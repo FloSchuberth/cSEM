@@ -1,0 +1,121 @@
+---
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# cSEM Package: Design
+
+#### Note to package contributers:
+
+When writting code intended to be added to the package, please stick to the 
+conventions and design choices described below.
+For questions: please contact the [author](mailto:manuel.steiner@uni-wuerzburg.de).
+
+## Design
+
+### Structure
+
+The package is organized in layers. The follwing layers exist:
+
+- 2 toplevel function (`csem`, `cca`) 
+- 1 midlevel function (currently called `workhorse`)
+- (Exported) helper functions: Functions that are exported to be applied directly 
+  by the user if needed (like `parseModel` or `calculateWeightsPLS`).
+- (Internal) helper functions: Functions that are not exported. These functions 
+  can be accessed via `csem::` but they are not generally useful to the enduser. 
+  If we see them used by users, we export them in the future. Examples: (all vcv helper functions).
+- Other package functions like `.onAttach` that are not accessible by endusers.
+- Postestimation functions. Two types of postestimation functions will exist
+    - `test_*` performs statistical test like `testMICOM`
+    - `check_*` performs diverse checks
+  Postestimation functions form a seperate layer and are generally designed
+  to work with a `cSEMREsults` object.
+
+### Design choices
+- No S4 classes! (Strong recommendation by Yves Rosseel)
+- All `...` are handled and matched to default arguments by the `handleArgs()` function and 
+  returned as a processed list. 
+- Many functions expect a standarized list of class `cSEMModel`. To convert a 
+  model in lavaan model syntax to a `cSEMModel` object simply 
+  pass the model to `parseModel`.
+- Helper functions always reside in an `.R` file called `helper_*`. Put functions that conceptionally 
+  belong together in one `helper_*` file (like `scaleWeights` and `calculateWeights` which both belong to the 
+`helper_weights.R` file).
+- There is a lot of redundancy across the `vcv_element` helper functions 
+  `SingleSingle()`, `CubicTWQuad` etc. I was contemplating to minimize redundancy, 
+  however, this makes the functions less self-contained. So I think while it 
+  would make the code more compact choosing redundancy over code compactness 
+  is reasonable. 
+  
+### Style/Naming
+
+Stick to [this styleguide](http://style.tidyverse.org/) with the following
+exceptions/additions:
+
+1. Function names are always CamelCase. They should contain a verb followed by a noun like: 
+  `processData`, `calculateValue`.
+1. Verbs in function names should be consistent across the whole package. So avoid to
+   mix synonomys but stick to one, always. Example: `computeValue` vs. `calculateValue`.
+   This package always uses `calculate` instead of `compute`. 
+   And `method` vs e.g. `approach`. This package always uses `approach` instead of `method`.
+1. Use plural in function/object names if the main input and output
+are more than one element, like `scaleWeights`, `calculateProxies`, `handleArgs` etc. but 
+stick to singular in other cases like `parseModel` (although this might not always be
+consistent...)
+1. Arguments: strive for meaningful argument names even if they are a bit longer 
+than ususal. People are much better at remembering arguments like `respect_structural_model`
+compared to something like `resp_sm`. Naming should also be consistent if possible.
+For example: any argument das describs a method or an approach should be named `.appraoch_*`.
+1. Argument names always start with a dot to distinguish them from other objects,
+this might take a bit to get used to in the beginning.
+1. Indentation: It is ok to align function arguments indendet by two spaces below 
+the function name instead of where the function starts if this help with clarity.
+
+```{r eval=FALSE}
+## Both ok but second is prefered in this case
+
+calculateInnerWeights <- function(.S                        = NULL,
+                                  .W                        = NULL,
+                                  .modellist                = NULL,
+                                  .weight_scheme            = c("centroid", 
+                                                                "factorial", 
+                                                                "path"),
+                                  .respect_structural_model = TRUE
+                                  ) { }
+
+calculateInnerWeights <- function(
+  .S                        = NULL,
+  .W                        = NULL,
+  .modellist                = NULL,
+  .weight_scheme            = c("centroid", "factorial", "path"),
+  .respect_structural_model = TRUE
+  ) { }
+```
+
+### Matrices
+Unless I encounter a case where this does not make sense, the following should be applied when
+creating new matrices 
+
+- Whenever possible: variables belong in columns, observations belong to rows.
+This implies: Whenever a matrix contains observations, variables are in columns,
+no matter if they are indicator, proxies, errors or anything else.
+- Covariance matrices: indicators **always** belong to columns and proxies to 
+rows, i.e., the matrix of weights $W$ for PLS is therefore $(J \times K)$ where $J$ is the 
+number of proxies and $K$ the number of indicators.
+- Naming: matrices within the package should be named according to the naming schemes
+of the composite based SEM literature. 
+
+### Helper function
+
+The aim is to keep helper functions as flexible as possible in a sense that they 
+can be used without having to jump to mother function in order to allow researchers 
+using the package to use helper function the way the need it. 
+This flexibility will certainly not always hold but should nevertheless always
+be considered when writing a new helper function
+
+### Documentation
+
+Document! although this is not the primary objectiv as long as the package is 
+not out in the open. The moment it is out, any addtion/new function etc. must be documented well! 

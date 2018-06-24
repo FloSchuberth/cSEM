@@ -1,0 +1,34 @@
+Package: cSEM
+Title: Composite Based Structural Equation Modeling
+Version: 0.0.0.9000
+Authors@R: c(person(given = "Manuel", family = "Steiner",
+                    role  = c("aut", "cre"),
+                    email = "manuel.steiner@uni-wuerzburg.de"),
+             person(given = "Florian", family = "Schuberth",
+                    role  = c("aut"),
+                    email = "f.schuberth@utwente.nl"),
+             person(given = "Tamara", family = "Schamberger",
+                    role  = c("aut"),
+                    email = "tamara.schamberger@uni-wuerzburg.de"))
+Depends: R (>= 3.4.2)
+Description: Analyse structural equation models, including path 
+    analysis and confirmatory composite analysis using a composite
+    based approach.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: lavaan, 
+    cli,
+    crayon, 
+    magrittr,
+    matrixStats,
+    purrr,
+    Rdpack,
+    symmoments
+RdMacros: Rdpack
+RoxygenNote: 6.0.1
+Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
+Suggests: knitr,
+    rmarkdown,
+    listviewer
+VignetteBuilder: knitr
