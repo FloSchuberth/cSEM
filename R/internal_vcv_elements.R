@@ -795,6 +795,7 @@ TwInterTwInter <- function(.i, .j, .Q, .H) {
 }
 
 TwInterThrwInter <- function(.i, .j, .Q, .H) {
+  
   ## Label
   # i_split  := the term .i split into its components
   # j_split  := the term .j split into its components
@@ -807,12 +808,12 @@ TwInterThrwInter <- function(.i, .j, .Q, .H) {
   ij_match <- intersect(i_split, j_split)
 
   ## Calculate M
-  M0a <- mean(matrixStats::rowProds(.H[, i_single]))
-  M0b <- mean(matrixStats::rowProds(.H[, j_single]))
+  M0a <- mean(matrixStats::rowProds(.H[, i_split]))
+  M0b <- mean(matrixStats::rowProds(.H[, j_split]))
   M1  <- mean(matrixStats::rowProds(.H[, ij]))
-  M2  <- mean(matrixStats::rowProds(.H[, ij[!(ij %in% ij_match)]]))
-  M3  <- mean(matrixStats::rowProds(.H[, ij[!(ij %in% ij_match[1])]]))
-  M4  <- mean(matrixStats::rowProds(.H[, ij[!(ij %in% ij_match[2])]]))
+  M2  <- mean(matrixStats::rowProds(.H[, ij[!(ij %in% ij_match)], drop = FALSE]))
+  M3  <- mean(matrixStats::rowProds(.H[, ij[!(ij %in% ij_match[1])], drop = FALSE]))
+  M4  <- mean(matrixStats::rowProds(.H[, ij[!(ij %in% ij_match[2])], drop = FALSE]))
 
   ## Calculate denominator (D)
   D <- prod(.Q[ij])

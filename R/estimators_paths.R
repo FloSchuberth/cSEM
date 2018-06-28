@@ -139,7 +139,7 @@ estimatePathOLS <- function(
 
     ### Calculation ============================================================
     ## Calculate variance of the structural errors
-    var_struc_error <- 1 - r2
+    var_struc_error <- 1 - unlist(r2)
 
     ## Preallocate
     vcv  <- list()
@@ -203,9 +203,9 @@ estimatePathOLS <- function(
         ## structural equations) and "var_struc_error" (= vector of
         ## structural error variances) -----------------------------------------
 
-        coef[[k]] <- solve(vcv[[k]]) %*% cv_endo_explana_ls[[k]]
+        coef[[k]] <- solve(vcv[[k]]) %*% t(cv_endo_explana_ls[[k]])
         r2[[k]]   <- t(coef[[k]]) %*% vcv[[k]] %*% coef[[k]]
-        var_struc_error[[k]]    <- 1 - r2[[k]]
+        var_struc_error[k]    <- 1 - r2[[k]]
 
         temp <- mapply(function(x, y) x * y,
                        x = temp,
@@ -230,3 +230,12 @@ estimatePathOLS <- function(
   ## Return result -------------------------------------------------------------
   list("Path_estimates" = path_estimates, R2 = r2)
 }
+
+# estimatePath2SLS <- function(
+#   .H                   = NULL,
+#   .W                   = NULL,
+#   .Q                   = NULL,
+#   .csem_model          = NULL,
+# ) {
+# 
+# }

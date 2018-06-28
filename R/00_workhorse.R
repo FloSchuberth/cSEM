@@ -48,7 +48,7 @@ workhorse <- function(
                                "GSCA", "fixed", "unit"),
   .disattenuate            = TRUE,
   .estimate_structural     = TRUE,
-  .ignore_structural_model = TRUE,
+  .ignore_structural_model = FALSE,
   .iter_max                = 100,
   .normal                  = TRUE,
   .PLS_mode                = NULL,

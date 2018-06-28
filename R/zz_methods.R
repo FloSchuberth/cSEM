@@ -94,14 +94,16 @@ summary.cSEMResults <- function(x, ...) {
   names_loadings <- paste0(rep(rownames(temp), times = apply(temp, 1, function(x) sum(x != 0))),
                            " =~ ", colnames(temp))
   loading_estimates <- data.frame("Loading" = names_loadings,
-                                  "Estimate" = unlist(t(temp)[t(temp) != 0 ]))
+                                  "Estimate" = unlist(t(temp)[t(temp) != 0 ]),
+                                  stringsAsFactors = FALSE)
 
   ## Structure weights output
   temp <- x$Estimates$Weight_estimates
   names_weights <- paste0(rep(rownames(temp), times = apply(temp, 1, function(x) sum(x != 0))),
                           " -- ", colnames(temp))
   weight_estimates <- data.frame("Weights" = names_weights,
-                                 "Estimate" = unlist(t(temp)[t(temp) != 0 ]))
+                                 "Estimate" = unlist(t(temp)[t(temp) != 0 ]),
+                                 stringsAsFactors = FALSE)
 
   ## Create summary list
   summary_out <- list(
