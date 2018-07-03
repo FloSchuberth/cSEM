@@ -12,9 +12,9 @@ WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES MAY OCCUR.
 
 ## Purpose
 
-Estimate, analyse, test and study linear and nonlinear structural equation models 
-using composite based approaches, procedures and tests including e.g. 
-PLS, GSCA, 2SLS estimation and numerous tests.
+Estimate, analyse, test, and study linear and nonlinear structural equation models 
+using composite based approaches, procedures, and tests including e.g. 
+PLS, GSCA, 2SLS estimation, and numerous tests.
 
 ## Installation
 
