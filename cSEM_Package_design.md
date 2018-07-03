@@ -1,8 +1,6 @@
 cSEM Package: Design
 ====================
 
-major testupdate
-
 #### Note to package contributers:
 
 When writting code intended to be added to the package, please stick to the 
