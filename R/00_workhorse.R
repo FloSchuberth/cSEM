@@ -149,8 +149,6 @@ workhorse <- function(
     Q <- .reliabilities
   }
 
-
-
   ## Calculate proxy correlation matrix
   C <- calculateProxyVCV(.S = S, .W = W$W)
 
