@@ -90,6 +90,7 @@ csem <- function(
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
   .PLS_mode                = NULL,
   .estimate_structural     = TRUE,
+  .reliabilities           = NULL,
   ...
   ) {
 
@@ -119,6 +120,7 @@ csem <- function(
     .PLS_weight_scheme_inner = PLS_weight_scheme_inner,
     .PLS_mode                = .PLS_mode,
     .estimate_structural     = .estimate_structural,
+    .reliabilities           = .reliabilities,
     ## Other arguments passed via ...
     .tolerance               = args$.tolerance,
     .iter_max                = args$.iter_max,

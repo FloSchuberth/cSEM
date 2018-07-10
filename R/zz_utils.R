@@ -53,6 +53,8 @@
 #'   of construct used. The argument is ignored if `.approach_weight` is not PLS.
 #' @param .Q A vector of reliability coefficients with element names equal to
 #'   the names of the J construct names used in the measurement model.
+#' @param .reliabilities A vector of `name = value` pairs of reliability coefficient. 
+#'   Element names are equal to the names of the J construct names.
 #' @param .S The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 #'   where K is the number of indicators.
 #' @param .terms A vector of construct names to be classified.

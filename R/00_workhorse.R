@@ -19,7 +19,8 @@
 #'   .normal                  = NULL,
 #'   .PLS_mode                = NULL,
 #'   .PLS_weight_scheme_inner = NULL,
-#'   .tolerance               = NULL
+#'   .tolerance               = NULL,
+#'   .reliabilities           = NULL,
 #'    )
 #'
 #' @inheritParams csem_arguments
@@ -53,7 +54,8 @@ workhorse <- function(
   .normal                  = TRUE,
   .PLS_mode                = NULL,
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-  .tolerance               = 1e-06
+  .tolerance               = 1e-06,
+  .reliabilities           = NULL
   ) {
 
   ### Preprocessing ============================================================
@@ -131,14 +133,23 @@ workhorse <- function(
   ## Calculate Q's (correlation between construct and proxy)
   # Note: Q_i := R(eta_i; eta_bar_i) is also called the reliability coefficient
   # rho_A in Dijkstra (2015) - Consistent partial least squares path modeling
-  Q <- calculateProxyConstructCV(
-    .S             = S,
-    .W             = W$W,
-    .csem_model    = csem_model,
-    .modes         = W$Modes,
-    .disattenuate  = .disattenuate,
-    .correction_factors = correction_factors
-  )
+  
+  if(is.null(.reliabilities)) {
+    Q <- calculateProxyConstructCV(
+      .S             = S,
+      .W             = W$W,
+      .csem_model    = csem_model,
+      .modes         = W$Modes,
+      .disattenuate  = .disattenuate,
+      .correction_factors = correction_factors
+    )
+  } else {
+    if(!identical(rownames(W$W), names(.reliabilities))) stop("all reliabilities must be provided.")
+    
+    Q <- .reliabilities
+  }
+
+
 
   ## Calculate proxy correlation matrix
   C <- calculateProxyVCV(.S = S, .W = W$W)
