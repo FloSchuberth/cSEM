@@ -18,6 +18,6 @@
 #' @export
 
 cca <- function(.data, .model, ...) {
-  stop("not yet implemented")
+  stop("not yet implemented.")
 }
 
