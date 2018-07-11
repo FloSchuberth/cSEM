@@ -55,7 +55,8 @@ workhorse <- function(
   .PLS_mode                = NULL,
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
   .tolerance               = 1e-06,
-  .reliabilities           = NULL
+  .reliabilities           = NULL, 
+  .dominantIndicatorsApproach = NULL
   ) {
 
   ### Preprocessing ============================================================
@@ -81,6 +82,22 @@ workhorse <- function(
       .PLS_weight_scheme_inner  = .PLS_weight_scheme_inner,
       .ignore_structural_model  = .ignore_structural_model
     )
+    
+    # use dominant indicators approach Henseler et al. (2016), perhaps this
+    # applicaple to other weight function.
+    # If yes then put at the end
+    # Input is a Vektor with indicator names, where the names contain the constructs
+    
+    if(!is.null(.dominantIndicatorsApproach)){
+     for(i in names(.dominantIndicatorsApproach)){
+       W[i,]=W[i,]*sign(W[i,.dominantIndicatorsApproach[i]])
+     } 
+    }
+    
+    
+    
+    
+    
   } else if(.approach_weights %in% c("SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
       .data                     = data,
@@ -179,7 +196,7 @@ workhorse <- function(
                                  "Loading_estimates"      = Lambda,
                                  "Weight_estimates"       = W$W,
                                  "Inner_weight_estimates" = W$E,
-                                 "Proxies"                = H,
+                                 # "Proxies"                = H,
                                  "Indicator_VCV"          = S,
                                  "Proxy_VCV"              = C,
                                  "Construct_VCV"          = P,
