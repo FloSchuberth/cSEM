@@ -18,7 +18,8 @@ workhorse(
   .normal                  = NULL,
   .PLS_mode                = NULL,
   .PLS_weight_scheme_inner = NULL,
-  .tolerance               = NULL
+  .tolerance               = NULL,
+  .reliabilities           = NULL,
    )
 }
 \arguments{
@@ -74,6 +75,9 @@ Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight
 \item{.tolerance}{Double. The tolerance criterion for convergence of the PLS
 algorithm. Defaults to \code{1e-06}.
 The argument is ignored if \code{.approach_weight} is not PLS.}
+
+\item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficient.
+Element names are equal to the names of the J construct names.}
 }
 \value{
 An object of class \code{cSEMResults} for which the following methods exist:

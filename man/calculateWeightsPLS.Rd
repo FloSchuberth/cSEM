@@ -45,7 +45,12 @@ Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight
 when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}}
 }
 \value{
-The (J x K) matrix of estimated weights.
+A list with the following elements:
+\describe{
+\item{\code{$W}}{A (J x K) matrix of estimated weights.}
+\item{\code{$E}}{A (J x J) matrix of inner weights.}
+\item{\code{$Modes}}{A named vector of Modes used for the outer estimation.}
+}
 }
 \description{
 Calculates weights

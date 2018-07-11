@@ -61,6 +61,7 @@
 #'   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
 #'   .PLS_mode            = NULL,
 #'   .estimate_structural = TRUE,
+#'   .reliabilities       = NULL
 #'   ...)
 #'
 #' @inheritParams csem_arguments

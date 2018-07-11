@@ -14,6 +14,7 @@ csem(
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
   .PLS_mode            = NULL,
   .estimate_structural = TRUE,
+  .reliabilities       = NULL
   ...)
 }
 \arguments{
@@ -51,6 +52,9 @@ of construct used. The argument is ignored if \code{.approach_weight} is not PLS
 
 \item{.estimate_structural}{Logical. Should the structural (path) coefficients
 be estimated? Defaults to \code{TRUE}.}
+
+\item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficient.
+Element names are equal to the names of the J construct names.}
 
 \item{...}{Further arguments to be passed down to other functions.
 See \link{args_default} for a complete list of possible arguments and their defaults.}

@@ -16,8 +16,12 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return The (J x K) matrix of estimated weights.
-#'
+#' @return A list with the following elements:
+#' \describe{
+#'   \item{`$W`}{A (J x K) matrix of estimated weights.}
+#'   \item{`$E`}{A (J x J) matrix of inner weights.}
+#'   \item{`$Modes`}{A named vector of Modes used for the outer estimation.}
+#' }
 #' @export
 #'
 
