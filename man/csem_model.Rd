@@ -44,9 +44,10 @@ possible interaction and exponential terms).}
 solely explained by exogenous constructs.}
 }
 Note: it is possible to supply an incomplete cSEMModel list
-to all functions that require \code{.csem_model} as a mandatory argument.
-However, this may lead to unexpected behaviour and errors so do use this
-technique with cauation.
+to all functions that require \code{.csem_model} as a mandatory argument. Currently,
+only the structural and the measurement matrix are required.
+However, specifying an incomplete cSEMModel list may lead to unexpected behaviour
+and errors so do use this technique with caution.
 }
 \seealso{
 \link{parseModel}
