@@ -221,7 +221,7 @@ estimatePathOLS <- function(
   } # END if(.approach_nlhod = replace)
 
   ## Structure results
-  names_path <- paste0(rep(names(coef), times = sapply(coef, length)), " ~ ",
+  names_path <- paste0(rep(names(coef), times = sapply(coef, length)), "~",
                        unlist(sapply(coef, rownames)))
 
   path_estimates  <- data.frame("Path" = names_path,
