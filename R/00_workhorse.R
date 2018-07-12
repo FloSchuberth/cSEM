@@ -54,7 +54,7 @@ workhorse <- function(
   .normal                  = TRUE,
   .PLS_mode                = NULL,
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-  .tolerance               = 1e-06,
+  .tolerance               = 1e-05,
   .reliabilities           = NULL, 
   .dominantIndicatorsApproach = NULL, 
   .standardize=TRUE
