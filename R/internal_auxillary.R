@@ -12,10 +12,10 @@
 calculateProxies <- function(.X = NULL, .W = NULL) {
 
   ## Proxies for the linear terms/latent variables
-  # H <- .X %*% t(.W)
+  H <- .X %*% t(.W)
 
   ## for comparison with the MoMoly function
-  H <- apply(.X, 2, function(x) {(x - mean(x)) / (sd(x) * sqrt((length(x) - 1) / length(x)))}) %*% t(.W)
+  # H <- apply(.X, 2, function(x) {(x - mean(x)) / (sd(x) * sqrt((length(x) - 1) / length(x)))}) %*% t(.W)
 
   return(H)
 }
