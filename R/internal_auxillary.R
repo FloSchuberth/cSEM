@@ -83,8 +83,8 @@ calculateProxyConstructCV <- function(
 
     if(length(names_modeA) > 0) {
 
-      x_modeA <- (c(diag(.W[names_modeA, ] %*% t(.W[names_modeA, ])) %*%
-                     diag(.correction_factors[names_modeA])))^2
+      x_modeA <- c(diag(.W[names_modeA, ] %*% t(.W[names_modeA, ])) %*%
+                     diag(.correction_factors[names_modeA]))
 
       if(length(names_modeB) > 0) {
         stop("Variable(s): ", names_modeB, " where estimated using Mode B\n",
