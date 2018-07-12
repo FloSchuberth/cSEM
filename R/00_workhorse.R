@@ -171,8 +171,8 @@ workhorse <- function(
   }
 
   ## Calculate proxy correlation matrix
-  C <- calculateProxyVCV(.S = S, .W = W$W)
-
+  # C <- calculateProxyVCV(.S = S, .W = W$W) 
+  C = cov(H)
   ## Calculate construct correlation matrix
   P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
 
