@@ -90,7 +90,7 @@ workhorse <- function(
     
     if(!is.null(.dominantIndicatorsApproach)){
      for(i in names(.dominantIndicatorsApproach)){
-       W[i,]=W[i,]*sign(W[i,.dominantIndicatorsApproach[i]])
+       W$W[i,]=W$W[i,]*sign(W$W[i,.dominantIndicatorsApproach[i]])
      } 
     }
     
