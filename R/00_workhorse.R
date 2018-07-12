@@ -21,7 +21,7 @@
 #'   .PLS_weight_scheme_inner = NULL,
 #'   .tolerance               = NULL,
 #'   .reliabilities           = NULL,
-#'   .dominantIndicatorsApproach = NULL, 
+#'   .dominantIndicators = NULL, 
 #'   .standardize             = NULL
 #'    )
 #'
@@ -90,9 +90,9 @@ workhorse <- function(
     # If yes then put at the end
     # Input is a Vektor with indicator names, where the names contain the constructs
     
-    if(!is.null(.dominantIndicatorsApproach)){
-     for(i in names(.dominantIndicatorsApproach)){
-       W$W[i,]=W$W[i,]*sign(W$W[i,.dominantIndicatorsApproach[i]])
+    if(!is.null(.dominantIndicators)){
+     for(i in names(.dominantIndicators)){
+       W$W[i,]=W$W[i,]*sign(W$W[i,.dominantIndicators[i]])
      } 
     }
     
