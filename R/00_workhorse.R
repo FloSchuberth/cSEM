@@ -81,7 +81,7 @@ workhorse <- function(
       .iter_max                 = .iter_max,
       # Arguments passed on to calculateInnerWeightsPLS
       .PLS_weight_scheme_inner  = .PLS_weight_scheme_inner,
-      .ignore_structural_model  = .ignore_structural_model
+      .ignore_structural_model  = .ignore_structural_model, 
     )
     
     # use dominant indicators approach Henseler et al. (2016), perhaps this
