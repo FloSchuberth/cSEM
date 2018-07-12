@@ -58,7 +58,7 @@ workhorse <- function(
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
   .tolerance               = 1e-05,
   .reliabilities           = NULL, 
-  .dominantIndicatorsApproach = NULL
+  .dominantIndicators = NULL
   ) {
 
   ### Preprocessing ============================================================

@@ -27,7 +27,7 @@
 #' @param .csem_model A (possibly incomplete) [cSEMModel] list.
 #' @param .disattenuate Logical. Should proxy correlations be disattenuated
 #'   if the construct is modeled as a common factor? Defaults to `TRUE`.
-#' @param .dominantIndicatorsApproach A named vector where the elements represent 
+#' @param .dominantIndicators A named vector where the elements represent 
 #'    the dominant indicator and the name the corresponding construct 
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural (path) coefficients
