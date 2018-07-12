@@ -28,8 +28,7 @@ calculateWeightsPLS <- function(
   .tolerance                = NULL,
   .iter_max                 = NULL,
   .PLS_weight_scheme_inner  = NULL,
-  .ignore_structural_model  = NULL,
-  .standardize              = NULL
+  .ignore_structural_model  = NULL
 ) {
 
 
@@ -46,7 +45,7 @@ calculateWeightsPLS <- function(
     if(is.matrix(.data) && isSymmetric.matrix(.data)) {
       S <- .data
     } else {
-      X <- processData(.data = .data, .model = csem_model, .standardize=.standardize)
+      X <- processData(.data = .data, .model = csem_model)
       S <- stats::cov(X)
     }
   }

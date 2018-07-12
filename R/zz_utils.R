@@ -59,7 +59,6 @@
 #'   Element names are equal to the names of the J construct names.
 #' @param .S The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 #'   where K is the number of indicators.
-#' @param .standardize Logical if the data is standardized before the calculation.   
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence of the PLS
 #'   algorithm. Defaults to `1e-06`.

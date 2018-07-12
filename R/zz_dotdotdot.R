@@ -82,8 +82,6 @@ args_default <- function() {
     #  Argument only used in workhorse
     .dominantIndicatorsApproach = formals(workhorse)$.dominantIndicatorsApproach,
     
-    # Argument passed to helper_data
-    .standardize=formals(workhorse)$.standardize
     
   )
 

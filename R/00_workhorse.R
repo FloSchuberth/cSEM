@@ -58,8 +58,7 @@ workhorse <- function(
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
   .tolerance               = 1e-05,
   .reliabilities           = NULL, 
-  .dominantIndicatorsApproach = NULL, 
-  .standardize=TRUE
+  .dominantIndicatorsApproach = NULL
   ) {
 
   ### Preprocessing ============================================================
@@ -67,7 +66,7 @@ workhorse <- function(
   csem_model <- parseModel(.model)
 
   ## Prepare, standardize, check, and clean data
-  X <- processData(.data = .data, .model = csem_model, .standardize=.standardize) 
+  X <- processData(.data = .data, .model = csem_model) 
 
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
@@ -83,8 +82,7 @@ workhorse <- function(
       .iter_max                 = .iter_max,
       # Arguments passed on to calculateInnerWeightsPLS
       .PLS_weight_scheme_inner  = .PLS_weight_scheme_inner,
-      .ignore_structural_model  = .ignore_structural_model, 
-      .standardize = .standardize
+      .ignore_structural_model  = .ignore_structural_model
     )
     
     # use dominant indicators approach Henseler et al. (2016), perhaps this
