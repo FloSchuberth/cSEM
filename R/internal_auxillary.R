@@ -15,7 +15,7 @@ calculateProxies <- function(.X = NULL, .W = NULL) {
   H <- .X %*% t(.W)
   
   # Create standardized construct scores
-  H = scale(H)
+
   ## for comparison with the MoMoly function
   # H <- apply(.X, 2, function(x) {(x - mean(x)) / (sd(x) * sqrt((length(x) - 1) / length(x)))}) %*% t(.W)
   # H <- apply(.X, 2, function(x) {(x - mean(x)) / sd(x)}) %*% t(.W)
