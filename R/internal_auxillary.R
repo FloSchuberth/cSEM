@@ -12,7 +12,7 @@
 calculateProxies <- function(.X = NULL, .W = NULL) {
 
   ## Proxies for the linear terms/latent variables
-  H <- scale(.X,center=TRUE,scale=TRUE) %*% t(.W)
+  H <- scale(.X,center=TRUE,scale=FALSE) %*% t(.W)
   
   # Create standardized construct scores
 
