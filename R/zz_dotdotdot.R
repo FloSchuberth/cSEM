@@ -77,10 +77,10 @@ args_default <- function() {
     .approach_cf              = eval(formals(workhorse)$.approach_cf)[1],
 
     # Arguements passed to estimator
-    .normal                   = formals(workhorse)$.normal
+    .normal                   = formals(workhorse)$.normal,
     
     #  Argument only used in workhorse
-    .dominantIndicatorsApproach=formals(workhorse)$.dominantIndicatorsApproach
+    .dominantIndicatorsApproach = formals(workhorse)$.dominantIndicatorsApproach,
     
     # Argument passed to helper_data
     .standardize=formals(workhorse)$.standardize
