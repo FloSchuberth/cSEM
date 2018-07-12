@@ -80,7 +80,7 @@ args_default <- function() {
     .normal                   = formals(workhorse)$.normal,
     
     #  Argument only used in workhorse
-    .dominantIndicatorsApproach = formals(workhorse)$.dominantIndicatorsApproach,
+    .dominantIndicatorsApproach = formals(workhorse)$.dominantIndicatorsApproach
     
     
   )
