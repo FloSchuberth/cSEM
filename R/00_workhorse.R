@@ -68,7 +68,7 @@ workhorse <- function(
 
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
-  S <- stats::cor(X)
+  S <- stats::cov(X)
 
   ## Calculate weights
   if(.approach_weights == "PLS") {
