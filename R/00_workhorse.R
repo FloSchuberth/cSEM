@@ -21,6 +21,8 @@
 #'   .PLS_weight_scheme_inner = NULL,
 #'   .tolerance               = NULL,
 #'   .reliabilities           = NULL,
+#'   .dominantIndicatorsApproach = NULL, 
+#'   .standardize             = NULL
 #'    )
 #'
 #' @inheritParams csem_arguments
