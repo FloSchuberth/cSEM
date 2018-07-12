@@ -201,7 +201,7 @@ workhorse <- function(
                                  "Loading_estimates"      = Lambda,
                                  "Weight_estimates"       = W$W,
                                  "Inner_weight_estimates" = W$E,
-                                 "Proxies"                = H,
+                                 "Construct_scores"                = H,
                                  "Indicator_VCV"          = S,
                                  "Proxy_VCV"              = C,
                                  "Construct_VCV"          = P,
