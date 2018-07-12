@@ -72,7 +72,7 @@ processData <- function(.data, .model, .standardize) {
   .data <- .data[, colnames(.model$measurement)]
 
   # Scale data
-  if(.standardize=TRUE){
+  if(.standardize==TRUE){
   .data <- scale(.data) # Note: it does not matter if the data is already scaled
                         # Scaling a scaled/standardized data set does not alter
                         # the data.

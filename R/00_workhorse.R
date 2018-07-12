@@ -65,7 +65,7 @@ workhorse <- function(
   csem_model <- parseModel(.model)
 
   ## Prepare, standardize, check, and clean data
-  X <- processData(.data = .data, .model = csem_model) # note: X is now standardized
+  X <- processData(.data = .data, .model = csem_model, .standardize=.standardize) # note: X is now standardized
 
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
