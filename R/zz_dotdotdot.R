@@ -78,6 +78,13 @@ args_default <- function() {
 
     # Arguements passed to estimator
     .normal                   = formals(workhorse)$.normal
+    
+    #  Argument only used in workhorse
+    .dominantIndicatorsApproach=formals(workhorse)$.dominantIndicatorsApproach
+    
+    # Argument passed to helper_data
+    .standardize=formals(workhorse)$.standardize
+    
   )
 
   return(args_ls)
