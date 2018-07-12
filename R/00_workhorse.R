@@ -149,12 +149,12 @@ workhorse <- function(
     .correction_factors = correction_factors
   )
 
-  ## Calculate Q^2's (squared correlation between construct and proxy)
+  ## Calculate Q's (correlation between construct and proxy)
   # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
   # rho_A in Dijkstra (2015) - Consistent partial least squares path modeling
-  
-  # if(is.null(.reliabilities)) {
-    Q2 <- calculateProxyConstructCV(
+  # The the Q presented in matrixpls differ from our Q since matrixpls prints the squared Q  
+
+    Q <- calculateProxyConstructCV(
       .S             = S,
       .W             = W$W,
       .csem_model    = csem_model,
@@ -163,18 +163,12 @@ workhorse <- function(
       .correction_factors = correction_factors
     )
     
-  if(!is.null(.reliabilities)){}  
+  if(!is.null(.reliabilities)){
+    Q[names(.reliabilities)] = sqrt(.reliabilities)
+  }  
     
-    
-  # take the square root from the reliability estimates 
-  Q=sqrt(Q2)  
-  # } else {
-    # if(!identical(rownames(W$W), names(.reliabilities))) stop("all reliabilities must be provided.")
-    
-    # Q <- .reliabilities
-  # }
-    
-    
+ 
+
     
 
   ## Calculate proxy correlation matrix
@@ -211,7 +205,7 @@ workhorse <- function(
                                  "Indicator_VCV"          = S,
                                  "Proxy_VCV"              = C,
                                  "Construct_VCV"          = P,
-                                 "Construct_Reliability"     = Q2,
+                                 "Construct_Reliability"     = Q^2,
                                  "Correction_factors"     = correction_factors
                                  ),
     "Tests"               = list("Overall_model_fit"      = c("still to implement"),
