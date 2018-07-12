@@ -82,6 +82,7 @@ workhorse <- function(
       # Arguments passed on to calculateInnerWeightsPLS
       .PLS_weight_scheme_inner  = .PLS_weight_scheme_inner,
       .ignore_structural_model  = .ignore_structural_model, 
+      .standardize = .standardize
     )
     
     # use dominant indicators approach Henseler et al. (2016), perhaps this
@@ -197,7 +198,7 @@ workhorse <- function(
                                  "Loading_estimates"      = Lambda,
                                  "Weight_estimates"       = W$W,
                                  "Inner_weight_estimates" = W$E,
-                                 # "Proxies"                = H,
+                                 "Proxies"                = H,
                                  "Indicator_VCV"          = S,
                                  "Proxy_VCV"              = C,
                                  "Construct_VCV"          = P,
