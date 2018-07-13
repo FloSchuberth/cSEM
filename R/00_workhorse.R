@@ -164,6 +164,10 @@ workhorse <- function(
     )
     
   if(!is.null(.reliabilities)){
+    # Check whether defined external reliabilities are correctly defined
+    if(TRUE %in% (.reliabilities > 1)){stop('External reliabilities must be smaller equal 1.')}
+    if(FALSE %in% (.reliabilities %in% names(Q))){stop('The provided reliability refers to a non-defined construct.')}
+    
     Q[names(.reliabilities)] = sqrt(.reliabilities)
   }  
     
