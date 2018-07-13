@@ -50,7 +50,7 @@ parseModel <- function(.model) {
       
     } else {
       
-      stop("The model you provided containes element names unknown to cSEM (", 
+      stop("The model you provided contains element names unknown to cSEM (", 
            paste0("'", x, "'", collapse = ", "), ").\n", 
            "See ?cSEMModel for a list of valid component names.", call. = FALSE)
     }
@@ -151,8 +151,8 @@ parseModel <- function(.model) {
       z <- names(temp[i, names_constructs][temp[i, names_constructs] == 1])
       
       if(length(setdiff(x, z)) > 0) {
-        stop(paste0("The structural equation for ", i, " contains interactions between constructs",
-                    "\nthat do not appear individually. ",
+        stop(paste0("The structural equation for ", i, " contains interactions between constructs", 
+                    " that do not appear individually.\n",
                     "This is almost certainly not a meaningful model."), call. = FALSE)
       }
       
@@ -166,7 +166,8 @@ parseModel <- function(.model) {
     ## Return error if the structural model contains feedback loops
     if(any(temp[var_endo, var_endo] + t(temp[var_endo, var_endo]) == 2)) {
       stop("The structural model contains feedback loops.",
-           " Currently no feedback loops are allowed.")
+           " Currently no feedback loops are allowed.",
+           call. = FALSE)
     }
     
     # Endo variables that are explained by exo and endo variables
@@ -203,7 +204,8 @@ parseModel <- function(.model) {
           }
         } # END for-loop
         if(counter > 50)
-          stop("Reordering the structural equations was not succesful. Something is wrong.")
+          stop("Reordering the structural equations was not succesful. Something is wrong.",
+               call. = FALSE)
         if(length(explained_by_exo_endo_temp) == 0) break
       } # END repeat
     } # END if-statement

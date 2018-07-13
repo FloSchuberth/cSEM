@@ -75,11 +75,12 @@ calculateWeightsPLS <- function(
     } else if (length(.PLS_mode) == 1) {
       modes <- sapply(csem_model$construct_type$Name, function(x) .PLS_mode)
     } else {
-      stop("At least one mode has not been specified.")
+      stop("At least one mode has not been specified.",
+           call. = FALSE)
     }
   } else {
-    stop(paste(setdiff(.PLS_mode, c("ModeA", "ModeB")), collapse = ", "),
-         " is an unknown Mode.")
+    stop(paste0("`", setdiff(.PLS_mode, c("ModeA", "ModeB")), "`", collapse = ", "),
+         " is an unknown mode.", call. = FALSE)
   }
 
   ### Calculation/Iteration ====================================================

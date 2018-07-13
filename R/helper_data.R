@@ -43,14 +43,16 @@ processData <- function(.data, .model) {
   ### Checks, errors and warnings ========
   # Check if any data set is provided
   if(is.null(.data)) {
-    stop("No data set provided. Please provide a data.frame or a matrix of data.")
+    stop("No data set provided. Please provide a `data.frame` or a matrix of data.",
+         call. = FALSE)
   }
 
   # Check class of the .data object and stop if not of class "data.frame" or "matrix"
 
   if(!(class(.data) %in% c("data.frame", "matrix"))) {
     stop("Don't know how to deal with a data object of class: ", class(.data), ".\n",
-         "Please provide the data as a data.frame or a matrix.")
+         "Please provide the data as a `data.frame` or a matrix.",
+         call. = FALSE)
   }
 
   # Check if all columns are numeric. Stop otherwise
@@ -58,15 +60,22 @@ processData <- function(.data, .model) {
     stop("At least one column of the data is non-numeric.")
   }
 
-  ### Processing =========
+  ### Processing and further checking =========
   # Convert to matrix if data.frame
   if(is.data.frame(.data)) {
     .data <- as.matrix(.data)
   }
 
-  # Convert to cSEMModel format if not already in this format
+  # Convert .model to cSEMModel format if not already in this format
   if(!(class(.model) == "cSEMModel")) {
     .model <- parseModel(.model)
+  }
+  # Check indicator names
+  if(!all(colnames(.model$measurement) %in% colnames(.data))) {
+    stop("Unknown indicator(s): ",  
+         paste0("`", setdiff(colnames(.model$measurement), colnames(.data)), "`.", collapse = ", "),
+         " Please verify your model description.",
+         call. = FALSE)
   }
   # Order data according to the ordering of the measurement model
   .data <- .data[, colnames(.model$measurement)]
@@ -80,4 +89,3 @@ processData <- function(.data, .model) {
   ## Return
   return(.data)
 }
-

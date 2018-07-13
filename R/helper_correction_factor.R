@@ -61,8 +61,9 @@ calculateCorrectionFactors <- function(
         .[. != 0]
 
       if(length(S_vect) == 0) {
-        stop("At least 1 pair of indicators with uncorrelated measurement
-             errors required.\n Please revise your model.")
+        stop("At least one pair of indicators with uncorrelated measurement
+             errors required.\n Please revise your model.",
+             call. = FALSE)
       }
 
       ## Do the actual computation ---------------------------------------------

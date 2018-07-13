@@ -175,7 +175,7 @@ workhorse <- function(
   ## Calculate Q's (correlation between construct and proxy)
   # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
   # rho_A in Dijkstra (2015) - Consistent partial least squares path modeling
-  # The the Q presented in matrixpls differ from our Q since matrixpls prints the squared Q  
+  # The Q's in matrixpls differ since matrixpls prints the squared Q.  
 
     Q <- calculateProxyConstructCV(
       .S             = S,
@@ -238,15 +238,12 @@ workhorse <- function(
                                  "Loading_estimates"      = Lambda,
                                  "Weight_estimates"       = W$W,
                                  "Inner_weight_estimates" = W$E,
-                                 "Construct_scores"                = H,
+                                 "Construct_scores"       = H,
                                  "Indicator_VCV"          = S,
                                  "Proxy_VCV"              = C,
                                  "Construct_VCV"          = P,
-                                 "Construct_Reliability"     = Q^2,
+                                 "Construct_reliabilities"= Q^2,
                                  "Correction_factors"     = correction_factors
-                                 ),
-    "Tests"               = list("Overall_model_fit"      = c("still to implement"),
-                                 "Some_other_test"        = c("still to implement")
                                  ),
     "Meta_information"    = list("Number_of_observations" = nrow(X),
                                  "Weight_approach"        = .approach_weights,
