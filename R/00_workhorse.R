@@ -176,7 +176,7 @@ workhorse <- function(
       stop('The provided reliability refers to a non-defined construct.')}
     
     Q[names(.reliabilities)] = sqrt(.reliabilities)
-  }  
+   }  
     
  
 
