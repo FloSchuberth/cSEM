@@ -91,12 +91,12 @@ workhorse <- function(
     # Input is a Vektor with indicator names, where the names contain the constructs
     
     if(!is.null(.dominant_indicators)){
+      # Check the provided dominant indicators
+      if(FALSE %in% (.dominant_indicators %in% colnames(W$W))){
+        stop('At least one defined dominant indicator does is not used in the model')}
+      if(FALSE %in% names(.dominant_indicators)%in%rownames(W$W)){
+        stop('At least one dominant indicator is defined for a non-defined construct')}
      for(i in names(.dominant_indicators)){
-       # Check the provided dominant indicators
-       if(FALSE %in% (.dominant_indicators %in% colnames(W$W))){
-         stop('At least one defined dominant indicator does is not used in the model')}
-       if(FALSE %in% names(.dominant_indicators)%in%rownames(W$W)){
-         stop('At least one dominant indicator is defined for a non-defined construct')}
        W$W[i,]=W$W[i,]*sign(W$W[i,.dominant_indicators[i]])
      } 
     }
