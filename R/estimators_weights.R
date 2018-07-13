@@ -40,15 +40,16 @@ calculateWeightsPLS <- function(
     csem_model <- .model
   }
 
-  # ## Prepare, standardize, check, and clean data if not already in this format
-  # if(!(class(.data) == "cSEMData")) {
-  #   if(is.matrix(.data) && isSymmetric.matrix(.data)) {
-  #     S <- .data
-  #   } else {
-  #     X <- processData(.data = .data, .model = csem_model)
-  #     S <- stats::cov(X)
-  #   }
-  # }
+  ## Prepare, standardize, check, and clean data if not already in this format
+  if(!(class(.data) == "cSEMData")) {
+    if(is.matrix(.data) && isSymmetric.matrix(.data)) {
+      S <- .data
+    } else {
+      #  If function is used externally, data is not automatically scaled
+      X <- processData(.data = .data, .model = csem_model)
+      S <- stats::cov(X)
+    }
+  }
 
   ### Preparation ==============================================================
   ## Get/set the modes for the outer estimation

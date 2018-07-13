@@ -67,7 +67,7 @@ workhorse <- function(
 
   ## Prepare, standardize, check, and clean data
   X <- processData(.data = .data, .model = csem_model) 
-
+  X = scale(X)
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
   S <- stats::cov(X)

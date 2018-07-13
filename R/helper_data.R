@@ -72,7 +72,7 @@ processData <- function(.data, .model) {
   .data <- .data[, colnames(.model$measurement)]
 
   # Scale data
-  .data <- scale(.data) 
+  # .data <- scale(.data) 
 
   ## Set class
   class(.data) <- "cSEMData"
