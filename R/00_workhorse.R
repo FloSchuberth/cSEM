@@ -21,6 +21,8 @@
 #'   .PLS_weight_scheme_inner = NULL,
 #'   .tolerance               = NULL,
 #'   .reliabilities           = NULL,
+#'   .dominant_indicators = NULL, 
+#'   .standardize             = NULL
 #'    )
 #'
 #' @inheritParams csem_arguments
@@ -54,8 +56,9 @@ workhorse <- function(
   .normality               = TRUE,
   .PLS_mode                = NULL,
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-  .tolerance               = 1e-06,
-  .reliabilities           = NULL
+  .tolerance               = 1e-05,
+  .reliabilities           = NULL, 
+  .dominant_indicators = NULL
   ) {
 
   ### Preprocessing ============================================================
@@ -63,11 +66,11 @@ workhorse <- function(
   csem_model <- parseModel(.model)
 
   ## Prepare, standardize, check, and clean data
-  X <- processData(.data = .data, .model = csem_model) # note: X is now standardized
-
+  X <- processData(.data = .data, .model = csem_model) 
+  X = scale(X)
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
-  S <- stats::cor(X)
+  S <- stats::cov(X)
 
   ## Calculate weights
   if(.approach_weights == "PLS") {
@@ -81,6 +84,28 @@ workhorse <- function(
       .PLS_weight_scheme_inner  = .PLS_weight_scheme_inner,
       .ignore_structural_model  = .ignore_structural_model
     )
+    
+    # use dominant indicators approach Henseler et al. (2016), perhaps this
+    # applicaple to other weight function.
+    # If yes then put at the end
+    # Input is a Vektor with indicator names, where the names contain the constructs
+    
+    if(!is.null(.dominant_indicators)){
+      # Check the provided dominant indicators
+      if(FALSE %in% (.dominant_indicators %in% colnames(W$W))){
+        stop('At least one defined dominant indicator does is not used in the model')}
+      if(FALSE %in% (names(.dominant_indicators)%in%rownames(W$W)) | is.null(names(.dominant_indicators))){
+        stop('At least one dominant indicator is defined for a non-defined construct')}
+      
+     for(i in names(.dominant_indicators)){
+       W$W[i,]=W$W[i,]*sign(W$W[i,.dominant_indicators[i]])
+      } 
+    }
+    
+    
+    
+    
+    
   } else if(.approach_weights %in% c("SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
       .data                     = data,
@@ -131,10 +156,10 @@ workhorse <- function(
   )
 
   ## Calculate Q's (correlation between construct and proxy)
-  # Note: Q_i := R(eta_i; eta_bar_i) is also called the reliability coefficient
+  # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
   # rho_A in Dijkstra (2015) - Consistent partial least squares path modeling
-  
-  if(is.null(.reliabilities)) {
+  # The the Q presented in matrixpls differ from our Q since matrixpls prints the squared Q  
+
     Q <- calculateProxyConstructCV(
       .S             = S,
       .W             = W$W,
@@ -143,15 +168,23 @@ workhorse <- function(
       .disattenuate  = .disattenuate,
       .correction_factors = correction_factors
     )
-  } else {
-    if(!identical(rownames(W$W), names(.reliabilities))) stop("all reliabilities must be provided.")
     
-    Q <- .reliabilities
-  }
+  if(!is.null(.reliabilities)){
+    # Check whether defined external reliabilities are correctly defined
+    if(TRUE %in% (.reliabilities > 1)){stop('External reliabilities must be smaller equal 1.')}
+    if(FALSE %in% (.reliabilities %in% names(Q)) | is.null(.reliabilities)){
+      stop('The provided reliability refers to a non-defined construct.')}
+    
+    Q[names(.reliabilities)] = sqrt(.reliabilities)
+   }  
+    
+ 
+
+    
 
   ## Calculate proxy correlation matrix
-  C <- calculateProxyVCV(.S = S, .W = W$W)
-
+  # C <- calculateProxyVCV(.S = S, .W = W$W) 
+  C = cov(H)
   ## Calculate construct correlation matrix
   P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
 
@@ -179,11 +212,11 @@ workhorse <- function(
                                  "Loading_estimates"      = Lambda,
                                  "Weight_estimates"       = W$W,
                                  "Inner_weight_estimates" = W$E,
-                                 "Proxies"                = H,
+                                 "Construct_scores"                = H,
                                  "Indicator_VCV"          = S,
                                  "Proxy_VCV"              = C,
                                  "Construct_VCV"          = P,
-                                 "Proxy_construct_CV"     = Q,
+                                 "Construct_Reliability"     = Q^2,
                                  "Correction_factors"     = correction_factors
                                  ),
     "Tests"               = list("Overall_model_fit"      = c("still to implement"),

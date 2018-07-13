@@ -77,7 +77,11 @@ args_default <- function() {
     .approach_cf              = eval(formals(workhorse)$.approach_cf)[1],
 
     # Arguements passed to estimatorPathOLS
-    .normality                = formals(workhorse)$.normality
+    .normality                = formals(workhorse)$.normality,
+
+    #  Argument only used in workhorse
+    .dominant_indicators      = formals(workhorse)$.dominant_indicators
+    
   )
 
   return(args_ls)

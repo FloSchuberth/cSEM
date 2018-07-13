@@ -127,6 +127,7 @@ csem <- function(
     .iter_max                = args$.iter_max,
     .ignore_structural_model = args$.ignore_structural_model,
     .approach_cf             = args$.approach_cf,
-    .normality               = args$.normalilty
+    .normality               = args$.normalilty,
+    .dominant_indicators     = args$.dominant_indicators
     )
 }
