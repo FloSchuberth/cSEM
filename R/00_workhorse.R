@@ -16,7 +16,7 @@
 #'   .estimate_structural     = NULL,
 #'   .ignore_structural_model = NULL,
 #'   .iter_max                = NULL,
-#'   .normal                  = NULL,
+#'   .normality               = NULL,
 #'   .PLS_mode                = NULL,
 #'   .PLS_weight_scheme_inner = NULL,
 #'   .tolerance               = NULL,
@@ -51,7 +51,7 @@ workhorse <- function(
   .estimate_structural     = TRUE,
   .ignore_structural_model = FALSE,
   .iter_max                = 100,
-  .normal                  = TRUE,
+  .normality               = TRUE,
   .PLS_mode                = NULL,
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
   .tolerance               = 1e-06,
@@ -162,7 +162,7 @@ workhorse <- function(
       .W            = W$W,
       .Q            = Q,
       .csem_model   = csem_model,
-      .normal       = .normal,
+      .normality    = .normality,
       .approach_nl  = .approach_nl
     )
   } else {

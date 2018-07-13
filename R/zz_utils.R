@@ -40,6 +40,9 @@
 #'   with a warning. Defaults to `100`. The argument is ignored if
 #'   `.approach_weight` is not PLS.
 #' @param .mode A named vector giving the mode used to obtain new outer weights.
+#' @param .normality Logical. Should joint normality be assumed if the model
+#'   contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
+#'   Defaults to `TRUE`.
 #' @param .permutations Integer. The number permutations used for step 2 and 3 of the test.
 #' Defaults to `100`. Note however that the number should typically be a lot higher.
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme

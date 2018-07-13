@@ -15,7 +15,7 @@ workhorse(
   .estimate_structural     = NULL,
   .ignore_structural_model = NULL,
   .iter_max                = NULL,
-  .normal                  = NULL,
+  .normality               = NULL,
   .PLS_mode                = NULL,
   .PLS_weight_scheme_inner = NULL,
   .tolerance               = NULL,
@@ -60,6 +60,10 @@ If \code{iter_max = 1} one-step weights are returned. If the algorithm exceeds
 the specified number, weights of iteration step \code{.iter_max - 1}  will be returned
 with a warning. Defaults to \code{100}. The argument is ignored if
 \code{.approach_weight} is not PLS.}
+
+\item{.normality}{Logical. Should joint normality be assumed if the model
+contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
+Defaults to \code{TRUE}.}
 
 \item{.PLS_mode}{Either a named vector specifying the mode that should be used for
 each construct in the form \code{name = "mode"}, a single character

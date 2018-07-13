@@ -5,7 +5,7 @@
 \title{Estimate the structural coefficients}
 \usage{
 estimatePathOLS(.H = NULL, .W = NULL, .Q = NULL, .csem_model = NULL,
-  .normal = NULL, .approach_nl = NULL)
+  .normality = NULL, .approach_nl = NULL)
 }
 \arguments{
 \item{.H}{The (N x J) matrix of proxy values.}
@@ -17,6 +17,10 @@ K the number of indicators.}
 the names of the J construct names used in the measurement model.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
+
+\item{.normality}{Logical. Should joint normality be assumed if the model
+contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
+Defaults to \code{TRUE}.}
 
 \item{.approach_nl}{Character string. The approach used to handle non-linear
 structural relationships. Possible choices are: "\emph{none}", or "\emph{replace}".
