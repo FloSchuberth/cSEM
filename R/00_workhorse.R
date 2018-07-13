@@ -91,12 +91,13 @@ workhorse <- function(
     # Input is a Vektor with indicator names, where the names contain the constructs
     
     if(!is.null(.dominant_indicators)){
+      # Check the provided dominant indicators
+      if(FALSE %in% (.dominant_indicators %in% colnames(W$W))){
+        stop('At least one defined dominant indicator does is not used in the model')}
+      if(FALSE %in% names(.dominant_indicators)%in%rownames(W$W) | is.null(names(.dominat_indicators))){
+        stop('At least one dominant indicator is defined for a non-defined construct')}
+      
      for(i in names(.dominant_indicators)){
-       # Check the provided dominant indicators
-       if(FALSE %in% (.dominant_indicators %in% colnames(W$W))){
-         stop('At least one defined dominant indicator does is not used in the model')}
-       if(FALSE %in% names(.dominant_indicators)%in%rownames(W$W)){
-         stop('At least one dominant indicator is defined for a non-defined construct')}
        W$W[i,]=W$W[i,]*sign(W$W[i,.dominant_indicators[i]])
      } 
     }
@@ -171,7 +172,8 @@ workhorse <- function(
   if(!is.null(.reliabilities)){
     # Check whether defined external reliabilities are correctly defined
     if(TRUE %in% (.reliabilities > 1)){stop('External reliabilities must be smaller equal 1.')}
-    if(FALSE %in% (.reliabilities %in% names(Q))){stop('The provided reliability refers to a non-defined construct.')}
+    if(FALSE %in% (.reliabilities %in% names(Q)) | is.null(.reliabilities)){
+      stop('The provided reliability refers to a non-defined construct.')}
     
     Q[names(.reliabilities)] = sqrt(.reliabilities)
   }  
