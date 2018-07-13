@@ -127,6 +127,6 @@ csem <- function(
     .ignore_structural_model = args$.ignore_structural_model,
     .approach_cf             = args$.approach_cf,
     .normal                  = args$.normal,
-    .dominantIndicators = args$.dominantIndicators
+    .dominant_indicators = args$.dominant_indicators
     )
 }
