@@ -38,17 +38,21 @@ calculateLoadings <- function(
                         diag(.correction_factors[names_modeA]))
 
       if(length(names_modeB) > 0) {
-        stop("Variable(s): ", paste(names_modeB, collapse = " "), " where estimated using Mode B\n",
-             "Currently correction for attenuation for constructs modeled as\n",
-             "common factors is only possible for Mode A.")
+        stop("Variable(s): ", paste0("`", names_modeB, "`", collapse = ", "), 
+             " where estimated using Mode B\n",
+             "Currently correction for attenuation for constructs modeled as",
+             " common factors is only possible for Mode A.",
+             call. = FALSE)
       }
 
       x[names_modeA, ] <- x_modesA
     } else {
 
-      stop("Variable(s): ", paste(names_modeB, collapse = " "), " where estimated using Mode B\n",
-           "Currently correction for attenuation for constructs modeled as\n",
-           "common factors is only possible for Mode A.")
+      stop("Variable(s): ", paste0("`", names_modeB, "`", collapse = ", "), 
+           " where estimated using Mode B\n",
+           "Currently correction for attenuation for constructs modeled as",
+           " common factors is only possible for Mode A.",
+           call. = FALSE)
     }
   }
   return(x)

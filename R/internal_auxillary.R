@@ -87,9 +87,10 @@ calculateProxyConstructCV <- function(
                      diag(.correction_factors[names_modeA]))
 
       if(length(names_modeB) > 0) {
-        stop("Variable(s): ", names_modeB, " where estimated using Mode B\n",
-             "Currently correction for attenuation for constructs modeled as\n",
-             "common factors is only possible for Mode A.")
+        stop("Variable(s): ", paste0("`", names_modeB, "`", collapse = ", "), " where estimated using Mode B.",
+             " Currently correction for attenuation for constructs modeled as",
+             " common factors is only possible for Mode A.",
+             call. = FALSE)
       }
 
       x[names_modeA] <- x_modeA
@@ -169,8 +170,10 @@ classifyConstructs <- function(.terms) {
     ## Do the actual classification --------------------------------------------
 
     if(a > 3) {
-      stop("The nonlinear term: ", paste(.terms), " is currently not supported.\n",
-           "Please see ?classifyConstructs for a list of supported terms.")
+      stop("The nonlinear term(s): ", paste0("`", .terms, "`", collapse = ", "), 
+           ifelse(length(.terms == 1, " is", " are")), " currently not supported.\n",
+           "Please see ?classifyConstructs for a list of supported terms.",
+           call. = FALSE)
     } else {
       switch(a,
              "1" = {
@@ -252,4 +255,21 @@ scaleWeights <- function(.S = NULL, .W = NULL) {
   colnames(W_scaled) <- colnames(.W)
 
   return(W_scaled)
+}
+
+#' Internal: A symmetric version of setdiff()
+#'
+#' A symmetric version of setdiff()
+#'
+#' More description here
+#'
+#' @usage setdiff2(x, y)
+#'
+#' @param x,y elements to compare.
+#'
+#' @return A vector containing the non-overlapping elements.
+
+setdiff2 <- function(x,  y) { 
+  
+  setdiff(union(x, y), intersect(x, y))
 }

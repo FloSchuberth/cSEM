@@ -116,7 +116,8 @@ estimatePathOLS <- function(
   if(.approach_nl == "replace") {
     ### Preparation ============================================================
     if(.normality == FALSE) {
-      stop("Only implemented for normal = TRUE")
+      stop("Only implemented for normality = TRUE",
+           call. = FALSE)
     }
     # Create list with each list element holding one structural equation
     struc_coef_ls <- lapply(coef, function(x) {
