@@ -253,5 +253,3 @@ scaleWeights <- function(.S = NULL, .W = NULL) {
 
   return(W_scaled)
 }
-
-

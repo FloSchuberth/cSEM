@@ -50,24 +50,27 @@ workhorse <- function(
   .approach_weights        = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR",
                                "GSCA", "fixed", "unit"),
   .disattenuate            = TRUE,
+  .dominant_indicators     = NULL,
   .estimate_structural     = TRUE,
   .ignore_structural_model = FALSE,
   .iter_max                = 100,
   .normality               = TRUE,
   .PLS_mode                = NULL,
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-  .tolerance               = 1e-05,
   .reliabilities           = NULL, 
-  .dominant_indicators = NULL
+  .tolerance               = 1e-05
   ) {
 
   ### Preprocessing ============================================================
   ## Parse and order model to "cSEMModel" list
   csem_model <- parseModel(.model)
 
-  ## Prepare, standardize, check, and clean data
+  ## Prepare, check, and clean data
   X <- processData(.data = .data, .model = csem_model) 
-  X = scale(X)
+  
+  ## Standardize
+  X <- scale(X)
+  
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
   S <- stats::cov(X)
@@ -84,28 +87,6 @@ workhorse <- function(
       .PLS_weight_scheme_inner  = .PLS_weight_scheme_inner,
       .ignore_structural_model  = .ignore_structural_model
     )
-    
-    # use dominant indicators approach Henseler et al. (2016), perhaps this
-    # applicaple to other weight function.
-    # If yes then put at the end
-    # Input is a Vektor with indicator names, where the names contain the constructs
-    
-    if(!is.null(.dominant_indicators)){
-      # Check the provided dominant indicators
-      if(FALSE %in% (.dominant_indicators %in% colnames(W$W))){
-        stop('At least one defined dominant indicator does is not used in the model')}
-      if(FALSE %in% (names(.dominant_indicators)%in%rownames(W$W)) | is.null(names(.dominant_indicators))){
-        stop('At least one dominant indicator is defined for a non-defined construct')}
-      
-     for(i in names(.dominant_indicators)){
-       W$W[i,]=W$W[i,]*sign(W$W[i,.dominant_indicators[i]])
-      } 
-    }
-    
-    
-    
-    
-    
   } else if(.approach_weights %in% c("SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
       .data                     = data,
@@ -128,9 +109,45 @@ workhorse <- function(
       .model                    = csemmodel
     )
   } else {
-    stop("Unknown weighting approach.")
+    stop("Unknown weighting approach.", call. = FALSE)
   }
 
+  ## Dominant indicators:
+  # Use the dominant indicators approach (Henseler et al. (2016)) for PLS. 
+  # Perhaps this applicable to weights obtained from algorithms other than PLS.
+  # Currently only PLS is supported.
+  
+  if(!is.null(.dominant_indicators)) {
+    if(.approach_weights == "PLS") {
+      
+      ## Check construct names:
+      # Do all construct names in .dominant_indicators match the construct
+      # names used in the model?
+      tmp <- setdiff(names(.dominant_indicators), rownames(W$W))
+      
+      if(length(tmp) != 0) {
+        stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+             " provided to `.dominant_indicators`", 
+             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+      }
+      
+      ## Check indicators
+      # Do all indicators names in .dominant_indicators match the indicator
+      # names used in the model?
+      tmp <- setdiff(.dominant_indicators, colnames(W$W))
+      
+      if(length(tmp) != 0) {
+        stop("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+             " provided to `.dominant_indicators`", 
+             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+      }
+
+      for(i in names(.dominant_indicators)) {
+        W$W[i, ] = W$W[i, ] * sign(W$W[i, .dominant_indicators[i]])
+      }
+    } # END if PLS
+  } # END if 
+  
   ## Calculate proxies/scores
   H <- calculateProxies(
     .X          = X,
@@ -169,22 +186,31 @@ workhorse <- function(
       .correction_factors = correction_factors
     )
     
-  if(!is.null(.reliabilities)){
-    # Check whether defined external reliabilities are correctly defined
-    if(TRUE %in% (.reliabilities > 1)){stop('External reliabilities must be smaller equal 1.')}
-    if(FALSE %in% (.reliabilities %in% names(Q)) | is.null(.reliabilities)){
-      stop('The provided reliability refers to a non-defined construct.')}
-    
-    Q[names(.reliabilities)] = sqrt(.reliabilities)
-   }  
-    
- 
-
-    
+    if(!is.null(.reliabilities)) {
+      
+      ## Check construct names:
+      # Do all construct names in .reliabilities match the construct
+      # names used in the model?
+      tmp <- setdiff(names(.reliabilities), rownames(W$W))
+      
+      if(length(tmp) != 0) {
+        stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+             " provided to `.reliabilities`", 
+             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+      }
+      
+      # Check whether defined external reliabilities are correctly defined
+      if(any(.reliabilities > 1)) {
+        stop('Reliabilities must be smaller or equal to 1.', call. = FALSE)
+      }
+      
+      Q[names(.reliabilities)] <- sqrt(.reliabilities)
+    }
 
   ## Calculate proxy correlation matrix
   # C <- calculateProxyVCV(.S = S, .W = W$W) 
-  C = cov(H)
+  C <- cov(H)
+  
   ## Calculate construct correlation matrix
   P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
 

@@ -27,8 +27,10 @@
 #' @param .csem_model A (possibly incomplete) [cSEMModel] list.
 #' @param .disattenuate Logical. Should proxy correlations be disattenuated
 #'   if the construct is modeled as a common factor? Defaults to `TRUE`.
-#' @param .dominant_indicators A named vector where the elements represent 
-#'    the dominant indicator and the name the corresponding construct 
+#' @param .dominant_indicators A character vector of `name = value` pairs, where `value` is 
+#'   a character string giving the name of the dominant indicator and `name` 
+#'   the corresponding construct name. Dominant indicators may be specified for 
+#'   a subset of the constructs. 
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural (path) coefficients
 #'   be estimated? Defaults to `TRUE`.
@@ -59,12 +61,13 @@
 #' @param .Q A vector of reliability coefficients with element names equal to
 #'   the names of the J construct names used in the measurement model.
 #' @param .reliabilities A vector of `name = value` pairs of reliability coefficient. 
-#'   Element names are equal to the names of the J construct names.
+#'   Element names are equal to the names of the J construct names. Reliabilities
+#'   may be given for a subset of the constructs. 
 #' @param .S The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 #'   where K is the number of indicators.
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence of the PLS
-#'   algorithm. Defaults to `1e-06`.
+#'   algorithm. Defaults to `1e-05`.
 #'   The argument is ignored if `.approach_weight` is not PLS.
 #' @param .verbose Logical. Should information be printed to the console ?
 #' @param .W The (J x K) weight matrix, where J is the number of constructs and

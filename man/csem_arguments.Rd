@@ -41,6 +41,11 @@ Defaults to "\emph{PLS}".}
 \item{.disattenuate}{Logical. Should proxy correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
+\item{.dominant_indicators}{A character vector of \code{name = value} pairs, where \code{value} is
+a character string giving the name of the dominant indicator and \code{name}
+the corresponding construct name. Dominant indicators may be specified for
+a subset of the constructs.}
+
 \item{.E}{A (J x J) matrix of inner weights.}
 
 \item{.estimate_structural}{Logical. Should the structural (path) coefficients
@@ -83,7 +88,8 @@ of construct used. The argument is ignored if \code{.approach_weight} is not PLS
 the names of the J construct names used in the measurement model.}
 
 \item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficient.
-Element names are equal to the names of the J construct names.}
+Element names are equal to the names of the J construct names. Reliabilities
+may be given for a subset of the constructs.}
 
 \item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 where K is the number of indicators.}
@@ -91,7 +97,7 @@ where K is the number of indicators.}
 \item{.terms}{A vector of construct names to be classified.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence of the PLS
-algorithm. Defaults to \code{1e-06}.
+algorithm. Defaults to \code{1e-05}.
 The argument is ignored if \code{.approach_weight} is not PLS.}
 
 \item{.verbose}{Logical. Should information be printed to the console ?}
