@@ -99,7 +99,7 @@ workhorse <- function(
       
      for(i in names(.dominant_indicators)){
        W$W[i,]=W$W[i,]*sign(W$W[i,.dominant_indicators[i]])
-     } 
+      } 
     }
     
     
