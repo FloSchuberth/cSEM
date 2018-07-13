@@ -94,7 +94,7 @@ workhorse <- function(
       # Check the provided dominant indicators
       if(FALSE %in% (.dominant_indicators %in% colnames(W$W))){
         stop('At least one defined dominant indicator does is not used in the model')}
-      if(FALSE %in% names(.dominant_indicators)%in%rownames(W$W) | is.null(names(.dominat_indicators))){
+      if(FALSE %in% names(.dominant_indicators)%in%rownames(W$W) | is.null(names(.dominant_indicators))){
         stop('At least one dominant indicator is defined for a non-defined construct')}
       
      for(i in names(.dominant_indicators)){
