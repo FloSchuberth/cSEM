@@ -28,7 +28,7 @@ If \code{NULL}, \code{cSEM} will choose the appropriate mode according to the ty
 of construct used. The argument is ignored if \code{.approach_weight} is not PLS.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence of the PLS
-algorithm. Defaults to \code{1e-06}.
+algorithm. Defaults to \code{1e-05}.
 The argument is ignored if \code{.approach_weight} is not PLS.}
 
 \item{.iter_max}{Integer. The maximum number of iterations of the PLS algorithm.

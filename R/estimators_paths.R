@@ -17,7 +17,7 @@ estimatePathOLS <- function(
   .W                   = NULL,
   .Q                   = NULL,
   .csem_model          = NULL,
-  .normal              = NULL,
+  .normality           = NULL,
   .approach_nl         = NULL
 ) {
   ### Preparation ==============================================================
@@ -38,7 +38,7 @@ estimatePathOLS <- function(
 
   ### Calculation ==============================================================
   ## Calculate elements of the VCV matrix of the explanatory variables ---------
-  if(.normal == TRUE) {
+  if(.normality == TRUE) {
 
     vcv_explana <- outer(vars_explana,
                          vars_explana,
@@ -115,7 +115,7 @@ estimatePathOLS <- function(
   ### ==========================================================================
   if(.approach_nl == "replace") {
     ### Preparation ============================================================
-    if(.normal == FALSE) {
+    if(.normality == FALSE) {
       stop("Only implemented for normal = TRUE")
     }
     # Create list with each list element holding one structural equation
@@ -221,7 +221,7 @@ estimatePathOLS <- function(
   } # END if(.approach_nlhod = replace)
 
   ## Structure results
-  names_path <- paste0(rep(names(coef), times = sapply(coef, length)), " ~ ",
+  names_path <- paste0(rep(names(coef), times = sapply(coef, length)), "~",
                        unlist(sapply(coef, rownames)))
 
   path_estimates  <- data.frame("Path" = names_path,

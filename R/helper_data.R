@@ -72,9 +72,7 @@ processData <- function(.data, .model) {
   .data <- .data[, colnames(.model$measurement)]
 
   # Scale data
-  .data <- scale(.data) # Note: it does not matter if the data is already scaled
-                        # Scaling a scaled/standardized data set does not alter
-                        # the data.
+  # .data <- scale(.data) 
 
   ## Set class
   class(.data) <- "cSEMData"

@@ -76,8 +76,12 @@ args_default <- function() {
     # Arguments passed to calculateCorrectionFactors
     .approach_cf              = eval(formals(workhorse)$.approach_cf)[1],
 
-    # Arguements passed to estimator
-    .normal                   = formals(workhorse)$.normal
+    # Arguements passed to estimatorPathOLS
+    .normality                = formals(workhorse)$.normality,
+
+    #  Argument only used in workhorse
+    .dominant_indicators      = formals(workhorse)$.dominant_indicators
+    
   )
 
   return(args_ls)

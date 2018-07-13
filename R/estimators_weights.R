@@ -49,8 +49,9 @@ calculateWeightsPLS <- function(
     if(is.matrix(.data) && isSymmetric.matrix(.data)) {
       S <- .data
     } else {
-      X <- processData(.data = .data, .model = csem_model) # note: X is now standardized
-      S <- stats::cor(X)
+      #  If function is used externally, data is not automatically scaled
+      X <- processData(.data = .data, .model = csem_model)
+      S <- stats::cov(X)
     }
   }
 

@@ -54,7 +54,8 @@ of construct used. The argument is ignored if \code{.approach_weight} is not PLS
 be estimated? Defaults to \code{TRUE}.}
 
 \item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficient.
-Element names are equal to the names of the J construct names.}
+Element names are equal to the names of the J construct names. Reliabilities
+may be given for a subset of the constructs.}
 
 \item{...}{Further arguments to be passed down to other functions.
 See \link{args_default} for a complete list of possible arguments and their defaults.}

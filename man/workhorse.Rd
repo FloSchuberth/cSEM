@@ -15,11 +15,13 @@ workhorse(
   .estimate_structural     = NULL,
   .ignore_structural_model = NULL,
   .iter_max                = NULL,
-  .normal                  = NULL,
+  .normality               = NULL,
   .PLS_mode                = NULL,
   .PLS_weight_scheme_inner = NULL,
   .tolerance               = NULL,
   .reliabilities           = NULL,
+  .dominant_indicators = NULL, 
+  .standardize             = NULL
    )
 }
 \arguments{
@@ -49,6 +51,11 @@ Defaults to "\emph{PLS}".}
 \item{.disattenuate}{Logical. Should proxy correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
+\item{.dominant_indicators}{A character vector of \code{name = value} pairs, where \code{value} is
+a character string giving the name of the dominant indicator and \code{name}
+the corresponding construct name. Dominant indicators may be specified for
+a subset of the constructs.}
+
 \item{.estimate_structural}{Logical. Should the structural (path) coefficients
 be estimated? Defaults to \code{TRUE}.}
 
@@ -61,6 +68,10 @@ the specified number, weights of iteration step \code{.iter_max - 1}  will be re
 with a warning. Defaults to \code{100}. The argument is ignored if
 \code{.approach_weight} is not PLS.}
 
+\item{.normality}{Logical. Should joint normality be assumed if the model
+contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
+Defaults to \code{TRUE}.}
+
 \item{.PLS_mode}{Either a named vector specifying the mode that should be used for
 each construct in the form \code{name = "mode"}, a single character
 string giving the mode that should be used for all constructs or \code{NULL}.
@@ -72,12 +83,13 @@ of construct used. The argument is ignored if \code{.approach_weight} is not PLS
 used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight} is not PLS.}
 
-\item{.tolerance}{Double. The tolerance criterion for convergence of the PLS
-algorithm. Defaults to \code{1e-06}.
-The argument is ignored if \code{.approach_weight} is not PLS.}
-
 \item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficient.
-Element names are equal to the names of the J construct names.}
+Element names are equal to the names of the J construct names. Reliabilities
+may be given for a subset of the constructs.}
+
+\item{.tolerance}{Double. The tolerance criterion for convergence of the PLS
+algorithm. Defaults to \code{1e-05}.
+The argument is ignored if \code{.approach_weight} is not PLS.}
 }
 \value{
 An object of class \code{cSEMResults} for which the following methods exist:

@@ -16,11 +16,13 @@
 #'   .estimate_structural     = NULL,
 #'   .ignore_structural_model = NULL,
 #'   .iter_max                = NULL,
-#'   .normal                  = NULL,
+#'   .normality               = NULL,
 #'   .PLS_mode                = NULL,
 #'   .PLS_weight_scheme_inner = NULL,
 #'   .tolerance               = NULL,
 #'   .reliabilities           = NULL,
+#'   .dominant_indicators = NULL, 
+#'   .standardize             = NULL
 #'    )
 #'
 #' @inheritParams csem_arguments
@@ -48,26 +50,30 @@ workhorse <- function(
   .approach_weights        = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR",
                                "GSCA", "fixed", "unit"),
   .disattenuate            = TRUE,
+  .dominant_indicators     = NULL,
   .estimate_structural     = TRUE,
   .ignore_structural_model = FALSE,
   .iter_max                = 100,
-  .normal                  = TRUE,
+  .normality               = TRUE,
   .PLS_mode                = NULL,
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-  .tolerance               = 1e-06,
-  .reliabilities           = NULL
+  .reliabilities           = NULL, 
+  .tolerance               = 1e-05
   ) {
 
   ### Preprocessing ============================================================
   ## Parse and order model to "cSEMModel" list
   csem_model <- parseModel(.model)
 
-  ## Prepare, standardize, check, and clean data
-  X <- processData(.data = .data, .model = csem_model) # note: X is now standardized
-
+  ## Prepare, check, and clean data
+  X <- processData(.data = .data, .model = csem_model) 
+  
+  ## Standardize
+  X <- scale(X)
+  
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
-  S <- stats::cor(X)
+  S <- stats::cov(X)
 
   ## Calculate weights
   if(.approach_weights == "PLS") {
@@ -103,9 +109,45 @@ workhorse <- function(
       .model                    = csemmodel
     )
   } else {
-    stop("Unknown weighting approach.")
+    stop("Unknown weighting approach.", call. = FALSE)
   }
 
+  ## Dominant indicators:
+  # Use the dominant indicators approach (Henseler et al. (2016)) for PLS. 
+  # Perhaps this applicable to weights obtained from algorithms other than PLS.
+  # Currently only PLS is supported.
+  
+  if(!is.null(.dominant_indicators)) {
+    if(.approach_weights == "PLS") {
+      
+      ## Check construct names:
+      # Do all construct names in .dominant_indicators match the construct
+      # names used in the model?
+      tmp <- setdiff(names(.dominant_indicators), rownames(W$W))
+      
+      if(length(tmp) != 0) {
+        stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+             " provided to `.dominant_indicators`", 
+             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+      }
+      
+      ## Check indicators
+      # Do all indicators names in .dominant_indicators match the indicator
+      # names used in the model?
+      tmp <- setdiff(.dominant_indicators, colnames(W$W))
+      
+      if(length(tmp) != 0) {
+        stop("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+             " provided to `.dominant_indicators`", 
+             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+      }
+
+      for(i in names(.dominant_indicators)) {
+        W$W[i, ] = W$W[i, ] * sign(W$W[i, .dominant_indicators[i]])
+      }
+    } # END if PLS
+  } # END if 
+  
   ## Calculate proxies/scores
   H <- calculateProxies(
     .X          = X,
@@ -131,10 +173,10 @@ workhorse <- function(
   )
 
   ## Calculate Q's (correlation between construct and proxy)
-  # Note: Q_i := R(eta_i; eta_bar_i) is also called the reliability coefficient
+  # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
   # rho_A in Dijkstra (2015) - Consistent partial least squares path modeling
-  
-  if(is.null(.reliabilities)) {
+  # The the Q presented in matrixpls differ from our Q since matrixpls prints the squared Q  
+
     Q <- calculateProxyConstructCV(
       .S             = S,
       .W             = W$W,
@@ -143,15 +185,32 @@ workhorse <- function(
       .disattenuate  = .disattenuate,
       .correction_factors = correction_factors
     )
-  } else {
-    if(!identical(rownames(W$W), names(.reliabilities))) stop("all reliabilities must be provided.")
     
-    Q <- .reliabilities
-  }
+    if(!is.null(.reliabilities)) {
+      
+      ## Check construct names:
+      # Do all construct names in .reliabilities match the construct
+      # names used in the model?
+      tmp <- setdiff(names(.reliabilities), rownames(W$W))
+      
+      if(length(tmp) != 0) {
+        stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+             " provided to `.reliabilities`", 
+             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+      }
+      
+      # Check whether defined external reliabilities are correctly defined
+      if(any(.reliabilities > 1)) {
+        stop('Reliabilities must be smaller or equal to 1.', call. = FALSE)
+      }
+      
+      Q[names(.reliabilities)] <- sqrt(.reliabilities)
+    }
 
   ## Calculate proxy correlation matrix
-  C <- calculateProxyVCV(.S = S, .W = W$W)
-
+  # C <- calculateProxyVCV(.S = S, .W = W$W) 
+  C <- cov(H)
+  
   ## Calculate construct correlation matrix
   P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
 
@@ -162,7 +221,7 @@ workhorse <- function(
       .W            = W$W,
       .Q            = Q,
       .csem_model   = csem_model,
-      .normal       = .normal,
+      .normality    = .normality,
       .approach_nl  = .approach_nl
     )
   } else {
@@ -179,11 +238,11 @@ workhorse <- function(
                                  "Loading_estimates"      = Lambda,
                                  "Weight_estimates"       = W$W,
                                  "Inner_weight_estimates" = W$E,
-                                 "Proxies"                = H,
+                                 "Construct_scores"                = H,
                                  "Indicator_VCV"          = S,
                                  "Proxy_VCV"              = C,
                                  "Construct_VCV"          = P,
-                                 "Proxy_construct_CV"     = Q,
+                                 "Construct_Reliability"     = Q^2,
                                  "Correction_factors"     = correction_factors
                                  ),
     "Tests"               = list("Overall_model_fit"      = c("still to implement"),
