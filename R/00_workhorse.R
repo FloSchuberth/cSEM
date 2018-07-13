@@ -21,7 +21,7 @@
 #'   .PLS_weight_scheme_inner = NULL,
 #'   .tolerance               = NULL,
 #'   .reliabilities           = NULL,
-#'   .dominantIndicators = NULL, 
+#'   .dominant_indicators = NULL, 
 #'   .standardize             = NULL
 #'    )
 #'
@@ -58,7 +58,7 @@ workhorse <- function(
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
   .tolerance               = 1e-05,
   .reliabilities           = NULL, 
-  .dominantIndicators = NULL
+  .dominant_indicators = NULL
   ) {
 
   ### Preprocessing ============================================================
@@ -90,9 +90,9 @@ workhorse <- function(
     # If yes then put at the end
     # Input is a Vektor with indicator names, where the names contain the constructs
     
-    if(!is.null(.dominantIndicators)){
-     for(i in names(.dominantIndicators)){
-       W$W[i,]=W$W[i,]*sign(W$W[i,.dominantIndicators[i]])
+    if(!is.null(.dominant_indicators)){
+     for(i in names(.dominant_indicators)){
+       W$W[i,]=W$W[i,]*sign(W$W[i,.dominant_indicators[i]])
      } 
     }
     
