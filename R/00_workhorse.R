@@ -257,15 +257,14 @@ workhorse <- function(
   class(out) <- "cSEMResults"
   return(out)
 
-
   ### For maintenance: ---------------------------------------------------------
-  # X (N x K) := Matrix of indicator values (=data)
-  # S (K x K) := Empirical indicator covariance/correlation matrix
-  # W (J x K) := (Block-)diagonal matrix of weights with the same dimension as
-  #              .modellist$measurement
-  # H (N x J) := Matrix of proxy values for the J constructs
+  # X (N x K)   := Matrix of indicator values (=data)
+  # S (K x K)   := Empirical indicator covariance/correlation matrix
+  # W$W (J x K) := (Block-)diagonal matrix of weights with the same dimension as
+  #                .modellist$measurement
+  # H (N x J)   := Matrix of proxy values for the J constructs
   # Lambda (K x J) := Blockdiagonal matrix of factor loadings.
-  # Q (1 x J) := Vector of reliability coefficients: Q := R(eta; eta_bar)
-  # C (J x J) := Proxy correlation matrix: R(eta_bar, eta_bar)
-  # P (J x J) := Construct correlation matrix
+  # Q (1 x J)   := Vector of estimated construct-proxy correlations: Q := R(eta; eta_bar)
+  # C (J x J)   := Proxy covariance matrix: R(eta_bar, eta_bar)
+  # P (J x J)   := Construct correlation matrix
 }
