@@ -65,7 +65,8 @@ calculateProxyConstructCV <- function(
   .csem_model    = NULL,
   .disattenuate  = NULL,
   .modes         = NULL,
-  .correction_factors = NULL
+  .correction_factors = NULL,
+  .reliabilities = NULL
   ) {
 
   x <- rep(1, times = nrow(.W))
@@ -96,6 +97,27 @@ calculateProxyConstructCV <- function(
       x[names_modeA] <- x_modeA
     }
   }
+  
+  if(!is.null(.reliabilities)) {
+    
+    ## Check construct names:
+    # Do all construct names in .reliabilities match the construct
+    # names used in the model?
+    tmp <- setdiff(names(.reliabilities), rownames(.W))
+    
+    if(length(tmp) != 0) {
+      stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+           " provided to `.reliabilities`", 
+           ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+    }
+    
+    # Check whether defined external reliabilities are correctly defined
+    if(any(.reliabilities > 1)) {
+      stop('Reliabilities must be smaller or equal to 1.', call. = FALSE)
+    }
+    
+    x[names(.reliabilities)] <- sqrt(.reliabilities)
+  } # END if
   return(x)
 }
 

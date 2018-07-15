@@ -183,31 +183,11 @@ workhorse <- function(
       .csem_model    = csem_model,
       .modes         = W$Modes,
       .disattenuate  = .disattenuate,
-      .correction_factors = correction_factors
+      .correction_factors = correction_factors,
+      .reliabilities = .reliabilities
     )
-    
-    if(!is.null(.reliabilities)) {
-      
-      ## Check construct names:
-      # Do all construct names in .reliabilities match the construct
-      # names used in the model?
-      tmp <- setdiff(names(.reliabilities), rownames(W$W))
-      
-      if(length(tmp) != 0) {
-        stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
-             " provided to `.reliabilities`", 
-             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
-      }
-      
-      # Check whether defined external reliabilities are correctly defined
-      if(any(.reliabilities > 1)) {
-        stop('Reliabilities must be smaller or equal to 1.', call. = FALSE)
-      }
-      
-      Q[names(.reliabilities)] <- sqrt(.reliabilities)
-    }
 
-  ## Calculate proxy correlation matrix
+  ## Calculate proxy covariance matrix
   # C <- calculateProxyVCV(.S = S, .W = W$W) 
   C <- cov(H)
   
@@ -245,7 +225,8 @@ workhorse <- function(
                                  "Construct_reliabilities"= Q^2,
                                  "Correction_factors"     = correction_factors
                                  ),
-    "Meta_information"    = list("Number_of_observations" = nrow(X),
+    "Meta_information"    = list("Model"                  = csem_model,
+                                 "Number_of_observations" = nrow(X),
                                  "Weight_approach"        = .approach_weights,
                                  "Path_approach"          = .approach_paths,
                                  "Construct_types"        = csem_model$construct_type,
