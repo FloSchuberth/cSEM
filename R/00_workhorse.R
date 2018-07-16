@@ -154,38 +154,43 @@ workhorse <- function(
     .W          = W$W
   )
 
-  ## Calculate correction factors
-  correction_factors <- calculateCorrectionFactors(
-    .S            = S,
-    .W            = W$W,
-    .csem_model   = csem_model,
-    .approach_cf  = .approach_cf
-  )
-
-  ## Calculate loadings
-  Lambda <- calculateLoadings(
-    .S             = S,
+  ## Calculate PLSc-type correction factors if no reliabilites are given
+  # and disattenuation is requested. Otherwise use only the reliabilities
+  # to disattenuate both weights and proxy correlations to obtain consistent
+  # estimators for the loadings, cross-loadings and path coefficients.
+  
+  if(is.null(.reliabilities) & .disattenuate == TRUE) {
+    correction_factors <- calculateCorrectionFactors(
+      .S            = S,
+      .W            = W$W,
+      .csem_model   = csem_model,
+      .approach_cf  = .approach_cf)
+  } else {
+    correction_factors <- NULL
+  }
+  
+  ## Calculate Q's (correlation between construct and proxy)
+  # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
+  # rho_A in Dijkstra (2015) - Consistent partial least squares path modeling
+  
+  Q <- calculateProxyConstructCV(
     .W             = W$W,
     .csem_model    = csem_model,
     .modes         = W$Modes,
     .disattenuate  = .disattenuate,
-    .correction_factors = correction_factors
+    .correction_factors = correction_factors,
+    .reliabilities = .reliabilities
+  ) 
+  
+  ## Calculate loadings and cross-loadings (covariance between construct and indicators)
+  Lambda <- calculateLoadings(
+    .S             = S,
+    .W             = W$W,
+    .Q             = Q,
+    .csem_model    = csem_model,
+    .modes         = W$Modes,
+    .disattenuate  = .disattenuate
   )
-
-  ## Calculate Q's (correlation between construct and proxy)
-  # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
-  # rho_A in Dijkstra (2015) - Consistent partial least squares path modeling
-  # The Q's in matrixpls differ since matrixpls prints the squared Q.  
-
-    Q <- calculateProxyConstructCV(
-      .S             = S,
-      .W             = W$W,
-      .csem_model    = csem_model,
-      .modes         = W$Modes,
-      .disattenuate  = .disattenuate,
-      .correction_factors = correction_factors,
-      .reliabilities = .reliabilities
-    )
 
   ## Calculate proxy covariance matrix
   # C <- calculateProxyVCV(.S = S, .W = W$W) 
@@ -215,13 +220,14 @@ workhorse <- function(
     } else {
       estim_results
     },
-                                 "Loading_estimates"      = Lambda,
+                                 "Loading_estimates"      = Lambda * csem_model$measurement,
                                  "Weight_estimates"       = W$W,
                                  "Inner_weight_estimates" = W$E,
                                  "Construct_scores"       = H,
                                  "Indicator_VCV"          = S,
                                  "Proxy_VCV"              = C,
                                  "Construct_VCV"          = P,
+                                 "Indicator_construct_CV" = Lambda,
                                  "Construct_reliabilities"= Q^2,
                                  "Correction_factors"     = correction_factors
                                  ),

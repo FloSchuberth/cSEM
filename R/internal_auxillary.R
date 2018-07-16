@@ -60,7 +60,6 @@ calculateProxyVCV <- function(.S = NULL, .W = NULL) {
 #' @return A vector of proxy-construct covariances.
 #'
 calculateProxyConstructCV <- function(
-  .S             = NULL,
   .W             = NULL,
   .csem_model    = NULL,
   .disattenuate  = NULL,
@@ -72,7 +71,7 @@ calculateProxyConstructCV <- function(
   x <- rep(1, times = nrow(.W))
   names(x) <- rownames(.W)
 
-  if(.disattenuate) {
+  if(is.null(.reliabilities) & .disattenuate == TRUE) {
     ## Get names of constructs modeled as composites
     names_c  <- .csem_model$construct_type[.csem_model$construct_type$Type == "Composite", ]$Name
     ## Get names of constructs modeled as common factors
@@ -96,9 +95,11 @@ calculateProxyConstructCV <- function(
 
       x[names_modeA] <- x_modeA
     }
-  }
-  
-  if(!is.null(.reliabilities)) {
+  } else if(is.null(.reliabilities) & .disattenuate == FALSE) {
+    
+    return (x)
+    
+  } else if(!is.null(.reliabilities)) {
     
     ## Check construct names:
     # Do all construct names in .reliabilities match the construct
@@ -118,6 +119,7 @@ calculateProxyConstructCV <- function(
     
     x[names(.reliabilities)] <- sqrt(.reliabilities)
   } # END if
+  
   return(x)
 }
 
