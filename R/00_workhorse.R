@@ -227,7 +227,7 @@ workhorse <- function(
                                  "Indicator_VCV"          = S,
                                  "Proxy_VCV"              = C,
                                  "Construct_VCV"          = P,
-                                 "Indicator_construct_CV1" = Lambda,
+                                 "Cross_loadings" = Lambda,
                                  "Construct_reliabilities"= Q^2,
                                  "Correction_factors"     = correction_factors
                                  ),
