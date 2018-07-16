@@ -220,7 +220,7 @@ workhorse <- function(
     } else {
       estim_results
     },
-                                 "Loading_estimates"     = Lambda * csem_model$measurement,
+                                 "Loading_estimates"      = Lambda * csem_model$measurement,
                                  "Weight_estimates"       = W$W,
                                  "Inner_weight_estimates" = W$E,
                                  "Construct_scores"       = H,

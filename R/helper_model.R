@@ -214,15 +214,18 @@ parseModel <- function(.model) {
     # A cSEMModel objects contains all the information about the model and its
     # components such as the type of construct used
     
-    model_ls <- list("structural"         = model_structural,
-                     "structural_ordered" = model_ordered,
-                     "measurement"        = model_measurement,
-                     "error_cor"          = model_error,
-                     "construct_type"     = type_of_construct,
-                     "vars_endo"          = rownames(model_ordered),
-                     "vars_exo"           = var_exo,
-                     "vars_explana"       = colnames(model_ordered)[colSums(model_ordered) != 0],
-                     "explained_by_exo"   = explained_by_exo
+    model_ls <- list(
+      "structural"         = model_structural[
+        c(setdiff(names_constructs, rownames(model_ordered)), 
+          rownames(model_ordered)), ],
+      # "structural_ordered" = model_ordered, # not needed so far
+      "measurement"        = model_measurement,
+      "error_cor"          = model_error,
+      "construct_type"     = type_of_construct,
+      "vars_endo"          = rownames(model_ordered),
+      "vars_exo"           = var_exo,
+      "vars_explana"       = colnames(model_ordered)[colSums(model_ordered) != 0],
+      "explained_by_exo"   = explained_by_exo
     )
     class(model_ls) <- "cSEMModel"
     return(model_ls) 
