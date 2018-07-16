@@ -220,16 +220,14 @@ workhorse <- function(
     } else {
       estim_results
     },
-                                 "Loading_estimates1"      = Lambda$Lambda * csem_model$measurement,
-                                 "Loading_estimates2"     = Lambda$Lambda1 * csem_model$measurement,
+                                 "Loading_estimates"     = Lambda * csem_model$measurement,
                                  "Weight_estimates"       = W$W,
                                  "Inner_weight_estimates" = W$E,
                                  "Construct_scores"       = H,
                                  "Indicator_VCV"          = S,
                                  "Proxy_VCV"              = C,
                                  "Construct_VCV"          = P,
-                                 "Indicator_construct_CV1" = Lambda$Lambda,
-                                 "Indicator_construct_CV2" = Lambda$Lambda1,
+                                 "Indicator_construct_CV1" = Lambda,
                                  "Construct_reliabilities"= Q^2,
                                  "Correction_factors"     = correction_factors
                                  ),

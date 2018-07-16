@@ -7,7 +7,7 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return The (J x K) matrix of loadings and cross loadings (attenuated if required).
+#' @return The (J x K) matrix of loadings and "cross loadings" (attenuated if required).
 #'
 calculateLoadings <- function(
   .S                  = NULL,
@@ -35,14 +35,12 @@ calculateLoadings <- function(
     
     if(length(names_modeA) > 0) {
       ## Disattenuate loadings and cross-loadings ------------------------------
-      Lambda1 <- Lambda
       for(i in names_modeA) {
         temp  <- .W[i, ] # becomes a vector!
         temp1 <- temp[which(temp != 0)]
         temp2 <- temp[which(temp == 0)]
         
         Lambda[i, names(temp1)] <- .Q[i] * temp1 / c(t(temp1) %*% temp1)
-        Lambda1[i, names(temp1)] <- Lambda1[i, names(temp1)] / .Q[i]
         Lambda[i, names(temp2)] <- Lambda[i, names(temp2)] / .Q[i]
         
       }
@@ -64,6 +62,5 @@ calculateLoadings <- function(
            call. = FALSE)
     }
   } # END .disattentuate == TRUE
-  Lambda <- list(Lambda = Lambda, Lambda1 = Lambda1)
   return(Lambda)
 }
