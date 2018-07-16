@@ -40,7 +40,7 @@ calculateLoadings <- function(
         temp1 <- temp[which(temp != 0)]
         temp2 <- temp[which(temp == 0)]
         
-        Lambda[i, names(temp1)] <- Lambda1[i, names(temp1)] <- .Q[i] * temp1 / c(t(temp1) %*% temp1)
+        Lambda[i, names(temp1)] <- .Q[i] * temp1 / c(t(temp1) %*% temp1)
         Lambda[i, names(temp2)] <- Lambda[i, names(temp2)] / .Q[i]
         
       }
