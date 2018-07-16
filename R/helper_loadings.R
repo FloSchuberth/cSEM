@@ -7,7 +7,7 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return The (J x K) matrix of loadings and cross loadings (attenuated if required).
+#' @return The (J x K) matrix of loadings and "cross loadings" (attenuated if required).
 #'
 calculateLoadings <- function(
   .S                  = NULL,
