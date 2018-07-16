@@ -2,10 +2,10 @@
 % Please edit documentation in R/helper_loadings.R
 \name{calculateLoadings}
 \alias{calculateLoadings}
-\title{Calculate factor and composite loadings}
+\title{Calculate factor and composite loadings and cross-loadings}
 \usage{
-calculateLoadings(.S = NULL, .W = NULL, .csem_model = NULL,
-  .disattenuate = NULL, .modes = NULL, .correction_factors = NULL)
+calculateLoadings(.S = NULL, .W = NULL, .Q = NULL, .csem_model = NULL,
+  .disattenuate = NULL, .modes = NULL)
 }
 \arguments{
 \item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
@@ -14,13 +14,16 @@ where K is the number of indicators.}
 \item{.W}{The (J x K) weight matrix, where J is the number of constructs and
 K the number of indicators.}
 
+\item{.Q}{A vector of reliability coefficients with element names equal to
+the names of the J construct names used in the measurement model.}
+
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
 
 \item{.disattenuate}{Logical. Should proxy correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 }
 \value{
-The (J x K) matrix of loadings (disattenuated if requested).
+The (J x K) matrix of loadings and cross loadings (attenuated if required).
 }
 \description{
 Calculates factor loadings (for constructs modeled as common factors) and
