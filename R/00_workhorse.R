@@ -154,60 +154,45 @@ workhorse <- function(
     .W          = W$W
   )
 
-  ## Calculate correction factors
-  correction_factors <- calculateCorrectionFactors(
-    .S            = S,
-    .W            = W$W,
-    .csem_model   = csem_model,
-    .approach_cf  = .approach_cf
-  )
-
-  ## Calculate loadings
-  Lambda <- calculateLoadings(
-    .S             = S,
+  ## Calculate PLSc-type correction factors if no reliabilites are given
+  # and disattenuation is requested. Otherwise use only the reliabilities
+  # to disattenuate both weights and proxy correlations to obtain consistent
+  # estimators for the loadings, cross-loadings and path coefficients.
+  
+  if(is.null(.reliabilities) & .disattenuate == TRUE) {
+    correction_factors <- calculateCorrectionFactors(
+      .S            = S,
+      .W            = W$W,
+      .csem_model   = csem_model,
+      .approach_cf  = .approach_cf)
+  } else {
+    correction_factors <- NULL
+  }
+  
+  ## Calculate Q's (correlation between construct and proxy)
+  # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
+  # rho_A in Dijkstra (2015) - Consistent partial least squares path modeling
+  
+  Q <- calculateProxyConstructCV(
     .W             = W$W,
     .csem_model    = csem_model,
     .modes         = W$Modes,
     .disattenuate  = .disattenuate,
-    .correction_factors = correction_factors
+    .correction_factors = correction_factors,
+    .reliabilities = .reliabilities
+  ) 
+  
+  ## Calculate loadings and cross-loadings (covariance between construct and indicators)
+  Lambda <- calculateLoadings(
+    .S             = S,
+    .W             = W$W,
+    .Q             = Q,
+    .csem_model    = csem_model,
+    .modes         = W$Modes,
+    .disattenuate  = .disattenuate
   )
 
-  ## Calculate Q's (correlation between construct and proxy)
-  # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
-  # rho_A in Dijkstra (2015) - Consistent partial least squares path modeling
-  # The Q's in matrixpls differ since matrixpls prints the squared Q.  
-
-    Q <- calculateProxyConstructCV(
-      .S             = S,
-      .W             = W$W,
-      .csem_model    = csem_model,
-      .modes         = W$Modes,
-      .disattenuate  = .disattenuate,
-      .correction_factors = correction_factors
-    )
-    
-    if(!is.null(.reliabilities)) {
-      
-      ## Check construct names:
-      # Do all construct names in .reliabilities match the construct
-      # names used in the model?
-      tmp <- setdiff(names(.reliabilities), rownames(W$W))
-      
-      if(length(tmp) != 0) {
-        stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
-             " provided to `.reliabilities`", 
-             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
-      }
-      
-      # Check whether defined external reliabilities are correctly defined
-      if(any(.reliabilities > 1)) {
-        stop('Reliabilities must be smaller or equal to 1.', call. = FALSE)
-      }
-      
-      Q[names(.reliabilities)] <- sqrt(.reliabilities)
-    }
-
-  ## Calculate proxy correlation matrix
+  ## Calculate proxy covariance matrix
   # C <- calculateProxyVCV(.S = S, .W = W$W) 
   C <- cov(H)
   
@@ -235,17 +220,19 @@ workhorse <- function(
     } else {
       estim_results
     },
-                                 "Loading_estimates"      = Lambda,
+                                 "Loading_estimates"      = Lambda * csem_model$measurement,
                                  "Weight_estimates"       = W$W,
                                  "Inner_weight_estimates" = W$E,
                                  "Construct_scores"       = H,
                                  "Indicator_VCV"          = S,
                                  "Proxy_VCV"              = C,
                                  "Construct_VCV"          = P,
+                                 "Indicator_construct_CV" = Lambda,
                                  "Construct_reliabilities"= Q^2,
                                  "Correction_factors"     = correction_factors
                                  ),
-    "Meta_information"    = list("Number_of_observations" = nrow(X),
+    "Meta_information"    = list("Model"                  = csem_model,
+                                 "Number_of_observations" = nrow(X),
                                  "Weight_approach"        = .approach_weights,
                                  "Path_approach"          = .approach_paths,
                                  "Construct_types"        = csem_model$construct_type,
@@ -257,15 +244,14 @@ workhorse <- function(
   class(out) <- "cSEMResults"
   return(out)
 
-
   ### For maintenance: ---------------------------------------------------------
-  # X (N x K) := Matrix of indicator values (=data)
-  # S (K x K) := Empirical indicator covariance/correlation matrix
-  # W (J x K) := (Block-)diagonal matrix of weights with the same dimension as
-  #              .modellist$measurement
-  # H (N x J) := Matrix of proxy values for the J constructs
+  # X (N x K)   := Matrix of indicator values (=data)
+  # S (K x K)   := Empirical indicator covariance/correlation matrix
+  # W$W (J x K) := (Block-)diagonal matrix of weights with the same dimension as
+  #                .modellist$measurement
+  # H (N x J)   := Matrix of proxy values for the J constructs
   # Lambda (K x J) := Blockdiagonal matrix of factor loadings.
-  # Q (1 x J) := Vector of reliability coefficients: Q := R(eta; eta_bar)
-  # C (J x J) := Proxy correlation matrix: R(eta_bar, eta_bar)
-  # P (J x J) := Construct correlation matrix
+  # Q (1 x J)   := Vector of estimated construct-proxy correlations: Q := R(eta; eta_bar)
+  # C (J x J)   := Proxy covariance matrix: R(eta_bar, eta_bar)
+  # P (J x J)   := Construct correlation matrix
 }

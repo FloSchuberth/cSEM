@@ -4,13 +4,11 @@
 \alias{calculateProxyConstructCV}
 \title{Internal: Calculate proxy-construct covariance}
 \usage{
-calculateProxyConstructCV(.S = NULL, .W = NULL, .csem_model = NULL,
-  .disattenuate = NULL, .modes = NULL, .correction_factors = NULL)
+calculateProxyConstructCV(.W = NULL, .csem_model = NULL,
+  .disattenuate = NULL, .modes = NULL, .correction_factors = NULL,
+  .reliabilities = NULL)
 }
 \arguments{
-\item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
-where K is the number of indicators.}
-
 \item{.W}{The (J x K) weight matrix, where J is the number of constructs and
 K the number of indicators.}
 
@@ -18,6 +16,10 @@ K the number of indicators.}
 
 \item{.disattenuate}{Logical. Should proxy correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+
+\item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficient.
+Element names are equal to the names of the J construct names. Reliabilities
+may be given for a subset of the constructs.}
 }
 \value{
 A vector of proxy-construct covariances.
