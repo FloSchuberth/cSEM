@@ -171,7 +171,7 @@ workhorse <- function(
   
   ## Calculate Q's (correlation between construct and proxy)
   # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
-  # rho_A in Dijkstra (2015) - Consistent partial least squares path modeling
+  # rho_A in Dijkstra & Henseler (2015) - Consistent partial least squares path modeling
   
   Q <- calculateProxyConstructCV(
     .W             = W$W,
