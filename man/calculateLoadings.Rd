@@ -23,7 +23,7 @@ the names of the J construct names used in the measurement model.}
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 }
 \value{
-The (J x K) matrix of loadings and cross loadings (attenuated if required).
+The (J x K) matrix of loadings and "cross loadings" (attenuated if required).
 }
 \description{
 Calculates factor loadings (for constructs modeled as common factors) and
