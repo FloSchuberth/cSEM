@@ -78,6 +78,13 @@ parseModel <- function(.model) {
     type_of_construct  <- unique(tbl_measurement[, c("lhs", "op")])
     colnames(type_of_construct) <- c("Name", "Type")
     
+    ## Type of model (linear or non-linear)
+    
+    type_of_model <- if(any(grepl("\\.", names_constructs_all))) {
+      "Nonlinear"
+    } else {
+      "Linear"
+    }
     ### Construct matrices specifying the relationship between constructs,
     ### indicators and errors ----------------------------------------------------
     model_structural  <- matrix(0,
@@ -222,6 +229,7 @@ parseModel <- function(.model) {
       "measurement"        = model_measurement,
       "error_cor"          = model_error,
       "construct_type"     = type_of_construct,
+      "model_type"         = type_of_model,
       "vars_endo"          = rownames(model_ordered),
       "vars_exo"           = var_exo,
       "vars_explana"       = colnames(model_ordered)[colSums(model_ordered) != 0],
