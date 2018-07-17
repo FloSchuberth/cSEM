@@ -221,15 +221,18 @@ estimatePathOLS <- function(
     } # END for k in vars_endo
   } # END if(.approach_nlhod = replace)
 
-  ## Structure results
-  names_path <- paste0(rep(names(coef), times = sapply(coef, length)), "~",
-                       unlist(sapply(coef, rownames)))
-
-  path_estimates  <- data.frame("Path" = names_path,
-                                "Estimate" = unlist(coef, use.names = FALSE))
+  ### Structure results --------------------------------------------------------
+  tm <- t(.csem_model$structural)
+  tm[which(tm == 1)] <- do.call(rbind, coef)
+  
+  # names_path <- paste0(rep(names(coef), times = sapply(coef, length)), "~",
+  #                      unlist(sapply(coef, rownames)))
+  # 
+  # path_estimates  <- data.frame("Path" = names_path,
+  #                               "Estimate" = unlist(coef, use.names = FALSE))
 
   ## Return result -------------------------------------------------------------
-  list("Path_estimates" = path_estimates, R2 = r2)
+  list("Path_estimates" = t(tm), R2 = r2)
 }
 
 # estimatePath2SLS <- function(
