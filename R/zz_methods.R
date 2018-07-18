@@ -182,13 +182,19 @@ fitted.cSEMResults <- function(object, ...) {
   ## G      := (r x s) Selector matrix selecting only observable variables.
   ### --------------------------------------------------------------------------
   ### Preparation ==============================================================
+  ## Check if linear
+  if(object$Meta_information$Model$model_type != "Linear") {
+    stop("Model is nonlinear. Currently the model-implied indicator covariance",
+         " matrix can only be computed for linear models.", call. = FALSE)
+  }
+    
   ## Get relevant matrices
 
-  S <- a1$Estimates$Indicator_VCV
-  P <- a1$Estimates$Construct_VCV
-  B <- a1$Estimates$Path_estimates 
-  Lambda <- a1$Estimates$Loading_estimates 
-  Lambda_cross <- a1$Estimates$Cross_loadings
+  S <- object$Estimates$Indicator_VCV
+  P <- object$Estimates$Construct_VCV
+  B <- object$Estimates$Path_estimates 
+  Lambda <- object$Estimates$Loading_estimates 
+  Lambda_cross <- object$Estimates$Cross_loadings
   
   ## Compute variances of the errors (diagonal matrices Var(delta) and Var(zeta)).
   
@@ -270,12 +276,14 @@ fitted.cSEMResults <- function(object, ...) {
   rownames(Sigma) <- colnames(Sigma) <- rownames(S)
 
   # ### Replace indicators connected to a composite by S
-  # 
-  # construct_type <- a1$Meta_information$Model$construct_type
-  # composites <- construct_type[which(construct_type[, "Type"] == "Common factor"), ][, "Name"]
-  # composite_names <- colnames(a1$Meta_information$Model$measurement[composites, ])
-  # 
-  # Sigma[comp] <- S[which(CompInd == 1)]
+
+  mod <- object$Meta_information$Model
+  composites <- mod$construct_type[which(mod$construct_type[, "Type"] == "Composite"), "Name"]
+  composites <- mod$construct_type[which(mod$construct_type[, "Type"] == "Common factor"), "Name"]
+  
+  index <- t(mod$measurement[composites, ]) %*% mod$measurement[composites, ]
+
+  Sigma[index] <- S[which(index == 1)]
   
   return(Sigma)
 }
