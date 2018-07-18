@@ -6,7 +6,7 @@ output: github_document
 
 # cSEM
 
-WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES MAY OCCUR. 
+WARNING: THIS IS WORK IN PROGRESS. BREAKING ARE VERY LIKELY. 
          Do not use the package before the first stable relase (which will
          be 0.0.1, towards the end of 2018).
 
@@ -14,7 +14,7 @@ WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES MAY OCCUR.
 
 Estimate, analyse, test, and study linear and nonlinear structural equation models 
 using composite based approaches, procedures, and tests including e.g. 
-PLS, GSCA, 2SLS estimation, and numerous tests.
+PLS, GSCA, 2SLS estimation, several tests and typical postestimation procedures.
 
 ## Installation
 
@@ -27,13 +27,14 @@ devtools::install_github("M-E-Steiner/cSEM")
 ## Philopsophy/Goals/Ideas
 
 - Easy to use by non-R experts: 
-    - Functions `csem` and `cca` provide default choices for most of its arguments 
+    - Functions `csem()` and `cca()` provide default choices for most of its arguments 
       (similarity to the `sem` and `cfa` functions of the [lavaan](http://lavaan.ugent.be/) 
       package is intended).
     - Well documented (Vignettes, HTML output, a website, intro course(s)). 
       Of course this may take some time!
     - There will be an extensive (non-expert) visually and didactically appealing 
-      documentation designed to make the learning curve of both the methods involved and the package as flat as possible.
+      documentation designed to make the learning curve of both the methods involved 
+      and the package as flat as possible.
     - Structured output/results  that aims to be "easy"" in a sense that it is
           - ... descriptive/verbose
           - ... easy to export to other environments such as MS Word, Latex files etc. (exportability)
@@ -43,51 +44,37 @@ devtools::install_github("M-E-Steiner/cSEM")
 - The package is designed to be flexible/modular enough so that researchers 
   developing new methods can take specific function provided by the package and 
   alter them according to their need without working their way through a chain
-  of other functions (naturally this will not always be possible).
+  of other functions (naturally this will not always be possible). Modularity is
+  largly inspired by the `matrixpls` package.
 - Modern in a sense that the package integrates modern developments within 
   the R community. This mainly includes ideas/recommendations/design choices that
   fead into the packages of the [tidyverse](https://github.com/tidyverse/tidyverse).
       
-## To do
-### Before the initial relase
+## Basic usage
 
-- Implement:
-     - Fixed weights
-     - Unit weights
-     - All of Kettenring's (1971) criteria for obtaining weights
-         - SUMCOR 
-         - MAXVAR 
-         - SSQCOR 
-         - MINVAR
-         - GENVAR
-     - GSCA  <https://cran.r-project.org/web/packages/gesca/gesca.pdf>
-     - 2SLS for linear models but possibly also for non-linear models
-- Tests 
-    - Test for overall model fit (Dijkstra & Henseler)
-    - (bootstrapped) Hausman test (for linear (and non-linear?) models)
-- Compute direct, indirect and total effect.
-- Allow for bootstrapping (use the `boot` package)/ jackknife?
-    - A bootstrap function should accept a user defined function that can be 
-      bootstraped with it.
-- Allow for different convergence criteria in PLS (as in [matrixpls](https://github.com/mronkko/matrixpls))
-- Automatically distinguish between linear and nonlinear models (will be useful
-  for performance reasons).
-- Use the [crayon package](https://github.com/r-lib/crayon) and the 
-  [cli package](https://github.com/r-lib/cli) to produce good-looking/colorful 
-  console output.
-- Use the [spelling package](https://github.com/ropensci/spelling) to
-  do spellchecking of the package documentation (just before the release).
-- Move the `.PLS_weight_scheme_inner` argument to the `...` arguement list.
-
-
-
-  
-### At some point ...
-  
-- Vignettes for all important aspects of the package and the methods used.
-- GSCAm 
-- Enable cross-PLS-platform use by writting functions that make it
-  easy to export and import models/results from/to.
-- Factor score path analysis von Ives Rosseel
-- Compute effect size, Cohens f2 (Cohen, 1988)
+    require(cSEM)
+    data(satisfaction)
+    
+    model <- "
+    # Structural model
+    EXPE ~ IMAG
+    QUAL ~ EXPE
+    VAL  ~ EXPE + QUAL + QUAL.EXPE
+    SAT  ~ IMAG + EXPE + QUAL + VAL + IMAG.IMAG
+    LOY  ~ IMAG + SAT
+    
+    # Measurement model
+    
+    IMAG <~ imag1 + imag2 + imag3
+    EXPE <~ expe1 + expe2 + expe3 
+    QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
+    VAL  <~ val1  + val2  + val3
+    SAT  =~ sat1  + sat2  + sat3  + sat4
+    LOY  =~ loy1  + loy2  + loy3  + loy4
+    "
+    
+    a <- csem(.data = satisfaction, .model = model)
+    a
+    
+    summary(a) # summary is work in progress
 
