@@ -215,30 +215,32 @@ workhorse <- function(
 
   ## Set class for Output
   out <- list(
-    "Estimates"           = list("Path_estimates"         = if(.estimate_structural) {
-      estim_results$Path_estimates
-    } else {
-      estim_results
-    },
-                                 "Loading_estimates"      = Lambda * csem_model$measurement,
-                                 "Weight_estimates"       = W$W,
-                                 "Inner_weight_estimates" = W$E,
-                                 "Construct_scores"       = H,
-                                 "Indicator_VCV"          = S,
-                                 "Proxy_VCV"              = C,
-                                 "Construct_VCV"          = P,
-                                 "Cross_loadings" = Lambda,
-                                 "Construct_reliabilities"= Q^2,
-                                 "Correction_factors"     = correction_factors
-                                 ),
-    "Meta_information"    = list("Model"                  = csem_model,
-                                 "Number_of_observations" = nrow(X),
-                                 "Weight_approach"        = .approach_weights,
-                                 "Path_approach"          = .approach_paths,
-                                 "Construct_types"        = csem_model$construct_type,
-                                 "PLS_Modes"              = W$Modes,
-                                 "PLS_Inner_Weightning_scheme" = .PLS_weight_scheme_inner
-                                 )
+    "Estimates"           = list(
+      "Path_estimates"         = if(.estimate_structural) {
+        estim_results$Path_estimates
+      } else {
+        estim_results
+      },
+      "Loading_estimates"      = Lambda * csem_model$measurement,
+      "Weight_estimates"       = W$W,
+      "Inner_weight_estimates" = W$E,
+      "Construct_scores"       = H,
+      "Indicator_VCV"          = S,
+      "Proxy_VCV"              = C,
+      "Construct_VCV"          = P,
+      "Cross_loadings"         = Lambda,
+      "Construct_reliabilities"= Q^2,
+      "Correction_factors"     = correction_factors
+     ),
+    "Meta_information"    = list(
+      "Model"                       = csem_model,
+      "Number_of_observations"      = nrow(X),
+      "Weight_approach"             = .approach_weights,
+      "Path_approach"               = .approach_paths,
+      "Construct_types"             = csem_model$construct_type,
+      "PLS_Modes"                   = W$Modes,
+      "PLS_Inner_Weightning_scheme" = .PLS_weight_scheme_inner
+      )
     )
 
   class(out) <- "cSEMResults"
@@ -253,5 +255,5 @@ workhorse <- function(
   # Lambda (K x J) := Blockdiagonal matrix of factor loadings.
   # Q (1 x J)   := Vector of estimated construct-proxy correlations: Q := R(eta; eta_bar)
   # C (J x J)   := Proxy covariance matrix: R(eta_bar, eta_bar)
-  # P (J x J)   := Construct correlation matrix
+  # P (J x J)   := Construct correlation matrix (possibly disattenuated)
 }
