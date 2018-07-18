@@ -279,7 +279,6 @@ fitted.cSEMResults <- function(object, ...) {
 
   mod <- object$Meta_information$Model
   composites <- mod$construct_type[which(mod$construct_type[, "Type"] == "Composite"), "Name"]
-  composites <- mod$construct_type[which(mod$construct_type[, "Type"] == "Common factor"), "Name"]
   
   index <- t(mod$measurement[composites, ]) %*% mod$measurement[composites, ]
 
