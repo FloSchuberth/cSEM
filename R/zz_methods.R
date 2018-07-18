@@ -279,10 +279,9 @@ fitted.cSEMResults <- function(object, ...) {
 
   mod <- object$Meta_information$Model
   composites <- mod$construct_type[which(mod$construct_type[, "Type"] == "Composite"), "Name"]
-  
-  index <- t(mod$measurement[composites, ]) %*% mod$measurement[composites, ]
+  index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
 
-  Sigma[index] <- S[which(index == 1)]
+  Sigma[which(index == 1)] <- S[which(index == 1)]
   
   return(Sigma)
 }
