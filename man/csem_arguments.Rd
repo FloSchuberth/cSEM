@@ -70,6 +70,8 @@ with a warning. Defaults to \code{100}. The argument is ignored if
 contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}.}
 
+\item{object}{An R object of class cSEMResults.}
+
 \item{.permutations}{Integer. The number permutations used for step 2 and 3 of the test.
 Defaults to \code{100}. Note however that the number should typically be a lot higher.}
 

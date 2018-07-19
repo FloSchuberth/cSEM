@@ -129,18 +129,14 @@ summary.cSEMResults <- function(x, ...) {
 #'
 #' Compute the model implied indicator variance-covariance (VCV) matrix. Usually 
 #' this is called \eqn{\hat\Sigma}. Currently only the model implied VCV for 
-#' linear model ist implemented. An error is given if the model is not linear.
+#' linear model for constructs modeled as common factors or composites are 
+#' implemented. An error is given if the model is not linear.
 #'
-#' @usage fitted(
-#'   object   = x
-#'   ...  =
-#'    )
+#' @usage fitted(object)
 #'
 #' @inheritParams csem_arguments
 #'
-#' @inherit csem_results return
-#'
-#' @seealso [csem], [cca], [testMICOM]
+#' @seealso [csem], [cSEMResults]
 #'
 #' @examples
 #' \dontrun{
@@ -149,12 +145,12 @@ summary.cSEMResults <- function(x, ...) {
 #'
 #' @export
 #'
-fitted.cSEMResults <- function(object, ...) {
+fitted.cSEMResults <- function(object) {
+  # Implementation is inspired by the matrixpls package licensed under GPL-3
   
   # Function to compute the model implied VCV matrix of the indicators
   # The implementation is based on an approach proposed by
   # Bentler, P. M., & Weeks, D. G. (1980) - Linear Structural Equations with Latent Variables 
-  # Implementation is inspired by the matrixpls package licensed under GPL-3
   
   ### For maintenance: ---------------------------------------------------------
   ## S      := (K x K) Empirical indicator VCV matrix: V(X)  
@@ -284,4 +280,42 @@ fitted.cSEMResults <- function(object, ...) {
   Sigma[which(index == 1)] <- S[which(index == 1)]
   
   return(Sigma)
+}
+
+#' Effects
+#'
+#' Compute direct, indirect and total effects.
+#'
+#' @usage effects(object)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @export
+#'
+effects.cSEMResults <- function(object) {
+  # Implementation is inspired by the matrixpls package licensed under GPL-3
+  
+  ## Matrix of direct effects:
+  direct <- object$Estimates$Path_estimates
+  
+  ## Matrix of total total effects: B = direct
+  # Note: eta = B x eta + I x eta + zeta
+  #       eta = (B + I) eta + zeta
+  #       eta = B_star eta + zeta
+  #       (I - B_star^-1) eta = zeta
+  B_star <- - direct + diag(nrow(direct))
+  total <- solve(B_star) - diag(nrow(direct))
+    # diag(rowSums(direct) != 0) 
+  
+  ## Matrix of indirect effects:
+  indirect <- total - direct
+  
+  list(direct = direct, indirect = indirect, total = total)
 }

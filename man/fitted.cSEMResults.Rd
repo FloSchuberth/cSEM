@@ -4,33 +4,16 @@
 \alias{fitted.cSEMResults}
 \title{Model implied indicator variance-covariance matrix}
 \usage{
-fitted(
-  object   = x
-  ...  =
-   )
+fitted(object)
 }
 \arguments{
-\item{...}{Further arguments to be passed down to other functions.
-See \link{args_default} for a complete list of possible arguments and their defaults.}
-}
-\value{
-An object of class \code{cSEMResults} for which the following methods exist:
-\describe{
-\item{\code{print.cSEMResults}}{Prints a message to inform the user
-whether estimation has been successful and what functions may be used
-to examine the object.}
-\item{\code{summary.cSEMResults}}{Print and return a comprehensive summary of the results.}
-}
-Technically \code{cSEMResults} is a named list containing the following list elements:
-\describe{
-\item{\code{$Estimates}}{A list containing the estimated quantities.}
-\item{\code{$Meta_information}}{A list of additional information. (incomplete)}
-}
+\item{object}{An R object of class cSEMResults.}
 }
 \description{
 Compute the model implied indicator variance-covariance (VCV) matrix. Usually
 this is called \eqn{\hat\Sigma}. Currently only the model implied VCV for
-linear model ist implemented. An error is given if the model is not linear.
+linear model for constructs modeled as common factors or composites are
+implemented. An error is given if the model is not linear.
 }
 \examples{
 \dontrun{
@@ -39,5 +22,5 @@ linear model ist implemented. An error is given if the model is not linear.
 
 }
 \seealso{
-\link{csem}, \link{cca}, \link{testMICOM}
+\link{csem}, \link{cSEMResults}
 }
