@@ -1,15 +1,26 @@
-## Methods
-
+#' `cSEMResults` method for `print()`
+#'
+#' The [cSEMResults] method for the generic function [print()]. 
+#' 
+#' Prints basic information on the [cSEMResults] object and suggested next 
+#' steps to the console.
+#'
+#' @usage print(object)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
 #' @export
-print.cSEMResults <- function(x, ...) {
+#'
+print.cSEMResults <- function(object) {
 
   cat(cli::rule(line = "bar2"), "\n")
   cat(cli::rule(center = "Overview"), "\n\n")
   cat("Estimation was successful. The result is a named list of class " %+% bold("cSEMResults") %+%" \n",
       "containing the following list elements (:\n\n\t",
       "- ", crayon::green("Estimates\n\t"),
-      "- ", crayon::green("Tests\n\t"),
-      "- ", crayon::green("Meta_information\n\n"), sep = "")
+      "- ", crayon::green("Information\n\n"), sep = "")
   cat("To get an overview or help type: \n\n\t",
       "- ", crayon::magenta("?"), crayon::cyan("cSEMResults"),"\n\t",
       "- ", crayon::magenta("str"), "(", crayon::cyan("<listname>"), ")\n\t",
@@ -21,7 +32,21 @@ print.cSEMResults <- function(x, ...) {
   cat(cli::rule(line = "bar2"), "\n")
 }
 
+#' `cSEMResultssummary` method for `print()`
+#'
+#' The [cSEMResultssummary] method for the generic function [print()]. 
+#' 
+#' Prints a summary of the results obtained from runinng [csem], [cca], or
+#' [workhorse].
+#'
+#' @usage print(object)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
 #' @export
+#'
 print.cSEMResultssummary <- function(x, ...) {
   cat(cli::rule(line = "bar2"), "\n",
       cli::rule(center = "General Information"), "\n\n\t", sep = "")
@@ -86,8 +111,24 @@ print.cSEMResultssummary <- function(x, ...) {
   cat(cli::rule(line = "bar2"))
 }
 
+#' `cSEMResults` method for `summary()`
+#'
+#' The [cSEMResults] method for the generic function [summary()]. 
+#' 
+#' Computes a summary of the results obtained from runinng [csem], [cca], or
+#' [workhorse].
+#'
+#' @usage summary(object, .what = NULL)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#' 
+#' @inherit csem_resultssummary return
+#'
 #' @export
-summary.cSEMResults <- function(x, ...) {
+#'
+summary.cSEMResults <- function(object, .what = NULL) {
 
   ## Structure loadings output
   temp <- x$Estimates$Loading_estimates
@@ -132,20 +173,16 @@ summary.cSEMResults <- function(x, ...) {
 #' linear model for constructs modeled as common factors or composites are 
 #' implemented. An error is given if the model is not linear.
 #'
-#' @usage fitted(object)
+#' @usage fitted(object, test = NULL)
 #'
 #' @inheritParams csem_arguments
+#' @param test not used
 #'
 #' @seealso [csem], [cSEMResults]
 #'
-#' @examples
-#' \dontrun{
-#' # still to implement
-#' }
-#'
 #' @export
 #'
-fitted.cSEMResults <- function(object) {
+fitted.cSEMResults <- function(object, ...) {
   # Implementation is inspired by the matrixpls package licensed under GPL-3
   
   # Function to compute the model implied VCV matrix of the indicators
@@ -179,7 +216,7 @@ fitted.cSEMResults <- function(object) {
   ### --------------------------------------------------------------------------
   ### Preparation ==============================================================
   ## Check if linear
-  if(object$Meta_information$Model$model_type != "Linear") {
+  if(object$Information$Model$model_type != "Linear") {
     stop("Model is nonlinear. Currently the model-implied indicator covariance",
          " matrix can only be computed for linear models.", call. = FALSE)
   }
@@ -273,7 +310,7 @@ fitted.cSEMResults <- function(object) {
 
   # ### Replace indicators connected to a composite by S
 
-  mod <- object$Meta_information$Model
+  mod <- object$Information$Model
   composites <- mod$construct_type[which(mod$construct_type[, "Type"] == "Composite"), "Name"]
   index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
 

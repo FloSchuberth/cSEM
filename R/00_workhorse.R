@@ -193,8 +193,8 @@ workhorse <- function(
   )
 
   ## Calculate proxy covariance matrix
-  # C <- calculateProxyVCV(.S = S, .W = W$W) 
-  C <- cov(H)
+  C <- calculateProxyVCV(.S = S, .W = W$W)
+  # C <- cov(H)
   
   ## Calculate construct correlation matrix
   P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
@@ -213,9 +213,9 @@ workhorse <- function(
     estim_results <- NA
   }
 
-  ## Set class for Output
+  ### Output -------------------------------------------------------------------
   out <- list(
-    "Estimates"           = list(
+    "Estimates"   = list(
       "Path_estimates"         = if(.estimate_structural) {
         estim_results$Path_estimates
       } else {
@@ -232,7 +232,7 @@ workhorse <- function(
       "Construct_reliabilities"= Q^2,
       "Correction_factors"     = correction_factors
      ),
-    "Meta_information"    = list(
+    "Information" = list(
       "Model"                       = csem_model,
       "Number_of_observations"      = nrow(X),
       "Weight_approach"             = .approach_weights,
@@ -242,7 +242,7 @@ workhorse <- function(
       "PLS_Inner_Weightning_scheme" = .PLS_weight_scheme_inner
       )
     )
-
+  ## Set class for Output
   class(out) <- "cSEMResults"
   return(out)
 
