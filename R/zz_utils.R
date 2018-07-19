@@ -47,6 +47,7 @@
 #' @param .normality Logical. Should joint normality be assumed if the model
 #'   contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
 #'   Defaults to `TRUE`.
+#' @param object An R object of class cSEMResults.
 #' @param .permutations Integer. The number permutations used for step 2 and 3 of the test.
 #' Defaults to `100`. Note however that the number should typically be a lot higher.
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
