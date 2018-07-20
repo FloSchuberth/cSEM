@@ -118,19 +118,27 @@ calculateWeightsPLS <- function(
 
     # Check for convergence
     if(max(abs(W_iter - W)) < .tolerance) {
+      # Set convergence status to TRUE as algorithm has converged
+      conv_status = TRUE
       break # return iterative PLS weights
     } else if(iter_counter == iter_max & iter_max == 1) {
+      # Set convergence status to NULL, NULL is used if no algorithm is used
+      conv_status=NULL
       break # return one-step PLS weights
+      
     } else if(iter_counter == iter_max & iter_max > 1) {
+      # Set convergence status to FALSE, as algorithm has not converged
+      conv_status=FALSE
       warning("Iteration did not converge after ", iter_max, " steps. ",
               "Last weights are returned.")
+      
     } else {
       W_iter <- W
     }
   }
 
   # Return
-  l <- list("W" = W, "E" = E, "Modes" = modes)
+  l <- list("W" = W, "E" = E, "Modes" = modes,"Conv_status"=conv_status)
   return(l)
 
   ### For maintenance: ### -----------------------------------------------------
