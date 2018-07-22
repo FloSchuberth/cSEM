@@ -240,7 +240,9 @@ workhorse <- function(
       "Path_approach"               = .approach_paths,
       "Construct_types"             = csem_model$construct_type,
       "PLS_Modes"                   = W$Modes,
-      "PLS_Inner_Weightning_scheme" = .PLS_weight_scheme_inner
+      "PLS_inner_weightning_scheme" = .PLS_weight_scheme_inner,
+      "Number_iterations"           = W$Iterations,
+      "Convergence_status"          = W$Conv_status
       )
     )
   ## Set class for Output

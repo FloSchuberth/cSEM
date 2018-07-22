@@ -339,19 +339,23 @@ fitted.cSEMResults <- function(object, ...) {
 effects.cSEMResults <- function(object) {
   # Implementation is inspired by the matrixpls package licensed under GPL-3
   
+  ## Endogenous (lhs) variables
+  vars_endo <- object$Information$Model$vars_endo
+  
   ## Matrix of direct effects:
   direct <- object$Estimates$Path_estimates
-  
+
   ## Matrix of total total effects: B = direct
   # Note: eta = B x eta + zeta
   #       (I - B)*eta = zeta
   
-  B_star <- - direct + diag(nrow(direct))
+  B_star <- diag(nrow(direct)) - direct
   total <- solve(B_star) - diag(nrow(direct))
-    # diag(rowSums(direct) != 0) 
   
   ## Matrix of indirect effects:
   indirect <- total - direct
   
-  list(direct = direct, indirect = indirect, total = total)
+  list(direct = direct[vars_endo, , drop = FALSE], 
+       indirect = indirect[vars_endo, , drop = FALSE], 
+       total = total[vars_endo, , drop = FALSE])
 }

@@ -47,11 +47,18 @@ calculateLoadings <- function(
         }
       }
       if(length(names_modeB) > 0) {
-        stop("Variable(s): ", paste0("`", names_modeB, "`", collapse = ", "), 
-             " were estimated using Mode B\n",
-             "Currently correction for attenuation for constructs modeled as",
-             " common factors is only possible for Mode A.",
-             call. = FALSE)
+        # Inconsistent loadings estimates for the calculation of mode B loadings
+        L <- Lambda*(.W != 0)
+        
+        for(i in names_modeB){
+          temp  <- L[i, ] # becomes a vector!
+          temp1 <- temp[which(temp != 0)]
+          temp2 <- temp[which(temp == 0)]
+          
+          Lambda[i, names(temp1)] <- temp1*.Q[i] #* temp1 / c(t(temp1) %*% temp1)
+          Lambda[i, names(temp2)] <- Lambda[i, names(temp2)] / .Q[i]
+          
+        }
       }
     } else {# all constructs are modeled as composites
       return(Lambda)

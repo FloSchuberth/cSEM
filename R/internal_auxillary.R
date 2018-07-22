@@ -78,19 +78,19 @@ calculateProxyConstructCV <- function(
     names_modeB <- intersect(names(.modes[.modes == "ModeB"]), names_cf)
 
     if(length(names_modeA) > 0) {
-
+      
       x_modeA <- c(diag(.W[names_modeA, ] %*% t(.W[names_modeA, ])) %*%
                      diag(.correction_factors[names_modeA]))
-
-      if(length(names_modeB) > 0) {
-        stop("Variable(s): ", paste0("`", names_modeB, "`", collapse = ", "), " where estimated using Mode B.",
-             " Currently correction for attenuation for constructs modeled as",
-             " common factors is only possible for Mode A.",
-             call. = FALSE)
-      }
-
-      x[names_modeA] <- x_modeA
     }
+    
+    if(length(names_modeB) > 0) {
+      x_modeB = .correction_factors[names_modeB]
+    }
+    
+    x[names_modeA] <- x_modeA
+    x[names_modeB] <- x_modeB
+    
+  
   } else if(is.null(.reliabilities) & .disattenuate == FALSE) {
     
     return (x)
