@@ -25,7 +25,7 @@ calculateLoadings <- function(
   if(.disattenuate) {
     
     ## Get names of constructs modeled as composites
-    names_c  <- .csem_model$construct_type[.csem_model$construct_type$Type == "Composite", ]$Name
+    names_c  <- names(.csem_model$construct_type[.csem_model$construct_type == "Composite"])
     ## Get names of constructs modeled as common factors
     names_cf <- setdiff(rownames(.csem_model$structural), names_c)
     ## Get names of the common factors whose weights were estimated with "ModeA"
