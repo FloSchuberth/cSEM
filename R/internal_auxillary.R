@@ -12,15 +12,11 @@
 calculateProxies <- function(.X = NULL, .W = NULL) {
 
   ## Proxies for the linear terms/latent variables
-  # H <- scale(.X,center=TRUE,scale=FALSE) %*% t(.W)
+  H <- .X %*% t(.W)
   
-  # Create standardized construct scores
-
-  # H= scale(H)
-  
-  ## for comparison with the MoMoly function
-  H <- apply(.X, 2, function(x) {(x - mean(x)) / (sd(x) * sqrt((length(x) - 1) / length(x)))}) %*% t(.W)
-  # H <- apply(.X, 2, function(x) {(x - mean(x)) / sd(x)}) %*% t(.W)
+  ## Alternative 
+  # Note: functions like var, sd, scale, and cov use n-1. 
+  # H <- apply(.X, 2, function(x) {(x - mean(x)) / (sd(x) * sqrt((length(x) - 1) / length(x)))}) %*% t(.W)
   return(H)
 }
 
@@ -73,7 +69,7 @@ calculateProxyConstructCV <- function(
 
   if(is.null(.reliabilities) & .disattenuate == TRUE) {
     ## Get names of constructs modeled as composites
-    names_c  <- .csem_model$construct_type[.csem_model$construct_type$Type == "Composite", ]$Name
+    names_c  <- names(.csem_model$construct_type[.csem_model$construct_type == "Composite"])
     ## Get names of constructs modeled as common factors
     names_cf <- setdiff(rownames(.csem_model$structural), names_c)
     ## Get names of the common factors whose weights where estimated with "ModeA"
@@ -113,8 +109,8 @@ calculateProxyConstructCV <- function(
     }
     
     # Check whether defined external reliabilities are correctly defined
-    if(any(.reliabilities > 1)) {
-      stop('Reliabilities must be smaller or equal to 1.', call. = FALSE)
+    if(any(.reliabilities > 1 | .reliabilities < 0)) {
+      stop('Reliabilities must be between 0 and 1.', call. = FALSE)
     }
     
     x[names(.reliabilities)] <- sqrt(.reliabilities)

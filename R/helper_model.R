@@ -75,8 +75,8 @@ parseModel <- function(.model) {
     ## Construct type
     
     tbl_measurement$op <- ifelse(tbl_measurement$op == "=~", "Common factor", "Composite")
-    type_of_construct  <- unique(tbl_measurement[, c("lhs", "op")])
-    colnames(type_of_construct) <- c("Name", "Type")
+    type_of_construct  <- unique(tbl_measurement[, c("lhs", "op")])$op
+    names(type_of_construct) <- names_constructs
     
     ## Type of model (linear or non-linear)
     
@@ -165,9 +165,7 @@ parseModel <- function(.model) {
       
       # If x containes an interaction term, assign 1 to all elements in temp[i, ] whose
       # column names match one or more of the elements/names of the splitted terms
-      if(length(x) > 1) {
-        temp[i, intersect(x, colnames(temp))] <- 1
-      }
+      temp[i, intersect(x, colnames(temp))] <- 1
     }
     
     ## Return error if the structural model contains feedback loops
@@ -219,20 +217,20 @@ parseModel <- function(.model) {
     
     ## Return a cSEMModel object.
     # A cSEMModel objects contains all the information about the model and its
-    # components such as the type of construct used
+    # components such as the type of construct used. 
+    n <- c(setdiff(names_constructs, rownames(model_ordered)), rownames(model_ordered))
+    m <- order(which(model_measurement[n, ] == 1, arr.ind = TRUE)[, "row"])
     
     model_ls <- list(
-      "structural"         = model_structural[
-        c(setdiff(names_constructs, rownames(model_ordered)), 
-          rownames(model_ordered)), ],
+      "structural"         = model_structural[n, c(n, setdiff(colnames(model_ordered), n))],
       # "structural_ordered" = model_ordered, # not needed so far
-      "measurement"        = model_measurement,
-      "error_cor"          = model_error,
-      "construct_type"     = type_of_construct,
+      "measurement"        = model_measurement[n, m],
+      "error_cor"          = model_error[m, m],
+      "construct_type"     = type_of_construct[match(n, names(type_of_construct))],
       "model_type"         = type_of_model,
       "vars_endo"          = rownames(model_ordered),
       "vars_exo"           = var_exo,
-      "vars_explana"       = colnames(model_ordered)[colSums(model_ordered) != 0],
+      "vars_explana"       = colnames(model_structural[n, c(n, setdiff(colnames(model_ordered), n))][, colSums(model_structural[n, c(n, setdiff(colnames(model_ordered), n))]) != 0 ]),
       "explained_by_exo"   = explained_by_exo
     )
     class(model_ls) <- "cSEMModel"

@@ -194,7 +194,6 @@ workhorse <- function(
 
   ## Calculate proxy covariance matrix
   C <- calculateProxyVCV(.S = S, .W = W$W)
-  # C <- cov(H)
   
   ## Calculate construct correlation matrix
   P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
@@ -205,6 +204,7 @@ workhorse <- function(
       .H            = H,
       .W            = W$W,
       .Q            = Q,
+      .P            = P,
       .csem_model   = csem_model,
       .normality    = .normality,
       .approach_nl  = .approach_nl
@@ -230,7 +230,8 @@ workhorse <- function(
       "Construct_VCV"          = P,
       "Cross_loadings"         = Lambda,
       "Construct_reliabilities"= Q^2,
-      "Correction_factors"     = correction_factors
+      "Correction_factors"     = correction_factors,
+      "R2"                     = estim_results$R2
      ),
     "Information" = list(
       "Model"                       = csem_model,

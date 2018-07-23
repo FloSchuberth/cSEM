@@ -20,7 +20,7 @@
 SingleSingle <- function(.i, .j, .Q, .H) {
 
   ## Calculate M
-  M <- mean(.H[, .i] * .H[, .j])
+  M <- mean(.H[, .i] * .H[, .j]) *length(.H[,.i])/(length(.H[,.i])-1)
 
   ## Calculate denominator D
   D <- prod(.Q[c(.i, .j)])

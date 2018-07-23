@@ -27,11 +27,11 @@ calculateCorrectionFactors <- function(
   .approach_cf  = NULL
   ) {
 
-  approach_cf <- .approach_cf
-
   ### Compute correction factors  ----------------------------------------------
   correction_factors <- vector(mode = "double", length = nrow(.W))
-  for(j in 1:nrow(.W)) {
+  names(correction_factors) <- rownames(.W)
+  
+  for(j in rownames(.W)) {
 
     ## Extract vector of weights of block j
     w_j <- .W[j, ] %>%
@@ -39,7 +39,7 @@ calculateCorrectionFactors <- function(
       as.matrix(.)
 
     ## Check if single indicator block or composite; If yes, set cf to 1
-    if(nrow(w_j) == 1 | .csem_model$construct_type[j, ]["Type"] == "Composite") {
+    if(nrow(w_j) == 1 | .csem_model$construct_type[j] == "Composite") {
       correction_factors[j] <- 1
 
     } else {
@@ -54,7 +54,7 @@ calculateCorrectionFactors <- function(
         .[lower.tri(.) | upper.tri(.)] %>%
         .[. != 0]
 
-      ## Set indicator pairs whise measurement errors are correlated to zero and
+      ## Set indicator pairs whose measurement errors are correlated to zero and
       ## extract non-zero off-diagonal elements of W_jj (vectorized)
       W_vect <- replace(W_jj, which(E_jj == 1), 0)  %>%
         .[lower.tri(.) | upper.tri(.)] %>%
@@ -67,7 +67,7 @@ calculateCorrectionFactors <- function(
       }
 
       ## Do the actual computation ---------------------------------------------
-      switch (approach_cf,
+      switch (.approach_cf,
               "dist_euclid"          = {
                 cf <- sum(W_vect * S_vect) / sum(W_vect^2)
               },
@@ -103,7 +103,6 @@ calculateCorrectionFactors <- function(
       correction_factors[j] <- sqrt(abs(cf))
     }
   }
-  names(correction_factors) <- row.names(.W)
   return(correction_factors)
   ### For maintenance: ### -------------------------------------------------------------------------
   # w_j (K_j x 1)      := Column vector of indicator weights of block j

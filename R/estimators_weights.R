@@ -60,26 +60,21 @@ calculateWeightsPLS <- function(
 
   if(is.null(.PLS_mode)) {
     
-    modes <- apply(csem_model$construct_type, 1, function(x) {
-      if(x["Type"] == "Common factor") {
-        "ModeA"
-      } else {
-        "ModeB"
-      }
-    })
-    names(modes) <- csem_model$construct_type$Name
+    modes <- ifelse(csem_model$construct_type == "Common factor", "ModeA", "ModeB")
 
   } else if(all(.PLS_mode %in% c("ModeA", "ModeB"))) {
-    if(setequal(names(.PLS_mode), csem_model$construct_type$Name)) {
+    
+    if(setequal(names(.PLS_mode), names(csem_model$construct_type))) {
       modes <- .PLS_mode
-      modes <- modes[csem_model$construct_type$Name]
+      modes <- modes[names(csem_model$construct_type)]
     } else if(length(.PLS_mode) == 1) {
-      modes <- sapply(csem_model$construct_type$Name, function(x) .PLS_mode)
-    } else if(length(setdiff(names(.PLS_mode), csem_model$construct_type$Name)) > 0) {
-      stop(paste0("`", setdiff(names(.PLS_mode), csem_model$construct_type$Name), 
+      modes <- rep(.PLS_mode, length(csem_model$construct_type))
+      names(modes) <- names(csem_model$construct_type)
+    } else if(length(setdiff(names(.PLS_mode), names(csem_model$construct_type))) > 0) {
+      stop(paste0("`", setdiff(names(.PLS_mode), names(csem_model$construct_type)), 
                   "`", collapse = ", ")," in `.PLS_mode` is an unknown construct name.", call. = FALSE)
     } else  {
-      stop("Mode ", paste0("`", setdiff(csem_model$construct_type$Name, names(.PLS_mode)), 
+      stop("Mode ", paste0("`", setdiff(names(csem_model$construct_type), names(.PLS_mode)), 
                   "`", collapse = ", ")," in `.PLS_mode` is missing.", call. = FALSE)
     }
   } else {

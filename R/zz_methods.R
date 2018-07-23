@@ -311,7 +311,7 @@ fitted.cSEMResults <- function(object, ...) {
   # ### Replace indicators connected to a composite by S
 
   mod <- object$Information$Model
-  composites <- mod$construct_type[which(mod$construct_type[, "Type"] == "Composite"), "Name"]
+  composites <- names(mod$constructr_type[mod$construct_type == "Composite"])
   index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
 
   Sigma[which(index == 1)] <- S[which(index == 1)]

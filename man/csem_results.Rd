@@ -15,7 +15,7 @@ to examine the object.}
 Technically \code{cSEMResults} is a named list containing the following list elements:
 \describe{
 \item{\code{$Estimates}}{A list containing the estimated quantities.}
-\item{\code{$Meta_information}}{A list of additional information. (incomplete)}
+\item{\code{$Information}}{A list of additional information. (incomplete)}
 }
 }
 \description{

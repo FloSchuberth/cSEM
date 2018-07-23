@@ -80,9 +80,6 @@ processData <- function(.data, .model) {
   # Order data according to the ordering of the measurement model
   .data <- .data[, colnames(.model$measurement)]
 
-  # Scale data
-  # .data <- scale(.data) 
-
   ## Set class
   class(.data) <- "cSEMData"
 
