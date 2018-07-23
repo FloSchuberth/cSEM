@@ -222,7 +222,7 @@ fitted.cSEMResults <- function(object, ...) {
   }
     
   ## Get relevant matrices
-
+  
   S <- object$Estimates$Indicator_VCV
   P <- object$Estimates$Construct_VCV
   B <- object$Estimates$Path_estimates 
@@ -252,11 +252,14 @@ fitted.cSEMResults <- function(object, ...) {
     cbind(S * 0, t(Lambda), Delta, matrix(0, nrow(S), ncol(Zeta))),
     cbind(Lambda * 0, B, matrix(0, nrow(B), ncol(Delta)), Zeta)
   )
+
   A1 <- rbind(A1,
     matrix(0, nrow(Delta), ncol(A1)),
     matrix(0, nrow(Zeta), ncol(A1))
   )
   rownames(A1) <- colnames(A1) <- names   
+  ## Set rows of variables who are only related to an error to 0 .
+  A1[rowSums(A1) == 1, ] <- 0  ## Set rows of variables who are only related to an error to 0 .
   
   ## Matrix of variances and covariances between all variables 
   # Note: is necessary for the computation of Phi. The matrix is also (s x s)
@@ -271,9 +274,6 @@ fitted.cSEMResults <- function(object, ...) {
                  sum(ncol(S) + nrow(Lambda_cross) + ncol(vcv_delta))), vcv_zeta) 
   )
   rownames(A2) <- colnames(A2) <- names 
-  
-  ## Set rows of variables who are only related to an error to 0 .
-  A1[rowSums(A1) == 1, ] <- 0
   
   ## Distinguish and get dimensions --------------------------------------------
   indep_vars <- rownames((A1[rowSums(A1) == 0, ]))

@@ -84,7 +84,9 @@ calculateProxyConstructCV <- function(
     }
     
     if(length(names_modeB) > 0) {
-      x_modeB = .correction_factors[names_modeB]
+      x_modeB <- .correction_factors[names_modeB]
+    } else {
+      x_modeB <- 1
     }
     
     x[names_modeA] <- x_modeA

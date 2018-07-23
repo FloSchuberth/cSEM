@@ -19,7 +19,7 @@
 #' @export
 #'
 
-status = function(object,...){
+status <- function(object,...){
   # 0: Everything is fine
   # 1 Algorithm has not not converged
   # 2: at least one absolute standardized loading estimate is larger than 1,
