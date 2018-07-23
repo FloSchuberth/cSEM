@@ -229,15 +229,19 @@ fitted.cSEMResults <- function(object, ...) {
   Lambda <- object$Estimates$Loading_estimates 
   Lambda_cross <- object$Estimates$Cross_loadings
   
+  a <- object$Information$Model$vars_exo
+  
   ## Compute variances of the errors (diagonal matrices Var(delta) and Var(zeta)).
   
   vcv_delta <- diag(diag(S) - diag(t(Lambda) %*% P %*% Lambda))
   Delta <- vcv_delta
   diag(Delta) <- 1
 
-  vcv_zeta  <- diag(1 - diag(B %*% P %*% t(B)))
+  vcv_zeta <- diag(1 - diag(B%*% P %*% t(B)))
+  vcv_zeta[1:length(a), 1:length(a)] <- 0
   Zeta <- vcv_zeta
   diag(Zeta) <- 1
+  Zeta[1:length(a), 1:length(a)] <- 0
   
   ## Get names of all variables (dependent and independent)
   names <- c(colnames(S), rownames(Lambda), paste0("del", 1:nrow(vcv_delta)),
@@ -259,7 +263,7 @@ fitted.cSEMResults <- function(object, ...) {
   )
   rownames(A1) <- colnames(A1) <- names   
   ## Set rows of variables who are only related to an error to 0 .
-  A1[rowSums(A1) == 1, ] <- 0  ## Set rows of variables who are only related to an error to 0 .
+  # A1[rowSums(A1) == 1, ] <- 0  ## Set rows of variables who are only related to an error to 0 .
   
   ## Matrix of variances and covariances between all variables 
   # Note: is necessary for the computation of Phi. The matrix is also (s x s)
@@ -274,7 +278,7 @@ fitted.cSEMResults <- function(object, ...) {
                  sum(ncol(S) + nrow(Lambda_cross) + ncol(vcv_delta))), vcv_zeta) 
   )
   rownames(A2) <- colnames(A2) <- names 
-  
+
   ## Distinguish and get dimensions --------------------------------------------
   indep_vars <- rownames((A1[rowSums(A1) == 0, ]))
   dep_vars   <- setdiff(rownames(A1), indep_vars)
