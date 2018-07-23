@@ -26,15 +26,10 @@ estimatePathOLS <- function(
   #                                       equation models
 
   m              <- .csem_model$structural
-  # m              <- .csem_model$structural_ordered
   vars_explana   <- .csem_model$vars_explana
   vars_endo      <- .csem_model$vars_endo
   vars_exo       <- .csem_model$vars_exo
   vars_ex_by_exo <- .csem_model$explained_by_exo
-
-  # Evaluate Proxies H and Q's
-  .H <- .H
-  .Q <- .Q
 
   ### Calculation ==============================================================
   ## Calculate elements of the VCV matrix of the explanatory variables ---------
@@ -224,15 +219,9 @@ estimatePathOLS <- function(
   ### Structure results --------------------------------------------------------
   tm <- t(.csem_model$structural)
   tm[which(tm == 1)] <- do.call(rbind, coef)
-  
-  # names_path <- paste0(rep(names(coef), times = sapply(coef, length)), "~",
-  #                      unlist(sapply(coef, rownames)))
-  # 
-  # path_estimates  <- data.frame("Path" = names_path,
-  #                               "Estimate" = unlist(coef, use.names = FALSE))
 
   ## Return result -------------------------------------------------------------
-  list("Path_estimates" = t(tm), R2 = r2)
+  list("Path_estimates" = t(tm), "R2" = unlist(r2))
 }
 
 # estimatePath2SLS <- function(
