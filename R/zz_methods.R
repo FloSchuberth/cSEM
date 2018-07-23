@@ -278,7 +278,7 @@ fitted.cSEMResults <- function(object, ...) {
                  sum(ncol(S) + nrow(Lambda_cross) + ncol(vcv_delta))), vcv_zeta) 
   )
   rownames(A2) <- colnames(A2) <- names 
-
+round(A2, 5)
   ## Distinguish and get dimensions --------------------------------------------
   indep_vars <- rownames((A1[rowSums(A1) == 0, ]))
   dep_vars   <- setdiff(rownames(A1), indep_vars)
@@ -308,7 +308,7 @@ fitted.cSEMResults <- function(object, ...) {
   I     <- diag(s)          # (s x s)
   
   ### Calculate the model implied covariance matrix ============================
-  
+
   Sigma <- G %*% solve(I - Beta) %*% Gamma %*% Phi %*% t(Gamma) %*% t(solve(I - Beta))%*% t(G)
   rownames(Sigma) <- colnames(Sigma) <- rownames(S)
 

@@ -79,19 +79,15 @@ calculateProxyConstructCV <- function(
 
     if(length(names_modeA) > 0) {
       
-      x_modeA <- c(diag(.W[names_modeA, ] %*% t(.W[names_modeA, ])) %*%
-                     diag(.correction_factors[names_modeA]))
+      x_modeA <- c(diag(.W[names_modeA, , drop = FALSE] %*% t(.W[names_modeA, ,drop = FALSE])) %*%
+                     diag(.correction_factors[names_modeA], nrow = length(names_modeA)))
+      x[names_modeA] <- x_modeA
     }
     
     if(length(names_modeB) > 0) {
       x_modeB <- .correction_factors[names_modeB]
-    } else {
-      x_modeB <- 1
+      x[names_modeB] <- x_modeB
     }
-    
-    x[names_modeA] <- x_modeA
-    x[names_modeB] <- x_modeB
-    
   
   } else if(is.null(.reliabilities) & .disattenuate == FALSE) {
     
