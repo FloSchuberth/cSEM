@@ -343,10 +343,9 @@ effects.cSEMResults <- function(object) {
   direct <- object$Estimates$Path_estimates
   
   ## Matrix of total total effects: B = direct
-  # Note: eta = B x eta + I x eta + zeta
-  #       eta = (B + I) eta + zeta
-  #       eta = B_star eta + zeta
-  #       (I - B_star^-1) eta = zeta
+  # Note: eta = B x eta + zeta
+  #       (I - B)*eta = zeta
+  
   B_star <- - direct + diag(nrow(direct))
   total <- solve(B_star) - diag(nrow(direct))
     # diag(rowSums(direct) != 0) 
