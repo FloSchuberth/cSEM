@@ -329,6 +329,10 @@ fitted.cSEMResults <- function(object) {
   
   diag(Sigma) <- 1
   
+  
+  # make symmetric; it may happen that the matrix is symmetric due to maschine calculations
+  Sigma[lower.tri(Sigma)] = t(Sigma)[lower.tri(Sigma)]
+  
   return(Sigma)
 }
 
