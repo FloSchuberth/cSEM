@@ -1,15 +1,26 @@
-## Methods
-
+#' `cSEMResults` method for `print()`
+#'
+#' The [cSEMResults] method for the generic function [print()]. 
+#' 
+#' Prints basic information on the [cSEMResults] object and suggested next 
+#' steps to the console.
+#'
+#' @usage print(object)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
 #' @export
-print.cSEMResults <- function(x, ...) {
+#'
+print.cSEMResults <- function(object) {
 
   cat(cli::rule(line = "bar2"), "\n")
   cat(cli::rule(center = "Overview"), "\n\n")
   cat("Estimation was successful. The result is a named list of class " %+% bold("cSEMResults") %+%" \n",
       "containing the following list elements (:\n\n\t",
       "- ", crayon::green("Estimates\n\t"),
-      "- ", crayon::green("Tests\n\t"),
-      "- ", crayon::green("Meta_information\n\n"), sep = "")
+      "- ", crayon::green("Information\n\n"), sep = "")
   cat("To get an overview or help type: \n\n\t",
       "- ", crayon::magenta("?"), crayon::cyan("cSEMResults"),"\n\t",
       "- ", crayon::magenta("str"), "(", crayon::cyan("<listname>"), ")\n\t",
@@ -21,7 +32,21 @@ print.cSEMResults <- function(x, ...) {
   cat(cli::rule(line = "bar2"), "\n")
 }
 
+#' `cSEMResultssummary` method for `print()`
+#'
+#' The [cSEMResultssummary] method for the generic function [print()]. 
+#' 
+#' Prints a summary of the results obtained from runinng [csem], [cca], or
+#' [workhorse].
+#'
+#' @usage print(object)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
 #' @export
+#'
 print.cSEMResultssummary <- function(x, ...) {
   cat(cli::rule(line = "bar2"), "\n",
       cli::rule(center = "General Information"), "\n\n\t", sep = "")
@@ -86,8 +111,24 @@ print.cSEMResultssummary <- function(x, ...) {
   cat(cli::rule(line = "bar2"))
 }
 
+#' `cSEMResults` method for `summary()`
+#'
+#' The [cSEMResults] method for the generic function [summary()]. 
+#' 
+#' Computes a summary of the results obtained from runinng [csem], [cca], or
+#' [workhorse].
+#'
+#' @usage summary(object, .what = NULL)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#' 
+#' @inherit csem_resultssummary return
+#'
 #' @export
-summary.cSEMResults <- function(x, ...) {
+#'
+summary.cSEMResults <- function(object, .what = NULL) {
 
   ## Structure loadings output
   temp <- x$Estimates$Loading_estimates
@@ -132,20 +173,16 @@ summary.cSEMResults <- function(x, ...) {
 #' linear model for constructs modeled as common factors or composites are 
 #' implemented. An error is given if the model is not linear.
 #'
-#' @usage fitted(object)
+#' @usage fitted(object, test = NULL)
 #'
 #' @inheritParams csem_arguments
+#' @param test not used
 #'
 #' @seealso [csem], [cSEMResults]
 #'
-#' @examples
-#' \dontrun{
-#' # still to implement
-#' }
-#'
 #' @export
 #'
-fitted.cSEMResults <- function(object) {
+fitted.cSEMResults <- function(object, ...) {
   # Implementation is inspired by the matrixpls package licensed under GPL-3
   
   # Function to compute the model implied VCV matrix of the indicators
@@ -179,18 +216,20 @@ fitted.cSEMResults <- function(object) {
   ### --------------------------------------------------------------------------
   ### Preparation ==============================================================
   ## Check if linear
-  if(object$Meta_information$Model$model_type != "Linear") {
+  if(object$Information$Model$model_type != "Linear") {
     stop("Model is nonlinear. Currently the model-implied indicator covariance",
          " matrix can only be computed for linear models.", call. = FALSE)
   }
     
   ## Get relevant matrices
-
+  
   S <- object$Estimates$Indicator_VCV
   P <- object$Estimates$Construct_VCV
   B <- object$Estimates$Path_estimates 
   Lambda <- object$Estimates$Loading_estimates 
   Lambda_cross <- object$Estimates$Cross_loadings
+  
+  a <- object$Information$Model$vars_exo
   
   ## Compute variances of the errors (diagonal matrices Var(delta) and Var(zeta)).
   
@@ -198,9 +237,11 @@ fitted.cSEMResults <- function(object) {
   Delta <- vcv_delta
   diag(Delta) <- 1
 
-  vcv_zeta  <- diag(1 - diag(B %*% P %*% t(B)))
+  vcv_zeta <- diag(1 - diag(B%*% P %*% t(B)))
+  vcv_zeta[1:length(a), 1:length(a)] <- 0
   Zeta <- vcv_zeta
   diag(Zeta) <- 1
+  Zeta[1:length(a), 1:length(a)] <- 0
   
   ## Get names of all variables (dependent and independent)
   names <- c(colnames(S), rownames(Lambda), paste0("del", 1:nrow(vcv_delta)),
@@ -215,11 +256,14 @@ fitted.cSEMResults <- function(object) {
     cbind(S * 0, t(Lambda), Delta, matrix(0, nrow(S), ncol(Zeta))),
     cbind(Lambda * 0, B, matrix(0, nrow(B), ncol(Delta)), Zeta)
   )
+
   A1 <- rbind(A1,
     matrix(0, nrow(Delta), ncol(A1)),
     matrix(0, nrow(Zeta), ncol(A1))
   )
   rownames(A1) <- colnames(A1) <- names   
+  ## Set rows of variables who are only related to an error to 0 .
+  # A1[rowSums(A1) == 1, ] <- 0  ## Set rows of variables who are only related to an error to 0 .
   
   ## Matrix of variances and covariances between all variables 
   # Note: is necessary for the computation of Phi. The matrix is also (s x s)
@@ -234,10 +278,7 @@ fitted.cSEMResults <- function(object) {
                  sum(ncol(S) + nrow(Lambda_cross) + ncol(vcv_delta))), vcv_zeta) 
   )
   rownames(A2) <- colnames(A2) <- names 
-  
-  ## Set rows of variables who are only related to an error to 0 .
-  A1[rowSums(A1) == 1, ] <- 0
-  
+round(A2, 5)
   ## Distinguish and get dimensions --------------------------------------------
   indep_vars <- rownames((A1[rowSums(A1) == 0, ]))
   dep_vars   <- setdiff(rownames(A1), indep_vars)
@@ -267,14 +308,14 @@ fitted.cSEMResults <- function(object) {
   I     <- diag(s)          # (s x s)
   
   ### Calculate the model implied covariance matrix ============================
-  
+
   Sigma <- G %*% solve(I - Beta) %*% Gamma %*% Phi %*% t(Gamma) %*% t(solve(I - Beta))%*% t(G)
   rownames(Sigma) <- colnames(Sigma) <- rownames(S)
 
   # ### Replace indicators connected to a composite by S
 
-  mod <- object$Meta_information$Model
-  composites <- mod$construct_type[which(mod$construct_type[, "Type"] == "Composite"), "Name"]
+  mod <- object$Information$Model
+  composites <- names(mod$construct_type[mod$construct_type == "Composite"])
   index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
 
   Sigma[which(index == 1)] <- S[which(index == 1)]
@@ -302,20 +343,23 @@ fitted.cSEMResults <- function(object) {
 effects.cSEMResults <- function(object) {
   # Implementation is inspired by the matrixpls package licensed under GPL-3
   
+  ## Endogenous (lhs) variables
+  vars_endo <- object$Information$Model$vars_endo
+  
   ## Matrix of direct effects:
   direct <- object$Estimates$Path_estimates
-  
+
   ## Matrix of total total effects: B = direct
-  # Note: eta = B x eta + I x eta + zeta
-  #       eta = (B + I) eta + zeta
-  #       eta = B_star eta + zeta
-  #       (I - B_star^-1) eta = zeta
-  B_star <- - direct + diag(nrow(direct))
+  # Note: eta = B x eta + zeta
+  #       (I - B)*eta = zeta
+  
+  B_star <- diag(nrow(direct)) - direct
   total <- solve(B_star) - diag(nrow(direct))
-    # diag(rowSums(direct) != 0) 
   
   ## Matrix of indirect effects:
   indirect <- total - direct
   
-  list(direct = direct, indirect = indirect, total = total)
+  list(direct = direct[vars_endo, , drop = FALSE], 
+       indirect = indirect[vars_endo, , drop = FALSE], 
+       total = total[vars_endo, , drop = FALSE])
 }

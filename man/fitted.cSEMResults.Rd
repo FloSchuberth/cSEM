@@ -4,22 +4,21 @@
 \alias{fitted.cSEMResults}
 \title{Model implied indicator variance-covariance matrix}
 \usage{
-fitted(object)
+fitted(object, test = NULL)
 }
 \arguments{
-\item{object}{An R object of class cSEMResults.}
+\item{object}{An R object of class \link{cSEMResults}.}
+
+\item{...}{Further arguments to be passed down to other functions.
+See \link{args_default} for a complete list of possible arguments and their defaults.}
+
+\item{test}{not used}
 }
 \description{
 Compute the model implied indicator variance-covariance (VCV) matrix. Usually
 this is called \eqn{\hat\Sigma}. Currently only the model implied VCV for
 linear model for constructs modeled as common factors or composites are
 implemented. An error is given if the model is not linear.
-}
-\examples{
-\dontrun{
-# still to implement
-}
-
 }
 \seealso{
 \link{csem}, \link{cSEMResults}

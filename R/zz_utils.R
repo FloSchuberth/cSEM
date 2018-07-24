@@ -47,7 +47,7 @@
 #' @param .normality Logical. Should joint normality be assumed if the model
 #'   contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
 #'   Defaults to `TRUE`.
-#' @param object An R object of class cSEMResults.
+#' @param object An R object of class [cSEMResults].
 #' @param .permutations Integer. The number permutations used for step 2 and 3 of the test.
 #' Defaults to `100`. Note however that the number should typically be a lot higher.
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
@@ -96,21 +96,21 @@ NULL
 #'      names. If the structural model contains non-linear relationships
 #'      `structural` is (J x (J + J\*)) where J\* is the number of
 #'      non-linear terms.}
-#'   \item{`$structural_ordered`}{A matrix of the same dimension as `structural`
-#'     with rows rearranged to satisfy the following criteria. 1. the construct
-#'     in the first row depends on exogenous constructs only. 2. the constructs
-#'     of the following rows depend only on exogenous constructs or those
-#'     of previous rows. This is required to estimate non-linear structural equation
-#'     model relationships using the replacement approach.
-#'     }
+  # \item{`$structural_ordered`}{A matrix of the same dimension as `structural`
+  #   with rows rearranged to satisfy the following criteria. 1. the construct
+  #   in the first row depends on exogenous constructs only. 2. the constructs
+  #   of the following rows depend only on exogenous constructs or those
+  #   of previous rows. This is required to estimate non-linear structural equation
+  #   model relationships using the replacement approach.
+  #   }
 #'   \item{`$measurement`}{A (J x K) matrix mimicking the measurement relationship
 #'     between constructs and their related indicators with row names equal to
 #'     the construct names and column names equal to the indicator names.}
 #'   \item{`$error_cor`}{A (K x K) matrix mimicking the measurement error
 #'     correlation relationship.}
-#'   \item{`$construct_type`}{A data frame with two columns *"Name"* and *"Type"*
-#'     containing the name of each construct and their respective type
-#'     (**"Common factor"** or **"Composite"**).}
+#'   \item{`$construct_type`}{A named vector containing the names of each construct
+#'    and their respective type (**"Common factor"** or **"Composite"**).}
+#'   \item{`$model_type`}{The type of model (linear or nonlinear).}
 #'   \item{`$vars_endo`}{A vector of names of the endogenous constructs.}
 #'   \item{`$vars_exo`}{A vector of names of the exogenous constructs (incudes
 #'     possible interaction and exponential terms).}
@@ -144,9 +144,25 @@ NULL
 #' Technically `cSEMResults` is a named list containing the following list elements:
 #' \describe{
 #'   \item{`$Estimates`}{A list containing the estimated quantities.}
-#'   \item{`$Meta_information`}{A list of additional information. (incomplete)}
+#'   \item{`$Information`}{A list of additional information. (incomplete)}
 #' }
 #'
 #' @name csem_results
 #' @aliases cSEMResults
+NULL
+
+#' cSEMResultssummary
+#'
+#' @return
+#' An object of class `cSEMResultssummary` for which the following methods exist:
+#' \describe{
+#'   \item{`print.cSEMResultssummary`}{Prints a summary.}
+#' }
+#' Technically `cSEMResultssummary` is a named list containing the following list elements:
+#' \describe{
+#'   \item{`...}{Not finished yet.}
+#' }
+#'
+#' @name csem_resultssummary
+#' @aliases cSEMResultssummary
 NULL

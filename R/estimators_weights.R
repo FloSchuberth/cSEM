@@ -49,7 +49,7 @@ calculateWeightsPLS <- function(
     if(is.matrix(.data) && isSymmetric.matrix(.data)) {
       S <- .data
     } else {
-      #  If function is used externally, data is not automatically scaled
+      #  If function is used externally, data is not automatically scaled!
       X <- processData(.data = .data, .model = csem_model)
       S <- stats::cov(X)
     }
@@ -59,28 +59,27 @@ calculateWeightsPLS <- function(
   ## Get/set the modes for the outer estimation
 
   if(is.null(.PLS_mode)) {
-    modes <- apply(csem_model$construct_type, 1, function(x) {
-
-      if(x["Type"] == "Common factor") {
-        "ModeA"
-      } else {
-        "ModeB"
-      }
-    })
-    names(modes) <- csem_model$construct_type$Name
+    
+    modes <- ifelse(csem_model$construct_type == "Common factor", "ModeA", "ModeB")
 
   } else if(all(.PLS_mode %in% c("ModeA", "ModeB"))) {
-    if(setequal(names(.PLS_mode), csem_model$construct_type$Name)) {
+    
+    if(setequal(names(.PLS_mode), names(csem_model$construct_type))) {
       modes <- .PLS_mode
-    } else if (length(.PLS_mode) == 1) {
-      modes <- sapply(csem_model$construct_type$Name, function(x) .PLS_mode)
-    } else {
-      stop("At least one mode has not been specified.",
-           call. = FALSE)
+      modes <- modes[names(csem_model$construct_type)]
+    } else if(length(.PLS_mode) == 1) {
+      modes <- rep(.PLS_mode, length(csem_model$construct_type))
+      names(modes) <- names(csem_model$construct_type)
+    } else if(length(setdiff(names(.PLS_mode), names(csem_model$construct_type))) > 0) {
+      stop(paste0("`", setdiff(names(.PLS_mode), names(csem_model$construct_type)), 
+                  "`", collapse = ", ")," in `.PLS_mode` is an unknown construct name.", call. = FALSE)
+    } else  {
+      stop("Mode ", paste0("`", setdiff(names(csem_model$construct_type), names(.PLS_mode)), 
+                  "`", collapse = ", ")," in `.PLS_mode` is missing.", call. = FALSE)
     }
   } else {
     stop(paste0("`", setdiff(.PLS_mode, c("ModeA", "ModeB")), "`", collapse = ", "),
-         " is an unknown mode.", call. = FALSE)
+         " in `.PLS_mode` is an unknown mode.", call. = FALSE)
   }
 
   ### Calculation/Iteration ====================================================
@@ -119,19 +118,28 @@ calculateWeightsPLS <- function(
 
     # Check for convergence
     if(max(abs(W_iter - W)) < .tolerance) {
+      # Set convergence status to TRUE as algorithm has converged
+      conv_status = TRUE
       break # return iterative PLS weights
     } else if(iter_counter == iter_max & iter_max == 1) {
+      # Set convergence status to NULL, NULL is used if no algorithm is used
+      conv_status = NULL
       break # return one-step PLS weights
+      
     } else if(iter_counter == iter_max & iter_max > 1) {
+      # Set convergence status to FALSE, as algorithm has not converged
+      conv_status = FALSE
       warning("Iteration did not converge after ", iter_max, " steps. ",
               "Last weights are returned.")
+      
     } else {
       W_iter <- W
     }
   }
 
   # Return
-  l <- list("W" = W, "E" = E, "Modes" = modes)
+  l <- list("W" = W, "E" = E, "Modes" = modes, "Conv_status" = conv_status,
+            "Iterations" = iter_counter)
   return(l)
 
   ### For maintenance: ### -----------------------------------------------------
@@ -262,7 +270,7 @@ calculateOuterWeightsPLS <- function(
   proxy_indicator_cor <- .E %*% W %*% .S
 
   for(i in 1:nrow(W)) {
-    block      <- intersect(rownames(W[i, , drop = FALSE]), names(.PLS_mode))
+    block      <- rownames(W[i, , drop = FALSE])
     indicators <- W[block, ] != 0
 
     if(.PLS_mode[block] == "ModeA") {

@@ -66,17 +66,38 @@ parseModel <- function(.model) {
     
     names_constructs_all  <- unique(c(tbl_measurement$lhs, tbl_structural$rhs))
     names_constructs      <- unique(unlist(strsplit(names_constructs_all, "\\.")))
+    names_constructs_structural <- unique(c(tbl_structural$lhs, unlist(strsplit(tbl_structural$rhs, "\\."))))
     names_indicators      <- unique(tbl_measurement$rhs)
     
     number_of_constructs_all  <- length(names_constructs_all)
     number_of_constructs      <- length(names_constructs)
     number_of_indicators      <- length(names_indicators)
     
+    ### Checks, errors and warnings ----------------------------------------------
+    ## Stop if construct has no obervables/indicators attached
+    if(length(setdiff(names_constructs_structural, tbl_measurement$lhs)) != 0) {
+      
+      stop("No measurement equation provided for: ",
+           paste0("`", setdiff(names_constructs_structural, tbl_measurement$lhs), "`", collapse = ", "),
+           call. = FALSE)
+    }
+    
+    ## Stop if construct appears in the measurement but not in the structural model
+    if(length(setdiff(tbl_measurement$lhs, names_constructs_structural)) != 0) {
+      
+      stop("Construct(s): ",
+           paste0("`", setdiff(tbl_measurement$lhs, names_constructs_structural), "`", collapse = ", "),
+           " of the measurement model",
+           ifelse(length(setdiff(tbl_measurement$lhs, names_constructs_structural)) == 1, " does", " do"),
+           " not appear in the structural model.",
+           call. = FALSE)
+    }
+    
     ## Construct type
     
     tbl_measurement$op <- ifelse(tbl_measurement$op == "=~", "Common factor", "Composite")
-    type_of_construct  <- unique(tbl_measurement[, c("lhs", "op")])
-    colnames(type_of_construct) <- c("Name", "Type")
+    type_of_construct  <- unique(tbl_measurement[, c("lhs", "op")])$op
+    names(type_of_construct) <- names_constructs
     
     ## Type of model (linear or non-linear)
     
@@ -123,15 +144,6 @@ parseModel <- function(.model) {
     
     model_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
-    ### Checks, errors and warnings ----------------------------------------------
-    ## Stop if construct has no obervables/indicators attached
-    if(length(setdiff(names_constructs, tbl_measurement$lhs)) != 0) {
-      
-      stop("No indicators provided for: ",
-           paste(setdiff(names_constructs, tbl_measurement$lhs), collapse = ", "),
-           call. = FALSE)
-    }
-    
     ### Order model ==============================================================
     # Order the structual equations in a way that every equation depends on
     # exogenous variables and variables that have been explained in a previous equation
@@ -165,9 +177,7 @@ parseModel <- function(.model) {
       
       # If x containes an interaction term, assign 1 to all elements in temp[i, ] whose
       # column names match one or more of the elements/names of the splitted terms
-      if(length(x) > 1) {
-        temp[i, intersect(x, colnames(temp))] <- 1
-      }
+      temp[i, intersect(x, colnames(temp))] <- 1
     }
     
     ## Return error if the structural model contains feedback loops
@@ -219,20 +229,20 @@ parseModel <- function(.model) {
     
     ## Return a cSEMModel object.
     # A cSEMModel objects contains all the information about the model and its
-    # components such as the type of construct used
+    # components such as the type of construct used. 
+    n <- c(setdiff(names_constructs, rownames(model_ordered)), rownames(model_ordered))
+    m <- order(which(model_measurement[n, ] == 1, arr.ind = TRUE)[, "row"])
     
     model_ls <- list(
-      "structural"         = model_structural[
-        c(setdiff(names_constructs, rownames(model_ordered)), 
-          rownames(model_ordered)), ],
+      "structural"         = model_structural[n, c(n, setdiff(colnames(model_ordered), n))],
       # "structural_ordered" = model_ordered, # not needed so far
-      "measurement"        = model_measurement,
-      "error_cor"          = model_error,
-      "construct_type"     = type_of_construct,
+      "measurement"        = model_measurement[n, m],
+      "error_cor"          = model_error[m, m],
+      "construct_type"     = type_of_construct[match(n, names(type_of_construct))],
       "model_type"         = type_of_model,
       "vars_endo"          = rownames(model_ordered),
       "vars_exo"           = var_exo,
-      "vars_explana"       = colnames(model_ordered)[colSums(model_ordered) != 0],
+      "vars_explana"       = colnames(model_structural[n, c(n, setdiff(colnames(model_ordered), n))][, colSums(model_structural[n, c(n, setdiff(colnames(model_ordered), n))]) != 0 ]),
       "explained_by_exo"   = explained_by_exo
     )
     class(model_ls) <- "cSEMModel"

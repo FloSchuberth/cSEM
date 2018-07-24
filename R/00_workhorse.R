@@ -193,8 +193,7 @@ workhorse <- function(
   )
 
   ## Calculate proxy covariance matrix
-  # C <- calculateProxyVCV(.S = S, .W = W$W) 
-  C <- cov(H)
+  C <- calculateProxyVCV(.S = S, .W = W$W)
   
   ## Calculate construct correlation matrix
   P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
@@ -205,6 +204,7 @@ workhorse <- function(
       .H            = H,
       .W            = W$W,
       .Q            = Q,
+      .P            = P,
       .csem_model   = csem_model,
       .normality    = .normality,
       .approach_nl  = .approach_nl
@@ -213,9 +213,9 @@ workhorse <- function(
     estim_results <- NA
   }
 
-  ## Set class for Output
+  ### Output -------------------------------------------------------------------
   out <- list(
-    "Estimates"           = list(
+    "Estimates"   = list(
       "Path_estimates"         = if(.estimate_structural) {
         estim_results$Path_estimates
       } else {
@@ -230,19 +230,22 @@ workhorse <- function(
       "Construct_VCV"          = P,
       "Cross_loadings"         = Lambda,
       "Construct_reliabilities"= Q^2,
-      "Correction_factors"     = correction_factors
+      "Correction_factors"     = correction_factors,
+      "R2"                     = estim_results$R2
      ),
-    "Meta_information"    = list(
+    "Information" = list(
       "Model"                       = csem_model,
       "Number_of_observations"      = nrow(X),
       "Weight_approach"             = .approach_weights,
       "Path_approach"               = .approach_paths,
       "Construct_types"             = csem_model$construct_type,
       "PLS_Modes"                   = W$Modes,
-      "PLS_Inner_Weightning_scheme" = .PLS_weight_scheme_inner
+      "PLS_inner_weightning_scheme" = .PLS_weight_scheme_inner,
+      "Number_iterations"           = W$Iterations,
+      "Convergence_status"          = W$Conv_status
       )
     )
-
+  ## Set class for Output
   class(out) <- "cSEMResults"
   return(out)
 

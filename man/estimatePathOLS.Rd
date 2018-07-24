@@ -4,8 +4,8 @@
 \alias{estimatePathOLS}
 \title{Estimate the structural coefficients}
 \usage{
-estimatePathOLS(.H = NULL, .W = NULL, .Q = NULL, .csem_model = NULL,
-  .normality = NULL, .approach_nl = NULL)
+estimatePathOLS(.H = NULL, .W = NULL, .Q = NULL, .P = NULL,
+  .csem_model = NULL, .normality = NULL, .approach_nl = NULL)
 }
 \arguments{
 \item{.H}{The (N x J) matrix of proxy values.}
