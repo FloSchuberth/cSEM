@@ -66,11 +66,32 @@ parseModel <- function(.model) {
     
     names_constructs_all  <- unique(c(tbl_measurement$lhs, tbl_structural$rhs))
     names_constructs      <- unique(unlist(strsplit(names_constructs_all, "\\.")))
+    names_constructs_structural <- unique(c(tbl_structural$lhs, unlist(strsplit(tbl_structural$rhs, "\\."))))
     names_indicators      <- unique(tbl_measurement$rhs)
     
     number_of_constructs_all  <- length(names_constructs_all)
     number_of_constructs      <- length(names_constructs)
     number_of_indicators      <- length(names_indicators)
+    
+    ### Checks, errors and warnings ----------------------------------------------
+    ## Stop if construct has no obervables/indicators attached
+    if(length(setdiff(names_constructs_structural, tbl_measurement$lhs)) != 0) {
+      
+      stop("No measurement equation provided for: ",
+           paste0("`", setdiff(names_constructs_structural, tbl_measurement$lhs), "`", collapse = ", "),
+           call. = FALSE)
+    }
+    
+    ## Stop if construct appears in the measurement but not in the structural model
+    if(length(setdiff(tbl_measurement$lhs, names_constructs_structural)) != 0) {
+      
+      stop("Construct(s): ",
+           paste0("`", setdiff(tbl_measurement$lhs, names_constructs_structural), "`", collapse = ", "),
+           " of the measurement model",
+           ifelse(length(setdiff(tbl_measurement$lhs, names_constructs_structural)) == 1, " does", " do"),
+           " not appear in the structural model.",
+           call. = FALSE)
+    }
     
     ## Construct type
     
@@ -122,15 +143,6 @@ parseModel <- function(.model) {
     col_index <- match(tbl_errors$rhs, names_indicators)
     
     model_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
-    
-    ### Checks, errors and warnings ----------------------------------------------
-    ## Stop if construct has no obervables/indicators attached
-    if(length(setdiff(names_constructs, tbl_measurement$lhs)) != 0) {
-      
-      stop("No indicators provided for: ",
-           paste(setdiff(names_constructs, tbl_measurement$lhs), collapse = ", "),
-           call. = FALSE)
-    }
     
     ### Order model ==============================================================
     # Order the structual equations in a way that every equation depends on
