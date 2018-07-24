@@ -229,7 +229,8 @@ fitted.cSEMResults <- function(object, ...) {
   Lambda <- object$Estimates$Loading_estimates 
   Lambda_cross <- object$Estimates$Cross_loadings
   
-  a <- object$Information$Model$vars_exo
+  a1 <- object$Information$Model$vars_exo
+  a2 <- object$Information$Model$vars_endo
   
   ## Compute variances of the errors (diagonal matrices Var(delta) and Var(zeta)).
   
@@ -237,11 +238,17 @@ fitted.cSEMResults <- function(object, ...) {
   Delta <- vcv_delta
   diag(Delta) <- 1
 
-  vcv_zeta <- diag(1 - diag(B%*% P %*% t(B)))
-  vcv_zeta[1:length(a), 1:length(a)] <- 0
+  tmp <- diag(1 - diag(solve(diag(length(a2)) - B[a2, a2]) %*% B[a2, a1]%*% 
+    P[a1, a1] %*% t(B[a2, a1]) %*% t(solve(diag(length(a2)) - B[a2, a2]))))
+  rownames(tmp) <- colnames(tmp) <- a2
+  
+  # vcv_zeta <- diag(1 - diag(B%*% P %*% t(B)))
+  # vcv_zeta[1:length(a), 1:length(a)] <- 0
+  vcv_zeta <- matrix(0, nrow(B), ncol(B), dimnames = list(rownames(B), colnames(B)))
+  vcv_zeta[a2, a2] <- tmp
+
   Zeta <- vcv_zeta
-  diag(Zeta) <- 1
-  Zeta[1:length(a), 1:length(a)] <- 0
+  Zeta[Zeta != 0] <- 1
   
   ## Get names of all variables (dependent and independent)
   names <- c(colnames(S), rownames(Lambda), paste0("del", 1:nrow(vcv_delta)),
@@ -278,7 +285,7 @@ fitted.cSEMResults <- function(object, ...) {
                  sum(ncol(S) + nrow(Lambda_cross) + ncol(vcv_delta))), vcv_zeta) 
   )
   rownames(A2) <- colnames(A2) <- names 
-round(A2, 5)
+
   ## Distinguish and get dimensions --------------------------------------------
   indep_vars <- rownames((A1[rowSums(A1) == 0, ]))
   dep_vars   <- setdiff(rownames(A1), indep_vars)
@@ -319,6 +326,8 @@ round(A2, 5)
   index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
 
   Sigma[which(index == 1)] <- S[which(index == 1)]
+  
+  diag(Sigma) <- 1
   
   return(Sigma)
 }
