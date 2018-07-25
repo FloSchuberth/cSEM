@@ -182,7 +182,7 @@ summary.cSEMResults <- function(object, .what = NULL) {
 #'
 #' @export
 #'
-fitted.cSEMResults <- function(object, ...) {
+fitted.cSEMResults <- function(object) {
   # Implementation is inspired by the matrixpls package licensed under GPL-3
   
   # Function to compute the model implied VCV matrix of the indicators
@@ -371,4 +371,73 @@ effects.cSEMResults <- function(object) {
   list(direct = direct[vars_endo, , drop = FALSE], 
        indirect = indirect[vars_endo, , drop = FALSE], 
        total = total[vars_endo, , drop = FALSE])
+}
+
+#' `cSEMResults` method to check the validity of the results
+#'
+#' Check the validity of the estimated quantities.
+#' 
+#' @usage status(object)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @return A NULL vector or a vector of status codes pointing to specific problems. 
+#' Problems are:
+#'  \itemize{
+#' \item 1 Algorithm has not not converged
+#' \item 2: at least one absolute standardized loading estimate is larger than 1,
+#' which implies either a negative veriance of the measurement error or
+#' a correlation larger than 1
+#' \item 3: construct VCV is not positive semi-definit
+#' \item 4 model-implied indicators VCV is not positive semi-definit
+#' }
+#' 
+#' @export
+#'
+
+status <- function(object){
+  UseMethod("status")
+}
+
+status.cSEMResults <- function(object){
+  
+  # 0: Everything is fine
+  # 1 Algorithm has not not converged
+  # 2: at least one absolute standardized loading estimate is larger than 1,
+  # which implies either a negative veriance of the measurement error or
+  # a correlation larger than 1
+  # 3: construct VCV is not positive semi-definit
+  # 4 model-implied indicators VCV is not positive semi-definit
+
+  stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE)
+  
+  if(object$Information$Weight_approach == "PLS") {
+    
+    if(!object$Information$Convergence_status) {
+      stat["1"] <- TRUE
+    }
+    
+    if(max(abs(object$Estimates$Cross_loadings)) > 1) {
+      stat["2"] <- TRUE
+    }
+    
+    if(!matrixcalc::is.positive.semi.definite(object$Estimates$Construct_VCV)) {
+      stat["3"] <- TRUE
+    }
+    
+    if(!matrixcalc::is.positive.semi.definite(fitted(object))) {
+      stat["4"] <- TRUE
+    }
+    # If if no problem occured, it seems that the estimation is fine.
+    if(sum(stat) == 0) {
+      stat <- NULL
+    }
+    
+  } else {
+    stop("Only applicable if PLS is used.", call. = FALSE)
+  }
+  
+  return(stat) 
 }
