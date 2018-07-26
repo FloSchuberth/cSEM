@@ -13,23 +13,31 @@
 #'
 #' @export
 #'
-print.cSEMResults <- function(object) {
+print.cSEMResults <- function(.object) {
 
   cat(cli::rule(line = "bar2"), "\n")
   cat(cli::rule(center = "Overview"), "\n\n")
-  cat("Estimation was successful. The result is a named list of class " %+% bold("cSEMResults") %+%" \n",
-      "containing the following list elements (:\n\n\t",
-      "- ", crayon::green("Estimates\n\t"),
-      "- ", crayon::green("Information\n\n"), sep = "")
-  cat("To get an overview or help type: \n\n\t",
-      "- ", crayon::magenta("?"), crayon::cyan("cSEMResults"),"\n\t",
-      "- ", crayon::magenta("str"), "(", crayon::cyan("<listname>"), ")\n\t",
-      "- ", crayon::magenta("summary"), "(", crayon::cyan("<listname>"), ") or \n\t",
-      "- ", crayon::magenta("listviewer"), crayon::yellow("::"), crayon::magenta("jsondedit"),
-      "(", crayon::cyan("<listname>"), ", ", crayon::red("mode"), " = ", crayon::cyan("'view'"), ")\n\n", sep = "")
-  cat("If you wish to access the list elements directly type e.g. \n\t",
-      "- ", crayon::cyan("<listname>"), crayon::yellow("$"), crayon::green("Estimates"), "\n", sep = "")
-  cat(cli::rule(line = "bar2"), "\n")
+  if(length(.object) > 1) {
+    cat("Estimation status:\n\n\t")
+        for(i in names(.object)) {
+          cat(crayon::col_align(i, 10), ": ", 
+              ifelse(.object[[i]]$Information$Weight_info$Convergence_status == TRUE, "successful\n\t", "not successful\n\t"), sep = "")
+        }
+  } else {
+    cat("Estimation was successful. The result is a named list of class " %+% bold("cSEMResults") %+%" \n",
+        "containing the following list elements (:\n\n\t",
+        "- ", crayon::green("Estimates\n\t"),
+        "- ", crayon::green("Information\n\n"), sep = "")
+    cat("To get an overview or help type: \n\n\t",
+        "- ", crayon::magenta("?"), crayon::cyan("cSEMResults"),"\n\t",
+        "- ", crayon::magenta("str"), "(", crayon::cyan("<listname>"), ")\n\t",
+        "- ", crayon::magenta("summary"), "(", crayon::cyan("<listname>"), ") or \n\t",
+        "- ", crayon::magenta("listviewer"), crayon::yellow("::"), crayon::magenta("jsondedit"),
+        "(", crayon::cyan("<listname>"), ", ", crayon::red("mode"), " = ", crayon::cyan("'view'"), ")\n\n", sep = "")
+    cat("If you wish to access the list elements directly type e.g. \n\t",
+        "- ", crayon::cyan("<listname>"), crayon::yellow("$"), crayon::green("Estimates"), "\n", sep = "")
+    cat(cli::rule(line = "bar2"), "\n")
+  }
 }
 
 #' `cSEMResultssummary` method for `print()`

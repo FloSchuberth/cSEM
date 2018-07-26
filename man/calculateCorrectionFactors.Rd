@@ -11,8 +11,7 @@ calculateCorrectionFactors(.S = NULL, .W = NULL, .csem_model = NULL,
 \item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 where K is the number of indicators.}
 
-\item{.W}{The (J x K) weight matrix, where J is the number of constructs and
-K the number of indicators.}
+\item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
 

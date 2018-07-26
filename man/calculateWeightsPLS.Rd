@@ -23,7 +23,7 @@ or a \link{cSEMModel} object.}
 \item{.PLS_mode}{Either a named vector specifying the mode that should be used for
 each construct in the form \code{name = "mode"}, a single character
 string giving the mode that should be used for all constructs or \code{NULL}.
-Possible choices are: "\emph{ModeA}" or "\emph{ModeB}".
+Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
 If \code{NULL}, \code{cSEM} will choose the appropriate mode according to the type
 of construct used. The argument is ignored if \code{.approach_weight} is not PLS.}
 

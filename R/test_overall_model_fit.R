@@ -6,7 +6,7 @@ testOverallModelFit <- function(
   .alpha=0.05,
   .runs=499,
   ...
-  )
+  ) {
   
   # Extract required infromation 
   X=.object$Informatio$Dataset

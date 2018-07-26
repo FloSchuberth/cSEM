@@ -7,10 +7,9 @@
 fitted(object, test = NULL)
 }
 \arguments{
-\item{object}{An R object of class \link{cSEMResults}.}
-
-\item{...}{Further arguments to be passed down to other functions.
-See \link{args_default} for a complete list of possible arguments and their defaults.}
+\item{object}{An R object of class \link{cSEMResults}.
+#' @param .only_dots Logical. Should only those arguments to be passed to lower level functions via the
+\code{...} argument of the \link{csem} or \link{cca} function be returned. Defaults to \code{FALSE}.}
 
 \item{test}{not used}
 }

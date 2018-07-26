@@ -7,7 +7,9 @@
 summary(object, .what = NULL)
 }
 \arguments{
-\item{object}{An R object of class \link{cSEMResults}.}
+\item{object}{An R object of class \link{cSEMResults}.
+#' @param .only_dots Logical. Should only those arguments to be passed to lower level functions via the
+\code{...} argument of the \link{csem} or \link{cca} function be returned. Defaults to \code{FALSE}.}
 }
 \value{
 An object of class \code{cSEMResultssummary} for which the following methods exist:

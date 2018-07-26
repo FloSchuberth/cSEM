@@ -10,11 +10,11 @@ estimatePathOLS(.H = NULL, .W = NULL, .Q = NULL, .P = NULL,
 \arguments{
 \item{.H}{The (N x J) matrix of proxy values.}
 
-\item{.W}{The (J x K) weight matrix, where J is the number of constructs and
-K the number of indicators.}
+\item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
 
-\item{.Q}{A vector of reliability coefficients with element names equal to
-the names of the J construct names used in the measurement model.}
+\item{.Q}{A vector of proxy-construct correlations with element names equal to
+the names of the J construct names used in the measurement model. Note
+Q^2 is also called the reliability coefficient.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
 
