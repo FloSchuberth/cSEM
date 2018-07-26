@@ -1,12 +1,12 @@
+#' @export 
+
 # Test for overall model fit
 
-testOverallModelFit <- function(
-  .object,
-  .dropInadmissibles=TRUE,
-  .alpha=0.05,
-  .runs=499,
-  ...
-  ) {
+Test_for_overall_model_fit=function(.object,
+                                    .dropInadmissibles=TRUE,
+                                    .alpha=0.05,
+                                    .runs=499,
+                                    ...){
   
   # Extract required infromation 
   X=.object$Informatio$Dataset
@@ -16,7 +16,7 @@ testOverallModelFit <- function(
   
   
   # Calculate test statistic
-  teststat=c(dG=dG(.object), SRMR=SRMR(.object), dL=dL(.object))
+  teststat=c(dG=dG(.A=S,.B=Sigma_hat), SRMR=SRMR(.object), dL=dL(.A=S,.B=Sigma_hat))
   
   S_half=solve(expm::sqrtm(S))
   Sig_half=expm::sqrtm(Sigma_hat)
@@ -49,16 +49,28 @@ testOverallModelFit <- function(
     # if it is controlled for inadmissible
     if(.dropInadmissibles){
       if(0 %in% status_code){
-        c(dG = dG(Est_temp), SRMR = SRMR(Est_temp), dL=dL(Est_temp)) 
+        c(dG = dG(.A=Est_temp$Estimates$Indicator_VCV,.B=fitted(Est_temp)),
+          SRMR = SRMR(Est_temp),
+          dL=dL(.A=Est_temp$Estimates$Indicator_VCV,.B=fitted(Est_temp))) 
       }
       # else, i.e., dropInadmissible == FALSE
     }else{ 
-      c(dG = dG(Est_temp), SRMR = SRMR(Est_temp), dL=dL(Est_temp))
+      c(dG = dG(.A=Est_temp$Estimates$Indicator_VCV,.B=fitted(Est_temp)),
+        SRMR = SRMR(Est_temp),
+        dL=dL(.A=Est_temp$Estimates$Indicator_VCV,.B=fitted(Est_temp)))
     }
   })
   ref_dist_matrix=do.call(cbind,ref_dist)
   critical_value=apply(ref_dist_matrix,1,quantile,1-.alpha)
   
-  list(Test_statistic=teststat,Critical_value=critical_value, Number_admissibles=nrow(ref_dist_matrix)) 
+  
+  if(length(.alpha)>1){
+    decision = apply(critical_value,1,function(x){teststat<x})
+  }
+  if(length(.alpha)==1){
+    decision = teststat<critical_value
+  }
+  
+  list(Test_statistic=teststat,Critical_value=critical_value, Decision=decision, Number_admissibles=ncol(ref_dist_matrix)) 
   
 }

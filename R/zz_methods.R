@@ -423,6 +423,10 @@ status.cSEMResults <- function(.object){
   # a correlation larger than 1
   # 3: construct VCV is not positive semi-definit
   # 4 model-implied indicators VCV is not positive semi-definit
+  
+  if(.object$Information$Model$model_type != "Linear"){
+    stop("Currently, the status function only works for linear models.",
+         call. = FALSE)}
 
   stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE)
   

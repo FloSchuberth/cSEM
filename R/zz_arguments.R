@@ -21,8 +21,8 @@
 #'   structural coefficients. Possible choices are: "*OLS*", "*2SLS*", or "*3SLS*".
 #'   Defaults to "*OLS*".
 #' @param .approach_weights Character string. The name of the approach used to
-#'   obtain composite weights. Possible choices are: "*PLS*", "*SUMCOR*", "*MAXVAR*",
-#'   "*SSQCOR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*fixed*", or "*unit*".
+#'   obtain composite weights. Possible choices are: "*PLS*", "*SUMCORR*", "*MAXVAR*",
+#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*fixed*", or "*unit*".
 #'   Defaults to "*PLS*".
 #' @param .args_used A list of argument names and user picked values. Usually captured by 
 #'   `as.list(match_call())`.
