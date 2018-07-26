@@ -6,6 +6,9 @@
 \usage{
 print(object)
 }
+\arguments{
+\item{.object}{An R object of class \link{cSEMResults}.}
+}
 \description{
 The \link{cSEMResults} method for the generic function \code{\link[=print]{print()}}.
 }

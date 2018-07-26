@@ -6,24 +6,23 @@
 #' be more convenient to use [csem] or [cca] instead.
 #'
 #' @usage workhorse(
-#'   .data                    = NULL,
-#'   .model                   = NULL,
-#'   .approach_cf             = NULL,
-#'   .approach_nl             = NULL,
-#'   .approach_paths          = NULL,
-#'   .approach_weights        = NULL,
-#'   .disattenuate            = NULL,
-#'   .estimate_structural     = NULL,
-#'   .ignore_structural_model = NULL,
-#'   .iter_max                = NULL,
-#'   .normality               = NULL,
-#'   .PLS_mode                = NULL,
-#'   .PLS_weight_scheme_inner = NULL,
-#'   .tolerance               = NULL,
-#'   .reliabilities           = NULL,
-#'   .dominant_indicators = NULL, 
-#'   .standardize             = NULL
-#'    )
+#'     .data                    = args_default()$.data,
+#'     .model                   = args_default()$.model,
+#'     .approach_cf             = args_default()$.approach_cf,
+#'     .approach_nl             = args_default()$.approach_nl,
+#'     .approach_paths          = args_default()$.approach_paths,
+#'     .approach_weights        = args_default()$.approach_weights,
+#'     .disattenuate            = args_default()$.disattenuate,
+#'     .dominant_indicators     = args_default()$.dominant_indicators,
+#'     .estimate_structural     = args_default()$.estimate_structural,
+#'     .ignore_structural_model = args_default()$.ignore_structural_model,
+#'     .iter_max                = args_default()$.iter_max,
+#'     .normality               = args_default()$.normality,
+#'     .PLS_mode                = args_default()$.PLS_mode,
+#'     .PLS_weight_scheme_inner = args_default()$.PLS_weight_scheme_inner,
+#'     .reliabilities           = args_default()$.reliabilities,
+#'     .tolerance               = args_default()$.tolerance
+#'     )
 #'
 #' @inheritParams csem_arguments
 #'
@@ -84,11 +83,11 @@ workhorse <- function(
       .PLS_weight_scheme_inner  = .PLS_weight_scheme_inner,
       .ignore_structural_model  = .ignore_structural_model
     )
-  } else if(.approach_weights %in% c("SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR")) {
+  } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
-      .data                     = data,
+      .data                     = S,
       .model                    = csem_model,
-      .criteria                 = .approach_weights
+      .approach                 = .approach_weights
     )
   } else if(.approach_weights == "GSCA") {
     W <- calculateWeightsGSCA(
@@ -102,8 +101,8 @@ workhorse <- function(
     )
   } else if(.approach_weights == "unit") {
     W <- calculateWeightsUnit(
-      .data                     = NULL,
-      .model                    = csemmodel
+      .data                     = S,
+      .model                    = csem_model
     )
   } else {
     stop("Unknown weighting approach.", call. = FALSE)
@@ -160,6 +159,7 @@ workhorse <- function(
     correction_factors <- calculateCorrectionFactors(
       .S            = S,
       .W            = W$W,
+      .modes        = W$Modes,
       .csem_model   = csem_model,
       .approach_cf  = .approach_cf)
   } else {
@@ -171,12 +171,12 @@ workhorse <- function(
   # rho_A in Dijkstra & Henseler (2015) - Consistent partial least squares path modeling
   
   Q <- calculateProxyConstructCV(
-    .W             = W$W,
-    .csem_model    = csem_model,
-    .modes         = W$Modes,
-    .disattenuate  = .disattenuate,
+    .W                  = W$W,
+    .csem_model         = csem_model,
+    .modes              = W$Modes,
+    .disattenuate       = .disattenuate,
     .correction_factors = correction_factors,
-    .reliabilities = .reliabilities
+    .reliabilities      = .reliabilities
   ) 
   
   ## Calculate loadings and cross-loadings (covariance between construct and indicators)
@@ -238,12 +238,11 @@ workhorse <- function(
         "PLS_Modes"          = W$Modes,
         "Number_iterations"  = W$Iterations,
         "Convergence_status" = W$Conv_status
-      )           
+      )
     )
   )
-  ## Set class for Output
-  class(out) <- "cSEMResults"
-  return(out)
+
+  invisible(out)
 
   ### For maintenance: ---------------------------------------------------------
   # X (N x K)   := Matrix of indicator values (=data)

@@ -10,7 +10,7 @@ Authors@R: c(person(given = "Manuel", family = "Steiner",
              person(given = "Tamara", family = "Schamberger",
                     role  = c("aut"),
                     email = "tamara.schamberger@uni-wuerzburg.de"))
-Depends: R (>= 3.4.2)
+Depends: R (>= 3.5.0)
 Description: Analyse structural equation models, including path 
     analysis and confirmatory composite analysis using a composite
     based approach.

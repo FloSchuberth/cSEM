@@ -21,8 +21,8 @@
 #'   structural coefficients. Possible choices are: "*OLS*", "*2SLS*", or "*3SLS*".
 #'   Defaults to "*OLS*".
 #' @param .approach_weights Character string. The name of the approach used to
-#'   obtain composite weights. Possible choices are: "*PLS*", "*SUMCOR*", "*MAXVAR*",
-#'   "*SSQCOR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*fixed*", or "*unit*".
+#'   obtain composite weights. Possible choices are: "*PLS*", "*SUMCORR*", "*MAXVAR*",
+#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*fixed*", or "*unit*".
 #'   Defaults to "*PLS*".
 #' @param .args_used A list of argument names and user picked values. Usually captured by 
 #'   `as.list(match_call())`.
@@ -50,12 +50,12 @@
 #'   the specified number, weights of iteration step `.iter_max - 1`  will be returned
 #'   with a warning. Defaults to `100`. The argument is ignored if
 #'   `.approach_weight` is not PLS.
-#' @param .mode A named vector giving the mode used to obtain new outer weights.
+#' @param .modes A named vector giving the mode used to obtain new outer weights.
 #' @param .normality Logical. Should joint normality be assumed if the model
 #'   contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
 #'   Defaults to `TRUE`.
-#' @param object An R object of class [cSEMResults].
-#' #' @param .only_dots Logical. Should only those arguments to be passed to lower level functions via the 
+#' @param .object An R object of class [cSEMResults].
+#' @param .only_dots Logical. Should only those arguments to be passed to lower level functions via the 
 #' `...` argument of the [csem] or [cca] function be returned. Defaults to `FALSE`.
 #' @param .permutations Integer. The number permutations used for step 2 and 3 of the test.
 #' Defaults to `100`. Note however that the number should typically be a lot higher.

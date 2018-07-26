@@ -16,7 +16,7 @@
 #'   .data             = NULL,
 #'   .model            = NULL,
 #'   .group_var        = NULL,
-#'   .approach_weights = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR",
+#'   .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
 #'                         "GSCA", "fixed", "unit")
 #'   .permutations     = 100,
 #'   .alpha            = c(0.1, 0.05, 0.01),
@@ -44,7 +44,7 @@
 testMICOM <- function(.data             = NULL,
                       .model            = NULL,
                       .group_var        = NULL,
-                      .approach_weights = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR",
+                      .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                             "GSCA", "fixed", "unit"),
                       .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
                       .permutations      = 100,

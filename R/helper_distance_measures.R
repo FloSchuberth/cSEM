@@ -2,20 +2,20 @@
 
 ### Squared euclidean distance
 
-dL <- function(.object) {
+dL <- function(.A,.B) {
   
-  S     <- .object$Estimates$Indicator_VCV
-  Sigma <- fitted(.object)
-  0.5*sum((S - Sigma)[lower.tri(S, diag = FALSE)]^2)
+  # S     <- .object$Estimates$Indicator_VCV
+  # Sigma <- fitted(.object)
+  0.5*sum((.A - .B)[lower.tri(.A, diag = FALSE)]^2)
 }
 
 ### Geodesic distance
 
-dG <- function(.object) {
+dG <- function(.A,.B) {
   
-  S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fitted(.object)
-  Eigen     <- eigen(solve(S) %*% Sigma_hat)
+  # S         <- .object$Estimates$Indicator_VCV
+  # Sigma_hat <- fitted(.object)
+  Eigen     <- eigen(solve(.A) %*% .B)
   logEigenvaluessq <- (log(Eigen$values, base = 10))^2   
   # not sure if logarithm naturalis is used or logarithm with base 10. 
   
