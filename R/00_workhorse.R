@@ -40,25 +40,22 @@
 #'
 
 workhorse <- function(
-  .data                    = NULL,
-  .model                   = NULL,
-  .approach_cf             = c("dist_euclid", "dist_euclid_weighted", "fisher_transformed",
-                               "mean_geometric", "mean_harmonic", "mean_arithmetic",
-                               "geo_of_harmonic"),
-  .approach_nl             = c("none", "replace"),
-  .approach_paths          = c("OLS", "2SLS", "3SLS"),
-  .approach_weights        = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR",
-                               "GSCA", "fixed", "unit"),
-  .disattenuate            = TRUE,
-  .dominant_indicators     = NULL,
-  .estimate_structural     = TRUE,
-  .ignore_structural_model = FALSE,
-  .iter_max                = 100,
-  .normality               = TRUE,
-  .PLS_mode                = NULL,
-  .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-  .reliabilities           = NULL, 
-  .tolerance               = 1e-05
+  .data                    = args_default()$.data,
+  .model                   = args_default()$.model,
+  .approach_cf             = args_default()$.approach_cf,
+  .approach_nl             = args_default()$.approach_nl,
+  .approach_paths          = args_default()$.approach_paths,
+  .approach_weights        = args_default()$.approach_weights,
+  .disattenuate            = args_default()$.disattenuate,
+  .dominant_indicators     = args_default()$.dominant_indicators,
+  .estimate_structural     = args_default()$.estimate_structural,
+  .ignore_structural_model = args_default()$.ignore_structural_model,
+  .iter_max                = args_default()$.iter_max,
+  .normality               = args_default()$.normality,
+  .PLS_mode                = args_default()$.PLS_mode,
+  .PLS_weight_scheme_inner = args_default()$.PLS_weight_scheme_inner,
+  .reliabilities           = args_default()$.reliabilities,
+  .tolerance               = args_default()$.tolerance
   ) {
 
   ### Preprocessing ============================================================
@@ -232,19 +229,18 @@ workhorse <- function(
       "Construct_reliabilities"= Q^2,
       "Correction_factors"     = correction_factors,
       "R2"                     = estim_results$R2
-     ),
+    ),
     "Information" = list(
-      "Model"                       = csem_model,
-      "Number_of_observations"      = nrow(X),
-      "Weight_approach"             = .approach_weights,
-      "Path_approach"               = .approach_paths,
-      "Construct_types"             = csem_model$construct_type,
-      "PLS_Modes"                   = W$Modes,
-      "PLS_inner_weightning_scheme" = .PLS_weight_scheme_inner,
-      "Number_iterations"           = W$Iterations,
-      "Convergence_status"          = W$Conv_status
-      )
+      "Data"          = X,
+      "Model"         = csem_model,
+      "Arguments"     = as.list(match.call()[-1]),
+      "Weight_info"   = list(
+        "PLS_Modes"          = W$Modes,
+        "Number_iterations"  = W$Iterations,
+        "Convergence_status" = W$Conv_status
+      )           
     )
+  )
   ## Set class for Output
   class(out) <- "cSEMResults"
   return(out)

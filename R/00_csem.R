@@ -83,6 +83,7 @@
 csem <- function(
   .data                    = NULL,
   .model                   = NULL,
+  .id                      = NULL,
   .approach_weights        = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR",
                                "GSCA", "fixed", "unit"),
   .approach_paths          = c("OLS", "2SLS", "3SLS"),
@@ -94,40 +95,29 @@ csem <- function(
   .reliabilities           = NULL,
   ...
   ) {
-
-  ## Collect arguments
-  approach_weights <- match.arg(.approach_weights)
-  approach_paths   <- match.arg(.approach_paths)
-  approach_nl      <- match.arg(.approach_nl)
-
-  if(approach_weights == "PLS") {
-    PLS_weight_scheme_inner <- match.arg(.PLS_weight_scheme_inner)
+  
+  ## Collect and handle arguments
+  args_used   <- as.list(match.call())[-1]
+  args        <- handleArgs(args_used)
+  args_needed <- args[intersect(names(args[-which(names(args) == ".id")]), 
+                                names(as.list(formals(workhorse))))] 
+  ## 
+  if(!is.null(.id)) {
+    
+    data_split <- split(.data, f = .data[, .id])
+    out <- lapply(data_split, function(x) {
+      
+      args_needed[[".data"]] <- x[, -which(names(x) == .id)]
+      do.call(workhorse, args_needed)
+      
+    })
+    
   } else {
-    PLS_weight_scheme_inner <- NULL
+    out <- do.call(workhorse, args_needed)
   }
-
-  ## Handle arguments passed via the ... argument
-  args <- handleArgs(list(...))
-
-  ## Call workhorse
-
-  workhorse(
-    .data                    = .data,
-    .model                   = .model,
-    .approach_weights        = approach_weights,
-    .approach_paths          = approach_paths,
-    .approach_nl             = approach_nl,
-    .disattenuate            = .disattenuate,
-    .PLS_weight_scheme_inner = PLS_weight_scheme_inner,
-    .PLS_mode                = .PLS_mode,
-    .estimate_structural     = .estimate_structural,
-    .reliabilities           = .reliabilities,
-    ## Other arguments passed via ...
-    .tolerance               = args$.tolerance,
-    .iter_max                = args$.iter_max,
-    .ignore_structural_model = args$.ignore_structural_model,
-    .approach_cf             = args$.approach_cf,
-    .normality               = args$.normality,
-    .dominant_indicators     = args$.dominant_indicators
-    )
+  
+  ## Set class for output
+  class(out) <- "cSEMResults"
+  return(out)
+  return(out)
 }

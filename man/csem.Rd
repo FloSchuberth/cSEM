@@ -23,6 +23,9 @@ csem(
 \item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 or a \link{cSEMModel} object.}
 
+\item{.id}{Charachter string. The name of the column of \code{.data} used to split
+the date into groups.}
+
 \item{.approach_weights}{Character string. The name of the approach used to
 obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCOR}", "\emph{MAXVAR}",
 "\emph{SSQCOR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
@@ -46,16 +49,17 @@ Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight
 \item{.PLS_mode}{Either a named vector specifying the mode that should be used for
 each construct in the form \code{name = "mode"}, a single character
 string giving the mode that should be used for all constructs or \code{NULL}.
-Possible choices are: "\emph{ModeA}" or "\emph{ModeB}".
+Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
 If \code{NULL}, \code{cSEM} will choose the appropriate mode according to the type
 of construct used. The argument is ignored if \code{.approach_weight} is not PLS.}
 
 \item{.estimate_structural}{Logical. Should the structural (path) coefficients
 be estimated? Defaults to \code{TRUE}.}
 
-\item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficient.
+\item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficients.
 Element names are equal to the names of the J construct names. Reliabilities
-may be given for a subset of the constructs.}
+may be given for a subset of the constructs. Defaults to \code{NULL} in which case
+reliabilites are estimated by \code{cSEM}.}
 
 \item{...}{Further arguments to be passed down to other functions.
 See \link{args_default} for a complete list of possible arguments and their defaults.}

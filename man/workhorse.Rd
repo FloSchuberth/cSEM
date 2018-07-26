@@ -75,7 +75,7 @@ Defaults to \code{TRUE}.}
 \item{.PLS_mode}{Either a named vector specifying the mode that should be used for
 each construct in the form \code{name = "mode"}, a single character
 string giving the mode that should be used for all constructs or \code{NULL}.
-Possible choices are: "\emph{ModeA}" or "\emph{ModeB}".
+Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
 If \code{NULL}, \code{cSEM} will choose the appropriate mode according to the type
 of construct used. The argument is ignored if \code{.approach_weight} is not PLS.}
 
@@ -83,9 +83,10 @@ of construct used. The argument is ignored if \code{.approach_weight} is not PLS
 used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight} is not PLS.}
 
-\item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficient.
+\item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficients.
 Element names are equal to the names of the J construct names. Reliabilities
-may be given for a subset of the constructs.}
+may be given for a subset of the constructs. Defaults to \code{NULL} in which case
+reliabilites are estimated by \code{cSEM}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence of the PLS
 algorithm. Defaults to \code{1e-05}.

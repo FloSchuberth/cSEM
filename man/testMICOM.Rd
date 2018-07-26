@@ -37,7 +37,8 @@ Defaults to \code{100}. Note however that the number should typically be a lot h
 
 \item{.alpha}{A numeric vector of significance levels. Defaults to \code{c(0.1, 0.05, 0.01)}.}
 
-\item{.verbose}{Logical. Should information be printed to the console ?}
+\item{.verbose}{Logical. Should information be printed to the console? Defaults
+to \code{TRUE}.}
 
 \item{...}{Further arguments to be passed down to other functions.
 See \link{args_default} for a complete list of possible arguments and their defaults.}

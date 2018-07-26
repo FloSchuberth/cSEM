@@ -13,23 +13,31 @@
 #'
 #' @export
 #'
-print.cSEMResults <- function(object) {
+print.cSEMResults <- function(.object) {
 
   cat(cli::rule(line = "bar2"), "\n")
   cat(cli::rule(center = "Overview"), "\n\n")
-  cat("Estimation was successful. The result is a named list of class " %+% bold("cSEMResults") %+%" \n",
-      "containing the following list elements (:\n\n\t",
-      "- ", crayon::green("Estimates\n\t"),
-      "- ", crayon::green("Information\n\n"), sep = "")
-  cat("To get an overview or help type: \n\n\t",
-      "- ", crayon::magenta("?"), crayon::cyan("cSEMResults"),"\n\t",
-      "- ", crayon::magenta("str"), "(", crayon::cyan("<listname>"), ")\n\t",
-      "- ", crayon::magenta("summary"), "(", crayon::cyan("<listname>"), ") or \n\t",
-      "- ", crayon::magenta("listviewer"), crayon::yellow("::"), crayon::magenta("jsondedit"),
-      "(", crayon::cyan("<listname>"), ", ", crayon::red("mode"), " = ", crayon::cyan("'view'"), ")\n\n", sep = "")
-  cat("If you wish to access the list elements directly type e.g. \n\t",
-      "- ", crayon::cyan("<listname>"), crayon::yellow("$"), crayon::green("Estimates"), "\n", sep = "")
-  cat(cli::rule(line = "bar2"), "\n")
+  if(length(.object) > 1) {
+    cat("Estimation status:\n\n\t")
+        for(i in names(.object)) {
+          cat(crayon::col_align(i, 10), ": ", 
+              ifelse(.object[[i]]$Information$Weight_info$Convergence_status == TRUE, "successful\n\t", "not successful\n\t"), sep = "")
+        }
+  } else {
+    cat("Estimation was successful. The result is a named list of class " %+% bold("cSEMResults") %+%" \n",
+        "containing the following list elements (:\n\n\t",
+        "- ", crayon::green("Estimates\n\t"),
+        "- ", crayon::green("Information\n\n"), sep = "")
+    cat("To get an overview or help type: \n\n\t",
+        "- ", crayon::magenta("?"), crayon::cyan("cSEMResults"),"\n\t",
+        "- ", crayon::magenta("str"), "(", crayon::cyan("<listname>"), ")\n\t",
+        "- ", crayon::magenta("summary"), "(", crayon::cyan("<listname>"), ") or \n\t",
+        "- ", crayon::magenta("listviewer"), crayon::yellow("::"), crayon::magenta("jsondedit"),
+        "(", crayon::cyan("<listname>"), ", ", crayon::red("mode"), " = ", crayon::cyan("'view'"), ")\n\n", sep = "")
+    cat("If you wish to access the list elements directly type e.g. \n\t",
+        "- ", crayon::cyan("<listname>"), crayon::yellow("$"), crayon::green("Estimates"), "\n", sep = "")
+    cat(cli::rule(line = "bar2"), "\n")
+  }
 }
 
 #' `cSEMResultssummary` method for `print()`
@@ -182,7 +190,7 @@ summary.cSEMResults <- function(object, .what = NULL) {
 #'
 #' @export
 #'
-fitted.cSEMResults <- function(object, ...) {
+fitted.cSEMResults <- function(object) {
   # Implementation is inspired by the matrixpls package licensed under GPL-3
   
   # Function to compute the model implied VCV matrix of the indicators
@@ -229,7 +237,8 @@ fitted.cSEMResults <- function(object, ...) {
   Lambda <- object$Estimates$Loading_estimates 
   Lambda_cross <- object$Estimates$Cross_loadings
   
-  a <- object$Information$Model$vars_exo
+  a1 <- object$Information$Model$vars_exo
+  a2 <- object$Information$Model$vars_endo
   
   ## Compute variances of the errors (diagonal matrices Var(delta) and Var(zeta)).
   
@@ -237,11 +246,17 @@ fitted.cSEMResults <- function(object, ...) {
   Delta <- vcv_delta
   diag(Delta) <- 1
 
-  vcv_zeta <- diag(1 - diag(B%*% P %*% t(B)))
-  vcv_zeta[1:length(a), 1:length(a)] <- 0
+  tmp <- diag(1 - diag(solve(diag(length(a2)) - B[a2, a2]) %*% B[a2, a1]%*% 
+    P[a1, a1] %*% t(B[a2, a1]) %*% t(solve(diag(length(a2)) - B[a2, a2]))))
+  rownames(tmp) <- colnames(tmp) <- a2
+  
+  # vcv_zeta <- diag(1 - diag(B%*% P %*% t(B)))
+  # vcv_zeta[1:length(a), 1:length(a)] <- 0
+  vcv_zeta <- matrix(0, nrow(B), ncol(B), dimnames = list(rownames(B), colnames(B)))
+  vcv_zeta[a2, a2] <- tmp
+
   Zeta <- vcv_zeta
-  diag(Zeta) <- 1
-  Zeta[1:length(a), 1:length(a)] <- 0
+  Zeta[Zeta != 0] <- 1
   
   ## Get names of all variables (dependent and independent)
   names <- c(colnames(S), rownames(Lambda), paste0("del", 1:nrow(vcv_delta)),
@@ -278,7 +293,7 @@ fitted.cSEMResults <- function(object, ...) {
                  sum(ncol(S) + nrow(Lambda_cross) + ncol(vcv_delta))), vcv_zeta) 
   )
   rownames(A2) <- colnames(A2) <- names 
-round(A2, 5)
+
   ## Distinguish and get dimensions --------------------------------------------
   indep_vars <- rownames((A1[rowSums(A1) == 0, ]))
   dep_vars   <- setdiff(rownames(A1), indep_vars)
@@ -319,6 +334,12 @@ round(A2, 5)
   index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
 
   Sigma[which(index == 1)] <- S[which(index == 1)]
+  
+  diag(Sigma) <- 1
+  
+  
+  # make symmetric; it may happen that the matrix is symmetric due to maschine calculations
+  Sigma[lower.tri(Sigma)] = t(Sigma)[lower.tri(Sigma)]
   
   return(Sigma)
 }
@@ -362,4 +383,73 @@ effects.cSEMResults <- function(object) {
   list(direct = direct[vars_endo, , drop = FALSE], 
        indirect = indirect[vars_endo, , drop = FALSE], 
        total = total[vars_endo, , drop = FALSE])
+}
+
+#' `cSEMResults` method to check the validity of the results
+#'
+#' Check the validity of the estimated quantities.
+#' 
+#' @usage status(object)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @return A NULL vector or a vector of status codes pointing to specific problems. 
+#' Problems are:
+#'  \itemize{
+#' \item 1 Algorithm has not not converged
+#' \item 2: at least one absolute standardized loading estimate is larger than 1,
+#' which implies either a negative veriance of the measurement error or
+#' a correlation larger than 1
+#' \item 3: construct VCV is not positive semi-definit
+#' \item 4 model-implied indicators VCV is not positive semi-definit
+#' }
+#' 
+#' @export
+#'
+
+status <- function(object){
+  UseMethod("status")
+}
+
+status.cSEMResults <- function(object){
+  
+  # 0: Everything is fine
+  # 1 Algorithm has not not converged
+  # 2: at least one absolute standardized loading estimate is larger than 1,
+  # which implies either a negative veriance of the measurement error or
+  # a correlation larger than 1
+  # 3: construct VCV is not positive semi-definit
+  # 4 model-implied indicators VCV is not positive semi-definit
+
+  stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE)
+  
+  if(object$Information$Weight_approach == "PLS") {
+    
+    if(!object$Information$Convergence_status) {
+      stat["1"] <- TRUE
+    }
+    
+    if(max(abs(object$Estimates$Cross_loadings)) > 1) {
+      stat["2"] <- TRUE
+    }
+    
+    if(!matrixcalc::is.positive.semi.definite(object$Estimates$Construct_VCV)) {
+      stat["3"] <- TRUE
+    }
+    
+    if(!matrixcalc::is.positive.semi.definite(fitted(object))) {
+      stat["4"] <- TRUE
+    }
+    # If if no problem occured, it seems that the estimation is fine.
+    if(sum(stat) == 0) {
+      stat <- NULL
+    }
+    
+  } else {
+    stop("Only applicable if PLS is used.", call. = FALSE)
+  }
+  
+  return(stat) 
 }

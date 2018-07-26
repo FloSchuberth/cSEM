@@ -15,15 +15,14 @@ calculateOuterWeightsPLS(
 \item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 where K is the number of indicators.}
 
-\item{.W}{The (J x K) weight matrix, where J is the number of constructs and
-K the number of indicators.}
+\item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
 
 \item{.E}{A (J x J) matrix of inner weights.}
 
 \item{.PLS_mode}{Either a named vector specifying the mode that should be used for
 each construct in the form \code{name = "mode"}, a single character
 string giving the mode that should be used for all constructs or \code{NULL}.
-Possible choices are: "\emph{ModeA}" or "\emph{ModeB}".
+Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
 If \code{NULL}, \code{cSEM} will choose the appropriate mode according to the type
 of construct used. The argument is ignored if \code{.approach_weight} is not PLS.}
 }

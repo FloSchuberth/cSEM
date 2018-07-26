@@ -7,8 +7,7 @@
 calculateProxies(.X = NULL, .W = NULL)
 }
 \arguments{
-\item{.W}{The (J x K) weight matrix, where J is the number of constructs and
-K the number of indicators.}
+\item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
 }
 \value{
 The (N x J) matrix of proxy values with column names equal to
