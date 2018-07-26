@@ -335,10 +335,10 @@ fitted.cSEMResults <- function(.object) {
 
   Sigma[which(index == 1)] <- S[which(index == 1)]
   
+  ## Set all diagonal elements to 1
   diag(Sigma) <- 1
   
-  
-  # make symmetric; it may happen that the matrix is symmetric due to maschine calculations
+  # Make symmetric
   Sigma[lower.tri(Sigma)] = t(Sigma)[lower.tri(Sigma)]
   
   return(Sigma)

@@ -56,12 +56,12 @@ calculateProxyVCV <- function(.S = NULL, .W = NULL) {
 #' @return A vector of proxy-construct covariances.
 #'
 calculateProxyConstructCV <- function(
-  .W             = NULL,
-  .csem_model    = NULL,
-  .disattenuate  = NULL,
-  .modes         = NULL,
+  .W                  = NULL,
+  .csem_model         = NULL,
+  .disattenuate       = NULL,
+  .modes              = NULL,
   .correction_factors = NULL,
-  .reliabilities = NULL
+  .reliabilities      = NULL
   ) {
 
   x <- rep(1, times = nrow(.W))

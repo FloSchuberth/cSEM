@@ -70,7 +70,7 @@ the specified number, weights of iteration step \code{.iter_max - 1}  will be re
 with a warning. Defaults to \code{100}. The argument is ignored if
 \code{.approach_weight} is not PLS.}
 
-\item{.mode}{A named vector giving the mode used to obtain new outer weights.}
+\item{.modes}{A named vector giving the mode used to obtain new outer weights.}
 
 \item{.normality}{Logical. Should joint normality be assumed if the model
 contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}.

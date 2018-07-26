@@ -50,7 +50,7 @@
 #'   the specified number, weights of iteration step `.iter_max - 1`  will be returned
 #'   with a warning. Defaults to `100`. The argument is ignored if
 #'   `.approach_weight` is not PLS.
-#' @param .mode A named vector giving the mode used to obtain new outer weights.
+#' @param .modes A named vector giving the mode used to obtain new outer weights.
 #' @param .normality Logical. Should joint normality be assumed if the model
 #'   contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
 #'   Defaults to `TRUE`.

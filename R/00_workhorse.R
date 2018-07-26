@@ -160,6 +160,7 @@ workhorse <- function(
     correction_factors <- calculateCorrectionFactors(
       .S            = S,
       .W            = W$W,
+      .PLS_mode     = W$Modes,
       .csem_model   = csem_model,
       .approach_cf  = .approach_cf)
   } else {
@@ -171,12 +172,12 @@ workhorse <- function(
   # rho_A in Dijkstra & Henseler (2015) - Consistent partial least squares path modeling
   
   Q <- calculateProxyConstructCV(
-    .W             = W$W,
-    .csem_model    = csem_model,
-    .modes         = W$Modes,
-    .disattenuate  = .disattenuate,
+    .W                  = W$W,
+    .csem_model         = csem_model,
+    .modes              = W$Modes,
+    .disattenuate       = .disattenuate,
     .correction_factors = correction_factors,
-    .reliabilities = .reliabilities
+    .reliabilities      = .reliabilities
   ) 
   
   ## Calculate loadings and cross-loadings (covariance between construct and indicators)
@@ -238,10 +239,10 @@ workhorse <- function(
         "PLS_Modes"          = W$Modes,
         "Number_iterations"  = W$Iterations,
         "Convergence_status" = W$Conv_status
-      )           
+      )
     )
   )
-  
+
   invisible(out)
 
   ### For maintenance: ---------------------------------------------------------

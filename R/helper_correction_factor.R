@@ -23,6 +23,7 @@
 calculateCorrectionFactors <- function(
   .S            = NULL,
   .W            = NULL,
+  .modes        = NULL,
   .csem_model   = NULL,
   .approach_cf  = NULL
   ) {
@@ -31,12 +32,21 @@ calculateCorrectionFactors <- function(
   correction_factors <- vector(mode = "double", length = nrow(.W))
   names(correction_factors) <- rownames(.W)
   
+  L <- W %*% S * .csem_model$measurement
+  
   for(j in rownames(.W)) {
 
-    ## Extract vector of weights of block j
-    w_j <- .W[j, ] %>%
-      .[. != 0] %>%
-      as.matrix(.)
+    ## Depending on the mode: extract vector of weights or indicator-proxy
+    # correlations (composite loadings) of block j 
+    if(.modes[j] == "ModeA") {
+      w_j <- .W[j, ] %>%
+        .[. != 0] %>%
+        as.matrix(.)
+    } else {
+      w_j <- .L[j, ] %>%
+        .[. != 0] %>%
+        as.matrix(.)
+    }
 
     ## Check if single indicator block or composite; If yes, set cf to 1
     if(nrow(w_j) == 1 | .csem_model$construct_type[j] == "Composite") {

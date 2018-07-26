@@ -21,6 +21,8 @@ Q^2 is also called the reliability coefficient.}
 
 \item{.disattenuate}{Logical. Should proxy correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+
+\item{.modes}{A named vector giving the mode used to obtain new outer weights.}
 }
 \value{
 The (J x K) matrix of loadings and "cross loadings" (attenuated if required).
