@@ -8,7 +8,7 @@ testMICOM(
   .data             = NULL,
   .model            = NULL,
   .group_var        = NULL,
-  .approach_weights = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR",
+  .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                         "GSCA", "fixed", "unit")
   .permutations     = 100,
   .alpha            = c(0.1, 0.05, 0.01),
@@ -24,8 +24,8 @@ or a \link{cSEMModel} object.}
 \item{.group_var}{Character string. The name of the column used to split the data into groups.}
 
 \item{.approach_weights}{Character string. The name of the approach used to
-obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCOR}", "\emph{MAXVAR}",
-"\emph{SSQCOR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
+obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme

@@ -32,7 +32,7 @@ calculateCorrectionFactors <- function(
   correction_factors <- vector(mode = "double", length = nrow(.W))
   names(correction_factors) <- rownames(.W)
   
-  L <- W %*% S * .csem_model$measurement
+  L <- .W %*% .S * .csem_model$measurement
   
   for(j in rownames(.W)) {
 
@@ -43,7 +43,7 @@ calculateCorrectionFactors <- function(
         .[. != 0] %>%
         as.matrix(.)
     } else {
-      w_j <- .L[j, ] %>%
+      w_j <- L[j, ] %>%
         .[. != 0] %>%
         as.matrix(.)
     }

@@ -110,7 +110,7 @@ calculateWeightsPLS <- function(
       .S        = S,
       .W        = W_iter,
       .E        = E,
-      .PLS_mode = modes
+      .modes    = modes
     )
 
     # Scale weights
