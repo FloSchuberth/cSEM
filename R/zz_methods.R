@@ -17,13 +17,13 @@ print.cSEMResults <- function(.object) {
 
   cat(cli::rule(line = "bar2"), "\n")
   cat(cli::rule(center = "Overview"), "\n\n")
-  if(length(.object) > 1) {
-    cat("Estimation status:\n\n\t")
-        for(i in names(.object)) {
-          cat(crayon::col_align(i, 10), ": ", 
-              ifelse(.object[[i]]$Information$Weight_info$Convergence_status == TRUE, "successful\n\t", "not successful\n\t"), sep = "")
-        }
-  } else {
+  # if(length(.object) > 1) {
+  #   cat("Estimation status:\n\n\t")
+  #       for(i in names(.object)) {
+  #         cat(crayon::col_align(i, 10), ": ", 
+  #             ifelse(.object[[i]]$Information$Weight_info$Convergence_status == TRUE, "successful\n\t", "not successful\n\t"), sep = "")
+  #       }
+  # } else {
     cat("Estimation was successful. The result is a named list of class " %+% bold("cSEMResults") %+%" \n",
         "containing the following list elements (:\n\n\t",
         "- ", crayon::green("Estimates\n\t"),
@@ -37,7 +37,7 @@ print.cSEMResults <- function(.object) {
     cat("If you wish to access the list elements directly type e.g. \n\t",
         "- ", crayon::cyan("<listname>"), crayon::yellow("$"), crayon::green("Estimates"), "\n", sep = "")
     cat(cli::rule(line = "bar2"), "\n")
-  }
+  # }
 }
 
 #' `cSEMResultssummary` method for `print()`
@@ -47,7 +47,7 @@ print.cSEMResults <- function(.object) {
 #' Prints a summary of the results obtained from runinng [csem], [cca], or
 #' [workhorse].
 #'
-#' @usage print(object)
+#' @usage print(.object)
 #'
 #' @inheritParams csem_arguments
 #'
@@ -126,7 +126,7 @@ print.cSEMResultssummary <- function(x, ...) {
 #' Computes a summary of the results obtained from runinng [csem], [cca], or
 #' [workhorse].
 #'
-#' @usage summary(object, .what = NULL)
+#' @usage summary(.object, .what = NULL)
 #'
 #' @inheritParams csem_arguments
 #'
@@ -136,7 +136,7 @@ print.cSEMResultssummary <- function(x, ...) {
 #'
 #' @export
 #'
-summary.cSEMResults <- function(object, .what = NULL) {
+summary.cSEMResults <- function(.object, .what = NULL) {
 
   ## Structure loadings output
   temp <- x$Estimates$Loading_estimates
@@ -181,7 +181,7 @@ summary.cSEMResults <- function(object, .what = NULL) {
 #' linear model for constructs modeled as common factors or composites are 
 #' implemented. An error is given if the model is not linear.
 #'
-#' @usage fitted(object, test = NULL)
+#' @usage fitted(.object, test = NULL)
 #'
 #' @inheritParams csem_arguments
 #' @param test not used
@@ -190,7 +190,7 @@ summary.cSEMResults <- function(object, .what = NULL) {
 #'
 #' @export
 #'
-fitted.cSEMResults <- function(object) {
+fitted.cSEMResults <- function(.object) {
   # Implementation is inspired by the matrixpls package licensed under GPL-3
   
   # Function to compute the model implied VCV matrix of the indicators
@@ -224,21 +224,21 @@ fitted.cSEMResults <- function(object) {
   ### --------------------------------------------------------------------------
   ### Preparation ==============================================================
   ## Check if linear
-  if(object$Information$Model$model_type != "Linear") {
+  if(.object$Information$Model$model_type != "Linear") {
     stop("Model is nonlinear. Currently the model-implied indicator covariance",
          " matrix can only be computed for linear models.", call. = FALSE)
   }
     
   ## Get relevant matrices
   
-  S <- object$Estimates$Indicator_VCV
-  P <- object$Estimates$Construct_VCV
-  B <- object$Estimates$Path_estimates 
-  Lambda <- object$Estimates$Loading_estimates 
-  Lambda_cross <- object$Estimates$Cross_loadings
+  S <- .object$Estimates$Indicator_VCV
+  P <- .object$Estimates$Construct_VCV
+  B <- .object$Estimates$Path_estimates 
+  Lambda <- .object$Estimates$Loading_estimates 
+  Lambda_cross <- .object$Estimates$Cross_loadings
   
-  a1 <- object$Information$Model$vars_exo
-  a2 <- object$Information$Model$vars_endo
+  a1 <- .object$Information$Model$vars_exo
+  a2 <- .object$Information$Model$vars_endo
   
   ## Compute variances of the errors (diagonal matrices Var(delta) and Var(zeta)).
   
@@ -329,7 +329,7 @@ fitted.cSEMResults <- function(object) {
 
   # ### Replace indicators connected to a composite by S
 
-  mod <- object$Information$Model
+  mod <- .object$Information$Model
   composites <- names(mod$construct_type[mod$construct_type == "Composite"])
   index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
 
@@ -348,7 +348,7 @@ fitted.cSEMResults <- function(object) {
 #'
 #' Compute direct, indirect and total effects.
 #'
-#' @usage effects(object)
+#' @usage effects(.object)
 #'
 #' @inheritParams csem_arguments
 #'
@@ -361,14 +361,14 @@ fitted.cSEMResults <- function(object) {
 #'
 #' @export
 #'
-effects.cSEMResults <- function(object) {
+effects.cSEMResults <- function(.object) {
   # Implementation is inspired by the matrixpls package licensed under GPL-3
   
   ## Endogenous (lhs) variables
-  vars_endo <- object$Information$Model$vars_endo
+  vars_endo <- .object$Information$Model$vars_endo
   
   ## Matrix of direct effects:
-  direct <- object$Estimates$Path_estimates
+  direct <- .object$Estimates$Path_estimates
 
   ## Matrix of total total effects: B = direct
   # Note: eta = B x eta + zeta
@@ -409,11 +409,12 @@ effects.cSEMResults <- function(object) {
 #' @export
 #'
 
-status <- function(object){
+status <- function(.object){
   UseMethod("status")
 }
 
-status.cSEMResults <- function(object){
+#' @export
+status.cSEMResults <- function(.object){
   
   # 0: Everything is fine
   # 1 Algorithm has not not converged
@@ -425,21 +426,21 @@ status.cSEMResults <- function(object){
 
   stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE)
   
-  if(object$Information$Weight_approach == "PLS") {
+  if(.object$Information$Arguments$.approach_weights == "PLS") {
     
-    if(!object$Information$Convergence_status) {
+    if(!.object$Information$Weight_info$Convergence_status) {
       stat["1"] <- TRUE
     }
     
-    if(max(abs(object$Estimates$Cross_loadings)) > 1) {
+    if(max(abs(.object$Estimates$Cross_loadings)) > 1) {
       stat["2"] <- TRUE
     }
     
-    if(!matrixcalc::is.positive.semi.definite(object$Estimates$Construct_VCV)) {
+    if(!matrixcalc::is.positive.semi.definite(.object$Estimates$Construct_VCV)) {
       stat["3"] <- TRUE
     }
     
-    if(!matrixcalc::is.positive.semi.definite(fitted(object))) {
+    if(!matrixcalc::is.positive.semi.definite(fitted(.object))) {
       stat["4"] <- TRUE
     }
     # If if no problem occured, it seems that the estimation is fine.

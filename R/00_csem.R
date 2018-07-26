@@ -119,5 +119,4 @@ csem <- function(
   ## Set class for output
   class(out) <- "cSEMResults"
   return(out)
-  return(out)
 }

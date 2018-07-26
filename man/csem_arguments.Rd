@@ -76,8 +76,9 @@ with a warning. Defaults to \code{100}. The argument is ignored if
 contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}.}
 
-\item{object}{An R object of class \link{cSEMResults}.
-#' @param .only_dots Logical. Should only those arguments to be passed to lower level functions via the
+\item{.object}{An R object of class \link{cSEMResults}.}
+
+\item{.only_dots}{Logical. Should only those arguments to be passed to lower level functions via the
 \code{...} argument of the \link{csem} or \link{cca} function be returned. Defaults to \code{FALSE}.}
 
 \item{.permutations}{Integer. The number permutations used for step 2 and 3 of the test.

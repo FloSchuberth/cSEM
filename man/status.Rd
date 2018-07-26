@@ -7,9 +7,7 @@
 status(object)
 }
 \arguments{
-\item{object}{An R object of class \link{cSEMResults}.
-#' @param .only_dots Logical. Should only those arguments to be passed to lower level functions via the
-\code{...} argument of the \link{csem} or \link{cca} function be returned. Defaults to \code{FALSE}.}
+\item{.object}{An R object of class \link{cSEMResults}.}
 }
 \value{
 A NULL vector or a vector of status codes pointing to specific problems.

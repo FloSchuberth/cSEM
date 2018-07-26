@@ -241,9 +241,8 @@ workhorse <- function(
       )           
     )
   )
-  ## Set class for Output
-  class(out) <- "cSEMResults"
-  return(out)
+  
+  invisible(out)
 
   ### For maintenance: ---------------------------------------------------------
   # X (N x K)   := Matrix of indicator values (=data)
