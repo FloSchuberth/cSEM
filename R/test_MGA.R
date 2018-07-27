@@ -81,7 +81,7 @@ permutateData <- function(.cSEM){
 }
 
 testOverallMGA <- function(.cSEM, .permutations){
-  if(length(.cSEM) = 1){
+  if(length(.cSEM) == 1){
     stop("Only one group. Multigroup is not possible.")
   }
  
@@ -97,10 +97,22 @@ testOverallMGA <- function(.cSEM, .permutations){
   permEstimates <- list()
   
   for(iPerm in 1:.permutations){
-    args_needed[[".data"]] <- permutateData(.cSEM)
+    # Permute data
+    permData <- permutateData(.cSEM = .cSEM)
+    # Get original arguments
+    args <- .cSEM[[1]]$Information$Arguments
+    # New esimate for each element
+    do.call(cSEM... )
     
-    permEstimates[iPerm] <- lappy(permData, .cSEM$female$Information$Arguments)
     
+    # permEstimates <- lapply(permData, function(y) {
+    #   args[[".data"]] <- y
+    #   do.call(workhorse, args)
+    # })
+   
+  # Estimate Distance of perm data
+    
+     
   }
 
    
@@ -113,7 +125,6 @@ testOverallMGA <- function(.cSEM, .permutations){
 # Test ---------------------------
 
 
-require(cSEM)
 require(plspm)
 data(satisfaction)
 
