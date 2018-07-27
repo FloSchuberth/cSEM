@@ -36,6 +36,7 @@
 #'   a character string giving the name of the dominant indicator and `name` 
 #'   the corresponding construct name. Dominant indicators may be specified for 
 #'   a subset of the constructs. 
+#' @param .dropInadmissibles Logical. Should the inadmissible solution be dropped? Defaults to `TRUE`.
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural (path) coefficients
 #'   be estimated? Defaults to `TRUE`.
@@ -44,7 +45,7 @@
 #' @param .id Charachter string. The name of the column of `.data` used to split
 #'   the date into groups. 
 #' @param .ignore_structural_model Logical. Should the structural (path) model be ignored
-#'   when calculating the inner weights of the PLS algorithm? Defaults to `FALSE`
+#'   when calculating the inner weights of the PLS algorithm? Defaults to `FALSE`.
 #' @param .iter_max Integer. The maximum number of iterations of the PLS algorithm.
 #'   If `iter_max = 1` one-step weights are returned. If the algorithm exceeds
 #'   the specified number, weights of iteration step `.iter_max - 1`  will be returned
@@ -75,6 +76,7 @@
 #'   Element names are equal to the names of the J construct names. Reliabilities
 #'   may be given for a subset of the constructs. Defaults to `NULL` in which case
 #'   reliabilites are estimated by `cSEM`.
+#' @param .runs Integer. How many runs should be performed? Defaults to `499`.
 #' @param .S The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 #'   where K is the number of indicators.
 #' @param .terms A vector of construct names to be classified.
@@ -166,7 +168,11 @@ args_default <- function(.only_dots = FALSE) {
     .normality               = TRUE,
     
     #  Arguments passed to workhorse
-    .dominant_indicators     = NULL
+    .dominant_indicators     = NULL,
+    
+    # Arguments passed to Test_overall_model_fit
+    .dropInadmissibles=TRUE,
+    .runs = 499
   )
 
   if(.only_dots) {
