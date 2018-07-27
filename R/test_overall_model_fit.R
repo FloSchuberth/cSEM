@@ -56,7 +56,7 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
     
     # if it is controlled for inadmissible
     if(.dropInadmissibles){
-      if(0 %in% status_code){
+      if(is.null(status_code)){
         c(dG = dG(.matrix1=Est_temp$Estimates$Indicator_VCV,.matrix2=fitted(Est_temp)),
           SRMR = SRMR(Est_temp),
           dL=dL(.matrix1=Est_temp$Estimates$Indicator_VCV,.matrix2=fitted(Est_temp))) 
