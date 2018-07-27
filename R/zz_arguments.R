@@ -6,11 +6,14 @@
 #' passed down to lower level functions via the `...` argument of the [csem()] function,
 #' set the `.only_dots` argument of the [args_default()] function to `TRUE`.
 #'
-#' @param .data A `data.frame` or a `matrix` containing the raw data.
+#' @param .data A `data.frame` or a `matrix` containing the raw data. 
 #' @param .model A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 #'   or a [cSEMModel] object.
 #' @param .alpha An integer or a numeric vector of significance levels. 
 #'   Defaults to `0.05`.
+#' @param .approach Character string. The Kettenring approach to use. One of 
+#' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
+#' "*SUMCORR*".
 #' @param .approach_nl Character string. The approach used to handle non-linear
 #'   structural relationships. Possible choices are: "*none*", or "*replace*".
 #'   Defaults to "*none*".
@@ -22,10 +25,8 @@
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*fixed*", or "*unit*".
 #'   Defaults to "*PLS*".
 #' @param .args_used A list of argument names and user picked values. Usually captured by 
-#'   `as.list(match_call())`.
+#'   `as.list(match_call())[-1]`.
 #' @param .C A (J x J) proxy variance-covariance matrix.
-#' @param .criteria Character string. The criteria to use. One of "*SUMCOR*", "*MAXVAR*",
-#'   "*SSQCOR*", "*MINVAR*" or "*GENVAR*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel] list.
 #' @param .disattenuate Logical. Should proxy correlations be disattenuated
 #'   if the construct is modeled as a common factor? Defaults to `TRUE`.
@@ -130,11 +131,11 @@ args_default <- function(.only_dots = FALSE) {
     .data                    = NULL,
     .model                   = NULL,
     .alpha                   = 0.05,
+    .approach                = "SUMCORR",
     .approach_nl             = "none",
     .approach_paths          = "OLS",
     .approach_weights        = "PLS", 
     .C                       = NULL,
-    .criteria                = NULL,
     .csem_model              = NULL,
     .disattenuate            = TRUE,
     .dropInadmissibles       = TRUE,

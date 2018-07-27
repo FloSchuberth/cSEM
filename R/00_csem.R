@@ -9,8 +9,10 @@
 #' and `.model` argument.
 #'
 #' To get started the `.data` and `.model` arguments are required. Data must be
-#' provided as either a matrix or a data frame with column names matching
+#' provided as either a `matrix` or a `data.frame` with column names matching
 #' the variable/indicator names used in the model description of the measurement model.
+#' Alternativly a named or unamed list of matrices `data.frame`s may be provided
+#' in which case estimation is repeated for each data set.
 #'
 #' To provide a model use the \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 #' with two notable extensions/changes. First: the "`<~`" operator in `cSEM` is
@@ -99,8 +101,7 @@ csem <- function(
   ## Collect and handle arguments
   args_used   <- as.list(match.call())[-1]
   args        <- handleArgs(args_used)
-  args_needed <- args[intersect(names(args[-which(names(args) == ".id")]), 
-                                names(as.list(formals(workhorse))))] 
+  args_needed <- args[intersect(names(args), names(as.list(formals(workhorse))))] 
   ## 
   
   if(!is.null(.id)) {
@@ -111,7 +112,7 @@ csem <- function(
       args_needed[[".data"]] <- x[, -which(names(x) == .id)]
       do.call(workhorse, args_needed)
     })
-  } else if(is.list(.data) & !is.data.frame(.data)) {
+  } else if(class(.data) == "list") {
     
     out <- lapply(.data, function(x) {
       

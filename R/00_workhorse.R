@@ -48,6 +48,7 @@ workhorse <- function(
   .disattenuate            = args_default()$.disattenuate,
   .dominant_indicators     = args_default()$.dominant_indicators,
   .estimate_structural     = args_default()$.estimate_structural,
+  .id                      = args_default()$.id,
   .ignore_structural_model = args_default()$.ignore_structural_model,
   .iter_max                = args_default()$.iter_max,
   .normality               = args_default()$.normality,
