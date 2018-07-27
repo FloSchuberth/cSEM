@@ -231,8 +231,9 @@ workhorse <- function(
       "R2"                     = estim_results$R2
     ),
     "Information" = list(
+      "Data"          = X,
       "Model"         = csem_model,
-      "Arguments"     = as.list(match.call()[-1]),
+      "Arguments"     = lapply(as.list(match.call())[-1], eval),
       "Weight_info"   = list(
         "Modes"              = W$Modes,
         "Number_iterations"  = W$Iterations,
