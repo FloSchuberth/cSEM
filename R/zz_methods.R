@@ -416,7 +416,7 @@ status <- function(.object){
 #' @export
 status.cSEMResults <- function(.object){
   
-  # 0: Everything is fine
+  # NULL: Everything is fine
   # 1 Algorithm has not not converged
   # 2: at least one absolute standardized loading estimate is larger than 1,
   # which implies either a negative veriance of the measurement error or
@@ -430,7 +430,7 @@ status.cSEMResults <- function(.object){
 
   stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE)
   
-  if(.object$Information$Arguments$.approach_weights == "PLS") {
+  # if(.object$Information$Arguments$.approach_weights == "PLS") {
     
     if(!.object$Information$Weight_info$Convergence_status) {
       stat["1"] <- TRUE
@@ -452,9 +452,9 @@ status.cSEMResults <- function(.object){
       stat <- NULL
     }
     
-  } else {
-    stop("Only applicable if PLS is used.", call. = FALSE)
-  }
+  # } else {
+  #   stop("Only applicable if PLS is used.", call. = FALSE)
+  # }
   
   return(stat) 
 }
