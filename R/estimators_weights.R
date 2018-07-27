@@ -384,7 +384,10 @@ calculateWeightsKettenring <- function(
     W= a[rownames(W),colnames(W)]
     W= scaleWeights(S, W)
     
-    l <- list("W" = W, "E" = NULL, "Modes" = rep('MAXVAR',length(Construct_names)),
+    modes=rep('MAXVAR',length(Construct_names))
+    names(modes)=Construct_names
+    
+    l <- list("W" = W, "E" = NULL, "Modes" = modes,
               "Conv_status" = TRUE, "Iterations" = 0)
     return(l)
     
@@ -438,7 +441,11 @@ calculateWeightsKettenring <- function(
     
     W = scaleWeights(S, W)
     
-    l <- list("W" = W, "E" = NULL, "Modes" = rep('SUMCORR',length(Construct_names)),
+    modes=rep('SUMCORR',length(Construct_names))
+    names(modes)=Construct_names
+    
+    
+    l <- list("W" = W, "E" = NULL, "Modes" = modes,
               "Conv_status" = res$convergence == 0, "Iterations" = res$counts[1])
     return(l)
     
@@ -487,7 +494,10 @@ calculateWeightsKettenring <- function(
     
     W=scaleWeights(S, W)
     
-    l <- list("W" = W, "E" = NULL, "Modes" = rep('GENVAR',length(Construct_names)),
+    modes=rep('GENVAR',length(Construct_names))
+    names(modes)=Construct_names
+    
+    l <- list("W" = W, "E" = NULL, "Modes" = modes,
               "Conv_status" = res$convergence == 0, "Iterations" = res$counts[1])
     return(l)
     
@@ -540,7 +550,10 @@ calculateWeightsKettenring <- function(
     
     W=scaleWeights(S, W)
     
-    l <- list("W" = W, "E" = NULL, "Modes" = rep('SSQCORR',length(Construct_names)),
+    modes=rep('SSQCORR',length(Construct_names))
+    names(modes)=Construct_names
+    
+    l <- list("W" = W, "E" = NULL, "Modes" = modes,
               "Conv_status" = res$convergence == 0, "Iterations" = res$counts[1])
     return(l)
     

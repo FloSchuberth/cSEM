@@ -3,9 +3,9 @@
 # Test for overall model fit
 
 Test_for_overall_model_fit=function(.object=args_default()$.model,
-                                    .dropInadmissibles=args_default()$.model,
-                                    .alpha=args_default()$.model,
-                                    .runs=args_default()$.model,
+                                    .dropInadmissibles=args_default()$.dropInadmissibles,
+                                    .alpha=args_default()$.alpha,
+                                    .runs=args_default()$.runs,
                                     ...){
   
   # Extract required infromation 
@@ -29,6 +29,9 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
   X_trans = X%*%S_half%*%Sig_half
   colnames(X_trans)=colnames(X)
   
+  # Collect arguments
+  arguments=.object$Information$Arguments
+  
   # Calculate reference distribution
   ref_dist=lapply(replicate(.runs, X_trans[sample(1:nObs,replace=TRUE),], simplify = FALSE),function(x){
     # Est_temp=csem(.data =x,
@@ -44,37 +47,25 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
     #               .PLS_mode =.object$Information$PLS_modes,
     #               .PLS_weight_scheme_inner = .object$Information$PLS_inner_weighting_scheme,
     #               .tolerance =  .object$Information$Tolerance)
-    arguments=.object$Information$Arguments
-    # delete .data from arguments
-    arguments=arguments[arguments != arguments[['.data']]]
-    Est_temp=do.call(csem,.object$Information$Arguments)(.data =x,
-                  .model = .object$Information$Model,
-                  .approach_cf =  .object$Information$Approach_cf,
-                  .approach_paths =.object$Information$Path_approach,
-                  .approach_weights= .object$Information$Weight_approach,
-                  .disattenuate = .object$Information$Disattenuate,
-                  .dominant_indicators =.object$Information$Dominant_indicators, 
-                  .estimate_structural =.object$Information$Estimate_structural,
-                  .ignore_structural_model =.object$Information$Ignore_structural_model,
-                  .iter_max = .object$Information$Number_max_iterations,
-                  .PLS_mode =.object$Information$PLS_modes,
-                  .PLS_weight_scheme_inner = .object$Information$PLS_inner_weighting_scheme,
-                  .tolerance =  .object$Information$Tolerance)
+   
+    arguments[[".data"]] <- x
+    
+    Est_temp=do.call(csem,arguments)
     
     status_code=status(Est_temp)
     
     # if it is controlled for inadmissible
     if(.dropInadmissibles){
-      if(0 %in% status_code){
-        c(dG = dG(.A=Est_temp$Estimates$Indicator_VCV,.B=fitted(Est_temp)),
+      if(is.null(status_code)){
+        c(dG = dG(.matrix1=Est_temp$Estimates$Indicator_VCV,.matrix2=fitted(Est_temp)),
           SRMR = SRMR(Est_temp),
-          dL=dL(.A=Est_temp$Estimates$Indicator_VCV,.B=fitted(Est_temp))) 
+          dL=dL(.matrix1=Est_temp$Estimates$Indicator_VCV,.matrix2=fitted(Est_temp))) 
       }
       # else, i.e., dropInadmissible == FALSE
     }else{ 
-      c(dG = dG(.A=Est_temp$Estimates$Indicator_VCV,.B=fitted(Est_temp)),
+      c(dG = dG(.matrix1=Est_temp$Estimates$Indicator_VCV,.matrix2=fitted(Est_temp)),
         SRMR = SRMR(Est_temp),
-        dL=dL(.A=Est_temp$Estimates$Indicator_VCV,.B=fitted(Est_temp)))
+        dL=dL(.matrix1=Est_temp$Estimates$Indicator_VCV,.matrix2=fitted(Est_temp)))
     }
   })
   ref_dist_matrix=do.call(cbind,ref_dist)
