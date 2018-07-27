@@ -16,7 +16,9 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
   
   
   # Calculate test statistic
-  teststat=c(dG=dG(.matrix1=S,.matrix2=Sigma_hat), SRMR=SRMR(.object), dL=dL(.matrix1=S,.matrix2=Sigma_hat))
+  teststat=c(dG=dG(.matrix1=S,.matrix2=Sigma_hat), 
+             SRMR=SRMR(.object), 
+             dL=dL(.matrix1=S,.matrix2=Sigma_hat))
   
   S_half=solve(expm::sqrtm(S))
   Sig_half=expm::sqrtm(Sigma_hat)
@@ -29,7 +31,23 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
   
   # Calculate reference distribution
   ref_dist=lapply(replicate(.runs, X_trans[sample(1:nObs,replace=TRUE),], simplify = FALSE),function(x){
-    Est_temp=csem(.data =x,
+    # Est_temp=csem(.data =x,
+    #               .model = .object$Information$Model,
+    #               .approach_cf =  .object$Information$Approach_cf,
+    #               .approach_paths =.object$Information$Path_approach,
+    #               .approach_weights= .object$Information$Weight_approach,
+    #               .disattenuate = .object$Information$Disattenuate,
+    #               .dominant_indicators =.object$Information$Dominant_indicators, 
+    #               .estimate_structural =.object$Information$Estimate_structural,
+    #               .ignore_structural_model =.object$Information$Ignore_structural_model,
+    #               .iter_max = .object$Information$Number_max_iterations,
+    #               .PLS_mode =.object$Information$PLS_modes,
+    #               .PLS_weight_scheme_inner = .object$Information$PLS_inner_weighting_scheme,
+    #               .tolerance =  .object$Information$Tolerance)
+    arguments=.object$Information$Arguments
+    # delete .data from arguments
+    arguments=arguments[arguments != arguments[['.data']]]
+    Est_temp=do.call(csem,.object$Information$Arguments)(.data =x,
                   .model = .object$Information$Model,
                   .approach_cf =  .object$Information$Approach_cf,
                   .approach_paths =.object$Information$Path_approach,
@@ -41,8 +59,7 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
                   .iter_max = .object$Information$Number_max_iterations,
                   .PLS_mode =.object$Information$PLS_modes,
                   .PLS_weight_scheme_inner = .object$Information$PLS_inner_weighting_scheme,
-                  .tolerance =  .object$Information$Tolerance
-    )
+                  .tolerance =  .object$Information$Tolerance)
     
     status_code=status(Est_temp)
     

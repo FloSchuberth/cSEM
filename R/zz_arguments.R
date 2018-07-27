@@ -137,6 +137,7 @@ args_default <- function(.only_dots = FALSE) {
     .criteria                = NULL,
     .csem_model              = NULL,
     .disattenuate            = TRUE,
+    .dropInadmissibles       = TRUE,
     .E                       = NULL,
     .estimate_structural     = TRUE,
     .group_var               = NULL,
@@ -149,6 +150,7 @@ args_default <- function(.only_dots = FALSE) {
     .only_dots               = FALSE,
     .permutations            = 100,
     .PLS_mode                = NULL,
+    .runs                    = 499,
     .Q                       = NULL,
     .reliabilities           = NULL,
     .S                       = NULL,
@@ -173,11 +175,8 @@ args_default <- function(.only_dots = FALSE) {
     .normality               = TRUE,
     
     #  Arguments passed to workhorse
-    .dominant_indicators     = NULL,
+    .dominant_indicators     = NULL
     
-    # Arguments passed to Test_overall_model_fit
-    .dropInadmissibles=TRUE,
-    .runs = 499
   )
 
   if(.only_dots) {
