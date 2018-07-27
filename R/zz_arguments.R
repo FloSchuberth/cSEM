@@ -6,14 +6,11 @@
 #' passed down to lower level functions via the `...` argument of the [csem()] function,
 #' set the `.only_dots` argument of the [args_default()] function to `TRUE`.
 #'
-#' @param .data A data frame or a matrix containing the raw data.
+#' @param .data A `data.frame` or a `matrix` containing the raw data.
 #' @param .model A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 #'   or a [cSEMModel] object.
-#' @param .alpha A numeric vector of significance levels. Defaults to `c(0.1, 0.05, 0.01)`.
-#' @param .approach_cf Character string. The approach to obtain the correction
-#'   factor for PLSc. Possible choices are: "*dist_euclid*", "*dist_euclid_weighted*",
-#'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
-#'   "*geo_of_harmonic*". Defaults to "*dist_euclid*". Ignored if `.disattenuate = FALSE`.
+#' @param .alpha An integer or a numeric vector of significance levels. 
+#'   Defaults to `0.05`.
 #' @param .approach_nl Character string. The approach used to handle non-linear
 #'   structural relationships. Possible choices are: "*none*", or "*replace*".
 #'   Defaults to "*none*".
@@ -59,6 +56,10 @@
 #' `...` argument of the [csem] or [cca] function be returned. Defaults to `FALSE`.
 #' @param .permutations Integer. The number permutations used for step 2 and 3 of the test.
 #' Defaults to `100`. Note however that the number should typically be a lot higher.
+#' @param .approach_cf Character string. The approach to obtain the correction
+#'   factor for PLSc. Possible choices are: "*dist_euclid*", "*dist_euclid_weighted*",
+#'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
+#'   "*geo_of_harmonic*". Defaults to "*dist_euclid*". Ignored if `.disattenuate = FALSE`.
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
 #'   used in PLS. Possible choices are: "*centroid*", "*factorial*", or "*path*".
 #'   Defaults to "*centroid*". The argument is ignored if `.approach_weight` is not PLS.
@@ -124,7 +125,7 @@ args_default <- function(.only_dots = FALSE) {
   args <- list(
     .data                    = NULL,
     .model                   = NULL,
-    .alpha                   = 0.1,
+    .alpha                   = 0.05,
     .approach_nl             = "none",
     .approach_paths          = "OLS",
     .approach_weights        = "PLS", 

@@ -16,7 +16,7 @@ testMICOM(
   ...)
 }
 \arguments{
-\item{.data}{A data frame or a matrix containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
 \item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 or a \link{cSEMModel} object.}
@@ -35,7 +35,8 @@ Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight
 \item{.permutations}{Integer. The number permutations used for step 2 and 3 of the test.
 Defaults to \code{100}. Note however that the number should typically be a lot higher.}
 
-\item{.alpha}{A numeric vector of significance levels. Defaults to \code{c(0.1, 0.05, 0.01)}.}
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}

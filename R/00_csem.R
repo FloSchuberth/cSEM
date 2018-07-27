@@ -97,7 +97,7 @@ csem <- function(
   ) {
   
   ## Collect and handle arguments
-  args_used   <- as.list(match.call())[-1]
+  args_used   <- lapply(as.list(match.call())[-1], eval)
   args        <- handleArgs(args_used)
   args_needed <- args[intersect(names(args[-which(names(args) == ".id")]), 
                                 names(as.list(formals(workhorse))))] 

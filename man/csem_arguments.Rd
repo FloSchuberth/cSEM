@@ -6,17 +6,13 @@
 \alias{csem_parameters}
 \title{cSEMArguments}
 \arguments{
-\item{.data}{A data frame or a matrix containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
 \item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 or a \link{cSEMModel} object.}
 
-\item{.alpha}{A numeric vector of significance levels. Defaults to \code{c(0.1, 0.05, 0.01)}.}
-
-\item{.approach_cf}{Character string. The approach to obtain the correction
-factor for PLSc. Possible choices are: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
-"\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
-"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}". Ignored if \code{.disattenuate = FALSE}.}
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
 
 \item{.approach_nl}{Character string. The approach used to handle non-linear
 structural relationships. Possible choices are: "\emph{none}", or "\emph{replace}".
@@ -83,6 +79,11 @@ Defaults to \code{TRUE}.}
 
 \item{.permutations}{Integer. The number permutations used for step 2 and 3 of the test.
 Defaults to \code{100}. Note however that the number should typically be a lot higher.}
+
+\item{.approach_cf}{Character string. The approach to obtain the correction
+factor for PLSc. Possible choices are: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+"\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
+"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}". Ignored if \code{.disattenuate = FALSE}.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
 used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
