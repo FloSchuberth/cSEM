@@ -17,7 +17,6 @@
 #' @importFrom lavaan lavaanify
 #' @importFrom stats cor
 #' @importFrom magrittr %>%
-#' @importFrom dplyr mutate
 #' @importFrom matrixStats rowProds colVars
 #' @importFrom Rdpack reprompt
 #' @importFrom symmoments callmultmoments

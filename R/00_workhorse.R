@@ -231,17 +231,16 @@ workhorse <- function(
       "R2"                     = estim_results$R2
     ),
     "Information" = list(
-      "Data"          = X,
       "Model"         = csem_model,
       "Arguments"     = as.list(match.call()[-1]),
       "Weight_info"   = list(
-        "PLS_Modes"          = W$Modes,
+        "Modes"              = W$Modes,
         "Number_iterations"  = W$Iterations,
         "Convergence_status" = W$Conv_status
       )
     )
   )
-
+  
   invisible(out)
 
   ### For maintenance: ---------------------------------------------------------
