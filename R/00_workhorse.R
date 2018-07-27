@@ -70,7 +70,11 @@ workhorse <- function(
   ## Calculate empirical indicator covariance/correlation matrix
   # Note: its important to take cor(X) here instead of cov(X) as `cov` may produce
   # 1s on the main diagonal that are not exactly 1 due to floating point imprecisions.
-  S <- polycor::hetcor(X)$correlations
+  Stemp=polycor::hetcor(X)
+  S <- Stemp$correlations
+  if(FALSE %in% (c(Stemp$type) %in% 'pearson')){
+    warning("OrdPLS(c) is used!!!")
+  }
 
   ## Standardize
   X <- scale(X)
