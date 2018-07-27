@@ -45,6 +45,8 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
     #               .PLS_weight_scheme_inner = .object$Information$PLS_inner_weighting_scheme,
     #               .tolerance =  .object$Information$Tolerance)
     arguments=.object$Information$Arguments
+    arguments[["data"]] <- x
+    
     # delete .data from arguments
     arguments=arguments[arguments != arguments[['.data']]]
     Est_temp=do.call(csem,.object$Information$Arguments)(.data =x,
