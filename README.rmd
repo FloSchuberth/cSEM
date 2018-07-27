@@ -6,7 +6,7 @@ output: github_document
 
 # cSEM
 
-WARNING: THIS IS WORK IN PROGRESS. BREAKING ARE VERY LIKELY. 
+WARNING: THIS IS WORK IN PROGRESS. BREAKING IS VERY LIKELY. 
          Do not use the package before the first stable relase (which will
          be 0.0.1, towards the end of 2018).
 
