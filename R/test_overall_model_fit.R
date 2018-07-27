@@ -2,10 +2,10 @@
 
 # Test for overall model fit
 
-Test_for_overall_model_fit=function(.object,
-                                    .dropInadmissibles=TRUE,
-                                    .alpha=0.05,
-                                    .runs=499,
+Test_for_overall_model_fit=function(.object=args_default()$.model,
+                                    .dropInadmissibles=args_default()$.model,
+                                    .alpha=args_default()$.model,
+                                    .runs=args_default()$.model,
                                     ...){
   
   # Extract required infromation 
