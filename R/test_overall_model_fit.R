@@ -9,8 +9,8 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
                                     ...){
   
   # Extract required infromation 
-  X=.object$Informatio$Dataset
-  nObs=.object$Information$Number_of_observations
+  X=.object$Information$Data
+  nObs=nrow(X)
   S=.object$Estimates$Indicator_VCV
   Sigma_hat=fitted(.object)
   
