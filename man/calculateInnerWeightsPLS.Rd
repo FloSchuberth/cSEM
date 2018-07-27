@@ -25,7 +25,7 @@ used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\e
 Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight} is not PLS.}
 
 \item{.ignore_structural_model}{Logical. Should the structural (path) model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}}
+when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.}
 }
 \value{
 The (J x J) matrix of inner weights.
