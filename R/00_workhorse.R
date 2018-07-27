@@ -65,8 +65,6 @@ workhorse <- function(
   ## Prepare, check, and clean data
   X <- processData(.data = .data, .model = csem_model) 
   
-  ## Standardize
-  X <- scale(X)
   
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
@@ -74,6 +72,9 @@ workhorse <- function(
   # 1s on the main diagonal that are not exactly 1 due to floating point imprecisions.
   S <- stats::cor(X)
 
+  ## Standardize
+  X <- scale(X)
+  
   ## Calculate weights
   if(.approach_weights == "PLS") {
     W <- calculateWeightsPLS(
