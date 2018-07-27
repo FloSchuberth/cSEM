@@ -3,9 +3,9 @@
 # Test for overall model fit
 
 Test_for_overall_model_fit=function(.object=args_default()$.model,
-                                    .dropInadmissibles=args_default()$.model,
-                                    .alpha=args_default()$.model,
-                                    .runs=args_default()$.model,
+                                    .dropInadmissibles=args_default()$.dropInadmissibles,
+                                    .alpha=args_default()$.alpha,
+                                    .runs=args_default()$.runs,
                                     ...){
   
   # Extract required infromation 
