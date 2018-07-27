@@ -59,7 +59,7 @@ a subset of the constructs.}
 be estimated? Defaults to \code{TRUE}.}
 
 \item{.ignore_structural_model}{Logical. Should the structural (path) model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}}
+when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations of the PLS algorithm.
 If \code{iter_max = 1} one-step weights are returned. If the algorithm exceeds

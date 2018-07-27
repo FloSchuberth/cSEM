@@ -45,6 +45,8 @@ a character string giving the name of the dominant indicator and \code{name}
 the corresponding construct name. Dominant indicators may be specified for
 a subset of the constructs.}
 
+\item{.dropInadmissibles}{Logical. Should the inadmissible solution be dropped? Defaults to \code{TRUE}.}
+
 \item{.E}{A (J x J) matrix of inner weights.}
 
 \item{.estimate_structural}{Logical. Should the structural (path) coefficients
@@ -58,13 +60,17 @@ be estimated? Defaults to \code{TRUE}.}
 the date into groups.}
 
 \item{.ignore_structural_model}{Logical. Should the structural (path) model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}}
+when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations of the PLS algorithm.
 If \code{iter_max = 1} one-step weights are returned. If the algorithm exceeds
 the specified number, weights of iteration step \code{.iter_max - 1}  will be returned
 with a warning. Defaults to \code{100}. The argument is ignored if
 \code{.approach_weight} is not PLS.}
+
+\item{.matrix1}{A matrix. Defaults to \code{NULL}.}
+
+\item{.matrix2}{A matrix. Defaults to \code{NULL}.}
 
 \item{.modes}{A named vector giving the mode used to obtain new outer weights.}
 
@@ -104,6 +110,8 @@ Q^2 is also called the reliability coefficient.}
 Element names are equal to the names of the J construct names. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
 reliabilites are estimated by \code{cSEM}.}
+
+\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
 
 \item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 where K is the number of indicators.}
