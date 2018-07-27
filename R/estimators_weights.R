@@ -646,8 +646,11 @@ calculateWeightsUnit = function(
   W=.model$measurement
   W=scaleWeights(S,W)
   
+  modes=rep('unit',nrow(W))
+  names(modes)=rownames(W)
+  
   # Return
-  l <- list("W" = W, "E" = NULL, "Modes" = rep('unit',nrow(W)), "Conv_status" = TRUE,
+  l <- list("W" = W, "E" = NULL, "Modes" = modes, "Conv_status" = TRUE,
             "Iterations" = 0)
   return(l)  
 }
