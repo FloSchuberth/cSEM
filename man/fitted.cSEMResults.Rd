@@ -4,12 +4,10 @@
 \alias{fitted.cSEMResults}
 \title{Model implied indicator variance-covariance matrix}
 \usage{
-fitted(object, test = NULL)
+fitted(.object, test = NULL)
 }
 \arguments{
-\item{object}{An R object of class \link{cSEMResults}.
-#' @param .only_dots Logical. Should only those arguments to be passed to lower level functions via the
-\code{...} argument of the \link{csem} or \link{cca} function be returned. Defaults to \code{FALSE}.}
+\item{.object}{An R object of class \link{cSEMResults}.}
 
 \item{test}{not used}
 }

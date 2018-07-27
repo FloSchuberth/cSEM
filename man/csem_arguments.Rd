@@ -6,17 +6,13 @@
 \alias{csem_parameters}
 \title{cSEMArguments}
 \arguments{
-\item{.data}{A data frame or a matrix containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
 \item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 or a \link{cSEMModel} object.}
 
-\item{.alpha}{A numeric vector of significance levels. Defaults to \code{c(0.1, 0.05, 0.01)}.}
-
-\item{.approach_cf}{Character string. The approach to obtain the correction
-factor for PLSc. Possible choices are: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
-"\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
-"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}". Ignored if \code{.disattenuate = FALSE}.}
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
 
 \item{.approach_nl}{Character string. The approach used to handle non-linear
 structural relationships. Possible choices are: "\emph{none}", or "\emph{replace}".
@@ -27,8 +23,8 @@ structural coefficients. Possible choices are: "\emph{OLS}", "\emph{2SLS}", or "
 Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. The name of the approach used to
-obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCOR}", "\emph{MAXVAR}",
-"\emph{SSQCOR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
+obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
 \item{.args_used}{A list of argument names and user picked values. Usually captured by
@@ -49,6 +45,8 @@ a character string giving the name of the dominant indicator and \code{name}
 the corresponding construct name. Dominant indicators may be specified for
 a subset of the constructs.}
 
+\item{.dropInadmissibles}{Logical. Should the inadmissible solution be dropped? Defaults to \code{TRUE}.}
+
 \item{.E}{A (J x J) matrix of inner weights.}
 
 \item{.estimate_structural}{Logical. Should the structural (path) coefficients
@@ -62,7 +60,7 @@ be estimated? Defaults to \code{TRUE}.}
 the date into groups.}
 
 \item{.ignore_structural_model}{Logical. Should the structural (path) model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}}
+when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations of the PLS algorithm.
 If \code{iter_max = 1} one-step weights are returned. If the algorithm exceeds
@@ -70,18 +68,28 @@ the specified number, weights of iteration step \code{.iter_max - 1}  will be re
 with a warning. Defaults to \code{100}. The argument is ignored if
 \code{.approach_weight} is not PLS.}
 
-\item{.mode}{A named vector giving the mode used to obtain new outer weights.}
+\item{.matrix1}{A matrix. Defaults to \code{NULL}.}
+
+\item{.matrix2}{A matrix. Defaults to \code{NULL}.}
+
+\item{.modes}{A named vector giving the mode used to obtain new outer weights.}
 
 \item{.normality}{Logical. Should joint normality be assumed if the model
 contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}.}
 
-\item{object}{An R object of class \link{cSEMResults}.
-#' @param .only_dots Logical. Should only those arguments to be passed to lower level functions via the
+\item{.object}{An R object of class \link{cSEMResults}.}
+
+\item{.only_dots}{Logical. Should only those arguments to be passed to lower level functions via the
 \code{...} argument of the \link{csem} or \link{cca} function be returned. Defaults to \code{FALSE}.}
 
 \item{.permutations}{Integer. The number permutations used for step 2 and 3 of the test.
 Defaults to \code{100}. Note however that the number should typically be a lot higher.}
+
+\item{.approach_cf}{Character string. The approach to obtain the correction
+factor for PLSc. Possible choices are: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+"\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
+"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}". Ignored if \code{.disattenuate = FALSE}.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
 used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
@@ -102,6 +110,8 @@ Q^2 is also called the reliability coefficient.}
 Element names are equal to the names of the J construct names. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
 reliabilites are estimated by \code{cSEM}.}
+
+\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
 
 \item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 where K is the number of indicators.}

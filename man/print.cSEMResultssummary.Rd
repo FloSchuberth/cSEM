@@ -4,7 +4,7 @@
 \alias{print.cSEMResultssummary}
 \title{\code{cSEMResultssummary} method for \code{print()}}
 \usage{
-print(object)
+print(.object)
 }
 \arguments{
 \item{...}{Further arguments to be passed down to other functions.

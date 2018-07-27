@@ -18,7 +18,7 @@ csem(
   ...)
 }
 \arguments{
-\item{.data}{A data frame or a matrix containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
 \item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 or a \link{cSEMModel} object.}
@@ -27,8 +27,8 @@ or a \link{cSEMModel} object.}
 the date into groups.}
 
 \item{.approach_weights}{Character string. The name of the approach used to
-obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCOR}", "\emph{MAXVAR}",
-"\emph{SSQCOR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
+obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the

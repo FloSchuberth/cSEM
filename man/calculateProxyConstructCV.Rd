@@ -16,6 +16,8 @@ calculateProxyConstructCV(.W = NULL, .csem_model = NULL,
 \item{.disattenuate}{Logical. Should proxy correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
+\item{.modes}{A named vector giving the mode used to obtain new outer weights.}
+
 \item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficients.
 Element names are equal to the names of the J construct names. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case

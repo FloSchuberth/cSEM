@@ -4,14 +4,16 @@
 \alias{calculateCorrectionFactors}
 \title{Calculate the correction factor}
 \usage{
-calculateCorrectionFactors(.S = NULL, .W = NULL, .csem_model = NULL,
-  .approach_cf = NULL)
+calculateCorrectionFactors(.S = NULL, .W = NULL, .modes = NULL,
+  .csem_model = NULL, .approach_cf = NULL)
 }
 \arguments{
 \item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 where K is the number of indicators.}
 
 \item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
+
+\item{.modes}{A named vector giving the mode used to obtain new outer weights.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
 

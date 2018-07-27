@@ -17,9 +17,11 @@ Description: Analyse structural equation models, including path
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Imports: lavaan, 
+Imports: alabama,
     cli,
     crayon, 
+    expm,
+    lavaan,
     magrittr,
     matrixcalc,
     matrixStats,

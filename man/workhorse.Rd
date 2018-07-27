@@ -5,27 +5,26 @@
 \title{Composite based estimation}
 \usage{
 workhorse(
-  .data                    = NULL,
-  .model                   = NULL,
-  .approach_cf             = NULL,
-  .approach_nl             = NULL,
-  .approach_paths          = NULL,
-  .approach_weights        = NULL,
-  .disattenuate            = NULL,
-  .estimate_structural     = NULL,
-  .ignore_structural_model = NULL,
-  .iter_max                = NULL,
-  .normality               = NULL,
-  .PLS_mode                = NULL,
-  .PLS_weight_scheme_inner = NULL,
-  .tolerance               = NULL,
-  .reliabilities           = NULL,
-  .dominant_indicators = NULL, 
-  .standardize             = NULL
-   )
+    .data                    = args_default()$.data,
+    .model                   = args_default()$.model,
+    .approach_cf             = args_default()$.approach_cf,
+    .approach_nl             = args_default()$.approach_nl,
+    .approach_paths          = args_default()$.approach_paths,
+    .approach_weights        = args_default()$.approach_weights,
+    .disattenuate            = args_default()$.disattenuate,
+    .dominant_indicators     = args_default()$.dominant_indicators,
+    .estimate_structural     = args_default()$.estimate_structural,
+    .ignore_structural_model = args_default()$.ignore_structural_model,
+    .iter_max                = args_default()$.iter_max,
+    .normality               = args_default()$.normality,
+    .PLS_mode                = args_default()$.PLS_mode,
+    .PLS_weight_scheme_inner = args_default()$.PLS_weight_scheme_inner,
+    .reliabilities           = args_default()$.reliabilities,
+    .tolerance               = args_default()$.tolerance
+    )
 }
 \arguments{
-\item{.data}{A data frame or a matrix containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
 \item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 or a \link{cSEMModel} object.}
@@ -44,8 +43,8 @@ structural coefficients. Possible choices are: "\emph{OLS}", "\emph{2SLS}", or "
 Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. The name of the approach used to
-obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCOR}", "\emph{MAXVAR}",
-"\emph{SSQCOR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
+obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
 \item{.disattenuate}{Logical. Should proxy correlations be disattenuated
@@ -60,7 +59,7 @@ a subset of the constructs.}
 be estimated? Defaults to \code{TRUE}.}
 
 \item{.ignore_structural_model}{Logical. Should the structural (path) model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}}
+when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations of the PLS algorithm.
 If \code{iter_max = 1} one-step weights are returned. If the algorithm exceeds

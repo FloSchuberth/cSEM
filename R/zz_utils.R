@@ -1,5 +1,3 @@
-
-
 #' cSEMModel
 #'
 #' A standardized list containing model-related information. To convert a

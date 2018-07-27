@@ -8,7 +8,7 @@ testMICOM(
   .data             = NULL,
   .model            = NULL,
   .group_var        = NULL,
-  .approach_weights = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR",
+  .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                         "GSCA", "fixed", "unit")
   .permutations     = 100,
   .alpha            = c(0.1, 0.05, 0.01),
@@ -16,7 +16,7 @@ testMICOM(
   ...)
 }
 \arguments{
-\item{.data}{A data frame or a matrix containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
 \item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 or a \link{cSEMModel} object.}
@@ -24,8 +24,8 @@ or a \link{cSEMModel} object.}
 \item{.group_var}{Character string. The name of the column used to split the data into groups.}
 
 \item{.approach_weights}{Character string. The name of the approach used to
-obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCOR}", "\emph{MAXVAR}",
-"\emph{SSQCOR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
+obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
@@ -35,7 +35,8 @@ Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight
 \item{.permutations}{Integer. The number permutations used for step 2 and 3 of the test.
 Defaults to \code{100}. Note however that the number should typically be a lot higher.}
 
-\item{.alpha}{A numeric vector of significance levels. Defaults to \code{c(0.1, 0.05, 0.01)}.}
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}

@@ -43,7 +43,7 @@ processData <- function(.data, .model) {
   ### Checks, errors and warnings ========
   # Check if any data set is provided
   if(is.null(.data)) {
-    stop("No data set provided. Please provide a `data.frame` or a matrix of data.",
+    stop("No data set provided. Please provide a `data.frame` or a `matrix` of data.",
          call. = FALSE)
   }
 
@@ -51,7 +51,7 @@ processData <- function(.data, .model) {
 
   if(!(class(.data) %in% c("data.frame", "matrix"))) {
     stop("Don't know how to deal with a data object of class: ", class(.data), ".\n",
-         "Please provide the data as a `data.frame` or a matrix.",
+         "Please provide the data as a `data.frame` or a `matrix`.",
          call. = FALSE)
   }
 

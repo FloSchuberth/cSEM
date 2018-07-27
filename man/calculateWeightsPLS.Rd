@@ -15,7 +15,7 @@ calculateWeights(
    )
 }
 \arguments{
-\item{.data}{A data frame or a matrix containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
 \item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 or a \link{cSEMModel} object.}
@@ -42,7 +42,7 @@ used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\e
 Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight} is not PLS.}
 
 \item{.ignore_structural_model}{Logical. Should the structural (path) model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}}
+when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.}
 }
 \value{
 A list with the following elements:

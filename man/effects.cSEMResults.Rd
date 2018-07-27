@@ -4,12 +4,10 @@
 \alias{effects.cSEMResults}
 \title{Effects}
 \usage{
-effects(object)
+effects(.object)
 }
 \arguments{
-\item{object}{An R object of class \link{cSEMResults}.
-#' @param .only_dots Logical. Should only those arguments to be passed to lower level functions via the
-\code{...} argument of the \link{csem} or \link{cca} function be returned. Defaults to \code{FALSE}.}
+\item{.object}{An R object of class \link{cSEMResults}.}
 }
 \description{
 Compute direct, indirect and total effects.

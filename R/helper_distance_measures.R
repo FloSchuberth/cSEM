@@ -2,27 +2,31 @@
 
 ### Squared euclidean distance
 
-dL <- function(.object) {
+dL <- function(.matrix1=args_default()$.matrix1,.matrix2=args_default()$.matrix2) {
   
-  S     <- .object$Estimates$Indicator_VCV
-  Sigma <- fitted(.object)
-  0.5*sum((S - Sigma)[lower.tri(S, diag = FALSE)]^2)
+  if(!identical(dim(.matrix1),dim(.matrix2))){
+    stop("The provided matrices are not identical.")
+    }
+
+  0.5*sum((.matrix1 - .matrix2)[lower.tri(.matrix1, diag = FALSE)]^2)
 }
 
 ### Geodesic distance
 
-dG <- function(.object) {
+dG <- function(.matrix1=args_default()$.matrix1,.matrix2=args_default()$.matrix2) {
   
-  S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fitted(.object)
-  Eigen     <- eigen(solve(S) %*% Sigma_hat)
+  if(!identical(dim(.matrix1),dim(.matrix2))){
+    stop("The provided matrices are not identical.")
+  }
+  
+  Eigen     <- eigen(solve(.matrix1) %*% .matrix2)
   logEigenvaluessq <- (log(Eigen$values, base = 10))^2   
   # not sure if logarithm naturalis is used or logarithm with base 10. 
   
   0.5 * sum(logEigenvaluessq)
 }
 
-SRMR <- function(.object) {
+SRMR <- function(.object=args_default()$.object) {
   
   # The SRMR as calculated by us is always based on the the difference between correlation matrices.
   
@@ -39,7 +43,7 @@ SRMR <- function(.object) {
 
 ### dML: the fitting function used in FIML
 
-dML <- function(.object){
+dML <- function(.object=args_default()$.object){
   
   nobs <- .object$Information$Number_of_observations
   S         <- .object$Estimates$Indicator_VCV
