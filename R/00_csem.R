@@ -102,6 +102,7 @@ csem <- function(
   args_needed <- args[intersect(names(args[-which(names(args) == ".id")]), 
                                 names(as.list(formals(workhorse))))] 
   ## 
+  
   if(!is.null(.id)) {
     
     data_split <- split(.data, f = .data[, .id])
@@ -109,10 +110,21 @@ csem <- function(
       
       args_needed[[".data"]] <- x[, -which(names(x) == .id)]
       do.call(workhorse, args_needed)
-      
     })
+  } else if(is.list(.data) & !is.data.frame(.data)) {
     
+    out <- lapply(.data, function(x) {
+      
+      args_needed[[".data"]] <- x
+      do.call(workhorse, args_needed)
+    })
+    if(is.null(names(.data))) {
+      names(out) <- paste0("Data_", 1:length(out))
+    } else {
+      names(out) <- names(.data)
+    }
   } else {
+    
     out <- do.call(workhorse, args_needed)
   }
   
