@@ -72,7 +72,11 @@ workhorse <- function(
   # 1s on the main diagonal that are not exactly 1 due to floating point imprecisions.
   Stemp=polycor::hetcor(X)
   S <- Stemp$correlations
-  if(FALSE %in% (c(Stemp$type) %in% 'pearson')){
+  # Remove "" from type matrix
+  Stype=Stemp$type[!Stemp$type == ""]
+  
+  # Return warning
+  if(FALSE %in% (Stype %in% 'Pearson')){
     warning("OrdPLS(c) is used!!!")
   }
 
