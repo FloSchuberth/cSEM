@@ -16,7 +16,7 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
   
   
   # Calculate test statistic
-  teststat=c(dG=dG(.A=S,.B=Sigma_hat), SRMR=SRMR(.object), dL=dL(.A=S,.B=Sigma_hat))
+  teststat=c(dG=dG(.matrix1=S,.matrix2=Sigma_hat), SRMR=SRMR(.object), dL=dL(.matrix1=S,.matrix2=Sigma_hat))
   
   S_half=solve(expm::sqrtm(S))
   Sig_half=expm::sqrtm(Sigma_hat)
