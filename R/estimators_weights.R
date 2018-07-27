@@ -502,8 +502,31 @@ calculateWeightsKettenring <- function(
     return(l)
     
   } else if(.approach == "MINVAR"){
+
+    Rs=H%*%Srestructured%*%H
     
-    stop("Not yet implemented")
+    # Calculate eigenvalues and eigenvectors of Rs
+        # take eigenvector to the smallest eigenvalue
+    u=as.matrix( eigen(Rs)$vectors[,length(Rs[,1])],nocl=1)
+    rownames(u)=  unlist(namesIndicators)
+    
+    # Calculate weights
+    a=matrix(0,ncol=length(unlist(namesIndicators)),nrow=length(Construct_names),dimnames=list(Construct_names,unlist(namesIndicators)))
+    for(i in Construct_names){
+      a[i,namesIndicators[[i]]]=as.vector((H[namesIndicators[[i]],namesIndicators[[i]]]%*%u[namesIndicators[[i]],])/sqrt(sum(c(u[namesIndicators[[i]],])^2)))
+    }
+    for(i in Construct_names){
+      if(sum(a[i,])<0) a[i,]=-a[i,]
+    }
+    
+    W=a[rownames(W),colnames(W)]
+    
+    W=scaleWeights(S, W)
+    
+    l <- list("W" = W, "E" = NULL, "Modes" = rep('MINVAR',length(Construct_names)),
+              "Conv_status" = TRUE, "Iterations" = 0)
+    return(l)
+
   } else if(.approach == "SSQCORR"){
     
     # Function to be optimized
