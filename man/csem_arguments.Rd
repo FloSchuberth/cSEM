@@ -14,6 +14,10 @@ or a \link{cSEMModel} object.}
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
+\item{.approach}{Character string. The Kettenring approach to use. One of
+"\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
+"\emph{SUMCORR}".}
+
 \item{.approach_nl}{Character string. The approach used to handle non-linear
 structural relationships. Possible choices are: "\emph{none}", or "\emph{replace}".
 Defaults to "\emph{none}".}
@@ -28,12 +32,9 @@ obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCORR}", 
 Defaults to "\emph{PLS}".}
 
 \item{.args_used}{A list of argument names and user picked values. Usually captured by
-\code{as.list(match_call())}.}
+\code{as.list(match_call())[-1]}.}
 
 \item{.C}{A (J x J) proxy variance-covariance matrix.}
-
-\item{.criteria}{Character string. The criteria to use. One of "\emph{SUMCOR}", "\emph{MAXVAR}",
-"\emph{SSQCOR}", "\emph{MINVAR}" or "\emph{GENVAR}".}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
 

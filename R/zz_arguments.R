@@ -121,7 +121,7 @@ NULL
 #' args_default() # List all possible arguments and their defaults.
 #' args_default(.only_dots = TRUE) # list only those accepted by `...`.
 #'
-#' @seealso [handleArgs], [csem_arguments], [cca], [csem], [workhorse]
+#' @seealso [handleArgs], [csem_arguments], [cca], [csem], [foreman]
 #'
 #' @export
 
@@ -175,7 +175,7 @@ args_default <- function(.only_dots = FALSE) {
     # Arguements passed to estimatorPathOLS
     .normality               = TRUE,
     
-    #  Arguments passed to workhorse
+    #  Arguments passed to foreman
     .dominant_indicators     = NULL
     
   )

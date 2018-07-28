@@ -15,7 +15,7 @@ The \link{cSEMResultssummary} method for the generic function \code{\link[=print
 }
 \details{
 Prints a summary of the results obtained from runinng \link{csem}, \link{cca}, or
-\link{workhorse}.
+\link{foreman}.
 }
 \seealso{
 \link{csem}, \link{cSEMResults}

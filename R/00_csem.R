@@ -3,7 +3,7 @@
 #' Estimates linear and nonlinear structural equation models using a
 #' composite based approach.
 #'
-#' The `csem` function is a wrapper around the more general [workhorse] function.
+#' The `csem` function is a wrapper around the more general [foreman] function.
 #' It is designed for quick, easy, and flexible use by providing the user with
 #' defaults choices for all relevant arguments except the mandatory `.data`
 #' and `.model` argument.
@@ -68,12 +68,12 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @inherit workhorse return
+#' @inherit foreman return
 #'
 #' @references
 #'   \insertAllCited{}
 #'
-#' @seealso [cca], [workhorse]
+#' @seealso [cca], [foreman]
 #'
 #' @examples
 #' \dontrun{
@@ -101,7 +101,7 @@ csem <- function(
   ## Collect and handle arguments
   args_used   <- as.list(match.call())[-1]
   args        <- handleArgs(args_used)
-  args_needed <- args[intersect(names(args), names(as.list(formals(workhorse))))] 
+  args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))] 
   ## 
   
   if(!is.null(.id)) {
@@ -110,14 +110,14 @@ csem <- function(
     out <- lapply(data_split, function(x) {
       
       args_needed[[".data"]] <- x[, -which(names(x) == .id)]
-      do.call(workhorse, args_needed)
+      do.call(foreman, args_needed)
     })
   } else if(class(.data) == "list") {
     
     out <- lapply(.data, function(x) {
       
       args_needed[[".data"]] <- x
-      do.call(workhorse, args_needed)
+      do.call(foreman, args_needed)
     })
     if(is.null(names(.data))) {
       names(out) <- paste0("Data_", 1:length(out))
@@ -126,7 +126,7 @@ csem <- function(
     }
   } else {
     
-    out <- do.call(workhorse, args_needed)
+    out <- do.call(foreman, args_needed)
   }
   
   ## Set class for output
