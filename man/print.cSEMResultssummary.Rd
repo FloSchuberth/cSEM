@@ -12,9 +12,11 @@ See \code{\link[=args_default]{args_default()}} with \code{.only_dots = TRUE} fo
 of possible arguments and their defaults.}
 }
 \description{
-The \link{cSEMResultssummary} method for the generic function \code{\link[=print]{print()}} prints a
-a formated summary of the output obtained from running \code{\link[=summary]{summary()}} on
-a \link{cSEMResults} object.
+The \link{cSEMResultssummary} method for the generic function \code{\link[=print]{print()}}.
+}
+\details{
+Prints a summary of the results obtained from runinng \link{csem}, \link{cca}, or
+\link{foreman}.
 }
 \seealso{
 \link{csem}, \link{cSEMResults}

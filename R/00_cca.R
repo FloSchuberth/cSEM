@@ -8,7 +8,7 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @inherit workhorse return
+#' @inherit foreman return
 #'
 #' @examples
 #' \dontrun{

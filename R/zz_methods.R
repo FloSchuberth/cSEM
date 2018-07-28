@@ -41,9 +41,10 @@ print.cSEMResults <- function(.object) {
 
 #' `cSEMResultssummary` method for `print()`
 #'
-#' The [cSEMResultssummary] method for the generic function [print()] prints a 
-#' a formated summary of the output obtained from running [summary()] on
-#' a [cSEMResults] object.
+#' The [cSEMResultssummary] method for the generic function [print()]. 
+#' 
+#' Prints a summary of the results obtained from runinng [csem], [cca], or
+#' [foreman].
 #'
 #' @usage print(.object)
 #'
@@ -119,8 +120,10 @@ print.cSEMResultssummary <- function(x, ...) {
 
 #' `cSEMResults` method for `summary()`
 #'
-#' The [cSEMResults] method for the generic function [summary()] computes a
-#' summary of a [cSEMResults] object.
+#' The [cSEMResults] method for the generic function [summary()]. 
+#' 
+#' Computes a summary of the results obtained from runinng [csem], [cca], or
+#' [foreman].
 #'
 #' @usage summary(.object, .what = NULL)
 #'

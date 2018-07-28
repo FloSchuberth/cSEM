@@ -23,7 +23,7 @@ Some text on the cca function
 Some text on the csem function
 }
 
-\section{The workhorse function}{
+\section{The foreman function}{
 
 Some text on the workhorse function
 }

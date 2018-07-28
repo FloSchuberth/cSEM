@@ -86,7 +86,7 @@ Estimates linear and nonlinear structural equation models using a
 composite based approach.
 }
 \details{
-The \code{csem()} function is a wrapper around the more general \code{\link[=workhorse]{workhorse()}} function.
+The \code{csem} function is a wrapper around the more general \link{foreman} function.
 It is designed for quick, easy, and flexible use by providing the user with
 defaults choices for all relevant arguments except the mandatory \code{.data}
 and \code{.model} argument.
@@ -101,7 +101,7 @@ in which case estimation is repeated for each data set.
 The data provided via \code{.data} may contain a non numeric column whose column name
 must be provided to \code{.id}. Values of this column are interpreted as group identifiers
 and \code{csem()} will split the data by levels of that column and run the estimation by calling
-\code{\link[=workhorse]{workhorse()}} for each level separately.
+\code{\link[=foreman]{foreman()}} for each level separately.
 
 To provide a model use the \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 with two notable extensions/changes. First: the "\code{<~}" operator in \code{cSEM} is
@@ -158,5 +158,5 @@ measurement errors behave as if they were Gaussian.
 \insertAllCited{}
 }
 \seealso{
-\link{cca}, \link{workhorse}
+\link{cca}, \link{foreman}
 }

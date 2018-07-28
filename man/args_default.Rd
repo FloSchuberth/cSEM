@@ -32,5 +32,5 @@ args_default(.only_dots = TRUE) # list only those accepted by `...`.
 
 }
 \seealso{
-\link{handleArgs}, \link{csem_arguments}, \link{cca}, \link{csem}, \link{workhorse}
+\link{handleArgs}, \link{csem_arguments}, \link{cca}, \link{csem}, \link{foreman}
 }

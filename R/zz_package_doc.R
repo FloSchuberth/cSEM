@@ -11,7 +11,7 @@
 #' @section The csem function:
 #' Some text on the csem function
 #'
-#' @section The workhorse function:
+#' @section The foreman function:
 #' Some text on the workhorse function
 #'
 #' @importFrom stats cor

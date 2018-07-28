@@ -5,7 +5,7 @@
 #' It may be called directly by the user, however, in most cases it will likely
 #' be more convenient to use [csem] or [cca] instead.
 #'
-#' @usage workhorse(
+#' @usage foreman(
 #'     .data                    = args_default()$.data,
 #'     .model                   = args_default()$.model,
 #'     .approach_cf             = args_default()$.approach_cf,
@@ -38,7 +38,7 @@
 #' @export
 #'
 
-workhorse <- function(
+foreman <- function(
   .data                    = args_default()$.data,
   .model                   = args_default()$.model,
   .approach_cf             = args_default()$.approach_cf,
