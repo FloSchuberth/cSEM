@@ -14,12 +14,8 @@
 #' @section The workhorse function:
 #' Some text on the workhorse function
 #'
-#' @importFrom lavaan lavaanify
 #' @importFrom stats cor
 #' @importFrom magrittr %>%
-#' @importFrom matrixStats rowProds colVars
-#' @importFrom Rdpack reprompt
-#' @importFrom symmoments callmultmoments
-#' @importFrom purrr transpose
+#' @importFrom matrixStats rowProds
 #' @import crayon
 "_PACKAGE"

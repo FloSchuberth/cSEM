@@ -1,6 +1,6 @@
-#' Calculate composite weights
+#' Calculate composite weights using PLS
 #'
-#' Calculates weights
+#' Calculates composite weights using the PLS algorithm.
 #'
 #' More description here
 #'
@@ -21,6 +21,10 @@
 #'   \item{`$W`}{A (J x K) matrix of estimated weights.}
 #'   \item{`$E`}{A (J x J) matrix of inner weights.}
 #'   \item{`$Modes`}{A named vector of Modes used for the outer estimation.}
+#'   \item{`$Conv_status`}{The convergence status. One of `TRUE`or `FASLE`. If 
+#'     one-step weights are used via `.iter_max = 1` the convergence status
+#'     is set to `NULL`.}
+#'   \item{`$Iterations`}{The number of iterations used.}
 #' }
 #' @export
 #'
@@ -129,8 +133,9 @@ calculateWeightsPLS <- function(
     } else if(iter_counter == iter_max & iter_max > 1) {
       # Set convergence status to FALSE, as algorithm has not converged
       conv_status = FALSE
-      warning("Iteration did not converge after ", iter_max, " steps. ",
-              "Last weights are returned.")
+      warning("The PLS algorithm did not converge after ", iter_max, " steps. ",
+              "Last weights are returned.", 
+              call. = FALSE)
       
     } else {
       W_iter <- W
@@ -165,7 +170,7 @@ calculateWeightsPLS <- function(
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return The (J x J) matrix of inner weights.
+#' @return The (J x J) matrix `E` of inner weights.
 #'
 calculateInnerWeightsPLS <- function(
   .S                        = NULL,
@@ -328,259 +333,142 @@ calculateWeightsKettenring <- function(
     }
   }
   
-  # Check if all constructs are modeled as composite
-  if("Common factor" %in% .model$construct_type ){
-    stop("Kettenring's is only allowed for pure composite models.")
+  ### Preparation ==============================================================
+  ## Check if all constructs are modeled as composites
+  if("Common factor" %in% csem_model$construct_type){
+    stop("Currently Kettenring's approaches are only allowed for pure composite models.", 
+         call. = FALSE)
+  }
+
+  ## Get relevant objects 
+  W <- csem_model$measurement
+  
+  construct_names <- rownames(W)
+  indicator_names <- colnames(W)
+  indicator_names_ls <- lapply(construct_names, function(x) {
+    indicator_names[W[x, ] == 1]
+  })
+  
+  ## Calculate S_{ii}^{-1/2}}
+  sqrt_S_jj_list <- lapply(indicator_names_ls, function(x) {
+    solve(expm::sqrtm(S[x, x]))
+  })
+  
+  ## Put in a diagonal matrix
+  H <- as.matrix(Matrix::bdiag(sqrt_S_jj_list))
+  dimnames(H) <- list(indicator_names, indicator_names)
+  
+  if(.approach %in% c("MAXVAR", "MINVAR")) {
+    # Note: The MAXVAR implementation is based on a MATLAB code provided 
+    #       by Theo K. Dijkstra
+    Rs <- H %*% S %*% H
+    
+    ## Calculate eigenvalues and eigenvectors of Rs and ...
+    u <- switch (.approach,
+          "MINVAR" = {
+            # ... select the eigenvector corresponding to the smallest eigenvalue
+            as.matrix(eigen(Rs)$vectors[, length(Rs[,1])], nocl = 1)
+          },
+          "MAXVAR" = {
+            # ... select the eigenvector corresponding to the largest eigenvalue
+            as.matrix(eigen(Rs)$vectors[, 1], nocl = 1)
+          }
+    )
+    rownames(u) <- indicator_names
+
+    ## Calculate weight
+    W <- lapply(indicator_names_ls, function(x) {
+      w <- as.vector((H[x, x] %*% u[x, ]) / sqrt(sum(c(u[x, ])^2)))
+      
+      # Correct if negative
+      if(sum(w) < 0) w <- -w
+      return(w)
+    })
+  } else if(.approach %in% c("SUMCORR", "GENVAR", "SSQCORR")) {
+    
+    # Maximize the sum of the composite correlations sum(w_i%*%S_ii%*%t(w_i)), 
+    #   see Asendorf (2015, Appendix B.3.2 Empirical, p. 295)
+    
+    ## Define function to be minimized:
+    # R       := Empirical indicator correlation matrix (S)
+    # RDsqrt  := Blockdiagonal matrix with S_{ii}^{-1/2} on its diagonal (H)
+    # nameInd := List with indicator names per block (indicator_names_ls)
+    # name    := Vector of composites names (construct_names)
+    
+    fn <- switch (.approach,
+      "SUMCORR" = {
+        function(wtilde, R, RDsqrt, nameInd, nameLV) {
+          -(t(wtilde) %*% RDsqrt %*% R %*% RDsqrt %*% t(t(wtilde)))
+        }
+      },
+      "GENVAR"  = {
+        function(wtilde, R, RDsqrt, nameInd, nameLV) {
+          det(-(t(wtilde) %*% RDsqrt %*% R %*% RDsqrt %*% t(t(wtilde))))
+        }
+      },
+      "SSQCORR" = {
+        function(wtilde, R, RDsqrt, nameInd, nameLV) {
+          norm(-(t(wtilde) %*% RDsqrt %*% R %*% RDsqrt %*% t(t(wtilde))), 
+               type = "F")
+        }
+      }
+    )
+    
+    # Define constraint function: variance of each composite is one
+    heq <- function(wtilde, R, RDsqrt, nameInd, nameLV) {
+      names(wtilde) = unlist(nameInd)
+      h <- rep(NA, length(nameLV))
+      
+      for (i in 1:length(h)) {
+        h[i] <- t(wtilde[nameInd[[i]]]) %*% t(t(wtilde[nameInd[[i]]])) - 1
+      }
+      h
+    }
+    
+    ## Optimization
+    res <- alabama::auglag(
+      par     = runif(length(indicator_names)),
+      fn      = fn,
+      R       = S,
+      RDsqrt  = H,
+      nameInd = indicator_names_ls,
+      nameLV  = construct_names,
+      heq     = heq
+    )
+    
+    # Get wtilde
+    wtilde <- res$par
+    names(wtilde) <- indicator_names
+    
+    # Calculate weights w_i = R_{ii}^{-1/2} wtilde_i
+    W <- lapply(indicator_names_ls, function(x) {
+      w <- as.vector(H[x, x] %*% wtilde[x])
+      
+      # Correct if negative
+      if(sum(w) < 0) w <- -w
+      return(w)
+    })
   }
   
-  # read out measurement model 
-  W=csem_model$measurement
-  
-  Construct_names=rownames(W)
-  
-  # read out names of indicators belonging to one block 
-  Blocksqrtmcorrelation=list()
-  namesIndicators=list()
-  
-  for(i in Construct_names){      
-    # Collect indicator names that belong to construct i 
-    namesIndicators[[i]] = colnames(W)[W[i,]==1]
-    
-    # selects Correlation matrix of block i and calculate S_{ii}^{-1/2}}
-    Blocksqrtmcorrelation[[i]]=solve(expm::sqrtm(as.matrix(S[namesIndicators[[i]],namesIndicators[[i]]])))
-    dimnames(Blocksqrtmcorrelation[[i]])=list(namesIndicators[[i]],namesIndicators[[i]])
-  }
-  
-  # restructure the correlation matrix S to get the right order
-  Srestructured=S[unlist(namesIndicators),unlist(namesIndicators)]
-  
-  # Create Blockdiagonal matrix
-  H=as.matrix(Matrix::bdiag(Blocksqrtmcorrelation))
-  dimnames(H)=list(unlist(namesIndicators),unlist(namesIndicators))
-  
-  if(.approach == 'MAXVAR'){
-    # The MAXVAR implementation is based on a MATLAB code provided by Theo K. Dijkstra
-    
-    Rs=H%*%Srestructured%*%H
-    
-    # Calculate eigenvalues and eigenvectors of Rs
-    u=as.matrix(eigen(Rs)$vectors[,1],nocl=1)# take eigenvector to the largest eigenvalue
-    rownames(u)=  unlist(namesIndicators)
-    
-    # Calculate weights
-    a=matrix(0,ncol=length(unlist(namesIndicators)),nrow=length(Construct_names),
-             dimnames=list(Construct_names,unlist(namesIndicators)))
-    for(i in Construct_names){
-      a[i,namesIndicators[[i]]]=
-        as.vector((H[namesIndicators[[i]],namesIndicators[[i]]]%*%
-                     u[namesIndicators[[i]],])/sqrt(sum(c(u[namesIndicators[[i]],])^2)))
-    }
-    for(i in Construct_names){
-      if(sum(a[i,])<0) a[i,]=-a[i,]
-    }
-    
-    
-    
-    W= a[rownames(W),colnames(W)]
-    W= scaleWeights(S, W)
-    
-    modes=rep('MAXVAR',length(Construct_names))
-    names(modes)=Construct_names
-    
-    l <- list("W" = W, "E" = NULL, "Modes" = modes,
-              "Conv_status" = TRUE, "Iterations" = 0)
-    return(l)
-    
-    
-  } else if(.approach=="SUMCORR"){
-    
-    # maximize the sum of the composite correlations sum(w_i%*%S_ii%*%t(w_i)), see Asendorf (2015, Appendix B.3.2 Empirical, p. 295)
-    
-    # define function to be minimized:
-    # R: empirical correlation matrix
-    # RDsqrt: Blockdiagonal matrix with S_{ii}^{-1/2} on its diagonal
-    # nameInd: list with indicator names per block
-    # name: vector with names of the composite
-    fn = function(wtilde,R,RDsqrt,nameInd,nameLV) {
-      -(t(wtilde)%*%RDsqrt%*%R%*%RDsqrt%*%t(t(wtilde)))
-    }
-    
-    # constraints; variance of each composite is one
-    heq <- function(wtilde,R,RDsqrt,nameInd,nameLV){
-      names(wtilde)=unlist(nameInd)
-      
-      h <- rep(NA,length(nameLV))
-      
-      for(kk in 1:length(h)){
-        h[kk]=t(wtilde[nameInd[[kk]]])%*%t(t(wtilde[nameInd[[kk]]])) -1 
-      }
-      h
-    }
-    
-    # drawn random starting values for optimization
-    p0=runif(length(unlist(namesIndicators)))
-    
-    # minimze
-    res=alabama::auglag(par=p0, fn=fn, R=Srestructured, RDsqrt=H,nameInd=namesIndicators,nameLV=Construct_names ,heq=heq)
-    wtilde=res$par
-    
-    names(wtilde)=unlist(namesIndicators)
-    
-    # Calculate weights w_i = R_{ii}^{-1/2} wtilde_i
-    a=matrix(0,ncol=length(unlist(namesIndicators)),nrow=length(Construct_names),dimnames=list(Construct_names,unlist(namesIndicators)))
-    
-    for(i in Construct_names){
-      a[i,namesIndicators[[i]]]=as.vector(Blocksqrtmcorrelation[[i]]%*%wtilde[namesIndicators[[i]]]   )
-    }
-    
-    for(i in Construct_names){
-      if(sum(a[i,])<0) a[i,]=-a[i,]
-    }
-    
-    W = a[rownames(W),colnames(W)]
-    
-    W = scaleWeights(S, W)
-    
-    modes=rep('SUMCORR',length(Construct_names))
-    names(modes)=Construct_names
-    
-    
-    l <- list("W" = W, "E" = NULL, "Modes" = modes,
-              "Conv_status" = res$convergence == 0, "Iterations" = res$counts[1])
-    return(l)
-    
-  } else if(.approach == "GENVAR" ){
-    
-    # Function to be optimized
-    fn = function(wtilde,R,RDsqrt,nameInd,nameLV) {
-      det(-(t(wtilde)%*%RDsqrt%*%R%*%RDsqrt%*%t(t(wtilde))))
-    } 
-    
-    # constraints; variance of each composite is one
-    heq <- function(wtilde,R,RDsqrt,nameInd,nameLV){
-      names(wtilde)=unlist(nameInd)
-      
-      h <- rep(NA,length(nameLV))
-      
-      # constraint: t(wtilde_i)%*%t(t(wtilde_i))=1
-      for(kk in 1:length(h)){
-        h[kk]=t(wtilde[nameInd[[kk]]])%*%t(t(wtilde[nameInd[[kk]]])) -1 
-      }
-      h
-    }
-    
-    # drawn random starting values 
-    p0=runif(length(unlist(namesIndicators)))
-    
-    # minimze
-    res=alabama::auglag(par=p0, fn=fn, R=Srestructured, RDsqrt=H,nameInd=namesIndicators,nameLV=Construct_names ,heq=heq)
-    
-    wtilde=res$par
-    
-    names(wtilde)=unlist(namesIndicators)
-    
-    # Calculate weights w_i = R_{ii}^{-1/2} wtilde_i
-    a=matrix(0,ncol=length(unlist(namesIndicators)),nrow=length(Construct_names),dimnames=list(Construct_names,unlist(namesIndicators)))
-    
-    for(i in Construct_names){
-      a[i,namesIndicators[[i]]]=as.vector(Blocksqrtmcorrelation[[i]]%*%wtilde[namesIndicators[[i]]]   )
-    }
-    
-    for(i in Construct_names){
-      if(sum(a[i,])<0) a[i,]=-a[i,]
-    }
-    
-    W=a[rownames(W),colnames(W)]
-    
-    W=scaleWeights(S, W)
-    
-    modes=rep('GENVAR',length(Construct_names))
-    names(modes)=Construct_names
-    
-    l <- list("W" = W, "E" = NULL, "Modes" = modes,
-              "Conv_status" = res$convergence == 0, "Iterations" = res$counts[1])
-    return(l)
-    
-  } else if(.approach == "MINVAR"){
+  ## Format, name and scale
+  W <- t(as.matrix(Matrix::bdiag(W)))
+  dimnames(W) <- list(construct_names, indicator_names)
+  W <- scaleWeights(S, W)
 
-    Rs=H%*%Srestructured%*%H
-    
-    # Calculate eigenvalues and eigenvectors of Rs
-        # take eigenvector to the smallest eigenvalue
-    u=as.matrix( eigen(Rs)$vectors[,length(Rs[,1])],nocl=1)
-    rownames(u)=  unlist(namesIndicators)
-    
-    # Calculate weights
-    a=matrix(0,ncol=length(unlist(namesIndicators)),nrow=length(Construct_names),dimnames=list(Construct_names,unlist(namesIndicators)))
-    for(i in Construct_names){
-      a[i,namesIndicators[[i]]]=as.vector((H[namesIndicators[[i]],namesIndicators[[i]]]%*%u[namesIndicators[[i]],])/sqrt(sum(c(u[namesIndicators[[i]],])^2)))
-    }
-    for(i in Construct_names){
-      if(sum(a[i,])<0) a[i,]=-a[i,]
-    }
-    
-    W=a[rownames(W),colnames(W)]
-    
-    W=scaleWeights(S, W)
-    
-    l <- list("W" = W, "E" = NULL, "Modes" = rep('MINVAR',length(Construct_names)),
-              "Conv_status" = TRUE, "Iterations" = 0)
-    return(l)
-
-  } else if(.approach == "SSQCORR"){
-    
-    # Function to be optimized
-    fn = function(wtilde,R,RDsqrt,nameInd,nameLV) {
-      norm(-(t(wtilde)%*%RDsqrt%*%R%*%RDsqrt%*%t(t(wtilde))),"F")
-    }
-    
-    # constraints; variance of each composite is one
-    
-    heq <- function(wtilde,R,RDsqrt,nameInd,nameLV){
-      names(wtilde)=unlist(nameInd)
-      
-      h <- rep(NA,length(nameLV))
-      
-      # constraint: t(wtilde_i)%*%t(t(wtilde_i))=1
-      for(kk in 1:length(h)){
-        h[kk]=t(wtilde[nameInd[[kk]]])%*%t(t(wtilde[nameInd[[kk]]])) -1 
-      }
-      h
-    }
-    
-    # drawn random starting values 
-    p0=runif(length(unlist(namesIndicators)))
-    
-    # minimze
-    res=alabama::auglag(par=p0, fn=fn, R=Srestructured, RDsqrt=H,nameInd=namesIndicators,nameLV=Construct_names ,heq=heq)
-    
-    wtilde=res$par
-    
-    names(wtilde)=unlist(namesIndicators)
-    
-    # Calculate weights w_i = R_{ii}^{-1/2} wtilde_i
-    a=matrix(0,ncol=length(unlist(namesIndicators)),nrow=length(Construct_names),dimnames=list(Construct_names,unlist(namesIndicators)))
-    
-    for(i in Construct_names){
-      a[i,namesIndicators[[i]]]=as.vector(Blocksqrtmcorrelation[[i]]%*%wtilde[namesIndicators[[i]]]   )
-    }
-    
-    for(i in Construct_names){
-      if(sum(a[i,])<0) a[i,]=-a[i,]
-    }
-    
-    W=a[rownames(W),colnames(W)] 
-    
-    W=scaleWeights(S, W)
-    
-    modes=rep('SSQCORR',length(Construct_names))
-    names(modes)=Construct_names
-    
-    l <- list("W" = W, "E" = NULL, "Modes" = modes,
-              "Conv_status" = res$convergence == 0, "Iterations" = res$counts[1])
-    return(l)
-    
-  } else{stop("Not yet implemented")}
+  ## Prepare for output
+  modes <- rep(.approach, length(construct_names))
+  names(modes) <- construct_names
+  
+  ## Prepare output and return
+  l <- list(
+    "W"           = W, 
+    "E"           = NULL, 
+    "Modes"       = modes,
+    "Conv_status" = if(.approach %in% c("MINVAR", "MAXVAR")) NULL else res$convergence == 0,  
+    "Iterations"  = if(.approach %in% c("MINVAR", "MAXVAR")) NULL else res$counts[1]
+    )
+  
+  return(l)
   
 } # END calculateWeightsKettenring
 
