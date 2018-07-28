@@ -20,11 +20,8 @@ Technically \code{cSEMResultssummary} is a named list containing the following l
 }
 }
 \description{
-The \link{cSEMResults} method for the generic function \code{\link[=summary]{summary()}}.
-}
-\details{
-Computes a summary of the results obtained from runinng \link{csem}, \link{cca}, or
-\link{workhorse}.
+The \link{cSEMResults} method for the generic function \code{\link[=summary]{summary()}} computes a
+summary of a \link{cSEMResults} object.
 }
 \seealso{
 \link{csem}, \link{cSEMResults}

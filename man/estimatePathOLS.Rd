@@ -10,7 +10,8 @@ estimatePathOLS(.H = NULL, .W = NULL, .Q = NULL, .P = NULL,
 \arguments{
 \item{.H}{The (N x J) matrix of proxy values.}
 
-\item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
+\item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
+\code{Iterations}.}
 
 \item{.Q}{A vector of proxy-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
@@ -23,8 +24,8 @@ contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cS
 Defaults to \code{TRUE}.}
 
 \item{.approach_nl}{Character string. The approach used to handle non-linear
-structural relationships. Possible choices are: "\emph{none}", or "\emph{replace}".
-Defaults to "\emph{none}".}
+structural relationships. Possible choices are: "\emph{sequential}", or "\emph{replace}".
+Defaults to "\emph{sequential}".}
 }
 \value{
 A named list containing the estimated structural coefficients and the

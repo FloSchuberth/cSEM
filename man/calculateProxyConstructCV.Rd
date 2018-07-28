@@ -9,7 +9,8 @@ calculateProxyConstructCV(.W = NULL, .csem_model = NULL,
   .reliabilities = NULL)
 }
 \arguments{
-\item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
+\item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
+\code{Iterations}.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
 

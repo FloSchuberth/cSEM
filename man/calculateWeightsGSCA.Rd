@@ -18,6 +18,10 @@ A list with the following elements:
 \item{\code{$W}}{A (J x K) matrix of estimated weights.}
 \item{\code{$E}}{A (J x J) matrix of inner weights.}
 \item{\code{$Modes}}{A named vector of Modes used for the outer estimation.}
+\item{\code{$Conv_status}}{The convergence status. One of \code{TRUE}or \code{FASLE}. If
+one-step weights are used via \code{.iter_max = 1} the convergence status
+is set to \code{NULL}.}
+\item{\code{$Iterations}}{The number of iterations used.}
 }
 }
 \description{

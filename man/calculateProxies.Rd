@@ -7,7 +7,8 @@
 calculateProxies(.X = NULL, .W = NULL)
 }
 \arguments{
-\item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
+\item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
+\code{Iterations}.}
 }
 \value{
 The (N x J) matrix of proxy values with column names equal to

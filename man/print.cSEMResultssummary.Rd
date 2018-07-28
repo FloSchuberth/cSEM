@@ -8,14 +8,13 @@ print(.object)
 }
 \arguments{
 \item{...}{Further arguments to be passed down to other functions.
-See \link{args_default} for a complete list of possible arguments and their defaults.}
+See \code{\link[=args_default]{args_default()}} with \code{.only_dots = TRUE} for a complete list
+of possible arguments and their defaults.}
 }
 \description{
-The \link{cSEMResultssummary} method for the generic function \code{\link[=print]{print()}}.
-}
-\details{
-Prints a summary of the results obtained from runinng \link{csem}, \link{cca}, or
-\link{workhorse}.
+The \link{cSEMResultssummary} method for the generic function \code{\link[=print]{print()}} prints a
+a formated summary of the output obtained from running \code{\link[=summary]{summary()}} on
+a \link{cSEMResults} object.
 }
 \seealso{
 \link{csem}, \link{cSEMResults}

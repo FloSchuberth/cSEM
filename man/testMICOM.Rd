@@ -42,7 +42,8 @@ Defaults to \code{0.05}.}
 to \code{TRUE}.}
 
 \item{...}{Further arguments to be passed down to other functions.
-See \link{args_default} for a complete list of possible arguments and their defaults.}
+See \code{\link[=args_default]{args_default()}} with \code{.only_dots = TRUE} for a complete list
+of possible arguments and their defaults.}
 }
 \value{
 An object of class "testMICOM"

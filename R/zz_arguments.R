@@ -1,10 +1,12 @@
 #' cSEMArguments
 #'
-#' A list of all arguments including a description of their use and current defaults.
-#' Mainly used for interal purposes (parameter inheritance). To list all arguments
+#' An alphabetical list of all arguments used by functions of the `cSEM` package,
+#' including their description and defaults.
+#' Mainly used for internal purposes (parameter inheritance). To list all arguments
 #' and their defaults, use [args_default()]. To list only those arguments to be 
-#' passed down to lower level functions via the `...` argument of the [csem()] function,
-#' set the `.only_dots` argument of the [args_default()] function to `TRUE`.
+#' passed down to lower level functions via the `...` argument of any 
+#' function having `...` as a formal argument, set the `.only_dots` argument 
+#' of the [args_default()] function to `TRUE`.
 #'
 #' @param .data A `data.frame` or a `matrix` containing the raw data. 
 #' @param .model A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
@@ -15,8 +17,8 @@
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
 #' @param .approach_nl Character string. The approach used to handle non-linear
-#'   structural relationships. Possible choices are: "*none*", or "*replace*".
-#'   Defaults to "*none*".
+#'   structural relationships. Possible choices are: "*sequential*", or "*replace*".
+#'   Defaults to "*sequential*".
 #' @param .approach_paths Character string. Approach used to estimate the
 #'   structural coefficients. Possible choices are: "*OLS*", "*2SLS*", or "*3SLS*".
 #'   Defaults to "*OLS*".
@@ -89,9 +91,11 @@
 #'   The argument is ignored if `.approach_weight` is not PLS.
 #' @param .verbose Logical. Should information be printed to the console? Defaults
 #'   to `TRUE`.
-#' @param .W A list with elements `$W`, `$E`, `PLS_mode` and xxx.
+#' @param .W A list with elements `$W`, `$E`, `Modes`, `Conv_status`, and 
+#'   `Iterations`.
 #' @param ... Further arguments to be passed down to other functions.
-#' See [args_default] for a complete list of possible arguments and their defaults.
+#' See [args_default()] with `.only_dots = TRUE` for a complete list 
+#' of possible arguments and their defaults.
 #'
 #' @name csem_arguments
 #' @aliases cSEMArguments csem_parameters
@@ -132,7 +136,7 @@ args_default <- function(.only_dots = FALSE) {
     .model                   = NULL,
     .alpha                   = 0.05,
     .approach                = "SUMCORR",
-    .approach_nl             = "none",
+    .approach_nl             = "sequential",
     .approach_paths          = "OLS",
     .approach_weights        = "PLS", 
     .C                       = NULL,

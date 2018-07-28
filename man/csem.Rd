@@ -9,7 +9,7 @@ csem(
   .model               = NULL,
   .approach_weights    = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR", "GSCA", "fixed", "unit"),
   .approach_path       = c("OLS", "2SLS", "3SLS"),
-  .approach_nl         = c("none", "replace"),
+  .approach_nl         = c("sequential", "replace"),
   .disattenuate        = TRUE,
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
   .PLS_mode            = NULL,
@@ -18,7 +18,9 @@ csem(
   ...)
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Addionally,
+a list of \code{data.frame}s or \code{matrices} may be specified in which case estimation
+is repeated for each data set.}
 
 \item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
 or a \link{cSEMModel} object.}
@@ -36,8 +38,8 @@ structural coefficients. Possible choices are: "\emph{OLS}", "\emph{2SLS}", or "
 Defaults to "\emph{OLS}".}
 
 \item{.approach_nl}{Character string. The approach used to handle non-linear
-structural relationships. Possible choices are: "\emph{none}", or "\emph{replace}".
-Defaults to "\emph{none}".}
+structural relationships. Possible choices are: "\emph{sequential}", or "\emph{replace}".
+Defaults to "\emph{sequential}".}
 
 \item{.disattenuate}{Logical. Should proxy correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
@@ -62,7 +64,8 @@ may be given for a subset of the constructs. Defaults to \code{NULL} in which ca
 reliabilites are estimated by \code{cSEM}.}
 
 \item{...}{Further arguments to be passed down to other functions.
-See \link{args_default} for a complete list of possible arguments and their defaults.}
+See \code{\link[=args_default]{args_default()}} with \code{.only_dots = TRUE} for a complete list
+of possible arguments and their defaults.}
 }
 \value{
 An object of class \code{cSEMResults} for which the following methods exist:
@@ -83,32 +86,43 @@ Estimates linear and nonlinear structural equation models using a
 composite based approach.
 }
 \details{
-The \code{csem} function is a wrapper around the more general \link{workhorse} function.
+The \code{csem()} function is a wrapper around the more general \code{\link[=workhorse]{workhorse()}} function.
 It is designed for quick, easy, and flexible use by providing the user with
 defaults choices for all relevant arguments except the mandatory \code{.data}
 and \code{.model} argument.
+}
+\section{Data and model}{
 
 To get started the \code{.data} and \code{.model} arguments are required. Data must be
-provided as either a matrix or a data frame with column names matching
+provided as either a \code{matrix} or a \code{data.frame} with column names matching
 the variable/indicator names used in the model description of the measurement model.
+Alternativly a named or unamed list of matrices or \code{data.frame}s may be provided
+in which case estimation is repeated for each data set.
+The data provided via \code{.data} may contain a non numeric column whose column name
+must be provided to \code{.id}. Values of this column are interpreted as group identifiers
+and \code{csem()} will split the data by levels of that column and run the estimation by calling
+\code{\link[=workhorse]{workhorse()}} for each level separately.
 
-To provide a model use the \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
+To provide a model use the \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 with two notable extensions/changes. First: the "\code{<~}" operator in \code{cSEM} is
 used to define a composite instead of a formative common factor. Second:
 the "\code{.}" is used to indicate interactions between constructs as in e.g.,
 \code{construct1.construct2}.
+}
+
+\section{Weights}{
 
 By default weights are estimated using \emph{PLS}. Alternative approaches include
-n, "\emph{fixed weights}"
+all of \emph{Kettenring's approaches}, "\emph{fixed weights}"
 or "\emph{unit weight}". \emph{Generalized Structured Component Analysis} (\emph{GSCA}) may
 also be chosen as a weighing approach although technically GSCA obtains weight
 and structural coefficient estimates simultaneously. Hence, setting
 \code{.approach_weights = "GSCA"} automatically sets \code{.approach_path = "GSCA"} (and
 vice-versa).
 
-The weights are properly rescaled to get consistent estimates for the factor
-loadings as well as for the correlations between the proxies and their
-corresponding factors unless \code{.disattenuate} is set to \code{FALSE}.
+Composite-indicator and composite-composite correaltions are properly rescaled
+to get consistent estimates for the factor loadings and construct correlations
+unless \code{.disattenuate} is set explicitly set to \code{FALSE}.
 Consistent estimates are calculated for the entries of the moment equations
 that define the structural parameters.
 The solutions to the moment equations are reported as consistent estimates
@@ -122,15 +136,18 @@ exponential terms. The latter is described in model syntax as an
 terms up to a power of three (i.e. three-way interactions) are allowed.
 
 The current version of the package allows two kinds of estimation:
-Estimation of the reduced form equation and estimation each equation by not
-inserting the other equations. The latter does not not allow for assuming multivariate normality of all
-exogenous variables, i.e., the latent variables and the error terms.
+estimation of the reduced form equation (\code{.approach_nl = "reduced"}) and
+sequential estimation (\code{.approach_nl = "sequential"}). The latter does not
+not allow for multivariate normality of all exogenous variables, i.e.,
+the latent variables and the error terms.
 
-Distributional assumptions are kept to a minimum (an i.i.d. sample from a population with finite
-moments for the relevant order); for higher order models, that go beyond interaction, we work in
-this version with the assumption that as far as the relevant moments are concerned certain
-combinations of measurement errors behave as if they were Gaussian.
+Distributional assumptions are kept to a minimum (an i.i.d. sample from a
+population with finite moments for the relevant order); for higher order models,
+that go beyond interaction, we work in this version with the assumption that
+as far as the relevant moments are concerned certain combinations of
+measurement errors behave as if they were Gaussian.
 }
+
 \examples{
 \dontrun{
 # still to implement

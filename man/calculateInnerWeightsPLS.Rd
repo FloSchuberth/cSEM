@@ -16,7 +16,8 @@ calculateInnerWeightsPLS(
 \item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 where K is the number of indicators.}
 
-\item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
+\item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
+\code{Iterations}.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
 
@@ -28,7 +29,7 @@ Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight
 when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.}
 }
 \value{
-The (J x J) matrix of inner weights.
+The (J x J) matrix \code{E} of inner weights.
 }
 \description{
 Calculates inner weights

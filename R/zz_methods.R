@@ -1,18 +1,17 @@
 #' `cSEMResults` method for `print()`
 #'
-#' The [cSEMResults] method for the generic function [print()]. 
-#' 
-#' Prints basic information on the [cSEMResults] object and suggested next 
-#' steps to the console.
+#' The [cSEMResults] method for the generic function [print()] prints basic 
+#' information on a [cSEMResults] object including potentially
+#' useful postestimation functions to call.
 #'
-#' @usage print(object)
+#' @usage print(.object)
 #'
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem], [cSEMResults]
 #'
 #' @export
-#'
+#' 
 print.cSEMResults <- function(.object) {
 
   cat(cli::rule(line = "bar2"), "\n")
@@ -42,10 +41,9 @@ print.cSEMResults <- function(.object) {
 
 #' `cSEMResultssummary` method for `print()`
 #'
-#' The [cSEMResultssummary] method for the generic function [print()]. 
-#' 
-#' Prints a summary of the results obtained from runinng [csem], [cca], or
-#' [workhorse].
+#' The [cSEMResultssummary] method for the generic function [print()] prints a 
+#' a formated summary of the output obtained from running [summary()] on
+#' a [cSEMResults] object.
 #'
 #' @usage print(.object)
 #'
@@ -121,10 +119,8 @@ print.cSEMResultssummary <- function(x, ...) {
 
 #' `cSEMResults` method for `summary()`
 #'
-#' The [cSEMResults] method for the generic function [summary()]. 
-#' 
-#' Computes a summary of the results obtained from runinng [csem], [cca], or
-#' [workhorse].
+#' The [cSEMResults] method for the generic function [summary()] computes a
+#' summary of a [cSEMResults] object.
 #'
 #' @usage summary(.object, .what = NULL)
 #'
@@ -413,6 +409,7 @@ status <- function(.object){
   UseMethod("status")
 }
 
+#' @describeIn status Some text
 #' @export
 status.cSEMResults <- function(.object){
   

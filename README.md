@@ -3,16 +3,17 @@
 
 # cSEM
 
-WARNING: THIS IS WORK IN PROGRESS. BREAKING ARE VERY LIKELY. Do not use
-the package before the first stable relase (which will be 0.0.1, towards
-the end of 2018).
+WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES TO THE API ARE VERY
+LIKELY. Do not use the package before the first stable relase (which
+will be 0.0.1, towards the end of 2018).
 
 ## Purpose
 
 Estimate, analyse, test, and study linear and nonlinear structural
 equation models using composite based approaches, procedures, and tests
-including e.g. PLS, GSCA, 2SLS estimation, several tests and typical
-postestimation procedures.
+including e.g. PLS, PLSc, GSCA, GSCAm, 2SLS estimation, several tests
+and typical postestimation procedures (e.g., computing a model-implied
+covariance or effects).
 
 ## Installation
 
@@ -28,8 +29,8 @@ devtools::install_github("M-E-Steiner/cSEM")
       - Functions `csem()` and `cca()` provide default choices for most
         of its arguments (similarity to the `sem` and `cfa` functions of
         the [lavaan](http://lavaan.ugent.be/) package is intended).
-      - Well documented (Vignettes, HTML output, a website, intro
-        course(s)). Of course this may take some time\!
+      - (Eventually) well documented (Vignettes, HTML output, a website,
+        intro course(s)). Of course this may take some time\!
       - There will be an extensive (non-expert) visually and
         didactically appealing documentation designed to make the
         learning curve of both the methods involved and the package as
@@ -57,6 +58,11 @@ devtools::install_github("M-E-Steiner/cSEM")
     require(cSEM)
     data(satisfaction)
     
+    ## Note: the opeartor "<~" tells cSEM that the construct to its left is modelled
+             as a composite.
+             the operator "=~" tells cSEM that the construct to its left is modelled
+             as a common factor.
+             
     model <- "
     # Structural model
     EXPE ~ IMAG
@@ -78,4 +84,14 @@ devtools::install_github("M-E-Steiner/cSEM")
     a <- csem(.data = satisfaction, .model = model)
     a
     
-    summary(a) # summary is work in progress
+    ## Access elements using $. E.g.
+    a$Estimates # or
+    a$Information$Model
+    
+    ## Apply postestimation functions, e.g.
+    status(a) # no print method yet
+    fitted(a)
+    effects(a) # no print method yet
+    
+    ## Get a summary
+    summary(a) # currently not working

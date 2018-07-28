@@ -2,9 +2,12 @@
 % Please edit documentation in R/zz_methods.R
 \name{status}
 \alias{status}
+\alias{status.cSEMResults}
 \title{\code{cSEMResults} method to check the validity of the results}
 \usage{
 status(object)
+
+\method{status}{cSEMResults}(.object)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults}.}
@@ -24,6 +27,11 @@ a correlation larger than 1
 \description{
 Check the validity of the estimated quantities.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults}: Some text
+}}
+
 \seealso{
 \link{csem}, \link{cSEMResults}
 }

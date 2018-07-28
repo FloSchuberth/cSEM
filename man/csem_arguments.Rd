@@ -14,9 +14,13 @@ or a \link{cSEMModel} object.}
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
+\item{.approach}{Character string. The Kettenring approach to use. One of
+"\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
+"\emph{SUMCORR}".}
+
 \item{.approach_nl}{Character string. The approach used to handle non-linear
-structural relationships. Possible choices are: "\emph{none}", or "\emph{replace}".
-Defaults to "\emph{none}".}
+structural relationships. Possible choices are: "\emph{sequential}", or "\emph{replace}".
+Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. Possible choices are: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}".
@@ -28,12 +32,9 @@ obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCORR}", 
 Defaults to "\emph{PLS}".}
 
 \item{.args_used}{A list of argument names and user picked values. Usually captured by
-\code{as.list(match_call())}.}
+\code{as.list(match_call())[-1]}.}
 
 \item{.C}{A (J x J) proxy variance-covariance matrix.}
-
-\item{.criteria}{Character string. The criteria to use. One of "\emph{SUMCOR}", "\emph{MAXVAR}",
-"\emph{SSQCOR}", "\emph{MINVAR}" or "\emph{GENVAR}".}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
 
@@ -125,15 +126,19 @@ The argument is ignored if \code{.approach_weight} is not PLS.}
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
 
-\item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
+\item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
+\code{Iterations}.}
 
 \item{...}{Further arguments to be passed down to other functions.
-See \link{args_default} for a complete list of possible arguments and their defaults.}
+See \code{\link[=args_default]{args_default()}} with \code{.only_dots = TRUE} for a complete list
+of possible arguments and their defaults.}
 }
 \description{
-A list of all arguments including a description of their use and current defaults.
-Mainly used for interal purposes (parameter inheritance). To list all arguments
+An alphabetical list of all arguments used by functions of the \code{cSEM} package,
+including their description and defaults.
+Mainly used for internal purposes (parameter inheritance). To list all arguments
 and their defaults, use \code{\link[=args_default]{args_default()}}. To list only those arguments to be
-passed down to lower level functions via the \code{...} argument of the \code{\link[=csem]{csem()}} function,
-set the \code{.only_dots} argument of the \code{\link[=args_default]{args_default()}} function to \code{TRUE}.
+passed down to lower level functions via the \code{...} argument of any
+function having \code{...} as a formal argument, set the \code{.only_dots} argument
+of the \code{\link[=args_default]{args_default()}} function to \code{TRUE}.
 }

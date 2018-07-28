@@ -11,7 +11,8 @@ calculateLoadings(.S = NULL, .W = NULL, .Q = NULL, .csem_model = NULL,
 \item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 where K is the number of indicators.}
 
-\item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
+\item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
+\code{Iterations}.}
 
 \item{.Q}{A vector of proxy-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note

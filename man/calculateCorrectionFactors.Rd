@@ -11,7 +11,8 @@ calculateCorrectionFactors(.S = NULL, .W = NULL, .modes = NULL,
 \item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
 where K is the number of indicators.}
 
-\item{.W}{A list with elements \code{$W}, \code{$E}, \code{PLS_mode} and xxx.}
+\item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
+\code{Iterations}.}
 
 \item{.modes}{A named vector giving the mode used to obtain new outer weights.}
 

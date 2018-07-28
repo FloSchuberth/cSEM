@@ -35,8 +35,8 @@ factor for PLSc. Possible choices are: "\emph{dist_euclid}", "\emph{dist_euclid_
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}". Ignored if \code{.disattenuate = FALSE}.}
 
 \item{.approach_nl}{Character string. The approach used to handle non-linear
-structural relationships. Possible choices are: "\emph{none}", or "\emph{replace}".
-Defaults to "\emph{none}".}
+structural relationships. Possible choices are: "\emph{sequential}", or "\emph{replace}".
+Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. Possible choices are: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}".
@@ -57,6 +57,9 @@ a subset of the constructs.}
 
 \item{.estimate_structural}{Logical. Should the structural (path) coefficients
 be estimated? Defaults to \code{TRUE}.}
+
+\item{.id}{Charachter string. The name of the column of \code{.data} used to split
+the date into groups.}
 
 \item{.ignore_structural_model}{Logical. Should the structural (path) model be ignored
 when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.}
