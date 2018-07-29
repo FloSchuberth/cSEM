@@ -72,7 +72,7 @@
 #'   .approach_nl         = c("sequential", "replace"),
 #'   .disattenuate        = TRUE,
 #'   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-#'   .PLS_mode            = NULL,
+#'   .PLS_modes           = NULL,
 #'   .estimate_structural = TRUE,
 #'   .reliabilities       = NULL
 #'   ...)
@@ -106,7 +106,7 @@ csem <- function(
   .approach_nl             = c("sequential", "replace"),
   .disattenuate            = TRUE,
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-  .PLS_mode                = NULL,
+  .PLS_modes               = NULL,
   .estimate_structural     = TRUE,
   .reliabilities           = NULL,
   ...

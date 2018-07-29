@@ -9,8 +9,8 @@ processData(.data, .model)
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
-\item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
-or a \link{cSEMModel} object.}
+\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+or a \link{cSEMModel}-list.}
 }
 \value{
 A (N x K) matrix containing the standardized data with columns ordered

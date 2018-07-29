@@ -5,13 +5,13 @@
 #' More description here
 #'
 #' @usage calculateWeights(
-#'   .data                     = NULL,
-#'   .model                    = NULL,
-#'   .PLS_mode                 = NULL,
-#'   .tolerance                = NULL,
-#'   .iter_max                 = NULL,
-#'   .PLS_weight_scheme_inner  = NULL,
-#'   .ignore_structural_model  = NULL
+#'   .data                        = NULL,
+#'   .model                       = NULL,
+#'   .PLS_modes                   = NULL,
+#'   .tolerance                   = NULL,
+#'   .iter_max                    = NULL,
+#'   .PLS_ignore_structural_model = NULL
+#'   .PLS_weight_scheme_inner     = NULL,
 #'    )
 #'
 #' @inheritParams csem_arguments
@@ -30,13 +30,13 @@
 #'
 
 calculateWeightsPLS <- function(
-  .data                     = NULL,
-  .model                    = NULL,
-  .PLS_mode                 = NULL,
-  .tolerance                = NULL,
-  .iter_max                 = NULL,
-  .PLS_weight_scheme_inner  = NULL,
-  .ignore_structural_model  = NULL
+  .data                        = NULL,
+  .model                       = NULL,
+  .PLS_modes                   = NULL,
+  .tolerance                   = NULL,
+  .iter_max                    = NULL,
+  .PLS_ignore_structural_model = NULL,
+  .PLS_weight_scheme_inner     = NULL
 ) {
 
 
@@ -62,28 +62,28 @@ calculateWeightsPLS <- function(
   ### Preparation ==============================================================
   ## Get/set the modes for the outer estimation
 
-  if(is.null(.PLS_mode)) {
+  if(is.null(.PLS_modes)) {
     
     modes <- ifelse(csem_model$construct_type == "Common factor", "ModeA", "ModeB")
 
-  } else if(all(.PLS_mode %in% c("ModeA", "ModeB"))) {
+  } else if(all(.PLS_modes %in% c("ModeA", "ModeB"))) {
     
-    if(setequal(names(.PLS_mode), names(csem_model$construct_type))) {
-      modes <- .PLS_mode
+    if(setequal(names(.PLS_modes), names(csem_model$construct_type))) {
+      modes <- .PLS_modes
       modes <- modes[names(csem_model$construct_type)]
-    } else if(length(.PLS_mode) == 1) {
-      modes <- rep(.PLS_mode, length(csem_model$construct_type))
+    } else if(length(.PLS_modes) == 1) {
+      modes <- rep(.PLS_modes, length(csem_model$construct_type))
       names(modes) <- names(csem_model$construct_type)
-    } else if(length(setdiff(names(.PLS_mode), names(csem_model$construct_type))) > 0) {
-      stop(paste0("`", setdiff(names(.PLS_mode), names(csem_model$construct_type)), 
-                  "`", collapse = ", ")," in `.PLS_mode` is an unknown construct name.", call. = FALSE)
+    } else if(length(setdiff(names(.PLS_modes), names(csem_model$construct_type))) > 0) {
+      stop(paste0("`", setdiff(names(.PLS_modes), names(csem_model$construct_type)), 
+                  "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.", call. = FALSE)
     } else  {
-      stop("Mode ", paste0("`", setdiff(names(csem_model$construct_type), names(.PLS_mode)), 
-                  "`", collapse = ", ")," in `.PLS_mode` is missing.", call. = FALSE)
+      stop("Mode ", paste0("`", setdiff(names(csem_model$construct_type), names(.PLS_modes)), 
+                  "`", collapse = ", ")," in `.PLS_modes` is missing.", call. = FALSE)
     }
   } else {
-    stop(paste0("`", setdiff(.PLS_mode, c("ModeA", "ModeB")), "`", collapse = ", "),
-         " in `.PLS_mode` is an unknown mode.", call. = FALSE)
+    stop(paste0("`", setdiff(.PLS_modes, c("ModeA", "ModeB")), "`", collapse = ", "),
+         " in `.PLS_modes` is an unknown mode.", call. = FALSE)
   }
 
   ### Calculation/Iteration ====================================================
@@ -102,11 +102,11 @@ calculateWeightsPLS <- function(
 
     # Inner estimation
     E <- calculateInnerWeightsPLS(
-      .S                       = S,
-      .W                       = W_iter,
-      .csem_model              = csem_model,
-      .PLS_weight_scheme_inner = .PLS_weight_scheme_inner,
-      .ignore_structural_model = .ignore_structural_model
+      .S                           = S,
+      .W                           = W_iter,
+      .csem_model                  = csem_model,
+      .PLS_ignore_structural_model = .PLS_ignore_structural_model,
+      .PLS_weight_scheme_inner     = .PLS_weight_scheme_inner
     )
     # Outer estimation
 
@@ -161,11 +161,11 @@ calculateWeightsPLS <- function(
 #' More description here.
 #'
 #' @usage calculateInnerWeightsPLS(
-#'   .S                        = NULL,
-#'   .W                        = NULL,
-#'   .csem_model               = NULL,
-#'   .PLS_weight_scheme_inner  = NULL,
-#'   .ignore_structural_model  = NULL
+#'   .S                           = NULL,
+#'   .W                           = NULL,
+#'   .csem_model                  = NULL,
+#'   .PLS_ignore_structural_model = NULL,
+#'   .PLS_weight_scheme_inner     = NULL
 #' )
 #'
 #' @inheritParams csem_arguments
@@ -173,11 +173,11 @@ calculateWeightsPLS <- function(
 #' @return The (J x J) matrix `E` of inner weights.
 #'
 calculateInnerWeightsPLS <- function(
-  .S                        = NULL,
-  .W                        = NULL,
-  .csem_model               = NULL,
-  .PLS_weight_scheme_inner  = NULL,
-  .ignore_structural_model  = NULL
+  .S                           = NULL,
+  .W                           = NULL,
+  .csem_model                  = NULL,
+  .PLS_ignore_structural_model = NULL,
+  .PLS_weight_scheme_inner     = NULL
 ) {
 
   # Composite correlation matrix (C = V(H))
@@ -195,13 +195,14 @@ calculateInnerWeightsPLS <- function(
   D   <- E + t(E)
 
   ## (Inner) weightning scheme:
-  if(.PLS_weight_scheme_inner == "path" & .ignore_structural_model) {
-    .ignore_structural_model <- FALSE
+  if(.PLS_weight_scheme_inner == "path" & .PLS_ignore_structural_model) {
+    .PLS_ignore_structural_model <- FALSE
     warning("Structural model required for the path weighting scheme.\n",
-            ".ignore_structural_model = TRUE was changed to FALSE.")
+            ".PLS_ignore_structural_model = TRUE was changed to FALSE.", 
+            call. = FALSE)
   }
 
-  if(.ignore_structural_model) {
+  if(.PLS_ignore_structural_model) {
     switch (.PLS_weight_scheme_inner,
             "centroid"  = {E <- sign(C) - diag(1, nrow = nrow(.W))},
             "factorial" = {E <- C - diag(1, nrow = nrow(.W))}

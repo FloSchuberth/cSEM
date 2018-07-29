@@ -8,8 +8,8 @@
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
-\item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
-or a \link{cSEMModel} object.}
+\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+or a \link{cSEMModel}-list.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
@@ -18,110 +18,108 @@ Defaults to \code{0.05}.}
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
 "\emph{SUMCORR}".}
 
-\item{.approach_nl}{Character string. The approach used to handle non-linear
-structural relationships. Possible choices are: "\emph{sequential}", or "\emph{replace}".
+\item{.approach_nl}{Character string. Approach used to estimate nonlinear
+structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. Possible choices are: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}".
+structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}".
 Defaults to "\emph{OLS}".}
 
-\item{.approach_weights}{Character string. The name of the approach used to
-obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+\item{.approach_weights}{Character string. Approach used to
+obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
-\item{.args_used}{A list of argument names and user picked values. Usually captured by
-\code{as.list(match_call())[-1]}.}
+\item{.args_used}{A list of function argument names to \code{foo()} whose value
+was modified by the user. Usually captured by \code{as.list(match_call())[-1]}
+within the body of \code{foo()}.}
 
-\item{.C}{A (J x J) proxy variance-covariance matrix.}
+\item{.C}{A (J x J) composite variance-covariance matrix.}
 
-\item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.disattenuate}{Logical. Should proxy correlations be disattenuated
-if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
+if the construct is modelled as a common factor? Defaults to \code{TRUE}.}
 
-\item{.dominant_indicators}{A character vector of \code{name = value} pairs, where \code{value} is
-a character string giving the name of the dominant indicator and \code{name}
-the corresponding construct name. Dominant indicators may be specified for
-a subset of the constructs.}
+\item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
+where \code{"value"} is a character string giving the name of the dominant indicator
+and \code{"name"} a character string of the corresponding construct name.
+Dominant indicators may be specified for a subset of the constructs.}
 
-\item{.dropInadmissibles}{Logical. Should the inadmissible solution be dropped? Defaults to \code{TRUE}.}
+\item{.drop_inadmissibles}{Logical. Should inadmissible solutions be dropped?
+Defaults to \code{TRUE}.}
 
 \item{.E}{A (J x J) matrix of inner weights.}
 
-\item{.estimate_structural}{Logical. Should the structural (path) coefficients
+\item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
 
-\item{.group_var}{Character string. The name of the column used to split the data into groups.}
-
-\item{.H}{The (N x J) matrix of proxy values.}
+\item{.H}{The (N x J) matrix of composite scores.}
 
 \item{.id}{Charachter string. The name of the column of \code{.data} used to split
 the date into groups.}
 
-\item{.ignore_structural_model}{Logical. Should the structural (path) model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.}
+\item{.iter_max}{Integer. The maximum number of iterations allowed.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS"} one-step weights are returned.
+If the algorithm exceeds the specified number, weights of iteration step
+\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
-\item{.iter_max}{Integer. The maximum number of iterations of the PLS algorithm.
-If \code{iter_max = 1} one-step weights are returned. If the algorithm exceeds
-the specified number, weights of iteration step \code{.iter_max - 1}  will be returned
-with a warning. Defaults to \code{100}. The argument is ignored if
-\code{.approach_weight} is not PLS.}
+\item{.matrix1}{A \code{matrix} to compare.}
 
-\item{.matrix1}{A matrix. Defaults to \code{NULL}.}
-
-\item{.matrix2}{A matrix. Defaults to \code{NULL}.}
+\item{.matrix2}{A \code{matrix} to compare.}
 
 \item{.modes}{A named vector giving the mode used to obtain new outer weights.}
 
-\item{.normality}{Logical. Should joint normality be assumed if the model
-contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
-Defaults to \code{TRUE}.}
+\item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
+For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
+Defaults to \code{TRUE}. Ignored if the model is linear.}
 
-\item{.object}{An R object of class \link{cSEMResults}.}
+\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
-\item{.only_dots}{Logical. Should only those arguments to be passed to lower level functions via the
-\code{...} argument of the \link{csem} or \link{cca} function be returned. Defaults to \code{FALSE}.}
+\item{.only_dots}{Logical. Should only arguments to be passed to lower level
+functions via the  \code{...} argument of the \code{\link[=csem]{csem()}} or \code{\link[=cca]{cca()}} function be returned.
+Defaults to \code{FALSE}.}
 
-\item{.permutations}{Integer. The number permutations used for step 2 and 3 of the test.
-Defaults to \code{100}. Note however that the number should typically be a lot higher.}
-
-\item{.approach_cf}{Character string. The approach to obtain the correction
-factor for PLSc. Possible choices are: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+\item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
+factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
-"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}". Ignored if \code{.disattenuate = FALSE}.}
+"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
+Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS.}
+
+\item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
+when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.
+Ignored if \code{.approach_weights} is not PLS.}
+
+\item{.PLS_modes}{Either a named vector specifying the mode that should be used for
+each construct in the form \code{"name" = "mode"}, a single character
+string giving the mode that should be used for all constructs, or \code{NULL}.
+Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
+If \code{NULL}, \code{csem()} will choose the appropriate mode according to the type
+of construct used. Ignored if \code{.approach_weight} is not PLS.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight} is not PLS.}
+used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
 
-\item{.PLS_mode}{Either a named vector specifying the mode that should be used for
-each construct in the form \code{name = "mode"}, a single character
-string giving the mode that should be used for all constructs or \code{NULL}.
-Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
-If \code{NULL}, \code{cSEM} will choose the appropriate mode according to the type
-of construct used. The argument is ignored if \code{.approach_weight} is not PLS.}
-
-\item{.Q}{A vector of proxy-construct correlations with element names equal to
+\item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.}
 
-\item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficients.
-Element names are equal to the names of the J construct names. Reliabilities
+\item{.reliabilities}{A character vector of \code{"name" = value} pairs,
+where \code{value} is a number between 0 and 1 and \code{"name"} a character string
+of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
-reliabilites are estimated by \code{cSEM}.}
+reliabilites are estimated by \code{csem()}.}
 
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
 
-\item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
-where K is the number of indicators.}
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.terms}{A vector of construct names to be classified.}
 
-\item{.tolerance}{Double. The tolerance criterion for convergence of the PLS
-algorithm. Defaults to \code{1e-05}.
-The argument is ignored if \code{.approach_weight} is not PLS.}
+\item{.tolerance}{Double. The tolerance criterion for convergence.
+Defaults to \code{1e-05}.}
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}

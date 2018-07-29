@@ -13,7 +13,7 @@ csem(
   .approach_nl         = c("sequential", "replace"),
   .disattenuate        = TRUE,
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-  .PLS_mode            = NULL,
+  .PLS_modes           = NULL,
   .estimate_structural = TRUE,
   .reliabilities       = NULL
   ...)
@@ -23,46 +23,47 @@ csem(
 a list of \code{data.frame}s or \code{matrices} may be specified in which case estimation
 is repeated for each data set. See details.}
 
-\item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
-or a \link{cSEMModel} object.}
+\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+or a \link{cSEMModel}-list.}
 
 \item{.id}{Charachter string. The name of the column of \code{.data} used to split
 the date into groups.}
 
-\item{.approach_weights}{Character string. The name of the approach used to
-obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+\item{.approach_weights}{Character string. Approach used to
+obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. Possible choices are: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}".
+structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}".
 Defaults to "\emph{OLS}".}
 
-\item{.approach_nl}{Character string. The approach used to handle non-linear
-structural relationships. Possible choices are: "\emph{sequential}", or "\emph{replace}".
+\item{.approach_nl}{Character string. Approach used to estimate nonlinear
+structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
-\item{.disattenuate}{Logical. Should proxy correlations be disattenuated
-if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
+if the construct is modelled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight} is not PLS.}
+used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
 
-\item{.PLS_mode}{Either a named vector specifying the mode that should be used for
-each construct in the form \code{name = "mode"}, a single character
-string giving the mode that should be used for all constructs or \code{NULL}.
+\item{.PLS_modes}{Either a named vector specifying the mode that should be used for
+each construct in the form \code{"name" = "mode"}, a single character
+string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
-If \code{NULL}, \code{cSEM} will choose the appropriate mode according to the type
-of construct used. The argument is ignored if \code{.approach_weight} is not PLS.}
+If \code{NULL}, \code{csem()} will choose the appropriate mode according to the type
+of construct used. Ignored if \code{.approach_weight} is not PLS.}
 
-\item{.estimate_structural}{Logical. Should the structural (path) coefficients
+\item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
 
-\item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficients.
-Element names are equal to the names of the J construct names. Reliabilities
+\item{.reliabilities}{A character vector of \code{"name" = value} pairs,
+where \code{value} is a number between 0 and 1 and \code{"name"} a character string
+of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
-reliabilites are estimated by \code{cSEM}.}
+reliabilites are estimated by \code{csem()}.}
 
 \item{...}{Further arguments to be passed down to other functions.
 See \code{\link[=args_default]{args_default()}} with \code{.only_dots = TRUE} for a complete list

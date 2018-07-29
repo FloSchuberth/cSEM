@@ -21,11 +21,11 @@
 #'
 
 calculateCorrectionFactors <- function(
-  .S            = NULL,
-  .W            = NULL,
-  .modes        = NULL,
-  .csem_model   = NULL,
-  .approach_cf  = NULL
+  .S               = NULL,
+  .W               = NULL,
+  .modes           = NULL,
+  .csem_model      = NULL,
+  .PLS_approach_cf = NULL
   ) {
 
   ### Compute correction factors  ----------------------------------------------
@@ -77,7 +77,7 @@ calculateCorrectionFactors <- function(
       }
 
       ## Do the actual computation ---------------------------------------------
-      switch (.approach_cf,
+      switch (.PLS_approach_cf,
               "dist_euclid"          = {
                 cf <- sum(W_vect * S_vect) / sum(W_vect^2)
               },

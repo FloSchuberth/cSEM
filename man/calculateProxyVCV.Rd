@@ -7,8 +7,7 @@
 calculateProxyVCV(.S = NULL, .W = NULL)
 }
 \arguments{
-\item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
-where K is the number of indicators.}
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
 \code{Iterations}.}

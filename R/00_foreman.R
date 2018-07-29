@@ -6,22 +6,22 @@
 #' be more convenient to use [csem] or [cca] instead.
 #'
 #' @usage foreman(
-#'     .data                    = args_default()$.data,
-#'     .model                   = args_default()$.model,
-#'     .approach_cf             = args_default()$.approach_cf,
-#'     .approach_nl             = args_default()$.approach_nl,
-#'     .approach_paths          = args_default()$.approach_paths,
-#'     .approach_weights        = args_default()$.approach_weights,
-#'     .disattenuate            = args_default()$.disattenuate,
-#'     .dominant_indicators     = args_default()$.dominant_indicators,
-#'     .estimate_structural     = args_default()$.estimate_structural,
-#'     .ignore_structural_model = args_default()$.ignore_structural_model,
-#'     .iter_max                = args_default()$.iter_max,
-#'     .normality               = args_default()$.normality,
-#'     .PLS_mode                = args_default()$.PLS_mode,
-#'     .PLS_weight_scheme_inner = args_default()$.PLS_weight_scheme_inner,
-#'     .reliabilities           = args_default()$.reliabilities,
-#'     .tolerance               = args_default()$.tolerance
+#'     .data                        = args_default()$.data,
+#'     .model                       = args_default()$.model,
+#'     .approach_nl                 = args_default()$.approach_nl,
+#'     .approach_paths              = args_default()$.approach_paths,
+#'     .approach_weights            = args_default()$.approach_weights,
+#'     .disattenuate                = args_default()$.disattenuate,
+#'     .dominant_indicators         = args_default()$.dominant_indicators,
+#'     .estimate_structural         = args_default()$.estimate_structural,
+#'     .iter_max                    = args_default()$.iter_max,
+#'     .normality                   = args_default()$.normality,
+#'     .PLS_approach_cf             = args_default()$.PLS_approach_cf,
+#'     .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
+#'     .PLS_modes                   = args_default()$.PLS_modes,
+#'     .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
+#'     .reliabilities               = args_default()$.reliabilities,
+#'     .tolerance                   = args_default()$.tolerance
 #'     )
 #'
 #' @inheritParams csem_arguments
@@ -39,23 +39,23 @@
 #'
 
 foreman <- function(
-  .data                    = args_default()$.data,
-  .model                   = args_default()$.model,
-  .approach_cf             = args_default()$.approach_cf,
-  .approach_nl             = args_default()$.approach_nl,
-  .approach_paths          = args_default()$.approach_paths,
-  .approach_weights        = args_default()$.approach_weights,
-  .disattenuate            = args_default()$.disattenuate,
-  .dominant_indicators     = args_default()$.dominant_indicators,
-  .estimate_structural     = args_default()$.estimate_structural,
-  .id                      = args_default()$.id,
-  .ignore_structural_model = args_default()$.ignore_structural_model,
-  .iter_max                = args_default()$.iter_max,
-  .normality               = args_default()$.normality,
-  .PLS_mode                = args_default()$.PLS_mode,
-  .PLS_weight_scheme_inner = args_default()$.PLS_weight_scheme_inner,
-  .reliabilities           = args_default()$.reliabilities,
-  .tolerance               = args_default()$.tolerance
+  .data                        = args_default()$.data,
+  .model                       = args_default()$.model,
+  .approach_nl                 = args_default()$.approach_nl,
+  .approach_paths              = args_default()$.approach_paths,
+  .approach_weights            = args_default()$.approach_weights,
+  .disattenuate                = args_default()$.disattenuate,
+  .dominant_indicators         = args_default()$.dominant_indicators,
+  .estimate_structural         = args_default()$.estimate_structural,
+  .id                          = args_default()$.id,
+  .iter_max                    = args_default()$.iter_max,
+  .normality                   = args_default()$.normality,
+  .PLS_approach_cf             = args_default()$.PLS_approach_cf,
+  .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
+  .PLS_modes                   = args_default()$.PLS_modes,
+  .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
+  .reliabilities               = args_default()$.reliabilities,
+  .tolerance                   = args_default()$.tolerance
   ) {
 
   ### Preprocessing ============================================================
@@ -90,12 +90,12 @@ foreman <- function(
     W <- calculateWeightsPLS(
       .data                     = S,
       .model                    = csem_model,
-      .PLS_mode                 = .PLS_mode,
+      .PLS_modes                = .PLS_modes,
       .tolerance                = .tolerance,
       .iter_max                 = .iter_max,
       # Arguments passed on to calculateInnerWeightsPLS
-      .PLS_weight_scheme_inner  = .PLS_weight_scheme_inner,
-      .ignore_structural_model  = .ignore_structural_model
+      .PLS_ignore_structural_model  = .PLS_ignore_structural_model,
+      .PLS_weight_scheme_inner      = .PLS_weight_scheme_inner
     )
   } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
@@ -171,11 +171,11 @@ foreman <- function(
   
   if(is.null(.reliabilities) & .disattenuate == TRUE) {
     correction_factors <- calculateCorrectionFactors(
-      .S            = S,
-      .W            = W$W,
-      .modes        = W$Modes,
-      .csem_model   = csem_model,
-      .approach_cf  = .approach_cf)
+      .S               = S,
+      .W               = W$W,
+      .modes           = W$Modes,
+      .csem_model      = csem_model,
+      .PLS_approach_cf = .PLS_approach_cf)
   } else {
     correction_factors <- NULL
   }

@@ -7,8 +7,8 @@
 parseModel(.model)
 }
 \arguments{
-\item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
-or a \link{cSEMModel} object.}
+\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+or a \link{cSEMModel}-list.}
 }
 \value{
 A \link{cSEMModel} list that may be passed to any function requiring

@@ -9,8 +9,8 @@ cca(.data, .model, ...)
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
-\item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
-or a \link{cSEMModel} object.}
+\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+or a \link{cSEMModel}-list.}
 
 \item{...}{Further arguments to be passed down to other functions.
 See \code{\link[=args_default]{args_default()}} with \code{.only_dots = TRUE} for a complete list

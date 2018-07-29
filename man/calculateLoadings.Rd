@@ -8,20 +8,19 @@ calculateLoadings(.S = NULL, .W = NULL, .Q = NULL, .csem_model = NULL,
   .disattenuate = NULL, .modes = NULL)
 }
 \arguments{
-\item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
-where K is the number of indicators.}
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
 \code{Iterations}.}
 
-\item{.Q}{A vector of proxy-construct correlations with element names equal to
+\item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.}
 
-\item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.disattenuate}{Logical. Should proxy correlations be disattenuated
-if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
+if the construct is modelled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.modes}{A named vector giving the mode used to obtain new outer weights.}
 }

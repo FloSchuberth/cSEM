@@ -12,17 +12,18 @@ calculateProxyConstructCV(.W = NULL, .csem_model = NULL,
 \item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
 \code{Iterations}.}
 
-\item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.disattenuate}{Logical. Should proxy correlations be disattenuated
-if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
+if the construct is modelled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.modes}{A named vector giving the mode used to obtain new outer weights.}
 
-\item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficients.
-Element names are equal to the names of the J construct names. Reliabilities
+\item{.reliabilities}{A character vector of \code{"name" = value} pairs,
+where \code{value} is a number between 0 and 1 and \code{"name"} a character string
+of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
-reliabilites are estimated by \code{cSEM}.}
+reliabilites are estimated by \code{csem()}.}
 }
 \value{
 A vector of proxy-construct covariances.

@@ -5,23 +5,23 @@
 \title{Calculate the correction factor}
 \usage{
 calculateCorrectionFactors(.S = NULL, .W = NULL, .modes = NULL,
-  .csem_model = NULL, .approach_cf = NULL)
+  .csem_model = NULL, .PLS_approach_cf = NULL)
 }
 \arguments{
-\item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
-where K is the number of indicators.}
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
 \code{Iterations}.}
 
 \item{.modes}{A named vector giving the mode used to obtain new outer weights.}
 
-\item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.approach_cf}{Character string. The approach to obtain the correction
-factor for PLSc. Possible choices are: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+\item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
+factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
-"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}". Ignored if \code{.disattenuate = FALSE}.}
+"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
+Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS.}
 }
 \value{
 A numeric vector of correction factors with element names equal

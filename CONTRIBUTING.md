@@ -109,21 +109,21 @@ following exceptions/additions:
 
 ``` r
 ## Both ok but second is prefered in this case
-calculateInnerWeightsPLS <- function(.S                        = NULL,
-                                     .W                        = NULL,
-                                     .csem_model               = NULL,
-                                     .PLS_weight_scheme_inner  = c("centroid",
-                                                                   "factorial", 
-                                                                   "path"),
-                                     .ignore_structural_model  = NULL
+calculateInnerWeightsPLS <- function(.S                           = NULL,
+                                     .W                           = NULL,
+                                     .csem_model                  = NULL,
+                                     .PLS_weight_scheme_inner     = c("centroid",
+                                                                      "factorial", 
+                                                                      "path"),
+                                     .PLS_ignore_structural_model = NULL
                                      ) { }
 
 calculateInnerWeightsPLS <- function(
-  .S                        = NULL,
-  .W                        = NULL,
-  .csem_model               = NULL,
-  .PLS_weight_scheme_inner  = c("centroid","factorial", "path"),
-  .ignore_structural_model  = NULL
+  .S                            = NULL,
+  .W                            = NULL,
+  .csem_model                   = NULL,
+  .PLS_weight_scheme_inner      = c("centroid","factorial", "path"),
+  .PLS_ignore_structural_model  = NULL
   ) { }
 ```
 
