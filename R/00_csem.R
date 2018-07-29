@@ -3,46 +3,48 @@
 #' Estimates linear and nonlinear structural equation models using a
 #' composite based approach.
 #'
-#' The `csem` function is a wrapper around the more general [foreman] function.
+#' The `csem()` function is a wrapper around the more general [foreman()] function.
 #' It is designed for quick, easy, and flexible use by providing the user with
 #' defaults choices for all relevant arguments except the mandatory `.data`
 #' and `.model` argument.
 #'
-#' @section Data and model:
-#' To get started the `.data` and `.model` arguments are required. Data must be
+#' \subsection{Data and model:}{
+#' The `.data` and `.model` arguments are required. Data must be
 #' provided as either a `matrix` or a `data.frame` with column names matching
-#' the variable/indicator names used in the model description of the measurement model.
+#' the indicator names used in the model description of the measurement model.
 #' Alternativly a named or unamed list of matrices or `data.frame`s may be provided
 #' in which case estimation is repeated for each data set. 
 #' The data provided via `.data` may contain a non numeric column whose column name 
-#' must be provided to `.id`. Values of this column are interpreted as group identifiers
-#' and `csem()` will split the data by levels of that column and run the estimation by calling 
-#' [foreman()] for each level separately.
+#' must be provided to `.id`. Values of this column are interpreted as group 
+#' identifiers and `csem()` will split the data by levels of that column and run
+#' the estimation by calling [foreman()] for each level separately.
 #'
 #' To provide a model use the \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 #' with two notable extensions/changes. First: the "`<~`" operator in `cSEM` is
 #' used to define a composite instead of a formative common factor. Second:
 #' the "`.`" is used to indicate interactions between constructs as in e.g.,
-#' `construct1.construct2`.
+#' `construct1.construct2`. Alternativly a standardized (possibly incomplete)
+#' [cSEMModel]-list may be supplied.
+#' }
 #'
-#' @section Weights:
-#' By default weights are estimated using *PLS*. Alternative approaches include
-#' all of *Kettenring's approaches*, "*fixed weights*"
+#' \subsection{Weights and path coefficients:}{
+#' By default weights are estimated using the partial least squares algorithm (*PLS*).
+#' Alternative approaches include all of *Kettenring's criteria*, "*fixed weights*"
 #' or "*unit weight*". *Generalized Structured Component Analysis* (*GSCA*) may
 #' also be chosen as a weighing approach although technically GSCA obtains weight
 #' and structural coefficient estimates simultaneously. Hence, setting
 #' `.approach_weights = "GSCA"` automatically sets `.approach_path = "GSCA"` (and
 #' vice-versa).
 #'
-#' Composite-indicator and composite-composite correaltions are properly rescaled
-#' to get consistent estimates for the factor loadings and construct correlations
-#' unless `.disattenuate` is set explicitly set to `FALSE`.
-#' Consistent estimates are calculated for the entries of the moment equations
-#' that define the structural parameters.
-#' The solutions to the moment equations are reported as consistent estimates
-#' for the structural parameters.
+#' For PLS composite-indicator and composite-composite correlations are properly
+#' rescaled using *PLSc* by yielding consistent estimates for the factor loadings, construct 
+#' correlations, and path coefficients if any of the constructs involved is 
+#' modelled as a common factor. If no disattenuation should be done, 
+#' set `.disattenuate = FALSE`. 
+#' }
 #'
-#' If the model is nonlinear [csem] estimates a polynomial structural equation model
+#' \subsection{Non linear models:}{
+#' If the model is nonlinear `csem()` estimates a polynomial structural equation model
 #' using a non-iterative method of moments approach described in
 #' \insertCite{Dijkstra2014}{cSEM}. Non linear terms include interactions and
 #' exponential terms. The latter is described in model syntax as an
@@ -60,10 +62,11 @@
 #' that go beyond interaction, we work in this version with the assumption that
 #' as far as the relevant moments are concerned certain combinations of 
 #' measurement errors behave as if they were Gaussian.
-#'
+#' }
 #' @usage csem(
 #'   .data                = NULL,
 #'   .model               = NULL,
+#'   .id                  = NULL,
 #'   .approach_weights    = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR", "GSCA", "fixed", "unit"),
 #'   .approach_path       = c("OLS", "2SLS", "3SLS"),
 #'   .approach_nl         = c("sequential", "replace"),
@@ -76,7 +79,7 @@
 #'
 #' @param .data A `data.frame` or a `matrix` containing the raw data. Addionally,
 #'   a list of `data.frame`s or `matrices` may be specified in which case estimation
-#'   is repeated for each data set.
+#'   is repeated for each data set. See details.
 #' @inheritParams csem_arguments
 #'
 #' @inherit foreman return
