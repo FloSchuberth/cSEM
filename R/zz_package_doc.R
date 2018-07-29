@@ -18,4 +18,5 @@
 #' @importFrom magrittr %>%
 #' @importFrom matrixStats rowProds
 #' @import crayon
+#' @import cli
 "_PACKAGE"
