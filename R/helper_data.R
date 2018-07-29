@@ -56,8 +56,13 @@ processData <- function(.data, .model) {
   }
 
   # Check if all columns are numeric. Stop otherwise
-  if(!all(apply(.data, 2, is.numeric))) {
-    stop("At least one column of the data is non-numeric.")
+  x <- names(which(!sapply(.data, is.numeric)))
+  if(length(x) == 1) {
+    stop("Column: ",paste0("`", x, "`", collapse = ", "), " of `.data` is non-numeric.\n",
+         "Have you forgotten to set `", paste0(".id = '", x, "'`?"), call. = FALSE)
+  } else if(length(x) > 1) {
+    stop("Columns: ",paste0("`", x, "`", collapse = ", "), "of `.data` are non-numeric.\n",
+         call. = FALSE)
   }
 
   ### Processing and further checking =========
