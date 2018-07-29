@@ -127,7 +127,7 @@ csem <- function(
       args_needed[[".data"]] <- x[, -which(names(x) == .id)]
       do.call(foreman, args_needed)
     })
-  } else if(class(.data) == "list") {
+  } else if(any(class(.data) == "list")) {
     
     out <- lapply(.data, function(x) {
       

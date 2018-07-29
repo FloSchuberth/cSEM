@@ -49,7 +49,7 @@ processData <- function(.data, .model) {
 
   # Check class of the .data object and stop if not of class "data.frame" or "matrix"
 
-  if(!(class(.data) %in% c("data.frame", "matrix"))) {
+  if(!any(class(.data) %in% c("data.frame", "matrix"))) {
     stop("Don't know how to deal with a data object of class: ", class(.data), ".\n",
          "Please provide the data as a `data.frame` or a `matrix`.",
          call. = FALSE)
