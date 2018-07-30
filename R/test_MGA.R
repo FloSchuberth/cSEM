@@ -52,7 +52,9 @@ extractIndicator_VCV <- function(.cSEM){
   corMatrices <- list()
   for(iGroups in 1:groups){
     # TODO: implied
-    corMatrices[[iGroups]] <- .cSEM[[iGroups]]$Estimates$Indicator_VCV
+    # corMatrices[[iGroups]] <- .cSEM[[iGroups]]$Estimates$Indicator_VCV
+    # TODO: test
+    corMatrices[[iGroups]] <- fitted(.cSEM[[iGroups]])
   }
   names(corMatrices) <- names(.cSEM)
   return(corMatrices)
