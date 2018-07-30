@@ -197,155 +197,65 @@ summary.cSEMResults <- function(.object, .what = NULL) {
 #' @export
 #'
 fitted.cSEMResults <- function(.object) {
-  # Implementation is inspired by the matrixpls package licensed under GPL-3
-  
-  # Function to compute the model implied VCV matrix of the indicators
-  # The implementation is based on an approach proposed by
-  # Bentler, P. M., & Weeks, D. G. (1980) - Linear Structural Equations with Latent Variables 
-  
-  ### For maintenance: ---------------------------------------------------------
-  ## S      := (K x K) Empirical indicator VCV matrix: V(X)  
-  ## P      := (J x J) Empirical construct covariance/correlation matrix (attenuated) 
-  ## B      := (J x J) Matrix of (estimated) path coefficients (zero if there is no path)
-  ## Lambda := (J X K) Matrix of factor and/or composite loadings
-  ## Lambda_cross := (J x K) Empirical indicator-construct CV matrix (attenuated)
-  ##
-  ## ---- Bentler & Weeks notation
-  ##
-  ## p      := Number of observed dependent variables (usually all indicators)
-  ## q      := Number of observed independent variables (0 in a complete latent-variable model)
-  ## r      := Number of observed variables, r = p + q
-  ## m      := Number of dependent variables ("endogenous" constructs + indicators)
-  ## n      := Number of independent variables ("exogenous" constructs + zetas + deltas)
-  ## s      := Total number of variables, s = m + n
-  ## beta   := (m x m) Coefficient matrix of dep. variables on dep. variables.
-  ## gamma  := (m x n) Coefficient matrix of indep. variables on dep. variables.
-  ## Phi    := (n x n) VCV of independent variables.
-  ## Beta   := (s x s) Relationship super-matrix of dependent variables on
-  ##                   dependent variables. Path from independent and dependent 
-  ##                   on independent are zero.
-  ## Gamma  := (s x n) Relationship super-matrix of independent on dependent 
-  ##                   and independent variables.
-  ## G      := (r x s) Selector matrix selecting only observable variables.
-  ### --------------------------------------------------------------------------
   ### Preparation ==============================================================
   ## Check if linear
   if(.object$Information$Model$model_type != "Linear") {
     stop("Model is nonlinear. Currently the model-implied indicator covariance",
          " matrix can only be computed for linear models.", call. = FALSE)
   }
-    
+  
+  Cons_exo <- .object$Information$Model$vars_exo
+  Cons_endo <- .object$Information$Model$vars_endo
+  
   ## Get relevant matrices
-  
   S <- .object$Estimates$Indicator_VCV
-  P <- .object$Estimates$Construct_VCV
-  B <- .object$Estimates$Path_estimates 
-  Lambda <- .object$Estimates$Loading_estimates 
-  Lambda_cross <- .object$Estimates$Cross_loadings
+  Phi <- .object$Estimates$Construct_VCV[Cons_exo,Cons_exo,drop=FALSE]
+  B <- .object$Estimates$Path_estimates[Cons_endo,Cons_endo,drop=FALSE] 
+  Gamma = .object$Estimates$Path_estimates[Cons_endo,Cons_exo,drop=FALSE]
+  Lambda <- .object$Estimates$Cross_loadings*.object$Information$Model$measurement
+  # Lambda_cross <- .object$Estimates$Cross_loadings
+  I = diag(length(Cons_endo))
   
-  a1 <- .object$Information$Model$vars_exo
-  a2 <- .object$Information$Model$vars_endo
   
-  ## Compute variances of the errors (diagonal matrices Var(delta) and Var(zeta)).
+  vcv_delta <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
+  dimnames(vcv_delta)=dimnames(S)
   
-  vcv_delta <- diag(diag(S) - diag(t(Lambda) %*% P %*% Lambda))
-  Delta <- vcv_delta
-  diag(Delta) <- 1
-
-  tmp <- diag(1 - diag(solve(diag(length(a2)) - B[a2, a2]) %*% B[a2, a1]%*% 
-    P[a1, a1] %*% t(B[a2, a1]) %*% t(solve(diag(length(a2)) - B[a2, a2]))))
-  rownames(tmp) <- colnames(tmp) <- a2
+  # calculate the vcv of zeta
+  vec_zeta=1-rowSums(.object$Estimates$Path_estimates*
+                       .object$Estimates$Construct_VCV)
+  names(vec_zeta)=rownames(.object$Estimates$Construct_VCV)
   
-  # vcv_zeta <- diag(1 - diag(B%*% P %*% t(B)))
-  # vcv_zeta[1:length(a), 1:length(a)] <- 0
-  vcv_zeta <- matrix(0, nrow(B), ncol(B), dimnames = list(rownames(B), colnames(B)))
-  vcv_zeta[a2, a2] <- tmp
-
-  Zeta <- vcv_zeta
-  Zeta[Zeta != 0] <- 1
+  vcv_zeta=matrix(0,nrow=nrow(I),ncol=ncol(I))
+  diag(vcv_zeta)=vec_zeta[Cons_endo]
   
-  ## Get names of all variables (dependent and independent)
-  names <- c(colnames(S), rownames(Lambda), paste0("del", 1:nrow(vcv_delta)),
-             paste0("zeta", 1:nrow(vcv_zeta)))
+  # Correlation among the exogenous constructs
+  Corr_exo=Phi
+  # Correlations  between exogenous and endogenous constructs
+  Corr_exo_endo=Phi %*% t(Gamma) %*%t(solve(I-B))
+  # Correlations among endogenous cosntructs 
+  Cor_endo=solve(I-B)%*%(Gamma%*%Phi%*%t(Gamma)+vcv_zeta)%*%t(solve(I-B))
+  diag(Cor_endo)=1
   
-  ## Matrix of structural relationships
-  # Note: Here, "structural" refers to realtionsips between variables in general
-  #       not just constructs. The matrix is (s x s), where s is the total number
-  #       of variables.
+  VCV_construct=rbind(cbind(Corr_exo,Corr_exo_endo),
+                      cbind(t(Corr_exo_endo),Cor_endo))
   
-  A1 <- rbind(
-    cbind(S * 0, t(Lambda), Delta, matrix(0, nrow(S), ncol(Zeta))),
-    cbind(Lambda * 0, B, matrix(0, nrow(B), ncol(Delta)), Zeta)
-  )
-
-  A1 <- rbind(A1,
-    matrix(0, nrow(Delta), ncol(A1)),
-    matrix(0, nrow(Zeta), ncol(A1))
-  )
-  rownames(A1) <- colnames(A1) <- names   
-  ## Set rows of variables who are only related to an error to 0 .
-  # A1[rowSums(A1) == 1, ] <- 0  ## Set rows of variables who are only related to an error to 0 .
+  # calculate model-implied VCV of the indicators
+  VCV_ind=t(Lambda)%*%VCV_construct%*%Lambda
   
-  ## Matrix of variances and covariances between all variables 
-  # Note: is necessary for the computation of Phi. The matrix is also (s x s)
-  
-  A2 <- rbind(
-    cbind(S, t(Lambda_cross), matrix(0, nrow(S), sum(ncol(vcv_delta), ncol(vcv_zeta)))),
-    cbind(Lambda_cross, P, matrix(0, nrow(P), sum(ncol(vcv_delta), ncol(vcv_zeta)))),
-    cbind(matrix(0, nrow(vcv_delta), sum(ncol(S) + nrow(Lambda_cross))), 
-          vcv_delta,
-          matrix(0, nrow(vcv_delta), ncol(vcv_zeta))),
-    cbind(matrix(0, nrow(vcv_zeta), 
-                 sum(ncol(S) + nrow(Lambda_cross) + ncol(vcv_delta))), vcv_zeta) 
-  )
-  rownames(A2) <- colnames(A2) <- names 
-
-  ## Distinguish and get dimensions --------------------------------------------
-  indep_vars <- rownames((A1[rowSums(A1) == 0, ]))
-  dep_vars   <- setdiff(rownames(A1), indep_vars)
-  observed   <- colnames(S)
-  # unobserved <- setdiff(rownames(A1), observed)
-  
-  m <- length(dep_vars)
-  n <- length(indep_vars)
-  s <- m + n
-  p <- length(intersect(dep_vars, observed)) 
-  q <- length(intersect(indep_vars, observed))
-  r <- p + q
-
-  ### Define the required matrices ---------------------------------------------
-  
-  Beta <- matrix(0, s, s, dimnames = list(names, names))  # (s x s)
-  Beta[dep_vars, dep_vars] <- A1[dep_vars, dep_vars] # beta0 (m x m)
-  
-  Gamma <- matrix(0, s, n, dimnames = list(names, indep_vars))  # (s x n)
-  Gamma[dep_vars, ]   <- A1[dep_vars, indep_vars] # gamma (m x n)
-  Gamma[indep_vars, ] <- diag(n) # I (n x n)
-  
-  G <- matrix(0, r, s, dimnames = list(observed, names))  # (r x s)
-  G[observed, observed] <- diag(r) # (r x s)
-  
-  Phi   <- A2[indep_vars, indep_vars] # (n x n)
-  I     <- diag(s)          # (s x s)
-  
-  ### Calculate the model implied covariance matrix ============================
-
-  Sigma <- G %*% solve(I - Beta) %*% Gamma %*% Phi %*% t(Gamma) %*% t(solve(I - Beta))%*% t(G)
-  rownames(Sigma) <- colnames(Sigma) <- rownames(S)
-
-  # ### Replace indicators connected to a composite by S
-
-  mod <- .object$Information$Model
-  composites <- names(mod$construct_type[mod$construct_type == "Composite"])
-  index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
-
-  Sigma[which(index == 1)] <- S[which(index == 1)]
-  
-  ## Set all diagonal elements to 1
-  diag(Sigma) <- 1
+  Sigma=VCV_ind+vcv_delta
   
   # Make symmetric
   Sigma[lower.tri(Sigma)] = t(Sigma)[lower.tri(Sigma)]
+  
+  # ### Replace indicators connected to a composite by S
+  
+  mod <- .object$Information$Model
+  composites <- names(mod$construct_type[mod$construct_type == "Composite"])
+  index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
+  
+  Sigma[which(index == 1)] <- S[which(index == 1)]
+  
+  # Replace indicators which measurement errors are allowed to be correlated by s_ij
   
   return(Sigma)
 }
