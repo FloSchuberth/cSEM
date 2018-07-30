@@ -118,6 +118,11 @@ csem <- function(
   args        <- handleArgs(args_used)
   args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))] 
   
+  ## Explicitly evalute .data and .model argument (as.list(match.call())[-1]
+  # does not evaluate the call)
+  args_needed[[".data"]]  <- .data
+  args_needed[[".model"]] <- .model 
+  
   ## 
   if(!is.null(.id)) {
     
