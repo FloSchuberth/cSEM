@@ -118,10 +118,11 @@ csem <- function(
   args        <- handleArgs(args_used)
   args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))] 
   
-  ## Explicitly evalute .data and .model argument (as.list(match.call())[-1]
-  # does not evaluate the call)
-  args_needed[[".data"]]  <- .data
-  args_needed[[".model"]] <- .model 
+  ## Explicitly evalute arguments_used (as.list(match.call())[-1]
+  # does not evaluate the call) which causes problems when using foreach or mapply
+  args_needed[names(args_used)] <- lapply(names(args_used), function(x) {
+    eval(parse(text = x)) 
+  })
   
   ## 
   if(!is.null(.id)) {
