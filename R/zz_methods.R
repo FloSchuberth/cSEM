@@ -206,7 +206,7 @@ fitted.cSEMResults <- function(.object) {
   
   Cons_exo <- .object$Information$Model$vars_exo
   Cons_endo <- .object$Information$Model$vars_endo
-  
+  # test 
   ## Get relevant matrices
   S <- .object$Estimates$Indicator_VCV
   Phi <- .object$Estimates$Construct_VCV[Cons_exo,Cons_exo,drop=FALSE]
