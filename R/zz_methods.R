@@ -256,6 +256,7 @@ fitted.cSEMResults <- function(.object) {
   Sigma[which(index == 1)] <- S[which(index == 1)]
   
   # Replace indicators which measurement errors are allowed to be correlated by s_ij
+  Sigma[.object$Information$Model$error_cor == 1] = S[.object$Information$Model$error_cor == 1]
   
   return(Sigma)
 }
