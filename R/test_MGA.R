@@ -1,9 +1,9 @@
 #' Test Multigroup
-#'
+#' @export
 #'
 
 
-# Calculate the arithmetic distance between groups
+# @Distance functions
 calculateArithmDistance <- function(.corMatrices, .distance="geodesic"){
   # number of groups to compare
   groups <- length(.corMatrices)
@@ -49,24 +49,35 @@ calculateArithmDistance <- function(.corMatrices, .distance="geodesic"){
   return(res)
 }
 
-# Check if .object object has an id variable
-checkMGA <- function(.object){
-  if(is.null(.object[[1]]$Information$Arguments$.id)){
-    return(FALSE)
+#' Test statistic to compare group differences. 
+#'
+#' @param .objc a cSEM object
+#' @param .runs the number 
+#' @return The test statistic, the critical value, a logical value with 
+#' the decision, and the number of admissible results.
+#' @examples
+testOverallMGA <- function(.object=args_default()$.model,
+                           .dropInadmissibles=args_default()$.dropInadmissibles,
+                           .alpha=args_default()$.alpha,
+                           .runs=args_default()$.runs,
+                           ...){
+  # Check if .id variable is set
+  if(!is.null(.object[[1]]$Information$Arguments$.id)){
+    stop("No .id variable set. Overall test for group differences not possible.",
+         call. = FALSE)
   }
-  return(TRUE)
-}
-
-testOverallMGA <- function(.object, .runs){
-  if(!checkMGA(.object)){
-    stop("No .id variable set. Overall test for group differences not possible.", call. = FALSE)
+  # Check if .object is admissible
+  if(FALSE %in% sapply(lapply(.object, status), is.null)){
+    stop("Initial estimation is inadmissible.", call. = FALSE)
   }
   
-  # 1: Overall distance
-  geoDistance <- calculateArithmDistance(lapply(.object, fitted))
+  # 1: calculate test statistic
+  teststat = c(dG = calculateArithmDistance(.corMatrices = lapply(.object, fitted), 
+                                       .distance="geodesic"),
+               dL = calculateArithmDistance(.corMatrices = lapply(.object, fitted), 
+                                       .distance="euclidean"))
   
   # 2: permutation procedure
-  # extract data
   listMatrices <- list()
   for(iData in 1:length(.object)){
     listMatrices[[iData]] <- .object[[iData]]$Information$Data
@@ -74,29 +85,85 @@ testOverallMGA <- function(.object, .runs){
   # combine data
   totalData <- data.frame(do.call(rbind, listMatrices))
   
+
+  # Collect initial arguments
+  arguments=.object[[1]]$Information$Arguments
+  arguments[[".id"]] <- "permID"
+  
   # Results
-  permEstimates <- c()
+  permEstimates <- list()
+  
   for(iPerm in 1:.runs){
     # create ID
-    ID <- rep(1:length(listMatrices),lengths(listMatrices)/ncol(listMatrices[[1]]))
+    ID <- rep(1:length(listMatrices),
+              lengths(listMatrices)/ncol(listMatrices[[1]]))
     # random ID
     permData <- cbind(totalData, permID = as.character(sample(ID)))
-    
-    # Collect arguments
-    arguments=.object[[1]]$Information$Arguments
+    # set Data
     arguments[[".data"]] <- permData
-    arguments[[".id"]] <- "permID"
+    # estimate 
+    Est_tmp <- do.call(csem, arguments)
+    # status codes
+    status_code=lapply(Est_tmp, status)
     
-    permOut <- do.call(csem, arguments)
-    
-    permEstimates[iPerm] <- calculateArithmDistance(lapply(permOut, fitted))
+    # if it is controlled for inadmissible
+    if(.dropInadmissibles){
+      if(!(FALSE %in% sapply(status_code, is.null))){
+        permEstimates[[iPerm]] <-
+          c(
+            dG = calculateArithmDistance(
+              .corMatrices =
+                lapply(Est_tmp, fitted),
+              .distance = "geodesic"
+            ),
+            dL = calculateArithmDistance(
+              .corMatrices =
+                lapply(Est_tmp, fitted),
+              .distance = "euclidean"
+            )
+          )
+      }else{
+        # Set null if status code is false
+        permEstimates[[iPerm]] <- NULL
+      }
+      # else, i.e., dropInadmissible == FALSE
+    }else{
+      permEstimates[[iPerm]] <-
+        c(
+          dG = calculateArithmDistance(
+            .corMatrices = lapply(Est_tmp, fitted),
+            .distance = "geodesic"
+          ),
+          dL = calculateArithmDistance(
+            .corMatrices = lapply(Est_tmp, fitted),
+            .distance = "euclidean"
+          )
+        )
+      
+    }
+  }  
+  ref_dist <- do.call(cbind, permEstimates)
+  critical_value <- matrix(apply(ref_dist, 1, quantile, 1-.alpha), 
+                           ncol = length(teststat), 
+                           dimnames = list(paste(.alpha*100, sep = "","%"),
+                                           names(teststat)))
+  
+  if(length(.alpha)>1){
+    decision = t(apply(critical_value,1,function(x){teststat<x}))
   }
-  return(c(geoDistance, quantile(permEstimates)))
+  if(length(.alpha)==1){
+    decision = teststat<critical_value
+  }
+  
+  return(list(Test_statistic = teststat, 
+              Critial_value = critical_value,
+              Decision = decision, 
+              Number_admissibles = ncol(ref_dist)))
 }
 
-# 
-# 
+
 # Test ---------------------------
+
 model <- "
 # Structural model
 EXPE ~ IMAG
@@ -121,11 +188,10 @@ sat.plspm <- read.csv2("C:/Users/Michael Klesel/Dropbox/R Projekte/R cSEM/satisf
 require(cSEM)
 data(satisfaction)
 a <- csem(.data = sat.plspm, .model = model, .id = "gender")
+lapply(a, status)
 
 
-
-testOverallMGA(a, 20)
-
+testOverallMGA(.object = a, .runs = 20, .alpha = c(0.05, 0.01))
 
 
 
