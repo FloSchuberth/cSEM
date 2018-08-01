@@ -1,20 +1,19 @@
 #' `cSEMResults` method for `print()`
 #'
-#' The [cSEMResults] method for the generic function [print()]. 
-#' 
-#' Prints basic information on the [cSEMResults] object and suggested next 
-#' steps to the console.
+#' The [cSEMResults] method for the generic function [print()] prints basic 
+#' information on a [cSEMResults] object including potentially
+#' useful postestimation functions to call.
 #'
-#' @usage print(object)
+#' @usage print(.object)
 #'
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem], [cSEMResults]
 #'
 #' @export
-#'
+#' 
 print.cSEMResults <- function(.object) {
-
+  
   cat(cli::rule(line = "bar2"), "\n")
   cat(cli::rule(center = "Overview"), "\n\n")
   # if(length(.object) > 1) {
@@ -24,19 +23,19 @@ print.cSEMResults <- function(.object) {
   #             ifelse(.object[[i]]$Information$Weight_info$Convergence_status == TRUE, "successful\n\t", "not successful\n\t"), sep = "")
   #       }
   # } else {
-    cat("Estimation was successful. The result is a named list of class " %+% bold("cSEMResults") %+%" \n",
-        "containing the following list elements (:\n\n\t",
-        "- ", crayon::green("Estimates\n\t"),
-        "- ", crayon::green("Information\n\n"), sep = "")
-    cat("To get an overview or help type: \n\n\t",
-        "- ", crayon::magenta("?"), crayon::cyan("cSEMResults"),"\n\t",
-        "- ", crayon::magenta("str"), "(", crayon::cyan("<listname>"), ")\n\t",
-        "- ", crayon::magenta("summary"), "(", crayon::cyan("<listname>"), ") or \n\t",
-        "- ", crayon::magenta("listviewer"), crayon::yellow("::"), crayon::magenta("jsondedit"),
-        "(", crayon::cyan("<listname>"), ", ", crayon::red("mode"), " = ", crayon::cyan("'view'"), ")\n\n", sep = "")
-    cat("If you wish to access the list elements directly type e.g. \n\t",
-        "- ", crayon::cyan("<listname>"), crayon::yellow("$"), crayon::green("Estimates"), "\n", sep = "")
-    cat(cli::rule(line = "bar2"), "\n")
+  cat("Estimation was successful. The result is a named list of class " %+% bold("cSEMResults") %+%" \n",
+      "containing the following list elements (:\n\n\t",
+      "- ", crayon::green("Estimates\n\t"),
+      "- ", crayon::green("Information\n\n"), sep = "")
+  cat("To get an overview or help type: \n\n\t",
+      "- ", crayon::magenta("?"), crayon::cyan("cSEMResults"),"\n\t",
+      "- ", crayon::magenta("str"), "(", crayon::cyan("<listname>"), ")\n\t",
+      "- ", crayon::magenta("summary"), "(", crayon::cyan("<listname>"), ") or \n\t",
+      "- ", crayon::magenta("listviewer"), crayon::yellow("::"), crayon::magenta("jsondedit"),
+      "(", crayon::cyan("<listname>"), ", ", crayon::red("mode"), " = ", crayon::cyan("'view'"), ")\n\n", sep = "")
+  cat("If you wish to access the list elements directly type e.g. \n\t",
+      "- ", crayon::cyan("<listname>"), crayon::yellow("$"), crayon::green("Estimates"), "\n", sep = "")
+  cat(cli::rule(line = "bar2"), "\n")
   # }
 }
 
@@ -45,7 +44,7 @@ print.cSEMResults <- function(.object) {
 #' The [cSEMResultssummary] method for the generic function [print()]. 
 #' 
 #' Prints a summary of the results obtained from runinng [csem], [cca], or
-#' [workhorse].
+#' [foreman].
 #'
 #' @usage print(.object)
 #'
@@ -58,64 +57,64 @@ print.cSEMResults <- function(.object) {
 print.cSEMResultssummary <- function(x, ...) {
   cat(cli::rule(line = "bar2"), "\n",
       cli::rule(center = "General Information"), "\n\n\t", sep = "")
-
+  
   cat(crayon::col_align("Number of Observations", 25), "= ", x$Number_of_observations, "\n\t",
       crayon::col_align("Weight estimator", 25), "= ", x$Weight_estimator, "\n\t", sep = "")
   if(x$Weight_estimator == "PLS") {
-  cat(crayon::col_align("Inner Weighting Scheme ", 25), "= ", x$PLS_weight_scheme_inner, "\n\t", sep = "")
+    cat(crayon::col_align("Inner Weighting Scheme ", 25), "= ", x$PLS_weight_scheme_inner, "\n\t", sep = "")
   }
   cat(
-      crayon::col_align("Path estimator", 25), "= ", x$Path_estimator, "\n\t",
-      crayon::col_align("Convergence Status", 25), "= ", c("not yet implemented"), "\n\t",
-      crayon::col_align("Overall model fit", 25), "= ", c("not yet implemented"), "\n\t",
-      crayon::col_align("Degrees of Freedom", 25), "= ", c("not yet implemented"), "\n\t",
-      crayon::col_align("Computation Time", 25), "= ", c("not yet implemented"), "\n\n\t",
-      sep = "")
-
+    crayon::col_align("Path estimator", 25), "= ", x$Path_estimator, "\n\t",
+    crayon::col_align("Convergence Status", 25), "= ", c("not yet implemented"), "\n\t",
+    crayon::col_align("Overall model fit", 25), "= ", c("not yet implemented"), "\n\t",
+    crayon::col_align("Degrees of Freedom", 25), "= ", c("not yet implemented"), "\n\t",
+    crayon::col_align("Computation Time", 25), "= ", c("not yet implemented"), "\n\n\t",
+    sep = "")
+  
   cat("Construct Types:\n\t","----------------","\n\t", sep = "")
-
+  
   for(i in seq_along(x$Construct_types$Name)) {
     cat(crayon::col_align(x$Construct_types$Name[i], 10), ": ", x$Construct_types$Type[i],"\n\t", sep = "")
   }
   cat("\n")
-
+  
   if(x$Weight_estimator == "PLS") {
     cat("\tPLS Modes:\n\t","----------------","\n\t", sep = "")
-
+    
     for(i in seq_along(x$Construct_type$Name)) {
       cat(crayon::col_align(x$Construct_types$Name[i], 10), ": ", x$PLS_modes[i],"\n\t", sep = "")
     }
     cat("\n")
   }
-
+  
   cat(cli::rule(center = "Estimates"), "\n\n", sep = "")
-
+  
   cat("Estimated Path Coefficients:\n============================\n", sep = "")
   print(x$Path_estimates, row.names = FALSE)
-
-
+  
+  
   cat("\nEstimated Loadings:\n===================\n", sep = "")
   print(x$Loading_estimates, row.names = FALSE)
-
+  
   cat("\nEstimated Weights:\n==================\n", sep = "")
   print(x$Weight_estimates, row.names = FALSE)
-
+  
   if(x$Weight_estimator == "PLS") {
     cat("\nEstimated Correction Factors:\n=============================\n", sep = "")
     print(x$Correction_factors)
   }
-
+  
   cat("\n\n", cli::rule(center = "Other output"), "\n\n\t", sep = "")
-
+  
   cat("<not yet implemented>")
-
+  
   cat("\n\n", cli::rule(center = "Fit Indices"), "\n\n\t", sep = "")
-
+  
   cat(crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
       crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
       crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\n",
       sep = "")
-
+  
   cat(cli::rule(line = "bar2"))
 }
 
@@ -124,7 +123,7 @@ print.cSEMResultssummary <- function(x, ...) {
 #' The [cSEMResults] method for the generic function [summary()]. 
 #' 
 #' Computes a summary of the results obtained from runinng [csem], [cca], or
-#' [workhorse].
+#' [foreman].
 #'
 #' @usage summary(.object, .what = NULL)
 #'
@@ -137,7 +136,7 @@ print.cSEMResultssummary <- function(x, ...) {
 #' @export
 #'
 summary.cSEMResults <- function(.object, .what = NULL) {
-
+  
   ## Structure loadings output
   temp <- x$Estimates$Loading_estimates
   names_loadings <- paste0(rep(rownames(temp), times = apply(temp, 1, function(x) sum(x != 0))),
@@ -145,7 +144,7 @@ summary.cSEMResults <- function(.object, .what = NULL) {
   loading_estimates <- data.frame("Loading" = names_loadings,
                                   "Estimate" = unlist(t(temp)[t(temp) != 0 ]),
                                   stringsAsFactors = FALSE)
-
+  
   ## Structure weights output
   temp <- x$Estimates$Weight_estimates
   names_weights <- paste0(rep(rownames(temp), times = apply(temp, 1, function(x) sum(x != 0))),
@@ -153,7 +152,7 @@ summary.cSEMResults <- function(.object, .what = NULL) {
   weight_estimates <- data.frame("Weights" = names_weights,
                                  "Estimate" = unlist(t(temp)[t(temp) != 0 ]),
                                  stringsAsFactors = FALSE)
-
+  
   ## Create summary list
   summary_out <- list(
     "Construct_types"        = x$Meta_information$Construct_types,
@@ -168,7 +167,7 @@ summary.cSEMResults <- function(.object, .what = NULL) {
     "Weight_estimates"       = weight_estimates,
     "Weight_estimator"       = x$Meta_information$Weight_approach
   )
-
+  
   ## Set class for printing and return
   class(summary_out) <- "cSEMResultssummary"
   return(summary_out)
@@ -228,121 +227,65 @@ fitted.cSEMResults <- function(.object) {
     stop("Model is nonlinear. Currently the model-implied indicator covariance",
          " matrix can only be computed for linear models.", call. = FALSE)
   }
-    
+  
+  Cons_exo <- .object$Information$Model$vars_exo
+  Cons_endo <- .object$Information$Model$vars_endo
+  
   ## Get relevant matrices
-  
   S <- .object$Estimates$Indicator_VCV
-  P <- .object$Estimates$Construct_VCV
-  B <- .object$Estimates$Path_estimates 
-  Lambda <- .object$Estimates$Loading_estimates 
-  Lambda_cross <- .object$Estimates$Cross_loadings
+  Phi <- .object$Estimates$Construct_VCV[Cons_exo,Cons_exo,drop=FALSE]
+  B <- .object$Estimates$Path_estimates[Cons_endo,Cons_endo,drop=FALSE] 
+  Gamma = .object$Estimates$Path_estimates[Cons_endo,Cons_exo,drop=FALSE]
+  Lambda <- .object$Estimates$Cross_loadings*.object$Information$Model$measurement
+  I = diag(length(Cons_endo))
   
-  a1 <- .object$Information$Model$vars_exo
-  a2 <- .object$Information$Model$vars_endo
   
-  ## Compute variances of the errors (diagonal matrices Var(delta) and Var(zeta)).
+  vcv_delta <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
+  dimnames(vcv_delta)=dimnames(S)
   
-  vcv_delta <- diag(diag(S) - diag(t(Lambda) %*% P %*% Lambda))
-  Delta <- vcv_delta
-  diag(Delta) <- 1
-
-  tmp <- diag(1 - diag(solve(diag(length(a2)) - B[a2, a2]) %*% B[a2, a1]%*% 
-    P[a1, a1] %*% t(B[a2, a1]) %*% t(solve(diag(length(a2)) - B[a2, a2]))))
-  rownames(tmp) <- colnames(tmp) <- a2
+  # calculate the vcv of zeta
+  #  Currently, the calculation of the VCV of the zetas is not 100%, this should be adjusted, 
+  # Calculate the variance of zeta equation by equation with replacement
+  vec_zeta=1-rowSums(.object$Estimates$Path_estimates*
+                       .object$Estimates$Construct_VCV)
+  names(vec_zeta)=rownames(.object$Estimates$Construct_VCV)
   
-  # vcv_zeta <- diag(1 - diag(B%*% P %*% t(B)))
-  # vcv_zeta[1:length(a), 1:length(a)] <- 0
-  vcv_zeta <- matrix(0, nrow(B), ncol(B), dimnames = list(rownames(B), colnames(B)))
-  vcv_zeta[a2, a2] <- tmp
-
-  Zeta <- vcv_zeta
-  Zeta[Zeta != 0] <- 1
+  vcv_zeta=matrix(0,nrow=nrow(I),ncol=ncol(I))
+  diag(vcv_zeta)=vec_zeta[Cons_endo]
   
-  ## Get names of all variables (dependent and independent)
-  names <- c(colnames(S), rownames(Lambda), paste0("del", 1:nrow(vcv_delta)),
-             paste0("zeta", 1:nrow(vcv_zeta)))
+  # Correlation among the exogenous constructs
+  Corr_exo=Phi
+  # Correlations  between exogenous and endogenous constructs
+  Corr_exo_endo=Phi %*% t(Gamma) %*%t(solve(I-B))
+  # Correlations among endogenous cosntructs 
+  Cor_endo=solve(I-B)%*%(Gamma%*%Phi%*%t(Gamma)+vcv_zeta)%*%t(solve(I-B))
+  diag(Cor_endo)=1
   
-  ## Matrix of structural relationships
-  # Note: Here, "structural" refers to realtionsips between variables in general
-  #       not just constructs. The matrix is (s x s), where s is the total number
-  #       of variables.
+  VCV_construct=rbind(cbind(Corr_exo,Corr_exo_endo),
+                      cbind(t(Corr_exo_endo),Cor_endo))
   
-  A1 <- rbind(
-    cbind(S * 0, t(Lambda), Delta, matrix(0, nrow(S), ncol(Zeta))),
-    cbind(Lambda * 0, B, matrix(0, nrow(B), ncol(Delta)), Zeta)
-  )
-
-  A1 <- rbind(A1,
-    matrix(0, nrow(Delta), ncol(A1)),
-    matrix(0, nrow(Zeta), ncol(A1))
-  )
-  rownames(A1) <- colnames(A1) <- names   
-  ## Set rows of variables who are only related to an error to 0 .
-  # A1[rowSums(A1) == 1, ] <- 0  ## Set rows of variables who are only related to an error to 0 .
+  # calculate model-implied VCV of the indicators
+  VCV_ind=t(Lambda)%*%VCV_construct%*%Lambda
   
-  ## Matrix of variances and covariances between all variables 
-  # Note: is necessary for the computation of Phi. The matrix is also (s x s)
-  
-  A2 <- rbind(
-    cbind(S, t(Lambda_cross), matrix(0, nrow(S), sum(ncol(vcv_delta), ncol(vcv_zeta)))),
-    cbind(Lambda_cross, P, matrix(0, nrow(P), sum(ncol(vcv_delta), ncol(vcv_zeta)))),
-    cbind(matrix(0, nrow(vcv_delta), sum(ncol(S) + nrow(Lambda_cross))), 
-          vcv_delta,
-          matrix(0, nrow(vcv_delta), ncol(vcv_zeta))),
-    cbind(matrix(0, nrow(vcv_zeta), 
-                 sum(ncol(S) + nrow(Lambda_cross) + ncol(vcv_delta))), vcv_zeta) 
-  )
-  rownames(A2) <- colnames(A2) <- names 
-
-  ## Distinguish and get dimensions --------------------------------------------
-  indep_vars <- rownames((A1[rowSums(A1) == 0, ]))
-  dep_vars   <- setdiff(rownames(A1), indep_vars)
-  observed   <- colnames(S)
-  # unobserved <- setdiff(rownames(A1), observed)
-  
-  m <- length(dep_vars)
-  n <- length(indep_vars)
-  s <- m + n
-  p <- length(intersect(dep_vars, observed)) 
-  q <- length(intersect(indep_vars, observed))
-  r <- p + q
-
-  ### Define the required matrices ---------------------------------------------
-  
-  Beta <- matrix(0, s, s, dimnames = list(names, names))  # (s x s)
-  Beta[dep_vars, dep_vars] <- A1[dep_vars, dep_vars] # beta0 (m x m)
-  
-  Gamma <- matrix(0, s, n, dimnames = list(names, indep_vars))  # (s x n)
-  Gamma[dep_vars, ]   <- A1[dep_vars, indep_vars] # gamma (m x n)
-  Gamma[indep_vars, ] <- diag(n) # I (n x n)
-  
-  G <- matrix(0, r, s, dimnames = list(observed, names))  # (r x s)
-  G[observed, observed] <- diag(r) # (r x s)
-  
-  Phi   <- A2[indep_vars, indep_vars] # (n x n)
-  I     <- diag(s)          # (s x s)
-  
-  ### Calculate the model implied covariance matrix ============================
-
-  Sigma <- G %*% solve(I - Beta) %*% Gamma %*% Phi %*% t(Gamma) %*% t(solve(I - Beta))%*% t(G)
-  rownames(Sigma) <- colnames(Sigma) <- rownames(S)
-
-  # ### Replace indicators connected to a composite by S
-
-  mod <- .object$Information$Model
-  composites <- names(mod$construct_type[mod$construct_type == "Composite"])
-  index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
-
-  Sigma[which(index == 1)] <- S[which(index == 1)]
-  
-  ## Set all diagonal elements to 1
-  diag(Sigma) <- 1
+  Sigma=VCV_ind+vcv_delta
   
   # Make symmetric
   Sigma[lower.tri(Sigma)] = t(Sigma)[lower.tri(Sigma)]
   
+  # ### Replace indicators connected to a composite by S
+  
+  mod <- .object$Information$Model
+  composites <- names(mod$construct_type[mod$construct_type == "Composite"])
+  index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
+  
+  Sigma[which(index == 1)] <- S[which(index == 1)]
+  
+  # Replace indicators which measurement errors are allowed to be correlated by s_ij
+  
   return(Sigma)
 }
+
+
 
 #' Effects
 #'
@@ -369,7 +312,7 @@ effects.cSEMResults <- function(.object) {
   
   ## Matrix of direct effects:
   direct <- .object$Estimates$Path_estimates
-
+  
   ## Matrix of total total effects: B = direct
   # Note: eta = B x eta + zeta
   #       (I - B)*eta = zeta
@@ -413,6 +356,7 @@ status <- function(.object){
   UseMethod("status")
 }
 
+#' @describeIn status Some text
 #' @export
 status.cSEMResults <- function(.object){
   
@@ -422,36 +366,43 @@ status.cSEMResults <- function(.object){
   # which implies either a negative veriance of the measurement error or
   # a correlation larger than 1
   # 3: construct VCV is not positive semi-definit
-  # 4 model-implied indicators VCV is not positive semi-definit
+  # 4: model-implied indicators VCV is not positive semi-definit
+  # 5: at least one construct reliability is larger than 1
   
   if(.object$Information$Model$model_type != "Linear"){
     stop("Currently, the status function only works for linear models.",
          call. = FALSE)}
-
-  stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE)
+  
+  stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE, "5" = FALSE)
   
   # if(.object$Information$Arguments$.approach_weights == "PLS") {
-    
-    if(!.object$Information$Weight_info$Convergence_status) {
-      stat["1"] <- TRUE
-    }
-    
-    if(max(abs(.object$Estimates$Cross_loadings)) > 1) {
-      stat["2"] <- TRUE
-    }
-    
-    if(!matrixcalc::is.positive.semi.definite(.object$Estimates$Construct_VCV)) {
-      stat["3"] <- TRUE
-    }
-    
-    if(!matrixcalc::is.positive.semi.definite(fitted(.object))) {
-      stat["4"] <- TRUE
-    }
-    # If if no problem occured, it seems that the estimation is fine.
-    if(sum(stat) == 0) {
-      stat <- NULL
-    }
-    
+  
+  if(!(is.null(.object$Information$Weight_info$Convergence_status) || .object$Information$Weight_info$Convergence_status)) {
+    stat["1"] <- TRUE
+  }
+  
+  if(max(abs(.object$Estimates$Cross_loadings)) > 1) {
+    stat["2"] <- TRUE
+  }
+  
+  if(!matrixcalc::is.positive.semi.definite(.object$Estimates$Construct_VCV)) {
+    stat["3"] <- TRUE
+  }
+  
+  if(!matrixcalc::is.positive.semi.definite(fitted(.object))) {
+    stat["4"] <- TRUE
+  }
+  
+  if(max(.object$Estimates$Construct_reliabilities)>1) {
+    stat["5"] <- TRUE
+  }
+  
+  
+  # If if no problem occured, it seems that the estimation is fine.
+  if(sum(stat) == 0) {
+    stat <- NULL
+  }
+  
   # } else {
   #   stop("Only applicable if PLS is used.", call. = FALSE)
   # }
