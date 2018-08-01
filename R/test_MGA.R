@@ -128,6 +128,10 @@ a <- csem(.data = satisfaction, .model = model, .id = "gender")
 
 b <- csem(.data = satisfaction[,-ncol(satisfaction)], .model = model, 
           .PLS_weight_scheme_inner = "path")
+
+
+lapply(a, fitted)
+
 status(b)
 fitted(b)
 diag(fitted(b))
