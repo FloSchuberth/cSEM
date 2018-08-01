@@ -19,9 +19,11 @@ calculateArithmDistance <- function(.corMatrices, .distance="geodesic"){
              geodesic = {
                # Eigen values
                Eigen <- eigen(solve(.corMatrices[[h]]) %*% 
-                                      .corMatrices[[g]])
+                                       .corMatrices[[g]])
                # calc distance
-               results[index]  <-  sum((log(Eigen$values))^2) 
+               results[index]  <-  sum((log(Eigen$values))^2)
+               
+               # results[index] <- 2 * dG(.corMatrices[[h]], .corMatrices[[g]])
                # update index
                index <- index + 1 
              },
@@ -47,66 +49,58 @@ calculateArithmDistance <- function(.corMatrices, .distance="geodesic"){
   return(res)
 }
 
-extractIndicator_VCV <- function(.cSEM){
-  groups <- length(names(.cSEM))
-  corMatrices <- list()
-  for(iGroups in 1:groups){
-    # TODO: implied
-    # corMatrices[[iGroups]] <- .cSEM[[iGroups]]$Estimates$Indicator_VCV
-    # TODO: test
-    corMatrices[[iGroups]] <- fitted(.cSEM[[iGroups]])
-  }
-  names(corMatrices) <- names(.cSEM)
-  return(corMatrices)
-}
 
-
-# Check if .cSEM object has an id variable
-checkMGA <- function(.cSEM){
-  if(is.null(.cSEM[[1]]$Information$Arguments$.id)){
+# Check if .object object has an id variable
+checkMGA <- function(.object){
+  if(is.null(.object[[1]]$Information$Arguments$.id)){
     return(FALSE)
   }
   return(TRUE)
 }
 
-testOverallMGA <- function(.cSEM, .permutations){
-  if(!checkMGA(.cSEM)){
+testOverallMGA <- function(.object, .runs){
+  if(!checkMGA(.object)){
+    call. = FALSE
     stop("No .id variable set. Overall test for group differences not possible.")
   }
+  
+  .object <- a
+  
   # 1: Overall distance
-  geoDistance <- calculateArithmDistance(extractIndicator_VCV(.cSEM))
+  # 
+  geoDistance <- calculateArithmDistance(lapply(.object, fitted))
   
   # extract data
   listMatrices <- list()
-  for(iData in 1:length(.cSEM)){
-    listMatrices[[iData]] <- .cSEM[[iData]]$Information$Data
+  for(iData in 1:length(.object)){
+    listMatrices[[iData]] <- .object[[iData]]$Information$Data
   }
   # combine data
   totalData <- data.frame(do.call(rbind, listMatrices))
   
   # Results
   permEstimates <- c()
-  for(iPerm in 1:.permutations){
+  for(iPerm in 1:.runs){
     # create ID
     ID <- rep(1:length(listMatrices),lengths(listMatrices)/ncol(listMatrices[[1]]))
     # random ID
     permData <- cbind(totalData, permID = as.character(sample(ID)))
     
     # Collect arguments
-    arguments=.cSEM[[1]]$Information$Arguments
+    arguments=.object[[1]]$Information$Arguments
     arguments[[".data"]] <- permData
     arguments[[".id"]] <- "permID"
     
     permOut <- do.call(csem, arguments)
     
-    permEstimates[iPerm] <- calculateArithmDistance(extractIndicator_VCV(permOut))
+    permEstimates[iPerm] <- calculateArithmDistance(extractFitted_VCV(permOut))
   }
   return(c(geoDistance, permEstimates))
 }
 
-
-
-# Test ---------------------------
+# 
+# 
+# # Test ---------------------------
 model <- "
 # Structural model
 EXPE ~ IMAG
@@ -119,23 +113,30 @@ LOY  ~ IMAG + SAT
 # Measurement model
 
 IMAG <~ imag1 + imag2 + imag3
-EXPE <~ expe1 + expe2 + expe3 
+EXPE <~ expe1 + expe2 + expe3
 QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
 VAL  <~ val1  + val2  + val3
-SAT  =~ sat1  + sat2  + sat3  + sat4
-LOY  =~ loy1  + loy2  + loy3  + loy4
+SAT  <~ sat1  + sat2  + sat3  + sat4
+LOY  <~ loy1  + loy2  + loy3  + loy4
 "
 
 
 require(cSEM)
-data("satisfaction")
-b <- csem(.data = cSEM::satisfaction, .model = model)
-b
-listviewer::jsonedit(b, mode="view")
-
 require(plspm)
 data("satisfaction")
 a <- csem(.data = satisfaction, .model = model, .id = "gender")
+
+b <- csem(.data = satisfaction[,-ncol(satisfaction)], .model = model, 
+          .PLS_weight_scheme_inner = "path")
+status(b)
+fitted(b)
+diag(fitted(b))
+
+require(matrixpls)
+c <- matrixpls(S=cor(satisfaction[,-ncol(satisfaction)]), model = model)
+sum(fitted.matpls(c)[rownames(fitted(b)),colnames(fitted(b))]-fitted(b))
+
+
 
 # MGA
 a_test <- testOverallMGA(a, .10)
@@ -144,29 +145,3 @@ a_test
 
 testOverallMGA(a, 5)
 
-
-
-
-listviewer::jsonedit(a, mode="view")
-
-cdata <- permutateData(a)
-c <- csem(.data = list(cdata[[1]], cdata[[2]]), .model = model)
-
-
-
-
-
-a$female$Information$Model
-
-str(a)
-
-calculateArithmDistance(a, "geodesic")
-calculateArithmDistance(a, "euclidean")
-
-a_perm <- permutateData(a)
-calculateArithmDistance(a_perm, "geodesic")
-
-
-listviewer::jsonedit(a, mode="view")
-
-a$male$Information$Data

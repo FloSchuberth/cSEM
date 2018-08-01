@@ -245,6 +245,8 @@ workhorse <- function(
     )
   )
   
+  class( out ) <- "cSEMResults"
+  
   invisible(out)
 
   ### For maintenance: ---------------------------------------------------------
