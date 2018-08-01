@@ -49,7 +49,6 @@ calculateArithmDistance <- function(.corMatrices, .distance="geodesic"){
   return(res)
 }
 
-
 # Check if .object object has an id variable
 checkMGA <- function(.object){
   if(is.null(.object[[1]]$Information$Arguments$.id)){
@@ -60,16 +59,13 @@ checkMGA <- function(.object){
 
 testOverallMGA <- function(.object, .runs){
   if(!checkMGA(.object)){
-    call. = FALSE
-    stop("No .id variable set. Overall test for group differences not possible.")
+    stop("No .id variable set. Overall test for group differences not possible.", call. = FALSE)
   }
   
-  .object <- a
-  
   # 1: Overall distance
-  # 
   geoDistance <- calculateArithmDistance(lapply(.object, fitted))
   
+  # 2: permutation procedure
   # extract data
   listMatrices <- list()
   for(iData in 1:length(.object)){
@@ -93,14 +89,14 @@ testOverallMGA <- function(.object, .runs){
     
     permOut <- do.call(csem, arguments)
     
-    permEstimates[iPerm] <- calculateArithmDistance(extractFitted_VCV(permOut))
+    permEstimates[iPerm] <- calculateArithmDistance(lapply(permOut, fitted))
   }
-  return(c(geoDistance, permEstimates))
+  return(c(geoDistance, quantile(permEstimates)))
 }
 
 # 
 # 
-# # Test ---------------------------
+# Test ---------------------------
 model <- "
 # Structural model
 EXPE ~ IMAG
@@ -120,24 +116,26 @@ SAT  <~ sat1  + sat2  + sat3  + sat4
 LOY  <~ loy1  + loy2  + loy3  + loy4
 "
 
+sat.plspm <- read.csv2("C:/Users/Michael Klesel/Dropbox/R Projekte/R cSEM/satisfaction.csv")
 
 require(cSEM)
-require(plspm)
-data("satisfaction")
-a <- csem(.data = satisfaction, .model = model, .id = "gender")
-
-b <- csem(.data = satisfaction[,-ncol(satisfaction)], .model = model, 
-          .PLS_weight_scheme_inner = "path")
+data(satisfaction)
+a <- csem(.data = sat.plspm, .model = model, .id = "gender")
 
 
-lapply(a, fitted)
 
-status(b)
-fitted(b)
-diag(fitted(b))
+testOverallMGA(a, 20)
+
+
+
+
+b <- csem(.data = satisfaction, .model = model, .PLS_weight_scheme_inner = "path")
+
+Test_for_overall_model_fit(b)
+
 
 require(matrixpls)
-c <- matrixpls(S=cor(satisfaction[,-ncol(satisfaction)]), model = model)
+c <- matrixpls(S=cor(satisfaction), model = model)
 sum(fitted.matpls(c)[rownames(fitted(b)),colnames(fitted(b))]-fitted(b))
 
 
