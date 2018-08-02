@@ -108,30 +108,38 @@ csem <- function(
   .reliabilities           = NULL,
   ...
   ) {
+
   ## Match arguments (for meaningful error messages)
-  match.arg(.approach_paths)
-  match.arg(.approach_nl)
-  match.arg(.PLS_weight_scheme_inner)
-  
+  .approach_weights        <- match.arg(.approach_weights)
+  .approach_paths          <- match.arg(.approach_paths)
+  .approach_nl             <- match.arg(.approach_nl)
+  .PLS_weight_scheme_inner <- match.arg(.PLS_weight_scheme_inner)
+
   ## Collect and handle arguments
-  args_used   <- as.list(match.call())[-1]
+  # Note: all.names = TRUE is neccessary for otherwise arguments with a leading
+  #       dot will be omitted!
+  args_used <- c(as.list(environment(), all.names = TRUE), list(...))
+  args_used["..."] <- NULL
   args        <- handleArgs(args_used)
   args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))] 
   
-  ## Explicitly evalute arguments_used (as.list(match.call())[-1]
-  # does not evaluate the call) which causes problems when using foreach or mapply
-  args_needed[names(args_used)] <- lapply(names(args_used), function(x) {
-    eval(parse(text = x)) 
-  })
-  
-  ## 
+  ## Select cases
   if(!is.null(.id)) {
     
+    if(length(.id) != 1) {
+      stop("`.id` must be a character string or an integer identifying one single column.",
+           call. = FALSE)
+    }
+
     data_split <- split(.data, f = .data[, .id])
     out <- lapply(data_split, function(x) {
-      
-      args_needed[[".data"]] <- x[, -which(names(x) == .id)]
+      if(is.numeric(.id)) {
+        args_needed[[".data"]] <- x[, -.id]
+      } else {
+        args_needed[[".data"]] <- x[, -which(names(x) == .id)]
+      }
       do.call(foreman, args_needed)
+      
     })
   } else if(any(class(.data) == "list")) {
     
