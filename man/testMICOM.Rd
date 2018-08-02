@@ -18,22 +18,17 @@ testMICOM(
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
-\item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
-or a \link{cSEMModel} object.}
+\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+or a \link{cSEMModel}-list.}
 
-\item{.group_var}{Character string. The name of the column used to split the data into groups.}
-
-\item{.approach_weights}{Character string. The name of the approach used to
-obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+\item{.approach_weights}{Character string. Approach used to
+obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight} is not PLS.}
-
-\item{.permutations}{Integer. The number permutations used for step 2 and 3 of the test.
-Defaults to \code{100}. Note however that the number should typically be a lot higher.}
+used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}

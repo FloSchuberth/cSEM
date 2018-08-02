@@ -5,44 +5,43 @@
 \title{Calculate composite weights using PLS}
 \usage{
 calculateWeights(
-  .data                     = NULL,
-  .model                    = NULL,
-  .PLS_mode                 = NULL,
-  .tolerance                = NULL,
-  .iter_max                 = NULL,
-  .PLS_weight_scheme_inner  = NULL,
-  .ignore_structural_model  = NULL
+  .data                        = NULL,
+  .model                       = NULL,
+  .PLS_modes                   = NULL,
+  .tolerance                   = NULL,
+  .iter_max                    = NULL,
+  .PLS_ignore_structural_model = NULL
+  .PLS_weight_scheme_inner     = NULL,
    )
 }
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
-\item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
-or a \link{cSEMModel} object.}
+\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+or a \link{cSEMModel}-list.}
 
-\item{.PLS_mode}{Either a named vector specifying the mode that should be used for
-each construct in the form \code{name = "mode"}, a single character
-string giving the mode that should be used for all constructs or \code{NULL}.
+\item{.PLS_modes}{Either a named vector specifying the mode that should be used for
+each construct in the form \code{"name" = "mode"}, a single character
+string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
-If \code{NULL}, \code{cSEM} will choose the appropriate mode according to the type
-of construct used. The argument is ignored if \code{.approach_weight} is not PLS.}
+If \code{NULL}, \code{csem()} will choose the appropriate mode according to the type
+of construct used. Ignored if \code{.approach_weight} is not PLS.}
 
-\item{.tolerance}{Double. The tolerance criterion for convergence of the PLS
-algorithm. Defaults to \code{1e-05}.
-The argument is ignored if \code{.approach_weight} is not PLS.}
+\item{.tolerance}{Double. The tolerance criterion for convergence.
+Defaults to \code{1e-05}.}
 
-\item{.iter_max}{Integer. The maximum number of iterations of the PLS algorithm.
-If \code{iter_max = 1} one-step weights are returned. If the algorithm exceeds
-the specified number, weights of iteration step \code{.iter_max - 1}  will be returned
-with a warning. Defaults to \code{100}. The argument is ignored if
-\code{.approach_weight} is not PLS.}
+\item{.iter_max}{Integer. The maximum number of iterations allowed.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS"} one-step weights are returned.
+If the algorithm exceeds the specified number, weights of iteration step
+\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
+
+\item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
+when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.
+Ignored if \code{.approach_weights} is not PLS.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight} is not PLS.}
-
-\item{.ignore_structural_model}{Logical. Should the structural (path) model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.}
+used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
 }
 \value{
 A list with the following elements:

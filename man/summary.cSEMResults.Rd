@@ -7,7 +7,7 @@
 summary(.object, .what = NULL)
 }
 \arguments{
-\item{.object}{An R object of class \link{cSEMResults}.}
+\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 }
 \value{
 An object of class \code{cSEMResultssummary} for which the following methods exist:

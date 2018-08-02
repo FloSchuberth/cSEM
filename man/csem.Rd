@@ -7,12 +7,13 @@
 csem(
   .data                = NULL,
   .model               = NULL,
+  .id                  = NULL,
   .approach_weights    = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR", "GSCA", "fixed", "unit"),
   .approach_path       = c("OLS", "2SLS", "3SLS"),
   .approach_nl         = c("sequential", "replace"),
   .disattenuate        = TRUE,
   .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-  .PLS_mode            = NULL,
+  .PLS_modes           = NULL,
   .estimate_structural = TRUE,
   .reliabilities       = NULL
   ...)
@@ -20,48 +21,49 @@ csem(
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Addionally,
 a list of \code{data.frame}s or \code{matrices} may be specified in which case estimation
-is repeated for each data set.}
+is repeated for each data set. See details.}
 
-\item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
-or a \link{cSEMModel} object.}
+\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+or a \link{cSEMModel}-list.}
 
 \item{.id}{Charachter string. The name of the column of \code{.data} used to split
 the date into groups.}
 
-\item{.approach_weights}{Character string. The name of the approach used to
-obtain composite weights. Possible choices are: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+\item{.approach_weights}{Character string. Approach used to
+obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. Possible choices are: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}".
+structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}".
 Defaults to "\emph{OLS}".}
 
-\item{.approach_nl}{Character string. The approach used to handle non-linear
-structural relationships. Possible choices are: "\emph{sequential}", or "\emph{replace}".
+\item{.approach_nl}{Character string. Approach used to estimate nonlinear
+structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
-\item{.disattenuate}{Logical. Should proxy correlations be disattenuated
-if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
+if the construct is modelled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight} is not PLS.}
+used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
 
-\item{.PLS_mode}{Either a named vector specifying the mode that should be used for
-each construct in the form \code{name = "mode"}, a single character
-string giving the mode that should be used for all constructs or \code{NULL}.
+\item{.PLS_modes}{Either a named vector specifying the mode that should be used for
+each construct in the form \code{"name" = "mode"}, a single character
+string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
-If \code{NULL}, \code{cSEM} will choose the appropriate mode according to the type
-of construct used. The argument is ignored if \code{.approach_weight} is not PLS.}
+If \code{NULL}, \code{csem()} will choose the appropriate mode according to the type
+of construct used. Ignored if \code{.approach_weight} is not PLS.}
 
-\item{.estimate_structural}{Logical. Should the structural (path) coefficients
+\item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
 
-\item{.reliabilities}{A vector of \code{name = value} pairs of reliability coefficients.
-Element names are equal to the names of the J construct names. Reliabilities
+\item{.reliabilities}{A character vector of \code{"name" = value} pairs,
+where \code{value} is a number between 0 and 1 and \code{"name"} a character string
+of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
-reliabilites are estimated by \code{cSEM}.}
+reliabilites are estimated by \code{csem()}.}
 
 \item{...}{Further arguments to be passed down to other functions.
 See \code{\link[=args_default]{args_default()}} with \code{.only_dots = TRUE} for a complete list
@@ -86,49 +88,48 @@ Estimates linear and nonlinear structural equation models using a
 composite based approach.
 }
 \details{
-The \code{csem} function is a wrapper around the more general \link{foreman} function.
+The \code{csem()} function is a wrapper around the more general \code{\link[=foreman]{foreman()}} function.
 It is designed for quick, easy, and flexible use by providing the user with
 defaults choices for all relevant arguments except the mandatory \code{.data}
 and \code{.model} argument.
-}
-\section{Data and model}{
 
-To get started the \code{.data} and \code{.model} arguments are required. Data must be
+\subsection{Data and model:}{
+The \code{.data} and \code{.model} arguments are required. Data must be
 provided as either a \code{matrix} or a \code{data.frame} with column names matching
-the variable/indicator names used in the model description of the measurement model.
+the indicator names used in the model description of the measurement model.
 Alternativly a named or unamed list of matrices or \code{data.frame}s may be provided
 in which case estimation is repeated for each data set.
 The data provided via \code{.data} may contain a non numeric column whose column name
-must be provided to \code{.id}. Values of this column are interpreted as group identifiers
-and \code{csem()} will split the data by levels of that column and run the estimation by calling
-\code{\link[=foreman]{foreman()}} for each level separately.
+must be provided to \code{.id}. Values of this column are interpreted as group
+identifiers and \code{csem()} will split the data by levels of that column and run
+the estimation by calling \code{\link[=foreman]{foreman()}} for each level separately.
 
 To provide a model use the \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 with two notable extensions/changes. First: the "\code{<~}" operator in \code{cSEM} is
 used to define a composite instead of a formative common factor. Second:
 the "\code{.}" is used to indicate interactions between constructs as in e.g.,
-\code{construct1.construct2}.
+\code{construct1.construct2}. Alternativly a standardized (possibly incomplete)
+\link{cSEMModel}-list may be supplied.
 }
 
-\section{Weights}{
-
-By default weights are estimated using \emph{PLS}. Alternative approaches include
-all of \emph{Kettenring's approaches}, "\emph{fixed weights}"
+\subsection{Weights and path coefficients:}{
+By default weights are estimated using the partial least squares algorithm (\emph{PLS}).
+Alternative approaches include all of \emph{Kettenring's criteria}, "\emph{fixed weights}"
 or "\emph{unit weight}". \emph{Generalized Structured Component Analysis} (\emph{GSCA}) may
 also be chosen as a weighing approach although technically GSCA obtains weight
 and structural coefficient estimates simultaneously. Hence, setting
 \code{.approach_weights = "GSCA"} automatically sets \code{.approach_path = "GSCA"} (and
 vice-versa).
 
-Composite-indicator and composite-composite correaltions are properly rescaled
-to get consistent estimates for the factor loadings and construct correlations
-unless \code{.disattenuate} is set explicitly set to \code{FALSE}.
-Consistent estimates are calculated for the entries of the moment equations
-that define the structural parameters.
-The solutions to the moment equations are reported as consistent estimates
-for the structural parameters.
+For PLS composite-indicator and composite-composite correlations are properly
+rescaled using \emph{PLSc} by yielding consistent estimates for the factor loadings, construct
+correlations, and path coefficients if any of the constructs involved is
+modelled as a common factor. If no disattenuation should be done,
+set \code{.disattenuate = FALSE}.
+}
 
-If the model is nonlinear \link{csem} estimates a polynomial structural equation model
+\subsection{Non linear models:}{
+If the model is nonlinear \code{csem()} estimates a polynomial structural equation model
 using a non-iterative method of moments approach described in
 \insertCite{Dijkstra2014}{cSEM}. Non linear terms include interactions and
 exponential terms. The latter is described in model syntax as an
@@ -147,7 +148,7 @@ that go beyond interaction, we work in this version with the assumption that
 as far as the relevant moments are concerned certain combinations of
 measurement errors behave as if they were Gaussian.
 }
-
+}
 \examples{
 \dontrun{
 # still to implement

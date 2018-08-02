@@ -7,7 +7,7 @@
 print(.object)
 }
 \arguments{
-\item{.object}{An R object of class \link{cSEMResults}.}
+\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 }
 \description{
 The \link{cSEMResults} method for the generic function \code{\link[=print]{print()}} prints basic

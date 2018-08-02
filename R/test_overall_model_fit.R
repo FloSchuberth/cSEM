@@ -3,7 +3,7 @@
 # Test for overall model fit
 
 Test_for_overall_model_fit=function(.object=args_default()$.model,
-                                    .dropInadmissibles=args_default()$.dropInadmissibles,
+                                    .drop_inadmissibles=args_default()$.drop_inadmissibles,
                                     .alpha=args_default()$.alpha,
                                     .runs=args_default()$.runs,
                                     ...){
@@ -55,7 +55,7 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
     status_code=status(Est_temp)
     
     # if it is controlled for inadmissible
-    if(.dropInadmissibles){
+    if(.drop_inadmissibles){
       if(is.null(status_code)){
         c(dG = dG(.matrix1=Est_temp$Estimates$Indicator_VCV,.matrix2=fitted(Est_temp)),
           SRMR = SRMR(Est_temp),

@@ -20,10 +20,10 @@ For a description of the arguments see \link{csem_arguments}.
 This is the complete list of arguments, their current defaults, and their
 possible alternatives. Each default may be changed by passing a \code{arg_name = value}
 pair to the function that uses the argument. Changes to the default arguments
-are checked and processed by the \link{handleArgs} function.
+are checked and processed by the \code{\link[=handleArgs]{handleArgs()}} function.
 
 If \code{.only_dots = TRUE} all possible arguments to be passed to lower level functions via the
-\code{...} argument of the \link{csem} or \link{cca} function are returned.
+\code{...} argument of the \code{\link[=csem]{csem()}} or \code{\link[=cca]{cca()}} function are returned.
 }
 \examples{
 
@@ -32,5 +32,5 @@ args_default(.only_dots = TRUE) # list only those accepted by `...`.
 
 }
 \seealso{
-\link{handleArgs}, \link{csem_arguments}, \link{cca}, \link{csem}, \link{foreman}
+\code{\link[=handleArgs]{handleArgs()}}, \link{csem_arguments}, \code{\link[=cca]{cca()}}, \code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}
 }

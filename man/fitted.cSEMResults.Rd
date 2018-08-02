@@ -7,7 +7,7 @@
 fitted(.object, test = NULL)
 }
 \arguments{
-\item{.object}{An R object of class \link{cSEMResults}.}
+\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
 \item{test}{not used}
 }

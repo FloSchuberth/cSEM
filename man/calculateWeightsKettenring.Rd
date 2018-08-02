@@ -9,8 +9,8 @@ calculateWeightsKettenring(.data, .model, .approach)
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
 
-\item{.model}{A model in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
-or a \link{cSEMModel} object.}
+\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+or a \link{cSEMModel}-list.}
 
 \item{.approach}{Character string. The Kettenring approach to use. One of
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to

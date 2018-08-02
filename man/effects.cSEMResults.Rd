@@ -7,7 +7,7 @@
 effects(.object)
 }
 \arguments{
-\item{.object}{An R object of class \link{cSEMResults}.}
+\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 }
 \description{
 Compute direct, indirect and total effects.

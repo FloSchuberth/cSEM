@@ -5,28 +5,28 @@
 \title{Calculate the inner weights for PLS}
 \usage{
 calculateInnerWeightsPLS(
-  .S                        = NULL,
-  .W                        = NULL,
-  .csem_model               = NULL,
-  .PLS_weight_scheme_inner  = NULL,
-  .ignore_structural_model  = NULL
+  .S                           = NULL,
+  .W                           = NULL,
+  .csem_model                  = NULL,
+  .PLS_ignore_structural_model = NULL,
+  .PLS_weight_scheme_inner     = NULL
 )
 }
 \arguments{
-\item{.S}{The (scaled) empirical (K x K) indicator covariance/correlation matrix,
-where K is the number of indicators.}
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
 \code{Iterations}.}
 
-\item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
+
+\item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
+when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.
+Ignored if \code{.approach_weights} is not PLS.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. Possible choices are: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". The argument is ignored if \code{.approach_weight} is not PLS.}
-
-\item{.ignore_structural_model}{Logical. Should the structural (path) model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.}
+used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
 }
 \value{
 The (J x J) matrix \code{E} of inner weights.

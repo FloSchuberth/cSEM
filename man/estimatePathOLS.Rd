@@ -8,23 +8,23 @@ estimatePathOLS(.H = NULL, .W = NULL, .Q = NULL, .P = NULL,
   .csem_model = NULL, .normality = NULL, .approach_nl = NULL)
 }
 \arguments{
-\item{.H}{The (N x J) matrix of proxy values.}
+\item{.H}{The (N x J) matrix of composite scores.}
 
 \item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
 \code{Iterations}.}
 
-\item{.Q}{A vector of proxy-construct correlations with element names equal to
+\item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.}
 
-\item{.csem_model}{A (possibly incomplete) \link{cSEMModel} list.}
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.normality}{Logical. Should joint normality be assumed if the model
-contains non-linear terms. For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
-Defaults to \code{TRUE}.}
+\item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
+For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
+Defaults to \code{TRUE}. Ignored if the model is linear.}
 
-\item{.approach_nl}{Character string. The approach used to handle non-linear
-structural relationships. Possible choices are: "\emph{sequential}", or "\emph{replace}".
+\item{.approach_nl}{Character string. Approach used to estimate nonlinear
+structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 }
 \value{

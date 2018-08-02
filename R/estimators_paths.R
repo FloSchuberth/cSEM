@@ -1,6 +1,6 @@
 #' Estimate the structural coefficients
 #'
-#' Estimates the coefficients of the structural model (non-linear and linear)
+#' Estimates the coefficients of the structural model (non-linear and linear).
 #'
 #' More details here
 #'

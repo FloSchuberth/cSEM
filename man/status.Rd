@@ -10,7 +10,7 @@ status(object)
 \method{status}{cSEMResults}(.object)
 }
 \arguments{
-\item{.object}{An R object of class \link{cSEMResults}.}
+\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 }
 \value{
 A NULL vector or a vector of status codes pointing to specific problems.
