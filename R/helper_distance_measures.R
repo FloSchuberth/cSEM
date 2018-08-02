@@ -40,10 +40,10 @@ calculateDistance <- function(
   if(!is.list(.matrices) && length(.matrices) < 2) {
     stop("`.matrices` must be a list of at least length two.", call. = FALSE)
   }
-  ## Check if all elements of matrices are of class matrix and symmetric
-  if(!all(sapply(.matrices, is.matrix))) {
-    stop("All elements of `.matrices` must be matrices.", call. = FALSE)
-  }
+  # ## Check if all elements of matrices are of class matrix and symmetric
+  # if(!all(sapply(.matrices, is.matrix))) {
+  #   stop("All elements of `.matrices` must be matrices.", call. = FALSE)
+  # }
   if(!all(sapply(.matrices, matrixcalc::is.symmetric.matrix))) {
     stop("All matrices in `.matrices` must be symmetric.", 
          call. = FALSE)
