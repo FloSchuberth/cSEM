@@ -8,7 +8,7 @@ estimatePathOLS(.H = NULL, .W = NULL, .Q = NULL, .P = NULL,
   .csem_model = NULL, .normality = NULL, .approach_nl = NULL)
 }
 \arguments{
-\item{.H}{The (N x J) matrix of composite scores.}
+\item{.H}{The (N x J) matrix of construct scores.}
 
 \item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
 \code{Iterations}.}
@@ -32,7 +32,7 @@ A named list containing the estimated structural coefficients and the
 r^2 for each regression.
 }
 \description{
-Estimates the coefficients of the structural model (non-linear and linear)
+Estimates the coefficients of the structural model (non-linear and linear).
 }
 \details{
 More details here
