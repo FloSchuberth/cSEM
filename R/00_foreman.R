@@ -118,8 +118,6 @@ foreman <- function(
       .data                     = S,
       .model                    = csem_model
     )
-  } else {
-    stop("Unknown weighting approach.", call. = FALSE)
   }
 
   ## Dominant indicators:
@@ -247,7 +245,7 @@ foreman <- function(
     "Information" = list(
       "Data"          = X,
       "Model"         = csem_model,
-      "Arguments"     = lapply(as.list(match.call())[-1], eval),
+      "Arguments"     = as.list(match.call())[-1],
       "Weight_info"   = list(
         "Modes"              = W$Modes,
         "Number_iterations"  = W$Iterations,
