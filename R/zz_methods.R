@@ -186,6 +186,8 @@ summary.cSEMResults <- function(.object, .what = NULL) {
 #' this is called \eqn{\hat\Sigma}. Currently only the model implied VCV for 
 #' linear model for constructs modeled as common factors or composites are 
 #' implemented. An error is given if the model is not linear.
+#' 
+#' Notation anis taken from Bollen (1989), page 319 f.
 #'
 #' @usage fitted(.object, test = NULL)
 #'
@@ -197,6 +199,28 @@ summary.cSEMResults <- function(.object, .what = NULL) {
 #' @export
 #'
 fitted.cSEMResults <- function(.object) {
+  
+  ### For maintenance: ---------------------------------------------------------
+  ## Cons_exo  := (J_exo x 1) vector of exogenous constructs names.
+  ## Cons_endo := (J_endo x 1) vector of endogenous constructs names.
+  ## S         := (K x K) Empirical indicator VCV matrix: V(X).
+  ## B         := (J_endo x J_endo) matrix of (estimated) path coefficients 
+  ##              from endogenous to endogenous constructs. (zero if there is no path)
+  ## Gamma     := (J_endo x J_exo) matrix of (estimated) path coefficients from
+  ##              exogenous to endogenous constructs.
+  ## Lambda    := (J X K) matrix of factor (dissatenuated if requested) 
+  ##              and/or composite loadings.
+  ## Phi       := (J_exo x J_exo) empirical construct correlation matrix 
+  ##              between exogenous constructs (attenuated if requested).
+  ## I         := (J_endo x J_endo) identity matrix.
+  ## Theta     := (K x K) diagonal matrix of measurement model error variances.
+  ## Psi       := (J_endo x J_endo) diagonal matrix of structural model error 
+  ##              variances (zetas).
+  ## Corr_exo_endo := (J_exo x J_endo) model-implied correlation matrix between 
+  ##                  exogenous and endogenous constructs.
+  ## Corr_endo     := (J_endo x J_endo) 
+
+  
   ### Preparation ==============================================================
   ## Check if linear
   if(.object$Information$Model$model_type != "Linear") {
@@ -204,45 +228,43 @@ fitted.cSEMResults <- function(.object) {
          " matrix can only be computed for linear models.", call. = FALSE)
   }
   
-  Cons_exo <- .object$Information$Model$vars_exo
+  Cons_exo  <- .object$Information$Model$vars_exo
   Cons_endo <- .object$Information$Model$vars_endo
-  # test 
+  
   ## Get relevant matrices
-  S <- .object$Estimates$Indicator_VCV
-  Phi <- .object$Estimates$Construct_VCV[Cons_exo,Cons_exo,drop=FALSE]
-  B <- .object$Estimates$Path_estimates[Cons_endo,Cons_endo,drop=FALSE] 
-  Gamma = .object$Estimates$Path_estimates[Cons_endo,Cons_exo,drop=FALSE]
-  Lambda <- .object$Estimates$Cross_loadings*.object$Information$Model$measurement
-  # Lambda_cross <- .object$Estimates$Cross_loadings
-  I = diag(length(Cons_endo))
+  S      <- .object$Estimates$Indicator_VCV
+  B      <- .object$Estimates$Path_estimates[Cons_endo, Cons_endo, drop = FALSE]
+  Gamma  <- .object$Estimates$Path_estimates[Cons_endo, Cons_exo, drop = FALSE]
+  Lambda <- .object$Estimates$Loading_estimates
+  Phi    <- .object$Estimates$Construct_VCV[Cons_exo, Cons_exo, drop = FALSE]
+  I      <- diag(length(Cons_endo))
+  Theta  <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
+  dimnames(Theta) <- dimnames(S)
   
+  ## Calculate variance of the zetas
+  # Note: this is not yet fully correct, athough it does not currently affect 
+  # the results. This may have to be fixed in the future to avoid potential 
+  # problem that might arise in setups we have not considered yet.
+  vec_zeta <- 1 - rowSums(.object$Estimates$Path_estimates * 
+                            .object$Estimates$Construct_VCV)
+  names(vec_zeta) <- rownames(.object$Estimates$Construct_VCV)
+
+  vcv_zeta <- matrix(0, nrow = nrow(I), ncol = ncol(I))
+  diag(vcv_zeta) <- vec_zeta[Cons_endo]
   
-  vcv_delta <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
-  dimnames(vcv_delta)=dimnames(S)
+  ## Correlations between exogenous and endogenous constructs
+  Corr_exo_endo <- Phi %*% t(Gamma) %*% t(solve(I-B))
+  # Correlations among endogenous constructs 
+  Cor_endo <- solve(I-B) %*% (Gamma %*% Phi %*% t(Gamma) + vcv_zeta) %*% t(solve(I-B))
+  diag(Cor_endo) <- 1
   
-  # calculate the vcv of zeta
-  vec_zeta=1-rowSums(.object$Estimates$Path_estimates*
-                       .object$Estimates$Construct_VCV)
-  names(vec_zeta)=rownames(.object$Estimates$Construct_VCV)
-  
-  vcv_zeta=matrix(0,nrow=nrow(I),ncol=ncol(I))
-  diag(vcv_zeta)=vec_zeta[Cons_endo]
-  
-  # Correlation among the exogenous constructs
-  Corr_exo=Phi
-  # Correlations  between exogenous and endogenous constructs
-  Corr_exo_endo=Phi %*% t(Gamma) %*%t(solve(I-B))
-  # Correlations among endogenous cosntructs 
-  Cor_endo=solve(I-B)%*%(Gamma%*%Phi%*%t(Gamma)+vcv_zeta)%*%t(solve(I-B))
-  diag(Cor_endo)=1
-  
-  VCV_construct=rbind(cbind(Corr_exo,Corr_exo_endo),
-                      cbind(t(Corr_exo_endo),Cor_endo))
+  VCV_construct <- rbind(cbind(PH, Corr_exo_endo),
+                         cbind(t(Corr_exo_endo), Cor_endo))
   
   # calculate model-implied VCV of the indicators
-  VCV_ind=t(Lambda)%*%VCV_construct%*%Lambda
+  VCV_ind = t(Lambda) %*% VCV_construct %*% Lambda
   
-  Sigma=VCV_ind+vcv_delta
+  Sigma=VCV_ind+Theta
   
   # Make symmetric
   Sigma[lower.tri(Sigma)] = t(Sigma)[lower.tri(Sigma)]
