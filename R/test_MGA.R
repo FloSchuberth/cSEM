@@ -49,13 +49,35 @@ calculateArithmDistance <- function(.corMatrices, .distance="geodesic"){
   return(res)
 }
 
-#' Test statistic to compare group differences. 
+
+
+#' @title Test for group differences
 #'
-#' @param .objc a cSEM object
-#' @param .runs the number 
-#' @return The test statistic, the critical value, a logical value with 
-#' the decision, and the number of admissible results.
+#' @description x of this function.
+#' 
+#' @details Whaaaaaaaaaaaaaaaats up.  \deqn{sqrt{9} + b}
+#' 
+#' @usage testOverallMGA(.object=args_default()$.model,
+#' .dropInadmissibles=args_default()$.dropInadmissibles,
+#' .alpha=args_default()$.alpha,
+#' .runs=args_default()$.runs,
+#' ...)
+#' 
+#' @inheritParams csem_arguments
+#' 
+#' @inherit csem_testresults return
+#' 
+#' @references
+#'   \insertAllCited{}
+#'
+#' @seealso [csem], [foreman]
+#'
 #' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @export
 testOverallMGA <- function(.object=args_default()$.model,
                            .dropInadmissibles=args_default()$.dropInadmissibles,
                            .alpha=args_default()$.alpha,
@@ -154,62 +176,11 @@ testOverallMGA <- function(.object=args_default()$.model,
   if(length(.alpha)==1){
     decision = teststat<critical_value
   }
-  
-  return(list(Test_statistic = teststat, 
+  out <- list(Test_statistic = teststat, 
               Critial_value = critical_value,
               Decision = decision, 
-              Number_admissibles = ncol(ref_dist)))
+              Number_admissibles = ncol(ref_dist))
+  # define return class
+  class(out) <- "cSEMTestResults"
+  return(out)
 }
-
-
-# Test ---------------------------
-
-model <- "
-# Structural model
-EXPE ~ IMAG
-QUAL ~ EXPE
-VAL  ~ EXPE + QUAL
-SAT  ~ IMAG + EXPE + QUAL + VAL
-
-LOY  ~ IMAG + SAT
-
-# Measurement model
-
-IMAG <~ imag1 + imag2 + imag3
-EXPE <~ expe1 + expe2 + expe3
-QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
-VAL  <~ val1  + val2  + val3
-SAT  <~ sat1  + sat2  + sat3  + sat4
-LOY  <~ loy1  + loy2  + loy3  + loy4
-"
-
-sat.plspm <- read.csv2("C:/Users/Michael Klesel/Dropbox/R Projekte/R cSEM/satisfaction.csv")
-
-require(cSEM)
-data(satisfaction)
-a <- csem(.data = sat.plspm, .model = model, .id = "gender")
-lapply(a, status)
-
-
-testOverallMGA(.object = a, .runs = 20, .alpha = c(0.05, 0.01))
-
-
-
-b <- csem(.data = satisfaction, .model = model, .PLS_weight_scheme_inner = "path")
-
-Test_for_overall_model_fit(b)
-
-
-require(matrixpls)
-c <- matrixpls(S=cor(satisfaction), model = model)
-sum(fitted.matpls(c)[rownames(fitted(b)),colnames(fitted(b))]-fitted(b))
-
-
-
-# MGA
-a_test <- testOverallMGA(a, .10)
-a_test
-
-
-testOverallMGA(a, 5)
-
