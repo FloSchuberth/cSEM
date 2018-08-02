@@ -1,14 +1,18 @@
-#' Test for group differences 
+#' @title Test for group differences
 #'
-#' Test for group differences.
+#' @description x of this function.
 #' 
-#' Some more details here including references.
+#' @details Whaaaaaaaaaaaaaaaats up.  \deqn{sqrt{9} + b}
 #' 
-#' @usage testOverllMGA()
+#' @usage testOverallMGA(.object=args_default()$.model,
+#' .dropInadmissibles=args_default()$.dropInadmissibles,
+#' .alpha=args_default()$.alpha,
+#' .runs=args_default()$.runs,
+#' ...)
 #' 
-#' @param csem_arguments
+#' @inheritParams csem_arguments
 #' 
-#' @return csem_testresults
+#' @inherit csem_testresults return
 #' 
 #' @references
 #'   \insertAllCited{}
@@ -119,9 +123,13 @@ testOverallMGA <- function(.object=args_default()$.model,
   if(length(.alpha)==1){
     decision = teststat<critical_value
   }
-  
-  return(list(Test_statistic = teststat, 
+  out <- list(Test_statistic = teststat, 
               Critial_value = critical_value,
               Decision = decision, 
-              Number_admissibles = ncol(ref_dist)))
+              Number_admissibles = ncol(ref_dist))
+  
+  # define return class
+  class(out) <- "cSEMTestResults"
+  return(out)
 }
+
