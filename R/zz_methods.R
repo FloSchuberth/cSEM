@@ -218,7 +218,8 @@ fitted.cSEMResults <- function(.object) {
   ##              variances (zetas).
   ## Corr_exo_endo := (J_exo x J_endo) model-implied correlation matrix between 
   ##                  exogenous and endogenous constructs.
-  ## Corr_endo     := (J_endo x J_endo) 
+  ## Corr_endo     := (J_endo x J_endo)  model-implied correlation matrix between
+  ##                  endogenous constructs.
 
   
   ### Preparation ==============================================================
@@ -244,7 +245,7 @@ fitted.cSEMResults <- function(.object) {
   ## Calculate variance of the zetas
   # Note: this is not yet fully correct, athough it does not currently affect 
   # the results. This may have to be fixed in the future to avoid potential 
-  # problem that might arise in setups we have not considered yet.
+  # problems that might arise in setups we have not considered yet.
   vec_zeta <- 1 - rowSums(.object$Estimates$Path_estimates * 
                             .object$Estimates$Construct_VCV)
   names(vec_zeta) <- rownames(.object$Estimates$Construct_VCV)
@@ -254,22 +255,22 @@ fitted.cSEMResults <- function(.object) {
   
   ## Correlations between exogenous and endogenous constructs
   Corr_exo_endo <- Phi %*% t(Gamma) %*% t(solve(I-B))
-  # Correlations among endogenous constructs 
+  ## Correlations between endogenous constructs 
   Cor_endo <- solve(I-B) %*% (Gamma %*% Phi %*% t(Gamma) + vcv_zeta) %*% t(solve(I-B))
   diag(Cor_endo) <- 1
   
   VCV_construct <- rbind(cbind(PH, Corr_exo_endo),
                          cbind(t(Corr_exo_endo), Cor_endo))
   
-  # calculate model-implied VCV of the indicators
-  VCV_ind = t(Lambda) %*% VCV_construct %*% Lambda
+  ## Calculate model-implied VCV of the indicators
+  VCV_ind <- t(Lambda) %*% VCV_construct %*% Lambda
   
-  Sigma=VCV_ind+Theta
+  Sigma <- VCV_ind + Theta
   
-  # Make symmetric
-  Sigma[lower.tri(Sigma)] = t(Sigma)[lower.tri(Sigma)]
+  ## Make symmetric
+  Sigma[lower.tri(Sigma)] <- t(Sigma)[lower.tri(Sigma)]
   
-  # ### Replace indicators connected to a composite by S
+  ## Replace indicators connected to a composite by their correponding elements of S.
   
   mod <- .object$Information$Model
   composites <- names(mod$construct_type[mod$construct_type == "Composite"])
@@ -277,7 +278,8 @@ fitted.cSEMResults <- function(.object) {
   
   Sigma[which(index == 1)] <- S[which(index == 1)]
   
-  # Replace indicators which measurement errors are allowed to be correlated by s_ij
+  # Replace indicators whose measurement errors are allowed to be correlated by s_ij
+  Sigma[.object$Information$Model$error_cor == 1] = S[.object$Information$Model$error_cor == 1]
   
   return(Sigma)
 }
