@@ -1,9 +1,11 @@
-#' Composite based estimation
+#' Composite based SEM
 #'
-#' This function is the backbone of the `cSEM` package. It is called by [csem],
-#' [cca], and test functions such as [testMICOM] to do the actual calculations.
+#' The function is the central hub of the `cSEM`package. It acts like a 
+#' foreman by collecting all (estimation) tasks, distributing them to lower 
+#' level package functions, and eventually recollecting all of their results. 
+#' It is called by [csem()] and [cca()] to manage the actual calculations.
 #' It may be called directly by the user, however, in most cases it will likely
-#' be more convenient to use [csem] or [cca] instead.
+#' be more convenient to use [csem()] or [cca()] instead.
 #'
 #' @usage foreman(
 #'     .data                        = args_default()$.data,
