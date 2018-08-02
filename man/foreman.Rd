@@ -2,7 +2,7 @@
 % Please edit documentation in R/00_foreman.R
 \name{foreman}
 \alias{foreman}
-\title{Composite based estimation}
+\title{Composite based SEM}
 \usage{
 foreman(
     .data                        = args_default()$.data,
@@ -110,10 +110,12 @@ Technically \code{cSEMResults} is a named list containing the following list ele
 }
 }
 \description{
-This function is the backbone of the \code{cSEM} package. It is called by \link{csem},
-\link{cca}, and test functions such as \link{testMICOM} to do the actual calculations.
+The function is the central hub of the \code{cSEM}package. It acts like a
+foreman by collecting all (estimation) tasks, distributing them to lower
+level package functions, and eventually recollecting all of their results.
+It is called by \code{\link[=csem]{csem()}} and \code{\link[=cca]{cca()}} to manage the actual calculations.
 It may be called directly by the user, however, in most cases it will likely
-be more convenient to use \link{csem} or \link{cca} instead.
+be more convenient to use \code{\link[=csem]{csem()}} or \code{\link[=cca]{cca()}} instead.
 }
 \examples{
 \dontrun{

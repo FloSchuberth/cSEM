@@ -55,7 +55,7 @@ Defaults to \code{TRUE}.}
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
 
-\item{.H}{The (N x J) matrix of composite scores.}
+\item{.H}{The (N x J) matrix of construct scores.}
 
 \item{.id}{Charachter string. The name of the column of \code{.data} used to split
 the date into groups.}
