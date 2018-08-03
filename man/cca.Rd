@@ -29,6 +29,19 @@ Technically \code{cSEMResults} is a named list containing the following list ele
 \item{\code{$Estimates}}{A list containing the estimated quantities.}
 \item{\code{$Information}}{A list of additional information. (incomplete)}
 }
+
+An object of class \code{cSEMResults} for which the following methods exist:
+\describe{
+\item{\code{print.cSEMResults}}{Prints a message to inform the user
+whether estimation has been successful and what functions may be used
+to examine the object.}
+\item{\code{summary.cSEMResults}}{Print and return a comprehensive summary of the results.}
+}
+Technically \code{cSEMResults} is a named list containing the following list elements:
+\describe{
+\item{\code{$Estimates}}{A list containing the estimated quantities.}
+\item{\code{$Information}}{A list of additional information. (incomplete)}
+}
 }
 \description{
 Conduct a confirmatory composite analysis (CCA).
