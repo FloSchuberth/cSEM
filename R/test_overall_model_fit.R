@@ -34,19 +34,6 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
   
   # Calculate reference distribution
   ref_dist=lapply(replicate(.runs, X_trans[sample(1:nObs,replace=TRUE),], simplify = FALSE),function(x){
-    # Est_temp=csem(.data =x,
-    #               .model = .object$Information$Model,
-    #               .approach_cf =  .object$Information$Approach_cf,
-    #               .approach_paths =.object$Information$Path_approach,
-    #               .approach_weights= .object$Information$Weight_approach,
-    #               .disattenuate = .object$Information$Disattenuate,
-    #               .dominant_indicators =.object$Information$Dominant_indicators, 
-    #               .estimate_structural =.object$Information$Estimate_structural,
-    #               .ignore_structural_model =.object$Information$Ignore_structural_model,
-    #               .iter_max = .object$Information$Number_max_iterations,
-    #               .PLS_mode =.object$Information$PLS_modes,
-    #               .PLS_weight_scheme_inner = .object$Information$PLS_inner_weighting_scheme,
-    #               .tolerance =  .object$Information$Tolerance)
    
     arguments[[".data"]] <- x
     
@@ -60,6 +47,8 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
         c(dG = dG(.matrix1=Est_temp$Estimates$Indicator_VCV,.matrix2=fitted(Est_temp)),
           SRMR = SRMR(Est_temp),
           dL=dL(.matrix1=Est_temp$Estimates$Indicator_VCV,.matrix2=fitted(Est_temp))) 
+      } else {
+        NULL
       }
       # else, i.e., dropInadmissible == FALSE
     }else{ 
@@ -69,11 +58,12 @@ Test_for_overall_model_fit=function(.object=args_default()$.model,
     }
   })
   ref_dist_matrix=do.call(cbind,ref_dist)
-  critical_value=apply(ref_dist_matrix,1,quantile,1-.alpha)
+  critical_value=matrix(apply(ref_dist_matrix,1,quantile,1-.alpha),ncol=length(teststat),
+                        dimnames = list(paste(.alpha*100, sep = "","%"),names(teststat)))
   
   
   if(length(.alpha)>1){
-    decision = apply(critical_value,1,function(x){teststat<x})
+    decision = t(apply(critical_value,1,function(x){teststat<x}))
   }
   if(length(.alpha)==1){
     decision = teststat<critical_value

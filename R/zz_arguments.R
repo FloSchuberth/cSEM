@@ -86,6 +86,7 @@
 #'   reliabilites are estimated by `csem()`.
 #' @param .runs Integer. How many runs should be performed? Defaults to `499`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
+#' @param .saturated Logical. Should a saturated structural model be assumed? Defaults to `FALSE`.
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.

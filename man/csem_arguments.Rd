@@ -116,6 +116,8 @@ reliabilites are estimated by \code{csem()}.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
+\item{.saturated}{Logical. Should a saturated structural model be assumed? Defaults to \code{FALSE}.}
+
 \item{.terms}{A vector of construct names to be classified.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.

@@ -30,6 +30,8 @@ Defaults to "\emph{PLS}".}
 used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
 
+\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
+
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
@@ -60,7 +62,7 @@ The test is only meaningful for composite models.
 If more than two groups are to be compared issus related to multiple testing
 should be taken into account.
 
-The number of permutations is defaults to 100 for performance reasons.
+The number of permutation runs is defaults to 100 for performance reasons.
 According to Henseler et al. (2016) the number of permutations should be at least 5000 for
 assessement to be reliable.
 }

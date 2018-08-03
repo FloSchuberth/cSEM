@@ -9,6 +9,8 @@ fitted(.object, test = NULL)
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
+\item{.saturated}{Logical. Should a saturated structural model be assumed? Defaults to \code{FALSE}.}
+
 \item{test}{not used}
 }
 \description{
@@ -16,6 +18,9 @@ Compute the model implied indicator variance-covariance (VCV) matrix. Usually
 this is called \eqn{\hat\Sigma}. Currently only the model implied VCV for
 linear model for constructs modeled as common factors or composites are
 implemented. An error is given if the model is not linear.
+}
+\details{
+Notation anis taken from Bollen (1989), page 319 f.
 }
 \seealso{
 \link{csem}, \link{cSEMResults}

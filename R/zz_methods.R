@@ -198,7 +198,7 @@ summary.cSEMResults <- function(.object, .what = NULL) {
 #'
 #' @export
 #'
-fitted.cSEMResults <- function(.object) {
+fitted.cSEMResults <- function(.object, .saturated) {
   
   ### For maintenance: ---------------------------------------------------------
   ## Cons_exo  := (J_exo x 1) vector of exogenous constructs names.
@@ -229,43 +229,54 @@ fitted.cSEMResults <- function(.object) {
          " matrix can only be computed for linear models.", call. = FALSE)
   }
   
-  Cons_exo  <- .object$Information$Model$vars_exo
-  Cons_endo <- .object$Information$Model$vars_endo
-  
-  ## Get relevant matrices
+  ## Collect matrices
   S      <- .object$Estimates$Indicator_VCV
-  B      <- .object$Estimates$Path_estimates[Cons_endo, Cons_endo, drop = FALSE]
-  Gamma  <- .object$Estimates$Path_estimates[Cons_endo, Cons_exo, drop = FALSE]
   Lambda <- .object$Estimates$Loading_estimates
-  Phi    <- .object$Estimates$Construct_VCV[Cons_exo, Cons_exo, drop = FALSE]
-  I      <- diag(length(Cons_endo))
   Theta  <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   dimnames(Theta) <- dimnames(S)
   
-  ## Calculate variance of the zetas
-  # Note: this is not yet fully correct, athough it does not currently affect 
-  # the results. This may have to be fixed in the future to avoid potential 
-  # problems that might arise in setups we have not considered yet.
-  vec_zeta <- 1 - rowSums(.object$Estimates$Path_estimates * 
-                            .object$Estimates$Construct_VCV)
-  names(vec_zeta) <- rownames(.object$Estimates$Construct_VCV)
-
-  vcv_zeta <- matrix(0, nrow = nrow(I), ncol = ncol(I))
-  diag(vcv_zeta) <- vec_zeta[Cons_endo]
-  
-  ## Correlations between exogenous and endogenous constructs
-  Corr_exo_endo <- Phi %*% t(Gamma) %*% t(solve(I-B))
-  ## Correlations between endogenous constructs 
-  Cor_endo <- solve(I-B) %*% (Gamma %*% Phi %*% t(Gamma) + vcv_zeta) %*% t(solve(I-B))
-  diag(Cor_endo) <- 1
-  
-  VCV_construct <- rbind(cbind(PH, Corr_exo_endo),
-                         cbind(t(Corr_exo_endo), Cor_endo))
+  if(.saturated) {
+    # If a saturated model is assumed the structural model is ignored in
+    # the calculation of the construct VCV (i.e. a full graph is estimated). 
+    # Hence: V(eta) = WSW' (ppssibly disattenuated)
+    vcv_construct <- .object$Estimates$Construct_VCV
+    
+  } else {
+    
+    Cons_exo  <- .object$Information$Model$vars_exo
+    Cons_endo <- .object$Information$Model$vars_endo
+    
+    B      <- .object$Estimates$Path_estimates[Cons_endo, Cons_endo, drop = FALSE]
+    Gamma  <- .object$Estimates$Path_estimates[Cons_endo, Cons_exo, drop = FALSE]
+    Phi    <- .object$Estimates$Construct_VCV[Cons_exo, Cons_exo, drop = FALSE]
+    I      <- diag(length(Cons_endo))
+    
+    
+    ## Calculate variance of the zetas
+    # Note: this is not yet fully correct, athough it does not currently affect 
+    # the results. This may have to be fixed in the future to avoid potential 
+    # problems that might arise in setups we have not considered yet.
+    vec_zeta <- 1 - rowSums(.object$Estimates$Path_estimates * 
+                              .object$Estimates$Construct_VCV)
+    names(vec_zeta) <- rownames(.object$Estimates$Construct_VCV)
+    
+    vcv_zeta <- matrix(0, nrow = nrow(I), ncol = ncol(I))
+    diag(vcv_zeta) <- vec_zeta[Cons_endo]
+    
+    ## Correlations between exogenous and endogenous constructs
+    Corr_exo_endo <- Phi %*% t(Gamma) %*% t(solve(I-B))
+    ## Correlations between endogenous constructs 
+    Cor_endo <- solve(I-B) %*% (Gamma %*% Phi %*% t(Gamma) + vcv_zeta) %*% t(solve(I-B))
+    diag(Cor_endo) <- 1
+    
+    vcv_construct <- rbind(cbind(PH, Corr_exo_endo),
+                           cbind(t(Corr_exo_endo), Cor_endo)) 
+  }
   
   ## Calculate model-implied VCV of the indicators
-  VCV_ind <- t(Lambda) %*% VCV_construct %*% Lambda
+  vcv_ind <- t(Lambda) %*% vcv_construct %*% Lambda
   
-  Sigma <- VCV_ind + Theta
+  Sigma <- vcv_ind + Theta
   
   ## Make symmetric
   Sigma[lower.tri(Sigma)] <- t(Sigma)[lower.tri(Sigma)]
@@ -357,45 +368,46 @@ status <- function(.object){
 #' @export
 status.cSEMResults <- function(.object){
   
-  # NULL: Everything is fine
-  # 1 Algorithm has not not converged
-  # 2: at least one absolute standardized loading estimate is larger than 1,
-  # which implies either a negative veriance of the measurement error or
-  # a correlation larger than 1
-  # 3: construct VCV is not positive semi-definit
-  # 4 model-implied indicators VCV is not positive semi-definit
+  # NULL: No problem occured.
+  # 1: Algorithm has not not converged.
+  # 2: At least one absolute standardized loading estimate is larger than 1,
+  #    which implies either a negative variance of the measurement error or
+  #    a correlation larger than 1.
+  # 3: The construct VCV is not positive semi-definite.
+  # 4: The model-implied indicator VCV is not positive semi-definite.
+  # 5: At least one construct reliability is larger than 1. 
   
   if(.object$Information$Model$model_type != "Linear"){
     stop("Currently, the status function only works for linear models.",
          call. = FALSE)}
-
-  stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE)
   
-  # if(.object$Information$Arguments$.approach_weights == "PLS") {
-    
-    if(!.object$Information$Weight_info$Convergence_status) {
-      stat["1"] <- TRUE
-    }
-    
-    if(max(abs(.object$Estimates$Cross_loadings)) > 1) {
-      stat["2"] <- TRUE
-    }
-    
-    if(!matrixcalc::is.positive.semi.definite(.object$Estimates$Construct_VCV)) {
-      stat["3"] <- TRUE
-    }
-    
-    if(!matrixcalc::is.positive.semi.definite(fitted(.object))) {
-      stat["4"] <- TRUE
-    }
-    # If if no problem occured, it seems that the estimation is fine.
-    if(sum(stat) == 0) {
-      stat <- NULL
-    }
-    
-  # } else {
-  #   stop("Only applicable if PLS is used.", call. = FALSE)
-  # }
+  stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE, "5" = FALSE)
+  
+  if(!(is.null(.object$Information$Weight_info$Convergence_status) || 
+       .object$Information$Weight_info$Convergence_status)) {
+    stat["1"] <- TRUE
+  }
+  
+  if(max(abs(.object$Estimates$Cross_loadings)) > 1) {
+    stat["2"] <- TRUE
+  }
+  
+  if(!matrixcalc::is.positive.semi.definite(.object$Estimates$Construct_VCV)) {
+    stat["3"] <- TRUE
+  }
+  
+  if(!matrixcalc::is.positive.semi.definite(fitted(.object))) {
+    stat["4"] <- TRUE
+  }
+  
+  if(max(.object$Estimates$Construct_reliabilities)>1) {
+    stat["5"] <- TRUE
+  }
+  
+  # No problem occured
+  if(sum(stat) == 0) {
+    stat <- NULL
+  }
   
   return(stat) 
 }

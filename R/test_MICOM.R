@@ -8,7 +8,7 @@
 #' If more than two groups are to be compared issus related to multiple testing
 #' should be taken into account.
 #'
-#' The number of permutations is defaults to 100 for performance reasons.
+#' The number of permutation runs is defaults to 100 for performance reasons.
 #' According to Henseler et al. (2016) the number of permutations should be at least 5000 for
 #' assessement to be reliable.
 #'
@@ -47,7 +47,7 @@ testMICOM <- function(.data             = NULL,
                       .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                             "GSCA", "fixed", "unit"),
                       .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-                      .permutations      = 100,
+                      .runs      = 100,
                       .alpha             = c(0.1, 0.05, 0.01),
                       .verbose           = TRUE,
                       ...) {
@@ -162,10 +162,10 @@ testMICOM <- function(.data             = NULL,
   }
 
   # Run all permuations
-  perm1 <- lapply(1:.permutations, function(x) {
+  perm1 <- lapply(1:.runs, function(x) {
 
     if(.verbose) {
-      cat(x, " / ", .permutations, "\n", sep = "")
+      cat(x, " / ", .runs, "\n", sep = "")
     }
 
     d <- data_no_group_var[sample(x = nrow(.data)), ]
@@ -272,10 +272,10 @@ testMICOM <- function(.data             = NULL,
     cat("\nProgress:\n", sep = "")
   }
 
-  perm2 <- lapply(1:.permutations, function(x) {
+  perm2 <- lapply(1:.runs, function(x) {
 
-    if(.verbose & x %in% seq(0, .permutations, by = 10)) {
-      cat(x, " / ", .permutations, "\n", sep = "")
+    if(.verbose & x %in% seq(0, .runs, by = 10)) {
+      cat(x, " / ", .runs, "\n", sep = "")
     }
 
     H <- workhorse(

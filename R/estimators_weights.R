@@ -352,7 +352,7 @@ calculateWeightsKettenring <- function(
   
   ## Calculate S_{ii}^{-1/2}}
   sqrt_S_jj_list <- lapply(indicator_names_ls, function(x) {
-    solve(expm::sqrtm(S[x, x]))
+    solve(expm::sqrtm(S[x, x, drop = FALSE]))
   })
   
   ## Put in a diagonal matrix
@@ -379,10 +379,9 @@ calculateWeightsKettenring <- function(
 
     ## Calculate weight
     W <- lapply(indicator_names_ls, function(x) {
+      
       w <- as.vector((H[x, x] %*% u[x, ]) / sqrt(sum(c(u[x, ])^2)))
       
-      # Correct if negative
-      if(sum(w) < 0) w <- -w
       return(w)
     })
   } else if(.approach %in% c("SUMCORR", "GENVAR", "SSQCORR")) {
@@ -443,10 +442,9 @@ calculateWeightsKettenring <- function(
     
     # Calculate weights w_i = R_{ii}^{-1/2} wtilde_i
     W <- lapply(indicator_names_ls, function(x) {
-      w <- as.vector(H[x, x] %*% wtilde[x])
       
-      # Correct if negative
-      if(sum(w) < 0) w <- -w
+      w <- as.vector(H[x, x] %*% wtilde[x])
+
       return(w)
     })
   }
@@ -466,7 +464,7 @@ calculateWeightsKettenring <- function(
     "E"           = NULL, 
     "Modes"       = modes,
     "Conv_status" = if(.approach %in% c("MINVAR", "MAXVAR")) NULL else res$convergence == 0,  
-    "Iterations"  = if(.approach %in% c("MINVAR", "MAXVAR")) NULL else res$counts[1]
+    "Iterations"  = if(.approach %in% c("MINVAR", "MAXVAR")) 0 else res$counts[1]
     )
   
   return(l)
@@ -562,7 +560,7 @@ calculateWeightsUnit = function(
   names(modes)=rownames(W)
   
   # Return
-  l <- list("W" = W, "E" = NULL, "Modes" = modes, "Conv_status" = TRUE,
+  l <- list("W" = W, "E" = NULL, "Modes" = modes, "Conv_status" = NULL,
             "Iterations" = 0)
   return(l)  
 }
