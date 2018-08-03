@@ -116,11 +116,7 @@ reliabilites are estimated by \code{csem()}.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
-<<<<<<< HEAD
-\item{.saturated}{Logical. Should a saturated structural model be assumed? Defaults to \code{FALSE}.}
-=======
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
->>>>>>> 6c3cc72893a7ae8256cd4cad75c6b1a5c5704d82
 
 \item{.terms}{A vector of construct names to be classified.}
 
