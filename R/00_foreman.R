@@ -256,8 +256,9 @@ foreman <- function(
     )
   )
   
+  class(out) <- "cSEMResults"
   invisible(out)
-
+  
   ### For maintenance: ---------------------------------------------------------
   # X (N x K)   := Matrix of indicator values (=data)
   # S (K x K)   := Empirical indicator covariance/correlation matrix

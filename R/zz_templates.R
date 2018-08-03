@@ -83,24 +83,3 @@ NULL
 #' @name csem_resultssummary
 #' @aliases cSEMResultssummary
 NULL
-
-#' cSEMTestResults
-#'
-#' @return
-#' A standarized list of class `cSEMTestResults` for which the following methods exists:
-#' \describe{
-#'   \item{`print.cSEMTestResults`}{A formated summary of the test.}
-#'   \item{`summary.cSEMTestResults`}{A formated summary of the test (identical to `print.cSEMTestResults`).}
-#' }
-#' Technically `cSEMTestResults` is a named list containing the following list elements:
-#' \describe{
-#'   \item{`$Test_statistic`}{The value of test statistic.}
-#'   \item{`$Critical_value`}{The critical value.}
-#'   \item{`$Decision`}{The test decision. One of: **Reject** or *Do not reject*}
-#'   \item{`$Number_addmissibles`}{The number of admissible runs. See xxx for what
-#'   constitutes an **inadmissible run**.}
-#' }
-#'
-#' @name csem_testresults
-#' @aliases cSEMTestResults
-NULL

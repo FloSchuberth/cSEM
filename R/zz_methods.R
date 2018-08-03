@@ -13,37 +13,36 @@
 #' @export
 #' 
 print.cSEMResults <- function(.object) {
-
+  
   cat(rule(line = "bar2"), "\n")
   cat(rule(center = "Overview"), "\n\n")
-
+  
   if(!all(names(.object) %in% c("Estimates", "Information")) ) {
     cat("Estimation status by group/data set:\n\n\t")
-        for(i in names(.object)) {
-          cat(col_align(cyan(i), 15), ": ",
-              ifelse(.object[[i]]$Information$Weight_info$Convergence_status == TRUE, 
-                     green("successful\n\t"), red("not successful\n\t")), sep = "")
-        }
+    for(i in names(.object)) {
+      cat(col_align(cyan(i), 15), ": ",
+          ifelse(.object[[i]]$Information$Weight_info$Convergence_status == TRUE, 
+                 green("successful\n\t"), red("not successful\n\t")), sep = "")
+    }
   } else {
     cat("Estimation was ", ifelse(.object$Information$Weight_info$Convergence_status == TRUE, 
-                                 green("successful.\n"), red("not successful.\n")), sep = "") 
+                                  green("successful.\n"), red("not successful.\n")), sep = "") 
   }
-    cat("\nThe result is a list of class " %+% bold("cSEMResults") %+%" with list elements:\n\n\t",
-        "- ", green("Estimates\n\t"),
-        "- ", green("Information\n\n"), sep = "")
-    cat("To get an overview or help type:\n\n\t",
-        "- ", magenta("?"), cyan("cSEMResults"),"\n\t",
-        "- ", magenta("str"), "(", cyan("<object-name>"), ")\n\t",
-        "- ", magenta("listviewer"), yellow("::"), magenta("jsondedit"),
-        "(", cyan("<object-name>"), ", ", red("mode"), " = ", cyan("'view'"), ")\n\n", sep = "")
-    cat("If you wish to access the list elements directly type e.g. \n\n\t",
-        "- ", cyan("<object-name>"), yellow("$"), green("Estimates"), "\n\n", sep = "")
-    cat("Frequently used available postestimation commands:\n\n\t",
-        "- ", magenta("summary"), "(", cyan("<object-name>"), ")\n\t",
-        "- ", magenta("test"), "(", cyan("<object-name>"), ")\n\t"  ,
-        "- ", magenta("status"), "(", cyan("<object-name>"), ")\n", sep = "")
-    cat(rule(line = "bar2"), "\n")
-  # }
+  cat("\nThe result is a list of class " %+% bold("cSEMResults") %+%" with list elements:\n\n\t",
+      "- ", green("Estimates\n\t"),
+      "- ", green("Information\n\n"), sep = "")
+  cat("To get an overview or help type:\n\n\t",
+      "- ", magenta("?"), cyan("cSEMResults"),"\n\t",
+      "- ", magenta("str"), "(", cyan("<object-name>"), ")\n\t",
+      "- ", magenta("listviewer"), yellow("::"), magenta("jsondedit"),
+      "(", cyan("<object-name>"), ", ", red("mode"), " = ", cyan("'view'"), ")\n\n", sep = "")
+  cat("If you wish to access the list elements directly type e.g. \n\n\t",
+      "- ", cyan("<object-name>"), yellow("$"), green("Estimates"), "\n\n", sep = "")
+  cat("Frequently used available postestimation commands:\n\n\t",
+      "- ", magenta("summary"), "(", cyan("<object-name>"), ")\n\t",
+      "- ", magenta("test"), "(", cyan("<object-name>"), ")\n\t"  ,
+      "- ", magenta("status"), "(", cyan("<object-name>"), ")\n", sep = "")
+  cat(rule(line = "bar2"), "\n")
 }
 
 #' `cSEMResultssummary` method for `print()`
@@ -64,64 +63,64 @@ print.cSEMResults <- function(.object) {
 print.cSEMResultssummary <- function(x, ...) {
   cat(cli::rule(line = "bar2"), "\n",
       cli::rule(center = "General Information"), "\n\n\t", sep = "")
-
+  
   cat(crayon::col_align("Number of Observations", 25), "= ", x$Number_of_observations, "\n\t",
       crayon::col_align("Weight estimator", 25), "= ", x$Weight_estimator, "\n\t", sep = "")
   if(x$Weight_estimator == "PLS") {
-  cat(crayon::col_align("Inner Weighting Scheme ", 25), "= ", x$PLS_weight_scheme_inner, "\n\t", sep = "")
+    cat(crayon::col_align("Inner Weighting Scheme ", 25), "= ", x$PLS_weight_scheme_inner, "\n\t", sep = "")
   }
   cat(
-      crayon::col_align("Path estimator", 25), "= ", x$Path_estimator, "\n\t",
-      crayon::col_align("Convergence Status", 25), "= ", c("not yet implemented"), "\n\t",
-      crayon::col_align("Overall model fit", 25), "= ", c("not yet implemented"), "\n\t",
-      crayon::col_align("Degrees of Freedom", 25), "= ", c("not yet implemented"), "\n\t",
-      crayon::col_align("Computation Time", 25), "= ", c("not yet implemented"), "\n\n\t",
-      sep = "")
-
+    crayon::col_align("Path estimator", 25), "= ", x$Path_estimator, "\n\t",
+    crayon::col_align("Convergence Status", 25), "= ", c("not yet implemented"), "\n\t",
+    crayon::col_align("Overall model fit", 25), "= ", c("not yet implemented"), "\n\t",
+    crayon::col_align("Degrees of Freedom", 25), "= ", c("not yet implemented"), "\n\t",
+    crayon::col_align("Computation Time", 25), "= ", c("not yet implemented"), "\n\n\t",
+    sep = "")
+  
   cat("Construct Types:\n\t","----------------","\n\t", sep = "")
-
+  
   for(i in seq_along(x$Construct_types$Name)) {
     cat(crayon::col_align(x$Construct_types$Name[i], 10), ": ", x$Construct_types$Type[i],"\n\t", sep = "")
   }
   cat("\n")
-
+  
   if(x$Weight_estimator == "PLS") {
     cat("\tPLS Modes:\n\t","----------------","\n\t", sep = "")
-
+    
     for(i in seq_along(x$Construct_type$Name)) {
       cat(crayon::col_align(x$Construct_types$Name[i], 10), ": ", x$PLS_modes[i],"\n\t", sep = "")
     }
     cat("\n")
   }
-
+  
   cat(cli::rule(center = "Estimates"), "\n\n", sep = "")
-
+  
   cat("Estimated Path Coefficients:\n============================\n", sep = "")
   print(x$Path_estimates, row.names = FALSE)
-
-
+  
+  
   cat("\nEstimated Loadings:\n===================\n", sep = "")
   print(x$Loading_estimates, row.names = FALSE)
-
+  
   cat("\nEstimated Weights:\n==================\n", sep = "")
   print(x$Weight_estimates, row.names = FALSE)
-
+  
   if(x$Weight_estimator == "PLS") {
     cat("\nEstimated Correction Factors:\n=============================\n", sep = "")
     print(x$Correction_factors)
   }
-
+  
   cat("\n\n", cli::rule(center = "Other output"), "\n\n\t", sep = "")
-
+  
   cat("<not yet implemented>")
-
+  
   cat("\n\n", cli::rule(center = "Fit Indices"), "\n\n\t", sep = "")
-
+  
   cat(crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
       crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
       crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\n",
       sep = "")
-
+  
   cat(cli::rule(line = "bar2"))
 }
 
@@ -143,7 +142,7 @@ print.cSEMResultssummary <- function(x, ...) {
 #' @export
 #'
 summary.cSEMResults <- function(.object, .what = NULL) {
-
+  
   ## Structure loadings output
   temp <- x$Estimates$Loading_estimates
   names_loadings <- paste0(rep(rownames(temp), times = apply(temp, 1, function(x) sum(x != 0))),
@@ -151,7 +150,7 @@ summary.cSEMResults <- function(.object, .what = NULL) {
   loading_estimates <- data.frame("Loading" = names_loadings,
                                   "Estimate" = unlist(t(temp)[t(temp) != 0 ]),
                                   stringsAsFactors = FALSE)
-
+  
   ## Structure weights output
   temp <- x$Estimates$Weight_estimates
   names_weights <- paste0(rep(rownames(temp), times = apply(temp, 1, function(x) sum(x != 0))),
@@ -159,7 +158,7 @@ summary.cSEMResults <- function(.object, .what = NULL) {
   weight_estimates <- data.frame("Weights" = names_weights,
                                  "Estimate" = unlist(t(temp)[t(temp) != 0 ]),
                                  stringsAsFactors = FALSE)
-
+  
   ## Create summary list
   summary_out <- list(
     "Construct_types"        = x$Meta_information$Construct_types,
@@ -174,7 +173,7 @@ summary.cSEMResults <- function(.object, .what = NULL) {
     "Weight_estimates"       = weight_estimates,
     "Weight_estimator"       = x$Meta_information$Weight_approach
   )
-
+  
   ## Set class for printing and return
   class(summary_out) <- "cSEMResultssummary"
   return(summary_out)
@@ -295,6 +294,8 @@ fitted.cSEMResults <- function(.object, .saturated) {
   return(Sigma)
 }
 
+
+
 #' Effects
 #'
 #' Compute direct, indirect and total effects.
@@ -320,7 +321,7 @@ effects.cSEMResults <- function(.object) {
   
   ## Matrix of direct effects:
   direct <- .object$Estimates$Path_estimates
-
+  
   ## Matrix of total total effects: B = direct
   # Note: eta = B x eta + zeta
   #       (I - B)*eta = zeta
@@ -408,6 +409,7 @@ status.cSEMResults <- function(.object){
   if(sum(stat) == 0) {
     stat <- NULL
   }
+
   
   return(stat) 
 }

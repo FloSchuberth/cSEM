@@ -128,12 +128,14 @@ csem <- function(
   
   ## Select cases
   if(!is.null(.id)) {
-    if(is.matrix(.data)) {
-      .data <- as.data.frame(.data)
-    }
+
     if(length(.id) != 1) {
       stop("`.id` must be a character string or an integer identifying one single column.",
            call. = FALSE)
+    }
+    
+    if(is.matrix(.data)) {
+      .data <- as.data.frame(.data)
     }
     
     data_split <- split(.data, f = .data[, .id])
