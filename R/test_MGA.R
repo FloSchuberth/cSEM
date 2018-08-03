@@ -160,10 +160,10 @@ permutateData <- function(.matrices = NULL){
   combinedData <- data.frame(do.call(rbind, .matrices))
   
   # create ID
-  ID <- rep(1:length(.matrices),lengths(.matrices)/ncol(.matrices[[1]]))
+  ID <- rep(paste(1:length(.matrices)),lengths(.matrices)/ncol(.matrices[[1]]))
   
   # assign data
-  permData <- cbind(combinedData, permID = as.character(sample(ID)))
+  permData <- cbind(combinedData, permID = sample(ID))
   
   # split data based on perm ID
   permList <- base::split(permData, f = as.factor(permData$permID))
@@ -171,8 +171,9 @@ permutateData <- function(.matrices = NULL){
   # drop permID
   permList <- lapply(permList, function(x) x[!(names(x) %in% c("permID"))])
   
+  
   # define list elements as matrix
-  permList <- lapply(permList, data.matrix)
+  permList <- lapply(permList, as.matrix)
   
   # set original names
   permList <- lapply(permList, function(x){
