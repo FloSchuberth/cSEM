@@ -59,6 +59,7 @@
 #' @param .only_dots Logical. Should only arguments to be passed to lower level 
 #'   functions via the  `...` argument of the [csem()] or [cca()] function be returned. 
 #'   Defaults to `FALSE`.
+#' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
@@ -92,8 +93,7 @@
 #'   Defaults to `1e-05`.
 #' @param .verbose Logical. Should information be printed to the console? Defaults
 #'   to `TRUE`.
-#' @param .W A list with elements `$W`, `$E`, `Modes`, `Conv_status`, and 
-#'   `Iterations`.
+#' @param .W A (J x K) matrix of weights.
 #' @param ... Further arguments to be passed down to other functions.
 #' See [args_default()] with `.only_dots = TRUE` for a complete list 
 #' of possible arguments and their defaults.
@@ -153,6 +153,7 @@ args_default <- function(.only_dots = FALSE) {
     .mode                    = NULL,
     .object                  = NULL,
     .only_dots               = FALSE,
+    .P                       = NULL,
     .PLS_modes               = NULL,
     .runs                    = 499,
     .Q                       = NULL,

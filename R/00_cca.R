@@ -1,23 +1,25 @@
 #' Confirmatory composite analysis
 #'
-#' Conduct a confirmatory composite analysis (CCA).
+#' What it does (TODO).
 #'
-#' More details here.
+#' More details here (TODO).
 #'
-#' @usage cca(.data, .model, ...)
+#' @usage cca(.data = NULL, .model = NULL, ...)
 #'
 #' @inheritParams csem_arguments
 #'
-#' @inherit foreman return
-#'
+#' @inherit csem_results return
+#' 
+#' @seealso [csem], [foreman], [cSEMResults]
+#' 
 #' @examples
 #' \dontrun{
-#' # still to implement
+#' # TODO
 #' }
 #'
 #' @export
 
-cca <- function(.data, .model, ...) {
-  stop("not yet implemented.")
+cca <- function(.data = NULL, .model = NULL, ...) {
+  stop("not yet implemented. (TODO)")
 }
 

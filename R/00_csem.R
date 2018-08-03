@@ -82,12 +82,12 @@
 #'   is repeated for each data set. See details.
 #' @inheritParams csem_arguments
 #'
-#' @inherit foreman return
+#' @inherit csem_results return
 #'
 #' @references
 #'   \insertAllCited{}
 #'
-#' @seealso [cca], [foreman]
+#' @seealso [cca], [foreman], [cSEMResults]
 #'
 #' @examples
 #' \dontrun{

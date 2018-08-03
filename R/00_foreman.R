@@ -7,6 +7,8 @@
 #' It may be called directly by the user, however, in most cases it will likely
 #' be more convenient to use [csem()] or [cca()] instead.
 #'
+#' More details here (TODO).
+#' 
 #' @usage foreman(
 #'     .data                        = args_default()$.data,
 #'     .model                       = args_default()$.model,
@@ -30,11 +32,11 @@
 #'
 #' @inherit csem_results return
 #'
-#' @seealso [csem], [cca], [testMICOM]
+#' @seealso [csem], [cca], [cSEMResults]
 #'
 #' @examples
 #' \dontrun{
-#' # still to implement
+#' # TO DO
 #' }
 #'
 #' @export

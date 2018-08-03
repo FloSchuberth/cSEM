@@ -18,12 +18,10 @@
 #' 
 #' @usage calculateDistance(.matrices = NULL, .distance = "geodesic")
 #' 
-#' @param csem_arguments
+#' @inheritParams csem_arguments
 #' 
 #' @return A numeric vector of length one containing the (arithmetic mean) difference 
 #'   between all matrices.
-#' 
-#' @seealso [csem], [foreman]
 #'
 #' @examples
 #' \dontrun{

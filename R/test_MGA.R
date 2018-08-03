@@ -1,23 +1,14 @@
-#' @title Test for group differences
+#' Test for group differences
 #'
-#' @description x of this function.
+#' What it does.
 #' 
-#' @details Whaaaaaaaaaaaaaaaats up.  \deqn{sqrt{9} + b}
-#' 
-#' @usage testOverallMGA(.object=args_default()$.model,
-#' .drop_inadmissibles=args_default()$.drop_inadmissibles,
-#' .alpha=args_default()$.alpha,
-#' .runs=args_default()$.runs,
-#' ...)
+#' More details here.
 #' 
 #' @inheritParams csem_arguments
 #' 
 #' @inherit csem_testresults return
-#' 
-#' @references
-#'   \insertAllCited{}
 #'
-#' @seealso [csem], [foreman]
+#' @seealso [cSEMResults]
 #'
 #' @examples
 #' \dontrun{
@@ -25,6 +16,7 @@
 #' }
 #'
 #' @export
+
 testOverallMGA <- function(.object=args_default()$.model,
                            .drop_inadmissibles=args_default()$.drop_inadmissibles,
                            .alpha=args_default()$.alpha,

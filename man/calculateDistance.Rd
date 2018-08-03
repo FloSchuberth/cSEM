@@ -6,9 +6,6 @@
 \usage{
 calculateDistance(.matrices = NULL, .distance = "geodesic")
 }
-\arguments{
-\item{csem_arguments}{}
-}
 \value{
 A numeric vector of length one containing the (arithmetic mean) difference
 between all matrices.
@@ -37,7 +34,4 @@ Currently two distance measures are supported:
 }
 
 
-}
-\seealso{
-\link{csem}, \link{foreman}
 }

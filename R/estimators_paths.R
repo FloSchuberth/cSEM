@@ -1,25 +1,34 @@
 #' Estimate the structural coefficients
 #'
-#' Estimates the coefficients of the structural model (non-linear and linear).
+#' Estimates the coefficients of the structural model (nonlinear and linear) using
+#' OLS. (TODO)
 #'
-#' More details here
+#' More details here (TODO).
 #'
+#' @usage estimatePathOLS(
+#'   .H           = args_default()$.H,
+#'   .W           = args_default()$.W,
+#'   .Q           = args_default()$.Q,
+#'   .P           = args_default()$.P,
+#'   .csem_model  = args_default()$.csem_model,
+#'   .normality   = args_default()$.normality,
+#'   .approach_nl = args_default()$.approach_nl
+#'   )
+#'   
 #' @inheritParams csem_arguments
 #'
 #' @return A named list containing the estimated structural coefficients and the
 #'   r^2 for each regression.
 #'
-#' @export
-#'
 
 estimatePathOLS <- function(
-  .H                   = NULL,
-  .W                   = NULL,
-  .Q                   = NULL,
-  .P                   = NULL,
-  .csem_model          = NULL,
-  .normality           = NULL,
-  .approach_nl         = NULL
+  .H           = args_default()$.H,
+  .W           = args_default()$.W,
+  .Q           = args_default()$.Q,
+  .P           = args_default()$.P,
+  .csem_model  = args_default()$.csem_model,
+  .normality   = args_default()$.normality,
+  .approach_nl = args_default()$.approach_nl
 ) {
   
   m         <- .csem_model$structural

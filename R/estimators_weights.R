@@ -1,8 +1,8 @@
 #' Calculate composite weights using PLS
 #'
-#' Calculates composite weights using the PLS algorithm.
+#' Calculates composite weights using the PLS algorithm. (TODO)
 #'
-#' More description here
+#' More details here. (TODO)
 #'
 #' @usage calculateWeights(
 #'   .data                        = NULL,
@@ -16,14 +16,14 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return A list with the following elements:
+#' @return A list with the following elements (TODO)
 #' \describe{
 #'   \item{`$W`}{A (J x K) matrix of estimated weights.}
 #'   \item{`$E`}{A (J x J) matrix of inner weights.}
 #'   \item{`$Modes`}{A named vector of Modes used for the outer estimation.}
 #'   \item{`$Conv_status`}{The convergence status. One of `TRUE`or `FASLE`. If 
-#'     one-step weights are used via `.iter_max = 1` the convergence status
-#'     is set to `NULL`.}
+#'     one-step weights are used via `.iter_max = 1` or no iterative algorithm was used,
+#'     the convergence status is set to `NULL`.}
 #'   \item{`$Iterations`}{The number of iterations used.}
 #' }
 #' @export
@@ -32,11 +32,11 @@
 calculateWeightsPLS <- function(
   .data                        = NULL,
   .model                       = NULL,
-  .PLS_modes                   = NULL,
-  .tolerance                   = NULL,
   .iter_max                    = NULL,
   .PLS_ignore_structural_model = NULL,
-  .PLS_weight_scheme_inner     = NULL
+  .PLS_modes                   = NULL,
+  .PLS_weight_scheme_inner     = NULL,
+  .tolerance                   = NULL
 ) {
 
 

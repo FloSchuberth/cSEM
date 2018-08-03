@@ -1,6 +1,23 @@
-#' @export 
-
-# Test for overall model fit
+#' Test for overall model fit
+#'
+#' What it does.
+#' 
+#' More details here.
+#' 
+#' @usage testOMF(.matrices = NULL, .distance = "geodesic")
+#' 
+#' @inheritParams  csem_arguments
+#' 
+#' @inherit csem_testresults return
+#' 
+#' @seealso [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @export
 
 Test_for_overall_model_fit=function(.object=args_default()$.model,
                                     .drop_inadmissibles=args_default()$.drop_inadmissibles,

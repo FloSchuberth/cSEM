@@ -18,15 +18,6 @@ Technically \code{cSEMResultssummary} is a named list containing the following l
 \describe{
 \item{`...}{Not finished yet.}
 }
-
-An object of class \code{cSEMResultssummary} for which the following methods exist:
-\describe{
-\item{\code{print.cSEMResultssummary}}{Prints a summary.}
-}
-Technically \code{cSEMResultssummary} is a named list containing the following list elements:
-\describe{
-\item{`...}{Not finished yet.}
-}
 }
 \description{
 The \link{cSEMResults} method for the generic function \code{\link[=summary]{summary()}}.

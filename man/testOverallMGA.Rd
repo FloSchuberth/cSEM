@@ -4,11 +4,9 @@
 \alias{testOverallMGA}
 \title{Test for group differences}
 \usage{
-testOverallMGA(.object=args_default()$.model,
-.drop_inadmissibles=args_default()$.drop_inadmissibles,
-.alpha=args_default()$.alpha,
-.runs=args_default()$.runs,
-...)
+testOverallMGA(.object = args_default()$.model,
+  .drop_inadmissibles = args_default()$.drop_inadmissibles,
+  .alpha = args_default()$.alpha, .runs = args_default()$.runs, ...)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -41,10 +39,10 @@ constitutes an \strong{inadmissible run}.}
 }
 }
 \description{
-x of this function.
+What it does.
 }
 \details{
-Whaaaaaaaaaaaaaaaats up.  \deqn{sqrt{9} + b}
+More details
 }
 \examples{
 \dontrun{
@@ -52,9 +50,6 @@ Whaaaaaaaaaaaaaaaats up.  \deqn{sqrt{9} + b}
 }
 
 }
-\references{
-\insertAllCited{}
-}
 \seealso{
-\link{csem}, \link{foreman}
+\link{cSEMResults}
 }
