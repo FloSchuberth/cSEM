@@ -31,7 +31,7 @@ testOverallMGA <- function(.object=args_default()$.model,
                            .runs=args_default()$.runs,
                            ...){
   # Check if .id variable is set
-  if(!is.null(.object[[1]]$Information$Arguments$.id)){
+  if(is.null(.object[[1]]$Information$Arguments$.id)){
     stop("No .id variable set. Overall test for group differences not possible.",
          call. = FALSE)
   }
@@ -41,19 +41,16 @@ testOverallMGA <- function(.object=args_default()$.model,
   }
   
   # 1: calculate test statistic
-  teststat = c(dG = calculateArithmDistance(.corMatrices = lapply(.object, fitted), 
+  teststat = c(dG = calculateDistance(.matrices = lapply(.object, fitted), 
                                        .distance="geodesic"),
-               dL = calculateArithmDistance(.corMatrices = lapply(.object, fitted), 
-                                       .distance="euclidean"))
+               dL = calculateDistance(.matrices = lapply(.object, fitted), 
+                                       .distance="squared_euclidian"))
   
   # 2: permutation procedure
   listMatrices <- list()
   for(iData in 1:length(.object)){
     listMatrices[[iData]] <- .object[[iData]]$Information$Data
   }
-  # combine data
-  totalData <- data.frame(do.call(rbind, listMatrices))
-  
 
   # Collect initial arguments
   arguments=.object[[1]]$Information$Arguments
@@ -63,11 +60,8 @@ testOverallMGA <- function(.object=args_default()$.model,
   permEstimates <- list()
   
   for(iPerm in 1:.runs){
-    # create ID
-    ID <- rep(1:length(listMatrices),
-              lengths(listMatrices)/ncol(listMatrices[[1]]))
-    # random ID
-    permData <- cbind(totalData, permID = as.character(sample(ID)))
+    # permutate data
+    permData <- permutateData(listMatrices)
     # set Data
     arguments[[".data"]] <- permData
     # estimate 
@@ -80,15 +74,15 @@ testOverallMGA <- function(.object=args_default()$.model,
       if(!(FALSE %in% sapply(status_code, is.null))){
         permEstimates[[iPerm]] <-
           c(
-            dG = calculateArithmDistance(
-              .corMatrices =
+            dG = calculateDistance(
+              .matrices =
                 lapply(Est_tmp, fitted),
               .distance = "geodesic"
             ),
-            dL = calculateArithmDistance(
-              .corMatrices =
+            dL = calculateDistance(
+              .matrices =
                 lapply(Est_tmp, fitted),
-              .distance = "euclidean"
+              .distance = "squared_euclidian"
             )
           )
       }else{
@@ -99,13 +93,13 @@ testOverallMGA <- function(.object=args_default()$.model,
     }else{
       permEstimates[[iPerm]] <-
         c(
-          dG = calculateArithmDistance(
-            .corMatrices = lapply(Est_tmp, fitted),
+          dG = calculateDistance(
+            .matrices = lapply(Est_tmp, fitted),
             .distance = "geodesic"
           ),
-          dL = calculateArithmDistance(
-            .corMatrices = lapply(Est_tmp, fitted),
-            .distance = "euclidean"
+          dL = calculateDistance(
+            .matrices = lapply(Est_tmp, fitted),
+            .distance = "squared_euclidian"
           )
         )
       
@@ -133,7 +127,6 @@ testOverallMGA <- function(.object=args_default()$.model,
   return(out)
 }
 
-
 permutateData <- function(.matrices = NULL){
   
   ### Checks and errors ========================================================
@@ -159,11 +152,10 @@ permutateData <- function(.matrices = NULL){
   # add permID
   permData <- cbind(combinedData, permID = sample(ID))
   
-  # assign data
-  l=lapply(1:length(.matrices),function(x){temp=permData[permData[,'permID']==x,]
-  temp[,-ncol(temp),drop=FALSE]})
+  # If we want to return a list
+  # l=lapply(1:length(.matrices),function(x){temp=permData[permData[,'permID']==x,]
+  # temp[,-ncol(temp),drop=FALSE]})
+  # return(l)
   
-  return(l)
+  return(permData)
 }
-
-
