@@ -5,7 +5,7 @@
 #' @details Whaaaaaaaaaaaaaaaats up.  \deqn{sqrt{9} + b}
 #' 
 #' @usage testOverallMGA(.object=args_default()$.model,
-#' .dropInadmissibles=args_default()$.dropInadmissibles,
+#' .drop_inadmissibles=args_default()$.drop_inadmissibles,
 #' .alpha=args_default()$.alpha,
 #' .runs=args_default()$.runs,
 #' ...)
@@ -26,7 +26,7 @@
 #'
 #' @export
 testOverallMGA <- function(.object=args_default()$.model,
-                           .dropInadmissibles=args_default()$.dropInadmissibles,
+                           .drop_inadmissibles=args_default()$.drop_inadmissibles,
                            .alpha=args_default()$.alpha,
                            .runs=args_default()$.runs,
                            ...){
@@ -70,7 +70,7 @@ testOverallMGA <- function(.object=args_default()$.model,
     status_code=lapply(Est_tmp, status)
     
     # if it is controlled for inadmissible
-    if(.dropInadmissibles){
+    if(.drop_inadmissibles){
       if(!(FALSE %in% sapply(status_code, is.null))){
         permEstimates[[iPerm]] <-
           c(

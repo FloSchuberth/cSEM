@@ -5,13 +5,16 @@
 \title{Test for group differences}
 \usage{
 testOverallMGA(.object=args_default()$.model,
-.dropInadmissibles=args_default()$.dropInadmissibles,
+.drop_inadmissibles=args_default()$.drop_inadmissibles,
 .alpha=args_default()$.alpha,
 .runs=args_default()$.runs,
 ...)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+
+\item{.drop_inadmissibles}{Logical. Should inadmissible solutions be dropped?
+Defaults to \code{TRUE}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
