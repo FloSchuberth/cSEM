@@ -105,6 +105,14 @@ csem <- function(
   ## 
   
   if(!is.null(.id)) {
+    if(length(.id) != 1) {
+      stop("`.id` must be a character string or an integer identifying one single column.",
+           call. = FALSE)
+    }
+
+    if(is.matrix(.data)) {
+      .data <- as.data.frame(.data)
+    }
     
     data_split <- split(.data, f = .data[, .id])
     out <- lapply(data_split, function(x) {
