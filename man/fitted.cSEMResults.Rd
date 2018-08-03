@@ -9,7 +9,11 @@ fitted(.object, test = NULL)
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
+<<<<<<< HEAD
 \item{.saturated}{Logical. Should a saturated structural model be assumed? Defaults to \code{FALSE}.}
+=======
+\item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+>>>>>>> 6c3cc72893a7ae8256cd4cad75c6b1a5c5704d82
 
 \item{test}{not used}
 }
