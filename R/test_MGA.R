@@ -141,55 +141,29 @@ permutateData <- function(.matrices = NULL){
   if(!is.list(.matrices) && length(.matrices) < 2) {
     stop("`.matrices` must be a list of at least length two.", call. = FALSE)
   }
-  
-  # ## Check if matrices only include integers
-  # if(FALSE %in% sapply(.matrices, is.integer)){
-  #   stop("`.matrices` must only include integers.", call. = FALSE)
-  # }
-  
+
   # ## Check if column names are identical
   # if (FALSE %in% sapply(.matrices,function(x) {
   #   identical(colnames(x), colnames(.matrices[[1]]))})) {
   #   stop("`.matrices` must have the same colnames.", call. = FALSE)
   # }
   
-  
   ### Permutation ==============================================================
   
   # combine data
-  # combinedData <- data.frame(do.call(rbind, .matrices))
   combinedData <- do.call(rbind, .matrices)
-  
     
   # create ID
-  # ID <- rep(paste(1:length(.matrices)),lengths(.matrices)/ncol(.matrices[[1]]))
   ID <- rep(1:length(.matrices),lengths(.matrices)/ncol(.matrices[[1]]))
   
-  # assign data
+  # add permID
   permData <- cbind(combinedData, permID = sample(ID))
   
+  # assign data
   l=lapply(1:length(.matrices),function(x){temp=permData[permData[,'permID']==x,]
   temp[,-ncol(temp),drop=FALSE]})
   
   return(l)
-  
-  # # split data based on perm ID
-  # permList <- base::split(permData, f = as.factor(permData$permID))
-  # 
-  # # drop permID
-  # permList <- lapply(permList, function(x) x[!(names(x) %in% c("permID"))])
-  # 
-  # 
-  # # define list elements as matrix
-  # permList <- lapply(permList, as.matrix)
-  # 
-  # # set original names
-  # permList <- lapply(permList, function(x){
-  #   colnames(x) <- colnames(.matrices[[1]])
-  #   rownames(x) <- c() # empty rownames
-  #   return(x)
-  # })
-  # return(permList)
 }
 
 
