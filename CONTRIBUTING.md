@@ -162,6 +162,10 @@ internal functions) are centrally collected in the file
 `zz_arguments.R`. Whenever a new argument is introduced:
 
 1.  Add the new argument + a description to the `cSEMArguments` list by
-    writing `@param <argument> Description. Default.`
-2.  Add the argument to the `args`-list in `args_default()` and provide
-    a default value.
+    writing `@param <argument> "Some description". "Default to xxx".`
+2.  Add the argument to the `args`-list in `args_default()` function and
+    provide a default value.
+3.  Add the argument to the function you want to use it in. Order
+    arguments according to their importance (i.e. `.data` and `.model`
+    always come first). if there is one otherwise use alphabetical
+    order.
