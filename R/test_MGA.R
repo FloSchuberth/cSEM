@@ -142,16 +142,16 @@ permutateData <- function(.matrices = NULL){
     stop("`.matrices` must be a list of at least length two.", call. = FALSE)
   }
   
-  ## Check if matrices only include integers
-  if(FALSE %in% sapply(.matrices, is.integer)){
-    stop("`.matrices` must only include integers.", call. = FALSE)
-  }
+  # ## Check if matrices only include integers
+  # if(FALSE %in% sapply(.matrices, is.integer)){
+  #   stop("`.matrices` must only include integers.", call. = FALSE)
+  # }
   
-  ## Check if column names are identical
-  if (FALSE %in% sapply(.matrices,function(x) {
-    identical(colnames(x), colnames(.matrices[[1]]))})) {
-    stop("`.matrices` must have the same colnames.", call. = FALSE)
-  }
+  # ## Check if column names are identical
+  # if (FALSE %in% sapply(.matrices,function(x) {
+  #   identical(colnames(x), colnames(.matrices[[1]]))})) {
+  #   stop("`.matrices` must have the same colnames.", call. = FALSE)
+  # }
   
   
   ### Permutation ==============================================================
