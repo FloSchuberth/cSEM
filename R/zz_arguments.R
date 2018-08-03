@@ -158,6 +158,7 @@ args_default <- function(.only_dots = FALSE) {
     .Q                       = NULL,
     .reliabilities           = NULL,
     .S                       = NULL,
+    .saturated               = FALSE,
     .terms                   = NULL,
     .verbose                 = TRUE,
     .W                       = NULL

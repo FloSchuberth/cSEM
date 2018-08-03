@@ -197,7 +197,7 @@ summary.cSEMResults <- function(.object, .what = NULL) {
 #'
 #' @export
 #'
-fitted.cSEMResults <- function(.object, .saturated) {
+fitted.cSEMResults <- function(.object, .saturated = args_default()$.saturated) {
   
   ### For maintenance: ---------------------------------------------------------
   ## Cons_exo  := (J_exo x 1) vector of exogenous constructs names.
@@ -268,7 +268,7 @@ fitted.cSEMResults <- function(.object, .saturated) {
     Cor_endo <- solve(I-B) %*% (Gamma %*% Phi %*% t(Gamma) + vcv_zeta) %*% t(solve(I-B))
     diag(Cor_endo) <- 1
     
-    vcv_construct <- rbind(cbind(PH, Corr_exo_endo),
+    vcv_construct <- rbind(cbind(Phi, Corr_exo_endo),
                            cbind(t(Corr_exo_endo), Cor_endo)) 
   }
   
