@@ -128,7 +128,7 @@ foreman <- function(
   # Currently only PLS is supported.
   
   if(!is.null(.dominant_indicators)) {
-    if(.approach_weights == "PLS") {
+    if(.approach_weights %in% c("PLS",'MAXVAR','MINVAR','SUMCORR','SSQCORR','GENVAR')) {
       
       ## Check construct names:
       # Do all construct names in .dominant_indicators match the construct
