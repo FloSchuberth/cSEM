@@ -4,19 +4,20 @@
 #'
 #' More details here. (TODO)
 #'
-#' @usage calculateWeights(
-#'   .data                        = NULL,
-#'   .model                       = NULL,
-#'   .PLS_modes                   = NULL,
-#'   .tolerance                   = NULL,
-#'   .iter_max                    = NULL,
-#'   .PLS_ignore_structural_model = NULL
-#'   .PLS_weight_scheme_inner     = NULL,
+#' @usage calculateWeightsPLS(
+#'   .data                        = args_default()$.data,
+#'   .model                       = args_default()$.model,
+#'   .conv_criterion              = args_default()$.conv_criterion,
+#'   .iter_max                    = args_default()$.iter_max,
+#'   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model
+#'   .PLS_modes                   = args_default()$.PLS_modes,
+#'   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
+#'   .tolerance                   = args_default()$.tolerance
 #'    )
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return A list with the following elements (TODO)
+#' @return A list with the elements
 #' \describe{
 #'   \item{`$W`}{A (J x K) matrix of estimated weights.}
 #'   \item{`$E`}{A (J x J) matrix of inner weights.}
@@ -30,13 +31,14 @@
 #'
 
 calculateWeightsPLS <- function(
-  .data                        = NULL,
-  .model                       = NULL,
-  .iter_max                    = NULL,
-  .PLS_ignore_structural_model = NULL,
-  .PLS_modes                   = NULL,
-  .PLS_weight_scheme_inner     = NULL,
-  .tolerance                   = NULL
+  .data                        = args_default()$.data,
+  .model                       = args_default()$.model,
+  .conv_criterion              = args_default()$.conv_criterion,
+  .iter_max                    = args_default()$.iter_max,
+  .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
+  .PLS_modes                   = args_default()$.PLS_modes,
+  .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
+  .tolerance                   = args_default()$.tolerance
 ) {
 
 
@@ -121,10 +123,15 @@ calculateWeightsPLS <- function(
     W <- scaleWeights(S, W)
 
     # Check for convergence
-    if(max(abs(W_iter - W)) < .tolerance) {
+    conv <- checkConvergence(W, W_iter, 
+                             .conv_criterion = .conv_criterion, 
+                             .tolerance = .tolerance)
+    
+    if(conv) {
       # Set convergence status to TRUE as algorithm has converged
       conv_status = TRUE
       break # return iterative PLS weights
+      
     } else if(iter_counter == iter_max & iter_max == 1) {
       # Set convergence status to NULL, NULL is used if no algorithm is used
       conv_status = NULL
@@ -154,147 +161,7 @@ calculateWeightsPLS <- function(
   # D (J x J) := An "adjacency" matrix with elements equal to one, if proxy j and j' are adjacent
 } # END calculateWeightsPLS
 
-#' Calculate the inner weights for PLS
-#'
-#' Calculates inner weights
-#'
-#' More description here.
-#'
-#' @usage calculateInnerWeightsPLS(
-#'   .S                           = NULL,
-#'   .W                           = NULL,
-#'   .csem_model                  = NULL,
-#'   .PLS_ignore_structural_model = NULL,
-#'   .PLS_weight_scheme_inner     = NULL
-#' )
-#'
-#' @inheritParams csem_arguments
-#'
-#' @return The (J x J) matrix `E` of inner weights.
-#'
-calculateInnerWeightsPLS <- function(
-  .S                           = NULL,
-  .W                           = NULL,
-  .csem_model                  = NULL,
-  .PLS_ignore_structural_model = NULL,
-  .PLS_weight_scheme_inner     = NULL
-) {
-
-  # Composite correlation matrix (C = V(H))
-  C <- .W %*% .S %*% t(.W)
-
-  # Due to floting point errors may not be symmetric anymore. In order
-  # prevent that replace the lower triangular elements by the upper
-  # triangular elements
-
-  C[lower.tri(C)] <- t(C)[lower.tri(C)]
-
-  # Path model relationship
-  tmp <- rownames(.csem_model$measurement)
-  E   <- .csem_model$structural[tmp, tmp]
-  D   <- E + t(E)
-
-  ## (Inner) weightning scheme:
-  if(.PLS_weight_scheme_inner == "path" & .PLS_ignore_structural_model) {
-    .PLS_ignore_structural_model <- FALSE
-    warning("Structural model required for the path weighting scheme.\n",
-            ".PLS_ignore_structural_model = TRUE was changed to FALSE.", 
-            call. = FALSE)
-  }
-
-  if(.PLS_ignore_structural_model) {
-    switch (.PLS_weight_scheme_inner,
-            "centroid"  = {E <- sign(C) - diag(1, nrow = nrow(.W))},
-            "factorial" = {E <- C - diag(1, nrow = nrow(.W))}
-    )
-  } else {
-    switch (.PLS_weight_scheme_inner,
-            "centroid"  = {E <- sign(C) * D},
-            "factorial" = {E <- C * D},
-            "path"      = {
-              ## All construct that have an arrow pointing to construct j
-              ## are called predecessors of j; all arrows going from j to other
-              ## constructs are called followers of j
-
-              ## Path weighting scheme:
-              ## Take construct j:
-              #  - For all predecessors of j: set the inner weight of
-              #    predescessor i to the correlation of i with j.
-              #  - For all followers of j: set the inner weight of follower i
-              #    to the coefficient of a multiple regression of j on
-              #    all followers i with i = 1,...,I.
-
-              E_temp <- E
-              ## Assign predescessor relation
-              E[t(E_temp) == 1] <- C[t(E_temp) == 1]
-
-              ## Assign follower relation
-              for(j in tmp) {
-
-                followers <- E_temp[j, ] == 1
-
-                if(sum(followers) > 0) {
-
-                  E[j, followers] <-  solve(C[followers, followers, drop = FALSE]) %*%
-                    C[j, followers]
-                }
-              }
-            }
-    )
-  }
-
-  return(E)
-} # END calculateInnerWeights
-
-#' Calculate the outer weights for PLS
-#'
-#' Calculates outer weights
-#'
-#' More description here..
-#'
-#' @usage calculateOuterWeightsPLS(
-#'    .S      = NULL,
-#'    .W      = NULL,
-#'    .E      = NULL,
-#'    .modes  = NULL
-#'    )
-#'
-#' @inheritParams csem_arguments
-#'
-#' @return A (J x K) matrix of outer weights.
-#'
-
-calculateOuterWeightsPLS <- function(
-  .S      = NULL,
-  .W      = NULL,
-  .E      = NULL,
-  .modes  = NULL
-) {
-  # Covariance/Correlation matrix between each proxy and all indicators (not
-  # only the related ones). Note: Cov(H, X) = WS, since H = XW'.
-  W <- .W
-  proxy_indicator_cor <- .E %*% W %*% .S
-
-  for(i in 1:nrow(W)) {
-    block      <- rownames(W[i, , drop = FALSE])
-    indicators <- W[block, ] != 0
-
-    if(.modes[block] == "ModeA") {
-      ## Mode A - Regression of each indicator on its corresponding proxy
-      # Select only
-      W[block, indicators] <- proxy_indicator_cor[block, indicators]
-
-    } else if(.modes[block] == "ModeB") {
-      ## Mode B - Regression of each proxy on all its indicator
-      # W_j = S_jj^{-1} %*% Cov(eta_j, X_j)
-      W[block, indicators] <- solve(.S[indicators, indicators]) %*% proxy_indicator_cor[block, indicators]
-
-    } # END ModeB
-  }
-  return(W)
-} # END calculateOuterWeights
-
-#' Calculate weights using one of Kettenrings's approaches
+#' Calculate composite weights using one of Kettenrings's approaches
 #'
 #' Calculates weights according to on of the the five criteria
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*", and "*GENVAR*"
@@ -494,7 +361,7 @@ calculateWeightsGSCA <- function(
 
 } # END calculateWeightsGSCA
 
-#' Calculate weights using fixed weights
+#' Calculate composite weights using fixed weights
 #'
 #' Calculates weights...
 #'
@@ -516,12 +383,11 @@ calculateWeightsFixed <- function(
 
 } # END calculateWeightsFixed
 
-#' Calculate unit weights for all blocks, i.e., each indicator of a block is equally weighted 
-#' This approach might be useful for Kroon correction.
+
+#' Calculate composite weights using unit weights
 #'
-#' Calculates weights...
-#'
-#' Some more description...
+#' Calculate unit weights for all blocks, i.e., each indicator of a block is
+#' equally weighted.
 #'
 #' @usage calculateWeightsUnit(.data, .model)
 #'

@@ -11,8 +11,6 @@
 #'   via the `.model` argument.
 #'
 #' @examples
-#' require(cSEM)
-#'
 #' dat <- data.frame(x2 = rnorm(100),
 #'                   x1 = rnorm(100),
 #'                   b2 = rnorm(100),

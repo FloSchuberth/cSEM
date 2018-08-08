@@ -27,7 +27,7 @@ estimation/calculation of the quantities of the measurement and the path
 model. There are:
 
   - **2 toplevel functions** (`csem()` and `cca()`). These functions +
-    the postestimation function `summary()` (see below) should be
+    the postestimation function `summarize()` (see below) should be
     sufficient for the end user 95% of the time. Both functions
     eventually call `foreman()`.
   - **1 midlevel function**, `foreman()`, that acts like a foreman by
@@ -43,26 +43,26 @@ model. There are:
         generally useful to the end user (e.g. `calculateConstructVCV()`
         or `classifyConstructs()`).
 
-#### Postestimation functions
+#### Postestimation functions:
 
-**Postestimation functions**. Postestimation functions are generic
-functions to be applied to an object resulting from a call to `csem()`
-or `cca()`. Depending on the class of the resulting object (e.g.
-`cSEMResults` or `cSEMSummary`) different methods are dispatched. Most
-postestimation functions like `test()` (not yet implemented) act like a
-foreman by the collect-distribute-recollect strategy as implemented in
-the `foreman()` function. Therefore postestimation functions are
-generally also hierarchical. Currently only a subset of these functions
-is implemented:
+Postestimation functions are generic functions to be applied to an
+object resulting from a call to `csem()`, `cca()` or `foreman()`.
+Depending on the class of the resulting object (e.g. `cSEMResults` or
+`cSEMSummary`) different methods are dispatched. Most postestimation
+functions like `test()` (not yet implemented) act like a foreman by the
+collect-distribute-recollect strategy as implemented in the `foreman()`
+function. Therefore postestimation functions are generally also
+hierarchical. All postestimation functions are consistently named by
+(preferably short) verbs. Currently only a subset of these functions is
+implemented:
 
   - 1 Top-level function:
-      - `summary()` with class `cSEMSummary`
+      - `summarize()` with class `cSEMSummarize`
   - Mid-level functions:
-      - `status()` with class `cSEMStatus`
+      - `check()` with class `cSEMCheck`
       - `fit()` with class `cSEMFit`
-      - `coef()` with class `cSEMCoef`
-      - `effects()` with class `cSEMEffects`
       - `test()` with class `cSEMTest`
+      - `verify` with class `cSEMVerify`
   - Low-level functions:
       - `test_fit()` with class `cSEMTestFit`
       - `test_MICOM()` with class `cSEMTestMICOM`
@@ -92,7 +92,7 @@ following exceptions/additions:
     `compute`. Similarly, `method` vs e.g. `approach`. This package
     always uses `approach` instead of `method`.
 3.  Use plural in function/object names if the main output is more than
-    one element, like `scaleWeights()`, `calculateProxies()`,
+    one element, like `scaleWeights()`, `calculateComposites()`,
     `handleArgs()` etc. but stick to singular in other cases like
     `parseModel()`.
 4.  Strive for meaningful argument names even if they are a bit longer

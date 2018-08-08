@@ -5,12 +5,12 @@
 #'
 #' The test is only meaningful for composite models.
 #'
-#' If more than two groups are to be compared issus related to multiple testing
+#' If more than two groups are to be compared issues related to multiple testing
 #' should be taken into account.
 #'
 #' The number of permutation runs is defaults to 100 for performance reasons.
 #' According to Henseler et al. (2016) the number of permutations should be at least 5000 for
-#' assessement to be reliable.
+#' assessment to be reliable.
 #'
 #' @usage testMICOM(
 #'   .data             = NULL,
@@ -27,9 +27,9 @@
 #'
 #' @return An object of class "testMICOM"
 #'
-#' An object of class "testMICOM" is a named list containing the following list elemement:
+#' An object of class "testMICOM" is a named list containing the following list element:
 #' \describe{
-#' \item{**Step2**}{A list containing the results of the test for composistional invariance (Step 2).}
+#' \item{**Step2**}{A list containing the results of the test for compositional invariance (Step 2).}
 #' \item{**Step3**}{A list containing the results of the test for mean and variance equality (Step 3).}
 #' \item{**Meta_information**}{A list of additional information on the test.}
 #' }

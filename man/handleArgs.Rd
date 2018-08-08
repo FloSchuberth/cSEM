@@ -16,3 +16,4 @@ changed to the values given by the user.
 \description{
 Internal helper function to handle arguments passed to any function within \code{cSEM}.
 }
+\keyword{internal}

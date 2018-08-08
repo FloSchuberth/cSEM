@@ -34,7 +34,7 @@ structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}".
+structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
 Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
@@ -42,8 +42,12 @@ obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
+\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+to "\emph{diff_absolute}".}
+
 \item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
-if the construct is modelled as a common factor? Defaults to \code{TRUE}.}
+if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
 where \code{"value"} is a character string giving the name of the dominant indicator
@@ -53,8 +57,8 @@ Dominant indicators may be specified for a subset of the constructs.}
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
 
-\item{.id}{Charachter string. The name of the column of \code{.data} used to split
-the date into groups.}
+\item{.id}{Character string. The name of the column of \code{.data} used to split
+the data into groups. Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS"} one-step weights are returned.
@@ -90,39 +94,51 @@ Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
 where \code{value} is a number between 0 and 1 and \code{"name"} a character string
 of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
-reliabilites are estimated by \code{csem()}.}
+reliabilities are estimated by \code{csem()}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 }
 \value{
-An object of class \code{cSEMResults} for which the following methods exist:
+An object of class \code{cSEMResults} with methods for all postestimation generics:
 \describe{
-\item{\code{print.cSEMResults}}{Prints a message to inform the user
-whether estimation has been successful and what functions may be used
-to examine the object.}
-\item{\code{summary.cSEMResults}}{Print and return a comprehensive summary of the results.}
+\item{\code{check.cSEMResults}}{Checks results using common indices and fit measures.}
+\item{\code{fit.cSEMResults}}{Compute the model-implied covariance matrix.}
+\item{\code{summarize.cSEMResults}}{Summarize the results.}
+\item{\code{test.cSEMResults}}{Run tests.}
+\item{\code{verify.cSEMResults}}{Verify admissibility (e.g., loadings larger than one).}
 }
-Technically \code{cSEMResults} is a named list containing the following list elements:
+The structure of the \code{cSEMResults} object is determined by the data set provided
+or more precisely the number of estimation runs performed.
+
+If data is a single matrix or data frame with no id-column, the result is a list with elements:
 \describe{
-\item{\code{$Estimates}}{A list containing the estimated quantities.}
-\item{\code{$Information}}{A list of additional information. (incomplete)}
+\item{\code{$Estimates}}{A list containing a list of estimated quantities.}
+\item{\code{$Information}}{A list containing a list of additional information.}
 }
+
+If \code{.data} contains an id-column to split the data by or if a list of
+data sets is provided, the results contains \code{n} list with elements \code{$Estimates}
+and \code{$Informations} where \code{n} is equal to the number of groups or the number of
+data sets in the list of data sets provided.
 }
 \description{
 The function is the central hub of the \code{cSEM}package. It acts like a
 foreman by collecting all (estimation) tasks, distributing them to lower
 level package functions, and eventually recollecting all of their results.
-It is called by \code{\link[=csem]{csem()}} and \code{\link[=cca]{cca()}} to manage the actual calculations.
+It is called by \code{\link[=csem]{csem()}} to manage the actual calculations.
 It may be called directly by the user, however, in most cases it will likely
 be more convenient to use \code{\link[=csem]{csem()}} or \code{\link[=cca]{cca()}} instead.
 }
+\details{
+More details here (TODO).
+}
 \examples{
 \dontrun{
-# still to implement
+# TODO
 }
 
 }
 \seealso{
-\link{csem}, \link{cca}, \link{testMICOM}
+\link{csem}, \link{cca}, \link{cSEMResults}
 }

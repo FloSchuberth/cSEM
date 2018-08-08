@@ -1,4 +1,4 @@
-#' Internal: Calcualte matrix difference using distance measure
+#' Internal: Calculate matrix difference using distance measure
 #'
 #' Calculates the differences between symmetric matrices using a given 
 #' distance measure. This is typically used to calculate the difference between
@@ -12,26 +12,24 @@
 #' Currently two distance measures are supported:
 #' 
 #' \describe{
-#'   \item{`geodesic`}{The gedesic distance. Details here.}
+#'   \item{`geodesic`}{The geodesic distance. Details here.}
 #'   \item{`squared_euclidian`}{The squared euclidian distance. Details here.}
 #' }
 #' 
-#' @usage calculateDistance(.matrices = NULL, .distance = "geodesic")
+#' @usage calculateDistance(
+#'   .matrices = args_default()$.matrices, 
+#'   .distance = args_default()$.distance
+#'   )
 #' 
 #' @inheritParams csem_arguments
 #' 
 #' @return A numeric vector of length one containing the (arithmetic mean) difference 
 #'   between all matrices.
-#'
-#' @examples
-#' \dontrun{
-#' # still to implement
-#' }
-#'
-#' 
+#' @keywords internal
+
 calculateDistance <- function(
-  .matrices = NULL, 
-  .distance = "geodesic"
+  .matrices = args_default()$.matrices, 
+  .distance = args_default()$.distance
   ){
   ### Checks and errors ========================================================
   ## Check if list and at least of length 2
@@ -108,20 +106,6 @@ dG <- function(
   0.5 * sum(logEigenvaluessq)
 }
 
-SRMR <- function(.object=args_default()$.object) {
-  
-  # The SRMR as calculated by us is always based on the the difference between correlation matrices.
-  
-  S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fitted(.object)
-  
-  
-  # Perhaps in the future we allow to estimate unstandardized coefficients
-  C_diff    <- cov2cor(S) -  cov2cor(Sigma_hat)
-  
-  sqrt(sum(C_diff[lower.tri(C_diff, diag = T)]^2) / sum(lower.tri(C_diff, diag=T)))
-} 
-
 ### dML: the fitting function used in FIML
 
 dML <- function(.object=args_default()$.object){
@@ -129,6 +113,6 @@ dML <- function(.object=args_default()$.object){
   nobs <- .object$Information$Number_of_observations
   S         <- .object$Estimates$Indicator_VCV
   p         <- dim(S)[1]
-  Sigma_hat <- fitted(.object)
+  Sigma_hat <- fit(.object)
   (nobs - 1)*(log(det(Sigma_hat)) + sum(diag(S %*% solve(Sigma_hat))) - log(det(S)) - p)
 }

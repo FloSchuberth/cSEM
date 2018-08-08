@@ -27,8 +27,9 @@ devtools::install_github("M-E-Steiner/cSEM")
 
   - Easy to use by non-R experts:
       - Functions `csem()` and `cca()` provide default choices for most
-        of its arguments (similarity to the `sem` and `cfa` functions of
-        the [lavaan](http://lavaan.ugent.be/) package is intended).
+        of its arguments (similarity to the `sem()` and `cfa()`
+        functions of the [lavaan](http://lavaan.ugent.be/) package is
+        intended).
       - (Eventually) well documented (Vignettes, HTML output, a website,
         intro course(s)). Of course this may take some time\!
       - There will be an extensive (non-expert) visually and
@@ -89,9 +90,8 @@ devtools::install_github("M-E-Steiner/cSEM")
     a$Information$Model
     
     ## Apply postestimation functions, e.g.
-    status(a) # no print method yet
-    fitted(a)
-    effects(a) # no print method yet
+    verify(a) # no print method yet
+    fit(a) # computes the model-implied indicator covariance matrix
     
     ## Get a summary
-    summary(a) # currently not working
+    summarize(a) # currently not working

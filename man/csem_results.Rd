@@ -5,19 +5,29 @@
 \alias{cSEMResults}
 \title{cSEMResults}
 \value{
-An object of class \code{cSEMResults} for which the following methods exist:
+An object of class \code{cSEMResults} with methods for all postestimation generics:
 \describe{
-\item{\code{print.cSEMResults}}{Prints a message to inform the user
-whether estimation has been successful and what functions may be used
-to examine the object.}
-\item{\code{summary.cSEMResults}}{Print and return a comprehensive summary of the results.}
+\item{\code{check.cSEMResults}}{Checks results using common indices and fit measures.}
+\item{\code{fit.cSEMResults}}{Compute the model-implied covariance matrix.}
+\item{\code{summarize.cSEMResults}}{Summarize the results.}
+\item{\code{test.cSEMResults}}{Run tests.}
+\item{\code{verify.cSEMResults}}{Verify admissibility (e.g., loadings larger than one).}
 }
-Technically \code{cSEMResults} is a named list containing the following list elements:
+The structure of the \code{cSEMResults} object is determined by the data set provided
+or more precisely the number of estimation runs performed.
+
+If data is a single matrix or data frame with no id-column, the result is a list with elements:
 \describe{
-\item{\code{$Estimates}}{A list containing the estimated quantities.}
-\item{\code{$Information}}{A list of additional information. (incomplete)}
+\item{\code{$Estimates}}{A list containing a list of estimated quantities.}
+\item{\code{$Information}}{A list containing a list of additional information.}
 }
+
+If \code{.data} contains an id-column to split the data by or if a list of
+data sets is provided, the results contains \code{n} list with elements \code{$Estimates}
+and \code{$Informations} where \code{n} is equal to the number of groups or the number of
+data sets in the list of data sets provided.
 }
 \description{
 cSEMResults
 }
+\keyword{internal}

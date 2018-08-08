@@ -1,6 +1,6 @@
 #' cSEM: A package for composite based structural equation modeling
 #'
-#' The package provides functions to analyse structual equation models using composite based approaches.
+#' The package provides functions to analyze structural equation models using composite based approaches.
 #'
 #' @section General:
 #' Some comments on the package structure.
@@ -19,4 +19,5 @@
 #' @importFrom matrixStats rowProds
 #' @import crayon
 #' @import cli
+#' @keywords internal
 "_PACKAGE"

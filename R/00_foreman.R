@@ -3,7 +3,7 @@
 #' The function is the central hub of the `cSEM`package. It acts like a 
 #' foreman by collecting all (estimation) tasks, distributing them to lower 
 #' level package functions, and eventually recollecting all of their results. 
-#' It is called by [csem()] and [cca()] to manage the actual calculations.
+#' It is called by [csem()] to manage the actual calculations.
 #' It may be called directly by the user, however, in most cases it will likely
 #' be more convenient to use [csem()] or [cca()] instead.
 #'
@@ -36,7 +36,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' # TO DO
+#' # TODO
 #' }
 #'
 #' @export
@@ -48,6 +48,7 @@ foreman <- function(
   .approach_nl                 = args_default()$.approach_nl,
   .approach_paths              = args_default()$.approach_paths,
   .approach_weights            = args_default()$.approach_weights,
+  .conv_criterion              = args_default()$.conv_criterion,
   .disattenuate                = args_default()$.disattenuate,
   .dominant_indicators         = args_default()$.dominant_indicators,
   .estimate_structural         = args_default()$.estimate_structural,
@@ -69,7 +70,6 @@ foreman <- function(
   ## Prepare, check, and clean data
   X <- processData(.data = .data, .model = csem_model) 
   
-  
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
   # Note: its important to take cor(X) here instead of cov(X) as `cov` may produce
@@ -86,20 +86,21 @@ foreman <- function(
 
   ## Standardize
   X <- scale(X)
-  
-  S=stats::cor(X)
+  S <- stats::cor(X)
   
   ## Calculate weights
   if(.approach_weights == "PLS") {
     W <- calculateWeightsPLS(
       .data                     = S,
       .model                    = csem_model,
+      .iter_max                 = .iter_max,
       .PLS_modes                = .PLS_modes,
       .tolerance                = .tolerance,
-      .iter_max                 = .iter_max,
       # Arguments passed on to calculateInnerWeightsPLS
       .PLS_ignore_structural_model  = .PLS_ignore_structural_model,
-      .PLS_weight_scheme_inner      = .PLS_weight_scheme_inner
+      .PLS_weight_scheme_inner      = .PLS_weight_scheme_inner,
+      # Arguments passed to checkConvergence
+      .conv_criterion           = .conv_criterion
     )
   } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
@@ -161,7 +162,7 @@ foreman <- function(
   } # END if 
   
   ## Calculate proxies/scores
-  H <- calculateProxies(
+  H <- calculateComposites(
     .X          = X,
     .W          = W$W
   )
@@ -186,7 +187,7 @@ foreman <- function(
   # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
   # rho_A in Dijkstra & Henseler (2015) - Consistent partial least squares path modeling
   
-  Q <- calculateProxyConstructCV(
+  Q <- calculateCompositeConstructCV(
     .W                  = W$W,
     .csem_model         = csem_model,
     .modes              = W$Modes,
@@ -206,7 +207,7 @@ foreman <- function(
   )
 
   ## Calculate proxy covariance matrix
-  C <- calculateProxyVCV(.S = S, .W = W$W)
+  C <- calculateCompositeVCV(.S = S, .W = W$W)
   
   ## Calculate construct correlation matrix
   P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
@@ -223,7 +224,7 @@ foreman <- function(
       .approach_nl  = .approach_nl
     )
   } else {
-    estim_results <- NA
+    estim_results <- NULL
   }
 
   ### Output -------------------------------------------------------------------
@@ -244,7 +245,11 @@ foreman <- function(
       "Cross_loadings"         = Lambda,
       "Construct_reliabilities"= Q^2,
       "Correction_factors"     = correction_factors,
-      "R2"                     = estim_results$R2
+      "R2"                     = if(.estimate_structural) {
+        estim_results$R2
+      } else {
+        estim_results
+      }
     ),
     "Information" = list(
       "Data"          = X,
