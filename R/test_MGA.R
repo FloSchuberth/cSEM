@@ -30,11 +30,17 @@ testOverallMGA <- function(.object=args_default()$.model,
                            .alpha=args_default()$.alpha,
                            .runs=args_default()$.runs,
                            ...){
-  # Check if .id variable is set
-  if(is.null(.object[[1]]$Information$Arguments$.id)){
-    stop("No .id variable set. Overall test for group differences not possible.",
-         call. = FALSE)
+  
+  ## test if attribute "single" =  TRUE
+  if(attr(.object, "single") == TRUE) {
+    # error
   }
+  
+  # # Check if .id variable is set
+  # if(is.null(.object[[1]]$Information$Arguments$.id)){
+  #   stop("No .id variable set. Overall test for group differences not possible.",
+  #        call. = FALSE)
+  # }
   # Check if .object is admissible
   if(FALSE %in% sapply(lapply(.object, status), is.null)){
     stop("Initial estimation is inadmissible.", call. = FALSE)
