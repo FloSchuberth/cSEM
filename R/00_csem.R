@@ -167,5 +167,7 @@ csem <- function(
   
   ## Set class for output
   class(out) <- "cSEMResults"
+  ## Has estimation been done based on a single data 
+  attr(out, "single") <- ifelse(any(class(.data) == "list")| !is.null(.id), FALSE, TRUE) 
   return(out)
 }
