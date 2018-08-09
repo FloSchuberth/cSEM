@@ -31,12 +31,6 @@ testOverallMGA <- function(.object=args_default()$.model,
                            .runs=args_default()$.runs,
                            ...){
   
-  # Check if there are identical data sets
-  if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
-                      function(x){ identical(x[[1]], x[[2]])})){
-    stop("there are identical data sets.", call. = FALSE)
-  }
-  
   # test if attribute "single" =  TRUE
   if(attr(.object, "single") == TRUE) {
     stop(".object cannot be single. 
@@ -46,6 +40,12 @@ testOverallMGA <- function(.object=args_default()$.model,
   # Check if .object is admissible
   if(FALSE %in% sapply(lapply(.object, status), is.null)){
     stop("Initial estimation is inadmissible.", call. = FALSE)
+  }
+  
+  # Check if there are identical data sets
+  if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
+                      function(x){ identical(x[[1]], x[[2]])})){
+    stop("there are identical data sets.", call. = FALSE)
   }
   
   # 1: calculate test statistic
