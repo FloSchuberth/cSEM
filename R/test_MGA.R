@@ -31,16 +31,18 @@ testOverallMGA <- function(.object=args_default()$.model,
                            .runs=args_default()$.runs,
                            ...){
   
-  ## test if attribute "single" =  TRUE
-  if(attr(.object, "single") == TRUE) {
-    # error
+  # Check if there are identical data sets
+  if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
+                      function(x){ identical(x[[1]], x[[2]])})){
+    stop("there are identical data sets.", call. = FALSE)
   }
   
-  # # Check if .id variable is set
-  # if(is.null(.object[[1]]$Information$Arguments$.id)){
-  #   stop("No .id variable set. Overall test for group differences not possible.",
-  #        call. = FALSE)
-  # }
+  # test if attribute "single" =  TRUE
+  if(attr(.object, "single") == TRUE) {
+    stop(".object cannot be single. 
+         Overall test for group differences not possible.",   call. = FALSE)
+  }
+  
   # Check if .object is admissible
   if(FALSE %in% sapply(lapply(.object, status), is.null)){
     stop("Initial estimation is inadmissible.", call. = FALSE)
@@ -64,6 +66,9 @@ testOverallMGA <- function(.object=args_default()$.model,
   
   # Results
   permEstimates <- list()
+  
+  # Progress bar
+  pb <- txtProgressBar(min = 0, max = .runs, style = 3)
   
   for(iPerm in 1:.runs){
     # permutate data
@@ -110,7 +115,12 @@ testOverallMGA <- function(.object=args_default()$.model,
         )
       
     }
-  }  
+    # Update Progress bar
+    setTxtProgressBar(pb, iPerm)
+  }
+  # Close Progress bar
+  close(pb)
+  
   ref_dist <- do.call(cbind, permEstimates)
   critical_value <- matrix(apply(ref_dist, 1, quantile, 1-.alpha), 
                            ncol = length(teststat), 
