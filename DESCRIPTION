@@ -34,5 +34,7 @@ RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: knitr,
     rmarkdown,
-    listviewer
+    listviewer,
+    doSNOW,
+    parallel
 VignetteBuilder: knitr
