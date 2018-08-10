@@ -147,9 +147,7 @@ testOverallMGA <- function(.object=args_default()$.model,
     cluster = parallel::makeCluster(.cores, type="SOCK")
     registerDoSNOW(cluster)
     
-    permEstimates <- foreach(iPerm = 1:.runs, 
-                             .export = c('permutateData', 'calculateDistance', 'dG', 'dL'), 
-                             .packages = c("cSEM")) %dopar% {
+    permEstimates <- foreach(iPerm = 1:.runs) %dopar% {
                                # permutate data
                                permData <- permutateData(listMatrices)
                                # set Data
