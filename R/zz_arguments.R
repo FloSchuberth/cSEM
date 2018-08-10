@@ -59,6 +59,7 @@
 #' @param .only_dots Logical. Should only arguments to be passed to lower level 
 #'   functions via the  `...` argument of the [csem()] or [cca()] function be returned. 
 #'   Defaults to `FALSE`.
+#' @param .parallel Logical. Use parallel computing. Defaults to `FALSE`.
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
@@ -87,6 +88,7 @@
 #' @param .runs Integer. How many runs should be performed? Defaults to `499`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
+#' @param .show_progress Logical. Show progress bar. Defaults to `TRUE`.
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.

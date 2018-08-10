@@ -29,6 +29,8 @@ testOverallMGA <- function(.object=args_default()$.model,
                            .drop_inadmissibles=args_default()$.drop_inadmissibles,
                            .alpha=args_default()$.alpha,
                            .runs=args_default()$.runs,
+                           .parallel=args_default()$.parallel,
+                           .show_progress=args_default()$.show_progress,
                            ...){
   
   # test if attribute "single" =  TRUE
@@ -67,59 +69,138 @@ testOverallMGA <- function(.object=args_default()$.model,
   # Results
   permEstimates <- list()
   
-  # Progress bar
-  pb <- txtProgressBar(min = 0, max = .runs, style = 3)
   
-  for(iPerm in 1:.runs){
-    # permutate data
-    permData <- permutateData(listMatrices)
-    # set Data
-    arguments[[".data"]] <- permData
-    # estimate 
-    Est_tmp <- do.call(csem, arguments)
-    # status codes
-    status_code=lapply(Est_tmp, status)
+  # If .parallel == FALSE
+  if(.parallel == FALSE){
+    if(.show_progress==TRUE){
+      # Progress bar
+    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+    }
     
-    # if it is controlled for inadmissible
-    if(.drop_inadmissibles){
-      if(!(FALSE %in% sapply(status_code, is.null))){
+    for(iPerm in 1:.runs){
+      # permutate data
+      permData <- permutateData(listMatrices)
+      # set Data
+      arguments[[".data"]] <- permData
+      # estimate 
+      Est_tmp <- do.call(csem, arguments)
+      # status codes
+      status_code=lapply(Est_tmp, status)
+      
+      # if it is controlled for inadmissible
+      if(.drop_inadmissibles){
+        if(!(FALSE %in% sapply(status_code, is.null))){
+          permEstimates[[iPerm]] <-
+            c(
+              dG = calculateDistance(
+                .matrices =
+                  lapply(Est_tmp, fitted),
+                .distance = "geodesic"
+              ),
+              dL = calculateDistance(
+                .matrices =
+                  lapply(Est_tmp, fitted),
+                .distance = "squared_euclidian"
+              )
+            )
+        }else{
+          # Set null if status code is false
+          permEstimates[[iPerm]] <- NULL
+        }
+        # else, i.e., dropInadmissible == FALSE
+      }else{
         permEstimates[[iPerm]] <-
           c(
             dG = calculateDistance(
-              .matrices =
-                lapply(Est_tmp, fitted),
+              .matrices = lapply(Est_tmp, fitted),
               .distance = "geodesic"
             ),
             dL = calculateDistance(
-              .matrices =
-                lapply(Est_tmp, fitted),
+              .matrices = lapply(Est_tmp, fitted),
               .distance = "squared_euclidian"
             )
           )
-      }else{
-        # Set null if status code is false
-        permEstimates[[iPerm]] <- NULL
+        
       }
-      # else, i.e., dropInadmissible == FALSE
-    }else{
-      permEstimates[[iPerm]] <-
-        c(
-          dG = calculateDistance(
-            .matrices = lapply(Est_tmp, fitted),
-            .distance = "geodesic"
-          ),
-          dL = calculateDistance(
-            .matrices = lapply(Est_tmp, fitted),
-            .distance = "squared_euclidian"
-          )
-        )
-      
+      if(.show_progress==TRUE){
+        # Update Progress bar
+      setTxtProgressBar(pb, iPerm)
+      }
     }
-    # Update Progress bar
-    setTxtProgressBar(pb, iPerm)
+    if(.show_progress==TRUE){
+        # Close Progress bar
+        close(pb)
+    }
+  
   }
-  # Close Progress bar
-  close(pb)
+  
+  # IF .parallel == TRUE
+  if(.parallel == TRUE){
+    if(.show_progress==TRUE){
+      print("Progress bar is not available for parallel computing.")
+    }
+    # Parallelize
+    # require(foreach)
+    # require(doParallel)
+    # core= detectCores()
+    # cl <- makeCluster(core)
+    # registerDoParallel(cl)
+    
+    require(doSNOW)
+    cluster = makeCluster(4, type="SOCK")
+    registerDoSNOW(cluster)
+    
+    foreach(iPerm = 1:.runs, .export = c('permutateData'), .packages = c("cSEM")) %do% {
+      # permutate data
+      permData <- permutateData(listMatrices)
+      # set Data
+      arguments[[".data"]] <- permData
+      # estimate 
+      Est_tmp <- do.call(csem, arguments)
+      # status codes
+      status_code=lapply(Est_tmp, status)
+      
+      # if it is controlled for inadmissible
+      if(.drop_inadmissibles){
+        if(!(FALSE %in% sapply(status_code, is.null))){
+          permEstimates[[iPerm]] <-
+            c(
+              dG = calculateDistance(
+                .matrices =
+                  lapply(Est_tmp, fitted),
+                .distance = "geodesic"
+              ),
+              dL = calculateDistance(
+                .matrices =
+                  lapply(Est_tmp, fitted),
+                .distance = "squared_euclidian"
+              )
+            )
+        }else{
+          # Set null if status code is false
+          permEstimates[[iPerm]] <- NULL
+        }
+        # else, i.e., dropInadmissible == FALSE
+      }else{
+        permEstimates[[iPerm]] <-
+          c(
+            dG = calculateDistance(
+              .matrices = lapply(Est_tmp, fitted),
+              .distance = "geodesic"
+            ),
+            dL = calculateDistance(
+              .matrices = lapply(Est_tmp, fitted),
+              .distance = "squared_euclidian"
+            )
+          )
+        
+      }
+    }
+    # Stop Cluster
+    # stopCluster(cl)
+    stopCluster(cluster)
+      }
+
   
   ref_dist <- do.call(cbind, permEstimates)
   critical_value <- matrix(apply(ref_dist, 1, quantile, 1-.alpha), 
