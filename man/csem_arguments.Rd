@@ -95,6 +95,9 @@ Defaults to \code{FALSE}.}
 
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 
+\item{.parallel}{Logical. Use parallel computing. Defaults to \code{FALSE}. Note:
+requires the \code{doSNOW} and the \code{parallel} package to be installed.}
+
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
@@ -131,6 +134,8 @@ reliabilities are estimated by \code{csem()}.}
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+
+\item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
 
 \item{.terms}{A vector of construct names to be classified.}
 

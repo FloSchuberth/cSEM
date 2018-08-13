@@ -4,20 +4,30 @@
 \alias{testOverallMGA}
 \title{Test for group differences}
 \usage{
-testOverallMGA(.object = args_default()$.model,
-  .drop_inadmissibles = args_default()$.drop_inadmissibles,
-  .alpha = args_default()$.alpha, .runs = args_default()$.runs, ...)
+testOverallMGA(
+ .object             = args_default()$.model,
+ .alpha              = args_default()$.alpha,
+ .drop_inadmissibles = args_default()$.drop_inadmissibles,
+ .parallel           = args_default()$.parallel,
+ .runs               = args_default()$.runs,
+ .show_progress      = args_default()$.show_progress
+ )
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
-\item{.drop_inadmissibles}{Logical. Should inadmissible solutions be dropped?
-Defaults to \code{TRUE}.}
-
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
+\item{.drop_inadmissibles}{Logical. Should inadmissible solutions be dropped?
+Defaults to \code{TRUE}.}
+
+\item{.parallel}{Logical. Use parallel computing. Defaults to \code{FALSE}. Note:
+requires the \code{doSNOW} and the \code{parallel} package to be installed.}
+
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
+
+\item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
 }
 \value{
 A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
@@ -32,10 +42,10 @@ what constitues and inadmissble run.}
 }
 }
 \description{
-What it does.
+What it does (TODO).
 }
 \details{
-More details here.
+More details here (TODO).
 }
 \examples{
 \dontrun{

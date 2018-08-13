@@ -69,6 +69,8 @@
 #'   functions via the  `...` argument of the `fun` function be returned. 
 #'   Defaults to `FALSE`.
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
+#' @param .parallel Logical. Use parallel computing. Defaults to `FALSE`. Note:
+#'   requires the `doSNOW` and the `parallel` package to be installed.
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
@@ -97,6 +99,7 @@
 #' @param .runs Integer. How many runs should be performed? Defaults to `499`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
+#' @param .show_progress Logical. Show progress bar. Defaults to `TRUE`.
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
@@ -179,10 +182,12 @@ args_default <- function(
     .object                  = NULL,
     .only_dots               = FALSE,
     .P                       = NULL,
+    .parallel                = FALSE,
     .runs                    = 499,
     .Q                       = NULL,
     .S                       = NULL,
     .saturated               = FALSE,
+    .show_progress           = TRUE,
     .terms                   = NULL,
     .verbose                 = TRUE,
     .W                       = NULL,
