@@ -11,7 +11,7 @@ Authors@R: c(person(given = "Manuel", family = "Steiner",
                     role  = c("aut"),
                     email = "tamara.schamberger@uni-wuerzburg.de"))
 Depends: R (>= 3.4.2)
-Description: Analyse structural equation models, including path 
+Description: Analyze structural equation models, including path 
     analysis and confirmatory composite analysis using a composite
     based approach.
 License: GPL-3

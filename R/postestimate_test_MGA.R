@@ -1,23 +1,14 @@
-#' @title Test for group differences
+#' Test for group differences
 #'
-#' @description x of this function.
+#' What it does.
 #' 
-#' @details Whaaaaaaaaaaaaaaaats up.  \deqn{sqrt{9} + b}
-#' 
-#' @usage testOverallMGA(.object=args_default()$.model,
-#' .drop_inadmissibles=args_default()$.drop_inadmissibles,
-#' .alpha=args_default()$.alpha,
-#' .runs=args_default()$.runs,
-#' ...)
+#' More details here.
 #' 
 #' @inheritParams csem_arguments
 #' 
-#' @inherit csem_testresults return
-#' 
-#' @references
-#'   \insertAllCited{}
+#' @inherit csem_test return
 #'
-#' @seealso [csem], [foreman]
+#' @seealso [cSEMResults]
 #'
 #' @examples
 #' \dontrun{
@@ -25,6 +16,7 @@
 #' }
 #'
 #' @export
+
 testOverallMGA <- function(.object=args_default()$.model,
                            .drop_inadmissibles=args_default()$.drop_inadmissibles,
                            .alpha=args_default()$.alpha,
@@ -38,7 +30,7 @@ testOverallMGA <- function(.object=args_default()$.model,
   }
   
   # Check if .object is admissible
-  if(FALSE %in% sapply(lapply(.object, status), is.null)){
+  if(FALSE %in% sapply(lapply(.object, verify), is.null)){
     stop("Initial estimation is inadmissible.", call. = FALSE)
   }
   
@@ -49,9 +41,9 @@ testOverallMGA <- function(.object=args_default()$.model,
   }
   
   # 1: calculate test statistic
-  teststat = c(dG = calculateDistance(.matrices = lapply(.object, fitted), 
+  teststat = c(dG = calculateDistance(.matrices = lapply(.object, fit), 
                                        .distance="geodesic"),
-               dL = calculateDistance(.matrices = lapply(.object, fitted), 
+               dL = calculateDistance(.matrices = lapply(.object, fit), 
                                        .distance="squared_euclidian"))
   
   # 2: permutation procedure
@@ -78,7 +70,7 @@ testOverallMGA <- function(.object=args_default()$.model,
     # estimate 
     Est_tmp <- do.call(csem, arguments)
     # status codes
-    status_code=lapply(Est_tmp, status)
+    status_code=lapply(Est_tmp, verify)
     
     # if it is controlled for inadmissible
     if(.drop_inadmissibles){
@@ -87,12 +79,12 @@ testOverallMGA <- function(.object=args_default()$.model,
           c(
             dG = calculateDistance(
               .matrices =
-                lapply(Est_tmp, fitted),
+                lapply(Est_tmp, fit),
               .distance = "geodesic"
             ),
             dL = calculateDistance(
               .matrices =
-                lapply(Est_tmp, fitted),
+                lapply(Est_tmp, fit),
               .distance = "squared_euclidian"
             )
           )
@@ -105,11 +97,11 @@ testOverallMGA <- function(.object=args_default()$.model,
       permEstimates[[iPerm]] <-
         c(
           dG = calculateDistance(
-            .matrices = lapply(Est_tmp, fitted),
+            .matrices = lapply(Est_tmp, fit),
             .distance = "geodesic"
           ),
           dL = calculateDistance(
-            .matrices = lapply(Est_tmp, fitted),
+            .matrices = lapply(Est_tmp, fit),
             .distance = "squared_euclidian"
           )
         )

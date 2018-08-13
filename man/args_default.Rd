@@ -2,33 +2,49 @@
 % Please edit documentation in R/zz_arguments.R
 \name{args_default}
 \alias{args_default}
-\title{List all arguments and their defaults}
+\title{Show argument defaults or candidates}
 \usage{
-args_default(.only_dots = FALSE)
+args_default(
+  .choices   = FALSE,
+  .only_dots = FALSE,
+  .which_fun = "csem"
+)
 }
 \arguments{
-\item{csem_arguments}{}
+\item{.choices}{Logical. Should candidate values for the arguments be returned?
+Defaults to \code{FALSE}.}
+
+\item{.only_dots}{Logical. Should only arguments to be passed to lower level
+functions via the  \code{...} argument of the \code{fun} function be returned.
+Defaults to \code{FALSE}.}
+
+\item{.which_fun}{Character string. The \code{...} argument names and values of which
+function should be returned? One of: \code{"csem"} or \code{"cca"}. Defaults to \code{"csem"}.
+Currently ignored if \code{.only_dots = FALSE}.}
 }
 \value{
-A named list of argument names and their defaults.
+A named list of argument names and defaults or accepted candidates.
 }
 \description{
-The function \code{args_default()} lists all possible arguments and their defaults.
-For a description of the arguments see \link{csem_arguments}.
+Show all arguments used by package functions including default or candidate
+values. For argument descriptions, see: \link{csem_arguments}.
 }
 \details{
-This is the complete list of arguments, their current defaults, and their
-possible alternatives. Each default may be changed by passing a \code{arg_name = value}
-pair to the function that uses the argument. Changes to the default arguments
-are checked and processed by the \code{\link[=handleArgs]{handleArgs()}} function.
+By default \code{args_default()}returns a list of default values by argument name.
+If the list of accepted candidate values is required instead, use \code{.choices = TRUE}.
 
-If \code{.only_dots = TRUE} all possible arguments to be passed to lower level functions via the
-\code{...} argument of the \code{\link[=csem]{csem()}} or \code{\link[=cca]{cca()}} function are returned.
+If \code{.only_dots = TRUE} arguments passed to lower level
+functions via the \code{...} argument of \code{which.fun} are returned.
 }
 \examples{
 
 args_default() # List all possible arguments and their defaults.
-args_default(.only_dots = TRUE) # list only those accepted by `...`.
+args_default(.only_dots = TRUE) # list only those accepted by the `...` argument
+                                # of the csem function.
+args_default(.only_dots = TRUE, .which_fun = "csem") # the same
+
+## Show accepted candidates:
+args.default(.choices = TRUE)
 
 }
 \seealso{

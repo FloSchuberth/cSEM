@@ -20,19 +20,25 @@
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
 #' @param .approach_paths Character string. Approach used to estimate the
-#'   structural coefficients. One of: "*OLS*", "*2SLS*", or "*3SLS*".
+#'   structural coefficients. One of: "*OLS*" or "*2SLS*".
 #'   Defaults to "*OLS*".
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS*", "*SUMCORR*", "*MAXVAR*",
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*fixed*", or "*unit*".
 #'   Defaults to "*PLS*".
-#' @param .args_used A list of function argument names to `foo()` whose value 
-#'   was modified by the user. Usually captured by `as.list(match_call())[-1]` 
-#'   within the body of `foo()`.
+#' @param .args_used A list of function argument names to `fun()` whose value 
+#'   was modified by the user.
 #' @param .C A (J x J) composite variance-covariance matrix.
+#' @param .choices Logical. Should candidate values for the arguments be returned?
+#'   Defaults to `FALSE`.
+#' @param .conv_criterion Character string. The criterion to use for the convergence check.
+#'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
+#'   to "*diff_absolute*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel]-list.
 #' @param .disattenuate Logical. If possible, should composite correlations be disattenuated
-#'   if the construct is modelled as a common factor? Defaults to `TRUE`.
+#'   if the construct is modeled as a common factor? Defaults to `TRUE`.
+#' @param .distance Character string. A distance measure. One of: "*geodesic*"
+#'   or "*squared_euclidian*". Defaults to "*geodesic*".
 #' @param .dominant_indicators A character vector of `"name" = "value"` pairs, 
 #'   where `"value"` is a character string giving the name of the dominant indicator
 #'   and `"name"` a character string of the corresponding construct name.
@@ -43,22 +49,26 @@
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
 #' @param .H The (N x J) matrix of construct scores.
-#' @param .id Charachter string. The name of the column of `.data` used to split
-#'   the date into groups. 
+#' @param .id Character string. The name of the column of `.data` used to split
+#'   the data into groups. Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
 #'   If `iter_max = 1` and `.approach_weights = "PLS"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
 #'   `.iter_max - 1`  will be returned with a warning. Defaults to `100`.
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
-#' @param .modes A named vector giving the mode used to obtain new outer weights.
+#' @param .matrices A list of at least two matrices.
+#' @param .modes A vector specifying the mode that should be used for
+#'   each construct in the form `"name" = "mode"`, where `"name"` refers to the
+#'   construct name and `"mode"`` is one of *"ModeA"* or *"ModeB"*.
 #' @param .normality Logical. Should joint normality be assumed in the nonlinear model?
 #'  For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
 #'  Defaults to `TRUE`. Ignored if the model is linear.
 #' @param .object An R object of class `cSEM<class>` with corresponding method.
 #' @param .only_dots Logical. Should only arguments to be passed to lower level 
-#'   functions via the  `...` argument of the [csem()] or [cca()] function be returned. 
+#'   functions via the  `...` argument of the `fun` function be returned. 
 #'   Defaults to `FALSE`.
+#' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
@@ -83,7 +93,7 @@
 #'   where `value` is a number between 0 and 1 and `"name"` a character string
 #'   of the corresponding construct name, or `NULL`. Reliabilities
 #'   may be given for a subset of the constructs. Defaults to `NULL` in which case
-#'   reliabilites are estimated by `csem()`.
+#'   reliabilities are estimated by `csem()`.
 #' @param .runs Integer. How many runs should be performed? Defaults to `499`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
@@ -92,103 +102,145 @@
 #'   Defaults to `1e-05`.
 #' @param .verbose Logical. Should information be printed to the console? Defaults
 #'   to `TRUE`.
-#' @param .W A list with elements `$W`, `$E`, `Modes`, `Conv_status`, and 
-#'   `Iterations`.
-#' @param ... Further arguments to be passed down to other functions.
-#' See [args_default()] with `.only_dots = TRUE` for a complete list 
-#' of possible arguments and their defaults.
+#' @param .W A (J x K) matrix of weights.
+#' @param .W_new A (J x K) matrix of weights.
+#' @param .W_old A (J x K) matrix of weights.
+#' @param .which_fun Character string. The `...` argument names and values of which 
+#'   function should be returned? One of: `"csem"` or `"cca"`. Defaults to `"csem"`. 
+#'   Currently ignored if `.only_dots = FALSE`. 
+#' @param .X A matrix of processed data (scaled, cleaned and ordered).
 #'
 #' @name csem_arguments
-#' @aliases cSEMArguments csem_parameters
+#' @aliases cSEMArguments
+#' 
 NULL
 
-#' List all arguments and their defaults
+#' Show argument defaults or candidates
 #'
-#' The function `args_default()` lists all possible arguments and their defaults.
-#' For a description of the arguments see [csem_arguments].
+#' Show all arguments used by package functions including default or candidate
+#' values. For argument descriptions, see: [csem_arguments].
 #'
-#' This is the complete list of arguments, their current defaults, and their
-#' possible alternatives. Each default may be changed by passing a `arg_name = value`
-#' pair to the function that uses the argument. Changes to the default arguments
-#' are checked and processed by the [handleArgs()] function.
+#' By default `args_default()`returns a list of default values by argument name.
+#' If the list of accepted candidate values is required instead, use `.choices = TRUE`.
 #' 
-#' If `.only_dots = TRUE` all possible arguments to be passed to lower level functions via the 
-#' `...` argument of the [csem()] or [cca()] function are returned.
+#' If `.only_dots = TRUE` arguments passed to lower level 
+#' functions via the `...` argument of `which.fun` are returned.
 #'
-#' @usage args_default(.only_dots = FALSE)
+#' @usage args_default(
+#'   .choices   = FALSE,
+#'   .only_dots = FALSE,
+#'   .which_fun = "csem"
+#' )
 #' 
-#' @param csem_arguments
+#' @inheritParams  csem_arguments
 #' 
-#' @return A named list of argument names and their defaults.
+#' @return A named list of argument names and defaults or accepted candidates.
 #'
 #' @examples
 #'
 #' args_default() # List all possible arguments and their defaults.
-#' args_default(.only_dots = TRUE) # list only those accepted by `...`.
+#' args_default(.only_dots = TRUE) # list only those accepted by the `...` argument
+#'                                 # of the csem function.
+#' args_default(.only_dots = TRUE, .which_fun = "csem") # the same
+#' 
+#' ## Show accepted candidates:
+#' args.default(.choices = TRUE)
 #'
 #' @seealso [handleArgs()], [csem_arguments], [cca()], [csem()], [foreman()]
 #'
 #' @export
 
-args_default <- function(.only_dots = FALSE) {
+args_default <- function(
+  .choices   = FALSE, 
+  .only_dots = FALSE, 
+  .which_fun = "csem"
+  ) {
   
   args <- list(
     .data                    = NULL,
     .model                   = NULL,
     .alpha                   = 0.05,
-    .approach                = "SUMCORR",
-    .approach_nl             = "sequential",
-    .approach_paths          = "OLS",
-    .approach_weights        = "PLS", 
+    .approach                = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
+    .approach_paths          = c("OLS", "2SLS"),
+    .approach_weights        = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
+                                 "GSCA", "fixed", "unit"), 
     .C                       = NULL,
+    .choices                 = FALSE,
     .csem_model              = NULL,
-    .disattenuate            = TRUE,
+    .distance                = c("geodesic", "squared_euclidian"),
     .drop_inadmissibles      = TRUE,
     .E                       = NULL,
-    .estimate_structural     = TRUE,
     .H                       = NULL,
     .id                      = NULL,
     .matrix1                 = NULL,
     .matrix2                 = NULL,
-    .mode                    = NULL,
+    .matrices                = NULL,
+    .modes                   = NULL,
     .object                  = NULL,
     .only_dots               = FALSE,
-    .PLS_modes               = NULL,
+    .P                       = NULL,
     .runs                    = 499,
     .Q                       = NULL,
-    .reliabilities           = NULL,
     .S                       = NULL,
     .saturated               = FALSE,
     .terms                   = NULL,
     .verbose                 = TRUE,
-    .W                       = NULL
+    .W                       = NULL,
+    .which_fun               = c("csem", "cca"),
+    .X                       = NULL
   )
   
-  args_dotdotdot <- list(
+  args_dotdotdot_csem <- list(
     # Arguments passed to calculateWeightsPLS
     .iter_max                = 100,
+    .PLS_modes               = NULL,
     .tolerance               = 1e-05,
     
     # Arguments passed to calculateInnerWeightsPLS
     .PLS_ignore_structural_model = FALSE,
-    .PLS_weight_scheme_inner     = "centroid",
+    .PLS_weight_scheme_inner     = c("centroid", "factorial", "path"),
     
     # Arguments passed to calculateCorrectionFactors
-    .PLS_approach_cf         = "dist_euclid",
+    .PLS_approach_cf         = c("dist_euclid", "dist_euclid_weighted", 
+                                 "fisher_transformed", "mean_arithmetic",
+                                 "mean_geometric", "mean_harmonic",
+                                 "geo_of_harmonic"),
+    # Arguments passed to checkConvergence
+    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
     
     # Arguements passed to estimatorPathOLS
+    .approach_nl             = c("sequential", "replace"),
     .normality               = TRUE,
     
     #  Arguments passed to foreman
-    .dominant_indicators     = NULL
-    
+    .disattenuate            = TRUE,
+    .dominant_indicators     = NULL,
+    .estimate_structural     = TRUE,
+    .reliabilities           = NULL
   )
+  
+  args_dotdotdot_cca <- args_dotdotdot_csem
+  args_dotdotdot_cca[c(".approach_nl", ".normality", ".estimate_structural")] <- NULL
 
+  if(!.choices) {
+    args <- lapply(args, function(x) eval(x)[1])
+    args_dotdotdot_csem <- lapply(args_dotdotdot_csem, function(x) eval(x)[1])
+    args_dotdotdot_cca <- lapply(args_dotdotdot_cca, function(x) eval(x)[1])
+  }
+  
   if(.only_dots) {
-    return(args_dotdotdot)
+    cat("Possible `...` argument names and ", 
+        ifelse(.choices, "possible candidates","default values"), " for function: `", .which_fun, "()` \n\n", 
+        sep = "", "See `?cSEMArguments` for their description.\n\n")
+    switch (.which_fun,
+      "csem" = return(args_dotdotdot_csem),
+      "cca"  = return(args_dotdotdot_cca),
+      stop("Function `", .which_fun, "()` does not have `...` arguments",
+           call. = FALSE)
+    )
   } else {
     
-    args_all <- c(args, args_dotdotdot)
+    args_all <- c(args, args_dotdotdot_csem)
     args_all <- args_all[sort(names(args_all))]
     
     return(args_all)
@@ -204,10 +256,11 @@ args_default <- function(.only_dots = FALSE) {
 #'
 #' @return The [args_default] list, with default values
 #' changed to the values given by the user.
-#'
+#' @keywords internal
+
 handleArgs <- function(.args_used) {
   
-  x <- args_default()
+  x  <- args_default()
   
   args_default_names  <- names(x)
   args_used_names <- names(.args_used)

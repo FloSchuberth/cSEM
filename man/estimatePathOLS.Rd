@@ -4,18 +4,26 @@
 \alias{estimatePathOLS}
 \title{Estimate the structural coefficients}
 \usage{
-estimatePathOLS(.H = NULL, .W = NULL, .Q = NULL, .P = NULL,
-  .csem_model = NULL, .normality = NULL, .approach_nl = NULL)
+estimatePathOLS(
+  .H           = args_default()$.H,
+  .W           = args_default()$.W,
+  .Q           = args_default()$.Q,
+  .P           = args_default()$.P,
+  .csem_model  = args_default()$.csem_model,
+  .normality   = args_default()$.normality,
+  .approach_nl = args_default()$.approach_nl
+  )
 }
 \arguments{
 \item{.H}{The (N x J) matrix of construct scores.}
 
-\item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
-\code{Iterations}.}
+\item{.W}{A (J x K) matrix of weights.}
 
 \item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.}
+
+\item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
@@ -32,8 +40,9 @@ A named list containing the estimated structural coefficients and the
 r^2 for each regression.
 }
 \description{
-Estimates the coefficients of the structural model (non-linear and linear).
+Estimates the coefficients of the structural model (nonlinear and linear) using
+OLS. (TODO)
 }
 \details{
-More details here
+More details here (TODO).
 }

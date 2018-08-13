@@ -1,106 +1,102 @@
-#' cSEMModel
+#' Internal: Classify structural model terms by type
 #'
-#' A standardized list containing model-related information. To convert a
-#' a model written in \href{http://lavaan.ugent.be/tutorial/syntax1.html}{lavaan model syntax}
-#' to a cSEMModel list use [parseModel].
+#' Classify terms of the structural model according to their type.
 #'
-#' An object of class cSEMModel is a standardized list containing the following
-#' components (assume in the following that there are J constructs and K indicators)
-#' \describe{
-#'   \item{`$structural`}{A matrix mimicking the structural relationship between
-#'      constructs. If constructs are only linearly related, `structural` is
-#'      of dimension (J x J) with row- and column names equal to the construct
-#'      names. If the structural model contains non-linear relationships
-#'      `structural` is (J x (J + J\*)) where J\* is the number of
-#'      non-linear terms.}
-  # \item{`$structural_ordered`}{A matrix of the same dimension as `structural`
-  #   with rows rearranged to satisfy the following criteria. 1. the construct
-  #   in the first row depends on exogenous constructs only. 2. the constructs
-  #   of the following rows depend only on exogenous constructs or those
-  #   of previous rows. This is required to estimate non-linear structural equation
-  #   model relationships using the replacement approach.
-  #   }
-#'   \item{`$measurement`}{A (J x K) matrix mimicking the measurement relationship
-#'     between constructs and their related indicators with row names equal to
-#'     the construct names and column names equal to the indicator names.}
-#'   \item{`$error_cor`}{A (K x K) matrix mimicking the measurement error
-#'     correlation relationship.}
-#'   \item{`$construct_type`}{A named vector containing the names of each construct
-#'    and their respective type (**"Common factor"** or **"Composite"**).}
-#'   \item{`$model_type`}{The type of model (linear or nonlinear).}
-#'   \item{`$vars_endo`}{A vector of names of the endogenous constructs.}
-#'   \item{`$vars_exo`}{A vector of names of the exogenous constructs (incudes
-#'     possible interaction and exponential terms).}
-#'   \item{`$vars_explana`}{ A vector of names of the constructs that appear as
-#'     explanatory variables in at least one structural equation (incudes
-#'     possible interaction and exponential terms).}
-#'   \item{`$explained_by_exo`}{A vector of names of the constructs that are
-#'     solely explained by exogenous constructs.}
+#' Classification is required to estimate nonlinear structural relationships.
+#' Currently the following terms are supported
+#' \itemize{
+#' \item Single, e.g., `eta1`
+#' \item Quadratic, e.g., `eta1.eta1`
+#' \item Cubic, e.g., `eta1.eta1.eta1`
+#' \item Two-way interaction, e.g., `eta1.eta2`
+#' \item Three-way interaction, e.g., `eta1.eta2.eta3`
+#' \item Quadratic and two-way interaction, e.g., `eta1.eta1.eta3`
 #' }
-#' Note: it is possible to supply an incomplete cSEMModel list
-#' to all functions that require `.csem_model` as a mandatory argument. Currently,
-#' only the structural and the measurement matrix are required.
-#' However, specifying an incomplete cSEMModel list may lead to unexpected behaviour 
-#' and errors so do use this technique with caution.
+#' Note that exponential terms are modeled as "interactions with itself"
+#' as in i.e., `eta1^3 = eta1.eta1.eta1`.
 #'
-#' @seealso [parseModel]
-#' @name csem_model
-#' @aliases cSEMModel
-NULL
+#' @usage classifyConstructs(.terms = args_default()$.terms)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @return A named list of length equal to the number of terms provided containing
+#'   a data frame with columns "*Term_class*", "*Component*",
+#'   "*Component_type*", and "*Component_freq*".
+#' @keywords internal
 
-#' cSEMResults
-#'
-#' @return
-#' An object of class `cSEMResults` for which the following methods exist:
-#' \describe{
-#'   \item{`print.cSEMResults`}{Prints a message to inform the user
-#'   whether estimation has been successful and what functions may be used
-#'   to examine the object.}
-#'   \item{`summary.cSEMResults`}{Print and return a comprehensive summary of the results.}
-#' }
-#' Technically `cSEMResults` is a named list containing the following list elements:
-#' \describe{
-#'   \item{`$Estimates`}{A list containing the estimated quantities.}
-#'   \item{`$Information`}{A list of additional information. (incomplete)}
-#' }
-#'
-#' @name csem_results
-#' @aliases cSEMResults
-NULL
-
-#' cSEMResultssummary
-#'
-#' @return
-#' An object of class `cSEMResultssummary` for which the following methods exist:
-#' \describe{
-#'   \item{`print.cSEMResultssummary`}{Prints a summary.}
-#' }
-#' Technically `cSEMResultssummary` is a named list containing the following list elements:
-#' \describe{
-#'   \item{`...}{Not finished yet.}
-#' }
-#'
-#' @name csem_resultssummary
-#' @aliases cSEMResultssummary
-NULL
-
-#' cSEMTestResults
-#'
-#' @return
-#' A standarized list of class `cSEMTestResults` for which the following methods exists:
-#' \describe{
-#'   \item{`print.cSEMTestResults`}{A formated summary of the test.}
-#'   \item{`summary.cSEMTestResults`}{A formated summary of the test (identical to `print.cSEMTestResults`).}
-#' }
-#' Technically `cSEMTestResults` is a named list containing the following list elements:
-#' \describe{
-#'   \item{`$Test_statistic`}{The value of test statistic.}
-#'   \item{`$Critical_value`}{The critical value.}
-#'   \item{`$Decision`}{The test decision. One of: **Reject** or *Do not reject*}
-#'   \item{`$Number_addmissibles`}{The number of admissible runs. See xxx for what
-#'   constitutes an **inadmissible run**.}
-#' }
-#'
-#' @name csem_testresults
-#' @aliases cSEMTestResults
-NULL
+classifyConstructs <- function(.terms = args_default()$.terms) {
+  ## Split term
+  terms_split <- strsplit(.terms, "\\.")
+  
+  ## Count instances of each construct name (used for classifying)
+  terms_classified <- lapply(terms_split, function(.x) {
+    x <- .x %>%
+      table(.) %>%
+      as.data.frame(., stringsAsFactors = FALSE)
+    
+    ## To save typing
+    a <- sum(x$Freq)
+    b <- length(unique(x$.))
+    
+    ## Do the actual classification --------------------------------------------
+    
+    if(a > 3) {
+      stop("The nonlinear term(s): ", paste0("`", .terms, "`", collapse = ", "), 
+           ifelse(length(.terms == 1, " is", " are")), " currently not supported.\n",
+           "Please see ?classifyConstructs for a list of supported terms.",
+           call. = FALSE)
+    } else {
+      switch(a,
+             "1" = {
+               x <- data.frame("Term_class"     = "Single",
+                               "Component"      = x$.,
+                               "Component_type" = "Single",
+                               "Component_freq" = x$Freq,
+                               stringsAsFactors = FALSE)
+             },
+             "2" = {
+               if(b == 1) {
+                 x <- data.frame("Term_class"     = "Quadratic",
+                                 "Component"      = x$.,
+                                 "Component_type" = "Quadratic",
+                                 "Component_freq" = x$Freq,
+                                 stringsAsFactors = FALSE)
+               } else if (b == 2){
+                 x <- data.frame("Term_class"     = "TwInter",
+                                 "Component"      = x$.,
+                                 "Component_type" = c("Single", "Single"),
+                                 "Component_freq" = x$Freq,
+                                 stringsAsFactors = FALSE)
+               }
+             },
+             "3" = {
+               if(b == 1) {
+                 x <- data.frame("Term_class"     = "Cubic",
+                                 "Component"      = x$.,
+                                 "Component_type" = "Cubic",
+                                 "Component_freq" = x$Freq,
+                                 stringsAsFactors = FALSE)
+               } else if (b == 2) {
+                 x <- data.frame("Term_class"     = "QuadTwInter",
+                                 "Component"      = x$.,
+                                 "Component_type" =
+                                   ifelse(x$Freq == 1, "Single", "Quadratic"),
+                                 "Component_freq" = x$Freq,
+                                 stringsAsFactors = FALSE)
+               } else if (b == 3) {
+                 
+                 x <- data.frame("Term_class"     = "ThrwInter",
+                                 "Component"      = x$.,
+                                 "Component_type" =
+                                   c("Single", "Single", "Single"),
+                                 "Component_freq" = x$Freq,
+                                 stringsAsFactors = FALSE)
+               }
+             }
+      ) # END switch
+    } # END else
+  }) # END lapply
+  
+  names(terms_classified) <- unlist(.terms)
+  terms_classified
+}

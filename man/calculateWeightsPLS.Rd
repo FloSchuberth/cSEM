@@ -4,14 +4,15 @@
 \alias{calculateWeightsPLS}
 \title{Calculate composite weights using PLS}
 \usage{
-calculateWeights(
-  .data                        = NULL,
-  .model                       = NULL,
-  .PLS_modes                   = NULL,
-  .tolerance                   = NULL,
-  .iter_max                    = NULL,
-  .PLS_ignore_structural_model = NULL
-  .PLS_weight_scheme_inner     = NULL,
+calculateWeightsPLS(
+  .data                        = args_default()$.data,
+  .model                       = args_default()$.model,
+  .conv_criterion              = args_default()$.conv_criterion,
+  .iter_max                    = args_default()$.iter_max,
+  .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model
+  .PLS_modes                   = args_default()$.PLS_modes,
+  .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
+  .tolerance                   = args_default()$.tolerance
    )
 }
 \arguments{
@@ -20,15 +21,9 @@ calculateWeights(
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
 
-\item{.PLS_modes}{Either a named vector specifying the mode that should be used for
-each construct in the form \code{"name" = "mode"}, a single character
-string giving the mode that should be used for all constructs, or \code{NULL}.
-Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
-If \code{NULL}, \code{csem()} will choose the appropriate mode according to the type
-of construct used. Ignored if \code{.approach_weight} is not PLS.}
-
-\item{.tolerance}{Double. The tolerance criterion for convergence.
-Defaults to \code{1e-05}.}
+\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+to "\emph{diff_absolute}".}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS"} one-step weights are returned.
@@ -39,25 +34,35 @@ If the algorithm exceeds the specified number, weights of iteration step
 when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.
 Ignored if \code{.approach_weights} is not PLS.}
 
+\item{.PLS_modes}{Either a named vector specifying the mode that should be used for
+each construct in the form \code{"name" = "mode"}, a single character
+string giving the mode that should be used for all constructs, or \code{NULL}.
+Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
+If \code{NULL}, \code{csem()} will choose the appropriate mode according to the type
+of construct used. Ignored if \code{.approach_weight} is not PLS.}
+
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
 used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
+
+\item{.tolerance}{Double. The tolerance criterion for convergence.
+Defaults to \code{1e-05}.}
 }
 \value{
-A list with the following elements:
+A list with the elements
 \describe{
 \item{\code{$W}}{A (J x K) matrix of estimated weights.}
 \item{\code{$E}}{A (J x J) matrix of inner weights.}
 \item{\code{$Modes}}{A named vector of Modes used for the outer estimation.}
 \item{\code{$Conv_status}}{The convergence status. One of \code{TRUE}or \code{FASLE}. If
-one-step weights are used via \code{.iter_max = 1} the convergence status
-is set to \code{NULL}.}
+one-step weights are used via \code{.iter_max = 1} or no iterative algorithm was used,
+the convergence status is set to \code{NULL}.}
 \item{\code{$Iterations}}{The number of iterations used.}
 }
 }
 \description{
-Calculates composite weights using the PLS algorithm.
+Calculates composite weights using the PLS algorithm. (TODO)
 }
 \details{
-More description here
+More details here. (TODO)
 }

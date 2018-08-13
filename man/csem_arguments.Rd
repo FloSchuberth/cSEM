@@ -3,7 +3,6 @@
 \name{csem_arguments}
 \alias{csem_arguments}
 \alias{cSEMArguments}
-\alias{csem_parameters}
 \title{cSEMArguments}
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
@@ -23,7 +22,7 @@ structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}".
+structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
 Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
@@ -31,16 +30,25 @@ obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
-\item{.args_used}{A list of function argument names to \code{foo()} whose value
-was modified by the user. Usually captured by \code{as.list(match_call())[-1]}
-within the body of \code{foo()}.}
+\item{.args_used}{A list of function argument names to \code{fun()} whose value
+was modified by the user.}
 
 \item{.C}{A (J x J) composite variance-covariance matrix.}
+
+\item{.choices}{Logical. Should candidate values for the arguments be returned?
+Defaults to \code{FALSE}.}
+
+\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+to "\emph{diff_absolute}".}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
-if the construct is modelled as a common factor? Defaults to \code{TRUE}.}
+if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+
+\item{.distance}{Character string. A distance measure. One of: "\emph{geodesic}"
+or "\emph{squared_euclidian}". Defaults to "\emph{geodesic}".}
 
 \item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
 where \code{"value"} is a character string giving the name of the dominant indicator
@@ -57,8 +65,8 @@ be estimated? Defaults to \code{TRUE}.}
 
 \item{.H}{The (N x J) matrix of construct scores.}
 
-\item{.id}{Charachter string. The name of the column of \code{.data} used to split
-the date into groups.}
+\item{.id}{Character string. The name of the column of \code{.data} used to split
+the data into groups. Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS"} one-step weights are returned.
@@ -69,7 +77,11 @@ If the algorithm exceeds the specified number, weights of iteration step
 
 \item{.matrix2}{A \code{matrix} to compare.}
 
-\item{.modes}{A named vector giving the mode used to obtain new outer weights.}
+\item{.matrices}{A list of at least two matrices.}
+
+\item{.modes}{A vector specifying the mode that should be used for
+each construct in the form \code{"name" = "mode"}, where \code{"name"} refers to the
+construct name and `"mode"`` is one of \emph{"ModeA"} or \emph{"ModeB"}.}
 
 \item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
 For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
@@ -78,8 +90,10 @@ Defaults to \code{TRUE}. Ignored if the model is linear.}
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
 \item{.only_dots}{Logical. Should only arguments to be passed to lower level
-functions via the  \code{...} argument of the \code{\link[=csem]{csem()}} or \code{\link[=cca]{cca()}} function be returned.
+functions via the  \code{...} argument of the \code{fun} function be returned.
 Defaults to \code{FALSE}.}
+
+\item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
@@ -110,7 +124,7 @@ Q^2 is also called the reliability coefficient.}
 where \code{value} is a number between 0 and 1 and \code{"name"} a character string
 of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
-reliabilites are estimated by \code{csem()}.}
+reliabilities are estimated by \code{csem()}.}
 
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
 
@@ -126,12 +140,17 @@ Defaults to \code{1e-05}.}
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
 
-\item{.W}{A list with elements \code{$W}, \code{$E}, \code{Modes}, \code{Conv_status}, and
-\code{Iterations}.}
+\item{.W}{A (J x K) matrix of weights.}
 
-\item{...}{Further arguments to be passed down to other functions.
-See \code{\link[=args_default]{args_default()}} with \code{.only_dots = TRUE} for a complete list
-of possible arguments and their defaults.}
+\item{.W_new}{A (J x K) matrix of weights.}
+
+\item{.W_old}{A (J x K) matrix of weights.}
+
+\item{.which_fun}{Character string. The \code{...} argument names and values of which
+function should be returned? One of: \code{"csem"} or \code{"cca"}. Defaults to \code{"csem"}.
+Currently ignored if \code{.only_dots = FALSE}.}
+
+\item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 }
 \description{
 An alphabetical list of all arguments used by functions of the \code{cSEM} package,
