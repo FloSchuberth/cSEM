@@ -15,7 +15,3 @@ HTMT = function(.object){
   
 }
 
-
-# something new
-
-# more text
