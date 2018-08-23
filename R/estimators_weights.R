@@ -143,6 +143,7 @@ calculateWeightsPLS <- function(
       warning("The PLS algorithm did not converge after ", iter_max, " steps. ",
               "Last weights are returned.", 
               call. = FALSE)
+      break
       
     } else {
       W_iter <- W
