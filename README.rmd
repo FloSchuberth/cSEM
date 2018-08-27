@@ -22,7 +22,7 @@ procedures (e.g., computing a model-implied covariance or effects).
 ```{r, eval = FALSE}
 # Currently only a development version from GitHub is available:
 # install.packages("devtools")
-devtools::install_github("M-E-Steiner/cSEM")
+devtools::install_github("M-E-Rademaker/cSEM")
 ```
 
 ## Philopsophy/Goals/Ideas
