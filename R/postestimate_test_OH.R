@@ -4,7 +4,7 @@
 #' 
 #' More details here (TODO).
 #' 
-#' @usage testOverallMGA(
+#' @usage testOH(
 #'  .object             = args_default()$.model,
 #'  .alpha              = args_default()$.alpha,
 #'  .drop_inadmissibles = args_default()$.drop_inadmissibles,
@@ -26,7 +26,7 @@
 #'
 #' @export
 
-testOverallMGA <- function(
+testOH <- function(
   .object             = args_default()$.model,
   .alpha              = args_default()$.alpha,
   .drop_inadmissibles = args_default()$.drop_inadmissibles,
@@ -135,9 +135,9 @@ testOverallMGA <- function(
       stop("cSEM requires the parallel package")
     } 
     # Prepare parallelization
-    .cores <- parallel::detectCores()
-    cluster = parallel::makeCluster(.cores, type="SOCK")
-    registerDoSNOW(cluster)
+    core= detectCores()
+    cl <- makeCluster(core)
+    registerDoParallel(cl)
     
     permEstimates <- foreach(iPerm = 1:.runs) %dopar% {
                                # permutate data
@@ -183,7 +183,7 @@ testOverallMGA <- function(
                                }
                              }
     # Stop Cluster
-    stopCluster(cluster)
+    stopCluster(cl)
   }
   
   
@@ -195,11 +195,11 @@ testOverallMGA <- function(
   
   if(length(.alpha) > 1){
     decision <- t(apply(critical_value, 1, function(x){
-      ifelse(teststat < x, "Do not reject", "Reject")
+      ifelse(teststat > x, TRUE, FALSE)
       }))
   }
   if(length(.alpha) == 1){
-    decision <- ifelse(teststat < critical_value, "Do not reject", "Reject")
+    decision <- ifelse(teststat > critical_value, TRUE, FALSE)
   }
   out <- list(
     "Hypothesis"         = paste0("H0: No significant difference between groups."),

@@ -30,11 +30,11 @@ Imports: alabama,
     Rdpack,
     symmoments
 RdMacros: Rdpack
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: knitr,
     rmarkdown,
     listviewer,
-    doSNOW,
-    parallel
+    foreach,
+    doParallel
 VignetteBuilder: knitr
