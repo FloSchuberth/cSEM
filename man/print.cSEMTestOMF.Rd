@@ -2,7 +2,7 @@
 % Please edit documentation in R/zz_print.R
 \name{print.cSEMTestOMF}
 \alias{print.cSEMTestOMF}
-\title{\code{cSEMTest} method for \code{print()}}
+\title{\code{cSEMTestOMF} method for \code{print()}}
 \usage{
 print(.object)
 }
@@ -10,7 +10,7 @@ print(.object)
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 }
 \description{
-The \code{cSEMTest} method for the generic function \code{\link[=print]{print()}}.
+The \code{cSEMTestOMF} method for the generic function \code{\link[=print]{print()}}.
 }
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
