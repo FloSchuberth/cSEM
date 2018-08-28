@@ -3,6 +3,7 @@
 S3method(effects,cSEMResults)
 S3method(print,cSEMResults)
 S3method(print,cSEMSummary)
+S3method(print,cSEMTestOMF)
 S3method(print,cSEMVerify)
 S3method(print,testMICOM)
 S3method(summary,cSEMResults)

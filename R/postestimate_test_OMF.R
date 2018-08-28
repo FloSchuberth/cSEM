@@ -99,27 +99,20 @@ testOMF <- function(
                             )
   
   if (length(.alpha) > 1) {
-    decision <- t(apply(critical_value, 1, function(x) {
-      if(teststat < x) {
-        "Do not reject"
-      } else {
-        "Reject"
-      }
-  }))}
+    decision <- t(apply(critical_value, 1, function(x) {teststat < x}))
+  }
     
   if (length(.alpha) == 1) {
-    decision <- ifelse(teststat < critical_value, "Do not reject", "Reject")
+    decision <- teststat < critical_value
   }
   
   out <- list(
-    "Hyothesis"          = paste0("H0: No significant difference between empirical\n", 
-                                  "and model-implied indicator covariance matrix."),
     "Test_statistic"     = teststat,
     "Critical_value"     = critical_value, 
     "Decision"           = decision, 
     "Number_admissibles" = ncol(ref_dist_matrix)
     ) 
   
-  class(out) <- "cSEMTest"
+  class(out) <- "cSEMTestOMF"
   return(out)
 }

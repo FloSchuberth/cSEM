@@ -152,3 +152,66 @@ print.cSEMVerify <- function(.object) {
     cat("\t", i, ": ", col_align(ifelse(.object[i] == FALSE, green("ok"), red("not ok")), 8), text[i], "\n", sep = "")
   }
 }
+
+#' `cSEMTestOMF` method for `print()`
+#'
+#' The `cSEMTestOMF` method for the generic function [print()]. 
+#'
+#' @usage print(.object)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#'
+#' @export
+#'
+print.cSEMTestOMF <- function(.object) {
+  cat("Null Hypothesis:\n\n", 
+      boxx(c("H0: No significant difference between empirical and", 
+       "model-implied indicator covariance matrix."), padding = 1, float = "center"), sep = "")
+  
+  cat("\n\nTest statistics and critical values: \n\n\t", sep = "")
+  
+  cat(col_align("", width = 20, align = "left"),
+      col_align("", 18, align = "left"), "\t",
+      col_align("Critical Value(s)", 8*nrow(.object$Critical_value), align = "center"), "\n\t",
+      col_align("Distance Measure", width = 20, align = "left"),
+      col_align("Test statistic", 18, align = "left"), "\t",
+      sep = "")
+  
+  for(i in rownames(.object$Critical_value)) {
+    cat(col_align(i, 6, align = "center"), "\t", sep = "")
+  }
+  cat("\n\t")
+  for(j in seq_along(.object$Test_statistic)) {
+    cat(col_align(names(.object$Test_statistic)[j], 20),
+        col_align(sprintf("%.4f", .object$Test_statistic[j]), 18), "\t", sep = "")
+    for(k in 1:nrow(.object$Critical_value)) {
+      cat(sprintf("%.4f", .object$Critical_value[k, j]), "\t",
+          sep = "")
+    }
+    cat("\n\t")
+  }
+  
+  cat("\n\nDecisions \n\n\t", sep = "")
+  
+  cat(col_align("", width = 20, align = "left"), "\t",
+      col_align("Significance level", 8*nrow(.object$Critical_value), align = "center"), "\n\t",
+      col_align("Distance Measure", width = 20, align = "left"), "\t",
+      sep = "")
+  
+  for(i in rownames(.object$Critical_value)) {
+    cat(col_align(i, 8, align = "center"), "\t", sep = "")
+  }
+  cat("\n\t")
+  for(j in seq_along(.object$Test_statistic)) {
+    cat(col_align(names(.object$Test_statistic)[j], 20), "\t", sep = "")
+    for(k in 1:nrow(.object$Critical_value)) {
+      cat(col_align(ifelse(.object$Decision[k, j], "Do not reject", "reject"), 8), "\t", sep = "")
+    }
+    cat("\n\t")
+  }
+ 
+  cat("\nThere are", .object$Number_admissibles, "admisibles results. See `?verfiy`",
+      "for what constitutes an inadmissible result.", sep = "")
+}
