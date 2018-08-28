@@ -20,7 +20,7 @@ covariance or effects).
 ``` r
 # Currently only a development version from GitHub is available:
 # install.packages("devtools")
-devtools::install_github("M-E-Steiner/cSEM")
+devtools::install_github("M-E-Rademaker/cSEM")
 ```
 
 ## Philopsophy/Goals/Ideas
