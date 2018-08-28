@@ -1,4 +1,4 @@
-#' Test for group differences
+#' Test for multi group differences (MGD)
 #'
 #' What it does (TODO).
 #' 
@@ -26,7 +26,7 @@
 #'
 #' @export
 
-testOH <- function(
+testMGD <- function(
   .object             = args_default()$.model,
   .alpha              = args_default()$.alpha,
   .drop_inadmissibles = args_default()$.drop_inadmissibles,
