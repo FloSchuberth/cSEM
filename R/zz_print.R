@@ -170,12 +170,12 @@ print.cSEMTestOMF <- function(.object) {
       boxx(c("H0: No significant difference between empirical and", 
        "model-implied indicator covariance matrix."), padding = 1, float = "center"), sep = "")
   
-  cat("\n\nTest statistics and critical values: \n\n\t", sep = "")
+  cat("\n\nTest statistic and critical value: \n\n\t", sep = "")
   
   cat(col_align("", width = 20, align = "left"),
       col_align("", 18, align = "left"), "\t",
-      col_align("Critical Value(s)", 8*nrow(.object$Critical_value), align = "center"), "\n\t",
-      col_align("Distance Measure", width = 20, align = "left"),
+      col_align("Critical value", 8*nrow(.object$Critical_value), align = "center"), "\n\t",
+      col_align("Distance measure", width = 20, align = "left"),
       col_align("Test statistic", 18, align = "left"), "\t",
       sep = "")
   
@@ -193,11 +193,11 @@ print.cSEMTestOMF <- function(.object) {
     cat("\n\t")
   }
   
-  cat("\n\nDecisions \n\n\t", sep = "")
+  cat("\n\nDecision: \n\n\t", sep = "")
   
   cat(col_align("", width = 20, align = "left"), "\t",
       col_align("Significance level", 8*nrow(.object$Critical_value), align = "center"), "\n\t",
-      col_align("Distance Measure", width = 20, align = "left"), "\t",
+      col_align("Distance measure", width = 20, align = "left"), "\t",
       sep = "")
   
   for(i in rownames(.object$Critical_value)) {
@@ -211,7 +211,8 @@ print.cSEMTestOMF <- function(.object) {
     }
     cat("\n\t")
   }
- 
-  cat("\nThere are", .object$Number_admissibles, "admisibles results. See `?verfiy`",
-      "for what constitutes an inadmissible result.", sep = "")
+
+  cat("\nAdditonal information:")
+  cat("\n\n\tThere are ", .object$Number_admissibles, " admisibles bootstrap results.\n\tSee `?verfiy`",
+      " for what constitutes an inadmissible result.", sep = "")
 }
