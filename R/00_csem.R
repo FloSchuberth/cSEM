@@ -38,7 +38,7 @@
 #' or "*unit weight*". *Generalized Structured Component Analysis* (*GSCA*) may
 #' also be chosen as a weighing approach although technically GSCA obtains weight
 #' and structural coefficient estimates simultaneously. Hence, setting
-#' `.approach_weights = "GSCA"` automatically sets `.approach_path = "GSCA"` (and
+#' `.approach_weights = "GSCA"` automatically sets `.approach_paths = "GSCA"` (and
 #' vice-versa).
 #'
 #' For PLS composite-indicator and composite-composite correlations are properly
