@@ -36,10 +36,11 @@ print.cSEMResults <- function(.object) {
       "(", cyan("<object-name>"), ", ", red("mode"), " = ", cyan("'view'"), ")\n\n", sep = "")
   cat("If you wish to access the list elements directly type e.g. \n\n\t",
       "- ", cyan("<object-name>"), yellow("$"), green("Estimates"), "\n\n", sep = "")
-  cat("Frequently used available postestimation commands:\n\n\t",
-      "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t",
+  cat("Available postestimation commands:\n\n\t",
+      "- ", magenta("check"), "(", cyan("<object-name>"), ")\n\t",
+      "- ", magenta("fit"), "(", cyan("<object-name>"), ")\n\t",
+      "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t"  ,
       "- ", magenta("test"), "(", cyan("<object-name>"), ")\n\t"  ,
-      "- ", magenta("check"), "(", cyan("<object-name>"), ")\n\t"  ,
       "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n", sep = "")
   cat(rule(line = "bar2"), "\n")
 }
