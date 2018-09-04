@@ -90,41 +90,43 @@ print.cSEMSummarize <- function(.object) {
   cat(
     col_align("\n\tPath estimator", 25), "= ", x2$Arguments$.approach_paths,
     col_align("\n\tType of path model", 25), "= ", x2$Model$model_type,
+    col_align("\n\tDisattenuated", 25), "= ", ifelse(x2$Arguments$.disattenuate, "Yes", "no"),
     sep = "")
   
-  cat("\n\n\tConstruct modeled as:\n\t","----------------", sep = "")
+  cat("\n\n\tConstruct modeled as:\n\t","---------------------", sep = "")
+  l <- max(nchar(names(x2$Model$construct_type)))
 
   for(i in names(x2$Model$construct_type)) {
-    cat("\n\t", col_align(i, 10), ": ", x2$Model$construct_type[i], sep = "")
+    cat("\n\t", col_align(i, l + 2), ": ", x2$Model$construct_type[i], sep = "")
   }
 
   if(x2$Arguments$.approach_weights == "PLS") {
-    cat("\n\n\tPLS Modes:\n\t","----------------", sep = "")
+    cat("\n\n\tPLS Modes:\n\t","----------", sep = "")
 
     for(i in names(x2$Weight_info$Modes)) {
-      cat("\n\t", col_align(i, 10), ": ", x2$Weight_info$Modes[i], sep = "")
+      cat("\n\t", col_align(i, l + 2), ": ", x2$Weight_info$Modes[i], sep = "")
     }
   }
 
   cat("\n\n", rule(center = "Estimates"), "\n\n", sep = "")
 
   cat("Estimated Path Coefficients:\n============================", sep = "")
-  
   l <- max(nchar(x1$Path_estimates[, 1]))
   
+  cat("\n\t", col_align("", l + 2), col_align("Estimate"))
   for(i in 1:nrow(x1$Path_estimates)) {
     cat("\n\t", col_align(x1$Path_estimates[i, 1], l + 2), 
-        col_align(sprintf("%.4f", x1$Path_estimates[i, 2]), 8, align = "right"), 
+        col_align(sprintf("%.4f", x1$Path_estimates[i, 2]), 10, align = "right"), 
         sep = "")
   }
   
   cat("\n\nEstimated Loadings:\n===================", sep = "")
-  
   l <- max(nchar(x1$Loading_estimates[, 1]))
   
+  cat("\n\t", col_align("", l + 2), col_align("Estimate"))
   for(i in 1:nrow(x1$Loading_estimates)) {
     cat("\n\t", col_align(x1$Loading_estimates[i, 1], l + 2), 
-        col_align(sprintf("%.4f", x1$Loading_estimates[i, 2]), 8, align = "right"), 
+        col_align(sprintf("%.4f", x1$Loading_estimates[i, 2]), 10, align = "right"), 
         sep = "")
   }
 
@@ -132,9 +134,10 @@ print.cSEMSummarize <- function(.object) {
   cat("\n\nEstimated Weights:\n==================\n", sep = "")
   l <- max(nchar(x1$Weight_estimates[, 1]))
   
+  cat("\n\t", col_align("", l + 2), col_align("Estimate"))
   for(i in 1:nrow(x1$Weight_estimates)) {
     cat("\n\t", col_align(x1$Weight_estimates[i, 1], l + 2), 
-        col_align(sprintf("%.4f", x1$Weight_estimates[i, 2]), 8, align = "right"), 
+        col_align(sprintf("%.4f", x1$Weight_estimates[i, 2]), 10, align = "right"), 
         sep = "")
   }
 

@@ -1,9 +1,9 @@
 Package: cSEM
 Title: Composite Based Structural Equation Modeling
 Version: 0.0.0.9000
-Authors@R: c(person(given = "Manuel", family = "Steiner",
+Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     role  = c("aut", "cre"),
-                    email = "manuel.steiner@uni-wuerzburg.de"),
+                    email = "manuel.rademaker@uni-wuerzburg.de"),
              person(given = "Florian", family = "Schuberth",
                     role  = c("aut"),
                     email = "f.schuberth@utwente.nl"),

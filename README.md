@@ -60,38 +60,68 @@ devtools::install_github("M-E-Rademaker/cSEM")
     data(satisfaction)
     
     ## Note: the opeartor "<~" tells cSEM that the construct to its left is modelled
-             as a composite.
-             the operator "=~" tells cSEM that the construct to its left is modelled
-             as a common factor.
-             
+    ##       as a composite.
+    ##       the operator "=~" tells cSEM that the construct to its left is modelled
+    ##       as a common factor.
+    
     model <- "
-    # Structural model
-    EXPE ~ IMAG
-    QUAL ~ EXPE
-    VAL  ~ EXPE + QUAL + QUAL.EXPE
-    SAT  ~ IMAG + EXPE + QUAL + VAL + IMAG.IMAG
-    LOY  ~ IMAG + SAT
-    
-    # Measurement model
-    
-    IMAG <~ imag1 + imag2 + imag3
-    EXPE <~ expe1 + expe2 + expe3 
-    QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
-    VAL  <~ val1  + val2  + val3
-    SAT  =~ sat1  + sat2  + sat3  + sat4
-    LOY  =~ loy1  + loy2  + loy3  + loy4
-    "
+        # Structural model
+        EXPE ~ IMAG
+        QUAL ~ EXPE
+        VAL  ~ EXPE + QUAL + QUAL.EXPE
+        SAT  ~ IMAG + EXPE + QUAL + VAL + IMAG.IMAG
+        LOY  ~ IMAG + SAT
+        
+        # Measurement model
+        
+        IMAG <~ imag1 + imag2 + imag3
+        EXPE <~ expe1 + expe2 + expe3 
+        QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
+        VAL  <~ val1  + val2  + val3
+        SAT  =~ sat1  + sat2  + sat3  + sat4
+        LOY  =~ loy1  + loy2  + loy3  + loy4
+        "
     
     a <- csem(.data = satisfaction, .model = model)
     a
     
-    ## Access elements using $. E.g.
-    a$Estimates # or
+    ## Access elements using `$`. E.g.
+    a$Estimates$Loading_estimates # or
     a$Information$Model
     
-    ## Apply postestimation functions, e.g.
-    verify(a) # no print method yet
-    fit(a) # computes the model-implied indicator covariance matrix
+    ## Examine the structure:
+    listviewer::jsonedit(a, mode = "view") # requires the listviewer package.
     
     ## Get a summary
-    summarize(a) # currently not working
+    summarize(a) # preliminary
+    
+    # Currently only `summarize()` works for nonlinear models. 
+    
+    # Alter the model to obtain a linear model:
+    
+    model <- "
+        # Structural model
+        EXPE ~ IMAG
+        QUAL ~ EXPE
+        VAL  ~ EXPE + QUAL
+        SAT  ~ IMAG + EXPE + QUAL + VAL
+        LOY  ~ IMAG + SAT
+        
+        # Measurement model
+        
+        IMAG <~ imag1 + imag2 + imag3
+        EXPE <~ expe1 + expe2 + expe3 
+        QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
+        VAL  <~ val1  + val2  + val3
+        SAT  =~ sat1  + sat2  + sat3  + sat4
+        LOY  =~ loy1  + loy2  + loy3  + loy4
+        "
+    
+    a <- csem(.data = satisfaction, .model = model)
+    
+    ## Apply postestimation functions, e.g.
+    verify(a) 
+    fit(a) # computes the model-implied indicator covariance matrix
+    
+    ## Test overall model fit
+    testOMF(a) # takes roughly 30 seconds
