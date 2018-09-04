@@ -11,26 +11,33 @@
 #' @export
 #' 
 print.cSEMResults <- function(.object) {
+    
+  cat(
+    rule(line = "bar2"), "\n",
+    rule(center = "Overview"), 
+    sep = "")
   
-  cat(rule(line = "bar2"), "\n")
-  cat(rule(center = "Overview"), "\n\n")
-  
-  if(!all(names(.object) %in% c("Estimates", "Information"))) {
-    cat("Estimation status by group/data set:\n\n\t")
+  if(attr(.object, "single") == FALSE) {
+    cat("\n\nEstimation status by group/data set:\n", sep = "")
     for(i in names(.object)) {
-      cat(col_align(cyan(i), 15), ": ",
+      cat("\n\t", col_align(cyan(i), 15), ": ",
           ifelse(.object[[i]]$Information$Weight_info$Convergence_status == TRUE, 
-                 green("successful\n\t"), red("not successful\n\t")), sep = "")
+                 green("successful"), red("not successful")), sep = "")
     }
+    cat("\n\nThe result for each group/data set is a list of class " %+% bold("cSEMResults") %+%"", 
+        "\nwith list elements:\n\n\t", sep = "")
+    
   } else {
-    cat("Estimation was ", ifelse(.object$Information$Weight_info$Convergence_status == TRUE, 
-                                  green("successful.\n"), red("not successful.\n")), sep = "") 
+    cat(
+      "\n\nEstimation was ", ifelse(.object$Information$Weight_info$Convergence_status == TRUE, 
+                                    green("successful."), red("not successful.")), sep = "") 
+    cat("\n\nThe result is a list of class " %+% bold("cSEMResults") %+%" with list elements:\n\n\t")
   }
-  cat("\nThe result is a list of class " %+% bold("cSEMResults") %+%" with list elements:\n\n\t",
+  cat(
       "- ", green("Estimates\n\t"),
       "- ", green("Information\n\n"), sep = "")
   cat("To get an overview or help type:\n\n\t",
-      "- ", magenta("?"), cyan("cSEMResults"),"\n\t",
+      "- ", yellow("?"), cyan("cSEMResults"),"\n\t",
       "- ", magenta("str"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("listviewer"), yellow("::"), magenta("jsondedit"),
       "(", cyan("<object-name>"), ", ", red("mode"), " = ", cyan("'view'"), ")\n\n", sep = "")
@@ -57,68 +64,97 @@ print.cSEMResults <- function(.object) {
 #'
 #' @export
 #'
-print.cSEMSummary <- function(.object) {
-  cat(cli::rule(line = "bar2"), "\n",
-      cli::rule(center = "General Information"), "\n\n\t", sep = "")
+
+print.cSEMSummarize <- function(.object) {
   
-  cat(crayon::col_align("Number of Observations", 25), "= ", x$Number_of_observations, "\n\t",
-      crayon::col_align("Weight estimator", 25), "= ", x$Weight_estimator, "\n\t", sep = "")
-  if(x$Weight_estimator == "PLS") {
-    cat(crayon::col_align("Inner Weighting Scheme ", 25), "= ", x$PLS_weight_scheme_inner, "\n\t", sep = "")
-  }
+  x1 <- .object$Estimates
+  x2 <- .object$Information
+  
   cat(
-    crayon::col_align("Path estimator", 25), "= ", x$Path_estimator, "\n\t",
-    crayon::col_align("Convergence Status", 25), "= ", c("not yet implemented"), "\n\t",
-    crayon::col_align("Overall model fit", 25), "= ", c("not yet implemented"), "\n\t",
-    crayon::col_align("Degrees of Freedom", 25), "= ", c("not yet implemented"), "\n\t",
-    crayon::col_align("Computation Time", 25), "= ", c("not yet implemented"), "\n\n\t",
+    rule(line = "bar2"), "\n",
+    rule(center = "Overview"), 
+    "\n", sep = "")
+  
+  cat(
+    col_align("\n\tNumber of Observations", 25), "= ", nrow(x2$Arguments$.data),
+    col_align("\n\tWeight estimator", 25), "= ", x2$Arguments$.approach_weights, 
     sep = "")
   
-  cat("Construct Types:\n\t","----------------","\n\t", sep = "")
-  
-  for(i in seq_along(x$Construct_types$Name)) {
-    cat(crayon::col_align(x$Construct_types$Name[i], 10), ": ", x$Construct_types$Type[i],"\n\t", sep = "")
-  }
-  cat("\n")
-  
-  if(x$Weight_estimator == "PLS") {
-    cat("\tPLS Modes:\n\t","----------------","\n\t", sep = "")
-    
-    for(i in seq_along(x$Construct_type$Name)) {
-      cat(crayon::col_align(x$Construct_types$Name[i], 10), ": ", x$PLS_modes[i],"\n\t", sep = "")
-    }
-    cat("\n")
-  }
-  
-  cat(cli::rule(center = "Estimates"), "\n\n", sep = "")
-  
-  cat("Estimated Path Coefficients:\n============================\n", sep = "")
-  print(x$Path_estimates, row.names = FALSE)
-  
-  
-  cat("\nEstimated Loadings:\n===================\n", sep = "")
-  print(x$Loading_estimates, row.names = FALSE)
-  
-  cat("\nEstimated Weights:\n==================\n", sep = "")
-  print(x$Weight_estimates, row.names = FALSE)
-  
-  if(x$Weight_estimator == "PLS") {
-    cat("\nEstimated Correction Factors:\n=============================\n", sep = "")
-    print(x$Correction_factors)
-  }
-  
-  cat("\n\n", cli::rule(center = "Other output"), "\n\n\t", sep = "")
-  
-  cat("<not yet implemented>")
-  
-  cat("\n\n", cli::rule(center = "Fit Indices"), "\n\n\t", sep = "")
-  
-  cat(crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
-      crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
-      crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\n",
+  if(x2$Arguments$.approach_weights == "PLS") {
+    cat(
+      col_align("\n\tInner Weighting Scheme", 25), "= ", 
+      x2$Arguments$.PLS_weight_scheme_inner, 
       sep = "")
+  }
+
+  cat(
+    col_align("\n\tPath estimator", 25), "= ", x2$Arguments$.approach_paths,
+    col_align("\n\tType of path model", 25), "= ", x2$Model$model_type,
+    sep = "")
   
-  cat(cli::rule(line = "bar2"))
+  cat("\n\n\tConstruct modeled as:\n\t","----------------", sep = "")
+
+  for(i in names(x2$Model$construct_type)) {
+    cat("\n\t", col_align(i, 10), ": ", x2$Model$construct_type[i], sep = "")
+  }
+
+  if(x2$Arguments$.approach_weights == "PLS") {
+    cat("\n\n\tPLS Modes:\n\t","----------------", sep = "")
+
+    for(i in names(x2$Weight_info$Modes)) {
+      cat("\n\t", col_align(i, 10), ": ", x2$Weight_info$Modes[i], sep = "")
+    }
+  }
+
+  cat("\n\n", rule(center = "Estimates"), "\n\n", sep = "")
+
+  cat("Estimated Path Coefficients:\n============================", sep = "")
+  
+  l <- max(nchar(x1$Path_estimates[, 1]))
+  
+  for(i in 1:nrow(x1$Path_estimates)) {
+    cat("\n\t", col_align(x1$Path_estimates[i, 1], l + 2), 
+        col_align(sprintf("%.4f", x1$Path_estimates[i, 2]), 8, align = "right"), 
+        sep = "")
+  }
+  
+  cat("\n\nEstimated Loadings:\n===================", sep = "")
+  
+  l <- max(nchar(x1$Loading_estimates[, 1]))
+  
+  for(i in 1:nrow(x1$Loading_estimates)) {
+    cat("\n\t", col_align(x1$Loading_estimates[i, 1], l + 2), 
+        col_align(sprintf("%.4f", x1$Loading_estimates[i, 2]), 8, align = "right"), 
+        sep = "")
+  }
+
+
+  cat("\n\nEstimated Weights:\n==================\n", sep = "")
+  l <- max(nchar(x1$Weight_estimates[, 1]))
+  
+  for(i in 1:nrow(x1$Weight_estimates)) {
+    cat("\n\t", col_align(x1$Weight_estimates[i, 1], l + 2), 
+        col_align(sprintf("%.4f", x1$Weight_estimates[i, 2]), 8, align = "right"), 
+        sep = "")
+  }
+
+  # if(x$Weight_estimator == "PLS") {
+  #   cat("\nEstimated Correction Factors:\n=============================\n", sep = "")
+  #   print(x$Correction_factors)
+  # }
+
+  # cat("\n\n", cli::rule(center = "Other output"), "\n\n\t", sep = "")
+  # 
+  # cat("<not yet implemented>")
+  # 
+  # cat("\n\n", cli::rule(center = "Fit Indices"), "\n\n\t", sep = "")
+  # 
+  # cat(crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
+  #     crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
+  #     crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\n",
+  #     sep = "")
+  
+  cat("\n", rule(line = "bar2"), sep = "")
 }
 
 #' `cSEMVerify` method for `print()`
@@ -135,7 +171,9 @@ print.cSEMSummary <- function(.object) {
 #'
 print.cSEMVerify <- function(.object) {
   
-  cat("Verify admissibility of the model estimates:\n", sep = "")
+  cat(rule(line = "bar2"), sep = "")
+  
+  cat("\n\nVerify admissibility of the model estimates:\n", sep = "")
   
   if(sum(.object) == 0) {
     cat(green("\n\t admissible\n"), sep = "")
@@ -152,6 +190,7 @@ print.cSEMVerify <- function(.object) {
   for(i in names(.object)) {
     cat("\t", i, ": ", col_align(ifelse(.object[i] == FALSE, green("ok"), red("not ok")), 8), text[i], "\n", sep = "")
   }
+  cat(rule(line = "bar2"), sep = "")
 }
 
 #' `cSEMTestOMF` method for `print()`
@@ -167,7 +206,12 @@ print.cSEMVerify <- function(.object) {
 #' @export
 #'
 print.cSEMTestOMF <- function(.object) {
-  cat("Null Hypothesis:\n\n", 
+  
+  cat(
+    rule(line = "bar2"), "\n",
+    rule(center = "Test for Overall Model Fit"), 
+    sep = "")
+  cat("\n\nNull Hypothesis:\n\n", 
       boxx(c("H0: No significant difference between empirical and", 
        "model-implied indicator covariance matrix."), padding = 1, float = "center"), sep = "")
   
@@ -208,12 +252,14 @@ print.cSEMTestOMF <- function(.object) {
   for(j in seq_along(.object$Test_statistic)) {
     cat(col_align(names(.object$Test_statistic)[j], 20), "\t", sep = "")
     for(k in 1:nrow(.object$Critical_value)) {
-      cat(col_align(ifelse(.object$Decision[k, j], "Do not reject", "reject"), 8), "\t", sep = "")
+      cat(col_align(ifelse(.object$Decision[k, j], green("Do not reject"), red("reject")), 8), "\t", sep = "")
     }
     cat("\n\t")
   }
 
   cat("\nAdditonal information:")
-  cat("\n\n\tThere are ", .object$Number_admissibles, " admisibles bootstrap results.\n\tSee `?verfiy`",
-      " for what constitutes an inadmissible result.", sep = "")
+  cat("\n\n\tThere are ", .object$Number_admissibles, " admissibles bootstrap results.\n\t",
+      "See ", yellow("?"), magenta("verify"), "()",
+      " for what constitutes an inadmissible result.\n", sep = "")
+  cat(rule(line = "bar2"), sep = "")
 }

@@ -36,6 +36,13 @@ testOMF <- function(
   .runs                = args_default()$.runs
   ){
   
+  ## Check if single
+  if(attr(.object, "single") == FALSE) {
+    stop("`testOMF()` not applicable to multiple groups or data sets.\n",
+         "Use `lapply(.object, testOMF)` instead.",
+         call. = FALSE)
+  }
+  
   ## Extract required information 
   X         <- .object$Information$Data
   S         <- .object$Estimates$Indicator_VCV

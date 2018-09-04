@@ -140,9 +140,6 @@ calculateWeightsPLS <- function(
     } else if(iter_counter == iter_max & iter_max > 1) {
       # Set convergence status to FALSE, as algorithm has not converged
       conv_status = FALSE
-      warning("The PLS algorithm did not converge after ", iter_max, " steps. ",
-              "Last weights are returned.", 
-              call. = FALSE)
       break
       
     } else {

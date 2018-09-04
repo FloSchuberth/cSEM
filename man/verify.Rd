@@ -27,6 +27,9 @@ Results based on an estimated model exhibiting one of the
 following defects are deemed inadmissible: non-convergence, loadings and/or
 reliabilities larger than 1, a construct VCV and/or a
 model-implied VCV matrix that is not positive (semi-)definite.
+
+Currently \code{verify()} is only implemented for linear models. Future package
+versions will include non-linear models as well.
 }
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
