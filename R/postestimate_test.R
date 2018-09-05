@@ -15,6 +15,12 @@
 
 test <- function(.object, .which_test = "all", ...) {
   
+  if(attr(.object, "single") == FALSE) {
+    stop("`test()` not applicable to multiple groups or data sets.\n",
+         "Use `lapply(.object, test)` instead.",
+         call. = FALSE)
+  }
+  
   ## Select tests to compute
   if(.which_test %in% c("all", "testOMF")) {
     out_omf <- testOMF(.object, ...)
@@ -23,9 +29,9 @@ test <- function(.object, .which_test = "all", ...) {
   }
   
   if(.which_test %in% c("all", "testMGA")) {
-    out_mga <- testMGA(.object, ...)
+    out_mgd <- testMGD(.object, ...)
   } else {
-    out_mga <- "Not computed"
+    out_mgd <- "Not computed"
   }
   
   out <- list(

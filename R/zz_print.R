@@ -266,3 +266,74 @@ print.cSEMTestOMF <- function(.object) {
       " for what constitutes an inadmissible result.\n", sep = "")
   cat(rule(line = "bar2"), sep = "")
 }
+
+#' `cSEMTestMGD` method for `print()`
+#'
+#' The `cSEMTestMGD` method for the generic function [print()]. 
+#'
+#' @usage print(.object)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#'
+#' @export
+#'
+print.cSEMTestMGD <- function(.object) {
+  
+  cat(
+    rule(line = "bar2"), "\n",
+    rule(center = "Test for Multigroup Differences"), 
+    sep = "")
+  cat("\n\nNull Hypothesis:\n\n", 
+      boxx("H0: No significant difference between groups.", 
+           padding = 1, float = "center"), sep = "")
+  
+  cat("\n\nTest statistic and critical value: \n\n\t", sep = "")
+  
+  cat(col_align("", width = 20, align = "left"),
+      col_align("", 18, align = "left"), "\t",
+      col_align("Critical value", 8*nrow(.object$Critical_value), align = "center"), "\n\t",
+      col_align("Distance measure", width = 20, align = "left"),
+      col_align("Test statistic", 18, align = "left"), "\t",
+      sep = "")
+  
+  for(i in rownames(.object$Critical_value)) {
+    cat(col_align(i, 6, align = "center"), "\t", sep = "")
+  }
+  cat("\n\t")
+  for(j in seq_along(.object$Test_statistic)) {
+    cat(col_align(names(.object$Test_statistic)[j], 20),
+        col_align(sprintf("%.4f", .object$Test_statistic[j]), 18), "\t", sep = "")
+    for(k in 1:nrow(.object$Critical_value)) {
+      cat(sprintf("%.4f", .object$Critical_value[k, j]), "\t",
+          sep = "")
+    }
+    cat("\n\t")
+  }
+  
+  cat("\n\nDecision: \n\n\t", sep = "")
+  
+  cat(col_align("", width = 20, align = "left"), "\t",
+      col_align("Significance level", 8*nrow(.object$Critical_value), align = "center"), "\n\t",
+      col_align("Distance measure", width = 20, align = "left"), "\t",
+      sep = "")
+  
+  for(i in rownames(.object$Critical_value)) {
+    cat(col_align(i, 8, align = "center"), "\t", sep = "")
+  }
+  cat("\n\t")
+  for(j in seq_along(.object$Test_statistic)) {
+    cat(col_align(names(.object$Test_statistic)[j], 20), "\t", sep = "")
+    for(k in 1:nrow(.object$Critical_value)) {
+      cat(col_align(ifelse(.object$Decision[k, j], green("Do not reject"), red("reject")), 8), "\t", sep = "")
+    }
+    cat("\n\t")
+  }
+  
+  cat("\nAdditonal information:")
+  cat("\n\n\tThere are ", .object$Number_admissibles, " admissibles bootstrap results.\n\t",
+      "See ", yellow("?"), magenta("verify"), "()",
+      " for what constitutes an inadmissible result.\n", sep = "")
+  cat(rule(line = "bar2"), sep = "")
+}

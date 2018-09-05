@@ -130,7 +130,7 @@ csem <- function(
          class(.data), call. = FALSE)
   }
   ## Select cases
-  if(!is.null(.id) && !is.list(.data)) {
+  if(!is.null(.id) && !inherits(.data, "list")) {
 
     if(length(.id) != 1) {
       stop("`.id` must be a character string or an integer identifying one single column.",

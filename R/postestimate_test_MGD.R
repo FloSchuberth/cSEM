@@ -41,15 +41,17 @@ testMGD <- function(
     stop("At least two groups required.", call. = FALSE)
   }
   
-  ## Check if any of the group estimates is inadmissible
+  ## Check if any of the group estimates are inadmissible
   if(!all(sapply(.object, function(x) sum(verify(x)) == 0))) {
-    stop("Results for at least one group are inadmissible.", call. = FALSE)
+    stop("Initial estimation results for at least one group are inadmissible.\n", 
+         "See `lapply(.object, verify)` for details.",
+         call. = FALSE)
   }
   
   # Check if data for different groups is identical
   if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
                       function(x){ identical(x[[1]], x[[2]])})){
-    stop("Identical data sets.", call. = FALSE)
+    stop("At least two groups are identical.", call. = FALSE)
   }
   
   ### Calculation===============================================================
@@ -134,6 +136,7 @@ testMGD <- function(
     if(!requireNamespace("parallel")){
       stop("cSEM requires the parallel package")
     } 
+    
     # Prepare parallelization
     core= detectCores()
     cl <- makeCluster(core)
@@ -202,14 +205,13 @@ testMGD <- function(
     decision <- ifelse(teststat > critical_value, TRUE, FALSE)
   }
   out <- list(
-    "Hypothesis"         = paste0("H0: No significant difference between groups."),
     "Test_statistic"     = teststat, 
-    "Critial_value"      = critical_value,
+    "Critical_value"     = critical_value,
     "Decision"           = decision, 
     "Number_admissibles" = ncol(ref_dist))
   
   # define return class
-  class(out) <- "cSEMTest"
+  class(out) <- "cSEMTestMGD"
   return(out)
 }
 
