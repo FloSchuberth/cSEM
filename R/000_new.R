@@ -111,3 +111,6 @@ effects.cSEMResults <- function(.object) {
        indirect = indirect[vars_endo, , drop = FALSE], 
        total = total[vars_endo, , drop = FALSE])
 }
+
+
+## this is some test change
