@@ -15,7 +15,7 @@
 #'
 #' @return A logical vector indicating which (if any) problem occurred. Status codes are:
 #'  \itemize{
-#' \item 1: The algorithm has not not converged.
+#' \item 1: The algorithm has not converged.
 #' \item 2: At least one absolute standardized loading estimate is larger than 1,
 #    which implies either a negative variance of the measurement error or
 #    a correlation larger than 1.
@@ -27,6 +27,11 @@
 #' @export
 
 verify <- function(.object){
+  
+  ## Check if cSEMResults object
+  if(class(.object) != "cSEMResults") {
+    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
+  }
   
   if(attr(.object, "single") == FALSE) {
     stop("`verify()` not applicable to multiple groups or data sets.\n",

@@ -23,7 +23,7 @@ Imports: alabama,
     doSNOW,
     doParallel,
     expm,
-    foreach,
+    foreach
     lavaan,
     magrittr,
     Matrix,
