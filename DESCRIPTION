@@ -19,8 +19,10 @@ Encoding: UTF-8
 LazyData: true
 Imports: alabama,
     cli,
-    crayon, 
+    crayon,
+    doParallel,
     expm,
+    foreach,
     lavaan,
     magrittr,
     Matrix,
@@ -34,7 +36,5 @@ RoxygenNote: 6.1.0
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: knitr,
     rmarkdown,
-    listviewer,
-    foreach,
-    doParallel
+    listviewer
 VignetteBuilder: knitr

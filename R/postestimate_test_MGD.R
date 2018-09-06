@@ -130,17 +130,17 @@ testMGD <- function(
     if(.show_progress==TRUE){
       print("Progress bar is not available for parallel computing.")
     }
-    if(!requireNamespace("doSNOW")){
-      stop("cSEM requires the doSNOW package")
-    } 
-    if(!requireNamespace("parallel")){
-      stop("cSEM requires the parallel package")
-    } 
-    
-    # Prepare parallelization
-    core= detectCores()
-    cl <- makeCluster(core)
-    registerDoParallel(cl)
+    # if(!requireNamespace("doSNOW")){
+    #   stop("cSEM requires the foreach package")
+    # } 
+    # if(!requireNamespace("doParallel")){
+    #   stop("cSEM requires the parallel package")
+    # } 
+    # 
+    # # Prepare parallelization
+    # core= detectCores()
+    # cl <- makeCluster(core)
+    # registerDoParallel(cl)
     
     permEstimates <- foreach(iPerm = 1:.runs) %dopar% {
                                # permutate data
