@@ -15,6 +15,11 @@
 
 test <- function(.object, .which_test = "all", ...) {
   
+  ## Check if cSEMResults object
+  if(class(.object) != "cSEMResults") {
+    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
+  }
+  
   if(attr(.object, "single") == FALSE) {
     stop("`test()` not applicable to multiple groups or data sets.\n",
          "Use `lapply(.object, test)` instead.",

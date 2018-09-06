@@ -50,6 +50,11 @@ fit <- function(
   
   
   ### Preparation ==============================================================
+  ## Check if cSEMResults object
+  if(class(.object) != "cSEMResults") {
+    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
+  }
+  
   ## Check if linear
   if(.object$Information$Model$model_type != "Linear"){
     stop("`fit()` currently not applicable to nonlinear models.",

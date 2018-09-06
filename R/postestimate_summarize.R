@@ -14,6 +14,11 @@
 #'
 summarize <- function(.object) {
   
+  ## Check if cSEMResults object
+  if(class(.object) != "cSEMResults") {
+    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
+  }
+  
   if(attr(.object, "single") == FALSE) {
     stop("`summarize()` not applicable to multiple groups or data sets.\n",
          "Use lapply(.object, summarize) instead.",

@@ -36,6 +36,11 @@ testMGD <- function(
   ){
 
   ### Checks and errors ========================================================
+  ## Check if cSEMResults object
+  if(class(.object) != "cSEMResults") {
+    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
+  }
+  
   ## Check if .object contains estimates for at least two groups.
   if(attr(.object, "single") == TRUE) {
     stop("At least two groups required.", call. = FALSE)
@@ -127,31 +132,32 @@ testMGD <- function(
   
   ## With PARALLEL VERSION -----------------------------------------------------
   if(.parallel == TRUE) {
+    stop("not implemented yet.", call. = FALSE)
     if(.show_progress==TRUE){
       print("Progress bar is not available for parallel computing.")
     }
-    # if(!requireNamespace("doSNOW")){
-    #   stop("cSEM requires the foreach package")
-    # } 
-    # if(!requireNamespace("doParallel")){
-    #   stop("cSEM requires the parallel package")
-    # } 
-    # 
-    # # Prepare parallelization
-    # core= detectCores()
-    # cl <- makeCluster(core)
-    # registerDoParallel(cl)
-    
-    permEstimates <- foreach(iPerm = 1:.runs) %dopar% {
+    if(!requireNamespace("doSNOW")){
+      stop("cSEM requires the foreach package")
+    }
+    if(!requireNamespace("doParallel")){
+      stop("cSEM requires the parallel package")
+    }
+
+    # Prepare parallelization
+    core <- detectCores()
+    cl   <- makeCluster(core)
+    registerDoParallel(cl)
+
+    permEstimates <- foreach::foreach(iPerm = 1:.runs) %dopar% {
                                # permutate data
                                permData <- permutateData(listMatrices)
                                # set Data
                                arguments[[".data"]] <- permData
-                               # estimate 
+                               # estimate
                                Est_tmp <- do.call(csem, arguments)
                                # status codes
-                               status_code=lapply(Est_tmp, verify)
-                               
+                               status_code <- lapply(Est_tmp, verify)
+
                                # if it is controlled for inadmissible
                                if(.drop_inadmissibles){
                                  if(!(FALSE %in% sapply(status_code, is.null))){
@@ -182,7 +188,7 @@ testMGD <- function(
                                      .distance = "squared_euclidian"
                                    )
                                  )
-                                 
+
                                }
                              }
     # Stop Cluster

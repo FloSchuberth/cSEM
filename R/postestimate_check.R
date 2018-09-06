@@ -12,6 +12,12 @@
 #' @export
 
 check <- function(.object){
+  
+  ## Check if cSEMResults object
+  if(class(.object) != "cSEMResults") {
+    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
+  }
+  
   paste("not yet implemented")
 }
 

@@ -36,6 +36,11 @@ testOMF <- function(
   .runs                = args_default()$.runs
   ){
   
+  ## Check if cSEMResults object
+  if(class(.object) != "cSEMResults") {
+    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
+  }
+  
   ## Check if single
   if(attr(.object, "single") == FALSE) {
     stop("`testOMF()` not applicable to multiple groups or data sets.\n",
