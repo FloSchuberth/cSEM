@@ -15,7 +15,6 @@ HTMT = function(.object){
   
 }
 
-
 #' `cSEMResults` method for `summary()`
 #'
 #' The [cSEMResults] method for the generic function [summary()]. 
@@ -111,6 +110,3 @@ effects.cSEMResults <- function(.object) {
        indirect = indirect[vars_endo, , drop = FALSE], 
        total = total[vars_endo, , drop = FALSE])
 }
-
-
-## this is some test change

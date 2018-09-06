@@ -35,8 +35,9 @@ verify <- function(.object){
   }
   
   if(.object$Information$Model$model_type != "Linear"){
-    stop("`verify()` currently not applicable to non-linear models.",
-         call. = FALSE)}
+    stop("`verify()` currently not applicable to nonlinear models.",
+         call. = FALSE)
+  }
   
   stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE, "5" = FALSE)
   

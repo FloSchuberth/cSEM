@@ -111,7 +111,7 @@ Alternative approaches include all of \emph{Kettenring's criteria}, "\emph{fixed
 or "\emph{unit weight}". \emph{Generalized Structured Component Analysis} (\emph{GSCA}) may
 also be chosen as a weighing approach although technically GSCA obtains weight
 and structural coefficient estimates simultaneously. Hence, setting
-\code{.approach_weights = "GSCA"} automatically sets \code{.approach_path = "GSCA"} (and
+\code{.approach_weights = "GSCA"} automatically sets \code{.approach_paths = "GSCA"} (and
 vice-versa).
 
 For PLS composite-indicator and composite-composite correlations are properly

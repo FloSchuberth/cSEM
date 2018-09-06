@@ -20,10 +20,40 @@ summarize <- function(.object) {
          call. = FALSE)
   }
   
-  ## Structure output
-  loading_estimates <- formatEstimates(.object$Estimates$Loading_estimates)
-  weight_estimates  <- formatEstimates(.object$Estimates$Weight_estimates)
-  path_estimates    <- formatEstimates(.object$Estimates$Path_estimates)
+  x1  <- .object$Estimates
+  x2  <- .object$Information
+  
+  ### Structure output
+  ## Path coefficients
+  temp <- outer(rownames(x1$Path_estimates), colnames(x1$Path_estimates), 
+                FUN = function(x, y) paste(x, y, sep = " ~ "))
+  
+  path_estimates <- data.frame(
+    "Name" = temp[x2$Model$structural != 0],
+    "Estimate" = x1$Path_estimates[x2$Model$structural != 0 ], 
+    stringsAsFactors = FALSE)
+  
+  ## Loading estimates
+  temp <- rep(rownames(x1$Loading_estimates), 
+              times = apply(x1$Loading_estimates, 1, function(w) sum(w != 0)))
+  temp <- paste0(temp, 
+                 ifelse(x2$Model$construct_type[temp] == "Composite", " <~ ", " =~ "),  
+                 colnames(x1$Loading_estimates))
+  
+  loading_estimates <- data.frame(
+    "Name" = temp,
+    "Estimate" = x1$Loading_estimates[x2$Model$measurement != 0 ], 
+                               stringsAsFactors = FALSE)
+  
+  ## Loading estimates
+  temp <- rep(rownames(x1$Weight_estimates), 
+              times = apply(x1$Weight_estimates, 1, function(w) sum(w != 0)))
+  temp <- paste0(temp, " -- ", colnames(x1$Weight_estimates))
+  
+  weight_estimates <- data.frame(
+    "Name" = temp,
+    "Estimate" = x1$Weight_estimates[x2$Model$measurement != 0 ], 
+    stringsAsFactors = FALSE)
   
   ## Modify relevant .object elements
   
@@ -36,10 +66,3 @@ summarize <- function(.object) {
   class(.object) <- "cSEMSummarize"
   return(.object)
 }
-
-formatEstimates <- function(x) {
-  a <- paste0(rep(rownames(x), times = apply(x, 1, function(w) sum(w != 0))),
-              " =~ ", colnames(x))
-  data.frame("Name" = a,
-             "Estimate" = unlist(t(x)[t(x) != 0 ]), stringsAsFactors = FALSE)
-} 

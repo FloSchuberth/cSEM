@@ -38,7 +38,7 @@
 #' or "*unit weight*". *Generalized Structured Component Analysis* (*GSCA*) may
 #' also be chosen as a weighing approach although technically GSCA obtains weight
 #' and structural coefficient estimates simultaneously. Hence, setting
-#' `.approach_weights = "GSCA"` automatically sets `.approach_path = "GSCA"` (and
+#' `.approach_weights = "GSCA"` automatically sets `.approach_paths = "GSCA"` (and
 #' vice-versa).
 #'
 #' For PLS composite-indicator and composite-composite correlations are properly
@@ -130,7 +130,7 @@ csem <- function(
          class(.data), call. = FALSE)
   }
   ## Select cases
-  if(!is.null(.id) && !is.list(.data)) {
+  if(!is.null(.id) && !inherits(.data, "list")) {
 
     if(length(.id) != 1) {
       stop("`.id` must be a character string or an integer identifying one single column.",

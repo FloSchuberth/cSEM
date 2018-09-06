@@ -264,6 +264,7 @@ foreman <- function(
   )
   
   class(out) <- "cSEMResults"
+  attr(out, "single") <- TRUE
   invisible(out)
   
   ### For maintenance: ---------------------------------------------------------
