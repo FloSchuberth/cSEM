@@ -3,7 +3,7 @@
 \name{csem_summary}
 \alias{csem_summary}
 \alias{cSEMSummary}
-\title{cSEMSummary}
+\title{cSEMSummarize}
 \value{
 An object of class \code{cSEMSummary}.
 Technically \code{cSEMSummary} is a named list containing the following list elements:
@@ -12,6 +12,6 @@ Technically \code{cSEMSummary} is a named list containing the following list ele
 }
 }
 \description{
-cSEMSummary
+cSEMSummarize
 }
 \keyword{internal}

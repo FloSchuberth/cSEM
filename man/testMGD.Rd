@@ -4,7 +4,7 @@
 \alias{testMGD}
 \title{Estimates the distance between multiple groups.}
 \usage{
-testOH(
+testMGD(
  .object             = args_default()$.model,
  .alpha              = args_default()$.alpha,
  .drop_inadmissibles = args_default()$.drop_inadmissibles,
@@ -33,12 +33,11 @@ requires the \code{doSNOW} and the \code{parallel} package to be installed.}
 A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
 list containing the following list elements:
 \describe{
-\item{\code{Hypothesis}}{The null hypothesis.}
 \item{\code{$Test_statistic}}{The value of test statistic(s).}
 \item{\code{$Critical_value}}{The critical value(s).}
 \item{\code{$Decision}}{The test decision. One of: \strong{Reject} or \strong{Do not reject}}
 \item{\code{$Number_admissibles}}{The number of admissible runs. See \code{\link[=verify]{verify()}} for
-what constitues and inadmissble run.}
+what constitues and inadmissible run.}
 }
 }
 \description{

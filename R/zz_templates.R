@@ -76,7 +76,7 @@ NULL
 #' @keywords internal
 NULL
 
-#' cSEMSummary
+#' cSEMSummarize
 #'
 #' @return
 #' An object of class `cSEMSummary`.
@@ -96,12 +96,11 @@ NULL
 #' A standardized list of class `cSEMTest`. Technically `cSEMTest` is a named 
 #' list containing the following list elements:
 #' \describe{
-#'   \item{`Hypothesis`}{The null hypothesis.}
 #'   \item{`$Test_statistic`}{The value of test statistic(s).}
 #'   \item{`$Critical_value`}{The critical value(s).}
 #'   \item{`$Decision`}{The test decision. One of: **Reject** or **Do not reject**}
 #'   \item{`$Number_admissibles`}{The number of admissible runs. See [verify()] for
-#'     what constitues and inadmissble run.}
+#'     what constitues and inadmissible run.}
 #' }
 #'
 #' @name csem_test

@@ -12,7 +12,7 @@ verify(.object)
 \value{
 A logical vector indicating which (if any) problem occurred. Status codes are:
 \itemize{
-\item 1: The algorithm has not not converged.
+\item 1: The algorithm has not converged.
 \item 2: At least one absolute standardized loading estimate is larger than 1,
 \item 3: The construct VCV is not positive semi-definite.
 \item 4: The model-implied indicator VCV is not positive semi-definite.
