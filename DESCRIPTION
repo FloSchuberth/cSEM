@@ -1,9 +1,9 @@
 Package: cSEM
 Title: Composite Based Structural Equation Modeling
 Version: 0.0.0.9000
-Authors@R: c(person(given = "Manuel", family = "Steiner",
+Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     role  = c("aut", "cre"),
-                    email = "manuel.steiner@uni-wuerzburg.de"),
+                    email = "manuel.rademaker@uni-wuerzburg.de"),
              person(given = "Florian", family = "Schuberth",
                     role  = c("aut"),
                     email = "f.schuberth@utwente.nl"),
@@ -19,13 +19,17 @@ Encoding: UTF-8
 LazyData: true
 Imports: alabama,
     cli,
-    crayon, 
+    crayon,
+    doSNOW,
+    doParallel,
     expm,
+    foreach,
     lavaan,
     magrittr,
     Matrix,
     matrixcalc,
     matrixStats,
+    parallel,
     purrr,
     Rdpack,
     symmoments
@@ -34,7 +38,5 @@ RoxygenNote: 6.1.0
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: knitr,
     rmarkdown,
-    listviewer,
-    foreach,
-    doParallel
+    listviewer
 VignetteBuilder: knitr

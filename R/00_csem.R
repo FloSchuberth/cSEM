@@ -75,7 +75,7 @@
 #'   .data             = NULL,
 #'   .model            = NULL,
 #'   .id               = NULL,
-#'   .approach_weights = c("PLS", "SUMCOR", "MAXVAR", "SSQCOR", "MINVAR", "GENVAR", "GSCA", 
+#'   .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
 #'                         "fixed", "unit"),
 #'   .approach_path    = c("OLS", "2SLS", "3SLS"),
 #'   ...)
@@ -130,7 +130,7 @@ csem <- function(
          class(.data), call. = FALSE)
   }
   ## Select cases
-  if(!is.null(.id) && !is.list(.data)) {
+  if(!is.null(.id) && !inherits(.data, "list")) {
 
     if(length(.id) != 1) {
       stop("`.id` must be a character string or an integer identifying one single column.",
@@ -170,7 +170,8 @@ csem <- function(
   
   ## Set class for output
   class(out) <- "cSEMResults"
-  ## Has estimation been done based on a single data 
+  
+  ## Has estimation been done based on a single data set with no grouping?
   attr(out, "single") <- ifelse(any(class(.data) == "list")| !is.null(.id), FALSE, TRUE) 
   return(out)
 }

@@ -29,7 +29,7 @@ Some text on the workhorse function
 }
 
 \author{
-\strong{Maintainer}: Manuel Steiner \email{manuel.steiner@uni-wuerzburg.de}
+\strong{Maintainer}: Manuel Rademaker \email{manuel.rademaker@uni-wuerzburg.de}
 
 Authors:
 \itemize{

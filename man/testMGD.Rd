@@ -2,7 +2,7 @@
 % Please edit documentation in R/postestimate_test_MGD.R
 \name{testMGD}
 \alias{testMGD}
-\title{Test for multi group differences (MGD)}
+\title{Estimates the distance between multiple groups.}
 \usage{
 testOH(
  .object             = args_default()$.model,
@@ -42,14 +42,37 @@ what constitues and inadmissble run.}
 }
 }
 \description{
-What it does (TODO).
-}
-\details{
-More details here (TODO).
+The geodesic distance (dG) and the Euclidean distance (dE) is used
+to assess group differences. Permutation is used to generate a
+reference distribtuion.
 }
 \examples{
 \dontrun{
-# still to implement
+require(cSEM)
+data(satisfaction)
+
+model <- "
+# Structural model
+QUAL ~ EXPE
+EXPE ~ IMAG
+SAT  ~ IMAG + EXPE + QUAL + VAL
+LOY  ~ IMAG + SAT
+VAL  ~ EXPE + QUAL
+
+# Measurement model
+
+EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+LOY  =~ loy1  + loy2  + loy3  + loy4
+QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+SAT  <~ sat1  + sat2  + sat3  + sat4
+VAL  <~ val1  + val2  + val3  + val4
+"
+
+listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
+out.cSEM <- csem(listData, model) 
+
+testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE)
 }
 
 }

@@ -51,9 +51,9 @@ fit <- function(
   
   ### Preparation ==============================================================
   ## Check if linear
-  if(.object$Information$Model$model_type != "Linear") {
-    stop("Model is nonlinear. Currently the model-implied indicator covariance",
-         " matrix can only be computed for linear models.", call. = FALSE)
+  if(.object$Information$Model$model_type != "Linear"){
+    stop("`fit()` currently not applicable to nonlinear models.",
+         call. = FALSE)
   }
   
   ## Collect matrices

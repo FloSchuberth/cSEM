@@ -1,8 +1,9 @@
-#' Test for multi group differences (MGD)
+#' Estimates the distance between multiple groups. 
 #'
-#' What it does (TODO).
 #' 
-#' More details here (TODO).
+#' The geodesic distance (dG) and the Euclidean distance (dE) is used
+#' to assess group differences. Permutation is used to generate a 
+#' reference distribtuion. 
 #' 
 #' @usage testOH(
 #'  .object             = args_default()$.model,
@@ -21,7 +22,31 @@
 #'
 #' @examples
 #' \dontrun{
-#' # still to implement
+#' require(cSEM)
+#' data(satisfaction)
+#'
+#' model <- "
+#' # Structural model
+#' QUAL ~ EXPE
+#' EXPE ~ IMAG
+#' SAT  ~ IMAG + EXPE + QUAL + VAL
+#' LOY  ~ IMAG + SAT
+#' VAL  ~ EXPE + QUAL
+#'
+#' # Measurement model
+#'
+#' EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+#' IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+#' LOY  =~ loy1  + loy2  + loy3  + loy4
+#' QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+#' SAT  <~ sat1  + sat2  + sat3  + sat4
+#' VAL  <~ val1  + val2  + val3  + val4
+#' "
+#' 
+#' listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
+#' out.cSEM <- csem(listData, model) 
+#'
+#' testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE)
 #' }
 #'
 #' @export
@@ -41,15 +66,17 @@ testMGD <- function(
     stop("At least two groups required.", call. = FALSE)
   }
   
-  ## Check if any of the group estimates is inadmissible
+  ## Check if any of the group estimates are inadmissible
   if(!all(sapply(.object, function(x) sum(verify(x)) == 0))) {
-    stop("Results for at least one group are inadmissible.", call. = FALSE)
+    stop("Initial estimation results for at least one group are inadmissible.\n", 
+         "See `lapply(.object, verify)` for details.",
+         call. = FALSE)
   }
   
   # Check if data for different groups is identical
   if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
                       function(x){ identical(x[[1]], x[[2]])})){
-    stop("Identical data sets.", call. = FALSE)
+    stop("At least two groups are identical.", call. = FALSE)
   }
   
   ### Calculation===============================================================
@@ -74,119 +101,52 @@ testMGD <- function(
   # Results
   permEstimates <- list()
   
-  ##  WITHOUT PARALLELIZATION --------------------------------------------------
-  if(.parallel == FALSE) {
-    if(.show_progress == TRUE) {
-      # Progress bar
-      pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+  ##  PREPARE PERMUTAITON --------------------------------------------------
+  opts <- NULL
+  # Progress bar
+  if(.show_progress){
+    # Progress bar
+    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+    if(.parallel){
+      progress <- function(n) setTxtProgressBar(pb, n)
+      opts <- list(progress = progress)
     }
-    
+  }
+  
+  # Parallel
+  if(.parallel == TRUE){
+    # Initiate Cluster
+    nprocs = parallel::detectCores()
+    cl <- parallel::makeCluster(nprocs)
+    doSNOW::registerDoSNOW(cl)
+    # DoParallel
+    permEstimates <- foreach::foreach(iPerm = 1:.runs, .options.snow = opts) %dopar% {
+      permutationProcedure(.object = .object,
+                           .listMatrices = listMatrices, 
+                           .arguments = arguments, 
+                           .drop_inadmissibles = .drop_inadmissibles)
+    }
+    parallel::stopCluster(cl)
+  }else{
+    # Sequential
+    permEstimates <- list()
     for(iPerm in 1:.runs){
-      # Permutate data
-      permData <- permutateData(listMatrices)
-      # Replace .data 
-      arguments[[".data"]] <- permData
-      # Estimate using permutated data
-      Est_tmp <- do.call(csem, arguments)
-      # Check if all estimates produce admissible results
-      status_code <- sapply(Est_tmp, verify)
-      
-      # Drop potential inadmissibles if required
-      if(.drop_inadmissibles){
-        ## If no inadmissibles exists continue as usual
-        if(all(sapply(.object, function(x) sum(verify(x)) == 0))){
-          
-          permEstimates[[iPerm]] <- c(
-            dG = calculateDistance(lapply(Est_tmp, fit), .distance = "geodesic"),
-            dL = calculateDistance(lapply(Est_tmp, fit), .distance = "squared_euclidian")
-          )
-        } else {
-          # Set to NULL
-          permEstimates[[iPerm]] <- NULL
-        }
-        # else, i.e., dropInadmissible == FALSE
-      } else {
-        
-        permEstimates[[iPerm]] <- c(
-          dG = calculateDistance(lapply(Est_tmp, fit), .distance = "geodesic"),
-          dL = calculateDistance(lapply(Est_tmp, fit), .distance = "squared_euclidian")
-        )
-      }
-      if(.show_progress == TRUE){
-        # Update Progress bar
+      permEstimates[[iPerm]] <- permutationProcedure(.object = .object,
+                                                     .listMatrices = listMatrices, 
+                                                     .arguments = arguments,
+                                                     .drop_inadmissibles = .drop_inadmissibles)
+      # Update progress bar
+      if(.show_progress){
         setTxtProgressBar(pb, iPerm)
       }
-    }
-    if(.show_progress==TRUE){
-      # Close Progress bar
-      close(pb)
+      
     }
   }
-  
-  ## With PARALLEL VERSION -----------------------------------------------------
-  if(.parallel == TRUE) {
-    if(.show_progress==TRUE){
-      print("Progress bar is not available for parallel computing.")
-    }
-    if(!requireNamespace("doSNOW")){
-      stop("cSEM requires the doSNOW package")
-    } 
-    if(!requireNamespace("parallel")){
-      stop("cSEM requires the parallel package")
-    } 
-    # Prepare parallelization
-    core= detectCores()
-    cl <- makeCluster(core)
-    registerDoParallel(cl)
-    
-    permEstimates <- foreach(iPerm = 1:.runs) %dopar% {
-                               # permutate data
-                               permData <- permutateData(listMatrices)
-                               # set Data
-                               arguments[[".data"]] <- permData
-                               # estimate 
-                               Est_tmp <- do.call(csem, arguments)
-                               # status codes
-                               status_code=lapply(Est_tmp, verify)
-                               
-                               # if it is controlled for inadmissible
-                               if(.drop_inadmissibles){
-                                 if(!(FALSE %in% sapply(status_code, is.null))){
-                                   c(dG = calculateDistance(
-                                     .matrices =
-                                       lapply(Est_tmp, fit),
-                                     .distance = "geodesic"
-                                   ),
-                                   dL = calculateDistance(
-                                     .matrices =
-                                       lapply(Est_tmp, fit),
-                                     .distance = "squared_euclidian"
-                                   )
-                                   )
-                                 }else{
-                                   # Set null if status code is false
-                                   NULL
-                                 }
-                                 # else, i.e., dropInadmissible == FALSE
-                               }else{
-                                 c(
-                                   dG = calculateDistance(
-                                     .matrices = lapply(Est_tmp, fit),
-                                     .distance = "geodesic"
-                                   ),
-                                   dL = calculateDistance(
-                                     .matrices = lapply(Est_tmp, fit),
-                                     .distance = "squared_euclidian"
-                                   )
-                                 )
-                                 
-                               }
-                             }
-    # Stop Cluster
-    stopCluster(cl)
+  # Close progress bar
+  if(.show_progress){
+    close(pb)
   }
-  
-  
+  # Calculate Estimates
   ref_dist       <- do.call(cbind, permEstimates)
   critical_value <- matrix(apply(ref_dist, 1, quantile, 1-.alpha), 
                            ncol = length(teststat), 
@@ -202,14 +162,13 @@ testMGD <- function(
     decision <- ifelse(teststat > critical_value, TRUE, FALSE)
   }
   out <- list(
-    "Hypothesis"         = paste0("H0: No significant difference between groups."),
     "Test_statistic"     = teststat, 
-    "Critial_value"      = critical_value,
+    "Critical_value"     = critical_value,
     "Decision"           = decision, 
     "Number_admissibles" = ncol(ref_dist))
   
   # define return class
-  class(out) <- "cSEMTest"
+  class(out) <- "cSEMTestMGD"
   return(out)
 }
 
@@ -245,3 +204,32 @@ permutateData <- function(.matrices = NULL){
   
   return(permData)
 }
+
+permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadmissibles){
+  # Permutate data
+  permData <- permutateData(.listMatrices)
+  # Replace .data 
+  .arguments[[".data"]] <- permData
+  # Estimate using permutated data
+  Est_tmp <- do.call(csem, .arguments)
+  # Check if all estimates produce admissible results
+  status_code <- sapply(Est_tmp, verify)
+  # Drop potential inadmissibles if required
+  if(.drop_inadmissibles){
+    ## If no inadmissibles exists continue as usual
+    if(all(sapply(.object, function(x) sum(verify(x)) == 0))){
+      return(c(
+        dG = calculateDistance(lapply(Est_tmp, fit), .distance = "geodesic"),
+        dL = calculateDistance(lapply(Est_tmp, fit), .distance = "squared_euclidian")))
+    } else {
+      # return NULL
+      return(NULL)
+    }
+    # else, i.e., dropInadmissible == FALSE
+  } else {
+    return(c(
+      dG = calculateDistance(lapply(Est_tmp, fit), .distance = "geodesic"),
+      dL = calculateDistance(lapply(Est_tmp, fit), .distance = "squared_euclidian")))
+  }
+}
+
