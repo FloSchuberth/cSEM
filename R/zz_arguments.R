@@ -112,6 +112,10 @@
 #'   function should be returned? One of: `"csem"` or `"cca"`. Defaults to `"csem"`. 
 #'   Currently ignored if `.only_dots = FALSE`. 
 #' @param .X A matrix of processed data (scaled, cleaned and ordered).
+#' @param .cor_kind Character string. Approach used to
+#'   obtain correlation matrix between the
+#'   manifest variables. One of: "*bravais-pearson*", "*theil-sen*".
+#'   Defaults to "*bravais-pearson*".
 #'
 #' @name csem_arguments
 #' @aliases cSEMArguments
@@ -192,7 +196,8 @@ args_default <- function(
     .verbose                 = TRUE,
     .W                       = NULL,
     .which_fun               = c("csem", "cca"),
-    .X                       = NULL
+    .X                       = NULL,
+    .cor_kind                = c("bravais-pearson","theil-sen")
   )
   
   args_dotdotdot_csem <- list(

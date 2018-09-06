@@ -27,6 +27,7 @@ Imports: alabama,
     matrixcalc,
     matrixStats,
     purrr,
+    RcppAlgos,
     Rdpack,
     symmoments
 RdMacros: Rdpack

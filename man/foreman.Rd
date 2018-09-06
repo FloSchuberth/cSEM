@@ -98,6 +98,11 @@ reliabilities are estimated by \code{csem()}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
+
+\item{.cor_kind}{Character string. Approach used to
+obtain correlation matrix between the
+manifest variables. One of: "\emph{bravais-pearson}", "\emph{theil-sen}".
+Defaults to "\emph{bravais-pearson}".}
 }
 \value{
 An object of class \code{cSEMResults} with methods for all postestimation generics:

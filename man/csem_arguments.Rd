@@ -156,6 +156,11 @@ function should be returned? One of: \code{"csem"} or \code{"cca"}. Defaults to 
 Currently ignored if \code{.only_dots = FALSE}.}
 
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
+
+\item{.cor_kind}{Character string. Approach used to
+obtain correlation matrix between the
+manifest variables. One of: "\emph{bravais-pearson}", "\emph{theil-sen}".
+Defaults to "\emph{bravais-pearson}".}
 }
 \description{
 An alphabetical list of all arguments used by functions of the \code{cSEM} package,

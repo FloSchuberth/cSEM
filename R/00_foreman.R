@@ -60,7 +60,8 @@ foreman <- function(
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
   .reliabilities               = args_default()$.reliabilities,
-  .tolerance                   = args_default()$.tolerance
+  .tolerance                   = args_default()$.tolerance,
+  .cor_kind                    = args_default()$.cor_kind
   ) {
 
   ### Preprocessing ============================================================
@@ -68,7 +69,7 @@ foreman <- function(
   csem_model <- parseModel(.model)
 
   ## Prepare, check, and clean data
-  X <- processData(.data = .data, .model = csem_model) 
+  X_cleaned <- processData(.data = .data, .model = csem_model) 
   
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
@@ -85,9 +86,8 @@ foreman <- function(
   # }
 
   ## Standardize
-  X <- scale(X)
-  S <- stats::cor(X)
-  
+  S <- compute_cor(X_cleaned = X_cleaned, .cor_kind = .cor_kind)
+  X <- scale(X_cleaned)
   ## Calculate weights
   if(.approach_weights == "PLS") {
     W <- calculateWeightsPLS(

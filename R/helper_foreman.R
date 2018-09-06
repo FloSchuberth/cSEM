@@ -381,6 +381,89 @@ calculateConstructVCV <- function(
   return(x)
 }
 
+#' Internal: Calculate correlation matrix between the indicators (Bravais-Pearson
+#' or Theil-Sen)
+#'
+#' @usage compute_cor(X_cleaned, .cor_kind)
+#'  )
+#'
+#' @return The (N x N) indicator correlation matrix
+#' @keywords internal
+
+compute_cor <- function(X_cleaned, .cor_kind){
+  if(.cor_kind == "bravais-pearson"){
+    #standardize X
+    x <- scale(X_cleaned)
+    return(stats::cor(X_cleaned))
+    
+  }else if(.cor_kind == "theil-sen"){
+    # standardize x by using robust measures 
+    X_cleaned <- (X_cleaned - median(X_cleaned))/mad(X_cleaned)
+    return(Cov_theilsen(X_cleaned))
+  }
+}
+
+#' Internal: Calculate Theil-Sen estimator between two vectors
+#'
+#
+#' @usage theil_sen(x,y)
+#'  )
+#' @return The regression estimator from x on y
+#' @keywords internal
+# Gives the Theil-Sen estimator from a regresion of x on y
+theil_sen <- function(x, y) {
+  xy <- cbind(x, y)
+  ind <- RcppAlgos::comboGeneral(nrow(xy), 2) # from RcppAlgos
+  
+  d <- xy[ind[, 2], ] - xy[ind[, 1], ]
+  slope <- d[, 2] / d[, 1]
+  median(slope)
+}
+
+#' Internal: Calculate correlation matrix of a data set using the Theil-Sen
+#' estimator
+#'
+#' @usage Cov_theilsen(X_cleaned)
+#'  )
+#' @inheritParams csem_arguments
+#'
+#' @return The (J x J) construct VCV matrix. Disattenuated if requested.
+#' @keywords internal
+
+# Gives an alternative covariance matrix using the Theil-Sen correlation 
+# instead of the Bravais-Pearson correlation
+Cov_theilsen <- function(X_cleaned){
+  # Store matrix for the correlations
+  cov_mat = matrix(0, ncol = ncol(X_cleaned), nrow = ncol(X_cleaned),
+                   dimnames = list(colnames(X_cleaned), colnames(X_cleaned)))
+  for(i in 1:ncol(X_cleaned)){
+    for(j in i:ncol(X_cleaned)){
+      # Gives the Theil-Sen estimator from a regression of the i-th column of the
+      # data on the j-th column of  the data
+      a <- theil_sen(X_cleaned[,i],X_cleaned[,j])
+      
+      # Gives the Theil-Sen estimator from a regression of the j-th column of the
+      # data on the i-th column of the data
+      b <- theil_sen(X_cleaned[,j],X_cleaned[,i])
+      
+      # The correlation is the geometric mean of both estimated regression 
+      # coefficients 
+      ## WORKING SOLUTION for the case that a and b have different directions:
+      # use the arithmetic mean instead the geometric mean
+      rho <- sqrt(a*b)
+      if(!is.nan(rho)){
+        cov_mat[i,j] <- rho 
+      }else{
+        cov_mat[i,j] <- 0.5*(a+b)
+      }
+    }
+  }
+  d <- diag(cov_mat)
+  cov_mat = t(cov_mat) + cov_mat
+  diag(cov_mat) = d
+  return(cov_mat)
+}
+
 
 
 
