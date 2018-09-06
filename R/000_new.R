@@ -15,7 +15,6 @@ HTMT = function(.object){
   
 }
 
-
 #' `cSEMResults` method for `summary()`
 #'
 #' The [cSEMResults] method for the generic function [summary()]. 

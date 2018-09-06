@@ -77,7 +77,7 @@ Each function has (will eventually have) a distinct class and a corresponding
 - The only OO system used is the S3 system. No S4 classes will be allowed! (Strong
   recommendation by Yves Rosseel)
 - Whenever you subset a matrix using `[` use: `[..., ..., drop = FALSE]` to avoid
-  accidentally droping the `dim` attributes.
+  accidentally dropping the `dim` attributes.
   
 ### Style/Naming
 
