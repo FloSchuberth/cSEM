@@ -76,7 +76,7 @@ corresponding `print` method.
   - The only OO system used is the S3 system. No S4 classes will be
     allowed\! (Strong recommendation by Yves Rosseel)
   - Whenever you subset a matrix using `[` use: `[..., ..., drop =
-    FALSE]` to avoid accidentally droping the `dim` attributes.
+    FALSE]` to avoid accidentally dropping the `dim` attributes.
 
 ### Style/Naming
 
