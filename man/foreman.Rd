@@ -29,6 +29,10 @@ foreman(
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
 
+\item{.approach_cor}{Character string. Approach used to obtain the indicator
+correlation matrix. One of: "\emph{bravais-pearson}" or "\emph{theil-sen}".
+Defaults to "\emph{bravais-pearson}".}
+
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
@@ -98,11 +102,6 @@ reliabilities are estimated by \code{csem()}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
-
-\item{.cor_kind}{Character string. Approach used to
-obtain correlation matrix between the
-manifest variables. One of: "\emph{bravais-pearson}", "\emph{theil-sen}".
-Defaults to "\emph{bravais-pearson}".}
 }
 \value{
 An object of class \code{cSEMResults} with methods for all postestimation generics:
