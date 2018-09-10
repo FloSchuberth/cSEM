@@ -453,7 +453,7 @@ estimateTheilSen <- function(
   
   d     <- xy[ind[, 2], ] - xy[ind[, 1], ]
   slope <- d[, 2] / d[, 1]
-  median(slope, na.rm = TRUE)
+  median(slope[is.infinite(slope) == FALSE])
 }
 
 #' Internal: Calculate indicator correlation matrix using Theil-Sen
@@ -484,10 +484,12 @@ calculateCorTheilSen <- function(.X = args_default()$.X){
       b <- estimateTheilSen(.X[,j], .X[,i])
       
       # The correlation is the geometric mean of both estimated regression 
+      # weighted with the sign of the single theil-sen estimators to be also able
+      # to estimate negative correlations
       # coefficients 
       ## WORKING SOLUTION for the case that a and b have different directions:
       # use the arithmetic mean instead the geometric mean
-      rho <- sqrt(a*b)
+      rho <- sign(a)*sqrt(a*b)
       
       if(!is.nan(rho)){
         cov_mat[i, j] <- rho 
