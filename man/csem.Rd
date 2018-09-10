@@ -3,7 +3,6 @@
 \name{csem}
 \alias{csem}
 \alias{cca}
-\alias{csem}
 \title{Composite based SEM and CCA}
 \usage{
 cca(
