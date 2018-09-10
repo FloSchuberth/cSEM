@@ -16,6 +16,9 @@
 #' @param .approach Character string. The Kettenring approach to use. One of 
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
+#' @param .approach_cor Character string. Approach used to obtain the indicator 
+#'   correlation matrix. One of: "*bravais-pearson*" or "*theil-sen*".
+#'   Defaults to "*bravais-pearson*".
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
@@ -105,6 +108,8 @@
 #'   Defaults to `1e-05`.
 #' @param .verbose Logical. Should information be printed to the console? Defaults
 #'   to `TRUE`.
+#' @param .vector1 A vector of numeric values.
+#' @param .vector2 A vector of numeric values.
 #' @param .W A (J x K) matrix of weights.
 #' @param .W_new A (J x K) matrix of weights.
 #' @param .W_old A (J x K) matrix of weights.
@@ -112,6 +117,8 @@
 #'   function should be returned? One of: `"csem"` or `"cca"`. Defaults to `"csem"`. 
 #'   Currently ignored if `.only_dots = FALSE`. 
 #' @param .X A matrix of processed data (scaled, cleaned and ordered).
+#' @param .X_cleaned A matrix of processed data (cleaned and ordered). Note: `X_cleaned`
+#'   may not be scaled!
 #'
 #' @name csem_arguments
 #' @aliases cSEMArguments
@@ -192,7 +199,10 @@ args_default <- function(
     .verbose                 = TRUE,
     .W                       = NULL,
     .which_fun               = c("csem", "cca"),
-    .X                       = NULL
+    .x                       = NULL,
+    .X                       = NULL,
+    .X_cleaned               = NULL,
+    .y                       = NULL
   )
   
   args_dotdotdot_csem <- list(
@@ -218,6 +228,7 @@ args_default <- function(
     .normality               = TRUE,
     
     #  Arguments passed to foreman
+    .approach_cor            = c("bravais-pearson","theil-sen"),
     .disattenuate            = TRUE,
     .dominant_indicators     = NULL,
     .estimate_structural     = TRUE,

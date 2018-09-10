@@ -45,6 +45,7 @@
 foreman <- function(
   .data                        = args_default()$.data,
   .model                       = args_default()$.model,
+  .approach_cor                = args_default()$.approach_cor,
   .approach_nl                 = args_default()$.approach_nl,
   .approach_paths              = args_default()$.approach_paths,
   .approach_weights            = args_default()$.approach_weights,
@@ -68,25 +69,14 @@ foreman <- function(
   csem_model <- parseModel(.model)
 
   ## Prepare, check, and clean data
-  X <- processData(.data = .data, .model = csem_model) 
+  X_cleaned <- processData(.data = .data, .model = csem_model) 
   
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
-  # Note: its important to take cor(X) here instead of cov(X) as `cov` may produce
-  # 1s on the main diagonal that are not exactly 1 due to floating point imprecisions.
-  # Stemp=polycor::hetcor(X)
-  # S <- Stemp$correlations
-  # # Remove "" from type matrix
-  # Stype=Stemp$type[!Stemp$type == ""]
-  # 
-  # # Return warning
-  # if(FALSE %in% (Stype %in% 'Pearson')){
-  #   warning("OrdPLS(c) is used!!!")
-  # }
-
+  S <- calculateIndicatorCor(.X_cleaned = X_cleaned, .approach_cor = .approach_cor)
+  
   ## Standardize
-  X <- scale(X)
-  S <- stats::cor(X)
+  X <- scale(X_cleaned)
   
   ## Calculate weights
   if(.approach_weights == "PLS") {

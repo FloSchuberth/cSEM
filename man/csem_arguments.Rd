@@ -17,6 +17,10 @@ Defaults to \code{0.05}.}
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
 "\emph{SUMCORR}".}
 
+\item{.approach_cor}{Character string. Approach used to obtain the indicator
+correlation matrix. One of: "\emph{bravais-pearson}" or "\emph{theil-sen}".
+Defaults to "\emph{bravais-pearson}".}
+
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
@@ -145,6 +149,10 @@ Defaults to \code{1e-05}.}
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
 
+\item{.vector1}{A vector of numeric values.}
+
+\item{.vector2}{A vector of numeric values.}
+
 \item{.W}{A (J x K) matrix of weights.}
 
 \item{.W_new}{A (J x K) matrix of weights.}
@@ -156,6 +164,9 @@ function should be returned? One of: \code{"csem"} or \code{"cca"}. Defaults to 
 Currently ignored if \code{.only_dots = FALSE}.}
 
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
+
+\item{.X_cleaned}{A matrix of processed data (cleaned and ordered). Note: \code{X_cleaned}
+may not be scaled!}
 }
 \description{
 An alphabetical list of all arguments used by functions of the \code{cSEM} package,
