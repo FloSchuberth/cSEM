@@ -453,7 +453,7 @@ estimateTheilSen <- function(
   
   d     <- xy[ind[, 2], ] - xy[ind[, 1], ]
   slope <- d[, 2] / d[, 1]
-  median(slope[is.infinite(slope) == FALSE])
+  median(slope[is.infinite(slope) == FALSE], na.rm = TRUE)
 }
 
 #' Internal: Calculate indicator correlation matrix using Theil-Sen
