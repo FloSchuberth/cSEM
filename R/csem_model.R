@@ -233,9 +233,10 @@ parseModel <- function(.model) {
     # components such as the type of construct used. 
     n <- c(setdiff(names_constructs, rownames(model_ordered)), rownames(model_ordered))
     m <- order(which(model_measurement[n, ] == 1, arr.ind = TRUE)[, "row"])
+    structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n))]
     
     model_ls <- list(
-      "structural"         = model_structural[n, c(n, setdiff(colnames(model_ordered), n))],
+      "structural"         = structural_ordered,
       # "structural_ordered" = model_ordered, # not needed so far
       "measurement"        = model_measurement[n, m],
       "error_cor"          = model_error[m, m],
@@ -243,7 +244,7 @@ parseModel <- function(.model) {
       "model_type"         = type_of_model,
       "vars_endo"          = rownames(model_ordered),
       "vars_exo"           = var_exo,
-      "vars_explana"       = colnames(model_structural[n, c(n, setdiff(colnames(model_ordered), n))][, colSums(model_structural[n, c(n, setdiff(colnames(model_ordered), n))]) != 0 ]),
+      "vars_explana"       = colnames(structural_ordered)[colSums(structural_ordered) != 0],
       "explained_by_exo"   = explained_by_exo
     )
     class(model_ls) <- "cSEMModel"
