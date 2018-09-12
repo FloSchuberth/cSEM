@@ -16,7 +16,7 @@
 #'      first, followed by constructs that only depend on exogenous constructs and/or
 #'      previously ordered constructs.}
 #'   \item{`$measurement`}{A (J x K) matrix mimicking the measurement relationship
-#'     between constructs and their related indicators. Rows are are in the same
+#'     between constructs and their related indicators. Rows are in the same
 #'     order as the `$structural` with row names equal to
 #'     the construct names. The order of the columns is such that `$.measurement`
 #'     forms a block diagonal matrix.}
