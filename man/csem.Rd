@@ -19,7 +19,7 @@ csem(
   .id               = NULL,
   .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
                         "fixed", "unit"),
-  .approach_path    = c("OLS", "2SLS", "3SLS"),
+  .approach_paths    = c("OLS", "2SLS", "3SLS"),
   ...)
 }
 \arguments{

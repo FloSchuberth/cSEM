@@ -22,7 +22,7 @@ nonlinear terms. Rows are ordered such that exogenous constructs are always
 first, followed by constructs that only depend on exogenous constructs and/or
 previously ordered constructs.}
 \item{\code{$measurement}}{A (J x K) matrix mimicking the measurement relationship
-between constructs and their related indicators. Rows are are in the same
+between constructs and their related indicators. Rows are in the same
 order as the \code{$structural} with row names equal to
 the construct names. The order of the columns is such that \code{$.measurement}
 forms a block diagonal matrix.}

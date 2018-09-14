@@ -99,11 +99,13 @@ foreman <- function(
       .approach                 = .approach_weights
     )
   } else if(.approach_weights == "GSCA") {
-    temp <-  calculateWeightsGSCA(
-      .data                     = NULL,
-      .model                    = csem_model
+    GSCA_results <-  calculateWeightsGSCA(
+      .data                     = X,
+      .model                    = csem_model,
+      .iter_max                 = .iter_max,
+      .tolerance                = .tolerance
     )
-    return(temp)
+    return(GSCA_results)
   } else if(.approach_weights == "fixed") {
     W <- calculateWeightsFixed(
       .data                     = NULL,
