@@ -35,7 +35,7 @@ parseModel <- function(.model) {
 
   ### Check if already a cSEMModel list  
   if(class(.model) == "cSEMModel") {
-    
+    .model <- model
     return(.model)
   
     ## Check if list contains necessary elements
@@ -69,36 +69,80 @@ parseModel <- function(.model) {
     names_constructs      <- unique(unlist(strsplit(names_constructs_all, "\\.")))
     names_constructs_structural <- unique(c(tbl_structural$lhs, unlist(strsplit(tbl_structural$rhs, "\\."))))
     names_indicators      <- unique(tbl_measurement$rhs)
+    names_constructs_measurement_rhs <- intersect(names_indicators, names_constructs)
+    names_constructs_second_order <- unique(tbl_measurement[tbl_measurement$rhs %in% names_constructs_measurement_rhs, "lhs"])
     
     number_of_constructs_all  <- length(names_constructs_all)
     number_of_constructs      <- length(names_constructs)
     number_of_indicators      <- length(names_indicators)
     
+    ## Order
+    construct_order <- rep("First order", length(names_constructs))
+    names(construct_order) <- names_constructs
+    construct_order[names_constructs_second_order] <- "Second order"
+    
     ### Checks, errors and warnings ----------------------------------------------
     ## Stop if construct has no obervables/indicators attached
-    if(length(setdiff(names_constructs_structural, tbl_measurement$lhs)) != 0) {
-      
-      stop("No measurement equation provided for: ",
-           paste0("`", setdiff(names_constructs_structural, tbl_measurement$lhs), "`", collapse = ", "),
-           call. = FALSE)
+    if(length(setdiff(c(names_constructs_structural, names_constructs_measurement_rhs), 
+                      tbl_measurement$lhs)) != 0) {
+      if(any(grepl("\\.", tbl_structural$lhs))) {
+        stop("Interaction terms cannot appear on the left-hand side of a structural equation.", 
+             call. = FALSE)
+      } else {
+        stop("No measurement equation provided for: ",
+             paste0("`", setdiff(names_constructs_structural, 
+                                 tbl_measurement$lhs), "`", collapse = ", "),
+             call. = FALSE)
+      }
     }
     
     ## Stop if construct appears in the measurement but not in the structural model
-    if(length(setdiff(tbl_measurement$lhs, names_constructs_structural)) != 0) {
-      
-      stop("Construct(s): ",
-           paste0("`", setdiff(tbl_measurement$lhs, names_constructs_structural), "`", collapse = ", "),
-           " of the measurement model",
-           ifelse(length(setdiff(tbl_measurement$lhs, names_constructs_structural)) == 1, " does", " do"),
-           " not appear in the structural model.",
+    if(length(setdiff(tbl_measurement$lhs, 
+                      c(names_constructs_structural, 
+                        names_constructs_measurement_rhs)) != 0)) {
+      ## Stop if user trys to specify a measurement equation for an interaction term
+      if(any(grepl("\\.", tbl_measurement$lhs))) {
+        stop("Interaction terms cannot appear on the left-hand side of a measurement equation.",
+             call. = FALSE)
+      } else {
+        stop("Construct(s): ",
+             paste0("`", setdiff(tbl_measurement$lhs, 
+                                 c(names_constructs_structural,
+                                   names_constructs_measurement_rhs)), 
+                    "`", collapse = ", "),
+             " of the measurement model",
+             ifelse(length(setdiff(tbl_measurement$lhs, 
+                                   c(names_constructs_structural,
+                                     names_constructs_measurement_rhs))) == 1, 
+                    " does", " do"),
+             " not appear in the structural model.",
+             call. = FALSE)
+      }
+    }
+    
+    ## Stop rhs of second order constructs contains indicators
+    if(length(intersect(setdiff(names_indicators, 
+                                names_constructs_measurement_rhs), 
+                        tbl_measurement[tbl_measurement$lhs 
+                                        %in% names_constructs_second_order, "rhs"])) != 0) {
+      stop("Second-order constructs must be defined by first-order constructs only.",
            call. = FALSE)
     }
     
+    ## Stop if construct has a higher order than 2 (currently not allowed)
+    if(length(intersect(names_constructs_second_order, 
+                        names_constructs_measurement_rhs)) != 0) {
+      stop(paste0("`", unique(tbl_measurement[
+        tbl_measurement$rhs == intersect(names_constructs_second_order, 
+                                         names_constructs_measurement_rhs), 
+        "lhs"]), "`"), " has order > 2. Currently, only first and second-order constructs are supported.",
+           call. = FALSE)
+    }
     ## Construct type
     
     tbl_measurement$op <- ifelse(tbl_measurement$op == "=~", "Common factor", "Composite")
-    type_of_construct  <- unique(tbl_measurement[, c("lhs", "op")])$op
-    names(type_of_construct) <- names_constructs
+    construct_type  <- unique(tbl_measurement[, c("lhs", "op")])$op
+    names(construct_type) <- names_constructs
     
     ## Type of model (linear or non-linear)
     
@@ -171,7 +215,7 @@ parseModel <- function(.model) {
       z <- names(temp[i, names_constructs][temp[i, names_constructs] == 1])
       
       if(length(setdiff(x, z)) > 0) {
-        stop(paste0("The structural equation for ", i, " contains interactions between constructs", 
+        stop(paste0("The structural equation for `", i, "` contains interactions between constructs", 
                     " that do not appear individually.\n",
                     "This is almost certainly not a meaningful model."), call. = FALSE)
       }
@@ -233,17 +277,19 @@ parseModel <- function(.model) {
     # components such as the type of construct used. 
     n <- c(setdiff(names_constructs, rownames(model_ordered)), rownames(model_ordered))
     m <- order(which(model_measurement[n, ] == 1, arr.ind = TRUE)[, "row"])
+    structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n))]
     
     model_ls <- list(
-      "structural"         = model_structural[n, c(n, setdiff(colnames(model_ordered), n))],
+      "structural"         = structural_ordered,
       # "structural_ordered" = model_ordered, # not needed so far
       "measurement"        = model_measurement[n, m],
       "error_cor"          = model_error[m, m],
-      "construct_type"     = type_of_construct[match(n, names(type_of_construct))],
+      "construct_type"     = construct_type[match(n, names(construct_type))],
+      "construct_order"    = construct_order[match(n, names(construct_order))],
       "model_type"         = type_of_model,
       "vars_endo"          = rownames(model_ordered),
       "vars_exo"           = var_exo,
-      "vars_explana"       = colnames(model_structural[n, c(n, setdiff(colnames(model_ordered), n))][, colSums(model_structural[n, c(n, setdiff(colnames(model_ordered), n))]) != 0 ]),
+      "vars_explana"       = colnames(structural_ordered)[colSums(structural_ordered) != 0],
       "explained_by_exo"   = explained_by_exo
     )
     class(model_ls) <- "cSEMModel"
