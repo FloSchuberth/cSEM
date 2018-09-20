@@ -13,6 +13,7 @@
 
 calculateWeightsGSCA <- function(
   .data                        = args_default()$.data,
+  .S                           = args_default()$.S,
   .model                       = args_default()$.model,
   .iter_max                    = args_default()$.iter_max,
   .tolerance                   = args_default()$.tolerance
@@ -20,10 +21,10 @@ calculateWeightsGSCA <- function(
   
   ## Calculation of the actual weights, coefficients and loadings 
   
-  Z <- X # Z is the data matrix in GSCA, data are already standardized
-  W0 <- t(csem_model$measurement) # Matrix of the weighted relation model
-  B0 <- t(csem_model$structural) # Matrix of the structural model
-  C0 <- csem_model$measurement # Matrix of the measurement model if all indicators are reflective
+  Z <- .data # Z is the data matrix in GSCA, data are already standardized
+  W0 <- t(.model$measurement) # Matrix of the weighted relation model
+  B0 <- t(.model$structural) # Matrix of the structural model
+  C0 <- .model$measurement # Matrix of the measurement model if all indicators are reflective
   
   N = nrow(Z) # number of observations per indicator
   K = nrow(W0) # number of indicators
@@ -125,6 +126,7 @@ calculateWeightsGSCA <- function(
   H <- Z %*% W
   
   ## Calculate proxy covariance matrix
+  S <- .S
   proxyCV = t(W) %*% S %*% W
   
   ## Calculate global and local measures of fit
@@ -151,7 +153,7 @@ calculateWeightsGSCA <- function(
     ),
     "Information" = list(
       "Data"          = Z,
-      "Model"         = csem_model,
+      "Model"         = .model,
       "Arguments"     = as.list(match.call())[-1],
       "Weight_info"   = list(
         "Number_iterations"  = iter,
@@ -165,6 +167,8 @@ calculateWeightsGSCA <- function(
   invisible(out)
   
 } # END calculateWeightsGSCA
+
+
 
 
 #' Calculate weights using GSCA and variance-covariance matrices
@@ -182,6 +186,7 @@ calculateWeightsGSCA <- function(
 
 calculateWeightsGSCAVCV <- function(
   .data                        = args_default()$.data,
+  .S                           = args_default()$.S,
   .model                       = args_default()$.model,
   .iter_max                    = args_default()$.iter_max,
   .tolerance                   = args_default()$.tolerance
@@ -189,10 +194,10 @@ calculateWeightsGSCAVCV <- function(
   
   ## Calculation of the actual weights, coefficients and loadings 
   
-  Z <- X # Z is the data matrix in GSCA, data are already standardized
-  W0 <- t(csem_model$measurement) # Matrix of the weighted relation model
-  B0 <- t(csem_model$structural) # Matrix of the structural model
-  C0 <- csem_model$measurement # Matrix of the measurement model if all indicators are reflective
+  Z <- .data # Z is the data matrix in GSCA, data are already standardized
+  W0 <- t(.model$measurement) # Matrix of the weighted relation model
+  B0 <- t(.model$structural) # Matrix of the structural model
+  C0 <- .model$measurement # Matrix of the measurement model if all indicators are reflective
   
   N = nrow(Z) # number of observations per indicator
   K = nrow(W0) # number of indicators
@@ -202,6 +207,7 @@ calculateWeightsGSCAVCV <- function(
   ## in this approach, the variance-covariance matrix of the indicators is used instead
   ## of the data matrix Z. For this, a square root decomposition of M is needed
   ## which is obtained via a cholesky decomposition
+  S <- .S
   M <- (N-1) * S
   H <- chol(M)  ## upper triangular
   H <- t(H)  ## lower triangular: H %*% t(H) = t(Z) %*% Z = M
@@ -327,7 +333,7 @@ calculateWeightsGSCAVCV <- function(
     ),
     "Information" = list(
       "Data"          = Z,
-      "Model"         = csem_model,
+      "Model"         = .model,
       "Arguments"     = as.list(match.call())[-1],
       "Weight_info"   = list(
         "Number_iterations"  = iter,

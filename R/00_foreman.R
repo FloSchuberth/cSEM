@@ -101,11 +101,30 @@ foreman <- function(
   } else if(.approach_weights == "GSCA") {
     GSCA_results <-  calculateWeightsGSCA(
       .data                     = X,
+      .S                        = S,
       .model                    = csem_model,
       .iter_max                 = .iter_max,
       .tolerance                = .tolerance
     )
     return(GSCA_results)
+  } else if(.approach_weights == "GSCAm") {
+    GSCAm_results <-  calculateWeightsGSCAm(
+      .data                     = X,
+      .S                        = S,
+      .model                    = csem_model,
+      .iter_max                 = .iter_max,
+      .tolerance                = .tolerance
+    )
+    return(GSCAm_results)
+  } else if(.approach_weights == "GSCA_VCV") {
+    GSCA_VCV_results <-  calculateWeightsGSCAVCV(
+      .data                     = X,
+      .S                        = S,
+      .model                    = csem_model,
+      .iter_max                 = .iter_max,
+      .tolerance                = .tolerance
+    )
+    return(GSCA_VCV_results)
   } else if(.approach_weights == "fixed") {
     W <- calculateWeightsFixed(
       .data                     = NULL,

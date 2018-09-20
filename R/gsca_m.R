@@ -13,15 +13,19 @@
 
 calculateWeightsGSCAm <- function(
   .data                        = args_default()$.data,
+  .S                           = args_default()$.S,
   .model                       = args_default()$.model,
   .iter_max                    = args_default()$.iter_max,
   .tolerance                   = args_default()$.tolerance
 ) {
+  Z <- .data # Z is the data matrix in GSCAm, data are already standardized
+  S <- .S # S is the empirical indicator covariance/correlation matrix
   
   # Use the usual GSCA procedure to obtain initial values for Gamma, C and B
   GSCA_results <-  calculateWeightsGSCA(
-    .data                     = X,
-    .model                    = csem_model,
+    .data                     = Z,
+    .S                        = S, 
+    .model                    = .model,
     .iter_max                 = .iter_max,
     .tolerance                = .tolerance
   )
@@ -50,7 +54,6 @@ calculateWeightsGSCAm <- function(
   ## Preparation of the calculation of the actual weights, coefficients and loadings 
   
   ## prepare data for GSCAm
-  Z <- X # Z is the data matrix in GSCAm, data are already standardized
   # for GSCAm, normalized data are needed
   vZ = sqrt(diag(t(Z) %*% Z))
   factorZ = matrix(vZ, nrow=N, ncol=length(vZ), byrow=TRUE)
@@ -145,7 +148,7 @@ calculateWeightsGSCAm <- function(
   ## Calculate final proxies/scores (oder ist das einfach Gamma?)
   proxies <- (Z - U %*% D) %*% W
   
-  ## Calculate proxy covariance matrix (S is the VCV-matrix of the indicators)
+  ## Calculate proxy covariance matrix
   proxyCV = t(W) %*% S %*% W
   
   ## Calculate global and local measures of fit
@@ -170,8 +173,8 @@ calculateWeightsGSCAm <- function(
       "FIT_S"                  = FIT_S
     ),
     "Information" = list(
-      "Data"          = X,
-      "Model"         = csem_model,
+      "Data"          = Z,
+      "Model"         = .model,
       "Arguments"     = as.list(match.call())[-1],
       "Weight_info"   = list(
         "Number_iterations"  = iter,

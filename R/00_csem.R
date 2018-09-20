@@ -108,7 +108,7 @@ csem <- function(
   .model                   = NULL,
   .id                      = NULL,
   .approach_weights        = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                               "GSCA", "fixed", "unit"),
+                               "GSCA", "GSCAm", "GSCA_VCV", "fixed", "unit"),
   .approach_paths          = c("OLS", "2SLS"),
   ...
   ) {
