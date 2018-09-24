@@ -35,7 +35,7 @@ parseModel <- function(.model) {
 
   ### Check if already a cSEMModel list  
   if(class(.model) == "cSEMModel") {
-    .model <- model
+    # .model <- model
     return(.model)
   
     ## Check if list contains necessary elements
