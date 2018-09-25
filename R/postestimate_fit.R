@@ -21,11 +21,11 @@
 #' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
+
 fit <- function(
   .object    = args_default()$.object, 
   .saturated = args_default()$.saturated
-  ) {
+) {
   
   ### For maintenance: ---------------------------------------------------------
   ## Cons_exo  := (J_exo x 1) vector of exogenous constructs names.

@@ -124,6 +124,46 @@ csem <- function(
   args        <- handleArgs(args_used)
   args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))] 
   
+  ## 
+  model <- parseModel(.model)
+  
+  if(any(model$construct_order == "Second order")) {
+    n1c <- names(model$construct_order[model$construct_order == "First order"])
+    n1i <- setdiff(colnames(model$measurement), rownames(model$measurement))
+    # Structural model
+    a <- c()
+    for(i in 2:length(n1c)) {
+      a1  <- paste0(n1c[i], "~", paste0(n1c[1:(i-1)], collapse = "+"))
+      a <- paste(a, a1, sep = "\n")
+    }
+    # Measurement model
+    b <- c()
+    for(i in n1c) {
+      n <- colnames(model$measurement[i, model$measurement[i, ] == 1, drop = FALSE])
+      b1  <- paste0(i, ifelse(model$construct_type[i] == "Composite", "<~", "=~"), paste0(n, collapse = "+"))
+      b <- paste(b, b1, sep = "\n")
+    }
+    # Error_cor
+    c <- c()
+    for(i in n1i) {
+      # only upper triagular matrix as lavaan does not allow for double entries such
+      # as x11 ~~ x12 vs x12 ~~ x11
+      error_cor <- model$error_cor
+      error_cor[lower.tri(error_cor)] <- 0
+      n <- colnames(error_cor[i, error_cor[i, ] == 1, drop = FALSE])
+      if(!is.null(n)) {
+        c1  <- paste0(i, "~~", paste0(n, collapse = "+"))
+      } else {
+        c1 <- "\n"
+      }
+      c <- paste(c, c1, sep = "\n")
+    }
+    
+    model <- parseModel(c(a, b, c))
+  }
+  ## Update model
+  args_needed[[".model"]] <- model
+    
   ## Check data
   if(!any(class(.data) %in% c("data.frame", "matrix", "list"))) {
     stop("Data must be provided as a `matrix`, a `data.frame` or a `list`. ", ".data has class: ", 
@@ -167,6 +207,9 @@ csem <- function(
     
     out <- do.call(foreman, args_needed)
   }
+  
+  ##
+  
   
   ## Set class for output
   class(out) <- "cSEMResults"

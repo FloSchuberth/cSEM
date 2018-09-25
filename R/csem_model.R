@@ -42,7 +42,7 @@ parseModel <- function(.model) {
   } else if(all(c("structural", "measurement") %in% names(.model))) {
     
     x <- setdiff(names(.model), c("structural", "measurement", "error_cor", 
-                                  "construct_type", "model_type", "vars_endo", 
+                                  "construct_type", "construct_order", "model_type", "vars_endo", 
                                   "vars_exo", "vars_explana", "explained_by_exo"))
     if(length(x) == 0) {
       
