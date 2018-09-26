@@ -28,7 +28,7 @@ Defaults to "\emph{PLS}".}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
 used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS.}
 
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
 

@@ -43,7 +43,7 @@ of construct used. Ignored if \code{.approach_weight} is not PLS.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
 used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}

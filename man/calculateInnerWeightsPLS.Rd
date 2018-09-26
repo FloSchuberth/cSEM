@@ -25,7 +25,7 @@ Ignored if \code{.approach_weights} is not PLS.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
 used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS.}
 }
 \value{
 The (J x J) matrix \code{E} of inner weights.
