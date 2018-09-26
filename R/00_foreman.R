@@ -81,8 +81,8 @@ foreman <- function(
   ## Calculate weights
   if(.approach_weights == "PLS") {
     W <- calculateWeightsPLS(
-      .data                     = S,
-      .model                    = csem_model,
+      .S                        = S,
+      .csem_model               = csem_model,
       .iter_max                 = .iter_max,
       .PLS_modes                = .PLS_modes,
       .tolerance                = .tolerance,
@@ -94,8 +94,8 @@ foreman <- function(
     )
   } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
-      .data                     = S,
-      .model                    = csem_model,
+      .S                        = S,
+      .csem_model               = csem_model,
       .approach                 = .approach_weights
     )
   } else if(.approach_weights == "GSCA") {
@@ -110,8 +110,8 @@ foreman <- function(
     )
   } else if(.approach_weights == "unit") {
     W <- calculateWeightsUnit(
-      .data                     = S,
-      .model                    = csem_model
+      .S                        = S,
+      .csem_model               = csem_model
     )
   }
 

@@ -5,8 +5,8 @@
 #' More details here. (TODO)
 #'
 #' @usage calculateWeightsPLS(
-#'   .data                        = args_default()$.data,
-#'   .model                       = args_default()$.model,
+#'   .S                           = args_default()$.S,
+#'   .csem_model                  = args_default()$.csem_model,
 #'   .conv_criterion              = args_default()$.conv_criterion,
 #'   .iter_max                    = args_default()$.iter_max,
 #'   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model
@@ -31,8 +31,8 @@
 #'
 
 calculateWeightsPLS <- function(
-  .data                        = args_default()$.data,
-  .model                       = args_default()$.model,
+  .S                           = args_default()$.S,
+  .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
   .iter_max                    = args_default()$.iter_max,
   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
@@ -41,46 +41,26 @@ calculateWeightsPLS <- function(
   .tolerance                   = args_default()$.tolerance
 ) {
 
-
-  ### Make the function more autonomous ========================================
-  ## Convert model to "cSEMModel" format if not already in this format
-  if(!(class(.model) == "cSEMModel")) {
-    csem_model <- parseModel(.model)
-  } else {
-    csem_model <- .model
-  }
-
-  ## Prepare, standardize, check, and clean data if not already in this format
-  if(!(class(.data) == "cSEMData")) {
-    if(is.matrix(.data) && isSymmetric.matrix(.data)) {
-      S <- .data
-    } else {
-      #  If function is used externally, data is not automatically scaled!
-      X <- processData(.data = .data, .model = csem_model)
-      S <- stats::cov(X)
-    }
-  }
-
   ### Preparation ==============================================================
   ## Get/set the modes for the outer estimation
 
   if(is.null(.PLS_modes)) {
     
-    modes <- ifelse(csem_model$construct_type == "Common factor", "ModeA", "ModeB")
+    modes <- ifelse(.csem_model$construct_type == "Common factor", "ModeA", "ModeB")
 
   } else if(all(.PLS_modes %in% c("ModeA", "ModeB"))) {
     
-    if(setequal(names(.PLS_modes), names(csem_model$construct_type))) {
+    if(setequal(names(.PLS_modes), names(.csem_model$construct_type))) {
       modes <- .PLS_modes
-      modes <- modes[names(csem_model$construct_type)]
+      modes <- modes[names(.csem_model$construct_type)]
     } else if(length(.PLS_modes) == 1) {
-      modes <- rep(.PLS_modes, length(csem_model$construct_type))
-      names(modes) <- names(csem_model$construct_type)
-    } else if(length(setdiff(names(.PLS_modes), names(csem_model$construct_type))) > 0) {
-      stop(paste0("`", setdiff(names(.PLS_modes), names(csem_model$construct_type)), 
+      modes <- rep(.PLS_modes, length(.csem_model$construct_type))
+      names(modes) <- names(.csem_model$construct_type)
+    } else if(length(setdiff(names(.PLS_modes), names(.csem_model$construct_type))) > 0) {
+      stop(paste0("`", setdiff(names(.PLS_modes), names(.csem_model$construct_type)), 
                   "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.", call. = FALSE)
     } else  {
-      stop("Mode ", paste0("`", setdiff(names(csem_model$construct_type), names(.PLS_modes)), 
+      stop("Mode ", paste0("`", setdiff(names(.csem_model$construct_type), names(.PLS_modes)), 
                   "`", collapse = ", ")," in `.PLS_modes` is missing.", call. = FALSE)
     }
   } else {
@@ -89,9 +69,9 @@ calculateWeightsPLS <- function(
   }
 
   ### Calculation/Iteration ====================================================
-  W <- csem_model$measurement
+  W <- .csem_model$measurement
   # Scale weights
-  W <- scaleWeights(.S = S, .W = W)
+  W <- scaleWeights(.S = .S, .W = W)
 
   W_iter       <- W
   tolerance    <- .tolerance
@@ -104,23 +84,23 @@ calculateWeightsPLS <- function(
 
     # Inner estimation
     E <- calculateInnerWeightsPLS(
-      .S                           = S,
+      .S                           = .S,
       .W                           = W_iter,
-      .csem_model                  = csem_model,
+      .csem_model                  = .csem_model,
       .PLS_ignore_structural_model = .PLS_ignore_structural_model,
       .PLS_weight_scheme_inner     = .PLS_weight_scheme_inner
     )
     # Outer estimation
 
     W <- calculateOuterWeightsPLS(
-      .S        = S,
+      .S        = .S,
       .W        = W_iter,
       .E        = E,
       .modes    = modes
     )
 
     # Scale weights
-    W <- scaleWeights(S, W)
+    W <- scaleWeights(.S, W)
 
     # Check for convergence
     conv <- checkConvergence(W, W_iter, 
@@ -167,7 +147,11 @@ calculateWeightsPLS <- function(
 #'
 #' Some more description...
 #'
-#' @usage calculateWeightsKettenring(.data, .model, .approach)
+#' @usage calculateWeightsKettenring(
+#'   .S           = args_default()$.S, 
+#'   .csem_model  = args_default()$.csem_model,   
+#'   .approach    = args_default()$.approach
+#'   )
 #'
 #' @inheritParams csem_arguments
 #'
@@ -175,39 +159,20 @@ calculateWeightsPLS <- function(
 #'
 
 calculateWeightsKettenring <- function(
-  .data           = NULL,
-  .model          = NULL,
-  .approach       = NULL
+  .S              = args_default()$.S,
+  .csem_model     = args_default()$.csem_model,
+  .approach       = args_default()$.approach
 ) {
-  
-  ### Make the function more autonomous ========================================
-  ## Convert model to "cSEMModel" format if not already in this format
-  if(!(class(.model) == "cSEMModel")) {
-    csem_model <- parseModel(.model)
-  } else {
-    csem_model <- .model
-  }
-  
-  ## Prepare, standardize, check, and clean data if not already in this format
-  if(!(class(.data) == "cSEMData")) {
-    if(is.matrix(.data) && isSymmetric.matrix(.data)) {
-      S <- .data
-    } else {
-      #  If function is used externally, data is not automatically scaled!
-      X <- processData(.data = .data, .model = csem_model)
-      S <- stats::cov(X)
-    }
-  }
   
   ### Preparation ==============================================================
   ## Check if all constructs are modeled as composites
-  if("Common factor" %in% csem_model$construct_type){
+  if("Common factor" %in% .csem_model$construct_type){
     stop("Currently Kettenring's approaches are only allowed for pure composite models.", 
          call. = FALSE)
   }
 
   ## Get relevant objects 
-  W <- csem_model$measurement
+  W <- .csem_model$measurement
   
   construct_names <- rownames(W)
   indicator_names <- colnames(W)
@@ -217,7 +182,7 @@ calculateWeightsKettenring <- function(
   
   ## Calculate S_{ii}^{-1/2}}
   sqrt_S_jj_list <- lapply(indicator_names_ls, function(x) {
-    solve(expm::sqrtm(S[x, x, drop = FALSE]))
+    solve(expm::sqrtm(.S[x, x, drop = FALSE]))
   })
   
   ## Put in a diagonal matrix
@@ -227,7 +192,7 @@ calculateWeightsKettenring <- function(
   if(.approach %in% c("MAXVAR", "MINVAR")) {
     # Note: The MAXVAR implementation is based on a MATLAB code provided 
     #       by Theo K. Dijkstra
-    Rs <- H %*% S %*% H
+    Rs <- H %*% .S %*% H
     
     ## Calculate eigenvalues and eigenvectors of Rs and ...
     u <- switch (.approach,
@@ -294,7 +259,7 @@ calculateWeightsKettenring <- function(
     res <- alabama::auglag(
       par     = runif(length(indicator_names)),
       fn      = fn,
-      R       = S,
+      R       = .S,
       RDsqrt  = H,
       nameInd = indicator_names_ls,
       nameLV  = construct_names,
@@ -317,7 +282,7 @@ calculateWeightsKettenring <- function(
   ## Format, name and scale
   W <- t(as.matrix(Matrix::bdiag(W)))
   dimnames(W) <- list(construct_names, indicator_names)
-  W <- scaleWeights(S, W)
+  W <- scaleWeights(.S, W)
 
   ## Prepare for output
   modes <- rep(.approach, length(construct_names))
@@ -387,41 +352,25 @@ calculateWeightsFixed <- function(
 #' Calculate unit weights for all blocks, i.e., each indicator of a block is
 #' equally weighted.
 #'
-#' @usage calculateWeightsUnit(.data, .model)
+#' @usage calculateWeightsUnit(
+#'  .S                 = args_default()$.S,
+#'  .csem_model        = args_default()$.csem_model
+#'   )
 #'
 #' @inheritParams csem_arguments
 #'
 #' @inherit calculateWeightsPLS return
 #'
 calculateWeightsUnit = function(
-  .data         = NULL,
-  .model        = NULL
+  .S                 = args_default()$.S,
+  .csem_model        = args_default()$.csem_model
 ){
   
-  ### Make the function more autonomous ========================================
-  ## Convert model to "cSEMModel" format if not already in this format
-  if(!(class(.model) == "cSEMModel")) {
-    csem_model <- parseModel(.model)
-  } else {
-    csem_model <- .model
-  }
+  W <- .csem_model$measurement
+  W <- scaleWeights(.S, W)
   
-  ## Prepare, standardize, check, and clean data if not already in this format
-  if(!(class(.data) == "cSEMData")) {
-    if(is.matrix(.data) && isSymmetric.matrix(.data)) {
-      S <- .data
-    } else {
-      #  If function is used externally, data is not automatically scaled!
-      X <- processData(.data = .data, .model = csem_model)
-      S <- stats::cov(X)
-    }
-  }
-  
-  W=.model$measurement
-  W=scaleWeights(S,W)
-  
-  modes=rep('unit',nrow(W))
-  names(modes)=rownames(W)
+  modes        <- rep("unit", nrow(W))
+  names(modes) <- rownames(W)
   
   # Return
   l <- list("W" = W, "E" = NULL, "Modes" = modes, "Conv_status" = NULL,
