@@ -107,7 +107,7 @@ Defaults to \code{FALSE}.}
 requires the \code{doSNOW} and the \code{parallel} package to be installed.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
-factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS.}
@@ -144,6 +144,9 @@ reliabilities are estimated by \code{csem()}.}
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 
 \item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
+
+\item{.stage}{Character string. The stage the model is need for.
+One of "\emph{first}", "\emph{second}" or "\emph{third}". Defaults to "\emph{first}".}
 
 \item{.terms}{A vector of construct names to be classified.}
 

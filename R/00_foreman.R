@@ -45,7 +45,6 @@
 foreman <- function(
   .data                        = args_default()$.data,
   .model                       = args_default()$.model,
-  .approach_2ndorder           = args_default()$.approach_2ndorder,
   .approach_cor                = args_default()$.approach_cor,
   .approach_nl                 = args_default()$.approach_nl,
   .approach_paths              = args_default()$.approach_paths,

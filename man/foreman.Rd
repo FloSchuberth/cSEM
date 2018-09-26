@@ -29,10 +29,6 @@ foreman(
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
 
-\item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
-Defaults to "\emph{3stage}".}
-
 \item{.approach_cor}{Character string. Approach used to obtain the indicator
 correlation matrix. One of: "\emph{bravais-pearson}" or "\emph{theil-sen}".
 Defaults to "\emph{bravais-pearson}".}
@@ -78,7 +74,7 @@ For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
-factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS.}

@@ -5,7 +5,7 @@
 #' Currently, seven approaches are available:
 #'
 #' \itemize{
-#' \item "dist_euclid" (default)
+#' \item "dist_squared_euclid" (default)
 #' \item "dist_euclid_weighted"
 #' \item "fisher_transformed"
 #' \item "mean_geometric"
@@ -88,7 +88,7 @@ calculateCorrectionFactors <- function(
       
       ## Do the actual computation ---------------------------------------------
       switch (.PLS_approach_cf,
-              "dist_euclid"          = {
+              "dist_squared_euclid"          = {
                 cf <- sum(W_vect * S_vect) / sum(W_vect^2)
               },
               "dist_euclid_weighted" = {

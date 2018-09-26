@@ -12,6 +12,9 @@ convertModel(.csem_model)
 \item{.approach_2ndorder}{Character string. Approach used for models containing
 second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
 Defaults to "\emph{3stage}".}
+
+\item{.stage}{Character string. The stage the model is need for.
+One of "\emph{first}", "\emph{second}" or "\emph{third}". Defaults to "\emph{first}".}
 }
 \value{
 A \link{cSEMModel} list that may be passed to any function requiring

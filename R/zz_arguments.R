@@ -78,7 +78,7 @@
 #' @param .parallel Logical. Use parallel computing. Defaults to `FALSE`. Note:
 #'   requires the `doSNOW` and the `parallel` package to be installed.
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
-#'   factors for PLSc. One of: "*dist_euclid*", "*dist_euclid_weighted*",
+#'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
 #'   "*geo_of_harmonic*". Defaults to "*dist_euclid*". 
 #'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS.
@@ -106,6 +106,8 @@
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
 #' @param .show_progress Logical. Show progress bar. Defaults to `TRUE`.
+#' @param .stage Character string. The stage the model is need for.
+#'   One of "*first*", "*second*" or "*third*". Defaults to "*first*".
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
@@ -209,6 +211,9 @@ args_default <- function(
   )
   
   args_dotdotdot_csem <- list(
+    # Arguments passed to convertModel()
+    .approach_2ndorder       = c("3stage", "repeated_indicators"),
+    .stage                   = c("first", "second", "third"),
     # Arguments passed to calculateWeightsPLS
     .iter_max                = 100,
     .PLS_modes               = NULL,
@@ -219,7 +224,7 @@ args_default <- function(
     .PLS_weight_scheme_inner     = c("centroid", "factorial", "path"),
     
     # Arguments passed to calculateCorrectionFactors
-    .PLS_approach_cf         = c("dist_euclid", "dist_euclid_weighted", 
+    .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 
                                  "fisher_transformed", "mean_arithmetic",
                                  "mean_geometric", "mean_harmonic",
                                  "geo_of_harmonic"),
@@ -231,7 +236,6 @@ args_default <- function(
     .normality               = TRUE,
     
     #  Arguments passed to foreman
-    .approach_2ndorder       = c("3stage", "repeated_indicators"),
     .approach_cor            = c("bravais-pearson","theil-sen"),
     .disattenuate            = TRUE,
     .dominant_indicators     = NULL,

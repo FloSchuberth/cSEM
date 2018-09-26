@@ -122,18 +122,22 @@ csem <- function(
   args_used <- c(as.list(environment(), all.names = TRUE), list(...))
   args_used["..."] <- NULL
   args        <- handleArgs(args_used)
-  args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))] 
+  args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))]
   
   ## Parse model
   model <- parseModel(.model)
   
   ## Modify model if model contains second order constructs
   if(any(model$construct_order == "Second order")) {
-    model <- convertModel(model, .approach_2ndorder = args_needed$.approach_2ndorder)
+    model1 <- convertModel(
+      .csem_model        = model, 
+      .approach_2ndorder = args$.approach_2ndorder,
+      .stage             = "first")
+    ## Update model
+    args_needed[[".model"]] <- model1
+  } else {
+    args_needed[[".model"]] <- model
   }
-
-  ## Update model
-  args_needed[[".model"]] <- model
     
   ## Check data
   if(!any(class(.data) %in% c("data.frame", "matrix", "list"))) {
@@ -180,7 +184,37 @@ csem <- function(
   }
   
   ##
-  
+  # Note: currently only data supplied as a list or grouped data is not allowed
+  if(any(model$construct_order == "Second order") && 
+     args$.approach_2ndorder == "3stage") {
+    
+    model2 <- convertModel(
+      .csem_model        = model,
+      .approach_2ndorder = args$.approach_2ndorder,
+      .stage             = "second")
+
+    scores         <- out$Estimates$Construct_scores
+    rel_all_1step  <- out$Estimates$Construct_reliabilities
+    
+    # All constructs of the original model
+    nc_all_original <- rownames(model$structural)
+    # All indicators of the original model (including constructs that form/measure
+    # a second order construct
+    ni_all_original <- colnames(model$measurement)
+    # Constructs used in the first step (= all first order constructs)
+    nc_all_1step <- names(model$construct_order[model$construct_order == "First order"])
+    # Constructs forming/measuring a second order constructs
+    nc_to_2nd <- intersect(ni_all_original, nc_all_original)
+    # Constructs that dont form/measure a second order construct
+    nc_not_to_2nd <- setdiff(nc_all_1step, nc_to_2nd)
+    
+    rel_not_to_2nd <- rel_all_1step[nc_not_to_2nd]
+    names(rel_not_to_2nd) <- paste0(nc_not_to_2nd, "_temp")
+    
+    out <- csem(.data = scores, 
+                .model = model2, 
+                .reliabilities = rel_not_to_2nd)
+  } 
   
   ## Set class for output
   class(out) <- "cSEMResults"

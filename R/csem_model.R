@@ -314,7 +314,8 @@ parseModel <- function(.model) {
 #'
 convertModel <- function(
   .csem_model        = args_default()$.csem_model, 
-  .approach_2ndorder = args_default()$.approach_2ndorder
+  .approach_2ndorder = args_default()$.approach_2ndorder,
+  .stage             = args_default()$.stage
 ) {
   
   ### Check if a cSEMModel list  
@@ -322,23 +323,33 @@ convertModel <- function(
     stop("`.model` must be of model of class `cSEMModel`.")
   }
   
-  # Get relevant construct/indicator names
-  nc_all <- rownames(.csem_model$structural)
-  ni_all <- colnames(.csem_model$measurement)
-  n1c <- names(.csem_model$construct_order[.csem_model$construct_order == "First order"])
-  n2c <- setdiff(nc_all, n1c)
-  n1i <- setdiff(ni_all, nc_all)
-  n2i <- intersect(ni_all, nc_all)
-  
-  if(.approach_2ndorder == "repeated_indicators") {
+  if(.stage %in% c("second", "third")) {
+
+    # All constructs of the original model
+    nc_all_original <- rownames(.csem_model$structural)
+    # All indicators of the original model (including constructs that form/measure
+    # a second order construct
+    ni_all_original <- colnames(.csem_model$measurement)
+    # Constructs used in the first step (= all first order constructs)
+    nc_all_1step <- names(.csem_model$construct_order[.csem_model$construct_order == "First order"])
+    # Constructs forming/measuring a second order constructs
+    nc_to_2nd <- intersect(ni_all_original, nc_all_original)
+    # Constructs that dont form/measure a second order construct
+    nc_not_to_2nd <- setdiff(nc_all_1step, nc_to_2nd)
+    # Second order constructs
+    nc_2ndorder <- setdiff(nc_all_original, nc_all_1step)
+    # Constructs used in the second step (= second order + constructs not attached 
+    # to second order constructs)
+    nc_all_2step <- c(nc_not_to_2nd, nc_2ndorder)
     
-    ## Structural .csem_model
-    # First order equations
+    # Second order model
+    ## Structural model
     x1 <- c()
-    for(i in nc_all) {
+    for(i in nc_all_2step) {
       col_names <- colnames(.csem_model$structural[i, .csem_model$structural[i, , drop = FALSE] == 1, drop = FALSE])
       temp <- if(!is.null(col_names)) {
-        paste0(i, "~", paste0(col_names, collapse = "+")) 
+        col_names[col_names %in% nc_not_to_2nd] <- paste0(col_names[col_names %in% nc_not_to_2nd], "_temp")
+        paste0(ifelse(i %in% nc_not_to_2nd, paste0(i, "_temp"), i), "~", paste0(col_names, collapse = "+")) 
       } else {
         "\n"
       }
@@ -346,80 +357,124 @@ convertModel <- function(
     }
     
     ## Measurement model + second order structural equation 
-    # First order constructs
+    # Constructs that dont form/measure a second order construct
     x2a <- c()
-    for(i in n1c) {
-      col_names <- colnames(.csem_model$measurement[i, .csem_model$measurement[i, , drop = FALSE ] == 1, drop = FALSE])
-      temp  <- paste0(i, ifelse(.csem_model$construct_type[i] == "Composite", "<~", "=~"), paste0(col_names, collapse = "+"))
+    for(i in nc_not_to_2nd) {
+      temp <- paste0(paste0(i, "_temp"), ifelse(.csem_model$construct_type[i] == "Composite", "<~", "=~"), i)
       x2a <- paste(x2a, temp, sep = "\n")
     }
-    
     # Second order constructs
     x2b <- c()
-    for(i in n2c) {
-      # i <- n2c[1]
-      col_names_1 <- colnames(.csem_model$measurement[i, .csem_model$measurement[i, , drop = FALSE ] == 1, drop = FALSE])
-      col_names_2 <- .csem_model$measurement[col_names_1, colSums(.csem_model$measurement[col_names_1, ,drop = FALSE]) != 0, drop = FALSE]
-      temp <- paste0(i, "_2nd_", colnames(col_names_2))
-      temp <- paste0(i, ifelse(.csem_model$construct_type[i] == "Composite", "<~", "=~"), paste0(temp, collapse = "+"))
+    for(i in nc_2ndorder) {
+      col_names <- colnames(.csem_model$measurement[i, .csem_model$measurement[i, , drop = FALSE ] == 1, drop = FALSE])
+      temp  <- paste0(i, ifelse(.csem_model$construct_type[i] == "Composite", "<~", "=~"), paste0(col_names, collapse = "+"))
       x2b <- paste(x2b, temp, sep = "\n")
-      ## add second order structural equation
-      x2b <- paste(x2b, paste0(i, "~", paste0(col_names_1, collapse = "+" )), sep = "\n")
     }
     
-    ## Error_cor
-    # First order
-    x3 <- c()
-    for(i in n1i) {
-      # - Only upper triagular matrix as lavaan does not allow for double entries such
-      #   as x11 ~~ x12 vs x12 ~~ x11
-      # - Only 1st order construct indicators are allowed to correlate 
-      error_cor <- .csem_model$error_cor
-      error_cor[lower.tri(error_cor)] <- 0
-      col_names <- colnames(error_cor[i, error_cor[i, , drop = FALSE] == 1, drop = FALSE])
-      temp <- if(!is.null(col_names)) {
-        paste0(i, "~~", paste0(col_names, collapse = "+"))
-      } else {
-        "\n"
-      }
-      x3 <- paste(x3, temp, sep = "\n")
-    }
     ## Model to be parsed
-    lav_model <- paste(x1, x2a, x2b, x3, sep = "\n")
+    lav_model <- paste(x1, x2a, x2b, sep = "\n")
+  } else { # BEGIN: first step
     
-  } else { # First step of the two step approach
+    # Get relevant construct/indicator names
+    nc_all <- rownames(.csem_model$structural)
+    ni_all <- colnames(.csem_model$measurement)
+    n1c <- names(.csem_model$construct_order[.csem_model$construct_order == "First order"])
+    n2c <- setdiff(nc_all, n1c)
+    n1i <- setdiff(ni_all, nc_all)
+    n2i <- intersect(ni_all, nc_all)
     
-    ## Structural model
-    x1 <- c()
-    for(i in 2:length(n1c)) {
-      temp <- paste0(n1c[i], "~", paste0(n1c[1:(i-1)], collapse = "+"))
-      x1   <- paste(x1, temp, sep = "\n")
-    }
-    ## Measurement model
-    x2 <- c()
-    for(i in n1c) {
-      col_names <- colnames(.csem_model$measurement[i, .csem_model$measurement[i, , drop = FALSE] == 1, drop = FALSE])
-      temp <- paste0(i, ifelse(.csem_model$construct_type[i] == "Composite", "<~", "=~"), paste0(col_names, collapse = "+"))
-      x2   <- paste(x2, temp, sep = "\n")
-    }
-    ## Error_cor
-    x3 <- c()
-    for(i in n1i) {
-      # only upper triagular matrix as lavaan does not allow for double entries such
-      # as x11 ~~ x12 vs x12 ~~ x11
-      error_cor <- .csem_model$error_cor
-      error_cor[lower.tri(error_cor)] <- 0
-      col_names <- colnames(error_cor[i, error_cor[i, , drop = FALSE] == 1, drop = FALSE])
-      temp <- if(!is.null(col_names)) {
-        paste0(i, "~~", paste0(col_names, collapse = "+"))
-      } else {
-        "\n"
+    if(.approach_2ndorder == "repeated_indicators") {
+      
+      ## Structural .csem_model
+      # First order equations
+      x1 <- c()
+      for(i in nc_all) {
+        col_names <- colnames(.csem_model$structural[i, .csem_model$structural[i, , drop = FALSE] == 1, drop = FALSE])
+        temp <- if(!is.null(col_names)) {
+          paste0(i, "~", paste0(col_names, collapse = "+")) 
+        } else {
+          "\n"
+        }
+        x1 <- paste(x1, temp, sep = "\n")
       }
-      x3 <- paste(x3, temp, sep = "\n")
-    }
-    ## Model to be parsed
-    lav_model <- paste(x1, x2, x3, sep = "\n")
-  }
+      
+      ## Measurement model + second order structural equation 
+      # First order constructs
+      x2a <- c()
+      for(i in n1c) {
+        col_names <- colnames(.csem_model$measurement[i, .csem_model$measurement[i, , drop = FALSE ] == 1, drop = FALSE])
+        temp  <- paste0(i, ifelse(.csem_model$construct_type[i] == "Composite", "<~", "=~"), paste0(col_names, collapse = "+"))
+        x2a <- paste(x2a, temp, sep = "\n")
+      }
+      
+      # Second order constructs
+      x2b <- c()
+      for(i in n2c) {
+        # i <- n2c[1]
+        col_names_1 <- colnames(.csem_model$measurement[i, .csem_model$measurement[i, , drop = FALSE ] == 1, drop = FALSE])
+        col_names_2 <- .csem_model$measurement[col_names_1, colSums(.csem_model$measurement[col_names_1, ,drop = FALSE]) != 0, drop = FALSE]
+        temp <- paste0(i, "_2nd_", colnames(col_names_2))
+        temp <- paste0(i, ifelse(.csem_model$construct_type[i] == "Composite", "<~", "=~"), paste0(temp, collapse = "+"))
+        x2b <- paste(x2b, temp, sep = "\n")
+        ## add second order structural equation
+        x2b <- paste(x2b, paste0(i, "~", paste0(col_names_1, collapse = "+" )), sep = "\n")
+      }
+      
+      ## Error_cor
+      # First order
+      x3 <- c()
+      for(i in n1i) {
+        # - Only upper triagular matrix as lavaan does not allow for double entries such
+        #   as x11 ~~ x12 vs x12 ~~ x11
+        # - Only 1st order construct indicators are allowed to correlate 
+        error_cor <- .csem_model$error_cor
+        error_cor[lower.tri(error_cor)] <- 0
+        col_names <- colnames(error_cor[i, error_cor[i, , drop = FALSE] == 1, drop = FALSE])
+        temp <- if(!is.null(col_names)) {
+          paste0(i, "~~", paste0(col_names, collapse = "+"))
+        } else {
+          "\n"
+        }
+        x3 <- paste(x3, temp, sep = "\n")
+      }
+      ## Model to be parsed
+      lav_model <- paste(x1, x2a, x2b, x3, sep = "\n")
+      
+    } else { # First step of the two step approach
+      
+      ## Structural model
+      x1 <- c()
+      for(i in 2:length(n1c)) {
+        temp <- paste0(n1c[i], "~", paste0(n1c[1:(i-1)], collapse = "+"))
+        x1   <- paste(x1, temp, sep = "\n")
+      }
+      ## Measurement model
+      x2 <- c()
+      for(i in n1c) {
+        col_names <- colnames(.csem_model$measurement[i, .csem_model$measurement[i, , drop = FALSE] == 1, drop = FALSE])
+        temp <- paste0(i, ifelse(.csem_model$construct_type[i] == "Composite", "<~", "=~"), paste0(col_names, collapse = "+"))
+        x2   <- paste(x2, temp, sep = "\n")
+      }
+      ## Error_cor
+      x3 <- c()
+      for(i in n1i) {
+        # only upper triagular matrix as lavaan does not allow for double entries such
+        # as x11 ~~ x12 vs x12 ~~ x11
+        error_cor <- .csem_model$error_cor
+        error_cor[lower.tri(error_cor)] <- 0
+        col_names <- colnames(error_cor[i, error_cor[i, , drop = FALSE] == 1, drop = FALSE])
+        temp <- if(!is.null(col_names)) {
+          paste0(i, "~~", paste0(col_names, collapse = "+"))
+        } else {
+          "\n"
+        }
+        x3 <- paste(x3, temp, sep = "\n")
+      }
+      ## Model to be parsed
+      lav_model <- paste(x1, x2, x3, sep = "\n")
+    } # END first step of the 3 step approach
+  } # END first step
+
   ## Parse model
   model <- parseModel(lav_model)
   return(model)
