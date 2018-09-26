@@ -16,6 +16,9 @@
 #' @param .approach Character string. The Kettenring approach to use. One of 
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
+#' @param .approach_2ndorder Character string. Approach used for models containing
+#'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
+#'   Defaults to "*3stage*".
 #' @param .approach_cor Character string. Approach used to obtain the indicator 
 #'   correlation matrix. One of: "*bravais-pearson*" or "*theil-sen*".
 #'   Defaults to "*bravais-pearson*".
@@ -228,6 +231,7 @@ args_default <- function(
     .normality               = TRUE,
     
     #  Arguments passed to foreman
+    .approach_2ndorder       = c("3stage", "repeated_indicators"),
     .approach_cor            = c("bravais-pearson","theil-sen"),
     .disattenuate            = TRUE,
     .dominant_indicators     = NULL,
@@ -276,9 +280,9 @@ args_default <- function(
 
 handleArgs <- function(.args_used) {
   
-  x  <- args_default()
+  args_default  <- args_default()
   
-  args_default_names  <- names(x)
+  args_default_names  <- names(args_default)
   args_used_names <- names(.args_used)
   
   ## Are all argument names used valid?
@@ -291,15 +295,37 @@ handleArgs <- function(.args_used) {
          call. = FALSE)
   }
   
-  ## Which arguments need to be changed?
-  args_intersect <- intersect(args_used_names, args_default_names)
-  
+  ## Are arguments valid
+  # Note: for now, I will only check if string arguments are valid. In the
+  # future we could refine and check if e.g. numeric values are within a reasonable
+  # range or larger than zero if required etc.
+  # choices_logical <- Filter(function(x) any(is.logical(x)), args_default(.choices = TRUE))
+  # choices_numeric <- Filter(function(x) any(is.numeric(x)), args_default(.choices = TRUE))
+  choices_character <- Filter(function(x) any(is.character(x)), args_default(.choices = TRUE))
+
+  character_args <- intersect(names(choices_character), args_used_names)
+  x <- Map(function(x, y) x %in% y, 
+      x = .args_used[character_args], 
+      y = choices_character[character_args]
+      )
+
+  lapply(seq_along(x), function(i) {
+    if(isFALSE(x[[i]])) {
+      n <- names(x[i])
+      a <- args_default(.choices = TRUE)[[n]]
+      stop(paste0("`", .args_used[n], "` is not a valid choice for ", "`", 
+                  names(.args_used[n]),"`.\n"), 
+           "Choices are: ", paste0("`", a[-length(a)],"`", collapse = ", "), 
+           " or " , paste0("`", a[length(a)], "`"), call. = FALSE)
+    }
+
+  })
   ## Replace all arguments that were changed or explicitly given and keep
   #  the default values for the others
   
-  for(i in args_intersect) {
-    x[i] <- .args_used[i]
+  for(i in args_used_names) {
+    args_default[i] <- .args_used[i]
   }
   
-  return(x)
+  return(args_default)
 }

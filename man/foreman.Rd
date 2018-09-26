@@ -29,6 +29,10 @@ foreman(
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
 
+\item{.approach_2ndorder}{Character string. Approach used for models containing
+second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
+Defaults to "\emph{3stage}".}
+
 \item{.approach_cor}{Character string. Approach used to obtain the indicator
 correlation matrix. One of: "\emph{bravais-pearson}" or "\emph{theil-sen}".
 Defaults to "\emph{bravais-pearson}".}

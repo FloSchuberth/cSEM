@@ -73,7 +73,25 @@ processData <- function(.data, .model) {
   if(!(class(.model) == "cSEMModel")) {
     .model <- parseModel(.model)
   }
-  # Check indicator names
+  ## Add indicators to .data if the repeated indicators approach is used
+  # Error:
+  # Note: the indicators to be added are identified by the string "_2nd_". Hence
+  # the string is basically a reserved word. If indicators supplied by the
+  # users contain the strinf this causes and error
+  if(any(grepl("_2nd_", colnames(.data)))) {
+    stop("Indicator names must not contain the string `_2nd_`.", call. = FALSE)
+  }
+  
+  names_2nd <- colnames(.model$measurement)[grep("_2nd", colnames(.model$measurement))]
+  temp <- do.call(rbind, strsplit(names_2nd, "_2nd_"))
+  
+  temp <- .data[, temp[, 2]]
+  colnames(temp) <- names_2nd
+  
+  ## extended .data
+  .data <- cbind(.data, temp)
+  
+  ## Check indicator names
   if(!all(colnames(.model$measurement) %in% colnames(.data))) {
     stop("Unknown indicator(s): ",  
          paste0("`", setdiff(colnames(.model$measurement), colnames(.data)), "`.", collapse = ", "),
