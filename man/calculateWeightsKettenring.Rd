@@ -4,13 +4,16 @@
 \alias{calculateWeightsKettenring}
 \title{Calculate composite weights using one of Kettenrings's approaches}
 \usage{
-calculateWeightsKettenring(.data, .model, .approach)
+calculateWeightsKettenring(
+  .S           = args_default()$.S, 
+  .csem_model  = args_default()$.csem_model,   
+  .approach    = args_default()$.approach
+  )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.approach}{Character string. The Kettenring approach to use. One of
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
