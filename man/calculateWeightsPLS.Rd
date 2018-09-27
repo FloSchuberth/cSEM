@@ -16,7 +16,9 @@ calculateWeightsPLS(
    )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
+data column types or classes are: logical, numeric (double or integer), factor
+(ordered and unordered) or a mix of several types.}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
