@@ -330,7 +330,7 @@ calculateCompositeConstructCV <- function(
     ## Check construct names:
     # Do all construct names in .reliabilities match the construct
     # names used in the model?
-    tmp1 <- setdiff(names(.reliabilities), names(.correction_factors))
+    tmp1 <- setdiff(names(.reliabilities), rownames(.W))
     if(length(tmp1) != 0) {
       stop("Construct name(s): ", paste0("`", tmp1, "`", collapse = ", "), 
            " provided to `.reliabilities`", 
@@ -343,7 +343,7 @@ calculateCompositeConstructCV <- function(
     }
     
     ## Compute reliabilities not supplied by the user
-    tmp2 <- setdiff(names(.correction_factors), names(.reliabilities))
+    tmp2 <- setdiff(rownames(.W), names(.reliabilities))
     if(length(tmp2) != 0) {
       ## Get names of constructs modeled as composites
       names_c  <- names(.csem_model$construct_type[tmp2 == "Composite"])
