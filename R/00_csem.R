@@ -129,7 +129,8 @@ csem <- function(
   
   ## Modify model if model contains second order constructs
   if(any(model$construct_order == "Second order")) {
-    model1 <- convertModel(      .csem_model        = model, 
+    model1 <- convertModel(
+      .csem_model        = model, 
       .approach_2ndorder = args$.approach_2ndorder,
       .stage             = "first")
     ## Update model
