@@ -384,49 +384,52 @@ calculateConstructVCV <- function(
 
 #' Internal: Calculate indicator correlation matrix
 #' 
-#' Calculate the indicator correlation matrix using Bravais-Pearson
-#' or Theil-Sen correlation.
+#' Calculate the indicator correlation matrix using conventional or robust methods.
+#' 
+#' Depending on the type of the columns of `.X_cleaned` the following methods are used:
+#' \describe{
+#'   \item{`Numeric-numeric`}{Bravais-Pearson product-moment correlation}
+#'   \item{`Numeric-factor`}{Polyserial correlation}
+#'   \item{`Factor-factor`}{Polychoric correlation}
+#' }
+#' Note: logical input is treated as a 0-1 factor variable.
+#' 
+#' If `.approach_cor_robust` is not `none`, the specified robustness method is used
+#' instead.
 #'
 #' @usage calculateIndicatorCor(
-#'   .X_cleaned    = args_default()$.X_cleaned, 
-#'   .approach_cor = args_default()$.approach_cor
+#'   .X_cleaned           = args_default()$.X_cleaned, 
+#'   .approach_cor_robust = args_default()$.approach_cor
 #'  )
 #'
 #' @inheritParams csem_arguments
 #' 
-#' @return The (K x K) indicator correlation matrix S.
+#' @return The (K x K) (robust) indicator correlation matrix S.
 #' @keywords internal
 
 calculateIndicatorCor <- function(
-  .X_cleaned    = args_default()$.X_cleaned,
-  .approach_cor = args_default()$.approach_cor
-  ){
+  .X_cleaned           = args_default()$.X_cleaned,
+  .approach_cor_robust = args_default()$.approach_cor
+){
   
-  # Note: its important to take cor(x) here instead of cov(x) as `cov()` may produce
-  # 1s on the main diagonal that are not exactly 1 due to floating point imprecisions.
-  x <- scale(.X_cleaned)
-  
-  switch (.approach_cor,
-    "bravais-pearson" = {stats::cor(x)},
-    "theil-sen" = {
-      # Standardize x using robust measures 
-      # X_cleaned <- (.X_cleaned - median(.X_cleaned))/mad(.X_cleaned)
-      
-      calculateCorTheilSen(x)
-    },
-    "polycoric" = {
-      stop("Not yet implemented")
-      # Stemp=polycor::hetcor(X)
-      # S <- Stemp$correlations
-      # # Remove "" from type matrix
-      # Stype=Stemp$type[!Stemp$type == ""]
-      # 
-      # # Return warning
-      # if(FALSE %in% (Stype %in% 'Pearson')){
-      #   warning("OrdPLS(c) is used!!!")
-      # }
-    }
+  switch (.approach_cor_robust,
+          "none" = {
+            temp <- polycor::hetcor(.X_cleaned, std.err = FALSE)
+            S    <- temp$correlations
+            type <- ifelse(all(temp$type %in% c("Pearson", "")), "PLS", "OrdPLS")
+          },
+          
+          "theil-sen" = {
+            S    <- calculateCorTheilSen(scale(data.matrix(.X_cleaned)))
+            type <-  "PLS"
+          },
+          "TODO" = {
+            "(TODO)"
+          }
   )
+  # (TODO) not sure how to name the "type" yet and what to do with it. Theoretically,
+  # a polycoric correlation could also be used with GSCA or some other non-PLS method.
+  list(S = S, type = type)
 }
 
 #' Internal: Calculate the Theil-Sen estimator

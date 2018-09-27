@@ -5,23 +5,35 @@
 \title{Internal: Calculate indicator correlation matrix}
 \usage{
 calculateIndicatorCor(
-  .X_cleaned    = args_default()$.X_cleaned, 
-  .approach_cor = args_default()$.approach_cor
+  .X_cleaned           = args_default()$.X_cleaned, 
+  .approach_cor_robust = args_default()$.approach_cor
  )
 }
 \arguments{
-\item{.X_cleaned}{A matrix of processed data (cleaned and ordered). Note: \code{X_cleaned}
+\item{.X_cleaned}{A data.frame of processed data (cleaned and ordered). Note: \code{X_cleaned}
 may not be scaled!}
 
-\item{.approach_cor}{Character string. Approach used to obtain the indicator
-correlation matrix. One of: "\emph{bravais-pearson}" or "\emph{theil-sen}".
-Defaults to "\emph{bravais-pearson}".}
+\item{.approach_cor_robust}{Character string. Approach used to obtain a robust
+indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+"\emph{theil-sen}" or (TODO)
+Defaults to "\emph{none}".}
 }
 \value{
-The (K x K) indicator correlation matrix S.
+The (K x K) (robust) indicator correlation matrix S.
 }
 \description{
-Calculate the indicator correlation matrix using Bravais-Pearson
-or Theil-Sen correlation.
+Calculate the indicator correlation matrix using conventional or robust methods.
+}
+\details{
+Depending on the type of the columns of \code{.X_cleaned} the following methods are used:
+\describe{
+\item{\code{Numeric-numeric}}{Bravais-Pearson product-moment correlation}
+\item{\code{Numeric-factor}}{Polyserial correlation}
+\item{\code{Factor-factor}}{Polychoric correlation}
+}
+Note: logical input is treated as a 0-1 factor variable.
+
+If \code{.approach_cor_robust} is not \code{none}, the specified robustness method is used
+instead.
 }
 \keyword{internal}

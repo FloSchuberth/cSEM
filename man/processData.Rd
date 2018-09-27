@@ -7,13 +7,15 @@
 processData(.data, .model)
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
+data column types or classes are: logical, numeric (double or integer), factor
+(ordered and unordered) or a mix of several types.}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
 }
 \value{
-A (N x K) matrix containing the standardized data with columns ordered
+A (N x K) data.frame containing the standardized data with columns ordered
 according to the order they appear in the measurement model equations provided
 via the \code{.model} argument.
 }

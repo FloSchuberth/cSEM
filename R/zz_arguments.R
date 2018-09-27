@@ -8,7 +8,9 @@
 #' function having `...` as a formal argument, set the `.only_dots` argument 
 #' of the [args_default()] function to `TRUE`.
 #'
-#' @param .data A `data.frame` or a `matrix` containing the raw data. 
+#' @param .data A `data.frame` or a `matrix` containing the raw data. Possible
+#'   data column types or classes are: logical, numeric (double or integer), factor 
+#'   (ordered and unordered) or a mix of several types.
 #' @param .model A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 #'   or a [cSEMModel]-list.
 #' @param .alpha An integer or a numeric vector of significance levels. 
@@ -19,9 +21,10 @@
 #' @param .approach_2ndorder Character string. Approach used for models containing
 #'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
 #'   Defaults to "*3stage*".
-#' @param .approach_cor Character string. Approach used to obtain the indicator 
-#'   correlation matrix. One of: "*bravais-pearson*" or "*theil-sen*".
-#'   Defaults to "*bravais-pearson*".
+#' @param .approach_cor_robust Character string. Approach used to obtain a robust 
+#'   indicator correlation matrix. One of: "*none*" in which case nothing is done,
+#'   "*theil-sen*" or (TODO)
+#'   Defaults to "*none*".
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
@@ -122,7 +125,7 @@
 #'   function should be returned? One of: `"csem"` or `"cca"`. Defaults to `"csem"`. 
 #'   Currently ignored if `.only_dots = FALSE`. 
 #' @param .X A matrix of processed data (scaled, cleaned and ordered).
-#' @param .X_cleaned A matrix of processed data (cleaned and ordered). Note: `X_cleaned`
+#' @param .X_cleaned A data.frame of processed data (cleaned and ordered). Note: `X_cleaned`
 #'   may not be scaled!
 #'
 #' @name csem_arguments
@@ -236,7 +239,7 @@ args_default <- function(
     .normality               = TRUE,
     
     #  Arguments passed to foreman
-    .approach_cor            = c("bravais-pearson","theil-sen"),
+    .approach_cor_robust     = c("none", "theil-sen"),
     .disattenuate            = TRUE,
     .dominant_indicators     = NULL,
     .estimate_structural     = TRUE,

@@ -6,7 +6,7 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return A (N x K) matrix containing the standardized data with columns ordered
+#' @return A (N x K) data.frame containing the standardized data with columns ordered
 #'   according to the order they appear in the measurement model equations provided
 #'   via the `.model` argument.
 #'
@@ -53,20 +53,25 @@ processData <- function(.data, .model) {
          call. = FALSE)
   }
 
-  # Check if all columns are numeric. Stop otherwise
-  x <- names(which(!sapply(.data, is.numeric)))
+  # Check if any of the columns is a character. 
+  # Allowed types: numeric (double, integer), factor (ordered and unordered), or logical 
+  x <- names(which(sapply(.data, is.character)))
   if(length(x) == 1) {
-    stop("Column: ",paste0("`", x, "`", collapse = ", "), " of `.data` is non-numeric.\n",
+    stop("Column: ",paste0("`", x, "`", collapse = ", "), " of `.data` is of type `character`.\n",
          "Have you forgotten to set `", paste0(".id = '", x, "'`?"), call. = FALSE)
   } else if(length(x) > 1) {
-    stop("Columns: ",paste0("`", x, "`", collapse = ", "), "of `.data` are non-numeric.\n",
+    stop("Columns: ",paste0("`", x, "`", collapse = ", "), "of `.data` are of type `character`.\n",
+         "The column type must be one of: `logical`, `numeric`, or `factor`",
          call. = FALSE)
   }
 
   ### Processing and further checking =========
-  # Convert to matrix if data.frame
-  if(is.data.frame(.data)) {
-    .data <- as.matrix(.data)
+  # Convert to data.frame if matrix
+  # Note we need a data frame to allow for data to have different classes. Namely,
+  # factors need to be allowed.
+  
+  if(is.matrix(.data)) {
+    .data <- as.data.frame(.data)
   }
 
   # Convert .model to cSEMModel format if not already in this format
@@ -100,9 +105,6 @@ processData <- function(.data, .model) {
   }
   # Order data according to the ordering of the measurement model
   .data <- .data[, colnames(.model$measurement)]
-
-  ## Set class
-  class(.data) <- "cSEMData"
 
   ## Return
   return(.data)

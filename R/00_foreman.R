@@ -12,6 +12,7 @@
 #' @usage foreman(
 #'     .data                        = args_default()$.data,
 #'     .model                       = args_default()$.model,
+#'     .approach_cor_robust         = args_default()$.approach_cor_robust,
 #'     .approach_nl                 = args_default()$.approach_nl,
 #'     .approach_paths              = args_default()$.approach_paths,
 #'     .approach_weights            = args_default()$.approach_weights,
@@ -45,7 +46,7 @@
 foreman <- function(
   .data                        = args_default()$.data,
   .model                       = args_default()$.model,
-  .approach_cor                = args_default()$.approach_cor,
+  .approach_cor_robust         = args_default()$.approach_cor_robust,
   .approach_nl                 = args_default()$.approach_nl,
   .approach_paths              = args_default()$.approach_paths,
   .approach_weights            = args_default()$.approach_weights,
@@ -68,15 +69,20 @@ foreman <- function(
   ## Parse and order model to "cSEMModel" list
   csem_model <- parseModel(.model)
 
-  ## Prepare, check, and clean data
+  ## Prepare, check, and clean data (a data.frame)
   X_cleaned <- processData(.data = .data, .model = csem_model) 
   
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
-  S <- calculateIndicatorCor(.X_cleaned = X_cleaned, .approach_cor = .approach_cor)
+  Cor <- calculateIndicatorCor(.X_cleaned = X_cleaned, 
+                             .approach_cor_robust = .approach_cor_robust)
+  
+  # Extract the correlation matrix
+  S <- Cor$S
   
   ## Standardize
-  X <- scale(X_cleaned)
+  
+  X <- scale(data.matrix(X_cleaned))
   
   ## Calculate weights
   if(.approach_weights == "PLS") {
