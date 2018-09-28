@@ -107,14 +107,16 @@ csem <- function(
   .data                    = NULL,
   .model                   = NULL,
   .id                      = NULL,
+  .approach_2ndorder       = c("3stage", "repeated_indicators"),
+  .approach_paths          = c("OLS", "2SLS"),
   .approach_weights        = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                "GSCA", "fixed", "unit"),
-  .approach_paths          = c("OLS", "2SLS"),
   ...
   ) {
   ## Match arguments
-  .approach_weights <- match.arg(.approach_weights)
+  .approach_2ndorder<- match.arg(.approach_2ndorder)
   .approach_paths   <- match.arg(.approach_paths)
+  .approach_weights <- match.arg(.approach_weights)
   
   ## Collect and handle arguments
   # Note: all.names = TRUE is neccessary for otherwise arguments with a leading
@@ -185,15 +187,26 @@ csem <- function(
   
   ##
   # Note: currently only data supplied as a list or grouped data is not allowed
-  if(any(model$construct_order == "Second order") && 
+  if(any(model$construct_order == "Second order") &&
      args$.approach_2ndorder == "3stage") {
     
     model2 <- convertModel(
       .csem_model        = model,
       .approach_2ndorder = args$.approach_2ndorder,
       .stage             = "second")
-
+    
+    # Get scores
     scores         <- out$Estimates$Construct_scores
+    if(any(grepl("\\.", colnames(model2$measurement)))) {
+      temp_names <- grep("\\.", colnames(model2$measurement), value = TRUE)
+      temp <- lapply(strsplit(temp_names, "\\."), function(x) {
+        matrixStats::rowProds(scores[, x, drop = FALSE])
+      })
+    }
+    temp <- do.call(cbind, temp)
+    colnames(temp) <- temp_names
+    scores <- cbind(scores, temp)
+    
     rel_all_1step  <- out$Estimates$Construct_reliabilities
     
     # All constructs of the original model
@@ -214,6 +227,15 @@ csem <- function(
     out <- csem(.data = scores, 
                 .model = model2, 
                 .reliabilities = rel_not_to_2nd)
+    
+    # Covered cases: constructs build by only composites: done
+    
+    # 1. check 2nd order constructs (comp or cf) that are only influenced by common factors
+    # 2. distingusih what the 2nd order construct is 
+    # if composite (composite of cf) --> use code by flo
+    
+    # if cf (cf of cf) <- Flo does it right now
+    
   } 
   
   ## Set class for output

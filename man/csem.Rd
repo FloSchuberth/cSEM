@@ -43,6 +43,10 @@ or \code{cca()}. Type \code{\link[cSEM:args_default]{args_default(.only_dots = T
 or \code{\link[cSEM:args_default]{args_default(.only_dots = TRUE, .which_fun = "cca")}}
 for a complete list of accepted \code{...} arguments for the respective function.}
 
+\item{.approach_2ndorder}{Character string. Approach used for models containing
+second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
+Defaults to "\emph{3stage}".}
+
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
 Defaults to "\emph{OLS}".}
