@@ -78,9 +78,14 @@ calculateWeightsPLS <- function(
                   "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.", call. = FALSE)
     }
     # If only "ModeA" or "ModeB" is provided without set all of the modes to that mode.
-    if(length(names(.PLS_modes)) == 0 && length(.PLS_modes) == 1) {
-      modes <- rep(.PLS_modes, length(csem_model$construct_type))
-      names(modes) <- names(csem_model$construct_type)
+    if(length(names(.PLS_modes)) == 0) {
+      if(length(.PLS_modes) == 1) {
+        modes <- rep(.PLS_modes, length(csem_model$construct_type))
+        names(modes) <- names(csem_model$construct_type)
+      } else {
+        stop("Only a vector of `name = value` pairs or a single mode may be provided to `.PLS_modes`.", 
+             call. = FALSE)
+      }
     } else {
       # Replace modes if necessary and keep the others at their defaults
       modes[names(.PLS_modes)] <- .PLS_modes
