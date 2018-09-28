@@ -69,16 +69,15 @@ calculateWeightsPLS <- function(
     modes <- ifelse(csem_model$construct_type == "Common factor", "ModeA", "ModeB")
 
   } else if(all(.PLS_modes %in% c("ModeA", "ModeB"))) {
-    
     if(setequal(names(.PLS_modes), names(csem_model$construct_type))) {
       modes <- .PLS_modes
       modes <- modes[names(csem_model$construct_type)]
-    } else if(length(.PLS_modes) == 1) {
-      modes <- rep(.PLS_modes, length(csem_model$construct_type))
-      names(modes) <- names(csem_model$construct_type)
     } else if(length(setdiff(names(.PLS_modes), names(csem_model$construct_type))) > 0) {
       stop(paste0("`", setdiff(names(.PLS_modes), names(csem_model$construct_type)), 
                   "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.", call. = FALSE)
+    } else if(length(.PLS_modes) == 1) {
+      modes <- rep(.PLS_modes, length(csem_model$construct_type))
+      names(modes) <- names(csem_model$construct_type)
     } else  {
       stop("Mode ", paste0("`", setdiff(names(csem_model$construct_type), names(.PLS_modes)), 
                   "`", collapse = ", ")," in `.PLS_modes` is missing.", call. = FALSE)
