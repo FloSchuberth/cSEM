@@ -63,28 +63,28 @@ calculateWeightsPLS <- function(
 
   ### Preparation ==============================================================
   ## Get/set the modes for the outer estimation
-
-  if(is.null(.PLS_modes)) {
-    
-    modes <- ifelse(csem_model$construct_type == "Common factor", "ModeA", "ModeB")
-
-  } else if(all(.PLS_modes %in% c("ModeA", "ModeB"))) {
-    if(setequal(names(.PLS_modes), names(csem_model$construct_type))) {
-      modes <- .PLS_modes
-      modes <- modes[names(csem_model$construct_type)]
-    } else if(length(setdiff(names(.PLS_modes), names(csem_model$construct_type))) > 0) {
+  modes <- ifelse(csem_model$construct_type == "Common factor", "ModeA", "ModeB")
+  
+  if(!is.null(.PLS_modes)) {
+    # Error if other than "ModeA" or "ModeB"
+    if(!all(.PLS_modes %in% c("ModeA", "ModeB"))) {
+      stop(paste0("`", setdiff(.PLS_modes, c("ModeA", "ModeB")), "`", collapse = ", "),
+           " in `.PLS_modes` is an unknown mode.", call. = FALSE)
+    }
+    # Error if construct names provided do not match the constructs of the model
+    if(length(names(.PLS_modes)) != 0 &&
+       length(setdiff(names(.PLS_modes), names(csem_model$construct_type))) > 0) {
       stop(paste0("`", setdiff(names(.PLS_modes), names(csem_model$construct_type)), 
                   "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.", call. = FALSE)
-    } else if(length(.PLS_modes) == 1) {
+    }
+    # If only "ModeA" or "ModeB" is provided without set all of the modes to that mode.
+    if(length(names(.PLS_modes)) == 0 && length(.PLS_modes) == 1) {
       modes <- rep(.PLS_modes, length(csem_model$construct_type))
       names(modes) <- names(csem_model$construct_type)
-    } else  {
-      stop("Mode ", paste0("`", setdiff(names(csem_model$construct_type), names(.PLS_modes)), 
-                  "`", collapse = ", ")," in `.PLS_modes` is missing.", call. = FALSE)
+    } else {
+      # Replace modes if necessary and keep the others at their defaults
+      modes[names(.PLS_modes)] <- .PLS_modes
     }
-  } else {
-    stop(paste0("`", setdiff(.PLS_modes, c("ModeA", "ModeB")), "`", collapse = ", "),
-         " in `.PLS_modes` is an unknown mode.", call. = FALSE)
   }
 
   ### Calculation/Iteration ====================================================
