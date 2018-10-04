@@ -202,11 +202,11 @@ csem <- function(
       temp <- lapply(strsplit(temp_names, "\\."), function(x) {
         matrixStats::rowProds(scores[, x, drop = FALSE])
       })
+      temp <- do.call(cbind, temp)
+      colnames(temp) <- temp_names
+      scores <- cbind(scores, temp)
     }
-    temp <- do.call(cbind, temp)
-    colnames(temp) <- temp_names
-    scores <- cbind(scores, temp)
-    
+
     rel_all_1step  <- out$Estimates$Construct_reliabilities
     
     # All constructs of the original model
