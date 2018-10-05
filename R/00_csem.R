@@ -185,7 +185,7 @@ csem <- function(
     out <- do.call(foreman, args_needed)
   }
   
-  ##
+  ### Second step
   # Note: currently only data supplied as a list or grouped data is not allowed
   if(any(model$construct_order == "Second order") &&
      args$.approach_2ndorder == "3stage") {
@@ -197,6 +197,7 @@ csem <- function(
     
     # Get scores
     scores         <- out$Estimates$Construct_scores
+    # Add scores for non-linear terms of necessary
     if(any(grepl("\\.", colnames(model2$measurement)))) {
       temp_names <- grep("\\.", colnames(model2$measurement), value = TRUE)
       temp <- lapply(strsplit(temp_names, "\\."), function(x) {
@@ -206,38 +207,78 @@ csem <- function(
       colnames(temp) <- temp_names
       scores <- cbind(scores, temp)
     }
-
+    
+    # All linear constructs of the original model
+    c_linear_original <- rownames(model$structural)
+    # All constructs used in the first step (= all first order constructs)
+    c_linear_1step <- names(model$construct_order[model$construct_order == "First order"])
+    # All second order constructs
+    c_2nd_order <- setdiff(c_linear_original, c_linear_1step)
+    # All indicators of the original model (including linear and nonlinear 
+    # constructs that form/measure a second order construct)
+    i_original <- colnames(model$measurement)
+    i_linear_original <- intersect(c_linear_original, i_original)
+    i_nonlinear_original <- grep("\\.", i_original, value = TRUE) 
+    # Constructs not attatched to second order constructs
+    c_not_attached_to_2nd <- setdiff(c_linear_1step, i_linear_original)
+    
+    # Get all reliabilities from first step
     rel_all_1step  <- out$Estimates$Construct_reliabilities
+    # Select only those reliabilities of the constructs that are not attached
+    # to a second order factor
+    rel_not_attached_to_2nd <- rel_all_1step[c_not_attached_to_2nd]
+    names(rel_not_attached_to_2nd) <- paste0(c_not_attached_to_2nd, "_temp")
     
-    # All constructs of the original model
-    nc_all_original <- rownames(model$structural)
-    # All indicators of the original model (including constructs that form/measure
-    # a second order construct
-    ni_all_original <- colnames(model$measurement)
-    # Constructs used in the first step (= all first order constructs)
-    nc_all_1step <- names(model$construct_order[model$construct_order == "First order"])
-    # Constructs forming/measuring a second order constructs
-    nc_to_2nd <- intersect(ni_all_original, nc_all_original)
-    # Constructs that dont form/measure a second order construct
-    nc_not_to_2nd <- setdiff(nc_all_1step, nc_to_2nd)
+    out <- csem(.data          = scores, 
+                .model         = model2, 
+                .reliabilities = rel_not_attached_to_2nd)
     
-    rel_not_to_2nd <- rel_all_1step[nc_not_to_2nd]
-    names(rel_not_to_2nd) <- paste0(nc_not_to_2nd, "_temp")
+    # Correct loadings
+    out$Estimates$Loading_estimates <-  t(apply(out$Estimates$Loading_estimates, 1, function(x) {
+      x / sqrt(rel_all_1step[colnames(out$Information$Model$measurement)])
+    }))
+    colnames(out$Estimates$Loading_estimates) <- colnames(out$Information$Model$measurement)
     
-    out <- csem(.data = scores, 
-                .model = model2, 
-                .reliabilities = rel_not_to_2nd)
-    
-    # Covered cases: constructs build by only composites: done
-    
-    # 1. check 2nd order constructs (comp or cf) that are only influenced by common factors
-    # 2. distingusih what the 2nd order construct is 
-    # if composite (composite of cf) --> use code by flo
-    
-    # if cf (cf of cf) <- Flo does it right now
-    
-  } 
-  
+    ## Third step
+    # If 2nd order construct is build by common factors an additional
+    # correction is necessary
+    rel_2nd_order <- 1
+    names(rel_2nd_order) <- c_2nd_order
+    for(i in c_2nd_order) {
+      ## Get names of the first order constructs attatched to second order factor i
+      col_names <- colnames(model$measurement[i, model$measurement[i, , drop = FALSE ] == 1, drop = FALSE])
+      # Extract only names of the linear terms
+      col_names_linear  <- setdiff(col_names, i_nonlinear_original)
+      ## Only compute a correction if any of the first order constructs are
+      ## common factors
+      if(any(model$construct_type[col_names_linear] == "Common factor")) {
+        ## Correction depends on the type of second order constructs
+        if(model$construct_type[i] == "Composite") {
+          
+          w <- out$Estimates$Weight_estimates[i, col_names, drop = FALSE]
+          Sstar <- out$Estimates$Indicator_VCV[col_names, col_names]
+          diag(Sstar) <- rel_all_1step[col_names]
+          rel_2nd_order[i] <- c(w %*% Sstar %*% t(w))
+          
+          rel <- out$Estimates$Construct_reliabilities
+          rel[c_2nd_order] <- rel_2nd_order 
+          
+          out <- csem(.data          = scores, 
+                      .model         = model2, 
+                      .reliabilities = rel)
+        }
+        # Covered cases: constructs build by only composites: done
+        
+        # 1. check 2nd order constructs (comp or cf) that are only influenced by common factors
+        # 2. distingusih what the 2nd order construct is 
+        # if composite (composite of cf) --> use code by flo
+        
+        # if cf (cf of cf) <- Flo does it right now
+        
+      } 
+    }
+  }
+
   ## Set class for output
   class(out) <- "cSEMResults"
   
