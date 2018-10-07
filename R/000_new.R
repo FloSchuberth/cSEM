@@ -6,12 +6,42 @@
 
 
 HTMT = function(.object){
+  
+  # Adapted from matrixpls
+  
+  # Extract correlation matrix
   S=.object$Estimates$Indicator_VCV
   
   # HTMT only for common factors
-  cf_names=names(.object$Information$Construct_types[.object$Information$Construct_types=="Common factor"])
+  cf_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Common factor"])
   
-  stop('Not yet implemented') 
+  # Indicators connected to a common factor
+  cf_measurement=.object$Information$Model$measurement[cf_names,
+                                        colSums(.object$Information$Model$measurement[cf_names,])!=0]
+  
+  ind_names=colnames(cf_measurement)
+  S_relevant=S[ind_names,ind_names]
+  
+  1-diag(nrow(S_relevant))
+  
+  
+  # calculate average correlation of the indicators of a block 
+  average_correlation_per_block=cf_measurement%*%(S_relevant-diag(diag(S_relevant)))%*%t(cf_measurement)/
+    cf_measurement%*%(1-diag(nrow(S_relevant))) %*%t(cf_measurement)
+  
+  # Choose constructs that are measured by at least 2 indicators
+  i = which(rowSums(cf_measurement) > 1)
+  relevant_average_block_correlations <- average_correlation_per_block[i,i]
+  
+  if(length(i)<2){
+    warning("The HTMT can only be calculated in case of two common factors with at least two indicators per common factor.")
+    return(NULL)
+  }
+  
+  htmt <- relevant_average_block_correlations*lower.tri(relevant_average_block_correlations) /
+    sqrt(diag(relevant_average_block_correlations) %o% diag(relevant_average_block_correlations))
+  
+  htmt
   
 }
 
