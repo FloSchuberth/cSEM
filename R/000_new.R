@@ -17,7 +17,7 @@ HTMT = function(.object,.only_common_factors=TRUE){
   # Indicators connected to a common factor
   cf_measurement=.object$Information$Model$measurement[cf_names,
                                         colSums(.object$Information$Model$measurement[cf_names,])!=0]
-  } else{
+  } else{ # in case of composites
     cf_names=names(.object$Information$Model$construct_type)
     cf_measurement=.object$Information$Model$measurement[cf_names,
                                                          colSums(.object$Information$Model$measurement[cf_names,])!=0]
@@ -37,8 +37,13 @@ HTMT = function(.object,.only_common_factors=TRUE){
   relevant_average_block_correlations <- average_correlation_per_block[i,i]
   
   if(length(i)<2){
+    if(.only_common_factors==TRUE){
     stop("The HTMT can only be calculated in case of two common factors with at least two indicators per common factor.")
-  }
+    } else {
+      stop("The HTMT can only be calculated in case of two constructs with at least two indicators per construct.")
+    }
+      
+      }
   
   htmt <- relevant_average_block_correlations*lower.tri(relevant_average_block_correlations) /
     sqrt(diag(relevant_average_block_correlations) %o% diag(relevant_average_block_correlations))
