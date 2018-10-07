@@ -34,8 +34,7 @@ HTMT = function(.object){
   relevant_average_block_correlations <- average_correlation_per_block[i,i]
   
   if(length(i)<2){
-    warning("The HTMT can only be calculated in case of two common factors with at least two indicators per common factor.")
-    return(NULL)
+    stop("The HTMT can only be calculated in case of two common factors with at least two indicators per common factor.")
   }
   
   htmt <- relevant_average_block_correlations*lower.tri(relevant_average_block_correlations) /
