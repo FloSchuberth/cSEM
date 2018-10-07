@@ -5,22 +5,25 @@
 # Calculates the Heterotrait-Monotrait factor correlations, see Henseler et al. (2015)
 
 
-HTMT = function(.object){
+HTMT = function(.object,.only_common_factors=TRUE){
   
   # Adapted from matrixpls
   
-  # Extract correlation matrix
-  S=.object$Estimates$Indicator_VCV
-  
-  # HTMT only for common factors
+
+  if(.only_common_factors==TRUE){
+  # Extract names of the common factors, the HTMT is only calculated for common factors
   cf_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Common factor"])
   
   # Indicators connected to a common factor
   cf_measurement=.object$Information$Model$measurement[cf_names,
                                         colSums(.object$Information$Model$measurement[cf_names,])!=0]
-  
+  } else{
+    cf_names=names(.object$Information$Model$construct_type)
+    cf_measurement=.object$Information$Model$measurement[cf_names,
+                                                         colSums(.object$Information$Model$measurement[cf_names,])!=0]
+  }
   ind_names=colnames(cf_measurement)
-  S_relevant=S[ind_names,ind_names]
+  S_relevant=.object$Estimates$Indicator_VCV[ind_names,ind_names]
   
   1-diag(nrow(S_relevant))
   
