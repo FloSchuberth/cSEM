@@ -42,8 +42,7 @@ HTMT = function(.object,.only_common_factors=TRUE){
     } else {
       stop("The HTMT can only be calculated in case of two constructs with at least two indicators per construct.")
     }
-      
-      }
+  }
   
   htmt <- relevant_average_block_correlations*lower.tri(relevant_average_block_correlations) /
     sqrt(diag(relevant_average_block_correlations) %o% diag(relevant_average_block_correlations))
