@@ -96,7 +96,7 @@ of construct used. Ignored if \code{.approach_weight} is not PLS.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
 used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS.}
 
 \item{.reliabilities}{A character vector of \code{"name" = value} pairs,
 where \code{value} is a number between 0 and 1 and \code{"name"} a character string

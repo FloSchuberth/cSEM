@@ -4,15 +4,16 @@
 \alias{calculateWeightsUnit}
 \title{Calculate composite weights using unit weights}
 \usage{
-calculateWeightsUnit(.data, .model)
+calculateWeightsUnit(
+ .S                 = args_default()$.S,
+ .csem_model        = args_default()$.csem_model
+  )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
-data column types or classes are: logical, numeric (double or integer), factor
-(ordered and unordered) or a mix of several types.}
 
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
+
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 }
 \value{
 A list with the elements

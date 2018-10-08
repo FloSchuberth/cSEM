@@ -96,7 +96,7 @@
 #'   of construct used. Ignored if `.approach_weight` is not PLS.  
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
 #'   used in PLS. One of: "*centroid*", "*factorial*", or "*path*".
-#'   Defaults to "*centroid*". Ignored if `.approach_weight` is not PLS.
+#'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS.
 #' @param .Q A vector of composite-construct correlations with element names equal to
 #'   the names of the J construct names used in the measurement model. Note 
 #'   Q^2 is also called the reliability coefficient.
@@ -224,7 +224,7 @@ args_default <- function(
     
     # Arguments passed to calculateInnerWeightsPLS
     .PLS_ignore_structural_model = FALSE,
-    .PLS_weight_scheme_inner     = c("centroid", "factorial", "path"),
+    .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
     
     # Arguments passed to calculateCorrectionFactors
     .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 

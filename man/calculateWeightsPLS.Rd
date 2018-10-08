@@ -5,8 +5,8 @@
 \title{Calculate composite weights using PLS}
 \usage{
 calculateWeightsPLS(
-  .data                        = args_default()$.data,
-  .model                       = args_default()$.model,
+  .S                           = args_default()$.S,
+  .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
   .iter_max                    = args_default()$.iter_max,
   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model
@@ -16,12 +16,9 @@ calculateWeightsPLS(
    )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
-data column types or classes are: logical, numeric (double or integer), factor
-(ordered and unordered) or a mix of several types.}
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
@@ -45,7 +42,7 @@ of construct used. Ignored if \code{.approach_weight} is not PLS.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
 used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
