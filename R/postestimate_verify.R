@@ -7,8 +7,6 @@
 #' reliabilities larger than 1, a construct VCV and/or a
 #' model-implied VCV matrix that is not positive (semi-)definite.
 #'
-#' Currently `verify()` is only implemented for linear models. Future package 
-#' versions will include non-linear models as well.
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
@@ -21,7 +19,8 @@
 #    a correlation larger than 1.
 #' \item 3: The construct VCV is not positive semi-definite.
 #' \item 4: At least one construct reliability is larger than 1. 
-#' \item 5: The model-implied indicator VCV is not positive semi-definite. This is only checked for linear models.
+#' \item 5: The model-implied indicator VCV is not positive semi-definite. 
+#'   This is only checked for linear models.
 #' }
 #'
 #' @export
@@ -38,11 +37,6 @@ verify <- function(.object){
          "Use `lapply(.object, verify)` instead.",
          call. = FALSE)
   }
-  
-  # if(.object$Information$Model$model_type != "Linear"){
-  #   stop("`verify()` currently not applicable to nonlinear models.",
-  #        call. = FALSE)
-  # }
   
   stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE, "5" = FALSE)
   
@@ -63,11 +57,10 @@ verify <- function(.object){
     stat["4"] <- TRUE
   }
   
-  
-   if(.object$Information$Model$model_type == "Linear" && !matrixcalc::is.positive.semi.definite(fit(.object))) {
+  if(.object$Information$Model$model_type == "Linear" && 
+     !matrixcalc::is.positive.semi.definite(fit(.object))) {
     stat["5"] <- TRUE
   }
-  
   
   class(stat) <- "cSEMVerify"
   return(stat) 
