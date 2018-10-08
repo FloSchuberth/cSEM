@@ -75,6 +75,7 @@
 #'   .data             = NULL,
 #'   .model            = NULL,
 #'   .id               = NULL,
+#'   .approach_2ndorder= c("2stage", "repeated_indicators"),
 #'   .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
 #'                         "fixed", "unit"),
 #'   .approach_path    = c("OLS", "2SLS", "3SLS"),
@@ -107,7 +108,7 @@ csem <- function(
   .data                    = NULL,
   .model                   = NULL,
   .id                      = NULL,
-  .approach_2ndorder       = c("3stage", "repeated_indicators"),
+  .approach_2ndorder       = c("2stage", "repeated_indicators"),
   .approach_paths          = c("OLS", "2SLS"),
   .approach_weights        = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                "GSCA", "fixed", "unit"),
@@ -188,7 +189,7 @@ csem <- function(
   ### Second step
   # Note: currently only data supplied as a list or grouped data is not allowed
   if(any(model$construct_order == "Second order") &&
-     args$.approach_2ndorder == "3stage") {
+     args$.approach_2ndorder == "2stage") {
     
     model2 <- convertModel(
       .csem_model        = model,

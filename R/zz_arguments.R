@@ -19,8 +19,8 @@
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
 #' @param .approach_2ndorder Character string. Approach used for models containing
-#'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
-#'   Defaults to "*3stage*".
+#'   second order constructs. One of: "*2stage*" or "*repeated_indicators*". 
+#'   Defaults to "*2stage*".
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
 #'   indicator correlation matrix. One of: "*none*" in which case nothing is done,
 #'   "*theil-sen*" or (TODO)
@@ -110,7 +110,7 @@
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
 #' @param .show_progress Logical. Show progress bar. Defaults to `TRUE`.
 #' @param .stage Character string. The stage the model is need for.
-#'   One of "*first*", "*second*" or "*third*". Defaults to "*first*".
+#'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
@@ -215,8 +215,8 @@ args_default <- function(
   
   args_dotdotdot_csem <- list(
     # Arguments passed to convertModel()
-    .approach_2ndorder       = c("3stage", "repeated_indicators"),
-    .stage                   = c("first", "second", "third"),
+    .approach_2ndorder       = c("2stage", "repeated_indicators"),
+    .stage                   = c("first", "second"),
     # Arguments passed to calculateWeightsPLS
     .iter_max                = 100,
     .PLS_modes               = NULL,

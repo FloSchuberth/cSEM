@@ -20,8 +20,8 @@ Defaults to \code{0.05}.}
 "\emph{SUMCORR}".}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
-Defaults to "\emph{3stage}".}
+second order constructs. One of: "\emph{2stage}" or "\emph{repeated_indicators}".
+Defaults to "\emph{2stage}".}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
@@ -149,7 +149,7 @@ reliabilities are estimated by \code{csem()}.}
 \item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
 
 \item{.stage}{Character string. The stage the model is need for.
-One of "\emph{first}", "\emph{second}" or "\emph{third}". Defaults to "\emph{first}".}
+One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 
 \item{.terms}{A vector of construct names to be classified.}
 

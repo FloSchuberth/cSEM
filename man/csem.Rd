@@ -17,6 +17,7 @@ csem(
   .data             = NULL,
   .model            = NULL,
   .id               = NULL,
+  .approach_2ndorder= c("2stage", "repeated_indicators"),
   .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
                         "fixed", "unit"),
   .approach_path    = c("OLS", "2SLS", "3SLS"),
@@ -44,8 +45,8 @@ or \code{\link[cSEM:args_default]{args_default(.only_dots = TRUE, .which_fun = "
 for a complete list of accepted \code{...} arguments for the respective function.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
-Defaults to "\emph{3stage}".}
+second order constructs. One of: "\emph{2stage}" or "\emph{repeated_indicators}".
+Defaults to "\emph{2stage}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".

@@ -337,7 +337,7 @@ convertModel <- function(
   # Linear constructs that serve as indicators and need to be replaced
   i_linear_1step <- setdiff(i_original, c(c_linear_original, i_nonlinear_original))
   
-  if(.stage %in% c("second", "third")) {
+  if(.stage %in% c("second")) {
     # Linear constructs that dont form/measure a second order construct
     c_not_attached_to_2nd <- setdiff(c_linear_1step, i_linear_original)
     c_2step <- c(c_not_attached_to_2nd, c_2nd_order)
