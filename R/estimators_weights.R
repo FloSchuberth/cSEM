@@ -43,7 +43,7 @@ calculateWeightsPLS <- function(
 
   ### Preparation ==============================================================
   ## Get/set the modes for the outer estimation
-  modes <- ifelse(csem_model$construct_type == "Common factor", "ModeA", "ModeB")
+  modes <- ifelse(.csem_model$construct_type == "Common factor", "ModeA", "ModeB")
   
   if(!is.null(.PLS_modes)) {
     # Error if other than "ModeA" or "ModeB"
