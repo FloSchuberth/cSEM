@@ -8,7 +8,7 @@ Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     role  = c("aut"),
                     email = "f.schuberth@utwente.nl"),
              person(given = "Tamara", family = "Schamberger",
-                    role  = c("aut"),
+                    role  = c("ctb"),
                     email = "tamara.schamberger@uni-wuerzburg.de"))
 Depends: R (>= 3.5.0)
 Description: Analyze structural equation models, including path 
