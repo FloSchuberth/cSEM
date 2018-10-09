@@ -68,9 +68,9 @@ calculate2ndOrder <- function(
   names(rel_not_attached_to_2nd) <- paste0(c_not_attached_to_2nd, "_temp")
   
   ## Perform second stage
-  out2 <- csem(.data          = scores, 
-               .model         = model2, 
-               .reliabilities = rel_not_attached_to_2nd)
+  out2 <- foreman(.data          = scores, 
+                  .model         = model2, 
+                  .reliabilities = rel_not_attached_to_2nd)
   
   ## Correct loadings (this basically rebases loadings)
   out2$Estimates$Loading_estimates <-  t(apply(out2$Estimates$Loading_estimates, 1, function(x) {
@@ -111,9 +111,9 @@ calculate2ndOrder <- function(
       rel[c_2nd_order_composites] <- rel_2nd_order 
       
       ## Redo second stage including new reliabilities (= third stage)
-      out2 <- csem(.data          = scores, 
-                   .model         = model2, 
-                   .reliabilities = rel)
+      out2 <- foreman(.data          = scores, 
+                      .model         = model2, 
+                      .reliabilities = rel)
       
       for(i in c_2nd_order_composites) {
         
@@ -147,89 +147,6 @@ calculate2ndOrder <- function(
       } # END correct single indicator loadings
     } # END if length(c_2nd_order_composites) != 0
   } # END third stage
-  # ###  Combine Results for final output ----------------------------------------
-  # out1 <- .first_stage_results
-  # n <- rownames(original_model$structural)
-  # 
-  # # n <- c(setdiff(names_constructs, rownames(model_ordered)), rownames(model_ordered))
-  # # m <- order(which(model_measurement[n, ] == 1, arr.ind = TRUE)[, "row"])
-  # # structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n))]
-  # 
-  # ## Path coefficients
-  # n_structural <- gsub("_temp", "", rownames(out2$Estimates$Path_estimates))
-  # dimnames(out2$Estimates$Path_estimates) <- list(n_structural, n_structural)
-  # 
-  # ## Loadings
-  # tmp <- out2$Estimates$Loading_estimates[c_2nd_order, c_attached_to_2nd, drop = FALSE]
-  # 
-  # l1 <- nrow(out1$Estimates$Loading_estimates)
-  # l2 <- ncol(out1$Estimates$Loading_estimates)
-  # l3 <- nrow(tmp)
-  # l4 <- ncol(tmp)
-  # 
-  # # Combine
-  # Lambda <- rbind(cbind(out1$Estimates$Loading_estimates, 
-  #                       matrix(0, l1, l4, dimnames = list(NULL, colnames(tmp)))), 
-  #                 cbind(matrix(0, l3, l2), tmp))
-  # # Reorder
-  # m <- order(which(Lambda[n, ] != 0, arr.ind = TRUE)[, "row"])
-  # Lambda <- Lambda[n, m]
-  # 
-  # ## Weights
-  # tmp <- out2$Estimates$Weight_estimates[c_2nd_order, c_attached_to_2nd, drop = FALSE]
-  # 
-  # W <- rbind(cbind(out1$Estimates$Weight_estimates, 
-  #                  matrix(0, l1, l4, dimnames = list(NULL, colnames(tmp)))), 
-  #            cbind(matrix(0, l3, l2), tmp))
-  # W <- W[n, m]
-  # 
-  # ## Inner weight estimates
-  # dimnames(out2$Estimates$Inner_weight_estimates) <- list(n_structural, n_structural)
-  # 
-  # ## Construct scores
-  # colnames(out2$Estimates$Construct_scores) <- n_structural
-  # 
-  # ## Indicator VCV
-  # # not sure yet
-  # 
-  # ## Proxy VCV
-  # dimnames(out2$Estimates$Proxy_VCV) <- list(n_structural, n_structural)
-  # 
-  # ## Construct VCV
-  # dimnames(out2$Estimates$Construct_VCV) <- list(n_structural, n_structural)
-  # 
-  # ## Cross loadings
-  # # not sure yet
-  # 
-  # ## Construct reliabilities
-  # names(out2$Estimates$Construct_reliabilities) <- n_structural
-  # 
-  # 
-  # out <- list(
-  #   "Estimates"   = list(
-  #     "Path_estimates"         = out2$Estimates$Path_estimates,
-  #     "Loading_estimates"      = Lambda,
-  #     "Weight_estimates"       = W,
-  #     "Construct_scores"       = out2$Estimates$Construct_scores,
-  #     "Indicator_VCV"          = cor(out1$Information$Data),
-  #     "Proxy_VCV"              = out2$Estimates$Proxy_VCV,
-  #     "Construct_VCV"          = out2$Estimates$Construct_VCV,
-  #     "Cross_loadings"         = NULL,
-  #     "Construct_reliabilities"= out2$Estimates$Construct_reliabilities,
-  #     "Correction_factors"     = NULL,
-  #     "R2"                     = out2$Estimates$R2
-  #   ),
-  #   "Information" = list(
-  #     "Data"          = out1$Information$Data,
-  #     "Model"         = original_model,
-  #     "Arguments"     = out1$Information$Arguments,
-  #     "Weight_info"   = list(
-  #       "Modes"                  = NULL,
-  #       "Number_iterations"      = NULL,
-  #       "Inner_weight_estimates" = out2$Estimates$Inner_weight_estimates,
-  #       "Convergence_status"     = out2$Information$Weight_info$Convergence_status
-  #     )
-  #   )
-  # )
+
   return(out2)
 }
