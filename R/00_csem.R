@@ -243,12 +243,15 @@ csem <- function(
     colnames(out2$Estimates$Loading_estimates) <- colnames(out2$Information$Model$measurement)
     
     ### Third step
-    # If 2nd order construct is a composite build by common factors an additional
-    # correction is necessary
+    # If 2nd order construct is a composite build by at least on common factor 
+    # an additional correction is necessary
     
     if(any(model$construct_type[c_attached_to_2nd] == "Common factor")) {
       ## Correction only necessary if the second order construct is a composite
-      c_2nd_order_composites <- names(model$construct_type[model$construct_type == "Composite"])
+      # Which second order constructs are composites?
+      c_2nd_order_composites <- model$construct_type[c_2nd_order]
+      c_2nd_order_composites <- names(c_2nd_order_composites[c_2nd_order_composites == "Composite"])
+      
       if(length(c_2nd_order_composites) != 0) {
         rel_2nd_order <- rep(1, length(c_2nd_order_composites))
         names(rel_2nd_order) <- c_2nd_order_composites
