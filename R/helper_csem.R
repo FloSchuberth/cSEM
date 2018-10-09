@@ -231,5 +231,5 @@ calculate2ndOrder <- function(
   #     )
   #   )
   # )
-  return(out)
+  return(out2)
 }
