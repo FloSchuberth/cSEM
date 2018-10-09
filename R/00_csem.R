@@ -75,7 +75,7 @@
 #'   .data             = NULL,
 #'   .model            = NULL,
 #'   .id               = NULL,
-#'   .approach_2ndorder= c("2stage", "repeated_indicators"),
+#'   .approach_2ndorder= c("3stage", "repeated_indicators"),
 #'   .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
 #'                         "fixed", "unit"),
 #'   .approach_path    = c("OLS", "2SLS", "3SLS"),
@@ -108,7 +108,7 @@ csem <- function(
   .data                    = NULL,
   .model                   = NULL,
   .id                      = NULL,
-  .approach_2ndorder       = c("2stage", "repeated_indicators"),
+  .approach_2ndorder       = c("3stage", "repeated_indicators"),
   .approach_paths          = c("OLS", "2SLS"),
   .approach_weights        = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                "GSCA", "fixed", "unit"),
@@ -189,7 +189,7 @@ csem <- function(
   ### Second step
   # Note: currently only data supplied as a list or grouped data is not allowed
   if(any(model$construct_order == "Second order") &&
-     args$.approach_2ndorder == "2stage") {
+     args$.approach_2ndorder == "3stage") {
     
     model2 <- convertModel(
       .csem_model        = model,
@@ -233,8 +233,8 @@ csem <- function(
     names(rel_not_attached_to_2nd) <- paste0(c_not_attached_to_2nd, "_temp")
     
     out2 <- csem(.data          = scores, 
-                .model         = model2, 
-                .reliabilities = rel_not_attached_to_2nd)
+                 .model         = model2, 
+                 .reliabilities = rel_not_attached_to_2nd)
     
     # Correct loadings
     out2$Estimates$Loading_estimates <-  t(apply(out2$Estimates$Loading_estimates, 1, function(x) {

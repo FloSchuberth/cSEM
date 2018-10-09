@@ -437,7 +437,8 @@ calculateIndicatorCor <- function(
   
   switch (.approach_cor_robust,
           "none" = {
-            temp <- polycor::hetcor(.X_cleaned, std.err = FALSE)
+            # Pd is TRUE by default. See ?polycor for details
+            temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
             S    <- temp$correlations
             type <- ifelse(all(temp$type %in% c("Pearson", "")), "PLS", "OrdPLS")
           },

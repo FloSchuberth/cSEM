@@ -19,8 +19,8 @@
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
 #' @param .approach_2ndorder Character string. Approach used for models containing
-#'   second order constructs. One of: "*2stage*" or "*repeated_indicators*". 
-#'   Defaults to "*2stage*".
+#'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
+#'   Defaults to "*3stage*".
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
 #'   indicator correlation matrix. One of: "*none*" in which case nothing is done,
 #'   "*theil-sen*" or (TODO)
@@ -215,7 +215,7 @@ args_default <- function(
   
   args_dotdotdot_csem <- list(
     # Arguments passed to convertModel()
-    .approach_2ndorder       = c("2stage", "repeated_indicators"),
+    .approach_2ndorder       = c("3stage", "repeated_indicators"),
     .stage                   = c("first", "second"),
     # Arguments passed to calculateWeightsPLS
     .iter_max                = 100,

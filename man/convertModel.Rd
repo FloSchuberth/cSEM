@@ -10,8 +10,8 @@ convertModel(.csem_model)
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{2stage}" or "\emph{repeated_indicators}".
-Defaults to "\emph{2stage}".}
+second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
+Defaults to "\emph{3stage}".}
 
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}

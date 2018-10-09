@@ -53,15 +53,15 @@ calculateWeightsPLS <- function(
     }
     # Error if construct names provided do not match the constructs of the model
     if(length(names(.PLS_modes)) != 0 &&
-       length(setdiff(names(.PLS_modes), names(csem_model$construct_type))) > 0) {
+       length(setdiff(names(.PLS_modes), names(.csem_model$construct_type))) > 0) {
       stop(paste0("`", setdiff(names(.PLS_modes), names(csem_model$construct_type)), 
                   "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.", call. = FALSE)
     }
     # If only "ModeA" or "ModeB" is provided without set all of the modes to that mode.
     if(length(names(.PLS_modes)) == 0) {
       if(length(.PLS_modes) == 1) {
-        modes <- rep(.PLS_modes, length(csem_model$construct_type))
-        names(modes) <- names(csem_model$construct_type)
+        modes <- rep(.PLS_modes, length(.csem_model$construct_type))
+        names(modes) <- names(.csem_model$construct_type)
       } else {
         stop("Only a vector of `name = value` pairs or a single mode may be provided to `.PLS_modes`.", 
              call. = FALSE)
