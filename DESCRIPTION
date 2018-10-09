@@ -1,5 +1,5 @@
 Package: cSEM
-Title: Composite Based Structural Equation Modeling
+Title: Composite-Based Structural Equation Modeling
 Version: 0.0.0.9000
 Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     role  = c("aut", "cre"),
