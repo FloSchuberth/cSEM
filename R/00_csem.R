@@ -191,7 +191,9 @@ csem <- function(
   if(any(model$construct_order == "Second order") &&
      args$.approach_2ndorder == "3stage") {
     
-    out <- calculate2ndOrder(model, out)
+    out2 <- calculate2ndOrder(model, out)
+    
+    out <- list("First_stage" = out, "Second_stage" = out2)
   }
 
   ## Set class for output
