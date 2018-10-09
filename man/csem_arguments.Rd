@@ -5,7 +5,9 @@
 \alias{cSEMArguments}
 \title{cSEMArguments}
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
+data column types or classes are: logical, numeric (double or integer), factor
+(ordered and unordered) or a mix of several types.}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
@@ -17,9 +19,14 @@ Defaults to \code{0.05}.}
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
 "\emph{SUMCORR}".}
 
-\item{.approach_cor}{Character string. Approach used to obtain the indicator
-correlation matrix. One of: "\emph{bravais-pearson}" or "\emph{theil-sen}".
-Defaults to "\emph{bravais-pearson}".}
+\item{.approach_2ndorder}{Character string. Approach used for models containing
+second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
+Defaults to "\emph{3stage}".}
+
+\item{.approach_cor_robust}{Character string. Approach used to obtain a robust
+indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+"\emph{theil-sen}" or (TODO)
+Defaults to "\emph{none}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
@@ -103,7 +110,7 @@ Defaults to \code{FALSE}.}
 requires the \code{doSNOW} and the \code{parallel} package to be installed.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
-factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS.}
@@ -141,6 +148,9 @@ reliabilities are estimated by \code{csem()}.}
 
 \item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
 
+\item{.stage}{Character string. The stage the model is need for.
+One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
+
 \item{.terms}{A vector of construct names to be classified.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
@@ -165,7 +175,7 @@ Currently ignored if \code{.only_dots = FALSE}.}
 
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 
-\item{.X_cleaned}{A matrix of processed data (cleaned and ordered). Note: \code{X_cleaned}
+\item{.X_cleaned}{A data.frame of processed data (cleaned and ordered). Note: \code{X_cleaned}
 may not be scaled!}
 }
 \description{

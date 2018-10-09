@@ -15,8 +15,9 @@ A logical vector indicating which (if any) problem occurred. Status codes are:
 \item 1: The algorithm has not converged.
 \item 2: At least one absolute standardized loading estimate is larger than 1,
 \item 3: The construct VCV is not positive semi-definite.
-\item 4: The model-implied indicator VCV is not positive semi-definite.
-\item 5: At least one construct reliability is larger than 1.
+\item 4: At least one construct reliability is larger than 1.
+\item 5: The model-implied indicator VCV is not positive semi-definite.
+This is only checked for linear models.
 }
 }
 \description{
@@ -27,9 +28,6 @@ Results based on an estimated model exhibiting one of the
 following defects are deemed inadmissible: non-convergence, loadings and/or
 reliabilities larger than 1, a construct VCV and/or a
 model-implied VCV matrix that is not positive (semi-)definite.
-
-Currently \code{verify()} is only implemented for linear models. Future package
-versions will include non-linear models as well.
 }
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}

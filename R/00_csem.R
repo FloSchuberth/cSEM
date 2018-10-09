@@ -75,6 +75,7 @@
 #'   .data             = NULL,
 #'   .model            = NULL,
 #'   .id               = NULL,
+#'   .approach_2ndorder= c("3stage", "repeated_indicators"),
 #'   .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
 #'                         "fixed", "unit"),
 #'   .approach_path    = c("OLS", "2SLS", "3SLS"),
@@ -107,14 +108,16 @@ csem <- function(
   .data                    = NULL,
   .model                   = NULL,
   .id                      = NULL,
+  .approach_2ndorder       = c("3stage", "repeated_indicators"),
+  .approach_paths          = c("OLS", "2SLS"),
   .approach_weights        = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                "GSCA", "fixed", "unit"),
-  .approach_paths          = c("OLS", "2SLS"),
   ...
   ) {
   ## Match arguments
+  .approach_2ndorder<- match.arg(.approach_2ndorder)
+  .approach_paths   <- match.arg(.approach_paths)
   .approach_weights <- match.arg(.approach_weights)
-  .approach_paths    <- match.arg(.approach_paths)
   
   ## Collect and handle arguments
   # Note: all.names = TRUE is neccessary for otherwise arguments with a leading
@@ -122,8 +125,23 @@ csem <- function(
   args_used <- c(as.list(environment(), all.names = TRUE), list(...))
   args_used["..."] <- NULL
   args        <- handleArgs(args_used)
-  args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))] 
+  args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))]
   
+  ## Parse model
+  model <- parseModel(.model)
+  
+  ## Modify model if model contains second order constructs
+  if(any(model$construct_order == "Second order")) {
+    model1 <- convertModel(
+      .csem_model        = model, 
+      .approach_2ndorder = args$.approach_2ndorder,
+      .stage             = "first")
+    ## Update model
+    args_needed[[".model"]] <- model1
+  } else {
+    args_needed[[".model"]] <- model
+  }
+    
   ## Check data
   if(!any(class(.data) %in% c("data.frame", "matrix", "list"))) {
     stop("Data must be provided as a `matrix`, a `data.frame` or a `list`. ", ".data has class: ", 
@@ -168,10 +186,32 @@ csem <- function(
     out <- do.call(foreman, args_needed)
   }
   
+  ### Second step
+  # Note: currently only data supplied as a list or grouped data is not allowed
+  if(any(model$construct_order == "Second order") &&
+     args$.approach_2ndorder == "3stage") {
+    
+    out2 <- calculate2ndOrder(model, out)
+    
+    out <- list("First_stage" = out, "Second_stage" = out2)
+  }
+
   ## Set class for output
   class(out) <- "cSEMResults"
   
-  ## Has estimation been done based on a single data set with no grouping?
-  attr(out, "single") <- ifelse(any(class(.data) == "list")| !is.null(.id), FALSE, TRUE) 
+  ## Is the output a single cSEMResults object or a list of several cSEMResults
+  #  object? The result will not be "single" if ...
+  #  a.) .data is a list of data
+  #  b.) .data contains an .id variable that splits the data into groups
+
+  attr(out, "single") <- ifelse(any(class(.data) == "list") | !is.null(.id) , FALSE, TRUE)
+
+  # ## Is the output from a second order model in which case the
+  # #  result (out) is a list containing the results from the first and
+  # #  the second/third stage.
+  # 
+  # attr(out, "2ndorder") <- ifelse(any(model$construct_order == "Second order") &&
+  #                                   args$.approach_2ndorder == "3stage", TRUE, FALSE)
+  
   return(out)
 }

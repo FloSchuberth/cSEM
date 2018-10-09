@@ -24,7 +24,7 @@ construct name and `"mode"`` is one of \emph{"ModeA"} or \emph{"ModeB"}.}
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
-factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS.}
@@ -40,7 +40,7 @@ Calculates the correction factor used by PLSc.
 Currently, seven approaches are available:
 
 \itemize{
-\item "dist_euclid" (default)
+\item "dist_squared_euclid" (default)
 \item "dist_euclid_weighted"
 \item "fisher_transformed"
 \item "mean_geometric"
