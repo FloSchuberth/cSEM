@@ -25,7 +25,7 @@ AVE=function(.object,.only_common_factors=TRUE){
     AVEs[co_names]=NULL
   }
   
-  return(CRs)
+  return(AVEs)
   
   
 }
