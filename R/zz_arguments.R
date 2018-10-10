@@ -67,6 +67,9 @@
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
+#' @param .modes A vector specifying the mode that should be used for
+#'   each construct in the form `"name" = "mode"`, where `"name"` refers to the
+#'   construct name and `"mode"`` is one of *"ModeA"* or *"ModeB"*.
 #' @param .normality Logical. Should joint normality be assumed in the nonlinear model?
 #'  For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
 #'  Defaults to `TRUE`. Ignored if the model is linear.
