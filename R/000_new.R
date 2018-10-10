@@ -13,7 +13,7 @@ CR=function(.object, .only_common_factors=TRUE){
   
   # Calculate CR for all constructs
   CRs=sapply(construct_names, function(x){
-    lam=c(L[x,])
+    lam=c(L[x,L[x,]!=0])
     cr=sum(lam)^2/(sum(lam)^2+sum(1-lam^2))
     cr
     
