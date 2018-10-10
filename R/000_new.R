@@ -1,10 +1,32 @@
 ### Use this file to add new functions whose name you have not yet decided on
 # or when it is unclear where it belongs.
 
+# Calculates the composite reliability, see Raykov (1997).
+# The current calculation requires standardized loadings, which is not an issue yet.
+# In case of hierarchical models, we need to apply this function on both stages
+CR=function(.object){
+  construct_names=names(.object$Information$Construct_types)
+  
+  # Extract loadings
+  L=.object$Estimates$Loading_estimates
+  
+  
+  # Calculate CR for all constructs
+  CRs=sapply(construct_names, function(x){
+    lam=c(L[x,])
+    cr=sum(lam)^2/(sum(lam)^2+sum(1-lam^2))
+    cr
+    
+  })
+  
+  names(CRs)=construct_names
+  
+  # By default, for composites the CR is set to 1
+  
+}
+
 
 # Calculates the Heterotrait-Monotrait factor correlations, see Henseler et al. (2015)
-
-
 HTMT = function(.object){
   S=.object$Estimates$Indicator_VCV
   
