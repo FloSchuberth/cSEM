@@ -5,7 +5,7 @@
 # The current calculation requires standardized loadings, which is not an issue yet.
 # In case of hierarchical models, we need to apply this function on both stages
 CR=function(.object, .only_common_factors=TRUE){
-  construct_names=names(.object$Information$Model$Construct_types)
+  construct_names=names(.object$Information$Model$construct_type)
   
   # Extract loadings
   L=.object$Estimates$Loading_estimates
@@ -23,7 +23,7 @@ CR=function(.object, .only_common_factors=TRUE){
   
   # By default, for composites the CR is set to 1
   if(.only_common_factors){
-    co_names=names(.object$Information$Model$Construct_types[.object$Information$Model$Construct_types=="Composite"])
+    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite"])
     CRs[co_names]=1
   }
   
