@@ -195,7 +195,7 @@ args_default <- function(
     .matrix2                 = NULL,
     .matrices                = NULL,
     .modes                   = NULL,
-    .only_common_factors     = FALSE,
+    .only_common_factors     = TRUE,
     .object                  = NULL,
     .only_dots               = FALSE,
     .P                       = NULL,
