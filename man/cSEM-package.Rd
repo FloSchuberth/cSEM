@@ -34,7 +34,11 @@ Some text on the workhorse function
 Authors:
 \itemize{
   \item Florian Schuberth \email{f.schuberth@utwente.nl}
-  \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de}
+}
+
+Other contributors:
+\itemize{
+  \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de} [contributor]
 }
 
 }

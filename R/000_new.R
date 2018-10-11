@@ -4,7 +4,7 @@
 
 #' AVE
 #'
-#' Computes the average variance extracted \insertCite{Raykov1997} based on the standardized loadings.
+#' Computes the average variance extracted \insertCite{Raykov1997}{cSEM} based on the standardized loadings.
 #'
 #' @usage AVE(
 #'  .object              = args_default()$.object,
@@ -22,7 +22,6 @@
 #'
 #' @references 
 #' \insertAllCited{}
-#' Fornell, C. & Larcker, D. F. (1981). Evaluating structural equation models with unobservable variables and measurement error. \emph{Journal of Marketing Research}, 18, 39–50.
 #'
 #'
 #' @export
@@ -56,7 +55,7 @@ AVE=function(.object=args_default()$.object,
 
 #' CR
 #'
-#' Computes the composite reliability \insertCite{Raykov1997} based on standardized loading.
+#' Computes the composite reliability \insertCite{Raykov1997}{cSEM} based on standardized loading.
 #'
 #' @usage CR(
 #'  .object              = args_default()$.object,
@@ -107,7 +106,7 @@ CR=function(.object=args_default()$.object,
 
 #' Cronbach_alpha
 #'
-#' Computes Cronbach's alpha \insertCite{Cronbach1951} based on the correlation matrix 
+#' Computes Cronbach's alpha \insertCite{Cronbach1951}{cSEM} based on the correlation matrix 
 #'
 #' @usage Cronbach_alpha(
 #'  .object              = args_default()$.object,
@@ -153,7 +152,7 @@ Cronbach_alpha=function(.object=args_default()$.object,
 
 #' Fornell_Larcker
 #'
-#' Computes the Fornell-Larcker criterion \insertCite{Fornell1981}.
+#' Computes the Fornell-Larcker criterion \insertCite{Fornell1981}{cSEM}.
 #'
 #' @usage Fornell_Larcker(
 #'  .object              = args_default()$.object,

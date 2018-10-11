@@ -5,7 +5,7 @@
 \title{Estimates the distance between multiple groups.}
 \usage{
 testMGD(
- .object             = args_default()$.model,
+ .object             = args_default()$.object,
  .alpha              = args_default()$.alpha,
  .drop_inadmissibles = args_default()$.drop_inadmissibles,
  .parallel           = args_default()$.parallel,
