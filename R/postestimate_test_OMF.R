@@ -7,7 +7,7 @@
 #' Data is transformed according to \insertCite{Beran1985;textual}{cSEM}.
 #' 
 #' @usage testOMF(
-#'  .object              = args_default()$.model, 
+#'  .object              = args_default()$.object, 
 #'  .alpha               = args_default()$.alpha, 
 #'  .drop_inadmissibles  = args_default()$.drop_inadmissibles, 
 #'  .runs                = args_default()$.runs
@@ -30,7 +30,7 @@
 #' @export
 
 testOMF <- function(
-  .object              = args_default()$.model,
+  .object              = args_default()$.object,
   .alpha               = args_default()$.alpha,
   .drop_inadmissibles  = args_default()$.drop_inadmissibles,
   .runs                = args_default()$.runs
