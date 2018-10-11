@@ -1,6 +1,6 @@
 #' HTMT
 #'
-#' Compute the heterotrait-monotrait ratio of correlations (TODO)
+#' Compute the heterotrait-monotrait ratio of correlations \insertCite{Henseler2015}
 #'
 #' @usage HTMT(
 #'  .object              = args_default()$.object,
@@ -15,6 +15,8 @@
 #' \dontrun{
 #' # still to implement
 #' }
+#' @references 
+#'\insertAllCited{}
 #'
 #' @export
 #'

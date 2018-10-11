@@ -120,4 +120,48 @@ Carlo studies and an empirical application.},
   publisher = {Springer Nature},
 }
 
+@Article{Fornell1981,
+  author    = {C. Fornell and D. F. Larcker},
+  title     = {Evaluating structural equation models with unobservable variables and measurement error},
+  journal   = {Journal of Marketing Research},
+  year      = {1981},
+  volume    = {XVIII},
+  pages     = {39--50},
+  month     = {February},
+  abstract  = {The statistical tests used in the analysis of structural equation models with unobservable variables and measurement error are examined. A drawback of the commonly applied chi square test, in addition to the known problems related to sample size and power, is that it may indicate an increasing correspondence between the hypothesized model and the observed data as both the measurement properties and the relationship between constructs decline. Further, and contrary to common assertion, the risk of making a Type II error can be substantial even when the sample size is large. Moreover, the present testing methods are unable to assess a model's explanatory power. To overcome these problems, the authors develop and apply a testing system based on measures of shared variance within the structural model, measurement model, and overall model.},
+  file      = {Fornell1981.pdf:Fornell1981.pdf:PDF},
+  owner     = {fls44rr},
+  timestamp = {2012.11.22},
+}
+
+@Article{Henseler2014b,
+  author    = {Henseler, J{\"o}rg and Ringle, Christian M and Sarstedt, Marko},
+  title     = {A new criterion for assessing discriminant validity in variance-based structural equation modeling},
+  journal   = {Journal of the Academy of Marketing Science},
+  year      = {2015},
+  volume    = {43},
+  number    = {1},
+  pages     = {1--21},
+  abstract  = {Discriminant validity assessment has become a
+generally accepted prerequisite for analyzing relationships
+between latent variables. For variance-based structural equation
+modeling, such as partial least squares, the Fornell-
+Larcker criterion and the examination of cross-loadings are
+the dominant approaches for evaluating discriminant validity.
+By means of a simulation study, we show that these approaches
+do not reliably detect the lack of discriminant validity
+in common research situations. We therefore propose an
+alternative approach, based on the multitrait-multimethod matrix,
+to assess discriminant validity: the heterotrait-monotrait
+ratio of correlations.We demonstrate its superior performance
+by means of a Monte Carlo simulation study, in which we
+compare the new approach to the Fornell-Larcker criterion
+and the assessment of (partial) cross-loadings. Finally, we
+provide guidelines on how to handle discriminant validity
+issues in variance-based structural equation modeling.},
+  file      = {Henseler2015.pdf:Henseler2015.pdf:PDF},
+  keywords  = {Structural equation modeling (SEM) . Partial least squares (PLS) . Results evaluation . Measurement model assessment . Discriminant validity .Fornell-Larcker criterion . Cross-loadings . Multitrait-multimethod (MTMM) matrix . Heterotrait-monotrait (HTMT) ratio of correlations},
+  publisher = {Springer},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}
