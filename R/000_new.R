@@ -4,7 +4,8 @@
 
 # Calculates the average variance extracted (AVE)
 # The current calculation requires standardized loadings
-AVE=function(.object,.only_common_factors=TRUE){
+AVE=function(.object=args_default()$.object,
+             .only_common_factors=args_default()$.only_common_factors){
   construct_names=names(.object$Information$Model$construct_type)
   
   # Extract loadings
