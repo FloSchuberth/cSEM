@@ -223,7 +223,7 @@ permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadm
   # Drop potential inadmissibles if required
   if(.drop_inadmissibles){
     ## If no inadmissibles exists continue as usual
-    if(all(sapply(.object, function(x) sum(verify(x)) == 0))){
+    if(all(sum(status_code) == 0)){
       return(c(
         dG = calculateDistance(lapply(Est_tmp, fit), .distance = "geodesic"),
         dL = calculateDistance(lapply(Est_tmp, fit), .distance = "squared_euclidian")))

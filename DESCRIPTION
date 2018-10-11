@@ -1,5 +1,5 @@
 Package: cSEM
-Title: Composite Based Structural Equation Modeling
+Title: Composite-Based Structural Equation Modeling
 Version: 0.0.0.9000
 Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     role  = c("aut", "cre"),
@@ -8,9 +8,9 @@ Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     role  = c("aut"),
                     email = "f.schuberth@utwente.nl"),
              person(given = "Tamara", family = "Schamberger",
-                    role  = c("aut"),
+                    role  = c("ctb"),
                     email = "tamara.schamberger@uni-wuerzburg.de"))
-Depends: R (>= 3.4.2)
+Depends: R (>= 3.5.0)
 Description: Analyze structural equation models, including path 
     analysis and confirmatory composite analysis using a composite
     based approach.
@@ -30,6 +30,7 @@ Imports: alabama,
     matrixcalc,
     matrixStats,
     parallel,
+    polycor,
     purrr,
     RcppAlgos,
     Rdpack,

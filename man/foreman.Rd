@@ -7,6 +7,7 @@
 foreman(
     .data                        = args_default()$.data,
     .model                       = args_default()$.model,
+    .approach_cor_robust         = args_default()$.approach_cor_robust,
     .approach_nl                 = args_default()$.approach_nl,
     .approach_paths              = args_default()$.approach_paths,
     .approach_weights            = args_default()$.approach_weights,
@@ -24,14 +25,17 @@ foreman(
     )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
+data column types or classes are: logical, numeric (double or integer), factor
+(ordered and unordered) or a mix of several types.}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
 
-\item{.approach_cor}{Character string. Approach used to obtain the indicator
-correlation matrix. One of: "\emph{bravais-pearson}" or "\emph{theil-sen}".
-Defaults to "\emph{bravais-pearson}".}
+\item{.approach_cor_robust}{Character string. Approach used to obtain a robust
+indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+"\emph{theil-sen}" or (TODO)
+Defaults to "\emph{none}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
@@ -74,7 +78,7 @@ For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
-factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS.}

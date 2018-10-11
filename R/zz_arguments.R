@@ -8,7 +8,9 @@
 #' function having `...` as a formal argument, set the `.only_dots` argument 
 #' of the [args_default()] function to `TRUE`.
 #'
-#' @param .data A `data.frame` or a `matrix` containing the raw data. 
+#' @param .data A `data.frame` or a `matrix` containing the raw data. Possible
+#'   data column types or classes are: logical, numeric (double or integer), factor 
+#'   (ordered and unordered) or a mix of several types.
 #' @param .model A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 #'   or a [cSEMModel]-list.
 #' @param .alpha An integer or a numeric vector of significance levels. 
@@ -16,9 +18,13 @@
 #' @param .approach Character string. The Kettenring approach to use. One of 
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
-#' @param .approach_cor Character string. Approach used to obtain the indicator 
-#'   correlation matrix. One of: "*bravais-pearson*" or "*theil-sen*".
-#'   Defaults to "*bravais-pearson*".
+#' @param .approach_2ndorder Character string. Approach used for models containing
+#'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
+#'   Defaults to "*3stage*".
+#' @param .approach_cor_robust Character string. Approach used to obtain a robust 
+#'   indicator correlation matrix. One of: "*none*" in which case nothing is done,
+#'   "*theil-sen*" or (TODO)
+#'   Defaults to "*none*".
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
@@ -76,7 +82,7 @@
 #' @param .parallel Logical. Use parallel computing. Defaults to `FALSE`. Note:
 #'   requires the `doSNOW` and the `parallel` package to be installed.
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
-#'   factors for PLSc. One of: "*dist_euclid*", "*dist_euclid_weighted*",
+#'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
 #'   "*geo_of_harmonic*". Defaults to "*dist_euclid*". 
 #'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS.
@@ -104,6 +110,8 @@
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
 #' @param .show_progress Logical. Show progress bar. Defaults to `TRUE`.
+#' @param .stage Character string. The stage the model is need for.
+#'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
@@ -118,7 +126,7 @@
 #'   function should be returned? One of: `"csem"` or `"cca"`. Defaults to `"csem"`. 
 #'   Currently ignored if `.only_dots = FALSE`. 
 #' @param .X A matrix of processed data (scaled, cleaned and ordered).
-#' @param .X_cleaned A matrix of processed data (cleaned and ordered). Note: `X_cleaned`
+#' @param .X_cleaned A data.frame of processed data (cleaned and ordered). Note: `X_cleaned`
 #'   may not be scaled!
 #'
 #' @name csem_arguments
@@ -208,6 +216,9 @@ args_default <- function(
   )
   
   args_dotdotdot_csem <- list(
+    # Arguments passed to convertModel()
+    .approach_2ndorder       = c("3stage", "repeated_indicators"),
+    .stage                   = c("first", "second"),
     # Arguments passed to calculateWeightsPLS
     .iter_max                = 100,
     .PLS_modes               = NULL,
@@ -218,7 +229,7 @@ args_default <- function(
     .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
     
     # Arguments passed to calculateCorrectionFactors
-    .PLS_approach_cf         = c("dist_euclid", "dist_euclid_weighted", 
+    .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 
                                  "fisher_transformed", "mean_arithmetic",
                                  "mean_geometric", "mean_harmonic",
                                  "geo_of_harmonic"),
@@ -230,7 +241,7 @@ args_default <- function(
     .normality               = TRUE,
     
     #  Arguments passed to foreman
-    .approach_cor            = c("bravais-pearson","theil-sen"),
+    .approach_cor_robust     = c("none", "theil-sen"),
     .disattenuate            = TRUE,
     .dominant_indicators     = NULL,
     .estimate_structural     = TRUE,
@@ -278,9 +289,9 @@ args_default <- function(
 
 handleArgs <- function(.args_used) {
   
-  x  <- args_default()
+  args_default  <- args_default()
   
-  args_default_names  <- names(x)
+  args_default_names  <- names(args_default)
   args_used_names <- names(.args_used)
   
   ## Are all argument names used valid?
@@ -293,15 +304,37 @@ handleArgs <- function(.args_used) {
          call. = FALSE)
   }
   
-  ## Which arguments need to be changed?
-  args_intersect <- intersect(args_used_names, args_default_names)
-  
+  ## Are arguments valid
+  # Note: for now, I will only check if string arguments are valid. In the
+  # future we could refine and check if e.g. numeric values are within a reasonable
+  # range or larger than zero if required etc.
+  # choices_logical <- Filter(function(x) any(is.logical(x)), args_default(.choices = TRUE))
+  # choices_numeric <- Filter(function(x) any(is.numeric(x)), args_default(.choices = TRUE))
+  choices_character <- Filter(function(x) any(is.character(x)), args_default(.choices = TRUE))
+
+  character_args <- intersect(names(choices_character), args_used_names)
+  x <- Map(function(x, y) x %in% y, 
+      x = .args_used[character_args], 
+      y = choices_character[character_args]
+      )
+
+  lapply(seq_along(x), function(i) {
+    if(isFALSE(x[[i]])) {
+      n <- names(x[i])
+      a <- args_default(.choices = TRUE)[[n]]
+      stop(paste0("`", .args_used[n], "` is not a valid choice for ", "`", 
+                  names(.args_used[n]),"`.\n"), 
+           "Choices are: ", paste0("`", a[-length(a)],"`", collapse = ", "), 
+           " or " , paste0("`", a[length(a)], "`"), call. = FALSE)
+    }
+
+  })
   ## Replace all arguments that were changed or explicitly given and keep
   #  the default values for the others
   
-  for(i in args_intersect) {
-    x[i] <- .args_used[i]
+  for(i in args_used_names) {
+    args_default[i] <- .args_used[i]
   }
   
-  return(x)
+  return(args_default)
 }
