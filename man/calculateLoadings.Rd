@@ -27,9 +27,8 @@ Q^2 is also called the reliability coefficient.}
 \item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
-\item{.modes}{A vector specifying the mode that should be used for
-each construct in the form \code{"name" = "mode"}, where \code{"name"} refers to the
-construct name and `"mode"`` is one of \emph{"ModeA"} or \emph{"ModeB"}.}
+\item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
+Only used internally.}
 }
 \value{
 The (J x K) matrix of loadings and cross-loadings (attenuated if required).

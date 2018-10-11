@@ -90,15 +90,17 @@ If the algorithm exceeds the specified number, weights of iteration step
 
 \item{.matrices}{A list of at least two matrices.}
 
-\item{.modes}{A vector specifying the mode that should be used for
-each construct in the form \code{"name" = "mode"}, where \code{"name"} refers to the
-construct name and `"mode"`` is one of \emph{"ModeA"} or \emph{"ModeB"}.}
+\item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
+Only used internally.}
 
 \item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
 For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+
+\item{.only_common_factors}{Logical. Should only common factors be included?
+Defaults to \code{FALSE}.}
 
 \item{.only_dots}{Logical. Should only arguments to be passed to lower level
 functions via the  \code{...} argument of the \code{fun} function be returned.

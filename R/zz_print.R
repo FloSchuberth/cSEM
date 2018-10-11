@@ -44,7 +44,7 @@ print.cSEMResults <- function(.object) {
   cat("If you wish to access the list elements directly type e.g. \n\n\t",
       "- ", cyan("<object-name>"), yellow("$"), green("Estimates"), "\n\n", sep = "")
   cat("Available postestimation commands:\n\n\t",
-      "- ", magenta("check"), "(", cyan("<object-name>"), ")\n\t",
+      "- ", magenta("assess"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("fit"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t"  ,
       "- ", magenta("test"), "(", cyan("<object-name>"), ")\n\t"  ,

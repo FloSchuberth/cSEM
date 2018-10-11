@@ -58,7 +58,7 @@ fit <- function(
   ## Check if linear
   if(.object$Information$Model$model_type != "Linear"){
     stop("`fit()` currently not applicable to nonlinear models.",
-         call. = FALSE)
+         call. = FASLE)
   }
   
   ## Collect matrices
