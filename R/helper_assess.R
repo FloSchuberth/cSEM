@@ -1,6 +1,6 @@
 #' HTMT
 #'
-#' Compute the heterotrait-monotrait ratio of correlations \insertCite{Henseler2015}
+#' Compute the heterotrait-monotrait ratio of correlations \insertCite{Henseler2015}{cSEM}.
 #'
 #' @usage HTMT(
 #'  .object              = args_default()$.object,
