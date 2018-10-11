@@ -33,7 +33,8 @@ AVE=function(.object=args_default()$.object,
 # Calculates the composite reliability, see Raykov (1997).
 # The current calculation requires standardized loadings, which is not an issue yet.
 # In case of hierarchical models, we need to apply this function on both stages
-CR=function(.object, .only_common_factors=TRUE){
+CR=function(.object=args_default()$.object,
+            .only_common_factors=args_default()$.only_common_factors){
   construct_names=names(.object$Information$Model$construct_type)
   
   # Extract loadings
