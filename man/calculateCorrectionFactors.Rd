@@ -17,9 +17,8 @@ calculateCorrectionFactors(
 
 \item{.W}{A (J x K) matrix of weights.}
 
-\item{.modes}{A vector specifying the mode that should be used for
-each construct in the form \code{"name" = "mode"}, where \code{"name"} refers to the
-construct name and `"mode"`` is one of \emph{"ModeA"} or \emph{"ModeB"}.}
+\item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
+Only used internally.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 

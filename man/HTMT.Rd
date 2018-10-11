@@ -4,10 +4,16 @@
 \alias{HTMT}
 \title{HTMT}
 \usage{
-HTMT(.object)
+HTMT(
+ .object              = args_default()$.object,
+ .only_common_factors = args_default()$.only_common_factors
+)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+
+\item{.only_common_factors}{Logical. Should only common factors be included?
+Defaults to \code{FALSE}.}
 }
 \description{
 Compute the heterotrait-monotrait ratio of correlations (TODO)

@@ -61,13 +61,14 @@
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
-#' @param .modes A vector specifying the mode that should be used for
-#'   each construct in the form `"name" = "mode"`, where `"name"` refers to the
-#'   construct name and `"mode"`` is one of *"ModeA"* or *"ModeB"*.
+#' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
+#'   Only used internally. 
 #' @param .normality Logical. Should joint normality be assumed in the nonlinear model?
 #'  For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
 #'  Defaults to `TRUE`. Ignored if the model is linear.
 #' @param .object An R object of class `cSEM<class>` with corresponding method.
+#' @param .only_common_factors Logical. Should only common factors be included? 
+#'   Defaults to `FALSE`.
 #' @param .only_dots Logical. Should only arguments to be passed to lower level 
 #'   functions via the  `...` argument of the `fun` function be returned. 
 #'   Defaults to `FALSE`.
@@ -186,6 +187,7 @@ args_default <- function(
     .matrix2                 = NULL,
     .matrices                = NULL,
     .modes                   = NULL,
+    .only_common_factors     = FALSE,
     .object                  = NULL,
     .only_dots               = FALSE,
     .P                       = NULL,

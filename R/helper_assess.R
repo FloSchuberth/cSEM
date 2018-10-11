@@ -2,7 +2,10 @@
 #'
 #' Compute the heterotrait-monotrait ratio of correlations (TODO)
 #'
-#' @usage HTMT(.object)
+#' @usage HTMT(
+#'  .object              = args_default()$.object,
+#'  .only_common_factors = args_default()$.only_common_factors
+#' )
 #'
 #' @inheritParams csem_arguments
 #'
@@ -15,50 +18,44 @@
 #'
 #' @export
 #'
-HTMT <- function(.object,.only_common_factors=TRUE){
-  
-  # Adapted from matrixpls
-  
-  
-  if(.only_common_factors==TRUE){
-    # Extract names of the common factors, the HTMT is only calculated for common factors
-    cf_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Common factor"])
-    
-    # Indicators connected to a common factor
-    cf_measurement=.object$Information$Model$measurement[cf_names,
-                                                         colSums(.object$Information$Model$measurement[cf_names,])!=0]
-  } else{ # in case of composites
-    cf_names=names(.object$Information$Model$construct_type)
-    cf_measurement=.object$Information$Model$measurement[cf_names,
-                                                         colSums(.object$Information$Model$measurement[cf_names,])!=0]
-  }
-  ind_names=colnames(cf_measurement)
-  S_relevant=.object$Estimates$Indicator_VCV[ind_names,ind_names]
-  
-  1-diag(nrow(S_relevant))
-  
-  
-  # calculate average correlation of the indicators of a block 
-  average_correlation_per_block=cf_measurement%*%(S_relevant-diag(diag(S_relevant)))%*%t(cf_measurement)/
-    cf_measurement%*%(1-diag(nrow(S_relevant))) %*%t(cf_measurement)
-  
-  # Choose constructs that are measured by at least 2 indicators
-  i = which(rowSums(cf_measurement) > 1)
-  relevant_average_block_correlations <- average_correlation_per_block[i,i]
-  
-  if(length(i)<2){
-    if(.only_common_factors==TRUE){
-      stop("The HTMT can only be calculated in case of two common factors with at least two indicators per common factor.")
-    } else {
-      stop("The HTMT can only be calculated in case of two constructs with at least two indicators per construct.")
-    }
+HTMT <- function(
+  .object              = args_default()$.object,
+  .only_common_factors = args_default()$.only_common_factors
+  ){
+
+  ## Get relevant quantities
+  m <- .object$Information$Model
+ 
+  cf_names <- if(isTRUE(.only_common_factors)) {
+    names(m$construct_type[m$construct_type == "Common factor"])
+  } else {
+    names(m$construct_type)
   }
   
-  htmt <- relevant_average_block_correlations*lower.tri(relevant_average_block_correlations) /
-    sqrt(diag(relevant_average_block_correlations) %o% diag(relevant_average_block_correlations))
+  cf_measurement <- m$measurement[cf_names, colSums(m$measurement[cf_names, ]) != 0, drop = FALSE]
   
-  htmt
+  ## HTMT can only be calculated for constructs with more than one indicator
+  x <- rowSums(cf_measurement) > 1
+  cf_measurement <- cf_measurement[x, colSums(cf_measurement[x, ]) != 0, drop = FALSE]
   
+  ## At least two multi-indicator constructs required
+  if(length(which(x)) < 2) {
+    stop("Computation of the HTMT requires at least two multi indicator constructs.",
+        call. = FALSE)
+  }
+  
+  i_names <- colnames(cf_measurement)
+  S       <- .object$Estimates$Indicator_VCV[i_names, i_names]
+  
+  ## Average correlation of the indicators of a block 
+  avrg_cor <- cf_measurement %*% (S - diag(diag(S))) %*% t(cf_measurement) /
+    cf_measurement %*% (1 - diag(nrow(S))) %*% t(cf_measurement)
+  
+  ## Compute HTMT
+  out <- avrg_cor*lower.tri(avrg_cor) / sqrt(diag(avrg_cor) %o% diag(avrg_cor))
+  
+  # Return
+  return(out)
 }
 #' SRMR
 #'
