@@ -167,38 +167,25 @@ Cronbach_alpha=function(.object=args_default()$.object,
 #' \dontrun{
 #' # still to implement
 #' }
-#'@references 
-#' 
+#'@references
+#'
 #' \insertAllCited{}
 #'
 #' @export
 #'
 Fornell_Larcker=function(.object=args_default()$.object,
                                  .only_common_factors=args_default()$.only_common_factors){
-  
+
   # Calculate the average variance extracted
   average_variance_extracted=AVE(.object,.only_common_factors=FALSE)
-  
+
   .object
-  
+
   construct_names=names(.object$Information$Model$construct_type)
-  
-  # calculate Cronbach's alpah for all constructs
-  alphas=sapply(construct_names,function(x){
-    relevant_indicators=colnames(.object$Information$Model$measurement[x,.object$Information$Model$measurement[x,]!=0,drop=FALSE])
-    S_relevant=.object$Estimates$Indicator_VCV[relevant_indicators,relevant_indicators]
-    alpha_temp=psych::alpha(S_relevant,delete=FALSE,na.rm=FALSE)
-    alpha_temp$total$raw_alpha
-  })
-  
-  names(alphas)=construct_names
-  
-  # By default, for composites the CR is set to 1
-  if(.only_common_factors){
-    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite"])
-    alphas[co_names]=NULL
-  }
-  
-  return(alphas)
+
+  construct_vcv_sq=.object$Estimates$Construct_VCV^2
+  diag(construct_vcv_sq)=average_variance_extracted[colnames(construct_vcv_sq)]
+stop('Not implemented yet')
+
 }
 
