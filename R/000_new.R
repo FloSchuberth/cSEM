@@ -116,7 +116,7 @@ CR=function(.object=args_default()$.object,
 #'
 #' @export
 #'
-alpha=function(.object=args_default()$.object,
+Cronbach_alpha=function(.object=args_default()$.object,
             .only_common_factors=args_default()$.only_common_factors){
   construct_names=names(.object$Information$Model$construct_type)
   
@@ -138,3 +138,6 @@ alpha=function(.object=args_default()$.object,
   
   return(alphas)
 }
+
+
+
