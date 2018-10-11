@@ -2,8 +2,26 @@
 # or when it is unclear where it belongs.
 
 
-# Calculates the average variance extracted (AVE)
-# The current calculation requires standardized loadings
+#' AVE
+#'
+#' Compute the average variance extracted (AVE) based on the standardized loadings.
+#'
+#' @usage AVE(
+#'  .object              = args_default()$.object,
+#'  .only_common_factors = args_default()$.only_common_factors
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @export
+#'
 AVE=function(.object=args_default()$.object,
              .only_common_factors=args_default()$.only_common_factors){
   construct_names=names(.object$Information$Model$construct_type)
@@ -30,9 +48,27 @@ AVE=function(.object=args_default()$.object,
 }
 
 
-# Calculates the composite reliability, see Raykov (1997).
-# The current calculation requires standardized loadings, which is not an issue yet.
-# In case of hierarchical models, we need to apply this function on both stages
+
+#' CR
+#'
+#' Compute the composite reliability (CR) based on standardized loading, see Raykov (1997)
+#'
+#' @usage CR(
+#'  .object              = args_default()$.object,
+#'  .only_common_factors = args_default()$.only_common_factors
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @export
+#'
 CR=function(.object=args_default()$.object,
             .only_common_factors=args_default()$.only_common_factors){
   construct_names=names(.object$Information$Model$construct_type)
