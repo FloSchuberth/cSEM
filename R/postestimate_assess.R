@@ -1,8 +1,8 @@
-#' Check fit
+#' Assess model
 #'
-#' Check model fit using common fit measures.
+#' Assess model using common evaluation criteria and fit measures.
 #' 
-#' The following fit measures are used (TODO).
+#' The following evaulation criteria and fit measures are used (TODO).
 #'
 #' @inheritParams csem_arguments
 #'
@@ -11,7 +11,7 @@
 #' @return (TODO)
 #' @export
 
-check <- function(.object){
+assess <- function(.object){
   
   ## Check if cSEMResults object
   if(class(.object) != "cSEMResults") {
