@@ -4,10 +4,12 @@ Version: 0.0.0.9000
 Date: 2018-11-10
 Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     role  = c("aut", "cre"),
-                    email = "manuel.rademaker@uni-wuerzburg.de"),
+                    email = "manuel.rademaker@uni-wuerzburg.de",
+                    comment = c(ORCID = "0000-0002-8902-3561")),
              person(given = "Florian", family = "Schuberth",
                     role  = c("aut"),
-                    email = "f.schuberth@utwente.nl"),
+                    email = "f.schuberth@utwente.nl"
+                    comment = c(ORCID = "0000-0002-2110-9086")),
              person(given = "Tamara", family = "Schamberger",
                     role  = c("ctb"),
                     email = "tamara.schamberger@uni-wuerzburg.de"))
@@ -31,6 +33,7 @@ Imports: alabama,
     matrixStats,
     parallel,
     polycor,
+    psych,
     purrr,
     RcppAlgos,
     Rdpack,

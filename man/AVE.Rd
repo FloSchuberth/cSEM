@@ -16,7 +16,7 @@ AVE(
 Defaults to \code{FALSE}.}
 }
 \description{
-Computes the average variance extracted \insertCite{Raykov1997} based on the standardized loadings.
+Computes the average variance extracted \insertCite{Raykov1997}{cSEM} based on the standardized loadings.
 }
 \examples{
 \dontrun{
@@ -26,7 +26,6 @@ Computes the average variance extracted \insertCite{Raykov1997} based on the sta
 }
 \references{
 \insertAllCited{}
-Fornell, C. & Larcker, D. F. (1981). Evaluating structural equation models with unobservable variables and measurement error. \emph{Journal of Marketing Research}, 18, 39–50.
 }
 \seealso{
 \link{csem}, \link{cSEMResults}

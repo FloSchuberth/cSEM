@@ -16,7 +16,7 @@ CR(
 Defaults to \code{FALSE}.}
 }
 \description{
-Computes the composite reliability \insertCite{Raykov1997} based on standardized loading.
+Computes the composite reliability \insertCite{Raykov1997}{cSEM} based on standardized loading.
 }
 \examples{
 \dontrun{

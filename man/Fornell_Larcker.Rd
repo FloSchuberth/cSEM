@@ -16,7 +16,7 @@ Fornell_Larcker(
 Defaults to \code{FALSE}.}
 }
 \description{
-Computes the Fornell-Larcker criterion \insertCite{Fornell1981}.
+Computes the Fornell-Larcker criterion \insertCite{Fornell1981}{cSEM}.
 }
 \examples{
 \dontrun{

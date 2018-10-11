@@ -16,7 +16,7 @@ Cronbach_alpha(
 Defaults to \code{FALSE}.}
 }
 \description{
-Computes Cronbach's alpha \insertCite{Cronbach1951} based on the correlation matrix
+Computes Cronbach's alpha \insertCite{Cronbach1951}{cSEM} based on the correlation matrix
 }
 \examples{
 \dontrun{
