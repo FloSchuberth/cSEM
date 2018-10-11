@@ -95,3 +95,46 @@ CR=function(.object=args_default()$.object,
   
   return(CRs)
 }
+
+#' alpha
+#'
+#' Compute the composite reliability (CR) based on standardized loading, see Raykov (1997)
+#'
+#' @usage alpha(
+#'  .object              = args_default()$.object,
+#'  .only_common_factors = args_default()$.only_common_factors
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @export
+#'
+alpha=function(.object=args_default()$.object,
+            .only_common_factors=args_default()$.only_common_factors){
+  construct_names=names(.object$Information$Model$construct_type)
+  
+  # calculate Cronbach's alpah for all constructs
+  alphas=sapply(construct_names,function(x){
+    relevant_indicators=colnames(.object$Information$Model$measurement[x,.object$Information$Model$measurement[x,]!=0,drop=FALSE])
+    S_relevant=.object$Estimates$Indicator_VCV[relevant_indicators,relevant_indicators]
+    alpha_temp=psych::alpha(S_relevant,delete=FALSE,na.rm=FALSE)
+    alpha_temp$total$raw_alpha
+    })
+  
+  names(alphas)=construct_names
+  
+  # By default, for composites the CR is set to 1
+  if(.only_common_factors){
+    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite"])
+    alphas[co_names]=NULL
+  }
+  
+  return(alphas)
+}
