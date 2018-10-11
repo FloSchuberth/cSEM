@@ -4,7 +4,7 @@
 
 #' AVE
 #'
-#' Compute the average variance extracted (AVE) based on the standardized loadings.
+#' Computes the average variance extracted \insertCite{Raykov1997} based on the standardized loadings.
 #'
 #' @usage AVE(
 #'  .object              = args_default()$.object,
@@ -21,7 +21,7 @@
 #' }
 #'
 #' @references 
-#' 
+#' \insertAllCited{}
 #' Fornell, C. & Larcker, D. F. (1981). Evaluating structural equation models with unobservable variables and measurement error. \emph{Journal of Marketing Research}, 18, 39–50.
 #'
 #'
@@ -56,7 +56,7 @@ AVE=function(.object=args_default()$.object,
 
 #' CR
 #'
-#' Compute the composite reliability (CR) based on standardized loading, see Raykov (1997)
+#' Computes the composite reliability \insertCite{Raykov1997} based on standardized loading.
 #'
 #' @usage CR(
 #'  .object              = args_default()$.object,
@@ -74,7 +74,7 @@ AVE=function(.object=args_default()$.object,
 #'
 #' @references 
 #' 
-#' Raykov, T. (1997). Estimation of composite reliability for congeneric measures. \emph{Applied Psychological Measurement}, 21(2), 173–184.
+#' \insertAllCited{}
 #'
 #' @export
 #'
@@ -107,6 +107,7 @@ CR=function(.object=args_default()$.object,
 
 #' Cronbach_alpha
 #'
+#' Computes Cronbach's alpha \insertCite{Cronbach1951} based on the correlation matrix 
 #'
 #' @usage Cronbach_alpha(
 #'  .object              = args_default()$.object,
@@ -123,8 +124,7 @@ CR=function(.object=args_default()$.object,
 #' }
 #'
 #' @references 
-#' 
-#' Cronbach, L. J.(1951). Coefficinet alpha and the internal structure of tests. \emph{Psychometrika}, 16(3), 297–334.
+#' \insertAllCited{}
 #'
 #' @export
 #'
@@ -153,7 +153,7 @@ Cronbach_alpha=function(.object=args_default()$.object,
 
 #' Fornell_Larcker
 #'
-#' Computes the Fornell-Larcker criterion
+#' Computes the Fornell-Larcker criterion \insertCite{Fornell1981}.
 #'
 #' @usage Fornell_Larcker(
 #'  .object              = args_default()$.object,
@@ -170,7 +170,7 @@ Cronbach_alpha=function(.object=args_default()$.object,
 #' }
 #'@references 
 #' 
-#' Fornell, C. & Larcker, D. F. (1981). Evaluating structural equation models with unobservable variables and measurement error. \emph{Journal of Marketing Research}, 18, 39–50.
+#' \insertAllCited{}
 #'
 #' @export
 #'
