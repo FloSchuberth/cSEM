@@ -176,6 +176,12 @@ Cronbach_alpha=function(.object=args_default()$.object,
 #'
 Fornell_Larcker=function(.object=args_default()$.object,
                                  .only_common_factors=args_default()$.only_common_factors){
+  
+  # Calculate the average variance extracted
+  average_variance_extracted=AVE(.object,.only_common_factors=FALSE)
+  
+  .object
+  
   construct_names=names(.object$Information$Model$construct_type)
   
   # calculate Cronbach's alpah for all constructs
