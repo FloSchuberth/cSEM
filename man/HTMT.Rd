@@ -16,7 +16,7 @@ HTMT(
 Defaults to \code{FALSE}.}
 }
 \description{
-Compute the heterotrait-monotrait ratio of correlations \insertCite{Henseler2015}
+Compute the heterotrait-monotrait ratio of correlations \insertCite{Henseler2015}{cSEM}.
 }
 \examples{
 \dontrun{
