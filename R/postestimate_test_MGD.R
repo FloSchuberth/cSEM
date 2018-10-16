@@ -131,7 +131,8 @@ testMGD <- function(
       permutationProcedure(.object = .object,
                            .listMatrices = listMatrices, 
                            .arguments = arguments, 
-                           .drop_inadmissibles = .drop_inadmissibles)
+                           .drop_inadmissibles = .drop_inadmissibles,
+                           .type=.type)
     }
     parallel::stopCluster(cl)
   }else{
@@ -141,7 +142,8 @@ testMGD <- function(
       permEstimates[[iPerm]] <- permutationProcedure(.object = .object,
                                                      .listMatrices = listMatrices, 
                                                      .arguments = arguments,
-                                                     .drop_inadmissibles = .drop_inadmissibles)
+                                                     .drop_inadmissibles = .drop_inadmissibles,
+                                                     .type=.type)
       # Update progress bar
       if(.show_progress){
         setTxtProgressBar(pb, iPerm)
