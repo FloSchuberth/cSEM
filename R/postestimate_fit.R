@@ -24,7 +24,8 @@
 
 fit <- function(
   .object    = args_default()$.object, 
-  .saturated = args_default()$.saturated
+  .saturated = args_default()$.saturated,
+  .type = args_default()$.type
 ) {
   
   ### For maintenance: ---------------------------------------------------------
@@ -105,6 +106,9 @@ fit <- function(
                            cbind(t(Corr_exo_endo), Cor_endo)) 
   }
   
+  
+  
+  if(.type == 'índicator'){#
   ## Calculate model-implied VCV of the indicators
   vcv_ind <- t(Lambda) %*% vcv_construct %*% Lambda
   
@@ -124,5 +128,8 @@ fit <- function(
   # Replace indicators whose measurement errors are allowed to be correlated by s_ij
   Sigma[.object$Information$Model$error_cor == 1] = S[.object$Information$Model$error_cor == 1]
   
-  return(Sigma)
+  return(Sigma)}
+  else if(.type == 'construct'){
+    return(vcv_construct)
+  } 
 }
