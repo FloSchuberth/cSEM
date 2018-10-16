@@ -12,6 +12,7 @@
 #'  .parallel           = args_default()$.parallel,
 #'  .runs               = args_default()$.runs,
 #'  .show_progress      = args_default()$.show_progress
+#'  .type               = args_default()$.type
 #'  ) 
 #' 
 #' @inheritParams csem_arguments
@@ -46,7 +47,7 @@
 #' listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
 #' out.cSEM <- csem(listData, model) 
 #'
-#' testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE)
+#' testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE, .type= 'construct')
 #' }
 #'
 #' @export
@@ -57,7 +58,8 @@ testMGD <- function(
   .drop_inadmissibles = args_default()$.drop_inadmissibles,
   .parallel           = args_default()$.parallel,
   .runs               = args_default()$.runs,
-  .show_progress      = args_default()$.show_progress
+  .show_progress      = args_default()$.show_progress,
+  .type               = args_default()$.type
   ){
 
   ### Checks and errors ========================================================
@@ -87,9 +89,9 @@ testMGD <- function(
   ### Calculation===============================================================
   ## 1. Compute the test statistics
   teststat <- c(
-    "dG" = calculateDistance(.matrices = lapply(.object, fit), 
+    "dG" = calculateDistance(.matrices = lapply(.object, fit,.type=.type), 
                              .distance = "geodesic"),
-    "dL" = calculateDistance(.matrices = lapply(.object, fit), 
+    "dL" = calculateDistance(.matrices = lapply(.object, fit,.type=.type), 
                              .distance = "squared_euclidian")
     )
   
@@ -225,8 +227,8 @@ permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadm
     ## If no inadmissibles exists continue as usual
     if(all(sum(status_code) == 0)){
       return(c(
-        dG = calculateDistance(lapply(Est_tmp, fit), .distance = "geodesic"),
-        dL = calculateDistance(lapply(Est_tmp, fit), .distance = "squared_euclidian")))
+        dG = calculateDistance(lapply(Est_tmp, fit, .type=.type), .distance = "geodesic"),
+        dL = calculateDistance(lapply(Est_tmp, fit, .type=.type), .distance = "squared_euclidian")))
     } else {
       # return NULL
       return(NULL)
@@ -234,8 +236,8 @@ permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadm
     # else, i.e., dropInadmissible == FALSE
   } else {
     return(c(
-      dG = calculateDistance(lapply(Est_tmp, fit), .distance = "geodesic"),
-      dL = calculateDistance(lapply(Est_tmp, fit), .distance = "squared_euclidian")))
+      dG = calculateDistance(lapply(Est_tmp, fit, .type=.type), .distance = "geodesic"),
+      dL = calculateDistance(lapply(Est_tmp, fit, .type=.type), .distance = "squared_euclidian")))
   }
 }
 
