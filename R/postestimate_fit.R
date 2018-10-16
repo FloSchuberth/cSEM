@@ -132,6 +132,8 @@ fit <- function(
   return(Sigma)
   }
   else if(.type == 'construct'){
+    ## Make symmetric
+    vcv_construct[lower.tri(vcv_construct)] <- t(vcv_construct)[lower.tri(vcv_construct)]
     return(vcv_construct)
   } 
 }
