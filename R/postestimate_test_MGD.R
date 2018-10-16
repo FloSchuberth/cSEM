@@ -59,7 +59,7 @@ testMGD <- function(
   .parallel           = args_default()$.parallel,
   .runs               = args_default()$.runs,
   .show_progress      = args_default()$.show_progress,
-  .type               = args_default()$.type
+  .type1               = args_default()$.type
   ){
 
   ### Checks and errors ========================================================
@@ -89,9 +89,9 @@ testMGD <- function(
   ### Calculation===============================================================
   ## 1. Compute the test statistics
   teststat <- c(
-    "dG" = calculateDistance(.matrices = lapply(.object, fit,.type=.type), 
+    "dG" = calculateDistance(.matrices = lapply(.object, fit,.type=.type1), 
                              .distance = "geodesic"),
-    "dL" = calculateDistance(.matrices = lapply(.object, fit,.type=.type), 
+    "dL" = calculateDistance(.matrices = lapply(.object, fit,.type=.type1), 
                              .distance = "squared_euclidian")
     )
   
@@ -227,8 +227,8 @@ permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadm
     ## If no inadmissibles exists continue as usual
     if(all(sum(status_code) == 0)){
       return(c(
-        dG = calculateDistance(lapply(Est_tmp, fit, .type=.type), .distance = "geodesic"),
-        dL = calculateDistance(lapply(Est_tmp, fit, .type=.type), .distance = "squared_euclidian")))
+        dG = calculateDistance(lapply(Est_tmp, fit, .type=.type1), .distance = "geodesic"),
+        dL = calculateDistance(lapply(Est_tmp, fit, .type=.type1), .distance = "squared_euclidian")))
     } else {
       # return NULL
       return(NULL)
@@ -236,8 +236,8 @@ permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadm
     # else, i.e., dropInadmissible == FALSE
   } else {
     return(c(
-      dG = calculateDistance(lapply(Est_tmp, fit, .type=.type), .distance = "geodesic"),
-      dL = calculateDistance(lapply(Est_tmp, fit, .type=.type), .distance = "squared_euclidian")))
+      dG = calculateDistance(lapply(Est_tmp, fit, .type=.type1), .distance = "geodesic"),
+      dL = calculateDistance(lapply(Est_tmp, fit, .type=.type1), .distance = "squared_euclidian")))
   }
 }
 
