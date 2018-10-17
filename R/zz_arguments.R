@@ -115,7 +115,7 @@
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
-#' @param .type Character string. Indicates which model-implied correlation matrix is calcuted
+#' @param .type_vcv Character string. Indicates which model-implied correlation matrix is calcuted
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
 #' @param .verbose Logical. Should information be printed to the console? Defaults
 #'   to `TRUE`.
@@ -208,7 +208,7 @@ args_default <- function(
     .saturated               = FALSE,
     .show_progress           = TRUE,
     .terms                   = NULL,
-    .type                    = c('indicator','construct'),
+    .type_vcv                    = c('indicator','construct'),
     .verbose                 = TRUE,
     .W                       = NULL,
     .which_fun               = c("csem", "cca"),
