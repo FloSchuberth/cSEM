@@ -11,7 +11,8 @@
 #'  .drop_inadmissibles = args_default()$.drop_inadmissibles,
 #'  .parallel           = args_default()$.parallel,
 #'  .runs               = args_default()$.runs,
-#'  .show_progress      = args_default()$.show_progress
+#'  .show_progress      = args_default()$.show_progress,
+#'  .saturated           = args_default()$.saturated,
 #'  .type_vcv               = args_default()$.type_vcv
 #'  ) 
 #' 
@@ -59,7 +60,8 @@ testMGD <- function(
   .parallel           = args_default()$.parallel,
   .runs               = args_default()$.runs,
   .show_progress      = args_default()$.show_progress,
-  .type_vcv              = args_default()$.type_vcv
+  .saturated          = args_default()$.saturated,
+  .type_vcv           = args_default()$.type_vcv
   ){
 
   ### Checks and errors ========================================================
@@ -89,9 +91,13 @@ testMGD <- function(
   ### Calculation===============================================================
   ## 1. Compute the test statistics
   teststat <- c(
-    "dG" = calculateDistance(.matrices = lapply(.object, fit,.type_vcv=.type_vcv), 
+    "dG" = calculateDistance(.matrices = lapply(.object, fit,
+                                                .saturated = .saturated,
+                                                .type_vcv =.type_vcv), 
                              .distance = "geodesic"),
-    "dL" = calculateDistance(.matrices = lapply(.object, fit,.type_vcv=.type_vcv), 
+    "dL" = calculateDistance(.matrices = lapply(.object, fit, 
+                                                .saturated= .saturated,
+                                                .type_vcv=.type_vcv), 
                              .distance = "squared_euclidian")
     )
   
@@ -132,6 +138,7 @@ testMGD <- function(
                            .listMatrices = listMatrices, 
                            .arguments = arguments, 
                            .drop_inadmissibles = .drop_inadmissibles,
+                           .saturated  = .saturated,
                            .type_vcv=.type_vcv)
     }
     parallel::stopCluster(cl)
@@ -143,6 +150,7 @@ testMGD <- function(
                                                      .listMatrices = listMatrices, 
                                                      .arguments = arguments,
                                                      .drop_inadmissibles = .drop_inadmissibles,
+                                                     .saturated  = .saturated,
                                                      .type_vcv=.type_vcv)
       # Update progress bar
       if(.show_progress){
@@ -215,7 +223,12 @@ permutateData <- function(.matrices = NULL){
   return(permData)
 }
 
-permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadmissibles, .type_vcv){
+permutationProcedure <- function(.object, 
+                                 .listMatrices, 
+                                 .arguments, 
+                                 .drop_inadmissibles= args_default()$.drop_inadmissibles, 
+                                 .saturated = args_default()$.saturated,
+                                 .type_vcv = args_default()$.type_vcv){
   # Permutate data
   permData <- permutateData(.listMatrices)
   # Replace .data 
@@ -229,8 +242,12 @@ permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadm
     ## If no inadmissibles exists continue as usual
     if(all(sum(status_code) == 0)){
       return(c(
-        dG = calculateDistance(lapply(Est_tmp, fit, .type_vcv=.type_vcv), .distance = "geodesic"),
-        dL = calculateDistance(lapply(Est_tmp, fit, .type_vcv=.type_vcv), .distance = "squared_euclidian")))
+        dG = calculateDistance(lapply(Est_tmp, fit, 
+                                      .saturated  = .saturated,
+                                      .type_vcv=.type_vcv), .distance = "geodesic"),
+        dL = calculateDistance(lapply(Est_tmp, fit, 
+                                      .saturated  = .saturated,
+                                      .type_vcv=.type_vcv), .distance = "squared_euclidian")))
     } else {
       # return NULL
       return(NULL)
@@ -238,8 +255,12 @@ permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadm
     # else, i.e., dropInadmissible == FALSE
   } else {
     return(c(
-      dG = calculateDistance(lapply(Est_tmp, fit, .type_vcv=.type_vcv), .distance = "geodesic"),
-      dL = calculateDistance(lapply(Est_tmp, fit, .type_vcv=.type_vcv), .distance = "squared_euclidian")))
+      dG = calculateDistance(lapply(Est_tmp, fit, 
+                                    .saturated  = .saturated,
+                                    .type_vcv=.type_vcv), .distance = "geodesic"),
+      dL = calculateDistance(lapply(Est_tmp, fit, 
+                                    .saturated  = .saturated,
+                                    .type_vcv=.type_vcv), .distance = "squared_euclidian")))
   }
 }
 
