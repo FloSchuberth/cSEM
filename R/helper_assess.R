@@ -77,13 +77,15 @@ HTMT <- function(
 #' @export
 #'
 
-SRMR <- function(.object = args_default()$.object) {
+SRMR <- function(.object = args_default()$.object,
+                 .saturated = args_default()$.saturated) {
   
   # The SRMR as calculated by us is always based on the the difference 
   # between correlation matrices.
   
   S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object)
+  Sigma_hat <- fit(.object, .saturated = args_default()$.saturated, 
+                   .type='indicator')
   
   # Perhaps in the future we allow to estimate unstandardized coefficients
   C_diff    <- cov2cor(S) -  cov2cor(Sigma_hat)

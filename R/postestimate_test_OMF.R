@@ -12,7 +12,6 @@
 #'  .drop_inadmissibles  = args_default()$.drop_inadmissibles, 
 #'  .runs                = args_default()$.runs, 
 #'  .saturated           = args_default()$.saturated,
-#'  .type_vcv            = args_default()$.type_vcv
 #' )
 #' 
 #' @inheritParams  csem_arguments
@@ -37,7 +36,6 @@ testOMF <- function(
   .drop_inadmissibles  = args_default()$.drop_inadmissibles,
   .runs                = args_default()$.runs,
   .saturated           = args_default()$.saturated,
-  .type_vcv            = args_default()$.type_vcv
   ){
   
   ## Check if cSEMResults object
@@ -64,7 +62,7 @@ testOMF <- function(
   ## Calculate test statistic
   teststat <- c(
     "dG"   = dG(.matrix1 = S, .matrix2 = Sigma_hat),
-    "SRMR" = SRMR(.object),
+    "SRMR" = SRMR(.object, .saturated = .saturated),
     "dL"   = dL(.matrix1 = S, .matrix2 = Sigma_hat)
   )
   
@@ -96,11 +94,11 @@ testOMF <- function(
         
         c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp, 
                                                             .saturated = .saturated,
-                                                            .type_vcv=.type_vcv)),
-          "SRMR" = SRMR(Est_temp),
+                                                            .type_vcv= 'indicator')),
+          "SRMR" = SRMR(Est_temp, .saturated = .saturated),
           "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
                                                             .saturated = .saturated,
-                                                            .type_vcv=.type_vcv))
+                                                            .type_vcv='indicator'))
         ) 
       } else {
         NULL
@@ -108,11 +106,11 @@ testOMF <- function(
     } else { 
       c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
                                                           .saturated = .saturated,
-                                                          .type_vcv=.type_vcv)),
-        "SRMR" = SRMR(Est_temp),
+                                                          .type_vcv='indicator')),
+        "SRMR" = SRMR(Est_temp, .saturated = .saturated),
         "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
                                                           .saturated = .saturated,
-                                                          .type_vcv=.type_vcv))
+                                                          .type_vcv='indicator'))
       ) 
     }
   }) # lapply
