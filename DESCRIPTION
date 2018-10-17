@@ -13,7 +13,10 @@ Authors@R: c(person(given = "Manuel", family = "Rademaker",
              person(given = "Tamara", family = "Schamberger",
                     role  = c("ctb"),
                     email = "tamara.schamberger@uni-wuerzburg.de"),
-            person(given = "Theo K.", family = "Dijkstra",
+             person(given = "Michael", family = "Klesel",
+                    role  = c("ctb"),
+                    email = ""),
+             person(given = "Theo K.", family = "Dijkstra",
                     role  = c("ctb"),
                     email = ""))
 Maintainer: Manuel Rademaker <manuel.rademaker@uni-wuerzburg.de>
