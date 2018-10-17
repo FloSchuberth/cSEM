@@ -35,7 +35,7 @@ testOMF <- function(
   .alpha               = args_default()$.alpha,
   .drop_inadmissibles  = args_default()$.drop_inadmissibles,
   .runs                = args_default()$.runs,
-  .saturated           = args_default()$.saturated,
+  .saturated           = args_default()$.saturated
   ){
   
   ## Check if cSEMResults object
