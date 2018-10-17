@@ -134,8 +134,7 @@ testMGD <- function(
     doSNOW::registerDoSNOW(cl)
     # DoParallel
     permEstimates <- foreach::foreach(iPerm = 1:.runs, .options.snow = opts) %dopar% {
-      permutationProcedure(.object = .object,
-                           .listMatrices = listMatrices, 
+      permutationProcedure(.listMatrices = listMatrices, 
                            .arguments = arguments, 
                            .drop_inadmissibles = .drop_inadmissibles,
                            .saturated  = .saturated,
@@ -146,8 +145,7 @@ testMGD <- function(
     # Sequential
     permEstimates <- list()
     for(iPerm in 1:.runs){
-      permEstimates[[iPerm]] <- permutationProcedure(.object = .object,
-                                                     .listMatrices = listMatrices, 
+      permEstimates[[iPerm]] <- permutationProcedure(.listMatrices = listMatrices, 
                                                      .arguments = arguments,
                                                      .drop_inadmissibles = .drop_inadmissibles,
                                                      .saturated  = .saturated,
@@ -190,7 +188,7 @@ testMGD <- function(
   return(out)
 }
 
-permutateData <- function(.matrices = NULL){
+permutateData <- function(.matrices = args_default()$.matrices){
   
   ### Checks and errors ========================================================
   ## Check if list and at least of length 2
@@ -223,14 +221,13 @@ permutateData <- function(.matrices = NULL){
   return(permData)
 }
 
-permutationProcedure <- function(.object, 
-                                 .listMatrices, 
+permutationProcedure <- function(.listMatrices, 
                                  .arguments, 
                                  .drop_inadmissibles= args_default()$.drop_inadmissibles, 
                                  .saturated = args_default()$.saturated,
                                  .type_vcv = args_default()$.type_vcv){
   # Permutate data
-  permData <- permutateData(.listMatrices)
+  permData <- permutateData(.matrices = .listMatrices)
   # Replace .data 
   .arguments[[".data"]] <- permData
   # Estimate using permutated data
