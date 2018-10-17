@@ -178,8 +178,6 @@ args_default <- function(
   ) {
   
   args <- list(
-    .data                    = NULL,
-    .model                   = NULL,
     .alpha                   = 0.05,
     .approach                = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_paths          = c("OLS", "2SLS"),
@@ -188,6 +186,7 @@ args_default <- function(
     .C                       = NULL,
     .choices                 = FALSE,
     .csem_model              = NULL,
+    .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
     .drop_inadmissibles      = TRUE,
     .E                       = NULL,
@@ -196,14 +195,15 @@ args_default <- function(
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,
+    .model                   = NULL,
     .modes                   = NULL,
     .only_common_factors     = TRUE,
     .object                  = NULL,
     .only_dots               = FALSE,
     .P                       = NULL,
     .parallel                = FALSE,
-    .runs                    = 499,
     .Q                       = NULL,
+    .runs                    = 499,
     .S                       = NULL,
     .saturated               = FALSE,
     .show_progress           = TRUE,
