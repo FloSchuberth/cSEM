@@ -11,6 +11,7 @@
 #'  .alpha               = args_default()$.alpha, 
 #'  .drop_inadmissibles  = args_default()$.drop_inadmissibles, 
 #'  .runs                = args_default()$.runs, 
+#'  .saturated           = args_default()$.saturated,
 #'  .type_vcv            = args_default()$.type_vcv
 #' )
 #' 
