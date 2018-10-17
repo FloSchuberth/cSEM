@@ -221,8 +221,8 @@ permutateData <- function(.matrices = args_default()$.matrices){
   return(permData)
 }
 
-permutationProcedure <- function(.listMatrices, 
-                                 .arguments, 
+permutationProcedure <- function(.listMatrices = args_default()$.listMatrices, 
+                                 .arguments = args_default()$.arguments, 
                                  .drop_inadmissibles= args_default()$.drop_inadmissibles, 
                                  .saturated = args_default()$.saturated,
                                  .type_vcv = args_default()$.type_vcv){
