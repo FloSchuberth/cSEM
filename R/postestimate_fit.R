@@ -10,7 +10,8 @@
 #'
 #' @usage fit(
 #'   .object    = args_default()$.object, 
-#'   .saturated = args_default()$.saturated
+#'   .saturated = args_default()$.saturated,
+#'   .type_vcv = args_default()$.type_vcv
 #'   )
 #'
 #' @inheritParams csem_arguments
@@ -24,7 +25,8 @@
 
 fit <- function(
   .object    = args_default()$.object, 
-  .saturated = args_default()$.saturated
+  .saturated = args_default()$.saturated,
+  .type_vcv = args_default()$.type_vcv
 ) {
   
   ### For maintenance: ---------------------------------------------------------
@@ -105,6 +107,9 @@ fit <- function(
                            cbind(t(Corr_exo_endo), Cor_endo)) 
   }
   
+  
+  
+  if(.type_vcv == 'indicator'){#
   ## Calculate model-implied VCV of the indicators
   vcv_ind <- t(Lambda) %*% vcv_construct %*% Lambda
   
@@ -125,4 +130,10 @@ fit <- function(
   Sigma[.object$Information$Model$error_cor == 1] = S[.object$Information$Model$error_cor == 1]
   
   return(Sigma)
+  }
+  else if(.type_vcv == 'construct'){
+    ## Make symmetric
+    vcv_construct[lower.tri(vcv_construct)] <- t(vcv_construct)[lower.tri(vcv_construct)]
+    return(vcv_construct)
+  } 
 }

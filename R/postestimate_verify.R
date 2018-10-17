@@ -58,7 +58,9 @@ verify <- function(.object){
   }
   
   if(.object$Information$Model$model_type == "Linear" && 
-     !matrixcalc::is.positive.semi.definite(fit(.object))) {
+     !matrixcalc::is.positive.semi.definite(fit(.object, 
+                                                .saturated = FALSE,
+                                                .type_vcv = 'indicator'))) {
     stat["5"] <- TRUE
   }
   
