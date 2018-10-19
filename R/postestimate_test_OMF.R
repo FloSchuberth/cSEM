@@ -77,43 +77,101 @@ testOMF <- function(
   arguments <- .object$Information$Arguments
   
   ## Calculate reference distribution
-  ref_dist <- lapply(replicate(.runs, X_trans[sample(1:nrow(X), replace = TRUE), ], simplify = FALSE), function(x) {
+  ref_dist=list()
+  counter=0
+  total_iterations=0
+  repeat{
+    total_iterations=total_iterations+1  
+    # Break repeat loop
+    if(counter == .runs) {break}
     
-    # Replace data
-    arguments[[".data"]] <- x
+    # draw dataset
+    X_temp=X_trans[sample(1:nrow(X), replace = TRUE),]
     
-    # Run estimation
-    Est_temp <- do.call(csem, arguments)
-    
-    # Check if admissible
+    # Replace the old dataset by the new one
+    arguments[[".data"]] <- X_temp
+    # Estimate model
+    Est_temp <- do.call(csem, arguments)               
+
+    # Check status
     status_code <- verify(Est_temp)
     
-    # if it is controlled for inadmissible
-    if(.drop_inadmissibles){
+    
+    if(.deal_inadmissibles == 'drop' | .deal_inadmissibles == 'redraw'){
       if(sum(status_code) == 0){
         
-        c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp, 
+        ref_dist[counter]=c(
+          "dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp, 
                                                             .saturated = .saturated,
                                                             .type_vcv= 'indicator')),
           "SRMR" = SRMR(Est_temp, .saturated = .saturated),
           "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
                                                             .saturated = .saturated,
                                                             .type_vcv='indicator'))
-        ) 
-      } else {
-        NULL
-      }
-    } else { 
-      c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
+          ) 
+        counter=counter+1
+      } else if(sum(status_code) != 0 & .deal_inadmissibles == 'drop'){
+        # if(.deal_inadmissibles == 'drop')#{
+         ref_dist[counter]= NULL
+         counter=counter+1
+        #} else if(.deal_inadmissibles == 'redraw'){
+        #  NULL
+        #}
+       }
+    } else if(.deal_inadmissibles == 'ignore') { 
+         ref_dist[counter]= c(
+           "dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
                                                           .saturated = .saturated,
                                                           .type_vcv='indicator')),
-        "SRMR" = SRMR(Est_temp, .saturated = .saturated),
-        "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
+           "SRMR" = SRMR(Est_temp, .saturated = .saturated),
+           "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
                                                           .saturated = .saturated,
                                                           .type_vcv='indicator'))
-      ) 
+      )
+      counter=counter+1
     }
-  }) # lapply
+      
+    }
+    
+  # }
+  
+  # ref_dist <- lapply(replicate(.runs, X_trans[sample(1:nrow(X), replace = TRUE), ], simplify = FALSE), function(x) {
+  #   
+  #   # Replace data
+  #   arguments[[".data"]] <- x
+  #   
+  #   # Run estimation
+  #   Est_temp <- do.call(csem, arguments)
+  #   
+  #   # Check if admissible
+  #   status_code <- verify(Est_temp)
+  #   
+  #   # if it is controlled for inadmissible
+  #   if(.drop_inadmissibles=='drop'){
+  #     if(sum(status_code) == 0){
+  #       
+  #       c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp, 
+  #                                                           .saturated = .saturated,
+  #                                                           .type_vcv= 'indicator')),
+  #         "SRMR" = SRMR(Est_temp, .saturated = .saturated),
+  #         "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
+  #                                                           .saturated = .saturated,
+  #                                                           .type_vcv='indicator'))
+  #       ) 
+  #     } else {
+  #       NULL
+  #     }
+  #   } else { 
+  #     c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
+  #                                                         .saturated = .saturated,
+  #                                                         .type_vcv='indicator')),
+  #       "SRMR" = SRMR(Est_temp, .saturated = .saturated),
+  #       "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
+  #                                                         .saturated = .saturated,
+  #                                                         .type_vcv='indicator'))
+  #     ) 
+  #   }
+  # }) # end lapply
   
   ref_dist_matrix <- do.call(cbind, ref_dist)
   critical_value  <- matrix(apply(ref_dist_matrix, 1, quantile, 1-.alpha), 
@@ -134,7 +192,8 @@ testOMF <- function(
     "Test_statistic"     = teststat,
     "Critical_value"     = critical_value, 
     "Decision"           = decision, 
-    "Number_admissibles" = ncol(ref_dist_matrix)
+    "Number_admissibles" = ncol(ref_dist_matrix),
+    "Total performed runs" = total_iterations
     ) 
   
   class(out) <- "cSEMTestOMF"
