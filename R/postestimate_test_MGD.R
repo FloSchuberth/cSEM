@@ -235,8 +235,8 @@ permutationProcedure <- function(.listMatrices = args_default()$.listMatrices,
   # FILL 
   if(.handle_inadmissibles == "fill"){
     .endFill <- FALSE
-    .countFill <- 0
-    while(!.endFill | .countFill == 10000){
+    .countFill <- -1
+    while(!.endFill){
       # New permutation
       permData <- permutateData(.matrices = .listMatrices)
       # Replace .data 
@@ -245,9 +245,12 @@ permutationProcedure <- function(.listMatrices = args_default()$.listMatrices,
       Est_tmp <- do.call(csem, .arguments)
       # Check if all estimates produce admissible results
       status_code <- sapply(Est_tmp, verify)
-      # If all estimations are admissible
-      if(!all(sum(status_code) == 0)){
+      # If estimations are admissible
+      if(sum(status_code) == 0){
         .endFill <- TRUE
+      }
+      if(.countFill == 1000){
+        return(c(dG = NA, dL = NA, countFill = .countFill, admissible = FALSE))
       }
       # increase counter
       .countFill <- .countFill + 1
@@ -303,8 +306,7 @@ permutationProcedure <- function(.listMatrices = args_default()$.listMatrices,
                                       .saturated  = .saturated,
                                       .type_vcv=.type_vcv), .distance = "squared_euclidian"),
         countFill = NA,
-        admissible = all(sum(status_code))))
-    } 
+        admissible = (sum(status_code)) == 0))    } 
   }
 }
 
