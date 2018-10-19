@@ -131,7 +131,7 @@ testOMF <- function(
       
     total_iterations=total_iterations+1  
     # Break repeat loop
-    if(counter == .runs) {break}
+    if((counter-1) == .runs) {break}
     }
     
   # }
