@@ -9,7 +9,7 @@
 #' @usage testOMF(
 #'  .object              = args_default()$.object, 
 #'  .alpha               = args_default()$.alpha, 
-#'  .drop_inadmissibles  = args_default()$.drop_inadmissibles, 
+#'  .deal_inadmissibles  = args_default()$.deal_inadmissibles, 
 #'  .runs                = args_default()$.runs, 
 #'  .saturated           = args_default()$.saturated,
 #' )
@@ -33,7 +33,7 @@
 testOMF <- function(
   .object              = args_default()$.object,
   .alpha               = args_default()$.alpha,
-  .drop_inadmissibles  = args_default()$.drop_inadmissibles,
+  .deal_inadmissibles  = args_default()$.deal_inadmissibles,
   .runs                = args_default()$.runs,
   .saturated           = args_default()$.saturated
   ){
