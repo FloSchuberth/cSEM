@@ -9,7 +9,7 @@
 #' @usage testOMF(
 #'  .object              = args_default()$.object, 
 #'  .alpha               = args_default()$.alpha, 
-#'  .deal_inadmissibles  = args_default()$.deal_inadmissibles, 
+#'  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
 #'  .runs                = args_default()$.runs, 
 #'  .saturated           = args_default()$.saturated,
 #' )
@@ -33,7 +33,7 @@
 testOMF <- function(
   .object              = args_default()$.object,
   .alpha               = args_default()$.alpha,
-  .deal_inadmissibles  = args_default()$.deal_inadmissibles,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                = args_default()$.runs,
   .saturated           = args_default()$.saturated
   ){
@@ -95,7 +95,7 @@ testOMF <- function(
     status_code <- verify(Est_temp)
     
     
-    if(.deal_inadmissibles == 'drop' | .deal_inadmissibles == 'replace'){
+    if(.handle_inadmissibles == 'drop' | .handle_inadmissibles == 'replace'){
       if(sum(status_code) == 0){
         
         ref_dist[[counter]]=c(
@@ -108,15 +108,15 @@ testOMF <- function(
                                                             .type_vcv='indicator'))
           ) 
         counter=counter+1
-      } else if(sum(status_code) != 0 & .deal_inadmissibles == 'drop'){
-        # if(.deal_inadmissibles == 'drop')#{
+      } else if(sum(status_code) != 0 & .handle_inadmissibles == 'drop'){
+        # if(.handle_inadmissibles == 'drop')#{
          ref_dist[[counter]]= NULL
          counter=counter+1
-        #} else if(.deal_inadmissibles == 'redraw'){
+        #} else if(.handle_inadmissibles == 'redraw'){
         #  NULL
         #}
        }
-    } else if(.deal_inadmissibles == 'ignore') { 
+    } else if(.handle_inadmissibles == 'ignore') { 
          ref_dist[[counter]]= c(
            "dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
                                                           .saturated = .saturated,
