@@ -190,7 +190,7 @@ args_default <- function(
     .csem_model              = NULL,
     .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
-    .deal_inadmissibles      = c('drop','ignore','replace')
+    .deal_inadmissibles      = c('drop','ignore','replace'),
     .drop_inadmissibles      = TRUE,
     .E                       = NULL,
     .H                       = NULL,
