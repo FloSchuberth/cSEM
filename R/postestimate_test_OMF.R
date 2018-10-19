@@ -100,7 +100,7 @@ testOMF <- function(
     if(.deal_inadmissibles == 'drop' | .deal_inadmissibles == 'replace'){
       if(sum(status_code) == 0){
         
-        ref_dist[counter]=c(
+        ref_dist[[counter]]=c(
           "dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp, 
                                                             .saturated = .saturated,
                                                             .type_vcv= 'indicator')),
@@ -112,14 +112,14 @@ testOMF <- function(
         counter=counter+1
       } else if(sum(status_code) != 0 & .deal_inadmissibles == 'drop'){
         # if(.deal_inadmissibles == 'drop')#{
-         ref_dist[counter]= NULL
+         ref_dist[[counter]]= NULL
          counter=counter+1
         #} else if(.deal_inadmissibles == 'redraw'){
         #  NULL
         #}
        }
     } else if(.deal_inadmissibles == 'ignore') { 
-         ref_dist[counter]= c(
+         ref_dist[[counter]]= c(
            "dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
                                                           .saturated = .saturated,
                                                           .type_vcv='indicator')),
