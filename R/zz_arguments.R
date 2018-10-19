@@ -57,6 +57,8 @@
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
+#' @param .handle_inadmissibles a character string. Strategy to handle inadmissibles:
+#' "*drop*", "*ignore*", or "*fill*". Defaults to "drop". 
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .id Character string. The name of the column of `.data` used to split
 #'   the data into groups. Defaults to `NULL`.
@@ -191,6 +193,7 @@ args_default <- function(
     .distance                = c("geodesic", "squared_euclidian"),
     .drop_inadmissibles      = TRUE,
     .E                       = NULL,
+    .handle_inadmissibles    = c("drop", "ignore", "fill"),
     .H                       = NULL,
     .id                      = NULL,
     .listMatrices            = NULL, 
