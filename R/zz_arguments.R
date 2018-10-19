@@ -44,6 +44,7 @@
 #'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
 #'   to "*diff_absolute*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel]-list.
+#' @param .deal_inadmissibles Character string. Options are 'drop', 'ignore', 'replace' Defaults to 'drop'
 #' @param .disattenuate Logical. If possible, should composite correlations be disattenuated
 #'   if the construct is modeled as a common factor? Defaults to `TRUE`.
 #' @param .distance Character string. A distance measure. One of: "*geodesic*"
@@ -189,6 +190,7 @@ args_default <- function(
     .csem_model              = NULL,
     .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
+    .deal_inadmissibles      = c('drop','ignore','replace')
     .drop_inadmissibles      = TRUE,
     .E                       = NULL,
     .H                       = NULL,
