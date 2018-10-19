@@ -44,7 +44,6 @@
 #'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
 #'   to "*diff_absolute*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel]-list.
-#' @param .deal_inadmissibles Character string. Options are 'drop', 'ignore', 'replace' Defaults to 'drop'
 #' @param .disattenuate Logical. If possible, should composite correlations be disattenuated
 #'   if the construct is modeled as a common factor? Defaults to `TRUE`.
 #' @param .distance Character string. A distance measure. One of: "*geodesic*"
@@ -59,6 +58,7 @@
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
 #' @param .H The (N x J) matrix of construct scores.
+#' @param .handle_inadmissibles Character string. Options are 'drop', 'ignore', 'replace' Defaults to 'drop'.
 #' @param .id Character string. The name of the column of `.data` used to split
 #'   the data into groups. Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
@@ -190,10 +190,10 @@ args_default <- function(
     .csem_model              = NULL,
     .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
-    .deal_inadmissibles      = c('drop','ignore','replace'),
     .drop_inadmissibles      = TRUE,
     .E                       = NULL,
     .H                       = NULL,
+    .handle_inadmissibles      = c('drop','ignore','replace'),
     .id                      = NULL,
     .listMatrices            = NULL, 
     .matrix1                 = NULL,
