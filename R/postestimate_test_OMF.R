@@ -97,7 +97,7 @@ testOMF <- function(
     status_code <- verify(Est_temp)
     
     
-    if(.deal_inadmissibles == 'drop' | .deal_inadmissibles == 'redraw'){
+    if(.deal_inadmissibles == 'drop' | .deal_inadmissibles == 'replace'){
       if(sum(status_code) == 0){
         
         ref_dist[counter]=c(
