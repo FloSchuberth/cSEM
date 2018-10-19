@@ -11,13 +11,30 @@
 #' @return (TODO)
 #' @export
 
-assess <- function(.object){
-  
-  ## Check if cSEMResults object
-  if(class(.object) != "cSEMResults") {
-    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
-  }
+assess <- function(.object) {
+  UseMethod("assess")
+}
+
+#' @describeIn assess (TODO)
+#' @export
+
+assess.cSEMResults_default <- function(.object){
   
   paste("not yet implemented")
 }
 
+#' @describeIn assess (TODO)
+#' @export
+
+assess.cSEMResults_multi <- function(.object){
+  
+  paste("not yet implemented")
+}
+
+#' @describeIn assess (TODO)
+#' @export
+
+assess.cSEMResults_2ndorder <- function(.object){
+  
+  paste("not yet implemented")
+}

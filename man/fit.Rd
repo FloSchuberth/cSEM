@@ -2,12 +2,24 @@
 % Please edit documentation in R/postestimate_fit.R
 \name{fit}
 \alias{fit}
+\alias{fit.cSEMResults_default}
+\alias{fit.cSEMResults_multi}
+\alias{fit.cSEMResults_2ndorder}
 \title{Model-implied indicator covariance matrix}
 \usage{
 fit(
   .object    = args_default()$.object, 
   .saturated = args_default()$.saturated
   )
+
+\method{fit}{cSEMResults_default}(.object = args_default()$.object,
+  .saturated = args_default()$.saturated)
+
+\method{fit}{cSEMResults_multi}(.object = args_default()$.object,
+  .saturated = args_default()$.saturated)
+
+\method{fit}{cSEMResults_2ndorder}(.object = args_default()$.object,
+  .saturated = args_default()$.saturated)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -24,6 +36,15 @@ By default the model-implied VCV matrix is based on the structural model.
 If \code{.saturated = TRUE} the structural model is ignored (i.e. a full graph is estimated).
 Hence: V(eta) = WSW' (possibly disattenuated).
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
+
+\item \code{cSEMResults_multi}: (TODO)
+
+\item \code{cSEMResults_2ndorder}: (TODO)
+}}
+
 \references{
 \insertAllCited{}
 }

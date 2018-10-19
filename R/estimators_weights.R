@@ -22,9 +22,9 @@
 #'   \item{`$W`}{A (J x K) matrix of estimated weights.}
 #'   \item{`$E`}{A (J x J) matrix of inner weights.}
 #'   \item{`$Modes`}{A named vector of Modes used for the outer estimation.}
-#'   \item{`$Conv_status`}{The convergence status. One of `TRUE`or `FASLE`. If 
-#'     one-step weights are used via `.iter_max = 1` or no iterative algorithm was used,
-#'     the convergence status is set to `NULL`.}
+#'   \item{`$Conv_status`}{The convergence status. `TRUE` if the algorithm has converged 
+#'     and `FASLE` otherwise. If one-step weights are used via `.iter_max = 1` 
+#'     or a non-iterative procedure was used, the convergence status is set to `NULL`.}
 #'   \item{`$Iterations`}{The number of iterations used.}
 #' }
 #' @export
@@ -160,7 +160,7 @@ calculateWeightsPLS <- function(
 #' @inheritParams csem_arguments
 #'
 #' @inherit calculateWeightsPLS return
-#'
+#' 
 
 calculateWeightsKettenring <- function(
   .S              = args_default()$.S,

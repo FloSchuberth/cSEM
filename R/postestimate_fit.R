@@ -25,7 +25,17 @@
 fit <- function(
   .object    = args_default()$.object, 
   .saturated = args_default()$.saturated
-) {
+  ) {
+  UseMethod("fit")
+}
+
+#' @describeIn fit (TODO)
+#' @export
+
+fit.cSEMResults_default <- function(
+  .object    = args_default()$.object, 
+  .saturated = args_default()$.saturated
+  ) {
   
   ### For maintenance: ---------------------------------------------------------
   ## Cons_exo  := (J_exo x 1) vector of exogenous constructs names.
@@ -50,15 +60,10 @@ fit <- function(
   
   
   ### Preparation ==============================================================
-  ## Check if cSEMResults object
-  if(class(.object) != "cSEMResults") {
-    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
-  }
-  
   ## Check if linear
   if(.object$Information$Model$model_type != "Linear"){
     stop("`fit()` currently not applicable to nonlinear models.",
-         call. = FASLE)
+         call. = FALSE)
   }
   
   ## Collect matrices
@@ -126,3 +131,52 @@ fit <- function(
   
   return(Sigma)
 }
+
+#' @describeIn fit (TODO)
+#' @export
+
+fit.cSEMResults_multi <- function(
+  .object    = args_default()$.object,
+  .saturated = args_default()$.saturated
+  ) {
+  
+  out <- lapply(.object, fit.cSEMResults_default, .saturated = .saturated)
+  return(out)
+  
+}
+
+#' @describeIn fit (TODO)
+#' @export
+
+fit.cSEMResults_2ndorder <- function(
+  .object    = args_default()$.object,
+  .saturated = args_default()$.saturated
+  ) {
+  
+  ## Get relevant quantities
+  S             <- .object$First_stage$Estimates$Indicator_VCV
+  vcv_construct <- fit.cSEMResults_default(.object$Second_stage, .saturated = .saturated)
+  Lambda        <- .object$First_stage$Estimates$Loading_estimates
+  Theta         <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
+  
+  # Reorder dimnames to match the order of Lambda
+  vcv_construct <- vcv_construct[rownames(Lambda), rownames(Lambda)]
+  
+  # Compute VCV
+  Sigma <- t(Lambda) %*% vcv_construct %*% Lambda + Theta
+  Sigma[lower.tri(Sigma)] <- t(Sigma)[lower.tri(Sigma)]
+  
+  # Replace composite blocks by corresponding elements of S
+  m          <- .object$First_stage$Information$Model
+  composites <- names(m$construct_type[m$construct_type == "Composite"])
+  index      <- t(m$measurement[composites, , drop = FALSE]) %*% m$measurement[composites, , drop = FALSE]
+  
+  Sigma[which(index == 1)] <- S[which(index == 1)]
+  
+  # Replace indicators whose measurement errors are allowed to be correlated by s_ij
+  Sigma[.object$Information$Model$error_cor == 1] = S[.object$Information$Model$error_cor == 1]
+  Sigma
+  
+  return(Sigma)
+}
+  

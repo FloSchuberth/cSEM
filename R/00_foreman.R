@@ -259,8 +259,7 @@ foreman <- function(
     )
   )
   
-  class(out) <- "cSEMResults"
-  attr(out, "single") <- TRUE
+  class(out) <- c("cSEMResults", "cSEMResults_default")
   invisible(out)
   
   ### For maintenance: ---------------------------------------------------------

@@ -137,6 +137,7 @@ csem <- function(
       .approach_2ndorder = args$.approach_2ndorder,
       .stage             = "first")
     ## Update model
+    model1$construct_order <- model$construct_order
     args_needed[[".model"]] <- model1
   } else {
     args_needed[[".model"]] <- model
@@ -197,21 +198,22 @@ csem <- function(
   }
 
   ## Set class for output
-  class(out) <- "cSEMResults"
-  
-  ## Is the output a single cSEMResults object or a list of several cSEMResults
-  #  object? The result will not be "single" if ...
-  #  a.) .data is a list of data
-  #  b.) .data contains an .id variable that splits the data into groups
-
-  attr(out, "single") <- ifelse(any(class(.data) == "list") | !is.null(.id) , FALSE, TRUE)
-
-  # ## Is the output from a second order model in which case the
-  # #  result (out) is a list containing the results from the first and
-  # #  the second/third stage.
-  # 
-  # attr(out, "2ndorder") <- ifelse(any(model$construct_order == "Second order") &&
-  #                                   args$.approach_2ndorder == "3stage", TRUE, FALSE)
+  # See the details section of ?UseMethod() to learn how method dispatch works
+  # for objects with multiple classes
+  if(any(class(.data) == "list") | !is.null(.id)) {
+    
+    class(out) <- c("cSEMResults", "cSEMResults_multi")
+    
+  } else if(any(model$construct_order == "Second order") && 
+            args$.approach_2ndorder == "3stage") {
+    
+    class(out) <- c("cSEMResults", "cSEMResults_2ndorder" )
+    
+  } else {
+    
+    class(out) <- c("cSEMResults", "cSEMResults_default")
+    
+  }
   
   return(out)
 }
