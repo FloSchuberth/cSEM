@@ -130,7 +130,7 @@ testOMF <- function(
     }
       
     total_iterations=total_iterations+1  
-    # Break repeat loop
+    # Break repeat loop; Counter -1 since I start with 1, starting with zero leads to problems in filling the list
     if((counter-1) == .runs) {break}
     }
     
