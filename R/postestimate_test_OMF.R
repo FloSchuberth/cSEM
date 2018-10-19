@@ -56,7 +56,7 @@ testOMF <- function(
   # nObs      <- nrow(X)
   Sigma_hat <- fit(.object,
                    .saturated = .saturated,
-                   .type_vcv  = .type_vcv)
+                   .type_vcv  = 'indicator')
   
   
   ## Calculate test statistic
