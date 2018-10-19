@@ -78,12 +78,10 @@ testOMF <- function(
   
   ## Calculate reference distribution
   ref_dist=list()
-  counter=0
+  counter=1
   total_iterations=0
   repeat{
-    total_iterations=total_iterations+1  
-    # Break repeat loop
-    if(counter == .runs) {break}
+
     
     # draw dataset
     X_temp=X_trans[sample(1:nrow(X), replace = TRUE),]
@@ -131,6 +129,9 @@ testOMF <- function(
       counter=counter+1
     }
       
+    total_iterations=total_iterations+1  
+    # Break repeat loop
+    if(counter == .runs) {break}
     }
     
   # }
