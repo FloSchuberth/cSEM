@@ -193,7 +193,7 @@ testOMF <- function(
     "Critical_value"     = critical_value, 
     "Decision"           = decision, 
     "Number_admissibles" = ncol(ref_dist_matrix),
-    "Total performed runs" = total_iterations
+    "Total_runs" = total_iterations
     ) 
   
   class(out) <- "cSEMTestOMF"
