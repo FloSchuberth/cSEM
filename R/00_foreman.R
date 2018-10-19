@@ -85,7 +85,7 @@ foreman <- function(
   X <- scale(data.matrix(X_cleaned))
   
   ## Calculate weights
-  if(.approach_weights == "PLS") {
+  if(.approach_weights == "PLS-PM") {
     W <- calculateWeightsPLS(
       .S                        = S,
       .csem_model               = csem_model,
@@ -122,12 +122,12 @@ foreman <- function(
   }
 
   ## Dominant indicators:
-  # Use the dominant indicators approach (Henseler et al. (2016)) for PLS. 
-  # Perhaps this applicable to weights obtained from algorithms other than PLS.
-  # Currently only PLS is supported.
+  # Use the dominant indicators approach (Henseler et al. (2016)) for PLS-PM. 
+  # Perhaps this applicable to weights obtained from algorithms other than PLS-PM.
+  # Currently only PLS-PM is supported.
   
   if(!is.null(.dominant_indicators)) {
-    if(.approach_weights %in% c("PLS",'MAXVAR','MINVAR','SUMCORR','SSQCORR','GENVAR')) {
+    if(.approach_weights %in% c("PLS-PM",'MAXVAR','MINVAR','SUMCORR','SSQCORR','GENVAR')) {
       
       ## Check construct names:
       # Do all construct names in .dominant_indicators match the construct
@@ -154,7 +154,7 @@ foreman <- function(
       for(i in names(.dominant_indicators)) {
         W$W[i, ] = W$W[i, ] * sign(W$W[i, .dominant_indicators[i]])
       }
-    } # END if PLS
+    } # END if PLS-PM
   } # END if 
   
   ## Calculate proxies/scores

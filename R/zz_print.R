@@ -101,7 +101,7 @@ print.cSEMSummarize_default <- function(.object) {
     col_align("\n\tWeight estimator", 25), "= ", x2$Arguments$.approach_weights, 
     sep = "")
   
-  if(x2$Arguments$.approach_weights == "PLS") {
+  if(x2$Arguments$.approach_weights == "PLS-PM") {
     cat(
       col_align("\n\tInner weighting scheme", 25), "= ", 
       x2$Arguments$.PLS_weight_scheme_inner, 
@@ -117,7 +117,7 @@ print.cSEMSummarize_default <- function(.object) {
     col_align("\n\tType of path model", 25), "= ", x2$Model$model_type,
     col_align("\n\tDisattenuated", 25), "= ", 
     ifelse(x2$Arguments$.disattenuate, 
-           ifelse(x2$Arguments$.approach_weights == "PLS", "Yes (PLSc)", "Yes"), "no"),
+           ifelse(x2$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)", "Yes"), "no"),
     sep = "")
   
   cat("\n\n\tConstruct details:\n\t","------------------", sep = "")
@@ -127,7 +127,7 @@ print.cSEMSummarize_default <- function(.object) {
       col_align("Name", max(l, nchar("Name")) + 2), 
       col_align("Modeled as", 13 + 2),
       col_align("Order", 12 + 2), sep = "")
-  if(x2$Arguments$.approach_weights == "PLS") {
+  if(x2$Arguments$.approach_weights == "PLS-PM") {
     cat(col_align("Mode", 5), sep = "")
   }
   cat("\n")
@@ -137,7 +137,7 @@ print.cSEMSummarize_default <- function(.object) {
         col_align(i, max(l, nchar("Name")) + 2), 
         col_align(x2$Model$construct_type[i], 13 + 2), 
         col_align(x2$Model$construct_order[i], 12 + 2), sep = "")
-    if(x2$Arguments$.approach_weights == "PLS") {
+    if(x2$Arguments$.approach_weights == "PLS-PM") {
        cat(col_align(x2$Weight_info$Modes[i], 5), sep = "")
     }
   }
@@ -199,7 +199,7 @@ print.cSEMSummarize_default <- function(.object) {
         sep = "")
   }
 
-  # if(x$Weight_estimator == "PLS") {
+  # if(x$Weight_estimator == "PLS-PM") {
   #   cat("\nEstimated Correction Factors:\n=============================\n", sep = "")
   #   print(x$Correction_factors)
   # }
@@ -259,7 +259,7 @@ print.cSEMSummarize_2ndorder <- function(.object) {
     col_align("\n\tWeight estimator", 25), "= ", x12$Arguments$.approach_weights, 
     sep = "")
   
-  if(x12$Arguments$.approach_weights == "PLS") {
+  if(x12$Arguments$.approach_weights == "PLS-PM") {
     cat(
       col_align("\n\tInner weighting scheme", 25), "= ", 
       x12$Arguments$.PLS_weight_scheme_inner, 
@@ -277,7 +277,7 @@ print.cSEMSummarize_2ndorder <- function(.object) {
     col_align("\n\tType of path model", 25), "= ", x22$Model$model_type,
     col_align("\n\tDisattenuated", 25), "= ", 
     ifelse(x12$Arguments$.disattenuate, 
-           ifelse(x12$Arguments$.approach_weights == "PLS", "Yes (PLSc)", "Yes"), "no"),
+           ifelse(x12$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)", "Yes"), "no"),
     sep = "")
   
   cat("\n\n\tConstruct details:\n\t","------------------", sep = "")
@@ -289,7 +289,7 @@ print.cSEMSummarize_2ndorder <- function(.object) {
       col_align("Name", max(l, nchar("Name")) + 2), 
       col_align("Modeled as", 13 + 2),
       col_align("Order", 12 + 2), sep = "")
-  if(x12$Arguments$.approach_weights == "PLS") {
+  if(x12$Arguments$.approach_weights == "PLS-PM") {
     cat(col_align("Mode", 5), sep = "")
   }
   cat("\n")
@@ -299,7 +299,7 @@ print.cSEMSummarize_2ndorder <- function(.object) {
         col_align(i, max(l, nchar("Name")) + 2), 
         col_align(x12$Model$construct_type[i], 13 + 2), 
         col_align("First order", 12 + 2), sep = "")
-    if(x2$Arguments$.approach_weights == "PLS") {
+    if(x2$Arguments$.approach_weights == "PLS-PM") {
       cat(col_align(x12$Weight_info$Modes[i], 5), sep = "")
     }
   }
@@ -309,7 +309,7 @@ print.cSEMSummarize_2ndorder <- function(.object) {
         col_align(i, max(l, nchar("Name")) + 2), 
         col_align(x22$Model$construct_type[i], 13 + 2), 
         col_align("Second order", 12 + 2), sep = "")
-    if(x2$Arguments$.approach_weights == "PLS") {
+    if(x2$Arguments$.approach_weights == "PLS-PM") {
       cat(col_align(x22$Weight_info$Modes[i], 5), sep = "")
     }
   }
@@ -388,7 +388,7 @@ print.cSEMSummarize_2ndorder <- function(.object) {
         col_align(sprintf("%.4f", temp_w2[i, "Estimate"]), 10, align = "right"), 
         sep = "")
   }
-  # if(x$Weight_estimator == "PLS") {
+  # if(x$Weight_estimator == "PLS-PM") {
   #   cat("\nEstimated Correction Factors:\n=============================\n", sep = "")
   #   print(x$Correction_factors)
   # }

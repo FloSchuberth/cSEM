@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators_weights.R
 \name{calculateWeightsPLS}
 \alias{calculateWeightsPLS}
-\title{Calculate composite weights using PLS}
+\title{Calculate composite weights using PLS-PM}
 \usage{
 calculateWeightsPLS(
   .S                           = args_default()$.S,
@@ -25,24 +25,24 @@ One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}"
 to "\emph{diff_absolute}".}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
-If \code{iter_max = 1} and \code{.approach_weights = "PLS"} one-step weights are returned.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
 \item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.
-Ignored if \code{.approach_weights} is not PLS.}
+when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FALSE}.
+Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_modes}{Either a named vector specifying the mode that should be used for
 each construct in the form \code{"name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
 If \code{NULL}, \code{csem()} will choose the appropriate mode according to the type
-of construct used. Ignored if \code{.approach_weight} is not PLS.}
+of construct used. Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS.}
+used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
@@ -60,7 +60,7 @@ or a non-iterative procedure was used, the convergence status is set to \code{NU
 }
 }
 \description{
-Calculates composite weights using the PLS algorithm. (TODO)
+Calculates composite weights using the PLS-PM algorithm. (TODO)
 }
 \details{
 More details here. (TODO)

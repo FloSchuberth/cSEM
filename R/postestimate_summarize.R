@@ -66,7 +66,7 @@ summarize.cSEMResults_default <- function(.object) {
     stringsAsFactors = FALSE)
   
   ## Inner weight estimates ----------------------------------------------------
-  if(x2$Arguments$.approach_weights == "PLS") {
+  if(x2$Arguments$.approach_weights == "PLS-PM") {
     i <- rownames(x1$Inner_weight_estimates)
     D <- x2$Model$structural[i, i , drop = FALSE] + t(x2$Model$structural[i, i, drop = FALSE])
     

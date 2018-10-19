@@ -1,6 +1,6 @@
-#' Calculate composite weights using PLS
+#' Calculate composite weights using PLS-PM
 #'
-#' Calculates composite weights using the PLS algorithm. (TODO)
+#' Calculates composite weights using the PLS-PM algorithm. (TODO)
 #'
 #' More details here. (TODO)
 #'
@@ -114,12 +114,12 @@ calculateWeightsPLS <- function(
     if(conv) {
       # Set convergence status to TRUE as algorithm has converged
       conv_status = TRUE
-      break # return iterative PLS weights
+      break # return iterative PLS-PM weights
       
     } else if(iter_counter == iter_max & iter_max == 1) {
       # Set convergence status to NULL, NULL is used if no algorithm is used
       conv_status = NULL
-      break # return one-step PLS weights
+      break # return one-step PLS-PM weights
       
     } else if(iter_counter == iter_max & iter_max > 1) {
       # Set convergence status to FALSE, as algorithm has not converged
