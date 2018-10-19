@@ -5,6 +5,7 @@
 #' Description: TODO.
 #' Test is based on \insertCite{Dijkstra2015;textual}{cSEM}.
 #' Data is transformed according to \insertCite{Beran1985;textual}{cSEM}.
+#' After 10000 iterations it stops automatically
 #' 
 #' @usage testOMF(
 #'  .object              = args_default()$.object, 
@@ -131,7 +132,7 @@ testOMF <- function(
       
     total_iterations=total_iterations+1  
     # Break repeat loop; Counter -1 since I start with 1, starting with zero leads to problems in filling the list
-    if((counter-1) == .runs) {break}
+    if((counter-1) == .runs | total_iterations == 10000) {break}
     }
     
   # }
