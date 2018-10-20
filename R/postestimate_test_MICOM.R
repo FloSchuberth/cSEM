@@ -1,3 +1,38 @@
+testMICOMnew=function(.object=args_default()$.object,
+                      .runs      = args_default()$.runs,
+                      .alpha        = args_default()$.alpha){
+  
+  ### Checks and errors ========================================================
+  ## Check if cSEMResults object
+  if(class(.object) != "cSEMResults") {
+    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
+  }
+  
+  ## Check if .object contains estimates for at least two groups.
+  if(attr(.object, "single") == TRUE) {
+    stop("At least two groups required.", call. = FALSE)
+  }
+  
+  ## Check if any of the group estimates are inadmissible
+  if(!all(sapply(.object, function(x) sum(verify(x)) == 0))) {
+    stop("Initial estimation results for at least one group are inadmissible.\n", 
+         "See `lapply(.object, verify)` for details.",
+         call. = FALSE)
+  }
+  
+  # Check if data for different groups is identical
+  if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
+                      function(x){ identical(x[[1]], x[[2]])})){
+    stop("At least two groups are identical.", call. = FALSE)
+  }
+  
+  # extract scores
+  
+  
+  
+  
+}
+
 #' Test measurement invariance of composites
 #'
 #' This functions performs the test for measurement invariance of composites
