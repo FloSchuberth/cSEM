@@ -1,6 +1,43 @@
+# permutateDataNew <- function(.list_matrices = args_default()$.matrices){
+  
+  ### Checks and errors ========================================================
+  ## Check if list and at least of length 2
+  if(!is.list(.list_matrices) && length(.list_matrices) < 2) {
+    stop("`.matrices` must be a list of at least length two.", call. = FALSE)
+  }
+  
+  # ## Check if column names are identical
+  # if (FALSE %in% sapply(.matrices,function(x) {
+  #   identical(colnames(x), colnames(.matrices[[1]]))})) {
+  #   stop("`.matrices` must have the same colnames.", call. = FALSE)
+  # }
+  
+  ### Permutation ==============================================================
+  
+  # combine data
+  combinedData <- do.call(rbind, .list_matrices)
+  # combinedData = as.data.frame(combinedData)
+  # create ID
+  # ID <- 1:nrow(combinedData)
+  
+  # combinedData=data.frame(combinedData, ID=ID)
+  nrows=sapply(.list_matrices,nrow)
+  out=foreach::foreach(i = 1:length(.list_matrices)) %do% {
+    
+    ID=sample(1:nrow(combinedData),nrows[i])
+    data_ret=combinedData[ID,]
+    combinedData=combinedData[-ID,]
+    data_ret    
+  }
+  
+  return(out)
+}
+
 testMICOMnew=function(.object=args_default()$.object,
                       .runs      = args_default()$.runs,
-                      .alpha        = args_default()$.alpha){
+                      .alpha        = args_default()$.alpha,
+                      .show_progress = args_default()$.show_progress,
+                      .handle_inadmissibles = args_default()$.handle_inadmissibles){
   
   ### Checks and errors ========================================================
   ## Check if cSEMResults object
@@ -26,13 +63,13 @@ testMICOMnew=function(.object=args_default()$.object,
     stop("At least two groups are identical.", call. = FALSE)
   }
   
-  # Needs to be adapted for the case with more than 2 groups
+  # Should work for a list of datasets as welle as two single objects.
   
   # extract scores
   scores1=.object$Data_1$Estimates$Construct_scores
   scores2=.object$Data_2$Estimates$Construct_scores
   
-  if(ncol(scores1)!=ncol(scores2)){stop(Different number of constructs)} 
+  if(ncol(scores1)!=ncol(scores2)){stop("Different number of constructs")} 
   
   teststat=sapply(1:ncol(scores1), function(x){
     cor(scores1[,x],scores2[,x])
@@ -45,13 +82,103 @@ testMICOMnew=function(.object=args_default()$.object,
   # Put data in a list
   listMatrices <- lapply(.object, function(x) x$Information$Data)
   
-  # Collect initial arguments
+  # Collect initial arguments (from the first object)
   arguments <- .object[[1]]$Information$Arguments
   
-  # Set .id
-  arguments[[".id"]] <- "permID"
+  ref_dist=list()
+  counter=1
+  total_iterations=0
   
+  # extract original data as a list
+  org_data_list=lapply(.object , function(x) x$Information$Data)
+  repeat{
+    
+    
+    # draw dataset
+    X_temp=permutateData(.matrices=org_data_list)
+    
+    # Replace the old dataset by the new one
+    arguments[[".data"]] <- X_temp
+    # Set .id
+    arguments[[".id"]] <- "permID"
+    # Estimate model
+    Est_temp <- do.call(csem, arguments)               
+    
+    # Check status
+    # status_code <- verify(Est_temp)
+    status_code <- sapply(Est_temp,verify)
+    
+    
+    if(.handle_inadmissibles == 'drop' | .handle_inadmissibles == 'replace'){
+      if(sum(status_code) == 0){
+        
+        
+        scores_temp=lapply(Est_temp, function(x) x$Estimates$Construct_scores)
+        
+        ref_dist[[counter]]=sapply(1:ncol(scores1), function(x){
+          cor(scores_temp[[1]][,x],scores_temp[[2]][,x])
+        })
+        
+        counter=counter+1
+      } else if(sum(status_code) != 0 & .handle_inadmissibles == 'drop'){
+        # if(.handle_inadmissibles == 'drop')#{
+        ref_dist[[counter]]= NULL
+        counter=counter+1
+        #} else if(.handle_inadmissibles == 'redraw'){
+        #  NULL
+        #}
+      }
+    } else if(.handle_inadmissibles == 'ignore') { 
+      
+      scores_temp=lapply(Est_temp, function(x) x$Estimates$Construct_scores)
+      
+      ref_dist[[counter]]=sapply(1:ncol(scores1), function(x){
+        cor(scores_temp[[1]][,x],scores_temp[[2]][,x])
+      })
+      counter=counter+1
+    }
+    
+    total_iterations=total_iterations+1  
+    # Break repeat loop; Counter -1 since I start with 1, starting with zero leads to problems in filling the list
+    if((counter-1) == .runs | total_iterations == 10000) {break}
+  }
+  
+   
+  ref_dist_matrix <- do.call(cbind, ref_dist)
+  critical_value  <- matrix(apply(ref_dist_matrix, 1, quantile, .alpha), 
+                            ncol =length(teststat),
+                            dimnames = list(paste(.alpha*100, sep = "","%"), 
+                                            names(teststat))
+  )
+  
+  
+  if (length(.alpha) > 1) {
+    decision <- t(apply(critical_value, 1, function(x) {teststat > x}))
+  }
+  
+  if (length(.alpha) == 1) {
+    decision <- teststat > critical_value
+  }
+  
+  # step 3 is missing and still needs to be implemented
+  
+  
+  out <- list(
+    "Test_statistic"     = teststat,
+    "Critical_value"     = critical_value, 
+    "Decision"           = decision, 
+    "Number_admissibles" = ncol(ref_dist_matrix)
+  ) 
+  
+  class(out) <- "cSEMTestMICOM"
+  return(out)
+   
 }
+
+
+
+
+
 
 #' Test measurement invariance of composites
 #'
