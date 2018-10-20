@@ -26,10 +26,30 @@ testMICOMnew=function(.object=args_default()$.object,
     stop("At least two groups are identical.", call. = FALSE)
   }
   
+  # Needs to be adapted for the case with more than 2 groups
+  
   # extract scores
+  scores1=.object$Data_1$Estimates$Construct_scores
+  scores2=.object$Data_2$Estimates$Construct_scores
   
+  if(ncol(scores1)!=ncol(scores2)){stop(Different number of constructs)} 
   
+  teststat=sapply(1:ncol(scores1), function(x){
+    cor(scores1[,x],scores2[,x])
+  })
   
+  # macht dasselbe und ist evtl eleganter
+  # diag(cor(scores1,scores2))
+  
+  ## 2. Permuation
+  # Put data in a list
+  listMatrices <- lapply(.object, function(x) x$Information$Data)
+  
+  # Collect initial arguments
+  arguments <- .object[[1]]$Information$Arguments
+  
+  # Set .id
+  arguments[[".id"]] <- "permID"
   
 }
 
