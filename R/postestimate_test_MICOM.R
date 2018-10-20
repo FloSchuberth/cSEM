@@ -63,16 +63,18 @@ testMICOMnew=function(.object=args_default()$.object,
     stop("At least two groups are identical.", call. = FALSE)
   }
   
-  # Should work for a list of datasets as welle as two single objects.
+  if(length(.object)!=2){stop('More than 2 groups', call. = FALSE)}
+  
+  # Should work for a list of datasets as well as two single objects.
   
   # extract scores
-  scores1=.object$Data_1$Estimates$Construct_scores
-  scores2=.object$Data_2$Estimates$Construct_scores
+  scores=lapply(.object, function(x) x$Estimates$Construct_scores)
+
   
-  if(ncol(scores1)!=ncol(scores2)){stop("Different number of constructs")} 
+  if(ncol(scores[[1]])!=ncol(scores[[2]])){stop("Different number of constructs", call. = FALSE)} 
   
-  teststat=sapply(1:ncol(scores1), function(x){
-    cor(scores1[,x],scores2[,x])
+  teststat=sapply(1:ncol(scores[[1]]), function(x){
+    cor(scores[[1]][,x],scores[[2]][,x])
   })
   
   # macht dasselbe und ist evtl eleganter
