@@ -113,6 +113,6 @@ dML <- function(.object=args_default()$.object){
   nobs <- .object$Information$Number_of_observations
   S         <- .object$Estimates$Indicator_VCV
   p         <- dim(S)[1]
-  Sigma_hat <- fit(.object)
+  Sigma_hat <- fit(.object, .saturated = FALSE, .type_vcv = 'indicator')
   (nobs - 1)*(log(det(Sigma_hat)) + sum(diag(S %*% solve(Sigma_hat))) - log(det(S)) - p)
 }

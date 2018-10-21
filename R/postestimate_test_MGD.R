@@ -11,7 +11,9 @@
 #'  .drop_inadmissibles = args_default()$.drop_inadmissibles,
 #'  .parallel           = args_default()$.parallel,
 #'  .runs               = args_default()$.runs,
-#'  .show_progress      = args_default()$.show_progress
+#'  .show_progress      = args_default()$.show_progress,
+#'  .saturated           = args_default()$.saturated,
+#'  .type_vcv               = args_default()$.type_vcv
 #'  ) 
 #' 
 #' @inheritParams csem_arguments
@@ -46,7 +48,7 @@
 #' listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
 #' out.cSEM <- csem(listData, model) 
 #'
-#' testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE)
+#' testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE, .type_vcv= 'construct')
 #' }
 #'
 #' @export
@@ -57,7 +59,9 @@ testMGD <- function(
   .drop_inadmissibles = args_default()$.drop_inadmissibles,
   .parallel           = args_default()$.parallel,
   .runs               = args_default()$.runs,
-  .show_progress      = args_default()$.show_progress
+  .show_progress      = args_default()$.show_progress,
+  .saturated          = args_default()$.saturated,
+  .type_vcv           = args_default()$.type_vcv
   ){
 
   ### Checks and errors ========================================================
@@ -87,9 +91,13 @@ testMGD <- function(
   ### Calculation===============================================================
   ## 1. Compute the test statistics
   teststat <- c(
-    "dG" = calculateDistance(.matrices = lapply(.object, fit), 
+    "dG" = calculateDistance(.matrices = lapply(.object, fit,
+                                                .saturated = .saturated,
+                                                .type_vcv =.type_vcv), 
                              .distance = "geodesic"),
-    "dL" = calculateDistance(.matrices = lapply(.object, fit), 
+    "dL" = calculateDistance(.matrices = lapply(.object, fit, 
+                                                .saturated= .saturated,
+                                                .type_vcv=.type_vcv), 
                              .distance = "squared_euclidian")
     )
   
@@ -126,20 +134,22 @@ testMGD <- function(
     doSNOW::registerDoSNOW(cl)
     # DoParallel
     permEstimates <- foreach::foreach(iPerm = 1:.runs, .options.snow = opts) %dopar% {
-      permutationProcedure(.object = .object,
-                           .listMatrices = listMatrices, 
+      permutationProcedure(.listMatrices = listMatrices, 
                            .arguments = arguments, 
-                           .drop_inadmissibles = .drop_inadmissibles)
+                           .drop_inadmissibles = .drop_inadmissibles,
+                           .saturated  = .saturated,
+                           .type_vcv=.type_vcv)
     }
     parallel::stopCluster(cl)
   }else{
     # Sequential
     permEstimates <- list()
     for(iPerm in 1:.runs){
-      permEstimates[[iPerm]] <- permutationProcedure(.object = .object,
-                                                     .listMatrices = listMatrices, 
+      permEstimates[[iPerm]] <- permutationProcedure(.listMatrices = listMatrices, 
                                                      .arguments = arguments,
-                                                     .drop_inadmissibles = .drop_inadmissibles)
+                                                     .drop_inadmissibles = .drop_inadmissibles,
+                                                     .saturated  = .saturated,
+                                                     .type_vcv=.type_vcv)
       # Update progress bar
       if(.show_progress){
         setTxtProgressBar(pb, iPerm)
@@ -178,7 +188,7 @@ testMGD <- function(
   return(out)
 }
 
-permutateData <- function(.matrices = NULL){
+permutateData <- function(.matrices = args_default()$.matrices){
   
   ### Checks and errors ========================================================
   ## Check if list and at least of length 2
@@ -211,9 +221,13 @@ permutateData <- function(.matrices = NULL){
   return(permData)
 }
 
-permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadmissibles){
+permutationProcedure <- function(.listMatrices = args_default()$.listMatrices, 
+                                 .arguments = args_default()$.arguments, 
+                                 .drop_inadmissibles= args_default()$.drop_inadmissibles, 
+                                 .saturated = args_default()$.saturated,
+                                 .type_vcv = args_default()$.type_vcv){
   # Permutate data
-  permData <- permutateData(.listMatrices)
+  permData <- permutateData(.matrices = .listMatrices)
   # Replace .data 
   .arguments[[".data"]] <- permData
   # Estimate using permutated data
@@ -225,8 +239,12 @@ permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadm
     ## If no inadmissibles exists continue as usual
     if(all(sum(status_code) == 0)){
       return(c(
-        dG = calculateDistance(lapply(Est_tmp, fit), .distance = "geodesic"),
-        dL = calculateDistance(lapply(Est_tmp, fit), .distance = "squared_euclidian")))
+        dG = calculateDistance(lapply(Est_tmp, fit, 
+                                      .saturated  = .saturated,
+                                      .type_vcv=.type_vcv), .distance = "geodesic"),
+        dL = calculateDistance(lapply(Est_tmp, fit, 
+                                      .saturated  = .saturated,
+                                      .type_vcv=.type_vcv), .distance = "squared_euclidian")))
     } else {
       # return NULL
       return(NULL)
@@ -234,8 +252,12 @@ permutationProcedure <- function(.object, .listMatrices, .arguments, .drop_inadm
     # else, i.e., dropInadmissible == FALSE
   } else {
     return(c(
-      dG = calculateDistance(lapply(Est_tmp, fit), .distance = "geodesic"),
-      dL = calculateDistance(lapply(Est_tmp, fit), .distance = "squared_euclidian")))
+      dG = calculateDistance(lapply(Est_tmp, fit, 
+                                    .saturated  = .saturated,
+                                    .type_vcv=.type_vcv), .distance = "geodesic"),
+      dL = calculateDistance(lapply(Est_tmp, fit, 
+                                    .saturated  = .saturated,
+                                    .type_vcv=.type_vcv), .distance = "squared_euclidian")))
   }
 }
 

@@ -115,6 +115,8 @@
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
+#' @param .type_vcv Character string. Indicates which model-implied correlation matrix is calcuted
+#'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
 #' @param .verbose Logical. Should information be printed to the console? Defaults
 #'   to `TRUE`.
 #' @param .vector1 A vector of numeric values.
@@ -176,32 +178,34 @@ args_default <- function(
   ) {
   
   args <- list(
-    .data                    = NULL,
-    .model                   = NULL,
     .alpha                   = 0.05,
     .approach                = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_paths          = c("OLS", "2SLS"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "fixed", "unit"), 
+    .arguments               = NULL,
     .C                       = NULL,
     .choices                 = FALSE,
     .csem_model              = NULL,
+    .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
     .drop_inadmissibles      = TRUE,
     .E                       = NULL,
     .H                       = NULL,
     .id                      = NULL,
+    .listMatrices            = NULL, 
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,
+    .model                   = NULL,
     .modes                   = NULL,
     .only_common_factors     = TRUE,
     .object                  = NULL,
     .only_dots               = FALSE,
     .P                       = NULL,
     .parallel                = FALSE,
-    .runs                    = 499,
     .Q                       = NULL,
+    .runs                    = 499,
     .S                       = NULL,
     .saturated               = FALSE,
     .show_progress           = TRUE,

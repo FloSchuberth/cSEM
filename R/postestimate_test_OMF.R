@@ -10,7 +10,8 @@
 #'  .object              = args_default()$.object, 
 #'  .alpha               = args_default()$.alpha, 
 #'  .drop_inadmissibles  = args_default()$.drop_inadmissibles, 
-#'  .runs                = args_default()$.runs
+#'  .runs                = args_default()$.runs, 
+#'  .saturated           = args_default()$.saturated,
 #' )
 #' 
 #' @inheritParams  csem_arguments
@@ -33,7 +34,8 @@ testOMF <- function(
   .object              = args_default()$.object,
   .alpha               = args_default()$.alpha,
   .drop_inadmissibles  = args_default()$.drop_inadmissibles,
-  .runs                = args_default()$.runs
+  .runs                = args_default()$.runs,
+  .saturated           = args_default()$.saturated
   ){
   
   ## Check if cSEMResults object
@@ -52,13 +54,15 @@ testOMF <- function(
   X         <- .object$Information$Data
   S         <- .object$Estimates$Indicator_VCV
   # nObs      <- nrow(X)
-  Sigma_hat <- fit(.object)
+  Sigma_hat <- fit(.object,
+                   .saturated = .saturated,
+                   .type_vcv  = 'indicator')
   
   
   ## Calculate test statistic
   teststat <- c(
     "dG"   = dG(.matrix1 = S, .matrix2 = Sigma_hat),
-    "SRMR" = SRMR(.object),
+    "SRMR" = SRMR(.object, .saturated = .saturated),
     "dL"   = dL(.matrix1 = S, .matrix2 = Sigma_hat)
   )
   
@@ -88,17 +92,25 @@ testOMF <- function(
     if(.drop_inadmissibles){
       if(sum(status_code) == 0){
         
-        c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp)),
-          "SRMR" = SRMR(Est_temp),
-          "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp))
+        c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp, 
+                                                            .saturated = .saturated,
+                                                            .type_vcv= 'indicator')),
+          "SRMR" = SRMR(Est_temp, .saturated = .saturated),
+          "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
+                                                            .saturated = .saturated,
+                                                            .type_vcv='indicator'))
         ) 
       } else {
         NULL
       }
     } else { 
-      c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp)),
-        "SRMR" = SRMR(Est_temp),
-        "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp))
+      c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
+                                                          .saturated = .saturated,
+                                                          .type_vcv='indicator')),
+        "SRMR" = SRMR(Est_temp, .saturated = .saturated),
+        "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
+                                                          .saturated = .saturated,
+                                                          .type_vcv='indicator'))
       ) 
     }
   }) # lapply
