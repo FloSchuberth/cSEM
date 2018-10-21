@@ -158,6 +158,9 @@ One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 
+\item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
+One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
+
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
 

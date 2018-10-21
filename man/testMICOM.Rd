@@ -5,50 +5,24 @@
 \title{Test measurement invariance of composites}
 \usage{
 testMICOM(
-  .data             = NULL,
-  .model            = NULL,
-  .group_var        = NULL,
-  .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                        "GSCA", "fixed", "unit")
-  .permutations     = 100,
-  .alpha            = c(0.1, 0.05, 0.01),
-  .verbose          = TRUE,
-  ...)
+  .object=args_default()$.object,
+  .runs      = args_default()$.runs,
+  .alpha        = args_default()$.alpha,
+  .show_progress = args_default()$.show_progress,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
-data column types or classes are: logical, numeric (double or integer), factor
-(ordered and unordered) or a mix of several types.}
-
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
-
-\item{.approach_weights}{Character string. Approach used to
-obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
-Defaults to "\emph{PLS-PM}".}
-
-\item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
+\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.verbose}{Logical. Should information be printed to the console? Defaults
-to \code{TRUE}.}
+\item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
 }
 \value{
 An object of class "testMICOM"
-
-An object of class "testMICOM" is a named list containing the following list element:
-\describe{
-\item{\strong{Step2}}{A list containing the results of the test for compositional invariance (Step 2).}
-\item{\strong{Step3}}{A list containing the results of the test for mean and variance equality (Step 3).}
-\item{\strong{Meta_information}}{A list of additional information on the test.}
-}
 }
 \description{
 This functions performs the test for measurement invariance of composites

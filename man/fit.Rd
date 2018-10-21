@@ -29,6 +29,9 @@ fit(
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+
+\item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
+One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 }
 \description{
 Calculate the model-implied indicator or construct variance-covariance (VCV)

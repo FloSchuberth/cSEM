@@ -8,7 +8,8 @@ testOMF(
  .object              = args_default()$.object, 
  .alpha               = args_default()$.alpha, 
  .drop_inadmissibles  = args_default()$.drop_inadmissibles, 
- .runs                = args_default()$.runs
+ .runs                = args_default()$.runs, 
+ .saturated           = args_default()$.saturated,
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ Defaults to \code{0.05}.}
 Defaults to \code{TRUE}.}
 
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
+
+\item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 }
 \value{
 A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
