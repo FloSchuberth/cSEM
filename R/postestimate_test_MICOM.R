@@ -1,37 +1,37 @@
-# permutateDataNew <- function(.list_matrices = args_default()$.matrices){
-  
-  ### Checks and errors ========================================================
-  ## Check if list and at least of length 2
-  if(!is.list(.list_matrices) && length(.list_matrices) < 2) {
-    stop("`.matrices` must be a list of at least length two.", call. = FALSE)
-  }
-  
-  # ## Check if column names are identical
-  # if (FALSE %in% sapply(.matrices,function(x) {
-  #   identical(colnames(x), colnames(.matrices[[1]]))})) {
-  #   stop("`.matrices` must have the same colnames.", call. = FALSE)
-  # }
-  
-  ### Permutation ==============================================================
-  
-  # combine data
-  combinedData <- do.call(rbind, .list_matrices)
-  # combinedData = as.data.frame(combinedData)
-  # create ID
-  # ID <- 1:nrow(combinedData)
-  
-  # combinedData=data.frame(combinedData, ID=ID)
-  nrows=sapply(.list_matrices,nrow)
-  out=foreach::foreach(i = 1:length(.list_matrices)) %do% {
-    
-    ID=sample(1:nrow(combinedData),nrows[i])
-    data_ret=combinedData[ID,]
-    combinedData=combinedData[-ID,]
-    data_ret    
-  }
-  
-  return(out)
-}
+#  permutateDataNew <- function(.list_matrices = args_default()$.matrices){
+#   
+#   ### Checks and errors ========================================================
+#   ## Check if list and at least of length 2
+#   if(!is.list(.list_matrices) && length(.list_matrices) < 2) {
+#     stop("`.matrices` must be a list of at least length two.", call. = FALSE)
+#   }
+#   
+#   # ## Check if column names are identical
+#   # if (FALSE %in% sapply(.matrices,function(x) {
+#   #   identical(colnames(x), colnames(.matrices[[1]]))})) {
+#   #   stop("`.matrices` must have the same colnames.", call. = FALSE)
+#   # }
+#   
+#   ### Permutation ==============================================================
+#   
+#   # combine data
+#   combinedData <- do.call(rbind, .list_matrices)
+#   # combinedData = as.data.frame(combinedData)
+#   # create ID
+#   # ID <- 1:nrow(combinedData)
+#   
+#   # combinedData=data.frame(combinedData, ID=ID)
+#   nrows=sapply(.list_matrices,nrow)
+#   out=foreach::foreach(i = 1:length(.list_matrices)) %do% {
+#     
+#     ID=sample(1:nrow(combinedData),nrows[i])
+#     data_ret=combinedData[ID,]
+#     combinedData=combinedData[-ID,]
+#     data_ret    
+#   }
+#   
+#   return(out)
+# }
 
 testMICOMnew=function(.object=args_default()$.object,
                       .runs      = args_default()$.runs,
