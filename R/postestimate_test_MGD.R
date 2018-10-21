@@ -12,8 +12,8 @@
 #'  .parallel           = args_default()$.parallel,
 #'  .runs               = args_default()$.runs,
 #'  .show_progress      = args_default()$.show_progress,
-#'  .saturated           = args_default()$.saturated,
-#'  .type_vcv               = args_default()$.type_vcv
+#'  .saturated          = args_default()$.saturated,
+#'  .type_vcv           = args_default()$.type_vcv
 #'  ) 
 #' 
 #' @inheritParams csem_arguments
@@ -233,7 +233,7 @@ permutationProcedure <- function(.listMatrices = args_default()$.listMatrices,
                                  .saturated = args_default()$.saturated,
                                  .type_vcv = args_default()$.type_vcv){
   # FILL 
-  if(.handle_inadmissibles == "fill"){
+  if(.handle_inadmissibles == "replace"){
     .endFill <- FALSE
     .countFill <- -1
     while(!.endFill){

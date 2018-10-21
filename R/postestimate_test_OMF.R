@@ -58,8 +58,6 @@ testOMF <- function(
                    .saturated = .saturated,
                    .type_vcv  = "indicator")
 
-  
-  
   ## Calculate test statistic
   teststat <- c(
     "dG"   = dG(.matrix1 = S, .matrix2 = Sigma_hat),

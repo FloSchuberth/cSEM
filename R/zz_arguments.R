@@ -55,14 +55,12 @@
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
-#' @param .handle_inadmissibles a character string. Strategy to handle inadmissibles:
-#' "*drop*", "*ignore*", or "*fill*". Defaults to "drop". 
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
 #'   replications yielding an inadmissible result will be dropped (=
-#'   numerb of results shown <= .runs). For "*ignore*" all results are returned 
-#'   even if they are inadbmissible (= number of results = .runs). For "*replace*"
+#'   number of results shown <= .runs). For "*ignore*" all results are returned 
+#'   even if they are inadmissible (= number of results = .runs). For "*replace*"
 #'   bootstrapping continues until there are .runs admissible solutions. 
 #'   Defaults to "*drop*".
 #' @param .id Character string. The name of the column of `.data` used to split
@@ -197,9 +195,8 @@ args_default <- function(
     .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
     .E                       = NULL,
-    .handle_inadmissibles    = c("drop", "ignore", "fill"),
+    .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
-    .handle_inadmissibles      = c('drop','ignore','replace'),
     .id                      = NULL,
     .listMatrices            = NULL, 
     .matrix1                 = NULL,
@@ -218,7 +215,7 @@ args_default <- function(
     .saturated               = FALSE,
     .show_progress           = TRUE,
     .terms                   = NULL,
-    .type_vcv                    = c('indicator','construct'),
+    .type_vcv                = c("indicator", "construct"),
     .verbose                 = TRUE,
     .W                       = NULL,
     .which_fun               = c("csem", "cca"),

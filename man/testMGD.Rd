@@ -11,8 +11,8 @@ testMGD(
  .parallel           = args_default()$.parallel,
  .runs               = args_default()$.runs,
  .show_progress      = args_default()$.show_progress,
- .saturated           = args_default()$.saturated,
- .type_vcv               = args_default()$.type_vcv
+ .saturated          = args_default()$.saturated,
+ .type_vcv           = args_default()$.type_vcv
  )
 }
 \arguments{
@@ -21,8 +21,13 @@ testMGD(
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.drop_inadmissibles}{Logical. Should inadmissible solutions be dropped?
-Defaults to \code{TRUE}.}
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications yielding an inadmissible result will be dropped (=
+number of results shown <= .runs). For "\emph{ignore}" all results are returned
+even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
+bootstrapping continues until there are .runs admissible solutions.
+Defaults to "\emph{drop}".}
 
 \item{.parallel}{Logical. Use parallel computing. Defaults to \code{FALSE}. Note:
 requires the \code{doSNOW} and the \code{parallel} package to be installed.}
