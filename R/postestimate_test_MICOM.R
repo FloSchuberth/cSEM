@@ -63,7 +63,7 @@ testMICOMnew=function(.object=args_default()$.object,
     stop("At least two groups are identical.", call. = FALSE)
   }
   
-  if(length(.object)!=2){stop('More than 2 groups', call. = FALSE)}
+  if(length(.object)!=2){stop('More than 2 groups are not allowed.', call. = FALSE)}
   
   # Should work for a list of datasets as well as two single objects.
   
