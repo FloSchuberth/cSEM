@@ -104,6 +104,7 @@ testMICOM=function(.object=args_default()$.object,
   if(length(.object)!=2){stop('More than 2 groups are not allowed.', call. = FALSE)}
   
   # Should work for a list of datasets as well as two single objects.
+  # Needs to be adjusted
   
   # extract scores
   scores=lapply(.object, function(x) x$Estimates$Construct_scores)
