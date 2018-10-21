@@ -573,7 +573,7 @@ testMICOM=function(.object=args_default()$.object,
 #   return(out)
 # }
 
-#' @export
+
 # print.testMICOM <- function(x, ...) {
 # 
 #   cat(cli::rule(), "\n")
