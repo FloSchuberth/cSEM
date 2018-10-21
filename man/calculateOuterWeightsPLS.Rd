@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_estimators_weights.R
 \name{calculateOuterWeightsPLS}
 \alias{calculateOuterWeightsPLS}
-\title{Internal: Calculate the outer weights for PLS}
+\title{Internal: Calculate the outer weights for PLS-PM}
 \usage{
 calculateOuterWeightsPLS(
    .S      = args_default()$.S,

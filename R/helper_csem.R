@@ -68,9 +68,9 @@ calculate2ndOrder <- function(
   names(rel_not_attached_to_2nd) <- paste0(c_not_attached_to_2nd, "_temp")
   
   ## Perform second stage
-  out2 <- foreman(.data          = scores, 
-                  .model         = model2, 
-                  .reliabilities = rel_not_attached_to_2nd)
+  out2 <- csem(.data          = scores, 
+               .model         = model2, 
+               .reliabilities = rel_not_attached_to_2nd)
   
   ## Correct loadings (this basically rebases loadings)
   out2$Estimates$Loading_estimates <-  t(apply(out2$Estimates$Loading_estimates, 1, function(x) {
@@ -111,9 +111,9 @@ calculate2ndOrder <- function(
       rel[c_2nd_order_composites] <- rel_2nd_order 
       
       ## Redo second stage including new reliabilities (= third stage)
-      out2 <- foreman(.data          = scores, 
-                      .model         = model2, 
-                      .reliabilities = rel)
+      out2 <- csem(.data          = scores, 
+                   .model         = model2, 
+                   .reliabilities = rel)
       
       for(i in c_2nd_order_composites) {
         

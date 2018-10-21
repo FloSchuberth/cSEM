@@ -37,9 +37,9 @@ structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
 Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
-obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
-Defaults to "\emph{PLS}".}
+Defaults to "\emph{PLS-PM}".}
 
 \item{.args_used}{A list of function argument names to \code{fun()} whose value
 was modified by the user.}
@@ -85,7 +85,7 @@ Defaults to "\emph{drop}".}
 the data into groups. Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
-If \code{iter_max = 1} and \code{.approach_weights = "PLS"} one-step weights are returned.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
@@ -120,22 +120,22 @@ requires the \code{doSNOW} and the \code{parallel} package to be installed.}
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
-Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS.}
+Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.
-Ignored if \code{.approach_weights} is not PLS.}
+when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FALSE}.
+Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_modes}{Either a named vector specifying the mode that should be used for
 each construct in the form \code{"name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
 If \code{NULL}, \code{csem()} will choose the appropriate mode according to the type
-of construct used. Ignored if \code{.approach_weight} is not PLS.}
+of construct used. Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS.}
+used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note

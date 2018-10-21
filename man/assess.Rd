@@ -2,9 +2,18 @@
 % Please edit documentation in R/postestimate_assess.R
 \name{assess}
 \alias{assess}
+\alias{assess.cSEMResults_default}
+\alias{assess.cSEMResults_multi}
+\alias{assess.cSEMResults_2ndorder}
 \title{Assess model}
 \usage{
 assess(.object)
+
+\method{assess}{cSEMResults_default}(.object)
+
+\method{assess}{cSEMResults_multi}(.object)
+
+\method{assess}{cSEMResults_2ndorder}(.object)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -18,6 +27,15 @@ Assess model using common evaluation criteria and fit measures.
 \details{
 The following evaulation criteria and fit measures are used (TODO).
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
+
+\item \code{cSEMResults_multi}: (TODO)
+
+\item \code{cSEMResults_2ndorder}: (TODO)
+}}
+
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
 }

@@ -1,6 +1,6 @@
-#' Calculate composite weights using PLS
+#' Calculate composite weights using PLS-PM
 #'
-#' Calculates composite weights using the PLS algorithm. (TODO)
+#' Calculates composite weights using the PLS-PM algorithm. (TODO)
 #'
 #' More details here. (TODO)
 #'
@@ -22,9 +22,9 @@
 #'   \item{`$W`}{A (J x K) matrix of estimated weights.}
 #'   \item{`$E`}{A (J x J) matrix of inner weights.}
 #'   \item{`$Modes`}{A named vector of Modes used for the outer estimation.}
-#'   \item{`$Conv_status`}{The convergence status. One of `TRUE`or `FASLE`. If 
-#'     one-step weights are used via `.iter_max = 1` or no iterative algorithm was used,
-#'     the convergence status is set to `NULL`.}
+#'   \item{`$Conv_status`}{The convergence status. `TRUE` if the algorithm has converged 
+#'     and `FASLE` otherwise. If one-step weights are used via `.iter_max = 1` 
+#'     or a non-iterative procedure was used, the convergence status is set to `NULL`.}
 #'   \item{`$Iterations`}{The number of iterations used.}
 #' }
 #' @export
@@ -114,12 +114,12 @@ calculateWeightsPLS <- function(
     if(conv) {
       # Set convergence status to TRUE as algorithm has converged
       conv_status = TRUE
-      break # return iterative PLS weights
+      break # return iterative PLS-PM weights
       
     } else if(iter_counter == iter_max & iter_max == 1) {
       # Set convergence status to NULL, NULL is used if no algorithm is used
       conv_status = NULL
-      break # return one-step PLS weights
+      break # return one-step PLS-PM weights
       
     } else if(iter_counter == iter_max & iter_max > 1) {
       # Set convergence status to FALSE, as algorithm has not converged
@@ -160,7 +160,7 @@ calculateWeightsPLS <- function(
 #' @inheritParams csem_arguments
 #'
 #' @inherit calculateWeightsPLS return
-#'
+#' 
 
 calculateWeightsKettenring <- function(
   .S              = args_default()$.S,
