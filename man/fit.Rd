@@ -9,17 +9,21 @@
 \usage{
 fit(
   .object    = args_default()$.object, 
-  .saturated = args_default()$.saturated
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv
   )
 
 \method{fit}{cSEMResults_default}(.object = args_default()$.object,
-  .saturated = args_default()$.saturated)
+  .saturated = args_default()$.saturated,
+  .type_vcv = args_default()$.type_vcv)
 
 \method{fit}{cSEMResults_multi}(.object = args_default()$.object,
-  .saturated = args_default()$.saturated)
+  .saturated = args_default()$.saturated,
+  .type_vcv = args_default()$.type_vcv)
 
 \method{fit}{cSEMResults_2ndorder}(.object = args_default()$.object,
-  .saturated = args_default()$.saturated)
+  .saturated = args_default()$.saturated,
+  .type_vcv = args_default()$.type_vcv)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -27,8 +31,8 @@ fit(
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 }
 \description{
-Calculate the model-implied indicator variance-covariance (VCV) matrix.
-Currently only the model-implied VCV for linear model is implemented.
+Calculate the model-implied indicator or construct variance-covariance (VCV)
+matrix. Currently only the model-implied VCV for linear model is implemented.
 }
 \details{
 Notation is taken from \insertCite{Bollen1989;textual}{cSEM}.

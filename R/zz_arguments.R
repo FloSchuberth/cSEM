@@ -206,6 +206,7 @@ args_default <- function(
     .saturated               = FALSE,
     .show_progress           = TRUE,
     .terms                   = NULL,
+    .type_vcv                = c("indicator", "construct"),
     .verbose                 = TRUE,
     .W                       = NULL,
     .which_fun               = c("csem", "cca"),

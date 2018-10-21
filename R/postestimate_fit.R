@@ -1,7 +1,7 @@
 #' Model-implied indicator covariance matrix
 #'
-#' Calculate the model-implied indicator variance-covariance (VCV) matrix. 
-#' Currently only the model-implied VCV for linear model is implemented.
+#' Calculate the model-implied indicator or construct variance-covariance (VCV) 
+#' matrix. Currently only the model-implied VCV for linear model is implemented.
 #' 
 #' Notation is taken from \insertCite{Bollen1989;textual}{cSEM}.
 #' By default the model-implied VCV matrix is based on the structural model. 
@@ -10,7 +10,8 @@
 #'
 #' @usage fit(
 #'   .object    = args_default()$.object, 
-#'   .saturated = args_default()$.saturated
+#'   .saturated = args_default()$.saturated,
+#'   .type_vcv  = args_default()$.type_vcv
 #'   )
 #'
 #' @inheritParams csem_arguments
@@ -24,7 +25,8 @@
 
 fit <- function(
   .object    = args_default()$.object, 
-  .saturated = args_default()$.saturated
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv
   ) {
   UseMethod("fit")
 }
@@ -34,7 +36,8 @@ fit <- function(
 
 fit.cSEMResults_default <- function(
   .object    = args_default()$.object, 
-  .saturated = args_default()$.saturated
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv
   ) {
   
   ### For maintenance: ---------------------------------------------------------
@@ -108,6 +111,13 @@ fit.cSEMResults_default <- function(
     
     vcv_construct <- rbind(cbind(Phi, Corr_exo_endo),
                            cbind(t(Corr_exo_endo), Cor_endo)) 
+    ## Make symmetric
+    vcv_construct[lower.tri(vcv_construct)] <- t(vcv_construct)[lower.tri(vcv_construct)]
+  }
+  
+  ## If only the fitted construct VCV is needed, return it now
+  if(.type_vcv == "construct") {
+    return(vcv_construct)
   }
   
   ## Calculate model-implied VCV of the indicators
@@ -137,10 +147,13 @@ fit.cSEMResults_default <- function(
 
 fit.cSEMResults_multi <- function(
   .object    = args_default()$.object,
-  .saturated = args_default()$.saturated
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv
   ) {
   
-  out <- lapply(.object, fit.cSEMResults_default, .saturated = .saturated)
+  out <- lapply(.object, fit.cSEMResults_default, 
+                .saturated = .saturated,
+                .type_vcv  = .type_vcv)
   return(out)
   
 }
@@ -150,19 +163,28 @@ fit.cSEMResults_multi <- function(
 
 fit.cSEMResults_2ndorder <- function(
   .object    = args_default()$.object,
-  .saturated = args_default()$.saturated
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv
   ) {
   
   ## Get relevant quantities
   S             <- .object$First_stage$Estimates$Indicator_VCV
-  vcv_construct <- fit.cSEMResults_default(.object$Second_stage, .saturated = .saturated)
+  vcv_construct <- fit.cSEMResults_default(.object$Second_stage, 
+                                           .saturated = .saturated,
+                                           .type_vcv  = .type_vcv)
   Lambda        <- .object$First_stage$Estimates$Loading_estimates
   Theta         <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   
-  # Reorder dimnames to match the order of Lambda
+  # Reorder dimnames to match the order of Lambda and ensure symmetrie
   vcv_construct <- vcv_construct[rownames(Lambda), rownames(Lambda)]
+  vcv_construct[lower.tri(vcv_construct)] <- t(vcv_construct)[lower.tri(vcv_construct)]
   
-  # Compute VCV
+  ## If only the fitted construct VCV is needed, return it now
+  if(.type_vcv == "construct") {
+    return(vcv_construct)
+  }
+  
+  # Compute VCV and ensure symmetrie
   Sigma <- t(Lambda) %*% vcv_construct %*% Lambda + Theta
   Sigma[lower.tri(Sigma)] <- t(Sigma)[lower.tri(Sigma)]
   
