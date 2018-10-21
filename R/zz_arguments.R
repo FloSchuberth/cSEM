@@ -52,8 +52,6 @@
 #'   where `"value"` is a character string giving the name of the dominant indicator
 #'   and `"name"` a character string of the corresponding construct name.
 #'   Dominant indicators may be specified for a subset of the constructs. 
-#' @param .drop_inadmissibles Logical. Should inadmissible solutions be dropped? 
-#'   Defaults to `TRUE`.
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
@@ -198,7 +196,6 @@ args_default <- function(
     .csem_model              = NULL,
     .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
-    .drop_inadmissibles      = TRUE,
     .E                       = NULL,
     .handle_inadmissibles    = c("drop", "ignore", "fill"),
     .H                       = NULL,
