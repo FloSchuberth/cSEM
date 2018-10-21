@@ -1,6 +1,6 @@
-#' Internal: Calculate the inner weights for PLS
+#' Internal: Calculate the inner weights for PLS-PM
 #'
-#' PLS forms "inner" composites as a weighted sum of its *I* related composites.
+#' PLS-PM forms "inner" composites as a weighted sum of its *I* related composites.
 #' These inner weights are obtained using one of the following schemes:
 #' \describe{
 #'   \item{`centroid`}{According to the centroid scheme each inner weight used
@@ -114,7 +114,7 @@ calculateInnerWeightsPLS <- function(
   return(E)
 } # END calculateInnerWeights
 
-#' Internal: Calculate the outer weights for PLS
+#' Internal: Calculate the outer weights for PLS-PM
 #'
 #' Calculates outer weights using Mode A or Mode B.
 #'

@@ -24,13 +24,13 @@ data column types or classes are: logical, numeric (double or integer), factor
 or a \link{cSEMModel}-list.}
 
 \item{.approach_weights}{Character string. Approach used to
-obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
-Defaults to "\emph{PLS}".}
+Defaults to "\emph{PLS-PM}".}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS.}
+used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
 

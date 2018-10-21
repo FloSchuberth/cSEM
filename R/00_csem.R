@@ -4,7 +4,7 @@
 #' composite based approach or conduct confirmatory composite analysis (CCA).
 #'
 #' `csem()` estimates linear and nonlinear structural equation models using a 
-#' composite based approach like PLS, GSCA or unit weights. Technically, `csem()` is a wrapper 
+#' composite based approach like PLS-PM, GSCA or unit weights. Technically, `csem()` is a wrapper 
 #' around the more general [foreman()] function designed for quick and flexible 
 #' use by providing the user with default options except for 
 #' the mandatory `.data` and `.model` argument. 
@@ -33,7 +33,7 @@
 #' }
 #'
 #' \subsection{Weights and path coefficients:}{
-#' By default weights are estimated using the partial least squares algorithm (*PLS*).
+#' By default weights are estimated using the partial least squares algorithm (*PLS-PM*).
 #' Alternative approaches include all of *Kettenring's criteria*, "*fixed weights*"
 #' or "*unit weight*". *Generalized Structured Component Analysis* (*GSCA*) may
 #' also be chosen as a weighing approach although technically GSCA obtains weight
@@ -41,7 +41,7 @@
 #' `.approach_weights = "GSCA"` automatically sets `.approach_paths = "GSCA"` (and
 #' vice-versa).
 #'
-#' For PLS composite-indicator and composite-composite correlations are properly
+#' For PLS-PM composite-indicator and composite-composite correlations are properly
 #' rescaled using *PLSc* \insertCite{Dijkstra2015}{cSEM} by default. *PLSc* yields
 #' consistent estimates for the factor loadings, construct correlations, 
 #' and path coefficients if any of the constructs involved is 
@@ -76,7 +76,7 @@
 #'   .model            = NULL,
 #'   .id               = NULL,
 #'   .approach_2ndorder= c("3stage", "repeated_indicators"),
-#'   .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
+#'   .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
 #'                         "fixed", "unit"),
 #'   .approach_path    = c("OLS", "2SLS", "3SLS"),
 #'   ...)
@@ -110,7 +110,7 @@ csem <- function(
   .id                      = NULL,
   .approach_2ndorder       = c("3stage", "repeated_indicators"),
   .approach_paths          = c("OLS", "2SLS"),
-  .approach_weights        = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
+  .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                "GSCA", "fixed", "unit"),
   ...
   ) {
@@ -137,6 +137,7 @@ csem <- function(
       .approach_2ndorder = args$.approach_2ndorder,
       .stage             = "first")
     ## Update model
+    model1$construct_order <- model$construct_order
     args_needed[[".model"]] <- model1
   } else {
     args_needed[[".model"]] <- model
@@ -197,21 +198,22 @@ csem <- function(
   }
 
   ## Set class for output
-  class(out) <- "cSEMResults"
-  
-  ## Is the output a single cSEMResults object or a list of several cSEMResults
-  #  object? The result will not be "single" if ...
-  #  a.) .data is a list of data
-  #  b.) .data contains an .id variable that splits the data into groups
-
-  attr(out, "single") <- ifelse(any(class(.data) == "list") | !is.null(.id) , FALSE, TRUE)
-
-  # ## Is the output from a second order model in which case the
-  # #  result (out) is a list containing the results from the first and
-  # #  the second/third stage.
-  # 
-  # attr(out, "2ndorder") <- ifelse(any(model$construct_order == "Second order") &&
-  #                                   args$.approach_2ndorder == "3stage", TRUE, FALSE)
+  # See the details section of ?UseMethod() to learn how method dispatch works
+  # for objects with multiple classes
+  if(any(class(.data) == "list") | !is.null(.id)) {
+    
+    class(out) <- c("cSEMResults", "cSEMResults_multi")
+    
+  } else if(any(model$construct_order == "Second order") && 
+            args$.approach_2ndorder == "3stage") {
+    
+    class(out) <- c("cSEMResults", "cSEMResults_2ndorder" )
+    
+  } else {
+    
+    class(out) <- c("cSEMResults", "cSEMResults_default")
+    
+  }
   
   return(out)
 }

@@ -440,19 +440,19 @@ calculateIndicatorCor <- function(
             # Pd is TRUE by default. See ?polycor for details
             temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
             S    <- temp$correlations
-            type <- ifelse(all(temp$type %in% c("Pearson", "")), "PLS", "OrdPLS")
+            type <- ifelse(all(temp$type %in% c("Pearson", "")), "PLS-PM", "OrdPLS")
           },
           
           "theil-sen" = {
             S    <- calculateCorTheilSen(scale(data.matrix(.X_cleaned)))
-            type <-  "PLS"
+            type <-  "PLS-PM"
           },
           "TODO" = {
             "(TODO)"
           }
   )
   # (TODO) not sure how to name the "type" yet and what to do with it. Theoretically,
-  # a polycoric correlation could also be used with GSCA or some other non-PLS method.
+  # a polycoric correlation could also be used with GSCA or some other non-PLS-PM method.
   list(S = S, type = type)
 }
 

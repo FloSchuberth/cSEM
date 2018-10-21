@@ -2,9 +2,18 @@
 % Please edit documentation in R/postestimate_summarize.R
 \name{summarize}
 \alias{summarize}
+\alias{summarize.cSEMResults_default}
+\alias{summarize.cSEMResults_multi}
+\alias{summarize.cSEMResults_2ndorder}
 \title{Summarize model}
 \usage{
 summarize(.object)
+
+\method{summarize}{cSEMResults_default}(.object)
+
+\method{summarize}{cSEMResults_multi}(.object)
+
+\method{summarize}{cSEMResults_2ndorder}(.object)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -15,6 +24,15 @@ Summarize the model (TODO).
 \details{
 Summary (TODO)
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
+
+\item \code{cSEMResults_multi}: (TODO)
+
+\item \code{cSEMResults_2ndorder}: (TODO)
+}}
+
 \seealso{
 \link{csem}, \link{cSEMResults}
 }

@@ -32,9 +32,9 @@
 #'   structural coefficients. One of: "*OLS*" or "*2SLS*".
 #'   Defaults to "*OLS*".
 #' @param .approach_weights Character string. Approach used to
-#'   obtain composite weights. One of: "*PLS*", "*SUMCORR*", "*MAXVAR*",
+#'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*fixed*", or "*unit*".
-#'   Defaults to "*PLS*".
+#'   Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names to `fun()` whose value 
 #'   was modified by the user.
 #' @param .C A (J x J) composite variance-covariance matrix.
@@ -61,7 +61,7 @@
 #' @param .id Character string. The name of the column of `.data` used to split
 #'   the data into groups. Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
-#'   If `iter_max = 1` and `.approach_weights = "PLS"` one-step weights are returned. 
+#'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
 #'   `.iter_max - 1`  will be returned with a warning. Defaults to `100`.
 #' @param .matrix1 A `matrix` to compare.
@@ -85,19 +85,19 @@
 #'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
 #'   "*geo_of_harmonic*". Defaults to "*dist_euclid*". 
-#'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS.
+#'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS-PM.
 #' @param .PLS_ignore_structural_model Logical. Should the structural model be ignored
-#'   when calculating the inner weights of the PLS algorithm? Defaults to `FALSE`.
-#'   Ignored if `.approach_weights` is not PLS.
+#'   when calculating the inner weights of the PLS-PM algorithm? Defaults to `FALSE`.
+#'   Ignored if `.approach_weights` is not PLS-PM.
 #' @param .PLS_modes Either a named vector specifying the mode that should be used for
 #'   each construct in the form `"name" = "mode"`, a single character
 #'   string giving the mode that should be used for all constructs, or `NULL`.
 #'   Possible choices are: "*ModeA*" or "*ModeB*". Defaults to `NULL`.
 #'   If `NULL`, `csem()` will choose the appropriate mode according to the type
-#'   of construct used. Ignored if `.approach_weight` is not PLS.  
+#'   of construct used. Ignored if `.approach_weight` is not PLS-PM.  
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
-#'   used in PLS. One of: "*centroid*", "*factorial*", or "*path*".
-#'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS.
+#'   used in PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
+#'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS-PM.
 #' @param .Q A vector of composite-construct correlations with element names equal to
 #'   the names of the J construct names used in the measurement model. Note 
 #'   Q^2 is also called the reliability coefficient.
@@ -181,7 +181,7 @@ args_default <- function(
     .alpha                   = 0.05,
     .approach                = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_paths          = c("OLS", "2SLS"),
-    .approach_weights        = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
+    .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "fixed", "unit"), 
     .arguments               = NULL,
     .C                       = NULL,
@@ -210,7 +210,7 @@ args_default <- function(
     .saturated               = FALSE,
     .show_progress           = TRUE,
     .terms                   = NULL,
-    .type_vcv                    = c('indicator','construct'),
+    .type_vcv                = c("indicator", "construct"),
     .verbose                 = TRUE,
     .W                       = NULL,
     .which_fun               = c("csem", "cca"),
