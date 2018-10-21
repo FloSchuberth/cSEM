@@ -163,7 +163,10 @@ testMICOMnew=function(.object=args_default()$.object,
   }
   
   # step 3 is missing and still needs to be implemented
-  
+  # VErsteh ehrlich gesagt auch nicht so genau wie der geht da die Kompositen ja so skaliert sind dass 
+  # sie einen Mittelwert von 0 und eine Varianz von 1 haben. 
+  # Eine Möglichkeit wäre die standardisierten Gewichte zu verwenden um die unstandardisierten konstrukt scores zu berechnen, weiss abe rnicht ob das ganz korrekt ist. 
+  # Man berechnet unstandardisierte Gewichte.
   
   out <- list(
     "Test_statistic"     = teststat,
