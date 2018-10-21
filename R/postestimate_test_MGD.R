@@ -54,14 +54,14 @@
 #' @export
 
 testMGD <- function(
-  .object             = args_default()$.object,
-  .alpha              = args_default()$.alpha,
-  .drop_inadmissibles = args_default()$.drop_inadmissibles,
-  .parallel           = args_default()$.parallel,
-  .runs               = args_default()$.runs,
-  .show_progress      = args_default()$.show_progress,
-  .saturated          = args_default()$.saturated,
-  .type_vcv           = args_default()$.type_vcv
+  .object                = args_default()$.object,
+  .alpha                 = args_default()$.alpha,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .parallel              = args_default()$.parallel,
+  .runs                  = args_default()$.runs,
+  .show_progress         = args_default()$.show_progress,
+  .saturated             = args_default()$.saturated,
+  .type_vcv              = args_default()$.type_vcv
   ){
 
   ### Checks and errors ========================================================
@@ -136,7 +136,7 @@ testMGD <- function(
     permEstimates <- foreach::foreach(iPerm = 1:.runs, .options.snow = opts) %dopar% {
       permutationProcedure(.listMatrices = listMatrices, 
                            .arguments = arguments, 
-                           .drop_inadmissibles = .drop_inadmissibles,
+                           .handle_inadmissibles = .handle_inadmissibles,
                            .saturated  = .saturated,
                            .type_vcv=.type_vcv)
     }
@@ -147,7 +147,7 @@ testMGD <- function(
     for(iPerm in 1:.runs){
       permEstimates[[iPerm]] <- permutationProcedure(.listMatrices = listMatrices, 
                                                      .arguments = arguments,
-                                                     .drop_inadmissibles = .drop_inadmissibles,
+                                                     .handle_inadmissibles = .handle_inadmissibles,
                                                      .saturated  = .saturated,
                                                      .type_vcv=.type_vcv)
       # Update progress bar
@@ -163,8 +163,13 @@ testMGD <- function(
   }
   
   # Calculate Estimates
-  ref_dist       <- do.call(cbind, permEstimates)
-  critical_value <- matrix(apply(ref_dist, 1, quantile, 1-.alpha), 
+  tmp.ref_dist       <- do.call(cbind, permEstimates)
+  # test statistics
+  ref_dist <- tmp.ref_dist[1:2, ]
+  # fills
+  fills <- tmp.ref_dist[3,]
+  admissibles <- tmp.ref_dist[4,]
+  critical_value <- matrix(apply(ref_dist, 1, quantile, 1-.alpha, na.rm = TRUE), 
                            ncol = length(teststat), 
                            dimnames = list(paste(.alpha*100, sep = "","%"),
                                            names(teststat)))
@@ -181,7 +186,8 @@ testMGD <- function(
     "Test_statistic"     = teststat, 
     "Critical_value"     = critical_value,
     "Decision"           = decision, 
-    "Number_admissibles" = ncol(ref_dist))
+    "Number_admissibles" = sum(admissibles),
+    "Total_runs"         = .runs + sum(fills, na.rm = T))
   
   # define return class
   class(out) <- "cSEMTestMGD"
@@ -223,41 +229,84 @@ permutateData <- function(.matrices = args_default()$.matrices){
 
 permutationProcedure <- function(.listMatrices = args_default()$.listMatrices, 
                                  .arguments = args_default()$.arguments, 
-                                 .drop_inadmissibles= args_default()$.drop_inadmissibles, 
+                                 .handle_inadmissibles= args_default()$.handle_inadmissibles, 
                                  .saturated = args_default()$.saturated,
                                  .type_vcv = args_default()$.type_vcv){
-  # Permutate data
-  permData <- permutateData(.matrices = .listMatrices)
-  # Replace .data 
-  .arguments[[".data"]] <- permData
-  # Estimate using permutated data
-  Est_tmp <- do.call(csem, .arguments)
-  # Check if all estimates produce admissible results
-  status_code <- sapply(Est_tmp, verify)
-  # Drop potential inadmissibles if required
-  if(.drop_inadmissibles){
-    ## If no inadmissibles exists continue as usual
-    if(all(sum(status_code) == 0)){
-      return(c(
-        dG = calculateDistance(lapply(Est_tmp, fit, 
-                                      .saturated  = .saturated,
-                                      .type_vcv=.type_vcv), .distance = "geodesic"),
-        dL = calculateDistance(lapply(Est_tmp, fit, 
-                                      .saturated  = .saturated,
-                                      .type_vcv=.type_vcv), .distance = "squared_euclidian")))
-    } else {
-      # return NULL
-      return(NULL)
+  # FILL 
+  if(.handle_inadmissibles == "fill"){
+    .endFill <- FALSE
+    .countFill <- -1
+    while(!.endFill){
+      # New permutation
+      permData <- permutateData(.matrices = .listMatrices)
+      # Replace .data 
+      .arguments[[".data"]] <- permData
+      # Estimate using permutated data
+      Est_tmp <- do.call(csem, .arguments)
+      # Check if all estimates produce admissible results
+      status_code <- sapply(Est_tmp, verify)
+      # If estimations are admissible
+      if(sum(status_code) == 0){
+        .endFill <- TRUE
+      }
+      if(.countFill == 1000){
+        return(c(dG = NA, dL = NA, countFill = .countFill, admissible = FALSE))
+      }
+      # increase counter
+      .countFill <- .countFill + 1
     }
-    # else, i.e., dropInadmissible == FALSE
-  } else {
+    # RETURN
     return(c(
       dG = calculateDistance(lapply(Est_tmp, fit, 
                                     .saturated  = .saturated,
                                     .type_vcv=.type_vcv), .distance = "geodesic"),
       dL = calculateDistance(lapply(Est_tmp, fit, 
                                     .saturated  = .saturated,
-                                    .type_vcv=.type_vcv), .distance = "squared_euclidian")))
+                                    .type_vcv=.type_vcv), .distance = "squared_euclidian"),
+      countFill = .countFill,
+      admissible = TRUE))
+  }else{
+    # Permutate data
+    permData <- permutateData(.matrices = .listMatrices)
+    # Replace .data 
+    .arguments[[".data"]] <- permData
+    # Estimate using permutated data
+    Est_tmp <- do.call(csem, .arguments)
+    # Check if all estimates produce admissible results
+    status_code <- sapply(Est_tmp, verify)
+    # Drop potential inadmissibles if required
+    if(.handle_inadmissibles == "drop"){
+      ## If no inadmissibles exists continue as usual
+      if(all(sum(status_code) == 0)){
+        return(c(
+          dG = calculateDistance(lapply(Est_tmp, fit, 
+                                        .saturated  = .saturated,
+                                        .type_vcv=.type_vcv), .distance = "geodesic"),
+          dL = calculateDistance(lapply(Est_tmp, fit, 
+                                        .saturated  = .saturated,
+                                        .type_vcv=.type_vcv), .distance = "squared_euclidian"),
+          countFill = NA,
+          admissible = TRUE))
+      } else {
+        # return NULL
+        return(c(
+          dG = NA,
+          dL = NA,
+          countFill = NA,
+          admissible = FALSE
+        ))
+      }
+      # else, i.e., dropInadmissible == FALSE
+    } else if (.handle_inadmissibles == "ignore") {
+      return(c(
+        dG = calculateDistance(lapply(Est_tmp, fit, 
+                                      .saturated  = .saturated,
+                                      .type_vcv=.type_vcv), .distance = "geodesic"),
+        dL = calculateDistance(lapply(Est_tmp, fit, 
+                                      .saturated  = .saturated,
+                                      .type_vcv=.type_vcv), .distance = "squared_euclidian"),
+        countFill = NA,
+        admissible = (sum(status_code)) == 0))    } 
   }
 }
 
