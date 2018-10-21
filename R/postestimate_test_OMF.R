@@ -8,11 +8,11 @@
 #' After 10000 iterations it stops automatically
 #' 
 #' @usage testOMF(
-#'  .object              = args_default()$.object, 
-#'  .alpha               = args_default()$.alpha, 
+#'  .object                = args_default()$.object, 
+#'  .alpha                 = args_default()$.alpha, 
 #'  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
-#'  .runs                = args_default()$.runs, 
-#'  .saturated           = args_default()$.saturated,
+#'  .runs                  = args_default()$.runs, 
+#'  .saturated             = args_default()$.saturated,
 #' )
 #' 
 #' @inheritParams  csem_arguments
@@ -32,11 +32,11 @@
 #' @export
 
 testOMF <- function(
-  .object              = args_default()$.object,
-  .alpha               = args_default()$.alpha,
+  .object                = args_default()$.object,
+  .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .runs                = args_default()$.runs,
-  .saturated           = args_default()$.saturated
+  .runs                  = args_default()$.runs,
+  .saturated             = args_default()$.saturated
   ){
   
   ## Check if cSEMResults object
@@ -54,10 +54,9 @@ testOMF <- function(
   ## Extract required information 
   X         <- .object$Information$Data
   S         <- .object$Estimates$Indicator_VCV
-  # nObs      <- nrow(X)
   Sigma_hat <- fit(.object,
                    .saturated = .saturated,
-                   .type_vcv  = 'indicator')
+                   .type_vcv  = "indicator")
   
   
   ## Calculate test statistic
@@ -78,106 +77,60 @@ testOMF <- function(
   arguments <- .object$Information$Arguments
   
   ## Calculate reference distribution
-  ref_dist=list()
-  counter=1
-  total_iterations=0
+  ref_dist         <- list()
+  counter          <- 1
+  total_iterations <- 0
   repeat{
-
     
-    # draw dataset
-    X_temp=X_trans[sample(1:nrow(X), replace = TRUE),]
+    # Draw dataset
+    X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
     
     # Replace the old dataset by the new one
     arguments[[".data"]] <- X_temp
+    
     # Estimate model
     Est_temp <- do.call(csem, arguments)               
-
+    
     # Check status
     status_code <- verify(Est_temp)
     
-    
-    if(.handle_inadmissibles == 'drop' | .handle_inadmissibles == 'replace'){
-      if(sum(status_code) == 0){
-        
-        ref_dist[[counter]]=c(
-          "dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp, 
-                                                            .saturated = .saturated,
-                                                            .type_vcv= 'indicator')),
-          "SRMR" = SRMR(Est_temp, .saturated = .saturated),
-          "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
-                                                            .saturated = .saturated,
-                                                            .type_vcv='indicator'))
-          ) 
-        counter=counter+1
-      } else if(sum(status_code) != 0 & .handle_inadmissibles == 'drop'){
-        # if(.handle_inadmissibles == 'drop')#{
-         ref_dist[[counter]]= NULL
-         counter=counter+1
-        #} else if(.handle_inadmissibles == 'redraw'){
-        #  NULL
-        #}
-       }
-    } else if(.handle_inadmissibles == 'ignore') { 
-         ref_dist[[counter]]= c(
-           "dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
+    if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
+      # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
+      # not ok
+      ref_dist[[counter]] <- c(
+        "dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp, 
                                                           .saturated = .saturated,
-                                                          .type_vcv='indicator')),
-           "SRMR" = SRMR(Est_temp, .saturated = .saturated),
-           "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
+                                                          .type_vcv = "indicator")),
+        "SRMR" = SRMR(Est_temp, .saturated = .saturated),
+        "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
                                                           .saturated = .saturated,
-                                                          .type_vcv='indicator'))
-      )
-      counter=counter+1
-    }
+                                                          .type_vcv = "indicator"))
+      ) 
+      counter <- counter + 1
       
-    total_iterations=total_iterations+1  
-    # Break repeat loop; Counter -1 since I start with 1, starting with zero leads to problems in filling the list
-    if((counter-1) == .runs | total_iterations == 10000) {break}
+    } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
+      # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
+      ref_dist[[counter]] <- NULL
+      counter <- counter + 1
+      
+    } else {# status is not ok and .handle_inadmissibles == "replace"
+      # raise the number of iterations by one and repeat.
+      total_iterations <- total_iterations+1  
     }
     
-  # }
-  
-  # ref_dist <- lapply(replicate(.runs, X_trans[sample(1:nrow(X), replace = TRUE), ], simplify = FALSE), function(x) {
-  #   
-  #   # Replace data
-  #   arguments[[".data"]] <- x
-  #   
-  #   # Run estimation
-  #   Est_temp <- do.call(csem, arguments)
-  #   
-  #   # Check if admissible
-  #   status_code <- verify(Est_temp)
-  #   
-  #   # if it is controlled for inadmissible
-  #   if(.drop_inadmissibles=='drop'){
-  #     if(sum(status_code) == 0){
-  #       
-  #       c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp, 
-  #                                                           .saturated = .saturated,
-  #                                                           .type_vcv= 'indicator')),
-  #         "SRMR" = SRMR(Est_temp, .saturated = .saturated),
-  #         "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
-  #                                                           .saturated = .saturated,
-  #                                                           .type_vcv='indicator'))
-  #       ) 
-  #     } else {
-  #       NULL
-  #     }
-  #   } else { 
-  #     c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
-  #                                                         .saturated = .saturated,
-  #                                                         .type_vcv='indicator')),
-  #       "SRMR" = SRMR(Est_temp, .saturated = .saturated),
-  #       "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
-  #                                                         .saturated = .saturated,
-  #                                                         .type_vcv='indicator'))
-  #     ) 
-  #   }
-  # }) # end lapply
-  
+    # Break repeat loop if the necessary number of runs was succesful or 
+    # 10'000 iterations have been done without sucess.
+    if((counter - 1) == .runs) {
+      break
+    } else if(total_iterations == 10000) { 
+      stop("Not enough admissible result.", call. = FALSE)
+    }
+  }
+
+  ## Compute critical values 
   ref_dist_matrix <- do.call(cbind, ref_dist)
   critical_value  <- matrix(apply(ref_dist_matrix, 1, quantile, 1-.alpha), 
-                            ncol =length(teststat),
+                            ncol = length(teststat),
                             dimnames = list(paste(.alpha*100, sep = "","%"), 
                                             names(teststat))
                             )
@@ -190,12 +143,13 @@ testOMF <- function(
     decision <- teststat < critical_value
   }
   
+  # Return output
   out <- list(
     "Test_statistic"     = teststat,
     "Critical_value"     = critical_value, 
     "Decision"           = decision, 
     "Number_admissibles" = ncol(ref_dist_matrix),
-    "Total_runs" = total_iterations
+    "Total_runs"         = total_iterations
     ) 
   
   class(out) <- "cSEMTestOMF"

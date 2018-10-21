@@ -5,10 +5,11 @@
 \title{Test for overall model fit}
 \usage{
 testOMF(
- .object              = args_default()$.object, 
- .alpha               = args_default()$.alpha, 
- .drop_inadmissibles  = args_default()$.drop_inadmissibles, 
- .runs                = args_default()$.runs
+ .object                = args_default()$.object, 
+ .alpha                 = args_default()$.alpha, 
+ .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
+ .runs                  = args_default()$.runs, 
+ .saturated             = args_default()$.saturated,
 )
 }
 \arguments{
@@ -17,10 +18,17 @@ testOMF(
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.drop_inadmissibles}{Logical. Should inadmissible solutions be dropped?
-Defaults to \code{TRUE}.}
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications yielding an inadmissible result will be dropped (=
+numerb of results shown <= .runs). For "\emph{ignore}" all results are returned
+even if they are inadbmissible (= number of results = .runs). For "\emph{replace}"
+bootstrapping continues until there are .runs admissible solutions.
+Defaults to "\emph{drop}".}
 
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
+
+\item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 }
 \value{
 A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
@@ -40,6 +48,7 @@ Test the overall model fit.
 Description: TODO.
 Test is based on \insertCite{Dijkstra2015;textual}{cSEM}.
 Data is transformed according to \insertCite{Beran1985;textual}{cSEM}.
+After 10000 iterations it stops automatically
 }
 \examples{
 \dontrun{

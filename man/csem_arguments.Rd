@@ -76,6 +76,14 @@ be estimated? Defaults to \code{TRUE}.}
 
 \item{.H}{The (N x J) matrix of construct scores.}
 
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications yielding an inadmissible result will be dropped (=
+numerb of results shown <= .runs). For "\emph{ignore}" all results are returned
+even if they are inadbmissible (= number of results = .runs). For "\emph{replace}"
+bootstrapping continues until there are .runs admissible solutions.
+Defaults to "\emph{drop}".}
+
 \item{.id}{Character string. The name of the column of \code{.data} used to split
 the data into groups. Defaults to \code{NULL}.}
 
@@ -157,6 +165,9 @@ One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
+
+\item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
+One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}

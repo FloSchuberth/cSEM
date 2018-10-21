@@ -39,6 +39,8 @@ Authors:
 Other contributors:
 \itemize{
   \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de} [contributor]
+  \item Michael Klesel [contributor]
+  \item Theo K. Dijkstra [contributor]
 }
 
 }

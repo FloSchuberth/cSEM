@@ -8,6 +8,8 @@ SRMR(.object)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+
+\item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 }
 \description{
 Compute the SRMR (TODO)

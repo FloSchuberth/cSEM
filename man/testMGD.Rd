@@ -10,7 +10,9 @@ testMGD(
  .drop_inadmissibles = args_default()$.drop_inadmissibles,
  .parallel           = args_default()$.parallel,
  .runs               = args_default()$.runs,
- .show_progress      = args_default()$.show_progress
+ .show_progress      = args_default()$.show_progress,
+ .saturated           = args_default()$.saturated,
+ .type_vcv               = args_default()$.type_vcv
  )
 }
 \arguments{
@@ -28,6 +30,11 @@ requires the \code{doSNOW} and the \code{parallel} package to be installed.}
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
 
 \item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
+
+\item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+
+\item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
+One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 }
 \value{
 A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
@@ -71,7 +78,7 @@ VAL  <~ val1  + val2  + val3  + val4
 listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
 out.cSEM <- csem(listData, model) 
 
-testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE)
+testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE, .type_vcv= 'construct')
 }
 
 }

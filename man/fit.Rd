@@ -6,13 +6,17 @@
 \usage{
 fit(
   .object    = args_default()$.object, 
-  .saturated = args_default()$.saturated
+  .saturated = args_default()$.saturated,
+  .type_vcv = args_default()$.type_vcv
   )
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+
+\item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
+One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 }
 \description{
 Calculate the model-implied indicator variance-covariance (VCV) matrix.
