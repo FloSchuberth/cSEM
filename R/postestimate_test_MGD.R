@@ -9,9 +9,7 @@
 #'  .object             = args_default()$.object,
 #'  .alpha              = args_default()$.alpha,
 #'  .drop_inadmissibles = args_default()$.drop_inadmissibles,
-#'  .parallel           = args_default()$.parallel,
 #'  .runs               = args_default()$.runs,
-#'  .show_progress      = args_default()$.show_progress,
 #'  .saturated          = args_default()$.saturated,
 #'  .type_vcv           = args_default()$.type_vcv
 #'  ) 
@@ -48,7 +46,7 @@
 #' listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
 #' out.cSEM <- csem(listData, model) 
 #'
-#' testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE, .type_vcv= 'construct')
+#' testMGD(.object = out.cSEM, .runs = 20, .type_vcv= 'construct')
 #' }
 #'
 #' @export
@@ -57,29 +55,46 @@ testMGD <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .parallel              = args_default()$.parallel,
   .runs                  = args_default()$.runs,
-  .show_progress         = args_default()$.show_progress,
   .saturated             = args_default()$.saturated,
-  .type_vcv              = args_default()$.type_vcv
-  ){
+  .type_vcv              = args_default()$.type_vcv,
+  .show_progress         = args_default()$.show_progress
+){
+  UseMethod("testMGD")
+}
 
+#' @describeIn testMGD (TODO)
+#' @export
+
+testMGD.cSEMResults_default <- function(
+  .object                = args_default()$.object,
+  .alpha                 = args_default()$.alpha,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .runs                  = args_default()$.runs,
+  .saturated             = args_default()$.saturated,
+  .type_vcv              = args_default()$.type_vcv,
+  .show_progress         = args_default()$.show_progress
+) { 
+  stop("At least two groups required.", call. = FALSE)
+}
+
+#' @describeIn testMGD (TODO)
+#' @export
+
+testMGD.cSEMResults_multi <- function(
+  .object                = args_default()$.object,
+  .alpha                 = args_default()$.alpha,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .runs                  = args_default()$.runs,
+  .saturated             = args_default()$.saturated,
+  .type_vcv              = args_default()$.type_vcv,
+  .show_progress         = args_default()$.show_progress
+){
   ### Checks and errors ========================================================
-  ## Check if cSEMResults object
-  # if(class(.object) != "cSEMResults") {
-  #   stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
-  # }
-  # 
-  # ## Check if .object contains estimates for at least two groups.
-  # if(attr(.object, "single") == TRUE) {
-  #   stop("At least two groups required.", call. = FALSE)
-  # }
-  
-  ## Check if any of the group estimates are inadmissible
-  if(!all(sapply(.object, function(x) sum(verify(x)) == 0))) {
+  # Check if any of the group estimates are inadmissible
+  if(sum(sapply(verify(.object), sum)) != 0) {
     stop("Initial estimation results for at least one group are inadmissible.\n", 
-         "See `lapply(.object, verify)` for details.",
-         call. = FALSE)
+         "See `verify(.object)` for details.",  call. = FALSE)
   }
   
   # Check if data for different groups is identical
@@ -89,224 +104,123 @@ testMGD <- function(
   }
   
   ### Calculation===============================================================
-  ## 1. Compute the test statistics
+  ## Get the fitted values
+  fit <- fit(.object = .object, .saturated = .saturated, .type_vcv = .type_vcv)
+  
+  ## Compute the test statistics
   teststat <- c(
-    "dG" = calculateDistance(.matrices = lapply(.object, fit,
-                                                .saturated = .saturated,
-                                                .type_vcv =.type_vcv), 
-                             .distance = "geodesic"),
-    "dL" = calculateDistance(.matrices = lapply(.object, fit, 
-                                                .saturated= .saturated,
-                                                .type_vcv=.type_vcv), 
-                             .distance = "squared_euclidian")
-    )
+    "dG" = calculateDistance(.matrices = fit, .distance = "geodesic"),
+    "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")
+  )
   
-  ## 2. Permuation
-  # Put data in a list
-  listMatrices <- lapply(.object, function(x) x$Information$Data)
-  
-  # Collect initial arguments
+  # Put data of each groups in a list and combine
+  data_all_list  <- lapply(.object, function(x) x$Information$Data)
+  data_all       <- do.call(rbind, data_all_list)
+
+  # Collect initial arguments (from the first object, but could be any other)
   arguments <- .object[[1]]$Information$Arguments
   
-  # Set .id
-  arguments[[".id"]] <- "permID"
-  
-  # Results
-  permEstimates <- list()
-  
-  ##  PREPARE PERMUTAITON --------------------------------------------------
-  opts <- NULL
-  # Progress bar
-  if(.show_progress){
-    # Progress bar
-    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
-    if(.parallel){
-      progress <- function(n) setTxtProgressBar(pb, n)
-      opts <- list(progress = progress)
-    }
-  }
-  
-  # Parallel
-  if(.parallel == TRUE){
-    # Initiate Cluster
-    nprocs = parallel::detectCores()
-    cl <- parallel::makeCluster(nprocs)
-    doSNOW::registerDoSNOW(cl)
-    # DoParallel
-    permEstimates <- foreach::foreach(iPerm = 1:.runs, .options.snow = opts) %dopar% {
-      permutationProcedure(.listMatrices = listMatrices, 
-                           .arguments = arguments, 
-                           .handle_inadmissibles = .handle_inadmissibles,
-                           .saturated  = .saturated,
-                           .type_vcv=.type_vcv)
-    }
-    parallel::stopCluster(cl)
-  }else{
-    # Sequential
-    permEstimates <- list()
-    for(iPerm in 1:.runs){
-      permEstimates[[iPerm]] <- permutationProcedure(.listMatrices = listMatrices, 
-                                                     .arguments = arguments,
-                                                     .handle_inadmissibles = .handle_inadmissibles,
-                                                     .saturated  = .saturated,
-                                                     .type_vcv=.type_vcv)
-      # Update progress bar
-      if(.show_progress){
-        setTxtProgressBar(pb, iPerm)
-      }
-    }
-  }
+  # Create a vector "id" to be used to randomly select groups (permutate) and
+  # set id as an argument in order to identify the groups.
+  id <- rep(1:length(data_all_list), sapply(data_all_list, nrow))
+  arguments[[".id"]] <- "id"
 
-  # Close progress bar
+  # Start progress bar if required
+  if(.show_progress){
+    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+  }
+  
+  ## Calculate reference distribution
+  ref_dist         <- list()
+  n_inadmissibles  <- 0
+  i <- 0
+  repeat{
+    # Counter
+    i <- i + 1
+    
+    # Permutate data
+    X_temp <- cbind(data_all, id = sample(id))
+    
+    # Replace the old dataset by the new permutated dataset
+    arguments[[".data"]] <- X_temp
+    
+    # Estimate model
+    Est_temp <- do.call(csem, arguments)   
+    
+    # Check status
+    status_code <- sum(sapply(verify(Est_temp), sum))
+    
+    # Distinguish depending on how inadmissibles should be handled
+    if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
+      # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
+      # not ok
+      fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
+      ref_dist[[i]] <- c(
+        "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
+        "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
+      )
+      
+    } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
+      # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
+      ref_dist[[i]] <- NULL
+      
+    } else {# status is not ok and .handle_inadmissibles == "replace"
+      # Reset counter and raise number of inadmissibles by 1
+      i <- i - 1
+      n_inadmissibles <- n_inadmissibles + 1
+    }
+    
+    # Break repeat loop if .runs results have been created.
+    if(length(ref_dist) == .runs) {
+      break
+    } else if(i + n_inadmissibles == 10000) { 
+      ## Stop if 10000 runs did not result in insufficient admissible results
+      stop("Not enough admissible result.", call. = FALSE)
+    }
+    
+    if(.show_progress){
+      setTxtProgressBar(pb, i)
+    }
+    
+  } # END repeat 
+  
+  # close progress bar
   if(.show_progress){
     close(pb)
   }
   
-  # Calculate Estimates
-  tmp.ref_dist       <- do.call(cbind, permEstimates)
-  # test statistics
-  ref_dist <- tmp.ref_dist[1:2, ]
-  # fills
-  fills <- tmp.ref_dist[3,]
-  admissibles <- tmp.ref_dist[4,]
-  critical_value <- matrix(apply(ref_dist, 1, quantile, 1-.alpha, na.rm = TRUE), 
-                           ncol = length(teststat), 
-                           dimnames = list(paste(.alpha*100, sep = "","%"),
-                                           names(teststat)))
+  ## Compute critical values 
+  ref_dist_matrix <- do.call(cbind, ref_dist)
+  critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
+                                               probs =  1-.alpha, drop = FALSE)
   
-  if(length(.alpha) > 1){
-    decision <- t(apply(critical_value, 1, function(x){
-      ifelse(teststat > x, TRUE, FALSE)
-      }))
-  }
-  if(length(.alpha) == 1){
-    decision <- ifelse(teststat > critical_value, TRUE, FALSE)
-  }
+  ## Compare critical value and teststatistic
+  decision <- teststat < critical_values
+  
+  # Return output
   out <- list(
-    "Test_statistic"     = teststat, 
-    "Critical_value"     = critical_value,
+    "Test_statistic"     = teststat,
+    "Critical_value"     = critical_values, 
     "Decision"           = decision, 
-    "Number_admissibles" = sum(admissibles),
-    "Total_runs"         = .runs + sum(fills, na.rm = T))
+    "Number_admissibles" = ncol(ref_dist_matrix),
+    "Total_runs"         = i + n_inadmissibles
+  )
   
-  # define return class
   class(out) <- "cSEMTestMGD"
   return(out)
 }
 
-permutateData <- function(.matrices = args_default()$.matrices){
-  
-  ### Checks and errors ========================================================
-  ## Check if list and at least of length 2
-  if(!is.list(.matrices) && length(.matrices) < 2) {
-    stop("`.matrices` must be a list of at least length two.", call. = FALSE)
-  }
-  
-  # ## Check if column names are identical
-  # if (FALSE %in% sapply(.matrices,function(x) {
-  #   identical(colnames(x), colnames(.matrices[[1]]))})) {
-  #   stop("`.matrices` must have the same colnames.", call. = FALSE)
-  # }
-  
-  ### Permutation ==============================================================
-  
-  # combine data
-  combinedData <- do.call(rbind, .matrices)
-  
-  # create ID
-  ID <- rep(1:length(.matrices),lengths(.matrices)/ncol(.matrices[[1]]))
-  
-  # add permID
-  permData <- cbind(combinedData, permID = sample(ID))
-  
-  # If we want to return a list
-  # l=lapply(1:length(.matrices),function(x){temp=permData[permData[,'permID']==x,]
-  # temp[,-ncol(temp),drop=FALSE]})
-  # return(l)
-  
-  return(permData)
-}
+#' @describeIn testMGD (TODO)
+#' @export
 
-permutationProcedure <- function(.listMatrices = args_default()$.listMatrices, 
-                                 .arguments = args_default()$.arguments, 
-                                 .handle_inadmissibles= args_default()$.handle_inadmissibles, 
-                                 .saturated = args_default()$.saturated,
-                                 .type_vcv = args_default()$.type_vcv){
-  # FILL 
-  if(.handle_inadmissibles == "replace"){
-    .endFill <- FALSE
-    .countFill <- -1
-    while(!.endFill){
-      # New permutation
-      permData <- permutateData(.matrices = .listMatrices)
-      # Replace .data 
-      .arguments[[".data"]] <- permData
-      # Estimate using permutated data
-      Est_tmp <- do.call(csem, .arguments)
-      # Check if all estimates produce admissible results
-      status_code <- sapply(Est_tmp, verify)
-      # If estimations are admissible
-      if(sum(status_code) == 0){
-        .endFill <- TRUE
-      }
-      if(.countFill == 1000){
-        return(c(dG = NA, dL = NA, countFill = .countFill, admissible = FALSE))
-      }
-      # increase counter
-      .countFill <- .countFill + 1
-    }
-    # RETURN
-    return(c(
-      dG = calculateDistance(lapply(Est_tmp, fit, 
-                                    .saturated  = .saturated,
-                                    .type_vcv=.type_vcv), .distance = "geodesic"),
-      dL = calculateDistance(lapply(Est_tmp, fit, 
-                                    .saturated  = .saturated,
-                                    .type_vcv=.type_vcv), .distance = "squared_euclidian"),
-      countFill = .countFill,
-      admissible = TRUE))
-  }else{
-    # Permutate data
-    permData <- permutateData(.matrices = .listMatrices)
-    # Replace .data 
-    .arguments[[".data"]] <- permData
-    # Estimate using permutated data
-    Est_tmp <- do.call(csem, .arguments)
-    # Check if all estimates produce admissible results
-    status_code <- sapply(Est_tmp, verify)
-    # Drop potential inadmissibles if required
-    if(.handle_inadmissibles == "drop"){
-      ## If no inadmissibles exists continue as usual
-      if(all(sum(status_code) == 0)){
-        return(c(
-          dG = calculateDistance(lapply(Est_tmp, fit, 
-                                        .saturated  = .saturated,
-                                        .type_vcv=.type_vcv), .distance = "geodesic"),
-          dL = calculateDistance(lapply(Est_tmp, fit, 
-                                        .saturated  = .saturated,
-                                        .type_vcv=.type_vcv), .distance = "squared_euclidian"),
-          countFill = NA,
-          admissible = TRUE))
-      } else {
-        # return NULL
-        return(c(
-          dG = NA,
-          dL = NA,
-          countFill = NA,
-          admissible = FALSE
-        ))
-      }
-      # else, i.e., dropInadmissible == FALSE
-    } else if (.handle_inadmissibles == "ignore") {
-      return(c(
-        dG = calculateDistance(lapply(Est_tmp, fit, 
-                                      .saturated  = .saturated,
-                                      .type_vcv=.type_vcv), .distance = "geodesic"),
-        dL = calculateDistance(lapply(Est_tmp, fit, 
-                                      .saturated  = .saturated,
-                                      .type_vcv=.type_vcv), .distance = "squared_euclidian"),
-        countFill = NA,
-        admissible = (sum(status_code)) == 0))    } 
-  }
+testMGD.cSEMResults_2ndorder <- function(
+  .object                = args_default()$.object,
+  .alpha                 = args_default()$.alpha,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .runs                  = args_default()$.runs,
+  .saturated             = args_default()$.saturated,
+  .type_vcv              = args_default()$.type_vcv,
+  .show_progress         = args_default()$.show_progress
+){
+ stop("Not yet implemented.")
 }
-

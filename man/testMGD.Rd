@@ -2,18 +2,40 @@
 % Please edit documentation in R/postestimate_test_MGD.R
 \name{testMGD}
 \alias{testMGD}
+\alias{testMGD.cSEMResults_default}
+\alias{testMGD.cSEMResults_multi}
+\alias{testMGD.cSEMResults_2ndorder}
 \title{Estimates the distance between multiple groups.}
 \usage{
 testMGD(
  .object             = args_default()$.object,
  .alpha              = args_default()$.alpha,
  .drop_inadmissibles = args_default()$.drop_inadmissibles,
- .parallel           = args_default()$.parallel,
  .runs               = args_default()$.runs,
- .show_progress      = args_default()$.show_progress,
  .saturated          = args_default()$.saturated,
  .type_vcv           = args_default()$.type_vcv
  )
+
+\method{testMGD}{cSEMResults_default}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .type_vcv = args_default()$.type_vcv,
+  .show_progress = args_default()$.show_progress)
+
+\method{testMGD}{cSEMResults_multi}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .type_vcv = args_default()$.type_vcv,
+  .show_progress = args_default()$.show_progress)
+
+\method{testMGD}{cSEMResults_2ndorder}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .type_vcv = args_default()$.type_vcv,
+  .show_progress = args_default()$.show_progress)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -29,17 +51,14 @@ even if they are inadmissible (= number of results = .runs). For "\emph{replace}
 bootstrapping continues until there are .runs admissible solutions.
 Defaults to "\emph{drop}".}
 
-\item{.parallel}{Logical. Use parallel computing. Defaults to \code{FALSE}. Note:
-requires the \code{doSNOW} and the \code{parallel} package to be installed.}
-
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
-
-\item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 
 \item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
+
+\item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
 }
 \value{
 A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
@@ -57,6 +76,15 @@ The geodesic distance (dG) and the Euclidean distance (dE) is used
 to assess group differences. Permutation is used to generate a
 reference distribtuion.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
+
+\item \code{cSEMResults_multi}: (TODO)
+
+\item \code{cSEMResults_2ndorder}: (TODO)
+}}
+
 \examples{
 \dontrun{
 require(cSEM)
@@ -83,7 +111,7 @@ VAL  <~ val1  + val2  + val3  + val4
 listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
 out.cSEM <- csem(listData, model) 
 
-testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE, .type_vcv= 'construct')
+testMGD(.object = out.cSEM, .runs = 20, .type_vcv= 'construct')
 }
 
 }

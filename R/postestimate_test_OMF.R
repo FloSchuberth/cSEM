@@ -54,6 +54,13 @@ testOMF.cSEMResults_default <- function(
   ## Check arguments
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
   
+  ## Check if initial results are inadmissible
+  if(sum(verify(.object)) == 0) {
+    stop("Initial estimation results are inadmissible.\n", 
+         "See `verify(.object)` for details.",
+         call. = FALSE)
+  }
+  
   ## Extract required information 
   X         <- .object$Information$Data
   S         <- .object$Estimates$Indicator_VCV
@@ -100,6 +107,7 @@ testOMF.cSEMResults_default <- function(
     # Check status
     status_code <- verify(Est_temp)
     
+    # Distinguish depending on how inadmissibles should be handled
     if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
@@ -185,6 +193,13 @@ testOMF.cSEMResults_2ndorder <- function(
   ## Check arguments
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
 
+  ## Check if initial results are inadmissible
+  if(sum(sapply(verify(.object), sum)) == 0) {
+    stop("Initial estimation results are inadmissible.\n", 
+         "See `verify(.object)` for details.",
+         call. = FALSE)
+  }
+  
   ## Extract required information 
   x1 <- .object$First_stage
   x2 <- .object$Second_stage

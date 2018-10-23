@@ -586,20 +586,20 @@ print.cSEMTestMGD <- function(.object) {
   
   cat(col_align("", width = 20, align = "left"),
       col_align("", 18, align = "left"), "\t",
-      col_align("Critical value", 8*nrow(.object$Critical_value), align = "center"), "\n\t",
+      col_align("Critical value", 8*ncol(.object$Critical_value), align = "center"), "\n\t",
       col_align("Distance measure", width = 20, align = "left"),
       col_align("Test statistic", 18, align = "left"), "\t",
       sep = "")
   
-  for(i in rownames(.object$Critical_value)) {
+  for(i in colnames(.object$Critical_value)) {
     cat(col_align(i, 6, align = "center"), "\t", sep = "")
   }
   cat("\n\t")
   for(j in seq_along(.object$Test_statistic)) {
     cat(col_align(names(.object$Test_statistic)[j], 20),
         col_align(sprintf("%.4f", .object$Test_statistic[j]), 18), "\t", sep = "")
-    for(k in 1:nrow(.object$Critical_value)) {
-      cat(sprintf("%.4f", .object$Critical_value[k, j]), "\t",
+    for(k in 1:ncol(.object$Critical_value)) {
+      cat(sprintf("%.4f", .object$Critical_value[j, k]), "\t",
           sep = "")
     }
     cat("\n\t")
@@ -608,24 +608,25 @@ print.cSEMTestMGD <- function(.object) {
   cat("\n\nDecision: \n\n\t", sep = "")
   
   cat(col_align("", width = 20, align = "left"), "\t",
-      col_align("Significance level", 8*nrow(.object$Critical_value), align = "center"), "\n\t",
+      col_align("Significance level", 8*ncol(.object$Critical_value), align = "center"), "\n\t",
       col_align("Distance measure", width = 20, align = "left"), "\t",
       sep = "")
   
-  for(i in rownames(.object$Critical_value)) {
+  for(i in colnames(.object$Critical_value)) {
     cat(col_align(i, 8, align = "center"), "\t", sep = "")
   }
   cat("\n\t")
   for(j in seq_along(.object$Test_statistic)) {
     cat(col_align(names(.object$Test_statistic)[j], 20), "\t", sep = "")
-    for(k in 1:nrow(.object$Critical_value)) {
+    for(k in 1:ncol(.object$Critical_value)) {
       cat(col_align(ifelse(.object$Decision[k, j], green("Do not reject"), red("reject")), 8), "\t", sep = "")
     }
     cat("\n\t")
   }
   
   cat("\nAdditonal information:")
-  cat("\n\n\tOut of ", .object$Total_runs , "bootstrap replications, ", .object$Number_admissibles, " where admissible.\n\t",
+  cat("\n\n\tOut of ", .object$Total_runs , " permutation runs, ", 
+      .object$Number_admissibles, " where admissible.\n\t",
       "See ", yellow("?"), magenta("verify"), "()",
       " for what constitutes an inadmissible result.\n", sep = "")
   cat(rule(line = "bar2"), sep = "")
