@@ -2,7 +2,7 @@
 #'   .data             = NULL,
 #'   .model            = NULL,
 #'   .id               = NULL,
-#'   .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
+#'   .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
 #'                         "fixed", "unit"),
 #'   ...) 
 #'   
@@ -14,7 +14,7 @@ cca <- function(
   .data             = NULL, 
   .model            = NULL, 
   .id               = NULL,
-  .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA",
+  .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA",
                         "fixed", "unit"),
   ...
   ) {

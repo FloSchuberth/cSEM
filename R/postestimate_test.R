@@ -13,7 +13,14 @@
 #'
 #' @export
 
-test <- function(.object, .which_test = "all", ...) {
+test <- function(.object, ...) {
+  UseMethod("test")
+}
+
+#' @describeIn test (TODO)
+#' @export
+
+test.cSEMResults_default <- function(.object, .which_test = "all", ...) {
   
   ## Check if cSEMResults object
   if(class(.object) != "cSEMResults") {
