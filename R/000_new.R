@@ -197,13 +197,11 @@ stop('Not implemented yet')
 #' to assess group differences. Permutation is used to generate a 
 #' reference distribtuion. 
 #' 
-#' @usage testMGD(
+#' @usage testMGDnew(
 #'  .object             = args_default()$.object,
 #'  .alpha              = args_default()$.alpha,
 #'  .drop_inadmissibles = args_default()$.drop_inadmissibles,
-#'  .parallel           = args_default()$.parallel,
 #'  .runs               = args_default()$.runs,
-#'  .show_progress      = args_default()$.show_progress,
 #'  .saturated          = args_default()$.saturated,
 #'  .type_vcv           = args_default()$.type_vcv
 #'  ) 
@@ -240,18 +238,16 @@ stop('Not implemented yet')
 #' listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
 #' out.cSEM <- csem(listData, model) 
 #'
-#' testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE, .type_vcv= 'construct')
+#' testMGDnew(.object = out.cSEM, .runs = 20, .parallel = TRUE, .type_vcv= 'construct')
 #' }
 #'
 #' @export
-
+#'
 testMGDnew <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  # .parallel              = args_default()$.parallel,
   .runs                  = args_default()$.runs,
-  # .show_progress         = args_default()$.show_progress,
   .saturated             = args_default()$.saturated,
   .type_vcv              = args_default()$.type_vcv
 ){
@@ -300,12 +296,11 @@ testMGDnew <- function(
   # Collect initial arguments (from the first object)
   arguments <- .object[[1]]$Information$Arguments
   
-  # # Set .id
-  # arguments[[".id"]] <- "permID"
   # 
-  # Results 
+  # list containing the results
   ref_dist = list()
-  # permEstimates <- list()
+  counter=1
+  total_iterations=0
   
   repeat{
     # permutate data
