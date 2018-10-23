@@ -2,6 +2,9 @@
 % Please edit documentation in R/postestimate_test_OMF.R
 \name{testOMF}
 \alias{testOMF}
+\alias{testOMF.cSEMResults_default}
+\alias{testOMF.cSEMResults_multi}
+\alias{testOMF.cSEMResults_2ndorder}
 \title{Test for overall model fit}
 \usage{
 testOMF(
@@ -11,6 +14,21 @@ testOMF(
  .runs                  = args_default()$.runs, 
  .saturated             = args_default()$.saturated,
 )
+
+\method{testOMF}{cSEMResults_default}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated)
+
+\method{testOMF}{cSEMResults_multi}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated)
+
+\method{testOMF}{cSEMResults_2ndorder}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -50,6 +68,15 @@ Test is based on \insertCite{Dijkstra2015;textual}{cSEM}.
 Data is transformed according to \insertCite{Beran1985;textual}{cSEM}.
 After 10000 iterations it stops automatically
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
+
+\item \code{cSEMResults_multi}: (TODO)
+
+\item \code{cSEMResults_2ndorder}: (TODO)
+}}
+
 \examples{
 \dontrun{
 # TODO

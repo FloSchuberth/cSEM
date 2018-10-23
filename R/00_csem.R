@@ -186,16 +186,6 @@ csem <- function(
     
     out <- do.call(foreman, args_needed)
   }
-  
-  ### Second step
-  # Note: currently only data supplied as a list or grouped data is not allowed
-  if(any(model$construct_order == "Second order") &&
-     args$.approach_2ndorder == "3stage") {
-    
-    out2 <- calculate2ndOrder(model, out)
-    
-    out <- list("First_stage" = out, "Second_stage" = out2)
-  }
 
   ## Set class for output
   # See the details section of ?UseMethod() to learn how method dispatch works
@@ -206,6 +196,14 @@ csem <- function(
     
   } else if(any(model$construct_order == "Second order") && 
             args$.approach_2ndorder == "3stage") {
+    
+    ### Second step
+    # Note: currently only data supplied as a list or grouped data is not allowed
+    out2 <- calculate2ndOrder(model, out)
+    out <- list("First_stage" = out, "Second_stage" = out2)
+    ## Append original arguments needed as they are required by e.g. testOMF.
+    
+    out$Second_stage$Information$Arguments_original <- args_needed
     
     class(out) <- c("cSEMResults", "cSEMResults_2ndorder" )
     
