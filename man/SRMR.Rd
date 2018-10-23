@@ -7,9 +7,9 @@
 SRMR(.object)
 }
 \arguments{
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+\item{.matrix1}{A \code{matrix} to compare.}
 
-\item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+\item{.matrix2}{A \code{matrix} to compare.}
 }
 \description{
 Compute the SRMR (TODO)

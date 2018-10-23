@@ -52,12 +52,17 @@
 #'   where `"value"` is a character string giving the name of the dominant indicator
 #'   and `"name"` a character string of the corresponding construct name.
 #'   Dominant indicators may be specified for a subset of the constructs. 
-#' @param .drop_inadmissibles Logical. Should inadmissible solutions be dropped? 
-#'   Defaults to `TRUE`.
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
 #' @param .H The (N x J) matrix of construct scores.
+#' @param .handle_inadmissibles Character string. How should inadmissible results 
+#'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
+#'   replications yielding an inadmissible result will be dropped (=
+#'   number of results shown <= .runs). For "*ignore*" all results are returned 
+#'   even if they are inadmissible (= number of results = .runs). For "*replace*"
+#'   bootstrapping continues until there are .runs admissible solutions. 
+#'   Defaults to "*drop*".
 #' @param .id Character string. The name of the column of `.data` used to split
 #'   the data into groups. Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
@@ -189,8 +194,8 @@ args_default <- function(
     .csem_model              = NULL,
     .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
-    .drop_inadmissibles      = TRUE,
     .E                       = NULL,
+    .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
     .listMatrices            = NULL, 

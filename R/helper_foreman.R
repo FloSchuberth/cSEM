@@ -338,9 +338,9 @@ calculateCompositeConstructCV <- function(
     }
     
     # Check whether defined external reliabilities are correctly defined
-    if(any(.reliabilities > 1 | .reliabilities < 0)) {
-      stop('Reliabilities must be between 0 and 1.', call. = FALSE)
-    }
+    # if(any(.reliabilities > 1 | .reliabilities < 0)) {
+    #   stop('Reliabilities must be between 0 and 1.', call. = FALSE)
+    # }
     
     ## Compute reliabilities not supplied by the user
     tmp2 <- setdiff(rownames(.W), names(.reliabilities))

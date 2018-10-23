@@ -121,7 +121,7 @@ testMICOM=function(.object=args_default()$.object,
   
   ## 2. Permuation
   # Put data in a list
-  listMatrices <- lapply(.object, function(x) x$Information$Data)
+  # listMatrices <- lapply(.object, function(x) x$Information$Data)
   
   # Collect initial arguments (from the first object)
   arguments <- .object[[1]]$Information$Arguments
@@ -135,7 +135,7 @@ testMICOM=function(.object=args_default()$.object,
   repeat{
     
     
-    # draw dataset
+    # permutate data
     X_temp=permutateData(.matrices=org_data_list)
     
     # Replace the old dataset by the new one

@@ -5,13 +5,14 @@
 #' Description: TODO.
 #' Test is based on \insertCite{Dijkstra2015;textual}{cSEM}.
 #' Data is transformed according to \insertCite{Beran1985;textual}{cSEM}.
+#' After 10000 iterations it stops automatically
 #' 
 #' @usage testOMF(
-#'  .object              = args_default()$.object, 
-#'  .alpha               = args_default()$.alpha, 
-#'  .drop_inadmissibles  = args_default()$.drop_inadmissibles, 
-#'  .runs                = args_default()$.runs, 
-#'  .saturated           = args_default()$.saturated,
+#'  .object                = args_default()$.object, 
+#'  .alpha                 = args_default()$.alpha, 
+#'  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
+#'  .runs                  = args_default()$.runs, 
+#'  .saturated             = args_default()$.saturated,
 #' )
 #' 
 #' @inheritParams  csem_arguments
@@ -31,39 +32,48 @@
 #' @export
 
 testOMF <- function(
-  .object              = args_default()$.object,
-  .alpha               = args_default()$.alpha,
-  .drop_inadmissibles  = args_default()$.drop_inadmissibles,
-  .runs                = args_default()$.runs,
-  .saturated           = args_default()$.saturated
-  ){
+  .object                = args_default()$.object,
+  .alpha                 = args_default()$.alpha,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .runs                  = args_default()$.runs,
+  .saturated             = args_default()$.saturated
+) {
+  UseMethod("testOMF")
+}
   
-  ## Check if cSEMResults object
-  if(class(.object) != "cSEMResults") {
-    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
-  }
+#' @describeIn testOMF (TODO)
+#' @export
+
+testOMF.cSEMResults_default <- function(
+  .object                = args_default()$.object,
+  .alpha                 = args_default()$.alpha,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .runs                  = args_default()$.runs,
+  .saturated             = args_default()$.saturated,
+  .show_progress         = args_default()$.show_progress
+){
+  ## Check arguments
+  match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
   
-  ## Check if single
-  if(attr(.object, "single") == FALSE) {
-    stop("`testOMF()` not applicable to multiple groups or data sets.\n",
-         "Use `lapply(.object, testOMF)` instead.",
+  ## Check if initial results are inadmissible
+  if(sum(verify(.object)) != 0) {
+    stop("Initial estimation results are inadmissible.\n", 
+         "See `verify(.object)` for details.",
          call. = FALSE)
   }
   
   ## Extract required information 
   X         <- .object$Information$Data
   S         <- .object$Estimates$Indicator_VCV
-  # nObs      <- nrow(X)
   Sigma_hat <- fit(.object,
                    .saturated = .saturated,
-                   .type_vcv  = 'indicator')
-  
+                   .type_vcv  = "indicator")
   
   ## Calculate test statistic
   teststat <- c(
-    "dG"   = dG(.matrix1 = S, .matrix2 = Sigma_hat),
-    "SRMR" = SRMR(.object, .saturated = .saturated),
-    "dL"   = dL(.matrix1 = S, .matrix2 = Sigma_hat)
+    "dG"   = dG(S, Sigma_hat),
+    "SRMR" = SRMR(S, Sigma_hat),
+    "dL"   = dL(S, Sigma_hat)
   )
   
   ## Transform dataset, see Beran & Srivastava (1985)
@@ -76,67 +86,249 @@ testOMF <- function(
   ## Collect arguments
   arguments <- .object$Information$Arguments
   
+  # Start progress bar if required
+  if(.show_progress){
+    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+  }
+  
   ## Calculate reference distribution
-  ref_dist <- lapply(replicate(.runs, X_trans[sample(1:nrow(X), replace = TRUE), ], simplify = FALSE), function(x) {
+  ref_dist         <- list()
+  n_inadmissibles  <- 0
+  i <- 0
+  repeat{
+    # Counter
+    i <- i + 1
     
-    # Replace data
-    arguments[[".data"]] <- x
+    # Draw dataset
+    X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
     
-    # Run estimation
-    Est_temp <- do.call(csem, arguments)
+    # Replace the old dataset by the new one
+    arguments[[".data"]] <- X_temp
     
-    # Check if admissible
+    # Estimate model
+    Est_temp <- do.call(foreman, arguments) # its important to use foreman here 
+    # instead of csem() to allow for lapply(x, testOMF.cSEMResults_default) when x 
+    # is of class cSEMResults_2ndorder.
+    
+    # Check status
     status_code <- verify(Est_temp)
     
-    # if it is controlled for inadmissible
-    if(.drop_inadmissibles){
-      if(sum(status_code) == 0){
-        
-        c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp, 
-                                                            .saturated = .saturated,
-                                                            .type_vcv= 'indicator')),
-          "SRMR" = SRMR(Est_temp, .saturated = .saturated),
-          "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
-                                                            .saturated = .saturated,
-                                                            .type_vcv='indicator'))
-        ) 
-      } else {
-        NULL
-      }
-    } else { 
-      c("dG"   = dG(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
-                                                          .saturated = .saturated,
-                                                          .type_vcv='indicator')),
-        "SRMR" = SRMR(Est_temp, .saturated = .saturated),
-        "dL"   = dL(Est_temp$Estimates$Indicator_VCV, fit(Est_temp,
-                                                          .saturated = .saturated,
-                                                          .type_vcv='indicator'))
+    # Distinguish depending on how inadmissibles should be handled
+    if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
+      # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
+      # not ok
+      S_temp         <- Est_temp$Estimates$Indicator_VCV
+      Sigma_hat_temp <- fit(Est_temp,
+                            .saturated = .saturated,
+                            .type_vcv  = "indicator")
+      
+      ref_dist[[i]] <- c(
+        "dG"   = dG(S_temp, Sigma_hat_temp),
+        "SRMR" = SRMR(S_temp, Sigma_hat_temp),
+        "dL"   = dL(S_temp, Sigma_hat_temp)
       ) 
+      
+    } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
+      # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
+      ref_dist[[i]] <- NULL
+      
+    } else {# status is not ok and .handle_inadmissibles == "replace"
+      # Reset counter and raise number of inadmissibles by 1
+      i <- i - 1
+      n_inadmissibles <- n_inadmissibles + 1
     }
-  }) # lapply
-  
-  ref_dist_matrix <- do.call(cbind, ref_dist)
-  critical_value  <- matrix(apply(ref_dist_matrix, 1, quantile, 1-.alpha), 
-                            ncol =length(teststat),
-                            dimnames = list(paste(.alpha*100, sep = "","%"), 
-                                            names(teststat))
-                            )
-  
-  if (length(.alpha) > 1) {
-    decision <- t(apply(critical_value, 1, function(x) {teststat < x}))
-  }
     
-  if (length(.alpha) == 1) {
-    decision <- teststat < critical_value
+    # Break repeat loop if .runs results have been created.
+    if(length(ref_dist) == .runs) {
+      break
+    } else if(i + n_inadmissibles == 10000) { 
+      ## Stop if 10000 runs did not result in insufficient admissible results
+      stop("Not enough admissible result.", call. = FALSE)
+    }
+    if(.show_progress){
+      setTxtProgressBar(pb, i)
+    }
+    
+  } # END repeat 
+  
+  # close progress bar
+  if(.show_progress){
+    close(pb)
   }
   
+  ## Compute critical values 
+  ref_dist_matrix <- do.call(cbind, ref_dist)
+  critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
+                                               probs =  1-.alpha, drop = FALSE)
+  
+  ## Compare critical value and teststatistic
+  decision <- teststat < critical_values
+  
+  # Return output
   out <- list(
     "Test_statistic"     = teststat,
-    "Critical_value"     = critical_value, 
+    "Critical_value"     = critical_values, 
     "Decision"           = decision, 
-    "Number_admissibles" = ncol(ref_dist_matrix)
-    ) 
+    "Number_admissibles" = ncol(ref_dist_matrix),
+    "Total_runs"         = i + n_inadmissibles
+  )
   
   class(out) <- "cSEMTestOMF"
   return(out)
+}
+
+#' @describeIn testOMF (TODO)
+#' @export
+
+testOMF.cSEMResults_multi <- function(
+  .object                = args_default()$.object,
+  .alpha                 = args_default()$.alpha,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .runs                  = args_default()$.runs,
+  .saturated             = args_default()$.saturated,
+  .show_progress         = args_default()$.show_progress
+){
+  lapply(.object, testOMF.cSEMResults_default,
+         .alpha                = .alpha,
+         .handle_inadmissibles = .handle_inadmissibles,
+         .runs                 = .runs,
+         .saturated            = .saturated,
+         .show_progress        = .show_progress
+         )
+}
+
+#' @describeIn testOMF (TODO)
+#' @export
+
+testOMF.cSEMResults_2ndorder <- function(
+  .object                = args_default()$.object,
+  .alpha                 = args_default()$.alpha,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .runs                  = args_default()$.runs,
+  .saturated             = args_default()$.saturated,
+  .show_progress         = args_default()$.show_progress
+){
+  ## Check arguments
+  match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
+
+  ## Check if initial results are inadmissible
+  if(sum(sapply(verify(.object), sum)) != 0) {
+    stop("Initial estimation results are inadmissible.\n", 
+         "See `verify(.object)` for details.",
+         call. = FALSE)
+  }
+  
+  ## Extract required information 
+  x1 <- .object$First_stage
+  x2 <- .object$Second_stage
+  X         <- x1$Information$Data
+  S         <- x1$Estimates$Indicator_VCV
+  Sigma_hat <- fit(.object,
+                   .saturated = .saturated,
+                   .type_vcv  = "indicator")
+  
+  ## Calculate test statistic
+  teststat <- c(
+    "dG"   = dG(S, Sigma_hat),
+    "SRMR" = SRMR( S, Sigma_hat),
+    "dL"   = dL(S, Sigma_hat)
+  )
+  
+  ## Transform dataset, see Beran & Srivastava (1985)
+  S_half   <- solve(expm::sqrtm(S))
+  Sig_half <- expm::sqrtm(Sigma_hat)
+  
+  X_trans           <- X %*% S_half %*% Sig_half
+  colnames(X_trans) <- colnames(X)
+  
+  ## Collect arguments
+  arguments <- x2$Information$Arguments_original
+  
+  # Start progress bar if required
+  if(.show_progress){
+    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+  }
+  
+  ## Calculate reference distribution
+  ref_dist         <- list()
+  n_inadmissibles  <- 0
+  i <- 0
+  repeat{
+    # Counter
+    i <- i + 1
+    
+    # Draw dataset
+    X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
+    
+    # Replace the old dataset by the new one
+    arguments[[".data"]] <- X_temp
+    
+    # Estimate model
+    Est_temp <- do.call(csem, arguments)               
+    
+    # Check status (Note: output of verify for second orders is a list)
+    status_code <- sum(sapply(verify(Est_temp), sum))
+    
+    if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
+      # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
+      # not ok
+      S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
+      Sigma_hat_temp <- fit(Est_temp,
+                            .saturated = .saturated,
+                            .type_vcv  = "indicator")
+      
+      ref_dist[[i]] <- c(
+        "dG"   = dG(S_temp, Sigma_hat_temp),
+        "SRMR" = SRMR(S_temp, Sigma_hat_temp),
+        "dL"   = dL(S_temp, Sigma_hat_temp)
+      )  
+      
+    } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
+      # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
+      ref_dist[[i]] <- NULL
+      
+    } else {# status is not ok and .handle_inadmissibles == "replace"
+      # Reset counter and raise number of inadmissibles by 1
+      i <- i - 1
+      n_inadmissibles <- n_inadmissibles + 1
+    }
+    
+    # Break repeat loop if .runs results have been created.
+    if(length(ref_dist) == .runs) {
+      break
+    } else if(i + n_inadmissibles == 10000) { 
+      ## Stop if 10000 runs did not result in insufficient admissible results
+      stop("Not enough admissible result.", call. = FALSE)
+    }
+    if(.show_progress){
+      setTxtProgressBar(pb, i)
+    }
+    
+  } # END repeat 
+  
+  # close progress bar
+  if(.show_progress){
+    close(pb)
+  }
+
+  ## Compute critical values 
+  ref_dist_matrix <- do.call(cbind, ref_dist)
+  critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
+                                               probs =  1-.alpha, drop = FALSE)
+  
+  ## Compare critical value and teststatistic
+  decision <- teststat < critical_values
+  
+  # Return output
+  out <- list(
+    "Test_statistic"     = teststat,
+    "Critical_value"     = critical_values, 
+    "Decision"           = decision, 
+    "Number_admissibles" = ncol(ref_dist_matrix),
+    "Total_runs"         = i + n_inadmissibles
+  ) 
+  
+  class(out) <- "cSEMTestOMF"
+  return(out)
+  
 }

@@ -20,6 +20,14 @@ testMICOM(
 Defaults to \code{0.05}.}
 
 \item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
+
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications yielding an inadmissible result will be dropped (=
+number of results shown <= .runs). For "\emph{ignore}" all results are returned
+even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
+bootstrapping continues until there are .runs admissible solutions.
+Defaults to "\emph{drop}".}
 }
 \value{
 An object of class "testMICOM"
