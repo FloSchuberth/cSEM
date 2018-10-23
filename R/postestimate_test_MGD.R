@@ -91,6 +91,9 @@ testMGD.cSEMResults_multi <- function(
   .show_progress         = args_default()$.show_progress
 ){
   ### Checks and errors ========================================================
+  match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
+  match.arg(.type_vcv, args_default(.choices = TRUE)$.type_vcv)
+  
   # Check if any of the group estimates are inadmissible
   if(sum(sapply(verify(.object), sum)) != 0) {
     stop("Initial estimation results for at least one group are inadmissible.\n", 

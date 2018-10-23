@@ -49,13 +49,14 @@ testOMF.cSEMResults_default <- function(
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
-  .saturated             = args_default()$.saturated
+  .saturated             = args_default()$.saturated,
+  .show_progress         = args_default()$.show_progress
 ){
   ## Check arguments
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
   
   ## Check if initial results are inadmissible
-  if(sum(verify(.object)) == 0) {
+  if(sum(verify(.object)) != 0) {
     stop("Initial estimation results are inadmissible.\n", 
          "See `verify(.object)` for details.",
          call. = FALSE)
@@ -84,6 +85,11 @@ testOMF.cSEMResults_default <- function(
   
   ## Collect arguments
   arguments <- .object$Information$Arguments
+  
+  # Start progress bar if required
+  if(.show_progress){
+    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+  }
   
   ## Calculate reference distribution
   ref_dist         <- list()
@@ -139,6 +145,15 @@ testOMF.cSEMResults_default <- function(
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
+    if(.show_progress){
+      setTxtProgressBar(pb, i)
+    }
+    
+  } # END repeat 
+  
+  # close progress bar
+  if(.show_progress){
+    close(pb)
   }
   
   ## Compute critical values 
@@ -170,13 +185,15 @@ testOMF.cSEMResults_multi <- function(
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
-  .saturated             = args_default()$.saturated
+  .saturated             = args_default()$.saturated,
+  .show_progress         = args_default()$.show_progress
 ){
   lapply(.object, testOMF.cSEMResults_default,
          .alpha                = .alpha,
          .handle_inadmissibles = .handle_inadmissibles,
          .runs                 = .runs,
-         .saturated            = .saturated
+         .saturated            = .saturated,
+         .show_progress        = .show_progress
          )
 }
 
@@ -188,13 +205,14 @@ testOMF.cSEMResults_2ndorder <- function(
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
-  .saturated             = args_default()$.saturated
+  .saturated             = args_default()$.saturated,
+  .show_progress         = args_default()$.show_progress
 ){
   ## Check arguments
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
 
   ## Check if initial results are inadmissible
-  if(sum(sapply(verify(.object), sum)) == 0) {
+  if(sum(sapply(verify(.object), sum)) != 0) {
     stop("Initial estimation results are inadmissible.\n", 
          "See `verify(.object)` for details.",
          call. = FALSE)
@@ -225,6 +243,11 @@ testOMF.cSEMResults_2ndorder <- function(
   
   ## Collect arguments
   arguments <- x2$Information$Arguments_original
+  
+  # Start progress bar if required
+  if(.show_progress){
+    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+  }
   
   ## Calculate reference distribution
   ref_dist         <- list()
@@ -277,6 +300,15 @@ testOMF.cSEMResults_2ndorder <- function(
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
+    if(.show_progress){
+      setTxtProgressBar(pb, i)
+    }
+    
+  } # END repeat 
+  
+  # close progress bar
+  if(.show_progress){
+    close(pb)
   }
 
   ## Compute critical values 

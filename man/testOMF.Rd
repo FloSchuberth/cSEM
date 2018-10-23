@@ -18,17 +18,20 @@ testOMF(
 \method{testOMF}{cSEMResults_default}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs = args_default()$.runs, .saturated = args_default()$.saturated)
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .show_progress = args_default()$.show_progress)
 
 \method{testOMF}{cSEMResults_multi}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs = args_default()$.runs, .saturated = args_default()$.saturated)
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .show_progress = args_default()$.show_progress)
 
 \method{testOMF}{cSEMResults_2ndorder}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs = args_default()$.runs, .saturated = args_default()$.saturated)
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .show_progress = args_default()$.show_progress)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -47,6 +50,8 @@ Defaults to "\emph{drop}".}
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+
+\item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
 }
 \value{
 A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
