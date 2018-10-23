@@ -66,14 +66,14 @@ testMGD <- function(
 
   ### Checks and errors ========================================================
   ## Check if cSEMResults object
-  if(class(.object) != "cSEMResults") {
-    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
-  }
-  
-  ## Check if .object contains estimates for at least two groups.
-  if(attr(.object, "single") == TRUE) {
-    stop("At least two groups required.", call. = FALSE)
-  }
+  # if(class(.object) != "cSEMResults") {
+  #   stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
+  # }
+  # 
+  # ## Check if .object contains estimates for at least two groups.
+  # if(attr(.object, "single") == TRUE) {
+  #   stop("At least two groups required.", call. = FALSE)
+  # }
   
   ## Check if any of the group estimates are inadmissible
   if(!all(sapply(.object, function(x) sum(verify(x)) == 0))) {
