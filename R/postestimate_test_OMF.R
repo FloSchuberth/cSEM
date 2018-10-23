@@ -51,6 +51,8 @@ testOMF.cSEMResults_default <- function(
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated
 ){
+  ## Check arguments
+  match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
   
   ## Extract required information 
   X         <- .object$Information$Data
@@ -101,15 +103,15 @@ testOMF.cSEMResults_default <- function(
     if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
-      S         <- Est_temp$Estimates$Indicator_VCV
-      Sigma_hat <- fit(Est_temp,
-                       .saturated = .saturated,
-                       .type_vcv  = "indicator")
+      S_temp         <- Est_temp$Estimates$Indicator_VCV
+      Sigma_hat_temp <- fit(Est_temp,
+                            .saturated = .saturated,
+                            .type_vcv  = "indicator")
       
       ref_dist[[i]] <- c(
-        "dG"   = dG(S, Sigma_hat),
-        "SRMR" = SRMR(S, Sigma_hat),
-        "dL"   = dL(S, Sigma_hat)
+        "dG"   = dG(S_temp, Sigma_hat_temp),
+        "SRMR" = SRMR(S_temp, Sigma_hat_temp),
+        "dL"   = dL(S_temp, Sigma_hat_temp)
       ) 
       
     } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
@@ -180,10 +182,12 @@ testOMF.cSEMResults_2ndorder <- function(
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated
 ){
-  x1 <- .object$First_stage
-  x2 <- .object$Second_stage
+  ## Check arguments
+  match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
 
   ## Extract required information 
+  x1 <- .object$First_stage
+  x2 <- .object$Second_stage
   X         <- x1$Information$Data
   S         <- x1$Estimates$Indicator_VCV
   Sigma_hat <- fit(.object,
@@ -230,16 +234,16 @@ testOMF.cSEMResults_2ndorder <- function(
     if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
-      S         <- Est_temp$First_stage$Estimates$Indicator_VCV
-      Sigma_hat <- fit(Est_temp,
-                       .saturated = .saturated,
-                       .type_vcv  = "indicator")
+      S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
+      Sigma_hat_temp <- fit(Est_temp,
+                            .saturated = .saturated,
+                            .type_vcv  = "indicator")
       
       ref_dist[[i]] <- c(
-        "dG"   = dG(S, Sigma_hat),
-        "SRMR" = SRMR( S, Sigma_hat),
-        "dL"   = dL(S, Sigma_hat)
-      ) 
+        "dG"   = dG(S_temp, Sigma_hat_temp),
+        "SRMR" = SRMR(S_temp, Sigma_hat_temp),
+        "dL"   = dL(S_temp, Sigma_hat_temp)
+      )  
       
     } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
