@@ -249,7 +249,8 @@ testMGDnew <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated,
-  .type_vcv              = args_default()$.type_vcv
+  .type_vcv              = args_default()$.type_vcv,
+  .show_progress         = args_default()$.show_progress
 ){
   
   ### Checks and errors ========================================================
@@ -302,6 +303,11 @@ testMGDnew <- function(
   counter=1
   total_iterations=0
   
+  if(.show_progress){
+    # Progress bar
+    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+  }
+  
   repeat{
     # permutate data
     X_temp=permutateData(.matrices=org_data_list)
@@ -352,6 +358,11 @@ testMGDnew <- function(
     
       total_iterations=total_iterations+1  
       
+      # Update progress bar
+      if(.show_progress){
+        setTxtProgressBar(pb, iPerm)
+      }
+      
       # Break repeat loop if the necessary number of runs was succesful or 
       # 10'000 iterations have been done without sucess.
       if((counter - 1) == .runs) {
@@ -362,6 +373,10 @@ testMGDnew <- function(
     
     
   } #end repeat 
+  
+  if(.show_progress){
+    close(pb)
+  }
   
   
   ## Compute critical values 
