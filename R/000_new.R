@@ -303,11 +303,6 @@ testMGDnew <- function(
   counter=1
   total_iterations=0
   
-  if(.show_progress){
-    # Progress bar
-    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
-  }
-  
   repeat{
     # permutate data
     X_temp=permutateData(.matrices=org_data_list)
@@ -358,12 +353,7 @@ testMGDnew <- function(
     
       total_iterations=total_iterations+1  
       
-      # Update progress bar
-      if(.show_progress){
-        setTxtProgressBar(pb, iPerm)
-      }
-      
-      # Break repeat loop if the necessary number of runs was succesful or 
+    # Break repeat loop if the necessary number of runs was succesful or 
       # 10'000 iterations have been done without sucess.
       if((counter - 1) == .runs) {
         break
@@ -374,11 +364,7 @@ testMGDnew <- function(
     
   } #end repeat 
   
-  if(.show_progress){
-    close(pb)
-  }
-  
-  
+
   ## Compute critical values 
   ref_dist_matrix <- do.call(cbind, ref_dist)
   critical_value  <- matrix(apply(ref_dist_matrix, 1, quantile, 1-.alpha), 
