@@ -85,6 +85,7 @@ SRMR <- function(.matrix1 = args_default()$.matrix1,
   
   S         <- .matrix1
   Sigma_hat <- .matrix2
+
   
   # Perhaps in the future we allow to estimate unstandardized coefficients
   C_diff    <- cov2cor(S) -  cov2cor(Sigma_hat)
