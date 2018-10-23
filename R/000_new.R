@@ -189,3 +189,215 @@ stop('Not implemented yet')
 
 }
 
+
+#' Estimates the distance between multiple groups. 
+#'
+#' 
+#' The geodesic distance (dG) and the Euclidean distance (dE) is used
+#' to assess group differences. Permutation is used to generate a 
+#' reference distribtuion. 
+#' 
+#' @usage testMGD(
+#'  .object             = args_default()$.object,
+#'  .alpha              = args_default()$.alpha,
+#'  .drop_inadmissibles = args_default()$.drop_inadmissibles,
+#'  .parallel           = args_default()$.parallel,
+#'  .runs               = args_default()$.runs,
+#'  .show_progress      = args_default()$.show_progress,
+#'  .saturated          = args_default()$.saturated,
+#'  .type_vcv           = args_default()$.type_vcv
+#'  ) 
+#' 
+#' @inheritParams csem_arguments
+#' 
+#' @inherit csem_test return
+#'
+#' @seealso [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' require(cSEM)
+#' data(satisfaction)
+#'
+#' model <- "
+#' # Structural model
+#' QUAL ~ EXPE
+#' EXPE ~ IMAG
+#' SAT  ~ IMAG + EXPE + QUAL + VAL
+#' LOY  ~ IMAG + SAT
+#' VAL  ~ EXPE + QUAL
+#'
+#' # Measurement model
+#'
+#' EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+#' IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+#' LOY  =~ loy1  + loy2  + loy3  + loy4
+#' QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+#' SAT  <~ sat1  + sat2  + sat3  + sat4
+#' VAL  <~ val1  + val2  + val3  + val4
+#' "
+#' 
+#' listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
+#' out.cSEM <- csem(listData, model) 
+#'
+#' testMGD(.object = out.cSEM, .runs = 20, .parallel = TRUE, .type_vcv= 'construct')
+#' }
+#'
+#' @export
+
+testMGDnew <- function(
+  .object                = args_default()$.object,
+  .alpha                 = args_default()$.alpha,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  # .parallel              = args_default()$.parallel,
+  .runs                  = args_default()$.runs,
+  # .show_progress         = args_default()$.show_progress,
+  .saturated             = args_default()$.saturated,
+  .type_vcv              = args_default()$.type_vcv
+){
+  
+  ### Checks and errors ========================================================
+  ## Check if cSEMResults object
+  # if(class(.object) != "cSEMResults") {
+  #   stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
+  # }
+  
+  # ## Check if .object contains estimates for at least two groups.
+  # if(attr(.object, "single") == TRUE) {
+  #   stop("At least two groups required.", call. = FALSE)
+  # }
+  
+  ## Check if any of the group estimates are inadmissible
+  if(!all(sapply(.object, function(x) sum(verify(x)) == 0))) {
+    stop("Initial estimation results for at least one group are inadmissible.\n", 
+         "See `lapply(.object, verify)` for details.",
+         call. = FALSE)
+  }
+  
+  # Verstehe ich nicht
+  # Check if data for different groups is identical
+  if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
+                      function(x){ identical(x[[1]], x[[2]])})){
+    stop("At least two groups are identical.", call. = FALSE)
+  }
+  
+  ### Calculation===============================================================
+  ## 1. Compute the test statistics
+  teststat <- c(
+    "dG" = calculateDistance(.matrices = fit(.object = .object,
+                                             .saturated = .saturated,
+                                             .type_vcv =.type_vcv),
+                             .distance = "geodesic"),
+    "dL" = calculateDistance(.matrices = fit(.object = .object,
+                                             .saturated= .saturated,
+                                             .type_vcv=.type_vcv),
+                             .distance = "squared_euclidian"))
+  
+  ## 2. Permuation
+  # Put data in a list
+  org_data_list<- lapply(.object, function(x) x$Information$Data)
+  
+  # Collect initial arguments (from the first object)
+  arguments <- .object[[1]]$Information$Arguments
+  
+  # # Set .id
+  # arguments[[".id"]] <- "permID"
+  # 
+  # Results 
+  ref_dist = list()
+  # permEstimates <- list()
+  
+  repeat{
+    # permutate data
+    X_temp=permutateData(.matrices=org_data_list)
+    
+    # Replace the old dataset by the new one
+    arguments[[".data"]] <- X_temp
+    
+    # Set .id etl kann dies auch ausserhalb von repeat
+    arguments[[".id"]] <- "permID"
+    
+    # Estimate model
+    Est_temp <- do.call(csem, arguments)   
+    
+    # Check status
+    status_code <- verify(Est_temp)
+    
+    if(.handle_inadmissibles == 'drop' | .handle_inadmissibles == 'replace'){
+      if(sum(unlist(status_code)) == 0){
+        
+        ref_dist[[counter]]= c('dG' = calculateDistance(.matrices = fit(.object = Est_temp, 
+                                               .saturated  = .saturated,
+                                               .type_vcv=.type_vcv), 
+                                               .distance = "geodesic"),
+                              'dL' = calculateDistance(.matrices = fit(.object = Est_temp, 
+                                                                       .saturated  = .saturated,
+                                                                       .type_vcv=.type_vcv),
+                                                       .distance = "squared_euclidian"))
+        
+        counter=counter+1
+        
+       }else if(sum(unlist(status_code)) != 0 & .handle_inadmissibles == 'drop'){
+        # if(.handle_inadmissibles == 'drop')#{
+        ref_dist[[counter]]= NULL
+        counter=counter+1
+        }
+      } else if(.handle_inadmissibles == 'ignore') { 
+        
+        ref_dist[[counter]]= c('dG' = calculateDistance(.matrices = fit(.object = Est_temp, 
+                                                                       .saturated  = .saturated,
+                                                                       .type_vcv=.type_vcv), 
+                                                       .distance = "geodesic"),
+                              'dL' = calculateDistance(.matrices = fit(.object = Est_temp, 
+                                                                       .saturated  = .saturated,
+                                                                       .type_vcv=.type_vcv),
+                                                       .distance = "squared_euclidian"))
+        counter=counter+1
+      }
+    
+      total_iterations=total_iterations+1  
+      
+      # Break repeat loop if the necessary number of runs was succesful or 
+      # 10'000 iterations have been done without sucess.
+      if((counter - 1) == .runs) {
+        break
+      } else if(total_iterations == 10000) { 
+        stop("Not enough admissible result.", call. = FALSE)
+      }
+    
+    
+  } #end repeat 
+  
+  
+  ## Compute critical values 
+  ref_dist_matrix <- do.call(cbind, ref_dist)
+  critical_value  <- matrix(apply(ref_dist_matrix, 1, quantile, 1-.alpha), 
+                            ncol = length(teststat),
+                            dimnames = list(paste(.alpha*100, sep = "","%"), 
+                                            names(teststat))
+  )
+  
+  if (length(.alpha) > 1) {
+    decision <- t(apply(critical_value, 1, function(x) {teststat < x}))
+  }
+  
+  if (length(.alpha) == 1) {
+    decision <- teststat < critical_value
+  }
+  
+  # Return output
+  out <- list(
+    "Test_statistic"     = teststat,
+    "Critical_value"     = critical_value, 
+    "Decision"           = decision, 
+    "Number_admissibles" = ncol(ref_dist_matrix),
+    "Total_runs"         = total_iterations
+  ) 
+  
+  class(out) <- "cSEMTestMGD"
+  return(out)
+}  
+  
+  
+
+
