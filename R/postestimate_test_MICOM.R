@@ -46,7 +46,6 @@ testMICOM <- function(
   .runs                 = args_default()$.runs,
   .verbose              = args_default()$.verbose
 ) {
-
   # Implementation is based on:
   # Henseler et al. (2016) - Testing measurement invariance of composites using
   #                          partial least squares
@@ -55,7 +54,33 @@ testMICOM <- function(
     cat(rule(center = "Test for measurement invariance based on Henseler et al. (2016)",
              line = "bar3"), "\n\n")
   }
+  UseMethod("testMICOM")
 
+}
+
+#' @describeIn testMICOM (TODO)
+#' @export
+
+testMICOM.cSEMResults_default <- function(
+  .object               = args_default()$.object,
+  .alpha                = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs                 = args_default()$.runs,
+  .verbose              = args_default()$.verbose
+) {
+  stop("At least 2 groups required for the MICOM test required", call. = FALSE)
+}
+
+#' @describeIn testMICOM (TODO)
+#' @export
+
+testMICOM.cSEMResults_multi <- function(
+  .object               = args_default()$.object,
+  .alpha                = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs                 = args_default()$.runs,
+  .verbose              = args_default()$.verbose
+) {
   ### Checks and errors ========================================================
   if(sum(sapply(verify(.object), sum)) != 0) {
     stop("Initial estimation results for at least one group are inadmissible.\n", 
@@ -333,118 +358,15 @@ testMICOM <- function(
   return(out)
 }
 
+#' @describeIn testMICOM (TODO)
+#' @export
 
-# print.testMICOM <- function(x, ...) {
-# 
-#   cat(cli::rule(), "\n")
-#   cat(cli::rule(center = "Overview", line = "bar3"), "\n\n",
-#       crayon::col_align("\tNumber of Observations", 25), "= ", x$Meta_information$Number_of_observations[1, 2], "\n", sep = "")
-#   for(i in 2:nrow(x$Meta_information$Number_of_observations)) {
-#     cat("\t\t", x$Meta_information$Number_of_observations[i, "x"], " : ",
-#     x$Meta_information$Number_of_observations[i, "n"], "\n")
-#   }
-#   cat(
-#       crayon::col_align("\tNumber of Groups", 25), "= ", x$Meta_information$Number_of_Groups, "\n",
-#       crayon::col_align("\tGrouping Variable", 25), "= ", x$Meta_information$Grouping_variable, "\n\n",
-#       sep = "")
-#   cat(cli::rule(center = "Details", line = "bar3"), "\n")
-#   cat(cli::rule(center = "Step 1 - Configural invariance", line = 2), "\n\n",
-#       "\tConfigural invariance is a precondition for step 2 and 3.\n",
-#       "\tDo not proceed to interpret results unless\n",
-#       "\tconfigural invariance has been established.\n\n",
-#       sep = "")
-#   cat(cli::rule(center = "Step 2 - Compositional invariance", line = 2), "\n\n",
-#       cli::boxx("H0: Compositional measurement invariance holds", float = "center"), "\n\n",
-#       sep = "")
-# 
-#   l <- max(nchar(c("Construct", rownames(x$Step2[[1]]))))
-# 
-#     for(i in seq_along(x$Step2)) {
-# 
-#     cat("Groups: ", names(x$Step2)[i], "\n\t",
-#         crayon::col_align("", width = l + 2, align = "center"),
-#         crayon::col_align("", 10, align = "center"), "\t",
-#         crayon::col_align("Critical Value(s)", 8*(ncol(x$Step2[[1]]) - 1), align = "center"), "\n\t",
-#         crayon::col_align("Construct", width = l + 2, align = "center"),
-#         crayon::col_align("c", 10, align = "center"), "\t",
-#         sep = "")
-#     for(j in colnames(x$Step2[[1]])[-1]) {
-#       cat(crayon::col_align(j, 6, align = "center"), "\t", sep = "")
-#     }
-#     cat("\n\t")
-# 
-#     for(j in 1:nrow(x$Step2[[i]])) {
-#       cat(crayon::col_align(row.names(x$Step2[[i]])[j], l + 2), ": ",
-#           sprintf("%7.4f", x$Step2[[i]][j, "c"]) , "\t", sep = "")
-#       for(k in 2:ncol(x$Step2[[i]])) {
-#         cat(sprintf("%7.4f", x$Step2[[i]][j, k]), "\t",
-#             sep = "")
-#       }
-#       cat("\n\t")
-#     }
-#     cat("\n")
-#   }
-# 
-#   cat(cli::rule(center = "Step 3 - Equality of the mean values and variances", line = 2), "\n\n",
-#       cli::boxx(c("1. H0: Difference between group means is zero",
-#                   "2. H0: Log of the ratio of the group variances is zero"),
-#                 float = "center"),
-#       sep = "")
-# 
-#   cat("\n\nEquality of the means:\n", "______________________", sep = "")
-#   for(i in seq_along(x$Step3$Mean_diff)) {
-# 
-#     cat("\n\nGroups: ", names(x$Step3$Mean_diff)[i], "\n\t",
-#         crayon::col_align("", width = l + 2, align = "center"),
-#         crayon::col_align("", 10, align = "center"), "\t",
-#         crayon::col_align("Critical Value(s)", 8*(ncol(x$Step3$Mean_diff[[1]]) - 1), align = "center"), "\n\t",
-#         crayon::col_align("Construct", width = l + 2, align = "center"),
-#         crayon::col_align("Mean diff.", 11, align = "center"), "\t",
-#         sep = "")
-# 
-#     for(j in colnames(x$Step3$Mean_diff[[1]][-1])) {
-#       cat(crayon::col_align(j, 6, align = "center"), "\t", sep = "")
-#     }
-#     cat("\n\t")
-# 
-#     for(j in 1:nrow(x$Step3$Mean_diff[[i]])) {
-#       cat(crayon::col_align(row.names(x$Step3$Mean_diff[[i]])[j], l + 2), ": ",
-#           crayon::col_align(sprintf("%7.4f", x$Step3$Mean_diff[[i]][j, "Diff_mean"]), 11), sep = "")
-#       for(k in 2:ncol(x$Step3$Mean_diff[[i]])) {
-#         cat(sprintf("%7.4f", x$Step3$Mean_diff[[i]][j, k]), "\t",
-#             sep = "")
-#       }
-#       cat("\n\t")
-#     }
-#     cat("\n")
-#   }
-# 
-#   cat("\n\nEquality of the variances:\n", "__________________________", sep = "")
-#   for(i in seq_along(x$Step3$Var_diff)) {
-# 
-#     cat("\n\nGroups: ", names(x$Step3$Var_diff)[i], "\n\t",
-#         crayon::col_align("", width = l + 2, align = "center"),
-#         crayon::col_align("", 10, align = "center"), "\t",
-#         crayon::col_align("Critical Value(s)", 8*(ncol(x$Step3$Var_diff[[1]]) - 1), align = "center"), "\n\t",
-#         crayon::col_align("Construct", width = l + 2, align = "center"),
-#         crayon::col_align("Var diff.", 11, align = "center"), "\t",
-#         sep = "")
-# 
-#     for(j in colnames(x$Step3$Var_diff[[1]][-1])) {
-#       cat(crayon::col_align(j, 6, align = "center"), "\t", sep = "")
-#     }
-#     cat("\n\t")
-# 
-#     for(j in 1:nrow(x$Step3$Var_diff[[i]])) {
-#       cat(crayon::col_align(row.names(x$Step3$Var_diff[[i]])[j], l + 2), ": ",
-#           crayon::col_align(sprintf("%7.4f", x$Step3$Var_diff[[i]][j, "Diff_log_var"]), 11), sep = "")
-#       for(k in 2:ncol(x$Step3$Var_diff[[i]])) {
-#         cat(sprintf("%7.4f", x$Step3$Var_diff[[i]][j, k]), "\t",
-#             sep = "")
-#       }
-#       cat("\n\t")
-#     }
-#     cat("\n")
-#   }
-# }
-
+testMICOM.cSEMResults_2ndorder <- function(
+  .object               = args_default()$.object,
+  .alpha                = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs                 = args_default()$.runs,
+  .verbose              = args_default()$.verbose
+) {
+  stop("Not yet implemented", call. = FALSE)
+}

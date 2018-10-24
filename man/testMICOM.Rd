@@ -2,6 +2,9 @@
 % Please edit documentation in R/postestimate_test_MICOM.R
 \name{testMICOM}
 \alias{testMICOM}
+\alias{testMICOM.cSEMResults_default}
+\alias{testMICOM.cSEMResults_multi}
+\alias{testMICOM.cSEMResults_2ndorder}
 \title{Test measurement invariance of composites}
 \usage{
 testMICOM(
@@ -11,6 +14,23 @@ testMICOM(
  .runs                 = args_default()$.runs,
  .verbose              = args_default()$.verbose
  )
+
+
+  \method{testMICOM}{cSEMResults_default}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .verbose = args_default()$.verbose)
+
+\method{testMICOM}{cSEMResults_multi}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .verbose = args_default()$.verbose)
+
+
+  \method{testMICOM}{cSEMResults_2ndorder}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .verbose = args_default()$.verbose)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -55,8 +75,18 @@ The number of permutation runs is defaults to \code{args_default()$.runs} for pe
 According to Henseler et al. (2016) the number of permutations should be at least 5000 for
 assessment to be reliable.
 }
-\examples{
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
 
-still to implement
+\item \code{cSEMResults_multi}: (TODO)
+
+\item \code{cSEMResults_2ndorder}: (TODO)
+}}
+
+\examples{
+\dontrun{
+# TODO
+}
 
 }
