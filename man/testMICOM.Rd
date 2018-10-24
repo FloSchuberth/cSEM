@@ -16,10 +16,7 @@ testMICOM(
  )
 
 
-  \method{testMICOM}{cSEMResults_default}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs = args_default()$.runs, .verbose = args_default()$.verbose)
+  \method{testMICOM}{cSEMResults_default}(.object = args_default()$.object)
 
 \method{testMICOM}{cSEMResults_multi}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,

@@ -121,10 +121,10 @@ testOMF.cSEMResults_default <- function(
     # is of class cSEMResults_2ndorder.
     
     # Check status
-    status_code <- verify(Est_temp)
+    status_code <- sum(verify(Est_temp))
     
     # Distinguish depending on how inadmissibles should be handled
-    if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
+    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
       S_temp         <- Est_temp$Estimates$Indicator_VCV
@@ -138,7 +138,7 @@ testOMF.cSEMResults_default <- function(
         "dL"   = dL(S_temp, Sigma_hat_temp)
       ) 
       
-    } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
+    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
       ref_dist[[i]] <- NULL
       
@@ -179,8 +179,10 @@ testOMF.cSEMResults_default <- function(
     "Test_statistic"     = teststat,
     "Critical_value"     = critical_values, 
     "Decision"           = decision, 
-    "Number_admissibles" = ncol(ref_dist_matrix),
-    "Total_runs"         = i + n_inadmissibles
+    "Information"        = list(
+      "Number_admissibles" = ncol(ref_dist_matrix),
+      "Total_runs"         = i + n_inadmissibles 
+    )
   )
   
   class(out) <- "cSEMTestOMF"
@@ -222,7 +224,7 @@ testOMF.cSEMResults_2ndorder <- function(
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
 
   ## Check if initial results are inadmissible
-  if(sum(sapply(verify(.object), sum)) != 0) {
+  if(sum(unlist(verify(.object))) != 0) {
     stop("Initial estimation results are inadmissible.\n", 
          "See `verify(.object)` for details.",
          call. = FALSE)
@@ -277,9 +279,9 @@ testOMF.cSEMResults_2ndorder <- function(
     Est_temp <- do.call(csem, arguments)               
     
     # Check status (Note: output of verify for second orders is a list)
-    status_code <- sum(sapply(verify(Est_temp), sum))
+    status_code <- sum(unlist(verify(Est_temp)))
     
-    if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
+    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
       S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
@@ -293,7 +295,7 @@ testOMF.cSEMResults_2ndorder <- function(
         "dL"   = dL(S_temp, Sigma_hat_temp)
       )  
       
-    } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
+    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
       ref_dist[[i]] <- NULL
       
@@ -334,8 +336,10 @@ testOMF.cSEMResults_2ndorder <- function(
     "Test_statistic"     = teststat,
     "Critical_value"     = critical_values, 
     "Decision"           = decision, 
-    "Number_admissibles" = ncol(ref_dist_matrix),
-    "Total_runs"         = i + n_inadmissibles
+    "Information"        = list(
+      "Number_admissibles" = ncol(ref_dist_matrix),
+      "Total_runs"         = i + n_inadmissibles 
+    )
   ) 
   
   class(out) <- "cSEMTestOMF"

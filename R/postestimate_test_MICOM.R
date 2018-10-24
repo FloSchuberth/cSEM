@@ -61,14 +61,8 @@ testMICOM <- function(
 #' @describeIn testMICOM (TODO)
 #' @export
 
-testMICOM.cSEMResults_default <- function(
-  .object               = args_default()$.object,
-  .alpha                = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs                 = args_default()$.runs,
-  .verbose              = args_default()$.verbose
-) {
-  stop("At least 2 groups required for the MICOM test required", call. = FALSE)
+testMICOM.cSEMResults_default <- function(.object = args_default()$.object) {
+  stop("At least 2 groups required for the MICOM test.", call. = FALSE)
 }
 
 #' @describeIn testMICOM (TODO)
@@ -82,18 +76,18 @@ testMICOM.cSEMResults_multi <- function(
   .verbose              = args_default()$.verbose
 ) {
   ### Checks and errors ========================================================
-  if(sum(sapply(verify(.object), sum)) != 0) {
+  if(sum(unlink(verify(.object))) != 0) {
     stop("Initial estimation results for at least one group are inadmissible.\n", 
          "See `verify(.object)` for details.",  call. = FALSE)
   }
   
-  if(all(.object[[1]]$Information$Model$construct_type == "Common factor")) {
+  if(.verbose & all(.object[[1]]$Information$Model$construct_type == "Common factor")) {
     warning("\tAll constructs are modelled as common factors.\n",
             "\tTest results are only meaningful for composite models!",
             call. = FALSE)
   }
 
-  if(length(.object) > 2) {
+  if(.verbose & length(.object) > 2) {
     warning("\tComparing multiple groups inflates the familywise error rate.\n",
             "\tInterpret statistical significance with caution.\n",
             "\n\tFuture versions of the package will likely include\n",
@@ -160,10 +154,10 @@ testMICOM.cSEMResults_multi <- function(
     Est_temp <- do.call(csem, arguments)   
     
     # Check status
-    status_code <- sum(sapply(verify(Est_temp), sum))
+    status_code <- sum(unlist(verify(Est_temp)))
     
     # Distinguish depending on how inadmissibles should be handled
-    if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
+    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
       
@@ -183,7 +177,7 @@ testMICOM.cSEMResults_multi <- function(
       
       ref_dist[[i]] <- c_temp
       
-    } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
+    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
       ref_dist[[i]] <- NULL
       
@@ -226,10 +220,10 @@ testMICOM.cSEMResults_multi <- function(
                       y = c,
                       SIMPLIFY = FALSE)
   
-  if(.verbose) {
-    cat("\nCompositional invariance test finished.\n",
-        "Proceding to test equality of composite mean values and variances.\n", sep = "")
-  }
+  # if(.verbose) {
+  #   cat("\nCompositional invariance test finished.\n",
+  #       "Proceding to test equality of composite mean values and variances.\n", sep = "")
+  # }
   
   ### Step 3 - Equal mean values and variances==================================
 # 

@@ -76,15 +76,7 @@ testMGD <- function(
 #' @describeIn testMGD (TODO)
 #' @export
 
-testMGD.cSEMResults_default <- function(
-  .object                = args_default()$.object,
-  .alpha                 = args_default()$.alpha,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .runs                  = args_default()$.runs,
-  .saturated             = args_default()$.saturated,
-  .type_vcv              = args_default()$.type_vcv,
-  .verbose               = args_default()$.verbose
-) { 
+testMGD.cSEMResults_default <- function(.object = args_default()$.object) { 
   stop("At least two groups required.", call. = FALSE)
 }
 
@@ -105,20 +97,22 @@ testMGD.cSEMResults_multi <- function(
   match.arg(.type_vcv, args_default(.choices = TRUE)$.type_vcv)
   
   # Check if any of the group estimates are inadmissible
-  if(sum(sapply(verify(.object), sum)) != 0) {
+  if(sum(unlist(verify(.object))) != 0) {
     stop("Initial estimation results for at least one group are inadmissible.\n", 
          "See `verify(.object)` for details.",  call. = FALSE)
   }
   
   # Check if data for different groups is identical
-  if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
-                      function(x){ identical(x[[1]], x[[2]])})){
-    stop("At least two groups are identical.", call. = FALSE)
+  if(.verbose) {
+    if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
+                        function(x){ identical(x[[1]], x[[2]])})){
+      warning("At least two groups are identical.", call. = FALSE)
+    } 
   }
   
   ### Calculation===============================================================
   ## Get the fitted values
-  fit <- fit(.object = .object, .saturated = .saturated, .type_vcv = .type_vcv)
+  fit <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
   
   ## Compute the test statistics
   teststat <- c(
@@ -161,10 +155,10 @@ testMGD.cSEMResults_multi <- function(
     Est_temp <- do.call(csem, arguments)   
     
     # Check status
-    status_code <- sum(sapply(verify(Est_temp), sum))
+    status_code <- sum(unlist(verify(Est_temp)))
     
     # Distinguish depending on how inadmissibles should be handled
-    if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
+    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
       fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
@@ -173,7 +167,7 @@ testMGD.cSEMResults_multi <- function(
         "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
       )
       
-    } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
+    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
       ref_dist[[i]] <- NULL
       
@@ -215,8 +209,12 @@ testMGD.cSEMResults_multi <- function(
     "Test_statistic"     = teststat,
     "Critical_value"     = critical_values, 
     "Decision"           = decision, 
-    "Number_admissibles" = ncol(ref_dist_matrix),
-    "Total_runs"         = i + n_inadmissibles
+    "Information"        = list(
+      "Number_admissibles"    = ncol(ref_dist_matrix),
+      "Total_runs"            = i + n_inadmissibles,
+      "Group_names"           = names(.object),
+      "Number_of_observations"= sapply(X_all_list, nrow)
+    )
   )
   
   class(out) <- "cSEMTestMGD"
