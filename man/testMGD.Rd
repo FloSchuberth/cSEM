@@ -14,28 +14,24 @@ testMGD(
  .runs               = args_default()$.runs,
  .saturated          = args_default()$.saturated,
  .type_vcv           = args_default()$.type_vcv
+ .verbose            = args_default()$.verbose
  )
 
-\method{testMGD}{cSEMResults_default}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv,
-  .show_progress = args_default()$.show_progress)
+\method{testMGD}{cSEMResults_default}(.object = args_default()$.object)
 
 \method{testMGD}{cSEMResults_multi}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .runs = args_default()$.runs, .saturated = args_default()$.saturated,
   .type_vcv = args_default()$.type_vcv,
-  .show_progress = args_default()$.show_progress)
+  .verbose = args_default()$.verbose)
 
 \method{testMGD}{cSEMResults_2ndorder}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .runs = args_default()$.runs, .saturated = args_default()$.saturated,
   .type_vcv = args_default()$.type_vcv,
-  .show_progress = args_default()$.show_progress)
+  .verbose = args_default()$.verbose)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -58,7 +54,8 @@ Defaults to "\emph{drop}".}
 \item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 
-\item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
+\item{.verbose}{Logical. Should information be printed to the console? Defaults
+to \code{TRUE}.}
 }
 \value{
 A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named

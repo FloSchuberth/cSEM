@@ -204,15 +204,15 @@ print.cSEMSummarize_default <- function(.object) {
   #   print(x$Correction_factors)
   # }
 
-  # cat("\n\n", cli::rule(center = "Other output"), "\n\n\t", sep = "")
+  # cat("\n\n", rule(center = "Other output"), "\n\n\t", sep = "")
   # 
   # cat("<not yet implemented>")
   # 
-  # cat("\n\n", cli::rule(center = "Fit Indices"), "\n\n\t", sep = "")
+  # cat("\n\n", rule(center = "Fit Indices"), "\n\n\t", sep = "")
   # 
-  # cat(crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
-  #     crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
-  #     crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\n",
+  # cat(col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
+  #     col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
+  #     col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\n",
   #     sep = "")
   
   cat("\n", rule(line = "bar2"), sep = "")
@@ -393,15 +393,15 @@ print.cSEMSummarize_2ndorder <- function(.object) {
   #   print(x$Correction_factors)
   # }
   
-  # cat("\n\n", cli::rule(center = "Other output"), "\n\n\t", sep = "")
+  # cat("\n\n", rule(center = "Other output"), "\n\n\t", sep = "")
   # 
   # cat("<not yet implemented>")
   # 
-  # cat("\n\n", cli::rule(center = "Fit Indices"), "\n\n\t", sep = "")
+  # cat("\n\n", rule(center = "Fit Indices"), "\n\n\t", sep = "")
   # 
-  # cat(crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
-  #     crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
-  #     crayon::col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\n",
+  # cat(col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
+  #     col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
+  #     col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\n",
   #     sep = "")
   
   cat("\n", rule(line = "bar2"), sep = "")
@@ -554,7 +554,8 @@ print.cSEMTestOMF <- function(.object) {
   }
 
   cat("\nAdditonal information:")
-  cat("\n\n\tOut of ", .object$Total_runs , " bootstrap replications ", .object$Number_admissibles, " are admissible.\n\t",
+  cat("\n\n\tOut of ", .object$Information$Total_runs , " bootstrap replications ", 
+      .object$Information$Number_admissibles, " are admissible.\n\t",
       "See ", yellow("?"), magenta("verify"), "()",
       " for what constitutes an inadmissible result.\n", sep = "")
   cat(rule(line = "bar2"), sep = "")
@@ -625,9 +626,159 @@ print.cSEMTestMGD <- function(.object) {
   }
   
   cat("\nAdditonal information:")
-  cat("\n\n\tOut of ", .object$Total_runs , " permutation runs, ", 
-      .object$Number_admissibles, " where admissible.\n\t",
+  cat("\n\n\tOut of ", .object$Information$Total_runs , " permutation runs, ", 
+      .object$Information$Number_admissibles, " where admissible.\n\t",
       "See ", yellow("?"), magenta("verify"), "()",
-      " for what constitutes an inadmissible result.\n", sep = "")
-  cat(rule(line = "bar2"), sep = "")
+      " for what constitutes an inadmissible result.", sep = "")
+  cat("\n\n\tNumber of observations per group:")
+  l <- max(nchar(c(.object$Information$Group_names, "Group")))
+  cat("\n\n\t",
+    col_align("Group", width = l + 6, align = "left"),
+    col_align("No. observations", 15, align = "left"),
+    sep = "")
+  for(i in seq_along(.object$Information$Group_names)) {
+    cat("\n\t",
+      col_align(.object$Information$Group_names[i], l + 6, align = "left"), 
+      col_align(.object$Information$Number_of_observations[i], 15, align = "left"),
+      sep = "")
+  }
+  
+  cat("\n", rule(line = "bar2"), sep = "")
 }
+
+#' `cSEMTestMICOM` method for `print()`
+#'
+#' The `cSEMTestMICOM` method for the generic function [print()]. 
+#'
+#' @usage print(.object)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#'
+#' @export
+#'
+# print.testMICOM <- function(.object) {
+#   
+#   cat(
+#     rule(line = "bar2"), "\n",
+#     rule(center = "Test for Measurement Invariance"), 
+#     sep = "")
+#   cat("\n\nNull Hypothesis:\n\n", 
+#       boxx("H0: No significant difference between groups.", 
+#            padding = 1, float = "center"), sep = "")
+#   
+#   cat("\n\nTest statistic and critical value: \n\n\t", sep = "")
+# 
+#   cat(rule(), "\n")
+#   cat(rule(center = "Overview", line = "bar3"), "\n\n",
+#       col_align("\tNumber of Observations", 25), "= ", x$Meta_information$Number_of_observations[1, 2], "\n", sep = "")
+#   for(i in 2:nrow(x$Meta_information$Number_of_observations)) {
+#     cat("\t\t", x$Meta_information$Number_of_observations[i, "x"], " : ",
+#     x$Meta_information$Number_of_observations[i, "n"], "\n")
+#   }
+#   cat(
+#       col_align("\tNumber of Groups", 25), "= ", x$Meta_information$Number_of_Groups, "\n",
+#       col_align("\tGrouping Variable", 25), "= ", x$Meta_information$Grouping_variable, "\n\n",
+#       sep = "")
+#   cat(rule(center = "Details", line = "bar3"), "\n")
+#   cat(rule(center = "Step 1 - Configural invariance", line = 2), "\n\n",
+#       "\tConfigural invariance is a precondition for step 2 and 3.\n",
+#       "\tDo not proceed to interpret results unless\n",
+#       "\tconfigural invariance has been established.\n\n",
+#       sep = "")
+#   cat(rule(center = "Step 2 - Compositional invariance", line = 2), "\n\n",
+#       boxx("H0: Compositional measurement invariance holds", float = "center"), "\n\n",
+#       sep = "")
+# 
+#   l <- max(nchar(c("Construct", rownames(x$Step2[[1]]))))
+# 
+#     for(i in seq_along(x$Step2)) {
+# 
+#     cat("Groups: ", names(x$Step2)[i], "\n\t",
+#         col_align("", width = l + 2, align = "center"),
+#         col_align("", 10, align = "center"), "\t",
+#         col_align("Critical Value(s)", 8*(ncol(x$Step2[[1]]) - 1), align = "center"), "\n\t",
+#         col_align("Construct", width = l + 2, align = "center"),
+#         col_align("c", 10, align = "center"), "\t",
+#         sep = "")
+#     for(j in colnames(x$Step2[[1]])[-1]) {
+#       cat(col_align(j, 6, align = "center"), "\t", sep = "")
+#     }
+#     cat("\n\t")
+# 
+#     for(j in 1:nrow(x$Step2[[i]])) {
+#       cat(col_align(row.names(x$Step2[[i]])[j], l + 2), ": ",
+#           sprintf("%7.4f", x$Step2[[i]][j, "c"]) , "\t", sep = "")
+#       for(k in 2:ncol(x$Step2[[i]])) {
+#         cat(sprintf("%7.4f", x$Step2[[i]][j, k]), "\t",
+#             sep = "")
+#       }
+#       cat("\n\t")
+#     }
+#     cat("\n")
+#   }
+# 
+#   cat(rule(center = "Step 3 - Equality of the mean values and variances", line = 2), "\n\n",
+#       boxx(c("1. H0: Difference between group means is zero",
+#                   "2. H0: Log of the ratio of the group variances is zero"),
+#                 float = "center"),
+#       sep = "")
+# 
+#   cat("\n\nEquality of the means:\n", "______________________", sep = "")
+#   for(i in seq_along(x$Step3$Mean_diff)) {
+# 
+#     cat("\n\nGroups: ", names(x$Step3$Mean_diff)[i], "\n\t",
+#         col_align("", width = l + 2, align = "center"),
+#         col_align("", 10, align = "center"), "\t",
+#         col_align("Critical Value(s)", 8*(ncol(x$Step3$Mean_diff[[1]]) - 1), align = "center"), "\n\t",
+#         col_align("Construct", width = l + 2, align = "center"),
+#         col_align("Mean diff.", 11, align = "center"), "\t",
+#         sep = "")
+# 
+#     for(j in colnames(x$Step3$Mean_diff[[1]][-1])) {
+#       cat(col_align(j, 6, align = "center"), "\t", sep = "")
+#     }
+#     cat("\n\t")
+# 
+#     for(j in 1:nrow(x$Step3$Mean_diff[[i]])) {
+#       cat(col_align(row.names(x$Step3$Mean_diff[[i]])[j], l + 2), ": ",
+#           col_align(sprintf("%7.4f", x$Step3$Mean_diff[[i]][j, "Diff_mean"]), 11), sep = "")
+#       for(k in 2:ncol(x$Step3$Mean_diff[[i]])) {
+#         cat(sprintf("%7.4f", x$Step3$Mean_diff[[i]][j, k]), "\t",
+#             sep = "")
+#       }
+#       cat("\n\t")
+#     }
+#     cat("\n")
+#   }
+# 
+#   cat("\n\nEquality of the variances:\n", "__________________________", sep = "")
+#   for(i in seq_along(x$Step3$Var_diff)) {
+# 
+#     cat("\n\nGroups: ", names(x$Step3$Var_diff)[i], "\n\t",
+#         col_align("", width = l + 2, align = "center"),
+#         col_align("", 10, align = "center"), "\t",
+#         col_align("Critical Value(s)", 8*(ncol(x$Step3$Var_diff[[1]]) - 1), align = "center"), "\n\t",
+#         col_align("Construct", width = l + 2, align = "center"),
+#         col_align("Var diff.", 11, align = "center"), "\t",
+#         sep = "")
+# 
+#     for(j in colnames(x$Step3$Var_diff[[1]][-1])) {
+#       cat(col_align(j, 6, align = "center"), "\t", sep = "")
+#     }
+#     cat("\n\t")
+# 
+#     for(j in 1:nrow(x$Step3$Var_diff[[i]])) {
+#       cat(col_align(row.names(x$Step3$Var_diff[[i]])[j], l + 2), ": ",
+#           col_align(sprintf("%7.4f", x$Step3$Var_diff[[i]][j, "Diff_log_var"]), 11), sep = "")
+#       for(k in 2:ncol(x$Step3$Var_diff[[i]])) {
+#         cat(sprintf("%7.4f", x$Step3$Var_diff[[i]][j, k]), "\t",
+#             sep = "")
+#       }
+#       cat("\n\t")
+#     }
+#     cat("\n")
+#   }
+# }
+# 

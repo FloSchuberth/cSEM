@@ -1,40 +1,3 @@
-#  permutateDataNew <- function(.list_matrices = args_default()$.matrices){
-#   
-#   ### Checks and errors ========================================================
-#   ## Check if list and at least of length 2
-#   if(!is.list(.list_matrices) && length(.list_matrices) < 2) {
-#     stop("`.matrices` must be a list of at least length two.", call. = FALSE)
-#   }
-#   
-#   # ## Check if column names are identical
-#   # if (FALSE %in% sapply(.matrices,function(x) {
-#   #   identical(colnames(x), colnames(.matrices[[1]]))})) {
-#   #   stop("`.matrices` must have the same colnames.", call. = FALSE)
-#   # }
-#   
-#   ### Permutation ==============================================================
-#   
-#   # combine data
-#   combinedData <- do.call(rbind, .list_matrices)
-#   # combinedData = as.data.frame(combinedData)
-#   # create ID
-#   # ID <- 1:nrow(combinedData)
-#   
-#   # combinedData=data.frame(combinedData, ID=ID)
-#   nrows=sapply(.list_matrices,nrow)
-#   out=foreach::foreach(i = 1:length(.list_matrices)) %do% {
-#     
-#     ID=sample(1:nrow(combinedData),nrows[i])
-#     data_ret=combinedData[ID,]
-#     combinedData=combinedData[-ID,]
-#     data_ret    
-#   }
-#   
-#   return(out)
-# }
-
-
-
 #' Test measurement invariance of composites
 #'
 #' This functions performs the test for measurement invariance of composites
@@ -45,209 +8,17 @@
 #' If more than two groups are to be compared issues related to multiple testing
 #' should be taken into account.
 #'
-#' The number of permutation runs is defaults to 100 for performance reasons.
+#' The number of permutation runs is defaults to `args_default()$.runs` for performance reasons.
 #' According to Henseler et al. (2016) the number of permutations should be at least 5000 for
 #' assessment to be reliable.
 #'
 #' @usage testMICOM(
-#'   .object=args_default()$.object,
-#'   .runs      = args_default()$.runs,
-#'   .alpha        = args_default()$.alpha,
-#'   .show_progress = args_default()$.show_progress,
-#'   .handle_inadmissibles = args_default()$.handle_inadmissibles
-#'
-#' @inheritParams csem_arguments
-#'
-#' @return An object of class "testMICOM"
-#'
-#'
-#' @export
-#'
-#' @examples
-#'
-#' still to implement
-#'
-
-
-
-
-testMICOM=function(.object=args_default()$.object,
-                      .runs      = args_default()$.runs,
-                      .alpha        = args_default()$.alpha,
-                      .show_progress = args_default()$.show_progress,
-                      .handle_inadmissibles = args_default()$.handle_inadmissibles){
-  
-  ### Checks and errors ========================================================
-  ## Check if cSEMResults object
-  if(class(.object) != "cSEMResults") {
-    stop("`.object` must be of class `cSEMResults`.", call. = FALSE)
-  }
-  
-  ## Check if .object contains estimates for at least two groups.
-  if(attr(.object, "single") == TRUE) {
-    stop("At least two groups required.", call. = FALSE)
-  }
-  
-  ## Check if any of the group estimates are inadmissible
-  if(!all(sapply(.object, function(x) sum(verify(x)) == 0))) {
-    stop("Initial estimation results for at least one group are inadmissible.\n", 
-         "See `lapply(.object, verify)` for details.",
-         call. = FALSE)
-  }
-  
-  # Check if data for different groups is identical
-  if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
-                      function(x){ identical(x[[1]], x[[2]])})){
-    stop("At least two groups are identical.", call. = FALSE)
-  }
-  
-  if(length(.object)!=2){stop('More than 2 groups are not allowed.', call. = FALSE)}
-  
-  # Should work for a list of datasets as well as two single objects.
-  # Needs to be adjusted
-  
-  # extract scores
-  scores=lapply(.object, function(x) x$Estimates$Construct_scores)
-
-  
-  if(ncol(scores[[1]])!=ncol(scores[[2]])){stop("Different number of constructs", call. = FALSE)} 
-  
-  teststat=sapply(1:ncol(scores[[1]]), function(x){
-    cor(scores[[1]][,x],scores[[2]][,x])
-  })
-  
-  # macht dasselbe und ist evtl eleganter
-  # diag(cor(scores1,scores2))
-  
-  ## 2. Permuation
-  # Put data in a list
-  # listMatrices <- lapply(.object, function(x) x$Information$Data)
-  
-  # Collect initial arguments (from the first object)
-  arguments <- .object[[1]]$Information$Arguments
-  
-  ref_dist=list()
-  counter=1
-  total_iterations=0
-  
-  # extract original data as a list
-  org_data_list=lapply(.object , function(x) x$Information$Data)
-  repeat{
-    
-    
-    # permutate data
-    X_temp=permutateData(.matrices=org_data_list)
-    
-    # Replace the old dataset by the new one
-    arguments[[".data"]] <- X_temp
-    # Set .id
-    arguments[[".id"]] <- "permID"
-    # Estimate model
-    Est_temp <- do.call(csem, arguments)               
-    
-    # Check status
-    # status_code <- verify(Est_temp)
-    status_code <- sapply(Est_temp,verify)
-    
-    
-    if(.handle_inadmissibles == 'drop' | .handle_inadmissibles == 'replace'){
-      if(sum(status_code) == 0){
-        
-        
-        scores_temp=lapply(Est_temp, function(x) x$Estimates$Construct_scores)
-        
-        ref_dist[[counter]]=sapply(1:ncol(scores1), function(x){
-          cor(scores_temp[[1]][,x],scores_temp[[2]][,x])
-        })
-        
-        counter=counter+1
-      } else if(sum(status_code) != 0 & .handle_inadmissibles == 'drop'){
-        # if(.handle_inadmissibles == 'drop')#{
-        ref_dist[[counter]]= NULL
-        counter=counter+1
-        #} else if(.handle_inadmissibles == 'redraw'){
-        #  NULL
-        #}
-      }
-    } else if(.handle_inadmissibles == 'ignore') { 
-      
-      scores_temp=lapply(Est_temp, function(x) x$Estimates$Construct_scores)
-      
-      ref_dist[[counter]]=sapply(1:ncol(scores1), function(x){
-        cor(scores_temp[[1]][,x],scores_temp[[2]][,x])
-      })
-      counter=counter+1
-    }
-    
-    total_iterations=total_iterations+1  
-    # Break repeat loop; Counter -1 since I start with 1, starting with zero leads to problems in filling the list
-    if((counter-1) == .runs | total_iterations == 10000) {break}
-  }
-  
-   
-  ref_dist_matrix <- do.call(cbind, ref_dist)
-  critical_value  <- matrix(apply(ref_dist_matrix, 1, quantile, .alpha), 
-                            ncol =length(teststat),
-                            dimnames = list(paste(.alpha*100, sep = "","%"), 
-                                            names(teststat))
-  )
-  
-  
-  if (length(.alpha) > 1) {
-    decision <- t(apply(critical_value, 1, function(x) {teststat > x}))
-  }
-  
-  if (length(.alpha) == 1) {
-    decision <- teststat > critical_value
-  }
-  
-  # step 3 is missing and still needs to be implemented
-  # VErsteh ehrlich gesagt auch nicht so genau wie der geht da die Kompositen ja so skaliert sind dass 
-  # sie einen Mittelwert von 0 und eine Varianz von 1 haben. 
-  # Eine Möglichkeit wäre die standardisierten Gewichte zu verwenden um die unstandardisierten konstrukt scores zu berechnen, weiss abe rnicht ob das ganz korrekt ist. 
-  # Man berechnet unstandardisierte Gewichte.
-  
-  out <- list(
-    "Test_statistic"     = teststat,
-    "Critical_value"     = critical_value, 
-    "Decision"           = decision, 
-    "Number_admissibles" = ncol(ref_dist_matrix)
-  ) 
-  
-  class(out) <- "cSEMTestMICOM"
-  return(out)
-   
-}
-
-
-
-
-
-
-#' Test measurement invariance of composites
-#'
-#' This functions performs the test for measurement invariance of composites
-#' proposed by Henseler et al. (2016).
-#'
-#' The test is only meaningful for composite models.
-#'
-#' If more than two groups are to be compared issues related to multiple testing
-#' should be taken into account.
-#'
-#' The number of permutation runs is defaults to 100 for performance reasons.
-#' According to Henseler et al. (2016) the number of permutations should be at least 5000 for
-#' assessment to be reliable.
-#'
-#' @usage testMICOM(
-#'   .data             = NULL,
-#'   .model            = NULL,
-#'   .group_var        = NULL,
-#'   .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-#'                         "GSCA", "fixed", "unit")
-#'   .permutations     = 100,
-#'   .alpha            = c(0.1, 0.05, 0.01),
-#'   .verbose          = TRUE,
-#'   ...)
+#'  .object               = args_default()$.object,
+#'  .alpha                = args_default()$.alpha,
+#'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+#'  .runs                 = args_default()$.runs,
+#'  .verbose              = args_default()$.verbose
+#'  )
 #'
 #' @inheritParams csem_arguments
 #'
@@ -260,194 +31,201 @@ testMICOM=function(.object=args_default()$.object,
 #' \item{**Meta_information**}{A list of additional information on the test.}
 #' }
 #'
+#' @examples
+#' \dontrun{
+#' # TODO
+#' }
+#'
 #' @export
 #'
-#' @examples
-#'
-#' still to implement
-#'
 
-# testMICOM <- function(.data             = NULL,
-#                       .model            = NULL,
-#                       .group_var        = NULL,
-#                       .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-#                                             "GSCA", "fixed", "unit"),
-#                       .PLS_weight_scheme_inner = c("centroid", "factorial", "path"),
-#                       .runs      = 100,
-#                       .alpha             = c(0.1, 0.05, 0.01),
-#                       .verbose           = TRUE,
-#                       ...) {
-# 
-#   # Implementation and notation is based on:
-#   # Henseler et al. (2016) - Testing measurement invariance of composites using
-#   #                          partial least squares
-# 
-#   ### Information ==============================================================
-#   if(.verbose) {
-#     cat(cli::rule(center = "Test for measurement invariance based on Henseler et al. (2016)",
-#                   line = "bar3"), "\n\n")
-#     cat(
-#       "Note:\t", "Due to the permutation runs the test procedure is computationally intensive.\n\t",
-#       "Depending on the complexity of the model, the number of permutations\n\t",
-#       "choosen, and the available hardware the procedure may take a while.\n\n",
-#       sep = "")
-#   }
-# 
-#   ### Preparation ==============================================================
-#   ## Parse model and capture arguments
-#   csem_model <- parseModel(.model)
-# 
-#   ## Warnings, messages, and errors
-#   if(!(.group_var %in% names(.data))) {
-#     stop("No grouping variable provided.")
-#   }
-# 
-#   if(all(csem_model$construct_type$Type == "Common factor")) {
-#     warning("\tAll constructs are modelled as common factors.\n",
-#             "\tTest results are only meaningful for composite models!",
-#             call. = FALSE)
-#   }
-# 
-#   if(length(unique(.data[, .group_var])) > 2) {
-#     warning("\tComparing multiple groups inflates the familywise error rate.\n",
-#             "\tInterpret statistical significance with caution.\n",
-#             "\n\tFuture versions of the package will likely include\n",
-#             "\tappropriate correction options.",
-#             call = FALSE)
-#   }
-# 
-#   approach_weights        <- match.arg(.approach_weights)
-#   if(approach_weights == "PLS") {
-#     PLS_weight_scheme_inner <- match.arg(.PLS_weight_scheme_inner)
-#   } else {
-#     PLS_weight_scheme_inner <- NULL
-#   }
-# 
-#   ## Definitions
-#   .data <- .data[, c(colnames(csem_model$measurement), .group_var)]
-#   data_no_group_var <- .data[, -which(names(.data) == .group_var)]
-#   data_split        <- split(x = .data, f = .data[, .group_var])
-#   data_ordered      <- .data[order(.data[, .group_var]), ]
-# 
-#   no_obs            <- data.frame("x" = c("Total", unique(data_ordered[, .group_var])),
-#                                   "n" = c(nrow(.data), table(data_ordered[, .group_var])),
-#                                   row.names = NULL,
-#                                   stringsAsFactors = FALSE)
-#   ### Step 1 - Configural invariance ===========================================
-# 
-#   # Has to be assessed by the user prior to using the testMICOM function. See
-#   # the original paper for details.
-# 
-#   ### Step 2 - Compositional invariance ========================================
-#   ## Compute weights for each group and use these to compute proxies/scores using
-#   # the pooled data
-# 
-#   scores <- lapply(data_split, function(x, ...) {
-#     W <- workhorse(
-#       .data                    = x[, -which(names(x) == .group_var)],
-#       .model                   = csem_model,
-#       .approach_cf             = "dist_euclid",
-#       .approach_nl             = NULL,
-#       .approach_paths          = NULL,
-#       .approach_weights        = approach_weights,
-#       .disattenuate            = FALSE,
-#       .estimate_structural     = FALSE,
-#       .ignore_structural_model = FALSE,
-#       .iter_max                = 100,
-#       .normality               = TRUE,
-#       .PLS_mode                = NULL,
-#       .PLS_weight_scheme_inner = "centroid",
-#       .tolerance               = 1e-06
-#     )$Estimates$Weight_estimates
-# 
-#     # W <- workhorse(.data = x[, -which(names(x) == .group_var)],
-#     #                .model = csem_model,
-#     #                .approach_weights = approach_weights,
-#     #                .PLS_weight_scheme_inner = PLS_weight_scheme_inner,
-#     #                .estimate_structural = FALSE,
-#     #                ...)$Estimates$Weight_estimates
-# 
-#     H <- scale(as.matrix(data_no_group_var)) %*% t(W)
-# 
-#   })
-# 
-#   ## Compute the correlation of the scores for all group combinations
-#   # Get the scores for all group combinations
-#   temp <- combn(scores, 2, simplify = FALSE)
-# 
-#   # Compute the correlation c for each group combination
-#   c <- lapply(temp, function(x) diag(cor(x[[1]], x[[2]])))
-# 
-#   # Set the names for each group combination
-#   names(c) <- combn(names(scores), 2, FUN = paste0, collapse = "_", simplify = FALSE)
-# 
-#   ## Permutation ---------------------------------------------------------------
-#   # Procedure: see page 414 and 415 of the paper
-#   if(.verbose) {
-#     cat("Progress:\n")
-#   }
-# 
-#   # Run all permuations
-#   perm1 <- lapply(1:.runs, function(x) {
-# 
-#     if(.verbose) {
-#       cat(x, " / ", .runs, "\n", sep = "")
-#     }
-# 
-#     d <- data_no_group_var[sample(x = nrow(.data)), ]
-#     temp <- split(x = d, rep(unique(data_ordered[, .group_var]),
-#                              times = table(data_ordered[, .group_var])))
-# 
-#     scores <- lapply(temp, function(y) {
-# 
-#       W <- workhorse(
-#         .data                    = y,
-#         .model                   = csem_model,
-#         .approach_cf             = "dist_euclid",
-#         .approach_nl             = NULL,
-#         .approach_paths          = NULL,
-#         .approach_weights        = approach_weights,
-#         .disattenuate            = FALSE,
-#         .estimate_structural     = FALSE,
-#         .ignore_structural_model = FALSE,
-#         .iter_max                = 100,
-#         .normality               = TRUE,
-#         .PLS_mode                = NULL,
-#         .PLS_weight_scheme_inner = "centroid",
-#         .tolerance               = 1e-06
-#       )$Estimates$Weight_estimates
-# 
-#       H <- scale(as.matrix(d)) %*% t(W)
-# 
-#     })
-#     # Make the combinations of list elements
-#     temp <- combn(scores, 2, simplify = FALSE)
-# 
-#     # Compute correlation
-#     c_u <- lapply(temp, function(x) diag(cor(x[[1]], x[[2]])))
-# 
-#     # Get the names
-#     names(c_u) <- combn(names(scores), 2, FUN = paste0, collapse = "_", simplify = FALSE)
-# 
-#     return(c_u)
-#   })
-# 
-#   ## Bring data to form and compute quantiles
-#   temp <- do.call(rbind, lapply(perm1, function(x) do.call(rbind, x)))
-#   temp <- split(as.data.frame(temp), rownames(temp))
-# 
-#   step2_out <- lapply(temp, function(x) as.data.frame(t(apply(x, 2, quantile, probs = .alpha))))
-#   step2_out <- mapply(function(x, y) cbind("c" = y, x),
-#                       x = step2_out,
-#                       y = c,
-#                       SIMPLIFY = FALSE)
-# 
-#   if(.verbose) {
-#     cat("\nCompositional invariance test finished.\n",
-#         "Proceding to test equality of composite mean values and variances.\n", sep = "")
-#   }
-# 
-#   ### Step 3 - Equal mean values and variances==================================
+testMICOM <- function(
+  .object               = args_default()$.object,
+  .alpha                = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs                 = args_default()$.runs,
+  .verbose              = args_default()$.verbose
+) {
+  # Implementation is based on:
+  # Henseler et al. (2016) - Testing measurement invariance of composites using
+  #                          partial least squares
+  
+  if(.verbose) {
+    cat(rule(center = "Test for measurement invariance based on Henseler et al. (2016)",
+             line = "bar3"), "\n\n")
+  }
+  UseMethod("testMICOM")
+
+}
+
+#' @describeIn testMICOM (TODO)
+#' @export
+
+testMICOM.cSEMResults_default <- function(.object = args_default()$.object) {
+  stop("At least 2 groups required for the MICOM test.", call. = FALSE)
+}
+
+#' @describeIn testMICOM (TODO)
+#' @export
+
+testMICOM.cSEMResults_multi <- function(
+  .object               = args_default()$.object,
+  .alpha                = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs                 = args_default()$.runs,
+  .verbose              = args_default()$.verbose
+) {
+  ### Checks and errors ========================================================
+  if(sum(unlink(verify(.object))) != 0) {
+    stop("Initial estimation results for at least one group are inadmissible.\n", 
+         "See `verify(.object)` for details.",  call. = FALSE)
+  }
+  
+  if(.verbose & all(.object[[1]]$Information$Model$construct_type == "Common factor")) {
+    warning("\tAll constructs are modelled as common factors.\n",
+            "\tTest results are only meaningful for composite models!",
+            call. = FALSE)
+  }
+
+  if(.verbose & length(.object) > 2) {
+    warning("\tComparing multiple groups inflates the familywise error rate.\n",
+            "\tInterpret statistical significance with caution.\n",
+            "\n\tFuture versions of the package will likely include\n",
+            "\tappropriate correction options.",
+            call. = FALSE)
+  }
+  
+  ### Preparation ==============================================================
+  # Put data of each groups in a list and combine
+  X_all_list  <- lapply(.object, function(x) x$Information$Data)
+  X_all       <- do.call(rbind, X_all_list)
+  
+  # Collect initial arguments (from the first object, but could be any other)
+  arguments <- .object[[1]]$Information$Arguments
+  
+  # Create a vector "id" to be used to randomly select groups (permutate) and
+  # set id as an argument in order to identify the groups.
+  id <- rep(1:length(X_all_list), sapply(X_all_list, nrow))
+  arguments[[".id"]] <- "id"
+  
+  ### Step 1 - Configural invariance ===========================================
+
+  # Has to be assessed by the user prior to using the testMICOM function. See
+  # the original paper for details.
+
+  ### Step 2 - Compositional invariance ========================================
+  # Procedure: see page 414 and 415 of the paper
+  ## Compute weights for each group and use these to compute proxies/scores using
+  # the pooled data
+
+  H <- lapply(.object, function(x) X_all %*% t(x$Estimates$Weight_estimates))
+  
+  ## Compute the correlation of the scores for all group combinations
+  # Get the scores for all group combinations
+  H_combn <- utils::combn(H, 2, simplify = FALSE)
+
+  # Compute the correlation c for each group combination
+  c <- lapply(H_combn, function(x) diag(cor(x[[1]], x[[2]])))
+
+  # Set the names for each group combination
+  names(c) <- utils::combn(names(H), 2, FUN = paste0, collapse = "_", simplify = FALSE)
+
+  ## Permutation ---------------------------------------------------------------
+  # Start progress bar
+  if(.verbose){
+    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+  }
+  
+  ## Calculate reference distribution
+  ref_dist         <- list()
+  n_inadmissibles  <- 0
+  i <- 0
+  repeat{
+    # Counter
+    i <- i + 1
+    
+    # Permutate data
+    X_temp <- cbind(X_all, id = sample(id))
+    
+    # Replace the old dataset by the new permutated dataset
+    arguments[[".data"]] <- X_temp
+    
+    # Estimate model
+    Est_temp <- do.call(csem, arguments)   
+    
+    # Check status
+    status_code <- sum(unlist(verify(Est_temp)))
+    
+    # Distinguish depending on how inadmissibles should be handled
+    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
+      # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
+      # not ok
+      
+      ## Compute weights for each group and use these to compute proxies/scores using
+      # the pooled data (= the original combined data)
+      H_temp <- lapply(Est_temp, function(x) X_all %*% t(x$Estimates$Weight_estimates))
+      
+      ## Compute the correlation of the scores for all group combinations
+      # Get the scores for all group combinations
+      H_combn_temp <- utils::combn(H_temp, 2, simplify = FALSE)
+      
+      # Compute the correlation c for each group combination
+      c_temp <- lapply(H_combn_temp, function(x) diag(cor(x[[1]], x[[2]])))
+      
+      # Set the names for each group combination
+      names(c_temp) <- utils::combn(names(H_temp), 2, FUN = paste0, collapse = "_", simplify = FALSE)
+      
+      ref_dist[[i]] <- c_temp
+      
+    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
+      # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
+      ref_dist[[i]] <- NULL
+      
+    } else {# status is not ok and .handle_inadmissibles == "replace"
+      # Reset counter and raise number of inadmissibles by 1
+      i <- i - 1
+      n_inadmissibles <- n_inadmissibles + 1
+    }
+    
+    # Break repeat loop if .runs results have been created.
+    if(length(ref_dist) == .runs) {
+      break
+    } else if(i + n_inadmissibles == 10000) { 
+      ## Stop if 10000 runs did not result in insufficient admissible results
+      stop("Not enough admissible result.", call. = FALSE)
+    }
+    
+    if(.verbose){
+      setTxtProgressBar(pb, i)
+    }
+    
+  } # END repeat 
+  
+  # close progress bar
+  if(.verbose){
+    close(pb)
+  }
+  
+  ## Bring data to form and compute quantiles
+  # Delete potential NULL entries
+  ref_dist <- Filter(Negate(is.null), ref_dist)
+  # Bind 
+  temp <- do.call(rbind, lapply(ref_dist, function(x) do.call(rbind, x)))
+  temp <- split(as.data.frame(temp), rownames(temp))
+  
+  step2_out <- lapply(lapply(temp, as.matrix), matrixStats::colQuantiles, 
+                      probs = 1-.alpha, drop = FALSE)
+  step2_out <- mapply(function(x, y) cbind("c" = y, x),
+                      x = step2_out,
+                      y = c,
+                      SIMPLIFY = FALSE)
+  
+  # if(.verbose) {
+  #   cat("\nCompositional invariance test finished.\n",
+  #       "Proceding to test equality of composite mean values and variances.\n", sep = "")
+  # }
+  
+  ### Step 3 - Equal mean values and variances==================================
 # 
 #   H <- workhorse(
 #     .data                    = data_ordered[, -which(names(data_ordered) == .group_var)],
@@ -560,131 +338,29 @@ testMICOM=function(.object=args_default()$.object,
 #                         x = step3_out_v,
 #                         y = v,
 #                         SIMPLIFY = FALSE)
-#   ### Results ==================================================================
-#   out <- list("Step2"            = step2_out,
-#               "Step3"            = list("Mean_diff" = step3_out_m,
-#                                         "Var_diff"  = step3_out_v),
-#               "Meta_information" = list("Number_of_observations" = no_obs,
-#                                         "Number_of_Groups"       = nrow(no_obs) - 1,
-#                                         "Grouping_variable"      = .group_var)
-#               )
-#   ## Set class
-#   class(out) <- "testMICOM"
-#   return(out)
-# }
+## Results ==================================================================
+  out <- list("Step2"            = step2_out
+              # ,
+              # "Step3"            = list("Mean_diff" = step3_out_m,
+              #                           "Var_diff"  = step3_out_v),
+              # "Meta_information" = list("Number_of_observations" = no_obs,
+              #                           "Number_of_Groups"       = nrow(no_obs) - 1,
+              #                           "Grouping_variable"      = .group_var)
+              )
+  ## Set class
+  class(out) <- "testMICOM"
+  return(out)
+}
 
+#' @describeIn testMICOM (TODO)
+#' @export
 
-# print.testMICOM <- function(x, ...) {
-# 
-#   cat(cli::rule(), "\n")
-#   cat(cli::rule(center = "Overview", line = "bar3"), "\n\n",
-#       crayon::col_align("\tNumber of Observations", 25), "= ", x$Meta_information$Number_of_observations[1, 2], "\n", sep = "")
-#   for(i in 2:nrow(x$Meta_information$Number_of_observations)) {
-#     cat("\t\t", x$Meta_information$Number_of_observations[i, "x"], " : ",
-#     x$Meta_information$Number_of_observations[i, "n"], "\n")
-#   }
-#   cat(
-#       crayon::col_align("\tNumber of Groups", 25), "= ", x$Meta_information$Number_of_Groups, "\n",
-#       crayon::col_align("\tGrouping Variable", 25), "= ", x$Meta_information$Grouping_variable, "\n\n",
-#       sep = "")
-#   cat(cli::rule(center = "Details", line = "bar3"), "\n")
-#   cat(cli::rule(center = "Step 1 - Configural invariance", line = 2), "\n\n",
-#       "\tConfigural invariance is a precondition for step 2 and 3.\n",
-#       "\tDo not proceed to interpret results unless\n",
-#       "\tconfigural invariance has been established.\n\n",
-#       sep = "")
-#   cat(cli::rule(center = "Step 2 - Compositional invariance", line = 2), "\n\n",
-#       cli::boxx("H0: Compositional measurement invariance holds", float = "center"), "\n\n",
-#       sep = "")
-# 
-#   l <- max(nchar(c("Construct", rownames(x$Step2[[1]]))))
-# 
-#     for(i in seq_along(x$Step2)) {
-# 
-#     cat("Groups: ", names(x$Step2)[i], "\n\t",
-#         crayon::col_align("", width = l + 2, align = "center"),
-#         crayon::col_align("", 10, align = "center"), "\t",
-#         crayon::col_align("Critical Value(s)", 8*(ncol(x$Step2[[1]]) - 1), align = "center"), "\n\t",
-#         crayon::col_align("Construct", width = l + 2, align = "center"),
-#         crayon::col_align("c", 10, align = "center"), "\t",
-#         sep = "")
-#     for(j in colnames(x$Step2[[1]])[-1]) {
-#       cat(crayon::col_align(j, 6, align = "center"), "\t", sep = "")
-#     }
-#     cat("\n\t")
-# 
-#     for(j in 1:nrow(x$Step2[[i]])) {
-#       cat(crayon::col_align(row.names(x$Step2[[i]])[j], l + 2), ": ",
-#           sprintf("%7.4f", x$Step2[[i]][j, "c"]) , "\t", sep = "")
-#       for(k in 2:ncol(x$Step2[[i]])) {
-#         cat(sprintf("%7.4f", x$Step2[[i]][j, k]), "\t",
-#             sep = "")
-#       }
-#       cat("\n\t")
-#     }
-#     cat("\n")
-#   }
-# 
-#   cat(cli::rule(center = "Step 3 - Equality of the mean values and variances", line = 2), "\n\n",
-#       cli::boxx(c("1. H0: Difference between group means is zero",
-#                   "2. H0: Log of the ratio of the group variances is zero"),
-#                 float = "center"),
-#       sep = "")
-# 
-#   cat("\n\nEquality of the means:\n", "______________________", sep = "")
-#   for(i in seq_along(x$Step3$Mean_diff)) {
-# 
-#     cat("\n\nGroups: ", names(x$Step3$Mean_diff)[i], "\n\t",
-#         crayon::col_align("", width = l + 2, align = "center"),
-#         crayon::col_align("", 10, align = "center"), "\t",
-#         crayon::col_align("Critical Value(s)", 8*(ncol(x$Step3$Mean_diff[[1]]) - 1), align = "center"), "\n\t",
-#         crayon::col_align("Construct", width = l + 2, align = "center"),
-#         crayon::col_align("Mean diff.", 11, align = "center"), "\t",
-#         sep = "")
-# 
-#     for(j in colnames(x$Step3$Mean_diff[[1]][-1])) {
-#       cat(crayon::col_align(j, 6, align = "center"), "\t", sep = "")
-#     }
-#     cat("\n\t")
-# 
-#     for(j in 1:nrow(x$Step3$Mean_diff[[i]])) {
-#       cat(crayon::col_align(row.names(x$Step3$Mean_diff[[i]])[j], l + 2), ": ",
-#           crayon::col_align(sprintf("%7.4f", x$Step3$Mean_diff[[i]][j, "Diff_mean"]), 11), sep = "")
-#       for(k in 2:ncol(x$Step3$Mean_diff[[i]])) {
-#         cat(sprintf("%7.4f", x$Step3$Mean_diff[[i]][j, k]), "\t",
-#             sep = "")
-#       }
-#       cat("\n\t")
-#     }
-#     cat("\n")
-#   }
-# 
-#   cat("\n\nEquality of the variances:\n", "__________________________", sep = "")
-#   for(i in seq_along(x$Step3$Var_diff)) {
-# 
-#     cat("\n\nGroups: ", names(x$Step3$Var_diff)[i], "\n\t",
-#         crayon::col_align("", width = l + 2, align = "center"),
-#         crayon::col_align("", 10, align = "center"), "\t",
-#         crayon::col_align("Critical Value(s)", 8*(ncol(x$Step3$Var_diff[[1]]) - 1), align = "center"), "\n\t",
-#         crayon::col_align("Construct", width = l + 2, align = "center"),
-#         crayon::col_align("Var diff.", 11, align = "center"), "\t",
-#         sep = "")
-# 
-#     for(j in colnames(x$Step3$Var_diff[[1]][-1])) {
-#       cat(crayon::col_align(j, 6, align = "center"), "\t", sep = "")
-#     }
-#     cat("\n\t")
-# 
-#     for(j in 1:nrow(x$Step3$Var_diff[[i]])) {
-#       cat(crayon::col_align(row.names(x$Step3$Var_diff[[i]])[j], l + 2), ": ",
-#           crayon::col_align(sprintf("%7.4f", x$Step3$Var_diff[[i]][j, "Diff_log_var"]), 11), sep = "")
-#       for(k in 2:ncol(x$Step3$Var_diff[[i]])) {
-#         cat(sprintf("%7.4f", x$Step3$Var_diff[[i]][j, k]), "\t",
-#             sep = "")
-#       }
-#       cat("\n\t")
-#     }
-#     cat("\n")
-#   }
-# }
-
+testMICOM.cSEMResults_2ndorder <- function(
+  .object               = args_default()$.object,
+  .alpha                = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs                 = args_default()$.runs,
+  .verbose              = args_default()$.verbose
+) {
+  stop("Not yet implemented", call. = FALSE)
+}

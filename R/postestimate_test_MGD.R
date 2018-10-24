@@ -12,6 +12,7 @@
 #'  .runs               = args_default()$.runs,
 #'  .saturated          = args_default()$.saturated,
 #'  .type_vcv           = args_default()$.type_vcv
+#'  .verbose            = args_default()$.verbose
 #'  ) 
 #' 
 #' @inheritParams csem_arguments
@@ -58,23 +59,24 @@ testMGD <- function(
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated,
   .type_vcv              = args_default()$.type_vcv,
-  .show_progress         = args_default()$.show_progress
+  .verbose               = args_default()$.verbose
 ){
+  
+  # Implementation is based on:
+  # Klesel & Schuberth (forthcoming) - (TODO) name
+  
+  if(.verbose) {
+    cat(rule(center = "Test for multigroup differences based on Klesel (forthcoming)",
+             line = "bar3"), "\n\n")
+  }
   UseMethod("testMGD")
+  
 }
 
 #' @describeIn testMGD (TODO)
 #' @export
 
-testMGD.cSEMResults_default <- function(
-  .object                = args_default()$.object,
-  .alpha                 = args_default()$.alpha,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .runs                  = args_default()$.runs,
-  .saturated             = args_default()$.saturated,
-  .type_vcv              = args_default()$.type_vcv,
-  .show_progress         = args_default()$.show_progress
-) { 
+testMGD.cSEMResults_default <- function(.object = args_default()$.object) { 
   stop("At least two groups required.", call. = FALSE)
 }
 
@@ -88,27 +90,29 @@ testMGD.cSEMResults_multi <- function(
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated,
   .type_vcv              = args_default()$.type_vcv,
-  .show_progress         = args_default()$.show_progress
+  .verbose               = args_default()$.verbose
 ){
   ### Checks and errors ========================================================
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
   match.arg(.type_vcv, args_default(.choices = TRUE)$.type_vcv)
   
   # Check if any of the group estimates are inadmissible
-  if(sum(sapply(verify(.object), sum)) != 0) {
+  if(sum(unlist(verify(.object))) != 0) {
     stop("Initial estimation results for at least one group are inadmissible.\n", 
          "See `verify(.object)` for details.",  call. = FALSE)
   }
   
   # Check if data for different groups is identical
-  if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
-                      function(x){ identical(x[[1]], x[[2]])})){
-    stop("At least two groups are identical.", call. = FALSE)
+  if(.verbose) {
+    if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
+                        function(x){ identical(x[[1]], x[[2]])})){
+      warning("At least two groups are identical.", call. = FALSE)
+    } 
   }
   
   ### Calculation===============================================================
   ## Get the fitted values
-  fit <- fit(.object = .object, .saturated = .saturated, .type_vcv = .type_vcv)
+  fit <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
   
   ## Compute the test statistics
   teststat <- c(
@@ -117,19 +121,19 @@ testMGD.cSEMResults_multi <- function(
   )
   
   # Put data of each groups in a list and combine
-  data_all_list  <- lapply(.object, function(x) x$Information$Data)
-  data_all       <- do.call(rbind, data_all_list)
+  X_all_list  <- lapply(.object, function(x) x$Information$Data)
+  X_all       <- do.call(rbind, X_all_list)
 
   # Collect initial arguments (from the first object, but could be any other)
   arguments <- .object[[1]]$Information$Arguments
   
   # Create a vector "id" to be used to randomly select groups (permutate) and
   # set id as an argument in order to identify the groups.
-  id <- rep(1:length(data_all_list), sapply(data_all_list, nrow))
+  id <- rep(1:length(X_all_list), sapply(X_all_list, nrow))
   arguments[[".id"]] <- "id"
 
   # Start progress bar if required
-  if(.show_progress){
+  if(.verbose){
     pb <- txtProgressBar(min = 0, max = .runs, style = 3)
   }
   
@@ -142,7 +146,7 @@ testMGD.cSEMResults_multi <- function(
     i <- i + 1
     
     # Permutate data
-    X_temp <- cbind(data_all, id = sample(id))
+    X_temp <- cbind(X_all, id = sample(id))
     
     # Replace the old dataset by the new permutated dataset
     arguments[[".data"]] <- X_temp
@@ -151,10 +155,10 @@ testMGD.cSEMResults_multi <- function(
     Est_temp <- do.call(csem, arguments)   
     
     # Check status
-    status_code <- sum(sapply(verify(Est_temp), sum))
+    status_code <- sum(unlist(verify(Est_temp)))
     
     # Distinguish depending on how inadmissibles should be handled
-    if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
+    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
       fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
@@ -163,7 +167,7 @@ testMGD.cSEMResults_multi <- function(
         "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
       )
       
-    } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
+    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
       ref_dist[[i]] <- NULL
       
@@ -181,14 +185,14 @@ testMGD.cSEMResults_multi <- function(
       stop("Not enough admissible result.", call. = FALSE)
     }
     
-    if(.show_progress){
+    if(.verbose){
       setTxtProgressBar(pb, i)
     }
     
   } # END repeat 
   
   # close progress bar
-  if(.show_progress){
+  if(.verbose){
     close(pb)
   }
   
@@ -205,8 +209,12 @@ testMGD.cSEMResults_multi <- function(
     "Test_statistic"     = teststat,
     "Critical_value"     = critical_values, 
     "Decision"           = decision, 
-    "Number_admissibles" = ncol(ref_dist_matrix),
-    "Total_runs"         = i + n_inadmissibles
+    "Information"        = list(
+      "Number_admissibles"    = ncol(ref_dist_matrix),
+      "Total_runs"            = i + n_inadmissibles,
+      "Group_names"           = names(.object),
+      "Number_of_observations"= sapply(X_all_list, nrow)
+    )
   )
   
   class(out) <- "cSEMTestMGD"
@@ -223,7 +231,7 @@ testMGD.cSEMResults_2ndorder <- function(
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated,
   .type_vcv              = args_default()$.type_vcv,
-  .show_progress         = args_default()$.show_progress
+  .verbose               = args_default()$.verbose
 ){
  stop("Not yet implemented.")
 }

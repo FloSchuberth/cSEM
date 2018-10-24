@@ -13,6 +13,7 @@
 #'  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
 #'  .runs                  = args_default()$.runs, 
 #'  .saturated             = args_default()$.saturated,
+#'  .verbose               = args_default()$.verbose
 #' )
 #' 
 #' @inheritParams  csem_arguments
@@ -36,8 +37,17 @@ testOMF <- function(
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
-  .saturated             = args_default()$.saturated
+  .saturated             = args_default()$.saturated,
+  .verbose               = args_default()$.verbose
 ) {
+  # Implementation is based on:
+  # Dijkstra & Henseler (2015) - Consistent Paritial Least Squares Path Modeling
+  
+  if(.verbose) {
+    cat(rule(center = "Test for overall model Fit based on Dijkstra & Henseler (2015)",
+             line = "bar3"), "\n\n")
+  }
+  
   UseMethod("testOMF")
 }
   
@@ -50,7 +60,7 @@ testOMF.cSEMResults_default <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated,
-  .show_progress         = args_default()$.show_progress
+  .verbose               = args_default()$.verbose
 ){
   ## Check arguments
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
@@ -87,7 +97,7 @@ testOMF.cSEMResults_default <- function(
   arguments <- .object$Information$Arguments
   
   # Start progress bar if required
-  if(.show_progress){
+  if(.verbose){
     pb <- txtProgressBar(min = 0, max = .runs, style = 3)
   }
   
@@ -111,10 +121,10 @@ testOMF.cSEMResults_default <- function(
     # is of class cSEMResults_2ndorder.
     
     # Check status
-    status_code <- verify(Est_temp)
+    status_code <- sum(verify(Est_temp))
     
     # Distinguish depending on how inadmissibles should be handled
-    if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
+    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
       S_temp         <- Est_temp$Estimates$Indicator_VCV
@@ -128,7 +138,7 @@ testOMF.cSEMResults_default <- function(
         "dL"   = dL(S_temp, Sigma_hat_temp)
       ) 
       
-    } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
+    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
       ref_dist[[i]] <- NULL
       
@@ -145,14 +155,14 @@ testOMF.cSEMResults_default <- function(
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
-    if(.show_progress){
+    if(.verbose){
       setTxtProgressBar(pb, i)
     }
     
   } # END repeat 
   
   # close progress bar
-  if(.show_progress){
+  if(.verbose){
     close(pb)
   }
   
@@ -169,8 +179,10 @@ testOMF.cSEMResults_default <- function(
     "Test_statistic"     = teststat,
     "Critical_value"     = critical_values, 
     "Decision"           = decision, 
-    "Number_admissibles" = ncol(ref_dist_matrix),
-    "Total_runs"         = i + n_inadmissibles
+    "Information"        = list(
+      "Number_admissibles" = ncol(ref_dist_matrix),
+      "Total_runs"         = i + n_inadmissibles 
+    )
   )
   
   class(out) <- "cSEMTestOMF"
@@ -186,14 +198,14 @@ testOMF.cSEMResults_multi <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated,
-  .show_progress         = args_default()$.show_progress
+  .verbose               = args_default()$.verbose
 ){
   lapply(.object, testOMF.cSEMResults_default,
          .alpha                = .alpha,
          .handle_inadmissibles = .handle_inadmissibles,
          .runs                 = .runs,
          .saturated            = .saturated,
-         .show_progress        = .show_progress
+         .verbose              = .verbose
          )
 }
 
@@ -206,13 +218,13 @@ testOMF.cSEMResults_2ndorder <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated,
-  .show_progress         = args_default()$.show_progress
+  .verbose               = args_default()$.verbose
 ){
   ## Check arguments
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
 
   ## Check if initial results are inadmissible
-  if(sum(sapply(verify(.object), sum)) != 0) {
+  if(sum(unlist(verify(.object))) != 0) {
     stop("Initial estimation results are inadmissible.\n", 
          "See `verify(.object)` for details.",
          call. = FALSE)
@@ -245,7 +257,7 @@ testOMF.cSEMResults_2ndorder <- function(
   arguments <- x2$Information$Arguments_original
   
   # Start progress bar if required
-  if(.show_progress){
+  if(.verbose){
     pb <- txtProgressBar(min = 0, max = .runs, style = 3)
   }
   
@@ -267,9 +279,9 @@ testOMF.cSEMResults_2ndorder <- function(
     Est_temp <- do.call(csem, arguments)               
     
     # Check status (Note: output of verify for second orders is a list)
-    status_code <- sum(sapply(verify(Est_temp), sum))
+    status_code <- sum(unlist(verify(Est_temp)))
     
-    if(sum(status_code) == 0 | (sum(status_code) != 0 & .handle_inadmissibles == "ignore")) {
+    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
       S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
@@ -283,7 +295,7 @@ testOMF.cSEMResults_2ndorder <- function(
         "dL"   = dL(S_temp, Sigma_hat_temp)
       )  
       
-    } else if(sum(status_code) != 0 & .handle_inadmissibles == "drop") {
+    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
       ref_dist[[i]] <- NULL
       
@@ -300,14 +312,14 @@ testOMF.cSEMResults_2ndorder <- function(
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
-    if(.show_progress){
+    if(.verbose){
       setTxtProgressBar(pb, i)
     }
     
   } # END repeat 
   
   # close progress bar
-  if(.show_progress){
+  if(.verbose){
     close(pb)
   }
 
@@ -324,8 +336,10 @@ testOMF.cSEMResults_2ndorder <- function(
     "Test_statistic"     = teststat,
     "Critical_value"     = critical_values, 
     "Decision"           = decision, 
-    "Number_admissibles" = ncol(ref_dist_matrix),
-    "Total_runs"         = i + n_inadmissibles
+    "Information"        = list(
+      "Number_admissibles" = ncol(ref_dist_matrix),
+      "Total_runs"         = i + n_inadmissibles 
+    )
   ) 
   
   class(out) <- "cSEMTestOMF"

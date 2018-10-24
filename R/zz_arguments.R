@@ -114,7 +114,6 @@
 #' @param .runs Integer. How many runs should be performed? Defaults to `499`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
-#' @param .show_progress Logical. Show progress bar. Defaults to `TRUE`.
 #' @param .stage Character string. The stage the model is need for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .terms A vector of construct names to be classified.
@@ -213,7 +212,6 @@ args_default <- function(
     .runs                    = 499,
     .S                       = NULL,
     .saturated               = FALSE,
-    .show_progress           = TRUE,
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
     .verbose                 = TRUE,
