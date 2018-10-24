@@ -153,8 +153,6 @@ reliabilities are estimated by \code{csem()}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 
-\item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
-
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 

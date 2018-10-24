@@ -5,21 +5,18 @@
 \title{Test measurement invariance of composites}
 \usage{
 testMICOM(
-  .object=args_default()$.object,
-  .runs      = args_default()$.runs,
-  .alpha        = args_default()$.alpha,
-  .show_progress = args_default()$.show_progress,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles
+ .object               = args_default()$.object,
+ .alpha                = args_default()$.alpha,
+ .handle_inadmissibles = args_default()$.handle_inadmissibles,
+ .runs                 = args_default()$.runs,
+ .verbose              = args_default()$.verbose
+ )
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
-\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
-
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
-
-\item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -28,9 +25,21 @@ number of results shown <= .runs). For "\emph{ignore}" all results are returned
 even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
 bootstrapping continues until there are .runs admissible solutions.
 Defaults to "\emph{drop}".}
+
+\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
+
+\item{.verbose}{Logical. Should information be printed to the console? Defaults
+to \code{TRUE}.}
 }
 \value{
 An object of class "testMICOM"
+
+An object of class "testMICOM" is a named list containing the following list element:
+\describe{
+\item{\strong{Step2}}{A list containing the results of the test for compositional invariance (Step 2).}
+\item{\strong{Step3}}{A list containing the results of the test for mean and variance equality (Step 3).}
+\item{\strong{Meta_information}}{A list of additional information on the test.}
+}
 }
 \description{
 This functions performs the test for measurement invariance of composites
@@ -42,7 +51,7 @@ The test is only meaningful for composite models.
 If more than two groups are to be compared issues related to multiple testing
 should be taken into account.
 
-The number of permutation runs is defaults to 100 for performance reasons.
+The number of permutation runs is defaults to \code{args_default()$.runs} for performance reasons.
 According to Henseler et al. (2016) the number of permutations should be at least 5000 for
 assessment to be reliable.
 }

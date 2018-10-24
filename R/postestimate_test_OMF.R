@@ -13,6 +13,7 @@
 #'  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
 #'  .runs                  = args_default()$.runs, 
 #'  .saturated             = args_default()$.saturated,
+#'  .verbose               = args_default()$.verbose
 #' )
 #' 
 #' @inheritParams  csem_arguments
@@ -36,8 +37,17 @@ testOMF <- function(
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
-  .saturated             = args_default()$.saturated
+  .saturated             = args_default()$.saturated,
+  .verbose               = args_default()$.verbose
 ) {
+  # Implementation is based on:
+  # Dijkstra & Henseler (2015) - Consistent Paritial Least Squares Path Modeling
+  
+  if(.verbose) {
+    cat(rule(center = "Test for overall model Fit based on Dijkstra & Henseler (2015)",
+             line = "bar3"), "\n\n")
+  }
+  
   UseMethod("testOMF")
 }
   
@@ -50,7 +60,7 @@ testOMF.cSEMResults_default <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated,
-  .show_progress         = args_default()$.show_progress
+  .verbose               = args_default()$.verbose
 ){
   ## Check arguments
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
@@ -87,7 +97,7 @@ testOMF.cSEMResults_default <- function(
   arguments <- .object$Information$Arguments
   
   # Start progress bar if required
-  if(.show_progress){
+  if(.verbose){
     pb <- txtProgressBar(min = 0, max = .runs, style = 3)
   }
   
@@ -145,14 +155,14 @@ testOMF.cSEMResults_default <- function(
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
-    if(.show_progress){
+    if(.verbose){
       setTxtProgressBar(pb, i)
     }
     
   } # END repeat 
   
   # close progress bar
-  if(.show_progress){
+  if(.verbose){
     close(pb)
   }
   
@@ -186,14 +196,14 @@ testOMF.cSEMResults_multi <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated,
-  .show_progress         = args_default()$.show_progress
+  .verbose               = args_default()$.verbose
 ){
   lapply(.object, testOMF.cSEMResults_default,
          .alpha                = .alpha,
          .handle_inadmissibles = .handle_inadmissibles,
          .runs                 = .runs,
          .saturated            = .saturated,
-         .show_progress        = .show_progress
+         .verbose              = .verbose
          )
 }
 
@@ -206,7 +216,7 @@ testOMF.cSEMResults_2ndorder <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .runs                  = args_default()$.runs,
   .saturated             = args_default()$.saturated,
-  .show_progress         = args_default()$.show_progress
+  .verbose               = args_default()$.verbose
 ){
   ## Check arguments
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
@@ -245,7 +255,7 @@ testOMF.cSEMResults_2ndorder <- function(
   arguments <- x2$Information$Arguments_original
   
   # Start progress bar if required
-  if(.show_progress){
+  if(.verbose){
     pb <- txtProgressBar(min = 0, max = .runs, style = 3)
   }
   
@@ -300,14 +310,14 @@ testOMF.cSEMResults_2ndorder <- function(
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
-    if(.show_progress){
+    if(.verbose){
       setTxtProgressBar(pb, i)
     }
     
   } # END repeat 
   
   # close progress bar
-  if(.show_progress){
+  if(.verbose){
     close(pb)
   }
 
