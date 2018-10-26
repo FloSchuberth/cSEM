@@ -76,7 +76,7 @@ testMICOM.cSEMResults_multi <- function(
   .verbose              = args_default()$.verbose
 ) {
   ### Checks and errors ========================================================
-  if(sum(unlink(verify(.object))) != 0) {
+  if(sum(unlist(verify(.object))) != 0) {
     stop("Initial estimation results for at least one group are inadmissible.\n", 
          "See `verify(.object)` for details.",  call. = FALSE)
   }
