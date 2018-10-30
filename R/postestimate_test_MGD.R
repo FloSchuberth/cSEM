@@ -201,6 +201,7 @@ testMGD.cSEMResults_multi <- function(
                                               # so only the admissibles remain.
   ## Compute critical values (Result is a (2 x p) matrix, where n is the number
   ## of quantiles that have been computed (1 by default)
+  .alpha <- .alpha[order(.alpha)]
   critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
                                                probs =  1-.alpha, drop = FALSE)
   

@@ -223,8 +223,8 @@ testMICOM.cSEMResults_multi <- function(
                       probs = 1-.alpha, drop = FALSE)
   
   ## Decision
-  decision <- mapply(function(x, y) x < y,
-                     x = c,
+  decision <- mapply(function(x, y) x > y, # dont reject (TRUE) if the value of 
+                     x = c,                # the teststat is larger than the critical value
                      y = critical_values_step2,
                      SIMPLIFY = FALSE)
   
@@ -237,9 +237,8 @@ testMICOM.cSEMResults_multi <- function(
   # Update arguments
   arguments[[".data"]] <- X
   arguments[[".id"]]   <- NULL
-
   
-  # Estimate model using pooled data set,
+  # Estimate model using pooled data set
   Est <- do.call(csem, arguments)
   
   # Procedure below:
@@ -301,18 +300,25 @@ testMICOM.cSEMResults_multi <- function(
   # dataset
   mv_o <- lapply(mv, function(x) lapply(x, function(y) y[1, ]))
 
-  # Compute quantiles/critical values
+  ## Compute quantiles/critical values
+  # Order alphas (decreasing order)
+  .alpha <- .alpha[order(.alpha)]
+  probs <- c()
+  for(i in seq_along(.alpha)) { 
+    probs <- c(probs, .alpha[i]/2, 1 - .alpha[i]/2) 
+  }
+
   critical_values_step3 <- lapply(mv, function(x) lapply(x, function(y) y[-1, ])) %>% 
-    lapply(function(x) lapply(x, function(y) matrixStats::colQuantiles(y, probs =  1-.alpha, drop = FALSE)))
+    lapply(function(x) lapply(x, function(y) matrixStats::colQuantiles(y, probs =  probs, drop = FALSE)))
 
   ## Compare critical value and teststatistic
   # For Mean
-  decision_m <- mapply(function(x, y) x < y,
-                    x = mv_o[[1]],
-                    y = critical_values_step3[[1]],
-                    SIMPLIFY = FALSE)
+  decision_m <- mapply(function(x, y) abs(x) < y[, seq(2, length(.alpha)*2, by = 2)],
+                       x = mv_o[[1]],
+                       y = critical_values_step3[[1]],
+                       SIMPLIFY = FALSE)
   # For Var
-  decision_v <- mapply(function(x, y) x < y,
+  decision_v <- mapply(function(x, y) abs(x) < y[, seq(2, length(.alpha)*2, by = 2)],
                        x = mv_o[[2]],
                        y = critical_values_step3[[2]],
                        SIMPLIFY = FALSE)
