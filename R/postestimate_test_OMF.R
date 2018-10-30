@@ -166,13 +166,20 @@ testOMF.cSEMResults_default <- function(
     close(pb)
   }
   
-  ## Compute critical values 
-  ref_dist_matrix <- do.call(cbind, ref_dist)
+  # Combine
+  ref_dist_matrix <- do.call(cbind, ref_dist) # note: this drops the NULL elements,
+  # so only the admissibles remain.
+  ## Compute critical values (Result is a (2 x p) matrix, where n is the number
+  ## of quantiles that have been computed (1 by default)
   critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
                                                probs =  1-.alpha, drop = FALSE)
   
   ## Compare critical value and teststatistic
-  decision <- teststat < critical_values
+  decision <- teststat < critical_values # a logical (2 x p) matrix with each column
+                                         # representing the decision for one
+                                         # significance level. TRUE = no evidence 
+                                         # against the H0 --> not reject
+                                         # FALSE --> reject
   
   # Return output
   out <- list(
@@ -323,13 +330,20 @@ testOMF.cSEMResults_2ndorder <- function(
     close(pb)
   }
 
-  ## Compute critical values 
-  ref_dist_matrix <- do.call(cbind, ref_dist)
+  # Combine
+  ref_dist_matrix <- do.call(cbind, ref_dist) # note: this drops the NULL elements,
+  # so only the admissibles remain.
+  ## Compute critical values (Result is a (2 x p) matrix, where n is the number
+  ## of quantiles that have been computed (1 by default)
   critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
                                                probs =  1-.alpha, drop = FALSE)
   
   ## Compare critical value and teststatistic
-  decision <- teststat < critical_values
+  decision <- teststat < critical_values # a logical (2 x p) matrix with each column
+                                         # representing the decision for one
+                                         # significance level. TRUE = no evidence 
+                                         # against the H0 --> not reject
+                                         # FALSE --> reject
   
   # Return output
   out <- list(

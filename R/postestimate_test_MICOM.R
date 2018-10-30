@@ -88,7 +88,7 @@ testMICOM.cSEMResults_multi <- function(
   }
 
   if(.verbose & length(.object) > 2) {
-    warning("\tComparing multiple groups inflates the familywise error rate.\n",
+    warning("\tComparing more than two groups inflates the familywise error rate.\n",
             "\tInterpret statistical significance with caution.\n",
             "\n\tFuture versions of the package will likely include\n",
             "\tappropriate correction options.",
@@ -96,16 +96,16 @@ testMICOM.cSEMResults_multi <- function(
   }
   
   ### Preparation ==============================================================
-  # Put data of each groups in a list and combine
-  X_all_list  <- lapply(.object, function(x) x$Information$Data)
-  X_all       <- do.call(rbind, X_all_list)
+  ## Get data (pooled, potentially unstandardized data)
+  X <- .object$Data_1$Information$Data_pooled 
   
   # Collect initial arguments (from the first object, but could be any other)
   arguments <- .object[[1]]$Information$Arguments
   
   # Create a vector "id" to be used to randomly select groups (permutate) and
   # set id as an argument in order to identify the groups.
-  id <- rep(1:length(X_all_list), sapply(X_all_list, nrow))
+  X_list <- lapply(.object, function(x) x$Information$Data)
+  id <- rep(1:length(X_list), sapply(X_list, nrow))
   arguments[[".id"]] <- "id"
   
   ### Step 1 - Configural invariance ===========================================
@@ -115,22 +115,24 @@ testMICOM.cSEMResults_multi <- function(
 
   ### Step 2 - Compositional invariance ========================================
   # Procedure: see page 414 and 415 of the paper
-  ## Compute weights for each group and use these to compute proxies/scores using
-  # the pooled data
+  ## Compute proxies/scores using the pooled data 
+  # (it does not matter if the data is scaled or unscaled as this does not 
+  # affect the correlation)
 
-  H <- lapply(.object, function(x) X_all %*% t(x$Estimates$Weight_estimates))
-  
+  H <- lapply(.object, function(x) X %*% t(x$Estimates$Weight_estimates))
+
   ## Compute the correlation of the scores for all group combinations
   # Get the scores for all group combinations
   H_combn <- utils::combn(H, 2, simplify = FALSE)
 
   # Compute the correlation c for each group combination
   c <- lapply(H_combn, function(x) diag(cor(x[[1]], x[[2]])))
-
+  
   # Set the names for each group combination
-  names(c) <- utils::combn(names(H), 2, FUN = paste0, collapse = "_", simplify = FALSE)
-
-  ## Permutation ---------------------------------------------------------------
+  names(c) <- utils::combn(names(.object), 2, FUN = paste0, 
+                           collapse = "_", simplify = FALSE)
+ 
+## Permutation ---------------------------------------------------------------
   # Start progress bar
   if(.verbose){
     pb <- txtProgressBar(min = 0, max = .runs, style = 3)
@@ -145,7 +147,7 @@ testMICOM.cSEMResults_multi <- function(
     i <- i + 1
     
     # Permutate data
-    X_temp <- cbind(X_all, id = sample(id))
+    X_temp <- cbind(X, id = sample(id))
     
     # Replace the old dataset by the new permutated dataset
     arguments[[".data"]] <- X_temp
@@ -162,8 +164,11 @@ testMICOM.cSEMResults_multi <- function(
       # not ok
       
       ## Compute weights for each group and use these to compute proxies/scores using
-      # the pooled data (= the original combined data)
-      H_temp <- lapply(Est_temp, function(x) X_all %*% t(x$Estimates$Weight_estimates))
+      # the pooled data (= the original combined data). Note that these
+      # scores are unstandardized, however since we consider the correlation 
+      # it does not matter whether we consider standardized or unstandardized 
+      # proxies
+      H_temp <- lapply(Est_temp, function(x) X %*% t(x$Estimates$Weight_estimates))
       
       ## Compute the correlation of the scores for all group combinations
       # Get the scores for all group combinations
@@ -173,7 +178,8 @@ testMICOM.cSEMResults_multi <- function(
       c_temp <- lapply(H_combn_temp, function(x) diag(cor(x[[1]], x[[2]])))
       
       # Set the names for each group combination
-      names(c_temp) <- utils::combn(names(H_temp), 2, FUN = paste0, collapse = "_", simplify = FALSE)
+      names(c_temp) <- utils::combn(names(H_temp), 2, FUN = paste0, 
+                                    collapse = "_", simplify = FALSE)
       
       ref_dist[[i]] <- c_temp
       
@@ -213,12 +219,14 @@ testMICOM.cSEMResults_multi <- function(
   temp <- do.call(rbind, lapply(ref_dist, function(x) do.call(rbind, x)))
   temp <- split(as.data.frame(temp), rownames(temp))
   
-  step2_out <- lapply(lapply(temp, as.matrix), matrixStats::colQuantiles, 
+  critical_values_step2 <- lapply(lapply(temp, as.matrix), matrixStats::colQuantiles, 
                       probs = 1-.alpha, drop = FALSE)
-  step2_out <- mapply(function(x, y) cbind("c" = y, x),
-                      x = step2_out,
-                      y = c,
-                      SIMPLIFY = FALSE)
+  
+  ## Decision
+  decision <- mapply(function(x, y) x < y,
+                     x = c,
+                     y = critical_values_step2,
+                     SIMPLIFY = FALSE)
   
   # if(.verbose) {
   #   cat("\nCompositional invariance test finished.\n",
@@ -226,129 +234,117 @@ testMICOM.cSEMResults_multi <- function(
   # }
   
   ### Step 3 - Equal mean values and variances==================================
-# 
-#   H <- workhorse(
-#     .data                    = data_ordered[, -which(names(data_ordered) == .group_var)],
-#     .model                   = csem_model,
-#     .approach_cf             = "dist_euclid",
-#     .approach_nl             = NULL,
-#     .approach_paths          = NULL,
-#     .approach_weights        = approach_weights,
-#     .disattenuate            = FALSE,
-#     .estimate_structural     = FALSE,
-#     .ignore_structural_model = FALSE,
-#     .iter_max                = 100,
-#     .normality               = TRUE,
-#     .PLS_mode                = NULL,
-#     .PLS_weight_scheme_inner = "centroid",
-#     .tolerance               = 1e-06
-#   )$Estimates$Proxies
-# 
-#   # H <- workhorse(.data  = data_ordered[, -which(names(data_ordered) == .group_var)],
-#   #                .model = csem_model,
-#   #                .approach_weights    = approach_weights,
-#   #                .PLS_weight_scheme_inner = PLS_weight_scheme_inner,
-#   #                .estimate_structural = FALSE,
-#   #                ...)$Estimates$Proxies
-# 
-#   temp <- split(x = as.data.frame(H), rep(unique(data_ordered[, .group_var]),
-#                                           times = table(data_ordered[, .group_var])))
-#   temp_m <- lapply(temp, colMeans)
-#   temp_v <- lapply(temp, function(x) {
-#     a <- matrixStats::colVars(as.matrix(x))
-#     names(a) <- colnames(x)
-#     a
-#   })
-# 
-#   # Make the combinations of list elements
-#   temp_m <- combn(temp_m, 2, simplify = FALSE)
-#   temp_v <- combn(temp_v, 2, simplify = FALSE)
-# 
-#   # Compute difference for each group combination
-#   m <- lapply(temp_m, function(x) x[[1]] - x[[2]])
-#   v <- lapply(temp_v, function(x) x[[1]] - x[[2]])
-# 
-#   # Get the names
-#   names(m) <- names(v) <- combn(names(temp), 2, FUN = paste0, collapse = "_", simplify = FALSE)
-# 
-#   ### Permutation --------------------------------------------------------------
-#   if(.verbose) {
-#     cat("\nProgress:\n", sep = "")
-#   }
-# 
-#   perm2 <- lapply(1:.runs, function(x) {
-# 
-#     if(.verbose & x %in% seq(0, .runs, by = 10)) {
-#       cat(x, " / ", .runs, "\n", sep = "")
-#     }
-# 
-#     H <- workhorse(
-#       .data                    = data_no_group_var[sample(x = nrow(data_no_group_var)), ],
-#       .model                   = csem_model,
-#       .approach_cf             = "dist_euclid",
-#       .approach_nl             = NULL,
-#       .approach_paths          = NULL,
-#       .approach_weights        = approach_weights,
-#       .disattenuate            = FALSE,
-#       .estimate_structural     = FALSE,
-#       .ignore_structural_model = FALSE,
-#       .iter_max                = 100,
-#       .normality               = TRUE,
-#       .PLS_mode                = NULL,
-#       .PLS_weight_scheme_inner = "centroid",
-#       .tolerance               = 1e-06
-#     )$Estimates$Proxies
-# 
-#     temp <- split(x = as.data.frame(H), rep(unique(data_ordered[, .group_var]),
-#                                             times = table(data_ordered[, .group_var])))
-#     temp_m <- lapply(temp, colMeans)
-#     temp_v <- lapply(temp, function(x) {
-#       a <- matrixStats::colVars(as.matrix(x))
-#       names(a) <- colnames(x)
-#       a
-#     })
-# 
-#     # Make the combinations of list elements
-#     temp_m <- combn(temp_m, 2, simplify = FALSE)
-#     temp_v <- combn(temp_v, 2, simplify = FALSE)
-# 
-#     # Compute difference for each group combination
-#     m <- lapply(temp_m, function(x) x[[1]] - x[[2]])
-#     v <- lapply(temp_v, function(x) log(x[[1]]) - log(x[[2]]))
-# 
-#     # Get the names
-#     names(m) <- names(v) <- combn(names(temp), 2, FUN = paste0, collapse = "_", simplify = FALSE)
-#     list("m" = m, "v" = v)
-#   })
-# 
-#   temp_mv <- lapply(perm2, function(x) lapply(x, function(y) do.call(rbind, y)))
-#   temp_mv <- lapply(purrr::transpose(temp_mv), function(x) do.call(rbind, x))
-# 
-#   temp_m <- split(as.data.frame(temp_mv[["m"]]), names(m))
-#   temp_v <- split(as.data.frame(temp_mv[["v"]]), names(v))
-# 
-#   step3_out_m <- lapply(temp_m, function(x) as.data.frame(t(apply(x, 2, quantile, probs = c(.alpha/2, 1 - .alpha/2)))))
-#   step3_out_m <- mapply(function(x, y) cbind("Diff_mean" = y, x),
-#                       x = step3_out_m,
-#                       y = m,
-#                       SIMPLIFY = FALSE)
-# 
-#   step3_out_v <- lapply(temp_v, function(x) as.data.frame(t(apply(x, 2, quantile, probs = c(.alpha/2, 1 - .alpha/2)))))
-#   step3_out_v <- mapply(function(x, y) cbind("Diff_log_var" = y, x),
-#                         x = step3_out_v,
-#                         y = v,
-#                         SIMPLIFY = FALSE)
-## Results ==================================================================
-  out <- list("Step2"            = step2_out
-              # ,
-              # "Step3"            = list("Mean_diff" = step3_out_m,
-              #                           "Var_diff"  = step3_out_v),
-              # "Meta_information" = list("Number_of_observations" = no_obs,
-              #                           "Number_of_Groups"       = nrow(no_obs) - 1,
-              #                           "Grouping_variable"      = .group_var)
-              )
-  ## Set class
-  class(out) <- "testMICOM"
+  # Update arguments
+  arguments[[".data"]] <- X
+  arguments[[".id"]]   <- NULL
+
+  
+  # Estimate model using pooled data set,
+  Est <- do.call(csem, arguments)
+  
+  # Procedure below:
+  # 1. Create list of original group id's + .runs permutated id's
+  # 2. Extract construct scores, attach ids and convert to data.frame (for split)
+  # 3. Split construct scores by its id column
+  # --- Now the structure is a list of length 1 + .runs each containing a list
+  #     of the same length as there are numbers of groups (often just 2).
+  # 4. Convert group data set to a matrix and delete id column
+  # 5. Compute the mean and the variance for each replication (+ the original data of course)
+  #    and data set for each group.
+  # 6. Transpose list
+  # --- Now we have a list of length 1 + .runs containing two list elements
+  #     "Mean" and "Var" which in turn contain as many list elements as there are
+  #     groups
+  meanvar <- c(list(id), replicate(.runs, sample(id), simplify = FALSE)) %>% 
+    lapply(function(x) as.data.frame(cbind(Est$Estimates$Construct_scores, id = x))) %>% 
+    lapply(function(x) split(x, f = x$id)) %>% 
+    lapply(function(x) lapply(x, function(y) as.matrix(y[, -ncol(y), drop = FALSE]))) %>% 
+    lapply(function(x) lapply(x, function(y) list(
+      "Mean" = colMeans(y), 
+      "Var"  = {tt <- matrixStats::colVars(y); names(tt) <- colnames(y); tt})
+    )) %>% 
+    lapply(function(x) purrr::transpose(x))
+  
+  # Compute the difference of the means for each possible group combination 
+  # and attach a name
+  m <- meanvar %>% 
+    lapply(function(x) {
+      tt <- utils::combn(x[["Mean"]], m = 2, 
+                   FUN = function(y) y[[1]] - y[[2]], 
+                   simplify = FALSE)
+      names(tt) <- utils::combn(names(.object), m = 2, FUN = paste0, 
+                         collapse = "_", simplify = FALSE)
+      tt
+    })
+  
+  # Compute the log difference of the variances for each possible group combination
+  # and attach a name
+  v <- meanvar %>% 
+    lapply(function(x) {
+      tt <- utils::combn(x[["Var"]], m = 2, 
+                         FUN = function(y) log(y[[1]]) - log(y[[2]]), 
+                         simplify = FALSE)
+      names(tt) <- utils::combn(names(.object), m = 2, FUN = paste0, 
+                                collapse = "_", simplify = FALSE)
+      tt
+    })
+  
+  # Combine in a list and bind (log) differences for each replication in a list
+  mv <- list("Mean" = m, "Var"= v) %>% 
+    lapply(function(x) lapply(x, function(y) do.call(rbind, y))) %>% 
+    lapply(function(x) cbind(as.data.frame(do.call(rbind, x), row.names = FALSE), 
+                             id = rownames(do.call(rbind, x)))) %>% 
+    lapply(function(x) split(x, f = x$id)) %>% 
+    lapply(function(x) lapply(x, function(y) as.matrix(y[, -ncol(y), drop = FALSE])))
+  
+  # Extract the original group differences. This is the first row of each group
+  # dataset
+  mv_o <- lapply(mv, function(x) lapply(x, function(y) y[1, ]))
+
+  # Compute quantiles/critical values
+  critical_values_step3 <- lapply(mv, function(x) lapply(x, function(y) y[-1, ])) %>% 
+    lapply(function(x) lapply(x, function(y) matrixStats::colQuantiles(y, probs =  1-.alpha, drop = FALSE)))
+
+  ## Compare critical value and teststatistic
+  # For Mean
+  decision_m <- mapply(function(x, y) x < y,
+                    x = mv_o[[1]],
+                    y = critical_values_step3[[1]],
+                    SIMPLIFY = FALSE)
+  # For Var
+  decision_v <- mapply(function(x, y) x < y,
+                       x = mv_o[[2]],
+                       y = critical_values_step3[[2]],
+                       SIMPLIFY = FALSE)
+
+  # Return output
+  out <- list(
+    "step2" = list(
+      "Test_statistic"     = c,
+      "Critical_value"     = critical_values_step2, 
+      "Decision"           = decision 
+    ),
+    "step3" = list(
+      "Mean" = list(
+        "Test_statistic"     = mv_o$Mean,
+        "Critical_value"     = critical_values_step3$Mean, 
+        "Decision"           = decision_m
+      ),
+      "Var" = list(
+        "Test_statistic"     = mv_o$Var,
+        "Critical_value"     = critical_values_step3$Var, 
+        "Decision"           = decision_v
+      )
+    ),
+    "Information" = list(
+      "Number_admissibles"    = length(ref_dist),
+      "Total_runs"            = i + n_inadmissibles,
+      "Group_names"           = names(.object),
+      "Number_of_observations"= sapply(X_list, nrow)
+    ) 
+  )
+  
+  class(out) <- "cSEMTestMICOM"
   return(out)
 }
 
