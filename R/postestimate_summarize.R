@@ -35,7 +35,7 @@ summarize.cSEMResults_default <- function(.object) {
   
   path_estimates <- data.frame(
     "Name"           = t(temp)[t(x2$Model$structural) != 0],
-    "Construct_Type" = type,
+    "Construct_type" = type,
     "Estimate"       = t(x1$Path_estimates)[t(x2$Model$structural) != 0 ], 
     stringsAsFactors = FALSE)
   
