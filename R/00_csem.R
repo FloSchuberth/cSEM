@@ -192,6 +192,20 @@ csem <- function(
   # for objects with multiple classes
   if(any(class(.data) == "list") | !is.null(.id)) {
     
+    # Sometimes the original (unstandardized) pooled data set is required 
+    # (e.g. for testMICOM()).
+    # By convention the original, pooled dataset is therefore added to the first 
+    # element of "out" (= results for the first group/dataset)! 
+    # If ".data" was a list of data they are combined to on pooled dataset
+    # If ".data" was originallay pooled and subsequently split by ".id"
+    # The original unsplit data is returned without the id column.
+    
+    out[[1]]$Information$Data_pooled <- if(any(class(.data) == "list")) {
+      as.matrix(do.call(rbind, .data))
+    } else {
+      as.matrix(.data[, -which(colnames(.data) == .id)])
+    }
+    
     class(out) <- c("cSEMResults", "cSEMResults_multi")
     
   } else if(any(model$construct_order == "Second order") && 

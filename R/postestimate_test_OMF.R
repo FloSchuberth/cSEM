@@ -44,7 +44,7 @@ testOMF <- function(
   # Dijkstra & Henseler (2015) - Consistent Paritial Least Squares Path Modeling
   
   if(.verbose) {
-    cat(rule(center = "Test for overall model Fit based on Dijkstra & Henseler (2015)",
+    cat(rule(center = "Test for overall model fit based on Dijkstra & Henseler (2015)",
              line = "bar3"), "\n\n")
   }
   
@@ -104,10 +104,10 @@ testOMF.cSEMResults_default <- function(
   ## Calculate reference distribution
   ref_dist         <- list()
   n_inadmissibles  <- 0
-  i <- 0
+  counter <- 0
   repeat{
     # Counter
-    i <- i + 1
+    counter <- counter + 1
     
     # Draw dataset
     X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
@@ -132,7 +132,7 @@ testOMF.cSEMResults_default <- function(
                             .saturated = .saturated,
                             .type_vcv  = "indicator")
       
-      ref_dist[[i]] <- c(
+      ref_dist[[counter]] <- c(
         "dG"   = dG(S_temp, Sigma_hat_temp),
         "SRMR" = SRMR(S_temp, Sigma_hat_temp),
         "dL"   = dL(S_temp, Sigma_hat_temp)
@@ -140,23 +140,23 @@ testOMF.cSEMResults_default <- function(
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[i]] <- NULL
+      ref_dist[[counter]] <- NULL
       
     } else {# status is not ok and .handle_inadmissibles == "replace"
       # Reset counter and raise number of inadmissibles by 1
-      i <- i - 1
+      counter <- counter - 1
       n_inadmissibles <- n_inadmissibles + 1
     }
     
     # Break repeat loop if .runs results have been created.
     if(length(ref_dist) == .runs) {
       break
-    } else if(i + n_inadmissibles == 10000) { 
+    } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
     if(.verbose){
-      setTxtProgressBar(pb, i)
+      setTxtProgressBar(pb, counter)
     }
     
   } # END repeat 
@@ -166,13 +166,21 @@ testOMF.cSEMResults_default <- function(
     close(pb)
   }
   
-  ## Compute critical values 
-  ref_dist_matrix <- do.call(cbind, ref_dist)
+  # Combine
+  ref_dist_matrix <- do.call(cbind, ref_dist) # note: this drops the NULL elements,
+  # so only the admissibles remain.
+  ## Compute critical values (Result is a (2 x p) matrix, where n is the number
+  ## of quantiles that have been computed (1 by default)
+  .alpha <- .alpha[order(.alpha)]
   critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
                                                probs =  1-.alpha, drop = FALSE)
   
   ## Compare critical value and teststatistic
-  decision <- teststat < critical_values
+  decision <- teststat < critical_values # a logical (2 x p) matrix with each column
+                                         # representing the decision for one
+                                         # significance level. TRUE = no evidence 
+                                         # against the H0 --> not reject
+                                         # FALSE --> reject
   
   # Return output
   out <- list(
@@ -181,7 +189,7 @@ testOMF.cSEMResults_default <- function(
     "Decision"           = decision, 
     "Information"        = list(
       "Number_admissibles" = ncol(ref_dist_matrix),
-      "Total_runs"         = i + n_inadmissibles 
+      "Total_runs"         = counter + n_inadmissibles 
     )
   )
   
@@ -264,10 +272,10 @@ testOMF.cSEMResults_2ndorder <- function(
   ## Calculate reference distribution
   ref_dist         <- list()
   n_inadmissibles  <- 0
-  i <- 0
+  counter <- 0
   repeat{
     # Counter
-    i <- i + 1
+    counter <- counter + 1
     
     # Draw dataset
     X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
@@ -289,7 +297,7 @@ testOMF.cSEMResults_2ndorder <- function(
                             .saturated = .saturated,
                             .type_vcv  = "indicator")
       
-      ref_dist[[i]] <- c(
+      ref_dist[[counter]] <- c(
         "dG"   = dG(S_temp, Sigma_hat_temp),
         "SRMR" = SRMR(S_temp, Sigma_hat_temp),
         "dL"   = dL(S_temp, Sigma_hat_temp)
@@ -297,23 +305,23 @@ testOMF.cSEMResults_2ndorder <- function(
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[i]] <- NULL
+      ref_dist[[counter]] <- NULL
       
     } else {# status is not ok and .handle_inadmissibles == "replace"
       # Reset counter and raise number of inadmissibles by 1
-      i <- i - 1
+      counter <- counter - 1
       n_inadmissibles <- n_inadmissibles + 1
     }
     
     # Break repeat loop if .runs results have been created.
     if(length(ref_dist) == .runs) {
       break
-    } else if(i + n_inadmissibles == 10000) { 
+    } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
     if(.verbose){
-      setTxtProgressBar(pb, i)
+      setTxtProgressBar(pb, counter)
     }
     
   } # END repeat 
@@ -323,13 +331,21 @@ testOMF.cSEMResults_2ndorder <- function(
     close(pb)
   }
 
-  ## Compute critical values 
-  ref_dist_matrix <- do.call(cbind, ref_dist)
+  # Combine
+  ref_dist_matrix <- do.call(cbind, ref_dist) # note: this drops the NULL elements,
+  # so only the admissibles remain.
+  ## Compute critical values (Result is a (2 x p) matrix, where n is the number
+  ## of quantiles that have been computed (1 by default)
+  .alpha <- .alpha[order(.alpha)]
   critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
                                                probs =  1-.alpha, drop = FALSE)
   
   ## Compare critical value and teststatistic
-  decision <- teststat < critical_values
+  decision <- teststat < critical_values # a logical (2 x p) matrix with each column
+                                         # representing the decision for one
+                                         # significance level. TRUE = no evidence 
+                                         # against the H0 --> not reject
+                                         # FALSE --> reject
   
   # Return output
   out <- list(
@@ -338,7 +354,7 @@ testOMF.cSEMResults_2ndorder <- function(
     "Decision"           = decision, 
     "Information"        = list(
       "Number_admissibles" = ncol(ref_dist_matrix),
-      "Total_runs"         = i + n_inadmissibles 
+      "Total_runs"         = counter + n_inadmissibles 
     )
   ) 
   
