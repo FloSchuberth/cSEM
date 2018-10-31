@@ -76,7 +76,15 @@ testMGD <- function(
 #' @describeIn testMGD (TODO)
 #' @export
 
-testMGD.cSEMResults_default <- function(.object = args_default()$.object) { 
+testMGD.cSEMResults_default <- function(
+  .object                = args_default()$.object,
+  .alpha                 = args_default()$.alpha,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .runs                  = args_default()$.runs,
+  .saturated             = args_default()$.saturated,
+  .type_vcv              = args_default()$.type_vcv,
+  .verbose               = args_default()$.verbose
+) { 
   stop("At least two groups required.", call. = FALSE)
 }
 
@@ -140,10 +148,10 @@ testMGD.cSEMResults_multi <- function(
   ## Calculate reference distribution
   ref_dist         <- list()
   n_inadmissibles  <- 0
-  i <- 0
+  counter <- 0
   repeat{
     # Counter
-    i <- i + 1
+    counter <- counter + 1
     
     # Permutate data
     X_temp <- cbind(X_all, id = sample(id))
@@ -162,31 +170,31 @@ testMGD.cSEMResults_multi <- function(
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
       fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
-      ref_dist[[i]] <- c(
+      ref_dist[[counter]] <- c(
         "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
         "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
       )
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[i]] <- NULL
+      ref_dist[[counter]] <- NULL
       
     } else {# status is not ok and .handle_inadmissibles == "replace"
       # Reset counter and raise number of inadmissibles by 1
-      i <- i - 1
+      counter <- counter - 1
       n_inadmissibles <- n_inadmissibles + 1
     }
     
     # Break repeat loop if .runs results have been created.
     if(length(ref_dist) == .runs) {
       break
-    } else if(i + n_inadmissibles == 10000) { 
+    } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
     
     if(.verbose){
-      setTxtProgressBar(pb, i)
+      setTxtProgressBar(pb, counter)
     }
     
   } # END repeat 
@@ -219,7 +227,7 @@ testMGD.cSEMResults_multi <- function(
     "Decision"           = decision, 
     "Information"        = list(
       "Number_admissibles"    = ncol(ref_dist_matrix),
-      "Total_runs"            = i + n_inadmissibles,
+      "Total_runs"            = counter + n_inadmissibles,
       "Group_names"           = names(.object),
       "Number_of_observations"= sapply(X_all_list, nrow)
     )

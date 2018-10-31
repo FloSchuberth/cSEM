@@ -17,7 +17,12 @@ testMGD(
  .verbose            = args_default()$.verbose
  )
 
-\method{testMGD}{cSEMResults_default}(.object = args_default()$.object)
+\method{testMGD}{cSEMResults_default}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .type_vcv = args_default()$.type_vcv,
+  .verbose = args_default()$.verbose)
 
 \method{testMGD}{cSEMResults_multi}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,

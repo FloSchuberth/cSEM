@@ -61,7 +61,13 @@ testMICOM <- function(
 #' @describeIn testMICOM (TODO)
 #' @export
 
-testMICOM.cSEMResults_default <- function(.object = args_default()$.object) {
+testMICOM.cSEMResults_default <- function(
+  .object               = args_default()$.object,
+  .alpha                = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs                 = args_default()$.runs,
+  .verbose              = args_default()$.verbose
+) {
   stop("At least 2 groups required for the MICOM test.", call. = FALSE)
 }
 
@@ -141,10 +147,10 @@ testMICOM.cSEMResults_multi <- function(
   ## Calculate reference distribution
   ref_dist         <- list()
   n_inadmissibles  <- 0
-  i <- 0
+  counter <- 0
   repeat{
     # Counter
-    i <- i + 1
+    counter <- counter + 1
     
     # Permutate data
     X_temp <- cbind(X, id = sample(id))
@@ -181,28 +187,28 @@ testMICOM.cSEMResults_multi <- function(
       names(c_temp) <- utils::combn(names(H_temp), 2, FUN = paste0, 
                                     collapse = "_", simplify = FALSE)
       
-      ref_dist[[i]] <- c_temp
+      ref_dist[[counter]] <- c_temp
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[i]] <- NULL
+      ref_dist[[counter]] <- NULL
       
     } else {# status is not ok and .handle_inadmissibles == "replace"
       # Reset counter and raise number of inadmissibles by 1
-      i <- i - 1
+      counter <- counter - 1
       n_inadmissibles <- n_inadmissibles + 1
     }
     
     # Break repeat loop if .runs results have been created.
     if(length(ref_dist) == .runs) {
       break
-    } else if(i + n_inadmissibles == 10000) { 
+    } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
     
     if(.verbose){
-      setTxtProgressBar(pb, i)
+      setTxtProgressBar(pb, counter)
     }
     
   } # END repeat 
@@ -219,6 +225,8 @@ testMICOM.cSEMResults_multi <- function(
   temp <- do.call(rbind, lapply(ref_dist, function(x) do.call(rbind, x)))
   temp <- split(as.data.frame(temp), rownames(temp))
   
+  # Order alphas (decreasing order)
+  .alpha <- .alpha[order(.alpha)]
   critical_values_step2 <- lapply(lapply(temp, as.matrix), matrixStats::colQuantiles, 
                       probs = .alpha, drop = FALSE) # lower quantile needed, hence 
                                                     # alpha and not 1 - alpha
@@ -297,8 +305,6 @@ testMICOM.cSEMResults_multi <- function(
   mv_o <- lapply(mv, function(x) lapply(x, function(y) y[1, ]))
 
   ## Compute quantiles/critical values
-  # Order alphas (decreasing order)
-  .alpha <- .alpha[order(.alpha)]
   probs <- c()
   for(i in seq_along(.alpha)) { 
     probs <- c(probs, .alpha[i]/2, 1 - .alpha[i]/2) 
@@ -309,12 +315,12 @@ testMICOM.cSEMResults_multi <- function(
 
   ## Compare critical value and teststatistic
   # For Mean
-  decision_m <- mapply(function(x, y) abs(x) < y[, seq(2, length(.alpha)*2, by = 2)],
+  decision_m <- mapply(function(x, y) abs(x) < y[, seq(2, length(.alpha)*2, by = 2), drop = FALSE],
                        x = mv_o[[1]],
                        y = critical_values_step3[[1]],
                        SIMPLIFY = FALSE)
   # For Var
-  decision_v <- mapply(function(x, y) abs(x) < y[, seq(2, length(.alpha)*2, by = 2)],
+  decision_v <- mapply(function(x, y) abs(x) < y[, seq(2, length(.alpha)*2, by = 2), drop = FALSE],
                        x = mv_o[[2]],
                        y = critical_values_step3[[2]],
                        SIMPLIFY = FALSE)
@@ -340,7 +346,7 @@ testMICOM.cSEMResults_multi <- function(
     ),
     "Information" = list(
       "Number_admissibles"    = length(ref_dist),
-      "Total_runs"            = i + n_inadmissibles,
+      "Total_runs"            = counter + n_inadmissibles,
       "Group_names"           = names(.object),
       "Number_of_observations"= sapply(X_list, nrow)
     ) 

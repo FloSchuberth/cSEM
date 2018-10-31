@@ -104,10 +104,10 @@ testOMF.cSEMResults_default <- function(
   ## Calculate reference distribution
   ref_dist         <- list()
   n_inadmissibles  <- 0
-  i <- 0
+  counter <- 0
   repeat{
     # Counter
-    i <- i + 1
+    counter <- counter + 1
     
     # Draw dataset
     X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
@@ -132,7 +132,7 @@ testOMF.cSEMResults_default <- function(
                             .saturated = .saturated,
                             .type_vcv  = "indicator")
       
-      ref_dist[[i]] <- c(
+      ref_dist[[counter]] <- c(
         "dG"   = dG(S_temp, Sigma_hat_temp),
         "SRMR" = SRMR(S_temp, Sigma_hat_temp),
         "dL"   = dL(S_temp, Sigma_hat_temp)
@@ -140,23 +140,23 @@ testOMF.cSEMResults_default <- function(
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[i]] <- NULL
+      ref_dist[[counter]] <- NULL
       
     } else {# status is not ok and .handle_inadmissibles == "replace"
       # Reset counter and raise number of inadmissibles by 1
-      i <- i - 1
+      counter <- counter - 1
       n_inadmissibles <- n_inadmissibles + 1
     }
     
     # Break repeat loop if .runs results have been created.
     if(length(ref_dist) == .runs) {
       break
-    } else if(i + n_inadmissibles == 10000) { 
+    } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
     if(.verbose){
-      setTxtProgressBar(pb, i)
+      setTxtProgressBar(pb, counter)
     }
     
   } # END repeat 
@@ -189,7 +189,7 @@ testOMF.cSEMResults_default <- function(
     "Decision"           = decision, 
     "Information"        = list(
       "Number_admissibles" = ncol(ref_dist_matrix),
-      "Total_runs"         = i + n_inadmissibles 
+      "Total_runs"         = counter + n_inadmissibles 
     )
   )
   
@@ -272,10 +272,10 @@ testOMF.cSEMResults_2ndorder <- function(
   ## Calculate reference distribution
   ref_dist         <- list()
   n_inadmissibles  <- 0
-  i <- 0
+  counter <- 0
   repeat{
     # Counter
-    i <- i + 1
+    counter <- counter + 1
     
     # Draw dataset
     X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
@@ -297,7 +297,7 @@ testOMF.cSEMResults_2ndorder <- function(
                             .saturated = .saturated,
                             .type_vcv  = "indicator")
       
-      ref_dist[[i]] <- c(
+      ref_dist[[counter]] <- c(
         "dG"   = dG(S_temp, Sigma_hat_temp),
         "SRMR" = SRMR(S_temp, Sigma_hat_temp),
         "dL"   = dL(S_temp, Sigma_hat_temp)
@@ -305,23 +305,23 @@ testOMF.cSEMResults_2ndorder <- function(
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[i]] <- NULL
+      ref_dist[[counter]] <- NULL
       
     } else {# status is not ok and .handle_inadmissibles == "replace"
       # Reset counter and raise number of inadmissibles by 1
-      i <- i - 1
+      counter <- counter - 1
       n_inadmissibles <- n_inadmissibles + 1
     }
     
     # Break repeat loop if .runs results have been created.
     if(length(ref_dist) == .runs) {
       break
-    } else if(i + n_inadmissibles == 10000) { 
+    } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
     if(.verbose){
-      setTxtProgressBar(pb, i)
+      setTxtProgressBar(pb, counter)
     }
     
   } # END repeat 
@@ -354,7 +354,7 @@ testOMF.cSEMResults_2ndorder <- function(
     "Decision"           = decision, 
     "Information"        = list(
       "Number_admissibles" = ncol(ref_dist_matrix),
-      "Total_runs"         = i + n_inadmissibles 
+      "Total_runs"         = counter + n_inadmissibles 
     )
   ) 
   
