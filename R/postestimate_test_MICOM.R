@@ -51,7 +51,7 @@ testMICOM <- function(
   #                          partial least squares
   
   if(.verbose) {
-    cat(rule(center = "Test for measurement invariance based on Henseler et al. (2016)",
+    cat(rule(center = "Test for measurement invariance based on Henseler et al (2016)",
              line = "bar3"), "\n\n")
   }
   UseMethod("testMICOM")
@@ -220,18 +220,14 @@ testMICOM.cSEMResults_multi <- function(
   temp <- split(as.data.frame(temp), rownames(temp))
   
   critical_values_step2 <- lapply(lapply(temp, as.matrix), matrixStats::colQuantiles, 
-                      probs = 1-.alpha, drop = FALSE)
+                      probs = .alpha, drop = FALSE) # lower quantile needed, hence 
+                                                    # alpha and not 1 - alpha
   
   ## Decision
   decision <- mapply(function(x, y) x > y, # dont reject (TRUE) if the value of 
                      x = c,                # the teststat is larger than the critical value
                      y = critical_values_step2,
                      SIMPLIFY = FALSE)
-  
-  # if(.verbose) {
-  #   cat("\nCompositional invariance test finished.\n",
-  #       "Proceding to test equality of composite mean values and variances.\n", sep = "")
-  # }
   
   ### Step 3 - Equal mean values and variances==================================
   # Update arguments
@@ -325,12 +321,12 @@ testMICOM.cSEMResults_multi <- function(
 
   # Return output
   out <- list(
-    "step2" = list(
+    "Step2" = list(
       "Test_statistic"     = c,
       "Critical_value"     = critical_values_step2, 
       "Decision"           = decision 
     ),
-    "step3" = list(
+    "Step3" = list(
       "Mean" = list(
         "Test_statistic"     = mv_o$Mean,
         "Critical_value"     = critical_values_step3$Mean, 

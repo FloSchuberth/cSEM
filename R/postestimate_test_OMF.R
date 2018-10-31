@@ -44,7 +44,7 @@ testOMF <- function(
   # Dijkstra & Henseler (2015) - Consistent Paritial Least Squares Path Modeling
   
   if(.verbose) {
-    cat(rule(center = "Test for overall model Fit based on Dijkstra & Henseler (2015)",
+    cat(rule(center = "Test for overall model fit based on Dijkstra & Henseler (2015)",
              line = "bar3"), "\n\n")
   }
   
