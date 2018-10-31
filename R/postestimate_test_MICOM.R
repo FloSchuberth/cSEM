@@ -103,7 +103,7 @@ testMICOM.cSEMResults_multi <- function(
   
   ### Preparation ==============================================================
   ## Get data (pooled, potentially unstandardized data)
-  X <- .object$Data_1$Information$Data_pooled 
+  X <- .object[[1]]$Information$Data_pooled 
   
   # Collect initial arguments (from the first object, but could be any other)
   arguments <- .object[[1]]$Information$Arguments
