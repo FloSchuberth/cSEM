@@ -93,19 +93,23 @@ print.cSEMSummarize_default <- function(.object) {
   cat(
     rule(line = "bar2"), "\n",
     rule(center = "Overview"), 
-    "\n", sep = "")
+    "\n", 
+    sep = ""
+  )
   
   ### Overview -----------------------------------------------------------------
   cat(
     col_align("\n\tNumber of observations", 25), "= ", nrow(x2$Arguments$.data),
     col_align("\n\tWeight estimator", 25), "= ", x2$Arguments$.approach_weights, 
-    sep = "")
+    sep = ""
+  )
   
   if(x2$Arguments$.approach_weights == "PLS-PM") {
     cat(
       col_align("\n\tInner weighting scheme", 25), "= ", 
       x2$Arguments$.PLS_weight_scheme_inner, 
-      sep = "")
+      sep = ""
+    )
   }
   cat(
     col_align("\n\tType of correlation", 25), "= ", 
@@ -199,22 +203,6 @@ print.cSEMSummarize_default <- function(.object) {
         sep = "")
   }
 
-  # if(x$Weight_estimator == "PLS-PM") {
-  #   cat("\nEstimated Correction Factors:\n=============================\n", sep = "")
-  #   print(x$Correction_factors)
-  # }
-
-  # cat("\n\n", rule(center = "Other output"), "\n\n\t", sep = "")
-  # 
-  # cat("<not yet implemented>")
-  # 
-  # cat("\n\n", rule(center = "Fit Indices"), "\n\n\t", sep = "")
-  # 
-  # cat(col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
-  #     col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
-  #     col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\n",
-  #     sep = "")
-  
   cat("\n", rule(line = "bar2"), sep = "")
 }
 
