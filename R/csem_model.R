@@ -212,17 +212,17 @@ parseModel <- function(.model) {
       
       # For each structural equation: Get names of single constructs that are already
       # set to 1
-      z <- names(temp[i, names_constructs][temp[i, names_constructs] == 1])
-      
-      if(length(setdiff(x, z)) > 0) {
-        stop(paste0("The structural equation for `", i, "` contains interactions between constructs", 
-                    " that do not appear individually.\n",
-                    "This is almost certainly not a meaningful model."), call. = FALSE)
-      }
+      # z <- names(temp[i, names_constructs][temp[i, names_constructs] == 1])
+      # 
+      # if(length(setdiff(x, z)) > 0) {
+      #   stop(paste0("The structural equation for `", i, "` contains interactions between constructs", 
+      #               " that do not appear individually.\n",
+      #               "This is almost certainly not a meaningful model."), call. = FALSE)
+      # }
       
       # If x containes an interaction term, assign 1 to all elements in temp[i, ] whose
-      # column names match one or more of the elements/names of the splitted terms
-      temp[i, intersect(x, colnames(temp))] <- 1
+      # column name matches one or more of the elements/names of the splitted terms
+      # temp[i, intersect(x, colnames(temp))] <- 1
     }
     
     ## Return error if the structural model contains feedback loops
