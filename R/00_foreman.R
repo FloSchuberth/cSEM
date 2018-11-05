@@ -245,6 +245,11 @@ foreman <- function(
         estim_results$R2
       } else {
         estim_results
+      }, 
+      "VIF"                     = if(.estimate_structural) {
+        estim_results$VIF
+      } else {
+        estim_results
       }
     ),
     "Information" = list(
