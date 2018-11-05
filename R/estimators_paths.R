@@ -174,7 +174,7 @@ estimatePathOLS <- function(
       
       ## Preallocate
       vcv  <- list()
-      # vif = list()
+
       ## Loop over each endogenous variable
       for(k in vars_endo) {
         
