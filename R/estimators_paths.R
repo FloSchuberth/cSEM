@@ -138,7 +138,7 @@ estimatePathOLS <- function(
                  SIMPLIFY = FALSE)
     
     # Variance inflation factor
-    vif = lapply(vcv_explana_ls, function(x) diag(solve(x)))
+    vif = lapply(vcv_explana_ls, function(x) diag(solve(stats::cov2cor(x))))
     
     ##==========================================================================
     # Replacement approach
@@ -236,7 +236,7 @@ estimatePathOLS <- function(
           
           coef[[k]] <- solve(vcv[[k]]) %*% t(cv_endo_explana_ls[[k]])
           r2[[k]]   <- t(coef[[k]]) %*% vcv[[k]] %*% coef[[k]]
-          vif[[k]] = diag(solve(vcv[[k]]))
+          vif[[k]] = diag(solve(stats::cov2cor(vcv[[k]])))
           var_struc_error[k]    <- 1 - r2[[k]]
           
           temp <- mapply(function(x, y) x * y,
