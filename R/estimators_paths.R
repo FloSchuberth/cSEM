@@ -45,7 +45,7 @@ estimatePathOLS <- function(
      names(r2) <- x
     
      vif <- diag(solve(.P[indep_var, indep_var, drop = FALSE]))
-     names(vif) <- x
+     names(vif)=indep_var
      
      list("coef" = coef, "r2" = r2, "vif"=vif)
     })
