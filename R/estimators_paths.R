@@ -43,7 +43,11 @@ estimatePathOLS <- function(
      # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
      r2   <- t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef
      names(r2) <- x
-     list("coef" = coef, "r2" = r2)
+    
+     vif <- diag(solve(.P[indep_var, indep_var, drop = FALSE]))
+     names(vif) <- x
+     
+     list("coef" = coef, "r2" = r2, "vif"=vif)
     })
     
     res <- purrr::transpose(res)
@@ -120,7 +124,7 @@ estimatePathOLS <- function(
     })
     names(cv_endo_explana_ls) <- vars_endo
     
-    ## Calculate path coef and R2 ----------------------------------------------
+    ## Calculate path coef, R2 and VIF ----------------------------------------------
     # Path coefficients
     coef <- mapply(function(x, y) solve(x) %*% t(y),
                    x = vcv_explana_ls,
@@ -132,6 +136,9 @@ estimatePathOLS <- function(
                  x = vcv_explana_ls,
                  y = coef,
                  SIMPLIFY = FALSE)
+    
+    # Variance inflation factor
+    vif = lapply(vcv_explana_ls, function(x) diag(solve(x)))
     
     ##==========================================================================
     # Replacement approach
@@ -167,7 +174,7 @@ estimatePathOLS <- function(
       
       ## Preallocate
       vcv  <- list()
-      
+      vif = list()
       ## Loop over each endogenous variable
       for(k in vars_endo) {
         
@@ -223,12 +230,13 @@ estimatePathOLS <- function(
           # Set row- and colnames for vcv matrix
           rownames(vcv[[k]]) <- colnames(vcv[[k]]) <- explana_k
           
-          ## Calculate path coefs, R^2 and update "struc_coef_ls" (= matrix of
+          ## Calculate path coefs, R^2, VIF and update "struc_coef_ls" (= matrix of
           ## structural equations) and "var_struc_error" (= vector of
           ## structural error variances) ---------------------------------------
           
           coef[[k]] <- solve(vcv[[k]]) %*% t(cv_endo_explana_ls[[k]])
           r2[[k]]   <- t(coef[[k]]) %*% vcv[[k]] %*% coef[[k]]
+          vif[[k]] = diag(solve(vcv[[k]]))
           var_struc_error[k]    <- 1 - r2[[k]]
           
           temp <- mapply(function(x, y) x * y,
@@ -243,14 +251,14 @@ estimatePathOLS <- function(
         } # END else
       } # END for k in vars_endo
     } # END if(.approach_nlhod = replace)
-    res <- list("coef" = coef, "r2" = r2)
+    res <- list("coef" = coef, "r2" = r2, 'vif'=vif)
   } # END if nonlinear
   ### Structure results --------------------------------------------------------
   tm <- t(.csem_model$structural)
   tm[which(tm == 1)] <- do.call(rbind, res$coef)
   
   ## Return result -------------------------------------------------------------
-  list("Path_estimates" = t(tm), "R2" = unlist(res$r2))
+  list("Path_estimates" = t(tm), "R2" = unlist(res$r2), 'VIF' = unlist(res$vif))
 }
 
 # estimatePath2SLS <- function(
