@@ -239,7 +239,7 @@ estimatePathOLS <- function(
           # Set row- and colnames for vcv matrix
           rownames(vcv[[k]]) <- colnames(vcv[[k]]) <- explana_k
           
-          ## Calculate path coefs, R^2, VIF and update "struc_coef_ls" (= matrix of
+          ## Calculate path coefs, R^2, adjusted R^2, VIF and update "struc_coef_ls" (= matrix of
           ## structural equations) and "var_struc_error" (= vector of
           ## structural error variances) ---------------------------------------
           
