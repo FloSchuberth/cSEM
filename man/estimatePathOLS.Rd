@@ -6,7 +6,6 @@
 \usage{
 estimatePathOLS(
   .H           = args_default()$.H,
-  .W           = args_default()$.W,
   .Q           = args_default()$.Q,
   .P           = args_default()$.P,
   .csem_model  = args_default()$.csem_model,
@@ -16,8 +15,6 @@ estimatePathOLS(
 }
 \arguments{
 \item{.H}{The (N x J) matrix of construct scores.}
-
-\item{.W}{A (J x K) matrix of weights.}
 
 \item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
