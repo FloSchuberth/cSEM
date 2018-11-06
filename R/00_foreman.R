@@ -245,6 +245,11 @@ foreman <- function(
       } else {
         estim_results
       }, 
+      "R2adj"                     = if(.estimate_structural) {
+        estim_results$R2adj
+      } else {
+        estim_results
+      }, 
       "VIF"                     = if(.estimate_structural) {
         estim_results$VIF
       } else {
