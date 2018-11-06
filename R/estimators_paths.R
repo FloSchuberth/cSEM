@@ -31,6 +31,8 @@ estimatePathOLS <- function(
   
   m         <- .csem_model$structural
   vars_endo <- .csem_model$vars_endo
+  # Number of observations (required for the adjusted R^2)
+  n = dim(.H)[1]
   
   if(.csem_model$model_type == "Linear") {
 
@@ -42,11 +44,14 @@ estimatePathOLS <- function(
      r2   <- t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef
      names(r2) <- x
     
+     # Calculation of the adjusted R^2
+     r2adj = 1 - (1-r2)*(n-1)/(n-length(indep_var))
+     names(r2adj) <- x
      # Calculation of the VIF
      vif <- diag(solve(cov2cor(.P[indep_var, indep_var, drop = FALSE])))
      names(vif)=paste(x,indep_var, sep='.')
 
-     list("coef" = coef, "r2" = r2, "vif"=vif)
+     list("coef" = coef, "r2" = r2, 'r2adj' = r2adj, "vif" = vif)
     })
     
     res <- purrr::transpose(res)
@@ -135,6 +140,11 @@ estimatePathOLS <- function(
                  x = vcv_explana_ls,
                  y = coef,
                  SIMPLIFY = FALSE)
+    
+    # Adjusted R^2 
+    r2adj = mapply(function(x,y) 1-(1-x)*(n-1)/(n-nrow(y)),
+                   x = r2,
+                   y = coef)
     
     # Variance inflation factor
     vif = lapply(vcv_explana_ls, function(x) diag(solve(stats::cov2cor(x))))
@@ -229,12 +239,13 @@ estimatePathOLS <- function(
           # Set row- and colnames for vcv matrix
           rownames(vcv[[k]]) <- colnames(vcv[[k]]) <- explana_k
           
-          ## Calculate path coefs, R^2, VIF and update "struc_coef_ls" (= matrix of
+          ## Calculate path coefs, R^2, adjusted R^2, VIF and update "struc_coef_ls" (= matrix of
           ## structural equations) and "var_struc_error" (= vector of
           ## structural error variances) ---------------------------------------
           
           coef[[k]] <- solve(vcv[[k]]) %*% t(cv_endo_explana_ls[[k]])
           r2[[k]]   <- t(coef[[k]]) %*% vcv[[k]] %*% coef[[k]]
+          r2adj[[k]] = 1-(1-r2[[k]])*(n-1)/(n-nrow(coef[[k]]))
           vif[[k]] = diag(solve(stats::cov2cor(vcv[[k]])))
           var_struc_error[k]    <- 1 - r2[[k]]
           
@@ -250,14 +261,14 @@ estimatePathOLS <- function(
         } # END else
       } # END for k in vars_endo
     } # END if(.approach_nlhod = replace)
-    res <- list("coef" = coef, "r2" = r2, 'vif'=vif)
+    res <- list("coef" = coef, "r2" = r2, "r2adj" = r2adj, 'vif' = vif)
   } # END if nonlinear
   ### Structure results --------------------------------------------------------
   tm <- t(.csem_model$structural)
   tm[which(tm == 1)] <- do.call(rbind, res$coef)
   
   ## Return result -------------------------------------------------------------
-  list("Path_estimates" = t(tm), "R2" = unlist(res$r2), 'VIF' = unlist(res$vif))
+  list("Path_estimates" = t(tm), "R2" = unlist(res$r2),"R2adj" = unlist(res$r2adj), 'VIF' = unlist(res$vif))
 }
 
 # estimatePath2SLS <- function(
