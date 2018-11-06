@@ -212,7 +212,6 @@ foreman <- function(
   if(.estimate_structural) {
     estim_results <- estimatePathOLS(
       .H            = H,
-      .W            = W$W,
       .Q            = Q,
       .P            = P,
       .csem_model   = csem_model,
