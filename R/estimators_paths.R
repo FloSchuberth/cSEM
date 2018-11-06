@@ -7,7 +7,6 @@
 #'
 #' @usage estimatePathOLS(
 #'   .H           = args_default()$.H,
-#'   .W           = args_default()$.W,
 #'   .Q           = args_default()$.Q,
 #'   .P           = args_default()$.P,
 #'   .csem_model  = args_default()$.csem_model,
@@ -23,7 +22,6 @@
 
 estimatePathOLS <- function(
   .H           = args_default()$.H,
-  .W           = args_default()$.W,
   .Q           = args_default()$.Q,
   .P           = args_default()$.P,
   .csem_model  = args_default()$.csem_model,
