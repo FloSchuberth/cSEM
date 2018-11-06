@@ -212,7 +212,6 @@ foreman <- function(
   if(.estimate_structural) {
     estim_results <- estimatePathOLS(
       .H            = H,
-      .W            = W$W,
       .Q            = Q,
       .P            = P,
       .csem_model   = csem_model,
@@ -243,6 +242,11 @@ foreman <- function(
       "Correction_factors"     = correction_factors,
       "R2"                     = if(.estimate_structural) {
         estim_results$R2
+      } else {
+        estim_results
+      }, 
+      "VIF"                     = if(.estimate_structural) {
+        estim_results$VIF
       } else {
         estim_results
       }
