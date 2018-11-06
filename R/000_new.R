@@ -190,8 +190,46 @@ stop('Not implemented yet')
 }
 
 
-  
-  
-  
 
+###
+
+calculateEffectSize <- function(.object) {
+  
+  # Get relevenat quantities
+  H <- .object$Estimates$Construct_scores
+  Q <- sqrt(.object$Estimates$Construct_reliabilities)
+  P <- .object$Estimates$Construct_VCV
+  csem_model  <- .object$Information$Model
+  normality   <- .object$Information$Arguments$.normality
+  approach_nl <- .object$Information$Arguments$.approach_nl
+  
+  s <- csem_model$structural
+  
+  outer_out <- lapply(csem_model$vars_endo, function(x) {
+    # get colnames
+    names <- colnames(s[x , s[x, ] != 0, drop = FALSE])
+    
+    inner_out <- lapply(names, function(i) {
+      # update csem_model
+      xx <- csem_model
+      
+      xx$structural[x, i] <- 0 
+      
+      out <- cSEM:::estimatePathOLS(
+        .H = H,
+        .Q = Q,
+        .P = P,
+        .csem_model = xx,
+        .normality = normality,
+        .approach_nl = approach_nl
+      )
+      out
+    })
+    names(inner_out) <- names
+    inner_out
+  })
+  names(outer_out) <- csem_model$vars_endo
+  outer_out
+}
+  
 
