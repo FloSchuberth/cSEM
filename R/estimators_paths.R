@@ -33,7 +33,7 @@ estimatePathOLS <- function(
   vars_endo <- rownames(m)[rowSums(m) != 0]
   vars_exo  <- setdiff(colnames(m), vars_endo)
   explained_by_exo_endo <- vars_endo[rowSums(m[vars_endo, vars_endo, drop = FALSE]) != 0]
-  explained_by_exo <- setdiff(vars_endo, explained_by_exo_endo)
+  vars_ex_by_exo <- setdiff(vars_endo, explained_by_exo_endo)
   vars_explana <- colnames(m)[colSums(m) != 0]
 
   # Number of observations (required for the adjusted R^2)
@@ -76,15 +76,16 @@ estimatePathOLS <- function(
     ## Calculate elements of the VCV matrix of the explanatory variables -------
     if(.normality == TRUE) {
       # Check if vars_explan = vars_exo
-      if(length(setdiff(vars_explana, vars_exo)) == 0) {
+      if(length(setdiff(vars_explana, vars_exo)) != 0 & .approach_nl == "sequential") {
+        
+        stop("The sequential approach can only be used in conjunction with `normality = TRUE`", 
+             " if all explanatory variables are exogenous.", call. = FALSE)
+      } else {
         vcv_explana <- outer(vars_explana,
                              vars_explana,
                              FUN = Vectorize(f3, vectorize.args = c(".i", ".j")),
                              .Q  = .Q,
                              .H  = .H)
-      } else {
-        stop("The sequential approach can only be used in conjunction with `normality = TRUE`", 
-             "if all explanatory variables are exogenous.", call. = FALSE)
       }
 
     } else {
@@ -164,6 +165,7 @@ estimatePathOLS <- function(
     # Replacement approach
     ### ========================================================================
     if(.approach_nl == "replace") {
+      warning("Something is wrong here!")
       ### Preparation ==========================================================
       if(.normality == FALSE) {
         stop("Only implemented for normality = TRUE",
@@ -185,7 +187,7 @@ estimatePathOLS <- function(
           struc_coef_ls[[x]] <- 1
           names(struc_coef_ls[[x]]) <- x
           struc_coef_ls
-        })[[1]]
+        })[[1]] # there is a problem here 
       }
       
       ### Calculation ==========================================================

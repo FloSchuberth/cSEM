@@ -562,14 +562,14 @@ QuadraticCubic <- function(.i, .j, .Q, .H) {
   if(i_single != j_single) {
     # 1.) Non of the components match
     
-    x <- (M1 - (1 - .Q[i_single]^2) * M2 - (1 - .Q[j_single]^2) * M3) / D -
+    x <- (M1 - 3*(1 - .Q[j_single]^2) * M2 - (1 - .Q[i_single]^2) * M3) / D1 -
       M3 / D0
     
   } else {
     # 2.) The component(s) of the "Quadratic" term matche those of the
     #    "Cubic" term
     
-    x <- (M1 - 10 * (1 - .Q[i_single]^2) * M3) / D - M3/D0
+    x <- (M1 - 10 * (1 - .Q[i_single]^2) * M3) / D1 - M3/D0
     
   }
   ## Return
