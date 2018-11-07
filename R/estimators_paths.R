@@ -75,12 +75,18 @@ estimatePathOLS <- function(
     ### Calculation ============================================================
     ## Calculate elements of the VCV matrix of the explanatory variables -------
     if(.normality == TRUE) {
-      
-      vcv_explana <- outer(vars_explana,
-                           vars_explana,
-                           FUN = Vectorize(f3, vectorize.args = c(".i", ".j")),
-                           .Q  = .Q,
-                           .H  = .H)
+      # Check if vars_explan = vars_exo
+      if(length(setdiff(vars_explana, vars_exo)) == 0) {
+        vcv_explana <- outer(vars_explana,
+                             vars_explana,
+                             FUN = Vectorize(f3, vectorize.args = c(".i", ".j")),
+                             .Q  = .Q,
+                             .H  = .H)
+      } else {
+        stop("The sequential approach can only be used in conjunction with `normality = TRUE`", 
+             "if all explanatory variables are exogenous.", call. = FALSE)
+      }
+
     } else {
       
       # Define the type/class of the moments in the VCV matrix of the explanatory
