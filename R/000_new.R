@@ -205,7 +205,8 @@ calculateEffectSize <- function(.object) {
   
   s <- csem_model$structural
   x <- "SAT"
-  outer_out <- lapply(csem_model$vars_endo, function(x) {
+  vars_endo <- rownames(s)[rowSums(s) != 0]
+  outer_out <- lapply(vars_endo, function(x) {
     # get colnames
     indep_vars <- colnames(s[x , s[x, ] != 0, drop = FALSE])
     
