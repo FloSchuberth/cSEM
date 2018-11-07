@@ -30,10 +30,10 @@ estimatePathOLS <- function(
 ) {
   
   m         <- .csem_model$structural
-  var_endo <- rownames(m)[rowSums(m) != 0]
-  var_exo  <- setdiff(colnames(m), var_endo)
-  explained_by_exo_endo <- var_endo[rowSums(m[var_endo, var_endo, drop = FALSE]) != 0]
-  explained_by_exo <- setdiff(var_endo, explained_by_exo_endo)
+  vars_endo <- rownames(m)[rowSums(m) != 0]
+  vars_exo  <- setdiff(colnames(m), vars_endo)
+  explained_by_exo_endo <- vars_endo[rowSums(m[vars_endo, vars_endo, drop = FALSE]) != 0]
+  explained_by_exo <- setdiff(vars_endo, explained_by_exo_endo)
   vars_explana <- colnames(m)[colSums(m) != 0]
 
   # Number of observations (required for the adjusted R^2)
