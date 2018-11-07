@@ -41,9 +41,12 @@ parseModel <- function(.model) {
     ## Check if list contains necessary elements
   } else if(all(c("structural", "measurement") %in% names(.model))) {
     
+    # x <- setdiff(names(.model), c("structural", "measurement", "error_cor", 
+    #                               "construct_type", "construct_order", "model_type", "vars_endo", 
+    #                               "vars_exo", "vars_explana", "explained_by_exo"))
     x <- setdiff(names(.model), c("structural", "measurement", "error_cor", 
-                                  "construct_type", "construct_order", "model_type", "vars_endo", 
-                                  "vars_exo", "vars_explana", "explained_by_exo"))
+                                  "construct_type", "construct_order", 
+                                  "model_type"))
     if(length(x) == 0) {
       
       class(.model) <- "cSEMModel"
@@ -256,21 +259,21 @@ parseModel <- function(.model) {
     temp <- model_structural
     
     ## Extract endogenous and exogenous variables
-    var_endo <- rownames(temp)[rowSums(temp) != 0]
-    var_exo  <- setdiff(colnames(temp), var_endo)
+    vars_endo <- rownames(temp)[rowSums(temp) != 0]
+    var_exo  <- setdiff(colnames(temp), vars_endo)
     
     ## Return error if the structural model contains feedback loops
-    if(any(temp[var_endo, var_endo] + t(temp[var_endo, var_endo]) == 2)) {
+    if(any(temp[vars_endo, vars_endo] + t(temp[vars_endo, vars_endo]) == 2)) {
       stop("The structural model contains feedback loops.",
            " Currently no feedback loops are allowed.",
            call. = FALSE)
     }
     
     # Endo variables that are explained by exo and endo variables
-    explained_by_exo_endo <- var_endo[rowSums(temp[var_endo, var_endo, drop = FALSE]) != 0]
+    explained_by_exo_endo <- vars_endo[rowSums(temp[vars_endo, vars_endo, drop = FALSE]) != 0]
     
     # Endo variables explained by exo variables only
-    explained_by_exo <- setdiff(var_endo, explained_by_exo_endo)
+    explained_by_exo <- setdiff(vars_endo, explained_by_exo_endo)
     
     ### Order =======================
     # First the endo variables that are soley explained by the exo variables

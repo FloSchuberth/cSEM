@@ -19,8 +19,9 @@
 effects <- function(.object) {
   # Implementation is inspired by the matrixpls package licensed under GPL-3
   
+  m         <- .object$Information$Model$structural
   ## Endogenous (lhs) variables
-  vars_endo <- .object$Information$Model$vars_endo
+  vars_endo <- rownames(m)[rowSums(m) != 0]
   
   ## Matrix of direct effects:
   direct <- .object$Estimates$Path_estimates

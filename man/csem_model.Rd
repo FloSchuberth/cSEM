@@ -31,14 +31,6 @@ correlation relationship. The row and column order is identical to \code{$measur
 \item{\code{$construct_type}}{A named vector containing the names of each construct
 and their respective type (\strong{"Common factor"} or \strong{"Composite"}).}
 \item{\code{$model_type}}{The type of model (linear or nonlinear).}
-\item{\code{$vars_endo}}{A vector of names of the endogenous constructs.}
-\item{\code{$vars_exo}}{A vector of names of the exogenous constructs (includes
-possible interaction and exponential terms).}
-\item{\code{$vars_explana}}{ A vector of names of the constructs that appear as
-explanatory variables in at least one structural equation (includes
-possible interaction and exponential terms).}
-\item{\code{$explained_by_exo}}{A vector of names of the constructs that are
-solely explained by exogenous constructs.}
 }
 Note: it is possible to supply an incomplete \code{cSEMModel}-list
 to all functions that require \code{.csem_model} as a mandatory argument. Currently,
