@@ -115,6 +115,12 @@ estimatePathOLS <- function(
     })
     names(vcv_explana_ls) <- vars_endo
     
+    ## Check for definitness
+    lapply(vcv_explana_ls, function(x) {
+      if(!matrixcalc::is.positive.semi.definite(x)) {
+        warning("Not semi positive definite")
+      }
+    })
     ## Calculate covariances between explanatory and endogenous variables ------
     
     # Define the class of the moments in the VCV matrix between explanatory
