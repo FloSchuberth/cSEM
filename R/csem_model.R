@@ -319,11 +319,11 @@ parseModel <- function(.model) {
       "error_cor"          = model_error[m, m],
       "construct_type"     = construct_type[match(n, names(construct_type))],
       "construct_order"    = construct_order[match(n, names(construct_order))],
-      "model_type"         = type_of_model,
-      "vars_endo"          = rownames(model_ordered),
-      "vars_exo"           = var_exo,
-      "vars_explana"       = colnames(structural_ordered)[colSums(structural_ordered) != 0],
-      "explained_by_exo"   = explained_by_exo
+      "model_type"         = type_of_model
+      # "vars_endo"          = rownames(model_ordered),
+      # "vars_exo"           = var_exo,
+      # "vars_explana"       = colnames(structural_ordered)[colSums(structural_ordered) != 0],
+      # "explained_by_exo"   = explained_by_exo
     )
     class(model_ls) <- "cSEMModel"
     return(model_ls) 

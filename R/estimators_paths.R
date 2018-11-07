@@ -30,7 +30,12 @@ estimatePathOLS <- function(
 ) {
   
   m         <- .csem_model$structural
-  vars_endo <- .csem_model$vars_endo
+  var_endo <- rownames(m)[rowSums(m) != 0]
+  var_exo  <- setdiff(colnames(m), var_endo)
+  explained_by_exo_endo <- var_endo[rowSums(m[var_endo, var_endo, drop = FALSE]) != 0]
+  explained_by_exo <- setdiff(var_endo, explained_by_exo_endo)
+  vars_explana <- colnames(m)[colSums(m) != 0]
+
   # Number of observations (required for the adjusted R^2)
   n = dim(.H)[1]
   
@@ -63,9 +68,9 @@ estimatePathOLS <- function(
     # Dijkstra & Schermelleh-Engel (2014) - PLSc for nonlinear structural
     #                                       equation models
     
-    vars_explana   <- .csem_model$vars_explana
-    vars_exo       <- .csem_model$vars_exo
-    vars_ex_by_exo <- .csem_model$explained_by_exo
+    # vars_explana   <- .csem_model$vars_explana
+    # vars_exo       <- .csem_model$vars_exo
+    # vars_ex_by_exo <- .csem_model$explained_by_exo
     
     ### Calculation ============================================================
     ## Calculate elements of the VCV matrix of the explanatory variables -------

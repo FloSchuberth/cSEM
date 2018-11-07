@@ -192,7 +192,7 @@ stop('Not implemented yet')
 
 
 ###
-
+# .object <- a
 calculateEffectSize <- function(.object) {
   
   # Get relevenat quantities
@@ -204,7 +204,7 @@ calculateEffectSize <- function(.object) {
   approach_nl <- .object$Information$Arguments$.approach_nl
   
   s <- csem_model$structural
-  
+  x <- "SAT"
   outer_out <- lapply(csem_model$vars_endo, function(x) {
     # get colnames
     names <- colnames(s[x , s[x, ] != 0, drop = FALSE])
@@ -231,5 +231,7 @@ calculateEffectSize <- function(.object) {
   names(outer_out) <- csem_model$vars_endo
   outer_out
 }
-  
 
+# bb <- calculateEffectSize(a)  
+# 
+# str(bb)
