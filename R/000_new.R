@@ -203,10 +203,12 @@ calculateEffectSize <- function(.object) {
   normality   <- .object$Information$Arguments$.normality
   approach_nl <- .object$Information$Arguments$.approach_nl
   
+  
   s <- csem_model$structural
-  x <- "SAT"
+
   vars_endo <- rownames(s)[rowSums(s) != 0]
   outer_out <- lapply(vars_endo, function(x) {
+    
     # get colnames
     indep_vars <- colnames(s[x , s[x, ] != 0, drop = FALSE])
     
@@ -224,12 +226,17 @@ calculateEffectSize <- function(.object) {
         .normality = normality,
         .approach_nl = approach_nl
       )
-      out
+      # calculate 
+      r2_excluded <- out$R2[x]
+      r2_included <- .object$Estimates$R2[x]
+      
+      effect_size <- (r2_included - r2_excluded)/(1 - r2_included)
+      list("r2_ex" = r2_excluded, "r2_in" = r2_included, "eff_size" = effect_size)
     })
     names(inner_out) <- indep_vars
     inner_out
   })
-  names(outer_out) <- csem_model$vars_endo
+  names(outer_out) <- vars_endo
   outer_out
 }
 
