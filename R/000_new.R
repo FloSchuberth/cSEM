@@ -207,9 +207,9 @@ calculateEffectSize <- function(.object) {
   x <- "SAT"
   outer_out <- lapply(csem_model$vars_endo, function(x) {
     # get colnames
-    names <- colnames(s[x , s[x, ] != 0, drop = FALSE])
+    indep_vars <- colnames(s[x , s[x, ] != 0, drop = FALSE])
     
-    inner_out <- lapply(names, function(i) {
+    inner_out <- lapply(indep_vars, function(i) {
       # update csem_model
       xx <- csem_model
       
@@ -225,7 +225,7 @@ calculateEffectSize <- function(.object) {
       )
       out
     })
-    names(inner_out) <- names
+    names(inner_out) <- indep_vars
     inner_out
   })
   names(outer_out) <- csem_model$vars_endo
