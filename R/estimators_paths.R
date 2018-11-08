@@ -87,7 +87,7 @@ estimatePathOLS <- function(
       }
 
       # It can happen that this matrix is not symmetric
-      # vcv_explana[lower.tri(vcv_explana)] = t(vcv_explana)[lower.tri(vcv_explana)]
+      vcv_explana[lower.tri(vcv_explana)] = t(vcv_explana)[lower.tri(vcv_explana)]
       
     } else {
       
@@ -105,7 +105,7 @@ estimatePathOLS <- function(
                            .H = .H)
     
       # It can happen that this matrix is not symmetric
-      # vcv_explana[lower.tri(vcv_explana)] = t(vcv_explana)[lower.tri(vcv_explana)]
+      vcv_explana[lower.tri(vcv_explana)] = t(vcv_explana)[lower.tri(vcv_explana)]
       
       }
     
