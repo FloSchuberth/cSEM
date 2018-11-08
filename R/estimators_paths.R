@@ -86,6 +86,9 @@ estimatePathOLS <- function(
                              .H  = .H)
       }
 
+      # It can happen that this matrix is not symmetric
+      vcv_explana[lower.tri(vcv_explana)] = t(vcv_explana)[lower.tri(vcv_explana)]
+      
     } else {
       
       # Define the type/class of the moments in the VCV matrix of the explanatory
@@ -100,7 +103,11 @@ estimatePathOLS <- function(
                            .select_from = class_explana,
                            .Q = .Q,
                            .H = .H)
-    }
+    
+      # It can happen that this matrix is not symmetric
+      vcv_explana[lower.tri(vcv_explana)] = t(vcv_explana)[lower.tri(vcv_explana)]
+      
+      }
     
     # Set row- and colnames for matrix
     rownames(vcv_explana) <- colnames(vcv_explana) <- vars_explana
