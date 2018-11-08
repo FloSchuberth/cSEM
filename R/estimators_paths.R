@@ -34,10 +34,10 @@ estimatePathOLS <- function(
   vars_exo  <- setdiff(colnames(m), vars_endo)
   explained_by_exo_endo <- vars_endo[rowSums(m[vars_endo, vars_endo, drop = FALSE]) != 0]
   vars_ex_by_exo <- setdiff(vars_endo, explained_by_exo_endo)
-  vars_explana <- colnames(m)[colSums(m) != 0]
+  vars_explana   <- colnames(m)[colSums(m) != 0]
 
   # Number of observations (required for the adjusted R^2)
-  n = dim(.H)[1]
+  n <- dim(.H)[1]
   
   if(.csem_model$model_type == "Linear") {
 
@@ -68,17 +68,15 @@ estimatePathOLS <- function(
     # Dijkstra & Schermelleh-Engel (2014) - PLSc for nonlinear structural
     #                                       equation models
     
-    # vars_explana   <- .csem_model$vars_explana
-    # vars_exo       <- .csem_model$vars_exo
-    # vars_ex_by_exo <- .csem_model$explained_by_exo
-    
     ### Calculation ============================================================
     ## Calculate elements of the VCV matrix of the explanatory variables -------
     if(.normality == TRUE) {
-      # Check if vars_explan = vars_exo
+      # For the sequential approach normality = TRUE requires all 
+      # explanatory variables to be exogenous!
       if(length(setdiff(vars_explana, vars_exo)) != 0 & .approach_nl == "sequential") {
         
-        stop("The sequential approach can only be used in conjunction with `normality = TRUE`", 
+        stop("The following error was encountered while calculating the path coefficients:\n",
+             "The sequential approach can only be used in conjunction with `normality = TRUE`", 
              " if all explanatory variables are exogenous.", call. = FALSE)
       } else {
         vcv_explana <- outer(vars_explana,
@@ -91,7 +89,7 @@ estimatePathOLS <- function(
     } else {
       
       # Define the type/class of the moments in the VCV matrix of the explanatory
-      # variables
+      # variables 
       class_explana <- outer(vars_explana, vars_explana, FUN = Vectorize(f1))
       rownames(class_explana) <- colnames(class_explana) <- vars_explana
       
@@ -115,12 +113,17 @@ estimatePathOLS <- function(
     })
     names(vcv_explana_ls) <- vars_endo
     
-    ## Check for definitness
-    lapply(vcv_explana_ls, function(x) {
-      if(!matrixcalc::is.positive.semi.definite(x)) {
-        warning("Not semi positive definite")
-      }
+    ## Check if all vcv matrices are semi positive-definite and warn if not
+    semidef <- lapply(vcv_explana_ls, function(x) {
+      matrixcalc::is.positive.semi.definite(x)
     })
+    
+    if(any(!unlist(semidef))) {
+      warning("The following issue was encountered while calculating the path coefficients:\n",
+              "The variance-covariance matrix of the explanatory variables for ",
+              "at least one of the structural equations is not positive semi-definite.",
+              call. = FALSE, immediate. = TRUE)
+    }
     ## Calculate covariances between explanatory and endogenous variables ------
     
     # Define the class of the moments in the VCV matrix between explanatory
@@ -171,10 +174,12 @@ estimatePathOLS <- function(
     # Replacement approach
     ### ========================================================================
     if(.approach_nl == "replace") {
-      warning("Something is wrong here!")
+      # warning("Something is wrong here!")
       ### Preparation ==========================================================
       if(.normality == FALSE) {
-        stop("Only implemented for normality = TRUE",
+        
+        stop("The following error was encountered while calculating the path coefficients:\n",
+             "The replacement approach is only implemented for `normality = TRUE`.",
              call. = FALSE)
       }
       # Create list with each list element holding one structural equation

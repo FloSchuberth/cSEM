@@ -81,7 +81,6 @@ foreman <- function(
   S <- Cor$S
   
   ## Standardize
-  
   X <- scale(data.matrix(X_cleaned))
   
   ## Calculate weights

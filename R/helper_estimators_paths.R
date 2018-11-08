@@ -16,7 +16,7 @@ f1 <- function(.i, .j) {
   class_ij <- paste(unique(tab_i$Term_class),
                     unique(tab_j$Term_class), sep = "_")
 
-  ## Rename joint class so "class1_class2" = "class2_class1"
+  ## Rename/reorder joint class so that "class1_class2" = "class2_class1"
   switch (class_ij,
           # Class "Single_x"
           "Quadratic_Single"      = {class_ij <- "Single_Quadratic"},
@@ -268,7 +268,7 @@ f5 <- function(.i, .j, .H, .Q, .var_struc_error) {
 SingleSingle <- function(.i, .j, .Q, .H) {
   
   ## Calculate M
-  M <- mean(.H[, .i] * .H[, .j]) * length(.H[,.i])/(length(.H[,.i])-1)
+  M <- mean(.H[, .i] * .H[, .j])
   
   ## Calculate denominator D
   D <- prod(.Q[c(.i, .j)])

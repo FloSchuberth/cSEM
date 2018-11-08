@@ -191,8 +191,25 @@ stop('Not implemented yet')
 
 
 
-###
-# .object <- a
+#' Calculate effect size
+#'
+#' (TODO)
+#'
+#' @usage calculateEffectSize(
+#'  .object              = args_default()$.object,
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @export
+#'
 calculateEffectSize <- function(.object) {
   
   # Get relevenat quantities
@@ -202,7 +219,6 @@ calculateEffectSize <- function(.object) {
   csem_model  <- .object$Information$Model
   normality   <- .object$Information$Arguments$.normality
   approach_nl <- .object$Information$Arguments$.approach_nl
-  
   
   s <- csem_model$structural
 
@@ -239,7 +255,3 @@ calculateEffectSize <- function(.object) {
   names(outer_out) <- vars_endo
   outer_out
 }
-
-# bb <- calculateEffectSize(a)  
-# 
-# str(bb)
