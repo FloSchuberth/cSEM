@@ -190,8 +190,68 @@ stop('Not implemented yet')
 }
 
 
-  
-  
-  
 
+#' Calculate effect size
+#'
+#' (TODO)
+#'
+#' @usage calculateEffectSize(
+#'  .object              = args_default()$.object,
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @export
+#'
+calculateEffectSize <- function(.object) {
+  
+  # Get relevenat quantities
+  H <- .object$Estimates$Construct_scores
+  Q <- sqrt(.object$Estimates$Construct_reliabilities)
+  P <- .object$Estimates$Construct_VCV
+  csem_model  <- .object$Information$Model
+  normality   <- .object$Information$Arguments$.normality
+  approach_nl <- .object$Information$Arguments$.approach_nl
+  
+  s <- csem_model$structural
 
+  vars_endo <- rownames(s)[rowSums(s) != 0]
+  outer_out <- lapply(vars_endo, function(x) {
+    
+    # get colnames
+    indep_vars <- colnames(s[x , s[x, ] != 0, drop = FALSE])
+    
+    inner_out <- lapply(indep_vars, function(i) {
+      # update csem_model
+      xx <- csem_model
+      
+      xx$structural[x, i] <- 0 
+      
+      out <- cSEM:::estimatePathOLS(
+        .H = H,
+        .Q = Q,
+        .P = P,
+        .csem_model = xx,
+        .normality = normality,
+        .approach_nl = approach_nl
+      )
+      # calculate 
+      r2_excluded <- out$R2[x]
+      r2_included <- .object$Estimates$R2[x]
+      
+      effect_size <- (r2_included - r2_excluded)/(1 - r2_included)
+      list("r2_ex" = r2_excluded, "r2_in" = r2_included, "eff_size" = effect_size)
+    })
+    names(inner_out) <- indep_vars
+    inner_out
+  })
+  names(outer_out) <- vars_endo
+  outer_out
+}

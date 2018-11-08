@@ -83,8 +83,9 @@ fit.cSEMResults_default <- function(
     
   } else {
     
-    Cons_exo  <- .object$Information$Model$vars_exo
-    Cons_endo <- .object$Information$Model$vars_endo
+    m         <- .object$Information$Model$structural
+    Cons_endo <- rownames(m)[rowSums(m) != 0]
+    Cons_exo  <- setdiff(colnames(m), Cons_endo)
     
     B      <- .object$Estimates$Path_estimates[Cons_endo, Cons_endo, drop = FALSE]
     Gamma  <- .object$Estimates$Path_estimates[Cons_endo, Cons_exo, drop = FALSE]

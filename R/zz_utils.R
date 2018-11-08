@@ -42,7 +42,7 @@ classifyConstructs <- function(.terms = args_default()$.terms) {
     
     if(a > 3) {
       stop("The nonlinear term(s): ", paste0("`", .terms, "`", collapse = ", "), 
-           ifelse(length(.terms == 1, " is", " are")), " currently not supported.\n",
+           ifelse(length(.terms == 1), " is", " are"), " currently not supported.\n",
            "Please see ?classifyConstructs for a list of supported terms.",
            call. = FALSE)
     } else {

@@ -145,7 +145,8 @@ csem <- function(
     
   ## Check data
   if(!any(class(.data) %in% c("data.frame", "matrix", "list"))) {
-    stop("Data must be provided as a `matrix`, a `data.frame` or a `list`. ", ".data has class: ", 
+    stop("Data must be provided as a `matrix`, a `data.frame` or a `list`. ", 
+         ".data has class: ", 
          class(.data), call. = FALSE)
   }
   ## Select cases
