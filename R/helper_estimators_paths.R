@@ -445,6 +445,7 @@ SingleQuadTwInter <- function(.i, .j, .Q, .H) {
   ## Label
   # i := name of the "Single" term
   # j := name of the "QuadTwInter" term
+  # ij          := all components
   # j_split     := the "QuadTwInter" term split into its components
   # j_single    := name of the "Single" component of the "QuadTwInter" term
   # j_quadratic := name of the "Quadratic" component of the "QuadTwInter" term
@@ -462,7 +463,7 @@ SingleQuadTwInter <- function(.i, .j, .Q, .H) {
   M2 <- mean(matrixStats::rowProds(.H[, c(i, j_single)]))
   
   ## Calculate denominator (D)
-  D <- prod(.Q[c(i, j_split)])
+  D <- prod(.Q[ij])
   
   ## Calculate VCV element
   if(length(intersect(i, j_split)) == 0) {
@@ -569,7 +570,7 @@ QuadraticCubic <- function(.i, .j, .Q, .H) {
     # 2.) The component(s) of the "Quadratic" term matche those of the
     #    "Cubic" term
     
-    x <- (M1 - 10 * (1 - .Q[i_single]^2) * M3) / D1 - M3/D0
+    x <- (M1 - 10 * (1 - .Q[j_single]^2) * M3) / D1 - M3/D0
     
   }
   ## Return
@@ -989,7 +990,7 @@ CubicQuadTwInter <- function(.i, .j, .Q, .H) {
     #     of the "QuadTwInter" term
     
     x <- (M1 - 10 * (1 - .Q[i_single]^2) * M2 + 15 *
-            (1 - .Q[i_single]^2) * M4) / D - (M0a * M0b) / D
+            (1 - .Q[i_single]^2)^2 * M4) / D - (M0a * M0b) / D
     
   }
   ## Return
@@ -1080,7 +1081,7 @@ TwInterThrwInter <- function(.i, .j, .Q, .H) {
   } else {
     # 3.) All components of .i match with any two of the components of .j
     
-    x <- (M1 - (1 - .Q[ij_match[1]]^2) * M3 - .Q[ij_match[2]]^2 * M4) / D + 1 -
+    x <- (M1 - (1 - .Q[ij_match[1]]^2) * M3 - (1 - .Q[ij_match[2]]^2) * M4) / D - 
       (M0a * M0b) / D
     
   }
@@ -1201,7 +1202,7 @@ ThrwInterThrwInter <- function(.i, .j, .Q, .H){
     x <- M1 / D - (M0a * M0b) / D
     
   } else if (length(ij_match) == 1) {
-    # 2.) Exactly one of the components in the first "ThrwInter" term matches
+    # 2.) Exactly one of the components in the first "ThrwInter" term
     #     matches one in the second term
     
     x <- (M1 - (1 - .Q[ij_match]^2) * M2) / D - (M0a * M0b) / D
@@ -1243,9 +1244,12 @@ ThrwInterQuadTwInter <- function(.i, .j, .Q, .H){
   
   ## Label
   # i_split     := the "ThrwInter" term .i split into its components
-  # j_split     := the "ThrwInter" term .j split into its components
-  # ij          := all terms
-  # ij_match    := the name of the component of the "ThrwInter" terms that match
+  # j_split     := the "QuadTwInter" term .j split into its components
+  # ij          := all component names
+  # ij_match    := the name of the component of the two terms that match
+  # ij_nomatch  := the name of the component of the two terms that dont match
+  # j_single    := name of the "Single" component of the "QuadTwInter" term
+  # j_quadratic := name of the "Quadratic" component of the "QuadTwInter" term
   
   i           <- names(thrw_tab)
   j           <- names(other_tab)
