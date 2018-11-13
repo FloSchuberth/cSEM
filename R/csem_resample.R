@@ -188,8 +188,10 @@ infer <- function(
       x1$Construct_VCV <- c(x1$Construct_VCV)
       x1$Cross_loadings <- NULL
       
-      x1 <- c(x1, user_funs)
-      
+      if(!is.null(.user_fun)) {
+        x1 <- c(x1, user_funs)
+      }
+
       Est_ls[[counter]] <- x1
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {

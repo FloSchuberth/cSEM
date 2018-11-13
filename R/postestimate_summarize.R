@@ -26,7 +26,9 @@ summarize.cSEMResults_default <- function(.object, .inference = "Bootstrap") {
                       .method = .inference, 
                       .runs = 100, 
                       .handle_inadmissibles = "drop",
-                      .verbose = TRUE)
+                      .verbose = TRUE,
+                      .alpha = 0.05,
+                      .user_funs = NULL)
   }
   x1  <- .object$Estimates
   x2  <- .object$Information
