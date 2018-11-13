@@ -7,6 +7,7 @@
 foreman(
     .data                        = args_default()$.data,
     .model                       = args_default()$.model,
+    .approach_cor_robust         = args_default()$.approach_cor_robust,
     .approach_nl                 = args_default()$.approach_nl,
     .approach_paths              = args_default()$.approach_paths,
     .approach_weights            = args_default()$.approach_weights,
@@ -24,14 +25,17 @@ foreman(
     )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
+data column types or classes are: logical, numeric (double or integer), factor
+(ordered and unordered) or a mix of several types.}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
 
-\item{.approach_cor}{Character string. Approach used to obtain the indicator
-correlation matrix. One of: "\emph{bravais-pearson}" or "\emph{theil-sen}".
-Defaults to "\emph{bravais-pearson}".}
+\item{.approach_cor_robust}{Character string. Approach used to obtain a robust
+indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+"\emph{theil-sen}" or (TODO)
+Defaults to "\emph{none}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
@@ -45,6 +49,7 @@ Defaults to "\emph{OLS}".}
 obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{GSCAm}", "\emph{GSCA_VCV}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
+
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
@@ -65,7 +70,7 @@ be estimated? Defaults to \code{TRUE}.}
 the data into groups. Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
-If \code{iter_max = 1} and \code{.approach_weights = "PLS"} one-step weights are returned.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
@@ -74,25 +79,25 @@ For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
-factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
-Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS.}
+Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.
-Ignored if \code{.approach_weights} is not PLS.}
+when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FALSE}.
+Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_modes}{Either a named vector specifying the mode that should be used for
 each construct in the form \code{"name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
 If \code{NULL}, \code{csem()} will choose the appropriate mode according to the type
-of construct used. Ignored if \code{.approach_weight} is not PLS.}
+of construct used. Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
+used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.reliabilities}{A character vector of \code{"name" = value} pairs,
 where \code{value} is a number between 0 and 1 and \code{"name"} a character string

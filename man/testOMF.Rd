@@ -2,14 +2,37 @@
 % Please edit documentation in R/postestimate_test_OMF.R
 \name{testOMF}
 \alias{testOMF}
+\alias{testOMF.cSEMResults_default}
+\alias{testOMF.cSEMResults_multi}
+\alias{testOMF.cSEMResults_2ndorder}
 \title{Test for overall model fit}
 \usage{
 testOMF(
- .object              = args_default()$.model, 
- .alpha               = args_default()$.alpha, 
- .drop_inadmissibles  = args_default()$.drop_inadmissibles, 
- .runs                = args_default()$.runs
+ .object                = args_default()$.object, 
+ .alpha                 = args_default()$.alpha, 
+ .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
+ .runs                  = args_default()$.runs, 
+ .saturated             = args_default()$.saturated,
+ .verbose               = args_default()$.verbose
 )
+
+\method{testOMF}{cSEMResults_default}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .verbose = args_default()$.verbose)
+
+\method{testOMF}{cSEMResults_multi}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .verbose = args_default()$.verbose)
+
+\method{testOMF}{cSEMResults_2ndorder}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .verbose = args_default()$.verbose)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -17,10 +40,20 @@ testOMF(
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.drop_inadmissibles}{Logical. Should inadmissible solutions be dropped?
-Defaults to \code{TRUE}.}
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications yielding an inadmissible result will be dropped (=
+number of results shown <= .runs). For "\emph{ignore}" all results are returned
+even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
+bootstrapping continues until there are .runs admissible solutions.
+Defaults to "\emph{drop}".}
 
 \item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
+
+\item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+
+\item{.verbose}{Logical. Should information be printed to the console? Defaults
+to \code{TRUE}.}
 }
 \value{
 A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
@@ -40,7 +73,17 @@ Test the overall model fit.
 Description: TODO.
 Test is based on \insertCite{Dijkstra2015;textual}{cSEM}.
 Data is transformed according to \insertCite{Beran1985;textual}{cSEM}.
+After 10000 iterations it stops automatically
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
+
+\item \code{cSEMResults_multi}: (TODO)
+
+\item \code{cSEMResults_2ndorder}: (TODO)
+}}
+
 \examples{
 \dontrun{
 # TODO

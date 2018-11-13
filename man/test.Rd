@@ -2,9 +2,12 @@
 % Please edit documentation in R/postestimate_test.R
 \name{test}
 \alias{test}
+\alias{test.cSEMResults_default}
 \title{Diverse tests}
 \usage{
-test(.object, .which_test = "all", ...)
+test(.object, ...)
+
+\method{test}{cSEMResults_default}(.object, .which_test = "all", ...)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -20,6 +23,11 @@ Test estimated model (TODO).
 \details{
 More details here (TODO).
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
+}}
+
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
 }

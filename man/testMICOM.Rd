@@ -2,38 +2,51 @@
 % Please edit documentation in R/postestimate_test_MICOM.R
 \name{testMICOM}
 \alias{testMICOM}
+\alias{testMICOM.cSEMResults_default}
+\alias{testMICOM.cSEMResults_multi}
+\alias{testMICOM.cSEMResults_2ndorder}
 \title{Test measurement invariance of composites}
 \usage{
 testMICOM(
-  .data             = NULL,
-  .model            = NULL,
-  .group_var        = NULL,
-  .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                        "GSCA", "fixed", "unit")
-  .permutations     = 100,
-  .alpha            = c(0.1, 0.05, 0.01),
-  .verbose          = TRUE,
-  ...)
+ .object               = args_default()$.object,
+ .alpha                = args_default()$.alpha,
+ .handle_inadmissibles = args_default()$.handle_inadmissibles,
+ .runs                 = args_default()$.runs,
+ .verbose              = args_default()$.verbose
+ )
+
+
+  \method{testMICOM}{cSEMResults_default}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .verbose = args_default()$.verbose)
+
+\method{testMICOM}{cSEMResults_multi}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .verbose = args_default()$.verbose)
+
+
+  \method{testMICOM}{cSEMResults_2ndorder}(.object = args_default()$.object,
+  .alpha = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .runs = args_default()$.runs, .verbose = args_default()$.verbose)
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
-
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
-
-\item{.approach_weights}{Character string. Approach used to
-obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{GSCAm}", "\emph{GSCA_VCV}", "\emph{fixed}", or "\emph{unit}".
-Defaults to "\emph{PLS}".}
-
-\item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
-
-\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
+\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
+
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications yielding an inadmissible result will be dropped (=
+number of results shown <= .runs). For "\emph{ignore}" all results are returned
+even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
+bootstrapping continues until there are .runs admissible solutions.
+Defaults to "\emph{drop}".}
+
+\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
@@ -58,12 +71,22 @@ The test is only meaningful for composite models.
 If more than two groups are to be compared issues related to multiple testing
 should be taken into account.
 
-The number of permutation runs is defaults to 100 for performance reasons.
+The number of permutation runs is defaults to \code{args_default()$.runs} for performance reasons.
 According to Henseler et al. (2016) the number of permutations should be at least 5000 for
 assessment to be reliable.
 }
-\examples{
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
 
-still to implement
+\item \code{cSEMResults_multi}: (TODO)
+
+\item \code{cSEMResults_2ndorder}: (TODO)
+}}
+
+\examples{
+\dontrun{
+# TODO
+}
 
 }

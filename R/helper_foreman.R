@@ -5,7 +5,7 @@
 #' Currently, seven approaches are available:
 #'
 #' \itemize{
-#' \item "dist_euclid" (default)
+#' \item "dist_squared_euclid" (default)
 #' \item "dist_euclid_weighted"
 #' \item "fisher_transformed"
 #' \item "mean_geometric"
@@ -88,7 +88,7 @@ calculateCorrectionFactors <- function(
       
       ## Do the actual computation ---------------------------------------------
       switch (.PLS_approach_cf,
-              "dist_euclid"          = {
+              "dist_squared_euclid"          = {
                 cf <- sum(W_vect * S_vect) / sum(W_vect^2)
               },
               "dist_euclid_weighted" = {
@@ -327,21 +327,44 @@ calculateCompositeConstructCV <- function(
     return (x)
     
   } else if(!is.null(.reliabilities)) {
-    
     ## Check construct names:
     # Do all construct names in .reliabilities match the construct
     # names used in the model?
-    tmp <- setdiff(names(.reliabilities), rownames(.W))
-    
-    if(length(tmp) != 0) {
-      stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+    tmp1 <- setdiff(names(.reliabilities), rownames(.W))
+    if(length(tmp1) != 0) {
+      stop("Construct name(s): ", paste0("`", tmp1, "`", collapse = ", "), 
            " provided to `.reliabilities`", 
-           ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+           ifelse(length(tmp1) == 1, " is", " are"), " unknown.", call. = FALSE)
     }
     
     # Check whether defined external reliabilities are correctly defined
-    if(any(.reliabilities > 1 | .reliabilities < 0)) {
-      stop('Reliabilities must be between 0 and 1.', call. = FALSE)
+    # if(any(.reliabilities > 1 | .reliabilities < 0)) {
+    #   stop('Reliabilities must be between 0 and 1.', call. = FALSE)
+    # }
+    
+    ## Compute reliabilities not supplied by the user
+    tmp2 <- setdiff(rownames(.W), names(.reliabilities))
+    if(length(tmp2) != 0) {
+      ## Get names of constructs modeled as composites
+      names_c  <- names(.csem_model$construct_type[tmp2 == "Composite"])
+      ## Get names of constructs modeled as common factors
+      names_cf <- setdiff(tmp2, names_c)
+      ## Get names of the common factors whose weights where estimated with "ModeA"
+      names_modeA <- intersect(names(.modes[.modes == "ModeA"]), names_cf)
+      ## Get names of the common factors whose weights where estimated with "ModeB"
+      names_modeB <- intersect(names(.modes[.modes == "ModeB"]), names_cf)
+      
+      if(length(names_modeA) > 0) {
+        
+        x_modeA <- c(diag(.W[names_modeA, , drop = FALSE] %*% t(.W[names_modeA, ,drop = FALSE])) %*%
+                       diag(.correction_factors[names_modeA], nrow = length(names_modeA)))
+        x[names_modeA] <- x_modeA
+      }
+      
+      if(length(names_modeB) > 0) {
+        x_modeB <- .correction_factors[names_modeB]
+        x[names_modeB] <- x_modeB
+      }
     }
     
     x[names(.reliabilities)] <- sqrt(.reliabilities)
@@ -384,49 +407,53 @@ calculateConstructVCV <- function(
 
 #' Internal: Calculate indicator correlation matrix
 #' 
-#' Calculate the indicator correlation matrix using Bravais-Pearson
-#' or Theil-Sen correlation.
+#' Calculate the indicator correlation matrix using conventional or robust methods.
+#' 
+#' Depending on the type of the columns of `.X_cleaned` the following methods are used:
+#' \describe{
+#'   \item{`Numeric-numeric`}{Bravais-Pearson product-moment correlation}
+#'   \item{`Numeric-factor`}{Polyserial correlation}
+#'   \item{`Factor-factor`}{Polychoric correlation}
+#' }
+#' Note: logical input is treated as a 0-1 factor variable.
+#' 
+#' If `.approach_cor_robust` is not `none`, the specified robustness method is used
+#' instead.
 #'
 #' @usage calculateIndicatorCor(
-#'   .X_cleaned    = args_default()$.X_cleaned, 
-#'   .approach_cor = args_default()$.approach_cor
+#'   .X_cleaned           = args_default()$.X_cleaned, 
+#'   .approach_cor_robust = args_default()$.approach_cor
 #'  )
 #'
 #' @inheritParams csem_arguments
 #' 
-#' @return The (K x K) indicator correlation matrix S.
+#' @return The (K x K) (robust) indicator correlation matrix S.
 #' @keywords internal
 
 calculateIndicatorCor <- function(
-  .X_cleaned    = args_default()$.X_cleaned,
-  .approach_cor = args_default()$.approach_cor
-  ){
+  .X_cleaned           = args_default()$.X_cleaned,
+  .approach_cor_robust = args_default()$.approach_cor
+){
   
-  # Note: its important to take cor(x) here instead of cov(x) as `cov()` may produce
-  # 1s on the main diagonal that are not exactly 1 due to floating point imprecisions.
-  x <- scale(.X_cleaned)
-  
-  switch (.approach_cor,
-    "bravais-pearson" = {stats::cor(x)},
-    "theil-sen" = {
-      # Standardize x using robust measures 
-      # X_cleaned <- (.X_cleaned - median(.X_cleaned))/mad(.X_cleaned)
-      
-      calculateCorTheilSen(x)
-    },
-    "polycoric" = {
-      stop("Not yet implemented")
-      # Stemp=polycor::hetcor(X)
-      # S <- Stemp$correlations
-      # # Remove "" from type matrix
-      # Stype=Stemp$type[!Stemp$type == ""]
-      # 
-      # # Return warning
-      # if(FALSE %in% (Stype %in% 'Pearson')){
-      #   warning("OrdPLS(c) is used!!!")
-      # }
-    }
+  switch (.approach_cor_robust,
+          "none" = {
+            # Pd is TRUE by default. See ?polycor for details
+            temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
+            S    <- temp$correlations
+            type <- ifelse(all(temp$type %in% c("Pearson", "")), "PLS-PM", "OrdPLS")
+          },
+          
+          "theil-sen" = {
+            S    <- calculateCorTheilSen(scale(data.matrix(.X_cleaned)))
+            type <-  "PLS-PM"
+          },
+          "TODO" = {
+            "(TODO)"
+          }
   )
+  # (TODO) not sure how to name the "type" yet and what to do with it. Theoretically,
+  # a polycoric correlation could also be used with GSCA or some other non-PLS-PM method.
+  list(S = S, type = type)
 }
 
 #' Internal: Calculate the Theil-Sen estimator

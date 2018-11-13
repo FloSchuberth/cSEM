@@ -1,19 +1,27 @@
 Package: cSEM
-Title: Composite Based Structural Equation Modeling
+Title: Composite-Based Structural Equation Modeling
 Version: 0.0.0.9000
+Date: 2018-11-10
 Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     role  = c("aut", "cre"),
-                    email = "manuel.rademaker@uni-wuerzburg.de"),
+                    email = "manuel.rademaker@uni-wuerzburg.de",
+                    comment = c(ORCID = "0000-0002-8902-3561")),
              person(given = "Florian", family = "Schuberth",
                     role  = c("aut"),
-                    email = "f.schuberth@utwente.nl"),
+                    email = "f.schuberth@utwente.nl",
+                    comment = c(ORCID = "0000-0002-2110-9086")),
              person(given = "Tamara", family = "Schamberger",
-                    role  = c("aut"),
-                    email = "tamara.schamberger@uni-wuerzburg.de"))
-Depends: R (>= 3.4.2)
-Description: Analyze structural equation models, including path 
-    analysis and confirmatory composite analysis using a composite
-    based approach.
+                    role  = c("ctb"),
+                    email = "tamara.schamberger@uni-wuerzburg.de"),
+             person(given = "Michael", family = "Klesel",
+                    role  = c("ctb"),
+                    email = ""),
+             person(given = "Theo K.", family = "Dijkstra",
+                    role  = c("ctb"),
+                    email = ""))
+Maintainer: Manuel Rademaker <manuel.rademaker@uni-wuerzburg.de>
+Depends: R (>= 3.5.0)
+Description: Composite-based estimators for structural equation modeling.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -30,12 +38,14 @@ Imports: alabama,
     matrixcalc,
     matrixStats,
     parallel,
+    polycor,
+    psych,
     purrr,
     RcppAlgos,
     Rdpack,
     symmoments
 RdMacros: Rdpack
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: knitr,
     rmarkdown,

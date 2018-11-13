@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_estimators_weights.R
 \name{calculateOuterWeightsPLS}
 \alias{calculateOuterWeightsPLS}
-\title{Internal: Calculate the outer weights for PLS}
+\title{Internal: Calculate the outer weights for PLS-PM}
 \usage{
 calculateOuterWeightsPLS(
    .S      = args_default()$.S,
@@ -18,9 +18,8 @@ calculateOuterWeightsPLS(
 
 \item{.E}{A (J x J) matrix of inner weights.}
 
-\item{.modes}{A vector specifying the mode that should be used for
-each construct in the form \code{"name" = "mode"}, where \code{"name"} refers to the
-construct name and `"mode"`` is one of \emph{"ModeA"} or \emph{"ModeB"}.}
+\item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
+Only used internally.}
 }
 \value{
 A (J x K) matrix of outer weights.

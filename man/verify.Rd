@@ -2,21 +2,34 @@
 % Please edit documentation in R/postestimate_verify.R
 \name{verify}
 \alias{verify}
+\alias{verify.cSEMResults_default}
+\alias{verify.cSEMResults_multi}
+\alias{verify.cSEMResults_2ndorder}
 \title{Verify admissibility}
 \usage{
 verify(.object)
+
+\method{verify}{cSEMResults_default}(.object)
+
+\method{verify}{cSEMResults_multi}(.object)
+
+\method{verify}{cSEMResults_2ndorder}(.object)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 }
 \value{
-A logical vector indicating which (if any) problem occurred. Status codes are:
+A logical vector indicating which (if any) problem occurred.
+A \code{TRUE} indicates that the problem has occured. For models containg second order
+constructs a list of two such vectors (one for the first and one for the second stage)
+is returned. Status codes are:
 \itemize{
 \item 1: The algorithm has not converged.
 \item 2: At least one absolute standardized loading estimate is larger than 1,
 \item 3: The construct VCV is not positive semi-definite.
-\item 4: The model-implied indicator VCV is not positive semi-definite.
-\item 5: At least one construct reliability is larger than 1.
+\item 4: At least one construct reliability is larger than 1.
+\item 5: The model-implied indicator VCV is not positive semi-definite.
+This is only checked for linear models.
 }
 }
 \description{
@@ -28,9 +41,19 @@ following defects are deemed inadmissible: non-convergence, loadings and/or
 reliabilities larger than 1, a construct VCV and/or a
 model-implied VCV matrix that is not positive (semi-)definite.
 
-Currently \code{verify()} is only implemented for linear models. Future package
-versions will include non-linear models as well.
+For models containing second order constructs estimation is by default done
+in a two/three stage procedure. In this case both the first and the second/third
+stage model quantities are checked.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
+
+\item \code{cSEMResults_multi}: (TODO)
+
+\item \code{cSEMResults_2ndorder}: (TODO)
+}}
+
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
 }

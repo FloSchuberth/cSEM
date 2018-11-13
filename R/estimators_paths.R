@@ -7,7 +7,6 @@
 #'
 #' @usage estimatePathOLS(
 #'   .H           = args_default()$.H,
-#'   .W           = args_default()$.W,
 #'   .Q           = args_default()$.Q,
 #'   .P           = args_default()$.P,
 #'   .csem_model  = args_default()$.csem_model,
@@ -23,7 +22,6 @@
 
 estimatePathOLS <- function(
   .H           = args_default()$.H,
-  .W           = args_default()$.W,
   .Q           = args_default()$.Q,
   .P           = args_default()$.P,
   .csem_model  = args_default()$.csem_model,
@@ -32,7 +30,14 @@ estimatePathOLS <- function(
 ) {
   
   m         <- .csem_model$structural
-  vars_endo <- .csem_model$vars_endo
+  vars_endo <- rownames(m)[rowSums(m) != 0]
+  vars_exo  <- setdiff(colnames(m), vars_endo)
+  explained_by_exo_endo <- vars_endo[rowSums(m[vars_endo, vars_endo, drop = FALSE]) != 0]
+  vars_ex_by_exo <- setdiff(vars_endo, explained_by_exo_endo)
+  vars_explana   <- colnames(m)[colSums(m) != 0]
+
+  # Number of observations (required for the adjusted R^2)
+  n <- dim(.H)[1]
   
   if(.csem_model$model_type == "Linear") {
 
@@ -43,7 +48,15 @@ estimatePathOLS <- function(
      # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
      r2   <- t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef
      names(r2) <- x
-     list("coef" = coef, "r2" = r2)
+    
+     # Calculation of the adjusted R^2
+     r2adj = 1 - (1-r2)*(n-1)/(n-length(indep_var))
+     names(r2adj) <- x
+     # Calculation of the VIF
+     vif <- diag(solve(cov2cor(.P[indep_var, indep_var, drop = FALSE])))
+     names(vif)=paste(x,indep_var, sep='.')
+
+     list("coef" = coef, "r2" = r2, 'r2adj' = r2adj, "vif" = vif)
     })
     
     res <- purrr::transpose(res)
@@ -55,23 +68,31 @@ estimatePathOLS <- function(
     # Dijkstra & Schermelleh-Engel (2014) - PLSc for nonlinear structural
     #                                       equation models
     
-    vars_explana   <- .csem_model$vars_explana
-    vars_exo       <- .csem_model$vars_exo
-    vars_ex_by_exo <- .csem_model$explained_by_exo
-    
     ### Calculation ============================================================
     ## Calculate elements of the VCV matrix of the explanatory variables -------
     if(.normality == TRUE) {
+      # For the sequential approach normality = TRUE requires all 
+      # explanatory variables to be exogenous!
+      if(length(setdiff(vars_explana, vars_exo)) != 0 & .approach_nl == "sequential") {
+        
+        stop("The following error was encountered while calculating the path coefficients:\n",
+             "The sequential approach can only be used in conjunction with `normality = TRUE`", 
+             " if all explanatory variables are exogenous.", call. = FALSE)
+      } else {
+        vcv_explana <- outer(vars_explana,
+                             vars_explana,
+                             FUN = Vectorize(f3, vectorize.args = c(".i", ".j")),
+                             .Q  = .Q,
+                             .H  = .H)
+      }
+
+      # It can happen that this matrix is not symmetric
+      vcv_explana[lower.tri(vcv_explana)] = t(vcv_explana)[lower.tri(vcv_explana)]
       
-      vcv_explana <- outer(vars_explana,
-                           vars_explana,
-                           FUN = Vectorize(f3, vectorize.args = c(".i", ".j")),
-                           .Q  = .Q,
-                           .H  = .H)
     } else {
       
       # Define the type/class of the moments in the VCV matrix of the explanatory
-      # variables
+      # variables 
       class_explana <- outer(vars_explana, vars_explana, FUN = Vectorize(f1))
       rownames(class_explana) <- colnames(class_explana) <- vars_explana
       
@@ -82,7 +103,11 @@ estimatePathOLS <- function(
                            .select_from = class_explana,
                            .Q = .Q,
                            .H = .H)
-    }
+    
+      # It can happen that this matrix is not symmetric
+      vcv_explana[lower.tri(vcv_explana)] = t(vcv_explana)[lower.tri(vcv_explana)]
+      
+      }
     
     # Set row- and colnames for matrix
     rownames(vcv_explana) <- colnames(vcv_explana) <- vars_explana
@@ -95,6 +120,17 @@ estimatePathOLS <- function(
     })
     names(vcv_explana_ls) <- vars_endo
     
+    ## Check if all vcv matrices are semi positive-definite and warn if not
+    semidef <- lapply(vcv_explana_ls, function(x) {
+      matrixcalc::is.positive.semi.definite(x)
+    })
+    
+    if(any(!unlist(semidef))) {
+      warning("The following issue was encountered while calculating the path coefficients:\n",
+              "The variance-covariance matrix of the explanatory variables for ",
+              "at least one of the structural equations is not positive semi-definite.",
+              call. = FALSE, immediate. = TRUE)
+    }
     ## Calculate covariances between explanatory and endogenous variables ------
     
     # Define the class of the moments in the VCV matrix between explanatory
@@ -120,7 +156,7 @@ estimatePathOLS <- function(
     })
     names(cv_endo_explana_ls) <- vars_endo
     
-    ## Calculate path coef and R2 ----------------------------------------------
+    ## Calculate path coef, R2 and VIF ----------------------------------------------
     # Path coefficients
     coef <- mapply(function(x, y) solve(x) %*% t(y),
                    x = vcv_explana_ls,
@@ -133,13 +169,24 @@ estimatePathOLS <- function(
                  y = coef,
                  SIMPLIFY = FALSE)
     
+    # Adjusted R^2 
+    r2adj = mapply(function(x,y) 1-(1-x)*(n-1)/(n-nrow(y)),
+                   x = r2,
+                   y = coef)
+    
+    # Variance inflation factor
+    vif = lapply(vcv_explana_ls, function(x) diag(solve(stats::cov2cor(x))))
+    
     ##==========================================================================
     # Replacement approach
     ### ========================================================================
     if(.approach_nl == "replace") {
+      # warning("Something is wrong here!")
       ### Preparation ==========================================================
       if(.normality == FALSE) {
-        stop("Only implemented for normality = TRUE",
+        
+        stop("The following error was encountered while calculating the path coefficients:\n",
+             "The replacement approach is only implemented for `normality = TRUE`.",
              call. = FALSE)
       }
       # Create list with each list element holding one structural equation
@@ -158,7 +205,7 @@ estimatePathOLS <- function(
           struc_coef_ls[[x]] <- 1
           names(struc_coef_ls[[x]]) <- x
           struc_coef_ls
-        })[[1]]
+        })[[1]] # there is a problem here 
       }
       
       ### Calculation ==========================================================
@@ -167,7 +214,7 @@ estimatePathOLS <- function(
       
       ## Preallocate
       vcv  <- list()
-      
+
       ## Loop over each endogenous variable
       for(k in vars_endo) {
         
@@ -223,12 +270,14 @@ estimatePathOLS <- function(
           # Set row- and colnames for vcv matrix
           rownames(vcv[[k]]) <- colnames(vcv[[k]]) <- explana_k
           
-          ## Calculate path coefs, R^2 and update "struc_coef_ls" (= matrix of
+          ## Calculate path coefs, R^2, adjusted R^2, VIF and update "struc_coef_ls" (= matrix of
           ## structural equations) and "var_struc_error" (= vector of
           ## structural error variances) ---------------------------------------
           
           coef[[k]] <- solve(vcv[[k]]) %*% t(cv_endo_explana_ls[[k]])
           r2[[k]]   <- t(coef[[k]]) %*% vcv[[k]] %*% coef[[k]]
+          r2adj[[k]] = 1-(1-r2[[k]])*(n-1)/(n-nrow(coef[[k]]))
+          vif[[k]] = diag(solve(stats::cov2cor(vcv[[k]])))
           var_struc_error[k]    <- 1 - r2[[k]]
           
           temp <- mapply(function(x, y) x * y,
@@ -243,14 +292,14 @@ estimatePathOLS <- function(
         } # END else
       } # END for k in vars_endo
     } # END if(.approach_nlhod = replace)
-    res <- list("coef" = coef, "r2" = r2)
+    res <- list("coef" = coef, "r2" = r2, "r2adj" = r2adj, 'vif' = vif)
   } # END if nonlinear
   ### Structure results --------------------------------------------------------
   tm <- t(.csem_model$structural)
   tm[which(tm == 1)] <- do.call(rbind, res$coef)
   
   ## Return result -------------------------------------------------------------
-  list("Path_estimates" = t(tm), "R2" = unlist(res$r2))
+  list("Path_estimates" = t(tm), "R2" = unlist(res$r2),"R2adj" = unlist(res$r2adj), 'VIF' = unlist(res$vif))
 }
 
 # estimatePath2SLS <- function(

@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_estimators_weights.R
 \name{calculateInnerWeightsPLS}
 \alias{calculateInnerWeightsPLS}
-\title{Internal: Calculate the inner weights for PLS}
+\title{Internal: Calculate the inner weights for PLS-PM}
 \usage{
 calculateInnerWeightsPLS(
   .S                           = args_default()$.S,
@@ -20,18 +20,18 @@ calculateInnerWeightsPLS(
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.
-Ignored if \code{.approach_weights} is not PLS.}
+when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FALSE}.
+Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
+used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 }
 \value{
 The (J x J) matrix \code{E} of inner weights.
 }
 \description{
-PLS forms "inner" composites as a weighted sum of its \emph{I} related composites.
+PLS-PM forms "inner" composites as a weighted sum of its \emph{I} related composites.
 These inner weights are obtained using one of the following schemes:
 \describe{
 \item{\code{centroid}}{According to the centroid scheme each inner weight used

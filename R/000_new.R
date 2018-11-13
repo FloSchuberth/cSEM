@@ -2,79 +2,202 @@
 # or when it is unclear where it belongs.
 
 
-# Calculates the Heterotrait-Monotrait factor correlations, see Henseler et al. (2015)
-
-
-HTMT = function(.object){
-  S=.object$Estimates$Indicator_VCV
-  
-  # HTMT only for common factors
-  cf_names=names(.object$Information$Construct_types[.object$Information$Construct_types=="Common factor"])
-  
-  stop('Not yet implemented') 
-  
-}
-
-#' `cSEMResults` method for `summary()`
+#' AVE
 #'
-#' The [cSEMResults] method for the generic function [summary()]. 
-#' 
-#' Computes a summary of the results obtained from running [csem], [cca], or
-#' [foreman].
+#' Computes the average variance extracted \insertCite{Raykov1997}{cSEM} based on the standardized loadings.
 #'
-#' @usage summary(.object, .what = NULL)
+#' @usage AVE(
+#'  .object              = args_default()$.object,
+#'  .only_common_factors = args_default()$.only_common_factors
+#' )
 #'
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem], [cSEMResults]
-#' 
-#' @inherit csem_summary return
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @references 
+#' \insertAllCited{}
+#'
 #'
 #' @export
 #'
-summary.cSEMResults <- function(.object, .what = NULL) {
+AVE=function(.object=args_default()$.object,
+             .only_common_factors=args_default()$.only_common_factors){
+  construct_names=names(.object$Information$Model$construct_type)
   
-  ## Structure loadings output
-  temp <- x$Estimates$Loading_estimates
-  names_loadings <- paste0(rep(rownames(temp), times = apply(temp, 1, function(x) sum(x != 0))),
-                           " =~ ", colnames(temp))
-  loading_estimates <- data.frame("Loading" = names_loadings,
-                                  "Estimate" = unlist(t(temp)[t(temp) != 0 ]),
-                                  stringsAsFactors = FALSE)
+  # Extract loadings
+  L=.object$Estimates$Loading_estimates
+
+  AVEs=sapply(construct_names, function(x){
+    lam=c(L[x,L[x,]!=0])
+    ave=sum(lam^2)/(sum(lam^2)+sum(1-lam^2))
+    ave
+    
+  })
   
-  ## Structure weights output
-  temp <- x$Estimates$Weight_estimates
-  names_weights <- paste0(rep(rownames(temp), times = apply(temp, 1, function(x) sum(x != 0))),
-                          " -- ", colnames(temp))
-  weight_estimates <- data.frame("Weights" = names_weights,
-                                 "Estimate" = unlist(t(temp)[t(temp) != 0 ]),
-                                 stringsAsFactors = FALSE)
+  names(AVEs)=construct_names
   
-  ## Create summary list
-  summary_out <- list(
-    "Construct_types"        = x$Meta_information$Construct_types,
-    "Correction_factors"     = x$Estimates$Correction_factors,
-    "Loading_estimates"      = loading_estimates,
-    "Names_endogenous_var"   = x$Meta_information$modellist$vars_endo,
-    "Number_of_observations" = x$Meta_information$Number_of_observations,
-    "Path_estimates"         = x$Estimates$Path_estimates,
-    "Path_estimator"         = x$Meta_information$Path_approach,
-    "PLS_modes"              = x$Meta_information$PLS_Modes,
-    "PLS_weight_scheme_inner"= x$Meta_information$PLS_Inner_Weightning_scheme,
-    "Weight_estimates"       = weight_estimates,
-    "Weight_estimator"       = x$Meta_information$Weight_approach
-  )
+  # By default, for composites the CR is set to 1
+  if(.only_common_factors){
+    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite"])
+    AVEs[co_names]=NULL
+  }
   
-  ## Set class for printing and return
-  class(summary_out) <- "cSEMResultssummary"
-  return(summary_out)
+  return(AVEs) 
 }
 
-#' Effects
+
+
+#' CR
 #'
-#' Compute direct, indirect and total effects.
+#' Computes the composite reliability \insertCite{Raykov1997}{cSEM} based on standardized loading.
 #'
-#' @usage effects(.object)
+#' @usage CR(
+#'  .object              = args_default()$.object,
+#'  .only_common_factors = args_default()$.only_common_factors
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @references 
+#' 
+#' \insertAllCited{}
+#'
+#' @export
+#'
+CR=function(.object=args_default()$.object,
+            .only_common_factors=args_default()$.only_common_factors){
+  construct_names=names(.object$Information$Model$construct_type)
+  
+  # Extract loadings
+  L=.object$Estimates$Loading_estimates
+  
+  
+  # Calculate CR for all constructs
+  CRs=sapply(construct_names, function(x){
+    lam=c(L[x,L[x,]!=0])
+    cr=sum(lam)^2/(sum(lam)^2+sum(1-lam^2))
+    cr
+    
+  })
+  
+  names(CRs)=construct_names
+  
+  # By default, for composites the CR is set to 1
+  if(.only_common_factors){
+    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite"])
+    CRs[co_names]=1
+  }
+  
+  return(CRs)
+}
+
+#' Cronbach_alpha
+#'
+#' Computes Cronbach's alpha \insertCite{Cronbach1951}{cSEM} based on the correlation matrix 
+#'
+#' @usage Cronbach_alpha(
+#'  .object              = args_default()$.object,
+#'  .only_common_factors = args_default()$.only_common_factors
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @references 
+#' \insertAllCited{}
+#'
+#' @export
+#'
+Cronbach_alpha=function(.object=args_default()$.object,
+            .only_common_factors=args_default()$.only_common_factors){
+  construct_names=names(.object$Information$Model$construct_type)
+  
+  # calculate Cronbach's alpah for all constructs
+  alphas=sapply(construct_names,function(x){
+    relevant_indicators=colnames(.object$Information$Model$measurement[x,.object$Information$Model$measurement[x,]!=0,drop=FALSE])
+    S_relevant=.object$Estimates$Indicator_VCV[relevant_indicators,relevant_indicators]
+    alpha_temp=psych::alpha(S_relevant,delete=FALSE,na.rm=FALSE)
+    alpha_temp$total$raw_alpha
+    })
+  
+  names(alphas)=construct_names
+  
+  # By default, for composites the CR is set to 1
+  if(.only_common_factors){
+    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite"])
+    alphas[co_names]=NULL
+  }
+  
+  return(alphas)
+}
+
+#' Fornell_Larcker
+#'
+#' Computes the Fornell-Larcker criterion \insertCite{Fornell1981}{cSEM}.
+#'
+#' @usage Fornell_Larcker(
+#'  .object              = args_default()$.object,
+#'  .only_common_factors = args_default()$.only_common_factors
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'@references
+#'
+#' \insertAllCited{}
+#'
+#' @export
+#'
+Fornell_Larcker=function(.object=args_default()$.object,
+                                 .only_common_factors=args_default()$.only_common_factors){
+
+  # Calculate the average variance extracted
+  average_variance_extracted=AVE(.object,.only_common_factors=FALSE)
+
+  .object
+
+  construct_names=names(.object$Information$Model$construct_type)
+
+  construct_vcv_sq=.object$Estimates$Construct_VCV^2
+  diag(construct_vcv_sq)=average_variance_extracted[colnames(construct_vcv_sq)]
+stop('Not implemented yet')
+
+}
+
+
+
+#' Calculate effect size
+#'
+#' (TODO)
+#'
+#' @usage calculateEffectSize(
+#'  .object              = args_default()$.object,
+#' )
 #'
 #' @inheritParams csem_arguments
 #'
@@ -87,26 +210,48 @@ summary.cSEMResults <- function(.object, .what = NULL) {
 #'
 #' @export
 #'
-effects.cSEMResults <- function(.object) {
-  # Implementation is inspired by the matrixpls package licensed under GPL-3
+calculateEffectSize <- function(.object) {
   
-  ## Endogenous (lhs) variables
-  vars_endo <- .object$Information$Model$vars_endo
+  # Get relevenat quantities
+  H <- .object$Estimates$Construct_scores
+  Q <- sqrt(.object$Estimates$Construct_reliabilities)
+  P <- .object$Estimates$Construct_VCV
+  csem_model  <- .object$Information$Model
+  normality   <- .object$Information$Arguments$.normality
+  approach_nl <- .object$Information$Arguments$.approach_nl
   
-  ## Matrix of direct effects:
-  direct <- .object$Estimates$Path_estimates
-  
-  ## Matrix of total total effects: B = direct
-  # Note: eta = B x eta + zeta
-  #       (I - B)*eta = zeta
-  
-  B_star <- diag(nrow(direct)) - direct
-  total <- solve(B_star) - diag(nrow(direct))
-  
-  ## Matrix of indirect effects:
-  indirect <- total - direct
-  
-  list(direct = direct[vars_endo, , drop = FALSE], 
-       indirect = indirect[vars_endo, , drop = FALSE], 
-       total = total[vars_endo, , drop = FALSE])
+  s <- csem_model$structural
+
+  vars_endo <- rownames(s)[rowSums(s) != 0]
+  outer_out <- lapply(vars_endo, function(x) {
+    
+    # get colnames
+    indep_vars <- colnames(s[x , s[x, ] != 0, drop = FALSE])
+    
+    inner_out <- lapply(indep_vars, function(i) {
+      # update csem_model
+      xx <- csem_model
+      
+      xx$structural[x, i] <- 0 
+      
+      out <- cSEM:::estimatePathOLS(
+        .H = H,
+        .Q = Q,
+        .P = P,
+        .csem_model = xx,
+        .normality = normality,
+        .approach_nl = approach_nl
+      )
+      # calculate 
+      r2_excluded <- out$R2[x]
+      r2_included <- .object$Estimates$R2[x]
+      
+      effect_size <- (r2_included - r2_excluded)/(1 - r2_included)
+      list("r2_ex" = r2_excluded, "r2_in" = r2_included, "eff_size" = effect_size)
+    })
+    names(inner_out) <- indep_vars
+    inner_out
+  })
+  names(outer_out) <- vars_endo
+  outer_out
 }

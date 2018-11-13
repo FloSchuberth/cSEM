@@ -4,7 +4,7 @@
 #' composite based approach or conduct confirmatory composite analysis (CCA).
 #'
 #' `csem()` estimates linear and nonlinear structural equation models using a 
-#' composite based approach like PLS, GSCA or unit weights. Technically, `csem()` is a wrapper 
+#' composite based approach like PLS-PM, GSCA or unit weights. Technically, `csem()` is a wrapper 
 #' around the more general [foreman()] function designed for quick and flexible 
 #' use by providing the user with default options except for 
 #' the mandatory `.data` and `.model` argument. 
@@ -33,7 +33,7 @@
 #' }
 #'
 #' \subsection{Weights and path coefficients:}{
-#' By default weights are estimated using the partial least squares algorithm (*PLS*).
+#' By default weights are estimated using the partial least squares algorithm (*PLS-PM*).
 #' Alternative approaches include all of *Kettenring's criteria*, "*fixed weights*"
 #' or "*unit weight*". *Generalized Structured Component Analysis* (*GSCA*) may
 #' also be chosen as a weighing approach although technically GSCA obtains weight
@@ -41,7 +41,7 @@
 #' `.approach_weights = "GSCA"` automatically sets `.approach_paths = "GSCA"` (and
 #' vice-versa).
 #'
-#' For PLS composite-indicator and composite-composite correlations are properly
+#' For PLS-PM composite-indicator and composite-composite correlations are properly
 #' rescaled using *PLSc* \insertCite{Dijkstra2015}{cSEM} by default. *PLSc* yields
 #' consistent estimates for the factor loadings, construct correlations, 
 #' and path coefficients if any of the constructs involved is 
@@ -75,7 +75,8 @@
 #'   .data             = NULL,
 #'   .model            = NULL,
 #'   .id               = NULL,
-#'   .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
+#'   .approach_2ndorder= c("3stage", "repeated_indicators"),
+#'   .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
 #'                         "fixed", "unit"),
 #'   .approach_paths    = c("OLS", "2SLS", "3SLS"),
 #'   ...)
@@ -107,14 +108,16 @@ csem <- function(
   .data                    = NULL,
   .model                   = NULL,
   .id                      = NULL,
-  .approach_weights        = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                               "GSCA", "GSCAm", "GSCA_VCV", "fixed", "unit"),
+  .approach_2ndorder       = c("3stage", "repeated_indicators"),
   .approach_paths          = c("OLS", "2SLS"),
+  .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
+                               "GSCA", "GSCAm", "GSCA_VCV", "fixed", "unit"),
   ...
   ) {
   ## Match arguments
+  .approach_2ndorder<- match.arg(.approach_2ndorder)
+  .approach_paths   <- match.arg(.approach_paths)
   .approach_weights <- match.arg(.approach_weights)
-  .approach_paths    <- match.arg(.approach_paths)
   
   ## Collect and handle arguments
   # Note: all.names = TRUE is neccessary for otherwise arguments with a leading
@@ -122,11 +125,28 @@ csem <- function(
   args_used <- c(as.list(environment(), all.names = TRUE), list(...))
   args_used["..."] <- NULL
   args        <- handleArgs(args_used)
-  args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))] 
+  args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))]
   
+  ## Parse model
+  model <- parseModel(.model)
+  
+  ## Modify model if model contains second order constructs
+  if(any(model$construct_order == "Second order")) {
+    model1 <- convertModel(
+      .csem_model        = model, 
+      .approach_2ndorder = args$.approach_2ndorder,
+      .stage             = "first")
+    ## Update model
+    model1$construct_order <- model$construct_order
+    args_needed[[".model"]] <- model1
+  } else {
+    args_needed[[".model"]] <- model
+  }
+    
   ## Check data
   if(!any(class(.data) %in% c("data.frame", "matrix", "list"))) {
-    stop("Data must be provided as a `matrix`, a `data.frame` or a `list`. ", ".data has class: ", 
+    stop("Data must be provided as a `matrix`, a `data.frame` or a `list`. ", 
+         ".data has class: ", 
          class(.data), call. = FALSE)
   }
   ## Select cases
@@ -167,11 +187,46 @@ csem <- function(
     
     out <- do.call(foreman, args_needed)
   }
-  
+
   ## Set class for output
-  class(out) <- "cSEMResults"
+  # See the details section of ?UseMethod() to learn how method dispatch works
+  # for objects with multiple classes
+  if(any(class(.data) == "list") | !is.null(.id)) {
+    
+    # Sometimes the original (unstandardized) pooled data set is required 
+    # (e.g. for testMICOM()).
+    # By convention the original, pooled dataset is therefore added to the first 
+    # element of "out" (= results for the first group/dataset)! 
+    # If ".data" was a list of data they are combined to on pooled dataset
+    # If ".data" was originallay pooled and subsequently split by ".id"
+    # The original unsplit data is returned without the id column.
+    
+    out[[1]]$Information$Data_pooled <- if(any(class(.data) == "list")) {
+      as.matrix(do.call(rbind, .data))
+    } else {
+      as.matrix(.data[, -which(colnames(.data) == .id)])
+    }
+    
+    class(out) <- c("cSEMResults", "cSEMResults_multi")
+    
+  } else if(any(model$construct_order == "Second order") && 
+            args$.approach_2ndorder == "3stage") {
+    
+    ### Second step
+    # Note: currently only data supplied as a list or grouped data is not allowed
+    out2 <- calculate2ndOrder(model, out)
+    out <- list("First_stage" = out, "Second_stage" = out2)
+    ## Append original arguments needed as they are required by e.g. testOMF.
+    
+    out$Second_stage$Information$Arguments_original <- args_needed
+    
+    class(out) <- c("cSEMResults", "cSEMResults_2ndorder" )
+    
+  } else {
+    
+    class(out) <- c("cSEMResults", "cSEMResults_default")
+    
+  }
   
-  ## Has estimation been done based on a single data set with no grouping?
-  attr(out, "single") <- ifelse(any(class(.data) == "list")| !is.null(.id), FALSE, TRUE) 
   return(out)
 }

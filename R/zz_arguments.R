@@ -8,7 +8,9 @@
 #' function having `...` as a formal argument, set the `.only_dots` argument 
 #' of the [args_default()] function to `TRUE`.
 #'
-#' @param .data A `data.frame` or a `matrix` containing the raw data. 
+#' @param .data A `data.frame` or a `matrix` containing the raw data. Possible
+#'   data column types or classes are: logical, numeric (double or integer), factor 
+#'   (ordered and unordered) or a mix of several types.
 #' @param .model A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 #'   or a [cSEMModel]-list.
 #' @param .alpha An integer or a numeric vector of significance levels. 
@@ -16,9 +18,13 @@
 #' @param .approach Character string. The Kettenring approach to use. One of 
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
-#' @param .approach_cor Character string. Approach used to obtain the indicator 
-#'   correlation matrix. One of: "*bravais-pearson*" or "*theil-sen*".
-#'   Defaults to "*bravais-pearson*".
+#' @param .approach_2ndorder Character string. Approach used for models containing
+#'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
+#'   Defaults to "*3stage*".
+#' @param .approach_cor_robust Character string. Approach used to obtain a robust 
+#'   indicator correlation matrix. One of: "*none*" in which case nothing is done,
+#'   "*theil-sen*" or (TODO)
+#'   Defaults to "*none*".
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
@@ -29,6 +35,9 @@
 #'   obtain composite weights. One of: "*PLS*", "*SUMCORR*", "*MAXVAR*",
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*GSCAm*", "*GSCA_VCV*", "*fixed*", or "*unit*".
 #'   Defaults to "*PLS*".
+#'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
+#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*GSCAm*", "*GSCA_VCV*", "*fixed*", or "*unit*".
+#'   Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names to `fun()` whose value 
 #'   was modified by the user.
 #' @param .C A (J x J) composite variance-covariance matrix.
@@ -46,28 +55,34 @@
 #'   where `"value"` is a character string giving the name of the dominant indicator
 #'   and `"name"` a character string of the corresponding construct name.
 #'   Dominant indicators may be specified for a subset of the constructs. 
-#' @param .drop_inadmissibles Logical. Should inadmissible solutions be dropped? 
-#'   Defaults to `TRUE`.
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
 #' @param .H The (N x J) matrix of construct scores.
+#' @param .handle_inadmissibles Character string. How should inadmissible results 
+#'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
+#'   replications yielding an inadmissible result will be dropped (=
+#'   number of results shown <= .runs). For "*ignore*" all results are returned 
+#'   even if they are inadmissible (= number of results = .runs). For "*replace*"
+#'   bootstrapping continues until there are .runs admissible solutions. 
+#'   Defaults to "*drop*".
 #' @param .id Character string. The name of the column of `.data` used to split
 #'   the data into groups. Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
-#'   If `iter_max = 1` and `.approach_weights = "PLS"` one-step weights are returned. 
+#'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
 #'   `.iter_max - 1`  will be returned with a warning. Defaults to `100`.
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
-#' @param .modes A vector specifying the mode that should be used for
-#'   each construct in the form `"name" = "mode"`, where `"name"` refers to the
-#'   construct name and `"mode"`` is one of *"ModeA"* or *"ModeB"*.
+#' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
+#'   Only used internally. 
 #' @param .normality Logical. Should joint normality be assumed in the nonlinear model?
 #'  For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
 #'  Defaults to `TRUE`. Ignored if the model is linear.
 #' @param .object An R object of class `cSEM<class>` with corresponding method.
+#' @param .only_common_factors Logical. Should only common factors be included? 
+#'   Defaults to `FALSE`.
 #' @param .only_dots Logical. Should only arguments to be passed to lower level 
 #'   functions via the  `...` argument of the `fun` function be returned. 
 #'   Defaults to `FALSE`.
@@ -75,22 +90,22 @@
 #' @param .parallel Logical. Use parallel computing. Defaults to `FALSE`. Note:
 #'   requires the `doSNOW` and the `parallel` package to be installed.
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
-#'   factors for PLSc. One of: "*dist_euclid*", "*dist_euclid_weighted*",
+#'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
 #'   "*geo_of_harmonic*". Defaults to "*dist_euclid*". 
-#'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS.
+#'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS-PM.
 #' @param .PLS_ignore_structural_model Logical. Should the structural model be ignored
-#'   when calculating the inner weights of the PLS algorithm? Defaults to `FALSE`.
-#'   Ignored if `.approach_weights` is not PLS.
+#'   when calculating the inner weights of the PLS-PM algorithm? Defaults to `FALSE`.
+#'   Ignored if `.approach_weights` is not PLS-PM.
 #' @param .PLS_modes Either a named vector specifying the mode that should be used for
 #'   each construct in the form `"name" = "mode"`, a single character
 #'   string giving the mode that should be used for all constructs, or `NULL`.
 #'   Possible choices are: "*ModeA*" or "*ModeB*". Defaults to `NULL`.
 #'   If `NULL`, `csem()` will choose the appropriate mode according to the type
-#'   of construct used. Ignored if `.approach_weight` is not PLS.  
+#'   of construct used. Ignored if `.approach_weight` is not PLS-PM.  
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
-#'   used in PLS. One of: "*centroid*", "*factorial*", or "*path*".
-#'   Defaults to "*centroid*". Ignored if `.approach_weight` is not PLS.
+#'   used in PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
+#'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS-PM.
 #' @param .Q A vector of composite-construct correlations with element names equal to
 #'   the names of the J construct names used in the measurement model. Note 
 #'   Q^2 is also called the reliability coefficient.
@@ -102,10 +117,13 @@
 #' @param .runs Integer. How many runs should be performed? Defaults to `499`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
-#' @param .show_progress Logical. Show progress bar. Defaults to `TRUE`.
+#' @param .stage Character string. The stage the model is need for.
+#'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
+#' @param .type_vcv Character string. Indicates which model-implied correlation matrix is calcuted
+#'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
 #' @param .verbose Logical. Should information be printed to the console? Defaults
 #'   to `TRUE`.
 #' @param .vector1 A vector of numeric values.
@@ -117,7 +135,7 @@
 #'   function should be returned? One of: `"csem"` or `"cca"`. Defaults to `"csem"`. 
 #'   Currently ignored if `.only_dots = FALSE`. 
 #' @param .X A matrix of processed data (scaled, cleaned and ordered).
-#' @param .X_cleaned A matrix of processed data (cleaned and ordered). Note: `X_cleaned`
+#' @param .X_cleaned A data.frame of processed data (cleaned and ordered). Note: `X_cleaned`
 #'   may not be scaled!
 #'
 #' @name csem_arguments
@@ -167,35 +185,38 @@ args_default <- function(
   ) {
   
   args <- list(
-    .data                    = NULL,
-    .model                   = NULL,
     .alpha                   = 0.05,
     .approach                = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_paths          = c("OLS", "2SLS"),
-    .approach_weights        = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                                 "GSCA", "GSCAm", "GSCA_VCV", "fixed", "unit"), 
+    .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
+                                 "GSCA", "GSCAm", "GSCA_VCV", "fixed", "unit"),
+    .arguments               = NULL,
     .C                       = NULL,
     .choices                 = FALSE,
     .csem_model              = NULL,
+    .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
-    .drop_inadmissibles      = TRUE,
     .E                       = NULL,
+    .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
+    .listMatrices            = NULL, 
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,
+    .model                   = NULL,
     .modes                   = NULL,
+    .only_common_factors     = TRUE,
     .object                  = NULL,
     .only_dots               = FALSE,
     .P                       = NULL,
     .parallel                = FALSE,
-    .runs                    = 499,
     .Q                       = NULL,
+    .runs                    = 499,
     .S                       = NULL,
     .saturated               = FALSE,
-    .show_progress           = TRUE,
     .terms                   = NULL,
+    .type_vcv                = c("indicator", "construct"),
     .verbose                 = TRUE,
     .W                       = NULL,
     .which_fun               = c("csem", "cca"),
@@ -206,6 +227,9 @@ args_default <- function(
   )
   
   args_dotdotdot_csem <- list(
+    # Arguments passed to convertModel()
+    .approach_2ndorder       = c("3stage", "repeated_indicators"),
+    .stage                   = c("first", "second"),
     # Arguments passed to calculateWeightsPLS
     .iter_max                = 100,
     .PLS_modes               = NULL,
@@ -213,10 +237,10 @@ args_default <- function(
     
     # Arguments passed to calculateInnerWeightsPLS
     .PLS_ignore_structural_model = FALSE,
-    .PLS_weight_scheme_inner     = c("centroid", "factorial", "path"),
+    .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
     
     # Arguments passed to calculateCorrectionFactors
-    .PLS_approach_cf         = c("dist_euclid", "dist_euclid_weighted", 
+    .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 
                                  "fisher_transformed", "mean_arithmetic",
                                  "mean_geometric", "mean_harmonic",
                                  "geo_of_harmonic"),
@@ -228,7 +252,7 @@ args_default <- function(
     .normality               = TRUE,
     
     #  Arguments passed to foreman
-    .approach_cor            = c("bravais-pearson","theil-sen"),
+    .approach_cor_robust     = c("none", "theil-sen"),
     .disattenuate            = TRUE,
     .dominant_indicators     = NULL,
     .estimate_structural     = TRUE,
@@ -276,9 +300,9 @@ args_default <- function(
 
 handleArgs <- function(.args_used) {
   
-  x  <- args_default()
+  args_default  <- args_default()
   
-  args_default_names  <- names(x)
+  args_default_names  <- names(args_default)
   args_used_names <- names(.args_used)
   
   ## Are all argument names used valid?
@@ -291,15 +315,37 @@ handleArgs <- function(.args_used) {
          call. = FALSE)
   }
   
-  ## Which arguments need to be changed?
-  args_intersect <- intersect(args_used_names, args_default_names)
-  
+  ## Are arguments valid
+  # Note: for now, I will only check if string arguments are valid. In the
+  # future we could refine and check if e.g. numeric values are within a reasonable
+  # range or larger than zero if required etc.
+  # choices_logical <- Filter(function(x) any(is.logical(x)), args_default(.choices = TRUE))
+  # choices_numeric <- Filter(function(x) any(is.numeric(x)), args_default(.choices = TRUE))
+  choices_character <- Filter(function(x) any(is.character(x)), args_default(.choices = TRUE))
+
+  character_args <- intersect(names(choices_character), args_used_names)
+  x <- Map(function(x, y) x %in% y, 
+      x = .args_used[character_args], 
+      y = choices_character[character_args]
+      )
+
+  lapply(seq_along(x), function(i) {
+    if(isFALSE(x[[i]])) {
+      n <- names(x[i])
+      a <- args_default(.choices = TRUE)[[n]]
+      stop(paste0("`", .args_used[n], "` is not a valid choice for ", "`", 
+                  names(.args_used[n]),"`.\n"), 
+           "Choices are: ", paste0("`", a[-length(a)],"`", collapse = ", "), 
+           " or " , paste0("`", a[length(a)], "`"), call. = FALSE)
+    }
+
+  })
   ## Replace all arguments that were changed or explicitly given and keep
   #  the default values for the others
   
-  for(i in args_intersect) {
-    x[i] <- .args_used[i]
+  for(i in args_used_names) {
+    args_default[i] <- .args_used[i]
   }
   
-  return(x)
+  return(args_default)
 }

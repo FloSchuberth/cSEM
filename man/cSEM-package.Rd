@@ -29,12 +29,18 @@ Some text on the workhorse function
 }
 
 \author{
-\strong{Maintainer}: Manuel Rademaker \email{manuel.rademaker@uni-wuerzburg.de}
+\strong{Maintainer}: Manuel Rademaker \email{manuel.rademaker@uni-wuerzburg.de} (0000-0002-8902-3561)
 
 Authors:
 \itemize{
-  \item Florian Schuberth \email{f.schuberth@utwente.nl}
-  \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de}
+  \item Florian Schuberth \email{f.schuberth@utwente.nl} (0000-0002-2110-9086)
+}
+
+Other contributors:
+\itemize{
+  \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de} [contributor]
+  \item Michael Klesel [contributor]
+  \item Theo K. Dijkstra [contributor]
 }
 
 }

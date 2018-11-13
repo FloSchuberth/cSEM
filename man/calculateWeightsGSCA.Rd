@@ -9,7 +9,9 @@ calculateWeightsGSCA(.data, .model)
 calculateWeightsGSCA(.data, .model)
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
+data column types or classes are: logical, numeric (double or integer), factor
+(ordered and unordered) or a mix of several types.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
@@ -30,9 +32,9 @@ A list with the elements
 \item{\code{$W}}{A (J x K) matrix of estimated weights.}
 \item{\code{$E}}{A (J x J) matrix of inner weights.}
 \item{\code{$Modes}}{A named vector of Modes used for the outer estimation.}
-\item{\code{$Conv_status}}{The convergence status. One of \code{TRUE}or \code{FASLE}. If
-one-step weights are used via \code{.iter_max = 1} or no iterative algorithm was used,
-the convergence status is set to \code{NULL}.}
+\item{\code{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
+and \code{FASLE} otherwise. If one-step weights are used via \code{.iter_max = 1}
+or a non-iterative procedure was used, the convergence status is set to \code{NULL}.}
 \item{\code{$Iterations}}{The number of iterations used.}
 }
 }

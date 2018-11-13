@@ -12,6 +12,7 @@
 #' @usage foreman(
 #'     .data                        = args_default()$.data,
 #'     .model                       = args_default()$.model,
+#'     .approach_cor_robust         = args_default()$.approach_cor_robust,
 #'     .approach_nl                 = args_default()$.approach_nl,
 #'     .approach_paths              = args_default()$.approach_paths,
 #'     .approach_weights            = args_default()$.approach_weights,
@@ -45,7 +46,7 @@
 foreman <- function(
   .data                        = args_default()$.data,
   .model                       = args_default()$.model,
-  .approach_cor                = args_default()$.approach_cor,
+  .approach_cor_robust         = args_default()$.approach_cor_robust,
   .approach_nl                 = args_default()$.approach_nl,
   .approach_paths              = args_default()$.approach_paths,
   .approach_weights            = args_default()$.approach_weights,
@@ -68,21 +69,25 @@ foreman <- function(
   ## Parse and order model to "cSEMModel" list
   csem_model <- parseModel(.model)
 
-  ## Prepare, check, and clean data
+  ## Prepare, check, and clean data (a data.frame)
   X_cleaned <- processData(.data = .data, .model = csem_model) 
   
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
-  S <- calculateIndicatorCor(.X_cleaned = X_cleaned, .approach_cor = .approach_cor)
+  Cor <- calculateIndicatorCor(.X_cleaned = X_cleaned, 
+                             .approach_cor_robust = .approach_cor_robust)
+  
+  # Extract the correlation matrix
+  S <- Cor$S
   
   ## Standardize
-  X <- scale(X_cleaned)
+  X <- scale(data.matrix(X_cleaned))
   
   ## Calculate weights
-  if(.approach_weights == "PLS") {
+  if(.approach_weights == "PLS-PM") {
     W <- calculateWeightsPLS(
-      .data                     = S,
-      .model                    = csem_model,
+      .S                        = S,
+      .csem_model               = csem_model,
       .iter_max                 = .iter_max,
       .PLS_modes                = .PLS_modes,
       .tolerance                = .tolerance,
@@ -94,8 +99,8 @@ foreman <- function(
     )
   } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
-      .data                     = S,
-      .model                    = csem_model,
+      .S                        = S,
+      .csem_model               = csem_model,
       .approach                 = .approach_weights
     )
   } else if(.approach_weights == "GSCA") {
@@ -132,18 +137,18 @@ foreman <- function(
     )
   } else if(.approach_weights == "unit") {
     W <- calculateWeightsUnit(
-      .data                     = S,
-      .model                    = csem_model
+      .S                        = S,
+      .csem_model               = csem_model
     )
   }
 
   ## Dominant indicators:
-  # Use the dominant indicators approach (Henseler et al. (2016)) for PLS. 
-  # Perhaps this applicable to weights obtained from algorithms other than PLS.
-  # Currently only PLS is supported.
+  # Use the dominant indicators approach (Henseler et al. (2016)) for PLS-PM. 
+  # Perhaps this applicable to weights obtained from algorithms other than PLS-PM.
+  # Currently only PLS-PM is supported.
   
   if(!is.null(.dominant_indicators)) {
-    if(.approach_weights %in% c("PLS",'MAXVAR','MINVAR','SUMCORR','SSQCORR','GENVAR')) {
+    if(.approach_weights %in% c("PLS-PM",'MAXVAR','MINVAR','SUMCORR','SSQCORR','GENVAR')) {
       
       ## Check construct names:
       # Do all construct names in .dominant_indicators match the construct
@@ -170,7 +175,7 @@ foreman <- function(
       for(i in names(.dominant_indicators)) {
         W$W[i, ] = W$W[i, ] * sign(W$W[i, .dominant_indicators[i]])
       }
-    } # END if PLS
+    } # END if PLS-PM
   } # END if 
   
   ## Calculate proxies/scores
@@ -179,12 +184,12 @@ foreman <- function(
     .W          = W$W
   )
 
-  ## Calculate PLSc-type correction factors if no reliabilites are given
-  # and disattenuation is requested. Otherwise use only the reliabilities
+  ## Calculate PLSc-type correction factors if no or only a subset of reliabilities
+  # are given and disattenuation is requested. Otherwise use only the reliabilities
   # to disattenuate both weights and proxy correlations to obtain consistent
   # estimators for the loadings, cross-loadings and path coefficients.
   
-  if(is.null(.reliabilities) & .disattenuate == TRUE) {
+  if((is.null(.reliabilities) | length(.reliabilities) != ncol(H))  & .disattenuate == TRUE) {
     correction_factors <- calculateCorrectionFactors(
       .S               = S,
       .W               = W$W,
@@ -228,7 +233,6 @@ foreman <- function(
   if(.estimate_structural) {
     estim_results <- estimatePathOLS(
       .H            = H,
-      .W            = W$W,
       .Q            = Q,
       .P            = P,
       .csem_model   = csem_model,
@@ -261,6 +265,16 @@ foreman <- function(
         estim_results$R2
       } else {
         estim_results
+      }, 
+      "R2adj"                     = if(.estimate_structural) {
+        estim_results$R2adj
+      } else {
+        estim_results
+      }, 
+      "VIF"                     = if(.estimate_structural) {
+        estim_results$VIF
+      } else {
+        estim_results
       }
     ),
     "Information" = list(
@@ -275,8 +289,7 @@ foreman <- function(
     )
   )
   
-  class(out) <- "cSEMResults"
-  attr(out, "single") <- TRUE
+  class(out) <- c("cSEMResults", "cSEMResults_default")
   invisible(out)
   
   ### For maintenance: ---------------------------------------------------------

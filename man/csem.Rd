@@ -9,7 +9,7 @@ cca(
   .data             = NULL,
   .model            = NULL,
   .id               = NULL,
-  .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
+  .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
                         "fixed", "unit"),
   ...)
 
@@ -17,7 +17,8 @@ csem(
   .data             = NULL,
   .model            = NULL,
   .id               = NULL,
-  .approach_weights = c("PLS", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
+  .approach_2ndorder= c("3stage", "repeated_indicators"),
+  .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
                         "fixed", "unit"),
   .approach_paths    = c("OLS", "2SLS", "3SLS"),
   ...)
@@ -38,10 +39,15 @@ obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{GSCAm}", "\emph{GSCA_VCV}", "\emph{fixed}", or "\emph{unit}".
 Defaults to "\emph{PLS}".}
 
+
 \item{...}{Further arguments to be passed down to lower level functions of \code{csem()}
 or \code{cca()}. Type \code{\link[cSEM:args_default]{args_default(.only_dots = TRUE)}}
 or \code{\link[cSEM:args_default]{args_default(.only_dots = TRUE, .which_fun = "cca")}}
 for a complete list of accepted \code{...} arguments for the respective function.}
+
+\item{.approach_2ndorder}{Character string. Approach used for models containing
+second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
+Defaults to "\emph{3stage}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
@@ -76,7 +82,7 @@ composite based approach or conduct confirmatory composite analysis (CCA).
 }
 \details{
 \code{csem()} estimates linear and nonlinear structural equation models using a
-composite based approach like PLS, GSCA or unit weights. Technically, \code{csem()} is a wrapper
+composite based approach like PLS-PM, GSCA or unit weights. Technically, \code{csem()} is a wrapper
 around the more general \code{\link[=foreman]{foreman()}} function designed for quick and flexible
 use by providing the user with default options except for
 the mandatory \code{.data} and \code{.model} argument.
@@ -105,7 +111,7 @@ the "\code{.}" is used to indicate interactions between constructs as in e.g.,
 }
 
 \subsection{Weights and path coefficients:}{
-By default weights are estimated using the partial least squares algorithm (\emph{PLS}).
+By default weights are estimated using the partial least squares algorithm (\emph{PLS-PM}).
 Alternative approaches include all of \emph{Kettenring's criteria}, "\emph{fixed weights}"
 or "\emph{unit weight}". \emph{Generalized Structured Component Analysis} (\emph{GSCA}) may
 also be chosen as a weighing approach although technically GSCA obtains weight
@@ -113,7 +119,7 @@ and structural coefficient estimates simultaneously. Hence, setting
 \code{.approach_weights = "GSCA"} automatically sets \code{.approach_paths = "GSCA"} (and
 vice-versa).
 
-For PLS composite-indicator and composite-composite correlations are properly
+For PLS-PM composite-indicator and composite-composite correlations are properly
 rescaled using \emph{PLSc} \insertCite{Dijkstra2015}{cSEM} by default. \emph{PLSc} yields
 consistent estimates for the factor loadings, construct correlations,
 and path coefficients if any of the constructs involved is

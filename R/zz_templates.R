@@ -25,14 +25,14 @@
 #'   \item{`$construct_type`}{A named vector containing the names of each construct
 #'    and their respective type (**"Common factor"** or **"Composite"**).}
 #'   \item{`$model_type`}{The type of model (linear or nonlinear).}
-#'   \item{`$vars_endo`}{A vector of names of the endogenous constructs.}
-#'   \item{`$vars_exo`}{A vector of names of the exogenous constructs (includes
-#'     possible interaction and exponential terms).}
-#'   \item{`$vars_explana`}{ A vector of names of the constructs that appear as
-#'     explanatory variables in at least one structural equation (includes
-#'     possible interaction and exponential terms).}
-#'   \item{`$explained_by_exo`}{A vector of names of the constructs that are
-#'     solely explained by exogenous constructs.}
+  # \item{`$vars_endo`}{A vector of names of the endogenous constructs.}
+  # \item{`$vars_exo`}{A vector of names of the exogenous constructs (includes
+  #   possible interaction and exponential terms).}
+  # \item{`$vars_explana`}{ A vector of names of the constructs that appear as
+  #   explanatory variables in at least one structural equation (includes
+  #   possible interaction and exponential terms).}
+  # \item{`$explained_by_exo`}{A vector of names of the constructs that are
+  #   solely explained by exogenous constructs.}
 #' }
 #' Note: it is possible to supply an incomplete `cSEMModel`-list
 #' to all functions that require `.csem_model` as a mandatory argument. Currently,

@@ -5,7 +5,9 @@
 \alias{cSEMArguments}
 \title{cSEMArguments}
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
+data column types or classes are: logical, numeric (double or integer), factor
+(ordered and unordered) or a mix of several types.}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
@@ -17,9 +19,14 @@ Defaults to \code{0.05}.}
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
 "\emph{SUMCORR}".}
 
-\item{.approach_cor}{Character string. Approach used to obtain the indicator
-correlation matrix. One of: "\emph{bravais-pearson}" or "\emph{theil-sen}".
-Defaults to "\emph{bravais-pearson}".}
+\item{.approach_2ndorder}{Character string. Approach used for models containing
+second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
+Defaults to "\emph{3stage}".}
+
+\item{.approach_cor_robust}{Character string. Approach used to obtain a robust
+indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+"\emph{theil-sen}" or (TODO)
+Defaults to "\emph{none}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
@@ -30,9 +37,10 @@ structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
 Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
-obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{GSCAm}", "\emph{GSCA_VCV}", "\emph{fixed}", or "\emph{unit}".
-Defaults to "\emph{PLS}".}
+obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
+Defaults to "\emph{PLS-PM}".}
+
 
 \item{.args_used}{A list of function argument names to \code{fun()} whose value
 was modified by the user.}
@@ -59,9 +67,6 @@ where \code{"value"} is a character string giving the name of the dominant indic
 and \code{"name"} a character string of the corresponding construct name.
 Dominant indicators may be specified for a subset of the constructs.}
 
-\item{.drop_inadmissibles}{Logical. Should inadmissible solutions be dropped?
-Defaults to \code{TRUE}.}
-
 \item{.E}{A (J x J) matrix of inner weights.}
 
 \item{.estimate_structural}{Logical. Should the structural coefficients
@@ -69,11 +74,19 @@ be estimated? Defaults to \code{TRUE}.}
 
 \item{.H}{The (N x J) matrix of construct scores.}
 
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications yielding an inadmissible result will be dropped (=
+number of results shown <= .runs). For "\emph{ignore}" all results are returned
+even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
+bootstrapping continues until there are .runs admissible solutions.
+Defaults to "\emph{drop}".}
+
 \item{.id}{Character string. The name of the column of \code{.data} used to split
 the data into groups. Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
-If \code{iter_max = 1} and \code{.approach_weights = "PLS"} one-step weights are returned.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
@@ -83,15 +96,17 @@ If the algorithm exceeds the specified number, weights of iteration step
 
 \item{.matrices}{A list of at least two matrices.}
 
-\item{.modes}{A vector specifying the mode that should be used for
-each construct in the form \code{"name" = "mode"}, where \code{"name"} refers to the
-construct name and `"mode"`` is one of \emph{"ModeA"} or \emph{"ModeB"}.}
+\item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
+Only used internally.}
 
 \item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
 For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+
+\item{.only_common_factors}{Logical. Should only common factors be included?
+Defaults to \code{FALSE}.}
 
 \item{.only_dots}{Logical. Should only arguments to be passed to lower level
 functions via the  \code{...} argument of the \code{fun} function be returned.
@@ -103,25 +118,25 @@ Defaults to \code{FALSE}.}
 requires the \code{doSNOW} and the \code{parallel} package to be installed.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
-factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
-Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS.}
+Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
-when calculating the inner weights of the PLS algorithm? Defaults to \code{FALSE}.
-Ignored if \code{.approach_weights} is not PLS.}
+when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FALSE}.
+Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_modes}{Either a named vector specifying the mode that should be used for
 each construct in the form \code{"name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
 If \code{NULL}, \code{csem()} will choose the appropriate mode according to the type
-of construct used. Ignored if \code{.approach_weight} is not PLS.}
+of construct used. Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
-Defaults to "\emph{centroid}". Ignored if \code{.approach_weight} is not PLS.}
+used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
@@ -139,12 +154,16 @@ reliabilities are estimated by \code{csem()}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 
-\item{.show_progress}{Logical. Show progress bar. Defaults to \code{TRUE}.}
+\item{.stage}{Character string. The stage the model is need for.
+One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 
 \item{.terms}{A vector of construct names to be classified.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
+
+\item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
+One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
@@ -165,7 +184,7 @@ Currently ignored if \code{.only_dots = FALSE}.}
 
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 
-\item{.X_cleaned}{A matrix of processed data (cleaned and ordered). Note: \code{X_cleaned}
+\item{.X_cleaned}{A data.frame of processed data (cleaned and ordered). Note: \code{X_cleaned}
 may not be scaled!}
 }
 \description{

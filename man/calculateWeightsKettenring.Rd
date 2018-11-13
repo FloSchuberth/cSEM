@@ -4,13 +4,16 @@
 \alias{calculateWeightsKettenring}
 \title{Calculate composite weights using one of Kettenrings's approaches}
 \usage{
-calculateWeightsKettenring(.data, .model, .approach)
+calculateWeightsKettenring(
+  .S           = args_default()$.S, 
+  .csem_model  = args_default()$.csem_model,   
+  .approach    = args_default()$.approach
+  )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.approach}{Character string. The Kettenring approach to use. One of
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
@@ -22,9 +25,9 @@ A list with the elements
 \item{\code{$W}}{A (J x K) matrix of estimated weights.}
 \item{\code{$E}}{A (J x J) matrix of inner weights.}
 \item{\code{$Modes}}{A named vector of Modes used for the outer estimation.}
-\item{\code{$Conv_status}}{The convergence status. One of \code{TRUE}or \code{FASLE}. If
-one-step weights are used via \code{.iter_max = 1} or no iterative algorithm was used,
-the convergence status is set to \code{NULL}.}
+\item{\code{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
+and \code{FASLE} otherwise. If one-step weights are used via \code{.iter_max = 1}
+or a non-iterative procedure was used, the convergence status is set to \code{NULL}.}
 \item{\code{$Iterations}}{The number of iterations used.}
 }
 }

@@ -17,17 +17,16 @@ calculateCorrectionFactors(
 
 \item{.W}{A (J x K) matrix of weights.}
 
-\item{.modes}{A vector specifying the mode that should be used for
-each construct in the form \code{"name" = "mode"}, where \code{"name"} refers to the
-construct name and `"mode"`` is one of \emph{"ModeA"} or \emph{"ModeB"}.}
+\item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
+Only used internally.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
-factors for PLSc. One of: "\emph{dist_euclid}", "\emph{dist_euclid_weighted}",
+factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
-Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS.}
+Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 }
 \value{
 A numeric vector of correction factors with element names equal
@@ -40,7 +39,7 @@ Calculates the correction factor used by PLSc.
 Currently, seven approaches are available:
 
 \itemize{
-\item "dist_euclid" (default)
+\item "dist_squared_euclid" (default)
 \item "dist_euclid_weighted"
 \item "fisher_transformed"
 \item "mean_geometric"
