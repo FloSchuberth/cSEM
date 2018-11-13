@@ -36,7 +36,11 @@ effects <- function(.object) {
   ## Matrix of indirect effects:
   indirect <- total - direct
   
+  # MAtrix containing the variance accounted for (VAR)
+  VAR <- indirect/total
+  
   list(direct = direct[vars_endo, , drop = FALSE], 
        indirect = indirect[vars_endo, , drop = FALSE], 
-       total = total[vars_endo, , drop = FALSE])
+       total = total[vars_endo, , drop = FALSE],
+       var = VAR[vars_endo, , drop = FALSE])
 }
