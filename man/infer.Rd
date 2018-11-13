@@ -23,6 +23,9 @@ Defaults to "\emph{drop}".}
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
+
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
 }
 \description{
 Compute quantities for inference (TODO)

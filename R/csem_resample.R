@@ -124,6 +124,7 @@ infer <- function(
   .runs = 499,
   .handle_inadmissibles = c("drop", "ignore", "replace"),
   .verbose = TRUE,
+  .alpha = 0.05,
   .user_fun = NULL,
   ...
 ) {
