@@ -38,7 +38,7 @@ effects <- function(.object) {
   
   # MAtrix containing the variance accounted for (VAR)
   VAR <- indirect/total
-  VAR[is.nan(VAR==NaN)] = 0 
+  VAR[which(is.nan(VAR), arr.ind = TRUE)] <- 0
   
   list(direct = direct[vars_endo, , drop = FALSE], 
        indirect = indirect[vars_endo, , drop = FALSE], 
