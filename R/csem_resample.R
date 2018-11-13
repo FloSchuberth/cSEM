@@ -98,25 +98,34 @@ resampleData <- function(
   out
 }
 
-a <- csem(satisfaction, model)
-resampleData(.object = a, .method = "Bootstrap", .draws = 1)
-
-.object <- a
-.draws <- 20
-method <- "Bootstrap"
-.handle_inadmissibles <- "replace"
-.alpha <- .alpha[order(.alpha)]
-.alpha <- c(0.1, 0.2, 0.05)
-.verbose = TRUE
-
-
+#' Internal: Inference
+#'
+#' Compute quantities for inference (TODO)
+#'
+#' @usage infer(
+#'  .object        = args_default()$.object
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#' 
+#' @export
+#'
 
 infer <- function(
   .object = NULL,
   .method = c("Bootstrap", "Jackknife"),
-  .draws = 499,
+  .runs = 499,
   .handle_inadmissibles = c("drop", "ignore", "replace"),
-  .verbose = TRUE
+  .verbose = TRUE,
+  .user_fun = NULL,
+  ...
 ) {
   
   method <- match.arg(.method)
@@ -136,7 +145,7 @@ infer <- function(
   
   ## Start progress bar if required
   if(.verbose){
-    pb <- txtProgressBar(min = 0, max = .draws, style = 3)
+    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
   }
 
   ## Calculate reference distribution
@@ -155,12 +164,32 @@ infer <- function(
     Est_temp <- do.call(csem, args)   
     
     # Check status
-    status_code <- sum(verify(Est_temp))
+    status_code <- sum(unlist(verify(Est_temp)))
     
     # Distinguish depending on how inadmissibles should be handled
     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-
-      Est_ls[[counter]] <- Est_temp$Estimates
+      
+      # Compute user defined function if specified
+      if(!is.null(.user_fun)) {
+        user_funs <- lapply(.user_fun, function(f) c(f(Est_temp)))
+      }
+      
+      x1  <- Est_temp$Estimates
+      x2  <- Est_temp$Information
+      
+      x1$Path_estimates    <- t(x1$Path_estimates)[t(x2$Model$structural) != 0]
+      x1$Loading_estimates <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0]
+      x1$Weight_estimates  <- t(x1$Weight_estimates)[t(x2$Model$measurement) != 0]
+      x1$Inner_weight_estimates <- NULL
+      x1$Construct_scores <- NULL
+      x1$Indicator_VCV <- NULL
+      x1$Proxy_VCV <- c(x1$Proxy_VCV)
+      x1$Construct_VCV <- c(x1$Construct_VCV)
+      x1$Cross_loadings <- NULL
+      
+      x1 <- c(x1, user_funs)
+      
+      Est_ls[[counter]] <- x1
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to NA if status is not okay and .handle_inadmissibles == "drop"
@@ -172,8 +201,8 @@ infer <- function(
       n_inadmissibles <- n_inadmissibles + 1
     }
     
-    # Break repeat loop if .draws results have been created.
-    if(length(Est_ls) == .draws) {
+    # Break repeat loop if .runs results have been created.
+    if(length(Est_ls) == .runs) {
       break
     } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
@@ -191,129 +220,27 @@ infer <- function(
   }
   
   ## Process data --------------------------------------------------------------
-  # Delete inadmissibles
+  # Delete NA's
   out <- Filter(Negate(anyNA), Est_ls)
 
-  # Check if at least 10 admissible results were obtained
-  if(length(out) < 11) {
+  # Check if at least 3 admissible results were obtained
+  if(length(out) < 3) {
     stop("The following error occured in the `infer()` functions:\n",
-         "Less than 10 admissible results produced.", 
+         "Less than 2 admissible results produced.", 
          " Consider setting .handle_inadmissibles = 'replace' instead.",
          call. = FALSE)
   }
   
-  out <- purrr::transpose(out)
-  
-  # Some quantities are matrices and others are vectors. They need to be handled
-  # differently so we split them
-  out_mat <- out[c("Path_estimates", 
-                   "Loading_estimates", 
-                   "Weight_estimates", 
-                   "Inner_weight_estimates",
-                   "Proxy_VCV",
-                   "Construct_VCV",
-                   "Cross_loadings")] %>% 
-    lapply(simplify2array)
-  
-
-  funs <- list(
-    "Mean"   = function(x) mean(x),
-    "Median" = function(x) median(x), 
-    "Var"    = function(x) var(x),
-    "Sd"     = function(x) sd(x),
-    "Quantile" = function(x) lapply(.alpha, function(y) quantile(x, probs = 1 - y))
-  )
-  
-  funs
-  ## Apply each function to compute the statistics need 
-  tt <- lapply(funs, function(fun) {
-    lapply(out_mat, function(x) apply(x, c(1, 2), FUN = fun))
-    })
-  
- #  tt$Mean
- #  tt$Median
- #  tt$Sd
- #  mm <- tt$Quantile$Path_estimates
- #  str(mm[1,1])
- #  ff <- function(x) lapply(1:length(mm[1,1])mm[i, j]
- # outer(rownames(mm), colnames(mm), FUN = Vectorize())
- #  
- #  lapply(function(x, y) apply(x, c(1, 2), list("mean", "median", "var")), x = out_mat, y = list("mean", "median", "var"))
-  
-    lapply(function(x) apply(x, c(1, 2), mean))
-    
-    lapply(function(x) apply(x, c(1, 2), function(y) list(
-      "Mean"     = mean(x),
-      "Median"   = median(x),
-      "Var"      = var(x),
-      "Sd"       = sd(x),
-      "Quantile" = quantile(x, probs = 1 - .alpha)
-      ))
-    )
-  
-  # out_mat$Path_estimates
-  # outer(rownames(out_mat$Path_estimates), colnames(out_mat$Path_estimates), 
-  #       function(x) )
-
-  out_vec <- out[c("Construct_reliabilities", "R2", "R2adj", "VIF")] %>% 
+  out2 <- purrr::transpose(out) %>% 
     lapply(function(x) do.call(rbind, x)) %>% 
     lapply(function(x) list(
       "Mean"     = colMeans(x),
-      "Median"   = {tt <- matrixStats::colMedians(x); names(tt) <- colnames(x); tt},
-      "Var"      = {tt <- matrixStats::colVars(x); names(tt) <- colnames(x); tt},
-      "Sd"       = {tt <- matrixStats::colSds(x); names(tt) <- colnames(x); tt},
-      "Quantile" = matrixStats::colQuantiles(x, probs = 1 - .alpha, drop = FALSE)
-    ))
+      "Median"   = matrixStats::colMedians(x),
+      "Var"      = matrixStats::colVars(x),
+      "Sd"       = matrixStats::colSds(x),
+      "Quantile" = t(matrixStats::colQuantiles(x, probs = 1 - .alpha, drop = FALSE))
+    )
+    )
   
+  return(out2)
 }
-
-# debugonce(infer)
-# infer(a, .method = "Bootstrap", .draws = 20, .handle_inadmissibles = "replace")
-
-# 
-# ## Compute csem estimate for each data set
-# Est_ls <- lapply(1:.draws, function(x) {
-#   
-#   ## Replace data
-#   args[[".data"]] <- ll[[x]]
-#   
-#   ## Estimate
-#   Est_out <- do.call(csem, args)
-#   
-#   ## Update progress bar
-#   if(.verbose){
-#     setTxtProgressBar(pb, x)
-#   }
-#   
-#   ## Return the estimated quantities
-#   Est_out
-# })
-# 
-# # Check status (the sum is the number of inadbmissibles)
-# ninad <- sum(unlist(lapply(Est_ls, verify)))
-# 
-# ## Handle inadmissibles
-# if(ninad != 0 && handle_inadmissibles == "drop") {
-#   
-#   # Delete inadmissibles
-#   Est_ls <- Filter(function(x) sum(verify(x)) == 0, Est_ls)
-# 
-# }
-# 
-# if(ninad != 0 && handle_inadmissibles == "replace") {
-#   
-#   # Delete inadmissibles
-#   Est_ls <- Filter(function(x) sum(verify(x)) == 0, Est_ls)
-#   
-#   ## Keep on bootstrapping until the number of admissible bootstrapped 
-#   ## replicates is equal to .draws
-#   while(.draws > .draws - ninad) {
-#     
-#     ninad <- nrow(boot.out$t[!complete.cases(boot.out$t), , drop = FALSE])
-#   }
-# }
-#   
-# 
-# }    
-#      
-# if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore"))

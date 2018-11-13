@@ -9,7 +9,8 @@
 \usage{
 summarize(.object)
 
-\method{summarize}{cSEMResults_default}(.object)
+\method{summarize}{cSEMResults_default}(.object,
+  .inference = "Bootstrap")
 
 \method{summarize}{cSEMResults_multi}(.object)
 

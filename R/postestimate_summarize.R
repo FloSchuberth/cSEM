@@ -12,15 +12,22 @@
 #'
 #' @export
 #'
-summarize <- function(.object) {
+summarize <- function(.object, .inference = "Bootstrap") {
   UseMethod("summarize")
 }
 
 #' @describeIn summarize (TODO)
 #' @export
 
-summarize.cSEMResults_default <- function(.object) {
+summarize.cSEMResults_default <- function(.object, .inference = "Bootstrap") {
 
+  if(.inference == "Bootstrap") {
+    boot_out <- infer(.object, 
+                      .method = .inference, 
+                      .runs = 100, 
+                      .handle_inadmissibles = "drop",
+                      .verbose = TRUE)
+  }
   x1  <- .object$Estimates
   x2  <- .object$Information
 
@@ -33,10 +40,16 @@ summarize.cSEMResults_default <- function(.object) {
   temp <- outer(rownames(x1$Path_estimates), colnames(x1$Path_estimates), 
                 FUN = function(x, y) paste(x, y, sep = " ~ "))
   
+  temp_boot <- boot_out$Path_estimates
+  t_temp    <- t(x1$Path_estimates)[t(x2$Model$structural) != 0 ] / temp_boot$Sd
+  
   path_estimates <- data.frame(
     "Name"           = t(temp)[t(x2$Model$structural) != 0],
     "Construct_type" = type,
-    "Estimate"       = t(x1$Path_estimates)[t(x2$Model$structural) != 0 ], 
+    "Estimate"       = t(x1$Path_estimates)[t(x2$Model$structural) != 0 ],
+    "Std_Err"        = temp_boot$Sd,
+    "t_statistic"    = t_temp,
+    "p_value"        = 2*pnorm(abs(t_temp), lower.tail = FALSE),
     stringsAsFactors = FALSE)
   
   ## Loading estimates ---------------------------------------------------------
@@ -49,10 +62,16 @@ summarize.cSEMResults_default <- function(.object) {
                  ifelse(x2$Model$construct_type[temp] == "Composite", " <~ ", " =~ "),  
                  colnames(x1$Loading_estimates))
   
+  temp_boot <- boot_out$Loading_estimates
+  t_temp    <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0 ] / temp_boot$Sd
+  
   loading_estimates <- data.frame(
     "Name"           = temp,
     "Construct_type" = type,
     "Estimate"       = x1$Loading_estimates[x2$Model$measurement != 0 ], 
+    "Std_Err"        = temp_boot$Sd,
+    "t_statistic"    = t_temp,
+    "p_value"        = 2*pnorm(abs(t_temp), lower.tail = FALSE),
     stringsAsFactors = FALSE)
   
   ## Weight estimates ----------------------------------------------------------
