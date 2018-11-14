@@ -87,7 +87,9 @@ summarize.cSEMResults_default <- function(.object) {
   .object$Estimates$Path_estimates    <- path_estimates
   .object$Estimates$Loading_estimates <- loading_estimates
   .object$Estimates$Weight_estimates  <- weight_estimates
+  if(x2$Arguments$.approach_weights == "PLS-PM") {
   .object$Estimates$Inner_weight_estimates <- inner_weight_estimates
+  }
   .object$Estimates$Construct_scores <- construct_scores
   
   

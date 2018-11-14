@@ -188,21 +188,22 @@ print.cSEMSummarize_default <- function(.object) {
   }
 
   ## Only print weights, for constructs modeled as common factors
-  temp_w <- x1$Weight_estimates[x1$Weight_estimates$Construct_type == "Common factor", , drop = FALSE] 
-  
-  cat("\n\nEstimated Weights:\n==================\n", sep = "")
-  l <- max(nchar(temp_w[, "Name"]))
-  
-  cat("\n\t", 
-      col_align("Weight", max(l, nchar("Weight")) + 2), 
-      col_align("Estimate", 10, align = "right"), sep = "")
-  for(i in 1:nrow(temp_w)) {
+  temp_w <- x1$Weight_estimates[x1$Weight_estimates$Construct_type == "Composite", , drop = FALSE] 
+  if(length(temp_w) > 0) {
+    cat("\n\nEstimated Weights:\n==================\n", sep = "")
+    l <- max(nchar(temp_w[, "Name"]))
+    
     cat("\n\t", 
-        col_align(temp_w[i, "Name"], max(l, nchar("Weight")) + 2), 
-        col_align(sprintf("%.4f", temp_w[i, "Estimate"]), 10, align = "right"), 
-        sep = "")
+        col_align("Weight", max(l, nchar("Weight")) + 2), 
+        col_align("Estimate", 10, align = "right"), sep = "")
+    for(i in 1:nrow(temp_w)) {
+      cat("\n\t", 
+          col_align(temp_w[i, "Name"], max(l, nchar("Weight")) + 2), 
+          col_align(sprintf("%.4f", temp_w[i, "Estimate"]), 10, align = "right"), 
+          sep = "")
+    }
   }
-
+  
   cat("\n", rule(line = "bar2"), sep = "")
 }
 
