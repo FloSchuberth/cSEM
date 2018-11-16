@@ -55,11 +55,21 @@ to "\emph{diff_absolute}".}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
+\item{.csem_resample}{A list resulting from a call to \link{resamplecSEMResults}.}
+
+\item{.cv_fold}{Integer. The number of cross-validation folds to use.
+Defaults to \code{10}.}
+
 \item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.distance}{Character string. A distance measure. One of: "\emph{geodesic}"
 or "\emph{squared_euclidian}". Defaults to "\emph{geodesic}".}
+
+\item{.draws}{Integer. The number of resamples to take. Defaults to \code{499}.}
+
+\item{.draws2}{Integer. The number of resamples to take when resampling from
+a resample. Defaults to \code{NULL}.}
 
 \item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
 where \code{"value"} is a character string giving the name of the dominant indicator
@@ -81,6 +91,10 @@ even if they are inadmissible (= number of results = .runs). For "\emph{replace}
 bootstrapping continues until there are .runs admissible solutions.
 Defaults to "\emph{drop}".}
 
+\item{.handle_inadmissibles2}{Character string. How should inadmissible results
+be treated when resampling from a resample? For details see
+the description for \code{.handle_inadmissibles}.}
+
 \item{.id}{Character string. The name of the column of \code{.data} used to split
 the data into groups. Defaults to \code{NULL}.}
 
@@ -94,6 +108,14 @@ If the algorithm exceeds the specified number, weights of iteration step
 \item{.matrix2}{A \code{matrix} to compare.}
 
 \item{.matrices}{A list of at least two matrices.}
+
+\item{.method}{Character string. The resampling method to use. One of:
+"\emph{bootstrap}", "\emph{jackknife}", "\emph{permutation}", or "\emph{cross-validation}".
+Defaults to "\emph{bootstrap}".}
+
+\item{.method2}{Character string. The resampling method to use when resampling
+from a resample. One of: "\emph{bootstrap}" or "\emph{jackknife}".
+Defaults to "\emph{bootstrap}".}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
@@ -166,6 +188,12 @@ One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
+
+\item{.user_funs}{A function or a (named) list of functions to apply to every
+resample. Takes \code{.object} as an input:
+\code{myFun <- function(.object) {...}}.  Output should preferably be a (named)
+vector but matrices are also accepted. Note however that output will be
+vectorized (columnwise) in this case.}
 
 \item{.vector1}{A vector of numeric values.}
 

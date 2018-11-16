@@ -2,12 +2,12 @@
 % Please edit documentation in R/csem_resample.R
 \name{resampleData}
 \alias{resampleData}
-\title{Internal: Resample}
+\title{Resample data}
 \usage{
 resampleData(
  .object        = args_default()$.object,
  .data          = NULL,
- .method        = c("Bootstrap", "Jackknife", "Permutation", "Cross-validation"),
+ .method        = c("bootstrap", "jackknife", "permutation", "cross-validation"),
  .draws         = 499,
  .id            = NULL,
  .cv_folds      = 10      
@@ -18,7 +18,16 @@ resampleData(
 
 \item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
 data column types or classes are: logical, numeric (double or integer), factor
-(ordered and unordered) or a mix of several types.}
+(ordered and unordered) or a mix of several types. Data may include
+one character column whose name is given by \code{.id}. This column is assumed
+to contain group identifiers used to split the data.
+If \code{.data} is provided \code{.object} is ignored. Defaults to \code{NULL}.}
+
+\item{.method}{Character string. The resampling method to use. One of:
+"\emph{bootstrap}", "\emph{jackknife}", "\emph{permutation}", or "\emph{cross-validation}".
+Defaults to "\emph{bootstrap}".}
+
+\item{.draws}{Integer. The number of resamples to take. Defaults to \code{499}.}
 
 \item{.id}{Character string. The name of the column of \code{.data} used to split
 the data into groups. Defaults to \code{NULL}.}

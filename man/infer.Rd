@@ -2,27 +2,37 @@
 % Please edit documentation in R/csem_resample.R
 \name{infer}
 \alias{infer}
+\alias{bootMean}
+\alias{bootVar}
+\alias{bootSd}
+\alias{bootBias}
+\alias{bootStandardCI}
+\alias{bootPercentilCI}
+\alias{bootTstatCI}
 \title{Internal: Inference}
 \usage{
 infer(
  .object        = args_default()$.object
 )
+
+bootMean(x)
+
+bootVar(x)
+
+bootSd(x)
+
+bootBias(x)
+
+bootStandardCI(x, .dist = c("z", "t"))
+
+bootPercentilCI(x)
+
+bootTstatCI(x1, x2)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
-\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
-
-\item{.handle_inadmissibles}{Character string. How should inadmissible results
-be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
-replications yielding an inadmissible result will be dropped (=
-number of results shown <= .runs). For "\emph{ignore}" all results are returned
-even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
-bootstrapping continues until there are .runs admissible solutions.
-Defaults to "\emph{drop}".}
-
-\item{.verbose}{Logical. Should information be printed to the console? Defaults
-to \code{TRUE}.}
+\item{.csem_resample}{A list resulting from a call to \link{resamplecSEMResults}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
@@ -30,6 +40,23 @@ Defaults to \code{0.05}.}
 \description{
 Compute quantities for inference (TODO)
 }
+\section{Functions}{
+\itemize{
+\item \code{bootMean}: The bootstraped mean
+
+\item \code{bootVar}: (TODO)
+
+\item \code{bootSd}: (TODO)
+
+\item \code{bootBias}: (TODO)
+
+\item \code{bootStandardCI}: (TODO)
+
+\item \code{bootPercentilCI}: (TODO)
+
+\item \code{bootTstatCI}: (TODO)
+}}
+
 \examples{
 \dontrun{
 # still to implement

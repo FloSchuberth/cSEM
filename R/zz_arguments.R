@@ -44,10 +44,16 @@
 #'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
 #'   to "*diff_absolute*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel]-list.
+#' @param .csem_resample A list resulting from a call to [resamplecSEMResults].
+#' @param .cv_fold Integer. The number of cross-validation folds to use. 
+#'   Defaults to `10`.
 #' @param .disattenuate Logical. If possible, should composite correlations be disattenuated
 #'   if the construct is modeled as a common factor? Defaults to `TRUE`.
 #' @param .distance Character string. A distance measure. One of: "*geodesic*"
 #'   or "*squared_euclidian*". Defaults to "*geodesic*".
+#' @param .draws Integer. The number of resamples to take. Defaults to `499`.
+#' @param .draws2 Integer. The number of resamples to take when resampling from 
+#'   a resample. Defaults to `NULL`.
 #' @param .dominant_indicators A character vector of `"name" = "value"` pairs, 
 #'   where `"value"` is a character string giving the name of the dominant indicator
 #'   and `"name"` a character string of the corresponding construct name.
@@ -63,6 +69,9 @@
 #'   even if they are inadmissible (= number of results = .runs). For "*replace*"
 #'   bootstrapping continues until there are .runs admissible solutions. 
 #'   Defaults to "*drop*".
+#' @param .handle_inadmissibles2 Character string. How should inadmissible results 
+#'   be treated when resampling from a resample? For details see 
+#'   the description for `.handle_inadmissibles`.
 #' @param .id Character string. The name of the column of `.data` used to split
 #'   the data into groups. Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
@@ -72,6 +81,12 @@
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
+#' @param .method Character string. The resampling method to use. One of: 
+#'  "*bootstrap*", "*jackknife*", "*permutation*", or "*cross-validation*". 
+#'  Defaults to "*bootstrap*".
+#' @param .method2 Character string. The resampling method to use when resampling
+#'   from a resample. One of: "*bootstrap*" or "*jackknife*".
+#'   Defaults to "*bootstrap*".
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .normality Logical. Should joint normality be assumed in the nonlinear model?
@@ -123,6 +138,11 @@
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
 #' @param .verbose Logical. Should information be printed to the console? Defaults
 #'   to `TRUE`.
+#' @param .user_funs A function or a (named) list of functions to apply to every
+#'   resample. Takes `.object` as an input:
+#'   `myFun <- function(.object) {...}`.  Output should preferably be a (named)
+#'   vector but matrices are also accepted. Note however that output will be 
+#'   vectorized (columnwise) in this case.
 #' @param .vector1 A vector of numeric values.
 #' @param .vector2 A vector of numeric values.
 #' @param .W A (J x K) matrix of weights.
@@ -191,16 +211,24 @@ args_default <- function(
     .C                       = NULL,
     .choices                 = FALSE,
     .csem_model              = NULL,
+    .csem_resample           = NULL,
+    .cv_folds                = 10,
     .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
+    .draws                   = 499, 
+    .draws2                  = NULL,
     .E                       = NULL,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
+    .handle_inadmissibles2   = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
     .listMatrices            = NULL, 
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,
+    .method                  = c("bootstrap", "jackknife", "permutation", 
+                                 "cross-validation"),
+    .method2                 = c("bootstrap", "jackknife"),
     .model                   = NULL,
     .modes                   = NULL,
     .only_common_factors     = TRUE,
@@ -214,6 +242,7 @@ args_default <- function(
     .saturated               = FALSE,
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
+    .user_funs               = NULL,
     .verbose                 = TRUE,
     .W                       = NULL,
     .which_fun               = c("csem", "cca"),

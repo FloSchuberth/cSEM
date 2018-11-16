@@ -12,23 +12,37 @@
 #'
 #' @export
 #'
-summarize <- function(.object, .inference = "Bootstrap") {
+summarize <- function(
+  .object, 
+  .inference = "Bootstrap") {
   UseMethod("summarize")
 }
 
 #' @describeIn summarize (TODO)
 #' @export
 
-summarize.cSEMResults_default <- function(.object, .inference = "Bootstrap") {
+summarize.cSEMResults_default <- function(
+  .object, 
+  .inference = "Bootstrap"
+  ) {
 
   if(.inference == "Bootstrap") {
-    boot_out <- infer(.object, 
-                      .method = .inference, 
-                      .runs = 100, 
-                      .handle_inadmissibles = "drop",
-                      .verbose = TRUE,
-                      .alpha = 0.05,
-                      .user_funs = NULL)
+    Est_resamples <- resamplecSEMResults(
+      .object               = .object,
+      .method               = "bootstrap",
+      .draws                = 40,
+      .handle_inadmissibles = "replace", 
+      .verbose              = TRUE,
+      .user_funs            = list("HTMT" = HTMT),
+      .draws2               = 20
+    )
+    
+    boot_out <- infer(
+      .object        = .object,
+      .alpha         = c(0.05, 0.01),
+      .csem_resample = Est_resamples,
+      .statistic     = "all"
+    )
   }
   x1  <- .object$Estimates
   x2  <- .object$Information
@@ -60,9 +74,7 @@ summarize.cSEMResults_default <- function(.object, .inference = "Bootstrap") {
   
   # Build names
   temp <- rep(rownames(x1$Loading_estimates), times = rowSums(x2$Model$measurement))
-  temp <- paste0(temp, 
-                 ifelse(x2$Model$construct_type[temp] == "Composite", " <~ ", " =~ "),  
-                 colnames(x1$Loading_estimates))
+  temp <- paste0(temp, " =~ ", colnames(x1$Loading_estimates))
   
   temp_boot <- boot_out$Loading_estimates
   t_temp    <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0 ] / temp_boot$Sd
@@ -78,7 +90,7 @@ summarize.cSEMResults_default <- function(.object, .inference = "Bootstrap") {
   
   ## Weight estimates ----------------------------------------------------------
   temp <- rep(rownames(x1$Weight_estimates), times = rowSums(x2$Model$measurement))
-  temp <- paste0(temp, " -- ", colnames(x1$Weight_estimates))
+  temp <- paste0(temp, " <~ ", colnames(x1$Weight_estimates))
   
   weight_estimates <- data.frame(
     "Name"           = temp,
