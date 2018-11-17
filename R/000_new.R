@@ -257,11 +257,24 @@ calculateEffectSize <- function(.object) {
 }
 
 
-GoF=function(.object){
+GoF.default=function(.object){
   
-  L=.object$Estimates$Loading_estimates
+  
+  m         <- .object$Information$Model$structural
+  # Endogenous constructs
+  vars_endo <- rownames(m)[rowSums(m) != 0]
+
+  # Collect names of common factors
   ct=.object$Information$Model$construct_type
   cf=names(ct[ct == 'Common factor'])
-  sqrt(mean(L[cf,,drop=FALSE]^2) * mean(.object$Estimates$R2))
   
+  
+  # Select loadings of the common factors
+  L=.object$Estimates$Loading_estimates[cf,]
+    L=L[L!=0]
+  
+    # Calculate GoF. However, only constructs modeled as common factors are considered
+    # as they explain their indicators in contrast to the composite.
+    sqrt(mean(L^2) * mean(.object$Estimates$R2))
+
 }
