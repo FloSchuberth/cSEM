@@ -273,7 +273,10 @@ GoF.default=function(.object){
   L=.object$Estimates$Loading_estimates[cf,]
     L=L[L!=0]
   
-    # Calculate GoF. However, only constructs modeled as common factors are considered
+    # Calculate GoF. 
+    # It is defined as the mean of the R^2s of the structural model times
+    # the variance in the indicators that is explained by the construct.
+    # For the latter, only constructs modeled as common factors are considered
     # as they explain their indicators in contrast to the composite.
     sqrt(mean(L^2) * mean(.object$Estimates$R2))
 
