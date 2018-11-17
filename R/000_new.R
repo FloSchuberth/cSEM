@@ -255,3 +255,13 @@ calculateEffectSize <- function(.object) {
   names(outer_out) <- vars_endo
   outer_out
 }
+
+
+GoF=function(.object){
+  
+  L=.object$Estimates$Loading_estimates
+  ct=.object$Information$Model$construct_type
+  cf=names(ct[ct == 'Common factor'])
+  sqrt(mean(L[cf,,drop=FALSE]^2) * mean(.object$Estimates$R2))
+  
+}
