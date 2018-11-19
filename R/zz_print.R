@@ -150,23 +150,23 @@ print.cSEMSummarize_default <- function(.object) {
   cat("\n\n", rule(center = "Estimates"), "\n\n", sep = "")
 
   ## Path estimates
-  cat("Estimated Path Coefficients:\n============================", sep = "")
+  cat("Estimated path coefficients:\n============================", sep = "")
   l <- max(nchar(x1$Path_estimates[, "Name"]))
   
   cat("\n\t", 
       col_align("Path", max(l, nchar("Path")) + 2), 
       col_align("Estimate", 10, align = "right"), 
-      col_align("Std. Error", 12, align = "right"),
-      col_align("t-Stat", 10, align = "right"), 
-      col_align("p-Value", 10, align = "right"), 
+      col_align("Std. error", 12, align = "right"),
+      col_align("t-stat.", 10, align = "right"), 
+      col_align("p-value", 10, align = "right"), 
       sep = "")
   
   for(i in 1:nrow(x1$Path_estimates)) {
     cat("\n\t", 
         col_align(x1$Path_estimates[i, "Name"], max(l, nchar("Path")) + 2), 
         col_align(sprintf("%.4f", x1$Path_estimates[i, "Estimate"]), 10, align = "right"),
-        col_align(sprintf("%.4f", x1$Path_estimates[i, "Std_Err"]), 12, align = "right"),
-        col_align(sprintf("%.4f", x1$Path_estimates[i, "t_statistic"]), 10, align = "right"),
+        col_align(sprintf("%.4f", x1$Path_estimates[i, "Std_err"]), 12, align = "right"),
+        col_align(sprintf("%.4f", x1$Path_estimates[i, "t_stat"]), 10, align = "right"),
         col_align(ifelse(x1$Path_estimates[i, "p_value"] < 0.05, 
                      green(sprintf("%.4f", x1$Path_estimates[i, "p_value"])),
                      sprintf("%.4f", x1$Path_estimates[i, "p_value"])), 10, align = "right"),
@@ -180,17 +180,17 @@ print.cSEMSummarize_default <- function(.object) {
   cat("\n\t", 
       col_align("Loading", max(l, nchar("Loading")) + 2), 
       col_align("Estimate", 10, align = "right"), 
-      col_align("Std. Error", 12, align = "right"),
-      col_align("t-value", 10, align = "right"), 
-      col_align("p-Value", 10, align = "right"),
+      col_align("Std. error", 12, align = "right"),
+      col_align("t-stat.", 10, align = "right"), 
+      col_align("p-value", 10, align = "right"),
       sep = "")
   
   for(i in 1:nrow(x1$Loading_estimates)) {
     cat("\n\t", 
         col_align(x1$Loading_estimates[i, "Name"], max(l, nchar("Loading")) + 2), 
         col_align(sprintf("%.4f", x1$Loading_estimates[i, "Estimate"]), 10, align = "right"), 
-        col_align(sprintf("%.4f", x1$Loading_estimates[i, "Std_Err"]), 12, align = "right"),
-        col_align(sprintf("%.4f", x1$Loading_estimates[i, "t_statistic"]), 10, align = "right"),
+        col_align(sprintf("%.4f", x1$Loading_estimates[i, "Std_err"]), 12, align = "right"),
+        col_align(sprintf("%.4f", x1$Loading_estimates[i, "t_stat"]), 10, align = "right"),
         col_align(ifelse(x1$Loading_estimates[i, "p_value"] < 0.05, 
                          green(sprintf("%.4f", x1$Loading_estimates[i, "p_value"])),
                          sprintf("%.4f", x1$Loading_estimates[i, "p_value"])), 10, align = "right"),

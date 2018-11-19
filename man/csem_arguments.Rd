@@ -98,6 +98,11 @@ the description for \code{.handle_inadmissibles}.}
 \item{.id}{Character string. The name of the column of \code{.data} used to split
 the data into groups. Defaults to \code{NULL}.}
 
+\item{.inference}{Logical. Should inference statistics (e.g., confidence intervalls)
+be computed? Defaults to \code{FALSE}. Inference is based on resampling methods
+such as (double) bootstrap or jackknife. Output may therefore take
+considerably longer.}
+
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step

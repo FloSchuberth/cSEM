@@ -23,11 +23,11 @@ bootSd(x)
 
 bootBias(x)
 
-bootStandardCI(x, .dist = c("z", "t"))
+bootStandardCI(x, .object, .dist = c("z", "t"), .probs)
 
-bootPercentilCI(x)
+bootPercentilCI(x, .probs)
 
-bootTstatCI(x1, x2)
+bootTstatCI(x1, x2, .probs)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}

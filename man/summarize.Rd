@@ -9,8 +9,12 @@
 \usage{
 summarize(.object)
 
-\method{summarize}{cSEMResults_default}(.object,
-  .inference = "Bootstrap")
+\method{summarize}{cSEMResults_default}(.object = NULL,
+  .inference = TRUE, .csem_resample = NULL, .alpha = c(0.01, 0.1),
+  .draws = 40, .draws2 = 20, .method = "bootstrap",
+  .method2 = "bootstrap", .handle_inadmissibles = "replace",
+  .handle_inadmissibles2 = "replace", .statistic = "all",
+  .verbose = TRUE, .user_funs = list(HTMT = HTMT))
 
 \method{summarize}{cSEMResults_multi}(.object)
 
@@ -18,6 +22,50 @@ summarize(.object)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+
+\item{.inference}{Logical. Should inference statistics (e.g., confidence intervalls)
+be computed? Defaults to \code{FALSE}. Inference is based on resampling methods
+such as (double) bootstrap or jackknife. Output may therefore take
+considerably longer.}
+
+\item{.csem_resample}{A list resulting from a call to \link{resamplecSEMResults}.}
+
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
+
+\item{.draws}{Integer. The number of resamples to take. Defaults to \code{499}.}
+
+\item{.draws2}{Integer. The number of resamples to take when resampling from
+a resample. Defaults to \code{NULL}.}
+
+\item{.method}{Character string. The resampling method to use. One of:
+"\emph{bootstrap}", "\emph{jackknife}", "\emph{permutation}", or "\emph{cross-validation}".
+Defaults to "\emph{bootstrap}".}
+
+\item{.method2}{Character string. The resampling method to use when resampling
+from a resample. One of: "\emph{bootstrap}" or "\emph{jackknife}".
+Defaults to "\emph{bootstrap}".}
+
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications yielding an inadmissible result will be dropped (=
+number of results shown <= .runs). For "\emph{ignore}" all results are returned
+even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
+bootstrapping continues until there are .runs admissible solutions.
+Defaults to "\emph{drop}".}
+
+\item{.handle_inadmissibles2}{Character string. How should inadmissible results
+be treated when resampling from a resample? For details see
+the description for \code{.handle_inadmissibles}.}
+
+\item{.verbose}{Logical. Should information be printed to the console? Defaults
+to \code{TRUE}.}
+
+\item{.user_funs}{A function or a (named) list of functions to apply to every
+resample. Takes \code{.object} as an input:
+\code{myFun <- function(.object) {...}}.  Output should preferably be a (named)
+vector but matrices are also accepted. Note however that output will be
+vectorized (columnwise) in this case.}
 }
 \description{
 Summarize the model (TODO).

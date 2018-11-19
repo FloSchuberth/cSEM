@@ -149,6 +149,11 @@ resamplecSEMResults <- function(
             call. = FALSE, immediate. = TRUE)
   }
   
+  if(.draws < 3 | (!is.null(.draws2) && .draws2 < 3)) {
+    stop2("The following error occured in the `resamplecSEMResults()` functions:\n",
+         "At least 3 draws required.")
+  }
+  
   ### Process original data ----------------------------------------------------
   Est_original  <- .object$Estimates
   Info_original <- .object$Information
@@ -266,6 +271,7 @@ resamplecSEMResults <- function(
       ## bootstraped t-interval CI) the original object needs to be returned. This
       ## may be problematic for 
       if(!is.null(.draws2)) {
+      
         Est_resamples2 <- resamplecSEMResults(
           .object               = Est_temp,
           .draws                = .draws2,
@@ -314,7 +320,7 @@ resamplecSEMResults <- function(
   
   # Check if at least 3 admissible results were obtained
   if(length(out) < 3) {
-    stop("The following error occured in the `infer()` functions:\n",
+    stop("The following error occured in the `resamplecSEMResults()` functions:\n",
          "Less than 2 admissible results produced.", 
          " Consider setting .handle_inadmissibles = 'replace' instead.",
          call. = FALSE)
@@ -339,11 +345,11 @@ resamplecSEMResults <- function(
                 SIMPLIFY = FALSE)
   
   out <- if(!is.null(.draws2)) {
-    list("Estimates1" = out, "Estimates2" = out_2)
+    list("Estimates1" = out, "Estimates2" = out_2) 
   } else {
     out
   }
-  
+
   ## Set class
   class(out) <- "cSEMResults_resampled"
   return(out)
@@ -372,22 +378,17 @@ resamplecSEMResults <- function(
 infer <- function(
   .object          = NULL,
   .csem_resample   = args_default()$.csem_resample,
-  .alpha           = args_default()$.alpha,
-  .statistic       = c("all", "mean", "var", "sd", "bias", "CI-standard_z",
-                       "CI-standard_t", "CI-percentile", "CI-t-intervall",
-                       "CI-Bc", "CI-Bca")
+  .alpha           = args_default()$.alpha
 ) {
  
-  x1 <- .csem_resample$Estimates1
-  x2 <- .csem_resample$Estimates2
-  
-  if(anyNA(x2) & any(.statistic %in% c("all", "CI-t-intervall", "CI-Bca"))) {
-    stop(paste0("`", intersect(.statistic, c("all", "CI-t-intervall", "CI-Bca")), 
-                "`", collapse = ", "), 
-         " requires the resampling distribution for each resample.",
-         " Please set `.draws2` in `resamplecSEMResults()`.",
-         call. = FALSE)
+  if(all(names(.csem_resample) %in% c("Estimates1", "Estimates2"))) {
+    x1 <- .csem_resample$Estimates1
+    x2 <- .csem_resample$Estimates2
+  } else {
+    x1 <- .csem_resample
+    x2 <- NA
   }
+
   
   ## Compute quantiles/critical values -----------------------------------------
   ### Note if jackknife was chosen a correction is needed for the variance 
@@ -396,20 +397,28 @@ infer <- function(
   for(i in seq_along(.alpha[order(.alpha)])) { 
     probs <- c(probs, round(.alpha[i]/2, 4), round(1 - .alpha[i]/2, 4)) 
   }
-  
+
   ## Compute statistics and quantities
   l <- list(
     "Mean" = bootMean(x1),
     "Var"  = bootVar(x1),
     "Sd"   = bootSd(x1),
     "Bias" = bootBias(x1),
-    "CI-standard_z" = bootStandardCI(x1, .dist = "z"),
-    "CI-standard_t" = bootStandardCI(x1, .dist = "t"),
-    "CI-percentile" = bootPercentilCI(x1),
-    "CI-t-invertall"= bootTstatCI(x1, x2)
+    "CI_standard_z" = bootStandardCI(x1, .object = .object, .dist = "z", .probs = probs),
+    "CI_standard_t" = bootStandardCI(x1, .object = .object, .dist = "t", .probs = probs),
+    "CI_percentile" = bootPercentilCI(x1, .probs = probs),
+    "CI_t_invertall"= if(anyNA(x2)) NA else bootTstatCI(x1, x2, .probs = probs)
+    # if(!anyNA(x2)) {
+    #   "CI_t_invertall"= bootTstatCI(x1, x2, .probs = probs)
+    # }
+
   )
-  
-  return(l)
+  if(anyNA(x2)) {
+    l <- l[-length(l)]
+  } else {
+    l
+  }
+  return(purrr::transpose(l))
 }
 
 #' @describeIn infer The bootstraped mean
@@ -445,7 +454,7 @@ bootBias <- function(x) {
   })
 }
 #' @describeIn infer (TODO)
-bootStandardCI <- function(x, .dist = c("z", "t")) {
+bootStandardCI <- function(x, .object, .dist = c("z", "t"), .probs) {
   # Standard CI with bootstraped SE's
   # Apparently critical quantiles can be based on both the t or the 
   # standard normal distribution (z). The former may perform better in
@@ -459,7 +468,7 @@ bootStandardCI <- function(x, .dist = c("z", "t")) {
   # y     := the estimated standard errors (based on .draw resamples)
   # z     := a vector of probabilities
   out <- mapply(function(w, y) {
-    lapply(probs, function(z) {
+    lapply(.probs, function(z) {
       if(.dist == "t") {
         df <- nrow(.object$Information$Data) - 1
         w$Original + qt(z, df = df) * y
@@ -470,27 +479,27 @@ bootStandardCI <- function(x, .dist = c("z", "t")) {
   }, w = x, y = boot_sd, SIMPLIFY = FALSE) %>% 
     lapply(function(x) do.call(rbind, x)) %>% 
     lapply(function(x) {
-      rownames(x) <- sprintf("%.2f%%", probs*100)
+      rownames(x) <- sprintf("%.2f%%", .probs*100)
       x
     })
   
   return(out)
 }
 #' @describeIn infer (TODO)
-bootPercentilCI <- function(x) {
+bootPercentilCI <- function(x, .probs) {
   # Percentile CI 
   # Take the distribution of the bootstrap distribution F* (CDF) as an estimator for
   # the true distribution of theta_hat. Use the quantilies of that distribution
   # to estimate the CI for theta
   # CI: [F*^-1(alpha/2) ; F*^-1(1 - alpha/2)]
   lapply(x, function(y) {
-    out <- t(matrixStats::colQuantiles(y$Resample, probs = probs, drop = FALSE))
+    out <- t(matrixStats::colQuantiles(y$Resample, probs = .probs, drop = FALSE))
     colnames(out) <- names(y$Original)
     out
   })
 }
 #' @describeIn infer (TODO)
-bootTstatCI <- function(x1, x2) {
+bootTstatCI <- function(x1, x2, .probs) {
   # Bootstraped t statistic
   # Bootstrap the t-statisic (since it is roughly pivotal) and compute
   # CI based on bootstraped t-values and bootstraped SE
@@ -507,7 +516,7 @@ bootTstatCI <- function(x1, x2) {
                    y = boot_sd_star)
 
   out <- mapply(function(i, y) {
-    lapply(probs, function(z) {
+    lapply(.probs, function(z) {
       qt_boot <- t(matrixStats::colQuantiles(boot_t_stat[[i]], probs = z, drop = FALSE))
       
       ## Confidence interval
@@ -516,7 +525,7 @@ bootTstatCI <- function(x1, x2) {
   }, i = seq_along(x1), y = boot_sd, SIMPLIFY = FALSE) %>% 
     lapply(function(x) do.call(rbind, x)) %>% 
     lapply(function(x) {
-      rownames(x) <- sprintf("%.2f%%", probs*100)
+      rownames(x) <- sprintf("%.2f%%", .probs*100)
       x
     })
 

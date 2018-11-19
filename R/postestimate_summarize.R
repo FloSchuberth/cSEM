@@ -13,8 +13,20 @@
 #' @export
 #'
 summarize <- function(
-  .object, 
-  .inference = "Bootstrap") {
+  .object                = NULL, 
+  .inference             = TRUE,
+  .csem_resample         = NULL,
+  .alpha                 = c(0.01, 0.1),
+  .draws                 = 40,
+  .draws2                = 20,
+  .method                = "bootstrap",
+  .method2               = "bootstrap",
+  .handle_inadmissibles  = "replace", 
+  .handle_inadmissibles2 = "replace", 
+  .statistic             = "all",
+  .verbose               = TRUE,
+  .user_funs             = list("HTMT" = HTMT)
+  ) {
   UseMethod("summarize")
 }
 
@@ -22,28 +34,21 @@ summarize <- function(
 #' @export
 
 summarize.cSEMResults_default <- function(
-  .object, 
-  .inference = "Bootstrap"
+  .object                = NULL, 
+  .inference             = TRUE,
+  .csem_resample         = NULL,
+  .alpha                 = c(0.01, 0.1),
+  .draws                 = 40,
+  .draws2                = 20,
+  .method                = "bootstrap",
+  .method2               = "bootstrap",
+  .handle_inadmissibles  = "replace", 
+  .handle_inadmissibles2 = "replace", 
+  .statistic             = "all",
+  .verbose               = TRUE,
+  .user_funs             = list("HTMT" = HTMT)
   ) {
-
-  if(.inference == "Bootstrap") {
-    Est_resamples <- resamplecSEMResults(
-      .object               = .object,
-      .method               = "bootstrap",
-      .draws                = 40,
-      .handle_inadmissibles = "replace", 
-      .verbose              = TRUE,
-      .user_funs            = list("HTMT" = HTMT),
-      .draws2               = 20
-    )
-    
-    boot_out <- infer(
-      .object        = .object,
-      .alpha         = c(0.05, 0.01),
-      .csem_resample = Est_resamples,
-      .statistic     = "all"
-    )
-  }
+  
   x1  <- .object$Estimates
   x2  <- .object$Information
 
@@ -56,16 +61,13 @@ summarize.cSEMResults_default <- function(
   temp <- outer(rownames(x1$Path_estimates), colnames(x1$Path_estimates), 
                 FUN = function(x, y) paste(x, y, sep = " ~ "))
   
-  temp_boot <- boot_out$Path_estimates
-  t_temp    <- t(x1$Path_estimates)[t(x2$Model$structural) != 0 ] / temp_boot$Sd
-  
   path_estimates <- data.frame(
     "Name"           = t(temp)[t(x2$Model$structural) != 0],
     "Construct_type" = type,
     "Estimate"       = t(x1$Path_estimates)[t(x2$Model$structural) != 0 ],
-    "Std_Err"        = temp_boot$Sd,
-    "t_statistic"    = t_temp,
-    "p_value"        = 2*pnorm(abs(t_temp), lower.tail = FALSE),
+    "Std_err"        = NA,
+    "t_stat"         = NA,
+    "p_value"        = NA,
     stringsAsFactors = FALSE)
   
   ## Loading estimates ---------------------------------------------------------
@@ -76,16 +78,13 @@ summarize.cSEMResults_default <- function(
   temp <- rep(rownames(x1$Loading_estimates), times = rowSums(x2$Model$measurement))
   temp <- paste0(temp, " =~ ", colnames(x1$Loading_estimates))
   
-  temp_boot <- boot_out$Loading_estimates
-  t_temp    <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0 ] / temp_boot$Sd
-  
   loading_estimates <- data.frame(
     "Name"           = temp,
     "Construct_type" = type,
-    "Estimate"       = x1$Loading_estimates[x2$Model$measurement != 0 ], 
-    "Std_Err"        = temp_boot$Sd,
-    "t_statistic"    = t_temp,
-    "p_value"        = 2*pnorm(abs(t_temp), lower.tail = FALSE),
+    "Estimate"       = x1$Loading_estimates[x2$Model$measurement != 0 ],
+    "Std_err"        = NA,
+    "t_stat"         = NA,
+    "p_value"        = NA,
     stringsAsFactors = FALSE)
   
   ## Weight estimates ----------------------------------------------------------
@@ -95,7 +94,10 @@ summarize.cSEMResults_default <- function(
   weight_estimates <- data.frame(
     "Name"           = temp,
     "Construct_type" = type, 
-    "Estimate"       = x1$Weight_estimates[x2$Model$measurement != 0 ], 
+    "Estimate"       = x1$Weight_estimates[x2$Model$measurement != 0 ],
+    "Std_err"        = NA,
+    "t_stat"         = NA,
+    "p_value"        = NA,
     stringsAsFactors = FALSE)
   
   ## Inner weight estimates ----------------------------------------------------
@@ -116,6 +118,61 @@ summarize.cSEMResults_default <- function(
   ## Construct scores ----------------------------------------------------------
   construct_scores <- as.data.frame(x1$Construct_scores)
 
+  ## Inference =================================================================
+  
+  if(.inference) {
+    if(is.null(.csem_resample)) {
+      resample_out <- resamplecSEMResults(
+        .object                = .object,
+        .draws                 = .draws,
+        .draws2                = .draws,
+        .method                = .method,
+        .method2               = .method2,
+        .handle_inadmissibles  = .handle_inadmissibles2, 
+        .handle_inadmissibles2 = .handle_inadmissibles2, 
+        .verbose               = .verbose,
+        .user_funs             = .user_funs
+      )
+    } else if(class(.csem_resample) == "cSEMResults_resampled") {
+      resample_out <- .csem_resample
+    } else {
+      stop(".csem_results must be an object of class `cSEMResults_resampled`.")
+    }
+
+    infer_out <- infer(
+      .object        = .object,
+      .alpha         = .alpha,
+      .csem_resample = resample_out
+    )
+    
+    temp   <- infer_out$Path_estimates
+    t_temp <- t(x1$Path_estimates)[t(x2$Model$structural) != 0 ] / temp$Sd
+    
+    path_estimates["Std_err"] <- temp$Sd
+    path_estimates["t_stat"]  <- t_temp
+    path_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+    
+    temp   <- infer_out$Loading_estimates
+    t_temp <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0 ] / temp$Sd
+    
+    loading_estimates["Std_err"] <- temp$Sd
+    loading_estimates["t_stat"]  <- t_temp
+    loading_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+    
+    ## CI
+    CIs <- c("CI_standard_z", "CI_standard_t", "CI_percentile", "CI_t_intervall",
+             "CI_Bc", "CI_Bca")
+    
+    # Which statistics should be reported
+    stats <- intersect(.statistic, CIs)
+    # if(anyNA(x2) & any(.statistic %in% c("all", "CI_t_intervall", "CI_Bca"))) {
+    #   stop2(paste0("`", intersect(.statistic, c("all", "CI_t_intervall", "CI_Bca")), 
+    #                "`", collapse = ", "), 
+    #         " requires the resampling distribution for each resample.")
+    # }
+  }
+  
+  
   ## Modify relevant .object elements ------------------------------------------
   .object$Estimates$Path_estimates    <- path_estimates
   .object$Estimates$Loading_estimates <- loading_estimates

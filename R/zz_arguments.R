@@ -74,6 +74,10 @@
 #'   the description for `.handle_inadmissibles`.
 #' @param .id Character string. The name of the column of `.data` used to split
 #'   the data into groups. Defaults to `NULL`.
+#' @param .inference Logical. Should inference statistics (e.g., confidence intervalls)
+#'   be computed? Defaults to `FALSE`. Inference is based on resampling methods
+#'   such as (double) bootstrap or jackknife. Output may therefore take 
+#'   considerably longer.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
@@ -222,6 +226,7 @@ args_default <- function(
     .handle_inadmissibles2   = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
+    .inference               = TRUE,
     .listMatrices            = NULL, 
     .matrix1                 = NULL,
     .matrix2                 = NULL,
