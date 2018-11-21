@@ -2,59 +2,81 @@
 % Please edit documentation in R/csem_resample.R
 \name{infer}
 \alias{infer}
-\alias{bootMean}
-\alias{bootVar}
-\alias{bootSd}
-\alias{bootBias}
-\alias{bootStandardCI}
-\alias{bootPercentilCI}
-\alias{bootTstatCI}
+\alias{MeanResample}
+\alias{VarResample}
+\alias{SdResample}
+\alias{BiasResample}
+\alias{StandardCIResample}
+\alias{PercentilCIResample}
+\alias{TStatCIResample}
 \title{Internal: Inference}
 \usage{
 infer(
  .object        = args_default()$.object
 )
 
-bootMean(x)
+MeanResample(.x)
 
-bootVar(x)
+VarResample(.x, .method, .n)
 
-bootSd(x)
+SdResample(.x, .method, .n)
 
-bootBias(x)
+BiasResample(.x, .method, .n)
 
-bootStandardCI(x, .object, .dist = c("z", "t"), .probs)
+StandardCIResample(.x, .bias_corrected, .df = c("type1", "type2"),
+  .dist = c("z", "t"), .method, .n, .probs)
 
-bootPercentilCI(x, .probs)
+PercentilCIResample(.x, .probs)
 
-bootTstatCI(x1, x2, .probs)
+TStatCIResample(.x1, .x2, .bias_corrected, .method, .method2, .n, .probs)
 }
 \arguments{
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
-
-\item{.csem_resample}{A list resulting from a call to \link{resamplecSEMResults}.}
+\item{.csem_resample}{A list resulting from a call to \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
+
+\item{.bias_corrected}{Logical. Should the standard and the tStat
+confidence intervall be bias-corrected using the bootstraped bias estimate?
+If \code{TRUE} the confidence intervall for some estimated parameter \code{theta}
+is centered at \code{2*theta - theta*_hat},
+where \code{theta*_hat} is the average over all .R bootstrap estimates of \code{theta}.
+Defaults to \code{TRUE}}
+
+\item{.statistic}{Character string. Which statistic should be returned?
+One of (TODO)
+Defaults to (TODO).}
+
+\item{.method}{Character string. The resampling method to use. One of:
+"\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
+
+\item{.method2}{Character string. The resampling method to use when resampling
+from a resample. One of: "\emph{none}", "\emph{bootstrap}", "\emph{jackknife}" or "\emph{both}"
+in which case bootstrap and jackknife samples are drawn. For the former
+the number of bootstrap draws may be provided via \code{.R2}.
+Option "\emph{both}" is necessary if both tStat and Bca confidence intervalls
+are needed. Naturally, choosing "\emph{both}" this is very time consuming as the
+number of replicats is now \code{.R * (.R2 + n)} if \code{.method = "bootstrap"} or
+\code{n * (.R2 + n)} if \code{.method = "jackknife"}. Defaults to "\emph{none}".}
 }
 \description{
 Compute quantities for inference (TODO)
 }
 \section{Functions}{
 \itemize{
-\item \code{bootMean}: The bootstraped mean
+\item \code{MeanResample}: The bootstraped mean
 
-\item \code{bootVar}: (TODO)
+\item \code{VarResample}: (TODO)
 
-\item \code{bootSd}: (TODO)
+\item \code{SdResample}: (TODO)
 
-\item \code{bootBias}: (TODO)
+\item \code{BiasResample}: (TODO)
 
-\item \code{bootStandardCI}: (TODO)
+\item \code{StandardCIResample}: (TODO)
 
-\item \code{bootPercentilCI}: (TODO)
+\item \code{PercentilCIResample}: (TODO)
 
-\item \code{bootTstatCI}: (TODO)
+\item \code{TStatCIResample}: (TODO)
 }}
 
 \examples{

@@ -14,18 +14,11 @@
 #'
 summarize <- function(
   .object                = NULL, 
-  .inference             = TRUE,
-  .csem_resample         = NULL,
-  .alpha                 = c(0.01, 0.1),
-  .draws                 = 40,
-  .draws2                = 20,
-  .method                = "bootstrap",
-  .method2               = "bootstrap",
-  .handle_inadmissibles  = "replace", 
-  .handle_inadmissibles2 = "replace", 
-  .statistic             = "all",
-  .verbose               = TRUE,
-  .user_funs             = list("HTMT" = HTMT)
+  .csem_resample         = args_default()$.csem_resample,
+  .alpha                 = args_default()$.alpha,
+  .bias_corrected        = args_default()$.bias_corrected,
+  .statistic             = args_default()$.statistic,
+  .verbose               = args_default()$.verbose
   ) {
   UseMethod("summarize")
 }
@@ -35,18 +28,11 @@ summarize <- function(
 
 summarize.cSEMResults_default <- function(
   .object                = NULL, 
-  .inference             = TRUE,
-  .csem_resample         = NULL,
-  .alpha                 = c(0.01, 0.1),
-  .draws                 = 40,
-  .draws2                = 20,
-  .method                = "bootstrap",
-  .method2               = "bootstrap",
-  .handle_inadmissibles  = "replace", 
-  .handle_inadmissibles2 = "replace", 
-  .statistic             = "all",
-  .verbose               = TRUE,
-  .user_funs             = list("HTMT" = HTMT)
+  .csem_resample         = args_default()$.csem_resample,
+  .alpha                 = args_default()$.alpha,
+  .bias_corrected        = args_default()$.bias_corrected,
+  .statistic             = args_default()$.statistic,
+  .verbose               = args_default()$.verbose
   ) {
   
   x1  <- .object$Estimates
@@ -120,58 +106,45 @@ summarize.cSEMResults_default <- function(
 
   ## Inference =================================================================
   
-  if(.inference) {
-    if(is.null(.csem_resample)) {
-      resample_out <- resamplecSEMResults(
-        .object                = .object,
-        .draws                 = .draws,
-        .draws2                = .draws,
-        .method                = .method,
-        .method2               = .method2,
-        .handle_inadmissibles  = .handle_inadmissibles2, 
-        .handle_inadmissibles2 = .handle_inadmissibles2, 
-        .verbose               = .verbose,
-        .user_funs             = .user_funs
-      )
-    } else if(class(.csem_resample) == "cSEMResults_resampled") {
-      resample_out <- .csem_resample
-    } else {
-      stop(".csem_results must be an object of class `cSEMResults_resampled`.")
+  if(!is.null(.csem_resample)) {
+    if(class(.csem_resample) != "cSEMResults_resampled") {
+      stop2(".csem_results must be an object of class `cSEMResults_resampled`.",
+            " See ?resamplecSEMResults for details.")
     }
-
-    infer_out <- infer(
-      .object        = .object,
-      .alpha         = .alpha,
-      .csem_resample = resample_out
-    )
-    
-    temp   <- infer_out$Path_estimates
-    t_temp <- t(x1$Path_estimates)[t(x2$Model$structural) != 0 ] / temp$Sd
-    
-    path_estimates["Std_err"] <- temp$Sd
-    path_estimates["t_stat"]  <- t_temp
-    path_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-    
-    temp   <- infer_out$Loading_estimates
-    t_temp <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0 ] / temp$Sd
-    
-    loading_estimates["Std_err"] <- temp$Sd
-    loading_estimates["t_stat"]  <- t_temp
-    loading_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-    
-    ## CI
-    CIs <- c("CI_standard_z", "CI_standard_t", "CI_percentile", "CI_t_intervall",
-             "CI_Bc", "CI_Bca")
-    
-    # Which statistics should be reported
-    stats <- intersect(.statistic, CIs)
-    # if(anyNA(x2) & any(.statistic %in% c("all", "CI_t_intervall", "CI_Bca"))) {
-    #   stop2(paste0("`", intersect(.statistic, c("all", "CI_t_intervall", "CI_Bca")), 
-    #                "`", collapse = ", "), 
-    #         " requires the resampling distribution for each resample.")
-    # }
-  }
   
+    infer_out <- infer(
+      .csem_resample  = .csem_resample,
+      .alpha          = .alpha,
+      .bias_corrected = .bias_corrected,
+      .statistic      = .statistic
+    )
+  
+  temp   <- infer_out$Path_estimates
+  t_temp <- t(x1$Path_estimates)[t(x2$Model$structural) != 0 ] / temp$Sd
+  
+  path_estimates["Std_err"] <- temp$Sd
+  path_estimates["t_stat"]  <- t_temp
+  path_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+  
+  temp   <- infer_out$Loading_estimates
+  t_temp <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0 ] / temp$Sd
+  
+  loading_estimates["Std_err"] <- temp$Sd
+  loading_estimates["t_stat"]  <- t_temp
+  loading_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+  
+  ## CI
+  CIs <- c("CI_standard_z", "CI_standard_t", "CI_percentile", "CI_t_intervall",
+           "CI_Bc", "CI_Bca")
+  
+  # Which statistics should be reported
+  stats <- intersect(.statistic, CIs)
+  # if(anyNA(x2) & any(.statistic %in% c("all", "CI_t_intervall", "CI_Bca"))) {
+  #   stop2(paste0("`", intersect(.statistic, c("all", "CI_t_intervall", "CI_Bca")), 
+  #                "`", collapse = ", "), 
+  #         " requires the resampling distribution for each resample.")
+  # }
+  }
   
   ## Modify relevant .object elements ------------------------------------------
   .object$Estimates$Path_estimates    <- path_estimates

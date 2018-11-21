@@ -44,6 +44,13 @@ Defaults to "\emph{PLS-PM}".}
 \item{.args_used}{A list of function argument names to \code{fun()} whose value
 was modified by the user.}
 
+\item{.bias_corrected}{Logical. Should the standard and the tStat
+confidence intervall be bias-corrected using the bootstraped bias estimate?
+If \code{TRUE} the confidence intervall for some estimated parameter \code{theta}
+is centered at \code{2*theta - theta*_hat},
+where \code{theta*_hat} is the average over all .R bootstrap estimates of \code{theta}.
+Defaults to \code{TRUE}}
+
 \item{.C}{A (J x J) composite variance-covariance matrix.}
 
 \item{.choices}{Logical. Should candidate values for the arguments be returned?
@@ -55,7 +62,7 @@ to "\emph{diff_absolute}".}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.csem_resample}{A list resulting from a call to \link{resamplecSEMResults}.}
+\item{.csem_resample}{A list resulting from a call to \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}.}
 
 \item{.cv_fold}{Integer. The number of cross-validation folds to use.
 Defaults to \code{10}.}
@@ -65,11 +72,6 @@ if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.distance}{Character string. A distance measure. One of: "\emph{geodesic}"
 or "\emph{squared_euclidian}". Defaults to "\emph{geodesic}".}
-
-\item{.draws}{Integer. The number of resamples to take. Defaults to \code{499}.}
-
-\item{.draws2}{Integer. The number of resamples to take when resampling from
-a resample. Defaults to \code{NULL}.}
 
 \item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
 where \code{"value"} is a character string giving the name of the dominant indicator
@@ -85,10 +87,10 @@ be estimated? Defaults to \code{TRUE}.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
-replications yielding an inadmissible result will be dropped (=
-number of results shown <= .runs). For "\emph{ignore}" all results are returned
-even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
-bootstrapping continues until there are .runs admissible solutions.
+replications/resamples yielding an inadmissible result will be dropped (
+number of results shown <= .R). For "\emph{ignore}" all results are returned
+even if they are inadmissible (number of results = .R). For "\emph{replace}"
+resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
 \item{.handle_inadmissibles2}{Character string. How should inadmissible results
@@ -97,11 +99,6 @@ the description for \code{.handle_inadmissibles}.}
 
 \item{.id}{Character string. The name of the column of \code{.data} used to split
 the data into groups. Defaults to \code{NULL}.}
-
-\item{.inference}{Logical. Should inference statistics (e.g., confidence intervalls)
-be computed? Defaults to \code{FALSE}. Inference is based on resampling methods
-such as (double) bootstrap or jackknife. Output may therefore take
-considerably longer.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
@@ -115,12 +112,16 @@ If the algorithm exceeds the specified number, weights of iteration step
 \item{.matrices}{A list of at least two matrices.}
 
 \item{.method}{Character string. The resampling method to use. One of:
-"\emph{bootstrap}", "\emph{jackknife}", "\emph{permutation}", or "\emph{cross-validation}".
-Defaults to "\emph{bootstrap}".}
+"\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
 \item{.method2}{Character string. The resampling method to use when resampling
-from a resample. One of: "\emph{bootstrap}" or "\emph{jackknife}".
-Defaults to "\emph{bootstrap}".}
+from a resample. One of: "\emph{none}", "\emph{bootstrap}", "\emph{jackknife}" or "\emph{both}"
+in which case bootstrap and jackknife samples are drawn. For the former
+the number of bootstrap draws may be provided via \code{.R2}.
+Option "\emph{both}" is necessary if both tStat and Bca confidence intervalls
+are needed. Naturally, choosing "\emph{both}" this is very time consuming as the
+number of replicats is now \code{.R * (.R2 + n)} if \code{.method = "bootstrap"} or
+\code{n * (.R2 + n)} if \code{.method = "jackknife"}. Defaults to "\emph{none}".}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
@@ -174,7 +175,11 @@ of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
 reliabilities are estimated by \code{csem()}.}
 
-\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
+\item{.R}{Integer. The number of bootstrap or permuation replications
+to use. Defaults to \code{499}.}
+
+\item{.R2}{Integer. The number of bootstrap replications to use when
+resampling from a resample. Defaults to \code{100}.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
@@ -182,6 +187,10 @@ reliabilities are estimated by \code{csem()}.}
 
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
+
+\item{.statistic}{Character string. Which statistic should be returned?
+One of (TODO)
+Defaults to (TODO).}
 
 \item{.terms}{A vector of construct names to be classified.}
 

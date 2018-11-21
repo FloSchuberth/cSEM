@@ -8,7 +8,7 @@
 #' If more than two groups are to be compared issues related to multiple testing
 #' should be taken into account.
 #'
-#' The number of permutation runs is defaults to `args_default()$.runs` for performance reasons.
+#' The number of permutation runs defaults to `args_default()$.R` for performance reasons.
 #' According to Henseler et al. (2016) the number of permutations should be at least 5000 for
 #' assessment to be reliable.
 #'
@@ -16,7 +16,7 @@
 #'  .object               = args_default()$.object,
 #'  .alpha                = args_default()$.alpha,
 #'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-#'  .runs                 = args_default()$.runs,
+#'  .R                    = args_default()$.R,
 #'  .verbose              = args_default()$.verbose
 #'  )
 #'
@@ -43,7 +43,7 @@ testMICOM <- function(
   .object               = args_default()$.object,
   .alpha                = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs                 = args_default()$.runs,
+  .R                    = args_default()$.R,
   .verbose              = args_default()$.verbose
 ) {
   # Implementation is based on:
@@ -65,7 +65,7 @@ testMICOM.cSEMResults_default <- function(
   .object               = args_default()$.object,
   .alpha                = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs                 = args_default()$.runs,
+  .R                    = args_default()$.R,
   .verbose              = args_default()$.verbose
 ) {
   stop("At least 2 groups required for the MICOM test.", call. = FALSE)
@@ -78,7 +78,7 @@ testMICOM.cSEMResults_multi <- function(
   .object               = args_default()$.object,
   .alpha                = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs                 = args_default()$.runs,
+  .R                    = args_default()$.R,
   .verbose              = args_default()$.verbose
 ) {
   ### Checks and errors ========================================================
@@ -141,7 +141,7 @@ testMICOM.cSEMResults_multi <- function(
 ## Permutation ---------------------------------------------------------------
   # Start progress bar
   if(.verbose){
-    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+    pb <- txtProgressBar(min = 0, max = .R, style = 3)
   }
   
   ## Calculate reference distribution
@@ -199,8 +199,8 @@ testMICOM.cSEMResults_multi <- function(
       n_inadmissibles <- n_inadmissibles + 1
     }
     
-    # Break repeat loop if .runs results have been created.
-    if(length(ref_dist) == .runs) {
+    # Break repeat loop if .R results have been created.
+    if(length(ref_dist) == .R) {
       break
     } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
@@ -246,19 +246,19 @@ testMICOM.cSEMResults_multi <- function(
   Est <- do.call(csem, arguments)
   
   # Procedure below:
-  # 1. Create list of original group id's + .runs permutated id's
+  # 1. Create list of original group id's + .R permutated id's
   # 2. Extract construct scores, attach ids and convert to data.frame (for split)
   # 3. Split construct scores by its id column
-  # --- Now the structure is a list of length 1 + .runs each containing a list
+  # --- Now the structure is a list of length 1 + .R each containing a list
   #     of the same length as there are numbers of groups (often just 2).
   # 4. Convert group data set to a matrix and delete id column
   # 5. Compute the mean and the variance for each replication (+ the original data of course)
   #    and data set for each group.
   # 6. Transpose list
-  # --- Now we have a list of length 1 + .runs containing two list elements
+  # --- Now we have a list of length 1 + .R containing two list elements
   #     "Mean" and "Var" which in turn contain as many list elements as there are
   #     groups
-  meanvar <- c(list(id), replicate(.runs, sample(id), simplify = FALSE)) %>% 
+  meanvar <- c(list(id), replicate(.R, sample(id), simplify = FALSE)) %>% 
     lapply(function(x) as.data.frame(cbind(Est$Estimates$Construct_scores, id = x))) %>% 
     lapply(function(x) split(x, f = x$id)) %>% 
     lapply(function(x) lapply(x, function(y) as.matrix(y[, -ncol(y), drop = FALSE]))) %>% 
@@ -363,7 +363,7 @@ testMICOM.cSEMResults_2ndorder <- function(
   .object               = args_default()$.object,
   .alpha                = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs                 = args_default()$.runs,
+  .R                    = args_default()$.R,
   .verbose              = args_default()$.verbose
 ) {
   stop("Not yet implemented", call. = FALSE)

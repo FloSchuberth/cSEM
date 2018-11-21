@@ -11,7 +11,7 @@ testMGD(
  .object             = args_default()$.object,
  .alpha              = args_default()$.alpha,
  .drop_inadmissibles = args_default()$.drop_inadmissibles,
- .runs               = args_default()$.runs,
+ .R                  = args_default()$.R,
  .saturated          = args_default()$.saturated,
  .type_vcv           = args_default()$.type_vcv
  .verbose            = args_default()$.verbose
@@ -20,21 +20,21 @@ testMGD(
 \method{testMGD}{cSEMResults_default}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .R = args_default()$.R, .saturated = args_default()$.saturated,
   .type_vcv = args_default()$.type_vcv,
   .verbose = args_default()$.verbose)
 
 \method{testMGD}{cSEMResults_multi}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .R = args_default()$.R, .saturated = args_default()$.saturated,
   .type_vcv = args_default()$.type_vcv,
   .verbose = args_default()$.verbose)
 
 \method{testMGD}{cSEMResults_2ndorder}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .R = args_default()$.R, .saturated = args_default()$.saturated,
   .type_vcv = args_default()$.type_vcv,
   .verbose = args_default()$.verbose)
 }
@@ -46,13 +46,14 @@ Defaults to \code{0.05}.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
-replications yielding an inadmissible result will be dropped (=
-number of results shown <= .runs). For "\emph{ignore}" all results are returned
-even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
-bootstrapping continues until there are .runs admissible solutions.
+replications/resamples yielding an inadmissible result will be dropped (
+number of results shown <= .R). For "\emph{ignore}" all results are returned
+even if they are inadmissible (number of results = .R). For "\emph{replace}"
+resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
-\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
+\item{.R}{Integer. The number of bootstrap or permuation replications
+to use. Defaults to \code{499}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 
@@ -113,7 +114,7 @@ VAL  <~ val1  + val2  + val3  + val4
 listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
 out.cSEM <- csem(listData, model) 
 
-testMGD(.object = out.cSEM, .runs = 20, .type_vcv= 'construct')
+testMGD(.object = out.cSEM, .R = 20, .type_vcv= 'construct')
 }
 
 }

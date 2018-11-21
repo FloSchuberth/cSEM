@@ -8,7 +8,7 @@ resampleData(
  .object        = args_default()$.object,
  .data          = NULL,
  .method        = c("bootstrap", "jackknife", "permutation", "cross-validation"),
- .draws         = 499,
+ .R             = 499,
  .id            = NULL,
  .cv_folds      = 10      
 )
@@ -27,7 +27,8 @@ If \code{.data} is provided \code{.object} is ignored. Defaults to \code{NULL}.}
 "\emph{bootstrap}", "\emph{jackknife}", "\emph{permutation}", or "\emph{cross-validation}".
 Defaults to "\emph{bootstrap}".}
 
-\item{.draws}{Integer. The number of resamples to take. Defaults to \code{499}.}
+\item{.R}{Integer. The number of bootstrap or permuation replications
+to use. Defaults to \code{499}.}
 
 \item{.id}{Character string. The name of the column of \code{.data} used to split
 the data into groups. Defaults to \code{NULL}.}

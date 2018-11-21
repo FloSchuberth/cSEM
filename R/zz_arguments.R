@@ -37,6 +37,12 @@
 #'   Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names to `fun()` whose value 
 #'   was modified by the user.
+#' @param  .bias_corrected Logical. Should the standard and the tStat
+#'   confidence intervall be bias-corrected using the bootstraped bias estimate? 
+#'   If `TRUE` the confidence intervall for some estimated parameter `theta` 
+#'   is centered at `2*theta - theta*_hat`,
+#'   where `theta*_hat` is the average over all .R bootstrap estimates of `theta`.
+#'   Defaults to `TRUE`
 #' @param .C A (J x J) composite variance-covariance matrix.
 #' @param .choices Logical. Should candidate values for the arguments be returned?
 #'   Defaults to `FALSE`.
@@ -44,16 +50,13 @@
 #'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
 #'   to "*diff_absolute*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel]-list.
-#' @param .csem_resample A list resulting from a call to [resamplecSEMResults].
+#' @param .csem_resample A list resulting from a call to [resamplecSEMResults()].
 #' @param .cv_fold Integer. The number of cross-validation folds to use. 
 #'   Defaults to `10`.
 #' @param .disattenuate Logical. If possible, should composite correlations be disattenuated
 #'   if the construct is modeled as a common factor? Defaults to `TRUE`.
 #' @param .distance Character string. A distance measure. One of: "*geodesic*"
 #'   or "*squared_euclidian*". Defaults to "*geodesic*".
-#' @param .draws Integer. The number of resamples to take. Defaults to `499`.
-#' @param .draws2 Integer. The number of resamples to take when resampling from 
-#'   a resample. Defaults to `NULL`.
 #' @param .dominant_indicators A character vector of `"name" = "value"` pairs, 
 #'   where `"value"` is a character string giving the name of the dominant indicator
 #'   and `"name"` a character string of the corresponding construct name.
@@ -64,20 +67,16 @@
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
-#'   replications yielding an inadmissible result will be dropped (=
-#'   number of results shown <= .runs). For "*ignore*" all results are returned 
-#'   even if they are inadmissible (= number of results = .runs). For "*replace*"
-#'   bootstrapping continues until there are .runs admissible solutions. 
+#'   replications/resamples yielding an inadmissible result will be dropped (
+#'   number of results shown <= .R). For "*ignore*" all results are returned 
+#'   even if they are inadmissible (number of results = .R). For "*replace*"
+#'   resampling continues until there are exactly .R admissible solutions. 
 #'   Defaults to "*drop*".
 #' @param .handle_inadmissibles2 Character string. How should inadmissible results 
 #'   be treated when resampling from a resample? For details see 
 #'   the description for `.handle_inadmissibles`.
 #' @param .id Character string. The name of the column of `.data` used to split
 #'   the data into groups. Defaults to `NULL`.
-#' @param .inference Logical. Should inference statistics (e.g., confidence intervalls)
-#'   be computed? Defaults to `FALSE`. Inference is based on resampling methods
-#'   such as (double) bootstrap or jackknife. Output may therefore take 
-#'   considerably longer.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
@@ -86,11 +85,15 @@
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
 #' @param .method Character string. The resampling method to use. One of: 
-#'  "*bootstrap*", "*jackknife*", "*permutation*", or "*cross-validation*". 
-#'  Defaults to "*bootstrap*".
+#'  "*bootstrap*" or "*jackknife*". Defaults to "*bootstrap*".
 #' @param .method2 Character string. The resampling method to use when resampling
-#'   from a resample. One of: "*bootstrap*" or "*jackknife*".
-#'   Defaults to "*bootstrap*".
+#'   from a resample. One of: "*none*", "*bootstrap*", "*jackknife*" or "*both*" 
+#'   in which case bootstrap and jackknife samples are drawn. For the former
+#'   the number of bootstrap draws may be provided via `.R2`.
+#'   Option "*both*" is necessary if both tStat and Bca confidence intervalls
+#'   are needed. Naturally, choosing "*both*" this is very time consuming as the
+#'   number of replicats is now `.R * (.R2 + n)` if `.method = "bootstrap"` or
+#'   `n * (.R2 + n)` if `.method = "jackknife"`. Defaults to "*none*".
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .normality Logical. Should joint normality be assumed in the nonlinear model?
@@ -130,11 +133,17 @@
 #'   of the corresponding construct name, or `NULL`. Reliabilities
 #'   may be given for a subset of the constructs. Defaults to `NULL` in which case
 #'   reliabilities are estimated by `csem()`.
-#' @param .runs Integer. How many runs should be performed? Defaults to `499`.
+#' @param .R Integer. The number of bootstrap or permuation replications 
+#'   to use. Defaults to `499`.
+#' @param .R2 Integer. The number of bootstrap replications to use when 
+#'   resampling from a resample. Defaults to `100`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
 #' @param .stage Character string. The stage the model is need for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
+#' @param .statistic Character string. Which statistic should be returned?
+#'   One of (TODO) 
+#'   Defaults to (TODO).
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
@@ -212,6 +221,7 @@ args_default <- function(
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "fixed", "unit"), 
     .arguments               = NULL,
+    .bias_corrected          = TRUE,
     .C                       = NULL,
     .choices                 = FALSE,
     .csem_model              = NULL,
@@ -219,21 +229,17 @@ args_default <- function(
     .cv_folds                = 10,
     .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
-    .draws                   = 499, 
-    .draws2                  = NULL,
     .E                       = NULL,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .handle_inadmissibles2   = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
-    .inference               = TRUE,
     .listMatrices            = NULL, 
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,
-    .method                  = c("bootstrap", "jackknife", "permutation", 
-                                 "cross-validation"),
-    .method2                 = c("bootstrap", "jackknife"),
+    .method                  = c("bootstrap", "jackknife"),
+    .method2                 = c("none", "bootstrap", "jackknife", "both"),
     .model                   = NULL,
     .modes                   = NULL,
     .only_common_factors     = TRUE,
@@ -242,9 +248,11 @@ args_default <- function(
     .P                       = NULL,
     .parallel                = FALSE,
     .Q                       = NULL,
-    .runs                    = 499,
+    .R                       = 499,
+    .R2                      = 100,
     .S                       = NULL,
     .saturated               = FALSE,
+    .statistic               = NULL,
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,
