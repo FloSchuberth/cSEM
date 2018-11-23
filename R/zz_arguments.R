@@ -72,9 +72,6 @@
 #'   even if they are inadmissible (number of results = .R). For "*replace*"
 #'   resampling continues until there are exactly .R admissible solutions. 
 #'   Defaults to "*drop*".
-#' @param .handle_inadmissibles2 Character string. How should inadmissible results 
-#'   be treated when resampling from a resample? For details see 
-#'   the description for `.handle_inadmissibles`.
 #' @param .id Character string. The name of the column of `.data` used to split
 #'   the data into groups. Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
@@ -87,13 +84,9 @@
 #' @param .method Character string. The resampling method to use. One of: 
 #'  "*bootstrap*" or "*jackknife*". Defaults to "*bootstrap*".
 #' @param .method2 Character string. The resampling method to use when resampling
-#'   from a resample. One of: "*none*", "*bootstrap*", "*jackknife*" or "*both*" 
-#'   in which case bootstrap and jackknife samples are drawn. For the former
-#'   the number of bootstrap draws may be provided via `.R2`.
-#'   Option "*both*" is necessary if both tStat and Bca confidence intervalls
-#'   are needed. Naturally, choosing "*both*" this is very time consuming as the
-#'   number of replicats is now `.R * (.R2 + n)` if `.method = "bootstrap"` or
-#'   `n * (.R2 + n)` if `.method = "jackknife"`. Defaults to "*none*".
+#'   from a resample. One of: "*none*", "*bootstrap*" or "*jackknife*". For 
+#'   *bootstrap* the number of draws may be provided via `.R2`.
+#'   Defaults to "*none*".
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .normality Logical. Should joint normality be assumed in the nonlinear model?

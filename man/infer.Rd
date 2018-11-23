@@ -51,13 +51,9 @@ Defaults to (TODO).}
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
 \item{.method2}{Character string. The resampling method to use when resampling
-from a resample. One of: "\emph{none}", "\emph{bootstrap}", "\emph{jackknife}" or "\emph{both}"
-in which case bootstrap and jackknife samples are drawn. For the former
-the number of bootstrap draws may be provided via \code{.R2}.
-Option "\emph{both}" is necessary if both tStat and Bca confidence intervalls
-are needed. Naturally, choosing "\emph{both}" this is very time consuming as the
-number of replicats is now \code{.R * (.R2 + n)} if \code{.method = "bootstrap"} or
-\code{n * (.R2 + n)} if \code{.method = "jackknife"}. Defaults to "\emph{none}".}
+from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
+\emph{bootstrap} the number of draws may be provided via \code{.R2}.
+Defaults to "\emph{none}".}
 }
 \description{
 Compute quantities for inference (TODO)

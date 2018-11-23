@@ -93,10 +93,6 @@ even if they are inadmissible (number of results = .R). For "\emph{replace}"
 resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
-\item{.handle_inadmissibles2}{Character string. How should inadmissible results
-be treated when resampling from a resample? For details see
-the description for \code{.handle_inadmissibles}.}
-
 \item{.id}{Character string. The name of the column of \code{.data} used to split
 the data into groups. Defaults to \code{NULL}.}
 
@@ -115,13 +111,9 @@ If the algorithm exceeds the specified number, weights of iteration step
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
 \item{.method2}{Character string. The resampling method to use when resampling
-from a resample. One of: "\emph{none}", "\emph{bootstrap}", "\emph{jackknife}" or "\emph{both}"
-in which case bootstrap and jackknife samples are drawn. For the former
-the number of bootstrap draws may be provided via \code{.R2}.
-Option "\emph{both}" is necessary if both tStat and Bca confidence intervalls
-are needed. Naturally, choosing "\emph{both}" this is very time consuming as the
-number of replicats is now \code{.R * (.R2 + n)} if \code{.method = "bootstrap"} or
-\code{n * (.R2 + n)} if \code{.method = "jackknife"}. Defaults to "\emph{none}".}
+from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
+\emph{bootstrap} the number of draws may be provided via \code{.R2}.
+Defaults to "\emph{none}".}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/csem_resample.R
 \name{resamplecSEMResults}
 \alias{resamplecSEMResults}
-\title{Resample cSEMResults}
+\title{Internal: resample cSEMResults}
 \usage{
 resampleResults(
  .object        = args_default()$.object,
@@ -19,8 +19,16 @@ resampleResults(
 \item{.method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
+\item{.method2}{Character string. The resampling method to use when resampling
+from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
+\emph{bootstrap} the number of draws may be provided via \code{.R2}.
+Defaults to "\emph{none}".}
+
 \item{.R}{Integer. The number of bootstrap or permuation replications
 to use. Defaults to \code{499}.}
+
+\item{.R2}{Integer. The number of bootstrap replications to use when
+resampling from a resample. Defaults to \code{100}.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -30,30 +38,11 @@ even if they are inadmissible (number of results = .R). For "\emph{replace}"
 resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
-\item{.verbose}{Logical. Should information be printed to the console? Defaults
-to \code{TRUE}.}
-
 \item{.user_funs}{A function or a (named) list of functions to apply to every
 resample. Takes \code{.object} as an input:
 \code{myFun <- function(.object) {...}}.  Output should preferably be a (named)
 vector but matrices are also accepted. Note however that output will be
 vectorized (columnwise) in this case.}
-
-\item{.R2}{Integer. The number of bootstrap replications to use when
-resampling from a resample. Defaults to \code{100}.}
-
-\item{.handle_inadmissibles2}{Character string. How should inadmissible results
-be treated when resampling from a resample? For details see
-the description for \code{.handle_inadmissibles}.}
-
-\item{.method2}{Character string. The resampling method to use when resampling
-from a resample. One of: "\emph{none}", "\emph{bootstrap}", "\emph{jackknife}" or "\emph{both}"
-in which case bootstrap and jackknife samples are drawn. For the former
-the number of bootstrap draws may be provided via \code{.R2}.
-Option "\emph{both}" is necessary if both tStat and Bca confidence intervalls
-are needed. Naturally, choosing "\emph{both}" this is very time consuming as the
-number of replicats is now \code{.R * (.R2 + n)} if \code{.method = "bootstrap"} or
-\code{n * (.R2 + n)} if \code{.method = "jackknife"}. Defaults to "\emph{none}".}
 }
 \description{
 Resample (TODO)
