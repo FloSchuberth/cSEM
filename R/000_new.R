@@ -2,6 +2,11 @@
 # or when it is unclear where it belongs.
 
 
+AVE <- function(.object) {
+  UseMethod("AVE")
+}
+
+
 #' AVE
 #'
 #' Computes the average variance extracted \insertCite{Raykov1997}{cSEM} based on the standardized loadings.
@@ -26,8 +31,9 @@
 #'
 #' @export
 #'
-AVE=function(.object=args_default()$.object,
+AVE.cSEMResults_default=function(.object=args_default()$.object,
              .only_common_factors=args_default()$.only_common_factors){
+  
   construct_names=names(.object$Information$Model$construct_type)
   
   # Extract loadings
@@ -42,17 +48,29 @@ AVE=function(.object=args_default()$.object,
   
   names(AVEs)=construct_names
   
-  # By default, for composites the CR is set to 1
+  # By default, for composites the AVEs is hidden
   if(.only_common_factors){
-    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite"])
-    AVEs[co_names]=NULL
+    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite",drop=F])
+    AVEs=AVEs[setdiff(construct_names,co_names),drop=F]
   }
   
   return(AVEs) 
 }
 
+AVE.cSEMResults_multi <- function(.object) {
+  
+  lapply(.object, AVE.cSEMResults_default)
+}
 
 
+
+
+
+
+
+CR <- function(.object) {
+  UseMethod("CR")
+}
 #' CR
 #'
 #' Computes the composite reliability \insertCite{Raykov1997}{cSEM} based on standardized loading.
@@ -77,8 +95,10 @@ AVE=function(.object=args_default()$.object,
 #'
 #' @export
 #'
-CR=function(.object=args_default()$.object,
+CR.cSEMResults_default=function(.object=args_default()$.object,
             .only_common_factors=args_default()$.only_common_factors){
+  
+  
   construct_names=names(.object$Information$Model$construct_type)
   
   # Extract loadings
@@ -95,13 +115,19 @@ CR=function(.object=args_default()$.object,
   
   names(CRs)=construct_names
   
-  # By default, for composites the CR is set to 1
+  # By default, for composites the CR is set to 1, otherwise they are returned
   if(.only_common_factors){
-    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite"])
-    CRs[co_names]=1
+    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite",drop=F])
+    CRs[intersect(construct_names,co_names),drop=F]=1
   }
   
   return(CRs)
+}
+
+
+CR.cSEMResults_multi <- function(.object) {
+  
+  lapply(.object, CR.cSEMResults_default)
 }
 
 #' Cronbach_alpha
@@ -127,7 +153,10 @@ CR=function(.object=args_default()$.object,
 #'
 #' @export
 #'
-Cronbach_alpha=function(.object=args_default()$.object,
+#'
+#'
+
+Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
             .only_common_factors=args_default()$.only_common_factors){
   construct_names=names(.object$Information$Model$construct_type)
   
@@ -143,8 +172,8 @@ Cronbach_alpha=function(.object=args_default()$.object,
   
   # By default, for composites the CR is set to 1
   if(.only_common_factors){
-    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite"])
-    alphas[co_names]=NULL
+    co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite",drop=F])
+    alphas[intersect(construct_names,co_names),drop=F]=NULL
   }
   
   return(alphas)
