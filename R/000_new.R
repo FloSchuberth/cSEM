@@ -60,7 +60,7 @@ AVE.cSEMResults_default=function(.object=args_default()$.object,
 
 #' @describeIn AVE (TODO)
 #' @export
-AVE.cSEMResults_multi <- function(.object) {
+AVE.cSEMResults_multi <- function(.object=args_default()$.object) {
   
   lapply(.object, AVE.cSEMResults_default)
 }
@@ -70,10 +70,6 @@ AVE.cSEMResults_multi <- function(.object) {
 
 
 
-
-CR <- function(.object) {
-  UseMethod("CR")
-}
 #' CR
 #'
 #' Computes the composite reliability \insertCite{Raykov1997}{cSEM} based on standardized loading.
@@ -98,6 +94,12 @@ CR <- function(.object) {
 #'
 #' @export
 #'
+CR <- function(.object=args_default()$.object) {
+  UseMethod("CR")
+}
+
+#' @describeIn CR (TODO)
+#' @export
 CR.cSEMResults_default=function(.object=args_default()$.object,
             .only_common_factors=args_default()$.only_common_factors){
   
@@ -127,11 +129,14 @@ CR.cSEMResults_default=function(.object=args_default()$.object,
   return(CRs)
 }
 
-
-CR.cSEMResults_multi <- function(.object) {
+#' @describeIn CR (TODO)
+#' @export
+CR.cSEMResults_multi <- function(.object=args_default()$.object) {
   
   lapply(.object, CR.cSEMResults_default)
 }
+
+
 
 #' Cronbach_alpha
 #'
@@ -161,6 +166,7 @@ CR.cSEMResults_multi <- function(.object) {
 
 Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
             .only_common_factors=args_default()$.only_common_factors){
+  
   construct_names=names(.object$Information$Model$construct_type)
   
   # calculate Cronbach's alpah for all constructs
