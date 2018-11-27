@@ -2,12 +2,19 @@
 % Please edit documentation in R/000_new.R
 \name{AVE}
 \alias{AVE}
+\alias{AVE.cSEMResults_default}
+\alias{AVE.cSEMResults_multi}
 \title{AVE}
 \usage{
 AVE(
  .object              = args_default()$.object,
  .only_common_factors = args_default()$.only_common_factors
 )
+
+\method{AVE}{cSEMResults_default}(.object = args_default()$.object,
+  .only_common_factors = args_default()$.only_common_factors)
+
+\method{AVE}{cSEMResults_multi}(.object)
 }
 \arguments{
 \item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
@@ -18,6 +25,13 @@ Defaults to \code{FALSE}.}
 \description{
 Computes the average variance extracted \insertCite{Raykov1997}{cSEM} based on the standardized loadings.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
+
+\item \code{cSEMResults_multi}: (TODO)
+}}
+
 \examples{
 \dontrun{
 # still to implement

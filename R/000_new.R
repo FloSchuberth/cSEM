@@ -1,12 +1,6 @@
 ### Use this file to add new functions whose name you have not yet decided on
 # or when it is unclear where it belongs.
 
-
-AVE <- function(.object) {
-  UseMethod("AVE")
-}
-
-
 #' AVE
 #'
 #' Computes the average variance extracted \insertCite{Raykov1997}{cSEM} based on the standardized loadings.
@@ -31,6 +25,13 @@ AVE <- function(.object) {
 #'
 #' @export
 #'
+
+AVE <- function(.object) {
+  UseMethod("AVE")
+}
+
+#' @describeIn AVE (TODO)
+#' @export
 AVE.cSEMResults_default=function(.object=args_default()$.object,
              .only_common_factors=args_default()$.only_common_factors){
   
@@ -57,6 +58,8 @@ AVE.cSEMResults_default=function(.object=args_default()$.object,
   return(AVEs) 
 }
 
+#' @describeIn AVE (TODO)
+#' @export
 AVE.cSEMResults_multi <- function(.object) {
   
   lapply(.object, AVE.cSEMResults_default)
