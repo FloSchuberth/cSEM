@@ -372,10 +372,34 @@ calculateEffectSize.cSEMResults_2ndorder <- function(.object=args_default()$.obj
 
 
 
+#' Goodness of fit
+#'
+#' (TODO)
+#'
+#' @usage GoF(
+#'  .object              = args_default()$.object,
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @export
+#'
+#'
+GoF <- function(.object=args_default()$.object) {
+  UseMethod("GoF")
+}
 
 
-
-GoF.default=function(.object){
+#' @describeIn GoF (TODO)
+#' @export
+GoF.cSEMResults_default=function(.object){
   
   
   m         <- .object$Information$Model$structural
@@ -399,3 +423,20 @@ GoF.default=function(.object){
     sqrt(mean(L^2) * mean(.object$Estimates$R2))
 
 }
+
+#' @describeIn GoF (TODO)
+#' @export
+GoF.cSEMResults_multi <- function(.object=args_default()$.object) {
+  
+  lapply(.object, GoF.cSEMResults_default)
+}
+
+#' @describeIn GoF (TODO)
+#' @export
+GoF.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
+  
+  stop('Not implemented yet.')
+}
+
+
+
