@@ -61,7 +61,8 @@ AVE.cSEMResults_default=function(.object=args_default()$.object,
 
 #' @describeIn AVE (TODO)
 #' @export
-AVE.cSEMResults_multi <- function(.object=args_default()$.object) {
+AVE.cSEMResults_multi <- function(.object=args_default()$.object,
+                                  .only_common_factors=args_default()$.only_common_factors) {
   
   lapply(.object, AVE.cSEMResults_default)
 }
@@ -69,7 +70,8 @@ AVE.cSEMResults_multi <- function(.object=args_default()$.object) {
 
 #' @describeIn AVE (TODO)
 #' @export
-AVE.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
+AVE.cSEMResults_2ndorder <- function(.object=args_default()$.object,
+                                     .only_common_factors=args_default()$.only_common_factors) {
   
   stop('Not implemented yet.')
 }
@@ -133,7 +135,6 @@ CR.cSEMResults_default=function(.object=args_default()$.object,
   if(.only_common_factors){
     co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite",drop=F])
     CRs=CRs[setdiff(construct_names,co_names),drop=F]
-    # CRs[intersect(construct_names,co_names)] <- 1
   }
   
   return(CRs)
@@ -141,7 +142,8 @@ CR.cSEMResults_default=function(.object=args_default()$.object,
 
 #' @describeIn CR (TODO)
 #' @export
-CR.cSEMResults_multi <- function(.object=args_default()$.object) {
+CR.cSEMResults_multi <- function(.object=args_default()$.object,
+                                 .only_common_factors=args_default()$.only_common_factors) {
   
   lapply(.object, CR.cSEMResults_default)
 }
@@ -149,7 +151,8 @@ CR.cSEMResults_multi <- function(.object=args_default()$.object) {
 
 #' @describeIn CR (TODO)
 #' @export
-CR.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
+CR.cSEMResults_2ndorder <- function(.object=args_default()$.object,
+                                    .only_common_factors=args_default()$.only_common_factors) {
   
   stop('Not implemented yet')
 }
@@ -181,7 +184,8 @@ CR.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
 #'
 #'
 #'
-Cronbach_alpha <- function(.object=args_default()$.object) {
+Cronbach_alpha <- function(.object=args_default()$.object,
+                           .only_common_factors=args_default()$.only_common_factors) {
   UseMethod("Cronbach_alpha")
 }
 
@@ -203,10 +207,10 @@ Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
   
   names(alphas)=construct_names
   
-  # By default, for composites the CR is set to 1
+  # By default, Cronbach's alpha is omitted for composite, otherwise it is returned 
   if(.only_common_factors){
     co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite",drop=F])
-    alphas[intersect(construct_names,co_names),drop=F]=NULL
+    alphas=alphas[setdiff(construct_names,co_names),drop=F]
   }
   
   return(alphas)
@@ -214,14 +218,16 @@ Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
 
 #' @describeIn Cronbach_alpha (TODO)
 #' @export
-Cronbach_alpha.cSEMResults_multi <- function(.object=args_default()$.object) {
+Cronbach_alpha.cSEMResults_multi <- function(.object=args_default()$.object,
+                                             .only_common_factors=args_default()$.only_common_factors) {
   
   lapply(.object, Cronbach_alpha.cSEMResults_default)
 }
 
 #' @describeIn Cronbach_alpha (TODO)
 #' @export
-Cronbach_alpha.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
+Cronbach_alpha.cSEMResults_2ndorder <- function(.object=args_default()$.object,
+                                                .only_common_factors=args_default()$.only_common_factors) {
   
   stop('Not implemented yet.')
 }
