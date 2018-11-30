@@ -26,7 +26,8 @@
 #' @export
 #'
 
-AVE <- function(.object) {
+AVE <- function(.object, 
+                .only_common_factors=args_default()$.only_common_factors) {
   UseMethod("AVE")
 }
 
@@ -66,6 +67,12 @@ AVE.cSEMResults_multi <- function(.object=args_default()$.object) {
 }
 
 
+#' @describeIn AVE (TODO)
+#' @export
+AVE.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
+  
+  stop('Not implemented yet.')
+}
 
 
 
@@ -93,8 +100,10 @@ AVE.cSEMResults_multi <- function(.object=args_default()$.object) {
 #' \insertAllCited{}
 #'
 #' @export
-#'
-CR <- function(.object=args_default()$.object) {
+#' 
+
+CR <- function(.object=args_default()$.object,
+               .only_common_factors=args_default()$.only_common_factors) {
   UseMethod("CR")
 }
 
@@ -123,7 +132,7 @@ CR.cSEMResults_default=function(.object=args_default()$.object,
   # By default, for composites the CR is set to 1, otherwise they are returned
   if(.only_common_factors){
     co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite",drop=F])
-    CRs[intersect(construct_names,co_names),drop=F]=1
+    CRs[intersect(construct_names,co_names)] <- 1
   }
   
   return(CRs)
@@ -134,6 +143,14 @@ CR.cSEMResults_default=function(.object=args_default()$.object,
 CR.cSEMResults_multi <- function(.object=args_default()$.object) {
   
   lapply(.object, CR.cSEMResults_default)
+}
+
+
+#' @describeIn CR (TODO)
+#' @export
+CR.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
+  
+  stop('Not implemented yet')
 }
 
 
@@ -163,7 +180,13 @@ CR.cSEMResults_multi <- function(.object=args_default()$.object) {
 #'
 #'
 #'
+Cronbach_alpha <- function(.object=args_default()$.object) {
+  UseMethod("Cronbach_alpha")
+}
 
+
+#' @describeIn Cronbach_alpha (TODO)
+#' @export
 Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
             .only_common_factors=args_default()$.only_common_factors){
   
@@ -187,6 +210,23 @@ Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
   
   return(alphas)
 }
+
+#' @describeIn Cronbach_alpha (TODO)
+#' @export
+Cronbach_alpha.cSEMResults_multi <- function(.object=args_default()$.object) {
+  
+  lapply(.object, Cronbach_alpha.cSEMResults_default)
+}
+
+#' @describeIn Cronbach_alpha (TODO)
+#' @export
+Cronbach_alpha.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
+  
+  stop('Not implemented yet.')
+}
+
+
+
 
 #' Fornell_Larcker
 #'
