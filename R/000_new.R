@@ -298,7 +298,15 @@ stop('Not implemented yet')
 #'
 #' @export
 #'
-calculateEffectSize <- function(.object) {
+
+calculateEffectSize <- function(.object=args_default()$.object) {
+  UseMethod("calculateEffectSize")
+}
+
+
+#' @describeIn calculateEffectSize (TODO)
+#' @export
+calculateEffectSize.cSEMResults_default <- function(.object=args_default()$.object) {
   
   # Get relevenat quantities
   H <- .object$Estimates$Construct_scores
@@ -343,6 +351,27 @@ calculateEffectSize <- function(.object) {
   names(outer_out) <- vars_endo
   outer_out
 }
+
+#' @describeIn calculateEffectSize (TODO)
+#' @export
+calculateEffectSize.cSEMResults_multi <- function(.object=args_default()$.object) {
+  
+  lapply(.object, calculateEffectSize.cSEMResults_default)
+}
+
+#' @describeIn calculateEffectSize (TODO)
+#' @export
+calculateEffectSize.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
+  
+  stop('Not implemented yet.')
+}
+
+
+
+
+
+
+
 
 
 GoF.default=function(.object){
