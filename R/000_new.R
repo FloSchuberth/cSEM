@@ -213,6 +213,9 @@ Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
     alphas=alphas[setdiff(construct_names,co_names),drop=F]
   }
   
+  
+  # Implement closed-form CIs see Trinchera et al. (2018)
+  
   return(alphas)
 }
 
