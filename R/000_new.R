@@ -326,15 +326,15 @@ calculateEffectSize.cSEMResults_default <- function(.object=args_default()$.obje
     
     inner_out <- lapply(indep_vars, function(i) {
       # update csem_model
-      xx <- csem_model
+      model_temp <- csem_model
       
-      xx$structural[x, i] <- 0 
+      model_temp$structural[x, i] <- 0 
       
       out <- cSEM:::estimatePathOLS(
         .H = H,
         .Q = Q,
         .P = P,
-        .csem_model = xx,
+        .csem_model = model_temp,
         .normality = normality,
         .approach_nl = approach_nl
       )
@@ -343,7 +343,8 @@ calculateEffectSize.cSEMResults_default <- function(.object=args_default()$.obje
       r2_included <- .object$Estimates$R2[x]
       
       effect_size <- (r2_included - r2_excluded)/(1 - r2_included)
-      list("r2_ex" = r2_excluded, "r2_in" = r2_included, "eff_size" = effect_size)
+      # list("r2_ex" = r2_excluded, "r2_in" = r2_included, "eff_size" = effect_size)
+      list("effect_size" = effect_size)
     })
     names(inner_out) <- indep_vars
     inner_out
