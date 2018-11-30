@@ -129,10 +129,11 @@ CR.cSEMResults_default=function(.object=args_default()$.object,
   
   names(CRs)=construct_names
   
-  # By default, for composites the CR is set to 1, otherwise they are returned
+  # By default, for composites the CR is omitted, otherwise they are returned
   if(.only_common_factors){
     co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite",drop=F])
-    CRs[intersect(construct_names,co_names)] <- 1
+    CRs=CRs[setdiff(construct_names,co_names),drop=F]
+    # CRs[intersect(construct_names,co_names)] <- 1
   }
   
   return(CRs)
