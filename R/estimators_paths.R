@@ -50,7 +50,7 @@ estimatePathOLS <- function(
      names(r2) <- x
     
      # Calculation of the adjusted R^2
-     r2adj = 1 - (1-r2)*(n-1)/(n-length(indep_var))
+     r2adj = 1 - (1-r2)*(n-1)/(n-length(indep_var)-1)
      names(r2adj) <- x
      # Calculation of the VIF
      vif <- diag(solve(cov2cor(.P[indep_var, indep_var, drop = FALSE])))

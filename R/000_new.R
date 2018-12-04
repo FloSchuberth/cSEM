@@ -26,7 +26,8 @@
 #' @export
 #'
 
-AVE <- function(.object) {
+AVE <- function(.object, 
+                .only_common_factors=args_default()$.only_common_factors) {
   UseMethod("AVE")
 }
 
@@ -60,20 +61,24 @@ AVE.cSEMResults_default=function(.object=args_default()$.object,
 
 #' @describeIn AVE (TODO)
 #' @export
-AVE.cSEMResults_multi <- function(.object) {
+AVE.cSEMResults_multi <- function(.object=args_default()$.object,
+                                  .only_common_factors=args_default()$.only_common_factors) {
   
   lapply(.object, AVE.cSEMResults_default)
 }
 
 
-
-
-
-
-
-CR <- function(.object) {
-  UseMethod("CR")
+#' @describeIn AVE (TODO)
+#' @export
+AVE.cSEMResults_2ndorder <- function(.object=args_default()$.object,
+                                     .only_common_factors=args_default()$.only_common_factors) {
+  
+  stop('Not implemented yet.')
 }
+
+
+
+
 #' CR
 #'
 #' Computes the composite reliability \insertCite{Raykov1997}{cSEM} based on standardized loading.
@@ -97,7 +102,15 @@ CR <- function(.object) {
 #' \insertAllCited{}
 #'
 #' @export
-#'
+#' 
+
+CR <- function(.object=args_default()$.object,
+               .only_common_factors=args_default()$.only_common_factors) {
+  UseMethod("CR")
+}
+
+#' @describeIn CR (TODO)
+#' @export
 CR.cSEMResults_default=function(.object=args_default()$.object,
             .only_common_factors=args_default()$.only_common_factors){
   
@@ -118,20 +131,33 @@ CR.cSEMResults_default=function(.object=args_default()$.object,
   
   names(CRs)=construct_names
   
-  # By default, for composites the CR is set to 1, otherwise they are returned
+  # By default, for composites the CR is omitted, otherwise they are returned
   if(.only_common_factors){
     co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite",drop=F])
-    CRs[intersect(construct_names,co_names),drop=F]=1
+    CRs=CRs[setdiff(construct_names,co_names),drop=F]
   }
   
   return(CRs)
 }
 
-
-CR.cSEMResults_multi <- function(.object) {
+#' @describeIn CR (TODO)
+#' @export
+CR.cSEMResults_multi <- function(.object=args_default()$.object,
+                                 .only_common_factors=args_default()$.only_common_factors) {
   
   lapply(.object, CR.cSEMResults_default)
 }
+
+
+#' @describeIn CR (TODO)
+#' @export
+CR.cSEMResults_2ndorder <- function(.object=args_default()$.object,
+                                    .only_common_factors=args_default()$.only_common_factors) {
+  
+  stop('Not implemented yet')
+}
+
+
 
 #' Cronbach_alpha
 #'
@@ -158,9 +184,17 @@ CR.cSEMResults_multi <- function(.object) {
 #'
 #'
 #'
+Cronbach_alpha <- function(.object=args_default()$.object,
+                           .only_common_factors=args_default()$.only_common_factors) {
+  UseMethod("Cronbach_alpha")
+}
 
+
+#' @describeIn Cronbach_alpha (TODO)
+#' @export
 Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
             .only_common_factors=args_default()$.only_common_factors){
+  
   construct_names=names(.object$Information$Model$construct_type)
   
   # calculate Cronbach's alpah for all constructs
@@ -173,14 +207,36 @@ Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
   
   names(alphas)=construct_names
   
-  # By default, for composites the CR is set to 1
+  # By default, Cronbach's alpha is omitted for composite, otherwise it is returned 
   if(.only_common_factors){
     co_names=names(.object$Information$Model$construct_type[.object$Information$Model$construct_type=="Composite",drop=F])
-    alphas[intersect(construct_names,co_names),drop=F]=NULL
+    alphas=alphas[setdiff(construct_names,co_names),drop=F]
   }
+  
+  
+  # Implement closed-form CIs see Trinchera et al. (2018)
   
   return(alphas)
 }
+
+#' @describeIn Cronbach_alpha (TODO)
+#' @export
+Cronbach_alpha.cSEMResults_multi <- function(.object=args_default()$.object,
+                                             .only_common_factors=args_default()$.only_common_factors) {
+  
+  lapply(.object, Cronbach_alpha.cSEMResults_default)
+}
+
+#' @describeIn Cronbach_alpha (TODO)
+#' @export
+Cronbach_alpha.cSEMResults_2ndorder <- function(.object=args_default()$.object,
+                                                .only_common_factors=args_default()$.only_common_factors) {
+  
+  stop('Not implemented yet.')
+}
+
+
+
 
 #' Fornell_Larcker
 #'
@@ -242,7 +298,15 @@ stop('Not implemented yet')
 #'
 #' @export
 #'
-calculateEffectSize <- function(.object) {
+
+calculateEffectSize <- function(.object=args_default()$.object) {
+  UseMethod("calculateEffectSize")
+}
+
+
+#' @describeIn calculateEffectSize (TODO)
+#' @export
+calculateEffectSize.cSEMResults_default <- function(.object=args_default()$.object) {
   
   # Get relevenat quantities
   H <- .object$Estimates$Construct_scores
@@ -262,15 +326,15 @@ calculateEffectSize <- function(.object) {
     
     inner_out <- lapply(indep_vars, function(i) {
       # update csem_model
-      xx <- csem_model
+      model_temp <- csem_model
       
-      xx$structural[x, i] <- 0 
+      model_temp$structural[x, i] <- 0 
       
       out <- cSEM:::estimatePathOLS(
         .H = H,
         .Q = Q,
         .P = P,
-        .csem_model = xx,
+        .csem_model = model_temp,
         .normality = normality,
         .approach_nl = approach_nl
       )
@@ -279,7 +343,8 @@ calculateEffectSize <- function(.object) {
       r2_included <- .object$Estimates$R2[x]
       
       effect_size <- (r2_included - r2_excluded)/(1 - r2_included)
-      list("r2_ex" = r2_excluded, "r2_in" = r2_included, "eff_size" = effect_size)
+      # list("r2_ex" = r2_excluded, "r2_in" = r2_included, "eff_size" = effect_size)
+      list("effect_size" = effect_size)
     })
     names(inner_out) <- indep_vars
     inner_out
@@ -288,8 +353,53 @@ calculateEffectSize <- function(.object) {
   outer_out
 }
 
+#' @describeIn calculateEffectSize (TODO)
+#' @export
+calculateEffectSize.cSEMResults_multi <- function(.object=args_default()$.object) {
+  
+  lapply(.object, calculateEffectSize.cSEMResults_default)
+}
 
-GoF.default=function(.object){
+#' @describeIn calculateEffectSize (TODO)
+#' @export
+calculateEffectSize.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
+  
+  stop('Not implemented yet.')
+}
+
+
+
+
+
+
+#' Goodness of fit
+#'
+#' (TODO)
+#'
+#' @usage GoF(
+#'  .object              = args_default()$.object,
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @export
+#'
+#'
+GoF <- function(.object=args_default()$.object) {
+  UseMethod("GoF")
+}
+
+
+#' @describeIn GoF (TODO)
+#' @export
+GoF.cSEMResults_default=function(.object){
   
   
   m         <- .object$Information$Model$structural
@@ -313,3 +423,20 @@ GoF.default=function(.object){
     sqrt(mean(L^2) * mean(.object$Estimates$R2))
 
 }
+
+#' @describeIn GoF (TODO)
+#' @export
+GoF.cSEMResults_multi <- function(.object=args_default()$.object) {
+  
+  lapply(.object, GoF.cSEMResults_default)
+}
+
+#' @describeIn GoF (TODO)
+#' @export
+GoF.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
+  
+  stop('Not implemented yet.')
+}
+
+
+
