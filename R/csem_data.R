@@ -46,7 +46,6 @@ processData <- function(.data, .model) {
   }
 
   # Check class of the .data object and stop if not of class "data.frame" or "matrix"
-
   if(!any(class(.data) %in% c("data.frame", "matrix"))) {
     stop("Don't know how to deal with a data object of class: ", class(.data), ".\n",
          "Please provide the data as a `data.frame` or a `matrix`.",
@@ -82,19 +81,22 @@ processData <- function(.data, .model) {
   # Error:
   # Note: the indicators to be added are identified by the string "_2nd_". Hence
   # the string is basically a reserved word. If indicators supplied by the
-  # users contain the strinf this causes and error
+  # users contain the string this causes and error (unlikely to happen).
   if(any(grepl("_2nd_", colnames(.data)))) {
     stop("Indicator names must not contain the string `_2nd_`.", call. = FALSE)
   }
   
   names_2nd <- colnames(.model$measurement)[grep("_2nd", colnames(.model$measurement))]
-  temp <- do.call(rbind, strsplit(names_2nd, "_2nd_"))
   
-  temp <- .data[, temp[, 2]]
-  colnames(temp) <- names_2nd
-  
-  ## extended .data
-  .data <- cbind(.data, temp)
+  if(!is.null(names_2nd)) {
+    temp <- do.call(rbind, strsplit(names_2nd, "_2nd_"))
+    
+    temp <- .data[, temp[, 2]]
+    colnames(temp) <- names_2nd
+    
+    ## extended .data
+    .data <- cbind(.data, temp) 
+  }
   
   ## Check indicator names
   if(!all(colnames(.model$measurement) %in% colnames(.data))) {
