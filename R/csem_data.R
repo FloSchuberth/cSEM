@@ -88,7 +88,7 @@ processData <- function(.data, .model) {
   
   names_2nd <- colnames(.model$measurement)[grep("_2nd", colnames(.model$measurement))]
   
-  if(!is.null(names_2nd)) {
+  if(length(names_2nd) > 0) {
     temp <- do.call(rbind, strsplit(names_2nd, "_2nd_"))
     
     temp <- .data[, temp[, 2]]
