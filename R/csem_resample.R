@@ -471,6 +471,7 @@ infer <- function(
   ## Compute quantiles/critical values -----------------------------------------
   probs <- c()
   for(i in seq_along(.alpha[order(.alpha)])) { 
+    # for every alpha: alpha/2 and 1 - alpha/2
     probs <- c(probs, round(.alpha[i]/2, 4), round(1 - .alpha[i]/2, 4)) 
   }
 
@@ -508,6 +509,11 @@ infer <- function(
       .probs          = probs
     ),
     "CI_percentile" = PercentilCIResample(.x = resamples1, .probs = probs),
+    "CI_basic"      = BasicCIResample(
+      .x              = resamples1, 
+      .bias_corrected = .bias_corrected, 
+      .probs          = probs
+      ),
     "CI_t_invertall"= if(anyNA(resamples2)) {
       NA
     } else {
@@ -532,7 +538,7 @@ infer <- function(
 
 #' @describeIn infer The bootstraped mean
 MeanResample <- function(.x) {
-  
+
   lapply(.x, function(x) {
     out        <- colMeans(x$Resampled)
     names(out) <- names(x$Original)
@@ -585,15 +591,20 @@ StandardCIResample <- function(
   .n,
   .probs
   ) {
-  # Standard CI with bootstraped SE's
-  # Apparently critical quantiles can be based on both the t or the 
+  # Standard CI with bootstrap SE's
+  # Critical quantiles can be based on both the t- or the 
   # standard normal distribution (z). The former may perform better in
   # small samples but there is no clear consenus on what the degrees of freedom
   # should be.
-  # CI: [theta_hat + c(alpha/2)*sd_boot ; theta_hat + c(1 - alpha/2)*sd_boot]
-  #   = [theta_hat - a ; theta_hat + a]
+  # CI: [theta_hat + c(alpha/2)*boot_sd ; theta_hat + c(1 - alpha/2)*boot_sd]
+  #   = [theta_hat - c(1 - alpha/2)*boot_sd ; theta_hat + c(1 - alpha/2)*boot_sd]
+  # if c() is based on a symmetric distribution.
+  
+  ## Compute standard deviation
   boot_sd <- SdResample(.x, .method = .method, .n = .n)
   
+  ## Compute intervals
+  # Notation:
   # w = .x := the list containing the estimated values based on .R resamples
   #           and the original values
   # y      := the estimated standard errors (based on .R resamples)
@@ -630,14 +641,50 @@ StandardCIResample <- function(
 #' @describeIn infer (TODO)
 PercentilCIResample <- function(.x, .probs) {
   # Percentile CI 
-  # Take the distribution of the bootstrap distribution F* (the CDF) as an estimator for
-  # the true distribution of theta_hat. Use the quantilies of that distribution
-  # to estimate the CI for theta
+  # Take the bootstrap distribution F* (the CDF) as an estimator for
+  # the true distribution F. Use the quantiles of the estimated distribution
+  # to estimate the CI for theta.
   # CI: [F*^-1(alpha/2) ; F*^-1(1 - alpha/2)]
   lapply(.x, function(x) {
     out <- t(matrixStats::colQuantiles(x$Resample, probs = .probs, drop = FALSE))
     colnames(out) <- names(x$Original)
     out
+  })
+}
+#' @describeIn infer (TODO)
+BasicCIResample <- function(.x, .bias_corrected, .probs) {
+  # Basic CI 
+  # Estimate the distribution of delta_hat = theta_hat - theta by the bootstrap 
+  # distribution delta_hat_star = theta_hat_star - theta_hat.
+  # Since P(a <= theta_hat - theta <= b) = P(theta_hat - b <= theta <= theta_hat - a)
+  # (notice how the limits a and b switch places!!) 
+  # Define q_p := p%-quantile of the bootstrap distribution of delta_hat_star
+  # and
+  #  b = q_(1 - alpha/2) 
+  #  a = q_(alpha/2) 
+  # then the CI is:
+  # CI: [theta_hat - q_(1 - alpha/2); theta_hat - q_(alpha/2)]
+  # Note that q_p is just the alpha percentile quantile shifted by theta_hat:
+  # q_p = Q_p - theta_hat, where Q_P = F*^-1(p) := the p% quantile of the
+  # distribution of theta_hat_star.
+  # Therefore:
+  # CI: [2*theta_hat - Q_(1 - alpha/2); 2*theta_hat - Q_(alpha/2)]
+  
+  lapply(.x, function(x) {
+    out <- t(matrixStats::colQuantiles(x$Resample, probs = .probs, drop = FALSE))
+    
+    theta_star <- if(.bias_corrected) {
+      2*x$Original - colMeans(x$Resampled) 
+      # theta_hat - Bias = 2*theta_hat - mean_theta_hat_star
+    } else {
+      x$Original
+    }
+    
+    out2 <- t(2*theta_star - t(out))
+    colnames(out2) <- names(x$Original)
+    out2 <- out2[1:nrow(out2) + rep(c(1, -1), times = nrow(out2)/2), , drop = FALSE]
+    rownames(out2) <- rownames(out)
+    out2
   })
 }
 #' @describeIn infer (TODO)
@@ -654,7 +701,7 @@ TStatCIResample <- function(
   # Bootstrap the t-statisic (since it is roughly pivotal) and compute
   # CI based on bootstraped t-values and bootstraped/jackknife SE
   # CI: [F*^-1(alpha/2) ; F*^-1(1 - alpha/2)]
-  
+
   boot_sd_star <- lapply(.x2, SdResample, .method = .method2, .n = .n) %>% 
     purrr::transpose(.) %>% 
     lapply(function(y) do.call(rbind, y))
@@ -665,6 +712,9 @@ TStatCIResample <- function(
                    x = .x1,
                    y = boot_sd_star)
 
+  i <- 1
+  y <- boot_sd[[1]]
+  z <- .probs[1]
   out <- mapply(function(i, y) {
     lapply(.probs, function(z) {
       qt_boot <- t(matrixStats::colQuantiles(boot_t_stat[[i]], probs = z, drop = FALSE))
@@ -675,12 +725,15 @@ TStatCIResample <- function(
         .x1[[i]]$Original
       }
       ## Confidence interval
-      theta_star + qt_boot * y
+      theta_star - qt_boot * y
     })
   }, i = seq_along(.x1), y = boot_sd, SIMPLIFY = FALSE) %>% 
     lapply(function(x) do.call(rbind, x)) %>% 
     lapply(function(x) {
-      rownames(x) <- sprintf("%.2f%%", .probs*100)
+      x_rownames <- rownames(x)
+      
+      x <- x[1:nrow(x) + rep(c(1, -1), times = nrow(x)/2), , drop = FALSE]
+      rownames(x) <- x_rownames
       x
     })
 
@@ -706,8 +759,9 @@ bootBcaCI<- function(x) {
   dimnames(result) <- list(.FormatProbs(probs), names(x$observed))
   t(result)
 }
-# 
-# 
+
+
+
 # ### Alternative
 # if(.method == "jackknife") {
 #   

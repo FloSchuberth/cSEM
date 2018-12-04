@@ -8,6 +8,7 @@
 \alias{BiasResample}
 \alias{StandardCIResample}
 \alias{PercentilCIResample}
+\alias{BasicCIResample}
 \alias{TStatCIResample}
 \title{Internal: Inference}
 \usage{
@@ -27,6 +28,8 @@ StandardCIResample(.x, .bias_corrected, .df = c("type1", "type2"),
   .dist = c("z", "t"), .method, .n, .probs)
 
 PercentilCIResample(.x, .probs)
+
+BasicCIResample(.x, .bias_corrected, .probs)
 
 TStatCIResample(.x1, .x2, .bias_corrected, .method, .method2, .n, .probs)
 }
@@ -71,6 +74,8 @@ Compute quantities for inference (TODO)
 \item \code{StandardCIResample}: (TODO)
 
 \item \code{PercentilCIResample}: (TODO)
+
+\item \code{BasicCIResample}: (TODO)
 
 \item \code{TStatCIResample}: (TODO)
 }}
