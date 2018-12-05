@@ -40,8 +40,6 @@ BcCI(.x, .probs)
 BcaCI(.object, .x, .probs)
 }
 \arguments{
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
-
 \item{.csem_resample}{A list resulting from a call to \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
@@ -57,6 +55,8 @@ Defaults to \code{TRUE}}
 \item{.statistic}{Character string. Which statistic should be returned?
 One of (TODO)
 Defaults to (TODO).}
+
+\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
 
 \item{.method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}

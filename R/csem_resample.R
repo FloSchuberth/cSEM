@@ -272,12 +272,12 @@ resamplecSEMResults <- function(
   #  2. Information := a list of three
   #      2.1 Method  := the method used to obtain the "outer" resamples
   #      2.2 Method2 := the method used to obtain the "inner" resamples or NA
-  #      2.3 Number_of_admissibles  := the number of admissibles of the "outer" run
-  #      2.4 Number_of_observations := the number of observations.
+  #      2.3 Number_of_observations := the number of observations.
+  #      2.4 Original_object        := the original cSEMResults object
   #
   # Since resamplecSEMResults is called recursivly within its body it is 
   # difficult to produce the desired output. There is now straightforward way 
-  # to define if a call is an recursive call or not
+  # to determine if a call is a recursive call or not
   # My workaround for now is to simply check if the argument provided for ".object"
   # is "Est_temp" since this is the argument for the recurive call. This
   # is of course not general but a dirty workaround. I guess it is save enough
@@ -300,7 +300,8 @@ resamplecSEMResults <- function(
       "Information" = list(
         "Method"                  = .method,
         "Method2"                 = .method2,
-        "Number_of_observations"  = nrow(.object$Information$Data)
+        "Number_of_observations"  = nrow(.object$Information$Data),
+        "Original_object"         = .object
       )
     )
     
@@ -458,18 +459,17 @@ resamplecSEMResultsCore <- function(
 #'
 
 infer <- function(
-  .object          = args_default()$.object,
   .csem_resample   = args_default()$.csem_resample,
   .alpha           = args_default()$.alpha,
   .bias_corrected  = args_default()$.bias_corrected,
   .statistic       = args_default()$.statistic,
+  .object          = args_default()$.object,
   ...
 ) {
   
-  ## Compute the .csem_resample object if none has been provided
-  if(is.null(.csem_resample)) {
+  if(is.null(.csem_resample) & !is.null(.object)) {
     .csem_resample <- resamplecSEMResults(
-      .object = ..object,
+      .object = .object,
       ...
     )
   }
@@ -477,6 +477,7 @@ infer <- function(
   resamples1 <- .csem_resample$Resamples$Estimates1 # jackknife or bootstrap
   resamples2 <- .csem_resample$Resamples$Estimates2 # jackknife or bootstrap
   info       <- .csem_resample$Information
+  object     <- info$Original_object
 
   ## Compute quantiles/critical values -----------------------------------------
   probs  <- c()
@@ -526,11 +527,7 @@ infer <- function(
       .probs          = probs
       ),
     "CI_Bc"  = BcCI(resamples1, probs),
-    "CI_Bca" = if(is.null(.object)) {
-      NA
-    } else {
-      BcaCI(.object, resamples1, probs)
-    },
+    "CI_Bca" = BcaCI(.object = object, resamples1, probs),
     "CI_t_invertall"= if(anyNA(resamples2)) {
       NA
     } else {
