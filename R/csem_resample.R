@@ -458,19 +458,30 @@ resamplecSEMResultsCore <- function(
 #'
 
 infer <- function(
+  .object          = args_default()$.object,
   .csem_resample   = args_default()$.csem_resample,
   .alpha           = args_default()$.alpha,
   .bias_corrected  = args_default()$.bias_corrected,
-  .statistic       = args_default()$.statistic
+  .statistic       = args_default()$.statistic,
+  ...
 ) {
   
-  resamples1 <- .csem_resample$Resamples$Estimates1
+  ## Compute the .csem_resample object if none has been provided
+  if(is.null(.csem_resample)) {
+    .csem_resample <- resamplecSEMResults(
+      .object = ..object,
+      ...
+    )
+  }
+  
+  resamples1 <- .csem_resample$Resamples$Estimates1 # jackknife or bootstrap
   resamples2 <- .csem_resample$Resamples$Estimates2 # jackknife or bootstrap
   info       <- .csem_resample$Information
-  
+
   ## Compute quantiles/critical values -----------------------------------------
-  probs <- c()
-  for(i in seq_along(.alpha[order(.alpha)])) { 
+  probs  <- c()
+  .alpha <- .alpha[order(.alpha)]
+  for(i in seq_along(.alpha)) { 
     # for every alpha: alpha/2 and 1 - alpha/2
     probs <- c(probs, round(.alpha[i]/2, 4), round(1 - .alpha[i]/2, 4)) 
   }
@@ -514,6 +525,12 @@ infer <- function(
       .bias_corrected = .bias_corrected, 
       .probs          = probs
       ),
+    "CI_Bc"  = BcCI(resamples1, probs),
+    "CI_Bca" = if(is.null(.object)) {
+      NA
+    } else {
+      BcaCI(.object, resamples1, probs)
+    },
     "CI_t_invertall"= if(anyNA(resamples2)) {
       NA
     } else {
@@ -525,11 +542,12 @@ infer <- function(
         .method2 = info$Method2, 
         .n       = info$Number_of_observations, 
         .probs   = probs
-        ) 
+      ) 
     }
   )
-  if(anyNA(resamples2)) {
-    l <- l[-length(l)]
+  
+  if(anyNA(l)) {
+    l <- l[-which(is.na(l))]
   } else {
     l
   }
@@ -603,6 +621,9 @@ StandardCIResample <- function(
   ## Compute standard deviation
   boot_sd <- SdResample(.x, .method = .method, .n = .n)
   
+  ## confidence level (for rownames)
+  cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
+  
   ## Compute intervals
   # Notation:
   # w = .x := the list containing the estimated values based on .R resamples
@@ -632,10 +653,9 @@ StandardCIResample <- function(
   }, w = .x, y = boot_sd, SIMPLIFY = FALSE) %>% 
     lapply(function(x) do.call(rbind, x)) %>% 
     lapply(function(x) {
-      rownames(x) <- sprintf("%.2f%%", .probs*100)
+      rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
       x
     })
-  
   return(out)
 }
 #' @describeIn infer (TODO)
@@ -645,9 +665,14 @@ PercentilCIResample <- function(.x, .probs) {
   # the true distribution F. Use the quantiles of the estimated distribution
   # to estimate the CI for theta.
   # CI: [F*^-1(alpha/2) ; F*^-1(1 - alpha/2)]
+  
+  ## confidence level (for rownames)
+  cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
+  
   lapply(.x, function(x) {
-    out <- t(matrixStats::colQuantiles(x$Resample, probs = .probs, drop = FALSE))
+    out <- t(matrixStats::colQuantiles(x$Resampled, probs = .probs, drop = FALSE))
     colnames(out) <- names(x$Original)
+    rownames(out) <- paste0(c("L_", "U_"), rep(cl, each = 2))
     out
   })
 }
@@ -670,6 +695,9 @@ BasicCIResample <- function(.x, .bias_corrected, .probs) {
   # Therefore:
   # CI: [2*theta_hat - Q_(1 - alpha/2); 2*theta_hat - Q_(alpha/2)]
   
+  ## confidence level (for rownames)
+  cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
+  
   lapply(.x, function(x) {
     out <- t(matrixStats::colQuantiles(x$Resample, probs = .probs, drop = FALSE))
     
@@ -680,11 +708,11 @@ BasicCIResample <- function(.x, .bias_corrected, .probs) {
       x$Original
     }
     
-    out2 <- t(2*theta_star - t(out))
-    colnames(out2) <- names(x$Original)
-    out2 <- out2[1:nrow(out2) + rep(c(1, -1), times = nrow(out2)/2), , drop = FALSE]
-    rownames(out2) <- rownames(out)
-    out2
+    out <- t(2*theta_star - t(out))
+    colnames(out) <- names(x$Original)
+    out <- out[1:nrow(out) + rep(c(1, -1), times = nrow(out)/2), , drop = FALSE]
+    rownames(out) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+    out
   })
 }
 #' @describeIn infer (TODO)
@@ -702,6 +730,9 @@ TStatCIResample <- function(
   # CI based on bootstraped t-values and bootstraped/jackknife SE
   # CI: [F*^-1(alpha/2) ; F*^-1(1 - alpha/2)]
 
+  ## confidence level (for rownames)
+  cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
+  
   boot_sd_star <- lapply(.x2, SdResample, .method = .method2, .n = .n) %>% 
     purrr::transpose(.) %>% 
     lapply(function(y) do.call(rbind, y))
@@ -730,468 +761,78 @@ TStatCIResample <- function(
   }, i = seq_along(.x1), y = boot_sd, SIMPLIFY = FALSE) %>% 
     lapply(function(x) do.call(rbind, x)) %>% 
     lapply(function(x) {
-      x_rownames <- rownames(x)
-      
       x <- x[1:nrow(x) + rep(c(1, -1), times = nrow(x)/2), , drop = FALSE]
-      rownames(x) <- x_rownames
+      rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
       x
     })
 
+  names(out) <- names(.x1)
   return(out)
 }
-
-
-bootBcaCI<- function(x) {
-  # Bias corrected and accelerated CI
+#' @describeIn infer (TODO)
+BcCI <- function(.x, .probs) {
   
+  ## confidence level (for rownames)
+  cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
+
+  out <- lapply(.x, function(x) {
+    p0 <- colMeans(t(t(x$Resampled) <= x$Original))
+    z0 <- qnorm(p0)
+    
+    bc <- lapply(1:length(z0), function(i) {
+      bc_quantiles <- c()
+      for(j in seq_along(.probs)) {
+        q  <- pnorm(2*z0[i] + qnorm(.probs[j]))
+        bc_quantiles <- c(bc_quantiles, quantile(x$Resampled[, i], probs = q))
+      }
+      bc_quantiles
+    })
+    names(bc) <- names(x$Original)
+    bc
+  }) %>% 
+    lapply(function(x) t(do.call(rbind, x))) %>% 
+    lapply(function(x) {
+      rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+      x
+    })
   
-  a <- apply(L, 2, skewness) / (6 * sqrt(nrow(L)))
-  w <- qnorm(colMeans(x$replicates < rep(x$observed, each = x$R)))
-  probs2 <- IfElse(expand, ExpandProbs(probs, min(x$n)), probs)
-  zalpha <- qnorm(probs2)
-  # For now probs in rows, statistics in columns
-  zalpha <- matrix(zalpha, nrow = length(probs), ncol = x$p)
-  probs3 <- pnorm(w + (w + zalpha) / (1 - a * (w + zalpha)))
-  result <- probs3 * NA
-  for(j in 1:x$p) {
-    result[, j] <- Quantile(x$replicates[, j], probs3[, j])
-  }
-  dimnames(result) <- list(.FormatProbs(probs), names(x$observed))
-  t(result)
+  return(out)
 }
+#' @describeIn infer (TODO)
+BcaCI <- function(.object, .x, .probs) {
+  ## confidence level (for rownames)
+  cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
+  
+  ## influence values (estimated via jackknife)
+  jack <- resamplecSEMResults(
+    .object = .object,
+    .method = "jackknife"
+  )$Resamples$Estimates1
+  
+  aFun <- function(x) {
+    1/6 * (sum(x^3) / sum(x^2)^1.5)
+  }
+  
+  a <- lapply(jack, function(x) t(x$Original - t(x$Resampled))) %>% 
+    lapply(function(x) apply(x, 2, aFun)) 
+  
+  p0 <- lapply(.x, function(x) colMeans(t(t(x$Resampled) <= x$Original)))
+  z0 <- lapply(p0, qnorm)
 
-
-
-# ### Alternative
-# if(.method == "jackknife") {
-#   
-#   resample_jack <- resampleData(.object, .method = "jackknife")
-#   
-#   ## Start progress bar if required
-#   if(.verbose){
-#     pb <- txtProgressBar(min = 0, max = length(resample_jack), style = 3)
-#   }
-#   
-#   ## Substitute 'replace' by 'drop' if necessary
-#   ## .handle_inadbmissibles  = "replace" cannot be combined with "jackknife"
-#   if(.handle_inadmissibles == "replace" & .verbose == TRUE) {
-#     message("`'replace'` is set to `'.drop'` for jackknife resampling. ", )
-#     .handle_inadmissibles <- "drop"
-#   }
-#   
-#   
-#   Est_ls <- future.apply::future_lapply(seq_along(resample_jack), function(i) {
-#     
-#     # Replace the old dataset by a resampled data set (resampleData always returns
-#     # a list so for just one draw we need to pick the first list element)
-#     args[[".data"]] <- resample_jack[[i]]
-#     
-#     # Estimate model
-#     Est_temp <- do.call(csem, args)   
-#     
-#     # Check status
-#     status_code <- sum(unlist(verify(Est_temp)))
-#     
-#     # Distinguish depending on how inadmissibles should be handled
-#     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-#       
-#       ## Apply user defined function if specified
-#       user_funs <- if(!is.null(.user_funs)) {
-#         if(is.function(.user_funs)) {
-#           c("User_fun" = .user_funs(Est_temp))
-#         } else {
-#           x <- lapply(.user_funs, function(f) c(f(Est_temp)))
-#           if(is.null(names(x))) {
-#             names(x) <- paste0("User_fun", 1:length(x))
-#           }
-#           x
-#         }
-#       }
-#       
-#       ## Process
-#       x1  <- Est_temp$Estimates
-#       x2  <- Est_temp$Information
-#       
-#       x1$Path_estimates    <- t(x1$Path_estimates)[t(x2$Model$structural) != 0]
-#       x1$Loading_estimates <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0]
-#       x1$Weight_estimates  <- t(x1$Weight_estimates)[t(x2$Model$measurement) != 0]
-#       x1$Inner_weight_estimates  <- NULL
-#       x1$Construct_scores        <- NULL
-#       x1$Indicator_VCV           <- NULL
-#       x1$Proxy_VCV               <- NULL
-#       x1$Construct_VCV           <- NULL
-#       x1$Cross_loadings          <- NULL
-#       x1$Construct_reliabilities <- NULL
-#       x1$Correction_factors      <- NULL
-#       
-#       if(!is.null(.user_funs)) {
-#         x1 <- c(x1, user_funs)
-#       }
-#       
-#       ## If resampling from a bootstrap sample is required (e.g. for the 
-#       ## bootstraped t-interval CI) the original object needs to be returned. 
-#       if(.method2 != "none") {
-#         # Sometimes both jackknife and bootstrap resamples are required
-#         if(.method2 == "both") {
-#           Est_resamples2 <- lapply(list("bootstrap", "jackknife"), function(x) {
-#             resamplecSEMResults(
-#               .object               = Est_temp,
-#               .R                    = .R2,
-#               .handle_inadmissibles = .handle_inadmissibles,
-#               .method               = x,
-#               .verbose              = FALSE,
-#               .user_funs            = .user_funs,
-#             )
-#           })
-#           x1 <- list("Estimates1" = x1, 
-#                      "Estimates2" = Est_resamples2[[1]],
-#                      "Estimates3" = Est_resamples2[[2]])
-#         } else {
-#           Est_resamples2 <- resamplecSEMResults(
-#             .object               = Est_temp,
-#             .R                    = .R2,
-#             .handle_inadmissibles = .handle_inadmissibles,
-#             .method               = .method2,
-#             .verbose              = FALSE,
-#             .user_funs            = .user_funs,
-#           )
-#           x1 <- list("Estimates1" = x1, "Estimates2" = Est_resamples2)
-#         }
-#       } # END if .R2
-#     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
-#       # Retrun NA if status is not okay and .handle_inadmissibles == "drop"
-#       x1 <- NA
-#     } 
-#     
-#     if(.verbose){
-#       setTxtProgressBar(pb, i)
-#     }
-#     
-#     ## Return
-#     x1
-#   }) # END lapply(seq_along(resample_jack), ...)
-#   # END if .method = .jackknife
-# } else { # BEGIN if "bootstrap"
-#   
-#   ## Start progress bar if required
-#   if(.verbose){
-#     pb <- txtProgressBar(min = 0, max = .R, style = 3)
-#   }
-#   
-#   Est_ls          <- list()
-#   n_inadmissibles <- 0
-#   counter         <- 0
-#   repeat{
-#     # Counter
-#     counter <- counter + 1
-#     
-#     # Replace the old dataset by a resampled data set (resampleData always returns
-#     # a list so for just one draw we need to pick the first list element)
-#     args[[".data"]] <- resampleData(.object, .method = .method, .R = 1)[[1]]
-#     
-#     # Estimate model
-#     Est_temp <- do.call(csem, args)   
-#     
-#     # Check status
-#     status_code <- sum(unlist(verify(Est_temp)))
-#     
-#     # Distinguish depending on how inadmissibles should be handled
-#     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-#       
-#       ## Apply user defined function if specified
-#       user_funs <- if(!is.null(.user_funs)) {
-#         if(is.function(.user_funs)) {
-#           c("User_fun" = .user_funs(Est_temp))
-#         } else {
-#           x <- lapply(.user_funs, function(f) c(f(Est_temp)))
-#           if(is.null(names(x))) {
-#             names(x) <- paste0("User_fun", 1:length(x))
-#           }
-#           x
-#         }
-#       }
-#       
-#       ## Process
-#       x1  <- Est_temp$Estimates
-#       x2  <- Est_temp$Information
-#       
-#       x1$Path_estimates    <- t(x1$Path_estimates)[t(x2$Model$structural) != 0]
-#       x1$Loading_estimates <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0]
-#       x1$Weight_estimates  <- t(x1$Weight_estimates)[t(x2$Model$measurement) != 0]
-#       x1$Inner_weight_estimates  <- NULL
-#       x1$Construct_scores        <- NULL
-#       x1$Indicator_VCV           <- NULL
-#       x1$Proxy_VCV               <- NULL
-#       x1$Construct_VCV           <- NULL
-#       x1$Cross_loadings          <- NULL
-#       x1$Construct_reliabilities <- NULL
-#       x1$Correction_factors      <- NULL
-#       
-#       if(!is.null(.user_funs)) {
-#         x1 <- c(x1, user_funs)
-#       }
-#       
-#       ## If resampling from a bootstrap sample is required (e.g. for the 
-#       ## bootstraped t-interval CI) the original object needs to be returned. 
-#       if(.method2 != "none") {
-#         # Sometimes both jackknife and bootstrap resamples are required
-#         if(.method2 == "both") {
-#           Est_resamples2 <- lapply(list("bootstrap", "jackknife"), function(x) {
-#             resamplecSEMResults(
-#               .object               = Est_temp,
-#               .R                    = .R2,
-#               .handle_inadmissibles = .handle_inadmissibles,
-#               .method               = x,
-#               .verbose              = FALSE,
-#               .user_funs            = .user_funs,
-#             )
-#           })
-#           x1 <- list("Estimates1" = x1, 
-#                      "Estimates2" = Est_resamples2[[1]],
-#                      "Estimates3" = Est_resamples2[[2]])
-#         } else {
-#           Est_resamples2 <- resamplecSEMResults(
-#             .object               = Est_temp,
-#             .R                    = .R2,
-#             .handle_inadmissibles = .handle_inadmissibles,
-#             .method               = .method2,
-#             .verbose              = FALSE,
-#             .user_funs            = .user_funs,
-#           )
-#           x1 <- list("Estimates1" = x1, "Estimates2" = Est_resamples2)
-#         }
-#       }
-#       
-#       Est_ls[[counter]] <- x1
-#       
-#     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
-#       # Set list element to NA if status is not okay and .handle_inadmissibles == "drop"
-#       Est_ls[[counter]] <- NA
-#       
-#     } else {# status is not ok and .handle_inadmissibles == "replace"
-#       # Reset counter and raise number of inadmissibles by 1
-#       counter <- counter - 1
-#       n_inadmissibles <- n_inadmissibles + 1
-#     }
-#     
-#     # Break repeat loop if .R results have been created.
-#     if(length(Est_ls) == .R) {
-#       break
-#     } else if(counter + n_inadmissibles == 10000) { 
-#       ## Stop if 10000 runs did not result in insufficient admissible results
-#       stop("Not enough admissible result.", call. = FALSE)
-#     }
-#     
-#     if(.verbose){
-#       setTxtProgressBar(pb, counter)
-#     }
-#     
-#   } # END repeat 
-# } # END if "bootstrap"
-# 
-# # Close progress bar
-# if(.verbose){
-#   close(pb)
-# }
-
-# jackknifecSEMResults <- function(
-#   .object                = args_default()$.object,
-#   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-#   .user_funs             = args_default()$.user_funs,
-#   .verbose               = args_default()$.verbose,
-#   .R2                    = args_default()$.R2,
-#   .method2               = args_default()$.method2,
-#   .future_plan           = c("sequential", "multiprocess")
-# ) {
-#   
-#   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
-#   
-#   ## Set plan
-#   oplan <- future::plan()
-#   on.exit(future::plan(oplan), add = TRUE)
-#   future::plan(.future_plan)
-#   
-#   ## Resample
-#   resample_jack <- resampleData(.object, .method = "jackknife")
-#   
-#   ## Get argument list
-#   args <- .object$Information$Arguments
-#   
-#   out <- future.apply::future_lapply(resample_jack, function(i) {
-#     # Replace the old dataset by a resampled data set (resampleData always returns
-#     # a list so for just one draw we need to pick the first list element)
-#     
-#     args[[".data"]] <- i
-#     
-#     # Estimate model
-#     Est_temp <- do.call(csem, args)
-#     
-#     # Check status
-#     status_code <- sum(unlist(verify(Est_temp)))
-#     
-#     # Distinguish depending on how inadmissibles should be handled
-#     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-#       
-#       ## Apply user defined function if specified
-#       user_funs <- if(!is.null(.user_funs)) {
-#         if(is.function(.user_funs)) {
-#           c("User_fun" = .user_funs(Est_temp))
-#         } else {
-#           x <- lapply(.user_funs, function(f) c(f(Est_temp)))
-#           if(is.null(names(x))) {
-#             names(x) <- paste0("User_fun", 1:length(x))
-#           }
-#           x
-#         }
-#       }
-#       
-#       ## Process
-#       x1  <- Est_temp$Estimates
-#       x2  <- Est_temp$Information
-#       
-#       x1$Path_estimates    <- t(x1$Path_estimates)[t(x2$Model$structural) != 0]
-#       x1$Loading_estimates <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0]
-#       x1$Weight_estimates  <- t(x1$Weight_estimates)[t(x2$Model$measurement) != 0]
-#       x1$Inner_weight_estimates  <- NULL
-#       x1$Construct_scores        <- NULL
-#       x1$Indicator_VCV           <- NULL
-#       x1$Proxy_VCV               <- NULL
-#       x1$Construct_VCV           <- NULL
-#       x1$Cross_loadings          <- NULL
-#       x1$Construct_reliabilities <- NULL
-#       x1$Correction_factors      <- NULL
-#       
-#       if(!is.null(.user_funs)) {
-#         x1 <- c(x1, user_funs)
-#       }
-#       
-#       ## Resampling from a bootstrap sample is required for the
-#       ## bootstraped t-interval CI, hence the second run
-#       if(.method2 != "none") {
-#         
-#         Est_resamples2 <- resamplecSEMResults(
-#           .object               = Est_temp,
-#           .R                    = .R2,
-#           .handle_inadmissibles = .handle_inadmissibles,
-#           .method               = .method2,
-#           .verbose              = FALSE,
-#           .user_funs            = .user_funs
-#         )
-#         x1 <- list("Estimates1" = x1, "Estimates2" = Est_resamples2)
-#       }
-#     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
-#       # Retrun NA if status is not okay and .handle_inadmissibles == "drop"
-#       x1 <- NA
-#     }
-#     ## Return
-#     x1
-#   })
-#   
-#   ## Return
-#   out
-# }
-# 
-# bootcSEMResults <- function(
-#   .object                = args_default()$.object,
-#   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-#   .user_funs             = args_default()$.user_funs,
-#   .verbose               = args_default()$.verbose,
-#   .R                     = args_default()$.R,
-#   .R2                    = args_default()$.R2,
-#   .method2               = args_default()$.method2
-# ) {
-#   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
-#   
-#   # # register
-#   doFuture::registerDoFuture()
-#   
-#   ## Set plan
-#   oplan <- future::plan()
-#   on.exit(future::plan(oplan), add = TRUE)
-#   future::plan(.future_plan)
-#   
-#   ## Get argument list
-#   args <- .object$Information$Arguments
-#   data <- .object$Information$Arguments$.data
-#   out <- foreach(i = 1:length(resample_jack),
-#                  .export = c(".object",
-#                              "args",
-#                              ".handle_inadmissibles",
-#                              ".method2",
-#                              ".R",
-#                              ".R2",
-#                              ".user_funs"),
-#                  .packages = "cSEM"
-#                  
-#   ) %dopar% {
-#     # Replace the old dataset by a resampled data set (resampleData always returns
-#     # a list so for just one draw we need to pick the first list element)
-#     args[[".data"]] <- data[sample(1:nrow(data), size = nrow(data), replace = TRUE), ]
-#     
-#     # Estimate model
-#     Est_temp <- do.call(csem, args)
-#     
-#     # Check status
-#     status_code <- sum(unlist(verify(Est_temp)))
-#     
-#     # Distinguish depending on how inadmissibles should be handled
-#     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-#       
-#       ## Apply user defined function if specified
-#       user_funs <- if(!is.null(.user_funs)) {
-#         if(is.function(.user_funs)) {
-#           c("User_fun" = .user_funs(Est_temp))
-#         } else {
-#           x <- lapply(.user_funs, function(f) c(f(Est_temp)))
-#           if(is.null(names(x))) {
-#             names(x) <- paste0("User_fun", 1:length(x))
-#           }
-#           x
-#         }
-#       }
-#       
-#       ## Process
-#       x1  <- Est_temp$Estimates
-#       x2  <- Est_temp$Information
-#       
-#       x1$Path_estimates    <- t(x1$Path_estimates)[t(x2$Model$structural) != 0]
-#       x1$Loading_estimates <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0]
-#       x1$Weight_estimates  <- t(x1$Weight_estimates)[t(x2$Model$measurement) != 0]
-#       x1$Inner_weight_estimates  <- NULL
-#       x1$Construct_scores        <- NULL
-#       x1$Indicator_VCV           <- NULL
-#       x1$Proxy_VCV               <- NULL
-#       x1$Construct_VCV           <- NULL
-#       x1$Cross_loadings          <- NULL
-#       x1$Construct_reliabilities <- NULL
-#       x1$Correction_factors      <- NULL
-#       
-#       if(!is.null(.user_funs)) {
-#         x1 <- c(x1, user_funs)
-#       }
-#       
-#       ## Resampling from a bootstrap sample is required for the
-#       ## bootstraped t-interval CI, hence the second run
-#       if(.method2 != "none") {
-#         
-#         Est_resamples2 <- resamplecSEMResults(
-#           .object               = Est_temp,
-#           .R                    = .R2,
-#           .handle_inadmissibles = .handle_inadmissibles,
-#           .method               = .method2,
-#           .verbose              = FALSE,
-#           .user_funs            = .user_funs
-#         )
-#         x1 <- list("Estimates1" = x1, "Estimates2" = Est_resamples2)
-#       }
-#     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
-#       # Retrun NA if status is not okay and .handle_inadmissibles == "drop"
-#       x1 <- NA
-#     }
-#     ## Return
-#     x1
-#   }
-#   
-#   ## Return
-#   out
-# }
+  out <- lapply(seq_along(.x), function(i) {
+    bca <- lapply(1:length(z0[[i]]), function(j) {
+      q <- pnorm(z0[[i]][j] + (z0[[i]][j] + qnorm(.probs))/ (1 - a[[i]][j]*(z0[[i]][j] + qnorm(.probs)))) 
+      quantile(.x[[i]]$Resampled[, j], probs = q)
+    })
+    names(bca) <- names(.x[[i]]$Original)
+    bca
+  })%>% 
+    lapply(function(x) t(do.call(rbind, x))) %>% 
+    lapply(function(x) {
+      rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+      x
+    })
+  
+  names(out) <- names(.x)
+  out
+}

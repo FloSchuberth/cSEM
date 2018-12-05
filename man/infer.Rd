@@ -10,6 +10,8 @@
 \alias{PercentilCIResample}
 \alias{BasicCIResample}
 \alias{TStatCIResample}
+\alias{BcCI}
+\alias{BcaCI}
 \title{Internal: Inference}
 \usage{
 infer(
@@ -32,8 +34,14 @@ PercentilCIResample(.x, .probs)
 BasicCIResample(.x, .bias_corrected, .probs)
 
 TStatCIResample(.x1, .x2, .bias_corrected, .method, .method2, .n, .probs)
+
+BcCI(.x, .probs)
+
+BcaCI(.object, .x, .probs)
 }
 \arguments{
+\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+
 \item{.csem_resample}{A list resulting from a call to \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
@@ -78,6 +86,10 @@ Compute quantities for inference (TODO)
 \item \code{BasicCIResample}: (TODO)
 
 \item \code{TStatCIResample}: (TODO)
+
+\item \code{BcCI}: (TODO)
+
+\item \code{BcaCI}: (TODO)
 }}
 
 \examples{
