@@ -16,7 +16,7 @@ verify(.object)
 \method{verify}{cSEMResults_2ndorder}(.object)
 }
 \arguments{
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 }
 \value{
 A logical vector indicating which (if any) problem occurred.

@@ -2,33 +2,34 @@
 % Please edit documentation in R/csem_resample.R
 \name{resamplecSEMResults}
 \alias{resamplecSEMResults}
-\title{Internal: resample cSEMResults}
+\title{Resample cSEMResults}
 \usage{
-resampleResults(
- .object        = args_default()$.object,
- .data          = NULL,
- .method        = c("bootstrap", "jackknife", "permutation", "cross-validation"),
- .R         = 499,
- .id            = NULL,
- .cv_folds      = 10      
+resamplecSEMResults(
+ .object                = NULL,
+ .method                = c("bootstrap", "jackknife"),
+ .method2               = c("bootstrap", "jackknife"),
+ .R                     = 499,
+ .R2                    = 199,
+ .handle_inadmissibles  = c("drop", "ignore", "replace"),
+ .user_funs             = NULL,
+ .future_plan           = c("sequential", "multiprocess")
 )
 }
 \arguments{
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
 \item{.method2}{Character string. The resampling method to use when resampling
-from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
+from a resample. One of: "\emph{bootstrap}" or "\emph{jackknife}". For
 \emph{bootstrap} the number of draws may be provided via \code{.R2}.
-Defaults to "\emph{none}".}
+Defaults to "\emph{bootstrap}".}
 
-\item{.R}{Integer. The number of bootstrap or permuation replications
-to use. Defaults to \code{499}.}
+\item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
 \item{.R2}{Integer. The number of bootstrap replications to use when
-resampling from a resample. Defaults to \code{100}.}
+resampling from a resample. Defaults to \code{199}.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -43,9 +44,36 @@ resample. Takes \code{.object} as an input:
 \code{myFun <- function(.object) {...}}.  Output should preferably be a (named)
 vector but matrices are also accepted. Note however that output will be
 vectorized (columnwise) in this case.}
+
+\item{.future_plan}{Character string. The evaluation plan to use. One of
+\emph{sequential} or \emph{multiprocess}. In the latter case
+all available cores will be used. Defaults to \emph{sequential}.}
 }
 \description{
-Resample (TODO)
+The function resamples a \link{cSEMResults} object using bootstrap or jackknife resampling.
+}
+\details{
+The function essentially calls \code{\link[=csem]{csem()}} on each of the \emph{M} resamples (created via
+\code{\link[=resampleData]{resampleData()}}) and returns M estimates for each of a subset of practically useful
+resampled parameters/statistics computed by \code{\link[=csem]{csem()}}. Currently, the following
+quantities are returned for each resample:
+\describe{
+\item{Parameters}{Path estimates, Weight estimates, Loading estimates}
+\item{Statistics}{The heterotrait-monotrait ratio (HTMT)}
+}
+
+If the user needs to resample a statistic that is not returned by default,
+this statistic can be provided by a function \code{f(.object)} via the \code{.user_fun} argument.
+The only accepted argument of this function is \code{.object} which must be an
+object of class \link{cSEMResults}. Internally, the function will be applied on each
+cSEMResults resample to produce the desired statistic. As long as this is
+the only argument of the function provided, arbitrary complicated statistics
+may be resampled.
+
+The number of bootstrap runs is given by \code{.R}. The default is
+\code{499} but should be increased in real applications. See e.g.,
+\insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations.
+For jackknife \code{.R} is ignored.
 }
 \examples{
 \dontrun{

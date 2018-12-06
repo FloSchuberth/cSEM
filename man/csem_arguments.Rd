@@ -5,13 +5,6 @@
 \alias{cSEMArguments}
 \title{cSEMArguments}
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
-data column types or classes are: logical, numeric (double or integer), factor
-(ordered and unordered) or a mix of several types.}
-
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
-
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
@@ -67,6 +60,13 @@ to "\emph{diff_absolute}".}
 \item{.cv_fold}{Integer. The number of cross-validation folds to use.
 Defaults to \code{10}.}
 
+\item{.data}{A \code{data.frame}, a \code{matrix} or a list containing data of either type.
+Possible column types or classes of the data provided are:
+logical, numeric (double or integer), factor (ordered and unordered)
+or a mix of several types. The data may also include
+\emph{one} character column whose column name must be given to \code{.id}.
+This column is assumed to contain group identifiers used to split the data into groups.}
+
 \item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
@@ -82,6 +82,10 @@ Dominant indicators may be specified for a subset of the constructs.}
 
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
+
+\item{.future_plan}{Character string. The evaluation plan to use. One of
+\emph{sequential} or \emph{multiprocess}. In the latter case
+all available cores will be used. Defaults to \emph{sequential}.}
 
 \item{.H}{The (N x J) matrix of construct scores.}
 
@@ -111,9 +115,12 @@ If the algorithm exceeds the specified number, weights of iteration step
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
 \item{.method2}{Character string. The resampling method to use when resampling
-from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
+from a resample. One of: "\emph{bootstrap}" or "\emph{jackknife}". For
 \emph{bootstrap} the number of draws may be provided via \code{.R2}.
-Defaults to "\emph{none}".}
+Defaults to "\emph{bootstrap}".}
+
+\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+or a \link{cSEMModel}-list.}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
@@ -122,7 +129,7 @@ Only used internally.}
 For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.only_common_factors}{Logical. Should only common factors be included?
 Defaults to \code{FALSE}.}
@@ -167,11 +174,10 @@ of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
 reliabilities are estimated by \code{csem()}.}
 
-\item{.R}{Integer. The number of bootstrap or permuation replications
-to use. Defaults to \code{499}.}
+\item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
 \item{.R2}{Integer. The number of bootstrap replications to use when
-resampling from a resample. Defaults to \code{100}.}
+resampling from a resample. Defaults to \code{199}.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 

@@ -35,7 +35,7 @@ testOMF(
   .verbose = args_default()$.verbose)
 }
 \arguments{
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
@@ -48,8 +48,7 @@ even if they are inadmissible (number of results = .R). For "\emph{replace}"
 resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
-\item{.R}{Integer. The number of bootstrap or permuation replications
-to use. Defaults to \code{499}.}
+\item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 

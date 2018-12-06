@@ -5,44 +5,101 @@
 \title{Resample data}
 \usage{
 resampleData(
- .object        = args_default()$.object,
- .data          = NULL,
- .method        = c("bootstrap", "jackknife", "permutation", "cross-validation"),
- .R             = 499,
- .id            = NULL,
- .cv_folds      = 10      
+ .object   = NULL,
+ .method   = c("bootstrap", "jackknife", "permutation", "cross-validation"),
+ .cv_folds = 10,  
+ .data     = NULL,
+ .id       = NULL,
+ .R        = 499
 )
 }
 \arguments{
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
-
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
-data column types or classes are: logical, numeric (double or integer), factor
-(ordered and unordered) or a mix of several types. Data may include
-one character column whose name is given by \code{.id}. This column is assumed
-to contain group identifiers used to split the data.
-If \code{.data} is provided \code{.object} is ignored. Defaults to \code{NULL}.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}", "\emph{jackknife}", "\emph{permutation}", or "\emph{cross-validation}".
 Defaults to "\emph{bootstrap}".}
 
-\item{.R}{Integer. The number of bootstrap or permuation replications
-to use. Defaults to \code{499}.}
+\item{.data}{A \code{data.frame}, a \code{matrix} or a list containing data of either type.
+Possible column types or classes of the data provided are:
+logical, numeric (double or integer), factor (ordered and unordered)
+or a mix of several types. The data may also include
+\emph{one} character column whose column name must be given to \code{.id}.
+This column is assumed to contain group identifiers used to split the data into groups.
+If \code{.object} is provided, \code{.data} is ignored. Defaults to \code{NULL}.}
 
 \item{.id}{Character string. The name of the column of \code{.data} used to split
 the data into groups. Defaults to \code{NULL}.}
+
+\item{.R}{Integer. The number of bootstrap replications or permutation runs
+to use. Defaults to \code{499}.}
 }
 \description{
-Resample from a given cSEMResults object or data.frame using common
-resampling methods.
+Resample from a given data set using common resampling methods.
+For bootstrap or jackknife resampling package users usually dont need to
+call this function but directly use \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} instead.
+}
+\details{
+The function \code{resampleData()} is general purpose. It simply resamples data
+from a given data set according to the resampling method provided
+via the \code{.method} argument.
+Currently, \code{bootstrap}, \code{jackknife}, \code{permutation}, and  \code{cross-validation}
+(both leave-one-out (LOOCV) and k-fold cross-validation) are implemented.
+
+The user may provide a data set to be resampled or a \link{cSEMResults}
+object in which case the original data used in the call to \code{\link[=csem]{csem()}} is used.
+The \code{.data} argument is \code{NULL} by default. If both, a \link{cSEMResults} object and
+a data set via \code{.data} are provided the latter is always ignored.
+
+As \code{\link[=csem]{csem()}} accepts a single data set, a list of data sets as well as data sets
+that contain a column name used to split the data into groups,
+the \link{cSEMResults} object may contain multiple data sets.
+In this case, resampling is done by data set or group. Note that depending
+on the number of data sets provided this computation may be significantly slower
+as resampling will be repeated for each data set.
+
+If data containing a column to split the data into groups is
+provided via the \code{.data} argument, the column name containing the group levels
+must be given to \code{.id}.
+
+The number of bootstrap or permutation runs is given by \code{.R}. The default is
+\code{499} but should be increased in real applications. See e.g.,
+\insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations.
+For jackknife and cross-validation \code{.R} is ignored.
+
+For cross-validation the number of folds defaults to \code{10} and can be changed
+via the \code{.cv_folds} argument. Setting \code{.cv_folds} to \code{NULL} produces
+leave-one-out cross-validation samples.
 }
 \examples{
 \dontrun{
-# still to implement
+model <- "
+# Structural model
+QUAL ~ EXPE
+EXPE ~ IMAG
+SAT  ~ IMAG + EXPE + QUAL + VAL
+LOY  ~ IMAG + SAT
+VAL  ~ EXPE + QUAL
+
+# Measurement model
+
+EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+LOY  =~ loy1  + loy2  + loy3  + loy4
+QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+SAT  <~ sat1  + sat2  + sat3  + sat4
+VAL  <~ val1  + val2  + val3  + val4
+"
+a <- csem(satisfaction, model)
+
+res <- resampleData(a, .method = "bootstrap", .R = 999)
+str(res)
 }
 
 }
+\references{
+\insertAllCited{}
+}
 \seealso{
-\link{csem}, \link{cSEMResults}
+\link{cSEMResults}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}, \code{\link[=infer]{infer()}}
 }

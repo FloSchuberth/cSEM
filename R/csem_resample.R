@@ -1,44 +1,102 @@
 #' Resample data 
 #'
-#' Resample from a given cSEMResults object or data.frame using common
-#' resampling methods.
+#' Resample from a given data set using common resampling methods. 
+#' For bootstrap or jackknife resampling package users usually dont need to 
+#' call this function but directly use [resamplecSEMResults()] instead.
 #'
+#' The function `resampleData()` is general purpose. It simply resamples data 
+#' from a given data set according to the resampling method provided 
+#' via the `.method` argument. 
+#' Currently, `bootstrap`, `jackknife`, `permutation`, and  `cross-validation`
+#' (both leave-one-out (LOOCV) and k-fold cross-validation) are implemented. 
+#' 
+#' The user may provide a data set to be resampled or a [cSEMResults] 
+#' object in which case the original data used in the call to [csem()] is used. 
+#' The `.data` argument is `NULL` by default. If both, a [cSEMResults] object and 
+#' a data set via `.data` are provided the latter is always ignored. 
+#' 
+#' As [csem()] accepts a single data set, a list of data sets as well as data sets
+#' that contain a column name used to split the data into groups,
+#' the [cSEMResults] object may contain multiple data sets.
+#' In this case, resampling is done by data set or group. Note that depending
+#' on the number of data sets provided this computation may be significantly slower
+#' as resampling will be repeated for each data set.
+#' 
+#' If data containing a column to split the data into groups is 
+#' provided via the `.data` argument, the column name containing the group levels
+#' must be given to `.id`.
+#' 
+#' The number of bootstrap or permutation runs is given by `.R`. The default is
+#' `499` but should be increased in real applications. See e.g.,
+#' \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations.
+#' For jackknife and cross-validation `.R` is ignored.
+#' 
+#' For cross-validation the number of folds defaults to `10` and can be changed
+#' via the `.cv_folds` argument. Setting `.cv_folds` to `NULL` produces
+#' leave-one-out cross-validation samples.
+#' 
 #' @usage resampleData(
-#'  .object        = args_default()$.object,
-#'  .data          = NULL,
-#'  .method        = c("bootstrap", "jackknife", "permutation", "cross-validation"),
-#'  .R             = 499,
-#'  .id            = NULL,
-#'  .cv_folds      = 10      
+#'  .object   = NULL,
+#'  .method   = c("bootstrap", "jackknife", "permutation", "cross-validation"),
+#'  .cv_folds = 10,  
+#'  .data     = NULL,
+#'  .id       = NULL,
+#'  .R        = 499
 #' )
 #'
-#' @inheritParams csem_arguments
-#' @param .data A `data.frame` or a `matrix` containing the raw data. Possible
-#'   data column types or classes are: logical, numeric (double or integer), factor 
-#'   (ordered and unordered) or a mix of several types. Data may include
-#'   one character column whose name is given by `.id`. This column is assumed
-#'   to contain group identifiers used to split the data.
-#'   If `.data` is provided `.object` is ignored. Defaults to `NULL`.
+#' @param .data A `data.frame`, a `matrix` or a list containing data of either type. 
+#'   Possible column types or classes of the data provided are: 
+#'   logical, numeric (double or integer), factor (ordered and unordered) 
+#'   or a mix of several types. The data may also include
+#'   *one* character column whose column name must be given to `.id`. 
+#'   This column is assumed to contain group identifiers used to split the data into groups.
+#'   If `.object` is provided, `.data` is ignored. Defaults to `NULL`.
 #' @param .method Character string. The resampling method to use. One of: 
 #'  "*bootstrap*", "*jackknife*", "*permutation*", or "*cross-validation*". 
 #'  Defaults to "*bootstrap*".
-#'
-#' @seealso [csem], [cSEMResults]
+#' @param .R Integer. The number of bootstrap replications or permutation runs
+#'   to use. Defaults to `499`.
+#' @inheritParams csem_arguments
+#' 
+#' @references
+#'   \insertAllCited{}
+#'   
+#' @seealso [cSEMResults], [resamplecSEMResults()], [infer()]
 #'
 #' @examples
 #' \dontrun{
-#' # still to implement
+#' model <- "
+#' # Structural model
+#' QUAL ~ EXPE
+#' EXPE ~ IMAG
+#' SAT  ~ IMAG + EXPE + QUAL + VAL
+#' LOY  ~ IMAG + SAT
+#' VAL  ~ EXPE + QUAL
+#' 
+#' # Measurement model
+#' 
+#' EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+#' IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+#' LOY  =~ loy1  + loy2  + loy3  + loy4
+#' QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+#' SAT  <~ sat1  + sat2  + sat3  + sat4
+#' VAL  <~ val1  + val2  + val3  + val4
+#' "
+#' a <- csem(satisfaction, model)
+#' 
+#' res <- resampleData(a, .method = "bootstrap", .R = 999)
+#' str(res)
 #' }
 #' 
 #' @export
 #'
 resampleData <- function(
   .object   = args_default()$.object,
-  .data     = args_default()$.data,
   .method   = args_default()$.method,
-  .R        = args_default()$.R,
+  .cv_folds = args_default()$.cv_folds,
+  .data     = args_default()$.data,
   .id       = args_default()$.id,
-  .cv_folds = args_default()$.cv_folds
+  .R        = args_default()$.R
 ) {
   match.arg(.method, c("bootstrap", "jackknife", "permutation", "cross-validation"))
 
@@ -107,17 +165,41 @@ resampleData <- function(
   out
 }
 
-#' Internal: resample cSEMResults 
+#' Resample cSEMResults 
 #'
-#' Resample (TODO)
+#' The function resamples a [cSEMResults] object using bootstrap or jackknife resampling.
+#' 
+#' The function essentially calls [csem()] on each of the *M* resamples (created via
+#' [resampleData()]) and returns M estimates for each of a subset of practically useful 
+#' resampled parameters/statistics computed by [csem()]. Currently, the following 
+#' quantities are returned for each resample: 
+#' \describe{
+#' \item{Parameters}{Path estimates, Weight estimates, Loading estimates}
+#' \item{Statistics}{The heterotrait-monotrait ratio (HTMT)}
+#' }
+#' 
+#' If the user needs to resample a statistic that is not returned by default, 
+#' this statistic can be provided by a function `f(.object)` via the `.user_fun` argument. 
+#' The only accepted argument of this function is `.object` which must be an
+#' object of class [cSEMResults]. Internally, the function will be applied on each  
+#' cSEMResults resample to produce the desired statistic. As long as this is 
+#' the only argument of the function provided, arbitrary complicated statistics
+#' may be resampled.
+#' 
+#' The number of bootstrap runs is given by `.R`. The default is
+#' `499` but should be increased in real applications. See e.g.,
+#' \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations.
+#' For jackknife `.R` is ignored.
 #'
-#' @usage resampleResults(
-#'  .object        = args_default()$.object,
-#'  .data          = NULL,
-#'  .method        = c("bootstrap", "jackknife", "permutation", "cross-validation"),
-#'  .R         = 499,
-#'  .id            = NULL,
-#'  .cv_folds      = 10      
+#' @usage resamplecSEMResults(
+#'  .object                = NULL,
+#'  .method                = c("bootstrap", "jackknife"),
+#'  .method2               = c("bootstrap", "jackknife"),
+#'  .R                     = 499,
+#'  .R2                    = 199,
+#'  .handle_inadmissibles  = c("drop", "ignore", "replace"),
+#'  .user_funs             = NULL,
+#'  .future_plan           = c("sequential", "multiprocess")
 #' )
 #'
 #' @inheritParams csem_arguments
@@ -140,7 +222,7 @@ resamplecSEMResults <- function(
   .R2                    = args_default()$.R2,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
-  .future_plan           = c("sequential", "transparent", "multiprocess")
+  .future_plan           = c("sequential", "multiprocess")
   ) {
   
   ## Set plan on how to resolve futures 
@@ -155,9 +237,11 @@ resamplecSEMResults <- function(
   
   ## Has the object to use the data to resample from produced admissible results?
   if(sum(verify(.object)) != 0) {
-    warning("Estimation based on the data in `.object` has produced",
-            " inadmissible results.\n", 
-            "This may be a sign that something is wrong.",
+    warning(
+      "The following issue was encountered in the `resamplecSEMResults()` functions:\n",
+      "Estimation based on the original data has produced inadmissible results.\n", 
+      "This may be a sign that something is wrong.",
+      " Resampling will continue but may not produce valid results.",
             call. = FALSE, immediate. = TRUE)
   }
   
@@ -322,7 +406,7 @@ resamplecSEMResultsCore <- function(
   .R2                    = args_default()$.R2,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
-  .future_plan           = c("sequential", "transparent", "multiprocess")
+  .future_plan           = c("sequential", "multiprocess")
 ) {
   
   ## Get arguments

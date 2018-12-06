@@ -114,3 +114,10 @@ cat2 <- function(...) {
 stop2 <- function(...) {
   stop(..., call. = FALSE)
 }
+
+#' Wrapper around warning() with .call = FALSE and .immediate = TRUE
+#' @noRd
+#' 
+warning2 <- function(...) {
+  warning(..., call.= FALSE, immediate. = TRUE)
+}

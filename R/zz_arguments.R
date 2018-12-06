@@ -8,11 +8,6 @@
 #' function having `...` as a formal argument, set the `.only_dots` argument 
 #' of the [args_default()] function to `TRUE`.
 #'
-#' @param .data A `data.frame` or a `matrix` containing the raw data. Possible
-#'   data column types or classes are: logical, numeric (double or integer), factor 
-#'   (ordered and unordered) or a mix of several types.
-#' @param .model A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-#'   or a [cSEMModel]-list.
 #' @param .alpha An integer or a numeric vector of significance levels. 
 #'   Defaults to `0.05`.
 #' @param .approach Character string. The Kettenring approach to use. One of 
@@ -37,7 +32,7 @@
 #'   Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names to `fun()` whose value 
 #'   was modified by the user.
-#' @param  .bias_corrected Logical. Should the standard and the tStat
+#' @param .bias_corrected Logical. Should the standard and the tStat
 #'   confidence intervall be bias-corrected using the bootstraped bias estimate? 
 #'   If `TRUE` the confidence intervall for some estimated parameter `theta` 
 #'   is centered at `2*theta - theta*_hat`,
@@ -53,6 +48,12 @@
 #' @param .csem_resample A list resulting from a call to [resamplecSEMResults()].
 #' @param .cv_fold Integer. The number of cross-validation folds to use. 
 #'   Defaults to `10`.
+#' @param .data A `data.frame`, a `matrix` or a list containing data of either type. 
+#'   Possible column types or classes of the data provided are: 
+#'   logical, numeric (double or integer), factor (ordered and unordered) 
+#'   or a mix of several types. The data may also include
+#'   *one* character column whose column name must be given to `.id`. 
+#'   This column is assumed to contain group identifiers used to split the data into groups.
 #' @param .disattenuate Logical. If possible, should composite correlations be disattenuated
 #'   if the construct is modeled as a common factor? Defaults to `TRUE`.
 #' @param .distance Character string. A distance measure. One of: "*geodesic*"
@@ -64,6 +65,9 @@
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
+#' @param .future_plan Character string. The evaluation plan to use. One of 
+#'   *sequential* or *multiprocess*. In the latter case 
+#'   all available cores will be used. Defaults to *sequential*.
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
@@ -84,15 +88,17 @@
 #' @param .method Character string. The resampling method to use. One of: 
 #'  "*bootstrap*" or "*jackknife*". Defaults to "*bootstrap*".
 #' @param .method2 Character string. The resampling method to use when resampling
-#'   from a resample. One of: "*none*", "*bootstrap*" or "*jackknife*". For 
+#'   from a resample. One of: "*bootstrap*" or "*jackknife*". For 
 #'   *bootstrap* the number of draws may be provided via `.R2`.
-#'   Defaults to "*none*".
+#'   Defaults to "*bootstrap*".
+#' @param .model A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+#'   or a [cSEMModel]-list.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .normality Logical. Should joint normality be assumed in the nonlinear model?
 #'  For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
 #'  Defaults to `TRUE`. Ignored if the model is linear.
-#' @param .object An R object of class `cSEM<class>` with corresponding method.
+#' @param .object An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .only_common_factors Logical. Should only common factors be included? 
 #'   Defaults to `FALSE`.
 #' @param .only_dots Logical. Should only arguments to be passed to lower level 
@@ -126,10 +132,9 @@
 #'   of the corresponding construct name, or `NULL`. Reliabilities
 #'   may be given for a subset of the constructs. Defaults to `NULL` in which case
 #'   reliabilities are estimated by `csem()`.
-#' @param .R Integer. The number of bootstrap or permuation replications 
-#'   to use. Defaults to `499`.
+#' @param .R Integer. The number of bootstrap replications. Defaults to `499`.
 #' @param .R2 Integer. The number of bootstrap replications to use when 
-#'   resampling from a resample. Defaults to `100`.
+#'   resampling from a resample. Defaults to `199`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
 #' @param .stage Character string. The stage the model is need for.
@@ -223,8 +228,8 @@ args_default <- function(
     .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
     .E                       = NULL,
+    .future_plan             = c("sequential", "multiprocess"),
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
-    .handle_inadmissibles2   = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
     .listMatrices            = NULL, 
@@ -232,7 +237,7 @@ args_default <- function(
     .matrix2                 = NULL,
     .matrices                = NULL,
     .method                  = c("bootstrap", "jackknife"),
-    .method2                 = c("none", "bootstrap", "jackknife", "both"),
+    .method2                 = c("bootstrap", "jackknife"),
     .model                   = NULL,
     .modes                   = NULL,
     .only_common_factors     = TRUE,

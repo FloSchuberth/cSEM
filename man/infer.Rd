@@ -56,15 +56,15 @@ Defaults to \code{TRUE}}
 One of (TODO)
 Defaults to (TODO).}
 
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
 \item{.method2}{Character string. The resampling method to use when resampling
-from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
+from a resample. One of: "\emph{bootstrap}" or "\emph{jackknife}". For
 \emph{bootstrap} the number of draws may be provided via \code{.R2}.
-Defaults to "\emph{none}".}
+Defaults to "\emph{bootstrap}".}
 }
 \description{
 Compute quantities for inference (TODO)
