@@ -115,9 +115,9 @@ If the algorithm exceeds the specified number, weights of iteration step
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
 \item{.method2}{Character string. The resampling method to use when resampling
-from a resample. One of: "\emph{bootstrap}" or "\emph{jackknife}". For
+from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
 \emph{bootstrap} the number of draws may be provided via \code{.R2}.
-Defaults to "\emph{bootstrap}".}
+Defaults to "\emph{none}".}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}

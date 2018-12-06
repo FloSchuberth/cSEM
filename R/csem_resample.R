@@ -237,12 +237,11 @@ resamplecSEMResults <- function(
   
   ## Has the object to use the data to resample from produced admissible results?
   if(sum(verify(.object)) != 0) {
-    warning(
+    warning2(
       "The following issue was encountered in the `resamplecSEMResults()` functions:\n",
       "Estimation based on the original data has produced inadmissible results.\n", 
       "This may be a sign that something is wrong.",
-      " Resampling will continue but may not produce valid results.",
-            call. = FALSE, immediate. = TRUE)
+      " Resampling will continue but may not produce valid results.")
   }
   
   ## Check for the minimum number of necessary resamples

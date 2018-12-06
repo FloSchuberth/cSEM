@@ -88,9 +88,9 @@
 #' @param .method Character string. The resampling method to use. One of: 
 #'  "*bootstrap*" or "*jackknife*". Defaults to "*bootstrap*".
 #' @param .method2 Character string. The resampling method to use when resampling
-#'   from a resample. One of: "*bootstrap*" or "*jackknife*". For 
+#'   from a resample. One of: "*none*", "*bootstrap*" or "*jackknife*". For 
 #'   *bootstrap* the number of draws may be provided via `.R2`.
-#'   Defaults to "*bootstrap*".
+#'   Defaults to "*none*".
 #' @param .model A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 #'   or a [cSEMModel]-list.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
@@ -237,7 +237,7 @@ args_default <- function(
     .matrix2                 = NULL,
     .matrices                = NULL,
     .method                  = c("bootstrap", "jackknife"),
-    .method2                 = c("bootstrap", "jackknife"),
+    .method2                 = c("none", "bootstrap", "jackknife"),
     .model                   = NULL,
     .modes                   = NULL,
     .only_common_factors     = TRUE,
@@ -247,7 +247,7 @@ args_default <- function(
     .parallel                = FALSE,
     .Q                       = NULL,
     .R                       = 499,
-    .R2                      = 100,
+    .R2                      = 199,
     .S                       = NULL,
     .saturated               = FALSE,
     .statistic               = NULL,
