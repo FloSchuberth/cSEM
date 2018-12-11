@@ -5,18 +5,18 @@
 \title{Resample data}
 \usage{
 resampleData(
- .object   = NULL,
- .method   = c("bootstrap", "jackknife", "permutation", "cross-validation"),
- .cv_folds = 10,  
- .data     = NULL,
- .id       = NULL,
- .R        = 499
+ .object          = NULL,
+ .resample_method = c("bootstrap", "jackknife", "permutation", "cross-validation"),
+ .cv_folds        = 10,  
+ .data            = NULL,
+ .id              = NULL,
+ .R               = 499
 )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.method}{Character string. The resampling method to use. One of:
+\item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}", "\emph{jackknife}", "\emph{permutation}", or "\emph{cross-validation}".
 Defaults to "\emph{bootstrap}".}
 
@@ -35,28 +35,28 @@ the data into groups. Defaults to \code{NULL}.}
 to use. Defaults to \code{499}.}
 }
 \description{
-Resample from a given data set using common resampling methods.
-For bootstrap or jackknife resampling package users usually dont need to
+Resample from a given dataset using common resampling methods.
+For bootstrap or jackknife resampling, package users usually dont need to
 call this function but directly use \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} instead.
 }
 \details{
 The function \code{resampleData()} is general purpose. It simply resamples data
-from a given data set according to the resampling method provided
-via the \code{.method} argument.
+from a given dataset according to the resampling method provided
+via the \code{.resample_method} argument.
 Currently, \code{bootstrap}, \code{jackknife}, \code{permutation}, and  \code{cross-validation}
 (both leave-one-out (LOOCV) and k-fold cross-validation) are implemented.
 
-The user may provide a data set to be resampled or a \link{cSEMResults}
+The user may provide a dataset to be resampled or a \link{cSEMResults}
 object in which case the original data used in the call to \code{\link[=csem]{csem()}} is used.
 The \code{.data} argument is \code{NULL} by default. If both, a \link{cSEMResults} object and
-a data set via \code{.data} are provided the latter is always ignored.
+a dataset via \code{.data} are provided the latter is ignored.
 
-As \code{\link[=csem]{csem()}} accepts a single data set, a list of data sets as well as data sets
+As \code{\link[=csem]{csem()}} accepts a single dataset, a list of datasets as well as datasets
 that contain a column name used to split the data into groups,
-the \link{cSEMResults} object may contain multiple data sets.
-In this case, resampling is done by data set or group. Note that depending
-on the number of data sets provided this computation may be significantly slower
-as resampling will be repeated for each data set.
+the \link{cSEMResults} object may contain multiple datasets.
+In this case, resampling is done by dataset or group. Note that depending
+on the number of datasets provided this computation may be significantly slower
+as resampling will be repeated for each dataset/group.
 
 If data containing a column to split the data into groups is
 provided via the \code{.data} argument, the column name containing the group levels
@@ -92,7 +92,7 @@ VAL  <~ val1  + val2  + val3  + val4
 "
 a <- csem(satisfaction, model)
 
-res <- resampleData(a, .method = "bootstrap", .R = 999)
+res <- resampleData(a, .resample_method = "bootstrap", .R = 999)
 str(res)
 }
 

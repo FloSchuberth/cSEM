@@ -79,7 +79,8 @@
 #'   .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
 #'                         "fixed", "unit"),
 #'   .approach_path    = c("OLS", "2SLS", "3SLS"),
-#'   ...)
+#'   ...
+#'   )
 #'
 #' @param .data A `data.frame` or a `matrix` containing the raw data. Additionally,
 #'   a list of `data.frame`(s) or `matrices` is accepted in which case estimation
@@ -105,19 +106,30 @@
 #' @export
 
 csem <- function(
-  .data                    = NULL,
-  .model                   = NULL,
-  .id                      = NULL,
-  .approach_2ndorder       = c("3stage", "repeated_indicators"),
-  .approach_paths          = c("OLS", "2SLS"),
-  .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                               "GSCA", "fixed", "unit"),
+  .data                  = NULL,
+  .model                 = NULL,
+  .id                    = NULL,
+  .approach_2ndorder     = c("3stage", "repeated_indicators"),
+  .approach_paths        = c("OLS", "2SLS"),
+  .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
+                             "GSCA", "fixed", "unit"),
+  .resample_method       = c("none", "bootstrap", "jackknife"),
+  .resample_method2      = c("none", "bootstrap", "jackknife"),
+  .R                     = 499,
+  .R2                    = 199,
+  .handle_inadmissibles  = c("drop", "ignore", "replace"),
+  .user_funs             = NULL,
+  .eval_plan             = c("sequential", "multiprocess"),
   ...
   ) {
   ## Match arguments
-  .approach_2ndorder<- match.arg(.approach_2ndorder)
-  .approach_paths   <- match.arg(.approach_paths)
-  .approach_weights <- match.arg(.approach_weights)
+  .approach_2ndorder    <- match.arg(.approach_2ndorder)
+  .approach_paths       <- match.arg(.approach_paths)
+  .approach_weights     <- match.arg(.approach_weights)
+  .resample_method      <- match.arg(.resample_method)
+  .resample_method2     <- match.arg(.resample_method2)
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+  .eval_plan            <- match.arg(.eval_plan)
   
   ## Collect and handle arguments
   # Note: all.names = TRUE is neccessary for otherwise arguments with a leading
@@ -194,20 +206,37 @@ csem <- function(
   if(any(class(.data) == "list") | !is.null(.id)) {
     
     # Sometimes the original (unstandardized) pooled data set is required 
-    # (e.g. for testMICOM()).
+    # (e.g. for permutation and permutation based tests).
     # By convention the original, pooled dataset is therefore added to the first 
     # element of "out" (= results for the first group/dataset)! 
     # If ".data" was a list of data they are combined to on pooled dataset
     # If ".data" was originallay pooled and subsequently split by ".id"
-    # The original unsplit data is returned without the id column.
+    # The original unsplit data is returned.
     
     out[[1]]$Information$Data_pooled <- if(any(class(.data) == "list")) {
-      as.matrix(do.call(rbind, .data))
+      data_pooled <- as.matrix(do.call(rbind, .data))
+      data_pooled[, .id] <- rep(names(out), each = sapply(.data, nrow))
     } else {
-      as.matrix(.data[, -which(colnames(.data) == .id)])
+      .data
     }
     
     class(out) <- c("cSEMResults", "cSEMResults_multi")
+    
+    ## Resample if requested:
+    if(.resample_method != "none") {
+      out <- lapply(out, function(x) {
+        resamplecSEMResults(
+          .object               = x,
+          .resample_method      = .resample_method,
+          .resample_method2     = .resample_method2,
+          .R                    = .R,
+          .R2                   = .R2,
+          .handle_inadmissibles = .handle_inadmissibles,
+          .user_funs            = .user_funs,
+          .eval_plan            = .eval_plan  
+        )
+      })
+    }
     
   } else if(any(model$construct_order == "Second order") && 
             args$.approach_2ndorder == "3stage") {
@@ -220,12 +249,25 @@ csem <- function(
     
     out$Second_stage$Information$Arguments_original <- args_needed
     
-    class(out) <- c("cSEMResults", "cSEMResults_2ndorder" )
+    class(out) <- c("cSEMResults", "cSEMResults_2ndorder")
     
   } else {
     
     class(out) <- c("cSEMResults", "cSEMResults_default")
     
+    ## Resample if requested:
+    if(.resample_method != "none") {
+      out <- resamplecSEMResults(
+        .object               = out,
+        .resample_method      = .resample_method,
+        .resample_method2     = .resample_method2,
+        .R                    = .R,
+        .R2                   = .R2,
+        .handle_inadmissibles = .handle_inadmissibles,
+        .user_funs            = .user_funs,
+        .eval_plan            = .eval_plan  
+      )
+    }
   }
   
   return(out)

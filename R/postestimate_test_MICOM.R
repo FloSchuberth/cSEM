@@ -102,15 +102,16 @@ testMICOM.cSEMResults_multi <- function(
   }
   
   ### Preparation ==============================================================
-  ## Get data (pooled, potentially unstandardized data)
-  X <- .object[[1]]$Information$Data_pooled 
+  ## Get pooled data (potentially unstandardized) and remove id column
+  X <- .object[[1]]$Information$Data_pooled
+  X <- as.matrix(X[, -which(colnames(.data) == .id)])
   
   # Collect initial arguments (from the first object, but could be any other)
   arguments <- .object[[1]]$Information$Arguments
   
   # Create a vector "id" to be used to randomly select groups (permutate) and
   # set id as an argument in order to identify the groups.
-  X_list <- lapply(.object, function(x) x$Information$Data)
+  X_list <- lapply(.object, function(x) x$Information$Arguments$.data)
   id <- rep(1:length(X_list), sapply(X_list, nrow))
   arguments[[".id"]] <- "id"
   

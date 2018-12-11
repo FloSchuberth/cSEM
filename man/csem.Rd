@@ -21,7 +21,8 @@ csem(
   .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
                         "fixed", "unit"),
   .approach_path    = c("OLS", "2SLS", "3SLS"),
-  ...)
+  ...
+  )
 }
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Additionally,
@@ -51,6 +52,37 @@ Defaults to "\emph{3stage}".}
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
 Defaults to "\emph{OLS}".}
+
+\item{.resample_method}{Character string. The resampling method to use. One of:
+"\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
+
+\item{.resample_method2}{Character string. The resampling method to use when resampling
+from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
+\emph{bootstrap} the number of draws may be provided via \code{.R2}.
+Defaults to "\emph{none}".}
+
+\item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
+
+\item{.R2}{Integer. The number of bootstrap replications to use when
+resampling from a resample. Defaults to \code{199}.}
+
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications/resamples yielding an inadmissible result will be dropped (
+number of results shown <= .R). For "\emph{ignore}" all results are returned
+even if they are inadmissible (number of results = .R). For "\emph{replace}"
+resampling continues until there are exactly .R admissible solutions.
+Defaults to "\emph{drop}".}
+
+\item{.user_funs}{A function or a (named) list of functions to apply to every
+resample. Takes \code{.object} as an input:
+\code{myFun <- function(.object) {...}}.  Output should preferably be a (named)
+vector but matrices are also accepted. Note however that output will be
+vectorized (columnwise) in this case.}
+
+\item{.eval_plan}{Character string. The evaluation plan to use. One of
+\emph{sequential} or \emph{multiprocess}. In the latter case
+all available cores will be used. Defaults to \emph{sequential}.}
 }
 \value{
 An object of class \code{cSEMResults} with methods for all postestimation generics:

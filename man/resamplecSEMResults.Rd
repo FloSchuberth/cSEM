@@ -6,22 +6,22 @@
 \usage{
 resamplecSEMResults(
  .object                = NULL,
- .method                = c("bootstrap", "jackknife"),
- .method2               = c("bootstrap", "jackknife"),
+ .resample_method       = c("none", "bootstrap", "jackknife), 
+ .resample_method2      = c("none", "bootstrap", "jackknife), 
  .R                     = 499,
  .R2                    = 199,
  .handle_inadmissibles  = c("drop", "ignore", "replace"),
  .user_funs             = NULL,
- .future_plan           = c("sequential", "multiprocess")
+ .eval_plan             = c("sequential", "multiprocess")
 )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.method}{Character string. The resampling method to use. One of:
+\item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
-\item{.method2}{Character string. The resampling method to use when resampling
+\item{.resample_method2}{Character string. The resampling method to use when resampling
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
 \emph{bootstrap} the number of draws may be provided via \code{.R2}.
 Defaults to "\emph{none}".}
@@ -45,7 +45,7 @@ resample. Takes \code{.object} as an input:
 vector but matrices are also accepted. Note however that output will be
 vectorized (columnwise) in this case.}
 
-\item{.future_plan}{Character string. The evaluation plan to use. One of
+\item{.eval_plan}{Character string. The evaluation plan to use. One of
 \emph{sequential} or \emph{multiprocess}. In the latter case
 all available cores will be used. Defaults to \emph{sequential}.}
 }

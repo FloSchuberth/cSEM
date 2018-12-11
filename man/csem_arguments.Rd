@@ -83,7 +83,7 @@ Dominant indicators may be specified for a subset of the constructs.}
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
 
-\item{.future_plan}{Character string. The evaluation plan to use. One of
+\item{.eval_plan}{Character string. The evaluation plan to use. One of
 \emph{sequential} or \emph{multiprocess}. In the latter case
 all available cores will be used. Defaults to \emph{sequential}.}
 
@@ -111,10 +111,10 @@ If the algorithm exceeds the specified number, weights of iteration step
 
 \item{.matrices}{A list of at least two matrices.}
 
-\item{.method}{Character string. The resampling method to use. One of:
+\item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
-\item{.method2}{Character string. The resampling method to use when resampling
+\item{.resample_method2}{Character string. The resampling method to use when resampling
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
 \emph{bootstrap} the number of draws may be provided via \code{.R2}.
 Defaults to "\emph{none}".}

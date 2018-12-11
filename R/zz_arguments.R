@@ -65,7 +65,7 @@
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
-#' @param .future_plan Character string. The evaluation plan to use. One of 
+#' @param .eval_plan Character string. The evaluation plan to use. One of 
 #'   *sequential* or *multiprocess*. In the latter case 
 #'   all available cores will be used. Defaults to *sequential*.
 #' @param .H The (N x J) matrix of construct scores.
@@ -85,9 +85,9 @@
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
-#' @param .method Character string. The resampling method to use. One of: 
+#' @param .resample_method Character string. The resampling method to use. One of: 
 #'  "*bootstrap*" or "*jackknife*". Defaults to "*bootstrap*".
-#' @param .method2 Character string. The resampling method to use when resampling
+#' @param .resample_method2 Character string. The resampling method to use when resampling
 #'   from a resample. One of: "*none*", "*bootstrap*" or "*jackknife*". For 
 #'   *bootstrap* the number of draws may be provided via `.R2`.
 #'   Defaults to "*none*".
@@ -228,7 +228,7 @@ args_default <- function(
     .data                    = NULL,
     .distance                = c("geodesic", "squared_euclidian"),
     .E                       = NULL,
-    .future_plan             = c("sequential", "multiprocess"),
+    .eval_plan             = c("sequential", "multiprocess"),
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
@@ -236,8 +236,8 @@ args_default <- function(
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,
-    .method                  = c("bootstrap", "jackknife"),
-    .method2                 = c("none", "bootstrap", "jackknife"),
+    .resample_method         = c("none", "bootstrap", "jackknife"),
+    .resample_method2        = c("none", "bootstrap", "jackknife"),
     .model                   = NULL,
     .modes                   = NULL,
     .only_common_factors     = TRUE,

@@ -20,27 +20,28 @@ infer(
 
 MeanResample(.x)
 
-VarResample(.x, .method, .n)
+VarResample(.x, .resample_method, .n)
 
-SdResample(.x, .method, .n)
+SdResample(.x, .resample_method, .n)
 
-BiasResample(.x, .method, .n)
+BiasResample(.x, .resample_method, .n)
 
 StandardCIResample(.x, .bias_corrected, .df = c("type1", "type2"),
-  .dist = c("z", "t"), .method, .n, .probs)
+  .dist = c("z", "t"), .resample_method, .n, .probs)
 
 PercentilCIResample(.x, .probs)
 
 BasicCIResample(.x, .bias_corrected, .probs)
 
-TStatCIResample(.x1, .x2, .bias_corrected, .method, .method2, .n, .probs)
+TStatCIResample(.x1, .x2, .bias_corrected, .resample_method,
+  .resample_method2, .n, .probs)
 
 BcCI(.x, .probs)
 
 BcaCI(.object, .x, .probs)
 }
 \arguments{
-\item{.csem_resample}{A list resulting from a call to \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
@@ -56,12 +57,10 @@ Defaults to \code{TRUE}}
 One of (TODO)
 Defaults to (TODO).}
 
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
-
-\item{.method}{Character string. The resampling method to use. One of:
+\item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
-\item{.method2}{Character string. The resampling method to use when resampling
+\item{.resample_method2}{Character string. The resampling method to use when resampling
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
 \emph{bootstrap} the number of draws may be provided via \code{.R2}.
 Defaults to "\emph{none}".}

@@ -44,6 +44,8 @@ calculateWeightsPLS <- function(
   ### Preparation ==============================================================
   ## Get/set the modes for the outer estimation
   modes <- ifelse(.csem_model$construct_type == "Common factor", "ModeA", "ModeB")
+  ## Allow for mode = "unit" and "mode" fixed as well here
+  ## Warning if common factor and unit or fixed weights. Say that 
   
   if(!is.null(.PLS_modes)) {
     # Error if other than "ModeA" or "ModeB"
