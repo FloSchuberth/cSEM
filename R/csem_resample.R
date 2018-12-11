@@ -343,9 +343,17 @@ resampleData <- function(
 #' or `"replace"` inadmissble results in which case resampling continous until
 #' the necessary number of admissble results is reached.
 #' 
-#' The cSEM package supports multiprocessing via the future framework. Essentially 
-#' users specifiy the evaluation plan via `.eval_plan` and the package
-#' takes care of all the complicated backend issues. Currently users may spec
+#' The cSEM package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future} 
+#' \insertCite{Bengtsson2018}{cSEM} framework. User may simply choose an evaluation plan
+#' via `.eval_plan` and the package takes care of all the complicated backend 
+#' issues. Currently, users may chose between standard single-core evaluation
+#' (`"sequential"`) and multiprocessing (`"multiprocess"`). The future package
+#' provides other options (e.g. `"cluster"` or `"remote"`), however, they probably 
+#' wont be needed in the context of the cSEM package. Depeding on the platform, the future
+#' package will manage to distribute tasks to multiple R sessions (Windows)
+#' or multiple cores. Note that multiprocessing is not necessary always faster
+#' when only a small naumber of replications is required as the overhead of
+#' initializing new sessions will not imediatley be compensated.
 #'
 #' @usage resamplecSEMResults(
 #'  .object                = NULL,
@@ -359,7 +367,10 @@ resampleData <- function(
 #' )
 #'
 #' @inheritParams csem_arguments
-#'
+#' 
+#' @references
+#'   \insertAllCited{} 
+#'   
 #' @seealso [csem], [cSEMResults]
 #'
 #' @examples
