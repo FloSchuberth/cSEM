@@ -6,7 +6,7 @@
 \usage{
 resamplecSEMResults(
  .object                = NULL,
- .resample_method       = c("none", "bootstrap", "jackknife), 
+ .resample_method       = c("bootstrap", "jackknife), 
  .resample_method2      = c("none", "bootstrap", "jackknife), 
  .R                     = 499,
  .R2                    = 199,
@@ -56,7 +56,7 @@ The function resamples a \link{cSEMResults} object using bootstrap or jackknife 
 The function essentially calls \code{\link[=csem]{csem()}} on each of the \emph{M} resamples (created via
 \code{\link[=resampleData]{resampleData()}}) and returns M estimates for each of a subset of practically useful
 resampled parameters/statistics computed by \code{\link[=csem]{csem()}}. Currently, the following
-quantities are returned for each resample:
+quantities are computed and returned based on each resample:
 \describe{
 \item{Parameters}{Path estimates, Weight estimates, Loading estimates}
 \item{Statistics}{The heterotrait-monotrait ratio (HTMT)}
@@ -70,10 +70,28 @@ cSEMResults resample to produce the desired statistic. As long as this is
 the only argument of the function provided, arbitrary complicated statistics
 may be resampled.
 
-The number of bootstrap runs is given by \code{.R}. The default is
-\code{499} but should be increased in real applications. See e.g.,
+Both resampling the origianl \link{cSEMResults} object (first resample) and resampling based on
+a resampled \link{cSEMResults} object (second resample) are supported. Choices for the former
+are "bootstrap" and "jackknife". Resampling based on a resample is turned of
+by default (\code{.resample_method2 = "none"}) as this significantly
+increases computation time (there are now \code{.R * .R2} resamples to compute)
+However, in order to compute e.g., the studentized confidence interval via \code{\link[=infer]{infer()}},
+resampling from a resample is required.
+
+The number of bootstrap runs for the first and second run are given by \code{.R} and \code{.R}.
+The default is \code{499} for the first and \code{199} for the second run
+but should be increased in real applications. See e.g.,
 \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations.
-For jackknife \code{.R} is ignored.
+For jackknife \code{.R} are \code{.R2} are ignored.
+
+Resampling may produce inadmissble results (as checked by \code{\link[=verify]{verify()}}).
+By default these results are dropped however users may choose to \code{"ignore"}
+or \code{"replace"} inadmissble results in which case resampling continous until
+the necessary number of admissble results is reached.
+
+The cSEM package supports multiprocessing via the future framework. Essentially
+users specifiy the evaluation plan via \code{.eval_plan} and the package
+takes care of all the complicated backend issues.
 }
 \examples{
 \dontrun{

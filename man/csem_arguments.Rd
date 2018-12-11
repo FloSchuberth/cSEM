@@ -57,8 +57,9 @@ to "\emph{diff_absolute}".}
 
 \item{.csem_resample}{A list resulting from a call to \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}.}
 
-\item{.cv_fold}{Integer. The number of cross-validation folds to use.
-Defaults to \code{10}.}
+\item{.cv_folds}{Integer. The number of cross-validation folds to use. Setting
+\code{.cv_folds} to \code{N} (the number of observations) produces
+leave-one-out cross-validation samples. Defaults to \code{10}.}
 
 \item{.data}{A \code{data.frame}, a \code{matrix} or a list containing data of either type.
 Possible column types or classes of the data provided are:
@@ -97,8 +98,9 @@ even if they are inadmissible (number of results = .R). For "\emph{replace}"
 resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
-\item{.id}{Character string. The name of the column of \code{.data} used to split
-the data into groups. Defaults to \code{NULL}.}
+\item{.id}{Character string or integer. The name or position of the column of
+\code{.data} used to split the data into groups. Ignored if \code{.object} is provided.
+Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.

@@ -32,8 +32,9 @@ is repeated for each data set. See details.}
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
 
-\item{.id}{Character string. The name of the column of \code{.data} used to split
-the data into groups. Defaults to \code{NULL}.}
+\item{.id}{Character string or integer. The name or position of the column of
+\code{.data} used to split the data into groups. Ignored if \code{.object} is provided.
+Defaults to \code{NULL}.}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",

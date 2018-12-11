@@ -68,8 +68,9 @@ Dominant indicators may be specified for a subset of the constructs.}
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
 
-\item{.id}{Character string. The name of the column of \code{.data} used to split
-the data into groups. Defaults to \code{NULL}.}
+\item{.id}{Character string or integer. The name or position of the column of
+\code{.data} used to split the data into groups. Ignored if \code{.object} is provided.
+Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.

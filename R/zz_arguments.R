@@ -46,8 +46,9 @@
 #'   to "*diff_absolute*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel]-list.
 #' @param .csem_resample A list resulting from a call to [resamplecSEMResults()].
-#' @param .cv_fold Integer. The number of cross-validation folds to use. 
-#'   Defaults to `10`.
+#' @param .cv_folds Integer. The number of cross-validation folds to use. Setting
+#'   `.cv_folds` to `N` (the number of observations) produces 
+#'   leave-one-out cross-validation samples. Defaults to `10`.
 #' @param .data A `data.frame`, a `matrix` or a list containing data of either type. 
 #'   Possible column types or classes of the data provided are: 
 #'   logical, numeric (double or integer), factor (ordered and unordered) 
@@ -76,8 +77,9 @@
 #'   even if they are inadmissible (number of results = .R). For "*replace*"
 #'   resampling continues until there are exactly .R admissible solutions. 
 #'   Defaults to "*drop*".
-#' @param .id Character string. The name of the column of `.data` used to split
-#'   the data into groups. Defaults to `NULL`.
+#' @param .id Character string or integer. The name or position of the column of 
+#'   `.data` used to split the data into groups. Ignored if `.object` is provided.
+#'    Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 

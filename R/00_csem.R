@@ -214,12 +214,13 @@ csem <- function(
     # The original unsplit data is returned.
     
     out[[1]]$Information$Data_pooled <- if(any(class(.data) == "list")) {
-      data_pooled <- as.matrix(do.call(rbind, .data))
-      data_pooled[, .id] <- rep(names(out), each = sapply(.data, nrow))
+      data_pooled <- do.call(rbind, .data)
+      data_pooled[, "id"] <- rep(names(out), times = sapply(.data, nrow))
+      data_pooled
     } else {
       .data
     }
-    
+
     class(out) <- c("cSEMResults", "cSEMResults_multi")
     
     ## Resample if requested:

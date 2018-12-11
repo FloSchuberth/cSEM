@@ -20,22 +20,69 @@ resampleData(
 "\emph{bootstrap}", "\emph{jackknife}", "\emph{permutation}", or "\emph{cross-validation}".
 Defaults to "\emph{bootstrap}".}
 
-\item{.data}{A \code{data.frame}, a \code{matrix} or a list containing data of either type.
+\item{.cv_folds}{Integer. The number of cross-validation folds to use. Setting
+\code{.cv_folds} to \code{N} (the number of observations) produces
+leave-one-out cross-validation samples. Defaults to \code{10}.}
+
+\item{.data}{A \code{data.frame}, a \code{matrix} or a \code{list} of data of either type.
 Possible column types or classes of the data provided are:
-logical, numeric (double or integer), factor (ordered and unordered)
+"\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"), "\code{factor}" (ordered and unordered)
 or a mix of several types. The data may also include
-\emph{one} character column whose column name must be given to \code{.id}.
+\strong{one} character column whose column name must be given to \code{.id}.
 This column is assumed to contain group identifiers used to split the data into groups.
-If \code{.object} is provided, \code{.data} is ignored. Defaults to \code{NULL}.}
+If \code{.data} is provided, \code{.object} is ignored. Defaults to \code{NULL}.}
 
-\item{.id}{Character string. The name of the column of \code{.data} used to split
-the data into groups. Defaults to \code{NULL}.}
+\item{.id}{Character string or integer. The name or position of the column of
+\code{.data} used to split the data into groups. Ignored if \code{.object} is provided.
+Defaults to \code{NULL}.}
 
-\item{.R}{Integer. The number of bootstrap replications or permutation runs
-to use. Defaults to \code{499}.}
+\item{.R}{Integer. The number of bootstrap replications, permutation runs
+or cross-validation repetitions to use. Defaults to \code{499}.}
+}
+\value{
+The structure of the output depends on the type of input and the
+resampling method:
+\describe{
+\item{Bootstrap}{If a matrix or data.frame without grouping variable
+is provided (\code{.id = NULL}), the result is a list of length \code{.R}
+(default \code{499}). Each element of that list is a bootstrap sample.
+If a grouping variable is specified or a list of data is provided
+(where each list element is assumed to contain data for one group),
+resampling is done by group. Hence,
+the result is a list of length equal to the number of group levels
+with each list element containing \code{.R} bootstrap samples based on the
+\code{N_g} observations of group \code{g}.}
+\item{Jackknife}{If a matrix or data.frame without grouping variable
+is provided (\code{.id = NULL}), the result is a list of length equal to the number
+of observations/rows (\code{N}) of the dataset provided.
+Each element of that list is a jackknife sample.
+If a grouping variable is specified or a list of data is provided
+(where each list element is assumed to contain data for one group),
+resampling is done by group. Hence,
+the result is a list of length equal to the number of group levels
+with each list element containing \code{N} jackknife samples based on the
+\code{N_g} observations of group \code{g}.}
+\item{Permutation}{If a matrix or data.frame without grouping variable
+is provided an error is returned as permutation will simply reorder the observations.
+If a grouping variable is specified or a list of data is provided
+(where each list element is assumed to contain data for one group),
+group membership is permutated. Hence, the result is a list of length \code{.R}
+where each element of that list is a permutation sample.}
+\item{Cross-validation}{If a matrix or data.frame without grouping variable
+is provided a list of length \code{.R} is returned. Each list element
+contains a list containing the \code{k} splits/folds
+used as test and training data sets.
+If a grouping variable is specified or a list of data is provided
+(where each list element is assumed to contain data for one group),
+cross-validation is repeated \code{.R} times for each group. Hence,
+the result is a list of length equal to the number of group levels, each
+each containing \code{.R} list element (the repetitions) which in turn contain
+the \code{k} splits/folds specifyied via \code{cv_folds}.
+}
+}
 }
 \description{
-Resample from a given dataset using common resampling methods.
+Resample from a dataset using common resampling methods.
 For bootstrap or jackknife resampling, package users usually dont need to
 call this function but directly use \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} instead.
 }
@@ -48,31 +95,38 @@ Currently, \code{bootstrap}, \code{jackknife}, \code{permutation}, and  \code{cr
 
 The user may provide a dataset to be resampled or a \link{cSEMResults}
 object in which case the original data used in the call to \code{\link[=csem]{csem()}} is used.
-The \code{.data} argument is \code{NULL} by default. If both, a \link{cSEMResults} object and
-a dataset via \code{.data} are provided the latter is ignored.
+If both, a \link{cSEMResults} object and a dataset via \code{.data} are provided
+the former is ignored.
 
 As \code{\link[=csem]{csem()}} accepts a single dataset, a list of datasets as well as datasets
 that contain a column name used to split the data into groups,
 the \link{cSEMResults} object may contain multiple datasets.
 In this case, resampling is done by dataset or group. Note that depending
-on the number of datasets provided this computation may be significantly slower
+on the number of datasets provided this computation may be slower
 as resampling will be repeated for each dataset/group.
 
-If data containing a column to split the data into groups is
-provided via the \code{.data} argument, the column name containing the group levels
-must be given to \code{.id}.
+To split data provided via the \code{.data} argument into groups, the column name or
+the column index of the column containing the group levels to split the data
+by must be given to \code{.id}. If data that contains grouping is taken from
+a \link{cSEMResults} object, \code{.id} is taken from within the object. Hence,
+providing  \code{.id} is redundant and therefore ignored.
 
-The number of bootstrap or permutation runs is given by \code{.R}. The default is
+The number of bootstrap or permutation runs as well as the number of
+cross-validation repetitions is given by \code{.R}. The default is
 \code{499} but should be increased in real applications. See e.g.,
-\insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations.
-For jackknife and cross-validation \code{.R} is ignored.
+\insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations concering
+the bootstrap. For jackknife \code{.R} is ignored.
+
+Choosing \code{resample_method = "permutation"} for ungrouped data causes an error
+as permutation will simply reorder the observations. If a list of data is provided
+each list element is assumed to represent the observations belonging to one
+group. In this case, data is pooled and group adherance permutated.
 
 For cross-validation the number of folds defaults to \code{10} and can be changed
-via the \code{.cv_folds} argument. Setting \code{.cv_folds} to \code{NULL} produces
-leave-one-out cross-validation samples.
+via the \code{.cv_folds} argument. Setting \code{.cv_folds} to \code{N}
+(the number of observations) produces leave-one-out cross-validation samples.
 }
 \examples{
-\dontrun{
 model <- "
 # Structural model
 QUAL ~ EXPE
@@ -82,7 +136,6 @@ LOY  ~ IMAG + SAT
 VAL  ~ EXPE + QUAL
 
 # Measurement model
-
 EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
 IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
 LOY  =~ loy1  + loy2  + loy3  + loy4
@@ -92,14 +145,25 @@ VAL  <~ val1  + val2  + val3  + val4
 "
 a <- csem(satisfaction, model)
 
-res <- resampleData(a, .resample_method = "bootstrap", .R = 999)
-str(res)
-}
+## Using a cSEMResults object
+res_boot <- resampleData(a, .resample_method = "bootstrap", .R = 999)
+res_jack <- resampleData(a, .resample_method = "jackknife")
+
+## Using raw data
+res_boot1 <- resampleData(.data = satisfaction, .resample_method = "bootstrap")
+
+## Cross-validation repeated .R = 100 times
+cv_10 <- resampleData(a, .resample_method = "cross-validation", .R = 100) # 10 fold (the default)
+cv_loocv  <- resampleData(satisfaction, 
+                     .resample_method = "cross-validation", 
+                     .R = 100,
+                     .cv_fold = nrow(satisfaction)
+                     ) # LOOCV
 
 }
 \references{
 \insertAllCited{}
 }
 \seealso{
-\link{cSEMResults}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}, \code{\link[=infer]{infer()}}
+\code{\link[=csem]{csem()}}, \link{cSEMResults}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}
 }

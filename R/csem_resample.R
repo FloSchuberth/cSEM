@@ -1,6 +1,6 @@
 #' Resample data 
 #'
-#' Resample from a given dataset using common resampling methods. 
+#' Resample from a dataset using common resampling methods. 
 #' For bootstrap or jackknife resampling, package users usually dont need to 
 #' call this function but directly use [resamplecSEMResults()] instead.
 #'
@@ -12,28 +12,36 @@
 #' 
 #' The user may provide a dataset to be resampled or a [cSEMResults] 
 #' object in which case the original data used in the call to [csem()] is used. 
-#' The `.data` argument is `NULL` by default. If both, a [cSEMResults] object and 
-#' a dataset via `.data` are provided the latter is ignored. 
+#' If both, a [cSEMResults] object and a dataset via `.data` are provided 
+#' the former is ignored. 
 #' 
 #' As [csem()] accepts a single dataset, a list of datasets as well as datasets
 #' that contain a column name used to split the data into groups,
 #' the [cSEMResults] object may contain multiple datasets.
 #' In this case, resampling is done by dataset or group. Note that depending
-#' on the number of datasets provided this computation may be significantly slower
+#' on the number of datasets provided this computation may be slower
 #' as resampling will be repeated for each dataset/group.
 #' 
-#' If data containing a column to split the data into groups is 
-#' provided via the `.data` argument, the column name containing the group levels
-#' must be given to `.id`.
+#' To split data provided via the `.data` argument into groups, the column name or 
+#' the column index of the column containing the group levels to split the data 
+#' by must be given to `.id`. If data that contains grouping is taken from 
+#' a [cSEMResults] object, `.id` is taken from within the object. Hence, 
+#' providing  `.id` is redundant and therefore ignored.
 #' 
-#' The number of bootstrap or permutation runs is given by `.R`. The default is
+#' The number of bootstrap or permutation runs as well as the number of 
+#' cross-validation repetitions is given by `.R`. The default is
 #' `499` but should be increased in real applications. See e.g.,
-#' \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations.
-#' For jackknife and cross-validation `.R` is ignored.
+#' \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations concering
+#' the bootstrap. For jackknife `.R` is ignored.
+#' 
+#' Choosing `resample_method = "permutation"` for ungrouped data causes an error
+#' as permutation will simply reorder the observations. If a list of data is provided 
+#' each list element is assumed to represent the observations belonging to one
+#' group. In this case, data is pooled and group adherance permutated.
 #' 
 #' For cross-validation the number of folds defaults to `10` and can be changed
-#' via the `.cv_folds` argument. Setting `.cv_folds` to `NULL` produces
-#' leave-one-out cross-validation samples.
+#' via the `.cv_folds` argument. Setting `.cv_folds` to `N` 
+#' (the number of observations) produces leave-one-out cross-validation samples.
 #' 
 #' @usage resampleData(
 #'  .object          = NULL,
@@ -44,27 +52,66 @@
 #'  .R               = 499
 #' )
 #'
-#' @param .data A `data.frame`, a `matrix` or a list containing data of either type. 
+#' @param .data A `data.frame`, a `matrix` or a `list` of data of either type. 
 #'   Possible column types or classes of the data provided are: 
-#'   logical, numeric (double or integer), factor (ordered and unordered) 
+#'   "`logical`", "`numeric`" ("`double`" or "`integer`"), "`factor`" (ordered and unordered) 
 #'   or a mix of several types. The data may also include
-#'   *one* character column whose column name must be given to `.id`. 
+#'   **one** character column whose column name must be given to `.id`. 
 #'   This column is assumed to contain group identifiers used to split the data into groups.
-#'   If `.object` is provided, `.data` is ignored. Defaults to `NULL`.
+#'   If `.data` is provided, `.object` is ignored. Defaults to `NULL`.
 #' @param .resample_method Character string. The resampling method to use. One of: 
 #'  "*bootstrap*", "*jackknife*", "*permutation*", or "*cross-validation*". 
 #'  Defaults to "*bootstrap*".
-#' @param .R Integer. The number of bootstrap replications or permutation runs
-#'   to use. Defaults to `499`.
+#' @param .R Integer. The number of bootstrap replications, permutation runs
+#'   or cross-validation repetitions to use. Defaults to `499`.
 #' @inheritParams csem_arguments
 #' 
+#' @return The structure of the output depends on the type of input and the 
+#'   resampling method:
+#' \describe{
+#' \item{Bootstrap}{If a matrix or data.frame without grouping variable 
+#'   is provided (`.id = NULL`), the result is a list of length `.R` 
+#'   (default `499`). Each element of that list is a bootstrap sample.
+#'   If a grouping variable is specified or a list of data is provided 
+#'   (where each list element is assumed to contain data for one group), 
+#'   resampling is done by group. Hence, 
+#'   the result is a list of length equal to the number of group levels 
+#'   with each list element containing `.R` bootstrap samples based on the 
+#'   `N_g` observations of group `g`.}
+#' \item{Jackknife}{If a matrix or data.frame without grouping variable 
+#'   is provided (`.id = NULL`), the result is a list of length equal to the number
+#'   of observations/rows (`N`) of the dataset provided. 
+#'   Each element of that list is a jackknife sample.
+#'   If a grouping variable is specified or a list of data is provided 
+#'   (where each list element is assumed to contain data for one group), 
+#'   resampling is done by group. Hence, 
+#'   the result is a list of length equal to the number of group levels 
+#'   with each list element containing `N` jackknife samples based on the 
+#'   `N_g` observations of group `g`.}
+#' \item{Permutation}{If a matrix or data.frame without grouping variable 
+#'   is provided an error is returned as permutation will simply reorder the observations.
+#'   If a grouping variable is specified or a list of data is provided 
+#'   (where each list element is assumed to contain data for one group), 
+#'   group membership is permutated. Hence, the result is a list of length `.R`
+#'   where each element of that list is a permutation sample.}
+#' \item{Cross-validation}{If a matrix or data.frame without grouping variable 
+#'   is provided a list of length `.R` is returned. Each list element
+#'   contains a list containing the `k` splits/folds
+#'   used as test and training data sets.  
+#'   If a grouping variable is specified or a list of data is provided 
+#'   (where each list element is assumed to contain data for one group), 
+#'   cross-validation is repeated `.R` times for each group. Hence, 
+#'   the result is a list of length equal to the number of group levels, each 
+#'   each containing `.R` list element (the repetitions) which in turn contain 
+#'   the `k` splits/folds specifyied via `cv_folds`.
+#'   }
+#' }
 #' @references
 #'   \insertAllCited{}
 #'   
-#' @seealso [cSEMResults], [resamplecSEMResults()], [infer()]
+#' @seealso [csem()], [cSEMResults], [resamplecSEMResults()]
 #'
 #' @examples
-#' \dontrun{
 #' model <- "
 #' # Structural model
 #' QUAL ~ EXPE
@@ -74,7 +121,6 @@
 #' VAL  ~ EXPE + QUAL
 #' 
 #' # Measurement model
-#' 
 #' EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
 #' IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
 #' LOY  =~ loy1  + loy2  + loy3  + loy4
@@ -84,9 +130,20 @@
 #' "
 #' a <- csem(satisfaction, model)
 #' 
-#' res <- resampleData(a, .resample_method = "bootstrap", .R = 999)
-#' str(res)
-#' }
+#' ## Using a cSEMResults object
+#' res_boot <- resampleData(a, .resample_method = "bootstrap", .R = 999)
+#' res_jack <- resampleData(a, .resample_method = "jackknife")
+#' 
+#' ## Using raw data
+#' res_boot1 <- resampleData(.data = satisfaction, .resample_method = "bootstrap")
+#' 
+#' ## Cross-validation repeated .R = 100 times
+#' cv_10 <- resampleData(a, .resample_method = "cross-validation", .R = 100) # 10 fold (the default)
+#' cv_loocv  <- resampleData(satisfaction, 
+#'                      .resample_method = "cross-validation", 
+#'                      .R = 100,
+#'                      .cv_fold = nrow(satisfaction)
+#'                      ) # LOOCV
 #' 
 #' @export
 #'
@@ -110,8 +167,8 @@ resampleData <- function(
     } else if(any(class(.object) %in% "cSEMResults_multi")) {
       data        <- .object[[1]]$Information$Data_pooled
       data_split  <- lapply(.object, function(x) x$Information$Arguments$.data)
-      id          <- .object[[1]]$Information$Arguments$.id
-      
+      id          <- ifelse(is.null(a1[[1]]$Information$Arguments$.id), 
+                            "id", a1[[1]]$Information$Arguments$.id)
     } else if(any(class(.object) %in% "cSEMResults_2ndorder")) {
       data <- .object$First_stage$Information$Arguments$.data
       id   <- NULL
@@ -169,13 +226,6 @@ resampleData <- function(
     }
   }
   
-  # if(!is.null(id)) {
-  #   # extract id column
-  #   id_col <- data[, id] # a vector
-  #   # data without id column
-  #   data   <- data[, -which(colnames(data) == id)] 
-  # }
-  
   ## Choose resampling method
   out <- switch (.resample_method,
     "jackknife"   = {
@@ -203,35 +253,49 @@ resampleData <- function(
           "No id column specified to permutate the data with."
         )
       } else {
-        lapply(1:.R, function(x) cbind(data[,-which(colnames(data) == id)], "id" = sample(data$id)))
+        lapply(1:.R, function(x) cbind(data[,-which(colnames(data) == id)], "id" = sample(data[, id])))
       }
     },
     "cross-validation" = {
-      if(is.null(.cv_folds)) {
-        # LOOCV (Leave one out CV).
-        if(exists("data_split")) {
-          lapply(data_split, function(y) 
-            lapply(1:nrow(y), function(x) y[x, ]))
-        } else {
-          lapply(1:nrow(data), function(x) data[x, ])
+      # k-fold cross-validation (=draw k samples of equal size.).
+      # Note the last sample may contain less observations if equal sized
+      # samples are not possible
+      if(exists("data_split")) {
+        ## The number of folds cannot be larger than the minimum number of
+        ## rows/observations for all data sets in data_split
+        if(max(sapply(data_split, nrow)) < .cv_folds) {
+          stop2(
+            "The following error occured in the `resampleData()` function:\n",
+            "The number of folds is larger than the number of observations."
+          )
         }
-        
-      } else {
-        # k-fold cross-validation (=draw k samples of equal size.).
-        # Note the last sample may contain less observations if equal sized
-        # samples are not possible
-        if(exists("data_split")) {
-          lapply(data_split, function(y) 
+        lapply(data_split, function(y) {
+          lapply(1:.R, function(x) {
+            # shuffle data set
+            y <- y[sample(1:nrow(y)), ]
             suppressWarnings(
               split(as.data.frame(y), rep(1:.cv_folds, 
                                           each = ceiling(nrow(y)/.cv_folds)))
-            ))
-        } else {
+            )
+          })
+        })
+      } else {
+        ## The number of folds cannot be larger than the minimum number of
+        ## rows/observations for all data sets in data_split
+        if(nrow(data) < .cv_folds) {
+          stop2(
+            "The following error occured in the `resampleData()` function:\n",
+            "The number of folds is larger than the number of observations."
+          )
+        }
+        # shuffle data
+        lapply(1:.R, function(x) {
+          data <- data[sample(1:nrow(data)), ]
           suppressWarnings(
             split(as.data.frame(data), rep(1:.cv_folds, 
                                            each = ceiling(nrow(data)/.cv_folds)))
           )
-        }
+        })
       }
     } # END cross-validation
   ) # END switch
@@ -246,7 +310,7 @@ resampleData <- function(
 #' The function essentially calls [csem()] on each of the *M* resamples (created via
 #' [resampleData()]) and returns M estimates for each of a subset of practically useful 
 #' resampled parameters/statistics computed by [csem()]. Currently, the following 
-#' quantities are returned for each resample: 
+#' quantities are computed and returned based on each resample: 
 #' \describe{
 #' \item{Parameters}{Path estimates, Weight estimates, Loading estimates}
 #' \item{Statistics}{The heterotrait-monotrait ratio (HTMT)}
@@ -260,14 +324,32 @@ resampleData <- function(
 #' the only argument of the function provided, arbitrary complicated statistics
 #' may be resampled.
 #' 
-#' The number of bootstrap runs is given by `.R`. The default is
-#' `499` but should be increased in real applications. See e.g.,
+#' Both resampling the origianl [cSEMResults] object (first resample) and resampling based on 
+#' a resampled [cSEMResults] object (second resample) are supported. Choices for the former 
+#' are "bootstrap" and "jackknife". Resampling based on a resample is turned of
+#' by default (`.resample_method2 = "none"`) as this significantly
+#' increases computation time (there are now `.R * .R2` resamples to compute)
+#' However, in order to compute e.g., the studentized confidence interval via [infer()],
+#' resampling from a resample is required. 
+#' 
+#' The number of bootstrap runs for the first and second run are given by `.R` and `.R`. 
+#' The default is `499` for the first and `199` for the second run 
+#' but should be increased in real applications. See e.g.,
 #' \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations.
-#' For jackknife `.R` is ignored.
+#' For jackknife `.R` are `.R2` are ignored. 
+#' 
+#' Resampling may produce inadmissble results (as checked by [verify()]).
+#' By default these results are dropped however users may choose to `"ignore"`
+#' or `"replace"` inadmissble results in which case resampling continous until
+#' the necessary number of admissble results is reached.
+#' 
+#' The cSEM package supports multiprocessing via the future framework. Essentially 
+#' users specifiy the evaluation plan via `.eval_plan` and the package
+#' takes care of all the complicated backend issues. Currently users may spec
 #'
 #' @usage resamplecSEMResults(
 #'  .object                = NULL,
-#'  .resample_method       = c("none", "bootstrap", "jackknife), 
+#'  .resample_method       = c("bootstrap", "jackknife), 
 #'  .resample_method2      = c("none", "bootstrap", "jackknife), 
 #'  .R                     = 499,
 #'  .R2                    = 199,
