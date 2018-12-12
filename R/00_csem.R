@@ -223,22 +223,6 @@ csem <- function(
 
     class(out) <- c("cSEMResults", "cSEMResults_multi")
     
-    ## Resample if requested:
-    if(.resample_method != "none") {
-      out <- lapply(out, function(x) {
-        resamplecSEMResults(
-          .object               = x,
-          .resample_method      = .resample_method,
-          .resample_method2     = .resample_method2,
-          .R                    = .R,
-          .R2                   = .R2,
-          .handle_inadmissibles = .handle_inadmissibles,
-          .user_funs            = .user_funs,
-          .eval_plan            = .eval_plan  
-        )
-      })
-    }
-    
   } else if(any(model$construct_order == "Second order") && 
             args$.approach_2ndorder == "3stage") {
     
@@ -256,19 +240,22 @@ csem <- function(
     
     class(out) <- c("cSEMResults", "cSEMResults_default")
     
-    ## Resample if requested:
-    if(.resample_method != "none") {
-      out <- resamplecSEMResults(
-        .object               = out,
-        .resample_method      = .resample_method,
-        .resample_method2     = .resample_method2,
-        .R                    = .R,
-        .R2                   = .R2,
-        .handle_inadmissibles = .handle_inadmissibles,
-        .user_funs            = .user_funs,
-        .eval_plan            = .eval_plan  
-      )
-    }
+  }
+  
+  ## Resample if requested:
+  
+  if(.resample_method != "none") {
+    
+    out <- resamplecSEMResults(
+      .object               = out,
+      .resample_method      = .resample_method,
+      .resample_method2     = .resample_method2,
+      .R                    = .R,
+      .R2                   = .R2,
+      .handle_inadmissibles = .handle_inadmissibles,
+      .user_funs            = .user_funs,
+      .eval_plan            = .eval_plan  
+    )
   }
   
   return(out)

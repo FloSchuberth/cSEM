@@ -50,26 +50,56 @@ NULL
 #'
 #' @return
 #' An object of class `cSEMResults` with methods for all postestimation generics:
-#' \describe{
-#'   \item{`check.cSEMResults`}{Checks results using common indices and fit measures.}
-#'   \item{`fit.cSEMResults`}{Compute the model-implied covariance matrix.}
-#'   \item{`summarize.cSEMResults`}{Summarize the results.}
-#'   \item{`test.cSEMResults`}{Run tests.}
-#'   \item{`verify.cSEMResults`}{Verify admissibility (e.g., loadings larger than one).}
+#' \itemize{
+#'   \item{`assess.cSEMResults`   Asses results using common fit measures and indices.}
+#'   \item{`summarize.cSEMResults`   Summarize the results.}
+#'   \item{`test.cSEMResults`   Run tests.}
+#'   \item{`verify.cSEMResults`   Verify admissibility (e.g., loadings larger than one).}
 #' }
-#' The structure of the `cSEMResults` object is determined by the data set provided 
-#' or more precisely the number of estimation runs performed. 
 #' 
-#' If data is a single matrix or data frame with no id-column, the result is a list with elements: 
+#' The structure and class of the resulting `cSEMResults` object is generally 
+#' determined by the type of dataset(s) provided (`matrix`, `data.frame`, `list` 
+#' of data)
+#' 
+#' \describe{
+#' \item{Default}{If data is a single `matrix` or `data.frame` with no id-column, 
+#' the result is a `list` with elements: 
 #' \describe{
 #'   \item{`$Estimates`}{A list containing a list of estimated quantities.}
 #'   \item{`$Information`}{A list containing a list of additional information.}
 #' }
-#'
-#' If `.data` contains an id-column to split the data by or if a list of
-#' data sets is provided, the results contains `n` list with elements `$Estimates`
-#' and `$Informations` where `n` is equal to the number of groups or the number of 
-#' data sets in the list of data sets provided.
+#' The resulting object has classes `cSEMResults` and `cSEMResults_default`.
+#' }
+#' \item{Multi}{If the data provided contains an id-column to split the data by `G` group levels 
+#' or if a list of `G` datasets is provided, the resulting object is a list of `G` 
+#' lists, where `G` is equal to the number of groups or the number of datasets 
+#' in the list of datasets provided. Each of the `G` list elements are itself 
+#' a `cSEMResults_default` object. Hence its structure is identical to 
+#' the structure described in `Default`.
+#' 
+#' The resulting object has classes `cSEMResults` and `cSEMResults_multi`. 
+#' }
+#' \item{2ndorder}{
+#' A special output is generated if the model to estimate contains hierachical constructs
+#' **and** the 2step (3step) approach is used to estimate the model. In this case
+#' the resulting object is a list containing two elements `First_stage` and 
+#' `Second_stage`.
+#' 
+#' Each list element is itself a `cSEMResults_default` object. Hence its structure is identical to 
+#' the structure described in `Default`.
+#' }
+#' }
+#' 
+#' If `.resample_method = "bootstrap"` or `.resample_method = "jackknife"` resamples
+#' are attached to each object. For objects of class `cSEMResults_default` the resamples are
+#' attached to `.object$Estimates$Estimates_resamples`. For objects of type
+#' `cSEMResults_multi` the same is done by group. All objects containing 
+#' these elements gain the `cSEMResults_resampled` class.
+#' 
+#' As should be evident from the above, the core structure of the resulting object
+#' is by and large similiar across all cases. Practically, most users wont have to worry
+#' about the structure as postestimation functions have corresponding methods to
+#' accomodate all cases.
 #' 
 #' @name csem_results
 #' @aliases cSEMResults

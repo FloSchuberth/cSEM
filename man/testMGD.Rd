@@ -47,8 +47,8 @@ Defaults to \code{0.05}.}
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
 replications/resamples yielding an inadmissible result will be dropped (
-number of results shown <= .R). For "\emph{ignore}" all results are returned
-even if they are inadmissible (number of results = .R). For "\emph{replace}"
+the number of results returned will be less than .R). For "\emph{ignore}" all results are returned
+even if they are inadmissible (number of results returned = .R). For "\emph{replace}"
 resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 

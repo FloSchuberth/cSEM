@@ -1,6 +1,6 @@
 #' Resample data 
 #'
-#' Resample from a dataset using common resampling methods. 
+#' Resample data from a dataset using common resampling methods. 
 #' For bootstrap or jackknife resampling, package users usually dont need to 
 #' call this function but directly use [resamplecSEMResults()] instead.
 #'
@@ -10,8 +10,9 @@
 #' Currently, `bootstrap`, `jackknife`, `permutation`, and  `cross-validation`
 #' (both leave-one-out (LOOCV) and k-fold cross-validation) are implemented. 
 #' 
-#' The user may provide a dataset to be resampled or a [cSEMResults] 
-#' object in which case the original data used in the call to [csem()] is used. 
+#' The user may provide a dataset via `.data` to be resampled or a [cSEMResults] 
+#' object in which case the original data used in the call to [csem()] is used
+#' for resampling. 
 #' If both, a [cSEMResults] object and a dataset via `.data` are provided 
 #' the former is ignored. 
 #' 
@@ -19,8 +20,8 @@
 #' that contain a column name used to split the data into groups,
 #' the [cSEMResults] object may contain multiple datasets.
 #' In this case, resampling is done by dataset or group. Note that depending
-#' on the number of datasets provided this computation may be slower
-#' as resampling will be repeated for each dataset/group.
+#' on the number of datasets/groups provided this computation may be slower
+#' as resampling will be repeated for each dataset/group. 
 #' 
 #' To split data provided via the `.data` argument into groups, the column name or 
 #' the column index of the column containing the group levels to split the data 
@@ -31,7 +32,7 @@
 #' The number of bootstrap or permutation runs as well as the number of 
 #' cross-validation repetitions is given by `.R`. The default is
 #' `499` but should be increased in real applications. See e.g.,
-#' \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations concering
+#' \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations concerning
 #' the bootstrap. For jackknife `.R` is ignored.
 #' 
 #' Choosing `resample_method = "permutation"` for ungrouped data causes an error
@@ -39,9 +40,14 @@
 #' each list element is assumed to represent the observations belonging to one
 #' group. In this case, data is pooled and group adherance permutated.
 #' 
-#' For cross-validation the number of folds defaults to `10` and can be changed
-#' via the `.cv_folds` argument. Setting `.cv_folds` to `N` 
-#' (the number of observations) produces leave-one-out cross-validation samples.
+#' For cross-validation the number of folds (`k`) defaults to `10` and can be changed
+#' via the `.cv_folds` argument. Setting `k = N` (where `N` is the number of observations) 
+#' produces leave-one-out cross-validation samples.
+#' Note: 1. `k` can not be larger than the `N`.
+#' 2. If `N/k` is not not an integer the last fold will have less observations.
+#' 
+#' Currently it is not possible to set a random seed. This is will be adressed
+#' in a future package version.
 #' 
 #' @usage resampleData(
 #'  .object          = NULL,
@@ -69,41 +75,41 @@
 #' @return The structure of the output depends on the type of input and the 
 #'   resampling method:
 #' \describe{
-#' \item{Bootstrap}{If a matrix or data.frame without grouping variable 
+#' \item{Bootstrap}{If a `matrix` or `data.frame` without grouping variable 
 #'   is provided (`.id = NULL`), the result is a list of length `.R` 
-#'   (default `499`). Each element of that list is a bootstrap sample.
+#'   (default `499`). Each element of that list is a bootstrap (re)sample.
 #'   If a grouping variable is specified or a list of data is provided 
 #'   (where each list element is assumed to contain data for one group), 
 #'   resampling is done by group. Hence, 
 #'   the result is a list of length equal to the number of group levels 
 #'   with each list element containing `.R` bootstrap samples based on the 
 #'   `N_g` observations of group `g`.}
-#' \item{Jackknife}{If a matrix or data.frame without grouping variable 
+#' \item{Jackknife}{If a `matrix` or `data.frame` without grouping variable 
 #'   is provided (`.id = NULL`), the result is a list of length equal to the number
 #'   of observations/rows (`N`) of the dataset provided. 
-#'   Each element of that list is a jackknife sample.
+#'   Each element of that list is a jackknife (re)sample.
 #'   If a grouping variable is specified or a list of data is provided 
 #'   (where each list element is assumed to contain data for one group), 
 #'   resampling is done by group. Hence, 
 #'   the result is a list of length equal to the number of group levels 
 #'   with each list element containing `N` jackknife samples based on the 
 #'   `N_g` observations of group `g`.}
-#' \item{Permutation}{If a matrix or data.frame without grouping variable 
+#' \item{Permutation}{If a `matrix` or `data.frame` without grouping variable 
 #'   is provided an error is returned as permutation will simply reorder the observations.
 #'   If a grouping variable is specified or a list of data is provided 
 #'   (where each list element is assumed to contain data for one group), 
 #'   group membership is permutated. Hence, the result is a list of length `.R`
-#'   where each element of that list is a permutation sample.}
-#' \item{Cross-validation}{If a matrix or data.frame without grouping variable 
+#'   where each element of that list is a permutation (re)sample.}
+#' \item{Cross-validation}{If a `matrix` or `data.frame` without grouping variable 
 #'   is provided a list of length `.R` is returned. Each list element
-#'   contains a list containing the `k` splits/folds
-#'   used as test and training data sets.  
+#'   contains a list containing the `k` splits/folds subsequently
+#'   used as test and training datasets.  
 #'   If a grouping variable is specified or a list of data is provided 
 #'   (where each list element is assumed to contain data for one group), 
 #'   cross-validation is repeated `.R` times for each group. Hence, 
-#'   the result is a list of length equal to the number of group levels, each 
+#'   the result is a list of length equal to the number of group levels,
 #'   each containing `.R` list element (the repetitions) which in turn contain 
-#'   the `k` splits/folds specifyied via `cv_folds`.
+#'   the `k` splits/folds.
 #'   }
 #' }
 #' @references
@@ -112,6 +118,46 @@
 #' @seealso [csem()], [cSEMResults], [resamplecSEMResults()]
 #'
 #' @examples
+#' require(cSEM)
+#'  
+#' ### Using the raw data ------------------------------------------------------ 
+#' ## Create .R bootstrap samples
+#' res_boot1 <- resampleData(.data = satisfaction)
+#' str(res_boot1, max.level = 3, list.len = 3)
+#' 
+#' # Same as
+#' res_boot1a <- resampleData(.data = satisfaction, .resample_method = "bootstrap")
+#' 
+#' ## Create 10-fold cross-validation samples repeated .R = 100 times using 
+#' ## raw data
+#' 
+#' dat <- data.frame(
+#'   "x1" = rnorm(100),
+#'   "x2" = rnorm(100),
+#'   "group" = sample(c("male", "female"), size = 100, replace = TRUE),
+#'   stringsAsFactors = FALSE)
+#' 
+#' cv_10 <- resampleData(.data = dat, .resample_method = "cross-validation", 
+#'                       .id = "group", .R = 100)
+#' str(cv_10, max.level = 3, list.len = 3)
+#' 
+#' cv_loocv  <- resampleData(.data = dat[, -3], 
+#'                           .resample_method = "cross-validation", 
+#'                           .cv_folds = nrow(dat),
+#'                           .R = 50)
+#' str(cv_loocv, max.level = 2, list.len = 3)
+#' 
+#' ## Create permuation samples
+#' res_perm <- resampleData(.data = dat, .resample_method = "permutation",
+#'                          .id = "group")
+#' str(res_perm, max.level = 2, list.len = 3)
+#' # Forgetting to set .id causes an error
+#' \dontrun{
+#' res_perm <- resampleData(.data = dat, .resample_method = "permutation")
+#' }
+#' 
+#' ### Using a cSEMResults object-----------------------------------------------
+#' 
 #' model <- "
 #' # Structural model
 #' QUAL ~ EXPE
@@ -121,29 +167,18 @@
 #' VAL  ~ EXPE + QUAL
 #' 
 #' # Measurement model
-#' EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
-#' IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+#' EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5
+#' IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5
 #' LOY  =~ loy1  + loy2  + loy3  + loy4
 #' QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
-#' SAT  <~ sat1  + sat2  + sat3  + sat4
-#' VAL  <~ val1  + val2  + val3  + val4
+#' SAT  =~ sat1  + sat2  + sat3  + sat4
+#' VAL  =~ val1  + val2  + val3  + val4
 #' "
 #' a <- csem(satisfaction, model)
 #' 
-#' ## Using a cSEMResults object
+#' # Create bootstrap and jackknife samples
 #' res_boot <- resampleData(a, .resample_method = "bootstrap", .R = 999)
 #' res_jack <- resampleData(a, .resample_method = "jackknife")
-#' 
-#' ## Using raw data
-#' res_boot1 <- resampleData(.data = satisfaction, .resample_method = "bootstrap")
-#' 
-#' ## Cross-validation repeated .R = 100 times
-#' cv_10 <- resampleData(a, .resample_method = "cross-validation", .R = 100) # 10 fold (the default)
-#' cv_loocv  <- resampleData(satisfaction, 
-#'                      .resample_method = "cross-validation", 
-#'                      .R = 100,
-#'                      .cv_fold = nrow(satisfaction)
-#'                      ) # LOOCV
 #' 
 #' @export
 #'
@@ -266,7 +301,8 @@ resampleData <- function(
         if(max(sapply(data_split, nrow)) < .cv_folds) {
           stop2(
             "The following error occured in the `resampleData()` function:\n",
-            "The number of folds is larger than the number of observations."
+            "The number of folds is larger than the number of observations", 
+            " in at least one of the groups."
           )
         }
         lapply(data_split, function(y) {
@@ -305,37 +341,64 @@ resampleData <- function(
 
 #' Resample cSEMResults 
 #'
-#' The function resamples a [cSEMResults] object using bootstrap or jackknife resampling.
+#' Resample a [cSEMResults] object using bootstrap or jackknife resampling. 
+#' The function is called by [csem()] if the user sets 
+#' `csem(..., .resample_method = "bootstrap")` or 
+#' `csem(..., .resample_method = "jackknife")` but may also be called seperately.
+#' Technically, `resamplecSEMResults()` is a generic function with methods for
+#' all classes `cSEMResults_default`, `cSEMResults_multi` and `cSEMResults_2ndorder`.
 #' 
-#' The function essentially calls [csem()] on each of the *M* resamples (created via
-#' [resampleData()]) and returns M estimates for each of a subset of practically useful 
-#' resampled parameters/statistics computed by [csem()]. Currently, the following 
-#' quantities are computed and returned based on each resample: 
+#' Given `M` resamples (for bootstrap `M = .R` and for jackknife `M = N`, where
+#' `N` is the number of observations) based on the data used to compute the
+#' `cSEMResults` object provided via `.object`, `resamplecSEMResults()` essentially calls 
+#' [csem()] on each resample using the arguments of the origianl call (ignoring any arguments
+#' related to resampling) and returns estimates for each of a subset of 
+#' practically useful resampled parameters/statistics computed by [csem()]. 
+#' Currently, the following quantities are computed and returned based on each resample: 
 #' \describe{
-#' \item{Parameters}{Path estimates, Weight estimates, Loading estimates}
-#' \item{Statistics}{The heterotrait-monotrait ratio (HTMT)}
+#' \item{Parameters}{Path estimates, Loading estimates, Weight estimates}
+#' \item{Statistics}{The heterotrait-monotrait ratio (HTMT) (only for model without hiearchical constructs)}
 #' }
 #' 
-#' If the user needs to resample a statistic that is not returned by default, 
-#' this statistic can be provided by a function `f(.object)` via the `.user_fun` argument. 
-#' The only accepted argument of this function is `.object` which must be an
-#' object of class [cSEMResults]. Internally, the function will be applied on each  
-#' cSEMResults resample to produce the desired statistic. As long as this is 
-#' the only argument of the function provided, arbitrary complicated statistics
-#' may be resampled.
+#' In practical application users may need to resample a specific statistic (e.g,
+#' restrictions on path coefficients such as beta_1 = beta_2) that is not returned
+#' by default. 
+#' Such statistics may be provided by a function `f(.object)` or a list of such functions
+#' via the `.user_funs` argument. The only accepted argument of these functions is 
+#' `.object` which must be an object of class [cSEMResults]. 
+#' Internally, the function will be applied on each  
+#' resample to produce the desired statistic. Hence, arbitrary complicated statistics
+#' may be resampled as long as the body of the function draws on elements contained
+#' in the [cSEMResults] object only. See `?cSEMResults` and the examples section 
+#' for details.
 #' 
-#' Both resampling the origianl [cSEMResults] object (first resample) and resampling based on 
-#' a resampled [cSEMResults] object (second resample) are supported. Choices for the former 
-#' are "bootstrap" and "jackknife". Resampling based on a resample is turned of
+#' Both resampling the origianl [cSEMResults] object (call it "first resample") 
+#' and resampling based on a resampled [cSEMResults] object (call it "second resample") 
+#' are supported. Choices for the former 
+#' are "*bootstrap*" and "*jackknife*". Resampling based on a resample is turned off
 #' by default (`.resample_method2 = "none"`) as this significantly
-#' increases computation time (there are now `.R * .R2` resamples to compute)
-#' However, in order to compute e.g., the studentized confidence interval via [infer()],
-#' resampling from a resample is required. 
+#' increases computation time (there are now `M * M2` resamples to compute, where
+#' `M2` is `.R2` or `N`).
+#' Currently, resamples of a resample are only required for the studentized confidence
+#' intervall computed by the [infer()] function. Typically, bootstrap resamples
+#' are used in this case \insertCite{Davison1997}{cSEM}.
 #' 
-#' The number of bootstrap runs for the first and second run are given by `.R` and `.R`. 
+#' As [csem()] accepts a single dataset, a list of datasets as well as datasets
+#' that contain a column name used to split the data into groups,
+#' the [cSEMResults] object may contain multiple datasets. 
+#' In this case, resampling is done by dataset or group. Note that depending
+#' on the number of datasets/groups provided this computation may be considerably
+#' slower as resampling will be repeated for each dataset/group. However, apart
+#' from speed considerations users dont need to worry about the type of
+#' input used to compute the [cSEMResults] object as `resamplecSEMResults()`
+#' is able to deal with each case.
+#' 
+#' The number of bootstrap runs for the first and second run are given by `.R` and `.R2`. 
 #' The default is `499` for the first and `199` for the second run 
 #' but should be increased in real applications. See e.g.,
-#' \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations.
+#' \insertCite{Hesterberg2015;textual}{cSEM}, p.380, 
+#' \insertCite{Davison1997;textual}{cSEM}, and
+#' \insertCite{Efron2016}{cSEM} for recommendations.
 #' For jackknife `.R` are `.R2` are ignored. 
 #' 
 #' Resampling may produce inadmissble results (as checked by [verify()]).
@@ -344,7 +407,7 @@ resampleData <- function(
 #' the necessary number of admissble results is reached.
 #' 
 #' The cSEM package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future} 
-#' \insertCite{Bengtsson2018}{cSEM} framework. User may simply choose an evaluation plan
+#' framework \insertCite{Bengtsson2018}{cSEM}. Users may simply choose an evaluation plan
 #' via `.eval_plan` and the package takes care of all the complicated backend 
 #' issues. Currently, users may chose between standard single-core evaluation
 #' (`"sequential"`) and multiprocessing (`"multiprocess"`). The future package
@@ -352,8 +415,11 @@ resampleData <- function(
 #' wont be needed in the context of the cSEM package. Depeding on the platform, the future
 #' package will manage to distribute tasks to multiple R sessions (Windows)
 #' or multiple cores. Note that multiprocessing is not necessary always faster
-#' when only a small naumber of replications is required as the overhead of
-#' initializing new sessions will not imediatley be compensated.
+#' when only a "small" number of replications is required as the overhead of
+#' initializing new sessions or distributing tasks to different cores 
+#' will not immediatley be compensated by the avaiability of multiple sessions/cores.
+#' As a rule of thumb, the number of resamples to should be larger than 100 
+#' to offset the overhead. 
 #'
 #' @usage resamplecSEMResults(
 #'  .object                = NULL,
@@ -368,19 +434,37 @@ resampleData <- function(
 #'
 #' @inheritParams csem_arguments
 #' 
+#' @return The same structure as `.obeject` with element `$Estimates_resamples` and
+#'   `$Information_resamples` added. See [cSEMResults] for details.
+#'   
 #' @references
 #'   \insertAllCited{} 
 #'   
 #' @seealso [csem], [cSEMResults]
 #'
 #' @examples
-#' \dontrun{
-#' # still to implement
-#' }
 #' 
+#' model <- "
+#' # Structural model
+#' QUAL ~ EXPE
+#' EXPE ~ IMAG
+#' SAT  ~ IMAG + EXPE + QUAL + VAL
+#' LOY  ~ IMAG + SAT
+#' VAL  ~ EXPE + QUAL
+#' 
+#' # Measurement model
+#' EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5
+#' IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5
+#' LOY  =~ loy1  + loy2  + loy3  + loy4
+#' QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+#' SAT  =~ sat1  + sat2  + sat3  + sat4
+#' VAL  =~ val1  + val2  + val3  + val4
+#' "
+#' a <- csem(satisfaction, model) # 
+#' 
+#' resample
 #' @export
 #'
-
 resamplecSEMResults <- function(
   .object                = args_default()$.object, 
   .resample_method       = args_default()$.resample_method,
@@ -390,36 +474,66 @@ resamplecSEMResults <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan
-  ) {
-  
-  ## Set plan on how to resolve futures 
-  oplan <- future::plan()
-  on.exit(future::plan(oplan), add = TRUE)
-  future::plan(.eval_plan)
-    
-  ### Checks, warnings and errors -----------
-  match.arg(.resample_method, args_default(.choices = TRUE)$.resample_method)
-  match.arg(.resample_method2, args_default(.choices = TRUE)$.resample_method2)
-  match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
-  
-  ## Has the object to use the data to resample from produced admissible results?
-  if(sum(verify(.object)) != 0) {
-    warning2(
-      "The following issue was encountered in the `resamplecSEMResults()` functions:\n",
-      "Estimation based on the original data has produced inadmissible results.\n", 
-      "This may be a sign that something is wrong.",
-      " Resampling will continue but may not produce valid results.")
+) {
+  ## Does .object alread contain resamples
+  if(any(class(.object) == "cSEMResults_resampled")) {
+    stop2("The following issue was encountered in the `resamplecSEMResults()` functions:\n",
+          "The object provided already contains resamples.")
   }
   
   ## Check for the minimum number of necessary resamples
   if(.R < 3 | .R2 < 3) {
     stop2("The following error occured in the `resamplecSEMResults()` function:\n",
-         "At least 3 resamples required.")
+          "At least 3 resamples required.")
   }
   
+  ## Has the object to use the data to resample from produced admissible results?
+  if(sum(unlist(verify(.object))) != 0) {
+    warning2(
+      "The following issue was encountered in the `resamplecSEMResults()` functions:\n",
+      "Estimation based on the original data has produced inadmissible results.\n", 
+      "This may be a sign that something is wrong.",
+      " Resampling will continue but may not produce reliable results.")
+  }
+  
+  UseMethod("resamplecSEMResults")
+}
+
+#' @describeIn fit (TODO)
+#' @export
+
+resamplecSEMResults.cSEMResults_default <- function(
+  .object                = args_default()$.object, 
+  .resample_method       = args_default()$.resample_method,
+  .resample_method2      = args_default()$.resample_method2,
+  .R                     = args_default()$.R,
+  .R2                    = args_default()$.R2,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .user_funs             = args_default()$.user_funs,
+  .eval_plan             = args_default()$.eval_plan
+  ) {
+  ## Set plan on how to resolve futures 
+  oplan <- future::plan()
+  on.exit(future::plan(oplan), add = TRUE)
+  future::plan(.eval_plan)
+  
   ### Process original data ----------------------------------------------------
-  Est_original  <- .object$Estimates
-  Info_original <- .object$Information
+  ## Summarize
+  summary_original <- summarize(.object)
+  
+  Est_original <- list()
+  ## Select relevant statistics/parameters/quantities and vectorize
+  # Path estimates
+  Est_original[["Path_estimates"]] <- summary_original$Estimates$Path_estimates$Estimate
+  names(Est_original[["Path_estimates"]]) <- summary_original$Estimates$Path_estimates$Name
+  
+  # Loading estimates
+  Est_original[["Loading_estimates"]] <- summary_original$Estimates$Loading_estimates$Estimate
+  names(Est_original[["Loading_estimates"]]) <- summary_original$Estimates$Loading_estimates$Name
+  
+  # Weight estimates
+  Est_original[["Weight_estimates"]] <- summary_original$Estimates$Weight_estimates$Estimate
+  names(Est_original[["Weight_estimates"]]) <- summary_original$Estimates$Weight_estimates$Name
   
   ## Apply user defined function if specified
   user_funs <- if(!is.null(.user_funs)) {
@@ -434,41 +548,6 @@ resamplecSEMResults <- function(
     }
   }
   
-  ## Build names for path coef, loadings, and weights
-  # Path estimates
-  names_p <- outer(rownames(Est_original$Path_estimates), 
-                   colnames(Est_original$Path_estimates), 
-                   FUN = function(x, y) paste(x, y, sep = " ~ "))
-  # Loadings
-  names_l <- rep(rownames(Est_original$Loading_estimates), 
-                 times = rowSums(Info_original$Model$measurement))
-  names_l <- paste0(names_l, " =~ ", colnames(Est_original$Loading_estimates))
-  
-  # Weights
-  names_w <- rep(rownames(Est_original$Weight_estimates), 
-                 times = rowSums(Info_original$Model$measurement))
-  names_w <- paste0(names_w, " <~ ", colnames(Est_original$Weight_estimates))
-  
-  ## Vectorize quantities that are not already vectorized 
-  ## and set those that we dont need to NULL.
-  Est_original$Path_estimates    <- t(Est_original$Path_estimates)[t(Info_original$Model$structural) != 0]
-  names(Est_original$Path_estimates) <- t(names_p)[t(Info_original$Model$structural) != 0]
-  Est_original$Loading_estimates <- t(Est_original$Loading_estimates)[t(Info_original$Model$measurement) != 0]
-  names(Est_original$Loading_estimates) <- names_l
-  Est_original$Weight_estimates  <- t(Est_original$Weight_estimates)[t(Info_original$Model$measurement) != 0]
-  names(Est_original$Weight_estimates) <- names_w
-  Est_original$Inner_weight_estimates <- NULL
-  Est_original$Construct_scores       <- NULL
-  Est_original$Indicator_VCV          <- NULL
-  Est_original$Proxy_VCV              <- NULL
-  Est_original$Construct_VCV          <- NULL
-  Est_original$Cross_loadings         <- NULL
-  Est_original$Construct_reliabilities<- NULL
-  Est_original$Correction_factors     <- NULL
-  Est_original$R2                     <- NULL
-  Est_original$R2adj                  <- NULL
-  Est_original$VIF                    <- NULL
-  
   ## Additional statistics to compute by default
   # HTMT
   htmt <- c(HTMT(.object))
@@ -479,9 +558,6 @@ resamplecSEMResults <- function(
   if(!is.null(.user_funs)) {
     Est_original <- c(Est_original, user_funs)
   }
-  
-  ## Get argument list
-  args <- .object$Information$Arguments
   
   ### Resample and compute -----------------------------------------------------
   
@@ -581,6 +657,205 @@ resamplecSEMResults <- function(
   }
 }
 
+#' @describeIn fit (TODO)
+#' @export
+
+resamplecSEMResults.cSEMResults_multi <- function(
+  .object                = args_default()$.object, 
+  .resample_method       = args_default()$.resample_method,
+  .resample_method2      = args_default()$.resample_method2,
+  .R                     = args_default()$.R,
+  .R2                    = args_default()$.R2,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .user_funs             = args_default()$.user_funs,
+  .eval_plan             = args_default()$.eval_plan
+) {
+  
+  out <- lapply(.object, function(x) {
+    resamplecSEMResults.cSEMResults_default(
+      .object               = x,
+      .resample_method      = .resample_method,
+      .resample_method2     = .resample_method2,
+      .R                    = .R,
+      .R2                   = .R2,
+      .handle_inadmissibles = .handle_inadmissibles,
+      .user_funs            = .user_funs,
+      .eval_plan            = .eval_plan  
+    )
+  })
+  ## Add/ set class
+  class(out) <- c(class(.object), "cSEMResults_resampled")
+  return(out)
+}
+
+#' @describeIn fit (TODO)
+#' @export
+
+resamplecSEMResults.cSEMResults_2ndorder <- function(
+  .object                = args_default()$.object, 
+  .resample_method       = args_default()$.resample_method,
+  .resample_method2      = args_default()$.resample_method2,
+  .R                     = args_default()$.R,
+  .R2                    = args_default()$.R2,
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .user_funs             = args_default()$.user_funs,
+  .eval_plan             = args_default()$.eval_plan 
+) {
+  ## Set plan on how to resolve futures 
+  oplan <- future::plan()
+  on.exit(future::plan(oplan), add = TRUE)
+  future::plan(.eval_plan)
+    
+  ### Process original data ----------------------------------------------------
+  ## Summarize
+  summary_original <- summarize(.object)
+  est_1stage <- summary_original$First_stage$Estimates
+  est_2stage <- summary_original$Second_stage$Estimates
+  
+  Est_original <- list()
+  ## Select relevant statistics/parameters/quantities and vectorize
+  # Path estimates
+  Est_original[["Path_estimates"]] <- est_2stage$Path_estimates$Estimate
+  names(Est_original[["Path_estimates"]]) <- est_2stage$Path_estimates$Name
+  
+  # Loading estimates
+  Est_original[["Loading_estimates"]] <- c(est_1stage$Loading_estimates$Estimate, 
+                                           est_2stage$Loading_estimates$Estimate)
+  names(Est_original[["Loading_estimates"]]) <- c(est_1stage$Loading_estimates$Name,
+                                                  est_2stage$Loading_estimates$Name)
+  
+  # Weight estimates
+  Est_original[["Weight_estimates"]] <- c(est_1stage$Weight_estimates$Estimate, 
+                                          est_2stage$Weight_estimates$Estimate)
+  names(Est_original[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
+                                                 est_2stage$Weight_estimates$Name)
+  
+  ## Apply user defined function if specified
+  user_funs <- if(!is.null(.user_funs)) {
+    if(is.function(.user_funs)) {
+      c("User_fun" = .user_funs(.object))
+    } else {
+      x <- lapply(.user_funs, function(f) c(f(.object)))
+      if(is.null(names(x))) {
+        names(x) <- paste0("User_fun", 1:length(x))
+      }
+      x
+    }
+  }
+  
+  ## Additional statistics to compute by default
+  # (TODO)
+  
+  ## Add output of the user functions to Est_original
+  if(!is.null(.user_funs)) {
+    Est_original <- c(Est_original, user_funs)
+  }
+  
+  ### Resample and compute -----------------------------------------------------
+  
+  out <- resamplecSEMResultsCore(
+    .object                = .object, 
+    .resample_method       = .resample_method,
+    .resample_method2      = .resample_method2,
+    .R                     = .R,
+    .R2                    = .R2,
+    .handle_inadmissibles  = .handle_inadmissibles,
+    .user_funs             = .user_funs,
+    .eval_plan             = .eval_plan
+  )
+  
+  # Check if at least 3 admissible results were obtained
+  n_admissibles <- length(out)
+  if(n_admissibles < 3) {
+    stop("The following error occured in the `resamplecSEMResults()` functions:\n",
+         "Less than 2 admissible results produced.", 
+         " Consider setting `.handle_inadmissibles == 'replace'` instead.",
+         call. = FALSE)
+  }
+  
+  # Turn list "inside out" and bind bootstrap samples to matrix 
+  # columns are variables
+  # rows are bootstrap runs
+  out <- purrr::transpose(out) 
+  
+  if(.resample_method2 != "none") {
+    out_2 <- out$Estimates2
+    out   <- purrr::transpose(out$Estimates1)
+  }
+  
+  out <- out %>% 
+    lapply(function(x) do.call(rbind, x))
+  
+  # Add estimated quantities based on the the original sample/data
+  out <- mapply(function(l1, l2) list("Resampled" = l1, "Original" = l2),
+                l1 = out,
+                l2 = Est_original,
+                SIMPLIFY = FALSE)
+  
+  ## Return --------------------------------------------------------------------
+  # The desired output is: a list of two:
+  #  1. Resamples := a list of two
+  #      1.1 Estimates1 := the .R resamples of the "outer" resampling run.
+  #      1.2 Estimates2 := the .R2 resamples of the "inner" run or NA
+  #  2. Information := a list of three
+  #      2.1 Method  := the method used to obtain the "outer" resamples
+  #      2.2 Method2 := the method used to obtain the "inner" resamples or NA
+  #      2.3 Number_of_observations := the number of observations.
+  #      2.4 Original_object        := the original cSEMResults object
+  #
+  # Since resamplecSEMResults is called recursivly within its body it is 
+  # difficult to produce the desired output. There is now straightforward way 
+  # to determine if a call is a recursive call or not
+  # My workaround for now is to simply check if the argument provided for ".object"
+  # is "Est_temp" since this is the argument for the recurive call. This
+  # is of course not general but a dirty workaround. I guess it is save enough
+  # though.
+  is_recursive_call <- eval.parent(as.list(match.call()))$.object == "Est_temp"
+  
+  ## Return
+  if(is_recursive_call) {
+    out
+  } else {
+    if(.resample_method2 != "none") {
+      out <- list("Estimates1" = out, "Estimates2" = out_2)
+      
+    } else {
+      out <- list("Estimates1" = out, "Estimates2" = NA)
+    }
+    
+    ## Add resamples and additional information to .object
+    # Estimates
+    # estim <- c(.object$Estimates)
+    # estim[[length(estim) + 1]] <- c(out)
+    # names(estim)[length(estim)] <- "Estimates_resample"
+    # 
+    # Add resamples to the second stage
+    resample_out <- c(.object$Second_stage$Information)
+    resample_out[[length(resample_out) + 1]] <- list(
+      "Estimates" = c(out),
+      "Information" =       list(
+        "Method"                  = .resample_method,
+        "Method2"                 = .resample_method2,
+        "Number_of_observations"  = nrow(.object$Second_stage$Information$Data)
+      )
+    )
+    
+    names(resample_out)[length(resample_out)] <- "Resamples"
+    
+    out <- list(
+      "First_stage"   = .object$First_stage,
+      "Second_stage"  = list(
+        "Estimates" = .object$Second_stage$Estimates,
+        "Information" = resample_out
+      )
+    )
+    
+    ## Add/ set class
+    class(out) <- c(class(.object), "cSEMResults_resampled")
+    return(out)
+  }
+}
+
 #' Core tasks of the resamplecSEMResults function
 #' @noRd
 #' 
@@ -596,13 +871,17 @@ resamplecSEMResultsCore <- function(
 ) {
   
   ## Get arguments
-  args <- .object$Information$Arguments
+  args <- if(any(class(.object) == "cSEMResults_2ndorder")) {
+    .object$Second_stage$Information$Arguments_original
+  } else {
+    .object$Information$Arguments 
+  }
   
   ## Resample jackknife
   if(.resample_method == "jackknife") {
     resample_jack <- resampleData(.object, .resample_method = "jackknife") 
     .R <- length(resample_jack)
-  }
+  } 
   
   Est_ls <- future.apply::future_lapply(1:.R, function(i) {
     # Replace the old dataset by a resampled data set (resampleData always returns
@@ -611,7 +890,11 @@ resamplecSEMResultsCore <- function(
     data_temp <- if(.resample_method == "jackknife") {
       resample_jack[[i]]
     } else {
-      resampleData(.object, .resample_method = "bootstrap", .R = 1)[[1]]
+      # We could use resampleData here but, bootstrap resampling directly is faster
+      # (not surprisingly)
+      # (compared both approaches using microbenchmark)
+      data <- args[[".data"]]
+      data[sample(1:nrow(data), size = nrow(data), replace = TRUE), ]
     }
     
     args[[".data"]] <- data_temp
@@ -638,30 +921,50 @@ resamplecSEMResultsCore <- function(
         }
       }
       
-      ## Process
-      x1  <- Est_temp$Estimates
-      x2  <- Est_temp$Information
+      ## Summarize
+      summary_temp <- summarize(Est_temp)
+      est_1stage <- summary_temp$First_stage$Estimates
+      est_2stage <- summary_temp$Second_stage$Estimates
       
-      x1$Path_estimates    <- t(x1$Path_estimates)[t(x2$Model$structural) != 0]
-      x1$Loading_estimates <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0]
-      x1$Weight_estimates  <- t(x1$Weight_estimates)[t(x2$Model$measurement) != 0]
-      x1$Inner_weight_estimates  <- NULL
-      x1$Construct_scores        <- NULL
-      x1$Indicator_VCV           <- NULL
-      x1$Proxy_VCV               <- NULL
-      x1$Construct_VCV           <- NULL
-      x1$Cross_loadings          <- NULL
-      x1$Construct_reliabilities <- NULL
-      x1$Correction_factors      <- NULL
-      x1$R2                      <- NULL
-      x1$R2adj                   <- NULL
-      x1$VIF                     <- NULL
+      x1 <- list()
+      ## Select relevant statistics/parameters/quantities and vectorize
+      # Path estimates
+      x1[["Path_estimates"]] <- est_2stage$Path_estimates$Estimate
+      names(x1[["Path_estimates"]]) <- est_2stage$Path_estimates$Name
+      
+      # Loading estimates
+      x1[["Loading_estimates"]] <- c(est_1stage$Loading_estimates$Estimate, 
+                                     est_2stage$Loading_estimates$Estimate)
+      names(x1[["Loading_estimates"]]) <- c(est_1stage$Loading_estimates$Name,
+                                            est_2stage$Loading_estimates$Name)
+      
+      # Weight estimates
+      x1[["Weight_estimates"]] <- c(est_1stage$Weight_estimates$Estimate, 
+                                    est_2stage$Weight_estimates$Estimate)
+      names(x1[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
+                                           est_2stage$Weight_estimates$Name)
+      
+      # ## Process
+      # x1  <- Est_temp$Estimates
+      # x2  <- Est_temp$Information
+      # 
+      # x1$Path_estimates    <- t(x1$Path_estimates)[t(x2$Model$structural) != 0]
+      # x1$Loading_estimates <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0]
+      # x1$Weight_estimates  <- t(x1$Weight_estimates)[t(x2$Model$measurement) != 0]
+      # x1$Inner_weight_estimates  <- NULL
+      # x1$Construct_scores        <- NULL
+      # x1$Indicator_VCV           <- NULL
+      # x1$Proxy_VCV               <- NULL
+      # x1$Construct_VCV           <- NULL
+      # x1$Cross_loadings          <- NULL
+      # x1$Construct_reliabilities <- NULL
+      # x1$Correction_factors      <- NULL
+      # x1$R2                      <- NULL
+      # x1$R2adj                   <- NULL
+      # x1$VIF                     <- NULL
       
       ## Additional statistics
-      htmt <- c(HTMT(Est_temp))
-      x1[[length(x1) + 1]] <- htmt
-      names(x1)[length(x1)] <- "HTMT"
-      
+
       ## Add output of the user functions to Est_original
       if(!is.null(.user_funs)) {
         x1 <- c(x1, user_funs)

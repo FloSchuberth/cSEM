@@ -230,7 +230,7 @@ print.cSEMSummarize_default <- function(.object) {
 #'
 print.cSEMSummarize_2ndorder <- function(.object) {
   
-  ### Exctract name and objects 
+  ### Extract name and objects 
   x11 <- .object$First_stage$Estimates
   x12 <- .object$First_stage$Information
   

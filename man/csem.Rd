@@ -59,8 +59,9 @@ Defaults to "\emph{OLS}".}
 
 \item{.resample_method2}{Character string. The resampling method to use when resampling
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
-\emph{bootstrap} the number of draws may be provided via \code{.R2}.
-Defaults to "\emph{none}".}
+"\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
+resampling from each resample is only required for the studentized confidence
+intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
@@ -70,43 +71,73 @@ resampling from a resample. Defaults to \code{199}.}
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
 replications/resamples yielding an inadmissible result will be dropped (
-number of results shown <= .R). For "\emph{ignore}" all results are returned
-even if they are inadmissible (number of results = .R). For "\emph{replace}"
+the number of results returned will be less than .R). For "\emph{ignore}" all results are returned
+even if they are inadmissible (number of results returned = .R). For "\emph{replace}"
 resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
-resample. Takes \code{.object} as an input:
-\code{myFun <- function(.object) {...}}.  Output should preferably be a (named)
-vector but matrices are also accepted. Note however that output will be
-vectorized (columnwise) in this case.}
+resample. Takes \code{.object} as an input (e.g., \code{myFun <- function(.object) {...}}).
+Output should preferably be a (named)
+vector but matrices are also accepted. However, the output will be
+vectorized (columnwise) in this case. See the examples section for details.}
 
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
-\emph{sequential} or \emph{multiprocess}. In the latter case
-all available cores will be used. Defaults to \emph{sequential}.}
+"\emph{sequential}" or "\emph{multiprocess}". In the latter case
+all available cores will be used. Defaults to "\emph{sequential}".}
 }
 \value{
 An object of class \code{cSEMResults} with methods for all postestimation generics:
-\describe{
-\item{\code{check.cSEMResults}}{Checks results using common indices and fit measures.}
-\item{\code{fit.cSEMResults}}{Compute the model-implied covariance matrix.}
-\item{\code{summarize.cSEMResults}}{Summarize the results.}
-\item{\code{test.cSEMResults}}{Run tests.}
-\item{\code{verify.cSEMResults}}{Verify admissibility (e.g., loadings larger than one).}
+\itemize{
+\item{\code{assess.cSEMResults}   Asses results using common fit measures and indices.}
+\item{\code{summarize.cSEMResults}   Summarize the results.}
+\item{\code{test.cSEMResults}   Run tests.}
+\item{\code{verify.cSEMResults}   Verify admissibility (e.g., loadings larger than one).}
 }
-The structure of the \code{cSEMResults} object is determined by the data set provided
-or more precisely the number of estimation runs performed.
 
-If data is a single matrix or data frame with no id-column, the result is a list with elements:
+The structure and class of the resulting \code{cSEMResults} object is generally
+determined by the type of dataset(s) provided (\code{matrix}, \code{data.frame}, \code{list}
+of data)
+
+\describe{
+\item{Default}{If data is a single \code{matrix} or \code{data.frame} with no id-column,
+the result is a \code{list} with elements:
 \describe{
 \item{\code{$Estimates}}{A list containing a list of estimated quantities.}
 \item{\code{$Information}}{A list containing a list of additional information.}
 }
+The resulting object has classes \code{cSEMResults} and \code{cSEMResults_default}.
+}
+\item{Multi}{If the data provided contains an id-column to split the data by \code{G} group levels
+or if a list of \code{G} datasets is provided, the resulting object is a list of \code{G}
+lists, where \code{G} is equal to the number of groups or the number of datasets
+in the list of datasets provided. Each of the \code{G} list elements are itself
+a \code{cSEMResults_default} object. Hence its structure is identical to
+the structure described in \code{Default}.
 
-If \code{.data} contains an id-column to split the data by or if a list of
-data sets is provided, the results contains \code{n} list with elements \code{$Estimates}
-and \code{$Informations} where \code{n} is equal to the number of groups or the number of
-data sets in the list of data sets provided.
+The resulting object has classes \code{cSEMResults} and \code{cSEMResults_multi}.
+}
+\item{2ndorder}{
+A special output is generated if the model to estimate contains hierachical constructs
+\strong{and} the 2step (3step) approach is used to estimate the model. In this case
+the resulting object is a list containing two elements \code{First_stage} and
+\code{Second_stage}.
+
+Each list element is itself a \code{cSEMResults_default} object. Hence its structure is identical to
+the structure described in \code{Default}.
+}
+}
+
+If \code{.resample_method = "bootstrap"} or \code{.resample_method = "jackknife"} resamples
+are attached to each object. For objects of class \code{cSEMResults_default} the resamples are
+attached to \code{.object$Estimates$Estimates_resamples}. For objects of type
+\code{cSEMResults_multi} the same is done by group. All objects containing
+these elements gain the \code{cSEMResults_resampled} class.
+
+As should be evident from the above, the core structure of the resulting object
+is by and large similiar across all cases. Practically, most users wont have to worry
+about the structure as postestimation functions have corresponding methods to
+accomodate all cases.
 }
 \description{
 Estimate linear and nonlinear structural equation models using a

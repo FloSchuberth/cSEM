@@ -62,8 +62,9 @@ Defaults to (TODO).}
 
 \item{.resample_method2}{Character string. The resampling method to use when resampling
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
-\emph{bootstrap} the number of draws may be provided via \code{.R2}.
-Defaults to "\emph{none}".}
+"\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
+resampling from each resample is only required for the studentized confidence
+intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 }
 \description{
 Compute quantities for inference (TODO)

@@ -23,8 +23,9 @@ resamplecSEMResults(
 
 \item{.resample_method2}{Character string. The resampling method to use when resampling
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
-\emph{bootstrap} the number of draws may be provided via \code{.R2}.
-Defaults to "\emph{none}".}
+"\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
+resampling from each resample is only required for the studentized confidence
+intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
@@ -34,54 +35,85 @@ resampling from a resample. Defaults to \code{199}.}
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
 replications/resamples yielding an inadmissible result will be dropped (
-number of results shown <= .R). For "\emph{ignore}" all results are returned
-even if they are inadmissible (number of results = .R). For "\emph{replace}"
+the number of results returned will be less than .R). For "\emph{ignore}" all results are returned
+even if they are inadmissible (number of results returned = .R). For "\emph{replace}"
 resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
-resample. Takes \code{.object} as an input:
-\code{myFun <- function(.object) {...}}.  Output should preferably be a (named)
-vector but matrices are also accepted. Note however that output will be
-vectorized (columnwise) in this case.}
+resample. Takes \code{.object} as an input (e.g., \code{myFun <- function(.object) {...}}).
+Output should preferably be a (named)
+vector but matrices are also accepted. However, the output will be
+vectorized (columnwise) in this case. See the examples section for details.}
 
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
-\emph{sequential} or \emph{multiprocess}. In the latter case
-all available cores will be used. Defaults to \emph{sequential}.}
+"\emph{sequential}" or "\emph{multiprocess}". In the latter case
+all available cores will be used. Defaults to "\emph{sequential}".}
+}
+\value{
+The same structure as \code{.obeject} with element \code{$Estimates_resamples} and
+\code{$Information_resamples} added. See \link{cSEMResults} for details.
 }
 \description{
-The function resamples a \link{cSEMResults} object using bootstrap or jackknife resampling.
+Resample a \link{cSEMResults} object using bootstrap or jackknife resampling.
+The function is called by \code{\link[=csem]{csem()}} if the user sets
+\code{csem(..., .resample_method = "bootstrap")} or
+\code{csem(..., .resample_method = "jackknife")} but may also be called seperately.
+Technically, \code{resamplecSEMResults()} is a generic function with methods for
+all classes \code{cSEMResults_default}, \code{cSEMResults_multi} and \code{cSEMResults_2ndorder}.
 }
 \details{
-The function essentially calls \code{\link[=csem]{csem()}} on each of the \emph{M} resamples (created via
-\code{\link[=resampleData]{resampleData()}}) and returns M estimates for each of a subset of practically useful
-resampled parameters/statistics computed by \code{\link[=csem]{csem()}}. Currently, the following
-quantities are computed and returned based on each resample:
+Given \code{M} resamples (for bootstrap \code{M = .R} and for jackknife \code{M = N}, where
+\code{N} is the number of observations) based on the data used to compute the
+\code{cSEMResults} object provided via \code{.object}, \code{resamplecSEMResults()} essentially calls
+\code{\link[=csem]{csem()}} on each resample using the arguments of the origianl call (ignoring any arguments
+related to resampling) and returns estimates for each of a subset of
+practically useful resampled parameters/statistics computed by \code{\link[=csem]{csem()}}.
+Currently, the following quantities are computed and returned based on each resample:
 \describe{
-\item{Parameters}{Path estimates, Weight estimates, Loading estimates}
-\item{Statistics}{The heterotrait-monotrait ratio (HTMT)}
+\item{Parameters}{Path estimates, Loading estimates, Weight estimates}
+\item{Statistics}{The heterotrait-monotrait ratio (HTMT) (only for model without hiearchical constructs)}
 }
 
-If the user needs to resample a statistic that is not returned by default,
-this statistic can be provided by a function \code{f(.object)} via the \code{.user_fun} argument.
-The only accepted argument of this function is \code{.object} which must be an
-object of class \link{cSEMResults}. Internally, the function will be applied on each
-cSEMResults resample to produce the desired statistic. As long as this is
-the only argument of the function provided, arbitrary complicated statistics
-may be resampled.
+In practical application users may need to resample a specific statistic (e.g,
+restrictions on path coefficients such as beta_1 = beta_2) that is not returned
+by default.
+Such statistics may be provided by a function \code{f(.object)} or a list of such functions
+via the \code{.user_funs} argument. The only accepted argument of these functions is
+\code{.object} which must be an object of class \link{cSEMResults}.
+Internally, the function will be applied on each
+resample to produce the desired statistic. Hence, arbitrary complicated statistics
+may be resampled as long as the body of the function draws on elements contained
+in the \link{cSEMResults} object only. See \code{?cSEMResults} and the examples section
+for details.
 
-Both resampling the origianl \link{cSEMResults} object (first resample) and resampling based on
-a resampled \link{cSEMResults} object (second resample) are supported. Choices for the former
-are "bootstrap" and "jackknife". Resampling based on a resample is turned of
+Both resampling the origianl \link{cSEMResults} object (call it "first resample")
+and resampling based on a resampled \link{cSEMResults} object (call it "second resample")
+are supported. Choices for the former
+are "\emph{bootstrap}" and "\emph{jackknife}". Resampling based on a resample is turned off
 by default (\code{.resample_method2 = "none"}) as this significantly
-increases computation time (there are now \code{.R * .R2} resamples to compute)
-However, in order to compute e.g., the studentized confidence interval via \code{\link[=infer]{infer()}},
-resampling from a resample is required.
+increases computation time (there are now \code{M * M2} resamples to compute, where
+\code{M2} is \code{.R2} or \code{N}).
+Currently, resamples of a resample are only required for the studentized confidence
+intervall computed by the \code{\link[=infer]{infer()}} function. Typically, bootstrap resamples
+are used in this case \insertCite{Davison1997}{cSEM}.
 
-The number of bootstrap runs for the first and second run are given by \code{.R} and \code{.R}.
+As \code{\link[=csem]{csem()}} accepts a single dataset, a list of datasets as well as datasets
+that contain a column name used to split the data into groups,
+the \link{cSEMResults} object may contain multiple datasets.
+In this case, resampling is done by dataset or group. Note that depending
+on the number of datasets/groups provided this computation may be considerably
+slower as resampling will be repeated for each dataset/group. However, apart
+from speed considerations users dont need to worry about the type of
+input used to compute the \link{cSEMResults} object as \code{resamplecSEMResults()}
+is able to deal with each case.
+
+The number of bootstrap runs for the first and second run are given by \code{.R} and \code{.R2}.
 The default is \code{499} for the first and \code{199} for the second run
 but should be increased in real applications. See e.g.,
-\insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations.
+\insertCite{Hesterberg2015;textual}{cSEM}, p.380,
+\insertCite{Davison1997;textual}{cSEM}, and
+\insertCite{Efron2016}{cSEM} for recommendations.
 For jackknife \code{.R} are \code{.R2} are ignored.
 
 Resampling may produce inadmissble results (as checked by \code{\link[=verify]{verify()}}).
@@ -90,7 +122,7 @@ or \code{"replace"} inadmissble results in which case resampling continous until
 the necessary number of admissble results is reached.
 
 The cSEM package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future}
-\insertCite{Bengtsson2018}{cSEM} framework. User may simply choose an evaluation plan
+framework \insertCite{Bengtsson2018}{cSEM}. Users may simply choose an evaluation plan
 via \code{.eval_plan} and the package takes care of all the complicated backend
 issues. Currently, users may chose between standard single-core evaluation
 (\code{"sequential"}) and multiprocessing (\code{"multiprocess"}). The future package
@@ -98,13 +130,33 @@ provides other options (e.g. \code{"cluster"} or \code{"remote"}), however, they
 wont be needed in the context of the cSEM package. Depeding on the platform, the future
 package will manage to distribute tasks to multiple R sessions (Windows)
 or multiple cores. Note that multiprocessing is not necessary always faster
-when only a small naumber of replications is required.
+when only a "small" number of replications is required as the overhead of
+initializing new sessions or distributing tasks to different cores
+will not immediatley be compensated by the avaiability of multiple sessions/cores.
+As a rule of thumb, the number of resamples to should be larger than 100
+to offset the overhead.
 }
 \examples{
-\dontrun{
-# still to implement
-}
 
+model <- "
+# Structural model
+QUAL ~ EXPE
+EXPE ~ IMAG
+SAT  ~ IMAG + EXPE + QUAL + VAL
+LOY  ~ IMAG + SAT
+VAL  ~ EXPE + QUAL
+
+# Measurement model
+EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5
+IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5
+LOY  =~ loy1  + loy2  + loy3  + loy4
+QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+SAT  =~ sat1  + sat2  + sat3  + sat4
+VAL  =~ val1  + val2  + val3  + val4
+"
+a <- csem(satisfaction, model) # 
+
+resample
 }
 \references{
 \insertAllCited{}

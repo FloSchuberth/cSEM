@@ -85,16 +85,16 @@ Dominant indicators may be specified for a subset of the constructs.}
 be estimated? Defaults to \code{TRUE}.}
 
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
-\emph{sequential} or \emph{multiprocess}. In the latter case
-all available cores will be used. Defaults to \emph{sequential}.}
+"\emph{sequential}" or "\emph{multiprocess}". In the latter case
+all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.H}{The (N x J) matrix of construct scores.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
 replications/resamples yielding an inadmissible result will be dropped (
-number of results shown <= .R). For "\emph{ignore}" all results are returned
-even if they are inadmissible (number of results = .R). For "\emph{replace}"
+the number of results returned will be less than .R). For "\emph{ignore}" all results are returned
+even if they are inadmissible (number of results returned = .R). For "\emph{replace}"
 resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
@@ -118,8 +118,9 @@ If the algorithm exceeds the specified number, weights of iteration step
 
 \item{.resample_method2}{Character string. The resampling method to use when resampling
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
-\emph{bootstrap} the number of draws may be provided via \code{.R2}.
-Defaults to "\emph{none}".}
+"\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
+resampling from each resample is only required for the studentized confidence
+intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
@@ -204,10 +205,10 @@ One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".
 to \code{TRUE}.}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
-resample. Takes \code{.object} as an input:
-\code{myFun <- function(.object) {...}}.  Output should preferably be a (named)
-vector but matrices are also accepted. Note however that output will be
-vectorized (columnwise) in this case.}
+resample. Takes \code{.object} as an input (e.g., \code{myFun <- function(.object) {...}}).
+Output should preferably be a (named)
+vector but matrices are also accepted. However, the output will be
+vectorized (columnwise) in this case. See the examples section for details.}
 
 \item{.vector1}{A vector of numeric values.}
 

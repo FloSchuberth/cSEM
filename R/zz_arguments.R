@@ -67,14 +67,14 @@
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
 #' @param .eval_plan Character string. The evaluation plan to use. One of 
-#'   *sequential* or *multiprocess*. In the latter case 
-#'   all available cores will be used. Defaults to *sequential*.
+#'   "*sequential*" or "*multiprocess*". In the latter case 
+#'   all available cores will be used. Defaults to "*sequential*".
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
 #'   replications/resamples yielding an inadmissible result will be dropped (
-#'   number of results shown <= .R). For "*ignore*" all results are returned 
-#'   even if they are inadmissible (number of results = .R). For "*replace*"
+#'   the number of results returned will be less than .R). For "*ignore*" all results are returned 
+#'   even if they are inadmissible (number of results returned = .R). For "*replace*"
 #'   resampling continues until there are exactly .R admissible solutions. 
 #'   Defaults to "*drop*".
 #' @param .id Character string or integer. The name or position of the column of 
@@ -91,8 +91,9 @@
 #'  "*bootstrap*" or "*jackknife*". Defaults to "*bootstrap*".
 #' @param .resample_method2 Character string. The resampling method to use when resampling
 #'   from a resample. One of: "*none*", "*bootstrap*" or "*jackknife*". For 
-#'   *bootstrap* the number of draws may be provided via `.R2`.
-#'   Defaults to "*none*".
+#'   "*bootstrap*" the number of draws is provided via `.R2`. Currently, 
+#'   resampling from each resample is only required for the studentized confidence
+#'   intervall computed by the [infer()] function. Defaults to "*none*".
 #' @param .model A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 #'   or a [cSEMModel]-list.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
@@ -152,10 +153,10 @@
 #' @param .verbose Logical. Should information be printed to the console? Defaults
 #'   to `TRUE`.
 #' @param .user_funs A function or a (named) list of functions to apply to every
-#'   resample. Takes `.object` as an input:
-#'   `myFun <- function(.object) {...}`.  Output should preferably be a (named)
-#'   vector but matrices are also accepted. Note however that output will be 
-#'   vectorized (columnwise) in this case.
+#'   resample. Takes `.object` as an input (e.g., `myFun <- function(.object) {...}`).
+#'   Output should preferably be a (named)
+#'   vector but matrices are also accepted. However, the output will be 
+#'   vectorized (columnwise) in this case. See the examples section for details.
 #' @param .vector1 A vector of numeric values.
 #' @param .vector2 A vector of numeric values.
 #' @param .W A (J x K) matrix of weights.

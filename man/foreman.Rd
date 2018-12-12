@@ -113,26 +113,56 @@ Defaults to \code{1e-05}.}
 }
 \value{
 An object of class \code{cSEMResults} with methods for all postestimation generics:
-\describe{
-\item{\code{check.cSEMResults}}{Checks results using common indices and fit measures.}
-\item{\code{fit.cSEMResults}}{Compute the model-implied covariance matrix.}
-\item{\code{summarize.cSEMResults}}{Summarize the results.}
-\item{\code{test.cSEMResults}}{Run tests.}
-\item{\code{verify.cSEMResults}}{Verify admissibility (e.g., loadings larger than one).}
+\itemize{
+\item{\code{assess.cSEMResults}   Asses results using common fit measures and indices.}
+\item{\code{summarize.cSEMResults}   Summarize the results.}
+\item{\code{test.cSEMResults}   Run tests.}
+\item{\code{verify.cSEMResults}   Verify admissibility (e.g., loadings larger than one).}
 }
-The structure of the \code{cSEMResults} object is determined by the data set provided
-or more precisely the number of estimation runs performed.
 
-If data is a single matrix or data frame with no id-column, the result is a list with elements:
+The structure and class of the resulting \code{cSEMResults} object is generally
+determined by the type of dataset(s) provided (\code{matrix}, \code{data.frame}, \code{list}
+of data)
+
+\describe{
+\item{Default}{If data is a single \code{matrix} or \code{data.frame} with no id-column,
+the result is a \code{list} with elements:
 \describe{
 \item{\code{$Estimates}}{A list containing a list of estimated quantities.}
 \item{\code{$Information}}{A list containing a list of additional information.}
 }
+The resulting object has classes \code{cSEMResults} and \code{cSEMResults_default}.
+}
+\item{Multi}{If the data provided contains an id-column to split the data by \code{G} group levels
+or if a list of \code{G} datasets is provided, the resulting object is a list of \code{G}
+lists, where \code{G} is equal to the number of groups or the number of datasets
+in the list of datasets provided. Each of the \code{G} list elements are itself
+a \code{cSEMResults_default} object. Hence its structure is identical to
+the structure described in \code{Default}.
 
-If \code{.data} contains an id-column to split the data by or if a list of
-data sets is provided, the results contains \code{n} list with elements \code{$Estimates}
-and \code{$Informations} where \code{n} is equal to the number of groups or the number of
-data sets in the list of data sets provided.
+The resulting object has classes \code{cSEMResults} and \code{cSEMResults_multi}.
+}
+\item{2ndorder}{
+A special output is generated if the model to estimate contains hierachical constructs
+\strong{and} the 2step (3step) approach is used to estimate the model. In this case
+the resulting object is a list containing two elements \code{First_stage} and
+\code{Second_stage}.
+
+Each list element is itself a \code{cSEMResults_default} object. Hence its structure is identical to
+the structure described in \code{Default}.
+}
+}
+
+If \code{.resample_method = "bootstrap"} or \code{.resample_method = "jackknife"} resamples
+are attached to each object. For objects of class \code{cSEMResults_default} the resamples are
+attached to \code{.object$Estimates$Estimates_resamples}. For objects of type
+\code{cSEMResults_multi} the same is done by group. All objects containing
+these elements gain the \code{cSEMResults_resampled} class.
+
+As should be evident from the above, the core structure of the resulting object
+is by and large similiar across all cases. Practically, most users wont have to worry
+about the structure as postestimation functions have corresponding methods to
+accomodate all cases.
 }
 \description{
 The function is the central hub of the \code{cSEM}package. It acts like a
