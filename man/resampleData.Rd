@@ -10,7 +10,8 @@ resampleData(
  .cv_folds        = 10,  
  .data            = NULL,
  .id              = NULL,
- .R               = 499
+ .R               = 499,
+ .seed            = sample(.Random.seed, 1)
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ Defaults to \code{NULL}.}
 
 \item{.R}{Integer. The number of bootstrap replications, permutation runs
 or cross-validation repetitions to use. Defaults to \code{499}.}
+
+\item{.seed}{Integer. The random seed to use. Defaults to \code{sample(.Random.seed, 1)}}
 }
 \value{
 The structure of the output depends on the type of input and the
@@ -129,22 +132,29 @@ produces leave-one-out cross-validation samples.
 Note: 1. \code{k} can not be larger than the \code{N}.
 2. If \code{N/k} is not not an integer the last fold will have less observations.
 
-Currently it is not possible to set a random seed. This is will be adressed
-in a future package version.
+Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
+\href{https://github.com/HenrikBengtsson/future.apply}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
+See \link[future.apply:future_lapply]{?future_lapply} for details.
 }
 \examples{
 require(cSEM)
- 
-### Using the raw data ------------------------------------------------------ 
-## Create .R bootstrap samples
+
+# ===========================================================================
+### Using the raw data 
+# ===========================================================================
+## Create .R bootstrap samples ----------------------------------------------
+
 res_boot1 <- resampleData(.data = satisfaction)
 str(res_boot1, max.level = 3, list.len = 3)
 
-# Same as
-res_boot1a <- resampleData(.data = satisfaction, .resample_method = "bootstrap")
+# res_boot1 is the same as if a seed is set
+res_boot1  <- resampleData(.data = satisfaction, .seed = 2364)
+res_boot1a <- resampleData(.data = satisfaction, 
+                           .resample_method = "bootstrap", .seed = 2364)
+                           
+identical(res_boot1, res_boot1a) # TRUE
 
-## Create 10-fold cross-validation samples repeated .R = 100 times using 
-## raw data
+## Create cross-validation samples repeated .R = 100 ------------------------
 
 dat <- data.frame(
   "x1" = rnorm(100),
@@ -152,26 +162,32 @@ dat <- data.frame(
   "group" = sample(c("male", "female"), size = 100, replace = TRUE),
   stringsAsFactors = FALSE)
 
+# 10-fold cross-validation
 cv_10 <- resampleData(.data = dat, .resample_method = "cross-validation", 
                       .id = "group", .R = 100)
 str(cv_10, max.level = 3, list.len = 3)
 
+# Leave-one-out-cross-validation
 cv_loocv  <- resampleData(.data = dat[, -3], 
                           .resample_method = "cross-validation", 
                           .cv_folds = nrow(dat),
                           .R = 50)
 str(cv_loocv, max.level = 2, list.len = 3)
 
-## Create permuation samples
+## Create permuation samples ------------------------------------------------
+
 res_perm <- resampleData(.data = dat, .resample_method = "permutation",
                          .id = "group")
 str(res_perm, max.level = 2, list.len = 3)
+
 # Forgetting to set .id causes an error
 \dontrun{
 res_perm <- resampleData(.data = dat, .resample_method = "permutation")
 }
 
-### Using a cSEMResults object-----------------------------------------------
+# ===========================================================================
+### Using a cSEMResults object
+# ===========================================================================
 
 model <- "
 # Structural model
@@ -194,6 +210,13 @@ a <- csem(satisfaction, model)
 # Create bootstrap and jackknife samples
 res_boot <- resampleData(a, .resample_method = "bootstrap", .R = 999)
 res_jack <- resampleData(a, .resample_method = "jackknife")
+
+# Since `satisfaction` is the dataset used the following approaches yield
+# identical results.
+res_boot_data   <- resampleData(.data = satisfaction, .seed = 2364)
+res_boot_object <- resampleData(a, .seed = 2364)
+
+identical(res_boot_data, res_boot_object) # TRUE
 
 }
 \references{

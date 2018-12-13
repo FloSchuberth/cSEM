@@ -3,7 +3,6 @@
 \name{infer}
 \alias{infer}
 \alias{MeanResample}
-\alias{VarResample}
 \alias{SdResample}
 \alias{BiasResample}
 \alias{StandardCIResample}
@@ -12,37 +11,35 @@
 \alias{TStatCIResample}
 \alias{BcCI}
 \alias{BcaCI}
-\title{Internal: Inference}
+\title{Inference}
 \usage{
 infer(
- .object        = args_default()$.object
+ .resample_object   = NULL,
+ .alpha             = 0.05
+ .bias_corrected    = TRUE
 )
 
-MeanResample(.x)
+MeanResample(.first_resample)
 
-VarResample(.x, .resample_method, .n)
+SdResample(.first_resample, .resample_method, .n)
 
-SdResample(.x, .resample_method, .n)
+BiasResample(.first_resample, .resample_method, .n)
 
-BiasResample(.x, .resample_method, .n)
+StandardCIResample(.first_resample, .bias_corrected, .dist = c("z", "t"),
+  .df = c("type1", "type2"), .resample_method, .n, .probs)
 
-StandardCIResample(.x, .bias_corrected, .df = c("type1", "type2"),
-  .dist = c("z", "t"), .resample_method, .n, .probs)
+PercentilCIResample(.first_resample, .probs)
 
-PercentilCIResample(.x, .probs)
+BasicCIResample(.first_resample, .bias_corrected, .probs)
 
-BasicCIResample(.x, .bias_corrected, .probs)
+TStatCIResample(.first_resample, .second_resample, .bias_corrected,
+  .resample_method, .resample_method2, .n, .probs)
 
-TStatCIResample(.x1, .x2, .bias_corrected, .resample_method,
-  .resample_method2, .n, .probs)
+BcCI(.first_resample, .probs)
 
-BcCI(.x, .probs)
-
-BcaCI(.object, .x, .probs)
+BcaCI(.object, .first_resample, .probs)
 }
 \arguments{
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
-
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
@@ -53,39 +50,68 @@ is centered at \code{2*theta - theta*_hat},
 where \code{theta*_hat} is the average over all .R bootstrap estimates of \code{theta}.
 Defaults to \code{TRUE}}
 
-\item{.statistic}{Character string. Which statistic should be returned?
-One of (TODO)
-Defaults to (TODO).}
+\item{.first_resample}{A list containing the \code{.R} resamples based on the original
+data obtained by resamplecSEMResults()}
 
 \item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
+
+\item{.n}{Integer. The number of observations of the original data.}
+
+\item{.dist}{Character string. The distribution to use for the critical value.
+One of \emph{"t"} for Student's t-distribution or \emph{"z"} for the standard normal distribution.
+Defaults to \emph{"z"}.}
+
+\item{.df}{Character string. The method for obtaining the degrees of freedom.
+Choices are "\emph{type1}" and "\emph{type2}". Defaults to "\emph{type1}" .}
+
+\item{.probs}{A vector of probabilities.}
+
+\item{.second_resample}{A list containing \code{.R2} resamples for each of the \code{.R}
+resamples of the first run.}
 
 \item{.resample_method2}{Character string. The resampling method to use when resampling
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
 "\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
 resampling from each resample is only required for the studentized confidence
 intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
+
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 }
 \description{
-Compute quantities for inference (TODO)
+Calculate common inferencial quantities (e.g. estimated standard error, estimates bias,
+several confidence intervals) based on a \code{cSEMResults_resampled} object as obtained
+from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
+or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.
 }
 \section{Functions}{
 \itemize{
-\item \code{MeanResample}: The bootstraped mean
+\item \code{MeanResample}: Computes the mean over all resamples for each resampled
+statistic/parameter.
 
-\item \code{VarResample}: (TODO)
+\item \code{SdResample}: Computes the standard deviation over all resamples for each resampled
+statistic/estimator This is usually taken to be the estimate
+of the standard error of the statistic/estimator.
 
-\item \code{SdResample}: (TODO)
+\item \code{BiasResample}: Computes the estimated bias for each resampled
+statistic/estimator.
 
-\item \code{BiasResample}: (TODO)
+\item \code{StandardCIResample}: Computes the \emph{Standard CI with bootstrap SE's}.
+Critical quantiles can be based on both the \code{t}- or the
+standard normal distribution (\code{z}). The former may perform better in
+small samples but there is no clear consenus on what the degrees of freedom
+should be.
 
-\item \code{StandardCIResample}: (TODO)
+\item \code{PercentilCIResample}: Computes the \emph{Percentile CI}.
+The function takes the distribution F* (the CDF) of the resamples as an estimator for
+the true distribution F of the statistic/estimator of interest.
+Quantiles of the estimated distribution are then used as lower and upper bound.
 
-\item \code{PercentilCIResample}: (TODO)
+\item \code{BasicCIResample}: Computes the \emph{Basic CI}.
 
-\item \code{BasicCIResample}: (TODO)
-
-\item \code{TStatCIResample}: (TODO)
+\item \code{TStatCIResample}: Computes the \emph{Studentized or t-statistic CI}
+The function computes a boostrap t-statisic (since it is roughly pivotal) and constructs
+the CI based on bootstraped t-values and bootstraped/jackknife SE's
 
 \item \code{BcCI}: (TODO)
 
@@ -99,5 +125,5 @@ Compute quantities for inference (TODO)
 
 }
 \seealso{
-\link{csem}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}, \link{cSEMResults}
 }

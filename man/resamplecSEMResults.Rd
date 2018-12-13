@@ -12,7 +12,8 @@ resamplecSEMResults(
  .R2                    = 199,
  .handle_inadmissibles  = c("drop", "ignore", "replace"),
  .user_funs             = NULL,
- .eval_plan             = c("sequential", "multiprocess")
+ .eval_plan             = c("sequential", "multiprocess"),
+ .seed                  = sample(.Random.seed, 1)
 )
 }
 \arguments{
@@ -49,10 +50,23 @@ vectorized (columnwise) in this case. See the examples section for details.}
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
 all available cores will be used. Defaults to "\emph{sequential}".}
+
+\item{.seed}{Integer. The random seed to use. Defaults to \code{sample(.Random.seed, 1)}}
 }
 \value{
-The same structure as \code{.object} with element \code{$Estimates_resamples} and
-\code{$Information_resamples} added. See \link{cSEMResults} for details.
+The core structure is the same structure as that of \code{.object} with
+the following elements added:
+\itemize{
+\item{ \code{$Estimates_resamples}: A list containing the \code{.R} resamples and
+the original estimates for each of the resampled quantities (Path_estimates,
+Loading_estimates, Weight_estimates, (HTMT), (user defined functions).
+Each list element is a list containing elements
+\code{$Resamples} and \code{$Original}. \code{$Resamples} is a \code{(.R x K)} matrix with each
+row representing one resample for each of the \code{K} parameters/statistics.
+\code{$Original} contains the original estimates (vectorized by column (e.g. for the HTMT)).}
+\item {\code{$Information_resamples}: A list containing addtional information.}
+}
+See \code{str(<.object>, list.len = 3)} for an overview.
 }
 \description{
 Resample a \link{cSEMResults} object using bootstrap or jackknife resampling.
@@ -60,7 +74,7 @@ The function is called by \code{\link[=csem]{csem()}} if the user sets
 \code{csem(..., .resample_method = "bootstrap")} or
 \code{csem(..., .resample_method = "jackknife")} but may also be called seperately.
 Technically, \code{resamplecSEMResults()} is a generic function with methods for
-all classes \code{cSEMResults_default}, \code{cSEMResults_multi} and \code{cSEMResults_2ndorder}.
+classes \code{cSEMResults_default}, \code{cSEMResults_multi} and \code{cSEMResults_2ndorder}.
 }
 \details{
 Given \code{M} resamples (for bootstrap \code{M = .R} and for jackknife \code{M = N}, where
@@ -72,7 +86,8 @@ practically useful resampled parameters/statistics computed by \code{\link[=csem
 Currently, the following quantities are computed and returned based on each resample:
 \describe{
 \item{Parameters}{Path estimates, Loading estimates, Weight estimates}
-\item{Statistics}{The heterotrait-monotrait ratio (HTMT) (only for model without hiearchical constructs)}
+\item{Statistics}{The heterotrait-monotrait ratio (HTMT) (currently only for
+avaiable for models without hiearchical constructs)}
 }
 
 In practical application users may need to resample a specific statistic (e.g,
@@ -121,13 +136,14 @@ By default these results are dropped however users may choose to \code{"ignore"}
 or \code{"replace"} inadmissble results in which case resampling continous until
 the necessary number of admissble results is reached.
 
-The cSEM package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future}
+The \pkg{cSEM} package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future}
 framework \insertCite{Bengtsson2018}{cSEM}. Users may simply choose an evaluation plan
 via \code{.eval_plan} and the package takes care of all the complicated backend
-issues. Currently, users may chose between standard single-core evaluation
-(\code{"sequential"}) and multiprocessing (\code{"multiprocess"}). The future package
+issues. Currently, users may chose between standard single-core/single-session
+evaluation (\code{"sequential"}) and multiprocessing (\code{"multiprocess"}). The future package
 provides other options (e.g. \code{"cluster"} or \code{"remote"}), however, they probably
-wont be needed in the context of the cSEM package. Depeding on the platform, the future
+wont be needed in the context of the \pkg{cSEM} package as simulations usually
+dont require high-performance clusters. Depeding on the platform, the future
 package will manage to distribute tasks to multiple R sessions (Windows)
 or multiple cores. Note that multiprocessing is not necessary always faster
 when only a "small" number of replications is required as the overhead of
@@ -135,8 +151,17 @@ initializing new sessions or distributing tasks to different cores
 will not immediatley be compensated by the avaiability of multiple sessions/cores.
 As a rule of thumb, the number of resamples to should be larger than 100
 to offset the overhead.
+
+Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
+\href{https://github.com/HenrikBengtsson/future.apply}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
+It is independent of the evaluation plan. Hence, setting e.g., \code{.seed = 123} will
+generate the same random number and replicates
+for both \code{.eval_plan = "sequential"} and \code{.eval_plan = "multiprocess"}.
+See \link[future.apply:future_lapply]{?future_lapply} for details.
 }
 \examples{
+
+require(cSEM)
 
 model <- "
 # Structural model
@@ -154,9 +179,35 @@ QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
 SAT  =~ sat1  + sat2  + sat3  + sat4
 VAL  =~ val1  + val2  + val3  + val4
 "
-a <- csem(satisfaction, model) # 
 
-resample
+a <- csem(satisfaction, model)
+
+# Bootstrap and jackknife estimation
+boot <- resamplecSEMResults(a)
+jack <- resamplecSEMRestuts(a, .resample_method = "jackknife") 
+
+# Bootstrap resampling with resampling each resample (totals .R*R2 runs).
+boot1 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,
+                             .resample_method2 = "bootstrap", .R2 = 20,
+                              .seed = 1303)
+
+# To get inferencial quanitites such as the estimates standard error or
+# the percentile confidence intervall for each resampled quantity use infer()
+inference <- infer(boot1)
+inference$Path_estimates$Standard_deviation
+inference$Path_estimates$CI_percentile
+
+# As usual summarize() can be called directly
+summarize(boot1)
+
+# In the example above .R x .R2 = 50 x 20 = 1000. Multiprocessing will be
+# much here and is therefore recommended. Note that multiprocessing
+# does not affect the random number generation
+boot2 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,
+                             .resample_method2 = "bootstrap", .R2 = 20,
+                             .eval_plan = "multiprocess", .seed = 1303)
+
+identical(boot1, boot2)                  
 }
 \references{
 \insertAllCited{}

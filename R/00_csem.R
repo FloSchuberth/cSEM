@@ -104,6 +104,7 @@
 #' }
 #' 
 #' @export
+#' 
 
 csem <- function(
   .data                  = NULL,
@@ -120,6 +121,7 @@ csem <- function(
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .user_funs             = NULL,
   .eval_plan             = c("sequential", "multiprocess"),
+  .seed                  = sample(.Random.seed, 1),
   ...
   ) {
   ## Match arguments

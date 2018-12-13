@@ -85,6 +85,8 @@ vectorized (columnwise) in this case. See the examples section for details.}
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
 all available cores will be used. Defaults to "\emph{sequential}".}
+
+\item{.seed}{Integer. The random seed to use. Defaults to \code{sample(.Random.seed, 1)}}
 }
 \value{
 An object of class \code{cSEMResults} with methods for all postestimation generics:

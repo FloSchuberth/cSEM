@@ -71,8 +71,15 @@ This column is assumed to contain group identifiers used to split the data into 
 \item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
+\item{.dist}{Character string. The distribution to use for the critical value.
+One of \emph{"t"} for Student's t-distribution or \emph{"z"} for the standard normal distribution.
+Defaults to \emph{"z"}.}
+
 \item{.distance}{Character string. A distance measure. One of: "\emph{geodesic}"
 or "\emph{squared_euclidian}". Defaults to "\emph{geodesic}".}
+
+\item{.df}{Character string. The method for obtaining the degrees of freedom.
+Choices are "\emph{type1}" and "\emph{type2}". Defaults to "\emph{type1}" .}
 
 \item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
 where \code{"value"} is a character string giving the name of the dominant indicator
@@ -87,6 +94,12 @@ be estimated? Defaults to \code{TRUE}.}
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
 all available cores will be used. Defaults to "\emph{sequential}".}
+
+\item{.first_resample}{A list containing the \code{.R} resamples based on the original
+data obtained by resamplecSEMResults()}
+
+\item{.second_resample}{A list containing \code{.R2} resamples for each of the \code{.R}
+resamples of the first run.}
 
 \item{.H}{The (N x J) matrix of construct scores.}
 
@@ -107,20 +120,13 @@ If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights 
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
+\item{.n}{Integer. The number of observations of the original data.}
+
 \item{.matrix1}{A \code{matrix} to compare.}
 
 \item{.matrix2}{A \code{matrix} to compare.}
 
 \item{.matrices}{A list of at least two matrices.}
-
-\item{.resample_method}{Character string. The resampling method to use. One of:
-"\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
-
-\item{.resample_method2}{Character string. The resampling method to use when resampling
-from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
-"\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
-resampling from each resample is only required for the studentized confidence
-intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
@@ -167,6 +173,8 @@ of construct used. Ignored if \code{.approach_weight} is not PLS-PM.}
 used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
+\item{.probs}{A vector of probabilities.}
+
 \item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.}
@@ -177,6 +185,19 @@ of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
 reliabilities are estimated by \code{csem()}.}
 
+\item{.resample_method}{Character string. The resampling method to use. One of:
+"\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
+
+\item{.resample_method2}{Character string. The resampling method to use when resampling
+from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
+"\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
+resampling from each resample is only required for the studentized confidence
+intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
+
+\item{`.resample_object`}{An R object of class \code{cSEMResults_resampled}
+obtained from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
+or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.}
+
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
 \item{.R2}{Integer. The number of bootstrap replications to use when
@@ -185,6 +206,8 @@ resampling from a resample. Defaults to \code{199}.}
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+
+\item{.seed}{Integer. The random seed to use. Defaults to \code{sample(.Random.seed, 1)}}
 
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}

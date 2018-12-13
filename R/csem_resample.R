@@ -46,8 +46,9 @@
 #' Note: 1. `k` can not be larger than the `N`.
 #' 2. If `N/k` is not not an integer the last fold will have less observations.
 #' 
-#' Currently it is not possible to set a random seed. This is will be adressed
-#' in a future package version.
+#' Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
+#' \href{https://github.com/HenrikBengtsson/future.apply}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
+#' See [?future_lapply][future.apply::future_lapply] for details.
 #' 
 #' @usage resampleData(
 #'  .object          = NULL,
@@ -55,7 +56,8 @@
 #'  .cv_folds        = 10,  
 #'  .data            = NULL,
 #'  .id              = NULL,
-#'  .R               = 499
+#'  .R               = 499,
+#'  .seed            = sample(.Random.seed, 1)
 #' )
 #'
 #' @param .data A `data.frame`, a `matrix` or a `list` of data of either type. 
@@ -119,17 +121,23 @@
 #'
 #' @examples
 #' require(cSEM)
-#'  
-#' ### Using the raw data ------------------------------------------------------ 
-#' ## Create .R bootstrap samples
+#' 
+#' # ===========================================================================
+#' ### Using the raw data 
+#' # ===========================================================================
+#' ## Create .R bootstrap samples ----------------------------------------------
+#' 
 #' res_boot1 <- resampleData(.data = satisfaction)
 #' str(res_boot1, max.level = 3, list.len = 3)
 #' 
-#' # Same as
-#' res_boot1a <- resampleData(.data = satisfaction, .resample_method = "bootstrap")
+#' # res_boot1 is the same as if a seed is set
+#' res_boot1  <- resampleData(.data = satisfaction, .seed = 2364)
+#' res_boot1a <- resampleData(.data = satisfaction, 
+#'                            .resample_method = "bootstrap", .seed = 2364)
+#'                            
+#' identical(res_boot1, res_boot1a) # TRUE
 #' 
-#' ## Create 10-fold cross-validation samples repeated .R = 100 times using 
-#' ## raw data
+#' ## Create cross-validation samples repeated .R = 100 ------------------------
 #' 
 #' dat <- data.frame(
 #'   "x1" = rnorm(100),
@@ -137,26 +145,32 @@
 #'   "group" = sample(c("male", "female"), size = 100, replace = TRUE),
 #'   stringsAsFactors = FALSE)
 #' 
+#' # 10-fold cross-validation
 #' cv_10 <- resampleData(.data = dat, .resample_method = "cross-validation", 
 #'                       .id = "group", .R = 100)
 #' str(cv_10, max.level = 3, list.len = 3)
 #' 
+#' # Leave-one-out-cross-validation
 #' cv_loocv  <- resampleData(.data = dat[, -3], 
 #'                           .resample_method = "cross-validation", 
 #'                           .cv_folds = nrow(dat),
 #'                           .R = 50)
 #' str(cv_loocv, max.level = 2, list.len = 3)
 #' 
-#' ## Create permuation samples
+#' ## Create permuation samples ------------------------------------------------
+#' 
 #' res_perm <- resampleData(.data = dat, .resample_method = "permutation",
 #'                          .id = "group")
 #' str(res_perm, max.level = 2, list.len = 3)
+#' 
 #' # Forgetting to set .id causes an error
 #' \dontrun{
 #' res_perm <- resampleData(.data = dat, .resample_method = "permutation")
 #' }
 #' 
-#' ### Using a cSEMResults object-----------------------------------------------
+#' # ===========================================================================
+#' ### Using a cSEMResults object
+#' # ===========================================================================
 #' 
 #' model <- "
 #' # Structural model
@@ -180,6 +194,13 @@
 #' res_boot <- resampleData(a, .resample_method = "bootstrap", .R = 999)
 #' res_jack <- resampleData(a, .resample_method = "jackknife")
 #' 
+#' # Since `satisfaction` is the dataset used the following approaches yield
+#' # identical results.
+#' res_boot_data   <- resampleData(.data = satisfaction, .seed = 2364)
+#' res_boot_object <- resampleData(a, .seed = 2364)
+#' 
+#' identical(res_boot_data, res_boot_object) # TRUE
+#' 
 #' @export
 #'
 resampleData <- function(
@@ -188,11 +209,18 @@ resampleData <- function(
   .cv_folds        = args_default()$.cv_folds,
   .data            = args_default()$.data,
   .id              = args_default()$.id,
-  .R               = args_default()$.R
+  .R               = args_default()$.R,
+  .seed            = args_default()$.seed
 ) {
   .resample_method <- match.arg(.resample_method, 
             c("bootstrap", "jackknife", "permutation", "cross-validation"))
 
+  ## Set plan on how to resolve futures to "sequential" as it is virtually always
+  ## slower to resample data using "multiprocess".; reset at the end
+  oplan <- future::plan()
+  on.exit(future::plan(oplan), add = TRUE)
+  future::plan("sequential")
+  
   ## Get data set
   if(is.null(.data)) {
     ## Get information according to class of object
@@ -265,20 +293,23 @@ resampleData <- function(
   out <- switch (.resample_method,
     "jackknife"   = {
       if(exists("data_split")) {
-        lapply(data_split, function(y) 
-          lapply(1:nrow(y), function(x) y[-x, ]))
+        future_lapply(data_split, function(y) future_lapply(1:nrow(y), function(x) y[-x, ]))
       } else {
-        lapply(1:nrow(data), function(x) data[-x, ]) 
+        future_lapply(1:nrow(data), function(x) data[-x, ]) 
       }
     },
     "bootstrap"   = {
       if(exists("data_split")) {
-        lapply(data_split, function(y) 
-          lapply(1:.R, function(x) {
-            y[sample(1:nrow(y), size = nrow(y), replace = TRUE), ]}))
+        future_lapply(data_split, function(y) {
+          future_lapply(1:.R, function(x) {
+            y[sample(1:nrow(y), size = nrow(y), replace = TRUE), ]
+          }, future.seed = .seed)
+        })
       } else {
-        lapply(1:.R, function(x) {
-          data[sample(1:nrow(data), size = nrow(data), replace = TRUE), ]})
+        future_lapply(1:.R, function(x) {
+          data[sample(1:nrow(data), size = nrow(data), replace = TRUE), ]}, 
+          future.seed = .seed
+        )
       }
     },
     "permutation" = {
@@ -288,7 +319,9 @@ resampleData <- function(
           "No id column specified to permutate the data with."
         )
       } else {
-        lapply(1:.R, function(x) cbind(data[,-which(colnames(data) == id)], "id" = sample(data[, id])))
+        future_lapply(1:.R, function(x) {
+          cbind(data[,-which(colnames(data) == id)], "id" = sample(data[, id]))},
+          future.seed = .seed)
       }
     },
     "cross-validation" = {
@@ -305,15 +338,15 @@ resampleData <- function(
             " in at least one of the groups."
           )
         }
-        lapply(data_split, function(y) {
-          lapply(1:.R, function(x) {
+        future_lapply(data_split, function(y) {
+          future_lapply(1:.R, function(x) {
             # shuffle data set
             y <- y[sample(1:nrow(y)), ]
             suppressWarnings(
               split(as.data.frame(y), rep(1:.cv_folds, 
                                           each = ceiling(nrow(y)/.cv_folds)))
             )
-          })
+          }, future.seed = .seed)
         })
       } else {
         ## The number of folds cannot be larger than the minimum number of
@@ -325,13 +358,13 @@ resampleData <- function(
           )
         }
         # shuffle data
-        lapply(1:.R, function(x) {
+        future_lapply(1:.R, function(x) {
           data <- data[sample(1:nrow(data)), ]
           suppressWarnings(
             split(as.data.frame(data), rep(1:.cv_folds, 
                                            each = ceiling(nrow(data)/.cv_folds)))
           )
-        })
+        }, future.seed = .seed)
       }
     } # END cross-validation
   ) # END switch
@@ -346,7 +379,7 @@ resampleData <- function(
 #' `csem(..., .resample_method = "bootstrap")` or 
 #' `csem(..., .resample_method = "jackknife")` but may also be called seperately.
 #' Technically, `resamplecSEMResults()` is a generic function with methods for
-#' all classes `cSEMResults_default`, `cSEMResults_multi` and `cSEMResults_2ndorder`.
+#' classes `cSEMResults_default`, `cSEMResults_multi` and `cSEMResults_2ndorder`.
 #' 
 #' Given `M` resamples (for bootstrap `M = .R` and for jackknife `M = N`, where
 #' `N` is the number of observations) based on the data used to compute the
@@ -357,7 +390,8 @@ resampleData <- function(
 #' Currently, the following quantities are computed and returned based on each resample: 
 #' \describe{
 #' \item{Parameters}{Path estimates, Loading estimates, Weight estimates}
-#' \item{Statistics}{The heterotrait-monotrait ratio (HTMT) (only for model without hiearchical constructs)}
+#' \item{Statistics}{The heterotrait-monotrait ratio (HTMT) (currently only for 
+#' avaiable for models without hiearchical constructs)}
 #' }
 #' 
 #' In practical application users may need to resample a specific statistic (e.g,
@@ -406,13 +440,14 @@ resampleData <- function(
 #' or `"replace"` inadmissble results in which case resampling continous until
 #' the necessary number of admissble results is reached.
 #' 
-#' The cSEM package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future} 
+#' The \pkg{cSEM} package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future} 
 #' framework \insertCite{Bengtsson2018}{cSEM}. Users may simply choose an evaluation plan
 #' via `.eval_plan` and the package takes care of all the complicated backend 
-#' issues. Currently, users may chose between standard single-core evaluation
-#' (`"sequential"`) and multiprocessing (`"multiprocess"`). The future package
+#' issues. Currently, users may chose between standard single-core/single-session
+#'  evaluation (`"sequential"`) and multiprocessing (`"multiprocess"`). The future package
 #' provides other options (e.g. `"cluster"` or `"remote"`), however, they probably 
-#' wont be needed in the context of the cSEM package. Depeding on the platform, the future
+#' wont be needed in the context of the \pkg{cSEM} package as simulations usually
+#' dont require high-performance clusters. Depeding on the platform, the future
 #' package will manage to distribute tasks to multiple R sessions (Windows)
 #' or multiple cores. Note that multiprocessing is not necessary always faster
 #' when only a "small" number of replications is required as the overhead of
@@ -421,6 +456,13 @@ resampleData <- function(
 #' As a rule of thumb, the number of resamples to should be larger than 100 
 #' to offset the overhead. 
 #'
+#' Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
+#' \href{https://github.com/HenrikBengtsson/future.apply}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
+#' It is independent of the evaluation plan. Hence, setting e.g., `.seed = 123` will
+#' generate the same random number and replicates
+#' for both `.eval_plan = "sequential"` and `.eval_plan = "multiprocess"`.
+#' See [?future_lapply][future.apply::future_lapply] for details.
+#' 
 #' @usage resamplecSEMResults(
 #'  .object                = NULL,
 #'  .resample_method       = c("bootstrap", "jackknife), 
@@ -429,20 +471,34 @@ resampleData <- function(
 #'  .R2                    = 199,
 #'  .handle_inadmissibles  = c("drop", "ignore", "replace"),
 #'  .user_funs             = NULL,
-#'  .eval_plan             = c("sequential", "multiprocess")
+#'  .eval_plan             = c("sequential", "multiprocess"),
+#'  .seed                  = sample(.Random.seed, 1)
 #' )
 #'
 #' @inheritParams csem_arguments
 #' 
-#' @return The same structure as `.object` with element `$Estimates_resamples` and
-#'   `$Information_resamples` added. See [cSEMResults] for details.
-#'   
+#' @return The core structure is the same structure as that of `.object` with
+#' the following elements added:
+#' \itemize{
+#' \item{ `$Estimates_resamples`: A list containing the `.R` resamples and
+#' the original estimates for each of the resampled quantities (Path_estimates, 
+#' Loading_estimates, Weight_estimates, (HTMT), (user defined functions). 
+#' Each list element is a list containing elements 
+#' `$Resamples` and `$Original`. `$Resamples` is a `(.R x K)` matrix with each
+#' row representing one resample for each of the `K` parameters/statistics.
+#' `$Original` contains the original estimates (vectorized by column (e.g. for the HTMT)).}
+#' \item {`$Information_resamples`: A list containing addtional information.}
+#' }
+#' See `str(<.object>, list.len = 3)` for an overview.
+#' 
 #' @references
 #'   \insertAllCited{} 
 #'   
 #' @seealso [csem], [cSEMResults]
 #'
 #' @examples
+#' 
+#' require(cSEM)
 #' 
 #' model <- "
 #' # Structural model
@@ -460,9 +516,35 @@ resampleData <- function(
 #' SAT  =~ sat1  + sat2  + sat3  + sat4
 #' VAL  =~ val1  + val2  + val3  + val4
 #' "
-#' a <- csem(satisfaction, model) # 
 #' 
-#' resample
+#' a <- csem(satisfaction, model)
+#' 
+#' # Bootstrap and jackknife estimation
+#' boot <- resamplecSEMResults(a)
+#' jack <- resamplecSEMRestuts(a, .resample_method = "jackknife") 
+#' 
+#' # Bootstrap resampling with resampling each resample (totals .R*R2 runs).
+#' boot1 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,
+#'                              .resample_method2 = "bootstrap", .R2 = 20,
+#'                               .seed = 1303)
+#'
+#' # To get inferencial quanitites such as the estimates standard error or
+#' # the percentile confidence intervall for each resampled quantity use infer()
+#' inference <- infer(boot1)
+#' inference$Path_estimates$Standard_deviation
+#' inference$Path_estimates$CI_percentile
+#' 
+#' # As usual summarize() can be called directly
+#' summarize(boot1)
+#' 
+#' # In the example above .R x .R2 = 50 x 20 = 1000. Multiprocessing will be
+#' # much here and is therefore recommended. Note that multiprocessing
+#' # does not affect the random number generation
+#' boot2 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,
+#'                              .resample_method2 = "bootstrap", .R2 = 20,
+#'                              .eval_plan = "multiprocess", .seed = 1303)
+#'
+#' identical(boot1, boot2)                  
 #' @export
 #'
 resamplecSEMResults <- function(
@@ -473,7 +555,8 @@ resamplecSEMResults <- function(
   .R2                    = args_default()$.R2,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
-  .eval_plan             = args_default()$.eval_plan
+  .eval_plan             = args_default()$.eval_plan,
+  .seed                  = args_default()$.seed
 ) {
   ## Does .object alread contain resamples
   if(any(class(.object) == "cSEMResults_resampled")) {
@@ -499,7 +582,6 @@ resamplecSEMResults <- function(
   UseMethod("resamplecSEMResults")
 }
 
-#' @describeIn fit (TODO)
 #' @export
 
 resamplecSEMResults.cSEMResults_default <- function(
@@ -510,9 +592,10 @@ resamplecSEMResults.cSEMResults_default <- function(
   .R2                    = args_default()$.R2,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
-  .eval_plan             = args_default()$.eval_plan
+  .eval_plan             = args_default()$.eval_plan,
+  .seed                  = args_default()$.seed
   ) {
-  ## Set plan on how to resolve futures 
+  ## Set plan on how to resolve futures; reset at the end 
   oplan <- future::plan()
   on.exit(future::plan(oplan), add = TRUE)
   future::plan(.eval_plan)
@@ -569,7 +652,8 @@ resamplecSEMResults.cSEMResults_default <- function(
     .R2                    = .R2,
     .handle_inadmissibles  = .handle_inadmissibles,
     .user_funs             = .user_funs,
-    .eval_plan             = .eval_plan
+    .eval_plan             = .eval_plan,
+    .seed                  = .seed  
   )
   
   # Check if at least 3 admissible results were obtained
@@ -657,7 +741,6 @@ resamplecSEMResults.cSEMResults_default <- function(
   }
 }
 
-#' @describeIn fit (TODO)
 #' @export
 
 resamplecSEMResults.cSEMResults_multi <- function(
@@ -668,7 +751,8 @@ resamplecSEMResults.cSEMResults_multi <- function(
   .R2                    = args_default()$.R2,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
-  .eval_plan             = args_default()$.eval_plan
+  .eval_plan             = args_default()$.eval_plan,
+  .seed                  = args_default()$.seed
 ) {
   
   out <- lapply(.object, function(x) {
@@ -680,7 +764,8 @@ resamplecSEMResults.cSEMResults_multi <- function(
       .R2                   = .R2,
       .handle_inadmissibles = .handle_inadmissibles,
       .user_funs            = .user_funs,
-      .eval_plan            = .eval_plan  
+      .eval_plan            = .eval_plan,
+      .seed                 = .seed
     )
   })
   ## Add/ set class
@@ -688,7 +773,6 @@ resamplecSEMResults.cSEMResults_multi <- function(
   return(out)
 }
 
-#' @describeIn fit (TODO)
 #' @export
 
 resamplecSEMResults.cSEMResults_2ndorder <- function(
@@ -699,7 +783,8 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
   .R2                    = args_default()$.R2,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
-  .eval_plan             = args_default()$.eval_plan 
+  .eval_plan             = args_default()$.eval_plan,
+  .seed                  = args_default()$.seed
 ) {
   ## Set plan on how to resolve futures 
   oplan <- future::plan()
@@ -761,7 +846,8 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
     .R2                    = .R2,
     .handle_inadmissibles  = .handle_inadmissibles,
     .user_funs             = .user_funs,
-    .eval_plan             = .eval_plan
+    .eval_plan             = .eval_plan,
+    .seed                  = .seed
   )
   
   # Check if at least 3 admissible results were obtained
@@ -861,7 +947,8 @@ resamplecSEMResultsCore <- function(
   .R2                    = args_default()$.R2,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
-  .eval_plan             = args_default()$.eval_plan
+  .eval_plan             = args_default()$.eval_plan,
+  .seed                  = args_default()$.seed
 ) {
   
   ## Get arguments
@@ -894,7 +981,14 @@ resamplecSEMResultsCore <- function(
     args[[".data"]] <- data_temp
     
     # Estimate model
-    Est_temp <- do.call(csem, args)
+    Est_temp <- if(any(class(.object) == "cSEMResults_2ndorder")) {
+      do.call(csem, args)
+    } else {
+      # its important to use foreman() here 
+      # instead of csem() to allow for lapply(x, resamplecSEMResults_default) when x 
+      # is of class cSEMResults_2ndorder.
+      do.call(foreman, args) 
+    }
     
     # Check status
     status_code <- sum(unlist(verify(Est_temp)))
@@ -990,7 +1084,7 @@ resamplecSEMResultsCore <- function(
     }
     ## Return
     x1
-  })
+  }, future.seed = .seed)
   
   ## Process data --------------------------------------------------------------
   # Delete potential NA's
@@ -999,7 +1093,7 @@ resamplecSEMResultsCore <- function(
   ## Replace inaadmissibles
   if(length(out) != .R && .resample_method == "bootstrap" && 
      .handle_inadmissibles == "replace") {
-    
+
     R_new <- .R - length(out)
     
     while (length(out) < .R) {
@@ -1011,7 +1105,8 @@ resamplecSEMResultsCore <- function(
         .resample_method2     = .resample_method2,
         .R2                   = .R2,
         .user_funs            = .user_funs,
-        .eval_plan            = .eval_plan
+        .eval_plan            = .eval_plan,
+        .seed                 = .seed
       )
       
       out <- c(out, Est_replace)
@@ -1021,17 +1116,22 @@ resamplecSEMResultsCore <- function(
   out
 }
 
-#' Internal: Inference
+#' Inference
 #'
-#' Compute quantities for inference (TODO)
+#' Calculate common inferencial quantities (e.g. estimated standard error, estimates bias,
+#' several confidence intervals) based on a `cSEMResults_resampled` object as obtained
+#' from [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
+#' or `"jackknife"` when calling [csem()].
 #'
 #' @usage infer(
-#'  .object        = args_default()$.object
+#'  .resample_object   = NULL,
+#'  .alpha             = 0.05
+#'  .bias_corrected    = TRUE
 #' )
 #'
 #' @inheritParams csem_arguments
-#'
-#' @seealso [csem], [cSEMResults]
+#' 
+#' @seealso [csem()], [resamplecSEMResults()], [cSEMResults]
 #'
 #' @examples
 #' \dontrun{
@@ -1042,83 +1142,105 @@ resamplecSEMResultsCore <- function(
 #'
 
 infer <- function(
-  .object          = args_default()$.object,
-  .alpha           = args_default()$.alpha,
-  .bias_corrected  = args_default()$.bias_corrected,
-  .statistic       = args_default()$.statistic,
-  ...
+  .resample_object          = NULL,
+  .alpha           = 0.05,
+  .bias_corrected  = TRUE
+  # .statistic       = args_default()$.statistic,
 ) {
   
-  if(exists(.object$Estimates$Estimates_resamples)) {
-    .csem_resample <- resamplecSEMResults(
-      .object = .object,
-      ...
-    )
+  if(!any(class(.object) == "cSEMResults")) {
+    stop2("The following error occured in the `infer()` function:\n",
+          "Object must be of class `cSEMResults`")
   }
   
-  .alpha <- c(0.1, 0.5, 0.234)
-  resamples1 <- a$Estimates$Estimates_resample$Estimates1
-  resamples2 <- a$Estimates$Estimates_resample$Estimates2
-  resamples1 <- .csem_resample$Resamples$Estimates1 # jackknife or bootstrap
-  resamples2 <- .csem_resample$Resamples$Estimates2 # jackknife or bootstrap
-  info       <- a$Information$Information_resample
-  object     <- a
+  if(!any(class(.object) == "cSEMResults_resampled")) {
+    stop2("The following error occured in the `infer()` function:\n",
+          "Object must contain resamples.", 
+          " Use `resamplecSEMResults(.object = .resample_object, ...)` first."
+          )
+  }
+  
+  if(any(class(.object) == "cSEMResults_2ndorder")) {
+    first_resample  <- .resample_object$Second_stage$Information$Resamples$Estimates$Estimates1
+    second_resample <- .resample_object$Second_stage$Information$Resamples$Estimates$Estimates2
+    info            <- .resample_object$Second_stage$Information$Resamples$Information
+  } else {
+    first_resample  <- .resample_object$Estimates$Estimates_resample$Estimates1
+    second_resample <- .resample_object$Estimates$Estimates_resample$Estimates2
+    info            <- .resample_object$Information$Information_resample
+  }
+  
+  # .resample_object <- a
+  # .resample_object <- a1
+  # .resample_object <- a2
+
 
   ## Compute quantiles/critical values -----------------------------------------
   probs  <- c()
   .alpha <- .alpha[order(.alpha)]
   for(i in seq_along(.alpha)) { 
-    # for every alpha: alpha/2 and 1 - alpha/2
-    probs <- c(probs, round(.alpha[i]/2, 4), round(1 - .alpha[i]/2, 4)) 
+    # Both two sided and one sided confidence intervalls may be needed.
+    # Therefore for every alpha four values will be put in a vector 
+    # 1. alpha
+    # 2. 1 - alpha
+    # 3. alpha/2
+    # 4. 1 - alpha/2
+    # to make sure the corresponding quantile is available later on. Values are
+    # round to four digits.
+    probs <- c(probs, round(.alpha, 4), round(1 - .alpha, 4), 
+               round(.alpha[i]/2, 4), round(1 - .alpha[i]/2, 4)) 
   }
 
   ## Compute statistics and quantities
   l <- list(
-    "Mean" = MeanResample(resamples1),
-    "Var"  = VarResample(.x      = resamples1, 
+    "Mean" = MeanResample(first_resample),
+    "Var"  = VarResample(.first_resample  = first_resample, 
                          .resample_method = info$Method, 
-                         .n      = info$Number_of_observations
+                         .n               = info$Number_of_observations
                          ),
-    "Sd"   = SdResample(.x = resamples1, 
+    "Sd"   = SdResample(.first_resample  = first_resample, 
                         .resample_method = info$Method, 
-                        .n = info$Number_of_observations
+                        .n               = info$Number_of_observations
                         ),
-    "Bias" = BiasResample(.x = resamples1, 
+    "Bias" = BiasResample(.first_resample  = first_resample, 
                           .resample_method = info$Method, 
-                          .n = info$Number_of_observations
+                          .n               = info$Number_of_observations
                           ),
     "CI_standard_z" = StandardCIResample(
-      .x              = resamples1, 
+      .first_resample = first_resample, 
       .bias_corrected = .bias_corrected,
       .df             = NULL,
       .dist           = "z",
-      .resample_method         = info$Method, 
+      .resample_method= info$Method, 
       .n              = info$Number_of_observations,
       .probs          = probs
       ),
     "CI_standard_t" = StandardCIResample(
-      .x              = resamples1, 
+      .first_resample = first_resample, 
       .bias_corrected = .bias_corrected,
       .df             = "type1",
       .dist           = "t",
-      .resample_method         = info$Method, 
+      .resample_method= info$Method, 
       .n              = info$Number_of_observations,
       .probs          = probs
-    ),
-    "CI_percentile" = PercentilCIResample(.x = resamples1, .probs = probs),
+      ),
+    "CI_percentile" = PercentilCIResample(
+      .first_resample = first_resample, 
+      .probs = probs
+      ),
     "CI_basic"      = BasicCIResample(
-      .x              = resamples1, 
+      .first_resample = first_resample, 
       .bias_corrected = .bias_corrected, 
       .probs          = probs
       ),
-    "CI_Bc"  = BcCI(resamples1, probs),
-    "CI_Bca" = BcaCI(.object = object, resamples1, probs),
+    "CI_Bc"  = BcCI(first_resample, probs),
+    "CI_Bca" = BcaCI(.object = object, first_resample, probs),
     "CI_t_invertall"= if(anyNA(resamples2)) {
       NA
     } else {
       TStatCIResample(
-        .x1      = resamples1, 
-        .x2      = resamples2, 
+        .first_resample      = first_resample, 
+        .second_resample      = second_resample, 
         .bias_corrected = .bias_corrected,
         .resample_method  = info$Method, 
         .resample_method2 = info$Method2, 
@@ -1136,31 +1258,22 @@ infer <- function(
   return(purrr::transpose(l))
 }
 
-#' @describeIn infer The bootstraped mean
-MeanResample <- function(.x) {
+#' @describeIn infer Computes the mean over all resamples for each resampled 
+#'                   statistic/parameter.
+MeanResample <- function(.first_resample) {
 
-  lapply(.x, function(x) {
+  lapply(.first_resample, function(x) {
     out        <- colMeans(x$Resampled)
     names(out) <- names(x$Original)
     out
   })
 }
-#' @describeIn infer (TODO)
-VarResample <- function(.x, .resample_method, .n) {
-
-  lapply(.x, function(x) {
-    out        <- matrixStats::colVars(x$Resampled)
-    names(out) <- names(x$Original)
-    if(.resample_method == "jackknife") {
-      out <- out * (.n - 1)^2/.n 
-    }
-    out
-  })
-}
-#' @describeIn infer (TODO)
-SdResample <- function(.x, .resample_method, .n) {
+#' @describeIn infer Computes the standard deviation over all resamples for each resampled 
+#'                   statistic/estimator This is usually taken to be the estimate
+#'                   of the standard error of the statistic/estimator.
+SdResample <- function(.first_resample, .resample_method, .n) {
   
-  lapply(.x, function(x) {
+  lapply(.first_resample, function(x) {
     out        <- matrixStats::colSds(x$Resampled)
     names(out) <- names(x$Original)
     if(.resample_method == "jackknife") {
@@ -1169,10 +1282,11 @@ SdResample <- function(.x, .resample_method, .n) {
     out
   })
 }
-#' @describeIn infer (TODO)
-BiasResample <- function(.x, .resample_method, .n) {
+#' @describeIn infer Computes the estimated bias for each resampled 
+#'                   statistic/estimator. 
+BiasResample <- function(.first_resample, .resample_method, .n) {
   
-  lapply(.x, function(x) {
+  lapply(.first_resample, function(x) {
     out        <- colMeans(x$Resampled) - x$Original
     names(out) <- names(x$Original)
     if(.resample_method == "jackknife") {
@@ -1181,12 +1295,16 @@ BiasResample <- function(.x, .resample_method, .n) {
     out
   })
 }
-#' @describeIn infer (TODO)
+#' @describeIn infer Computes the *Standard CI with bootstrap SE's*.
+#'  Critical quantiles can be based on both the `t`- or the 
+#' standard normal distribution (`z`). The former may perform better in
+#' small samples but there is no clear consenus on what the degrees of freedom
+#' should be.
 StandardCIResample <- function(
-  .x, 
+  .first_resample, 
   .bias_corrected,
-  .df = c("type1", "type2"),
   .dist = c("z", "t"), 
+  .df = c("type1", "type2"),
   .resample_method, 
   .n,
   .probs
@@ -1201,14 +1319,14 @@ StandardCIResample <- function(
   # if c() is based on a symmetric distribution.
   
   ## Compute standard deviation
-  boot_sd <- SdResample(.x, .resample_method = .resample_method, .n = .n)
+  boot_sd <- SdResample(.first_resample, .resample_method = .resample_method, .n = .n)
   
   ## confidence level (for rownames)
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
   
   ## Compute intervals
   # Notation:
-  # w = .x := the list containing the estimated values based on .R resamples
+  # w = .first_resample := the list containing the estimated values based on .R resamples
   #           and the original values
   # y      := the estimated standard errors (based on .R resamples)
   # z      := a vector of probabilities
@@ -1232,7 +1350,7 @@ StandardCIResample <- function(
         theta_star + qnorm(z) * y
       }
     })
-  }, w = .x, y = boot_sd, SIMPLIFY = FALSE) %>% 
+  }, w = .first_resample, y = boot_sd, SIMPLIFY = FALSE) %>% 
     lapply(function(x) do.call(rbind, x)) %>% 
     lapply(function(x) {
       rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
@@ -1240,8 +1358,11 @@ StandardCIResample <- function(
     })
   return(out)
 }
-#' @describeIn infer (TODO)
-PercentilCIResample <- function(.x, .probs) {
+#' @describeIn infer Computes the *Percentile CI*.
+#'   The function takes the distribution F* (the CDF) of the resamples as an estimator for
+#'   the true distribution F of the statistic/estimator of interest. 
+#'   Quantiles of the estimated distribution are then used as lower and upper bound.
+PercentilCIResample <- function(.first_resample, .probs) {
   # Percentile CI 
   # Take the bootstrap distribution F* (the CDF) as an estimator for
   # the true distribution F. Use the quantiles of the estimated distribution
@@ -1251,15 +1372,15 @@ PercentilCIResample <- function(.x, .probs) {
   ## confidence level (for rownames)
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
   
-  lapply(.x, function(x) {
+  lapply(.first_resample, function(x) {
     out <- t(matrixStats::colQuantiles(x$Resampled, probs = .probs, drop = FALSE))
     colnames(out) <- names(x$Original)
     rownames(out) <- paste0(c("L_", "U_"), rep(cl, each = 2))
     out
   })
 }
-#' @describeIn infer (TODO)
-BasicCIResample <- function(.x, .bias_corrected, .probs) {
+#' @describeIn infer Computes the *Basic CI*.
+BasicCIResample <- function(.first_resample, .bias_corrected, .probs) {
   # Basic CI 
   # Estimate the distribution of delta_hat = theta_hat - theta by the bootstrap 
   # distribution delta_hat_star = theta_hat_star - theta_hat.
@@ -1280,7 +1401,7 @@ BasicCIResample <- function(.x, .bias_corrected, .probs) {
   ## confidence level (for rownames)
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
   
-  lapply(.x, function(x) {
+  lapply(.first_resample, function(x) {
     out <- t(matrixStats::colQuantiles(x$Resample, probs = .probs, drop = FALSE))
     
     theta_star <- if(.bias_corrected) {
@@ -1297,10 +1418,12 @@ BasicCIResample <- function(.x, .bias_corrected, .probs) {
     out
   })
 }
-#' @describeIn infer (TODO)
+#' @describeIn infer Computes the *Studentized or t-statistic CI*
+#' The function computes a boostrap t-statisic (since it is roughly pivotal) and constructs
+#' the CI based on bootstraped t-values and bootstraped/jackknife SE's
 TStatCIResample <- function(
-  .x1, 
-  .x2, 
+  .first_resample, 
+  .second_resample, 
   .bias_corrected,
   .resample_method, 
   .resample_method2, 
@@ -1315,14 +1438,14 @@ TStatCIResample <- function(
   ## confidence level (for rownames)
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
   
-  boot_sd_star <- lapply(.x2, SdResample, .resample_method = .resample_method2, .n = .n) %>% 
+  boot_sd_star <- lapply(.second_resample, SdResample, .resample_method = .resample_method2, .n = .n) %>% 
     purrr::transpose(.) %>% 
     lapply(function(y) do.call(rbind, y))
   
-  boot_sd <- SdResample(.x1, .resample_method = .resample_method, .n = .n)
+  boot_sd <- SdResample(.first_resample, .resample_method = .resample_method, .n = .n)
   
   boot_t_stat <- mapply(function(x, y) t(t(x$Resampled) - x$Original) / y,
-                   x = .x1,
+                   x = .first_resample,
                    y = boot_sd_star)
 
   i <- 1
@@ -1333,14 +1456,14 @@ TStatCIResample <- function(
       qt_boot <- t(matrixStats::colQuantiles(boot_t_stat[[i]], probs = z, drop = FALSE))
       
       theta_star <- if(.bias_corrected) {
-        2*.x1[[i]]$Original - colMeans(.x1[[i]]$Resampled) # theta_hat - Bias = 2*theta_hat - mean_theta_hat_star
+        2*.first_resample[[i]]$Original - colMeans(.first_resample[[i]]$Resampled) # theta_hat - Bias = 2*theta_hat - mean_theta_hat_star
       } else {
-        .x1[[i]]$Original
+        .first_resample[[i]]$Original
       }
       ## Confidence interval
       theta_star - qt_boot * y
     })
-  }, i = seq_along(.x1), y = boot_sd, SIMPLIFY = FALSE) %>% 
+  }, i = seq_along(.first_resample), y = boot_sd, SIMPLIFY = FALSE) %>% 
     lapply(function(x) do.call(rbind, x)) %>% 
     lapply(function(x) {
       x <- x[1:nrow(x) + rep(c(1, -1), times = nrow(x)/2), , drop = FALSE]
@@ -1348,16 +1471,16 @@ TStatCIResample <- function(
       x
     })
 
-  names(out) <- names(.x1)
+  names(out) <- names(.first_resample)
   return(out)
 }
 #' @describeIn infer (TODO)
-BcCI <- function(.x, .probs) {
+BcCI <- function(.first_resample, .probs) {
   
   ## confidence level (for rownames)
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
 
-  out <- lapply(.x, function(x) {
+  out <- lapply(.first_resample, function(x) {
     p0 <- colMeans(t(t(x$Resampled) <= x$Original))
     z0 <- qnorm(p0)
     
@@ -1381,7 +1504,7 @@ BcCI <- function(.x, .probs) {
   return(out)
 }
 #' @describeIn infer (TODO)
-BcaCI <- function(.object, .x, .probs) {
+BcaCI <- function(.object, .first_resample, .probs) {
   ## confidence level (for rownames)
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
   
@@ -1398,15 +1521,15 @@ BcaCI <- function(.object, .x, .probs) {
   a <- lapply(jack, function(x) t(x$Original - t(x$Resampled))) %>% 
     lapply(function(x) apply(x, 2, aFun)) 
   
-  p0 <- lapply(.x, function(x) colMeans(t(t(x$Resampled) <= x$Original)))
+  p0 <- lapply(.first_resample, function(x) colMeans(t(t(x$Resampled) <= x$Original)))
   z0 <- lapply(p0, qnorm)
 
-  out <- lapply(seq_along(.x), function(i) {
+  out <- lapply(seq_along(.first_resample), function(i) {
     bca <- lapply(1:length(z0[[i]]), function(j) {
       q <- pnorm(z0[[i]][j] + (z0[[i]][j] + qnorm(.probs))/ (1 - a[[i]][j]*(z0[[i]][j] + qnorm(.probs)))) 
-      quantile(.x[[i]]$Resampled[, j], probs = q)
+      quantile(.first_resample[[i]]$Resampled[, j], probs = q)
     })
-    names(bca) <- names(.x[[i]]$Original)
+    names(bca) <- names(.first_resample[[i]]$Original)
     bca
   })%>% 
     lapply(function(x) t(do.call(rbind, x))) %>% 
@@ -1415,6 +1538,19 @@ BcaCI <- function(.object, .x, .probs) {
       x
     })
   
-  names(out) <- names(.x)
+  names(out) <- names(.first_resample)
   out
 }
+
+###
+# VarResample <- function(.first_resample, .resample_method, .n) {
+# 
+#   lapply(.first_resample, function(x) {
+#     out        <- matrixStats::colVars(x$Resampled)
+#     names(out) <- names(x$Original)
+#     if(.resample_method == "jackknife") {
+#       out <- out * (.n - 1)^2/.n 
+#     }
+#     out
+#   })
+# }
