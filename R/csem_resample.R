@@ -434,7 +434,7 @@ resampleData <- function(
 #'
 #' @inheritParams csem_arguments
 #' 
-#' @return The same structure as `.obeject` with element `$Estimates_resamples` and
+#' @return The same structure as `.object` with element `$Estimates_resamples` and
 #'   `$Information_resamples` added. See [cSEMResults] for details.
 #'   
 #' @references
@@ -477,7 +477,7 @@ resamplecSEMResults <- function(
 ) {
   ## Does .object alread contain resamples
   if(any(class(.object) == "cSEMResults_resampled")) {
-    stop2("The following issue was encountered in the `resamplecSEMResults()` functions:\n",
+    stop2("The following issue was encountered in the `resamplecSEMResults()` function:\n",
           "The object provided already contains resamples.")
   }
   
@@ -490,7 +490,7 @@ resamplecSEMResults <- function(
   ## Has the object to use the data to resample from produced admissible results?
   if(sum(unlist(verify(.object))) != 0) {
     warning2(
-      "The following issue was encountered in the `resamplecSEMResults()` functions:\n",
+      "The following issue was encountered in the `resamplecSEMResults()` function:\n",
       "Estimation based on the original data has produced inadmissible results.\n", 
       "This may be a sign that something is wrong.",
       " Resampling will continue but may not produce reliable results.")
@@ -804,11 +804,11 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
   #      2.4 Original_object        := the original cSEMResults object
   #
   # Since resamplecSEMResults is called recursivly within its body it is 
-  # difficult to produce the desired output. There is now straightforward way 
-  # to determine if a call is a recursive call or not
+  # difficult to produce the desired output. There is no straightforward way in R
+  # to determine if a call is a recursive call or not.
   # My workaround for now is to simply check if the argument provided for ".object"
   # is "Est_temp" since this is the argument for the recurive call. This
-  # is of course not general but a dirty workaround. I guess it is save enough
+  # is of course not general but a workaround. I guess it is save enough
   # though.
   is_recursive_call <- eval.parent(as.list(match.call()))$.object == "Est_temp"
   
@@ -822,13 +822,7 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
     } else {
       out <- list("Estimates1" = out, "Estimates2" = NA)
     }
-    
-    ## Add resamples and additional information to .object
-    # Estimates
-    # estim <- c(.object$Estimates)
-    # estim[[length(estim) + 1]] <- c(out)
-    # names(estim)[length(estim)] <- "Estimates_resample"
-    # 
+
     # Add resamples to the second stage
     resample_out <- c(.object$Second_stage$Information)
     resample_out[[length(resample_out) + 1]] <- list(
@@ -908,6 +902,56 @@ resamplecSEMResultsCore <- function(
     # Distinguish depending on how inadmissibles should be handled
     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       
+      ## Summarize
+      summary_temp <- summarize(Est_temp)
+      
+      if(any(class(Est_temp) == "cSEMResults_2ndorder")) {
+        
+        est_1stage <- summary_temp$First_stage$Estimates
+        est_2stage <- summary_temp$Second_stage$Estimates
+        
+        x1 <- list()
+        ## Select relevant statistics/parameters/quantities and vectorize
+        # Path estimates
+        x1[["Path_estimates"]] <- est_2stage$Path_estimates$Estimate
+        names(x1[["Path_estimates"]]) <- est_2stage$Path_estimates$Name
+        
+        # Loading estimates
+        x1[["Loading_estimates"]] <- c(est_1stage$Loading_estimates$Estimate, 
+                                       est_2stage$Loading_estimates$Estimate)
+        names(x1[["Loading_estimates"]]) <- c(est_1stage$Loading_estimates$Name,
+                                              est_2stage$Loading_estimates$Name)
+        
+        # Weight estimates
+        x1[["Weight_estimates"]] <- c(est_1stage$Weight_estimates$Estimate, 
+                                      est_2stage$Weight_estimates$Estimate)
+        names(x1[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
+                                             est_2stage$Weight_estimates$Name)
+      } else { # default
+
+        x1 <- list()
+        ## Select relevant statistics/parameters/quantities and vectorize
+        # Path estimates
+        x1[["Path_estimates"]] <- summary_temp$Estimates$Path_estimates$Estimate
+        names(x1[["Path_estimates"]]) <- summary_temp$Estimates$Path_estimates$Name
+        
+        # Loading estimates
+        x1[["Loading_estimates"]] <- summary_temp$Estimates$Loading_estimates$Estimate
+        names(x1[["Loading_estimates"]]) <- summary_temp$Estimates$Loading_estimates$Name
+        
+        # Weight estimates
+        x1[["Weight_estimates"]] <- summary_temp$Estimates$Weight_estimates$Estimate
+        names(x1[["Weight_estimates"]]) <- summary_temp$Estimates$Weight_estimates$Name
+        
+        ## Additional statistics
+        # HTMT
+        htmt <- c(HTMT(Est_temp))
+        x1[[length(x1) + 1]] <- htmt
+        names(x1)[length(x1)] <- "HTMT"
+      }
+      
+
+
       ## Apply user defined function if specified
       user_funs <- if(!is.null(.user_funs)) {
         if(is.function(.user_funs)) {
@@ -921,57 +965,13 @@ resamplecSEMResultsCore <- function(
         }
       }
       
-      ## Summarize
-      summary_temp <- summarize(Est_temp)
-      est_1stage <- summary_temp$First_stage$Estimates
-      est_2stage <- summary_temp$Second_stage$Estimates
-      
-      x1 <- list()
-      ## Select relevant statistics/parameters/quantities and vectorize
-      # Path estimates
-      x1[["Path_estimates"]] <- est_2stage$Path_estimates$Estimate
-      names(x1[["Path_estimates"]]) <- est_2stage$Path_estimates$Name
-      
-      # Loading estimates
-      x1[["Loading_estimates"]] <- c(est_1stage$Loading_estimates$Estimate, 
-                                     est_2stage$Loading_estimates$Estimate)
-      names(x1[["Loading_estimates"]]) <- c(est_1stage$Loading_estimates$Name,
-                                            est_2stage$Loading_estimates$Name)
-      
-      # Weight estimates
-      x1[["Weight_estimates"]] <- c(est_1stage$Weight_estimates$Estimate, 
-                                    est_2stage$Weight_estimates$Estimate)
-      names(x1[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
-                                           est_2stage$Weight_estimates$Name)
-      
-      # ## Process
-      # x1  <- Est_temp$Estimates
-      # x2  <- Est_temp$Information
-      # 
-      # x1$Path_estimates    <- t(x1$Path_estimates)[t(x2$Model$structural) != 0]
-      # x1$Loading_estimates <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0]
-      # x1$Weight_estimates  <- t(x1$Weight_estimates)[t(x2$Model$measurement) != 0]
-      # x1$Inner_weight_estimates  <- NULL
-      # x1$Construct_scores        <- NULL
-      # x1$Indicator_VCV           <- NULL
-      # x1$Proxy_VCV               <- NULL
-      # x1$Construct_VCV           <- NULL
-      # x1$Cross_loadings          <- NULL
-      # x1$Construct_reliabilities <- NULL
-      # x1$Correction_factors      <- NULL
-      # x1$R2                      <- NULL
-      # x1$R2adj                   <- NULL
-      # x1$VIF                     <- NULL
-      
-      ## Additional statistics
-
-      ## Add output of the user functions to Est_original
+      ## Add output of the user functions to x1
       if(!is.null(.user_funs)) {
         x1 <- c(x1, user_funs)
       }
       
       ## Resampling from a bootstrap sample is required for the
-      ## bootstraped t-interval CI, hence the second run
+      ## bootstraped t-interval CI (studentized CI), hence the second run
       if(.resample_method2 != "none") {
         
         Est_resamples2 <- resamplecSEMResults(
@@ -1020,6 +1020,7 @@ resamplecSEMResultsCore <- function(
   
   out
 }
+
 #' Internal: Inference
 #'
 #' Compute quantities for inference (TODO)

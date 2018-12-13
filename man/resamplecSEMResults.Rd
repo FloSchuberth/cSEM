@@ -51,7 +51,7 @@ vectorized (columnwise) in this case. See the examples section for details.}
 all available cores will be used. Defaults to "\emph{sequential}".}
 }
 \value{
-The same structure as \code{.obeject} with element \code{$Estimates_resamples} and
+The same structure as \code{.object} with element \code{$Estimates_resamples} and
 \code{$Information_resamples} added. See \link{cSEMResults} for details.
 }
 \description{

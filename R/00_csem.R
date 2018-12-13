@@ -140,33 +140,38 @@ csem <- function(
   args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))]
   
   ## Parse model
-  model <- parseModel(.model)
+  model_original <- parseModel(.model)
   
   ## Modify model if model contains second order constructs
-  if(any(model$construct_order == "Second order")) {
-    model1 <- convertModel(
-      .csem_model        = model, 
+  if(any(model_original$construct_order == "Second order")) {
+    model_1stage <- convertModel(
+      .csem_model        = model_original, 
       .approach_2ndorder = args$.approach_2ndorder,
       .stage             = "first")
     ## Update model
-    model1$construct_order <- model$construct_order
-    args_needed[[".model"]] <- model1
+    model_1stage$construct_order <- model_original$construct_order
+    args_needed[[".model"]] <- model_1stage
   } else {
-    args_needed[[".model"]] <- model
+    args_needed[[".model"]] <- model_original
   }
     
   ## Check data
   if(!any(class(.data) %in% c("data.frame", "matrix", "list"))) {
-    stop("Data must be provided as a `matrix`, a `data.frame` or a `list`. ", 
-         ".data has class: ", 
-         class(.data), call. = FALSE)
+    stop2(
+      "The following error occured in the `csem()` function:\n",
+      "Data must be provided as a `matrix`, a `data.frame` or a `list`. ", 
+      ".data has class: ", 
+      paste0(class(.data), collapse = ", ")
+      )
   }
   ## Select cases
   if(!is.null(.id) && !inherits(.data, "list")) {
 
     if(length(.id) != 1) {
-      stop("`.id` must be a character string or an integer identifying one single column.",
-           call. = FALSE)
+      stop2(
+        "The following error occured in the `csem()` function:\n",
+        "`.id` must be a character string or an integer identifying one single column."
+        )
     }
     
     if(is.matrix(.data)) {
@@ -223,15 +228,17 @@ csem <- function(
 
     class(out) <- c("cSEMResults", "cSEMResults_multi")
     
-  } else if(any(model$construct_order == "Second order") && 
+  } else if(any(model_original$construct_order == "Second order") && 
             args$.approach_2ndorder == "3stage") {
     
     ### Second step
     # Note: currently only data supplied as a list or grouped data is not allowed
-    out2 <- calculate2ndOrder(model, out)
+    out2 <- calculate2ndOrder(model_original, out)
     out <- list("First_stage" = out, "Second_stage" = out2)
-    ## Append original arguments needed as they are required by e.g. testOMF.
     
+    ## Append original arguments needed as they are required by e.g. testOMF.
+    # Since 
+    args_needed[[".model"]] <- model_original
     out$Second_stage$Information$Arguments_original <- args_needed
     
     class(out) <- c("cSEMResults", "cSEMResults_2ndorder")
