@@ -293,20 +293,20 @@ resampleData <- function(
   out <- switch (.resample_method,
     "jackknife"   = {
       if(exists("data_split")) {
-        future_lapply(data_split, function(y) future_lapply(1:nrow(y), function(x) y[-x, ]))
+        future.apply::future_lapply(data_split, function(y) future.apply::future_lapply(1:nrow(y), function(x) y[-x, ]))
       } else {
-        future_lapply(1:nrow(data), function(x) data[-x, ]) 
+        future.apply::future_lapply(1:nrow(data), function(x) data[-x, ]) 
       }
     },
     "bootstrap"   = {
       if(exists("data_split")) {
-        future_lapply(data_split, function(y) {
-          future_lapply(1:.R, function(x) {
+        future.apply::future_lapply(data_split, function(y) {
+          future.apply::future_lapply(1:.R, function(x) {
             y[sample(1:nrow(y), size = nrow(y), replace = TRUE), ]
           }, future.seed = .seed)
         })
       } else {
-        future_lapply(1:.R, function(x) {
+        future.apply::future_lapply(1:.R, function(x) {
           data[sample(1:nrow(data), size = nrow(data), replace = TRUE), ]}, 
           future.seed = .seed
         )
@@ -319,7 +319,7 @@ resampleData <- function(
           "No id column specified to permutate the data with."
         )
       } else {
-        future_lapply(1:.R, function(x) {
+        future.apply::future_lapply(1:.R, function(x) {
           cbind(data[,-which(colnames(data) == id)], "id" = sample(data[, id]))},
           future.seed = .seed)
       }
@@ -338,8 +338,8 @@ resampleData <- function(
             " in at least one of the groups."
           )
         }
-        future_lapply(data_split, function(y) {
-          future_lapply(1:.R, function(x) {
+        future.apply::future_lapply(data_split, function(y) {
+          future.apply::future_lapply(1:.R, function(x) {
             # shuffle data set
             y <- y[sample(1:nrow(y)), ]
             suppressWarnings(
@@ -358,7 +358,7 @@ resampleData <- function(
           )
         }
         # shuffle data
-        future_lapply(1:.R, function(x) {
+        future.apply::future_lapply(1:.R, function(x) {
           data <- data[sample(1:nrow(data)), ]
           suppressWarnings(
             split(as.data.frame(data), rep(1:.cv_folds, 
@@ -651,6 +651,7 @@ resamplecSEMResults.cSEMResults_default <- function(
     .R                     = .R,
     .R2                    = .R2,
     .handle_inadmissibles  = .handle_inadmissibles,
+    .handle_inadmissibles2 = .handle_inadmissibles, 
     .user_funs             = .user_funs,
     .eval_plan             = .eval_plan,
     .seed                  = .seed  
@@ -845,6 +846,7 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
     .R                     = .R,
     .R2                    = .R2,
     .handle_inadmissibles  = .handle_inadmissibles,
+    .handle_inadmissibles2 = .handle_inadmissibles,
     .user_funs             = .user_funs,
     .eval_plan             = .eval_plan,
     .seed                  = .seed
@@ -946,6 +948,7 @@ resamplecSEMResultsCore <- function(
   .R                     = args_default()$.R,
   .R2                    = args_default()$.R2,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .handle_inadmissibles2 = NULL,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan,
   .seed                  = args_default()$.seed
@@ -1043,9 +1046,7 @@ resamplecSEMResultsCore <- function(
         x1[[length(x1) + 1]] <- htmt
         names(x1)[length(x1)] <- "HTMT"
       }
-      
-
-
+    
       ## Apply user defined function if specified
       user_funs <- if(!is.null(.user_funs)) {
         if(is.function(.user_funs)) {
@@ -1071,9 +1072,10 @@ resamplecSEMResultsCore <- function(
         Est_resamples2 <- resamplecSEMResults(
           .object               = Est_temp,
           .R                    = .R2,
-          .handle_inadmissibles = .handle_inadmissibles,
+          .handle_inadmissibles = .handle_inadmissibles2,
           .resample_method      = .resample_method2,
-          .user_funs            = .user_funs
+          .user_funs            = .user_funs,
+          .seed                 = .seed
         )
         x1 <- list("Estimates1" = x1, "Estimates2" = Est_resamples2)
       }
@@ -1090,17 +1092,20 @@ resamplecSEMResultsCore <- function(
   # Delete potential NA's
   out <- Filter(Negate(anyNA), Est_ls)
   
-  ## Replace inaadmissibles
+  ## Replace inadmissibles
   if(length(out) != .R && .resample_method == "bootstrap" && 
      .handle_inadmissibles == "replace") {
-
-    R_new <- .R - length(out)
     
+    n_attempt <- 0
     while (length(out) < .R) {
+      n_attempt <- n_attempt + 1
+      R_new <- .R - length(out)
+      
       Est_replace <- resamplecSEMResultsCore(
         .object               = .object,
         .R                    = R_new,
-        .handle_inadmissibles = .handle_inadmissibles,
+        .handle_inadmissibles = "drop",
+        .handle_inadmissibles2= .handle_inadmissibles, 
         .resample_method      = .resample_method,
         .resample_method2     = .resample_method2,
         .R2                   = .R2,
@@ -1110,6 +1115,15 @@ resamplecSEMResultsCore <- function(
       )
       
       out <- c(out, Est_replace)
+      
+      if(n_attempt == 10*.R) {
+        warning2(
+          "The following issue was encountered in the `resamplecSEMResults()` function:\n",
+          "Attempting to replace inadmissibles failed after ", 10*.R, " attempts.",
+          " Returning all admissible results up to the last attempt."
+          )
+        break
+      }
     }
   }
   
@@ -1142,7 +1156,7 @@ resamplecSEMResultsCore <- function(
 #'
 
 infer <- function(
-  .resample_object          = NULL,
+  .resample_object = NULL,
   .alpha           = 0.05,
   .bias_corrected  = TRUE
   # .statistic       = args_default()$.statistic,
@@ -1170,7 +1184,7 @@ infer <- function(
     info            <- .resample_object$Information$Information_resample
   }
   
-  # .resample_object <- a
+  .resample_object <- aa
   # .resample_object <- a1
   # .resample_object <- a2
 
@@ -1187,17 +1201,14 @@ infer <- function(
     # 4. 1 - alpha/2
     # to make sure the corresponding quantile is available later on. Values are
     # round to four digits.
-    probs <- c(probs, round(.alpha, 4), round(1 - .alpha, 4), 
+    probs <- c(probs, 
+               # round(.alpha, 4), round(1 - .alpha, 4), 
                round(.alpha[i]/2, 4), round(1 - .alpha[i]/2, 4)) 
   }
 
   ## Compute statistics and quantities
   l <- list(
     "Mean" = MeanResample(first_resample),
-    "Var"  = VarResample(.first_resample  = first_resample, 
-                         .resample_method = info$Method, 
-                         .n               = info$Number_of_observations
-                         ),
     "Sd"   = SdResample(.first_resample  = first_resample, 
                         .resample_method = info$Method, 
                         .n               = info$Number_of_observations
@@ -1234,18 +1245,18 @@ infer <- function(
       .probs          = probs
       ),
     "CI_Bc"  = BcCI(first_resample, probs),
-    "CI_Bca" = BcaCI(.object = object, first_resample, probs),
+    "CI_Bca" = BcaCI(.object = .resample_object, first_resample, probs),
     "CI_t_invertall"= if(anyNA(resamples2)) {
       NA
     } else {
       TStatCIResample(
-        .first_resample      = first_resample, 
-        .second_resample      = second_resample, 
-        .bias_corrected = .bias_corrected,
-        .resample_method  = info$Method, 
-        .resample_method2 = info$Method2, 
-        .n       = info$Number_of_observations, 
-        .probs   = probs
+        .first_resample     = first_resample, 
+        .second_resample    = second_resample, 
+        .bias_corrected     = .bias_corrected,
+        .resample_method    = info$Method, 
+        .resample_method2   = info$Method2, 
+        .n                  = info$Number_of_observations, 
+        .probs              = probs
       ) 
     }
   )
@@ -1509,10 +1520,16 @@ BcaCI <- function(.object, .first_resample, .probs) {
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
   
   ## influence values (estimated via jackknife)
+  # Delete resamples and cSEMResults_resampled class tag 
+  # to be able to run resampling again. 
+  .object$Estimates$Estimates_resample <- NULL
+  .object$Estimates$Information_resample <- NULL
+  class(.object) <- setdiff(class(.object), "cSEMResults_resampled")
+  
   jack <- resamplecSEMResults(
     .object = .object,
     .resample_method = "jackknife"
-  )$Resamples$Estimates1
+  )$Estimates$Estimates_resample$Estimates1
   
   aFun <- function(x) {
     1/6 * (sum(x^3) / sum(x^2)^1.5)
