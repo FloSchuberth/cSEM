@@ -1074,6 +1074,7 @@ resamplecSEMResultsCore <- function(
           .R                    = .R2,
           .handle_inadmissibles = .handle_inadmissibles2,
           .resample_method      = .resample_method2,
+          .resample_method2     = "none",
           .user_funs            = .user_funs,
           .seed                 = .seed
         )
