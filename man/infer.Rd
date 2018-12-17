@@ -16,7 +16,8 @@
 infer(
  .resample_object   = NULL,
  .alpha             = 0.05
- .bias_corrected    = TRUE
+ .bias_corrected    = TRUE,
+ .quantity          = ("all")
 )
 
 MeanResample(.first_resample)
@@ -82,7 +83,23 @@ intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\
 Calculate common inferencial quantities (e.g. estimated standard error, estimates bias,
 several confidence intervals) based on a \code{cSEMResults_resampled} object as obtained
 from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
-or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.
+or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}. Currently, the following quantities are
+returned by default (\code{.quantity = "all"}):
+\describe{
+\item{\code{Mean}, \code{Sd} and \code{Bias}}{The mean, the standard
+deviation and the bias (defined as the difference between the resample mean
+and the original estimate).}
+\item{\code{CI_standard_z} and \code{CI-standard_t}}{The standard confidence interval
+with standard errors estimated by the resample standard deviation.
+While \code{CI_standard_z} assumes a standard-normally distributed statistic,
+\code{CI_standard_t} assumes a t-statistic with \code{.df = c("type1", "type2")}}
+\item{\code{CI_percentile}}{The percentile confidence interval}
+\item{\code{CI_basic}}{The basic confidence interval}
+\item{\code{CI_Bc}}{The bias corrected confidence interval}
+\item{\code{CI_Bca}}{The bias corrected and accelerated confidence interval}
+\item{\code{CI-t-interval}}{The "studentized" confidence interval}
+}
+See for details on their use and calculation.
 }
 \section{Functions}{
 \itemize{

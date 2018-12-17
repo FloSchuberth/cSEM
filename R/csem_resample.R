@@ -1135,12 +1135,29 @@ resamplecSEMResultsCore <- function(
 #' Calculate common inferencial quantities (e.g. estimated standard error, estimates bias,
 #' several confidence intervals) based on a `cSEMResults_resampled` object as obtained
 #' from [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
-#' or `"jackknife"` when calling [csem()].
-#'
+#' or `"jackknife"` when calling [csem()]. Currently, the following quantities are
+#' returned by default (`.quantity = "all"`):
+#' \describe{
+#' \item{`Mean`, `Sd` and `Bias`}{The mean, the standard 
+#'   deviation and the bias (defined as the difference between the resample mean
+#'   and the original estimate).}
+#' \item{`CI_standard_z` and `CI-standard_t`}{The standard confidence interval 
+#'   with standard errors estimated by the resample standard deviation. 
+#'   While `CI_standard_z` assumes a standard-normally distributed statistic,
+#'   `CI_standard_t` assumes a t-statistic with `.df = c("type1", "type2")`}
+#' \item{`CI_percentile`}{The percentile confidence interval}
+#' \item{`CI_basic`}{The basic confidence interval}
+#' \item{`CI_Bc`}{The bias corrected confidence interval}
+#' \item{`CI_Bca`}{The bias corrected and accelerated confidence interval}
+#' \item{`CI-t-interval`}{The "studentized" confidence interval}
+#' }
+#' See for details on their use and calculation.
+#' 
 #' @usage infer(
 #'  .resample_object   = NULL,
 #'  .alpha             = 0.05
-#'  .bias_corrected    = TRUE
+#'  .bias_corrected    = TRUE,
+#'  .quantity          = ("all")
 #' )
 #'
 #' @inheritParams csem_arguments
@@ -1158,23 +1175,23 @@ resamplecSEMResultsCore <- function(
 infer <- function(
   .resample_object = NULL,
   .alpha           = 0.05,
-  .bias_corrected  = TRUE
-  # .statistic       = args_default()$.statistic,
+  .bias_corrected  = TRUE,
+  .quantity        = c("all", "Mean", "Sd", "Bias")
 ) {
   
-  if(!any(class(.object) == "cSEMResults")) {
+  if(!any(class(.resample_object) == "cSEMResults")) {
     stop2("The following error occured in the `infer()` function:\n",
           "Object must be of class `cSEMResults`")
   }
   
-  if(!any(class(.object) == "cSEMResults_resampled")) {
+  if(!any(class(.resample_object) == "cSEMResults_resampled")) {
     stop2("The following error occured in the `infer()` function:\n",
           "Object must contain resamples.", 
           " Use `resamplecSEMResults(.object = .resample_object, ...)` first."
           )
   }
   
-  if(any(class(.object) == "cSEMResults_2ndorder")) {
+  if(any(class(.resample_object) == "cSEMResults_2ndorder")) {
     first_resample  <- .resample_object$Second_stage$Information$Resamples$Estimates$Estimates1
     second_resample <- .resample_object$Second_stage$Information$Resamples$Estimates$Estimates2
     info            <- .resample_object$Second_stage$Information$Resamples$Information
@@ -1184,7 +1201,7 @@ infer <- function(
     info            <- .resample_object$Information$Information_resample
   }
   
-  .resample_object <- aa
+  # .resample_object <- aa
   # .resample_object <- a1
   # .resample_object <- a2
 
@@ -1246,7 +1263,7 @@ infer <- function(
       ),
     "CI_Bc"  = BcCI(first_resample, probs),
     "CI_Bca" = BcaCI(.object = .resample_object, first_resample, probs),
-    "CI_t_invertall"= if(anyNA(resamples2)) {
+    "CI_t_invertal"= if(anyNA(second_resample)) {
       NA
     } else {
       TStatCIResample(
