@@ -263,7 +263,8 @@ csem <- function(
       .R2                   = .R2,
       .handle_inadmissibles = .handle_inadmissibles,
       .user_funs            = .user_funs,
-      .eval_plan            = .eval_plan  
+      .eval_plan            = .eval_plan,
+      .seed                 = .seed
     )
   }
   

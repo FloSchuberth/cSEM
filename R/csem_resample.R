@@ -1101,6 +1101,7 @@ resamplecSEMResultsCore <- function(
     while (length(out) < .R) {
       n_attempt <- n_attempt + 1
       R_new <- .R - length(out)
+      .seed <- .seed + 1
       
       Est_replace <- resamplecSEMResultsCore(
         .object               = .object,
