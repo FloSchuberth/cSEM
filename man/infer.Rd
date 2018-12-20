@@ -9,8 +9,8 @@
 \alias{PercentilCIResample}
 \alias{BasicCIResample}
 \alias{TStatCIResample}
-\alias{BcCI}
-\alias{BcaCI}
+\alias{BcCIResample}
+\alias{BcaCIResample}
 \title{Inference}
 \usage{
 infer(
@@ -36,9 +36,9 @@ BasicCIResample(.first_resample, .bias_corrected, .probs)
 TStatCIResample(.first_resample, .second_resample, .bias_corrected,
   .resample_method, .resample_method2, .n, .probs)
 
-BcCI(.first_resample, .probs)
+BcCIResample(.first_resample, .probs)
 
-BcaCI(.object, .first_resample, .probs)
+BcaCIResample(.object, .first_resample, .probs)
 }
 \arguments{
 \item{.alpha}{An integer or a numeric vector of significance levels.
@@ -50,6 +50,10 @@ If \code{TRUE} the confidence intervall for some estimated parameter \code{theta
 is centered at \code{2*theta - theta*_hat},
 where \code{theta*_hat} is the average over all .R bootstrap estimates of \code{theta}.
 Defaults to \code{TRUE}}
+
+\item{.quantity}{Character string. Which statistic should be returned?
+One of (TODO)
+Defaults to (TODO).}
 
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
 data obtained by resamplecSEMResults()}
@@ -86,20 +90,22 @@ from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \co
 or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}. Currently, the following quantities are
 returned by default (\code{.quantity = "all"}):
 \describe{
-\item{\code{Mean}, \code{Sd} and \code{Bias}}{The mean, the standard
+\item{\code{"mean"}, \code{"sd"} and \code{"bias"}}{The mean, the standard
 deviation and the bias (defined as the difference between the resample mean
 and the original estimate).}
-\item{\code{CI_standard_z} and \code{CI-standard_t}}{The standard confidence interval
+\item{\code{"CI_standard_z"} and \code{"CI_standard_t"}}{The standard confidence interval
 with standard errors estimated by the resample standard deviation.
-While \code{CI_standard_z} assumes a standard-normally distributed statistic,
-\code{CI_standard_t} assumes a t-statistic with \code{.df = c("type1", "type2")}}
-\item{\code{CI_percentile}}{The percentile confidence interval}
-\item{\code{CI_basic}}{The basic confidence interval}
-\item{\code{CI_Bc}}{The bias corrected confidence interval}
-\item{\code{CI_Bca}}{The bias corrected and accelerated confidence interval}
-\item{\code{CI-t-interval}}{The "studentized" confidence interval}
+While \code{"CI_standard_z"} assumes a standard-normally distributed statistic,
+\code{"CI_standard_t"} assumes a t-statistic with \code{.df = c("type1", "type2")}}
+\item{\code{"CI_percentile"}}{The percentile confidence interval}
+\item{\code{"CI_basic"}}{The basic confidence interval}
+\item{\code{"CI_bc"}}{The bias corrected confidence interval}
+\item{\code{"CI_bca"}}{The bias corrected and accelerated confidence interval.
+NOTE: only possible if \code{.resample_method = "bootstrap"} and will be slow
+as jackknife estimates need to be computed.}
+\item{\code{"CI_t_interval"}}{The "studentized" confidence interval}
 }
-See for details on their use and calculation.
+See xxx for details on their use and calculation.
 }
 \section{Functions}{
 \itemize{
@@ -130,9 +136,9 @@ Quantiles of the estimated distribution are then used as lower and upper bound.
 The function computes a boostrap t-statisic (since it is roughly pivotal) and constructs
 the CI based on bootstraped t-values and bootstraped/jackknife SE's
 
-\item \code{BcCI}: (TODO)
+\item \code{BcCIResample}: (TODO)
 
-\item \code{BcaCI}: (TODO)
+\item \code{BcaCIResample}: (TODO)
 }}
 
 \examples{

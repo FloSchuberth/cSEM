@@ -10,37 +10,22 @@
 summarize(.object)
 
 \method{summarize}{cSEMResults_default}(.object = NULL,
-  .csem_resample = args_default()$.csem_resample,
-  .alpha = args_default()$.alpha,
-  .bias_corrected = args_default()$.bias_corrected,
-  .statistic = args_default()$.statistic,
-  .verbose = args_default()$.verbose)
+  .alpha = args_default()$.alpha, .ci = NULL, ...)
 
-\method{summarize}{cSEMResults_multi}(.object)
+\method{summarize}{cSEMResults_multi}(.object = NULL,
+  .alpha = args_default()$.alpha, .ci = NULL, ...)
 
-\method{summarize}{cSEMResults_2ndorder}(.object)
+\method{summarize}{cSEMResults_2ndorder}(.object = NULL,
+  .alpha = args_default()$.alpha, .ci = NULL, ...)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.csem_resample}{A list resulting from a call to \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}.}
-
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.bias_corrected}{Logical. Should the standard and the tStat
-confidence intervall be bias-corrected using the bootstraped bias estimate?
-If \code{TRUE} the confidence intervall for some estimated parameter \code{theta}
-is centered at \code{2*theta - theta*_hat},
-where \code{theta*_hat} is the average over all .R bootstrap estimates of \code{theta}.
-Defaults to \code{TRUE}}
-
-\item{.statistic}{Character string. Which statistic should be returned?
-One of (TODO)
-Defaults to (TODO).}
-
-\item{.verbose}{Logical. Should information be printed to the console? Defaults
-to \code{TRUE}.}
+\item{.ci}{A vector of character strings naming the confidence interval to compute.
+For possible choices see \code{\link[=infer]{infer()}}.}
 }
 \description{
 Summarize the model (TODO).

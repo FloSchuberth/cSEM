@@ -85,7 +85,7 @@ print.cSEMResults <- function(.object) {
 #'
 #' @export
 #'
-print.cSEMSummarize_default <- function(.object) {
+print.cSEMSummarize_default <- function(.object, .full_output = FALSE) {
   
   x1 <- .object$Estimates
   x2 <- .object$Information
@@ -148,21 +148,63 @@ print.cSEMSummarize_default <- function(.object) {
 
   ### Estimates ----------------------------------------------------------------
   cat("\n\n", rule(center = "Estimates"), "\n\n", sep = "")
+  
+  # Get the column names of the columns containing confidence intervals
+  ci_colnames <- colnames(x1$Path_estimates)[-c(1:6)]
+  
+  # Are there confidence intervals
+  if(length(ci_colnames) != 0) {
+    
+    cat(
+      paste0("Inference based on ", x2$Information_resample$Method, " resampling."),
+      sep = ""
+    )
+    
+    if(length(ci_colnames) > 2 && !.full_output) {
+      cat("\n",
+        "Only the first confidence interval shown by default.\n",
+        "Use `print(.object, .full_output = TRUE)` to print all confidence intervals.",
+        sep = "")
+      ci_colnames <- ci_colnames[1:2]
+    }
+    cat("\n\n")
+  }
 
   ## Path estimates
   cat("Estimated path coefficients:\n============================", sep = "")
   l <- max(nchar(x1$Path_estimates[, "Name"]))
-  
-  cat("\n\t", 
+ 
+  if(length(ci_colnames) != 0) {
+    xx <- regmatches(ci_colnames, regexpr("\\.", ci_colnames), invert = TRUE)
+    interval_names    <- unique(sapply(xx, `[`, 1))
+    sig_level_names   <- unique(gsub("[LU]", "", sapply(xx, `[`, 2)))
+    
+    cat("\n  ", 
+        col_align("", width = max(l, nchar("Path")) + 44), 
+        sep = "")
+    for(i in interval_names) {
+      cat(col_align(i, width = 20*length(sig_level_names), align = "center"),
+          sep = "")
+    }
+  }
+  cat("\n  ", 
       col_align("Path", max(l, nchar("Path")) + 2), 
       col_align("Estimate", 10, align = "right"), 
       col_align("Std. error", 12, align = "right"),
       col_align("t-stat.", 10, align = "right"), 
-      col_align("p-value", 10, align = "right"), 
+      col_align("p-value", 10, align = "right"),
       sep = "")
+  if(length(ci_colnames) != 0) {
+    for(i in rep(sig_level_names, length(interval_names))) {
+      cat(
+        col_align(i, 20, align = "center"),
+        sep = "" 
+      )
+    } 
+  }
   
   for(i in 1:nrow(x1$Path_estimates)) {
-    cat("\n\t", 
+    cat("\n  ", 
         col_align(x1$Path_estimates[i, "Name"], max(l, nchar("Path")) + 2), 
         col_align(sprintf("%.4f", x1$Path_estimates[i, "Estimate"]), 10, align = "right"),
         col_align(sprintf("%.4f", x1$Path_estimates[i, "Std_err"]), 12, align = "right"),
@@ -171,22 +213,50 @@ print.cSEMSummarize_default <- function(.object) {
                      green(sprintf("%.4f", x1$Path_estimates[i, "p_value"])),
                      sprintf("%.4f", x1$Path_estimates[i, "p_value"])), 10, align = "right"),
         sep = "")
+    if(length(ci_colnames) != 0) {
+      for(j in seq(1, length(ci_colnames), by = 2) + 6) {
+        cat(
+          col_align(
+            paste0("[", sprintf("%7.4f", x1$Path_estimates[i, j]), ";", 
+                   sprintf("%7.4f", x1$Path_estimates[i, j+1]), "]"), 20, align = "center"),
+          sep = "" 
+        )
+      } 
+    }
   }
   
   ## Loadings
   cat("\n\nEstimated Loadings:\n===================", sep = "")
   l <- max(nchar(x1$Loading_estimates[, "Name"]))
   
-  cat("\n\t", 
+  if(length(ci_colnames) != 0) {
+    cat("\n  ", 
+        col_align("", width = max(l, nchar("Loading")) + 44), 
+        sep = "")
+    for(i in interval_names) {
+      cat(col_align(i, width = 20*length(sig_level_names), align = "center"),
+          sep = "")
+    }
+  }
+  
+  cat("\n  ", 
       col_align("Loading", max(l, nchar("Loading")) + 2), 
       col_align("Estimate", 10, align = "right"), 
       col_align("Std. error", 12, align = "right"),
       col_align("t-stat.", 10, align = "right"), 
       col_align("p-value", 10, align = "right"),
       sep = "")
+  if(length(ci_colnames) != 0) {
+    for(i in rep(sig_level_names, length(interval_names))) {
+      cat(
+        col_align(i, 20, align = "center"),
+        sep = "" 
+      )
+    } 
+  }
   
   for(i in 1:nrow(x1$Loading_estimates)) {
-    cat("\n\t", 
+    cat("\n  ", 
         col_align(x1$Loading_estimates[i, "Name"], max(l, nchar("Loading")) + 2), 
         col_align(sprintf("%.4f", x1$Loading_estimates[i, "Estimate"]), 10, align = "right"), 
         col_align(sprintf("%.4f", x1$Loading_estimates[i, "Std_err"]), 12, align = "right"),
@@ -195,6 +265,16 @@ print.cSEMSummarize_default <- function(.object) {
                          green(sprintf("%.4f", x1$Loading_estimates[i, "p_value"])),
                          sprintf("%.4f", x1$Loading_estimates[i, "p_value"])), 10, align = "right"),
         sep = "")
+    if(length(ci_colnames) != 0) {
+      for(j in seq(1, length(ci_colnames), by = 2) + 6) {
+        cat(
+          col_align(
+            paste0("[", sprintf("%7.4f", x1$Loading_estimates[i, j]), ";", 
+                   sprintf("%7.4f", x1$Loading_estimates[i, j+1]), "]"), 20, align = "center"),
+          sep = "" 
+        )
+      } 
+    }
   }
 
   ## Only print weights, for constructs modeled as common factors
@@ -203,15 +283,63 @@ print.cSEMSummarize_default <- function(.object) {
   cat("\n\nEstimated Weights:\n==================\n", sep = "")
   l <- max(nchar(temp_w[, "Name"]))
   
-  cat("\n\t", 
-      col_align("Weight", max(l, nchar("Weight")) + 2), 
-      col_align("Estimate", 10, align = "right"), sep = "")
-  for(i in 1:nrow(temp_w)) {
-    cat("\n\t", 
-        col_align(temp_w[i, "Name"], max(l, nchar("Weight")) + 2), 
-        col_align(sprintf("%.4f", temp_w[i, "Estimate"]), 10, align = "right"), 
+  if(length(ci_colnames) != 0) {
+    cat("\n  ", 
+        col_align("", width = max(l, nchar("Weights")) + 44), 
         sep = "")
+    for(i in interval_names) {
+      cat(col_align(i, width = 20*length(sig_level_names), align = "center"),
+          sep = "")
+    }
   }
+  
+  cat("\n  ", 
+      col_align("Weights", max(l, nchar("Loading")) + 2), 
+      col_align("Estimate", 10, align = "right"), 
+      col_align("Std. error", 12, align = "right"),
+      col_align("t-stat.", 10, align = "right"), 
+      col_align("p-value", 10, align = "right"),
+      sep = "")
+  if(length(ci_colnames) != 0) {
+    for(i in rep(sig_level_names, length(interval_names))) {
+      cat(
+        col_align(i, 20, align = "center"),
+        sep = "" 
+      )
+    } 
+  }
+  
+  for(i in 1:nrow(temp_w)) {
+    cat("\n  ", 
+        col_align(temp_w[i, "Name"], max(l, nchar("Loading")) + 2), 
+        col_align(sprintf("%.4f", temp_w[i, "Estimate"]), 10, align = "right"), 
+        col_align(sprintf("%.4f", temp_w[i, "Std_err"]), 12, align = "right"),
+        col_align(sprintf("%.4f", temp_w[i, "t_stat"]), 10, align = "right"),
+        col_align(ifelse(temp_w[i, "p_value"] < 0.05, 
+                         green(sprintf("%.4f", temp_w[i, "p_value"])),
+                         sprintf("%.4f", temp_w[i, "p_value"])), 10, align = "right"),
+        sep = "")
+    if(length(ci_colnames) != 0) {
+      for(j in seq(1, length(ci_colnames), by = 2) + 6) {
+        cat(
+          col_align(
+            paste0("[", sprintf("%7.4f", temp_w[i, j]), ";", 
+                   sprintf("%7.4f", temp_w[i, j+1]), "]"), 20, align = "center"),
+          sep = "" 
+        )
+      } 
+    }
+  }
+  
+  # cat("\n  ",
+  #     col_align("Weight", max(l, nchar("Weight")) + 2),
+  #     col_align("Estimate", 10, align = "right"), sep = "")
+  # for(i in 1:nrow(temp_w)) {
+  #   cat("\n  ",
+  #       col_align(temp_w[i, "Name"], max(l, nchar("Weight")) + 2),
+  #       col_align(sprintf("%.4f", temp_w[i, "Estimate"]), 10, align = "right"),
+  #       sep = "")
+  # }
 
   cat("\n", rule(line = "bar2"), sep = "")
 }

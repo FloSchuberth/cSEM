@@ -727,7 +727,9 @@ resamplecSEMResults.cSEMResults_default <- function(
     info[[length(info) + 1]] <- list(
       "Method"                  = .resample_method,
       "Method2"                 = .resample_method2,
-      "Number_of_observations"  = nrow(.object$Information$Data)
+      "Number_of_observations"  = nrow(.object$Information$Data),
+      "Number_of_runs"          = .R,
+      "Number_of_runs2"         = .R2
     )
     names(info)[length(info)] <- "Information_resample"
     
@@ -918,7 +920,9 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
       "Information" =       list(
         "Method"                  = .resample_method,
         "Method2"                 = .resample_method2,
-        "Number_of_observations"  = nrow(.object$Second_stage$Information$Data)
+        "Number_of_observations"  = nrow(.object$Second_stage$Information$Data),
+        "Number_of_runs"          = .R,
+        "Number_of_runs2"         = .R2
       )
     )
     
@@ -1140,20 +1144,22 @@ resamplecSEMResultsCore <- function(
 #' or `"jackknife"` when calling [csem()]. Currently, the following quantities are
 #' returned by default (`.quantity = "all"`):
 #' \describe{
-#' \item{`Mean`, `Sd` and `Bias`}{The mean, the standard 
+#' \item{`"mean"`, `"sd"` and `"bias"`}{The mean, the standard 
 #'   deviation and the bias (defined as the difference between the resample mean
 #'   and the original estimate).}
-#' \item{`CI_standard_z` and `CI-standard_t`}{The standard confidence interval 
+#' \item{`"CI_standard_z"` and `"CI_standard_t"`}{The standard confidence interval 
 #'   with standard errors estimated by the resample standard deviation. 
-#'   While `CI_standard_z` assumes a standard-normally distributed statistic,
-#'   `CI_standard_t` assumes a t-statistic with `.df = c("type1", "type2")`}
-#' \item{`CI_percentile`}{The percentile confidence interval}
-#' \item{`CI_basic`}{The basic confidence interval}
-#' \item{`CI_Bc`}{The bias corrected confidence interval}
-#' \item{`CI_Bca`}{The bias corrected and accelerated confidence interval}
-#' \item{`CI-t-interval`}{The "studentized" confidence interval}
+#'   While `"CI_standard_z"` assumes a standard-normally distributed statistic,
+#'   `"CI_standard_t"` assumes a t-statistic with `.df = c("type1", "type2")`}
+#' \item{`"CI_percentile"`}{The percentile confidence interval}
+#' \item{`"CI_basic"`}{The basic confidence interval}
+#' \item{`"CI_bc"`}{The bias corrected confidence interval}
+#' \item{`"CI_bca"`}{The bias corrected and accelerated confidence interval. 
+#'   NOTE: only possible if `.resample_method = "bootstrap"` and will be slow
+#'   as jackknife estimates need to be computed.}
+#' \item{`"CI_t_interval"`}{The "studentized" confidence interval}
 #' }
-#' See for details on their use and calculation.
+#' See xxx for details on their use and calculation.
 #' 
 #' @usage infer(
 #'  .resample_object   = NULL,
@@ -1178,8 +1184,12 @@ infer <- function(
   .resample_object = NULL,
   .alpha           = 0.05,
   .bias_corrected  = TRUE,
-  .quantity        = c("all", "Mean", "Sd", "Bias")
+  .quantity        = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
+                       "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall")
 ) {
+  
+  ## Check arguments
+  match.arg(.quantity, args_default(.choices = TRUE)$.quantity, several.ok = TRUE)
   
   if(!any(class(.resample_object) == "cSEMResults")) {
     stop2("The following error occured in the `infer()` function:\n",
@@ -1202,11 +1212,6 @@ infer <- function(
     second_resample <- .resample_object$Estimates$Estimates_resample$Estimates2
     info            <- .resample_object$Information$Information_resample
   }
-  
-  # .resample_object <- aa
-  # .resample_object <- a1
-  # .resample_object <- a2
-
 
   ## Compute quantiles/critical values -----------------------------------------
   probs  <- c()
@@ -1221,22 +1226,35 @@ infer <- function(
     # to make sure the corresponding quantile is available later on. Values are
     # round to four digits.
     probs <- c(probs, 
-               # round(.alpha, 4), round(1 - .alpha, 4), 
-               round(.alpha[i]/2, 4), round(1 - .alpha[i]/2, 4)) 
+               # round(.alpha[i], 4), round(1 - .alpha[i], 4),
+               .alpha[i]/2, 1 - .alpha[i]/2) 
   }
 
   ## Compute statistics and quantities
-  l <- list(
-    "Mean" = MeanResample(first_resample),
-    "Sd"   = SdResample(.first_resample  = first_resample, 
-                        .resample_method = info$Method, 
-                        .n               = info$Number_of_observations
-                        ),
-    "Bias" = BiasResample(.first_resample  = first_resample, 
-                          .resample_method = info$Method, 
-                          .n               = info$Number_of_observations
-                          ),
-    "CI_standard_z" = StandardCIResample(
+  out <- list()
+  
+  if(any(.quantity %in% c("all", "mean"))) {
+    out[["mean"]] <- MeanResample(first_resample)
+  }
+  
+  if(any(.quantity %in% c("all", "sd"))) {
+    out[["sd"]] <- SdResample(
+      .first_resample  = first_resample, 
+      .resample_method = info$Method, 
+      .n               = info$Number_of_observations
+    )
+  }
+  
+  if(any(.quantity %in% c("all", "bias"))) {
+    out[["bias"]] <- BiasResample(
+      .first_resample  = first_resample, 
+      .resample_method = info$Method, 
+      .n               = info$Number_of_observations
+    )
+  }
+  
+  if(any(.quantity %in% c("all", "CI_standard_z"))) {
+    out[["CI_standard_z"]] <- StandardCIResample(
       .first_resample = first_resample, 
       .bias_corrected = .bias_corrected,
       .df             = NULL,
@@ -1244,8 +1262,11 @@ infer <- function(
       .resample_method= info$Method, 
       .n              = info$Number_of_observations,
       .probs          = probs
-      ),
-    "CI_standard_t" = StandardCIResample(
+    )
+  }
+  
+  if(any(.quantity %in% c("all", "CI_standard_t"))) {
+    out[["CI_standard_t"]] <- StandardCIResample(
       .first_resample = first_resample, 
       .bias_corrected = .bias_corrected,
       .df             = "type1",
@@ -1253,22 +1274,36 @@ infer <- function(
       .resample_method= info$Method, 
       .n              = info$Number_of_observations,
       .probs          = probs
-      ),
-    "CI_percentile" = PercentilCIResample(
+    )
+  }
+  
+  if(any(.quantity %in% c("all", "CI_percentile"))) {
+    out[["CI_percentile"]] <- PercentilCIResample(
       .first_resample = first_resample, 
       .probs = probs
-      ),
-    "CI_basic"      = BasicCIResample(
+    )
+  }
+  
+  if(any(.quantity %in% c("all", "CI_basic"))) {
+    out[["CI_basic"]] <- BasicCIResample(
       .first_resample = first_resample, 
-      .bias_corrected = .bias_corrected, 
+      .bias_corrected = .bias_corrected,
       .probs          = probs
-      ),
-    "CI_Bc"  = BcCI(first_resample, probs),
-    "CI_Bca" = BcaCI(.object = .resample_object, first_resample, probs),
-    "CI_t_invertal"= if(anyNA(second_resample)) {
-      NA
-    } else {
-      TStatCIResample(
+    )
+  }
+ 
+  if(any(.quantity %in% c("all", "CI_bc"))) {
+    out[["CI_bc"]] <- BcCIResample(first_resample, probs)
+  }
+  
+  if(any(.quantity %in% c("all", "CI_bca"))) {
+    out[["CI_bca"]] <- BcaCIResample(.object = .resample_object, 
+                                     first_resample, probs)
+  }
+  
+  if(any(.quantity %in% c("all", "CI_t_interval"))) {
+    if(!anyNA(second_resample)) {
+      out[["CI_t_interval"]] <-       TStatCIResample(
         .first_resample     = first_resample, 
         .second_resample    = second_resample, 
         .bias_corrected     = .bias_corrected,
@@ -1278,14 +1313,9 @@ infer <- function(
         .probs              = probs
       ) 
     }
-  )
-  
-  if(anyNA(l)) {
-    l <- l[-which(is.na(l))]
-  } else {
-    l
   }
-  return(purrr::transpose(l))
+  
+  return(purrr::transpose(out))
 }
 
 #' @describeIn infer Computes the mean over all resamples for each resampled 
@@ -1357,7 +1387,7 @@ StandardCIResample <- function(
   ## Compute intervals
   # Notation:
   # w = .first_resample := the list containing the estimated values based on .R resamples
-  #           and the original values
+  #                        and the original values
   # y      := the estimated standard errors (based on .R resamples)
   # z      := a vector of probabilities
   out <- mapply(function(w, y) {
@@ -1383,7 +1413,9 @@ StandardCIResample <- function(
   }, w = .first_resample, y = boot_sd, SIMPLIFY = FALSE) %>% 
     lapply(function(x) do.call(rbind, x)) %>% 
     lapply(function(x) {
-      rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+      # rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+      rownames(x) <- unlist(lapply(100*cl, function(x) 
+        c(sprintf("%.6g%%L", x), sprintf("%.6g%%U", x))))
       x
     })
   return(out)
@@ -1405,7 +1437,9 @@ PercentilCIResample <- function(.first_resample, .probs) {
   lapply(.first_resample, function(x) {
     out <- t(matrixStats::colQuantiles(x$Resampled, probs = .probs, drop = FALSE))
     colnames(out) <- names(x$Original)
-    rownames(out) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+    # rownames(out) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+    rownames(out) <- unlist(lapply(100*cl, function(x) 
+      c(sprintf("%.6g%%L", x), sprintf("%.6g%%U", x))))
     out
   })
 }
@@ -1444,7 +1478,9 @@ BasicCIResample <- function(.first_resample, .bias_corrected, .probs) {
     out <- t(2*theta_star - t(out))
     colnames(out) <- names(x$Original)
     out <- out[1:nrow(out) + rep(c(1, -1), times = nrow(out)/2), , drop = FALSE]
-    rownames(out) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+    # rownames(out) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+    rownames(out) <- unlist(lapply(100*cl, function(x) 
+      c(sprintf("%.6g%%L", x), sprintf("%.6g%%U", x))))
     out
   })
 }
@@ -1497,7 +1533,9 @@ TStatCIResample <- function(
     lapply(function(x) do.call(rbind, x)) %>% 
     lapply(function(x) {
       x <- x[1:nrow(x) + rep(c(1, -1), times = nrow(x)/2), , drop = FALSE]
-      rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+      # rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+      rownames(x) <- unlist(lapply(100*cl, function(x) 
+        c(sprintf("%.6g%%L", x), sprintf("%.6g%%U", x))))
       x
     })
 
@@ -1505,7 +1543,7 @@ TStatCIResample <- function(
   return(out)
 }
 #' @describeIn infer (TODO)
-BcCI <- function(.first_resample, .probs) {
+BcCIResample <- function(.first_resample, .probs) {
   
   ## confidence level (for rownames)
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
@@ -1527,34 +1565,46 @@ BcCI <- function(.first_resample, .probs) {
   }) %>% 
     lapply(function(x) t(do.call(rbind, x))) %>% 
     lapply(function(x) {
-      rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+      # rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+      rownames(x) <- unlist(lapply(100*cl, function(x) 
+        c(sprintf("%.6g%%L", x), sprintf("%.6g%%U", x))))
       x
     })
   
   return(out)
 }
 #' @describeIn infer (TODO)
-BcaCI <- function(.object, .first_resample, .probs) {
+BcaCIResample <- function(.object, .first_resample, .probs) {
   ## confidence level (for rownames)
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2
   
   ## influence values (estimated via jackknife)
   # Delete resamples and cSEMResults_resampled class tag 
   # to be able to run resampling again. 
-  .object$Estimates$Estimates_resample <- NULL
-  .object$Estimates$Information_resample <- NULL
+  # if(any(class(.object) == "cSEMResults_2ndorder")) {
+  #   .object$Second_stage$Information$ResamplesEstimates$Estimates_resample <- NULL
+  #   .object$Second_stage$Estimates$Information_resample <- NULL
+  # } else {
+  #   .object$Estimates$Estimates_resample <- NULL
+  #   .object$Estimates$Information_resample <- NULL
+  # }
   class(.object) <- setdiff(class(.object), "cSEMResults_resampled")
   
   jack <- resamplecSEMResults(
     .object = .object,
     .resample_method = "jackknife"
-  )$Estimates$Estimates_resample$Estimates1
+  )
   
+  jack_estimates <- if(any(class(jack) == "cSEMResults_2ndorder")) {
+    jack$Second_stage$Information$Resamples$Estimates$Estimates1
+  } else {
+    jack$Estimates$Estimates_resample$Estimates1
+  }
   aFun <- function(x) {
     1/6 * (sum(x^3) / sum(x^2)^1.5)
   }
   
-  a <- lapply(jack, function(x) t(x$Original - t(x$Resampled))) %>% 
+  a <- lapply(jack_estimates, function(x) t(x$Original - t(x$Resampled))) %>% 
     lapply(function(x) apply(x, 2, aFun)) 
   
   p0 <- lapply(.first_resample, function(x) colMeans(t(t(x$Resampled) <= x$Original)))
@@ -1570,7 +1620,9 @@ BcaCI <- function(.object, .first_resample, .probs) {
   })%>% 
     lapply(function(x) t(do.call(rbind, x))) %>% 
     lapply(function(x) {
-      rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+      # rownames(x) <- paste0(c("L_", "U_"), rep(cl, each = 2))
+      rownames(x) <- unlist(lapply(100*cl, function(x) 
+        c(sprintf("%.6g%%L", x), sprintf("%.6g%%U", x))))
       x
     })
   

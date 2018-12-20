@@ -41,6 +41,8 @@
 #' @param .C A (J x J) composite variance-covariance matrix.
 #' @param .choices Logical. Should candidate values for the arguments be returned?
 #'   Defaults to `FALSE`.
+#' @param .ci A vector of character strings naming the confidence interval to compute.
+#'   For possible choices see [infer()].
 #' @param .conv_criterion Character string. The criterion to use for the convergence check.
 #'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
 #'   to "*diff_absolute*".
@@ -131,6 +133,9 @@
 #'   used in PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
 #'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS-PM.
 #' @param .probs A vector of probabilities.
+#' @param .quantity Character string. Which statistic should be returned?
+#'   One of (TODO) 
+#'   Defaults to (TODO).
 #' @param .Q A vector of composite-construct correlations with element names equal to
 #'   the names of the J construct names used in the measurement model. Note 
 #'   Q^2 is also called the reliability coefficient.
@@ -157,9 +162,6 @@
 #' @param .seed Integer. The random seed to use. Defaults to `sample(.Random.seed, 1)`
 #' @param .stage Character string. The stage the model is need for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
-#' @param .statistic Character string. Which statistic should be returned?
-#'   One of (TODO) 
-#'   Defaults to (TODO).
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
@@ -240,6 +242,8 @@ args_default <- function(
     .bias_corrected          = TRUE,
     .C                       = NULL,
     .choices                 = FALSE,
+    .ci                      = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
+                                 "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
     .csem_model              = NULL,
     .csem_resample           = NULL,
     .cv_folds                = 10,
@@ -265,6 +269,8 @@ args_default <- function(
     .P                       = NULL,
     .parallel                = FALSE,
     .probs                   = NULL,
+    .quantity                = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
+                                 "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
     .Q                       = NULL,
     .R                       = 499,
     .R2                      = 199,
@@ -274,7 +280,6 @@ args_default <- function(
     .S                       = NULL,
     .saturated               = FALSE,
     .second_resample         = NULL,
-    .statistic               = NULL,
     .seed                    = sample(.Random.seed, 1),
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),

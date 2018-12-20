@@ -49,6 +49,9 @@ Defaults to \code{TRUE}}
 \item{.choices}{Logical. Should candidate values for the arguments be returned?
 Defaults to \code{FALSE}.}
 
+\item{.ci}{A vector of character strings naming the confidence interval to compute.
+For possible choices see \code{\link[=infer]{infer()}}.}
+
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
 to "\emph{diff_absolute}".}
@@ -175,6 +178,10 @@ Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.probs}{A vector of probabilities.}
 
+\item{.quantity}{Character string. Which statistic should be returned?
+One of (TODO)
+Defaults to (TODO).}
+
 \item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.}
@@ -211,10 +218,6 @@ resampling from a resample. Defaults to \code{199}.}
 
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
-
-\item{.statistic}{Character string. Which statistic should be returned?
-One of (TODO)
-Defaults to (TODO).}
 
 \item{.terms}{A vector of construct names to be classified.}
 
