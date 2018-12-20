@@ -280,56 +280,59 @@ print.cSEMSummarize_default <- function(.object, .full_output = FALSE) {
   ## Only print weights, for constructs modeled as composites
   temp_w <- x1$Weight_estimates[x1$Weight_estimates$Construct_type == "Composite", , drop = FALSE] 
   
-  cat("\n\nEstimated Weights:\n==================\n", sep = "")
-  l <- max(nchar(temp_w[, "Name"]))
-  
-  if(length(ci_colnames) != 0) {
-    cat("\n  ", 
-        col_align("", width = max(l, nchar("Weights")) + 44), 
-        sep = "")
-    for(i in interval_names) {
-      cat(col_align(i, width = 20*length(sig_level_names), align = "center"),
+  if(nrow(temp_w) != 0) {
+    cat("\n\nEstimated Weights:\n==================\n", sep = "")
+    l <- max(nchar(temp_w[, "Name"]))
+    
+    if(length(ci_colnames) != 0) {
+      cat("\n  ", 
+          col_align("", width = max(l, nchar("Weights")) + 44), 
           sep = "")
+      for(i in interval_names) {
+        cat(col_align(i, width = 20*length(sig_level_names), align = "center"),
+            sep = "")
+      }
     }
-  }
-  
-  cat("\n  ", 
-      col_align("Weights", max(l, nchar("Loading")) + 2), 
-      col_align("Estimate", 10, align = "right"), 
-      col_align("Std. error", 12, align = "right"),
-      col_align("t-stat.", 10, align = "right"), 
-      col_align("p-value", 10, align = "right"),
-      sep = "")
-  if(length(ci_colnames) != 0) {
-    for(i in rep(sig_level_names, length(interval_names))) {
-      cat(
-        col_align(i, 20, align = "center"),
-        sep = "" 
-      )
-    } 
-  }
-  
-  for(i in 1:nrow(temp_w)) {
+    
     cat("\n  ", 
-        col_align(temp_w[i, "Name"], max(l, nchar("Loading")) + 2), 
-        col_align(sprintf("%.4f", temp_w[i, "Estimate"]), 10, align = "right"), 
-        col_align(sprintf("%.4f", temp_w[i, "Std_err"]), 12, align = "right"),
-        col_align(sprintf("%.4f", temp_w[i, "t_stat"]), 10, align = "right"),
-        col_align(ifelse(temp_w[i, "p_value"] < 0.05, 
-                         green(sprintf("%.4f", temp_w[i, "p_value"])),
-                         sprintf("%.4f", temp_w[i, "p_value"])), 10, align = "right"),
+        col_align("Weights", max(l, nchar("Loading")) + 2), 
+        col_align("Estimate", 10, align = "right"), 
+        col_align("Std. error", 12, align = "right"),
+        col_align("t-stat.", 10, align = "right"), 
+        col_align("p-value", 10, align = "right"),
         sep = "")
     if(length(ci_colnames) != 0) {
-      for(j in seq(1, length(ci_colnames), by = 2) + 6) {
+      for(i in rep(sig_level_names, length(interval_names))) {
         cat(
-          col_align(
-            paste0("[", sprintf("%7.4f", temp_w[i, j]), ";", 
-                   sprintf("%7.4f", temp_w[i, j+1]), "]"), 20, align = "center"),
+          col_align(i, 20, align = "center"),
           sep = "" 
         )
       } 
     }
+    
+    for(i in 1:nrow(temp_w)) {
+      cat("\n  ", 
+          col_align(temp_w[i, "Name"], max(l, nchar("Loading")) + 2), 
+          col_align(sprintf("%.4f", temp_w[i, "Estimate"]), 10, align = "right"), 
+          col_align(sprintf("%.4f", temp_w[i, "Std_err"]), 12, align = "right"),
+          col_align(sprintf("%.4f", temp_w[i, "t_stat"]), 10, align = "right"),
+          col_align(ifelse(temp_w[i, "p_value"] < 0.05, 
+                           green(sprintf("%.4f", temp_w[i, "p_value"])),
+                           sprintf("%.4f", temp_w[i, "p_value"])), 10, align = "right"),
+          sep = "")
+      if(length(ci_colnames) != 0) {
+        for(j in seq(1, length(ci_colnames), by = 2) + 6) {
+          cat(
+            col_align(
+              paste0("[", sprintf("%7.4f", temp_w[i, j]), ";", 
+                     sprintf("%7.4f", temp_w[i, j+1]), "]"), 20, align = "center"),
+            sep = "" 
+          )
+        } 
+      }
+    }
   }
+
   
   cat("\n", rule(line = "bar2"), sep = "")
 }
