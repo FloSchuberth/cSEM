@@ -134,7 +134,7 @@ Carlo studies and an empirical application.},
   timestamp = {2012.11.22},
 }
 
-@Article{Henseler2014b,
+@Article{Henseler2015,
   author    = {Henseler, J{\"o}rg and Ringle, Christian M and Sarstedt, Marko},
   title     = {A new criterion for assessing discriminant validity in variance-based structural equation modeling},
   journal   = {Journal of the Academy of Marketing Science},
@@ -162,6 +162,45 @@ issues in variance-based structural equation modeling.},
   file      = {Henseler2015.pdf:Henseler2015.pdf:PDF},
   keywords  = {Structural equation modeling (SEM) . Partial least squares (PLS) . Results evaluation . Measurement model assessment . Discriminant validity .Fornell-Larcker criterion . Cross-loadings . Multitrait-multimethod (MTMM) matrix . Heterotrait-monotrait (HTMT) ratio of correlations},
   publisher = {Springer},
+}
+
+@Article{Hesterberg2015,
+  author    = {Tim C. Hesterberg},
+  title     = {What Teachers Should Know About the Bootstrap: Resampling in the Undergraduate Statistics Curriculum},
+  journal   = {The American Statistician},
+  year      = {2015},
+  volume    = {69},
+  number    = {4},
+  pages     = {371--386},
+  month     = {oct},
+  doi       = {10.1080/00031305.2015.1089789},
+  publisher = {Informa {UK} Limited},
+}
+
+@Manual{Bengtsson2018,
+  title  = {future: Unified Parallel and Distributed Processing in {R} for Everyone},
+  author = {Henrik Bengtsson},
+  year   = {2018},
+  note   = {R package version 1.10.0},
+  url    = {https://CRAN.R-project.org/package=future},
+}
+
+@Book{Efron2016,
+  title     = {Computer Age Statistical Inference},
+  publisher = {Cambridge University Pr.},
+  year      = {2016},
+  author    = {Efron, Bradley and Hastie, Trevor},
+  isbn      = {1107149894},
+  date      = {2016-07-31},
+  ean       = {9781107149892},
+}
+
+@Book{Davison1997,
+  title     = {Bootstrap Methods and their Application},
+  publisher = {Cambridge University Press},
+  year      = {1997},
+  author    = {A. C. Davison and D. V. Hinkley},
+  doi       = {10.1017/cbo9780511802843},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}

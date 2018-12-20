@@ -100,3 +100,24 @@ classifyConstructs <- function(.terms = args_default()$.terms) {
   names(terms_classified) <- unlist(.terms)
   terms_classified
 }
+
+#' Wrapper around cat() with sep = ""
+#' @noRd
+#' 
+cat2 <- function(...) {
+  cat(..., sep = "")
+}
+
+#' Wrapper around stop() with .call = FALSE
+#' @noRd
+#' 
+stop2 <- function(...) {
+  stop(..., call. = FALSE)
+}
+
+#' Wrapper around warning() with .call = FALSE and .immediate = TRUE
+#' @noRd
+#' 
+warning2 <- function(...) {
+  warning(..., call.= FALSE, immediate. = TRUE)
+}

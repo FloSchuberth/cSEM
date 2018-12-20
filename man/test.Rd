@@ -10,7 +10,7 @@ test(.object, ...)
 \method{test}{cSEMResults_default}(.object, .which_test = "all", ...)
 }
 \arguments{
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{...}{Further arguments.}
 }

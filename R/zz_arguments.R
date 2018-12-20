@@ -8,11 +8,6 @@
 #' function having `...` as a formal argument, set the `.only_dots` argument 
 #' of the [args_default()] function to `TRUE`.
 #'
-#' @param .data A `data.frame` or a `matrix` containing the raw data. Possible
-#'   data column types or classes are: logical, numeric (double or integer), factor 
-#'   (ordered and unordered) or a mix of several types.
-#' @param .model A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-#'   or a [cSEMModel]-list.
 #' @param .alpha An integer or a numeric vector of significance levels. 
 #'   Defaults to `0.05`.
 #' @param .approach Character string. The Kettenring approach to use. One of 
@@ -37,17 +32,40 @@
 #'   Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names to `fun()` whose value 
 #'   was modified by the user.
+#' @param .bias_corrected Logical. Should the standard and the tStat
+#'   confidence intervall be bias-corrected using the bootstraped bias estimate? 
+#'   If `TRUE` the confidence intervall for some estimated parameter `theta` 
+#'   is centered at `2*theta - theta*_hat`,
+#'   where `theta*_hat` is the average over all .R bootstrap estimates of `theta`.
+#'   Defaults to `TRUE`
 #' @param .C A (J x J) composite variance-covariance matrix.
 #' @param .choices Logical. Should candidate values for the arguments be returned?
 #'   Defaults to `FALSE`.
+#' @param .ci A vector of character strings naming the confidence interval to compute.
+#'   For possible choices see [infer()].
 #' @param .conv_criterion Character string. The criterion to use for the convergence check.
 #'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
 #'   to "*diff_absolute*".
 #' @param .csem_model A (possibly incomplete) [cSEMModel]-list.
+#' @param .csem_resample A list resulting from a call to [resamplecSEMResults()].
+#' @param .cv_folds Integer. The number of cross-validation folds to use. Setting
+#'   `.cv_folds` to `N` (the number of observations) produces 
+#'   leave-one-out cross-validation samples. Defaults to `10`.
+#' @param .data A `data.frame`, a `matrix` or a list containing data of either type. 
+#'   Possible column types or classes of the data provided are: 
+#'   logical, numeric (double or integer), factor (ordered and unordered) 
+#'   or a mix of several types. The data may also include
+#'   *one* character column whose column name must be given to `.id`. 
+#'   This column is assumed to contain group identifiers used to split the data into groups.
 #' @param .disattenuate Logical. If possible, should composite correlations be disattenuated
 #'   if the construct is modeled as a common factor? Defaults to `TRUE`.
+#' @param .dist Character string. The distribution to use for the critical value.
+#'  One of *"t"* for Student's t-distribution or *"z"* for the standard normal distribution.
+#'  Defaults to *"z"*.
 #' @param .distance Character string. A distance measure. One of: "*geodesic*"
 #'   or "*squared_euclidian*". Defaults to "*geodesic*".
+#' @param .df Character string. The method for obtaining the degrees of freedom.
+#'   Choices are "*type1*" and "*type2*". Defaults to "*type1*" .
 #' @param .dominant_indicators A character vector of `"name" = "value"` pairs, 
 #'   where `"value"` is a character string giving the name of the dominant indicator
 #'   and `"name"` a character string of the corresponding construct name.
@@ -55,29 +73,40 @@
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
+#' @param .eval_plan Character string. The evaluation plan to use. One of 
+#'   "*sequential*" or "*multiprocess*". In the latter case 
+#'   all available cores will be used. Defaults to "*sequential*".
+#' @param .first_resample A list containing the `.R` resamples based on the original
+#'   data obtained by resamplecSEMResults()
+#' @param .second_resample A list containing `.R2` resamples for each of the `.R`
+#'   resamples of the first run.
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
-#'   replications yielding an inadmissible result will be dropped (=
-#'   number of results shown <= .runs). For "*ignore*" all results are returned 
-#'   even if they are inadmissible (= number of results = .runs). For "*replace*"
-#'   bootstrapping continues until there are .runs admissible solutions. 
+#'   replications/resamples yielding an inadmissible result will be dropped (
+#'   the number of results returned will be less than .R). For "*ignore*" all results are returned 
+#'   even if they are inadmissible (number of results returned = .R). For "*replace*"
+#'   resampling continues until there are exactly .R admissible solutions. 
 #'   Defaults to "*drop*".
-#' @param .id Character string. The name of the column of `.data` used to split
-#'   the data into groups. Defaults to `NULL`.
+#' @param .id Character string or integer. The name or position of the column of 
+#'   `.data` used to split the data into groups. Ignored if `.object` is provided.
+#'    Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
 #'   `.iter_max - 1`  will be returned with a warning. Defaults to `100`.
+#' @param .n Integer. The number of observations of the original data.
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
+#' @param .model A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+#'   or a [cSEMModel]-list.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .normality Logical. Should joint normality be assumed in the nonlinear model?
 #'  For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
 #'  Defaults to `TRUE`. Ignored if the model is linear.
-#' @param .object An R object of class `cSEM<class>` with corresponding method.
+#' @param .object An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .only_common_factors Logical. Should only common factors be included? 
 #'   Defaults to `FALSE`.
 #' @param .only_dots Logical. Should only arguments to be passed to lower level 
@@ -103,6 +132,10 @@
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
 #'   used in PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
 #'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS-PM.
+#' @param .probs A vector of probabilities.
+#' @param .quantity Character string. Which statistic should be returned?
+#'   One of (TODO) 
+#'   Defaults to (TODO).
 #' @param .Q A vector of composite-construct correlations with element names equal to
 #'   the names of the J construct names used in the measurement model. Note 
 #'   Q^2 is also called the reliability coefficient.
@@ -111,9 +144,22 @@
 #'   of the corresponding construct name, or `NULL`. Reliabilities
 #'   may be given for a subset of the constructs. Defaults to `NULL` in which case
 #'   reliabilities are estimated by `csem()`.
-#' @param .runs Integer. How many runs should be performed? Defaults to `499`.
+#' @param .resample_method Character string. The resampling method to use. One of: 
+#'  "*bootstrap*" or "*jackknife*". Defaults to "*bootstrap*".
+#' @param .resample_method2 Character string. The resampling method to use when resampling
+#'   from a resample. One of: "*none*", "*bootstrap*" or "*jackknife*". For 
+#'   "*bootstrap*" the number of draws is provided via `.R2`. Currently, 
+#'   resampling from each resample is only required for the studentized confidence
+#'   intervall computed by the [infer()] function. Defaults to "*none*".  
+#' @param `.resample_object` An R object of class `cSEMResults_resampled`
+#'   obtained from [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
+#'   or `"jackknife"` when calling [csem()].
+#' @param .R Integer. The number of bootstrap replications. Defaults to `499`.
+#' @param .R2 Integer. The number of bootstrap replications to use when 
+#'   resampling from a resample. Defaults to `199`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
+#' @param .seed Integer. The random seed to use. Defaults to `sample(.Random.seed, 1)`
 #' @param .stage Character string. The stage the model is need for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .terms A vector of construct names to be classified.
@@ -123,6 +169,11 @@
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
 #' @param .verbose Logical. Should information be printed to the console? Defaults
 #'   to `TRUE`.
+#' @param .user_funs A function or a (named) list of functions to apply to every
+#'   resample. Takes `.object` as an input (e.g., `myFun <- function(.object) {...}`).
+#'   Output should preferably be a (named)
+#'   vector but matrices are also accepted. However, the output will be 
+#'   vectorized (columnwise) in this case. See the examples section for details.
 #' @param .vector1 A vector of numeric values.
 #' @param .vector2 A vector of numeric values.
 #' @param .W A (J x K) matrix of weights.
@@ -188,12 +239,21 @@ args_default <- function(
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "fixed", "unit"), 
     .arguments               = NULL,
+    .bias_corrected          = TRUE,
     .C                       = NULL,
     .choices                 = FALSE,
+    .ci                      = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
+                                 "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
     .csem_model              = NULL,
+    .csem_resample           = NULL,
+    .cv_folds                = 10,
     .data                    = NULL,
+    .dist                    = c("z", "t"),
     .distance                = c("geodesic", "squared_euclidian"),
+    .df                      = c("type1", "type2"),
     .E                       = NULL,
+    .eval_plan               = c("sequential", "multiprocess"),
+    .first_resample          = NULL,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
@@ -208,12 +268,22 @@ args_default <- function(
     .only_dots               = FALSE,
     .P                       = NULL,
     .parallel                = FALSE,
+    .probs                   = NULL,
+    .quantity                = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
+                                 "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
     .Q                       = NULL,
-    .runs                    = 499,
+    .R                       = 499,
+    .R2                      = 199,
+    .resample_method         = c("none", "bootstrap", "jackknife"),
+    .resample_method2        = c("none", "bootstrap", "jackknife"),
+    .resample_object         = NULL,
     .S                       = NULL,
     .saturated               = FALSE,
+    .second_resample         = NULL,
+    .seed                    = sample(.Random.seed, 1),
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
+    .user_funs               = NULL,
     .verbose                 = TRUE,
     .W                       = NULL,
     .which_fun               = c("csem", "cca"),

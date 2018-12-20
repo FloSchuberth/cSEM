@@ -11,7 +11,7 @@
 #'  .object                = args_default()$.object, 
 #'  .alpha                 = args_default()$.alpha, 
 #'  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
-#'  .runs                  = args_default()$.runs, 
+#'  .R                     = args_default()$.R, 
 #'  .saturated             = args_default()$.saturated,
 #'  .verbose               = args_default()$.verbose
 #' )
@@ -36,7 +36,7 @@ testOMF <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .runs                  = args_default()$.runs,
+  .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
   .verbose               = args_default()$.verbose
 ) {
@@ -58,7 +58,7 @@ testOMF.cSEMResults_default <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .runs                  = args_default()$.runs,
+  .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
   .verbose               = args_default()$.verbose
 ){
@@ -98,7 +98,7 @@ testOMF.cSEMResults_default <- function(
   
   # Start progress bar if required
   if(.verbose){
-    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+    pb <- txtProgressBar(min = 0, max = .R, style = 3)
   }
   
   ## Calculate reference distribution
@@ -148,8 +148,8 @@ testOMF.cSEMResults_default <- function(
       n_inadmissibles <- n_inadmissibles + 1
     }
     
-    # Break repeat loop if .runs results have been created.
-    if(length(ref_dist) == .runs) {
+    # Break repeat loop if .R results have been created.
+    if(length(ref_dist) == .R) {
       break
     } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
@@ -204,14 +204,14 @@ testOMF.cSEMResults_multi <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .runs                  = args_default()$.runs,
+  .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
   .verbose               = args_default()$.verbose
 ){
   lapply(.object, testOMF.cSEMResults_default,
          .alpha                = .alpha,
          .handle_inadmissibles = .handle_inadmissibles,
-         .runs                 = .runs,
+         .R                    = .R,
          .saturated            = .saturated,
          .verbose              = .verbose
          )
@@ -224,7 +224,7 @@ testOMF.cSEMResults_2ndorder <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .runs                  = args_default()$.runs,
+  .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
   .verbose               = args_default()$.verbose
 ){
@@ -266,7 +266,7 @@ testOMF.cSEMResults_2ndorder <- function(
   
   # Start progress bar if required
   if(.verbose){
-    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+    pb <- txtProgressBar(min = 0, max = .R, style = 3)
   }
   
   ## Calculate reference distribution
@@ -313,8 +313,8 @@ testOMF.cSEMResults_2ndorder <- function(
       n_inadmissibles <- n_inadmissibles + 1
     }
     
-    # Break repeat loop if .runs results have been created.
-    if(length(ref_dist) == .runs) {
+    # Break repeat loop if .R results have been created.
+    if(length(ref_dist) == .R) {
       break
     } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results

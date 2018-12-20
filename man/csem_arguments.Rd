@@ -5,13 +5,6 @@
 \alias{cSEMArguments}
 \title{cSEMArguments}
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
-data column types or classes are: logical, numeric (double or integer), factor
-(ordered and unordered) or a mix of several types.}
-
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
-
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
@@ -44,10 +37,20 @@ Defaults to "\emph{PLS-PM}".}
 \item{.args_used}{A list of function argument names to \code{fun()} whose value
 was modified by the user.}
 
+\item{.bias_corrected}{Logical. Should the standard and the tStat
+confidence intervall be bias-corrected using the bootstraped bias estimate?
+If \code{TRUE} the confidence intervall for some estimated parameter \code{theta}
+is centered at \code{2*theta - theta*_hat},
+where \code{theta*_hat} is the average over all .R bootstrap estimates of \code{theta}.
+Defaults to \code{TRUE}}
+
 \item{.C}{A (J x J) composite variance-covariance matrix.}
 
 \item{.choices}{Logical. Should candidate values for the arguments be returned?
 Defaults to \code{FALSE}.}
+
+\item{.ci}{A vector of character strings naming the confidence interval to compute.
+For possible choices see \code{\link[=infer]{infer()}}.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
@@ -55,11 +58,31 @@ to "\emph{diff_absolute}".}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
+\item{.csem_resample}{A list resulting from a call to \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}.}
+
+\item{.cv_folds}{Integer. The number of cross-validation folds to use. Setting
+\code{.cv_folds} to \code{N} (the number of observations) produces
+leave-one-out cross-validation samples. Defaults to \code{10}.}
+
+\item{.data}{A \code{data.frame}, a \code{matrix} or a list containing data of either type.
+Possible column types or classes of the data provided are:
+logical, numeric (double or integer), factor (ordered and unordered)
+or a mix of several types. The data may also include
+\emph{one} character column whose column name must be given to \code{.id}.
+This column is assumed to contain group identifiers used to split the data into groups.}
+
 \item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
 if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
+\item{.dist}{Character string. The distribution to use for the critical value.
+One of \emph{"t"} for Student's t-distribution or \emph{"z"} for the standard normal distribution.
+Defaults to \emph{"z"}.}
+
 \item{.distance}{Character string. A distance measure. One of: "\emph{geodesic}"
 or "\emph{squared_euclidian}". Defaults to "\emph{geodesic}".}
+
+\item{.df}{Character string. The method for obtaining the degrees of freedom.
+Choices are "\emph{type1}" and "\emph{type2}". Defaults to "\emph{type1}" .}
 
 \item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
 where \code{"value"} is a character string giving the name of the dominant indicator
@@ -71,29 +94,45 @@ Dominant indicators may be specified for a subset of the constructs.}
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
 
+\item{.eval_plan}{Character string. The evaluation plan to use. One of
+"\emph{sequential}" or "\emph{multiprocess}". In the latter case
+all available cores will be used. Defaults to "\emph{sequential}".}
+
+\item{.first_resample}{A list containing the \code{.R} resamples based on the original
+data obtained by resamplecSEMResults()}
+
+\item{.second_resample}{A list containing \code{.R2} resamples for each of the \code{.R}
+resamples of the first run.}
+
 \item{.H}{The (N x J) matrix of construct scores.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
-replications yielding an inadmissible result will be dropped (=
-number of results shown <= .runs). For "\emph{ignore}" all results are returned
-even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
-bootstrapping continues until there are .runs admissible solutions.
+replications/resamples yielding an inadmissible result will be dropped (
+the number of results returned will be less than .R). For "\emph{ignore}" all results are returned
+even if they are inadmissible (number of results returned = .R). For "\emph{replace}"
+resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
-\item{.id}{Character string. The name of the column of \code{.data} used to split
-the data into groups. Defaults to \code{NULL}.}
+\item{.id}{Character string or integer. The name or position of the column of
+\code{.data} used to split the data into groups. Ignored if \code{.object} is provided.
+Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
+\item{.n}{Integer. The number of observations of the original data.}
+
 \item{.matrix1}{A \code{matrix} to compare.}
 
 \item{.matrix2}{A \code{matrix} to compare.}
 
 \item{.matrices}{A list of at least two matrices.}
+
+\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+or a \link{cSEMModel}-list.}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
@@ -102,7 +141,7 @@ Only used internally.}
 For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.only_common_factors}{Logical. Should only common factors be included?
 Defaults to \code{FALSE}.}
@@ -137,6 +176,12 @@ of construct used. Ignored if \code{.approach_weight} is not PLS-PM.}
 used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
+\item{.probs}{A vector of probabilities.}
+
+\item{.quantity}{Character string. Which statistic should be returned?
+One of (TODO)
+Defaults to (TODO).}
+
 \item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.}
@@ -147,11 +192,29 @@ of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
 reliabilities are estimated by \code{csem()}.}
 
-\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
+\item{.resample_method}{Character string. The resampling method to use. One of:
+"\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
+
+\item{.resample_method2}{Character string. The resampling method to use when resampling
+from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
+"\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
+resampling from each resample is only required for the studentized confidence
+intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
+
+\item{`.resample_object`}{An R object of class \code{cSEMResults_resampled}
+obtained from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
+or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.}
+
+\item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
+
+\item{.R2}{Integer. The number of bootstrap replications to use when
+resampling from a resample. Defaults to \code{199}.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+
+\item{.seed}{Integer. The random seed to use. Defaults to \code{sample(.Random.seed, 1)}}
 
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
@@ -166,6 +229,12 @@ One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
+
+\item{.user_funs}{A function or a (named) list of functions to apply to every
+resample. Takes \code{.object} as an input (e.g., \code{myFun <- function(.object) {...}}).
+Output should preferably be a (named)
+vector but matrices are also accepted. However, the output will be
+vectorized (columnwise) in this case. See the examples section for details.}
 
 \item{.vector1}{A vector of numeric values.}
 

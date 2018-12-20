@@ -7,9 +7,12 @@
 calculateWeightsGSCA(.data, .model)
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
-data column types or classes are: logical, numeric (double or integer), factor
-(ordered and unordered) or a mix of several types.}
+\item{.data}{A \code{data.frame}, a \code{matrix} or a list containing data of either type.
+Possible column types or classes of the data provided are:
+logical, numeric (double or integer), factor (ordered and unordered)
+or a mix of several types. The data may also include
+\emph{one} character column whose column name must be given to \code{.id}.
+This column is assumed to contain group identifiers used to split the data into groups.}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}

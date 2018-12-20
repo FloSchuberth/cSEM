@@ -9,14 +9,23 @@
 \usage{
 summarize(.object)
 
-\method{summarize}{cSEMResults_default}(.object)
+\method{summarize}{cSEMResults_default}(.object = NULL,
+  .alpha = args_default()$.alpha, .ci = NULL, ...)
 
-\method{summarize}{cSEMResults_multi}(.object)
+\method{summarize}{cSEMResults_multi}(.object = NULL,
+  .alpha = args_default()$.alpha, .ci = NULL, ...)
 
-\method{summarize}{cSEMResults_2ndorder}(.object)
+\method{summarize}{cSEMResults_2ndorder}(.object = NULL,
+  .alpha = args_default()$.alpha, .ci = NULL, ...)
 }
 \arguments{
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
+
+\item{.ci}{A vector of character strings naming the confidence interval to compute.
+For possible choices see \code{\link[=infer]{infer()}}.}
 }
 \description{
 Summarize the model (TODO).

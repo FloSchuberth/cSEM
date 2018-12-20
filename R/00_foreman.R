@@ -75,7 +75,7 @@ foreman <- function(
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
   Cor <- calculateIndicatorCor(.X_cleaned = X_cleaned, 
-                             .approach_cor_robust = .approach_cor_robust)
+                               .approach_cor_robust = .approach_cor_robust)
   
   # Extract the correlation matrix
   S <- Cor$S

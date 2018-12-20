@@ -9,7 +9,7 @@
 #'  .object             = args_default()$.object,
 #'  .alpha              = args_default()$.alpha,
 #'  .drop_inadmissibles = args_default()$.drop_inadmissibles,
-#'  .runs               = args_default()$.runs,
+#'  .R                  = args_default()$.R,
 #'  .saturated          = args_default()$.saturated,
 #'  .type_vcv           = args_default()$.type_vcv
 #'  .verbose            = args_default()$.verbose
@@ -47,7 +47,7 @@
 #' listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
 #' out.cSEM <- csem(listData, model) 
 #'
-#' testMGD(.object = out.cSEM, .runs = 20, .type_vcv= 'construct')
+#' testMGD(.object = out.cSEM, .R = 20, .type_vcv= 'construct')
 #' }
 #'
 #' @export
@@ -56,7 +56,7 @@ testMGD <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .runs                  = args_default()$.runs,
+  .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
   .type_vcv              = args_default()$.type_vcv,
   .verbose               = args_default()$.verbose
@@ -80,7 +80,7 @@ testMGD.cSEMResults_default <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .runs                  = args_default()$.runs,
+  .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
   .type_vcv              = args_default()$.type_vcv,
   .verbose               = args_default()$.verbose
@@ -95,7 +95,7 @@ testMGD.cSEMResults_multi <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .runs                  = args_default()$.runs,
+  .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
   .type_vcv              = args_default()$.type_vcv,
   .verbose               = args_default()$.verbose
@@ -142,7 +142,7 @@ testMGD.cSEMResults_multi <- function(
 
   # Start progress bar if required
   if(.verbose){
-    pb <- txtProgressBar(min = 0, max = .runs, style = 3)
+    pb <- txtProgressBar(min = 0, max = .R, style = 3)
   }
   
   ## Calculate reference distribution
@@ -185,8 +185,8 @@ testMGD.cSEMResults_multi <- function(
       n_inadmissibles <- n_inadmissibles + 1
     }
     
-    # Break repeat loop if .runs results have been created.
-    if(length(ref_dist) == .runs) {
+    # Break repeat loop if .R results have been created.
+    if(length(ref_dist) == .R) {
       break
     } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
@@ -244,7 +244,7 @@ testMGD.cSEMResults_2ndorder <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .runs                  = args_default()$.runs,
+  .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
   .type_vcv              = args_default()$.type_vcv,
   .verbose               = args_default()$.verbose

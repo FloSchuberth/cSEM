@@ -11,7 +11,7 @@ testOMF(
  .object                = args_default()$.object, 
  .alpha                 = args_default()$.alpha, 
  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
- .runs                  = args_default()$.runs, 
+ .R                     = args_default()$.R, 
  .saturated             = args_default()$.saturated,
  .verbose               = args_default()$.verbose
 )
@@ -19,36 +19,36 @@ testOMF(
 \method{testOMF}{cSEMResults_default}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .R = args_default()$.R, .saturated = args_default()$.saturated,
   .verbose = args_default()$.verbose)
 
 \method{testOMF}{cSEMResults_multi}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .R = args_default()$.R, .saturated = args_default()$.saturated,
   .verbose = args_default()$.verbose)
 
 \method{testOMF}{cSEMResults_2ndorder}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .runs = args_default()$.runs, .saturated = args_default()$.saturated,
+  .R = args_default()$.R, .saturated = args_default()$.saturated,
   .verbose = args_default()$.verbose)
 }
 \arguments{
-\item{.object}{An R object of class \code{cSEM<class>} with corresponding method.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
-replications yielding an inadmissible result will be dropped (=
-number of results shown <= .runs). For "\emph{ignore}" all results are returned
-even if they are inadmissible (= number of results = .runs). For "\emph{replace}"
-bootstrapping continues until there are .runs admissible solutions.
+replications/resamples yielding an inadmissible result will be dropped (
+the number of results returned will be less than .R). For "\emph{ignore}" all results are returned
+even if they are inadmissible (number of results returned = .R). For "\emph{replace}"
+resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
-\item{.runs}{Integer. How many runs should be performed? Defaults to \code{499}.}
+\item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 
