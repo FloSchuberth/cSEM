@@ -2,12 +2,20 @@
 % Please edit documentation in R/gsca.R
 \name{calculateWeightsGSCAVCV}
 \alias{calculateWeightsGSCAVCV}
-\title{Calculate weights using GSCA and variance-covariance matrices}
+\title{Calculate weights using the variance-covariance matrix approach of GSCA}
 \usage{
-calculateWeightsGSCAVCV(.data, .model)
+#' @usage calculateWeightsGSCAVCV(
+   .data        = args_default()$.data, 
+   .model       = args_default()$.model,
+   .S           = args_default()$.S,
+   .iter_max    = args_default()$.iter_max,
+   .tolerance   = args_default()$.tolerance
+   )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data.}
+\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Possible
+data column types or classes are: logical, numeric (double or integer), factor
+(ordered and unordered) or a mix of several types.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
@@ -15,7 +23,7 @@ calculateWeightsGSCAVCV(.data, .model)
 or a \link{cSEMModel}-list.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
-If \code{iter_max = 1} and \code{.approach_weights = "PLS"} one-step weights are returned.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
@@ -23,20 +31,62 @@ If the algorithm exceeds the specified number, weights of iteration step
 Defaults to \code{1e-05}.}
 }
 \value{
-A list with the elements
+An object of class \code{cSEMResults}. The result is a list with the elements:
 \describe{
-\item{\code{$W}}{A (J x K) matrix of estimated weights.}
-\item{\code{$E}}{A (J x J) matrix of inner weights.}
-\item{\code{$Modes}}{A named vector of Modes used for the outer estimation.}
-\item{\code{$Conv_status}}{The convergence status. One of \code{TRUE}or \code{FASLE}. If
-one-step weights are used via \code{.iter_max = 1} or no iterative algorithm was used,
-the convergence status is set to \code{NULL}.}
-\item{\code{$Iterations}}{The number of iterations used.}
+\item{\code{$Estimates}}{A list containing a list of estimated quantities.}
+\item{\code{$Information}}{A list containing a list of additional information.}
+}
+
+The estimated quantities in the \code{$Estimates} list are:
+\describe{
+\item{\code{$Path_estimates}}{A (J x J) matrix of estimated path coefficients.}
+\item{\code{$Loading_estimates}}{A (K x J) matrix of loading estimates.}
+\item{\code{$Weight_estimates}}{A (J x K) matrix of weight estimates.}
+\item{\code{$Construct_scores}}{A (N x 1) matrix of construct scores calculated
+using the estimated weights via the weighted relation model.}
+\item{\code{$Indicator_VCV}}{The empirical correlation matrix of the indicators.}
+\item{\code{$Proxy_VCV}}{The correlation matrix of the proxies.}
+\item{\code{$FIT}}{The \code{FIT} measure of global model fit.}
+\item{\code{$AFIT}}{The \code{adjusted FIT} measure of global model fit.}
+\item{\code{$FIT_M}}{The \code{FIT_M} measure of local model fit in the measurement model.}
+\item{\code{$FIT_S}}{The \code{FIT_S} measure of local model fit in the structural model.}
+}
+
+The additional information in the list \code{information} are:
+\describe{
+\item{\code{$Data}}{The (standardized) data used for the estimation.}
+\item{\code{$Model}}{The specified model as given by the function \code{parseModel}.}
+\item{\code{$Arguments}}{A list containing all arguments used and their respective value.}
+\item{\code{$Weight_info}}{A list with the elements \code{Number_iterations} and
+\code{Convergence_status}.}
 }
 }
 \description{
-Calculates weights...
+This function calculates weights, path coefficients and loadings of a specified
+strucural equation model with the variance-covariance matrix approach of GSCA (\insertCite{Hwang2004}{cSEM}
+and \insertCite{Hwang2014}{cSEM}). For more details concerning
+the GSCA approach, the estimation routine, its embedding in the cSEM-package
+and the variance-covariance approach see vignette.
 }
-\details{
-Some more description...
+\examples{
+model <- "
+# Structural model
+QUAL ~ EXPE
+EXPE ~ IMAG
+SAT  ~ IMAG + EXPE + QUAL + VAL
+LOY  ~ IMAG + SAT
+VAL  ~ EXPE + QUAL 
+# Measurement model
+EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+LOY  =~ loy1  + loy2  + loy3  + loy4
+QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+SAT  <~ sat1  + sat2  + sat3  + sat4
+VAL  <~ val1  + val2  + val3  + val4
+"
+gsca_results <- csem(.data = satisfaction, .model = model, .approach_weights = "GSCA_VCV")
+ 
+}
+\references{
+\insertAllCited{}
 }

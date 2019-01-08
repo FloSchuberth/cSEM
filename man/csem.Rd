@@ -37,8 +37,10 @@ the data into groups. Defaults to \code{NULL}.}
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{GSCAm}", "\emph{GSCA_VCV}", "\emph{fixed}", or "\emph{unit}".
-Defaults to "\emph{PLS}".}
-
+Defaults to "\emph{PLS}".
+obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{GSCAm}", "\emph{GSCA_VCV}", "\emph{fixed}", or "\emph{unit}".
+Defaults to "\emph{PLS-PM}".}
 
 \item{...}{Further arguments to be passed down to lower level functions of \code{csem()}
 or \code{cca()}. Type \code{\link[cSEM:args_default]{args_default(.only_dots = TRUE)}}

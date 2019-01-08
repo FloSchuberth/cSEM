@@ -1,15 +1,73 @@
 #' Calculate weights using GSCA
 #'
-#' Calculates weights...
+#' This function calculates weights, path coefficients and loadings of a specified
+#' strucural equation model with the GSCA procedure (\insertCite{Hwang2004}{cSEM}
+#' and \insertCite{Hwang2014}{cSEM}). For more details concerning 
+#' the GSCA approach, the estimation routine and its embedding in the cSEM-package 
+#' see vignette.
 #'
-#' Some more description...
-#'
-#' @usage calculateWeightsGSCA(.data, .model)
-#'
+#' @usage calculateWeightsGSCA(
+#'    .data        = args_default()$.data,
+#'    .S           = args_default()$.S,
+#'    .model       = args_default()$.model,
+#'    .iter_max    = args_default()$.iter_max,
+#'    .tolerance   = args_default()$.tolerance
+#'    )
+#' 
 #' @inheritParams csem_arguments
 #'
-#' @inherit calculateWeightsPLS return
+#' @return An object of class `cSEMResults`. The result is a list with the elements:
+#' \describe{
+#'   \item{`$Estimates`}{A list containing a list of estimated quantities.}
+#'   \item{`$Information`}{A list containing a list of additional information.}
+#' }
+#' 
+#' The estimated quantities in the `$Estimates` list are:
+#' \describe{
+#'   \item{`$Path_estimates`}{A (J x J) matrix of estimated path coefficients.}
+#'   \item{`$Loading_estimates`}{A (K x J) matrix of loading estimates.}
+#'   \item{`$Weight_estimates`}{A (J x K) matrix of weight estimates.}
+#'   \item{`$Construct_scores`}{A (N x 1) matrix of construct scores calculated 
+#'   using the estimated weights via the weighted relation model.}
+#'   \item{`$Indicator_VCV`}{The empirical correlation matrix of the indicators.}
+#'   \item{`$Proxy_VCV`}{The correlation matrix of the proxies.}
+#'   \item{`$FIT`}{The `FIT` measure of global model fit.}
+#'   \item{`$AFIT`}{The `adjusted FIT` measure of global model fit.}
+#'   \item{`$FIT_M`}{The `FIT_M` measure of local model fit in the measurement model.}
+#'   \item{`$FIT_S`}{The `FIT_S` measure of local model fit in the structural model.}
+#'   }
+#'   
+#'   The additional information in the list `information` are:
+#'   \describe{
+#'   \item{`$Data`}{The (standardized) data used for the estimation.}
+#'   \item{`$Model`}{The specified model as given by the function `parseModel`.}
+#'   \item{`$Arguments`}{A list containing all arguments used and their respective value.}
+#'   \item{`$Weight_info`}{A list with the elements `Number_iterations` and 
+#'   `Convergence_status`.}
+#'   }
 #'
+#' @references
+#'   \insertAllCited{}
+#'
+#' @examples
+#' model <- "
+#' # Structural model
+#' QUAL ~ EXPE
+#' EXPE ~ IMAG
+#' SAT  ~ IMAG + EXPE + QUAL + VAL
+#' LOY  ~ IMAG + SAT
+#' VAL  ~ EXPE + QUAL 
+#' # Measurement model
+#' EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+#' IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+#' LOY  =~ loy1  + loy2  + loy3  + loy4
+#' QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+#' SAT  <~ sat1  + sat2  + sat3  + sat4
+#' VAL  <~ val1  + val2  + val3  + val4
+#' "
+#' gsca_results <- csem(.data = satisfaction, .model = model, .approach_weights = "GSCA")
+#'  
+#' @export
 
 calculateWeightsGSCA <- function(
   .data                        = args_default()$.data,
@@ -31,6 +89,22 @@ calculateWeightsGSCA <- function(
   J = ncol(W0) # number of constructs
   T = K + J
   
+  # here comes the routine that adapts the matrix of the measurement model if there 
+  # are some only formative indicators as well, i.e., if in the model specification
+  # appear also non-common factor constructs
+  
+  for (j in 1:J)
+  {
+    if (.model$construct_type[j]=="Composite")
+    {
+     C0[j,] = rep(0, K) 
+    }
+    else
+    {
+     C0[j,] = C0[j,]
+    }
+  }
+  
   A0 = cbind(C0, B0) # J rows, T columns
   
   ## get indices of those entries of A0 and W0 which are not zero 
@@ -43,6 +117,7 @@ calculateWeightsGSCA <- function(
   ## set initial values of non-zero entries in A0 and W0 to random values
   vecA[aindex,] = runif(length(aindex), min = 0, max = 1)
   vecW[windex,] = runif(length(windex), min = 0, max = 1)
+  
   # A = A0
   # W = W0
   A = matrix(vecA, ncol = T, nrow = J, byrow = FALSE)
@@ -154,6 +229,7 @@ calculateWeightsGSCA <- function(
     "Information" = list(
       "Data"          = Z,
       "Model"         = .model,
+      "Information_GSCA" = list("Measurement model GSCA" = C0),
       "Arguments"     = as.list(match.call())[-1],
       "Weight_info"   = list(
         "Number_iterations"  = iter,
@@ -169,20 +245,76 @@ calculateWeightsGSCA <- function(
 } # END calculateWeightsGSCA
 
 
-
-
-#' Calculate weights using GSCA and variance-covariance matrices
+#' Calculate weights using the variance-covariance matrix approach of GSCA
 #'
-#' Calculates weights...
+#' This function calculates weights, path coefficients and loadings of a specified
+#' strucural equation model with the variance-covariance matrix approach of GSCA (\insertCite{Hwang2004}{cSEM}
+#' and \insertCite{Hwang2014}{cSEM}). For more details concerning 
+#' the GSCA approach, the estimation routine, its embedding in the cSEM-package
+#' and the variance-covariance approach see vignette.
 #'
-#' Some more description...
-#'
-#' @usage calculateWeightsGSCAVCV(.data, .model)
-#'
+#' @usage #' @usage calculateWeightsGSCAVCV(
+#'    .data        = args_default()$.data, 
+#'    .model       = args_default()$.model,
+#'    .S           = args_default()$.S,
+#'    .iter_max    = args_default()$.iter_max,
+#'    .tolerance   = args_default()$.tolerance
+#'    )
+#'    
 #' @inheritParams csem_arguments
 #'
-#' @inherit calculateWeightsPLS return
+#' @return An object of class `cSEMResults`. The result is a list with the elements:
+#' \describe{
+#'   \item{`$Estimates`}{A list containing a list of estimated quantities.}
+#'   \item{`$Information`}{A list containing a list of additional information.}
+#' }
+#' 
+#' The estimated quantities in the `$Estimates` list are:
+#' \describe{
+#'   \item{`$Path_estimates`}{A (J x J) matrix of estimated path coefficients.}
+#'   \item{`$Loading_estimates`}{A (K x J) matrix of loading estimates.}
+#'   \item{`$Weight_estimates`}{A (J x K) matrix of weight estimates.}
+#'   \item{`$Construct_scores`}{A (N x 1) matrix of construct scores calculated 
+#'   using the estimated weights via the weighted relation model.}
+#'   \item{`$Indicator_VCV`}{The empirical correlation matrix of the indicators.}
+#'   \item{`$Proxy_VCV`}{The correlation matrix of the proxies.}
+#'   \item{`$FIT`}{The `FIT` measure of global model fit.}
+#'   \item{`$AFIT`}{The `adjusted FIT` measure of global model fit.}
+#'   \item{`$FIT_M`}{The `FIT_M` measure of local model fit in the measurement model.}
+#'   \item{`$FIT_S`}{The `FIT_S` measure of local model fit in the structural model.}
+#'   }
+#'   
+#'   The additional information in the list `information` are:
+#'   \describe{
+#'   \item{`$Data`}{The (standardized) data used for the estimation.}
+#'   \item{`$Model`}{The specified model as given by the function `parseModel`.}
+#'   \item{`$Arguments`}{A list containing all arguments used and their respective value.}
+#'   \item{`$Weight_info`}{A list with the elements `Number_iterations` and 
+#'   `Convergence_status`.}
+#'   }
 #'
+#' @references
+#'   \insertAllCited{}
+#'
+#' @examples
+#' model <- "
+#' # Structural model
+#' QUAL ~ EXPE
+#' EXPE ~ IMAG
+#' SAT  ~ IMAG + EXPE + QUAL + VAL
+#' LOY  ~ IMAG + SAT
+#' VAL  ~ EXPE + QUAL 
+#' # Measurement model
+#' EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+#' IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+#' LOY  =~ loy1  + loy2  + loy3  + loy4
+#' QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+#' SAT  <~ sat1  + sat2  + sat3  + sat4
+#' VAL  <~ val1  + val2  + val3  + val4
+#' "
+#' gsca_results <- csem(.data = satisfaction, .model = model, .approach_weights = "GSCA_VCV")
+#'  
+#' @export
 
 calculateWeightsGSCAVCV <- function(
   .data                        = args_default()$.data,
@@ -204,6 +336,22 @@ calculateWeightsGSCAVCV <- function(
   J = ncol(W0) # number of constructs
   T = K + J
   
+  # here comes the routine that adapts the matrix of the measurement model if there 
+  # are some only formative indicators as well, i.e., if in the model specification
+  # appear also non-common factor constructs
+  
+  for (j in 1:J)
+  {
+    if (.model$construct_type[j]=="Composite")
+    {
+      C0[j,] = rep(0, K) 
+    }
+    else
+    {
+      C0[j,] = C0[j,]
+    }
+  }
+  
   ## in this approach, the variance-covariance matrix of the indicators is used instead
   ## of the data matrix Z. For this, a square root decomposition of M is needed
   ## which is obtained via a cholesky decomposition
@@ -224,6 +372,7 @@ calculateWeightsGSCAVCV <- function(
   ## set initial values of non-zero entries in A0 and W0 to random values
   vecA[aindex,] = runif(length(aindex), min = 0, max = 1)
   vecW[windex,] = runif(length(windex), min = 0, max = 1)
+  
   # A = A0
   # W = W0
   A = matrix(vecA, ncol = T, nrow = J, byrow = FALSE)
@@ -334,6 +483,7 @@ calculateWeightsGSCAVCV <- function(
     "Information" = list(
       "Data"          = Z,
       "Model"         = .model,
+      "Information_GSCA" = list("Measurement model GSCA" = C0),
       "Arguments"     = as.list(match.call())[-1],
       "Weight_info"   = list(
         "Number_iterations"  = iter,

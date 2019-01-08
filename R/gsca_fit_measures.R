@@ -31,7 +31,7 @@ calculateSRMR <- function(.object = args_default()$.object) {
   Omega = solve(Q %*% t(Q)) %*% Q
   e = t(Q) %*% t(Z) # Residuals
   
-  Xi = stats::cor(t(e))
+  Xi = stats::corp(t(e))
   Sigma_hat = Omega %*% Xi %*% t(Omega)
   diagprod <- matrix(0, nrow = K, ncol = K) 
   
@@ -79,8 +79,6 @@ calculateGFI <- function(.object = args_default()$.object) {
   e = t(Q) %*% t(Z) # Residuals 
   
   Xi = stats::cor(t(e)) 
-  # as S is standardized and the correlation matrix of indicators, I suggest to take 
-  # the correlation matrix of the residuals (and not the covariance matrix)
   Sigma_hat = Omega %*% Xi %*% t(Omega)
   C_diff = S - Sigma_hat
   
