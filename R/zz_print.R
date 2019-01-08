@@ -36,13 +36,13 @@ print.cSEMResults <- function(.object) {
     cat("\n\nEstimation status by stage:\n", sep = "")
     for(i in names(.object)) {
       cat("\n\t", col_align(cyan(i), 15), ": ",
-          ifelse(sum(x) == 0, green("successful"), red("not successful")), ".", sep = "")
+          ifelse(sum(x) == 0, green("successful"), red("not successful")), sep = "")
     }
     if(sum(x) != 0) {
       cat("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
           " for details.", sep = "")
     }
-    cat("\n\nThe result for each stage set is a list of class " %+% bold("cSEMResults") %+%"",
+    cat("\n\nThe result for each stage is a list of class " %+% bold("cSEMResults") %+%"",
         "\nwith list elements:\n\n\t", sep = "")
   } else {
     cat(
@@ -66,9 +66,7 @@ print.cSEMResults <- function(.object) {
       "- ", cyan("<object-name>"), yellow("$"), green("Estimates"), "\n\n", sep = "")
   cat("Available postestimation commands:\n\n\t",
       "- ", magenta("assess"), "(", cyan("<object-name>"), ")\n\t",
-      "- ", magenta("fit"), "(", cyan("<object-name>"), ")\n\t",
-      "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t"  ,
-      "- ", magenta("test"), "(", cyan("<object-name>"), ")\n\t"  ,
+      "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n", sep = "")
   cat(rule(line = "bar2"), "\n")
 }
