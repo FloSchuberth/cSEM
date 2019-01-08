@@ -17,9 +17,8 @@ second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}"
 Defaults to "\emph{3stage}".}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
-indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
-"\emph{theil-sen}" or (TODO)
-Defaults to "\emph{none}".}
+indicator correlation matrix. One of: "\emph{none}" in which case nothing is done or
+"\emph{mcd}" via \code{MASS::cor.rob()}. Defaults to "\emph{none}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".

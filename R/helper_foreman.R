@@ -409,7 +409,7 @@ calculateConstructVCV <- function(
 #' 
 #' Calculate the indicator correlation matrix using conventional or robust methods.
 #' 
-#' Depending on the type of the columns of `.X_cleaned` the following methods are used:
+#' Id `"none"` the method depends on the type of column of `.X_cleaned`:
 #' \describe{
 #'   \item{`Numeric-numeric`}{Bravais-Pearson product-moment correlation}
 #'   \item{`Numeric-factor`}{Polyserial correlation}
@@ -417,8 +417,8 @@ calculateConstructVCV <- function(
 #' }
 #' Note: logical input is treated as a 0-1 factor variable.
 #' 
-#' If `.approach_cor_robust` is not `none`, the specified robustness method is used
-#' instead.
+#' If `"mcd" (= minimum covariance determinant) a robust covariance is estimated
+#' via `MASS::cov.rob()`. See `?MASS::cov.rob()` for details.
 #'
 #' @usage calculateIndicatorCor(
 #'   .X_cleaned           = args_default()$.X_cleaned, 
@@ -443,8 +443,10 @@ calculateIndicatorCor <- function(
             type <- ifelse(all(temp$type %in% c("Pearson", "")), "PLS-PM", "OrdPLS")
           },
           
-          "theil-sen" = {
-            S    <- calculateCorTheilSen(scale(data.matrix(.X_cleaned)))
+          "mcd" = {
+            S <- MASS::cov.rob(.X_cleaned, cor = TRUE, method = "mcd")$cor
+            S[upper.tri(S) == TRUE] = t(S)[upper.tri(S) == TRUE]
+            
             type <-  "PLS-PM"
           },
           "TODO" = {
@@ -454,80 +456,4 @@ calculateIndicatorCor <- function(
   # (TODO) not sure how to name the "type" yet and what to do with it. Theoretically,
   # a polycoric correlation could also be used with GSCA or some other non-PLS-PM method.
   list(S = S, type = type)
-}
-
-#' Internal: Calculate the Theil-Sen estimator
-#'
-#' Calculate the Theil-Sen estimator (TODO, Reference) between two vectors.
-#' 
-#' (TODO) Description of what Theil-Sen does exactly.
-#' 
-#' @usage estimateTheilSen(
-#'   .x = args_default()$.x, 
-#'   .y = args_default()$.y)
-#'
-#' @inheritParams csem_arguments
-#' 
-#' @return A vector of length one.
-#' @keywords internal
-
-estimateTheilSen <- function(
-  .x = args_default()$.x, 
-  .y = args_default()$.y
-  ) {
-  xy  <- cbind(.x, .y)
-  ind <- RcppAlgos::comboGeneral(nrow(xy), 2) 
-  
-  d     <- xy[ind[, 2], ] - xy[ind[, 1], ]
-  slope <- d[, 2] / d[, 1]
-  median(slope[is.infinite(slope) == FALSE], na.rm = TRUE)
-}
-
-#' Internal: Calculate indicator correlation matrix using Theil-Sen
-#'
-#' Calculate the indicator correlation matrix using Theil-Sen correlation.
-#' 
-#' @usage calculateCorTheilSen(.X= args_default()$.X)
-#'  
-#' @inheritParams csem_arguments
-#'
-#' @return The (K x K) indicator correlation matrix.
-#' @keywords internal
-
-calculateCorTheilSen <- function(.X = args_default()$.X){
-  
-  # Store matrix for the correlations
-  cov_mat <- matrix(0, ncol = ncol(.X), nrow = ncol(.X),
-                   dimnames = list(colnames(.X), colnames(.X)))
-  
-  for(i in 1:ncol(.X)){
-    for(j in i:ncol(.X)){
-      # Gives the Theil-Sen estimator from a regression of the i-th column of the
-      # data on the j-th column of  the data
-      a <- estimateTheilSen(.X[,i], .X[,j])
-      
-      # Gives the Theil-Sen estimator from a regression of the j-th column of the
-      # data on the i-th column of the data
-      b <- estimateTheilSen(.X[,j], .X[,i])
-      
-      # The correlation is the geometric mean of both estimated regression 
-      # weighted with the sign of the single theil-sen estimators to be also able
-      # to estimate negative correlations
-      # coefficients 
-      ## WORKING SOLUTION for the case that a and b have different directions:
-      # use the arithmetic mean instead the geometric mean
-      rho <- sign(a)*sqrt(a*b)
-      
-      if(!is.nan(rho)){
-        cov_mat[i, j] <- rho 
-      }else{
-        cov_mat[i, j] <- 0.5 * (a + b)
-      }
-    }
-  }
-  
-  d       <- diag(cov_mat)
-  cov_mat <- t(cov_mat) + cov_mat
-  diag(cov_mat) <- d
-  return(cov_mat)
 }

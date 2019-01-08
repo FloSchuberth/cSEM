@@ -17,9 +17,8 @@
 #'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
 #'   Defaults to "*3stage*".
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
-#'   indicator correlation matrix. One of: "*none*" in which case nothing is done,
-#'   "*theil-sen*" or (TODO)
-#'   Defaults to "*none*".
+#'   indicator correlation matrix. One of: "*none*" in which case nothing is done or
+#'   "*mcd*" via `MASS::cor.rob()`. Defaults to "*none*".
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
@@ -319,7 +318,7 @@ args_default <- function(
     .normality               = TRUE,
     
     #  Arguments passed to foreman
-    .approach_cor_robust     = c("none", "theil-sen"),
+    .approach_cor_robust     = c("none", "mcd"),
     .disattenuate            = TRUE,
     .dominant_indicators     = NULL,
     .estimate_structural     = TRUE,

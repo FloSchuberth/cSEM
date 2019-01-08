@@ -36,9 +36,8 @@ This column is assumed to contain group identifiers used to split the data into 
 or a \link{cSEMModel}-list.}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
-indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
-"\emph{theil-sen}" or (TODO)
-Defaults to "\emph{none}".}
+indicator correlation matrix. One of: "\emph{none}" in which case nothing is done or
+"\emph{mcd}" via \code{MASS::cor.rob()}. Defaults to "\emph{none}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
