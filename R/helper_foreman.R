@@ -435,6 +435,11 @@ calculateIndicatorCor <- function(
   .approach_cor_robust = args_default()$.approach_cor
 ){
   
+  if(.approach_cor_robust != "none" && !all(sapply(.X_cleaned, is.numeric))) {
+    stop2("Setting `.approach_cor_robust = ", .approach_cor_robust, "` requires all",
+          " columns of .data to be numeric.")
+  }
+  
   switch (.approach_cor_robust,
           "none" = {
             # Pd is TRUE by default. See ?polycor for details
@@ -449,8 +454,10 @@ calculateIndicatorCor <- function(
             
             type <-  "PLS-PM"
           },
-          "TODO" = {
-            "(TODO)"
+          "spearman" = {
+            S <- cor(.X_cleaned, method = "spearman")
+            
+            type <-  "PLS-PM"
           }
   )
   # (TODO) not sure how to name the "type" yet and what to do with it. Theoretically,

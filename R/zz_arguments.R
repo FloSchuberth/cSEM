@@ -318,7 +318,7 @@ args_default <- function(
     .normality               = TRUE,
     
     #  Arguments passed to foreman
-    .approach_cor_robust     = c("none", "mcd"),
+    .approach_cor_robust     = c("none", "mcd", "spearman"),
     .disattenuate            = TRUE,
     .dominant_indicators     = NULL,
     .estimate_structural     = TRUE,
