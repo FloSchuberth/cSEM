@@ -391,7 +391,7 @@ resampleData <- function(
 #' Path estimates, Loading estimates, Weight estimates.
 #' 
 #' In practical application users may need to resample a specific statistic (e.g,
-#' the heterotrait-monotrait ratio (HTMT) or restrictions on path coefficients such as beta_1 = beta_2).
+#' the heterotrait-monotrait ratio of correlations (HTMT) or restrictions on path coefficients such as beta_1 = beta_2).
 #' Such statistics may be provided by a function `f(.object)` or a list of such functions
 #' via the `.user_funs` argument. The only accepted argument of these functions is 
 #' `.object` which must be an object of class [cSEMResults]. 
