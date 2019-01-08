@@ -388,7 +388,7 @@ resampleData <- function(
 #' related to resampling) and returns estimates for each of a subset of 
 #' practically useful resampled parameters/statistics computed by [csem()]. 
 #' Currently, the following quantities are computed and returned based on each resample: 
-#' Path estimates, Loading estimates, Weight estimates
+#' Path estimates, Loading estimates, Weight estimates.
 #' 
 #' In practical application users may need to resample a specific statistic (e.g,
 #' the heterotrait-monotrait ratio (HTMT) or restrictions on path coefficients such as beta_1 = beta_2).
@@ -432,7 +432,7 @@ resampleData <- function(
 #' 
 #' Resampling may produce inadmissble results (as checked by [verify()]).
 #' By default these results are dropped however users may choose to `"ignore"`
-#' or `"replace"` inadmissble results in which case resampling continous until
+#' or `"replace"` inadmissble results in which case resampling continious until
 #' the necessary number of admissble results is reached.
 #' 
 #' The \pkg{cSEM} package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future} 
@@ -477,14 +477,15 @@ resampleData <- function(
 #' \itemize{
 #' \item{ `$Estimates_resamples`: A list containing the `.R` resamples and
 #' the original estimates for each of the resampled quantities (Path_estimates, 
-#' Loading_estimates, Weight_estimates, (HTMT), (user defined functions). 
+#' Loading_estimates, Weight_estimates, user defined functions). 
 #' Each list element is a list containing elements 
 #' `$Resamples` and `$Original`. `$Resamples` is a `(.R x K)` matrix with each
 #' row representing one resample for each of the `K` parameters/statistics.
-#' `$Original` contains the original estimates (vectorized by column (e.g. for the HTMT)).}
+#' `$Original` contains the original estimates (vectorized by column if the output of 
+#' the user provided function is a matrix.}
 #' \item {`$Information_resamples`: A list containing addtional information.}
 #' }
-#' See `str(<.object>, list.len = 3)` for an overview.
+#' Use `str(<.object>, list.len = 3)` for on the resulting object for an overview.
 #' 
 #' @references
 #'   \insertAllCited{} 

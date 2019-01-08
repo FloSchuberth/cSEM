@@ -59,14 +59,15 @@ the following elements added:
 \itemize{
 \item{ \code{$Estimates_resamples}: A list containing the \code{.R} resamples and
 the original estimates for each of the resampled quantities (Path_estimates,
-Loading_estimates, Weight_estimates, (HTMT), (user defined functions).
+Loading_estimates, Weight_estimates, user defined functions).
 Each list element is a list containing elements
 \code{$Resamples} and \code{$Original}. \code{$Resamples} is a \code{(.R x K)} matrix with each
 row representing one resample for each of the \code{K} parameters/statistics.
-\code{$Original} contains the original estimates (vectorized by column (e.g. for the HTMT)).}
+\code{$Original} contains the original estimates (vectorized by column if the output of
+the user provided function is a matrix.}
 \item {\code{$Information_resamples}: A list containing addtional information.}
 }
-See \code{str(<.object>, list.len = 3)} for an overview.
+Use \code{str(<.object>, list.len = 3)} for on the resulting object for an overview.
 }
 \description{
 Resample a \link{cSEMResults} object using bootstrap or jackknife resampling.
@@ -84,7 +85,7 @@ Given \code{M} resamples (for bootstrap \code{M = .R} and for jackknife \code{M 
 related to resampling) and returns estimates for each of a subset of
 practically useful resampled parameters/statistics computed by \code{\link[=csem]{csem()}}.
 Currently, the following quantities are computed and returned based on each resample:
-Path estimates, Loading estimates, Weight estimates
+Path estimates, Loading estimates, Weight estimates.
 
 In practical application users may need to resample a specific statistic (e.g,
 the heterotrait-monotrait ratio (HTMT) or restrictions on path coefficients such as beta_1 = beta_2).
@@ -128,7 +129,7 @@ For jackknife \code{.R} are \code{.R2} are ignored.
 
 Resampling may produce inadmissble results (as checked by \code{\link[=verify]{verify()}}).
 By default these results are dropped however users may choose to \code{"ignore"}
-or \code{"replace"} inadmissble results in which case resampling continous until
+or \code{"replace"} inadmissble results in which case resampling continious until
 the necessary number of admissble results is reached.
 
 The \pkg{cSEM} package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future}
