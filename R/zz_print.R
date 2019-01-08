@@ -90,36 +90,35 @@ print.cSEMSummarize_default <- function(.object, .full_output = FALSE) {
   x1 <- .object$Estimates
   x2 <- .object$Information
   
-  cat(
+  cat2(
     rule(line = "bar2"), "\n",
     rule(center = "Overview"), 
-    "\n", 
-    sep = ""
+    "\n"
   )
   
   ### Overview -----------------------------------------------------------------
-  cat(
-    col_align("\n\tNumber of observations", 25), "= ", nrow(x2$Arguments$.data),
-    col_align("\n\tWeight estimator", 25), "= ", x2$Arguments$.approach_weights, 
-    sep = ""
+  cat2(
+    col_align("\n\tNumber of observations", 35), "= ", nrow(x2$Arguments$.data),
+    col_align("\n\tWeight estimator", 35), "= ", 
+    ifelse(x2$Arguments$.approach_weights == "PLS-PM" && 
+             x2$Type_of_indicator_correlation %in% c("Polychoric", "Polyserial"), 
+           "PLS-PM (OrdPLS)", x2$Arguments$.approach_weights)
   )
   
   if(x2$Arguments$.approach_weights == "PLS-PM") {
-    cat(
-      col_align("\n\tInner weighting scheme", 25), "= ", 
-      x2$Arguments$.PLS_weight_scheme_inner, 
-      sep = ""
+    cat2(
+      col_align("\n\tInner weighting scheme", 35), "= ", 
+       x2$Arguments$.PLS_weight_scheme_inner
     )
   }
+  cat2(
+    col_align("\n\tType of indicator correlation", 35), "= ", 
+    paste0(x2$Type_of_indicator_correlation, collapse = ", ")
+    )
   cat(
-    col_align("\n\tType of correlation", 25), "= ", 
-    ifelse(x2$Arguments$.approach_cor_robust == "none", 
-           "Bravais-Pearson", x2$Arguments$.approach_cor_robust),
-    sep = "")
-  cat(
-    col_align("\n\tPath model estimator", 25), "= ", x2$Arguments$.approach_paths,
-    col_align("\n\tType of path model", 25), "= ", x2$Model$model_type,
-    col_align("\n\tDisattenuated", 25), "= ", 
+    col_align("\n\tPath model estimator", 35), "= ", x2$Arguments$.approach_paths,
+    col_align("\n\tType of path model", 35), "= ", x2$Model$model_type,
+    col_align("\n\tDisattenuated", 35), "= ", 
     ifelse(x2$Arguments$.disattenuate, 
            ifelse(x2$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)", "Yes"), "no"),
     sep = "")
@@ -373,30 +372,32 @@ print.cSEMSummarize_2ndorder <- function(.object) {
     "\n", sep = "")
   
   ### Overview -----------------------------------------------------------------
-  cat(
-    col_align("\n\tNumber of observations", 25), "= ", nrow(x12$Arguments$.data),
-    col_align("\n\tWeight estimator", 25), "= ", x12$Arguments$.approach_weights, 
-    sep = "")
+  cat2(
+    col_align("\n\tNumber of observations", 35), "= ", nrow(x12$Arguments$.data),
+    col_align("\n\tWeight estimator", 35), "= ", 
+    ifelse(x12$Arguments$.approach_weights == "PLS-PM" && 
+             x12$Type_of_indicator_correlation %in% c("Polychoric", "Polyserial"), 
+           "PLS-PM (OrdPLS)", x12$Arguments$.approach_weights)
+  )
   
   if(x12$Arguments$.approach_weights == "PLS-PM") {
     cat(
-      col_align("\n\tInner weighting scheme", 25), "= ", 
+      col_align("\n\tInner weighting scheme", 35), "= ", 
       x12$Arguments$.PLS_weight_scheme_inner, 
       sep = "")
   }
+  cat2(
+    col_align("\n\tType of indicator correlation", 35), "= ", 
+    paste0(x12$Type_of_indicator_correlation, collapse = ", ")
+  )
   cat(
-    col_align("\n\tType of correlation", 25), "= ", 
-    ifelse(x12$Arguments$.approach_cor_robust == "none", 
-           "Bravais-Pearson", x12$Arguments$.approach_cor_robust),
-    sep = "")
-  cat(
-    col_align("\n\tPath model estimator", 25), "= ", x12$Arguments$.approach_paths,
+    col_align("\n\tPath model estimator", 35), "= ", x12$Arguments$.approach_paths,
     # Its important to read the model type of the second stage (since the first
     # is always linear)
-    col_align("\n\tType of path model", 25), "= ", x22$Model$model_type,
-    col_align("\n\tDisattenuated", 25), "= ", 
+    col_align("\n\tType of path model", 35), "= ", x22$Model$model_type,
+    col_align("\n\tDisattenuated", 35), "= ", 
     ifelse(x12$Arguments$.disattenuate, 
-           ifelse(x12$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)", "Yes"), "no"),
+           ifelse(x12$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)", "Yes"), "No"),
     sep = "")
   
   cat("\n\n\tConstruct details:\n\t","------------------", sep = "")
