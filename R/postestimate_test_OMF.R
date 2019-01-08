@@ -140,7 +140,7 @@ testOMF.cSEMResults_default <- function(
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[counter]] <- NULL
+      ref_dist[[counter]] <- NA
       
     } else {# status is not ok and .handle_inadmissibles == "replace"
       # Reset counter and raise number of inadmissibles by 1
@@ -166,9 +166,11 @@ testOMF.cSEMResults_default <- function(
     close(pb)
   }
   
+  # Delete potential NA's
+  ref_dist1 <- Filter(Negate(anyNA), ref_dist)
+  
   # Combine
-  ref_dist_matrix <- do.call(cbind, ref_dist) # note: this drops the NULL elements,
-  # so only the admissibles remain.
+  ref_dist_matrix <- do.call(cbind, ref_dist1) 
   ## Compute critical values (Result is a (2 x p) matrix, where n is the number
   ## of quantiles that have been computed (1 by default)
   .alpha <- .alpha[order(.alpha)]
@@ -306,7 +308,7 @@ testOMF.cSEMResults_2ndorder <- function(
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[counter]] <- NULL
+      ref_dist[[counter]] <- NA
       
     } else {# status is not ok and .handle_inadmissibles == "replace"
       # Reset counter and raise number of inadmissibles by 1
@@ -331,10 +333,12 @@ testOMF.cSEMResults_2ndorder <- function(
   if(.verbose){
     close(pb)
   }
+  
+  # Delete potential NA's
+  ref_dist1 <- Filter(Negate(anyNA), ref_dist)
 
   # Combine
-  ref_dist_matrix <- do.call(cbind, ref_dist) # note: this drops the NULL elements,
-  # so only the admissibles remain.
+  ref_dist_matrix <- do.call(cbind, ref_dist1)
   ## Compute critical values (Result is a (2 x p) matrix, where n is the number
   ## of quantiles that have been computed (1 by default)
   .alpha <- .alpha[order(.alpha)]
