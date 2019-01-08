@@ -65,13 +65,17 @@ processData <- function(.data, .model) {
   }
 
   ### Processing and further checking =========
-  # Convert to data.frame if matrix
-  # Note we need a data frame to allow for data to have different classes. Namely,
-  # factors need to be allowed.
-  
-  if(is.matrix(.data)) {
-    .data <- as.data.frame(.data)
-  }
+  # Convert to data.frame
+  # Note 1: we need a data frame to allow for data to have different classes. Namely,
+  #   factors need to be allowed.
+  # Note 2: previously as.data.frame() was only called when .data had class
+  #    .matrix. However, classes tbl_df, tbl and tiblle cause e.g. an error in the
+  #    hetcor() function (its basically a programming error on the developers part,
+  #    as it checks the class atributed incorrectly). 
+  #    Hence, as.data.frame is now always called to make sure .data is
+  #    always really a data frame with the single class attribute "data.frame".
+    
+  .data <- as.data.frame(.data)
 
   # Convert .model to cSEMModel format if not already in this format
   if(!(class(.model) == "cSEMModel")) {
