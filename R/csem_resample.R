@@ -388,15 +388,10 @@ resampleData <- function(
 #' related to resampling) and returns estimates for each of a subset of 
 #' practically useful resampled parameters/statistics computed by [csem()]. 
 #' Currently, the following quantities are computed and returned based on each resample: 
-#' \describe{
-#' \item{Parameters}{Path estimates, Loading estimates, Weight estimates}
-#' \item{Statistics}{The heterotrait-monotrait ratio (HTMT) (currently only for 
-#' avaiable for models without hiearchical constructs)}
-#' }
+#' Path estimates, Loading estimates, Weight estimates.
 #' 
 #' In practical application users may need to resample a specific statistic (e.g,
-#' restrictions on path coefficients such as beta_1 = beta_2) that is not returned
-#' by default. 
+#' the heterotrait-monotrait ratio of correlations (HTMT) or restrictions on path coefficients such as beta_1 = beta_2).
 #' Such statistics may be provided by a function `f(.object)` or a list of such functions
 #' via the `.user_funs` argument. The only accepted argument of these functions is 
 #' `.object` which must be an object of class [cSEMResults]. 
@@ -437,7 +432,7 @@ resampleData <- function(
 #' 
 #' Resampling may produce inadmissble results (as checked by [verify()]).
 #' By default these results are dropped however users may choose to `"ignore"`
-#' or `"replace"` inadmissble results in which case resampling continous until
+#' or `"replace"` inadmissble results in which case resampling continious until
 #' the necessary number of admissble results is reached.
 #' 
 #' The \pkg{cSEM} package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future} 
@@ -482,14 +477,15 @@ resampleData <- function(
 #' \itemize{
 #' \item{ `$Estimates_resamples`: A list containing the `.R` resamples and
 #' the original estimates for each of the resampled quantities (Path_estimates, 
-#' Loading_estimates, Weight_estimates, (HTMT), (user defined functions). 
+#' Loading_estimates, Weight_estimates, user defined functions). 
 #' Each list element is a list containing elements 
 #' `$Resamples` and `$Original`. `$Resamples` is a `(.R x K)` matrix with each
 #' row representing one resample for each of the `K` parameters/statistics.
-#' `$Original` contains the original estimates (vectorized by column (e.g. for the HTMT)).}
+#' `$Original` contains the original estimates (vectorized by column if the output of 
+#' the user provided function is a matrix.}
 #' \item {`$Information_resamples`: A list containing addtional information.}
 #' }
-#' See `str(<.object>, list.len = 3)` for an overview.
+#' Use `str(<.object>, list.len = 3)` for on the resulting object for an overview.
 #' 
 #' @references
 #'   \insertAllCited{} 
@@ -631,11 +627,11 @@ resamplecSEMResults.cSEMResults_default <- function(
     }
   }
   
-  ## Additional statistics to compute by default
-  # HTMT
-  htmt <- c(HTMT(.object))
-  Est_original[[length(Est_original) + 1]] <- htmt
-  names(Est_original)[length(Est_original)] <- "HTMT"
+  # ## Additional statistics to compute by default
+  # # HTMT
+  # htmt <- c(HTMT(.object))
+  # Est_original[[length(Est_original) + 1]] <- htmt
+  # names(Est_original)[length(Est_original)] <- "HTMT"
   
   ## Add output of the user functions to Est_original
   if(!is.null(.user_funs)) {
@@ -830,9 +826,6 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
       x
     }
   }
-  
-  ## Additional statistics to compute by default
-  # (TODO)
   
   ## Add output of the user functions to Est_original
   if(!is.null(.user_funs)) {
@@ -1044,11 +1037,11 @@ resamplecSEMResultsCore <- function(
         x1[["Weight_estimates"]] <- summary_temp$Estimates$Weight_estimates$Estimate
         names(x1[["Weight_estimates"]]) <- summary_temp$Estimates$Weight_estimates$Name
         
-        ## Additional statistics
-        # HTMT
-        htmt <- c(HTMT(Est_temp))
-        x1[[length(x1) + 1]] <- htmt
-        names(x1)[length(x1)] <- "HTMT"
+        # ## Additional statistics
+        # # HTMT
+        # htmt <- c(HTMT(Est_temp))
+        # x1[[length(x1) + 1]] <- htmt
+        # names(x1)[length(x1)] <- "HTMT"
       }
     
       ## Apply user defined function if specified

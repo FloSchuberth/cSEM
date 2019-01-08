@@ -259,6 +259,7 @@ foreman <- function(
       "Data"          = X,
       "Model"         = csem_model,
       "Arguments"     = as.list(match.call())[-1],
+      "Type_of_indicator_correlation" = Cor$cor_type,
       "Weight_info"   = list(
         "Modes"              = W$Modes,
         "Number_iterations"  = W$Iterations,

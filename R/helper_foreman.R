@@ -435,25 +435,33 @@ calculateIndicatorCor <- function(
   .approach_cor_robust = args_default()$.approach_cor
 ){
   
+  if(.approach_cor_robust != "none" && !all(sapply(.X_cleaned, is.numeric))) {
+    stop2("Setting `.approach_cor_robust = ", .approach_cor_robust, "` requires all",
+          " columns of .data to be numeric.")
+  }
+  
   switch (.approach_cor_robust,
           "none" = {
             # Pd is TRUE by default. See ?polycor for details
             temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
             S    <- temp$correlations
-            type <- ifelse(all(temp$type %in% c("Pearson", "")), "PLS-PM", "OrdPLS")
+            cor_type <- unique(c(temp$type))
+            cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""'
           },
           
           "mcd" = {
             S <- MASS::cov.rob(.X_cleaned, cor = TRUE, method = "mcd")$cor
             S[upper.tri(S) == TRUE] = t(S)[upper.tri(S) == TRUE]
             
-            type <-  "PLS-PM"
+            cor_type <-  "Robust (MCD)"
           },
-          "TODO" = {
-            "(TODO)"
+          "spearman" = {
+            S <- cor(.X_cleaned, method = "spearman")
+            
+            cor_type <-  "Robust (Spearman)"
           }
   )
   # (TODO) not sure how to name the "type" yet and what to do with it. Theoretically,
   # a polycoric correlation could also be used with GSCA or some other non-PLS-PM method.
-  list(S = S, type = type)
+  list(S = S, cor_type = cor_type)
 }

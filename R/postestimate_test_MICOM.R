@@ -192,7 +192,7 @@ testMICOM.cSEMResults_multi <- function(
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[counter]] <- NULL
+      ref_dist[[counter]] <- NA
       
     } else {# status is not ok and .handle_inadmissibles == "replace"
       # Reset counter and raise number of inadmissibles by 1
@@ -219,9 +219,9 @@ testMICOM.cSEMResults_multi <- function(
     close(pb)
   }
   
-  ## Bring data to form and compute quantiles
-  # Delete potential NULL entries
-  ref_dist <- Filter(Negate(is.null), ref_dist)
+  # Delete potential NA's
+  ref_dist <- Filter(Negate(anyNA), ref_dist)
+  
   # Bind 
   temp <- do.call(rbind, lapply(ref_dist, function(x) do.call(rbind, x)))
   temp <- split(as.data.frame(temp), rownames(temp))
