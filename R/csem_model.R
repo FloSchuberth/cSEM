@@ -146,28 +146,31 @@ parseModel <- function(.model) {
     construct_order[names_c_2nd] <- "Second order"
     
     ### Checks, errors and warnings --------------------------------------------
+    ## Stop if one indicator is connected to several constructs
+    if(any(duplicated(tbl_m$rhs))) {
+      stop2("At least one indicator is connected to several constructs.")
+    }
+    
     ## Stop if any interaction/nonlinear term is used as an endogenous (lhs) variable in the
     ## structural model 
     if(length(names_c_s_lhs_nl)) {
       
-      stop("Interaction terms cannot appear on the left-hand side of a structural equation.", 
-           call. = FALSE)
+      stop2("Interaction terms cannot appear on the left-hand side of a structural equation.")
     }
     
     ## Stop if any interaction/nonlinear term is used as an endogenous (lhs) variable in the
     ## measurement model 
     if(length(names_c_m_lhs_nl)) {
       
-      stop("Interaction terms cannot appear on the left-hand side of a measurement equation.", 
-           call. = FALSE)
+      stop2("Interaction terms cannot appear on the left-hand side of a measurement equation.")
     }
     
-    ## Stop if any construct has no obervables/indicators attached
+    ## Stop if any construct has no observables/indicators attached
     tmp <- setdiff(c(names_c_s_l, names_c_m_rhs_l), names_c_m_lhs)
     if(length(tmp) != 0) {
       
-      stop("No measurement equation provided for: ",
-           paste0("`", tmp,  "`", collapse = ", "), call. = FALSE)
+      stop2("No measurement equation provided for: ",
+           paste0("`", tmp,  "`", collapse = ", "))
     }
     
     ## Stop if any construct appears in the measurement but not in the 
@@ -175,18 +178,16 @@ parseModel <- function(.model) {
     tmp <- setdiff(names_c_m_lhs, c(names_c_s_l, names_c_m_rhs_l))
     if(length(tmp) != 0) {
       
-      stop("Construct(s): ",
+      stop2("Construct(s): ",
            paste0("`", tmp, "`", collapse = ", "), " of the measurement model",
            ifelse(length(tmp) == 1, " does", " do"), 
-           " not appear in the structural model.",
-           call. = FALSE)
+           " not appear in the structural model.")
     }
     
     ## Stop if any construct has a higher order than 2 (currently not allowed)
     if(length(names_c_higher) != 0) {
-      stop(paste0("`", names_c_higher, "`"), " has order > 2.", 
-           " Currently, only first and second-order constructs are supported.",
-           call. = FALSE)
+      stop2(paste0("`", names_c_higher, "`"), " has order > 2.", 
+           " Currently, only first and second-order constructs are supported.")
     }
     
     ## Stop if at least one of the components of an interaction term does not appear
@@ -194,8 +195,8 @@ parseModel <- function(.model) {
     tmp <- setdiff(names_c_s_l, names_c_s_no_nl)
     if(length(tmp) != 0) {
         
-      stop("The nonlinear terms containing ", paste0("`", tmp, "`", collapse = ", "), 
-           " are not embeded in a nomological net.", call. = FALSE)
+      stop2("The nonlinear terms containing ", paste0("`", tmp, "`", collapse = ", "), 
+           " are not embeded in a nomological net.")
     }
     
     ## Construct type
