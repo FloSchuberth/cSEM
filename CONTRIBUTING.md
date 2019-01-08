@@ -3,7 +3,7 @@
 
 Stick to the structure, design choices and style conventions described
 below. For questions: please contact the
-[author](mailto:manuel.steiner@uni-wuerzburg.de).
+[author](mailto:manuel.rademaker@uni-wuerzburg.de).
 
 ### Structure
 
@@ -23,12 +23,12 @@ belonging to (only) one of the two departments.
 #### Estimation functions:
 
 Estimation functions are all functions involved in the
-estimation/calculation of the quantities of the measurement and the path
-model. There are:
+estimation/calculation of the quantities of the measurement and the
+path/structural model. There are:
 
   - **2 toplevel functions** (`csem()` and `cca()`). These functions +
     the postestimation function `summarize()` (see below) should be
-    sufficient for the end user 95% of the time. Both functions
+    sufficient for the end user most of the time. Both functions
     eventually call `foreman()`.
   - **1 midlevel function**, `foreman()`, that acts like a foreman by
     collecting all (estimation) tasks, distributing them to lower level
@@ -48,25 +48,22 @@ model. There are:
 
 Postestimation functions are functions to be applied to an object
 resulting from a call to `csem()`, `cca()` or `foreman()`, namely a
-`cSEMResults` object. Most postestimation functions like `test()` (not
-yet implemented) act like a foreman by the collect-distribute-recollect
-strategy as implemented in the `foreman()` function. Therefore
-postestimation functions are generally also hierarchical. All
-postestimation functions are consistently named by (preferably short)
-verbs. Currently only a subset of these functions is implemented:
+`cSEMResults` object. All postestimation functions are consistently
+named by (preferably short) verbs. Postestimation functions are generic
+with methods for classes `cSEMResults_default`, `cSEMResults_multi` and
+`cSEMResults_2ndorder`.
+
+Currently only a subset of these functions is implemented:
 
   - 1 toplevel function:
       - `summarize()` with class `cSEMSummarize`
-  - 4 midlevel functions:
-      - `check()` with class `cSEMCheck`
-      - `fit()` with class `cSEMFit`
-      - `test()` with class `cSEMTest`
+  - 2 midlevel functions:
+      - `assess()` with class `cSEMCheck`
       - `verify` with class `cSEMVerify`
-  - 4 lowlevel functions:
-      - `test_fit()` with class `cSEMTestFit`
-      - `test_MICOM()` with class `cSEMTestMICOM`
-      - `test_MGD()` with class `cSEMTestMGA`
-      - `test_OMF()` with class `cSEMTestOMF`
+  - 3 lowlevel functions:
+      - `testMICOM()` with class `cSEMTestMICOM`
+      - `testMGD()` with class `cSEMTestMGA`
+      - `testOMF()` with class `cSEMTestOMF`
 
 Each function has (will eventually have) a distinct class and a
 corresponding `print` method.

@@ -5,15 +5,15 @@
 
 WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES TO THE API ARE VERY
 LIKELY. Do not use the package before the first stable relase (which
-will be 0.0.1, towards the end of 2018).
+will be 0.0.1, most likely in early march 2019).
 
 ## Purpose
 
-Estimate, analyse, test, and study linear and nonlinear structural
-equation models using composite based approaches, procedures, and tests
-including e.g. PLS, PLSc, GSCA, GSCAm, 2SLS estimation, several tests
-and typical postestimation procedures (e.g., computing a model-implied
-covariance or effects).
+Estimate, analyse, test, and study linear, nonlinear and hierachical
+structural equation models using composite based approaches, procedures,
+and tests including e.g. PLS, PLSc, GSCA, GSCAm, 2SLS estimation,
+several tests and typical postestimation procedures (e.g., computing a
+model-implied covariance or effects).
 
 ## Installation
 
@@ -85,7 +85,7 @@ devtools::install_github("M-E-Rademaker/cSEM")
     a <- csem(.data = satisfaction, .model = model)
     a
     
-    ## Access elements using `$`. E.g.
+    ## Access elements using `$`:
     a$Estimates$Loading_estimates # or
     a$Information$Model
     
@@ -93,7 +93,7 @@ devtools::install_github("M-E-Rademaker/cSEM")
     listviewer::jsonedit(a, mode = "view") # requires the listviewer package.
     
     ## Get a summary
-    summarize(a) # preliminary
+    summarize(a) 
     
     # Currently only `summarize()` works for nonlinear models. 
     
@@ -121,7 +121,16 @@ devtools::install_github("M-E-Rademaker/cSEM")
     
     ## Apply postestimation functions, e.g.
     verify(a) 
-    fit(a) # computes the model-implied indicator covariance matrix
     
     ## Test overall model fit
     testOMF(a) # takes roughly 30 seconds
+
+Inference can be done by setting `.resample_method` to `"jackkinfe"` or
+`"bootstrap"`.
+
+    b <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
+    summarize(b)
+    
+    ## Several confidence intervals are implemented, see ?infer():
+    
+    infer(b, .quantity = c("CI_standard_z", "CI_percentile"))
