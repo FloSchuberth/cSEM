@@ -262,7 +262,7 @@ calculateWeightsKettenring <- function(
     }
     
     ## Optimization
-    res <- alabama::auglag(
+    capture.output(res <- alabama::auglag(
       par     = runif(length(indicator_names)),
       fn      = fn,
       R       = .S,
@@ -270,7 +270,7 @@ calculateWeightsKettenring <- function(
       nameInd = indicator_names_ls,
       nameLV  = construct_names,
       heq     = heq
-    )
+    ))
     
     # Get wtilde
     wtilde <- res$par
