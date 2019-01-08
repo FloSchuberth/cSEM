@@ -84,15 +84,10 @@ Given \code{M} resamples (for bootstrap \code{M = .R} and for jackknife \code{M 
 related to resampling) and returns estimates for each of a subset of
 practically useful resampled parameters/statistics computed by \code{\link[=csem]{csem()}}.
 Currently, the following quantities are computed and returned based on each resample:
-\describe{
-\item{Parameters}{Path estimates, Loading estimates, Weight estimates}
-\item{Statistics}{The heterotrait-monotrait ratio (HTMT) (currently only for
-avaiable for models without hiearchical constructs)}
-}
+Path estimates, Loading estimates, Weight estimates
 
 In practical application users may need to resample a specific statistic (e.g,
-restrictions on path coefficients such as beta_1 = beta_2) that is not returned
-by default.
+the heterotrait-monotrait ratio (HTMT) or restrictions on path coefficients such as beta_1 = beta_2).
 Such statistics may be provided by a function \code{f(.object)} or a list of such functions
 via the \code{.user_funs} argument. The only accepted argument of these functions is
 \code{.object} which must be an object of class \link{cSEMResults}.

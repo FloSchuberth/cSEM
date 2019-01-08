@@ -388,15 +388,10 @@ resampleData <- function(
 #' related to resampling) and returns estimates for each of a subset of 
 #' practically useful resampled parameters/statistics computed by [csem()]. 
 #' Currently, the following quantities are computed and returned based on each resample: 
-#' \describe{
-#' \item{Parameters}{Path estimates, Loading estimates, Weight estimates}
-#' \item{Statistics}{The heterotrait-monotrait ratio (HTMT) (currently only for 
-#' avaiable for models without hiearchical constructs)}
-#' }
+#' Path estimates, Loading estimates, Weight estimates
 #' 
 #' In practical application users may need to resample a specific statistic (e.g,
-#' restrictions on path coefficients such as beta_1 = beta_2) that is not returned
-#' by default. 
+#' the heterotrait-monotrait ratio (HTMT) or restrictions on path coefficients such as beta_1 = beta_2).
 #' Such statistics may be provided by a function `f(.object)` or a list of such functions
 #' via the `.user_funs` argument. The only accepted argument of these functions is 
 #' `.object` which must be an object of class [cSEMResults]. 
@@ -631,11 +626,11 @@ resamplecSEMResults.cSEMResults_default <- function(
     }
   }
   
-  ## Additional statistics to compute by default
-  # HTMT
-  htmt <- c(HTMT(.object))
-  Est_original[[length(Est_original) + 1]] <- htmt
-  names(Est_original)[length(Est_original)] <- "HTMT"
+  # ## Additional statistics to compute by default
+  # # HTMT
+  # htmt <- c(HTMT(.object))
+  # Est_original[[length(Est_original) + 1]] <- htmt
+  # names(Est_original)[length(Est_original)] <- "HTMT"
   
   ## Add output of the user functions to Est_original
   if(!is.null(.user_funs)) {
@@ -830,9 +825,6 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
       x
     }
   }
-  
-  ## Additional statistics to compute by default
-  # (TODO)
   
   ## Add output of the user functions to Est_original
   if(!is.null(.user_funs)) {
@@ -1044,11 +1036,11 @@ resamplecSEMResultsCore <- function(
         x1[["Weight_estimates"]] <- summary_temp$Estimates$Weight_estimates$Estimate
         names(x1[["Weight_estimates"]]) <- summary_temp$Estimates$Weight_estimates$Name
         
-        ## Additional statistics
-        # HTMT
-        htmt <- c(HTMT(Est_temp))
-        x1[[length(x1) + 1]] <- htmt
-        names(x1)[length(x1)] <- "HTMT"
+        # ## Additional statistics
+        # # HTMT
+        # htmt <- c(HTMT(Est_temp))
+        # x1[[length(x1) + 1]] <- htmt
+        # names(x1)[length(x1)] <- "HTMT"
       }
     
       ## Apply user defined function if specified

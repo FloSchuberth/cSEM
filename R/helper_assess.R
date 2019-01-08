@@ -28,10 +28,16 @@ HTMT <- function(
   ## Get relevant quantities
   m <- .object$Information$Model
  
-  cf_names <- if(isTRUE(.only_common_factors)) {
-    names(m$construct_type[m$construct_type == "Common factor"])
+  if(isTRUE(.only_common_factors)) {
+    cf_names <-names(m$construct_type[m$construct_type == "Common factor"])
+    
+    ## Stop if there are no common factors
+    if(length(cf_names) < 2) {
+      stop("Computation of the HTMT requires at least two common factors, unless `.only_common_factors = FALSE`.",
+           call. = FALSE)
+    }
   } else {
-    names(m$construct_type)
+    cf_names <- names(m$construct_type)
   }
   
   cf_measurement <- m$measurement[cf_names, colSums(m$measurement[cf_names, ]) != 0, drop = FALSE]
