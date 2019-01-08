@@ -189,7 +189,8 @@ testOMF.cSEMResults_default <- function(
     "Decision"           = decision, 
     "Information"        = list(
       "Number_admissibles" = ncol(ref_dist_matrix),
-      "Total_runs"         = counter + n_inadmissibles 
+      "Total_runs"         = counter + n_inadmissibles,
+      "Bootstrap_values"   = ref_dist
     )
   )
   
@@ -354,7 +355,8 @@ testOMF.cSEMResults_2ndorder <- function(
     "Decision"           = decision, 
     "Information"        = list(
       "Number_admissibles" = ncol(ref_dist_matrix),
-      "Total_runs"         = counter + n_inadmissibles 
+      "Total_runs"         = counter + n_inadmissibles,
+      "Bootstrap_values"   = ref_dist
     )
   ) 
   

@@ -229,7 +229,8 @@ testMGD.cSEMResults_multi <- function(
       "Number_admissibles"    = ncol(ref_dist_matrix),
       "Total_runs"            = counter + n_inadmissibles,
       "Group_names"           = names(.object),
-      "Number_of_observations"= sapply(X_all_list, nrow)
+      "Number_of_observations"= sapply(X_all_list, nrow),
+      "Bootstrap_values"      = ref_dist
     )
   )
   
