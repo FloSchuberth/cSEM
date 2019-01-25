@@ -322,11 +322,102 @@ calculateWeightsKettenring <- function(
 #'
 
 calculateWeightsGSCA <- function(
-  .data         = NULL,
-  .model        = NULL
+  .S                           = args_default()$.S,
+  .csem_model                  = args_default()$.csem_model,
+  .conv_criterion              = args_default()$.conv_criterion,
+  .iter_max                    = args_default()$.iter_max,
+  .tolerance                   = args_default()$.tolerance
 ) {
+  ### Calculation (ALS algorithm) ==============================================
+  ## 
+  X  <- .X # Z is the data matrix in GSCA. Data is already cleaned and standardized
+  W0 <- .model$measurement # Matrix of the weighted relation model
+  B0 <- .model$structural # Matrix of the structural model
+  Lambda0 <- .model$measurement # Matrix of the measurement model if all indicators are reflective
+  
+  W <- .csem_model$measurement
+  # Scale weights
+  W <- scaleWeights(.S = .S, .W = W)
+  
+  W_iter       <- W
+  tolerance    <- .tolerance
+  iter_max     <- .iter_max
+  iter_counter <- 0
+  
+  repeat {
+    # Counter
+    iter_counter <- iter_counter + 1
+    
+    # "Outer" estimation (Step 1 of the ALS algorithm. Note that most implementations
+    # start with the "inner estimation" - estimating loadings and path coefficients
+    # giving weights - but due to the structure of the cSEM package weights
+    # need to come first.)
+    W <- calculateOuterWeightsGSCA(
+      .S        = .S,
+      .W        = W_iter,
+      .E        = E,
+      .modes    = modes
+    )
+    
+    # Inner estimation
+    E <- calculateInnerWeightsPLS(
+      .S                           = .S,
+      .W                           = W_iter,
+      .csem_model                  = .csem_model,
+      .PLS_ignore_structural_model = .PLS_ignore_structural_model,
+      .PLS_weight_scheme_inner     = .PLS_weight_scheme_inner
+    )
 
-  stop("Not yet implemented")
+    
+    # Scale weights
+    W <- scaleWeights(.S, W)
+    
+    # Check for convergence
+    conv <- checkConvergence(W, W_iter, 
+                             .conv_criterion = .conv_criterion, 
+                             .tolerance = .tolerance)
+    
+    if(conv) {
+      # Set convergence status to TRUE as algorithm has converged
+      conv_status = TRUE
+      break # return iterative PLS-PM weights
+      
+    } else if(iter_counter == iter_max & iter_max == 1) {
+      # Set convergence status to NULL, NULL is used if no algorithm is used
+      conv_status = NULL
+      break # return one-step PLS-PM weights
+      
+    } else if(iter_counter == iter_max & iter_max > 1) {
+      # Set convergence status to FALSE, as algorithm has not converged
+      conv_status = FALSE
+      break
+      
+    } else {
+      W_iter <- W
+    }
+  }
+  
+  # Return
+  l <- list("W" = W, "E" = E, "Modes" = modes, "Conv_status" = conv_status,
+            "Iterations" = iter_counter)
+  return(l)
+  
+  ### For maintenance: ---------------------------------------------------------
+  # Hwang and Takane (2004, 2010, 2014, 2017) use a completely different notation
+  #   compared to the standard LISREL/Bollen-type notation. This implementation
+  #   uses the LISREL notation. This table translates some of the notation
+  ## N              := Number of observations
+  ## K              := Total number of indicators (J in H&T)
+  ## J              := Total number of constructs (P in H&T)
+  ## TT             := K + J (T in H&T)
+  ## X (N x K)      := Matrix of indicator values (=data) (Z in H&T)
+  ## W (J x K)      := (Block-)diagonal matrix of weight relations (W' in H&T)
+  ## Lambda (J x K) := (Block-)diagonal matrix of loadings (C in H&T)
+  ## B (J x J)      := Matrix of path coefficients (B' in H&T). B is not necessarily
+  ##                   lower-triangular (i.e may contain feedback loops)
+  ## H (N x J)      := Matrix of proxies/scores  
+  ## V (K x TT)     := Matrix of indicator and construct relations
+  ## Psi (N x TT)   := Matrix of all indicator values and construct scores
 
 } # END calculateWeightsGSCA
 
