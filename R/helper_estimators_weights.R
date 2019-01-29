@@ -158,7 +158,7 @@ calculateOuterWeightsPLS <- function(
     } # END ModeB
     
     # Set weights of single-indicator constructs to 1 (in order to avoid floating point imprecision)
-    if(length(sum(indicators))==1){W[block,indicators]=1}
+    if(length(sum(indicators)) == 1){W[block, indicators] = 1}
   }
   return(W)
 } # END calculateOuterWeights
