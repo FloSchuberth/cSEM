@@ -440,3 +440,79 @@ GoF.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
 
 
 
+#' Variance Inflation Factor for weight estimates obtained by Mode B
+#'
+#' (TODO)
+#'
+#' @usage calculateVIFPLS(
+#'  .object              = args_default()$.object,
+#' )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem], [cSEMResults]
+#'
+#' @examples
+#' \dontrun{
+#' # still to implement
+#' }
+#'
+#' @export
+#'
+#'
+calculateVIFPLS <- function(.object=args_default()$.object) {
+  UseMethod("calculateVIFPLS")
+}
+
+
+#' @describeIn calculateVIFPLS (TODO)
+#' @export
+calculateVIFPLS.cSEMResults_default=function(.object=args_default()$.object){
+  
+  if(.object$Information$Arguments$.approach_weights!='PLS-PM'){
+    stop('VIF is only calculate when weights are obtained by PLS-PM') }
+  
+  # Calculation of the VIF makes only sense when Mode B is used 
+  # Extract composite names that are build by Mode B 
+  ModesUsed=.object$Information$Weight_info$Modes
+  ModeB=names(which(ModesUsed=='ModeB'))
+  
+  
+  measurement=.object$Information$Model$measurement
+  VIF=list()
+  for(blocks in ModeB){
+    all = names(which(measurement[blocks, ] == 1))
+    if (length(all) != 1) {# if a none single-indicator block
+      VIF[[blocks]]=lapply(1:length(all), function(x) {
+        indep = all[-x]
+        dep = all[x]
+        # paste0(dep,'~',paste0(indep,sep= '+ '))
+        form = paste0(dep, '~', paste0(indep, collapse = '+ '))
+        
+        res = lm(form, data = as.data.frame(.object$Information$Data))
+        R2 = cor(res$fitted.values, .object$Information$Data[, dep]) ^ 2
+        names(R2) = dep
+        1/(1-R2)
+      })
+      
+    } else{#if single-indicator block
+      VIF[[blocks]]=NaN
+    }
+  }
+  return(VIF)
+}
+
+#' @describeIn calculateVIFPLS (TODO)
+#' @export
+calculateVIFPLS.cSEMResults_multi <- function(.object=args_default()$.object) {
+  
+  lapply(.object, calculateVIFPLS.cSEMResults_default)
+}
+
+#' @describeIn calculateVIFPLS (TODO)
+#' @export
+calculateVIFPLS.cSEMResults_2ndorder <- function(.object=args_default()$.object) {
+  
+  stop('Not implemented yet.')
+}
+  
