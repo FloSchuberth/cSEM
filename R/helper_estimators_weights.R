@@ -156,6 +156,9 @@ calculateOuterWeightsPLS <- function(
       W[block, indicators] <- solve(.S[indicators, indicators]) %*% proxy_indicator_cor[block, indicators]
       
     } # END ModeB
+    
+    # Set weights of single-indicator constructs to 1 (in order to avoid floating point imprecision)
+    if(length(sum(indicators))==1){W[block,indicators]=1}
   }
   return(W)
 } # END calculateOuterWeights
