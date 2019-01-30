@@ -329,15 +329,18 @@ calculateWeightsGSCA <- function(
   .tolerance                   = args_default()$.tolerance
 ) {
   ### Calculation (ALS algorithm) ==============================================
-  ## 
-  X  <- .X # Z is the data matrix in GSCA. Data is already cleaned and standardized
-  W0 <- .model$measurement # Matrix of the weighted relation model
-  B0 <- .model$structural # Matrix of the structural model
-  Lambda0 <- .model$measurement # Matrix of the measurement model if all indicators are reflective
+  W0 <- Lambda0 <- .csem_model$measurement # Weight relation model
+  Lambda0[which(.csem_model$construct_type == "Composite"), ]  <- 0
+  B0 <- .csem_model$structural # Structural model
+  vars_endo    <- rownames(B0)[rowSums(B0) != 0]
+  vars_cf      <- names(which(.csem_model$construct_type == "Common factor"))
+
+  J <- nrow(W0)
+  K <- ncol(W0)
+  JK <- J + K
   
-  W <- .csem_model$measurement
   # Scale weights
-  W <- scaleWeights(.S = .S, .W = W)
+  W <- scaleWeights(.S = .S, .W = W0)
   
   W_iter       <- W
   tolerance    <- .tolerance
@@ -348,29 +351,68 @@ calculateWeightsGSCA <- function(
     # Counter
     iter_counter <- iter_counter + 1
     
-    # "Outer" estimation (Step 1 of the ALS algorithm. Note that most implementations
-    # start with the "inner estimation" - estimating loadings and path coefficients
-    # giving weights - but due to the structure of the cSEM package weights
-    # need to come first.)
-    W <- calculateOuterWeightsGSCA(
-      .S        = .S,
-      .W        = W_iter,
-      .E        = E,
-      .modes    = modes
-    )
+    # Step 1a: Estimate B (the structural coefficients for a given W)
+    C <- W_iter %*% .S %*% t(W_iter)
+    B <- lapply(vars_endo, function(y) {
+      x <-  colnames(B0[y, B0[y, ] != 0, drop = FALSE])
+      coef <- solve(C[x, x, drop = FALSE]) %*% C[x, y, drop = FALSE]
+      
+      # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
+      # r2   <- t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef
+      # names(r2) <- x
+    })
+    # Transform
+    tB <- t(B0)
+    tB[tB != 0] <- unlist(B)
     
-    # Inner estimation
-    E <- calculateInnerWeightsPLS(
-      .S                           = .S,
-      .W                           = W_iter,
-      .csem_model                  = .csem_model,
-      .PLS_ignore_structural_model = .PLS_ignore_structural_model,
-      .PLS_weight_scheme_inner     = .PLS_weight_scheme_inner
-    )
+    # Step 1b: Estimate Lambda (the loadings for a given W)
+    if(length(vars_cf) > 0) {
+      Lambda_tilde <- W_iter %*% .S
+      dep_vars <- names(which(colSums(Lambda0[vars_cf, ]) !=0))
+      Lambda <- lapply(dep_vars, function(y) {
+        x <-  which(Lambda0[vars_cf, y] != 0)
+        coef <- solve(C[x, x, drop = FALSE]) %*% Lambda_tilde[x, y, drop = FALSE]
+      })
+      # Transform
+      tLambda <- t(Lambda0)
+      tLambda[tLambda != 0] <- unlist(Lambda)
+    } else {
+      tLambda <- t(Lambda0)
+    }
 
+    # Build matrices A and V used in GSCA
     
-    # Scale weights
-    W <- scaleWeights(.S, W)
+    A <- rbind(tLambda, t(tB))
+    V <- rbind(diag(K), W_iter)
+    
+    # The following code is based on the ASGSCA package (licensed
+    # under GPL-3). Notation is adapted to be conform with the notation of the 
+    # cSEM package
+    
+    tr_w <- 0
+    for(j in 1:J){
+      t <- K + j
+      windex_j <- which(W_iter[j, ] != 0)
+      m <- matrix(0, 1, JK)
+      m[t] <- 1
+      a <- A[, j]
+      beta <- m - a
+      H1 <- diag(J)
+      H2 <- diag(JK)
+      H1[j,j] <- 0
+      H2[t,t] <- 0
+      Delta <- A %*% H1 %*% W_iter - H2 %*% V 
+      Sp <- .S[windex_j , windex_j]
+      if(length(windex_j) != 0) {        
+        
+        theta <- MASS::ginv(as.numeric(beta%*%t(beta))*.S[windex_j,windex_j]) %*%
+          t(beta %*% Delta %*% .S[,windex_j])
+        
+        # Update the weights based on the estimated parameters and standardize
+        W0[j, windex_j] <- theta
+        W <- scaleWeights(.S, W0)
+      }
+    }
     
     # Check for convergence
     conv <- checkConvergence(W, W_iter, 
@@ -398,7 +440,7 @@ calculateWeightsGSCA <- function(
   }
   
   # Return
-  l <- list("W" = W, "E" = E, "Modes" = modes, "Conv_status" = conv_status,
+  l <- list("W" = W, "E" = NULL, "Modes" = "gsca", "Conv_status" = conv_status,
             "Iterations" = iter_counter)
   return(l)
   

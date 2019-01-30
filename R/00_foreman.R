@@ -105,8 +105,11 @@ foreman <- function(
     )
   } else if(.approach_weights == "GSCA") {
     W <- calculateWeightsGSCA(
-      .data                     = NULL,
-      .model                    = csem_model
+      .S                        = S,
+      .csem_model               = csem_model,
+      .conv_criterion           = .conv_criterion,
+      .iter_max                 = .iter_max,
+      .tolerance                = .tolerance
     )
   } else if(.approach_weights == "fixed") {
     W <- calculateWeightsFixed(
@@ -166,8 +169,8 @@ foreman <- function(
   # are given and disattenuation is requested. Otherwise use only the reliabilities
   # to disattenuate both weights and proxy correlations to obtain consistent
   # estimators for the loadings, cross-loadings and path coefficients.
-  
-  if((is.null(.reliabilities) | length(.reliabilities) != ncol(H))  & .disattenuate == TRUE) {
+
+  if(.approach_weights == "PLS-PM" & (is.null(.reliabilities) | length(.reliabilities) != ncol(H))  & .disattenuate == TRUE) {
     correction_factors <- calculateCorrectionFactors(
       .S               = S,
       .W               = W$W,
@@ -182,15 +185,19 @@ foreman <- function(
   # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
   # rho_A in Dijkstra & Henseler (2015) - Consistent partial least squares path modeling
   
-  Q <- calculateCompositeConstructCV(
-    .W                  = W$W,
-    .csem_model         = csem_model,
-    .modes              = W$Modes,
-    .disattenuate       = .disattenuate,
-    .correction_factors = correction_factors,
-    .reliabilities      = .reliabilities
-  ) 
-  
+  if(.approach_weights == "GSCA") {
+    Q <- rep(1, nrow(csem_model$structural))
+  } else {
+    Q <- calculateCompositeConstructCV(
+      .W                  = W$W,
+      .csem_model         = csem_model,
+      .modes              = W$Modes,
+      .disattenuate       = .disattenuate,
+      .correction_factors = correction_factors,
+      .reliabilities      = .reliabilities
+    ) 
+  }
+
   ## Calculate loadings and cross-loadings (covariance between construct and indicators)
   Lambda <- calculateLoadings(
     .S             = S,
