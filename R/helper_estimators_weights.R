@@ -116,7 +116,7 @@ calculateInnerWeightsPLS <- function(
 
 #' Internal: Calculate the outer weights for PLS-PM
 #'
-#' Calculates outer weights using Mode A or Mode B.
+#' Calculates outer weights using Mode A, Mode B, Unit or fixed weights.
 #'
 #' @usage calculateOuterWeightsPLS(
 #'    .S      = args_default()$.S,

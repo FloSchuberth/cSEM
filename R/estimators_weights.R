@@ -60,7 +60,7 @@ calculateWeightsPLS <- function(
     if(length(names(.PLS_modes)) != 0 &&
        length(setdiff(names(.PLS_modes), names(.csem_model$construct_type))) > 0) {
       stop2("The following error occured in the `calculateWeightsPLS()` function:\n",
-        paste0("`", setdiff(names(.PLS_modes), names(csem_model$construct_type)), 
+        paste0("`", setdiff(names(.PLS_modes), names(.csem_model$construct_type)), 
                "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.")
     }
     
@@ -138,6 +138,10 @@ calculateWeightsPLS <- function(
     }
   }
 
+  # Get the modes
+  modes <- sapply(modes, function(x) 
+    ifelse(is.numeric(x) & length(x) > 1, "fixed", 
+           ifelse(is.numeric(x) & length(x) == 1, "unit", x)))
   # Return
   l <- list("W" = W, "E" = E, "Modes" = modes, "Conv_status" = conv_status,
             "Iterations" = iter_counter)
@@ -467,29 +471,6 @@ calculateWeightsGSCA <- function(
   ## Psi (N x TT)   := Matrix of all indicator values and construct scores
 
 } # END calculateWeightsGSCA
-
-#' Calculate composite weights using fixed weights
-#'
-#' Calculates weights...
-#'
-#' Some more description...
-#'
-#' @usage calculateWeightsFixed(.data, .model)
-#'
-#' @inheritParams csem_arguments
-#'
-#' @inherit calculateWeightsPLS return
-#'
-
-calculateWeightsFixed <- function(
-  .data         = NULL,
-  .model        = NULL
-) {
-
-  stop("Not yet implemented")
-
-} # END calculateWeightsFixed
-
 
 #' Calculate composite weights using unit weights
 #'

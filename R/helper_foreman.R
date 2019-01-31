@@ -465,3 +465,49 @@ calculateIndicatorCor <- function(
   # a polycoric correlation could also be used with GSCA or some other non-PLS-PM method.
   list(S = S, cor_type = cor_type)
 }
+
+#' Internal: Set the dominant indicator
+#' 
+#' Set the dominant indicator for each construct.
+#'
+#' @usage setDominantIndicator(
+#'  .W                   = W,
+#'  .dominant_indicators = .dominant_indicators
+#'  )
+#'
+#' @inheritParams csem_arguments
+#' 
+#' @return The (J x K) matrix of weights with the dominant indicator set.
+#' @keywords internal
+#'
+setDominantIndicator <- function(
+  .W                   = W,
+  .dominant_indicators = .dominant_indicators
+) {
+  ## Check construct names:
+  # Do all construct names in .dominant_indicators match the construct
+  # names used in the model?
+  tmp <- setdiff(names(.dominant_indicators), rownames(.W))
+  
+  if(length(tmp) != 0) {
+    stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+         " provided to `.dominant_indicators`", 
+         ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+  }
+  
+  ## Check indicators
+  # Do all indicators names in .dominant_indicators match the indicator
+  # names used in the model?
+  tmp <- setdiff(.dominant_indicators, colnames(.W))
+  
+  if(length(tmp) != 0) {
+    stop("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+         " provided to `.dominant_indicators`", 
+         ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
+  }
+  
+  for(i in names(.dominant_indicators)) {
+    .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
+  }
+  return(.W)
+}

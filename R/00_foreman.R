@@ -111,11 +111,6 @@ foreman <- function(
       .iter_max                 = .iter_max,
       .tolerance                = .tolerance
     )
-  } else if(.approach_weights == "fixed") {
-    W <- calculateWeightsFixed(
-      .data                     = NULL,
-      .model                    = csem_model
-    )
   } else if(.approach_weights == "unit") {
     W <- calculateWeightsUnit(
       .S                        = S,
@@ -124,40 +119,12 @@ foreman <- function(
   }
 
   ## Dominant indicators:
-  # Use the dominant indicators approach (Henseler et al. (2016)) for PLS-PM. 
-  # Perhaps this applicable to weights obtained from algorithms other than PLS-PM.
-  # Currently only PLS-PM is supported.
-  
   if(!is.null(.dominant_indicators)) {
-    if(.approach_weights %in% c("PLS-PM",'MAXVAR','MINVAR','SUMCORR','SSQCORR','GENVAR')) {
-      
-      ## Check construct names:
-      # Do all construct names in .dominant_indicators match the construct
-      # names used in the model?
-      tmp <- setdiff(names(.dominant_indicators), rownames(W$W))
-      
-      if(length(tmp) != 0) {
-        stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
-             " provided to `.dominant_indicators`", 
-             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
-      }
-      
-      ## Check indicators
-      # Do all indicators names in .dominant_indicators match the indicator
-      # names used in the model?
-      tmp <- setdiff(.dominant_indicators, colnames(W$W))
-      
-      if(length(tmp) != 0) {
-        stop("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
-             " provided to `.dominant_indicators`", 
-             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
-      }
-
-      for(i in names(.dominant_indicators)) {
-        W$W[i, ] = W$W[i, ] * sign(W$W[i, .dominant_indicators[i]])
-      }
-    } # END if PLS-PM
-  } # END if 
+    W$W <- setDominantIndicator(
+      .W = W$W, 
+      .dominant_indicators = .dominant_indicators)
+    
+  }
   
   ## Calculate proxies/scores
   H <- calculateComposites(
