@@ -42,31 +42,36 @@ calculateWeightsPLS <- function(
 ) {
 
   ### Preparation ==============================================================
-  ## Get/set the modes for the outer estimation
-  modes <- ifelse(.csem_model$construct_type == "Common factor", "ModeA", "ModeB")
-  ## Allow for mode = "unit" and "mode" fixed as well here
-  ## Warning if common factor and unit or fixed weights. Say that 
+  ## Get/set the default modes for the outer estimation
+  modes <- as.list(ifelse(.csem_model$construct_type == "Common factor", "modeA", "modeB"))
   
   if(!is.null(.PLS_modes)) {
-    # Error if other than "ModeA" or "ModeB"
-    if(!all(.PLS_modes %in% c("ModeA", "ModeB"))) {
-      stop(paste0("`", setdiff(.PLS_modes, c("ModeA", "ModeB")), "`", collapse = ", "),
-           " in `.PLS_modes` is an unknown mode.", call. = FALSE)
+    
+    # Error if other than "ModeA", "ModeB", "unit", a number, or a vector
+    # of numbers of the same length as there are indicators for block j
+    modes_check <- sapply(.PLS_modes, function(x) all(x %in% c("modeA", "modeB", "unit") | is.numeric(x)))
+    if(!all(modes_check)) {
+      stop2("The following error occured in the `calculateWeightsPLS()` function:\n",
+            paste0("`", .PLS_modes[!modes_check], "`", collapse = " and "),
+            " in `.PLS_modes` is an unknown mode.")
     }
+    
     # Error if construct names provided do not match the constructs of the model
     if(length(names(.PLS_modes)) != 0 &&
        length(setdiff(names(.PLS_modes), names(.csem_model$construct_type))) > 0) {
-      stop(paste0("`", setdiff(names(.PLS_modes), names(csem_model$construct_type)), 
-                  "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.", call. = FALSE)
+      stop2("The following error occured in the `calculateWeightsPLS()` function:\n",
+        paste0("`", setdiff(names(.PLS_modes), names(csem_model$construct_type)), 
+               "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.")
     }
-    # If only "ModeA" or "ModeB" is provided without set all of the modes to that mode.
+    
+    # If only "modeA", "modeB" or "unit" is provided set all of the modes to that mode.
     if(length(names(.PLS_modes)) == 0) {
       if(length(.PLS_modes) == 1) {
-        modes <- rep(.PLS_modes, length(.csem_model$construct_type))
+        modes <- as.list(rep(.PLS_modes, length(.csem_model$construct_type)))
         names(modes) <- names(.csem_model$construct_type)
       } else {
-        stop("Only a vector of `name = value` pairs or a single mode may be provided to `.PLS_modes`.", 
-             call. = FALSE)
+        stop2("The following error occured in the `calculateWeightsPLS()` function:\n",
+          "Only a list of `name = value` pairs or a single mode may be provided to `.PLS_modes`.")
       }
     } else {
       # Replace modes if necessary and keep the others at their defaults

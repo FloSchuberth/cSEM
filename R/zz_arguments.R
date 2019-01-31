@@ -122,12 +122,15 @@
 #' @param .PLS_ignore_structural_model Logical. Should the structural model be ignored
 #'   when calculating the inner weights of the PLS-PM algorithm? Defaults to `FALSE`.
 #'   Ignored if `.approach_weights` is not PLS-PM.
-#' @param .PLS_modes Either a named vector specifying the mode that should be used for
+#' @param .PLS_modes Either a named list specifying the mode that should be used for
 #'   each construct in the form `"name" = "mode"`, a single character
 #'   string giving the mode that should be used for all constructs, or `NULL`.
-#'   Possible choices are: "*ModeA*" or "*ModeB*". Defaults to `NULL`.
-#'   If `NULL`, `csem()` will choose the appropriate mode according to the type
-#'   of construct used. Ignored if `.approach_weight` is not PLS-PM.  
+#'   Possible choices for `"mode"` are: "*modeA*", "*modeB*", "*unit*", a single number (weight) or 
+#'   a vector of fixed weights of the same length as there are indicators for the
+#'   construct given by `"name"`. If only a single number is provided this is identical to
+#'   using unit weights, as weights are rescaled.  Defaults to `NULL`.
+#'   If `NULL` the appropriate mode according to the type
+#'   of construct used is choosen. Ignored if `.approach_weight` is not PLS-PM.  
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
 #'   used in PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
 #'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS-PM.
