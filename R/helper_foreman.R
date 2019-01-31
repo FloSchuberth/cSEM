@@ -373,6 +373,61 @@ calculateCompositeConstructCV <- function(
   return(x)
 }
 
+#' Internal: Calculate Croon Reliabilities
+#'
+#' (TODO)
+#'  
+#' @inheritParams csem_arguments
+#'
+#' @keywords internal
+
+calculateReliabilities <- function(
+  .csem_model = args_default()$.csem_model,
+  .W          = args_default()$.W,
+  .X          = args_default()$.X
+){
+  # The Croon reliabilities assume that the scores are built by sum scores!
+  # Moreover, it requires that all concepts are operationalized by a common factor
+  if(any(.csem_model$construct_type == "Composite")) {
+    stop2("Only applicable if all constructs are modeled as common factors")
+  }
+  m <- .csem_model$measurement
+  # measurementmodel=.object$Information$Model$measurement
+  
+  # run CFA for each construct separately to obtain the loading estimates
+  res <- list()
+  for(i in 1:rownames(m)) {
+    indicator_names <- colnames(m[i, m[i, ] != 0, drop = FALSE])
+    model <- paste0(i, '=~', paste0(indicator_names, collapse = '+'))
+    data <- .X
+    
+    res_lavaan <- lavaan::cfa(model, data, std.lv = TRUE, std.ov = TRUE)
+    
+    # Extract loading estimates
+    lambda <- res_lavaan@Model@GLIST$lambda
+    dimnames(lambda) <- res_lavaan@Model@dimNames[[1]]
+    # Extract VCV matrix of the measurement errors
+    # theta <- res_lavaan@Model@GLIST$theta
+    # dimnames(theta) <- res_lavaan@Model@dimNames[[2]]
+    # Extract weights for construct i
+    w <- .W[i, indicator_names, drop = FALSE]
+    
+    # Reorder indicator names to ensure they are identical to the order in cSEM
+    lambda <- lambda[colnames(w), ]
+    # theta  <- theta[colnames(w), colnames(w)]
+    
+    # Compute reliabilities and indicator-composite correlation (sqrt(reliability))
+    Q2 <- (w %*% lambda)^2
+    Q  <- sqrt(Q2)
+    
+    # var_correction=w%*%theta%*%t(w)
+    # list(Q=Q,var_corr=var_correction)
+    res[[i]] <- list("Q" = Q, "lambda" = lambda)
+  }
+  names(res) <- rownames(m)
+  res
+}
+
 #' Internal: Calculate construct VCV matrix
 #'
 #' Calculate the covariance matrix of the constructs.
