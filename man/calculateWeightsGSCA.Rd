@@ -7,6 +7,8 @@
 calculateWeightsGSCA(.data, .model)
 }
 \arguments{
+\item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
+
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}

@@ -105,6 +105,7 @@ foreman <- function(
     )
   } else if(.approach_weights == "GSCA") {
     W <- calculateWeightsGSCA(
+      .X                        = X,
       .S                        = S,
       .csem_model               = csem_model,
       .conv_criterion           = .conv_criterion,
@@ -137,7 +138,9 @@ foreman <- function(
   # to disattenuate both weights and proxy correlations to obtain consistent
   # estimators for the loadings, cross-loadings and path coefficients.
 
-  if(.approach_weights == "PLS-PM" & (is.null(.reliabilities) | length(.reliabilities) != ncol(H))  & .disattenuate == TRUE) {
+  if(.approach_weights == "PLS-PM" & 
+     (is.null(.reliabilities) | length(.reliabilities) != ncol(H))  & 
+     .disattenuate == TRUE) {
     correction_factors <- calculateCorrectionFactors(
       .S               = S,
       .W               = W$W,
@@ -147,6 +150,7 @@ foreman <- function(
   } else {
     correction_factors <- NULL
   }
+  
   
   ## Calculate Q's (correlation between construct and proxy)
   # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient

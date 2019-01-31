@@ -136,7 +136,7 @@ calculateCorrectionFactors <- function(
 #' Calculates factor loadings (for constructs modeled as common factors),
 #' composite loadings (for constructs modeled as composites), and cross-loadings.
 #'
-#' @usage calculateLoadings(
+#' @usage calculateLoadingsPLS(
 #'  .S              = args_default()$.S,
 #'  .W              = args_default()$.W,
 #'  .Q              = args_default()$.Q,
@@ -150,7 +150,7 @@ calculateCorrectionFactors <- function(
 #' @return The (J x K) matrix of loadings and cross-loadings (attenuated if required).
 #' @keywords internal
 
-calculateLoadings <- function(
+calculateLoadingsPLS <- function(
   .S              = args_default()$.S,
   .W              = args_default()$.W,
   .Q              = args_default()$.Q,

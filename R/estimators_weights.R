@@ -180,11 +180,11 @@ calculateWeightsKettenring <- function(
 ) {
   
   ### Preparation ==============================================================
-  ## Check if all constructs are modeled as composites
-  if("Common factor" %in% .csem_model$construct_type){
-    stop("Currently Kettenring's approaches are only allowed for pure composite models.", 
-         call. = FALSE)
-  }
+  # ## Check if all constructs are modeled as composites
+  # if("Common factor" %in% .csem_model$construct_type){
+  #   stop("Currently Kettenring's approaches are only allowed for pure composite models.", 
+  #        call. = FALSE)
+  # }
 
   ## Get relevant objects 
   W <- .csem_model$measurement
@@ -331,6 +331,7 @@ calculateWeightsKettenring <- function(
 #'
 
 calculateWeightsGSCA <- function(
+  .X                           = args_default()$.X,
   .S                           = args_default()$.S,
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
@@ -399,9 +400,10 @@ calculateWeightsGSCA <- function(
     # cSEM package
     
     tr_w <- 0
+    W <- W_iter
     for(j in 1:J){
       t <- K + j
-      windex_j <- which(W_iter[j, ] != 0)
+      windex_j <- which(W[j, ] != 0)
       m <- matrix(0, 1, JK)
       m[t] <- 1
       a <- A[, j]
@@ -410,7 +412,7 @@ calculateWeightsGSCA <- function(
       H2 <- diag(JK)
       H1[j,j] <- 0
       H2[t,t] <- 0
-      Delta <- A %*% H1 %*% W_iter - H2 %*% V 
+      Delta <- A %*% H1 %*% W - H2 %*% V 
       Sp <- .S[windex_j , windex_j]
       if(length(windex_j) != 0) {        
         
@@ -447,6 +449,145 @@ calculateWeightsGSCA <- function(
       W_iter <- W
     }
   }
+  
+  ## GSCAm
+  # if(.disattenuate) {
+  #   # W <- t(GSCA_results$Estimates$Weight_estimates) # Matrix of the weighted relation model
+  #   # B <- t(GSCA_results$Estimates$Path_estimates) # Matrix of the structural model
+  #   # C <- t(GSCA_results$Estimates$Loading_estimates) # Matrix of the measurement model if all indicators are reflective
+  #   # Gamma <- GSCA_results$Estimates$Construct_scores # Matrix of scores of latent variables
+  #   
+  #   Z <- .X # Z is the data matrix in GSCAm, data are already standardized
+  #   S <- .S # S is the empirical indicator covariance/correlation matrix
+  #   W <- W
+  #   B <- t(tB)
+  #   C <- t(tLambda)
+  #   Gamma <- Z %*% W
+  #   
+  #   N = nrow(Z) # number of observations per indicator
+  #   K = nrow(W) # number of indicators
+  #   J = ncol(W) # number of constructs
+  #   T = K + J
+  #   
+  #   A = cbind(C, B) # J rows, T columns
+  #   D <- diag(runif(K, min = 0, max = 1)) # matrix of unique loadings, random inital values
+  #   U <- matrix(0, N, K) # matrix of unique variables
+  #   
+  #   ## get indices of those entries of A which are not zero 
+  #   
+  #   vecA <- matrix(A, ncol = 1)
+  #   aindex <- which(vecA!=0,arr.ind = T)[,1]
+  #   vecW <- matrix(W, ncol = 1)
+  #   windex <- which(vecW!=0,arr.ind = T)[,1]
+  #   
+  #   ## Preparation of the calculation of the actual weights, coefficients and loadings 
+  #   
+  #   ## prepare data for GSCAm
+  #   # for GSCAm, normalized data are needed
+  #   vZ = sqrt(diag(t(Z) %*% Z))
+  #   factorZ = matrix(vZ, nrow=N, ncol=length(vZ), byrow=TRUE)
+  #   Z = Z/factorZ # normalized matrix Z
+  #   
+  #   ## prepare latent variables (constructs) for GSCAm
+  #   v = sqrt(diag(t(Gamma) %*% Gamma))
+  #   factor = matrix(v, nrow=N, ncol=length(v), byrow=TRUE)
+  #   Gamma = Gamma/factor # normalized matrix Gamma of latent variables
+  #   
+  #   # calculate initial values for the unique variables in U
+  #   # analogous to step 3 of the modified ALS-algorithm
+  #   Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, N-J, drop = FALSE]
+  #   s <- svd(t(Gamma_orth) %*% Z %*% D)
+  #   U_tilde = s$u %*% t(s$v)
+  #   U = Gamma_orth %*% U_tilde # this is the initial matrix U
+  #   
+  #   # iter = 0
+  #   iter_counter <- 1
+  #   f0 = 100000
+  #   imp = 100000
+  #   repeat {
+  #     # Counter
+  #     iter_counter <- iter_counter + 1
+  #     
+  #     # iter = iter + 1
+  #     
+  #     ## step 1: update Gamma (latent variable scores) and W (weights)
+  #     
+  #     H = A - cbind(matrix(0, nrow = J, ncol = K), diag(J))
+  #     M = cbind(diag(K), matrix(0, nrow = K, ncol = J))
+  #     W = M %*% t(H) %*% solve(H %*% t(H))
+  #     Gamma = (Z - U %*% D) %*% W
+  #     
+  #     # normalize every latent variable and adjust the corresponding weights
+  #     v = sqrt(diag(t(Gamma) %*% Gamma)) # length of v is J
+  #     factor = matrix(v, nrow=N, ncol=length(v), byrow=TRUE)
+  #     Gamma = Gamma/factor # normalized matrix of latent variables
+  #     W = W/matrix(v, nrow=K, ncol=length(v), byrow=TRUE)
+  #     
+  #     ## step 2: update A (loadings and path coefficients)
+  #     
+  #     Sm = cbind(U %*% D, matrix(0, nrow = N, ncol = J))
+  #     Psi = cbind(Z, Gamma)
+  #     PsiStar = Psi - Sm
+  #     vecPsi = matrix(Psi, ncol = 1)
+  #     vecPsiStar = matrix(PsiStar, ncol = 1)
+  #     
+  #     Phi = kronecker(diag(T), Gamma)
+  #     Phi = Phi[,aindex]
+  #     a_hat = solve((t(Phi)%*%Phi))%*%t(Phi)%*%vecPsiStar
+  #     vecA[aindex,1] = a_hat
+  #     A = matrix(vecA, ncol = T, nrow = J, byrow = FALSE)
+  #     vecA <- matrix(A, ncol = 1)
+  #     
+  #     ## step 3: update U (unique parts) for fixed Gamma, A and D
+  #     ## based on Trendafilov et al.'s procedure (2013)
+  #     
+  #     # Gamma_orth is an N by N-J orthonormal basis matrix of the null space of Gamma
+  #     Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, N-J, drop = FALSE]
+  #     s <- svd(t(Gamma_orth) %*% Z %*% D)
+  #     U_tilde = s$u %*% t(s$v)
+  #     U = Gamma_orth %*% U_tilde
+  #     
+  #     ## step 4: update D (unique loadings) for fixed Gamma, A and U 
+  #     
+  #     D = diag(diag(t(U) %*% Z))
+  #     
+  #     ## updated matrices Psi and Sm
+  #     Psi = cbind(Z, Gamma)
+  #     Sm = cbind(U %*% D, matrix(0, nrow = N, ncol = J))
+  #     dif = Psi - Gamma %*% A - Sm # This is the matrix of the optimization criterion 
+  #     f = matrixcalc::matrix.trace(t(dif) %*% dif)
+  #     imp = f0 - f # decrease of the minimization criterion
+  #     f0 = f
+  #     PsiStar = Psi - Sm
+  #     vecPsi = matrix(Psi, ncol = 1)
+  #     vecPsiStar = matrix(PsiStar, ncol = 1)
+  #     
+  #     
+  #     # Check for convergence
+  #     conv <- checkConvergence(W, W_iter, 
+  #                              .conv_criterion = .conv_criterion, 
+  #                              .tolerance = .tolerance)
+  #     
+  #     if(conv) {
+  #       # Set convergence status to TRUE as algorithm has converged
+  #       conv_status = TRUE
+  #       break # return iterative PLS-PM weights
+  #       
+  #     } else if(iter_counter == iter_max & iter_max == 1) {
+  #       # Set convergence status to NULL, NULL is used if no algorithm is used
+  #       conv_status = NULL
+  #       break # return one-step PLS-PM weights
+  #       
+  #     } else if(iter_counter == iter_max & iter_max > 1) {
+  #       # Set convergence status to FALSE, as algorithm has not converged
+  #       conv_status = FALSE
+  #       break
+  #       
+  #     } else {
+  #       W_iter <- W
+  #     }
+  #   }
+  # }
   
   # Return
   l <- list("W" = W, "E" = NULL, "Modes" = "gsca", "Conv_status" = conv_status,
