@@ -48,7 +48,7 @@ calculateCorrectionFactors <- function(
     
     ## Depending on the mode: extract vector of weights or indicator-proxy
     # correlations (composite loadings) of block j 
-    if(.modes[j] == "ModeA") {
+    if(.modes[j] == "modeA") {
       w_j <- .W[j, ] %>%
         .[. != 0] %>%
         as.matrix(.)
@@ -168,10 +168,10 @@ calculateLoadingsPLS <- function(
     names_c  <- names(.csem_model$construct_type[.csem_model$construct_type == "Composite"])
     ## Get names of constructs modeled as common factors
     names_cf <- setdiff(rownames(.csem_model$structural), names_c)
-    ## Get names of the common factors whose weights were estimated with "ModeA"
-    names_modeA <- intersect(names(.modes[.modes == "ModeA"]), names_cf)
-    ## Get names of the common factors whose weights were estimated with "ModeB"
-    names_modeB <- intersect(names(.modes[.modes == "ModeB"]), names_cf)
+    ## Get names of the common factors whose weights were estimated with "modeA"
+    names_modeA <- intersect(names(.modes[.modes == "modeA"]), names_cf)
+    ## Get names of the common factors whose weights were estimated with "modeB"
+    names_modeB <- intersect(names(.modes[.modes == "modeB"]), names_cf)
     
     if(length(names_cf) > 0) {
       if(length(names_modeA) > 0) {
@@ -306,9 +306,9 @@ calculateCompositeConstructCV <- function(
     ## Get names of constructs modeled as common factors
     names_cf <- setdiff(rownames(.csem_model$structural), names_c)
     ## Get names of the common factors whose weights where estimated with "ModeA"
-    names_modeA <- intersect(names(.modes[.modes == "ModeA"]), names_cf)
+    names_modeA <- intersect(names(.modes[.modes == "modeA"]), names_cf)
     ## Get names of the common factors whose weights where estimated with "ModeB"
-    names_modeB <- intersect(names(.modes[.modes == "ModeB"]), names_cf)
+    names_modeB <- intersect(names(.modes[.modes == "modeB"]), names_cf)
 
     if(length(names_modeA) > 0) {
       
@@ -350,9 +350,9 @@ calculateCompositeConstructCV <- function(
       ## Get names of constructs modeled as common factors
       names_cf <- setdiff(tmp2, names_c)
       ## Get names of the common factors whose weights where estimated with "ModeA"
-      names_modeA <- intersect(names(.modes[.modes == "ModeA"]), names_cf)
+      names_modeA <- intersect(names(.modes[.modes == "modeA"]), names_cf)
       ## Get names of the common factors whose weights where estimated with "ModeB"
-      names_modeB <- intersect(names(.modes[.modes == "ModeB"]), names_cf)
+      names_modeB <- intersect(names(.modes[.modes == "modeB"]), names_cf)
       
       if(length(names_modeA) > 0) {
         

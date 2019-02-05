@@ -106,9 +106,9 @@ foreman <- function(
   } else if(.approach_weights == "GSCA") {
     W <- calculateWeightsGSCA(
       .X                        = X,
-      .S                        = S,
       .csem_model               = csem_model,
       .conv_criterion           = .conv_criterion,
+      .disattenuate             = .disattenuate,
       .iter_max                 = .iter_max,
       .tolerance                = .tolerance
     )
@@ -170,7 +170,7 @@ foreman <- function(
   }
 
   ## Calculate loadings and cross-loadings (covariance between construct and indicators)
-  Lambda <- calculateLoadings(
+  Lambda <- calculateLoadingsPLS(
     .S             = S,
     .W             = W$W,
     .Q             = Q,
