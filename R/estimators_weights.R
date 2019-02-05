@@ -473,12 +473,11 @@ calculateWeightsGSCA <- function(
       # Transform
       tC <- t(C)
       tC[tC != 0] <- unlist(loadings)
-    } else {
-      tC <- t(C)
+      C <- t(tC)
     }
     
     # Build A
-    A <- cbind(t(tC), B)
+    A <- cbind(C, B)
     
     ### GSCAm steps
     if(.disattenuate) {
