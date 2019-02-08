@@ -185,7 +185,8 @@ CR.cSEMResults_2ndorder <- function(.object=args_default()$.object,
 #'
 #'
 Cronbach_alpha <- function(.object=args_default()$.object,
-                           .only_common_factors=args_default()$.only_common_factors) {
+                           .only_common_factors=args_default()$.only_common_factors,
+                           .alpha=args_default()$.alpha) {
   UseMethod("Cronbach_alpha")
 }
 
@@ -193,7 +194,8 @@ Cronbach_alpha <- function(.object=args_default()$.object,
 #' @describeIn Cronbach_alpha (TODO)
 #' @export
 Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
-            .only_common_factors=args_default()$.only_common_factors){
+            .only_common_factors=args_default()$.only_common_factors,
+            .alpha=args_default()$.alpha){
   
   construct_names=names(.object$Information$Model$construct_type)
   
@@ -215,6 +217,43 @@ Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
   
   
   # Implement closed-form CIs see Trinchera et al. (2018)
+  # Rcode adopted from Trinchera et al. (2018)
+    # MyAlpha.CI <− function (X, sig = 0.05){
+    # p <− ncol(X)
+    # n <− nrow(X)
+    # S <−apply(X,1,sum)
+    # sigma.S <− var(S)
+    # alphaHat <− (p/(p − 1))*(1−sum(diag(cov(X)))/sigma.S)
+    # sigma4.S <− sigma.S^2
+    # sigma6.S <− sigma.S^3
+    # sigma8.S <− sigma.S^4
+    # a <− matrix(,p,p)
+    # for (pp in 1:p){
+    #   for (ll in 1:p){
+    #     a [pp,ll] <−
+    #     −diag(cov(X))[pp]*diag(cov(X))[ll]+(1/n)*sum(((X[,pp]
+    #                                                    *mean(X[,pp]))^2)*((X[,ll]−mean(X[,ll]))^2))
+    #   }
+    # }
+    # A <− sum(a)
+    # b <− matrix(,1,p)
+    # for (pp in 1:p){
+    #   b [pp] <−
+    #   −sigma.S*diag(cov(X))[pp]+(1/n)*sum(((S*mean(S))^2)
+    #                                       *((X[,pp]−mean(X[,pp]))^2))
+    # }
+    # B <− sum(diag(var(X)))*sum(b)
+    # CC <− sum(diag(var(X)))^2*(−sigma4.S+(1/n)*sum((S
+    #                                                 −mean(S))^4))
+    # teta.alpha <− (p^2/(p − 1)^2)*(A/sigma4.S−(2*B)/sigma6.
+    #                                S+CC/sigma8.S)
+    # seAlpha<−sqrt(teta.alpha/n)
+    # zvalue <− qnorm((1−sig/2), mean = 0, sd = 1)
+    # up <− (alphaHat + zvalue*seAlpha)
+    # low <− (alphaHat − zvalue*seAlpha)
+    # return(list(point.estimate = alphaHat, seAlpha = seAlpha,
+                # CI = list(low.bound = low, up.bound = up)))
+  
   
   return(alphas)
 }
@@ -222,7 +261,8 @@ Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
 #' @describeIn Cronbach_alpha (TODO)
 #' @export
 Cronbach_alpha.cSEMResults_multi <- function(.object=args_default()$.object,
-                                             .only_common_factors=args_default()$.only_common_factors) {
+                                             .only_common_factors=args_default()$.only_common_factors,
+                                             .alpha=args_default()$.alpha) {
   
   lapply(.object, Cronbach_alpha.cSEMResults_default)
 }
