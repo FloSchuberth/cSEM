@@ -204,8 +204,54 @@ Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
     relevant_indicators=colnames(.object$Information$Model$measurement[x,.object$Information$Model$measurement[x,]!=0,drop=FALSE])
     S_relevant=.object$Estimates$Indicator_VCV[relevant_indicators,relevant_indicators]
     alpha_temp=psych::alpha(S_relevant,delete=FALSE,na.rm=FALSE)
-    alpha_temp$total$raw_alpha
-    })
+    alphaHat=alpha_temp$total$raw_alpha
+    
+    # # Calculating confidence intervals based on Trinchera et al. (2018)
+    # 
+    # # Can we use standardized indicators for that purpose?
+    # X = .object$Information$Data[,relevant_indicators]
+    # sumscores=apply(X,1,sum)
+    # # Variance and higher-order moments of the of the sum scores
+    # varss=var(sumscores)
+    # sigma4.S <- varss^2
+    # sigma6.S <- varss^3
+    # sigma8.S <- varss^4
+    # 
+    # NrIndicators=length(relevant_indicators)
+    # nObs = nrow(X)
+    # 
+    # # alpha (equals the one from the psych package)
+    # NrIndicators/(NrIndicators - 1)*(1 - sum(diag(cov(X)))/varss)
+    # 
+    # a <- matrix(,NrIndicators,NrIndicators)
+    # for (pp in 1:NrIndicators){
+    #   for (ll in 1:NrIndicators){
+    #     a [pp,ll] = -diag(cov(X))[pp]*diag(cov(X))[ll]+(1/nObs)*sum(((X[,pp]
+    #                                                    *mean(X[,pp]))^2)*((X[,ll]-mean(X[,ll]))^2))
+    #   }
+    # }
+    # 
+    # A <- sum(a)
+    # b <- matrix(,1,NrIndicators)
+    # for (pp in 1:NrIndicators){
+    #   b [pp] <-
+    #   -varss*diag(cov(X))[pp]+(1/nObs)*sum(((sumscores*mean(sumscores))^2)
+    #                                       *((X[,pp]-mean(X[,pp]))^2))
+    # }
+    # B <- sum(diag(var(X)))*sum(b)
+    # 
+    # CC <- sum(diag(var(X)))^2*(-sigma4.S+(1/nObs)*sum((sumscores - mean(sumscores))^4))
+    # teta.alpha <- (NrIndicators^2/(NrIndicators - 1)^2)*(A/sigma4.S-(2*B)/sigma6.S+CC/sigma8.S)
+    # seAlpha <-sqrt(teta.alpha/nObs)
+    # zvalue <- qnorm((1-.alpha/2), mean = 0, sd = 1)
+    # up <- (alphaHat + zvalue*seAlpha)
+    # low <- (alphaHat - zvalue*seAlpha)
+    # return(list(point.estimate = alphaHat, seAlpha = seAlpha,
+    # CI = list(low.bound = low, up.bound = up)))    
+    
+    alphaHat
+    
+    })# End of sapply
   
   names(alphas)=construct_names
   
