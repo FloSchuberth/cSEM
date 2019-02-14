@@ -104,14 +104,25 @@ foreman <- function(
       .approach                 = .approach_weights
     )
   } else if(.approach_weights == "GSCA") {
-    W <- calculateWeightsGSCA(
-      .X                        = X,
-      .csem_model               = csem_model,
-      .conv_criterion           = .conv_criterion,
-      .disattenuate             = .disattenuate,
-      .iter_max                 = .iter_max,
-      .tolerance                = .tolerance
-    )
+    if(.disattenuate) {
+      W <- calculateWeightsGSCAm(
+        .X                        = X,
+        .csem_model               = csem_model,
+        .conv_criterion           = .conv_criterion,
+        .iter_max                 = .iter_max,
+        .tolerance                = .tolerance
+      )
+    } else {
+      W <- calculateWeightsGSCA(
+        .X                        = X,
+        .S                        = S,
+        .csem_model               = csem_model,
+        .conv_criterion           = .conv_criterion,
+        .iter_max                 = .iter_max,
+        .tolerance                = .tolerance
+      )
+    }
+
   } else if(.approach_weights == "unit") {
     W <- calculateWeightsUnit(
       .S                        = S,

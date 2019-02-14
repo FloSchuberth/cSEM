@@ -329,10 +329,158 @@ calculateWeightsKettenring <- function(
 #'
 #' @inherit calculateWeightsPLS return
 #'
+#' @export
 calculateWeightsGSCA <- function(
   .X                           = args_default()$.X,
+  .S                           = args_default()$.S,
   .csem_model                  = args_default()$.csem_model,
-  .disattenuate                = args_default()$.disattenuate,
+  .conv_criterion              = args_default()$.conv_criterion,
+  .iter_max                    = args_default()$.iter_max,
+  .tolerance                   = args_default()$.tolerance
+) {
+  ### Calculation (ALS algorithm) ==============================================
+  
+  W0 <- Lambda0 <- .csem_model$measurement # Weight relation model
+  Lambda0[which(.csem_model$construct_type == "Composite"), ]  <- 0
+  B0 <- .csem_model$structural # Structural model
+  vars_endo    <- rownames(B0)[rowSums(B0) != 0]
+  vars_cf      <- names(which(.csem_model$construct_type == "Common factor"))
+  
+  J <- nrow(W0)
+  K <- ncol(W0)
+  JK <- J + K
+  
+  # Scale weights
+  W <- scaleWeights(.S = .S, .W = W0)
+  
+  W_iter       <- W
+  tolerance    <- .tolerance
+  iter_max     <- .iter_max
+  iter_counter <- 0
+  
+  repeat {
+    # Counter
+    iter_counter <- iter_counter + 1
+    
+    # Step 1a: Estimate B (the structural coefficients for a given W)
+    C <- W_iter %*% .S %*% t(W_iter)
+    B <- lapply(vars_endo, function(y) {
+      x <-  colnames(B0[y, B0[y, ] != 0, drop = FALSE])
+      coef <- solve(C[x, x, drop = FALSE]) %*% C[x, y, drop = FALSE]
+      
+      # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
+      # r2   <- t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef
+      # names(r2) <- x
+    })
+    # Transform
+    tB <- t(B0)
+    tB[tB != 0] <- unlist(B)
+    
+    # Step 1b: Estimate Lambda (the loadings for a given W)
+    if(length(vars_cf) > 0) {
+      Lambda_tilde <- W_iter %*% .S
+      dep_vars <- names(which(colSums(Lambda0[vars_cf, ]) !=0))
+      Lambda <- lapply(dep_vars, function(y) {
+        x <-  which(Lambda0[vars_cf, y] != 0)
+        coef <- solve(C[x, x, drop = FALSE]) %*% Lambda_tilde[x, y, drop = FALSE]
+      })
+      # Transform
+      tLambda <- t(Lambda0)
+      tLambda[tLambda != 0] <- unlist(Lambda)
+    } else {
+      tLambda <- t(Lambda0)
+    }
+    
+    # Build matrices A and V used in GSCA
+    
+    # A <- rbind(tLambda, t(tB))
+    A <- cbind(t(tLambda), tB)
+    V <- rbind(diag(K), W_iter)
+    
+    # The following code is based on the ASGSCA package (licensed
+    # under GPL-3). Notation is adapted to be conform with the notation of the
+    # cSEM package
+    
+    tr_w <- 0
+    W <- W_iter
+    for(j in 1:J){
+      t <- K + j
+      windex_j <- which(W[j, ] != 0)
+      m <- matrix(0, 1, JK)
+      m[t] <- 1
+      # a <- A[, j]
+      a <- A[j, ]
+      beta <- m - a
+      H1 <- diag(J)
+      H2 <- diag(JK)
+      H1[j,j] <- 0
+      H2[t,t] <- 0
+      Delta <- t(A) %*% H1 %*% W - H2 %*% V
+      Sp <- .S[windex_j , windex_j]
+      if(length(windex_j) != 0) {
+        
+        theta <- MASS::ginv(as.numeric(beta%*%t(beta))*.S[windex_j,windex_j]) %*%
+          t(beta %*% Delta %*% .S[,windex_j])
+        
+        # Update the weights based on the estimated parameters and standardize
+        W0[j, windex_j] <- theta
+        W <- scaleWeights(.S, W0)
+      }
+    }
+    
+    # Check for convergence
+    conv <- checkConvergence(W, W_iter,
+                             .conv_criterion = .conv_criterion,
+                             .tolerance = .tolerance)
+    
+    if(conv) {
+      # Set convergence status to TRUE as algorithm has converged
+      conv_status = TRUE
+      break # return iterative PLS-PM weights
+      
+    } else if(iter_counter == iter_max & iter_max == 1) {
+      # Set convergence status to NULL, NULL is used if no algorithm is used
+      conv_status = NULL
+      break # return one-step PLS-PM weights
+      
+    } else if(iter_counter == iter_max & iter_max > 1) {
+      # Set convergence status to FALSE, as algorithm has not converged
+      conv_status = FALSE
+      break
+      
+    } else {
+      W_iter <- W
+    }
+  }
+  
+  # Return
+  l <- list("W" = W, "E" = NULL, "Modes" = "gsca", "Conv_status" = conv_status,
+            "Iterations" = iter_counter)
+  return(l)
+  
+  ### For maintenance: ---------------------------------------------------------
+  # Hwang and Takane (2004, 2010, 2014, 2017) use a completely different notation
+  #   compared to the standard LISREL/Bollen-type notation. This implementation
+  #   uses the LISREL notation. This table translates some of the notation
+  ## N              := Number of observations
+  ## K              := Total number of indicators (J in H&T)
+  ## J              := Total number of constructs (P in H&T)
+  ## TT             := K + J (T in H&T)
+  ## X (N x K)      := Matrix of indicator values (=data) (Z in H&T)
+  ## W (J x K)      := (Block-)diagonal matrix of weight relations (W' in H&T)
+  ## Lambda (J x K) := (Block-)diagonal matrix of loadings (C in H&T)
+  ## B (J x J)      := Matrix of path coefficients (B' in H&T). B is not necessarily
+  ##                   lower-triangular (i.e may contain feedback loops)
+  ## H (N x J)      := Matrix of proxies/scores
+  ## V (K x TT)     := Matrix of indicator and construct relations
+  ## Psi (N x TT)   := Matrix of all indicator values and construct scores
+  
+} # END calculateWeightsGSCA
+#'
+#' @export
+calculateWeightsGSCAm <- function(
+  .X                           = args_default()$.X,
+  .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
   .iter_max                    = args_default()$.iter_max,
   .tolerance                   = args_default()$.tolerance
@@ -399,63 +547,48 @@ calculateWeightsGSCA <- function(
   A  <- cbind(C, B) # (P x TT)
   # V  <- cbind(Ij, W) # (J x TT)
   
-  U  <- matrix(0, nrow = N, ncol = J) # matrix of unique terms
-  D  <- diag(runif(J, min = 0, max = 1))
+  # Normalize Z
+  Z <- Z/sqrt(N - 1) 
   
-  Gamma <- (Z - U %*% D) %*% W
+  # Gamma
+  Gamma <- Z %*% W
+  
   # Calculate initial values for the unique variables in U
-  # analogous to step 3 of the modified ALS-algorithm
+  # analogous to step 3 of the modified ALS-algorith
+  D          <- Ij
   Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (P+1):N, drop = FALSE]
-  s          <- svd(t(Gamma_orth) %*% Z %*% D)
-  U_tilde    <- s$u %*% t(s$v)
-  U          <- Gamma_orth %*% U_tilde # this is the initial matrix U 
+  s          <- svd(D %*% t(Z) %*% Gamma_orth)
+  U_tilde    <- s$v %*% t(s$u)
+  U          <- Gamma_orth %*% U_tilde # this is the initial matrix U
+  # U <- as.matrix(read.csv("Temp/Testing/frommatlab.csv", header = FALSE))
+  # U <- as.matrix(read.table("Temp/Testing/file1.txt", header = FALSE, sep = ","))
+  D <- diag(diag(t(U) %*% Z))
   
-  # Prepare repeat-loop
+  est  <-  A[which(A != 0)]
+  est0 <- est + 1
   iter_counter <- 0
-  f0           <- 100000
-  imp          <- 100000
-  
-  repeat {
-    # Counter
-    iter_counter <- iter_counter + 1
+  while (sum(sum(abs(est0 - est))) > .tolerance & iter_counter < .iter_max) {
     
-    ## Step 1: Update W and Gamma for given A, U and D ---------------------------
-    H <- A - cbind(matrix(0, nrow = P, ncol = J), Ip) # (P x T)
-    M <- cbind(Ij, matrix(0, nrow = J, ncol = P) )
-    
-    # Estimate new weights 
-    W <- t(solve(H %*% t(H)) %*% H %*% t(M)) # (J x P)
-    
-    # Select only (block)-diagonal elements
-    W <- W * t(.csem_model$measurement)
-    
-    # Build proxies/scores
-    if(.disattenuate) {
-      Z <- Z - U %*% D
-    } 
-    vcv_Z <- cor(Z)
-    
-    # Scale weights
-    W <- t(scaleWeights(vcv_Z, t(W)))
-    
-    Gamma <- Z %*% W
-    
-    ## Step 2: Update A for given Gamma, U and D ---------------------------------
-    
-    # The matrix Theta in H&T (204, 2014, 2017) can get pretty large if N is large.
-    # Its more efficient to update C und B in A seperately
+    iter_counter  <- iter_counter + 1
+    est0  <- est
+    X     <- Z - U %*% D
+    WW    <- t(C) %*% solve(C %*% t(C) + Ip - 2*B + B %*% t(B))
+    for(p in 1:P) {
+      windex_p <- which(W[ , p] != 0)
+      w        <- WW[windex_p, p]
+      Xp       <- X[,windex_p]
+      w        <- w / norm(Xp %*% w, type = "2")
+      W[windex_p, p] <- w
+      Gamma[ , p]    <- Xp %*% w
+    }
     
     # Step 2a: Update B (the structural coefficients for a given W)
-    vcv_gamma <- t(W) %*% vcv_Z %*% W
+    vcv_gamma <- t(Gamma) %*% Gamma
     vars_endo <- which(colSums(B) != 0)
     
     beta <- lapply(vars_endo, function(y) {
       x    <- which(B[, y, drop = FALSE] != 0)
-      coef <- solve(vcv_gamma[x, x, drop = FALSE]) %*% vcv_gamma[x, y, drop = FALSE]
-      
-      # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
-      # r2   <- t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef
-      # names(r2) <- x
+      coef <- MASS::ginv(vcv_gamma[x, x, drop = FALSE]) %*% vcv_gamma[x, y, drop = FALSE]
     })
     B[B != 0] <- unlist(beta)
     
@@ -463,7 +596,7 @@ calculateWeightsGSCA <- function(
     vars_cf <- which(.csem_model$construct_type == "Common factor")
     if(length(vars_cf) > 0) {
       
-      cov_gamma_indicators <- t(W) %*% vcv_Z
+      cov_gamma_indicators <- t(Gamma) %*% X
       Y <- which(colSums(C[vars_cf, ]) !=0)
       loadings <- lapply(Y, function(y) {
         x    <-  which(C[vars_cf, y] != 0)
@@ -476,359 +609,28 @@ calculateWeightsGSCA <- function(
       C <- t(tC)
     }
     
+    Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (P+1):N, drop = FALSE]
+    s          <- svd(D %*% t(Z) %*% Gamma_orth)
+    U_tilde    <- s$v %*% t(s$u)
+    U          <- Gamma_orth %*% U_tilde # this is the initial matrix U
+    
+    D <- diag(diag(t(U) %*% Z))
+    
     # Build A
     A <- cbind(C, B)
-    
-    ### GSCAm steps
-    if(.disattenuate) {
-      ## Step 3: update U (unique parts) for given Gamma, A and D
-      ## Based on Trendafilov et al.'s procedure (2013)
-      # Gamma_orth is an N by N-P orthonormal basis matrix of the null space of Gamma
-      Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (P+1):N, drop = FALSE]
-      s          <- svd(t(Gamma_orth) %*% Z %*% D)
-      U_tilde    <- s$u %*% t(s$v)
-      U          <- Gamma_orth %*% U_tilde
-      
-      ## step 4: update D (unique loadings) and Z for fixed Gamma, A and U 
-      D <- diag(diag(t(U) %*% Z))
-      Z <- Z - U %*% D
-    }
-    
-    ## Check convergence
-    Psi <- cbind(Z, Gamma) # or Psi_star in GSCAm
-    
-    # Optimization criterion
-    optim_crit <- Psi - Gamma %*% A  
-    f   <- matrixcalc::matrix.trace(t(optim_crit) %*% optim_crit) # since trace(X'X) = SS(X)
-    imp <- f0 - f # how much did the minimization criterion decrease
-    
-    if(imp < .tolerance) {
-      # Set convergence status to TRUE as algorithm has converged
-      conv_status <- TRUE
-      break 
-      
-    } else if(iter_counter > .iter_max) {
-      # Set convergence status to FALSE, as algorithm has not converged
-      conv_status <- FALSE
-      break
-      
-    } else {
-      # Reset f0 and continue
-      f0  <- f
-    }
+    est <- A[which(A != 0)]
   }
   
   # Return
-  l <- list("W" = W, "E" = NULL, "Modes" = "gsca", "Conv_status" = conv_status,
+  l <- list("W" = t(W), 
+            "X" = X,
+            "E" = NULL, 
+            "Modes" = "gsca", 
+            "Conv_status" = ifelse(iter_counter > .iter_max, FALSE, TRUE),
             "Iterations" = iter_counter)
   return(l)
   
 } # END calculateWeightsGSCA
-
-# calculateWeightsGSCA2 <- function(
-#   .X                           = args_default()$.X,
-#   .S                           = args_default()$.S,
-#   .csem_model                  = args_default()$.csem_model,
-#   .disattenuate                = args_default()$.disattenuate,
-#   .conv_criterion              = args_default()$.conv_criterion,
-#   .iter_max                    = args_default()$.iter_max,
-#   .tolerance                   = args_default()$.tolerance
-# ) {
-#   ### Calculation (ALS algorithm) ==============================================
-#   W0 <- Lambda0 <- .csem_model$measurement # Weight relation model
-#   Lambda0[which(.csem_model$construct_type == "Composite"), ]  <- 0
-#   B0 <- .csem_model$structural # Structural model
-#   vars_endo    <- rownames(B0)[rowSums(B0) != 0]
-#   vars_cf      <- names(which(.csem_model$construct_type == "Common factor"))
-# 
-#   J <- nrow(W0)
-#   K <- ncol(W0)
-#   JK <- J + K
-#   
-#   # Scale weights
-#   W <- scaleWeights(.S = .S, .W = W0)
-#   
-#   W_iter       <- W
-#   tolerance    <- .tolerance
-#   iter_max     <- .iter_max
-#   iter_counter <- 0
-#   
-#   repeat {
-#     # Counter
-#     iter_counter <- iter_counter + 1
-#     
-#     # Step 1a: Estimate B (the structural coefficients for a given W)
-#     C <- W_iter %*% .S %*% t(W_iter)
-#     B <- lapply(vars_endo, function(y) {
-#       x <-  colnames(B0[y, B0[y, ] != 0, drop = FALSE])
-#       coef <- solve(C[x, x, drop = FALSE]) %*% C[x, y, drop = FALSE]
-#       
-#       # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
-#       # r2   <- t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef
-#       # names(r2) <- x
-#     })
-#     # Transform
-#     tB <- t(B0)
-#     tB[tB != 0] <- unlist(B)
-#     
-#     # Step 1b: Estimate Lambda (the loadings for a given W)
-#     if(length(vars_cf) > 0) {
-#       Lambda_tilde <- W_iter %*% .S
-#       dep_vars <- names(which(colSums(Lambda0[vars_cf, ]) !=0))
-#       Lambda <- lapply(dep_vars, function(y) {
-#         x <-  which(Lambda0[vars_cf, y] != 0)
-#         coef <- solve(C[x, x, drop = FALSE]) %*% Lambda_tilde[x, y, drop = FALSE]
-#       })
-#       # Transform
-#       tLambda <- t(Lambda0)
-#       tLambda[tLambda != 0] <- unlist(Lambda)
-#     } else {
-#       tLambda <- t(Lambda0)
-#     }
-# 
-#     # Build matrices A and V used in GSCA
-#     
-#     # A <- rbind(tLambda, t(tB))
-#     A <- cbind(t(tLambda), tB)
-#     V <- rbind(diag(K), W_iter)
-#     
-#     # The following code is based on the ASGSCA package (licensed
-#     # under GPL-3). Notation is adapted to be conform with the notation of the 
-#     # cSEM package
-#     
-#     tr_w <- 0
-#     W <- W_iter
-#     for(j in 1:J){
-#       t <- K + j
-#       windex_j <- which(W[j, ] != 0)
-#       m <- matrix(0, 1, JK)
-#       m[t] <- 1
-#       # a <- A[, j]
-#       a <- A[j, ]
-#       beta <- m - a
-#       H1 <- diag(J)
-#       H2 <- diag(JK)
-#       H1[j,j] <- 0
-#       H2[t,t] <- 0
-#       Delta <- t(A) %*% H1 %*% W - H2 %*% V 
-#       Sp <- .S[windex_j , windex_j]
-#       if(length(windex_j) != 0) {        
-#         
-#         theta <- MASS::ginv(as.numeric(beta%*%t(beta))*.S[windex_j,windex_j]) %*%
-#           t(beta %*% Delta %*% .S[,windex_j])
-#         
-#         # Update the weights based on the estimated parameters and standardize
-#         W0[j, windex_j] <- theta
-#         W <- scaleWeights(.S, W0)
-#       }
-#     }
-#     
-#     # Check for convergence
-#     conv <- checkConvergence(W, W_iter, 
-#                              .conv_criterion = .conv_criterion, 
-#                              .tolerance = .tolerance)
-#     
-#     if(conv) {
-#       # Set convergence status to TRUE as algorithm has converged
-#       conv_status = TRUE
-#       break # return iterative PLS-PM weights
-#       
-#     } else if(iter_counter == iter_max & iter_max == 1) {
-#       # Set convergence status to NULL, NULL is used if no algorithm is used
-#       conv_status = NULL
-#       break # return one-step PLS-PM weights
-#       
-#     } else if(iter_counter == iter_max & iter_max > 1) {
-#       # Set convergence status to FALSE, as algorithm has not converged
-#       conv_status = FALSE
-#       break
-#       
-#     } else {
-#       W_iter <- W
-#     }
-#   }
-# 
-#   H <- A - cbind(matrix(0, nrow = J, ncol = K), diag(J)) # (P x T)
-#   M <- cbind(diag(K), matrix(0, nrow = K, ncol = J) )
-#   
-#   Wnew <- M %*% t(H) %*% solve(H %*% t(H))
-#   solve(H %*% t(H)) %*% H %*% t(M)
-#   Zp <- .X[, 1:2]
-#   wp <- Wnew[1:2, 1, drop = FALSE]
-#   wp %*% (1/sqrt(t(wp) %*% (1/99*t(Zp) %*% Zp) %*% wp))
-#   
-#   var(Zp %*% wp)
-#   cov(Zp)
-#   Wnew2 <-  solve(H %*% t(H)) %*% H %*% t(.X %*% M)
-#   all.equal(Wnew, t(Wnew2))
-#   Wnew[1:5, ]
-#   t(Wnew2)[1:5, ]
-#   wp <- Wnew[, 1, drop = FALSE]
-#   varproxy <- diag(t(Wnew) %*% .S %*% Wnew)
-#   wp/sqrt(varproxy[1])
-#   scaleWeights(t(Wnew), .S)
-#   # GSCAm
-#   if(.disattenuate) {
-#     # W <- t(GSCA_results$Estimates$Weight_estimates) # Matrix of the weighted relation model
-#     # B <- t(GSCA_results$Estimates$Path_estimates) # Matrix of the structural model
-#     # C <- t(GSCA_results$Estimates$Loading_estimates) # Matrix of the measurement model if all indicators are reflective
-#     # Gamma <- GSCA_results$Estimates$Construct_scores # Matrix of scores of latent variables
-# 
-#     Z <- .X # Z is the data matrix in GSCAm, data are already standardized
-#     S <- .S # S is the empirical indicator covariance/correlation matrix
-#     W <- t(W)
-#     B <- tB
-#     C <- t(W) %*% S * .csem_model$measurement
-#     Gamma <- Z %*% W
-# 
-#     N <- nrow(Z) # number of observations per indicator
-#     K <- nrow(W) # number of indicators
-#     J <- ncol(W) # number of constructs
-#     T <- K + J
-# 
-#     A <- cbind(C, B) # J rows, T columns
-#     D <- diag(runif(K, min = 0, max = 1)) # matrix of unique loadings, random inital values
-#     U <- matrix(0, N, K) # matrix of unique variables
-# 
-#     ## get indices of those entries of A which are not zero
-# 
-#     vecA <- matrix(A, ncol = 1)
-#     aindex <- which(vecA!=0,arr.ind = T)[,1]
-#     vecW <- matrix(W, ncol = 1)
-#     windex <- which(vecW!=0,arr.ind = T)[,1]
-# 
-#     ## Preparation of the calculation of the actual weights, coefficients and loadings
-# 
-#     ## prepare data for GSCAm
-#     # for GSCAm, normalized data are needed
-#     vZ = sqrt(diag(t(Z) %*% Z))
-#     factorZ = matrix(vZ, nrow=N, ncol=length(vZ), byrow=TRUE)
-#     Z = Z/factorZ # normalized matrix Z
-# 
-#     ## prepare latent variables (constructs) for GSCAm
-#     v = sqrt(diag(t(Gamma) %*% Gamma))
-#     factor = matrix(v, nrow=N, ncol=length(v), byrow=TRUE)
-#     Gamma = Gamma/factor # normalized matrix Gamma of latent variables
-# 
-#     # calculate initial values for the unique variables in U
-#     # analogous to step 3 of the modified ALS-algorithm
-#     Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, N-J, drop = FALSE]
-#     s <- svd(t(Gamma_orth) %*% Z %*% D)
-#     U_tilde = s$u %*% t(s$v)
-#     U = Gamma_orth %*% U_tilde # this is the initial matrix U
-# 
-#     # iter = 0
-#     iter_counter <- 1
-#     f0 = 100000
-#     imp = 100000
-#     repeat {
-#       # Counter
-#       iter_counter <- iter_counter + 1
-# 
-#       # iter = iter + 1
-# 
-#       ## step 1: update Gamma (latent variable scores) and W (weights)
-# 
-#       H = A - cbind(matrix(0, nrow = J, ncol = K), diag(J))
-#       M = cbind(diag(K), matrix(0, nrow = K, ncol = J))
-#       W = M %*% t(H) %*% solve(H %*% t(H))
-#       Gamma = (Z - U %*% D) %*% W
-# 
-#       # normalize every latent variable and adjust the corresponding weights
-#       v = sqrt(diag(t(Gamma) %*% Gamma)) # length of v is J
-#       factor = matrix(v, nrow=N, ncol=length(v), byrow=TRUE)
-#       Gamma = Gamma/factor # normalized matrix of latent variables
-#       W = W/matrix(v, nrow=K, ncol=length(v), byrow=TRUE)
-# 
-#       ## step 2: update A (loadings and path coefficients)
-# 
-#       Sm = cbind(U %*% D, matrix(0, nrow = N, ncol = J))
-#       Psi = cbind(Z, Gamma)
-#       PsiStar = Psi - Sm
-#       vecPsi = matrix(Psi, ncol = 1)
-#       vecPsiStar = matrix(PsiStar, ncol = 1)
-# 
-#       Phi = kronecker(diag(T), Gamma)
-#       Phi = Phi[,aindex]
-#       a_hat = solve((t(Phi)%*%Phi))%*%t(Phi)%*%vecPsiStar
-#       vecA[aindex,1] = a_hat
-#       A = matrix(vecA, ncol = T, nrow = J, byrow = FALSE)
-#       vecA <- matrix(A, ncol = 1)
-# 
-#       ## step 3: update U (unique parts) for fixed Gamma, A and D
-#       ## based on Trendafilov et al.'s procedure (2013)
-# 
-#       # Gamma_orth is an N by N-J orthonormal basis matrix of the null space of Gamma
-#       Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, N-J, drop = FALSE]
-#       s <- svd(t(Gamma_orth) %*% Z %*% D)
-#       U_tilde = s$u %*% t(s$v)
-#       U = Gamma_orth %*% U_tilde
-# 
-#       ## step 4: update D (unique loadings) for fixed Gamma, A and U
-# 
-#       D = diag(diag(t(U) %*% Z))
-# 
-#       ## updated matrices Psi and Sm
-#       Psi = cbind(Z, Gamma)
-#       Sm = cbind(U %*% D, matrix(0, nrow = N, ncol = J))
-#       dif = Psi - Gamma %*% A - Sm # This is the matrix of the optimization criterion
-#       f = matrixcalc::matrix.trace(t(dif) %*% dif)
-#       imp = f0 - f # decrease of the minimization criterion
-#       f0 = f
-#       PsiStar = Psi - Sm
-#       vecPsi = matrix(Psi, ncol = 1)
-#       vecPsiStar = matrix(PsiStar, ncol = 1)
-# 
-# 
-#       # Check for convergence
-#       conv <- checkConvergence(W, W_iter,
-#                                .conv_criterion = .conv_criterion,
-#                                .tolerance = .tolerance)
-# 
-#       if(conv) {
-#         # Set convergence status to TRUE as algorithm has converged
-#         conv_status = TRUE
-#         break # return iterative PLS-PM weights
-# 
-#       } else if(iter_counter == iter_max & iter_max == 1) {
-#         # Set convergence status to NULL, NULL is used if no algorithm is used
-#         conv_status = NULL
-#         break # return one-step PLS-PM weights
-# 
-#       } else if(iter_counter == iter_max & iter_max > 1) {
-#         # Set convergence status to FALSE, as algorithm has not converged
-#         conv_status = FALSE
-#         break
-# 
-#       } else {
-#         W_iter <- W
-#       }
-#     }
-#   }
-#   
-#   # Return
-#   l <- list("W" = W, "E" = NULL, "Modes" = "gsca", "Conv_status" = conv_status,
-#             "Iterations" = iter_counter)
-#   return(l)
-#   
-#   ### For maintenance: ---------------------------------------------------------
-#   # Hwang and Takane (2004, 2010, 2014, 2017) use a completely different notation
-#   #   compared to the standard LISREL/Bollen-type notation. This implementation
-#   #   uses the LISREL notation. This table translates some of the notation
-#   ## N              := Number of observations
-#   ## K              := Total number of indicators (J in H&T)
-#   ## J              := Total number of constructs (P in H&T)
-#   ## TT             := K + J (T in H&T)
-#   ## X (N x K)      := Matrix of indicator values (=data) (Z in H&T)
-#   ## W (J x K)      := (Block-)diagonal matrix of weight relations (W' in H&T)
-#   ## Lambda (J x K) := (Block-)diagonal matrix of loadings (C in H&T)
-#   ## B (J x J)      := Matrix of path coefficients (B' in H&T). B is not necessarily
-#   ##                   lower-triangular (i.e may contain feedback loops)
-#   ## H (N x J)      := Matrix of proxies/scores  
-#   ## V (K x TT)     := Matrix of indicator and construct relations
-#   ## Psi (N x TT)   := Matrix of all indicator values and construct scores
-# 
-# } # END calculateWeightsGSCA
 
 #' Calculate composite weights using unit weights
 #'
