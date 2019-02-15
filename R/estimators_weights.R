@@ -554,14 +554,12 @@ calculateWeightsGSCAm <- function(
   Gamma <- Z %*% W
   
   # Calculate initial values for the unique variables in U
-  # analogous to step 3 of the modified ALS-algorith
+  # analogous to step 3 of the modified ALS-algorithm
   D          <- Ij
   Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (P+1):N, drop = FALSE]
   s          <- svd(D %*% t(Z) %*% Gamma_orth)
   U_tilde    <- s$v %*% t(s$u)
   U          <- Gamma_orth %*% U_tilde # this is the initial matrix U
-  # U <- as.matrix(read.csv("Temp/Testing/frommatlab.csv", header = FALSE))
-  # U <- as.matrix(read.table("Temp/Testing/file1.txt", header = FALSE, sep = ","))
   D <- diag(diag(t(U) %*% Z))
   
   est  <-  A[which(A != 0)]
