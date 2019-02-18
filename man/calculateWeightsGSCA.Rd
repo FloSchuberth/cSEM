@@ -9,10 +9,9 @@ calculateWeightsGSCA(.data, .model)
 \arguments{
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 
-\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 
-\item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
-if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
