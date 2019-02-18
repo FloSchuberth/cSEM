@@ -622,6 +622,10 @@ calculateWeightsGSCAm <- function(
   # Return
   l <- list("W" = t(W), 
             "X" = X,
+            "C" = C,
+            "B" = B,
+            "U" = U,
+            "D" = D,
             "E" = NULL, 
             "Modes" = "gsca", 
             "Conv_status" = ifelse(iter_counter > .iter_max, FALSE, TRUE),

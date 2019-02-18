@@ -137,13 +137,13 @@ foreman <- function(
       .dominant_indicators = .dominant_indicators)
     
   }
-  
+
   ## Calculate proxies/scores
   H <- calculateComposites(
     .X          = X,
     .W          = W$W
   )
-
+  
   ## Calculate PLSc-type correction factors if no or only a subset of reliabilities
   # are given and disattenuation is requested. Otherwise use only the reliabilities
   # to disattenuate both weights and proxy correlations to obtain consistent
