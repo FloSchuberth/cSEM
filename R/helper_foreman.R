@@ -25,7 +25,7 @@
 #' @inheritParams csem_arguments
 #'
 #' @return A numeric vector of correction factors with element names equal
-#'   to the names of the J constructs used in the measurement model
+#'   to the names of the J constructs used in the measurement model.
 #' @references
 #'   \insertAllCited{}
 #' @keywords internal
@@ -61,7 +61,6 @@ calculateCorrectionFactors <- function(
     ## Check if single indicator block or composite; If yes, set cf to 1
     if(nrow(w_j) == 1 | .csem_model$construct_type[j] == "Composite") {
       correction_factors[j] <- 1
-      
     } else {
       ## Extract relevant objects
       E_jj <- .csem_model$error_cor[rownames(w_j), rownames(w_j)]
@@ -130,114 +129,9 @@ calculateCorrectionFactors <- function(
   # S_vect (1 x 2*K_j) := Vector of off-diagonal elements of S_jj
 }
 
-
-#' Internal: Calculate factor, composite, and cross-loadings
-#'
-#' Calculates factor loadings (for constructs modeled as common factors),
-#' composite loadings (for constructs modeled as composites), and cross-loadings.
-#'
-#' @usage calculateLoadingsPLS(
-#'  .S              = args_default()$.S,
-#'  .W              = args_default()$.W,
-#'  .Q              = args_default()$.Q,
-#'  .csem_model     = args_default()$.csem_model,
-#'  .disattenuate   = args_default()$.disattenuate,
-#'  .modes          = args_default()$.modes
-#'  )
-#' @inheritParams 
-#' csem_arguments
-#'
-#' @return The (J x K) matrix of loadings and cross-loadings (attenuated if required).
-#' @keywords internal
-
-calculateLoadingsPLS <- function(
-  .S              = args_default()$.S,
-  .W              = args_default()$.W,
-  .Q              = args_default()$.Q,
-  .csem_model     = args_default()$.csem_model,
-  .disattenuate   = args_default()$.disattenuate,
-  .modes          = args_default()$.modes
-) {
-  
-  ## Matrix of (composite) loadings and cross-loadings
-  Lambda <- .W %*% .S
-  
-  if(.disattenuate) {
-    
-    ## Get names of constructs modeled as composites
-    names_c  <- names(.csem_model$construct_type[.csem_model$construct_type == "Composite"])
-    ## Get names of constructs modeled as common factors
-    names_cf <- setdiff(rownames(.csem_model$structural), names_c)
-    ## Get names of the common factors whose weights were estimated with "modeA"
-    names_modeA <- intersect(names(.modes[.modes == "modeA"]), names_cf)
-    ## Get names of the common factors whose weights were estimated with "modeB"
-    names_modeB <- intersect(names(.modes[.modes == "modeB"]), names_cf)
-    
-    if(length(names_cf) > 0) {
-      if(length(names_modeA) > 0) {
-        ## Disattenuate loadings and cross-loadings ------------------------------
-        for(i in names_modeA) {
-          temp  <- .W[i, ] # becomes a vector!
-          temp1 <- temp[which(temp != 0)]
-          temp2 <- temp[which(temp == 0)]
-          
-          Lambda[i, names(temp1)] <- .Q[i] * temp1 / c(t(temp1) %*% temp1)
-          Lambda[i, names(temp2)] <- Lambda[i, names(temp2)] / .Q[i]
-          
-        }
-      }
-      if(length(names_modeB) > 0) {
-        # Composite loading estimates 
-        L <- Lambda*(.W != 0)
-        
-        for(i in names_modeB){
-          temp  <- L[i, ] # becomes a vector!
-          temp1 <- temp[which(temp != 0)]
-          temp2 <- temp[which(temp == 0)]
-          
-          Lambda[i, names(temp1)] <- temp1*.Q[i] #* temp1 / c(t(temp1) %*% temp1)
-          Lambda[i, names(temp2)] <- Lambda[i, names(temp2)] / .Q[i]
-        }
-      }
-    } else {# all constructs are modeled as composites
-      return(Lambda)
-    }
-  } # END .disattentuate == TRUE
-  return(Lambda)
-}
-
-#' Internal: Calculate composites
-#'
-#' Calculates composite values for the J constructs of the structural model.
-#'
-#' @usage calculateComposites(
-#'  .X  = args_default()$.X,
-#'  .W  = args_default()$.W
-#'  )
-#'  
-#' @inheritParams csem_arguments
-#'
-#' @return The (N x J) matrix of proxy values with column names equal to
-#'   the names of the J constructs.
-#' @keywords internal
-
-calculateComposites <- function(
-  .X = args_default()$.X, 
-  .W = args_default()$.W
-  ){
-
-  ## Proxies for the linear terms/latent variables
-  H <- .X %*% t(.W)
-  
-  ## Alternative 
-  # Note: functions like var, sd, scale, and cov use n-1. 
-  # H <- apply(.X, 2, function(x) {(x - mean(x)) / (sd(x) * sqrt((length(x) - 1) / length(x)))}) %*% t(.W)
-  return(H)
-}
-
 #' Internal: Calculate composite variance-covariance matrix
 #'
-#' Calculate the variance-covariance (VCV) matrix of the composites.
+#' Calculate the variance-covariance (VCV) matrix of the composites/proxies.
 #'
 #' @usage calculateCompositeVCV(
 #'  .S  = args_default()$.S,
@@ -266,171 +160,9 @@ calculateCompositeVCV <- function(
   x
 }
 
-#' Internal: Calculate composite-construct correlation
+#' Internal: Calculate construct variance-covariance matrix
 #'
-#' Calculate the correlation between composite and construct (usually called Q).
-#' Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
-#' rho_A \insertCite{Dijkstra2015a}{cSEM}.
-#'
-#' @usage calculateCompositeConstructCV(
-#'  .W                  = args_default()$.W,
-#'  .csem_model         = args_default()$.csem_model,
-#'  .disattenuate       = args_default()$.disattenuate,
-#'  .modes              = args_default()$.modes,
-#'  .correction_factors = args_default()$.correction_factors,
-#'  .reliabilities      = args_default()$.reliabilities
-#'  )
-#'  
-#' @inheritParams csem_arguments
-#'
-#' @return A vector of composite-construct correlations.
-#' @references
-#'   \insertAllCited{}
-#' @keywords internal
-
-calculateCompositeConstructCV <- function(
-  .W                  = args_default()$.W,
-  .csem_model         = args_default()$.csem_model,
-  .disattenuate       = args_default()$.disattenuate,
-  .modes              = args_default()$.modes,
-  .correction_factors = args_default()$.correction_factors,
-  .reliabilities      = args_default()$.reliabilities
-  ) {
-
-  x <- rep(1, times = nrow(.W))
-  names(x) <- rownames(.W)
-
-  if(is.null(.reliabilities) & .disattenuate == TRUE) {
-    ## Get names of constructs modeled as composites
-    names_c  <- names(.csem_model$construct_type[.csem_model$construct_type == "Composite"])
-    ## Get names of constructs modeled as common factors
-    names_cf <- setdiff(rownames(.csem_model$structural), names_c)
-    ## Get names of the common factors whose weights where estimated with "ModeA"
-    names_modeA <- intersect(names(.modes[.modes == "modeA"]), names_cf)
-    ## Get names of the common factors whose weights where estimated with "ModeB"
-    names_modeB <- intersect(names(.modes[.modes == "modeB"]), names_cf)
-
-    if(length(names_modeA) > 0) {
-      
-      x_modeA <- c(diag(.W[names_modeA, , drop = FALSE] %*% t(.W[names_modeA, ,drop = FALSE])) %*%
-                     diag(.correction_factors[names_modeA], nrow = length(names_modeA)))
-      x[names_modeA] <- x_modeA
-    }
-    
-    if(length(names_modeB) > 0) {
-      x_modeB <- .correction_factors[names_modeB]
-      x[names_modeB] <- x_modeB
-    }
-  
-  } else if(is.null(.reliabilities) & .disattenuate == FALSE) {
-    
-    return (x)
-    
-  } else if(!is.null(.reliabilities)) {
-    ## Check construct names:
-    # Do all construct names in .reliabilities match the construct
-    # names used in the model?
-    tmp1 <- setdiff(names(.reliabilities), rownames(.W))
-    if(length(tmp1) != 0) {
-      stop("Construct name(s): ", paste0("`", tmp1, "`", collapse = ", "), 
-           " provided to `.reliabilities`", 
-           ifelse(length(tmp1) == 1, " is", " are"), " unknown.", call. = FALSE)
-    }
-    
-    # Check whether defined external reliabilities are correctly defined
-    # if(any(.reliabilities > 1 | .reliabilities < 0)) {
-    #   stop('Reliabilities must be between 0 and 1.', call. = FALSE)
-    # }
-    
-    ## Compute reliabilities not supplied by the user
-    tmp2 <- setdiff(rownames(.W), names(.reliabilities))
-    if(length(tmp2) != 0) {
-      ## Get names of constructs modeled as composites
-      names_c  <- names(.csem_model$construct_type[tmp2 == "Composite"])
-      ## Get names of constructs modeled as common factors
-      names_cf <- setdiff(tmp2, names_c)
-      ## Get names of the common factors whose weights where estimated with "ModeA"
-      names_modeA <- intersect(names(.modes[.modes == "modeA"]), names_cf)
-      ## Get names of the common factors whose weights where estimated with "ModeB"
-      names_modeB <- intersect(names(.modes[.modes == "modeB"]), names_cf)
-      
-      if(length(names_modeA) > 0) {
-        
-        x_modeA <- c(diag(.W[names_modeA, , drop = FALSE] %*% t(.W[names_modeA, ,drop = FALSE])) %*%
-                       diag(.correction_factors[names_modeA], nrow = length(names_modeA)))
-        x[names_modeA] <- x_modeA
-      }
-      
-      if(length(names_modeB) > 0) {
-        x_modeB <- .correction_factors[names_modeB]
-        x[names_modeB] <- x_modeB
-      }
-    }
-    
-    x[names(.reliabilities)] <- sqrt(.reliabilities)
-  } # END if
-  
-  return(x)
-}
-
-#' Internal: Calculate Croon Reliabilities
-#'
-#' (TODO)
-#'  
-#' @inheritParams csem_arguments
-#'
-#' @keywords internal
-
-calculateReliabilities <- function(
-  .csem_model = args_default()$.csem_model,
-  .W          = args_default()$.W,
-  .X          = args_default()$.X
-){
-  # The Croon reliabilities assume that the scores are built by sum scores!
-  # Moreover, it requires that all concepts are operationalized by a common factor
-  if(any(.csem_model$construct_type == "Composite")) {
-    stop2("Only applicable if all constructs are modeled as common factors")
-  }
-  m <- .csem_model$measurement
-  # measurementmodel=.object$Information$Model$measurement
-  
-  # run CFA for each construct separately to obtain the loading estimates
-  res <- list()
-  for(i in 1:rownames(m)) {
-    indicator_names <- colnames(m[i, m[i, ] != 0, drop = FALSE])
-    model <- paste0(i, '=~', paste0(indicator_names, collapse = '+'))
-    data <- .X
-    
-    res_lavaan <- lavaan::cfa(model, data, std.lv = TRUE, std.ov = TRUE)
-    
-    # Extract loading estimates
-    lambda <- res_lavaan@Model@GLIST$lambda
-    dimnames(lambda) <- res_lavaan@Model@dimNames[[1]]
-    # Extract VCV matrix of the measurement errors
-    # theta <- res_lavaan@Model@GLIST$theta
-    # dimnames(theta) <- res_lavaan@Model@dimNames[[2]]
-    # Extract weights for construct i
-    w <- .W[i, indicator_names, drop = FALSE]
-    
-    # Reorder indicator names to ensure they are identical to the order in cSEM
-    lambda <- lambda[colnames(w), ]
-    # theta  <- theta[colnames(w), colnames(w)]
-    
-    # Compute reliabilities and indicator-composite correlation (sqrt(reliability))
-    Q2 <- (w %*% lambda)^2
-    Q  <- sqrt(Q2)
-    
-    # var_correction=w%*%theta%*%t(w)
-    # list(Q=Q,var_corr=var_correction)
-    res[[i]] <- list("Q" = Q, "lambda" = lambda)
-  }
-  names(res) <- rownames(m)
-  res
-}
-
-#' Internal: Calculate construct VCV matrix
-#'
-#' Calculate the covariance matrix of the constructs.
+#' Calculate the variance-covariance matrix (VCV) of the constructs.
 #'
 #' @usage calculateConstructVCV(
 #'  .C          = args_default()$.C, 
@@ -464,7 +196,7 @@ calculateConstructVCV <- function(
 #' 
 #' Calculate the indicator correlation matrix using conventional or robust methods.
 #' 
-#' Id `"none"` the method depends on the type of column of `.X_cleaned`:
+#' If `"none"` the method depends on the type of column of `.X_cleaned`:
 #' \describe{
 #'   \item{`Numeric-numeric`}{Bravais-Pearson product-moment correlation}
 #'   \item{`Numeric-factor`}{Polyserial correlation}
@@ -472,7 +204,7 @@ calculateConstructVCV <- function(
 #' }
 #' Note: logical input is treated as a 0-1 factor variable.
 #' 
-#' If `"mcd" (= minimum covariance determinant) a robust covariance is estimated
+#' If  `"mcd"` (= minimum covariance determinant) a robust covariance is estimated
 #' via `MASS::cov.rob()`. See `?MASS::cov.rob()` for details.
 #'
 #' @usage calculateIndicatorCor(
@@ -519,6 +251,219 @@ calculateIndicatorCor <- function(
   # (TODO) not sure how to name the "type" yet and what to do with it. Theoretically,
   # a polycoric correlation could also be used with GSCA or some other non-PLS-PM method.
   list(S = S, cor_type = cor_type)
+}
+
+#' Internal: Calculate Reliabilities
+#'
+#' (TODO)
+#'  
+#' @inheritParams csem_arguments
+#'
+#' @keywords internal
+
+calculateReliabilities <- function(
+  .X                = args_default()$.X,
+  .S                = args_default()$.S,
+  .W                = args_default()$.W,
+  .approach_weights = args_default()$.approach_weights,
+  .csem_model       = args_default()$.csem_model,
+  .disattenuate     = args_default()$.disattenuate,
+  .PLS_approach_cf  = args_default()$.PLS_approach_cf,
+  .reliabilities    = args_default()$.reliabilities
+){
+  .modes   <- .W$Modes
+  W        <- .W$W
+  names_cf <- names(.csem_model$construct_type[.csem_model$construct_type == "Common factor"])
+  names_c  <- setdiff(names(.csem_model$construct_type), names_cf)
+  Q        <- rep(1, times = nrow(W))
+  names(Q) <- rownames(W)
+  
+  Lambda   <- W %*% .S * .csem_model$measurement # composite loadings
+  # These are the defaults. If disattenuation is requested all loadings/Q's
+  # that belong to a construct modeled as a common factor will be replaced now.
+  
+  if(is.null(.reliabilities)) {
+    ## Reliability: Q^2 = (w' * lambda)^2 where lambda is a consistent estimator
+    ## of the true factor loading.
+    ## Approaches differ in the way the loadings are calculated but in the end
+    ## it is always: Q = w' lambda.
+    
+    if(.approach_weights == "PLS-PM") {
+      
+      if(.disattenuate) {
+        ## Consistent loadings are obtained using PLSc, which uses the fact that
+        ## lambda = c * w, where c := correction factor
+        
+        ## 1. Compute correction factor (c)
+        correction_factors <- calculateCorrectionFactors(
+          .S               = .S,
+          .W               = W,
+          .modes           = .modes,
+          .csem_model      = .csem_model,
+          .PLS_approach_cf = .PLS_approach_cf
+        )
+        
+        ## 2. Compute consistent loadings and Q (Composite/proxy-construct correlation)
+        ## for constructs modeled as common factors.
+        for(j in names_cf) {
+          Lambda[j, ] <- correction_factors[j] * W[j, ]
+          Q[j]        <- c(W[j, ] %*% Lambda[j, ])
+        }
+      } 
+    } else if(.approach_weights == "GSCA") {
+      
+      if(.disattenuate) {
+        # Currently, GSCAm only supports pure common factor models. This may change
+        # in the future.
+        
+        # Compute consistent loadings and Q (Composite/proxy-construct correlation)
+        # Consistent factor loadings are obtained from GSCAm.
+        
+        for(j in rownames(Lambda)) {
+          Lambda[j, ] <- .W$C[j, ]
+          Q[j]        <- c(W[j, ] %*% Lambda[j, ]) 
+        }
+      }
+    } else if(.approach_weights == "unit") {
+    
+      if(.disattenuate) {
+        ## Croon approach
+        # The Croon reliabilities assume that the scores are built by sumscores 
+        # (i.e. unit weights).
+        # Moreover, all constructs must be modeled as common factors
+        
+        if(any(.csem_model$construct_type == "Composite")) {
+          stop2("The following error occured in the `calculateReliabilities()` function:\n",
+                "Disattenuation only applicable if all constructs are modeled as common factors.")
+        }
+        
+        for(j in names_cf) {
+          indicator_names <- colnames(Lambda[j, Lambda[j, ] != 0, drop = FALSE])
+          model <- paste0(j, '=~', paste0(indicator_names, collapse = '+'))
+          
+          # Run CFA for each construct separately to obtain the consistent loadings
+          res_lavaan <- lavaan::cfa(model, .X, std.lv = TRUE, std.ov = TRUE)
+          
+          # Extract loading estimates
+          lambda           <- res_lavaan@Model@GLIST$lambda
+          dimnames(lambda) <- res_lavaan@Model@dimNames[[1]]
+          
+          # Extract weights for construct j
+          w <- W[j, indicator_names, drop = FALSE]
+          
+          # Reorder indicator names to ensure they are identical to the order in cSEM
+          lambda <- lambda[colnames(w), ]
+          Lambda[j, indicator_names] <- lambda
+          
+          # Compute composite/proxy-construct correlation: Q 
+          Q[j] <- w %*% lambda
+        }
+      }
+    } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
+      
+      if(.disattenuate) {
+        stop2("No known disattenuation for Kettenring approaches.")
+      }
+    }
+  } else {
+    
+    ## Check if weighting scheme is PLS:
+    #  Note: In PLS we have lambda = c * w and Q = (w'w) *c --> c = Q / (w'w) 
+    #        and therefore lambda = w'Q / (w'w). For other approaches we need to
+    #        figure out how weights, loadings and reliabilities are related s.t.
+    #        we can solve for lambda depending on w and Q.
+    #        Currently we are only aware of such an approach for PLS/PLSc
+    
+    if(.approach_weights != "PLS-PM") {
+      stop2("The following error occured in the `calculateReliabilities()` function:\n",
+            "User-provided reliabilities are not supported for weighting approach: ", 
+            .approach_weights)
+    }
+    
+    if(!.disattenuate) {
+      .disattenuate <- TRUE
+      warning2("`.disattenuate = FALSE` is set to `TRUE`.")
+    }
+    
+    # Do all construct names in .reliabilities match the construct
+    # names used in the model?
+    tmp1 <- setdiff(names(.reliabilities), rownames(W))
+    
+    if(length(tmp1) != 0) {
+      stop2("Construct name(s): ", paste0("`", tmp1, "`", collapse = ", "), 
+           " provided to `.reliabilities`", 
+           ifelse(length(tmp1) == 1, " is", " are"), " unknown.")
+    }
+    
+    ## Compute reliabilities not supplied by the user (only for common factors,
+    ## since for composites they are either supplied or 1)
+    Q[names(.reliabilities)] <- sqrt(.reliabilities)
+    tmp2 <- setdiff(rownames(.W), names(.reliabilities))
+    # Get names of the common factors whose weights where estimated with "modeA"
+    names_modeA <- intersect(names(.modes[.modes == "modeA"]), names_cf)
+    # Get names of the common factors whose weights where estimated with "modeB"
+    names_modeB <- intersect(names(.modes[.modes == "modeB"]), names_cf)
+    
+    correction_factors <- calculateCorrectionFactors(
+      .S               = .S,
+      .W               = W,
+      .modes           = .modes,
+      .csem_model      = .csem_model,
+      .PLS_approach_cf = .PLS_approach_cf
+    )
+    
+    if(length(tmp2) != 0) {
+      if(length(names_modeA) > 0) {
+        
+        Q_modeA <- c(diag(W[names_modeA, , drop = FALSE] %*% t(W[names_modeA, ,drop = FALSE])) %*%
+                       diag(correction_factors[names_modeA], nrow = length(names_modeA)))
+        Q[names_modeA] <- Q_modeA
+      }
+      
+      if(length(names_modeB) > 0) {
+        Q_modeB <- correction_factors[names_modeB]
+        Q[names_modeB] <- Q_modeB
+      }
+    }
+    
+    ## Compute Loadings based on reliabilities
+    # Loadings are calculated for common factors and for those composites
+    # that a reliability is give.
+    names_cf_rel <- intersect(names(.reliabilities), rownames(W))
+    names_modeA  <- intersect(names(.modes[.modes == "modeA"]), names_cf_rel)
+    names_modeB  <- intersect(names(.modes[.modes == "modeB"]), names_cf_rel)
+    # if(length(names_cf) > 0) {
+    if(length(names_modeA) > 0) {
+      ## Disattenuate loadings and cross-loadings 
+      for(i in names_modeA) {
+        w  <- W[i, ] # becomes a vector!
+        w1 <- w[which(w != 0)]
+        w2 <- w[which(w == 0)]
+        
+        Lambda[i, names(w1)] <- Q[i] * w1 / c(t(w1) %*% w1)
+        Lambda[i, names(w2)] <- Lambda[i, names(w2)] / Q[i]
+        
+      }
+    }
+    if(length(names_modeB) > 0) {
+      # Composite loading estimates 
+      L <- Lambda*(W != 0)
+      
+      for(i in names_modeB){
+        temp  <- L[i, ] # becomes a vector!
+        temp1 <- temp[which(temp != 0)]
+        temp2 <- temp[which(temp == 0)]
+        
+        Lambda[i, names(temp1)] <- temp1*Q[i] 
+        Lambda[i, names(temp2)] <- Lambda[i, names(temp2)] / Q[i]
+      } # END for i in names_modeB
+    } # END if(length(names_modeB))
+    # } # END if(length(names_cf))
+  } # END if(is.null(.reliabilities))
+  
+  ## Return Loadings, Reliabilities, and Cross loadings
+  out <- list("Lambda" = Lambda, "Q2" = Q^2)
+  return(out)
 }
 
 #' Internal: Set the dominant indicator

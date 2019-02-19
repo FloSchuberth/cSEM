@@ -112,6 +112,12 @@ foreman <- function(
         .iter_max                 = .iter_max,
         .tolerance                = .tolerance
       )
+      
+      # Weights need to be scaled s.t. the composite build using .X has
+      # variance of one. Note that scaled GSCAm weights are identical
+      # to PLS ModeA weights.
+      W$W <- scaleWeights(S, W$W)
+      
     } else {
       W <- calculateWeightsGSCA(
         .X                        = X,
@@ -135,65 +141,27 @@ foreman <- function(
     W$W <- setDominantIndicator(
       .W = W$W, 
       .dominant_indicators = .dominant_indicators)
-    
   }
 
   ## Calculate proxies/scores
-  H <- calculateComposites(
-    .X          = X,
-    .W          = W$W
-  )
+  H <- X %*% t(W$W)
   
-  ## Calculate PLSc-type correction factors if no or only a subset of reliabilities
-  # are given and disattenuation is requested. Otherwise use only the reliabilities
-  # to disattenuate both weights and proxy correlations to obtain consistent
-  # estimators for the loadings, cross-loadings and path coefficients.
-
-  if(.approach_weights == "PLS-PM" & 
-     (is.null(.reliabilities) | length(.reliabilities) != ncol(H))  & 
-     .disattenuate == TRUE) {
-    correction_factors <- calculateCorrectionFactors(
-      .S               = S,
-      .W               = W$W,
-      .modes           = W$Modes,
-      .csem_model      = csem_model,
-      .PLS_approach_cf = .PLS_approach_cf)
-  } else {
-    correction_factors <- NULL
-  }
-  
-  
-  ## Calculate Q's (correlation between construct and proxy)
-  # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
-  # rho_A in Dijkstra & Henseler (2015) - Consistent partial least squares path modeling
-  
-  if(.approach_weights == "GSCA") {
-    Q <- rep(1, nrow(csem_model$structural))
-  } else {
-    Q <- calculateCompositeConstructCV(
-      .W                  = W$W,
-      .csem_model         = csem_model,
-      .modes              = W$Modes,
-      .disattenuate       = .disattenuate,
-      .correction_factors = correction_factors,
-      .reliabilities      = .reliabilities
-    ) 
-  }
-
-  ## Calculate loadings and cross-loadings (covariance between construct and indicators)
-  Lambda <- calculateLoadingsPLS(
-    .S             = S,
-    .W             = W$W,
-    .Q             = Q,
-    .csem_model    = csem_model,
-    .modes         = W$Modes,
-    .disattenuate  = .disattenuate
+  LambdaQ2 <- calculateReliabilities(
+    .X                = X,
+    .S                = S,
+    .W                = W,
+    .approach_weights = .approach_weights,
+    .csem_model       = csem_model,
+    .disattenuate     = .disattenuate,
+    .PLS_approach_cf  = .PLS_approach_cf,
+    .reliabilities    = .reliabilities
   )
 
   ## Calculate proxy covariance matrix
   C <- calculateCompositeVCV(.S = S, .W = W$W)
   
   ## Calculate construct correlation matrix
+  Q <- sqrt(LambdaQ2$Q2)
   P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
 
   ## Estimate structural coef
@@ -218,16 +186,16 @@ foreman <- function(
       } else {
         estim_results
       },
-      "Loading_estimates"      = Lambda * csem_model$measurement,
+      # "Loading_estimates"      = Lambda * csem_model$measurement,
+      "Loading_estimates"      = LambdaQ2$Lambda,
       "Weight_estimates"       = W$W,
       "Inner_weight_estimates" = W$E,
       "Construct_scores"       = H,
       "Indicator_VCV"          = S,
       "Proxy_VCV"              = C,
       "Construct_VCV"          = P,
-      "Cross_loadings"         = Lambda,
-      "Construct_reliabilities"= Q^2,
-      "Correction_factors"     = correction_factors,
+      # "Cross_loadings"         = Lambda,
+      "Construct_reliabilities"= LambdaQ2$Q2,
       "R2"                     = if(.estimate_structural) {
         estim_results$R2
       } else {

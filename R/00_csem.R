@@ -77,7 +77,7 @@
 #'   .id               = NULL,
 #'   .approach_2ndorder= c("3stage", "repeated_indicators"),
 #'   .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
-#'                         "fixed", "unit"),
+#'                         "unit"),
 #'   .approach_path    = c("OLS", "2SLS", "3SLS"),
 #'   ...
 #'   )
@@ -113,7 +113,8 @@ csem <- function(
   .approach_2ndorder     = c("3stage", "repeated_indicators"),
   .approach_paths        = c("OLS", "2SLS"),
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                             "GSCA", "fixed", "unit"),
+                             "GSCA", "unit"),
+  .disattenuate          = TRUE,
   .resample_method       = c("none", "bootstrap", "jackknife"),
   .resample_method2      = c("none", "bootstrap", "jackknife"),
   .R                     = 499,

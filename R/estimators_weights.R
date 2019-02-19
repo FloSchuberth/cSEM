@@ -531,6 +531,13 @@ calculateWeightsGSCAm <- function(
   ## 
   ## Define matrices
   
+  # Currently only pure common factor models are supported
+  if(any(.csem_model$construct_type == "Composite")) {
+    stop2("The following error occured in the `calculateWeightsGSCAm()` function:\n",
+          "GSCAm only applicable to pure common factor models.", 
+           "Use `.disattenuate = FALSE`.")
+  }
+  
   Z  <- .X # Z is the data matrix in GSCA, data are already standardized
   W  <- t(.csem_model$measurement) # Matrix of the weighted relation model
   C  <- .csem_model$measurement # Matrix of the measurement model (non-zero only for common factors)
@@ -621,11 +628,8 @@ calculateWeightsGSCAm <- function(
   
   # Return
   l <- list("W" = t(W), 
-            "X" = X,
             "C" = C,
             "B" = B,
-            "U" = U,
-            "D" = D,
             "E" = NULL, 
             "Modes" = "gsca", 
             "Conv_status" = ifelse(iter_counter > .iter_max, FALSE, TRUE),
