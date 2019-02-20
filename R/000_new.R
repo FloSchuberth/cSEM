@@ -647,4 +647,46 @@ calculateVIFPLS.cSEMResults_2ndorder <- function(.object=args_default()$.object)
   
   stop('Not implemented yet.')
 }
+
+# Empirical Bayes correction for loadings suggested by Dijkstra (2018) can be extended to other parameter as well 
+# I recommend to extend it to construct correlations instead of the path coefficients and restimate them as we now the bounds of such correlations
+# However, this requires that we bootstrap the SEs for the construct correlations.
+quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
+  # Loadings=.object$Estimates$Loading_estimates
+  # Loadings[1,2]=2
+  # Indmatrix=which(abs(Loadings)>1,arr.ind = F)
+
+  
+  L=.object$Estimates$Loading_estimates[.object$Information$Model$measurement!=0]
+  
+
+    
+    sig_hat=apply(.object$Estimates$Estimates_resample$Estimates1$Loading_estimates$Resampled,2,sd)
+    
+    adjustedLoading=c()
+    if(.method='median'){
+    for(i in which(abs(L)>1)){
+      A=pnorm((-1-L[i])/sig_hat[i])
+      B=pnorm((1-L[i])/sig_hat[i])
+      adjustedLoading[i]=L[i] + sig_hat[i] * qnorm(mean(c(A,B)),0,1)
+      }
+    }
+
+    if(.method='mean'){
+      for(i in which(abs(L)>1)){
+        A=pnorm((-1-L[i])/sig_hat[i])
+        B=pnorm((1-L[i])/sig_hat[i])
+        adjustedLoading[i]=L[i] + sig_hat[i]/(B-A) *( dnorm((-1-L[i])/sig_hat[i],0,1) - dnorm((1-L[i])/sig_hat[i],0,1))
+        
+      }
+
+    }
+    
+  }
+  
+  
+  
+
+
+
   
