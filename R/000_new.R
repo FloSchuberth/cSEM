@@ -185,7 +185,8 @@ CR.cSEMResults_2ndorder <- function(.object=args_default()$.object,
 #'
 #'
 Cronbach_alpha <- function(.object=args_default()$.object,
-                           .only_common_factors=args_default()$.only_common_factors) {
+                           .only_common_factors=args_default()$.only_common_factors,
+                           .alpha=args_default()$.alpha) {
   UseMethod("Cronbach_alpha")
 }
 
@@ -193,17 +194,110 @@ Cronbach_alpha <- function(.object=args_default()$.object,
 #' @describeIn Cronbach_alpha (TODO)
 #' @export
 Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
-            .only_common_factors=args_default()$.only_common_factors){
+            .only_common_factors=args_default()$.only_common_factors,
+            .alpha=args_default()$.alpha){
   
   construct_names=names(.object$Information$Model$construct_type)
+  data = .object$Information$Data
   
-  # calculate Cronbach's alpah for all constructs
-  alphas=sapply(construct_names,function(x){
-    relevant_indicators=colnames(.object$Information$Model$measurement[x,.object$Information$Model$measurement[x,]!=0,drop=FALSE])
-    S_relevant=.object$Estimates$Indicator_VCV[relevant_indicators,relevant_indicators]
-    alpha_temp=psych::alpha(S_relevant,delete=FALSE,na.rm=FALSE)
-    alpha_temp$total$raw_alpha
-    })
+  # calculate Cronbach's alpha & CIs for all constructs
+  #  Calculation of the CIs are based on Trinchera et al. (2018)
+  # The code for the calculation of the CIs is addpated from the paper Trinchera et al. (2018) 
+    alphas=lapply(construct_names,function(x){
+    indicators_relevant=colnames(.object$Information$Model$measurement[x,.object$Information$Model$measurement[x,]!=0,drop=FALSE])
+    nInd=length(indicators_relevant)
+    data_relevant=data[,indicators_relevant]
+    nObs=nrow(data_relevant)
+    S_relevant=.object$Estimates$Indicator_VCV[indicators_relevant,indicators_relevant]
+    
+    # sum scores
+    SS=Matrix::rowSums(data_relevant)
+    sig2SS = var(SS)
+    sig4SS = var(SS)^2  
+    sig6SS = var(SS)^3
+    sig8SS = var(SS)^4
+    # Calculation of alpha
+    alphaHat=nInd/(nInd - 1)*(1 - sum(diag(cov(data_relevant)))/sig2SS)
+    
+    # alpha_temp=psych::alpha(S_relevant,delete=FALSE,na.rm=FALSE)
+    # alphaHat=alpha_temp$total$raw_alpha
+    
+    a <- matrix(,nInd,nInd)
+    for (pp in 1:nInd){
+      for (ll in 1:nInd){
+        a [pp,ll] = -diag(S_relevant)[pp]*diag(S_relevant)[ll]+(1/nObs)*sum(((data_relevant[,pp]
+                                                       *mean(data_relevant[,pp]))^2)*((data_relevant[,ll]-mean(data_relevant[,ll]))^2))
+      }
+    }
+    
+    A <- sum(a)
+    b <- matrix(,1,nInd)
+    for (pp in 1:nInd){
+      b [pp] <- -sig2SS*diag(S_relevant)[pp]+(1/nObs)*sum(((SS*mean(SS))^2)
+                                          *((data_relevant[,pp]-mean(data_relevant[,pp]))^2))
+    }
+    B <- sum(diag(S_relevant))*sum(b)
+    CC <- sum(diag(S_relevant))^2*(-sig4SS+(1/nObs)*sum((SS - mean(SS))^4))
+    teta.alpha <- (nInd^2/(nInd - 1)^2)*(A/sig4SS-(2*B)/sig6SS+CC/sig8SS)
+    seAlpha <-sqrt(teta.alpha/nObs)
+    zvalue <- qnorm((1-.alpha/2), mean = 0, sd = 1)
+    up <- alphaHat + zvalue*seAlpha
+    low <- alphaHat - zvalue*seAlpha
+    # return(list(point.estimate = alphaHat, seAlpha = seAlpha,
+    # CI = list(low.bound = low, up.bound = up)))
+    
+    list(point.estimate = alphaHat, seAlpha = seAlpha,
+         CI = list(low.bound = low, up.bound = up))
+    
+    
+    
+    
+    # # Calculating confidence intervals based on Trinchera et al. (2018)
+    # 
+    # # Can we use standardized indicators for that purpose?
+    # X = .object$Information$Data[,indicators_relevant]
+    # sumscores=apply(X,1,sum)
+    # # Variance and higher-order moments of the of the sum scores
+    # varss=var(sumscores)
+    # sigma4.S <- varss^2
+    # sigma6.S <- varss^3
+    # sigma8.S <- varss^4
+    # 
+    # NrIndicators=length(indicators_relevant)
+    # nObs = nrow(X)
+    # 
+    # # alpha (equals the one from the psych package)
+    # NrIndicators/(NrIndicators - 1)*(1 - sum(diag(cov(X)))/varss)
+    # 
+    # a <- matrix(,NrIndicators,NrIndicators)
+    # for (pp in 1:NrIndicators){
+    #   for (ll in 1:NrIndicators){
+    #     a [pp,ll] = -diag(cov(X))[pp]*diag(cov(X))[ll]+(1/nObs)*sum(((X[,pp]
+    #                                                    *mean(X[,pp]))^2)*((X[,ll]-mean(X[,ll]))^2))
+    #   }
+    # }
+    # 
+    # A <- sum(a)
+    # b <- matrix(,1,NrIndicators)
+    # for (pp in 1:NrIndicators){
+    #   b [pp] <-
+    #   -varss*diag(cov(X))[pp]+(1/nObs)*sum(((sumscores*mean(sumscores))^2)
+    #                                       *((X[,pp]-mean(X[,pp]))^2))
+    # }
+    # B <- sum(diag(var(X)))*sum(b)
+    # 
+    # CC <- sum(diag(var(X)))^2*(-sigma4.S+(1/nObs)*sum((sumscores - mean(sumscores))^4))
+    # teta.alpha <- (NrIndicators^2/(NrIndicators - 1)^2)*(A/sigma4.S-(2*B)/sigma6.S+CC/sigma8.S)
+    # seAlpha <-sqrt(teta.alpha/nObs)
+    # zvalue <- qnorm((1-.alpha/2), mean = 0, sd = 1)
+    # up <- (alphaHat + zvalue*seAlpha)
+    # low <- (alphaHat - zvalue*seAlpha)
+    # return(list(point.estimate = alphaHat, seAlpha = seAlpha,
+    # CI = list(low.bound = low, up.bound = up)))    
+    
+    # alphaHat
+    
+    })# End of sapply
   
   names(alphas)=construct_names
   
@@ -215,6 +309,43 @@ Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
   
   
   # Implement closed-form CIs see Trinchera et al. (2018)
+  # Rcode adopted from Trinchera et al. (2018)
+    # MyAlpha.CI <− function (X, sig = 0.05){
+    # p <− ncol(X)
+    # n <− nrow(X)
+    # S <−apply(X,1,sum)
+    # sigma.S <− var(S)
+    # alphaHat <− (p/(p − 1))*(1−sum(diag(cov(X)))/sigma.S)
+    # sigma4.S <− sigma.S^2
+    # sigma6.S <− sigma.S^3
+    # sigma8.S <− sigma.S^4
+    # a <− matrix(,p,p)
+    # for (pp in 1:p){
+    #   for (ll in 1:p){
+    #     a [pp,ll] <−
+    #     −diag(cov(X))[pp]*diag(cov(X))[ll]+(1/n)*sum(((X[,pp]
+    #                                                    *mean(X[,pp]))^2)*((X[,ll]−mean(X[,ll]))^2))
+    #   }
+    # }
+    # A <− sum(a)
+    # b <− matrix(,1,p)
+    # for (pp in 1:p){
+    #   b [pp] <−
+    #   −sigma.S*diag(cov(X))[pp]+(1/n)*sum(((S*mean(S))^2)
+    #                                       *((X[,pp]−mean(X[,pp]))^2))
+    # }
+    # B <− sum(diag(var(X)))*sum(b)
+    # CC <− sum(diag(var(X)))^2*(−sigma4.S+(1/n)*sum((S
+    #                                                 −mean(S))^4))
+    # teta.alpha <− (p^2/(p − 1)^2)*(A/sigma4.S−(2*B)/sigma6.
+    #                                S+CC/sigma8.S)
+    # seAlpha<−sqrt(teta.alpha/n)
+    # zvalue <− qnorm((1−sig/2), mean = 0, sd = 1)
+    # up <− (alphaHat + zvalue*seAlpha)
+    # low <− (alphaHat − zvalue*seAlpha)
+    # return(list(point.estimate = alphaHat, seAlpha = seAlpha,
+                # CI = list(low.bound = low, up.bound = up)))
+  
   
   return(alphas)
 }
@@ -222,7 +353,8 @@ Cronbach_alpha.cSEMResults_default=function(.object=args_default()$.object,
 #' @describeIn Cronbach_alpha (TODO)
 #' @export
 Cronbach_alpha.cSEMResults_multi <- function(.object=args_default()$.object,
-                                             .only_common_factors=args_default()$.only_common_factors) {
+                                             .only_common_factors=args_default()$.only_common_factors,
+                                             .alpha=args_default()$.alpha) {
   
   lapply(.object, Cronbach_alpha.cSEMResults_default)
 }
