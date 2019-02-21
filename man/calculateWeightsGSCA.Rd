@@ -7,15 +7,23 @@
 calculateWeightsGSCA(.data, .model)
 }
 \arguments{
-\item{.data}{A \code{data.frame}, a \code{matrix} or a list containing data of either type.
-Possible column types or classes of the data provided are:
-logical, numeric (double or integer), factor (ordered and unordered)
-or a mix of several types. The data may also include
-\emph{one} character column whose column name must be given to \code{.id}.
-This column is assumed to contain group identifiers used to split the data into groups.}
+\item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
+
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
+
+\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+to "\emph{diff_absolute}".}
+
+\item{.iter_max}{Integer. The maximum number of iterations allowed.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
+If the algorithm exceeds the specified number, weights of iteration step
+\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
+
+\item{.tolerance}{Double. The tolerance criterion for convergence.
+Defaults to \code{1e-05}.}
 }
 \value{
 A list with the elements

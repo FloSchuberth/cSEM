@@ -48,7 +48,7 @@ verify.cSEMResults_default <- function(.object){
     stat["1"] <- TRUE
   }
   
-  if(max(abs(.object$Estimates$Cross_loadings)) > 1) {
+  if(max(abs(.object$Estimates$Loading_estimates)) > 1) {
     stat["2"] <- TRUE
   }
   
@@ -94,7 +94,7 @@ verify.cSEMResults_2ndorder <- function(.object){
     stat1["1"] <- TRUE
   }
   
-  if(max(abs(x1e$Cross_loadings)) > 1) {
+  if(max(abs(x1e$Loading_estimates)) > 1) {
     stat1["2"] <- TRUE
   }
   
@@ -119,7 +119,7 @@ verify.cSEMResults_2ndorder <- function(.object){
     stat2["1"] <- TRUE
   }
   
-  if(max(abs(x2e$Cross_loadings)) > 1) {
+  if(max(abs(x2e$Loading_estimates)) > 1) {
     stat2["2"] <- TRUE
   }
   

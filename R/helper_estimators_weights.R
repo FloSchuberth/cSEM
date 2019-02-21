@@ -116,7 +116,7 @@ calculateInnerWeightsPLS <- function(
 
 #' Internal: Calculate the outer weights for PLS-PM
 #'
-#' Calculates outer weights using Mode A or Mode B.
+#' Calculates outer weights using Mode A, Mode B, Unit or fixed weights.
 #'
 #' @usage calculateOuterWeightsPLS(
 #'    .S      = args_default()$.S,
@@ -144,21 +144,28 @@ calculateOuterWeightsPLS <- function(
   for(i in 1:nrow(W)) {
     block      <- rownames(W[i, , drop = FALSE])
     indicators <- W[block, ] != 0
-    
-    if(.modes[block] == "ModeA") {
+    if(is.numeric(.modes[[block]]) & length(.modes[[block]]) > 1) {
+      if(length(.modes[[block]]) == sum(indicators)) {
+        ## Fixed weights - Each weight of "block" is fixed to a user-given value
+        W[block, indicators] <- .modes[[block]]
+      } else {
+        stop2("Construct ", paste0("`", block, "` has ", sum(indicators), 
+                                   " indicators but only ",
+                                  length(.modes[[block]]), " fixed weights are provided.")) 
+      }
+    } else if(.modes[block] == "modeA") {
       ## Mode A - Regression of each indicator on its corresponding proxy
       # Select only
       W[block, indicators] <- proxy_indicator_cor[block, indicators]
       
-    } else if(.modes[block] == "ModeB") {
+    } else if(.modes[block] == "modeB") {
       ## Mode B - Regression of each proxy on all its indicator
       # W_j = S_jj^{-1} %*% Cov(eta_j, X_j)
       W[block, indicators] <- solve(.S[indicators, indicators]) %*% proxy_indicator_cor[block, indicators]
       
-    } # END ModeB
-    
-    # Set weights of single-indicator constructs to 1 (in order to avoid floating point imprecision)
-    if(sum(indicators) == 1){W[block, indicators] = 1}
+    }
+    # If .modes[block] == "unit" or a single value has been given, nothing needs
+    # to happen since W[block, indicators] would be set to 1 (which it already is). 
   }
   return(W)
 } # END calculateOuterWeights

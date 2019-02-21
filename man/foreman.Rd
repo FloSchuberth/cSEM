@@ -90,12 +90,15 @@ Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PL
 when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FALSE}.
 Ignored if \code{.approach_weights} is not PLS-PM.}
 
-\item{.PLS_modes}{Either a named vector specifying the mode that should be used for
+\item{.PLS_modes}{Either a named list specifying the mode that should be used for
 each construct in the form \code{"name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
-Possible choices are: "\emph{ModeA}" or "\emph{ModeB}". Defaults to \code{NULL}.
-If \code{NULL}, \code{csem()} will choose the appropriate mode according to the type
-of construct used. Ignored if \code{.approach_weight} is not PLS-PM.}
+Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{unit}", a single number (weight) or
+a vector of fixed weights of the same length as there are indicators for the
+construct given by \code{"name"}. If only a single number is provided this is identical to
+using unit weights, as weights are rescaled.  Defaults to \code{NULL}.
+If \code{NULL} the appropriate mode according to the type
+of construct used is choosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
 used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
