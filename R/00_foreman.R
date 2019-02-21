@@ -104,105 +104,74 @@ foreman <- function(
       .approach                 = .approach_weights
     )
   } else if(.approach_weights == "GSCA") {
-    W <- calculateWeightsGSCA(
-      .data                     = NULL,
-      .model                    = csem_model
-    )
-  } else if(.approach_weights == "fixed") {
-    W <- calculateWeightsFixed(
-      .data                     = NULL,
-      .model                    = csem_model
-    )
+    if(.disattenuate) {
+      W <- calculateWeightsGSCAm(
+        .X                        = X,
+        .csem_model               = csem_model,
+        .conv_criterion           = .conv_criterion,
+        .iter_max                 = .iter_max,
+        .tolerance                = .tolerance
+      )
+      
+      # Weights need to be scaled s.t. the composite build using .X has
+      # variance of one. Note that scaled GSCAm weights are identical
+      # to PLS ModeA weights.
+      W$W <- scaleWeights(S, W$W)
+      
+    } else {
+      W <- calculateWeightsGSCA(
+        .X                        = X,
+        .S                        = S,
+        .csem_model               = csem_model,
+        .conv_criterion           = .conv_criterion,
+        .iter_max                 = .iter_max,
+        .tolerance                = .tolerance
+      )
+    }
+
   } else if(.approach_weights == "unit") {
+            
     W <- calculateWeightsUnit(
       .S                        = S,
       .csem_model               = csem_model
     )
+  } else if(.approach_weights %in% c("bartlett", "regression")) {
+    
+    # Note:  1. "bartlett" and "regression" weights are calculated later in the 
+    #        calculateReliabilities() function. Here only placeholders for
+    #        the weights are set in order to keep the list structure of W.
+    
+    W <- list("W" = csem_model$measurement, "E" = NULL, "Modes" = NULL, 
+              "Conv_status" = NULL, "Iterations" = 0)
   }
 
   ## Dominant indicators:
-  # Use the dominant indicators approach (Henseler et al. (2016)) for PLS-PM. 
-  # Perhaps this applicable to weights obtained from algorithms other than PLS-PM.
-  # Currently only PLS-PM is supported.
-  
   if(!is.null(.dominant_indicators)) {
-    if(.approach_weights %in% c("PLS-PM",'MAXVAR','MINVAR','SUMCORR','SSQCORR','GENVAR')) {
-      
-      ## Check construct names:
-      # Do all construct names in .dominant_indicators match the construct
-      # names used in the model?
-      tmp <- setdiff(names(.dominant_indicators), rownames(W$W))
-      
-      if(length(tmp) != 0) {
-        stop("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
-             " provided to `.dominant_indicators`", 
-             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
-      }
-      
-      ## Check indicators
-      # Do all indicators names in .dominant_indicators match the indicator
-      # names used in the model?
-      tmp <- setdiff(.dominant_indicators, colnames(W$W))
-      
-      if(length(tmp) != 0) {
-        stop("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
-             " provided to `.dominant_indicators`", 
-             ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
-      }
-
-      for(i in names(.dominant_indicators)) {
-        W$W[i, ] = W$W[i, ] * sign(W$W[i, .dominant_indicators[i]])
-      }
-    } # END if PLS-PM
-  } # END if 
-  
-  ## Calculate proxies/scores
-  H <- calculateComposites(
-    .X          = X,
-    .W          = W$W
-  )
-
-  ## Calculate PLSc-type correction factors if no or only a subset of reliabilities
-  # are given and disattenuation is requested. Otherwise use only the reliabilities
-  # to disattenuate both weights and proxy correlations to obtain consistent
-  # estimators for the loadings, cross-loadings and path coefficients.
-  
-  if((is.null(.reliabilities) | length(.reliabilities) != ncol(H))  & .disattenuate == TRUE) {
-    correction_factors <- calculateCorrectionFactors(
-      .S               = S,
-      .W               = W$W,
-      .modes           = W$Modes,
-      .csem_model      = csem_model,
-      .PLS_approach_cf = .PLS_approach_cf)
-  } else {
-    correction_factors <- NULL
+    W$W <- setDominantIndicator(
+      .W = W$W, 
+      .dominant_indicators = .dominant_indicators)
   }
+
+  ## Calculate proxies/scores
+  H <- X %*% t(W$W)
   
-  ## Calculate Q's (correlation between construct and proxy)
-  # Note: Q_i^2 := R^2(eta_i; eta_bar_i) is also called the reliability coefficient
-  # rho_A in Dijkstra & Henseler (2015) - Consistent partial least squares path modeling
-  
-  Q <- calculateCompositeConstructCV(
-    .W                  = W$W,
-    .csem_model         = csem_model,
-    .modes              = W$Modes,
-    .disattenuate       = .disattenuate,
-    .correction_factors = correction_factors,
-    .reliabilities      = .reliabilities
-  ) 
-  
-  ## Calculate loadings and cross-loadings (covariance between construct and indicators)
-  Lambda <- calculateLoadings(
-    .S             = S,
-    .W             = W$W,
-    .Q             = Q,
-    .csem_model    = csem_model,
-    .modes         = W$Modes,
-    .disattenuate  = .disattenuate
+  LambdaQ2W <- calculateReliabilities(
+    .X                = X,
+    .S                = S,
+    .W                = W,
+    .approach_weights = .approach_weights,
+    .csem_model       = csem_model,
+    .disattenuate     = .disattenuate,
+    .PLS_approach_cf  = .PLS_approach_cf,
+    .reliabilities    = .reliabilities
   )
 
+  Weights <- LambdaQ2W$W 
+  Lambda  <- LambdaQ2W$Lambda
+  Q       <- sqrt(LambdaQ2W$Q2)
+  
   ## Calculate proxy covariance matrix
-  C <- calculateCompositeVCV(.S = S, .W = W$W)
+  C <- calculateCompositeVCV(.S = S, .W = Weights)
   
   ## Calculate construct correlation matrix
   P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
@@ -229,16 +198,15 @@ foreman <- function(
       } else {
         estim_results
       },
-      "Loading_estimates"      = Lambda * csem_model$measurement,
-      "Weight_estimates"       = W$W,
+      "Loading_estimates"      = Lambda,
+      "Weight_estimates"       = Weights,
       "Inner_weight_estimates" = W$E,
       "Construct_scores"       = H,
       "Indicator_VCV"          = S,
       "Proxy_VCV"              = C,
       "Construct_VCV"          = P,
-      "Cross_loadings"         = Lambda,
+      # "Cross_loadings"         = Lambda,
       "Construct_reliabilities"= Q^2,
-      "Correction_factors"     = correction_factors,
       "R2"                     = if(.estimate_structural) {
         estim_results$R2
       } else {
