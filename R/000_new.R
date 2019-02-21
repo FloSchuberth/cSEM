@@ -663,12 +663,13 @@ quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
     
     sig_hat=apply(.object$Estimates$Estimates_resample$Estimates1$Loading_estimates$Resampled,2,sd)
     
-    adjustedLoading=c()
+    # adjustedLoading=c()
     if(.method='median'){
     for(i in which(abs(L)>1)){
       A=pnorm((-1-L[i])/sig_hat[i])
       B=pnorm((1-L[i])/sig_hat[i])
-      adjustedLoading[i]=L[i] + sig_hat[i] * qnorm(mean(c(A,B)),0,1)
+      # Overwrite the old loadings
+      L[i]=L[i] + sig_hat[i] * qnorm(mean(c(A,B)),0,1)
       }
     }
 
@@ -676,11 +677,14 @@ quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
       for(i in which(abs(L)>1)){
         A=pnorm((-1-L[i])/sig_hat[i])
         B=pnorm((1-L[i])/sig_hat[i])
-        adjustedLoading[i]=L[i] + sig_hat[i]/(B-A) *( dnorm((-1-L[i])/sig_hat[i],0,1) - dnorm((1-L[i])/sig_hat[i],0,1))
-        
+        # Overwrite the old loadings
+        L[i]=L[i] + sig_hat[i]/(B-A) *( dnorm((-1-L[i])/sig_hat[i],0,1) - dnorm((1-L[i])/sig_hat[i],0,1))
       }
-
-    }
+     }
+    
+    # Overwrite the old loadings
+    .object$Estimates$Loading_estimates[.object$Information$Model$measurement!=0]=L
+    
     
   }
   
