@@ -664,7 +664,7 @@ quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
     sig_hat=apply(.object$Estimates$Estimates_resample$Estimates1$Loading_estimates$Resampled,2,sd)
     
     # adjustedLoading=c()
-    if(.method='median'){
+    if(.method=='median'){
     for(i in which(abs(L)>1)){
       A=pnorm((-1-L[i])/sig_hat[i])
       B=pnorm((1-L[i])/sig_hat[i])
@@ -673,7 +673,7 @@ quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
       }
     }
 
-    if(.method='mean'){
+    if(.method=='mean'){
       for(i in which(abs(L)>1)){
         A=pnorm((-1-L[i])/sig_hat[i])
         B=pnorm((1-L[i])/sig_hat[i])
