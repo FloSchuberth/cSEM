@@ -362,7 +362,7 @@ calculateReliabilities <- function(
             
             # Get weights and scale
             w <- c(attr(scores, 'fsm')[[1]])
-            w <- w /  c(sqrt(w %*% .S[indicator_names, indicator_names, drop = FALSE] %*% w))
+            # w <- w /  c(sqrt(w %*% .S[indicator_names, indicator_names, drop = FALSE] %*% w))
             W[j, indicator_names] <- w
           }
           
