@@ -685,7 +685,7 @@ quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
     # Overwrite the old loadings
     .object$Estimates$Loading_estimates[.object$Information$Model$measurement!=0]=L
     
-    
+    .object
   }
   
   
