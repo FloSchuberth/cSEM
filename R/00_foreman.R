@@ -130,10 +130,19 @@ foreman <- function(
     }
 
   } else if(.approach_weights == "unit") {
+            
     W <- calculateWeightsUnit(
       .S                        = S,
       .csem_model               = csem_model
     )
+  } else if(.approach_weights %in% c("bartlett", "regression")) {
+    
+    # Note:  1. "bartlett" and "regression" weights are calculated later in the 
+    #        calculateReliabilities() function. Here only placeholders for
+    #        the weights are set in order to keep the list structure of W.
+    
+    W <- list("W" = csem_model$measurement, "E" = NULL, "Modes" = NULL, 
+              "Conv_status" = NULL, "Iterations" = 0)
   }
 
   ## Dominant indicators:
@@ -146,7 +155,7 @@ foreman <- function(
   ## Calculate proxies/scores
   H <- X %*% t(W$W)
   
-  LambdaQ2 <- calculateReliabilities(
+  LambdaQ2W <- calculateReliabilities(
     .X                = X,
     .S                = S,
     .W                = W,
@@ -157,11 +166,14 @@ foreman <- function(
     .reliabilities    = .reliabilities
   )
 
+  Weights <- LambdaQ2W$W 
+  Lambda  <- LambdaQ2W$Lambda
+  Q       <- sqrt(LambdaQ2W$Q2)
+  
   ## Calculate proxy covariance matrix
-  C <- calculateCompositeVCV(.S = S, .W = W$W)
+  C <- calculateCompositeVCV(.S = S, .W = Weights)
   
   ## Calculate construct correlation matrix
-  Q <- sqrt(LambdaQ2$Q2)
   P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
 
   ## Estimate structural coef
@@ -186,16 +198,15 @@ foreman <- function(
       } else {
         estim_results
       },
-      # "Loading_estimates"      = Lambda * csem_model$measurement,
-      "Loading_estimates"      = LambdaQ2$Lambda,
-      "Weight_estimates"       = W$W,
+      "Loading_estimates"      = Lambda,
+      "Weight_estimates"       = Weights,
       "Inner_weight_estimates" = W$E,
       "Construct_scores"       = H,
       "Indicator_VCV"          = S,
       "Proxy_VCV"              = C,
       "Construct_VCV"          = P,
       # "Cross_loadings"         = Lambda,
-      "Construct_reliabilities"= LambdaQ2$Q2,
+      "Construct_reliabilities"= Q^2,
       "R2"                     = if(.estimate_structural) {
         estim_results$R2
       } else {

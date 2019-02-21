@@ -271,7 +271,7 @@ calculateReliabilities <- function(
   .PLS_approach_cf  = args_default()$.PLS_approach_cf,
   .reliabilities    = args_default()$.reliabilities
 ){
-  .modes   <- .W$Modes
+  modes   <- .W$Modes
   W        <- .W$W
   names_cf <- names(.csem_model$construct_type[.csem_model$construct_type == "Common factor"])
   names_c  <- setdiff(names(.csem_model$construct_type), names_cf)
@@ -298,7 +298,7 @@ calculateReliabilities <- function(
         correction_factors <- calculateCorrectionFactors(
           .S               = .S,
           .W               = W,
-          .modes           = .modes,
+          .modes           = modes,
           .csem_model      = .csem_model,
           .PLS_approach_cf = .PLS_approach_cf
         )
@@ -324,13 +324,22 @@ calculateReliabilities <- function(
           Q[j]        <- c(W[j, ] %*% Lambda[j, ]) 
         }
       }
-    } else if(.approach_weights == "unit") {
+    } else if(.approach_weights %in% c("unit", "bartlett", "regression", 
+                "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     
+      #   Note: "bartlett" and "regression" weights are obtained AFTER running a CFA. 
+      #   Therefore loadings are consistent and as such "disattenuation"
+      #   has already implicitly happend. Hence, it is impossible to 
+      #   specify "bartlett" or "regression" when .disattenuate = FALSE.
+      if(!.disattenuate & .approach_weights %in% c("bartlett", "regression")) {
+        stop2("Unable to use `bartlett` or `regression` weights when `.disattenuate = FALSE`.")
+      }
+      
       if(.disattenuate) {
-        ## Croon approach
+        ## "Croon" approach
         # The Croon reliabilities assume that the scores are built by sumscores 
         # (i.e. unit weights).
-        # Moreover, all constructs must be modeled as common factors
+        # Moreover, all constructs must be modeled as common factors.
         
         if(any(.csem_model$construct_type == "Composite")) {
           stop2("The following error occured in the `calculateReliabilities()` function:\n",
@@ -343,6 +352,19 @@ calculateReliabilities <- function(
           
           # Run CFA for each construct separately to obtain the consistent loadings
           res_lavaan <- lavaan::cfa(model, .X, std.lv = TRUE, std.ov = TRUE)
+          
+          if(.approach_weights %in% c("bartlett", "regression")) {
+            
+            method <- ifelse(.approach_weights == "bartlett", "Bartlett", "regression")
+            
+            # Compute factor scores using "methode"
+            scores <- lavaan::lavPredict(res_lavaan, fsm = TRUE, method = method)
+            
+            # Get weights and scale
+            w <- c(attr(scores, 'fsm')[[1]])
+            w <- w /  c(sqrt(w %*% .S[indicator_names, indicator_names, drop = FALSE] %*% w))
+            W[j, indicator_names] <- w
+          }
           
           # Extract loading estimates
           lambda           <- res_lavaan@Model@GLIST$lambda
@@ -358,11 +380,6 @@ calculateReliabilities <- function(
           # Compute composite/proxy-construct correlation: Q 
           Q[j] <- w %*% lambda
         }
-      }
-    } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
-      
-      if(.disattenuate) {
-        stop2("No known disattenuation for Kettenring approaches.")
       }
     }
   } else {
@@ -395,24 +412,27 @@ calculateReliabilities <- function(
            ifelse(length(tmp1) == 1, " is", " are"), " unknown.")
     }
     
-    ## Compute reliabilities not supplied by the user (only for common factors,
-    ## since for composites they are either supplied or 1)
-    Q[names(.reliabilities)] <- sqrt(.reliabilities)
-    tmp2 <- setdiff(rownames(.W), names(.reliabilities))
+    ## Compute reliabilities not supplied by the user 
+    
+    #  Only for those common factors, since for composites they are either 
+    #  supplied or 1.
+    Q[names(.reliabilities)] <- sqrt(.reliabilities) # replace the one already supplied
+    
+    names_cf_not_supplied <- setdiff(names_cf, names(.reliabilities))
     # Get names of the common factors whose weights where estimated with "modeA"
-    names_modeA <- intersect(names(.modes[.modes == "modeA"]), names_cf)
+    names_modeA <- intersect(names(modes[modes == "modeA"]), names_cf_not_supplied)
     # Get names of the common factors whose weights where estimated with "modeB"
-    names_modeB <- intersect(names(.modes[.modes == "modeB"]), names_cf)
+    names_modeB <- intersect(names(modes[modes == "modeB"]), names_cf_not_supplied)
     
     correction_factors <- calculateCorrectionFactors(
       .S               = .S,
       .W               = W,
-      .modes           = .modes,
+      .modes           = modes,
       .csem_model      = .csem_model,
       .PLS_approach_cf = .PLS_approach_cf
     )
     
-    if(length(tmp2) != 0) {
+    if(length(names_cf_not_supplied) != 0) {
       if(length(names_modeA) > 0) {
         
         Q_modeA <- c(diag(W[names_modeA, , drop = FALSE] %*% t(W[names_modeA, ,drop = FALSE])) %*%
@@ -425,13 +445,13 @@ calculateReliabilities <- function(
         Q[names_modeB] <- Q_modeB
       }
     }
-    
+
     ## Compute Loadings based on reliabilities
     # Loadings are calculated for common factors and for those composites
     # that a reliability is give.
-    names_cf_rel <- intersect(names(.reliabilities), rownames(W))
-    names_modeA  <- intersect(names(.modes[.modes == "modeA"]), names_cf_rel)
-    names_modeB  <- intersect(names(.modes[.modes == "modeB"]), names_cf_rel)
+    names_cf_rel <- union(names(.reliabilities), names_cf)
+    names_modeA  <- intersect(names(modes[modes == "modeA"]), names_cf_rel)
+    names_modeB  <- intersect(names(modes[modes == "modeB"]), names_cf_rel)
     # if(length(names_cf) > 0) {
     if(length(names_modeA) > 0) {
       ## Disattenuate loadings and cross-loadings 
@@ -462,7 +482,7 @@ calculateReliabilities <- function(
   } # END if(is.null(.reliabilities))
   
   ## Return Loadings, Reliabilities, and Cross loadings
-  out <- list("Lambda" = Lambda, "Q2" = Q^2)
+  out <- list("Lambda" = Lambda, "Q2" = Q^2, "W" = W)
   return(out)
 }
 
