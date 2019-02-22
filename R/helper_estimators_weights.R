@@ -143,7 +143,8 @@ calculateOuterWeightsPLS <- function(
   W <- .W
   proxy_indicator_cor <- .E %*% W %*% .S
   
-  inner_proxy <- .data%*%t(W)%*%t(.E)
+  # scale the inner proxy, inner weights are usually scaled that the inner proxies are standardized
+  inner_proxy <- scale(.data%*%t(W)%*%t(.E))
   colnames(inner_proxy)=rownames(W)
   
   for(i in 1:nrow(W)) {
@@ -169,7 +170,7 @@ calculateOuterWeightsPLS <- function(
       W[block, indicators] <- solve(.S[indicators, indicators]) %*% proxy_indicator_cor[block, indicators]
       
     } else if(.modes[block] == "modeBNNLS"){
-      
+      # .data is standardized, i.e., mean 0 and unit variance
       temp <- nnls::nnls(A = .data[,indicators,drop=FALSE],b = inner_proxy[,block])
       W[block, indicators] <- temp$x
     }
