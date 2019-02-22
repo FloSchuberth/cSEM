@@ -171,7 +171,7 @@ calculateOuterWeightsPLS <- function(
     } else if(.modes[block] == "modeBNNLS"){
       
       temp <- nnls::nnls(A = .data[,indicators,drop=FALSE],b = inner_proxy[,block])
-      W[block, indicators] <- nnls::nnls()
+      W[block, indicators] <- temp$x
     }
     # If .modes[block] == "unit" or a single value has been given, nothing needs
     # to happen since W[block, indicators] would be set to 1 (which it already is). 
