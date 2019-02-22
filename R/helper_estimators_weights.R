@@ -45,7 +45,8 @@ calculateInnerWeightsPLS <- function(
   .W                           = args_default()$.W,
   .csem_model                  = args_default()$.csem_model,
   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structrual_model,
-  .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner
+  .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner, 
+  .data                        = args_default()$.data  
 ) {
   
   # Composite correlation matrix (C = V(H))
@@ -163,6 +164,9 @@ calculateOuterWeightsPLS <- function(
       # W_j = S_jj^{-1} %*% Cov(eta_j, X_j)
       W[block, indicators] <- solve(.S[indicators, indicators]) %*% proxy_indicator_cor[block, indicators]
       
+    } else if(.modes[block] == "modeBNNLS"){
+      
+      W[block, indicators] <- 
     }
     # If .modes[block] == "unit" or a single value has been given, nothing needs
     # to happen since W[block, indicators] would be set to 1 (which it already is). 
