@@ -143,7 +143,7 @@ calculateOuterWeightsPLS <- function(
   W <- .W
   proxy_indicator_cor <- .E %*% W %*% .S
   
-  proxy_inner <- .data%*%t(W)%*%t(.E)
+  inner_proxy <- .data%*%t(W)%*%t(.E)
   colnames(proxy_inner)=rownames(W)
   
   for(i in 1:nrow(W)) {
