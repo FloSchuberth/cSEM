@@ -38,7 +38,8 @@ calculateWeightsPLS <- function(
   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
-  .tolerance                   = args_default()$.tolerance
+  .tolerance                   = args_default()$.tolerance,
+  .data                        = args_default()$.data
 ) {
 
   ### Preparation ==============================================================
@@ -47,9 +48,9 @@ calculateWeightsPLS <- function(
   
   if(!is.null(.PLS_modes)) {
     
-    # Error if other than "modeA", "modeB", "unit", a number, or a vector
+    # Error if other than "modeA", "modeB", "unit", "modeBNNLS", a number, or a vector
     # of numbers of the same length as there are indicators for block j
-    modes_check <- sapply(.PLS_modes, function(x) all(x %in% c("modeA", "modeB", "unit") | is.numeric(x)))
+    modes_check <- sapply(.PLS_modes, function(x) all(x %in% c("modeA", "modeB", "unit", "modeBNNLS") | is.numeric(x)))
     if(!all(modes_check)) {
       stop2("The following error occured in the `calculateWeightsPLS()` function:\n",
             paste0("`", .PLS_modes[!modes_check], "`", collapse = " and "),
@@ -64,7 +65,7 @@ calculateWeightsPLS <- function(
                "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.")
     }
     
-    # If only "modeA", "modeB" or "unit" is provided set all of the modes to that mode.
+    # If only "modeA", "modeB", "modeBNNLS", or "unit" is provided set all of the modes to that mode.
     if(length(names(.PLS_modes)) == 0) {
       if(length(.PLS_modes) == 1) {
         modes <- as.list(rep(.PLS_modes, length(.csem_model$construct_type)))
@@ -107,7 +108,8 @@ calculateWeightsPLS <- function(
       .S        = .S,
       .W        = W_iter,
       .E        = E,
-      .modes    = modes
+      .modes    = modes, 
+      .data     = .data
     )
 
     # Scale weights
