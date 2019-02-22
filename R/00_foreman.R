@@ -95,7 +95,10 @@ foreman <- function(
       .PLS_ignore_structural_model  = .PLS_ignore_structural_model,
       .PLS_weight_scheme_inner      = .PLS_weight_scheme_inner,
       # Arguments passed to checkConvergence
-      .conv_criterion           = .conv_criterion
+      .conv_criterion           = .conv_criterion, 
+      # data needs to be provided for nnls
+      .data                     = X
+      
     )
   } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
