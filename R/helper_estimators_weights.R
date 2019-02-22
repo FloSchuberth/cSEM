@@ -45,8 +45,7 @@ calculateInnerWeightsPLS <- function(
   .W                           = args_default()$.W,
   .csem_model                  = args_default()$.csem_model,
   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structrual_model,
-  .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner, 
-  .data                        = args_default()$.data  
+  .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner
 ) {
   
   # Composite correlation matrix (C = V(H))
@@ -135,12 +134,16 @@ calculateOuterWeightsPLS <- function(
   .S      = args_default()$.S,
   .W      = args_default()$.W,
   .E      = args_default()$.E,
-  .modes  = args_default()$.modes
+  .modes  = args_default()$.modes,
+  .data   = args_default()$.data  
 ) {
   # Covariance/Correlation matrix between each proxy and all indicators (not
   # only the related ones). Note: Cov(H, X) = WS, since H = XW'.
   W <- .W
   proxy_indicator_cor <- .E %*% W %*% .S
+  
+  proxy_inner <- .data%*%W%*%.E
+  colnames(proxy_inner)=rownames(W)
   
   for(i in 1:nrow(W)) {
     block      <- rownames(W[i, , drop = FALSE])
@@ -166,7 +169,8 @@ calculateOuterWeightsPLS <- function(
       
     } else if(.modes[block] == "modeBNNLS"){
       
-      W[block, indicators] <- 
+      temp <- nnls::nnls(A = .data[,indicators,drop=FALSE],b = inner_proxy[,block])
+      W[block, indicators] <- nnls::nnls()
     }
     # If .modes[block] == "unit" or a single value has been given, nothing needs
     # to happen since W[block, indicators] would be set to 1 (which it already is). 
