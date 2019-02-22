@@ -122,7 +122,8 @@ calculateInnerWeightsPLS <- function(
 #'    .S      = args_default()$.S,
 #'    .W      = args_default()$.W,
 #'    .E      = args_default()$.E,
-#'    .modes  = args_default()$.modes
+#'    .modes  = args_default()$.modes,
+#'    .data   = args_default()$.data  
 #'    )
 #'
 #' @inheritParams csem_arguments

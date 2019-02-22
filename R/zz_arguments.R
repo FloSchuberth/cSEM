@@ -126,7 +126,7 @@
 #' @param .PLS_modes Either a named list specifying the mode that should be used for
 #'   each construct in the form `"name" = "mode"`, a single character
 #'   string giving the mode that should be used for all constructs, or `NULL`.
-#'   Possible choices for `"mode"` are: "*modeA*", "*modeB*", "*unit*", a single number (weight) or 
+#'   Possible choices for `"mode"` are: "*modeA*", "*modeB*", "*modeBNNLS*", "*unit*", a single number (weight) or 
 #'   a vector of fixed weights of the same length as there are indicators for the
 #'   construct given by `"name"`. If only a single number is provided this is identical to
 #'   using unit weights, as weights are rescaled.  Defaults to `NULL`.
