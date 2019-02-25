@@ -1,11 +1,11 @@
-#' Composite based SEM and CCA
+#' Composite-based SEM and CCA
 #'
-#' Estimate linear and nonlinear structural equation models using a 
-#' composite based approach or conduct confirmatory composite analysis (CCA).
+#' Estimate linear, nonlinear, hierachical or multigroup structural equation
+#' models using a composite-based approach.
 #'
-#' `csem()` estimates linear and nonlinear structural equation models using a 
-#' composite based approach like PLS-PM, GSCA or unit weights. Technically, `csem()` is a wrapper 
-#' around the more general [foreman()] function designed for quick and flexible 
+#' `csem()` estimates linear, nonlinear, hierachical or multigroup structural 
+#' equation models using a composite-based approach like PLS-PM, PLSc, GSCA, GSCAm or 
+#' unit weights. `csem()` is designed for quick and flexible 
 #' use by providing the user with default options except for 
 #' the mandatory `.data` and `.model` argument. 
 #' 
@@ -19,7 +19,7 @@
 #' the indicator names used in the model description of the measurement model.
 #' Alternatively, a list of matrices or `data.frame`s may be provided
 #' in which case estimation is repeated for each data set. 
-#' The data provided via `.data` may contain a non numeric column whose column name 
+#' The data provided via `.data` may contain a character column whose column name 
 #' must be provided to `.id`. Values of this column are interpreted as group 
 #' identifiers and `csem()` or `cca()` will split the data by levels of that column and run
 #' the estimation for each level separately.
@@ -34,21 +34,22 @@
 #'
 #' \subsection{Weights and path coefficients:}{
 #' By default weights are estimated using the partial least squares algorithm (*PLS-PM*).
-#' Alternative approaches include all of *Kettenring's criteria*, "*fixed weights*"
-#' or "*unit weight*". *Generalized Structured Component Analysis* (*GSCA*) may
-#' also be chosen as a weighing approach although technically GSCA obtains weight
-#' and structural coefficient estimates simultaneously. Hence, setting
-#' `.approach_weights = "GSCA"` automatically sets `.approach_paths = "GSCA"` (and
-#' vice-versa).
+#' Alternative approaches include generalized structured component analysis (*GSCA*),
+#'  *GCCA* (i.e. *Kettenring's criteria*), "*fixed weights*"
+#' or "*unit weight*".
 #'
-#' For PLS-PM composite-indicator and composite-composite correlations are properly
-#' rescaled using *PLSc* \insertCite{Dijkstra2015}{cSEM} by default. *PLSc* yields
-#' consistent estimates for the factor loadings, construct correlations, 
-#' and path coefficients if any of the constructs involved is 
-#' modeled as a common factor. Disattenuation my be suppressed by setting 
+#' Composite-indicator and composite-composite correlations are properly
+#' disattenuated by default to yield consistent loadings, construct correlations, 
+#' and path coefficients if any of the constructs in the model are modeled as a 
+#' common factor. cSEM offers two ways to adress 
+#' 
+#' For *PLS-PM* disattenuation is done using *PLSc* \insertCite{Dijkstra2015}{cSEM}.
+#' For *GSCA* disattenuation is done implicitly by using *GSCAm*. Weights obtained
+#' by GCCA, unit weights and fixed weights are disattenuated using a  
+#' Disattenuation my be suppressed by setting 
 #' `.disattenuate = FALSE`. Note however that quantities in this case are inconsistent 
-#' estimates for their construct level counterparts if any of the constructs is
-#' the model as a common factor.
+#' estimates for their construct level counterparts if any of the constructs in the structural model is
+#' modeled as a common factor!
 #' }
 #'
 #' \subsection{Non linear models:}{
@@ -70,21 +71,45 @@
 #' that go beyond interaction, we work in this version with the assumption that
 #' as far as the relevant moments are concerned certain combinations of 
 #' measurement errors behave as if they were Gaussian.
+#' For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 #' }
+#' 
+#' \subsection{Inference:}{
+#' Inference is done via resampling. See [resamplecSEMREsults()] for details.
+#' }
+#' 
 #' @usage csem(
-#'   .data             = NULL,
-#'   .model            = NULL,
-#'   .id               = NULL,
-#'   .approach_2ndorder= c("3stage", "repeated_indicators"),
-#'   .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
-#'                         "unit"),
-#'   .approach_path    = c("OLS", "2SLS", "3SLS"),
+#'   .data                        = NULL,
+#'   .model                       = NULL,
+#'   .approach_nl                 = c("sequential", "replace"),
+#'   .approach_paths              = c("OLS", "2SLS"),
+#'   .approach_weights            = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", 
+#'                                    "GSCA", "unit", "bartlett", "regression"),
+#'   .disattenuate                = TRUE,
+#'   .id                          = NULL,
+#'   .iter_max                    = 100,
+#'   .normality                   = TRUE,
+#'   .reliabilities               = NULL,
+#'   .tolerance                   = 1e-05,
+#'   .resample_method           = c("none", "bootstrap", "jackknife"),
+#'   .resample_method2            = c("none", "bootstrap", "jackknife"),
+#'   .R                           = 499,
+#'   .R2                          = 199,
+#'   .handle_inadmissibles        = c("drop", "ignore", "replace"),
+#'   .user_funs                   = NULL,
+#'   .eval_plan                   = c("sequential", "multiprocess"),
+#'   .seed                        = sample(.Random.seed, 1),
 #'   ...
 #'   )
 #'
-#' @param .data A `data.frame` or a `matrix` containing the raw data. Additionally,
-#'   a list of `data.frame`(s) or `matrices` is accepted in which case estimation
-#'   is repeated for each data set. See details.
+#' @param .data A `data.frame` or a `matrix` of standardized or unstandarized data. Additionally,
+#'   a list of `data.frame`(s) or `matrice`(s) is accepted in which case estimation
+#'   is repeated for each data set. Possible column types or classes 
+#'   of the data provided are: logical, numeric (double or integer), factor (ordered and unordered) 
+#'   or a mix of several types. The data may also include
+#'   *one* character column whose column name must be given to `.id`. 
+#'   This column is assumed to contain group identifiers used to split 
+#'   the data into groups.
 #' @inheritParams csem_arguments
 #' @param ... Further arguments to be passed down to lower level functions of `csem()`
 #'   or `cca()`. Type \code{\link[cSEM:args_default]{args_default(.only_dots = TRUE)}} 
@@ -99,9 +124,6 @@
 #' @seealso [args_default], [cSEMArguments], [cSEMResults], [foreman] 
 #'
 #' @examples
-#' \dontrun{
-#' # TODO
-#' }
 #' 
 #' @export
 #' 
@@ -109,12 +131,17 @@
 csem <- function(
   .data                  = NULL,
   .model                 = NULL,
-  .id                    = NULL,
   .approach_2ndorder     = c("3stage", "repeated_indicators"),
+  .approach_nl           = c("sequential", "replace"),
   .approach_paths        = c("OLS", "2SLS"),
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                              "GSCA", "unit", "bartlett", "regression"),
   .disattenuate          = TRUE,
+  .id                    = NULL,
+  .iter_max              = 100,
+  .normality             = TRUE,
+  .reliabilities         = NULL,
+  .tolerance             = 1e-05,
   .resample_method       = c("none", "bootstrap", "jackknife"),
   .resample_method2      = c("none", "bootstrap", "jackknife"),
   .R                     = 499,
@@ -126,6 +153,7 @@ csem <- function(
   ...
   ) {
   ## Match arguments
+  .approach_nl          <- match.arg(.approach_nl)
   .approach_2ndorder    <- match.arg(.approach_2ndorder)
   .approach_paths       <- match.arg(.approach_paths)
   .approach_weights     <- match.arg(.approach_weights)

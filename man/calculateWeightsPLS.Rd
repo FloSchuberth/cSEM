@@ -39,7 +39,8 @@ string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{unit}", a single number (weight) or
 a vector of fixed weights of the same length as there are indicators for the
 construct given by \code{"name"}. If only a single number is provided this is identical to
-using unit weights, as weights are rescaled.  Defaults to \code{NULL}.
+using unit weights, as weights are rescaled such that the related composite
+has unit variance.  Defaults to \code{NULL}.
 If \code{NULL} the appropriate mode according to the type
 of construct used is choosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 

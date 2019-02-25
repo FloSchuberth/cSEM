@@ -3,7 +3,7 @@
 \name{csem}
 \alias{csem}
 \alias{cca}
-\title{Composite based SEM and CCA}
+\title{Composite-based SEM and CCA}
 \usage{
 cca(
   .data             = NULL,
@@ -14,31 +14,50 @@ cca(
   ...)
 
 csem(
-  .data             = NULL,
-  .model            = NULL,
-  .id               = NULL,
-  .approach_2ndorder= c("3stage", "repeated_indicators"),
-  .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
-                        "fixed", "unit"),
-  .approach_path    = c("OLS", "2SLS", "3SLS"),
+  .data                        = NULL,
+  .model                       = NULL,
+  .approach_nl                 = c("sequential", "replace"),
+  .approach_paths              = c("OLS", "2SLS"),
+  .approach_weights            = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", 
+                                   "GSCA", "unit", "bartlett", "regression"),
+  .disattenuate                = TRUE,
+  .id                          = NULL,
+  .iter_max                    = 100,
+  .normality                   = TRUE,
+  .reliabilities               = NULL,
+  .tolerance                   = 1e-05,
+  .resample_method           = c("none", "bootstrap", "jackknife"),
+  .resample_method2            = c("none", "bootstrap", "jackknife"),
+  .R                           = 499,
+  .R2                          = 199,
+  .handle_inadmissibles        = c("drop", "ignore", "replace"),
+  .user_funs                   = NULL,
+  .eval_plan                   = c("sequential", "multiprocess"),
+  .seed                        = sample(.Random.seed, 1),
   ...
   )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} containing the raw data. Additionally,
-a list of \code{data.frame}(s) or \code{matrices} is accepted in which case estimation
-is repeated for each data set. See details.}
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized data. Additionally,
+a list of \code{data.frame}(s) or \code{matrice}(s) is accepted in which case estimation
+is repeated for each data set. Possible column types or classes
+of the data provided are: logical, numeric (double or integer), factor (ordered and unordered)
+or a mix of several types. The data may also include
+\emph{one} character column whose column name must be given to \code{.id}.
+This column is assumed to contain group identifiers used to split
+the data into groups.}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
 
 \item{.id}{Character string or integer. The name or position of the column of
-\code{.data} used to split the data into groups. Ignored if \code{.object} is provided.
+\code{.data} used to split the data into groups.
 Defaults to \code{NULL}.}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{unit}", "\emph{bartlett}",
+or "\emph{regression}".
 Defaults to "\emph{PLS-PM}".}
 
 \item{...}{Further arguments to be passed down to lower level functions of \code{csem()}
@@ -50,9 +69,35 @@ for a complete list of accepted \code{...} arguments for the respective function
 second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
 Defaults to "\emph{3stage}".}
 
+\item{.approach_nl}{Character string. Approach used to estimate nonlinear
+structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
+Defaults to "\emph{sequential}".}
+
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
+structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
+
+\item{.disattenuate}{Logical. If possible, should composite/proxy correlations
+be disattenuated if the construct is modeled as a common factor?
+Defaults to \code{TRUE}.}
+
+\item{.iter_max}{Integer. The maximum number of iterations allowed.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
+If the algorithm exceeds the specified number, weights of iteration step
+\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
+
+\item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
+Defaults to \code{TRUE}. Ignored if the model is linear.}
+
+\item{.reliabilities}{A character vector of \code{"name" = value} pairs,
+where \code{value} is a number between 0 and 1 and \code{"name"} a character string
+of the corresponding construct name, or \code{NULL}. Reliabilities
+may be given for a subset of the constructs. Defaults to \code{NULL} in which case
+reliabilities are estimated by \code{csem()}. Currently, only supported for
+\code{.approach_weights = "PLS-PM"}.}
+
+\item{.tolerance}{Double. The tolerance criterion for convergence.
+Defaults to \code{1e-05}.}
 
 \item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
@@ -89,20 +134,12 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 \item{.seed}{Integer. The random seed to use. Defaults to \code{sample(.Random.seed, 1)}}
 }
 \value{
-An object of class \code{cSEMResults} with methods for all postestimation generics:
-\itemize{
-\item{\code{assess.cSEMResults}   Asses results using common fit measures and indices.}
-\item{\code{summarize.cSEMResults}   Summarize the results.}
-\item{\code{test.cSEMResults}   Run tests.}
-\item{\code{verify.cSEMResults}   Verify admissibility (e.g., loadings larger than one).}
-}
-
-The structure and class of the resulting \code{cSEMResults} object is generally
-determined by the type of dataset(s) provided (\code{matrix}, \code{data.frame}, \code{list}
-of data)
+An object of class \code{cSEMResults} with methods for all postestimation generics.
+Depending on the type of model and data the object has a different structure.
 
 \describe{
-\item{Default}{If data is a single \code{matrix} or \code{data.frame} with no id-column,
+\item{Default}{This will be the structure for the vaste majority of applications.
+If the data is a single \code{matrix} or \code{data.frame} with no id-column,
 the result is a \code{list} with elements:
 \describe{
 \item{\code{$Estimates}}{A list containing a list of estimated quantities.}
@@ -110,7 +147,8 @@ the result is a \code{list} with elements:
 }
 The resulting object has classes \code{cSEMResults} and \code{cSEMResults_default}.
 }
-\item{Multi}{If the data provided contains an id-column to split the data by \code{G} group levels
+\item{Multi}{If the data provided is a single \code{matrix} or \code{data.frame} containing
+an id-column to split the data by \code{G} group levels
 or if a list of \code{G} datasets is provided, the resulting object is a list of \code{G}
 lists, where \code{G} is equal to the number of groups or the number of datasets
 in the list of datasets provided. Each of the \code{G} list elements are itself
@@ -123,32 +161,27 @@ The resulting object has classes \code{cSEMResults} and \code{cSEMResults_multi}
 A special output is generated if the model to estimate contains hierachical constructs
 \strong{and} the 2step (3step) approach is used to estimate the model. In this case
 the resulting object is a list containing two elements \code{First_stage} and
-\code{Second_stage}.
+\code{ Second_stage}.
 
 Each list element is itself a \code{cSEMResults_default} object. Hence its structure is identical to
 the structure described in \code{Default}.
 }
 }
 
-If \code{.resample_method = "bootstrap"} or \code{.resample_method = "jackknife"} resamples
+If \code{.resample_method = "bootstrap"} or \code{.resample_method = "jackknife"}, resamples
 are attached to each object. For objects of class \code{cSEMResults_default} the resamples are
-attached to \code{.object$Estimates$Estimates_resamples}. For objects of type
+attached to \code{.object$Estimates$Estimates_resamples}. For objects of class
 \code{cSEMResults_multi} the same is done by group. All objects containing
 these elements gain the \code{cSEMResults_resampled} class.
-
-As should be evident from the above, the core structure of the resulting object
-is by and large similiar across all cases. Practically, most users wont have to worry
-about the structure as postestimation functions have corresponding methods to
-accomodate all cases.
 }
 \description{
-Estimate linear and nonlinear structural equation models using a
-composite based approach or conduct confirmatory composite analysis (CCA).
+Estimate linear, nonlinear, hierachical or multigroup structural equation
+models using a composite-based approach.
 }
 \details{
-\code{csem()} estimates linear and nonlinear structural equation models using a
-composite based approach like PLS-PM, GSCA or unit weights. Technically, \code{csem()} is a wrapper
-around the more general \code{\link[=foreman]{foreman()}} function designed for quick and flexible
+\code{csem()} estimates linear, nonlinear, hierachical or multigroup structural
+equation models using a composite-based approach like PLS-PM, PLSc, GSCA, GSCAm or
+unit weights. \code{csem()} is designed for quick and flexible
 use by providing the user with default options except for
 the mandatory \code{.data} and \code{.model} argument.
 
@@ -162,7 +195,7 @@ provided as either a \code{matrix} or a \code{data.frame} with column names matc
 the indicator names used in the model description of the measurement model.
 Alternatively, a list of matrices or \code{data.frame}s may be provided
 in which case estimation is repeated for each data set.
-The data provided via \code{.data} may contain a non numeric column whose column name
+The data provided via \code{.data} may contain a character column whose column name
 must be provided to \code{.id}. Values of this column are interpreted as group
 identifiers and \code{csem()} or \code{cca()} will split the data by levels of that column and run
 the estimation for each level separately.
@@ -177,21 +210,22 @@ the "\code{.}" is used to indicate interactions between constructs as in e.g.,
 
 \subsection{Weights and path coefficients:}{
 By default weights are estimated using the partial least squares algorithm (\emph{PLS-PM}).
-Alternative approaches include all of \emph{Kettenring's criteria}, "\emph{fixed weights}"
-or "\emph{unit weight}". \emph{Generalized Structured Component Analysis} (\emph{GSCA}) may
-also be chosen as a weighing approach although technically GSCA obtains weight
-and structural coefficient estimates simultaneously. Hence, setting
-\code{.approach_weights = "GSCA"} automatically sets \code{.approach_paths = "GSCA"} (and
-vice-versa).
+Alternative approaches include generalized structured component analysis (\emph{GSCA}),
+\emph{GCCA} (i.e. \emph{Kettenring's criteria}), "\emph{fixed weights}"
+or "\emph{unit weight}".
 
-For PLS-PM composite-indicator and composite-composite correlations are properly
-rescaled using \emph{PLSc} \insertCite{Dijkstra2015}{cSEM} by default. \emph{PLSc} yields
-consistent estimates for the factor loadings, construct correlations,
-and path coefficients if any of the constructs involved is
-modeled as a common factor. Disattenuation my be suppressed by setting
+Composite-indicator and composite-composite correlations are properly
+disattenuated by default to yield consistent loadings, construct correlations,
+and path coefficients if any of the constructs in the model are modeled as a
+common factor. cSEM offers two ways to adress
+
+For \emph{PLS-PM} disattenuation is done using \emph{PLSc} \insertCite{Dijkstra2015}{cSEM}.
+For \emph{GSCA} disattenuation is done implicitly by using \emph{GSCAm}. Weights obtained
+by GCCA, unit weights and fixed weights are disattenuated using a
+Disattenuation my be suppressed by setting
 \code{.disattenuate = FALSE}. Note however that quantities in this case are inconsistent
-estimates for their construct level counterparts if any of the constructs is
-the model as a common factor.
+estimates for their construct level counterparts if any of the constructs in the structural model is
+modeled as a common factor!
 }
 
 \subsection{Non linear models:}{
@@ -213,12 +247,14 @@ population with finite moments for the relevant order); for higher order models,
 that go beyond interaction, we work in this version with the assumption that
 as far as the relevant moments are concerned certain combinations of
 measurement errors behave as if they were Gaussian.
+For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
+}
+
+\subsection{Inference:}{
+Inference is done via resampling. See \code{\link[=resamplecSEMREsults]{resamplecSEMREsults()}} for details.
 }
 }
 \examples{
-\dontrun{
-# TODO
-}
 
 }
 \references{

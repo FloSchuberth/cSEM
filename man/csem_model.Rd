@@ -4,14 +4,10 @@
 \alias{csem_model}
 \alias{cSEMModel}
 \title{cSEMModel}
-\description{
-A standardized list containing model-related information. To convert a
-a model written in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-to a \code{cSEMModel}-list use \code{\link[=parseModel]{parseModel()}}.
-}
-\details{
+\value{
 An object of class \code{cSEMModel} is a standardized list containing the following
-components (J constructs and K indicators)
+components. Here J stands for the number of constructs and K for the number
+of indicators.
 \describe{
 \item{\code{$structural}}{A matrix mimicking the structural relationship between
 constructs. If constructs are only linearly related, \code{structural} is
@@ -22,21 +18,31 @@ nonlinear terms. Rows are ordered such that exogenous constructs are always
 first, followed by constructs that only depend on exogenous constructs and/or
 previously ordered constructs.}
 \item{\code{$measurement}}{A (J x K) matrix mimicking the measurement relationship
-between constructs and their related indicators. Rows are are in the same
-order as the \code{$structural} with row names equal to
-the construct names. The order of the columns is such that \code{$.measurement}
+between constructs and their related indicators. Rows are in the same
+order as the matrix \code{$structural} with row names equal to
+the construct names. The order of the columns is such that \code{$measurement}
 forms a block diagonal matrix.}
 \item{\code{$error_cor}}{A (K x K) matrix mimicking the measurement error
 correlation relationship. The row and column order is identical to \code{$measurement}.}
 \item{\code{$construct_type}}{A named vector containing the names of each construct
 and their respective type (\strong{"Common factor"} or \strong{"Composite"}).}
-\item{\code{$model_type}}{The type of model (linear or nonlinear).}
+\item{\code{$construct_order}}{A named vector containing the names of each construct
+and their respective order (\strong{"First order"} or \strong{"Second order"}).}
+\item{\code{$model_type}}{The type of model (\strong{"Linear"} or \strong{"Nonlinear"}).}
 }
 Note: it is possible to supply an incomplete \code{cSEMModel}-list
 to all functions that require \code{.csem_model} as a mandatory argument. Currently,
 only the structural and the measurement matrix are required.
 However, specifying an incomplete cSEMModel list may lead to unexpected behavior
-and errors so do use this technique with caution.
+and errors. Use carfully.
+}
+\description{
+cSEMModel
+}
+\details{
+A standardized list containing model-related information. To convert a
+a model written in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+to a \code{cSEMModel}-list use \code{\link[=parseModel]{parseModel()}}.
 }
 \seealso{
 \link{parseModel}

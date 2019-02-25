@@ -14,10 +14,10 @@ WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES TO THE API ARE VERY LIKELY.
 
 Estimate, analyse, test, and study linear, nonlinear, hierachical and
 multigroup structural equation models using composite-based approaches and procedures including estimation 
-techniques such as partial least squares path modelling (PLS) and its consistent 
-version PLSc, generalized structured component analysis (GSCA), generalized structured component 
-analyis with uniqueness terms (GSCAm), unit weights (sum score) and
-fixed weights, as well as several tests and typical postestimation 
+techniques such as partial least squares path modelling (PLS) and its derivatives
+(PLSc, ordPLSc, robustPLSc), generalized structured component analysis (GSCA), generalized structured component 
+analyis with uniqueness terms (GSCAm), generalized canonical correlation analysis (GCCA),
+unit weights (sum score) and fixed weights, as well as several tests and typical postestimation 
 procedures (e.g., assess the model fit, compute direct, indirect and total effects).
 
 ## Installation
@@ -28,7 +28,7 @@ procedures (e.g., assess the model fit, compute direct, indirect and total effec
 devtools::install_github("M-E-Rademaker/cSEM")
 ```
 
-## Philopsophy/Goals/Ideas
+## Philopsophy
 
 - User-centred!!
 - Easy to use by non-R experts: 
@@ -52,7 +52,8 @@ devtools::install_github("M-E-Rademaker/cSEM")
       
 ## Basic usage
 
-```{r, eval=FALSE}
+Models are defined using [lavaan syntax](http://lavaan.ugent.be/tutorial/syntax1.html) with some slight modification.
+```{r eval=FALSE}
 require(cSEM)
 data(satisfaction)
     
@@ -62,26 +63,66 @@ data(satisfaction)
 ##       as a common factor.
     
 model <- "
-    # Structural model
-    EXPE ~ IMAG
-    QUAL ~ EXPE
-    VAL  ~ EXPE + QUAL + QUAL.EXPE
-    SAT  ~ IMAG + EXPE + QUAL + VAL + IMAG.IMAG
-    LOY  ~ IMAG + SAT
-    
-    # Measurement model
-    
-    IMAG <~ imag1 + imag2 + imag3
-    EXPE <~ expe1 + expe2 + expe3 
-    QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
-    VAL  <~ val1  + val2  + val3
-    SAT  =~ sat1  + sat2  + sat3  + sat4
-    LOY  =~ loy1  + loy2  + loy3  + loy4
-    "
-    
+# Structural model
+EXPE ~ IMAG
+QUAL ~ EXPE
+VAL  ~ EXPE + QUAL
+SAT  ~ IMAG + EXPE + QUAL + VAL 
+LOY  ~ IMAG + SAT
+
+# Measurement model
+
+IMAG <~ imag1 + imag2 + imag3
+EXPE <~ expe1 + expe2 + expe3 
+QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
+VAL  <~ val1  + val2  + val3
+SAT  =~ sat1  + sat2  + sat3  + sat4
+LOY  =~ loy1  + loy2  + loy3  + loy4
+"
+```
+Estimation is done using the `csem()` function.
+```{r eval=FALSE}
+# Estimate using defaults
 a <- csem(.data = satisfaction, .model = model)
-a
-    
+
+# This is equal to
+csem(
+   .data                        = NULL,
+   .model                       = NULL,
+   .approach_cor_robust         = "none",
+   .approach_nl                 = "sequential",
+   .approach_paths              = "OLS",
+   .approach_weights            = "PLS-PM",
+   .conv_criterion              = "diff_absolute",
+   .disattenuate                = TRUE,
+   .dominant_indicators         = NULL,
+   .estimate_structural         = TRUE,
+   .id                          = NULL,
+   .iter_max                    = 100,
+   .normality                   = TRUE,
+   .PLS_approach_cf             = "dist_squared_euclid",
+   .PLS_ignore_structural_model = FALSE,
+   .PLS_modes                   = NULL,
+   .PLS_weight_scheme_inner     = "path",
+   .reliabilities               = NULL,
+   .tolerance                   = 1e-05,
+   .resample_method             = "none", 
+   .resample_method2            = "none",
+   .R                           = 499,
+   .R2                          = 199,
+   .handle_inadmissibles        = "drop"
+   .user_funs                   = NULL,
+   .eval_plan                   = "sequential",
+   .seed                        = sample(.Random.seed, 1)
+    )
+```
+
+The result is always an object of class `cSEMResults`. Technically, the resulting
+object has an additional class attribute (namely `cSEMResults_default`, `cSEMResults_multi`
+or `cSEMResults_2ndorder`) however users usually dont need to work since postestimation
+function automatically (will eventually) work on all classes. 
+
+```{r eval=FALSE}
 ## Access elements using `$`:
 a$Estimates$Loading_estimates # or
 a$Information$Model
@@ -124,9 +165,10 @@ testOMF(a) # takes roughly 30 seconds
 
 ```
 
-Inference can be done by setting `.resample_method` to `"jackkinfe"` or `"bootstrap"`.
+Inference can be done by setting first setting `.resample_method` to 
+`"jackkinfe"` or `"bootstrap"` and subsequently using `summarize()` or `infer()`.
 
-```{r}
+```{r eval=FALSE}
 b <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
 summarize(b)
 
