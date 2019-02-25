@@ -693,7 +693,7 @@ quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
 #' Implementation of REBUS-PLS
 #' Code obtained by Laura Trinchera.
 #' 
-hclus <- function(.object){
+REBUS_cluster <- function(.object){
   if (class(pls)!="plspm") 
     stop("An object of class 'plspm' was expected")
   # if (any(pls$model[[4]]!="A"))# checking reflective modes DOES it also work with PLSc?
@@ -750,7 +750,7 @@ hclus <- function(.object){
   return(res.clus)
 }  
   
-it.reb <-
+REBUS_iterative <-
   function(pls, hclus.res, nk, stop.crit=0.005, iter.max=100)
   {
     # ========================== it.reb function ==========================
@@ -793,8 +793,13 @@ it.reb <-
     }
     
     # ========================== INPUTS SETTING ==========================
-    IDM <- pls$model[[1]]# Inner Design Matrix
-    blocks <- pls$model[[2]]# cardinality of blocks
+    # IDM <- pls$model[[1]]# Inner Design Matrix
+    IDM <- .object$Information$Model$structural# Inner Design Matrix
+    lvs.names <- as.list(rownames(.object$Information$Model$measurement))
+    blocks <- lapply( Construct_names, function(x) {
+      names(.object$Information$Model$measurement[x,][.object$Information$Model$measurement[x,]!=0])
+    })
+    # blocks <- pls$model[[2]]# cardinality of blocks
     scheme <- pls$model[[3]]# inner weighting scheme
     modes <- pls$model[[4]]# measurement modes
     scaled <- pls$model[[5]]# type of scaling
@@ -802,9 +807,10 @@ it.reb <-
     if (plsr) 
       warning("path coefficients will be calculated with OLS regression")
     plsr <- FALSE
-    DM <- pls$data# original data matrix
-    lvs <- nrow(IDM)# number of LVs
-    lvs.names <- rownames(IDM)# names of LVs
+    # DM <- pls$data# original data matrix
+    DM <- .object$Information$Data# original data matrix
+    lvs <- length(Construct_names)# number of LVs
+    # lvs.names <- rownames(IDM)# names of LVs
     mvs <- sum(blocks)# number of MVs
     mvs.names <- colnames(DM)
     blocklist <- as.list(1:lvs)
