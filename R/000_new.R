@@ -811,8 +811,11 @@ REBUS_iterative <-
     DM <- .object$Information$Data# original data matrix
     lvs <- length(Construct_names)# number of LVs
     # lvs.names <- rownames(IDM)# names of LVs
-    mvs <- sum(blocks)# number of MVs
-    mvs.names <- colnames(DM)
+    mvs <- length(colnames(.object$Information$Model$measurement))
+    # mvs <- sum(blocks)# number of MVs
+    mvs.names <-colnames(.object$Information$Model$measurement)
+    # mvs.names <- colnames(DM)
+    
     blocklist <- as.list(1:lvs)
     for (j in 1:lvs)
       blocklist[[j]] <- rep(j,blocks[j])
