@@ -1,0 +1,95 @@
+---
+title: "cSEM-package: The GSCA and GSCA_m functions"
+author: "Sebastian Gross"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+This vignette provides additional information about the GSCA approach for structural equation models and its implementation in the cSEM package. The aim of the following document is to explain to the user, how to proceed when parameters shall be estimated with GSCA or GSCA_{m}. The usage of GSCA and GSCA_{m} as well as the general structure of the output are explained via an estimation example which will also provide an idea of how estimation results look like. 
+
+## The GSCA and GSCA_{m} approach
+
+The implemented routine calculates weights, as well as path coefficients and loadings of a structural equation model with the GSCA procedure. GSCA is a composite-based approach to structural equation modeling. It is in several points comparable to PLS.
+As in PLS, constructs are defined as composites, i.e., as exact linear combinations of the related indicators. The corresponding weights are estimated by minimizing a global optimization criterion which is done via some linear regressions involving latent variables (i.e. their proxies) and indicators.  
+Both GSCA approaches do not make any assumption concerning the distribution of the residuals of indicators and latent variables. That is why, estimators are finally calculated via Least Squares. Basic to GSCA and GSCA_m is that three submodels are combined to build up the overall GSCA/GSCA_m model. These are the structural model (relationships among constructs), measurement model (influence of constructs on indicators) and weighted relation model (constructs as linear combinations of indicators). For details and formula see Sections 'methods'.
+
+It is possible that the estimated parameters, especially loadings, are biased when using GSCA. Particularly, this is the case when indicators are observed with an error. However, GSCA_m provides a way to consistently estimate the parameters also in this situation. The term 'GSCA_m' stands for 'GSCA with measurement errors incorporated'. The basic idea of GSCA_m is to model indicators in the measurement model as a combination of common parts (arising from the constructs) and unique parts. The purpose of adding a unique part to each indicator is to account for measurement errors in the indicators. In a next step, latent variables are expressed in the weighted relation model as a linear combination of indicators but with their unique parts removed. For some formula and details see Section 'methods'.
+
+
+Hier GSCA_m beschreiben: Wann wird es aufgerufen? Ähnlichkeit betonen.
+
+#' Parameters are automatically estimated via GSCA_m when calling [csem()]. However, 
+#' if there is no construct which is a common factor, parameters have to be estimated 
+#' with GSCA. The reason is that estimation via GSCA_m involves the transposed 
+#' measurement matrix which has no non-zero entry if all constructs are only composites 
+#' leading to weight estimators equal to 0. Thus, in this special case, the user 
+#' imperatively has to use GSCA and GSCA_m is no option.
+#' Otherwise, i.e., if there is at least one construct which is a common factor,
+#' calling [csem()] will lead to an estimation via GSCA_m except in the case that
+#' the user explicitly sets the argument `.disattenuate` to `FALSE`. Then, estimation
+#' is done by 'standard' GSCA.
+
+
+Dann Ausgangspunkt: Daten, Modell und Ansatz um Gewichte zu schätzen...
+dazu weitere Input Argumente, deren Bedeutung später klar wird. Hier allgemeiner Befehl, d.h. der wird nicht ausgeführt.
+
+## example
+
+Modell in lavaan Syntax, Datensatz
+Dann Beispiel durchrechnen: Ergebnisse, Output, Interpretation
+
+## methods
+
+hier kurz die Idee hinter der GSCA Methode vorstellen, die Gleichungen aus dem GSCA_m Paper und das Optimierungskriterium. Schätzungen sind eigentlich nur Regressionen... Verweis auf die Paper
+
+
+The estimation within GSCA begins with the standardization of the data and the specification of three submodels. The matrix of the standardized data is denoted by Z and is of dimension N x K since there are N observations in K indicators. Additionally, the structural equation model consists of J latent variables (constructs).
+As in PLS, the measurement model and the structural model are defined to specifiy the relations of latent variables on indicators resp. of the exogenous latent variables on the endogenous ones. 
+In addition, the weighted relation model accounts for the influence of the indicators on the latent variables.
+This leads to the three matrices (and corresponding dimension):
+W0: matrix of the weighted relation model (K x J)
+B0: matrix of the structural model (J x J) 
+C0: matrix of the measurement model (J x K) 
+
+Attention: The notation in this script is slightly different from the 
+notation used by Hwang & Takane in "Generalized Structured Component Analysis" (2014) where the number of indicators is J and the number of latent variables is P. Furthermore, the notation is largely different from the one used by the same authors in "Generalized Structured Component Analysis" (2004), because the initial GSCA model and procedure from this paper has been subject to some major adjustments and changes. 
+The innovation of GSCA compared to PLS is the fact, that the three submodels are integrated into one unified algebraic framework. This leads to a single optimization criterion which is minimized with the Alternating-Least-Squares-Algorithm. The ALS-Algorithm is the centerpiece of the GSCA estimation procedure.
+Its main idea is that the set of parameters is divided into two subsets: 
+firstly, the loadings and path coefficients (in the matrices B and C, resp. A) and secondly, the weights (in matrix W). After having found initial values for all parameters to be estimated, the criterion is minimized with respect to the first subset keeping all other parameters constant. In the next step, this is reversed and the freshly estimated parameters of step 1 are now kept fixed while minimizing the criterion with respect to the other parameters. These two steps are alternated until convergence is reached, i.e., the decrease of the value of the optimization criterion falls below the initially defined tolerance (".tolerance"). If this does not happen within a prescribed number of steps (".iter_max"), the algorithm will abort and return the latest estimators (but the convergence status "Conv_status" will be set to FALSE).
+The fact that a single optimization criterion is minimized within GSCA allows the derivation of several measures of global model fit. Those are calculated after the estimation of all relevant parameters. 
+description of measures of fit... 
+
+hier dann: Aufruf der Funktionen inkl. Befehl
+
+## Happy Knitting!
+
+Feel free to use the `knitr` infrastructure with dozens of tunable options in
+your package vignette.
+
+```{r fig.width=6, fig.height=6, fig.align='center'}
+set.seed(123)
+n <- 1000
+x1  <- matrix(rnorm(n), ncol = 2)
+x2  <- matrix(rnorm(n, mean = 3, sd = 1.5), ncol = 2)
+x   <- rbind(x1, x2)
+head(x)
+smoothScatter(x, xlab = "x1", ylab = "x2")
+```
+
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$,
+footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(iris, 10))
+```
+
