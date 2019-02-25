@@ -319,7 +319,7 @@ calculateWeightsKettenring <- function(
 
 #' Calculate weights using GSCA
 #'
-#' Calculates weights... a
+#' Calculates weights...
 #'
 #' Some more description...
 #'
