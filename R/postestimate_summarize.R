@@ -171,7 +171,7 @@ summarize.cSEMResults_default <- function(
     }
   }
   
-  ### Modify relevant .object elements -----------------------------------------
+  ### Modify relevant .object elements =========================================
   .object$Estimates$Path_estimates    <- path_estimates
   .object$Estimates$Loading_estimates <- loading_estimates
   .object$Estimates$Weight_estimates  <- weight_estimates
