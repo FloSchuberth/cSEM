@@ -754,7 +754,7 @@ REBUS_cluster <- function(.object){
 }  
   
 REBUS_iterative <-
-  function(pls, hclus.res, nk, stop.crit=0.005, iter.max=100)
+  function(.object, hclus.res, nk, stop.crit=0.005, iter.max=100)
   {
     # ========================== it.reb function ==========================
     # Performs iterative steps of Response-Based Unit Segmentation  
@@ -767,12 +767,15 @@ REBUS_iterative <-
     # iter.max: maximum number of iterations (must be an integer)
     
     # ==================== Checking function arguments ===================
-    if (class(pls)!="plspm") 
-      stop("argument 'pls' must be an object of class 'plspm'")
-    if (any(pls$model[[4]]!="A"))# checking reflective modes
+    # if (class(pls)!="plspm") 
+    #   stop("argument 'pls' must be an object of class 'plspm'")
+    # if (any(pls$model[[4]]!="A"))# checking reflective modes
+    #   stop("REBUS only works for reflective modes")
+    if(any(.object$Information$Model$construct_type == "Common factor")){
       stop("REBUS only works for reflective modes")
-    if (!pls$model[[5]])# checking scaled data
-      stop("REBUS only works with scaled='TRUE'")
+    }
+    # if (!pls$model[[5]])# checking scaled data
+    #   stop("REBUS only works with scaled='TRUE'")
     if (missing(hclus.res))
       stop("argument 'hclus.res' is missing")
     if (class(hclus.res)!="hclust")
@@ -799,6 +802,7 @@ REBUS_iterative <-
     # IDM <- pls$model[[1]]# Inner Design Matrix
     IDM <- .object$Information$Model$structural# Inner Design Matrix
     lvs.names <- as.list(rownames(.object$Information$Model$measurement))
+    Construct_names <- as.list(rownames(.object$Information$Model$measurement))
     blocks <- lapply( Construct_names, function(x) {
       names(.object$Information$Model$measurement[x,][.object$Information$Model$measurement[x,]!=0])
     })
@@ -811,7 +815,7 @@ REBUS_iterative <-
       warning("path coefficients will be calculated with OLS regression")
     plsr <- FALSE
     # DM <- pls$data# original data matrix
-    DM <- .object$Information$Data# original data matrix
+    DM <- .object$Information$Data# original data matrix     WE USE THE STANDARDIZED ONE
     lvs <- length(Construct_names)# number of LVs
     # lvs.names <- rownames(IDM)# names of LVs
     mvs <- length(colnames(.object$Information$Model$measurement))
@@ -852,8 +856,9 @@ REBUS_iterative <-
       # define MV matrix for each initial class
       split.DM <- as.list(1:nclus)
       split.X <- as.list(1:nclus)
-      for (k in 1:nclus)
-        split.DM[[k]] <- DM[old.clas==k,]            
+      for (k in 1:nclus){
+        split.DM[[k]] <- DM[old.clas==k,]       
+      }
       # local models computation
       for (k in 1:nclus)
       {   
@@ -861,6 +866,9 @@ REBUS_iterative <-
         sd.k <- apply(split.DM[[k]],2,sd)# local std.dev
         # spliting data matrix for each class
         split.X[[k]] <- scale(split.DM[[k]], center=mean.k, scale=sd.k)
+        
+        # Here we could use the cSEM function to calculate the weights and path coef per class
+        
         # calculating outer weights for each class
         out.ws  <- pls.weights(split.X[[k]], IDM, blocks, modes, scheme)
         w.locals[[k]] <- out.ws[[2]]
