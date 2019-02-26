@@ -285,8 +285,7 @@ csem <- function(
   if(.resample_method != "none") {
     
     if(is.null(.seed)) {
-      # .seed <- sample(.Random.seed, 1)
-      .seed <- 1234
+      .seed <- sample(.Random.seed, 1)
     }
     
     out <- resamplecSEMResults(
