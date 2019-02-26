@@ -30,7 +30,7 @@ Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PL
 }
 \value{
 A numeric vector of correction factors with element names equal
-to the names of the J constructs used in the measurement model
+to the names of the J constructs used in the measurement model.
 }
 \description{
 Calculates the correction factor used by PLSc.

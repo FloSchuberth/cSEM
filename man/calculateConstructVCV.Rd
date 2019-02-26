@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_foreman.R
 \name{calculateConstructVCV}
 \alias{calculateConstructVCV}
-\title{Internal: Calculate construct VCV matrix}
+\title{Internal: Calculate construct variance-covariance matrix}
 \usage{
 calculateConstructVCV(
  .C          = args_default()$.C, 
@@ -23,6 +23,6 @@ Q^2 is also called the reliability coefficient.}
 The (J x J) construct VCV matrix. Disattenuated if requested.
 }
 \description{
-Calculate the covariance matrix of the constructs.
+Calculate the variance-covariance matrix (VCV) of the constructs.
 }
 \keyword{internal}

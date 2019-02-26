@@ -24,7 +24,7 @@ The (K x K) (robust) indicator correlation matrix S.
 Calculate the indicator correlation matrix using conventional or robust methods.
 }
 \details{
-Id \code{"none"} the method depends on the type of column of \code{.X_cleaned}:
+If \code{"none"} the method depends on the type of column of \code{.X_cleaned}:
 \describe{
 \item{\code{Numeric-numeric}}{Bravais-Pearson product-moment correlation}
 \item{\code{Numeric-factor}}{Polyserial correlation}
@@ -32,6 +32,7 @@ Id \code{"none"} the method depends on the type of column of \code{.X_cleaned}:
 }
 Note: logical input is treated as a 0-1 factor variable.
 
-If \code{"mcd" (= minimum covariance determinant) a robust covariance is estimated via }MASS::cov.rob()\code{. See }?MASS::cov.rob()` for details.
+If  \code{"mcd"} (= minimum covariance determinant) a robust covariance is estimated
+via \code{MASS::cov.rob()}. See \code{?MASS::cov.rob()} for details.
 }
 \keyword{internal}

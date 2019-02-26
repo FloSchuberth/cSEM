@@ -335,7 +335,8 @@ calculateReliabilities <- function(
         stop2("Unable to use `bartlett` or `regression` weights when `.disattenuate = FALSE`.")
       }
       
-      if(.disattenuate) {
+      #   Note: Only necessary if at least one common factor is in the model
+      if(.disattenuate & any(.csem_model$construct_type == "Common factor")) {
         ## "Croon" approach
         # The Croon reliabilities assume that the scores are built by sumscores 
         # (i.e. unit weights).

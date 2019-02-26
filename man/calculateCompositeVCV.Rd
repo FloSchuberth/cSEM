@@ -18,6 +18,6 @@ calculateCompositeVCV(
 A (J x J) composite VCV matrix.
 }
 \description{
-Calculate the variance-covariance (VCV) matrix of the composites.
+Calculate the variance-covariance (VCV) matrix of the composites/proxies.
 }
 \keyword{internal}

@@ -14,11 +14,13 @@ Cronbach_alpha(
 
 
   \method{Cronbach_alpha}{cSEMResults_default}(.object = args_default()$.object,
-  .only_common_factors = args_default()$.only_common_factors)
+  .only_common_factors = args_default()$.only_common_factors,
+  .alpha = args_default()$.alpha)
 
 
   \method{Cronbach_alpha}{cSEMResults_multi}(.object = args_default()$.object,
-  .only_common_factors = args_default()$.only_common_factors)
+  .only_common_factors = args_default()$.only_common_factors,
+  .alpha = args_default()$.alpha)
 
 
   \method{Cronbach_alpha}{cSEMResults_2ndorder}(.object = args_default()$.object,
@@ -29,6 +31,9 @@ Cronbach_alpha(
 
 \item{.only_common_factors}{Logical. Should only common factors be included?
 Defaults to \code{FALSE}.}
+
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
 }
 \description{
 Computes Cronbach's alpha \insertCite{Cronbach1951}{cSEM} based on the correlation matrix

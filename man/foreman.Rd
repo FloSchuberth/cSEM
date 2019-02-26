@@ -49,7 +49,8 @@ Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{unit}", "\emph{bartlett}",
+or "\emph{regression}".
 Defaults to "\emph{PLS-PM}".}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.

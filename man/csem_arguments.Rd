@@ -30,7 +30,8 @@ Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{unit}", "\emph{bartlett}",
+or "\emph{regression}".
 Defaults to "\emph{PLS-PM}".}
 
 \item{.args_used}{A list of function argument names to \code{fun()} whose value

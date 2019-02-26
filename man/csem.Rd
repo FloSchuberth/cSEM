@@ -19,7 +19,7 @@ csem(
   .id               = NULL,
   .approach_2ndorder= c("3stage", "repeated_indicators"),
   .approach_weights = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", "GSCA", 
-                        "fixed", "unit"),
+                        "unit"),
   .approach_path    = c("OLS", "2SLS", "3SLS"),
   ...
   )
@@ -38,7 +38,8 @@ Defaults to \code{NULL}.}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{unit}", "\emph{bartlett}",
+or "\emph{regression}".
 Defaults to "\emph{PLS-PM}".}
 
 \item{...}{Further arguments to be passed down to lower level functions of \code{csem()}
@@ -53,6 +54,9 @@ Defaults to "\emph{3stage}".}
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
 Defaults to "\emph{OLS}".}
+
+\item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
+if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}

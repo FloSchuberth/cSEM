@@ -2,17 +2,45 @@
 % Please edit documentation in R/helper_foreman.R
 \name{calculateReliabilities}
 \alias{calculateReliabilities}
-\title{Internal: Calculate Croon Reliabilities}
+\title{Internal: Calculate Reliabilities}
 \usage{
-calculateReliabilities(.csem_model = args_default()$.csem_model,
-  .W = args_default()$.W, .X = args_default()$.X)
+calculateReliabilities(.X = args_default()$.X, .S = args_default()$.S,
+  .W = args_default()$.W,
+  .approach_weights = args_default()$.approach_weights,
+  .csem_model = args_default()$.csem_model,
+  .disattenuate = args_default()$.disattenuate,
+  .PLS_approach_cf = args_default()$.PLS_approach_cf,
+  .reliabilities = args_default()$.reliabilities)
 }
 \arguments{
-\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
+\item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
+
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.W}{A (J x K) matrix of weights.}
 
-\item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
+\item{.approach_weights}{Character string. Approach used to
+obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{unit}", "\emph{bartlett}",
+or "\emph{regression}".
+Defaults to "\emph{PLS-PM}".}
+
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
+
+\item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
+if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+
+\item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
+factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
+"\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
+"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
+Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
+
+\item{.reliabilities}{A character vector of \code{"name" = value} pairs,
+where \code{value} is a number between 0 and 1 and \code{"name"} a character string
+of the corresponding construct name, or \code{NULL}. Reliabilities
+may be given for a subset of the constructs. Defaults to \code{NULL} in which case
+reliabilities are estimated by \code{csem()}.}
 }
 \description{
 (TODO)
