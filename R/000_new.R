@@ -694,16 +694,17 @@ quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
 #' Code obtained by Laura Trinchera.
 #' 
 REBUS_cluster <- function(.object){
-  if (class(pls)!="plspm") 
-    stop("An object of class 'plspm' was expected")
+  # if (class(pls)!="plspm") 
+    # stop("An object of class 'plspm' was expected")
   # if (any(pls$model[[4]]!="A"))# checking reflective modes DOES it also work with PLSc?
   #   stop("REBUS only works for reflective modes")
   # DOES it also work with PLSc? I chekc whether all constructs are modeled as common factor
-  if(.object$Information$Model$construct_type != "Common factor"){
+  if(any(.object$Information$Model$construct_type == "Common factor")){
     stop("REBUS only works for reflective modes")
   }
-  if (!pls$model[[5]])# checking scaled data
-    stop("REBUS only works with scaled='TRUE'")
+  # Is not needed as in cSEM data is always scaled
+  # if (!pls$model[[5]])# checking scaled data
+  #   stop("REBUS only works with scaled='TRUE'")
   
   DM = .object$Information$Data
   Y.lvs <- .object$Estimates$Construct_scores# recovering LV scores from pls
@@ -714,6 +715,8 @@ REBUS_cluster <- function(.object){
   indicator_blocks <- lapply( Construct_names, function(x) {
     names(.object$Information$Model$measurement[x,][.object$Information$Model$measurement[x,]!=0])
   })
+  
+  IDM <- .object$Information$Model$structural
   
   endo <- rowSums(IDM)
   endo[endo!=0] <- 1  # indicator of endogenous LVs
