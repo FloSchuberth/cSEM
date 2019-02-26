@@ -122,19 +122,19 @@ csem(
    .handle_inadmissibles        = "drop"
    .user_funs                   = NULL,
    .eval_plan                   = "sequential",
-   .seed                        = sample(.Random.seed, 1)
+   .seed                        = NULL
     )
 ```
 
 The result is always an object of class `cSEMResults`. Technically, the
 resulting object has an additional class attribute (namely
-`cSEMResults_default`, `cSEMResults_multi` or `cSEMResults_2ndorder`)
-however users usually dont need to work since postestimation function
-automatically (will eventually) work on all classes.
+`cSEMResults_default`, `cSEMResults_multi` or `cSEMResults_2ndorder`),
+however, users usually dont need to worry since postestimation functions
+(will eventually) automatically work on all classes.
 
 ``` r
-## Access elements using `$`:
-a$Estimates$Loading_estimates # or
+## Access elements using `$`. E.g.:
+a$Estimates$Loading_estimates 
 a$Information$Model
     
 ## Examine the structure:
@@ -143,10 +143,7 @@ listviewer::jsonedit(a, mode = "view") # requires the listviewer package.
 ## Get a summary
 summarize(a) 
     
-# Currently only `summarize()` works for nonlinear models. 
-    
 # Alter the model to obtain a linear model:
-    
 model <- "
     # Structural model
     EXPE ~ IMAG
@@ -174,7 +171,7 @@ verify(a)
 testOMF(a) # takes roughly 30 seconds
 ```
 
-Inference can be done by setting first setting `.resample_method` to
+Inference can be done by first setting `.resample_method` to
 `"jackkinfe"` or `"bootstrap"` and subsequently using `summarize()` or
 `infer()`.
 
