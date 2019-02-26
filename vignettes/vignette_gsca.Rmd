@@ -58,11 +58,8 @@ GSCAm only applicable to pure common factor models. Use `.disattenuate = FALSE`.
 In the following, a first application example of the *csem*-function for the estimation with GSCA is presented. Data are given in form of the dataset "satisfaction" that comes with the *cSEM*-package.
 This dataset consists of 250 observations for 27 indicators. These indicators are somehow related to 6 constructs. Before estimation can be done, a model has to be specified for the relationships among these variables. This model is a result of the user's ideas, hypotheses and theories about the original subject, which is customer satisfaction in the example. The model specification has to be done in lavaan-Syntax. In the structural model, the tilde "~" is the known regression operator. However, in the measurement model, the symbol "<~" is used for pure composites whereas the symbol "=~" stands for common factors.
 Note that the following specification is just one possible way and does not reflect any common theory about customer satisfaction but is used only for illustration purposes. 
-Furthermore, *'.Random.seed'* is set to 2019. Even though this argument is only needed for the bootstrapping algorithm implemented in the *cSEM*-package, it is necessary to set its value since otherwise calculation and estimation would not work in the scope of this vignette. Hence, it is not necessary to assign a value to the argument  *'.Random.seed'* when working in a usual RStudio session - this will be done automatically. 
 
 ```{r message=FALSE}
-.Random.seed <- 2019
-
 library(cSEM)
 data(satisfaction)
 
@@ -160,8 +157,13 @@ VAL  <~ val1  + val2  + val3  + val4
 
 Calling the *csem*-function will produce the error already mentioned in the Section [Approach](#approach):
 
-```{r warning=FALSE}
-results3 <- csem(satisfaction, model2, .approach_weights = "GSCA", .disattenuate = "TRUE")
+```{r eval=FALSE}
+csem(satisfaction, model2, .approach_weights = "GSCA", .disattenuate = "TRUE")
+```
+
+```{r, eval=FALSE}
+Error: The following error occured in the `calculateWeightsGSCAm()` function:
+GSCAm only applicable to pure common factor models. Use `.disattenuate = FALSE`. 
 ```
 
 ### Example 4: At least one composite and GSCA
