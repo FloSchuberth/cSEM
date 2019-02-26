@@ -76,7 +76,7 @@ Defaults to "\emph{sequential}".}
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
-  
+
 \item{.disattenuate}{Logical. If possible, should composite/proxy correlations
 be disattenuated if the construct is modeled as a common factor?
 Defaults to \code{TRUE}.}

@@ -14,7 +14,7 @@ multigroup structural equation models using composite-based approaches
 and procedures including estimation techniques such as partial least
 squares path modelling (PLS) and its derivatives (PLSc, ordPLSc,
 robustPLSc), generalized structured component analysis (GSCA),
-generalized structured component analyis with uniqueness terms (GSCAm),
+generalized structured component analysis with uniqueness terms (GSCAm),
 generalized canonical correlation analysis (GCCA), unit weights (sum
 score) and fixed weights, as well as several tests and typical
 postestimation procedures (e.g., assess the model fit, compute direct,
@@ -39,10 +39,12 @@ devtools::install_github("M-E-Rademaker/cSEM")
       - (Eventually…) well documented (Vignettes, HTML output, a
         website, intro course(s), cheatsheets)
       - Structured output/results that aims to be “easy”" in a sense
-        that it is - … descriptive/verbose - … easy to export to other
-        environments such as MS Word, Latex files etc. (exportability) -
-        … easy to migrate from/to/between other PLS/VB/CB-based systems
-        (lavaan, semPLS, ADANCO, SmartPLS)
+        that it is
+          - … descriptive/verbose
+          - … easy to export to other environments such as MS Word,
+            Latex files etc. (exportability)
+          - … easy to migrate from/to/between other PLS/VB/CB-based
+            systems (lavaan, semPLS, ADANCO, SmartPLS)
   - The package is designed to be flexible/modular enough so that
     researchers developing new methods can take specific function
     provided by the package and alter them according to their need
