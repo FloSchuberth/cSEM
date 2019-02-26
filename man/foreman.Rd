@@ -2,49 +2,58 @@
 % Please edit documentation in R/00_foreman.R
 \name{foreman}
 \alias{foreman}
-\title{Composite based SEM}
+\title{Composite-based SEM}
 \usage{
 foreman(
-    .data                        = args_default()$.data,
-    .model                       = args_default()$.model,
-    .approach_cor_robust         = args_default()$.approach_cor_robust,
-    .approach_nl                 = args_default()$.approach_nl,
-    .approach_paths              = args_default()$.approach_paths,
-    .approach_weights            = args_default()$.approach_weights,
-    .disattenuate                = args_default()$.disattenuate,
-    .dominant_indicators         = args_default()$.dominant_indicators,
-    .estimate_structural         = args_default()$.estimate_structural,
-    .iter_max                    = args_default()$.iter_max,
-    .normality                   = args_default()$.normality,
-    .PLS_approach_cf             = args_default()$.PLS_approach_cf,
-    .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
-    .PLS_modes                   = args_default()$.PLS_modes,
-    .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
-    .reliabilities               = args_default()$.reliabilities,
-    .tolerance                   = args_default()$.tolerance
-    )
+  .data                        = NULL,
+  .model                       = NULL,
+  .approach_cor_robust         = c("none", "mcd", "spearman"),
+  .approach_nl                 = c("sequential", "replace"),
+  .approach_paths              = c("OLS", "2SLS"),
+  .approach_weights            = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", 
+                                   "GSCA", "unit", "bartlett", "regression"),
+  .conv_criterion              = c("diff_absolute", "diff_squared", "diff_relative"),
+  .disattenuate                = TRUE,
+  .dominant_indicators         = NULL,
+  .estimate_structural         = TRUE,
+  .id                          = NULL,
+  .iter_max                    = 100,
+  .normality                   = TRUE,
+  .PLS_approach_cf             = c("dist_squared_euclid", "dist_euclid_weighted", 
+                                   "fisher_transformed", "mean_arithmetic",
+                                   "mean_geometric", "mean_harmonic",
+                                   "geo_of_harmonic"),
+  .PLS_ignore_structural_model = FALSE,
+  .PLS_modes                   = NULL,
+  .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
+  .reliabilities               = NULL,
+  .tolerance                   = 1e-05
+  )
 }
 \arguments{
-\item{.data}{A \code{data.frame}, a \code{matrix} or a list containing data of either type.
-Possible column types or classes of the data provided are:
-logical, numeric (double or integer), factor (ordered and unordered)
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized data.
+Possible column types or classes of the data provided are: logical,
+numeric (double or integer), factor (ordered and unordered)
 or a mix of several types. The data may also include
 \emph{one} character column whose column name must be given to \code{.id}.
-This column is assumed to contain group identifiers used to split the data into groups.}
+This column is assumed to contain group identifiers used to split
+the data into groups.}
 
 \item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
 or a \link{cSEMModel}-list.}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
-indicator correlation matrix. One of: "\emph{none}" in which case nothing is done or
-"\emph{mcd}" via \code{MASS::cor.rob()}. Defaults to "\emph{none}".}
+indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+"\emph{spearman}" for the spearman correlation, or
+"\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
+Defaults to "\emph{none}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
+structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
@@ -57,8 +66,9 @@ Defaults to "\emph{PLS-PM}".}
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
 to "\emph{diff_absolute}".}
 
-\item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
-if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. If possible, should composite/proxy correlations
+be disattenuated if the construct is modeled as a common factor?
+Defaults to \code{TRUE}.}
 
 \item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
 where \code{"value"} is a character string giving the name of the dominant indicator
@@ -69,7 +79,7 @@ Dominant indicators may be specified for a subset of the constructs.}
 be estimated? Defaults to \code{TRUE}.}
 
 \item{.id}{Character string or integer. The name or position of the column of
-\code{.data} used to split the data into groups. Ignored if \code{.object} is provided.
+\code{.data} used to split the data into groups.
 Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
@@ -78,13 +88,12 @@ If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
 \item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
-For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
-"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
+"\emph{geo_of_harmonic}". Defaults to "\emph{dist_squared_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
@@ -97,7 +106,8 @@ string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{unit}", a single number (weight) or
 a vector of fixed weights of the same length as there are indicators for the
 construct given by \code{"name"}. If only a single number is provided this is identical to
-using unit weights, as weights are rescaled.  Defaults to \code{NULL}.
+using unit weights, as weights are rescaled such that the related composite
+has unit variance.  Defaults to \code{NULL}.
 If \code{NULL} the appropriate mode according to the type
 of construct used is choosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 
@@ -109,26 +119,19 @@ Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 where \code{value} is a number between 0 and 1 and \code{"name"} a character string
 of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
-reliabilities are estimated by \code{csem()}.}
+reliabilities are estimated by \code{csem()}. Currently, only supported for
+\code{.approach_weights = "PLS-PM"}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 }
 \value{
-An object of class \code{cSEMResults} with methods for all postestimation generics:
-\itemize{
-\item{\code{assess.cSEMResults}   Asses results using common fit measures and indices.}
-\item{\code{summarize.cSEMResults}   Summarize the results.}
-\item{\code{test.cSEMResults}   Run tests.}
-\item{\code{verify.cSEMResults}   Verify admissibility (e.g., loadings larger than one).}
-}
-
-The structure and class of the resulting \code{cSEMResults} object is generally
-determined by the type of dataset(s) provided (\code{matrix}, \code{data.frame}, \code{list}
-of data)
+An object of class \code{cSEMResults} with methods for all postestimation generics.
+Depending on the type of model and data the object has a different structure.
 
 \describe{
-\item{Default}{If data is a single \code{matrix} or \code{data.frame} with no id-column,
+\item{Default}{This will be the structure for the vaste majority of applications.
+If the data is a single \code{matrix} or \code{data.frame} with no id-column,
 the result is a \code{list} with elements:
 \describe{
 \item{\code{$Estimates}}{A list containing a list of estimated quantities.}
@@ -136,7 +139,8 @@ the result is a \code{list} with elements:
 }
 The resulting object has classes \code{cSEMResults} and \code{cSEMResults_default}.
 }
-\item{Multi}{If the data provided contains an id-column to split the data by \code{G} group levels
+\item{Multi}{If the data provided is a single \code{matrix} or \code{data.frame} containing
+an id-column to split the data by \code{G} group levels
 or if a list of \code{G} datasets is provided, the resulting object is a list of \code{G}
 lists, where \code{G} is equal to the number of groups or the number of datasets
 in the list of datasets provided. Each of the \code{G} list elements are itself
@@ -149,40 +153,26 @@ The resulting object has classes \code{cSEMResults} and \code{cSEMResults_multi}
 A special output is generated if the model to estimate contains hierachical constructs
 \strong{and} the 2step (3step) approach is used to estimate the model. In this case
 the resulting object is a list containing two elements \code{First_stage} and
-\code{Second_stage}.
+\code{ Second_stage}.
 
 Each list element is itself a \code{cSEMResults_default} object. Hence its structure is identical to
 the structure described in \code{Default}.
 }
 }
 
-If \code{.resample_method = "bootstrap"} or \code{.resample_method = "jackknife"} resamples
+If \code{.resample_method = "bootstrap"} or \code{.resample_method = "jackknife"}, resamples
 are attached to each object. For objects of class \code{cSEMResults_default} the resamples are
-attached to \code{.object$Estimates$Estimates_resamples}. For objects of type
+attached to \code{.object$Estimates$Estimates_resamples}. For objects of class
 \code{cSEMResults_multi} the same is done by group. All objects containing
 these elements gain the \code{cSEMResults_resampled} class.
-
-As should be evident from the above, the core structure of the resulting object
-is by and large similiar across all cases. Practically, most users wont have to worry
-about the structure as postestimation functions have corresponding methods to
-accomodate all cases.
 }
 \description{
-The function is the central hub of the \code{cSEM}package. It acts like a
+The central hub of the \code{cSEM} package. It acts like a
 foreman by collecting all (estimation) tasks, distributing them to lower
 level package functions, and eventually recollecting all of their results.
 It is called by \code{\link[=csem]{csem()}} to manage the actual calculations.
 It may be called directly by the user, however, in most cases it will likely
-be more convenient to use \code{\link[=csem]{csem()}} or \code{\link[=cca]{cca()}} instead.
-}
-\details{
-More details here (TODO).
-}
-\examples{
-\dontrun{
-# TODO
-}
-
+be more convenient to use \code{\link[=csem]{csem()}} (or \code{\link[=cca]{cca()}}) instead.
 }
 \seealso{
 \link{csem}, \link{cca}, \link{cSEMResults}

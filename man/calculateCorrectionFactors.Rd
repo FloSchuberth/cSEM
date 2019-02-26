@@ -25,7 +25,7 @@ Only used internally.}
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
-"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
+"\emph{geo_of_harmonic}". Defaults to "\emph{dist_squared_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 }
 \value{

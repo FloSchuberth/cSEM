@@ -27,20 +27,24 @@ Defaults to "\emph{PLS-PM}".}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
-if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. If possible, should composite/proxy correlations
+be disattenuated if the construct is modeled as a common factor?
+Defaults to \code{TRUE}.}
+
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
-"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
+"\emph{geo_of_harmonic}". Defaults to "\emph{dist_squared_euclid}".
+
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 
 \item{.reliabilities}{A character vector of \code{"name" = value} pairs,
 where \code{value} is a number between 0 and 1 and \code{"name"} a character string
 of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
-reliabilities are estimated by \code{csem()}.}
+reliabilities are estimated by \code{csem()}. Currently, only supported for
+\code{.approach_weights = "PLS-PM"}.}
 }
 \description{
 (TODO)

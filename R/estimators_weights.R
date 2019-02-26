@@ -476,6 +476,7 @@ calculateWeightsGSCA <- function(
   ## Psi (N x TT)   := Matrix of all indicator values and construct scores
   
 } # END calculateWeightsGSCA
+
 #'
 #' @export
 calculateWeightsGSCAm <- function(

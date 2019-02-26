@@ -373,7 +373,7 @@ resampleData <- function(
 }
 
 #' Resample cSEMResults 
-#'
+#' 
 #' Resample a [cSEMResults] object using bootstrap or jackknife resampling. 
 #' The function is called by [csem()] if the user sets 
 #' `csem(..., .resample_method = "bootstrap")` or 

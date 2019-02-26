@@ -14,8 +14,10 @@ calculateIndicatorCor(
 may not be scaled!}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
-indicator correlation matrix. One of: "\emph{none}" in which case nothing is done or
-"\emph{mcd}" via \code{MASS::cor.rob()}. Defaults to "\emph{none}".}
+indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+"\emph{spearman}" for the spearman correlation, or
+"\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
+Defaults to "\emph{none}".}
 }
 \value{
 The (K x K) (robust) indicator correlation matrix S.
