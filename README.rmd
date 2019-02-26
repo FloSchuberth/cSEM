@@ -113,7 +113,7 @@ csem(
    .handle_inadmissibles        = "drop"
    .user_funs                   = NULL,
    .eval_plan                   = "sequential",
-   .seed                        = sample(.Random.seed, 1)
+   .seed                        = NULL
     )
 ```
 
@@ -165,7 +165,7 @@ testOMF(a) # takes roughly 30 seconds
 
 ```
 
-Inference can be done by setting first setting `.resample_method` to 
+Inference can be done by first setting `.resample_method` to 
 `"jackkinfe"` or `"bootstrap"` and subsequently using `summarize()` or `infer()`.
 
 ```{r eval=FALSE}

@@ -33,7 +33,7 @@ csem(
   .handle_inadmissibles        = c("drop", "ignore", "replace"),
   .user_funs                   = NULL,
   .eval_plan                   = c("sequential", "multiprocess"),
-  .seed                        = sample(.Random.seed, 1),
+  .seed                        = NULL,
   ...
   )
 }
@@ -131,7 +131,8 @@ vectorized (columnwise) in this case. See the examples section for details.}
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
 all available cores will be used. Defaults to "\emph{sequential}".}
 
-\item{.seed}{Integer. The random seed to use. Defaults to \code{sample(.Random.seed, 1)}}
+\item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen.}
 }
 \value{
 An object of class \code{cSEMResults} with methods for all postestimation generics.
@@ -251,7 +252,7 @@ For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 }
 
 \subsection{Inference:}{
-Inference is done via resampling. See \code{\link[=resamplecSEMREsults]{resamplecSEMREsults()}} for details.
+Inference is done via resampling. See \link{resamplecSEMResults} for details.
 }
 }
 \examples{

@@ -115,7 +115,7 @@ summarize.cSEMResults_default <- function(
       ...
     )
     
-    ## Path coefficients
+    ## Path estimates ----------------------------------------------------------
     temp   <- infer_out$Path_estimates
     t_temp <- t(x1$Path_estimates)[t(x2$Model$structural) != 0 ] / temp$sd
     
@@ -136,7 +136,7 @@ summarize.cSEMResults_default <- function(
                                   (length(ci_colnames) - 1)):length(colnames(path_estimates))] <- ci_colnames
     }
     
-    ## Loadings
+    ## Loading estimates -------------------------------------------------------
     temp   <- infer_out$Loading_estimates
     t_temp <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0 ] / temp$sd
     
@@ -153,7 +153,7 @@ summarize.cSEMResults_default <- function(
                                   (length(ci_colnames) - 1)):length(colnames(loading_estimates))] <- ci_colnames
     }
     
-    ## Weight estimates
+    ## Weight estimates --------------------------------------------------------
     temp   <- infer_out$Weight_estimates
     t_temp <- t(x1$Weight_estimates)[t(x2$Model$measurement) != 0 ] / temp$sd
     
@@ -171,7 +171,7 @@ summarize.cSEMResults_default <- function(
     }
   }
   
-  ## Modify relevant .object elements ------------------------------------------
+  ### Modify relevant .object elements -----------------------------------------
   .object$Estimates$Path_estimates    <- path_estimates
   .object$Estimates$Loading_estimates <- loading_estimates
   .object$Estimates$Weight_estimates  <- weight_estimates

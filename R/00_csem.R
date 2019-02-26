@@ -75,7 +75,7 @@
 #' }
 #' 
 #' \subsection{Inference:}{
-#' Inference is done via resampling. See [resamplecSEMREsults()] for details.
+#' Inference is done via resampling. See [resamplecSEMResults] for details.
 #' }
 #' 
 #' @usage csem(
@@ -98,7 +98,7 @@
 #'   .handle_inadmissibles        = c("drop", "ignore", "replace"),
 #'   .user_funs                   = NULL,
 #'   .eval_plan                   = c("sequential", "multiprocess"),
-#'   .seed                        = sample(.Random.seed, 1),
+#'   .seed                        = NULL,
 #'   ...
 #'   )
 #'
@@ -149,7 +149,7 @@ csem <- function(
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .user_funs             = NULL,
   .eval_plan             = c("sequential", "multiprocess"),
-  .seed                  = sample(.Random.seed, 1),
+  .seed                  = NULL,
   ...
   ) {
   ## Match arguments
@@ -283,6 +283,11 @@ csem <- function(
   ## Resample if requested:
   
   if(.resample_method != "none") {
+    
+    if(is.null(.seed)) {
+      # .seed <- sample(.Random.seed, 1)
+      .seed <- 1234
+    }
     
     out <- resamplecSEMResults(
       .object               = out,

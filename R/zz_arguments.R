@@ -167,7 +167,8 @@
 #'   resampling from a resample. Defaults to `199`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
-#' @param .seed Integer. The random seed to use. Defaults to `sample(.Random.seed, 1)`
+#' @param .seed Integer. The random seed to use. Defaults to `NULL` in which
+#'   case an arbitrary seed is choosen.
 #' @param .stage Character string. The stage the model is need for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .terms A vector of construct names to be classified.
@@ -288,7 +289,7 @@ args_default <- function(
     .S                       = NULL,
     .saturated               = FALSE,
     .second_resample         = NULL,
-    .seed                    = sample(.Random.seed, 1),
+    .seed                    = NULL,
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,

@@ -40,7 +40,8 @@ Defaults to \code{NULL}.}
 \item{.R}{Integer. The number of bootstrap replications, permutation runs
 or cross-validation repetitions to use. Defaults to \code{499}.}
 
-\item{.seed}{Integer. The random seed to use. Defaults to \code{sample(.Random.seed, 1)}}
+\item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen.}
 }
 \value{
 The structure of the output depends on the type of input and the

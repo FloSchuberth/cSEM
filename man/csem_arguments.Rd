@@ -222,7 +222,8 @@ resampling from a resample. Defaults to \code{199}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 
-\item{.seed}{Integer. The random seed to use. Defaults to \code{sample(.Random.seed, 1)}}
+\item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen.}
 
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
