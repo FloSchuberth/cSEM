@@ -1,5 +1,5 @@
 ---
-title: "cSEM-package: The GSCA and GSCA_m functions"
+title: "cSEM-package: GSCA and GSCA<sub>m</sub>"
 author: "Sebastian Gross"
 date: "`r Sys.Date()`"
 output:
@@ -12,42 +12,175 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## Introduction
+## Introduction {#introduction}
 
-This vignette provides additional information about the GSCA approach for structural equation models and its implementation in the cSEM package. The aim of the following document is to explain to the user, how to proceed when parameters shall be estimated with GSCA or GSCA_{m}. The usage of GSCA and GSCA_{m} as well as the general structure of the output are explained via an estimation example which will also provide an idea of how estimation results look like. 
+This vignette provides additional information about the GSCA approach for structural equation models and its implementation in the *cSEM*-package. The aim of the following document is to explain to the user, how to proceed when parameters shall be estimated with GSCA or GSCA<sub>m</sub>. The usage of GSCA and GSCA<sub>m</sub> as well as the general structure of the output are explained via an estimation example which will also provide an idea of how estimation results look like. 
 
-## The GSCA and GSCA_{m} approach
+## The approach of GSCA and GSCA<sub>m</sub> {#approach}
 
-The implemented routine calculates weights, as well as path coefficients and loadings of a structural equation model with the GSCA procedure. GSCA is a composite-based approach to structural equation modeling. It is in several points comparable to PLS.
-As in PLS, constructs are defined as composites, i.e., as exact linear combinations of the related indicators. The corresponding weights are estimated by minimizing a global optimization criterion which is done via some linear regressions involving latent variables (i.e. their proxies) and indicators.  
-Both GSCA approaches do not make any assumption concerning the distribution of the residuals of indicators and latent variables. That is why, estimators are finally calculated via Least Squares. Basic to GSCA and GSCA_m is that three submodels are combined to build up the overall GSCA/GSCA_m model. These are the structural model (relationships among constructs), measurement model (influence of constructs on indicators) and weighted relation model (constructs as linear combinations of indicators). For details and formula see Sections 'methods'.
+The implemented routine calculates weights, as well as path coefficients and loadings of a structural equation model with the GSCA procedure. GSCA is a composite-based approach to structural equation modeling. It is in several points comparable to PLS.  
 
-It is possible that the estimated parameters, especially loadings, are biased when using GSCA. Particularly, this is the case when indicators are observed with an error. However, GSCA_m provides a way to consistently estimate the parameters also in this situation. The term 'GSCA_m' stands for 'GSCA with measurement errors incorporated'. The basic idea of GSCA_m is to model indicators in the measurement model as a combination of common parts (arising from the constructs) and unique parts. The purpose of adding a unique part to each indicator is to account for measurement errors in the indicators. In a next step, latent variables are expressed in the weighted relation model as a linear combination of indicators but with their unique parts removed. For some formula and details see Section 'methods'.
+As in PLS, constructs are defined as composites, i.e., as exact linear combinations of the related indicators. The corresponding weights are estimated by minimizing a global optimization criterion which is done via some linear regressions involving latent variables (resp. their proxies) and the observed indicators.  
+
+Both GSCA approaches do not make any assumption concerning the distribution of the residuals of indicators and latent variables. That is why, estimators finally have to be calculated via Least Squares. Basic to GSCA and GSCA<sub>m</sub> is that three submodels are combined to build up the overall GSCA/GSCA<sub>m</sub>-model. These are the structural model (relationships among constructs), measurement model (influence of constructs on indicators expressed y loadings) and weighted relation model (constructs as linear combinations of indicators). For details and formula see Section [Methods](#methods).
+
+It is possible that the estimated parameters, especially loadings, are biased when using GSCA. In particular, this is the case when indicators are observed with an error. However, GSCA<sub>m</sub> provides a way to estimate the parameters also in this situation consistently. The term "GSCA<sub>m</sub>" stands for "GSCA with measurement errors incorporated". The main idea of GSCA<sub>m</sub> is to model indicators in the measurement model as a combination of common parts (arising from the constructs) and unique parts. The purpose of adding a unique part to each indicator is to account for measurement errors in the indicators. In a next step, latent variables are expressed in the weighted relation model as a linear combination of indicators but with their unique parts removed. For some formula and details see Section [Methods](#methods).
+For the estimation with GSCA using the functions of the cSEM-package see Sections [Implementation](#usage) and [Examples](#examples).
+
+## Implementation and usage {#usage}
+
+Suppose that a structural model 'model' is specified in Lavaan-syntax and that data are given in form of an observation matrix 'data'.
+To estimate parameters now in this specified structural model by means of GSCA (or GSCA<sub>m</sub>) for the given data, the user has to call the function *csem()*:
+
+```{r eval=FALSE}
+csem(.data = data, .model = model, .approach_weights = "GSCA", .disattenuate = )
+```
+
+Although the *csem*-function has many more input arguments, it suffices in the case of GSCA in a first step to specify the input arguments *'.model'* and *'.data'* and to set the argument *'.approach_weights'* equal to *"GSCA"*. The argument *'.disattenuate'* indicates which of the two GSCA-approaches should be used. Its default value is *TRUE* resulting in GSCA<sub>m</sub> as estimation method whereas a value of *FALSE* leads to "standard" GSCA. The handling of the *'.disattenuate'*-argument is explained more detailly in the following paragraphs. By this, the user gets a concrete idea in which cases this argument has to be specified and in which it can be dropped. 
+
+With "GSCA" as chosen approach, estimation is automatically done via GSCA<sub>m</sub> when calling the *csem*-function. This works out fine as long as all constructs are of common factor type (i.e. the construct has an influence on its indicators and vice versa). In this case, GSCA<sub>m</sub> can be applied and the argument *'.disattenuate'* can be dropped. Although estimators will be biased, the user might want to estimate parameters in this special case with "standard" GSCA. To this end, the input argument *'.disattenuate'* has to be set to *FALSE*.
+
+However, if there is at least one construct which is not a common factor, parameters cannot be estimated by means of GSCA<sub>m</sub>, but only with "standard" GSCA. The reason is, e.g. in the case of all constructs being a pure composite, that the transposed measurement matrix has only zero entries in this situation. Thus, involving this matrix in the estimation procedure, GSCA<sub>m</sub> would lead to weight estimators equal to 0. In the same way, in the case of a mixed model, that is to say when some constructs are of common factor type and some are pure composites, estimation with GSCA<sub>m</sub> causes problems. Therefore, in these situations, the user imperatively has to use GSCA and GSCA<sub>m</sub> is no option. This necessitates an input argument of *'.disattenuate'* equal to *FALSE*. 
+
+Setting the argument *'.disattenuate'* equal to *TRUE* always leads to GSCA<sub>m</sub> as estimation method. Furthermore, dropping the argument also leads to GSCA<sub>m</sub> since its default value is *TRUE*. In these situations, estimation with GSCA<sub>m</sub> fails in case of a model where at least one construct is not a common factor. Then, the user gets an error message (see also Section [Examples](#examples)):
+
+```{r, eval=FALSE}
+Error: The following error occured in the `calculateWeightsGSCAm()` function:
+GSCAm only applicable to pure common factor models. Use `.disattenuate = FALSE`. 
+```
 
 
-Hier GSCA_m beschreiben: Wann wird es aufgerufen? Ähnlichkeit betonen.
 
-#' Parameters are automatically estimated via GSCA_m when calling [csem()]. However, 
-#' if there is no construct which is a common factor, parameters have to be estimated 
-#' with GSCA. The reason is that estimation via GSCA_m involves the transposed 
-#' measurement matrix which has no non-zero entry if all constructs are only composites 
-#' leading to weight estimators equal to 0. Thus, in this special case, the user 
-#' imperatively has to use GSCA and GSCA_m is no option.
-#' Otherwise, i.e., if there is at least one construct which is a common factor,
-#' calling [csem()] will lead to an estimation via GSCA_m except in the case that
-#' the user explicitly sets the argument `.disattenuate` to `FALSE`. Then, estimation
-#' is done by 'standard' GSCA.
+## Examples {#examples}
+
+### Example 1: Pure common factor model and GSCA<sub>m</sub>
+
+In the following, a first application example of the *csem*-function for the estimation with GSCA is presented. Data are given in form of the dataset "satisfaction" that comes with the *cSEM*-package.
+This dataset consists of 250 observations for 27 indicators. These indicators are somehow related to 6 constructs. Before estimation can be done, a model has to be specified for the relationships among these variables. This model is a result of the user's ideas, hypotheses and theories about the original subject, which is customer satisfaction in the example. The model specification has to be done in lavaan-Syntax. In the structural model, the tilde "~" is the known regression operator. However, in the measurement model, the symbol "<~" is used for pure composites whereas the symbol "=~" stands for common factors.
+Note that the following specification is just one possible way and does not reflect any common theory about customer satisfaction but is used only for illustration purposes. 
+Furthermore, *'.Random.seed'* is set to 2019. Even though this argument is only needed for the bootstrapping algorithm implemented in the *cSEM*-package, it is necessary to set its value since otherwise calculation and estimation would not work in the scope of this vignette. Hence, it is not necessary to assign a value to the argument  *'.Random.seed'* when working in a usual RStudio session - this will be done automatically. 
+
+```{r message=FALSE}
+.Random.seed <- 2019
+
+library(cSEM)
+data(satisfaction)
+
+model <- "
+# Structural model
+QUAL ~ EXPE
+EXPE ~ IMAG
+SAT  ~ IMAG + EXPE + QUAL + VAL
+LOY  ~ IMAG + SAT
+VAL  ~ EXPE + QUAL
+
+# Measurement model (pure common factor)
+
+EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5
+IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5
+LOY  =~ loy1  + loy2  + loy3  + loy4
+QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+SAT  =~ sat1  + sat2  + sat3  + sat4
+VAL  =~ val1  + val2  + val3  + val4
+"
+```
+
+Having specified the model to be estimated and the data, the user can now call the *csem*-function:
+
+```{r warning=FALSE}
+results1 <- csem(satisfaction, model, .approach_weights = "GSCA", .disattenuate = "TRUE")
+```
+
+Note that in this case, the user could also drop the input argument *'.disattenuate'* because estimation is here done with GSCA<sub>m</sub> as it should. Since it is a pure common factor model, no error message is produced. The estimation results are stored in the object *"results1"*:
+
+```{r}
+results1
+```
+
+As indicated, the object *"results1"* is a list of class *cSEMResults* with the list elements *Estimates* and *Information*. Each sublist contains several elements which can be accessed separately:
+
+1. Estimates
++ Path_estimates
++ Loading_estimates
++ Weight_estimates
++ Inner_weight_estimates
++ Construct_scores
++ Indicator_VCV
++ Proxy_VCV
++ Construct_VCV
++ Construct_reliabilities
++ R2
++ R2adj
++ VIF
+
+2. Information
++ Data
++ Model
++ Arguments
++ Type_of_indicator_correlation
++ Weight_info
+
+Depending on the research interests that the user has, he/she can extract those information and estimators that are relevant for him/her.  
+If the user just wants a compact summary of the parameter estimators and of the most important information concerning the estimation, calling the *'summarize'*-function of the *cSEM*-package will provide this.
+
+```{r}
+summarize(results1)
+```
+
+Hier noch: Interpretation? Was kann man nun mit den Ergebnisse machen?
 
 
-Dann Ausgangspunkt: Daten, Modell und Ansatz um Gewichte zu schätzen...
-dazu weitere Input Argumente, deren Bedeutung später klar wird. Hier allgemeiner Befehl, d.h. der wird nicht ausgeführt.
+### Example 2: Pure common factor model and GSCA
 
-## example
 
-Modell in lavaan Syntax, Datensatz
-Dann Beispiel durchrechnen: Ergebnisse, Output, Interpretation
 
-## methods
+### Example 3: At least one composite and GSCA<sub>m</sub>
+
+
+
+```{r message=FALSE}
+model2 <- "
+# Structural model
+QUAL ~ EXPE
+EXPE ~ IMAG
+SAT  ~ IMAG + EXPE + QUAL + VAL
+LOY  ~ IMAG + SAT
+VAL  ~ EXPE + QUAL
+
+# Measurement model (pure common factor)
+
+EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
+LOY  =~ loy1  + loy2  + loy3  + loy4
+QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+SAT  <~ sat1  + sat2  + sat3  + sat4
+VAL  <~ val1  + val2  + val3  + val4
+"
+```
+
+Calling the *csem*-function will produce the error already mentioned in the Section [Approach](#approach):
+
+```{r warning=FALSE}
+results3 <- csem(satisfaction, model2, .approach_weights = "GSCA", .disattenuate = "TRUE")
+```
+
+### Example 4: At least one composite and GSCA
+
+In the last example, the same model as before is considered: common factor type constructs are combined with composite type constructs. However, estimation is now done with "standard" GSCA, i.e., *'.disattenuate'* is set to *FALSE*. Therefore, calling the *csem*-function with these input arguments does not produce an error. 
+
+```{r warning=FALSE}
+results4 <- csem(satisfaction, model2, .approach_weights = "GSCA", .disattenuate = "FALSE")
+```
+
+This leads to the following estimation results:
+
+```{r}
+summarize(results4)
+```
+
+Due to the fact that there are some constructs that are of composite type, estimation must happen with GSCA. This might result in biased estimators.
+
+## Methods {#methods}
 
 hier kurz die Idee hinter der GSCA Methode vorstellen, die Gleichungen aus dem GSCA_m Paper und das Optimierungskriterium. Schätzungen sind eigentlich nur Regressionen... Verweis auf die Paper
 
@@ -69,27 +202,3 @@ The fact that a single optimization criterion is minimized within GSCA allows th
 description of measures of fit... 
 
 hier dann: Aufruf der Funktionen inkl. Befehl
-
-## Happy Knitting!
-
-Feel free to use the `knitr` infrastructure with dozens of tunable options in
-your package vignette.
-
-```{r fig.width=6, fig.height=6, fig.align='center'}
-set.seed(123)
-n <- 1000
-x1  <- matrix(rnorm(n), ncol = 2)
-x2  <- matrix(rnorm(n, mean = 3, sd = 1.5), ncol = 2)
-x   <- rbind(x1, x2)
-head(x)
-smoothScatter(x, xlab = "x1", ylab = "x2")
-```
-
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$,
-footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(iris, 10))
-```
-
