@@ -6,9 +6,8 @@
 #' @usage parseModel(.model)
 #'
 #' @inheritParams csem_arguments
-#
-#' @return A [cSEMModel] list that may be passed to any function requiring
-#'   `.csem_model` as a mandatory argument.
+#' 
+#' @inherit csem_model return
 #'
 #' @examples
 #' model <- '

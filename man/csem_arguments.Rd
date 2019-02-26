@@ -17,20 +17,23 @@ second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}"
 Defaults to "\emph{3stage}".}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
-indicator correlation matrix. One of: "\emph{none}" in which case nothing is done or
-"\emph{mcd}" via \code{MASS::cor.rob()}. Defaults to "\emph{none}".}
+indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+"\emph{spearman}" for the spearman correlation, or
+"\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
+Defaults to "\emph{none}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
+structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{fixed}", or "\emph{unit}".
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{unit}", "\emph{bartlett}",
+or "\emph{regression}".
 Defaults to "\emph{PLS-PM}".}
 
 \item{.args_used}{A list of function argument names to \code{fun()} whose value
@@ -63,15 +66,17 @@ to "\emph{diff_absolute}".}
 \code{.cv_folds} to \code{N} (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to \code{10}.}
 
-\item{.data}{A \code{data.frame}, a \code{matrix} or a list containing data of either type.
-Possible column types or classes of the data provided are:
-logical, numeric (double or integer), factor (ordered and unordered)
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized data.
+Possible column types or classes of the data provided are: logical,
+numeric (double or integer), factor (ordered and unordered)
 or a mix of several types. The data may also include
 \emph{one} character column whose column name must be given to \code{.id}.
-This column is assumed to contain group identifiers used to split the data into groups.}
+This column is assumed to contain group identifiers used to split
+the data into groups.}
 
-\item{.disattenuate}{Logical. If possible, should composite correlations be disattenuated
-if the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. If possible, should composite/proxy correlations
+be disattenuated if the construct is modeled as a common factor?
+Defaults to \code{TRUE}.}
 
 \item{.dist}{Character string. The distribution to use for the critical value.
 One of \emph{"t"} for Student's t-distribution or \emph{"z"} for the standard normal distribution.
@@ -114,7 +119,7 @@ resampling continues until there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
 \item{.id}{Character string or integer. The name or position of the column of
-\code{.data} used to split the data into groups. Ignored if \code{.object} is provided.
+\code{.data} used to split the data into groups.
 Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
@@ -137,7 +142,6 @@ or a \link{cSEMModel}-list.}
 Only used internally.}
 
 \item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
-For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -157,7 +161,7 @@ requires the \code{doSNOW} and the \code{parallel} package to be installed.}
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
-"\emph{geo_of_harmonic}". Defaults to "\emph{dist_euclid}".
+"\emph{geo_of_harmonic}". Defaults to "\emph{dist_squared_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
@@ -170,7 +174,8 @@ string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{unit}", a single number (weight) or
 a vector of fixed weights of the same length as there are indicators for the
 construct given by \code{"name"}. If only a single number is provided this is identical to
-using unit weights, as weights are rescaled.  Defaults to \code{NULL}.
+using unit weights, as weights are rescaled such that the related composite
+has unit variance.  Defaults to \code{NULL}.
 If \code{NULL} the appropriate mode according to the type
 of construct used is choosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 
@@ -192,7 +197,8 @@ Q^2 is also called the reliability coefficient.}
 where \code{value} is a number between 0 and 1 and \code{"name"} a character string
 of the corresponding construct name, or \code{NULL}. Reliabilities
 may be given for a subset of the constructs. Defaults to \code{NULL} in which case
-reliabilities are estimated by \code{csem()}.}
+reliabilities are estimated by \code{csem()}. Currently, only supported for
+\code{.approach_weights = "PLS-PM"}.}
 
 \item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
@@ -216,7 +222,8 @@ resampling from a resample. Defaults to \code{199}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 
-\item{.seed}{Integer. The random seed to use. Defaults to \code{sample(.Random.seed, 1)}}
+\item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen.}
 
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}

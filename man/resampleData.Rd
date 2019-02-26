@@ -34,13 +34,14 @@ This column is assumed to contain group identifiers used to split the data into 
 If \code{.data} is provided, \code{.object} is ignored. Defaults to \code{NULL}.}
 
 \item{.id}{Character string or integer. The name or position of the column of
-\code{.data} used to split the data into groups. Ignored if \code{.object} is provided.
+\code{.data} used to split the data into groups.
 Defaults to \code{NULL}.}
 
 \item{.R}{Integer. The number of bootstrap replications, permutation runs
 or cross-validation repetitions to use. Defaults to \code{499}.}
 
-\item{.seed}{Integer. The random seed to use. Defaults to \code{sample(.Random.seed, 1)}}
+\item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen.}
 }
 \value{
 The structure of the output depends on the type of input and the

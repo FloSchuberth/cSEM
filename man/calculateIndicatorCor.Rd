@@ -14,8 +14,10 @@ calculateIndicatorCor(
 may not be scaled!}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
-indicator correlation matrix. One of: "\emph{none}" in which case nothing is done or
-"\emph{mcd}" via \code{MASS::cor.rob()}. Defaults to "\emph{none}".}
+indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+"\emph{spearman}" for the spearman correlation, or
+"\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
+Defaults to "\emph{none}".}
 }
 \value{
 The (K x K) (robust) indicator correlation matrix S.
@@ -24,7 +26,7 @@ The (K x K) (robust) indicator correlation matrix S.
 Calculate the indicator correlation matrix using conventional or robust methods.
 }
 \details{
-Id \code{"none"} the method depends on the type of column of \code{.X_cleaned}:
+If \code{"none"} the method depends on the type of column of \code{.X_cleaned}:
 \describe{
 \item{\code{Numeric-numeric}}{Bravais-Pearson product-moment correlation}
 \item{\code{Numeric-factor}}{Polyserial correlation}
@@ -32,6 +34,7 @@ Id \code{"none"} the method depends on the type of column of \code{.X_cleaned}:
 }
 Note: logical input is treated as a 0-1 factor variable.
 
-If \code{"mcd" (= minimum covariance determinant) a robust covariance is estimated via }MASS::cov.rob()\code{. See }?MASS::cov.rob()` for details.
+If  \code{"mcd"} (= minimum covariance determinant) a robust covariance is estimated
+via \code{MASS::cov.rob()}. See \code{?MASS::cov.rob()} for details.
 }
 \keyword{internal}

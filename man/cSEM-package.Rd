@@ -4,30 +4,17 @@
 \name{cSEM-package}
 \alias{cSEM}
 \alias{cSEM-package}
-\title{cSEM: A package for composite based structural equation modeling}
+\title{cSEM: A package for composite-based structural equation modeling}
 \description{
-The package provides functions to analyze structural equation models using composite based approaches.
+Estimate, analyse, test, and study linear, nonlinear, hierachical and
+multigroup structural equation models using composite-based approaches and procedures including estimation
+techniques such as partial least squares path modelling (PLS) and its derivatives
+(PLSc, ordPLSc, robustPLSc), generalized structured component analysis (GSCA),
+generalized structured component analyis with uniqueness terms (GSCAm),
+generalized canonical correlation analysis (GCCA) unit weights (sum score) and
+fixed weights, as well as several tests and typical postestimation
+procedures (e.g., assess the model fit, compute direct, indirect and total effects).
 }
-\section{General}{
-
-Some comments on the package structure.
-}
-
-\section{The cca function}{
-
-Some text on the cca function
-}
-
-\section{The csem function}{
-
-Some text on the csem function
-}
-
-\section{The foreman function}{
-
-Some text on the workhorse function
-}
-
 \author{
 \strong{Maintainer}: Manuel Rademaker \email{manuel.rademaker@uni-wuerzburg.de} (0000-0002-8902-3561)
 

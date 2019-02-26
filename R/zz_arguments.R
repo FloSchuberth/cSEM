@@ -17,13 +17,15 @@
 #'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
 #'   Defaults to "*3stage*".
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
-#'   indicator correlation matrix. One of: "*none*" in which case nothing is done or
-#'   "*mcd*" via `MASS::cor.rob()`. Defaults to "*none*".
+#'   indicator correlation matrix. One of: "*none*" in which case nothing is done,
+#'   "*spearman*" for the spearman correlation, or
+#'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
+#'   Defaults to "*none*".
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
 #' @param .approach_paths Character string. Approach used to estimate the
-#'   structural coefficients. One of: "*OLS*" or "*2SLS*".
+#'   structural coefficients. One of: "*OLS*" or "*2SLS*" (not yet implemented).
 #'   Defaults to "*OLS*".
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
@@ -51,14 +53,16 @@
 #' @param .cv_folds Integer. The number of cross-validation folds to use. Setting
 #'   `.cv_folds` to `N` (the number of observations) produces 
 #'   leave-one-out cross-validation samples. Defaults to `10`.
-#' @param .data A `data.frame`, a `matrix` or a list containing data of either type. 
-#'   Possible column types or classes of the data provided are: 
-#'   logical, numeric (double or integer), factor (ordered and unordered) 
+#' @param .data A `data.frame` or a `matrix` of standardized or unstandarized data. 
+#'   Possible column types or classes of the data provided are: logical, 
+#'   numeric (double or integer), factor (ordered and unordered) 
 #'   or a mix of several types. The data may also include
 #'   *one* character column whose column name must be given to `.id`. 
-#'   This column is assumed to contain group identifiers used to split the data into groups.
-#' @param .disattenuate Logical. If possible, should composite correlations be disattenuated
-#'   if the construct is modeled as a common factor? Defaults to `TRUE`.
+#'   This column is assumed to contain group identifiers used to split 
+#'   the data into groups.
+#' @param .disattenuate Logical. If possible, should composite/proxy correlations 
+#'   be disattenuated if the construct is modeled as a common factor? 
+#'   Defaults to `TRUE`.
 #' @param .dist Character string. The distribution to use for the critical value.
 #'  One of *"t"* for Student's t-distribution or *"z"* for the standard normal distribution.
 #'  Defaults to *"z"*.
@@ -89,7 +93,7 @@
 #'   resampling continues until there are exactly .R admissible solutions. 
 #'   Defaults to "*drop*".
 #' @param .id Character string or integer. The name or position of the column of 
-#'   `.data` used to split the data into groups. Ignored if `.object` is provided.
+#'   `.data` used to split the data into groups.
 #'    Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
@@ -103,8 +107,7 @@
 #'   or a [cSEMModel]-list.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
-#' @param .normality Logical. Should joint normality be assumed in the nonlinear model?
-#'  For details see: \insertCite{Dijkstra2014;textual}{cSEM}. 
+#' @param .normality Logical. Should joint normality be assumed in the nonlinear model? 
 #'  Defaults to `TRUE`. Ignored if the model is linear.
 #' @param .object An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .only_common_factors Logical. Should only common factors be included? 
@@ -118,7 +121,7 @@
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
-#'   "*geo_of_harmonic*". Defaults to "*dist_euclid*". 
+#'   "*geo_of_harmonic*". Defaults to "*dist_squared_euclid*". 
 #'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS-PM.
 #' @param .PLS_ignore_structural_model Logical. Should the structural model be ignored
 #'   when calculating the inner weights of the PLS-PM algorithm? Defaults to `FALSE`.
@@ -129,7 +132,8 @@
 #'   Possible choices for `"mode"` are: "*modeA*", "*modeB*", "*unit*", a single number (weight) or 
 #'   a vector of fixed weights of the same length as there are indicators for the
 #'   construct given by `"name"`. If only a single number is provided this is identical to
-#'   using unit weights, as weights are rescaled.  Defaults to `NULL`.
+#'   using unit weights, as weights are rescaled such that the related composite 
+#'   has unit variance.  Defaults to `NULL`.
 #'   If `NULL` the appropriate mode according to the type
 #'   of construct used is choosen. Ignored if `.approach_weight` is not PLS-PM.  
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
@@ -146,7 +150,8 @@
 #'   where `value` is a number between 0 and 1 and `"name"` a character string
 #'   of the corresponding construct name, or `NULL`. Reliabilities
 #'   may be given for a subset of the constructs. Defaults to `NULL` in which case
-#'   reliabilities are estimated by `csem()`.
+#'   reliabilities are estimated by `csem()`. Currently, only supported for
+#'   `.approach_weights = "PLS-PM"`.
 #' @param .resample_method Character string. The resampling method to use. One of: 
 #'  "*bootstrap*" or "*jackknife*". Defaults to "*bootstrap*".
 #' @param .resample_method2 Character string. The resampling method to use when resampling
@@ -162,7 +167,8 @@
 #'   resampling from a resample. Defaults to `199`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
-#' @param .seed Integer. The random seed to use. Defaults to `sample(.Random.seed, 1)`
+#' @param .seed Integer. The random seed to use. Defaults to `NULL` in which
+#'   case an arbitrary seed is choosen.
 #' @param .stage Character string. The stage the model is need for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .terms A vector of construct names to be classified.
@@ -283,7 +289,7 @@ args_default <- function(
     .S                       = NULL,
     .saturated               = FALSE,
     .second_resample         = NULL,
-    .seed                    = sample(.Random.seed, 1),
+    .seed                    = NULL,
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,
