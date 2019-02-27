@@ -5,6 +5,7 @@
 #' More details here. (TODO)
 #'
 #' @usage calculateWeightsPLS(
+#'   .data                        = args_default()$.data,
 #'   .S                           = args_default()$.S,
 #'   .csem_model                  = args_default()$.csem_model,
 #'   .conv_criterion              = args_default()$.conv_criterion,
@@ -21,7 +22,7 @@
 #' \describe{
 #'   \item{`$W`}{A (J x K) matrix of estimated weights.}
 #'   \item{`$E`}{A (J x J) matrix of inner weights.}
-#'   \item{`$Modes`}{A named vector of Modes used for the outer estimation.}
+#'   \item{`$Modes`}{A named vector of modes used for the outer estimation.}
 #'   \item{`$Conv_status`}{The convergence status. `TRUE` if the algorithm has converged 
 #'     and `FASLE` otherwise. If one-step weights are used via `.iter_max = 1` 
 #'     or a non-iterative procedure was used, the convergence status is set to `NULL`.}
@@ -31,6 +32,7 @@
 #'
 
 calculateWeightsPLS <- function(
+  .data                        = args_default()$.data,
   .S                           = args_default()$.S,
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
@@ -47,9 +49,9 @@ calculateWeightsPLS <- function(
   
   if(!is.null(.PLS_modes)) {
     
-    # Error if other than "modeA", "modeB", "unit", a number, or a vector
+    # Error if other than "modeA", "modeB", "unit", "modeBNNLS", a number, or a vector
     # of numbers of the same length as there are indicators for block j
-    modes_check <- sapply(.PLS_modes, function(x) all(x %in% c("modeA", "modeB", "unit") | is.numeric(x)))
+    modes_check <- sapply(.PLS_modes, function(x) all(x %in% c("modeA", "modeB", "unit", "modeBNNLS") | is.numeric(x)))
     if(!all(modes_check)) {
       stop2("The following error occured in the `calculateWeightsPLS()` function:\n",
             paste0("`", .PLS_modes[!modes_check], "`", collapse = " and "),
@@ -64,7 +66,7 @@ calculateWeightsPLS <- function(
                "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.")
     }
     
-    # If only "modeA", "modeB" or "unit" is provided set all of the modes to that mode.
+    # If only "modeA", "modeB", "modeBNNLS", or "unit" is provided set all of the modes to that mode.
     if(length(names(.PLS_modes)) == 0) {
       if(length(.PLS_modes) == 1) {
         modes <- as.list(rep(.PLS_modes, length(.csem_model$construct_type)))
@@ -104,6 +106,7 @@ calculateWeightsPLS <- function(
     # Outer estimation
 
     W <- calculateOuterWeightsPLS(
+      .data     = .data,
       .S        = .S,
       .W        = W_iter,
       .E        = E,

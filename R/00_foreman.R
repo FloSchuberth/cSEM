@@ -93,6 +93,8 @@ foreman <- function(
       # Arguments passed on to calculateInnerWeightsPLS
       .PLS_ignore_structural_model  = .PLS_ignore_structural_model,
       .PLS_weight_scheme_inner      = .PLS_weight_scheme_inner,
+      # Arguments passed on to calcuateOuterWeightsPLS 
+      .data                     = X,
       # Arguments passed to checkConvergence
       .conv_criterion           = .conv_criterion
     )
