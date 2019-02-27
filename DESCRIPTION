@@ -36,6 +36,7 @@ Imports: alabama,
     Matrix,
     matrixcalc,
     matrixStats,
+    nnls
     polycor,
     psych,
     purrr,
