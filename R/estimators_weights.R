@@ -5,6 +5,7 @@
 #' More details here. (TODO)
 #'
 #' @usage calculateWeightsPLS(
+#'   .data                        = args_default()$.data,
 #'   .S                           = args_default()$.S,
 #'   .csem_model                  = args_default()$.csem_model,
 #'   .conv_criterion              = args_default()$.conv_criterion,
@@ -21,7 +22,7 @@
 #' \describe{
 #'   \item{`$W`}{A (J x K) matrix of estimated weights.}
 #'   \item{`$E`}{A (J x J) matrix of inner weights.}
-#'   \item{`$Modes`}{A named vector of Modes used for the outer estimation.}
+#'   \item{`$Modes`}{A named vector of modes used for the outer estimation.}
 #'   \item{`$Conv_status`}{The convergence status. `TRUE` if the algorithm has converged 
 #'     and `FASLE` otherwise. If one-step weights are used via `.iter_max = 1` 
 #'     or a non-iterative procedure was used, the convergence status is set to `NULL`.}
@@ -31,6 +32,7 @@
 #'
 
 calculateWeightsPLS <- function(
+  .data                        = args_default()$.data,
   .S                           = args_default()$.S,
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
@@ -38,8 +40,7 @@ calculateWeightsPLS <- function(
   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
-  .tolerance                   = args_default()$.tolerance,
-  .data                        = args_default()$.data
+  .tolerance                   = args_default()$.tolerance
 ) {
 
   ### Preparation ==============================================================
@@ -105,11 +106,11 @@ calculateWeightsPLS <- function(
     # Outer estimation
 
     W <- calculateOuterWeightsPLS(
+      .data     = .data,
       .S        = .S,
       .W        = W_iter,
       .E        = E,
-      .modes    = modes, 
-      .data     = .data
+      .modes    = modes
     )
 
     # Scale weights

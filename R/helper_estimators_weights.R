@@ -119,11 +119,11 @@ calculateInnerWeightsPLS <- function(
 #' Calculates outer weights using Mode A, Mode B, Unit or fixed weights.
 #'
 #' @usage calculateOuterWeightsPLS(
+#'    .data   = args_default()$.data  
 #'    .S      = args_default()$.S,
 #'    .W      = args_default()$.W,
 #'    .E      = args_default()$.E,
-#'    .modes  = args_default()$.modes,
-#'    .data   = args_default()$.data  
+#'    .modes  = args_default()$.modes
 #'    )
 #'
 #' @inheritParams csem_arguments
@@ -132,18 +132,19 @@ calculateInnerWeightsPLS <- function(
 #' @keywords internal
 
 calculateOuterWeightsPLS <- function(
+  .data   = args_default()$.data,
   .S      = args_default()$.S,
   .W      = args_default()$.W,
   .E      = args_default()$.E,
-  .modes  = args_default()$.modes,
-  .data   = args_default()$.data  
+  .modes  = args_default()$.modes
 ) {
   # Covariance/Correlation matrix between each proxy and all indicators (not
   # only the related ones). Note: Cov(H, X) = WS, since H = XW'.
   W <- .W
   proxy_indicator_cor <- .E %*% W %*% .S
   
-  # scale the inner proxy, inner weights are usually scaled that the inner proxies are standardized
+  # scale the inner proxy, inner weights are usually scaled that the inner
+  # proxies are standardized
   inner_proxy <- scale(.data%*%t(W)%*%t(.E))
   colnames(inner_proxy)=rownames(W)
   
@@ -170,8 +171,9 @@ calculateOuterWeightsPLS <- function(
       W[block, indicators] <- solve(.S[indicators, indicators]) %*% proxy_indicator_cor[block, indicators]
       
     } else if(.modes[block] == "modeBNNLS"){
-      # .data is standardized, i.e., mean 0 and unit variance, inner proxy is also standardized (standardization of the inner proxy has no effect)
-      temp <- nnls::nnls(A = .data[,indicators,drop=FALSE],b = inner_proxy[,block])
+      # .data is standardized, i.e., mean 0 and unit variance, inner proxy is also 
+      #  standardized (standardization of the inner proxy has no effect)
+      temp <- nnls::nnls(A = .data[,indicators,drop=FALSE], b = inner_proxy[,block])
       W[block, indicators] <- temp$x
     }
     # If .modes[block] == "unit" or a single value has been given, nothing needs
