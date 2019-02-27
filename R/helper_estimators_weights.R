@@ -145,8 +145,8 @@ calculateOuterWeightsPLS <- function(
   
   # scale the inner proxy, inner weights are usually scaled that the inner
   # proxies are standardized
-  inner_proxy <- scale(.data%*%t(W)%*%t(.E))
-  colnames(inner_proxy)=rownames(W)
+  inner_proxy <- scale(.data %*% t(W) %*% t(.E))
+  colnames(inner_proxy) = rownames(W)
   
   for(i in 1:nrow(W)) {
     block      <- rownames(W[i, , drop = FALSE])
