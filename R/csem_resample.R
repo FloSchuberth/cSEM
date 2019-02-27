@@ -289,6 +289,11 @@ resampleData <- function(
     }
   }
   
+  ## Set seed if not given
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
+  }
+  
   ## Choose resampling method
   out <- switch (.resample_method,
     "jackknife"   = {
@@ -573,6 +578,11 @@ resamplecSEMResults <- function(
       "Estimation based on the original data has produced inadmissible results.\n", 
       "This may be a sign that something is wrong.",
       " Resampling will continue but may not produce reliable results.")
+  }
+  
+  ## Set seed if not given
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
   }
   
   UseMethod("resamplecSEMResults")

@@ -52,7 +52,7 @@
 #' modeled as a common factor!
 #' }
 #'
-#' \subsection{Non linear models:}{
+#' \subsection{Nonlinear models:}{
 #' If the model is nonlinear `csem()` estimates a polynomial structural equation model
 #' using a non-iterative method of moments approach described in
 #' \insertCite{Dijkstra2014}{cSEM}. Non linear terms include interactions and
