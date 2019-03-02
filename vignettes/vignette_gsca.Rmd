@@ -143,6 +143,7 @@ Furthermore, the loading is the correlation between an indicator and its constru
 ```{r}
 results1$Estimates$Loading_estimates["EXPE", "expe1"]
 ```
+
 This result shows, that the correlation between "EXPE" and its first indicator "expe1" is `r results1$Estimates$Loading_estimates["EXPE", "expe1"]`.
 
 Finally, squared loadings and squared path coefficients are squared multiple correlations of the variables connected by the related unsquared parameters. 
@@ -165,7 +166,7 @@ results2$Estimates$Path_estimates["EXPE","IMAG"]
 results2$Estimates$Loading_estimates["EXPE", "expe1"]
 ```
 
-The interpretation of the estimators is the same as in the case of GSCA<sub>m</sub>. Comparing these values with those calculated in [Example1](#example1), the bias in estimators when using GSCA becomes obvious. 
+The interpretation of the estimators is the same as in the case of GSCA<sub>m</sub> (see [Example1](#example1)). But comparing these values with those calculated before, the bias in estimators when using GSCA becomes obvious. Thus, when interpreting these values the user should keep in mind that the estimators might be biased. 
 
 
 ### Example 3: At least one composite and GSCA<sub>m</sub> {#example3}
@@ -206,6 +207,7 @@ GSCAm only applicable to pure common factor models. Use `.disattenuate = FALSE`.
 
 Since GSCA<sub>m</sub> is not an option for those models, parameter estimates have to be determined using "standard" GSCA (see [Example 4](#example4)).
 
+
 ### Example 4: At least one composite and GSCA {#example4}
 
 In the last example, the same model as before is considered: common factor type constructs are combined with composite type constructs. However, estimation is now done with "standard" GSCA, i.e., *'.disattenuate'* is set to *FALSE*. Therefore, calling the *csem*-function with these input arguments does not produce an error. 
@@ -221,6 +223,7 @@ summarize(results4)
 ```
 
 Due to the fact that there are some constructs that are of composite type, estimation must happen with GSCA. This might result in biased estimators (as in [Example2](#example2) for the model where all constructs are of common factor type). However, the interpretation of estimated coefficients is done in the same way as outlined in [Example1](#example1) keeping in mind that estimators might be biased.
+
 
 ## Methods {#methods}
 
