@@ -53,7 +53,7 @@ GSCAm only applicable to pure common factor models. Use `.disattenuate = FALSE`.
 
 ## Examples {#examples}
 
-### Example 1: Pure common factor model and GSCA<sub>m</sub>
+### Example 1: Pure common factor model and GSCA<sub>m</sub> {#example1}
 
 In the following, a first application example of the *csem*-function for the estimation with GSCA is presented. Data are given in form of the dataset "satisfaction" that comes with the *cSEM*-package.
 This dataset consists of 250 observations for 27 indicators. These indicators are somehow related to 6 constructs. Before estimation can be done, a model has to be specified for the relationships among these variables. This model is a result of the user's ideas, hypotheses and theories about the original subject, which is customer satisfaction in the example. The model specification has to be done in lavaan-Syntax. In the structural model, the tilde "~" is the known regression operator. However, in the measurement model, the symbol "<~" is used for pure composites whereas the symbol "=~" stands for common factors.
@@ -124,16 +124,54 @@ If the user just wants a compact summary of the parameter estimators and of the 
 summarize(results1)
 ```
 
-Hier noch: Interpretation? Was kann man nun mit den Ergebnisse machen?
+Having carried out the estimation of all parameters, it is now question to interpret the results. 
+The influence of (exogenous) constructs on (endogenous) constructs is described by the structural model and expressed by the estimated path coefficients:
+
+```{r}
+results1$Estimates$Path_estimates
+```
+
+The way estimated loadings and weights are provided is the same: The user is always given a matrix which consists of the variables involved in the respective submodel of GSCA<sub>m</sub> (resp. GSCA). For the path estimates, the columns of the output matrix stand for the constructs that exert an influence and the rows for those constructs that are influenced.
+
+For example, in the considered dataset the user gets for the path coefficient "IMAG" on "EXPE" an estimated value of:  
+```{r}
+results1$Estimates$Path_estimates["EXPE","IMAG"]
+```
+
+This value describes the influence of the construct "Consumers image of the enterprise" on the construct "Consumer expectation". As data are standardized, also parameter estimates are standardized. Therefore, they measure the change of a variable in standard deviations. This has to be taken into account when interpreting the results. Thus, an increase of "IMAG" by one standard deviation leads to an increase of "EXPE" by `r results1$Estimates$Path_estimates["EXPE","IMAG"]` standard deviations. If the original units of the data are known, the parameters can be transformed in these units to make a more meaningful interpretation possible. 
+Furthermore, the loading is the correlation between an indicator and its construct:
+```{r}
+results1$Estimates$Loading_estimates["EXPE", "expe1"]
+```
+This result shows, that the correlation between "EXPE" and its first indicator "expe1" is `r results1$Estimates$Loading_estimates["EXPE", "expe1"]`.
+
+Finally, squared loadings and squared path coefficients are squared multiple correlations of the variables connected by the related unsquared parameters. 
+
+Altogether, these interpretations and relationships also offer a way to assess the reliability of the indicators and to analyze whether the model is well specified or not. Loadings (as well as path coefficients) should be statistically significantly different from zero. Otherwise they could be omitted from the model. Moreover, it is recommended that the absolute value of each loading is greater than 0.7 (Literaturverweis?). 
 
 
-### Example 2: Pure common factor model and GSCA
+### Example 2: Pure common factor model and GSCA {#example2}
+
+In the next example, the same model as in [Example1](#example1) is considered. However, estimation is now done with GSCA. As already mentioned, this can be achieved by setting the argument *'.disattenuate'* equal to *FALSE*. In this case, estimators can be biased when constructs are of common factor type and no pure composites.  
+
+```{r}
+results2 <- csem(satisfaction, model, .approach_weights = "GSCA", .disattenuate = "FALSE")
+```
+
+For the path coefficient and the loading already considered in [Example1](#example1), the estimated values are now:
+
+```{r}
+results2$Estimates$Path_estimates["EXPE","IMAG"]
+results2$Estimates$Loading_estimates["EXPE", "expe1"]
+```
+
+The interpretation of the estimators is the same as in the case of GSCA<sub>m</sub>. Comparing these values with those calculated in [Example1](#example1), the bias in estimators when using GSCA becomes obvious. 
 
 
+### Example 3: At least one composite and GSCA<sub>m</sub> {#example3}
 
-### Example 3: At least one composite and GSCA<sub>m</sub>
-
-
+Now, the specified model will be modified. The aim is to consider models with at least one construct of composite type. [Example 1](#example1) and [Example 2](#example2) show that in the case of a pure common factor model, estimation can be carried out either with GSCA or with GSCA<sub>m</sub>. 
+We use the same dataset as before, but the constructs "EXPE", "IMAG", "SAT" and "VAL" are now of composite type. This means that, these constructs are interpreted that they do not have an influence on their respective indicators. Thus, they are only modeled as an (exact) linear combination of their indicators. 
 
 ```{r message=FALSE}
 model2 <- "
@@ -144,7 +182,7 @@ SAT  ~ IMAG + EXPE + QUAL + VAL
 LOY  ~ IMAG + SAT
 VAL  ~ EXPE + QUAL
 
-# Measurement model (pure common factor)
+# Measurement model (common factors and composites)
 
 EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
 IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
@@ -155,7 +193,7 @@ VAL  <~ val1  + val2  + val3  + val4
 "
 ```
 
-Calling the *csem*-function will produce the error already mentioned in the Section [Approach](#approach):
+Calling the *csem*-function in this case without setting the argument *'.disattenuate'* equal to *FALSE* will produce the error already mentioned in the Section [Approach](#approach). For a model like the specified one, i.e. with at least one construct of composite type, estimation cannot be done with GSCA<sub>m</sub>:
 
 ```{r eval=FALSE}
 csem(satisfaction, model2, .approach_weights = "GSCA", .disattenuate = "TRUE")
@@ -166,7 +204,9 @@ Error: The following error occured in the `calculateWeightsGSCAm()` function:
 GSCAm only applicable to pure common factor models. Use `.disattenuate = FALSE`. 
 ```
 
-### Example 4: At least one composite and GSCA
+Since GSCA<sub>m</sub> is not an option for those models, parameter estimates have to be determined using "standard" GSCA (see [Example 4](#example4)).
+
+### Example 4: At least one composite and GSCA {#example4}
 
 In the last example, the same model as before is considered: common factor type constructs are combined with composite type constructs. However, estimation is now done with "standard" GSCA, i.e., *'.disattenuate'* is set to *FALSE*. Therefore, calling the *csem*-function with these input arguments does not produce an error. 
 
@@ -180,7 +220,7 @@ This leads to the following estimation results:
 summarize(results4)
 ```
 
-Due to the fact that there are some constructs that are of composite type, estimation must happen with GSCA. This might result in biased estimators.
+Due to the fact that there are some constructs that are of composite type, estimation must happen with GSCA. This might result in biased estimators (as in [Example2](#example2) for the model where all constructs are of common factor type). However, the interpretation of estimated coefficients is done in the same way as outlined in [Example1](#example1) keeping in mind that estimators might be biased.
 
 ## Methods {#methods}
 
