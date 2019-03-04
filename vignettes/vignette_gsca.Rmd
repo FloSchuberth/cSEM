@@ -1,5 +1,5 @@
 ---
-title: "cSEM-package: GSCA and GSCA<sub>m</sub>"
+title: "cSEM-package: GSCA and GSCA<sub>M</sub>"
 author: "Sebastian Gross"
 date: "`r Sys.Date()`"
 output:
@@ -15,45 +15,46 @@ bibliography: REFERENCES.bib
 
 # Introduction {#introduction}
 
-This vignette provides additional information about the GSCA approach for structural equation models and its implementation in the *cSEM*-package. The aim of the following document is to explain to the user, how to proceed when parameters shall be estimated with GSCA or GSCA<sub>m</sub>. The usage of GSCA and GSCA<sub>m</sub> as well as the general structure of the output are explained via an estimation example which will also provide an idea of how estimation results look like. 
+This vignette provides additional information about the GSCA approach for structural equation models and its implementation in the *cSEM*-package. The aim of the following document is to explain to the user, how to proceed when parameters shall be estimated with GSCA or GSCA<sub>M</sub>. The usage of GSCA and GSCA<sub>M</sub> as well as the general structure of the output are explained via an estimation example which will also provide an idea of how estimation results look like. 
 
-# The approach of GSCA and GSCA<sub>m</sub> {#approach}
+# The approach of GSCA and GSCA<sub>M</sub> {#approach}
 
 The implemented routine calculates weights, as well as path coefficients and loadings of a structural equation model with the GSCA procedure. GSCA is a composite-based approach to structural equation modeling introduced and refined by Hwang and Takane in [@Hwang2004; also @Hwang2014] and [@Hwang2017]. 
 
 It is in several points comparable to PLS. As in PLS, constructs are defined as composites, i.e., as exact linear combinations of the related indicators. The corresponding weights are estimated by minimizing a global optimization criterion which is done via some linear regressions involving latent variables (resp. their proxies) and the observed indicators (see [@Hwang2014, pp. 8-10]).  
 
-Both GSCA approaches do not make any assumption concerning the distribution of the residuals of indicators and latent variables. That is why, estimators finally have to be calculated via Least Squares. Basic to GSCA and GSCA<sub>m</sub> is that three submodels are combined to build up the overall GSCA/GSCA<sub>m</sub>-model. These are the structural model (relationships among constructs), measurement model (influence of constructs on indicators expressed y loadings) and weighted relation model (constructs as linear combinations of indicators) (see [@Hwang2014, chapter 2.1-2.2]). For details and formula see Section [Methods](#methods).
+Both GSCA approaches do not make any assumption concerning the distribution of the residuals of indicators and latent variables. That is why, estimators finally have to be calculated via Least Squares. Basic to GSCA and GSCA<sub>M</sub> is that three submodels are combined to build up the overall GSCA/GSCA<sub>M</sub>-model. These are the structural model (relationships among constructs), measurement model (influence of constructs on indicators expressed y loadings) and weighted relation model (constructs as linear combinations of indicators) (see [@Hwang2014, chapter 2.1-2.2]). For details and formula see Section [Methods](#methods).
 
-It is possible that the estimated parameters, especially loadings, are biased when using GSCA. In particular, this is the case when indicators are observed with an error. However, GSCA<sub>m</sub> provides a way to estimate the parameters also in this situation consistently. The term "GSCA<sub>m</sub>" stands for "GSCA with measurement errors incorporated". The main idea of GSCA<sub>m</sub> is to model indicators in the measurement model as a combination of common parts (arising from the constructs) and unique parts. The purpose of adding a unique part to each indicator is to account for measurement errors in the indicators. In a next step, latent variables are expressed in the weighted relation model as a linear combination of indicators but with their unique parts removed. This approach was presented in  [@Hwang2017], this paragraph especially refers to [@Hwang2017, pp. 1-3]. For some formula and details see Section [Methods](#methods). 
-For the estimation with GSCA and GSCA<sub>m</sub> using the functions of the cSEM-package see Sections [Implementation](#usage) and [Examples](#examples).
+It is possible that the estimated parameters, especially loadings, are biased when using GSCA. In particular, this is the case when indicators are observed with an error. However, GSCA<sub>M</sub> provides a way to estimate the parameters also in this situation consistently. The term "GSCA<sub>M</sub>" stands for "GSCA with measurement errors incorporated". The main idea of GSCA<sub>M</sub> is to model indicators in the measurement model as a combination of common parts (arising from the constructs) and unique parts. The purpose of adding a unique part to each indicator is to account for measurement errors in the indicators. In a next step, latent variables are expressed in the weighted relation model as a linear combination of indicators but with their unique parts removed. This approach was presented in  [@Hwang2017], this paragraph especially refers to [@Hwang2017, pp. 1-3]. For some formula and details see Section [Methods](#methods). 
+For the estimation with GSCA and GSCA<sub>M</sub> using the functions of the cSEM-package see Sections [Implementation](#usage) and [Examples](#examples).
 
 # Implementation and usage {#usage}
 
 Suppose that a structural model 'model' is specified in Lavaan-syntax and that data are given in form of an observation matrix 'data'.
-To estimate parameters now in this specified structural model by means of GSCA (or GSCA<sub>m</sub>) for the given data, the user has to call the function *csem()*:
+To estimate parameters now in this specified structural model by means of GSCA (or GSCA<sub>M</sub>) for the given data, the user has to call the function *csem()*:
 
 ```{r eval=FALSE}
 csem(.data = data, .model = model, .approach_weights = "GSCA", .disattenuate = )
 ```
 
-Although the *csem*-function has many more input arguments, it suffices in the case of GSCA in a first step to specify the input arguments *'.model'* and *'.data'* and to set the argument *'.approach_weights'* equal to *"GSCA"*. The argument *'.disattenuate'* indicates which of the two GSCA-approaches should be used. Its default value is *TRUE* resulting in GSCA<sub>m</sub> as estimation method whereas a value of *FALSE* leads to "standard" GSCA. The handling of the *'.disattenuate'*-argument is explained more detailly in the following paragraphs. By this, the user gets a concrete idea in which cases this argument has to be specified and in which it can be dropped. 
+Although the *csem*-function has many more input arguments, it suffices in the case of GSCA in a first step to specify the input arguments *'.model'* and *'.data'* and to set the argument *'.approach_weights'* equal to *"GSCA"*. The argument *'.disattenuate'* indicates which of the two GSCA-approaches should be used. Its default value is *TRUE* resulting in GSCA<sub>M</sub> as estimation method whereas a value of *FALSE* leads to "standard" GSCA. The handling of the *'.disattenuate'*-argument is explained more detailly in the following paragraphs. By this, the user gets a concrete idea in which cases this argument has to be specified and in which it can be dropped. 
 
-With "GSCA" as chosen approach, estimation is automatically done via GSCA<sub>m</sub> when calling the *csem*-function. This works out fine as long as all constructs are of common factor type (i.e. the construct has an influence on its indicators and vice versa). In this case, GSCA<sub>m</sub> can be applied and the argument *'.disattenuate'* can be dropped. Although estimators will be biased, the user might want to estimate parameters in this special case with "standard" GSCA. To this end, the input argument *'.disattenuate'* has to be set to *FALSE*.
+With "GSCA" as chosen approach, estimation is automatically done via GSCA<sub>M</sub> when calling the *csem*-function. This works out fine as long as all constructs are of common factor type (i.e. the construct has an influence on its indicators and vice versa). In this case, GSCA<sub>M</sub> can be applied and the argument *'.disattenuate'* can be dropped. Although estimators will be biased, the user might want to estimate parameters in this special case with "standard" GSCA. To this end, the input argument *'.disattenuate'* has to be set to *FALSE*.
 
-However, if there is at least one construct which is not a common factor, parameters cannot be estimated by means of GSCA<sub>m</sub>, but only with "standard" GSCA. The reason is, e.g. in the case of all constructs being a pure composite, that the transposed measurement matrix has only zero entries in this situation. Thus, involving this matrix in the estimation procedure, GSCA<sub>m</sub> would lead to weight estimators equal to 0. In the same way, in the case of a mixed model, that is to say when some constructs are of common factor type and some are pure composites, estimation with GSCA<sub>m</sub> causes problems. Therefore, in these situations, the user imperatively has to use GSCA and GSCA<sub>m</sub> is no option. This necessitates an input argument of *'.disattenuate'* equal to *FALSE*. 
+However, if there is at least one construct which is not a common factor, parameters cannot be estimated by means of GSCA<sub>M</sub>, but only with "standard" GSCA. The reason is, e.g. in the case of all constructs being a pure composite, that the transposed measurement matrix has only zero entries in this situation. Thus, involving this matrix in the estimation procedure, GSCA<sub>M</sub> would lead to weight estimators equal to 0. In the same way, in the case of a mixed model, that is to say when some constructs are of common factor type and some are pure composites, estimation with GSCA<sub>M</sub> causes problems. Therefore, in these situations, the user imperatively has to use GSCA and GSCA<sub>M</sub> is no option. This necessitates an input argument of *'.disattenuate'* equal to *FALSE*. 
 
-Setting the argument *'.disattenuate'* equal to *TRUE* always leads to GSCA<sub>m</sub> as estimation method. Furthermore, dropping the argument also leads to GSCA<sub>m</sub> since its default value is *TRUE*. In these situations, estimation with GSCA<sub>m</sub> fails in case of a model where at least one construct is not a common factor. Then, the user gets an error message (see also Section [Examples](#examples)):
+Setting the argument *'.disattenuate'* equal to *TRUE* always leads to GSCA<sub>M</sub> as estimation method. Furthermore, dropping the argument also leads to GSCA<sub>M</sub> since its default value is *TRUE*. In these situations, estimation with GSCA<sub>M</sub> fails in case of a model where at least one construct is not a common factor. Then, the user gets an error message (see also Section [Examples](#examples)):
 
 ```{r, eval=FALSE}
 Error: The following error occured in the `calculateWeightsGSCAm()` function:
 GSCAm only applicable to pure common factor models. Use `.disattenuate = FALSE`. 
 ```
 
+There are two other input-arguments which are of interest when estimating parameters with GSCA or GSCA<sub>M</sub>:  *'.iter_max'* and *'.tolerance'*. Both will be explained in the section [Methods](#methods). 
 
 # Examples {#examples}
 
-### Example 1: Pure common factor model and GSCA<sub>m</sub> {#example1}
+### Example 1: Pure common factor model and GSCA<sub>M</sub> {#example1}
 
 In the following, a first application example of the *csem*-function for the estimation with GSCA is presented. Data are given in form of the dataset "satisfaction" that comes with the *cSEM*-package.
 This dataset consists of 250 observations for 27 indicators. These indicators are somehow related to 6 constructs. Before estimation can be done, a model has to be specified for the relationships among these variables. This model is a result of the user's ideas, hypotheses and theories about the original subject, which is customer satisfaction in the example. The model specification has to be done in lavaan-Syntax. In the structural model, the tilde "~" is the known regression operator. However, in the measurement model, the symbol "<~" is used for pure composites whereas the symbol "=~" stands for common factors.
@@ -88,7 +89,7 @@ Having specified the model to be estimated and the data, the user can now call t
 results1 <- csem(satisfaction, model, .approach_weights = "GSCA", .disattenuate = "TRUE")
 ```
 
-Note that in this case, the user could also drop the input argument *'.disattenuate'* because estimation is here done with GSCA<sub>m</sub> as it should. Since it is a pure common factor model, no error message is produced. The estimation results are stored in the object *"results1"*:
+Note that in this case, the user could also drop the input argument *'.disattenuate'* because estimation is here done with GSCA<sub>M</sub> as it should. Since it is a pure common factor model, no error message is produced. The estimation results are stored in the object *"results1"*:
 
 ```{r}
 results1
@@ -131,7 +132,7 @@ The influence of (exogenous) constructs on (endogenous) constructs is described 
 results1$Estimates$Path_estimates
 ```
 
-The way estimated loadings and weights are provided is the same: The user is always given a matrix which consists of the variables involved in the respective submodel of GSCA<sub>m</sub> (resp. GSCA). For the path estimates, the columns of the output matrix stand for the constructs that exert an influence and the rows for those constructs that are influenced.
+The way estimated loadings and weights are provided is the same: The user is always given a matrix which consists of the variables involved in the respective submodel of GSCA<sub>M</sub> (resp. GSCA). For the path estimates, the columns of the output matrix stand for the constructs that exert an influence and the rows for those constructs that are influenced.
 
 For example, in the considered dataset the user gets for the path coefficient "IMAG" on "EXPE" an estimated value of:  
 ```{r}
@@ -166,12 +167,12 @@ results2$Estimates$Path_estimates["EXPE","IMAG"]
 results2$Estimates$Loading_estimates["EXPE", "expe1"]
 ```
 
-The interpretation of the estimators is the same as in the case of GSCA<sub>m</sub> (see [Example1](#example1)). But comparing these values with those calculated before, the bias in estimators when using GSCA becomes obvious. Thus, when interpreting these values the user should keep in mind that the estimators might be biased. 
+The interpretation of the estimators is the same as in the case of GSCA<sub>M</sub> (see [Example1](#example1)). But comparing these values with those calculated before, the bias in estimators when using GSCA becomes obvious. Thus, when interpreting these values the user should keep in mind that the estimators might be biased. 
 
 
-### Example 3: At least one composite and GSCA<sub>m</sub> {#example3}
+### Example 3: At least one composite and GSCA<sub>M</sub> {#example3}
 
-Now, the specified model will be modified. The aim is to consider models with at least one construct of composite type. [Example 1](#example1) and [Example 2](#example2) show that in the case of a pure common factor model, estimation can be carried out either with GSCA or with GSCA<sub>m</sub>. 
+Now, the specified model will be modified. The aim is to consider models with at least one construct of composite type. [Example 1](#example1) and [Example 2](#example2) show that in the case of a pure common factor model, estimation can be carried out either with GSCA or with GSCA<sub>M</sub>. 
 We use the same dataset as before, but the constructs "EXPE", "IMAG", "SAT" and "VAL" are now of composite type. This means that, these constructs are interpreted that they do not have an influence on their respective indicators. Thus, they are only modeled as an (exact) linear combination of their indicators. 
 
 ```{r message=FALSE}
@@ -194,7 +195,7 @@ VAL  <~ val1  + val2  + val3  + val4
 "
 ```
 
-Calling the *csem*-function in this case without setting the argument *'.disattenuate'* equal to *FALSE* will produce the error already mentioned in the Section [Approach](#approach). For a model like the specified one, i.e. with at least one construct of composite type, estimation cannot be done with GSCA<sub>m</sub>:
+Calling the *csem*-function in this case without setting the argument *'.disattenuate'* equal to *FALSE* will produce the error already mentioned in the Section [Approach](#approach). For a model like the specified one, i.e. with at least one construct of composite type, estimation cannot be done with GSCA<sub>M</sub>:
 
 ```{r eval=FALSE}
 csem(satisfaction, model2, .approach_weights = "GSCA", .disattenuate = "TRUE")
@@ -205,7 +206,7 @@ Error: The following error occured in the `calculateWeightsGSCAm()` function:
 GSCAm only applicable to pure common factor models. Use `.disattenuate = FALSE`. 
 ```
 
-Since GSCA<sub>m</sub> is not an option for those models, parameter estimates have to be determined using "standard" GSCA (see [Example 4](#example4)).
+Since GSCA<sub>M</sub> is not an option for those models, parameter estimates have to be determined using "standard" GSCA (see [Example 4](#example4)).
 
 
 ### Example 4: At least one composite and GSCA {#example4}
@@ -227,29 +228,50 @@ Due to the fact that there are some constructs that are of composite type, estim
 
 # Methods {#methods}
 
+### The GSCA<sub>M</sub>-model
+
 The following section is based on [@Hwang2017, pp. 1-4] and [@Hwang2014, chapter 2.1.-2.2].
 
-Hier kurz die Idee hinter der GSCA Methode vorstellen, die Gleichungen aus dem GSCA_m Paper, erläutern worin der Unterschied zwischen GSCA und GSCa_m besteht und das Optimierungskriterium. Schätzungen sind eigentlich nur Regressionen... Verweis auf die Paper.
-Auf Matrixdimensionen eingehen...
-das sollte dann reichen!
+As already mentioned in the introduction, GSCA and GSCA<sub>M</sub> are composite-based approaches to estimation of parameters in structural equation models.
 
+The estimation within GSCA (resp. GSCA<sub>M</sub>) begins with the standardization of the data and the specification of three submodels. The matrix of the standardized data is denoted by $\mathbf{X}$ and is of dimension *N* *x* *K* since there are *N* observations in *K* indicators. Additionally, there are *J* constructs (latent variables).
 
-ggf. was von hier übernehmen (falls sinnvoll):
+As in PLS, the measurement model and the structural model are defined to specifiy the relations of latent variables on indicators resp. of the exogenous latent variables on the endogenous ones. In addition, the weighted relation model accounts for the influence of the indicators on the latent variables. Each submodel is expressed in a matrix equation leading to the following 3 equations: 
 
-The estimation within GSCA begins with the standardization of the data and the specification of three submodels. The matrix of the standardized data is denoted by Z and is of dimension N x K since there are N observations in K indicators. Additionally, the structural equation model consists of J latent variables (constructs).
-As in PLS, the measurement model and the structural model are defined to specifiy the relations of latent variables on indicators resp. of the exogenous latent variables on the endogenous ones. 
-In addition, the weighted relation model accounts for the influence of the indicators on the latent variables.
-This leads to the three matrices (and corresponding dimension):
-W0: matrix of the weighted relation model (K x J)
-B0: matrix of the structural model (J x J) 
-C0: matrix of the measurement model (J x K) 
+1. Matrix equation of the measurement model:
+$$ \mathbf{X} = \boldsymbol{\Gamma}  \boldsymbol{\Lambda} + \mathbf{U} \mathbf{D} + \mathbf{E_{1}} $$
+In the measurement model, relationships between indicators and constructs are specified. The matrix $\boldsymbol{\Gamma}$ is the *N* by *J* matrix which contains columnwise the constructs $\gamma_{1}$ up to $\gamma_{J}$. The matrix $\boldsymbol{\Lambda}$ is the *J* by *K* matrix of loadings relating constructs and indicators. $\mathbf{U}$ denotes the *N* by *K* matrix of unique variables and $\mathbf{D}$ is the *K* by *K* diagonal matrix of unique loadings. Therefore, the matrix $\boldsymbol{\Gamma}  \boldsymbol{\Lambda}$ represents the common parts of the indicators whereas $\mathbf{U} \mathbf{D}$ stands for the unique parts.
+Finally, $\mathbf{E_{1}}$ is the *N* by *K* matrix containing the residuals of indicators. It is assumed that $\boldsymbol{\Gamma}$ is uncorrelated with $\mathbf{U}$, i.e. $\boldsymbol{\Gamma}' \mathbf{U}$ = $\mathbf{U}' \boldsymbol{\Gamma} = \mathbf{0}$, and that $\mathbf{U}$ is orthonormalized. 
 
-Attention: The notation in this script is slightly different from the 
-notation used by Hwang & Takane in "Generalized Structured Component Analysis" (2014) where the number of indicators is J and the number of latent variables is P. Furthermore, the notation is largely different from the one used by the same authors in "Generalized Structured Component Analysis" (2004), because the initial GSCA model and procedure from this paper has been subject to some major adjustments and changes. 
-The innovation of GSCA compared to PLS is the fact, that the three submodels are integrated into one unified algebraic framework. This leads to a single optimization criterion which is minimized with the Alternating-Least-Squares-Algorithm. The ALS-Algorithm is the centerpiece of the GSCA estimation procedure.
-Its main idea is that the set of parameters is divided into two subsets: 
-firstly, the loadings and path coefficients (in the matrices B and C, resp. A) and secondly, the weights (in matrix W). After having found initial values for all parameters to be estimated, the criterion is minimized with respect to the first subset keeping all other parameters constant. In the next step, this is reversed and the freshly estimated parameters of step 1 are now kept fixed while minimizing the criterion with respect to the other parameters. These two steps are alternated until convergence is reached, i.e., the decrease of the value of the optimization criterion falls below the initially defined tolerance (".tolerance"). If this does not happen within a prescribed number of steps (".iter_max"), the algorithm will abort and return the latest estimators (but the convergence status "Conv_status" will be set to FALSE).
-The fact that a single optimization criterion is minimized within GSCA allows the derivation of several measures of global model fit. Those are calculated after the estimation of all relevant parameters. 
-description of measures of fit... 
+2. Matrix equation of the structural model:
+
+$$ \boldsymbol{\Gamma} = \boldsymbol{\Gamma}  \mathbf{B'} + \mathbf{E_{2}} $$
+In the structural model, relationships between constructs are specified. The matrix $\boldsymbol{\Gamma}$ is defined as in the measurement model, the matrix $\mathbf{B}$ is the *J* *x* *J* matrix of path coefficients and $\mathbf{E_{2}}$ is the *N* by *J* matrix of the residuals for the constructs.
+
+3. Matrix equation of the weighted relation model:
+
+$$ \boldsymbol{\Gamma} = ( \mathbf{X} - \mathbf{U} \mathbf{D}) \mathbf{W'} $$
+In the weighted relation model, constructs (in the matrix $\boldsymbol{\Gamma}$) are expressed as an exact linear combination (composite) of the corresponding indicators (matrix $\mathbf{X}$) with their unique parts (matrix $\mathbf{UD}$) removed. The *J* by *K* matrix $\mathbf{W}$ contains the weights of the indicators in the linear combinations. 
+
+Note that the authors in @Hwang2004, @Hwang2010, @Hwang2014 and @Hwang2017 use a completely different notation compared to the standard LISREL/Bollen-type notation. For example, the total number of indicators is there denoted by *J* and the total number of constructs by *P*. Moreover, the matrix of indicator values, i.e. the data matrix, is called **Z** in the literature. The implementation of GSCA and GSCA<sub>m</sub> in the *cSEM*-package uses the LISREL notation.
+
+Setting the matrix $\mathbf{U}$ equal to the zero matrix of the corresponding dimension, the equations of the three GSCA submodels result. Thus, the difference of both approaches is that in GSCA indicators do not have a unique part and are only modeled by their constructs and some error term. However, including the unique term makes it possible to account for errors in observations of indicators which leads to unbiased paramater estimators.
+
+In the next step, the three submodels are combined to one GSCA (resp. GSCA<sub>M</sub>)-model leading to one model equation:
+
+$$ [\mathbf{Z}, \boldsymbol{\Gamma}] =  \boldsymbol{\Gamma} [\boldsymbol{\Lambda}', \mathbf{B}'] + [\mathbf{UD},\mathbf{0}] + [\mathbf{E_{1}}, \mathbf{E_{2}}] $$
+In short notation, this equation becomes by renaming:
+$$ \boldsymbol{\Psi} = \boldsymbol{\Gamma} \mathbf{A} + \mathbf{S} + \mathbf{E} $$
+This is the GSCA<sub>M</sub>-model. Since $\mathbf{S} = \mathbf{0}$, iff $\mathbf{U} = \mathbf{0}$ the GSCA-model is: $ \boldsymbol{\Psi} = \boldsymbol{\Gamma} \mathbf{A} + \mathbf{E} $
+
+### Parameter estimation
+
+Parameter estimation within GSCA or GSCA<sub>M</sub> is based on minimizing a global optimization criterion $\phi$ via least squares. This optimization criterion is a direct consequence of the model equation:
+
+$$ \phi = \text{SS}(\mathbf{E}) = \text{SS}(\boldsymbol{\Psi} - \boldsymbol{\Gamma} \mathbf{A} - \mathbf{S}) $$
+The minimization happens under the constraint that $\gamma_{j}' \gamma_{j} = 1$ $(j=1,...,J)$, $\mathbf{U}' \boldsymbol{\Gamma} = \mathbf{0}$ and $\mathbf{U}' \mathbf{U} = \boldsymbol{I_{J}}$ where $\boldsymbol{I_{J}}$ is the identity matrix of dimension *J*. Minimization of $\phi$ is done via an iterative algorithm: the Alternating Least Squares Algorithm. To this end, the whole set of parameters is divided into subsets ($\boldsymbol{\Gamma}, \mathbf{A}, \mathbf{U}, \mathbf{D}$ for GSCA<sub>M</sub>). The ALS algorithm now iteratively updates one of these sets of parameters in a least squares sense while keeping all other parameters fixed. In every step, this updating consists essentially in regressions of some variables on the others. By this, optimal parameter estimates are calculated and the value of the optimization criterion $\phi$ decreases. This step is repeated (alternating in every step the set of parameters which is updated) until convergence is reached. Convergence means that the decrease of $\phi$ falls below a (initially defined) threshold *'.tolerance'* (default value: $10^{-5}$) or that the maximum number of iterations *'.iter_max'* (default value: 100) was carried out. In fact, the latter means that the algorithm did not converge and the latest estimators were returned. 
+Both arguments, *'.tolerance'* as well as *'.iter_max'*, can be set to any other value by the user when calling the *csem()*-function.
+
+For more information about the theoretical background of parameter estimation in GSCA (or GSCA<sub>M</sub>) in general and especially the Alternating Least Squares Algorithm see for example @Hwang2004 and @Hwang2017.
 
 # References
