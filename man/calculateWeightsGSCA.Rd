@@ -85,13 +85,19 @@ value which Hwang and Takane use in their example in \insertCite{Hwang2014;textu
 , p. 75. Nevertheless, the argument \code{.tolerance} can take any other value as well.
 
 The ALS algorithm as outlined in \insertCite{Hwang2014;textual}{cSEM} essentially
-consists of regressions of endogeneous constructs (resp. their proxies) on
-exogeneous constructs for the structural model coefficients and in regressions
+consists of regressions of endogenous constructs (resp. their proxies) on
+exogenous constructs for the structural model coefficients and in regressions
 of all common factor constructs on their related indicators for the loadings
-(steps 1a and 1b). If there is no such construct all loadings take a value of 0.
-In this case, the user imperatively has to use GSCA and GSCA_m is no option.
-Otherwise, i.e., if there is at least one construct which is a common factor,
-calling \code{\link[=csem]{csem()}} will lead to an estimation via GSCA_m except in the case that
+(steps 1a and 1b). If a construct is not of common factor type but a pure composite
+the corresponding loadings take a value of 0. In the case that there is at least
+one construct which is not modeled as a common factor but as a pure composite,
+the user imperatively has to use GSCA and GSCA_M is no option.
+If GSCA_M is applied in this situation, estimation fails. The reason is that
+calculating weight estimates with GSCA_M leads to a product involving the measurement matrix.
+This matrix does not have full rank in the case of at least one pure composite construct.
+Therefore estimation must be carried out with GSCA if there is at least one composite
+construct. Otherwise, i.e., if there are only constructs which are common factors,
+calling \code{\link[=csem]{csem()}} will lead to an estimation via GSCA_M except in the case that
 the user explicitly sets the argument \code{.disattenuate} to \code{FALSE}.
 }
 \references{
