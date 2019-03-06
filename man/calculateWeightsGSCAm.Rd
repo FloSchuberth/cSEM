@@ -90,14 +90,22 @@ Nevertheless, the argument \code{.tolerance} can take any other value as well.
 
 Parameters are automatically estimated via GSCA_M when calling \code{\link[=csem]{csem()}}. However,
 if there is at least one construct which is not a common factor, but a pure composite,
-parameters have to be estimated with GSCA. The reason is that estimation via
-GSCA_M involves the measurement matrix which has a zero row for every construct
-which is a pure composite (i.e. all related loadings are zero). This leads to
-weight estimates equal to 0. Thus, in this case, the user imperatively has to
-use GSCA and GSCA_M is no option.
-Otherwise, i.e., if all constructs are of common factor type, calling \code{\link[=csem]{csem()}}
-will lead to an estimation via GSCA_M except in the case that the user explicitly
-sets the argument \code{.disattenuate} to \code{FALSE}. Then, estimation is always done
+parameters have to be estimated with GSCA. The reason is that the implementation
+of GSCA_M in the cSEM-package is based on \insertCite{Hwang2017;textual}{cSEM}.
+In the case of GSCA_M, the estimated loadings are the correlations between indicators
+and proxies, not the "true" correlations between indicators and underlying but unknown
+constructs.
+The GSCA_M-approach presented by the authors only works out if all constructs
+are of common factor type. Otherwise, i.e., if there is at least one construct
+of composite type estimation using GSCA_M fails because calculating weight estimates
+with GSCA_M leads to a product involving the measurement matrix. This matrix
+does not have full rank in the case of at least one pure composite construct.
+It has a zero row for every construct which is a pure composite (i.e. all related loadings are zero)
+and, therefore, leads to a non-invertible matrix when multiplying it with its transposed.
+Thus, in this case, the user imperatively has to use GSCA and GSCA_M is no option.
+Otherwise, i.e., if there are only constructs which are of common factor type,
+calling \code{\link[=csem]{csem()}} will lead to an estimation via GSCA_M except in the case that
+the user explicitly sets the argument \code{.disattenuate} to \code{FALSE}. estimation is always done
 by 'standard' GSCA.
 }
 \references{

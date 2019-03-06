@@ -89,16 +89,32 @@ consists of regressions of endogenous constructs (resp. their proxies) on
 exogenous constructs for the structural model coefficients and in regressions
 of all common factor constructs on their related indicators for the loadings
 (steps 1a and 1b). If a construct is not of common factor type but a pure composite
-the corresponding loadings take a value of 0. In the case that there is at least
-one construct which is not modeled as a common factor but as a pure composite,
-the user imperatively has to use GSCA and GSCA_M is no option.
-If GSCA_M is applied in this situation, estimation fails. The reason is that
-calculating weight estimates with GSCA_M leads to a product involving the measurement matrix.
+the corresponding "construct" loadings do not need to be calculated because the
+constructs are exact linear combinations of their indicators. Instead, "composite"
+loadings are calculated and provided as the estimated loadings. These "composite"
+loadings are the "true" correlations between a construct and indicator. This correlation
+always exists, no matter which is the type of the construct under consideration.
+Considering a construct of common factor type, estimated ("construct") loadings
+are the correlations between indicators and proxies, but not the "true" correlation
+between indicator and underlying but unknown construct.
+
+In the case that there is at least one construct which is not modeled as a
+common factor but as a pure composite, the user imperatively has to use GSCA
+and GSCA_M is no option. The reason is that the implementation of GSCA_M in
+the cSEM-package is based on \insertCite{Hwang2017;textual}{cSEM}.
+The GSCA_M-approach presented by the authors only works out if all constructs
+are of common factor type. Otherwise, i.e., if there is at least one construct
+of composite type estimation using GSCA_M fails because calculating weight estimates
+with GSCA_M leads to a product involving the measurement matrix.
 This matrix does not have full rank in the case of at least one pure composite construct.
+It has a zero row for every construct which is a pure composite (i.e. all related loadings are zero)
+and, therefore, leads to a non-invertible matrix when multiplying it with its transposed.
+
 Therefore estimation must be carried out with GSCA if there is at least one composite
-construct. Otherwise, i.e., if there are only constructs which are common factors,
+construct. Otherwise, i.e., if there are only constructs which are of common factor type,
 calling \code{\link[=csem]{csem()}} will lead to an estimation via GSCA_M except in the case that
-the user explicitly sets the argument \code{.disattenuate} to \code{FALSE}.
+the user explicitly sets the argument \code{.disattenuate} to \code{FALSE}. estimation is always done
+by 'standard' GSCA.
 }
 \references{
 \insertAllCited{}

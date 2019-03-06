@@ -10,22 +10,22 @@ vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-bibliography: REFERENCES.bib
+bibliography: REFERENCES_vignettes.bib
 ---
 
 # Introduction {#introduction}
 
-This vignette provides additional information about the GSCA approach for structural equation models and its implementation in the *cSEM*-package. The aim of the following document is to explain to the user, how to proceed when parameters shall be estimated with GSCA or GSCA<sub>M</sub>. The usage of GSCA and GSCA<sub>M</sub> as well as the general structure of the output are explained via an estimation example which will also provide an idea of how estimation results are interpreted. 
+This vignette provides additional information about the GSCA approach for structural equation models and its implementation in the *cSEM*-package. The aim of the following document is to explain to the user, how to proceed when parameters of a structural model shall be estimated with GSCA or GSCA<sub>M</sub>. The usage of GSCA and GSCA<sub>M</sub> as well as the general structure of the output are explained via an estimation example which will also provide an idea of how estimation results can be interpreted. 
 
 # The approach of GSCA and GSCA<sub>M</sub> {#approach}
 
-The implemented routine calculates weights, as well as path coefficients and loadings of a structural equation model with the GSCA procedure. GSCA is a composite-based approach to structural equation modeling introduced and refined by Hwang and Takane in [@Hwang2004; also @Hwang2014] and [@Hwang2017]. 
+The implemented routine calculates weights, as well as path coefficients and loadings of a structural equation model with the GSCA procedure. GSCA is a composite-based approach to structural equation modeling introduced and refined by Heungsun Hwang and Yoshio Takane in [@Hwang2004; also @Hwang2014] and [@Hwang2017]. 
 
 It is in several points comparable to PLS. As in PLS, constructs are defined as composites, i.e., as exact linear combinations of the related indicators. The corresponding weights are estimated by minimizing a global optimization criterion which is done via some linear regressions involving latent variables (resp. their proxies) and the observed indicators (see [@Hwang2014, pp. 8-10]).  
 
-Both GSCA approaches do not make any assumption concerning the distribution of the residuals of indicators and latent variables. That is why, estimators finally have to be calculated via Least Squares. Basic to GSCA and GSCA<sub>M</sub> is that three submodels are combined to build up the overall GSCA/GSCA<sub>M</sub>-model. These are the structural model (relationships among constructs), measurement model (influence of constructs on indicators expressed by loadings) and weighted relation model (constructs as linear combinations of indicators) (see [@Hwang2014, chapter 2.1-2.2]). For some details and formula see Section [Methods](#methods).
+Both GSCA, GSCA and GSCA<sub>M</sub> approaches do not make any assumption concerning the distribution of the residuals of indicators and latent variables. That is why, estimators finally have to be calculated via Least Squares. Basic to GSCA and GSCA<sub>M</sub> is that three submodels are combined to build up the overall GSCA/GSCA<sub>M</sub>-model. These are the structural model (relationships among constructs), measurement model (influence of constructs on indicators expressed by loadings) and weighted relation model (constructs as linear combinations of indicators) (for a detailed description see [@Hwang2014, chapter 2.1-2.2]). The Section [Methods](#methods) provides some details and formula of the GSCA-model. 
 
-It is possible that the estimated parameters, especially loadings, are biased when using GSCA. In particular, this is the case when indicators are observed with an error. However, GSCA<sub>M</sub> provides a way to estimate the parameters also in this situation consistently. The term "GSCA<sub>M</sub>" stands for "GSCA with measurement errors incorporated". The main idea of GSCA<sub>M</sub> is to model indicators in the measurement model as a combination of common parts (arising from the constructs) and unique parts. The purpose of adding a unique part to each indicator is to account for measurement errors in the indicators. In a next step, latent variables are expressed in the weighted relation model as a linear combination of indicators but with their unique parts removed. This approach was presented in  [@Hwang2017]. This paragraph refers to [@Hwang2017, pp. 1-3]. For some formula and details see Section [Methods](#methods). 
+It is possible that the estimated parameters, especially loadings, are biased when using GSCA. In particular, this is the case when indicators are observed with an error. However, GSCA<sub>M</sub> offers a way to estimate the parameters also in this situation consistently. The term "GSCA<sub>M</sub>" stands for "GSCA with measurement errors incorporated". This approach was presented in  [@Hwang2017]. The main idea of GSCA<sub>M</sub> is to model indicators in the measurement model as a combination of common parts (arising from the constructs) and unique parts. The purpose of adding a unique part to each indicator is to account for measurement errors in the indicators. In a next step, latent variables are expressed in the weighted relation model as a linear combination of indicators but with their unique parts removed (see [@Hwang2017, pp. 1-3]). For some formula and details see Section [Methods](#methods). 
 For the estimation with GSCA and GSCA<sub>M</sub> using the functions of the cSEM-package see Sections [Implementation](#usage) and [Examples](#examples).
 
 # Implementation and usage {#usage}
@@ -41,7 +41,7 @@ Although the *csem*-function has many more input arguments, it suffices in the c
 
 With "GSCA" as chosen approach, estimation is automatically done via GSCA<sub>M</sub> when calling the *csem*-function. This works out fine as long as all constructs are of common factor type (i.e. the construct has an influence on its indicators and vice versa). In this case, GSCA<sub>M</sub> can be applied and the argument *'.disattenuate'* can be dropped. Although estimators will be biased, the user might want to estimate parameters in this special case with "standard" GSCA. To this end, the input argument *'.disattenuate'* has to be set to *FALSE*.
 
-However, if there is at least one construct which is not a common factor, parameters cannot be estimated by means of GSCA<sub>M</sub>, but only with "standard" GSCA. The reason is, e.g. in the case of all constructs being pure composites, that the transposed measurement matrix has only zero entries in this situation. Thus, involving this matrix in the estimation procedure, GSCA<sub>M</sub> would lead to weight estimators equal to 0. In the same way, in the case of a mixed model, that is to say when some constructs are of common factor type and some are pure composites, estimation with GSCA<sub>M</sub> causes problems because the measurement matrix cannot not have full rank. Therefore, in these situations, the user imperatively has to use GSCA and GSCA<sub>M</sub> is no option. This necessitates an input argument of *'.disattenuate'* equal to *FALSE*. 
+However, if there is at least one construct which is not a common factor, parameters cannot be estimated by means of GSCA<sub>M</sub>, but only with "standard" GSCA. The reason is, e.g. in the case of all constructs being pure composites, that the transposed measurement matrix has only zero entries in this situation. Thus, involving this matrix in the estimation procedure, GSCA<sub>M</sub> would lead to weight estimators equal to 0. In the same way, in the case of a mixed model, that is to say when some constructs are of common factor type and some are pure composites, estimation with GSCA<sub>M</sub> causes problems because the measurement matrix cannot not have full rank. Thus, the GSCA<sub>M</sub> approach developed by Hwang and Takane in [@Hwang2017] does not work for such models. The implementation is based on the current state of research but does not pursue own research goals. That is to say, developping a GSCA<sub>M</sub> procedure for the models with at least one composite type construct is not the aim and, therefore, in these situations, the user imperatively has to use GSCA and GSCA<sub>M</sub> is no option. This necessitates an input argument of *'.disattenuate'* equal to *FALSE*. 
 
 Setting the argument *'.disattenuate'* equal to *TRUE* always leads to GSCA<sub>M</sub> as estimation method. Furthermore, dropping the argument also leads to GSCA<sub>M</sub> since its default value is *TRUE*. In these situations, estimation with GSCA<sub>M</sub> fails in case of a model where at least one construct is not a common factor. Then, the user gets an error message (see also Section [Examples](#examples)):
 
@@ -118,15 +118,38 @@ As indicated, the object *"results1"* is a list of class *cSEMResults* with the 
 + Type_of_indicator_correlation
 + Weight_info
 
-Depending on the research interests that the user has, he/she can extract those information and estimators that are relevant for him/her.  
-If the user just wants a compact summary of the parameter estimators and of the most important information concerning the estimation, calling the *'summarize'*-function of the *cSEM*-package will provide this.
+Depending on the research interests that the user has, the relevant information and estimators can be extracted by the user.
+
+For GSCA, as well as for PLS and the other approaches, some postestimation functions are available:
+1. *'assess'*
+2. *'summarize'*
+3. *'verify'*
+
+Firstly, the *'assess'*-function provides the user with common evaluation criteria and fit measures to assess the model:
+
+```{r, eval=FALSE}
+assess(results1)
+```
+
+Next, if the user just wants a compact summary of the parameter estimators and of the most important information concerning the estimation, calling the *'summarize'*-function of the *cSEM*-package will provide this. 
 
 ```{r}
 summarize(results1)
 ```
 
-Having carried out the estimation of all parameters, it is now question to interpret the results. 
-The influence of (exogenous) constructs on (endogenous) constructs is described by the structural model and expressed by the estimated path coefficients:
+Finally, the *'verify'*-function checks whether the calculated results are admissible. That is to say, it is verified that all results are consonant with the theory underlying the estimation. If the results based on an estimated model exhibit one of the following defects they are deemed inadmissible: 
+- non-convergence
+- loadings and/or reliabilities larger than 1
+- a construct VCV and/or a model-implied VCV matrix that is not positive (semi-)definite
+
+```{r}
+verify(results1)
+```
+
+The output shows that the estimation results of the example are admissible, every status is set to "ok".
+
+Having carried out the estimation of all parameters and having established that they are all admissible, it is now question to interpret the results. 
+The influence of (exogenous) constructs on (endogenous) constructs is described by the structural model and expressed by the estimated path coefficients (reliabilities):
 
 ```{r}
 results1$Estimates$Path_estimates
@@ -139,17 +162,24 @@ For example, in the considered dataset the user gets for the path coefficient "I
 results1$Estimates$Path_estimates["EXPE","IMAG"]
 ```
 
-This value describes the influence of the construct "Consumer's image of the enterprise" on the construct "Consumer's expectation". As data are standardized, also parameter estimates are standardized. Therefore, they measure the change of a variable in standard deviations. This has to be taken into account when interpreting the results. Thus, an increase of "IMAG" by one standard deviation leads to an increase of "EXPE" by `r results1$Estimates$Path_estimates["EXPE","IMAG"]` standard deviations. If the original units of the data are known, the estimated parameters can be transformed in these units to make a more meaningful interpretation possible. 
-Furthermore, the loading is the correlation between an indicator and its construct:
+This value describes the influence of the construct "Consumer's image of the enterprise" on the construct "Consumer's expectation". As data are standardized, also parameter estimates are standardized. Therefore, they measure the change of a variable in standard deviations. This has to be taken into account when interpreting the results. Thus, an increase of "IMAG" by one standard deviation leads to an increase of "EXPE" by `r results1$Estimates$Path_estimates["EXPE","IMAG"]` standard deviations. If the original units of the data are known, the estimated parameters can be transformed in these units to make a more meaningful interpretation possible. Furthermore, path coefficients can be seen as the reliabilities of the constructs. Thus, the path coefficient in the example stands for the portion of the total variance of the construct "EXPE" which is explained by the construct "IMAG".
+
+Next, the loadings are to be interpreted. The loading is the correlation between a construct (resp. its proxy) and an indicator. Obviously, this correlation always exists and can always be calculated. To this end, it is important to point out that in the scope of the *cSEM*-package two types of loadings are distinguished. The type of a specific loading is strongly related to the type of the construct which is connected by the loading to an indicator. 
+On the one side, there are pure composite constructs. These constructs are an exact linear combination of their indicators and do not influence their indicators. Therefore, the constructs can be calculated exactly when weights have been estimated. In this case, the loading is the correlation between the "true" construct and its indicator ("composite loading").
+On the other side, there are common factor constructs. For these constructs, only proxy values can be calculated using the estimated weights. Thus, the loading represents in this case the correlation between indicator and proxy and not between indicator and true underlying but unknown construct ("construct loading").
+
+When estimating coefficients with GSCA, Hwang and Takane state that loadings are set equal to zero for all composite type constructs because these constructs do not exert any influence on their related indicators. This means in the language of the *cSEM*-package that the "construct loading" does not need to be calculated with the chosen estimation method since it is not of any further interest. The reason is that these constructs are the exact linear combination of their indicators and, therefore, the "true" correlation (which is of interest) can be calculated directly without proxies as an intermediate step. Also in this case, this correlation exists and is part of the resulting estimation output of the *csem*-function when composite type constructs are under consideration. 
+
+
 ```{r}
 results1$Estimates$Loading_estimates["EXPE", "expe1"]
 ```
 
-This result shows, that the correlation between "EXPE" and its first indicator "expe1" is `r results1$Estimates$Loading_estimates["EXPE", "expe1"]`.
+This result shows, that the correlation between the proxy of the construct "EXPE" and its first indicator "expe1" is `r results1$Estimates$Loading_estimates["EXPE", "expe1"]`.
 
-Finally, squared loadings and squared path coefficients are squared multiple correlations of the variables connected by the related unsquared parameters. 
+Finally, squared loadings and squared path coefficients are squared multiple correlations of the variables connected by the related unsquared parameters.
 
-Altogether, these interpretations and relationships also offer a way to assess the reliability of the indicators and to analyze whether the model is well specified or not. Loadings (as well as path coefficients) should be statistically significantly different from zero. Otherwise they could be omitted from the model. Moreover, it is recommended that the absolute value of each loading is greater than 0.7 [see @Hwang2014, p. 31]. 
+Altogether, these interpretations and relationships also offer a way to assess the reliability of the indicators and to analyze whether the model is well specified or not. Loadings (as well as path coefficients) should be statistically significantly different from zero. Otherwise they could be omitted from the model. Moreover, it is recommended that the absolute value of each loading ("composite" as well as "construct") is greater than 0.7 [see @Hwang2014, p. 31]. 
 
 
 ### Example 2: Pure common factor model and GSCA {#example2}
@@ -173,7 +203,7 @@ The interpretation of the estimators is the same as in the case of GSCA<sub>M</s
 ### Example 3: At least one composite and GSCA<sub>M</sub> {#example3}
 
 Now, the specified model will be modified. The aim is to consider models with at least one construct of composite type. [Example 1](#example1) and [Example 2](#example2) show that in the case of a pure common factor model, estimation can be carried out either with GSCA or with GSCA<sub>M</sub>. 
-We use the same dataset as before, but the constructs "EXPE", "IMAG", "SAT" and "VAL" are now of composite type. This means that, these constructs are interpreted such that they do not have an influence on their respective indicators. Thus, they are only modeled as an (exact) linear combination (composite) of their indicators. The structural model stays the same.
+We use the same dataset as before, but the constructs "EXPE", "IMAG", "SAT" and "VAL" are now of composite type. This means that, these constructs are interpreted such that they do not have an influence on their respective indicators. Thus, they are only modeled as an (exact) linear combination (composite) of their indicators. For these constructs, construct loadings do not need to be calculated. The structural model stays the same.
 
 ```{r message=FALSE}
 model2 <- "
@@ -223,14 +253,14 @@ This leads to the following estimation results:
 summarize(results4)
 ```
 
-Due to the fact that there are some constructs that are of composite type, estimation must happen with GSCA. This might result in biased estimators (as in [Example2](#example2) for the model where all constructs are of common factor type). However, the interpretation of estimated coefficients is done in the same way as outlined in [Example1](#example1) keeping in mind that estimators might be biased.
+Due to the fact that there are some constructs that are of composite type, estimation must happen with GSCA. This might result in biased estimators (as in [Example2](#example2) for the model where all constructs are of common factor type). However, the interpretation of estimated coefficients is done in the same way as outlined in [Example1](#example1) keeping in mind that estimators might be biased. Note that the estimated ("composite") loadings represent in this case the "true" correlations between indicators and constructs (not proxies!) for all composite type constructs. 
 
 
 # Methods {#methods}
 
 ### The GSCA-/GSCA<sub>M</sub>-model
 
-The following section is based on [@Hwang2017, pp. 1-4] and [@Hwang2014, chapter 2.1.-2.2].
+This section is based on [@Hwang2017, pp. 1-4] and [@Hwang2014, chapter 2.1.-2.2] where the GSCA-/GSCA<sub>M</sub>-model and the parameter estimation are outlined.
 
 As already mentioned in the introduction, GSCA and GSCA<sub>M</sub> are composite-based approaches to estimation of parameters in structural equation models.
 
@@ -240,7 +270,7 @@ As in PLS, the measurement model and the structural model are defined to specifi
 
 1. Matrix equation of the measurement model:
 $$ \mathbf{X} = \boldsymbol{\Gamma}  \boldsymbol{\Lambda} + \mathbf{U} \mathbf{D} + \mathbf{E_{1}} $$
-In the measurement model, relationships between indicators and constructs are specified. The matrix $\boldsymbol{\Gamma}$ is the *N* by *J* matrix which contains columnwise the constructs $\gamma_{1}$ up to $\gamma_{J}$. The matrix $\boldsymbol{\Lambda}$ is the *J* by *K* matrix of loadings relating constructs and indicators. $\mathbf{U}$ denotes the *N* by *K* matrix of unique variables and $\mathbf{D}$ is the *K* by *K* diagonal matrix of unique loadings. Therefore, the matrix $\boldsymbol{\Gamma}  \boldsymbol{\Lambda}$ represents the common parts of the indicators whereas $\mathbf{U} \mathbf{D}$ stands for the unique parts.
+In the measurement model, relationships between indicators and constructs are specified. The matrix $\boldsymbol{\Gamma}$ is the *N* by *J* matrix which contains columnwise the constructs $\gamma_{1}$ up to $\gamma_{J}$. The matrix $\boldsymbol{\Lambda}$ is the *J* by *K* matrix of ("construct") loadings relating constructs and indicators. $\mathbf{U}$ denotes the *N* by *K* matrix of unique variables and $\mathbf{D}$ is the *K* by *K* diagonal matrix of unique loadings. Therefore, the matrix $\boldsymbol{\Gamma}  \boldsymbol{\Lambda}$ represents the common parts of the indicators whereas $\mathbf{U} \mathbf{D}$ stands for the unique parts.
 Finally, $\mathbf{E_{1}}$ is the *N* by *K* matrix containing the residuals of indicators. It is assumed that $\boldsymbol{\Gamma}$ is uncorrelated with $\mathbf{U}$, i.e. $\boldsymbol{\Gamma}' \mathbf{U}$ = $\mathbf{U}' \boldsymbol{\Gamma} = \mathbf{0}$, and that $\mathbf{U}$ is orthonormalized. 
 
 2. Matrix equation of the structural model:
