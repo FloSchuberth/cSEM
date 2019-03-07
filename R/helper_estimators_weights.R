@@ -175,7 +175,7 @@ calculateOuterWeightsPLS <- function(
       #  standardized (standardization of the inner proxy has no effect)
       temp <- nnls::nnls(A = .data[,indicators,drop=FALSE], b = inner_proxy[,block])
       W[block, indicators] <- temp$x
-    } else if(.mode[block] == "PCA"){
+    } else if(.modes[block] == "PCA"){
       temp <- psych::principal(r = .S[indicators, indicators], nfactors = 1)
       
       W[block, indicators] <- c(temp$weights)
