@@ -177,7 +177,7 @@ calculateOuterWeightsPLS <- function(
       W[block, indicators] <- temp$x
     
       # Weights of principal component analysis for a certain block
-      } else if(.modes[block] == "PCA"){
+    } else if(.modes[block] == "PCA"){
       temp <- psych::principal(r = .S[indicators, indicators], nfactors = 1)
       
       W[block, indicators] <- c(temp$weights)
