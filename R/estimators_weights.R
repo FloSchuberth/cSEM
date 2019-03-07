@@ -51,7 +51,7 @@ calculateWeightsPLS <- function(
     
     # Error if other than "modeA", "modeB", "unit", "modeBNNLS", a number, or a vector
     # of numbers of the same length as there are indicators for block j
-    modes_check <- sapply(.PLS_modes, function(x) all(x %in% c("modeA", "modeB", "unit", "modeBNNLS") | is.numeric(x)))
+    modes_check <- sapply(.PLS_modes, function(x) all(x %in% c("modeA", "modeB", "unit", "modeBNNLS", "PCA") | is.numeric(x)))
     if(!all(modes_check)) {
       stop2("The following error occured in the `calculateWeightsPLS()` function:\n",
             paste0("`", .PLS_modes[!modes_check], "`", collapse = " and "),

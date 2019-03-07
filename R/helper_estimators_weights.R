@@ -175,6 +175,11 @@ calculateOuterWeightsPLS <- function(
       #  standardized (standardization of the inner proxy has no effect)
       temp <- nnls::nnls(A = .data[,indicators,drop=FALSE], b = inner_proxy[,block])
       W[block, indicators] <- temp$x
+    } else if(.mode[block] == "PCA"){
+      temp <- psych::principal(r = .S[indicators, indicators], nfactors = 1)
+      
+      W[block, indicators] <- c(temp$weights)
+      
     }
     # If .modes[block] == "unit" or a single value has been given, nothing needs
     # to happen since W[block, indicators] would be set to 1 (which it already is). 
