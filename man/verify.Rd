@@ -27,7 +27,7 @@ is returned. Status codes are:
 \item 1: The algorithm has not converged.
 \item 2: At least one absolute standardized loading estimate is larger than 1,
 \item 3: The construct VCV is not positive semi-definite.
-\item 4: At least one construct reliability is larger than 1.
+\item 4: At least one proxy reliability is larger than 1.
 \item 5: The model-implied indicator VCV is not positive semi-definite.
 This is only checked for linear models.
 }
@@ -38,7 +38,7 @@ Verify admissibility of the estimated quantities for a given model.
 \details{
 Results based on an estimated model exhibiting one of the
 following defects are deemed inadmissible: non-convergence, loadings and/or
-reliabilities larger than 1, a construct VCV and/or a
+proxy reliabilities larger than 1, a construct VCV and/or a
 model-implied VCV matrix that is not positive (semi-)definite.
 
 For models containing second order constructs estimation is by default done

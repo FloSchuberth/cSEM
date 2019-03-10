@@ -553,7 +553,7 @@ print.cSEMVerify_default <- function(.object) {
             "2" = "At least one standardized loadings > 1", 
             "3" = "Construct VCV not positive semi-definite", 
             "4" = "Model-implied VCV not positive semi-definite",
-            "5" = "At least one construct reliability > 1")
+            "5" = "At least one proxy reliability > 1")
   cat("\nDetails:\n\n", sep = "")
   
   cat("  ", col_align("Code", 7), col_align("Status", 10), "Description\n", sep = "")
@@ -592,7 +592,7 @@ print.cSEMVerify_2ndorder <- function(.object) {
             "2" = "At least one standardized loadings > 1", 
             "3" = "Construct VCV not positive semi-definite", 
             "4" = "Model-implied VCV not positive semi-definite",
-            "5" = "At least one construct reliability > 1")
+            "5" = "At least one proxy reliability > 1")
   
   cat("\n\nDetails:\n\n", sep = "")
   
