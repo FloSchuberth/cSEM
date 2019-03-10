@@ -144,6 +144,11 @@ foreman <- function(
     
     W <- list("W" = csem_model$measurement, "E" = NULL, "Modes" = NULL, 
               "Conv_status" = NULL, "Iterations" = 0)
+  } else if(.approach_weights == "PCA") {
+    W <- calculateWeightsPCA(
+      .S                        = S,
+      .csem_model               = csem_model
+    )
   }
 
   ## Dominant indicators:

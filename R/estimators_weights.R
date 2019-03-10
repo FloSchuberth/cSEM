@@ -49,9 +49,11 @@ calculateWeightsPLS <- function(
   
   if(!is.null(.PLS_modes)) {
     
-    # Error if other than "modeA", "modeB", "unit", "modeBNNLS", a number, or a vector
+    # Error if other than "modeA", "modeB", "unit", "modeBNNLS", "PCA", a number, or a vector
     # of numbers of the same length as there are indicators for block j
-    modes_check <- sapply(.PLS_modes, function(x) all(x %in% c("modeA", "modeB", "unit", "modeBNNLS", "PCA") | is.numeric(x)))
+    modes_check <- sapply(.PLS_modes, 
+                          function(x) all(x %in% c("modeA", "modeB", "unit", 
+                                                   "modeBNNLS", "PCA") | is.numeric(x)))
     if(!all(modes_check)) {
       stop2("The following error occured in the `calculateWeightsPLS()` function:\n",
             paste0("`", .PLS_modes[!modes_check], "`", collapse = " and "),
@@ -66,7 +68,8 @@ calculateWeightsPLS <- function(
                "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.")
     }
     
-    # If only "modeA", "modeB", "modeBNNLS", or "unit" is provided set all of the modes to that mode.
+    # If only "modeA", "modeB", "modeBNNLS", "PCA", or "unit" is provided set all 
+    # of the modes to that mode.
     if(length(names(.PLS_modes)) == 0) {
       if(length(.PLS_modes) == 1) {
         modes <- as.list(rep(.PLS_modes, length(.csem_model$construct_type)))
@@ -665,6 +668,45 @@ calculateWeightsUnit = function(
   W <- scaleWeights(.S, W)
   
   modes        <- rep("unit", nrow(W))
+  names(modes) <- rownames(W)
+  
+  # Return
+  l <- list("W" = W, "E" = NULL, "Modes" = modes, "Conv_status" = NULL,
+            "Iterations" = 0)
+  return(l)  
+}
+
+#' Calculate composite weights using principal component analysis (PCA)
+#'
+#' Calculate weights for each block by extracting the first principal component
+#' of the indicator correlation matrix S_jj for each blocks, i.e., weights
+#' are the simply the first eigenvector of S_jj.
+#'
+#' @usage calculateWeightsPCA(
+#'  .S                 = args_default()$.S,
+#'  .csem_model        = args_default()$.csem_model
+#'   )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @inherit calculateWeightsPLS return
+#'
+calculateWeightsPCA = function(
+  .S                 = args_default()$.S,
+  .csem_model        = args_default()$.csem_model
+){
+  
+  W <- .csem_model$measurement
+  
+  for(j in 1:nrow(W)) {
+    block      <- rownames(W[j, , drop = FALSE])
+    indicators <- W[block, ] != 0
+    
+    temp <- psych::principal(r = .S[indicators, indicators], nfactors = 1)
+    W[block, indicators] <- c(temp$weights)
+  }
+  
+  modes        <- rep("PCA", nrow(W))
   names(modes) <- rownames(W)
   
   # Return

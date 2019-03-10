@@ -324,7 +324,7 @@ calculateReliabilities <- function(
           Q[j]        <- c(W[j, ] %*% Lambda[j, ]) 
         }
       }
-    } else if(.approach_weights %in% c("unit", "bartlett", "regression", 
+    } else if(.approach_weights %in% c("unit", "bartlett", "regression", "PCA", 
                 "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     
       #   Note: "bartlett" and "regression" weights are obtained AFTER running a CFA. 
@@ -382,6 +382,9 @@ calculateReliabilities <- function(
           Q[j] <- w %*% lambda
         }
       }
+    } else {
+      stop2("The following error occured in the `calculateReliabilities()` function:\n",
+            .approach_weights, " is an unknown weight scheme.")
     }
   } else {
     

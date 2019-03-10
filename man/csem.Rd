@@ -19,7 +19,7 @@ csem(
   .approach_nl                 = c("sequential", "replace"),
   .approach_paths              = c("OLS", "2SLS"),
   .approach_weights            = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", 
-                                   "GSCA", "unit", "bartlett", "regression"),
+                                   "GSCA", "PCA", "unit", "bartlett", "regression"),
   .disattenuate                = TRUE,
   .id                          = NULL,
   .iter_max                    = 100,
@@ -56,7 +56,7 @@ Defaults to \code{NULL}.}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{unit}", "\emph{bartlett}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
 or "\emph{regression}".
 Defaults to "\emph{PLS-PM}".}
 
@@ -181,13 +181,14 @@ models using a composite-based approach.
 }
 \details{
 \code{csem()} estimates linear, nonlinear, hierachical or multigroup structural
-equation models using a composite-based approach like PLS-PM, PLSc, GSCA, GSCAm or
-unit weights. \code{csem()} is designed for quick and flexible
+equation models using a composite-based approach like PLS-PM, PLSc, GSCA, GSCAm, GCCA or
+differnt types of factor score regression (FSR). \code{csem()} is designed for quick and flexible
 use by providing the user with default options except for
 the mandatory \code{.data} and \code{.model} argument.
 
 \code{cca()} performs CCA. CCA and SEM differ in that the former allows all
-constructs to vary freely. Hence, \code{cca()} is technically a simple convenience wrapper
+constructs to co-vary freely, i.e. no structural model is assumed.
+Hence, \code{cca()} is technically a simple convenience wrapper
 around \code{csem(..., .estimate_structural = FALSE)}.
 
 \subsection{Data and model:}{
@@ -196,7 +197,7 @@ provided as either a \code{matrix} or a \code{data.frame} with column names matc
 the indicator names used in the model description of the measurement model.
 Alternatively, a list of matrices or \code{data.frame}s may be provided
 in which case estimation is repeated for each data set.
-The data provided via \code{.data} may contain a character column whose column name
+The data provided via \code{.data} may contain \strong{one} character column whose column name
 must be provided to \code{.id}. Values of this column are interpreted as group
 identifiers and \code{csem()} or \code{cca()} will split the data by levels of that column and run
 the estimation for each level separately.
@@ -210,21 +211,30 @@ the "\code{.}" is used to indicate interactions between constructs as in e.g.,
 }
 
 \subsection{Weights and path coefficients:}{
-By default weights are estimated using the partial least squares algorithm (\emph{PLS-PM}).
-Alternative approaches include generalized structured component analysis (\emph{GSCA}),
-\emph{GCCA} (i.e. \emph{Kettenring's criteria}), "\emph{fixed weights}"
-or "\emph{unit weight}".
+By default weights are estimated using the partial least squares (path) algorithm (\code{"PLS-PM"}).
+A broad range of alternative weightning algorithms may be supplied to \code{.appraoch_weights}.
+Currently the following approaches are implemented
+\enumerate{
+\item{(Default) Partial least squares path modeling (\code{"PLS"}). The algorithm
+can be customized. See \code{\link[=calculateWeightsPLS]{calculateWeightsPLS()}} for details.}
+\item{Generalized structured component analysis (\code{"GSCA"})}
+\item{Generalized canoncial correlation analysis (\emph{GCCA}), including
+\code{"SUMCORR"}, \code{"MAXVAR"}, \code{"SSQCORR"}, \code{"MINVAR"}, \code{"GENVAR"}}
+\item{Principal component analysis (\code{"PCA"})}
+\item{Factor score regression using sum scores (\code{"unit"}),
+regression (\code{"regression"}) or bartlett scores (\code{"bartlett"})}
+}
 
 Composite-indicator and composite-composite correlations are properly
 disattenuated by default to yield consistent loadings, construct correlations,
 and path coefficients if any of the constructs in the model are modeled as a
-common factor. cSEM offers two ways to adress
+common factor.
 
 For \emph{PLS-PM} disattenuation is done using \emph{PLSc} \insertCite{Dijkstra2015}{cSEM}.
 For \emph{GSCA} disattenuation is done implicitly by using \emph{GSCAm}. Weights obtained
 by GCCA, unit weights and fixed weights are disattenuated using a
 Disattenuation my be suppressed by setting
-\code{.disattenuate = FALSE}. Note however that quantities in this case are inconsistent
+\code{.disattenuate = FALSE}. Note, however, that quantities in this case are inconsistent
 estimates for their construct level counterparts if any of the constructs in the structural model is
 modeled as a common factor!
 }
