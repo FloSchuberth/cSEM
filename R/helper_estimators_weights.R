@@ -65,7 +65,7 @@ calculateInnerWeightsPLS <- function(
   ## (Inner) weightning scheme:
   if(.PLS_weight_scheme_inner == "path" & .PLS_ignore_structural_model) {
     .PLS_ignore_structural_model <- FALSE
-    warning("Structural model required for the path weighting scheme.\n",
+    warning("Structural model is required for the path weighting scheme.\n",
             ".PLS_ignore_structural_model = TRUE was changed to FALSE.", 
             call. = FALSE)
   }
