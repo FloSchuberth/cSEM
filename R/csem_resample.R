@@ -559,7 +559,7 @@ resamplecSEMResults <- function(
   .eval_plan             = args_default()$.eval_plan,
   .seed                  = args_default()$.seed
 ) {
-  ## Does .object alread contain resamples
+  ## Does .object already contain resamples
   if(any(class(.object) == "cSEMResults_resampled")) {
     stop2("The following issue was encountered in the `resamplecSEMResults()` function:\n",
           "The object provided already contains resamples.")
@@ -580,11 +580,6 @@ resamplecSEMResults <- function(
       " Resampling will continue but may not produce reliable results.")
   }
   
-  ## Set seed if not given
-  if(is.null(.seed)) {
-    .seed <- sample(.Random.seed, 1)
-  }
-  
   UseMethod("resamplecSEMResults")
 }
 
@@ -601,6 +596,12 @@ resamplecSEMResults.cSEMResults_default <- function(
   .eval_plan             = args_default()$.eval_plan,
   .seed                  = args_default()$.seed
   ) {
+  
+  ## Set seed if not given
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
+  }
+  
   ## Set plan on how to resolve futures; reset at the end 
   oplan <- future::plan()
   on.exit(future::plan(oplan), add = TRUE)
@@ -795,6 +796,12 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
   .eval_plan             = args_default()$.eval_plan,
   .seed                  = args_default()$.seed
 ) {
+  
+  ## Set seed if not given
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
+  }
+  
   ## Set plan on how to resolve futures 
   oplan <- future::plan()
   on.exit(future::plan(oplan), add = TRUE)
