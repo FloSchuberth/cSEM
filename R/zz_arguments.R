@@ -29,7 +29,7 @@
 #'   Defaults to "*OLS*".
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
-#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*unit*", "*bartlett*", 
+#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
 #'   or "*regression*".
 #'   Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names to `fun()` whose value 
@@ -246,7 +246,7 @@ args_default <- function(
     .approach                = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_paths          = c("OLS", "2SLS"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                                 "GSCA", "unit", "bartlett", "regression"), 
+                                 "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
     .bias_corrected          = TRUE,
     .C                       = NULL,

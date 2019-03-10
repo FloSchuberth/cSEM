@@ -34,6 +34,6 @@ Only used internally.}
 A (J x K) matrix of outer weights.
 }
 \description{
-Calculates outer weights using Mode A, Mode B, Unit or fixed weights.
+Calculates outer weights using default or user supplied modes.
 }
 \keyword{internal}

@@ -4,13 +4,14 @@
 #' models using a composite-based approach.
 #'
 #' `csem()` estimates linear, nonlinear, hierachical or multigroup structural 
-#' equation models using a composite-based approach like PLS-PM, PLSc, GSCA, GSCAm or 
-#' unit weights. `csem()` is designed for quick and flexible 
+#' equation models using a composite-based approach like PLS-PM, PLSc, GSCA, GSCAm, GCCA or 
+#' differnt types of factor score regression (FSR). `csem()` is designed for quick and flexible 
 #' use by providing the user with default options except for 
 #' the mandatory `.data` and `.model` argument. 
 #' 
 #' `cca()` performs CCA. CCA and SEM differ in that the former allows all 
-#' constructs to vary freely. Hence, `cca()` is technically a simple convenience wrapper
+#' constructs to co-vary freely, i.e. no structural model is assumed. 
+#' Hence, `cca()` is technically a simple convenience wrapper
 #' around `csem(..., .estimate_structural = FALSE)`.
 #'
 #' \subsection{Data and model:}{
@@ -19,7 +20,7 @@
 #' the indicator names used in the model description of the measurement model.
 #' Alternatively, a list of matrices or `data.frame`s may be provided
 #' in which case estimation is repeated for each data set. 
-#' The data provided via `.data` may contain a character column whose column name 
+#' The data provided via `.data` may contain **one** character column whose column name 
 #' must be provided to `.id`. Values of this column are interpreted as group 
 #' identifiers and `csem()` or `cca()` will split the data by levels of that column and run
 #' the estimation for each level separately.
@@ -33,21 +34,30 @@
 #' }
 #'
 #' \subsection{Weights and path coefficients:}{
-#' By default weights are estimated using the partial least squares algorithm (*PLS-PM*).
-#' Alternative approaches include generalized structured component analysis (*GSCA*),
-#'  *GCCA* (i.e. *Kettenring's criteria*), "*fixed weights*"
-#' or "*unit weight*".
+#' By default weights are estimated using the partial least squares (path) algorithm (`"PLS-PM"`).
+#' A broad range of alternative weightning algorithms may be supplied to `.appraoch_weights`.
+#' Currently the following approaches are implemented 
+#' \enumerate{
+#' \item{(Default) Partial least squares path modeling (`"PLS"`). The algorithm
+#'    can be customized. See [calculateWeightsPLS()] for details.}
+#' \item{Generalized structured component analysis (`"GSCA"`)}
+#' \item{Generalized canoncial correlation analysis (*GCCA*), including 
+#'   `"SUMCORR"`, `"MAXVAR"`, `"SSQCORR"`, `"MINVAR"`, `"GENVAR"`}
+#' \item{Principal component analysis (`"PCA"`)}
+#' \item{Factor score regression using sum scores (`"unit"`), 
+#'    regression (`"regression"`) or bartlett scores (`"bartlett"`)}
+#' }
 #'
 #' Composite-indicator and composite-composite correlations are properly
 #' disattenuated by default to yield consistent loadings, construct correlations, 
 #' and path coefficients if any of the constructs in the model are modeled as a 
-#' common factor. cSEM offers two ways to adress 
+#' common factor. 
 #' 
 #' For *PLS-PM* disattenuation is done using *PLSc* \insertCite{Dijkstra2015}{cSEM}.
 #' For *GSCA* disattenuation is done implicitly by using *GSCAm*. Weights obtained
 #' by GCCA, unit weights and fixed weights are disattenuated using a  
 #' Disattenuation my be suppressed by setting 
-#' `.disattenuate = FALSE`. Note however that quantities in this case are inconsistent 
+#' `.disattenuate = FALSE`. Note, however, that quantities in this case are inconsistent 
 #' estimates for their construct level counterparts if any of the constructs in the structural model is
 #' modeled as a common factor!
 #' }
@@ -84,7 +94,7 @@
 #'   .approach_nl                 = c("sequential", "replace"),
 #'   .approach_paths              = c("OLS", "2SLS"),
 #'   .approach_weights            = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", 
-#'                                    "GSCA", "unit", "bartlett", "regression"),
+#'                                    "GSCA", "PCA", "unit", "bartlett", "regression"),
 #'   .disattenuate                = TRUE,
 #'   .id                          = NULL,
 #'   .iter_max                    = 100,
@@ -135,7 +145,7 @@ csem <- function(
   .approach_nl           = c("sequential", "replace"),
   .approach_paths        = c("OLS", "2SLS"),
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                             "GSCA", "unit", "bartlett", "regression"),
+                             "GSCA", "unit", "PCA", "bartlett", "regression"),
   .disattenuate          = TRUE,
   .id                    = NULL,
   .iter_max              = 100,
