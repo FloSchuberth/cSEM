@@ -180,8 +180,8 @@ calculateOuterWeightsPLS <- function(
       W[block, indicators] <- temp$x
     
     } else if(.modes[block] == "PCA"){
-      ## PCA - Weights are the first principal component (= the first eigenvector)
-      ##       of S_jj.
+      ## PCA - Weights to create the first principal component are used  (= the first eigenvector of
+      ##       of S_jj).
       temp <- psych::principal(r = .S[indicators, indicators], nfactors = 1)
       W[block, indicators] <- c(temp$weights)
       
