@@ -707,7 +707,7 @@ predictPLS=function(.object, testDataset){
   # Order the provided dataset
   testData=testDataset[,colnames(.object$Information$Model$measurement)]
   
-  # store the values of the train dataset, it ia assumed that this is the dataset in the cSEM object.
+  # save descriptives of the original unscaled train dataset
   mean_train <- colMeans(.object$Information$Data)
   sd_train <- apply(.object$Information$Data,2,sd)
   W_train <- .object$Estimates$Weight_estimates
@@ -731,8 +731,15 @@ predictPLS=function(.object, testDataset){
   # calculate predictions of the endogenous constructs
   endoscores <- exogscores%*%t(Gamma_train) %*% solve(diag(nrow(B_train)) - t(B_train))
   
-  predendind <- endoscores %*% loadingstrain[endo,,drop = FALSE]
   
+  xhat <- endoscores %*% loadingstrain[endo,,drop = FALSE]
+  
+  # Denormalize predictions
+  xhatrescale= sapply(colnames(xhat),function(x){
+    xhat[,x]*sd_train[x]+mean_train[x]
+  } )
+  
+  return(xhatrescale)
   
 }
 
