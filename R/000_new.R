@@ -699,6 +699,8 @@ predict=function(.object, testDataset){
     stop('The same indicators as in the original estimation need to be provided') #Perhaps we do not need to be tha strict as we only need the exogenous indicators
   }
   
+  # throw error if model is non-linear. See danks et al how this can be addressed.
+  
   # Perform check of the provided dataset
   # Needs to be implemented
   
@@ -717,12 +719,13 @@ predict=function(.object, testDataset){
   
   # Identifiy exogenous construct in the structural model
   exog = rownames(pathtrain)[rowSums(pathtrain)==0]
-  
-  # calculate scores for the exogenous constructs
+  endo = rownames(pathtrain)[rowSums(pathtrain)!=0]
+
+    # calculate scores for the exogenous constructs
   exogscores=testData%*%t(weightstrain[exog,])
   
   # calculate predictions of the endogenous constructs
-  endoscores = exogscores %*% t(pathtrain[exog,])
+  endoscores = exogscores %*% t(pathtrain[exog,endo])
   
   
 }
