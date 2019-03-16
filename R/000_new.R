@@ -760,7 +760,9 @@ predictPLS=function(.object, testDataset){
   # Calculate the difference between original and predicted values
   residuals = testData[,Ind_endo] - xhatrescale[,Ind_endo]
   
-  list(Pred_Indicators_endo = xhatrescale[,Ind_endo],Residuals = residuals)
+  list(Pred_Indicators_endo = xhatrescale[,Ind_endo],
+       Residuals_Indicators_endo = residuals, 
+       Pred_Construct_endo = endoscores)
   
   
   }
