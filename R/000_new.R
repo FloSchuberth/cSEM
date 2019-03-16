@@ -692,7 +692,7 @@ quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
 #' Implementation of PLS predict adopted from Shmueli et al. (2016) Table 1
 #' 
 #' 
-predict=function(.object, testDataset){
+predictPLS=function(.object, testDataset){
   
   # Check whether the test dataset contains the same inidcators as the train dataset
   if(sum(!(colnames(.object$Information$Model$measurement)%in% colnames(testDataset)))!=0){
@@ -708,26 +708,30 @@ predict=function(.object, testDataset){
   testData=testDataset[,colnames(.object$Information$Model$measurement)]
   
   # store the values of the train dataset, it ia assumed that this is the dataset in the cSEM object.
-  meantrain=colMeans(.object$Information$Data)
-  sdtrain=apply(.object$Information$Data,2,sd)
-  weightstrain=.object$Estimates$Weight_estimates
-  loadingstrain=.object$Estimates$Loading_estimates
-  pathtrain=.object$Estimates$Path_estimates
+  mean_train <- colMeans(.object$Information$Data)
+  sd_train <- apply(.object$Information$Data,2,sd)
+  W_train <- .object$Estimates$Weight_estimates
+  Loadings_train <- .object$Estimates$Loading_estimates
   
-  # Ordered indicator names
-  indordered=colnames(.object$Information$Model$measurement)
-  
-  # Identifiy exogenous construct in the structural model
-  exog = rownames(pathtrain)[rowSums(pathtrain)==0]
-  endo = rownames(pathtrain)[rowSums(pathtrain)!=0]
+  # Path coefficients estimates based on the trainig dataset
+  pathtrain <- .object$Estimates$Path_estimates
 
-    # calculate scores for the exogenous constructs
-  exogscores=testData%*%t(weightstrain[exog,,drop = FALSE])
+  # Identifiy exogenous construct in the structural model
+  Cons_exo <- rownames(pathtrain)[rowSums(pathtrain)==0]
+  Cons_endo <- rownames(pathtrain)[rowSums(pathtrain)!=0]
+  
+  # Path coefficients of exogenous and endogenous constructs
+  B_train      <- .object$Estimates$Path_estimates[Cons_endo, Cons_endo, drop = FALSE]
+  Gamma_train  <- .object$Estimates$Path_estimates[Cons_endo, Cons_exo, drop = FALSE]
+  
+  # Predict scores for the exogenous constructs
+  exogscores <- testData%*%t(W_train[exog,,drop = FALSE])
+  
   
   # calculate predictions of the endogenous constructs
-  endoscores = exogscores %*% t(pathtrain[exog,endo,drop = FALSE])
+  endoscores <- exogscores%*%t(Gamma_train) %*% solve(diag(nrow(B_train)) - t(B_train))
   
-  predendind= endoscores %*% loadingstrain[endo,,drop = FALSE]
+  predendind <- endoscores %*% loadingstrain[endo,,drop = FALSE]
   
   
 }
