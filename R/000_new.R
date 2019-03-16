@@ -687,7 +687,51 @@ quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
     
     .object
   }
+ 
+
+#' Implementation of PLS predict adopted from Shmueli et al. (2016) Table 1
+#' 
+#' 
+predict=function(.object, testDataset){
   
+  # Check whether the test dataset contains the same inidcators as the train dataset
+  if(sum(!(colnames(.object$Information$Model$measurement)%in% colnames(testDataset)))!=0){
+    stop('The same indicators as in the original estimation need to be provided') #Perhaps we do not need to be tha strict as we only need the exogenous indicators
+  }
+  
+  # Perform check of the provided dataset
+  # Needs to be implemented
+  
+  # Order the provided dataset
+  testData=testDataset[,colnames(.object$Information$Model$measurement)]
+  
+  # store the values of the train dataset, it ia assumed that this is the dataset in the cSEM object.
+  meantrain=colMeans(.object$Information$Data)
+  sdtrain=apply(.object$Information$Data,2,sd)
+  weightstrain=.object$Estimates$Weight_estimates
+  loadingstrain=.object$Estimates$Loading_estimates
+  pathtrain=.object$Estimates$Path_estimates
+  
+  # Ordered indicator names
+  indordered=colnames(.object$Information$Model$measurement)
+  
+  # Identifiy exogenous construct in the structural model
+  exog = rownames(pathtrain)[rowSums(pathtrain)==0]
+  
+  # calculate scores for the exogenous constructs
+  exogscores=testData%*%t(weightstrain[exog,])
+  
+  # calculate predictions of the endogenous constructs
+  endoscores = exogscores %*% t(pathtrain[exog,])
+  
+  
+}
+
+
+
+
+
+ 
   
   
 #' Implementation of REBUS-PLS
