@@ -722,10 +722,12 @@ predict=function(.object, testDataset){
   endo = rownames(pathtrain)[rowSums(pathtrain)!=0]
 
     # calculate scores for the exogenous constructs
-  exogscores=testData%*%t(weightstrain[exog,])
+  exogscores=testData%*%t(weightstrain[exog,,drop = FALSE])
   
   # calculate predictions of the endogenous constructs
-  endoscores = exogscores %*% t(pathtrain[exog,endo])
+  endoscores = exogscores %*% t(pathtrain[exog,endo,drop = FALSE])
+  
+  predendind= endoscores %*% loadingstrain[endo,,drop = FALSE]
   
   
 }
