@@ -699,17 +699,32 @@ predictPLS=function(.object, testDataset){
     stop('The same indicators as in the original estimation need to be provided') #Perhaps we do not need to be tha strict as we only need the exogenous indicators
   }
   
-  # throw error if model is non-linear. See danks et al how this can be addressed.
+  # Return error if model is non-linear. See danks et al how this can be addressed.
+  if(.object$Information$Model$model_type != 'Linear'){
+    stop2('Currenlty, predictPLS works only for linear models.')
+  }
+  
+  if(.object$Information$Type_of_indicator_correlation != 'Pearson'){
+    stop2('Currently, predictPLS works only in combination with Pearson correlation.')
+  }
   
   # Perform check of the provided dataset
   # Needs to be implemented
   
   # Order the provided dataset
-  testData=testDataset[,colnames(.object$Information$Model$measurement)]
+  testData <- testDataset[,colnames(.object$Information$Model$measurement)]
+  
   
   # save descriptives of the original unscaled train dataset
-  mean_train <- colMeans(.object$Information$Data)
-  sd_train <- apply(.object$Information$Data,2,sd)
+  trainData <- .object$Information$Arguments$.data
+  mean_train <- colMeans(trainData)
+  sd_train <- apply(trainData,2,sd)
+  
+  # Scale the test dataset with the descriptives of taining dataset
+  testDatascale <- sapply(colnames(testData),function(x){
+    (testData[,x]-mean_train[x])/sd_train[x]
+  })
+  
   W_train <- .object$Estimates$Weight_estimates
   Loadings_train <- .object$Estimates$Loading_estimates
   
@@ -725,23 +740,30 @@ predictPLS=function(.object, testDataset){
   Gamma_train  <- .object$Estimates$Path_estimates[Cons_endo, Cons_exo, drop = FALSE]
   
   # Predict scores for the exogenous constructs
-  exogscores <- testData%*%t(W_train[exog,,drop = FALSE])
+  exogscores <- testDatascale%*%t(W_train[Cons_exo,,drop = FALSE])
   
   
   # calculate predictions of the endogenous constructs
   endoscores <- exogscores%*%t(Gamma_train) %*% solve(diag(nrow(B_train)) - t(B_train))
   
   
-  xhat <- endoscores %*% loadingstrain[endo,,drop = FALSE]
+  xhat <- endoscores %*% Loadings_train[Cons_endo,,drop = FALSE]
   
   # Denormalize predictions
   xhatrescale= sapply(colnames(xhat),function(x){
     xhat[,x]*sd_train[x]+mean_train[x]
   } )
   
-  return(xhatrescale)
+  # Return the predicted values of the indicators connected to endogenous constructs
+  Ind_endo=colnames(.object$Information$Model$measurement)[colSums(.object$Information$Model$measurement[Cons_endo,])!=0]
+
+  # Calculate the difference between original and predicted values
+  residuals = testData[,Ind_endo] - xhatrescale[,Ind_endo]
   
-}
+  list(Pred_Indicators_endo = xhatrescale[,Ind_endo],Residuals = residuals)
+  
+  
+  }
 
 
 
