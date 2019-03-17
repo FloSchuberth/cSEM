@@ -6,6 +6,8 @@ output: github_document
 
 # cSEM: a package for composite-based SEM
 
+[![CRAN status](https://www.r-pkg.org/badges/version/cSEM)](https://cran.r-project.org/package=cSEM)
+
 WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES TO THE API ARE VERY LIKELY. 
          Do not use the package before the first stable relase (which will
          be 0.0.1, most likely in mid 2019).

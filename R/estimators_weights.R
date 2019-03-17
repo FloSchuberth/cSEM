@@ -483,7 +483,12 @@ calculateWeightsGSCA <- function(
   
 } # END calculateWeightsGSCA
 
+#' Calculate weights using GSCAm
 #'
+#' Calculates weights...
+#' 
+#' (TODO)
+#' 
 #' @export
 calculateWeightsGSCAm <- function(
   .X                           = args_default()$.X,
