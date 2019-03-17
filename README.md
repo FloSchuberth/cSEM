@@ -5,6 +5,8 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/cSEM)](https://cran.r-project.org/package=cSEM)
+[![Build
+Status](https://travis-ci.com/M-E-Rademaker/cSEM.svg?branch=master)](https://travis-ci.com/M-E-Rademaker/cSEM)
 
 WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES TO THE API ARE VERY
 LIKELY. Do not use the package before the first stable relase (which
