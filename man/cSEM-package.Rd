@@ -15,6 +15,13 @@ generalized canonical correlation analysis (GCCA) unit weights (sum score) and
 fixed weights, as well as several tests and typical postestimation
 procedures (e.g., assess the model fit, compute direct, indirect and total effects).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item Report bugs at \url{https://github.com/M-E-Rademaker/cSEM/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Manuel Rademaker \email{manuel.rademaker@uni-wuerzburg.de} (0000-0002-8902-3561)
 

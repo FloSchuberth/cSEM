@@ -22,6 +22,7 @@ Authors@R: c(person(given = "Manuel", family = "Rademaker",
 Maintainer: Manuel Rademaker <manuel.rademaker@uni-wuerzburg.de>
 Depends: R (>= 3.5.0)
 Description: Composite-based estimators for structural equation modeling.
+BugReports: https://github.com/M-E-Rademaker/cSEM/issues
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -40,7 +41,6 @@ Imports: alabama,
     polycor,
     psych,
     purrr,
-    RcppAlgos,
     Rdpack,
     symmoments
 RdMacros: Rdpack
