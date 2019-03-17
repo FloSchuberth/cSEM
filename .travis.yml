@@ -2,3 +2,5 @@
 
 language: r
 cache: packages
+# As long as we are in the development stage warnings are not considered errors
+warnings_are_errors: false

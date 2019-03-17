@@ -10,7 +10,7 @@
 #'
 #' @export
 #' 
-print.cSEMResults <- function(.object) {
+print.cSEMResults <- function(.object, ...) {
     
   cat(
     rule(line = "bar2"), "\n",
@@ -83,7 +83,7 @@ print.cSEMResults <- function(.object) {
 #'
 #' @export
 #'
-print.cSEMSummarize_default <- function(.object, .full_output = FALSE) {
+print.cSEMSummarize_default <- function(.object, .full_output = FALSE, ...) {
   
   x1 <- .object$Estimates
   x2 <- .object$Information
@@ -346,7 +346,7 @@ print.cSEMSummarize_default <- function(.object, .full_output = FALSE) {
 #'
 #' @export
 #'
-print.cSEMSummarize_2ndorder <- function(.object) {
+print.cSEMSummarize_2ndorder <- function(.object, ...) {
   
   ### Extract name and objects 
   x11 <- .object$First_stage$Estimates
@@ -537,7 +537,7 @@ print.cSEMSummarize_2ndorder <- function(.object) {
 #'
 #' @export
 #'
-print.cSEMVerify_default <- function(.object) {
+print.cSEMVerify_default <- function(.object, ...) {
   
   cat(rule(line = "bar2"), sep = "")
   
@@ -577,7 +577,7 @@ print.cSEMVerify_default <- function(.object) {
 #'
 #' @export
 #'
-print.cSEMVerify_2ndorder <- function(.object) {
+print.cSEMVerify_2ndorder <- function(.object, ...) {
   
   cat(rule(line = "bar2"), sep = "")
   cat("\n\nVerify admissibility:\n", sep = "")
@@ -619,7 +619,7 @@ print.cSEMVerify_2ndorder <- function(.object) {
 #'
 #' @export
 #'
-print.cSEMTestOMF <- function(.object) {
+print.cSEMTestOMF <- function(.object, ...) {
   
   cat(
     rule(line = "bar2"), "\n",
@@ -745,7 +745,7 @@ print.cSEMTestOMF <- function(.object) {
 #'
 #' @export
 #'
-print.cSEMTestMGD <- function(.object) {
+print.cSEMTestMGD <- function(.object, ...) {
 
   cat(
     rule(line = "bar2"), "\n",
@@ -889,7 +889,7 @@ print.cSEMTestMGD <- function(.object) {
 #'
 #' @export
 #'
-print.cSEMTestMICOM <- function(.object) {
+print.cSEMTestMICOM <- function(.object, ...) {
 
   cat(
     rule(line = "bar2"), "\n",

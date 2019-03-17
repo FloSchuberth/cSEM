@@ -362,7 +362,8 @@ Cronbach_alpha.cSEMResults_multi <- function(.object=args_default()$.object,
 #' @describeIn Cronbach_alpha (TODO)
 #' @export
 Cronbach_alpha.cSEMResults_2ndorder <- function(.object=args_default()$.object,
-                                                .only_common_factors=args_default()$.only_common_factors) {
+                                                .only_common_factors=args_default()$.only_common_factors,
+                                                .alpha=args_default()$.alpha) {
   
   stop('Not implemented yet.')
 }
@@ -462,7 +463,7 @@ calculateEffectSize.cSEMResults_default <- function(.object=args_default()$.obje
       
       model_temp$structural[x, i] <- 0 
       
-      out <- cSEM:::estimatePathOLS(
+      out <- estimatePathOLS(
         .H = H,
         .Q = Q,
         .P = P,

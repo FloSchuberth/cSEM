@@ -24,7 +24,8 @@ Cronbach_alpha(
 
 
   \method{Cronbach_alpha}{cSEMResults_2ndorder}(.object = args_default()$.object,
-  .only_common_factors = args_default()$.only_common_factors)
+  .only_common_factors = args_default()$.only_common_factors,
+  .alpha = args_default()$.alpha)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}

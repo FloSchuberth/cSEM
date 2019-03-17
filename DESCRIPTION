@@ -23,10 +23,11 @@ Maintainer: Manuel Rademaker <manuel.rademaker@uni-wuerzburg.de>
 Depends: R (>= 3.5.0)
 Description: Composite-based estimators for structural equation modeling.
 BugReports: https://github.com/M-E-Rademaker/cSEM/issues
-License: GPL-3
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: alabama,
+    amap,
     cli,
     crayon,
     expm,
@@ -34,6 +35,7 @@ Imports: alabama,
     future,
     lavaan,
     magrittr,
+    MASS,
     Matrix,
     matrixcalc,
     matrixStats,
@@ -43,7 +45,9 @@ Imports: alabama,
     psych,
     purrr,
     Rdpack,
-    symmoments
+    stats,
+    symmoments,
+    utils
 RdMacros: Rdpack
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
