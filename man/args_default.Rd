@@ -44,7 +44,7 @@ args_default(.only_dots = TRUE) # list only those accepted by the `...` argument
 args_default(.only_dots = TRUE, .which_fun = "csem") # the same
 
 ## Show accepted candidates:
-args.default(.choices = TRUE)
+args_default(.choices = TRUE)
 
 }
 \seealso{

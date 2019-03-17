@@ -181,7 +181,7 @@ a <- csem(satisfaction, model)
 
 # Bootstrap and jackknife estimation
 boot <- resamplecSEMResults(a)
-jack <- resamplecSEMRestuts(a, .resample_method = "jackknife") 
+jack <- resamplecSEMResults(a, .resample_method = "jackknife") 
 
 # Bootstrap resampling with resampling each resample (totals .R*R2 runs).
 boot1 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,

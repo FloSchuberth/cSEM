@@ -229,7 +229,7 @@ NULL
 #' args_default(.only_dots = TRUE, .which_fun = "csem") # the same
 #' 
 #' ## Show accepted candidates:
-#' args.default(.choices = TRUE)
+#' args_default(.choices = TRUE)
 #'
 #' @seealso [handleArgs()], [csem_arguments], [cca()], [csem()], [foreman()]
 #'
