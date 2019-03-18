@@ -17,13 +17,15 @@ will be 0.0.1, most likely in mid 2019).
 Estimate, analyse, test, and study linear, nonlinear, hierachical and
 multigroup structural equation models using composite-based approaches
 and procedures including estimation techniques such as partial least
-squares path modelling (PLS) and its derivatives (PLSc, ordPLSc,
+squares path modeling (PLS) and its derivatives (PLSc, ordPLSc,
 robustPLSc), generalized structured component analysis (GSCA),
-generalized structured component analysis with uniqueness terms (GSCAm),
-generalized canonical correlation analysis (GCCA), unit weights (sum
-score) and fixed weights, as well as several tests and typical
-postestimation procedures (e.g., assess the model fit, compute direct,
-indirect and total effects).
+generalized structured component analysis with uniqueness terms (GCSAm),
+generalized canonical correlation analysis (GCCA), principal component
+analysis (PCA), factor score regression (FSR) using sum score,
+regression or bartlett scores (including bias correction using Croon’s
+approach), as well as several tests and typical postestimation
+procedures (e.g., verify admissibility of the estimates, assess the
+model fit, test the model fit etc.).
 
 ## Installation
 
@@ -35,13 +37,13 @@ devtools::install_github("M-E-Rademaker/cSEM")
 
 ## Philopsophy
 
-  - User-centred\!\!
+  - User-centered design\!
   - Easy to use by non-R experts:
       - One central function `csem()` provides default choices for most
         of its arguments (similarity to the `sem()` and `cfa()`
         functions of the [lavaan](http://lavaan.ugent.be/) package is
         intended).
-      - (Eventually…) well documented (Vignettes, HTML output, a
+      - (Eventually…) well documented (vignettes, HTML output, a
         website, intro course(s), cheatsheets)
       - Structured output/results that aims to be “easy”" in a sense
         that it is
@@ -63,9 +65,22 @@ devtools::install_github("M-E-Rademaker/cSEM")
 
 ## Basic usage
 
+The basic usage is illustrated below.
+<img src="man/figures/api.png" width="80%" style="display: block; margin: auto;" />
+
+Roughly speaking using `cSEM` is always the same 3 step procedure
+
+1.  Pick a dataset and specify a model using [lavaan
+    syntax](http://lavaan.ugent.be/tutorial/syntax1.html)
+2.  Use `csem()`
+3.  Apply one of the postestimation functions on the resulting object.
+
+### Example
+
 Models are defined using [lavaan
 syntax](http://lavaan.ugent.be/tutorial/syntax1.html) with some slight
-modification.
+modification. For illustration we use the build-in and well known
+`satisfaction` data set.
 
 ``` r
 require(cSEM)
@@ -103,8 +118,8 @@ a <- csem(.data = satisfaction, .model = model)
 
 # This is equal to
 csem(
-   .data                        = NULL,
-   .model                       = NULL,
+   .data                        = satisfaction,
+   .model                       = model,
    .approach_cor_robust         = "none",
    .approach_nl                 = "sequential",
    .approach_paths              = "OLS",
@@ -126,7 +141,7 @@ csem(
    .resample_method2            = "none",
    .R                           = 499,
    .R2                          = 199,
-   .handle_inadmissibles        = "drop"
+   .handle_inadmissibles        = "drop",
    .user_funs                   = NULL,
    .eval_plan                   = "sequential",
    .seed                        = NULL
@@ -178,15 +193,70 @@ verify(a)
 testOMF(a) # takes roughly 30 seconds
 ```
 
-Inference can be done by first setting `.resample_method` to
-`"jackkinfe"` or `"bootstrap"` and subsequently using `summarize()` or
-`infer()`.
+#### Inference
+
+By default no inferential quantities are calculated since most
+composite-based approaches do not have closed-form solutions for
+standard errors. `cSEM` relies on the `bootstrap` or `jackknife` to
+estimate standard errors, test statistics, and critical quantiles.
+
+`cSEM` offers two ways to compute resamples
+
+1.  Inference can be done by first setting `.resample_method` to
+    `"jackkinfe"` or `"bootstrap"` and subsequently using `summarize()`
+    or `infer()`.
+2.  The same result is achived by passing a `cSEMResults` object to
+    `resamplecSEMResults()` and subsequently using `summarize()` or
+    `infer()`.
+
+<!-- end list -->
 
 ``` r
-b <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
-summarize(b)
-
-## Several confidence intervals are implemented, see ?infer():
-
-infer(b, .quantity = c("CI_standard_z", "CI_percentile"))
+# Setting `.resample_method`
+b1 <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
+b2 <- resamplecSEMResults(a)
 ```
+
+Several confidence intervals are implemented, see `?infer()`:
+
+``` r
+summarize(b1)
+infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
+```
+
+Both bootstrap and jackknife resampling support multiprocessing as well
+as random seeds. Simply set `eval_plan = "multiprocess"` in which case
+the maximum number of available cores is used if not on Windows. On
+Windows separate R instances are opend instead. Note that this naturally
+has some overhead so for a small number of resamples multiprocessing
+will not always be faster compared to sequential (single core)
+processing (the default).
+
+``` r
+b <- csem(
+  .data            = satisfaction,
+  .model           = model, 
+  .resample_method = "bootstrap",
+  .R               = 999,
+  .seed            = 98234,
+  .eval_plan       = "multiprocess")
+```
+
+## Postestimation functions
+
+Currently we have four major postestimation verbs.
+
+  - `summarize()` : usually all that is need.
+  - `verify()` : verify if the estimation produced admissible results
+  - `assess()` : asses the model using common fit and assessment
+    measures
+  - `predict()` : (not yet implemented)
+
+Tests are performed by using the test family of functions. Currently
+three tests are implemented.
+
+  - `testOMF()` : performs a test for overall model fit
+  - `testMICOM()` : performs a test for composite measurement invariance
+  - `testMGD` : performs a test for multi-group differences
+
+All functions require a `cSEMResults` object.
