@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# cSEM: a package for composite-based SEM
+# cSEM: a package for composite-based SEM <img src='man/figures/cSEMsticker.svg' align="right" height="200" /></a>
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/cSEM)](https://cran.r-project.org/package=cSEM)
