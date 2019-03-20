@@ -283,7 +283,7 @@ calculateReliabilities <- function(
   # that belong to a construct modeled as a common factor will be replaced now.
   
   if(is.null(.reliabilities)) {
-    ## Reliability: Q^2 = (w' * lambda)^2 where lambda is a consistent estimator
+    ## Congeneric reliability: Q^2 = (w' * lambda)^2 where lambda is a consistent estimator
     ## of the true factor loading.
     ## Approaches differ in the way the loadings are calculated but in the end
     ## it is always: Q = w' lambda.

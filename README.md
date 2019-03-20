@@ -9,17 +9,18 @@ status](https://www.r-pkg.org/badges/version/cSEM)](https://cran.r-project.org/p
 Status](https://travis-ci.com/M-E-Rademaker/cSEM.svg?branch=master)](https://travis-ci.com/M-E-Rademaker/cSEM)
 
 WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES TO THE API ARE VERY
-LIKELY. Do not use the package before the first stable relase (which
-will be 0.0.1, most likely in mid 2019).
+LIKELY. Use the package with caution and please report bugs to [the
+package creator](mailto:manuel.rademaker@uni-wuerzburg.de). The first
+stable relase will be version 0.0.1, most likely in mid 2019.
 
 ## Purpose
 
 Estimate, analyse, test, and study linear, nonlinear, hierachical and
 multigroup structural equation models using composite-based approaches
-and procedures including estimation techniques such as partial least
-squares path modeling (PLS) and its derivatives (PLSc, ordPLSc,
+and procedures, including estimation techniques such as partial least
+squares path modeling (PLS-PM) and its derivatives (PLSc, ordPLSc,
 robustPLSc), generalized structured component analysis (GSCA),
-generalized structured component analysis with uniqueness terms (GCSAm),
+generalized structured component analysis with uniqueness terms (GSCAm),
 generalized canonical correlation analysis (GCCA), principal component
 analysis (PCA), factor score regression (FSR) using sum score,
 regression or bartlett scores (including bias correction using Croon’s
@@ -35,7 +36,7 @@ model fit, test the model fit etc.).
 devtools::install_github("M-E-Rademaker/cSEM")
 ```
 
-## Philopsophy
+## Philosophy
 
   - User-centered design\!
   - Easy to use by non-R experts:
@@ -79,8 +80,8 @@ Roughly speaking using `cSEM` is always the same 3 step procedure
 
 Models are defined using [lavaan
 syntax](http://lavaan.ugent.be/tutorial/syntax1.html) with some slight
-modification. For illustration we use the build-in and well known
-`satisfaction` data set.
+modifications. For illustration we use the build-in and well known
+`satisfaction` dataset.
 
 ``` r
 require(cSEM)
@@ -200,12 +201,12 @@ composite-based approaches do not have closed-form solutions for
 standard errors. `cSEM` relies on the `bootstrap` or `jackknife` to
 estimate standard errors, test statistics, and critical quantiles.
 
-`cSEM` offers two ways to compute resamples
+`cSEM` offers two ways to compute resamples:
 
 1.  Inference can be done by first setting `.resample_method` to
     `"jackkinfe"` or `"bootstrap"` and subsequently using `summarize()`
     or `infer()`.
-2.  The same result is achived by passing a `cSEMResults` object to
+2.  The same result is achieved by passing a `cSEMResults` object to
     `resamplecSEMResults()` and subsequently using `summarize()` or
     `infer()`.
 
@@ -224,13 +225,16 @@ summarize(b1)
 infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
 ```
 
-Both bootstrap and jackknife resampling support multiprocessing as well
-as random seeds. Simply set `eval_plan = "multiprocess"` in which case
+Both bootstrap and jackknife resampling support platform-independent
+multiprocessing as well as random seeds via the [future
+framework](https://github.com/HenrikBengtsson/future). For
+multiprocessing simply set `eval_plan = "multiprocess"` in which case
 the maximum number of available cores is used if not on Windows. On
-Windows separate R instances are opend instead. Note that this naturally
-has some overhead so for a small number of resamples multiprocessing
-will not always be faster compared to sequential (single core)
-processing (the default).
+Windows as many separate R instances are opened in the backround as
+there are cores available instead. Note that this naturally has some
+overhead so for a small number of resamples multiprocessing will not
+always be faster compared to sequential (single core) processing (the
+default). Seeds are set via the `.seed` argument.
 
 ``` r
 b <- csem(
