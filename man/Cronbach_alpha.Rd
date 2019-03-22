@@ -29,8 +29,8 @@ Cronbach_alpha(
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.only_common_factors}{Logical. Should only common factors be included?
-Defaults to \code{FALSE}.}
+\item{.only_common_factors}{Logical. Should only constructs modeled as common
+factors be included? Defaults to \code{TRUE}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}

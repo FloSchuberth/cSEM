@@ -110,8 +110,8 @@
 #' @param .normality Logical. Should joint normality be assumed in the nonlinear model? 
 #'  Defaults to `TRUE`. Ignored if the model is linear.
 #' @param .object An R object of class [cSEMResults] resulting from a call to [csem()].
-#' @param .only_common_factors Logical. Should only common factors be included? 
-#'   Defaults to `FALSE`.
+#' @param .only_common_factors Logical. Should only constructs modeled as common 
+#'   factors be included? Defaults to `TRUE`.
 #' @param .only_dots Logical. Should only arguments to be passed to lower level 
 #'   functions via the  `...` argument of the `fun` function be returned. 
 #'   Defaults to `FALSE`.

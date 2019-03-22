@@ -7,9 +7,9 @@
 \alias{assess.cSEMResults_2ndorder}
 \title{Assess model}
 \usage{
-assess(.object)
+assess(.object, ...)
 
-\method{assess}{cSEMResults_default}(.object)
+\method{assess}{cSEMResults_default}(.object, ...)
 
 \method{assess}{cSEMResults_multi}(.object)
 
@@ -25,7 +25,7 @@ assess(.object)
 Assess model using common evaluation criteria and fit measures.
 }
 \details{
-The following evaulation criteria and fit measures are used (TODO).
+For details see the vignette on assess.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -37,5 +37,5 @@ The following evaulation criteria and fit measures are used (TODO).
 }}
 
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
 }

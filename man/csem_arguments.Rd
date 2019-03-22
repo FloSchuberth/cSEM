@@ -146,8 +146,8 @@ Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.only_common_factors}{Logical. Should only common factors be included?
-Defaults to \code{FALSE}.}
+\item{.only_common_factors}{Logical. Should only constructs modeled as common
+factors be included? Defaults to \code{TRUE}.}
 
 \item{.only_dots}{Logical. Should only arguments to be passed to lower level
 functions via the  \code{...} argument of the \code{fun} function be returned.
