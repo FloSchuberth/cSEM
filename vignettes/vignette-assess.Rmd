@@ -37,17 +37,17 @@ Currently the following quality measures are implemented:
 - **Congeneric reliability** ($\rho_C$), also know as e.g.: composite reliability,
   construct reliability, (unidimensional) omega, Jöreskog's $\rho$, $\rho_A$,
   or $\rho_B$. Under the assumption of tau-equivalent and/or parallel measurement
-  an alternative reliability measures my be derived:
+  an alternative reliability measures may be derived:
     - **Tau-equivalent reliability** ($\rho_T$), also know as e.g.: Cronbach alpha, alpha, $\alpha$,
       coefficient alpha, Guttman's $\lambda_3$, KR-20. 
   
   A third measure is **Parallel reliability** ($\rho_P$), also know as e.g.: split-half reliability, 
   Spearman-Brown formulae/prophecy, standarized alpha. In `cSEM` parallel 
   reliability is always identical to tau-equivalent reliability as indicators
-  are always standarized. Hence, only $\rho_T$ is reported.
+  are always standardized. Hence, only $\rho_T$ is reported.
      
   WARNING: tau-equivalent (and parallel) measurement reliability
-  measures are only consistent for the population reliability under restrictive
+  estimates are only consistent for the population reliability under restrictive
   assumptions that are unlikly to hold in practice. We therefore explicitly discourage
   their use as congeneric reliability is virtually always preferable in empirical
   work! In fact, congeneric reliability can be shown to be
@@ -62,7 +62,8 @@ Currently the following quality measures are implemented:
 - The **root mean square error of approximation** (RMSEA)
 - The **RMS_$\theta$**
 - The **variance inflation factor** (VIF)
-- The R-square ($R^2$)
+- The coefficient of determination ($R^2$)
+- What about the adjusted $R^2$
 
 For implementation details see the [Methods & Formulae](#methods) section.
 
@@ -372,7 +373,7 @@ different naming systems and conventions we provide a "translation table" below:
  Parallel reliability           $\rho_P$   Spearman-Brown formula, Spearman-Brown prophcy,
                                            Standardized alpha, Split-half reliability
 
- Tau-equivalent reliability     $\rho_T$   Cronbach alpha, $\alpha$, Coefficient alpha
+ Tau-equivalent reliability     $\rho_T$   Cronbach's alpha, $\alpha$, Coefficient alpha
                                            Guttmans's $\lambda_3$, KR-20
  
  Congeneric reliability         $\rho_C$   Composite reliability, Jöreskog's $\rho$,
