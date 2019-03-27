@@ -472,7 +472,8 @@ resampleData <- function(
 #'  .handle_inadmissibles  = c("drop", "ignore", "replace"),
 #'  .user_funs             = NULL,
 #'  .eval_plan             = c("sequential", "multiprocess"),
-#'  .seed                  = sample(.Random.seed, 1)
+#'  .seed                  = sample(.Random.seed, 1),
+#'  .sign_change_option    = args_default()$.sign_change_option
 #' )
 #'
 #' @inheritParams csem_arguments
@@ -557,7 +558,8 @@ resamplecSEMResults <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed
+  .seed                  = args_default()$.seed,
+  .sign_change_option    = args_default()$.sign_change_option
 ) {
   ## Does .object already contain resamples
   if(any(class(.object) == "cSEMResults_resampled")) {
@@ -594,7 +596,8 @@ resamplecSEMResults.cSEMResults_default <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed
+  .seed                  = args_default()$.seed,
+  .sign_change_option    = args_default()$.sign_change_option
   ) {
   
   ## Set seed if not given
@@ -661,7 +664,8 @@ resamplecSEMResults.cSEMResults_default <- function(
     .handle_inadmissibles2 = .handle_inadmissibles, 
     .user_funs             = .user_funs,
     .eval_plan             = .eval_plan,
-    .seed                  = .seed  
+    .seed                  = .seed,
+    .sign_change_option    = .sign_change_option
   )
   
   # Check if at least 3 admissible results were obtained
@@ -736,7 +740,8 @@ resamplecSEMResults.cSEMResults_default <- function(
       "Method2"                 = .resample_method2,
       "Number_of_observations"  = nrow(.object$Information$Data),
       "Number_of_runs"          = .R,
-      "Number_of_runs2"         = .R2
+      "Number_of_runs2"         = .R2,
+      "Sign_chnage_option"      = .sign_change_option
     )
     names(info)[length(info)] <- "Information_resample"
     
@@ -762,7 +767,8 @@ resamplecSEMResults.cSEMResults_multi <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed
+  .seed                  = args_default()$.seed,
+  .sign_change_option    = args_default()$.sign_change_option
 ) {
   
   out <- lapply(.object, function(x) {
@@ -775,7 +781,8 @@ resamplecSEMResults.cSEMResults_multi <- function(
       .handle_inadmissibles = .handle_inadmissibles,
       .user_funs            = .user_funs,
       .eval_plan            = .eval_plan,
-      .seed                 = .seed
+      .seed                 = .seed,
+      .sign_change_option    = .sign_change_option
     )
   })
   ## Add/ set class
@@ -794,7 +801,8 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed
+  .seed                  = args_default()$.seed,
+  .sign_change_option    = args_default()$.sign_change_option
 ) {
   
   ## Set seed if not given
@@ -861,7 +869,8 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
     .handle_inadmissibles2 = .handle_inadmissibles,
     .user_funs             = .user_funs,
     .eval_plan             = .eval_plan,
-    .seed                  = .seed
+    .seed                  = .seed,
+    .sign_change_option    = .sign_change_option 
   )
   
   # Check if at least 3 admissible results were obtained
@@ -932,7 +941,8 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
         "Method2"                 = .resample_method2,
         "Number_of_observations"  = nrow(.object$Second_stage$Information$Data),
         "Number_of_runs"          = .R,
-        "Number_of_runs2"         = .R2
+        "Number_of_runs2"         = .R2,
+        "Sign_change_option"      = .sign_change_option
       )
     )
     
@@ -965,7 +975,8 @@ resamplecSEMResultsCore <- function(
   .handle_inadmissibles2 = NULL,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed
+  .seed                  = args_default()$.seed,
+  .sign_change_option    = args_default()$.sign_change_option
 ) {
   
   ## Get arguments
@@ -1024,6 +1035,41 @@ resamplecSEMResultsCore <- function(
         x1 <- list()
         ## Select relevant statistics/parameters/quantities and vectorize
         # Path estimates
+        
+        if(.sign_change_option == "individual"){
+        summary_org =  summarize(.object)
+          est_1stage_org <- summary_org$First_stage$Estimates
+          est_2stage_org <- summary_org$Second_stage$Estimates  
+          
+        x1[["Path_estimates"]] <- est_2stage$Path_estimates$Estimate
+        x1[["Path_estimates"]][!(sign(est_2stage$Path_estimates$Estimate) == sign(est_2stage_org$Path_estimates$Estimate))] = 
+          x1[["Path_estimates"]][!(sign(est_2stage$Path_estimates$Estimate) == sign(est_2stage_org$Path_estimates$Estimate))]*-1
+        
+        names(x1[["Path_estimates"]]) <- est_2stage$Path_estimates$Name
+        
+        # Loading estimates
+        x1[["Loading_estimates"]] <- c(est_1stage$Loading_estimates$Estimate, 
+                                       est_2stage$Loading_estimates$Estimate)
+        x1[["Loading_estimates"]][!(sign(c(est_1stage$Loading_estimates$Estimate,est_2stage$Loading_estimates$Estimate)) == sign(c(est_1stage_org$Loading_estimates$Estimate,est_2stage_org$Loading_estimates$Estimate)))] = 
+          x1[["Loading_estimates"]][!(sign(c(est_1stage$Loading_estimates$Estimate,est_2stage$Loading_estimates$Estimate)) == sign(c(est_1stage_org$Loading_estimates$Estimate,est_2stage_org$Loading_estimates$Estimate)))]*-1
+        
+        names(x1[["Loading_estimates"]]) <- c(est_1stage$Loading_estimates$Name,
+                                              est_2stage$Loading_estimates$Name)
+        
+        # Weight estimates
+        x1[["Weight_estimates"]] <- c(est_1stage$Weight_estimates$Estimate, 
+                                      est_2stage$Weight_estimates$Estimate)
+        x1[["Weight_estimates"]][!(sign(c(est_1stage$Weight_estimates$Estimate,est_2stage$Weight_estimates$Estimate)) == sign(c(est_1stage_org$Weight_estimates$Estimate,est_2stage_org$Weight_estimates$Estimate)))] = 
+          x1[["Weight_estimates"]][!(sign(c(est_1stage$Weight_estimates$Estimate,est_2stage$Weight_estimates$Estimate)) == sign(c(est_1stage_org$Weight_estimates$Estimate,est_2stage_org$Weight_estimates$Estimate)))]*-1
+        
+        names(x1[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
+                                             est_2stage$Weight_estimates$Name)
+        }
+        
+        
+        
+        
+        # if .sign_change_option = "no"
         x1[["Path_estimates"]] <- est_2stage$Path_estimates$Estimate
         names(x1[["Path_estimates"]]) <- est_2stage$Path_estimates$Name
         
@@ -1043,6 +1089,32 @@ resamplecSEMResultsCore <- function(
         x1 <- list()
         ## Select relevant statistics/parameters/quantities and vectorize
         # Path estimates
+        if(.sign_change_option = "individual"){
+          .object
+          
+          summary_org = summarize(.object)
+          
+          x1[["Path_estimates"]] <- summary_temp$Estimates$Path_estimates$Estimate
+          # Multiply the coefficients for which the sign differs by -1
+          x1[["Path_estimates"]][!(sign(summary_temp$Estimates$Path_estimates$Estimate) == sign(summary_org$Estimates$Path_estimates$Estimate))] = 
+            x1[["Path_estimates"]][!(sign(summary_temp$Estimates$Path_estimates$Estimate) == sign(summary_org$Estimates$Path_estimates$Estimate))]*-1
+          names(x1[["Path_estimates"]]) <- summary_temp$Estimates$Path_estimates$Name
+          
+          # Loading estimates
+          x1[["Loading_estimates"]] <- summary_temp$Estimates$Loading_estimates$Estimate
+          x1[["Loading_estimates"]][!(sign(summary_temp$Estimates$Loading_estimates$Estimate) == sign(summary_org$Estimates$Loading_estimates$Estimate))] = 
+            x1[["Loading_estimates"]][!(sign(summary_temp$Estimates$Loading_estimates$Estimate) == sign(summary_org$Estimates$Loading_estimates$Estimate))]*-1
+          names(x1[["Loading_estimates"]]) <- summary_temp$Estimates$Loading_estimates$Name
+          
+          # Weight estimates
+          x1[["Weight_estimates"]] <- summary_temp$Estimates$Weight_estimates$Estimate
+          x1[["Weight_estimates"]][!(sign(summary_temp$Estimates$Weight_estimates$Estimate) == sign(summary_org$Estimates$Weight_estimates$Estimate))] = 
+            x1[["Weight_estimates"]][!(sign(summary_temp$Estimates$Weight_estimates$Estimate) == sign(summary_org$Estimates$Weight_estimates$Estimate))]*-1
+          
+          names(x1[["Weight_estimates"]]) <- summary_temp$Estimates$Weight_estimates$Name
+          
+        }
+        
         x1[["Path_estimates"]] <- summary_temp$Estimates$Path_estimates$Estimate
         names(x1[["Path_estimates"]]) <- summary_temp$Estimates$Path_estimates$Name
         
@@ -1053,6 +1125,7 @@ resamplecSEMResultsCore <- function(
         # Weight estimates
         x1[["Weight_estimates"]] <- summary_temp$Estimates$Weight_estimates$Estimate
         names(x1[["Weight_estimates"]]) <- summary_temp$Estimates$Weight_estimates$Name
+        
         
         # ## Additional statistics
         # # HTMT
@@ -1081,6 +1154,8 @@ resamplecSEMResultsCore <- function(
       
       ## Resampling from a bootstrap sample is required for the
       ## bootstraped t-interval CI (studentized CI), hence the second run
+      # In the second run no sign change option is used. We can think about 
+      # applying the same correction as in the first run
       if(.resample_method2 != "none") {
         
         Est_resamples2 <- resamplecSEMResults(
@@ -1090,7 +1165,8 @@ resamplecSEMResultsCore <- function(
           .resample_method      = .resample_method2,
           .resample_method2     = "none",
           .user_funs            = .user_funs,
-          .seed                 = .seed
+          .seed                 = .seed, 
+          .sign_change_option   = "no" 
         )
         x1 <- list("Estimates1" = x1, "Estimates2" = Est_resamples2)
       }
@@ -1127,7 +1203,8 @@ resamplecSEMResultsCore <- function(
         .R2                   = .R2,
         .user_funs            = .user_funs,
         .eval_plan            = .eval_plan,
-        .seed                 = .seed
+        .seed                 = .seed,
+        .sign_change_option   = .sign_change_option
       )
       
       out <- c(out, Est_replace)
