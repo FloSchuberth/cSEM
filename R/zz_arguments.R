@@ -167,6 +167,8 @@
 #'   resampling from a resample. Defaults to `199`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
+#' @param .sign_change_option Character string. Indicates which sign change option should be used in 
+#' the resample function. One of "*no*" "*individual*"  "*construct*". Defaults to "*no*".
 #' @param .seed Integer. The random seed to use. Defaults to `NULL` in which
 #'   case an arbitrary seed is choosen.
 #' @param .stage Character string. The stage the model is need for.
@@ -290,6 +292,7 @@ args_default <- function(
     .saturated               = FALSE,
     .second_resample         = NULL,
     .seed                    = NULL,
+    .sign_change_option      = c("no","individual","construct"),
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,
