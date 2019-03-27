@@ -160,7 +160,7 @@ csem <- function(
   .user_funs             = NULL,
   .eval_plan             = c("sequential", "multiprocess"),
   .seed                  = NULL,
-  .sign_change_option    = c("no",'individual','construct')
+  .sign_change_option    = c("no",'individual','construct'),
   ...
   ) {
   ## Match arguments

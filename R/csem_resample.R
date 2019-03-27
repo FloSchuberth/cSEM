@@ -1035,86 +1035,48 @@ resamplecSEMResultsCore <- function(
         x1 <- list()
         ## Select relevant statistics/parameters/quantities and vectorize
         # Path estimates
+        x1[["Path_estimates"]] <- est_2stage$Path_estimates$Estimate
+        names(x1[["Path_estimates"]]) <- est_2stage$Path_estimates$Name
+        
+        # Loading estimates
+        x1[["Loading_estimates"]] <- c(est_1stage$Loading_estimates$Estimate, 
+                                       est_2stage$Loading_estimates$Estimate)
+        names(x1[["Loading_estimates"]]) <- c(est_1stage$Loading_estimates$Name,
+                                              est_2stage$Loading_estimates$Name)
+        
+        # Weight estimates
+        x1[["Weight_estimates"]] <- c(est_1stage$Weight_estimates$Estimate, 
+                                      est_2stage$Weight_estimates$Estimate)
+        names(x1[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
+                                             est_2stage$Weight_estimates$Name)
         
         if(.sign_change_option == "individual"){
-        summary_org =  summarize(.object)
+          summary_org =  summarize(.object)
           est_1stage_org <- summary_org$First_stage$Estimates
           est_2stage_org <- summary_org$Second_stage$Estimates  
           
-        x1[["Path_estimates"]] <- est_2stage$Path_estimates$Estimate
-        x1[["Path_estimates"]][!(sign(est_2stage$Path_estimates$Estimate) == sign(est_2stage_org$Path_estimates$Estimate))] = 
-          x1[["Path_estimates"]][!(sign(est_2stage$Path_estimates$Estimate) == sign(est_2stage_org$Path_estimates$Estimate))]*-1
+          x1[["Path_estimates"]][!(sign(est_2stage$Path_estimates$Estimate) == sign(est_2stage_org$Path_estimates$Estimate))] = 
+            x1[["Path_estimates"]][!(sign(est_2stage$Path_estimates$Estimate) == sign(est_2stage_org$Path_estimates$Estimate))]*-1
+
+          # Loading estimates
+          x1[["Loading_estimates"]][!(sign(c(est_1stage$Loading_estimates$Estimate,est_2stage$Loading_estimates$Estimate)) == sign(c(est_1stage_org$Loading_estimates$Estimate,est_2stage_org$Loading_estimates$Estimate)))] = 
+            x1[["Loading_estimates"]][!(sign(c(est_1stage$Loading_estimates$Estimate,est_2stage$Loading_estimates$Estimate)) == sign(c(est_1stage_org$Loading_estimates$Estimate,est_2stage_org$Loading_estimates$Estimate)))]*-1
+
+          # Weight estimates
+          x1[["Weight_estimates"]][!(sign(c(est_1stage$Weight_estimates$Estimate,est_2stage$Weight_estimates$Estimate)) == sign(c(est_1stage_org$Weight_estimates$Estimate,est_2stage_org$Weight_estimates$Estimate)))] = 
+            x1[["Weight_estimates"]][!(sign(c(est_1stage$Weight_estimates$Estimate,est_2stage$Weight_estimates$Estimate)) == sign(c(est_1stage_org$Weight_estimates$Estimate,est_2stage_org$Weight_estimates$Estimate)))]*-1
+        }
         
-        names(x1[["Path_estimates"]]) <- est_2stage$Path_estimates$Name
-        
-        # Loading estimates
-        x1[["Loading_estimates"]] <- c(est_1stage$Loading_estimates$Estimate, 
-                                       est_2stage$Loading_estimates$Estimate)
-        x1[["Loading_estimates"]][!(sign(c(est_1stage$Loading_estimates$Estimate,est_2stage$Loading_estimates$Estimate)) == sign(c(est_1stage_org$Loading_estimates$Estimate,est_2stage_org$Loading_estimates$Estimate)))] = 
-          x1[["Loading_estimates"]][!(sign(c(est_1stage$Loading_estimates$Estimate,est_2stage$Loading_estimates$Estimate)) == sign(c(est_1stage_org$Loading_estimates$Estimate,est_2stage_org$Loading_estimates$Estimate)))]*-1
-        
-        names(x1[["Loading_estimates"]]) <- c(est_1stage$Loading_estimates$Name,
-                                              est_2stage$Loading_estimates$Name)
-        
-        # Weight estimates
-        x1[["Weight_estimates"]] <- c(est_1stage$Weight_estimates$Estimate, 
-                                      est_2stage$Weight_estimates$Estimate)
-        x1[["Weight_estimates"]][!(sign(c(est_1stage$Weight_estimates$Estimate,est_2stage$Weight_estimates$Estimate)) == sign(c(est_1stage_org$Weight_estimates$Estimate,est_2stage_org$Weight_estimates$Estimate)))] = 
-          x1[["Weight_estimates"]][!(sign(c(est_1stage$Weight_estimates$Estimate,est_2stage$Weight_estimates$Estimate)) == sign(c(est_1stage_org$Weight_estimates$Estimate,est_2stage_org$Weight_estimates$Estimate)))]*-1
-        
-        names(x1[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
-                                             est_2stage$Weight_estimates$Name)
+        if(.sign_change_option == "construct"){
+          stop2("sign_change_option == construct is not implemented yet.")
         }
         
         
-        
-        
-        # if .sign_change_option = "no"
-        x1[["Path_estimates"]] <- est_2stage$Path_estimates$Estimate
-        names(x1[["Path_estimates"]]) <- est_2stage$Path_estimates$Name
-        
-        # Loading estimates
-        x1[["Loading_estimates"]] <- c(est_1stage$Loading_estimates$Estimate, 
-                                       est_2stage$Loading_estimates$Estimate)
-        names(x1[["Loading_estimates"]]) <- c(est_1stage$Loading_estimates$Name,
-                                              est_2stage$Loading_estimates$Name)
-        
-        # Weight estimates
-        x1[["Weight_estimates"]] <- c(est_1stage$Weight_estimates$Estimate, 
-                                      est_2stage$Weight_estimates$Estimate)
-        names(x1[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
-                                             est_2stage$Weight_estimates$Name)
       } else { # default
 
         x1 <- list()
         ## Select relevant statistics/parameters/quantities and vectorize
         # Path estimates
-        if(.sign_change_option = "individual"){
-          .object
-          
-          summary_org = summarize(.object)
-          
-          x1[["Path_estimates"]] <- summary_temp$Estimates$Path_estimates$Estimate
-          # Multiply the coefficients for which the sign differs by -1
-          x1[["Path_estimates"]][!(sign(summary_temp$Estimates$Path_estimates$Estimate) == sign(summary_org$Estimates$Path_estimates$Estimate))] = 
-            x1[["Path_estimates"]][!(sign(summary_temp$Estimates$Path_estimates$Estimate) == sign(summary_org$Estimates$Path_estimates$Estimate))]*-1
-          names(x1[["Path_estimates"]]) <- summary_temp$Estimates$Path_estimates$Name
-          
-          # Loading estimates
-          x1[["Loading_estimates"]] <- summary_temp$Estimates$Loading_estimates$Estimate
-          x1[["Loading_estimates"]][!(sign(summary_temp$Estimates$Loading_estimates$Estimate) == sign(summary_org$Estimates$Loading_estimates$Estimate))] = 
-            x1[["Loading_estimates"]][!(sign(summary_temp$Estimates$Loading_estimates$Estimate) == sign(summary_org$Estimates$Loading_estimates$Estimate))]*-1
-          names(x1[["Loading_estimates"]]) <- summary_temp$Estimates$Loading_estimates$Name
-          
-          # Weight estimates
-          x1[["Weight_estimates"]] <- summary_temp$Estimates$Weight_estimates$Estimate
-          x1[["Weight_estimates"]][!(sign(summary_temp$Estimates$Weight_estimates$Estimate) == sign(summary_org$Estimates$Weight_estimates$Estimate))] = 
-            x1[["Weight_estimates"]][!(sign(summary_temp$Estimates$Weight_estimates$Estimate) == sign(summary_org$Estimates$Weight_estimates$Estimate))]*-1
-          
-          names(x1[["Weight_estimates"]]) <- summary_temp$Estimates$Weight_estimates$Name
-          
-        }
-        
         x1[["Path_estimates"]] <- summary_temp$Estimates$Path_estimates$Estimate
         names(x1[["Path_estimates"]]) <- summary_temp$Estimates$Path_estimates$Name
         
@@ -1125,6 +1087,27 @@ resamplecSEMResultsCore <- function(
         # Weight estimates
         x1[["Weight_estimates"]] <- summary_temp$Estimates$Weight_estimates$Estimate
         names(x1[["Weight_estimates"]]) <- summary_temp$Estimates$Weight_estimates$Name
+        
+        
+        if(.sign_change_option == "individual"){
+          summary_org = summarize(.object)
+          
+          # Multiply the coefficients for which the sign differs by -1
+          x1[["Path_estimates"]][!(sign(summary_temp$Estimates$Path_estimates$Estimate) == sign(summary_org$Estimates$Path_estimates$Estimate))] = 
+            x1[["Path_estimates"]][!(sign(summary_temp$Estimates$Path_estimates$Estimate) == sign(summary_org$Estimates$Path_estimates$Estimate))]*-1
+          
+          # Loading estimates
+          x1[["Loading_estimates"]][!(sign(summary_temp$Estimates$Loading_estimates$Estimate) == sign(summary_org$Estimates$Loading_estimates$Estimate))] = 
+            x1[["Loading_estimates"]][!(sign(summary_temp$Estimates$Loading_estimates$Estimate) == sign(summary_org$Estimates$Loading_estimates$Estimate))]*-1
+          
+          # Weight estimates
+          x1[["Weight_estimates"]][!(sign(summary_temp$Estimates$Weight_estimates$Estimate) == sign(summary_org$Estimates$Weight_estimates$Estimate))] = 
+            x1[["Weight_estimates"]][!(sign(summary_temp$Estimates$Weight_estimates$Estimate) == sign(summary_org$Estimates$Weight_estimates$Estimate))]*-1
+        }
+        
+        if(.sign_change_option == "construct"){
+          stop2("sign_change option == construct is not implemented yet")
+        }
         
         
         # ## Additional statistics
