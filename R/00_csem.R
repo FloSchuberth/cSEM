@@ -160,6 +160,7 @@ csem <- function(
   .user_funs             = NULL,
   .eval_plan             = c("sequential", "multiprocess"),
   .seed                  = NULL,
+  .sign_change_option    = c("no",'individual','construct')
   ...
   ) {
   ## Match arguments
@@ -171,6 +172,7 @@ csem <- function(
   .resample_method2     <- match.arg(.resample_method2)
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   .eval_plan            <- match.arg(.eval_plan)
+  .sign_change_option   <- match.arg(.sign_change_option)
   
   ## Collect and handle arguments
   # Note: all.names = TRUE is neccessary for otherwise arguments with a leading
@@ -307,7 +309,8 @@ csem <- function(
       .handle_inadmissibles = .handle_inadmissibles,
       .user_funs            = .user_funs,
       .eval_plan            = .eval_plan,
-      .seed                 = .seed
+      .seed                 = .seed,
+      .sign_change_option   = .sign_change_option
     )
   }
   
