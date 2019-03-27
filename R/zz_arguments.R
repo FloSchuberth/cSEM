@@ -41,6 +41,8 @@
 #'   where `theta*_hat` is the average over all .R bootstrap estimates of `theta`.
 #'   Defaults to `TRUE`
 #' @param .C A (J x J) composite variance-covariance matrix.
+#' @param .calculate_ci Logical. Should a closed-form confidence interval be computed?
+#'   Defaults to `FALSE`.
 #' @param .choices Logical. Should candidate values for the arguments be returned?
 #'   Defaults to `FALSE`.
 #' @param .ci A vector of character strings naming the confidence interval to compute.
@@ -250,6 +252,7 @@ args_default <- function(
     .arguments               = NULL,
     .bias_corrected          = TRUE,
     .C                       = NULL,
+    .calculate_ci            = FALSE, 
     .choices                 = FALSE,
     .ci                      = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),

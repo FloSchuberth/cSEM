@@ -6,7 +6,7 @@
 \usage{
 calculateHTMT(
  .object              = NULL,
- .only_common_factors = args_default()$.only_common_factors
+ .only_common_factors = TRUE
 )
 }
 \arguments{
@@ -16,10 +16,12 @@ calculateHTMT(
 factors be included? Defaults to \code{TRUE}.}
 }
 \description{
-Compute the heterotrait-monotrait ratio of correlations
-\insertCite{Henseler2015}{cSEM}.
+Compute the heterotrait-monotrait ratio of correlations (HTMT) based on
+\insertCite{Henseler2015;textual}{cSEM}.
 }
 \details{
+The HTMT is used to assess discriminant validity.
+
 The function is only applicable to objects of class \code{cSEMResults_default}.
 For other object classes use \code{\link[=assess]{assess()}}.
 }

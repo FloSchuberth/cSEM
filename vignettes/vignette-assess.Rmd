@@ -58,13 +58,13 @@ Currently the following quality measures are implemented:
 - Distance measures
     - The **standardized root mean square residual** (SRMR)
     - The **geodesic distance**
-    - The **squared euclidian distance**
+    - The **squared Euclidian distance**
 - The **root mean square error of approximation** (RMSEA)
 - The **RMS_$\theta$**
 - The **variance inflation factor** (VIF)
 - The R-square ($R^2$)
 
-For implementation details see the [Methods & Formulaes](#methods) section.
+For implementation details see the [Methods & Formulae](#methods) section.
 
 ## Syntax & Options
 
@@ -113,8 +113,6 @@ which is called by `assess() ` (e.g., `calculateAVE()` or `calculateHTMT()`).
 In this case only objects of class `cSEMResults_default` are accepted as this
 ensures a specific structure. It is therefore important to remember that
 *internal functions are generally **not** generic.*
-
-
 
 Some assessment measures are inherently tied to the common factor model. It
 is therefore unclear how to interpret their results in the context of a 
@@ -223,16 +221,25 @@ common defintions are given below:
   the AVE is a sum over all $R^2_k$. 
 
 It is important to stress that, although different in wording, all definitions 
-are synonymous!
+are synonymous! 
 
 #### Formula
 Using the results and notation derived above, the AVE for a generic construct is:
-$$ \text{AVE} = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}$$
+$$ AVE = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}$$
 If $x_k$ is standardized the denominator reduces to $K$ and the AVE is 
 $$ AVE = \frac{1}{K}\sum \lambda^2_k = \frac{1}{K}\sum \rho_{x_k, \eta}^2$$
-As an important consequence, the AVE now equals
-the average of the $K$ (indicator) reliabilities (Reliability: the squared correlation between
-a measure and its related latent variable. See section: [Reliability](#reliability) below.
+As an important consequence, the AVE is closely tied the communality.
+**Indicator communality** ($COM_k$) is definied as the square of the standardized loading of the $k$'th
+indicator ($\lambda^2$). **Construct (total) communality** ($COM = \varnothing COM_k$) is definied as the
+mean over all indicator communalities. Since indicators, proxies and 
+subsequently loadings are always standardized, the squared loading is simply 
+the squared correlation between the indicator and its related population proxy. 
+The AVE is also directly related to another frenquently used term, **indicator reliability**, 
+defined as the squared correlation between an indicator $k$ and its related 
+population proxy (see section [Reliability](#reliability) below),
+which is again simply $\lambda^2$. Therefore in `cSEM` we always have:
+
+$$ AVE = COM = \frac{1}{K}\sum COM_k = \frac{1}{K}\sum \text{Indicator reliability}_k = \frac{1}{K}\sum R^2_k $$
 
 #### Implementation
 The function is implemented as: `calculateAVE()`. See `?calculateAVE ` for a list
@@ -240,7 +247,7 @@ of arguments and their description.
 
 #### See also
 
-The AVE is the basis for the Fornell-Larcker criterion. See validity assessment.
+The AVE is the basis for the Fornell-Larcker criterion. See (TODO).
 
 ### Reliability {#reliability}
 
@@ -248,7 +255,7 @@ The AVE is the basis for the Fornell-Larcker criterion. See validity assessment.
 Reliability is the **consistency of measurement**, i.e. the degree to which a hypothetical
 repetition of the same measure would yield the same results. As such, reliability
 is the closeness of a measure to an error free measure. It is not to be confused 
-with validity as a perferctly reliable measure may be completly invalid.
+with validity as a perfectly reliable measure may be completly invalid.
 
 Practically, reliability must be empirically assessed based on a theoretical
 framework. The dominant - and virtually only - theoretical framework against which 
@@ -261,22 +268,26 @@ reliability is definied as
 2. This is identical to the squared correlation between the true score and the
    proxy: $\rho_{\eta, \hat\eta}^2 = Cor(\eta, \hat\eta)^2$.
 
+This "kind" of reliability is commonly referred to as 
+**internal consistency reliability**.
+
 Based on the true score theory three major types of measurement models are 
 distinguished. Each type implies different assumptions which give rise
 to the formulae written below. The well-established names for the different 
 types of measurment model provide natural naming candidates for their corresponding
-reliabilities measure.
+reliabilities measure:
 
 1. **Parallel** -- Assumption: $\eta_k = \eta \longrightarrow \lambda_k = \lambda$ and $Var(\varepsilon_k) = Var(\varepsilon)$.
 1. **Tau-equivalent** -- Assumption: $\eta_k = \eta \longrightarrow \lambda_k = \lambda$ and $Var(\varepsilon_k) \neq Var(\varepsilon_l)$.
 1. **Congeneric** -- Assumption: $\eta_k = \lambda_k\eta$ and $Var(\varepsilon_k) \neq Var(\varepsilon_l)$.
+
 
 #### Formula
 
 The most general formula for reliability is the congeneric reliability:
 
 **Congeneric reliability**
-$$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\bm{w}\bm{\lambda})^2}{\bm{w}'\bm{\Sigma}\bm{w}}$$
+$$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\bm{w}'\bm{\lambda})^2}{\bm{w}'\bm{\Sigma}\bm{w}}$$
 Using the assumptions imposed by the tau-equivalent measurement model we obtain
 the tau-equivalent reliability.
 
@@ -299,7 +310,7 @@ that $Var(\hat\eta_k) = 1$. This significantly simplifies the formulae and
 $\rho_T = \rho_P$ are in fact identical:
 
 \begin{align}
-\rho_C &=  (\sum w_k\lambda_k)^2 = (\bm{w}\bm{\lambda})^2\\
+\rho_C &=  (\sum w_k\lambda_k)^2 = (\bm{w}'\bm{\lambda})^2\\
 \rho_T = \rho_P &=  \bar\rho_x(\sum w_k)^2
 \end{align}
 
@@ -316,6 +327,14 @@ work! In fact, as shown above, congeneric reliability is identical to the
 tau-equivalent/parallel reliability *if their respective assumptions acutally hold*,
 essentially offering robustness against violation of the tau-equivalence and/or
 parallel measurement assumption.
+
+#### Confidence interval
+
+Trinchera et al. (2018) proposed a closed-form confidence interval (CI) for
+the tau-equivalent reliability (coefficient alpha). To compute the CI, set
+`.calculate_ci = TRUE` when calling `assess()` or invoke 
+`calculateRhoT(..., .calculate_ci = TRUE)` directly. The level of the CI
+can be changed by supplying a single value or a vector of values to $.alpha$.
 
 ##### A note on the terminology
 
@@ -365,7 +384,7 @@ reliability found in the literature
 </center>
 
 #### Implementation
-Function are implemented as: `calculateRhoP()`, `calculateRhoT()`, and `calculateRhoC()`. 
+Function are implemented as: `calculateRhoT()` and `calculateRhoC()`. 
 See e.g., `?calculateRhoC() ` for a list of arguments and their description.
 
 

@@ -114,7 +114,7 @@ code > span.ot { color: #007020; }
 <h1 class="title toc-ignore project-name">Postestimation: Assessing a model</h1>
 <h3 class="subtitle project-tagline">Using the <code>assess()</code> function</h3>
 <h4 class="author project-author">Manuel Rademaker &amp; Florian Schuberth</h4>
-<h4 class="date project-date">Last edited: 2019-03-22</h4>
+<h4 class="date project-date">Last edited: 2019-03-27</h4>
 </section>
 
 
@@ -154,14 +154,14 @@ WARNING: tau-equivalent (and parallel) measurement reliability measures are only
 <ul>
 <li>The <strong>standardized root mean square residual</strong> (SRMR)</li>
 <li>The <strong>geodesic distance</strong></li>
-<li>The <strong>squared euclidian distance</strong></li>
+<li>The <strong>squared Euclidian distance</strong></li>
 </ul></li>
 <li>The <strong>root mean square error of approximation</strong> (RMSEA)</li>
 <li>The <strong>RMS_<span class="math inline">\(\theta\)</span></strong></li>
 <li>The <strong>variance inflation factor</strong> (VIF)</li>
 <li><p>The R-square (<span class="math inline">\(R^2\)</span>)</p></li>
 </ul>
-<p>For implementation details see the <a href="#methods">Methods &amp; Formulaes</a> section.</p>
+<p>For implementation details see the <a href="#methods">Methods &amp; Formulae</a> section.</p>
 </div>
 <div id="syntax-options" class="section level2">
 <h2>Syntax &amp; Options</h2>
@@ -244,7 +244,8 @@ Cov(\eta, \hat\eta) &amp;= E(\sum w_k \lambda_k \eta^2) = \sum w_k\lambda_k = \b
 </div>
 <div id="formula" class="section level4">
 <h4>Formula</h4>
-<p>Using the results and notation derived above, the AVE for a generic construct is: <span class="math display">\[ \text{AVE} = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}\]</span> If <span class="math inline">\(x_k\)</span> is standardized the denominator reduces to <span class="math inline">\(K\)</span> and the AVE is <span class="math display">\[ AVE = \frac{1}{K}\sum \lambda^2_k = \frac{1}{K}\sum \rho_{x_k, \eta}^2\]</span> As an important consequence, the AVE now equals the average of the <span class="math inline">\(K\)</span> (indicator) reliabilities (Reliability: the squared correlation between a measure and its related latent variable. See section: <a href="#reliability">Reliability</a> below.</p>
+<p>Using the results and notation derived above, the AVE for a generic construct is: <span class="math display">\[ AVE = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}\]</span> If <span class="math inline">\(x_k\)</span> is standardized the denominator reduces to <span class="math inline">\(K\)</span> and the AVE is <span class="math display">\[ AVE = \frac{1}{K}\sum \lambda^2_k = \frac{1}{K}\sum \rho_{x_k, \eta}^2\]</span> As an important consequence, the AVE is closely tied the communality. <strong>Indicator communality</strong> (<span class="math inline">\(COM_k\)</span>) is definied as the square of the standardized loading of the <span class="math inline">\(k\)</span>’th indicator (<span class="math inline">\(\lambda^2\)</span>). <strong>Construct (total) communality</strong> (<span class="math inline">\(COM = \varnothing COM_k\)</span>) is definied as the mean over all indicator communalities. Since indicators, proxies and subsequently loadings are always standardized, the squared loading is simply the squared correlation between the indicator and its related population proxy. The AVE is also directly related to another frenquently used term, <strong>indicator reliability</strong>, defined as the squared correlation between an indicator <span class="math inline">\(k\)</span> and its related population proxy (see section <a href="#reliability">Reliability</a> below), which is again simply <span class="math inline">\(\lambda^2\)</span>. Therefore in <code>cSEM</code> we always have:</p>
+<p><span class="math display">\[ AVE = COM = \frac{1}{K}\sum COM_k = \frac{1}{K}\sum \text{Indicator reliability}_k = \frac{1}{K}\sum R^2_k \]</span></p>
 </div>
 <div id="implementation" class="section level4">
 <h4>Implementation</h4>
@@ -252,20 +253,21 @@ Cov(\eta, \hat\eta) &amp;= E(\sum w_k \lambda_k \eta^2) = \sum w_k\lambda_k = \b
 </div>
 <div id="see-also" class="section level4">
 <h4>See also</h4>
-<p>The AVE is the basis for the Fornell-Larcker criterion. See validity assessment.</p>
+<p>The AVE is the basis for the Fornell-Larcker criterion. See (TODO).</p>
 </div>
 </div>
 <div id="reliability" class="section level3">
 <h3>Reliability</h3>
 <div id="definition-1" class="section level4">
 <h4>Definition</h4>
-<p>Reliability is the <strong>consistency of measurement</strong>, i.e. the degree to which a hypothetical repetition of the same measure would yield the same results. As such, reliability is the closeness of a measure to an error free measure. It is not to be confused with validity as a perferctly reliable measure may be completly invalid.</p>
+<p>Reliability is the <strong>consistency of measurement</strong>, i.e. the degree to which a hypothetical repetition of the same measure would yield the same results. As such, reliability is the closeness of a measure to an error free measure. It is not to be confused with validity as a perfectly reliable measure may be completly invalid.</p>
 <p>Practically, reliability must be empirically assessed based on a theoretical framework. The dominant - and virtually only - theoretical framework against which to compare empirical reliability results to is the well-known true score framework which provides the underlying justification for the measurement model postulated at the begining of the <a href="#methods">Methods &amp; Formulae</a> section. Based on the true score framework reliability is definied as</p>
 <ol style="list-style-type: decimal">
 <li>The amount of population proxy variance, <span class="math inline">\(Var(\bar\eta)\)</span>, relative to the proxy variance, <span class="math inline">\(Var(\hat\eta)\)</span>.</li>
 <li>This is identical to the squared correlation between the true score and the proxy: <span class="math inline">\(\rho_{\eta, \hat\eta}^2 = Cor(\eta, \hat\eta)^2\)</span>.</li>
 </ol>
-<p>Based on the true score theory three major types of measurement models are distinguished. Each type implies different assumptions which give rise to the formulae written below. The well-established names for the different types of measurment model provide natural naming candidates for their corresponding reliabilities measure.</p>
+<p>This “kind” of reliability is commonly referred to as <strong>internal consistency reliability</strong>.</p>
+<p>Based on the true score theory three major types of measurement models are distinguished. Each type implies different assumptions which give rise to the formulae written below. The well-established names for the different types of measurment model provide natural naming candidates for their corresponding reliabilities measure:</p>
 <ol style="list-style-type: decimal">
 <li><strong>Parallel</strong> – Assumption: <span class="math inline">\(\eta_k = \eta \longrightarrow \lambda_k = \lambda\)</span> and <span class="math inline">\(Var(\varepsilon_k) = Var(\varepsilon)\)</span>.</li>
 <li><strong>Tau-equivalent</strong> – Assumption: <span class="math inline">\(\eta_k = \eta \longrightarrow \lambda_k = \lambda\)</span> and <span class="math inline">\(Var(\varepsilon_k) \neq Var(\varepsilon_l)\)</span>.</li>
@@ -275,7 +277,7 @@ Cov(\eta, \hat\eta) &amp;= E(\sum w_k \lambda_k \eta^2) = \sum w_k\lambda_k = \b
 <div id="formula-1" class="section level4">
 <h4>Formula</h4>
 <p>The most general formula for reliability is the congeneric reliability:</p>
-<p><strong>Congeneric reliability</strong> <span class="math display">\[ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\bm{w}\bm{\lambda})^2}{\bm{w}&#39;\bm{\Sigma}\bm{w}}\]</span> Using the assumptions imposed by the tau-equivalent measurement model we obtain the tau-equivalent reliability.</p>
+<p><strong>Congeneric reliability</strong> <span class="math display">\[ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\bm{w}&#39;\bm{\lambda})^2}{\bm{w}&#39;\bm{\Sigma}\bm{w}}\]</span> Using the assumptions imposed by the tau-equivalent measurement model we obtain the tau-equivalent reliability.</p>
 <p><strong>Tau-equivalent reliability</strong> <span class="math display">\[ \rho_T = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + \sum w_k^2Var(\varepsilon_k)}
  = \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + \sum w_k^2Var(x_k)}\]</span> where we used the fact that if <span class="math inline">\(\lambda_k = \lambda\)</span> (tau-equivalence), <span class="math inline">\(\lambda^2_k\)</span> equals the average covariance between indicators: <span class="math display">\[\bar\sigma_x = \frac{1}{K(K-1)}\sum^K_{k=1}\sum^K_{l=1} \sigma_{kl}\]</span></p>
 <p>Using the assumptions imposed by the paralell measurement model we obtain the parallel reliability:</p>
@@ -283,11 +285,15 @@ Cov(\eta, \hat\eta) &amp;= E(\sum w_k \lambda_k \eta^2) = \sum w_k\lambda_k = \b
  \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + Var(x)\sum w_k^2} \]</span></p>
 <p>In <code>cSEM</code> indicators are always standardized and weights are choosen such that <span class="math inline">\(Var(\hat\eta_k) = 1\)</span>. This significantly simplifies the formulae and <span class="math inline">\(\rho_T = \rho_P\)</span> are in fact identical:</p>
 <p><span class="math display">\[\begin{align}
-\rho_C &amp;=  (\sum w_k\lambda_k)^2 = (\bm{w}\bm{\lambda})^2\\
+\rho_C &amp;=  (\sum w_k\lambda_k)^2 = (\bm{w}&#39;\bm{\lambda})^2\\
 \rho_T = \rho_P &amp;=  \bar\rho_x(\sum w_k)^2
 \end{align}\]</span></p>
 <p>where <span class="math inline">\(\bar\rho_x\)</span> is the average correlation between indicators. Consequently, parallel and tau-equivalent reliability are always identical in <code>cSEM</code></p>
 <p>It is important to realize that <span class="math inline">\(\rho_T\)</span> (<span class="math inline">\(\rho_P\)</span>) based on the average covariance/ correlation (if <span class="math inline">\(x_k\)</span> is standardized as it is always the case in <code>cSEM</code>) are nested within the general formula, however, <strong>if and only if the assumptions of the tau-equivalent and/or the parallel model hold do they represent reliability measures!!</strong> In pratice, these assumptions are unlikly to hold. We therefore explicitly discourage their use as congeneric reliability is virtually always preferable in empirical work! In fact, as shown above, congeneric reliability is identical to the tau-equivalent/parallel reliability <em>if their respective assumptions acutally hold</em>, essentially offering robustness against violation of the tau-equivalence and/or parallel measurement assumption.</p>
+</div>
+<div id="confidence-interval" class="section level4">
+<h4>Confidence interval</h4>
+<p>Trinchera et al. (2018) proposed a closed-form confidence interval (CI) for the tau-equivalent reliability (coefficient alpha). To compute the CI, set <code>.calculate_ci = TRUE</code> when calling <code>assess()</code> or invoke <code>calculateRhoT(..., .calculate_ci = TRUE)</code> directly. The level of the CI can be changed by supplying a single value or a vector of values to <span class="math inline">\(.alpha\)</span>.</p>
 <div id="a-note-on-the-terminology" class="section level5">
 <h5>A note on the terminology</h5>
 <p>A vast bulk of literature dating back to seminal work by Spearman (e.g., Spearman (1904)) has been written on the subject of reliability. Inevitably, definitions, formulae, notation and terminology conventions are unsystematic and confusing. This is particulary true for newcomers to structural equation modeling or applied users whose primary concern is to apply the appropriate method to the appropriate case without poring over books and research papers to understand each intricate detail.</p>
@@ -331,7 +337,7 @@ Cov(\eta, \hat\eta) &amp;= E(\sum w_k \lambda_k \eta^2) = \sum w_k\lambda_k = \b
 </div>
 <div id="implementation-1" class="section level4">
 <h4>Implementation</h4>
-<p>Function are implemented as: <code>calculateRhoP()</code>, <code>calculateRhoT()</code>, and <code>calculateRhoC()</code>. See e.g., <code>?calculateRhoC()</code> for a list of arguments and their description.</p>
+<p>Function are implemented as: <code>calculateRhoT()</code> and <code>calculateRhoC()</code>. See e.g., <code>?calculateRhoC()</code> for a list of arguments and their description.</p>
 </div>
 </div>
 </div>

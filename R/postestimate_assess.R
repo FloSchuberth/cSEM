@@ -11,14 +11,19 @@
 #' @return (TODO)
 #' @export
 
-assess <- function(.object, ...) {
+assess <- function(.object, .only_common_factors = TRUE, ...) {
   UseMethod("assess")
 }
 
 #' @describeIn assess (TODO)
 #' @export
 
-assess.cSEMResults_default <- function(.object, ...){
+assess.cSEMResults_default <- function(.object, .only_common_factors = TRUE, ...){
+  
+  ## Get relevant objects
+  con_types <-.object$Information$Model$construct_type
+  names_cf  <- names(con_types[con_types == "Common factor"])
+  P <- .object$Estimates$Construct_VCV
   
   # SRMR
   res_srmr  <- calculateSRMR(.object)
@@ -28,19 +33,36 @@ assess.cSEMResults_default <- function(.object, ...){
   res_dL    <- calculateDL(.object)
   # dML
   res_dml   <- calculateDML(.object)
+  # GoF
+  res_gof   <- calculateGoF(.object, .only_common_factors)
   # HTMT 
-  res_htmt  <- calculateHTMT(.object, ...)
+  res_htmt  <- calculateHTMT(.object, .only_common_factors)
   # AVE
-  res_ave   <- calculateAVE(.object, ...)
+  res_ave   <- calculateAVE(.object, .only_common_factors)
   # RhoC
-  res_rhoc  <- calculateRhoC(.object, ...)
+  res_rhoc  <- calculateRhoC(.object, .only_common_factors)
   # RhoT
-  res_rhot  <- calculateRhoT(.object, ...)
+  res_rhot  <- calculateRhoT(.object, .only_common_factors, ...)
   # Effect size
   res_esize <- calculateEffectSize(.object)
+  # VIFModeB
+  res_vifmodeb <- calculateVIFModeB(.object)
+  
+  # Redundancy analysis (RA)
+  res_ra <- calculateRA(.object)
+  
+  ## Fornell-Larcker
+  if(.only_common_factors) {
+    P <- P[names_cf, names_cf]
+  }
+
+  FL_matrix <- stats::cov2cor(P)^2
+  diag(FL_matrix) <- res_ave 
   
   out <- list(
     "AVE"  = res_ave,
+    "GoF"  = res_gof,
+    "FL_matrix" = FL_matrix,
     "RhoC" = res_rhoc,
     "RhoT" = res_rhot,
     "HTMT" = res_htmt,
@@ -48,7 +70,8 @@ assess.cSEMResults_default <- function(.object, ...){
     "dG"   = res_dg,
     "dL"   = res_dL,
     "dML"  = res_dml,
-    "Effect size" = res_esize
+    "Effect size" = res_esize,
+    "RA"   = Beta
   )
   
   class(out) <- "cSEMAssess_default"

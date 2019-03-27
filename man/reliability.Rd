@@ -6,24 +6,41 @@
 \alias{calculateRhoT}
 \title{Internal: Reliability}
 \usage{
-calculateRhoC(.object = NULL,
-  .only_common_factors = args_default()$.only_common_factors)
+calculateRhoC(.object = NULL, .only_common_factors = TRUE)
 
-calculateRhoT(.object = NULL,
-  .only_common_factors = args_default()$.only_common_factors)
+calculateRhoT(.object = NULL, .alpha = args_default()$.alpha,
+  .calculate_ci = args_default()$.calculate_ci,
+  .only_common_factors = TRUE)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.only_common_factors}{Logical. Should only constructs modeled as common
 factors be included? Defaults to \code{TRUE}.}
+
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
+
+\item{.calculate_ci}{Logical. Should a closed-form confidence interval be computed?
+Defaults to \code{FALSE}.}
+}
+\value{
+For \code{calculateRhoC()} a named numeric vector containing the reliability
+estimates.
+For \code{calculateRhoT()} a \code{data.frame} with as many rows as there are
+constructs modeled as common factors in the model (unless
+\code{.only_common_factors = FALSE} in which case the number of rows equals the
+total number of constructs in the model). The first column contains the name of the construct.
+The second column the reliability estimate.
+If \code{.calculate_ci = TRUE} the remaining columns contain lower and upper bounds
+for the (1 - \code{.alpha}) confidence interval(s).
 }
 \description{
 Compute several reliability measures. See the vignette for details.
 }
 \details{
 Reliability is the consistency of measurement. Practically, reliability
-is empirically derived based on the classical true score measurement theory
+is empirically assessed based on the classical true score measurement theory
 and defined as the ratio of the true score variance relative to the proxy
 (test score) variance, where the later is a weighted linear combinations of
 the indicators (i.e. a proxy or stand-in for the true score).
@@ -39,6 +56,11 @@ model only constructs modeled as common factors are considered by default.
 For constructs modeled as composites reliability may be estimated by setting
 \code{.only_common_factors = FALSE}, however, it is unclear how to
 interpret reliability in this case.
+
+For the the tau-equivalent reliability (rhoT) a closed-form confidence
+interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
+\code{.calculate_ci = TRUE} (default is \code{FALSE}). If \code{.alpha} is a vector
+several CI's are returned.
 
 The function is only applicable to objects of class \code{cSEMResults_default}.
 For other object classes use \code{\link[=assess]{assess()}}.
@@ -59,6 +81,6 @@ parallel reliability.
 \insertAllCited{}
 }
 \seealso{
-\link{assess}, \link{csem}, \link{cSEMResults}
+\link{assess}, \link{cSEMResults}
 }
 \keyword{internal}

@@ -211,4 +211,65 @@ issues in variance-based structural equation modeling.},
   url    = {https://CRAN.R-project.org/package=future.apply},
 }
 
+@Article{Cho2016,
+  author    = {Eunseong Cho},
+  title     = {Making Reliability Reliable},
+  journal   = {Organizational Research Methods},
+  year      = {2016},
+  volume    = {19},
+  number    = {4},
+  pages     = {651--682},
+  month     = {jul},
+  doi       = {10.1177/1094428116656239},
+  publisher = {{SAGE} Publications},
+}
+
+@Article{Trinchera2018,
+  author    = {Laura Trinchera and Nicolas Marie and George A. Marcoulides},
+  title     = {A Distribution Free Interval Estimate for Coefficient Alpha},
+  journal   = {Structural Equation Modeling: A Multidisciplinary Journal},
+  year      = {2018},
+  volume    = {25},
+  number    = {6},
+  pages     = {876--887},
+  month     = {mar},
+  doi       = {10.1080/10705511.2018.1431544},
+  publisher = {Informa {UK} Limited},
+}
+
+@InProceedings{Tenenhaus2004,
+  author    = {Tenenhaus, Michel and Amanto, Silvano and Vinzi, Vincenzo Esposito},
+  title     = {A Global Goodness-of-Fit Index for {PLS} Structural Equation Modelling},
+  booktitle = {Proceedings of the {XLII SIS} Scientific Meeting},
+  year      = {2004},
+  pages     = {739--742},
+}
+
+@Article{Henseler2012a,
+  author    = {J{\"o}rg Henseler and Marko Sarstedt},
+  title     = {Goodness-of-fit Indices for Partial Least Squares Path Modeling},
+  journal   = {Computational Statistics},
+  year      = {2012},
+  volume    = {28},
+  number    = {2},
+  pages     = {565--580},
+  month     = {mar},
+  doi       = {10.1007/s00180-012-0317-1},
+  file      = {:Papers/Henseler2012a.pdf:PDF},
+  publisher = {Springer Nature},
+}
+
+@Article{Henseler2015,
+  author    = {Jörg Henseler and Christian M. Ringle and Marko Sarstedt},
+  title     = {A New Criterion for Assessing Discriminant Validity in Variance-based Structural Equation Modeling},
+  journal   = {Journal of the Academy of Marketing Science},
+  year      = {2015},
+  volume    = {43},
+  number    = {1},
+  pages     = {115--135},
+  month     = {aug},
+  doi       = {10.1007/s11747-014-0403-8},
+  publisher = {Springer Nature},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}

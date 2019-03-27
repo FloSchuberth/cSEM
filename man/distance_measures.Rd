@@ -19,14 +19,17 @@ calculateDML(.object = NULL)
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 }
+\value{
+A single numeric value.
+}
 \description{
-Calculates the difference between the empirical
-and the model-implied indicator variance-covariance matrix
-using different distance measures. See vignette for assess.
+Calculate the difference between the empirical (S)
+and the model-implied indicator variance-covariance matrix (Sigma_hat)
+using different distance measures. See vignette assess.
 }
 \details{
-The functions are only applicable to objects of class \code{cSEMResults_default}.
-For other object classes use \code{\link[=assess]{assess()}}.
+The distance functions are only applicable to objects of class
+\code{cSEMResults_default}. For other object classes use \code{\link[=assess]{assess()}}.
 }
 \section{Functions}{
 \itemize{
@@ -34,7 +37,7 @@ For other object classes use \code{\link[=assess]{assess()}}.
 
 \item \code{calculateDG}: The geodesic distance (dG).
 
-\item \code{calculateDL}: The squared euclidian distance
+\item \code{calculateDL}: The squared Euclidian distance
 
 \item \code{calculateDML}: The distance measure used by FIML
 }}

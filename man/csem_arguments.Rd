@@ -48,6 +48,9 @@ Defaults to \code{TRUE}}
 
 \item{.C}{A (J x J) composite variance-covariance matrix.}
 
+\item{.calculate_ci}{Logical. Should a closed-form confidence interval be computed?
+Defaults to \code{FALSE}.}
+
 \item{.choices}{Logical. Should candidate values for the arguments be returned?
 Defaults to \code{FALSE}.}
 

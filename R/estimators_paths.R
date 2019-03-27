@@ -43,22 +43,32 @@ estimatePathOLS <- function(
 
     res <- lapply(vars_endo, function(x) {
      indep_var <-  colnames(m[x, m[x, ] != 0, drop = FALSE])
-
+     
+     # Coef = (X'X)^-1X'y = V(eta_indep)^-1 Cov(eta_indep, eta_dep)
      coef <- solve(.P[indep_var, indep_var, drop = FALSE]) %*% .P[indep_var, x, drop = FALSE]
+     
      # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
      r2   <- t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef
      names(r2) <- x
     
      # Calculation of the adjusted R^2
-     r2adj = 1 - (1-r2)*(n-1)/(n-length(indep_var)-1)
+     r2adj <- 1 - (1 - r2)*(n - 1)/(n - length(indep_var)-1)
      names(r2adj) <- x
-     # Calculation of the VIF
-     vif <- diag(solve(cov2cor(.P[indep_var, indep_var, drop = FALSE])))
-     names(vif)=paste(x,indep_var, sep='.')
+     
+     # Calculation of the VIF values (VIF_k = 1 / (1 - R^2_k)) where R_k is
+     # the R^2 from a regression of the k'th explanatory variable on all other
+     # explanatory variables of the same structural equation.
+     # VIF's require at least two explanatory variablesto meaningful
+     vif <- if(length(indep_var) > 1) {
+       diag(solve(stats::cov2cor(.P[indep_var, indep_var, drop = FALSE])))
+     } else {
+       NA
+     }
 
      list("coef" = coef, "r2" = r2, 'r2adj' = r2adj, "vif" = vif)
     })
     
+    names(res) <- vars_endo
     res <- purrr::transpose(res)
 
   } else {
