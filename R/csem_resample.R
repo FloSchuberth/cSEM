@@ -1053,25 +1053,152 @@ resamplecSEMResultsCore <- function(
         names(x1[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
                                              est_2stage$Weight_estimates$Name)
         
-        if(.sign_change_option == "individual" & .object$Information$Arguments$.approach_weights == "PLS-PM"){
-          summary_org =  summarize(.object)
-          est_1stage_org <- summary_org$First_stage$Estimates
-          est_2stage_org <- summary_org$Second_stage$Estimates  
+        # Check whether in the first stage PLS was applied, if yes it has to be applied in the second stage as well
+        if(.object$First_stage$Information$Arguments$.approach_weights == "PLS-PM"){
           
-          # x1[["Path_estimates"]][!(sign(est_2stage$Path_estimates$Estimate) == sign(est_2stage_org$Path_estimates$Estimate))] = 
-            # x1[["Path_estimates"]][!(sign(est_2stage$Path_estimates$Estimate) == sign(est_2stage_org$Path_estimates$Estimate))]*-1
+          # Return warning if used in combination with .dominant_indicator
+          if(!is.null(.object$First_stage$Information$Arguments$.dominant_indicators)){
+            warning2("Sign change options should be cautiously used in combination with the dominant indicator approach.")
+          }
+          
+          # Reverse the sign of the bootstrap weight estimate if it differs from the original estimation.
+          # Subsequently, reestimate all other parameters based on the sign reversed weights.
+          if(.sign_change_option == "individual_reestimate" | .sign_change_option == "construct_reestimate"){
+            
+            # If there is a difference in the signs of the weights
+            if(sum(sign(.object$First_stage$Estimates$Weight_estimates)!=sign(Est_temp$First_stage$Estimates$Weight_estimates))!=0){
+              
+              
+              if(.sign_change_option == "individual_reestimate"){
+                W_first_stage_new_sign=Est_temp$First_stage$Estimates$Weight_estimates
+                
+                W_first_stage_new_sign[sign(.object$First_stage_Estimates$Weight_estimates)!=sign(Est_temp$First_stage$Estimates$Weight_estimates)]=
+                  Est_temp$First_stage$Estimates$Weight_estimates[sign(.object$First_stage$Estimates$Weight_estimates)!=sign(Est_temp$First_stage$Estimates$Weight_estimates)]*-1
+              }
+              
+              if(.sign_change_option == "construct_reestimate"){
+                
+                # Create lists containing the loadings of the original 
+                Loading_org_first_stage = .object$First_stage$Estimates$Loading_estimates
+                Loading_Est_temp_first_stage = Est_temp$First_stage$Estimates$Loading_estimates
+                
+                
+                Load_diff_first_stage = abs(rowSums(Loading_org_first_stage - Loading_Est_temp_first_stage))
+                Load_sum_first_stage = abs(rowSums(Loading_org_first_stage - Loading_Est_temp_first_stage))
+                
+                W_first_stage_new_sign=Est_temp$First_stage$Estimates$Weight_estimates
+                
+                W_first_stage_new_sign[Load_diff_first_stage > Load_sum_first_stage,]=W__first_stage_new_sign[Load_diff_first_stage > Load_sum_first_stage,]*-1
+              }
+              
+              # create list containing the 'new' weights
+              W_new_sign_list_first_stage=lapply(1:nrow(W_first_stage_new_sign),function(x){
+                temp=W_first_stage_new_sign[x,]
+                temp[temp!=0]
+              })
+              names(W_new_sign_list_first_stage)=rownames(W_first_stage_new_sign)
+              
+              args_new_sign_first_stage = Est_temp$First_stage$Information$Arguments
+              args_new_sign_first_stage[[".PLS_modes"]]=W_first_stage_new_sign_list
+              
+              Est_new_sign_first_stage=do.call(csem,args_new_sign_first_stage)
+              
+              summary_new_sign_first_stage=summarize(Est_new_sign_first_stage)
+            }
+              # Second stage
+              # If there is a difference in the signs of the weights
+              if(sum(sign(.object$Second_stage$Estimates$Weight_estimates)!=sign(Est_temp$Second_stage$Estimates$Weight_estimates))!=0){
+                
+                
+                if(.sign_change_option == "individual_reestimate"){
+                  W_second_stage_new_sign=Est_temp$Second_stage$Estimates$Weight_estimates
+                  
+                  W_second_stage_new_sign[sign(.object$Second_stage_Estimates$Weight_estimates)!=sign(Est_temp$Second_stage$Estimates$Weight_estimates)]=
+                    Est_temp$Second_stage$Estimates$Weight_estimates[sign(.object$Second_stage$Estimates$Weight_estimates)!=sign(Est_temp$Second_stage$Estimates$Weight_estimates)]*-1
+                }
+                
+                if(.sign_change_option == "construct_reestimate"){
+                  
+                  # Create lists containing the loadings of the original 
+                  Loading_org_second_stage = .object$Second_stage$Estimates$Loading_estimates
+                  Loading_Est_temp_second_stage = Est_temp$Second_stage$Estimates$Loading_estimates
+                  
+                  
+                  Load_diff_second_stage = abs(rowSums(Loading_org_second_stage - Loading_Est_temp_second_stage))
+                  Load_sum_second_stage = abs(rowSums(Loading_org_second_stage - Loading_Est_temp_second_stage))
+                  
+                  W_second_stage_new_sign=Est_temp$Second_stage$Estimates$Weight_estimates
+                  
+                  W_second_stage_new_sign[Load_diff_second_stage > Load_sum_second_stage,]=W_second_stage_new_sign[Load_diff_second_stage > Load_sum_second_stage,]*-1
+                }
+                
+                # create list containing the 'new' weights
+                W_new_sign_list_second_stage=lapply(1:nrow(W_second_stage_new_sign),function(x){
+                  temp=W_second_stage_new_sign[x,]
+                  temp[temp!=0]
+                })
+                names(W_new_sign_list_second_stage)=rownames(W_second_stage_new_sign)
+                
+                args_new_sign_second_stage = Est_temp$Second_stage$Information$Arguments
+                args_new_sign_second_stage[[".PLS_modes"]]=W_second_stage_new_sign_list
+                
+                Est_new_sign_second_stage=do.call(csem,args_new_sign_second_stage)
+                
+                summary_new_sign_second_stage=summarize(Est_new_sign_secod_stage)
+            
+                
+                
+                x1[["Path_estimates"]] <- Est_new_sign_second_stage$Path_estimates$Estimate
+                names(x1[["Path_estimates"]]) <- Est_new_sign_second_stage$Path_estimates$Name
+                
+                # Loading estimates
+                x1[["Loading_estimates"]] <- c(Est_new_sign_second_stage$Loading_estimates$Estimate, 
+                                               Est_new_sign_second_stage$Loading_estimates$Estimate)
+                names(x1[["Loading_estimates"]]) <- c(Est_new_sign_first_stage$Loading_estimates$Name,
+                                                      Est_new_sign_second_stage$Loading_estimates$Name)
+                
+                # Weight estimates
+                x1[["Weight_estimates"]] <- c(Est_new_sign_first_stage$Weight_estimates$Estimate, 
+                                              Est_new_sign_second_stage$Weight_estimates$Estimate)
+                names(x1[["Weight_estimates"]]) <- c(Est_new_sign_first_stage$Weight_estimates$Name,
+                                                     Est_new_sign_second_stage$Weight_estimates$Name)
+              
+            }
+            
+          }
+          
+          # Reverse the signs off ALL parameter estimates in a bootstrap run if 
+          # their sign differs from the sign of the original estimation
+          if(.sign_change_option == 'individual'){
+            
+            summary_org = summarize(.object)
 
-          # Loading estimates
-          # x1[["Loading_estimates"]][!(sign(c(est_1stage$Loading_estimates$Estimate,est_2stage$Loading_estimates$Estimate)) == sign(c(est_1stage_org$Loading_estimates$Estimate,est_2stage_org$Loading_estimates$Estimate)))] = 
-            # x1[["Loading_estimates"]][!(sign(c(est_1stage$Loading_estimates$Estimate,est_2stage$Loading_estimates$Estimate)) == sign(c(est_1stage_org$Loading_estimates$Estimate,est_2stage_org$Loading_estimates$Estimate)))]*-1
-
-          # Weight estimates
-          x1[["Weight_estimates"]][!(sign(c(est_1stage$Weight_estimates$Estimate,est_2stage$Weight_estimates$Estimate)) == sign(c(est_1stage_org$Weight_estimates$Estimate,est_2stage_org$Weight_estimates$Estimate)))] = 
-            x1[["Weight_estimates"]][!(sign(c(est_1stage$Weight_estimates$Estimate,est_2stage$Weight_estimates$Estimate)) == sign(c(est_1stage_org$Weight_estimates$Estimate,est_2stage_org$Weight_estimates$Estimate)))]*-1
-        }
-        
-        if(.sign_change_option == "construct"){
-          stop2("sign_change_option == construct is not implemented yet.")
+            # Multiply the coefficients for which the sign differs by -1
+            x1[["Path_estimates"]][sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate) != 
+                                     sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate)] =
+              x1[["Path_estimates"]][sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate) != 
+                                       sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate)]*-1
+            
+            # Loading estimates
+            x1[["Loading_estimates"]][c(sign(summary_temp$First_stage$Estimates$Path_estimates$Estimate),
+                                        sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate)) != 
+                                        c(sign(summary_org$First_stage$Estimates$Path_estimates$Estimate),
+                                          sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate))] =
+              x1[["Loading_estimates"]][c(sign(summary_temp$First_stage$Estimates$Path_estimates$Estimate),
+                                          sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate)) != 
+                                          c(sign(summary_org$First_stage$Estimates$Path_estimates$Estimate),
+                                            sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate))]*-1
+            
+            # Weight estimates
+            x1[["Weight_estimates"]][c(sign(summary_temp$First_stage$Estimates$Path_estimates$Estimate),
+                                       sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate)) != 
+                                       c(sign(summary_org$First_stage$Estimates$Path_estimates$Estimate),
+                                        sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate))] =
+              x1[["Weight_estimates"]][c(sign(summary_temp$First_stage$Estimates$Path_estimates$Estimate),
+                                         sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate)) != 
+                                         c(sign(summary_org$First_stage$Estimates$Path_estimates$Estimate),
+                                          sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate))]*-1
+          }
         }
         
         
