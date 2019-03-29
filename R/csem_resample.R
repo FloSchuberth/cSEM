@@ -992,7 +992,10 @@ resamplecSEMResultsCore <- function(
     .R <- length(resample_jack)
   } 
   
-  Est_ls <- future.apply::future_lapply(1:.R, function(i) {
+  # Est_ls <- future.apply::future_lapply(1:.R, function(i) {
+  # Needs to be replaced again by the line above
+  set.seed(1234)
+  Est_ls <- lapply(1:.R, function(i) {
     # Replace the old dataset by a resampled data set (resampleData always returns
     # a list so for just one draw we need to pick the first list element)
     
@@ -1087,30 +1090,57 @@ resamplecSEMResultsCore <- function(
         # Weight estimates
         x1[["Weight_estimates"]] <- summary_temp$Estimates$Weight_estimates$Estimate
         names(x1[["Weight_estimates"]]) <- summary_temp$Estimates$Weight_estimates$Name
+
+        # Sign change option works only for PLS-PM, if another approach is used, 
+        # the .sign_change_option argument is ignored
+        if(.object$Information$Arguments$.approach_weights == "PLS-PM"){
+          
+          # Return warning if used in combination with .dominant_indicator
+          if(!is.null(.object$Information$Arguments$.dominant_indicators)){
+            warning2("Sign change options should be cautiously used in combination with the dominant indicator approach.")
+          }
         
-        # Sign change option works only for PLS-PM
-        if(.sign_change_option == "individual" & .object$Information$Arguments$.approach_weights == "PLS-PM"){
+        # Reverse the sign of the bootstrap weight estimate if it differs from the original estimation.
+        # Subsequently, reestimate all other parameters based on the sign reversed weights.
+        if(.sign_change_option == "individual_reestimate" | .sign_change_option == "construct_reestimate"){
           
           # If there is a difference in the signs of the weights
-          if(sum(!(sign(.object$Estimates$Weight_estimates)==sign(Est_temp$Estimates$Weight_estimates)))!=0){
-            W_new_sign=Est_temp$Estimates$Weight_estimates
-            W_new_sign[!(sign(.object$Estimates$Weight_estimates)==sign(Est_temp$Estimates$Weight_estimates))]=
-              Est_temp$Estimates$Weight_estimates[!(sign(.object$Estimates$Weight_estimates)==sign(Est_temp$Estimates$Weight_estimates))]*-1
-            # W_new_sign=matrix(Est_temp$Estimates$Weight_estimates[!(sign(.object$Estimates$Weight_estimates)==sign(Est_temp$Estimates$Weight_estimates))]*-1,
-                              # ncol=ncol(Est_temp$Estimates$Weight_estimates),
-                              # dimnames=dimnames(Est_temp$Estimates$Weight_estimates))
+          if(sum(sign(.object$Estimates$Weight_estimates)!=sign(Est_temp$Estimates$Weight_estimates))!=0){
+            
+
+            if(.sign_change_option == "individual_reestimate"){
+              W_new_sign=Est_temp$Estimates$Weight_estimates
+              
+              W_new_sign[sign(.object$Estimates$Weight_estimates)!=sign(Est_temp$Estimates$Weight_estimates)]=
+              Est_temp$Estimates$Weight_estimates[sign(.object$Estimates$Weight_estimates)!=sign(Est_temp$Estimates$Weight_estimates)]*-1
+            }
+            
+            if(.sign_change_option == "construct_reestimate"){
+              
+              # Create lists containing the loadings of the original 
+              Loading_org = .object$Estimates$Loading_estimates
+              Loading_Est_temp = Est_temp$Estimates$Loading_estimates
+              
+
+              Load_diff = abs(rowSums(Loading_org - Loading_Est_temp))
+              Load_sum = abs(rowSums(Loading_org - Loading_Est_temp))
+              
+              W_new_sign=Est_temp$Estimates$Weight_estimates
+              
+              W_new_sign[Load_diff > Load_sum,]=W_new_sign[Load_diff > Load_sum,]*-1
+            }
           
-            # create list containing these weights
+            # create list containing the 'new' weights
             W_new_sign_list=lapply(1:nrow(W_new_sign),function(x){
               temp=W_new_sign[x,]
               temp[temp!=0]
             })
-            
             names(W_new_sign_list)=rownames(W_new_sign)
+            
             args_new_sign = Est_temp$Information$Arguments
             args_new_sign[[".PLS_modes"]]=W_new_sign_list
             
-            Est_new_sign=do.call(forman,args_new_sign)
+            Est_new_sign=do.call(foreman,args_new_sign)
             
             summary_new_sign=summarize(Est_new_sign)
             
@@ -1129,36 +1159,31 @@ resamplecSEMResultsCore <- function(
             
             }
           
-          # summary_org = summarize(.object)
-          
-          # sum(!(sign(.object$Estimates$Weight_estimates)==sign(Est_temp$Estimates$Weight_estimates)))
-          
-          
-          # # Multiply the coefficients for which the sign differs by -1
-          # x1[["Path_estimates"]][!(sign(summary_temp$Estimates$Path_estimates$Estimate) == sign(summary_org$Estimates$Path_estimates$Estimate))] = 
-          #   x1[["Path_estimates"]][!(sign(summary_temp$Estimates$Path_estimates$Estimate) == sign(summary_org$Estimates$Path_estimates$Estimate))]*-1
-          # 
-          # # Loading estimates
-          # x1[["Loading_estimates"]][!(sign(summary_temp$Estimates$Loading_estimates$Estimate) == sign(summary_org$Estimates$Loading_estimates$Estimate))] = 
-          #   x1[["Loading_estimates"]][!(sign(summary_temp$Estimates$Loading_estimates$Estimate) == sign(summary_org$Estimates$Loading_estimates$Estimate))]*-1
-          # 
-          # Weight estimates
-          # x1[["Weight_estimates"]][!(sign(summary_temp$Estimates$Weight_estimates$Estimate) == sign(summary_org$Estimates$Weight_estimates$Estimate))] = 
-            # x1[["Weight_estimates"]][!(sign(summary_temp$Estimates$Weight_estimates$Estimate) == sign(summary_org$Estimates$Weight_estimates$Estimate))]*-1
-        
-          # Take these weights and reestimate the model
-          # make list with predetermined weightsweights
-          # weights_det=lapply(rownames(.object$Estimates$Weight_estimates), function(x){
-            
-          # })
-          
-          }
-        
-        if(.sign_change_option == "construct"){
-          stop2("sign_change option == construct is not implemented yet")
         }
         
+        # Reverse the signs off ALL parameter estimates in a bootstrap run if 
+        # their sign differs from the sign of the original estimation
+        if(.sign_change_option == 'individual'){
+          
+          summary_org = summarize(.object)
+
+          # Multiply the coefficients for which the sign differs by -1
+           x1[["Path_estimates"]][sign(summary_temp$Estimates$Path_estimates$Estimate) != sign(summary_org$Estimates$Path_estimates$Estimate)] =
+             x1[["Path_estimates"]][sign(summary_temp$Estimates$Path_estimates$Estimate) != sign(summary_org$Estimates$Path_estimates$Estimate)]*-1
+          
+           # Loading estimates
+           x1[["Loading_estimates"]][sign(summary_temp$Estimates$Loading_estimates$Estimate) != sign(summary_org$Estimates$Loading_estimates$Estimate)] =
+             x1[["Loading_estimates"]][sign(summary_temp$Estimates$Loading_estimates$Estimate) != sign(summary_org$Estimates$Loading_estimates$Estimate)]*-1
+          
+          # Weight estimates
+           x1[["Weight_estimates"]][sign(summary_temp$Estimates$Weight_estimates$Estimate) != sign(summary_org$Estimates$Weight_estimates$Estimate)] =
+           x1[["Weight_estimates"]][sign(summary_temp$Estimates$Weight_estimates$Estimate) != sign(summary_org$Estimates$Weight_estimates$Estimate)]*-1
+
+        }
+          
+          
         
+        }
         # ## Additional statistics
         # # HTMT
         # htmt <- c(HTMT(Est_temp))
@@ -1209,8 +1234,11 @@ resamplecSEMResultsCore <- function(
     }
     ## Return
     x1
-  }, future.seed = .seed)
-  
+  # }, future.seed = .seed)
+  # Needs to be replaced by the line above
+  })
+    
+    
   ## Process data --------------------------------------------------------------
   # Delete potential NA's
   out <- Filter(Negate(anyNA), Est_ls)

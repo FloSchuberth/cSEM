@@ -292,7 +292,7 @@ args_default <- function(
     .saturated               = FALSE,
     .second_resample         = NULL,
     .seed                    = NULL,
-    .sign_change_option      = c("no","individual","construct"),
+    .sign_change_option      = c("no","individual","individual_reestimate","construct_reestimate"),
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,
