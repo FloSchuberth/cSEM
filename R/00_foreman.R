@@ -61,7 +61,8 @@ foreman <- function(
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
   .reliabilities               = args_default()$.reliabilities,
-  .tolerance                   = args_default()$.tolerance
+  .tolerance                   = args_default()$.tolerance,
+  .starting_values             = args_default()$.starting_values
   ) {
 
   ### Preprocessing ============================================================
@@ -96,7 +97,9 @@ foreman <- function(
       # Arguments passed on to calcuateOuterWeightsPLS 
       .data                     = X,
       # Arguments passed to checkConvergence
-      .conv_criterion           = .conv_criterion
+      .conv_criterion           = .conv_criterion,
+      # starting values
+      .starting_values          = .starting_values
     )
   } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
@@ -111,7 +114,8 @@ foreman <- function(
         .csem_model               = csem_model,
         .conv_criterion           = .conv_criterion,
         .iter_max                 = .iter_max,
-        .tolerance                = .tolerance
+        .tolerance                = .tolerance,
+        .starting_values          = .starting_values
       )
       
       # Weights need to be scaled s.t. the composite build using .X has
@@ -126,7 +130,8 @@ foreman <- function(
         .csem_model               = csem_model,
         .conv_criterion           = .conv_criterion,
         .iter_max                 = .iter_max,
-        .tolerance                = .tolerance
+        .tolerance                = .tolerance,
+        .starting_values          = .starting_values
       )
     }
 

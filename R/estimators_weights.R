@@ -86,6 +86,39 @@ calculateWeightsPLS <- function(
 
   ### Calculation/Iteration ====================================================
   W <- .csem_model$measurement
+  
+  # if starting values are provided
+  if(!is.null(.starting_values)){
+    
+    if(!is.list(.starting_values)){
+      stop2("A list containing the starting values must be provided.")
+    }
+    
+    tmp <- setdiff(names(.starting_values), rownames(.W))
+    
+    if(length(tmp) != 0) {
+      stop2("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+           " provided to `.starting_values`", 
+           ifelse(length(tmp) == 1, " is", " are"), " unknown.")
+    }
+    
+   # Replace the original ones by the starting value
+    for(i in names(.starting_values)) {
+      
+      tmp <- setdiff(names(.starting_values[[i]]), colnames(.W[i,,drop=FALSE]))
+      
+      if(length(tmp) != 0) {
+        stop2("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+             " provided to `.starting_values`", 
+             ifelse(length(tmp) == 1, " is", " are"), " unknown.")
+      }
+      
+      .W[i,names(.starting_values[[i]]),drop = FALSE ] = .starting_values[[i]]
+    }
+    return(.W) 
+    
+  }
+  
   # Scale weights
   W <- scaleWeights(.S = .S, .W = W)
 

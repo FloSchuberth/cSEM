@@ -173,6 +173,8 @@
 #'   case an arbitrary seed is choosen.
 #' @param .stage Character string. The stage the model is need for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
+#' @param .starting_values list of named vectors containig the starting values. 
+#' Defaults to "*NULL*".
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
@@ -293,6 +295,7 @@ args_default <- function(
     .second_resample         = NULL,
     .seed                    = NULL,
     .sign_change_option      = c("no","individual","individual_reestimate","construct_reestimate"),
+    .starting_values         = NULL,
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,

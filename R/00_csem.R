@@ -161,6 +161,7 @@ csem <- function(
   .eval_plan             = c("sequential", "multiprocess"),
   .seed                  = NULL,
   .sign_change_option    = c("no",'individual','individual_reestimate','construct_reestimate'),
+  .starting_values       = NULL,
   ...
   ) {
   ## Match arguments
