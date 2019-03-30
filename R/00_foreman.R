@@ -139,7 +139,8 @@ foreman <- function(
             
     W <- calculateWeightsUnit(
       .S                        = S,
-      .csem_model               = csem_model
+      .csem_model               = csem_model,
+      .starting_values          = .starting_values
     )
   } else if(.approach_weights %in% c("bartlett", "regression")) {
     
