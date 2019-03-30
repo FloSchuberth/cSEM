@@ -992,10 +992,7 @@ resamplecSEMResultsCore <- function(
     .R <- length(resample_jack)
   } 
   
-  # Est_ls <- future.apply::future_lapply(1:.R, function(i) {
-  # Needs to be replaced again by the line above
-  set.seed(1234)
-  Est_ls <- lapply(1:.R, function(i) {
+  Est_ls <- future.apply::future_lapply(1:.R, function(i) {
     # Replace the old dataset by a resampled data set (resampleData always returns
     # a list so for just one draw we need to pick the first list element)
     
@@ -1003,7 +1000,7 @@ resamplecSEMResultsCore <- function(
       resample_jack[[i]]
     } else {
       # We could use resampleData here but, bootstrap resampling directly is faster
-      # (not surprisingly)
+      # (not surprising)
       # (compared both approaches using microbenchmark)
       data <- args[[".data"]]
       data[sample(1:nrow(data), size = nrow(data), replace = TRUE), ]
@@ -1053,6 +1050,7 @@ resamplecSEMResultsCore <- function(
         names(x1[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
                                              est_2stage$Weight_estimates$Name)
         
+        # Sign change correction for models containing second-order construct starts here (if applied)
         # Check whether in the first stage PLS was applied, if yes it has to be applied in the second stage as well
         if(.object$First_stage$Information$Arguments$.approach_weights == "PLS-PM"){
           
@@ -1061,19 +1059,24 @@ resamplecSEMResultsCore <- function(
             warning2("Sign change options should be cautiously used in combination with the dominant indicator approach.")
           }
           
-          # Reverse the sign of the bootstrap weight estimate if it differs from the original estimation.
-          # Subsequently, reestimate all other parameters based on the sign reversed weights.
+  
+          # Sign change option: individual_reestimate and construct_reestimate 
+          # (should be the same as in matrixpls, if proper funtion is supplied)
           if(.sign_change_option == "individual_reestimate" | .sign_change_option == "construct_reestimate"){
             
-            # If there is a difference in the signs of the weights
-            if(sum(sign(.object$First_stage$Estimates$Weight_estimates)!=sign(Est_temp$First_stage$Estimates$Weight_estimates))!=0){
+
+            # Is a sign? If the weight signs do not differ no correction is needed
+            if(sum(sign(.object$First_stage$Estimates$Weight_estimates)!=
+                   sign(Est_temp$First_stage$Estimates$Weight_estimates))!=0){
               
               
               if(.sign_change_option == "individual_reestimate"){
                 W_first_stage_new_sign=Est_temp$First_stage$Estimates$Weight_estimates
                 
-                W_first_stage_new_sign[sign(.object$First_stage_Estimates$Weight_estimates)!=sign(Est_temp$First_stage$Estimates$Weight_estimates)]=
-                  Est_temp$First_stage$Estimates$Weight_estimates[sign(.object$First_stage$Estimates$Weight_estimates)!=sign(Est_temp$First_stage$Estimates$Weight_estimates)]*-1
+                W_first_stage_new_sign[sign(.object$First_stage_Estimates$Weight_estimates)!=
+                                         sign(Est_temp$First_stage$Estimates$Weight_estimates)]=
+                  Est_temp$First_stage$Estimates$Weight_estimates[sign(.object$First_stage$Estimates$Weight_estimates)!=
+                                                                    sign(Est_temp$First_stage$Estimates$Weight_estimates)]*-1
               }
               
               if(.sign_change_option == "construct_reestimate"){
@@ -1361,10 +1364,8 @@ resamplecSEMResultsCore <- function(
     }
     ## Return
     x1
-  # }, future.seed = .seed)
-  # Needs to be replaced by the line above
-  })
-    
+  }, future.seed = .seed)
+
     
   ## Process data --------------------------------------------------------------
   # Delete potential NA's
