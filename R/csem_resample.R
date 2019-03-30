@@ -1052,6 +1052,9 @@ resamplecSEMResultsCore <- function(
         
         # Sign change correction for models containing second-order construct starts here (if applied)
         # Check whether in the first stage PLS was applied, if yes it has to be applied in the second stage as well
+        # It might be that the returned solution is not proper, currently we do not check for that!
+        # This is perticularly relvant for individual_reestimate and construct_reestimate
+      
         if(.object$First_stage$Information$Arguments$.approach_weights == "PLS-PM"){
           
           # Return warning if used in combination with .dominant_indicator
@@ -1065,7 +1068,7 @@ resamplecSEMResultsCore <- function(
           if(.sign_change_option == "individual_reestimate" | .sign_change_option == "construct_reestimate"){
             
 
-            # Is a sign? If the weight signs do not differ no correction is needed
+            # Is there a sign difference in the first stage? If the weight signs do not differ no correction is needed
             if(sum(sign(.object$First_stage$Estimates$Weight_estimates)!=
                    sign(Est_temp$First_stage$Estimates$Weight_estimates))!=0){
               
@@ -1109,8 +1112,9 @@ resamplecSEMResultsCore <- function(
               summary_new_sign_first_stage=summarize(Est_new_sign_first_stage)
             }
               # Second stage
-              # If there is a difference in the signs of the weights
-              if(sum(sign(.object$Second_stage$Estimates$Weight_estimates)!=sign(Est_temp$Second_stage$Estimates$Weight_estimates))!=0){
+              # If there is a difference in the signs of the weights in the second stage?
+              if(sum(sign(.object$Second_stage$Estimates$Weight_estimates)!=
+                     sign(Est_temp$Second_stage$Estimates$Weight_estimates))!=0){
                 
                 
                 if(.sign_change_option == "individual_reestimate"){
@@ -1223,6 +1227,7 @@ resamplecSEMResultsCore <- function(
 
         # Sign change option works only for PLS-PM, if another approach is used, 
         # the .sign_change_option argument is ignored
+        # Currenlty, the outcome of a reestimation is not verified.
         if(.object$Information$Arguments$.approach_weights == "PLS-PM"){
           
           # Return warning if used in combination with .dominant_indicator
@@ -1230,19 +1235,24 @@ resamplecSEMResultsCore <- function(
             warning2("Sign change options should be cautiously used in combination with the dominant indicator approach.")
           }
         
-        # Reverse the sign of the bootstrap weight estimate if it differs from the original estimation.
-        # Subsequently, reestimate all other parameters based on the sign reversed weights.
-        if(.sign_change_option == "individual_reestimate" | .sign_change_option == "construct_reestimate"){
-          
-          # If there is a difference in the signs of the weights
+       # Is there a difference in the signs of th weights? Otherwise no correction of the signs is done
+          # Not sure whether this is a problem for the construct_reestimate approach which only compares the loadings
+          # I think not.
           if(sum(sign(.object$Estimates$Weight_estimates)!=sign(Est_temp$Estimates$Weight_estimates))!=0){
-            
 
+            
+            # Sign change correction individual_reestimate and construct_reestimate
+            if(.sign_change_option == "individual_reestimate" | .sign_change_option == "construct_reestimate"){
+          
+            # Individual_reestimate: Change sign of the weights that differ from the sign of the original estimation
             if(.sign_change_option == "individual_reestimate"){
               W_new_sign=Est_temp$Estimates$Weight_estimates
               
-              W_new_sign[sign(.object$Estimates$Weight_estimates)!=sign(Est_temp$Estimates$Weight_estimates)]=
-              Est_temp$Estimates$Weight_estimates[sign(.object$Estimates$Weight_estimates)!=sign(Est_temp$Estimates$Weight_estimates)]*-1
+              # All weights with a different sign than the original weights are reversed
+              W_new_sign[sign(.object$Estimates$Weight_estimates)!=
+                           sign(Est_temp$Estimates$Weight_estimates)]=
+              Est_temp$Estimates$Weight_estimates[sign(.object$Estimates$Weight_estimates)!=
+                                                    sign(Est_temp$Estimates$Weight_estimates)]*-1
             }
             
             if(.sign_change_option == "construct_reestimate"){
@@ -1257,6 +1267,7 @@ resamplecSEMResultsCore <- function(
               
               W_new_sign=Est_temp$Estimates$Weight_estimates
               
+              # All weights belonging to a block are sign reversed if Load_diff > Load_sum
               W_new_sign[Load_diff > Load_sum,]=W_new_sign[Load_diff > Load_sum,]*-1
             }
           
@@ -1267,6 +1278,7 @@ resamplecSEMResultsCore <- function(
             })
             names(W_new_sign_list)=rownames(W_new_sign)
             
+            # Replace old weights by new weights
             args_new_sign = Est_temp$Information$Arguments
             args_new_sign[[".PLS_modes"]]=W_new_sign_list
             
@@ -1274,7 +1286,7 @@ resamplecSEMResultsCore <- function(
             
             summary_new_sign=summarize(Est_new_sign)
             
-            # fill list
+            # fill list with final estimates
             x1[["Path_estimates"]] <- summary_new_sign$Estimates$Path_estimates$Estimate
             names(x1[["Path_estimates"]]) <- summary_new_sign$Estimates$Path_estimates$Name
             
@@ -1285,11 +1297,7 @@ resamplecSEMResultsCore <- function(
             # Weight estimates
             x1[["Weight_estimates"]] <- summary_new_sign$Estimates$Weight_estimates$Estimate
             names(x1[["Weight_estimates"]]) <- summary_new_sign$Estimates$Weight_estimates$Name
-            
-            
-            }
-          
-        }
+        } # end if individual_reestimate, construct_reestimate
         
         # Reverse the signs off ALL parameter estimates in a bootstrap run if 
         # their sign differs from the sign of the original estimation
@@ -1298,19 +1306,25 @@ resamplecSEMResultsCore <- function(
           summary_org = summarize(.object)
 
           # Multiply the coefficients for which the sign differs by -1
-           x1[["Path_estimates"]][sign(summary_temp$Estimates$Path_estimates$Estimate) != sign(summary_org$Estimates$Path_estimates$Estimate)] =
-             x1[["Path_estimates"]][sign(summary_temp$Estimates$Path_estimates$Estimate) != sign(summary_org$Estimates$Path_estimates$Estimate)]*-1
+           x1[["Path_estimates"]][sign(summary_temp$Estimates$Path_estimates$Estimate) != 
+                                    sign(summary_org$Estimates$Path_estimates$Estimate)] =
+             x1[["Path_estimates"]][sign(summary_temp$Estimates$Path_estimates$Estimate) !=
+                                      sign(summary_org$Estimates$Path_estimates$Estimate)]*-1
           
            # Loading estimates
-           x1[["Loading_estimates"]][sign(summary_temp$Estimates$Loading_estimates$Estimate) != sign(summary_org$Estimates$Loading_estimates$Estimate)] =
-             x1[["Loading_estimates"]][sign(summary_temp$Estimates$Loading_estimates$Estimate) != sign(summary_org$Estimates$Loading_estimates$Estimate)]*-1
+           x1[["Loading_estimates"]][sign(summary_temp$Estimates$Loading_estimates$Estimate) != 
+                                       sign(summary_org$Estimates$Loading_estimates$Estimate)] =
+             x1[["Loading_estimates"]][sign(summary_temp$Estimates$Loading_estimates$Estimate) !=
+                                         sign(summary_org$Estimates$Loading_estimates$Estimate)]*-1
           
           # Weight estimates
-           x1[["Weight_estimates"]][sign(summary_temp$Estimates$Weight_estimates$Estimate) != sign(summary_org$Estimates$Weight_estimates$Estimate)] =
-           x1[["Weight_estimates"]][sign(summary_temp$Estimates$Weight_estimates$Estimate) != sign(summary_org$Estimates$Weight_estimates$Estimate)]*-1
+           x1[["Weight_estimates"]][sign(summary_temp$Estimates$Weight_estimates$Estimate) != 
+                                      sign(summary_org$Estimates$Weight_estimates$Estimate)] =
+           x1[["Weight_estimates"]][sign(summary_temp$Estimates$Weight_estimates$Estimate) != 
+                                      sign(summary_org$Estimates$Weight_estimates$Estimate)]*-1
 
         }
-          
+       }  
           
         
         }
