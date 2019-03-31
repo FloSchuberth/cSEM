@@ -161,7 +161,8 @@ foreman <- function(
   if(!is.null(.dominant_indicators)) {
     W$W <- setDominantIndicator(
       .W = W$W, 
-      .dominant_indicators = .dominant_indicators)
+      .dominant_indicators = .dominant_indicators,
+      .S = S)
   }
 
   ## Calculate proxies/scores

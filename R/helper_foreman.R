@@ -506,7 +506,8 @@ calculateReliabilities <- function(
 #'
 setDominantIndicator <- function(
   .W                   = W,
-  .dominant_indicators = .dominant_indicators
+  .dominant_indicators = .dominant_indicators,
+  .S                   = args_default()$.S  
 ) {
   ## Check construct names:
   # Do all construct names in .dominant_indicators match the construct
@@ -530,8 +531,14 @@ setDominantIndicator <- function(
          ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
   }
   
+  # Calculate the loadings
+  L = .W%*%.S[colnames(.W),colnames(.W)] * abs(sign(.W))
+  
   for(i in names(.dominant_indicators)) {
-    .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
+    # ensure that this indicator has positive correlation with the composite
+    
+    # .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
+    .W[i, ] = .W[i, ] * sign(L[i, .dominant_indicators[i]])
   }
   return(.W)
 }
