@@ -496,7 +496,8 @@ calculateReliabilities <- function(
 #'
 #' @usage setDominantIndicator(
 #'  .W                   = W,
-#'  .dominant_indicators = .dominant_indicators
+#'  .dominant_indicators = args_default()$.dominant_indicators, 
+#'  .S                   = args_default()$.S
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -506,7 +507,7 @@ calculateReliabilities <- function(
 #'
 setDominantIndicator <- function(
   .W                   = W,
-  .dominant_indicators = .dominant_indicators,
+  .dominant_indicators = args_default()$.dominant_indicators,
   .S                   = args_default()$.S  
 ) {
   ## Check construct names:
@@ -535,10 +536,11 @@ setDominantIndicator <- function(
   L = .W%*%.S[colnames(.W),colnames(.W)] * abs(sign(.W))
   
   for(i in names(.dominant_indicators)) {
-    # ensure that this indicator has positive correlation with the composite
-    
-    # .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
+    # ensure that the dominant indicator of a block has positive correlation/loading with the composite
     .W[i, ] = .W[i, ] * sign(L[i, .dominant_indicators[i]])
+    
+    # Old version which ensures that the weight for this indicator has a positive sign.
+    # .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
   }
   return(.W)
 }
