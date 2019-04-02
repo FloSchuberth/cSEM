@@ -363,7 +363,12 @@ calculateReliabilities <- function(
             
             # Get weights and scale
             w <- c(attr(scores, 'fsm')[[1]])
-            # w <- w /  c(sqrt(w %*% .S[indicator_names, indicator_names, drop = FALSE] %*% w))
+            
+            
+            # Standardization does not affect the path coefficients, only the weights and the corresponding 
+            # proxy scores are affected. In the manual we should refer to standardized regression weights
+            # We decided to use standardized weights as it might be problematic for other function if the scores are not standardized.
+            w <- w /  c(sqrt(w %*% .S[indicator_names, indicator_names, drop = FALSE] %*% w))
             W[j, indicator_names] <- w
           }
           
