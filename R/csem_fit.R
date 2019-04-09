@@ -19,7 +19,7 @@
 #' @references
 #'   \insertAllCited{}
 #'   
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 

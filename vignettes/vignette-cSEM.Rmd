@@ -1,0 +1,192 @@
+---
+title: "cSEM: Composite-based structural equation modeling"
+subtitle: "Concepts, terminonlogy, and notation"
+author: "Manuel Rademaker & Florian Schuberth"
+date: "Last edited: `r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Assess}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+## Introduction
+
+This vignette serves several purposes.
+
+1. Structural equation modeling (SEM) has been used for over a century
+   across a multitude of research fields such as (among others) psychology, 
+   sociology, or business research. 
+   As an almost inevidable consequence, a different terminology system and a distinct 
+   mathematical notation has evolved within each field over the years. This 
+   "terminology mess" is one of the major obstacles in interdisciplinary
+   research and (scientific) debates, hampers a broader understanding of 
+   methodolocial issues, and, even worse,
+   promotes systematic missue (e.g. the use of Cronbach's alpha as an estimator for
+   congeneric reliability). This is particulary
+   true for those new to SEM or casual applied users who are often overwhelmed
+   by terminology of their own field only to find that the difficult term they
+   just thought to have finally grasped is definied differently in another field, 
+   making the confusion complete.
+   
+   Ultimately, this is a matter of (mis)communication which, in our opinion, can 
+   only be satisfactorily solved by establishing a clear, unambigious definition 
+   for each term and symbol that is used within the package. We emphasize that
+   we do not seek to impose "our" conventions but merly seek to make communication
+   between us (the authors of the package) and you (the package user) as
+   unambigious and error-free as possible.
+   
+   This vignette therefore provides two glossaries:
+      - The [termionology glossary](#terminology) containing each term that we think should be 
+         definied and explained.
+      - The [mathematical notation glossary](#notation) containing each mathematical 
+        symbol used in the package alongside a definition.
+         
+1. The package is designed based on a set of principles that are partly in contrast 
+   to common open-source or commerical software offering similar content. This 
+   vignette serves to explain these principles, to contrast them to existing software,
+   and to point readers to further reading.
+1. To use **cSEM** effectively it is helpful to understand its design. This 
+   vignette therefore seeks to explain the architecure and design of the package
+   and definies what we consider the "cSEM workflow".
+
+## Composite-based structural equation modeling 
+### What is structural equation modeling (SEM)
+Structural equation modeling (SEM) is about modeling the (causal) relationship 
+between concepts (an entity defined by a conceptual definition, 
+e.g. "emotional stability", "self-confidence", "customer loyalty") with other 
+concepts and/or observable quantities generally referred to as 
+indicators, manifest variables or items. Broadly speaking, two modeling 
+approaches exist. Each approach entails a set of methods, estimators, test,
+and evaluation criteria as well as a specific terminology that may or may not 
+be adequate within the realm of the other approach. 
+
+Assuming there are $J$ constructs and $K$ indicators, the fundamental feature 
+of the first approach -- usually called the covariance-based 
+or factor-based approach -- is the assumption of the existence of a set of $J$ 
+common factors that each serve as a stand-in for one of the $J$ concepts to 
+be studied in a sense that each factor is at least partly (causally) responsible
+for the manifestations of a set of indicators which are supposed to measure 
+the concept in question. The entirety of these measurement relations is 
+captured by the measurement model which related indicators to common factors 
+according to the researchers theory of how observables are related to the 
+concepts in question. The entirety of the relationships between concepts is 
+captured by the structural model whose parameters are usually at the center 
+of the researchers interest.  Caution is warranted though as the common factor 
+and its respective concept are not the same thing. Within the covariance-based 
+literature concept, construct, latent variable and its representation the 
+common factor have often been used interchangeably (Rigdon, 2012, 2016). 
+This will not be the case here and readers are explicitly made aware of the 
+fact that constructs are the abstract entity which *may* be modeled by 
+a common factor, however, no assertion as to the correctness of this approach 
+in terms of "closeness of the common factor and its related concept" are made. 
+Parameters in covariance based methods are usually retrieved by 
+(full-information) maximum likelihood estimation. Notation follows below.
+
+The second approach is known as the variance-based approach, however, I will use
+the term composite-based approach instead for the simple reason that it clearly
+names the defining feature of these approaches: the composite.
+
+## Terminology {#terminology}
+
+Structural Equation Modeling 
+
+:   The entirety of a set of related theories, mathematical models, methods, 
+    algorithms and terminologies related to analyzing the relationships 
+    between (unobserved) concepts and/or observables. 
+
+Concept
+
+:   An entity defined by a conceptual definition. In line with Rigdon (2016) we
+    call variables representing or subsuming a concept **conceptual variables**. 
+    The precise nature/meaning of a conceptual variable depends on 
+    "differnt assumptions, philosophies or worldviews [of the researcher]" 
+    (Rigdon, 2016, p. 2). Unless otherwise stated, it is sufficient for our 
+    purpose to think of concepts as entities that exist simply because they 
+    have been defined. Hence, abstract terms such as "loyalty" or "depression" as 
+    well as designed entities (artifacts) such as the "OECD Better Life Index"
+    are covered by the definition.
+
+Construct
+
+:   Construct may refer to a representation of a concept within a given statistical 
+    model. While a concept is defined by a conceptual (theoretical) definition, 
+    a construct for a concept is defined/created by how the researcher's operationalization. 
+    As opposed to concepts, constructs therefore exist because they arise as 
+    the result of the act of modeling their relation to the observable 
+    variables (indicators). 
+    As such, stand-ins cease to exist without a 
+    measurement model and are inherently tied to the postulated measurement 
+    relation and consequently to the data as represented by the indicators.
+    Hence, stand-ins do not necessarily represent the concept they are meant to
+    represent.
+
+Proxy 
+
+:    A stand-in
+     
+Common factor
+
+:   A common factor is a type of construct. The defining feature of a
+    common factor is the idea that the common factor is the common underlying 
+    cause of the realizations of a set of indicators that are said to measure 
+    the common factor. The common factor model is also referred to as 
+    reflective measurement model. Accordingly, indicators related to the common factor
+    are modeled as measurement error-prone manifestations of a common variable, 
+    cause or factor.
+    
+Latent variable
+
+:   Historically latent variable and common factor where used interchangeably. 
+    We explicitly do not follow this convention. In the following, the term 
+    latent variable is only used to mean ``unobserved variable''. In this 
+    respect, both conceptual variables as well as common factors are 
+    latent variables.
+    
+Composite
+
+:   A composite is a weighted sum of its related indicators. Composites may 
+    either serve as constructs or as proxies for . The nature of the composite is 
+    defined by the type of (measurement) model. If composites are error-free representations 
+    of a concept we refer to the measurement model as composite measurement. If 
+    composites are used as stand-ins, the measurement model is called 
+    causal-formative (Henseler, 2017)
+    
+Factor-based methods 
+
+:   Factor-based methods or factor-based SEM refers to the entirety of methods 
+    centered around the use as of the common factors as stand-ins for the 
+    concepts under investigation.
+    
+Composite-based methods 
+
+:   Composite-based methods or composite-based SEM refers to the entirety of methods 
+    centered around the use as of composites (linear compounts of observables) 
+    as stand-ins or error-free representations for the concepts under investigation.
+
+    
+
+## Notation {#notation}
+
+<center>
+--------------------------------------------------------------------------------
+ Symbol                       Mathematical Synonomous terms      
+----------------------------- ------------ -------------------------------------
+ Parallel reliability           $\rho_P$   Spearman-Brown formula, Spearman-Brown prophcy,
+                                           Standardized alpha, Split-half reliability
+
+ Tau-equivalent reliability     $\rho_T$   Cronbach's alpha, $\alpha$, Coefficient alpha
+                                           Guttmans's $\lambda_3$, KR-20
+ 
+ Congeneric reliability         $\rho_C$   Composite reliability, Jöreskog's $\rho$,
+                                           Construct reliability, $\omega$, 
+                                           reliability coefficient
+--------------------------------------------------------------------------------
+Table: Systematic names and common synonomous names for the 
+reliability found in the literature
+</center>
+
+## Literature

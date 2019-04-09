@@ -17,7 +17,8 @@ second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}"
 Defaults to "\emph{3stage}".}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
-indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+indicator correlation matrix. One of: "\emph{none}" in which case the standard
+bravais-person correlation is used,
 "\emph{spearman}" for the spearman correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}".}
@@ -77,9 +78,9 @@ or a mix of several types. The data may also include
 This column is assumed to contain group identifiers used to split
 the data into groups.}
 
-\item{.disattenuate}{Logical. If possible, should composite/proxy correlations
-be disattenuated if the construct is modeled as a common factor?
-Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. Should composite/proxy correlations
+be disattenuated to yield consisten loadings and path estimates if at least
+one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.dist}{Character string. The distribution to use for the critical value.
 One of \emph{"t"} for Student's t-distribution or \emph{"z"} for the standard normal distribution.
@@ -115,10 +116,11 @@ resamples of the first run.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
-replications/resamples yielding an inadmissible result will be dropped (
-the number of results returned will be less than .R). For "\emph{ignore}" all results are returned
-even if they are inadmissible (number of results returned = .R). For "\emph{replace}"
-resampling continues until there are exactly .R admissible solutions.
+replications/resamples yielding an inadmissible result will be dropped
+(i.e. the number of results returned will be less than .R). For "\emph{ignore}"
+all results are returned even if they are inadmissible (i.e.
+number of results returned = .R). For "\emph{replace}" resampling continues until
+there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
 \item{.id}{Character string or integer. The name or position of the column of
@@ -138,13 +140,15 @@ If the algorithm exceeds the specified number, weights of iteration step
 
 \item{.matrices}{A list of at least two matrices.}
 
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
+\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
+or a \link{cSEMModel} list.}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
 
-\item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
+\item{.normality}{Logical. Should joint normality of
+\eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
+be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -152,14 +156,7 @@ Defaults to \code{TRUE}. Ignored if the model is linear.}
 \item{.only_common_factors}{Logical. Should only constructs modeled as common
 factors be included? Defaults to \code{TRUE}.}
 
-\item{.only_dots}{Logical. Should only arguments to be passed to lower level
-functions via the  \code{...} argument of the \code{fun} function be returned.
-Defaults to \code{FALSE}.}
-
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
-
-\item{.parallel}{Logical. Use parallel computing. Defaults to \code{FALSE}. Note:
-requires the \code{doSNOW} and the \code{parallel} package to be installed.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
@@ -258,10 +255,6 @@ vectorized (columnwise) in this case. See the examples section for details.}
 
 \item{.W_old}{A (J x K) matrix of weights.}
 
-\item{.which_fun}{Character string. The \code{...} argument names and values of which
-function should be returned? One of: \code{"csem"} or \code{"cca"}. Defaults to \code{"csem"}.
-Currently ignored if \code{.only_dots = FALSE}.}
-
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 
 \item{.X_cleaned}{A data.frame of processed data (cleaned and ordered). Note: \code{X_cleaned}
@@ -271,8 +264,6 @@ may not be scaled!}
 An alphabetical list of all arguments used by functions of the \code{cSEM} package,
 including their description and defaults.
 Mainly used for internal purposes (parameter inheritance). To list all arguments
-and their defaults, use \code{\link[=args_default]{args_default()}}. To list only those arguments to be
-passed down to lower level functions via the \code{...} argument of any
-function having \code{...} as a formal argument, set the \code{.only_dots} argument
-of the \code{\link[=args_default]{args_default()}} function to \code{TRUE}.
+and their defaults, use \code{\link[=args_default]{args_default()}}. To list all arguments and
+their possible choices, use \code{args_default(.choices = TRUE)}.
 }

@@ -6,7 +6,7 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #' 
@@ -79,7 +79,7 @@ print.cSEMResults <- function(.object) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults], [summarize()]
+#' @seealso [csem()], [foreman()], [cSEMResults], [summarize()]
 #'
 #' @export
 #'
@@ -342,7 +342,7 @@ print.cSEMSummarize_default <- function(.object, .full_output = FALSE) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults], [summarize()]
+#' @seealso [csem()], [foreman()], [cSEMResults], [summarize()]
 #'
 #' @export
 #'
@@ -533,7 +533,7 @@ print.cSEMSummarize_2ndorder <- function(.object) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #'
@@ -573,7 +573,7 @@ print.cSEMVerify_default <- function(.object) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #'
@@ -615,7 +615,7 @@ print.cSEMVerify_2ndorder <- function(.object) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #'
@@ -741,7 +741,7 @@ print.cSEMTestOMF <- function(.object) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #'
@@ -885,7 +885,7 @@ print.cSEMTestMGD <- function(.object) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #'

@@ -15,8 +15,8 @@ or a mix of several types. The data may also include
 This column is assumed to contain group identifiers used to split
 the data into groups.}
 
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
+\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
+or a \link{cSEMModel} list.}
 }
 \value{
 A (N x K) data.frame containing the standardized data with columns ordered

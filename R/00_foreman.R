@@ -5,7 +5,7 @@
 #' level package functions, and eventually recollecting all of their results. 
 #' It is called by [csem()] to manage the actual calculations.
 #' It may be called directly by the user, however, in most cases it will likely
-#' be more convenient to use [csem()] (or [cca()]) instead.
+#' be more convenient to use [csem()] instead.
 #' 
 #' @usage foreman(
 #'   .data                        = NULL,
@@ -37,7 +37,7 @@
 #' 
 #' @inherit csem_results return
 #'
-#' @seealso [csem], [cca], [cSEMResults]
+#' @seealso [csem], [cSEMResults]
 #'
 #' @export
 #'
@@ -184,14 +184,19 @@ foreman <- function(
 
   ## Estimate structural coef
   if(.estimate_structural) {
-    estim_results <- estimatePathOLS(
-      .H            = H,
-      .Q            = Q,
-      .P            = P,
-      .csem_model   = csem_model,
-      .normality    = .normality,
-      .approach_nl  = .approach_nl
-    )
+    if(.approach_paths == "OLS") {
+      estim_results <- estimatePathOLS(
+        .H            = H,
+        .Q            = Q,
+        .P            = P,
+        .csem_model   = csem_model,
+        .normality    = .normality,
+        .approach_nl  = .approach_nl
+      ) 
+    } else {
+      stop2("`.approach_path = '", .approach_paths, "'` not implemented yet.\n",
+            "Check the master branch of https://github.com/M-E-Rademaker/cSEM for updates.")
+    }
   } else {
     estim_results <- NULL
   }

@@ -602,7 +602,7 @@ resamplecSEMResults.cSEMResults_default <- function(
     .seed <- sample(.Random.seed, 1)
   }
   
-  ## Set plan on how to resolve futures; reset at the end 
+  # Set plan on how to resolve futures; reset at the end
   oplan <- future::plan()
   on.exit(future::plan(oplan), add = TRUE)
   future::plan(.eval_plan)
@@ -981,7 +981,8 @@ resamplecSEMResultsCore <- function(
     .R <- length(resample_jack)
   } 
   
-  Est_ls <- future.apply::future_lapply(1:.R, function(i) {
+  # Est_ls <- future.apply::future_lapply(1:.R, function(i) {
+  Est_ls <- lapply(1:.R, function(i) {
     # Replace the old dataset by a resampled data set (resampleData always returns
     # a list so for just one draw we need to pick the first list element)
     
@@ -1004,7 +1005,8 @@ resamplecSEMResultsCore <- function(
       # its important to use foreman() here 
       # instead of csem() to allow for lapply(x, resamplecSEMResults_default) when x 
       # is of class cSEMResults_2ndorder.
-      do.call(foreman, args) 
+      # do.call(foreman, args) 
+      fastDoCall(foreman, args)
     }
     
     # Check status
@@ -1101,7 +1103,8 @@ resamplecSEMResultsCore <- function(
     }
     ## Return
     x1
-  }, future.seed = .seed)
+  # }, future.seed = .seed)
+  })
   
   ## Process data --------------------------------------------------------------
   # Delete potential NA's

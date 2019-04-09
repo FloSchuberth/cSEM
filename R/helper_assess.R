@@ -15,7 +15,7 @@
 #' 
 #' @usage calculateAVE(
 #'  .object              = NULL,
-#'  .only_common_factors = TRUE,
+#'  .only_common_factors = TRUE
 #' )
 #'
 #' @return A named vector of numeric values of length equal to the number of constructs

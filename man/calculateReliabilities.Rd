@@ -27,9 +27,9 @@ Defaults to "\emph{PLS-PM}".}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.disattenuate}{Logical. If possible, should composite/proxy correlations
-be disattenuated if the construct is modeled as a common factor?
-Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. Should composite/proxy correlations
+be disattenuated to yield consisten loadings and path estimates if at least
+one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",

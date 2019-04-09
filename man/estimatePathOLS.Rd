@@ -24,7 +24,9 @@ Q^2 is also called the reliability coefficient.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
+\item{.normality}{Logical. Should joint normality of
+\eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
+be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear

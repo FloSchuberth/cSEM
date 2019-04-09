@@ -226,7 +226,7 @@ calculateIndicatorCor <- function(
     stop2("Setting `.approach_cor_robust = ", .approach_cor_robust, "` requires all",
           " columns of .data to be numeric.")
   }
-  
+
   switch (.approach_cor_robust,
           "none" = {
             # Pd is TRUE by default. See ?polycor for details
@@ -235,16 +235,16 @@ calculateIndicatorCor <- function(
             cor_type <- unique(c(temp$type))
             cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""'
           },
-          
+
           "mcd" = {
             S <- MASS::cov.rob(.X_cleaned, cor = TRUE, method = "mcd")$cor
             S[upper.tri(S) == TRUE] = t(S)[upper.tri(S) == TRUE]
-            
+
             cor_type <-  "Robust (MCD)"
           },
           "spearman" = {
             S <- cor(.X_cleaned, method = "spearman")
-            
+
             cor_type <-  "Robust (Spearman)"
           }
   )

@@ -6,7 +6,7 @@
 \usage{
 calculateAVE(
  .object              = NULL,
- .only_common_factors = TRUE,
+ .only_common_factors = TRUE
 )
 }
 \arguments{
