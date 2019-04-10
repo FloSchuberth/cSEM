@@ -43,7 +43,7 @@ code > span.ot { color: #007020; }
 <h1 class="title toc-ignore project-name">cSEM: Composite-based structural equation modeling</h1>
 <h3 class="subtitle project-tagline">Concepts, terminonlogy, and notation</h3>
 <h4 class="author project-author">Manuel Rademaker &amp; Florian Schuberth</h4>
-<h4 class="date project-date">Last edited: 2019-04-03</h4>
+<h4 class="date project-date">Last edited: 2019-04-10</h4>
 </section>
 
 
@@ -52,6 +52,11 @@ code > span.ot { color: #007020; }
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#composite-based-structural-equation-modeling">Composite-based structural equation modeling</a><ul>
 <li><a href="#what-is-structural-equation-modeling-sem">What is structural equation modeling (SEM)</a></li>
+<li><a href="#what-is-composite-based-sem">What is composite-based SEM?</a></li>
+</ul></li>
+<li><a href="#using-csem">Using cSEM</a><ul>
+<li><a href="#principles-underlying-csem">Principles underlying cSEM</a></li>
+<li><a href="#the-csem-workflow">The cSEM-Workflow</a></li>
 </ul></li>
 <li><a href="#terminology">Terminology</a></li>
 <li><a href="#notation">Notation</a></li>
@@ -62,13 +67,13 @@ code > span.ot { color: #007020; }
 <section class="main-content">
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>This vignette serves several purposes.</p>
+<p>This vignette serves several purposes:</p>
 <ol style="list-style-type: decimal">
 <li><p>Structural equation modeling (SEM) has been used for over a century across a multitude of research fields such as (among others) psychology, sociology, or business research. As an almost inevidable consequence, a different terminology system and a distinct mathematical notation has evolved within each field over the years. This “terminology mess” is one of the major obstacles in interdisciplinary research and (scientific) debates, hampers a broader understanding of methodolocial issues, and, even worse, promotes systematic missue (e.g. the use of Cronbach’s alpha as an estimator for congeneric reliability). This is particulary true for those new to SEM or casual applied users who are often overwhelmed by terminology of their own field only to find that the difficult term they just thought to have finally grasped is definied differently in another field, making the confusion complete.</p>
-<p>Ultimately, this is a matter of (mis)communication which, in our opinion, can only be satisfactorily solved by establishing a clear, unambigious definition for each term and symbol that is used within the package. We emphasize that we do not seek to impose “our” conventions but merly seek to make communication between us (the authors of the package) and you (the package user) as unambigious and error-free as possible.</p>
+<p>Ultimately, this is a matter of (mis)communication which, in our opinion, can only be satisfactorily solved by establishing a clear, unambigious definition for each term and symbol that is used within the package. We emphasize that we do not seek to impose “our” conventions, nor do we claim they are the “correct” convention, but merly seek to make communication between us (the authors of the package) and you (the package user) as unambigious and error-free as possible.</p>
 This vignette therefore provides two glossaries:
 <ul>
-<li>The <a href="#terminology">termionology glossary</a> containing each term that we think should be definied and explained.</li>
+<li>The <a href="#terminology">termionology glossary</a> containing each term that we think should be definied and explained in order to make sure package users understand complementary help files or vignettes the way the package authors intended them to be understood.</li>
 <li>The <a href="#notation">mathematical notation glossary</a> containing each mathematical symbol used in the package alongside a definition.</li>
 </ul></li>
 <li>The package is designed based on a set of principles that are partly in contrast to common open-source or commerical software offering similar content. This vignette serves to explain these principles, to contrast them to existing software, and to point readers to further reading.</li>
@@ -79,9 +84,41 @@ This vignette therefore provides two glossaries:
 <h2>Composite-based structural equation modeling</h2>
 <div id="what-is-structural-equation-modeling-sem" class="section level3">
 <h3>What is structural equation modeling (SEM)</h3>
-<p>Structural equation modeling (SEM) is about modeling the (causal) relationship between concepts (an entity defined by a conceptual definition, e.g. “emotional stability”, “self-confidence”, “customer loyalty”) with other concepts and/or observable quantities generally referred to as indicators, manifest variables or items. Broadly speaking, two modeling approaches exist. Each approach entails a set of methods, estimators, test, and evaluation criteria as well as a specific terminology that may or may not be adequate within the realm of the other approach.</p>
-<p>Assuming there are <span class="math inline">\(J\)</span> constructs and <span class="math inline">\(K\)</span> indicators, the fundamental feature of the first approach – usually called the covariance-based or factor-based approach – is the assumption of the existence of a set of <span class="math inline">\(J\)</span> common factors that each serve as a stand-in for one of the <span class="math inline">\(J\)</span> concepts to be studied in a sense that each factor is at least partly (causally) responsible for the manifestations of a set of indicators which are supposed to measure the concept in question. The entirety of these measurement relations is captured by the measurement model which related indicators to common factors according to the researchers theory of how observables are related to the concepts in question. The entirety of the relationships between concepts is captured by the structural model whose parameters are usually at the center of the researchers interest. Caution is warranted though as the common factor and its respective concept are not the same thing. Within the covariance-based literature concept, construct, latent variable and its representation the common factor have often been used interchangeably (Rigdon, 2012, 2016). This will not be the case here and readers are explicitly made aware of the fact that constructs are the abstract entity which <em>may</em> be modeled by a common factor, however, no assertion as to the correctness of this approach in terms of “closeness of the common factor and its related concept” are made. Parameters in covariance based methods are usually retrieved by (full-information) maximum likelihood estimation. Notation follows below.</p>
-<p>The second approach is known as the variance-based approach, however, I will use the term composite-based approach instead for the simple reason that it clearly names the defining feature of these approaches: the composite.</p>
+<p><a href="#terminology">Structural equation modeling (SEM)</a> is about modeling the (causal) relationship between <a href="#terminology">concepts</a> (an entity defined by a conceptual definition, e.g. “emotional stability”, “self-confidence”, “customer loyalty”) with other <a href="#terminology">concepts</a> and/or observable quantities generally referred to as indicators, manifest variables or items. Broadly speaking, two modeling approaches exist. We refer to the first as <a href="#lvmodel">the latent variable model</a> and to the second as <a href="#cmodel">the composite model</a>. Each approach entails a set of methods, estimators, test, and evaluation criteria as well as a specific terminology that may or may not be adequate within the realm of the other approach.</p>
+<div id="lvmodel" class="section level4">
+<h4>The latent variable or common factor model</h4>
+<p>Assuming there are <span class="math inline">\(J\)</span> <a href="#terminology">concepts</a> and <span class="math inline">\(K\)</span> indicators, the fundamental feature of the latent variable model is the assumption of the existence of a set of <span class="math inline">\(J\)</span> <a href="#terminology">latent variables (common factors)</a> that each serve as a representation of one of the <span class="math inline">\(J\)</span> <a href="#terminology">concepts</a> to be studied in a sense that each <a href="#terminology">latent variable</a> is at least partly (causally) responsible for the manifestations of a set of indicators which are supposed to measure the <a href="#terminology">concept</a> in question. The entirety of these measurement relations is captured by the <strong>measurement model</strong> which relates indicators to common factors according to the researchers theory of how observables are related to the <a href="#terminology">concepts</a> in question. The entirety of the relationships between concepts is captured by the <strong>structural model</strong> whose parameters are usually at the center of the researchers interest. Caution is warranted though as the <a href="#terminology">common factor</a> and its respective <a href="#terminology">concept</a> are not the same thing. Within the covariance-based literature <a href="#terminology">concept</a>, <a href="#terminology">construct</a>, <a href="#terminology">latent variable</a> and its representation the <a href="#terminology">common factor</a> have often been used interchangeably (Rigdon, 2012, 2016). This will not be the case here and readers are explicitly made aware of the fact that <a href="#terminology">concepts</a> are the abstract entity which <em>may</em> be modeled by a <a href="#terminology">common factor</a>, however, no assertion as to the correctness of this approach in terms of “closeness of the <a href="#terminology">common factor</a> and its related <a href="#terminology">concept</a>” are made.</p>
+<p>Parameters in latent variable models are usually retrieved by (full-information) maximum likelihood. The idea is to find parameters such that the difference between the model-implied and the empirical indicator covariance matrix is minimized. Such estimation methods are therefore usually refered to as covariance-based methods.</p>
+</div>
+<div id="cmodel" class="section level4">
+<h4>The composite model</h4>
+<p>The second approach is known as the composite model. As opposed to the latent variable or common factor model, composite do not presuppose the existence of a latent variable. Hence, designed entities (artifacts) such as the “OECD Better Life Index” that arguably have no latent counterpart may be adequatly described by a composite, i.e the linear combination of observables. Composites may be formed to represent latent variables, however,</p>
+</div>
+</div>
+<div id="what-is-composite-based-sem" class="section level3">
+<h3>What is composite-based SEM?</h3>
+<p>Composite-based SEM is the entirety of methods, approaches, procedures, algorithms that in some way or another involve linear compounts (composites), i.e. linear combinations of observables when retriving (estimating) quantities of interest such as the path coefficents. Its is important to cleary distiguish between the composite model and what we call composite-based SEM. They are not the same. While the former is “only” <em><strong>a</strong></em> <em>model</em> relating concepts to observables, the latter simply states that composites are used to retrive quantities of interest, given a specific modeling approach! Hence, composite-based SEM thus covers common factor as well as composite models.</p>
+<p>As sketched above, common factor and composite models fundamentally differ in how the relation between observables and concepts is modeled. Naturally, results and, most notably, their correct interpretation critically hinges on what type of model the user specifies. Across the package we therefore strictly distigusih between</p>
+<ul>
+<li>Concepts modeled as common factors (or alternatively latent variables)</li>
+<li>Concepts modeled as composites</li>
+</ul>
+<p>These phrases will reatetly appear in help files and other complementary files. It is therefore crucial to remember what they supposed to convey.</p>
+</div>
+</div>
+<div id="using-csem" class="section level2">
+<h2>Using cSEM</h2>
+<div id="principles-underlying-csem" class="section level3">
+<h3>Principles underlying cSEM</h3>
+<p>cSEM is based on a number of principles</p>
+<ol style="list-style-type: decimal">
+<li></li>
+<li></li>
+</ol>
+</div>
+<div id="the-csem-workflow" class="section level3">
+<h3>The cSEM-Workflow</h3>
+<p>cSEM can be used in two ways is delibertely</p>
 </div>
 </div>
 <div id="terminology" class="section level2">
@@ -103,7 +140,7 @@ This vignette therefore provides two glossaries:
 <dd><p>A common factor is a type of construct. The defining feature of a common factor is the idea that the common factor is the common underlying cause of the realizations of a set of indicators that are said to measure the common factor. The common factor model is also referred to as reflective measurement model. Accordingly, indicators related to the common factor are modeled as measurement error-prone manifestations of a common variable, cause or factor.</p>
 </dd>
 <dt>Latent variable</dt>
-<dd><p>Historically latent variable and common factor where used interchangeably. We explicitly do not follow this convention. In the following, the term latent variable is only used to mean ``unobserved variable’’. In this respect, both conceptual variables as well as common factors are latent variables.</p>
+<dd><p>Although, there a conceptional differences, We use the terms common factor and latent variable synommenoulsy.</p>
 </dd>
 <dt>Composite</dt>
 <dd><p>A composite is a weighted sum of its related indicators. Composites may either serve as constructs or as proxies for . The nature of the composite is defined by the type of (measurement) model. If composites are error-free representations of a concept we refer to the measurement model as composite measurement. If composites are used as stand-ins, the measurement model is called causal-formative (Henseler, 2017)</p>

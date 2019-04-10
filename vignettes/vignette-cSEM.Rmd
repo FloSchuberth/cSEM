@@ -9,7 +9,7 @@ output:
     highlight: github
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Assess}
+  %\VignetteIndexEntry{csem-basic}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

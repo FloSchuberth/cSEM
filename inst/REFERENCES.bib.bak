@@ -242,4 +242,17 @@ Carlo studies and an empirical application.},
   publisher = {Springer Nature},
 }
 
+@InBook{Croon2002,
+  pages     = {195--224},
+  title     = {Using predicted latent scores in general latent structure models},
+  publisher = {Lawrence Erlbaum},
+  year      = {2002},
+  author    = {M.A. Croon},
+  editor    = {G.A. Marcoulides and I. Moustaki},
+  isbn      = {080584046X},
+  note      = {Pagination: 288},
+  booktitle = {Latent Variable and Latent Structure Models},
+  language  = {English},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}

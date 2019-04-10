@@ -134,48 +134,34 @@ Estimate linear, nonlinear, hierachical or multigroup structural equation
 models using a composite-based approach. In \pkg{cSEM}
 any method or approach that involves linear compounts (scores/proxies/composites)
 of observables (indicators/items/manifest variables) is defined as composite-based.
-In \pkg{cSEM} linear compounts are usually refered to as proxies and observables as
-indicators.
+See the \href{vignette-cSEM.html}{the cSEM vignette} for details.
 }
 \details{
 \code{csem()} estimates linear, nonlinear, hierachical or multigroup structural
 equation models using a composite-based approach.
 
-In order to use the \pkg{cSEM} package effectivly users should internalize the
-following fundamental principles which form the basis of the package and
-its terminolgy.
+As detailed in the \href{vignette-cSEM.html}{the cSEM vignette}, in order to use
+the \pkg{cSEM} package effectivly users should internalize the
+following fundamental principles:
 \enumerate{
 \item{The approach to obtain scores (i.e. how weights that form a score are build/estimated)
 and the approach to obtain estimates of the structural/path coefficients based on these
 scores (e.g. by ordinary least squares ("OLS") or two-stage least squares ("2SLS"))
 are strictly distinct. This conceptual separation is reflected by the arguments
 \code{.approach_weights} and \code{.approach_path} which allow users to combine any
-given weight approach with any path approach.}
+given weightning approach with any path approach.}
 \item{The research objective or question (explanatory vs. confirmatory and/or
 prediction vs. causal inference) defines the appropriate model. }
-\item{How a certain concept/construct is modeled is strictly distguished
-from the way quantities related to this construct (e.g weights, scores, loadings,
-path coefficients) are estimated. Technically,  \strong{any} valid
+\item{How a certain concept is \strong{modeled} is strictly distguished
+from the way quantities related to this concept (e.g weights & scores, loadings,
+path coefficients) are \strong{estimated}. Technically,  \strong{any} valid
 model can be estimated using \strong{any} weightning approach, however,
 it is the choice of the model that definies the appropriateness of the
-method and potential steps that are potentially necessary to yield statistically
-sound results (e.g. consistency of the structural estiamtes
+method and potential steps that are necessary to yield statistically
+sound results (e.g. consistency of the structural estimates
 if constructs are modeled as common factors when the objective is confirmatory).
-In \pkg{cSEM} constructs may be modeled as common factors or
-composites.
 }
 }
-Currently, this includes
-partial least squares path modeling (PLS-PM) and
-its derivatives (PLSc, ordPLSc, robustPLSc), generalized structured
-component analysis (GSCA), generalized structured component analysis with
-uniqueness terms (GSCAm), generalized canonical correlation analysis (GCCA),
-principal component analysis (PCA), factor score regression (FSR) using sum
-scores, regression or bartlett scores. If constructs are modeled as common
-factors, proxy correlations, loading and path estimates are disattenuated  using \insertCite{Croon2002;textual}{cSEM}'s
-for scores obtained by GCCA, PCA, or FSR. \code{csem()} is designed for quick and flexible
-use by providing the user with default options except for
-the mandatory \code{.data} and \code{.model} argument.
 
 \subsection{Data and model:}{
 The \code{.data} and \code{.model} arguments are required. Data must be
