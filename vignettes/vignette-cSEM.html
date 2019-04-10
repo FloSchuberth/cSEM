@@ -17,6 +17,70 @@
 
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 
 
@@ -59,7 +123,7 @@ code > span.ot { color: #007020; }
 <li><a href="#the-csem-workflow">The cSEM-Workflow</a></li>
 </ul></li>
 <li><a href="#terminology">Terminology</a></li>
-<li><a href="#notation">Notation</a></li>
+<li><a href="#notation">(Mathematical) Notation</a></li>
 <li><a href="#literature">Literature</a></li>
 </ul>
 </div>
@@ -69,7 +133,8 @@ code > span.ot { color: #007020; }
 <h2>Introduction</h2>
 <p>This vignette serves several purposes:</p>
 <ol style="list-style-type: decimal">
-<li><p>Structural equation modeling (SEM) has been used for over a century across a multitude of research fields such as (among others) psychology, sociology, or business research. As an almost inevidable consequence, a different terminology system and a distinct mathematical notation has evolved within each field over the years. This “terminology mess” is one of the major obstacles in interdisciplinary research and (scientific) debates, hampers a broader understanding of methodolocial issues, and, even worse, promotes systematic missue (e.g. the use of Cronbach’s alpha as an estimator for congeneric reliability). This is particulary true for those new to SEM or casual applied users who are often overwhelmed by terminology of their own field only to find that the difficult term they just thought to have finally grasped is definied differently in another field, making the confusion complete.</p>
+<li><p>Structural equation modeling (SEM) has been used for over a century across a multitude of research fields such as (among others) psychology, sociology, or business research.</p>
+<p>As an almost inevidable consequence, a different terminology system and a distinct mathematical notation has evolved within each field over the years. This “terminology mess” is one of the major obstacles in interdisciplinary research and (scientific) debates, hampers a broader understanding of methodolocial issues, and, even worse, promotes systematic missue (e.g. the use of Cronbach’s alpha as an estimator for congeneric reliability). This is particulary true for those new to SEM or casual applied users who are often overwhelmed by terminology of their own field only to find that the difficult term they just thought to have finally grasped is definied differently in another field, making the confusion complete.</p>
 <p>Ultimately, this is a matter of (mis)communication which, in our opinion, can only be satisfactorily solved by establishing a clear, unambigious definition for each term and symbol that is used within the package. We emphasize that we do not seek to impose “our” conventions, nor do we claim they are the “correct” convention, but merly seek to make communication between us (the authors of the package) and you (the package user) as unambigious and error-free as possible.</p>
 This vignette therefore provides two glossaries:
 <ul>
@@ -87,38 +152,105 @@ This vignette therefore provides two glossaries:
 <p><a href="#terminology">Structural equation modeling (SEM)</a> is about modeling the (causal) relationship between <a href="#terminology">concepts</a> (an entity defined by a conceptual definition, e.g. “emotional stability”, “self-confidence”, “customer loyalty”) with other <a href="#terminology">concepts</a> and/or observable quantities generally referred to as indicators, manifest variables or items. Broadly speaking, two modeling approaches exist. We refer to the first as <a href="#lvmodel">the latent variable model</a> and to the second as <a href="#cmodel">the composite model</a>. Each approach entails a set of methods, estimators, test, and evaluation criteria as well as a specific terminology that may or may not be adequate within the realm of the other approach.</p>
 <div id="lvmodel" class="section level4">
 <h4>The latent variable or common factor model</h4>
-<p>Assuming there are <span class="math inline">\(J\)</span> <a href="#terminology">concepts</a> and <span class="math inline">\(K\)</span> indicators, the fundamental feature of the latent variable model is the assumption of the existence of a set of <span class="math inline">\(J\)</span> <a href="#terminology">latent variables (common factors)</a> that each serve as a representation of one of the <span class="math inline">\(J\)</span> <a href="#terminology">concepts</a> to be studied in a sense that each <a href="#terminology">latent variable</a> is at least partly (causally) responsible for the manifestations of a set of indicators which are supposed to measure the <a href="#terminology">concept</a> in question. The entirety of these measurement relations is captured by the <strong>measurement model</strong> which relates indicators to common factors according to the researchers theory of how observables are related to the <a href="#terminology">concepts</a> in question. The entirety of the relationships between concepts is captured by the <strong>structural model</strong> whose parameters are usually at the center of the researchers interest. Caution is warranted though as the <a href="#terminology">common factor</a> and its respective <a href="#terminology">concept</a> are not the same thing. Within the covariance-based literature <a href="#terminology">concept</a>, <a href="#terminology">construct</a>, <a href="#terminology">latent variable</a> and its representation the <a href="#terminology">common factor</a> have often been used interchangeably (Rigdon, 2012, 2016). This will not be the case here and readers are explicitly made aware of the fact that <a href="#terminology">concepts</a> are the abstract entity which <em>may</em> be modeled by a <a href="#terminology">common factor</a>, however, no assertion as to the correctness of this approach in terms of “closeness of the <a href="#terminology">common factor</a> and its related <a href="#terminology">concept</a>” are made.</p>
+<p>Assuming there are <span class="math inline">\(J\)</span> <a href="#terminology">concepts</a> and <span class="math inline">\(K\)</span> indicators, the fundamental feature of the latent variable model is the assumption of the existence of a set of <span class="math inline">\(J\)</span> <a href="#terminology">latent variables (common factors)</a> that each serve as a representation of one of the <span class="math inline">\(J\)</span> <a href="#terminology">concepts</a> to be studied in a sense that each <a href="#terminology">latent variable</a> is at least partly (causally) responsible for the manifestations of a set of indicators which are supposed to measure the <a href="#terminology">concept</a> in question. The entirety of these measurement relations is captured by the <strong>measurement model</strong> which relates indicators to <a href="#terminology">latent variables</a> according to the researchers theory of how observables are related to the <a href="#terminology">concepts</a> in question. The entirety of the relationships between <a href="#terminology">concepts</a> (i.e., its representation the <a href="#terminology">construct</a>) is captured by the <strong>structural model</strong> whose parameters are usually at the center of the researchers interest. Caution is warranted though as the <a href="#terminology">common factor</a> and its respective <a href="#terminology">concept</a> are not the same thing. Within the covariance-based literature <a href="#terminology">concept</a>, <a href="#terminology">construct</a>, <a href="#terminology">latent variable</a> and its representation the <a href="#terminology">common factor</a> have often been used interchangeably <span class="citation">(Rigdon 2012, 2016; Rigdon, Becker, and Sarstedt 2019)</span>. This will not be the case here and readers are explicitly made aware of the fact that <a href="#terminology">concepts</a> are the abstract entity which <em>may</em> be modeled by a <a href="#terminology">common factor</a>, however, no assertion as to the correctness of this approach in terms of “closeness of the <a href="#terminology">common factor</a> and its related <a href="#terminology">concept</a>” are made.</p>
 <p>Parameters in latent variable models are usually retrieved by (full-information) maximum likelihood. The idea is to find parameters such that the difference between the model-implied and the empirical indicator covariance matrix is minimized. Such estimation methods are therefore usually refered to as covariance-based methods.</p>
 </div>
 <div id="cmodel" class="section level4">
 <h4>The composite model</h4>
-<p>The second approach is known as the composite model. As opposed to the latent variable or common factor model, composite do not presuppose the existence of a latent variable. Hence, designed entities (artifacts) such as the “OECD Better Life Index” that arguably have no latent counterpart may be adequatly described by a composite, i.e the linear combination of observables. Composites may be formed to represent latent variables, however,</p>
+<p>The second approach is known as the composite model. As opposed to the latent variable or common factor model, composite do not presuppose the existence of a latent variable. Hence, designed entities (artifacts) such as the “OECD Better Life Index” that arguably have no latent counterpart may be adequatly described by a composite, i.e the linear combination of observables defining the composite. Composites may also be formed to represent latent variables/common factor (or more precisely a concepts modeled as a common factors) in which case the composite serves as a proxy or stand-in for the the latent variable. However, in cSEM, the term “composite model” is only used to refer to a model in a the former sense, i.e. a model in which the composite is a direct representation of concept/construct!</p>
 </div>
 </div>
 <div id="what-is-composite-based-sem" class="section level3">
 <h3>What is composite-based SEM?</h3>
-<p>Composite-based SEM is the entirety of methods, approaches, procedures, algorithms that in some way or another involve linear compounts (composites), i.e. linear combinations of observables when retriving (estimating) quantities of interest such as the path coefficents. Its is important to cleary distiguish between the composite model and what we call composite-based SEM. They are not the same. While the former is “only” <em><strong>a</strong></em> <em>model</em> relating concepts to observables, the latter simply states that composites are used to retrive quantities of interest, given a specific modeling approach! Hence, composite-based SEM thus covers common factor as well as composite models.</p>
-<p>As sketched above, common factor and composite models fundamentally differ in how the relation between observables and concepts is modeled. Naturally, results and, most notably, their correct interpretation critically hinges on what type of model the user specifies. Across the package we therefore strictly distigusih between</p>
+<p>Composite-based SEM is the entirety of methods, approaches, procedures, algorithms that in some way or another involve linear compounts (composites), i.e. linear combinations of observables when retriving (estimating) quantities of interest such as the coefficents of the structural model. Its is important to clearly distiguish between the composite model and what we call composite-based SEM. They are not the same. While the former is “only” <em><strong>a</strong></em> <em>model</em> relating concepts to observables, the latter simply states that composites (linear compounts, i.e. (weighted linear combinations of observables) are used to retrive quantities of interest, given a specific modeling approach! Hence, composite-based SEM thus covers common factor as well as composite models!</p>
+<p>As sketched above, common factor and composite models fundamentally differ in how the relation between observables and concepts is modeled. Naturally, results and, most notably, their (correct/meaningful) interpretation critically hinge on what type of model the user specifies. Across the package we therefore strictly distigusih between</p>
 <ul>
 <li>Concepts modeled as common factors (or alternatively latent variables)</li>
 <li>Concepts modeled as composites</li>
 </ul>
-<p>These phrases will reatetly appear in help files and other complementary files. It is therefore crucial to remember what they supposed to convey.</p>
+<p>These phrases will repeateatly appear in help files and other complementary files. It is therefore crucial to remember what they supposed to convey.</p>
 </div>
 </div>
 <div id="using-csem" class="section level2">
 <h2>Using cSEM</h2>
 <div id="principles-underlying-csem" class="section level3">
 <h3>Principles underlying cSEM</h3>
-<p>cSEM is based on a number of principles</p>
-<ol style="list-style-type: decimal">
-<li></li>
-<li></li>
-</ol>
+<p>cSEM is based on a number of principles, that have had a profound influence on the design of the package.</p>
+<div id="model-vs.estimation" class="section level4">
+<h4><strong>Model vs. Estimation</strong></h4>
+<p>The way different concepts and their relationship are <em>modeled</em> is strictly distinct from how they are <em>estimated</em>. Hence we strictly distinguish between concepts modeled as common factors (or composites) and the actual estimation for <strong>a given model</strong>.</p>
+<p>In cSEM we make use of the lavaan model syntax but redefine the operator <code>&lt;~</code> to mean that the concept to its left is modeled as a composite (not a formative common factor). The operator <code>=~</code> is used to mean that the concept to its left is modeled as a common factor.</p>
+<p><strong>Example</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">model &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="st">## Structural model</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="st">eta2 ~ eta1</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="st">## Measurement model</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="st">eta1 &lt;~ item1 + item2 + item3 # eta1 is modeled as a composite </span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="st">eta2 =~ item4 + item5 + item6 # eta2 is modeled as a common factor</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="st">&quot;</span></a></code></pre></div>
+</div>
+<div id="composites-in-a-composite-model-vs.composite-in-a-common-factor-model-and-disattenuation" class="section level4">
+<h4><strong>Composites in a composite model vs. composite in a common factor model and disattenuation</strong></h4>
+<p>By virtue of the package, cSEM uses composite-based estimators only. Depending on the model choosen, linear compounts may therefore either serve as a composite as part of the composite model or as a proxy/stand-in for a common factor. If a concept is modeled as a common factor, proxy correlations, proxy-indicator correlations and path coeffcients are inconsistent estimates for their supposed construct level counterparts (construct correlations, loadings and path coefficients) unless the proxy is a perfect representation of its construct level counterpart. This is commonly refered to as <strong>attentuation bias</strong>.<br />
+Several approaches have been suggested to correct for these biases. In cSEM estimates are correctly dissattenuated by default if any of the concepts involved are modeled as a common factor! Disattentuation is controlled by the <code>.disattenuate</code> argument of <code>csem()</code></p>
+<p><strong>Example</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">model &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">## Structural model</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">eta2 ~ eta1</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="st">## Measurement model</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="st">eta1 &lt;~ item1 + item2 + item3</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="st">eta2 =~ item4 + item5 + item6 </span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co"># Identical</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="kw">csem</span>(threecommonfactors, model)</a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.disattenuate =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co"># To supress automatic disattenuation</span></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.disattenuate =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p>Note that since <code>.approach_weights = &quot;PLS-PM&quot;</code> and <code>.disattentuate = TRUE</code> by default (see for <a href="#roleofpls">The role of the weightning scheme and partial least squares (PLS)</a> below) and one of the concepts in the model above is modeled as a common factor, composite (proxy) correlations, loadings and path coefficients are adequately disattenuated using the correction approach commonly known as <strong>consistent partial least squares (PLSc)</strong>. If <code>.disattenuate = FALSE</code> or all concepts are modeled as composites “proper” PLS values are returned. To learn more about disattenuation, see the Methods and Formulae section of the respective weightning approach.</p>
+</div>
+<div id="roleofpls" class="section level4">
+<h4><strong>The role of the weightning scheme and partial least squares (PLS)</strong></h4>
+<p>In principal, any weighted combination of appropriately choosen observables can be used to estimate structural relationships between these compounts. Hence, any conceptual or methodological issue disscussed based on a composite build by a given (weightning) approach may equally well be discussed for any other potential weightning scheme. The appropriatness or potential superiority of a specific weightning approach such as “unit weights” (sum scores) over another such as “partial least squares path modeling” (PLS) is therfore to some extent a question of <em>relative</em> appropriatness and <em>relative</em> superiority.</p>
+<p>As a notable consequence, we belief that well known approach such partial least squares path modeling (PLS) and generalized structured component analysis (GSCA) are - contrary to common belief - best exclusivly understood as prescriptions for forming linear compunts based on observables, i.e. as weightning approaches. In cSEM this is reflected by the fact that <code>&quot;PLS&quot;</code> and <code>&quot;GSCA&quot;</code> are choices of the <code>.approach_weights</code> argument.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">model &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">## Structural model</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">eta2 ~ eta1</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">## Measurement model (pure composite model)</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">eta1 &lt;~ item1 + item2 + item3</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">eta2 &lt;~ item4 + item5 + item6 </span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">### Currently the following weight approaches are implemented</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co"># Partial least squares path modeling (PLS)</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;PLS-PM&quot;</span>) <span class="co"># default</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co"># Generalized canonical correlation analysis (Kettenring approaches)</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;SUMCORR&quot;</span>)</a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;MAXVAR&quot;</span>)</a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;SSQCORR&quot;</span>)</a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;MINVAR&quot;</span>) </a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GENVAR&quot;</span>)</a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co"># Generalized structured component analysis (GSCA)</span></a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>)</a>
+<a class="sourceLine" id="cb3-23" data-line-number="23"></a>
+<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co"># Principal component analysis (PCA)</span></a>
+<a class="sourceLine" id="cb3-25" data-line-number="25"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;PCA&quot;</span>)</a>
+<a class="sourceLine" id="cb3-26" data-line-number="26"></a>
+<a class="sourceLine" id="cb3-27" data-line-number="27"><span class="co"># Factor score regression (FSR) using &quot;unit&quot;, &quot;bartlett&quot; or &quot;regression&quot; weights</span></a>
+<a class="sourceLine" id="cb3-28" data-line-number="28"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;unit&quot;</span>)</a>
+<a class="sourceLine" id="cb3-29" data-line-number="29"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;bartlett&quot;</span>) </a>
+<a class="sourceLine" id="cb3-30" data-line-number="30"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;regression&quot;</span>)</a></code></pre></div>
+</div>
 </div>
 <div id="the-csem-workflow" class="section level3">
 <h3>The cSEM-Workflow</h3>
-<p>cSEM can be used in two ways is delibertely</p>
+<p>Working in cSEM consistens o</p>
 </div>
 </div>
 <div id="terminology" class="section level2">
@@ -154,7 +286,7 @@ This vignette therefore provides two glossaries:
 </dl>
 </div>
 <div id="notation" class="section level2">
-<h2>Notation</h2>
+<h2>(Mathematical) Notation</h2>
 <center>
 <table style="width:100%;">
 <caption>Systematic names and common synonomous names for the reliability found in the literature</caption>
@@ -190,8 +322,19 @@ This vignette therefore provides two glossaries:
 </table>
 </center>
 </div>
-<div id="literature" class="section level2">
+<div id="literature" class="section level2 unnumbered">
 <h2>Literature</h2>
+<div id="refs" class="references">
+<div id="ref-Rigdon2012">
+<p>Rigdon, Edward E. 2012. “Rethinking Partial Least Squares Path Modeling: In Praise of Simple Methods.” <em>Long Range Planning</em> 45 (5-6). Elsevier BV: 341–58. <a href="https://doi.org/10.1016/j.lrp.2012.09.010">https://doi.org/10.1016/j.lrp.2012.09.010</a>.</p>
+</div>
+<div id="ref-Rigdon2016">
+<p>———. 2016. “Choosing PLS Path Modeling as Analytical Method in European Management Research: A Realist Perspective.” <em>European Management Journal</em> 34 (6). Elsevier BV: 598–605. <a href="https://doi.org/10.1016/j.emj.2016.05.006">https://doi.org/10.1016/j.emj.2016.05.006</a>.</p>
+</div>
+<div id="ref-Rigdon2019">
+<p>Rigdon, Edward E., Jan-Michael Becker, and Marko Sarstedt. 2019. “Factor Indeterminacy as Metrological Uncertainty: Implications for Advancing Psychological Measurement.” <em>Multivariate Behavioral Research</em>, March. Informa UK Limited, 1–15. <a href="https://doi.org/10.1080/00273171.2018.1535420">https://doi.org/10.1080/00273171.2018.1535420</a>.</p>
+</div>
+</div>
 </div>
 </section>
 

@@ -243,6 +243,7 @@ Carlo studies and an empirical application.},
 }
 
 @InBook{Croon2002,
+  chapter   = {10},
   pages     = {195--224},
   title     = {Using predicted latent scores in general latent structure models},
   publisher = {Lawrence Erlbaum},

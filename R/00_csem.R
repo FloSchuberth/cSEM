@@ -4,15 +4,14 @@
 #' models using a composite-based approach. In \pkg{cSEM} 
 #' any method or approach that involves linear compounts (scores/proxies/composites)
 #' of observables (indicators/items/manifest variables) is defined as composite-based.
-#' See the [the cSEM vignette](vignette-cSEM.html) for details.
+#' See the [the cSEM vignette](../doc/vignette-cSEM.html) for details.
 #' 
 #'
 #' `csem()` estimates linear, nonlinear, hierachical or multigroup structural 
 #' equation models using a composite-based approach. 
 #' 
-#' As detailed in the [the cSEM vignette](vignette-cSEM.html), in order to use 
-#' the \pkg{cSEM} package effectivly users should internalize the
-#' following fundamental principles:
+#' As detailed in the [the cSEM vignette](../doc/vignette-cSEM.html), \pkg{cSEM}
+#' has been developed around the following principles:
 #' \enumerate{
 #' \item{The approach to obtain scores (i.e. how weights that form a score are build/estimated) 
 #'   and the approach to obtain estimates of the structural/path coefficients based on these
@@ -20,8 +19,6 @@
 #'   are strictly distinct. This conceptual separation is reflected by the arguments
 #'   `.approach_weights` and `.approach_path` which allow users to combine any 
 #'   given weightning approach with any path approach.}
-#' \item{The research objective or question (explanatory vs. confirmatory and/or
-#'   prediction vs. causal inference) defines the appropriate model. }
 #' \item{How a certain concept is **modeled** is strictly distguished
 #'   from the way quantities related to this concept (e.g weights & scores, loadings, 
 #'   path coefficients) are **estimated**. Technically,  **any** valid 

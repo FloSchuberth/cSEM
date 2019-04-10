@@ -11,7 +11,7 @@ output:
     includes:
       before_body: preamble.mathjax.tex
 vignette: >
-  %\VignetteIndexEntry{Assess}
+  %\VignetteIndexEntry{using-assess}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

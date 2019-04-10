@@ -12,6 +12,7 @@ vignette: >
   %\VignetteIndexEntry{csem-basic}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: ../inst/REFERENCES.bib
 ---
 ## Introduction
 
@@ -20,6 +21,7 @@ This vignette serves several purposes:
 1. Structural equation modeling (SEM) has been used for over a century
    across a multitude of research fields such as (among others) psychology, 
    sociology, or business research. 
+   
    As an almost inevidable consequence, a different terminology system and a distinct 
    mathematical notation has evolved within each field over the years. This 
    "terminology mess" is one of the major obstacles in interdisciplinary
@@ -79,15 +81,17 @@ one of the $J$ [concepts](#terminology) to be studied in a sense that each
 partly (causally) responsible for the manifestations of a set of indicators which
 are supposed to measure the [concept](#terminology) in question. 
 The entirety of these measurement relations is captured by the **measurement model**
-which relates indicators to common factors 
+which relates indicators to [latent variables](#terminology)
 according to the researchers theory of how observables are related to the 
-[concepts](#terminology) in question. The entirety of the relationships between concepts is 
+[concepts](#terminology) in question. The entirety of the relationships between 
+[concepts](#terminology) (i.e., its representation the [construct](#terminology)) is 
 captured by the **structural model** whose parameters are usually at the center 
 of the researchers interest. Caution is warranted though as the [common factor](#terminology)
 and its respective [concept](#terminology) are not the same thing. Within the covariance-based 
 literature [concept](#terminology), [construct](#terminology), [latent variable](#terminology) 
 and its representation the 
-[common factor](#terminology) have often been used interchangeably (Rigdon, 2012, 2016). 
+[common factor](#terminology) have often been used interchangeably 
+[@Rigdon2012; @Rigdon2016; @Rigdon2019].
 This will not be the case here and readers are explicitly made aware of the 
 fact that [concepts](#terminology) are the abstract entity which *may* be modeled by 
 a [common factor](#terminology), however, no assertion as to the correctness of this approach 
@@ -104,8 +108,13 @@ The second approach is known as the composite model. As opposed to the latent
 variable or common factor model, composite do not presuppose the existence of 
 a latent variable. Hence, designed entities (artifacts) such as the 
 "OECD Better Life Index" that arguably have no latent counterpart may be 
-adequatly described by a composite, i.e the linear combination of observables.
-Composites may be formed to represent latent variables, however, 
+adequatly described by a composite, i.e the linear combination of observables defining
+the composite. Composites may also be formed to represent latent variables/common
+factor (or more precisely a concepts modeled as a common factors) in which case
+the composite serves as a proxy or stand-in for the the latent variable.
+However, in cSEM, the term "composite model" is only used to refer to a model
+in a the former sense, i.e. a model in which the composite is a direct representation
+of concept/construct!
 
 
 ### What is composite-based SEM?
@@ -113,36 +122,155 @@ Composites may be formed to represent latent variables, however,
 Composite-based SEM is the entirety of methods, approaches, procedures, algorithms
 that in some way or another involve linear compounts (composites), i.e. linear combinations of 
 observables when retriving (estimating) quantities of interest such as the 
-path coefficents.  Its is important to cleary distiguish between the composite
+coefficents of the structural model.  Its is important to clearly distiguish between the composite
 model and what we call composite-based SEM. They are not the same.
 While the former is "only" *__a__* *model* relating concepts to observables, the latter
-simply states that composites are used to retrive quantities of interest, given
+simply states that composites (linear compounts, i.e. (weighted linear combinations
+of observables) are used to retrive quantities of interest, given
 a specific modeling approach! Hence, composite-based SEM thus covers common 
-factor as well as composite models. 
+factor as well as composite models!
 
 As sketched above, common factor and composite models fundamentally differ in how the relation
 between observables and concepts is modeled. Naturally, results and, most notably,
-their correct interpretation critically hinges on what type of model the user 
+their (correct/meaningful) interpretation critically hinge on what type of model the user 
 specifies. Across the package we therefore strictly distigusih between
 
 - Concepts modeled as common factors (or alternatively latent variables)
 - Concepts modeled as composites
 
-These phrases will reatetly appear in help files and other complementary files. It
+These phrases will repeateatly appear in help files and other complementary files. It
 is therefore crucial to remember what they supposed to convey.
 
 ## Using cSEM
-
 ### Principles underlying cSEM 
 
-cSEM is based on a number of principles
+cSEM is based on a number of principles, that have had a profound influence on
+the design of the package.
 
-1. 
-2.
+#### **Model vs. Estimation**
+
+The way different concepts and their relationship 
+are *modeled* is strictly distinct from how they are *estimated*. Hence we
+strictly distinguish between concepts modeled as common factors (or composites)
+and the actual estimation for **a given model**.
+
+In cSEM we make use of the lavaan model syntax but redefine the operator `<~` to mean
+that the concept to its left is modeled as a composite (not a formative 
+common factor). The operator `=~` is used to mean that the concept to its
+left is modeled as a common factor.
+
+**Example**
+```{r, eval = FALSE}
+model <- "
+## Structural model
+eta2 ~ eta1
+
+## Measurement model
+eta1 <~ item1 + item2 + item3 # eta1 is modeled as a composite 
+eta2 =~ item4 + item5 + item6 # eta2 is modeled as a common factor
+"
+```
+
+
+
+#### **Composites in a composite model vs. composite in a common factor model and disattenuation**
+By virtue of the package, cSEM uses composite-based estimators only. Depending
+on the model choosen, linear compounts may therefore either serve as a
+composite as part of the composite model or as a proxy/stand-in for a common factor.
+If a concept is modeled as a common factor, proxy correlations, proxy-indicator
+correlations and path coeffcients are inconsistent estimates for their supposed
+construct level counterparts (construct correlations, loadings and 
+path coefficients) unless the proxy is a perfect representation of its 
+construct level counterpart. This is commonly refered to as **attentuation bias**.  
+Several approaches have been suggested to correct for these biases. 
+In cSEM estimates are correctly dissattenuated by default if any of the 
+concepts involved are modeled as a common factor! Disattentuation is controlled
+by the `.disattenuate` argument of `csem()`
+
+**Example**
+```{r eval=FALSE}
+model <- "
+## Structural model
+eta2 ~ eta1
+
+## Measurement model
+eta1 <~ item1 + item2 + item3
+eta2 =~ item4 + item5 + item6 
+"
+
+# Identical
+csem(threecommonfactors, model)
+csem(threecommonfactors, model, .disattenuate = TRUE)
+
+# To supress automatic disattenuation
+csem(threecommonfactors, model, .disattenuate = FALSE)
+```
+
+Note that since `.approach_weights = "PLS-PM"` and `.disattentuate = TRUE` 
+by default (see for [The role of the weightning scheme and partial least squares (PLS)](#roleofpls) below) 
+and one of the concepts in the model above is modeled as a common factor,
+composite (proxy) correlations, loadings and path coefficients are adequately 
+disattenuated using the correction approach commonly known as **consistent partial
+least squares (PLSc)**. 
+If `.disattenuate = FALSE` or all concepts are modeled as composites "proper"
+PLS values are returned. To learn more about disattenuation, see the Methods 
+and Formulae section of the respective weightning approach.
+
+#### **The role of the weightning scheme and partial least squares (PLS)** {#roleofpls}
+
+In principal, any weighted combination of 
+appropriately choosen observables can be used to estimate structural relationships
+between these compounts. Hence, any conceptual or methodological issue
+disscussed based on a composite build by a given (weightning) approach may 
+equally well be discussed for any other potential weightning scheme. The 
+appropriatness or potential superiority of a specific weightning approach such as
+"unit weights" (sum scores) over another such as "partial least squares path modeling" (PLS)
+is therfore to some extent a question of *relative* appropriatness and
+*relative* superiority. 
+
+As a notable consequence, we belief that well known approach such partial least 
+squares path modeling (PLS) and generalized structured component analysis (GSCA) 
+are - contrary to common belief - best exclusivly understood as prescriptions for forming
+linear compunts based on observables, i.e. as weightning approaches. In cSEM this
+is reflected by the fact that `"PLS"` and `"GSCA"` are choices of the `.approach_weights`
+argument.
+
+```{r eval=FALSE}
+model <- "
+## Structural model
+eta2 ~ eta1
+
+## Measurement model (pure composite model)
+eta1 <~ item1 + item2 + item3
+eta2 <~ item4 + item5 + item6 
+"
+
+### Currently the following weight approaches are implemented
+# Partial least squares path modeling (PLS)
+csem(threecommonfactors, model, .approach_weights = "PLS-PM") # default
+
+# Generalized canonical correlation analysis (Kettenring approaches)
+csem(threecommonfactors, model, .approach_weights = "SUMCORR")
+csem(threecommonfactors, model, .approach_weights = "MAXVAR")
+csem(threecommonfactors, model, .approach_weights = "SSQCORR")
+csem(threecommonfactors, model, .approach_weights = "MINVAR") 
+csem(threecommonfactors, model, .approach_weights = "GENVAR")
+
+# Generalized structured component analysis (GSCA)
+csem(threecommonfactors, model, .approach_weights = "GSCA")
+
+# Principal component analysis (PCA)
+csem(threecommonfactors, model, .approach_weights = "PCA")
+
+# Factor score regression (FSR) using "unit", "bartlett" or "regression" weights
+csem(threecommonfactors, model, .approach_weights = "unit")
+csem(threecommonfactors, model, .approach_weights = "bartlett") 
+csem(threecommonfactors, model, .approach_weights = "regression")
+```
 
 ### The cSEM-Workflow
 
-cSEM can be used in two ways is delibertely
+Working in cSEM consistens o
 
 
 ## Terminology {#terminology}
@@ -221,7 +349,7 @@ Composite-based methods
 
     
 
-## Notation {#notation}
+## (Mathematical) Notation {#notation}
 
 <center>
 --------------------------------------------------------------------------------

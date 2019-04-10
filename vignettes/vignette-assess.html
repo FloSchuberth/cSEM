@@ -114,7 +114,7 @@ code > span.ot { color: #007020; }
 <h1 class="title toc-ignore project-name">Postestimation: Assessing a model</h1>
 <h3 class="subtitle project-tagline">Using the <code>assess()</code> function</h3>
 <h4 class="author project-author">Manuel Rademaker &amp; Florian Schuberth</h4>
-<h4 class="date project-date">Last edited: 2019-03-27</h4>
+<h4 class="date project-date">Last edited: 2019-04-10</h4>
 </section>
 
 
@@ -144,12 +144,12 @@ code > span.ot { color: #007020; }
 <li>The <strong>average variance extracted</strong> (AVE) (the basis for the Fornell-Larcker criteria (FSE))</li>
 <li>The <strong>heterotrait-monotrait ratio of correlations</strong> (HTMT)</li>
 </ul></li>
-<li><strong>Congeneric reliability</strong> (<span class="math inline">\(\rho_C\)</span>), also know as e.g.: composite reliability, construct reliability, (unidimensional) omega, Jöreskog’s <span class="math inline">\(\rho\)</span>, <span class="math inline">\(\rho_A\)</span>, or <span class="math inline">\(\rho_B\)</span>. Under the assumption of tau-equivalent and/or parallel measurement an alternative reliability measures my be derived:
+<li><strong>Congeneric reliability</strong> (<span class="math inline">\(\rho_C\)</span>), also know as e.g.: composite reliability, construct reliability, (unidimensional) omega, Jöreskog’s <span class="math inline">\(\rho\)</span>, <span class="math inline">\(\rho_A\)</span>, or <span class="math inline">\(\rho_B\)</span>. Under the assumption of tau-equivalent and/or parallel measurement an alternative reliability measures may be derived:
 <ul>
 <li><strong>Tau-equivalent reliability</strong> (<span class="math inline">\(\rho_T\)</span>), also know as e.g.: Cronbach alpha, alpha, <span class="math inline">\(\alpha\)</span>, coefficient alpha, Guttman’s <span class="math inline">\(\lambda_3\)</span>, KR-20.</li>
 </ul>
-<p>A third measure is <strong>Parallel reliability</strong> (<span class="math inline">\(\rho_P\)</span>), also know as e.g.: split-half reliability, Spearman-Brown formulae/prophecy, standarized alpha. In <code>cSEM</code> parallel reliability is always identical to tau-equivalent reliability as indicators are always standarized. Hence, only <span class="math inline">\(\rho_T\)</span> is reported.</p>
-WARNING: tau-equivalent (and parallel) measurement reliability measures are only consistent for the population reliability under restrictive assumptions that are unlikly to hold in practice. We therefore explicitly discourage their use as congeneric reliability is virtually always preferable in empirical work! In fact, congeneric reliability can be shown to be identical to the tau-equivalent/parallel reliability <em>if their respective assumptions acutally hold</em>, essentially offering robustness against violation of the tau-equivalence and/or parallel measurement assumption. See the subsection <a href="#reliability">Reliability</a> in the <a href="#methods">Methods &amp; Formula</a> section for more details.</li>
+<p>A third measure is <strong>Parallel reliability</strong> (<span class="math inline">\(\rho_P\)</span>), also know as e.g.: split-half reliability, Spearman-Brown formulae/prophecy, standarized alpha. In <code>cSEM</code> parallel reliability is always identical to tau-equivalent reliability as indicators are always standardized. Hence, only <span class="math inline">\(\rho_T\)</span> is reported.</p>
+WARNING: tau-equivalent (and parallel) measurement reliability estimates are only consistent for the population reliability under restrictive assumptions that are unlikly to hold in practice. We therefore explicitly discourage their use as congeneric reliability is virtually always preferable in empirical work! In fact, congeneric reliability can be shown to be identical to the tau-equivalent/parallel reliability <em>if their respective assumptions acutally hold</em>, essentially offering robustness against violation of the tau-equivalence and/or parallel measurement assumption. See the subsection <a href="#reliability">Reliability</a> in the <a href="#methods">Methods &amp; Formula</a> section for more details.</li>
 <li>Distance measures
 <ul>
 <li>The <strong>standardized root mean square residual</strong> (SRMR)</li>
@@ -159,7 +159,8 @@ WARNING: tau-equivalent (and parallel) measurement reliability measures are only
 <li>The <strong>root mean square error of approximation</strong> (RMSEA)</li>
 <li>The <strong>RMS_<span class="math inline">\(\theta\)</span></strong></li>
 <li>The <strong>variance inflation factor</strong> (VIF)</li>
-<li><p>The R-square (<span class="math inline">\(R^2\)</span>)</p></li>
+<li>The coefficient of determination (<span class="math inline">\(R^2\)</span>)</li>
+<li><p>What about the adjusted <span class="math inline">\(R^2\)</span></p></li>
 </ul>
 <p>For implementation details see the <a href="#methods">Methods &amp; Formulae</a> section.</p>
 </div>
@@ -323,7 +324,7 @@ Cov(\eta, \hat\eta) &amp;= E(\sum w_k \lambda_k \eta^2) = \sum w_k\lambda_k = \b
 <tr class="even">
 <td align="center">Tau-equivalent reliability</td>
 <td><span class="math inline">\(\rho_T\)</span></td>
-<td align="left">Cronbach alpha, <span class="math inline">\(\alpha\)</span>, Coefficient alpha Guttmans’s <span class="math inline">\(\lambda_3\)</span>, KR-20</td>
+<td align="left">Cronbach’s alpha, <span class="math inline">\(\alpha\)</span>, Coefficient alpha Guttmans’s <span class="math inline">\(\lambda_3\)</span>, KR-20</td>
 </tr>
 <tr class="odd">
 <td align="center">Congeneric reliability</td>
