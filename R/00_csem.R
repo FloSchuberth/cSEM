@@ -10,31 +10,11 @@
 #' `csem()` estimates linear, nonlinear, hierachical or multigroup structural 
 #' equation models using a composite-based approach. 
 #' 
-#' As detailed in the [the cSEM vignette](../doc/vignette-cSEM.html), \pkg{cSEM}
-#' has been developed around the following principles:
-#' \enumerate{
-#' \item{The approach to obtain scores (i.e. how weights that form a score are build/estimated) 
-#'   and the approach to obtain estimates of the structural/path coefficients based on these
-#'   scores (e.g. by ordinary least squares ("OLS") or two-stage least squares ("2SLS"))
-#'   are strictly distinct. This conceptual separation is reflected by the arguments
-#'   `.approach_weights` and `.approach_path` which allow users to combine any 
-#'   given weightning approach with any path approach.}
-#' \item{How a certain concept is **modeled** is strictly distguished
-#'   from the way quantities related to this concept (e.g weights & scores, loadings, 
-#'   path coefficients) are **estimated**. Technically,  **any** valid 
-#'   model can be estimated using **any** weightning approach, however, 
-#'   it is the choice of the model that definies the appropriateness of the 
-#'   method and potential steps that are necessary to yield statistically
-#'   sound results (e.g. consistency of the structural estimates 
-#'   if constructs are modeled as common factors when the objective is confirmatory). 
-#'   }
-#' }
-#' 
 #' \subsection{Data and model:}{
 #' The `.data` and `.model` arguments are required. Data must be
 #' provided as either a `matrix` or a `data.frame` with column names matching
 #' the indicator names used in the model description of the measurement model.
-#' Alternatively, a list of matrices or `data.frame`s may be provided
+#' Alternatively, a list of matrices or `data.frame`'s may be provided
 #' in which case estimation is repeated for each data set. 
 #' The data provided via `.data` may contain **one** character column whose column name 
 #' must be provided to `.id`. Values of this column are interpreted as group 
