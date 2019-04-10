@@ -42,7 +42,8 @@
 #' uniqueness terms (GSCAm), generalized canonical correlation analysis (GCCA), 
 #' principal component analysis (PCA), factor score regression (FSR) using sum 
 #' scores, regression or bartlett scores. If constructs are modeled as common 
-#' factors, proxy correlations, loading and path estimates are disattenuated  using \insertCite{Croon2002;textual}{cSEM}'s 
+#' factors, proxy correlations, loading and path estimates are disattenuated  using 
+#' \insertCite{Croon2002;textual}{cSEM}'s 
 #' for scores obtained by GCCA, PCA, or FSR. `csem()` is designed for quick and flexible 
 #' use by providing the user with default options except for 
 #' the mandatory `.data` and `.model` argument. 
