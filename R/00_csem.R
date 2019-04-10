@@ -226,15 +226,63 @@ csem <- function(
       } else {
         args_needed[[".data"]] <- x[, -which(names(x) == .id)]
       }
-      do.call(foreman, args_needed)
-      
+      ## NOTE: using do.call(foreman, args_needed) would be more elegant but is much 
+      # much much! slower (especially for larger data sets). There is now a
+      # terible redundancy because foreman is repeated 3 times. This should be
+      # addressed at some point, however, it is much better than do.call in terms
+      # of speed
+      # out <- do.call(foreman, args_needed)
+      foreman(
+        .data                        = args_needed$.data,
+        .model                       = args_needed$.model,
+        .approach_cor_robust         = args_needed$.approach_cor_robust,
+        .approach_nl                 = args_needed$.approach_nl,
+        .approach_paths              = args_needed$.approach_paths,
+        .approach_weights            = args_needed$.approach_weights,
+        .conv_criterion              = args_needed$.conv_criterion,
+        .disattenuate                = args_needed$.disattenuate,
+        .dominant_indicators         = args_needed$.dominant_indicators,
+        .estimate_structural         = args_needed$.estimate_structural,
+        .id                          = args_needed$.id,
+        .iter_max                    = args_needed$.iter_max,
+        .normality                   = args_needed$.normality,
+        .PLS_approach_cf             = args_needed$.PLS_approach_cf,
+        .PLS_ignore_structural_model = args_needed$.PLS_ignore_structural_model,
+        .PLS_modes                   = args_needed$.PLS_modes,
+        .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
+        .reliabilities               = args_needed$.reliabilities,
+        .tolerance                   = args_needed$.tolerance
+      )
     })
   } else if(any(class(.data) == "list")) {
     
     out <- lapply(.data, function(x) {
       
       args_needed[[".data"]] <- x
-      do.call(foreman, args_needed)
+      ## NOTE: using do.call(foreman, args_needed) would be more elegant but is much 
+      # much much! slower (especially for larger data sets). 
+      # out <- do.call(foreman, args_needed)
+      foreman(
+        .data                        = args_needed$.data,
+        .model                       = args_needed$.model,
+        .approach_cor_robust         = args_needed$.approach_cor_robust,
+        .approach_nl                 = args_needed$.approach_nl,
+        .approach_paths              = args_needed$.approach_paths,
+        .approach_weights            = args_needed$.approach_weights,
+        .conv_criterion              = args_needed$.conv_criterion,
+        .disattenuate                = args_needed$.disattenuate,
+        .dominant_indicators         = args_needed$.dominant_indicators,
+        .estimate_structural         = args_needed$.estimate_structural,
+        .id                          = args_needed$.id,
+        .iter_max                    = args_needed$.iter_max,
+        .normality                   = args_needed$.normality,
+        .PLS_approach_cf             = args_needed$.PLS_approach_cf,
+        .PLS_ignore_structural_model = args_needed$.PLS_ignore_structural_model,
+        .PLS_modes                   = args_needed$.PLS_modes,
+        .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
+        .reliabilities               = args_needed$.reliabilities,
+        .tolerance                   = args_needed$.tolerance
+      )
     })
     if(is.null(names(.data))) {
       names(out) <- paste0("Data_", 1:length(out))
@@ -242,8 +290,30 @@ csem <- function(
       names(out) <- names(.data)
     }
   } else {
-    
-    out <- do.call(foreman, args_needed)
+    ## NOTE: using do.call(foreman, args_needed) would be more elegant but is much 
+    # much much! slower (especially for larger data sets). 
+    # out <- do.call(foreman, args_needed)
+    out <- foreman(
+      .data                        = args_needed$.data,
+      .model                       = args_needed$.model,
+      .approach_cor_robust         = args_needed$.approach_cor_robust,
+      .approach_nl                 = args_needed$.approach_nl,
+      .approach_paths              = args_needed$.approach_paths,
+      .approach_weights            = args_needed$.approach_weights,
+      .conv_criterion              = args_needed$.conv_criterion,
+      .disattenuate                = args_needed$.disattenuate,
+      .dominant_indicators         = args_needed$.dominant_indicators,
+      .estimate_structural         = args_needed$.estimate_structural,
+      .id                          = args_needed$.id,
+      .iter_max                    = args_needed$.iter_max,
+      .normality                   = args_needed$.normality,
+      .PLS_approach_cf             = args_needed$.PLS_approach_cf,
+      .PLS_ignore_structural_model = args_needed$.PLS_ignore_structural_model,
+      .PLS_modes                   = args_needed$.PLS_modes,
+      .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
+      .reliabilities               = args_needed$.reliabilities,
+      .tolerance                   = args_needed$.tolerance
+    )
   }
 
   ## Set class for output
@@ -256,11 +326,12 @@ csem <- function(
     # By convention the original, pooled dataset is therefore added to the first 
     # element of "out" (= results for the first group/dataset)! 
     # If ".data" was a list of data they are combined to on pooled dataset
-    # If ".data" was originallay pooled and subsequently split by ".id"
+    # If ".data" was originally pooled and subsequently split by ".id"
     # The original unsplit data is returned.
     
     out[[1]]$Information$Data_pooled <- if(any(class(.data) == "list")) {
       data_pooled <- do.call(rbind, .data)
+      data_pooled <- as.data.frame(data_pooled)
       data_pooled[, "id"] <- rep(names(out), times = sapply(.data, nrow))
       data_pooled
     } else {

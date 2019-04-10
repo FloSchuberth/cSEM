@@ -20,7 +20,7 @@ indicator correlation matrix. One of: "\emph{none}" in which case nothing is don
 Defaults to "\emph{none}".}
 }
 \value{
-The (K x K) (robust) indicator correlation matrix S.
+A list containing the (K x K) indicator correlation matrix S.
 }
 \description{
 Calculate the indicator correlation matrix using conventional or robust methods.
