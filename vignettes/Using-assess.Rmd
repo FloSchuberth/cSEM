@@ -1,7 +1,6 @@
 ---
 title: "Postestimation: Assessing a model"
 subtitle: "Using the `assess()` function"
-author: "Manuel Rademaker & Florian Schuberth"
 date: "Last edited: `r Sys.Date()`"
 output:
   prettydoc::html_pretty:
@@ -14,9 +13,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 bibliography: ../inst/REFERENCES.bib
 ---
-WARNING: this document is work in progress
+WARNING: this document is work in progress and may still contain mistakes!
 
-## Introduction
+# Introduction
 
 As indicated by the name, `assess()` is used to assess a model estimated using the
 `csem()` function.
@@ -91,7 +90,7 @@ assess(
    common factors only? Defaults to `TRUE`. See the [Details](#details) section 
    below.
 
-### Details {#details}
+## Details {#details}
 
 In line with all of `cSEM`'s postestimation functions, `assess()` is a generic 
 function with methods for objects of class `cSEMResults_default`, 
@@ -132,9 +131,13 @@ the AVE or the congeneric reliability $\rho_C$ inherit inconsistency making thei
 interpretation at the very least dubious.
 
 
-## Usage & Examples
+# Usage & Examples
 
-## Methods & Formulae {#methods}
+## Example 1 {#example1}
+## Example 2 {#example2}
+## Example 3 {#example3}
+
+# Methods & Formulae {#methods}
 
 This section provides technical details and relevant formulae. 
 
@@ -197,8 +200,8 @@ comparison to extant literature formulae will be derived and written in
 general form. The "simplified form" or "cSEM form" using $Var(x_k) = Var(\hat\eta) = 1$ 
 will be given at the end of each paragraph.
 
-### Average variance extracted AVE
-#### Definition
+## Average variance extracted (AVE)
+### Definition
 Several definitions exist. For ease of comparison to extant literature the most 
 common definitions are given below:
 
@@ -216,7 +219,7 @@ common definitions are given below:
 It is important to stress that, although different in wording, all definitions 
 are synonymous! 
 
-#### Formula
+### Formula
 Using the results and notation derived above, the AVE for a generic construct is:
 $$ AVE = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}$$
 If $x_k$ is standardized the denominator reduces to $K$ and the AVE is 
@@ -234,17 +237,17 @@ which is again simply $\lambda^2$. Therefore in `cSEM` we always have:
 
 $$ AVE = COM = \frac{1}{K}\sum COM_k = \frac{1}{K}\sum \text{Indicator reliability}_k = \frac{1}{K}\sum R^2_k $$
 
-#### Implementation
+### Implementation
 The function is implemented as: `calculateAVE()`. See `?calculateAVE ` for a list
 of arguments and their description.
 
-#### See also
+### See also
 
 The AVE is the basis for the Fornell-Larcker criterion. See (TODO).
 
-### Reliability {#reliability}
+## Reliability {#reliability}
 
-#### Definition
+### Definition
 Reliability is the **consistency of measurement**, i.e. the degree to which a hypothetical
 repetition of the same measure would yield the same results. As such, reliability
 is the closeness of a measure to an error free measure. It is not to be confused 
@@ -275,7 +278,7 @@ reliabilities measure:
 1. **Congeneric** -- Assumption: $\eta_k = \lambda_k\eta$ and $Var(\varepsilon_k) \neq Var(\varepsilon_l)$.
 
 
-#### Formula
+### Formula
 
 The most general formula for reliability is the congeneric reliability:
 
@@ -329,7 +332,7 @@ the tau-equivalent reliability (coefficient alpha). To compute the CI, set
 `calculateRhoT(..., .calculate_ci = TRUE)` directly. The level of the CI
 can be changed by supplying a single value or a vector of values to $.alpha$.
 
-##### A note on the terminology
+#### A note on the terminology
 
 A vast bulk of literature dating back to seminal work by Spearman (e.g., Spearman (1904))
 has been written on the subject of reliability. Inevitably, definitions, formulae, 
@@ -376,9 +379,9 @@ Table: Systematic names and common synonymous names for the
 reliability found in the literature
 </center>
 
-#### Implementation
+### Implementation
 Function are implemented as: `calculateRhoT()` and `calculateRhoC()`. 
 See e.g., `?calculateRhoC() ` for a list of arguments and their description.
 
 
-## Literature
+# Literature

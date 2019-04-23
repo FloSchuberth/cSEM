@@ -15,3 +15,4 @@ The \link{cSEMSummary} method for the generic function \code{\link[=print]{print
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}, \code{\link[=summarize]{summarize()}}
 }
+\keyword{internal}

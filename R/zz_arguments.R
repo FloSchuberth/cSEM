@@ -204,9 +204,9 @@ NULL
 #' @usage NULL
 #' 
 #' @inheritParams csem_arguments
-#' @name csem_dotdotdot
+#' @keywords internal
 
-foo <- function(
+args_csem_dotdotdot <- function(
   .approach_cor_robust     = c("none", "mcd", "spearman"),
   .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
   .dominant_indicators     = NULL,

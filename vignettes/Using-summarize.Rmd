@@ -1,0 +1,75 @@
+---
+title: "Postestimation: Summarizing results"
+subtitle: "Using the `summarize()` function"
+date: "Last edited: `r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{using-assess}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/REFERENCES.bib
+---
+WARNING: this document is work in progress.
+
+# Introduction {#introduction}
+
+An introduction.
+
+# Syntax & Options {#syntax}
+
+```{r eval=FALSE}
+summarize(
+  .arg1 = NULL,
+  .arg2 = NULL,
+  .arg3 = NULL,
+  ...
+)
+```
+
+`.arg1`
+
+:  description for `.arg1`
+   
+`.arg2`
+
+:  description for `.arg2`
+  
+`.arg3`
+
+:  description for `.arg3`
+
+## Details
+
+Details if there are any.
+
+# Usage & Examples {#examples}
+
+## Example 1 {#example1}
+## Example 2 {#example2}
+## Example 3 {#example3}
+
+# Methods & Formulae {#methods}
+
+## Topic 1 {#topic1}
+### Definition
+
+### Formula
+
+### Implementation
+
+### See also
+
+## Topic 2 {#topic2}
+### Definition
+
+### Formula
+
+### Implementation
+
+### See also
+
+# Literature

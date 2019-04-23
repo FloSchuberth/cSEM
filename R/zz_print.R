@@ -9,7 +9,7 @@
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#' 
+#' @keywords internal
 print.cSEMResults <- function(.object) {
     
   cat(
@@ -82,7 +82,7 @@ print.cSEMResults <- function(.object) {
 #' @seealso [csem()], [foreman()], [cSEMResults], [summarize()]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMSummarize_default <- function(.object, .full_output = FALSE) {
   
   x1 <- .object$Estimates
@@ -345,7 +345,7 @@ print.cSEMSummarize_default <- function(.object, .full_output = FALSE) {
 #' @seealso [csem()], [foreman()], [cSEMResults], [summarize()]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMSummarize_2ndorder <- function(.object) {
   
   ### Extract name and objects 
@@ -536,7 +536,7 @@ print.cSEMSummarize_2ndorder <- function(.object) {
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMVerify_default <- function(.object) {
   
   cat(rule(line = "bar2"), sep = "")
@@ -576,7 +576,7 @@ print.cSEMVerify_default <- function(.object) {
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMVerify_2ndorder <- function(.object) {
   
   cat(rule(line = "bar2"), sep = "")
@@ -618,7 +618,7 @@ print.cSEMVerify_2ndorder <- function(.object) {
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMTestOMF <- function(.object) {
   
   cat(
@@ -744,7 +744,7 @@ print.cSEMTestOMF <- function(.object) {
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMTestMGD <- function(.object) {
 
   cat(
@@ -888,7 +888,7 @@ print.cSEMTestMGD <- function(.object) {
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMTestMICOM <- function(.object) {
 
   cat(

@@ -15,3 +15,4 @@ The \code{cSEMTestMICOM} method for the generic function \code{\link[=print]{pri
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
 }
+\keyword{internal}
