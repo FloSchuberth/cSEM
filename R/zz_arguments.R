@@ -204,7 +204,6 @@ NULL
 #' @usage NULL
 #' 
 #' @inheritParams csem_arguments
-#' @keywords internal
 
 args_csem_dotdotdot <- function(
   .approach_cor_robust     = c("none", "mcd", "spearman"),
@@ -235,14 +234,6 @@ args_csem_dotdotdot <- function(
 #' @inheritParams  csem_arguments
 #' 
 #' @return A named list of argument names and defaults or accepted candidates.
-#'
-#' @examples
-#'
-#' # List all possible arguments and their defaults
-#' args_default()
-#' 
-#' ## Show accepted candidates:
-#' args_default(.choices = TRUE)
 #'
 #' @seealso [handleArgs()], [csem_arguments], [csem()], [foreman()]
 #'

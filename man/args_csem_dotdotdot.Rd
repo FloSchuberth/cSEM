@@ -60,4 +60,3 @@ Defaults to \code{1e-05}.}
 A complete alphabetical list of all possible arguments accepted by \code{csem()}'s \code{...}
 (dotdotdot) argument.
 }
-\keyword{internal}

@@ -21,15 +21,6 @@ values. For argument descriptions, see: \link{csem_arguments}.
 By default \code{args_default()}returns a list of default values by argument name.
 If the list of accepted candidate values is required instead, use \code{.choices = TRUE}.
 }
-\examples{
-
-# List all possible arguments and their defaults
-args_default()
-
-## Show accepted candidates:
-args_default(.choices = TRUE)
-
-}
 \seealso{
 \code{\link[=handleArgs]{handleArgs()}}, \link{csem_arguments}, \code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}
 }
