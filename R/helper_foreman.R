@@ -231,7 +231,6 @@ calculateIndicatorCor <- function(
   
   ## polycor::hetcor() is relatively slow. If all columns are numeric use cor
   ## directly
-  
   switch (.approach_cor_robust,
           "none" = {
             if(only_numeric_cols) {
@@ -245,16 +244,16 @@ calculateIndicatorCor <- function(
               cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""' 
             }
           },
-          
+
           "mcd" = {
             S <- MASS::cov.rob(.X_cleaned, cor = TRUE, method = "mcd")$cor
             S[upper.tri(S) == TRUE] = t(S)[upper.tri(S) == TRUE]
-            
+
             cor_type <-  "Robust (MCD)"
           },
           "spearman" = {
             S <- cor(.X_cleaned, method = "spearman")
-            
+
             cor_type <-  "Robust (Spearman)"
           }
   )

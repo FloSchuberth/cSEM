@@ -6,10 +6,10 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#' 
+#' @keywords internal
 print.cSEMResults <- function(.object, ...) {
     
   cat(
@@ -79,10 +79,10 @@ print.cSEMResults <- function(.object, ...) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults], [summarize()]
+#' @seealso [csem()], [foreman()], [cSEMResults], [summarize()]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMSummarize_default <- function(.object, .full_output = FALSE, ...) {
   
   x1 <- .object$Estimates
@@ -342,10 +342,10 @@ print.cSEMSummarize_default <- function(.object, .full_output = FALSE, ...) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults], [summarize()]
+#' @seealso [csem()], [foreman()], [cSEMResults], [summarize()]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMSummarize_2ndorder <- function(.object, ...) {
   
   ### Extract name and objects 
@@ -533,10 +533,10 @@ print.cSEMSummarize_2ndorder <- function(.object, ...) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMVerify_default <- function(.object, ...) {
   
   cat(rule(line = "bar2"), sep = "")
@@ -573,10 +573,10 @@ print.cSEMVerify_default <- function(.object, ...) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMVerify_2ndorder <- function(.object, ...) {
   
   cat(rule(line = "bar2"), sep = "")
@@ -615,10 +615,10 @@ print.cSEMVerify_2ndorder <- function(.object, ...) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMTestOMF <- function(.object, ...) {
   
   cat(
@@ -741,10 +741,10 @@ print.cSEMTestOMF <- function(.object, ...) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMTestMGD <- function(.object, ...) {
 
   cat(
@@ -885,10 +885,10 @@ print.cSEMTestMGD <- function(.object, ...) {
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
+#' @keywords internal
 print.cSEMTestMICOM <- function(.object, ...) {
 
   cat(

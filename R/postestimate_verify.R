@@ -13,7 +13,7 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @return A logical vector indicating which (if any) problem occurred. 
 #'   A `TRUE` indicates that the problem has occured. For models containg second order

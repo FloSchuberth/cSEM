@@ -602,7 +602,7 @@ resamplecSEMResults.cSEMResults_default <- function(
     .seed <- sample(.Random.seed, 1)
   }
   
-  ## Set plan on how to resolve futures; reset at the end 
+  # Set plan on how to resolve futures; reset at the end
   oplan <- future::plan()
   on.exit(future::plan(oplan), add = TRUE)
   future::plan(.eval_plan)

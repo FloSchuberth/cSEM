@@ -6,13 +6,13 @@
 \title{cSEMModel}
 \value{
 An object of class \code{cSEMModel} is a standardized list containing the following
-components. Here J stands for the number of constructs and K for the number
+components. J stands for the number of constructs and K for the number
 of indicators.
 \describe{
 \item{\code{$structural}}{A matrix mimicking the structural relationship between
 constructs. If constructs are only linearly related, \code{structural} is
 of dimension (J x J) with row- and column names equal to the construct
-names. If the structural model contains non-linear relationships
+names. If the structural model contains nonlinear relationships
 \code{structural} is (J x (J + J*)) where J* is the number of
 nonlinear terms. Rows are ordered such that exogenous constructs are always
 first, followed by constructs that only depend on exogenous constructs and/or
@@ -25,24 +25,24 @@ forms a block diagonal matrix.}
 \item{\code{$error_cor}}{A (K x K) matrix mimicking the measurement error
 correlation relationship. The row and column order is identical to \code{$measurement}.}
 \item{\code{$construct_type}}{A named vector containing the names of each construct
-and their respective type (\strong{"Common factor"} or \strong{"Composite"}).}
+and their respective type ("Common factor" or "Composite").}
 \item{\code{$construct_order}}{A named vector containing the names of each construct
-and their respective order (\strong{"First order"} or \strong{"Second order"}).}
-\item{\code{$model_type}}{The type of model (\strong{"Linear"} or \strong{"Nonlinear"}).}
+and their respective order ("First order" or "Second order").}
+\item{\code{$model_type}}{The type of model ("Linear" or "Nonlinear").}
 }
-Note: it is possible to supply an incomplete \code{cSEMModel}-list
+Note: it is possible to supply an incomplete \code{cSEMModel} list
 to all functions that require \code{.csem_model} as a mandatory argument. Currently,
 only the structural and the measurement matrix are required.
-However, specifying an incomplete cSEMModel list may lead to unexpected behavior
-and errors. Use carfully.
+However, specifying an incomplete \code{cSEMModel} list may lead to unexpected behavior
+and errors. Use with care.
 }
 \description{
 cSEMModel
 }
 \details{
 A standardized list containing model-related information. To convert a
-a model written in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-to a \code{cSEMModel}-list use \code{\link[=parseModel]{parseModel()}}.
+a model written in \link[lavaan:model.syntax]{lavaan model syntax}
+to a \link{cSEMModel} list use \code{\link[=parseModel]{parseModel()}}.
 }
 \seealso{
 \link{parseModel}

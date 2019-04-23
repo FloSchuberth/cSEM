@@ -1,33 +1,29 @@
-#' Composite-based SEM and CCA
+#' Composite-based SEM
 #'
 #' Estimate linear, nonlinear, hierachical or multigroup structural equation
-#' models using a composite-based approach.
+#' models using a composite-based approach. In \pkg{cSEM} 
+#' any method or approach that involves linear compounts (scores/proxies/composites)
+#' of observables (indicators/items/manifest variables) is defined as composite-based.
+#' See the [the cSEM vignette](../doc/vignette-cSEM.html) for details.
+#' 
 #'
 #' `csem()` estimates linear, nonlinear, hierachical or multigroup structural 
-#' equation models using a composite-based approach like PLS-PM, PLSc, GSCA, GSCAm, GCCA or 
-#' differnt types of factor score regression (FSR). `csem()` is designed for quick and flexible 
-#' use by providing the user with default options except for 
-#' the mandatory `.data` and `.model` argument. 
+#' equation models using a composite-based approach. 
 #' 
-#' `cca()` performs CCA. CCA and SEM differ in that the former allows all 
-#' constructs to co-vary freely, i.e. no structural model is assumed. 
-#' Hence, `cca()` is technically a simple convenience wrapper
-#' around `csem(..., .estimate_structural = FALSE)`.
-#'
 #' \subsection{Data and model:}{
 #' The `.data` and `.model` arguments are required. Data must be
 #' provided as either a `matrix` or a `data.frame` with column names matching
 #' the indicator names used in the model description of the measurement model.
-#' Alternatively, a list of matrices or `data.frame`s may be provided
+#' Alternatively, a list of matrices or `data.frame`'s may be provided
 #' in which case estimation is repeated for each data set. 
 #' The data provided via `.data` may contain **one** character column whose column name 
 #' must be provided to `.id`. Values of this column are interpreted as group 
-#' identifiers and `csem()` or `cca()` will split the data by levels of that column and run
+#' identifiers and `csem()` will split the data by levels of that column and run
 #' the estimation for each level separately.
 #'
-#' To provide a model use the \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+#' To provide a model use the [lavaan model syntax][lavaan::model.syntax] 
 #' with two notable extensions/changes. First: the "`<~`" operator in `cSEM` is
-#' used to define a composite instead of a formative common factor. Second:
+#' used to define a composite instead of a causal formative common factor. Second:
 #' the "`.`" is used to indicate interactions between constructs as in e.g.,
 #' `construct1.construct2`. Alternatively a standardized (possibly incomplete)
 #' [cSEMModel]-list may be supplied.
@@ -97,11 +93,9 @@
 #'                                    "GSCA", "PCA", "unit", "bartlett", "regression"),
 #'   .disattenuate                = TRUE,
 #'   .id                          = NULL,
-#'   .iter_max                    = 100,
 #'   .normality                   = TRUE,
 #'   .reliabilities               = NULL,
-#'   .tolerance                   = 1e-05,
-#'   .resample_method           = c("none", "bootstrap", "jackknife"),
+#'   .resample_method             = c("none", "bootstrap", "jackknife"),
 #'   .resample_method2            = c("none", "bootstrap", "jackknife"),
 #'   .R                           = 499,
 #'   .R2                          = 199,
@@ -112,21 +106,30 @@
 #'   ...
 #'   )
 #'
-#' @param .data A `data.frame` or a `matrix` of standardized or unstandarized data. Additionally,
-#'   a list of `data.frame`(s) or `matrice`(s) is accepted in which case estimation
-#'   is repeated for each data set. Possible column types or classes 
-#'   of the data provided are: logical, numeric (double or integer), factor (ordered and unordered) 
-#'   or a mix of several types. The data may also include
-#'   *one* character column whose column name must be given to `.id`. 
-#'   This column is assumed to contain group identifiers used to split 
+#' @param .data A `data.frame` or a `matrix` of standardized or unstandarized 
+#'   data (indicators/items/manifest variables). 
+#'   Additionally, a `list` of `data.frame`(s) or `matrice`(s) is accepted in which 
+#'   case estimation is repeated for each data set. Possible column types or classes 
+#'   of the data provided are: "logical", "numeric" ("double" or "integer"), 
+#'   "factor" ("ordered" and/or "unordered") or a mix of several types. 
+#'   The data may also include *one* character column whose column name must be 
+#'   given to `.id`. This column is assumed to contain group identifiers used to split 
 #'   the data into groups.
 #' @inheritParams csem_arguments
-#' @param ... Further arguments to be passed down to lower level functions of `csem()`
-#'   or `cca()`. Type \code{\link[cSEM:args_default]{args_default(.only_dots = TRUE)}} 
-#'   or \code{\link[cSEM:args_default]{args_default(.only_dots = TRUE, .which_fun = "cca")}}
-#'   for a complete list of accepted `...` arguments for the respective function.
+#' @param ... Further arguments to be passed down to lower level functions of `csem()`.
+#'   See [csem_dotdotdot] for a complete list of available arguments.
 #'
-#' @inherit csem_results return
+#' @return
+#' An object of class `cSEMResults` with methods for all postestimation generics.
+#' Note that, technically, a call to [csem()] results in an object with at least 
+#' two class attributes. The first class attribute is always `cSEMResults`. 
+#' The second is one of `cSEMResults_default`, `cSEMResults_multi`, or 
+#' `cSEMResults_2ndorder` and depends on the estimated model and/or the type of 
+#' data provided to the `.model` and `.data` arguments. The third class attribute
+#' `cSEMResults_resampled` is only added if resampling was conducted. 
+#' Technically, method dispatch for all postestimation 
+#' functions is based on the second class attribute. For a details see the 
+#' [cSEMResults helpfile ][cSEMResults].
 #'
 #' @references
 #'   \insertAllCited{}
@@ -148,10 +151,8 @@ csem <- function(
                              "GSCA", "unit", "PCA", "bartlett", "regression"),
   .disattenuate          = TRUE,
   .id                    = NULL,
-  .iter_max              = 100,
   .normality             = TRUE,
   .reliabilities         = NULL,
-  .tolerance             = 1e-05,
   .resample_method       = c("none", "bootstrap", "jackknife"),
   .resample_method2      = c("none", "bootstrap", "jackknife"),
   .R                     = 499,
