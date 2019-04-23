@@ -368,7 +368,6 @@ calculateHTMT <- function(
   .object              = NULL,
   .only_common_factors = TRUE
 ){
-  
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
     stop2("`", match.call()[1], "` only applicable to object of",
@@ -397,8 +396,8 @@ calculateHTMT <- function(
   cf_measurement <- cf_measurement[x, colSums(cf_measurement[x, ]) != 0, drop = FALSE]
   
   ## At least two multi-indicator constructs required
-  if(length(which(x)) < 2) {
-    stop2("Computation of the HTMT requires at least two multi indicator constructs.")
+  if(nrow(cf_measurement) < 2) {
+    stop2("Computation of the HTMT requires at least two multi-indicator common factors.")
   }
   
   i_names <- colnames(cf_measurement)
@@ -516,7 +515,6 @@ calculateDML <- function(.object = NULL){
 
 
 
-
 #' Internal: Calculate effect size
 #'
 #' Calculate the effect size
@@ -530,7 +528,7 @@ calculateDML <- function(.object = NULL){
 
 calculateEffectSize <- function(.object = NULL) {
   
-  # Get relevant quantities
+  ## Get relevant quantities
   H <- .object$Estimates$Construct_scores
   Q <- sqrt(.object$Estimates$Construct_reliabilities)
   P <- .object$Estimates$Construct_VCV
@@ -541,13 +539,14 @@ calculateEffectSize <- function(.object = NULL) {
   s <- csem_model$structural
   
   vars_endo <- rownames(s)[rowSums(s) != 0]
+  ## Start loop
   outer_out <- lapply(vars_endo, function(x) {
     
-    # get colnames
+    # Get names of the independent variables
     indep_vars <- colnames(s[x , s[x, ] != 0, drop = FALSE])
     
     inner_out <- lapply(indep_vars, function(i) {
-      # update csem_model
+      # Update csem_model
       model_temp <- csem_model
       model_temp$structural[x, i] <- 0 
       
@@ -560,14 +559,17 @@ calculateEffectSize <- function(.object = NULL) {
         .approach_nl = approach_nl
       )
       
-      # calculate 
-      r2_excluded <- out$R2[x]
+      ## Calculate effect size
+      # For equations with only one independet variable the R2_excluded is 0
+      r2_excluded <- ifelse(is.na(out$R2[x]), 0, out$R2[x])
+      names(r2_excluded) <- x
       r2_included <- .object$Estimates$R2[x]
       
-      effect_size <- (r2_included - r2_excluded)/(1 - r2_included)
+      effect_size <- unname((r2_included - r2_excluded)/(1 - r2_included))
+
       # list("r2_ex" = r2_excluded, "r2_in" = r2_included, "eff_size" = effect_size)
-      list("effect_size" = effect_size)
     })
+    inner_out <- unlist(inner_out)
     names(inner_out) <- indep_vars
     inner_out
   })
