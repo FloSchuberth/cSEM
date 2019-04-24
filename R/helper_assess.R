@@ -92,7 +92,7 @@ calculateAVE <- function(
 #' 
 #' @usage calculateGoF(
 #'  .object              = NULL,
-#'  .only_common_factors = TRUE,
+#'  .only_common_factors = TRUE
 #' )
 #'
 #' @return A single numeric value.

@@ -13,8 +13,9 @@
 #'   .approach_cor_robust         = c("none", "mcd", "spearman"),
 #'   .approach_nl                 = c("sequential", "replace"),
 #'   .approach_paths              = c("OLS", "2SLS"),
-#'   .approach_weights            = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", 
-#'                                    "GSCA", "unit", "bartlett", "regression"),
+#'   .approach_weights            = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR",
+#'                                    "MINVAR", "GENVAR", "GSCA", "PCA",
+#'                                    "unit", "bartlett", "regression"),
 #'   .conv_criterion              = c("diff_absolute", "diff_squared", "diff_relative"),
 #'   .disattenuate                = TRUE,
 #'   .dominant_indicators         = NULL,
@@ -30,6 +31,7 @@
 #'   .PLS_modes                   = NULL,
 #'   .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
 #'   .reliabilities               = NULL,
+#'   .starting_values             = NULL,
 #'   .tolerance                   = 1e-05
 #'   )
 #'

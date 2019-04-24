@@ -13,6 +13,7 @@
 #'   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model
 #'   .PLS_modes                   = args_default()$.PLS_modes,
 #'   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
+#'   .starting_values             = args_default()$.starting_values,
 #'   .tolerance                   = args_default()$.tolerance
 #'    )
 #'
@@ -40,8 +41,8 @@ calculateWeightsPLS <- function(
   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
-  .tolerance                   = args_default()$.tolerance,
-  .starting_values             = args_default()$.starting_values
+  .starting_values             = args_default()$.starting_values,
+  .tolerance                   = args_default()$.tolerance
 ) {
 
   ### Preparation ==============================================================
