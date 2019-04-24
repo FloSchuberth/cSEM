@@ -39,11 +39,12 @@ or a mix of several types. The data may also include
 This column is assumed to contain group identifiers used to split
 the data into groups.}
 
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
+\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
+or a \link{cSEMModel} list.}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
-indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+indicator correlation matrix. One of: "\emph{none}" in which case the standard
+bravais-person correlation is used,
 "\emph{spearman}" for the spearman correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}".}
@@ -66,9 +67,9 @@ Defaults to "\emph{PLS-PM}".}
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
 to "\emph{diff_absolute}".}
 
-\item{.disattenuate}{Logical. If possible, should composite/proxy correlations
-be disattenuated if the construct is modeled as a common factor?
-Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. Should composite/proxy correlations
+be disattenuated to yield consisten loadings and path estimates if at least
+one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
 where \code{"value"} is a character string giving the name of the dominant indicator
@@ -87,7 +88,9 @@ If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights 
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
-\item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
+\item{.normality}{Logical. Should joint normality of
+\eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
+be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
@@ -125,55 +128,14 @@ reliabilities are estimated by \code{csem()}. Currently, only supported for
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 }
-\value{
-An object of class \code{cSEMResults} with methods for all postestimation generics.
-Depending on the type of model and data the object has a different structure.
-
-\describe{
-\item{Default}{This will be the structure for the vaste majority of applications.
-If the data is a single \code{matrix} or \code{data.frame} with no id-column,
-the result is a \code{list} with elements:
-\describe{
-\item{\code{$Estimates}}{A list containing a list of estimated quantities.}
-\item{\code{$Information}}{A list containing a list of additional information.}
-}
-The resulting object has classes \code{cSEMResults} and \code{cSEMResults_default}.
-}
-\item{Multi}{If the data provided is a single \code{matrix} or \code{data.frame} containing
-an id-column to split the data by \code{G} group levels
-or if a list of \code{G} datasets is provided, the resulting object is a list of \code{G}
-lists, where \code{G} is equal to the number of groups or the number of datasets
-in the list of datasets provided. Each of the \code{G} list elements are itself
-a \code{cSEMResults_default} object. Hence its structure is identical to
-the structure described in \code{Default}.
-
-The resulting object has classes \code{cSEMResults} and \code{cSEMResults_multi}.
-}
-\item{2ndorder}{
-A special output is generated if the model to estimate contains hierachical constructs
-\strong{and} the 2step (3step) approach is used to estimate the model. In this case
-the resulting object is a list containing two elements \code{First_stage} and
-\code{ Second_stage}.
-
-Each list element is itself a \code{cSEMResults_default} object. Hence its structure is identical to
-the structure described in \code{Default}.
-}
-}
-
-If \code{.resample_method = "bootstrap"} or \code{.resample_method = "jackknife"}, resamples
-are attached to each object. For objects of class \code{cSEMResults_default} the resamples are
-attached to \code{.object$Estimates$Estimates_resamples}. For objects of class
-\code{cSEMResults_multi} the same is done by group. All objects containing
-these elements gain the \code{cSEMResults_resampled} class.
-}
 \description{
 The central hub of the \code{cSEM} package. It acts like a
 foreman by collecting all (estimation) tasks, distributing them to lower
 level package functions, and eventually recollecting all of their results.
 It is called by \code{\link[=csem]{csem()}} to manage the actual calculations.
 It may be called directly by the user, however, in most cases it will likely
-be more convenient to use \code{\link[=csem]{csem()}} (or \code{\link[=cca]{cca()}}) instead.
+be more convenient to use \code{\link[=csem]{csem()}} instead.
 }
 \seealso{
-\link{csem}, \link{cca}, \link{cSEMResults}
+\link{csem}, \link{cSEMResults}
 }

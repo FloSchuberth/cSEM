@@ -5,7 +5,7 @@
 #' level package functions, and eventually recollecting all of their results. 
 #' It is called by [csem()] to manage the actual calculations.
 #' It may be called directly by the user, however, in most cases it will likely
-#' be more convenient to use [csem()] (or [cca()]) instead.
+#' be more convenient to use [csem()] instead.
 #' 
 #' @usage foreman(
 #'   .data                        = NULL,
@@ -37,7 +37,7 @@
 #' 
 #' @inherit csem_results return
 #'
-#' @seealso [csem], [cca], [cSEMResults]
+#' @seealso [csem], [cSEMResults]
 #'
 #' @export
 #'
@@ -64,19 +64,21 @@ foreman <- function(
   .tolerance                   = args_default()$.tolerance,
   .starting_values             = args_default()$.starting_values
   ) {
-
+  args_used <- c(as.list(environment(), all.names = TRUE))
+  
   ### Preprocessing ============================================================
   ## Parse and order model to "cSEMModel" list
   csem_model <- parseModel(.model)
 
   ## Prepare, check, and clean data (a data.frame)
-  X_cleaned <- processData(.data = .data, .model = csem_model) 
+  X_cleaned <- processData(.data = .data, .model = csem_model)
+  # X_cleaned <- .data
   
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
-  Cor <- calculateIndicatorCor(.X_cleaned = X_cleaned, 
+  Cor <- calculateIndicatorCor(.X_cleaned = X_cleaned,
                                .approach_cor_robust = .approach_cor_robust)
-  
+
   # Extract the correlation matrix
   S <- Cor$S
   
@@ -195,14 +197,19 @@ foreman <- function(
 
   ## Estimate structural coef
   if(.estimate_structural) {
-    estim_results <- estimatePathOLS(
-      .H            = H,
-      .Q            = Q,
-      .P            = P,
-      .csem_model   = csem_model,
-      .normality    = .normality,
-      .approach_nl  = .approach_nl
-    )
+    if(.approach_paths == "OLS") {
+      estim_results <- estimatePathOLS(
+        .H            = H,
+        .Q            = Q,
+        .P            = P,
+        .csem_model   = csem_model,
+        .normality    = .normality,
+        .approach_nl  = .approach_nl
+      ) 
+    } else {
+      stop2("`.approach_path = '", .approach_paths, "'` not implemented yet.\n",
+            "Check the master branch of https://github.com/M-E-Rademaker/cSEM for updates.")
+    }
   } else {
     estim_results <- NULL
   }
@@ -243,7 +250,8 @@ foreman <- function(
     "Information" = list(
       "Data"          = X,
       "Model"         = csem_model,
-      "Arguments"     = as.list(match.call())[-1],
+      # "Arguments"     = as.list(match.call())[-1],
+      "Arguments"     = args_used,
       "Type_of_indicator_correlation" = Cor$cor_type,
       "Weight_info"   = list(
         "Modes"              = W$Modes,

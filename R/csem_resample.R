@@ -605,7 +605,7 @@ resamplecSEMResults.cSEMResults_default <- function(
     .seed <- sample(.Random.seed, 1)
   }
   
-  ## Set plan on how to resolve futures; reset at the end 
+  # Set plan on how to resolve futures; reset at the end
   oplan <- future::plan()
   on.exit(future::plan(oplan), add = TRUE)
   future::plan(.eval_plan)
@@ -993,6 +993,7 @@ resamplecSEMResultsCore <- function(
   } 
   
   Est_ls <- future.apply::future_lapply(1:.R, function(i) {
+  # Est_ls <- lapply(1:.R, function(i) {
     # Replace the old dataset by a resampled data set (resampleData always returns
     # a list so for just one draw we need to pick the first list element)
     
@@ -1010,12 +1011,36 @@ resamplecSEMResultsCore <- function(
     
     # Estimate model
     Est_temp <- if(any(class(.object) == "cSEMResults_2ndorder")) {
+      ## NOTE: this part is extremly slow. needs to be replaced by something faster,
+      # Currently I dont know how though.
       do.call(csem, args)
     } else {
       # its important to use foreman() here 
       # instead of csem() to allow for lapply(x, resamplecSEMResults_default) when x 
       # is of class cSEMResults_2ndorder.
-      do.call(foreman, args) 
+      ## NOTE: using do.call(foreman, args) would be more elegant but is much 
+      # much much! slower (especially for larger data sets). 
+      foreman(
+        .data                        = args$.data,
+        .model                       = args$.model,
+        .approach_cor_robust         = args$.approach_cor_robust,
+        .approach_nl                 = args$.approach_nl,
+        .approach_paths              = args$.approach_paths,
+        .approach_weights            = args$.approach_weights,
+        .conv_criterion              = args$.conv_criterion,
+        .disattenuate                = args$.disattenuate,
+        .dominant_indicators         = args$.dominant_indicators,
+        .estimate_structural         = args$.estimate_structural,
+        .id                          = args$.id,
+        .iter_max                    = args$.iter_max,
+        .normality                   = args$.normality,
+        .PLS_approach_cf             = args$.PLS_approach_cf,
+        .PLS_ignore_structural_model = args$.PLS_ignore_structural_model,
+        .PLS_modes                   = args$.PLS_modes,
+        .PLS_weight_scheme_inner     = args$.PLS_weight_scheme_inner,
+        .reliabilities               = args$.reliabilities,
+        .tolerance                   = args$.tolerance
+      )
     }
     
     # Check status
@@ -1379,8 +1404,7 @@ resamplecSEMResultsCore <- function(
     ## Return
     x1
   }, future.seed = .seed)
-
-    
+          
   ## Process data --------------------------------------------------------------
   # Delete potential NA's
   out <- Filter(Negate(anyNA), Est_ls)

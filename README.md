@@ -36,6 +36,12 @@ model fit, test the model fit etc.).
 devtools::install_github("M-E-Rademaker/cSEM")
 ```
 
+## Getting started
+
+The best place to get started is the
+[cSEM-website](https://m-e-rademaker.github.io/cSEM/) (Work in
+progress).
+
 ## Philosophy
 
   - User-centered design\!

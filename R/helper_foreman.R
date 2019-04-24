@@ -214,7 +214,7 @@ calculateConstructVCV <- function(
 #'
 #' @inheritParams csem_arguments
 #' 
-#' @return The (K x K) (robust) indicator correlation matrix S.
+#' @return A list containing the (K x K) indicator correlation matrix S. 
 #' @keywords internal
 
 calculateIndicatorCor <- function(
@@ -222,29 +222,38 @@ calculateIndicatorCor <- function(
   .approach_cor_robust = args_default()$.approach_cor
 ){
   
-  if(.approach_cor_robust != "none" && !all(sapply(.X_cleaned, is.numeric))) {
+  only_numeric_cols <- all(unlist(lapply(.X_cleaned, is.numeric)))
+  
+  if(.approach_cor_robust != "none" && !only_numeric_cols) {
     stop2("Setting `.approach_cor_robust = ", .approach_cor_robust, "` requires all",
           " columns of .data to be numeric.")
   }
   
+  ## polycor::hetcor() is relatively slow. If all columns are numeric use cor
+  ## directly
   switch (.approach_cor_robust,
           "none" = {
-            # Pd is TRUE by default. See ?polycor for details
-            temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
-            S    <- temp$correlations
-            cor_type <- unique(c(temp$type))
-            cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""'
+            if(only_numeric_cols) {
+              S <- stats::cor(.X_cleaned)
+              cor_type <- "Bravais-Pearson" 
+            } else {
+              # Pd is TRUE by default. See ?hetcor for details
+              temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
+              S    <- temp$correlations
+              cor_type <- unique(c(temp$type))
+              cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""' 
+            }
           },
-          
+
           "mcd" = {
             S <- MASS::cov.rob(.X_cleaned, cor = TRUE, method = "mcd")$cor
             S[upper.tri(S) == TRUE] = t(S)[upper.tri(S) == TRUE]
-            
+
             cor_type <-  "Robust (MCD)"
           },
           "spearman" = {
             S <- cor(.X_cleaned, method = "spearman")
-            
+
             cor_type <-  "Robust (Spearman)"
           }
   )

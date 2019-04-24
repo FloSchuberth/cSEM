@@ -1,17 +1,17 @@
 #' cSEMModel
 #'
 #' @details A standardized list containing model-related information. To convert a
-#' a model written in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-#' to a `cSEMModel`-list use [parseModel()].
+#' a model written in [lavaan model syntax][lavaan::model.syntax] 
+#' to a [cSEMModel] list use [parseModel()].
 #'
 #' @return An object of class `cSEMModel` is a standardized list containing the following
-#' components. Here J stands for the number of constructs and K for the number
+#' components. J stands for the number of constructs and K for the number
 #' of indicators.
 #' \describe{
 #'   \item{`$structural`}{A matrix mimicking the structural relationship between
 #'     constructs. If constructs are only linearly related, `structural` is
 #'     of dimension (J x J) with row- and column names equal to the construct
-#'     names. If the structural model contains non-linear relationships
+#'     names. If the structural model contains nonlinear relationships
 #'     `structural` is (J x (J + J\*)) where J\* is the number of
 #'     nonlinear terms. Rows are ordered such that exogenous constructs are always
 #'     first, followed by constructs that only depend on exogenous constructs and/or
@@ -24,16 +24,16 @@
 #'   \item{`$error_cor`}{A (K x K) matrix mimicking the measurement error
 #'     correlation relationship. The row and column order is identical to `$measurement`.}
 #'   \item{`$construct_type`}{A named vector containing the names of each construct
-#'     and their respective type (**"Common factor"** or **"Composite"**).}
+#'     and their respective type ("Common factor" or "Composite").}
 #'   \item{`$construct_order`}{A named vector containing the names of each construct
-#'     and their respective order (**"First order"** or **"Second order"**).}
-#'   \item{`$model_type`}{The type of model (**"Linear"** or **"Nonlinear"**).}
+#'     and their respective order ("First order" or "Second order").}
+#'   \item{`$model_type`}{The type of model ("Linear" or "Nonlinear").}
 #' }
-#' Note: it is possible to supply an incomplete `cSEMModel`-list
+#' Note: it is possible to supply an incomplete `cSEMModel` list
 #' to all functions that require `.csem_model` as a mandatory argument. Currently,
 #' only the structural and the measurement matrix are required.
-#' However, specifying an incomplete cSEMModel list may lead to unexpected behavior 
-#' and errors. Use carfully.
+#' However, specifying an incomplete `cSEMModel` list may lead to unexpected behavior 
+#' and errors. Use with care.
 #'
 #' @seealso [parseModel]
 #' @name csem_model
@@ -42,10 +42,13 @@
 NULL
 
 #' cSEMResults
-#'
-#' @return
-#' An object of class `cSEMResults` with methods for all postestimation generics.
-#' Depending on the type of model and data the object has a different structure.
+#' 
+#' A call to [csem()] results in an object with at least 
+#' two class attributes. The first class attribute is always `cSEMResults`. 
+#' The second is one of `cSEMResults_default`, `cSEMResults_multi`, or 
+#' `cSEMResults_2ndorder` and depends on the estimated model and/or the type of 
+#' data provided to the `.model` and `.data` arguments of [csem]. The third class attribute
+#' `cSEMResults_resampled` is only added if resampling was conducted.
 #' 
 #' \describe{
 #' \item{Default}{This will be the structure for the vaste majority of applications.

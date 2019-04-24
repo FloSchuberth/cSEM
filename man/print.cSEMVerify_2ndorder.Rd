@@ -13,5 +13,6 @@ print(.object)
 The \code{cSEMVerify_default} method for the generic function \code{\link[=print]{print()}}.
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
 }
+\keyword{internal}

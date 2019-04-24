@@ -4,10 +4,15 @@
 \alias{csem_results}
 \alias{cSEMResults}
 \title{cSEMResults}
-\value{
-An object of class \code{cSEMResults} with methods for all postestimation generics.
-Depending on the type of model and data the object has a different structure.
-
+\description{
+A call to \code{\link[=csem]{csem()}} results in an object with at least
+two class attributes. The first class attribute is always \code{cSEMResults}.
+The second is one of \code{cSEMResults_default}, \code{cSEMResults_multi}, or
+\code{cSEMResults_2ndorder} and depends on the estimated model and/or the type of
+data provided to the \code{.model} and \code{.data} arguments of \link{csem}. The third class attribute
+\code{cSEMResults_resampled} is only added if resampling was conducted.
+}
+\details{
 \describe{
 \item{Default}{This will be the structure for the vaste majority of applications.
 If the data is a single \code{matrix} or \code{data.frame} with no id-column,
@@ -44,8 +49,5 @@ are attached to each object. For objects of class \code{cSEMResults_default} the
 attached to \code{.object$Estimates$Estimates_resamples}. For objects of class
 \code{cSEMResults_multi} the same is done by group. All objects containing
 these elements gain the \code{cSEMResults_resampled} class.
-}
-\description{
-cSEMResults
 }
 \keyword{internal}

@@ -56,5 +56,5 @@ Hence: V(eta) = WSW' (possibly disattenuated).
 \insertAllCited{}
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
 }

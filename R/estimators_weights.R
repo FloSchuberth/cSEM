@@ -735,6 +735,16 @@ calculateWeightsPCA = function(
     indicators <- W[block, ] != 0
     
     temp <- psych::principal(r = .S[indicators, indicators], nfactors = 1)
+    # Note that temp$weights is the same as:
+    #  1. Calculating the eigenvectors of S[indicators, indicators] and
+    #     then taking the first eigenvector. This is the unscaled weight w
+    #  2. Obtain the scaled weight by w_s = w / sqrt(w' S[i, i] w)
+    # 
+    #  R Code:
+    #    tt <- eigen(.S[indicators, indicators])
+    #    w  <- tt$vectors[, 1]
+    #    w  <- w / sqrt(w %*% .S[indicators, indicators] %*% w)
+    
     W[block, indicators] <- c(temp$weights)
   }
   
