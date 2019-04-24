@@ -120,8 +120,10 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen.}
+
 \item{.sign_change_option}{Character string. Indicates which sign change option should be used in
 the resample function. One of "\emph{no}" "\emph{individual}"  "\emph{construct}". Defaults to "\emph{no}".}
+
 \item{...}{Further arguments to be passed down to lower level functions of \code{csem()}.
 See \link{args_csem_dotdotdot} for a complete list of available arguments.}
 }

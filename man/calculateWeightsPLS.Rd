@@ -13,6 +13,7 @@ calculateWeightsPLS(
   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
+  .starting_values             = args_default()$.starting_values,
   .tolerance                   = args_default()$.tolerance
    )
 }
@@ -57,11 +58,11 @@ of construct used is choosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
-\item{.tolerance}{Double. The tolerance criterion for convergence.
-Defaults to \code{1e-05}.}
-
 \item{.starting_values}{list of named vectors containig the starting values.
 Defaults to "\emph{NULL}".}
+
+\item{.tolerance}{Double. The tolerance criterion for convergence.
+Defaults to \code{1e-05}.}
 }
 \value{
 A list with the elements
