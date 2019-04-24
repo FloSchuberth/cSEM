@@ -107,7 +107,7 @@ f3 <- function(.i, .j, .Q, .H) {
   res <- c()
   for (i in 1:3) {
 
-    invisible(capture.output(out <-symmoments::callmultmoments(freq[[i]])))
+    invisible(utils::capture.output(out <-symmoments::callmultmoments(freq[[i]])))
 
     if (identical(out, -1)) {
 
@@ -179,7 +179,7 @@ f4 <- function(.i, .j, .Q, .H, .var_struc_error, .temp = NULL) {
 
       } else {
 
-        invisible(capture.output(out <-symmoments::callmultmoments(freq)))
+        invisible(utils::capture.output(out <-symmoments::callmultmoments(freq)))
 
         if (identical(out, -1)) {
 

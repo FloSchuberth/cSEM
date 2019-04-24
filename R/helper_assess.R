@@ -319,7 +319,7 @@ calculateRhoT <- function(
       ## Order the alphas provided, compute CI and add to data frame
       .alpha <- .alpha[order(.alpha)]
       for(i in .alpha) { 
-        z_value <- stats::qnorm((1 - i/2), mean = 0, sd = 1)
+        z_value <- qnorm((1 - i/2), mean = 0, sd = 1)
         up  <- rhoT + z_value * se_rhoT
         low <- rhoT - z_value * se_rhoT
         name_L <- sprintf("%.6g%%L", 100* (1 - i))
@@ -450,7 +450,7 @@ calculateSRMR <- function(.object = NULL) {
 
   
   # Perhaps in the future we allow to estimate unstandardized coefficients
-  C_diff    <- stats::cov2cor(S) -  stats::cov2cor(Sigma_hat)
+  C_diff    <- cov2cor(S) -  cov2cor(Sigma_hat)
   
   sqrt(sum(C_diff[lower.tri(C_diff, diag = T)]^2) / sum(lower.tri(C_diff, diag = T)))
 } 

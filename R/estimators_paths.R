@@ -60,7 +60,7 @@ estimatePathOLS <- function(
      # explanatory variables of the same structural equation.
      # VIF's require at least two explanatory variables to be meaningful
      vif <- if(length(indep_var) > 1) {
-       diag(solve(stats::cov2cor(.P[indep_var, indep_var, drop = FALSE])))
+       diag(solve(cov2cor(.P[indep_var, indep_var, drop = FALSE])))
      } else {
        NA
      }
@@ -185,7 +185,7 @@ estimatePathOLS <- function(
                    y = coef)
     
     # Variance inflation factor
-    vif = lapply(vcv_explana_ls, function(x) diag(solve(stats::cov2cor(x))))
+    vif = lapply(vcv_explana_ls, function(x) diag(solve(cov2cor(x))))
     
     ##==========================================================================
     # Replacement approach
@@ -287,7 +287,7 @@ estimatePathOLS <- function(
           coef[[k]] <- solve(vcv[[k]]) %*% t(cv_endo_explana_ls[[k]])
           r2[[k]]   <- t(coef[[k]]) %*% vcv[[k]] %*% coef[[k]]
           r2adj[[k]] = 1-(1-r2[[k]])*(n-1)/(n-nrow(coef[[k]]))
-          vif[[k]] = diag(solve(stats::cov2cor(vcv[[k]])))
+          vif[[k]] = diag(solve(cov2cor(vcv[[k]])))
           var_struc_error[k]    <- 1 - r2[[k]]
           
           temp <- mapply(function(x, y) x * y,

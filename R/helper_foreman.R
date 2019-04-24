@@ -102,7 +102,7 @@ calculateCorrectionFactors <- function(
                 }
                 
                 # Optimaziation
-                temp_optim <- stats::optim(fn = temp_fun, par = 0.5, method = "BFGS",
+                temp_optim <- optim(fn = temp_fun, par = 0.5, method = "BFGS",
                                     .W_vect = W_vect, .S_vect = S_vect)
                 cf <- temp_optim$par
               },
@@ -234,7 +234,7 @@ calculateIndicatorCor <- function(
   switch (.approach_cor_robust,
           "none" = {
             if(only_numeric_cols) {
-              S <- stats::cor(.X_cleaned)
+              S <- cor(.X_cleaned)
               cor_type <- "Bravais-Pearson" 
             } else {
               # Pd is TRUE by default. See ?hetcor for details

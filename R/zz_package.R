@@ -9,10 +9,12 @@
 #' fixed weights, as well as several tests and typical postestimation 
 #' procedures (e.g., assess the model fit, compute direct, indirect and total effects).
 #'
-#' @importFrom stats cor
 #' @importFrom magrittr %>%
 #' @importFrom matrixStats rowProds
 #' @import crayon
 #' @import cli
+#' @import stats
+#' @import utils
+#' 
 #' @keywords internal
 "_PACKAGE"

@@ -58,7 +58,7 @@ assess.cSEMResults_default <- function(.object, .only_common_factors = TRUE, ...
     P <- P[names_cf, names_cf]
   }
 
-  FL_matrix <- stats::cov2cor(P)^2
+  FL_matrix <- cov2cor(P)^2
   diag(FL_matrix) <- res_ave 
   
   ## Output --------------------

@@ -284,7 +284,7 @@ calculateWeightsKettenring <- function(
     }
     
     ## Optimization
-    capture.output(res <- alabama::auglag(
+    utils::capture.output(res <- alabama::auglag(
       par     = runif(length(indicator_names)),
       fn      = fn,
       R       = .S,

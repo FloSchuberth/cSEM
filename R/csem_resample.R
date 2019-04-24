@@ -1720,7 +1720,7 @@ StandardCIResample <- function(
         )
         theta_star + qt(z, df = df) * y
       } else {
-        theta_star + stats::qnorm(z) * y
+        theta_star + qnorm(z) * y
       }
     })
   }, w = .first_resample, y = boot_sd, SIMPLIFY = FALSE) %>% 
@@ -1863,13 +1863,13 @@ BcCIResample <- function(.first_resample, .probs) {
 
   out <- lapply(.first_resample, function(x) {
     p0 <- colMeans(t(t(x$Resampled) <= x$Original))
-    z0 <- stats::qnorm(p0)
+    z0 <- qnorm(p0)
     
     bc <- lapply(1:length(z0), function(i) {
       bc_quantiles <- c()
       for(j in seq_along(.probs)) {
-        q  <- stats::pnorm(2*z0[i] + stats::qnorm(.probs[j]))
-        bc_quantiles <- c(bc_quantiles, stats::quantile(x$Resampled[, i], probs = q))
+        q  <- pnorm(2*z0[i] + qnorm(.probs[j]))
+        bc_quantiles <- c(bc_quantiles, quantile(x$Resampled[, i], probs = q))
       }
       bc_quantiles
     })
@@ -1921,12 +1921,12 @@ BcaCIResample <- function(.object, .first_resample, .probs) {
     lapply(function(x) apply(x, 2, aFun)) 
   
   p0 <- lapply(.first_resample, function(x) colMeans(t(t(x$Resampled) <= x$Original)))
-  z0 <- lapply(p0, stats::qnorm)
+  z0 <- lapply(p0, qnorm)
 
   out <- lapply(seq_along(.first_resample), function(i) {
     bca <- lapply(1:length(z0[[i]]), function(j) {
-      q <- stats::pnorm(z0[[i]][j] + (z0[[i]][j] + stats::qnorm(.probs))/ (1 - a[[i]][j]*(z0[[i]][j] + stats::qnorm(.probs)))) 
-      stats::quantile(.first_resample[[i]]$Resampled[, j], probs = q)
+      q <- pnorm(z0[[i]][j] + (z0[[i]][j] + qnorm(.probs))/ (1 - a[[i]][j]*(z0[[i]][j] + qnorm(.probs)))) 
+      quantile(.first_resample[[i]]$Resampled[, j], probs = q)
     })
     names(bca) <- names(.first_resample[[i]]$Original)
     bca
