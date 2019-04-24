@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @keywords internal
-print.cSEMResults <- function(.object, ...) {
+print.cSEMResults <- function(...) {
     
   cat(
     rule(line = "bar2"), "\n",
@@ -83,7 +83,7 @@ print.cSEMResults <- function(.object, ...) {
 #'
 #' @export
 #' @keywords internal
-print.cSEMSummarize_default <- function(.object, .full_output = FALSE, ...) {
+print.cSEMSummarize_default <- function(..., .full_output = FALSE) {
   
   x1 <- .object$Estimates
   x2 <- .object$Information

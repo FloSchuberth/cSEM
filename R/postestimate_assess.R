@@ -88,7 +88,7 @@ assess.cSEMResults_default <- function(.object, .only_common_factors = TRUE, ...
 #' @describeIn assess (TODO)
 #' @export
 
-assess.cSEMResults_multi <- function(.object){
+assess.cSEMResults_multi <- function(.object, ...){
   
   paste("not yet implemented")
 }
@@ -96,7 +96,7 @@ assess.cSEMResults_multi <- function(.object){
 #' @describeIn assess (TODO)
 #' @export
 
-assess.cSEMResults_2ndorder <- function(.object){
+assess.cSEMResults_2ndorder <- function(.object, ...){
   
   paste("not yet implemented")
 }
