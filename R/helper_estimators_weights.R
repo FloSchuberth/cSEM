@@ -273,3 +273,52 @@ scaleWeights <- function(
   
   return(W_scaled)
 }
+
+#' Internal: Set Starting values
+#'
+#' Returns a matrix with that contains the starting values
+#'
+#' @usage setStartingValues(
+#'   .W = args_default()$.W,
+#'   .starting_values = args_default()$.starting_values
+#'   )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @return The (J x K) matrix of scaled weights.
+#' @keywords internal
+
+setStartingValues = function(.W = args_default()$.W,
+                             .starting_values = args_default()$.starting_values){
+
+  if(!is.list(.starting_values)){
+    stop2("A list containing the starting values must be provided.")
+  }
+  
+  tmp <- setdiff(names(.starting_values), rownames(.W))
+  
+  if(length(tmp) != 0) {
+    stop2("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+          " provided to `.starting_values`", 
+          ifelse(length(tmp) == 1, " is", " are"), " unknown.")
+  }
+  
+  # Replace the original ones by the starting value
+  for(i in names(.starting_values)) {
+    # tmp <- setdiff(names(.starting_values[[i]]), colnames(W[i,,drop=FALSE]))
+    tmp <- setdiff(names(.starting_values[[i]]), colnames(.W[i,.W[i,]!=0,drop = FALSE]))
+    
+    
+    if(length(tmp) != 0) {
+      stop2("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+            " provided to `.starting_values`", 
+            ifelse(length(tmp) == 1, " is", " are"), " unknown.")
+    }
+    
+    .W[i,names(.starting_values[[i]])] = .starting_values[[i]]
+    
+  }
+  
+  return(.W)
+}
+

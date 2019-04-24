@@ -40,7 +40,8 @@ calculateWeightsPLS <- function(
   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
-  .tolerance                   = args_default()$.tolerance
+  .tolerance                   = args_default()$.tolerance,
+  .starting_values             = args_default()$.starting_values
 ) {
 
   ### Preparation ==============================================================
@@ -86,6 +87,12 @@ calculateWeightsPLS <- function(
 
   ### Calculation/Iteration ====================================================
   W <- .csem_model$measurement
+  
+  # if starting values are provided
+  if(!is.null(.starting_values)){
+    W = setStartingValues(.W = W, .starting_values = .starting_values)
+    }
+  
   # Scale weights
   W <- scaleWeights(.S = .S, .W = W)
 
@@ -342,7 +349,8 @@ calculateWeightsGSCA <- function(
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
   .iter_max                    = args_default()$.iter_max,
-  .tolerance                   = args_default()$.tolerance
+  .tolerance                   = args_default()$.tolerance,
+  .starting_values             = args_default()$.starting_values
 ) {
   ### Calculation (ALS algorithm) ==============================================
   
@@ -355,6 +363,12 @@ calculateWeightsGSCA <- function(
   J <- nrow(W0)
   K <- ncol(W0)
   JK <- J + K
+  
+  
+  # if starting values are provided
+  if(!is.null(.starting_values)){
+    W0 = setStartingValues(.W = W0, .starting_values = .starting_values)
+  }
   
   # Scale weights
   W <- scaleWeights(.S = .S, .W = W0)
@@ -495,7 +509,8 @@ calculateWeightsGSCAm <- function(
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
   .iter_max                    = args_default()$.iter_max,
-  .tolerance                   = args_default()$.tolerance
+  .tolerance                   = args_default()$.tolerance,
+  .starting_values             = args_default()$.starting_values
 ) {
   ## Notes
   # - If disattenuate = TRUE we have Z = Z - UD. Everywhere else in the 
@@ -568,6 +583,11 @@ calculateWeightsGSCAm <- function(
   
   # Normalize Z
   Z <- Z/sqrt(N - 1) 
+  
+  # if starting values are provided
+  if(!is.null(.starting_values)){
+    W = setStartingValues(.W = W, .starting_values = .starting_values)
+  }
   
   # Gamma
   Gamma <- Z %*% W
@@ -666,10 +686,17 @@ calculateWeightsGSCAm <- function(
 #'
 calculateWeightsUnit = function(
   .S                 = args_default()$.S,
-  .csem_model        = args_default()$.csem_model
+  .csem_model        = args_default()$.csem_model,
+  .starting_values   = args_default()$starting_values
 ){
   
   W <- .csem_model$measurement
+  
+  # if starting values are provided
+  if(!is.null(.starting_values)){
+    W = setStartingValues(.W = W, .starting_values = .starting_values)
+  }
+  
   W <- scaleWeights(.S, W)
   
   modes        <- rep("unit", nrow(W))

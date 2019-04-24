@@ -61,7 +61,8 @@ foreman <- function(
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
   .reliabilities               = args_default()$.reliabilities,
-  .tolerance                   = args_default()$.tolerance
+  .tolerance                   = args_default()$.tolerance,
+  .starting_values             = args_default()$.starting_values
   ) {
   args_used <- c(as.list(environment(), all.names = TRUE))
   
@@ -98,7 +99,9 @@ foreman <- function(
       # Arguments passed on to calcuateOuterWeightsPLS 
       .data                     = X,
       # Arguments passed to checkConvergence
-      .conv_criterion           = .conv_criterion
+      .conv_criterion           = .conv_criterion,
+      # starting values
+      .starting_values          = .starting_values
     )
   } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
@@ -113,7 +116,8 @@ foreman <- function(
         .csem_model               = csem_model,
         .conv_criterion           = .conv_criterion,
         .iter_max                 = .iter_max,
-        .tolerance                = .tolerance
+        .tolerance                = .tolerance,
+        .starting_values          = .starting_values
       )
       
       # Weights need to be scaled s.t. the composite build using .X has
@@ -128,7 +132,8 @@ foreman <- function(
         .csem_model               = csem_model,
         .conv_criterion           = .conv_criterion,
         .iter_max                 = .iter_max,
-        .tolerance                = .tolerance
+        .tolerance                = .tolerance,
+        .starting_values          = .starting_values
       )
     }
 
@@ -136,7 +141,8 @@ foreman <- function(
             
     W <- calculateWeightsUnit(
       .S                        = S,
-      .csem_model               = csem_model
+      .csem_model               = csem_model,
+      .starting_values          = .starting_values
     )
   } else if(.approach_weights %in% c("bartlett", "regression")) {
     
@@ -157,11 +163,12 @@ foreman <- function(
   if(!is.null(.dominant_indicators)) {
     W$W <- setDominantIndicator(
       .W = W$W, 
-      .dominant_indicators = .dominant_indicators)
+      .dominant_indicators = .dominant_indicators,
+      .S = S)
   }
 
-  ## Calculate proxies/scores
-  H <- X %*% t(W$W)
+  # ## Calculate proxies/scores
+  # H <- X %*% t(W$W)
   
   LambdaQ2W <- calculateReliabilities(
     .X                = X,
@@ -177,6 +184,10 @@ foreman <- function(
   Weights <- LambdaQ2W$W 
   Lambda  <- LambdaQ2W$Lambda
   Q       <- sqrt(LambdaQ2W$Q2)
+  
+  ## Calculate proxies/scores
+  H <- X %*% t(Weights)
+  
   
   ## Calculate proxy covariance matrix
   C <- calculateCompositeVCV(.S = S, .W = Weights)
