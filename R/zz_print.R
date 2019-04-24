@@ -2,16 +2,15 @@
 #'
 #' The [cSEMResults] method for the generic function [print()].
 #'
-#' @usage print(.object)
-#'
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #' @keywords internal
-print.cSEMResults <- function(...) {
-    
+print.cSEMResults <- function(x, ...) {
+  .object <- x  
+  
   cat(
     rule(line = "bar2"), "\n",
     rule(center = "Overview"), 
@@ -75,15 +74,14 @@ print.cSEMResults <- function(...) {
 #'
 #' The [cSEMSummary] method for the generic function [print()]. 
 #'
-#' @usage print(.object)
-#'
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem()], [foreman()], [cSEMResults], [summarize()]
 #'
 #' @export
 #' @keywords internal
-print.cSEMSummarize_default <- function(..., .full_output = FALSE) {
+print.cSEMSummarize_default <- function(x, ..., .full_output = FALSE) {
+  .object <- x 
   
   x1 <- .object$Estimates
   x2 <- .object$Information
@@ -338,15 +336,14 @@ print.cSEMSummarize_default <- function(..., .full_output = FALSE) {
 #'
 #' The [cSEMSummary] method for the generic function [print()]. 
 #'
-#' @usage print(.object)
-#'
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem()], [foreman()], [cSEMResults], [summarize()]
 #'
 #' @export
 #' @keywords internal
-print.cSEMSummarize_2ndorder <- function(.object, ...) {
+print.cSEMSummarize_2ndorder <- function(x, ...) {
+  .object <- x
   
   ### Extract name and objects 
   x11 <- .object$First_stage$Estimates
@@ -529,15 +526,14 @@ print.cSEMSummarize_2ndorder <- function(.object, ...) {
 #'
 #' The `cSEMVerify_default` method for the generic function [print()]. 
 #'
-#' @usage print(.object)
-#'
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #' @keywords internal
-print.cSEMVerify_default <- function(.object, ...) {
+print.cSEMVerify_default <- function(x, ...) {
+  .object <- x
   
   cat(rule(line = "bar2"), sep = "")
   
@@ -569,15 +565,14 @@ print.cSEMVerify_default <- function(.object, ...) {
 #'
 #' The `cSEMVerify_default` method for the generic function [print()]. 
 #'
-#' @usage print(.object)
-#'
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #' @keywords internal
-print.cSEMVerify_2ndorder <- function(.object, ...) {
+print.cSEMVerify_2ndorder <- function(x, ...) {
+  .object <- x
   
   cat(rule(line = "bar2"), sep = "")
   cat("\n\nVerify admissibility:\n", sep = "")
@@ -611,15 +606,14 @@ print.cSEMVerify_2ndorder <- function(.object, ...) {
 #'
 #' The `cSEMTestOMF` method for the generic function [print()]. 
 #'
-#' @usage print(.object)
-#'
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #' @keywords internal
-print.cSEMTestOMF <- function(.object, ...) {
+print.cSEMTestOMF <- function(x, ...) {
+  .object <- x
   
   cat(
     rule(line = "bar2"), "\n",
@@ -737,16 +731,15 @@ print.cSEMTestOMF <- function(.object, ...) {
 #'
 #' The `cSEMTestMGD` method for the generic function [print()]. 
 #'
-#' @usage print(.object)
-#'
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #' @keywords internal
-print.cSEMTestMGD <- function(.object, ...) {
-
+print.cSEMTestMGD <- function(x, ...) {
+  .object <- x
+  
   cat(
     rule(line = "bar2"), "\n",
     rule(center = "Test for multigroup differences based on Klesel (forthcoming)"), 
@@ -881,16 +874,15 @@ print.cSEMTestMGD <- function(.object, ...) {
 #'
 #' The `cSEMTestMICOM` method for the generic function [print()]. 
 #'
-#' @usage print(.object)
-#'
 #' @inheritParams csem_arguments
 #'
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
 #' @keywords internal
-print.cSEMTestMICOM <- function(.object, ...) {
-
+print.cSEMTestMICOM <- function(x, ...) {
+  .object <- x
+  
   cat(
     rule(line = "bar2"), "\n",
     rule(center = "Test for measurement invariance based on Henseler et al (2016)"),

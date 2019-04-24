@@ -4,10 +4,7 @@
 \alias{print.cSEMSummarize_2ndorder}
 \title{\code{cSEMSummarize_2ndorder} method for \code{print()}}
 \usage{
-print(.object)
-}
-\arguments{
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+\method{print}{cSEMSummarize_2ndorder}(x, ...)
 }
 \description{
 The \link{cSEMSummary} method for the generic function \code{\link[=print]{print()}}.

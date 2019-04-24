@@ -1,7 +1,7 @@
 Package: cSEM
 Title: Composite-Based Structural Equation Modeling
 Version: 0.0.0.9000
-Date: 2018-11-10
+Date: 2019-04-24
 Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     role  = c("aut", "cre"),
                     email = "manuel.rademaker@uni-wuerzburg.de",
@@ -21,9 +21,20 @@ Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     email = ""))
 Maintainer: Manuel Rademaker <manuel.rademaker@uni-wuerzburg.de>
 Depends: R (>= 3.5.0)
-Description: Composite-based estimators for structural equation modeling.
+Description: Estimate, assess, test, and study linear, nonlinear, hierachical 
+  and multigroup structural equation models using composite-based approaches 
+  and procedures, including estimation techniques such as partial least squares 
+  path modeling (PLS-PM) and its derivatives (PLSc, ordPLSc, robustPLSc), 
+  generalized structured component analysis (GSCA), generalized structured 
+  component analysis with uniqueness terms (GSCAm), generalized canonical 
+  correlation analysis (GCCA), principal component analysis (PCA), 
+  factor score regression (FSR) using sum score, regression or 
+  bartlett scores (including bias correction using Croon’s approach), 
+  as well as several tests and typical postestimation procedures 
+  (e.g., verify admissibility of the estimates, assess the model fit, 
+  test the model fit etc.).
 BugReports: https://github.com/M-E-Rademaker/cSEM/issues
-URL: 
+URL: https://github.com/M-E-Rademaker/cSEM, https://m-e-rademaker.github.io/cSEM/
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true

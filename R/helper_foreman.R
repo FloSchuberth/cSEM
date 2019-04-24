@@ -102,7 +102,7 @@ calculateCorrectionFactors <- function(
                 }
                 
                 # Optimaziation
-                temp_optim <- optim(fn = temp_fun, par = 0.5, method = "BFGS",
+                temp_optim <- stats::optim(fn = temp_fun, par = 0.5, method = "BFGS",
                                     .W_vect = W_vect, .S_vect = S_vect)
                 cf <- temp_optim$par
               },

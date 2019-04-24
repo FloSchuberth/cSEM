@@ -4,10 +4,7 @@
 \alias{print.cSEMResults}
 \title{\code{cSEMResults} method for \code{print()}}
 \usage{
-print(.object)
-}
-\arguments{
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+\method{print}{cSEMResults}(x, ...)
 }
 \description{
 The \link{cSEMResults} method for the generic function \code{\link[=print]{print()}}.

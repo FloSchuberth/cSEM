@@ -12,9 +12,9 @@ assess(.object, .only_common_factors = TRUE, ...)
 \method{assess}{cSEMResults_default}(.object,
   .only_common_factors = TRUE, ...)
 
-\method{assess}{cSEMResults_multi}(.object)
+\method{assess}{cSEMResults_multi}(.object, ...)
 
-\method{assess}{cSEMResults_2ndorder}(.object)
+\method{assess}{cSEMResults_2ndorder}(.object, ...)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
