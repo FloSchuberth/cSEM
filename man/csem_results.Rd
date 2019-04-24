@@ -37,7 +37,7 @@ The resulting object has classes \code{cSEMResults} and \code{cSEMResults_multi}
 A special output is generated if the model to estimate contains hierachical constructs
 \strong{and} the 2step (3step) approach is used to estimate the model. In this case
 the resulting object is a list containing two elements \code{First_stage} and
-\code{ Second_stage}.
+\code{Second_stage}.
 
 Each list element is itself a \code{cSEMResults_default} object. Hence its structure is identical to
 the structure described in \code{Default}.
