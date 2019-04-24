@@ -185,7 +185,13 @@ calculateOuterWeightsPLS <- function(
       temp <- psych::principal(r = .S[indicators, indicators], nfactors = 1)
       W[block, indicators] <- c(temp$weights)
       
-    }
+    } 
+    # Set weights of single-indicator constructs to 1 (in order to avoid floating
+    # point imprecision)
+    if(sum(indicators) == 1){
+      W[block, indicators] <- 1 
+    } 
+    
     # If .modes[block] == "unit" or a single value has been given, nothing needs
     # to happen since W[block, indicators] would be set to 1 (which it already is). 
   }
