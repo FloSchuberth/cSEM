@@ -5,24 +5,28 @@
 \title{Composite-based SEM}
 \usage{
 csem(
-  .data                        = NULL,
-  .model                       = NULL,
-  .approach_nl                 = c("sequential", "replace"),
-  .approach_paths              = c("OLS", "2SLS"),
-  .approach_weights            = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", 
-                                   "GSCA", "PCA", "unit", "bartlett", "regression"),
-  .disattenuate                = TRUE,
-  .id                          = NULL,
-  .normality                   = TRUE,
-  .reliabilities               = NULL,
-  .resample_method             = c("none", "bootstrap", "jackknife"),
-  .resample_method2            = c("none", "bootstrap", "jackknife"),
-  .R                           = 499,
-  .R2                          = 199,
-  .handle_inadmissibles        = c("drop", "ignore", "replace"),
-  .user_funs                   = NULL,
-  .eval_plan                   = c("sequential", "multiprocess"),
-  .seed                        = NULL,
+  .data                    = NULL,
+  .model                   = NULL,
+  .approach_nl             = c("sequential", "replace"),
+  .approach_paths          = c("OLS", "2SLS"),
+  .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
+                               "MINVAR", "GENVAR", "GSCA", "PCA", 
+                               "unit", "bartlett", "regression"),
+  .disattenuate            = TRUE,
+  .id                      = NULL,
+  .normality               = TRUE,
+  .reliabilities           = NULL,
+  .starting_values         = NULL,
+  .resample_method         = c("none", "bootstrap", "jackknife"),
+  .resample_method2        = c("none", "bootstrap", "jackknife"),
+  .R                       = 499,
+  .R2                      = 199,
+  .handle_inadmissibles    = c("drop", "ignore", "replace"),
+  .user_funs               = NULL,
+  .eval_plan               = c("sequential", "multiprocess"),
+  .seed                    = NULL,
+  .sign_change_option      = c("no", "individual", "individual_reestimate", 
+                               "construct_reestimate"),
   ...
   )
 }
@@ -121,7 +125,7 @@ case an arbitrary seed is choosen.}
 the resample function. One of "\emph{no}" "\emph{individual}"  "\emph{construct}". Defaults to "\emph{no}".}
 
 \item{...}{Further arguments to be passed down to lower level functions of \code{csem()}.
-See \link{csem_dotdotdot} for a complete list of available arguments.}
+See \link{args_csem_dotdotdot} for a complete list of available arguments.}
 }
 \value{
 An object of class \code{cSEMResults} with methods for all postestimation generics.
@@ -140,7 +144,9 @@ Estimate linear, nonlinear, hierachical or multigroup structural equation
 models using a composite-based approach. In \pkg{cSEM}
 any method or approach that involves linear compounts (scores/proxies/composites)
 of observables (indicators/items/manifest variables) is defined as composite-based.
-See the \href{../doc/vignette-cSEM.html}{the cSEM vignette} for details.
+See the \href{https://m-e-rademaker.github.io/cSEM/articles/cSEM.html}{Get started}
+section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+for details.
 }
 \details{
 \code{csem()} estimates linear, nonlinear, hierachical or multigroup structural
@@ -219,9 +225,6 @@ For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 \subsection{Inference:}{
 Inference is done via resampling. See \link{resamplecSEMResults} for details.
 }
-}
-\examples{
-
 }
 \references{
 \insertAllCited{}
