@@ -127,6 +127,9 @@ reliabilities are estimated by \code{csem()}. Currently, only supported for
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
+
+\item{.starting_values}{list of named vectors containig the starting values.
+Defaults to "\emph{NULL}".}
 }
 \description{
 The central hub of the \code{cSEM} package. It acts like a

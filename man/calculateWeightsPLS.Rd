@@ -59,6 +59,9 @@ Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
+
+\item{.starting_values}{list of named vectors containig the starting values.
+Defaults to "\emph{NULL}".}
 }
 \value{
 A list with the elements

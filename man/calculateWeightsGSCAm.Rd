@@ -8,7 +8,8 @@ calculateWeightsGSCAm(.X = args_default()$.X,
   .csem_model = args_default()$.csem_model,
   .conv_criterion = args_default()$.conv_criterion,
   .iter_max = args_default()$.iter_max,
-  .tolerance = args_default()$.tolerance)
+  .tolerance = args_default()$.tolerance,
+  .starting_values = args_default()$.starting_values)
 }
 \description{
 Calculates weights...

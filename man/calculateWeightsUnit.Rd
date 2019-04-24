@@ -13,6 +13,9 @@ calculateWeightsUnit(
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
+
+\item{.starting_values}{list of named vectors containig the starting values.
+Defaults to "\emph{NULL}".}
 }
 \value{
 A list with the elements

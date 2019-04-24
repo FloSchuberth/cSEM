@@ -6,7 +6,8 @@
 \usage{
 setDominantIndicator(
  .W                   = W,
- .dominant_indicators = .dominant_indicators
+ .dominant_indicators = args_default()$.dominant_indicators, 
+ .S                   = args_default()$.S
  )
 }
 \arguments{
@@ -16,6 +17,8 @@ setDominantIndicator(
 where \code{"value"} is a character string giving the name of the dominant indicator
 and \code{"name"} a character string of the corresponding construct name.
 Dominant indicators may be specified for a subset of the constructs.}
+
+\item{.S}{The (K x K) empirical indicator correlation matrix.}
 }
 \value{
 The (J x K) matrix of weights with the dominant indicator set.

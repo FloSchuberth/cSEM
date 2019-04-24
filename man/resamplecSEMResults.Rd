@@ -13,7 +13,8 @@ resamplecSEMResults(
  .handle_inadmissibles  = c("drop", "ignore", "replace"),
  .user_funs             = NULL,
  .eval_plan             = c("sequential", "multiprocess"),
- .seed                  = sample(.Random.seed, 1)
+ .seed                  = sample(.Random.seed, 1),
+ .sign_change_option    = args_default()$.sign_change_option
 )
 }
 \arguments{
@@ -54,6 +55,9 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen.}
+
+\item{.sign_change_option}{Character string. Indicates which sign change option should be used in
+the resample function. One of "\emph{no}" "\emph{individual}"  "\emph{construct}". Defaults to "\emph{no}".}
 }
 \value{
 The core structure is the same structure as that of \code{.object} with

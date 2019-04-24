@@ -78,6 +78,9 @@ may be given for a subset of the constructs. Defaults to \code{NULL} in which ca
 reliabilities are estimated by \code{csem()}. Currently, only supported for
 \code{.approach_weights = "PLS-PM"}.}
 
+\item{.starting_values}{list of named vectors containig the starting values.
+Defaults to "\emph{NULL}".}
+
 \item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
@@ -113,6 +116,9 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen.}
+
+\item{.sign_change_option}{Character string. Indicates which sign change option should be used in
+the resample function. One of "\emph{no}" "\emph{individual}"  "\emph{construct}". Defaults to "\emph{no}".}
 
 \item{...}{Further arguments to be passed down to lower level functions of \code{csem()}.
 See \link{csem_dotdotdot} for a complete list of available arguments.}

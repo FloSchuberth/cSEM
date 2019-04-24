@@ -153,6 +153,7 @@ csem <- function(
   .id                    = NULL,
   .normality             = TRUE,
   .reliabilities         = NULL,
+  .starting_values       = NULL,
   .resample_method       = c("none", "bootstrap", "jackknife"),
   .resample_method2      = c("none", "bootstrap", "jackknife"),
   .R                     = 499,
@@ -162,7 +163,6 @@ csem <- function(
   .eval_plan             = c("sequential", "multiprocess"),
   .seed                  = NULL,
   .sign_change_option    = c("no",'individual','individual_reestimate','construct_reestimate'),
-  .starting_values       = NULL,
   ...
   ) {
   ## Match arguments
@@ -255,6 +255,7 @@ csem <- function(
         .PLS_modes                   = args_needed$.PLS_modes,
         .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
         .reliabilities               = args_needed$.reliabilities,
+        .starting_values             = args_needed$.starting_values,
         .tolerance                   = args_needed$.tolerance
       )
     })
@@ -285,6 +286,7 @@ csem <- function(
         .PLS_modes                   = args_needed$.PLS_modes,
         .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
         .reliabilities               = args_needed$.reliabilities,
+        .starting_values             = args_needed$.starting_values,
         .tolerance                   = args_needed$.tolerance
       )
     })
@@ -316,6 +318,7 @@ csem <- function(
       .PLS_modes                   = args_needed$.PLS_modes,
       .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
       .reliabilities               = args_needed$.reliabilities,
+      .starting_values             = args_needed$.starting_values,
       .tolerance                   = args_needed$.tolerance
     )
   }

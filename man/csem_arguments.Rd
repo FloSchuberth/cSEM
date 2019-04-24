@@ -222,11 +222,17 @@ resampling from a resample. Defaults to \code{199}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 
+\item{.sign_change_option}{Character string. Indicates which sign change option should be used in
+the resample function. One of "\emph{no}" "\emph{individual}"  "\emph{construct}". Defaults to "\emph{no}".}
+
 \item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen.}
 
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
+
+\item{.starting_values}{list of named vectors containig the starting values.
+Defaults to "\emph{NULL}".}
 
 \item{.terms}{A vector of construct names to be classified.}
 
