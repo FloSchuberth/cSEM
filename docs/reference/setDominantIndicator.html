@@ -135,7 +135,8 @@
 
     <pre class="usage"><span class='fu'>setDominantIndicator</span>(
  <span class='kw'>.W</span>                   <span class='kw'>=</span> <span class='no'>W</span>,
- <span class='kw'>.dominant_indicators</span> <span class='kw'>=</span> <span class='no'>.dominant_indicators</span>
+ <span class='kw'>.dominant_indicators</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.dominant_indicators</span>,
+ <span class='kw'>.S</span>                   <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.S</span>
  )</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -151,6 +152,10 @@
 where <code>"value"</code> is a character string giving the name of the dominant indicator
 and <code>"name"</code> a character string of the corresponding construct name.
 Dominant indicators may be specified for a subset of the constructs.</p></td>
+    </tr>
+    <tr>
+      <th>.S</th>
+      <td><p>The (K x K) empirical indicator correlation matrix.</p></td>
     </tr>
     </table>
     

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate weights using GSCAm — calculateWeightsGSCAm • cSEM</title>
+<title>Internal: Set Starting values — setStartingValues • cSEM</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -31,9 +31,9 @@
 
 
 
-<meta property="og:title" content="Calculate weights using GSCAm — calculateWeightsGSCAm" />
+<meta property="og:title" content="Internal: Set Starting values — setStartingValues" />
 
-<meta property="og:description" content="Calculates weights..." />
+<meta property="og:description" content="Returns a matrix with that contains the starting values" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -122,35 +122,48 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate weights using GSCAm</h1>
+    <h1>Internal: Set Starting values</h1>
     
-    <div class="hidden name"><code>calculateWeightsGSCAm.Rd</code></div>
+    <div class="hidden name"><code>setStartingValues.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Calculates weights...</p>
+    <p>Returns a matrix with that contains the starting values</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>calculateWeightsGSCAm</span>(<span class='kw'>.X</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.X</span>,
-  <span class='kw'>.csem_model</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.csem_model</span>,
-  <span class='kw'>.conv_criterion</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.conv_criterion</span>,
-  <span class='kw'>.iter_max</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.iter_max</span>,
-  <span class='kw'>.tolerance</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.tolerance</span>,
-  <span class='kw'>.starting_values</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.starting_values</span>)</pre>
-        
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <pre class="usage"><span class='fu'>setStartingValues</span>(
+  <span class='kw'>.W</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.W</span>,
+  <span class='kw'>.starting_values</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.starting_values</span>
+  )</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>.W</th>
+      <td><p>A (J x K) matrix of weights.</p></td>
+    </tr>
+    <tr>
+      <th>.starting_values</th>
+      <td><p>list of named vectors containig the starting values.
+Defaults to "<em>NULL</em>".</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>(TODO)</p>
+    <p>The (J x K) matrix of scaled weights.</p>
     
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#details">Details</a></li>
+      <li><a href="#value">Value</a></li>
           </ul>
 
   </div>

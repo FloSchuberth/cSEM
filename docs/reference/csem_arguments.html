@@ -478,6 +478,11 @@ resampling from a resample. Defaults to <code>199</code>.</p></td>
       <td><p>Logical. Should a saturated structural model be used? Defaults to <code>FALSE</code>.</p></td>
     </tr>
     <tr>
+      <th>.sign_change_option</th>
+      <td><p>Character string. Indicates which sign change option should be used in
+the resample function. One of "<em>no</em>" "<em>individual</em>"  "<em>construct</em>". Defaults to "<em>no</em>".</p></td>
+    </tr>
+    <tr>
       <th>.seed</th>
       <td><p>Integer. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is choosen.</p></td>
@@ -486,6 +491,11 @@ case an arbitrary seed is choosen.</p></td>
       <th>.stage</th>
       <td><p>Character string. The stage the model is need for.
 One of "<em>first</em>" or "<em>second</em>". Defaults to "<em>first</em>".</p></td>
+    </tr>
+    <tr>
+      <th>.starting_values</th>
+      <td><p>list of named vectors containig the starting values.
+Defaults to "<em>NULL</em>".</p></td>
     </tr>
     <tr>
       <th>.terms</th>

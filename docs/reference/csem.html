@@ -239,6 +239,11 @@ reliabilities are estimated by <code>csem()</code>. Currently, only supported fo
 <code>.approach_weights = "PLS-PM"</code>.</p></td>
     </tr>
     <tr>
+      <th>.starting_values</th>
+      <td><p>list of named vectors containig the starting values.
+Defaults to "<em>NULL</em>".</p></td>
+    </tr>
+    <tr>
       <th>.resample_method</th>
       <td><p>Character string. The resampling method to use. One of:
 "<em>bootstrap</em>" or "<em>jackknife</em>". Defaults to "<em>bootstrap</em>".</p></td>
@@ -289,6 +294,11 @@ all available cores will be used. Defaults to "<em>sequential</em>".</p></td>
       <th>.seed</th>
       <td><p>Integer. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is choosen.</p></td>
+    </tr>
+    <tr>
+      <th>.sign_change_option</th>
+      <td><p>Character string. Indicates which sign change option should be used in
+the resample function. One of "<em>no</em>" "<em>individual</em>"  "<em>construct</em>". Defaults to "<em>no</em>".</p></td>
     </tr>
     <tr>
       <th>...</th>
