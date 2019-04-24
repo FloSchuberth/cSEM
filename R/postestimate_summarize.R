@@ -4,7 +4,12 @@
 #' 
 #' Summary (TODO)
 #'
-#' @usage summarize(.object)
+#' @usage summarize(
+#'  .object = NULL, 
+#'  .alpha  = args_default()$.alpha,
+#'  .ci     = NULL,
+#'  ...
+#'  )
 #'
 #' @inheritParams csem_arguments
 #'

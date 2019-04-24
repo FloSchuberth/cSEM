@@ -37,7 +37,9 @@
 models using a composite-based approach. In cSEM
 any method or approach that involves linear compounts (scores/proxies/composites)
 of observables (indicators/items/manifest variables) is defined as composite-based.
-See the the cSEM vignette for details." />
+See the Get started
+section of the cSEM website
+for details." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -94,6 +96,12 @@ See the the cSEM vignette for details." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/GSCA.html">GSCA and GSCA&lt;sub&gt;M&lt;/sub&gt;</a>
+    </li>
+    <li>
+      <a href="../articles/PLS.html">PLS-PM</a>
+    </li>
+    <li>
       <a href="../articles/Using-assess.html">Postestimation: Assessing a model</a>
     </li>
     <li>
@@ -142,29 +150,36 @@ See the the cSEM vignette for details." />
 models using a composite-based approach. In <span class="pkg">cSEM</span>
 any method or approach that involves linear compounts (scores/proxies/composites)
 of observables (indicators/items/manifest variables) is defined as composite-based.
-See the <a href='../doc/vignette-cSEM.html'>the cSEM vignette</a> for details.</p>
+See the <a href='https://m-e-rademaker.github.io/cSEM/articles/cSEM.html'>Get started</a>
+section of the <a href='https://m-e-rademaker.github.io/cSEM/index.html'>cSEM website</a>
+for details.</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>csem</span>(
-  <span class='kw'>.data</span>                        <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.model</span>                       <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.approach_nl</span>                 <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"sequential"</span>, <span class='st'>"replace"</span>),
-  <span class='kw'>.approach_paths</span>              <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"OLS"</span>, <span class='st'>"2SLS"</span>),
-  <span class='kw'>.approach_weights</span>            <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"PLS-PM"</span>, <span class='st'>"SUMCORR"</span>, <span class='st'>"MAXVAR"</span>, <span class='st'>"SSQCORR"</span>, <span class='st'>"MINVAR"</span>, <span class='st'>"GENVAR"</span>,
-                                   <span class='st'>"GSCA"</span>, <span class='st'>"PCA"</span>, <span class='st'>"unit"</span>, <span class='st'>"bartlett"</span>, <span class='st'>"regression"</span>),
-  <span class='kw'>.disattenuate</span>                <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>.id</span>                          <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.normality</span>                   <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>.reliabilities</span>               <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.resample_method</span>             <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"bootstrap"</span>, <span class='st'>"jackknife"</span>),
-  <span class='kw'>.resample_method2</span>            <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"bootstrap"</span>, <span class='st'>"jackknife"</span>),
-  <span class='kw'>.R</span>                           <span class='kw'>=</span> <span class='fl'>499</span>,
-  <span class='kw'>.R2</span>                          <span class='kw'>=</span> <span class='fl'>199</span>,
-  <span class='kw'>.handle_inadmissibles</span>        <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"drop"</span>, <span class='st'>"ignore"</span>, <span class='st'>"replace"</span>),
-  <span class='kw'>.user_funs</span>                   <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.eval_plan</span>                   <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"sequential"</span>, <span class='st'>"multiprocess"</span>),
-  <span class='kw'>.seed</span>                        <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.data</span>                    <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.model</span>                   <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.approach_2ndorder</span>       <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"3stage"</span>, <span class='st'>"repeated_indicators"</span>),
+  <span class='kw'>.approach_nl</span>             <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"sequential"</span>, <span class='st'>"replace"</span>),
+  <span class='kw'>.approach_paths</span>          <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"OLS"</span>, <span class='st'>"2SLS"</span>),
+  <span class='kw'>.approach_weights</span>        <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"PLS-PM"</span>, <span class='st'>"SUMCORR"</span>, <span class='st'>"MAXVAR"</span>, <span class='st'>"SSQCORR"</span>,
+                               <span class='st'>"MINVAR"</span>, <span class='st'>"GENVAR"</span>, <span class='st'>"GSCA"</span>, <span class='st'>"PCA"</span>,
+                               <span class='st'>"unit"</span>, <span class='st'>"bartlett"</span>, <span class='st'>"regression"</span>),
+  <span class='kw'>.disattenuate</span>            <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>.id</span>                      <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.normality</span>               <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>.reliabilities</span>           <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.starting_values</span>         <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.resample_method</span>         <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"bootstrap"</span>, <span class='st'>"jackknife"</span>),
+  <span class='kw'>.resample_method2</span>        <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"bootstrap"</span>, <span class='st'>"jackknife"</span>),
+  <span class='kw'>.R</span>                       <span class='kw'>=</span> <span class='fl'>499</span>,
+  <span class='kw'>.R2</span>                      <span class='kw'>=</span> <span class='fl'>199</span>,
+  <span class='kw'>.handle_inadmissibles</span>    <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"drop"</span>, <span class='st'>"ignore"</span>, <span class='st'>"replace"</span>),
+  <span class='kw'>.user_funs</span>               <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.eval_plan</span>               <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"sequential"</span>, <span class='st'>"multiprocess"</span>),
+  <span class='kw'>.seed</span>                    <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.sign_change_option</span>      <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"no"</span>, <span class='st'>"individual"</span>, <span class='st'>"individual_reestimate"</span>,
+                               <span class='st'>"construct_reestimate"</span>),
   <span class='no'>...</span>
   )</pre>
     
@@ -308,7 +323,7 @@ the resample function. One of "<em>no</em>" "<em>individual</em>"  "<em>construc
     <tr>
       <th>...</th>
       <td><p>Further arguments to be passed down to lower level functions of <code>csem()</code>.
-See csem_dotdotdot for a complete list of available arguments.</p></td>
+See <a href='args_csem_dotdotdot.html'>args_csem_dotdotdot</a> for a complete list of available arguments.</p></td>
     </tr>
     </table>
     
@@ -408,9 +423,6 @@ For details see: Dijkstra and Schermelleh-Engel (2014)
     <div class='dont-index'><p><a href='args_default.html'>args_default</a>, <a href='csem_arguments.html'>cSEMArguments</a>, <a href='csem_results.html'>cSEMResults</a>, <a href='foreman.html'>foreman</a></p></div>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -424,9 +436,7 @@ For details see: Dijkstra and Schermelleh-Engel (2014)
       <li><a href="#references">References</a></li>
 
       <li><a href="#see-also">See also</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>

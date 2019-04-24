@@ -10,11 +10,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="author" content="Sebastian Gross" />
 
-<meta name="date" content="2019-03-06" />
+<meta name="date" content="2019-04-24" />
 
-<title>cSEM-package: GSCA and GSCAM</title>
+<title>GSCA and GSCAM</title>
 
 
 
@@ -22,7 +21,7 @@
 <style type="text/css">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; position: absolute; }
+a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -35,13 +34,11 @@ code.sourceCode { white-space: pre-wrap; }
 a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
 pre.numberSource a.sourceLine
-  { position: relative; }
-pre.numberSource a.sourceLine:empty
-  { position: absolute; }
+  { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
   { content: attr(data-line-number);
-    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all;
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -107,27 +104,28 @@ code > span.ot { color: #007020; }
 
 
 <section class="page-header">
-<h1 class="title toc-ignore project-name">cSEM-package: GSCA and GSCA<sub>M</sub></h1>
-<h4 class="author project-author">Sebastian Gross</h4>
-<h4 class="date project-date">2019-03-06</h4>
+<h1 class="title toc-ignore project-name">GSCA and GSCA<sub>M</sub></h1>
+<h3 class="subtitle project-tagline">Generalized structured component analysis with and without uniquness terms</h3>
+<h4 class="date project-date">2019-04-24</h4>
 </section>
 
 
 
 <section class="main-content">
+<p>WARNING: this document is work in progress.</p>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>This vignette provides additional information about the GSCA approach for structural equation models and its implementation in the <em>cSEM</em>-package. The aim of the following document is to explain to the user, how to proceed when parameters of a structural model shall be estimated with GSCA or GSCA<sub>M</sub>. The usage of GSCA and GSCA<sub>M</sub> as well as the general structure of the output are explained via an estimation example which will also provide an idea of how estimation results can be interpreted.</p>
-</div>
-<div id="approach" class="section level1">
-<h1>The approach of GSCA and GSCA<sub>M</sub></h1>
-<p>The implemented routine calculates weights, as well as path coefficients and loadings of a structural equation model with the GSCA procedure. GSCA is a composite-based approach to structural equation modeling introduced and refined by Heungsun Hwang and Yoshio Takane in <span class="citation">(Hwang and Takane 2004, also 2014)</span> and <span class="citation">(Hwang, Takane, and Jung 2017)</span>.</p>
-<p>It is in several points comparable to PLS. As in PLS, constructs are defined as composites, i.e., as exact linear combinations of the related indicators. The corresponding weights are estimated by minimizing a global optimization criterion which is done via some linear regressions involving latent variables (resp. their proxies) and the observed indicators (see <span class="citation">(Hwang and Takane 2014, 8–10)</span>).</p>
-<p>Both GSCA, GSCA and GSCA<sub>M</sub> approaches do not make any assumption concerning the distribution of the residuals of indicators and latent variables. That is why, estimators finally have to be calculated via Least Squares. Basic to GSCA and GSCA<sub>M</sub> is that three submodels are combined to build up the overall GSCA/GSCA<sub>M</sub>-model. These are the structural model (relationships among constructs), measurement model (influence of constructs on indicators expressed by loadings) and weighted relation model (constructs as linear combinations of indicators) (for a detailed description see <span class="citation">(Hwang and Takane 2014, chaps. 2.1–2.2)</span>). The Section <a href="#methods">Methods</a> provides some details and formula of the GSCA-model.</p>
-<p>It is possible that the estimated parameters, especially loadings, are biased when using GSCA. In particular, this is the case when indicators are observed with an error. However, GSCA<sub>M</sub> offers a way to estimate the parameters also in this situation consistently. The term “GSCA<sub>M</sub>” stands for “GSCA with measurement errors incorporated”. This approach was presented in <span class="citation">(Hwang, Takane, and Jung 2017)</span>. The main idea of GSCA<sub>M</sub> is to model indicators in the measurement model as a combination of common parts (arising from the constructs) and unique parts. The purpose of adding a unique part to each indicator is to account for measurement errors in the indicators. In a next step, latent variables are expressed in the weighted relation model as a linear combination of indicators but with their unique parts removed (see <span class="citation">(Hwang, Takane, and Jung 2017, 1–3)</span>). For some formula and details see Section <a href="#methods">Methods</a>. For the estimation with GSCA and GSCA<sub>M</sub> using the functions of the cSEM-package see Sections <a href="#usage">Implementation</a> and <a href="#examples">Examples</a>.</p>
+<!-- This helpfile provides additional information about the GSCA approach for structural equation models and its implementation in the *cSEM*-package. The aim of the following document is to explain to the user, how to proceed when parameters of a structural model shall be estimated with GSCA or GSCA<sub>M</sub>. The usage of GSCA and GSCA<sub>M</sub> as well as the general structure of the output are explained via an estimation example which will also provide an idea of how estimation results can be interpreted.  -->
+<!-- The implemented routine calculates weights, as well as path coefficients and  -->
+<!-- loadings of a structural equation model with the GSCA procedure.  -->
+<p>Generalized structured component analysis (GSCA) and generalized structured componenent analysis with uniquness terms (GSCA<sub>M</sub>) is a composite-based approach to structural equation modeling introduced and refined by <span class="citation">Hwang and Takane (2004)</span>; <span class="citation">Hwang and Takane (2014)</span> and <span class="citation">Hwang, Takane, and Jung (2017)</span>.</p>
+<!-- It is in several points comparable to PLS.  -->
+<p>As in other composite-based approaches such as partial least squares (PLS) or prinicpal component analysis (PCA), GSCA and GSCA<sub>M</sub> use composites, i.e., as exact linear combinations of related observables (indicators). The corresponding composite weights are estimated by minimizing a global optimization criterion via linear regressions involving latent variables (resp. their proxies) and the observed indicators (see <span class="citation">(Hwang and Takane 2014, 8–10)</span>).</p>
+<p>Both GSCA and GSCA<sub>M</sub> do not make any assumption concerning the distribution of the structural and/or measurement errors. <!-- That is why, --> <!-- estimators finally have to be calculated via Least Squares. --> Basic to GSCA and GSCA<sub>M</sub> is that three submodels are combined to build up the overall GSCA/GSCA<sub>M</sub>-model. These are the structural model (relationships among constructs), measurement model (influence of constructs on indicators expressed by loadings) and weighted relation model (constructs as linear combinations of indicators) (for a detailed description see <span class="citation">(Hwang and Takane 2014, chaps. 2.1–2.2)</span>). The <a href="#methods">Methods &amp; Formula</a> provides more details.</p>
+<p>As described in detail in the <a href="https://m-e-rademaker.github.io/cSEM/articles/cSEM.html">Introduction to cSEM</a> parameter estimates obtained using GSCA are biased if concepts are modeled as common factors. <!-- It is possible that the estimated parameters, especially loadings, are biased  --> <!-- when using GSCA. In particular, this is the case when indicators are observed  --> <!-- with an error. --> However, GSCA<sub>M</sub> offers a way to estimate the parameters also in this situation consistently. The term “GSCA<sub>M</sub>” stands for “GSCA with measurement errors incorporated”. This approach was presented in <span class="citation">(Hwang, Takane, and Jung 2017)</span>. The main idea of GSCA<sub>M</sub> is to model indicators in the measurement model as a combination of common parts (arising from the constructs) and unique parts. The purpose of adding a unique part to each indicator is to account for measurement errors in the indicators. In a next step, latent variables are expressed in the weighted relation model as a linear combination of indicators but with their unique parts removed (see <span class="citation">(Hwang, Takane, and Jung 2017, 1–3)</span>). For some formula and details see Section <a href="#methods">Methods</a>. For the estimation with GSCA and GSCA<sub>M</sub> using the functions of the cSEM-package see Sections <a href="#usage">Implementation</a> and <a href="#examples">Examples</a>.</p>
 </div>
 <div id="usage" class="section level1">
-<h1>Implementation and usage</h1>
+<h1>Syntax and Options</h1>
 <p>Suppose that a structural model ‘model’ is specified in Lavaan-syntax and that data are given in form of an observation matrix ‘data’. To estimate parameters now in this specified structural model by means of GSCA (or GSCA<sub>M</sub>) for the given data, the user has to call the function <em>csem()</em>:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">csem</span>(<span class="dt">.data =</span> data, <span class="dt">.model =</span> model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> )</a></code></pre></div>
 <p>Although the <em>csem</em>-function has many more input arguments, it suffices in the case of GSCA in a first step to specify the input arguments <em>‘.model’</em> and <em>‘.data’</em> and to set the argument <em>‘.approach_weights’</em> equal to <em>“GSCA”</em>. The argument <em>‘.disattenuate’</em> indicates which of the two GSCA-approaches should be used. Its default value is <em>TRUE</em> resulting in GSCA<sub>M</sub> as estimation method whereas a value of <em>FALSE</em> leads to “standard” GSCA. The handling of the <em>‘.disattenuate’</em>-argument is explained more detailly in the following paragraphs and in the Section <a href="#examples">Examples</a>. By this, the user gets a concrete idea in which cases this argument has to be specified and in which it can be dropped.</p>
@@ -139,7 +137,7 @@ code > span.ot { color: #007020; }
 <p>There are two other input-arguments which are of interest when estimating parameters with GSCA or GSCA<sub>M</sub>: <em>‘.iter_max’</em> and <em>‘.tolerance’</em>. Both will be explained in the section <a href="#methods">Methods</a>.</p>
 </div>
 <div id="examples" class="section level1">
-<h1>Examples</h1>
+<h1>Usage &amp; Examples</h1>
 <div id="example1" class="section level3">
 <h3>Example 1: Pure common factor model and GSCA<sub>M</sub></h3>
 <p>In the following, a first application example of the <em>csem</em>-function for the estimation with GSCA is presented. Data are given in form of the dataset “satisfaction” that comes with the <em>cSEM</em>-package. This dataset consists of 250 observations for 27 indicators. These indicators are somehow related to 6 constructs. Before estimation can be done, a model has to be specified for the relationships among these variables. This model is a result of the user’s ideas, hypotheses and theories about the original subject, which is customer satisfaction in the example. The model specification has to be done in lavaan-syntax. In the structural model, the tilde “~” is the known regression operator. However, in the measurement model, the symbol “&lt;~” is used for pure composites whereas the symbol “=~” stands for common factors. Note that the following specification is just one possible way and does not reflect any common theory about customer satisfaction but is used for illustration purposes only.</p>
@@ -167,8 +165,8 @@ code > span.ot { color: #007020; }
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">results1 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="st">&quot;TRUE&quot;</span>)</a></code></pre></div>
 <p>Note that in this case, the user could also drop the input argument <em>‘.disattenuate’</em> because estimation is here done with GSCA<sub>M</sub> as it should. Since it is a pure common factor model, no error message is produced. The estimation results are stored in the object <em>“results1”</em>:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">results1</a></code></pre></div>
-<pre><code>## ______________________________________________________________
-## -------------------------- Overview --------------------------
+<pre><code>## ___________________________________________________________________________________________________________________
+## ----------------------------------------------------- Overview ----------------------------------------------------
 ## 
 ## Estimation was successful.
 ## 
@@ -181,7 +179,7 @@ code > span.ot { color: #007020; }
 ## 
 ##  - ?cSEMResults
 ##  - str(&lt;object-name&gt;)
-##  - listviewer::jsondedit(&lt;object-name&gt;, mode = 'view')
+##  - listviewer::jsondedit(&lt;object-name&gt;, mode = &#39;view&#39;)
 ## 
 ## If you wish to access the list elements directly type e.g. 
 ## 
@@ -192,7 +190,7 @@ code > span.ot { color: #007020; }
 ##  - assess(&lt;object-name&gt;)
 ##  - summarize(&lt;object-name&gt;)
 ##  - verify(&lt;object-name&gt;)
-## ______________________________________________________________</code></pre>
+## ___________________________________________________________________________________________________________________</code></pre>
 <p>As indicated, the object <em>“results1”</em> is a list of class <em>cSEMResults</em> with the list elements <em>Estimates</em> and <em>Information</em>. Each sublist contains several elements which can be accessed separately:</p>
 <ol style="list-style-type: decimal">
 <li>Estimates</li>
@@ -227,12 +225,12 @@ code > span.ot { color: #007020; }
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">assess</span>(results1)</a></code></pre></div>
 <p>Next, if the user just wants a compact summary of the parameter estimators and of the most important information concerning the estimation, calling the <em>‘summarize’</em>-function of the <em>cSEM</em>-package will provide this.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">summarize</span>(results1)</a></code></pre></div>
-<pre><code>## ______________________________________________________________
-## -------------------------- Overview --------------------------
+<pre><code>## ___________________________________________________________________________________________________________________
+## ----------------------------------------------------- Overview ----------------------------------------------------
 ## 
 ##  Number of observations           = 250
 ##  Weight estimator                 = GSCA
-##  Type of indicator correlation    = Pearson
+##  Type of indicator correlation    = Bravais-Pearson
 ##  Path model estimator             = OLS
 ##  Type of path model               = Linear
 ##  Disattenuated                    = Yes
@@ -248,7 +246,7 @@ code > span.ot { color: #007020; }
 ##  SAT   Common factor  First order   
 ##  LOY   Common factor  First order   
 ## 
-## -------------------------- Estimates -------------------------
+## ---------------------------------------------------- Estimates ----------------------------------------------------
 ## 
 ## Estimated path coefficients:
 ## ============================
@@ -294,10 +292,10 @@ code > span.ot { color: #007020; }
 ##   LOY =~ loy2        0.6211          NA        NA        NA
 ##   LOY =~ loy3        0.8294          NA        NA        NA
 ##   LOY =~ loy4        0.6554          NA        NA        NA
-## ______________________________________________________________</code></pre>
+## ___________________________________________________________________________________________________________________</code></pre>
 <p>Finally, the <em>‘verify’</em>-function checks whether the calculated results are admissible. That is to say, it is verified that all results are consonant with the theory underlying the estimation. If the results based on an estimated model exhibit one of the following defects they are deemed inadmissible: - non-convergence - loadings and/or reliabilities larger than 1 - a construct VCV and/or a model-implied VCV matrix that is not positive (semi-)definite</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">verify</span>(results1)</a></code></pre></div>
-<pre><code>## ______________________________________________________________
+<pre><code>## ___________________________________________________________________________________________________________________
 ## 
 ## Verify admissibility:
 ## 
@@ -310,8 +308,8 @@ code > span.ot { color: #007020; }
 ##   2      ok        At least one standardized loadings &gt; 1        
 ##   3      ok        Construct VCV not positive semi-definite      
 ##   4      ok        Model-implied VCV not positive semi-definite  
-##   5      ok        At least one construct reliability &gt; 1        
-## ______________________________________________________________</code></pre>
+##   5      ok        At least one proxy reliability &gt; 1            
+## ___________________________________________________________________________________________________________________</code></pre>
 <p>The output shows that the estimation results of the example are admissible, every status is set to “ok”.</p>
 <p>Having carried out the estimation of all parameters and having established that they are all admissible, it is now question to interpret the results. The influence of (exogenous) constructs on (endogenous) constructs is described by the structural model and expressed by the estimated path coefficients (reliabilities):</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">results1<span class="op">$</span>Estimates<span class="op">$</span>Path_estimates</a></code></pre></div>
@@ -366,7 +364,7 @@ code > span.ot { color: #007020; }
 <a class="sourceLine" id="cb23-15" data-line-number="15"><span class="st">SAT  &lt;~ sat1  + sat2  + sat3  + sat4</span></a>
 <a class="sourceLine" id="cb23-16" data-line-number="16"><span class="st">VAL  &lt;~ val1  + val2  + val3  + val4</span></a>
 <a class="sourceLine" id="cb23-17" data-line-number="17"><span class="st">&quot;</span></a></code></pre></div>
-<p>Calling the <em>csem</em>-function in this case without setting the argument <em>‘.disattenuate’</em> equal to <em>FALSE</em> will produce the error already mentioned in the Section <a href="#approach">Approach</a>. For a model like the specified one, i.e. with at least one construct of composite type, estimation cannot be done with GSCA<sub>M</sub>:</p>
+<p>Calling the <em>csem</em>-function in this case without setting the argument <em>‘.disattenuate’</em> equal to <em>FALSE</em> will produce the error already mentioned in the <a href="#introduction">Introduction</a>. For a model like the specified one, i.e. with at least one construct of composite type, estimation cannot be done with GSCA<sub>M</sub>:</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">csem</span>(satisfaction, model2, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="st">&quot;TRUE&quot;</span>)</a></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">Error<span class="op">:</span><span class="st"> </span>The following error occured <span class="cf">in</span> the <span class="st">`</span><span class="dt">calculateWeightsGSCAm()</span><span class="st">`</span> <span class="cf">function</span><span class="op">:</span></a>
 <a class="sourceLine" id="cb25-2" data-line-number="2">GSCAm only applicable to pure common factor models. Use <span class="st">`</span><span class="dt">.disattenuate = FALSE</span><span class="st">`</span>. </a></code></pre></div>
@@ -378,12 +376,12 @@ code > span.ot { color: #007020; }
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">results4 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model2, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="st">&quot;FALSE&quot;</span>)</a></code></pre></div>
 <p>This leads to the following estimation results:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw">summarize</span>(results4)</a></code></pre></div>
-<pre><code>## ______________________________________________________________
-## -------------------------- Overview --------------------------
+<pre><code>## ___________________________________________________________________________________________________________________
+## ----------------------------------------------------- Overview ----------------------------------------------------
 ## 
 ##  Number of observations           = 250
 ##  Weight estimator                 = GSCA
-##  Type of indicator correlation    = Pearson
+##  Type of indicator correlation    = Bravais-Pearson
 ##  Path model estimator             = OLS
 ##  Type of path model               = Linear
 ##  Disattenuated                    = no
@@ -399,7 +397,7 @@ code > span.ot { color: #007020; }
 ##  SAT   Composite      First order   
 ##  LOY   Common factor  First order   
 ## 
-## -------------------------- Estimates -------------------------
+## ---------------------------------------------------- Estimates ----------------------------------------------------
 ## 
 ## Estimated path coefficients:
 ## ============================
@@ -468,12 +466,12 @@ code > span.ot { color: #007020; }
 ##   SAT &lt;~ sat2        0.3398          NA        NA        NA
 ##   SAT &lt;~ sat3        0.0341          NA        NA        NA
 ##   SAT &lt;~ sat4        0.1983          NA        NA        NA
-## ______________________________________________________________</code></pre>
+## ___________________________________________________________________________________________________________________</code></pre>
 <p>Due to the fact that there are some constructs that are of composite type, estimation must happen with GSCA. This might result in biased estimators (as in <a href="#example2">Example2</a> for the model where all constructs are of common factor type). However, the interpretation of estimated coefficients is done in the same way as outlined in <a href="#example1">Example1</a> keeping in mind that estimators might be biased. Note that the estimated (“composite”) loadings represent in this case the “true” correlations between indicators and constructs (not proxies!) for all composite type constructs.</p>
 </div>
 </div>
 <div id="methods" class="section level1">
-<h1>Methods</h1>
+<h1>Methods &amp; Formula</h1>
 <div id="the-gsca-gscam-model" class="section level3">
 <h3>The GSCA-/GSCA<sub>M</sub>-model</h3>
 <p>This section is based on <span class="citation">(Hwang, Takane, and Jung 2017, 1–4)</span> and <span class="citation">(Hwang and Takane 2014, chap. 2.1.-2.2)</span> where the GSCA-/GSCA<sub>M</sub>-model and the parameter estimation are outlined.</p>
@@ -481,25 +479,25 @@ code > span.ot { color: #007020; }
 <p>The estimation within GSCA (resp. GSCA<sub>M</sub>) begins with the standardization of the data and the specification of three submodels. The matrix of the standardized data is denoted by <span class="math inline">\(\mathbf{X}\)</span> and is of dimension <em>N</em> <em>x</em> <em>K</em> since there are <em>N</em> observations in <em>K</em> indicators. Additionally, there are <em>J</em> constructs (latent variables).</p>
 <p>As in PLS, the measurement model and the structural model are defined to specifiy the relations of latent variables on indicators resp. of the exogenous latent variables on the endogenous ones. In addition, the weighted relation model accounts for the influence of the indicators on the latent variables. Each submodel is expressed in a matrix equation leading to the following 3 equations:</p>
 <ol style="list-style-type: decimal">
-<li><p>Matrix equation of the measurement model: <span class="math display">\[ \mathbf{X} = \boldsymbol{\Gamma}  \boldsymbol{\Lambda} + \mathbf{U} \mathbf{D} + \mathbf{E_{1}} \]</span> In the measurement model, relationships between indicators and constructs are specified. The matrix <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is the <em>N</em> by <em>J</em> matrix which contains columnwise the constructs <span class="math inline">\(\gamma_{1}\)</span> up to <span class="math inline">\(\gamma_{J}\)</span>. The matrix <span class="math inline">\(\boldsymbol{\Lambda}\)</span> is the <em>J</em> by <em>K</em> matrix of (“construct”) loadings relating constructs and indicators. <span class="math inline">\(\mathbf{U}\)</span> denotes the <em>N</em> by <em>K</em> matrix of unique variables and <span class="math inline">\(\mathbf{D}\)</span> is the <em>K</em> by <em>K</em> diagonal matrix of unique loadings. Therefore, the matrix <span class="math inline">\(\boldsymbol{\Gamma} \boldsymbol{\Lambda}\)</span> represents the common parts of the indicators whereas <span class="math inline">\(\mathbf{U} \mathbf{D}\)</span> stands for the unique parts. Finally, <span class="math inline">\(\mathbf{E_{1}}\)</span> is the <em>N</em> by <em>K</em> matrix containing the residuals of indicators. It is assumed that <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is uncorrelated with <span class="math inline">\(\mathbf{U}\)</span>, i.e. <span class="math inline">\(\boldsymbol{\Gamma}' \mathbf{U}\)</span> = <span class="math inline">\(\mathbf{U}' \boldsymbol{\Gamma} = \mathbf{0}\)</span>, and that <span class="math inline">\(\mathbf{U}\)</span> is orthonormalized.</p></li>
+<li><p>Matrix equation of the measurement model: <span class="math display">\[ \mathbf{X} = \boldsymbol{\Gamma}  \boldsymbol{\Lambda} + \mathbf{U} \mathbf{D} + \mathbf{E_{1}} \]</span> In the measurement model, relationships between indicators and constructs are specified. The matrix <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is the <em>N</em> by <em>J</em> matrix which contains columnwise the constructs <span class="math inline">\(\gamma_{1}\)</span> up to <span class="math inline">\(\gamma_{J}\)</span>. The matrix <span class="math inline">\(\boldsymbol{\Lambda}\)</span> is the <em>J</em> by <em>K</em> matrix of (“construct”) loadings relating constructs and indicators. <span class="math inline">\(\mathbf{U}\)</span> denotes the <em>N</em> by <em>K</em> matrix of unique variables and <span class="math inline">\(\mathbf{D}\)</span> is the <em>K</em> by <em>K</em> diagonal matrix of unique loadings. Therefore, the matrix <span class="math inline">\(\boldsymbol{\Gamma} \boldsymbol{\Lambda}\)</span> represents the common parts of the indicators whereas <span class="math inline">\(\mathbf{U} \mathbf{D}\)</span> stands for the unique parts. Finally, <span class="math inline">\(\mathbf{E_{1}}\)</span> is the <em>N</em> by <em>K</em> matrix containing the residuals of indicators. It is assumed that <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is uncorrelated with <span class="math inline">\(\mathbf{U}\)</span>, i.e. <span class="math inline">\(\boldsymbol{\Gamma}&#39; \mathbf{U}\)</span> = <span class="math inline">\(\mathbf{U}&#39; \boldsymbol{\Gamma} = \mathbf{0}\)</span>, and that <span class="math inline">\(\mathbf{U}\)</span> is orthonormalized.</p></li>
 <li><p>Matrix equation of the structural model:</p></li>
 </ol>
-<p><span class="math display">\[ \boldsymbol{\Gamma} = \boldsymbol{\Gamma}  \mathbf{B'} + \mathbf{E_{2}} \]</span> In the structural model, relationships between constructs are specified. The matrix <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is defined as in the measurement model, the matrix <span class="math inline">\(\mathbf{B}\)</span> is the <em>J</em> <em>x</em> <em>J</em> matrix of path coefficients and <span class="math inline">\(\mathbf{E_{2}}\)</span> is the <em>N</em> by <em>J</em> matrix of the residuals for the constructs.</p>
+<p><span class="math display">\[ \boldsymbol{\Gamma} = \boldsymbol{\Gamma}  \mathbf{B&#39;} + \mathbf{E_{2}} \]</span> In the structural model, relationships between constructs are specified. The matrix <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is defined as in the measurement model, the matrix <span class="math inline">\(\mathbf{B}\)</span> is the <em>J</em> <em>x</em> <em>J</em> matrix of path coefficients and <span class="math inline">\(\mathbf{E_{2}}\)</span> is the <em>N</em> by <em>J</em> matrix of the residuals for the constructs.</p>
 <ol start="3" style="list-style-type: decimal">
 <li>Matrix equation of the weighted relation model:</li>
 </ol>
-<p><span class="math display">\[ \boldsymbol{\Gamma} = ( \mathbf{X} - \mathbf{U} \mathbf{D}) \mathbf{W'} \]</span> In the weighted relation model, constructs (in the matrix <span class="math inline">\(\boldsymbol{\Gamma}\)</span>) are expressed as an exact linear combination (composite) of the corresponding indicators (matrix <span class="math inline">\(\mathbf{X}\)</span>) with their unique parts (matrix <span class="math inline">\(\mathbf{UD}\)</span>) removed. The <em>J</em> by <em>K</em> matrix <span class="math inline">\(\mathbf{W}\)</span> contains the weights of the indicators in the linear combinations.</p>
+<p><span class="math display">\[ \boldsymbol{\Gamma} = ( \mathbf{X} - \mathbf{U} \mathbf{D}) \mathbf{W&#39;} \]</span> In the weighted relation model, constructs (in the matrix <span class="math inline">\(\boldsymbol{\Gamma}\)</span>) are expressed as an exact linear combination (composite) of the corresponding indicators (matrix <span class="math inline">\(\mathbf{X}\)</span>) with their unique parts (matrix <span class="math inline">\(\mathbf{UD}\)</span>) removed. The <em>J</em> by <em>K</em> matrix <span class="math inline">\(\mathbf{W}\)</span> contains the weights of the indicators in the linear combinations.</p>
 <p>Note that the authors in <span class="citation">Hwang and Takane (2004)</span>, <span class="citation">Hwang et al. (2010)</span>, <span class="citation">Hwang and Takane (2014)</span> and <span class="citation">Hwang, Takane, and Jung (2017)</span> use a completely different notation compared to the standard LISREL/Bollen-type notation. For example, the total number of indicators is there denoted by <em>J</em> and the total number of constructs by <em>P</em>. Moreover, the matrix of indicator values, i.e. the data matrix, is called <strong>Z</strong> in the literature. The implementation of GSCA and GSCA<sub>m</sub> in the <em>cSEM</em>-package uses the LISREL notation.</p>
 <p>Setting the matrix <span class="math inline">\(\mathbf{U}\)</span> equal to the zero matrix of the corresponding dimension leads to the equations of the three GSCA submodels. Thus, the difference of both approaches is that in GSCA indicators do not have a unique part and are only modeled by their constructs and some error terms. However, including the unique term makes it possible to account for errors in observations of indicators which leads to unbiased paramater estimators. That is why, GSCA<sub>m</sub> is the consistent alternative to GSCA.</p>
 <p>In the next step, the three submodels are combined to the GSCA (resp. GSCA<sub>M</sub>)-model expressed by one (unified) model equation:</p>
-<p><span class="math display">\[ [\mathbf{Z}, \boldsymbol{\Gamma}] =  \boldsymbol{\Gamma} [\boldsymbol{\Lambda}', \mathbf{B}'] + [\mathbf{UD},\mathbf{0}] + [\mathbf{E_{1}}, \mathbf{E_{2}}] \]</span> In short notation, this equation becomes by renaming: <span class="math display">\[ \boldsymbol{\Psi} = \boldsymbol{\Gamma} \mathbf{A} + \mathbf{S} + \mathbf{E} \]</span> This is the GSCA<sub>M</sub>-model. Since <span class="math inline">\(\mathbf{S} = \mathbf{0}\)</span>, iff <span class="math inline">\(\mathbf{U} = \mathbf{0}\)</span> the GSCA-model is:</p>
+<p><span class="math display">\[ [\mathbf{Z}, \boldsymbol{\Gamma}] =  \boldsymbol{\Gamma} [\boldsymbol{\Lambda}&#39;, \mathbf{B}&#39;] + [\mathbf{UD},\mathbf{0}] + [\mathbf{E_{1}}, \mathbf{E_{2}}] \]</span> In short notation, this equation becomes by renaming: <span class="math display">\[ \boldsymbol{\Psi} = \boldsymbol{\Gamma} \mathbf{A} + \mathbf{S} + \mathbf{E} \]</span> This is the GSCA<sub>M</sub>-model. Since <span class="math inline">\(\mathbf{S} = \mathbf{0}\)</span>, iff <span class="math inline">\(\mathbf{U} = \mathbf{0}\)</span> the GSCA-model is:</p>
 <p><span class="math display">\[ \boldsymbol{\Psi} = \boldsymbol{\Gamma} \mathbf{A} + \mathbf{E} \]</span></p>
 </div>
 <div id="parameter-estimation" class="section level3">
 <h3>Parameter estimation</h3>
 <p>Parameter estimation within GSCA or GSCA<sub>M</sub> is based on minimizing a global optimization criterion <span class="math inline">\(\phi\)</span> via least squares. This optimization criterion is a direct consequence of the model equation:</p>
-<p><span class="math display">\[ \phi = \text{SS}(\mathbf{E}) = \text{SS}(\boldsymbol{\Psi} - \boldsymbol{\Gamma} \mathbf{A} - \mathbf{S}) \]</span> In this equation <span class="math inline">\(&quot;\text{SS}&quot;\)</span> stands for the sum of squares of the related matrix. For any matrix <span class="math inline">\(X\)</span>, it holds: <span class="math display">\[\text{SS}(X) = \text{trace}(X'X)\]</span></p>
-<p>The minimization happens under the constraint that <span class="math inline">\(\gamma_{j}' \gamma_{j} = 1\)</span> <span class="math inline">\((j=1,...,J)\)</span>, <span class="math inline">\(\mathbf{U}' \boldsymbol{\Gamma} = \mathbf{0}\)</span> and <span class="math inline">\(\mathbf{U}' \mathbf{U} = \boldsymbol{I_{J}}\)</span> where <span class="math inline">\(\boldsymbol{I_{J}}\)</span> is the identity matrix of dimension <em>J</em> (see <span class="citation">Hwang, Takane, and Jung (2017)</span>, p.3). Minimization of <span class="math inline">\(\phi\)</span> is done via an iterative algorithm: the Alternating Least Squares Algorithm. To this end, the whole set of parameters is divided into subsets (<span class="math inline">\(\boldsymbol{\Gamma}, \mathbf{A}, \mathbf{U}, \mathbf{D}\)</span> for GSCA<sub>M</sub>).</p>
+<p><span class="math display">\[ \phi = \text{SS}(\mathbf{E}) = \text{SS}(\boldsymbol{\Psi} - \boldsymbol{\Gamma} \mathbf{A} - \mathbf{S}) \]</span> In this equation <span class="math inline">\(&quot;\text{SS}&quot;\)</span> stands for the sum of squares of the related matrix. For any matrix <span class="math inline">\(X\)</span>, it holds: <span class="math display">\[\text{SS}(X) = \text{trace}(X&#39;X)\]</span></p>
+<p>The minimization happens under the constraint that <span class="math inline">\(\gamma_{j}&#39; \gamma_{j} = 1\)</span> <span class="math inline">\((j=1,...,J)\)</span>, <span class="math inline">\(\mathbf{U}&#39; \boldsymbol{\Gamma} = \mathbf{0}\)</span> and <span class="math inline">\(\mathbf{U}&#39; \mathbf{U} = \boldsymbol{I_{J}}\)</span> where <span class="math inline">\(\boldsymbol{I_{J}}\)</span> is the identity matrix of dimension <em>J</em> (see <span class="citation">Hwang, Takane, and Jung (2017)</span>, p.3). Minimization of <span class="math inline">\(\phi\)</span> is done via an iterative algorithm: the Alternating Least Squares Algorithm. To this end, the whole set of parameters is divided into subsets (<span class="math inline">\(\boldsymbol{\Gamma}, \mathbf{A}, \mathbf{U}, \mathbf{D}\)</span> for GSCA<sub>M</sub>).</p>
 <p>The ALS algorithm now iteratively updates one of these sets of parameters in a least squares sense while keeping all other parameters fixed. In every step, this updating consists essentially in regressions of some variables on the others. By this, optimal parameter estimates are calculated and the value of the optimization criterion <span class="math inline">\(\phi\)</span> decreases. This step is repeated (alternating in every step the set of parameters which is updated) until convergence is reached. Convergence means that the decrease of <span class="math inline">\(\phi\)</span> falls below an (initially defined) threshold <em>‘.tolerance’</em> (default value: <span class="math inline">\(10^{-5}\)</span>) or that the maximum number of iterations <em>‘.iter_max’</em> (default value: 100) was carried out. In fact, the latter means that the algorithm did not converge and the latest estimators were returned. Both arguments, <em>‘.tolerance’</em> as well as <em>‘.iter_max’</em>, can be set to any other value by the user when calling the <em>csem()</em>-function.</p>
 <p>For more information about the theoretical background of parameter estimation in GSCA (or GSCA<sub>M</sub>) in general and especially the Alternating Least Squares Algorithm see for example <span class="citation">Hwang and Takane (2004)</span> and <span class="citation">Hwang, Takane, and Jung (2017)</span>.</p>
 </div>

@@ -15,9 +15,11 @@
 \usage{
 infer(
  .resample_object   = NULL,
- .alpha             = 0.05
+ .alpha             = 0.05,
  .bias_corrected    = TRUE,
- .quantity          = ("all")
+ .quantity          = c("all", "mean", "sd", "bias", "CI_standard_z", 
+                        "CI_standard_t", "CI_percentile", "CI_basic", 
+                        "CI_bc", "CI_bca", "CI_t_intervall")
 )
 
 MeanResample(.first_resample)

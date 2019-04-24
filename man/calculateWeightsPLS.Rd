@@ -10,7 +10,7 @@ calculateWeightsPLS(
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
   .iter_max                    = args_default()$.iter_max,
-  .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model
+  .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
   .starting_values             = args_default()$.starting_values,

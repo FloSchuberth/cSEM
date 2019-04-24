@@ -95,6 +95,12 @@ be more convenient to use csem() instead." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/GSCA.html">GSCA and GSCA&lt;sub&gt;M&lt;/sub&gt;</a>
+    </li>
+    <li>
+      <a href="../articles/PLS.html">PLS-PM</a>
+    </li>
+    <li>
       <a href="../articles/Using-assess.html">Postestimation: Assessing a model</a>
     </li>
     <li>
@@ -149,29 +155,26 @@ be more convenient to use <code><a href='csem.html'>csem()</a></code> instead.</
     </div>
 
     <pre class="usage"><span class='fu'>foreman</span>(
-  <span class='kw'>.data</span>                        <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.model</span>                       <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.approach_cor_robust</span>         <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"mcd"</span>, <span class='st'>"spearman"</span>),
-  <span class='kw'>.approach_nl</span>                 <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"sequential"</span>, <span class='st'>"replace"</span>),
-  <span class='kw'>.approach_paths</span>              <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"OLS"</span>, <span class='st'>"2SLS"</span>),
-  <span class='kw'>.approach_weights</span>            <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"PLS-PM"</span>, <span class='st'>"SUMCORR"</span>, <span class='st'>"MAXVAR"</span>, <span class='st'>"SSQCORR"</span>, <span class='st'>"MINVAR"</span>, <span class='st'>"GENVAR"</span>,
-                                   <span class='st'>"GSCA"</span>, <span class='st'>"unit"</span>, <span class='st'>"bartlett"</span>, <span class='st'>"regression"</span>),
-  <span class='kw'>.conv_criterion</span>              <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"diff_absolute"</span>, <span class='st'>"diff_squared"</span>, <span class='st'>"diff_relative"</span>),
-  <span class='kw'>.disattenuate</span>                <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>.dominant_indicators</span>         <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.estimate_structural</span>         <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>.id</span>                          <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.iter_max</span>                    <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>.normality</span>                   <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>.PLS_approach_cf</span>             <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"dist_squared_euclid"</span>, <span class='st'>"dist_euclid_weighted"</span>,
-                                   <span class='st'>"fisher_transformed"</span>, <span class='st'>"mean_arithmetic"</span>,
-                                   <span class='st'>"mean_geometric"</span>, <span class='st'>"mean_harmonic"</span>,
-                                   <span class='st'>"geo_of_harmonic"</span>),
-  <span class='kw'>.PLS_ignore_structural_model</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>.PLS_modes</span>                   <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.PLS_weight_scheme_inner</span>     <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"path"</span>, <span class='st'>"centroid"</span>, <span class='st'>"factorial"</span>),
-  <span class='kw'>.reliabilities</span>               <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.tolerance</span>                   <span class='kw'>=</span> <span class='fl'>1e-05</span>
+  <span class='kw'>.data</span>                        <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.data</span>,
+  <span class='kw'>.model</span>                       <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.model</span>,
+  <span class='kw'>.approach_cor_robust</span>         <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.approach_cor_robust</span>,
+  <span class='kw'>.approach_nl</span>                 <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.approach_nl</span>,
+  <span class='kw'>.approach_paths</span>              <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.approach_paths</span>,
+  <span class='kw'>.approach_weights</span>            <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.approach_weights</span>,
+  <span class='kw'>.conv_criterion</span>              <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.conv_criterion</span>,
+  <span class='kw'>.disattenuate</span>                <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.disattenuate</span>,
+  <span class='kw'>.dominant_indicators</span>         <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.dominant_indicators</span>,
+  <span class='kw'>.estimate_structural</span>         <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.estimate_structural</span>,
+  <span class='kw'>.id</span>                          <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.id</span>,
+  <span class='kw'>.iter_max</span>                    <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.iter_max</span>,
+  <span class='kw'>.normality</span>                   <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.normality</span>,
+  <span class='kw'>.PLS_approach_cf</span>             <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.PLS_approach_cf</span>,
+  <span class='kw'>.PLS_ignore_structural_model</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.PLS_ignore_structural_model</span>,
+  <span class='kw'>.PLS_modes</span>                   <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.PLS_modes</span>,
+  <span class='kw'>.PLS_weight_scheme_inner</span>     <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.PLS_weight_scheme_inner</span>,
+  <span class='kw'>.reliabilities</span>               <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.reliabilities</span>,
+  <span class='kw'>.starting_values</span>             <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.starting_values</span>,
+  <span class='kw'>.tolerance</span>                   <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.tolerance</span>
   )</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -309,14 +312,14 @@ reliabilities are estimated by <code><a href='csem.html'>csem()</a></code>. Curr
 <code>.approach_weights = "PLS-PM"</code>.</p></td>
     </tr>
     <tr>
-      <th>.tolerance</th>
-      <td><p>Double. The tolerance criterion for convergence.
-Defaults to <code>1e-05</code>.</p></td>
-    </tr>
-    <tr>
       <th>.starting_values</th>
       <td><p>list of named vectors containig the starting values.
 Defaults to "<em>NULL</em>".</p></td>
+    </tr>
+    <tr>
+      <th>.tolerance</th>
+      <td><p>Double. The tolerance criterion for convergence.
+Defaults to <code>1e-05</code>.</p></td>
     </tr>
     </table>
     

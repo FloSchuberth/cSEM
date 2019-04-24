@@ -51,13 +51,14 @@
 #' See [?future_lapply][future.apply::future_lapply] for details.
 #' 
 #' @usage resampleData(
-#'  .object          = NULL,
-#'  .resample_method = c("bootstrap", "jackknife", "permutation", "cross-validation"),
-#'  .cv_folds        = 10,  
-#'  .data            = NULL,
-#'  .id              = NULL,
-#'  .R               = 499,
-#'  .seed            = sample(.Random.seed, 1)
+#'  .object          = args_default()$.object,
+#'  .resample_method = c("bootstrap", "jackknife", "permutation", 
+#'                       "cross-validation"),
+#'  .cv_folds        = args_default()$.cv_folds,
+#'  .data            = args_default()$.data,
+#'  .id              = args_default()$.id,
+#'  .R               = args_default()$.R,
+#'  .seed            = args_default()$.seed
 #' )
 #'
 #' @param .data A `data.frame`, a `matrix` or a `list` of data of either type. 
@@ -205,7 +206,8 @@
 #'
 resampleData <- function(
   .object          = args_default()$.object,
-  .resample_method = c("bootstrap", "jackknife", "permutation", "cross-validation"),
+  .resample_method = c("bootstrap", "jackknife", "permutation", 
+                       "cross-validation"),
   .cv_folds        = args_default()$.cv_folds,
   .data            = args_default()$.data,
   .id              = args_default()$.id,
@@ -472,8 +474,8 @@ resampleData <- function(
 #'  .handle_inadmissibles  = c("drop", "ignore", "replace"),
 #'  .user_funs             = NULL,
 #'  .eval_plan             = c("sequential", "multiprocess"),
-#'  .seed                  = sample(.Random.seed, 1),
-#'  .sign_change_option    = args_default()$.sign_change_option
+#'  .seed                  = NULL,
+#'  .sign_change_option    = "no"
 #' )
 #'
 #' @inheritParams csem_arguments
@@ -1476,9 +1478,11 @@ resamplecSEMResultsCore <- function(
 #' 
 #' @usage infer(
 #'  .resample_object   = NULL,
-#'  .alpha             = 0.05
+#'  .alpha             = 0.05,
 #'  .bias_corrected    = TRUE,
-#'  .quantity          = ("all")
+#'  .quantity          = c("all", "mean", "sd", "bias", "CI_standard_z", 
+#'                         "CI_standard_t", "CI_percentile", "CI_basic", 
+#'                         "CI_bc", "CI_bca", "CI_t_intervall")
 #' )
 #'
 #' @inheritParams csem_arguments

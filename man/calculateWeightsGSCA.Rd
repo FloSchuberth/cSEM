@@ -10,6 +10,7 @@ calculateWeightsGSCA(
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
   .iter_max                    = args_default()$.iter_max,
+  .starting_values             = args_default()$.starting_values,
   .tolerance                   = args_default()$.tolerance
    )
 }
@@ -29,11 +30,11 @@ If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights 
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
-\item{.tolerance}{Double. The tolerance criterion for convergence.
-Defaults to \code{1e-05}.}
-
 \item{.starting_values}{list of named vectors containig the starting values.
 Defaults to "\emph{NULL}".}
+
+\item{.tolerance}{Double. The tolerance criterion for convergence.
+Defaults to \code{1e-05}.}
 }
 \value{
 A list with the elements

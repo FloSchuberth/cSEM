@@ -6,7 +6,8 @@
 \usage{
 calculateWeightsUnit(
  .S                 = args_default()$.S,
- .csem_model        = args_default()$.csem_model
+ .csem_model        = args_default()$.csem_model,
+ .starting_values   = args_default()$.starting_values
   )
 }
 \arguments{

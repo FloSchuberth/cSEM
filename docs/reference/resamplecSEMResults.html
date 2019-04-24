@@ -95,6 +95,12 @@ classes cSEMResults_default, cSEMResults_multi and cSEMResults_2ndorder." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/GSCA.html">GSCA and GSCA&lt;sub&gt;M&lt;/sub&gt;</a>
+    </li>
+    <li>
+      <a href="../articles/PLS.html">PLS-PM</a>
+    </li>
+    <li>
       <a href="../articles/Using-assess.html">Postestimation: Assessing a model</a>
     </li>
     <li>
@@ -157,8 +163,8 @@ classes <code>cSEMResults_default</code>, <code>cSEMResults_multi</code> and <co
  .handle_inadmissibles  = c("drop", "ignore", "replace"),
  .user_funs             = NULL,
  .eval_plan             = c("sequential", "multiprocess"),
- .seed                  = sample(.Random.seed, 1),
- .sign_change_option    = args_default()$.sign_change_option
+ .seed                  = NULL,
+ .sign_change_option    = "no"
 )</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>

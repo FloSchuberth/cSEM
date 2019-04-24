@@ -6,13 +6,13 @@
 #' reference distribtuion. 
 #' 
 #' @usage testMGD(
-#'  .object             = args_default()$.object,
-#'  .alpha              = args_default()$.alpha,
-#'  .drop_inadmissibles = args_default()$.drop_inadmissibles,
-#'  .R                  = args_default()$.R,
-#'  .saturated          = args_default()$.saturated,
-#'  .type_vcv           = args_default()$.type_vcv
-#'  .verbose            = args_default()$.verbose
+#'  .object               = args_default()$.object,
+#'  .alpha                = args_default()$.alpha,
+#'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+#'  .R                    = args_default()$.R,
+#'  .saturated            = args_default()$.saturated,
+#'  .type_vcv             = args_default()$.type_vcv,
+#'  .verbose              = args_default()$.verbose
 #'  ) 
 #' 
 #' @inheritParams csem_arguments

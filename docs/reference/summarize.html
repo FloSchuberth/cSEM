@@ -90,6 +90,12 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/GSCA.html">GSCA and GSCA&lt;sub&gt;M&lt;/sub&gt;</a>
+    </li>
+    <li>
+      <a href="../articles/PLS.html">PLS-PM</a>
+    </li>
+    <li>
       <a href="../articles/Using-assess.html">Postestimation: Assessing a model</a>
     </li>
     <li>
@@ -138,7 +144,12 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>summarize</span>(<span class='no'>.object</span>)
+    <pre class="usage"><span class='fu'>summarize</span>(
+ <span class='kw'>.object</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+ <span class='kw'>.alpha</span>  <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.alpha</span>,
+ <span class='kw'>.ci</span>     <span class='kw'>=</span> <span class='kw'>NULL</span>,
+ <span class='no'>...</span>
+ )
 
 <span class='co'># S3 method for cSEMResults_default</span>
 <span class='fu'>summarize</span>(<span class='kw'>.object</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,

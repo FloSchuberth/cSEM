@@ -8,31 +8,26 @@
 #' be more convenient to use [csem()] instead.
 #' 
 #' @usage foreman(
-#'   .data                        = NULL,
-#'   .model                       = NULL,
-#'   .approach_cor_robust         = c("none", "mcd", "spearman"),
-#'   .approach_nl                 = c("sequential", "replace"),
-#'   .approach_paths              = c("OLS", "2SLS"),
-#'   .approach_weights            = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR",
-#'                                    "MINVAR", "GENVAR", "GSCA", "PCA",
-#'                                    "unit", "bartlett", "regression"),
-#'   .conv_criterion              = c("diff_absolute", "diff_squared", "diff_relative"),
-#'   .disattenuate                = TRUE,
-#'   .dominant_indicators         = NULL,
-#'   .estimate_structural         = TRUE,
-#'   .id                          = NULL,
-#'   .iter_max                    = 100,
-#'   .normality                   = TRUE,
-#'   .PLS_approach_cf             = c("dist_squared_euclid", "dist_euclid_weighted", 
-#'                                    "fisher_transformed", "mean_arithmetic",
-#'                                    "mean_geometric", "mean_harmonic",
-#'                                    "geo_of_harmonic"),
-#'   .PLS_ignore_structural_model = FALSE,
-#'   .PLS_modes                   = NULL,
-#'   .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
-#'   .reliabilities               = NULL,
-#'   .starting_values             = NULL,
-#'   .tolerance                   = 1e-05
+#'   .data                        = args_default()$.data,
+#'   .model                       = args_default()$.model,
+#'   .approach_cor_robust         = args_default()$.approach_cor_robust,
+#'   .approach_nl                 = args_default()$.approach_nl,
+#'   .approach_paths              = args_default()$.approach_paths,
+#'   .approach_weights            = args_default()$.approach_weights,
+#'   .conv_criterion              = args_default()$.conv_criterion,
+#'   .disattenuate                = args_default()$.disattenuate,
+#'   .dominant_indicators         = args_default()$.dominant_indicators,
+#'   .estimate_structural         = args_default()$.estimate_structural,
+#'   .id                          = args_default()$.id,
+#'   .iter_max                    = args_default()$.iter_max,
+#'   .normality                   = args_default()$.normality,
+#'   .PLS_approach_cf             = args_default()$.PLS_approach_cf,
+#'   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
+#'   .PLS_modes                   = args_default()$.PLS_modes,
+#'   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
+#'   .reliabilities               = args_default()$.reliabilities,
+#'   .starting_values             = args_default()$.starting_values,
+#'   .tolerance                   = args_default()$.tolerance
 #'   )
 #'
 #' @inheritParams csem_arguments
@@ -63,8 +58,8 @@ foreman <- function(
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
   .reliabilities               = args_default()$.reliabilities,
-  .tolerance                   = args_default()$.tolerance,
-  .starting_values             = args_default()$.starting_values
+  .starting_values             = args_default()$.starting_values,
+  .tolerance                   = args_default()$.tolerance
   ) {
   args_used <- c(as.list(environment(), all.names = TRUE))
   

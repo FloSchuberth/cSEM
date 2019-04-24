@@ -119,7 +119,7 @@ calculateInnerWeightsPLS <- function(
 #' Calculates outer weights using default or user supplied modes.
 #'
 #' @usage calculateOuterWeightsPLS(
-#'    .data   = args_default()$.data  
+#'    .data   = args_default()$.data,  
 #'    .S      = args_default()$.S,
 #'    .W      = args_default()$.W,
 #'    .E      = args_default()$.E,

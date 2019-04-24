@@ -4,7 +4,11 @@
 \alias{convertModel}
 \title{Convert second order cSEMModel}
 \usage{
-convertModel(.csem_model)
+convertModel(
+ .csem_model        = NULL, 
+ .approach_2ndorder = "3stage",
+ .stage             = "first"
+ )
 }
 \arguments{
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}

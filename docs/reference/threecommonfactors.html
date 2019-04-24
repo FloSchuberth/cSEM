@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Parse lavaan model — parseModel • cSEM</title>
+<title>Threecommonfactors — threecommonfactors • cSEM</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -31,10 +31,12 @@
 
 
 
-<meta property="og:title" content="Parse lavaan model — parseModel" />
+<meta property="og:title" content="Threecommonfactors — threecommonfactors" />
 
-<meta property="og:description" content="Turns a model written in lavaan model syntax into a
-cSEMModel list." />
+<meta property="og:description" content="A dataset containing 500 standardized observations on 9 indicator generated from a
+population model with three concepts modeled as common factors. See
+the cSEM website for
+details." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -134,124 +136,38 @@ cSEMModel list." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Parse lavaan model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/M-E-Rademaker/cSEM/blob/master/R/csem_model.R'><code>R/csem_model.R</code></a></small>
-    <div class="hidden name"><code>parseModel.Rd</code></div>
+    <h1>Threecommonfactors</h1>
+    <small class="dont-index">Source: <a href='https://github.com/M-E-Rademaker/cSEM/blob/master/R/zz_datasets.R'><code>R/zz_datasets.R</code></a></small>
+    <div class="hidden name"><code>threecommonfactors.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Turns a model written in <a href='https://rdrr.io/pkg/lavaan/man/model.syntax.html'>lavaan model syntax</a> into a
-<a href='csem_model.html'>cSEMModel</a> list.</p>
+    <p>A dataset containing 500 standardized observations on 9 indicator generated from a
+population model with three concepts modeled as common factors. See
+the <a href='https://m-e-rademaker.github.io/cSEM/index.html'>cSEM website</a> for
+details.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>parseModel</span>(<span class='no'>.model</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>.model</th>
-      <td><p>A model in <a href='https://rdrr.io/pkg/lavaan/man/model.syntax.html'>lavaan model syntax</a>
-or a <a href='csem_model.html'>cSEMModel</a> list.</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <pre class="usage"><span class='no'>threecommonfactors</span></pre>
+        
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>An object of class <code>cSEMModel</code> is a standardized list containing the following
-components. J stands for the number of constructs and K for the number
-of indicators.</p><dl class='dl-horizontal'>
-<dt><code>$structural</code></dt><dd><p>A matrix mimicking the structural relationship between
-constructs. If constructs are only linearly related, <code>structural</code> is
-of dimension (J x J) with row- and column names equal to the construct
-names. If the structural model contains nonlinear relationships
-<code>structural</code> is (J x (J + J*)) where J* is the number of
-nonlinear terms. Rows are ordered such that exogenous constructs are always
-first, followed by constructs that only depend on exogenous constructs and/or
-previously ordered constructs.</p></dd>
-<dt><code>$measurement</code></dt><dd><p>A (J x K) matrix mimicking the measurement relationship
-between constructs and their related indicators. Rows are in the same
-order as the matrix <code>$structural</code> with row names equal to
-the construct names. The order of the columns is such that <code>$measurement</code>
-forms a block diagonal matrix.</p></dd>
-<dt><code>$error_cor</code></dt><dd><p>A (K x K) matrix mimicking the measurement error
-correlation relationship. The row and column order is identical to <code>$measurement</code>.</p></dd>
-<dt><code>$construct_type</code></dt><dd><p>A named vector containing the names of each construct
-and their respective type ("Common factor" or "Composite").</p></dd>
-<dt><code>$construct_order</code></dt><dd><p>A named vector containing the names of each construct
-and their respective order ("First order" or "Second order").</p></dd>
-<dt><code>$model_type</code></dt><dd><p>The type of model ("Linear" or "Nonlinear").</p></dd>
-</dl><p>Note: it is possible to supply an incomplete <code>cSEMModel</code> list
-to all functions that require <code>.csem_model</code> as a mandatory argument. Currently,
-only the structural and the measurement matrix are required.
-However, specifying an incomplete <code>cSEMModel</code> list may lead to unexpected behavior
-and errors. Use with care.</p>
+    <p>A matrix with 500 rows and 9 variables:</p><dl class='dl-horizontal'>
+<dt>y11-y13</dt><dd><p>indicators attachted to the first common factor</p></dd>
+<dt>y21-y23</dt><dd><p>indicators attachted to the second common factor</p></dd>
+<dt>y21-y23</dt><dd><p>indicators attachted to the third common factor</p></dd>
+</dl>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='st'>'
-# Structural model
-y1 ~ y2 + y3
-
-# Measurement model
-y1 =~ x1 + x2 + x3
-y2 =~ x4 + x5
-y3 =~ x6 + x7
-
-# Error correlation
-x1 ~~ x2
-'</span>
-
-(<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'>parseModel</span>(<span class='no'>model</span>))</div><div class='output co'>#&gt; $structural
-#&gt;    y2 y3 y1
-#&gt; y2  0  0  0
-#&gt; y3  0  0  0
-#&gt; y1  1  1  0
-#&gt; 
-#&gt; $measurement
-#&gt;    x4 x5 x6 x7 x1 x2 x3
-#&gt; y2  1  1  0  0  0  0  0
-#&gt; y3  0  0  1  1  0  0  0
-#&gt; y1  0  0  0  0  1  1  1
-#&gt; 
-#&gt; $error_cor
-#&gt;    x4 x5 x6 x7 x1 x2 x3
-#&gt; x4  0  0  0  0  0  0  0
-#&gt; x5  0  0  0  0  0  0  0
-#&gt; x6  0  0  0  0  0  0  0
-#&gt; x7  0  0  0  0  0  0  0
-#&gt; x1  0  0  0  0  0  1  0
-#&gt; x2  0  0  0  0  1  0  0
-#&gt; x3  0  0  0  0  0  0  0
-#&gt; 
-#&gt; $construct_type
-#&gt;              y2              y3              y1 
-#&gt; "Common factor" "Common factor" "Common factor" 
-#&gt; 
-#&gt; $construct_order
-#&gt;            y2            y3            y1 
-#&gt; "First order" "First order" "First order" 
-#&gt; 
-#&gt; $model_type
-#&gt; [1] "Linear"
-#&gt; 
-#&gt; attr(,"class")
-#&gt; [1] "cSEMModel"</div><div class='input'>
-<span class='co'># If the model is already a cSEMModel object, the model is returned as is.</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(<span class='no'>m</span>, <span class='fu'>parseModel</span>(<span class='no'>m</span>)) <span class='co'># TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+      <li><a href="#format">Format</a></li>
+          </ul>
 
   </div>
 </div>

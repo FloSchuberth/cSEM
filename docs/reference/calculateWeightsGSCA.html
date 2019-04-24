@@ -33,7 +33,14 @@
 
 <meta property="og:title" content="Calculate weights using GSCA — calculateWeightsGSCA" />
 
-<meta property="og:description" content="Calculates weights..." />
+<meta property="og:description" content="Calculates weights of a structural model using the GSCA-procedure. This approach
+is an alternative to PLS in structural equation modeling with composites.
+The first version of this approach was presented in Hwang and Takane (2004)
+.
+Since then, there had been several advancements, such that the latest version
+of GSCA can been found in Hwang and Takane (2014)
+. This is also
+the GSCA version the implementation in this package relies on." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -90,6 +97,12 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/GSCA.html">GSCA and GSCA&lt;sub&gt;M&lt;/sub&gt;</a>
+    </li>
+    <li>
+      <a href="../articles/PLS.html">PLS-PM</a>
+    </li>
+    <li>
       <a href="../articles/Using-assess.html">Postestimation: Assessing a model</a>
     </li>
     <li>
@@ -134,11 +147,26 @@
 
     <div class="ref-description">
     
-    <p>Calculates weights...</p>
+    <p>Calculates weights of a structural model using the GSCA-procedure. This approach
+is an alternative to PLS in structural equation modeling with composites.
+The first version of this approach was presented in Hwang and Takane (2004)
+.
+Since then, there had been several advancements, such that the latest version
+of GSCA can been found in Hwang and Takane (2014)
+. This is also
+the GSCA version the implementation in this package relies on.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>calculateWeightsGSCA</span>(<span class='no'>.data</span>, <span class='no'>.model</span>)</pre>
+    <pre class="usage"><span class='fu'>calculateWeightsGSCA</span>(
+  <span class='kw'>.X</span>                           <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.X</span>,
+  <span class='kw'>.S</span>                           <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.S</span>,
+  <span class='kw'>.csem_model</span>                  <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.csem_model</span>,
+  <span class='kw'>.conv_criterion</span>              <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.conv_criterion</span>,
+  <span class='kw'>.iter_max</span>                    <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.iter_max</span>,
+  <span class='kw'>.starting_values</span>             <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.starting_values</span>,
+  <span class='kw'>.tolerance</span>                   <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.tolerance</span>
+   )</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -169,14 +197,14 @@ If the algorithm exceeds the specified number, weights of iteration step
 <code>.iter_max - 1</code>  will be returned with a warning. Defaults to <code>100</code>.</p></td>
     </tr>
     <tr>
-      <th>.tolerance</th>
-      <td><p>Double. The tolerance criterion for convergence.
-Defaults to <code>1e-05</code>.</p></td>
-    </tr>
-    <tr>
       <th>.starting_values</th>
       <td><p>list of named vectors containig the starting values.
 Defaults to "<em>NULL</em>".</p></td>
+    </tr>
+    <tr>
+      <th>.tolerance</th>
+      <td><p>Double. The tolerance criterion for convergence.
+Defaults to <code>1e-05</code>.</p></td>
     </tr>
     </table>
     
@@ -185,9 +213,10 @@ Defaults to "<em>NULL</em>".</p></td>
     <p>A list with the elements</p><dl class='dl-horizontal'>
 <dt><code>$W</code></dt><dd><p>A (J x K) matrix of estimated weights.</p></dd>
 <dt><code>$E</code></dt><dd><p>A (J x J) matrix of inner weights.</p></dd>
-<dt><code>$Modes</code></dt><dd><p>A named vector of modes used for the outer estimation.</p></dd>
+<dt><code>$Modes</code></dt><dd><p>A named vector of Modes used for the outer estimation, for GSCA
+the mode is automatically set to 'gsca'.</p></dd>
 <dt><code>$Conv_status</code></dt><dd><p>The convergence status. <code>TRUE</code> if the algorithm has converged
-and <code>FASLE</code> otherwise. If one-step weights are used via <code>.iter_max = 1</code>
+and <code>FALSE</code> otherwise. If one-step weights are used via <code>.iter_max = 1</code>
 or a non-iterative procedure was used, the convergence status is set to <code>NULL</code>.</p></dd>
 <dt><code>$Iterations</code></dt><dd><p>The number of iterations used.</p></dd>
 </dl>
@@ -195,7 +224,76 @@ or a non-iterative procedure was used, the convergence status is set to <code>NU
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Some more description...</p>
+    <p>GSCA models latent variables (constructs) as composites, i.e. as an exact linear
+combination of its corresponding indicators. The main idea of GSCA is to
+divide the overall structural model into three submodels: the structural model,
+the measurement model and the weighted relation model. These sub-models and their
+corresponding matrices are provided by the <code>.csem_model</code> argument.</p>
+<p>Weights as well as structural coefficients and loadings are estimated with the
+Alternating Least Squares Algorithm.
+This algorithm consists of two main steps. In the first step, structural coefficients
+and loadings are updated for fixed weights. Then, in the second step, weights
+are updated keeping the other parameters constant. Doing this, the value of a
+global optimization decreases.</p>
+<p>These two steps are iterated until convergence is reached or the prescribed
+maximum number of iteration steps, '.iter_max', was carried out. In their example
+in Hwang and Takane (2014)
+, p. 75, the authors set '.iter_max'
+equal to 100, but this is an arbitrary choice. The user might try several values
+for '.iter_max' and eventually increase its value if convergence happened previously
+due to reaching the maximum number of steps (indicated by a <code>Conv_status</code> equal
+to <code>FALSE</code>).</p>
+<p>Several convergence criterion are possible, all consisting in calculating some
+difference of the weight matrices W of two subsequent steps. Checking for convergence
+this way results in the same interpretation as calculating the differences
+the global optimization criterion values as proposed by Hwang and Takane.
+The <code>.tolerance</code> argument provides the value below which the difference has to
+fall such that the algorithm converges. The default value of <code>1e-05</code> is the same
+value which Hwang and Takane use in their example in Hwang and Takane (2014)
+    , p. 75. Nevertheless, the argument <code>.tolerance</code> can take any other value as well.</p>
+<p>The ALS algorithm as outlined in Hwang and Takane (2014)
+ essentially
+consists of regressions of endogenous constructs (resp. their proxies) on
+exogenous constructs for the structural model coefficients and in regressions
+of all common factor constructs on their related indicators for the loadings
+(steps 1a and 1b). If a construct is not of common factor type but a pure composite
+the corresponding "construct" loadings do not need to be calculated because the
+constructs are exact linear combinations of their indicators. Instead, "composite"
+loadings are calculated and provided as the estimated loadings. These "composite"
+loadings are the "true" correlations between a construct and indicator. This correlation
+always exists, no matter which is the type of the construct under consideration.
+Considering a construct of common factor type, estimated ("construct") loadings
+are the correlations between indicators and proxies, but not the "true" correlation
+between indicator and underlying but unknown construct.</p>
+<p>In the case that there is at least one construct which is not modeled as a
+common factor but as a pure composite, the user imperatively has to use GSCA
+and GSCA_M is no option. The reason is that the implementation of GSCA_M in
+the cSEM-package is based on Hwang et al. (2017)
+.
+The GSCA_M-approach presented by the authors only works out if all constructs
+are of common factor type. Otherwise, i.e., if there is at least one construct
+of composite type estimation using GSCA_M fails because calculating weight estimates
+with GSCA_M leads to a product involving the measurement matrix.
+This matrix does not have full rank in the case of at least one pure composite construct.
+It has a zero row for every construct which is a pure composite (i.e. all related loadings are zero)
+and, therefore, leads to a non-invertible matrix when multiplying it with its transposed.</p>
+<p>Therefore estimation must be carried out with GSCA if there is at least one composite
+construct. Otherwise, i.e., if there are only constructs which are of common factor type,
+calling <code><a href='csem.html'>csem()</a></code> will lead to an estimation via GSCA_M except in the case that
+the user explicitly sets the argument <code>.disattenuate</code> to <code>FALSE</code>. estimation is always done
+by 'standard' GSCA.</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Hwang H, Takane Y (2004).
+&#8220;Generalized Structured Component Analysis.&#8221;
+<em>Psychometrika</em>, <b>69</b>(1), 81--99.
+    Hwang H, Takane Y (2014).
+<em>Generalized Structured Component Analysis: A Component-Based Approach to Structural Equation Modeling</em>,  Chapman $\&amp;$ Hall/CRC Statistics in the Social and Behavioral Sciences.
+Chapman and Hall/CRC.
+    Hwang H, Takane Y, Jung K (2017).
+&#8220;Generalized Structured Component Analysis with Uniqueness Terms for Accommodating Measurement Error.&#8221;
+<em>Frontiers in Psychology</em>, <b>8</b>(2137), 1--12.</p>
     
 
   </div>
@@ -207,6 +305,8 @@ or a non-iterative procedure was used, the convergence status is set to <code>NU
       <li><a href="#value">Value</a></li>
 
       <li><a href="#details">Details</a></li>
+
+      <li><a href="#references">References</a></li>
           </ul>
 
   </div>

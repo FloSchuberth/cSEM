@@ -5,13 +5,14 @@
 \title{Resample data}
 \usage{
 resampleData(
- .object          = NULL,
- .resample_method = c("bootstrap", "jackknife", "permutation", "cross-validation"),
- .cv_folds        = 10,  
- .data            = NULL,
- .id              = NULL,
- .R               = 499,
- .seed            = sample(.Random.seed, 1)
+ .object          = args_default()$.object,
+ .resample_method = c("bootstrap", "jackknife", "permutation", 
+                      "cross-validation"),
+ .cv_folds        = args_default()$.cv_folds,
+ .data            = args_default()$.data,
+ .id              = args_default()$.id,
+ .R               = args_default()$.R,
+ .seed            = args_default()$.seed
 )
 }
 \arguments{

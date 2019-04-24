@@ -1,0 +1,52 @@
+---
+title: "PLS-PM"
+subtitle: "Partial least squares path modeling" 
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/REFERENCES.bib
+---
+WARNING: this document is work in progress.
+
+# Introduction {#introduction}
+
+# Syntax and Options {#usage}
+
+```{r eval=FALSE}
+calculateWeightsPLS(
+  .arg1 = NULL,
+  .arg2 = NULL,
+  .arg3 = NULL,
+  ...
+)
+```
+
+`.arg1`
+
+:  description for `.arg1`
+   
+`.arg2`
+
+:  description for `.arg2`
+  
+`.arg3`
+
+:  description for `.arg3`
+
+# Usage & Examples {#examples}
+
+## Example 1 {#example1}
+
+## Example 2 {#example2}
+
+## Example 3 {#example3}
+
+# Methods & Formula {#methods}
+
+# References

@@ -7,7 +7,12 @@
 \alias{summarize.cSEMResults_2ndorder}
 \title{Summarize model}
 \usage{
-summarize(.object)
+summarize(
+ .object = NULL, 
+ .alpha  = args_default()$.alpha,
+ .ci     = NULL,
+ ...
+ )
 
 \method{summarize}{cSEMResults_default}(.object = NULL,
   .alpha = args_default()$.alpha, .ci = NULL, ...)

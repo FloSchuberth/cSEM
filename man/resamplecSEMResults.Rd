@@ -13,8 +13,8 @@ resamplecSEMResults(
  .handle_inadmissibles  = c("drop", "ignore", "replace"),
  .user_funs             = NULL,
  .eval_plan             = c("sequential", "multiprocess"),
- .seed                  = sample(.Random.seed, 1),
- .sign_change_option    = args_default()$.sign_change_option
+ .seed                  = NULL,
+ .sign_change_option    = "no"
 )
 }
 \arguments{

@@ -109,6 +109,12 @@ See xxx for details on their use and calculation." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/GSCA.html">GSCA and GSCA&lt;sub&gt;M&lt;/sub&gt;</a>
+    </li>
+    <li>
+      <a href="../articles/PLS.html">PLS-PM</a>
+    </li>
+    <li>
       <a href="../articles/Using-assess.html">Postestimation: Assessing a model</a>
     </li>
     <li>
@@ -176,32 +182,34 @@ as jackknife estimates need to be computed.</p></dd>
     
     </div>
 
-    <pre class="usage">infer(
- .resample_object   = NULL,
- .alpha             = 0.05
- .bias_corrected    = TRUE,
- .quantity          = ("all")
+    <pre class="usage"><span class='fu'>infer</span>(
+ <span class='kw'>.resample_object</span>   <span class='kw'>=</span> <span class='kw'>NULL</span>,
+ <span class='kw'>.alpha</span>             <span class='kw'>=</span> <span class='fl'>0.05</span>,
+ <span class='kw'>.bias_corrected</span>    <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+ <span class='kw'>.quantity</span>          <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"mean"</span>, <span class='st'>"sd"</span>, <span class='st'>"bias"</span>, <span class='st'>"CI_standard_z"</span>,
+                        <span class='st'>"CI_standard_t"</span>, <span class='st'>"CI_percentile"</span>, <span class='st'>"CI_basic"</span>,
+                        <span class='st'>"CI_bc"</span>, <span class='st'>"CI_bca"</span>, <span class='st'>"CI_t_intervall"</span>)
 )
 
-MeanResample(.first_resample)
+<span class='fu'>MeanResample</span>(<span class='no'>.first_resample</span>)
 
-SdResample(.first_resample, .resample_method, .n)
+<span class='fu'>SdResample</span>(<span class='no'>.first_resample</span>, <span class='no'>.resample_method</span>, <span class='no'>.n</span>)
 
-BiasResample(.first_resample, .resample_method, .n)
+<span class='fu'>BiasResample</span>(<span class='no'>.first_resample</span>, <span class='no'>.resample_method</span>, <span class='no'>.n</span>)
 
-StandardCIResample(.first_resample, .bias_corrected, .dist = c("z", "t"),
-  .df = c("type1", "type2"), .resample_method, .n, .probs)
+<span class='fu'>StandardCIResample</span>(<span class='no'>.first_resample</span>, <span class='no'>.bias_corrected</span>, <span class='kw'>.dist</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"z"</span>, <span class='st'>"t"</span>),
+  <span class='kw'>.df</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"type1"</span>, <span class='st'>"type2"</span>), <span class='no'>.resample_method</span>, <span class='no'>.n</span>, <span class='no'>.probs</span>)
 
-PercentilCIResample(.first_resample, .probs)
+<span class='fu'>PercentilCIResample</span>(<span class='no'>.first_resample</span>, <span class='no'>.probs</span>)
 
-BasicCIResample(.first_resample, .bias_corrected, .probs)
+<span class='fu'>BasicCIResample</span>(<span class='no'>.first_resample</span>, <span class='no'>.bias_corrected</span>, <span class='no'>.probs</span>)
 
-TStatCIResample(.first_resample, .second_resample, .bias_corrected,
-  .resample_method, .resample_method2, .n, .probs)
+<span class='fu'>TStatCIResample</span>(<span class='no'>.first_resample</span>, <span class='no'>.second_resample</span>, <span class='no'>.bias_corrected</span>,
+  <span class='no'>.resample_method</span>, <span class='no'>.resample_method2</span>, <span class='no'>.n</span>, <span class='no'>.probs</span>)
 
-BcCIResample(.first_resample, .probs)
+<span class='fu'>BcCIResample</span>(<span class='no'>.first_resample</span>, <span class='no'>.probs</span>)
 
-BcaCIResample(.object, .first_resample, .probs)</pre>
+<span class='fu'>BcaCIResample</span>(<span class='no'>.object</span>, <span class='no'>.first_resample</span>, <span class='no'>.probs</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

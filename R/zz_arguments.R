@@ -241,7 +241,7 @@ args_csem_dotdotdot <- function(
 #'
 #' @seealso [handleArgs()], [csem_arguments], [csem()], [foreman()]
 #'
-#' @keywords internal
+#' @export
 
 args_default <- function(.choices = FALSE) {
   

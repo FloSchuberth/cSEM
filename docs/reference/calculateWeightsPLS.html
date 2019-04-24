@@ -90,6 +90,12 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/GSCA.html">GSCA and GSCA&lt;sub&gt;M&lt;/sub&gt;</a>
+    </li>
+    <li>
+      <a href="../articles/PLS.html">PLS-PM</a>
+    </li>
+    <li>
       <a href="../articles/Using-assess.html">Postestimation: Assessing a model</a>
     </li>
     <li>
@@ -138,16 +144,17 @@
     
     </div>
 
-    <pre class="usage">calculateWeightsPLS(
-  .data                        = args_default()$.data,
-  .S                           = args_default()$.S,
-  .csem_model                  = args_default()$.csem_model,
-  .conv_criterion              = args_default()$.conv_criterion,
-  .iter_max                    = args_default()$.iter_max,
-  .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model
-  .PLS_modes                   = args_default()$.PLS_modes,
-  .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
-  .tolerance                   = args_default()$.tolerance
+    <pre class="usage"><span class='fu'>calculateWeightsPLS</span>(
+  <span class='kw'>.data</span>                        <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.data</span>,
+  <span class='kw'>.S</span>                           <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.S</span>,
+  <span class='kw'>.csem_model</span>                  <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.csem_model</span>,
+  <span class='kw'>.conv_criterion</span>              <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.conv_criterion</span>,
+  <span class='kw'>.iter_max</span>                    <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.iter_max</span>,
+  <span class='kw'>.PLS_ignore_structural_model</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.PLS_ignore_structural_model</span>,
+  <span class='kw'>.PLS_modes</span>                   <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.PLS_modes</span>,
+  <span class='kw'>.PLS_weight_scheme_inner</span>     <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.PLS_weight_scheme_inner</span>,
+  <span class='kw'>.starting_values</span>             <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.starting_values</span>,
+  <span class='kw'>.tolerance</span>                   <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.tolerance</span>
    )</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -210,14 +217,14 @@ used in PLS-PM. One of: "<em>centroid</em>", "<em>factorial</em>", or "<em>path<
 Defaults to "<em>path</em>". Ignored if <code>.approach_weight</code> is not PLS-PM.</p></td>
     </tr>
     <tr>
-      <th>.tolerance</th>
-      <td><p>Double. The tolerance criterion for convergence.
-Defaults to <code>1e-05</code>.</p></td>
-    </tr>
-    <tr>
       <th>.starting_values</th>
       <td><p>list of named vectors containig the starting values.
 Defaults to "<em>NULL</em>".</p></td>
+    </tr>
+    <tr>
+      <th>.tolerance</th>
+      <td><p>Double. The tolerance criterion for convergence.
+Defaults to <code>1e-05</code>.</p></td>
     </tr>
     </table>
     

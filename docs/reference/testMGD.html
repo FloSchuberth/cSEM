@@ -92,6 +92,12 @@ reference distribtuion." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/GSCA.html">GSCA and GSCA&lt;sub&gt;M&lt;/sub&gt;</a>
+    </li>
+    <li>
+      <a href="../articles/PLS.html">PLS-PM</a>
+    </li>
+    <li>
       <a href="../articles/Using-assess.html">Postestimation: Assessing a model</a>
     </li>
     <li>
@@ -142,39 +148,39 @@ reference distribtuion.</p>
     
     </div>
 
-    <pre class="usage">testMGD(
- .object             = args_default()$.object,
- .alpha              = args_default()$.alpha,
- .drop_inadmissibles = args_default()$.drop_inadmissibles,
- .R                  = args_default()$.R,
- .saturated          = args_default()$.saturated,
- .type_vcv           = args_default()$.type_vcv
- .verbose            = args_default()$.verbose
+    <pre class="usage"><span class='fu'>testMGD</span>(
+ <span class='kw'>.object</span>               <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.object</span>,
+ <span class='kw'>.alpha</span>                <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.alpha</span>,
+ <span class='kw'>.handle_inadmissibles</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.handle_inadmissibles</span>,
+ <span class='kw'>.R</span>                    <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.R</span>,
+ <span class='kw'>.saturated</span>            <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.saturated</span>,
+ <span class='kw'>.type_vcv</span>             <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.type_vcv</span>,
+ <span class='kw'>.verbose</span>              <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.verbose</span>
  )
 
-# S3 method for cSEMResults_default
-testMGD(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv,
-  .verbose = args_default()$.verbose)
+<span class='co'># S3 method for cSEMResults_default</span>
+<span class='fu'>testMGD</span>(<span class='kw'>.object</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.object</span>,
+  <span class='kw'>.alpha</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.alpha</span>,
+  <span class='kw'>.handle_inadmissibles</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.handle_inadmissibles</span>,
+  <span class='kw'>.R</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.R</span>, <span class='kw'>.saturated</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.saturated</span>,
+  <span class='kw'>.type_vcv</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.type_vcv</span>,
+  <span class='kw'>.verbose</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.verbose</span>)
 
-# S3 method for cSEMResults_multi
-testMGD(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv,
-  .verbose = args_default()$.verbose)
+<span class='co'># S3 method for cSEMResults_multi</span>
+<span class='fu'>testMGD</span>(<span class='kw'>.object</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.object</span>,
+  <span class='kw'>.alpha</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.alpha</span>,
+  <span class='kw'>.handle_inadmissibles</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.handle_inadmissibles</span>,
+  <span class='kw'>.R</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.R</span>, <span class='kw'>.saturated</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.saturated</span>,
+  <span class='kw'>.type_vcv</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.type_vcv</span>,
+  <span class='kw'>.verbose</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.verbose</span>)
 
-# S3 method for cSEMResults_2ndorder
-testMGD(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv,
-  .verbose = args_default()$.verbose)</pre>
+<span class='co'># S3 method for cSEMResults_2ndorder</span>
+<span class='fu'>testMGD</span>(<span class='kw'>.object</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.object</span>,
+  <span class='kw'>.alpha</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.alpha</span>,
+  <span class='kw'>.handle_inadmissibles</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.handle_inadmissibles</span>,
+  <span class='kw'>.R</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.R</span>, <span class='kw'>.saturated</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.saturated</span>,
+  <span class='kw'>.type_vcv</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.type_vcv</span>,
+  <span class='kw'>.verbose</span> <span class='kw'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span>()$<span class='no'>.verbose</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

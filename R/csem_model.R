@@ -339,7 +339,11 @@ parseModel <- function(.model) {
 #' estimable model using either the "repeated indicators" approach or a 
 #' two-step procedure (TODO; link to literature)
 #'
-#' @usage convertModel(.csem_model)
+#' @usage convertModel(
+#'  .csem_model        = NULL, 
+#'  .approach_2ndorder = "3stage",
+#'  .stage             = "first"
+#'  )
 #'
 #' @inheritParams csem_arguments
 #
@@ -349,9 +353,9 @@ parseModel <- function(.model) {
 #' @keywords internal
 #'
 convertModel <- function(
-  .csem_model        = args_default()$.csem_model, 
-  .approach_2ndorder = args_default()$.approach_2ndorder,
-  .stage             = args_default()$.stage
+  .csem_model        = NULL, 
+  .approach_2ndorder = "3stage",
+  .stage             = "first"
 ) {
   
   ### Check if a cSEMModel list  
