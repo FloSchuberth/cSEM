@@ -4,14 +4,12 @@
 \alias{print.cSEMTestMGD}
 \title{\code{cSEMTestMGD} method for \code{print()}}
 \usage{
-print(.object)
-}
-\arguments{
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+\method{print}{cSEMTestMGD}(x, ...)
 }
 \description{
 The \code{cSEMTestMGD} method for the generic function \code{\link[=print]{print()}}.
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
 }
+\keyword{internal}

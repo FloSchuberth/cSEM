@@ -20,7 +20,7 @@
 #' 
 #' @inherit csem_test return
 #' 
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #' 
 #' @references
 #'   \insertAllCited{}

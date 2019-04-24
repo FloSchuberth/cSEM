@@ -1,58 +1,65 @@
-#' Composite-based SEM and CCA
+#' Composite-based SEM
 #'
 #' Estimate linear, nonlinear, hierachical or multigroup structural equation
-#' models using a composite-based approach.
+#' models using a composite-based approach. In \pkg{cSEM} 
+#' any method or approach that involves linear compounts (scores/proxies/composites)
+#' of observables (indicators/items/manifest variables) is defined as composite-based.
+#' See the \href{https://m-e-rademaker.github.io/cSEM/articles/cSEM.html}{Get started} 
+#' section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+#' for details.
 #'
 #' `csem()` estimates linear, nonlinear, hierachical or multigroup structural 
-#' equation models using a composite-based approach like PLS-PM, PLSc, GSCA, GSCAm or 
-#' unit weights. `csem()` is designed for quick and flexible 
-#' use by providing the user with default options except for 
-#' the mandatory `.data` and `.model` argument. 
+#' equation models using a composite-based approach. 
 #' 
-#' `cca()` performs CCA. CCA and SEM differ in that the former allows all 
-#' constructs to vary freely. Hence, `cca()` is technically a simple convenience wrapper
-#' around `csem(..., .estimate_structural = FALSE)`.
-#'
 #' \subsection{Data and model:}{
 #' The `.data` and `.model` arguments are required. Data must be
 #' provided as either a `matrix` or a `data.frame` with column names matching
 #' the indicator names used in the model description of the measurement model.
-#' Alternatively, a list of matrices or `data.frame`s may be provided
+#' Alternatively, a list of matrices or `data.frame`'s may be provided
 #' in which case estimation is repeated for each data set. 
-#' The data provided via `.data` may contain a character column whose column name 
+#' The data provided via `.data` may contain **one** character column whose column name 
 #' must be provided to `.id`. Values of this column are interpreted as group 
-#' identifiers and `csem()` or `cca()` will split the data by levels of that column and run
+#' identifiers and `csem()` will split the data by levels of that column and run
 #' the estimation for each level separately.
 #'
-#' To provide a model use the \code{\link[lavaan:model.syntax]{lavaan model syntax}}
+#' To provide a model use the [lavaan model syntax][lavaan::model.syntax] 
 #' with two notable extensions/changes. First: the "`<~`" operator in `cSEM` is
-#' used to define a composite instead of a formative common factor. Second:
+#' used to define a composite instead of a causal formative common factor. Second:
 #' the "`.`" is used to indicate interactions between constructs as in e.g.,
 #' `construct1.construct2`. Alternatively a standardized (possibly incomplete)
 #' [cSEMModel]-list may be supplied.
 #' }
 #'
 #' \subsection{Weights and path coefficients:}{
-#' By default weights are estimated using the partial least squares algorithm (*PLS-PM*).
-#' Alternative approaches include generalized structured component analysis (*GSCA*),
-#'  *GCCA* (i.e. *Kettenring's criteria*), "*fixed weights*"
-#' or "*unit weight*".
+#' By default weights are estimated using the partial least squares (path) algorithm (`"PLS-PM"`).
+#' A broad range of alternative weightning algorithms may be supplied to `.appraoch_weights`.
+#' Currently the following approaches are implemented 
+#' \enumerate{
+#' \item{(Default) Partial least squares path modeling (`"PLS"`). The algorithm
+#'    can be customized. See [calculateWeightsPLS()] for details.}
+#' \item{Generalized structured component analysis (`"GSCA"`)}
+#' \item{Generalized canoncial correlation analysis (*GCCA*), including 
+#'   `"SUMCORR"`, `"MAXVAR"`, `"SSQCORR"`, `"MINVAR"`, `"GENVAR"`}
+#' \item{Principal component analysis (`"PCA"`)}
+#' \item{Factor score regression using sum scores (`"unit"`), 
+#'    regression (`"regression"`) or bartlett scores (`"bartlett"`)}
+#' }
 #'
 #' Composite-indicator and composite-composite correlations are properly
 #' disattenuated by default to yield consistent loadings, construct correlations, 
 #' and path coefficients if any of the constructs in the model are modeled as a 
-#' common factor. cSEM offers two ways to adress 
+#' common factor. 
 #' 
 #' For *PLS-PM* disattenuation is done using *PLSc* \insertCite{Dijkstra2015}{cSEM}.
 #' For *GSCA* disattenuation is done implicitly by using *GSCAm*. Weights obtained
 #' by GCCA, unit weights and fixed weights are disattenuated using a  
 #' Disattenuation my be suppressed by setting 
-#' `.disattenuate = FALSE`. Note however that quantities in this case are inconsistent 
+#' `.disattenuate = FALSE`. Note, however, that quantities in this case are inconsistent 
 #' estimates for their construct level counterparts if any of the constructs in the structural model is
 #' modeled as a common factor!
 #' }
 #'
-#' \subsection{Non linear models:}{
+#' \subsection{Nonlinear models:}{
 #' If the model is nonlinear `csem()` estimates a polynomial structural equation model
 #' using a non-iterative method of moments approach described in
 #' \insertCite{Dijkstra2014}{cSEM}. Non linear terms include interactions and
@@ -79,51 +86,60 @@
 #' }
 #' 
 #' @usage csem(
-#'   .data                        = NULL,
-#'   .model                       = NULL,
-#'   .approach_nl                 = c("sequential", "replace"),
-#'   .approach_paths              = c("OLS", "2SLS"),
-#'   .approach_weights            = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR", 
-#'                                    "GSCA", "unit", "bartlett", "regression"),
-#'   .disattenuate                = TRUE,
-#'   .id                          = NULL,
-#'   .iter_max                    = 100,
-#'   .normality                   = TRUE,
-#'   .reliabilities               = NULL,
-#'   .tolerance                   = 1e-05,
-#'   .resample_method           = c("none", "bootstrap", "jackknife"),
-#'   .resample_method2            = c("none", "bootstrap", "jackknife"),
-#'   .R                           = 499,
-#'   .R2                          = 199,
-#'   .handle_inadmissibles        = c("drop", "ignore", "replace"),
-#'   .user_funs                   = NULL,
-#'   .eval_plan                   = c("sequential", "multiprocess"),
-#'   .seed                        = NULL,
+#'   .data                    = NULL,
+#'   .model                   = NULL,
+#'   .approach_nl             = c("sequential", "replace"),
+#'   .approach_paths          = c("OLS", "2SLS"),
+#'   .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
+#'                                "MINVAR", "GENVAR", "GSCA", "PCA", 
+#'                                "unit", "bartlett", "regression"),
+#'   .disattenuate            = TRUE,
+#'   .id                      = NULL,
+#'   .normality               = TRUE,
+#'   .reliabilities           = NULL,
+#'   .starting_values         = NULL,
+#'   .resample_method         = c("none", "bootstrap", "jackknife"),
+#'   .resample_method2        = c("none", "bootstrap", "jackknife"),
+#'   .R                       = 499,
+#'   .R2                      = 199,
+#'   .handle_inadmissibles    = c("drop", "ignore", "replace"),
+#'   .user_funs               = NULL,
+#'   .eval_plan               = c("sequential", "multiprocess"),
+#'   .seed                    = NULL,
+#'   .sign_change_option      = c("no", "individual", "individual_reestimate", 
+#'                                "construct_reestimate"),
 #'   ...
 #'   )
 #'
-#' @param .data A `data.frame` or a `matrix` of standardized or unstandarized data. Additionally,
-#'   a list of `data.frame`(s) or `matrice`(s) is accepted in which case estimation
-#'   is repeated for each data set. Possible column types or classes 
-#'   of the data provided are: logical, numeric (double or integer), factor (ordered and unordered) 
-#'   or a mix of several types. The data may also include
-#'   *one* character column whose column name must be given to `.id`. 
-#'   This column is assumed to contain group identifiers used to split 
+#' @param .data A `data.frame` or a `matrix` of standardized or unstandarized 
+#'   data (indicators/items/manifest variables). 
+#'   Additionally, a `list` of `data.frame`(s) or `matrice`(s) is accepted in which 
+#'   case estimation is repeated for each data set. Possible column types or classes 
+#'   of the data provided are: "logical", "numeric" ("double" or "integer"), 
+#'   "factor" ("ordered" and/or "unordered") or a mix of several types. 
+#'   The data may also include *one* character column whose column name must be 
+#'   given to `.id`. This column is assumed to contain group identifiers used to split 
 #'   the data into groups.
 #' @inheritParams csem_arguments
-#' @param ... Further arguments to be passed down to lower level functions of `csem()`
-#'   or `cca()`. Type \code{\link[cSEM:args_default]{args_default(.only_dots = TRUE)}} 
-#'   or \code{\link[cSEM:args_default]{args_default(.only_dots = TRUE, .which_fun = "cca")}}
-#'   for a complete list of accepted `...` arguments for the respective function.
+#' @param ... Further arguments to be passed down to lower level functions of `csem()`.
+#'   See [args_csem_dotdotdot] for a complete list of available arguments.
 #'
-#' @inherit csem_results return
+#' @return
+#' An object of class `cSEMResults` with methods for all postestimation generics.
+#' Note that, technically, a call to [csem()] results in an object with at least 
+#' two class attributes. The first class attribute is always `cSEMResults`. 
+#' The second is one of `cSEMResults_default`, `cSEMResults_multi`, or 
+#' `cSEMResults_2ndorder` and depends on the estimated model and/or the type of 
+#' data provided to the `.model` and `.data` arguments. The third class attribute
+#' `cSEMResults_resampled` is only added if resampling was conducted. 
+#' Technically, method dispatch for all postestimation 
+#' functions is based on the second class attribute. For a details see the 
+#' [cSEMResults helpfile ][cSEMResults].
 #'
 #' @references
 #'   \insertAllCited{}
 #'
 #' @seealso [args_default], [cSEMArguments], [cSEMResults], [foreman] 
-#'
-#' @examples
 #' 
 #' @export
 #' 
@@ -134,14 +150,14 @@ csem <- function(
   .approach_2ndorder     = c("3stage", "repeated_indicators"),
   .approach_nl           = c("sequential", "replace"),
   .approach_paths        = c("OLS", "2SLS"),
-  .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
-                             "GSCA", "unit", "bartlett", "regression"),
+  .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
+                             "MINVAR", "GENVAR","GSCA", "PCA",
+                             "unit", "bartlett", "regression"),
   .disattenuate          = TRUE,
   .id                    = NULL,
-  .iter_max              = 100,
   .normality             = TRUE,
   .reliabilities         = NULL,
-  .tolerance             = 1e-05,
+  .starting_values       = NULL,
   .resample_method       = c("none", "bootstrap", "jackknife"),
   .resample_method2      = c("none", "bootstrap", "jackknife"),
   .R                     = 499,
@@ -150,6 +166,8 @@ csem <- function(
   .user_funs             = NULL,
   .eval_plan             = c("sequential", "multiprocess"),
   .seed                  = NULL,
+  .sign_change_option    = c("no", "individual", "individual_reestimate", 
+                             "construct_reestimate"),
   ...
   ) {
   ## Match arguments
@@ -161,6 +179,7 @@ csem <- function(
   .resample_method2     <- match.arg(.resample_method2)
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   .eval_plan            <- match.arg(.eval_plan)
+  .sign_change_option   <- match.arg(.sign_change_option)
   
   ## Collect and handle arguments
   # Note: all.names = TRUE is neccessary for otherwise arguments with a leading
@@ -216,15 +235,65 @@ csem <- function(
       } else {
         args_needed[[".data"]] <- x[, -which(names(x) == .id)]
       }
-      do.call(foreman, args_needed)
-      
+      ## NOTE: using do.call(foreman, args_needed) would be more elegant but is much 
+      # much much! slower (especially for larger data sets). There is now a
+      # terible redundancy because foreman is repeated 3 times. This should be
+      # addressed at some point, however, it is much better than do.call in terms
+      # of speed
+      # out <- do.call(foreman, args_needed)
+      foreman(
+        .data                        = args_needed$.data,
+        .model                       = args_needed$.model,
+        .approach_cor_robust         = args_needed$.approach_cor_robust,
+        .approach_nl                 = args_needed$.approach_nl,
+        .approach_paths              = args_needed$.approach_paths,
+        .approach_weights            = args_needed$.approach_weights,
+        .conv_criterion              = args_needed$.conv_criterion,
+        .disattenuate                = args_needed$.disattenuate,
+        .dominant_indicators         = args_needed$.dominant_indicators,
+        .estimate_structural         = args_needed$.estimate_structural,
+        .id                          = args_needed$.id,
+        .iter_max                    = args_needed$.iter_max,
+        .normality                   = args_needed$.normality,
+        .PLS_approach_cf             = args_needed$.PLS_approach_cf,
+        .PLS_ignore_structural_model = args_needed$.PLS_ignore_structural_model,
+        .PLS_modes                   = args_needed$.PLS_modes,
+        .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
+        .reliabilities               = args_needed$.reliabilities,
+        .starting_values             = args_needed$.starting_values,
+        .tolerance                   = args_needed$.tolerance
+      )
     })
   } else if(any(class(.data) == "list")) {
     
     out <- lapply(.data, function(x) {
       
       args_needed[[".data"]] <- x
-      do.call(foreman, args_needed)
+      ## NOTE: using do.call(foreman, args_needed) would be more elegant but is much 
+      # much much! slower (especially for larger data sets). 
+      # out <- do.call(foreman, args_needed)
+      foreman(
+        .data                        = args_needed$.data,
+        .model                       = args_needed$.model,
+        .approach_cor_robust         = args_needed$.approach_cor_robust,
+        .approach_nl                 = args_needed$.approach_nl,
+        .approach_paths              = args_needed$.approach_paths,
+        .approach_weights            = args_needed$.approach_weights,
+        .conv_criterion              = args_needed$.conv_criterion,
+        .disattenuate                = args_needed$.disattenuate,
+        .dominant_indicators         = args_needed$.dominant_indicators,
+        .estimate_structural         = args_needed$.estimate_structural,
+        .id                          = args_needed$.id,
+        .iter_max                    = args_needed$.iter_max,
+        .normality                   = args_needed$.normality,
+        .PLS_approach_cf             = args_needed$.PLS_approach_cf,
+        .PLS_ignore_structural_model = args_needed$.PLS_ignore_structural_model,
+        .PLS_modes                   = args_needed$.PLS_modes,
+        .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
+        .reliabilities               = args_needed$.reliabilities,
+        .starting_values             = args_needed$.starting_values,
+        .tolerance                   = args_needed$.tolerance
+      )
     })
     if(is.null(names(.data))) {
       names(out) <- paste0("Data_", 1:length(out))
@@ -232,8 +301,31 @@ csem <- function(
       names(out) <- names(.data)
     }
   } else {
-    
-    out <- do.call(foreman, args_needed)
+    ## NOTE: using do.call(foreman, args_needed) would be more elegant but is much 
+    # much much! slower (especially for larger data sets). 
+    # out <- do.call(foreman, args_needed)
+    out <- foreman(
+      .data                        = args_needed$.data,
+      .model                       = args_needed$.model,
+      .approach_cor_robust         = args_needed$.approach_cor_robust,
+      .approach_nl                 = args_needed$.approach_nl,
+      .approach_paths              = args_needed$.approach_paths,
+      .approach_weights            = args_needed$.approach_weights,
+      .conv_criterion              = args_needed$.conv_criterion,
+      .disattenuate                = args_needed$.disattenuate,
+      .dominant_indicators         = args_needed$.dominant_indicators,
+      .estimate_structural         = args_needed$.estimate_structural,
+      .id                          = args_needed$.id,
+      .iter_max                    = args_needed$.iter_max,
+      .normality                   = args_needed$.normality,
+      .PLS_approach_cf             = args_needed$.PLS_approach_cf,
+      .PLS_ignore_structural_model = args_needed$.PLS_ignore_structural_model,
+      .PLS_modes                   = args_needed$.PLS_modes,
+      .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
+      .reliabilities               = args_needed$.reliabilities,
+      .starting_values             = args_needed$.starting_values,
+      .tolerance                   = args_needed$.tolerance
+    )
   }
 
   ## Set class for output
@@ -246,11 +338,12 @@ csem <- function(
     # By convention the original, pooled dataset is therefore added to the first 
     # element of "out" (= results for the first group/dataset)! 
     # If ".data" was a list of data they are combined to on pooled dataset
-    # If ".data" was originallay pooled and subsequently split by ".id"
+    # If ".data" was originally pooled and subsequently split by ".id"
     # The original unsplit data is returned.
     
     out[[1]]$Information$Data_pooled <- if(any(class(.data) == "list")) {
       data_pooled <- do.call(rbind, .data)
+      data_pooled <- as.data.frame(data_pooled)
       data_pooled[, "id"] <- rep(names(out), times = sapply(.data, nrow))
       data_pooled
     } else {
@@ -297,7 +390,8 @@ csem <- function(
       .handle_inadmissibles = .handle_inadmissibles,
       .user_funs            = .user_funs,
       .eval_plan            = .eval_plan,
-      .seed                 = .seed
+      .seed                 = .seed,
+      .sign_change_option   = .sign_change_option
     )
   }
   

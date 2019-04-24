@@ -4,7 +4,7 @@
 #' 
 #' Results based on an estimated model exhibiting one of the 
 #' following defects are deemed inadmissible: non-convergence, loadings and/or 
-#' reliabilities larger than 1, a construct VCV and/or a
+#' proxy reliabilities larger than 1, a construct VCV and/or a
 #' model-implied VCV matrix that is not positive (semi-)definite.
 #' 
 #' For models containing second order constructs estimation is by default done
@@ -13,7 +13,7 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cca()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @return A logical vector indicating which (if any) problem occurred. 
 #'   A `TRUE` indicates that the problem has occured. For models containg second order
@@ -25,7 +25,7 @@
 #    which implies either a negative variance of the measurement error or
 #    a correlation larger than 1.
 #' \item 3: The construct VCV is not positive semi-definite.
-#' \item 4: At least one construct reliability is larger than 1. 
+#' \item 4: At least one proxy reliability is larger than 1. 
 #' \item 5: The model-implied indicator VCV is not positive semi-definite. 
 #'   This is only checked for linear models.
 #' }

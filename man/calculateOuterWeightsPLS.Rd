@@ -5,6 +5,7 @@
 \title{Internal: Calculate the outer weights for PLS-PM}
 \usage{
 calculateOuterWeightsPLS(
+   .data   = args_default()$.data  
    .S      = args_default()$.S,
    .W      = args_default()$.W,
    .E      = args_default()$.E,
@@ -12,6 +13,14 @@ calculateOuterWeightsPLS(
    )
 }
 \arguments{
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized data.
+Possible column types or classes of the data provided are: logical,
+numeric (double or integer), factor (ordered and unordered)
+or a mix of several types. The data may also include
+\emph{one} character column whose column name must be given to \code{.id}.
+This column is assumed to contain group identifiers used to split
+the data into groups.}
+
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.W}{A (J x K) matrix of weights.}
@@ -25,6 +34,6 @@ Only used internally.}
 A (J x K) matrix of outer weights.
 }
 \description{
-Calculates outer weights using Mode A, Mode B, Unit or fixed weights.
+Calculates outer weights using default or user supplied modes.
 }
 \keyword{internal}

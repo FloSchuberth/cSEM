@@ -5,7 +5,7 @@
 #' level package functions, and eventually recollecting all of their results. 
 #' It is called by [csem()] to manage the actual calculations.
 #' It may be called directly by the user, however, in most cases it will likely
-#' be more convenient to use [csem()] (or [cca()]) instead.
+#' be more convenient to use [csem()] instead.
 #' 
 #' @usage foreman(
 #'   .data                        = NULL,
@@ -37,7 +37,7 @@
 #' 
 #' @inherit csem_results return
 #'
-#' @seealso [csem], [cca], [cSEMResults]
+#' @seealso [csem], [cSEMResults]
 #'
 #' @export
 #'
@@ -61,21 +61,24 @@ foreman <- function(
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
   .reliabilities               = args_default()$.reliabilities,
-  .tolerance                   = args_default()$.tolerance
+  .tolerance                   = args_default()$.tolerance,
+  .starting_values             = args_default()$.starting_values
   ) {
-
+  args_used <- c(as.list(environment(), all.names = TRUE))
+  
   ### Preprocessing ============================================================
   ## Parse and order model to "cSEMModel" list
   csem_model <- parseModel(.model)
 
   ## Prepare, check, and clean data (a data.frame)
-  X_cleaned <- processData(.data = .data, .model = csem_model) 
+  X_cleaned <- processData(.data = .data, .model = csem_model)
+  # X_cleaned <- .data
   
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix
-  Cor <- calculateIndicatorCor(.X_cleaned = X_cleaned, 
+  Cor <- calculateIndicatorCor(.X_cleaned = X_cleaned,
                                .approach_cor_robust = .approach_cor_robust)
-  
+
   # Extract the correlation matrix
   S <- Cor$S
   
@@ -93,8 +96,12 @@ foreman <- function(
       # Arguments passed on to calculateInnerWeightsPLS
       .PLS_ignore_structural_model  = .PLS_ignore_structural_model,
       .PLS_weight_scheme_inner      = .PLS_weight_scheme_inner,
+      # Arguments passed on to calcuateOuterWeightsPLS 
+      .data                     = X,
       # Arguments passed to checkConvergence
-      .conv_criterion           = .conv_criterion
+      .conv_criterion           = .conv_criterion,
+      # starting values
+      .starting_values          = .starting_values
     )
   } else if(.approach_weights %in% c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     W <- calculateWeightsKettenring(
@@ -109,7 +116,8 @@ foreman <- function(
         .csem_model               = csem_model,
         .conv_criterion           = .conv_criterion,
         .iter_max                 = .iter_max,
-        .tolerance                = .tolerance
+        .tolerance                = .tolerance,
+        .starting_values          = .starting_values
       )
       
       # Weights need to be scaled s.t. the composite build using .X has
@@ -124,7 +132,8 @@ foreman <- function(
         .csem_model               = csem_model,
         .conv_criterion           = .conv_criterion,
         .iter_max                 = .iter_max,
-        .tolerance                = .tolerance
+        .tolerance                = .tolerance,
+        .starting_values          = .starting_values
       )
     }
 
@@ -132,7 +141,8 @@ foreman <- function(
             
     W <- calculateWeightsUnit(
       .S                        = S,
-      .csem_model               = csem_model
+      .csem_model               = csem_model,
+      .starting_values          = .starting_values
     )
   } else if(.approach_weights %in% c("bartlett", "regression")) {
     
@@ -142,17 +152,23 @@ foreman <- function(
     
     W <- list("W" = csem_model$measurement, "E" = NULL, "Modes" = NULL, 
               "Conv_status" = NULL, "Iterations" = 0)
+  } else if(.approach_weights == "PCA") {
+    W <- calculateWeightsPCA(
+      .S                        = S,
+      .csem_model               = csem_model
+    )
   }
 
   ## Dominant indicators:
   if(!is.null(.dominant_indicators)) {
     W$W <- setDominantIndicator(
       .W = W$W, 
-      .dominant_indicators = .dominant_indicators)
+      .dominant_indicators = .dominant_indicators,
+      .S = S)
   }
 
-  ## Calculate proxies/scores
-  H <- X %*% t(W$W)
+  # ## Calculate proxies/scores
+  # H <- X %*% t(W$W)
   
   LambdaQ2W <- calculateReliabilities(
     .X                = X,
@@ -169,6 +185,10 @@ foreman <- function(
   Lambda  <- LambdaQ2W$Lambda
   Q       <- sqrt(LambdaQ2W$Q2)
   
+  ## Calculate proxies/scores
+  H <- X %*% t(Weights)
+  
+  
   ## Calculate proxy covariance matrix
   C <- calculateCompositeVCV(.S = S, .W = Weights)
   
@@ -177,14 +197,19 @@ foreman <- function(
 
   ## Estimate structural coef
   if(.estimate_structural) {
-    estim_results <- estimatePathOLS(
-      .H            = H,
-      .Q            = Q,
-      .P            = P,
-      .csem_model   = csem_model,
-      .normality    = .normality,
-      .approach_nl  = .approach_nl
-    )
+    if(.approach_paths == "OLS") {
+      estim_results <- estimatePathOLS(
+        .H            = H,
+        .Q            = Q,
+        .P            = P,
+        .csem_model   = csem_model,
+        .normality    = .normality,
+        .approach_nl  = .approach_nl
+      ) 
+    } else {
+      stop2("`.approach_path = '", .approach_paths, "'` not implemented yet.\n",
+            "Check the master branch of https://github.com/M-E-Rademaker/cSEM for updates.")
+    }
   } else {
     estim_results <- NULL
   }
@@ -225,7 +250,8 @@ foreman <- function(
     "Information" = list(
       "Data"          = X,
       "Model"         = csem_model,
-      "Arguments"     = as.list(match.call())[-1],
+      # "Arguments"     = as.list(match.call())[-1],
+      "Arguments"     = args_used,
       "Type_of_indicator_correlation" = Cor$cor_type,
       "Weight_info"   = list(
         "Modes"              = W$Modes,

@@ -27,7 +27,7 @@ calculate2ndOrder <- function(
   ## Get scores for the second stage
   scores         <- .first_stage_results$Estimates$Construct_scores
   
-  # Add scores for nonlinear terms of the if a second order construct is attached
+  # Add scores for nonlinear terms if a second order construct is attached
   # to a nonlinear term
   if(any(grepl("\\.", colnames(model2$measurement)))) {
     

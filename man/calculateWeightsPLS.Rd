@@ -5,6 +5,7 @@
 \title{Calculate composite weights using PLS-PM}
 \usage{
 calculateWeightsPLS(
+  .data                        = args_default()$.data,
   .S                           = args_default()$.S,
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
@@ -16,6 +17,14 @@ calculateWeightsPLS(
    )
 }
 \arguments{
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized data.
+Possible column types or classes of the data provided are: logical,
+numeric (double or integer), factor (ordered and unordered)
+or a mix of several types. The data may also include
+\emph{one} character column whose column name must be given to \code{.id}.
+This column is assumed to contain group identifiers used to split
+the data into groups.}
+
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
@@ -36,7 +45,7 @@ Ignored if \code{.approach_weights} is not PLS-PM.}
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
 each construct in the form \code{"name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
-Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{unit}", a single number (weight) or
+Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}", "\emph{unit}", a single number (weight) or
 a vector of fixed weights of the same length as there are indicators for the
 construct given by \code{"name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
@@ -50,13 +59,16 @@ Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
+
+\item{.starting_values}{list of named vectors containig the starting values.
+Defaults to "\emph{NULL}".}
 }
 \value{
 A list with the elements
 \describe{
 \item{\code{$W}}{A (J x K) matrix of estimated weights.}
 \item{\code{$E}}{A (J x J) matrix of inner weights.}
-\item{\code{$Modes}}{A named vector of Modes used for the outer estimation.}
+\item{\code{$Modes}}{A named vector of modes used for the outer estimation.}
 \item{\code{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
 and \code{FASLE} otherwise. If one-step weights are used via \code{.iter_max = 1}
 or a non-iterative procedure was used, the convergence status is set to \code{NULL}.}

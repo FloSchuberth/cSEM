@@ -4,14 +4,12 @@
 \alias{print.cSEMTestOMF}
 \title{\code{cSEMTestOMF} method for \code{print()}}
 \usage{
-print(.object)
-}
-\arguments{
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+\method{print}{cSEMTestOMF}(x, ...)
 }
 \description{
 The \code{cSEMTestOMF} method for the generic function \code{\link[=print]{print()}}.
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
 }
+\keyword{internal}

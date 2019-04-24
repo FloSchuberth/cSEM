@@ -2,25 +2,13 @@
 % Please edit documentation in R/zz_arguments.R
 \name{args_default}
 \alias{args_default}
-\title{Show argument defaults or candidates}
+\title{Internal: Show argument defaults or candidates}
 \usage{
-args_default(
-  .choices   = FALSE,
-  .only_dots = FALSE,
-  .which_fun = "csem"
-)
+args_default(.choices = FALSE)
 }
 \arguments{
 \item{.choices}{Logical. Should candidate values for the arguments be returned?
 Defaults to \code{FALSE}.}
-
-\item{.only_dots}{Logical. Should only arguments to be passed to lower level
-functions via the  \code{...} argument of the \code{fun} function be returned.
-Defaults to \code{FALSE}.}
-
-\item{.which_fun}{Character string. The \code{...} argument names and values of which
-function should be returned? One of: \code{"csem"} or \code{"cca"}. Defaults to \code{"csem"}.
-Currently ignored if \code{.only_dots = FALSE}.}
 }
 \value{
 A named list of argument names and defaults or accepted candidates.
@@ -32,21 +20,8 @@ values. For argument descriptions, see: \link{csem_arguments}.
 \details{
 By default \code{args_default()}returns a list of default values by argument name.
 If the list of accepted candidate values is required instead, use \code{.choices = TRUE}.
-
-If \code{.only_dots = TRUE} arguments passed to lower level
-functions via the \code{...} argument of \code{which.fun} are returned.
-}
-\examples{
-
-args_default() # List all possible arguments and their defaults.
-args_default(.only_dots = TRUE) # list only those accepted by the `...` argument
-                                # of the csem function.
-args_default(.only_dots = TRUE, .which_fun = "csem") # the same
-
-## Show accepted candidates:
-args.default(.choices = TRUE)
-
 }
 \seealso{
-\code{\link[=handleArgs]{handleArgs()}}, \link{csem_arguments}, \code{\link[=cca]{cca()}}, \code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}
+\code{\link[=handleArgs]{handleArgs()}}, \link{csem_arguments}, \code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}
 }
+\keyword{internal}

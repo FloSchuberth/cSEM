@@ -13,13 +13,16 @@ calculateWeightsUnit(
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
+
+\item{.starting_values}{list of named vectors containig the starting values.
+Defaults to "\emph{NULL}".}
 }
 \value{
 A list with the elements
 \describe{
 \item{\code{$W}}{A (J x K) matrix of estimated weights.}
 \item{\code{$E}}{A (J x J) matrix of inner weights.}
-\item{\code{$Modes}}{A named vector of Modes used for the outer estimation.}
+\item{\code{$Modes}}{A named vector of modes used for the outer estimation.}
 \item{\code{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
 and \code{FASLE} otherwise. If one-step weights are used via \code{.iter_max = 1}
 or a non-iterative procedure was used, the convergence status is set to \code{NULL}.}

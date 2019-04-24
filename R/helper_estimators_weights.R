@@ -65,7 +65,7 @@ calculateInnerWeightsPLS <- function(
   ## (Inner) weightning scheme:
   if(.PLS_weight_scheme_inner == "path" & .PLS_ignore_structural_model) {
     .PLS_ignore_structural_model <- FALSE
-    warning("Structural model required for the path weighting scheme.\n",
+    warning("Structural model is required for the path weighting scheme.\n",
             ".PLS_ignore_structural_model = TRUE was changed to FALSE.", 
             call. = FALSE)
   }
@@ -116,9 +116,10 @@ calculateInnerWeightsPLS <- function(
 
 #' Internal: Calculate the outer weights for PLS-PM
 #'
-#' Calculates outer weights using Mode A, Mode B, Unit or fixed weights.
+#' Calculates outer weights using default or user supplied modes.
 #'
 #' @usage calculateOuterWeightsPLS(
+#'    .data   = args_default()$.data  
 #'    .S      = args_default()$.S,
 #'    .W      = args_default()$.W,
 #'    .E      = args_default()$.E,
@@ -131,6 +132,7 @@ calculateInnerWeightsPLS <- function(
 #' @keywords internal
 
 calculateOuterWeightsPLS <- function(
+  .data   = args_default()$.data,
   .S      = args_default()$.S,
   .W      = args_default()$.W,
   .E      = args_default()$.E,
@@ -141,9 +143,16 @@ calculateOuterWeightsPLS <- function(
   W <- .W
   proxy_indicator_cor <- .E %*% W %*% .S
   
+  # Scale the inner proxy. Inner weights are usually scaled such that the inner
+  # proxies are standardized (mean = 0, var = 1)
+  inner_proxy <- scale(.data %*% t(W) %*% t(.E))
+  colnames(inner_proxy) = rownames(W)
+  
+  # Compute outer weights by block/ construct
   for(i in 1:nrow(W)) {
     block      <- rownames(W[i, , drop = FALSE])
     indicators <- W[block, ] != 0
+    
     if(is.numeric(.modes[[block]]) & length(.modes[[block]]) > 1) {
       if(length(.modes[[block]]) == sum(indicators)) {
         ## Fixed weights - Each weight of "block" is fixed to a user-given value
@@ -155,7 +164,6 @@ calculateOuterWeightsPLS <- function(
       }
     } else if(.modes[block] == "modeA") {
       ## Mode A - Regression of each indicator on its corresponding proxy
-      # Select only
       W[block, indicators] <- proxy_indicator_cor[block, indicators]
       
     } else if(.modes[block] == "modeB") {
@@ -163,7 +171,27 @@ calculateOuterWeightsPLS <- function(
       # W_j = S_jj^{-1} %*% Cov(eta_j, X_j)
       W[block, indicators] <- solve(.S[indicators, indicators]) %*% proxy_indicator_cor[block, indicators]
       
-    }
+    } else if(.modes[block] == "modeBNNLS"){
+      ## Mode BNNLS - Regression of each proxy on its indicators using non-negative LS
+      # Note: .data is standardized, i.e., mean 0 and unit variance, inner proxy is also 
+      #       standardized (standardization of the inner proxy 
+      #       apparently has no effect though.)
+      temp <- nnls::nnls(A = .data[,indicators,drop=FALSE], b = inner_proxy[,block])
+      W[block, indicators] <- temp$x
+    
+    } else if(.modes[block] == "PCA"){
+      ## PCA - Weights to create the first principal component are used  (= the first eigenvector of
+      ##       of S_jj).
+      temp <- psych::principal(r = .S[indicators, indicators], nfactors = 1)
+      W[block, indicators] <- c(temp$weights)
+      
+    } 
+    # Set weights of single-indicator constructs to 1 (in order to avoid floating
+    # point imprecision)
+    if(sum(indicators) == 1){
+      W[block, indicators] <- 1 
+    } 
+    
     # If .modes[block] == "unit" or a single value has been given, nothing needs
     # to happen since W[block, indicators] would be set to 1 (which it already is). 
   }
@@ -251,3 +279,52 @@ scaleWeights <- function(
   
   return(W_scaled)
 }
+
+#' Internal: Set Starting values
+#'
+#' Returns a matrix with that contains the starting values
+#'
+#' @usage setStartingValues(
+#'   .W = args_default()$.W,
+#'   .starting_values = args_default()$.starting_values
+#'   )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @return The (J x K) matrix of scaled weights.
+#' @keywords internal
+
+setStartingValues = function(.W = args_default()$.W,
+                             .starting_values = args_default()$.starting_values){
+
+  if(!is.list(.starting_values)){
+    stop2("A list containing the starting values must be provided.")
+  }
+  
+  tmp <- setdiff(names(.starting_values), rownames(.W))
+  
+  if(length(tmp) != 0) {
+    stop2("Construct name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+          " provided to `.starting_values`", 
+          ifelse(length(tmp) == 1, " is", " are"), " unknown.")
+  }
+  
+  # Replace the original ones by the starting value
+  for(i in names(.starting_values)) {
+    # tmp <- setdiff(names(.starting_values[[i]]), colnames(W[i,,drop=FALSE]))
+    tmp <- setdiff(names(.starting_values[[i]]), colnames(.W[i,.W[i,]!=0,drop = FALSE]))
+    
+    
+    if(length(tmp) != 0) {
+      stop2("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
+            " provided to `.starting_values`", 
+            ifelse(length(tmp) == 1, " is", " are"), " unknown.")
+    }
+    
+    .W[i,names(.starting_values[[i]])] = .starting_values[[i]]
+    
+  }
+  
+  return(.W)
+}
+

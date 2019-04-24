@@ -214,7 +214,7 @@ calculateConstructVCV <- function(
 #'
 #' @inheritParams csem_arguments
 #' 
-#' @return The (K x K) (robust) indicator correlation matrix S.
+#' @return A list containing the (K x K) indicator correlation matrix S. 
 #' @keywords internal
 
 calculateIndicatorCor <- function(
@@ -222,29 +222,38 @@ calculateIndicatorCor <- function(
   .approach_cor_robust = args_default()$.approach_cor
 ){
   
-  if(.approach_cor_robust != "none" && !all(sapply(.X_cleaned, is.numeric))) {
+  only_numeric_cols <- all(unlist(lapply(.X_cleaned, is.numeric)))
+  
+  if(.approach_cor_robust != "none" && !only_numeric_cols) {
     stop2("Setting `.approach_cor_robust = ", .approach_cor_robust, "` requires all",
           " columns of .data to be numeric.")
   }
   
+  ## polycor::hetcor() is relatively slow. If all columns are numeric use cor
+  ## directly
   switch (.approach_cor_robust,
           "none" = {
-            # Pd is TRUE by default. See ?polycor for details
-            temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
-            S    <- temp$correlations
-            cor_type <- unique(c(temp$type))
-            cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""'
+            if(only_numeric_cols) {
+              S <- cor(.X_cleaned)
+              cor_type <- "Bravais-Pearson" 
+            } else {
+              # Pd is TRUE by default. See ?hetcor for details
+              temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
+              S    <- temp$correlations
+              cor_type <- unique(c(temp$type))
+              cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""' 
+            }
           },
-          
+
           "mcd" = {
             S <- MASS::cov.rob(.X_cleaned, cor = TRUE, method = "mcd")$cor
             S[upper.tri(S) == TRUE] = t(S)[upper.tri(S) == TRUE]
-            
+
             cor_type <-  "Robust (MCD)"
           },
           "spearman" = {
             S <- cor(.X_cleaned, method = "spearman")
-            
+
             cor_type <-  "Robust (Spearman)"
           }
   )
@@ -283,7 +292,7 @@ calculateReliabilities <- function(
   # that belong to a construct modeled as a common factor will be replaced now.
   
   if(is.null(.reliabilities)) {
-    ## Reliability: Q^2 = (w' * lambda)^2 where lambda is a consistent estimator
+    ## Congeneric reliability: Q^2 = (w' * lambda)^2 where lambda is a consistent estimator
     ## of the true factor loading.
     ## Approaches differ in the way the loadings are calculated but in the end
     ## it is always: Q = w' lambda.
@@ -324,7 +333,7 @@ calculateReliabilities <- function(
           Q[j]        <- c(W[j, ] %*% Lambda[j, ]) 
         }
       }
-    } else if(.approach_weights %in% c("unit", "bartlett", "regression", 
+    } else if(.approach_weights %in% c("unit", "bartlett", "regression", "PCA", 
                 "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     
       #   Note: "bartlett" and "regression" weights are obtained AFTER running a CFA. 
@@ -363,7 +372,12 @@ calculateReliabilities <- function(
             
             # Get weights and scale
             w <- c(attr(scores, 'fsm')[[1]])
-            # w <- w /  c(sqrt(w %*% .S[indicator_names, indicator_names, drop = FALSE] %*% w))
+            
+            
+            # Standardization does not affect the path coefficients, only the weights and the corresponding 
+            # proxy scores are affected. In the manual we should refer to standardized regression weights
+            # We decided to use standardized weights as it might be problematic for other function if the scores are not standardized.
+            w <- w /  c(sqrt(w %*% .S[indicator_names, indicator_names, drop = FALSE] %*% w))
             W[j, indicator_names] <- w
           }
           
@@ -382,6 +396,9 @@ calculateReliabilities <- function(
           Q[j] <- w %*% lambda
         }
       }
+    } else {
+      stop2("The following error occured in the `calculateReliabilities()` function:\n",
+            .approach_weights, " is an unknown weight scheme.")
     }
   } else {
     
@@ -493,7 +510,8 @@ calculateReliabilities <- function(
 #'
 #' @usage setDominantIndicator(
 #'  .W                   = W,
-#'  .dominant_indicators = .dominant_indicators
+#'  .dominant_indicators = args_default()$.dominant_indicators, 
+#'  .S                   = args_default()$.S
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -503,7 +521,8 @@ calculateReliabilities <- function(
 #'
 setDominantIndicator <- function(
   .W                   = W,
-  .dominant_indicators = .dominant_indicators
+  .dominant_indicators = args_default()$.dominant_indicators,
+  .S                   = args_default()$.S  
 ) {
   ## Check construct names:
   # Do all construct names in .dominant_indicators match the construct
@@ -527,8 +546,15 @@ setDominantIndicator <- function(
          ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
   }
   
+  # Calculate the loadings
+  L = .W%*%.S[colnames(.W),colnames(.W)] * abs(sign(.W))
+  
   for(i in names(.dominant_indicators)) {
-    .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
+    # ensure that the dominant indicator of a block has positive correlation/loading with the composite
+    .W[i, ] = .W[i, ] * sign(L[i, .dominant_indicators[i]])
+    
+    # Old version which ensures that the weight for this indicator has a positive sign.
+    # .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
   }
   return(.W)
 }

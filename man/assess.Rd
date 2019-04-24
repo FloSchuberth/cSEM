@@ -7,16 +7,20 @@
 \alias{assess.cSEMResults_2ndorder}
 \title{Assess model}
 \usage{
-assess(.object)
+assess(.object, .only_common_factors = TRUE, ...)
 
-\method{assess}{cSEMResults_default}(.object)
+\method{assess}{cSEMResults_default}(.object,
+  .only_common_factors = TRUE, ...)
 
-\method{assess}{cSEMResults_multi}(.object)
+\method{assess}{cSEMResults_multi}(.object, ...)
 
-\method{assess}{cSEMResults_2ndorder}(.object)
+\method{assess}{cSEMResults_2ndorder}(.object, ...)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.only_common_factors}{Logical. Should only constructs modeled as common
+factors be included? Defaults to \code{TRUE}.}
 }
 \value{
 (TODO)
@@ -25,7 +29,7 @@ assess(.object)
 Assess model using common evaluation criteria and fit measures.
 }
 \details{
-The following evaulation criteria and fit measures are used (TODO).
+For details see the vignette on assess.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -37,5 +41,5 @@ The following evaulation criteria and fit measures are used (TODO).
 }}
 
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
 }

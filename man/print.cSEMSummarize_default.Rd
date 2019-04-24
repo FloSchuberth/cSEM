@@ -4,14 +4,12 @@
 \alias{print.cSEMSummarize_default}
 \title{\code{cSEMSummarize_default} method for \code{print()}}
 \usage{
-print(.object)
-}
-\arguments{
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+\method{print}{cSEMSummarize_default}(x, ..., .full_output = FALSE)
 }
 \description{
 The \link{cSEMSummary} method for the generic function \code{\link[=print]{print()}}.
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=cca]{cca()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}, \code{\link[=summarize]{summarize()}}
+\code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}, \code{\link[=summarize]{summarize()}}
 }
+\keyword{internal}

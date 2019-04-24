@@ -13,7 +13,8 @@ resamplecSEMResults(
  .handle_inadmissibles  = c("drop", "ignore", "replace"),
  .user_funs             = NULL,
  .eval_plan             = c("sequential", "multiprocess"),
- .seed                  = sample(.Random.seed, 1)
+ .seed                  = sample(.Random.seed, 1),
+ .sign_change_option    = args_default()$.sign_change_option
 )
 }
 \arguments{
@@ -35,10 +36,11 @@ resampling from a resample. Defaults to \code{199}.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
-replications/resamples yielding an inadmissible result will be dropped (
-the number of results returned will be less than .R). For "\emph{ignore}" all results are returned
-even if they are inadmissible (number of results returned = .R). For "\emph{replace}"
-resampling continues until there are exactly .R admissible solutions.
+replications/resamples yielding an inadmissible result will be dropped
+(i.e. the number of results returned will be less than .R). For "\emph{ignore}"
+all results are returned even if they are inadmissible (i.e.
+number of results returned = .R). For "\emph{replace}" resampling continues until
+there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
@@ -53,6 +55,9 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen.}
+
+\item{.sign_change_option}{Character string. Indicates which sign change option should be used in
+the resample function. One of "\emph{no}" "\emph{individual}"  "\emph{construct}". Defaults to "\emph{no}".}
 }
 \value{
 The core structure is the same structure as that of \code{.object} with
@@ -181,7 +186,7 @@ a <- csem(satisfaction, model)
 
 # Bootstrap and jackknife estimation
 boot <- resamplecSEMResults(a)
-jack <- resamplecSEMRestuts(a, .resample_method = "jackknife") 
+jack <- resamplecSEMResults(a, .resample_method = "jackknife") 
 
 # Bootstrap resampling with resampling each resample (totals .R*R2 runs).
 boot1 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,

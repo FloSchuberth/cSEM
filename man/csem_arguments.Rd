@@ -17,7 +17,8 @@ second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}"
 Defaults to "\emph{3stage}".}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
-indicator correlation matrix. One of: "\emph{none}" in which case nothing is done,
+indicator correlation matrix. One of: "\emph{none}" in which case the standard
+bravais-person correlation is used,
 "\emph{spearman}" for the spearman correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}".}
@@ -32,7 +33,7 @@ Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{unit}", "\emph{bartlett}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
 or "\emph{regression}".
 Defaults to "\emph{PLS-PM}".}
 
@@ -47,6 +48,9 @@ where \code{theta*_hat} is the average over all .R bootstrap estimates of \code{
 Defaults to \code{TRUE}}
 
 \item{.C}{A (J x J) composite variance-covariance matrix.}
+
+\item{.calculate_ci}{Logical. Should a closed-form confidence interval be computed?
+Defaults to \code{FALSE}.}
 
 \item{.choices}{Logical. Should candidate values for the arguments be returned?
 Defaults to \code{FALSE}.}
@@ -74,9 +78,9 @@ or a mix of several types. The data may also include
 This column is assumed to contain group identifiers used to split
 the data into groups.}
 
-\item{.disattenuate}{Logical. If possible, should composite/proxy correlations
-be disattenuated if the construct is modeled as a common factor?
-Defaults to \code{TRUE}.}
+\item{.disattenuate}{Logical. Should composite/proxy correlations
+be disattenuated to yield consisten loadings and path estimates if at least
+one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.dist}{Character string. The distribution to use for the critical value.
 One of \emph{"t"} for Student's t-distribution or \emph{"z"} for the standard normal distribution.
@@ -112,10 +116,11 @@ resamples of the first run.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
-replications/resamples yielding an inadmissible result will be dropped (
-the number of results returned will be less than .R). For "\emph{ignore}" all results are returned
-even if they are inadmissible (number of results returned = .R). For "\emph{replace}"
-resampling continues until there are exactly .R admissible solutions.
+replications/resamples yielding an inadmissible result will be dropped
+(i.e. the number of results returned will be less than .R). For "\emph{ignore}"
+all results are returned even if they are inadmissible (i.e.
+number of results returned = .R). For "\emph{replace}" resampling continues until
+there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
 \item{.id}{Character string or integer. The name or position of the column of
@@ -135,28 +140,23 @@ If the algorithm exceeds the specified number, weights of iteration step
 
 \item{.matrices}{A list of at least two matrices.}
 
-\item{.model}{A model in \code{\link[lavaan:model.syntax]{lavaan model syntax}}
-or a \link{cSEMModel}-list.}
+\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
+or a \link{cSEMModel} list.}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
 
-\item{.normality}{Logical. Should joint normality be assumed in the nonlinear model?
+\item{.normality}{Logical. Should joint normality of
+\eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
+be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 Defaults to \code{TRUE}. Ignored if the model is linear.}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.only_common_factors}{Logical. Should only common factors be included?
-Defaults to \code{FALSE}.}
-
-\item{.only_dots}{Logical. Should only arguments to be passed to lower level
-functions via the  \code{...} argument of the \code{fun} function be returned.
-Defaults to \code{FALSE}.}
+\item{.only_common_factors}{Logical. Should only constructs modeled as common
+factors be included? Defaults to \code{TRUE}.}
 
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
-
-\item{.parallel}{Logical. Use parallel computing. Defaults to \code{FALSE}. Note:
-requires the \code{doSNOW} and the \code{parallel} package to be installed.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
@@ -171,7 +171,7 @@ Ignored if \code{.approach_weights} is not PLS-PM.}
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
 each construct in the form \code{"name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
-Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{unit}", a single number (weight) or
+Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}", "\emph{unit}", a single number (weight) or
 a vector of fixed weights of the same length as there are indicators for the
 construct given by \code{"name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
@@ -222,11 +222,17 @@ resampling from a resample. Defaults to \code{199}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 
+\item{.sign_change_option}{Character string. Indicates which sign change option should be used in
+the resample function. One of "\emph{no}" "\emph{individual}"  "\emph{construct}". Defaults to "\emph{no}".}
+
 \item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen.}
 
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
+
+\item{.starting_values}{list of named vectors containig the starting values.
+Defaults to "\emph{NULL}".}
 
 \item{.terms}{A vector of construct names to be classified.}
 
@@ -255,10 +261,6 @@ vectorized (columnwise) in this case. See the examples section for details.}
 
 \item{.W_old}{A (J x K) matrix of weights.}
 
-\item{.which_fun}{Character string. The \code{...} argument names and values of which
-function should be returned? One of: \code{"csem"} or \code{"cca"}. Defaults to \code{"csem"}.
-Currently ignored if \code{.only_dots = FALSE}.}
-
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 
 \item{.X_cleaned}{A data.frame of processed data (cleaned and ordered). Note: \code{X_cleaned}
@@ -268,8 +270,6 @@ may not be scaled!}
 An alphabetical list of all arguments used by functions of the \code{cSEM} package,
 including their description and defaults.
 Mainly used for internal purposes (parameter inheritance). To list all arguments
-and their defaults, use \code{\link[=args_default]{args_default()}}. To list only those arguments to be
-passed down to lower level functions via the \code{...} argument of any
-function having \code{...} as a formal argument, set the \code{.only_dots} argument
-of the \code{\link[=args_default]{args_default()}} function to \code{TRUE}.
+and their defaults, use \code{\link[=args_default]{args_default()}}. To list all arguments and
+their possible choices, use \code{args_default(.choices = TRUE)}.
 }

@@ -41,27 +41,13 @@ processData <- function(.data, .model) {
   ### Checks, errors and warnings ========
   # Check if any data set is provided
   if(is.null(.data)) {
-    stop("No data set provided. Please provide a `data.frame` or a `matrix` of data.",
-         call. = FALSE)
+    stop2("No data set provided. Please provide a `data.frame` or a `matrix` of data.")
   }
 
   # Check class of the .data object and stop if not of class "data.frame" or "matrix"
   if(!any(class(.data) %in% c("data.frame", "matrix"))) {
-    stop("Don't know how to deal with a data object of class: ", class(.data), ".\n",
-         "Please provide the data as a `data.frame` or a `matrix`.",
-         call. = FALSE)
-  }
-
-  # Check if any of the columns is a character. 
-  # Allowed types: numeric (double, integer), factor (ordered and unordered), or logical 
-  x <- names(which(sapply(.data, is.character)))
-  if(length(x) == 1) {
-    stop("Column: ",paste0("`", x, "`", collapse = ", "), " of `.data` is of type `character`.\n",
-         "Have you forgotten to set `", paste0(".id = '", x, "'`?"), call. = FALSE)
-  } else if(length(x) > 1) {
-    stop("Columns: ",paste0("`", x, "`", collapse = ", "), "of `.data` are of type `character`.\n",
-         "The column type must be one of: `logical`, `numeric`, or `factor`",
-         call. = FALSE)
+    stop2("Don't know how to deal with a data object of class: ", class(.data), ".\n",
+         "Please provide the data as a `data.frame` or a `matrix`.")
   }
 
   ### Processing and further checking =========
@@ -69,9 +55,9 @@ processData <- function(.data, .model) {
   # Note 1: we need a data frame to allow for data to have different classes. Namely,
   #   factors need to be allowed.
   # Note 2: previously as.data.frame() was only called when .data had class
-  #    .matrix. However, classes tbl_df, tbl and tiblle cause e.g. an error in the
+  #    .matrix. However, classes tbl_df, tbl and tibble cause e.g. an error in the
   #    hetcor() function (its basically a programming error on the developers part,
-  #    as it checks the class atributed incorrectly). 
+  #    as it checks the class attribute incorrectly). 
   #    Hence, as.data.frame is now always called to make sure .data is
   #    always really a data frame with the single class attribute "data.frame".
     
@@ -80,6 +66,19 @@ processData <- function(.data, .model) {
   # Convert .model to cSEMModel format if not already in this format
   if(!(class(.model) == "cSEMModel")) {
     .model <- parseModel(.model)
+  }
+  
+  # Check if any of the columns is a character. 
+  # Allowed types: numeric (double, integer), factor (ordered and unordered), or logical 
+  x <- names(.data[unlist(lapply(.data, is.character))])
+  
+  if(length(x) == 1) {
+    stop("Column: ",paste0("`", x, "`", collapse = ", "), " of `.data` is of type `character`.\n",
+         "Have you forgotten to set `", paste0(".id = '", x, "'`?"), call. = FALSE)
+  } else if(length(x) > 1) {
+    stop("Columns: ",paste0("`", x, "`", collapse = ", "), "of `.data` are of type `character`.\n",
+         "The column type must be one of: `logical`, `numeric`, or `factor`",
+         call. = FALSE)
   }
   ## Add indicators to .data if the repeated indicators approach is used
   # Error:

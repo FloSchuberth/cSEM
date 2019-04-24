@@ -5,6 +5,7 @@
 #' More details here. (TODO)
 #'
 #' @usage calculateWeightsPLS(
+#'   .data                        = args_default()$.data,
 #'   .S                           = args_default()$.S,
 #'   .csem_model                  = args_default()$.csem_model,
 #'   .conv_criterion              = args_default()$.conv_criterion,
@@ -21,7 +22,7 @@
 #' \describe{
 #'   \item{`$W`}{A (J x K) matrix of estimated weights.}
 #'   \item{`$E`}{A (J x J) matrix of inner weights.}
-#'   \item{`$Modes`}{A named vector of Modes used for the outer estimation.}
+#'   \item{`$Modes`}{A named vector of modes used for the outer estimation.}
 #'   \item{`$Conv_status`}{The convergence status. `TRUE` if the algorithm has converged 
 #'     and `FASLE` otherwise. If one-step weights are used via `.iter_max = 1` 
 #'     or a non-iterative procedure was used, the convergence status is set to `NULL`.}
@@ -31,6 +32,7 @@
 #'
 
 calculateWeightsPLS <- function(
+  .data                        = args_default()$.data,
   .S                           = args_default()$.S,
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
@@ -38,7 +40,8 @@ calculateWeightsPLS <- function(
   .PLS_ignore_structural_model = args_default()$.PLS_ignore_structural_model,
   .PLS_modes                   = args_default()$.PLS_modes,
   .PLS_weight_scheme_inner     = args_default()$.PLS_weight_scheme_inner,
-  .tolerance                   = args_default()$.tolerance
+  .tolerance                   = args_default()$.tolerance,
+  .starting_values             = args_default()$.starting_values
 ) {
 
   ### Preparation ==============================================================
@@ -47,9 +50,11 @@ calculateWeightsPLS <- function(
   
   if(!is.null(.PLS_modes)) {
     
-    # Error if other than "modeA", "modeB", "unit", a number, or a vector
+    # Error if other than "modeA", "modeB", "unit", "modeBNNLS", "PCA", a number, or a vector
     # of numbers of the same length as there are indicators for block j
-    modes_check <- sapply(.PLS_modes, function(x) all(x %in% c("modeA", "modeB", "unit") | is.numeric(x)))
+    modes_check <- sapply(.PLS_modes, 
+                          function(x) all(x %in% c("modeA", "modeB", "unit", 
+                                                   "modeBNNLS", "PCA") | is.numeric(x)))
     if(!all(modes_check)) {
       stop2("The following error occured in the `calculateWeightsPLS()` function:\n",
             paste0("`", .PLS_modes[!modes_check], "`", collapse = " and "),
@@ -64,7 +69,8 @@ calculateWeightsPLS <- function(
                "`", collapse = ", ")," in `.PLS_modes` is an unknown construct name.")
     }
     
-    # If only "modeA", "modeB" or "unit" is provided set all of the modes to that mode.
+    # If only "modeA", "modeB", "modeBNNLS", "PCA", or "unit" is provided set all 
+    # of the modes to that mode.
     if(length(names(.PLS_modes)) == 0) {
       if(length(.PLS_modes) == 1) {
         modes <- as.list(rep(.PLS_modes, length(.csem_model$construct_type)))
@@ -81,6 +87,12 @@ calculateWeightsPLS <- function(
 
   ### Calculation/Iteration ====================================================
   W <- .csem_model$measurement
+  
+  # if starting values are provided
+  if(!is.null(.starting_values)){
+    W = setStartingValues(.W = W, .starting_values = .starting_values)
+    }
+  
   # Scale weights
   W <- scaleWeights(.S = .S, .W = W)
 
@@ -104,6 +116,7 @@ calculateWeightsPLS <- function(
     # Outer estimation
 
     W <- calculateOuterWeightsPLS(
+      .data     = .data,
       .S        = .S,
       .W        = W_iter,
       .E        = E,
@@ -271,7 +284,7 @@ calculateWeightsKettenring <- function(
     }
     
     ## Optimization
-    capture.output(res <- alabama::auglag(
+    utils::capture.output(res <- alabama::auglag(
       par     = runif(length(indicator_names)),
       fn      = fn,
       R       = .S,
@@ -422,7 +435,8 @@ calculateWeightsGSCA <- function(
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
   .iter_max                    = args_default()$.iter_max,
-  .tolerance                   = args_default()$.tolerance
+  .tolerance                   = args_default()$.tolerance,
+  .starting_values             = args_default()$.starting_values
 ) {
   ### Calculation (ALS algorithm) ==============================================
   
@@ -435,6 +449,12 @@ calculateWeightsGSCA <- function(
   J <- nrow(W0)
   K <- ncol(W0)
   JK <- J + K
+  
+  
+  # if starting values are provided
+  if(!is.null(.starting_values)){
+    W0 = setStartingValues(.W = W0, .starting_values = .starting_values)
+  }
   
   # Scale weights
   W <- scaleWeights(.S = .S, .W = W0)
@@ -661,7 +681,8 @@ calculateWeightsGSCAm <- function(
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
   .iter_max                    = args_default()$.iter_max,
-  .tolerance                   = args_default()$.tolerance
+  .tolerance                   = args_default()$.tolerance,
+  .starting_values             = args_default()$.starting_values
 ) {
   ## Notes
   # - If disattenuate = TRUE we have Z = Z - UD. Everywhere else in the 
@@ -734,6 +755,11 @@ calculateWeightsGSCAm <- function(
   
   # Normalize Z
   Z <- Z/sqrt(N - 1) 
+  
+  # if starting values are provided
+  if(!is.null(.starting_values)){
+    W = setStartingValues(.W = W, .starting_values = .starting_values)
+  }
   
   # Gamma
   Gamma <- Z %*% W
@@ -832,13 +858,69 @@ calculateWeightsGSCAm <- function(
 #'
 calculateWeightsUnit = function(
   .S                 = args_default()$.S,
+  .csem_model        = args_default()$.csem_model,
+  .starting_values   = args_default()$starting_values
+){
+  
+  W <- .csem_model$measurement
+  
+  # if starting values are provided
+  if(!is.null(.starting_values)){
+    W = setStartingValues(.W = W, .starting_values = .starting_values)
+  }
+  
+  W <- scaleWeights(.S, W)
+  
+  modes        <- rep("unit", nrow(W))
+  names(modes) <- rownames(W)
+  
+  # Return
+  l <- list("W" = W, "E" = NULL, "Modes" = modes, "Conv_status" = NULL,
+            "Iterations" = 0)
+  return(l)  
+}
+
+#' Calculate composite weights using principal component analysis (PCA)
+#'
+#' Calculate weights for each block by extracting the first principal component
+#' of the indicator correlation matrix S_jj for each blocks, i.e., weights
+#' are the simply the first eigenvector of S_jj.
+#'
+#' @usage calculateWeightsPCA(
+#'  .S                 = args_default()$.S,
+#'  .csem_model        = args_default()$.csem_model
+#'   )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @inherit calculateWeightsPLS return
+#'
+calculateWeightsPCA = function(
+  .S                 = args_default()$.S,
   .csem_model        = args_default()$.csem_model
 ){
   
   W <- .csem_model$measurement
-  W <- scaleWeights(.S, W)
   
-  modes        <- rep("unit", nrow(W))
+  for(j in 1:nrow(W)) {
+    block      <- rownames(W[j, , drop = FALSE])
+    indicators <- W[block, ] != 0
+    
+    temp <- psych::principal(r = .S[indicators, indicators], nfactors = 1)
+    # Note that temp$weights is the same as:
+    #  1. Calculating the eigenvectors of S[indicators, indicators] and
+    #     then taking the first eigenvector. This is the unscaled weight w
+    #  2. Obtain the scaled weight by w_s = w / sqrt(w' S[i, i] w)
+    # 
+    #  R Code:
+    #    tt <- eigen(.S[indicators, indicators])
+    #    w  <- tt$vectors[, 1]
+    #    w  <- w / sqrt(w %*% .S[indicators, indicators] %*% w)
+    
+    W[block, indicators] <- c(temp$weights)
+  }
+  
+  modes        <- rep("PCA", nrow(W))
   names(modes) <- rownames(W)
   
   # Return
