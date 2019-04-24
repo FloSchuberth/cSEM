@@ -472,7 +472,8 @@ resampleData <- function(
 #'  .handle_inadmissibles  = c("drop", "ignore", "replace"),
 #'  .user_funs             = NULL,
 #'  .eval_plan             = c("sequential", "multiprocess"),
-#'  .seed                  = sample(.Random.seed, 1)
+#'  .seed                  = sample(.Random.seed, 1),
+#'  .sign_change_option    = args_default()$.sign_change_option
 #' )
 #'
 #' @inheritParams csem_arguments
@@ -557,7 +558,8 @@ resamplecSEMResults <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed
+  .seed                  = args_default()$.seed,
+  .sign_change_option    = args_default()$.sign_change_option
 ) {
   ## Does .object already contain resamples
   if(any(class(.object) == "cSEMResults_resampled")) {
@@ -594,7 +596,8 @@ resamplecSEMResults.cSEMResults_default <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed
+  .seed                  = args_default()$.seed,
+  .sign_change_option    = args_default()$.sign_change_option
   ) {
   
   ## Set seed if not given
@@ -661,7 +664,8 @@ resamplecSEMResults.cSEMResults_default <- function(
     .handle_inadmissibles2 = .handle_inadmissibles, 
     .user_funs             = .user_funs,
     .eval_plan             = .eval_plan,
-    .seed                  = .seed  
+    .seed                  = .seed,
+    .sign_change_option    = .sign_change_option
   )
   
   # Check if at least 3 admissible results were obtained
@@ -736,7 +740,8 @@ resamplecSEMResults.cSEMResults_default <- function(
       "Method2"                 = .resample_method2,
       "Number_of_observations"  = nrow(.object$Information$Data),
       "Number_of_runs"          = .R,
-      "Number_of_runs2"         = .R2
+      "Number_of_runs2"         = .R2,
+      "Sign_chnage_option"      = .sign_change_option
     )
     names(info)[length(info)] <- "Information_resample"
     
@@ -762,7 +767,8 @@ resamplecSEMResults.cSEMResults_multi <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed
+  .seed                  = args_default()$.seed,
+  .sign_change_option    = args_default()$.sign_change_option
 ) {
   
   out <- lapply(.object, function(x) {
@@ -775,7 +781,8 @@ resamplecSEMResults.cSEMResults_multi <- function(
       .handle_inadmissibles = .handle_inadmissibles,
       .user_funs            = .user_funs,
       .eval_plan            = .eval_plan,
-      .seed                 = .seed
+      .seed                 = .seed,
+      .sign_change_option    = .sign_change_option
     )
   })
   ## Add/ set class
@@ -794,7 +801,8 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed
+  .seed                  = args_default()$.seed,
+  .sign_change_option    = args_default()$.sign_change_option
 ) {
   
   ## Set seed if not given
@@ -861,7 +869,8 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
     .handle_inadmissibles2 = .handle_inadmissibles,
     .user_funs             = .user_funs,
     .eval_plan             = .eval_plan,
-    .seed                  = .seed
+    .seed                  = .seed,
+    .sign_change_option    = .sign_change_option 
   )
   
   # Check if at least 3 admissible results were obtained
@@ -932,7 +941,8 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
         "Method2"                 = .resample_method2,
         "Number_of_observations"  = nrow(.object$Second_stage$Information$Data),
         "Number_of_runs"          = .R,
-        "Number_of_runs2"         = .R2
+        "Number_of_runs2"         = .R2,
+        "Sign_change_option"      = .sign_change_option
       )
     )
     
@@ -965,7 +975,8 @@ resamplecSEMResultsCore <- function(
   .handle_inadmissibles2 = NULL,
   .user_funs             = args_default()$.user_funs,
   .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed
+  .seed                  = args_default()$.seed,
+  .sign_change_option    = args_default()$.sign_change_option
 ) {
   
   ## Get arguments
@@ -990,7 +1001,7 @@ resamplecSEMResultsCore <- function(
       resample_jack[[i]]
     } else {
       # We could use resampleData here but, bootstrap resampling directly is faster
-      # (not surprisingly)
+      # (not surprising)
       # (compared both approaches using microbenchmark)
       data <- args[[".data"]]
       data[sample(1:nrow(data), size = nrow(data), replace = TRUE), ]
@@ -1063,6 +1074,166 @@ resamplecSEMResultsCore <- function(
                                       est_2stage$Weight_estimates$Estimate)
         names(x1[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
                                              est_2stage$Weight_estimates$Name)
+        
+        # Sign change correction for models containing second-order construct starts here (if applied)
+        # Check whether in the first stage PLS was applied, if yes it has to be applied in the second stage as well
+        # It might be that the returned solution is not proper, currently we do not check for that!
+        # This is perticularly relvant for individual_reestimate and construct_reestimate
+      
+        if(.object$First_stage$Information$Arguments$.approach_weights == "PLS-PM"){
+          
+          # Return warning if used in combination with .dominant_indicator
+          if(!is.null(.object$First_stage$Information$Arguments$.dominant_indicators)){
+            warning2("Sign change options should be cautiously used in combination with the dominant indicator approach.")
+          }
+          
+  
+          # Sign change option: individual_reestimate and construct_reestimate 
+          # (should be the same as in matrixpls, if proper funtion is supplied)
+          if(.sign_change_option == "individual_reestimate" | .sign_change_option == "construct_reestimate"){
+            
+
+            # Is there a sign difference in the first stage? If the weight signs do not differ no correction is needed
+            if(sum(sign(.object$First_stage$Estimates$Weight_estimates)!=
+                   sign(Est_temp$First_stage$Estimates$Weight_estimates))!=0){
+              
+              
+              if(.sign_change_option == "individual_reestimate"){
+                W_first_stage_new_sign=Est_temp$First_stage$Estimates$Weight_estimates
+                
+                W_first_stage_new_sign[sign(.object$First_stage_Estimates$Weight_estimates)!=
+                                         sign(Est_temp$First_stage$Estimates$Weight_estimates)]=
+                  Est_temp$First_stage$Estimates$Weight_estimates[sign(.object$First_stage$Estimates$Weight_estimates)!=
+                                                                    sign(Est_temp$First_stage$Estimates$Weight_estimates)]*-1
+              }
+              
+              if(.sign_change_option == "construct_reestimate"){
+                
+                # Create lists containing the loadings of the original 
+                Loading_org_first_stage = .object$First_stage$Estimates$Loading_estimates
+                Loading_Est_temp_first_stage = Est_temp$First_stage$Estimates$Loading_estimates
+                
+                
+                Load_diff_first_stage = abs(rowSums(Loading_org_first_stage - Loading_Est_temp_first_stage))
+                Load_sum_first_stage = abs(rowSums(Loading_org_first_stage - Loading_Est_temp_first_stage))
+                
+                W_first_stage_new_sign=Est_temp$First_stage$Estimates$Weight_estimates
+                
+                W_first_stage_new_sign[Load_diff_first_stage > Load_sum_first_stage,]=W__first_stage_new_sign[Load_diff_first_stage > Load_sum_first_stage,]*-1
+              }
+              
+              # create list containing the 'new' weights
+              W_new_sign_list_first_stage=lapply(1:nrow(W_first_stage_new_sign),function(x){
+                temp=W_first_stage_new_sign[x,]
+                temp[temp!=0]
+              })
+              names(W_new_sign_list_first_stage)=rownames(W_first_stage_new_sign)
+              
+              args_new_sign_first_stage = Est_temp$First_stage$Information$Arguments
+              args_new_sign_first_stage[[".PLS_modes"]]=W_first_stage_new_sign_list
+              
+              Est_new_sign_first_stage=do.call(csem,args_new_sign_first_stage)
+              
+              summary_new_sign_first_stage=summarize(Est_new_sign_first_stage)
+            }
+              # Second stage
+              # If there is a difference in the signs of the weights in the second stage?
+              if(sum(sign(.object$Second_stage$Estimates$Weight_estimates)!=
+                     sign(Est_temp$Second_stage$Estimates$Weight_estimates))!=0){
+                
+                
+                if(.sign_change_option == "individual_reestimate"){
+                  W_second_stage_new_sign=Est_temp$Second_stage$Estimates$Weight_estimates
+                  
+                  W_second_stage_new_sign[sign(.object$Second_stage_Estimates$Weight_estimates)!=sign(Est_temp$Second_stage$Estimates$Weight_estimates)]=
+                    Est_temp$Second_stage$Estimates$Weight_estimates[sign(.object$Second_stage$Estimates$Weight_estimates)!=sign(Est_temp$Second_stage$Estimates$Weight_estimates)]*-1
+                }
+                
+                if(.sign_change_option == "construct_reestimate"){
+                  
+                  # Create lists containing the loadings of the original 
+                  Loading_org_second_stage = .object$Second_stage$Estimates$Loading_estimates
+                  Loading_Est_temp_second_stage = Est_temp$Second_stage$Estimates$Loading_estimates
+                  
+                  
+                  Load_diff_second_stage = abs(rowSums(Loading_org_second_stage - Loading_Est_temp_second_stage))
+                  Load_sum_second_stage = abs(rowSums(Loading_org_second_stage - Loading_Est_temp_second_stage))
+                  
+                  W_second_stage_new_sign=Est_temp$Second_stage$Estimates$Weight_estimates
+                  
+                  W_second_stage_new_sign[Load_diff_second_stage > Load_sum_second_stage,]=W_second_stage_new_sign[Load_diff_second_stage > Load_sum_second_stage,]*-1
+                }
+                
+                # create list containing the 'new' weights
+                W_new_sign_list_second_stage=lapply(1:nrow(W_second_stage_new_sign),function(x){
+                  temp=W_second_stage_new_sign[x,]
+                  temp[temp!=0]
+                })
+                names(W_new_sign_list_second_stage)=rownames(W_second_stage_new_sign)
+                
+                args_new_sign_second_stage = Est_temp$Second_stage$Information$Arguments
+                args_new_sign_second_stage[[".PLS_modes"]]=W_second_stage_new_sign_list
+                
+                Est_new_sign_second_stage=do.call(csem,args_new_sign_second_stage)
+                
+                summary_new_sign_second_stage=summarize(Est_new_sign_secod_stage)
+            
+                
+                
+                x1[["Path_estimates"]] <- Est_new_sign_second_stage$Path_estimates$Estimate
+                names(x1[["Path_estimates"]]) <- Est_new_sign_second_stage$Path_estimates$Name
+                
+                # Loading estimates
+                x1[["Loading_estimates"]] <- c(Est_new_sign_second_stage$Loading_estimates$Estimate, 
+                                               Est_new_sign_second_stage$Loading_estimates$Estimate)
+                names(x1[["Loading_estimates"]]) <- c(Est_new_sign_first_stage$Loading_estimates$Name,
+                                                      Est_new_sign_second_stage$Loading_estimates$Name)
+                
+                # Weight estimates
+                x1[["Weight_estimates"]] <- c(Est_new_sign_first_stage$Weight_estimates$Estimate, 
+                                              Est_new_sign_second_stage$Weight_estimates$Estimate)
+                names(x1[["Weight_estimates"]]) <- c(Est_new_sign_first_stage$Weight_estimates$Name,
+                                                     Est_new_sign_second_stage$Weight_estimates$Name)
+              
+            }
+            
+          }
+          
+          # Reverse the signs off ALL parameter estimates in a bootstrap run if 
+          # their sign differs from the sign of the original estimation
+          if(.sign_change_option == 'individual'){
+            
+            summary_org = summarize(.object)
+
+            # Multiply the coefficients for which the sign differs by -1
+            x1[["Path_estimates"]][sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate) != 
+                                     sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate)] =
+              x1[["Path_estimates"]][sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate) != 
+                                       sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate)]*-1
+            
+            # Loading estimates
+            x1[["Loading_estimates"]][c(sign(summary_temp$First_stage$Estimates$Path_estimates$Estimate),
+                                        sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate)) != 
+                                        c(sign(summary_org$First_stage$Estimates$Path_estimates$Estimate),
+                                          sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate))] =
+              x1[["Loading_estimates"]][c(sign(summary_temp$First_stage$Estimates$Path_estimates$Estimate),
+                                          sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate)) != 
+                                          c(sign(summary_org$First_stage$Estimates$Path_estimates$Estimate),
+                                            sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate))]*-1
+            
+            # Weight estimates
+            x1[["Weight_estimates"]][c(sign(summary_temp$First_stage$Estimates$Path_estimates$Estimate),
+                                       sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate)) != 
+                                       c(sign(summary_org$First_stage$Estimates$Path_estimates$Estimate),
+                                        sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate))] =
+              x1[["Weight_estimates"]][c(sign(summary_temp$First_stage$Estimates$Path_estimates$Estimate),
+                                         sign(summary_temp$Second_stage$Estimates$Path_estimates$Estimate)) != 
+                                         c(sign(summary_org$First_stage$Estimates$Path_estimates$Estimate),
+                                          sign(summary_org$Second_stage$Estimates$Path_estimates$Estimate))]*-1
+          }
+        }
+        
+        
       } else { # default
 
         x1 <- list()
@@ -1078,7 +1249,110 @@ resamplecSEMResultsCore <- function(
         # Weight estimates
         x1[["Weight_estimates"]] <- summary_temp$Estimates$Weight_estimates$Estimate
         names(x1[["Weight_estimates"]]) <- summary_temp$Estimates$Weight_estimates$Name
+
+        # Sign change option works only for PLS-PM, if another approach is used, 
+        # the .sign_change_option argument is ignored
+        # Currenlty, the outcome of a reestimation is not verified.
+        if(.object$Information$Arguments$.approach_weights == "PLS-PM"){
+          
+          # Return warning if used in combination with .dominant_indicator
+          if(!is.null(.object$Information$Arguments$.dominant_indicators)){
+            warning2("Sign change options should be cautiously used in combination with the dominant indicator approach.")
+          }
         
+       # Is there a difference in the signs of th weights? Otherwise no correction of the signs is done
+          # Not sure whether this is a problem for the construct_reestimate approach which only compares the loadings
+          # I think not.
+          if(sum(sign(.object$Estimates$Weight_estimates)!=sign(Est_temp$Estimates$Weight_estimates))!=0){
+
+            
+            # Sign change correction individual_reestimate and construct_reestimate
+            if(.sign_change_option == "individual_reestimate" | .sign_change_option == "construct_reestimate"){
+          
+            # Individual_reestimate: Change sign of the weights that differ from the sign of the original estimation
+            if(.sign_change_option == "individual_reestimate"){
+              W_new_sign=Est_temp$Estimates$Weight_estimates
+              
+              # All weights with a different sign than the original weights are reversed
+              W_new_sign[sign(.object$Estimates$Weight_estimates)!=
+                           sign(Est_temp$Estimates$Weight_estimates)]=
+              Est_temp$Estimates$Weight_estimates[sign(.object$Estimates$Weight_estimates)!=
+                                                    sign(Est_temp$Estimates$Weight_estimates)]*-1
+            }
+            
+            if(.sign_change_option == "construct_reestimate"){
+              
+              # Create lists containing the loadings of the original 
+              Loading_org = .object$Estimates$Loading_estimates
+              Loading_Est_temp = Est_temp$Estimates$Loading_estimates
+              
+
+              Load_diff = abs(rowSums(Loading_org - Loading_Est_temp))
+              Load_sum = abs(rowSums(Loading_org - Loading_Est_temp))
+              
+              W_new_sign=Est_temp$Estimates$Weight_estimates
+              
+              # All weights belonging to a block are sign reversed if Load_diff > Load_sum
+              W_new_sign[Load_diff > Load_sum,]=W_new_sign[Load_diff > Load_sum,]*-1
+            }
+          
+            # create list containing the 'new' weights
+            W_new_sign_list=lapply(1:nrow(W_new_sign),function(x){
+              temp=W_new_sign[x,]
+              temp[temp!=0]
+            })
+            names(W_new_sign_list)=rownames(W_new_sign)
+            
+            # Replace old weights by new weights
+            args_new_sign = Est_temp$Information$Arguments
+            args_new_sign[[".PLS_modes"]]=W_new_sign_list
+            
+            Est_new_sign=do.call(foreman,args_new_sign)
+            
+            summary_new_sign=summarize(Est_new_sign)
+            
+            # fill list with final estimates
+            x1[["Path_estimates"]] <- summary_new_sign$Estimates$Path_estimates$Estimate
+            names(x1[["Path_estimates"]]) <- summary_new_sign$Estimates$Path_estimates$Name
+            
+            # Loading estimates
+            x1[["Loading_estimates"]] <- summary_new_sign$Estimates$Loading_estimates$Estimate
+            names(x1[["Loading_estimates"]]) <- summary_new_sign$Estimates$Loading_estimates$Name
+            
+            # Weight estimates
+            x1[["Weight_estimates"]] <- summary_new_sign$Estimates$Weight_estimates$Estimate
+            names(x1[["Weight_estimates"]]) <- summary_new_sign$Estimates$Weight_estimates$Name
+        } # end if individual_reestimate, construct_reestimate
+        
+        # Reverse the signs off ALL parameter estimates in a bootstrap run if 
+        # their sign differs from the sign of the original estimation
+        if(.sign_change_option == 'individual'){
+          
+          summary_org = summarize(.object)
+
+          # Multiply the coefficients for which the sign differs by -1
+           x1[["Path_estimates"]][sign(summary_temp$Estimates$Path_estimates$Estimate) != 
+                                    sign(summary_org$Estimates$Path_estimates$Estimate)] =
+             x1[["Path_estimates"]][sign(summary_temp$Estimates$Path_estimates$Estimate) !=
+                                      sign(summary_org$Estimates$Path_estimates$Estimate)]*-1
+          
+           # Loading estimates
+           x1[["Loading_estimates"]][sign(summary_temp$Estimates$Loading_estimates$Estimate) != 
+                                       sign(summary_org$Estimates$Loading_estimates$Estimate)] =
+             x1[["Loading_estimates"]][sign(summary_temp$Estimates$Loading_estimates$Estimate) !=
+                                         sign(summary_org$Estimates$Loading_estimates$Estimate)]*-1
+          
+          # Weight estimates
+           x1[["Weight_estimates"]][sign(summary_temp$Estimates$Weight_estimates$Estimate) != 
+                                      sign(summary_org$Estimates$Weight_estimates$Estimate)] =
+           x1[["Weight_estimates"]][sign(summary_temp$Estimates$Weight_estimates$Estimate) != 
+                                      sign(summary_org$Estimates$Weight_estimates$Estimate)]*-1
+
+        }
+       }  
+          
+        
+        }
         # ## Additional statistics
         # # HTMT
         # htmt <- c(HTMT(Est_temp))
@@ -1106,6 +1380,8 @@ resamplecSEMResultsCore <- function(
       
       ## Resampling from a bootstrap sample is required for the
       ## bootstraped t-interval CI (studentized CI), hence the second run
+      # In the second run no sign change option is used. We can think about 
+      # applying the same correction as in the first run
       if(.resample_method2 != "none") {
         
         Est_resamples2 <- resamplecSEMResults(
@@ -1115,7 +1391,8 @@ resamplecSEMResultsCore <- function(
           .resample_method      = .resample_method2,
           .resample_method2     = "none",
           .user_funs            = .user_funs,
-          .seed                 = .seed
+          .seed                 = .seed, 
+          .sign_change_option   = "no" 
         )
         x1 <- list("Estimates1" = x1, "Estimates2" = Est_resamples2)
       }
@@ -1127,8 +1404,7 @@ resamplecSEMResultsCore <- function(
     ## Return
     x1
   }, future.seed = .seed)
-  # })
-  
+          
   ## Process data --------------------------------------------------------------
   # Delete potential NA's
   out <- Filter(Negate(anyNA), Est_ls)
@@ -1153,7 +1429,8 @@ resamplecSEMResultsCore <- function(
         .R2                   = .R2,
         .user_funs            = .user_funs,
         .eval_plan            = .eval_plan,
-        .seed                 = .seed
+        .seed                 = .seed,
+        .sign_change_option   = .sign_change_option
       )
       
       out <- c(out, Est_replace)

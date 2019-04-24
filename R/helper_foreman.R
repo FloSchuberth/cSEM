@@ -372,7 +372,12 @@ calculateReliabilities <- function(
             
             # Get weights and scale
             w <- c(attr(scores, 'fsm')[[1]])
-            # w <- w /  c(sqrt(w %*% .S[indicator_names, indicator_names, drop = FALSE] %*% w))
+            
+            
+            # Standardization does not affect the path coefficients, only the weights and the corresponding 
+            # proxy scores are affected. In the manual we should refer to standardized regression weights
+            # We decided to use standardized weights as it might be problematic for other function if the scores are not standardized.
+            w <- w /  c(sqrt(w %*% .S[indicator_names, indicator_names, drop = FALSE] %*% w))
             W[j, indicator_names] <- w
           }
           
@@ -505,7 +510,8 @@ calculateReliabilities <- function(
 #'
 #' @usage setDominantIndicator(
 #'  .W                   = W,
-#'  .dominant_indicators = .dominant_indicators
+#'  .dominant_indicators = args_default()$.dominant_indicators, 
+#'  .S                   = args_default()$.S
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -515,7 +521,8 @@ calculateReliabilities <- function(
 #'
 setDominantIndicator <- function(
   .W                   = W,
-  .dominant_indicators = .dominant_indicators
+  .dominant_indicators = args_default()$.dominant_indicators,
+  .S                   = args_default()$.S  
 ) {
   ## Check construct names:
   # Do all construct names in .dominant_indicators match the construct
@@ -539,8 +546,15 @@ setDominantIndicator <- function(
          ifelse(length(tmp) == 1, " is", " are"), " unknown.", call. = FALSE)
   }
   
+  # Calculate the loadings
+  L = .W%*%.S[colnames(.W),colnames(.W)] * abs(sign(.W))
+  
   for(i in names(.dominant_indicators)) {
-    .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
+    # ensure that the dominant indicator of a block has positive correlation/loading with the composite
+    .W[i, ] = .W[i, ] * sign(L[i, .dominant_indicators[i]])
+    
+    # Old version which ensures that the weight for this indicator has a positive sign.
+    # .W[i, ] = .W[i, ] * sign(.W[i, .dominant_indicators[i]])
   }
   return(.W)
 }
