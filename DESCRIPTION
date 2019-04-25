@@ -63,7 +63,9 @@ Imports: alabama,
 RdMacros: Rdpack
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
-Suggests: knitr,
+Suggests: 
+    knitr,
     rmarkdown,
-    listviewer
+    listviewer,
+    testthat
 VignetteBuilder: knitr

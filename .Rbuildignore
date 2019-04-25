@@ -3,6 +3,7 @@
 ^CONTRIBUTING\.Rmd$
 ^CONTRIBUTING\.md$
 ^Temp$
+^docs$
 ^README\.Rmd$
 ^NEWS.
 .travis.yml
