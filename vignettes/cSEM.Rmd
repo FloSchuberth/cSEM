@@ -364,8 +364,7 @@ Composite-based methods
                                            Construct reliability, $\omega$, 
                                            reliability coefficient
 --------------------------------------------------------------------------------
-Table: Systematic names and common synonomous names for the 
-reliability found in the literature
+Table: Mathematical symbols and meaning
 </center>
 
 ## Literature
