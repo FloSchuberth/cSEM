@@ -6,6 +6,7 @@ cache: packages
 warnings_are_errors: false
 
 after_success:
+  - Rscript -e 'devtools::install()'
   - Rscript -e 'pkgdown::build_site()'
 
 deploy:
