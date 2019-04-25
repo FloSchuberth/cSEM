@@ -4,8 +4,15 @@ language: r
 cache: packages
 # As long as we are in the development stage warnings are not considered errors
 warnings_are_errors: false
-before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
+
+after_success:
+  - Rscript -e 'pkgdown::build_site()'
+
 deploy:
-  provider: script
-  script: Rscript -e 'pkgdown::deploy_site_github()'
-  skip_cleanup: true
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_PAT
+  keep-history: true
+  local-dir: docs
+  on:
+    branch: master
