@@ -863,7 +863,7 @@ calculateWeightsGSCAm <- function(
 calculateWeightsUnit = function(
   .S                 = args_default()$.S,
   .csem_model        = args_default()$.csem_model,
-  .starting_values   = args_default()$starting_values
+  .starting_values   = args_default()$.starting_values
 ){
   
   W <- .csem_model$measurement
