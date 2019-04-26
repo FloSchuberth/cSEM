@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2019-04-24" />
+<meta name="date" content="2019-04-26" />
 
 <title>GSCA and GSCAM</title>
 
@@ -106,7 +106,7 @@ code > span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">GSCA and GSCA<sub>M</sub></h1>
 <h3 class="subtitle project-tagline">Generalized structured component analysis with and without uniquness terms</h3>
-<h4 class="date project-date">2019-04-24</h4>
+<h4 class="date project-date">2019-04-26</h4>
 </section>
 
 
@@ -165,8 +165,8 @@ code > span.ot { color: #007020; }
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">results1 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="st">&quot;TRUE&quot;</span>)</a></code></pre></div>
 <p>Note that in this case, the user could also drop the input argument <em>‘.disattenuate’</em> because estimation is here done with GSCA<sub>M</sub> as it should. Since it is a pure common factor model, no error message is produced. The estimation results are stored in the object <em>“results1”</em>:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">results1</a></code></pre></div>
-<pre><code>## ___________________________________________________________________________________________________________________
-## ----------------------------------------------------- Overview ----------------------------------------------------
+<pre><code>## ________________________________________________________________________________________________________
+## ----------------------------------------------- Overview -----------------------------------------------
 ## 
 ## Estimation was successful.
 ## 
@@ -190,7 +190,7 @@ code > span.ot { color: #007020; }
 ##  - assess(&lt;object-name&gt;)
 ##  - summarize(&lt;object-name&gt;)
 ##  - verify(&lt;object-name&gt;)
-## ___________________________________________________________________________________________________________________</code></pre>
+## ________________________________________________________________________________________________________</code></pre>
 <p>As indicated, the object <em>“results1”</em> is a list of class <em>cSEMResults</em> with the list elements <em>Estimates</em> and <em>Information</em>. Each sublist contains several elements which can be accessed separately:</p>
 <ol style="list-style-type: decimal">
 <li>Estimates</li>
@@ -225,8 +225,8 @@ code > span.ot { color: #007020; }
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">assess</span>(results1)</a></code></pre></div>
 <p>Next, if the user just wants a compact summary of the parameter estimators and of the most important information concerning the estimation, calling the <em>‘summarize’</em>-function of the <em>cSEM</em>-package will provide this.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">summarize</span>(results1)</a></code></pre></div>
-<pre><code>## ___________________________________________________________________________________________________________________
-## ----------------------------------------------------- Overview ----------------------------------------------------
+<pre><code>## ________________________________________________________________________________________________________
+## ----------------------------------------------- Overview -----------------------------------------------
 ## 
 ##  Number of observations           = 250
 ##  Weight estimator                 = GSCA
@@ -246,7 +246,7 @@ code > span.ot { color: #007020; }
 ##  SAT   Common factor  First order   
 ##  LOY   Common factor  First order   
 ## 
-## ---------------------------------------------------- Estimates ----------------------------------------------------
+## ----------------------------------------------- Estimates ----------------------------------------------
 ## 
 ## Estimated path coefficients:
 ## ============================
@@ -292,10 +292,10 @@ code > span.ot { color: #007020; }
 ##   LOY =~ loy2        0.6211          NA        NA        NA
 ##   LOY =~ loy3        0.8294          NA        NA        NA
 ##   LOY =~ loy4        0.6554          NA        NA        NA
-## ___________________________________________________________________________________________________________________</code></pre>
+## ________________________________________________________________________________________________________</code></pre>
 <p>Finally, the <em>‘verify’</em>-function checks whether the calculated results are admissible. That is to say, it is verified that all results are consonant with the theory underlying the estimation. If the results based on an estimated model exhibit one of the following defects they are deemed inadmissible: - non-convergence - loadings and/or reliabilities larger than 1 - a construct VCV and/or a model-implied VCV matrix that is not positive (semi-)definite</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">verify</span>(results1)</a></code></pre></div>
-<pre><code>## ___________________________________________________________________________________________________________________
+<pre><code>## ________________________________________________________________________________________________________
 ## 
 ## Verify admissibility:
 ## 
@@ -309,7 +309,7 @@ code > span.ot { color: #007020; }
 ##   3      ok        Construct VCV not positive semi-definite      
 ##   4      ok        Model-implied VCV not positive semi-definite  
 ##   5      ok        At least one proxy reliability &gt; 1            
-## ___________________________________________________________________________________________________________________</code></pre>
+## ________________________________________________________________________________________________________</code></pre>
 <p>The output shows that the estimation results of the example are admissible, every status is set to “ok”.</p>
 <p>Having carried out the estimation of all parameters and having established that they are all admissible, it is now question to interpret the results. The influence of (exogenous) constructs on (endogenous) constructs is described by the structural model and expressed by the estimated path coefficients (reliabilities):</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">results1<span class="op">$</span>Estimates<span class="op">$</span>Path_estimates</a></code></pre></div>
@@ -376,8 +376,8 @@ code > span.ot { color: #007020; }
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">results4 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model2, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="st">&quot;FALSE&quot;</span>)</a></code></pre></div>
 <p>This leads to the following estimation results:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw">summarize</span>(results4)</a></code></pre></div>
-<pre><code>## ___________________________________________________________________________________________________________________
-## ----------------------------------------------------- Overview ----------------------------------------------------
+<pre><code>## ________________________________________________________________________________________________________
+## ----------------------------------------------- Overview -----------------------------------------------
 ## 
 ##  Number of observations           = 250
 ##  Weight estimator                 = GSCA
@@ -397,7 +397,7 @@ code > span.ot { color: #007020; }
 ##  SAT   Composite      First order   
 ##  LOY   Common factor  First order   
 ## 
-## ---------------------------------------------------- Estimates ----------------------------------------------------
+## ----------------------------------------------- Estimates ----------------------------------------------
 ## 
 ## Estimated path coefficients:
 ## ============================
@@ -466,7 +466,7 @@ code > span.ot { color: #007020; }
 ##   SAT &lt;~ sat2        0.3398          NA        NA        NA
 ##   SAT &lt;~ sat3        0.0341          NA        NA        NA
 ##   SAT &lt;~ sat4        0.1983          NA        NA        NA
-## ___________________________________________________________________________________________________________________</code></pre>
+## ________________________________________________________________________________________________________</code></pre>
 <p>Due to the fact that there are some constructs that are of composite type, estimation must happen with GSCA. This might result in biased estimators (as in <a href="#example2">Example2</a> for the model where all constructs are of common factor type). However, the interpretation of estimated coefficients is done in the same way as outlined in <a href="#example1">Example1</a> keeping in mind that estimators might be biased. Note that the estimated (“composite”) loadings represent in this case the “true” correlations between indicators and constructs (not proxies!) for all composite type constructs.</p>
 </div>
 </div>
