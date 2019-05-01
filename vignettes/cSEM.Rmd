@@ -7,14 +7,19 @@ output:
     theme: cayman
     highlight: github
     toc: true
+    includes:
+      before_body: preamble.mathjax.tex
 vignette: >
   %\VignetteIndexEntry{csem-basic}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: ../inst/REFERENCES.bib
 ---
-WARNING: this document is work in progress and may still contain mistakes!
 
+WARNING: this document is work in progress and may still contain mistakes!
+<!-- used to print boldface greek symbols (\mathbf only works for latin symbols) -->
+```{r child="preamble-tex.tex", echo=FALSE, include=FALSE}
+```
 # Preface
 
 Structural equation modeling (SEM) has been used for over a century
@@ -63,7 +68,7 @@ as well as what we consider the "cSEM workflow" is discussed.
 between [concepts](#terminology) (an entity defined by a conceptual definition, 
 e.g. "emotional stability", "self-confidence", "customer loyalty") with other 
 [concepts](#terminology) and/or observable quantities generally referred to as 
-indicators, manifest variables or items. Broadly speaking, two modeling 
+[indicators, manifest variables or items](#indicators). Broadly speaking, two modeling 
 approaches exist. We refer to the first as [the latent variable model](#lvmodel) and to 
 the second as [the composite model](#cmodel). 
 Each approach entails a set of methods, estimators, test,
@@ -83,7 +88,7 @@ The entirety of these measurement relations is captured by the **measurement mod
 which relates indicators to [latent variables](#terminology)
 according to the researchers theory of how observables are related to the 
 [concepts](#terminology) in question. The entirety of the relationships between 
-[concepts](#terminology) (i.e., its representation the [construct](#terminology)) is 
+[concepts](#terminology) (i.e., its representation in a statistical model, the [construct](#terminology)) is 
 captured by the **structural model** whose parameters are usually at the center 
 of the researchers interest. Caution is warranted though as the [common factor](#terminology)
 and its respective [concept](#terminology) are not the same thing. Within the covariance-based 
@@ -146,7 +151,7 @@ is therefore crucial to remember what they supposed to convey.
 cSEM is based on a number of principles, that have had a profound influence on
 the design of the package.
 
-### **Model vs. Estimation**
+### Model vs. Estimation
 
 The way different concepts and their relationship 
 are *modeled* is strictly distinct from how they are *estimated*. Hence we
@@ -172,7 +177,7 @@ eta2 =~ item4 + item5 + item6 # eta2 is modeled as a common factor
 
 
 
-### **Composites in a composite model vs. composite in a common factor model and disattenuation**
+### Composites in a composite model vs. composite in a common factor model and disattenuation
 By virtue of the package, cSEM uses composite-based estimators only. Depending
 on the model choosen, linear compounts may therefore either serve as a
 composite as part of the composite model or as a proxy/stand-in for a common factor.
@@ -215,7 +220,7 @@ If `.disattenuate = FALSE` or all concepts are modeled as composites "proper"
 PLS values are returned. To learn more about disattenuation, see the Methods 
 and Formulae section of the respective weightning approach.
 
-### **The role of the weightning scheme and partial least squares (PLS)** {#roleofpls}
+### The role of the weightning scheme and partial least squares (PLS) {#roleofpls}
 
 In principal, any weighted combination of 
 appropriately choosen observables can be used to estimate structural relationships
@@ -269,102 +274,347 @@ csem(threecommonfactors, model, .approach_weights = "regression")
 
 ## The cSEM-Workflow
 
-Working in cSEM consistens o
+Working with cSEM consists of 4 steps
 
+- Preparing the data
+- Specifying the model, 
+- Using the `csem()` function
+- Applying the postestimation functions
+
+The following sections explain each step in detail.
+
+### Preparing the data
+
+### Specfiying a model
+Models are defined using [lavaan syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
+**cSEM** handles linear, nonlinear and hierachical models. Syntax for each
+model is illustrated below using variables of the build-in `satisfaction` dataset. 
+For more information please see the [lavaan syntax tutorial](http://lavaan.ugent.be/tutorial/syntax1.html).
+
+#### Linear model
+A typical linear model would looks like this: 
+```{r eval=FALSE}
+model <- "
+# Structural model
+EXPE ~ IMAG
+QUAL ~ EXPE
+VAL  ~ EXPE + QUAL
+SAT  ~ IMAG + EXPE + QUAL + VAL 
+LOY  ~ IMAG + SAT
+
+# Measurement model
+
+IMAG <~ imag1 + imag2 + imag3                  # composite
+EXPE <~ expe1 + expe2 + expe3                  # composite
+QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5  # composite
+VAL  <~ val1  + val2  + val3                   # composite
+SAT  =~ sat1  + sat2  + sat3  + sat4           # common factor
+LOY  =~ loy1  + loy2  + loy3  + loy4           # common factor
+"
+```
+Note that the opeartor `<~` tells **cSEM** that the concept to its left is modelled as a composite;
+the operator `=~` tells **cSEM** that the concept to its left is modelled
+as a common factor.
+
+#### Nonlinear model
+
+Nonlinear terms are specified as interactions using the colon operator `:`. 
+Non linear terms include interactions and exponential terms. The latter is 
+described in model syntax as an "interaction with itself", e.g., 
+`x_1^3 = x1:x1:x1`. Currently the following terms are allowed
+
+- Single, e.g., `eta1`
+- Quadratic, e.g., `eta1:eta1`
+- Cubic, e.g., `eta1:eta1:eta1`
+- Two-way interaction, e.g., `eta1:eta2`
+- Three-way interaction, e.g., `eta1:eta2:eta3`
+- Quadratic and two-way interaction, e.g., `eta1:eta1:eta3`
+
+A simple example would look like this:
+```{r}
+model <- "
+# Structural model
+EXPE ~ IMAG + IMAG:IMAG
+
+# Measurement model
+EXPE <~ expe1 + expe2
+IMAG <~ imag1 + imag2
+"
+
+```
+
+#### Hiearchical (second order) model
+
+Currently only second-order models are supported. Specification of the 
+second order construct takes place in the measurement model. 
+```{r, eval=FALSE}
+model <- "
+# Structural model
+SAT ~ QUAL
+VAL ~ SAT + QUAL
+
+# Measurement model
+EXPE <~ expe1 + expe2
+
+SAT =~ sat1 + sat2
+VAL =~ val1 + val2
+QUAL =~ IMAG + EXPE
+IMAG <~ imag1 + imag2
+"
+```
+In this case
+`QUAL =~ IMAG + EXPE` is modeled as a second-order common factor.
+
+### Using `csem()`
+
+`csem()` is the central function of the package. Although it is possible to 
+estimate a model using individual functions called by `csem()` (such as `parseModel()`, `processData()`, `calculateWeightsPLS()` etc. ), it is virturally
+always easier, saver and quicker to use `csem()` instead.
+
+`csem()` accepts all models and data types described above. The result of a call to
+`csem()`is always an object of class `cSEMResults`. Technically, the resulting
+object has an additional class attribute, namely `cSEMResults_default`, `cSEMResults_multi`
+or `cSEMResults_2ndorder` that depends on the type of model and/or data provided, 
+however, users usually dont need to worry since postestimation
+functions automatically work on all classes. 
+
+The simplest possible call to `csem()` involes a dataset and a model:
+```{r warning=FALSE, message=FALSE}
+require(cSEM)
+
+model <- "
+# Path model / Regressions 
+eta2 ~ eta1
+eta3 ~ eta1 + eta2
+
+# Measurement model
+eta1 =~ y11 + y12 + y13
+eta2 =~ y21 + y22 + y23
+eta3 =~ y31 + y32 + y33
+"
+  
+a <- csem(.data = threecommonfactors, .model = model)
+a
+```
+This is equal to:
+```{r, eval=FALSE}
+csem(
+   .data                        = threecommonfactors,
+   .model                       = model,
+   .approach_cor_robust         = "none",
+   .approach_nl                 = "sequential",
+   .approach_paths              = "OLS",
+   .approach_weights            = "PLS-PM",
+   .conv_criterion              = "diff_absolute",
+   .disattenuate                = TRUE,
+   .dominant_indicators         = NULL,
+   .estimate_structural         = TRUE,
+   .id                          = NULL,
+   .iter_max                    = 100,
+   .normality                   = TRUE,
+   .PLS_approach_cf             = "dist_squared_euclid",
+   .PLS_ignore_structural_model = FALSE,
+   .PLS_modes                   = NULL,
+   .PLS_weight_scheme_inner     = "path",
+   .reliabilities               = NULL,
+   .starting_values             = NULL,
+   .tolerance                   = 1e-05,
+   .resample_method             = "none", 
+   .resample_method2            = "none",
+   .R                           = 499,
+   .R2                          = 199,
+   .handle_inadmissibles        = "drop",
+   .user_funs                   = NULL,
+   .eval_plan                   = "sequential",
+   .seed                        = NULL,
+   .sign_change_option          = "no"
+    )
+```
+See the `csem()` documentation for details.
+
+#### Inference
+
+By default no inferential quantities are calculated since most composite-based approaches
+do not have closed-form solutions for standard errors. `cSEM` relies on the 
+ `bootstrap` or `jackknife`  to estimate standard errors, test statistics, 
+and critical quantiles.
+
+`cSEM` offers two ways to compute resamples:
+
+1. Inference can be done by first setting `.resample_method` to 
+`"jackkinfe"` or `"bootstrap"` and subsequently using `summarize()` or `infer()`.
+2. The same result is achieved by passing a `cSEMResults` object to `resamplecSEMResults()`
+and subsequently using `summarize()` or `infer()`.
+
+```{r eval=FALSE}
+# Setting `.resample_method`
+b1 <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
+b2 <- resamplecSEMResults(a)
+```
+
+Several confidence intervals are implemented, see `?infer()`:
+
+```{r eval=FALSE}
+summarize(b1)
+infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
+```
+
+Both bootstrap and jackknife resampling support platform-independent multiprocessing 
+as well as random seeds via the [future framework](https://github.com/HenrikBengtsson/future). 
+For multiprocessing simply set `eval_plan = "multiprocess"` in which case the maximum number of available cores
+is used if not on Windows. On Windows as many separate R instances are opened in the
+backround as there are cores available instead. Note
+that this naturally has some overhead so for a small number of resamples multiprocessing
+will not always be faster compared to sequential (single core) processing (the default).
+Seeds are set via the `.seed` argument.
+
+```{r eval=FALSE}
+b <- csem(
+  .data            = satisfaction,
+  .model           = model, 
+  .resample_method = "bootstrap",
+  .R               = 999,
+  .seed            = 98234,
+  .eval_plan       = "multiprocess")
+```
+
+### Applying a postestimation function
+
+Currently, there are 4 major postestimation function and 3 test-family functions:
+
+- `assess()`
+- `predict()`
+- `summarize()`
+- `verify()`
+
+- `testOMF()`
+- `testMGD()`
+- `testMICOM()`
+
+Postestimation functions are generic function with methods for objects of class 
+`cSEMResults_default`, `cSEMResults_multi`, `cSEMResults_2ndorder`. In `cSEM`
+every `cSEMResults_*` object must also have class `cSEMResults` for internal reasons. 
+When using one of the major postestimation functions, method dispatch is therefore 
+technically done on one of the `cSEMResults_*` class attributes, ignoring the 
+`cSEMResults` class attribute. As long as a postestimation function is
+used directly method dispatch is not of any practical concern to the end-user. 
+The difference, however, becomes important if a user seeks to directly invoke an internal function 
+which is called by one of the postestimation functions (e.g., `calculateAVE()` or 
+`calculateHTMT()` as called by `assess()`). 
+In this case only objects of class `cSEMResults_default` are accepted as this
+ensures a specific structure. Therefore, it is important to remember that
+*internal functions are generally **not** generic.*
+
+# Terminology & Notation 
+The termionology and (mathematical) notiation used in complementatry help files
+is described here. 
 
 ## Terminology {#terminology}
 
-Structural Equation Modeling 
-
-:   The entirety of a set of related theories, mathematical models, methods, 
-    algorithms and terminologies related to analyzing the relationships 
-    between (unobserved) concepts and/or observables. 
-
-Concept
-
-:   An entity defined by a conceptual definition. In line with Rigdon (2016) we
-    call variables representing or subsuming a concept **conceptual variables**. 
-    The precise nature/meaning of a conceptual variable depends on 
-    "differnt assumptions, philosophies or worldviews [of the researcher]" 
-    (Rigdon, 2016, p. 2). Unless otherwise stated, it is sufficient for our 
-    purpose to think of concepts as entities that exist simply because they 
-    have been defined. Hence, abstract terms such as "loyalty" or "depression" as 
-    well as designed entities (artifacts) such as the "OECD Better Life Index"
-    are covered by the definition.
-
-Construct
-
-:   Construct may refer to a representation of a concept within a given statistical 
-    model. While a concept is defined by a conceptual (theoretical) definition, 
-    a construct for a concept is defined/created by how the researcher's operationalization. 
-    As opposed to concepts, constructs therefore exist because they arise as 
-    the result of the act of modeling their relation to the observable 
-    variables (indicators). 
-    As such, stand-ins cease to exist without a 
-    measurement model and are inherently tied to the postulated measurement 
-    relation and consequently to the data as represented by the indicators.
-    Hence, stand-ins do not necessarily represent the concept they are meant to
-    represent.
-
-Proxy 
-
-:    A stand-in
-     
 Common factor
 
-:   A common factor is a type of construct. The defining feature of a
+:   A common factor or latent variable is a type of construct. The defining feature of a
     common factor is the idea that the common factor is the common underlying 
-    cause of the realizations of a set of indicators that are said to measure 
+    (latent) cause of the realizations of a set of indicators that are said to measure 
     the common factor. The common factor model is also referred to as 
     reflective measurement model. Accordingly, indicators related to the common factor
     are modeled as measurement error-prone manifestations of a common variable, 
-    cause or factor.
-    
-Latent variable
+    cause or factor. The idea of a common factor is closely related to the true
+    score theory. Although, there a subtle conceptional differences, the terms common factor,
+    true score, and latent variable are used synommenoulsy in **cSEM**.
 
-:   Although, there a conceptional differences, We use the terms common factor
-    and latent variable synommenoulsy.
-    
 Composite
 
 :   A composite is a weighted sum of its related indicators. Composites may 
-    either serve as constructs or as proxies for . The nature of the composite is 
-    defined by the type of (measurement) model. If composites are error-free representations 
+    either serve as constructs in their own right or as proxies for a latent variable. 
+    The nature of the composite is therefore defined by the type of (measurement) 
+    model. If composites are error-free representations 
     of a concept we refer to the measurement model as composite measurement. If 
     composites are used as stand-ins, the measurement model is called 
-    causal-formative (Henseler, 2017)
-    
-Factor-based methods 
-
-:   Factor-based methods or factor-based SEM refers to the entirety of methods 
-    centered around the use as of the common factors as stand-ins for the 
-    concepts under investigation.
+    causal-formative (Henseler, 2017). 
     
 Composite-based methods 
 
 :   Composite-based methods or composite-based SEM refers to the entirety of methods 
     centered around the use as of composites (linear compounts of observables) 
     as stand-ins or error-free representations for the concepts under investigation.
-
+    Factor-based methods are also called
+    variance-based methods as focal parameters are usually retrived such that explained 
+    variance is maximized.
     
+Concept
 
-## (Mathematical) Notation {#notation}
+:   An entity defined by a conceptual/theoretical definition. In line with Rigdon (2016)
+    variables representing or subsuming a concept are called **conceptual variables**. 
+    The precise nature/meaning of a conceptual variable depends on 
+    "differnt assumptions, philosophies or worldviews [of the researcher]" 
+    (Rigdon, 2016, p. 2). Unless otherwise stated, in **cSEM**, it is sufficient
+    to think of concepts as entities that exist simply because they 
+    have been defined. Hence, abstract terms such as "loyalty" or "depression" as 
+    well as designed entities (artifacts) such as the "OECD Better Life Index"
+    are covered by the definition.
 
+Construct
+
+:   Construct refer to a representation of a concept *within a given statistical 
+    model*. While a concept is defined by a conceptual (theoretical) definition, 
+    a construct for a concept is defined/created by the researcher's operationalization
+    of a concept within a statistical model. concepts are either modeled
+    as common factors/latent variables or as composites. Both operationalizations
+    - the common factor and the composite - are called constructs in **cSEM** .
+    As opposed to concepts, constructs therefore exist because they arise as 
+    the result of the act of modeling their relation to the observable 
+    variables (indicators) based on a specific set of assumptions. 
+    Constructs may therefore best be understood as stand-ins for concepts. Consequently,
+    constructs do not necessarily represent the concept they seek to represent.
+
+Factor-based methods 
+
+:   Factor-based methods or factor-based SEM refers to the entirety of methods 
+    centered around the use of the common factors/latent variables as stand-ins for 
+    the concepts under investigation. Factor-based methods are also called
+    covariance-based methods as focal parameters are retrived such that the
+    difference between the model-implied $\bm\Sigma(\theta)$ and the empirical indicator covariance 
+    matrix $\bm S$ is minimized.
+    
+Indicator
+
+:   An observable variable. In **cSEM** observable variables are generally refered 
+    to as indicators, however, terms such as item, manifest variable, or 
+    observables are sometimes used synommenoulsy.
+    
+Latent variable
+
+:   See: Common factor
+
+True score
+
+:   See: Common factor
+    
+Proxy
+
+:   Any quantity that functions as a representation of some other quantity.
+    Proxies are usually - but not necessarily - error-prone representations
+    of the quantity they seek to represent. Examples are 
+
+Stand-in
+
+:   See: Proxy    
+
+Structural Equation Modeling 
+
+:   The entirety of a set of related theories, mathematical models, methods, 
+    algorithms and terminologies related to analyzing the relationships 
+    between (unobserved) concepts and/or observables. 
+    
+## Notation {#notation}
 <center>
---------------------------------------------------------------------------------
- Symbol                       Mathematical Synonomous terms      
------------------------------ ------------ -------------------------------------
- Parallel reliability           $\rho_P$   Spearman-Brown formula, Spearman-Brown prophcy,
-                                           Standardized alpha, Split-half reliability
-
- Tau-equivalent reliability     $\rho_T$   Cronbach's alpha, $\alpha$, Coefficient alpha
-                                           Guttmans's $\lambda_3$, KR-20
- 
- Congeneric reliability         $\rho_C$   Composite reliability, Jöreskog's $\rho$,
-                                           Construct reliability, $\omega$, 
-                                           reliability coefficient
---------------------------------------------------------------------------------
-Table: Mathematical symbols and meaning
+| Symbol            |  Dimension              |  Description
+|:------------------|:-----------------------:|:-------------------------------------|
+| $\bm\eta_{en}$	  | $(J_{en} \times 1)$     |  Vector of endogenous constructs/concepts|
+| $\bm\eta_{ex}$	  | $(J_{ex} \times 1)$     |  Vector of exogenous constructs/concepts|
+| $\bm\eta$         | $(J \times 1)$          |  Vector of constructs/concepts|
+| $\eta_j$          | $(1 \times 1)$          |  The $j$'th construct/concept|
 </center>
 
-## Literature
+# Literature

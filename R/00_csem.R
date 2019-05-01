@@ -357,7 +357,7 @@ csem <- function(
             args$.approach_2ndorder == "3stage") {
     
     ### Second step
-    # Note: currently only data supplied as a list or grouped data is not allowed
+    # Note: currently data supplied as a list or grouped data is not allowed
     out2 <- calculate2ndOrder(model_original, out)
     out <- list("First_stage" = out, "Second_stage" = out2)
     

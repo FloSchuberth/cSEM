@@ -7,16 +7,19 @@ output:
     theme: cayman
     highlight: github
     toc: true
+    includes:
+      before_body: preamble.mathjax.tex
 vignette: >
   %\VignetteIndexEntry{using-assess}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 bibliography: ../inst/REFERENCES.bib
 ---
 WARNING: this document is work in progress and may still contain mistakes!
-
+<!-- used to print boldface greek symbols (\mathbf only works for latin symbols) -->
+```{r child="preamble-tex.tex", echo=FALSE, include=FALSE}
+```
 # Introduction
-
 As indicated by the name, `assess()` is used to assess a model estimated using the
 `csem()` function.
 

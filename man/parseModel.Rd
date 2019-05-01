@@ -29,14 +29,16 @@ order as the matrix \code{$structural} with row names equal to
 the construct names. The order of the columns is such that \code{$measurement}
 forms a block diagonal matrix.}
 \item{\code{$error_cor}}{A (K x K) matrix mimicking the measurement error
-correlation relationship. The row and column order is identical to \code{$measurement}.}
+correlation relationship. The row and column order is identical to
+the column order of \code{$measurement}.}
 \item{\code{$construct_type}}{A named vector containing the names of each construct
 and their respective type ("Common factor" or "Composite").}
 \item{\code{$construct_order}}{A named vector containing the names of each construct
 and their respective order ("First order" or "Second order").}
 \item{\code{$model_type}}{The type of model ("Linear" or "Nonlinear").}
 }
-Note: it is possible to supply an incomplete \code{cSEMModel} list
+It is possible to supply an incomplete list to \code{parseModel()}, resulting
+in an incomplete \code{cSEMModel} list which can be passed
 to all functions that require \code{.csem_model} as a mandatory argument. Currently,
 only the structural and the measurement matrix are required.
 However, specifying an incomplete \code{cSEMModel} list may lead to unexpected behavior
@@ -47,7 +49,10 @@ Turns a model written in \link[lavaan:model.syntax]{lavaan model syntax} into a
 \link{cSEMModel} list.
 }
 \examples{
-model <- '
+# ===========================================================================
+### Providing a model in lavaan syntax 
+# ===========================================================================
+model <- "
 # Structural model
 y1 ~ y2 + y3
 
@@ -58,11 +63,41 @@ y3 =~ x6 + x7
 
 # Error correlation
 x1 ~~ x2
-'
+"
 
-(m <- parseModel(model))
+m <- parseModel(model)
+m
 
-# If the model is already a cSEMModel object, the model is returned as is.
+# ===========================================================================
+### Providing a complete model in cSEM format (class cSEMModel)
+# ===========================================================================
+# If the model is already a cSEMModel object, the model is returned as is:
 
 identical(m, parseModel(m)) # TRUE
+
+# ===========================================================================
+### Providing a list 
+# ===========================================================================
+# It is possible to provide a list that contains at least the
+# elements "structural" and "measurement". This is generally discouraged
+# as this may cause unexpected errors.
+
+m_incomplete <- m[c("structural", "measurement", "construct_type")]
+parseModel(m_incomplete)
+
+# Providing a list containing list names that are not part of a `cSEMModel`
+# causes an error:
+
+\dontrun{
+m_incomplete[c("name_a", "name_b")] <- c("hello world", "hello universe")
+parseModel(m_incomplete)
+}
+
+# Failing to provide "structural" or "measurement" also causes an error:
+
+\dontrun{
+m_incomplete <- m[c("structural", "construct_type")]
+parseModel(m_incomplete)
+}
+
 }

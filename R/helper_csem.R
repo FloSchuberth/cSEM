@@ -15,9 +15,9 @@ calculate2ndOrder <- function(
   .csem_model          = args_default()$.csem_model,
   .first_stage_results = args_default()$.first_stage_results
 ) {
-
+  
   original_model <- .csem_model
-
+  
   ## Parse second stage model
   model2 <- convertModel(
     .csem_model        = original_model,
@@ -68,9 +68,29 @@ calculate2ndOrder <- function(
   names(rel_not_attached_to_2nd) <- paste0(c_not_attached_to_2nd, "_temp")
   
   ## Perform second stage
-  out2 <- csem(.data          = scores, 
-               .model         = model2, 
-               .reliabilities = rel_not_attached_to_2nd)
+  args <- .first_stage_results$Information$Arguments
+  out2 <- csem(
+    .data                        = scores, 
+    .model                       = model2,
+    .approach_cor_robust         = args$.approach_cor_robust,
+    .approach_nl                 = args$.approach_nl,
+    .approach_paths              = args$.approach_paths,
+    .approach_weights            = args$.approach_weights,
+    .conv_criterion              = args$.conv_criterion,
+    .disattenuate                = args$.disattenuate,
+    .dominant_indicators         = args$.dominant_indicators,
+    .estimate_structural         = args$.estimate_structural,
+    .id                          = NULL,
+    .iter_max                    = args$.iter_max,
+    .normality                   = args$.normality,
+    .PLS_approach_cf             = args$.PLS_approach_cf,
+    .PLS_ignore_structural_model = args$.PLS_ignore_structural_model,
+    .PLS_modes                   = NULL,
+    .PLS_weight_scheme_inner     = args$.PLS_weight_scheme_inner,
+    .reliabilities               = rel_not_attached_to_2nd,
+    .starting_values             = NULL,
+    .tolerance                   = args$.tolerance
+    )
   
   ## Correct loadings (this basically rebases loadings)
   out2$Estimates$Loading_estimates <-  t(apply(out2$Estimates$Loading_estimates, 1, function(x) {
@@ -111,9 +131,28 @@ calculate2ndOrder <- function(
       rel[c_2nd_order_composites] <- rel_2nd_order 
       
       ## Redo second stage including new reliabilities (= third stage)
-      out2 <- csem(.data          = scores, 
-                   .model         = model2, 
-                   .reliabilities = rel)
+      out2 <- csem(
+        .data                        = scores, 
+        .model                       = model2,
+        .approach_cor_robust         = args$.approach_cor_robust,
+        .approach_nl                 = args$.approach_nl,
+        .approach_paths              = args$.approach_paths,
+        .approach_weights            = args$.approach_weights,
+        .conv_criterion              = args$.conv_criterion,
+        .disattenuate                = args$.disattenuate,
+        .dominant_indicators         = args$.dominant_indicators,
+        .estimate_structural         = args$.estimate_structural,
+        .id                          = NULL,
+        .iter_max                    = args$.iter_max,
+        .normality                   = args$.normality,
+        .PLS_approach_cf             = args$.PLS_approach_cf,
+        .PLS_ignore_structural_model = args$.PLS_ignore_structural_model,
+        .PLS_modes                   = NULL,
+        .PLS_weight_scheme_inner     = args$.PLS_weight_scheme_inner,
+        .reliabilities               = rel,
+        .starting_values             = NULL,
+        .tolerance                   = args$.tolerance
+      )
       
       for(i in c_2nd_order_composites) {
         
@@ -147,6 +186,6 @@ calculate2ndOrder <- function(
       } # END correct single indicator loadings
     } # END if length(c_2nd_order_composites) != 0
   } # END third stage
-
+  
   return(out2)
 }

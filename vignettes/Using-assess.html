@@ -100,12 +100,19 @@ code > span.ot { color: #007020; }
 <body>
 
 
+\(
+\newcommand{\bm}[1]{\boldsymbol{\mathbf{#1}}}
+\)
+
+\(
+\newcommand{\hatt}[1]{\hat{\boldsymbol{\mathbf{#1}}}}
+\)
 
 
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Postestimation: Assessing a model</h1>
 <h3 class="subtitle project-tagline">Using the <code>assess()</code> function</h3>
-<h4 class="date project-date">Last edited: 2019-04-23</h4>
+<h4 class="date project-date">Last edited: 2019-04-29</h4>
 </section>
 
 
@@ -138,7 +145,8 @@ code > span.ot { color: #007020; }
 </div>
 
 <section class="main-content">
-<p>WARNING: this document is work in progress and may still contain mistakes!</p>
+<p>WARNING: this document is work in progress and may still contain mistakes! <!-- used to print boldface greek symbols (\mathbf only works for latin symbols) --></p>
+
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>As indicated by the name, <code>assess()</code> is used to assess a model estimated using the <code>csem()</code> function.</p>
