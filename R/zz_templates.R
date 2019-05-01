@@ -22,14 +22,16 @@
 #'     the construct names. The order of the columns is such that `$measurement`
 #'     forms a block diagonal matrix.}
 #'   \item{`$error_cor`}{A (K x K) matrix mimicking the measurement error
-#'     correlation relationship. The row and column order is identical to `$measurement`.}
+#'     correlation relationship. The row and column order is identical to 
+#'     the column order of `$measurement`.}
 #'   \item{`$construct_type`}{A named vector containing the names of each construct
 #'     and their respective type ("Common factor" or "Composite").}
 #'   \item{`$construct_order`}{A named vector containing the names of each construct
 #'     and their respective order ("First order" or "Second order").}
 #'   \item{`$model_type`}{The type of model ("Linear" or "Nonlinear").}
 #' }
-#' Note: it is possible to supply an incomplete `cSEMModel` list
+#' It is possible to supply an incomplete list to `parseModel()`, resulting
+#' in an incomplete `cSEMModel` list which can be passed
 #' to all functions that require `.csem_model` as a mandatory argument. Currently,
 #' only the structural and the measurement matrix are required.
 #' However, specifying an incomplete `cSEMModel` list may lead to unexpected behavior 

@@ -10,7 +10,10 @@
 #' @inherit csem_model return
 #'
 #' @examples
-#' model <- '
+#' # ===========================================================================
+#' ### Providing a model in lavaan syntax 
+#' # ===========================================================================
+#' model <- "
 #' # Structural model
 #' y1 ~ y2 + y3
 #'
@@ -21,41 +24,75 @@
 #'
 #' # Error correlation
 #' x1 ~~ x2
-#' '
+#' "
 #'
-#' (m <- parseModel(model))
-#'
-#' # If the model is already a cSEMModel object, the model is returned as is.
+#' m <- parseModel(model)
+#' m
+#' 
+#' # ===========================================================================
+#' ### Providing a complete model in cSEM format (class cSEMModel)
+#' # ===========================================================================
+#' # If the model is already a cSEMModel object, the model is returned as is:
 #'
 #' identical(m, parseModel(m)) # TRUE
+#' 
+#' # ===========================================================================
+#' ### Providing a list 
+#' # ===========================================================================
+#' # It is possible to provide a list that contains at least the
+#' # elements "structural" and "measurement". This is generally discouraged
+#' # as this may cause unexpected errors.
+#' 
+#' m_incomplete <- m[c("structural", "measurement", "construct_type")]
+#' parseModel(m_incomplete)
+#' 
+#' # Providing a list containing list names that are not part of a `cSEMModel`
+#' # causes an error:
+#' 
+#' \dontrun{
+#' m_incomplete[c("name_a", "name_b")] <- c("hello world", "hello universe")
+#' parseModel(m_incomplete)
+#' }
+#' 
+#' # Failing to provide "structural" or "measurement" also causes an error:
+#' 
+#' \dontrun{
+#' m_incomplete <- m[c("structural", "construct_type")]
+#' parseModel(m_incomplete)
+#' }
+#' 
 #' @export
 #'
 parseModel <- function(.model) {
 
   ### Check if already a cSEMModel list  
   if(class(.model) == "cSEMModel") {
-    # .model <- model
+
     return(.model)
-  
-    ## Check if list contains necessary elements
-  } else if(all(c("structural", "measurement") %in% names(.model))) {
     
-    # x <- setdiff(names(.model), c("structural", "measurement", "error_cor", 
-    #                               "construct_type", "construct_order", "model_type", "vars_endo", 
-    #                               "vars_exo", "vars_explana", "explained_by_exo"))
-    x <- setdiff(names(.model), c("structural", "measurement", "error_cor", 
-                                  "construct_type", "construct_order", 
-                                  "model_type"))
-    if(length(x) == 0) {
+  ### Check if list
+  } else if(is.list(.model)) {
+    ## Check if list contains minimum necessary elements (structural, measurement)
+    if(all(c("structural", "measurement") %in% names(.model))) {
       
-      class(.model) <- "cSEMModel"
-      return(.model)
-      
+      x <- setdiff(names(.model), c("structural", "measurement", "error_cor", 
+                                    "construct_type", "construct_order", 
+                                    "model_type"))
+      if(length(x) == 0) {
+        
+        class(.model) <- "cSEMModel"
+        return(.model)
+        
+      } else {
+        
+        stop2("The following error occured in the `parseModel()` function:\n", 
+              "The list provided contains element names unknown to cSEM: ", 
+              paste0("'", x, "'", collapse = ", "), ".\n", 
+              "See ?cSEMModel for a list of valid component names.")
+      }
     } else {
-      
-      stop("The model you provided contains element names unknown to cSEM (", 
-           paste0("'", x, "'", collapse = ", "), ").\n", 
-           "See ?cSEMModel for a list of valid component names.", call. = FALSE)
+      stop2("The following error occured in the `parseModel()` function:\n",
+            "Structural and measurement matrix required.")
     }
   } else {
     
@@ -147,29 +184,38 @@ parseModel <- function(.model) {
     ### Checks, errors and warnings --------------------------------------------
     ## Stop if one indicator is connected to several constructs
     if(any(duplicated(tbl_m$rhs))) {
-      stop2("At least one indicator is connected to several constructs.")
+      stop2(
+        "The following error occured in the `parseModel()` function:\n",
+        "At least one indicator is connected to several constructs.")
     }
     
     ## Stop if any interaction/nonlinear term is used as an endogenous (lhs) variable in the
     ## structural model 
     if(length(names_c_s_lhs_nl)) {
       
-      stop2("Interaction terms cannot appear on the left-hand side of a structural equation.")
+      stop2(
+        "The following error occured in the `parseModel()` function:\n",
+        "Interaction terms cannot appear on the left-hand side of a structural equation.")
     }
     
     ## Stop if any interaction/nonlinear term is used as an endogenous (lhs) variable in the
     ## measurement model 
     if(length(names_c_m_lhs_nl)) {
       
-      stop2("Interaction terms cannot appear on the left-hand side of a measurement equation.")
+      stop2(
+        "The following error occured in the `parseModel()` function:\n",
+        "Interaction terms cannot appear on the left-hand side of a measurement equation.")
     }
     
     ## Stop if any construct has no observables/indicators attached
     tmp <- setdiff(c(names_c_s_l, names_c_m_rhs_l), names_c_m_lhs)
     if(length(tmp) != 0) {
       
-      stop2("No measurement equation provided for: ",
-           paste0("`", tmp,  "`", collapse = ", "))
+      stop2(
+        "The following error occured in the `parseModel()` function:\n",
+        "No measurement equation provided for: ", 
+        paste0("`", tmp,  "`", collapse = ", ")
+        )
     }
     
     ## Stop if any construct appears in the measurement but not in the 
@@ -177,16 +223,19 @@ parseModel <- function(.model) {
     tmp <- setdiff(names_c_m_lhs, c(names_c_s_l, names_c_m_rhs_l))
     if(length(tmp) != 0) {
       
-      stop2("Construct(s): ",
-           paste0("`", tmp, "`", collapse = ", "), " of the measurement model",
-           ifelse(length(tmp) == 1, " does", " do"), 
-           " not appear in the structural model.")
+      stop2(
+        "The following error occured in the `parseModel()` function:\n",
+        "The following constructs of the measurement model do not appear",
+        " in the structural model: ", paste0("`", tmp, "`", collapse = ", ")
+        )
     }
     
     ## Stop if any construct has a higher order than 2 (currently not allowed)
     if(length(names_c_higher) != 0) {
-      stop2(paste0("`", names_c_higher, "`"), " has order > 2.", 
-           " Currently, only first and second-order constructs are supported.")
+      stop2(
+        "The following error occured in the `parseModel()` function:\n",
+        paste0("`", names_c_higher, "`"), " has order > 2.", 
+        " Currently, only first and second-order constructs are supported.")
     }
     
     ## Stop if at least one of the components of an interaction term does not appear
@@ -194,8 +243,10 @@ parseModel <- function(.model) {
     tmp <- setdiff(names_c_s_l, names_c_s_no_nl)
     if(length(tmp) != 0) {
         
-      stop2("The nonlinear terms containing ", paste0("`", tmp, "`", collapse = ", "), 
-           " are not embeded in a nomological net.")
+      stop2(
+        "The following error occured in the `parseModel()` function:\n",
+        "The nonlinear terms containing ", paste0("`", tmp, "`", collapse = ", "), 
+        " are not embeded in a nomological net.")
     }
     
     ## Construct type
@@ -264,9 +315,10 @@ parseModel <- function(.model) {
     
     ## Return error if the structural model contains feedback loops
     if(any(temp[vars_endo, vars_endo] + t(temp[vars_endo, vars_endo]) == 2)) {
-      stop("The structural model contains feedback loops.",
-           " Currently no feedback loops are allowed.",
-           call. = FALSE)
+      stop2(
+        "The following error occured in the `parseModel()` function:\n",
+        "The structural model contains feedback loops.",
+        " Currently no feedback loops are allowed.")
     }
     
     # Endo variables that are explained by exo and endo variables
@@ -303,8 +355,10 @@ parseModel <- function(.model) {
           }
         } # END for-loop
         if(counter > 50)
-          stop("Reordering the structural equations was not succesful. Something is wrong.",
-               call. = FALSE)
+          stop2(
+            "The following error occured in the `parseModel()` function:\n",
+            "Reordering the structural equations was not succesful."
+            )
         if(length(explained_by_exo_endo_temp) == 0) break
       } # END repeat
     } # END if-statement
@@ -358,10 +412,10 @@ convertModel <- function(
   .stage             = "first"
 ) {
   
-  ### Check if a cSEMModel list  
-  if(!class(.csem_model) == "cSEMModel") {
-    stop("`.model` must be of model of class `cSEMModel`.")
-  }
+  ## Note: currently we dont include nonlinear relationships in the first
+  ##       stage of 2/3stage approach. If we want to change this, we
+  ##       need to update the code that subsets the relevant constructs/indicators
+  ##       below.
   
   # All linear constructs of the original model
   c_linear_original <- rownames(.csem_model$structural)

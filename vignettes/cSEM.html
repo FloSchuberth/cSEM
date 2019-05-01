@@ -12,7 +12,7 @@
 
 
 
-<title>Postestimation: Assessing a model</title>
+<title>Introduction to cSEM</title>
 
 
 
@@ -110,35 +110,38 @@ code > span.ot { color: #007020; }
 
 
 <section class="page-header">
-<h1 class="title toc-ignore project-name">Postestimation: Assessing a model</h1>
-<h3 class="subtitle project-tagline">Using the <code>assess()</code> function</h3>
+<h1 class="title toc-ignore project-name">Introduction to cSEM</h1>
+<h3 class="subtitle project-tagline">Concepts, terminonlogy, and notation</h3>
 <h4 class="date project-date">Last edited: 2019-04-29</h4>
 </section>
 
 
 <div id="TOC" class="toc">
 <ul>
-<li><a href="#introduction">Introduction</a><ul>
-<li><a href="#syntax-options">Syntax &amp; Options</a></li>
-<li><a href="#details">Details</a></li>
+<li><a href="#preface">Preface</a></li>
+<li><a href="#composite-based-structural-equation-modeling">Composite-based structural equation modeling</a><ul>
+<li><a href="#what-is-structural-equation-modeling-sem">What is structural equation modeling (SEM)</a><ul>
+<li><a href="#lvmodel">The latent variable or common factor model</a></li>
+<li><a href="#cmodel">The composite model</a></li>
 </ul></li>
-<li><a href="#usage-examples">Usage &amp; Examples</a><ul>
-<li><a href="#example1">Example 1</a></li>
-<li><a href="#example2">Example 2</a></li>
-<li><a href="#example3">Example 3</a></li>
+<li><a href="#what-is-composite-based-sem">What is composite-based SEM?</a></li>
 </ul></li>
-<li><a href="#methods">Methods &amp; Formulae</a><ul>
-<li><a href="#average-variance-extracted-ave">Average variance extracted (AVE)</a><ul>
-<li><a href="#definition">Definition</a></li>
-<li><a href="#formula">Formula</a></li>
-<li><a href="#implementation">Implementation</a></li>
-<li><a href="#see-also">See also</a></li>
+<li><a href="#using-csem">Using cSEM</a><ul>
+<li><a href="#principles-underlying-csem">Principles underlying cSEM</a><ul>
+<li><a href="#model-vs.estimation">Model vs. Estimation</a></li>
+<li><a href="#composites-in-a-composite-model-vs.composite-in-a-common-factor-model-and-disattenuation">Composites in a composite model vs. composite in a common factor model and disattenuation</a></li>
+<li><a href="#roleofpls">The role of the weightning scheme and partial least squares (PLS)</a></li>
 </ul></li>
-<li><a href="#reliability">Reliability</a><ul>
-<li><a href="#definition-1">Definition</a></li>
-<li><a href="#formula-1">Formula</a></li>
-<li><a href="#implementation-1">Implementation</a></li>
+<li><a href="#the-csem-workflow">The cSEM-Workflow</a><ul>
+<li><a href="#preparing-the-data">Preparing the data</a></li>
+<li><a href="#specfiying-a-model">Specfiying a model</a></li>
+<li><a href="#using-csem-1">Using <code>csem()</code></a></li>
+<li><a href="#applying-a-postestimation-function">Applying a postestimation function</a></li>
 </ul></li>
+</ul></li>
+<li><a href="#terminology-notation">Terminology &amp; Notation</a><ul>
+<li><a href="#terminology">Terminology</a></li>
+<li><a href="#notation">Notation</a></li>
 </ul></li>
 <li><a href="#literature">Literature</a></li>
 </ul>
@@ -147,222 +150,417 @@ code > span.ot { color: #007020; }
 <section class="main-content">
 <p>WARNING: this document is work in progress and may still contain mistakes! <!-- used to print boldface greek symbols (\mathbf only works for latin symbols) --></p>
 
-<div id="introduction" class="section level1">
-<h1>Introduction</h1>
-<p>As indicated by the name, <code>assess()</code> is used to assess a model estimated using the <code>csem()</code> function.</p>
-<p>In <code>cSEM</code> <em>model assessement</em> is considered to be any task that in some way or another seeks to assess the quality of the estimated model <em>without conducting</em> <em>a statistical test</em> (tests are covered by the <code>test_*</code> family of functions). Quality in this case is taken to be a catch-all term for all common aspects of model assessment. This mainly comprises fit indices, reliability estimates, common validity assessment criteria and other related quality measures/indices that do not rely on a formal test procedure. Hereinafter, we will refer to a generic (fit) index, criteria or assessment measure as a <strong>quality measure</strong>. Currently the following quality measures are implemented:</p>
+<div id="preface" class="section level1">
+<h1>Preface</h1>
+<p>Structural equation modeling (SEM) has been used for over a century across a multitude of research fields such as (among others) psychology, sociology, or business research.</p>
+<p>As an almost inevidable consequence, a different terminology system and a distinct mathematical notation has evolved within each field over the years. This “terminology mess” is one of the major obstacles in interdisciplinary research and (scientific) debates, hampers a broader understanding of methodolocial issues, and, even worse, promotes systematic missue (e.g. the use of Cronbach’s alpha as an estimator for congeneric reliability). This is particulary true for those new to SEM or casual applied users who are often overwhelmed by terminology of their own field only to find that the term they just thought to have finally grasped is definied differently in another field, making the confusion complete.</p>
+<p>Ultimately, this is a matter of (mis)communication which, in our opinion, can only be satisfactorily solved by establishing a clear, unambigious definition for each term and symbol that is used within the package. We emphasize that we do not seek to impose “our” conventions, nor do we claim they are the “correct” convention, but merly seek to make communication between us (the authors of the package) and you (the package user) as unambigious and error-free as possible.</p>
+<p>This introduction therefore provides two glossaries:</p>
+<ol style="list-style-type: decimal">
+<li>The <a href="#terminology">termionology glossary</a> containing each term that we think should be definied and explained in order to make sure package users understand complementary help files or vignettes the way the package authors intended them to be understood.</li>
+<li>The <a href="#notation">mathematical notation glossary</a> containing each mathematical symbol used in the package documentation alongside a definition.</li>
+</ol>
+<p>The package is designed based on a set of principles that are partly in contrast to common open-source or commerical software offering similar content. This introduction serves to explain these principles, to contrast them to existing software, and to point readers to further reading. Lastly, to use <strong>cSEM</strong> effectively, it is helpful to understand its design. Hence, the package architecure and design as well as what we consider the “cSEM workflow” is discussed.</p>
+</div>
+<div id="composite-based-structural-equation-modeling" class="section level1">
+<h1>Composite-based structural equation modeling</h1>
+<div id="what-is-structural-equation-modeling-sem" class="section level2">
+<h2>What is structural equation modeling (SEM)</h2>
+<p><a href="#terminology">Structural equation modeling (SEM)</a> is about modeling the (causal) relationship between <a href="#terminology">concepts</a> (an entity defined by a conceptual definition, e.g. “emotional stability”, “self-confidence”, “customer loyalty”) with other <a href="#terminology">concepts</a> and/or observable quantities generally referred to as <a href="#indicators">indicators, manifest variables or items</a>. Broadly speaking, two modeling approaches exist. We refer to the first as <a href="#lvmodel">the latent variable model</a> and to the second as <a href="#cmodel">the composite model</a>. Each approach entails a set of methods, estimators, test, and evaluation criteria as well as a specific terminology that may or may not be adequate within the realm of the other approach.</p>
+<div id="lvmodel" class="section level3">
+<h3>The latent variable or common factor model</h3>
+<p>Assuming there are <span class="math inline">\(J\)</span> <a href="#terminology">concepts</a> and <span class="math inline">\(K\)</span> indicators, the fundamental feature of the latent variable model is the assumption of the existence of a set of <span class="math inline">\(J\)</span> <a href="#terminology">latent variables (common factors)</a> that each serve as a representation of one of the <span class="math inline">\(J\)</span> <a href="#terminology">concepts</a> to be studied in a sense that each <a href="#terminology">latent variable</a> is at least partly (causally) responsible for the manifestations of a set of indicators which are supposed to measure the <a href="#terminology">concept</a> in question. The entirety of these measurement relations is captured by the <strong>measurement model</strong> which relates indicators to <a href="#terminology">latent variables</a> according to the researchers theory of how observables are related to the <a href="#terminology">concepts</a> in question. The entirety of the relationships between <a href="#terminology">concepts</a> (i.e., its representation in a statistical model, the <a href="#terminology">construct</a>) is captured by the <strong>structural model</strong> whose parameters are usually at the center of the researchers interest. Caution is warranted though as the <a href="#terminology">common factor</a> and its respective <a href="#terminology">concept</a> are not the same thing. Within the covariance-based literature <a href="#terminology">concept</a>, <a href="#terminology">construct</a>, <a href="#terminology">latent variable</a> and its representation the <a href="#terminology">common factor</a> have often been used interchangeably <span class="citation">(Rigdon 2012, 2016; Rigdon, Becker, and Sarstedt 2019)</span>. This will not be the case here and readers are explicitly made aware of the fact that <a href="#terminology">concepts</a> are the abstract entity which <em>may</em> be modeled by a <a href="#terminology">common factor</a>, however, no assertion as to the correctness of this approach in terms of “closeness of the <a href="#terminology">common factor</a> and its related <a href="#terminology">concept</a>” are made.</p>
+<p>Parameters in latent variable models are usually retrieved by (full-information) maximum likelihood. The idea is to find parameters such that the difference between the model-implied and the empirical indicator covariance matrix is minimized. Such estimation methods are therefore usually refered to as covariance-based methods.</p>
+</div>
+<div id="cmodel" class="section level3">
+<h3>The composite model</h3>
+<p>The second approach is known as the composite model. As opposed to the latent variable or common factor model, composite do not presuppose the existence of a latent variable. Hence, designed entities (artifacts) such as the “OECD Better Life Index” that arguably have no latent counterpart may be adequatly described by a composite, i.e the linear combination of observables defining the composite. Composites may also be formed to represent latent variables/common factor (or more precisely a concepts modeled as a common factors) in which case the composite serves as a proxy or stand-in for the the latent variable. However, in cSEM, the term “composite model” is only used to refer to a model in a the former sense, i.e. a model in which the composite is a direct representation of concept/construct!</p>
+</div>
+</div>
+<div id="what-is-composite-based-sem" class="section level2">
+<h2>What is composite-based SEM?</h2>
+<p>Composite-based SEM is the entirety of methods, approaches, procedures, algorithms that in some way or another involve linear compounts (composites), i.e. linear combinations of observables when retriving (estimating) quantities of interest such as the coefficents of the structural model. Its is important to clearly distiguish between the composite model and what we call composite-based SEM. They are not the same. While the former is “only” <em><strong>a</strong></em> <em>model</em> relating concepts to observables, the latter simply states that composites (linear compounts, i.e. (weighted linear combinations of observables) are used to retrive quantities of interest, given a specific modeling approach! Hence, composite-based SEM thus covers common factor as well as composite models!</p>
+<p>As sketched above, common factor and composite models fundamentally differ in how the relation between observables and concepts is modeled. Naturally, results and, most notably, their (correct/meaningful) interpretation critically hinge on what type of model the user specifies. Across the package we therefore strictly distigusih between</p>
 <ul>
-<li>Convergent and discriminant validity assessment:
-<ul>
-<li>The <strong>average variance extracted</strong> (AVE) (the basis for the Fornell-Larcker criteria (FSE))</li>
-<li>The <strong>heterotrait-monotrait ratio of correlations</strong> (HTMT)</li>
-</ul></li>
-<li><strong>Congeneric reliability</strong> (<span class="math inline">\(\rho_C\)</span>), also known as e.g.: composite reliability, construct reliability, (unidimensional) omega, Jöreskog’s <span class="math inline">\(\rho\)</span>, <span class="math inline">\(\rho_A\)</span>, or <span class="math inline">\(\rho_B\)</span>.</li>
-<li><p><strong>Tau-equivalent reliability</strong> (<span class="math inline">\(\rho_T\)</span>), also known as e.g.: Cronbach alpha, alpha, <span class="math inline">\(\alpha\)</span>, coefficient alpha, Guttman’s <span class="math inline">\(\lambda_3\)</span>, KR-20.</p>
-A third reliability measure is <strong>Parallel reliability</strong> (<span class="math inline">\(\rho_P\)</span>), also known as e.g.: split-half reliability, Spearman-Brown formulae/prophecy, standarized alpha. In <code>cSEM</code> parallel reliability is always identical to tau-equivalent reliability as indicators are always standardized. Hence, only <span class="math inline">\(\rho_T\)</span> is reported.</li>
-<li>Distance measures
-<ul>
-<li>The <strong>standardized root mean square residual</strong> (SRMR)</li>
-<li>The <strong>geodesic distance</strong> (DG)</li>
-<li>The <strong>squared Euclidian distance</strong> (DL)</li>
-<li>The <strong>maximum-likelihood distance</strong> (DML)</li>
-</ul></li>
-<li>The <strong>variance inflation factors</strong> (VIF)</li>
-<li>The (adjusted) coefficient of determination (<span class="math inline">\(R^2\)</span> and <span class="math inline">\(R^2_{adj}\)</span>)</li>
-<li>A measure of the <strong>effect size</strong></li>
-<li><p><strong>Redundancy analysis</strong> (RA)</p></li>
+<li>Concepts modeled as common factors (or alternatively latent variables)</li>
+<li>Concepts modeled as composites</li>
 </ul>
-<p>For implementation details see the <a href="#methods">Methods &amp; Formulae</a> section.</p>
-<div id="syntax-options" class="section level2">
-<h2>Syntax &amp; Options</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">assess</span>(</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">  <span class="dt">.object              =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">  <span class="dt">.what                =</span> <span class="kw">c</span>(<span class="st">&quot;all&quot;</span>, <span class="st">&quot;ave&quot;</span>, <span class="st">&quot;rhoP&quot;</span>, <span class="st">&quot;rhoT&quot;</span>, <span class="st">&quot;rhoC&quot;</span>, <span class="st">&quot;HTMT&quot;</span>, </a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">                           <span class="st">&quot;SRMR&quot;</span>, <span class="st">&quot;RMSEA&quot;</span>)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">  <span class="dt">.only_common_factors =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">)</a></code></pre></div>
+<p>These phrases will repeateatly appear in help files and other complementary files. It is therefore crucial to remember what they supposed to convey.</p>
+</div>
+</div>
+<div id="using-csem" class="section level1">
+<h1>Using cSEM</h1>
+<div id="principles-underlying-csem" class="section level2">
+<h2>Principles underlying cSEM</h2>
+<p>cSEM is based on a number of principles, that have had a profound influence on the design of the package.</p>
+<div id="model-vs.estimation" class="section level3">
+<h3>Model vs. Estimation</h3>
+<p>The way different concepts and their relationship are <em>modeled</em> is strictly distinct from how they are <em>estimated</em>. Hence we strictly distinguish between concepts modeled as common factors (or composites) and the actual estimation for <strong>a given model</strong>.</p>
+<p>In cSEM we make use of the lavaan model syntax but redefine the operator <code>&lt;~</code> to mean that the concept to its left is modeled as a composite (not a formative common factor). The operator <code>=~</code> is used to mean that the concept to its left is modeled as a common factor.</p>
+<p><strong>Example</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">model &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="st">## Structural model</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="st">eta2 ~ eta1</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="st">## Measurement model</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="st">eta1 &lt;~ item1 + item2 + item3 # eta1 is modeled as a composite </span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="st">eta2 =~ item4 + item5 + item6 # eta2 is modeled as a common factor</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="st">&quot;</span></a></code></pre></div>
+</div>
+<div id="composites-in-a-composite-model-vs.composite-in-a-common-factor-model-and-disattenuation" class="section level3">
+<h3>Composites in a composite model vs. composite in a common factor model and disattenuation</h3>
+<p>By virtue of the package, cSEM uses composite-based estimators only. Depending on the model choosen, linear compounts may therefore either serve as a composite as part of the composite model or as a proxy/stand-in for a common factor. If a concept is modeled as a common factor, proxy correlations, proxy-indicator correlations and path coeffcients are inconsistent estimates for their supposed construct level counterparts (construct correlations, loadings and path coefficients) unless the proxy is a perfect representation of its construct level counterpart. This is commonly refered to as <strong>attentuation bias</strong>.<br />
+Several approaches have been suggested to correct for these biases. In cSEM estimates are correctly dissattenuated by default if any of the concepts involved are modeled as a common factor! Disattentuation is controlled by the <code>.disattenuate</code> argument of <code>csem()</code></p>
+<p><strong>Example</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">model &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">## Structural model</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">eta2 ~ eta1</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="st">## Measurement model</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="st">eta1 &lt;~ item1 + item2 + item3</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="st">eta2 =~ item4 + item5 + item6 </span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co"># Identical</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="kw">csem</span>(threecommonfactors, model)</a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.disattenuate =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co"># To supress automatic disattenuation</span></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.disattenuate =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p>Note that since <code>.approach_weights = &quot;PLS-PM&quot;</code> and <code>.disattentuate = TRUE</code> by default (see for <a href="#roleofpls">The role of the weightning scheme and partial least squares (PLS)</a> below) and one of the concepts in the model above is modeled as a common factor, composite (proxy) correlations, loadings and path coefficients are adequately disattenuated using the correction approach commonly known as <strong>consistent partial least squares (PLSc)</strong>. If <code>.disattenuate = FALSE</code> or all concepts are modeled as composites “proper” PLS values are returned. To learn more about disattenuation, see the Methods and Formulae section of the respective weightning approach.</p>
+</div>
+<div id="roleofpls" class="section level3">
+<h3>The role of the weightning scheme and partial least squares (PLS)</h3>
+<p>In principal, any weighted combination of appropriately choosen observables can be used to estimate structural relationships between these compounts. Hence, any conceptual or methodological issue disscussed based on a composite build by a given (weightning) approach may equally well be discussed for any other potential weightning scheme. The appropriatness or potential superiority of a specific weightning approach such as “unit weights” (sum scores) over another such as “partial least squares path modeling” (PLS) is therfore to some extent a question of <em>relative</em> appropriatness and <em>relative</em> superiority.</p>
+<p>As a notable consequence, we belief that well known approach such partial least squares path modeling (PLS) and generalized structured component analysis (GSCA) are - contrary to common belief - best exclusivly understood as prescriptions for forming linear compunts based on observables, i.e. as weightning approaches. In cSEM this is reflected by the fact that <code>&quot;PLS&quot;</code> and <code>&quot;GSCA&quot;</code> are choices of the <code>.approach_weights</code> argument.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">model &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">## Structural model</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">eta2 ~ eta1</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">## Measurement model (pure composite model)</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">eta1 &lt;~ item1 + item2 + item3</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">eta2 &lt;~ item4 + item5 + item6 </span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">### Currently the following weight approaches are implemented</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co"># Partial least squares path modeling (PLS)</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;PLS-PM&quot;</span>) <span class="co"># default</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co"># Generalized canonical correlation analysis (Kettenring approaches)</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;SUMCORR&quot;</span>)</a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;MAXVAR&quot;</span>)</a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;SSQCORR&quot;</span>)</a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;MINVAR&quot;</span>) </a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GENVAR&quot;</span>)</a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co"># Generalized structured component analysis (GSCA)</span></a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>)</a>
+<a class="sourceLine" id="cb3-23" data-line-number="23"></a>
+<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co"># Principal component analysis (PCA)</span></a>
+<a class="sourceLine" id="cb3-25" data-line-number="25"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;PCA&quot;</span>)</a>
+<a class="sourceLine" id="cb3-26" data-line-number="26"></a>
+<a class="sourceLine" id="cb3-27" data-line-number="27"><span class="co"># Factor score regression (FSR) using &quot;unit&quot;, &quot;bartlett&quot; or &quot;regression&quot; weights</span></a>
+<a class="sourceLine" id="cb3-28" data-line-number="28"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;unit&quot;</span>)</a>
+<a class="sourceLine" id="cb3-29" data-line-number="29"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;bartlett&quot;</span>) </a>
+<a class="sourceLine" id="cb3-30" data-line-number="30"><span class="kw">csem</span>(threecommonfactors, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;regression&quot;</span>)</a></code></pre></div>
+</div>
+</div>
+<div id="the-csem-workflow" class="section level2">
+<h2>The cSEM-Workflow</h2>
+<p>Working with cSEM consists of 4 steps</p>
+<ul>
+<li>Preparing the data</li>
+<li>Specifying the model,</li>
+<li>Using the <code>csem()</code> function</li>
+<li>Applying the postestimation functions</li>
+</ul>
+<p>The following sections explain each step in detail.</p>
+<div id="preparing-the-data" class="section level3">
+<h3>Preparing the data</h3>
+</div>
+<div id="specfiying-a-model" class="section level3">
+<h3>Specfiying a model</h3>
+<p>Models are defined using <a href="http://lavaan.ugent.be/tutorial/syntax1.html">lavaan syntax</a>. <strong>cSEM</strong> handles linear, nonlinear and hierachical models. Syntax for each model is illustrated below using variables of the build-in <code>satisfaction</code> dataset. For more information please see the <a href="http://lavaan.ugent.be/tutorial/syntax1.html">lavaan syntax tutorial</a>.</p>
+<div id="linear-model" class="section level4">
+<h4>Linear model</h4>
+<p>A typical linear model would looks like this:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">model &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st"># Structural model</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">EXPE ~ IMAG</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">QUAL ~ EXPE</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">VAL  ~ EXPE + QUAL</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">SAT  ~ IMAG + EXPE + QUAL + VAL </span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="st">LOY  ~ IMAG + SAT</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="st"># Measurement model</span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="st">IMAG &lt;~ imag1 + imag2 + imag3                  # composite</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="st">EXPE &lt;~ expe1 + expe2 + expe3                  # composite</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="st">QUAL &lt;~ qual1 + qual2 + qual3 + qual4 + qual5  # composite</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="st">VAL  &lt;~ val1  + val2  + val3                   # composite</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="st">SAT  =~ sat1  + sat2  + sat3  + sat4           # common factor</span></a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="st">LOY  =~ loy1  + loy2  + loy3  + loy4           # common factor</span></a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="st">&quot;</span></a></code></pre></div>
+<p>Note that the opeartor <code>&lt;~</code> tells <strong>cSEM</strong> that the concept to its left is modelled as a composite; the operator <code>=~</code> tells <strong>cSEM</strong> that the concept to its left is modelled as a common factor.</p>
+</div>
+<div id="nonlinear-model" class="section level4">
+<h4>Nonlinear model</h4>
+<p>Nonlinear terms are specified as interactions using the colon operator <code>:</code>. Non linear terms include interactions and exponential terms. The latter is described in model syntax as an “interaction with itself”, e.g., <code>x_1^3 = x1:x1:x1</code>. Currently the following terms are allowed</p>
+<ul>
+<li>Single, e.g., <code>eta1</code></li>
+<li>Quadratic, e.g., <code>eta1:eta1</code></li>
+<li>Cubic, e.g., <code>eta1:eta1:eta1</code></li>
+<li>Two-way interaction, e.g., <code>eta1:eta2</code></li>
+<li>Three-way interaction, e.g., <code>eta1:eta2:eta3</code></li>
+<li>Quadratic and two-way interaction, e.g., <code>eta1:eta1:eta3</code></li>
+</ul>
+<p>A simple example would look like this:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">model &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st"># Structural model</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">EXPE ~ IMAG + IMAG:IMAG</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="st"># Measurement model</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="st">EXPE &lt;~ expe1 + expe2</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="st">IMAG &lt;~ imag1 + imag2</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="st">&quot;</span></a></code></pre></div>
+</div>
+<div id="hiearchical-second-order-model" class="section level4">
+<h4>Hiearchical (second order) model</h4>
+<p>Currently only second-order models are supported. Specification of the second order construct takes place in the measurement model.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">model &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st"># Structural model</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">SAT ~ QUAL</span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="st">VAL ~ SAT + QUAL</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="st"># Measurement model</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">EXPE &lt;~ expe1 + expe2</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="st">SAT =~ sat1 + sat2</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="st">VAL =~ val1 + val2</span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="st">QUAL =~ IMAG + EXPE</span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="st">IMAG &lt;~ imag1 + imag2</span></a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="st">&quot;</span></a></code></pre></div>
+<p>In this case <code>QUAL =~ IMAG + EXPE</code> is modeled as a second-order common factor.</p>
+</div>
+</div>
+<div id="using-csem-1" class="section level3">
+<h3>Using <code>csem()</code></h3>
+<p><code>csem()</code> is the central function of the package. Although it is possible to estimate a model using individual functions called by <code>csem()</code> (such as <code>parseModel()</code>, <code>processData()</code>, <code>calculateWeightsPLS()</code> etc. ), it is virturally always easier, saver and quicker to use <code>csem()</code> instead.</p>
+<p><code>csem()</code> accepts all models and data types described above. The result of a call to <code>csem()</code>is always an object of class <code>cSEMResults</code>. Technically, the resulting object has an additional class attribute, namely <code>cSEMResults_default</code>, <code>cSEMResults_multi</code> or <code>cSEMResults_2ndorder</code> that depends on the type of model and/or data provided, however, users usually dont need to worry since postestimation functions automatically work on all classes.</p>
+<p>The simplest possible call to <code>csem()</code> involes a dataset and a model:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">require</span>(cSEM)</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">model &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="st"># Path model / Regressions </span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="st">eta2 ~ eta1</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="st">eta3 ~ eta1 + eta2</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="st"># Measurement model</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="st">eta1 =~ y11 + y12 + y13</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="st">eta2 =~ y21 + y22 + y23</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="st">eta3 =~ y31 + y32 + y33</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13">  </a>
+<a class="sourceLine" id="cb7-14" data-line-number="14">a &lt;-<span class="st"> </span><span class="kw">csem</span>(<span class="dt">.data =</span> threecommonfactors, <span class="dt">.model =</span> model)</a>
+<a class="sourceLine" id="cb7-15" data-line-number="15">a</a></code></pre></div>
+<pre><code>## ________________________________________________________________________________________________________
+## ----------------------------------------------- Overview -----------------------------------------------
+## 
+## Estimation was successful.
+## 
+## The result is a list of class cSEMResults with list elements:
+## 
+##  - Estimates
+##  - Information
+## 
+## To get an overview or help type:
+## 
+##  - ?cSEMResults
+##  - str(&lt;object-name&gt;)
+##  - listviewer::jsondedit(&lt;object-name&gt;, mode = &#39;view&#39;)
+## 
+## If you wish to access the list elements directly type e.g. 
+## 
+##  - &lt;object-name&gt;$Estimates
+## 
+## Available postestimation commands:
+## 
+##  - assess(&lt;object-name&gt;)
+##  - summarize(&lt;object-name&gt;)
+##  - verify(&lt;object-name&gt;)
+## ________________________________________________________________________________________________________</code></pre>
+<p>This is equal to:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">csem</span>(</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">   <span class="dt">.data                        =</span> threecommonfactors,</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">   <span class="dt">.model                       =</span> model,</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">   <span class="dt">.approach_cor_robust         =</span> <span class="st">&quot;none&quot;</span>,</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">   <span class="dt">.approach_nl                 =</span> <span class="st">&quot;sequential&quot;</span>,</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">   <span class="dt">.approach_paths              =</span> <span class="st">&quot;OLS&quot;</span>,</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">   <span class="dt">.approach_weights            =</span> <span class="st">&quot;PLS-PM&quot;</span>,</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8">   <span class="dt">.conv_criterion              =</span> <span class="st">&quot;diff_absolute&quot;</span>,</a>
+<a class="sourceLine" id="cb9-9" data-line-number="9">   <span class="dt">.disattenuate                =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb9-10" data-line-number="10">   <span class="dt">.dominant_indicators         =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb9-11" data-line-number="11">   <span class="dt">.estimate_structural         =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb9-12" data-line-number="12">   <span class="dt">.id                          =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb9-13" data-line-number="13">   <span class="dt">.iter_max                    =</span> <span class="dv">100</span>,</a>
+<a class="sourceLine" id="cb9-14" data-line-number="14">   <span class="dt">.normality                   =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb9-15" data-line-number="15">   <span class="dt">.PLS_approach_cf             =</span> <span class="st">&quot;dist_squared_euclid&quot;</span>,</a>
+<a class="sourceLine" id="cb9-16" data-line-number="16">   <span class="dt">.PLS_ignore_structural_model =</span> <span class="ot">FALSE</span>,</a>
+<a class="sourceLine" id="cb9-17" data-line-number="17">   <span class="dt">.PLS_modes                   =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb9-18" data-line-number="18">   <span class="dt">.PLS_weight_scheme_inner     =</span> <span class="st">&quot;path&quot;</span>,</a>
+<a class="sourceLine" id="cb9-19" data-line-number="19">   <span class="dt">.reliabilities               =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb9-20" data-line-number="20">   <span class="dt">.starting_values             =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb9-21" data-line-number="21">   <span class="dt">.tolerance                   =</span> <span class="fl">1e-05</span>,</a>
+<a class="sourceLine" id="cb9-22" data-line-number="22">   <span class="dt">.resample_method             =</span> <span class="st">&quot;none&quot;</span>, </a>
+<a class="sourceLine" id="cb9-23" data-line-number="23">   <span class="dt">.resample_method2            =</span> <span class="st">&quot;none&quot;</span>,</a>
+<a class="sourceLine" id="cb9-24" data-line-number="24">   <span class="dt">.R                           =</span> <span class="dv">499</span>,</a>
+<a class="sourceLine" id="cb9-25" data-line-number="25">   <span class="dt">.R2                          =</span> <span class="dv">199</span>,</a>
+<a class="sourceLine" id="cb9-26" data-line-number="26">   <span class="dt">.handle_inadmissibles        =</span> <span class="st">&quot;drop&quot;</span>,</a>
+<a class="sourceLine" id="cb9-27" data-line-number="27">   <span class="dt">.user_funs                   =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb9-28" data-line-number="28">   <span class="dt">.eval_plan                   =</span> <span class="st">&quot;sequential&quot;</span>,</a>
+<a class="sourceLine" id="cb9-29" data-line-number="29">   <span class="dt">.seed                        =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb9-30" data-line-number="30">   <span class="dt">.sign_change_option          =</span> <span class="st">&quot;no&quot;</span></a>
+<a class="sourceLine" id="cb9-31" data-line-number="31">    )</a></code></pre></div>
+<p>See the <code>csem()</code> documentation for details.</p>
+<div id="inference" class="section level4">
+<h4>Inference</h4>
+<p>By default no inferential quantities are calculated since most composite-based approaches do not have closed-form solutions for standard errors. <code>cSEM</code> relies on the <code>bootstrap</code> or <code>jackknife</code> to estimate standard errors, test statistics, and critical quantiles.</p>
+<p><code>cSEM</code> offers two ways to compute resamples:</p>
+<ol style="list-style-type: decimal">
+<li>Inference can be done by first setting <code>.resample_method</code> to <code>&quot;jackkinfe&quot;</code> or <code>&quot;bootstrap&quot;</code> and subsequently using <code>summarize()</code> or <code>infer()</code>.</li>
+<li>The same result is achieved by passing a <code>cSEMResults</code> object to <code>resamplecSEMResults()</code> and subsequently using <code>summarize()</code> or <code>infer()</code>.</li>
+</ol>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># Setting `.resample_method`</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">b1 &lt;-<span class="st"> </span><span class="kw">csem</span>(<span class="dt">.data =</span> satisfaction, <span class="dt">.model =</span> model, <span class="dt">.resample_method =</span> <span class="st">&quot;bootstrap&quot;</span>)</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">b2 &lt;-<span class="st"> </span><span class="kw">resamplecSEMResults</span>(a)</a></code></pre></div>
+<p>Several confidence intervals are implemented, see <code>?infer()</code>:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">summarize</span>(b1)</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">infer</span>(b1, <span class="dt">.quantity =</span> <span class="kw">c</span>(<span class="st">&quot;CI_standard_z&quot;</span>, <span class="st">&quot;CI_percentile&quot;</span>)) <span class="co"># no print method yet</span></a></code></pre></div>
+<p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future">future framework</a>. For multiprocessing simply set <code>eval_plan = &quot;multiprocess&quot;</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the backround as there are cores available instead. Note that this naturally has some overhead so for a small number of resamples multiprocessing will not always be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">b &lt;-<span class="st"> </span><span class="kw">csem</span>(</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">  <span class="dt">.data            =</span> satisfaction,</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">  <span class="dt">.model           =</span> model, </a>
+<a class="sourceLine" id="cb12-4" data-line-number="4">  <span class="dt">.resample_method =</span> <span class="st">&quot;bootstrap&quot;</span>,</a>
+<a class="sourceLine" id="cb12-5" data-line-number="5">  <span class="dt">.R               =</span> <span class="dv">999</span>,</a>
+<a class="sourceLine" id="cb12-6" data-line-number="6">  <span class="dt">.seed            =</span> <span class="dv">98234</span>,</a>
+<a class="sourceLine" id="cb12-7" data-line-number="7">  <span class="dt">.eval_plan       =</span> <span class="st">&quot;multiprocess&quot;</span>)</a></code></pre></div>
+</div>
+</div>
+<div id="applying-a-postestimation-function" class="section level3">
+<h3>Applying a postestimation function</h3>
+<p>Currently, there are 4 major postestimation function and 3 test-family functions:</p>
+<ul>
+<li><code>assess()</code></li>
+<li><code>predict()</code></li>
+<li><code>summarize()</code></li>
+<li><p><code>verify()</code></p></li>
+<li><code>testOMF()</code></li>
+<li><code>testMGD()</code></li>
+<li><p><code>testMICOM()</code></p></li>
+</ul>
+<p>Postestimation functions are generic function with methods for objects of class <code>cSEMResults_default</code>, <code>cSEMResults_multi</code>, <code>cSEMResults_2ndorder</code>. In <code>cSEM</code> every <code>cSEMResults_*</code> object must also have class <code>cSEMResults</code> for internal reasons. When using one of the major postestimation functions, method dispatch is therefore technically done on one of the <code>cSEMResults_*</code> class attributes, ignoring the <code>cSEMResults</code> class attribute. As long as a postestimation function is used directly method dispatch is not of any practical concern to the end-user. The difference, however, becomes important if a user seeks to directly invoke an internal function which is called by one of the postestimation functions (e.g., <code>calculateAVE()</code> or <code>calculateHTMT()</code> as called by <code>assess()</code>). In this case only objects of class <code>cSEMResults_default</code> are accepted as this ensures a specific structure. Therefore, it is important to remember that <em>internal functions are generally <strong>not</strong> generic.</em></p>
+</div>
+</div>
+</div>
+<div id="terminology-notation" class="section level1">
+<h1>Terminology &amp; Notation</h1>
+<p>The termionology and (mathematical) notiation used in complementatry help files is described here.</p>
+<div id="terminology" class="section level2">
+<h2>Terminology</h2>
 <dl>
-<dt><code>.object</code></dt>
-<dd><p>An object of class <code>cSEMResults</code> resulting from a call to <code>csem()</code>. Note that, technically, a call to <code>csem()</code> results in an object with at least two class attributes. The first class attribute is always <code>cSEMResults</code>. The second depends on the estimated model and/or the type of data provided. Technically, method dispatch is based on the second class attribute, however, practically this does not affect how the function is used. See the <a href="#details">Details</a> section below.</p>
+<dt>Common factor</dt>
+<dd><p>A common factor or latent variable is a type of construct. The defining feature of a common factor is the idea that the common factor is the common underlying (latent) cause of the realizations of a set of indicators that are said to measure the common factor. The common factor model is also referred to as reflective measurement model. Accordingly, indicators related to the common factor are modeled as measurement error-prone manifestations of a common variable, cause or factor. The idea of a common factor is closely related to the true score theory. Although, there a subtle conceptional differences, the terms common factor, true score, and latent variable are used synommenoulsy in <strong>cSEM</strong>.</p>
 </dd>
-<dt><code>.what</code></dt>
-<dd><p>A character string or a vector of character strings naming the quality measure to compute. By default all quality measures are computed (<code>&quot;all&quot;</code>).</p>
+<dt>Composite</dt>
+<dd><p>A composite is a weighted sum of its related indicators. Composites may either serve as constructs in their own right or as proxies for a latent variable. The nature of the composite is therefore defined by the type of (measurement) model. If composites are error-free representations of a concept we refer to the measurement model as composite measurement. If composites are used as stand-ins, the measurement model is called causal-formative (Henseler, 2017).</p>
 </dd>
-<dt><code>.only_common_factors</code></dt>
-<dd><p>Logical. Should quality measures be calculated for constructs modeled as common factors only? Defaults to <code>TRUE</code>. See the <a href="#details">Details</a> section below.</p>
+<dt>Composite-based methods</dt>
+<dd><p>Composite-based methods or composite-based SEM refers to the entirety of methods centered around the use as of composites (linear compounts of observables) as stand-ins or error-free representations for the concepts under investigation. Factor-based methods are also called variance-based methods as focal parameters are usually retrived such that explained variance is maximized.</p>
+</dd>
+<dt>Concept</dt>
+<dd><p>An entity defined by a conceptual/theoretical definition. In line with Rigdon (2016) variables representing or subsuming a concept are called <strong>conceptual variables</strong>. The precise nature/meaning of a conceptual variable depends on “differnt assumptions, philosophies or worldviews [of the researcher]” (Rigdon, 2016, p. 2). Unless otherwise stated, in <strong>cSEM</strong>, it is sufficient to think of concepts as entities that exist simply because they have been defined. Hence, abstract terms such as “loyalty” or “depression” as well as designed entities (artifacts) such as the “OECD Better Life Index” are covered by the definition.</p>
+</dd>
+<dt>Construct</dt>
+<dd><p>Construct refer to a representation of a concept <em>within a given statistical model</em>. While a concept is defined by a conceptual (theoretical) definition, a construct for a concept is defined/created by the researcher’s operationalization of a concept within a statistical model. concepts are either modeled as common factors/latent variables or as composites. Both operationalizations - the common factor and the composite - are called constructs in <strong>cSEM</strong> . As opposed to concepts, constructs therefore exist because they arise as the result of the act of modeling their relation to the observable variables (indicators) based on a specific set of assumptions. Constructs may therefore best be understood as stand-ins for concepts. Consequently, constructs do not necessarily represent the concept they seek to represent.</p>
+</dd>
+<dt>Factor-based methods</dt>
+<dd><p>Factor-based methods or factor-based SEM refers to the entirety of methods centered around the use of the common factors/latent variables as stand-ins for the concepts under investigation. Factor-based methods are also called covariance-based methods as focal parameters are retrived such that the difference between the model-implied <span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}(\theta)\)</span> and the empirical indicator covariance matrix <span class="math inline">\(\boldsymbol{\mathbf{S}}\)</span> is minimized.</p>
+</dd>
+<dt>Indicator</dt>
+<dd><p>An observable variable. In <strong>cSEM</strong> observable variables are generally refered to as indicators, however, terms such as item, manifest variable, or observables are sometimes used synommenoulsy.</p>
+</dd>
+<dt>Latent variable</dt>
+<dd><p>See: Common factor</p>
+</dd>
+<dt>True score</dt>
+<dd><p>See: Common factor</p>
+</dd>
+<dt>Proxy</dt>
+<dd><p>Any quantity that functions as a representation of some other quantity. Proxies are usually - but not necessarily - error-prone representations of the quantity they seek to represent. Examples are</p>
+</dd>
+<dt>Stand-in</dt>
+<dd><p>See: Proxy</p>
+</dd>
+<dt>Structural Equation Modeling</dt>
+<dd><p>The entirety of a set of related theories, mathematical models, methods, algorithms and terminologies related to analyzing the relationships between (unobserved) concepts and/or observables.</p>
 </dd>
 </dl>
 </div>
-<div id="details" class="section level2">
-<h2>Details</h2>
-<p>In line with all of <code>cSEM</code>’s postestimation functions, <code>assess()</code> is a generic function with methods for objects of class <code>cSEMResults_default</code>, <code>cSEMResults_multi</code>, <code>cSEMResults_2ndorder</code>. In <code>cSEM</code> every <code>cSEMResults_*</code> object must also have class <code>cSEMResults</code> for internal reasons. When using one of the major postestimation functions, method dispatch is therefore technically done on one of the <code>cSEMResults_*</code> class attributes, ignoring the <code>cSEMResults</code> class attribute. As long as <code>assess()</code> is used directly method dispatch is not of any practical concern to the end-user. The difference, however, becomes important if a user seeks to directly invoke an internal function which is called by <code>assess()</code> (e.g., <code>calculateAVE()</code> or <code>calculateHTMT()</code>). In this case only objects of class <code>cSEMResults_default</code> are accepted as this ensures a specific structure. Therefore, it is important to remember that <em>internal functions are generally <strong>not</strong> generic.</em></p>
-<p>Some assessment measures are inherently tied to the common factor model. It is therefore unclear how to interpret their results in the context of a composite model. Consequently, their computation is suppressed by default for constructs modeled as common factors. Currently, this applies to the following quality measures:</p>
-<ul>
-<li>AVE and validity assessment based theron (i.e., the Fornell-Larcker criterion)</li>
-<li>HTMT and validity assessment based theron</li>
-<li>All reliability measures (congeneric, tau-equivalen, and parallel)</li>
-</ul>
-<p>It is possible to force computation of all quality measures for constructs modeled as composites, however, we explicitly warn to interpret results with caution, as they may not even have a conceptual meaning.</p>
-<p>All quality measures assume that the estimated loadings, construct correlations and path coefficients involved in the computation of a specific qualitiy measure are consistent estimates for their theoretical population counterpart. If the user deliberately chooses an approach that yields inconsistent estimates (by setting <code>.disattenuate = FALSE</code> in <code>csem()</code> when the model contains constructs modeled as common factors) <code>assess()</code> will still estimate all quantities, however, a warning is displayed as quantities such as the AVE or the congeneric reliability <span class="math inline">\(\rho_C\)</span> inherit inconsistency making their interpretation at the very least dubious.</p>
-</div>
-</div>
-<div id="usage-examples" class="section level1">
-<h1>Usage &amp; Examples</h1>
-<div id="example1" class="section level2">
-<h2>Example 1</h2>
-</div>
-<div id="example2" class="section level2">
-<h2>Example 2</h2>
-</div>
-<div id="example3" class="section level2">
-<h2>Example 3</h2>
-</div>
-</div>
-<div id="methods" class="section level1">
-<h1>Methods &amp; Formulae</h1>
-<p>This section provides technical details and relevant formulae.</p>
-<p>Define the general measurement model as: <span class="math display">\[ x_{kj} = \eta_{kj} + \varepsilon_{kj} = \lambda_{kj}\eta_j +  \varepsilon_{kj}\quad\text{for}\quad k = 1, \dots, K_j\quad\text{and}\quad j = 1, \dots, J\]</span></p>
-<p>Call <span class="math inline">\(\eta_{jk} = \lambda_{jk}\eta_j\)</span> the true score and <span class="math inline">\(\eta_j\)</span> the underlying latent variable supposed to be the common factor or cause for the <span class="math inline">\(K_j\)</span> indicators conntected to latent variable <span class="math inline">\(\eta_j\)</span>. Call <span class="math inline">\(\lambda_{kj}\)</span> the loading or direct effect of the latent variable on its indicator. Let <span class="math inline">\(x_{kj}\)</span> be an indicator, <span class="math inline">\(\varepsilon_{kj}\)</span> be a measurement error and<br />
-<span class="math display">\[\hat{\eta}_j = \sum^{K_j}_{k = 1} w_{kj} x_{kj} = \sum^{K_j}_{k = 1} w_{kj} \eta_{kj} + \sum^{K_j}_{k = 1} w_{kj} \varepsilon_{kj}
-= \bar\eta_{kj} + \bar\varepsilon_{kj}\]</span> be a proxy/test score/composite/stand-in for <span class="math inline">\(\eta_j\)</span>, where <span class="math inline">\(w_{kj}\)</span> is a weight and <span class="math inline">\(\bar\eta_k\)</span> a population proxy, i.e., a weight sum of true scores. We will refer to <span class="math inline">\(\hat\eta\)</span> as “proxy” below as it best reflects its intended use.</p>
-<p>Assume that <span class="math inline">\(E(\varepsilon_{kj}) = E(\eta_j) = Cov(\eta_j, \varepsilon_{kj}) = 0\)</span>. Further assume <span class="math inline">\(Cov(\varepsilon_{kj}, \varepsilon_{lj})=0\)</span> for <span class="math inline">\(k \neq l\)</span> and that <span class="math inline">\(Var(\eta_j) = E(\eta^2_j) = 1\)</span> to determine the scale.</p>
-<p>Treatment below is done for a generic true score <span class="math inline">\(\eta_{jk}\)</span>. For the sake of clarity the index <span class="math inline">\(j\)</span> is therefore dropped unless it is necessary to avoid confusion.</p>
-<p>Note that classical treatment of reliability and other measures below is typically done assuming the proxy <span class="math inline">\(\hat\eta_j\)</span> is a simple sum score which implies that all weighs are set to one. The treatmeant below is more general since <span class="math inline">\(\hat{\eta}_j\)</span> is allowed to be <em>any</em> weighted sum of related indicators. Readers familiar with the “classical treatment” may simply set weights to one (unit weights) to “translate” results to known formulae.</p>
-<p>Based on the assumptions and definitions above the following quantities necessarily follow:</p>
-<p><span class="math display">\[\begin{align}
-Cov(x_k, \eta) &amp;= \lambda_k \\
-Cor(x_k, \eta) &amp;= \rho_{x_k, \eta} = \frac{\lambda_k}{\sqrt{Var(x_k)}} \\
-Var(\eta_k) &amp;= \lambda^2_k \\
-Var(x_k)    &amp;= \lambda^2_k + Var(\varepsilon_k) \\
-Cov(\eta_k, \eta_l) &amp;= E(\eta_k\eta_l) = \lambda_k\lambda_lE(\eta^2) = \lambda_k\lambda_l \\
-Cov(x_k, x_j) &amp;= \lambda_k\lambda_lE(\eta^2) + \lambda_kE(\eta\varepsilon_k) + \lambda_lE(\eta\varepsilon_l) + E(\varepsilon_k\varepsilon_l) = \lambda_k\lambda_l \\
-Var(\hat\eta) &amp;= \sum w_k^2(\lambda^2_k + Var(e_k)) + 2\sum_{k &lt; l} w_k w_l \lambda_k\lambda_j = \mathbf{w}&#39;\mathbf{\Sigma}\mathbf{w} \\
-Var(\bar\eta) &amp;= \sum w_k^2\lambda^2_k + 2\sum_{k &lt; l} w_k w_l \lambda_k\lambda_j =(\sum w_k\lambda_k)^2 = (\mathbf{w}&#39;\mathbf{\lambda})^2 \\
-Cov(\eta, \hat\eta) &amp;= E(\sum w_k \lambda_k \eta^2) = \sum w_k\lambda_k = \mathbf{w}&#39;\mathbf{\lambda}= \sqrt{Var(\bar\eta)}
-\end{align}\]</span> where <span class="math inline">\(\mathbf\Sigma\)</span> is the indicator variance covariance matrix implied by the measurement model:</p>
-<p><span class="math display">\[
-\mathbf\Sigma = \begin{pmatrix}
-\lambda^2_1 + Var(\varepsilon_1) &amp; \lambda_1\lambda_2  &amp; \dots &amp; \lambda_1\lambda_K \\
-\lambda_2\lambda_ 1 &amp; \lambda^2_2 + Var(\varepsilon_2) &amp; \dots &amp; \lambda_2\lambda_K \\
- \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-\lambda_{K}\lambda_1 &amp; \lambda_K\lambda_2 &amp;\dots &amp;\lambda^2_K + Var(\varepsilon_K)
-\end{pmatrix}
-\]</span></p>
-<p>In <code>cSEM</code> indicators are always standardized (i.e., <span class="math inline">\(Var(x_k) = 1\)</span>) and weights are always appropriately scaled such that the variance of <span class="math inline">\(\hat\eta\)</span> is equal to one! For most of the formulae below this implies a significant simplification, however, for ease of comparison to extant literature formulae will be derived and written in general form. The “simplified form” or “cSEM form” using <span class="math inline">\(Var(x_k) = Var(\hat\eta) = 1\)</span> will be given at the end of each paragraph.</p>
-<div id="average-variance-extracted-ave" class="section level2">
-<h2>Average variance extracted (AVE)</h2>
-<div id="definition" class="section level3">
-<h3>Definition</h3>
-<p>Several definitions exist. For ease of comparison to extant literature the most common definitions are given below:</p>
-<ul>
-<li>The AVE is the share of the total indicator variance that is captured by the proxy.</li>
-<li>The AVE is the ratio of the sum of the true score variances (explained variation) relative to the sum of the total indicator variances (total variation).</li>
-<li>The AVE gauges how much of the variation in the indicators is due to the assumed latent variable. Consequently, the share of unexplained, i.e. error variation is 1 - AVE.</li>
-<li>Since the <span class="math inline">\(R^2_k\)</span> from a regression of <span class="math inline">\(x_k\)</span> on <span class="math inline">\(\eta\)</span> is equal to the share of the explained variation relative to the share of total variation, the AVE is a sum over all <span class="math inline">\(R^2_k\)</span>.</li>
-</ul>
-<p>It is important to stress that, although different in wording, all definitions are synonymous!</p>
-</div>
-<div id="formula" class="section level3">
-<h3>Formula</h3>
-<p>Using the results and notation derived above, the AVE for a generic construct is: <span class="math display">\[ AVE = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}\]</span> If <span class="math inline">\(x_k\)</span> is standardized the denominator reduces to <span class="math inline">\(K\)</span> and the AVE is <span class="math display">\[ AVE = \frac{1}{K}\sum \lambda^2_k = \frac{1}{K}\sum \rho_{x_k, \eta}^2\]</span> As an important consequence, the AVE is closely tied the communality. <strong>Indicator communality</strong> (<span class="math inline">\(COM_k\)</span>) is definied as the square of the standardized loading of the <span class="math inline">\(k\)</span>’th indicator (<span class="math inline">\(\lambda^2\)</span>). <strong>Construct (total) communality</strong> (<span class="math inline">\(COM = \varnothing COM_k\)</span>) is definied as the mean over all indicator communalities. Since indicators, proxies and subsequently loadings are always standardized, the squared loading is simply the squared correlation between the indicator and its related population proxy. The AVE is also directly related to another frequently used term, <strong>indicator reliability</strong>, defined as the squared correlation between an indicator <span class="math inline">\(k\)</span> and its related population proxy (see section <a href="#reliability">Reliability</a> below), which is again simply <span class="math inline">\(\lambda^2\)</span>. Therefore in <code>cSEM</code> we always have:</p>
-<p><span class="math display">\[ AVE = COM = \frac{1}{K}\sum COM_k = \frac{1}{K}\sum \text{Indicator reliability}_k = \frac{1}{K}\sum R^2_k \]</span></p>
-</div>
-<div id="implementation" class="section level3">
-<h3>Implementation</h3>
-<p>The function is implemented as: <code>calculateAVE()</code>. See <code>?calculateAVE</code> for a list of arguments and their description.</p>
-</div>
-<div id="see-also" class="section level3">
-<h3>See also</h3>
-<p>The AVE is the basis for the Fornell-Larcker criterion. See (TODO).</p>
-</div>
-</div>
-<div id="reliability" class="section level2">
-<h2>Reliability</h2>
-<div id="definition-1" class="section level3">
-<h3>Definition</h3>
-<p>Reliability is the <strong>consistency of measurement</strong>, i.e. the degree to which a hypothetical repetition of the same measure would yield the same results. As such, reliability is the closeness of a measure to an error free measure. It is not to be confused with validity as a perfectly reliable measure may be completely invalid.</p>
-<p>Practically, reliability must be empirically assessed based on a theoretical framework. The dominant - and virtually only - theoretical framework against which to compare empirical reliability results to is the well-known true score framework which provides the underlying justification for the measurement model postulated at the beginning of the <a href="#methods">Methods &amp; Formulae</a> section. Based on the true score framework reliability is defined as</p>
-<ol style="list-style-type: decimal">
-<li>The amount of population proxy variance, <span class="math inline">\(Var(\bar\eta)\)</span>, relative to the proxy variance, <span class="math inline">\(Var(\hat\eta)\)</span>.</li>
-<li>This is identical to the squared correlation between the true score and the proxy: <span class="math inline">\(\rho_{\eta, \hat\eta}^2 = Cor(\eta, \hat\eta)^2\)</span>.</li>
-</ol>
-<p>This “kind” of reliability is commonly referred to as <strong>internal consistency reliability</strong>.</p>
-<p>Based on the true score theory three major types of measurement models are distinguished. Each type implies different assumptions which give rise to the formulae written below. The well-established names for the different types of measurement model provide natural naming candidates for their corresponding reliabilities measure:</p>
-<ol style="list-style-type: decimal">
-<li><strong>Parallel</strong> – Assumption: <span class="math inline">\(\eta_k = \eta \longrightarrow \lambda_k = \lambda\)</span> and <span class="math inline">\(Var(\varepsilon_k) = Var(\varepsilon)\)</span>.</li>
-<li><strong>Tau-equivalent</strong> – Assumption: <span class="math inline">\(\eta_k = \eta \longrightarrow \lambda_k = \lambda\)</span> and <span class="math inline">\(Var(\varepsilon_k) \neq Var(\varepsilon_l)\)</span>.</li>
-<li><strong>Congeneric</strong> – Assumption: <span class="math inline">\(\eta_k = \lambda_k\eta\)</span> and <span class="math inline">\(Var(\varepsilon_k) \neq Var(\varepsilon_l)\)</span>.</li>
-</ol>
-</div>
-<div id="formula-1" class="section level3">
-<h3>Formula</h3>
-<p>The most general formula for reliability is the congeneric reliability:</p>
-<p><strong>Congeneric reliability</strong> <span class="math display">\[ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\mathbf{w}&#39;\mathbf{\lambda})^2}{\mathbf{w}&#39;\mathbf{\Sigma}\mathbf{w}}\]</span> Using the assumptions imposed by the tau-equivalent measurement model we obtain the tau-equivalent reliability.</p>
-<p><strong>Tau-equivalent reliability</strong> <span class="math display">\[ \rho_T = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + \sum w_k^2Var(\varepsilon_k)}
- = \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + \sum w_k^2Var(x_k)}\]</span> where we used the fact that if <span class="math inline">\(\lambda_k = \lambda\)</span> (tau-equivalence), <span class="math inline">\(\lambda^2_k\)</span> equals the average covariance between indicators: <span class="math display">\[\bar\sigma_x = \frac{1}{K(K-1)}\sum^K_{k=1}\sum^K_{l=1} \sigma_{kl}\]</span></p>
-<p>Using the assumptions imposed by the parallel measurement model we obtain the parallel reliability:</p>
-<p><strong>Parallel reliability</strong> <span class="math display">\[ \rho_P = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + Var(\varepsilon)\sum w_k^2} = 
- \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + Var(x)\sum w_k^2} \]</span></p>
-<p>In <code>cSEM</code> indicators are always standardized and weights are choosen such that <span class="math inline">\(Var(\hat\eta_k) = 1\)</span>. This significantly simplifies the formulae and <span class="math inline">\(\rho_T = \rho_P\)</span> are in fact identical:</p>
-<p><span class="math display">\[\begin{align}
-\rho_C &amp;=  (\sum w_k\lambda_k)^2 = (\mathbf{w}&#39;\mathbf{\lambda})^2\\
-\rho_T = \rho_P &amp;=  \bar\rho_x(\sum w_k)^2
-\end{align}\]</span></p>
-<p>where <span class="math inline">\(\bar\rho_x\)</span> is the average correlation between indicators. Consequently, parallel and tau-equivalent reliability are always identical in <code>cSEM</code>.</p>
-<p>It is important to realize that <span class="math inline">\(\rho_T\)</span> (<span class="math inline">\(\rho_P\)</span>) based on the average covariance/ correlation (if <span class="math inline">\(x_k\)</span> is standardized as it is always the case in <code>cSEM</code>) are nested within the general formula, however, <strong>if and only if the assumptions of the tau-equivalent and/or the parallel model hold do they represent reliability measures!!</strong> In pratice, these assumptions are unlikely to hold. We therefore explicitly discourage their use as congeneric reliability is virtually always preferable in empirical work! In fact, as shown above, congeneric reliability is identical to the tau-equivalent/parallel reliability <em>if their respective assumptions actually hold</em>, essentially offering robustness against violation of the tau-equivalence and/or parallel measurement assumption.</p>
-<div id="confidence-interval" class="section level4">
-<h4>Confidence interval</h4>
-<p>Trinchera et al. (2018) proposed a closed-form confidence interval (CI) for the tau-equivalent reliability (coefficient alpha). To compute the CI, set <code>.calculate_ci = TRUE</code> when calling <code>assess()</code> or invoke <code>calculateRhoT(..., .calculate_ci = TRUE)</code> directly. The level of the CI can be changed by supplying a single value or a vector of values to <span class="math inline">\(.alpha\)</span>.</p>
-</div>
-<div id="a-note-on-the-terminology" class="section level4">
-<h4>A note on the terminology</h4>
-<p>A vast bulk of literature dating back to seminal work by Spearman (e.g., Spearman (1904)) has been written on the subject of reliability. Inevitably, definitions, formulae, notation and terminology conventions are unsystematic and confusing. This is particularly true for newcomers to structural equation modeling or applied users whose primary concern is to apply the appropriate method to the appropriate case without poring over books and research papers to understand each intricate detail.</p>
-<p>In <code>cSEM</code> we seek to make working with reliabilities as consistent and easy as possible by relying on a paper by Cho (2016) who proposed, uniform formula-generating methods and a systematic naming conventions for all common reliability measures. Naturally, some of the conventional terminonolgy is deeply entrenched within the nomenclatura of a particular filed (e.g., coefficient alpha alias Cronbach alpha in pychonometrics) such that a new, albeit consistent, naming scheme seems superfluous at best. However, we belief the merit of a “standardized” naming pattern will eventually be helpful to all users as it helps clarify potential missconceptions thus preventing potential missue, such as the (ab)use of Cronbach alpha as a reliability measure for congernic measurement models.</p>
-<p>Apart from these considerations, this package takes a pragmatic stance in a sense that we use consistent naming because it naturally provides a consistent naming scheme for the functions and the systematic formula generating methods because they make code maintenance easier. Eventually, what matters is the formula and more so its correct application. To facilitate the translation between different naming systems and conventions we provide a “translation table” below:</p>
+<div id="notation" class="section level2">
+<h2>Notation</h2>
 <center>
-<table style="width:100%;">
-<caption>Systematic names and common synonymous names for the reliability found in the literature</caption>
+<table>
 <colgroup>
-<col width="37%"></col>
-<col width="16%"></col>
+<col width="23%"></col>
+<col width="30%"></col>
 <col width="46%"></col>
 </colgroup>
 <thead>
 <tr class="header">
-<th align="center">Systematic names</th>
-<th>Mathematical</th>
-<th align="left">Synonymous terms</th>
+<th align="left">Symbol</th>
+<th align="center">Dimension</th>
+<th align="left">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">Parallel reliability</td>
-<td><span class="math inline">\(\rho_P\)</span></td>
-<td align="left">Spearman-Brown formula, Spearman-Brown prophecy, Standardized alpha, Split-half reliability</td>
+<td align="left"><span class="math inline">\(\boldsymbol{\mathbf{\eta}}_{en}\)</span></td>
+<td align="center"><span class="math inline">\((J_{en} \times 1)\)</span></td>
+<td align="left">Vector of endogenous constructs/concepts</td>
 </tr>
 <tr class="even">
-<td align="center">Tau-equivalent reliability</td>
-<td><span class="math inline">\(\rho_T\)</span></td>
-<td align="left">Cronbach’s alpha, <span class="math inline">\(\alpha\)</span>, Coefficient alpha Guttmans <span class="math inline">\(\lambda_3\)</span>, KR-20</td>
+<td align="left"><span class="math inline">\(\boldsymbol{\mathbf{\eta}}_{ex}\)</span></td>
+<td align="center"><span class="math inline">\((J_{ex} \times 1)\)</span></td>
+<td align="left">Vector of exogenous constructs/concepts</td>
 </tr>
 <tr class="odd">
-<td align="center">Congeneric reliability</td>
-<td><span class="math inline">\(\rho_C\)</span></td>
-<td align="left">Composite reliability, Jöreskog’s <span class="math inline">\(\rho\)</span>, Construct reliability, <span class="math inline">\(\omega\)</span>, reliability coefficient</td>
+<td align="left"><span class="math inline">\(\boldsymbol{\mathbf{\eta}}\)</span></td>
+<td align="center"><span class="math inline">\((J \times 1)\)</span></td>
+<td align="left">Vector of constructs/concepts</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\eta_j\)</span></td>
+<td align="center"><span class="math inline">\((1 \times 1)\)</span></td>
+<td align="left">The <span class="math inline">\(j\)</span>’th construct/concept</td>
 </tr>
 </tbody>
 </table>
 </center>
 </div>
 </div>
-<div id="implementation-1" class="section level3">
-<h3>Implementation</h3>
-<p>Function are implemented as: <code>calculateRhoT()</code> and <code>calculateRhoC()</code>. See e.g., <code>?calculateRhoC()</code> for a list of arguments and their description.</p>
-</div>
-</div>
-</div>
-<div id="literature" class="section level1">
+<div id="literature" class="section level1 unnumbered">
 <h1>Literature</h1>
+<div id="refs" class="references">
+<div id="ref-Rigdon2012">
+<p>Rigdon, Edward E. 2012. “Rethinking Partial Least Squares Path Modeling: In Praise of Simple Methods.” <em>Long Range Planning</em> 45 (5-6). Elsevier BV: 341–58. <a href="https://doi.org/10.1016/j.lrp.2012.09.010">https://doi.org/10.1016/j.lrp.2012.09.010</a>.</p>
+</div>
+<div id="ref-Rigdon2016">
+<p>———. 2016. “Choosing PLS Path Modeling as Analytical Method in European Management Research: A Realist Perspective.” <em>European Management Journal</em> 34 (6). Elsevier BV: 598–605. <a href="https://doi.org/10.1016/j.emj.2016.05.006">https://doi.org/10.1016/j.emj.2016.05.006</a>.</p>
+</div>
+<div id="ref-Rigdon2019">
+<p>Rigdon, Edward E., Jan-Michael Becker, and Marko Sarstedt. 2019. “Factor Indeterminacy as Metrological Uncertainty: Implications for Advancing Psychological Measurement.” <em>Multivariate Behavioral Research</em>, March. Informa UK Limited, 1–15. <a href="https://doi.org/10.1080/00273171.2018.1535420">https://doi.org/10.1080/00273171.2018.1535420</a>.</p>
+</div>
+</div>
 </div>
 </section>
 

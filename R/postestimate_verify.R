@@ -4,12 +4,16 @@
 #' 
 #' Results based on an estimated model exhibiting one of the 
 #' following defects are deemed inadmissible: non-convergence, loadings and/or 
-#' proxy reliabilities larger than 1, a construct VCV and/or a
+#' (congeneric) reliabilities larger than 1, a construct VCV and/or a
 #' model-implied VCV matrix that is not positive (semi-)definite.
 #' 
 #' For models containing second order constructs estimation is by default done
 #' in a two/three stage procedure. In this case both the first and the second/third
 #' stage model quantities are checked.
+#' 
+#' Currently, a model-implied indicator VCV matrix for nonlinear model is not
+#' available. `verify()` therefore skips the check for positive definiteness of the
+#' model-implied indicator VCV matrix and return an ok-status by default.
 #'
 #' @inheritParams csem_arguments
 #'
@@ -131,7 +135,7 @@ verify.cSEMResults_2ndorder <- function(.object){
     stat2["4"] <- TRUE
   }
   
-  if(x1i$Model$model_type == "Linear" && 
+  if(x2i$Model$model_type == "Linear" && 
      !matrixcalc::is.positive.semi.definite(fit.cSEMResults_default(.object$Second_stage))) {
     stat2["5"] <- TRUE
   }
