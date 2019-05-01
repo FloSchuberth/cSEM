@@ -1,5 +1,5 @@
 ---
-title: "GSCA and GSCA<sub>M</sub>"
+title: "GSCA and GSCA-M"
 subtitle: "Generalized structured component analysis with and without uniquness terms" 
 date: "`r Sys.Date()`"
 output:
@@ -7,7 +7,7 @@ output:
     theme: cayman
     highlight: github
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{GSCA}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: ../inst/REFERENCES.bib

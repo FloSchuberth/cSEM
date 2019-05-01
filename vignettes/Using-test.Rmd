@@ -8,7 +8,7 @@ output:
     highlight: github
     toc: true
 vignette: >
-  %\VignetteIndexEntry{using-assess}
+  %\VignetteIndexEntry{using-test}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: ../inst/REFERENCES.bib
