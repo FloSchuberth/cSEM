@@ -66,6 +66,8 @@ Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: 
     knitr,
     pkgdown,
+    prettydoc,
+    Rdpack,
     rmarkdown,
     listviewer,
     testthat
