@@ -264,7 +264,7 @@ IMAG <~ imag1 + imag2
 
 # 1.6 "Normal" second order model including a nonlinear term
 
-model <- "
+model6 <- "
 # Structural model
 SAT ~ QUAL
 VAL ~ SAT + SAT.SAT
