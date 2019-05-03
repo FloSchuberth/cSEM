@@ -1,6 +1,6 @@
 #' Composite-based SEM
 #'
-#' The central hub of the `cSEM` package. It acts like a 
+#' The central hub of the \pkg{cSEM} package. It acts like a 
 #' foreman by collecting all (estimation) tasks, distributing them to lower 
 #' level package functions, and eventually recollecting all of their results. 
 #' It is called by [csem()] to manage the actual calculations.

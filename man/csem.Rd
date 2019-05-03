@@ -165,20 +165,19 @@ must be provided to \code{.id}. Values of this column are interpreted as group
 identifiers and \code{csem()} will split the data by levels of that column and run
 the estimation for each level separately.
 
-To provide a model use the \link[lavaan:model.syntax]{lavaan model syntax}
-with two notable extensions/changes. First: the "\code{<~}" operator in \code{cSEM} is
-used to define a composite instead of a causal formative common factor. Second:
-the "\code{.}" is used to indicate interactions between constructs as in e.g.,
-\code{construct1.construct2}. Alternatively a standardized (possibly incomplete)
-\link{cSEMModel}-list may be supplied.
+To provide a model use the \link[lavaan:model.syntax]{lavaan model syntax}.
+Note, however, that \pkg{cSEM} currently only supports the "standard" lavaan
+model syntax (Types 1, 2, 3, and 7 as described on the help page).
+Therefore, specifying e.g. a threshold or scaling factors is ignored.
+Alternatively a standardized (possibly incomplete) \link{cSEMModel}-list may be supplied.
 }
 
 \subsection{Weights and path coefficients:}{
 By default weights are estimated using the partial least squares (path) algorithm (\code{"PLS-PM"}).
-A broad range of alternative weightning algorithms may be supplied to \code{.appraoch_weights}.
+A broad range of alternative weightning algorithms may be supplied to \code{.approach_weights}.
 Currently the following approaches are implemented
 \enumerate{
-\item{(Default) Partial least squares path modeling (\code{"PLS"}). The algorithm
+\item{(Default) Partial least squares path modeling (\code{"PLS-PM"}). The algorithm
 can be customized. See \code{\link[=calculateWeightsPLS]{calculateWeightsPLS()}} for details.}
 \item{Generalized structured component analysis (\code{"GSCA"})}
 \item{Generalized canoncial correlation analysis (\emph{GCCA}), including
@@ -190,22 +189,23 @@ regression (\code{"regression"}) or bartlett scores (\code{"bartlett"})}
 
 Composite-indicator and composite-composite correlations are properly
 disattenuated by default to yield consistent loadings, construct correlations,
-and path coefficients if any of the constructs in the model are modeled as a
+and path coefficients if any of the concepts in the model are modeled as a
 common factor.
 
 For \emph{PLS-PM} disattenuation is done using \emph{PLSc} \insertCite{Dijkstra2015}{cSEM}.
-For \emph{GSCA} disattenuation is done implicitly by using \emph{GSCAm}. Weights obtained
-by GCCA, unit weights and fixed weights are disattenuated using a
-Disattenuation my be suppressed by setting
-\code{.disattenuate = FALSE}. Note, however, that quantities in this case are inconsistent
-estimates for their construct level counterparts if any of the constructs in the structural model is
-modeled as a common factor!
+For \emph{GSCA} disattenuation is done implicitly by using \emph{GSCAm} \insertCite{Hwang2017}{cSEM}.
+Weights obtained by \emph{GCCA}, \emph{unit}, \emph{regression}, \emph{bartlett} or \emph{PCA} are
+disattenuated using Croon's approach \insertCite{Croon2002}{cSEM}.
+Disattenuation my be suppressed by setting \code{.disattenuate = FALSE}.
+Note, however, that quantities in this case are inconsistent
+estimates for their construct level counterparts if any of the constructs in
+the structural model are modeled as a common factor!
 }
 
 \subsection{Nonlinear models:}{
 If the model is nonlinear \code{csem()} estimates a polynomial structural equation model
 using a non-iterative method of moments approach described in
-\insertCite{Dijkstra2014}{cSEM}. Non linear terms include interactions and
+\insertCite{Dijkstra2014}{cSEM}. Nonlinear terms include interactions and
 exponential terms. The latter is described in model syntax as an
 "interaction with itself", e.g., \code{x_1^3 = x1.x1.x1}. Currently only exponential
 terms up to a power of three (i.e. three-way interactions) are allowed.
@@ -224,6 +224,27 @@ measurement errors behave as if they were Gaussian.
 For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 }
 
+\subsection{Second-order model}{
+Second-order models are specified using the operators \code{=~} and \code{<~}. These
+operators are usually used with indicators on their right-hand side. For
+second-order models the right-hand side variables are constructs instead:
+\preformatted{my_model <- "
+# Structural model
+SAT ~ QUAL
+VAL ~ SAT
+
+# Measurement model
+EXPE <~ expe1 + expe2
+
+SAT =~ sat1 + sat2
+VAL =~ val1 + val2
+IMAG <~ imag1 + imag2
+
+# Second-order term (in this case a second-order common factor)
+QUAL =~ IMAG + EXPE
+"
+}
+}
 \subsection{Inference:}{
 Inference is done via resampling. See \link{resamplecSEMResults} for details.
 }
