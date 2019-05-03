@@ -6,15 +6,21 @@
 \title{cSEMResults}
 \description{
 A call to \code{\link[=csem]{csem()}} results in an object with at least
-two class attributes. The first class attribute is always \code{cSEMResults}.
+two class attributes. The first class attribute is always \code{cSEMResults} no matter
+the type of data or model provided.
 The second is one of \code{cSEMResults_default}, \code{cSEMResults_multi}, or
 \code{cSEMResults_2ndorder} and depends on the estimated model and/or the type of
-data provided to the \code{.model} and \code{.data} arguments of \link{csem}. The third class attribute
-\code{cSEMResults_resampled} is only added if resampling was conducted.
+data provided to the \code{.model} and \code{.data} arguments of \code{\link[=csem]{csem()}}. Technically,
+method dispatch for all postestimation functions is based on the second
+class attribute.
+The third class attribute \code{cSEMResults_resampled} is only added if resampling
+was conducted.
 }
 \details{
+Depending on the type of data and/or model provided three different outputs
+types exists.
 \describe{
-\item{Default}{This will be the structure for the vaste majority of applications.
+\item{_default}{This will be the structure for the vaste majority of applications.
 If the data is a single \code{matrix} or \code{data.frame} with no id-column,
 the result is a \code{list} with elements:
 \describe{
@@ -23,24 +29,24 @@ the result is a \code{list} with elements:
 }
 The resulting object has classes \code{cSEMResults} and \code{cSEMResults_default}.
 }
-\item{Multi}{If the data provided is a single \code{matrix} or \code{data.frame} containing
+\item{_multi}{If the data provided is a single \code{matrix} or \code{data.frame} containing
 an id-column to split the data by \code{G} group levels
 or if a list of \code{G} datasets is provided, the resulting object is a list of \code{G}
 lists, where \code{G} is equal to the number of groups or the number of datasets
 in the list of datasets provided. Each of the \code{G} list elements are itself
 a \code{cSEMResults_default} object. Hence its structure is identical to
-the structure described in \code{Default}.
+the structure described in \code{_default}.
 
 The resulting object has classes \code{cSEMResults} and \code{cSEMResults_multi}.
 }
-\item{2ndorder}{
+\item{_2ndorder}{
 A special output is generated if the model to estimate contains hierachical constructs
 \strong{and} the 2step (3step) approach is used to estimate the model. In this case
 the resulting object is a list containing two elements \code{First_stage} and
 \code{ Second_stage}.
 
 Each list element is itself a \code{cSEMResults_default} object. Hence its structure is identical to
-the structure described in \code{Default}.
+the structure described in \code{_default}.
 }
 }
 

@@ -106,8 +106,8 @@
 #'   .handle_inadmissibles    = c("drop", "ignore", "replace"),
 #'   .user_funs               = NULL,
 #'   .eval_plan               = c("sequential", "multiprocess"),
-#'   .seed                    = NULL,
-#'   .sign_change_option      = c("no", "individual", "individual_reestimate", 
+#'   .seed                    = FALSE,
+#'   .sign_change_option      = c("none", "individual", "individual_reestimate", 
 #'                                "construct_reestimate"),
 #'   ...
 #'   )
@@ -166,8 +166,8 @@ csem <- function(
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .user_funs             = NULL,
   .eval_plan             = c("sequential", "multiprocess"),
-  .seed                  = NULL,
-  .sign_change_option    = c("no", "individual", "individual_reestimate", 
+  .seed                  = FALSE,
+  .sign_change_option    = c("none", "individual", "individual_reestimate", 
                              "construct_reestimate"),
   ...
   ) {
@@ -378,10 +378,6 @@ csem <- function(
   
   if(.resample_method != "none") {
     
-    if(is.null(.seed)) {
-      .seed <- sample(.Random.seed, 1)
-    }
-    
     out <- resamplecSEMResults(
       .object               = out,
       .resample_method      = .resample_method,
@@ -392,7 +388,8 @@ csem <- function(
       .user_funs            = .user_funs,
       .eval_plan            = .eval_plan,
       .seed                 = .seed,
-      .sign_change_option   = .sign_change_option
+      .sign_change_option   = .sign_change_option,
+      ...
     )
   }
   

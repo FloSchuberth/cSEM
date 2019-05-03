@@ -171,7 +171,8 @@ Ignored if \code{.approach_weights} is not PLS-PM.}
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
 each construct in the form \code{"name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
-Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}", "\emph{unit}", a single number (weight) or
+Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
+"\emph{unit}", "\emph{PCA}", a single integer or
 a vector of fixed weights of the same length as there are indicators for the
 construct given by \code{"name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
@@ -222,10 +223,11 @@ resampling from a resample. Defaults to \code{199}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
 
-\item{.sign_change_option}{Character string. Indicates which sign change option should be used in
-the resample function. One of "\emph{no}" "\emph{individual}"  "\emph{construct}". Defaults to "\emph{no}".}
+\item{.sign_change_option}{Character string. Which sign change option should
+be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",
+"\emph{individual_reestimate}", "\emph{construct_reestimate}". Defaults to "\emph{none}".}
 
-\item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
+\item{.seed}{Integer or FALSE. The random seed to use. Defaults to \code{FALSE} in which
 case an arbitrary seed is choosen.}
 
 \item{.stage}{Character string. The stage the model is need for.
@@ -273,3 +275,4 @@ Mainly used for internal purposes (parameter inheritance). To list all arguments
 and their defaults, use \code{\link[=args_default]{args_default()}}. To list all arguments and
 their possible choices, use \code{args_default(.choices = TRUE)}.
 }
+\keyword{internal}

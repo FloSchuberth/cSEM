@@ -5,26 +5,18 @@
 \title{Resample data}
 \usage{
 resampleData(
- .object          = args_default()$.object,
+ .object          = NULL,
+ .data            = NULL,
  .resample_method = c("bootstrap", "jackknife", "permutation", 
                       "cross-validation"),
- .cv_folds        = args_default()$.cv_folds,
- .data            = args_default()$.data,
- .id              = args_default()$.id,
- .R               = args_default()$.R,
- .seed            = args_default()$.seed
+ .cv_folds        = 10,
+ .id              = NULL,
+ .R               = 499,
+ .seed            = FALSE
 )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
-
-\item{.resample_method}{Character string. The resampling method to use. One of:
-"\emph{bootstrap}", "\emph{jackknife}", "\emph{permutation}", or "\emph{cross-validation}".
-Defaults to "\emph{bootstrap}".}
-
-\item{.cv_folds}{Integer. The number of cross-validation folds to use. Setting
-\code{.cv_folds} to \code{N} (the number of observations) produces
-leave-one-out cross-validation samples. Defaults to \code{10}.}
 
 \item{.data}{A \code{data.frame}, a \code{matrix} or a \code{list} of data of either type.
 Possible column types or classes of the data provided are:
@@ -34,6 +26,14 @@ or a mix of several types. The data may also include
 This column is assumed to contain group identifiers used to split the data into groups.
 If \code{.data} is provided, \code{.object} is ignored. Defaults to \code{NULL}.}
 
+\item{.resample_method}{Character string. The resampling method to use. One of:
+"\emph{bootstrap}", "\emph{jackknife}", "\emph{permutation}", or "\emph{cross-validation}".
+Defaults to "\emph{bootstrap}".}
+
+\item{.cv_folds}{Integer. The number of cross-validation folds to use. Setting
+\code{.cv_folds} to \code{N} (the number of observations) produces
+leave-one-out cross-validation samples. Defaults to \code{10}.}
+
 \item{.id}{Character string or integer. The name or position of the column of
 \code{.data} used to split the data into groups.
 Defaults to \code{NULL}.}
@@ -41,7 +41,7 @@ Defaults to \code{NULL}.}
 \item{.R}{Integer. The number of bootstrap replications, permutation runs
 or cross-validation repetitions to use. Defaults to \code{499}.}
 
-\item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
+\item{.seed}{Integer or FALSE. The random seed to use. Defaults to \code{FALSE} in which
 case an arbitrary seed is choosen.}
 }
 \value{
@@ -93,14 +93,15 @@ call this function but directly use \code{\link[=resamplecSEMResults]{resamplecS
 }
 \details{
 The function \code{resampleData()} is general purpose. It simply resamples data
-from a given dataset according to the resampling method provided
-via the \code{.resample_method} argument.
+from a dataset according to the resampling method provided
+via the \code{.resample_method} argument and returns a list of resamples.
 Currently, \code{bootstrap}, \code{jackknife}, \code{permutation}, and  \code{cross-validation}
 (both leave-one-out (LOOCV) and k-fold cross-validation) are implemented.
 
-The user may provide a dataset via \code{.data} to be resampled or a \link{cSEMResults}
-object in which case the original data used in the call to \code{\link[=csem]{csem()}} is used
-for resampling.
+The user may provide the dataset to resample from explicitly via the \code{.data}
+argument or implicitly by providing a \link{cSEMResults} objects to \code{.object}
+in which case the original data used in the call that created the
+\link{cSEMResults} object is used for resampling.
 If both, a \link{cSEMResults} object and a dataset via \code{.data} are provided
 the former is ignored.
 
@@ -115,7 +116,7 @@ To split data provided via the \code{.data} argument into groups, the column nam
 the column index of the column containing the group levels to split the data
 by must be given to \code{.id}. If data that contains grouping is taken from
 a \link{cSEMResults} object, \code{.id} is taken from within the object. Hence,
-providing  \code{.id} is redundant and therefore ignored.
+providing  \code{.id} is redundant in this case and therefore ignored.
 
 The number of bootstrap or permutation runs as well as the number of
 cross-validation repetitions is given by \code{.R}. The default is
@@ -124,59 +125,68 @@ cross-validation repetitions is given by \code{.R}. The default is
 the bootstrap. For jackknife \code{.R} is ignored.
 
 Choosing \code{resample_method = "permutation"} for ungrouped data causes an error
-as permutation will simply reorder the observations. If a list of data is provided
+as permutation will simply reorder the observations which is usually not
+meaningful. If a list of data is provided
 each list element is assumed to represent the observations belonging to one
 group. In this case, data is pooled and group adherance permutated.
 
-For cross-validation the number of folds (\code{k}) defaults to \code{10} and can be changed
-via the \code{.cv_folds} argument. Setting \code{k = N} (where \code{N} is the number of observations)
-produces leave-one-out cross-validation samples.
-Note: 1. \code{k} can not be larger than the \code{N}.
-2. If \code{N/k} is not not an integer the last fold will have less observations.
+For cross-validation the number of folds (\code{k}) defaults to \code{10}. It may be
+changed via the \code{.cv_folds} argument. Setting \code{k = N} (where \code{N} is the
+number of observations) produces leave-one-out cross-validation samples.
+Note: 1. \code{k} can not be larger than the \code{N}. 2. If \code{N/k} is not not an integer
+the last fold will have less observations.
 
-Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
-\href{https://github.com/HenrikBengtsson/future.apply}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
-See \link[future.apply:future_lapply]{?future_lapply} for details.
+Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented
+in the \href{https://github.com/HenrikBengtsson/future.apply}{future.apply package}
+\insertCite{Bengtsson2018a}{cSEM}.
+See \link[future.apply:future_lapply]{?future_lapply} for details. By default
+a random seed is choosen.
 }
 \examples{
-require(cSEM)
-
 # ===========================================================================
-### Using the raw data 
+# Using the raw data 
 # ===========================================================================
-## Create .R bootstrap samples ----------------------------------------------
+### Bootstrap (default) -----------------------------------------------------
 
 res_boot1 <- resampleData(.data = satisfaction)
 str(res_boot1, max.level = 3, list.len = 3)
 
-# res_boot1 is the same as if a seed is set
-res_boot1  <- resampleData(.data = satisfaction, .seed = 2364)
-res_boot1a <- resampleData(.data = satisfaction, 
-                           .resample_method = "bootstrap", .seed = 2364)
+## To replicate a bootstrap draw use .seed:
+res_boot1a <- resampleData(.data = satisfaction, .seed = 2364)
+res_boot1b <- resampleData(.data = satisfaction, .seed = 2364)
                            
 identical(res_boot1, res_boot1a) # TRUE
 
-## Create cross-validation samples repeated .R = 100 ------------------------
+### Jackknife ---------------------------------------------------------------
 
+res_jack <- resampleData(.data = satisfaction, .resample_method = "jackknife")
+str(res_jack, max.level = 3, list.len = 3)
+
+### Cross-validation --------------------------------------------------------
+## Create dataset for illustration:
 dat <- data.frame(
   "x1" = rnorm(100),
   "x2" = rnorm(100),
   "group" = sample(c("male", "female"), size = 100, replace = TRUE),
   stringsAsFactors = FALSE)
 
-# 10-fold cross-validation
+## 10-fold cross-validation (repeated 100 times)
+cv_10a <- resampleData(.data = dat, .resample_method = "cross-validation", 
+                      .R = 100)
+str(cv_10a, max.level = 3, list.len = 3)
+
+# Cross-validation can be done by group if a group identifyer is provided:
 cv_10 <- resampleData(.data = dat, .resample_method = "cross-validation", 
                       .id = "group", .R = 100)
-str(cv_10, max.level = 3, list.len = 3)
 
-# Leave-one-out-cross-validation
+## Leave-one-out-cross-validation (repeated 50 times)
 cv_loocv  <- resampleData(.data = dat[, -3], 
                           .resample_method = "cross-validation", 
                           .cv_folds = nrow(dat),
                           .R = 50)
 str(cv_loocv, max.level = 2, list.len = 3)
 
-## Create permuation samples ------------------------------------------------
+### Permuation ---------------------------------------------------------------
 
 res_perm <- resampleData(.data = dat, .resample_method = "permutation",
                          .id = "group")
@@ -188,7 +198,7 @@ res_perm <- resampleData(.data = dat, .resample_method = "permutation")
 }
 
 # ===========================================================================
-### Using a cSEMResults object
+# Using a cSEMResults object
 # ===========================================================================
 
 model <- "

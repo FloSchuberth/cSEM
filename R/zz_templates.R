@@ -46,14 +46,20 @@ NULL
 #' cSEMResults
 #' 
 #' A call to [csem()] results in an object with at least 
-#' two class attributes. The first class attribute is always `cSEMResults`. 
+#' two class attributes. The first class attribute is always `cSEMResults` no matter
+#' the type of data or model provided. 
 #' The second is one of `cSEMResults_default`, `cSEMResults_multi`, or 
 #' `cSEMResults_2ndorder` and depends on the estimated model and/or the type of 
-#' data provided to the `.model` and `.data` arguments of [csem]. The third class attribute
-#' `cSEMResults_resampled` is only added if resampling was conducted.
+#' data provided to the `.model` and `.data` arguments of [csem()]. Technically, 
+#' method dispatch for all postestimation functions is based on the second 
+#' class attribute.
+#' The third class attribute `cSEMResults_resampled` is only added if resampling
+#' was conducted.
 #' 
+#' Depending on the type of data and/or model provided three different outputs
+#' types exists.
 #' \describe{
-#' \item{Default}{This will be the structure for the vaste majority of applications.
+#' \item{_default}{This will be the structure for the vaste majority of applications.
 #'  If the data is a single `matrix` or `data.frame` with no id-column, 
 #'  the result is a `list` with elements: 
 #' \describe{
@@ -62,24 +68,24 @@ NULL
 #' }
 #' The resulting object has classes `cSEMResults` and `cSEMResults_default`.
 #' }
-#' \item{Multi}{If the data provided is a single `matrix` or `data.frame` containing
+#' \item{_multi}{If the data provided is a single `matrix` or `data.frame` containing
 #'  an id-column to split the data by `G` group levels 
 #'  or if a list of `G` datasets is provided, the resulting object is a list of `G` 
 #'  lists, where `G` is equal to the number of groups or the number of datasets 
 #'  in the list of datasets provided. Each of the `G` list elements are itself 
 #'  a `cSEMResults_default` object. Hence its structure is identical to 
-#'  the structure described in `Default`.
+#'  the structure described in `_default`.
 #' 
 #' The resulting object has classes `cSEMResults` and `cSEMResults_multi`. 
 #' }
-#' \item{2ndorder}{
+#' \item{_2ndorder}{
 #'  A special output is generated if the model to estimate contains hierachical constructs
 #'  **and** the 2step (3step) approach is used to estimate the model. In this case
 #'  the resulting object is a list containing two elements `First_stage` and 
 #' ` Second_stage`.
 #' 
 #' Each list element is itself a `cSEMResults_default` object. Hence its structure is identical to 
-#' the structure described in `Default`.
+#' the structure described in `_default`.
 #' }
 #' }
 #' 

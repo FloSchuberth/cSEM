@@ -25,8 +25,8 @@ csem(
   .handle_inadmissibles    = c("drop", "ignore", "replace"),
   .user_funs               = NULL,
   .eval_plan               = c("sequential", "multiprocess"),
-  .seed                    = NULL,
-  .sign_change_option      = c("no", "individual", "individual_reestimate", 
+  .seed                    = FALSE,
+  .sign_change_option      = c("none", "individual", "individual_reestimate", 
                                "construct_reestimate"),
   ...
   )
@@ -119,11 +119,12 @@ vectorized (columnwise) in this case. See the examples section for details.}
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
 all available cores will be used. Defaults to "\emph{sequential}".}
 
-\item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
+\item{.seed}{Integer or FALSE. The random seed to use. Defaults to \code{FALSE} in which
 case an arbitrary seed is choosen.}
 
-\item{.sign_change_option}{Character string. Indicates which sign change option should be used in
-the resample function. One of "\emph{no}" "\emph{individual}"  "\emph{construct}". Defaults to "\emph{no}".}
+\item{.sign_change_option}{Character string. Which sign change option should
+be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",
+"\emph{individual_reestimate}", "\emph{construct_reestimate}". Defaults to "\emph{none}".}
 
 \item{...}{Further arguments to be passed down to lower level functions of \code{csem()}.
 See \link{args_csem_dotdotdot} for a complete list of available arguments.}

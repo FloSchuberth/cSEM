@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' # ===========================================================================
-#' ### Providing a model in lavaan syntax 
+#' # Providing a model in lavaan syntax 
 #' # ===========================================================================
 #' model <- "
 #' # Structural model
@@ -30,14 +30,14 @@
 #' m
 #' 
 #' # ===========================================================================
-#' ### Providing a complete model in cSEM format (class cSEMModel)
+#' # Providing a complete model in cSEM format (class cSEMModel)
 #' # ===========================================================================
 #' # If the model is already a cSEMModel object, the model is returned as is:
 #'
 #' identical(m, parseModel(m)) # TRUE
 #' 
 #' # ===========================================================================
-#' ### Providing a list 
+#' # Providing a list 
 #' # ===========================================================================
 #' # It is possible to provide a list that contains at least the
 #' # elements "structural" and "measurement". This is generally discouraged
