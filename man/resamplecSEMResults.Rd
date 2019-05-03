@@ -6,15 +6,17 @@
 \usage{
 resamplecSEMResults(
  .object                = NULL,
- .resample_method       = c("bootstrap", "jackknife), 
- .resample_method2      = c("none", "bootstrap", "jackknife), 
+ .resample_method       = c("bootstrap", "jackknife"), 
+ .resample_method2      = c("none", "bootstrap", "jackknife"), 
  .R                     = 499,
  .R2                    = 199,
  .handle_inadmissibles  = c("drop", "ignore", "replace"),
  .user_funs             = NULL,
  .eval_plan             = c("sequential", "multiprocess"),
- .seed                  = NULL,
- .sign_change_option    = "no"
+ .seed                  = FALSE,
+ .sign_change_option    = c("none","individual","individual_reestimate",
+                            "construct_reestimate"),
+ ...
 )
 }
 \arguments{
@@ -53,11 +55,14 @@ vectorized (columnwise) in this case. See the examples section for details.}
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
 all available cores will be used. Defaults to "\emph{sequential}".}
 
-\item{.seed}{Integer. The random seed to use. Defaults to \code{NULL} in which
+\item{.seed}{Integer or FALSE. The random seed to use. Defaults to \code{FALSE} in which
 case an arbitrary seed is choosen.}
 
-\item{.sign_change_option}{Character string. Indicates which sign change option should be used in
-the resample function. One of "\emph{no}" "\emph{individual}"  "\emph{construct}". Defaults to "\emph{no}".}
+\item{.sign_change_option}{Character string. Which sign change option should
+be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",
+"\emph{individual_reestimate}", "\emph{construct_reestimate}". Defaults to "\emph{none}".}
+
+\item{...}{Further arguments passed to functions supplied to \code{.user_funs}.}
 }
 \value{
 The core structure is the same structure as that of \code{.object} with
@@ -73,36 +78,39 @@ row representing one resample for each of the \code{K} parameters/statistics.
 the user provided function is a matrix.}
 \item {\code{$Information_resamples}: A list containing addtional information.}
 }
-Use \code{str(<.object>, list.len = 3)} for on the resulting object for an overview.
+Use \code{str(<.object>, list.len = 3)} on the resulting object for an overview.
 }
 \description{
 Resample a \link{cSEMResults} object using bootstrap or jackknife resampling.
 The function is called by \code{\link[=csem]{csem()}} if the user sets
 \code{csem(..., .resample_method = "bootstrap")} or
-\code{csem(..., .resample_method = "jackknife")} but may also be called seperately.
+\code{csem(..., .resample_method = "jackknife")} but may also be called indenpendently.
 Technically, \code{resamplecSEMResults()} is a generic function with methods for
 classes \code{cSEMResults_default}, \code{cSEMResults_multi} and \code{cSEMResults_2ndorder}.
 }
 \details{
 Given \code{M} resamples (for bootstrap \code{M = .R} and for jackknife \code{M = N}, where
 \code{N} is the number of observations) based on the data used to compute the
-\code{cSEMResults} object provided via \code{.object}, \code{resamplecSEMResults()} essentially calls
+\link{cSEMResults} object provided via \code{.object}, \code{resamplecSEMResults()} essentially calls
 \code{\link[=csem]{csem()}} on each resample using the arguments of the origianl call (ignoring any arguments
 related to resampling) and returns estimates for each of a subset of
 practically useful resampled parameters/statistics computed by \code{\link[=csem]{csem()}}.
-Currently, the following quantities are computed and returned based on each resample:
-Path estimates, Loading estimates, Weight estimates.
+Currently, the following quantities are computed and returned by default based
+on each resample: Path estimates, Loading estimates, Weight estimates.
 
 In practical application users may need to resample a specific statistic (e.g,
-the heterotrait-monotrait ratio of correlations (HTMT) or restrictions on path coefficients such as beta_1 = beta_2).
-Such statistics may be provided by a function \code{f(.object)} or a list of such functions
-via the \code{.user_funs} argument. The only accepted argument of these functions is
-\code{.object} which must be an object of class \link{cSEMResults}.
+the heterotrait-monotrait ratio of correlations (HTMT) or restrictions on path
+coefficients such as beta_1 = beta_2).
+Such statistics may be provided by a function \code{f(.object, ...)} or a list of
+such functions via the \code{.user_funs} argument. The first argument of
+these functions must always be \code{.object}.
 Internally, the function will be applied on each
 resample to produce the desired statistic. Hence, arbitrary complicated statistics
 may be resampled as long as the body of the function draws on elements contained
-in the \link{cSEMResults} object only. See \code{?cSEMResults} and the examples section
-for details.
+in the \link{cSEMResults} object only. Output of \code{f(.object, ...)} should preferably
+be a (named) vector but matrices are also accepted.
+However, the output will be vectorized (columnwise) in this case.
+See the examples section for details.
 
 Both resampling the origianl \link{cSEMResults} object (call it "first resample")
 and resampling based on a resampled \link{cSEMResults} object (call it "second resample")
@@ -151,8 +159,6 @@ or multiple cores. Note that multiprocessing is not necessary always faster
 when only a "small" number of replications is required as the overhead of
 initializing new sessions or distributing tasks to different cores
 will not immediatley be compensated by the avaiability of multiple sessions/cores.
-As a rule of thumb, the number of resamples to should be larger than 100
-to offset the overhead.
 
 Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
 \href{https://github.com/HenrikBengtsson/future.apply}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
@@ -162,9 +168,7 @@ for both \code{.eval_plan = "sequential"} and \code{.eval_plan = "multiprocess"}
 See \link[future.apply:future_lapply]{?future_lapply} for details.
 }
 \examples{
-
-require(cSEM)
-
+\donttest{
 model <- "
 # Structural model
 QUAL ~ EXPE
@@ -191,9 +195,9 @@ jack <- resamplecSEMResults(a, .resample_method = "jackknife")
 # Bootstrap resampling with resampling each resample (totals .R*R2 runs).
 boot1 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,
                              .resample_method2 = "bootstrap", .R2 = 20,
-                              .seed = 1303)
+                             .seed = 1303)
 
-# To get inferencial quanitites such as the estimates standard error or
+# To get inferencial quanitites such as the estimated standard error or
 # the percentile confidence intervall for each resampled quantity use infer()
 inference <- infer(boot1)
 inference$Path_estimates$Standard_deviation
@@ -203,13 +207,14 @@ inference$Path_estimates$CI_percentile
 summarize(boot1)
 
 # In the example above .R x .R2 = 50 x 20 = 1000. Multiprocessing will be
-# much here and is therefore recommended. Note that multiprocessing
+# faster here and is therefore recommended. Note that multiprocessing
 # does not affect the random number generation
 boot2 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,
                              .resample_method2 = "bootstrap", .R2 = 20,
                              .eval_plan = "multiprocess", .seed = 1303)
 
-identical(boot1, boot2)                  
+identical(boot1, boot2)
+}                  
 }
 \references{
 \insertAllCited{}

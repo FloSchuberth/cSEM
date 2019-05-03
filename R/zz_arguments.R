@@ -128,7 +128,8 @@
 #' @param .PLS_modes Either a named list specifying the mode that should be used for
 #'   each construct in the form `"name" = "mode"`, a single character
 #'   string giving the mode that should be used for all constructs, or `NULL`.
-#'   Possible choices for `"mode"` are: "*modeA*", "*modeB*", "*modeBNNLS*", "*unit*", a single number (weight) or 
+#'   Possible choices for `"mode"` are: "*modeA*", "*modeB*", "*modeBNNLS*", 
+#'   "*unit*", "*PCA*", a single integer or 
 #'   a vector of fixed weights of the same length as there are indicators for the
 #'   construct given by `"name"`. If only a single number is provided this is identical to
 #'   using unit weights, as weights are rescaled such that the related composite 
@@ -166,9 +167,10 @@
 #'   resampling from a resample. Defaults to `199`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
-#' @param .sign_change_option Character string. Indicates which sign change option should be used in 
-#' the resample function. One of "*no*" "*individual*"  "*construct*". Defaults to "*no*".
-#' @param .seed Integer. The random seed to use. Defaults to `NULL` in which
+#' @param .sign_change_option Character string. Which sign change option should 
+#' be used to handle flipping signs when resampling? One of "*none*","*individual*",
+#' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".
+#' @param .seed Integer or FALSE. The random seed to use. Defaults to `FALSE` in which
 #'   case an arbitrary seed is choosen.
 #' @param .stage Character string. The stage the model is need for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
@@ -197,10 +199,10 @@
 #'
 #' @name csem_arguments
 #' @aliases cSEMArguments
-#' 
+#' @keywords internal
 NULL
 
-#' Complete list of csem()'s ... arguments
+#' Internal: Complete list of csem()'s ... arguments
 #' 
 #' A complete alphabetical list of all possible arguments accepted by `csem()`'s `...` 
 #' (dotdotdot) argument.
@@ -208,6 +210,7 @@ NULL
 #' @usage NULL
 #' 
 #' @inheritParams csem_arguments
+#' @keywords internal
 
 args_csem_dotdotdot <- function(
   .approach_cor_robust     = c("none", "mcd", "spearman"),
@@ -225,7 +228,7 @@ args_csem_dotdotdot <- function(
   .tolerance               = 1e-05
 ) {NULL}
   
-#' Internal: Show argument defaults or candidates
+#' Show argument defaults or candidates
 #'
 #' Show all arguments used by package functions including default or candidate
 #' values. For argument descriptions, see: [csem_arguments].
@@ -297,8 +300,9 @@ args_default <- function(.choices = FALSE) {
     .S                       = NULL,
     .saturated               = FALSE,
     .second_resample         = NULL,
-    .seed                    = NULL,
-    .sign_change_option      = c("no","individual","individual_reestimate","construct_reestimate"),
+    .seed                    = FALSE,
+    .sign_change_option      = c("none", "individual", "individual_reestimate",
+                                 "construct_reestimate"),
     .stage                   = c("first", "second"),
     .starting_values         = NULL,
     .terms                   = NULL,

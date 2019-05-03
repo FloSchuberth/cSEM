@@ -287,6 +287,14 @@ The following sections explain each step in detail.
 
 ### Specfiying a model
 Models are defined using [lavaan syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
+Currently, only the "standard" lavaan model syntax is supported. This comprises:
+
+1. The definition of a latent variable/common factor by the "`=~`" operator.
+2. The defintion of a composite (or more precicly: the definition of a concept
+   modeled as a composite) by the "`<-`" operator.
+3. The specification of regression equations by the "`~`" operator.
+4. The defintion of error (co)variances using the "`~~`" operator.
+ 
 **cSEM** handles linear, nonlinear and hierachical models. Syntax for each
 model is illustrated below using variables of the build-in `satisfaction` dataset. 
 For more information please see the [lavaan syntax tutorial](http://lavaan.ugent.be/tutorial/syntax1.html).
@@ -321,20 +329,20 @@ as a common factor.
 Nonlinear terms are specified as interactions using the colon operator `:`. 
 Non linear terms include interactions and exponential terms. The latter is 
 described in model syntax as an "interaction with itself", e.g., 
-`x_1^3 = x1:x1:x1`. Currently the following terms are allowed
+`x_1^3 = x1.x1.x1`. Currently the following terms are allowed
 
 - Single, e.g., `eta1`
-- Quadratic, e.g., `eta1:eta1`
-- Cubic, e.g., `eta1:eta1:eta1`
-- Two-way interaction, e.g., `eta1:eta2`
-- Three-way interaction, e.g., `eta1:eta2:eta3`
-- Quadratic and two-way interaction, e.g., `eta1:eta1:eta3`
+- Quadratic, e.g., `eta1.eta1`
+- Cubic, e.g., `eta1.eta1.eta1`
+- Two-way interaction, e.g., `eta1.eta2`
+- Three-way interaction, e.g., `eta1.eta2.eta3`
+- Quadratic and two-way interaction, e.g., `eta1.eta1.eta3`
 
 A simple example would look like this:
 ```{r}
 model <- "
 # Structural model
-EXPE ~ IMAG + IMAG:IMAG
+EXPE ~ IMAG + IMAG.IMAG
 
 # Measurement model
 EXPE <~ expe1 + expe2

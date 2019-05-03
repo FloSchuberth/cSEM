@@ -2,7 +2,7 @@
 % Please edit documentation in R/zz_arguments.R
 \name{args_csem_dotdotdot}
 \alias{args_csem_dotdotdot}
-\title{Complete list of csem()'s ... arguments}
+\title{Internal: Complete list of csem()'s ... arguments}
 \arguments{
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "\emph{none}" in which case the standard
@@ -31,7 +31,8 @@ If the algorithm exceeds the specified number, weights of iteration step
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
 each construct in the form \code{"name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
-Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}", "\emph{unit}", a single number (weight) or
+Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
+"\emph{unit}", "\emph{PCA}", a single integer or
 a vector of fixed weights of the same length as there are indicators for the
 construct given by \code{"name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
@@ -60,3 +61,4 @@ Defaults to \code{1e-05}.}
 A complete alphabetical list of all possible arguments accepted by \code{csem()}'s \code{...}
 (dotdotdot) argument.
 }
+\keyword{internal}

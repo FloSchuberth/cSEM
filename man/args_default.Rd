@@ -2,7 +2,7 @@
 % Please edit documentation in R/zz_arguments.R
 \name{args_default}
 \alias{args_default}
-\title{Internal: Show argument defaults or candidates}
+\title{Show argument defaults or candidates}
 \usage{
 args_default(.choices = FALSE)
 }

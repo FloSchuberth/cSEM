@@ -79,7 +79,7 @@
 ## ------------------------------------------------------------------------
 model <- "
 # Structural model
-EXPE ~ IMAG + IMAG:IMAG
+EXPE ~ IMAG + IMAG.IMAG
 
 # Measurement model
 EXPE <~ expe1 + expe2

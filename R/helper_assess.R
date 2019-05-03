@@ -202,7 +202,7 @@ calculateRhoC <- function(
 
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to object of",
+    stop2("`", match.call()[1], "` only applicable to objects of",
           " class `cSEMResults_default`. Use `assess()` instead.")
   }
   
@@ -243,7 +243,7 @@ calculateRhoT <- function(
   
   ## Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to object of",
+    stop2("`", match.call()[1], "` only applicable to objects of",
           " class `cSEMResults_default`. Use `assess()` instead.")
   }
   
@@ -370,7 +370,7 @@ calculateHTMT <- function(
 ){
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to object of",
+    stop2("`", match.call()[1], "` only applicable to objects of",
           " class `cSEMResults_default`. Use `assess()` instead.")
   }
   
@@ -438,7 +438,7 @@ calculateSRMR <- function(.object = NULL) {
   
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to object of",
+    stop2("`", match.call()[1], "` only applicable to objects of",
           " class `cSEMResults_default`. Use `assess()` instead.")
   }
   
@@ -461,7 +461,7 @@ calculateDG <- function(.object = NULL) {
 
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to object of",
+    stop2("`", match.call()[1], "` only applicable to objects of",
           " class `cSEMResults_default`. Use `assess()` instead.")
   }
   
@@ -482,7 +482,7 @@ calculateDL <- function(.object = NULL) {
   
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to object of",
+    stop2("`", match.call()[1], "` only applicable to objects of",
           " class `cSEMResults_default`. Use `assess()` instead.")
   }
   
@@ -499,7 +499,7 @@ calculateDML <- function(.object = NULL){
 
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to object of",
+    stop2("`", match.call()[1], "` only applicable to objects of",
           " class `cSEMResults_default`. Use `assess()` instead.")
   }
   
