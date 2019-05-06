@@ -48,7 +48,7 @@ unambigious and error-free as possible.
 
 This introduction therefore provides two glossaries:
 
-1. The [termionology glossary](#terminology) containing each term that we 
+1. The [terminology glossary](#terminology) containing each term that we 
   think should be definied and explained in order to make sure
   package users understand complementary help files or vignettes the way
   the package authors intended them to be understood.
