@@ -12,7 +12,7 @@ print.cSEMResults <- function(x, ...) {
   .object <- x  
   
   cat(
-    rule(line = "bar2"), "\n",
+    rule(line = "bar2", width = 80), "\n",
     rule(center = "Overview"), 
     sep = "")
   
@@ -67,7 +67,7 @@ print.cSEMResults <- function(x, ...) {
       "- ", magenta("assess"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n", sep = "")
-  cat(rule(line = "bar2"), "\n")
+  cat(rule(line = "bar2", width = 80), "\n")
 }
 
 #' `cSEMSummarize_default` method for `print()`
@@ -87,7 +87,7 @@ print.cSEMSummarize_default <- function(x, ..., .full_output = FALSE) {
   x2 <- .object$Information
   
   cat2(
-    rule(line = "bar2"), "\n",
+    rule(line = "bar2", width = 80), "\n",
     rule(center = "Overview"), 
     "\n"
   )
@@ -329,7 +329,7 @@ print.cSEMSummarize_default <- function(x, ..., .full_output = FALSE) {
   }
 
   
-  cat("\n", rule(line = "bar2"), sep = "")
+  cat("\n", rule(line = "bar2", width = 80), sep = "")
 }
 
 #' `cSEMSummarize_2ndorder` method for `print()`
@@ -362,7 +362,7 @@ print.cSEMSummarize_2ndorder <- function(x, ...) {
   c_linear_original     <- c(c_linear_1step, c_2nd_order)
   
   cat(
-    rule(line = "bar2"), "\n",
+    rule(line = "bar2", width = 80), "\n",
     rule(center = "Overview"), 
     "\n", sep = "")
   
@@ -519,7 +519,7 @@ print.cSEMSummarize_2ndorder <- function(x, ...) {
   #     col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\n",
   #     sep = "")
   
-  cat("\n", rule(line = "bar2"), sep = "")
+  cat("\n", rule(line = "bar2", width = 80), sep = "")
 }
 
 #' `cSEMVerify_default` method for `print()`
@@ -535,7 +535,7 @@ print.cSEMSummarize_2ndorder <- function(x, ...) {
 print.cSEMVerify_default <- function(x, ...) {
   .object <- x
   
-  cat(rule(line = "bar2"), sep = "")
+  cat(rule(line = "bar2", width = 80), sep = "")
   
   cat("\n\nVerify admissibility:\n", sep = "")
   
@@ -558,7 +558,7 @@ print.cSEMVerify_default <- function(x, ...) {
         col_align(ifelse(.object[i] == FALSE, green("ok"), red("not ok")), 10), 
         col_align(text[i], max(nchar(text)) + 2, align = "left"), "\n", sep = "")
   }
-  cat(rule(line = "bar2"), sep = "")
+  cat(rule(line = "bar2", width = 80), sep = "")
 }
 
 #' `cSEMVerify_2ndorder` method for `print()`
@@ -574,7 +574,7 @@ print.cSEMVerify_default <- function(x, ...) {
 print.cSEMVerify_2ndorder <- function(x, ...) {
   .object <- x
   
-  cat(rule(line = "bar2"), sep = "")
+  cat(rule(line = "bar2", width = 80), sep = "")
   cat("\n\nVerify admissibility:\n", sep = "")
   
   if(sum(.object$First_stage) == 0 & sum(.object$Second_stage) == 0) {
@@ -599,7 +599,7 @@ print.cSEMVerify_2ndorder <- function(x, ...) {
         col_align(ifelse(.object$Second_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
         col_align(text[i], max(nchar(text) + 2), align = "left"), "\n", sep = "")
   }
-  cat(rule(line = "bar2"), sep = "")
+  cat(rule(line = "bar2", width = 80), sep = "")
 }
 
 #' `cSEMTestOMF` method for `print()`
@@ -616,7 +616,7 @@ print.cSEMTestOMF <- function(x, ...) {
   .object <- x
   
   cat(
-    rule(line = "bar2"), "\n",
+    rule(line = "bar2", width = 80), "\n",
     rule(center = "Test for overall model fit based on Dijkstra & Henseler (2015)"), 
     sep = ""
   )
@@ -724,7 +724,7 @@ print.cSEMTestOMF <- function(x, ...) {
     " for what constitutes an inadmissible result.\n", 
     sep = ""
   )
-  cat(rule(line = "bar2"), sep = "")
+  cat(rule(line = "bar2", width = 80), sep = "")
 }
 
 #' `cSEMTestMGD` method for `print()`
@@ -741,7 +741,7 @@ print.cSEMTestMGD <- function(x, ...) {
   .object <- x
   
   cat(
-    rule(line = "bar2"), "\n",
+    rule(line = "bar2", width = 80), "\n",
     rule(center = "Test for multigroup differences based on Klesel (forthcoming)"), 
     sep = ""
   )
@@ -867,7 +867,7 @@ print.cSEMTestMGD <- function(x, ...) {
     )
   }
   
-  cat("\n", rule(line = "bar2"), sep = "")
+  cat("\n", rule(line = "bar2", width = 80), sep = "")
 }
 
 #' `cSEMTestMICOM` method for `print()`
@@ -884,7 +884,7 @@ print.cSEMTestMICOM <- function(x, ...) {
   .object <- x
   
   cat(
-    rule(line = "bar2"), "\n",
+    rule(line = "bar2", width = 80), "\n",
     rule(center = "Test for measurement invariance based on Henseler et al (2016)"),
     "\n",
     sep = ""
@@ -1173,6 +1173,6 @@ print.cSEMTestMICOM <- function(x, ...) {
     )
   }
   
-  cat("\n", rule(line = "bar2"), sep = "")
+  cat("\n", rule(line = "bar2", width = 80), sep = "")
 }
 

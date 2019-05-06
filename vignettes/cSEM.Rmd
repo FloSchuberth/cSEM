@@ -158,10 +158,12 @@ are *modeled* is strictly distinct from how they are *estimated*. Hence we
 strictly distinguish between concepts modeled as common factors (or composites)
 and the actual estimation for **a given model**.
 
-In cSEM we make use of the lavaan model syntax but redefine the operator `<~` to mean
-that the concept to its left is modeled as a composite (not a formative 
-common factor). The operator `=~` is used to mean that the concept to its
-left is modeled as a common factor.
+To provide a model use the [lavaan model syntax][lavaan::model.syntax].
+Note, however, that cSEM currently only supports the "standard" lavaan
+model syntax (Types 1, 2, 3, and 7 as described on the help page). 
+Therefore, specifying e.g. a threshold or scaling factors is ignored. 
+Alternatively, a standardized (possibly incomplete) [cSEMModel]-list may be supplied.
+See [Specifying a model](#specifyingamodel) below for details.
 
 **Example**
 ```{r, eval = FALSE}
@@ -274,18 +276,69 @@ csem(threecommonfactors, model, .approach_weights = "regression")
 
 ## The cSEM-Workflow
 
-Working with cSEM consists of 4 steps
+Usually, working with cSEM consists of 4 steps:
 
-- Preparing the data
-- Specifying the model, 
+- Preparing/loadings the data to analyse
+- Specifying the model to estimate 
 - Using the `csem()` function
 - Applying the postestimation functions
 
-The following sections explain each step in detail.
-
 ### Preparing the data
 
-### Specfiying a model
+Technically, preparing the data does not require cSEM and it therefore
+better considered a preparation task, i.e. a "pre-cSEM" task. The reason why
+this step is nevertheless considered an explicit part of the cSEM-workflow is motivated by the experience that 
+applied/causal users tend to shy away from software like R because
+"just getting the data in" and understanding how to show, manipulate and work with
+data can be frustrating if one is not aware of R's rich, and easy to learn
+data import and data processing capabilities. While these topics may have been
+overwhelming for newcommers several years ago, data import and data transformation
+have become extremly simple and user-friendly if the right tools packages/ packages
+ares used. The best place to start is
+the [Rstudio Cheat sheet webpage](https://www.rstudio.com/resources/cheatsheets/), 
+especially the *Data Import* and the *Data Transformation* cheat sheets.
+
+cSEM is relatively flexible as to the type of data accepted. Currently the following
+data types/structures are accepted:
+
+1. A `data.frame` or `tibble` with column names matching the indicator names used 
+   in the lavaan model description of the measurement model. Possible column 
+   types or classes of the data provided are: `"logical"` (`TRUE`/`FALSE`), 
+   `"numeric"` (`"double"` or `"integer"`), `"factor"` (`"ordered"` and/or `"unordered"`) 
+   or a mix of several types. Additionally, the data may also include **one** 
+   character column whose column name must be given to `.id`. 
+   Values of this column are interpreted as group identifiers and `csem()`
+   will split the data by levels of that column and run the estimation for each 
+   level separately.
+   
+   Example:
+   
+   Assuming the following simple model is to be estimated:
+    ```{r}
+    model <- "
+    # Structural model
+    EXPE ~ IMAG
+    
+    # Measurement model
+    EXPE =~ expe1 + expe2
+    IMAG =~ imag1 + imag2
+    "
+    ```
+   To estimate the model a data frame with $N$ rows (the observations) and
+   $K = 4$ columns with column names `expe1`, `imag1`, `expe2`, `imag2` is required.
+   The order of the columns in the dataset is irrelevant. In cSEM the order
+   is defined by the order in which the names appear in the measurment equations in the
+   model description. In this case any resulting matrix or vector whose (row/column)
+   names contain the indicator names would have the order `expe1`, `expe2`, 
+   `imag1`, `imag2`.
+   
+1. A `matrix` with column names matching the indicator names used 
+   in the lavaan model description of the measurement model. 
+   
+1. A list of data frames or matrices. In this case estimation is repeated for 
+   each data frame or matrix seperately. 
+
+### Specfiying a model {#specifyingamodel}
 Models are defined using [lavaan syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
 Currently, only the "standard" lavaan model syntax is supported. This comprises:
 
@@ -326,8 +379,8 @@ as a common factor.
 
 #### Nonlinear model
 
-Nonlinear terms are specified as interactions using the colon operator `:`. 
-Non linear terms include interactions and exponential terms. The latter is 
+Nonlinear terms are specified as interactions using the dot operator `"."`. 
+Nonlinear terms include interactions and exponential terms. The latter is 
 described in model syntax as an "interaction with itself", e.g., 
 `x_1^3 = x1.x1.x1`. Currently the following terms are allowed
 
@@ -354,7 +407,7 @@ IMAG <~ imag1 + imag2
 #### Hiearchical (second order) model
 
 Currently only second-order models are supported. Specification of the 
-second order construct takes place in the measurement model. 
+second-order construct takes place in the measurement model. 
 ```{r, eval=FALSE}
 model <- "
 # Structural model
@@ -363,20 +416,22 @@ VAL ~ SAT + QUAL
 
 # Measurement model
 EXPE <~ expe1 + expe2
-
-SAT =~ sat1 + sat2
-VAL =~ val1 + val2
-QUAL =~ IMAG + EXPE
+SAT  =~ sat1 + sat2
+VAL  =~ val1 + val2
 IMAG <~ imag1 + imag2
+
+# Second-order term
+QUAL =~ IMAG + EXPE
 "
 ```
-In this case
-`QUAL =~ IMAG + EXPE` is modeled as a second-order common factor.
+In this case `QUAL` is modeled as a second-order common factor measuring  `IMAG` and `EXPE`,
+where `IMAG` is modeled as a composite and and `EXPE` is itself a common factor.
 
 ### Using `csem()`
 
 `csem()` is the central function of the package. Although it is possible to 
-estimate a model using individual functions called by `csem()` (such as `parseModel()`, `processData()`, `calculateWeightsPLS()` etc. ), it is virturally
+estimate a model using individual functions called by `csem()` (such as 
+`parseModel()`, `processData()`, `calculateWeightsPLS()` etc. ), it is virturally
 always easier, saver and quicker to use `csem()` instead.
 
 `csem()` accepts all models and data types described above. The result of a call to

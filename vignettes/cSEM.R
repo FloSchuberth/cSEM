@@ -57,6 +57,16 @@
 #  csem(threecommonfactors, model, .approach_weights = "bartlett")
 #  csem(threecommonfactors, model, .approach_weights = "regression")
 
+## ------------------------------------------------------------------------
+model <- "
+# Structural model
+EXPE ~ IMAG
+
+# Measurement model
+EXPE =~ expe1 + expe2
+IMAG =~ imag1 + imag2
+"
+
 ## ----eval=FALSE----------------------------------------------------------
 #  model <- "
 #  # Structural model
@@ -95,11 +105,12 @@ IMAG <~ imag1 + imag2
 #  
 #  # Measurement model
 #  EXPE <~ expe1 + expe2
-#  
-#  SAT =~ sat1 + sat2
-#  VAL =~ val1 + val2
-#  QUAL =~ IMAG + EXPE
+#  SAT  =~ sat1 + sat2
+#  VAL  =~ val1 + val2
 #  IMAG <~ imag1 + imag2
+#  
+#  # Second-order term
+#  QUAL =~ IMAG + EXPE
 #  "
 
 ## ----warning=FALSE, message=FALSE----------------------------------------
