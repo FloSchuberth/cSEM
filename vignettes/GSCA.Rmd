@@ -69,7 +69,7 @@ Suppose that a structural model 'model' is specified in Lavaan-syntax and that d
 To estimate parameters now in this specified structural model by means of GSCA (or GSCA<sub>M</sub>) for the given data, the user has to call the function *csem()*:
 
 ```{r eval=FALSE}
-csem(.data = data, .model = model, .approach_weights = "GSCA", .disattenuate = )
+csem(.data = data, .model = model, .approach_weights = "GSCA")
 ```
 
 Although the *csem*-function has many more input arguments, it suffices in the case of GSCA in a first step to specify the input arguments *'.model'* and *'.data'* and to set the argument *'.approach_weights'* equal to *"GSCA"*. The argument *'.disattenuate'* indicates which of the two GSCA-approaches should be used. Its default value is *TRUE* resulting in GSCA<sub>M</sub> as estimation method whereas a value of *FALSE* leads to "standard" GSCA. The handling of the *'.disattenuate'*-argument is explained more detailly in the following paragraphs and in the Section [Examples](#examples). By this, the user gets a concrete idea in which cases this argument has to be specified and in which it can be dropped. 
@@ -121,7 +121,7 @@ VAL  =~ val1  + val2  + val3  + val4
 Having specified the model to be estimated and the data, the user can now call the *csem*-function:
 
 ```{r warning=FALSE}
-results1 <- csem(satisfaction, model, .approach_weights = "GSCA", .disattenuate = "TRUE")
+results1 <- csem(satisfaction, model, .approach_weights = "GSCA", .disattenuate = TRUE)
 ```
 
 Note that in this case, the user could also drop the input argument *'.disattenuate'* because estimation is here done with GSCA<sub>M</sub> as it should. Since it is a pure common factor model, no error message is produced. The estimation results are stored in the object *"results1"*:
@@ -222,7 +222,7 @@ Altogether, these interpretations and relationships also offer a way to assess t
 In the next example, the same model as in [Example1](#example1) is considered. However, estimation is now done with GSCA. As already mentioned, this can be achieved by setting the argument *'.disattenuate'* equal to *FALSE*. In this case, estimators can be biased when constructs are of common factor type and no pure composites.  
 
 ```{r}
-results2 <- csem(satisfaction, model, .approach_weights = "GSCA", .disattenuate = "FALSE")
+results2 <- csem(satisfaction, model, .approach_weights = "GSCA", .disattenuate = FALSE)
 ```
 
 For the path coefficient and the loading already considered in [Example1](#example1), the estimated values are now:
@@ -263,7 +263,7 @@ VAL  <~ val1  + val2  + val3  + val4
 Calling the *csem*-function in this case without setting the argument *'.disattenuate'* equal to *FALSE* will produce the error already mentioned in the [Introduction](#introduction). For a model like the specified one, i.e. with at least one construct of composite type, estimation cannot be done with GSCA<sub>M</sub>:
 
 ```{r eval=FALSE}
-csem(satisfaction, model2, .approach_weights = "GSCA", .disattenuate = "TRUE")
+csem(satisfaction, model2, .approach_weights = "GSCA", .disattenuate = TRUE)
 ```
 
 ```{r, eval=FALSE}
@@ -279,7 +279,7 @@ Since GSCA<sub>M</sub> is not an option for those models, parameter estimates ha
 In the last example, the same model as before is considered: common factor type constructs are combined with composite type constructs. However, estimation is now done with "standard" GSCA, i.e., *'.disattenuate'* is explicitly set to *FALSE*. Therefore, calling the *csem*-function with these input arguments does not produce an error. 
 
 ```{r warning=FALSE}
-results4 <- csem(satisfaction, model2, .approach_weights = "GSCA", .disattenuate = "FALSE")
+results4 <- csem(satisfaction, model2, .approach_weights = "GSCA", .disattenuate = FALSE)
 ```
 
 This leads to the following estimation results:

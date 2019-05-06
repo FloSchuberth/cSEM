@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2019-05-02" />
+<meta name="date" content="2019-05-06" />
 
 <title>GSCA and GSCA-M</title>
 
@@ -106,7 +106,7 @@ code > span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">GSCA and GSCA-M</h1>
 <h3 class="subtitle project-tagline">Generalized structured component analysis with and without uniquness terms</h3>
-<h4 class="date project-date">2019-05-02</h4>
+<h4 class="date project-date">2019-05-06</h4>
 </section>
 
 
@@ -127,7 +127,7 @@ code > span.ot { color: #007020; }
 <div id="usage" class="section level1">
 <h1>Syntax and Options</h1>
 <p>Suppose that a structural model ‘model’ is specified in Lavaan-syntax and that data are given in form of an observation matrix ‘data’. To estimate parameters now in this specified structural model by means of GSCA (or GSCA<sub>M</sub>) for the given data, the user has to call the function <em>csem()</em>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">csem</span>(<span class="dt">.data =</span> data, <span class="dt">.model =</span> model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> )</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">csem</span>(<span class="dt">.data =</span> data, <span class="dt">.model =</span> model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>)</a></code></pre></div>
 <p>Although the <em>csem</em>-function has many more input arguments, it suffices in the case of GSCA in a first step to specify the input arguments <em>‘.model’</em> and <em>‘.data’</em> and to set the argument <em>‘.approach_weights’</em> equal to <em>“GSCA”</em>. The argument <em>‘.disattenuate’</em> indicates which of the two GSCA-approaches should be used. Its default value is <em>TRUE</em> resulting in GSCA<sub>M</sub> as estimation method whereas a value of <em>FALSE</em> leads to “standard” GSCA. The handling of the <em>‘.disattenuate’</em>-argument is explained more detailly in the following paragraphs and in the Section <a href="#examples">Examples</a>. By this, the user gets a concrete idea in which cases this argument has to be specified and in which it can be dropped.</p>
 <p>With “GSCA” as chosen approach, estimation is automatically done via GSCA<sub>M</sub> when calling the <em>csem</em>-function. This works out fine as long as all constructs are of common factor type (i.e. the construct has an influence on its indicators and vice versa). In this case, GSCA<sub>M</sub> can be applied and the argument <em>‘.disattenuate’</em> can be dropped. Although estimators will be biased, the user might want to estimate parameters in this special case with “standard” GSCA. To this end, the input argument <em>‘.disattenuate’</em> has to be set to <em>FALSE</em>.</p>
 <p>However, if there is at least one construct which is not a common factor, parameters cannot be estimated by means of GSCA<sub>M</sub>, but only with “standard” GSCA. The reason is, e.g. in the case of all constructs being pure composites, that the transposed measurement matrix has only zero entries in this situation. Thus, involving this matrix in the estimation procedure, GSCA<sub>M</sub> would lead to weight estimators equal to 0. In the same way, in the case of a mixed model, that is to say when some constructs are of common factor type and some are pure composites, estimation with GSCA<sub>M</sub> causes problems because the measurement matrix cannot not have full rank. Thus, the GSCA<sub>M</sub> approach developed by Hwang and Takane in <span class="citation">(Hwang, Takane, and Jung 2017)</span> does not work for such models. The implementation is based on the current state of research but does not pursue own research goals. That is to say, developping a GSCA<sub>M</sub> procedure for the models with at least one composite type construct is not the aim and, therefore, in these situations, the user imperatively has to use GSCA and GSCA<sub>M</sub> is no option. This necessitates an input argument of <em>‘.disattenuate’</em> equal to <em>FALSE</em>.</p>
@@ -162,11 +162,11 @@ code > span.ot { color: #007020; }
 <a class="sourceLine" id="cb3-19" data-line-number="19"><span class="st">VAL  =~ val1  + val2  + val3  + val4</span></a>
 <a class="sourceLine" id="cb3-20" data-line-number="20"><span class="st">&quot;</span></a></code></pre></div>
 <p>Having specified the model to be estimated and the data, the user can now call the <em>csem</em>-function:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">results1 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="st">&quot;TRUE&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">results1 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <p>Note that in this case, the user could also drop the input argument <em>‘.disattenuate’</em> because estimation is here done with GSCA<sub>M</sub> as it should. Since it is a pure common factor model, no error message is produced. The estimation results are stored in the object <em>“results1”</em>:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">results1</a></code></pre></div>
-<pre><code>## ________________________________________________________________________________________________________
-## ----------------------------------------------- Overview -----------------------------------------------
+<pre><code>## ________________________________________________________________________________
+## ------------------------------------------------- Overview ------------------------------------------------
 ## 
 ## Estimation was successful.
 ## 
@@ -190,7 +190,7 @@ code > span.ot { color: #007020; }
 ##  - assess(&lt;object-name&gt;)
 ##  - summarize(&lt;object-name&gt;)
 ##  - verify(&lt;object-name&gt;)
-## ________________________________________________________________________________________________________</code></pre>
+## ________________________________________________________________________________</code></pre>
 <p>As indicated, the object <em>“results1”</em> is a list of class <em>cSEMResults</em> with the list elements <em>Estimates</em> and <em>Information</em>. Each sublist contains several elements which can be accessed separately:</p>
 <ol style="list-style-type: decimal">
 <li>Estimates</li>
@@ -225,15 +225,15 @@ code > span.ot { color: #007020; }
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">assess</span>(results1)</a></code></pre></div>
 <p>Next, if the user just wants a compact summary of the parameter estimators and of the most important information concerning the estimation, calling the <em>‘summarize’</em>-function of the <em>cSEM</em>-package will provide this.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">summarize</span>(results1)</a></code></pre></div>
-<pre><code>## ________________________________________________________________________________________________________
-## ----------------------------------------------- Overview -----------------------------------------------
+<pre><code>## ________________________________________________________________________________
+## ------------------------------------------------- Overview ------------------------------------------------
 ## 
 ##  Number of observations           = 250
 ##  Weight estimator                 = GSCA
 ##  Type of indicator correlation    = Bravais-Pearson
 ##  Path model estimator             = OLS
 ##  Type of path model               = Linear
-##  Disattenuated                    = Yes
+##  Disattenuated                    = Yes (GSCAm)
 ## 
 ##  Construct details:
 ##  ------------------
@@ -246,7 +246,7 @@ code > span.ot { color: #007020; }
 ##  SAT   Common factor  First order   
 ##  LOY   Common factor  First order   
 ## 
-## ----------------------------------------------- Estimates ----------------------------------------------
+## ------------------------------------------------ Estimates ------------------------------------------------
 ## 
 ## Estimated path coefficients:
 ## ============================
@@ -292,10 +292,10 @@ code > span.ot { color: #007020; }
 ##   LOY =~ loy2        0.6211          NA        NA        NA
 ##   LOY =~ loy3        0.8294          NA        NA        NA
 ##   LOY =~ loy4        0.6554          NA        NA        NA
-## ________________________________________________________________________________________________________</code></pre>
+## ________________________________________________________________________________</code></pre>
 <p>Finally, the <em>‘verify’</em>-function checks whether the calculated results are admissible. That is to say, it is verified that all results are consonant with the theory underlying the estimation. If the results based on an estimated model exhibit one of the following defects they are deemed inadmissible: - non-convergence - loadings and/or reliabilities larger than 1 - a construct VCV and/or a model-implied VCV matrix that is not positive (semi-)definite</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">verify</span>(results1)</a></code></pre></div>
-<pre><code>## ________________________________________________________________________________________________________
+<pre><code>## ________________________________________________________________________________
 ## 
 ## Verify admissibility:
 ## 
@@ -309,7 +309,7 @@ code > span.ot { color: #007020; }
 ##   3      ok        Construct VCV not positive semi-definite      
 ##   4      ok        Model-implied VCV not positive semi-definite  
 ##   5      ok        At least one proxy reliability &gt; 1            
-## ________________________________________________________________________________________________________</code></pre>
+## ________________________________________________________________________________</code></pre>
 <p>The output shows that the estimation results of the example are admissible, every status is set to “ok”.</p>
 <p>Having carried out the estimation of all parameters and having established that they are all admissible, it is now question to interpret the results. The influence of (exogenous) constructs on (endogenous) constructs is described by the structural model and expressed by the estimated path coefficients (reliabilities):</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">results1<span class="op">$</span>Estimates<span class="op">$</span>Path_estimates</a></code></pre></div>
@@ -336,7 +336,7 @@ code > span.ot { color: #007020; }
 <div id="example2" class="section level3">
 <h3>Example 2: Pure common factor model and GSCA</h3>
 <p>In the next example, the same model as in <a href="#example1">Example1</a> is considered. However, estimation is now done with GSCA. As already mentioned, this can be achieved by setting the argument <em>‘.disattenuate’</em> equal to <em>FALSE</em>. In this case, estimators can be biased when constructs are of common factor type and no pure composites.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">results2 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="st">&quot;FALSE&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">results2 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p>For the path coefficient and the loading already considered in <a href="#example1">Example1</a>, the estimated values are now:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">results2<span class="op">$</span>Estimates<span class="op">$</span>Path_estimates[<span class="st">&quot;EXPE&quot;</span>,<span class="st">&quot;IMAG&quot;</span>]</a></code></pre></div>
 <pre><code>## [1] 0.5565924</code></pre>
@@ -365,7 +365,7 @@ code > span.ot { color: #007020; }
 <a class="sourceLine" id="cb23-16" data-line-number="16"><span class="st">VAL  &lt;~ val1  + val2  + val3  + val4</span></a>
 <a class="sourceLine" id="cb23-17" data-line-number="17"><span class="st">&quot;</span></a></code></pre></div>
 <p>Calling the <em>csem</em>-function in this case without setting the argument <em>‘.disattenuate’</em> equal to <em>FALSE</em> will produce the error already mentioned in the <a href="#introduction">Introduction</a>. For a model like the specified one, i.e. with at least one construct of composite type, estimation cannot be done with GSCA<sub>M</sub>:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">csem</span>(satisfaction, model2, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="st">&quot;TRUE&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">csem</span>(satisfaction, model2, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">Error<span class="op">:</span><span class="st"> </span>The following error occured <span class="cf">in</span> the <span class="st">`</span><span class="dt">calculateWeightsGSCAm()</span><span class="st">`</span> <span class="cf">function</span><span class="op">:</span></a>
 <a class="sourceLine" id="cb25-2" data-line-number="2">GSCAm only applicable to pure common factor models. Use <span class="st">`</span><span class="dt">.disattenuate = FALSE</span><span class="st">`</span>. </a></code></pre></div>
 <p>Since GSCA<sub>M</sub> is not an option for those models, parameter estimates have to be determined using “standard” GSCA (see <a href="#example4">Example 4</a>).</p>
@@ -373,18 +373,18 @@ code > span.ot { color: #007020; }
 <div id="example4" class="section level3">
 <h3>Example 4: At least one composite and GSCA</h3>
 <p>In the last example, the same model as before is considered: common factor type constructs are combined with composite type constructs. However, estimation is now done with “standard” GSCA, i.e., <em>‘.disattenuate’</em> is explicitly set to <em>FALSE</em>. Therefore, calling the <em>csem</em>-function with these input arguments does not produce an error.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">results4 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model2, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="st">&quot;FALSE&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">results4 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model2, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p>This leads to the following estimation results:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw">summarize</span>(results4)</a></code></pre></div>
-<pre><code>## ________________________________________________________________________________________________________
-## ----------------------------------------------- Overview -----------------------------------------------
+<pre><code>## ________________________________________________________________________________
+## ------------------------------------------------- Overview ------------------------------------------------
 ## 
 ##  Number of observations           = 250
 ##  Weight estimator                 = GSCA
 ##  Type of indicator correlation    = Bravais-Pearson
 ##  Path model estimator             = OLS
 ##  Type of path model               = Linear
-##  Disattenuated                    = no
+##  Disattenuated                    = No
 ## 
 ##  Construct details:
 ##  ------------------
@@ -397,7 +397,7 @@ code > span.ot { color: #007020; }
 ##  SAT   Composite      First order   
 ##  LOY   Common factor  First order   
 ## 
-## ----------------------------------------------- Estimates ----------------------------------------------
+## ------------------------------------------------ Estimates ------------------------------------------------
 ## 
 ## Estimated path coefficients:
 ## ============================
@@ -466,7 +466,7 @@ code > span.ot { color: #007020; }
 ##   SAT &lt;~ sat2        0.3398          NA        NA        NA
 ##   SAT &lt;~ sat3        0.0341          NA        NA        NA
 ##   SAT &lt;~ sat4        0.1983          NA        NA        NA
-## ________________________________________________________________________________________________________</code></pre>
+## ________________________________________________________________________________</code></pre>
 <p>Due to the fact that there are some constructs that are of composite type, estimation must happen with GSCA. This might result in biased estimators (as in <a href="#example2">Example2</a> for the model where all constructs are of common factor type). However, the interpretation of estimated coefficients is done in the same way as outlined in <a href="#example1">Example1</a> keeping in mind that estimators might be biased. Note that the estimated (“composite”) loadings represent in this case the “true” correlations between indicators and constructs (not proxies!) for all composite type constructs.</p>
 </div>
 </div>

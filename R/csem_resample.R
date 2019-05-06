@@ -756,7 +756,9 @@ resamplecSEMResults.cSEMResults_default <- function(
       "Number_of_observations"  = nrow(.object$Information$Data),
       "Number_of_runs"          = .R,
       "Number_of_runs2"         = .R2,
-      "Sign_chnage_option"      = .sign_change_option
+      "Seed"                    = .seed,
+      "Handle_inadmissibles"    = .handle_inadmissibles,
+      "Sign_change_option"      = .sign_change_option
     )
     names(info)[length(info)] <- "Information_resample"
     
@@ -978,6 +980,8 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
         "Number_of_observations"  = nrow(.object$Second_stage$Information$Data),
         "Number_of_runs"          = .R,
         "Number_of_runs2"         = .R2,
+        "Seed"                    = .seed,
+        "Handle_inadmissibles"    = .handle_inadmissibles,
         "Sign_change_option"      = .sign_change_option
       )
     )
@@ -1046,8 +1050,8 @@ resamplecSEMResultsCore <- function(
   } 
   
   ### Start resampling loop ====================================================
-  # Est_ls <- future.apply::future_lapply(1:.R, function(i) {
-  Est_ls <- lapply(1:.R, function(i) {
+  Est_ls <- future.apply::future_lapply(1:.R, function(i) {
+  # Est_ls <- lapply(1:.R, function(i) {
     # Replace the old dataset by a resampled data set (resampleData always returns
     # a list so for just one draw we need to pick the first list element)
     
@@ -1197,9 +1201,8 @@ resamplecSEMResultsCore <- function(
               
               if(.sign_change_option == "construct_reestimate"){
                 
-                # Questions
-                # 1. Why loadings here instead of weights
-                # 2. The sign for Lambda_sum1 must be "+" instead of "-"
+                # In line with Tenenhaus et al. (2005, p 177) loadings are used,
+                # although they have not considered 2nd order models
                 
                 Lambda1 <- est1_normal$Loading_estimates
                 Lambda1_temp <- est1_temp_normal$Loading_estimates
@@ -1252,9 +1255,8 @@ resamplecSEMResultsCore <- function(
               
               if(.sign_change_option == "construct_reestimate"){
                 
-                # Questions
-                # 1. Why loadings here instead of weights
-                # 2. The sign for Lambda_sum1 must be "+" instead of "-"
+                # In line with Tenenhaus et al. (2005, p 177) loadings are used,
+                # although they have not considered 2nd order models
                 
                 Lambda2 <- est2_normal$Loading_estimates
                 Lambda2_temp <- est2_temp_normal$Loading_estimates
@@ -1489,8 +1491,8 @@ resamplecSEMResultsCore <- function(
     }
     ## Return
     x1
-  # }, future.seed = .seed)
-  })
+  }, future.seed = .seed)
+  # })
           
   ## Process data --------------------------------------------------------------
   # Delete potential NA's

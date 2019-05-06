@@ -91,8 +91,10 @@ NULL
 #' 
 #' If `.resample_method = "bootstrap"` or `.resample_method = "jackknife"`, resamples
 #' are attached to each object. For objects of class `cSEMResults_default` the resamples are
-#' attached to `.object$Estimates$Estimates_resamples`. For objects of class
-#' `cSEMResults_multi` the same is done by group. All objects containing 
+#' attached to `.object$Estimates$Estimates_resample`. For objects of class
+#' `cSEMResults_multi` the same is done by group. For objects of class
+#' `cSEMResults_2ndorder` the resamples are attached to the 
+#' `.object$Second_stage$Estimates$Estimates_resample`. All objects containing 
 #' these elements gain the `cSEMResults_resampled` class.
 #' 
 #' @name csem_results

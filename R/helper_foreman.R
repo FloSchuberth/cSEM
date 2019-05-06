@@ -321,7 +321,7 @@ calculateReliabilities <- function(
       } 
     } else if(.approach_weights == "GSCA") {
       
-      if(.disattenuate) {
+      if(.disattenuate & all(.csem_model$construct_type == "Common factor")) {
         # Currently, GSCAm only supports pure common factor models. This may change
         # in the future.
         

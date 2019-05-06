@@ -52,8 +52,10 @@ the structure described in \code{_default}.
 
 If \code{.resample_method = "bootstrap"} or \code{.resample_method = "jackknife"}, resamples
 are attached to each object. For objects of class \code{cSEMResults_default} the resamples are
-attached to \code{.object$Estimates$Estimates_resamples}. For objects of class
-\code{cSEMResults_multi} the same is done by group. All objects containing
+attached to \code{.object$Estimates$Estimates_resample}. For objects of class
+\code{cSEMResults_multi} the same is done by group. For objects of class
+\code{cSEMResults_2ndorder} the resamples are attached to the
+\code{.object$Second_stage$Estimates$Estimates_resample}. All objects containing
 these elements gain the \code{cSEMResults_resampled} class.
 }
 \keyword{internal}

@@ -107,7 +107,7 @@ summarize.cSEMResults_default <- function(
 
   ## Inference =================================================================
   
-  if(any(class(.object) == "cSEMResults_resampled")) {
+  if(inherits(.object, "cSEMResults_resampled")) {
     ## Check arguments
     match.arg(.ci, args_default(.choices = TRUE)$.ci, several.ok = TRUE)
     
@@ -187,7 +187,13 @@ summarize.cSEMResults_default <- function(
   
   
   ## Set class for printing and return
-  class(.object) <- "cSEMSummarize_default"
+  
+  class(.object) <- if(inherits(.object, "cSEMResults_resampled")) {
+    c("cSEMSummarize_default", "cSEMSummarize_resampled")
+  } else {
+    "cSEMSummarize_default"
+  }
+  
   return(.object)
 }
 
@@ -321,5 +327,10 @@ summarize.cSEMResults_2ndorder <- function(
               "Second_stage" = list("Estimates" = x21, "Information" = x22))
   
   class(out) <- "cSEMSummarize_2ndorder"
+  
+  if(inherits(.object) == "cSEMResults_resampled") {
+    class(.object) <- c(class(.object), "cSEMSummarize_resampled" )
+  }
+  
   return(out)
 }

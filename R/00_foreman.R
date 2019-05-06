@@ -107,7 +107,7 @@ foreman <- function(
       .approach                 = .approach_weights
     )
   } else if(.approach_weights == "GSCA") {
-    if(.disattenuate) {
+    if(.disattenuate & all(csem_model$construct_type == "Common factor")) {
       W <- calculateWeightsGSCAm(
         .X                        = X,
         .csem_model               = csem_model,

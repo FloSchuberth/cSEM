@@ -13,7 +13,7 @@ print.cSEMResults <- function(x, ...) {
   
   cat(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Overview"), 
+    rule(center = "Overview", width = 80), 
     sep = "")
   
   if(class(.object)[2] == "cSEMResults_multi") {
@@ -88,7 +88,7 @@ print.cSEMSummarize_default <- function(x, ..., .full_output = FALSE) {
   
   cat2(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Overview"), 
+    rule(center = "Overview", width = 80), 
     "\n"
   )
   
@@ -111,15 +111,34 @@ print.cSEMSummarize_default <- function(x, ..., .full_output = FALSE) {
     col_align("\n\tType of indicator correlation", 35), "= ", 
     paste0(x2$Type_of_indicator_correlation, collapse = ", ")
     )
-  cat(
+  cat2(
     col_align("\n\tPath model estimator", 35), "= ", x2$Arguments$.approach_paths,
     col_align("\n\tType of path model", 35), "= ", x2$Model$model_type,
     col_align("\n\tDisattenuated", 35), "= ", 
-    ifelse(x2$Arguments$.disattenuate, 
-           ifelse(x2$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)", "Yes"), "no"),
-    sep = "")
+    ifelse(x2$Arguments$.disattenuate & any(x2$Model$construct_type == "Common factor"), 
+           ifelse(x2$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)",
+                  ifelse(x2$Arguments$.approach_weights == "GSCA", "Yes (GSCAm)", "Yes")
+                  ), "No")
+  )
   
-  cat("\n\n\tConstruct details:\n\t","------------------", sep = "")
+  ## Resample information
+  if(inherits(x, "cSEMSummarize_resampled")) {
+    cat2("\n\n\tResample information:\n\t","------------------")
+    cat2(
+      col_align("\n\tResample methode", 35), "= ", x2$Information_resample$Method,
+      col_align("\n\tNumber of resamples", 35), "= ", x2$Information_resample$Number_of_runs,
+      col_align("\n\tApproach to handle inadmissibles ", 35), "= ", x2$Information_resample$Handle_inadmissibles,
+      col_align("\n\tSign change option", 35), "= ", x2$Information_resample$Sign_change_option
+    )
+    if(!is.null(x2$Information_resample$Seed)) {
+      cat2(
+        col_align("\n\tRandom seed", 35), "= ", x2$Information_resample$Seed
+      )
+    }
+  }
+  
+  ## Construct details
+  cat2("\n\n\tConstruct details:\n\t","------------------")
   l <- max(nchar(names(x2$Model$construct_type)))
   
   cat("\n\t", 
@@ -142,7 +161,7 @@ print.cSEMSummarize_default <- function(x, ..., .full_output = FALSE) {
   }
 
   ### Estimates ----------------------------------------------------------------
-  cat("\n\n", rule(center = "Estimates"), "\n\n", sep = "")
+  cat("\n\n", rule(center = "Estimates", width = 80), "\n\n", sep = "")
   
   # Get the column names of the columns containing confidence intervals
   ci_colnames <- colnames(x1$Path_estimates)[-c(1:6)]
@@ -363,7 +382,7 @@ print.cSEMSummarize_2ndorder <- function(x, ...) {
   
   cat(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Overview"), 
+    rule(center = "Overview", width = 80), 
     "\n", sep = "")
   
   ### Overview -----------------------------------------------------------------
@@ -394,6 +413,22 @@ print.cSEMSummarize_2ndorder <- function(x, ...) {
     ifelse(x12$Arguments$.disattenuate, 
            ifelse(x12$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)", "Yes"), "No"),
     sep = "")
+  
+  ## Resample information
+  if(inherits(x, "cSEMSummarize_resampled")) {
+    cat2("\n\n\tResample information:\n\t","------------------")
+    cat2(
+      col_align("\n\tResample methode", 35), "= ", x2$Information_resample$Method,
+      col_align("\n\tNumber of resamples", 35), "= ", x2$Information_resample$Number_of_runs,
+      col_align("\n\tApproach to handle inadmissibles ", 35), "= ", x2$Information_resample$Handle_inadmissibles,
+      col_align("\n\tSign change option", 35), "= ", x2$Information_resample$Sign_change_option
+    )
+    if(!is.null(x2$Information_resample$Seed)) {
+      cat2(
+        col_align("\n\tRandom seed", 35), "= ", x2$Information_resample$Seed
+      )
+    }
+  }
   
   cat("\n\n\tConstruct details:\n\t","------------------", sep = "")
   # First order constructs
@@ -430,7 +465,7 @@ print.cSEMSummarize_2ndorder <- function(x, ...) {
   }
   
   ### Estimates ----------------------------------------------------------------
-  cat("\n\n", rule(center = "Estimates"), "\n\n", sep = "")
+  cat("\n\n", rule(center = "Estimates", width = 80), "\n\n", sep = "")
   
   ## Path estimates
   cat("Estimated Path Coefficients:\n============================", sep = "")
@@ -617,7 +652,8 @@ print.cSEMTestOMF <- function(x, ...) {
   
   cat(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Test for overall model fit based on Dijkstra & Henseler (2015)"), 
+    rule(center = "Test for overall model fit based on Dijkstra & Henseler (2015)",
+         width = 80), 
     sep = ""
   )
   
@@ -742,7 +778,8 @@ print.cSEMTestMGD <- function(x, ...) {
   
   cat(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Test for multigroup differences based on Klesel (forthcoming)"), 
+    rule(center = "Test for multigroup differences based on Klesel (forthcoming)",
+         width = 80), 
     sep = ""
   )
   
@@ -885,7 +922,8 @@ print.cSEMTestMICOM <- function(x, ...) {
   
   cat(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Test for measurement invariance based on Henseler et al (2016)"),
+    rule(center = "Test for measurement invariance based on Henseler et al (2016)",
+         width = 80),
     "\n",
     sep = ""
   )
@@ -899,14 +937,14 @@ print.cSEMTestMICOM <- function(x, ...) {
   
   ### Step 1 ===================================================================
   cat(
-    rule(center = "Step 1 - Configural invariance", line = 2), "\n\n",
+    rule(center = "Step 1 - Configural invariance", line = 2, width = 80), "\n\n",
     "\tConfigural invariance is a precondition for step 2 and 3.\n",
     "\tDo not proceed to interpret results unless\n",
     "\tconfigural invariance has been established.\n\n",
     sep = ""
   )
   ### Step 2 ===================================================================
-  cat(rule(center = "Step 2 - Compositional invariance", line = 2))
+  cat(rule(center = "Step 2 - Compositional invariance", line = 2, width = 80))
   
   ## Null hypothesis -----------------------------------------------------------
   cat(
@@ -1015,7 +1053,7 @@ print.cSEMTestMICOM <- function(x, ...) {
   } # END for i (each group)
   
   ### Step 3 ===================================================================
-  cat(rule(center = "Step 3 - Equality of the means and variances", line = 2))
+  cat(rule(center = "Step 3 - Equality of the means and variances", line = 2, width = 80))
   
   ## Null hypothesis -----------------------------------------------------------
   cat(

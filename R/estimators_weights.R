@@ -736,8 +736,7 @@ calculateWeightsGSCAm <- function(
   # Currently only pure common factor models are supported
   if(any(.csem_model$construct_type == "Composite")) {
     stop2("The following error occured in the `calculateWeightsGSCAm()` function:\n",
-          "GSCAm only applicable to pure common factor models.", 
-           "Use `.disattenuate = FALSE`.")
+          "GSCAm only applicable to pure common factor models.")
   }
   
   Z  <- .X # Z is the data matrix in GSCA, data are already standardized
