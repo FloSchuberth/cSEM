@@ -39,7 +39,6 @@ License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: alabama,
-    amap,
     cli,
     crayon,
     expm,
@@ -51,7 +50,6 @@ Imports: alabama,
     Matrix,
     matrixcalc,
     matrixStats,
-    nnls,
     polycor,
     psych,
     purrr,
@@ -63,6 +61,7 @@ RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: 
     knitr,
+    nnls,
     pkgdown,
     prettydoc,
     Rdpack,

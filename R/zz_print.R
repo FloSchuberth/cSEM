@@ -9,31 +9,30 @@
 #' @export
 #' @keywords internal
 print.cSEMResults <- function(x, ...) {
-  .object <- x  
   
   cat(
     rule(line = "bar2", width = 80), "\n",
     rule(center = "Overview", width = 80), 
     sep = "")
   
-  if(class(.object)[2] == "cSEMResults_multi") {
+  if(class(x)[2] == "cSEMResults_multi") {
     cat("\n\nEstimation status by group/data set:\n", sep = "")
-    for(i in names(.object)) {
+    for(i in names(x)) {
       cat("\n\t", col_align(cyan(i), 15), ": ",
-          ifelse(sum(verify.cSEMResults_default(.object[[i]])) == 0, 
+          ifelse(sum(verify.cSEMResults_default(x[[i]])) == 0, 
                  green("successful"), red("not successful")), ".", sep = "")
     }
-    if(sum(verify.cSEMResults_default(.object[[i]])) != 0) {
+    if(sum(verify.cSEMResults_default(x[[i]])) != 0) {
       cat("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
           " for details.", sep = "")
     }
     cat("\n\nThe result for each group/data set is a list of class " %+% bold("cSEMResults") %+%"",
         "\nwith list elements:\n\n\t", sep = "")
     
-  } else if(class(.object)[2] == "cSEMResults_2ndorder") {
-    x <- sapply(verify.cSEMResults_2ndorder(.object), sum)
+  } else if(class(x)[2] == "cSEMResults_2ndorder") {
+    x <- sapply(verify.cSEMResults_2ndorder(x), sum)
     cat("\n\nEstimation status by stage:\n", sep = "")
-    for(i in names(.object)) {
+    for(i in names(x)) {
       cat("\n\t", col_align(cyan(i), 15), ": ",
           ifelse(sum(x) == 0, green("successful"), red("not successful")), sep = "")
     }
@@ -45,9 +44,9 @@ print.cSEMResults <- function(x, ...) {
         "\nwith list elements:\n\n\t", sep = "")
   } else {
     cat(
-      "\n\nEstimation was ", ifelse(sum(verify.cSEMResults_default(.object)) == 0, 
+      "\n\nEstimation was ", ifelse(sum(verify.cSEMResults_default(x)) == 0, 
                                     green("successful"), red("not successful")), ".", sep = "")
-    if(sum(verify.cSEMResults_default(.object)) != 0) {
+    if(sum(verify.cSEMResults_default(x)) != 0) {
       cat(" See ", magenta("verify"), "(", cyan("<object-name>"), ")", 
           " for details.", sep = "")
     }
@@ -65,6 +64,7 @@ print.cSEMResults <- function(x, ...) {
       "- ", cyan("<object-name>"), yellow("$"), green("Estimates"), "\n\n", sep = "")
   cat("Available postestimation commands:\n\n\t",
       "- ", magenta("assess"), "(", cyan("<object-name>"), ")\n\t",
+      "- ", magenta("predict"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n", sep = "")
   cat(rule(line = "bar2", width = 80), "\n")
@@ -81,10 +81,9 @@ print.cSEMResults <- function(x, ...) {
 #' @export
 #' @keywords internal
 print.cSEMSummarize_default <- function(x, ..., .full_output = FALSE) {
-  .object <- x 
   
-  x1 <- .object$Estimates
-  x2 <- .object$Information
+  x1 <- x$Estimates
+  x2 <- x$Information
   
   cat2(
     rule(line = "bar2", width = 80), "\n",
@@ -126,7 +125,15 @@ print.cSEMSummarize_default <- function(x, ..., .full_output = FALSE) {
     cat2("\n\n\tResample information:\n\t","------------------")
     cat2(
       col_align("\n\tResample methode", 35), "= ", x2$Information_resample$Method,
-      col_align("\n\tNumber of resamples", 35), "= ", x2$Information_resample$Number_of_runs,
+      col_align("\n\tNumber of resamples", 35), "= ", x2$Information_resample$Number_of_runs
+    )
+    if(x2$Information_resample$Method2 %in% c("bootstrap", "jackknife")) {
+      cat2(
+        col_align("\n\tResample of resample methode", 35), "= ", x2$Information_resample$Method2,
+        col_align("\n\tNumber of resamples per resample", 35), "= ", x2$Information_resample$Number_of_runs2
+      ) 
+    }
+    cat2(
       col_align("\n\tApproach to handle inadmissibles ", 35), "= ", x2$Information_resample$Handle_inadmissibles,
       col_align("\n\tSign change option", 35), "= ", x2$Information_resample$Sign_change_option
     )
@@ -177,7 +184,7 @@ print.cSEMSummarize_default <- function(x, ..., .full_output = FALSE) {
     if(length(ci_colnames) > 2 && !.full_output) {
       cat("\n",
         "Only the first confidence interval shown by default.\n",
-        "Use `print(.object, .full_output = TRUE)` to print all confidence intervals.",
+        "Use `print(x, .full_output = TRUE)` to print all confidence intervals.",
         sep = "")
       ci_colnames <- ci_colnames[1:2]
     }
@@ -362,14 +369,13 @@ print.cSEMSummarize_default <- function(x, ..., .full_output = FALSE) {
 #' @export
 #' @keywords internal
 print.cSEMSummarize_2ndorder <- function(x, ...) {
-  .object <- x
   
   ### Extract name and objects 
-  x11 <- .object$First_stage$Estimates
-  x12 <- .object$First_stage$Information
+  x11 <- x$First_stage$Estimates
+  x12 <- x$First_stage$Information
   
-  x21 <- .object$Second_stage$Estimates
-  x22 <- .object$Second_stage$Information
+  x21 <- x$Second_stage$Estimates
+  x22 <- x$Second_stage$Information
   
   ## Collect all necessary sets
   # All constructs used in the first step (= all first order constructs)
@@ -568,13 +574,12 @@ print.cSEMSummarize_2ndorder <- function(x, ...) {
 #' @export
 #' @keywords internal
 print.cSEMVerify_default <- function(x, ...) {
-  .object <- x
   
   cat(rule(line = "bar2", width = 80), sep = "")
   
   cat("\n\nVerify admissibility:\n", sep = "")
   
-  if(sum(.object) == 0) {
+  if(sum(x) == 0) {
     cat(green("\n\t admissible\n"), sep = "")
   } else {
     cat(red("\n\t inadmissible\n"), sep = "")
@@ -588,9 +593,9 @@ print.cSEMVerify_default <- function(x, ...) {
   cat("\nDetails:\n\n", sep = "")
   
   cat("  ", col_align("Code", 7), col_align("Status", 10), "Description\n", sep = "")
-  for(i in names(.object)) {
+  for(i in names(x)) {
     cat("  ", col_align(i, 7), 
-        col_align(ifelse(.object[i] == FALSE, green("ok"), red("not ok")), 10), 
+        col_align(ifelse(x[i] == FALSE, green("ok"), red("not ok")), 10), 
         col_align(text[i], max(nchar(text)) + 2, align = "left"), "\n", sep = "")
   }
   cat(rule(line = "bar2", width = 80), sep = "")
@@ -607,12 +612,11 @@ print.cSEMVerify_default <- function(x, ...) {
 #' @export
 #' @keywords internal
 print.cSEMVerify_2ndorder <- function(x, ...) {
-  .object <- x
   
   cat(rule(line = "bar2", width = 80), sep = "")
   cat("\n\nVerify admissibility:\n", sep = "")
   
-  if(sum(.object$First_stage) == 0 & sum(.object$Second_stage) == 0) {
+  if(sum(x$First_stage) == 0 & sum(x$Second_stage) == 0) {
     cat(green("\n\t admissible"), sep = "")
   } else {
     cat(red("\n\t inadmissible"), sep = "")
@@ -628,10 +632,10 @@ print.cSEMVerify_2ndorder <- function(x, ...) {
   
   cat("  ", col_align("Code", 7), col_align("Stage 1", 10), 
       col_align("Stage 2", 10), "Description\n", sep = "")
-  for(i in names(.object$First_stage)) {
+  for(i in names(x$First_stage)) {
     cat("  ", col_align(i, 7), 
-        col_align(ifelse(.object$First_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
-        col_align(ifelse(.object$Second_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
+        col_align(ifelse(x$First_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
+        col_align(ifelse(x$Second_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
         col_align(text[i], max(nchar(text) + 2), align = "left"), "\n", sep = "")
   }
   cat(rule(line = "bar2", width = 80), sep = "")
@@ -648,7 +652,6 @@ print.cSEMVerify_2ndorder <- function(x, ...) {
 #' @export
 #' @keywords internal
 print.cSEMTestOMF <- function(x, ...) {
-  .object <- x
   
   cat(
     rule(line = "bar2", width = 80), "\n",
@@ -672,7 +675,7 @@ print.cSEMTestOMF <- function(x, ...) {
     col_align("", width = 20),
     col_align("", width = 14), 
     "\t",
-    col_align("Critical value", width = 8*ncol(.object$Critical_value), 
+    col_align("Critical value", width = 8*ncol(x$Critical_value), 
               align = "center"),
     sep = ""
   )
@@ -684,22 +687,22 @@ print.cSEMTestOMF <- function(x, ...) {
     sep = ""
   )
   
-  for(i in colnames(.object$Critical_value)) {
+  for(i in colnames(x$Critical_value)) {
     cat(col_align(i, width = 6, align = "center"), "\t", sep = "")
   }
   
   cat("\n\t")
   
-  for(j in seq_along(.object$Test_statistic)) {
+  for(j in seq_along(x$Test_statistic)) {
     cat(
-      col_align(names(.object$Test_statistic)[j], width = 20),
-      col_align(sprintf("%.4f", .object$Test_statistic[j]), width = 14, 
+      col_align(names(x$Test_statistic)[j], width = 20),
+      col_align(sprintf("%.4f", x$Test_statistic[j]), width = 14, 
                 align = "center"), 
       "\t", 
       sep = ""
     )
-    for(k in 1:ncol(.object$Critical_value)) {
-      cat(sprintf("%.4f", .object$Critical_value[j, k]), "\t", sep = "")
+    for(k in 1:ncol(x$Critical_value)) {
+      cat(sprintf("%.4f", x$Critical_value[j, k]), "\t", sep = "")
     }
     cat("\n\t")
   }
@@ -708,11 +711,11 @@ print.cSEMTestOMF <- function(x, ...) {
   cat("\n\nDecision: \n\n\t", sep = "")
   
   # Width of columns
-  l <- apply(.object$Decision, 2, function(x) {
+  l <- apply(x$Decision, 2, function(x) {
     ifelse(any(x == TRUE), nchar("Do not reject"), nchar("reject"))
   })
   
-  l1 <- max(c(sum(l) + 3*(ncol(.object$Decision) - 1)), nchar("Significance level"))
+  l1 <- max(c(sum(l) + 3*(ncol(x$Decision) - 1)), nchar("Significance level"))
   
   cat(
     col_align("", width = 20), 
@@ -729,19 +732,19 @@ print.cSEMTestOMF <- function(x, ...) {
     sep = ""
   )
   
-  for(i in colnames(.object$Critical_value)) {
+  for(i in colnames(x$Critical_value)) {
     cat(col_align(i, width = l[i], align = "center"), "\t", sep = "")
   }
   
   cat("\n\t")
   
-  for(j in seq_along(.object$Test_statistic)) {
+  for(j in seq_along(x$Test_statistic)) {
     
-    cat(col_align(names(.object$Test_statistic)[j], width = 20), "\t", sep = "")
+    cat(col_align(names(x$Test_statistic)[j], width = 20), "\t", sep = "")
     
-    for(k in 1:ncol(.object$Critical_value)) {
+    for(k in 1:ncol(x$Critical_value)) {
       cat(
-        col_align(ifelse(.object$Decision[j, k], 
+        col_align(ifelse(x$Decision[j, k], 
                          green("Do not reject"), red("reject")), 
                   width = l[k], align = "center"), 
         "\t", 
@@ -754,8 +757,8 @@ print.cSEMTestOMF <- function(x, ...) {
   ## Additional information ----------------------------------------------------
   cat("\nAdditonal information:")
   cat(
-    "\n\n\tOut of ", .object$Information$Total_runs , " bootstrap replications ", 
-    .object$Information$Number_admissibles, " are admissible.\n\t",
+    "\n\n\tOut of ", x$Information$Total_runs , " bootstrap replications ", 
+    x$Information$Number_admissibles, " are admissible.\n\t",
     "See ", yellow("?"), magenta("verify"), "()",
     " for what constitutes an inadmissible result.\n", 
     sep = ""
@@ -774,7 +777,6 @@ print.cSEMTestOMF <- function(x, ...) {
 #' @export
 #' @keywords internal
 print.cSEMTestMGD <- function(x, ...) {
-  .object <- x
   
   cat(
     rule(line = "bar2", width = 80), "\n",
@@ -797,7 +799,7 @@ print.cSEMTestMGD <- function(x, ...) {
     col_align("", width = 20),
     col_align("", width = 14), 
     "\t",
-    col_align("Critical value", width = 8*ncol(.object$Critical_value), 
+    col_align("Critical value", width = 8*ncol(x$Critical_value), 
               align = "center"),
     sep = ""
   )
@@ -809,22 +811,22 @@ print.cSEMTestMGD <- function(x, ...) {
     sep = ""
   )
   
-  for(i in colnames(.object$Critical_value)) {
+  for(i in colnames(x$Critical_value)) {
     cat(col_align(i, width = 6, align = "center"), "\t", sep = "")
   }
   
   cat("\n\t")
   
-  for(j in seq_along(.object$Test_statistic)) {
+  for(j in seq_along(x$Test_statistic)) {
     cat(
-      col_align(names(.object$Test_statistic)[j], width = 20),
-      col_align(sprintf("%.4f", .object$Test_statistic[j]), width = 14, 
+      col_align(names(x$Test_statistic)[j], width = 20),
+      col_align(sprintf("%.4f", x$Test_statistic[j]), width = 14, 
                 align = "center"), 
       "\t", 
       sep = ""
     )
-    for(k in 1:ncol(.object$Critical_value)) {
-      cat(sprintf("%.4f", .object$Critical_value[j, k]), "\t", sep = "")
+    for(k in 1:ncol(x$Critical_value)) {
+      cat(sprintf("%.4f", x$Critical_value[j, k]), "\t", sep = "")
     }
     cat("\n\t")
   }
@@ -833,11 +835,11 @@ print.cSEMTestMGD <- function(x, ...) {
   cat("\n\nDecision: \n\n\t", sep = "")
   
   # Width of columns
-  l <- apply(.object$Decision, 2, function(x) {
+  l <- apply(x$Decision, 2, function(x) {
     ifelse(any(x == TRUE), nchar("Do not reject"), nchar("reject"))
   })
   
-  l1 <- max(c(sum(l) + 3*(ncol(.object$Decision) - 1)), nchar("Significance level"))
+  l1 <- max(c(sum(l) + 3*(ncol(x$Decision) - 1)), nchar("Significance level"))
   
   cat(
     col_align("", width = 20), 
@@ -854,19 +856,19 @@ print.cSEMTestMGD <- function(x, ...) {
     sep = ""
   )
   
-  for(i in colnames(.object$Critical_value)) {
+  for(i in colnames(x$Critical_value)) {
     cat(col_align(i, width = l[i], align = "center"), "\t", sep = "")
   }
   
   cat("\n\t")
   
-  for(j in seq_along(.object$Test_statistic)) {
+  for(j in seq_along(x$Test_statistic)) {
     
-    cat(col_align(names(.object$Test_statistic)[j], width = 20), "\t", sep = "")
+    cat(col_align(names(x$Test_statistic)[j], width = 20), "\t", sep = "")
     
-    for(k in 1:ncol(.object$Critical_value)) {
+    for(k in 1:ncol(x$Critical_value)) {
       cat(
-        col_align(ifelse(.object$Decision[j, k], 
+        col_align(ifelse(x$Decision[j, k], 
                          green("Do not reject"), red("reject")), 
                   width = l[k], align = "center"), 
         "\t", 
@@ -879,8 +881,8 @@ print.cSEMTestMGD <- function(x, ...) {
   ## Additional information ----------------------------------------------------
   cat("\nAdditional information:")
   cat(
-    "\n\n\tOut of ", .object$Information$Total_runs , " permutation runs, ", 
-    .object$Information$Number_admissibles, " where admissible.\n\t",
+    "\n\n\tOut of ", x$Information$Total_runs , " permutation runs, ", 
+    x$Information$Number_admissibles, " where admissible.\n\t",
     "See ", yellow("?"), magenta("verify"), "()",
     " for what constitutes an inadmissible result.", 
     sep = ""
@@ -888,18 +890,18 @@ print.cSEMTestMGD <- function(x, ...) {
   
   cat("\n\n\tNumber of observations per group:")
   
-  l <- max(nchar(c(.object$Information$Group_names, "Group")))
+  l <- max(nchar(c(x$Information$Group_names, "Group")))
   
   cat("\n\n\t",
       col_align("Group", width = l + 6),
       col_align("No. observations", width = 15),
       sep = ""
   )
-  for(i in seq_along(.object$Information$Group_names)) {
+  for(i in seq_along(x$Information$Group_names)) {
     cat(
       "\n\t",
-      col_align(.object$Information$Group_names[i], width = l + 6), 
-      col_align(.object$Information$Number_of_observations[i], width = 15),
+      col_align(x$Information$Group_names[i], width = l + 6), 
+      col_align(x$Information$Number_of_observations[i], width = 15),
       sep = ""
     )
   }
@@ -918,7 +920,6 @@ print.cSEMTestMGD <- function(x, ...) {
 #' @export
 #' @keywords internal
 print.cSEMTestMICOM <- function(x, ...) {
-  .object <- x
   
   cat(
     rule(line = "bar2", width = 80), "\n",
@@ -928,8 +929,8 @@ print.cSEMTestMICOM <- function(x, ...) {
     sep = ""
   )
   
-  x2 <- .object$Step2
-  x3 <- .object$Step3
+  x2 <- x$Step2
+  x3 <- x$Step3
   
   construct_names <- names(x2$Test_statistic[[1]])
   no_groups       <- length(x2$Test_statistic)
@@ -1186,8 +1187,8 @@ print.cSEMTestMICOM <- function(x, ...) {
   ## Additional information ----------------------------------------------------
   cat("Additional information:")
   cat(
-    "\n\n\tOut of ", .object$Information$Total_runs , " permutation runs, ", 
-    .object$Information$Number_admissibles, " where admissible.\n\t",
+    "\n\n\tOut of ", x$Information$Total_runs , " permutation runs, ", 
+    x$Information$Number_admissibles, " where admissible.\n\t",
     "See ", yellow("?"), magenta("verify"), "()",
     " for what constitutes an inadmissible result.", 
     sep = ""
@@ -1195,18 +1196,18 @@ print.cSEMTestMICOM <- function(x, ...) {
   
   cat("\n\n\tNumber of observations per group:")
   
-  l <- max(nchar(c(.object$Information$Group_names, "Group")))
+  l <- max(nchar(c(x$Information$Group_names, "Group")))
   
   cat("\n\n\t",
       col_align("Group", width = l + 6),
       col_align("No. observations", width = 15),
       sep = ""
   )
-  for(i in seq_along(.object$Information$Group_names)) {
+  for(i in seq_along(x$Information$Group_names)) {
     cat(
       "\n\t",
-      col_align(.object$Information$Group_names[i], width = l + 6), 
-      col_align(.object$Information$Number_of_observations[i], width = 15),
+      col_align(x$Information$Group_names[i], width = l + 6), 
+      col_align(x$Information$Number_of_observations[i], width = 15),
       sep = ""
     )
   }
