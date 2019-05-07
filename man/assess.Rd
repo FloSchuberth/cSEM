@@ -21,6 +21,8 @@ assess(.object, .only_common_factors = TRUE, ...)
 
 \item{.only_common_factors}{Logical. Should only constructs modeled as common
 factors be included? Defaults to \code{TRUE}.}
+
+\item{...}{Further arguments passed to functions called by \code{assess()}.}
 }
 \value{
 (TODO)

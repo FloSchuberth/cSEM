@@ -147,6 +147,50 @@ Carlo studies and an empirical application.},
   publisher = {Informa {UK} Limited},
 }
 
+@Article{Hwang2017,
+  Title                    = {Generalized {Structured} {Component} {Analysis} with {Uniqueness} {Terms} for {Accommodating} {Measurement} {Error}},
+  Author                   = {Hwang, Heungsun and Takane, Yoshio and Jung, Kwanghee},
+  Journal                  = {Frontiers in Psychology},
+  Year                     = {2017},
+  Number                   = {2137},
+  Pages                    = {1--12},
+  Volume                   = {8},
+  Language                 = {English},
+  Publisher                = {Frontiers Media}
+}
+
+@book{Hwang2014,
+  Title =     {Generalized Structured Component Analysis: A Component-Based Approach to Structural Equation Modeling},
+   Author =    {Hwang, Heungsun and Takane, Yoshio},
+   publisher = {Chapman and Hall/CRC},
+   year =      {2014},
+   series =    {Chapman $\&$ Hall/CRC Statistics in the Social and Behavioral Sciences},
+}
+
+@Article{Hwang2004,
+  Title                    = {Generalized {Structured} {Component} {Analysis}},
+  Author                   = {Hwang, Heungsun and Takane, Yoshio},
+  Journal                  = {Psychometrika},
+  Year                     = {2004},
+  Number                   = {1},
+  Pages                    = {81--99},
+  Volume                   = {69},
+  Language                 = {English},
+  Publisher                = {Springer}
+}
+
+@Article{Hwang2010,
+  Title                    = {A {Comparative} {Study} on {Parameter} {Recovery} of {Three} {Approaches} to {Structural} {Equation} {Modeling}},
+  Author                   = {Hwang, Heungsun and Malhotra, Naresh K. and Kim, Youngchan and Tomiuk, Marc A. and Hong, Sungjin},
+  Journal                  = {Journal of Marketing Research},
+  Year                     = {2010},
+  Number                   = {4},
+  Pages                    = {699--712},
+  Volume                   = {47},
+  Language                 = {English},
+  Publisher                = {American Marketing Association}
+}
+
 @Manual{Bengtsson2018,
   title  = {future: Unified Parallel and Distributed Processing in {R} for Everyone},
   author = {Henrik Bengtsson},
@@ -230,7 +274,7 @@ Carlo studies and an empirical application.},
 }
 
 @Article{Henseler2015,
-  author    = {Jörg Henseler and Christian M. Ringle and Marko Sarstedt},
+  author    = {J{\"o}rg Henseler and Christian M. Ringle and Marko Sarstedt},
   title     = {A New Criterion for Assessing Discriminant Validity in Variance-based Structural Equation Modeling},
   journal   = {Journal of the Academy of Marketing Science},
   year      = {2015},
@@ -254,6 +298,65 @@ Carlo studies and an empirical application.},
   note      = {Pagination: 288},
   booktitle = {Latent Variable and Latent Structure Models},
   language  = {English},
+}
+
+@Article{Rigdon2012,
+  author    = {Edward E. Rigdon},
+  title     = {Rethinking Partial Least Squares Path Modeling: In Praise of Simple Methods},
+  journal   = {Long Range Planning},
+  year      = {2012},
+  volume    = {45},
+  number    = {5-6},
+  pages     = {341--358},
+  month     = {oct},
+  doi       = {10.1016/j.lrp.2012.09.010},
+  file      = {:Papers/Rigdon2012.pdf:PDF},
+  publisher = {Elsevier {BV}},
+}
+
+@Article{Rigdon2016,
+  author    = {Edward E. Rigdon},
+  title     = {Choosing {PLS} Path Modeling As Analytical Method in European Management Research: A Realist Perspective},
+  journal   = {European Management Journal},
+  year      = {2016},
+  volume    = {34},
+  number    = {6},
+  pages     = {598--605},
+  doi       = {10.1016/j.emj.2016.05.006},
+  file      = {:Papers/Rigdon2016.pdf:PDF},
+  publisher = {Elsevier {BV}},
+}
+
+@Article{Rigdon2019,
+  author    = {Edward E. Rigdon and Jan-Michael Becker and Marko Sarstedt},
+  title     = {Factor Indeterminacy as Metrological Uncertainty: Implications for Advancing Psychological Measurement},
+  journal   = {Multivariate Behavioral Research},
+  year      = {2019},
+  pages     = {1--15},
+  month     = {mar},
+  doi       = {10.1080/00273171.2018.1535420},
+  publisher = {Informa {UK} Limited},
+}
+
+@Article{Holzinger1939,
+  author  = {Holzinger, Karl John and Swineford, Frances},
+  title   = {A Study in Factor Analysis: The Stability of a Bi-factor Solution.},
+  journal = {Supplementary Educational Monographs},
+  year    = {1939},
+  number  = {48},
+}
+
+@Article{Joereskog1969,
+  author    = {K. G. J{\"o}reskog},
+  title     = {A General Approach to Confirmatory Maximum Likelihood Factor Analysis},
+  journal   = {Psychometrika},
+  year      = {1969},
+  volume    = {34},
+  number    = {2},
+  pages     = {183--202},
+  month     = {jun},
+  doi       = {10.1007/bf02289343},
+  publisher = {Springer Nature},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}

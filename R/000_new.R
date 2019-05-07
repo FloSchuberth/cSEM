@@ -43,10 +43,6 @@ quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
     .object
   }
  
-
-#' Implementation of PLS predict adopted from Shmueli et al. (2016) Table 1
-#' 
-#' 
 predict=function(.object, testDataset){
   
   # Check whether the test dataset contains the same inidcators as the train dataset

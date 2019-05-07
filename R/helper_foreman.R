@@ -509,7 +509,7 @@ calculateReliabilities <- function(
 #' Set the dominant indicator for each construct.
 #'
 #' @usage setDominantIndicator(
-#'  .W                   = W,
+#'  .W                   = args_default()$.W,
 #'  .dominant_indicators = args_default()$.dominant_indicators, 
 #'  .S                   = args_default()$.S
 #'  )
@@ -520,7 +520,7 @@ calculateReliabilities <- function(
 #' @keywords internal
 #'
 setDominantIndicator <- function(
-  .W                   = W,
+  .W                   = args_default()$.W,
   .dominant_indicators = args_default()$.dominant_indicators,
   .S                   = args_default()$.S  
 ) {

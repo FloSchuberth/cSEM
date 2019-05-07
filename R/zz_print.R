@@ -137,7 +137,7 @@ print.cSEMSummarize_default <- function(x, ..., .full_output = FALSE) {
       col_align("\n\tApproach to handle inadmissibles ", 35), "= ", x2$Information_resample$Handle_inadmissibles,
       col_align("\n\tSign change option", 35), "= ", x2$Information_resample$Sign_change_option
     )
-    if(!is.null(x2$Information_resample$Seed)) {
+    if(!isFALSE(x2$Information_resample$Seed)) {
       cat2(
         col_align("\n\tRandom seed", 35), "= ", x2$Information_resample$Seed
       )
@@ -419,22 +419,6 @@ print.cSEMSummarize_2ndorder <- function(x, ...) {
     ifelse(x12$Arguments$.disattenuate, 
            ifelse(x12$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)", "Yes"), "No"),
     sep = "")
-  
-  ## Resample information
-  if(inherits(x, "cSEMSummarize_resampled")) {
-    cat2("\n\n\tResample information:\n\t","------------------")
-    cat2(
-      col_align("\n\tResample methode", 35), "= ", x2$Information_resample$Method,
-      col_align("\n\tNumber of resamples", 35), "= ", x2$Information_resample$Number_of_runs,
-      col_align("\n\tApproach to handle inadmissibles ", 35), "= ", x2$Information_resample$Handle_inadmissibles,
-      col_align("\n\tSign change option", 35), "= ", x2$Information_resample$Sign_change_option
-    )
-    if(!is.null(x2$Information_resample$Seed)) {
-      cat2(
-        col_align("\n\tRandom seed", 35), "= ", x2$Information_resample$Seed
-      )
-    }
-  }
   
   cat("\n\n\tConstruct details:\n\t","------------------", sep = "")
   # First order constructs

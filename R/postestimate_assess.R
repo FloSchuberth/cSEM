@@ -5,6 +5,7 @@
 #' For details see the vignette on assess.
 #'
 #' @inheritParams csem_arguments
+#' @param ... Further arguments passed to functions called by `assess()`.
 #'
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
