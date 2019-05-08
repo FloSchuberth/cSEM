@@ -285,7 +285,7 @@ calculateRhoT <- function(
       # The code for the calculation of the CIs is addpated from the paper.
 
       K <- length(indicator_names)
-      X <- .object$Information$Data[, indicator_names]
+      X <- .object$Information$Data[, indicator_names, drop=FALSE]
       N <- nrow(X)
       H <- .object$Estimates$Construct_scores[, j]
       
