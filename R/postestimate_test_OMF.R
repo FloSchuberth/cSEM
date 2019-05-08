@@ -72,6 +72,11 @@ testOMF.cSEMResults_default <- function(
          call. = FALSE)
   }
   
+  # Return error if used for ordinal variables
+  if(.object$Information$Type_of_indicator_correlation == "Polyserial" | .object$Information$Type_of_indicator_correlation == "Polychoric"){
+    stop2("Test for overall model fit can currently not applied if the polychoric or polyserial correlation were used.")
+  }
+  
   ## Extract required information 
   X         <- .object$Information$Data
   S         <- .object$Estimates$Indicator_VCV
