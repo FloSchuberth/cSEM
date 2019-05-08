@@ -251,7 +251,7 @@ calculateIndicatorCor <- function(
               # Estimate thresholds
               thres_est <- lavaan::lavCor(.X_cleaned, se = 'none', estimator = "two.step", output = "th")
               
-              # Define type of correlation, that can either be polyserial, polychoric or both
+              # Define type of correlation, that can either be polyserial or polychoric
               type_var=unlist(sapply(.X_cleaned,class))
               
               # if at least one numeric variable is included the polyserial correlation is applied
