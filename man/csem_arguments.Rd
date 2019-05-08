@@ -221,7 +221,8 @@ resampling from a resample. Defaults to \code{199}.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
-\item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+\item{.saturated}{Logical. Should a saturated structural model be used?
+Defaults to \code{FALSE}.}
 
 \item{.sign_change_option}{Character string. Which sign change option should
 be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",

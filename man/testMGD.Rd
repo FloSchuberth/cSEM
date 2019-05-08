@@ -55,7 +55,8 @@ Defaults to "\emph{drop}".}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
-\item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+\item{.saturated}{Logical. Should a saturated structural model be used?
+Defaults to \code{FALSE}.}
 
 \item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}

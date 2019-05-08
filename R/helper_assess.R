@@ -184,6 +184,7 @@ calculateGoF <- function(
 #'   for the (1 - `.alpha`) confidence interval(s).
 #'   
 #' @inheritParams csem_arguments
+#' @param ... Ignored.
 #'
 #' @seealso [assess], [cSEMResults]
 #'
@@ -239,7 +240,9 @@ calculateRhoT <- function(
   .object              = NULL,
   .alpha               = args_default()$.alpha,
   .calculate_ci        = args_default()$.calculate_ci,
-  .only_common_factors = TRUE) {
+  .only_common_factors = TRUE,
+  ...
+  ) {
   
   ## Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -427,6 +430,7 @@ calculateHTMT <- function(
 #' @return A single numeric value.
 #' 
 #' @inheritParams csem_arguments
+#' @param ... Ignored.
 #'
 #' @keywords internal
 #' @name distance_measures
@@ -434,7 +438,12 @@ NULL
 
 #' @describeIn distance_measures The standardized root means squared residual (SRMR).
 
-calculateSRMR <- function(.object = NULL) {
+calculateSRMR <- function(
+  .object    = NULL, 
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv,
+  ...
+  ) {
   
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -446,7 +455,7 @@ calculateSRMR <- function(.object = NULL) {
   # between correlation matrices.
   
   S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object)
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
 
   
   # Perhaps in the future we allow to estimate unstandardized coefficients
@@ -457,7 +466,12 @@ calculateSRMR <- function(.object = NULL) {
 
 #' @describeIn distance_measures The geodesic distance (dG).
 
-calculateDG <- function(.object = NULL) {
+calculateDG <- function(
+  .object    = NULL, 
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv,
+  ...
+  ){
 
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -466,7 +480,7 @@ calculateDG <- function(.object = NULL) {
   }
   
   S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object) 
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv) 
   
   # Not sure if logarithm naturalis is used or logarithm with base 10. 
   Eigen            <- eigen(solve(S) %*% Sigma_hat)
@@ -478,7 +492,12 @@ calculateDG <- function(.object = NULL) {
 
 #' @describeIn distance_measures The squared Euclidian distance
 
-calculateDL <- function(.object = NULL) {
+calculateDL <- function(
+  .object    = NULL, 
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv,
+  ...
+  ){
   
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -487,7 +506,7 @@ calculateDL <- function(.object = NULL) {
   }
   
   S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object) 
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
   
   ## Calculate distance
   0.5 * sum((S - Sigma_hat)[lower.tri(S, diag = FALSE)]^2)
@@ -495,7 +514,12 @@ calculateDL <- function(.object = NULL) {
 
 #' @describeIn  distance_measures The distance measure used by FIML
 
-calculateDML <- function(.object = NULL){
+calculateDML <- function(
+  .object    = NULL, 
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv,
+  ...
+  ){
 
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -506,7 +530,7 @@ calculateDML <- function(.object = NULL){
   n         <- nrow(.object$Information$Data)
   S         <- .object$Estimates$Indicator_VCV
   p         <- dim(S)[1]
-  Sigma_hat <- fit(.object, .saturated = FALSE, .type_vcv = 'indicator')
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
   
   (n - 1)*(log(det(Sigma_hat)) 
               + sum(diag(S %*% solve(Sigma_hat))) 

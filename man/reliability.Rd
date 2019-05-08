@@ -10,7 +10,7 @@ calculateRhoC(.object = NULL, .only_common_factors = TRUE)
 
 calculateRhoT(.object = NULL, .alpha = args_default()$.alpha,
   .calculate_ci = args_default()$.calculate_ci,
-  .only_common_factors = TRUE)
+  .only_common_factors = TRUE, ...)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -23,6 +23,8 @@ Defaults to \code{0.05}.}
 
 \item{.calculate_ci}{Logical. Should a closed-form confidence interval be computed?
 Defaults to \code{FALSE}.}
+
+\item{...}{Ignored.}
 }
 \value{
 For \code{calculateRhoC()} a named numeric vector containing the reliability

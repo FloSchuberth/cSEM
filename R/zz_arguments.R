@@ -166,7 +166,8 @@
 #' @param .R2 Integer. The number of bootstrap replications to use when 
 #'   resampling from a resample. Defaults to `199`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
-#' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
+#' @param .saturated Logical. Should a saturated structural model be used? 
+#'   Defaults to `FALSE`.
 #' @param .sign_change_option Character string. Which sign change option should 
 #' be used to handle flipping signs when resampling? One of "*none*","*individual*",
 #' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".

@@ -51,7 +51,8 @@ Defaults to "\emph{drop}".}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
-\item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+\item{.saturated}{Logical. Should a saturated structural model be used?
+Defaults to \code{FALSE}.}
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
