@@ -49,14 +49,14 @@ Defaults to \code{TRUE}}
 
 \item{.C}{A (J x J) composite variance-covariance matrix.}
 
-\item{.calculate_ci}{Logical. Should a closed-form confidence interval be computed?
-Defaults to \code{FALSE}.}
-
 \item{.choices}{Logical. Should candidate values for the arguments be returned?
 Defaults to \code{FALSE}.}
 
 \item{.ci}{A vector of character strings naming the confidence interval to compute.
 For possible choices see \code{\link[=infer]{infer()}}.}
+
+\item{.closed_form_ci}{Logical. Should a closed-form confidence interval be computed?
+Defaults to \code{FALSE}.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults

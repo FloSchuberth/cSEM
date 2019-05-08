@@ -167,7 +167,7 @@ calculateGoF <- function(
 #' 
 #' For the the tau-equivalent reliability (rhoT) a closed-form confidence 
 #' interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
-#' `.calculate_ci = TRUE` (default is `FALSE`). If `.alpha` is a vector
+#' `.closed_form_ci = TRUE` (default is `FALSE`). If `.alpha` is a vector
 #' several CI's are returned.
 #' 
 #' The function is only applicable to objects of class `cSEMResults_default`.
@@ -180,7 +180,7 @@ calculateGoF <- function(
 #'   `.only_common_factors = FALSE` in which case the number of rows equals the
 #'   total number of constructs in the model). The first column contains the name of the construct.
 #'   The second column the reliability estimate.
-#'   If `.calculate_ci = TRUE` the remaining columns contain lower and upper bounds
+#'   If `.closed_form_ci = TRUE` the remaining columns contain lower and upper bounds
 #'   for the (1 - `.alpha`) confidence interval(s).
 #'   
 #' @inheritParams csem_arguments
@@ -239,7 +239,7 @@ calculateRhoC <- function(
 calculateRhoT <- function(
   .object              = NULL,
   .alpha               = args_default()$.alpha,
-  .calculate_ci        = args_default()$.calculate_ci,
+  .closed_form_ci      = args_default()$.closed_form_ci,
   .only_common_factors = TRUE,
   ...
   ) {
@@ -257,7 +257,7 @@ calculateRhoT <- function(
   # given if a weightning scheme other than "unit" is used, since they have
   # not been formally studied yet.
   
-  if(.object$Information$Arguments$.approach_weights != "unit" & .calculate_ci == TRUE) {
+  if(.object$Information$Arguments$.approach_weights != "unit" & .closed_form_ci == TRUE) {
     warning2("Calculation of the confidence interval (CI) for rhoT (Cronbach alpha)",
              " was proposed and studied assuming sum scores.\n",
              "Statistical properties of the CI for rhoT based on a weighted composite",
@@ -283,7 +283,7 @@ calculateRhoT <- function(
     out[j, "Estimate"]  <- rhoT
     
     ## Calculate confidence interval for rhoT
-    if(.calculate_ci) {
+    if(.closed_form_ci) {
       # Calculation of the CIs are based on Trinchera et al. (2018).
       # The code for the calculation of the CIs is addpated from the paper.
 
