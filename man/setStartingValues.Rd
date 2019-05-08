@@ -13,7 +13,7 @@ setStartingValues(
 \item{.W}{A (J x K) matrix of weights.}
 
 \item{.starting_values}{list of named vectors containig the starting values.
-Defaults to "\emph{NULL}".}
+Defaults to \code{NULL}.}
 }
 \value{
 The (J x K) matrix of scaled weights.

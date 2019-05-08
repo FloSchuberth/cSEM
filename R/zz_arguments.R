@@ -40,12 +40,12 @@
 #'   where `theta*_hat` is the average over all .R bootstrap estimates of `theta`.
 #'   Defaults to `TRUE`
 #' @param .C A (J x J) composite variance-covariance matrix.
-#' @param .calculate_ci Logical. Should a closed-form confidence interval be computed?
-#'   Defaults to `FALSE`.
 #' @param .choices Logical. Should candidate values for the arguments be returned?
 #'   Defaults to `FALSE`.
 #' @param .ci A vector of character strings naming the confidence interval to compute.
 #'   For possible choices see [infer()].
+#' @param .closed_form_ci Logical. Should a closed-form confidence interval be computed?
+#'   Defaults to `FALSE`.
 #' @param .conv_criterion Character string. The criterion to use for the convergence check.
 #'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
 #'   to "*diff_absolute*".
@@ -166,7 +166,8 @@
 #' @param .R2 Integer. The number of bootstrap replications to use when 
 #'   resampling from a resample. Defaults to `199`.
 #' @param .S The (K x K) empirical indicator correlation matrix.
-#' @param .saturated Logical. Should a saturated structural model be used? Defaults to `FALSE`.
+#' @param .saturated Logical. Should a saturated structural model be used? 
+#'   Defaults to `FALSE`.
 #' @param .sign_change_option Character string. Which sign change option should 
 #' be used to handle flipping signs when resampling? One of "*none*","*individual*",
 #' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".
@@ -175,7 +176,7 @@
 #' @param .stage Character string. The stage the model is need for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .starting_values list of named vectors containig the starting values. 
-#' Defaults to "*NULL*".
+#' Defaults to `NULL`.
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
@@ -259,7 +260,7 @@ args_default <- function(.choices = FALSE) {
     .arguments               = NULL,
     .bias_corrected          = TRUE,
     .C                       = NULL,
-    .calculate_ci            = FALSE, 
+    .closed_form_ci          = FALSE, 
     .choices                 = FALSE,
     .ci                      = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),

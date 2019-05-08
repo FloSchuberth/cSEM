@@ -176,7 +176,11 @@ calculateOuterWeightsPLS <- function(
       # Note: .data is standardized, i.e., mean 0 and unit variance, inner proxy is also 
       #       standardized (standardization of the inner proxy 
       #       apparently has no effect though.)
-      temp <- nnls::nnls(A = .data[,indicators,drop=FALSE], b = inner_proxy[,block])
+      if (!requireNamespace("nnls", quietly = TRUE)) {
+        stop2(
+          "Package `nnls` needed for \"modeBNNLS\" to work. Use `install.packages(\"nnls\")` and rerun.")
+      }
+      temp <- nnls::nnls(A = .data[, indicators, drop = FALSE], b = inner_proxy[,block])
       W[block, indicators] <- temp$x
     
     } else if(.modes[block] == "PCA"){

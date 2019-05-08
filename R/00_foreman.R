@@ -227,18 +227,18 @@ foreman <- function(
       "Proxy_VCV"              = C,
       "Construct_VCV"          = P,
       # "Cross_loadings"         = Lambda,
-      "Construct_reliabilities"= Q^2,
+      "Reliabilities"          = Q^2,
       "R2"                     = if(.estimate_structural) {
         estim_results$R2
       } else {
         estim_results
       }, 
-      "R2adj"                     = if(.estimate_structural) {
+      "R2adj"                  = if(.estimate_structural) {
         estim_results$R2adj
       } else {
         estim_results
       }, 
-      "VIF"                     = if(.estimate_structural) {
+      "VIF"                    = if(.estimate_structural) {
         estim_results$VIF
       } else {
         estim_results

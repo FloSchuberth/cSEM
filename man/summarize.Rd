@@ -31,6 +31,8 @@ Defaults to \code{0.05}.}
 
 \item{.ci}{A vector of character strings naming the confidence interval to compute.
 For possible choices see \code{\link[=infer]{infer()}}.}
+
+\item{...}{Further arguments to \code{summarize()}. Currently ignored.}
 }
 \description{
 Summarize the model (TODO).

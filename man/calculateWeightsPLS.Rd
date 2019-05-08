@@ -60,7 +60,7 @@ used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.starting_values}{list of named vectors containig the starting values.
-Defaults to "\emph{NULL}".}
+Defaults to \code{NULL}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
@@ -72,7 +72,7 @@ A list with the elements
 \item{\code{$E}}{A (J x J) matrix of inner weights.}
 \item{\code{$Modes}}{A named vector of modes used for the outer estimation.}
 \item{\code{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
-and \code{FASLE} otherwise. If one-step weights are used via \code{.iter_max = 1}
+and \code{FALSE} otherwise. If one-step weights are used via \code{.iter_max = 1}
 or a non-iterative procedure was used, the convergence status is set to \code{NULL}.}
 \item{\code{$Iterations}}{The number of iterations used.}
 }

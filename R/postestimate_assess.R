@@ -5,6 +5,7 @@
 #' For details see the vignette on assess.
 #'
 #' @inheritParams csem_arguments
+#' @param ... Further arguments passed to functions called by `assess()`.
 #'
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
@@ -26,13 +27,13 @@ assess.cSEMResults_default <- function(.object, .only_common_factors = TRUE, ...
   P <- .object$Estimates$Construct_VCV
   
   # SRMR
-  res_srmr  <- calculateSRMR(.object)
+  res_srmr  <- calculateSRMR(.object, ...)
   # dG
-  res_dg    <- calculateDG(.object)
+  res_dg    <- calculateDG(.object, ...)
   # dL
-  res_dL    <- calculateDL(.object)
+  res_dL    <- calculateDL(.object, ...)
   # dML
-  res_dml   <- calculateDML(.object)
+  res_dml   <- calculateDML(.object, ...)
   # GoF
   res_gof   <- calculateGoF(.object, .only_common_factors)
   
@@ -90,7 +91,7 @@ assess.cSEMResults_default <- function(.object, .only_common_factors = TRUE, ...
 
 assess.cSEMResults_multi <- function(.object, ...){
   
-  paste("not yet implemented")
+  cat("not yet implemented")
 }
 
 #' @describeIn assess (TODO)
@@ -98,5 +99,5 @@ assess.cSEMResults_multi <- function(.object, ...){
 
 assess.cSEMResults_2ndorder <- function(.object, ...){
   
-  paste("not yet implemented")
+  cat("not yet implemented")
 }

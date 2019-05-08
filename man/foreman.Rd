@@ -124,7 +124,7 @@ reliabilities are estimated by \code{csem()}. Currently, only supported for
 \code{.approach_weights = "PLS-PM"}.}
 
 \item{.starting_values}{list of named vectors containig the starting values.
-Defaults to "\emph{NULL}".}
+Defaults to \code{NULL}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}

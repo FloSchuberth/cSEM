@@ -5,7 +5,7 @@
 \title{Internal: Set the dominant indicator}
 \usage{
 setDominantIndicator(
- .W                   = W,
+ .W                   = args_default()$.W,
  .dominant_indicators = args_default()$.dominant_indicators, 
  .S                   = args_default()$.S
  )

@@ -12,6 +12,7 @@
 #'  )
 #'
 #' @inheritParams csem_arguments
+#' @param ... Further arguments to `summarize()`. Currently ignored.
 #'
 #' @seealso [csem], [cSEMResults]
 #'
@@ -114,7 +115,7 @@ summarize.cSEMResults_default <- function(
     quantity <- c("sd", .ci)
     
     infer_out <- infer(
-      .resample_object = .object,
+      .object = .object,
       .alpha           = .alpha,
       .quantity        = quantity,
       ...
@@ -259,7 +260,7 @@ summarize.cSEMResults_2ndorder <- function(
     quantity <- c("sd", .ci)
     
     infer_out <- infer(
-      .resample_object = .object,
+      .object = .object,
       .alpha           = .alpha,
       .quantity        = quantity,
       ...

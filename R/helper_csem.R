@@ -60,7 +60,7 @@ calculate2ndOrder <- function(
   c_attached_to_2nd     <- intersect(c_linear_1step, i_linear_original)
   
   ## Get all reliabilities from first stage 
-  rel_all_1step  <- .first_stage_results$Estimates$Construct_reliabilities
+  rel_all_1step  <- .first_stage_results$Estimates$Reliabilities
   
   # Select reliabilities for those constructs that are not attached
   # to a second order factor
@@ -127,7 +127,7 @@ calculate2ndOrder <- function(
         rel_2nd_order[i] <- c(w %*% Sstar %*% t(w))
       }
       
-      rel                         <- out2$Estimates$Construct_reliabilities
+      rel                         <- out2$Estimates$Reliabilities
       rel[c_2nd_order_composites] <- rel_2nd_order 
       
       ## Redo second stage including new reliabilities (= third stage)

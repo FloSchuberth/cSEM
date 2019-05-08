@@ -14,7 +14,7 @@
 \title{Inference}
 \usage{
 infer(
- .resample_object   = NULL,
+ .object            = NULL,
  .alpha             = 0.05,
  .bias_corrected    = TRUE,
  .quantity          = c("all", "mean", "sd", "bias", "CI_standard_z", 
@@ -43,6 +43,8 @@ BcCIResample(.first_resample, .probs)
 BcaCIResample(.object, .first_resample, .probs)
 }
 \arguments{
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
@@ -82,8 +84,6 @@ from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}"
 "\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
 resampling from each resample is only required for the studentized confidence
 intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
-
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 }
 \description{
 Calculate common inferencial quantities (e.g. estimated standard error, estimates bias,

@@ -242,8 +242,8 @@ resampleData <- function(
     } else if(any(class(.object) %in% "cSEMResults_multi")) {
       data        <- .object[[1]]$Information$Data_pooled
       data_split  <- lapply(.object, function(x) x$Information$Arguments$.data)
-      id          <- ifelse(is.null(a1[[1]]$Information$Arguments$.id), 
-                            "id", a1[[1]]$Information$Arguments$.id)
+      id          <- ifelse(is.null(.object[[1]]$Information$Arguments$.id), 
+                            "id", .object[[1]]$Information$Arguments$.id)
     } else if(any(class(.object) %in% "cSEMResults_2ndorder")) {
       data <- .object$First_stage$Information$Arguments$.data
       id   <- NULL
@@ -1569,7 +1569,7 @@ resamplecSEMResultsCore <- function(
 #' See xxx for details on their use and calculation.
 #' 
 #' @usage infer(
-#'  .resample_object   = NULL,
+#'  .object            = NULL,
 #'  .alpha             = 0.05,
 #'  .bias_corrected    = TRUE,
 #'  .quantity          = c("all", "mean", "sd", "bias", "CI_standard_z", 
@@ -1590,7 +1590,7 @@ resamplecSEMResultsCore <- function(
 #'
 
 infer <- function(
-  .resample_object = NULL,
+  .object = NULL,
   .alpha           = 0.05,
   .bias_corrected  = TRUE,
   .quantity        = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
@@ -1600,26 +1600,26 @@ infer <- function(
   ## Check arguments
   match.arg(.quantity, args_default(.choices = TRUE)$.quantity, several.ok = TRUE)
   
-  if(!any(class(.resample_object) == "cSEMResults")) {
+  if(!any(class(.object) == "cSEMResults")) {
     stop2("The following error occured in the `infer()` function:\n",
           "Object must be of class `cSEMResults`")
   }
   
-  if(!any(class(.resample_object) == "cSEMResults_resampled")) {
+  if(!any(class(.object) == "cSEMResults_resampled")) {
     stop2("The following error occured in the `infer()` function:\n",
           "Object must contain resamples.", 
-          " Use `resamplecSEMResults(.object = .resample_object, ...)` first."
+          " Use `resamplecSEMResults(.object = .object, ...)` first."
           )
   }
   
-  if(any(class(.resample_object) == "cSEMResults_2ndorder")) {
-    first_resample  <- .resample_object$Second_stage$Information$Resamples$Estimates$Estimates1
-    second_resample <- .resample_object$Second_stage$Information$Resamples$Estimates$Estimates2
-    info            <- .resample_object$Second_stage$Information$Resamples$Information
+  if(any(class(.object) == "cSEMResults_2ndorder")) {
+    first_resample  <- .object$Second_stage$Information$Resamples$Estimates$Estimates1
+    second_resample <- .object$Second_stage$Information$Resamples$Estimates$Estimates2
+    info            <- .object$Second_stage$Information$Resamples$Information
   } else {
-    first_resample  <- .resample_object$Estimates$Estimates_resample$Estimates1
-    second_resample <- .resample_object$Estimates$Estimates_resample$Estimates2
-    info            <- .resample_object$Information$Information_resample
+    first_resample  <- .object$Estimates$Estimates_resample$Estimates1
+    second_resample <- .object$Estimates$Estimates_resample$Estimates2
+    info            <- .object$Information$Information_resample
   }
 
   ## Compute quantiles/critical values -----------------------------------------
@@ -1706,7 +1706,7 @@ infer <- function(
   }
   
   if(any(.quantity %in% c("all", "CI_bca"))) {
-    out[["CI_bca"]] <- BcaCIResample(.object = .resample_object, 
+    out[["CI_bca"]] <- BcaCIResample(.object = .object, 
                                      first_resample, probs)
   }
   

@@ -167,7 +167,7 @@ calculateGoF <- function(
 #' 
 #' For the the tau-equivalent reliability (rhoT) a closed-form confidence 
 #' interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
-#' `.calculate_ci = TRUE` (default is `FALSE`). If `.alpha` is a vector
+#' `.closed_form_ci = TRUE` (default is `FALSE`). If `.alpha` is a vector
 #' several CI's are returned.
 #' 
 #' The function is only applicable to objects of class `cSEMResults_default`.
@@ -180,10 +180,11 @@ calculateGoF <- function(
 #'   `.only_common_factors = FALSE` in which case the number of rows equals the
 #'   total number of constructs in the model). The first column contains the name of the construct.
 #'   The second column the reliability estimate.
-#'   If `.calculate_ci = TRUE` the remaining columns contain lower and upper bounds
+#'   If `.closed_form_ci = TRUE` the remaining columns contain lower and upper bounds
 #'   for the (1 - `.alpha`) confidence interval(s).
 #'   
 #' @inheritParams csem_arguments
+#' @param ... Ignored.
 #'
 #' @seealso [assess], [cSEMResults]
 #'
@@ -238,8 +239,10 @@ calculateRhoC <- function(
 calculateRhoT <- function(
   .object              = NULL,
   .alpha               = args_default()$.alpha,
-  .calculate_ci        = args_default()$.calculate_ci,
-  .only_common_factors = TRUE) {
+  .closed_form_ci      = args_default()$.closed_form_ci,
+  .only_common_factors = TRUE,
+  ...
+  ) {
   
   ## Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -254,7 +257,7 @@ calculateRhoT <- function(
   # given if a weightning scheme other than "unit" is used, since they have
   # not been formally studied yet.
   
-  if(.object$Information$Arguments$.approach_weights != "unit" & .calculate_ci == TRUE) {
+  if(.object$Information$Arguments$.approach_weights != "unit" & .closed_form_ci == TRUE) {
     warning2("Calculation of the confidence interval (CI) for rhoT (Cronbach alpha)",
              " was proposed and studied assuming sum scores.\n",
              "Statistical properties of the CI for rhoT based on a weighted composite",
@@ -280,7 +283,7 @@ calculateRhoT <- function(
     out[j, "Estimate"]  <- rhoT
     
     ## Calculate confidence interval for rhoT
-    if(.calculate_ci) {
+    if(.closed_form_ci) {
       # Calculation of the CIs are based on Trinchera et al. (2018).
       # The code for the calculation of the CIs is addpated from the paper.
 
@@ -427,6 +430,7 @@ calculateHTMT <- function(
 #' @return A single numeric value.
 #' 
 #' @inheritParams csem_arguments
+#' @param ... Ignored.
 #'
 #' @keywords internal
 #' @name distance_measures
@@ -434,7 +438,12 @@ NULL
 
 #' @describeIn distance_measures The standardized root means squared residual (SRMR).
 
-calculateSRMR <- function(.object = NULL) {
+calculateSRMR <- function(
+  .object    = NULL, 
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv,
+  ...
+  ) {
   
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -446,7 +455,7 @@ calculateSRMR <- function(.object = NULL) {
   # between correlation matrices.
   
   S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object)
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
 
   
   # Perhaps in the future we allow to estimate unstandardized coefficients
@@ -457,7 +466,12 @@ calculateSRMR <- function(.object = NULL) {
 
 #' @describeIn distance_measures The geodesic distance (dG).
 
-calculateDG <- function(.object = NULL) {
+calculateDG <- function(
+  .object    = NULL, 
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv,
+  ...
+  ){
 
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -466,7 +480,7 @@ calculateDG <- function(.object = NULL) {
   }
   
   S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object) 
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv) 
   
   # Not sure if logarithm naturalis is used or logarithm with base 10. 
   Eigen            <- eigen(solve(S) %*% Sigma_hat)
@@ -478,7 +492,12 @@ calculateDG <- function(.object = NULL) {
 
 #' @describeIn distance_measures The squared Euclidian distance
 
-calculateDL <- function(.object = NULL) {
+calculateDL <- function(
+  .object    = NULL, 
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv,
+  ...
+  ){
   
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -487,7 +506,7 @@ calculateDL <- function(.object = NULL) {
   }
   
   S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object) 
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
   
   ## Calculate distance
   0.5 * sum((S - Sigma_hat)[lower.tri(S, diag = FALSE)]^2)
@@ -495,7 +514,12 @@ calculateDL <- function(.object = NULL) {
 
 #' @describeIn  distance_measures The distance measure used by FIML
 
-calculateDML <- function(.object = NULL){
+calculateDML <- function(
+  .object    = NULL, 
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv,
+  ...
+  ){
 
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -506,7 +530,7 @@ calculateDML <- function(.object = NULL){
   n         <- nrow(.object$Information$Data)
   S         <- .object$Estimates$Indicator_VCV
   p         <- dim(S)[1]
-  Sigma_hat <- fit(.object, .saturated = FALSE, .type_vcv = 'indicator')
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
   
   (n - 1)*(log(det(Sigma_hat)) 
               + sum(diag(S %*% solve(Sigma_hat))) 
@@ -530,7 +554,7 @@ calculateEffectSize <- function(.object = NULL) {
   
   ## Get relevant quantities
   H <- .object$Estimates$Construct_scores
-  Q <- sqrt(.object$Estimates$Construct_reliabilities)
+  Q <- sqrt(.object$Estimates$Reliabilities)
   P <- .object$Estimates$Construct_VCV
   csem_model  <- .object$Information$Model
   normality   <- .object$Information$Arguments$.normality

@@ -49,14 +49,14 @@ Defaults to \code{TRUE}}
 
 \item{.C}{A (J x J) composite variance-covariance matrix.}
 
-\item{.calculate_ci}{Logical. Should a closed-form confidence interval be computed?
-Defaults to \code{FALSE}.}
-
 \item{.choices}{Logical. Should candidate values for the arguments be returned?
 Defaults to \code{FALSE}.}
 
 \item{.ci}{A vector of character strings naming the confidence interval to compute.
 For possible choices see \code{\link[=infer]{infer()}}.}
+
+\item{.closed_form_ci}{Logical. Should a closed-form confidence interval be computed?
+Defaults to \code{FALSE}.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
@@ -221,7 +221,8 @@ resampling from a resample. Defaults to \code{199}.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
-\item{.saturated}{Logical. Should a saturated structural model be used? Defaults to \code{FALSE}.}
+\item{.saturated}{Logical. Should a saturated structural model be used?
+Defaults to \code{FALSE}.}
 
 \item{.sign_change_option}{Character string. Which sign change option should
 be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",
@@ -234,7 +235,7 @@ case an arbitrary seed is choosen.}
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 
 \item{.starting_values}{list of named vectors containig the starting values.
-Defaults to "\emph{NULL}".}
+Defaults to \code{NULL}.}
 
 \item{.terms}{A vector of construct names to be classified.}
 

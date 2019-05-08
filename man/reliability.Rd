@@ -9,8 +9,8 @@
 calculateRhoC(.object = NULL, .only_common_factors = TRUE)
 
 calculateRhoT(.object = NULL, .alpha = args_default()$.alpha,
-  .calculate_ci = args_default()$.calculate_ci,
-  .only_common_factors = TRUE)
+  .closed_form_ci = args_default()$.closed_form_ci,
+  .only_common_factors = TRUE, ...)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -21,8 +21,10 @@ factors be included? Defaults to \code{TRUE}.}
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.calculate_ci}{Logical. Should a closed-form confidence interval be computed?
+\item{.closed_form_ci}{Logical. Should a closed-form confidence interval be computed?
 Defaults to \code{FALSE}.}
+
+\item{...}{Ignored.}
 }
 \value{
 For \code{calculateRhoC()} a named numeric vector containing the reliability
@@ -32,7 +34,7 @@ constructs modeled as common factors in the model (unless
 \code{.only_common_factors = FALSE} in which case the number of rows equals the
 total number of constructs in the model). The first column contains the name of the construct.
 The second column the reliability estimate.
-If \code{.calculate_ci = TRUE} the remaining columns contain lower and upper bounds
+If \code{.closed_form_ci = TRUE} the remaining columns contain lower and upper bounds
 for the (1 - \code{.alpha}) confidence interval(s).
 }
 \description{
@@ -59,7 +61,7 @@ interpret reliability in this case.
 
 For the the tau-equivalent reliability (rhoT) a closed-form confidence
 interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
-\code{.calculate_ci = TRUE} (default is \code{FALSE}). If \code{.alpha} is a vector
+\code{.closed_form_ci = TRUE} (default is \code{FALSE}). If \code{.alpha} is a vector
 several CI's are returned.
 
 The function is only applicable to objects of class \code{cSEMResults_default}.
