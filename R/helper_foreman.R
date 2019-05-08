@@ -236,12 +236,31 @@ calculateIndicatorCor <- function(
             if(only_numeric_cols) {
               S <- cor(.X_cleaned)
               cor_type <- "Bravais-Pearson" 
+              thres_est = NULL
             } else {
-              # Pd is TRUE by default. See ?hetcor for details
-              temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
-              S    <- temp$correlations
-              cor_type <- unique(c(temp$type))
-              cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""' 
+              # # Pd is TRUE by default. See ?hetcor for details
+              # temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
+              # S    <- temp$correlations
+              # cor_type <- unique(c(temp$type))
+              # cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""' 
+              
+              # Use lavCor function from the lavaan package for the calculation of the polychoric and polyserial correlation 
+              # No smoothing is conducted to ensure positive definiteness of the correlation matrix
+              S <- lavaan::lavCor(.X_cleaned, se = 'none', estimator = "two.step", output = "cor")
+              
+              # Estimate thresholds
+              thres_est <- lavaan::lavCor(.X_cleaned, se = 'none', estimator = "two.step", output = "th")
+              
+              # Define type of correlation, that can either be polyserial, polychoric or both
+              type_var=unlist(sapply(X_cleaned,class))
+              
+              # if at least one numeric variable is included the polyserial correlation is applied
+              if('numeric' %in% type_var){
+                cor_type = "Polyserial"
+              } else { #only if all variables are categorical the type of correlation is set to polychoric
+                cor_type = "Polychoric"
+              }
+
             }
           },
 
@@ -250,16 +269,20 @@ calculateIndicatorCor <- function(
             S[upper.tri(S) == TRUE] = t(S)[upper.tri(S) == TRUE]
 
             cor_type <-  "Robust (MCD)"
+            
+            thres_est = NULL
           },
           "spearman" = {
             S <- cor(.X_cleaned, method = "spearman")
 
             cor_type <-  "Robust (Spearman)"
+            
+            thres_est = NULL
           }
   )
   # (TODO) not sure how to name the "type" yet and what to do with it. Theoretically,
   # a polycoric correlation could also be used with GSCA or some other non-PLS-PM method.
-  list(S = S, cor_type = cor_type)
+  list(S = S, cor_type = cor_type, thres_est = thres_est)
 }
 
 #' Internal: Calculate Reliabilities

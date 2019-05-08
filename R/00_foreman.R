@@ -250,6 +250,7 @@ foreman <- function(
       # "Arguments"     = as.list(match.call())[-1],
       "Arguments"     = args_used,
       "Type_of_indicator_correlation" = Cor$cor_type,
+      "Threshold_parameter_estimates" = Cor$thres_est,
       "Weight_info"   = list(
         "Modes"              = W$Modes,
         "Number_iterations"  = W$Iterations,
