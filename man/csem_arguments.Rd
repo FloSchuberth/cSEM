@@ -234,7 +234,7 @@ case an arbitrary seed is choosen.}
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 
 \item{.starting_values}{list of named vectors containig the starting values.
-Defaults to "\emph{NULL}".}
+Defaults to \code{NULL}.}
 
 \item{.terms}{A vector of construct names to be classified.}
 

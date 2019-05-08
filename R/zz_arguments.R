@@ -175,7 +175,7 @@
 #' @param .stage Character string. The stage the model is need for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .starting_values list of named vectors containig the starting values. 
-#' Defaults to "*NULL*".
+#' Defaults to `NULL`.
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.

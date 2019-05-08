@@ -530,7 +530,7 @@ calculateEffectSize <- function(.object = NULL) {
   
   ## Get relevant quantities
   H <- .object$Estimates$Construct_scores
-  Q <- sqrt(.object$Estimates$Construct_reliabilities)
+  Q <- sqrt(.object$Estimates$Reliabilities)
   P <- .object$Estimates$Construct_VCV
   csem_model  <- .object$Information$Model
   normality   <- .object$Information$Arguments$.normality

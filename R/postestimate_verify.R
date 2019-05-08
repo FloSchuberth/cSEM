@@ -60,7 +60,7 @@ verify.cSEMResults_default <- function(.object){
     stat["3"] <- TRUE
   }
   
-  if(max(.object$Estimates$Construct_reliabilities)>1) {
+  if(max(.object$Estimates$Reliabilities)>1) {
     stat["4"] <- TRUE
   }
   
@@ -106,7 +106,7 @@ verify.cSEMResults_2ndorder <- function(.object){
     stat1["3"] <- TRUE
   }
   
-  if(max(x1e$Construct_reliabilities)>1) {
+  if(max(x1e$Reliabilities)>1) {
     stat1["4"] <- TRUE
   }
   
@@ -131,7 +131,7 @@ verify.cSEMResults_2ndorder <- function(.object){
     stat2["3"] <- TRUE
   }
   
-  if(max(x1e$Construct_reliabilities)>1) {
+  if(max(x1e$Reliabilities) > 1) {
     stat2["4"] <- TRUE
   }
   
