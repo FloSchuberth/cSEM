@@ -639,7 +639,7 @@ print.cSEMTestOMF <- function(x, ...) {
   
   cat(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Test for overall model fit based on Dijkstra & Henseler (2015)",
+    rule(center = "Test for overall model fit based on Beran & Srivastava (1985)",
          width = 80), 
     sep = ""
   )

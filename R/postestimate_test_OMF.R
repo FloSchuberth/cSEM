@@ -2,10 +2,9 @@
 #'
 #' Test the overall model fit.
 #' 
-#' Description: TODO.
-#' Test is based on \insertCite{Dijkstra2015;textual}{cSEM}.
-#' Data is transformed according to \insertCite{Beran1985;textual}{cSEM}.
-#' After 10000 iterations it stops automatically
+#' Based on \insertCite{Beran1985;textual}{cSEM}. See also 
+#' \insertCite{Dijkstra2015;textual}{cSEM}.
+#' After 10000 iterations it stops automatically.
 #' 
 #' @usage testOMF(
 #'  .object                = args_default()$.object, 
