@@ -4,7 +4,18 @@
 \name{satisfaction_gender}
 \alias{satisfaction_gender}
 \title{Data: satisfaction including gender}
-\format{A data frame with 250 observations and 28 variables.
+\format{An object of class \code{data.frame} with 250 rows and 28 columns.}
+\source{
+The \href{https://github.com/gastonstat/plspm}{plspm} package (version  0.4.9).
+Original source according to \pkg{plspm}:
+"Laboratory of Information Analysis and Modeling (LIAM).
+Facultat d'Informatica de Barcelona, Universitat Politecnica de Catalunya".
+}
+\usage{
+satisfaction_gender
+}
+\description{
+A data frame with 250 observations and 28 variables.
 Variables from 1 to 27 refer to six latent concepts: \code{IMAG}=Image,
 \code{EXPE}=Expectations, \code{QUAL}=Quality, \code{VAL}=Value,
 \code{SAT}=Satisfaction, and \code{LOY}=Loyalty.
@@ -36,17 +47,9 @@ same bank again, propensity to switch to other bank,
 intention to recommend the bank to friends,
 and the sense of loyalty.}
 \item{gender}{The sex of the respondent.}
-}}
-\source{
-The \href{https://github.com/gastonstat/plspm}{plspm} package (version  0.4.9).
-Original source according to \pkg{plspm}:
-"Laboratory of Information Analysis and Modeling (LIAM).
-Facultat d'Informatica de Barcelona, Universitat Politecnica de Catalunya".
 }
-\usage{
-satisfaction_gender
 }
-\description{
+\details{
 This data set contains the variables from a customer satisfaction study of
 a Spanish credit institution on 250 customers. The data is taken from the
 \href{https://github.com/gastonstat/plspm}{plspm} package. For convenience,

@@ -112,10 +112,15 @@ summarize.cSEMResults_default <- function(
     ## Check arguments
     match.arg(.ci, args_default(.choices = TRUE)$.ci, several.ok = TRUE)
     
+    ## The 95% percentile CI is returned by default (BCa is acutally better 
+    ##  but requires a second resampling run and should therefore not be the 
+    ##  default).
+    if(is.null(.ci)) .ci <- "CI_percentile"
+    
     quantity <- c("sd", .ci)
     
     infer_out <- infer(
-      .object = .object,
+      .object          = .object,
       .alpha           = .alpha,
       .quantity        = quantity,
       ...
@@ -230,6 +235,9 @@ summarize.cSEMResults_2ndorder <- function(
   ## Run summarize for each stage
   x <- lapply(.object, summarize.cSEMResults_default)
   
+  x11 <- x$First_stage$Estimates
+  x12 <- x$First_stage$Information
+  
   x21 <- x$Second_stage$Estimates
   x22 <- x$Second_stage$Information
   
@@ -246,34 +254,39 @@ summarize.cSEMResults_2ndorder <- function(
   x21$Loading_estimates <- x21$Loading_estimates[x21$Loading_estimates$Name %in% i, , drop = FALSE]
   
   ## Weights estimates 
-  # Wieghts for first stage (=all weights except those of the 2nd order constructs)
+  # Weights for first stage (=all weights except those of the 2nd order constructs)
   # Weights for second stage (all weights for 2nd order constructs)
   i <- x21$Weight_estimates$Name[!grepl("_temp", x21$Weight_estimates$Name)]
   x21$Weight_estimates <- x21$Weight_estimates[x21$Weight_estimates$Name %in% i, , drop = FALSE]
   
   ## Inner weight estimates
-  # Rename. Delete the "_temp" suffix.
-  # x21$Inner_weight_estimates$Name <- gsub("_temp", "", x21$Inner_weight_estimates$Name)
+  # Delete the "_temp" suffix.
+  x21$Inner_weight_estimates$Name <- gsub("_temp", "", x21$Inner_weight_estimates$Name)
   
   ## Construct scores
-  # colnames(x21$Construct_scores) <- gsub("_temp", "", colnames(x21$Construct_scores))
+  # Delete the "_temp" suffix.
+  colnames(x21$Construct_scores) <- gsub("_temp", "", colnames(x21$Construct_scores))
   
-  if(any(class(.object) == "cSEMResults_resampled")) {
+  if(inherits(.object, "cSEMResults_resampled")) {
     
     ## Check arguments
     match.arg(.ci, args_default(.choices = TRUE)$.ci, several.ok = TRUE)
     
+    ## The 95% percentile CI is returned by default (BCa is acutally better 
+    ##  but requires a second resampling run and should therefore not be the 
+    ##  default).
+    if(is.null(.ci)) .ci <- "CI_percentile"
+    
     quantity <- c("sd", .ci)
     
     infer_out <- infer(
-      .object = .object,
+      .object          = .object,
       .alpha           = .alpha,
       .quantity        = quantity,
       ...
     )
     
-    ## Path coefficients
-    
+    ### Path estimates -----------------
     temp   <- infer_out$Path_estimates
     t_temp <- x21$Path_estimates$Estimate / temp$sd
 
@@ -293,50 +306,67 @@ summarize.cSEMResults_2ndorder <- function(
       colnames(x21$Path_estimates)[(length(colnames(x21$Path_estimates)) - 
                                   (length(ci_colnames) - 1)):length(colnames(x21$Path_estimates))] <- ci_colnames
     }
-    # 
-    # ## Loadings
-    # temp   <- lapply(infer_out$Loading_estimates, function(x) x[]
-    # t_temp <- x21$Loading_estimates$Estimate / temp$sd
-    # 
-    # x21$Loading_estimates["Std_err"] <- temp$sd
-    # x21$Loading_estimates["t_stat"]  <- t_temp
-    # x21$Loading_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-    # 
-    # if(!is.null(.ci)) {
-    #   ## Add CI's
-    #   # Add cis to data frame and set names
-    #   x21$Loading_estimates <- cbind(x21$Loading_estimates, t(do.call(rbind, temp[.ci])))
-    #   rownames(x21$Loading_estimates) <- NULL
-    #   colnames(x21$Loading_estimates)[(length(colnames(x21$Loading_estimates)) - 
-    #                                  (length(ci_colnames) - 1)):length(colnames(x21$Loading_estimates))] <- ci_colnames
-    # }
-    # 
-    # ## Weight estimates
-    # temp   <- infer_out$Weight_estimates
-    # t_temp <- x21$Weight_estimates / temp$sd
-    # 
-    # x21$Weight_estimates["Std_err"] <- temp$sd
-    # x21$Weight_estimates["t_stat"]  <- t_temp
-    # x21$Weight_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-    # 
-    # if(!is.null(.ci)) {
-    #   ## Add CI's
-    #   # Add cis to data frame and set names
-    #   x21$Weight_estimates <- cbind(x21$Weight_estimates, t(do.call(rbind, temp[.ci])))
-    #   rownames(x21$Weight_estimates) <- NULL
-    #   colnames(x21$Weight_estimates)[(length(colnames(x21$Weight_estimates)) - 
-    #                                 (length(ci_colnames) - 1)):length(colnames(x21$Weight_estimates))] <- ci_colnames
-    # }
+
+    ### Loadings ----------------------
+    L <- lapply(list(x11$Loading_estimates, x21$Loading_estimates), function(y) {
+      
+      temp   <- infer_out$Loading_estimates
+      t_temp <- y$Estimate / temp$sd[y$Name]
+      
+      y["Std_err"] <- temp$sd[y$Name]
+      y["t_stat"]  <- t_temp
+      y["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+      
+      if(!is.null(.ci)) {
+        ## Add CI's
+        # Add cis to data frame and set names
+        ci_temp <- t(do.call(rbind, temp[.ci]))[y$Name, , drop =FALSE]
+        y <- cbind(y, ci_temp)
+        rownames(y) <- NULL
+        colnames(y)[(length(colnames(y)) - (length(ci_colnames) - 1)):length(colnames(y))] <- ci_colnames
+      }
+      ## Return y
+      y
+    }) 
+    
+    ### Weights --------------------
+    W <- lapply(list(x11$Weight_estimates, x21$Weight_estimates), function(y) {
+      
+      temp   <- infer_out$Weight_estimates
+      t_temp <- y$Estimate / temp$sd[y$Name]
+      
+      y["Std_err"] <- temp$sd[y$Name]
+      y["t_stat"]  <- t_temp
+      y["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+      
+      if(!is.null(.ci)) {
+        ## Add CI's
+        # Add cis to data frame and set names
+        ci_temp <- t(do.call(rbind, temp[.ci]))[y$Name, , drop =FALSE]
+        y <- cbind(y, ci_temp)
+        rownames(y) <- NULL
+        colnames(y)[(length(colnames(y)) - (length(ci_colnames) - 1)):length(colnames(y))] <- ci_colnames
+      }
+      ## Return y
+      y
+    }) 
+    
+    ## Update
+    x11$Loading_estimates <- L[[1]]
+    x21$Loading_estimates <- L[[2]]
+    x11$Weight_estimates  <- W[[1]]
+    x21$Weight_estimates  <- W[[2]]
   }
   
   ## Set class for printing and return
-  out <- list("First_stage" = x$First_stage, 
+  out <- list("First_stage"  = list("Estimates" = x11, "Information" = x12), 
               "Second_stage" = list("Estimates" = x21, "Information" = x22))
   
-  class(out) <- "cSEMSummarize_2ndorder"
-  
-  if(inherits(.object) == "cSEMResults_resampled") {
-    class(.object) <- c(class(.object), "cSEMSummarize_resampled" )
+  ## Set class for printing and return
+  class(out) <- if(inherits(.object, "cSEMResults_resampled")) {
+    c("cSEMSummarize_2ndorder", "cSEMSummarize_resampled")
+  } else {
+    "cSEMSummarize_2ndorder"
   }
   
   return(out)

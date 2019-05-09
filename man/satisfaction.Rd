@@ -4,7 +4,18 @@
 \name{satisfaction}
 \alias{satisfaction}
 \title{Data: satisfaction}
-\format{A data frame with 250 observations and 27 variables.
+\format{An object of class \code{data.frame} with 250 rows and 27 columns.}
+\source{
+The \href{https://github.com/gastonstat/plspm}{plspm} package (version  0.4.9).
+Original source according to \pkg{plspm}:
+"Laboratory of Information Analysis and Modeling (LIAM).
+Facultat d'Informatica de Barcelona, Universitat Politecnica de Catalunya".
+}
+\usage{
+satisfaction
+}
+\description{
+A data frame with 250 observations and 27 variables.
 Variables from 1 to 27 refer to six latent concepts: \code{IMAG}=Image,
 \code{EXPE}=Expectations, \code{QUAL}=Quality, \code{VAL}=Value,
 \code{SAT}=Satisfaction, and \code{LOY}=Loyalty.
@@ -35,17 +46,9 @@ capture aspects concerning propensity to choose the
 same bank again, propensity to switch to other bank,
 intention to recommend the bank to friends,
 and the sense of loyalty.}
-}}
-\source{
-The \href{https://github.com/gastonstat/plspm}{plspm} package (version  0.4.9).
-Original source according to \pkg{plspm}:
-"Laboratory of Information Analysis and Modeling (LIAM).
-Facultat d'Informatica de Barcelona, Universitat Politecnica de Catalunya".
 }
-\usage{
-satisfaction
 }
-\description{
+\details{
 This dataset contains the variables from a customer satisfaction study of
 a Spanish credit institution on 250 customers. The data is identical to
 the dataset provided by the \href{https://github.com/gastonstat/plspm}{plspm} package

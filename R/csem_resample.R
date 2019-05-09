@@ -993,7 +993,7 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
     resample_out <- c(.object$Second_stage$Information)
     resample_out[[length(resample_out) + 1]] <- list(
       "Estimates" = c(out),
-      "Information" =       list(
+      "Information_resample" =       list(
         "Method"                  = .resample_method,
         "Method2"                 = .resample_method2,
         "Number_of_observations"  = nrow(.object$Second_stage$Information$Data),
@@ -1645,6 +1645,10 @@ infer <- function(
   probs  <- c()
   .alpha <- .alpha[order(.alpha)]
   for(i in seq_along(.alpha)) { 
+    if(.alpha[i] < 0 | .alpha[i] > 1) {
+      stop2("The following error occured in the `infer()` function:\n",
+            "`.alpha` must be between 0 and 1.")
+    }
     # Both two sided and one sided confidence intervalls may be needed.
     # Therefore for every alpha four values will be put in a vector 
     # 1. alpha
@@ -1731,7 +1735,7 @@ infer <- function(
   
   if(any(.quantity %in% c("all", "CI_t_interval"))) {
     if(!anyNA(second_resample)) {
-      out[["CI_t_interval"]] <-       TStatCIResample(
+      out[["CI_t_interval"]] <- TStatCIResample(
         .first_resample     = first_resample, 
         .second_resample    = second_resample, 
         .bias_corrected     = .bias_corrected,
@@ -1740,6 +1744,11 @@ infer <- function(
         .n                  = info$Number_of_observations, 
         .probs              = probs
       ) 
+    } else if(any(.quantity == "CI_t_interval")) {
+      stop2("The following error occured in the `infer()` function:\n",
+            "`CI_t_interval` requires (jackknife) resamples for each resample.",
+            " Rerun your original estimation using .resample_method2 = 'jackknife'.",
+            " and try again.")
     }
   }
   

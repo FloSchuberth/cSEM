@@ -4,7 +4,7 @@
 \alias{print.cSEMSummarize_default}
 \title{\code{cSEMSummarize_default} method for \code{print()}}
 \usage{
-\method{print}{cSEMSummarize_default}(x, ..., .full_output = FALSE)
+\method{print}{cSEMSummarize_default}(x, ...)
 }
 \description{
 The \link{cSEMSummary} method for the generic function \code{\link[=print]{print()}}.
