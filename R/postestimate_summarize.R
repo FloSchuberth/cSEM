@@ -206,9 +206,15 @@ summarize.cSEMResults_multi <- function(
   .alpha                 = args_default()$.alpha,
   .ci                    = NULL,
   ...
-) {
-  
- lapply(.object, summarize.cSEMResults_default, .alpha, .ci, ...)
+  ) {
+
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    lapply(.object, summarize.cSEMResults_2ndorder, 
+           .alpha, .ci, ...)
+  } else {
+    lapply(.object, summarize.cSEMResults_default, 
+           .alpha, .ci, ...)
+  }
 }
 
 #' @describeIn summarize (TODO)

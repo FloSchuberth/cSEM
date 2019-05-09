@@ -7,12 +7,13 @@
 \alias{assess.cSEMResults_2ndorder}
 \title{Assess model}
 \usage{
-assess(.object, .only_common_factors = TRUE, ...)
+assess(.object = NULL, .only_common_factors = TRUE, ...)
 
-\method{assess}{cSEMResults_default}(.object,
+\method{assess}{cSEMResults_default}(.object = NULL,
   .only_common_factors = TRUE, ...)
 
-\method{assess}{cSEMResults_multi}(.object, ...)
+\method{assess}{cSEMResults_multi}(.object = NULL,
+  .only_common_factors = TRUE, ...)
 
 \method{assess}{cSEMResults_2ndorder}(.object, ...)
 }

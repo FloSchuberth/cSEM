@@ -789,21 +789,40 @@ resamplecSEMResults.cSEMResults_multi <- function(
   ...
 ) {
   
-  out <- lapply(.object, function(x) {
-    resamplecSEMResults.cSEMResults_default(
-      .object               = x,
-      .resample_method      = .resample_method,
-      .resample_method2     = .resample_method2,
-      .R                    = .R,
-      .R2                   = .R2,
-      .handle_inadmissibles = .handle_inadmissibles,
-      .user_funs            = .user_funs,
-      .eval_plan            = .eval_plan,
-      .seed                 = .seed,
-      .sign_change_option   = .sign_change_option,
-      ...
-    )
-  })
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    out <- lapply(.object, function(x) {
+      resamplecSEMResults.cSEMResults_2ndorder(
+        .object               = x,
+        .resample_method      = .resample_method,
+        .resample_method2     = .resample_method2,
+        .R                    = .R,
+        .R2                   = .R2,
+        .handle_inadmissibles = .handle_inadmissibles,
+        .user_funs            = .user_funs,
+        .eval_plan            = .eval_plan,
+        .seed                 = .seed,
+        .sign_change_option   = .sign_change_option,
+        ...
+      )
+    })
+  } else {
+    out <- lapply(.object, function(x) {
+      resamplecSEMResults.cSEMResults_default(
+        .object               = x,
+        .resample_method      = .resample_method,
+        .resample_method2     = .resample_method2,
+        .R                    = .R,
+        .R2                   = .R2,
+        .handle_inadmissibles = .handle_inadmissibles,
+        .user_funs            = .user_funs,
+        .eval_plan            = .eval_plan,
+        .seed                 = .seed,
+        .sign_change_option   = .sign_change_option,
+        ...
+      )
+    })
+  }
+
   ## Add/ set class
   class(out) <- c(class(.object), "cSEMResults_resampled")
   return(out)

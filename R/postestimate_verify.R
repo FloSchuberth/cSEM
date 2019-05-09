@@ -80,7 +80,11 @@ verify.cSEMResults_default <- function(.object){
 
 verify.cSEMResults_multi <- function(.object){
   
-  lapply(.object, verify.cSEMResults_default)
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    lapply(.object, verify.cSEMResults_2ndorder)
+  } else {
+    lapply(.object, verify.cSEMResults_default)
+  }
 }
 
 #' @describeIn verify (TODO)

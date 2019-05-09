@@ -12,14 +12,22 @@
 #' @return (TODO)
 #' @export
 
-assess <- function(.object, .only_common_factors = TRUE, ...) {
+assess <- function(
+  .object              = NULL, 
+  .only_common_factors = TRUE, 
+  ...
+  ){
   UseMethod("assess")
 }
 
 #' @describeIn assess (TODO)
 #' @export
 
-assess.cSEMResults_default <- function(.object, .only_common_factors = TRUE, ...){
+assess.cSEMResults_default <- function(
+  .object              = NULL, 
+  .only_common_factors = TRUE, 
+  ...
+  ){
   
   ## Get relevant objects
   con_types <-.object$Information$Model$construct_type
@@ -89,9 +97,19 @@ assess.cSEMResults_default <- function(.object, .only_common_factors = TRUE, ...
 #' @describeIn assess (TODO)
 #' @export
 
-assess.cSEMResults_multi <- function(.object, ...){
+assess.cSEMResults_multi <- function(
+  .object              = NULL,
+  .only_common_factors = TRUE,
+  ...
+  ){
   
-  cat("not yet implemented")
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    lapply(.object, assess.cSEMResults_2ndorder, 
+           .only_common_factors = TRUE, ...)
+  } else {
+    lapply(.object, assess.cSEMResults_default, 
+           .only_common_factors = TRUE, ...)
+  }
 }
 
 #' @describeIn assess (TODO)
@@ -99,5 +117,5 @@ assess.cSEMResults_multi <- function(.object, ...){
 
 assess.cSEMResults_2ndorder <- function(.object, ...){
   
-  cat("not yet implemented")
+  stop2("Currently, second-order models are not supported by `assess()`.")
 }

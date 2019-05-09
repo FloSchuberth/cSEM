@@ -234,13 +234,23 @@ testOMF.cSEMResults_multi <- function(
   .saturated             = args_default()$.saturated,
   .verbose               = args_default()$.verbose
 ){
-  lapply(.object, testOMF.cSEMResults_default,
-         .alpha                = .alpha,
-         .handle_inadmissibles = .handle_inadmissibles,
-         .R                    = .R,
-         .saturated            = .saturated,
-         .verbose              = .verbose
-         )
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    lapply(.object, testOMF.cSEMResults_2ndorder,
+           .alpha                = .alpha,
+           .handle_inadmissibles = .handle_inadmissibles,
+           .R                    = .R,
+           .saturated            = .saturated,
+           .verbose              = .verbose
+    )
+  } else {
+    lapply(.object, testOMF.cSEMResults_default,
+           .alpha                = .alpha,
+           .handle_inadmissibles = .handle_inadmissibles,
+           .R                    = .R,
+           .saturated            = .saturated,
+           .verbose              = .verbose
+    )
+  }
 }
 
 #' @describeIn testOMF (TODO)

@@ -38,7 +38,7 @@ measure what they are supposed to measure (validity).
 There are several issues with the termionlogy and the reasoning behind this logic.
 RA is therefore only implemented since reviewers are likely to demand
 its compuation, however, its actual application for validitiy assessment
-is strongly discouraged.
+is discouraged.
 
 The function is only applicable to objects of class \code{cSEMResults_default}.
 }
