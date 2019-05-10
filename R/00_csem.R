@@ -353,7 +353,7 @@ csem <- function(
   ## Set class for output
   # See the details section of ?UseMethod() to learn how method dispatch works
   # for objects with multiple classes
-  if(any(class(.data) == "list") | !is.null(.id)) {
+  if(inherits(.data, "list") | !is.null(.id)) {
     
     # Sometimes the original (unstandardized) pooled data set is required 
     # (e.g. for permutation and permutation based tests).
@@ -363,7 +363,7 @@ csem <- function(
     # If ".data" was originally pooled and subsequently split by ".id"
     # The original unsplit data is returned.
     
-    out[[1]]$Information$Data_pooled <- if(any(class(.data) == "list")) {
+    out[[1]]$Information$Data_pooled <- if(inherits(.data, "list")) {
       data_pooled <- do.call(rbind, .data)
       data_pooled <- as.data.frame(data_pooled)
       data_pooled[, "id"] <- rep(names(out), times = sapply(.data, nrow))
@@ -371,8 +371,29 @@ csem <- function(
     } else {
       .data
     }
-
+    
+    ## Set class
     class(out) <- c("cSEMResults", "cSEMResults_multi")
+
+    ## Second order (2/3 stage approach)
+    if(any(model_original$construct_order == "Second order") && 
+       args$.approach_2ndorder == "3stage") {
+      
+      ### Second step
+      out <- lapply(out, function(x) {
+        out2 <- calculate2ndOrder(model_original, x)
+        x <- list("First_stage" = x, "Second_stage" = out2)
+        
+        ## Append original arguments needed as they are required by e.g. testOMF.
+        # Since 
+        args_needed[[".model"]] <- model_original
+        x$Second_stage$Information$Arguments_original <- args_needed
+        
+        # Return x
+        x
+      })
+      class(out) <- c("cSEMResults", "cSEMResults_multi", "cSEMResults_2ndorder")
+    }
     
   } else if(any(model_original$construct_order == "Second order") && 
             args$.approach_2ndorder == "3stage") {

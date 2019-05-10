@@ -263,7 +263,7 @@ args_default <- function(.choices = FALSE) {
     .closed_form_ci          = FALSE, 
     .choices                 = FALSE,
     .ci                      = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
-                                 "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
+                                 "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .csem_model              = NULL,
     .csem_resample           = NULL,
     .cv_folds                = 10,

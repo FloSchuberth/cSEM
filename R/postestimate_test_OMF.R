@@ -2,10 +2,9 @@
 #'
 #' Test the overall model fit.
 #' 
-#' Description: TODO.
-#' Test is based on \insertCite{Dijkstra2015;textual}{cSEM}.
-#' Data is transformed according to \insertCite{Beran1985;textual}{cSEM}.
-#' After 10000 iterations it stops automatically
+#' Based on \insertCite{Beran1985;textual}{cSEM}. See also 
+#' \insertCite{Dijkstra2015;textual}{cSEM}.
+#' After 10000 iterations it stops automatically.
 #' 
 #' @usage testOMF(
 #'  .object                = args_default()$.object, 
@@ -239,13 +238,23 @@ testOMF.cSEMResults_multi <- function(
   .saturated             = args_default()$.saturated,
   .verbose               = args_default()$.verbose
 ){
-  lapply(.object, testOMF.cSEMResults_default,
-         .alpha                = .alpha,
-         .handle_inadmissibles = .handle_inadmissibles,
-         .R                    = .R,
-         .saturated            = .saturated,
-         .verbose              = .verbose
-         )
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    lapply(.object, testOMF.cSEMResults_2ndorder,
+           .alpha                = .alpha,
+           .handle_inadmissibles = .handle_inadmissibles,
+           .R                    = .R,
+           .saturated            = .saturated,
+           .verbose              = .verbose
+    )
+  } else {
+    lapply(.object, testOMF.cSEMResults_default,
+           .alpha                = .alpha,
+           .handle_inadmissibles = .handle_inadmissibles,
+           .R                    = .R,
+           .saturated            = .saturated,
+           .verbose              = .verbose
+    )
+  }
 }
 
 #' @describeIn testOMF (TODO)

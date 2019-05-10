@@ -8,7 +8,7 @@
 #'
 #' @docType data
 #'
-#' @format A data frame with 250 observations and 27 variables. 
+#' @description A data frame with 250 observations and 27 variables. 
 #' Variables from 1 to 27 refer to six latent concepts: \code{IMAG}=Image, 
 #' \code{EXPE}=Expectations, \code{QUAL}=Quality, \code{VAL}=Value, 
 #' \code{SAT}=Satisfaction, and \code{LOY}=Loyalty.
@@ -58,7 +58,7 @@
 #'
 #' @docType data
 #'
-#' @format A data frame with 250 observations and 28 variables. 
+#' @description  A data frame with 250 observations and 28 variables. 
 #' Variables from 1 to 27 refer to six latent concepts: \code{IMAG}=Image, 
 #' \code{EXPE}=Expectations, \code{QUAL}=Quality, \code{VAL}=Value, 
 #' \code{SAT}=Satisfaction, and \code{LOY}=Loyalty.

@@ -711,7 +711,7 @@ calculateVIFModeB <- function(.object = NULL) {
 #' There are several issues with the termionlogy and the reasoning behind this logic.
 #' RA is therefore only implemented since reviewers are likely to demand
 #' its compuation, however, its actual application for validitiy assessment 
-#' is strongly discouraged.
+#' is discouraged.
 #' 
 #' The function is only applicable to objects of class `cSEMResults_default`.
 #' 
@@ -745,6 +745,12 @@ calculateRA <- function(.object = NULL) {
     if(length(modesB) > 0) {
       
       args <- .object$Information$Arguments
+      
+      # Functions resampleData() and testMICOm require the .id argument.
+      # It is therefore present in the Arguments list although the 
+      # data set in the Arguments list does not contain the id column anymore.
+      # Therefore .id needs to be set to NULL
+      args[[".id"]] <- NULL
       new_modes <- as.list(modes) 
       
       beta <- c()

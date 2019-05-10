@@ -152,10 +152,15 @@ fit.cSEMResults_multi <- function(
   .type_vcv  = args_default()$.type_vcv
   ) {
   
-  out <- lapply(.object, fit.cSEMResults_default, 
-                .saturated = .saturated,
-                .type_vcv  = .type_vcv)
-  return(out)
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    lapply(.object, fit.cSEMResults_2ndorder, 
+           .saturated = .saturated,
+           .type_vcv  = .type_vcv)
+  } else {
+    lapply(.object, fit.cSEMResults_default, 
+           .saturated = .saturated,
+           .type_vcv  = .type_vcv)
+  }
   
 }
 

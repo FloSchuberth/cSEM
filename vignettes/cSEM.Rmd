@@ -601,7 +601,7 @@ Composite-based methods
 :   Composite-based methods or composite-based SEM refers to the entirety of methods 
     centered around the use as of composites (linear compounts of observables) 
     as stand-ins or error-free representations for the concepts under investigation.
-    Factor-based methods are also called
+    Composite-based methods are also called
     variance-based methods as focal parameters are usually retrived such that explained 
     variance is maximized.
     
@@ -658,7 +658,7 @@ Proxy
 
 :   Any quantity that functions as a representation of some other quantity.
     Proxies are usually - but not necessarily - error-prone representations
-    of the quantity they seek to represent. Examples are 
+    of the quantity they seek to represent.
 
 Stand-in
 
