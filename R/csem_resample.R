@@ -1613,7 +1613,7 @@ infer <- function(
   .alpha           = 0.05,
   .bias_corrected  = TRUE,
   .quantity        = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
-                       "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall")
+                       "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_interval")
 ) {
   
   ## Check arguments
@@ -1634,7 +1634,7 @@ infer <- function(
   if(any(class(.object) == "cSEMResults_2ndorder")) {
     first_resample  <- .object$Second_stage$Information$Resamples$Estimates$Estimates1
     second_resample <- .object$Second_stage$Information$Resamples$Estimates$Estimates2
-    info            <- .object$Second_stage$Information$Resamples$Information
+    info            <- .object$Second_stage$Information$Resamples$Information_resample
   } else {
     first_resample  <- .object$Estimates$Estimates_resample$Estimates1
     second_resample <- .object$Estimates$Estimates_resample$Estimates2

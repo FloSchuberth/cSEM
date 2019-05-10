@@ -70,7 +70,7 @@ print.cSEMResults <- function(x, ...) {
   cat(rule(line = "bar2", width = 80), "\n")
 }
 
-#' `cSEMSummarize_default` method for `print()`
+#' `cSEMSummarize` method for `print()`
 #'
 #' The [cSEMSummary] method for the generic function [print()]. 
 #'
@@ -80,10 +80,20 @@ print.cSEMResults <- function(x, ...) {
 #'
 #' @export
 #' @keywords internal
-print.cSEMSummarize_default <- function(x, ...) {
+print.cSEMSummarize <- function(x, ...) {
   
-  x1 <- x$Estimates
-  x2 <- x$Information
+  ## Check the class
+  if(inherits(x, "cSEMSummarize_2ndorder")) {
+    x11 <- x$First_stage$Estimates
+    x12 <- x$First_stage$Information
+    
+    x21 <- x$Second_stage$Estimates
+    x22 <- x$Second_stage$Information
+  } else {
+    
+    x1 <- x$Estimates
+    x2 <- x$Information
+  }
   
   cat2(
     rule(line = "bar2", width = 80), "\n",
@@ -92,461 +102,45 @@ print.cSEMSummarize_default <- function(x, ...) {
   )
   
   ### Overview -----------------------------------------------------------------
-  cat2(
-    col_align("\n\tNumber of observations", 35), "= ", nrow(x2$Arguments$.data),
-    col_align("\n\tWeight estimator", 35), "= ", 
-    ifelse(x2$Arguments$.approach_weights == "PLS-PM" && 
-             x2$Type_of_indicator_correlation %in% c("Polychoric", "Polyserial"), 
-           "PLS-PM (OrdPLS)", x2$Arguments$.approach_weights)
-  )
-  
-  if(x2$Arguments$.approach_weights == "PLS-PM") {
-    cat2(
-      col_align("\n\tInner weighting scheme", 35), "= ", 
-       x2$Arguments$.PLS_weight_scheme_inner
-    )
-  }
-  cat2(
-    col_align("\n\tType of indicator correlation", 35), "= ", 
-    paste0(x2$Type_of_indicator_correlation, collapse = ", ")
-    )
-  cat2(
-    col_align("\n\tPath model estimator", 35), "= ", x2$Arguments$.approach_paths,
-    col_align("\n\tType of path model", 35), "= ", x2$Model$model_type,
-    col_align("\n\tDisattenuated", 35), "= ", 
-    ifelse(x2$Arguments$.disattenuate & any(x2$Model$construct_type == "Common factor"), 
-           ifelse(x2$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)",
-                  ifelse(x2$Arguments$.approach_weights == "GSCA", "Yes (GSCAm)", "Yes")
-                  ), "No")
-  )
-  
-  ## Resample information
-  if(inherits(x, "cSEMSummarize_resampled")) {
-    cat2("\n\n\tResample information:\n\t","------------------")
-    cat2(
-      col_align("\n\tResample methode", 35), "= ", x2$Information_resample$Method,
-      col_align("\n\tNumber of resamples", 35), "= ", x2$Information_resample$Number_of_runs
-    )
-    if(x2$Information_resample$Method2 %in% c("bootstrap", "jackknife")) {
-      cat2(
-        col_align("\n\tResample of resample methode", 35), "= ", x2$Information_resample$Method2,
-        col_align("\n\tNumber of resamples per resample", 35), "= ", x2$Information_resample$Number_of_runs2
-      ) 
-    }
-    cat2(
-      col_align("\n\tApproach to handle inadmissibles ", 35), "= ", x2$Information_resample$Handle_inadmissibles,
-      col_align("\n\tSign change option", 35), "= ", x2$Information_resample$Sign_change_option
-    )
-    if(!isFALSE(x2$Information_resample$Seed)) {
-      cat2(
-        col_align("\n\tRandom seed", 35), "= ", x2$Information_resample$Seed
-      )
-    }
-  }
+  ## General information + resample information
+  printSummarizeOverview(x)
   
   ## Construct details
   cat2("\n\n\tConstruct details:\n\t","------------------")
-  l <- max(nchar(names(x2$Model$construct_type)))
   
-  cat2(
-    "\n\t", 
-    col_align("Name", max(l, nchar("Name")) + 2), 
-    col_align("Modeled as", 13 + 2),
-    col_align("Order", 12 + 2)
-  )
-  if(x2$Arguments$.approach_weights == "PLS-PM") {
-    cat2(col_align("Mode", 5))
-  }
-  cat("\n")
+  printSummarizeConstructDetails(x)
   
-  for(i in names(x2$Model$construct_type)) {
-    cat2(
-      "\n\t", 
-      col_align(i, max(l, nchar("Name")) + 2), 
-      col_align(x2$Model$construct_type[i], 13 + 2), 
-      col_align(x2$Model$construct_order[i], 12 + 2)
-    )
-    if(x2$Arguments$.approach_weights == "PLS-PM") {
-       cat2(col_align(x2$Weight_info$Modes[i], 5))
-    }
-  }
-
   ### Estimates ----------------------------------------------------------------
   cat2("\n\n", rule(center = "Estimates", width = 80), "\n\n")
   
   ## Confidence intervals
   # Get the column names of the columns containing confidence intervals
-  ci_colnames <- colnames(x1$Path_estimates)[-c(1:6)]
+  ## Check the class
+  ci_colnames <- if(inherits(x, "cSEMSummarize_2ndorder")) {
+    colnames(x21$Path_estimates)[-c(1:6)]
+  } else {
+    colnames(x1$Path_estimates)[-c(1:6)]
+  }
   
   # Are there more confidence intervals than the default (the 95% percentile CI)
   # Inform the user to use xxx instead.
   if(length(ci_colnames) > 2) {
     cat2(
-      "Only one confidence interval supplied to `.ci` shown by default.\n",
+      "By default, only one confidence interval supplied to `.ci` is printed.\n",
       "Use `xxx` to print all confidence intervals (not yet implemented)."
     )
     ci_colnames <- ci_colnames[1:2]
     cat("\n\n")
   }
-
+  
   ## Path estimates
   cat2("Estimated path coefficients:\n============================")
-  l <- max(nchar(x1$Path_estimates[, "Name"]))
- 
-  if(length(ci_colnames) != 0) {
-    xx <- regmatches(ci_colnames, regexpr("\\.", ci_colnames), invert = TRUE)
-    interval_names    <- unique(sapply(xx, `[`, 1))
-    sig_level_names   <- unique(gsub("[LU]", "", sapply(xx, `[`, 2)))
-    
-    cat2("\n  ",  col_align("", width = max(l, nchar("Path")) + 44))
-    for(i in interval_names) {
-      cat2(col_align(i, width = 20*length(sig_level_names), align = "center"))
-    }
-  }
-  cat2(
-    "\n  ", 
-    col_align("Path", max(l, nchar("Path")) + 2), 
-    col_align("Estimate", 10, align = "right"), 
-    col_align("Std. error", 12, align = "right"),
-    col_align("t-stat.", 10, align = "right"), 
-    col_align("p-value", 10, align = "right")
-  )
-  if(length(ci_colnames) != 0) {
-    for(i in rep(sig_level_names, length(interval_names))) {
-      cat2(col_align(i, 20, align = "center"))
-    } 
-  }
+  printSummarizePath(x, .ci_colnames = ci_colnames)
   
-  for(i in 1:nrow(x1$Path_estimates)) {
-    cat2(
-      "\n  ", 
-      col_align(x1$Path_estimates[i, "Name"], max(l, nchar("Path")) + 2), 
-      col_align(sprintf("%.4f", x1$Path_estimates[i, "Estimate"]), 10, align = "right"),
-      col_align(sprintf("%.4f", x1$Path_estimates[i, "Std_err"]), 12, align = "right"),
-      col_align(sprintf("%.4f", x1$Path_estimates[i, "t_stat"]), 10, align = "right"),
-      col_align(sprintf("%.4f", x1$Path_estimates[i, "p_value"]), 10, align = "right")
-    )
-    if(length(ci_colnames) != 0) {
-      for(j in seq(1, length(ci_colnames), by = 2) + 6) {
-        cat2(
-          col_align(
-            paste0("[", sprintf("%7.4f", x1$Path_estimates[i, j]), ";", 
-                   sprintf("%7.4f", x1$Path_estimates[i, j+1]), "]"), 20, align = "center")
-        )
-      } 
-    }
-  }
-  
-  ## Loadings
-  cat("\n\nEstimated Loadings:\n===================", sep = "")
-  l <- max(nchar(x1$Loading_estimates[, "Name"]))
-  
-  if(length(ci_colnames) != 0) {
-    cat2("\n  ", col_align("", width = max(l, nchar("Loading")) + 44))
-    for(i in interval_names) {
-      cat2(col_align(i, width = 20*length(sig_level_names), align = "center"))
-    }
-  }
-  
-  cat2(
-    "\n  ", 
-    col_align("Loading", max(l, nchar("Loading")) + 2), 
-    col_align("Estimate", 10, align = "right"), 
-    col_align("Std. error", 12, align = "right"),
-    col_align("t-stat.", 10, align = "right"), 
-    col_align("p-value", 10, align = "right")
-  )
-  if(length(ci_colnames) != 0) {
-    for(i in rep(sig_level_names, length(interval_names))) {
-      cat2(col_align(i, 20, align = "center"))
-    } 
-  }
-  
-  for(i in 1:nrow(x1$Loading_estimates)) {
-    cat2(
-      "\n  ", 
-      col_align(x1$Loading_estimates[i, "Name"], max(l, nchar("Loading")) + 2), 
-      col_align(sprintf("%.4f", x1$Loading_estimates[i, "Estimate"]), 10, align = "right"), 
-      col_align(sprintf("%.4f", x1$Loading_estimates[i, "Std_err"]), 12, align = "right"),
-      col_align(sprintf("%.4f", x1$Loading_estimates[i, "t_stat"]), 10, align = "right"),
-      col_align(sprintf("%.4f", x1$Loading_estimates[i, "p_value"]), 10, align = "right")
-    )
-    if(length(ci_colnames) != 0) {
-      for(j in seq(1, length(ci_colnames), by = 2) + 6) {
-        cat2(
-          col_align(
-            paste0("[", sprintf("%7.4f", x1$Loading_estimates[i, j]), ";", 
-                   sprintf("%7.4f", x1$Loading_estimates[i, j+1]), "]"), 20, align = "center")
-        )
-      } 
-    }
-  }
-
-  ## Only print weights, for constructs modeled as composites
-  temp_w <- x1$Weight_estimates[x1$Weight_estimates$Construct_type == "Composite", , drop = FALSE] 
-  
-  if(nrow(temp_w) != 0) {
-    cat("\n\nEstimated Weights:\n==================\n", sep = "")
-    l <- max(nchar(temp_w[, "Name"]))
-    
-    if(length(ci_colnames) != 0) {
-      cat2("\n  ", col_align("", width = max(l, nchar("Weights")) + 44))
-      for(i in interval_names) {
-        cat2(col_align(i, width = 20*length(sig_level_names), align = "center"))
-      }
-    }
-    
-    cat2(
-      "\n  ", 
-      col_align("Weights", max(l, nchar("Loading")) + 2), 
-      col_align("Estimate", 10, align = "right"), 
-      col_align("Std. error", 12, align = "right"),
-      col_align("t-stat.", 10, align = "right"), 
-      col_align("p-value", 10, align = "right")
-    )
-    if(length(ci_colnames) != 0) {
-      for(i in rep(sig_level_names, length(interval_names))) {
-        cat2(col_align(i, 20, align = "center"))
-      } 
-    }
-    
-    for(i in 1:nrow(temp_w)) {
-      cat2(
-        "\n  ", 
-        col_align(temp_w[i, "Name"], max(l, nchar("Loading")) + 2), 
-        col_align(sprintf("%.4f", temp_w[i, "Estimate"]), 10, align = "right"), 
-        col_align(sprintf("%.4f", temp_w[i, "Std_err"]), 12, align = "right"),
-        col_align(sprintf("%.4f", temp_w[i, "t_stat"]), 10, align = "right"),
-        col_align(sprintf("%.4f", temp_w[i, "p_value"]), 10, align = "right")
-      )
-      if(length(ci_colnames) != 0) {
-        for(j in seq(1, length(ci_colnames), by = 2) + 6) {
-          cat2(
-            col_align(
-              paste0("[", sprintf("%7.4f", temp_w[i, j]), ";", 
-                     sprintf("%7.4f", temp_w[i, j+1]), "]"), 20, align = "center")
-          )
-        } 
-      }
-    }
-  }
-
+  ## Loadings and Weights
+  printSummarizeLoadingsWeights(x, .ci_colnames = ci_colnames)
   
   cat2("\n", rule(line = "bar2", width = 80))
-}
-
-#' `cSEMSummarize_2ndorder` method for `print()`
-#'
-#' The [cSEMSummary] method for the generic function [print()]. 
-#'
-#' @inheritParams csem_arguments
-#'
-#' @seealso [csem()], [foreman()], [cSEMResults], [summarize()]
-#'
-#' @export
-#' @keywords internal
-print.cSEMSummarize_2ndorder <- function(x, ...) {
-  
-  ### Extract name and objects 
-  x11 <- x$First_stage$Estimates
-  x12 <- x$First_stage$Information
-  
-  x21 <- x$Second_stage$Estimates
-  x22 <- x$Second_stage$Information
-  
-  ## Collect all necessary sets
-  # All constructs used in the first step (= all first order constructs)
-  c_linear_1step        <- rownames(x12$Model$structural)
-  # All second order constructs
-  c_2nd_order           <- grep("_temp", rownames(x22$Model$structural), 
-                                value = TRUE, invert = TRUE)
-  # # All linear constructs of the original model
-  c_linear_original     <- c(c_linear_1step, c_2nd_order)
-  
-  cat2(
-    rule(line = "bar2", width = 80), "\n",
-    rule(center = "Overview", width = 80), 
-    "\n"
-  )
-  
-  ### Overview -----------------------------------------------------------------
-  cat2(
-    col_align("\n\tNumber of observations", 35), "= ", nrow(x12$Arguments$.data),
-    col_align("\n\tWeight estimator", 35), "= ", 
-    ifelse(x12$Arguments$.approach_weights == "PLS-PM" && 
-             x12$Type_of_indicator_correlation %in% c("Polychoric", "Polyserial"), 
-           "PLS-PM (OrdPLS)", x12$Arguments$.approach_weights)
-  )
-  
-  if(x12$Arguments$.approach_weights == "PLS-PM") {
-    cat2(
-      col_align("\n\tInner weighting scheme", 35), "= ", 
-      x12$Arguments$.PLS_weight_scheme_inner
-    )
-  }
-  cat2(
-    col_align("\n\tType of indicator correlation", 35), "= ", 
-    paste0(x12$Type_of_indicator_correlation, collapse = ", ")
-  )
-  cat2(
-    col_align("\n\tPath model estimator", 35), "= ", x12$Arguments$.approach_paths,
-    col_align("\n\tType of path model", 35), "= ", x22$Arguments_original$.model$model_type,
-    col_align("\n\tDisattenuated", 35), "= ", 
-    ifelse(x22$Arguments$.disattenuate & any(x22$Arguments_original$.model$construct_type == "Common factor"), 
-           ifelse(x22$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)",
-                  ifelse(x22$Arguments$.approach_weights == "GSCA", "Yes (GSCAm)", "Yes")
-           ), "No")
-  )
-  
-  ## Resample information
-  if(inherits(x, "cSEMSummarize_resampled")) {
-    cat2("\n\n\tResample information:\n\t","------------------")
-    cat2(
-      col_align("\n\tResample methode", 35), "= ", x22$Resamples$Information_resample$Method,
-      col_align("\n\tNumber of resamples", 35), "= ", x22$Resamples$Information_resample$Number_of_runs
-    )
-    if(x22$Resamples$Information_resample$Method2 %in% c("bootstrap", "jackknife")) {
-      cat2(
-        col_align("\n\tResample of resample methode", 35), "= ", x22$Resamples$Information_resample$Method2,
-        col_align("\n\tNumber of resamples per resample", 35), "= ", x22$Resamples$Information_resample$Number_of_runs2
-      ) 
-    }
-    cat2(
-      col_align("\n\tApproach to handle inadmissibles ", 35), "= ", x22$Resamples$Information_resample$Handle_inadmissibles,
-      col_align("\n\tSign change option", 35), "= ", x22$Resamples$Information_resample$Sign_change_option
-    )
-    if(!isFALSE(x22$Resamples$Information_resample$Seed)) {
-      cat2(
-        col_align("\n\tRandom seed", 35), "= ", x22$Resamples$Information_resample$Seed
-      )
-    }
-  }
-  
-  cat("\n\n\tConstruct details:\n\t","------------------", sep = "")
-  # First order constructs
-  l <- max(nchar(c_linear_original))
-  # Second order constructs
-  
-  cat("\n\t", 
-      col_align("Name", max(l, nchar("Name")) + 2), 
-      col_align("Modeled as", 13 + 2),
-      col_align("Order", 12 + 2), sep = "")
-  if(x12$Arguments$.approach_weights == "PLS-PM") {
-    cat(col_align("Mode", 5), sep = "")
-  }
-  cat("\n")
-  # First stage
-  for(i in names(x12$Model$construct_type)) {
-    cat("\n\t", 
-        col_align(i, max(l, nchar("Name")) + 2), 
-        col_align(x12$Model$construct_type[i], 13 + 2), 
-        col_align("First order", 12 + 2), sep = "")
-    if(x12$Arguments$.approach_weights == "PLS-PM") {
-      cat(col_align(x12$Weight_info$Modes[i], 5), sep = "")
-    }
-  }
-  # Second stage
-  for(i in names(x22$Model$construct_type[c_2nd_order])) {
-    cat("\n\t", 
-        col_align(i, max(l, nchar("Name")) + 2), 
-        col_align(x22$Model$construct_type[i], 13 + 2), 
-        col_align("Second order", 12 + 2), sep = "")
-    if(x12$Arguments$.approach_weights == "PLS-PM") {
-      cat(col_align(x22$Weight_info$Modes[i], 5), sep = "")
-    }
-  }
-  
-  ### Estimates ----------------------------------------------------------------
-  cat("\n\n", rule(center = "Estimates", width = 80), "\n\n", sep = "")
-  
-  ## Path estimates
-  cat("Estimated Path Coefficients:\n============================", sep = "")
-  l <- max(nchar(x21$Path_estimates[, "Name"]))
-  
-  cat("\n\t", 
-      col_align("Path", max(l, nchar("Path")) + 2), 
-      col_align("Estimate", 10, align = "right"), 
-      col_align("Std. Error", 12, align = "right"),
-      col_align("t-value", 10, align = "right"), sep = "")
-  
-  for(i in 1:nrow(x21$Path_estimates)) {
-    cat("\n\t", 
-        col_align(x21$Path_estimates[i, "Name"], max(l, nchar("Path")) + 2), 
-        col_align(sprintf("%.4f", x21$Path_estimates[i, "Estimate"]), 10, align = "right"),
-        col_align(NA, 12, align = "right"),
-        col_align(NA, 10, align = "right"),
-        sep = "")
-  }
-  
-  ## Loadings
-  cat("\n\nEstimated Loadings:\n===================", sep = "")
-  l <- max(nchar(c(x11$Loading_estimates[, "Name"], x21$Loading_estimates[, "Name"])))
-  
-  cat("\n\t", 
-      col_align("Loading", max(l, nchar("Loading")) + 2), 
-      col_align("Estimate", 10, align = "right"), 
-      col_align("Std. Error", 12, align = "right"),
-      col_align("t-value", 10, align = "right"), sep = "")
-  # First Stage
-  for(i in 1:nrow(x11$Loading_estimates)) {
-    cat("\n\t", 
-        col_align(x11$Loading_estimates[i, "Name"], max(l, nchar("Loading")) + 2), 
-        col_align(sprintf("%.4f", x11$Loading_estimates[i, "Estimate"]), 10, align = "right"), 
-        col_align(NA, 12, align = "right"),
-        col_align(NA, 10, align = "right"),
-        sep = "")
-  }
-  # Second stage
-  for(i in 1:nrow(x21$Loading_estimates)) {
-    cat("\n\t", 
-        col_align(x21$Loading_estimates[i, "Name"], max(l, nchar("Loading")) + 2), 
-        col_align(sprintf("%.4f", x21$Loading_estimates[i, "Estimate"]), 10, align = "right"), 
-        col_align(NA, 12, align = "right"),
-        col_align(NA, 10, align = "right"),
-        sep = "")
-  }
-  
-  ## Only print weights, for constructs modeled as common factors
-  temp_w1 <- x11$Weight_estimates[x11$Weight_estimates$Construct_type == "Common factor", , drop = FALSE] 
-  temp_w2 <- x21$Weight_estimates[x21$Weight_estimates$Construct_type == "Common factor", , drop = FALSE] 
-  
-  cat("\n\nEstimated Weights:\n==================\n", sep = "")
-  l <- max(nchar(c(temp_w1[, "Name"], temp_w2[, "Name"])))
-  
-  cat("\n\t", 
-      col_align("Weight", max(l, nchar("Weight")) + 2), 
-      col_align("Estimate", 10, align = "right"), sep = "")
-  # First stage
-  for(i in 1:nrow(temp_w1)) {
-    cat("\n\t", 
-        col_align(temp_w1[i, "Name"], max(l, nchar("Weight")) + 2), 
-        col_align(sprintf("%.4f", temp_w1[i, "Estimate"]), 10, align = "right"), 
-        sep = "")
-  }
-  # Second stage
-  for(i in 1:nrow(temp_w2)) {
-    cat("\n\t", 
-        col_align(temp_w2[i, "Name"], max(l, nchar("Weight")) + 2), 
-        col_align(sprintf("%.4f", temp_w2[i, "Estimate"]), 10, align = "right"), 
-        sep = "")
-  }
-  # if(x$Weight_estimator == "PLS-PM") {
-  #   cat("\nEstimated Correction Factors:\n=============================\n", sep = "")
-  #   print(x$Correction_factors)
-  # }
-  
-  # cat("\n\n", rule(center = "Other output"), "\n\n\t", sep = "")
-  # 
-  # cat("<not yet implemented>")
-  # 
-  # cat("\n\n", rule(center = "Fit Indices"), "\n\n\t", sep = "")
-  # 
-  # cat(col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
-  #     col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\t",
-  #     col_align("<some_index>", 30), "= ", c("not yet implemented"), "\n\n",
-  #     sep = "")
-  
-  cat("\n", rule(line = "bar2", width = 80), sep = "")
 }
 
 #' `cSEMVerify_default` method for `print()`

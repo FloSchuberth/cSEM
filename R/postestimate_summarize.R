@@ -195,9 +195,9 @@ summarize.cSEMResults_default <- function(
   ## Set class for printing and return
   
   class(.object) <- if(inherits(.object, "cSEMResults_resampled")) {
-    c("cSEMSummarize_default", "cSEMSummarize_resampled")
+    c("cSEMSummarize", "cSEMSummarize_resampled")
   } else {
-    "cSEMSummarize_default"
+    "cSEMSummarize"
   }
   
   return(.object)
@@ -364,9 +364,9 @@ summarize.cSEMResults_2ndorder <- function(
   
   ## Set class for printing and return
   class(out) <- if(inherits(.object, "cSEMResults_resampled")) {
-    c("cSEMSummarize_2ndorder", "cSEMSummarize_resampled")
+    c("cSEMSummarize", "cSEMSummarize_2ndorder", "cSEMSummarize_resampled")
   } else {
-    "cSEMSummarize_2ndorder"
+    c("cSEMSummarize", "cSEMSummarize_2ndorder")
   }
   
   return(out)
