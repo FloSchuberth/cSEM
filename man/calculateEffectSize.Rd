@@ -9,8 +9,13 @@ calculateEffectSize(.object = NULL)
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 }
+\value{
+A matrix with as many rows as there are structural equations. The
+number of columns is equal to the total number of right-hand side variables
+of these equations.
+}
 \description{
-Calculate the effect size
+Calculate the effect size.
 }
 \seealso{
 \link{assess}, \link{csem}, \link{cSEMResults}

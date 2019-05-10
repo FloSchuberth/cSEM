@@ -15,6 +15,9 @@ calculateHTMT(
 \item{.only_common_factors}{Logical. Should only constructs modeled as common
 factors be included? Defaults to \code{TRUE}.}
 }
+\value{
+A lower tringular matrix of HTMT values.
+}
 \description{
 Compute the heterotrait-monotrait ratio of correlations (HTMT) based on
 \insertCite{Henseler2015;textual}{cSEM}.

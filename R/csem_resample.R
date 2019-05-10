@@ -1593,7 +1593,7 @@ resamplecSEMResultsCore <- function(
 #'  .bias_corrected    = TRUE,
 #'  .quantity          = c("all", "mean", "sd", "bias", "CI_standard_z", 
 #'                         "CI_standard_t", "CI_percentile", "CI_basic", 
-#'                         "CI_bc", "CI_bca", "CI_t_intervall")
+#'                         "CI_bc", "CI_bca", "CI_t_interval")
 #' )
 #'
 #' @inheritParams csem_arguments
