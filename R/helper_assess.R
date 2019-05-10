@@ -364,6 +364,8 @@ calculateRhoT <- function(
 #'
 #' @inheritParams csem_arguments
 #'
+#' @return A lower tringular matrix of HTMT values.
+#' 
 #' @seealso [assess], [csem], [cSEMResults]
 #' @keywords internal
 
@@ -541,12 +543,16 @@ calculateDML <- function(
 
 #' Internal: Calculate effect size
 #'
-#' Calculate the effect size
+#' Calculate the effect size.
 #'
 #' @usage calculateEffectSize(.object = NULL)
 #'
 #' @inheritParams csem_arguments
 #'
+#' @return A matrix with as many rows as there are structural equations. The 
+#'   number of columns is equal to the total number of right-hand side variables
+#'   of these equations.
+#' 
 #' @seealso [assess], [csem], [cSEMResults]
 #' @keywords internal
 
@@ -598,7 +604,16 @@ calculateEffectSize <- function(.object = NULL) {
     inner_out
   })
   names(outer_out) <- vars_endo
-  outer_out
+  
+  ## Make output a matrix
+  # Note: this is necessary for calculateEffectSize to work
+  #       when supplied to the .user_funs argument. Currently, .user_funs functions 
+  #       need to return a vector or a matrix. I may change that in the future.
+  ss <- s[vars_endo, , drop = FALSE]
+  tm <- t(ss)
+  tm[which(tm == 1)] <- unlist(outer_out)
+  # Return
+  t(tm)
 }
 
 
