@@ -648,12 +648,37 @@ resamplecSEMResults.cSEMResults_default <- function(
       if(names(formals(.user_funs))[1] != ".object") {
         stop2("The following error occured in the `resamplecSEMResults()` function:\n",
               "The first argument of the function(s) provided to `.user_funs` must",
-              " always be`.object`.")
+              " always be `.object`.")
       } else {
-        list("User_fun" = c(.user_funs(.object, ...))) 
+        # Compute functions
+        fun_out <- .user_funs(.object, ...)
+        ## Check that the output is a vector or a matrix. Currently, no other
+        ## format is allowed 
+        if((is.vector(fun_out) & !is.list(fun_out)) | is.matrix(fun_out))  {
+          list("User_fun" = c(.user_funs(.object, ...)))  
+        } else {
+          stop2(
+            "The following error occured in the `resamplecSEMResults()` function:\n",
+            "The output of the function(s) provided to `.user_funs` must",
+            " always be an atomic vector (not a list) or matrix.")
+        }
       }
     } else {
-      x <- lapply(.user_funs, function(f) c(f(.object, ...)))
+      x <- lapply(.user_funs, function(f) {
+        # Compute functions
+        fun_out <- f(.object, ...)
+        ## Check that the output is a vector or a matrix. Currently, no other
+        ## format is allowed 
+        if((is.vector(fun_out) & !is.list(fun_out)) | is.matrix(fun_out))  {
+          c(f(.object, ...)) 
+        } else {
+          stop2(
+            "The following error occured in the `resamplecSEMResults()` function:\n",
+            "The output of the function(s) provided to `.user_funs` must",
+            " always be an atomic vector (not a list) or matrix.")
+        }
+      })
+      
       if(is.null(names(x))) {
         names(x) <- paste0("User_fun", 1:length(x))
       }
@@ -895,12 +920,37 @@ resamplecSEMResults.cSEMResults_2ndorder <- function(
       if(names(formals(.user_funs))[1] != ".object") {
         stop2("The following error occured in the `resamplecSEMResults()` function:\n",
               "The first argument of the function(s) provided to `.user_funs` must",
-              " always be`.object`.")
+              " always be `.object`.")
       } else {
-        list("User_fun" = c(.user_funs(.object, ...))) 
+        # Compute functions
+        fun_out <- .user_funs(.object, ...)
+        ## Check that the output is a vector or a matrix. Currently, no other
+        ## format is allowed 
+        if((is.vector(fun_out) & !is.list(fun_out)) | is.matrix(fun_out))  {
+          list("User_fun" = c(.user_funs(.object, ...)))  
+        } else {
+          stop2(
+            "The following error occured in the `resamplecSEMResults()` function:\n",
+            "The output of the function(s) provided to `.user_funs` must",
+            " always be an atomic vector (not a list) or matrix.")
+        }
       }
     } else {
-      x <- lapply(.user_funs, function(f) c(f(.object, ...)))
+      x <- lapply(.user_funs, function(f) {
+        # Compute functions
+        fun_out <- f(.object, ...)
+        ## Check that the output is a vector or a matrix. Currently, no other
+        ## format is allowed 
+        if((is.vector(fun_out) & !is.list(fun_out)) | is.matrix(fun_out))  {
+          c(f(.object, ...)) 
+        } else {
+          stop2(
+            "The following error occured in the `resamplecSEMResults()` function:\n",
+            "The output of the function(s) provided to `.user_funs` must",
+            " always be an atomic vector (not a list) or matrix.")
+        }
+      })
+      
       if(is.null(names(x))) {
         names(x) <- paste0("User_fun", 1:length(x))
       }

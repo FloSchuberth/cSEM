@@ -140,6 +140,9 @@ print.cSEMSummarize <- function(x, ...) {
   ## Loadings and Weights
   printSummarizeLoadingsWeights(x, .ci_colnames = ci_colnames)
   
+  ### Effects ------------------------------------------------------------------
+  cat2("\n\n", rule(center = "Effects", width = 80), "\n\n")
+  
   cat2("\n", rule(line = "bar2", width = 80))
 }
 
