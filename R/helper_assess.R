@@ -5,8 +5,8 @@
 #'
 #' The AVE is inherently tied to the common factor model. It is therefore 
 #' unclear how to meaningfully interpret AVE results in the context of a 
-#' composite model. It is possible to force computation of the AVE for constructs
-#' modeled as composites as well by setting `.only_common_factors = FALSE`, 
+#' composite model. It is possible to report the AVE for constructs
+#' modeled as composites by setting `.only_common_factors = FALSE`, 
 #' however, we explicitly warn to interpret results with caution, 
 #' as they may not even have a conceptual meaning.
 #' 
