@@ -22,8 +22,8 @@ WARNING: this document is work in progress and may still contain mistakes!
 ```
 # Preface
 
-Structural equation modeling (SEM) has been used for over decades
-across a various research fields such as (among others) psychology, 
+Structural equation modeling (SEM) has been used for over a century
+across various research fields such as (among others) psychology, 
 sociology, and business research. 
 
 As an almost inevidable consequence, a different terminology system and a distinct 

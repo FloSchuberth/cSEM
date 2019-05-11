@@ -82,12 +82,12 @@ with some slight modifications. For illustration we use the build-in and well-kn
 require(cSEM)
 data(satisfaction)
     
-## Note: the operator "<~" tells cSEM that the construct to its left is modelled
+## Note: The operator "<~" tells cSEM that the construct to its left is modelled
 ##       as a composite.
-##       the operator "=~" tells cSEM that the construct to its left is modelled
+##       The operator "=~" tells cSEM that the construct to its left is modelled
 ##       as a common factor.
-##       the "~" tells cSEM which are the dependent variables (left-hand side) and the 
-##       independent variables (right-hand side)
+##       The operator "~" tells cSEM which are the dependent (left-hand side) and
+##       independent variables (right-hand side).
     
 model <- "
 # Structural model
@@ -133,6 +133,7 @@ csem(
    .PLS_modes                   = NULL,
    .PLS_weight_scheme_inner     = "path",
    .reliabilities               = NULL,
+   .starting_values             = NULL,
    .tolerance                   = 1e-05,
    .resample_method             = "none", 
    .resample_method2            = "none",
@@ -141,7 +142,8 @@ csem(
    .handle_inadmissibles        = "drop",
    .user_funs                   = NULL,
    .eval_plan                   = "sequential",
-   .seed                        = NULL
+   .seed                        = NULL,
+   .sign_change_option          = "none"
     )
 ```
 
@@ -187,7 +189,7 @@ res <- csem(.data = satisfaction, .model = model)
 verify(res) 
     
 ## Test overall model fit
-testOMF(res) # takes roughly 30 seconds
+testOMF(res)
 ```
 
 #### Inference
@@ -210,7 +212,7 @@ b1 <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
 b2 <- resamplecSEMResults(res)
 ```
 
-Several bootstrap confidence intervals are implemented, see `?infer()`:
+Several resample-based confidence intervals are implemented, see `?infer()`:
 
 ```{r eval=FALSE}
 summarize(b1)
@@ -219,7 +221,7 @@ infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
 
 Both bootstrap and jackknife resampling support platform-independent multiprocessing 
 as well as setting random seeds via the [future framework](https://github.com/HenrikBengtsson/future). 
-For multiprocessing simply set `eval_plan = "multiprocess"` in which case the maximum number of available cores
+For multiprocessing simply set `.eval_plan = "multiprocess"` in which case the maximum number of available cores
 is used if not on Windows. On Windows as many separate R instances are opened in the
 backround as there are cores available instead. Note
 that this naturally has some overhead so for a small number of resamples multiprocessing

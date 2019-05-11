@@ -10,14 +10,14 @@ Status](https://travis-ci.com/M-E-Rademaker/cSEM.svg?branch=master)](https://tra
 
 WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES TO THE API ARE VERY
 LIKELY. Use the package with caution and please report bugs to [the
-package creator](mailto:manuel.rademaker@uni-wuerzburg.de). The first
+package developer](mailto:manuel.rademaker@uni-wuerzburg.de). The first
 stable relase will be version 0.0.1, most likely in mid 2019.
 
 ## Purpose
 
-Estimate, analyse, test, and study linear, nonlinear, hierachical and
-multigroup structural equation models using composite-based approaches
-and procedures, including estimation techniques such as partial least
+Estimate, analyse, test, and study linear, non-linear, hierachical
+structural equation models using composite-based approaches and
+procedures, including estimation techniques such as partial least
 squares path modeling (PLS-PM) and its derivatives (PLSc, ordPLSc,
 robustPLSc), generalized structured component analysis (GSCA),
 generalized structured component analysis with uniqueness terms (GSCAm),
@@ -26,7 +26,7 @@ analysis (PCA), factor score regression (FSR) using sum score,
 regression or bartlett scores (including bias correction using Croon’s
 approach), as well as several tests and typical postestimation
 procedures (e.g., verify admissibility of the estimates, assess the
-model fit, test the model fit etc.).
+model fit, test the model fit, compare groups, etc.).
 
 ## Installation
 
@@ -86,17 +86,19 @@ Roughly speaking using `cSEM` is always the same 3 step procedure
 
 Models are defined using [lavaan
 syntax](http://lavaan.ugent.be/tutorial/syntax1.html) with some slight
-modifications. For illustration we use the build-in and well known
+modifications. For illustration we use the build-in and well-known
 `satisfaction` dataset.
 
 ``` r
 require(cSEM)
 data(satisfaction)
     
-## Note: the opeartor "<~" tells cSEM that the construct to its left is modelled
+## Note: The operator "<~" tells cSEM that the construct to its left is modelled
 ##       as a composite.
-##       the operator "=~" tells cSEM that the construct to its left is modelled
+##       The operator "=~" tells cSEM that the construct to its left is modelled
 ##       as a common factor.
+##       The operator "~" tells cSEM which are the dependent (left-hand side) and
+##       independent variables (right-hand side).
     
 model <- "
 # Structural model
@@ -106,22 +108,23 @@ VAL  ~ EXPE + QUAL
 SAT  ~ IMAG + EXPE + QUAL + VAL 
 LOY  ~ IMAG + SAT
 
-# Measurement model
-
+# Composite model
 IMAG <~ imag1 + imag2 + imag3
 EXPE <~ expe1 + expe2 + expe3 
 QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
 VAL  <~ val1  + val2  + val3
+
+# Reflective measurement model
 SAT  =~ sat1  + sat2  + sat3  + sat4
 LOY  =~ loy1  + loy2  + loy3  + loy4
 "
 ```
 
-Estimation is done using the `csem()` function.
+Estimation is conducted by the `csem()` function.
 
 ``` r
 # Estimate using defaults
-a <- csem(.data = satisfaction, .model = model)
+res <- csem(.data = satisfaction, .model = model)
 
 # This is equal to
 csem(
@@ -143,6 +146,7 @@ csem(
    .PLS_modes                   = NULL,
    .PLS_weight_scheme_inner     = "path",
    .reliabilities               = NULL,
+   .starting_values             = NULL,
    .tolerance                   = 1e-05,
    .resample_method             = "none", 
    .resample_method2            = "none",
@@ -151,26 +155,27 @@ csem(
    .handle_inadmissibles        = "drop",
    .user_funs                   = NULL,
    .eval_plan                   = "sequential",
-   .seed                        = NULL
+   .seed                        = NULL,
+   .sign_change_option          = "none"
     )
 ```
 
 The result is always an object of class `cSEMResults`. Technically, the
 resulting object has an additional class attribute (namely
 `cSEMResults_default`, `cSEMResults_multi` or `cSEMResults_2ndorder`),
-however, users usually dont need to worry since postestimation functions
-(will eventually) automatically work on all classes.
+however, users usually do not need to care about since postestimation
+functions (will eventually) automatically work on all classes.
 
 ``` r
 ## Access elements using `$`. E.g.:
-a$Estimates$Loading_estimates 
-a$Information$Model
+res$Estimates$Loading_estimates 
+res$Information$Model
     
 ## Examine the structure:
-listviewer::jsonedit(a, mode = "view") # requires the listviewer package.
+listviewer::jsonedit(res, mode = "view") # requires the listviewer package.
     
 ## Get a summary
-summarize(a) 
+summarize(res) 
     
 # Alter the model to obtain a linear model:
 model <- "
@@ -181,31 +186,33 @@ model <- "
     SAT  ~ IMAG + EXPE + QUAL + VAL
     LOY  ~ IMAG + SAT
     
-    # Measurement model
-    
+    # Composite models
     IMAG <~ imag1 + imag2 + imag3
     EXPE <~ expe1 + expe2 + expe3 
     QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
     VAL  <~ val1  + val2  + val3
+     
+    # Reflective measurement model
     SAT  =~ sat1  + sat2  + sat3  + sat4
     LOY  =~ loy1  + loy2  + loy3  + loy4
     "
     
-a <- csem(.data = satisfaction, .model = model)
+res <- csem(.data = satisfaction, .model = model)
     
 ## Apply postestimation functions, e.g.
-verify(a) 
+verify(res) 
     
 ## Test overall model fit
-testOMF(a) # takes roughly 30 seconds
+testOMF(res)
 ```
 
 #### Inference
 
 By default no inferential quantities are calculated since most
-composite-based approaches do not have closed-form solutions for
-standard errors. `cSEM` relies on the `bootstrap` or `jackknife` to
-estimate standard errors, test statistics, and critical quantiles.
+composite-based estimators have no closed-form expressions for standard
+errors. `cSEM` mostly relies on the `bootstrap` and the `jackknife`
+procedure to estimate standard errors, test statistics, and critical
+quantiles.
 
 `cSEM` offers two ways to compute resamples:
 
@@ -221,10 +228,11 @@ estimate standard errors, test statistics, and critical quantiles.
 ``` r
 # Setting `.resample_method`
 b1 <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
-b2 <- resamplecSEMResults(a)
+b2 <- resamplecSEMResults(res)
 ```
 
-Several confidence intervals are implemented, see `?infer()`:
+Several resample-based confidence intervals are implemented, see
+`?infer()`:
 
 ``` r
 summarize(b1)
@@ -232,9 +240,9 @@ infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
 ```
 
 Both bootstrap and jackknife resampling support platform-independent
-multiprocessing as well as random seeds via the [future
+multiprocessing as well as setting random seeds via the [future
 framework](https://github.com/HenrikBengtsson/future). For
-multiprocessing simply set `eval_plan = "multiprocess"` in which case
+multiprocessing simply set `.eval_plan = "multiprocess"` in which case
 the maximum number of available cores is used if not on Windows. On
 Windows as many separate R instances are opened in the backround as
 there are cores available instead. Note that this naturally has some
@@ -267,6 +275,6 @@ three tests are implemented.
 
   - `testOMF()` : performs a test for overall model fit
   - `testMICOM()` : performs a test for composite measurement invariance
-  - `testMGD` : performs a test for multi-group differences
+  - `testMGD` : performs a test to assess multi-group differences
 
 All functions require a `cSEMResults` object.
