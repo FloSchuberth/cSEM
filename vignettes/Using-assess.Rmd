@@ -25,13 +25,14 @@ As indicated by the name, `assess()` is used to assess a model estimated using t
 
 In `cSEM` *model assessement* is considered to be any task that in some way or
 another seeks to assess the quality of the estimated model *without conducting* 
-*a statistical test* (tests are covered by the `test_*` family of functions). Quality in this case is taken to be a catch-all term for
+*a statistical test* (tests are covered by the `test_*` family of functions). 
+Quality in this case is taken to be a catch-all term for
 all common aspects of model assessment. This mainly comprises
 fit indices, reliability estimates, common validity assessment criteria and other 
 related quality measures/indices that do not rely on a formal test procedure. Hereinafter, 
-we will refer to a generic (fit) index, criteria or assessment measure as 
-a **quality measure**.
-Currently the following quality measures are implemented:
+we will refer to a generic (fit) index, quality or assessment measure as 
+a **quality criterion**.
+Currently the following quality criteria are implemented:
 
 - Convergent and discriminant validity assessment:
     - The **average variance extracted** (AVE) (the basis for the 
@@ -84,12 +85,12 @@ assess(
    
 `.what`
 
-:  A character string or a vector of character strings naming the quality measure 
-   to compute. By default all quality measures are computed (`"all"`).
+:  A character string or a vector of character strings naming the quality criterion
+   to compute. By default all quality criteria are computed (`"all"`).
   
 `.only_common_factors`
 
-:  Logical. Should quality measures be calculated for constructs modeled as 
+:  Logical. Should the quality criterion be calculated for constructs modeled as 
    common factors only? Defaults to `TRUE`. See the [Details](#details) section 
    below.
 
@@ -113,17 +114,17 @@ Some assessment measures are inherently tied to the common factor model. It
 is therefore unclear how to interpret their results in the context of a 
 composite model. Consequently, their computation is suppressed by default for 
 constructs modeled as common factors. Currently, this applies to the following
-quality measures: 
+quality criteria: 
 
 - AVE and validity assessment based theron (i.e., the Fornell-Larcker criterion)
 - HTMT and validity assessment based theron
 - All reliability measures (congeneric, tau-equivalen, and parallel)
  
-It is possible to force computation of all quality measures for constructs
+It is possible to force computation of all quality criteria for constructs
 modeled as composites, however, we explicitly warn to interpret results with
 caution, as they may not even have a conceptual meaning.
 
-All quality measures assume that the estimated loadings, construct correlations 
+All quality criteria assume that the estimated loadings, construct correlations 
 and path coefficients involved in the computation of a specific qualitiy measure
 are consistent estimates for their theoretical population counterpart. If
 the user deliberately chooses an approach that yields inconsistent estimates (by

@@ -112,7 +112,7 @@ code > span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Postestimation: Assessing a model</h1>
 <h3 class="subtitle project-tagline">Using the <code>assess()</code> function</h3>
-<h4 class="date project-date">Last edited: 2019-04-29</h4>
+<h4 class="date project-date">Last edited: 2019-05-11</h4>
 </section>
 
 
@@ -150,7 +150,7 @@ code > span.ot { color: #007020; }
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>As indicated by the name, <code>assess()</code> is used to assess a model estimated using the <code>csem()</code> function.</p>
-<p>In <code>cSEM</code> <em>model assessement</em> is considered to be any task that in some way or another seeks to assess the quality of the estimated model <em>without conducting</em> <em>a statistical test</em> (tests are covered by the <code>test_*</code> family of functions). Quality in this case is taken to be a catch-all term for all common aspects of model assessment. This mainly comprises fit indices, reliability estimates, common validity assessment criteria and other related quality measures/indices that do not rely on a formal test procedure. Hereinafter, we will refer to a generic (fit) index, criteria or assessment measure as a <strong>quality measure</strong>. Currently the following quality measures are implemented:</p>
+<p>In <code>cSEM</code> <em>model assessement</em> is considered to be any task that in some way or another seeks to assess the quality of the estimated model <em>without conducting</em> <em>a statistical test</em> (tests are covered by the <code>test_*</code> family of functions). Quality in this case is taken to be a catch-all term for all common aspects of model assessment. This mainly comprises fit indices, reliability estimates, common validity assessment criteria and other related quality measures/indices that do not rely on a formal test procedure. Hereinafter, we will refer to a generic (fit) index, quality or assessment measure as a <strong>quality criterion</strong>. Currently the following quality criteria are implemented:</p>
 <ul>
 <li>Convergent and discriminant validity assessment:
 <ul>
@@ -186,24 +186,24 @@ A third reliability measure is <strong>Parallel reliability</strong> (<span clas
 <dd><p>An object of class <code>cSEMResults</code> resulting from a call to <code>csem()</code>. Note that, technically, a call to <code>csem()</code> results in an object with at least two class attributes. The first class attribute is always <code>cSEMResults</code>. The second depends on the estimated model and/or the type of data provided. Technically, method dispatch is based on the second class attribute, however, practically this does not affect how the function is used. See the <a href="#details">Details</a> section below.</p>
 </dd>
 <dt><code>.what</code></dt>
-<dd><p>A character string or a vector of character strings naming the quality measure to compute. By default all quality measures are computed (<code>&quot;all&quot;</code>).</p>
+<dd><p>A character string or a vector of character strings naming the quality criterion to compute. By default all quality criteria are computed (<code>&quot;all&quot;</code>).</p>
 </dd>
 <dt><code>.only_common_factors</code></dt>
-<dd><p>Logical. Should quality measures be calculated for constructs modeled as common factors only? Defaults to <code>TRUE</code>. See the <a href="#details">Details</a> section below.</p>
+<dd><p>Logical. Should the quality criterion be calculated for constructs modeled as common factors only? Defaults to <code>TRUE</code>. See the <a href="#details">Details</a> section below.</p>
 </dd>
 </dl>
 </div>
 <div id="details" class="section level2">
 <h2>Details</h2>
 <p>In line with all of <code>cSEM</code>’s postestimation functions, <code>assess()</code> is a generic function with methods for objects of class <code>cSEMResults_default</code>, <code>cSEMResults_multi</code>, <code>cSEMResults_2ndorder</code>. In <code>cSEM</code> every <code>cSEMResults_*</code> object must also have class <code>cSEMResults</code> for internal reasons. When using one of the major postestimation functions, method dispatch is therefore technically done on one of the <code>cSEMResults_*</code> class attributes, ignoring the <code>cSEMResults</code> class attribute. As long as <code>assess()</code> is used directly method dispatch is not of any practical concern to the end-user. The difference, however, becomes important if a user seeks to directly invoke an internal function which is called by <code>assess()</code> (e.g., <code>calculateAVE()</code> or <code>calculateHTMT()</code>). In this case only objects of class <code>cSEMResults_default</code> are accepted as this ensures a specific structure. Therefore, it is important to remember that <em>internal functions are generally <strong>not</strong> generic.</em></p>
-<p>Some assessment measures are inherently tied to the common factor model. It is therefore unclear how to interpret their results in the context of a composite model. Consequently, their computation is suppressed by default for constructs modeled as common factors. Currently, this applies to the following quality measures:</p>
+<p>Some assessment measures are inherently tied to the common factor model. It is therefore unclear how to interpret their results in the context of a composite model. Consequently, their computation is suppressed by default for constructs modeled as common factors. Currently, this applies to the following quality criteria:</p>
 <ul>
 <li>AVE and validity assessment based theron (i.e., the Fornell-Larcker criterion)</li>
 <li>HTMT and validity assessment based theron</li>
 <li>All reliability measures (congeneric, tau-equivalen, and parallel)</li>
 </ul>
-<p>It is possible to force computation of all quality measures for constructs modeled as composites, however, we explicitly warn to interpret results with caution, as they may not even have a conceptual meaning.</p>
-<p>All quality measures assume that the estimated loadings, construct correlations and path coefficients involved in the computation of a specific qualitiy measure are consistent estimates for their theoretical population counterpart. If the user deliberately chooses an approach that yields inconsistent estimates (by setting <code>.disattenuate = FALSE</code> in <code>csem()</code> when the model contains constructs modeled as common factors) <code>assess()</code> will still estimate all quantities, however, a warning is displayed as quantities such as the AVE or the congeneric reliability <span class="math inline">\(\rho_C\)</span> inherit inconsistency making their interpretation at the very least dubious.</p>
+<p>It is possible to force computation of all quality criteria for constructs modeled as composites, however, we explicitly warn to interpret results with caution, as they may not even have a conceptual meaning.</p>
+<p>All quality criteria assume that the estimated loadings, construct correlations and path coefficients involved in the computation of a specific qualitiy measure are consistent estimates for their theoretical population counterpart. If the user deliberately chooses an approach that yields inconsistent estimates (by setting <code>.disattenuate = FALSE</code> in <code>csem()</code> when the model contains constructs modeled as common factors) <code>assess()</code> will still estimate all quantities, however, a warning is displayed as quantities such as the AVE or the congeneric reliability <span class="math inline">\(\rho_C\)</span> inherit inconsistency making their interpretation at the very least dubious.</p>
 </div>
 </div>
 <div id="usage-examples" class="section level1">

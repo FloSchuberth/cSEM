@@ -89,7 +89,6 @@ foreman <- function(
       .csem_model               = csem_model,
       .iter_max                 = .iter_max,
       .PLS_modes                = .PLS_modes,
-      .tolerance                = .tolerance,
       # Arguments passed on to calculateInnerWeightsPLS
       .PLS_ignore_structural_model  = .PLS_ignore_structural_model,
       .PLS_weight_scheme_inner      = .PLS_weight_scheme_inner,
@@ -97,6 +96,7 @@ foreman <- function(
       .data                     = X,
       # Arguments passed to checkConvergence
       .conv_criterion           = .conv_criterion,
+      .tolerance                = .tolerance,
       # starting values
       .starting_values          = .starting_values
     )

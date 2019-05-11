@@ -1,15 +1,38 @@
 #' Assess model
 #'
-#' Assess model using common evaluation criteria and fit measures. 
+#' Assess a model using common evaluation criteria and fit measures.
+#' See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
+#' article on the
+#' \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
 #' 
-#' For details see the vignette on assess.
+#' The function is essentially a wraper around a number of internal functions
+#' that perform an "assessment task" (called a **quality criterion** in \pkg{cSEM}
+#' parlance) like computing the (congeneric) reliability,
+#' the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
+#' 
+#' By default every possible quality criterion is calculated (`.what = "all"`). 
+#' If only a subset of quality criteria needs to be computed a single character string
+#' or a vector of character strings naming the quantity to compute may be 
+#' supplied to `assess()` via the `.what` argument.
+#' 
+#' Some of the quality criteria are inherently tied to the classical common
+#' factor model and therefore only meaningfully interpreted within a common
+#' factor model (see the 
+#' \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
+#' article for details). 
+#' It is possible to force computation of all quality criteria for constructs 
+#' modeled as composites by setting `.only_common_factors = FALSE`, however, 
+#' we explicitly warn to interpret quality criteria in this case with caution, 
+#' as they may not even have a conceptual meaning. 
 #'
 #' @inheritParams csem_arguments
 #' @param ... Further arguments passed to functions called by `assess()`.
+#'   See [args_assess_dotdotdot] for a complete list of available arguments.
 #'
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
-#' @return (TODO)
+#' @return A named list of quality criteria. Note that if only a single quality
+#'   criteria is computed the return value is still a list!
 #' @export
 
 assess <- function(

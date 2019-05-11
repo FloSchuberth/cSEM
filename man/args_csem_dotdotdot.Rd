@@ -6,8 +6,8 @@
 \arguments{
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "\emph{none}" in which case the standard
-bravais-person correlation is used,
-"\emph{spearman}" for the spearman correlation, or
+Bravais-Person correlation is used,
+"\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}".}
 
@@ -60,5 +60,24 @@ Defaults to \code{1e-05}.}
 \description{
 A complete alphabetical list of all possible arguments accepted by \code{csem()}'s \code{...}
 (dotdotdot) argument.
+}
+\details{
+Most arguments supplied to the \code{...} argument of \code{csem()} are only
+accepted by a subset of the functions called by \code{csem()}. The following
+list shows which argument is passed to which (internal) function:
+\describe{
+\item{.approach_cor_robust}{Accepted by/Passed down to: \code{\link[=calculateIndicatorCor]{calculateIndicatorCor()}}}
+\item{.conv_criterion}{Accepted by/Passed down to: \code{\link[=calculateWeightsPLS]{calculateWeightsPLS()}},
+\code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}, \code{\link[=calculateWeightsGSCAm]{calculateWeightsGSCAm()}} and subsequently
+\code{\link[=checkConvergence]{checkConvergence()}}.}
+\item{.dominant_indicators}{Accepted by/Passed down to: \code{\link[=setDominantIndicator]{setDominantIndicator()}}}
+\item{.estimate_structural}{Accepted by/Passed down to: \code{\link[=foreman]{foreman()}}}
+\item{.iter_max}{Accepted by/Passed down to: \code{\link[=calculateWeightsPLS]{calculateWeightsPLS()}},
+\code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}, \code{\link[=calculateWeightsGSCAm]{calculateWeightsGSCAm()}}}
+\item{.PLS_modes, .PLS_ignore_structural_model, .PLS_weight_scheme_inner, .PLS_approach_cf}{
+Accepted by/Passed down to: \code{\link[=calculateWeightsPLS]{calculateWeightsPLS()}}}
+\item{.tolerance}{Accepted by/Passed down to: \code{\link[=calculateWeightsPLS]{calculateWeightsPLS()}},
+\code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}, \code{\link[=calculateWeightsGSCAm]{calculateWeightsGSCAm()}}, \code{\link[=calculateWeightsUnit]{calculateWeightsUnit()}}}
+}
 }
 \keyword{internal}

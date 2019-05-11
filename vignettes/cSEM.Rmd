@@ -588,7 +588,7 @@ Common factor
 
 Composite
 
-:   A composite is a weighted sum of its related indicators. Composites may 
+:   A composite is a weighted sum of indicators. Composites may 
     either serve as constructs in their own right or as proxies for a latent variable. 
     The nature of the composite is therefore defined by the type of (measurement) 
     model. If composites are error-free representations 
@@ -650,6 +650,18 @@ Latent variable
 
 :   See: Common factor
 
+Test score
+
+:   A proxy for a true score. Usually, the test score is a simple (unweighted) 
+    sum score of observables/indicators, i.e. unit weights are assumed when
+    building the test score. More generally, 
+    the test score can be any weighted sum of observables (i.e. a composite), 
+    however, the term "test score" is historically closely tied to the idea that it is
+    indeed a simple sum score. Hence, whenever it is important to distinguish
+    between a true score as representing a sum score and a true score
+    as representing a weighted sum of indicators (where indicator weights a not necessarily
+    one) we will explicitly state what kind of test score we mean.
+    
 True score
 
 :   See: Common factor
@@ -657,6 +669,9 @@ True score
 Proxy
 
 :   Any quantity that functions as a representation of some other quantity.
+    Prominent proxies are the test score - which serves as a stand-in/proxy
+    for the true score - and the composite - which serves as a stand-in/proxy
+    for a common factor. 
     Proxies are usually - but not necessarily - error-prone representations
     of the quantity they seek to represent.
 

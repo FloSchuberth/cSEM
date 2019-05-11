@@ -16,8 +16,8 @@
 #'   Defaults to "*3stage*".
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
 #'   indicator correlation matrix. One of: "*none*" in which case the standard 
-#'   bravais-person correlation is used,
-#'   "*spearman*" for the spearman correlation, or
+#'   Bravais-Person correlation is used,
+#'   "*spearman*" for the Spearman rank correlation, or
 #'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
 #'   Defaults to "*none*".
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
@@ -208,6 +208,24 @@ NULL
 #' A complete alphabetical list of all possible arguments accepted by `csem()`'s `...` 
 #' (dotdotdot) argument.
 #' 
+#' Most arguments supplied to the `...` argument of `csem()` are only
+#' accepted by a subset of the functions called by `csem()`. The following
+#' list shows which argument is passed to which (internal) function:
+#' \describe{
+#' \item{.approach_cor_robust}{Accepted by/Passed down to: [calculateIndicatorCor()]}
+#' \item{.conv_criterion}{Accepted by/Passed down to: [calculateWeightsPLS()],
+#'   [calculateWeightsGSCA()], [calculateWeightsGSCAm()] and subsequently 
+#'   [checkConvergence()].}
+#' \item{.dominant_indicators}{Accepted by/Passed down to: [setDominantIndicator()]}
+#' \item{.estimate_structural}{Accepted by/Passed down to: [foreman()]}
+#' \item{.iter_max}{Accepted by/Passed down to: [calculateWeightsPLS()],
+#'   [calculateWeightsGSCA()], [calculateWeightsGSCAm()]}
+#' \item{.PLS_modes, .PLS_ignore_structural_model, .PLS_weight_scheme_inner, .PLS_approach_cf}{
+#'   Accepted by/Passed down to: [calculateWeightsPLS()]}
+#' \item{.tolerance}{Accepted by/Passed down to: [calculateWeightsPLS()],
+#'   [calculateWeightsGSCA()], [calculateWeightsGSCAm()], [calculateWeightsUnit()]}
+#' }
+#' 
 #' @usage NULL
 #' 
 #' @inheritParams csem_arguments
@@ -227,6 +245,34 @@ args_csem_dotdotdot <- function(
                                "mean_geometric", "mean_harmonic",
                                "geo_of_harmonic"),
   .tolerance               = 1e-05
+) {NULL}
+
+#' Internal: Complete list of assess()'s ... arguments
+#' 
+#' A complete alphabetical list of all possible arguments accepted by `assess()`'s `...` 
+#' (dotdotdot) argument.
+#' 
+#' Most arguments supplied to the `...` argument of `assess()` are only
+#' accepted by a subset of the functions called by `assess()`. The following
+#' list shows which argument is passed to which (internal) function:
+#' \describe{
+#' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()]}
+#' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
+#' \item{.saturated}{Accepted by/Passed down to: [calculateSRMR()], 
+#'   [calculateDG()], [calculateDL()], [calculateDML()]and subsequently [fit()].}
+#' \item{.type_vcv}{Accepted by/Passed down to: [calculateSRMR()], 
+#'   [calculateDG()], [calculateDL()], [calculateDML()] and subsequently [fit()].}
+#' }
+#' @usage NULL
+#' 
+#' @inheritParams csem_arguments
+#' @keywords internal
+
+args_assess_dotdotdot <- function(
+  .alpha               = 0.05,
+  .closed_form_ci      = FALSE,
+  .saturated           = FALSE,
+  .type_vcv            = "indicator"
 ) {NULL}
   
 #' Show argument defaults or candidates

@@ -41,8 +41,8 @@ or a \link{cSEMModel} list.}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "\emph{none}" in which case the standard
-bravais-person correlation is used,
-"\emph{spearman}" for the spearman correlation, or
+Bravais-Person correlation is used,
+"\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}".}
 
