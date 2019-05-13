@@ -45,7 +45,7 @@ The distance functions are only applicable to objects of class
 }
 \section{Functions}{
 \itemize{
-\item \code{calculateSRMR}: The standardized root means squared residual (SRMR).
+\item \code{calculateSRMR}: The standardized root mean square residual (SRMR).
 
 \item \code{calculateDG}: The geodesic distance (dG).
 

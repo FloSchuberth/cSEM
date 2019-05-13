@@ -1,6 +1,5 @@
 ---
 title: "Introduction to cSEM"
-subtitle: "Concepts, terminonlogy, and notation"
 date: "Last edited: `r Sys.Date()`"
 output:
   prettydoc::html_pretty:
@@ -46,19 +45,21 @@ we do not seek to impose "our" conventions, nor do we claim they are the
 between us (the authors of the package) and you (the package user) as
 unambigious and error-free as possible. 
 
-This introduction therefore provides two glossaries:
+Hence, users are strongly encourgaed to regularily consult the tow glossaries 
+listed below to avoid potential misunderstandings:
 
-1. The [terminology glossary](#terminology) containing each term that we 
+1. The [terminology glossary](#terminology) contains each term that we 
   think should be defined and explained in order to make sure
   package users understand complementary help files and vignettes the way
   the package authors intended them to be understood.
-1. The [mathematical notation glossary](#notation) containing each mathematical 
+1. The [mathematical notation glossary](#notation) contains each mathematical 
   symbol used in the package documentation alongside a definition.
          
 The package is designed based on a set of principles that are partly in contrast 
-to commonly used open-source and commerical software packages offering similar content. This 
-introduction explains these principles to contrast them against the principles of existing software packages
-and to point readers to further reading. Lastly, to use **cSEM** effectively, 
+to commonly used open-source and commerical software packages offering similar content. 
+This introduction explains these principles to contrast them against the principles
+of existing software packages and to point readers to further reading. 
+Lastly, to use **cSEM** effectively, 
 it is helpful to understand its design. Hence, the package architecure and design
 as well as what we consider the "cSEM workflow" are discussed in the following.
 
@@ -179,7 +180,7 @@ eta2 =~ item4 + item5 + item6 # eta2 is modeled as a common factor
 
 
 
-### Composites in a composite model vs. composite in a common factor model and disattenuation
+### Composites in a composite model vs. composites in a common factor model and disattenuation
 By virtue of the package, cSEM uses composite-based estimators only. Depending
 on the model choosen, linear compounts may therefore either serve as a
 composite as part of the composite model or as a proxy/stand-in for a common factor.
@@ -545,14 +546,46 @@ b <- csem(
 
 Currently, there are 4 major postestimation function and 3 test-family functions:
 
-- `assess()`
-- `predict()`
-- `summarize()`
-- `verify()`
+`assess()`
 
-- `testOMF()`
-- `testMGD()`
-- `testMICOM()`
+:   Assess the quality of the estimated model *without conducting a statistical test* 
+    Quality in this case is taken to be a catch-all term for all common aspects 
+    of model assessment. This mainly comprises fit indices, reliability 
+    estimates, common validity assessment criteria and other related quality 
+    measures/indices that do not rely on a formal test procedure. In `cSEM` 
+    a generic (fit) index or quality/assessment measure is refered to as
+    a **quality criterion**.
+    
+`predict()`
+
+:   Predict the scores of the exogenous constructs. (not yet implemented).
+
+`summarize()`
+
+:   Summarize a model. The function is mainly called for its side effect, the printing of
+    a structured summary of the estimates.
+   
+`verify()`
+
+:   Verify admissibility of the estimated quantities for a given model. 
+    Results based on an estimated model exhibiting one of the following defects 
+    are deemed inadmissible: non-convergence, loadings and/or (congeneric) reliabilities 
+    larger than 1, a construct VCV and/or a model-implied VCV matrix that 
+    is not positive (semi-)definite. 
+
+#### The `test_*` family of postestimation functions
+
+`testOMF()` 
+
+:   Test for overall model fit based on [@Beran1985]. See also [@Dijkstra2015].
+    
+`testMGD()`
+
+:   Test for group differences using difference measures
+
+`testMICOM()`
+
+:   Test of measurement invariance of composites proposed by [@Henseler2016]
 
 Postestimation functions are generic function with methods for objects of class 
 `cSEMResults_default`, `cSEMResults_multi`, `cSEMResults_2ndorder`. In `cSEM`
@@ -567,132 +600,5 @@ which is called by one of the postestimation functions (e.g., `calculateAVE()` o
 In this case only objects of class `cSEMResults_default` are accepted as this
 ensures a specific structure. Therefore, it is important to remember that
 *internal functions are generally **not** generic.*
-
-# Terminology & Notation 
-The termionology and (mathematical) notiation used in complementatry help files
-is described here. 
-
-## Terminology {#terminology}
-
-Common factor
-
-:   A common factor or latent variable is a type of construct. The defining feature of a
-    common factor is the idea that the common factor is the common underlying 
-    (latent) cause of the realizations of a set of indicators that are said to measure 
-    the common factor. The common factor model is also referred to as 
-    reflective measurement model. Accordingly, indicators related to the common factor
-    are modeled as measurement error-prone manifestations of a common variable, 
-    cause or factor. The idea of a common factor is closely related to the true
-    score theory. Although, there a subtle conceptional differences, the terms common factor,
-    true score, and latent variable are used synommenoulsy in **cSEM**.
-
-Composite
-
-:   A composite is a weighted sum of indicators. Composites may 
-    either serve as constructs in their own right or as proxies for a latent variable. 
-    The nature of the composite is therefore defined by the type of (measurement) 
-    model. If composites are error-free representations 
-    of a concept we refer to the measurement model as composite measurement. If 
-    composites are used as stand-ins, the measurement model is called 
-    causal-formative (Henseler, 2017). 
-    
-Composite-based methods 
-
-:   Composite-based methods or composite-based SEM refers to the entirety of methods 
-    centered around the use as of composites (linear compounts of observables) 
-    as stand-ins or error-free representations for the concepts under investigation.
-    Composite-based methods are also called
-    variance-based methods as focal parameters are usually retrived such that explained 
-    variance is maximized.
-    
-Concept
-
-:   An entity defined by a conceptual/theoretical definition. In line with Rigdon (2016)
-    variables representing or subsuming a concept are called **conceptual variables**. 
-    The precise nature/meaning of a conceptual variable depends on 
-    "differnt assumptions, philosophies or worldviews [of the researcher]" 
-    (Rigdon, 2016, p. 2). Unless otherwise stated, in **cSEM**, it is sufficient
-    to think of concepts as entities that exist simply because they 
-    have been defined. Hence, abstract terms such as "loyalty" or "depression" as 
-    well as designed entities (artifacts) such as the "OECD Better Life Index"
-    are covered by the definition.
-
-Construct
-
-:   Construct refer to a representation of a concept *within a given statistical 
-    model*. While a concept is defined by a conceptual (theoretical) definition, 
-    a construct for a concept is defined/created by the researcher's operationalization
-    of a concept within a statistical model. concepts are either modeled
-    as common factors/latent variables or as composites. Both operationalizations
-    - the common factor and the composite - are called constructs in **cSEM** .
-    As opposed to concepts, constructs therefore exist because they arise as 
-    the result of the act of modeling their relation to the observable 
-    variables (indicators) based on a specific set of assumptions. 
-    Constructs may therefore best be understood as stand-ins for concepts. Consequently,
-    constructs do not necessarily represent the concept they seek to represent.
-
-Factor-based methods 
-
-:   Factor-based methods or factor-based SEM refers to the entirety of methods 
-    centered around the use of the common factors/latent variables as stand-ins for 
-    the concepts under investigation. Factor-based methods are also called
-    covariance-based methods as focal parameters are retrived such that the
-    difference between the model-implied $\bm\Sigma(\theta)$ and the empirical indicator covariance 
-    matrix $\bm S$ is minimized.
-    
-Indicator
-
-:   An observable variable. In **cSEM** observable variables are generally refered 
-    to as indicators, however, terms such as item, manifest variable, or 
-    observables are sometimes used synommenoulsy.
-    
-Latent variable
-
-:   See: Common factor
-
-Test score
-
-:   A proxy for a true score. Usually, the test score is a simple (unweighted) 
-    sum score of observables/indicators, i.e. unit weights are assumed when
-    building the test score. More generally, 
-    the test score can be any weighted sum of observables (i.e. a composite), 
-    however, the term "test score" is historically closely tied to the idea that it is
-    indeed a simple sum score. Hence, whenever it is important to distinguish
-    between a true score as representing a sum score and a true score
-    as representing a weighted sum of indicators (where indicator weights a not necessarily
-    one) we will explicitly state what kind of test score we mean.
-    
-True score
-
-:   See: Common factor
-    
-Proxy
-
-:   Any quantity that functions as a representation of some other quantity.
-    Prominent proxies are the test score - which serves as a stand-in/proxy
-    for the true score - and the composite - which serves as a stand-in/proxy
-    for a common factor. 
-    Proxies are usually - but not necessarily - error-prone representations
-    of the quantity they seek to represent.
-
-Stand-in
-
-:   See: Proxy    
-
-Structural Equation Modeling 
-
-:   The entirety of a set of related theories, mathematical models, methods, 
-    algorithms and terminologies related to analyzing the relationships 
-    between (unobserved) concepts and/or observables. 
-    
-## Notation {#notation}
-<center>
-| Symbol            |  Dimension              |  Description
-|:------------------|:-----------------------:|:-------------------------------------|
-| $\bm\eta_{en}$	  | $(J_{en} \times 1)$     |  Vector of endogenous constructs/concepts|
-| $\bm\eta_{ex}$	  | $(J_{ex} \times 1)$     |  Vector of exogenous constructs/concepts|
-| $\bm\eta$         | $(J \times 1)$          |  Vector of constructs/concepts|
-| $\eta_j$          | $(1 \times 1)$          |  The $j$'th construct/concept|
-</center>
 
 # Literature

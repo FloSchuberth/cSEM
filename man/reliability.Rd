@@ -84,8 +84,8 @@ For constructs modeled as composites reliability may be estimated by setting
 \code{.only_common_factors = FALSE}, however, it is unclear how to
 interpret reliability in this case.
 
-For the the tau-equivalent reliability (rhoT) a closed-form confidence
-interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
+For the the tau-equivalent reliability (rhoT or Cronbach alpha) a closed-form
+confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 \code{.closed_form_ci = TRUE} (default is \code{FALSE}). If \code{.alpha} is a vector
 several CI's are returned.
 

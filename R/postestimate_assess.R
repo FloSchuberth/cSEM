@@ -10,10 +10,100 @@
 #' parlance) like computing the (congeneric) reliability,
 #' the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
 #' 
-#' By default every possible quality criterion is calculated (`.what = "all"`). 
+#' By default every possible quality criterion is calculated (`.quality_criterion = "all"`). 
 #' If only a subset of quality criteria needs to be computed a single character string
 #' or a vector of character strings naming the quantity to compute may be 
-#' supplied to `assess()` via the `.what` argument.
+#' supplied to `assess()` via the `.quality_criterion` argument. Currenty, the
+#' following quality crieria are implemented (in alphabetical order):
+#' \describe{
+#' \item{Average variance extracted (AVE); "ave"}{An estimate of the 
+#'   amount of variation in the indicators that is due to the assumed latent variable. Practically,
+#'   it is calculated as the ratio of the total indicator variance relative to 
+#'   the proxy (i.e. test score or composite) variance.}
+#' \item{Congeneric reliability; "rho_C"}{An estimate of the internal consistency
+#'   reliability assuming a congeneric measurement model (i.e., loadings are
+#'   allowed to differ) and a test score (proxy) based on unit weights.
+#'   To compute the congeneric reliability based on a score that uses the weights of the
+#'   weight approach used to obtain `.object` use `"rho_C_weighted"` instead.
+#'   Congeneric reliability is the unified name for 
+#'   reliability estimates that assume a congeneric measurement model. 
+#'   Alternative but synonemmous names  for `"rho_C"` and `"rho_C_weighted"` are: 
+#'   composite reliability, construct reliablity, reliability coefficient, rho_A,
+#'   rho_B, or Jöreskog's rho.}
+#' \item{Cronbach alpha; "cronbach_alpha"}{An estimate of the internal consistency
+#'   reliability assuming a tau-equivalent measurement model (i.e. a measurement
+#'   model with equal loadings) and a test score (proxy) based on unit weights. 
+#'   To compute Cronbach alpha based on a score that uses the weights of the
+#'   weight approach used to obtain `.object` use `"cronbach_alpha_weighted"` instead.
+#'   Cronbach alpha is an alias for `"rho_T"` (the tau-equivalent
+#'   reliability) which is
+#'   the prefered name for this kind of reliability in \pkg{cSEM}, as it clearly states what
+#'   it actually estimates (the tau-equivalent reliability as opposed to
+#'   the congeneric reliability).}
+#' \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
+#'   between the model-implied and the empirical indicator correlation matrix.
+#'   Currently, the geodesic distance (`"dg"`), the squared Euclidian distance
+#'   (`"dl"`) and the maximum likelihood distance function are implemented (`"dml"`)}
+#' \item{Effect size; "esize"}{An index of the effect size of an independent
+#'   variable in a structural regression equation. The effect size of the k'th
+#'   independent variabl in this case
+#'   is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where 
+#'   R2_inclded and R2_excluded are the R squares of the 
+#'   original structural model regression equation (R2_included) and the
+#'   alternative speficication with the k'th variable dropped (R2_excluded).}
+#' \item{Fornell-Larcker criterion; "fl"}{An estimate of the 
+#'   convergent and/or discriminant validity of a construct. The Fornell-Larcker
+#'   criterion is a descision rule based on a comparision between the squared
+#'   construct correlations and the average variance extracted. FL returns
+#'   a matrix with the squared construct correlations on the off-diagonal and 
+#'   the AVE's on the main diagonal.}
+#' \item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root of the mean 
+#'   of the R squares of the structural model times the mean of the variances in the indicators 
+#'   that are explained by their related constructs (lambda^2).
+#'   For the latter, only constructs modeled as common factors are considered
+#'   as they explain their indicator variance in contrast to a composite where 
+#'   indicators actually build the construct.
+#'   Note that, contrary to what the name suggests, the GoF is **not** a 
+#'   measure of model fit in a Chi-square fit test sense.}
+#' \item{Heterotrait-monotrait ratio of correlations (HTMT); "htmt"}{An estimate of the 
+#'   convergent and/or discriminant validity of a construct.}
+#' \item{R square and R square adjusted; "r2", "r2_adj"}{The R square and the adjusted
+#'   R square for each structural regression equation.}
+#' \item{Redundancy analysis (RA); "ra"}{The process of regressing the scores 
+#'   of a reflectivly measured construct on the scores of a formatively measured 
+#'   construct in order to gain empirical evidence for convergent validity of a 
+#'   formatively measured construct. 
+#'   RA is therefore confined to PLS, specifically PLS with at least one construct
+#'   whose mode is Mode B. This is the case if the construct is modeled as a 
+#'   composite or if the construct was explicitly given Mode B.
+#'   Hence RA is only conducated if `.object` was obtained using 
+#'   `.approach_weights = "PLS-PM"` and if at least one constructs mode is Mode B.}
+#' \item{Standardized root mean square residual; "srmr"}{The square root of the 
+#'   average elementwise squared distance between elements of the model-implied
+#'   and the empirical indicator corrleation matrix.}
+#' \item{Tau-equivalent reliability; "rho_T"}{An estimate of the internal consistency
+#'   reliability assuming a tau-equivalent measurement model (i.e. a measurement
+#'   model with equal loadings) and a test score (proxy) based on unit weights.
+#'   Tau-equivalent reliability is the preferred name for reliability estimates
+#'   that assume a tau-equivalent measurment model such as Cronbach alpha.}
+#' \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-) 
+#'   collinearity between independent variables of a regression equation. Computed
+#'   for each structural equation. Practically, the VIF_k is defined
+#'   as the ratio of 1 over (1 - R2_k) where R2_k is the R squared from a regression
+#'   of the k'th independent variable on all remaining independent variables.}
+#' \item{Variance inflation factors for PLS-PM mode B (VIF-ModeB); "vifmodeB"}{An index for 
+#'   the amount of (multi-) collinearity between independent variables (indicators) in
+#'   mode B regression equations. Computed only if `.object` was obtained using
+#'   `.weight_approach = "PLS-PM"` and at least one mode was mode B. 
+#'   Practically, VIF-ModeB_k is defined as the ratio of 1 over (1 - R2_k) where 
+#'   R2_k is the R squared from a regression of the k'th indicator of block j on
+#'   all remaining indicators of the same block.}
+#' }
+#' 
+#' For details see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
+#' of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
+#' article on the on the
+#' \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}.
 #' 
 #' Some of the quality criteria are inherently tied to the classical common
 #' factor model and therefore only meaningfully interpreted within a common
@@ -38,6 +128,7 @@
 assess <- function(
   .object              = NULL, 
   .only_common_factors = TRUE, 
+  .quality_criterion   = args_default()$.quality_criterion,
   ...
   ){
   UseMethod("assess")
@@ -49,6 +140,7 @@ assess <- function(
 assess.cSEMResults_default <- function(
   .object              = NULL, 
   .only_common_factors = TRUE, 
+  .quality_criterion   = args_default()$.quality_criterion,
   ...
   ){
   
@@ -123,6 +215,7 @@ assess.cSEMResults_default <- function(
 assess.cSEMResults_multi <- function(
   .object              = NULL,
   .only_common_factors = TRUE,
+  .quality_criterion   = args_default()$.quality_criterion,
   ...
   ){
   

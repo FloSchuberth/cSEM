@@ -1,0 +1,93 @@
+---
+title: "Notation glossary"
+date: "Last edited: `r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    toc: true
+    includes:
+      before_body: preamble.mathjax.tex
+vignette: >
+  %\VignetteIndexEntry{csem-notation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/REFERENCES.bib
+---
+
+WARNING: this document is work in progress and may still contain mistakes!
+<!-- used to print boldface greek symbols (\mathbf only works for latin symbols) -->
+```{r child="preamble-tex.tex", echo=FALSE, include=FALSE}
+```
+
+## The structural model
+
+## The measurement model
+Define the general measurement model as:
+$$ x_{kj} = \eta_{kj} + \varepsilon_{kj} = \lambda_{kj}\eta_j +  \varepsilon_{kj}\quad\text{for}\quad k = 1, \dots, K_j\quad\text{and}\quad j = 1, \dots, J$$
+
+Call $\eta_{jk} = \lambda_{jk}\eta_j$ the true score and $\eta_j$ the underlying latent variable
+supposed to be the common factor or cause for the $K_j$ indicators conntected to latent variable $\eta_j$. 
+Call $\lambda_{kj}$ the loading or direct effect of the latent variable on its indicator.
+Let $x_{kj}$ be an indicator, $\varepsilon_{kj}$ be a measurement error and  
+$$\hat{\eta}_j = \sum^{K_j}_{k = 1} w_{kj} x_{kj} = \sum^{K_j}_{k = 1} w_{kj} \eta_{kj} + \sum^{K_j}_{k = 1} w_{kj} \varepsilon_{kj}
+= \bar\eta_{kj} + \bar\varepsilon_{kj}$$ 
+be a proxy/test score/composite/stand-in for $\eta_j$, where $w_{kj}$ is a weight and
+$\bar\eta_k$ a population proxy, i.e., a weight sum of true scores. 
+We will refer to $\hat\eta$ as "proxy" below as it best reflects its intended use.
+
+Assume that $E(\varepsilon_{kj}) = E(\eta_j) = Cov(\eta_j, \varepsilon_{kj}) = 0$.
+Further assume $Cov(\varepsilon_{kj}, \varepsilon_{lj})=0$ for $k \neq l$
+and that $Var(\eta_j) = E(\eta^2_j) = 1$ to determine the scale. 
+
+Treatment below is done for a generic true score $\eta_{jk}$. For the sake of
+clarity the index $j$ is therefore dropped unless it is necessary to avoid confusion. 
+
+Note that classical treatment of reliability and other measures below is typically
+done assuming the proxy $\hat\eta_j$ is a simple sum score which implies that all weighs
+are set to one. The treatmeant below is more general since $\hat{\eta}_j$ is
+allowed to be *any* weighted sum of related indicators. Readers familiar with
+the "classical treatment" may simply set weights to one (unit weights)
+to "translate" results to known formulae.
+
+Based on the assumptions and definitions above the following quantities necessarily follow:
+
+\begin{align}
+Cov(x_k, \eta) &= \lambda_k \\
+Cor(x_k, \eta) &= \rho_{x_k, \eta} = \frac{\lambda_k}{\sqrt{Var(x_k)}} \\
+Var(\eta_k) &= \lambda^2_k \\
+Var(x_k)    &= \lambda^2_k + Var(\varepsilon_k) \\
+Cov(\eta_k, \eta_l) &= E(\eta_k\eta_l) = \lambda_k\lambda_lE(\eta^2) = \lambda_k\lambda_l \\
+Cov(x_k, x_j) &= \lambda_k\lambda_lE(\eta^2) + \lambda_kE(\eta\varepsilon_k) + \lambda_lE(\eta\varepsilon_l) + E(\varepsilon_k\varepsilon_l) = \lambda_k\lambda_l \\
+Var(\hat\eta) &= \sum w_k^2(\lambda^2_k + Var(e_k)) + 2\sum_{k < l} w_k w_l \lambda_k\lambda_j = \mathbf{w}'\mathbf{\Sigma}\mathbf{w} \\
+Var(\bar\eta) &= \sum w_k^2\lambda^2_k + 2\sum_{k < l} w_k w_l \lambda_k\lambda_j =(\sum w_k\lambda_k)^2 = (\mathbf{w}'\mathbf{\lambda})^2 \\
+Cov(\eta, \hat\eta) &= E(\sum w_k \lambda_k \eta^2) = \sum w_k\lambda_k = \mathbf{w}'\mathbf{\lambda}= \sqrt{Var(\bar\eta)}
+\end{align}
+where $\mathbf\Sigma$ is the indicator variance covariance matrix implied by the 
+measurement model:
+
+$$
+\mathbf\Sigma = \begin{pmatrix}
+\lambda^2_1 + Var(\varepsilon_1) & \lambda_1\lambda_2  & \dots & \lambda_1\lambda_K \\
+\lambda_2\lambda_ 1 & \lambda^2_2 + Var(\varepsilon_2) & \dots & \lambda_2\lambda_K \\
+ \vdots & \vdots & \ddots & \vdots \\
+\lambda_{K}\lambda_1 & \lambda_K\lambda_2 &\dots &\lambda^2_K + Var(\varepsilon_K)
+\end{pmatrix}
+$$
+
+In `cSEM` indicators are always standardized (i.e., $Var(x_k) = 1$) and weights are always appropriately
+scaled such that the variance of $\hat\eta$ is equal to one! For most of the
+formulae below this implies a significant simplification, however, for ease of 
+comparison to extant literature formulae will be derived and written in
+general form. The "simplified form" or "cSEM form" using $Var(x_k) = Var(\hat\eta) = 1$ 
+will be given at the end of each paragraph.
+
+<!-- ## Notation -->
+<!-- <center> -->
+<!-- | Symbol            |  Dimension              |  Description -->
+<!-- |:------------------|:-----------------------:|:-------------------------------------| -->
+<!-- | $\bm\eta_{en}$	  | $(J_{en} \times 1)$     |  Vector of endogenous constructs/concepts| -->
+<!-- | $\bm\eta_{ex}$	  | $(J_{ex} \times 1)$     |  Vector of exogenous constructs/concepts| -->
+<!-- | $\bm\eta$         | $(J \times 1)$          |  Vector of constructs/concepts| -->
+<!-- | $\eta_j$          | $(1 \times 1)$          |  The $j$'th construct/concept| -->
+<!-- </center> -->

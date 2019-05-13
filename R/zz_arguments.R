@@ -140,6 +140,9 @@
 #'   used in PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
 #'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS-PM.
 #' @param .probs A vector of probabilities.
+#' @param .quality_criterion Character string. A single character string or a
+#'   vector of character strings naming the quality criterion to compute. See 
+#'   the details section for a list of possible candidates. Defaults to "*all*".
 #' @param .quantity Character string. Which statistic should be returned?
 #'   One of (TODO) 
 #'   Defaults to (TODO).
@@ -335,6 +338,12 @@ args_default <- function(.choices = FALSE) {
     .object                  = NULL,
     .P                       = NULL,
     .probs                   = NULL,
+    .quality_criterion       = c("all", "ave", "rho_C", "rho_C_weighted", "cronbach_alpha", 
+                                 "cronbach_alpha_weighted", "dg", "dl", "dml",
+                                 "esize", "gof", "htmt", "r2", "r2_adj", "ra",
+                                 "srmr", "rho_T", "rho_T_weighted", "vif", 
+                                 "vifmodeb",  "fl_criterion"),
+    
     .quantity                = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
                                  "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
     .Q                       = NULL,

@@ -186,6 +186,10 @@ Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.probs}{A vector of probabilities.}
 
+\item{.quality_criterion}{Character string. A single character string or a
+vector of character strings naming the quality criterion to compute. See
+the details section for a list of possible candidates. Defaults to "\emph{all}".}
+
 \item{.quantity}{Character string. Which statistic should be returned?
 One of (TODO)
 Defaults to (TODO).}

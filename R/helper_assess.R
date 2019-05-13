@@ -463,7 +463,7 @@ calculateHTMT <- function(
 #' @name distance_measures
 NULL
 
-#' @describeIn distance_measures The standardized root means squared residual (SRMR).
+#' @describeIn distance_measures The standardized root mean square residual (SRMR).
 
 calculateSRMR <- function(
   .object    = NULL, 
