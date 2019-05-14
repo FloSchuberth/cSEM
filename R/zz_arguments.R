@@ -142,7 +142,7 @@
 #' @param .probs A vector of probabilities.
 #' @param .quality_criterion Character string. A single character string or a
 #'   vector of character strings naming the quality criterion to compute. See 
-#'   the details section for a list of possible candidates. Defaults to "*all*".
+#'   the Details section below for a list of possible candidates. Defaults to "*all*".
 #' @param .quantity Character string. Which statistic should be returned?
 #'   One of (TODO) 
 #'   Defaults to (TODO).
@@ -197,6 +197,8 @@
 #' @param .W A (J x K) matrix of weights.
 #' @param .W_new A (J x K) matrix of weights.
 #' @param .W_old A (J x K) matrix of weights.
+#' @param .weighted Logical. Should estimation be based on a score that uses 
+#'   the weights of the weight approach used to obtain `.object`?. Defaults to `FALSE`.
 #' @param .X A matrix of processed data (scaled, cleaned and ordered).
 #' @param .X_cleaned A data.frame of processed data (cleaned and ordered). Note: `X_cleaned`
 #'   may not be scaled!
@@ -338,8 +340,8 @@ args_default <- function(.choices = FALSE) {
     .object                  = NULL,
     .P                       = NULL,
     .probs                   = NULL,
-    .quality_criterion       = c("all", "ave", "rho_C", "rho_C_weighted", "cronbach_alpha", 
-                                 "cronbach_alpha_weighted", "dg", "dl", "dml",
+    .quality_criterion       = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+                                 "cronbachs_alpha_weighted", "dg", "dl", "dml",
                                  "esize", "gof", "htmt", "r2", "r2_adj", "ra",
                                  "srmr", "rho_T", "rho_T_weighted", "vif", 
                                  "vifmodeb",  "fl_criterion"),
@@ -366,6 +368,7 @@ args_default <- function(.choices = FALSE) {
     .user_funs               = NULL,
     .verbose                 = TRUE,
     .W                       = NULL,
+    .weighted                = FALSE,
     .x                       = NULL,
     .X                       = NULL,
     .X_cleaned               = NULL,

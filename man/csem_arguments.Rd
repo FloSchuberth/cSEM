@@ -188,7 +188,7 @@ Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
-the details section for a list of possible candidates. Defaults to "\emph{all}".}
+the Details section below for a list of possible candidates. Defaults to "\emph{all}".}
 
 \item{.quantity}{Character string. Which statistic should be returned?
 One of (TODO)
@@ -267,6 +267,9 @@ vectorized (columnwise) in this case. See the examples section for details.}
 \item{.W_new}{A (J x K) matrix of weights.}
 
 \item{.W_old}{A (J x K) matrix of weights.}
+
+\item{.weighted}{Logical. Should estimation be based on a score that uses
+the weights of the weight approach used to obtain \code{.object}?. Defaults to \code{FALSE}.}
 
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 

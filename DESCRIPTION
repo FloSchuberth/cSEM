@@ -53,6 +53,7 @@ Imports: alabama,
     polycor,
     psych,
     purrr,
+    Rdpack,
     stats,
     symmoments,
     utils
@@ -64,7 +65,6 @@ Suggests:
     nnls,
     pkgdown,
     prettydoc,
-    Rdpack,
     rmarkdown,
     listviewer,
     testthat

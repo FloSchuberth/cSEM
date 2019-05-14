@@ -128,7 +128,7 @@ code > span.ot { color: #007020; }
 <li><a href="#example3">Example 3</a></li>
 </ul></li>
 <li><a href="#methods">Methods &amp; Formulae</a><ul>
-<li><a href="#average-variance-extracted-ave">Average variance extracted (AVE)</a><ul>
+<li><a href="#ave">Average variance extracted (AVE)</a><ul>
 <li><a href="#definition">Definition</a></li>
 <li><a href="#formula">Formula</a></li>
 <li><a href="#implementation">Implementation</a></li>
@@ -228,7 +228,7 @@ code > span.ot { color: #007020; }
 <div id="methods" class="section level1">
 <h1>Methods &amp; Formulae</h1>
 <p>This section provides technical details and relevant formulae. To understand the notation and terminology used in this section see the <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation glossary</a> and the <a href="https://m-e-rademaker.github.io/cSEM/articles/Termionlogy.html">Termionology glossary</a>.</p>
-<div id="average-variance-extracted-ave" class="section level2">
+<div id="ave" class="section level2">
 <h2>Average variance extracted (AVE)</h2>
 <div id="definition" class="section level3">
 <h3>Definition</h3>
@@ -243,7 +243,7 @@ code > span.ot { color: #007020; }
 </div>
 <div id="formula" class="section level3">
 <h3>Formula</h3>
-<p>Using the results and notation derived and defined in the <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation glossary</a>, the AVE for a generic construct is: <span class="math display">\[ AVE = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}\]</span> If <span class="math inline">\(x_k\)</span> is standardized the denominator reduces to <span class="math inline">\(K\)</span> and the AVE is <span class="math display">\[ AVE = \frac{1}{K}\sum \lambda^2_k = \frac{1}{K}\sum \rho_{x_k, \eta}^2\]</span> As an important consequence, the AVE is closely tied the communality. <strong>Indicator communality</strong> (<span class="math inline">\(COM_k\)</span>) is definied as the square of the standardized loading of the <span class="math inline">\(k\)</span>’th indicator (<span class="math inline">\(\lambda^2\)</span>). <strong>Construct (total) communality</strong> (<span class="math inline">\(COM = \varnothing COM_k\)</span>) is definied as the mean over all indicator communalities. Since indicators, proxies and subsequently loadings are always standardized, the squared loading is simply the squared correlation between the indicator and its related population proxy. The AVE is also directly related to another frequently used term, <strong>indicator reliability</strong>, defined as the squared correlation between an indicator <span class="math inline">\(k\)</span> and its related population proxy (see section <a href="#reliability">Reliability</a> below), which is again simply <span class="math inline">\(\lambda^2\)</span>. Therefore in <code>cSEM</code> we always have:</p>
+<p>Using the results and notation derived and defined in the <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation glossary</a>, the AVE for a generic construct is: <span class="math display">\[ AVE = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}\]</span> If <span class="math inline">\(x_k\)</span> is standardized the denominator reduces to <span class="math inline">\(K\)</span> and the AVE is <span class="math display">\[ AVE = \frac{1}{K}\sum \lambda^2_k = \frac{1}{K}\sum \rho_{x_k, \eta}^2\]</span> As an important consequence, the AVE is closely tied the communality. <strong>Communality</strong> (<span class="math inline">\(COM_k\)</span>) is definied as the square of the standardized loading of the <span class="math inline">\(k\)</span>’th indicator (<span class="math inline">\(\lambda^2\)</span>). <strong>Construct (total) communality</strong> (<span class="math inline">\(COM = \varnothing COM_k\)</span>) is definied as the mean over all indicator communalities. Since indicators, proxies and subsequently loadings are always standardized, the squared loading is simply the squared correlation between the indicator and its related population proxy. The AVE is also directly related to another frequently used term, <strong>indicator reliability</strong>, defined as the squared correlation between an indicator <span class="math inline">\(k\)</span> and its related population proxy (see section <a href="#reliability">Reliability</a> below), which is again simply <span class="math inline">\(\lambda^2\)</span>. Therefore in <code>cSEM</code> we always have:</p>
 <p><span class="math display">\[ AVE = COM = \frac{1}{K}\sum COM_k = \frac{1}{K}\sum \text{Indicator reliability}_k = \frac{1}{K}\sum R^2_k \]</span></p>
 </div>
 <div id="implementation" class="section level3">

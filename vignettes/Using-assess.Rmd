@@ -23,40 +23,39 @@ WARNING: this document is work in progress and may still contain mistakes!
 As indicated by the name, `assess()` is used to assess a model estimated using the
 `csem()` function.
 
-In `cSEM` *model assessement* is considered to be any task that in some way or
+In **cSEM** model assessement is considered to be any task that in some way or
 another seeks to assess the quality of the estimated model *without conducting* 
-*a statistical test* (tests are covered by the `test_*` family of functions,
-see: [Postestimation: Testing a model](https://m-e-rademaker.github.io/cSEM/articles/Using-test.html)). 
+*a statistical test* (tests are covered by the `test_*` family of functions.
+See: [Postestimation: Testing a model][Testing]). 
 Quality in this case is taken to be a catch-all term for
 all common aspects of model assessment. This mainly comprises
-fit indices, reliability estimates, common validity assessment criteria and other 
+fit indices, reliability estimates, common validity assessment criteria, 
+effect sizes, and other 
 related quality measures/indices that do not rely on a formal test procedure. Hereinafter, 
-we will refer to a generic (fit) index, quality/assessment measure as 
+we will refer to a generic (fit) index, quality or assessment measure as 
 a **quality criterion**.
+
 Currently the following quality criteria are implemented:
 
 - Convergent and discriminant validity assessment:
-    - The **average variance extracted** (AVE) (the basis for the 
-      Fornell-Larcker criterion (FL criterion))
+    - The **average variance extracted** (AVE)
+    - The **Fornell-Larcker** criterion
     - The **heterotrait-monotrait ratio of correlations** (HTMT)
 - **Congeneric reliability** ($\rho_C$), also known as e.g.: composite reliability,
   construct reliability, (unidimensional) omega, Jöreskog's $\rho$, $\rho_A$,
   or $\rho_B$. 
 - **Tau-equivalent reliability** ($\rho_T$), also known as e.g.: Cronbach alpha, alpha, $\alpha$,
   coefficient alpha, Guttman's $\lambda_3$, KR-20. 
-  
-  A third reliability measure is **Parallel reliability** ($\rho_P$), also known
-  as e.g.: split-half reliability, 
-  Spearman-Brown formulae/prophecy, standarized alpha. In `cSEM` parallel 
-  reliability is always identical to tau-equivalent reliability as indicators
-  are always standardized. Hence, only $\rho_T$ is reported.
 - Distance measures
     - The **standardized root mean square residual** (SRMR)
     - The **geodesic distance** (DG)
     - The **squared Euclidian distance** (DL)
     - The **maximum-likelihood distance** (DML)
-- The **variance inflation factors** (VIF)
-- The (adjusted) coefficient of determination ($R^2$ and $R^2_{adj}$)
+- The **Goodness-of-Fit** (GoF) proposed by [@Tenenhaus2004]
+- The **variance inflation factors** (VIF) for the structural equations as
+  well as for Mode B regressions equations.
+- The coefficient of determination and the adjusted coefficient of determination
+  ($R^2$ and $R^2_{adj}$)
 - A measure of the **effect size**
 - **Redundancy analysis** (RA)
 
@@ -96,23 +95,23 @@ assess(
 `...`
 
 :  Further arguments passed to functions called by `assess()`.
-   See [args_assess_dotdotdot](https://m-e-rademaker.github.io/cSEM/reference/args_assess_dotdotdot.html) 
+   See [args_assess_dotdotdot][dotdotdot] 
    for a complete list of available arguments.
 
 ## Details {#details}
-In line with all of `cSEM`'s postestimation functions, `assess()` is a generic 
+In line with all of **cSEM**'s postestimation functions, `assess()` is a generic 
 function with methods for objects of class `cSEMResults_default`, 
-`cSEMResults_multi`, `cSEMResults_2ndorder`. In `cSEM`
+`cSEMResults_multi`, `cSEMResults_2ndorder`. In **cSEM**
 every `cSEMResults_*` object must also have class `cSEMResults` for internal reasons. 
 When using one of the major postestimation functions, method dispatch is therefore technically
 done on one of the `cSEMResults_*` class attributes, ignoring the 
 `cSEMResults` class attribute. As long as `assess()` is
-used directly method dispatch is not of any practical concern to the end-user. The difference, however,
-becomes important if a user seeks to directly invoke an internal function 
+used directly method dispatch is not of any practical concern to the end-users. 
+The difference, however, becomes important if a user seeks to directly invoke an internal function 
 which is called by `assess() ` (e.g., `cSEM:::calculateAVE()` or `cSEM:::calculateHTMT()`). 
 In this case only objects of class `cSEMResults_default` are accepted as this
 ensures a specific structure. Therefore, it is important to remember that
-*internal functions are generally **not** generic.*
+*internal functions are generally **not** generic*!
 
 Some assessment measures are inherently tied to the common factor model. It
 is therefore unclear how to interpret their results in the context of a 
@@ -122,7 +121,7 @@ quality criteria:
 
 - AVE and validity assessment based theron (i.e., the Fornell-Larcker criterion)
 - HTMT and validity assessment based theron
-- All reliability measures (congeneric, tau-equivalen (Cronbach alpha))
+- All reliability measures (congeneric, tau-equivalent, Cronbach's alpha)
  
 It is possible to force computation of all quality criteria for constructs
 modeled as composites, however, we explicitly warn to interpret results with
@@ -132,7 +131,7 @@ All quality criteria assume that the estimated loadings, construct correlations
 and path coefficients involved in the computation of a specific qualitiy measure
 are consistent estimates for their theoretical population counterpart. If
 the user deliberately chooses an approach that yields inconsistent estimates (by
-setting `.disattenuate = FALSE` in `csem()` when the model contains constructs
+setting `.disattenuate = FALSE` in `csem()` when the estimated model contains constructs
 modeled as common factors) `assess()` will still estimate
 all quantities, however, quantities such as
 the AVE or the congeneric reliability $\rho_C$ inherit inconsistency making their 
@@ -143,7 +142,7 @@ interpretation at the very least dubious.
 
 Like all postestimation functions `assess()` can be called on any object of
 class `cSEMResults`. The output is a named list of the quality criteria given
-to `.quality_criterion`. By default all quality possible quality criteria 
+to `.quality_criterion`. By default all possible quality criteria 
 a calculated (`.quality_criterion = "all"`).
 
 ## Example 1 {#example1}
@@ -152,55 +151,66 @@ a calculated (`.quality_criterion = "all"`).
 
 # Methods & Formulae {#methods}
 
-This section provides technical details and relevant formulae. To
-understand the notation and terminology used in this section see the
-[Notation glossary](https://m-e-rademaker.github.io/cSEM/articles/Notation.html) and the
-[Termionology glossary](https://m-e-rademaker.github.io/cSEM/articles/Termionlogy.html).
+This section provides technical details and relevant formulae. For the relevant 
+notation and terminology used in this section, see the
+[Notation glossary][Notation] and the
+[Termionology glossary][Terminology].
 
-## Average variance extracted (AVE)
+## Average variance extracted (AVE) {#ave}
 ### Definition
 Several definitions exist. For ease of comparison to extant literature the most 
 common definitions are given below:
 
-- The AVE is the share of the total indicator variance that is
-  captured by the proxy. 
-- The AVE is the ratio of the sum of the true score variances (explained variation) relative to the 
-  sum of the total indicator variances (total variation).
-- The AVE gauges how much of the variation in the indicators is due to the 
+- The AVE for a generic construct/latent variable $\eta$ is an estimate of
+  how much of the variation of its indicators is due to the 
   assumed latent variable. Consequently, the share of unexplained, 
   i.e. error variation is 1 - AVE.
-- Since the $R^2_k$ from a regression of $x_k$ on $\eta$ is equal to the
-  share of the explained variation relative to the share of total variation,
-  the AVE is a sum over all $R^2_k$. 
+- The AVE for a generic construct/latent variable $\eta$ is the share of the total 
+  indicator variance (i.e., the sum of the indicator variances of all indicators 
+  connected to the construct), that is captured by the (indicator) true scores. 
+- The AVE for a generic construct/latent variable $\eta$ is the ratio of the 
+  sum of the (indicator) true score variances (explained variation) 
+  relative to the sum of the total indicator variances (total variation, i.e., 
+  the sum of the indicator variances of all indicators connected to the construct).
+- Since for the regression of $x_k$ on $\eta_k$, the the R squared ($R^2_k)$ is equal to the
+  share of the explained variation of $x_k$ relative to the share of total variation of $x_k$,
+  The AVE for a generic construct/latent variable $\eta$ is equal to the average over all $R^2_k$. 
+- The AVE for a generic construct/latent variable $\eta$ is the sum of the 
+  squared correlation between indicator $x_k$ and
+  the (indicator) true score $\eta_k$ relative to the sum of the indicator variances of 
+  all indicators connected to the construct in question.
 
 It is important to stress that, although different in wording, all definitions 
 are synonymous! 
 
-### Formula
-Using the results and notation derived and defined in the [Notation glossary](https://m-e-rademaker.github.io/cSEM/articles/Notation.html),
+### Formulae
+Using the results and notation derived and defined in the [Notation glossary][Notation],
 the AVE for a generic construct is:
-$$ AVE = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}$$
-If $x_k$ is standardized the denominator reduces to $K$ and the AVE is 
+$$ AVE = \frac{\text{Sum indicator true score variances}}{\text{Sum indicator variances}} =  \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}$$
+If $x_k$ is standardized (i.e., $Var(x_k) = 1$) the denominator reduces to $K$ 
+and the AVE for a generic construct is:
 $$ AVE = \frac{1}{K}\sum \lambda^2_k = \frac{1}{K}\sum \rho_{x_k, \eta}^2$$
-As an important consequence, the AVE is closely tied the communality.
-**Indicator communality** ($COM_k$) is definied as the square of the standardized loading of the $k$'th
-indicator ($\lambda^2$). **Construct (total) communality** ($COM = \varnothing COM_k$) is definied as the
-mean over all indicator communalities. Since indicators, proxies and 
-subsequently loadings are always standardized, the squared loading is simply 
-the squared correlation between the indicator and its related population proxy. 
-The AVE is also directly related to another frequently used term, **indicator reliability**, 
+As an important consequence, the AVE is closely tied to the communality.
+**Communality** ($COM_k$) is definied as the proportion of variation in an indicator 
+that is explained by its common factor. Empirically, it is the square of 
+the standardized loading of the $k$'th indicator ($\lambda^2_k$). Since indicators, 
+scores/proxies and subsequently loadings are always standardized in **cSEM**, 
+the squared loading is simply the squared correlation between the indicator and 
+its related construct/common factor. 
+The AVE is also directly related to the **indicator reliability**, 
 defined as the squared correlation between an indicator $k$ and its related 
-population proxy (see section [Reliability](#reliability) below),
-which is again simply $\lambda^2$. Therefore in `cSEM` we always have:
+proxy true score (see section [Reliability](#reliability) below),
+which is again simply $\lambda^2_k$. Therefore in `cSEM` we always have:
 
-$$ AVE = COM = \frac{1}{K}\sum COM_k = \frac{1}{K}\sum \text{Indicator reliability}_k = \frac{1}{K}\sum R^2_k $$
+$$ AVE = \frac{1}{K}\sum COM_k = \frac{1}{K}\sum \text{Indicator reliability}_k = \frac{1}{K}\sum\lambda^2_k =  \frac{1}{K}\sum R^2_k $$
 
 ### Implementation
-The function is implemented as: `calculateAVE()`.
+The function is implemented as: `calculateAVE()`. It may be called directly 
+using R's `:::` mechanism.
 
 ### See also
 
-The AVE is the basis for the Fornell-Larcker criterion. See (TODO).
+The AVE is the basis for the Fornell-Larcker criterion.
 
 ## Reliability {#reliability}
 
@@ -208,18 +218,20 @@ The AVE is the basis for the Fornell-Larcker criterion. See (TODO).
 Reliability is the **consistency of measurement**, i.e. the degree to which a hypothetical
 repetition of the same measure would yield the same results. As such, reliability
 is the closeness of a measure to an error free measure. It is not to be confused 
-with validity as a perfectly reliable measure may be completely invalid.
+with validity as a perfectly reliable measure may be invalid.
 
 Practically, reliability must be empirically assessed based on a theoretical
 framework. The dominant - and virtually only - theoretical framework against which 
 to compare empirical reliability results to is the well-known true score framework 
-which provides the underlying justification for the measurement model postulated at the beginning
-of the [Methods & Formulae](#methods) section. Based on the true score framework
-reliability is defined as
+which provides the foundation for the measurement model postulated 
+in the [Notation glossary][Notation]. 
+Based on the true score framework and using the terminology and notation of
+the [Notation][Notation] and [Termniology][Terminology] glossary, reliability is defined as:
 
-1. The amount of population proxy variance, $Var(\bar\eta)$, relative to the proxy variance, $Var(\hat\eta)$.
-2. This is identical to the squared correlation between the true score and the
-   proxy: $\rho_{\eta, \hat\eta}^2 = Cor(\eta, \hat\eta)^2$.
+1. The amount of proxy true score variance, $Var(\bar\eta)$, relative to the 
+   the proxy/score variance, $Var(\hat\eta)$.
+2. This is identical to the squared correlation between the construct/common 
+   factor and its proxy: $\rho_{\eta, \hat\eta}^2 = Cor(\eta, \hat\eta)^2$.
 
 This "kind" of reliability is commonly referred to as 
 **internal consistency reliability**.
@@ -228,23 +240,21 @@ Based on the true score theory three major types of measurement models are
 distinguished. Each type implies different assumptions which give rise
 to the formulae written below. The well-established names for the different 
 types of measurement model provide natural naming candidates for their corresponding
-reliabilities measure:
+(internal consistency) reliabilities measure:
 
 1. **Parallel** -- Assumption: $\eta_k = \eta \longrightarrow \lambda_k = \lambda$ and $Var(\varepsilon_k) = Var(\varepsilon)$.
 1. **Tau-equivalent** -- Assumption: $\eta_k = \eta \longrightarrow \lambda_k = \lambda$ and $Var(\varepsilon_k) \neq Var(\varepsilon_l)$.
 1. **Congeneric** -- Assumption: $\eta_k = \lambda_k\eta$ and $Var(\varepsilon_k) \neq Var(\varepsilon_l)$.
 
 
-### Formula
+### Formulae
 
-The most general formula for reliability is the congeneric reliability:
+The most general formula for reliability is the **congeneric reliability**:
 
-**Congeneric reliability**
-$$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\mathbf{w}'\mathbf{\lambda})^2}{\mathbf{w}'\mathbf{\Sigma}\mathbf{w}}$$
+$$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\bm{w}'\bm{\lambda})^2}{\bm{w}'\bm{\Sigma}\bm{w}}$$
 Using the assumptions imposed by the tau-equivalent measurement model we obtain
-the tau-equivalent reliability.
+the **tau-equivalent reliability**:
 
-**Tau-equivalent reliability**
 $$ \rho_T = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + \sum w_k^2Var(\varepsilon_k)}
  = \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + \sum w_k^2Var(x_k)}$$
 where we used the fact that if $\lambda_k = \lambda$ (tau-equivalence), 
@@ -252,9 +262,8 @@ $\lambda^2_k$ equals the average covariance between indicators:
  $$\bar\sigma_x = \frac{1}{K(K-1)}\sum^K_{k=1}\sum^K_{l=1} \sigma_{kl}$$
 
 Using the assumptions imposed by the parallel measurement model we obtain
-the parallel reliability:
+the **parallel reliability**:
 
-**Parallel reliability**
 $$ \rho_P = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + Var(\varepsilon)\sum w_k^2} = 
  \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + Var(x)\sum w_k^2} $$
 
@@ -262,10 +271,12 @@ In `cSEM` indicators are always standardized and weights are choosen such
 that $Var(\hat\eta_k) = 1$. This significantly simplifies the formulae and 
 $\rho_T = \rho_P$ are in fact identical:
 
+$$
 \begin{align}
-\rho_C &=  (\sum w_k\lambda_k)^2 = (\mathbf{w}'\mathbf{\lambda})^2\\
+\rho_C &=  (\sum w_k\lambda_k)^2 = (\bm{w}'\bm{\lambda})^2 \\
 \rho_T = \rho_P &=  \bar\rho_x(\sum w_k)^2
 \end{align}
+$$
 
 where $\bar\rho_x$ is the average correlation between indicators. Consequently,
 parallel and tau-equivalent reliability are always identical in `cSEM`.
@@ -317,24 +328,57 @@ methods because they make code maintenance easier. Eventually, what matters is
 the formula and more so its correct application. To facilitate the translation between
 different naming systems and conventions we provide a "translation table" below:
 
-<!-- <center> -->
-<!-- -------------------------------------------------------------------------------- -->
-<!--  Systematic names             Mathematical Synonymous terms -->
+<center>
+--------------------------------------------------------------------------------
+ Systematic names             Mathematical Synonymous terms
 
-<!-- ----------------------------- ------------ ------------------------------------- -->
-<!--  Parallel reliability           $\rho_P$   Spearman-Brown formula, Spearman-Brown prophecy, -->
-<!--                                            Standardized alpha, Split-half reliability -->
+----------------------------- ------------ -------------------------------------
+ Parallel reliability           $\rho_P$   Spearman-Brown formula, Spearman-Brown prophecy,
+                                           Standardized alpha, Split-half reliability
 
-<!--  Tau-equivalent reliability     $\rho_T$   Cronbach's alpha, $\alpha$, Coefficient alpha -->
-<!--                                            Guttmans $\lambda_3$, KR-20 -->
+ Tau-equivalent reliability     $\rho_T$   Cronbach's alpha, $\alpha$, Coefficient alpha
+                                           Guttmans $\lambda_3$, KR-20
 
-<!--  Congeneric reliability         $\rho_C$   Composite reliability, Jöreskog's $\rho$, -->
-<!--                                            Construct reliability, $\omega$, -->
-<!--                                            reliability coefficient -->
-<!-- -------------------------------------------------------------------------------- -->
-<!-- Table: Systematic names and common synonymous names for the -->
-<!-- reliability found in the literature -->
-<!-- </center> -->
+ Congeneric reliability         $\rho_C$   Composite reliability, Jöreskog's $\rho$,
+                                           Construct reliability, $\omega$,
+                                           reliability coefficient
+--------------------------------------------------------------------------------
+Table: Systematic names and common synonymous names for the
+reliability found in the literature
+</center>
+
+## The heterotrait-monotrait-ratio of correlations
+
+### Definition
+
+### Formulae
+
+### Implementation
+
+## Distance measures
+
+### Definition
+
+### Formulae
+
+## Redundancy analysis
+
+### Definition
+
+### Formulae
+
+### Implementation
 
 
 # Literature
+
+[Testing]: https://m-e-rademaker.github.io/cSEM/articles/Using-test.html
+[Notation]: https://m-e-rademaker.github.io/cSEM/articles/Notation.html
+[Terminology]: https://m-e-rademaker.github.io/cSEM/articles/Terminology.html
+[dotdotdot]: https://m-e-rademaker.github.io/cSEM/reference/args_assess_dotdotdot.html
+
+<!-- A third reliability measure is **Parallel reliability** ($\rho_P$), also known -->
+<!-- as e.g.: split-half reliability,  -->
+<!-- Spearman-Brown formulae/prophecy, standarized alpha. In `cSEM` parallel  -->
+<!-- reliability is always identical to tau-equivalent reliability as indicators -->
+<!-- are always standardized. Hence, only $\rho_T$ is reported. -->

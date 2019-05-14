@@ -45,7 +45,7 @@ calculateAVE <- function(
   c_names <- rownames(Lambda)
   
   ## Calculate AVE (extracted variance / total variance)
-  # Note: Within the cSEM package indicators are always standardized (e.g, have
+  # Note: Within the cSEM package indicators are always standardized (i.e, have
   #       a variance of 1). Therefore the term (sum(lambda^2) + sum(1 - lambda^2) is
   #       simply equal to the number of indicator attached to a construct j.
   #       Hence AVE is simply the average over all lambda^2_k of construct j.
@@ -224,7 +224,9 @@ NULL
 #'                         composite reliability or rho_A.
 calculateRhoC <- function(
   .object              = NULL,
-  .only_common_factors = TRUE) {
+  .only_common_factors = TRUE,
+  .weighted            = args_default()$.weighted
+  ) {
 
   # Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -232,7 +234,14 @@ calculateRhoC <- function(
           " class `cSEMResults_default`. Use `assess()` instead.")
   }
   
-  W <- .object$Estimates$Weight_estimates
+  ## Get relevant objects
+  if(.weighted) {
+    W <- .object$Estimates$Weight_estimates
+  } else {
+    W <- .object$Information$Model$measurement
+    W <- scaleWeights(.object$Estimates$Indicator_VCV, W)
+  }
+  
   rhoC <- rep(1, times = nrow(W))
   names(rhoC) <- rownames(W)
   
@@ -256,7 +265,7 @@ calculateRhoC <- function(
 }
 
 #' @describeIn reliability Calculate the tau-equivalent reliability, also known
-#'                         as Cronbach alpha or coefficient alpha. Since
+#'                         as Cronbach's alpha or coefficient alpha. Since
 #'                         indicators are always standarized in `cSEM`, 
 #'                         tau-equivalent reliability is identical to the
 #'                         parallel reliability.
@@ -266,6 +275,7 @@ calculateRhoT <- function(
   .alpha               = args_default()$.alpha,
   .closed_form_ci      = args_default()$.closed_form_ci,
   .only_common_factors = TRUE,
+  .weighted            = args_default()$.weighted,
   ...
   ) {
   
@@ -275,25 +285,15 @@ calculateRhoT <- function(
           " class `cSEMResults_default`. Use `assess()` instead.")
   }
   
-  ## If CI's are computed:
-  # Calculation of the CIs are based on Trinchera et al. (2018).
-  # In the paper, the CI was proposed and studied using Monte Carlo simulation
-  # assuming scores are build as sum scores. Therefore a warning is
-  # given if a weightning scheme other than "unit" is used, since they have
-  # not been formally studied yet.
-  
-  if(.object$Information$Arguments$.approach_weights != "unit" & .closed_form_ci == TRUE) {
-    warning2("Calculation of the confidence interval (CI) for rhoT (Cronbach alpha)",
-             " was proposed and studied assuming sum scores.\n",
-             "Statistical properties of the CI for rhoT based on a weighted composite",
-             " obtained using weight approach ", 
-             paste0("`", .object$Information$Arguments$.approach_weights, "`"), 
-             " have not been formally examined yet.")
-  }
-  
   ## Get relevant objects
-  W <- .object$Estimates$Weight_estimates
   S <- .object$Estimates$Indicator_VCV
+  
+  if(.weighted) {
+    W <- .object$Estimates$Weight_estimates
+  } else {
+    W <- .object$Information$Model$measurement
+    W <- scaleWeights(S, W)
+  }
   
   ## Calculate tau-equivalent reliability by block/construct
   out <- data.frame()
@@ -312,6 +312,23 @@ calculateRhoT <- function(
       # Calculation of the CIs are based on Trinchera et al. (2018).
       # The code for the calculation of the CIs is addpated from the paper.
 
+      ## If CI's are computed:
+      # Calculation of the CIs are based on Trinchera et al. (2018).
+      # In the paper, the CI was proposed and studied using Monte Carlo simulation
+      # assuming scores are build as sum scores. Therefore a warning is
+      # given if a weightning scheme other than "unit" is used, since they have
+      # not been formally studied yet.
+      
+      if(.object$Information$Arguments$.approach_weights != "unit" & .weighted) {
+        warning2("Calculation of the confidence interval (CI) for rhoT (Cronbach alpha)",
+                 " was proposed and studied assuming sum scores.\n",
+                 "Statistical properties of the CI for rhoT based on a weighted composite",
+                 " obtained using weight approach ",
+                 paste0("`", .object$Information$Arguments$.approach_weights, "`"),
+                 " have not been formally examined yet.")
+      }
+      
+      
       K <- length(indicator_names)
       X <- .object$Information$Data[, indicator_names, drop=FALSE]
       N <- nrow(X)

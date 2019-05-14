@@ -5,7 +5,7 @@
 #' article on the
 #' \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
 #' 
-#' The function is essentially a wraper around a number of internal functions
+#' The function is essentially a wrapper around a number of internal functions
 #' that perform an "assessment task" (called a **quality criterion** in \pkg{cSEM}
 #' parlance) like computing the (congeneric) reliability,
 #' the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
@@ -13,53 +13,57 @@
 #' By default every possible quality criterion is calculated (`.quality_criterion = "all"`). 
 #' If only a subset of quality criteria needs to be computed a single character string
 #' or a vector of character strings naming the quantity to compute may be 
-#' supplied to `assess()` via the `.quality_criterion` argument. Currenty, the
+#' supplied to `assess()` via the `.quality_criterion` argument. Currently, the
 #' following quality crieria are implemented (in alphabetical order):
 #' \describe{
-#' \item{Average variance extracted (AVE); "ave"}{An estimate of the 
-#'   amount of variation in the indicators that is due to the assumed latent variable. Practically,
-#'   it is calculated as the ratio of the total indicator variance relative to 
-#'   the proxy (i.e. test score or composite) variance.}
-#' \item{Congeneric reliability; "rho_C"}{An estimate of the internal consistency
+#' \item{Average variance extracted (AVE)]; "ave"}{An estimate of the 
+#'   amount of variation in the indicators that is due to the assumed latent variable. 
+#'   Practically, it is calculated as the ratio of the total indicator variance 
+#'   (i.e., the sum of the squared loadings)
+#'   relative to the proxy (i.e. test score or composite) variance.}
+#' \item{Congeneric reliability; "rho_C"}{An estimate of the 
 #'   reliability assuming a congeneric measurement model (i.e., loadings are
 #'   allowed to differ) and a test score (proxy) based on unit weights.
 #'   To compute the congeneric reliability based on a score that uses the weights of the
 #'   weight approach used to obtain `.object` use `"rho_C_weighted"` instead.
 #'   Congeneric reliability is the unified name for 
 #'   reliability estimates that assume a congeneric measurement model. 
-#'   Alternative but synonemmous names  for `"rho_C"` and `"rho_C_weighted"` are: 
-#'   composite reliability, construct reliablity, reliability coefficient, rho_A,
-#'   rho_B, or Jöreskog's rho.}
-#' \item{Cronbach alpha; "cronbach_alpha"}{An estimate of the internal consistency
-#'   reliability assuming a tau-equivalent measurement model (i.e. a measurement
+#'   Alternative but synonemmous names for `"rho_C"` are: 
+#'   composite reliability, construct reliablity, reliability coefficient, 
+#'   Jöreskog's rho, coefficient omega, or Dillon-Goldstein's rho. 
+#'   For `"rho_C_weighted"`: rho_A, or rho_B.}
+#' \item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
+#'   reliability assuming a tau-equivalent measurement model (i.e., a measurement
 #'   model with equal loadings) and a test score (proxy) based on unit weights. 
-#'   To compute Cronbach alpha based on a score that uses the weights of the
-#'   weight approach used to obtain `.object` use `"cronbach_alpha_weighted"` instead.
-#'   Cronbach alpha is an alias for `"rho_T"` (the tau-equivalent
+#'   To compute Cronbach's alpha based on a score that uses the weights of the
+#'   weight approach used to obtain `.object` use `"cronbachs_alpha_weighted"` instead.
+#'   Cronbach's alpha is an alias for `"rho_T"` (the tau-equivalent
 #'   reliability) which is
 #'   the prefered name for this kind of reliability in \pkg{cSEM}, as it clearly states what
 #'   it actually estimates (the tau-equivalent reliability as opposed to
-#'   the congeneric reliability).}
+#'   the congeneric reliability). "rho_T" and "cronbachs_alpha" are therefore
+#'   always identical.}
 #' \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
 #'   between the model-implied and the empirical indicator correlation matrix.
 #'   Currently, the geodesic distance (`"dg"`), the squared Euclidian distance
-#'   (`"dl"`) and the maximum likelihood distance function are implemented (`"dml"`)}
+#'   (`"dl"`) and the the maximum likelihood-based distance function are implemented 
+#'   (`"dml"`).}
 #' \item{Effect size; "esize"}{An index of the effect size of an independent
 #'   variable in a structural regression equation. The effect size of the k'th
-#'   independent variabl in this case
+#'   independent variable in this case
 #'   is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where 
 #'   R2_inclded and R2_excluded are the R squares of the 
 #'   original structural model regression equation (R2_included) and the
 #'   alternative speficication with the k'th variable dropped (R2_excluded).}
 #' \item{Fornell-Larcker criterion; "fl"}{An estimate of the 
 #'   convergent and/or discriminant validity of a construct. The Fornell-Larcker
-#'   criterion is a descision rule based on a comparision between the squared
+#'   criterion is a decision rule based on a comparison between the squared
 #'   construct correlations and the average variance extracted. FL returns
 #'   a matrix with the squared construct correlations on the off-diagonal and 
 #'   the AVE's on the main diagonal.}
 #' \item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root of the mean 
 #'   of the R squares of the structural model times the mean of the variances in the indicators 
-#'   that are explained by their related constructs (lambda^2).
+#'   that are explained by their related constructs (i.e., the average over all lambda^2_k).
 #'   For the latter, only constructs modeled as common factors are considered
 #'   as they explain their indicator variance in contrast to a composite where 
 #'   indicators actually build the construct.
@@ -70,7 +74,7 @@
 #' \item{R square and R square adjusted; "r2", "r2_adj"}{The R square and the adjusted
 #'   R square for each structural regression equation.}
 #' \item{Redundancy analysis (RA); "ra"}{The process of regressing the scores 
-#'   of a reflectivly measured construct on the scores of a formatively measured 
+#'   of a reflectively measured construct on the scores of a formatively measured 
 #'   construct in order to gain empirical evidence for convergent validity of a 
 #'   formatively measured construct. 
 #'   RA is therefore confined to PLS, specifically PLS with at least one construct
@@ -81,14 +85,14 @@
 #' \item{Standardized root mean square residual; "srmr"}{The square root of the 
 #'   average elementwise squared distance between elements of the model-implied
 #'   and the empirical indicator corrleation matrix.}
-#' \item{Tau-equivalent reliability; "rho_T"}{An estimate of the internal consistency
+#' \item{Tau-equivalent reliability; "rho_T"}{An estimate of the
 #'   reliability assuming a tau-equivalent measurement model (i.e. a measurement
 #'   model with equal loadings) and a test score (proxy) based on unit weights.
 #'   Tau-equivalent reliability is the preferred name for reliability estimates
-#'   that assume a tau-equivalent measurment model such as Cronbach alpha.}
+#'   that assume a tau-equivalent measurment model such as Cronbach's alpha.}
 #' \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-) 
 #'   collinearity between independent variables of a regression equation. Computed
-#'   for each structural equation. Practically, the VIF_k is defined
+#'   for each structural equation. Practically, VIF_k is defined
 #'   as the ratio of 1 over (1 - R2_k) where R2_k is the R squared from a regression
 #'   of the k'th independent variable on all remaining independent variables.}
 #' \item{Variance inflation factors for PLS-PM mode B (VIF-ModeB); "vifmodeB"}{An index for 
@@ -100,7 +104,7 @@
 #'   all remaining indicators of the same block.}
 #' }
 #' 
-#' For details see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
+#' For details on all quality criteria see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
 #' of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
 #' article on the on the
 #' \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}.
@@ -115,6 +119,13 @@
 #' we explicitly warn to interpret quality criteria in this case with caution, 
 #' as they may not even have a conceptual meaning. 
 #'
+#' @usage assess(
+#'   .object              = NULL, 
+#'   .only_common_factors = TRUE, 
+#'   .quality_criterion   = args_default()$.quality_criterion,
+#'   ...
+#' )
+#' 
 #' @inheritParams csem_arguments
 #' @param ... Further arguments passed to functions called by `assess()`.
 #'   See [args_assess_dotdotdot] for a complete list of available arguments.
@@ -123,6 +134,29 @@
 #'
 #' @return A named list of quality criteria. Note that if only a single quality
 #'   criteria is computed the return value is still a list!
+#'   
+#' @examples 
+#' # ===========================================================================
+#' # Using the threecommonfactors dataset
+#' # ===========================================================================
+#' model <- "
+#' # Structural model
+#' eta2 ~ eta1
+#' eta3 ~ eta1 + eta2
+#' 
+#' # (Reflective) measurement model
+#' eta1 =~ y11 + y12 + y13
+#' eta2 =~ y21 + y22 + y23
+#' eta3 =~ y31 + y32 + y33
+#' "
+#' 
+#' res <- csem(threecommonfactors, model)
+#' a   <- assess(res) # computes all quality criteria (.quality_criterion = "all")
+#' 
+#' ## The return value is a named list
+#' str(a)
+#' a$HTMT
+#' 
 #' @export
 
 assess <- function(
@@ -143,68 +177,142 @@ assess.cSEMResults_default <- function(
   ...
   ){
   
-  ## Get relevant objects
-  con_types <-.object$Information$Model$construct_type
-  names_cf  <- names(con_types[con_types == "Common factor"])
-  P <- .object$Estimates$Construct_VCV
+  ## Check arguments
+  match.arg(.quality_criterion, 
+            args_default(.choices = TRUE)$.quality_criterion, several.ok = TRUE)
   
-  # SRMR
-  res_srmr  <- calculateSRMR(.object, ...)
-  # dG
-  res_dg    <- calculateDG(.object, ...)
-  # dL
-  res_dL    <- calculateDL(.object, ...)
-  # dML
-  res_dml   <- calculateDML(.object, ...)
-  # GoF
-  res_gof   <- calculateGoF(.object, .only_common_factors)
+  ## Set up empty list
+  out <- list()
   
-  # AVE
-  res_ave   <- calculateAVE(.object, .only_common_factors)
-  # RhoC
-  res_rhoc  <- calculateRhoC(.object, .only_common_factors)
-  # RhoT
-  res_rhot  <- calculateRhoT(.object, .only_common_factors, ...)
-  
-  # Effect size
-  res_esize <- calculateEffectSize(.object)
-  # VIFModeB
-  res_vifmodeb <- calculateVIFModeB(.object)
-  
-  # Redundancy analysis (RA)
-  res_ra <- calculateRA(.object)
-  
-  # HTMT 
-  res_htmt  <- calculateHTMT(.object, .only_common_factors)
-  # Fornell-Larcker
-  if(.only_common_factors) {
-    P <- P[names_cf, names_cf]
+  ## Select quality criteria
+  if(any(.quality_criterion %in% c("all", "ave"))) {
+    # AVE
+    out[["AVE"]] <- calculateAVE(
+      .object, 
+      .only_common_factors = .only_common_factors
+      )
   }
-
-  FL_matrix <- cov2cor(P)^2
-  diag(FL_matrix) <- res_ave 
+  if(any(.quality_criterion %in% c("all", "rho_C"))) {
+    # RhoC
+    out[["RhoC"]]  <- calculateRhoC(
+      .object, 
+      .only_common_factors = .only_common_factors
+      )
+  }
+  if(any(.quality_criterion %in% c("all", "rho_C_weighted"))) {
+    # RhoC weighted
+    out[["RhoC_weighted"]]  <- calculateRhoC(
+      .object, 
+      .only_common_factors = .only_common_factors, 
+      .weighted = TRUE
+      )
+  }
+  if(any(.quality_criterion %in% c("all", "cronbachs_alpha"))) {
+    # Cronbach's alpha aka RhoT
+    out[["Cronbachs_alpha"]]  <- calculateRhoT(
+      .object, 
+      .only_common_factors = .only_common_factors, 
+      ...
+      )
+  }
+  if(any(.quality_criterion %in% c("all", "cronbachs_alpha_weighted"))) {
+    # Cronbach's alpha weighted aka RhoT weighted
+    out[["Cronbachs_alpha_weighted"]]  <- calculateRhoT(
+      .object, 
+      .only_common_factors = .only_common_factors, 
+      .weighted = TRUE,
+      ...
+      )
+  }
+  if(any(.quality_criterion %in% c("all", "dg"))) {
+    # dG
+    out[["DG"]]    <- calculateDG(.object, ...)
+  }
+  if(any(.quality_criterion %in% c("all", "dl"))) {
+    # dL
+    out[["DL"]]    <- calculateDL(.object, ...)
+  }
+  if(any(.quality_criterion %in% c("all", "dml"))) {
+    # dML
+    out[["DML"]]   <- calculateDML(.object, ...)
+  }
+  if(any(.quality_criterion %in% c("all", "esize"))) {
+    # Effect size
+    out[["Effect_size"]] <- calculateEffectSize(.object)
+  }
+  if(any(.quality_criterion %in% c("all", "fl"))) {
+    # Fornell-Larcker
+    ## Get relevant objects
+    con_types <-.object$Information$Model$construct_type
+    names_cf  <- names(con_types[con_types == "Common factor"])
+    P <- .object$Estimates$Construct_VCV
+    
+    if(.only_common_factors) {
+      P <- P[names_cf, names_cf]
+    }
+    
+    FL_matrix <- cov2cor(P)^2
+    diag(FL_matrix) <- calculateAVE(.object, 
+                                    .only_common_factors = .only_common_factors)
+    out[["Fornell-Larcker"]] <- FL_matrix
+  }
+  if(any(.quality_criterion %in% c("all", "gof"))) {
+    # GoF
+    out[["GoF"]]   <- calculateGoF(
+      .object, 
+      .only_common_factors = .only_common_factors
+      )
+  }
+  if(any(.quality_criterion %in% c("all", "htmt"))) {
+    # HTMT 
+    out[["HTMT"]]  <- calculateHTMT(
+      .object, 
+      .only_common_factors = .only_common_factors
+      )
+  }
+  if(any(.quality_criterion %in% c("all", "r2"))) {
+    # R2
+    out[["R2"]]  <- .object$Estimates$R2
+  }
+  if(any(.quality_criterion %in% c("all", "r2_adj"))) {
+    # Adjusted R2
+    out[["R2_adj"]]  <- .object$Estimates$R2adj
+  }
+  if(any(.quality_criterion %in% c("all", "ra"))) {
+    # Redundancy analysis (RA)
+    out[["RA"]] <- calculateRA(.object)
+  }
+  if(any(.quality_criterion %in% c("all", "srmr"))) {
+    # SRMR
+    out[["SRMR"]]  <- calculateSRMR(.object, ...)
+  }
+  if(any(.quality_criterion %in% c("all", "rho_T"))) {
+    # RhoT
+    out[["RhoT"]]  <- calculateRhoT(
+      .object, 
+      .only_common_factors = .only_common_factors, 
+      ...
+      )
+  }
+  if(any(.quality_criterion %in% c("all", "rho_C_weighted"))) {
+    # RhoC weighted
+    out[["RhoT_weighted"]]  <- calculateRhoT(
+      .object, 
+      .only_common_factors = .only_common_factors, 
+      .weighted = TRUE, 
+      ...
+      )
+  }
+  if(any(.quality_criterion %in% c("all", "vif"))) {
+    # VIF
+    out[["VIF"]]  <- .object$Estimates$VIF
+  }
+  if(any(.quality_criterion %in% c("all", "vifmodeB"))) {
+    # VIFModeB
+    out[["VIF_modeB"]] <- calculateVIFModeB(.object)
+  }
   
-  ## Output --------------------
-  out <- list(
-    "SRMR" = res_srmr,
-    "dG"   = res_dg,
-    "dL"   = res_dL,
-    "dML"  = res_dml,
-    "GoF"  = res_gof,
-    "AVE"  = res_ave,
-    "RA"   = res_ra,
-    "R2"   = .object$Estimates$R2,
-    "R2_adj" = .object$Estimates$R2adj,
-    "VIF"  = .object$Estimates$VIF,
-    "RhoC" = res_rhoc,
-    "RhoT" = res_rhot,
-    "HTMT" = res_htmt,
-    "FL_matrix" = FL_matrix,
-    "Effect size" = res_esize,
-    "VIF_modeB" = res_vifmodeb
-  )
-  
-  class(out) <- "cSEMAssess_default"
+  class(out) <- "cSEMAssess"
   return(out)
 }
 
@@ -219,10 +327,16 @@ assess.cSEMResults_multi <- function(
   
   if(inherits(.object, "cSEMResults_2ndorder")) {
     lapply(.object, assess.cSEMResults_2ndorder, 
-           .only_common_factors = TRUE, ...)
+           .only_common_factors = .only_common_factors, 
+           .quality_criterion = .quality_criterion, 
+           ...
+           )
   } else {
     lapply(.object, assess.cSEMResults_default, 
-           .only_common_factors = TRUE, ...)
+           .only_common_factors = .only_common_factors,
+           .quality_criterion = .quality_criterion,
+           ...
+           )
   }
 }
 

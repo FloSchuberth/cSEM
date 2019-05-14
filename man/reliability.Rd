@@ -6,17 +6,22 @@
 \alias{calculateRhoT}
 \title{Internal: Reliability}
 \usage{
-calculateRhoC(.object = NULL, .only_common_factors = TRUE)
+calculateRhoC(.object = NULL, .only_common_factors = TRUE,
+  .weighted = args_default()$.weighted)
 
 calculateRhoT(.object = NULL, .alpha = args_default()$.alpha,
   .closed_form_ci = args_default()$.closed_form_ci,
-  .only_common_factors = TRUE, ...)
+  .only_common_factors = TRUE, .weighted = args_default()$.weighted,
+  ...)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.only_common_factors}{Logical. Should only constructs modeled as common
 factors be included? Defaults to \code{TRUE}.}
+
+\item{.weighted}{Logical. Should estimation be based on a score that uses
+the weights of the weight approach used to obtain \code{.object}?. Defaults to \code{FALSE}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
@@ -98,7 +103,7 @@ For other object classes use \code{\link[=assess]{assess()}}.
 composite reliability or rho_A.
 
 \item \code{calculateRhoT}: Calculate the tau-equivalent reliability, also known
-as Cronbach alpha or coefficient alpha. Since
+as Cronbach's alpha or coefficient alpha. Since
 indicators are always standarized in \code{cSEM},
 tau-equivalent reliability is identical to the
 parallel reliability.

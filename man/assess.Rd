@@ -4,8 +4,12 @@
 \alias{assess}
 \title{Assess model}
 \usage{
-assess(.object = NULL, .only_common_factors = TRUE,
-  .quality_criterion = args_default()$.quality_criterion, ...)
+assess(
+  .object              = NULL, 
+  .only_common_factors = TRUE, 
+  .quality_criterion   = args_default()$.quality_criterion,
+  ...
+)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -15,7 +19,7 @@ factors be included? Defaults to \code{TRUE}.}
 
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
-the details section for a list of possible candidates. Defaults to "\emph{all}".}
+the Details section below for a list of possible candidates. Defaults to "\emph{all}".}
 
 \item{...}{Further arguments passed to functions called by \code{assess()}.
 See \link{args_assess_dotdotdot} for a complete list of available arguments.}
@@ -31,7 +35,7 @@ article on the
 \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
 }
 \details{
-The function is essentially a wraper around a number of internal functions
+The function is essentially a wrapper around a number of internal functions
 that perform an "assessment task" (called a \strong{quality criterion} in \pkg{cSEM}
 parlance) like computing the (congeneric) reliability,
 the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
@@ -39,53 +43,57 @@ the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
 By default every possible quality criterion is calculated (\code{.quality_criterion = "all"}).
 If only a subset of quality criteria needs to be computed a single character string
 or a vector of character strings naming the quantity to compute may be
-supplied to \code{assess()} via the \code{.quality_criterion} argument. Currenty, the
+supplied to \code{assess()} via the \code{.quality_criterion} argument. Currently, the
 following quality crieria are implemented (in alphabetical order):
 \describe{
-\item{Average variance extracted (AVE); "ave"}{An estimate of the
-amount of variation in the indicators that is due to the assumed latent variable. Practically,
-it is calculated as the ratio of the total indicator variance relative to
-the proxy (i.e. test score or composite) variance.}
-\item{Congeneric reliability; "rho_C"}{An estimate of the internal consistency
+\item{Average variance extracted (AVE)]; "ave"}{An estimate of the
+amount of variation in the indicators that is due to the assumed latent variable.
+Practically, it is calculated as the ratio of the total indicator variance
+(i.e., the sum of the squared loadings)
+relative to the proxy (i.e. test score or composite) variance.}
+\item{Congeneric reliability; "rho_C"}{An estimate of the
 reliability assuming a congeneric measurement model (i.e., loadings are
 allowed to differ) and a test score (proxy) based on unit weights.
 To compute the congeneric reliability based on a score that uses the weights of the
 weight approach used to obtain \code{.object} use \code{"rho_C_weighted"} instead.
 Congeneric reliability is the unified name for
 reliability estimates that assume a congeneric measurement model.
-Alternative but synonemmous names  for \code{"rho_C"} and \code{"rho_C_weighted"} are:
-composite reliability, construct reliablity, reliability coefficient, rho_A,
-rho_B, or Jöreskog's rho.}
-\item{Cronbach alpha; "cronbach_alpha"}{An estimate of the internal consistency
-reliability assuming a tau-equivalent measurement model (i.e. a measurement
+Alternative but synonemmous names for \code{"rho_C"} are:
+composite reliability, construct reliablity, reliability coefficient,
+Jöreskog's rho, coefficient omega, or Dillon-Goldstein's rho.
+For \code{"rho_C_weighted"}: rho_A, or rho_B.}
+\item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
+reliability assuming a tau-equivalent measurement model (i.e., a measurement
 model with equal loadings) and a test score (proxy) based on unit weights.
-To compute Cronbach alpha based on a score that uses the weights of the
-weight approach used to obtain \code{.object} use \code{"cronbach_alpha_weighted"} instead.
-Cronbach alpha is an alias for \code{"rho_T"} (the tau-equivalent
+To compute Cronbach's alpha based on a score that uses the weights of the
+weight approach used to obtain \code{.object} use \code{"cronbachs_alpha_weighted"} instead.
+Cronbach's alpha is an alias for \code{"rho_T"} (the tau-equivalent
 reliability) which is
 the prefered name for this kind of reliability in \pkg{cSEM}, as it clearly states what
 it actually estimates (the tau-equivalent reliability as opposed to
-the congeneric reliability).}
+the congeneric reliability). "rho_T" and "cronbachs_alpha" are therefore
+always identical.}
 \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
 between the model-implied and the empirical indicator correlation matrix.
 Currently, the geodesic distance (\code{"dg"}), the squared Euclidian distance
-(\code{"dl"}) and the maximum likelihood distance function are implemented (\code{"dml"})}
+(\code{"dl"}) and the the maximum likelihood-based distance function are implemented
+(\code{"dml"}).}
 \item{Effect size; "esize"}{An index of the effect size of an independent
 variable in a structural regression equation. The effect size of the k'th
-independent variabl in this case
+independent variable in this case
 is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where
 R2_inclded and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
 alternative speficication with the k'th variable dropped (R2_excluded).}
 \item{Fornell-Larcker criterion; "fl"}{An estimate of the
 convergent and/or discriminant validity of a construct. The Fornell-Larcker
-criterion is a descision rule based on a comparision between the squared
+criterion is a decision rule based on a comparison between the squared
 construct correlations and the average variance extracted. FL returns
 a matrix with the squared construct correlations on the off-diagonal and
 the AVE's on the main diagonal.}
 \item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root of the mean
 of the R squares of the structural model times the mean of the variances in the indicators
-that are explained by their related constructs (lambda^2).
+that are explained by their related constructs (i.e., the average over all lambda^2_k).
 For the latter, only constructs modeled as common factors are considered
 as they explain their indicator variance in contrast to a composite where
 indicators actually build the construct.
@@ -96,7 +104,7 @@ convergent and/or discriminant validity of a construct.}
 \item{R square and R square adjusted; "r2", "r2_adj"}{The R square and the adjusted
 R square for each structural regression equation.}
 \item{Redundancy analysis (RA); "ra"}{The process of regressing the scores
-of a reflectivly measured construct on the scores of a formatively measured
+of a reflectively measured construct on the scores of a formatively measured
 construct in order to gain empirical evidence for convergent validity of a
 formatively measured construct.
 RA is therefore confined to PLS, specifically PLS with at least one construct
@@ -107,14 +115,14 @@ Hence RA is only conducated if \code{.object} was obtained using
 \item{Standardized root mean square residual; "srmr"}{The square root of the
 average elementwise squared distance between elements of the model-implied
 and the empirical indicator corrleation matrix.}
-\item{Tau-equivalent reliability; "rho_T"}{An estimate of the internal consistency
+\item{Tau-equivalent reliability; "rho_T"}{An estimate of the
 reliability assuming a tau-equivalent measurement model (i.e. a measurement
 model with equal loadings) and a test score (proxy) based on unit weights.
 Tau-equivalent reliability is the preferred name for reliability estimates
-that assume a tau-equivalent measurment model such as Cronbach alpha.}
+that assume a tau-equivalent measurment model such as Cronbach's alpha.}
 \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-)
 collinearity between independent variables of a regression equation. Computed
-for each structural equation. Practically, the VIF_k is defined
+for each structural equation. Practically, VIF_k is defined
 as the ratio of 1 over (1 - R2_k) where R2_k is the R squared from a regression
 of the k'th independent variable on all remaining independent variables.}
 \item{Variance inflation factors for PLS-PM mode B (VIF-ModeB); "vifmodeB"}{An index for
@@ -126,7 +134,7 @@ R2_k is the R squared from a regression of the k'th indicator of block j on
 all remaining indicators of the same block.}
 }
 
-For details see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
+For details on all quality criteria see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
 of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
 article on the on the
 \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}.
@@ -140,6 +148,29 @@ It is possible to force computation of all quality criteria for constructs
 modeled as composites by setting \code{.only_common_factors = FALSE}, however,
 we explicitly warn to interpret quality criteria in this case with caution,
 as they may not even have a conceptual meaning.
+}
+\examples{
+# ===========================================================================
+# Using the threecommonfactors dataset
+# ===========================================================================
+model <- "
+# Structural model
+eta2 ~ eta1
+eta3 ~ eta1 + eta2
+
+# (Reflective) measurement model
+eta1 =~ y11 + y12 + y13
+eta2 =~ y21 + y22 + y23
+eta3 =~ y31 + y32 + y33
+"
+
+res <- csem(threecommonfactors, model)
+a   <- assess(res) # computes all quality criteria (.quality_criterion = "all")
+
+## The return value is a named list
+str(a)
+a$HTMT
+
 }
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
