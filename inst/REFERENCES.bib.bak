@@ -359,4 +359,19 @@ Carlo studies and an empirical application.},
   publisher = {Springer Nature},
 }
 
+@Article{Henseler2016,
+  author    = {J{\"o}rrg Henseler and Christian M. Ringle and Marko Sarstedt},
+  title     = {Testing Measurement Invariance of Composites Using Partial Least Squares},
+  journal   = {International Marketing Review},
+  year      = {2016},
+  volume    = {33},
+  number    = {3},
+  pages     = {405--431},
+  month     = {may},
+  doi       = {10.1108/imr-09-2014-0304},
+  editor    = {Rudolf R. Sinkovics, Ruey-Jer {\textquotedblleft}Bryan{\textquotedblright} Jean},
+  file      = {:Papers/Henseler2016.pdf:PDF},
+  publisher = {Emerald},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}

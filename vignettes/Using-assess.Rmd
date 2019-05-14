@@ -86,7 +86,7 @@ assess(
 
 :  A character string or a vector of character strings naming the quality criterion
    to compute. By default all quality criteria are computed (`"all"`).
-   See the [Details](#details) section below for a list of possible candidates.
+   See `assess()` for a list of possible candidates.
   
 `.only_common_factors`
 
@@ -96,14 +96,8 @@ assess(
 `...`
 
 :  Further arguments passed to functions called by `assess()`.
-   Currently the following arguments are accepted:
-   
-   - `.alpha` Accepted by/Passed down to: `calculateRhoT()`
-   - `.closed_form_ci` Accepted by/Passed down to: `calculateRhoT()`
-   - `.saturated` Accepted by/Passed down to: `calculateSRMR()`, `calculateDG()`, 
-     `calculateDL()`, `calculateDML()` and subsequently `fit()`.
-   - `.type_vcv` Accepted by/Passed down to: `calculateSRMR()`, `calculateDG()`, 
-     `calculateDL()`, `calculateDML()` and subsequently `fit()`.
+   See [args_assess_dotdotdot](https://m-e-rademaker.github.io/cSEM/reference/args_assess_dotdotdot.html) 
+   for a complete list of available arguments.
 
 ## Details {#details}
 In line with all of `cSEM`'s postestimation functions, `assess()` is a generic 
@@ -160,7 +154,8 @@ a calculated (`.quality_criterion = "all"`).
 
 This section provides technical details and relevant formulae. To
 understand the notation and terminology used in this section see the
-notation and the termionology glossary.
+[Notation glossary](https://m-e-rademaker.github.io/cSEM/articles/Notation.html) and the
+[Termionology glossary](https://m-e-rademaker.github.io/cSEM/articles/Termionlogy.html).
 
 ## Average variance extracted (AVE)
 ### Definition
@@ -182,7 +177,7 @@ It is important to stress that, although different in wording, all definitions
 are synonymous! 
 
 ### Formula
-Using the results and notation derived and defined in the Notation glossary, 
+Using the results and notation derived and defined in the [Notation glossary](https://m-e-rademaker.github.io/cSEM/articles/Notation.html),
 the AVE for a generic construct is:
 $$ AVE = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}$$
 If $x_k$ is standardized the denominator reduces to $K$ and the AVE is 
@@ -292,7 +287,7 @@ Trinchera et al. (2018) proposed a closed-form confidence interval (CI) for
 the tau-equivalent reliability (coefficient alpha). To compute the CI, set
 `.calculate_ci = TRUE` when calling `assess()` or invoke 
 `calculateRhoT(..., .calculate_ci = TRUE)` directly. The level of the CI
-can be changed by supplying a single value or a vector of values to $.alpha$.
+can be changed by supplying a single value or a vector of values to `.alpha`.
 
 #### A note on the terminology
 

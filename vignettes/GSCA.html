@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2019-05-06" />
+<meta name="date" content="2019-05-13" />
 
 <title>GSCA and GSCA-M</title>
 
@@ -106,7 +106,7 @@ code > span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">GSCA and GSCA-M</h1>
 <h3 class="subtitle project-tagline">Generalized structured component analysis with and without uniquness terms</h3>
-<h4 class="date project-date">2019-05-06</h4>
+<h4 class="date project-date">2019-05-13</h4>
 </section>
 
 
@@ -166,7 +166,7 @@ code > span.ot { color: #007020; }
 <p>Note that in this case, the user could also drop the input argument <em>‘.disattenuate’</em> because estimation is here done with GSCA<sub>M</sub> as it should. Since it is a pure common factor model, no error message is produced. The estimation results are stored in the object <em>“results1”</em>:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">results1</a></code></pre></div>
 <pre><code>## ________________________________________________________________________________
-## ------------------------------------------------- Overview ------------------------------------------------
+## ----------------------------------- Overview -----------------------------------
 ## 
 ## Estimation was successful.
 ## 
@@ -188,6 +188,7 @@ code > span.ot { color: #007020; }
 ## Available postestimation commands:
 ## 
 ##  - assess(&lt;object-name&gt;)
+##  - predict(&lt;object-name&gt;)
 ##  - summarize(&lt;object-name&gt;)
 ##  - verify(&lt;object-name&gt;)
 ## ________________________________________________________________________________</code></pre>
@@ -226,8 +227,10 @@ code > span.ot { color: #007020; }
 <p>Next, if the user just wants a compact summary of the parameter estimators and of the most important information concerning the estimation, calling the <em>‘summarize’</em>-function of the <em>cSEM</em>-package will provide this.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">summarize</span>(results1)</a></code></pre></div>
 <pre><code>## ________________________________________________________________________________
-## ------------------------------------------------- Overview ------------------------------------------------
+## ----------------------------------- Overview -----------------------------------
 ## 
+##  General information:
+##  ------------------------
 ##  Number of observations           = 250
 ##  Weight estimator                 = GSCA
 ##  Type of indicator correlation    = Bravais-Pearson
@@ -246,7 +249,7 @@ code > span.ot { color: #007020; }
 ##  SAT   Common factor  First order   
 ##  LOY   Common factor  First order   
 ## 
-## ------------------------------------------------ Estimates ------------------------------------------------
+## ----------------------------------- Estimates ----------------------------------
 ## 
 ## Estimated path coefficients:
 ## ============================
@@ -292,6 +295,41 @@ code > span.ot { color: #007020; }
 ##   LOY =~ loy2        0.6211          NA        NA        NA
 ##   LOY =~ loy3        0.8294          NA        NA        NA
 ##   LOY =~ loy4        0.6554          NA        NA        NA
+## 
+## Estimated Weights:
+## ==================
+##   Weights          Estimate  Std. error   t-stat.   p-value
+##   IMAG &lt;~ imag1      0.2510          NA        NA        NA
+##   IMAG &lt;~ imag2      0.3227          NA        NA        NA
+##   IMAG &lt;~ imag3      0.2961          NA        NA        NA
+##   IMAG &lt;~ imag4      0.1975          NA        NA        NA
+##   IMAG &lt;~ imag5      0.1979          NA        NA        NA
+##   EXPE &lt;~ expe1      0.2625          NA        NA        NA
+##   EXPE &lt;~ expe2      0.2673          NA        NA        NA
+##   EXPE &lt;~ expe3      0.2300          NA        NA        NA
+##   EXPE &lt;~ expe4      0.2419          NA        NA        NA
+##   EXPE &lt;~ expe5      0.2660          NA        NA        NA
+##   QUAL &lt;~ qual1      0.2341          NA        NA        NA
+##   QUAL &lt;~ qual2      0.2628          NA        NA        NA
+##   QUAL &lt;~ qual3      0.2172          NA        NA        NA
+##   QUAL &lt;~ qual4      0.2724          NA        NA        NA
+##   QUAL &lt;~ qual5      0.2408          NA        NA        NA
+##   VAL &lt;~ val1        0.3189          NA        NA        NA
+##   VAL &lt;~ val2        0.3342          NA        NA        NA
+##   VAL &lt;~ val3        0.2767          NA        NA        NA
+##   VAL &lt;~ val4        0.2892          NA        NA        NA
+##   SAT &lt;~ sat1        0.3097          NA        NA        NA
+##   SAT &lt;~ sat2        0.3115          NA        NA        NA
+##   SAT &lt;~ sat3        0.2656          NA        NA        NA
+##   SAT &lt;~ sat4        0.2569          NA        NA        NA
+##   LOY &lt;~ loy1        0.3546          NA        NA        NA
+##   LOY &lt;~ loy2        0.2581          NA        NA        NA
+##   LOY &lt;~ loy3        0.3447          NA        NA        NA
+##   LOY &lt;~ loy4        0.2724          NA        NA        NA
+## 
+## ------------------------------------ Effects -----------------------------------
+## 
+## 
 ## ________________________________________________________________________________</code></pre>
 <p>Finally, the <em>‘verify’</em>-function checks whether the calculated results are admissible. That is to say, it is verified that all results are consonant with the theory underlying the estimation. If the results based on an estimated model exhibit one of the following defects they are deemed inadmissible: - non-convergence - loadings and/or reliabilities larger than 1 - a construct VCV and/or a model-implied VCV matrix that is not positive (semi-)definite</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">verify</span>(results1)</a></code></pre></div>
@@ -377,8 +415,10 @@ code > span.ot { color: #007020; }
 <p>This leads to the following estimation results:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw">summarize</span>(results4)</a></code></pre></div>
 <pre><code>## ________________________________________________________________________________
-## ------------------------------------------------- Overview ------------------------------------------------
+## ----------------------------------- Overview -----------------------------------
 ## 
+##  General information:
+##  ------------------------
 ##  Number of observations           = 250
 ##  Weight estimator                 = GSCA
 ##  Type of indicator correlation    = Bravais-Pearson
@@ -397,7 +437,7 @@ code > span.ot { color: #007020; }
 ##  SAT   Composite      First order   
 ##  LOY   Common factor  First order   
 ## 
-## ------------------------------------------------ Estimates ------------------------------------------------
+## ----------------------------------- Estimates ----------------------------------
 ## 
 ## Estimated path coefficients:
 ## ============================
@@ -446,7 +486,6 @@ code > span.ot { color: #007020; }
 ## 
 ## Estimated Weights:
 ## ==================
-## 
 ##   Weights          Estimate  Std. error   t-stat.   p-value
 ##   IMAG &lt;~ imag1     -0.0360          NA        NA        NA
 ##   IMAG &lt;~ imag2      0.2769          NA        NA        NA
@@ -458,6 +497,11 @@ code > span.ot { color: #007020; }
 ##   EXPE &lt;~ expe3      0.1759          NA        NA        NA
 ##   EXPE &lt;~ expe4      0.3162          NA        NA        NA
 ##   EXPE &lt;~ expe5      0.2512          NA        NA        NA
+##   QUAL &lt;~ qual1      0.2126          NA        NA        NA
+##   QUAL &lt;~ qual2      0.3001          NA        NA        NA
+##   QUAL &lt;~ qual3      0.1995          NA        NA        NA
+##   QUAL &lt;~ qual4      0.2550          NA        NA        NA
+##   QUAL &lt;~ qual5      0.2555          NA        NA        NA
 ##   VAL &lt;~ val1        0.4999          NA        NA        NA
 ##   VAL &lt;~ val2        0.1841          NA        NA        NA
 ##   VAL &lt;~ val3        0.1218          NA        NA        NA
@@ -466,6 +510,14 @@ code > span.ot { color: #007020; }
 ##   SAT &lt;~ sat2        0.3398          NA        NA        NA
 ##   SAT &lt;~ sat3        0.0341          NA        NA        NA
 ##   SAT &lt;~ sat4        0.1983          NA        NA        NA
+##   LOY &lt;~ loy1        0.4322          NA        NA        NA
+##   LOY &lt;~ loy2        0.1989          NA        NA        NA
+##   LOY &lt;~ loy3        0.4339          NA        NA        NA
+##   LOY &lt;~ loy4        0.1181          NA        NA        NA
+## 
+## ------------------------------------ Effects -----------------------------------
+## 
+## 
 ## ________________________________________________________________________________</code></pre>
 <p>Due to the fact that there are some constructs that are of composite type, estimation must happen with GSCA. This might result in biased estimators (as in <a href="#example2">Example2</a> for the model where all constructs are of common factor type). However, the interpretation of estimated coefficients is done in the same way as outlined in <a href="#example1">Example1</a> keeping in mind that estimators might be biased. Note that the estimated (“composite”) loadings represent in this case the “true” correlations between indicators and constructs (not proxies!) for all composite type constructs.</p>
 </div>

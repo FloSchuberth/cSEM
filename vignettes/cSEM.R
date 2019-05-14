@@ -96,7 +96,6 @@ EXPE <~ expe1 + expe2
 IMAG <~ imag1 + imag2
 "
 
-
 ## ---- eval=FALSE---------------------------------------------------------
 #  model <- "
 #  # Structural model
@@ -117,7 +116,7 @@ IMAG <~ imag1 + imag2
 require(cSEM)
 
 model <- "
-# Path model / Regressions 
+# Path model / Regressions
 eta2 ~ eta1
 eta3 ~ eta1 + eta2
 
@@ -126,7 +125,7 @@ eta1 =~ y11 + y12 + y13
 eta2 =~ y21 + y22 + y23
 eta3 =~ y31 + y32 + y33
 "
-  
+
 a <- csem(.data = threecommonfactors, .model = model)
 a
 

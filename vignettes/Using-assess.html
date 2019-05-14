@@ -35,7 +35,7 @@ a.sourceLine { text-indent: -1em; padding-left: 1em; }
 pre.numberSource a.sourceLine
   { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+  { content: attr(title);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
     border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
@@ -112,7 +112,7 @@ code > span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Postestimation: Assessing a model</h1>
 <h3 class="subtitle project-tagline">Using the <code>assess()</code> function</h3>
-<h4 class="date project-date">Last edited: 2019-05-13</h4>
+<h4 class="date project-date">Last edited: 2019-05-14</h4>
 </section>
 
 
@@ -151,59 +151,53 @@ code > span.ot { color: #007020; }
 <p>As indicated by the name, <code>assess()</code> is used to assess a model estimated using the <code>csem()</code> function.</p>
 <p>In <code>cSEM</code> <em>model assessement</em> is considered to be any task that in some way or another seeks to assess the quality of the estimated model <em>without conducting</em> <em>a statistical test</em> (tests are covered by the <code>test_*</code> family of functions, see: <a href="https://m-e-rademaker.github.io/cSEM/articles/Using-test.html">Postestimation: Testing a model</a>). Quality in this case is taken to be a catch-all term for all common aspects of model assessment. This mainly comprises fit indices, reliability estimates, common validity assessment criteria and other related quality measures/indices that do not rely on a formal test procedure. Hereinafter, we will refer to a generic (fit) index, quality/assessment measure as a <strong>quality criterion</strong>. Currently the following quality criteria are implemented:</p>
 <ul>
-<li>Convergent and discriminant validity assessment:
+<li><p>Convergent and discriminant validity assessment:</p>
 <ul>
 <li>The <strong>average variance extracted</strong> (AVE) (the basis for the Fornell-Larcker criterion (FL criterion))</li>
 <li>The <strong>heterotrait-monotrait ratio of correlations</strong> (HTMT)</li>
 </ul></li>
-<li><strong>Congeneric reliability</strong> (<span class="math inline">\(\rho_C\)</span>), also known as e.g.: composite reliability, construct reliability, (unidimensional) omega, Jöreskog’s <span class="math inline">\(\rho\)</span>, <span class="math inline">\(\rho_A\)</span>, or <span class="math inline">\(\rho_B\)</span>.</li>
+<li><p><strong>Congeneric reliability</strong> (<span class="math inline">\(\rho_C\)</span>), also known as e.g.: composite reliability, construct reliability, (unidimensional) omega, Jöreskog’s <span class="math inline">\(\rho\)</span>, <span class="math inline">\(\rho_A\)</span>, or <span class="math inline">\(\rho_B\)</span>.</p></li>
 <li><p><strong>Tau-equivalent reliability</strong> (<span class="math inline">\(\rho_T\)</span>), also known as e.g.: Cronbach alpha, alpha, <span class="math inline">\(\alpha\)</span>, coefficient alpha, Guttman’s <span class="math inline">\(\lambda_3\)</span>, KR-20.</p>
-A third reliability measure is <strong>Parallel reliability</strong> (<span class="math inline">\(\rho_P\)</span>), also known as e.g.: split-half reliability, Spearman-Brown formulae/prophecy, standarized alpha. In <code>cSEM</code> parallel reliability is always identical to tau-equivalent reliability as indicators are always standardized. Hence, only <span class="math inline">\(\rho_T\)</span> is reported.</li>
-<li>Distance measures
+<p>A third reliability measure is <strong>Parallel reliability</strong> (<span class="math inline">\(\rho_P\)</span>), also known as e.g.: split-half reliability, Spearman-Brown formulae/prophecy, standarized alpha. In <code>cSEM</code> parallel reliability is always identical to tau-equivalent reliability as indicators are always standardized. Hence, only <span class="math inline">\(\rho_T\)</span> is reported.</p></li>
+<li><p>Distance measures</p>
 <ul>
 <li>The <strong>standardized root mean square residual</strong> (SRMR)</li>
 <li>The <strong>geodesic distance</strong> (DG)</li>
 <li>The <strong>squared Euclidian distance</strong> (DL)</li>
 <li>The <strong>maximum-likelihood distance</strong> (DML)</li>
 </ul></li>
-<li>The <strong>variance inflation factors</strong> (VIF)</li>
-<li>The (adjusted) coefficient of determination (<span class="math inline">\(R^2\)</span> and <span class="math inline">\(R^2_{adj}\)</span>)</li>
-<li>A measure of the <strong>effect size</strong></li>
+<li><p>The <strong>variance inflation factors</strong> (VIF)</p></li>
+<li><p>The (adjusted) coefficient of determination (<span class="math inline">\(R^2\)</span> and <span class="math inline">\(R^2_{adj}\)</span>)</p></li>
+<li><p>A measure of the <strong>effect size</strong></p></li>
 <li><p><strong>Redundancy analysis</strong> (RA)</p></li>
 </ul>
 <p>For implementation details see the <a href="#methods">Methods &amp; Formulae</a> section.</p>
 <div id="syntax-options" class="section level2">
 <h2>Syntax &amp; Options</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">assess</span>(</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">  <span class="dt">.object              =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">  <span class="dt">.only_common_factors =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">  <span class="dt">.quality_criterion   =</span> <span class="kw">c</span>(<span class="st">&quot;all&quot;</span>, <span class="st">&quot;ave&quot;</span>, <span class="st">&quot;rho_C&quot;</span>, <span class="st">&quot;rho_C_weighted&quot;</span>, <span class="st">&quot;cronbach_alpha&quot;</span>, </a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">                           <span class="st">&quot;cronbach_alpha_weighted&quot;</span>, <span class="st">&quot;dg&quot;</span>, <span class="st">&quot;dl&quot;</span>, <span class="st">&quot;dml&quot;</span>,</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">                           <span class="st">&quot;esize&quot;</span>, <span class="st">&quot;gof&quot;</span>, <span class="st">&quot;htmt&quot;</span>, <span class="st">&quot;r2&quot;</span>, <span class="st">&quot;r2_adj&quot;</span>, <span class="st">&quot;ra&quot;</span>,</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">                           <span class="st">&quot;srmr&quot;</span>, <span class="st">&quot;rho_T&quot;</span>, <span class="st">&quot;rho_T_weighted&quot;</span>, <span class="st">&quot;vif&quot;</span>, </a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">                           <span class="st">&quot;vifmodeb&quot;</span>,  <span class="st">&quot;fl_criterion&quot;</span>),</a>
-<a class="sourceLine" id="cb1-9" data-line-number="9">  ...</a>
-<a class="sourceLine" id="cb1-10" data-line-number="10">)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">assess</span>(</a>
+<a class="sourceLine" id="cb1-2" title="2">  <span class="dt">.object              =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb1-3" title="3">  <span class="dt">.only_common_factors =</span> <span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb1-4" title="4">  <span class="dt">.quality_criterion   =</span> <span class="kw">c</span>(<span class="st">&quot;all&quot;</span>, <span class="st">&quot;ave&quot;</span>, <span class="st">&quot;rho_C&quot;</span>, <span class="st">&quot;rho_C_weighted&quot;</span>, <span class="st">&quot;cronbach_alpha&quot;</span>, </a>
+<a class="sourceLine" id="cb1-5" title="5">                           <span class="st">&quot;cronbach_alpha_weighted&quot;</span>, <span class="st">&quot;dg&quot;</span>, <span class="st">&quot;dl&quot;</span>, <span class="st">&quot;dml&quot;</span>,</a>
+<a class="sourceLine" id="cb1-6" title="6">                           <span class="st">&quot;esize&quot;</span>, <span class="st">&quot;gof&quot;</span>, <span class="st">&quot;htmt&quot;</span>, <span class="st">&quot;r2&quot;</span>, <span class="st">&quot;r2_adj&quot;</span>, <span class="st">&quot;ra&quot;</span>,</a>
+<a class="sourceLine" id="cb1-7" title="7">                           <span class="st">&quot;srmr&quot;</span>, <span class="st">&quot;rho_T&quot;</span>, <span class="st">&quot;rho_T_weighted&quot;</span>, <span class="st">&quot;vif&quot;</span>, </a>
+<a class="sourceLine" id="cb1-8" title="8">                           <span class="st">&quot;vifmodeb&quot;</span>,  <span class="st">&quot;fl_criterion&quot;</span>),</a>
+<a class="sourceLine" id="cb1-9" title="9">  ...</a>
+<a class="sourceLine" id="cb1-10" title="10">)</a></code></pre></div>
 <dl>
 <dt><code>.object</code></dt>
 <dd><p>An object of class <code>cSEMResults</code> resulting from a call to <code>csem()</code>.</p>
 </dd>
 <dt><code>.quality_criterion</code></dt>
-<dd><p>A character string or a vector of character strings naming the quality criterion to compute. By default all quality criteria are computed (<code>&quot;all&quot;</code>). See the <a href="#details">Details</a> section below for a list of possible candidates.</p>
+<dd><p>A character string or a vector of character strings naming the quality criterion to compute. By default all quality criteria are computed (<code>&quot;all&quot;</code>). See <code>assess()</code> for a list of possible candidates.</p>
 </dd>
 <dt><code>.only_common_factors</code></dt>
 <dd><p>Logical. Should the quality criterion be calculated for constructs modeled as common factors only? Defaults to <code>TRUE</code>.</p>
 </dd>
 <dt><code>...</code></dt>
-<dd><p>Further arguments passed to functions called by <code>assess()</code>. Currently the following arguments are accepted:</p>
+<dd><p>Further arguments passed to functions called by <code>assess()</code>. See <a href="https://m-e-rademaker.github.io/cSEM/reference/args_assess_dotdotdot.html">args_assess_dotdotdot</a> for a complete list of available arguments.</p>
 </dd>
 </dl>
-<ul>
-<li><code>.alpha</code> Accepted by/Passed down to: <code>calculateRhoT()</code></li>
-<li><code>.closed_form_ci</code> Accepted by/Passed down to: <code>calculateRhoT()</code></li>
-<li><code>.saturated</code> Accepted by/Passed down to: <code>calculateSRMR()</code>, <code>calculateDG()</code>, <code>calculateDL()</code>, <code>calculateDML()</code> and subsequently <code>fit()</code>.</li>
-<li><code>.type_vcv</code> Accepted by/Passed down to: <code>calculateSRMR()</code>, <code>calculateDG()</code>, <code>calculateDL()</code>, <code>calculateDML()</code> and subsequently <code>fit()</code>.</li>
-</ul>
 </div>
 <div id="details" class="section level2">
 <h2>Details</h2>
@@ -233,7 +227,7 @@ A third reliability measure is <strong>Parallel reliability</strong> (<span clas
 </div>
 <div id="methods" class="section level1">
 <h1>Methods &amp; Formulae</h1>
-<p>This section provides technical details and relevant formulae. To understand the notation and terminology used in this section see the notation and the termionology glossary.</p>
+<p>This section provides technical details and relevant formulae. To understand the notation and terminology used in this section see the <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation glossary</a> and the <a href="https://m-e-rademaker.github.io/cSEM/articles/Termionlogy.html">Termionology glossary</a>.</p>
 <div id="average-variance-extracted-ave" class="section level2">
 <h2>Average variance extracted (AVE)</h2>
 <div id="definition" class="section level3">
@@ -249,7 +243,7 @@ A third reliability measure is <strong>Parallel reliability</strong> (<span clas
 </div>
 <div id="formula" class="section level3">
 <h3>Formula</h3>
-<p>Using the results and notation derived and defined in the Notation glossary, the AVE for a generic construct is: <span class="math display">\[ AVE = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}\]</span> If <span class="math inline">\(x_k\)</span> is standardized the denominator reduces to <span class="math inline">\(K\)</span> and the AVE is <span class="math display">\[ AVE = \frac{1}{K}\sum \lambda^2_k = \frac{1}{K}\sum \rho_{x_k, \eta}^2\]</span> As an important consequence, the AVE is closely tied the communality. <strong>Indicator communality</strong> (<span class="math inline">\(COM_k\)</span>) is definied as the square of the standardized loading of the <span class="math inline">\(k\)</span>’th indicator (<span class="math inline">\(\lambda^2\)</span>). <strong>Construct (total) communality</strong> (<span class="math inline">\(COM = \varnothing COM_k\)</span>) is definied as the mean over all indicator communalities. Since indicators, proxies and subsequently loadings are always standardized, the squared loading is simply the squared correlation between the indicator and its related population proxy. The AVE is also directly related to another frequently used term, <strong>indicator reliability</strong>, defined as the squared correlation between an indicator <span class="math inline">\(k\)</span> and its related population proxy (see section <a href="#reliability">Reliability</a> below), which is again simply <span class="math inline">\(\lambda^2\)</span>. Therefore in <code>cSEM</code> we always have:</p>
+<p>Using the results and notation derived and defined in the <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation glossary</a>, the AVE for a generic construct is: <span class="math display">\[ AVE = \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}\]</span> If <span class="math inline">\(x_k\)</span> is standardized the denominator reduces to <span class="math inline">\(K\)</span> and the AVE is <span class="math display">\[ AVE = \frac{1}{K}\sum \lambda^2_k = \frac{1}{K}\sum \rho_{x_k, \eta}^2\]</span> As an important consequence, the AVE is closely tied the communality. <strong>Indicator communality</strong> (<span class="math inline">\(COM_k\)</span>) is definied as the square of the standardized loading of the <span class="math inline">\(k\)</span>’th indicator (<span class="math inline">\(\lambda^2\)</span>). <strong>Construct (total) communality</strong> (<span class="math inline">\(COM = \varnothing COM_k\)</span>) is definied as the mean over all indicator communalities. Since indicators, proxies and subsequently loadings are always standardized, the squared loading is simply the squared correlation between the indicator and its related population proxy. The AVE is also directly related to another frequently used term, <strong>indicator reliability</strong>, defined as the squared correlation between an indicator <span class="math inline">\(k\)</span> and its related population proxy (see section <a href="#reliability">Reliability</a> below), which is again simply <span class="math inline">\(\lambda^2\)</span>. Therefore in <code>cSEM</code> we always have:</p>
 <p><span class="math display">\[ AVE = COM = \frac{1}{K}\sum COM_k = \frac{1}{K}\sum \text{Indicator reliability}_k = \frac{1}{K}\sum R^2_k \]</span></p>
 </div>
 <div id="implementation" class="section level3">
@@ -297,7 +291,7 @@ A third reliability measure is <strong>Parallel reliability</strong> (<span clas
 <p>It is important to realize that <span class="math inline">\(\rho_T\)</span> (<span class="math inline">\(\rho_P\)</span>) based on the average covariance/ correlation (if <span class="math inline">\(x_k\)</span> is standardized as it is always the case in <code>cSEM</code>) are nested within the general formula, however, <strong>if and only if the assumptions of the tau-equivalent and/or the parallel model hold do they represent reliability measures!!</strong> In pratice, these assumptions are unlikely to hold. We therefore explicitly discourage their use as congeneric reliability is virtually always preferable in empirical work! In fact, as shown above, congeneric reliability is identical to the tau-equivalent/parallel reliability <em>if their respective assumptions actually hold</em>, essentially offering robustness against violation of the tau-equivalence and/or parallel measurement assumption.</p>
 <div id="confidence-interval" class="section level4">
 <h4>Confidence interval</h4>
-<p>Trinchera et al. (2018) proposed a closed-form confidence interval (CI) for the tau-equivalent reliability (coefficient alpha). To compute the CI, set <code>.calculate_ci = TRUE</code> when calling <code>assess()</code> or invoke <code>calculateRhoT(..., .calculate_ci = TRUE)</code> directly. The level of the CI can be changed by supplying a single value or a vector of values to <span class="math inline">\(.alpha\)</span>.</p>
+<p>Trinchera et al. (2018) proposed a closed-form confidence interval (CI) for the tau-equivalent reliability (coefficient alpha). To compute the CI, set <code>.calculate_ci = TRUE</code> when calling <code>assess()</code> or invoke <code>calculateRhoT(..., .calculate_ci = TRUE)</code> directly. The level of the CI can be changed by supplying a single value or a vector of values to <code>.alpha</code>.</p>
 </div>
 <div id="a-note-on-the-terminology" class="section level4">
 <h4>A note on the terminology</h4>
