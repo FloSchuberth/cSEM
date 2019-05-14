@@ -2,23 +2,10 @@
 % Please edit documentation in R/postestimate_assess.R
 \name{assess}
 \alias{assess}
-\alias{assess.cSEMResults_default}
-\alias{assess.cSEMResults_multi}
-\alias{assess.cSEMResults_2ndorder}
 \title{Assess model}
 \usage{
 assess(.object = NULL, .only_common_factors = TRUE,
   .quality_criterion = args_default()$.quality_criterion, ...)
-
-\method{assess}{cSEMResults_default}(.object = NULL,
-  .only_common_factors = TRUE,
-  .quality_criterion = args_default()$.quality_criterion, ...)
-
-\method{assess}{cSEMResults_multi}(.object = NULL,
-  .only_common_factors = TRUE,
-  .quality_criterion = args_default()$.quality_criterion, ...)
-
-\method{assess}{cSEMResults_2ndorder}(.object, ...)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -154,15 +141,6 @@ modeled as composites by setting \code{.only_common_factors = FALSE}, however,
 we explicitly warn to interpret quality criteria in this case with caution,
 as they may not even have a conceptual meaning.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{cSEMResults_default}: (TODO)
-
-\item \code{cSEMResults_multi}: (TODO)
-
-\item \code{cSEMResults_2ndorder}: (TODO)
-}}
-
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
 }

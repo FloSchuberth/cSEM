@@ -115,7 +115,7 @@ an outcome/indicator as the sum of a true score and an error score. The term is
 closely linked to the latent variable/common factor model in that the true
 score of a set of indicators are linear functions of some underlying common factor. 
 Mathematically speaking, the correspondence is $\eta_{jk} = \lambda_{jk}\eta_j$  
-where $\eta_{jk}$ is the true score and $\eta_j$ the underlying latent variable
+where $\eta_{jk}$, $\eta_j$ the underlying latent variable and $\lambda_{jk}$ the loading.
 Despite the difference, the term true score can generally be used synommenoulsy 
 to the terms common factor and latent variable without risking a misunderstanding.
     

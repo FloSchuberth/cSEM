@@ -47,19 +47,15 @@ code > span.ot { color: #007020; }
 
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Notation glossary</h1>
-<h4 class="date project-date">Last edited: 2019-05-13</h4>
+<h4 class="date project-date">Last edited: 2019-05-14</h4>
 </section>
 
 
 <div id="TOC" class="toc">
 <ul>
 <li><a href="#the-structural-model">The structural model</a></li>
-<<<<<<< HEAD
-<li><a href="#the-measurement-model">The measurement model</a></li>
-=======
 <li><a href="#the-reflective-measurement-model">The reflective measurement model</a></li>
 <li><a href="#notation-table">Notation table</a></li>
->>>>>>> more-fixes
 </ul>
 </div>
 
@@ -69,17 +65,6 @@ code > span.ot { color: #007020; }
 <div id="the-structural-model" class="section level2">
 <h2>The structural model</h2>
 </div>
-<<<<<<< HEAD
-<div id="the-measurement-model" class="section level2">
-<h2>The measurement model</h2>
-<p>Define the general measurement model as: <span class="math display">\[ x_{kj} = \eta_{kj} + \varepsilon_{kj} = \lambda_{kj}\eta_j +  \varepsilon_{kj}\quad\text{for}\quad k = 1, \dots, K_j\quad\text{and}\quad j = 1, \dots, J\]</span></p>
-<p>Call <span class="math inline">\(\eta_{jk} = \lambda_{jk}\eta_j\)</span> the true score and <span class="math inline">\(\eta_j\)</span> the underlying latent variable supposed to be the common factor or cause for the <span class="math inline">\(K_j\)</span> indicators conntected to latent variable <span class="math inline">\(\eta_j\)</span>. Call <span class="math inline">\(\lambda_{kj}\)</span> the loading or direct effect of the latent variable on its indicator. Let <span class="math inline">\(x_{kj}\)</span> be an indicator, <span class="math inline">\(\varepsilon_{kj}\)</span> be a measurement error and<br />
-<span class="math display">\[\hat{\eta}_j = \sum^{K_j}_{k = 1} w_{kj} x_{kj} = \sum^{K_j}_{k = 1} w_{kj} \eta_{kj} + \sum^{K_j}_{k = 1} w_{kj} \varepsilon_{kj}
-= \bar\eta_{kj} + \bar\varepsilon_{kj}\]</span> be a proxy/test score/composite/stand-in for <span class="math inline">\(\eta_j\)</span>, where <span class="math inline">\(w_{kj}\)</span> is a weight and <span class="math inline">\(\bar\eta_k\)</span> a population proxy, i.e., a weight sum of true scores. We will refer to <span class="math inline">\(\hat\eta\)</span> as “proxy” below as it best reflects its intended use.</p>
-<p>Assume that <span class="math inline">\(E(\varepsilon_{kj}) = E(\eta_j) = Cov(\eta_j, \varepsilon_{kj}) = 0\)</span>. Further assume <span class="math inline">\(Cov(\varepsilon_{kj}, \varepsilon_{lj})=0\)</span> for <span class="math inline">\(k \neq l\)</span> and that <span class="math inline">\(Var(\eta_j) = E(\eta^2_j) = 1\)</span> to determine the scale.</p>
-<p>Treatment below is done for a generic true score <span class="math inline">\(\eta_{jk}\)</span>. For the sake of clarity the index <span class="math inline">\(j\)</span> is therefore dropped unless it is necessary to avoid confusion.</p>
-<p>Note that classical treatment of reliability and other measures below is typically done assuming the proxy <span class="math inline">\(\hat\eta_j\)</span> is a simple sum score which implies that all weighs are set to one. The treatmeant below is more general since <span class="math inline">\(\hat{\eta}_j\)</span> is allowed to be <em>any</em> weighted sum of related indicators. Readers familiar with the “classical treatment” may simply set weights to one (unit weights) to “translate” results to known formulae.</p>
-=======
 <div id="the-reflective-measurement-model" class="section level2">
 <h2>The reflective measurement model</h2>
 <p>Define the general reflective measurement model as: <span class="math display">\[ x_{kj} = \eta_{kj} + \varepsilon_{kj} = \lambda_{kj}\eta_j +  \varepsilon_{kj}\quad\text{for}\quad k = 1, \dots, K_j\quad\text{and}\quad j = 1, \dots, J\]</span></p>
@@ -89,7 +74,6 @@ code > span.ot { color: #007020; }
 <p>Assume that <span class="math inline">\(E(\varepsilon_{kj}) = E(\eta_j) = Cov(\eta_j, \varepsilon_{kj}) = 0\)</span>. Further assume <span class="math inline">\(Cov(\varepsilon_{kj}, \varepsilon_{lj})=0\)</span> for <span class="math inline">\(k \neq l\)</span> and that <span class="math inline">\(Var(\eta_j) = E(\eta^2_j) = 1\)</span> to determine the scale.</p>
 <p>It often suffices to look at a generic true score/latent variable. For the sake of clarity the index <span class="math inline">\(j\)</span> is therefore dropped unless it is necessary to avoid confusion.</p>
 <p>Note that classical treatment of qualtiy criteria such as reliability and other measures below is typically done assuming the proxy <span class="math inline">\(\hat\eta_j\)</span> is a simple sum score which implies that all weighs are set to one. In most Methods and Formulae sections treatment is more general since <span class="math inline">\(\hat{\eta}_j\)</span> is allowed to be <em>any</em> weighted sum of related indicators. Readers familiar with the “classical treatment” may simply set weights to one (unit weights) to “translate” results to known formulae.</p>
->>>>>>> more-fixes
 <p>Based on the assumptions and definitions above the following quantities necessarily follow:</p>
 <p><span class="math display">\[\begin{align}
 Cov(x_k, \eta) &amp;= \lambda_k \\
@@ -110,20 +94,6 @@ Cov(\eta, \hat\eta) &amp;= E(\sum w_k \lambda_k \eta^2) = \sum w_k\lambda_k = \m
 \lambda_{K}\lambda_1 &amp; \lambda_K\lambda_2 &amp;\dots &amp;\lambda^2_K + Var(\varepsilon_K)
 \end{pmatrix}
 \]</span></p>
-<<<<<<< HEAD
-<p>In <code>cSEM</code> indicators are always standardized (i.e., <span class="math inline">\(Var(x_k) = 1\)</span>) and weights are always appropriately scaled such that the variance of <span class="math inline">\(\hat\eta\)</span> is equal to one! For most of the formulae below this implies a significant simplification, however, for ease of comparison to extant literature formulae will be derived and written in general form. The “simplified form” or “cSEM form” using <span class="math inline">\(Var(x_k) = Var(\hat\eta) = 1\)</span> will be given at the end of each paragraph.</p>
-<!-- ## Notation -->
-<!-- <center> -->
-<!-- | Symbol            |  Dimension              |  Description -->
-<!-- |:------------------|:-----------------------:|:-------------------------------------| -->
-<!-- | $\bm\eta_{en}$     | $(J_{en} \times 1)$     |  Vector of endogenous constructs/concepts| -->
-<!-- | $\bm\eta_{ex}$     | $(J_{ex} \times 1)$     |  Vector of exogenous constructs/concepts| -->
-<!-- | $\bm\eta$         | $(J \times 1)$          |  Vector of constructs/concepts| -->
-<!-- | $\eta_j$          | $(1 \times 1)$          |  The $j$'th construct/concept| -->
-<!-- </center> -->
-</div>
-</section>
-=======
 <p>In <code>cSEM</code> indicators are always standardized (i.e., <span class="math inline">\(Var(x_k) = 1\)</span>) and weights are always appropriately scaled such that the variance of <span class="math inline">\(\hat\eta\)</span> is equal to one! For some formulae this implies a significant simplification, however, for ease of comparison to extant literature formulae for quality criteria such as reliability or the average variance extracted will be derived and written in general form. The “simplified form” or “cSEM form” using <span class="math inline">\(Var(x_k) = Var(\hat\eta) = 1\)</span> will be given at the end of each paragraph.</p>
 </div>
 <div id="notation-table" class="section level2">
@@ -151,49 +121,47 @@ Cov(\eta, \hat\eta) &amp;= E(\sum w_k \lambda_k \eta^2) = \sum w_k\lambda_k = \m
 <tr class="even">
 <td align="left"><span class="math inline">\(\eta_{kj}\)</span></td>
 <td align="center"><span class="math inline">\((1 \times 1)\)</span></td>
-<td align="left">The <span class="math inline">\(k\)</span>’th true score related to construct <span ass="math inline">\(j\)</span></td>
+<td align="left">The <span class="math inline">\(k\)</span>’th true score related to construct <span class="math inline">\(j\)</span></td>
 </tr>
-<tr ass="odd">
-<td a ign="left"><span ass="math inline">\(\eta_j\)</span></td>
-<td a ign="center"><span ass="math inline">\((1 \times 1)\)</span></td>
-<td a ign="left">The <span ass="math inline">\(j\)</span>’th common factor/latent variable</td>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\eta_j\)</span></td>
+<td align="center"><span class="math inline">\((1 \times 1)\)</span></td>
+<td align="left">The <span class="math inline">\(j\)</span>’th common factor/latent variable</td>
 </tr>
-<tr ass="even">
-<td a ign="left"><span ass="math inline">\(\lambda_{kj}\)</span></td>
-<td a ign="center"><span ass="math inline">\((1 \times 1)\)</span></td>
-<td a ign="left">The <span ass="math inline">\(k\)</span>’th loading or direct effect of <span ass="math inline">\(\eta_j\)</span> on <span ass="math inline">\(x_{kj}\)</span></td>
+<tr class="even">
+<td align="left"><span class="math inline">\(\lambda_{kj}\)</span></td>
+<td align="center"><span class="math inline">\((1 \times 1)\)</span></td>
+<td align="left">The <span class="math inline">\(k\)</span>’th loading or direct effect of <span class="math inline">\(\eta_j\)</span> on <span class="math inline">\(x_{kj}\)</span></td>
 </tr>
-<tr ass="odd">
-<td a ign="left"><span ass="math inline">\(\varepsilon_{kj}\)</span></td>
-<td a ign="center"><span ass="math inline">\((1 \times 1)\)</span></td>
-<td a ign="left">The <span ass="math inline">\(k\)</span>’th measurement error or error score</td>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\varepsilon_{kj}\)</span></td>
+<td align="center"><span class="math inline">\((1 \times 1)\)</span></td>
+<td align="left">The <span class="math inline">\(k\)</span>’th measurement error or error score</td>
 </tr>
-<tr ass="even">
-<td a ign="left"><span ass="math inline">\(\hat\eta_j\)</span></td>
-<td a ign="center"><span ass="math inline">\((1 \times 1)\)</span></td>
-<td a ign="left">The <span ass="math inline">\(j\)</span>’th test score/composite/proxy for <span ass="math inline">\(\eta_j\)</span></td>
+<tr class="even">
+<td align="left"><span class="math inline">\(\hat\eta_j\)</span></td>
+<td align="center"><span class="math inline">\((1 \times 1)\)</span></td>
+<td align="left">The <span class="math inline">\(j\)</span>’th test score/composite/proxy for <span class="math inline">\(\eta_j\)</span></td>
 </tr>
-<tr ass="odd">
-<td a ign="left"><span ass="math inline">\(w_{kj}\)</span></td>
-<td a ign="center"><span ass="math inline">\((1 \times 1)\)</span></td>
-<td a ign="left">The <span ass="math inline">\(k\)</span>’th weight</td>
+<tr class="odd">
+<td align="left"><span class="math inline">\(w_{kj}\)</span></td>
+<td align="center"><span class="math inline">\((1 \times 1)\)</span></td>
+<td align="left">The <span class="math inline">\(k\)</span>’th weight</td>
 </tr>
-<tr ass="even">
-<td a ign="left"><span ass="math inline">\(\bar\eta_j\)</span></td>
-<td a ign="center"><span ass="math inline">\((1 \times 1)\)</span></td>
-<td a ign="left">The <span ass="math inline">\(j\)</span>’ population proxy, i.e. the weighted sum of true scores</td>
+<tr class="even">
+<td align="left"><span class="math inline">\(\bar\eta_j\)</span></td>
+<td align="center"><span class="math inline">\((1 \times 1)\)</span></td>
+<td align="left">The <span class="math inline">\(j\)</span>’ population proxy, i.e. the weighted sum of true scores</td>
 </tr>
-</t>
-</ta>
+</tbody>
+</table>
 </center>
 </div>
-</se>
->>>>>>> more-fixes
+</section>
 
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
-<<<<<<< HEAD
 <script>
   (function () {
     var script = document.createElement("script");
@@ -205,16 +173,3 @@ Cov(\eta, \hat\eta) &amp;= E(\sum w_k \lambda_k \eta^2) = \sum w_k\lambda_k = \m
 
 </body>
 </html>
-=======
-<s ript>
-  (function () {
-    var script = document.createElement(&quot;script&quot;);
-    script.type = &quot;text/javascript&quot;;
-    script.src  = &quot;https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&quot;;
-    document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
-  })();
-</s>
-
-</body>
-</htm>
->>>>>>> more-fixes

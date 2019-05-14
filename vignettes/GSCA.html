@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2019-05-13" />
+<meta name="date" content="2019-05-14" />
 
 <title>GSCA and GSCA-M</title>
 
@@ -36,7 +36,7 @@ a.sourceLine { text-indent: -1em; padding-left: 1em; }
 pre.numberSource a.sourceLine
   { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+  { content: attr(title);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
     border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
@@ -106,7 +106,7 @@ code > span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">GSCA and GSCA-M</h1>
 <h3 class="subtitle project-tagline">Generalized structured component analysis with and without uniquness terms</h3>
-<h4 class="date project-date">2019-05-13</h4>
+<h4 class="date project-date">2019-05-14</h4>
 </section>
 
 
@@ -127,13 +127,13 @@ code > span.ot { color: #007020; }
 <div id="usage" class="section level1">
 <h1>Syntax and Options</h1>
 <p>Suppose that a structural model ‘model’ is specified in Lavaan-syntax and that data are given in form of an observation matrix ‘data’. To estimate parameters now in this specified structural model by means of GSCA (or GSCA<sub>M</sub>) for the given data, the user has to call the function <em>csem()</em>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">csem</span>(<span class="dt">.data =</span> data, <span class="dt">.model =</span> model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">csem</span>(<span class="dt">.data =</span> data, <span class="dt">.model =</span> model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>)</a></code></pre></div>
 <p>Although the <em>csem</em>-function has many more input arguments, it suffices in the case of GSCA in a first step to specify the input arguments <em>‘.model’</em> and <em>‘.data’</em> and to set the argument <em>‘.approach_weights’</em> equal to <em>“GSCA”</em>. The argument <em>‘.disattenuate’</em> indicates which of the two GSCA-approaches should be used. Its default value is <em>TRUE</em> resulting in GSCA<sub>M</sub> as estimation method whereas a value of <em>FALSE</em> leads to “standard” GSCA. The handling of the <em>‘.disattenuate’</em>-argument is explained more detailly in the following paragraphs and in the Section <a href="#examples">Examples</a>. By this, the user gets a concrete idea in which cases this argument has to be specified and in which it can be dropped.</p>
 <p>With “GSCA” as chosen approach, estimation is automatically done via GSCA<sub>M</sub> when calling the <em>csem</em>-function. This works out fine as long as all constructs are of common factor type (i.e. the construct has an influence on its indicators and vice versa). In this case, GSCA<sub>M</sub> can be applied and the argument <em>‘.disattenuate’</em> can be dropped. Although estimators will be biased, the user might want to estimate parameters in this special case with “standard” GSCA. To this end, the input argument <em>‘.disattenuate’</em> has to be set to <em>FALSE</em>.</p>
 <p>However, if there is at least one construct which is not a common factor, parameters cannot be estimated by means of GSCA<sub>M</sub>, but only with “standard” GSCA. The reason is, e.g. in the case of all constructs being pure composites, that the transposed measurement matrix has only zero entries in this situation. Thus, involving this matrix in the estimation procedure, GSCA<sub>M</sub> would lead to weight estimators equal to 0. In the same way, in the case of a mixed model, that is to say when some constructs are of common factor type and some are pure composites, estimation with GSCA<sub>M</sub> causes problems because the measurement matrix cannot not have full rank. Thus, the GSCA<sub>M</sub> approach developed by Hwang and Takane in <span class="citation">(Hwang, Takane, and Jung 2017)</span> does not work for such models. The implementation is based on the current state of research but does not pursue own research goals. That is to say, developping a GSCA<sub>M</sub> procedure for the models with at least one composite type construct is not the aim and, therefore, in these situations, the user imperatively has to use GSCA and GSCA<sub>M</sub> is no option. This necessitates an input argument of <em>‘.disattenuate’</em> equal to <em>FALSE</em>.</p>
 <p>Setting the argument <em>‘.disattenuate’</em> equal to <em>TRUE</em> always leads to GSCA<sub>M</sub> as estimation method. Furthermore, dropping the argument also leads to GSCA<sub>M</sub> since its default value is <em>TRUE</em>. In these situations, estimation with GSCA<sub>M</sub> fails in case of a model where at least one construct is not a common factor. Then, the user gets an error message (see also Section <a href="#examples">Examples</a>):</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">Error<span class="op">:</span><span class="st"> </span>The following error occured <span class="cf">in</span> the <span class="st">`</span><span class="dt">calculateWeightsGSCAm()</span><span class="st">`</span> <span class="cf">function</span><span class="op">:</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">GSCAm only applicable to pure common factor models. Use <span class="st">`</span><span class="dt">.disattenuate = FALSE</span><span class="st">`</span>. </a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">Error<span class="op">:</span><span class="st"> </span>The following error occured <span class="cf">in</span> the <span class="st">`</span><span class="dt">calculateWeightsGSCAm()</span><span class="st">`</span> <span class="cf">function</span><span class="op">:</span></a>
+<a class="sourceLine" id="cb2-2" title="2">GSCAm only applicable to pure common factor models. Use <span class="st">`</span><span class="dt">.disattenuate = FALSE</span><span class="st">`</span>. </a></code></pre></div>
 <p>There are two other input-arguments which are of interest when estimating parameters with GSCA or GSCA<sub>M</sub>: <em>‘.iter_max’</em> and <em>‘.tolerance’</em>. Both will be explained in the section <a href="#methods">Methods</a>.</p>
 </div>
 <div id="examples" class="section level1">
@@ -141,30 +141,30 @@ code > span.ot { color: #007020; }
 <div id="example1" class="section level3">
 <h3>Example 1: Pure common factor model and GSCA<sub>M</sub></h3>
 <p>In the following, a first application example of the <em>csem</em>-function for the estimation with GSCA is presented. Data are given in form of the dataset “satisfaction” that comes with the <em>cSEM</em>-package. This dataset consists of 250 observations for 27 indicators. These indicators are somehow related to 6 constructs. Before estimation can be done, a model has to be specified for the relationships among these variables. This model is a result of the user’s ideas, hypotheses and theories about the original subject, which is customer satisfaction in the example. The model specification has to be done in lavaan-syntax. In the structural model, the tilde “~” is the known regression operator. However, in the measurement model, the symbol “&lt;~” is used for pure composites whereas the symbol “=~” stands for common factors. Note that the following specification is just one possible way and does not reflect any common theory about customer satisfaction but is used for illustration purposes only.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(cSEM)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">data</span>(satisfaction)</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">model &lt;-<span class="st"> &quot;</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st"># Structural model</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">QUAL ~ EXPE</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">EXPE ~ IMAG</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">SAT  ~ IMAG + EXPE + QUAL + VAL</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="st">LOY  ~ IMAG + SAT</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="st">VAL  ~ EXPE + QUAL</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="st"># Measurement model (pure common factor)</span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="st">EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5</span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="st">IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5</span></a>
-<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="st">LOY  =~ loy1  + loy2  + loy3  + loy4</span></a>
-<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="st">QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5</span></a>
-<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="st">SAT  =~ sat1  + sat2  + sat3  + sat4</span></a>
-<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="st">VAL  =~ val1  + val2  + val3  + val4</span></a>
-<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="st">&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">library</span>(cSEM)</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="kw">data</span>(satisfaction)</a>
+<a class="sourceLine" id="cb3-3" title="3"></a>
+<a class="sourceLine" id="cb3-4" title="4">model &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="st"># Structural model</span></a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="st">QUAL ~ EXPE</span></a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="st">EXPE ~ IMAG</span></a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="st">SAT  ~ IMAG + EXPE + QUAL + VAL</span></a>
+<a class="sourceLine" id="cb3-9" title="9"><span class="st">LOY  ~ IMAG + SAT</span></a>
+<a class="sourceLine" id="cb3-10" title="10"><span class="st">VAL  ~ EXPE + QUAL</span></a>
+<a class="sourceLine" id="cb3-11" title="11"></a>
+<a class="sourceLine" id="cb3-12" title="12"><span class="st"># Measurement model (pure common factor)</span></a>
+<a class="sourceLine" id="cb3-13" title="13"></a>
+<a class="sourceLine" id="cb3-14" title="14"><span class="st">EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5</span></a>
+<a class="sourceLine" id="cb3-15" title="15"><span class="st">IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5</span></a>
+<a class="sourceLine" id="cb3-16" title="16"><span class="st">LOY  =~ loy1  + loy2  + loy3  + loy4</span></a>
+<a class="sourceLine" id="cb3-17" title="17"><span class="st">QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5</span></a>
+<a class="sourceLine" id="cb3-18" title="18"><span class="st">SAT  =~ sat1  + sat2  + sat3  + sat4</span></a>
+<a class="sourceLine" id="cb3-19" title="19"><span class="st">VAL  =~ val1  + val2  + val3  + val4</span></a>
+<a class="sourceLine" id="cb3-20" title="20"><span class="st">&quot;</span></a></code></pre></div>
 <p>Having specified the model to be estimated and the data, the user can now call the <em>csem</em>-function:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">results1 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">results1 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <p>Note that in this case, the user could also drop the input argument <em>‘.disattenuate’</em> because estimation is here done with GSCA<sub>M</sub> as it should. Since it is a pure common factor model, no error message is produced. The estimation results are stored in the object <em>“results1”</em>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">results1</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">results1</a></code></pre></div>
 <pre><code>## ________________________________________________________________________________
 ## ----------------------------------- Overview -----------------------------------
 ## 
@@ -223,9 +223,9 @@ code > span.ot { color: #007020; }
 <p>Depending on the research interests that the user has, the relevant information and estimators can be extracted by the user.</p>
 <p>For GSCA, as well as for PLS and the other approaches, some postestimation functions are available: 1. <em>‘assess’</em> 2. <em>‘summarize’</em> 3. <em>‘verify’</em></p>
 <p>Firstly, the <em>‘assess’</em>-function provides the user with common evaluation criteria and fit measures to assess the model:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">assess</span>(results1)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">assess</span>(results1)</a></code></pre></div>
 <p>Next, if the user just wants a compact summary of the parameter estimators and of the most important information concerning the estimation, calling the <em>‘summarize’</em>-function of the <em>cSEM</em>-package will provide this.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">summarize</span>(results1)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">summarize</span>(results1)</a></code></pre></div>
 <pre><code>## ________________________________________________________________________________
 ## ----------------------------------- Overview -----------------------------------
 ## 
@@ -332,7 +332,7 @@ code > span.ot { color: #007020; }
 ## 
 ## ________________________________________________________________________________</code></pre>
 <p>Finally, the <em>‘verify’</em>-function checks whether the calculated results are admissible. That is to say, it is verified that all results are consonant with the theory underlying the estimation. If the results based on an estimated model exhibit one of the following defects they are deemed inadmissible: - non-convergence - loadings and/or reliabilities larger than 1 - a construct VCV and/or a model-implied VCV matrix that is not positive (semi-)definite</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">verify</span>(results1)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">verify</span>(results1)</a></code></pre></div>
 <pre><code>## ________________________________________________________________________________
 ## 
 ## Verify admissibility:
@@ -350,7 +350,7 @@ code > span.ot { color: #007020; }
 ## ________________________________________________________________________________</code></pre>
 <p>The output shows that the estimation results of the example are admissible, every status is set to “ok”.</p>
 <p>Having carried out the estimation of all parameters and having established that they are all admissible, it is now question to interpret the results. The influence of (exogenous) constructs on (endogenous) constructs is described by the structural model and expressed by the estimated path coefficients (reliabilities):</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">results1<span class="op">$</span>Estimates<span class="op">$</span>Path_estimates</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">results1<span class="op">$</span>Estimates<span class="op">$</span>Path_estimates</a></code></pre></div>
 <pre><code>##           IMAG        EXPE       QUAL       VAL       SAT LOY
 ## IMAG 0.0000000  0.00000000 0.00000000 0.0000000 0.0000000   0
 ## EXPE 0.6087192  0.00000000 0.00000000 0.0000000 0.0000000   0
@@ -360,12 +360,12 @@ code > span.ot { color: #007020; }
 ## LOY  0.3119949  0.00000000 0.00000000 0.0000000 0.5097847   0</code></pre>
 <p>The way estimated loadings and weights are provided is the same: The user is always given a matrix which consists of the variables involved in the respective submodel of GSCA<sub>M</sub> (resp. GSCA). For the path estimates, the columns of the output matrix stand for the constructs that exert an influence and the rows for those constructs that are influenced.</p>
 <p>For example, in the considered dataset the user gets for the path coefficient “IMAG” on “EXPE” an estimated value of:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">results1<span class="op">$</span>Estimates<span class="op">$</span>Path_estimates[<span class="st">&quot;EXPE&quot;</span>,<span class="st">&quot;IMAG&quot;</span>]</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">results1<span class="op">$</span>Estimates<span class="op">$</span>Path_estimates[<span class="st">&quot;EXPE&quot;</span>,<span class="st">&quot;IMAG&quot;</span>]</a></code></pre></div>
 <pre><code>## [1] 0.6087192</code></pre>
 <p>This value describes the influence of the construct “Consumer’s image of the enterprise” on the construct “Consumer’s expectation”. As data are standardized, also parameter estimates are standardized. Therefore, they measure the change of a variable in standard deviations. This has to be taken into account when interpreting the results. Thus, an increase of “IMAG” by one standard deviation leads to an increase of “EXPE” by 0.6087192 standard deviations. If the original units of the data are known, the estimated parameters can be transformed in these units to make a more meaningful interpretation possible. Furthermore, path coefficients can be seen as the reliabilities of the constructs. Thus, the path coefficient in the example stands for the portion of the total variance of the construct “EXPE” which is explained by the construct “IMAG”.</p>
 <p>Next, the loadings are to be interpreted. The loading is the correlation between a construct (resp. its proxy) and an indicator. Obviously, this correlation always exists and can always be calculated. To this end, it is important to point out that in the scope of the <em>cSEM</em>-package two types of loadings are distinguished. The type of a specific loading is strongly related to the type of the construct which is connected by the loading to an indicator. On the one side, there are pure composite constructs. These constructs are an exact linear combination of their indicators and do not influence their indicators. Therefore, the constructs can be calculated exactly when weights have been estimated. In this case, the loading is the correlation between the “true” construct and its indicator (“composite loading”). On the other side, there are common factor constructs. For these constructs, only proxy values can be calculated using the estimated weights. Thus, the loading represents in this case the correlation between indicator and proxy and not between indicator and true underlying but unknown construct (“construct loading”).</p>
 <p>When estimating coefficients with GSCA, Hwang and Takane state that loadings are set equal to zero for all composite type constructs because these constructs do not exert any influence on their related indicators. This means in the language of the <em>cSEM</em>-package that the “construct loading” does not need to be calculated with the chosen estimation method since it is not of any further interest. The reason is that these constructs are the exact linear combination of their indicators and, therefore, the “true” correlation (which is of interest) can be calculated directly without proxies as an intermediate step. Also in this case, this correlation exists and is part of the resulting estimation output of the <em>csem</em>-function when composite type constructs are under consideration.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">results1<span class="op">$</span>Estimates<span class="op">$</span>Loading_estimates[<span class="st">&quot;EXPE&quot;</span>, <span class="st">&quot;expe1&quot;</span>]</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">results1<span class="op">$</span>Estimates<span class="op">$</span>Loading_estimates[<span class="st">&quot;EXPE&quot;</span>, <span class="st">&quot;expe1&quot;</span>]</a></code></pre></div>
 <pre><code>## [1] 0.7597724</code></pre>
 <p>This result shows, that the correlation between the proxy of the construct “EXPE” and its first indicator “expe1” is 0.7597724.</p>
 <p>Finally, squared loadings and squared path coefficients are squared multiple correlations of the variables connected by the related unsquared parameters.</p>
@@ -374,46 +374,46 @@ code > span.ot { color: #007020; }
 <div id="example2" class="section level3">
 <h3>Example 2: Pure common factor model and GSCA</h3>
 <p>In the next example, the same model as in <a href="#example1">Example1</a> is considered. However, estimation is now done with GSCA. As already mentioned, this can be achieved by setting the argument <em>‘.disattenuate’</em> equal to <em>FALSE</em>. In this case, estimators can be biased when constructs are of common factor type and no pure composites.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">results2 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">results2 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p>For the path coefficient and the loading already considered in <a href="#example1">Example1</a>, the estimated values are now:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">results2<span class="op">$</span>Estimates<span class="op">$</span>Path_estimates[<span class="st">&quot;EXPE&quot;</span>,<span class="st">&quot;IMAG&quot;</span>]</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">results2<span class="op">$</span>Estimates<span class="op">$</span>Path_estimates[<span class="st">&quot;EXPE&quot;</span>,<span class="st">&quot;IMAG&quot;</span>]</a></code></pre></div>
 <pre><code>## [1] 0.5565924</code></pre>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">results2<span class="op">$</span>Estimates<span class="op">$</span>Loading_estimates[<span class="st">&quot;EXPE&quot;</span>, <span class="st">&quot;expe1&quot;</span>]</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">results2<span class="op">$</span>Estimates<span class="op">$</span>Loading_estimates[<span class="st">&quot;EXPE&quot;</span>, <span class="st">&quot;expe1&quot;</span>]</a></code></pre></div>
 <pre><code>## [1] 0.7773295</code></pre>
 <p>The interpretation of the estimators is the same as in the case of GSCA<sub>M</sub> (see <a href="#example1">Example1</a>). However, by comparing these values with those calculated before, the bias in (some) estimators when using GSCA becomes obvious. Thus, when interpreting these values the user should keep in mind that the estimators might be biased.</p>
 </div>
 <div id="example3" class="section level3">
 <h3>Example 3: At least one composite and GSCA<sub>M</sub></h3>
 <p>Now, the specified model will be modified. The aim is to consider models with at least one construct of composite type. <a href="#example1">Example 1</a> and <a href="#example2">Example 2</a> show that in the case of a pure common factor model, estimation can be carried out either with GSCA or with GSCA<sub>M</sub>. We use the same dataset as before, but the constructs “EXPE”, “IMAG”, “SAT” and “VAL” are now of composite type. This means that, these constructs are interpreted such that they do not have an influence on their respective indicators. Thus, they are only modeled as an (exact) linear combination (composite) of their indicators. For these constructs, construct loadings do not need to be calculated. The structural model stays the same.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">model2 &lt;-<span class="st"> &quot;</span></a>
-<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="st"># Structural model</span></a>
-<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="st">QUAL ~ EXPE</span></a>
-<a class="sourceLine" id="cb23-4" data-line-number="4"><span class="st">EXPE ~ IMAG</span></a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="st">SAT  ~ IMAG + EXPE + QUAL + VAL</span></a>
-<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="st">LOY  ~ IMAG + SAT</span></a>
-<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="st">VAL  ~ EXPE + QUAL</span></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="st"># Measurement model (common factors and composites)</span></a>
-<a class="sourceLine" id="cb23-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb23-11" data-line-number="11"><span class="st">EXPE &lt;~ expe1 + expe2 + expe3 + expe4 + expe5</span></a>
-<a class="sourceLine" id="cb23-12" data-line-number="12"><span class="st">IMAG &lt;~ imag1 + imag2 + imag3 + imag4 + imag5</span></a>
-<a class="sourceLine" id="cb23-13" data-line-number="13"><span class="st">LOY  =~ loy1  + loy2  + loy3  + loy4</span></a>
-<a class="sourceLine" id="cb23-14" data-line-number="14"><span class="st">QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5</span></a>
-<a class="sourceLine" id="cb23-15" data-line-number="15"><span class="st">SAT  &lt;~ sat1  + sat2  + sat3  + sat4</span></a>
-<a class="sourceLine" id="cb23-16" data-line-number="16"><span class="st">VAL  &lt;~ val1  + val2  + val3  + val4</span></a>
-<a class="sourceLine" id="cb23-17" data-line-number="17"><span class="st">&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">model2 &lt;-<span class="st"> &quot;</span></a>
+<a class="sourceLine" id="cb23-2" title="2"><span class="st"># Structural model</span></a>
+<a class="sourceLine" id="cb23-3" title="3"><span class="st">QUAL ~ EXPE</span></a>
+<a class="sourceLine" id="cb23-4" title="4"><span class="st">EXPE ~ IMAG</span></a>
+<a class="sourceLine" id="cb23-5" title="5"><span class="st">SAT  ~ IMAG + EXPE + QUAL + VAL</span></a>
+<a class="sourceLine" id="cb23-6" title="6"><span class="st">LOY  ~ IMAG + SAT</span></a>
+<a class="sourceLine" id="cb23-7" title="7"><span class="st">VAL  ~ EXPE + QUAL</span></a>
+<a class="sourceLine" id="cb23-8" title="8"></a>
+<a class="sourceLine" id="cb23-9" title="9"><span class="st"># Measurement model (common factors and composites)</span></a>
+<a class="sourceLine" id="cb23-10" title="10"></a>
+<a class="sourceLine" id="cb23-11" title="11"><span class="st">EXPE &lt;~ expe1 + expe2 + expe3 + expe4 + expe5</span></a>
+<a class="sourceLine" id="cb23-12" title="12"><span class="st">IMAG &lt;~ imag1 + imag2 + imag3 + imag4 + imag5</span></a>
+<a class="sourceLine" id="cb23-13" title="13"><span class="st">LOY  =~ loy1  + loy2  + loy3  + loy4</span></a>
+<a class="sourceLine" id="cb23-14" title="14"><span class="st">QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5</span></a>
+<a class="sourceLine" id="cb23-15" title="15"><span class="st">SAT  &lt;~ sat1  + sat2  + sat3  + sat4</span></a>
+<a class="sourceLine" id="cb23-16" title="16"><span class="st">VAL  &lt;~ val1  + val2  + val3  + val4</span></a>
+<a class="sourceLine" id="cb23-17" title="17"><span class="st">&quot;</span></a></code></pre></div>
 <p>Calling the <em>csem</em>-function in this case without setting the argument <em>‘.disattenuate’</em> equal to <em>FALSE</em> will produce the error already mentioned in the <a href="#introduction">Introduction</a>. For a model like the specified one, i.e. with at least one construct of composite type, estimation cannot be done with GSCA<sub>M</sub>:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">csem</span>(satisfaction, model2, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">Error<span class="op">:</span><span class="st"> </span>The following error occured <span class="cf">in</span> the <span class="st">`</span><span class="dt">calculateWeightsGSCAm()</span><span class="st">`</span> <span class="cf">function</span><span class="op">:</span></a>
-<a class="sourceLine" id="cb25-2" data-line-number="2">GSCAm only applicable to pure common factor models. Use <span class="st">`</span><span class="dt">.disattenuate = FALSE</span><span class="st">`</span>. </a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1"><span class="kw">csem</span>(satisfaction, model2, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">Error<span class="op">:</span><span class="st"> </span>The following error occured <span class="cf">in</span> the <span class="st">`</span><span class="dt">calculateWeightsGSCAm()</span><span class="st">`</span> <span class="cf">function</span><span class="op">:</span></a>
+<a class="sourceLine" id="cb25-2" title="2">GSCAm only applicable to pure common factor models. Use <span class="st">`</span><span class="dt">.disattenuate = FALSE</span><span class="st">`</span>. </a></code></pre></div>
 <p>Since GSCA<sub>M</sub> is not an option for those models, parameter estimates have to be determined using “standard” GSCA (see <a href="#example4">Example 4</a>).</p>
 </div>
 <div id="example4" class="section level3">
 <h3>Example 4: At least one composite and GSCA</h3>
 <p>In the last example, the same model as before is considered: common factor type constructs are combined with composite type constructs. However, estimation is now done with “standard” GSCA, i.e., <em>‘.disattenuate’</em> is explicitly set to <em>FALSE</em>. Therefore, calling the <em>csem</em>-function with these input arguments does not produce an error.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">results4 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model2, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">results4 &lt;-<span class="st"> </span><span class="kw">csem</span>(satisfaction, model2, <span class="dt">.approach_weights =</span> <span class="st">&quot;GSCA&quot;</span>, <span class="dt">.disattenuate =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p>This leads to the following estimation results:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw">summarize</span>(results4)</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1"><span class="kw">summarize</span>(results4)</a></code></pre></div>
 <pre><code>## ________________________________________________________________________________
 ## ----------------------------------- Overview -----------------------------------
 ## 
@@ -526,12 +526,12 @@ code > span.ot { color: #007020; }
 <h1>Methods &amp; Formula</h1>
 <div id="the-gsca-gscam-model" class="section level3">
 <h3>The GSCA-/GSCA<sub>M</sub>-model</h3>
-<p>This section is based on <span class="citation">(Hwang, Takane, and Jung 2017, 1–4)</span> and <span class="citation">(Hwang and Takane 2014, chap. 2.1.-2.2)</span> where the GSCA-/GSCA<sub>M</sub>-model and the parameter estimation are outlined.</p>
+<p>This section is based on <span class="citation">(Hwang, Takane, and Jung 2017, 1–4)</span> and <span class="citation">(Hwang and Takane 2014, chaps. 2.1.–2.2)</span> where the GSCA-/GSCA<sub>M</sub>-model and the parameter estimation are outlined.</p>
 <p>As already mentioned in the introduction, GSCA and GSCA<sub>M</sub> are composite-based approaches to estimation of parameters in structural equation models.</p>
 <p>The estimation within GSCA (resp. GSCA<sub>M</sub>) begins with the standardization of the data and the specification of three submodels. The matrix of the standardized data is denoted by <span class="math inline">\(\mathbf{X}\)</span> and is of dimension <em>N</em> <em>x</em> <em>K</em> since there are <em>N</em> observations in <em>K</em> indicators. Additionally, there are <em>J</em> constructs (latent variables).</p>
 <p>As in PLS, the measurement model and the structural model are defined to specifiy the relations of latent variables on indicators resp. of the exogenous latent variables on the endogenous ones. In addition, the weighted relation model accounts for the influence of the indicators on the latent variables. Each submodel is expressed in a matrix equation leading to the following 3 equations:</p>
 <ol style="list-style-type: decimal">
-<li><p>Matrix equation of the measurement model: <span class="math display">\[ \mathbf{X} = \boldsymbol{\Gamma}  \boldsymbol{\Lambda} + \mathbf{U} \mathbf{D} + \mathbf{E_{1}} \]</span> In the measurement model, relationships between indicators and constructs are specified. The matrix <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is the <em>N</em> by <em>J</em> matrix which contains columnwise the constructs <span class="math inline">\(\gamma_{1}\)</span> up to <span class="math inline">\(\gamma_{J}\)</span>. The matrix <span class="math inline">\(\boldsymbol{\Lambda}\)</span> is the <em>J</em> by <em>K</em> matrix of (“construct”) loadings relating constructs and indicators. <span class="math inline">\(\mathbf{U}\)</span> denotes the <em>N</em> by <em>K</em> matrix of unique variables and <span class="math inline">\(\mathbf{D}\)</span> is the <em>K</em> by <em>K</em> diagonal matrix of unique loadings. Therefore, the matrix <span class="math inline">\(\boldsymbol{\Gamma} \boldsymbol{\Lambda}\)</span> represents the common parts of the indicators whereas <span class="math inline">\(\mathbf{U} \mathbf{D}\)</span> stands for the unique parts. Finally, <span class="math inline">\(\mathbf{E_{1}}\)</span> is the <em>N</em> by <em>K</em> matrix containing the residuals of indicators. It is assumed that <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is uncorrelated with <span class="math inline">\(\mathbf{U}\)</span>, i.e. <span class="math inline">\(\boldsymbol{\Gamma}&#39; \mathbf{U}\)</span> = <span class="math inline">\(\mathbf{U}&#39; \boldsymbol{\Gamma} = \mathbf{0}\)</span>, and that <span class="math inline">\(\mathbf{U}\)</span> is orthonormalized.</p></li>
+<li><p>Matrix equation of the measurement model: <span class="math display">\[ \mathbf{X} = \boldsymbol{\Gamma}  \boldsymbol{\Lambda} + \mathbf{U} \mathbf{D} + \mathbf{E_{1}} \]</span> In the measurement model, relationships between indicators and constructs are specified. The matrix <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is the <em>N</em> by <em>J</em> matrix which contains columnwise the constructs <span class="math inline">\(\gamma_{1}\)</span> up to <span class="math inline">\(\gamma_{J}\)</span>. The matrix <span class="math inline">\(\boldsymbol{\Lambda}\)</span> is the <em>J</em> by <em>K</em> matrix of (“construct”) loadings relating constructs and indicators. <span class="math inline">\(\mathbf{U}\)</span> denotes the <em>N</em> by <em>K</em> matrix of unique variables and <span class="math inline">\(\mathbf{D}\)</span> is the <em>K</em> by <em>K</em> diagonal matrix of unique loadings. Therefore, the matrix <span class="math inline">\(\boldsymbol{\Gamma} \boldsymbol{\Lambda}\)</span> represents the common parts of the indicators whereas <span class="math inline">\(\mathbf{U} \mathbf{D}\)</span> stands for the unique parts. Finally, <span class="math inline">\(\mathbf{E_{1}}\)</span> is the <em>N</em> by <em>K</em> matrix containing the residuals of indicators. It is assumed that <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is uncorrelated with <span class="math inline">\(\mathbf{U}\)</span>, i.e. <span class="math inline">\(\boldsymbol{\Gamma}&#39; \mathbf{U}\)</span> = <span class="math inline">\(\mathbf{U}&#39; \boldsymbol{\Gamma} = \mathbf{0}\)</span>, and that <span class="math inline">\(\mathbf{U}\)</span> is orthonormalized.</p></li>
 <li><p>Matrix equation of the structural model:</p></li>
 </ol>
 <p><span class="math display">\[ \boldsymbol{\Gamma} = \boldsymbol{\Gamma}  \mathbf{B&#39;} + \mathbf{E_{2}} \]</span> In the structural model, relationships between constructs are specified. The matrix <span class="math inline">\(\boldsymbol{\Gamma}\)</span> is defined as in the measurement model, the matrix <span class="math inline">\(\mathbf{B}\)</span> is the <em>J</em> <em>x</em> <em>J</em> matrix of path coefficients and <span class="math inline">\(\mathbf{E_{2}}\)</span> is the <em>N</em> by <em>J</em> matrix of the residuals for the constructs.</p>
@@ -558,16 +558,16 @@ code > span.ot { color: #007020; }
 <h1>References</h1>
 <div id="refs" class="references">
 <div id="ref-Hwang2010">
-<p>Hwang, Heungsun, Naresh K. Malhotra, Youngchan Kim, Marc A. Tomiuk, and Sungjin Hong. 2010. “A Comparative Study on Parameter Recovery of Three Approaches to Structural Equation Modeling.” <em>Journal of Marketing Research</em> 47 (4). American Marketing Association: 699–712.</p>
+<p>Hwang, Heungsun, Naresh K. Malhotra, Youngchan Kim, Marc A. Tomiuk, and Sungjin Hong. 2010. “A Comparative Study on Parameter Recovery of Three Approaches to Structural Equation Modeling.” <em>Journal of Marketing Research</em> 47 (4): 699–712.</p>
 </div>
 <div id="ref-Hwang2004">
-<p>Hwang, Heungsun, and Yoshio Takane. 2004. “Generalized Structured Component Analysis.” <em>Psychometrika</em> 69 (1). Springer: 81–99.</p>
+<p>Hwang, Heungsun, and Yoshio Takane. 2004. “Generalized Structured Component Analysis.” <em>Psychometrika</em> 69 (1): 81–99.</p>
 </div>
 <div id="ref-Hwang2014">
 <p>———. 2014. <em>Generalized Structured Component Analysis: A Component-Based Approach to Structural Equation Modeling</em>. Chapman <span class="math inline">\(\&amp;\)</span> Hall/Crc Statistics in the Social and Behavioral Sciences. Chapman; Hall/CRC.</p>
 </div>
 <div id="ref-Hwang2017">
-<p>Hwang, Heungsun, Yoshio Takane, and Kwanghee Jung. 2017. “Generalized Structured Component Analysis with Uniqueness Terms for Accommodating Measurement Error.” <em>Frontiers in Psychology</em> 8 (2137). Frontiers Media: 1–12.</p>
+<p>Hwang, Heungsun, Yoshio Takane, and Kwanghee Jung. 2017. “Generalized Structured Component Analysis with Uniqueness Terms for Accommodating Measurement Error.” <em>Frontiers in Psychology</em> 8 (2137): 1–12.</p>
 </div>
 </div>
 </div>

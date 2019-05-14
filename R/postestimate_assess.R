@@ -134,7 +134,6 @@ assess <- function(
   UseMethod("assess")
 }
 
-#' @describeIn assess (TODO)
 #' @export
 
 assess.cSEMResults_default <- function(
@@ -209,7 +208,6 @@ assess.cSEMResults_default <- function(
   return(out)
 }
 
-#' @describeIn assess (TODO)
 #' @export
 
 assess.cSEMResults_multi <- function(
@@ -228,7 +226,6 @@ assess.cSEMResults_multi <- function(
   }
 }
 
-#' @describeIn assess (TODO)
 #' @export
 
 assess.cSEMResults_2ndorder <- function(.object, ...){
