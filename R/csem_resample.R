@@ -1140,56 +1140,24 @@ resamplecSEMResultsCore <- function(
     Est_temp <- if(any(class(.object) == "cSEMResults_2ndorder")) {
       ## NOTE: using do.call(csem, args) would be more elegant but is much 
       # much much! slower (especially for larger data sets). 
-      csem(
-        .data                    = args$.data,
-        .model                   = args$.model,
-        .approach_2ndorder       = args$.approach_2ndorder,
-        .approach_cor_robust     = args$.approach_cor_robust,
-        .approach_nl             = args$.approach_nl,
-        .approach_paths          = args$.approach_paths,
-        .approach_weights        = args$.approach_weights,
-        .conv_criterion          = args$.conv_criterion,
-        .disattenuate            = args$.disattenuate,
-        .dominant_indicators     = args$.dominant_indicators,
-        .estimate_structural     = args$.estimate_structural,
-        .id                      = args$.id,
-        .iter_max                = args$.iter_max,
-        .normality               = args$.normality,
-        .PLS_approach_cf         = args$.PLS_approach_cf,
-        .PLS_ignore_structural_model = args$.PLS_ignore_structural_model,
-        .PLS_modes               = args$.PLS_modes,
-        .PLS_weight_scheme_inner = args$.PLS_weight_scheme_inner,
-        .reliabilities           = args$.reliabilities,
-        .starting_values         = args$.starting_values,
-        .tolerance               = args$.tolerance
-      )
+      do.call(csem, args) 
+
     } else {
-      # its important to use foreman() here 
+      # It is important to use foreman() here 
       # instead of csem() to allow for lapply(x, resamplecSEMResults_default) when x 
       # is of class cSEMResults_2ndorder.
-      ## NOTE: using do.call(foreman, args) would be more elegant but is much 
-      # much much! slower (especially for larger data sets). 
-      foreman(
-        .data                        = args$.data,
-        .model                       = args$.model,
-        .approach_cor_robust         = args$.approach_cor_robust,
-        .approach_nl                 = args$.approach_nl,
-        .approach_paths              = args$.approach_paths,
-        .approach_weights            = args$.approach_weights,
-        .conv_criterion              = args$.conv_criterion,
-        .disattenuate                = args$.disattenuate,
-        .dominant_indicators         = args$.dominant_indicators,
-        .estimate_structural         = args$.estimate_structural,
-        .id                          = args$.id,
-        .iter_max                    = args$.iter_max,
-        .normality                   = args$.normality,
-        .PLS_approach_cf             = args$.PLS_approach_cf,
-        .PLS_ignore_structural_model = args$.PLS_ignore_structural_model,
-        .PLS_modes                   = args$.PLS_modes,
-        .PLS_weight_scheme_inner     = args$.PLS_weight_scheme_inner,
-        .reliabilities               = args$.reliabilities,
-        .tolerance                   = args$.tolerance
-      )
+      
+      ## NOTE: 
+      #  01.03.2019: Using do.call(foreman, args) would be more elegant but is much 
+      #              much much! slower (especially for larger data sets).
+      #
+      #  15.05.2019: Apparently do.call(foreman, args) is not that bad
+      #              after all. I did several comparisons using microbenchmark
+      #              but there was no speed difference (anymore?!). When I compared and
+      #              thought that do.call is slow I fixed other parts of 
+      #              foreman as well...maybe they had been the real culprit.
+      #              So we use do.call again, as it avoids redundancy
+      do.call(foreman, args)
     }
     
     # Check status

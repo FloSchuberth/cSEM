@@ -257,65 +257,26 @@ csem <- function(
       } else {
         args_needed[[".data"]] <- x[, -which(names(x) == .id)]
       }
-      ## NOTE: using do.call(foreman, args_needed) would be more elegant but is much 
-      # much much! slower (especially for larger data sets). There is now a
-      # terible redundancy because foreman is repeated 3 times. This should be
-      # addressed at some point, however, it is much better than do.call in terms
-      # of speed
-      # out <- do.call(foreman, args_needed)
-      foreman(
-        .data                        = args_needed$.data,
-        .model                       = args_needed$.model,
-        .approach_cor_robust         = args_needed$.approach_cor_robust,
-        .approach_nl                 = args_needed$.approach_nl,
-        .approach_paths              = args_needed$.approach_paths,
-        .approach_weights            = args_needed$.approach_weights,
-        .conv_criterion              = args_needed$.conv_criterion,
-        .disattenuate                = args_needed$.disattenuate,
-        .dominant_indicators         = args_needed$.dominant_indicators,
-        .estimate_structural         = args_needed$.estimate_structural,
-        .id                          = args_needed$.id,
-        .iter_max                    = args_needed$.iter_max,
-        .normality                   = args_needed$.normality,
-        .PLS_approach_cf             = args_needed$.PLS_approach_cf,
-        .PLS_ignore_structural_model = args_needed$.PLS_ignore_structural_model,
-        .PLS_modes                   = args_needed$.PLS_modes,
-        .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
-        .reliabilities               = args_needed$.reliabilities,
-        .starting_values             = args_needed$.starting_values,
-        .tolerance                   = args_needed$.tolerance
-      )
+      ## NOTE: 
+      #  01.03.2019: Using do.call(foreman, args_needed) would be more elegant but is much 
+      #              much much! slower (especially for larger data sets).
+      #
+      #  15.05.2019: Apparently do.call(foreman, args_needed) is not that bad
+      #              after all. I did several comparisons using microbenchmark
+      #              but there was no speed difference (anymore?!). When I compared and
+      #              thought that do.call is slow I fixed other parts of 
+      #              foreman as well...maybe they had been the real culprit.
+      #              So we use do.call again, as it avoids redundancy
+      do.call(foreman, args_needed)
+
     })
   } else if(any(class(.data) == "list")) {
     
     out <- lapply(.data, function(x) {
       
       args_needed[[".data"]] <- x
-      ## NOTE: using do.call(foreman, args_needed) would be more elegant but is much 
-      # much much! slower (especially for larger data sets). 
-      # out <- do.call(foreman, args_needed)
-      foreman(
-        .data                        = args_needed$.data,
-        .model                       = args_needed$.model,
-        .approach_cor_robust         = args_needed$.approach_cor_robust,
-        .approach_nl                 = args_needed$.approach_nl,
-        .approach_paths              = args_needed$.approach_paths,
-        .approach_weights            = args_needed$.approach_weights,
-        .conv_criterion              = args_needed$.conv_criterion,
-        .disattenuate                = args_needed$.disattenuate,
-        .dominant_indicators         = args_needed$.dominant_indicators,
-        .estimate_structural         = args_needed$.estimate_structural,
-        .id                          = args_needed$.id,
-        .iter_max                    = args_needed$.iter_max,
-        .normality                   = args_needed$.normality,
-        .PLS_approach_cf             = args_needed$.PLS_approach_cf,
-        .PLS_ignore_structural_model = args_needed$.PLS_ignore_structural_model,
-        .PLS_modes                   = args_needed$.PLS_modes,
-        .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
-        .reliabilities               = args_needed$.reliabilities,
-        .starting_values             = args_needed$.starting_values,
-        .tolerance                   = args_needed$.tolerance
-      )
+      do.call(foreman, args_needed)
+      
     })
     if(is.null(names(.data))) {
       names(out) <- paste0("Data_", 1:length(out))
@@ -323,31 +284,8 @@ csem <- function(
       names(out) <- names(.data)
     }
   } else {
-    ## NOTE: using do.call(foreman, args_needed) would be more elegant but is much 
-    # much much! slower (especially for larger data sets). 
-    # out <- do.call(foreman, args_needed)
-    out <- foreman(
-      .data                        = args_needed$.data,
-      .model                       = args_needed$.model,
-      .approach_cor_robust         = args_needed$.approach_cor_robust,
-      .approach_nl                 = args_needed$.approach_nl,
-      .approach_paths              = args_needed$.approach_paths,
-      .approach_weights            = args_needed$.approach_weights,
-      .conv_criterion              = args_needed$.conv_criterion,
-      .disattenuate                = args_needed$.disattenuate,
-      .dominant_indicators         = args_needed$.dominant_indicators,
-      .estimate_structural         = args_needed$.estimate_structural,
-      .id                          = args_needed$.id,
-      .iter_max                    = args_needed$.iter_max,
-      .normality                   = args_needed$.normality,
-      .PLS_approach_cf             = args_needed$.PLS_approach_cf,
-      .PLS_ignore_structural_model = args_needed$.PLS_ignore_structural_model,
-      .PLS_modes                   = args_needed$.PLS_modes,
-      .PLS_weight_scheme_inner     = args_needed$.PLS_weight_scheme_inner,
-      .reliabilities               = args_needed$.reliabilities,
-      .starting_values             = args_needed$.starting_values,
-      .tolerance                   = args_needed$.tolerance
-    )
+    out <- do.call(foreman, args_needed)
+    
   }
 
   ## Set class for output

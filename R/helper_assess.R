@@ -1,17 +1,18 @@
 #' Internal: AVE
 #'
 #' Calculate the average variance extracted (AVE) as proposed by 
-#' \insertCite{Fornell1981;textual}{cSEM}.
+#' \insertCite{Fornell1981;textual}{cSEM}. For details see the
+#' \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#ave}{cSEM website} 
 #'
 #' The AVE is inherently tied to the common factor model. It is therefore 
 #' unclear how to meaningfully interpret AVE results in the context of a 
-#' composite model. It is possible to report the AVE for constructs
+#' composite model. It is possible to report the AVE for concepts
 #' modeled as composites by setting `.only_common_factors = FALSE`, 
 #' however, we explicitly warn to interpret results with caution, 
 #' as they may not even have a conceptual meaning.
 #' 
-#' The function is only applicable to objects of class `cSEMResults_default`.
-#' For other object classes use [assess()].
+#' The function is only applicable to objects inheriting class `cSEMResults_default`.
+#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
 #' 
 #' @usage calculateAVE(
 #'  .object              = NULL,
@@ -87,8 +88,8 @@ calculateAVE <- function(
 #' however, we explicitly discourage to do so as the result may not even 
 #' have a conceptual meaning.
 #' 
-#' The function is only applicable to objects of class `cSEMResults_default`.
-#' For other object classes use [assess()].
+#' The function is only applicable to objects inheriting class `cSEMResults_default`.
+#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
 #' 
 #' @usage calculateGoF(
 #'  .object              = NULL,
@@ -145,44 +146,10 @@ calculateGoF <- function(
 
 #' Internal: Reliability
 #'
-#' Compute several reliability measures. See the 
+#' Compute several reliability estimates. See the 
 #' \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#reliability}{Reliability}
 #' section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
 #' for details.
-#' 
-#' Reliability is the consistency of measurement. Practically, reliability 
-#' is empirically assessed based on the classical true score measurement theory 
-#' and defined as the ratio of the true score/common factor variance relative to 
-#' the proxy/test score/composite variance, where the latter is **in principal**
-#' a weighted linear combinations of the indicators (i.e. a proxy or stand-in for the 
-#' true score/common factor). Historically, however, the test score is generally
-#' assumed to be a simple sum score (i.e a weighted sum of indicators with all
-#' weights assumed to be equal to one). Hence, well-known reliability
-#' measures such as Cronbach alpha are definied with respect to a test score
-#' that indeed represents a simple sum score. Yet, all reliability measures
-#' originally developped assuming a sum score may equally well be computed
-#' with respect to a composite (i.e., a weighted score, with weights not necessarily
-#' equal to one).
-#' 
-#' Moreover, empirically, common reliability measures are based on differnt types
-#' of measurement model assumptions, namley the parallel, the tau-equivalent,
-#' and the congeneric measurement model. 
-#' 
-#' Consequently, the current literature provides numerous reliability measures,
-#' based on (seemingly) different formulae with no systematic naming conventions. 
-#' This package follows \insertCite{Cho2016;textual}{cSEM}'s attempt for a 
-#' systematic approach to reliability by adopting his proposed unified naming 
-#' convention. See \insertCite{Cho2016;textual}{cSEM} for details. Using the naming
-#' scheme two reliability measures exist:
-#' 
-#' \itemize{
-#'  \item{**Congeneric reliabilty**}
-#'  \item{**Tau-equivalent reliabilty** (more famouly known as **Cronbach alpha**)}
-#' }
-#' 
-#' As \insertCite{Cho2016;textual}{cSEM} only considers reliability measures
-#' based on sum scores we add the **weighted** prefix to these names 
-#' whenever its calculation is based on a composite!
 #' 
 #' Since reliability is defined with respect to a classical true score measurement
 #' model only constructs modeled as common factors are considered by default.
@@ -190,13 +157,18 @@ calculateGoF <- function(
 #' `.only_common_factors = FALSE`, however, it is unclear how to
 #' interpret reliability in this case.
 #' 
+#' Reliability is are traditionally based on a test score (proxy) based on unit weights.
+#' To compute congeneric and tau-equivalent reliability based on a score that 
+#' uses the weights of the weight approach used to obtain `.object` use `.weighted = TRUE` 
+#' instead.
+#' 
 #' For the the tau-equivalent reliability (rhoT or Cronbach alpha) a closed-form 
 #' confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 #' `.closed_form_ci = TRUE` (default is `FALSE`). If `.alpha` is a vector
 #' several CI's are returned.
 #' 
-#' The function is only applicable to objects of class `cSEMResults_default`.
-#' For other object classes use [assess()].
+#' The function is only applicable to objects inheriting class `cSEMResults_default`.
+#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
 #'
 #' @return For `calculateRhoC()` a named numeric vector containing the reliability
 #'   estimates.

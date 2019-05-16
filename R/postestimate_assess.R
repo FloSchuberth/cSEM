@@ -18,9 +18,9 @@
 #' \describe{
 #' \item{Average variance extracted (AVE)]; "ave"}{An estimate of the 
 #'   amount of variation in the indicators that is due to the assumed latent variable. 
-#'   Practically, it is calculated as the ratio of the total indicator variance 
+#'   Practically, it is calculated as the ratio of the (indicator) true score variances 
 #'   (i.e., the sum of the squared loadings)
-#'   relative to the proxy (i.e. test score or composite) variance.}
+#'   relative to the sum of the total indicator variances.}
 #' \item{Congeneric reliability; "rho_C"}{An estimate of the 
 #'   reliability assuming a congeneric measurement model (i.e., loadings are
 #'   allowed to differ) and a test score (proxy) based on unit weights.
@@ -130,7 +130,8 @@
 #' @param ... Further arguments passed to functions called by `assess()`.
 #'   See [args_assess_dotdotdot] for a complete list of available arguments.
 #'
-#' @seealso [csem()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [calculateAVE()], [calculateRhoC()], [calculateRhoT()],
+#'   [calculateGoF()]
 #'
 #' @return A named list of quality criteria. Note that if only a single quality
 #'   criteria is computed the return value is still a list!

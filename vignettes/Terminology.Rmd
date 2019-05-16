@@ -1,5 +1,5 @@
 ---
-title: "Terminology glossary"
+title: "Terminology"
 date: "Last edited: `r Sys.Date()`"
 output:
   prettydoc::html_pretty:
@@ -77,7 +77,7 @@ variables (indicators) based on a specific set of assumptions.
 Constructs may therefore best be understood as stand-ins for concepts. Consequently,
 constructs do not necessarily represent the concept they seek to represent.
 
-#### Factor-based methods 
+#### Factor-based methods or covariance-based SEM 
 
 Factor-based methods or factor-based SEM refers to the entirety of methods 
 centered around the use of the common factors/latent variables as stand-ins for 
@@ -90,7 +90,7 @@ matrix $\bm S$ is minimized.
 
 An observable variable. In **cSEM** observable variables are generally refered 
 to as indicators, however, terms such as item, manifest variable, or 
-observables are sometimes used synommenoulsy.
+observable (variable) are sometimes used synommenoulsy.
     
 #### Latent variable
 
@@ -132,7 +132,7 @@ of the quantity they seek to represent.
 
 See: Proxy    
 
-#### Structural Equation Modeling 
+#### Structural Equation Modeling (SEM)
 
 The entirety of a set of related theories, mathematical models, methods, 
 algorithms and terminologies related to analyzing the relationships 

@@ -89,8 +89,10 @@ assess(
   
 `.only_common_factors`
 
-:  Logical. Should the quality criterion be calculated for constructs modeled as 
-   common factors only? Defaults to `TRUE`.
+:  Logical. Should only concepts modeled as common 
+   factors be included when calculating one of the following quality criteria: 
+   AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates. 
+   Defaults to `TRUE`.
 
 `...`
 
@@ -153,11 +155,12 @@ a calculated (`.quality_criterion = "all"`).
 
 This section provides technical details and relevant formulae. For the relevant 
 notation and terminology used in this section, see the
-[Notation glossary][Notation] and the
-[Termionology glossary][Terminology].
+[Notation][Notation] and the
+[Termionology][Terminology] help files.
 
 ## Average variance extracted (AVE) {#ave}
 ### Definition
+The average variance extracted (AVE) was first proposed by @Fornell1981.
 Several definitions exist. For ease of comparison to extant literature the most 
 common definitions are given below:
 
@@ -184,7 +187,7 @@ It is important to stress that, although different in wording, all definitions
 are synonymous! 
 
 ### Formulae
-Using the results and notation derived and defined in the [Notation glossary][Notation],
+Using the results and notation derived and defined in the [Notation][Notation] help file,
 the AVE for a generic construct is:
 $$ AVE = \frac{\text{Sum indicator true score variances}}{\text{Sum indicator variances}} =  \frac{\sum Var(\eta_k)}{\sum Var(x_k)} = \frac{\sum\lambda^2_k}{\sum(\lambda^2_k + Var(\varepsilon_k))}$$
 If $x_k$ is standardized (i.e., $Var(x_k) = 1$) the denominator reduces to $K$ 
@@ -223,15 +226,16 @@ with validity as a perfectly reliable measure may be invalid.
 Practically, reliability must be empirically assessed based on a theoretical
 framework. The dominant - and virtually only - theoretical framework against which 
 to compare empirical reliability results to is the well-known true score framework 
-which provides the foundation for the measurement model postulated 
-in the [Notation glossary][Notation]. 
+which provides the foundation for the measurement model described 
+in the [Notation][Notation] help file. 
 Based on the true score framework and using the terminology and notation of
-the [Notation][Notation] and [Termniology][Terminology] glossary, reliability is defined as:
+the [Notation][Notation] and [Termniology][Terminology] help files, reliability 
+is defined as:
 
 1. The amount of proxy true score variance, $Var(\bar\eta)$, relative to the 
-   the proxy/score variance, $Var(\hat\eta)$.
-2. This is identical to the squared correlation between the construct/common 
-   factor and its proxy: $\rho_{\eta, \hat\eta}^2 = Cor(\eta, \hat\eta)^2$.
+   the proxy or test score variance, $Var(\hat\eta)$.
+2. This is identical to the squared correlation between the common 
+   factor and its proxy/composite or test score: $\rho_{\eta, \hat\eta}^2 = Cor(\eta, \hat\eta)^2$.
 
 This "kind" of reliability is commonly referred to as 
 **internal consistency reliability**.
@@ -246,21 +250,41 @@ types of measurement model provide natural naming candidates for their correspon
 1. **Tau-equivalent** -- Assumption: $\eta_k = \eta \longrightarrow \lambda_k = \lambda$ and $Var(\varepsilon_k) \neq Var(\varepsilon_l)$.
 1. **Congeneric** -- Assumption: $\eta_k = \lambda_k\eta$ and $Var(\varepsilon_k) \neq Var(\varepsilon_l)$.
 
+In principal the test score $\hat\eta$ is weighted linear combinations of 
+the indicators (i.e. a proxy or stand-in for the true score/common factor). 
+Historically, however, the test score is generally assumed to be a simple sum 
+score (i.e a weighted sum of indicators with all weights assumed to be equal to 
+one). Hence, well-known reliability measures such as Cronbach's alpha are definied
+with respect to a test score that indeed represents a simple sum score. 
+Yet, all reliability measures originally developped assuming a sum score may 
+equally well be computed with respect to a composite 
+(i.e., a weighted score, with weights not necessarily equal to one).
+
+Apart form the distinction between congeneric and tau-equivalent reliability 
+(Cronbach's alpha) we therefore distinguish between reliability estimates based on
+a test score (composite) that uses the weights of the weight approach used 
+to obtain `.object` and a test score (proxy) based on unit weights. The former
+is indicated by adding "**weighted**" to the original name.
 
 ### Formulae
 
-The most general formula for reliability is the **congeneric reliability**:
+The most general formula for reliability is the **weighted congeneric reliability**:
 
 $$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\bm{w}'\bm{\lambda})^2}{\bm{w}'\bm{\Sigma}\bm{w}}$$
+Assuming $w_k = 1$, i.e. unit weights, the "classical" formula for congeneric reliability follows:
+$$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{\left(\sum\lambda_k\right)^2}{\left(\sum\lambda_k\right)^2 + \left(\sum\varepsilon_k\right)^2}$$
 Using the assumptions imposed by the tau-equivalent measurement model we obtain
-the **tau-equivalent reliability**:
+the **weighted tau-equivalent reliability (weighted Cronbach's alpha)**:
 
 $$ \rho_T = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + \sum w_k^2Var(\varepsilon_k)}
  = \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + \sum w_k^2Var(x_k)}$$
 where we used the fact that if $\lambda_k = \lambda$ (tau-equivalence), 
 $\lambda^2_k$ equals the average covariance between indicators:
  $$\bar\sigma_x = \frac{1}{K(K-1)}\sum^K_{k=1}\sum^K_{l=1} \sigma_{kl}$$
-
+Again, assuming $w_k = 1$, i.e. unit weights, the "classical" formula for 
+tau-equivalent reliability (Cronbach's alpha) follows:
+$$ \rho_T = \frac{\lambda^2K^2}{\lambda^2K^2 + \sum Var(\varepsilon_k)}
+ = \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + \sum w_k^2Var(x_k)}$$
 Using the assumptions imposed by the parallel measurement model we obtain
 the **parallel reliability**:
 
