@@ -12,8 +12,10 @@ calculateHTMT(
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.only_common_factors}{Logical. Should only constructs modeled as common
-factors be included? Defaults to \code{TRUE}.}
+\item{.only_common_factors}{Logical. Should only concepts modeled as common
+factors be included when calculating one of the following quality critera:
+AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
+Defaults to \code{TRUE}.}
 }
 \value{
 A lower tringular matrix of HTMT values.
@@ -25,8 +27,8 @@ Compute the heterotrait-monotrait ratio of correlations (HTMT) based on
 \details{
 The HTMT is used to assess discriminant validity.
 
-The function is only applicable to objects of class \code{cSEMResults_default}.
-For other object classes use \code{\link[=assess]{assess()}}.
+The function is only applicable to objects inheriting class \code{cSEMResults_default}.
+For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
 }
 \seealso{
 \link{assess}, \link{csem}, \link{cSEMResults}

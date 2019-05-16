@@ -14,8 +14,10 @@ assess(
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.only_common_factors}{Logical. Should only constructs modeled as common
-factors be included? Defaults to \code{TRUE}.}
+\item{.only_common_factors}{Logical. Should only concepts modeled as common
+factors be included when calculating one of the following quality critera:
+AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
+Defaults to \code{TRUE}.}
 
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
@@ -48,9 +50,9 @@ following quality crieria are implemented (in alphabetical order):
 \describe{
 \item{Average variance extracted (AVE)]; "ave"}{An estimate of the
 amount of variation in the indicators that is due to the assumed latent variable.
-Practically, it is calculated as the ratio of the total indicator variance
+Practically, it is calculated as the ratio of the (indicator) true score variances
 (i.e., the sum of the squared loadings)
-relative to the proxy (i.e. test score or composite) variance.}
+relative to the sum of the total indicator variances.}
 \item{Congeneric reliability; "rho_C"}{An estimate of the
 reliability assuming a congeneric measurement model (i.e., loadings are
 allowed to differ) and a test score (proxy) based on unit weights.
@@ -173,5 +175,6 @@ a$HTMT
 
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=calculateAVE]{calculateAVE()}}, \code{\link[=calculateRhoC]{calculateRhoC()}}, \code{\link[=calculateRhoT]{calculateRhoT()}},
+\code{\link[=calculateGoF]{calculateGoF()}}
 }

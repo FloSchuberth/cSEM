@@ -40,8 +40,8 @@ and the model-implied indicator variance-covariance matrix (Sigma_hat)
 using different distance measures. See vignette assess.
 }
 \details{
-The distance functions are only applicable to objects of class
-\code{cSEMResults_default}. For other object classes use \code{\link[=assess]{assess()}}.
+The functions are only applicable to objects inheriting class \code{cSEMResults_default}.
+For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
 }
 \section{Functions}{
 \itemize{

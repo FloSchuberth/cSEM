@@ -368,8 +368,8 @@ calculateRhoT <- function(
 #'
 #' The HTMT is used to assess discriminant validity.
 #' 
-#' The function is only applicable to objects of class `cSEMResults_default`.
-#' For other object classes use [assess()].
+#' The function is only applicable to objects inheriting class `cSEMResults_default`.
+#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
 #' 
 #' @usage calculateHTMT(
 #'  .object              = NULL,
@@ -440,8 +440,8 @@ calculateHTMT <- function(
 #' and the model-implied indicator variance-covariance matrix (Sigma_hat)
 #' using different distance measures. See vignette assess.
 #'
-#' The distance functions are only applicable to objects of class 
-#' `cSEMResults_default`. For other object classes use [assess()].
+#' The functions are only applicable to objects inheriting class `cSEMResults_default`.
+#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
 #' 
 #' @return A single numeric value.
 #' 

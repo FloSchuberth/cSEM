@@ -270,58 +270,60 @@ is indicated by adding "**weighted**" to the original name.
 
 The most general formula for reliability is the **weighted congeneric reliability**:
 
-$$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\bm{w}'\bm{\lambda})^2}{\bm{w}'\bm{\Sigma}\bm{w}}$$
+$$ \rho_{C; \text{weighted}} = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\bm{w}'\bm{\lambda})^2}{\bm{w}'\bm{\Sigma}\bm{w}}$$
 Assuming $w_k = 1$, i.e. unit weights, the "classical" formula for congeneric reliability follows:
-$$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{\left(\sum\lambda_k\right)^2}{\left(\sum\lambda_k\right)^2 + \left(\sum\varepsilon_k\right)^2}$$
+$$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{\left(\sum\lambda_k\right)^2}{\left(\sum\lambda_k\right)^2 + Var(\bar\varepsilon_k)}$$
 Using the assumptions imposed by the tau-equivalent measurement model we obtain
 the **weighted tau-equivalent reliability (weighted Cronbach's alpha)**:
 
-$$ \rho_T = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + \sum w_k^2Var(\varepsilon_k)}
+$$ \rho_{T; \text{weighted}}  = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + \sum w_k^2Var(\varepsilon_k)}
  = \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + \sum w_k^2Var(x_k)}$$
 where we used the fact that if $\lambda_k = \lambda$ (tau-equivalence), 
 $\lambda^2_k$ equals the average covariance between indicators:
  $$\bar\sigma_x = \frac{1}{K(K-1)}\sum^K_{k=1}\sum^K_{l=1} \sigma_{kl}$$
 Again, assuming $w_k = 1$, i.e. unit weights, the "classical" formula for 
 tau-equivalent reliability (Cronbach's alpha) follows:
-$$ \rho_T = \frac{\lambda^2K^2}{\lambda^2K^2 + \sum Var(\varepsilon_k)}
- = \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + \sum w_k^2Var(x_k)}$$
+$$ \rho_T = \frac{\lambda^2K^2}{\lambda^2K^2 + \sum Var(\bar\varepsilon_k)}
+ = \frac{\bar\sigma_xK^2}{\bar\sigma_x[K^2 - K] + K Var(x_k)}$$
 Using the assumptions imposed by the parallel measurement model we obtain
 the **parallel reliability**:
 
 $$ \rho_P = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + Var(\varepsilon)\sum w_k^2} = 
  \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + Var(x)\sum w_k^2} $$
 
-In `cSEM` indicators are always standardized and weights are choosen such 
+In **cSEM** indicators are always standardized and weights are choosen such 
 that $Var(\hat\eta_k) = 1$. This significantly simplifies the formulae and 
 $\rho_T = \rho_P$ are in fact identical:
 
 $$
 \begin{align}
-\rho_C &=  (\sum w_k\lambda_k)^2 = (\bm{w}'\bm{\lambda})^2 \\
-\rho_T = \rho_P &=  \bar\rho_x(\sum w_k)^2
+\rho_{C; \text{weighted}} &= (\sum w_k\lambda_k)^2 = (\bm{w}'\bm{\lambda})^2 \\
+\rho_C &=  (\sum \lambda_k)^2 \\
+\rho_{T; \text{weighted}} = \rho_{P; \text{weighted}} &=  \bar\rho_x(\sum w_k)^2 \\
+\rho_{T} = \rho_P = \bar\rho_x K^2
 \end{align}
 $$
 
-where $\bar\rho_x$ is the average correlation between indicators. Consequently,
-parallel and tau-equivalent reliability are always identical in `cSEM`.
+where $\bar\rho_x = \bar\sigma_x$ is the average correlation between indicators. Consequently,
+parallel and tau-equivalent reliability are always identical in **cSEM**.
 
-It is important to realize that $\rho_T$ ($\rho_P$) based on the average covariance/
-correlation (if $x_k$ is standardized as it is always the case in `cSEM`) are nested within the 
-general formula, however, **if and only if the assumptions of the tau-equivalent
-and/or the parallel model hold do they represent reliability measures!!**
-In pratice, these assumptions are unlikely to hold. We therefore explicitly discourage
-their use as congeneric reliability is virtually always preferable in empirical
-work! In fact, as shown above, congeneric reliability is identical to the 
-tau-equivalent/parallel reliability *if their respective assumptions actually hold*,
-essentially offering robustness against violation of the tau-equivalence and/or
-parallel measurement assumption.
+<!-- It is important to realize that $\rho_T$ ($\rho_P$) based on the average covariance/ -->
+<!-- correlation (if $x_k$ is standardized as it is always the case in **cSEM**) are nested within the  -->
+<!-- general formula, however, **if and only if the assumptions of the tau-equivalent -->
+<!-- and/or the parallel model hold do they represent reliability measures.** -->
+<!-- In pratice, these assumptions are unlikely to hold. We therefore explicitly discourage -->
+<!-- their use as congeneric reliability is virtually always preferable in empirical -->
+<!-- work! In fact, as shown above, congeneric reliability is identical to the  -->
+<!-- tau-equivalent/parallel reliability *if their respective assumptions actually hold*, -->
+<!-- essentially offering robustness against violation of the tau-equivalence and/or -->
+<!-- parallel measurement assumption. -->
 
-#### Confidence interval
+#### Closed-form confidence interval
 
-Trinchera et al. (2018) proposed a closed-form confidence interval (CI) for
-the tau-equivalent reliability (coefficient alpha). To compute the CI, set
-`.calculate_ci = TRUE` when calling `assess()` or invoke 
-`calculateRhoT(..., .calculate_ci = TRUE)` directly. The level of the CI
+@Trinchera2018 proposed a closed-form confidence interval (CI) for
+the tau-equivalent reliability (Cronbach's alpha). To compute the CI, set
+`.closed_form_ci = TRUE` when calling `assess()` or invoke 
+`calculateRhoT(..., .closed_form_ci = TRUE)` directly. The level of the CI
 can be changed by supplying a single value or a vector of values to `.alpha`.
 
 #### A note on the terminology
@@ -334,12 +336,12 @@ or applied users whose primary concern is to apply the appropriate method
 to the appropriate case without poring over books and research papers
 to understand each intricate detail.
 
-In `cSEM` we seek to make working with reliabilities as consistent and easy as
-possible by relying on a paper by Cho (2016) who proposed, uniform 
+In **cSEM** we seek to make working with reliabilities as consistent and easy as
+possible by relying on a paper by @Cho2016 who proposed uniform 
 formula-generating methods and a systematic naming conventions for all
 common reliability measures. Naturally, some of the conventional terminonolgy 
 is deeply entrenched within the nomenclatura of a particular filed (e.g., coefficient
-alpha alias Cronbach alpha in pychonometrics) such that a new, albeit consistent,
+alpha alias Cronbach's alpha in pychonometrics) such that a new, albeit consistent,
 naming scheme seems superfluous at best. However, we belief the merit of a 
 "standardized" naming pattern will eventually be helpful to all users as it
 helps clarify potential missconceptions thus preventing potential missue, such as
@@ -353,46 +355,62 @@ the formula and more so its correct application. To facilitate the translation b
 different naming systems and conventions we provide a "translation table" below:
 
 <center>
---------------------------------------------------------------------------------
- Systematic names             Mathematical Synonymous terms
+---------------------------------------------------------------------------------------------------------------
+ Systematic names                  Mathematical                   Synonymous terms
+ 
+--------------------------------- ------------------------------ ----------------------------------------------
+ Parallel reliability              $\rho_P$                      Spearman-Brown formula, Spearman-Brown prophecy,
+                                                                 Standardized alpha, Split-half reliability
 
------------------------------ ------------ -------------------------------------
- Parallel reliability           $\rho_P$   Spearman-Brown formula, Spearman-Brown prophecy,
-                                           Standardized alpha, Split-half reliability
+ Tau-equivalent reliability        $\rho_T$                      Cronbach's alpha, $\alpha$, Coefficient alpha
+                                                                 Guttmans $\lambda_3$, KR-20
+  
+ Congeneric reliability            $\rho_C$                      Composite reliability, Jöreskog's $\rho$,
+                                                                 Construct reliability, $\omega$,
+                                                                 reliability coefficient, Dillon-Goldsteins's $\rho$
+                                                                 
+ Weighted Congeneric reliability   $\rho_{C;\text{weighted}}$    $\rho_A$, $\rho_B$
+-----------------------------------------------------------------------------------------------------------------
 
- Tau-equivalent reliability     $\rho_T$   Cronbach's alpha, $\alpha$, Coefficient alpha
-                                           Guttmans $\lambda_3$, KR-20
-
- Congeneric reliability         $\rho_C$   Composite reliability, Jöreskog's $\rho$,
-                                           Construct reliability, $\omega$,
-                                           reliability coefficient
---------------------------------------------------------------------------------
 Table: Systematic names and common synonymous names for the
 reliability found in the literature
 </center>
 
-## The heterotrait-monotrait-ratio of correlations
+### Implementation
+The functions are implemented as: `calculateRhoC()` and `calculateRhoT()`. 
+They may be called directly using R's `:::` mechanism.
+
+## The Goodness of Fit (GoF)
+### Definition
+Calculate the Goodness of Fit (GoF) proposed by @Tenenhaus2004. 
+Note that, contrary to what the name suggests, the GoF is **not** a 
+measure of (overall) model fit in a $\chi^2$-fit test sense. 
+See e.g. @Henseler2012a for a discussion.
+
+### Formulae
+The GoF is defined as:
+
+$$\text{GoF} = \sqrt{\varnothing \text{COM}_k \times \varnothing R^2_{structural}} = 
+\sqrt{\frac{1}{k}\sum^K_{k=1} \lambda^2_k + \frac{1}{M} \sum^M_{m = 1} R^2_{m;structural}} $$
+where $COM_k$ is the communality of indicator $k$, i.e. the variance in the indicator 
+that is explained by its connected latent variable and $R^2_{m; structural$ the 
+R squared of the $m$'th equation of the structural model.
+
+### Implementation
+The function is implemented as: `calculateGoF()`. It may be called directly 
+using R's `:::` mechanism.
+
+## The heterotrait-monotrait-ratio of correlations (HTMT)
 
 ### Definition
+The heterotrait-monotrait ratio of correlations (HTMT) was first proposed by  
+@Henseler2015 to assess convergent and discriminant validity.
 
 ### Formulae
 
 ### Implementation
-
-## Distance measures
-
-### Definition
-
-### Formulae
-
-## Redundancy analysis
-
-### Definition
-
-### Formulae
-
-### Implementation
-
+The function is implemented as: `calculateHTMT()`. It may be called directly 
+using R's `:::` mechanism.
 
 # Literature
 

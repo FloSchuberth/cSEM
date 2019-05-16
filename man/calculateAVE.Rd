@@ -12,8 +12,10 @@ calculateAVE(
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.only_common_factors}{Logical. Should only constructs modeled as common
-factors be included? Defaults to \code{TRUE}.}
+\item{.only_common_factors}{Logical. Should only concepts modeled as common
+factors be included when calculating one of the following quality critera:
+AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
+Defaults to \code{TRUE}.}
 }
 \value{
 A named vector of numeric values of length equal to the number of constructs
@@ -21,18 +23,19 @@ in the model.
 }
 \description{
 Calculate the average variance extracted (AVE) as proposed by
-\insertCite{Fornell1981;textual}{cSEM}.
+\insertCite{Fornell1981;textual}{cSEM}. For details see the
+\href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#ave}{cSEM website}
 }
 \details{
 The AVE is inherently tied to the common factor model. It is therefore
 unclear how to meaningfully interpret AVE results in the context of a
-composite model. It is possible to report the AVE for constructs
+composite model. It is possible to report the AVE for concepts
 modeled as composites by setting \code{.only_common_factors = FALSE},
 however, we explicitly warn to interpret results with caution,
 as they may not even have a conceptual meaning.
 
-The function is only applicable to objects of class \code{cSEMResults_default}.
-For other object classes use \code{\link[=assess]{assess()}}.
+The function is only applicable to objects inheriting class \code{cSEMResults_default}.
+For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
 }
 \references{
 \insertAllCited{}

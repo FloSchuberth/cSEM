@@ -77,11 +77,11 @@ Cor(x_k, x_l) &= \frac{\lambda_k\lambda_l + \delta_{kl}}{\sqrt{Var(x_k)Var(x_l)}
 
 Var(\bar\eta) &= E(\bar\eta^2) = \sum w_k^2\lambda^2_k + 2\sum_{k < l} w_k w_l \lambda_k\lambda_l = \left(\sum w_k\lambda_k \right)^2 = (\bm{w}'\bm{\lambda})^2 \\
 
-Var(\bar\varepsilon) &= E(\bar\varepsilon^2) = \sum w_k^2Var(\varepsilon_k) + 2\sum_{k < l} w_k w_l \delta_{kl} = \left(\sum w_k\varepsilon_k \right)^2 = (\bm{w}'\bm{\varepsilon})^2 \\
+Var(\bar\varepsilon) &= E(\bar\varepsilon^2) = \sum w_k^2E(\varepsilon_k^2) + 2\sum_{k < l} w_k w_lE(\varepsilon_k\varepsilon_l)\\
 
 Var(\hat\eta) &= E(\hat\eta^2) = \sum w_k^2(\lambda^2_k + Var(\varepsilon_k)) + 2\sum_{k < l} w_k w_l (\lambda_k\lambda_l + \delta_{kl}) \\
 &= \sum w_k^2\lambda^2_k + 2\sum_{k < l} w_k w_l \lambda_k\lambda_l + \sum w_k^2Var(\varepsilon_k)  + 2\sum_{k < l} w_k w_l \delta_{kl} \\
-&=Var(\bar\eta) + Var(\bar\varepsilon) = (\bm{w}'\bm{\lambda})^2 + (\bm{w}'\bm{\varepsilon})^2 = \bm{w}'\bm{\Sigma}\bm{w} \\
+&=Var(\bar\eta) + Var(\bar\varepsilon) = (\bm{w}'\bm{\lambda})^2 + Var(\bar\varepsilon) = \bm{w}'\bm{\Sigma}\bm{w} \\
 
 Cov(\eta, \hat\eta) &= E\left(\sum w_k \lambda_k \eta^2\right) = \sum w_k\lambda_k = \bm{w}'\bm{\lambda}= \sqrt{Var(\bar\eta)}
 \end{align}
@@ -113,7 +113,8 @@ Cov(x_k, \eta) &= Cor(x_k, \eta) \\
 Cov(x_k, x_l) &= Cor(x_k, x_l) \\
 Var(\hat\eta) &= \bm{w}'\bm{\Sigma}\bm{w} = 1 \\
 Var(\varepsilon_k) &= 1 - Var(\eta_k) = 1 - \lambda^2_k \\
-Cov(\varepsilon_k, \varepsilon_l) &= 0
+Cov(\varepsilon_k, \varepsilon_l) &= 0 \\
+Var(\bar\varepsilon) &= \sum w_k^2 (1 - \lambda_k^2)
 \end{align}
 $$
 For most formulae this implies a significant simplification, however, for ease of 
@@ -124,8 +125,8 @@ and Formula sections.
 ## Notation table
 
 <center>
-| Symbol            |  Dimension              |  Description
-|:------------------|:-----------------------:|:-------------------------------------|
+| Symbol            | Dimension               |  Description
+|:------------------|:------------------------|:-------------------------------------|
 | $x_{kj}$      	  | $(1 \times 1)$          |  The $k$'th indicator of construct $j$|
 | $\eta_{kj}$	      | $(1 \times 1)$          |  The $k$'th (indicator) true score related to construct $j$|
 | $\eta_j$          | $(1 \times 1)$          |  The $j$'th common factor/latent variable|

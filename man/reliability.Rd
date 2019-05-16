@@ -17,8 +17,10 @@ calculateRhoT(.object = NULL, .alpha = args_default()$.alpha,
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.only_common_factors}{Logical. Should only constructs modeled as common
-factors be included? Defaults to \code{TRUE}.}
+\item{.only_common_factors}{Logical. Should only concepts modeled as common
+factors be included when calculating one of the following quality critera:
+AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
+Defaults to \code{TRUE}.}
 
 \item{.weighted}{Logical. Should estimation be based on a score that uses
 the weights of the weight approach used to obtain \code{.object}?. Defaults to \code{FALSE}.}
@@ -43,59 +45,30 @@ If \code{.closed_form_ci = TRUE} the remaining columns contain lower and upper b
 for the (1 - \code{.alpha}) confidence interval(s).
 }
 \description{
-Compute several reliability measures. See the
+Compute several reliability estimates. See the
 \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#reliability}{Reliability}
 section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
 for details.
 }
 \details{
-Reliability is the consistency of measurement. Practically, reliability
-is empirically assessed based on the classical true score measurement theory
-and defined as the ratio of the true score/common factor variance relative to
-the proxy/test score/composite variance, where the latter is \strong{in principal}
-a weighted linear combinations of the indicators (i.e. a proxy or stand-in for the
-true score/common factor). Historically, however, the test score is generally
-assumed to be a simple sum score (i.e a weighted sum of indicators with all
-weights assumed to be equal to one). Hence, well-known reliability
-measures such as Cronbach alpha are definied with respect to a test score
-that indeed represents a simple sum score. Yet, all reliability measures
-originally developped assuming a sum score may equally well be computed
-with respect to a composite (i.e., a weighted score, with weights not necessarily
-equal to one).
-
-Moreover, empirically, common reliability measures are based on differnt types
-of measurement model assumptions, namley the parallel, the tau-equivalent,
-and the congeneric measurement model.
-
-Consequently, the current literature provides numerous reliability measures,
-based on (seemingly) different formulae with no systematic naming conventions.
-This package follows \insertCite{Cho2016;textual}{cSEM}'s attempt for a
-systematic approach to reliability by adopting his proposed unified naming
-convention. See \insertCite{Cho2016;textual}{cSEM} for details. Using the naming
-scheme two reliability measures exist:
-
-\itemize{
-\item{\strong{Congeneric reliabilty}}
-\item{\strong{Tau-equivalent reliabilty} (more famouly known as \strong{Cronbach alpha})}
-}
-
-As \insertCite{Cho2016;textual}{cSEM} only considers reliability measures
-based on sum scores we add the \strong{weighted} prefix to these names
-whenever its calculation is based on a composite!
-
 Since reliability is defined with respect to a classical true score measurement
 model only constructs modeled as common factors are considered by default.
 For constructs modeled as composites reliability may be estimated by setting
 \code{.only_common_factors = FALSE}, however, it is unclear how to
 interpret reliability in this case.
 
+Reliability is are traditionally based on a test score (proxy) based on unit weights.
+To compute congeneric and tau-equivalent reliability based on a score that
+uses the weights of the weight approach used to obtain \code{.object} use \code{.weighted = TRUE}
+instead.
+
 For the the tau-equivalent reliability (rhoT or Cronbach alpha) a closed-form
 confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 \code{.closed_form_ci = TRUE} (default is \code{FALSE}). If \code{.alpha} is a vector
 several CI's are returned.
 
-The function is only applicable to objects of class \code{cSEMResults_default}.
-For other object classes use \code{\link[=assess]{assess()}}.
+The function is only applicable to objects inheriting class \code{cSEMResults_default}.
+For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
 }
 \section{Functions}{
 \itemize{
