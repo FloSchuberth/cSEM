@@ -62,6 +62,7 @@ to one (unit weights) to "translate" results to known formulae.
 
 Based on the assumptions and definitions above the following quantities necessarily follow:
 
+$$
 \begin{align}
 Cov(x_k, \eta) &= \lambda_k \\
 Var(\eta_k) &= \lambda^2_k \\
@@ -84,6 +85,7 @@ Var(\hat\eta) &= E(\hat\eta^2) = \sum w_k^2(\lambda^2_k + Var(\varepsilon_k)) + 
 
 Cov(\eta, \hat\eta) &= E\left(\sum w_k \lambda_k \eta^2\right) = \sum w_k\lambda_k = \bm{w}'\bm{\lambda}= \sqrt{Var(\bar\eta)}
 \end{align}
+$$
 
 where $\delta_{kl} = Cov(\varepsilon_{k}, \varepsilon_{l})$ for $k \neq l$
 is the measurment error covariance and $\bm\Sigma$ is the indicator variance-covariance 
