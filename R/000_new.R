@@ -135,11 +135,14 @@ effect_moderator_two_way=function(.object,.steps, .alpha, .independent, .moderat
   
   # Add stop if the variables are included in a higher order moderation
   
-  # Add stop if variables are not involved in an interaction
   
   possible_names=c(paste(.independent,.moderator, sep= '.'),paste(.moderator,.independent, sep= '.'))
   
   name_interaction = possible_names[possible_names %in% colnames(.object$Estimates$Path_estimates)]
+  
+  if(length(name_interaction) != 1){
+    stop2("The defined interaction term does not exist in the model.")
+  }
   
   name_mod_effect = paste(.dependent, name_interaction, sep=' ~ ')
   name_single_effect = paste(.dependent, .independent, sep=' ~ ')
@@ -157,24 +160,38 @@ effect_moderator_two_way=function(.object,.steps, .alpha, .independent, .moderat
       .object$Estimates$Estimates_resample$Estimates1$Path_estimates$Original[name_mod_effect]*x
     
     
-    c(lb=quantile(effect_boot,.alpha/2),
+    out=c(lb=quantile(effect_boot,.alpha/2),
       ub=quantile(effect_boot,1-.alpha/2),
       de=effect_at_steps,
       value=x)
-    
+   
   })
   
 # Return output
   
-    do.call(rbind,dataplot_temp)
-  
-  
-  
-
-  
-
-  
+    res=list(out = do.call(rbind,dataplot_temp), 
+             Information = c(alpha=.alpha, independent = .independent, moderator= .moderator, dependent = .dependent))
+    class(res) = c("Two_Way_Effect", class(res))
+    return(res)
 } 
 
+
+# plot method for effect_moderator_two_way
+plot.effect_moderator_two_way = function(.TWobject){
+  
+  require(ggplot2)
+  plot1=ggplot(as.data.frame(.TWobject$out),aes(x=.TWobject$out[,4],y=.TWobject$out[,3]))+
+    geom_line()+
+    geom_ribbon(aes(ymin=.TWobject$out[,1], ymax=.TWobject$out[,2]),alpha=0.2)+
+    labs(x=paste('Level of ',.TWobject$Information['moderator']) , 
+    y=paste('Effect of', .TWobject$Information['independent'], 'on \n', .TWobject$Information['dependent']))+
+    theme_bw()
+    # scale_x_continuous(breaks=seq(-3,3,0.5))+
+    # theme(panel.grid.minor = element_blank())
+  # geom_point(x=-0.224,y=0,size=2)
+  plot1
+  
+  
+}
   
 
