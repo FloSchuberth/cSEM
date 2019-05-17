@@ -88,7 +88,7 @@ intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\
 \description{
 Calculate common inferencial quantities (e.g. estimated standard error, estimates bias,
 several confidence intervals) based on a \code{cSEMResults_resampled} object as obtained
-from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
+by calling \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
 or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}. Currently, the following quantities are
 returned by default (\code{.quantity = "all"}):
 \describe{
@@ -102,12 +102,13 @@ While \code{"CI_standard_z"} assumes a standard-normally distributed statistic,
 \item{\code{"CI_percentile"}}{The percentile confidence interval}
 \item{\code{"CI_basic"}}{The basic confidence interval}
 \item{\code{"CI_bc"}}{The bias corrected confidence interval}
-\item{\code{"CI_bca"}}{The bias corrected and accelerated confidence interval.
-NOTE: only possible if \code{.resample_method = "bootstrap"} and will be slow
-as jackknife estimates need to be computed.}
-\item{\code{"CI_t_interval"}}{The "studentized" confidence interval}
 }
-See xxx for details on their use and calculation.
+}
+\details{
+In addtion, the bias-corrected and accelerated (\code{"CI_bca"}) and/or the "studentized"
+confidence interval (\code{"CI_t_interval"}) can be returned. The former requires jackknife estimates
+to compute influence values and the latter requires double bootstrap
+both take time. Hence, the will only be computed if explicitly given.
 }
 \section{Functions}{
 \itemize{

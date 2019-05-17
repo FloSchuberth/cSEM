@@ -140,8 +140,17 @@ print.cSEMSummarize <- function(x, ...) {
   ## Loadings and Weights
   printSummarizeLoadingsWeights(x, .ci_colnames = ci_colnames)
   
-  ### Effects ------------------------------------------------------------------
+
+  ### Effects ----------------------------------------------------------------
   cat2("\n\n", rule(center = "Effects", width = 80), "\n\n")
+  ## Path estimates
+  cat2("Estimated total effects:\n========================")
+  
+  printSummarizePath(x, .ci_colnames = ci_colnames, .what = "Total effect")
+  
+  cat2("\n\nEstimated indirect effects:\n===========================")
+  
+  printSummarizePath(x, .ci_colnames = ci_colnames, .what = "Indirect effect")
   
   cat2("\n", rule(line = "bar2", width = 80))
 }

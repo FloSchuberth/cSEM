@@ -599,7 +599,7 @@ resamplecSEMResults <- function(
 
 #' @export
 
-resamplecSEMResults.cSEMResults_default <- function(
+resamplecSEMResults.cSEMResults <- function(
   .object                = args_default()$.object, 
   .resample_method       = args_default()$.resample_method,
   .resample_method2      = args_default()$.resample_method2,
@@ -611,7 +611,7 @@ resamplecSEMResults.cSEMResults_default <- function(
   .seed                  = args_default()$.seed,
   .sign_change_option    = args_default()$.sign_change_option,
   ...
-  ) {
+) {
   
   # Set plan on how to resolve futures; reset at the end
   oplan <- future::plan()
@@ -619,73 +619,17 @@ resamplecSEMResults.cSEMResults_default <- function(
   future::plan(.eval_plan)
   
   ### Process original data ----------------------------------------------------
-  ## Summarize
-  summary_original <- summarize(.object)
+  # ## Summarize
+  # summary_original <- summarize(.object)
   
-  Est_original <- list()
-  ## Select relevant statistics/parameters/quantities and vectorize
-  # Path estimates
-  Est_original[["Path_estimates"]] <- summary_original$Estimates$Path_estimates$Estimate
-  names(Est_original[["Path_estimates"]]) <- summary_original$Estimates$Path_estimates$Name
-  
-  # Loading estimates
-  Est_original[["Loading_estimates"]] <- summary_original$Estimates$Loading_estimates$Estimate
-  names(Est_original[["Loading_estimates"]]) <- summary_original$Estimates$Loading_estimates$Name
-  
-  # Weight estimates
-  Est_original[["Weight_estimates"]] <- summary_original$Estimates$Weight_estimates$Estimate
-  names(Est_original[["Weight_estimates"]]) <- summary_original$Estimates$Weight_estimates$Name
+  ## Select relevant statistics/parameters/quantities and vectorize 
+  Est_original <- selectAndVectorize(.object)
   
   ## Apply user defined function if specified
   user_funs <- if(!is.null(.user_funs)) {
-    if(!(is.function(.user_funs) | is.list(.user_funs))) {
-      stop2("The following error occured in the `resamplecSEMResults()` function:\n",
-            "The arguments to `.user_funs` must be a single function or a list",
-            " of functions")
-    } 
-    
-    if(is.function(.user_funs)) {
-      if(names(formals(.user_funs))[1] != ".object") {
-        stop2("The following error occured in the `resamplecSEMResults()` function:\n",
-              "The first argument of the function(s) provided to `.user_funs` must",
-              " always be `.object`.")
-      } else {
-        # Compute functions
-        fun_out <- .user_funs(.object, ...)
-        ## Check that the output is a vector or a matrix. Currently, no other
-        ## format is allowed 
-        if((is.vector(fun_out) & !is.list(fun_out)) | is.matrix(fun_out))  {
-          list("User_fun" = c(.user_funs(.object, ...)))  
-        } else {
-          stop2(
-            "The following error occured in the `resamplecSEMResults()` function:\n",
-            "The output of the function(s) provided to `.user_funs` must",
-            " always be an atomic vector (not a list) or matrix.")
-        }
-      }
-    } else {
-      x <- lapply(.user_funs, function(f) {
-        # Compute functions
-        fun_out <- f(.object, ...)
-        ## Check that the output is a vector or a matrix. Currently, no other
-        ## format is allowed 
-        if((is.vector(fun_out) & !is.list(fun_out)) | is.matrix(fun_out))  {
-          c(f(.object, ...)) 
-        } else {
-          stop2(
-            "The following error occured in the `resamplecSEMResults()` function:\n",
-            "The output of the function(s) provided to `.user_funs` must",
-            " always be an atomic vector (not a list) or matrix.")
-        }
-      })
-      
-      if(is.null(names(x))) {
-        names(x) <- paste0("User_fun", 1:length(x))
-      }
-      x
-    }
+    applyUserFuns(.object, .user_funs = .user_funs, ...)
   }
-
+  
   ## Add output of the user functions to Est_original
   if(!is.null(.user_funs)) {
     Est_original <- c(Est_original, user_funs)
@@ -718,18 +662,18 @@ resamplecSEMResults.cSEMResults_default <- function(
   }
   
   # Turn list "inside out" and bind bootstrap samples to matrix 
-  # columns are variables
-  # rows are bootstrap runs
+  # - columns are variables
+  # - rows are bootstrap runs
   out <- purrr::transpose(out) 
   
   if(.resample_method2 != "none") {
     out_2 <- out$Estimates2
     out   <- purrr::transpose(out$Estimates1)
   }
-
+  
   out <- out %>% 
     lapply(function(x) do.call(rbind, x))
- 
+  
   # Add estimated quantities based on the the original sample/data
   out <- mapply(function(l1, l2) list("Resampled" = l1, "Original" = l2),
                 l1 = out,
@@ -767,31 +711,60 @@ resamplecSEMResults.cSEMResults_default <- function(
       out <- list("Estimates1" = out, "Estimates2" = NA)
     }
     
-    ## Add resamples and additional information to .object
-    # Estimates
-    estim <- c(.object$Estimates)
-    estim[[length(estim) + 1]] <- c(out)
-    names(estim)[length(estim)] <- "Estimates_resample"
+    ## Add resamples and additional information 
+    if(inherits(.object, "cSEMResults_2ndorder")) {
+      resample_out <- c(.object$Second_stage$Information)
+      resample_out[[length(resample_out) + 1]] <- list(
+        "Estimates" = c(out),
+        "Information_resample" =       list(
+          "Method"                  = .resample_method,
+          "Method2"                 = .resample_method2,
+          "Number_of_admissibles"   = n_admissibles,
+          "Number_of_observations"  = nrow(.object$Second_stage$Information$Data),
+          "Number_of_runs"          = .R,
+          "Number_of_runs2"         = .R2,
+          "Seed"                    = .seed,
+          "Handle_inadmissibles"    = .handle_inadmissibles,
+          "Sign_change_option"      = .sign_change_option
+        )
+      )
+      names(resample_out)[length(resample_out)] <- "Resamples"
+      
+      out <- list(
+        "First_stage"   = .object$First_stage,
+        "Second_stage"  = list(
+          "Estimates" = .object$Second_stage$Estimates,
+          "Information" = resample_out
+        )
+      )
+      
+    } else {
+      # Estimates
+      estim <- c(.object$Estimates)
+      estim[[length(estim) + 1]] <- c(out)
+      names(estim)[length(estim)] <- "Estimates_resample"
+      
+      # Information
+      info <- c(.object$Information)
+      info[[length(info) + 1]] <- list(
+        "Method"                  = .resample_method,
+        "Method2"                 = .resample_method2,
+        "Number_of_admissibles"   = n_admissibles,
+        "Number_of_observations"  = nrow(.object$Information$Data), # for infer()
+        "Number_of_runs"          = .R,
+        "Number_of_runs2"         = .R2,
+        "Seed"                    = .seed,
+        "Handle_inadmissibles"    = .handle_inadmissibles,
+        "Sign_change_option"      = .sign_change_option
+      )
+      names(info)[length(info)] <- "Information_resample"
+      
+      out <- list(
+        "Estimates"   = estim,
+        "Information" = info
+      )
+    }
     
-    # Information
-    info <- c(.object$Information)
-    info[[length(info) + 1]] <- list(
-      "Method"                  = .resample_method,
-      "Method2"                 = .resample_method2,
-      "Number_of_observations"  = nrow(.object$Information$Data),
-      "Number_of_runs"          = .R,
-      "Number_of_runs2"         = .R2,
-      "Seed"                    = .seed,
-      "Handle_inadmissibles"    = .handle_inadmissibles,
-      "Sign_change_option"      = .sign_change_option
-    )
-    names(info)[length(info)] <- "Information_resample"
-    
-    out <- list(
-      "Estimates"   = estim,
-      "Information" = info
-    )
-   
     ## Add/ set class
     class(out) <- c(class(.object), "cSEMResults_resampled")
     return(out)
@@ -853,224 +826,6 @@ resamplecSEMResults.cSEMResults_multi <- function(
   return(out)
 }
 
-#' @export
-
-resamplecSEMResults.cSEMResults_2ndorder <- function(
-  .object                = args_default()$.object, 
-  .resample_method       = args_default()$.resample_method,
-  .resample_method2      = args_default()$.resample_method2,
-  .R                     = args_default()$.R,
-  .R2                    = args_default()$.R2,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .user_funs             = args_default()$.user_funs,
-  .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed,
-  .sign_change_option    = args_default()$.sign_change_option,
-  ...
-) {
-  
-  ## Set plan on how to resolve futures 
-  oplan <- future::plan()
-  on.exit(future::plan(oplan), add = TRUE)
-  future::plan(.eval_plan)
-    
-  ### Process original data ----------------------------------------------------
-  ## Summarize
-  summary_original <- summarize(.object)
-  est_1stage <- summary_original$First_stage$Estimates
-  est_2stage <- summary_original$Second_stage$Estimates
-  
-  ## Errors and warnings
-  # Return warning if sign_change_otpion is used in combination with the 
-  # dominant indicator approach
-  
-  if(.sign_change_option != "none" && 
-     !is.null(.object$First_stage$Information$Arguments$.dominant_indicators)) {
-    warning2("Sign change options should be used cautiously in", 
-              " combination with the dominant indicator approach.")
-  }
-  
-  Est_original <- list()
-  ## Select relevant statistics/parameters/quantities and vectorize
-  # Path estimates
-  Est_original[["Path_estimates"]] <- est_2stage$Path_estimates$Estimate
-  names(Est_original[["Path_estimates"]]) <- est_2stage$Path_estimates$Name
-  
-  # Loading estimates
-  Est_original[["Loading_estimates"]] <- c(est_1stage$Loading_estimates$Estimate, 
-                                           est_2stage$Loading_estimates$Estimate)
-  names(Est_original[["Loading_estimates"]]) <- c(est_1stage$Loading_estimates$Name,
-                                                  est_2stage$Loading_estimates$Name)
-  
-  # Weight estimates
-  Est_original[["Weight_estimates"]] <- c(est_1stage$Weight_estimates$Estimate, 
-                                          est_2stage$Weight_estimates$Estimate)
-  names(Est_original[["Weight_estimates"]]) <- c(est_1stage$Weight_estimates$Name,
-                                                 est_2stage$Weight_estimates$Name)
-  
-  ## Apply user defined function if specified
-  user_funs <- if(!is.null(.user_funs)) {
-    if(!(is.function(.user_funs) | is.list(.user_funs))) {
-      stop2("The following error occured in the `resamplecSEMResults()` function:\n",
-            "The arguments to `.user_funs` must be a single function or a list",
-            " of functions")
-    } 
-    
-    if(is.function(.user_funs)) {
-      if(names(formals(.user_funs))[1] != ".object") {
-        stop2("The following error occured in the `resamplecSEMResults()` function:\n",
-              "The first argument of the function(s) provided to `.user_funs` must",
-              " always be `.object`.")
-      } else {
-        # Compute functions
-        fun_out <- .user_funs(.object, ...)
-        ## Check that the output is a vector or a matrix. Currently, no other
-        ## format is allowed 
-        if((is.vector(fun_out) & !is.list(fun_out)) | is.matrix(fun_out))  {
-          list("User_fun" = c(.user_funs(.object, ...)))  
-        } else {
-          stop2(
-            "The following error occured in the `resamplecSEMResults()` function:\n",
-            "The output of the function(s) provided to `.user_funs` must",
-            " always be an atomic vector (not a list) or matrix.")
-        }
-      }
-    } else {
-      x <- lapply(.user_funs, function(f) {
-        # Compute functions
-        fun_out <- f(.object, ...)
-        ## Check that the output is a vector or a matrix. Currently, no other
-        ## format is allowed 
-        if((is.vector(fun_out) & !is.list(fun_out)) | is.matrix(fun_out))  {
-          c(f(.object, ...)) 
-        } else {
-          stop2(
-            "The following error occured in the `resamplecSEMResults()` function:\n",
-            "The output of the function(s) provided to `.user_funs` must",
-            " always be an atomic vector (not a list) or matrix.")
-        }
-      })
-      
-      if(is.null(names(x))) {
-        names(x) <- paste0("User_fun", 1:length(x))
-      }
-      x
-    }
-  }
-  
-  ## Add output of the user functions to Est_original
-  if(!is.null(.user_funs)) {
-    Est_original <- c(Est_original, user_funs)
-  }
-  
-  ### Resample and compute -----------------------------------------------------
-  
-  out <- resamplecSEMResultsCore(
-    .object                = .object, 
-    .resample_method       = .resample_method,
-    .resample_method2      = .resample_method2,
-    .R                     = .R,
-    .R2                    = .R2,
-    .handle_inadmissibles  = .handle_inadmissibles,
-    .handle_inadmissibles2 = .handle_inadmissibles,
-    .user_funs             = .user_funs,
-    .eval_plan             = .eval_plan,
-    .seed                  = .seed,
-    .sign_change_option    = .sign_change_option,
-    ...
-  )
-  
-  # Check if at least 3 admissible results were obtained
-  n_admissibles <- length(out)
-  if(n_admissibles < 3) {
-    stop("The following error occured in the `resamplecSEMResults()` functions:\n",
-         "Less than 2 admissible results produced.", 
-         " Consider setting `.handle_inadmissibles == 'replace'` instead.",
-         call. = FALSE)
-  }
-  
-  # Turn list "inside out" and bind bootstrap samples to matrix 
-  # columns are variables
-  # rows are bootstrap runs
-  out <- purrr::transpose(out) 
-  
-  if(.resample_method2 != "none") {
-    out_2 <- out$Estimates2
-    out   <- purrr::transpose(out$Estimates1)
-  }
-  
-  out <- out %>% 
-    lapply(function(x) do.call(rbind, x))
-  
-  # Add estimated quantities based on the the original sample/data
-  out <- mapply(function(l1, l2) list("Resampled" = l1, "Original" = l2),
-                l1 = out,
-                l2 = Est_original,
-                SIMPLIFY = FALSE)
-  
-  ## Return --------------------------------------------------------------------
-  # The desired output is: a list of two:
-  #  1. Resamples := a list of two
-  #      1.1 Estimates1 := the .R resamples of the "outer" resampling run.
-  #      1.2 Estimates2 := the .R2 resamples of the "inner" run or NA
-  #  2. Information := a list of three
-  #      2.1 Method  := the method used to obtain the "outer" resamples
-  #      2.2 Method2 := the method used to obtain the "inner" resamples or NA
-  #      2.3 Number_of_observations := the number of observations.
-  #      2.4 Original_object        := the original cSEMResults object
-  #
-  # Since resamplecSEMResults is called recursivly within its body it is 
-  # difficult to produce the desired output. There is no straightforward way in R
-  # to determine if a call is a recursive call or not.
-  # My workaround for now is to simply check if the argument provided for ".object"
-  # is "Est_temp" since this is the argument for the recurive call. This
-  # is of course not general but a workaround. I guess it is save enough
-  # though.
-  is_recursive_call <- eval.parent(as.list(match.call()))$.object == "Est_temp"
-  
-  ## Return
-  if(is_recursive_call) {
-    out
-  } else {
-    if(.resample_method2 != "none") {
-      out <- list("Estimates1" = out, "Estimates2" = out_2)
-      
-    } else {
-      out <- list("Estimates1" = out, "Estimates2" = NA)
-    }
-
-    # Add resamples to the second stage
-    resample_out <- c(.object$Second_stage$Information)
-    resample_out[[length(resample_out) + 1]] <- list(
-      "Estimates" = c(out),
-      "Information_resample" =       list(
-        "Method"                  = .resample_method,
-        "Method2"                 = .resample_method2,
-        "Number_of_observations"  = nrow(.object$Second_stage$Information$Data),
-        "Number_of_runs"          = .R,
-        "Number_of_runs2"         = .R2,
-        "Seed"                    = .seed,
-        "Handle_inadmissibles"    = .handle_inadmissibles,
-        "Sign_change_option"      = .sign_change_option
-      )
-    )
-    
-    names(resample_out)[length(resample_out)] <- "Resamples"
-    
-    out <- list(
-      "First_stage"   = .object$First_stage,
-      "Second_stage"  = list(
-        "Estimates" = .object$Second_stage$Estimates,
-        "Information" = resample_out
-      )
-    )
-    
-    ## Add/ set class
-    class(out) <- c(class(.object), "cSEMResults_resampled")
-    return(out)
-  }
-}
-
 #' Core tasks of the resamplecSEMResults function
 #' @noRd
 #' 
@@ -1090,7 +845,7 @@ resamplecSEMResultsCore <- function(
 ) {
   
   ## Get arguments
-  if(any(class(.object) == "cSEMResults_2ndorder")) {
+  if(inherits(.object, "cSEMResults_2ndorder")) {
     info1 <- .object$First_stage$Information
     info2 <- .object$Second_stage$Information
     
@@ -1137,7 +892,7 @@ resamplecSEMResultsCore <- function(
     args[[".data"]] <- data_temp
     
     # Estimate model
-    Est_temp <- if(any(class(.object) == "cSEMResults_2ndorder")) {
+    Est_temp <- if(inherits(.object, "cSEMResults_2ndorder")) {
       ## NOTE: using do.call(csem, args) would be more elegant but is much 
       # much much! slower (especially for larger data sets). 
       do.call(csem, args) 
@@ -1166,51 +921,14 @@ resamplecSEMResultsCore <- function(
     # Distinguish depending on how inadmissibles should be handled
     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       
-      ## Select relevant statistics/parameters/quantities
-      x1 <- list()
-      summary_temp <- summarize(Est_temp)
       
-      if(any(class(Est_temp) == "cSEMResults_2ndorder")) {
-        
-        est1_temp <- summary_temp$First_stage$Estimates
-        est2_temp <- summary_temp$Second_stage$Estimates
-        
-        # Path estimates
-        x1[["Path_estimates"]] <- est2_temp$Path_estimates$Estimate
-        names(x1[["Path_estimates"]]) <- est2_temp$Path_estimates$Name
-        
-        # Loading estimates
-        x1[["Loading_estimates"]] <- c(est1_temp$Loading_estimates$Estimate,
-                                       est2_temp$Loading_estimates$Estimate)
-        names(x1[["Loading_estimates"]]) <- c(est1_temp$Loading_estimates$Name,
-                                              est2_temp$Loading_estimates$Name)
-        
-        # Weight estimates
-        x1[["Weight_estimates"]] <- c(est1_temp$Weight_estimates$Estimate,
-                                      est2_temp$Weight_estimates$Estimate)
-        names(x1[["Weight_estimates"]]) <- c(est1_temp$Weight_estimates$Name,
-                                             est2_temp$Weight_estimates$Name)
-      } else {
-      
-        est_temp <- summary_temp$Estimates
-        
-        # Path estimates
-        x1[["Path_estimates"]] <- est_temp$Path_estimates$Estimate
-        names(x1[["Path_estimates"]]) <- est_temp$Path_estimates$Name
-        
-        # Loading estimates
-        x1[["Loading_estimates"]] <- est_temp$Loading_estimates$Estimate
-        names(x1[["Loading_estimates"]]) <- est_temp$Loading_estimates$Name
-        
-        # Weight estimates
-        x1[["Weight_estimates"]] <- est_temp$Weight_estimates$Estimate
-        names(x1[["Weight_estimates"]]) <- est_temp$Weight_estimates$Name
-      }
+      # ## Select relevant statistics/parameters/quantities
+      x1 <- selectAndVectorize(Est_temp)
       
       ### Sign change correction for PLS-PM
       if(.sign_change_option != "none" && info1$Arguments$.approach_weights == "PLS-PM") {
         
-        if(any(class(Est_temp) == "cSEMResults_2ndorder")) {
+        if(inherits(.object, "cSEMResults_2ndorder")) {
           
           est1_temp_normal <- Est_temp$First_stage$Estimates
           est2_temp_normal <- Est_temp$Second_stage$Estimates
@@ -1322,60 +1040,16 @@ resamplecSEMResultsCore <- function(
               
             } # END second stage
             
-            ## Update using estimates based on the sign-corrected weights
-            summary_temp <- summarize(Est_temp)
-            est1_temp <- summary_temp$First_stage$Estimates
-            est2_temp <- summary_temp$Second_stage$Estimates
-            
-            # Path estimates
-            x1[["Path_estimates"]] <- est2_temp$Path_estimates$Estimate
-            names(x1[["Path_estimates"]]) <- est2_temp$Path_estimates$Name
-            
-            # Loading estimates
-            x1[["Loading_estimates"]] <- c(est1_temp$Loading_estimates$Estimate,
-                                           est2_temp$Loading_estimates$Estimate)
-            names(x1[["Loading_estimates"]]) <- c(est1_temp$Loading_estimates$Name,
-                                                  est2_temp$Loading_estimates$Name)
-            
-            # Weight estimates
-            x1[["Weight_estimates"]] <- c(est1_temp$Weight_estimates$Estimate,
-                                          est2_temp$Weight_estimates$Estimate)
-            names(x1[["Weight_estimates"]]) <- c(est1_temp$Weight_estimates$Name,
-                                                 est2_temp$Weight_estimates$Name)
-            
+            # ## Update using estimates based on the sign-corrected weights
+            x1 <- selectAndVectorize(Est_temp)
           } # END individual_reestimate, construct_reestimate
           
           if(.sign_change_option == "individual") {
             
             # Reverse the signs off ALL parameter estimates in a bootstrap run if 
             # their sign differs from the sign of the original estimation
-
-            ## Which signs differ:
-            sign_diff_path <- sign(est2_temp$Path_estimates$Estimate) != 
-                              sign(est2$Path_estimates$Estimate)
+            x1 <- reverseSign(.Est_temp = Est_temp, .summary_original = summary_original)
             
-            sign_diff_loadings <- sign(c(est1_temp$Loading_estimates$Estimate,
-                                         est2_temp$Loading_estimates$Estimate)) !=
-                                  sign(c(est1$Loading_estimates$Estimate,
-                                         est2$Loading_estimates$Estimate))
-            sign_diff_weights <- sign(c(est1_temp$Weight_estimates$Estimate,
-                                        est2_temp$Weight_estimates$Estimate)) !=
-                                 sign(c(est1$Weight_estimates$Estimate,
-                                        est2$Weight_estimates$Estimate))
-            
-            ## Multiply the coefficients for which the sign differs by (-1)
-
-            # Path estimates
-            x1[["Path_estimates"]][sign_diff_path] <- 
-              x1[["Path_estimates"]][sign_diff_path] * (-1)
-            
-            # Loading estimates
-            x1[["Loading_estimates"]][sign_diff_loadings] <- 
-              x1[["Loading_estimates"]][sign_diff_loadings] * (-1)
-            
-            # Weight estimates
-            x1[["Weight_estimates"]][sign_diff_weights] <-
-              x1[["Weight_estimates"]][sign_diff_weights] * (-1)
           }
       } else {
         est_temp_normal <- Est_temp$Estimates
@@ -1429,25 +1103,7 @@ resamplecSEMResultsCore <- function(
             Est_temp <- do.call(csem, args)
             
             ## Update using estimates based on the sign-corrected weights
-            summary_temp <- summarize(Est_temp)
-            est1_temp <- summary_temp$First_stage$Estimates
-            est2_temp <- summary_temp$Second_stage$Estimates
-            
-            # Path estimates
-            x1[["Path_estimates"]] <- est2_temp$Path_estimates$Estimate
-            names(x1[["Path_estimates"]]) <- est2_temp$Path_estimates$Name
-            
-            # Loading estimates
-            x1[["Loading_estimates"]] <- c(est1_temp$Loading_estimates$Estimate,
-                                           est2_temp$Loading_estimates$Estimate)
-            names(x1[["Loading_estimates"]]) <- c(est1_temp$Loading_estimates$Name,
-                                                  est2_temp$Loading_estimates$Name)
-            
-            # Weight estimates
-            x1[["Weight_estimates"]] <- c(est1_temp$Weight_estimates$Estimate,
-                                          est2_temp$Weight_estimates$Estimate)
-            names(x1[["Weight_estimates"]]) <- c(est1_temp$Weight_estimates$Name,
-                                                 est2_temp$Weight_estimates$Name)
+            x1 <- selectAndVectorize(Est_temp)
             
           } # end if individual_reestimate, construct_reestimate
           
@@ -1455,29 +1111,7 @@ resamplecSEMResultsCore <- function(
 
             # Reverse the signs off ALL parameter estimates in a bootstrap run if 
             # their sign differs from the sign of the original estimation
-            
-            ## Which signs differ:
-            sign_diff_path <- sign(est_temp$Path_estimates$Estimate) != 
-                              sign(est$Path_estimates$Estimate)
-            
-            sign_diff_loadings <- sign(est_temp$Loading_estimates$Estimate) !=
-                                  sign(est$Loading_estimates$Estimate)
-            sign_diff_weights  <- sign(est_temp$Weight_estimates$Estimate) !=
-                                  sign(est$Weight_estimates$Estimate)
-            
-            ## Multiply the coefficients for which the sign differs by (-1)
-            
-            # Path estimates
-            x1[["Path_estimates"]][sign_diff_path] <- 
-              x1[["Path_estimates"]][sign_diff_path] * (-1)
-            
-            # Loading estimates
-            x1[["Loading_estimates"]][sign_diff_loadings] <- 
-              x1[["Loading_estimates"]][sign_diff_loadings] * (-1)
-            
-            # Weight estimates
-            x1[["Weight_estimates"]][sign_diff_weights] <-
-              x1[["Weight_estimates"]][sign_diff_weights] * (-1)
+            x1 <- reverseSign(.Est_temp = Est_temp, .summary_original = summary_original)
             
           } # END .sign_change_option == "individual" 
         } # END sum(sign(.object$Estimates$Weight_estimates)!=sign(Est_temp$Estimates$Weight_estimates)
@@ -1584,7 +1218,7 @@ resamplecSEMResultsCore <- function(
 #'
 #' Calculate common inferencial quantities (e.g. estimated standard error, estimates bias,
 #' several confidence intervals) based on a `cSEMResults_resampled` object as obtained
-#' from [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
+#' by calling [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
 #' or `"jackknife"` when calling [csem()]. Currently, the following quantities are
 #' returned by default (`.quantity = "all"`):
 #' \describe{
@@ -1598,12 +1232,12 @@ resamplecSEMResultsCore <- function(
 #' \item{`"CI_percentile"`}{The percentile confidence interval}
 #' \item{`"CI_basic"`}{The basic confidence interval}
 #' \item{`"CI_bc"`}{The bias corrected confidence interval}
-#' \item{`"CI_bca"`}{The bias corrected and accelerated confidence interval. 
-#'   NOTE: only possible if `.resample_method = "bootstrap"` and will be slow
-#'   as jackknife estimates need to be computed.}
-#' \item{`"CI_t_interval"`}{The "studentized" confidence interval}
 #' }
-#' See xxx for details on their use and calculation.
+#' 
+#' In addtion, the bias-corrected and accelerated (`"CI_bca"`) and/or the "studentized"
+#' confidence interval (`"CI_t_interval"`) can be returned. The former requires jackknife estimates
+#' to compute influence values and the latter requires double bootstrap 
+#' both take time. Hence, the will only be computed if explicitly given.
 #' 
 #' @usage infer(
 #'  .object            = NULL,
@@ -1636,6 +1270,11 @@ infer <- function(
   
   ## Check arguments
   match.arg(.quantity, args_default(.choices = TRUE)$.quantity, several.ok = TRUE)
+  
+  ## Check if "all" is part of .quantity. If yes, set .quantity = "all"
+  if(any(.quantity == "all")) {
+    .quantity <- "all"
+  }
   
   if(!any(class(.object) == "cSEMResults")) {
     stop2("The following error occured in the `infer()` function:\n",
@@ -1746,7 +1385,7 @@ infer <- function(
     out[["CI_bc"]] <- BcCIResample(first_resample, probs)
   }
   
-  if(any(.quantity %in% c("all", "CI_bca"))) {
+  if(any(.quantity == "CI_bca")) {
     out[["CI_bca"]] <- BcaCIResample(.object = .object, 
                                      first_resample, probs)
   }

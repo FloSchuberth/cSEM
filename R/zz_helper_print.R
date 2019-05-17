@@ -60,6 +60,7 @@ printSummarizeOverview <- function(.summarize_object) {
       ) 
     }
     cat2(
+      col_align("\n\tNumber of admissible results ", 35), "= ", xx$Information_resample$Number_of_admissibles,
       col_align("\n\tApproach to handle inadmissibles ", 35), "= ", xx$Information_resample$Handle_inadmissibles,
       col_align("\n\tSign change option", 35), "= ", xx$Information_resample$Sign_change_option
     )
@@ -153,13 +154,22 @@ printSummarizeConstructDetails <- function(.summarize_object) {
 #' Helper for print.summarize_default and print.summerize_2ndorder
 #' @noRd
 #' 
-printSummarizePath <- function(.summarize_object, .ci_colnames) {
+printSummarizePath <- function(.summarize_object, .ci_colnames, .what = "Path") {
   
   ## Check the class
   x <- if(inherits(.summarize_object, "cSEMSummarize_2ndorder")) {
-    .summarize_object$Second_stage$Estimates$Path_estimates
+    switch (.what,
+      "Path" = {x <- .summarize_object$Second_stage$Estimates$Path_estimates},
+      "Total effect" = {.summarize_object$Second_stage$Estimates$Effect_estimates$Total_effect},
+      "Indirect effect" = {.summarize_object$Second_stage$Estimates$Effect_estimates$Indirect_effect}
+    )
+
   } else {
-    .summarize_object$Estimates$Path_estimates
+    switch (.what,
+      "Path" = {.summarize_object$Estimates$Path_estimates},
+      "Total effect" = {.summarize_object$Estimates$Effect_estimates$Total_effect},
+      "Indirect effect" = {.summarize_object$Estimates$Effect_estimates$Indirect_effect}
+    )
   }
   
   l <- max(nchar(x[, "Name"]))
@@ -169,14 +179,14 @@ printSummarizePath <- function(.summarize_object, .ci_colnames) {
     interval_names    <- unique(sapply(xx, `[`, 1))
     sig_level_names   <- unique(gsub("[LU]", "", sapply(xx, `[`, 2)))
     
-    cat2("\n  ",  col_align("", width = max(l, nchar("Path")) + 44))
+    cat2("\n  ",  col_align("", width = max(l, nchar(.what)) + 44))
     for(i in interval_names) {
       cat2(col_align(i, width = 20*length(sig_level_names), align = "center"))
     }
   }
   cat2(
     "\n  ", 
-    col_align("Path", max(l, nchar("Path")) + 2), 
+    col_align(.what, max(l, nchar(.what)) + 2), 
     col_align("Estimate", 10, align = "right"), 
     col_align("Std. error", 12, align = "right"),
     col_align("t-stat.", 10, align = "right"), 
@@ -191,7 +201,7 @@ printSummarizePath <- function(.summarize_object, .ci_colnames) {
   for(i in 1:nrow(x)) {
     cat2(
       "\n  ", 
-      col_align(x[i, "Name"], max(l, nchar("Path")) + 2), 
+      col_align(x[i, "Name"], max(l, nchar(.what)) + 2), 
       col_align(sprintf("%.4f", x[i, "Estimate"]), 10, align = "right"),
       col_align(sprintf("%.4f", x[i, "Std_err"]), 12, align = "right"),
       col_align(sprintf("%.4f", x[i, "t_stat"]), 10, align = "right"),
