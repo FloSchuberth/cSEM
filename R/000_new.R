@@ -121,7 +121,7 @@ predict=function(.object, testDataset){
 
  
 # Function that returns values for floodlight analysis
-effect_moderator_two_way=function(.object,.steps, .alpha, .independent, .moderator, .dependent ){
+effect_moderator_two_way=function(.object,.steps = seq(-1.5,1.5,0.01), .alpha = 0.05, .independent, .moderator, .dependent ){
   
   # Check whether resample
   if(!("cSEMResults_resampled" %in% class(.object))){
@@ -135,15 +135,18 @@ effect_moderator_two_way=function(.object,.steps, .alpha, .independent, .moderat
   
   # Add stop if the variables are included in a higher order moderation
   
-  
+  # Possible names of the interaction term. One could adjust the arguement that sth lik x.z needs to be provided to .moderator
   possible_names=c(paste(.independent,.moderator, sep= '.'),paste(.moderator,.independent, sep= '.'))
   
+  # Name of the interaction term 
   name_interaction = possible_names[possible_names %in% colnames(.object$Estimates$Path_estimates)]
   
   if(length(name_interaction) != 1){
     stop2("The defined interaction term does not exist in the model.")
   }
   
+  
+  # Effect names
   name_mod_effect = paste(.dependent, name_interaction, sep=' ~ ')
   name_single_effect = paste(.dependent, .independent, sep=' ~ ')
   
