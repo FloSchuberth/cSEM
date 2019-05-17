@@ -1,68 +1,9 @@
-## ---- eval = FALSE-------------------------------------------------------
-#  model <- "
-#  ## Structural model
-#  eta2 ~ eta1
-#  
-#  ## Measurement model
-#  eta1 <~ item1 + item2 + item3 # eta1 is modeled as a composite
-#  eta2 =~ item4 + item5 + item6 # eta2 is modeled as a common factor
-#  "
-
-## ----eval=FALSE----------------------------------------------------------
-#  model <- "
-#  ## Structural model
-#  eta2 ~ eta1
-#  
-#  ## Measurement model
-#  eta1 <~ item1 + item2 + item3
-#  eta2 =~ item4 + item5 + item6
-#  "
-#  
-#  # Identical
-#  csem(threecommonfactors, model)
-#  csem(threecommonfactors, model, .disattenuate = TRUE)
-#  
-#  # To supress automatic disattenuation
-#  csem(threecommonfactors, model, .disattenuate = FALSE)
-
-## ----eval=FALSE----------------------------------------------------------
-#  model <- "
-#  ## Structural model
-#  eta2 ~ eta1
-#  
-#  ## Measurement model (pure composite model)
-#  eta1 <~ item1 + item2 + item3
-#  eta2 <~ item4 + item5 + item6
-#  "
-#  
-#  ### Currently the following weight approaches are implemented
-#  # Partial least squares path modeling (PLS)
-#  csem(threecommonfactors, model, .approach_weights = "PLS-PM") # default
-#  
-#  # Generalized canonical correlation analysis (Kettenring approaches)
-#  csem(threecommonfactors, model, .approach_weights = "SUMCORR")
-#  csem(threecommonfactors, model, .approach_weights = "MAXVAR")
-#  csem(threecommonfactors, model, .approach_weights = "SSQCORR")
-#  csem(threecommonfactors, model, .approach_weights = "MINVAR")
-#  csem(threecommonfactors, model, .approach_weights = "GENVAR")
-#  
-#  # Generalized structured component analysis (GSCA)
-#  csem(threecommonfactors, model, .approach_weights = "GSCA")
-#  
-#  # Principal component analysis (PCA)
-#  csem(threecommonfactors, model, .approach_weights = "PCA")
-#  
-#  # Factor score regression (FSR) using "unit", "bartlett" or "regression" weights
-#  csem(threecommonfactors, model, .approach_weights = "unit")
-#  csem(threecommonfactors, model, .approach_weights = "bartlett")
-#  csem(threecommonfactors, model, .approach_weights = "regression")
-
 ## ------------------------------------------------------------------------
 model <- "
 # Structural model
 EXPE ~ IMAG
 
-# Measurement model
+# Reflective measurement model
 EXPE =~ expe1 + expe2
 IMAG =~ imag1 + imag2
 "
@@ -76,12 +17,13 @@ IMAG =~ imag1 + imag2
 #  SAT  ~ IMAG + EXPE + QUAL + VAL
 #  LOY  ~ IMAG + SAT
 #  
-#  # Measurement model
-#  
+#  # Composite model
 #  IMAG <~ imag1 + imag2 + imag3                  # composite
 #  EXPE <~ expe1 + expe2 + expe3                  # composite
 #  QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5  # composite
 #  VAL  <~ val1  + val2  + val3                   # composite
+#  
+#  # Reflective measurement model
 #  SAT  =~ sat1  + sat2  + sat3  + sat4           # common factor
 #  LOY  =~ loy1  + loy2  + loy3  + loy4           # common factor
 #  "
@@ -91,7 +33,7 @@ model <- "
 # Structural model
 EXPE ~ IMAG + IMAG.IMAG
 
-# Measurement model
+# Composite model
 EXPE <~ expe1 + expe2
 IMAG <~ imag1 + imag2
 "
@@ -102,11 +44,13 @@ IMAG <~ imag1 + imag2
 #  SAT ~ QUAL
 #  VAL ~ SAT + QUAL
 #  
-#  # Measurement model
-#  EXPE <~ expe1 + expe2
+#  # Reflective measurement model
 #  SAT  =~ sat1 + sat2
 #  VAL  =~ val1 + val2
+#  
+#  # Composite model
 #  IMAG <~ imag1 + imag2
+#  EXPE <~ expe1 + expe2
 #  
 #  # Second-order term
 #  QUAL =~ IMAG + EXPE
@@ -120,7 +64,7 @@ model <- "
 eta2 ~ eta1
 eta3 ~ eta1 + eta2
 
-# Measurement model
+# Reflective measurement model
 eta1 =~ y11 + y12 + y13
 eta2 =~ y21 + y22 + y23
 eta3 =~ y31 + y32 + y33
@@ -179,4 +123,53 @@ a
 #    .R               = 999,
 #    .seed            = 98234,
 #    .eval_plan       = "multiprocess")
+
+## ----eval=FALSE----------------------------------------------------------
+#  model <- "
+#  ## Structural model
+#  eta2 ~ eta1
+#  
+#  ## Measurement model
+#  eta1 <~ item1 + item2 + item3
+#  eta2 =~ item4 + item5 + item6
+#  "
+#  
+#  # Identical
+#  csem(threecommonfactors, model)
+#  csem(threecommonfactors, model, .disattenuate = TRUE)
+#  
+#  # To supress automatic disattenuation
+#  csem(threecommonfactors, model, .disattenuate = FALSE)
+
+## ----eval=FALSE----------------------------------------------------------
+#  model <- "
+#  ## Structural model
+#  eta2 ~ eta1
+#  
+#  ## Composite model
+#  eta1 <~ item1 + item2 + item3
+#  eta2 <~ item4 + item5 + item6
+#  "
+#  
+#  ### Currently the following weight approaches are implemented
+#  # Partial least squares path modeling (PLS)
+#  csem(threecommonfactors, model, .approach_weights = "PLS-PM") # default
+#  
+#  # Generalized canonical correlation analysis (Kettenring approaches)
+#  csem(threecommonfactors, model, .approach_weights = "SUMCORR")
+#  csem(threecommonfactors, model, .approach_weights = "MAXVAR")
+#  csem(threecommonfactors, model, .approach_weights = "SSQCORR")
+#  csem(threecommonfactors, model, .approach_weights = "MINVAR")
+#  csem(threecommonfactors, model, .approach_weights = "GENVAR")
+#  
+#  # Generalized structured component analysis (GSCA)
+#  csem(threecommonfactors, model, .approach_weights = "GSCA")
+#  
+#  # Principal component analysis (PCA)
+#  csem(threecommonfactors, model, .approach_weights = "PCA")
+#  
+#  # Factor score regression (FSR) using "unit", "bartlett" or "regression" weights
+#  csem(threecommonfactors, model, .approach_weights = "unit")
+#  csem(threecommonfactors, model, .approach_weights = "bartlett")
+#  csem(threecommonfactors, model, .approach_weights = "regression")
 
