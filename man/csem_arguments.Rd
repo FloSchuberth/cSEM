@@ -107,7 +107,10 @@ be estimated? Defaults to \code{TRUE}.}
 all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
-data obtained by resamplecSEMResults()}
+data obtained by resamplecSEMResults().}
+
+\item{.full_output}{Logical. Should the full ouput of summarize be printed.
+Defaults to \code{TRUE}.}
 
 \item{.second_resample}{A list containing \code{.R2} resamples for each of the \code{.R}
 resamples of the first run.}

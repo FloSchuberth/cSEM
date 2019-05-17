@@ -4,7 +4,11 @@
 \alias{print.cSEMSummarize}
 \title{\code{cSEMSummarize} method for \code{print()}}
 \usage{
-\method{print}{cSEMSummarize}(x, ...)
+\method{print}{cSEMSummarize}(x, .full_output = TRUE, ...)
+}
+\arguments{
+\item{.full_output}{Logical. Should the full ouput of summarize be printed.
+Defaults to \code{TRUE}.}
 }
 \description{
 The \link{cSEMSummary} method for the generic function \code{\link[=print]{print()}}.
