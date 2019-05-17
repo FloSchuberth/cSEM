@@ -120,5 +120,61 @@ predict=function(.object, testDataset){
 
 
  
+# Function that returns values for floodlight analysis
+effect_moderator_two_way=function(.object,.steps, .alpha, .independent, .moderator, .dependent ){
+  
+  # Check whether resample
+  if(!("cSEMResults_resampled" %in% class(.object))){
+    stop2('.object needs to be of class cSEMResults_resampled')
+  }
+  
+  if(length(.alpha)!=1){
+    stop2('Only one significant level is allowed, not a vector')
+  }
+  
+  
+  # Add stop if the variables are included in a higher order moderation
+  
+  # Add stop if variables are not involved in an interaction
+  
+  possible_names=c(paste(.independent,.moderator, sep= '.'),paste(.moderator,.independent, sep= '.'))
+  
+  name_interaction = possible_names[possible_names %in% colnames(.object$Estimates$Path_estimates)]
+  
+  name_mod_effect = paste(.dependent, name_interaction, sep=' ~ ')
+  name_single_effect = paste(.dependent, .independent, sep=' ~ ')
+  
+
+  dataplot_temp = lapply(.steps, function(x){
+    
+    # bootstrap effect of x on y at level step, i.e., z=.steps
+    effect_boot=.object$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,name_single_effect]+
+      .object$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,name_mod_effect]*x 
+    
+    
+    # Value of the originally estimated effect at level .steps
+    effect_at_steps=.object$Estimates$Estimates_resample$Estimates1$Path_estimates$Original[name_single_effect]+
+      .object$Estimates$Estimates_resample$Estimates1$Path_estimates$Original[name_mod_effect]*x
+    
+    
+    c(lb=quantile(effect_boot,.alpha/2),
+      ub=quantile(effect_boot,1-.alpha/2),
+      de=effect_at_steps,
+      value=x)
+    
+  })
+  
+# Return output
+  
+    do.call(rbind,dataplot_temp)
+  
+  
+  
+
+  
+
+  
+} 
+
   
 
