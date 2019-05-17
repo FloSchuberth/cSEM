@@ -80,7 +80,7 @@ print.cSEMResults <- function(x, ...) {
 #'
 #' @export
 #' @keywords internal
-print.cSEMSummarize <- function(x, ...) {
+print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   
   ## Check the class
   if(inherits(x, "cSEMSummarize_2ndorder")) {
@@ -141,17 +141,19 @@ print.cSEMSummarize <- function(x, ...) {
   printSummarizeLoadingsWeights(x, .ci_colnames = ci_colnames)
   
 
-  ### Effects ----------------------------------------------------------------
-  cat2("\n\n", rule(center = "Effects", width = 80), "\n\n")
-  ## Path estimates
-  cat2("Estimated total effects:\n========================")
-  
-  printSummarizePath(x, .ci_colnames = ci_colnames, .what = "Total effect")
-  
-  cat2("\n\nEstimated indirect effects:\n===========================")
-  
-  printSummarizePath(x, .ci_colnames = ci_colnames, .what = "Indirect effect")
-  
+  if(.full_output) {
+    ### Effects ----------------------------------------------------------------
+    cat2("\n\n", rule(center = "Effects", width = 80), "\n\n")
+    ## Path estimates
+    cat2("Estimated total effects:\n========================")
+    
+    printSummarizePath(x, .ci_colnames = ci_colnames, .what = "Total effect")
+    
+    cat2("\n\nEstimated indirect effects:\n===========================")
+    
+    printSummarizePath(x, .ci_colnames = ci_colnames, .what = "Indirect effect")
+  }
+
   cat2("\n", rule(line = "bar2", width = 80))
 }
 

@@ -60,7 +60,7 @@ One of (TODO)
 Defaults to (TODO).}
 
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
-data obtained by resamplecSEMResults()}
+data obtained by resamplecSEMResults().}
 
 \item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}

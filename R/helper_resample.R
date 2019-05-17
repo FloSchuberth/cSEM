@@ -128,7 +128,7 @@ reverseSign <- function(.Est_temp, .summary_original) {
   x1 <- list()
   summary_temp <- summarize(.Est_temp)
   
-  if(inherits(.object,"cSEMResults_2ndorder")) {
+  if(inherits(.Est_temp, "cSEMResults_2ndorder")) {
     est1 <- .summary_original$First_stage$Estimates
     est2 <- .summary_original$Second_stage$Estimates
     

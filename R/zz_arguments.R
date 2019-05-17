@@ -82,7 +82,9 @@
 #'   "*sequential*" or "*multiprocess*". In the latter case 
 #'   all available cores will be used. Defaults to "*sequential*".
 #' @param .first_resample A list containing the `.R` resamples based on the original
-#'   data obtained by resamplecSEMResults()
+#'   data obtained by resamplecSEMResults().
+#' @param .full_output Logical. Should the full ouput of summarize be printed.
+#'   Defaults to `TRUE`.
 #' @param .second_resample A list containing `.R2` resamples for each of the `.R`
 #'   resamples of the first run.
 #' @param .H The (N x J) matrix of construct scores.
@@ -328,6 +330,7 @@ args_default <- function(.choices = FALSE) {
     .E                       = NULL,
     .eval_plan               = c("sequential", "multiprocess"),
     .first_resample          = NULL,
+    .full_output             = TRUE,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
