@@ -123,7 +123,7 @@ predict=function(.object, testDataset){
 #' Output for floodlight analysis
 #'
 #' Calculate the the effect of an independent variable depending on different values
-#' of its moderator variable to perform a floodlight analysis \insertCite{Spiller2013;textual}{cSEM}
+#' of its moderator variable to perform a floodlight analysis \insertCite{Spiller2013;textual}{cSEM}.
 #' 
 #'
 #' @usage effect_moderator_two_way=function(.object=args_default()$.object,
@@ -141,9 +141,6 @@ predict=function(.object, testDataset){
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-#'
-#' @describeIn effect_moderator_two_way (TODO)
-#' @export
 effect_moderator_two_way=function(.object=args_default()$.object,
                                   .steps = seq(-1.5,1.5,0.01),
                                   .alpha = args_default()$.alpha, 
@@ -151,9 +148,14 @@ effect_moderator_two_way=function(.object=args_default()$.object,
                                   .moderator = NULL,
                                   .dependent = NULL ){
   
-  # Check whether resample
+  # Check whether .object is of class cSEMResults_resampled
   if(!("cSEMResults_resampled" %in% class(.object))){
     stop2('.object needs to be of class cSEMResults_resampled')
+  }
+  
+  # Check whether it is a non-linear model
+  if("Nonlinear" != .object$Information$Model$model_type){
+    stop2("Model type must be nonlinear.")
   }
   
   # Works only for one significance level, i.e., no vector of significances is allowed
@@ -161,24 +163,25 @@ effect_moderator_two_way=function(.object=args_default()$.object,
     stop2('Only one significant level is allowed, not a vector')
   }
   
-  # Check whether dependent, indepedent, and moderator variable are provided
-  if(is.null(.depedent) | is.null(.indepedent) | is.null(.moderator)){
+  # Check whether dependent, independent, and moderator variable are provided
+  if(is.null(.dependent) | is.null(.independent) | is.null(.moderator)){
     stop2("Not all variables (dependent, independent, and/or moderator) are supplied.")
   }
   
   structural = .object$Information$Model$structural
   
+  # Character string containing the names of the dependent and independent variables
   dependent_vars=rownames(structural[rowSums(structural)!=0,,drop=FALSE])
+  independent_vars = colnames(structural[,colSums(structural[.dependent,,drop = FALSE])!=0,drop = FALSE])
   
   # Check whether dependent variable is valid
   if(!(.dependent %in% dependent_vars)){
     stop2("Defined dependent variables is not a dependent variable in the specified model.")
   }
   
-  independent_vars = colnames(structural[,colSums(structural[.dependent,,drop = FALSE])!=0,drop = FALSE])
   
   # Check whether supplied variables are also used in the model
-  if(!all(c(.independent, .moderator) %in% colnames(.object$Information$Model$structural))){
+  if(!all(c(.independent, .moderator) %in% colnames(structural))){
     stop2("Independent and moderator variable do not occur together in the equation of the dependent variable.")
   }
   
@@ -191,7 +194,7 @@ effect_moderator_two_way=function(.object=args_default()$.object,
   name_interaction = possible_names[possible_names %in% independent_vars]
   
   if(length(name_interaction) != 1){
-    stop2("The defined interaction term does not exist in the model.")
+    stop2("The defined interaction term does not exist in the model or is not part of the equation of the dependent variable.")
   }
   
   
@@ -206,11 +209,9 @@ effect_moderator_two_way=function(.object=args_default()$.object,
     effect_boot=.object$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,name_single_effect]+
       .object$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,name_mod_effect]*x 
     
-    
     # Value of the originally estimated effect at level .steps
     effect_at_steps=.object$Estimates$Estimates_resample$Estimates1$Path_estimates$Original[name_single_effect]+
       .object$Estimates$Estimates_resample$Estimates1$Path_estimates$Original[name_mod_effect]*x
-    
     
     out=c(lb=quantile(effect_boot,.alpha/2),
       ub=quantile(effect_boot,1-.alpha/2),
@@ -219,7 +220,7 @@ effect_moderator_two_way=function(.object=args_default()$.object,
    
   })
   
-# Return output
+# Prepare and return output
   
     res=list(out = do.call(rbind,dataplot_temp), 
              Information = c(alpha=.alpha, independent = .independent, moderator= .moderator, dependent = .dependent))
