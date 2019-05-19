@@ -120,26 +120,75 @@ predict=function(.object, testDataset){
 
 
  
-# Function that returns values for floodlight analysis
-effect_moderator_two_way=function(.object,.steps = seq(-1.5,1.5,0.01), .alpha = 0.05, .independent, .moderator, .dependent ){
+#' Output for floodlight analysis
+#'
+#' Calculate the the effect of an independent variable depending on different values
+#' of its moderator variable to perform a floodlight analysis \insertCite{Spiller2013;textual}{cSEM}
+#' 
+#'
+#' @usage effect_moderator_two_way=function(.object=args_default()$.object,
+#'                                          .steps = seq(-1.5,1.5,0.01),
+#'                                          .alpha = args_default()$.alpha, 
+#'                                          .independent = NULL,
+#'                                          .moderator = NULL,
+#'                                          .dependent = NULL )
+#'
+#' @inheritParams csem_arguments
+#'
+#' @references
+#'   \insertAllCited{}
+#'   
+#' @seealso [csem()], [foreman()], [cSEMResults]
+#'
+#' @export
+#'
+#' @describeIn effect_moderator_two_way (TODO)
+#' @export
+effect_moderator_two_way=function(.object=args_default()$.object,
+                                  .steps = seq(-1.5,1.5,0.01),
+                                  .alpha = args_default()$.alpha, 
+                                  .independent = NULL,
+                                  .moderator = NULL,
+                                  .dependent = NULL ){
   
   # Check whether resample
   if(!("cSEMResults_resampled" %in% class(.object))){
     stop2('.object needs to be of class cSEMResults_resampled')
   }
   
+  # Works only for one significance level, i.e., no vector of significances is allowed
   if(length(.alpha)!=1){
     stop2('Only one significant level is allowed, not a vector')
   }
   
+  # Check whether dependent, indepedent, and moderator variable are provided
+  if(is.null(.depedent) | is.null(.indepedent) | is.null(.moderator)){
+    stop2("Not all variables (dependent, independent, and/or moderator) are supplied.")
+  }
   
-  # Add stop if the variables are included in a higher order moderation
+  structural = .object$Information$Model$structural
+  
+  dependent_vars=rownames(structural[rowSums(structural)!=0,,drop=FALSE])
+  
+  # Check whether dependent variable is valid
+  if(!(.dependent %in% dependent_vars)){
+    stop2("Defined dependent variables is not a dependent variable in the specified model.")
+  }
+  
+  independent_vars = colnames(structural[,colSums(structural[.dependent,,drop = FALSE])!=0,drop = FALSE])
+  
+  # Check whether supplied variables are also used in the model
+  if(!all(c(.independent, .moderator) %in% colnames(.object$Information$Model$structural))){
+    stop2("Independent and moderator variable do not occur together in the equation of the dependent variable.")
+  }
+  
+  # Add stop if the variables are included in a higher-order moderation, e.g., cubic term 
   
   # Possible names of the interaction term. One could adjust the arguement that sth lik x.z needs to be provided to .moderator
   possible_names=c(paste(.independent,.moderator, sep= '.'),paste(.moderator,.independent, sep= '.'))
   
   # Name of the interaction term 
-  name_interaction = possible_names[possible_names %in% colnames(.object$Estimates$Path_estimates)]
+  name_interaction = possible_names[possible_names %in% independent_vars]
   
   if(length(name_interaction) != 1){
     stop2("The defined interaction term does not exist in the model.")
