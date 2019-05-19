@@ -124,6 +124,9 @@ predict=function(.object, testDataset){
 #'
 #' Calculate the the effect of an independent variable depending on different values
 #' of its moderator variable to perform a floodlight analysis \insertCite{Spiller2013;textual}{cSEM}.
+#' Moreover, the Johnson-Neyman point(s) is calculated. In doing so, it is considered 
+#' whether there is a sign switch in the lower and upper confidence intervals. 
+#' If so, the position of the switch is returned.
 #' 
 #'
 #' @usage effect_moderator_two_way=function(.object=args_default()$.object,
@@ -213,16 +216,28 @@ effect_moderator_two_way=function(.object=args_default()$.object,
     effect_at_steps=.object$Estimates$Estimates_resample$Estimates1$Path_estimates$Original[name_single_effect]+
       .object$Estimates$Estimates_resample$Estimates1$Path_estimates$Original[name_mod_effect]*x
     
-    out=c(lb=quantile(effect_boot,.alpha/2),
-      ub=quantile(effect_boot,1-.alpha/2),
-      de=effect_at_steps,
-      value=x)
-   
+    bounds = quantile(effect_boot,c(.alpha/2,1-.alpha/2))
+
+    # Prepare and return output
+    out = c(bounds[1],
+      bounds[2],
+      de = effect_at_steps,
+      value = x)
+    names(out) = c('lb', 'ub', 'direct_effect', 'steps')
+    
+    return(out)
   })
+ 
+  out = do.call(rbind,dataplot_temp)
   
+# Determine Johnson-Neyman point 
+  # Look for sign flips in the upper boundary
+  pos_ub = which(diff(sign(out[,'ub']))!=0)
+  pos_lb = which(diff(sign(out[,'lb']))!=0) 
 # Prepare and return output
-  
-    res=list(out = do.call(rbind,dataplot_temp), 
+    res=list(out = out, 
+             Johnson_Neyman_points = list(JNlb = c(x = out[,'steps'][pos_lb], y = out[,'lb'][pos_lb]),
+                                          JNub = c(x = out[,'steps'][pos_ub], y = out[,'ub'][pos_ub])),
              Information = c(alpha=.alpha, independent = .independent, moderator= .moderator, dependent = .dependent))
     class(res) = c("Two_Way_Effect", class(res))
     return(res)
@@ -233,18 +248,30 @@ effect_moderator_two_way=function(.object=args_default()$.object,
 plot.effect_moderator_two_way = function(.TWobject){
   
   require(ggplot2)
-  plot1=ggplot(as.data.frame(.TWobject$out),aes(x=.TWobject$out[,4],y=.TWobject$out[,3]))+
+  plot1=ggplot(as.data.frame(.TWobject$out),aes(x=.TWobject$out[,'steps'],y=.TWobject$out[,'direct_effect']))+
     geom_line()+
-    geom_ribbon(aes(ymin=.TWobject$out[,1], ymax=.TWobject$out[,2]),alpha=0.2)+
+    geom_ribbon(aes(ymin=.TWobject$out[,'lb'], ymax=.TWobject$out[,'ub']),alpha=0.2)+
     labs(x=paste('Level of ',.TWobject$Information['moderator']) , 
     y=paste('Effect of', .TWobject$Information['independent'], 'on \n', .TWobject$Information['dependent']))+
-    theme_bw()
+    theme_bw()+
     # scale_x_continuous(breaks=seq(-3,3,0.5))+
-    # theme(panel.grid.minor = element_blank())
-  # geom_point(x=-0.224,y=0,size=2)
+    theme(panel.grid.minor = element_blank())
+  
+  # Plot Johnson-Neyman points, if they exist in the considered range
+  if(length(.TWobject$Johnson_Neyman_points$JNlb)==2){
+    JN=.TWobject$Johnson_Neyman_points$JNlb
+    plot1 = plot1+
+      geom_point(x=JN['x'],y=JN['y'],size=2)  
+  }
+  
+  if(length(.TWobject$Johnson_Neyman_points$JNub)==2){
+    JN=.TWobject$Johnson_Neyman_points$JNub
+    plot1 = plot1+
+      geom_point(x=JN['x'],y=JN['y'],size=2)  
+  }
+  
+  # Plot
   plot1
-  
-  
 }
   
 
