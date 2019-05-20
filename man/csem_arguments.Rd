@@ -78,6 +78,8 @@ or a mix of several types. The data may also include
 This column is assumed to contain group identifiers used to split
 the data into groups.}
 
+\item{.dependent}{Character string. Name of the dependent variable. Defaults to \code{NULL}.}
+
 \item{.disattenuate}{Logical. Should composite/proxy correlations
 be disattenuated to yield consisten loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
@@ -130,6 +132,9 @@ Defaults to "\emph{drop}".}
 \code{.data} used to split the data into groups.
 Defaults to \code{NULL}.}
 
+\item{.independent}{Character string. The name of the independent variable.
+Defaults to \code{NULL}.}
+
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
@@ -148,6 +153,8 @@ or a \link{cSEMModel} list.}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
+
+\item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
 
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
@@ -245,6 +252,9 @@ One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 
 \item{.starting_values}{list of named vectors containig the starting values.
 Defaults to \code{NULL}.}
+
+\item{.steps}{A vector containing values where e.g., a function is evaluated.
+Defaults to \code{seq(-2,2,0.01)}.}
 
 \item{.terms}{A vector of construct names to be classified.}
 

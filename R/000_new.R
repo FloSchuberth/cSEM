@@ -120,7 +120,7 @@ predict=function(.object, testDataset){
 
 
  
-#' Output for floodlight analysis
+#' Output of floodlight analysis
 #'
 #' Calculate the the effect of an independent variable depending on different values
 #' of its moderator variable to perform a floodlight analysis \insertCite{Spiller2013}{cSEM}.
@@ -244,7 +244,17 @@ effect_moderator_two_way=function(.object=args_default()$.object,
 } 
 
 
-# plot method for effect_moderator_two_way
+
+#' Plot the output of floodlight analysis
+#'
+#' It plots the direct effect of an independent variable depending on the levels of the 
+#' moderator variable. Moreover, the confidence interval are plotted including the 
+#' Johnson-Neyman points. 
+#'
+#' @usage plot(.TWobject)
+#'
+#'
+#' @export
 plot.effect_moderator_two_way = function(.TWobject){
   
   require(ggplot2)
