@@ -123,7 +123,7 @@ predict=function(.object, testDataset){
 #' Output for floodlight analysis
 #'
 #' Calculate the the effect of an independent variable depending on different values
-#' of its moderator variable to perform a floodlight analysis \insertCite{Spiller2013;textual}{cSEM}.
+#' of its moderator variable to perform a floodlight analysis \insertCite{Spiller2013}{cSEM}.
 #' Moreover, the Johnson-Neyman point(s) is calculated. In doing so, it is considered 
 #' whether there is a sign switch in the lower and upper confidence intervals. 
 #' If so, the position of the switch is returned.
@@ -132,9 +132,9 @@ predict=function(.object, testDataset){
 #' @usage effect_moderator_two_way=function(.object=args_default()$.object,
 #'                                          .steps = seq(-1.5,1.5,0.01),
 #'                                          .alpha = args_default()$.alpha, 
+#'                                          .dependent = NULL,
 #'                                          .independent = NULL,
-#'                                          .moderator = NULL,
-#'                                          .dependent = NULL )
+#'                                          .moderator = NULL )
 #'
 #' @inheritParams csem_arguments
 #'
@@ -145,11 +145,11 @@ predict=function(.object, testDataset){
 #'
 #' @export
 effect_moderator_two_way=function(.object=args_default()$.object,
-                                  .steps = seq(-1.5,1.5,0.01),
-                                  .alpha = args_default()$.alpha, 
-                                  .independent = NULL,
-                                  .moderator = NULL,
-                                  .dependent = NULL ){
+                                  .steps = args_default()$.steps,
+                                  .alpha = args_default()$.alpha,
+                                  .dependent = args_default()$.dependent, 
+                                  .independent = args_default()$.independent,
+                                  .moderator = args_default()$.moderator ){
   
   # Check whether .object is of class cSEMResults_resampled
   if(!("cSEMResults_resampled" %in% class(.object))){
