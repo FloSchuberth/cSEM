@@ -2,24 +2,34 @@
 % Please edit documentation in R/000_new.R
 \name{effect_moderator_two_way}
 \alias{effect_moderator_two_way}
-\title{Output for floodlight analysis}
+\title{Output of floodlight analysis}
 \usage{
 effect_moderator_two_way=function(.object=args_default()$.object,
                                          .steps = seq(-1.5,1.5,0.01),
                                          .alpha = args_default()$.alpha, 
+                                         .dependent = NULL,
                                          .independent = NULL,
-                                         .moderator = NULL,
-                                         .dependent = NULL )
+                                         .moderator = NULL )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
+\item{.steps}{A vector containing values where e.g., a function is evaluated.
+Defaults to \code{seq(-2,2,0.01)}.}
+
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
+
+\item{.dependent}{Character string. Name of the dependent variable. Defaults to \code{NULL}.}
+
+\item{.independent}{Character string. The name of the independent variable.
+Defaults to \code{NULL}.}
+
+\item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
 }
 \description{
 Calculate the the effect of an independent variable depending on different values
-of its moderator variable to perform a floodlight analysis \insertCite{Spiller2013;textual}{cSEM}.
+of its moderator variable to perform a floodlight analysis \insertCite{Spiller2013}{cSEM}.
 Moreover, the Johnson-Neyman point(s) is calculated. In doing so, it is considered
 whether there is a sign switch in the lower and upper confidence intervals.
 If so, the position of the switch is returned.

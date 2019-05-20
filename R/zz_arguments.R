@@ -61,6 +61,7 @@
 #'   *one* character column whose column name must be given to `.id`. 
 #'   This column is assumed to contain group identifiers used to split 
 #'   the data into groups.
+#' @param .dependent Character string. Name of the dependent variable. Defaults to `NULL`. 
 #' @param .disattenuate Logical. Should composite/proxy correlations 
 #'   be disattenuated to yield consisten loadings and path estimates if at least
 #'   one of the construct is modeled as a common factor? Defaults to `TRUE`.
@@ -99,6 +100,8 @@
 #' @param .id Character string or integer. The name or position of the column of 
 #'   `.data` used to split the data into groups.
 #'    Defaults to `NULL`.
+#' @param .independent Character string. The name of the independent variable. 
+#'    Defaults to `NULL`.  
 #' @param .iter_max Integer. The maximum number of iterations allowed.
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
@@ -111,6 +114,7 @@
 #'   or a [cSEMModel] list.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
+#' @param .moderator Character string. The name of the moderator variable. Defaults to `NULL`.
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
@@ -184,6 +188,8 @@
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .starting_values list of named vectors containig the starting values. 
 #' Defaults to `NULL`.
+#' @param .steps A vector containing values where e.g., a function is evaluated.
+#'  Defaults to `seq(-2,2,0.01)`.
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
@@ -323,6 +329,7 @@ args_default <- function(.choices = FALSE) {
     .csem_resample           = NULL,
     .cv_folds                = 10,
     .data                    = NULL,
+    .dependent               = NULL,
     .disattenuate            = TRUE,
     .dist                    = c("z", "t"),
     .distance                = c("geodesic", "squared_euclidian"),
@@ -334,11 +341,13 @@ args_default <- function(.choices = FALSE) {
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
+    .independent             = NULL,
     .listMatrices            = NULL, 
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,
     .model                   = NULL,
+    .moderator               = NULL,
     .modes                   = NULL,
     .normality               = TRUE,
     .only_common_factors     = TRUE,
@@ -368,6 +377,7 @@ args_default <- function(.choices = FALSE) {
                                  "construct_reestimate"),
     .stage                   = c("first", "second"),
     .starting_values         = NULL,
+    .steps                   = seq(-2,2,0.01),
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,
