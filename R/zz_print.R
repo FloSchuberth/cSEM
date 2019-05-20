@@ -91,8 +91,8 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     x22 <- x$Second_stage$Information
   } else {
     
-    x1 <- x$Estimates
-    x2 <- x$Information
+    x21 <- x$Estimates
+    x22 <- x$Information
   }
   
   cat2(
@@ -116,11 +116,7 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   ## Confidence intervals
   # Get the column names of the columns containing confidence intervals
   ## Check the class
-  ci_colnames <- if(inherits(x, "cSEMSummarize_2ndorder")) {
-    colnames(x21$Path_estimates)[-c(1:6)]
-  } else {
-    colnames(x1$Path_estimates)[-c(1:6)]
-  }
+  ci_colnames <- colnames(x21$Path_estimates)[-c(1:6)]
   
   # Are there more confidence intervals than the default (the 95% percentile CI)
   # Inform the user to use xxx instead.
@@ -141,7 +137,7 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   printSummarizeLoadingsWeights(x, .ci_colnames = ci_colnames)
   
 
-  if(.full_output) {
+  if(.full_output && x22$Model$model_type == "Linear") {
     ### Effects ----------------------------------------------------------------
     cat2("\n\n", rule(center = "Effects", width = 80), "\n\n")
     ## Path estimates

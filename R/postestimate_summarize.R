@@ -107,9 +107,12 @@ summarize.cSEMResults_default <- function(
   construct_scores <- as.data.frame(x1$Construct_scores)
 
   ## Effects -------------------------------------------------------------------
-  effects <- calculateEffects(.object, .output_type = "data.frame")
-  # Add effects to .object
-  .object$Estimates$Effect_estimates <- effects
+  if(x2$Model$model_type == "Linear") {
+    ## Effects are currently only for linear models. See issue #252 on github.
+    effects <- calculateEffects(.object, .output_type = "data.frame")
+    # Add effects to .object
+    .object$Estimates$Effect_estimates <- effects
+  }
   
   ## Inference =================================================================
   
@@ -187,32 +190,35 @@ summarize.cSEMResults_default <- function(
     }
     
     ## Effects -----------------------------------------------------------------
-    effects <- lapply(c("Total_effect", "Indirect_effect"), function(nx) {
-      temp   <- infer_out[[nx]]
-      x <- effects[[nx]]
-      t_temp <- x$Estimate / temp$sd
-      
-      x["Std_err"] <- temp$sd
-      x["t_stat"]  <- t_temp
-      x["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-      
-      if(!is.null(.ci)) {
-        ## Add CI's
-        # Column names
-        ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
-                              unlist(lapply(temp[.ci], rownames)))
+    if(x2$Model$model_type == "Linear") {
+      effects <- lapply(c("Total_effect", "Indirect_effect"), function(nx) {
+        temp   <- infer_out[[nx]]
+        x <- effects[[nx]]
+        t_temp <- x$Estimate / temp$sd
         
-        # Add cis to data frame and set names
-        x <- cbind(x, t(do.call(rbind, temp[.ci])))
-        rownames(x) <- NULL
-        colnames(x)[(length(colnames(x)) - 
-                       (length(ci_colnames) - 1)):length(colnames(x))] <- ci_colnames
-      }
-      ## Return
-      x
-    })
-    .object$Estimates$Effect_estimates$Indirect_effect <- effects[[2]] # Indirect effect
-    .object$Estimates$Effect_estimates$Total_effect <- effects[[1]] # Total effect!
+        x["Std_err"] <- temp$sd
+        x["t_stat"]  <- t_temp
+        x["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+        
+        if(!is.null(.ci)) {
+          ## Add CI's
+          # Column names
+          ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
+                                unlist(lapply(temp[.ci], rownames)))
+          
+          # Add cis to data frame and set names
+          x <- cbind(x, t(do.call(rbind, temp[.ci])))
+          rownames(x) <- NULL
+          colnames(x)[(length(colnames(x)) - 
+                         (length(ci_colnames) - 1)):length(colnames(x))] <- ci_colnames
+        }
+        ## Return
+        x
+      })
+      .object$Estimates$Effect_estimates$Indirect_effect <- effects[[2]] # Indirect effect
+      .object$Estimates$Effect_estimates$Total_effect <- effects[[1]] # Total effect!
+    }
+
   }
   
   ### Modify relevant .object elements =========================================
@@ -301,9 +307,11 @@ summarize.cSEMResults_2ndorder <- function(
   colnames(x21$Construct_scores) <- gsub("_temp", "", colnames(x21$Construct_scores))
   
   ## Effects -------------------------------------------------------------------
-  effects <- calculateEffects(.object, .output_type = "data.frame")
-  # Add effects to second stage
-  x21$Effect_estimates <- effects
+  if(x22$Model$model_type == "Linear") {
+    effects <- calculateEffects(.object, .output_type = "data.frame")
+    # Add effects to second stage
+    x21$Effect_estimates <- effects 
+  }
   
   ## Inference =================================================================
   if(inherits(.object, "cSEMResults_resampled")) {
@@ -397,33 +405,35 @@ summarize.cSEMResults_2ndorder <- function(
     x21$Weight_estimates  <- W[[2]]
     
     ## Effects -----------------------------------------------------------------
-    effects <- lapply(c("Total_effect", "Indirect_effect"), function(nx) {
-      temp   <- infer_out[[nx]]
-      x <- effects[[nx]]
-      t_temp <- x$Estimate / temp$sd
-      
-      x["Std_err"] <- temp$sd
-      x["t_stat"]  <- t_temp
-      x["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-      
-      if(!is.null(.ci)) {
-        ## Add CI's
-        # Column names
-        ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
-                              unlist(lapply(temp[.ci], rownames)))
+    if(x22$Model$model_type == "Linear") {
+      effects <- lapply(c("Total_effect", "Indirect_effect"), function(nx) {
+        temp   <- infer_out[[nx]]
+        x <- effects[[nx]]
+        t_temp <- x$Estimate / temp$sd
         
-        # Add cis to data frame and set names
-        x <- cbind(x, t(do.call(rbind, temp[.ci])))
-        rownames(x) <- NULL
-        colnames(x)[(length(colnames(x)) - 
-                       (length(ci_colnames) - 1)):length(colnames(x))] <- ci_colnames
-      }
-      ## Return
-      x
-    })
-    # Add effects to second stage
-    x21$Effect_estimates$Indirect_effect <- effects[[2]] # Indirect effect
-    x21$Effect_estimates$Total_effect <- effects[[1]] # Total effect!
+        x["Std_err"] <- temp$sd
+        x["t_stat"]  <- t_temp
+        x["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+        
+        if(!is.null(.ci)) {
+          ## Add CI's
+          # Column names
+          ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
+                                unlist(lapply(temp[.ci], rownames)))
+          
+          # Add cis to data frame and set names
+          x <- cbind(x, t(do.call(rbind, temp[.ci])))
+          rownames(x) <- NULL
+          colnames(x)[(length(colnames(x)) - 
+                         (length(ci_colnames) - 1)):length(colnames(x))] <- ci_colnames
+        }
+        ## Return
+        x
+      })
+      # Add effects to second stage
+      x21$Effect_estimates$Indirect_effect <- effects[[2]] # Indirect effect
+      x21$Effect_estimates$Total_effect <- effects[[1]] # Total effect!
+    }
   }
   
   ## Set class for printing and return

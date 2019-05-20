@@ -28,13 +28,15 @@ selectAndVectorize <- function(.object) {
     names(x1[["Weight_estimates"]]) <- c(est1_temp$Weight_estimates$Name,
                                          est2_temp$Weight_estimates$Name)
     
-    # Indirect effects
-    x1[["Indirect_effect"]] <- est2_temp$Effect_estimates$Indirect_effect$Estimate
-    names(x1[["Indirect_effect"]]) <- est2_temp$Effect_estimates$Indirect_effect$Name
-    
-    # Total effect
-    x1[["Total_effect"]] <- est2_temp$Effect_estimates$Total_effect$Estimate
-    names(x1[["Total_effect"]]) <- est2_temp$Effect_estimates$Total_effect$Name
+    if(.object$Second_stage$Information$Model$model_type == "Linear") {
+      # Indirect effects
+      x1[["Indirect_effect"]] <- est2_temp$Effect_estimates$Indirect_effect$Estimate
+      names(x1[["Indirect_effect"]]) <- est2_temp$Effect_estimates$Indirect_effect$Name
+      
+      # Total effect
+      x1[["Total_effect"]] <- est2_temp$Effect_estimates$Total_effect$Estimate
+      names(x1[["Total_effect"]]) <- est2_temp$Effect_estimates$Total_effect$Name 
+    }
     
   } else {
     
@@ -52,13 +54,15 @@ selectAndVectorize <- function(.object) {
     x1[["Weight_estimates"]] <- est_temp$Weight_estimates$Estimate
     names(x1[["Weight_estimates"]]) <- est_temp$Weight_estimates$Name
     
-    # Indirect effects
-    x1[["Indirect_effect"]] <- est_temp$Effect_estimates$Indirect_effect$Estimate
-    names(x1[["Indirect_effect"]]) <- est_temp$Effect_estimates$Indirect_effect$Name
-    
-    # Total effect
-    x1[["Total_effect"]] <- est_temp$Effect_estimates$Total_effect$Estimate
-    names(x1[["Total_effect"]]) <- est_temp$Effect_estimates$Total_effect$Name
+    if(.object$Information$Model$model_type == "Linear") {
+      # Indirect effects
+      x1[["Indirect_effect"]] <- est_temp$Effect_estimates$Indirect_effect$Estimate
+      names(x1[["Indirect_effect"]]) <- est_temp$Effect_estimates$Indirect_effect$Name
+      
+      # Total effect
+      x1[["Total_effect"]] <- est_temp$Effect_estimates$Total_effect$Estimate
+      names(x1[["Total_effect"]]) <- est_temp$Effect_estimates$Total_effect$Name
+    }
   }
   
   # Return 

@@ -19,13 +19,11 @@ Defaults to \code{0.05}.}
 }
 \description{
 Calculate the the effect of an independent variable depending on different values
-of its moderator variable to perform a floodlight analysis \insertCite{Spiller2013;textual}{cSEM}
+of its moderator variable to perform a floodlight analysis \insertCite{Spiller2013;textual}{cSEM}.
+Moreover, the Johnson-Neyman point(s) is calculated. In doing so, it is considered
+whether there is a sign switch in the lower and upper confidence intervals.
+If so, the position of the switch is returned.
 }
-\section{Functions}{
-\itemize{
-\item \code{effect_moderator_two_way}: (TODO)
-}}
-
 \references{
 \insertAllCited{}
 }
