@@ -255,7 +255,7 @@ effect_moderator_two_way=function(.object=args_default()$.object,
 #'
 #'
 #' @export
-plot.effect_moderator_two_way = function(.TWobject){
+plot.Two_Way_Effect = function(.TWobject){
   
   require(ggplot2)
   plot1=ggplot(as.data.frame(.TWobject$out),aes(x=.TWobject$out[,'steps'],y=.TWobject$out[,'direct_effect']))+
