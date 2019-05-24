@@ -19,6 +19,7 @@
 #'   .dominant_indicators         = args_default()$.dominant_indicators,
 #'   .estimate_structural         = args_default()$.estimate_structural,
 #'   .id                          = args_default()$.id,
+#'   .instruments                 = args_default()$.instruments,
 #'   .iter_max                    = args_default()$.iter_max,
 #'   .normality                   = args_default()$.normality,
 #'   .PLS_approach_cf             = args_default()$.PLS_approach_cf,
@@ -51,6 +52,7 @@ foreman <- function(
   .dominant_indicators         = args_default()$.dominant_indicators,
   .estimate_structural         = args_default()$.estimate_structural,
   .id                          = args_default()$.id,
+  .instruments                 = args_default()$.instruments,
   .iter_max                    = args_default()$.iter_max,
   .normality                   = args_default()$.normality,
   .PLS_approach_cf             = args_default()$.PLS_approach_cf,
@@ -65,11 +67,12 @@ foreman <- function(
   
   ### Preprocessing ============================================================
   ## Parse and order model to "cSEMModel" list
-  csem_model <- parseModel(.model)
+  csem_model <- parseModel(.model, .instruments = .instruments)
 
   ## Prepare, check, and clean data (a data.frame)
-  X_cleaned <- processData(.data = .data, .model = csem_model)
-  # X_cleaned <- .data
+  X_cleaned <- processData(.data = .data, 
+                           .model = csem_model,
+                           .instruments = NULL)
   
   ### Computation ==============================================================
   ## Calculate empirical indicator covariance/correlation matrix

@@ -2,7 +2,7 @@
 #'
 #' Prepare, standardize, check, and clean data provided via the `.data` argument.
 #'
-#' @usage processData(.data, .model)
+#' @usage processData(.data, .model, .instruments = NULL)
 #'
 #' @inheritParams csem_arguments
 #'
@@ -36,7 +36,7 @@
 #'
 #' @export
 
-processData <- function(.data, .model) {
+processData <- function(.data, .model, .instruments = NULL) {
 
   ### Checks, errors and warnings ========
   # Check if any data set is provided
@@ -65,7 +65,7 @@ processData <- function(.data, .model) {
 
   # Convert .model to cSEMModel format if not already in this format
   if(!(class(.model) == "cSEMModel")) {
-    .model <- parseModel(.model)
+    .model <- parseModel(.model, .instruments = .instruments)
   }
   
   # Check if any of the columns is a character. 

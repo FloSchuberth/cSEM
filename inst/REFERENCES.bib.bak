@@ -374,4 +374,18 @@ Carlo studies and an empirical application.},
   publisher = {Emerald},
 }
 
+@Article{Spiller2013,
+  author    = {Stephen A. Spiller and Gavan J. Fitzsimons and John G. Lynch and Gary H. Mcclelland},
+  title     = {Spotlights, Floodlights, and the Magic Number Zero: Simple Effects Tests in Moderated Regression},
+  journal   = {Journal of Marketing Research},
+  year      = {2013},
+  volume    = {50},
+  number    = {2},
+  pages     = {277--288},
+  month     = {apr},
+  doi       = {10.1509/jmr.12.0420},
+  file      = {:Spiller2013.pdf:PDF;:Spiller2013_WebAppendix.pdf:PDF},
+  publisher = {{SAGE} Publications},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}

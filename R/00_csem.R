@@ -117,6 +117,7 @@
 #'                                "unit", "bartlett", "regression"),
 #'   .disattenuate            = TRUE,
 #'   .id                      = NULL,
+#'   .instruments             = NULL,
 #'   .normality               = TRUE,
 #'   .reliabilities           = NULL,
 #'   .starting_values         = NULL,
@@ -177,6 +178,7 @@ csem <- function(
                              "unit", "bartlett", "regression"),
   .disattenuate          = TRUE,
   .id                    = NULL,
+  .instruments           = NULL,
   .normality             = TRUE,
   .reliabilities         = NULL,
   .starting_values       = NULL,
@@ -212,7 +214,7 @@ csem <- function(
   args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))]
   
   ## Parse model
-  model_original <- parseModel(.model)
+  model_original <- parseModel(.model, .instruments = .instruments)
   
   ## Modify model if model contains second order constructs
   if(any(model_original$construct_order == "Second order")) {

@@ -16,6 +16,7 @@ foreman(
   .dominant_indicators         = args_default()$.dominant_indicators,
   .estimate_structural         = args_default()$.estimate_structural,
   .id                          = args_default()$.id,
+  .instruments                 = args_default()$.instruments,
   .iter_max                    = args_default()$.iter_max,
   .normality                   = args_default()$.normality,
   .PLS_approach_cf             = args_default()$.PLS_approach_cf,

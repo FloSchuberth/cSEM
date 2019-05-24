@@ -4,7 +4,7 @@
 \alias{parseModel}
 \title{Parse lavaan model}
 \usage{
-parseModel(.model)
+parseModel(.model, .instruments = NULL)
 }
 \arguments{
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}

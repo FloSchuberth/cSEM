@@ -3,7 +3,7 @@
 #' Turns a model written in [lavaan model syntax][lavaan::model.syntax] into a
 #' [cSEMModel] list.
 #'
-#' @usage parseModel(.model)
+#' @usage parseModel(.model, .instruments = NULL)
 #'
 #' @inheritParams csem_arguments
 #' 
@@ -63,7 +63,7 @@
 #' 
 #' @export
 #'
-parseModel <- function(.model) {
+parseModel <- function(.model, .instruments = NULL) {
 
   ### Check if already a cSEMModel list  
   if(class(.model) == "cSEMModel") {
@@ -77,7 +77,7 @@ parseModel <- function(.model) {
       
       x <- setdiff(names(.model), c("structural", "measurement", "error_cor", 
                                     "construct_type", "construct_order", 
-                                    "model_type"))
+                                    "model_type", "instruments"))
       if(length(x) == 0) {
         
         class(.model) <- "cSEMModel"
@@ -95,6 +95,9 @@ parseModel <- function(.model) {
             "Structural and measurement matrix required.")
     }
   } else {
+    ### Check correctness of .instrument input ---------------------------------
+    
+    # TO DO
     
     ### Convert to lavaan partable ---------------------------------------------
     m_lav <- lavaan::lavaanify(model = .model, fixed.x = FALSE)
@@ -209,18 +212,33 @@ parseModel <- function(.model) {
     
     ## Stop if any construct has no observables/indicators attached
     tmp <- setdiff(c(names_c_s_l, names_c_m_rhs_l), names_c_m_lhs)
+    
+    ## Check if any of the individual components of the instruments has no 
+    ## observables/indicators attached
+    if(!is.null(.instruments)) {
+      tmp <- c(tmp, setdiff(unique(unlist(strsplit(unlist(.instruments), "\\."))), names_c_m_lhs))
+    }
+
     if(length(tmp) != 0) {
       
       stop2(
         "The following error occured in the `parseModel()` function:\n",
         "No measurement equation provided for: ", 
         paste0("`", tmp,  "`", collapse = ", ")
-        )
-    }
+      )
+    } 
     
-    ## Stop if any construct appears in the measurement but not in the 
+    ## Stop if a construct appears in the measurement but not in the 
     ## structural model
     tmp <- setdiff(names_c_m_lhs, c(names_c_s_l, names_c_m_rhs_l))
+    
+    # If tmp is non-empty: check if the constructs are instruments
+    # (only if not an error should be returned)
+    
+    if(length(tmp) != 0 & !is.null(.instruments)) {
+      tmp <- setdiff(tmp, unique(unlist(strsplit(unlist(.instruments), "\\."))))
+    }
+    
     if(length(tmp) != 0) {
       
       stop2(
@@ -263,12 +281,17 @@ parseModel <- function(.model) {
       "Linear"
     }
     ### Construct matrices specifying the relationship between constructs,
-    ### indicators and errors ----------------------------------------------------
+    ### indicators and errors ---------------------------------------------------
     model_structural  <- matrix(0,
-                                nrow = number_of_constructs,
-                                ncol = number_of_constructs_all,
-                                dimnames = list(names_c, names_c_all)
+                                nrow = length(names_c_s_l),
+                                ncol = length(names_c_s),
+                                dimnames = list(names_c_s_l, names_c_s)
     )
+    # model_structural  <- matrix(0,
+    #                             nrow = number_of_constructs,
+    #                             ncol = number_of_constructs_all,
+    #                             dimnames = list(names_c, names_c_all)
+    # )
     
     model_measurement <- matrix(0,
                                 nrow = number_of_constructs,
@@ -283,8 +306,10 @@ parseModel <- function(.model) {
     )
     
     ## Structural model
-    row_index <- match(tbl_s$lhs, names_c)
-    col_index <- match(tbl_s$rhs, names_c_all)
+    # row_index <- match(tbl_s$lhs, names_c)
+    # col_index <- match(tbl_s$rhs, names_c_all)
+    row_index <- match(tbl_s$lhs, names_c_s_l)
+    col_index <- match(tbl_s$rhs, names_c_s)
     
     model_structural[cbind(row_index, col_index)] <- 1
     
@@ -366,9 +391,11 @@ parseModel <- function(.model) {
     ## Return a cSEMModel object.
     # A cSEMModel objects contains all the information about the model and its
     # components such as the type of construct used. 
-    n <- c(setdiff(names_c, rownames(model_ordered)), rownames(model_ordered))
+    n  <- c(setdiff(names_c, rownames(model_ordered)), rownames(model_ordered))
+    n1 <- intersect(n, colnames(model_ordered))
     m <- order(which(model_measurement[n, ] == 1, arr.ind = TRUE)[, "row"])
-    structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n))]
+    # structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n))]
+    structural_ordered <- model_structural[n1, c(n1, setdiff(colnames(model_ordered), n1))]
     
     model_ls <- list(
       "structural"         = structural_ordered,
@@ -382,6 +409,34 @@ parseModel <- function(.model) {
       # "vars_explana"       = colnames(structural_ordered)[colSums(structural_ordered) != 0],
       # "explained_by_exo"   = explained_by_exo
     )
+    
+    ## Are there instruments?
+    if(!is.null(.instruments)) {
+      # Structural equations are named according to the name of the RHS variable
+      # of each equation (i.e. the name of the dependent variables).
+      
+      # # Name of the equation
+      # names_dependent <- names(which((rowSums(structural_ordered) != 0)))
+      # 
+      # # For which equation are instruments given
+      # eq_with_instruments <- intersect(names_dependent, names(.instruments))
+      
+      for(i in names(.instruments)) {
+        
+        names_independent <- names(which(structural_ordered[i, ] == 1))
+        # names_exogenous   <- intersect(colnames(names_independent), .instruments[[i]])
+        ## Not sure how to deal with nonlinear terms. For now they are treated
+        ## just like any other variable. If there is no instrument for a nonlinear
+        ## term, it is treated as exogenous.
+        names_endogenous  <- setdiff(names_independent, .instruments[[i]])
+        
+        # First stage relations
+        .instruments[[i]] <- matrix(1, nrow = length(names_endogenous), ncol = length(.instruments[[i]]),
+                      dimnames = list(names_endogenous, .instruments[[i]]))
+      }
+      model_ls$instruments <- .instruments
+    }
+    
     class(model_ls) <- "cSEMModel"
     return(model_ls) 
   } # END else

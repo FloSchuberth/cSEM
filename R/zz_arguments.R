@@ -101,7 +101,9 @@
 #'   `.data` used to split the data into groups.
 #'    Defaults to `NULL`.
 #' @param .independent Character string. The name of the independent variable. 
-#'    Defaults to `NULL`.  
+#'    Defaults to `NULL`. 
+#' @param `.instruments` A list of instruments for each structural equation. 
+#'   Defaults to `NULL`
 #' @param .iter_max Integer. The maximum number of iterations allowed.
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
@@ -342,6 +344,7 @@ args_default <- function(.choices = FALSE) {
     .H                       = NULL,
     .id                      = NULL,
     .independent             = NULL,
+    .instruments             = NULL,
     .listMatrices            = NULL, 
     .matrix1                 = NULL,
     .matrix2                 = NULL,

@@ -15,6 +15,7 @@ csem(
                                "unit", "bartlett", "regression"),
   .disattenuate            = TRUE,
   .id                      = NULL,
+  .instruments             = NULL,
   .normality               = TRUE,
   .reliabilities           = NULL,
   .starting_values         = NULL,

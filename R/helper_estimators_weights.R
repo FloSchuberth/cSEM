@@ -58,7 +58,7 @@ calculateInnerWeightsPLS <- function(
   C[lower.tri(C)] <- t(C)[lower.tri(C)]
   
   # Path model relationship
-  tmp <- rownames(.csem_model$measurement)
+  tmp <- rownames(.csem_model$structural)
   E   <- .csem_model$structural[tmp, tmp]
   D   <- E + t(E)
   
