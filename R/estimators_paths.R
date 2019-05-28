@@ -174,7 +174,7 @@ estimatePath <- function(
           coefsj <- res$coef[[j]] 
           VCVresid[i,j] <- .P[i,j] - t(coefsi) %*%  .P[m[i,]!=0,j,drop = FALSE] -
             .P[i, m[j,]!=0, drop = FALSE] %*% coefsj +
-            t(coefsi) %*% .P[m[i,]!=0, m[j,]!=0, drop=FALSE] %*% coefsj
+            t(coefsi) %*% .P[m[i,]!=0, m[j,]!=0, drop=FALSE] %*% coefsj}}
 
       part = lapply(vars_endo,function(x){
         independents = colnames(m)[m[x,]!=0]
