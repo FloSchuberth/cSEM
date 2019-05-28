@@ -32,7 +32,7 @@ estimatePath <- function(
   ) {
   
   ## Check approach_path argument:
-  if(!any(.approach_paths %in% c("OLS", "2SLS"))) {
+  if(!any(.approach_paths %in% c("OLS", "2SLS", "3SLS"))) {
     stop2("The following error occured in the `estimatePath()` function:\n",
           paste0("'", .approach_paths, "'"), 
           " is an unknown approach to estimate the path model.")
@@ -46,8 +46,8 @@ estimatePath <- function(
   }
   
   ## Error if no instruments are given but .approach_path = "2SLS"
-  if(is.null(.instruments) & .approach_paths == "2SLS") {
-    stop2("`.approach_path = '2SLS' requires instruments.")
+  if(is.null(.instruments) & .approach_paths == "2SLS" | .approach_paths == "3SLS") {
+    stop2("`.approach_path = '2SLS' '3SLS' requires instruments.")
   }
   
   m         <- .csem_model$structural
@@ -100,11 +100,16 @@ estimatePath <- function(
         } 
       } # END OLS
       
+      if(.approach_paths == "3SLS"){
+        stop2("3SLS is not implemented yet.")
+      }
+      
+      
       # Compute "2SLS" if endo_in_RHS is TRUE, i.e instruments are 
       # given for this particular equation and .approach_path is "2SLS".
       
-      ## Two stage least squares (2SLS)
-      if(endo_in_RHS & .approach_paths == "2SLS") {
+      ## Two stage least squares (2SLS) and three stage least squares (3SLS)
+      if(endo_in_RHS & .approach_paths == "2SLS" | .approach_paths == "3SLS") {
         
         ## First stage
         # Note: Regress the P endogenous variables (X) on the L instruments 
@@ -139,7 +144,7 @@ estimatePath <- function(
                       t(beta_1st) %*% .P[names_Z, x, drop = FALSE])
         
         
-        # Although the r^2 could be calculated in case of 2SLS,
+        # Although the r^2 can be calculated in case of 2SLS,
         # the r^2 and all corresponding statistics are not correct. 
         # Hence, I suggest to overwrite it with NA. This might help to detect potential problems.
         # 
