@@ -222,10 +222,11 @@ estimatePath <- function(
       nrcoefs=cumsum(c(0,lengths(res$coef)))
       
       # Overwrite parameters; There must be a better way, i.e., more secure way.
+      # Doesn't work yet!!!!
     
       for(endo in vars_endo){
         independents = colnames(m)[m[endo,]!=0]
-        res$coef[[endo]]=allparas[(nrcoefs[which(endo == vars_endo)]+1):nrcoefs[which(endo == vars_endo)+1],1,drop=FALSE]
+        res$coef[[endo]]=allparas[(nrcoefs[which(endo == vars_endo)]+1):nrcoefs[which(endo == vars_endo)+1],1,drop=FALSE][rownames(res$coef[[endo]]),1,drop=FALSE]
       }
       
       
