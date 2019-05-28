@@ -214,7 +214,10 @@ estimatePath <- function(
       LHS = do.call(rbind,part[["LHSpart"]])
       RHS = do.call(rbind,part[["RHSpart"]])
       
+      # solve equation
       allparas=solve(RHS,LHS)
+      
+      # parameters need to be sorted back, i.e., overwrite the res object of 2SLS
       
       stop2("3SLS is not implemented yet.")
       
