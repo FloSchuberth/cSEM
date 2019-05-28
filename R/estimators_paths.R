@@ -183,13 +183,14 @@ estimatePath <- function(
         InvOfVCVresid=solve(VCVresid)
 
       LHSpart=sapply(vars_endo,function(mue){ 
-          as.numeric(InvOfVCVresid[x,mue])* 
+          InvOfVCVresid[x,mue,drop=TRUE]* #Must be a scalar
             .P[c(indendo,indexog),vars_exo , drop = FALSE]%*%
             solve(.P[vars_exo,vars_exo,drop=FALSE])%*%
             .P[vars_exo,mue,drop=FALSE]
         })
       
-      # sum up all elements
+      # sum up all elements Not sure whether this required anymore might be that 
+      # using drop argument solved that issue
       if(is.matrix(LHSpart)){
         LHSpart=matrix(rowSums(LHSpart),ncol=1)
       }else{ 
@@ -217,9 +218,18 @@ estimatePath <- function(
       # solve equation
       allparas=solve(RHS,LHS)
       
-      # parameters need to be sorted back, i.e., overwrite the res object of 2SLS
+      # Overwrite res object
+      nrcoefs=cumsum(c(0,lengths(res$coef)))
       
-      stop2("3SLS is not implemented yet.")
+      # Overwrite parameters; There must be a better way, i.e., more secure way.
+    
+      for(endo in vars_endo){
+        independents = colnames(m)[m[endo,]!=0]
+        res$coef[[endo]]=allparas[(nrcoefs[which(endo == vars_endo)]+1):nrcoefs[which(endo == vars_endo)+1],1,drop=FALSE]
+      }
+      
+      
+      # stop2("3SLS is not implemented yet.")
       
     }
     
