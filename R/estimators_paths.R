@@ -100,11 +100,7 @@ estimatePath <- function(
         } 
       } # END OLS
       
-      if(.approach_paths == "3SLS"){
-        stop2("3SLS is not implemented yet.")
-      }
-      
-      
+
       # Compute "2SLS" if endo_in_RHS is TRUE, i.e instruments are 
       # given for this particular equation and .approach_path is "2SLS".
       
@@ -166,6 +162,65 @@ estimatePath <- function(
     names(res) <- vars_endo
     res <- purrr::transpose(res)
 
+    if(.approach_paths == "3SLS"){
+      # Variance covariance matrix of the error term
+      VCVresid=matrix(0,nrow=length(vars_endo),ncol=length(vars_endo),
+                      dimnames=list(vars_endo,vars_endo))
+      
+      # Fill the VCV of the error terms
+      for(i in   vars_endo){
+        for(j in  vars_endo){
+          coefsi <- res$coef[[i]]
+          coefsj <- res$coef[[j]] 
+          VCVresid[i,j] <- .P[i,j] - t(coefsi) %*%  .P[m[i,]!=0,j,drop = FALSE] -
+            .P[i, m[j,]!=0, drop = FALSE] %*% coefsj +
+            t(coefsi) %*% .P[m[i,]!=0, m[j,]!=0, drop=FALSE] %*% coefsj
+
+      part = lapply(vars_endo,function(x){
+        independents = colnames(m)[m[x,]!=0]
+        indendo = intersect(independents,vars_endo)
+        indexog = intersect(independents,vars_exo)
+        InvOfVCVresid=solve(VCVresid)
+
+      LHSpart=sapply(vars_endo,function(mue){ 
+          as.numeric(InvOfVCVresid[x,mue])* 
+            .P[c(indendo,indexog),vars_exo , drop = FALSE]%*%
+            solve(.P[vars_exo,vars_exo,drop=FALSE])%*%
+            .P[vars_exo,mue,drop=FALSE]
+        })
+      
+      # sum up all elements
+      if(is.matrix(LHSpart)){
+        LHSpart=matrix(rowSums(LHSpart),ncol=1)
+      }else{ 
+        LHSpart=sum(LHSpart)
+      }
+      
+      RHSpart=lapply(vars_endo, function(mue){
+        as.numeric(InvOfVCVresid[x,mue])* 
+          .P[c(indendo,indexog),vars_exo,drop=FALSE]%*%
+          solve(.P[vars_exo,vars_exo])%*%
+          .P[vars_exo,c(intersect(colnames(m)[m[mue,]!=0],vars_endo),
+                        intersect(colnames(m)[m[mue,]!=0],vars_exo))]
+        })
+      
+      RHSpart = do.call(cbind,RHSpart)
+        
+      list(LHSpart = LHSpart,RHSpart = RHSpart)
+      })
+      
+      
+      part = purrr::transpose(part)
+      LHS = do.call(rbind,part[["LHSpart"]])
+      RHS = do.call(rbind,part[["RHSpart"]])
+      
+      allparas=solve(RHS,LHS)
+      
+      stop2("3SLS is not implemented yet.")
+      
+    }
+    
+    
   } else {
     ## Error if approach_paths is not "OLS"
     # Note (05/2019): Currently, only "OLS" is allowed for nonlinear models
