@@ -109,7 +109,7 @@ estimatePath <- function(
       # given for this particular equation and .approach_path is "2SLS".
       
       ## Two stage least squares (2SLS) and three stage least squares (3SLS)
-      if(endo_in_RHS & .approach_paths == "2SLS" | .approach_paths == "3SLS") {
+      if(endo_in_RHS & (.approach_paths == "2SLS" | .approach_paths == "3SLS")) {
         
         ## First stage
         # Note: Regress the P endogenous variables (X) on the L instruments 

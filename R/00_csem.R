@@ -172,7 +172,7 @@ csem <- function(
   .model                 = NULL,
   .approach_2ndorder     = c("3stage", "repeated_indicators"),
   .approach_nl           = c("sequential", "replace"),
-  .approach_paths        = c("OLS", "2SLS"),
+  .approach_paths        = c("OLS", "2SLS", "3SLS"),
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                              "MINVAR", "GENVAR","GSCA", "PCA",
                              "unit", "bartlett", "regression"),
