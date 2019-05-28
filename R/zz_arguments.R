@@ -102,9 +102,9 @@
 #'    Defaults to `NULL`.
 #' @param .independent Character string. The name of the independent variable. 
 #'    Defaults to `NULL`. 
-#' @param `.instruments` A list of vectors, where the name of the list element indicates the 
-#'                      structural equation considered and the vectors contain the instruments for that equation.
-#'                      Defaults to `NULL`
+#' @param `.instruments` A list of vectors, where the names of the list elements indicate the 
+#'                      structural equations considered and the vectors contain the names of the 
+#'                      instruments. Defaults to `NULL`
 #' @param .iter_max Integer. The maximum number of iterations allowed.
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
