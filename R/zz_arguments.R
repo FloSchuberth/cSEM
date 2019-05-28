@@ -24,7 +24,7 @@
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
 #' @param .approach_paths Character string. Approach used to estimate the
-#'   structural coefficients. One of: "*OLS*" or "*2SLS*" (not yet implemented).
+#'   structural coefficients. One of: "*OLS*", "*2SLS*", or "*3SLS*" (not yet implemented).
 #'   Defaults to "*OLS*".
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
@@ -318,7 +318,7 @@ args_default <- function(.choices = FALSE) {
     .approach                = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("3stage", "repeated_indicators"),
     .approach_nl             = c("sequential", "replace"),
-    .approach_paths          = c("OLS", "2SLS"),
+    .approach_paths          = c("OLS", "2SLS", "3SLS"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,

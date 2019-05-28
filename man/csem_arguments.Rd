@@ -135,8 +135,9 @@ Defaults to \code{NULL}.}
 \item{.independent}{Character string. The name of the independent variable.
 Defaults to \code{NULL}.}
 
-\item{`.instruments`}{A list of instruments for each structural equation.
-Defaults to \code{NULL}}
+\item{`.instruments`}{A list of vectors, where the names of the list elements indicate the
+structural equations considered and the vectors contain the names of the
+instruments. Defaults to \code{NULL}}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
