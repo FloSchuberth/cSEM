@@ -197,19 +197,16 @@ foreman <- function(
 
   ## Estimate structural coef
   if(.estimate_structural) {
-    if(.approach_paths == "OLS") {
-      estim_results <- estimatePathOLS(
-        .H            = H,
-        .Q            = Q,
-        .P            = P,
-        .csem_model   = csem_model,
-        .normality    = .normality,
-        .approach_nl  = .approach_nl
-      ) 
-    } else {
-      stop2("`.approach_path = '", .approach_paths, "'` not implemented yet.\n",
-            "Check the master branch of https://github.com/M-E-Rademaker/cSEM for updates.")
-    }
+    estim_results <- estimatePath(
+      .approach_nl   = .approach_nl,
+      .approach_path = .approach_paths,
+      .csem_model    = csem_model,
+      .H             = H,
+      .instruments   = .instruments,
+      .normality     = .normality,
+      .P             = P,
+      .Q             = Q
+    ) 
   } else {
     estim_results <- NULL
   }

@@ -573,12 +573,13 @@ calculateDML <- function(
 calculateEffectSize <- function(.object = NULL) {
   
   ## Get relevant quantities
+  approach_nl    <- .object$Information$Arguments$.approach_nl
+  approach_paths <- .object$Information$Arguments$.approach_paths
+  csem_model     <- .object$Information$Model
   H <- .object$Estimates$Construct_scores
-  Q <- sqrt(.object$Estimates$Reliabilities)
+  normality <- .object$Information$Arguments$.normality
   P <- .object$Estimates$Construct_VCV
-  csem_model  <- .object$Information$Model
-  normality   <- .object$Information$Arguments$.normality
-  approach_nl <- .object$Information$Arguments$.approach_nl
+  Q <- sqrt(.object$Estimates$Reliabilities)
   
   s <- csem_model$structural
   
@@ -594,13 +595,14 @@ calculateEffectSize <- function(.object = NULL) {
       model_temp <- csem_model
       model_temp$structural[x, i] <- 0 
       
-      out <- estimatePathOLS(
-        .H = H,
-        .Q = Q,
-        .P = P,
-        .csem_model = model_temp,
-        .normality = normality,
-        .approach_nl = approach_nl
+      out <- estimatePath(
+        .approach_nl    = approach_nl,
+        .approach_paths = approach_paths,
+        .csem_model     = model_temp,
+        .H              = H,
+        .normality      = normality,
+        .P              = P,
+        .Q              = Q
       )
       
       ## Calculate effect size

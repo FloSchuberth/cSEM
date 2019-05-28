@@ -29,8 +29,21 @@ printSummarizeOverview <- function(.summarize_object) {
     col_align("\n\tType of indicator correlation", 35), "= ", 
     paste0(x$Type_of_indicator_correlation, collapse = ", ")
   )
+  
+  if(!is.null(x$Model$instruments) && x$Arguments$.approach_paths == "2SLS") {
+    tmp <- setdiff(names(which(rowSums(x$Model$structural) != 0)), names(x$Model$instruments))
+    cat2(
+      "\n\tPath model estimator",
+      "\n\t\tOLS  : ", paste0(tmp, collapse = ", "),
+      "\n\t\t2SLS : ", paste0(names(x$Model$instruments), collapse = ", ")
+    )
+  } else {
+    cat2(
+      col_align("\n\tPath model estimator", 35), "= ", x$Arguments$.approach_paths
+    )
+  }
+
   cat2(
-    col_align("\n\tPath model estimator", 35), "= ", x$Arguments$.approach_paths,
     col_align("\n\tType of path model", 35), "= ", x$Model$model_type,
     col_align("\n\tDisattenuated", 35), "= ", 
     ifelse(x$Arguments$.disattenuate & any(x$Model$construct_type == "Common factor"), 

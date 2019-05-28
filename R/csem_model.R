@@ -95,9 +95,6 @@ parseModel <- function(.model, .instruments = NULL) {
             "Structural and measurement matrix required.")
     }
   } else {
-    ### Check correctness of .instrument input ---------------------------------
-    
-    # TO DO
     
     ### Convert to lavaan partable ---------------------------------------------
     m_lav <- lavaan::lavaanify(model = .model, fixed.x = FALSE)
@@ -184,7 +181,51 @@ parseModel <- function(.model, .instruments = NULL) {
     names(construct_order) <- names_c
     construct_order[names_c_2nd] <- "Second order"
     
+    ## Instruments
+    if(!is.null(.instruments)) {
+      names_construct_instruments <- names(.instruments)
+      
+      ## Note (05/2019): Currently, we only allow linear instruments (i.e. no 
+      ##                 interaction terms). We may change that in the future.
+      names_instruments_nl <- unlist(.instruments)[grep("\\.", unlist(.instruments))]
+      
+      if(length(names_instruments_nl) != 0) {
+        stop2("The following error occured in the `parseModel()` function:\n",
+              "Only linear instruments allowed. Dont know how to handle: ", 
+              paste0("`", names_instruments_nl, "`", collapse = ", "))
+      }
+      names_instruments <- unique(unlist(strsplit(unlist(.instruments),  "\\.")))
+    }
+
     ### Checks, errors and warnings --------------------------------------------
+    if(!is.null(.instruments)) {
+      # Note (05/2019): Currently, we only allow instruments from within the model, 
+      #                 i.e instruments need to have a structural   
+      #                 and a measurement/composite equation. 
+      #                 Reason: we need to figure out, how to deal with 
+      #                 instruments that have no structural equation. If they are
+      #                 not part of the structural model its unclear how to 
+      #                 get composites/scores for them.
+      
+      ## Check if all instruments are part of the structural model (i.e. internal)
+      tmp <- setdiff(names_instruments, names_c)
+      
+      if(!is.null(.instruments) && length(tmp) != 0) {
+        stop2("The following error occured in the `parseModel()` function:\n",
+              "Currently, only internal instruments allowed. External instruments: ", 
+              paste0("`", tmp,  "`", collapse = ", "))
+      }
+      
+      ## Check if construct names for instruments are correct
+      tmp <- setdiff(names_construct_instruments, names_c)
+      
+      if(!is.null(.instruments) && length(tmp) != 0) {
+        stop2("The following error occured in the `parseModel()` function:\n",
+              "Instruments supplied for unknown constructs: ", 
+              paste0("`", tmp,  "`", collapse = ", "))
+      } 
+    }
+    
     ## Stop if one indicator is connected to several constructs
     if(any(duplicated(tbl_m$rhs))) {
       stop2(
@@ -213,11 +254,13 @@ parseModel <- function(.model, .instruments = NULL) {
     ## Stop if any construct has no observables/indicators attached
     tmp <- setdiff(c(names_c_s_l, names_c_m_rhs_l), names_c_m_lhs)
     
+    # Note: code below not required as long as only internal instruments 
+    #       are allowed 
     ## Check if any of the individual components of the instruments has no 
     ## observables/indicators attached
-    if(!is.null(.instruments)) {
-      tmp <- c(tmp, setdiff(unique(unlist(strsplit(unlist(.instruments), "\\."))), names_c_m_lhs))
-    }
+    # if(!is.null(.instruments)) {
+    #   tmp <- c(tmp, setdiff(names_instruments, names_c_m_lhs))
+    # }
 
     if(length(tmp) != 0) {
       
@@ -232,12 +275,13 @@ parseModel <- function(.model, .instruments = NULL) {
     ## structural model
     tmp <- setdiff(names_c_m_lhs, c(names_c_s_l, names_c_m_rhs_l))
     
+    # Note: code below not required as long as only internal instruments 
+    #       are allowed 
     # If tmp is non-empty: check if the constructs are instruments
     # (only if not an error should be returned)
-    
-    if(length(tmp) != 0 & !is.null(.instruments)) {
-      tmp <- setdiff(tmp, unique(unlist(strsplit(unlist(.instruments), "\\."))))
-    }
+    # if(length(tmp) != 0 & !is.null(.instruments)) {
+    #   tmp <- setdiff(tmp, names_instruments)
+    # }
     
     if(length(tmp) != 0) {
       
@@ -281,17 +325,19 @@ parseModel <- function(.model, .instruments = NULL) {
       "Linear"
     }
     ### Construct matrices specifying the relationship between constructs,
-    ### indicators and errors ---------------------------------------------------
-    model_structural  <- matrix(0,
-                                nrow = length(names_c_s_l),
-                                ncol = length(names_c_s),
-                                dimnames = list(names_c_s_l, names_c_s)
-    )
+    ### indicators and errors --------------------------------------------------
+    # Note: code below not required as long as only internal instruments 
+    #       are allowed 
     # model_structural  <- matrix(0,
-    #                             nrow = number_of_constructs,
-    #                             ncol = number_of_constructs_all,
-    #                             dimnames = list(names_c, names_c_all)
+    #                             nrow = length(names_c_s_l),
+    #                             ncol = length(names_c_s),
+    #                             dimnames = list(names_c_s_l, names_c_s)
     # )
+    model_structural  <- matrix(0,
+                                nrow = number_of_constructs,
+                                ncol = number_of_constructs_all,
+                                dimnames = list(names_c, names_c_all)
+    )
     
     model_measurement <- matrix(0,
                                 nrow = number_of_constructs,
@@ -306,10 +352,12 @@ parseModel <- function(.model, .instruments = NULL) {
     )
     
     ## Structural model
-    # row_index <- match(tbl_s$lhs, names_c)
-    # col_index <- match(tbl_s$rhs, names_c_all)
-    row_index <- match(tbl_s$lhs, names_c_s_l)
-    col_index <- match(tbl_s$rhs, names_c_s)
+    row_index <- match(tbl_s$lhs, names_c)
+    col_index <- match(tbl_s$rhs, names_c_all)
+    # Note: code below not required as long as only internal instruments 
+    #       are allowed 
+    # row_index <- match(tbl_s$lhs, names_c_s_l)
+    # col_index <- match(tbl_s$rhs, names_c_s)
     
     model_structural[cbind(row_index, col_index)] <- 1
     
@@ -394,8 +442,8 @@ parseModel <- function(.model, .instruments = NULL) {
     n  <- c(setdiff(names_c, rownames(model_ordered)), rownames(model_ordered))
     n1 <- intersect(n, colnames(model_ordered))
     m <- order(which(model_measurement[n, ] == 1, arr.ind = TRUE)[, "row"])
-    # structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n))]
-    structural_ordered <- model_structural[n1, c(n1, setdiff(colnames(model_ordered), n1))]
+    structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n))]
+    # structural_ordered <- model_structural[n1, c(n1, setdiff(colnames(model_ordered), n1))]
     
     model_ls <- list(
       "structural"         = structural_ordered,
@@ -424,10 +472,11 @@ parseModel <- function(.model, .instruments = NULL) {
       for(i in names(.instruments)) {
         
         names_independent <- names(which(structural_ordered[i, ] == 1))
-        # names_exogenous   <- intersect(colnames(names_independent), .instruments[[i]])
         ## Not sure how to deal with nonlinear terms. For now they are treated
         ## just like any other variable. If there is no instrument for a nonlinear
         ## term, it is treated as exogenous.
+        
+        names_exogenous   <- intersect(colnames(names_independent), .instruments[[i]])
         names_endogenous  <- setdiff(names_independent, .instruments[[i]])
         
         # First stage relations

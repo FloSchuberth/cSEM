@@ -1,33 +1,54 @@
 #' Estimate the structural coefficients
 #'
 #' Estimates the coefficients of the structural model (nonlinear and linear) using
-#' OLS. (TODO)
+#' OLS or 2SLS.
 #'
-#' More details here (TODO).
-#'
-#' @usage estimatePathOLS(
-#'   .H           = args_default()$.H,
-#'   .Q           = args_default()$.Q,
-#'   .P           = args_default()$.P,
-#'   .csem_model  = args_default()$.csem_model,
-#'   .normality   = args_default()$.normality,
-#'   .approach_nl = args_default()$.approach_nl
-#'   )
+#' @usage estimatePath(
+#'  .approach_nl    = args_default()$.approach_nl,
+#'  .approach_paths = args_default()$.approach_paths,
+#'  .csem_model     = args_default()$.csem_model,
+#'  .H              = args_default()$.H,
+#'  .instruments    = args_default()$.instruments,
+#'  .normality      = args_default()$.normality,
+#'  .P              = args_default()$.P,
+#'  .Q              = args_default()$.Q
+#'  )
 #'   
 #' @inheritParams csem_arguments
 #'
-#' @return A named list containing the estimated structural coefficients and the
-#'   r^2 for each regression.
+#' @return A named list containing the estimated structural coefficients, the
+#'   R2, the adjusted R2, and the VIF's for each regression.
 #'
 
-estimatePathOLS <- function(
-  .H           = args_default()$.H,
-  .Q           = args_default()$.Q,
-  .P           = args_default()$.P,
-  .csem_model  = args_default()$.csem_model,
-  .normality   = args_default()$.normality,
-  .approach_nl = args_default()$.approach_nl
-) {
+estimatePath <- function(
+  .approach_nl    = args_default()$.approach_nl,
+  .approach_paths = args_default()$.approach_paths,
+  .csem_model     = args_default()$.csem_model,
+  .H              = args_default()$.H,
+  .instruments    = args_default()$.instruments,
+  .normality      = args_default()$.normality,
+  .P              = args_default()$.P,
+  .Q              = args_default()$.Q
+  ) {
+  
+  ## Check approach_path argument:
+  if(!any(.approach_paths %in% c("OLS", "2SLS"))) {
+    stop2("The following error occured in the `estimatePath()` function:\n",
+          paste0("'", .approach_paths, "'"), 
+          " is an unknown approach to estimate the path model.")
+  }
+  
+  ## Warning if instruments are given but .approach_path = "OLS"
+  if(!is.null(.instruments) & .approach_paths == "OLS") {
+    warning2("Instruments supplied but path approach is 'OLS'.\n",
+             "Instruments are ignored.", 
+             " Consider setting `.approach_path = '2SLS'.")
+  }
+  
+  ## Error if no instruments are given but .approach_path = "2SLS"
+  if(is.null(.instruments) & .approach_paths == "2SLS") {
+    stop2("`.approach_path = '2SLS' requires instruments.")
+  }
   
   m         <- .csem_model$structural
   vars_endo <- rownames(m)[rowSums(m) != 0]
@@ -42,36 +63,111 @@ estimatePathOLS <- function(
   if(.csem_model$model_type == "Linear") {
 
     res <- lapply(vars_endo, function(x) {
-     indep_var <-  colnames(m[x, m[x, ] != 0, drop = FALSE])
-     
-     # Coef = (X'X)^-1X'y = V(eta_indep)^-1 Cov(eta_indep, eta_dep)
-     coef <- solve(.P[indep_var, indep_var, drop = FALSE]) %*% .P[indep_var, x, drop = FALSE]
-     
-     # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
-     r2   <- c(t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef)
-     # names(r2) <- x
-    
-     # Calculation of the adjusted R^2
-     r2adj <- c(1 - (1 - r2)*(n - 1)/(n - length(indep_var)-1))
-     # names(r2adj) <- x
-     
-     # Calculation of the VIF values (VIF_k = 1 / (1 - R^2_k)) where R_k is
-     # the R^2 from a regression of the k'th explanatory variable on all other
-     # explanatory variables of the same structural equation.
-     # VIF's require at least two explanatory variables to be meaningful
-     vif <- if(length(indep_var) > 1) {
-       diag(solve(cov2cor(.P[indep_var, indep_var, drop = FALSE])))
-     } else {
-       NA
-     }
-
-     list("coef" = coef, "r2" = r2, "r2adj" = r2adj, "vif" = vif)
-    })
+      # Which of the variables in vars_endo have instruments specified, i.e.
+      # have endogenous variables on the RHS. By default: FALSE.
+      endo_in_RHS <- FALSE
+      
+      if(!is.null(.instruments)) {
+        endo_in_RHS <- x %in% names(.instruments)
+      }
+      
+      ## Independent variables of the structural equation of construct x
+      indep_var <-  colnames(m[x, m[x, ] != 0, drop = FALSE])
+      
+      # Compute "OLS" if endo_in_RHS is FALSE, i.e no instruments are 
+      # given for this particular equation or .approach_path is "OLS"
+      if(!endo_in_RHS | .approach_paths == "OLS") {
+        
+        # Coef = (X'X)^-1X'y = V(eta_indep)^-1 Cov(eta_indep, eta_dep)
+        coef <- solve(.P[indep_var, indep_var, drop = FALSE]) %*% .P[indep_var, x, drop = FALSE]
+        
+        # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
+        r2   <- c(t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef)
+        # names(r2) <- x
+        
+        # Calculation of the adjusted R^2
+        r2adj <- c(1 - (1 - r2)*(n - 1)/(n - length(indep_var)-1))
+        # names(r2adj) <- x
+        
+        # Calculation of the VIF values (VIF_k = 1 / (1 - R^2_k)) where R_k is
+        # the R^2 from a regression of the k'th explanatory variable on all other
+        # explanatory variables of the same structural equation.
+        # VIF's require at least two explanatory variables to be meaningful
+        vif <- if(length(indep_var) > 1) {
+          diag(solve(cov2cor(.P[indep_var, indep_var, drop = FALSE])))
+        } else {
+          NA
+        } 
+      } # END OLS
+      
+      # Compute "2SLS" if endo_in_RHS is TRUE, i.e instruments are 
+      # given for this particular equation and .approach_path is "2SLS".
+      
+      ## Two stage least squares (2SLS)
+      if(endo_in_RHS & .approach_paths == "2SLS") {
+        
+        ## First stage
+        # Note: Regress the P endogenous variables (X) on the L instruments 
+        #       and the K exogenous independent variables (which must be part of Z).
+        #       Therefore: X (N x P) and Z (N x (L + K)) and
+        #       beta_1st = (Z'Z)^-1*(Z'X)
+        names_X <- rownames(.csem_model$instruments[[x]])
+        names_Z <- colnames(.csem_model$instruments[[x]])
+        
+        ## Error if the number of instruments (including the K exogenous variables)
+        ## is less than the number of independent variables in the original 
+        ## structural equation for construct "x"
+        if(length(names_Z) < length(indep_var)) {
+          stop2("The following error occured in the `estimatePath()` function:\n",
+                "The number of instruments for the structural equation of construct ",
+                paste0("'", x, "'"), " is less than the number of independent ",
+                "variables.\n", "Make sure all exogenous variables correctly ",
+                " supplied as instruments to `.instruments`.")
+        }
+        
+        # Assuming that .P (the construct correlation matrix) also contains 
+        # the instruments (ensured if only internal instruments are allowed)
+        # we can use .P.
+        
+        beta_1st <- solve(.P[names_Z, names_Z, drop = FALSE], 
+                          .P[names_Z, indep_var, drop = FALSE])
+        
+        ## Second stage
+        # Note: X_hat = beta_1st*Z --> X_hat'X_hat = beta_1st' (Z'Z) beta_1st
+        
+        coef <- solve(t(beta_1st) %*% .P[names_Z, names_Z, drop = FALSE] %*% beta_1st, 
+                      t(beta_1st) %*% .P[names_Z, x, drop = FALSE])
+        
+        
+        # Although the r^2 could be calculated in case of 2SLS,
+        # the r^2 and all corresponding statistics are not correct. 
+        # Hence, I suggest to overwrite it with NA. This might help to detect potential problems.
+        # 
+        r2    = NA
+        r2adj = NA
+        
+        # The VIF should be based on the second-stage equation 
+        vif <- if(length(names_Z) > 1) {
+          diag(solve(cov2cor(.P[names_Z, names_Z, drop = FALSE])))
+        } else {
+          NA
+        }
+      } # END 2SLS
+      
+      ## Collect results
+      list("coef" = coef, "r2" = r2, "r2adj" = r2adj, "vif" = vif)
+    }) # END lapply
     
     names(res) <- vars_endo
     res <- purrr::transpose(res)
 
   } else {
+    ## Error if approach_paths is not "OLS"
+    # Note (05/2019): Currently, only "OLS" is allowed for nonlinear models
+    if(.approach_paths != "OLS") {
+      stop2("The following error occured in the `estimatePath()` function:\n",
+           "Currently, ", .approach_paths, " is only applicable to linear models.")
+    }
     
     ### Preparation ============================================================
     # Implementation and notation is based on:
@@ -314,12 +410,3 @@ estimatePathOLS <- function(
   ## Return result -------------------------------------------------------------
   list("Path_estimates" = t(tm), "R2" = unlist(res$r2),"R2adj" = unlist(res$r2adj), "VIF" = res$vif)
 }
-
-# estimatePath2SLS <- function(
-#   .H                   = NULL,
-#   .W                   = NULL,
-#   .Q                   = NULL,
-#   .csem_model          = NULL,
-# ) {
-# 
-# }
