@@ -197,7 +197,7 @@ estimatePath <- function(
       }
       
       RHSpart=lapply(vars_endo, function(mue){
-        as.numeric(InvOfVCVresid[x,mue])* 
+        InvOfVCVresid[x,mue, drop=TRUE]* 
           .P[c(indendo,indexog),vars_exo,drop=FALSE]%*%
           solve(.P[vars_exo,vars_exo])%*%
           .P[vars_exo,c(intersect(colnames(m)[m[mue,]!=0],vars_endo),
