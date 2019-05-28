@@ -46,7 +46,7 @@ estimatePath <- function(
   }
   
   ## Error if no instruments are given but .approach_path = "2SLS"
-  if(is.null(.instruments) & .approach_paths == "2SLS" | .approach_paths == "3SLS") {
+  if(is.null(.instruments) & (.approach_paths == "2SLS" | .approach_paths == "3SLS")) {
     stop2("`.approach_path = '2SLS' '3SLS' requires instruments.")
   }
   
