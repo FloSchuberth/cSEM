@@ -285,3 +285,146 @@ plot.Two_Way_Effect = function(.TWobject){
 }
   
 
+# Bootstrap-based test for endogeneity Wong (1996)
+test_endogeneity=function(.object2SLS,
+                          .seed=1234,
+                          .alpha = args_default()$.alpha,
+                          .R = args_default()$.R){
+  
+  
+  # Estimate model with OLS
+  arguments2SLS <- .object2SLS$Information$Arguments
+  
+  # Remove instruments and set estimator path to OLS
+  arguments2SLS$.approach_paths <- 'OLS'
+  arguments2SLS$.instruments <- NULL
+  
+  # Reestimation by OLS
+  resOLS=do.call(csem,arguments2SLS)
+  # summarize(resOLS)
+  
+  # Bootstrap OLS estimates
+  bootOLS <- resamplecSEMResults(resOLS,.seed = .seed, .VCV_asymptotic = c(FALSE, TRUE))
+  
+  coefOLS <- bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
+  
+  # Bootstrap 2SLS estimates with same seed as the OLS estimate
+  boot2SLS <- resamplecSEMResults(.object2SLS,.seed = .seed)
+  
+  coef2SLS <- boot2SLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
+  
+  
+  # dependent variable 
+  m <- .object2SLS$Information$Model$structural
+  dep_vars <- rownames(m)[rowSums(m)!=0]
+  
+  test=strsplit(names(bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Original) , split = ' ~ ')
+  
+  test1 = sapply(test, function(x){
+    x[1]
+      })
+  
+  belongs <- lapply(dep_vars, function(x){
+    test1 == x
+  })
+  names(belongs) <- dep_vars
+  
+  # calculation of the test statistic
+  test_stat <- sapply(dep_vars, function(x){
+  
+    # calculate the VCV of the OLS estimates
+    VCVOLS <-   cov(bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+  
+    # calculate the VCV of the 2SLS estimates
+    VCV2SLS <- cov(boot2SLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+  
+    # calculate the test statistic
+    para_diff <- as.matrix(coef2SLS[belongs[[x]]]-coefOLS[belongs[[x]]])
+    
+    # There are two ways to calculate the VCV of the difference:
+    # Either using the asymptotic VCV, i.e., VCV(beta_OLS) - VCV(beta_2SLS) or
+    # as VCV(beta_2SLS - beta_OLS)
+    # Problem with the asymptotic VCV is that you can get negative variances
+    if(.VCV_asymptotic == TRUE){
+      VCV_diff <- VCV2SLS - VCVOLS
+    }
+    
+    
+    if(.VCV_asymptotic == FALSE){
+      VCV_diff <- cov(boot2SLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE]-
+                      bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+    }
+    
+    # Calculation of the test statistic
+    t(para_diff)%*%VCV_diff%*%para_diff
+    
+  })
+  
+  
+  ## Calculate the reference distribution of the test statistic
+  
+  # Extract the construct scores
+  scores <- .object2SLS$Estimates$Construct_scores
+  
+  uandyhat <- lapply(dep_vars, function(x){
+    # Calculate the predicted values of the dependent variable
+    pred <- scores%*%t(m[x,,drop = FALSE])
+    # Calculate the residuals
+    u <- scores[,x,drop=FALSE] - pred
+    list(u=u,pred=pred)
+  })
+  
+  names(uandyhat) <- dep_vars
+  
+  ref_dist <- list()
+  mapply(function(dep_var,uandyhat){
+  
+    for(bb in 1:.R) {
+      # draw with replacement from u
+      ustar=sample(uandyhat[[dep_var]][['u']],size = nrow(uandyhat[[dep_var]][['u']]),replace = T)
+      
+      # calculate new scores of dependent variable
+      depstar=uandyhat[[dep_var]][['pred']]+ustar
+      
+      # in the next step these scores are used to obtain the OLS and 2SLS estimates
+      # in case of PLSc this is tricky as we need the reliabilities
+      
+      
+      
+      
+      #create new sample
+      compstar=data.frame(comp,ETA1star=ETA1star)
+      # scale data set
+      compstar=as.data.frame(scale(compstar))
+      
+      # calculate differencebetween 2SLS and OLS
+      TSLSstar=AER::ivreg(formula = ETA1star~-1+XI1+XI2+ETA2|XI1+XI2+XI3+XI4, data=compstar)
+      OLSstar=lm(ETA1star~-1+XI1+XI2+ETA2, data=compstar)
+      diffstar=TSLSstar$coefficients[c('XI1','XI2','ETA2')]-OLSstar$coefficients[c('XI1','XI2','ETA2')]
+      
+      # bootstrap sample to obtain the variance of the diffstar
+      starboot=sapply(1:199, function(x){
+        temp=dplyr::sample_n(compstar,size=dim(compstar)[1],replace=T)
+        daten=as.data.frame(scale(temp))
+        # calculate the difference
+        TSLSboot=AER::ivreg(formula = ETA1star~-1+XI1+XI2+ETA2|XI1+XI2+XI3+XI4, data=daten)
+        OLSboot=lm(ETA1star~-1+XI1+XI2+ETA2, data=daten) 
+        TSLSboot$coefficients[c('XI1','XI2','ETA2')]-OLSboot$coefficients[c('XI1','XI2','ETA2')]
+      })
+      
+      # calculate the VCV 
+      vcvstar=cov(t(starboot))
+      
+      # calculate the test statistic
+      ref_dist[[bb]]=dim(compstar)[1]*diffstar%*%vcvstar%*%diffstar
+    }#end for loop
+    
+    
+  },MoreArgs = list(dep_var = dep_vars,uandyhat = uandyhat)) #end mapply
+  
+  
+  # make decision
+  
+  
+}
+
