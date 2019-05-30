@@ -291,6 +291,8 @@ test_endogeneity=function(.object2SLS,
                           .alpha = args_default()$.alpha,
                           .R = args_default()$.R){
   
+  # order the significance levels
+  .alpha <- .alpha[order(.alpha)]
   
   # Estimate model with OLS
   arguments2SLS <- .object2SLS$Information$Arguments
@@ -328,6 +330,10 @@ test_endogeneity=function(.object2SLS,
     test1 == x
   })
   names(belongs) <- dep_vars
+  
+  indep_var =  lapply(belongs, function(x){
+         sapply(test,function(x){x[2]})[x]
+     })
   
   # calculation of the test statistic
   test_stat <- sapply(dep_vars, function(x){
@@ -376,27 +382,30 @@ test_endogeneity=function(.object2SLS,
   
   names(uandyhat) <- dep_vars
   
-  ref_dist <- list()
+  # ref_dist <- list()
   
-  uandyhattrans = purrr::transpose(uandyhat)
-  
-  u <- do.call(cbind,uandyhattrans$u)
-  yhat <- do.call(cbind,uandyhattrans$pred)
-  
+  # uandyhattrans = purrr::transpose(uandyhat)
+  # 
+  # u <- do.call(cbind,uandyhattrans$u)
+  # yhat <- do.call(cbind,uandyhattrans$pred)
+  # 
   # Needs to be done equation per equation as it is not valid to replace all 
   # the scores of the dependent variables by their predicted values at once  
-  mapply(function(dep_var,uandyhat){
-
+  ref_dist <- mapply(function(dep_var,uandyhat){
+    
     # collect the instruments for that equation
-    instr <- resOLS$Information$Model$instruments[x]
+    instr <- resOLS$Information$Model$instruments[dep_var]
     
     # Adjust the structrual model as only the equation of the considered dependent variable should be estimated
     str_model=resOLS$Information$Model$structural[dep_var,,drop = FALSE]
-    modeltemp=list(structural = str_model,
+    modelstar=list(structural = str_model,
                    model_type = resOLS$Information$Model$model_type,
                    instruments = instr)
   
     indep_vars = colnames(str_model)[str_model!=0]
+    
+    # list to store the reference distribution 
+    refdist <- list()
     
     for(bb in 1:.R) {
       # draw with replacement from u
@@ -408,11 +417,11 @@ test_endogeneity=function(.object2SLS,
       depstar=uandyhat[[dep_var]][['pred']]+ustar
       
       # create new matrix where the scores of the dependent variable are replaced by the new predicted scores
-      scores_new = scores
-      scores_new[,dep_var] <-depstar
-      colnames(scores_new)
+      scores_star = scores
+      scores_star[,dep_var] <-depstar
+      colnames(scores_star)
       
-      Ptemp <- cSEM:::calculateConstructVCV(.C = cor(scores_new), #cor ensures that the predicted scores are standardized
+      Pstar <- cSEM:::calculateConstructVCV(.C = cor(scores_star), #cor ensures that the predicted scores are standardized
                                             .Q = resOLS$Estimates$Reliabilities,
                                             .csem_model = resOLS$Information$Model)
       
@@ -421,49 +430,80 @@ test_endogeneity=function(.object2SLS,
       # As an outcome, we obtain the OLS and the 2SLS estimate of the considered equation
       
       OLSstar <- cSEM:::estimatePath(.approach_nl = resOLS$Information$Arguments$.approach_nl,
-                                     .csem_model = modeltemp,
+                                     .csem_model = modelstar,
                                      .approach_paths = 'OLS',
-                                     .H = scores_new,
+                                     .H = scores_star,
                                      .normality = resOLS$Information$Arguments$.normality,
-                                     .P = Ptemp,
+                                     .P = Pstar,
                                      .Q = resOLS$Estimates$Reliabilities)
       
       TSLSstar <- cSEM:::estimatePath(.approach_nl = resOLS$Information$Arguments$.approach_nl,
-                                     .csem_model = modeltemp,
+                                     .csem_model = modelstar,
                                      .approach_paths = '2SLS',
-                                     .H = scores_new,
+                                     .H = scores_star,
                                      .normality = resOLS$Information$Arguments$.normality,
-                                     .P = Ptemp,
+                                     .P = Pstar,
                                      .Q = resOLS$Estimates$Reliabilities,
                                      .instruments = instr)
       
     
       
       # calculate the difference
-      diffstar <- OLSstar$Path_estimates[,indep_vars] - TSLSstar$Path_estimates[,indep_vars]
+      diffstar <- OLSstar$Path_estimates[,indep_var[[dep_var]],drop = FALSE] -
+        TSLSstar$Path_estimates[,indep_var[[dep_var]],drop = FALSE]
+     
       
+      
+       
       # bootstrap sample to obtain the variance of the diffstar
-      starboot=sapply(1:199, function(x){
-        temp=dplyr::sample_n(compstar,size=dim(compstar)[1],replace=T)
-        daten=as.data.frame(scale(temp))
+      starboot=lapply(1:199, function(x){
+        scores_temp=dplyr::sample_n(as.data.frame(scores_star),size=nrow(scores_star),replace=T)
+        # daten=as.data.frame(scale(temp))
+        
+        Pstar <- cSEM:::calculateConstructVCV(.C = cor(scores_temp), #cor ensures that the predicted scores are standardized
+                                              .Q = resOLS$Estimates$Reliabilities,
+                                              .csem_model = resOLS$Information$Model)
+        
         # calculate the difference
-        TSLSboot=AER::ivreg(formula = ETA1star~-1+XI1+XI2+ETA2|XI1+XI2+XI3+XI4, data=daten)
-        OLSboot=lm(ETA1star~-1+XI1+XI2+ETA2, data=daten) 
-        TSLSboot$coefficients[c('XI1','XI2','ETA2')]-OLSboot$coefficients[c('XI1','XI2','ETA2')]
-      })
+        OLStemp <- cSEM:::estimatePath(.approach_nl = resOLS$Information$Arguments$.approach_nl,
+                                       .csem_model = modelstar,
+                                       .approach_paths = 'OLS',
+                                       .H = scores_temp,
+                                       .normality = resOLS$Information$Arguments$.normality,
+                                       .P = Pstar,
+                                       .Q = resOLS$Estimates$Reliabilities)
+        
+        TSLStemp <- cSEM:::estimatePath(.approach_nl = resOLS$Information$Arguments$.approach_nl,
+                                        .csem_model = modelstar,
+                                        .approach_paths = '2SLS',
+                                        .H = scores_temp,
+                                        .normality = resOLS$Information$Arguments$.normality,
+                                        .P = Pstar,
+                                        .Q = resOLS$Estimates$Reliabilities,
+                                        .instruments = instr)
+      
+        
+        difftemp <- OLStemp$Path_estimates[,indep_var[[dep_var]]] - TSLStemp$Path_estimates[,indep_var[[dep_var]]]
+        
+        difftemp
+        })
+      
+      
+      starboot <- do.call(rbind,starboot)
       
       # calculate the VCV 
-      vcvstar=cov(t(starboot))
+      vcvstar=cov(starboot)
       
       # calculate the test statistic
-      ref_dist[[bb]]=dim(compstar)[1]*diffstar%*%vcvstar%*%diffstar
+      refdist[[bb]]=nrow(scores_temp)*diffstar%*%solve(vcvstar)%*%t(diffstar)
     }#end for loop
     
+    return(do.call(c,refdist))
     
   },MoreArgs = list(dep_var = dep_vars,uandyhat = uandyhat)) #end mapply
   
   
-  # make decision
+  ref_dist
   
   
 }
