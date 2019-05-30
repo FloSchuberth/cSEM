@@ -377,30 +377,70 @@ test_endogeneity=function(.object2SLS,
   names(uandyhat) <- dep_vars
   
   ref_dist <- list()
-  mapply(function(dep_var,uandyhat){
   
+  uandyhattrans = purrr::transpose(uandyhat)
+  
+  u <- do.call(cbind,uandyhattrans$u)
+  yhat <- do.call(cbind,uandyhattrans$pred)
+  
+  # Needs to be done equation per equation as it is not valid to replace all 
+  # the scores of the dependent variables by their predicted values at once  
+  mapply(function(dep_var,uandyhat){
+
+    # collect the instruments for that equation
+    instr <- resOLS$Information$Model$instruments[x]
+    
+    # Adjust the structrual model as only the equation of the considered dependent variable should be estimated
+    str_model=resOLS$Information$Model$structural[dep_var,,drop = FALSE]
+    modeltemp=list(structural = str_model,
+                   model_type = resOLS$Information$Model$model_type,
+                   instruments = instr)
+  
+    indep_vars = colnames(str_model)[str_model!=0]
+    
     for(bb in 1:.R) {
       # draw with replacement from u
       ustar=sample(uandyhat[[dep_var]][['u']],size = nrow(uandyhat[[dep_var]][['u']]),replace = T)
       
+      # ustar <- u[sample(1:nrow(u),size=nrow(u),replace=T),]
+      
       # calculate new scores of dependent variable
       depstar=uandyhat[[dep_var]][['pred']]+ustar
       
-      # in the next step these scores are used to obtain the OLS and 2SLS estimates
+      # create new matrix where the scores of the dependent variable are replaced by the new predicted scores
+      scores_new = scores
+      scores_new[,dep_var] <-depstar
+      colnames(scores_new)
+      
+      Ptemp <- cSEM:::calculateConstructVCV(.C = cor(scores_new), #cor ensures that the predicted scores are standardized
+                                            .Q = resOLS$Estimates$Reliabilities,
+                                            .csem_model = resOLS$Information$Model)
+      
+      # In the next step these scores are used to obtain the OLS and 2SLS estimates
       # in case of PLSc this is tricky as we need the reliabilities
+      # As an outcome, we obtain the OLS and the 2SLS estimate of the considered equation
       
+      OLSstar <- cSEM:::estimatePath(.approach_nl = resOLS$Information$Arguments$.approach_nl,
+                                     .csem_model = modeltemp,
+                                     .approach_paths = 'OLS',
+                                     .H = scores_new,
+                                     .normality = resOLS$Information$Arguments$.normality,
+                                     .P = Ptemp,
+                                     .Q = resOLS$Estimates$Reliabilities)
       
+      TSLSstar <- cSEM:::estimatePath(.approach_nl = resOLS$Information$Arguments$.approach_nl,
+                                     .csem_model = modeltemp,
+                                     .approach_paths = '2SLS',
+                                     .H = scores_new,
+                                     .normality = resOLS$Information$Arguments$.normality,
+                                     .P = Ptemp,
+                                     .Q = resOLS$Estimates$Reliabilities,
+                                     .instruments = instr)
       
+    
       
-      #create new sample
-      compstar=data.frame(comp,ETA1star=ETA1star)
-      # scale data set
-      compstar=as.data.frame(scale(compstar))
-      
-      # calculate differencebetween 2SLS and OLS
-      TSLSstar=AER::ivreg(formula = ETA1star~-1+XI1+XI2+ETA2|XI1+XI2+XI3+XI4, data=compstar)
-      OLSstar=lm(ETA1star~-1+XI1+XI2+ETA2, data=compstar)
-      diffstar=TSLSstar$coefficients[c('XI1','XI2','ETA2')]-OLSstar$coefficients[c('XI1','XI2','ETA2')]
+      # calculate the difference
+      diffstar <- OLSstar$Path_estimates[,indep_vars] - TSLSstar$Path_estimates[,indep_vars]
       
       # bootstrap sample to obtain the variance of the diffstar
       starboot=sapply(1:199, function(x){
