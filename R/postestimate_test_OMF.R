@@ -198,14 +198,14 @@ testOMF.cSEMResults_default <- function(
   
   # Combine
   ref_dist_matrix <- do.call(cbind, ref_dist1) 
-  ## Compute critical values (Result is a (2 x p) matrix, where n is the number
+  ## Compute critical values (Result is a (3 x p) matrix, where p is the number
   ## of quantiles that have been computed (1 by default)
   .alpha <- .alpha[order(.alpha)]
   critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
                                                probs =  1-.alpha, drop = FALSE)
   
   ## Compare critical value and teststatistic
-  decision <- teststat < critical_values # a logical (2 x p) matrix with each column
+  decision <- teststat < critical_values # a logical (3 x p) matrix with each column
                                          # representing the decision for one
                                          # significance level. TRUE = no evidence 
                                          # against the H0 --> not reject
