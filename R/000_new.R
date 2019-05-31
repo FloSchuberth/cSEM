@@ -290,11 +290,15 @@ plot.Two_Way_Effect = function(.TWobject){
 #' Calculates a bootstrap-based Hausman test that can be used to compare OLS to 2SLS estimates (Wong, 1996)
 #' or 2SLS to 3SLS estimates. 
 #' 
+#' 
+#' 
 #'
 #' @usage testHausman=function(.object2SLS,
 #'                             .seed=1234,
 #'                             .alpha = args_default()$.alpha,
-#'                             .R = args_default()$.R)
+#'                             .R = args_default()$.R,
+#'                             .R2 = args_default()$.R2,
+#'                             .vcv_asymptotic = c(FALSE, TRUE))
 #'
 #' @inheritParams csem_arguments
 #'
@@ -305,9 +309,11 @@ plot.Two_Way_Effect = function(.TWobject){
 #'
 #' @export
 testHausman=function(.object2SLS,
-                          .seed=1234,
-                          .alpha = args_default()$.alpha,
-                          .R = args_default()$.R){
+                     .seed=1234,
+                     .alpha = args_default()$.alpha,
+                     .R = args_default()$.R,
+                     .R2 = args_default()$.R2,
+                     .vcv_asymptotic = args_default()$.vcv_asymptotic){
 
   # Estimate model with OLS
   arguments2SLS <- .object2SLS$Information$Arguments
@@ -321,12 +327,14 @@ testHausman=function(.object2SLS,
   # summarize(resOLS)
   
   # Bootstrap OLS estimates
-  bootOLS <- resamplecSEMResults(resOLS,.seed = .seed, .VCV_asymptotic = c(FALSE, TRUE))
+  # I deliaberatly ignore inadmissible solution to ensure that both habe the same number of bootstrap.
+  # For the future that should be allowed
+  bootOLS <- resamplecSEMResults(resOLS,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
   
   coefOLS <- bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
   # Bootstrap 2SLS estimates with same seed as the OLS estimate
-  boot2SLS <- resamplecSEMResults(.object2SLS,.seed = .seed)
+  boot2SLS <- resamplecSEMResults(.object2SLS,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
   
   coef2SLS <- boot2SLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
@@ -369,18 +377,19 @@ testHausman=function(.object2SLS,
     # Either using the asymptotic VCV, i.e., VCV(beta_OLS) - VCV(beta_2SLS) or
     # as VCV(beta_2SLS - beta_OLS)
     # Problem with the asymptotic VCV is that you can get negative variances
-    if(.VCV_asymptotic == TRUE){
+    if(.vcv_asymptotic == TRUE){
       VCV_diff <- VCV_2SLS - VCV_OLS
     }
     
     
-    if(.VCV_asymptotic == FALSE){
+    # If we remove inadmissible results from the bootstrap, we muss ensure that the two matrices have the same dimension
+    if(.vcv_asymptotic == FALSE){
       VCV_diff <- cov(boot2SLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE]-
                       bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
     }
     
     # Calculation of the test statistic
-    t(para_diff)%*%VCV_diff%*%para_diff
+    nrow(.object2SLS$Information$Data)*t(para_diff)%*%VCV_diff%*%para_diff
     
   })
   
@@ -474,7 +483,7 @@ testHausman=function(.object2SLS,
       
        
       # bootstrap sample to obtain the variance of the diffstar
-      starboot=lapply(1:199, function(x){
+      starboot=lapply(1:.R2, function(x){
         scores_temp=dplyr::sample_n(as.data.frame(scores_star),size=nrow(scores_star),replace=T)
         # daten=as.data.frame(scale(temp))
         
@@ -503,14 +512,28 @@ testHausman=function(.object2SLS,
         
         difftemp <- OLStemp$Path_estimates[,indep_var[[dep_var]]] - TSLStemp$Path_estimates[,indep_var[[dep_var]]]
         
-        difftemp
+        out <- list(diff = difftemp, OLS = OLStemp$Path_estimates[,indep_var[[dep_var]]],
+                    TSLS = TSLStemp$Path_estimates[,indep_var[[dep_var]]])
+        
+        return(out)
         })
       
       
-      starboot <- do.call(rbind,starboot)
+      starboot <- purrr::transpose(starboot)
       
       # calculate the VCV 
-      vcvstar=cov(starboot)
+      
+      if(.vcv_asymptotic == FALSE){
+        diffboot <- do.call(rbind,starboot$diff)
+        vcvstar = cov(diffboot)
+      }
+      
+      if(.vcv_asymptotic == TRUE){
+        VCV_OLS_star <- cov(do.call(rbind,starboot$OLS))
+        VCV_2SLS_star <- cov(do.call(rbind,starboot$TSLS))
+
+        vcvstar = VCV_2SLS_star - VCV_OLS_star 
+      }
       
       # calculate the test statistic
       refdist[[bb]]=nrow(scores_star)*diffstar%*%solve(vcvstar)%*%t(diffstar)
@@ -518,12 +541,12 @@ testHausman=function(.object2SLS,
     
     do.call(c,refdist)
     
-  }) #end mapply
+  }) #end lapply
   
   
   names(ref_dist) <- dep_vars
   
-  ref_dist_matrix <- do.call(cbind, ref_dist) 
+  ref_dist_matrix <- do.call(rbind, ref_dist) 
   
   # Order the significance levels
   .alpha <- .alpha[order(.alpha)]
@@ -539,19 +562,19 @@ testHausman=function(.object2SLS,
   # FALSE --> reject
   
   # Return output
-  # out <- list(
-  #   "Test_statistic"     = teststat,
-  #   "Critical_value"     = critical_values, 
-  #   "Decision"           = decision, 
-  #   "Information"        = list(
-  #     "Number_admissibles" = ncol(ref_dist_matrix),
-  #     "Total_runs"         = counter + n_inadmissibles,
-  #     "Bootstrap_values"   = ref_dist
-  #   )
-  # )
+  out <- list(
+    "Test_statistic"     = teststat,
+    "Critical_value"     = critical_values,
+    "Decision"           = decision,
+    "Information"        = list(
+      "Number_admissibles" = ncol(ref_dist_matrix),
+      # "Total_runs"         = counter + n_inadmissibles,
+      "Bootstrap_values"   = ref_dist
+    )
+  )
   
-  # class(out) <- "cSEMTestHausman"
-  # return(out)
+  class(out) <- "cSEMTestHausman"
+  return(out)
   
   
 }

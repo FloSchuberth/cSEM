@@ -205,6 +205,8 @@
 #'   Output should preferably be a (named)
 #'   vector but matrices are also accepted. However, the output will be 
 #'   vectorized (columnwise) in this case. See the examples section for details.
+#' @param .vcv_asymptotic Logical. Should the asymptotic variance-covariance matrix be used. 
+#'  Defaults to `FALSE`.
 #' @param .vector1 A vector of numeric values.
 #' @param .vector2 A vector of numeric values.
 #' @param .W A (J x K) matrix of weights.
@@ -385,6 +387,7 @@ args_default <- function(.choices = FALSE) {
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,
+    .vcv_asymptotic          = c(FALSE, TRUE),
     .verbose                 = TRUE,
     .W                       = NULL,
     .weighted                = FALSE,
