@@ -285,21 +285,36 @@ plot.Two_Way_Effect = function(.TWobject){
 }
   
 
-# Bootstrap-based test for endogeneity Wong (1996)
-test_endogeneity=function(.object2SLS,
+#' Bootstrap-based Hausman test
+#'
+#' Calculates a bootstrap-based Hausman test that can be used to compare OLS to 2SLS estimates (Wong, 1996)
+#' or 2SLS to 3SLS estimates. 
+#' 
+#'
+#' @usage testHausman=function(.object2SLS,
+#'                             .seed=1234,
+#'                             .alpha = args_default()$.alpha,
+#'                             .R = args_default()$.R)
+#'
+#' @inheritParams csem_arguments
+#'
+#' @references
+#'   \insertAllCited{}
+#'   
+#' @seealso [csem()], [foreman()], [cSEMResults]
+#'
+#' @export
+testHausman=function(.object2SLS,
                           .seed=1234,
                           .alpha = args_default()$.alpha,
                           .R = args_default()$.R){
-  
-  # order the significance levels
-  .alpha <- .alpha[order(.alpha)]
-  
+
   # Estimate model with OLS
   arguments2SLS <- .object2SLS$Information$Arguments
   
   # Remove instruments and set estimator path to OLS
   arguments2SLS$.approach_paths <- 'OLS'
-  arguments2SLS$.instruments <- NULL
+  arguments2SLS$.instruments <- NULL #Why do I have to overwrite the instruments? Shouldn't it be enough to set the estimator to OLS
   
   # Reestimation by OLS
   resOLS=do.call(csem,arguments2SLS)
@@ -316,9 +331,12 @@ test_endogeneity=function(.object2SLS,
   coef2SLS <- boot2SLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
   
-  # dependent variable 
+  # dependent variable in which equation instruments have been used
+  # One could also think about investigating all euqations however, 
+  # this currently leads to problems in bootstrap because of no variation 
   m <- .object2SLS$Information$Model$structural
-  dep_vars <- rownames(m)[rowSums(m)!=0]
+  dep_vars <- names(.object2SLS$Information$Model$instruments)
+  # dep_vars <- rownames(m)[rowSums(m)!=0]
   
   test=strsplit(names(bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Original) , split = ' ~ ')
   
@@ -336,13 +354,13 @@ test_endogeneity=function(.object2SLS,
      })
   
   # calculation of the test statistic
-  test_stat <- sapply(dep_vars, function(x){
+  teststat <- sapply(dep_vars, function(x){
   
     # calculate the VCV of the OLS estimates
-    VCVOLS <-   cov(bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+    VCV_OLS <-   cov(bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
   
     # calculate the VCV of the 2SLS estimates
-    VCV2SLS <- cov(boot2SLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+    VCV_2SLS <- cov(boot2SLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
   
     # calculate the test statistic
     para_diff <- as.matrix(coef2SLS[belongs[[x]]]-coefOLS[belongs[[x]]])
@@ -352,7 +370,7 @@ test_endogeneity=function(.object2SLS,
     # as VCV(beta_2SLS - beta_OLS)
     # Problem with the asymptotic VCV is that you can get negative variances
     if(.VCV_asymptotic == TRUE){
-      VCV_diff <- VCV2SLS - VCVOLS
+      VCV_diff <- VCV_2SLS - VCV_OLS
     }
     
     
@@ -391,7 +409,7 @@ test_endogeneity=function(.object2SLS,
   # 
   # Needs to be done equation per equation as it is not valid to replace all 
   # the scores of the dependent variables by their predicted values at once  
-  ref_dist <- mapply(function(dep_var,uandyhat){
+  ref_dist <- lapply(dep_vars, function(dep_var){
     
     # collect the instruments for that equation
     instr <- resOLS$Information$Model$instruments[dep_var]
@@ -402,7 +420,7 @@ test_endogeneity=function(.object2SLS,
                    model_type = resOLS$Information$Model$model_type,
                    instruments = instr)
   
-    indep_vars = colnames(str_model)[str_model!=0]
+    # indep_vars = colnames(str_model)[str_model!=0]
     
     # list to store the reference distribution 
     refdist <- list()
@@ -495,15 +513,45 @@ test_endogeneity=function(.object2SLS,
       vcvstar=cov(starboot)
       
       # calculate the test statistic
-      refdist[[bb]]=nrow(scores_temp)*diffstar%*%solve(vcvstar)%*%t(diffstar)
+      refdist[[bb]]=nrow(scores_star)*diffstar%*%solve(vcvstar)%*%t(diffstar)
     }#end for loop
     
-    return(do.call(c,refdist))
+    do.call(c,refdist)
     
-  },MoreArgs = list(dep_var = dep_vars,uandyhat = uandyhat)) #end mapply
+  }) #end mapply
   
   
-  ref_dist
+  names(ref_dist) <- dep_vars
+  
+  ref_dist_matrix <- do.call(cbind, ref_dist) 
+  
+  # Order the significance levels
+  .alpha <- .alpha[order(.alpha)]
+  
+  critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
+                                               probs =  1-.alpha, drop = FALSE)
+  
+  ## Compare critical value and teststatistic
+  decision <- teststat < critical_values # a logical (3 x p) matrix with each column
+  # representing the decision for one
+  # significance level. TRUE = no evidence 
+  # against the H0 --> not reject
+  # FALSE --> reject
+  
+  # Return output
+  # out <- list(
+  #   "Test_statistic"     = teststat,
+  #   "Critical_value"     = critical_values, 
+  #   "Decision"           = decision, 
+  #   "Information"        = list(
+  #     "Number_admissibles" = ncol(ref_dist_matrix),
+  #     "Total_runs"         = counter + n_inadmissibles,
+  #     "Bootstrap_values"   = ref_dist
+  #   )
+  # )
+  
+  # class(out) <- "cSEMTestHausman"
+  # return(out)
   
   
 }
