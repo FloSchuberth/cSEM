@@ -324,36 +324,36 @@ testHausman=function(.object,
   # If structural model was estimated by 2SLS, the estimates should be compared to OLS
   if(.object$Information$Arguments$.approach_paths == "2SLS"){
   # Estimate model with OLS
-  arguments_org <- .object$Information$Arguments
+  arguments_efficient <- .object$Information$Arguments
   
   # Remove instruments and set estimator path to OLS
-  arguments_org$.approach_paths <- 'OLS'
-  arguments_org$.instruments <- NULL #Why do I have to overwrite the instruments? Shouldn't it be enough to set the estimator to OLS
+  arguments_efficient$.approach_paths <- 'OLS'
+  arguments_efficient$.instruments <- NULL #Why do I have to overwrite the instruments? Shouldn't it be enough to set the estimator to OLS
   }
   
   # If structural model was estimated by 3SLS, the estimates should be compared to 2SLS
   if(.object$Information$Arguments$.approach_paths == "3SLS"){
     # Estimate model with 2SLS
-    arguments_org <- .object$Information$Arguments
+    arguments_efficient <- .object$Information$Arguments
     
     # Set estimator path to 2SLS
-    arguments_org$.approach_paths <- '2SLS'
+    arguments_efficient$.approach_paths <- '2SLS'
     }
   
   # Reestimation by OLS or 2SLS
-  res_other=do.call(csem,arguments_org)
+  res_efficient=do.call(csem,arguments_efficient)
   
   # Bootstrap OLS/2SLS estimates
   # I deliaberatly ignore inadmissible solution to ensure that both habe the same number of bootstrap.
   # For the future that should be allowed
-  boot_other <- resamplecSEMResults(res_other,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
+  boot_efficient <- resamplecSEMResults(res_efficient,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
   
-  coef_other <- boot_other$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
+  coef_efficient <- boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
   # Bootstrap 2SLS estimates with same seed as the OLS estimate
-  boot_org <- resamplecSEMResults(.object,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
+  boot_consistent <- resamplecSEMResults(.object,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
   
-  coef_org <- boot_org$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
+  coef_consistent <- boot_consistent$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
   
   # dependent variables of the equations in which instruments have been used
@@ -365,7 +365,7 @@ testHausman=function(.object,
   ## Consider all equations
   # dep_vars <- rownames(m)[rowSums(m)!=0]
   
-  test=strsplit(names(boot_other$Estimates$Estimates_resample$Estimates1$Path_estimates$Original) , split = ' ~ ')
+  test=strsplit(names(boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Original) , split = ' ~ ')
   
   test1 = sapply(test, function(x){
     x[1]
@@ -384,27 +384,27 @@ testHausman=function(.object,
   teststat <- sapply(dep_vars, function(x){
   
     # calculate the VCV of the OLS estimates
-    VCV_OLS <-   cov(boot_other$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+    VCV_efficient <-   cov(boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
   
     # calculate the VCV of the 2SLS estimates
-    VCV_2SLS <- cov(boot_org$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+    VCV_consistent <- cov(boot_consistent$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
   
     # calculate the test statistic
-    para_diff <- as.matrix(coef_org[belongs[[x]]]-coef_other[belongs[[x]]])
+    para_diff <- as.matrix(coef_consistent[belongs[[x]]]-coef_efficient[belongs[[x]]])
     
     # There are two ways to calculate the VCV of the difference:
     # Either using the asymptotic VCV, i.e., VCV(beta_OLS) - VCV(beta_2SLS) or
     # as VCV(beta_2SLS - beta_OLS)
     # Problem with the asymptotic VCV is that you can get negative variances
     if(.vcv_asymptotic == TRUE){
-      VCV_diff <- VCV_2SLS - VCV_OLS
+      VCV_diff <- VCV_consistent - VCV_efficient
     }
     
     
     # If we remove inadmissible results from the bootstrap, we muss ensure that the two matrices have the same dimension
     if(.vcv_asymptotic == FALSE){
-      VCV_diff <- cov(boot_org$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE]-
-                      boot_other$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+      VCV_diff <- cov(boot_consistent$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE]-
+                      boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
     }
     
     # Calculation of the test statistic
@@ -440,12 +440,12 @@ testHausman=function(.object,
   ref_dist <- lapply(dep_vars, function(dep_var){
     
     # collect the instruments for that equation
-    instr <- res_other$Information$Model$instruments[dep_var]
+    instr <- res_efficient$Information$Model$instruments[dep_var]
     
     # Adjust the structrual model as only the equation of the considered dependent variable should be estimated
-    str_model=res_other$Information$Model$structural[dep_var,,drop = FALSE]
-    modelstar=list(structural = str_model,
-                   model_type = res_other$Information$Model$model_type,
+    str_model=res_efficient$Information$Model$structural[dep_var,,drop = FALSE]
+    model_star=list(structural = str_model,
+                   model_type = res_efficient$Information$Model$model_type,
                    instruments = instr)
   
     # indep_vars = colnames(str_model)[str_model!=0]
@@ -455,107 +455,150 @@ testHausman=function(.object,
     
     for(bb in 1:.R) {
       # draw with replacement from u
-      ustar=sample(uandyhat[[dep_var]][['u']],size = nrow(uandyhat[[dep_var]][['u']]),replace = T)
+      u_star=sample(uandyhat[[dep_var]][['u']],size = nrow(uandyhat[[dep_var]][['u']]),replace = T)
       
-      # ustar <- u[sample(1:nrow(u),size=nrow(u),replace=T),]
+      # u_star <- u[sample(1:nrow(u),size=nrow(u),replace=T),]
       
       # calculate new scores of dependent variable
-      depstar=uandyhat[[dep_var]][['pred']]+ustar
+      dep_star=uandyhat[[dep_var]][['pred']]+u_star
       
       # create new matrix where the scores of the dependent variable are replaced by the new predicted scores
       scores_star = scores
-      scores_star[,dep_var] <-depstar
+      scores_star[,dep_var] <-dep_star
       colnames(scores_star)
       
-      Pstar <- cSEM:::calculateConstructVCV(.C = cor(scores_star), #cor ensures that the predicted scores are standardized
-                                            .Q = res_other$Estimates$Reliabilities,
-                                            .csem_model = res_other$Information$Model)
+      P_star <- cSEM:::calculateConstructVCV(.C = cor(scores_star), #cor ensures that the predicted scores are standardized
+                                            .Q = res_efficient$Estimates$Reliabilities,
+                                            .csem_model = res_efficient$Information$Model)
       
       # In the next step these scores are used to obtain the OLS and 2SLS estimates
       # in case of PLSc this is tricky as we need the reliabilities
       # As an outcome, we obtain the OLS and the 2SLS estimate of the considered equation
-      
-      OLSstar <- cSEM:::estimatePath(.approach_nl = res_other$Information$Arguments$.approach_nl,
-                                     .csem_model = modelstar,
+      if(.object$Information$Arguments$.approach_paths == "2SLS"){
+      efficient_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+                                     .csem_model = model_star,
                                      .approach_paths = 'OLS',
                                      .H = scores_star,
-                                     .normality = res_other$Information$Arguments$.normality,
-                                     .P = Pstar,
-                                     .Q = res_other$Estimates$Reliabilities)
+                                     .normality = res_efficient$Information$Arguments$.normality,
+                                     .P = P_star,
+                                     .Q = res_efficient$Estimates$Reliabilities)
       
-      TSLSstar <- cSEM:::estimatePath(.approach_nl = res_other$Information$Arguments$.approach_nl,
-                                     .csem_model = modelstar,
+      consistent_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+                                     .csem_model = model_star,
                                      .approach_paths = '2SLS',
                                      .H = scores_star,
-                                     .normality = res_other$Information$Arguments$.normality,
-                                     .P = Pstar,
-                                     .Q = res_other$Estimates$Reliabilities,
+                                     .normality = res_efficient$Information$Arguments$.normality,
+                                     .P = P_star,
+                                     .Q = res_efficient$Estimates$Reliabilities,
                                      .instruments = instr)
+      }
+      
+      
+      if(.object$Information$Arguments$.approach_paths == "3SLS"){
+        efficient_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+                                              .csem_model = model_star,
+                                              .approach_paths = '2LS',
+                                              .H = scores_star,
+                                              .normality = res_efficient$Information$Arguments$.normality,
+                                              .P = P_star,
+                                              .Q = res_efficient$Estimates$Reliabilities)
+        
+        consistent_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+                                               .csem_model = model_star,
+                                               .approach_paths = '3SLS',
+                                               .H = scores_star,
+                                               .normality = res_efficient$Information$Arguments$.normality,
+                                               .P = P_star,
+                                               .Q = res_efficient$Estimates$Reliabilities,
+                                               .instruments = instr)
+        }
       
     
       
       # calculate the difference
-      diffstar <- OLSstar$Path_estimates[,indep_var[[dep_var]],drop = FALSE] -
-        TSLSstar$Path_estimates[,indep_var[[dep_var]],drop = FALSE]
+      diff_star <- efficient_star$Path_estimates[,indep_var[[dep_var]],drop = FALSE] -
+        consistent_star$Path_estimates[,indep_var[[dep_var]],drop = FALSE]
      
       
       
        
-      # bootstrap sample to obtain the variance of the diffstar
-      starboot=lapply(1:.R2, function(x){
+      # bootstrap sample to obtain the variance of the diff_star
+      boot_star=lapply(1:.R2, function(x){
         scores_temp=dplyr::sample_n(as.data.frame(scores_star),size=nrow(scores_star),replace=T)
         # daten=as.data.frame(scale(temp))
         
-        Pstar <- cSEM:::calculateConstructVCV(.C = cor(scores_temp), #cor ensures that the predicted scores are standardized
-                                              .Q = res_other$Estimates$Reliabilities,
-                                              .csem_model = res_other$Information$Model)
+        P_temp <- cSEM:::calculateConstructVCV(.C = cor(scores_temp), #cor ensures that the predicted scores are standardized
+                                              .Q = res_efficient$Estimates$Reliabilities,
+                                              .csem_model = res_efficient$Information$Model)
         
         # calculate the difference
-        OLStemp <- cSEM:::estimatePath(.approach_nl = res_other$Information$Arguments$.approach_nl,
-                                       .csem_model = modelstar,
+        
+        if(.object$Information$Arguments$.approach_paths == "2SLS"){
+        efficient_temp <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+                                       .csem_model = model_star,
                                        .approach_paths = 'OLS',
                                        .H = scores_temp,
-                                       .normality = res_other$Information$Arguments$.normality,
-                                       .P = Pstar,
-                                       .Q = res_other$Estimates$Reliabilities)
+                                       .normality = res_efficient$Information$Arguments$.normality,
+                                       .P = P_temp,
+                                       .Q = res_efficient$Estimates$Reliabilities)
         
-        TSLStemp <- cSEM:::estimatePath(.approach_nl = res_other$Information$Arguments$.approach_nl,
-                                        .csem_model = modelstar,
+        consistent_temp <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+                                        .csem_model = model_star,
                                         .approach_paths = '2SLS',
                                         .H = scores_temp,
-                                        .normality = res_other$Information$Arguments$.normality,
-                                        .P = Pstar,
-                                        .Q = res_other$Estimates$Reliabilities,
+                                        .normality = res_efficient$Information$Arguments$.normality,
+                                        .P = P_temp,
+                                        .Q = res_efficient$Estimates$Reliabilities,
                                         .instruments = instr)
-      
+        }
         
-        difftemp <- OLStemp$Path_estimates[,indep_var[[dep_var]]] - TSLStemp$Path_estimates[,indep_var[[dep_var]]]
         
-        out <- list(diff = difftemp, OLS = OLStemp$Path_estimates[,indep_var[[dep_var]]],
-                    TSLS = TSLStemp$Path_estimates[,indep_var[[dep_var]]])
+        if(.object$Information$Arguments$.approach_paths == "3SLS"){
+          efficient_temp <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+                                         .csem_model = model_star,
+                                         .approach_paths = '2SLS',
+                                         .H = scores_temp,
+                                         .normality = res_efficient$Information$Arguments$.normality,
+                                         .P = P_temp,
+                                         .Q = res_efficient$Estimates$Reliabilities)
+          
+          consistent_temp <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+                                          .csem_model = model_star,
+                                          .approach_paths = '3SLS',
+                                          .H = scores_temp,
+                                          .normality = res_efficient$Information$Arguments$.normality,
+                                          .P = P_temp,
+                                          .Q = res_efficient$Estimates$Reliabilities,
+                                          .instruments = instr)
+        }
+        
+        diff_temp <- efficient_temp$Path_estimates[,indep_var[[dep_var]]] - consistent_temp$Path_estimates[,indep_var[[dep_var]]]
+        
+        out <- list(diff = diff_temp, OLS = efficient_temp$Path_estimates[,indep_var[[dep_var]]],
+                    TSLS = consistent_temp$Path_estimates[,indep_var[[dep_var]]])
         
         return(out)
         })
       
       
-      starboot <- purrr::transpose(starboot)
+      boot_star <- purrr::transpose(boot_star)
       
       # calculate the VCV 
       
       if(.vcv_asymptotic == FALSE){
-        diffboot <- do.call(rbind,starboot$diff)
-        vcvstar = cov(diffboot)
+        diff_boot <- do.call(rbind,boot_star$diff)
+        vcv_star = cov(diff_boot)
       }
       
       if(.vcv_asymptotic == TRUE){
-        VCV_OLS_star <- cov(do.call(rbind,starboot$OLS))
-        VCV_2SLS_star <- cov(do.call(rbind,starboot$TSLS))
+        VCV_efficient_star <- cov(do.call(rbind,boot_star$OLS))
+        VCV_consistent_star <- cov(do.call(rbind,boot_star$TSLS))
 
-        vcvstar = VCV_2SLS_star - VCV_OLS_star 
+        vcv_star = VCV_consistent_star - VCV_efficient_star 
       }
       
       # calculate the test statistic
-      refdist[[bb]]=nrow(scores_star)*diffstar%*%solve(vcvstar)%*%t(diffstar)
+      refdist[[bb]]=nrow(scores_star)*diff_star%*%solve(vcv_star)%*%t(diff_star)
     }#end for loop
     
     do.call(c,refdist)
