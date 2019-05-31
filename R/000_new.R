@@ -293,7 +293,7 @@ plot.Two_Way_Effect = function(.TWobject){
 #' 
 #' 
 #'
-#' @usage testHausman=function(.object2SLS,
+#' @usage testHausman=function(.object,
 #'                             .seed=1234,
 #'                             .alpha = args_default()$.alpha,
 #'                             .R = args_default()$.R,
@@ -308,45 +308,64 @@ plot.Two_Way_Effect = function(.TWobject){
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
 #' @export
-testHausman=function(.object2SLS,
+testHausman=function(.object,
                      .seed=1234,
                      .alpha = args_default()$.alpha,
                      .R = args_default()$.R,
                      .R2 = args_default()$.R2,
                      .vcv_asymptotic = args_default()$.vcv_asymptotic){
 
+  # Check whether either 2SLS or 3SLS was used 
+  if(!(.object$Information$Arguments$.approach_paths %in% c("2SLS", "3SLS"))){
+    stop2("In order to conduct a Hausman test, the structural model must be either estimated by 2SLS or 3SLS.")
+  }
+  
+  
+  # If structural model was estimated by 2SLS, the estimates should be compared to OLS
+  if(.object$Information$Arguments$.approach_paths == "2SLS"){
   # Estimate model with OLS
-  arguments2SLS <- .object2SLS$Information$Arguments
+  arguments_org <- .object$Information$Arguments
   
   # Remove instruments and set estimator path to OLS
-  arguments2SLS$.approach_paths <- 'OLS'
-  arguments2SLS$.instruments <- NULL #Why do I have to overwrite the instruments? Shouldn't it be enough to set the estimator to OLS
+  arguments_org$.approach_paths <- 'OLS'
+  arguments_org$.instruments <- NULL #Why do I have to overwrite the instruments? Shouldn't it be enough to set the estimator to OLS
+  }
   
-  # Reestimation by OLS
-  resOLS=do.call(csem,arguments2SLS)
-  # summarize(resOLS)
+  # If structural model was estimated by 3SLS, the estimates should be compared to 2SLS
+  if(.object$Information$Arguments$.approach_paths == "3SLS"){
+    # Estimate model with 2SLS
+    arguments_org <- .object$Information$Arguments
+    
+    # Set estimator path to 2SLS
+    arguments_org$.approach_paths <- '2SLS'
+    }
   
-  # Bootstrap OLS estimates
+  # Reestimation by OLS or 2SLS
+  res_other=do.call(csem,arguments_org)
+  
+  # Bootstrap OLS/2SLS estimates
   # I deliaberatly ignore inadmissible solution to ensure that both habe the same number of bootstrap.
   # For the future that should be allowed
-  bootOLS <- resamplecSEMResults(resOLS,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
+  boot_other <- resamplecSEMResults(res_other,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
   
-  coefOLS <- bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
+  coef_other <- boot_other$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
   # Bootstrap 2SLS estimates with same seed as the OLS estimate
-  boot2SLS <- resamplecSEMResults(.object2SLS,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
+  boot_org <- resamplecSEMResults(.object,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
   
-  coef2SLS <- boot2SLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
+  coef_org <- boot_org$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
   
-  # dependent variable in which equation instruments have been used
+  # dependent variables of the equations in which instruments have been used
   # One could also think about investigating all euqations however, 
   # this currently leads to problems in bootstrap because of no variation 
-  m <- .object2SLS$Information$Model$structural
-  dep_vars <- names(.object2SLS$Information$Model$instruments)
+  m <- .object$Information$Model$structural
+  dep_vars <- names(.object$Information$Model$instruments)
+  
+  ## Consider all equations
   # dep_vars <- rownames(m)[rowSums(m)!=0]
   
-  test=strsplit(names(bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Original) , split = ' ~ ')
+  test=strsplit(names(boot_other$Estimates$Estimates_resample$Estimates1$Path_estimates$Original) , split = ' ~ ')
   
   test1 = sapply(test, function(x){
     x[1]
@@ -365,13 +384,13 @@ testHausman=function(.object2SLS,
   teststat <- sapply(dep_vars, function(x){
   
     # calculate the VCV of the OLS estimates
-    VCV_OLS <-   cov(bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+    VCV_OLS <-   cov(boot_other$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
   
     # calculate the VCV of the 2SLS estimates
-    VCV_2SLS <- cov(boot2SLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+    VCV_2SLS <- cov(boot_org$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
   
     # calculate the test statistic
-    para_diff <- as.matrix(coef2SLS[belongs[[x]]]-coefOLS[belongs[[x]]])
+    para_diff <- as.matrix(coef_org[belongs[[x]]]-coef_other[belongs[[x]]])
     
     # There are two ways to calculate the VCV of the difference:
     # Either using the asymptotic VCV, i.e., VCV(beta_OLS) - VCV(beta_2SLS) or
@@ -384,12 +403,12 @@ testHausman=function(.object2SLS,
     
     # If we remove inadmissible results from the bootstrap, we muss ensure that the two matrices have the same dimension
     if(.vcv_asymptotic == FALSE){
-      VCV_diff <- cov(boot2SLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE]-
-                      bootOLS$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+      VCV_diff <- cov(boot_org$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE]-
+                      boot_other$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
     }
     
     # Calculation of the test statistic
-    nrow(.object2SLS$Information$Data)*t(para_diff)%*%VCV_diff%*%para_diff
+    nrow(.object$Information$Data)*t(para_diff)%*%VCV_diff%*%para_diff
     
   })
   
@@ -397,7 +416,7 @@ testHausman=function(.object2SLS,
   ## Calculate the reference distribution of the test statistic
   
   # Extract the construct scores
-  scores <- .object2SLS$Estimates$Construct_scores
+  scores <- .object$Estimates$Construct_scores
   
   uandyhat <- lapply(dep_vars, function(x){
     # Calculate the predicted values of the dependent variable
@@ -421,12 +440,12 @@ testHausman=function(.object2SLS,
   ref_dist <- lapply(dep_vars, function(dep_var){
     
     # collect the instruments for that equation
-    instr <- resOLS$Information$Model$instruments[dep_var]
+    instr <- res_other$Information$Model$instruments[dep_var]
     
     # Adjust the structrual model as only the equation of the considered dependent variable should be estimated
-    str_model=resOLS$Information$Model$structural[dep_var,,drop = FALSE]
+    str_model=res_other$Information$Model$structural[dep_var,,drop = FALSE]
     modelstar=list(structural = str_model,
-                   model_type = resOLS$Information$Model$model_type,
+                   model_type = res_other$Information$Model$model_type,
                    instruments = instr)
   
     # indep_vars = colnames(str_model)[str_model!=0]
@@ -449,28 +468,28 @@ testHausman=function(.object2SLS,
       colnames(scores_star)
       
       Pstar <- cSEM:::calculateConstructVCV(.C = cor(scores_star), #cor ensures that the predicted scores are standardized
-                                            .Q = resOLS$Estimates$Reliabilities,
-                                            .csem_model = resOLS$Information$Model)
+                                            .Q = res_other$Estimates$Reliabilities,
+                                            .csem_model = res_other$Information$Model)
       
       # In the next step these scores are used to obtain the OLS and 2SLS estimates
       # in case of PLSc this is tricky as we need the reliabilities
       # As an outcome, we obtain the OLS and the 2SLS estimate of the considered equation
       
-      OLSstar <- cSEM:::estimatePath(.approach_nl = resOLS$Information$Arguments$.approach_nl,
+      OLSstar <- cSEM:::estimatePath(.approach_nl = res_other$Information$Arguments$.approach_nl,
                                      .csem_model = modelstar,
                                      .approach_paths = 'OLS',
                                      .H = scores_star,
-                                     .normality = resOLS$Information$Arguments$.normality,
+                                     .normality = res_other$Information$Arguments$.normality,
                                      .P = Pstar,
-                                     .Q = resOLS$Estimates$Reliabilities)
+                                     .Q = res_other$Estimates$Reliabilities)
       
-      TSLSstar <- cSEM:::estimatePath(.approach_nl = resOLS$Information$Arguments$.approach_nl,
+      TSLSstar <- cSEM:::estimatePath(.approach_nl = res_other$Information$Arguments$.approach_nl,
                                      .csem_model = modelstar,
                                      .approach_paths = '2SLS',
                                      .H = scores_star,
-                                     .normality = resOLS$Information$Arguments$.normality,
+                                     .normality = res_other$Information$Arguments$.normality,
                                      .P = Pstar,
-                                     .Q = resOLS$Estimates$Reliabilities,
+                                     .Q = res_other$Estimates$Reliabilities,
                                      .instruments = instr)
       
     
@@ -488,25 +507,25 @@ testHausman=function(.object2SLS,
         # daten=as.data.frame(scale(temp))
         
         Pstar <- cSEM:::calculateConstructVCV(.C = cor(scores_temp), #cor ensures that the predicted scores are standardized
-                                              .Q = resOLS$Estimates$Reliabilities,
-                                              .csem_model = resOLS$Information$Model)
+                                              .Q = res_other$Estimates$Reliabilities,
+                                              .csem_model = res_other$Information$Model)
         
         # calculate the difference
-        OLStemp <- cSEM:::estimatePath(.approach_nl = resOLS$Information$Arguments$.approach_nl,
+        OLStemp <- cSEM:::estimatePath(.approach_nl = res_other$Information$Arguments$.approach_nl,
                                        .csem_model = modelstar,
                                        .approach_paths = 'OLS',
                                        .H = scores_temp,
-                                       .normality = resOLS$Information$Arguments$.normality,
+                                       .normality = res_other$Information$Arguments$.normality,
                                        .P = Pstar,
-                                       .Q = resOLS$Estimates$Reliabilities)
+                                       .Q = res_other$Estimates$Reliabilities)
         
-        TSLStemp <- cSEM:::estimatePath(.approach_nl = resOLS$Information$Arguments$.approach_nl,
+        TSLStemp <- cSEM:::estimatePath(.approach_nl = res_other$Information$Arguments$.approach_nl,
                                         .csem_model = modelstar,
                                         .approach_paths = '2SLS',
                                         .H = scores_temp,
-                                        .normality = resOLS$Information$Arguments$.normality,
+                                        .normality = res_other$Information$Arguments$.normality,
                                         .P = Pstar,
-                                        .Q = resOLS$Estimates$Reliabilities,
+                                        .Q = res_other$Estimates$Reliabilities,
                                         .instruments = instr)
       
         
