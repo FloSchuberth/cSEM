@@ -497,11 +497,12 @@ testHausman=function(.object,
       if(.object$Information$Arguments$.approach_paths == "3SLS"){
         efficient_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
                                               .csem_model = model_star,
-                                              .approach_paths = '2LS',
+                                              .approach_paths = '2SLS',
                                               .H = scores_star,
                                               .normality = res_efficient$Information$Arguments$.normality,
                                               .P = P_star,
-                                              .Q = res_efficient$Estimates$Reliabilities)
+                                              .Q = res_efficient$Estimates$Reliabilities,
+                                              .instruments = instr)
         
         consistent_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
                                                .csem_model = model_star,
@@ -560,7 +561,8 @@ testHausman=function(.object,
                                          .H = scores_temp,
                                          .normality = res_efficient$Information$Arguments$.normality,
                                          .P = P_temp,
-                                         .Q = res_efficient$Estimates$Reliabilities)
+                                         .Q = res_efficient$Estimates$Reliabilities,
+                                         .instruments = instr)
           
           consistent_temp <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
                                           .csem_model = model_star,
@@ -631,7 +633,10 @@ testHausman=function(.object,
     "Information"        = list(
       "Number_admissibles" = ncol(ref_dist_matrix),
       # "Total_runs"         = counter + n_inadmissibles,
-      "Bootstrap_values"   = ref_dist
+      "Bootstrap_values"   = ref_dist,
+      "Consistent_estimator"        = .object$Information$Arguments$.approach_paths,
+      
+      
     )
   )
   
