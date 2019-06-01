@@ -277,6 +277,9 @@ Output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
 
+\item{.vcv_asymptotic}{Logical. Should the asymptotic variance-covariance matrix be used.
+Defaults to \code{FALSE}.}
+
 \item{.vector1}{A vector of numeric values.}
 
 \item{.vector2}{A vector of numeric values.}

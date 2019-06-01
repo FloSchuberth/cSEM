@@ -285,30 +285,51 @@ plot.Two_Way_Effect = function(.TWobject){
 }
   
 
-#' Bootstrap-based Hausman test
-#'
-#' Calculates a bootstrap-based Hausman test that can be used to compare OLS to 2SLS estimates (Wong, 1996)
-#' or 2SLS to 3SLS estimates. 
+
+#' Hausman test
 #' 
+#' Calculates a bootstrap-based Hausman test that can be used to compare OLS to 2SLS estimates \insertCite{Wong1996}{cSEM}
+#' or 2SLS to 3SLS estimates (Needs to be checked whether this can be done, I think so).
 #' 
-#' 
-#'
 #' @usage testHausman=function(.object,
-#'                             .seed=1234,
-#'                             .alpha = args_default()$.alpha,
-#'                             .R = args_default()$.R,
-#'                             .R2 = args_default()$.R2,
-#'                             .vcv_asymptotic = c(FALSE, TRUE))
-#'
-#' @inheritParams csem_arguments
-#'
+#'  .seed=1234,
+#'  .alpha = args_default()$.alpha,
+#'  .R = args_default()$.R,
+#'  .R2 = args_default()$.R2,
+#'  .vcv_asymptotic = args_default()$.vcv_asymptotic)
+#' 
+#' @inheritParams  csem_arguments
+#' 
+#' @inherit csem_test return
+#' 
+#' @seealso [csem()], [foreman()], [cSEMResults]
+#' 
 #' @references
 #'   \insertAllCited{}
 #'   
-#' @seealso [csem()], [foreman()], [cSEMResults]
+#' @examples
+#' \dontrun{
+#' # TODO
+#' }
 #'
 #' @export
+
 testHausman=function(.object,
+                     .seed=1234,
+                     .alpha = args_default()$.alpha,
+                     .R = args_default()$.R,
+                     .R2 = args_default()$.R2,
+                     .vcv_asymptotic = args_default()$.vcv_asymptotic) {
+  # Implementation is based on:
+  # Wong (1996) - Bootstrapping Hausman's exogeneity test
+  
+  UseMethod("testHausman")
+}
+
+#' @describeIn testHausman (TODO)
+#' @export
+
+testHausman.cSEMResults_default=function(.object,
                      .seed=1234,
                      .alpha = args_default()$.alpha,
                      .R = args_default()$.R,
@@ -619,10 +640,8 @@ testHausman=function(.object,
                                                probs =  1-.alpha, drop = FALSE)
   
   ## Compare critical value and teststatistic
-  decision <- teststat < critical_values # a logical (3 x p) matrix with each column
-  # representing the decision for one
-  # significance level. TRUE = no evidence 
-  # against the H0 --> not reject
+  decision <- teststat < critical_values
+  # TRUE = no evidence against the H0 --> not reject
   # FALSE --> reject
   
   # Return output
@@ -640,7 +659,44 @@ testHausman=function(.object,
   
   class(out) <- "cSEMTestHausman"
   return(out)
-  
-  
 }
 
+
+#' @describeIn testHausman (TODO)
+#' @export
+
+testHausman.cSEMResults_multi <- function(.object,
+                                          .seed=1234,
+                                          .alpha = args_default()$.alpha,
+                                          .R = args_default()$.R,
+                                          .R2 = args_default()$.R2,
+                                          .vcv_asymptotic = args_default()$.vcv_asymptotic){
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    lapply(.object, testHausman.cSEMResults_2ndorder,
+           .seed = 1234,
+           .alpha = args_default()$.alpha,
+           .R = args_default()$.R,
+           .R2 = args_default()$.R2,
+           .vcv_asymptotic = args_default()$.vcv_asymptotic)
+  } else {
+    lapply(.object, testHausman.cSEMResults_default,
+           .seed = 1234,
+           .alpha = args_default()$.alpha,
+           .R = args_default()$.R,
+           .R2 = args_default()$.R2,
+           .vcv_asymptotic = args_default()$.vcv_asymptotic)
+    }
+}
+
+#' @describeIn testHausman (TODO)
+#' @export
+
+ testHausman.cSEMResults_2ndorder <- function(.object,
+       .seed = 1234,
+       .alpha = args_default()$.alpha,
+       .R = args_default()$.R,
+       .R2 = args_default()$.R2,
+       .vcv_asymptotic = args_default()$.vcv_asymptotic){
+   
+   stop2("Hausman test is not yet implemented for second-order models.")
+ }

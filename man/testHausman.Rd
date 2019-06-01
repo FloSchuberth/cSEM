@@ -2,14 +2,36 @@
 % Please edit documentation in R/000_new.R
 \name{testHausman}
 \alias{testHausman}
-\title{Bootstrap-based Hausman test}
+\alias{testHausman.cSEMResults_default}
+\alias{testHausman.cSEMResults_multi}
+\alias{testHausman.cSEMResults_2ndorder}
+\title{Hausman test}
 \usage{
-testHausman=function(.object2SLS,
-                            .seed=1234,
-                            .alpha = args_default()$.alpha,
-                            .R = args_default()$.R)
+testHausman=function(.object,
+ .seed=1234,
+ .alpha = args_default()$.alpha,
+ .R = args_default()$.R,
+ .R2 = args_default()$.R2,
+ .vcv_asymptotic = args_default()$.vcv_asymptotic)
+
+\method{testHausman}{cSEMResults_default}(.object, .seed = 1234,
+  .alpha = args_default()$.alpha, .R = args_default()$.R,
+  .R2 = args_default()$.R2,
+  .vcv_asymptotic = args_default()$.vcv_asymptotic)
+
+\method{testHausman}{cSEMResults_multi}(.object, .seed = 1234,
+  .alpha = args_default()$.alpha, .R = args_default()$.R,
+  .R2 = args_default()$.R2,
+  .vcv_asymptotic = args_default()$.vcv_asymptotic)
+
+\method{testHausman}{cSEMResults_2ndorder}(.object, .seed = 1234,
+  .alpha = args_default()$.alpha, .R = args_default()$.R,
+  .R2 = args_default()$.R2,
+  .vcv_asymptotic = args_default()$.vcv_asymptotic)
 }
 \arguments{
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
 \item{.seed}{Integer or FALSE. The random seed to use. Defaults to \code{FALSE} in which
 case an arbitrary seed is choosen.}
 
@@ -17,10 +39,42 @@ case an arbitrary seed is choosen.}
 Defaults to \code{0.05}.}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
+
+\item{.R2}{Integer. The number of bootstrap replications to use when
+resampling from a resample. Defaults to \code{199}.}
+
+\item{.vcv_asymptotic}{Logical. Should the asymptotic variance-covariance matrix be used.
+Defaults to \code{FALSE}.}
+}
+\value{
+A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
+list containing the following list elements:
+\describe{
+\item{\code{$Test_statistic}}{The value of test statistic(s).}
+\item{\code{$Critical_value}}{The critical value(s).}
+\item{\code{$Decision}}{The test decision. One of: \strong{Reject} or \strong{Do not reject}}
+\item{\code{$Number_admissibles}}{The number of admissible runs. See \code{\link[=verify]{verify()}} for
+what constitues and inadmissible run.}
+}
 }
 \description{
-Calculates a bootstrap-based Hausman test that can be used to compare OLS to 2SLS estimates (Wong, 1996)
-or 2SLS to 3SLS estimates.
+Calculates a bootstrap-based Hausman test that can be used to compare OLS to 2SLS estimates \insertCite{Wong1996}{cSEM}
+or 2SLS to 3SLS estimates (Needs to be checked whether this can be done, I think so).
+}
+\section{Methods (by class)}{
+\itemize{
+\item \code{cSEMResults_default}: (TODO)
+
+\item \code{cSEMResults_multi}: (TODO)
+
+\item \code{cSEMResults_2ndorder}: (TODO)
+}}
+
+\examples{
+\dontrun{
+# TODO
+}
+
 }
 \references{
 \insertAllCited{}
