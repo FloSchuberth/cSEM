@@ -634,9 +634,7 @@ testHausman=function(.object,
       "Number_admissibles" = ncol(ref_dist_matrix),
       # "Total_runs"         = counter + n_inadmissibles,
       "Bootstrap_values"   = ref_dist,
-      "Consistent_estimator"        = .object$Information$Arguments$.approach_paths,
-      
-      
+      "Consistent_estimator"        = .object$Information$Arguments$.approach_paths
     )
   )
   
