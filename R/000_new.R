@@ -356,6 +356,7 @@ testHausman.cSEMResults_default=function(.object,
   # Reestimation by OLS
   res_efficient=do.call(csem,arguments_efficient)
   
+ # Under H0 the 2SLS is consistent but not asymptotically efficient 
   res_consistent <- .object
     }
   
@@ -373,6 +374,7 @@ testHausman.cSEMResults_default=function(.object,
     # Reestimation by 2SLS
     res_consistent=do.call(csem,arguments_consistent)
     
+    # Under H0 the 3SLS is asymptotically efficient and consistent
     res_efficient <- .object
     }
   
