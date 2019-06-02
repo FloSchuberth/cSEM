@@ -343,6 +343,8 @@ testHausman.cSEMResults_default=function(.object,
   
   
   # If structural model was estimated by 2SLS, the estimates should be compared to OLS
+  # OLS estimator is efficient and consistent under H0
+  # 2SLS is only consistent under H0
   if(.object$Information$Arguments$.approach_paths == "2SLS"){
   # Estimate model with OLS
   arguments_efficient <- .object$Information$Arguments
@@ -350,19 +352,28 @@ testHausman.cSEMResults_default=function(.object,
   # Remove instruments and set estimator path to OLS
   arguments_efficient$.approach_paths <- 'OLS'
   arguments_efficient$.instruments <- NULL #Why do I have to overwrite the instruments? Shouldn't it be enough to set the estimator to OLS
-  }
+
+  # Reestimation by OLS
+  res_efficient=do.call(csem,arguments_efficient)
   
-  # If structural model was estimated by 3SLS, the estimates should be compared to 2SLS
-  if(.object$Information$Arguments$.approach_paths == "3SLS"){
-    # Estimate model with 2SLS
-    arguments_efficient <- .object$Information$Arguments
-    
-    # Set estimator path to 2SLS
-    arguments_efficient$.approach_paths <- '2SLS'
     }
   
-  # Reestimation by OLS or 2SLS
-  res_efficient=do.call(csem,arguments_efficient)
+  # If structural model was estimated by 3SLS, these estimates should be compared to 2SLS:
+  # 3SLS estimator is efficient under H0
+  # 2SLS is only consistent but not efficient under H0
+  if(.object$Information$Arguments$.approach_paths == "3SLS"){
+    # Estimate model with 2SLS
+    arguments_consistent <- .object$Information$Arguments
+    
+    # Set estimator path to 2SLS
+    arguments_consistent$.approach_paths <- '2SLS'
+    
+    
+    # Reestimation by 2SLS
+    res_efficient=do.call(csem,arguments_consistent)
+    }
+  
+
   
   # Bootstrap OLS/2SLS estimates
   # I deliaberatly ignore inadmissible solution to ensure that both habe the same number of bootstrap.
