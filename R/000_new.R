@@ -418,11 +418,14 @@ testHausman.cSEMResults_default=function(.object,
   # Needs to be discussed 
   teststat <- sapply(dep_vars, function(x){
   
-    # calculate the VCV of the OLS estimates
-    VCV_efficient <-   cov(boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+    # calculate the VCV of the, under H0, asymptotically efficient and consistent estimator,
+    # but inconsistent under H1
+    VCV_efficient <-   cov(boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]],
+                                                                                                           drop = FALSE])
   
-    # calculate the VCV of the 2SLS estimates
-    VCV_consistent <- cov(boot_consistent$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], drop = FALSE])
+    # calculate the VCV of the under H0 and H1 consistent estimator
+    VCV_consistent <- cov(boot_consistent$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled[,belongs[[x]], 
+                                                                                                           drop = FALSE])
   
     # calculate the test statistic
     para_diff <- as.matrix(coef_consistent[belongs[[x]]]-coef_efficient[belongs[[x]]])
@@ -443,7 +446,7 @@ testHausman.cSEMResults_default=function(.object,
     }
     
     # Calculation of the test statistic
-    nrow(.object$Information$Data)*t(para_diff)%*%VCV_diff%*%para_diff
+    nrow(.object$Information$Data)*t(para_diff)%*%solve(VCV_diff)%*%para_diff
     
   })# end sapply
   
@@ -573,13 +576,13 @@ testHausman.cSEMResults_default=function(.object,
                                        .P = P_temp,
                                        .Q = res_efficient$Estimates$Reliabilities)
         
-        consistent_temp <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+        consistent_temp <- cSEM:::estimatePath(.approach_nl = res_consistent$Information$Arguments$.approach_nl,
                                         .csem_model = model_star,
                                         .approach_paths = '2SLS',
                                         .H = scores_temp,
-                                        .normality = res_efficient$Information$Arguments$.normality,
+                                        .normality = res_consistent$Information$Arguments$.normality,
                                         .P = P_temp,
-                                        .Q = res_efficient$Estimates$Reliabilities,
+                                        .Q = res_consistent$Estimates$Reliabilities,
                                         .instruments = instr)
         }
         
