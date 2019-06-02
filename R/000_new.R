@@ -356,6 +356,7 @@ testHausman.cSEMResults_default=function(.object,
   # Reestimation by OLS
   res_efficient=do.call(csem,arguments_efficient)
   
+  res_consistent <- .object
     }
   
   # If structural model was estimated by 3SLS, these estimates should be compared to 2SLS:
@@ -370,7 +371,9 @@ testHausman.cSEMResults_default=function(.object,
     
     
     # Reestimation by 2SLS
-    res_efficient=do.call(csem,arguments_consistent)
+    res_consistent=do.call(csem,arguments_consistent)
+    
+    res_efficient <- .object
     }
   
 
@@ -383,7 +386,7 @@ testHausman.cSEMResults_default=function(.object,
   coef_efficient <- boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
   # Bootstrap 2SLS estimates with same seed as the OLS estimate
-  boot_consistent <- resamplecSEMResults(.object,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
+  boot_consistent <- resamplecSEMResults(res_consistent,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
   
   coef_consistent <- boot_consistent$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
@@ -518,7 +521,7 @@ testHausman.cSEMResults_default=function(.object,
       
       
       if(.object$Information$Arguments$.approach_paths == "3SLS"){
-        efficient_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+        consistent_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
                                               .csem_model = model_star,
                                               .approach_paths = '2SLS',
                                               .H = scores_star,
@@ -527,7 +530,7 @@ testHausman.cSEMResults_default=function(.object,
                                               .Q = res_efficient$Estimates$Reliabilities,
                                               .instruments = instr)
         
-        consistent_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+        efficient_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
                                                .csem_model = model_star,
                                                .approach_paths = '3SLS',
                                                .H = scores_star,
@@ -578,7 +581,7 @@ testHausman.cSEMResults_default=function(.object,
         
         
         if(.object$Information$Arguments$.approach_paths == "3SLS"){
-          efficient_temp <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+          consistent_temp <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
                                          .csem_model = model_star,
                                          .approach_paths = '2SLS',
                                          .H = scores_temp,
@@ -587,7 +590,7 @@ testHausman.cSEMResults_default=function(.object,
                                          .Q = res_efficient$Estimates$Reliabilities,
                                          .instruments = instr)
           
-          consistent_temp <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+          efficient_temp <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
                                           .csem_model = model_star,
                                           .approach_paths = '3SLS',
                                           .H = scores_temp,
@@ -597,7 +600,7 @@ testHausman.cSEMResults_default=function(.object,
                                           .instruments = instr)
         }
         
-        diff_temp <- efficient_temp$Path_estimates[,indep_var[[dep_var]]] - consistent_temp$Path_estimates[,indep_var[[dep_var]]]
+        diff_temp <- consistent_temp$Path_estimates[,indep_var[[dep_var]]] - efficient_temp$Path_estimates[,indep_var[[dep_var]]]
         
         out <- list(diff = diff_temp, OLS = efficient_temp$Path_estimates[,indep_var[[dep_var]]],
                     TSLS = consistent_temp$Path_estimates[,indep_var[[dep_var]]])
