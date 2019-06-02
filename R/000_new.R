@@ -474,6 +474,8 @@ testHausman.cSEMResults_default=function(.object,
     # list to store the reference distribution 
     refdist <- list()
     
+    # A progress bar needs to be added, see testOMF
+    
     for(bb in 1:.R) {
       # draw with replacement from u
       u_star=sample(uandyhat[[dep_var]][['u']],size = nrow(uandyhat[[dep_var]][['u']]),replace = T)
