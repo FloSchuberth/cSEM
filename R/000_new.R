@@ -658,7 +658,9 @@ testHausman.cSEMResults_default=function(.object,
       "Number_admissibles" = ncol(ref_dist_matrix),
       # "Total_runs"         = counter + n_inadmissibles,
       "Bootstrap_values"   = ref_dist,
-      "Consistent_estimator"        = .object$Information$Arguments$.approach_paths
+      "Consistent_estimator"        = "2SLS",
+      "Efficient_estimator"  =  if(.object$Information$Arguments$.approach_paths == "2SLS") {"OLS"
+        } else if(.object$Information$Arguments$.approach_paths == "3SLS"){"3SLS"}
     )
   )
   
