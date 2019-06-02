@@ -414,7 +414,8 @@ testHausman.cSEMResults_default=function(.object,
          sapply(test,function(x){x[2]})[x]
      })
   
-  # calculation of the test statistic
+  # calculation of the test statistic perhaps this can also be done with the resample function
+  # Needs to be discussed 
   teststat <- sapply(dep_vars, function(x){
   
     # calculate the VCV of the OLS estimates
