@@ -205,7 +205,8 @@
 #'   Output should preferably be a (named)
 #'   vector but matrices are also accepted. However, the output will be 
 #'   vectorized (columnwise) in this case. See the examples section for details.
-#' @param .vcv_asymptotic Logical. Should the asymptotic variance-covariance matrix be used. 
+#' @param .vcv_asymptotic Logical. Should the asymptotic variance-covariance matrix be used, i.e., 
+#' VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) directly computed. 
 #'  Defaults to `FALSE`.
 #' @param .vector1 A vector of numeric values.
 #' @param .vector2 A vector of numeric values.
