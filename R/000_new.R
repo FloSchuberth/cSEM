@@ -559,6 +559,7 @@ testHausman.cSEMResults_default=function(.object,
                                               .csem_model = res_efficient$Information$Model)
         
         # calculate the difference
+        # What about the reliabilities in case of PLSc?
         
         if(.object$Information$Arguments$.approach_paths == "2SLS"){
         efficient_temp <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
