@@ -288,8 +288,8 @@ plot.Two_Way_Effect = function(.TWobject){
 
 #' Hausman test
 #' 
-#' Calculates a bootstrap-based Hausman test that can be used to compare OLS to 2SLS estimates \insertCite{Wong1996}{cSEM}
-#' or 2SLS to 3SLS estimates (Needs to be checked whether this can be done, I think so).
+#' Calculates a bootstrap-based Hausman test that can be used to compare OLS to 2SLS estimates 
+#' or 2SLS to 3SLS estimates \insertCite{Hausman1978,Wong1996}{cSEM} (Needs to be checked whether the implemention is correct, I doubt).
 #' 
 #' @usage testHausman=function(.object,
 #'  .seed=1234,
@@ -377,14 +377,11 @@ testHausman.cSEMResults_default=function(.object,
   coef_consistent <- boot_consistent$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
   
-  # dependent variables of the equations in which instruments have been used
+  # dependent variables of the equations in which instruments are used
   # One could also think about investigating all euqations however, 
   # this currently leads to problems in bootstrap because of no variation 
   m <- .object$Information$Model$structural
   dep_vars <- names(.object$Information$Model$instruments)
-  
-  ## Consider all equations
-  # dep_vars <- rownames(m)[rowSums(m)!=0]
   
   test=strsplit(names(boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Original) , split = ' ~ ')
   
@@ -431,7 +428,7 @@ testHausman.cSEMResults_default=function(.object,
     # Calculation of the test statistic
     nrow(.object$Information$Data)*t(para_diff)%*%VCV_diff%*%para_diff
     
-  })
+  })# end sapply
   
   
   ## Calculate the reference distribution of the test statistic
@@ -439,6 +436,7 @@ testHausman.cSEMResults_default=function(.object,
   # Extract the construct scores
   scores <- .object$Estimates$Construct_scores
   
+  # Calculate the predicted values and the residuals
   uandyhat <- lapply(dep_vars, function(x){
     # Calculate the predicted values of the dependent variable
     pred <- scores%*%t(m[x,,drop = FALSE])
@@ -449,13 +447,6 @@ testHausman.cSEMResults_default=function(.object,
   
   names(uandyhat) <- dep_vars
   
-  # ref_dist <- list()
-  
-  # uandyhattrans = purrr::transpose(uandyhat)
-  # 
-  # u <- do.call(cbind,uandyhattrans$u)
-  # yhat <- do.call(cbind,uandyhattrans$pred)
-  # 
   # Needs to be done equation per equation as it is not valid to replace all 
   # the scores of the dependent variables by their predicted values at once  
   ref_dist <- lapply(dep_vars, function(dep_var){
@@ -468,8 +459,6 @@ testHausman.cSEMResults_default=function(.object,
     model_star=list(structural = str_model,
                    model_type = res_efficient$Information$Model$model_type,
                    instruments = instr)
-  
-    # indep_vars = colnames(str_model)[str_model!=0]
     
     # list to store the reference distribution 
     refdist <- list()
