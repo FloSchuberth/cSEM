@@ -166,8 +166,8 @@ estimatePath <- function(
       # Approach based on Zellner & Theil (1962)
       
       ## Get variance covariance matrix of the error term
-      VCVresid=matrix(0,nrow=length(vars_endo),ncol=length(vars_endo),
-                      dimnames=list(vars_endo,vars_endo))
+      VCVresid <- matrix(0, nrow = length(vars_endo), ncol = length(vars_endo),
+                         dimnames = list(vars_endo, vars_endo))
       
       # Fill the VCV of the error terms
       for(i in   vars_endo){
@@ -178,13 +178,13 @@ estimatePath <- function(
             .P[i, m[j,]!=0, drop = FALSE] %*% coefsj +
             t(coefsi) %*% .P[m[i,]!=0, m[j,]!=0, drop=FALSE] %*% coefsj}}
 
-      part = lapply(vars_endo,function(x){
-        independents = colnames(m)[m[x,]!=0]
-        indendo = intersect(independents,vars_endo)
-        indexog = intersect(independents,vars_exo)
-        InvOfVCVresid=solve(VCVresid)
+      part  <-  lapply(vars_endo,function(x){
+        independents <- colnames(m)[m[x,]!=0]
+        indendo <- intersect(independents,vars_endo)
+        indexog <- intersect(independents,vars_exo)
+        InvOfVCVresid<-solve(VCVresid)
 
-      LHSpart=sapply(vars_endo,function(mue){ 
+      LHSpart<-sapply(vars_endo,function(mue){ 
           InvOfVCVresid[x,mue,drop=TRUE]* #Must be a scalar
             .P[c(indendo,indexog),vars_exo , drop = FALSE]%*%
             solve(.P[vars_exo,vars_exo,drop=FALSE])%*%
