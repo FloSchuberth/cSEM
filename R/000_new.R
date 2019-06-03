@@ -527,8 +527,8 @@ testHausman.cSEMResults_default=function(.object,
       colnames(scores_star)
       
       P_star <- cSEM:::calculateConstructVCV(.C = cor(scores_star), #cor ensures that the predicted scores are standardized
-                                            .Q = res_consistent$Estimates$Reliabilities, #From where the reliabilities
-                                            .csem_model = res_consistent$Information$Model)
+                                            .Q = res_consistent$Estimates$Reliabilities) #From where the reliabilities
+                                            
       
       # In the next step these scores are used to obtain the OLS and 2SLS estimates
       # in case of PLSc this is tricky as we need the reliabilities
@@ -590,8 +590,8 @@ testHausman.cSEMResults_default=function(.object,
         # daten=as.data.frame(scale(temp))
         
         P_temp <- cSEM:::calculateConstructVCV(.C = cor(scores_temp), #cor ensures that the predicted scores are standardized
-                                              .Q = res_consistent$Estimates$Reliabilities, # From where do the reliabilities come
-                                              .csem_model = res_efficient$Information$Model)
+                                              .Q = res_consistent$Estimates$Reliabilities) # From where do the reliabilities come
+                                              
         
         # calculate the difference
         # What about the reliabilities in case of PLSc?
