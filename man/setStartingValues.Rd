@@ -2,23 +2,25 @@
 % Please edit documentation in R/helper_estimators_weights.R
 \name{setStartingValues}
 \alias{setStartingValues}
-\title{Internal: Set Starting values}
+\title{Internal: Set starting values}
 \usage{
 setStartingValues(
-  .W = args_default()$.W,
+  .W               = args_default()$.W,
   .starting_values = args_default()$.starting_values
   )
 }
 \arguments{
 \item{.W}{A (J x K) matrix of weights.}
 
-\item{.starting_values}{list of named vectors containig the starting values.
-Defaults to \code{NULL}.}
+\item{.starting_values}{A named list of vectors where the
+list names are the construct names whose indicator weights the user
+wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
+pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
 }
 \value{
-The (J x K) matrix of scaled weights.
+The (J x K) matrix of starting values.
 }
 \description{
-Returns a matrix with that contains the starting values
+Set the starting values.
 }
 \keyword{internal}

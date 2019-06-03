@@ -386,13 +386,13 @@ parseModel <- function(.model, .instruments = NULL) {
     vars_endo <- rownames(temp)[rowSums(temp) != 0]
     var_exo  <- setdiff(colnames(temp), vars_endo)
     
-    ## Return error if the structural model contains feedback loops
-    if(any(temp[vars_endo, vars_endo] + t(temp[vars_endo, vars_endo]) == 2)) {
-      stop2(
-        "The following error occured in the `parseModel()` function:\n",
-        "The structural model contains feedback loops.",
-        " Currently no feedback loops are allowed.")
-    }
+    # ## Return error if the structural model contains feedback loops
+    # if(any(temp[vars_endo, vars_endo] + t(temp[vars_endo, vars_endo]) == 2)) {
+    #   stop2(
+    #     "The following error occured in the `parseModel()` function:\n",
+    #     "The structural model contains feedback loops.",
+    #     " Currently no feedback loops are allowed.")
+    # }
     
     # Endo variables that are explained by exo and endo variables
     explained_by_exo_endo <- vars_endo[rowSums(temp[vars_endo, vars_endo, drop = FALSE]) != 0]

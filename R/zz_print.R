@@ -165,30 +165,30 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
 #' @keywords internal
 print.cSEMVerify_default <- function(x, ...) {
   
-  cat(rule(line = "bar2", width = 80), sep = "")
+  cat2(rule(line = "bar2", width = 80))
   
-  cat("\n\nVerify admissibility:\n", sep = "")
+  cat2("\n\nVerify admissibility:\n")
   
   if(sum(x) == 0) {
-    cat(green("\n\t admissible\n"), sep = "")
+    cat2(green("\n\t admissible\n"))
   } else {
-    cat(red("\n\t inadmissible\n"), sep = "")
+    cat2(red("\n\t inadmissible\n"))
   }
 
   text <- c("1" = "Convergence", 
-            "2" = "At least one standardized loadings > 1", 
+            "2" = "At least one standardized loading > 1", 
             "3" = "Construct VCV not positive semi-definite", 
             "4" = "Model-implied VCV not positive semi-definite",
-            "5" = "At least one proxy reliability > 1")
-  cat("\nDetails:\n\n", sep = "")
+            "5" = "At least one reliability > 1")
+  cat2("\nDetails:\n\n")
   
-  cat("  ", col_align("Code", 7), col_align("Status", 10), "Description\n", sep = "")
+  cat2("  ", col_align("Code", 7), col_align("Status", 10), "Description\n")
   for(i in names(x)) {
-    cat("  ", col_align(i, 7), 
+    cat2("  ", col_align(i, 7), 
         col_align(ifelse(x[i] == FALSE, green("ok"), red("not ok")), 10), 
-        col_align(text[i], max(nchar(text)) + 2, align = "left"), "\n", sep = "")
+        col_align(text[i], max(nchar(text)) + 2, align = "left"), "\n")
   }
-  cat(rule(line = "bar2", width = 80), sep = "")
+  cat2(rule(line = "bar2", width = 80))
 }
 
 #' `cSEMVerify_2ndorder` method for `print()`
@@ -203,32 +203,32 @@ print.cSEMVerify_default <- function(x, ...) {
 #' @keywords internal
 print.cSEMVerify_2ndorder <- function(x, ...) {
   
-  cat(rule(line = "bar2", width = 80), sep = "")
-  cat("\n\nVerify admissibility:\n", sep = "")
+  cat2(rule(line = "bar2", width = 80))
+  cat2("\n\nVerify admissibility:\n")
   
   if(sum(x$First_stage) == 0 & sum(x$Second_stage) == 0) {
-    cat(green("\n\t admissible"), sep = "")
+    cat2(green("\n\t admissible"))
   } else {
-    cat(red("\n\t inadmissible"), sep = "")
+    cat2(red("\n\t inadmissible"))
   }
   
   text <- c("1" = "Convergence", 
-            "2" = "At least one standardized loadings > 1", 
+            "2" = "At least one standardized loading > 1", 
             "3" = "Construct VCV not positive semi-definite", 
             "4" = "Model-implied VCV not positive semi-definite",
-            "5" = "At least one proxy reliability > 1")
+            "5" = "At least one reliability > 1")
   
-  cat("\n\nDetails:\n\n", sep = "")
+  cat2("\n\nDetails:\n\n")
   
-  cat("  ", col_align("Code", 7), col_align("Stage 1", 10), 
-      col_align("Stage 2", 10), "Description\n", sep = "")
+  cat2("  ", col_align("Code", 7), col_align("Stage 1", 10), 
+      col_align("Stage 2", 10), "Description\n")
   for(i in names(x$First_stage)) {
-    cat("  ", col_align(i, 7), 
+    cat2("  ", col_align(i, 7), 
         col_align(ifelse(x$First_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
         col_align(ifelse(x$Second_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
-        col_align(text[i], max(nchar(text) + 2), align = "left"), "\n", sep = "")
+        col_align(text[i], max(nchar(text) + 2), align = "left"), "\n")
   }
-  cat(rule(line = "bar2", width = 80), sep = "")
+  cat2(rule(line = "bar2", width = 80))
 }
 
 #' `cSEMTestOMF` method for `print()`

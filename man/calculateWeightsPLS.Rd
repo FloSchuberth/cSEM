@@ -18,13 +18,10 @@ calculateWeightsPLS(
    )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized data.
-Possible column types or classes of the data provided are: logical,
-numeric (double or integer), factor (ordered and unordered)
-or a mix of several types. The data may also include
-\emph{one} character column whose column name must be given to \code{.id}.
-This column is assumed to contain group identifiers used to split
-the data into groups.}
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
+data (indicators/items/manifest variables). Possible column types or classes
+of the data provided are: "logical", "numeric" ("double" or "integer"),
+"factor" ("ordered" and/or "unordered") or a mix of several types.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
@@ -59,8 +56,10 @@ of construct used is choosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
-\item{.starting_values}{list of named vectors containig the starting values.
-Defaults to \code{NULL}.}
+\item{.starting_values}{A named list of vectors where the
+list names are the construct names whose indicator weights the user
+wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
+pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}

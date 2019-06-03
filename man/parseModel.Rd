@@ -9,6 +9,13 @@ parseModel(.model, .instruments = NULL)
 \arguments{
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
+
+\item{.instruments}{A named list of vectors of instruments. The names
+of the list elements are the names of the dependent constructs of the structural
+equation whose explanatory variables are endogenous. The vectors
+contain the names of the instruments corresponding to each equation. Note
+that exogenous variables of a given equation \strong{must} be supplied as
+instruments for themselves. See the examples section. Defaults to \code{NULL}.}
 }
 \value{
 An object of class \code{cSEMModel} is a standardized list containing the following

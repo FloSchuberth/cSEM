@@ -100,7 +100,7 @@ estimatePath <- function(
         } 
       } # END OLS
       
-
+      
       # Compute "2SLS" if endo_in_RHS is TRUE, i.e instruments are 
       # given for this particular equation and .approach_path is "2SLS".
       
@@ -163,8 +163,9 @@ estimatePath <- function(
     res <- purrr::transpose(res)
 
     if(.approach_paths == "3SLS"){
-      # Based on Zellner & Theil (1962)
-      # Variance covariance matrix of the error term
+      # Approach based on Zellner & Theil (1962)
+      
+      ## Get variance covariance matrix of the error term
       VCVresid=matrix(0,nrow=length(vars_endo),ncol=length(vars_endo),
                       dimnames=list(vars_endo,vars_endo))
       

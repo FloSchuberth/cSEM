@@ -535,7 +535,6 @@ testHausman.cSEMResults_default=function(.object,
       # As an outcome, we obtain the OLS and the 2SLS estimate of the considered equation
       if(.object$Information$Arguments$.approach_paths == "2SLS"){
       
-        # We need to pay attention when .instruments arguement is removed.
         efficient_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
                                      .csem_model = model_star,
                                      .approach_paths = 'OLS',

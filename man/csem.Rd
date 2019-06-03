@@ -35,7 +35,7 @@ csem(
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
 data (indicators/items/manifest variables).
-Additionally, a \code{list} of \code{data.frame}(s) or \code{matrice}(s) is accepted in which
+Additionally, a \code{list} of data sets (data frames or matrices) is accepted in which
 case estimation is repeated for each data set. Possible column types or classes
 of the data provided are: "logical", "numeric" ("double" or "integer"),
 "factor" ("ordered" and/or "unordered") or a mix of several types.
@@ -72,6 +72,13 @@ one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 \code{.data} used to split the data into groups.
 Defaults to \code{NULL}.}
 
+\item{.instruments}{A named list of vectors of instruments. The names
+of the list elements are the names of the dependent constructs of the structural
+equation whose explanatory variables are endogenous. The vectors
+contain the names of the instruments corresponding to each equation. Note
+that exogenous variables of a given equation \strong{must} be supplied as
+instruments for themselves. See the examples section. Defaults to \code{NULL}.}
+
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
@@ -84,8 +91,10 @@ may be given for a subset of the constructs. Defaults to \code{NULL} in which ca
 reliabilities are estimated by \code{csem()}. Currently, only supported for
 \code{.approach_weights = "PLS-PM"}.}
 
-\item{.starting_values}{list of named vectors containig the starting values.
-Defaults to \code{NULL}.}
+\item{.starting_values}{A named list of vectors where the
+list names are the construct names whose indicator weights the user
+wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
+pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
 
 \item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
@@ -157,36 +166,45 @@ equation models using a composite-based approach.
 
 \subsection{Data and model:}{
 The \code{.data} and \code{.model} arguments are required. Data must be
-provided as either a \code{matrix} or a \code{data.frame} with column names matching
+in a \code{matrix} or a \code{data.frame} with column names matching
 the indicator names used in the model description of the measurement model.
-Alternatively, a list of matrices or \code{data.frame}'s may be provided
+Alternatively, a \code{list} of data sets (matrices or data frames) may be provided
 in which case estimation is repeated for each data set.
-The data provided via \code{.data} may contain \strong{one} character column whose column name
-must be provided to \code{.id}. Values of this column are interpreted as group
-identifiers and \code{csem()} will split the data by levels of that column and run
-the estimation for each level separately.
+Possible column types/classes of the data provided are: "logical",
+"numeric" ("double" or "integer"), "factor" ("ordered" and/or "unordered"),
+"character", or a mix of several types. Character columns will be treated
+as (undordered) factors.
 
 To provide a model use the \link[lavaan:model.syntax]{lavaan model syntax}.
 Note, however, that \pkg{cSEM} currently only supports the "standard" lavaan
 model syntax (Types 1, 2, 3, and 7 as described on the help page).
 Therefore, specifying e.g. a threshold or scaling factors is ignored.
 Alternatively a standardized (possibly incomplete) \link{cSEMModel}-list may be supplied.
+See \code{\link[=parseModel]{parseModel()}} for details.
 }
 
 \subsection{Weights and path coefficients:}{
-By default weights are estimated using the partial least squares (path) algorithm (\code{"PLS-PM"}).
-A broad range of alternative weightning algorithms may be supplied to \code{.approach_weights}.
-Currently the following approaches are implemented
+By default weights are estimated using the partial least squares (path)
+algorithm (\code{"PLS-PM"}).
+A range of alternative weightning algorithms may be supplied to
+\code{.approach_weights}. Currently, the following approaches are implemented
 \enumerate{
 \item{(Default) Partial least squares path modeling (\code{"PLS-PM"}). The algorithm
 can be customized. See \code{\link[=calculateWeightsPLS]{calculateWeightsPLS()}} for details.}
-\item{Generalized structured component analysis (\code{"GSCA"})}
-\item{Generalized canoncial correlation analysis (\emph{GCCA}), including
-\code{"SUMCORR"}, \code{"MAXVAR"}, \code{"SSQCORR"}, \code{"MINVAR"}, \code{"GENVAR"}}
+\item{Generalized structured component analysis (\code{"GSCA"}). The algorithm
+can be customized. See \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}} for details.}
+\item{Generalized canonical correlation analysis (\emph{GCCA}), including
+\code{"SUMCORR"}, \code{"MAXVAR"}, \code{"SSQCORR"}, \code{"MINVAR"}, \code{"GENVAR"}.}
 \item{Principal component analysis (\code{"PCA"})}
 \item{Factor score regression using sum scores (\code{"unit"}),
 regression (\code{"regression"}) or bartlett scores (\code{"bartlett"})}
 }
+
+Its possible to supply starting values for the weightning algorithm
+via \code{.starting_values}. The argument accepts a named list of vectors where the
+list names are the construct names whose indicator weights the user
+wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
+pairs, where \code{value} is the starting weight. See the examples section below for details.
 
 Composite-indicator and composite-composite correlations are properly
 disattenuated by default to yield consistent loadings, construct correlations,
@@ -201,6 +219,21 @@ Disattenuation my be suppressed by setting \code{.disattenuate = FALSE}.
 Note, however, that quantities in this case are inconsistent
 estimates for their construct level counterparts if any of the constructs in
 the structural model are modeled as a common factor!
+
+By default. path coefficients are estimated using OLS (\code{.approach_path = "OLS"}).
+For linear model, two-stage least squares (\code{"2SLS"}) is available , however, \emph{only if}
+\emph{instruments are internal}, i.e. part of the structural model. Future versions
+will add support for external instruments. Instruments must be supplied to
+\code{.instruments} as a named list where the names
+of the list elements are the names of the dependent constructs of the structural
+equations whose explanatory variables are believed to be endogenous.
+The list consists of vectors of names of instruments corresponding to each equation.
+Note that exogenous variables of a given equation \strong{must} be supplied as
+instruments for themselves. See the examples section.
+
+If reliabilities are known they can be supplied as \code{"name" = value} pairs to
+\code{.reliabilities}, where \code{value} is a numeric value between 0 and 1.
+Currently, only supported for "PLS-PM".
 }
 
 \subsection{Nonlinear models:}{
@@ -212,9 +245,9 @@ exponential terms. The latter is described in model syntax as an
 terms up to a power of three (i.e. three-way interactions) are allowed.
 
 The current version of the package allows two kinds of estimation:
-estimation of the reduced form equation (\code{.approach_nl = "reduced"}) and
-sequential estimation (\code{.approach_nl = "sequential"}). The latter does not
-not allow for multivariate normality of all exogenous variables, i.e.,
+estimation of the reduced form equation (\code{.approach_nl = "replace"}) and
+sequential estimation (\code{.approach_nl = "sequential"}, the default). The latter does not
+allow for multivariate normality of all exogenous variables, i.e.,
 the latent variables and the error terms.
 
 Distributional assumptions are kept to a minimum (an i.i.d. sample from a
@@ -246,9 +279,141 @@ QUAL =~ IMAG + EXPE
 "
 }
 }
+Currently, two approaches are available: \code{"repeated_indicators"} and
+\code{"2stage"} (the default).
+\subsection{Multigroup analysis}{
+To perform multigroup analysis provide either a list of data sets or one
+data set containing a group-identifyer-column whose column
+name must be provided to \code{.id}. Values of this column are interpreted as group
+identifiers and \code{csem()} will split the data by levels of that column and run
+the estimation for each level separately. Note that the more levels
+the group-identifyer-column has, the more estimation runs are required.
+This can considerably slow down estimation, especially if resampling is
+requested. For the latter it will generally be faster to use
+\code{.eval_plan = "multiprocess"}.
+}
 \subsection{Inference:}{
 Inference is done via resampling. See \link{resamplecSEMResults} for details.
 }
+}
+\examples{
+# ===========================================================================
+# Basic usage
+# ===========================================================================
+### Linear model ------------------------------------------------------------
+# Most basic usage requires a dataset and a model. We use the 
+#  `threecommonfactors` dataset. 
+
+## Take a look at the dataset
+?threecommonfactors
+
+## Specify the (correct) model
+model <- "
+# Structural model
+eta2 ~ eta1
+eta3 ~ eta1 + eta2
+
+# (Reflective) measurement model
+eta1 =~ y11 + y12 + y13
+eta2 =~ y21 + y22 + y23
+eta3 =~ y31 + y32 + y33
+"
+
+## Estimate
+res <- csem(threecommonfactors, model)
+
+## Postestimation
+verify(res)
+summarize(res)  
+assess(res)
+
+# Notes: 
+#   1. By default no inferential quantities (e.g. Std. errors, p-values, or
+#      confidence intervals) are calculated. Use resampling to obtain
+#      inferential quantities. See "Resampling" in the "Extended usage"
+#      section below.
+#   2. `summarize()` prints the full output by default. For a more condensed
+#       output use:
+print(summarize(res), .full_output = FALSE)
+
+### Nonlinear model ---------------------------------------------------------
+
+### Second order model ------------------------------------------------------
+
+### Multigroup analysis -----------------------------------------------------
+
+# ===========================================================================
+# Extended usage
+# ===========================================================================
+# `csem()` provides defaults for all arguments except `.data` and `.model`.
+#   Below some common options/tasks that users are likely to be interested in.
+#   we use the threecommonfactors data set again:
+
+model <- "
+# Structural model
+eta2 ~ eta1
+eta3 ~ eta1 + eta2
+
+# (Reflective) measurement model
+eta1 =~ y11 + y12 + y13
+eta2 =~ y21 + y22 + y23
+eta3 =~ y31 + y32 + y33
+"
+
+### PLS vs PLSc and disattenuation
+# In the model all concepts are modeled as common factors. If 
+#   .approach_weights = "PLS-PM", csem() uses PLSc to disattenuate composite-indicator 
+#   and composite-composite correlations.
+res_plsc <- csem(threecommonfactors, model, .approach_weights = "PLS-PM")
+res$Information$Model$construct_type # all common factors
+
+# To obtain "original" (inconsistent) PLS estimates use `.disattenuate = FALSE`
+res_pls <- csem(threecommonfactors, model, 
+                .approach_weights = "PLS-PM",
+                .disattenuate = FALSE
+                )
+
+s_plsc <- summarize(res_plsc)
+s_pls  <- summarize(res_pls)
+
+# Compare
+data.frame(
+  "Path"      = s_plsc$Estimates$Path_estimates$Name,
+  "Pop_value" = c(0.6, 0.4, 0.35), # see ?threecommonfactors
+  "PLSc"      = s_plsc$Estimates$Path_estimates$Estimate,
+  "PLS"       = s_pls$Estimates$Path_estimates$Estimate
+  )
+
+### Resampling --------------------------------------------------------------
+## Basic resampling
+res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap")
+res_jack <- csem(threecommonfactors, model, .resample_method = "jackknife")
+
+# See ?resamplecSEMResults for more examples
+
+### Choosing a different weightning scheme --------------------------------------------
+
+res_gscam  <- csem(threecommonfactors, model, .approach_weights = "GSCA")
+res_gsca   <- csem(threecommonfactors, model, 
+                  .approach_weights = "GSCA",
+                  .disattenuate = FALSE
+                  )
+
+s_gscam <- summarize(res_gscam)
+s_gsca  <- summarize(res_gsca)
+
+# Compare
+data.frame(
+  "Path"      = s_gscam$Estimates$Path_estimates$Name,
+  "Pop_value" = c(0.6, 0.4, 0.35), # see ?threecommonfactors
+  "GSCAm"      = s_gscam$Estimates$Path_estimates$Estimate,
+  "GSCA"       = s_gsca$Estimates$Path_estimates$Estimate
+)
+### Fine-tuning a weighting scheme ------------------------------------------
+## Setting starting values
+
+sv <- list("eta1" = c("y12" = 10, "y13" = 4, "y11" = 1))
+res <- csem(threecommonfactors, model, .starting_values = sv)
 }
 \references{
 \insertAllCited{}
