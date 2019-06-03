@@ -163,6 +163,7 @@ estimatePath <- function(
     res <- purrr::transpose(res)
 
     if(.approach_paths == "3SLS"){
+      # Based on Zellner & Theil (1962)
       # Variance covariance matrix of the error term
       VCVresid=matrix(0,nrow=length(vars_endo),ncol=length(vars_endo),
                       dimnames=list(vars_endo,vars_endo))
