@@ -298,6 +298,8 @@ plot.Two_Way_Effect = function(.TWobject){
 #'  .R2 = args_default()$.R2,
 #'  .vcv_asymptotic = args_default()$.vcv_asymptotic)
 #' 
+#' @param .object A 2SLS or 3SLS object 
+#' 
 #' @inheritParams  csem_arguments
 #' 
 #' @inherit csem_test return
@@ -341,6 +343,10 @@ testHausman.cSEMResults_default=function(.object,
     stop2("In order to conduct a Hausman test, the structural model must be either estimated by 2SLS or 3SLS.")
   }
   
+  if(.object$Information$Arguments$.approach_paths == "3SLS"){
+    stop2("Comparison between 3SLS and 2SLS estimates is not implemented yet.")
+  }
+  
   
   # If structural model was estimated by 2SLS, the estimates should be compared to OLS
   # OLS estimator is efficient and consistent under H0
@@ -351,12 +357,16 @@ testHausman.cSEMResults_default=function(.object,
   
   # Remove instruments and set estimator path to OLS
   arguments_efficient$.approach_paths <- 'OLS'
-  arguments_efficient$.instruments <- NULL #Why do I have to overwrite the instruments? Shouldn't it be enough to set the estimator to OLS
+  
+  # FOR FUTURE: Overwrite cSEM_model$.instruments!!!!! 
+  arguments_efficient$.instruments <- NULL # set to NULL to avoid warning message
 
   # Reestimation by OLS
   res_efficient=do.call(csem,arguments_efficient)
-  
+
  # Under H0 the 2SLS is consistent but not asymptotically efficient 
+  
+  # If it is already a resample object select the default estimation.
   res_consistent <- .object
     }
   
@@ -380,16 +390,16 @@ testHausman.cSEMResults_default=function(.object,
   
 
   
-  # Bootstrap OLS/2SLS estimates
+  # Bootstrap results of efficient and consistent estimator
   # I deliaberatly ignore inadmissible solution to ensure that both habe the same number of bootstrap.
   # For the future that should be allowed
-  boot_efficient <- resamplecSEMResults(res_efficient,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
   
+  .seed <- sample(.Random.seed,1)
+  boot_efficient <- resamplecSEMResults(res_efficient,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
   coef_efficient <- boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
   # Bootstrap 2SLS estimates with same seed as the OLS estimate
   boot_consistent <- resamplecSEMResults(res_consistent,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
-  
   coef_consistent <- boot_consistent$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
   
@@ -399,20 +409,32 @@ testHausman.cSEMResults_default=function(.object,
   m <- .object$Information$Model$structural
   dep_vars <- names(.object$Information$Model$instruments)
   
-  test=strsplit(names(boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Original) , split = ' ~ ')
+  indep_vars <- lapply(dep_vars, function(x){
+    colnames(m)[which(m[x, ,drop = FALSE] == 1, arr.ind = TRUE)[, "col"]]})
   
-  test1 = sapply(test, function(x){
-    x[1]
-      })
+  names(indep_vars) <- dep_vars
   
-  belongs <- lapply(dep_vars, function(x){
-    test1 == x
-  })
+  endo_vars <- lapply(dep_vars, function(x){setdiff(indep_vars[[x]],colnames(.object$Information$Model$instruments[[x]]))})
+
+  belongs <- lapply(dep_vars,function(x){paste(x,endo_vars, sep = ' ~ ')})
+  
   names(belongs) <- dep_vars
   
-  indep_var =  lapply(belongs, function(x){
-         sapply(test,function(x){x[2]})[x]
-     })
+  # # Ols approach 
+  # test=strsplit(names(boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Original) , split = ' ~ ')
+  # 
+  # test1 = sapply(test, function(x){
+  #   x[1]
+  #     })
+  # 
+  # belongs <- lapply(dep_vars, function(x){
+  #   test1 == x
+  # })
+  # names(belongs) <- dep_vars
+  # # 
+  # # indep_vars =  lapply(belongs, function(x){
+  # #        sapply(test,function(x){x[2]})[x]
+  # #    })
   
   # calculation of the test statistic perhaps this can also be done with the resample function
   # Needs to be discussed 
@@ -431,12 +453,15 @@ testHausman.cSEMResults_default=function(.object,
     para_diff <- as.matrix(coef_consistent[belongs[[x]]]-coef_efficient[belongs[[x]]])
     
     # There are two ways to calculate the VCV of the difference:
-    # Either using the asymptotic VCV, i.e., VCV(beta_OLS) - VCV(beta_2SLS) or
+    # Either using the asymptotic VCV, i.e., VCV(beta_consistent) - VCV(beta_efficient) or
     # as VCV(beta_2SLS - beta_OLS)
     # Problem with the asymptotic VCV is that you can get negative variances
     if(.vcv_asymptotic == TRUE){
       VCV_diff <- VCV_consistent - VCV_efficient
-    }
+      if(!matrixcalc::is.positive.semi.definite(VCV_diff)){
+        stop2("The difference of two variance-covariance matrices is not positive semi-definite.")
+      }
+      }
     
     
     # If we remove inadmissible results from the bootstrap, we muss ensure that the two matrices have the same dimension
@@ -446,10 +471,11 @@ testHausman.cSEMResults_default=function(.object,
     }
     
     # Calculation of the test statistic
-    nrow(.object$Information$Data)*t(para_diff)%*%solve(VCV_diff)%*%para_diff
+    c(t(para_diff)%*%solve(VCV_diff)%*%para_diff)
     
   })# end sapply
   
+  # names(teststat) <- dep_vars
   
   ## Calculate the reference distribution of the test statistic
   
@@ -472,12 +498,14 @@ testHausman.cSEMResults_default=function(.object,
   ref_dist <- lapply(dep_vars, function(dep_var){
     
     # collect the instruments for that equation
-    instr <- res_efficient$Information$Model$instruments[dep_var]
+    instr <- res_consistent$Information$Model$instruments[dep_var]
     
     # Adjust the structrual model as only the equation of the considered dependent variable should be estimated
     str_model=res_efficient$Information$Model$structural[dep_var,,drop = FALSE]
+    
+    # Eventually replace by parseModel function
     model_star=list(structural = str_model,
-                   model_type = res_efficient$Information$Model$model_type,
+                   model_type = res_consistent$Information$Model$model_type,
                    instruments = instr)
     
     # list to store the reference distribution 
@@ -500,8 +528,8 @@ testHausman.cSEMResults_default=function(.object,
       colnames(scores_star)
       
       P_star <- cSEM:::calculateConstructVCV(.C = cor(scores_star), #cor ensures that the predicted scores are standardized
-                                            .Q = res_efficient$Estimates$Reliabilities,
-                                            .csem_model = res_efficient$Information$Model)
+                                            .Q = res_consistent$Estimates$Reliabilities, #From where the reliabilities
+                                            .csem_model = res_consistent$Information$Model)
       
       # In the next step these scores are used to obtain the OLS and 2SLS estimates
       # in case of PLSc this is tricky as we need the reliabilities
@@ -549,8 +577,8 @@ testHausman.cSEMResults_default=function(.object,
     
       
       # calculate the difference
-      diff_star <- efficient_star$Path_estimates[,indep_var[[dep_var]],drop = FALSE] -
-        consistent_star$Path_estimates[,indep_var[[dep_var]],drop = FALSE]
+      diff_star <- efficient_star$Path_estimates[,indep_vars[[dep_var]],drop = FALSE] -
+        consistent_star$Path_estimates[,indep_vars[[dep_var]],drop = FALSE]
      
       
       
@@ -607,10 +635,10 @@ testHausman.cSEMResults_default=function(.object,
                                           .instruments = instr)
         }
         
-        diff_temp <- consistent_temp$Path_estimates[,indep_var[[dep_var]]] - efficient_temp$Path_estimates[,indep_var[[dep_var]]]
+        diff_temp <- consistent_temp$Path_estimates[,indep_vars[[dep_var]]] - efficient_temp$Path_estimates[,indep_vars[[dep_var]]]
         
-        out <- list(diff = diff_temp, OLS = efficient_temp$Path_estimates[,indep_var[[dep_var]]],
-                    TSLS = consistent_temp$Path_estimates[,indep_var[[dep_var]]])
+        out <- list(diff = diff_temp, OLS = efficient_temp$Path_estimates[,indep_vars[[dep_var]]],
+                    TSLS = consistent_temp$Path_estimates[,indep_vars[[dep_var]]])
         
         return(out)
         })
