@@ -54,13 +54,10 @@
 #' @param .cv_folds Integer. The number of cross-validation folds to use. Setting
 #'   `.cv_folds` to `N` (the number of observations) produces 
 #'   leave-one-out cross-validation samples. Defaults to `10`.
-#' @param .data A `data.frame` or a `matrix` of standardized or unstandarized data. 
-#'   Possible column types or classes of the data provided are: logical, 
-#'   numeric (double or integer), factor (ordered and unordered) 
-#'   or a mix of several types. The data may also include
-#'   *one* character column whose column name must be given to `.id`. 
-#'   This column is assumed to contain group identifiers used to split 
-#'   the data into groups.
+#' @param .data A `data.frame` or a `matrix` of standardized or unstandarized 
+#'   data (indicators/items/manifest variables). Possible column types or classes 
+#'   of the data provided are: "logical", "numeric" ("double" or "integer"), 
+#'   "factor" ("ordered" and/or "unordered") or a mix of several types.
 #' @param .dependent Character string. Name of the dependent variable. Defaults to `NULL`. 
 #' @param .disattenuate Logical. Should composite/proxy correlations 
 #'   be disattenuated to yield consisten loadings and path estimates if at least
@@ -86,8 +83,6 @@
 #'   data obtained by resamplecSEMResults().
 #' @param .full_output Logical. Should the full ouput of summarize be printed.
 #'   Defaults to `TRUE`.
-#' @param .second_resample A list containing `.R2` resamples for each of the `.R`
-#'   resamples of the first run.
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
@@ -102,8 +97,12 @@
 #'    Defaults to `NULL`.
 #' @param .independent Character string. The name of the independent variable. 
 #'    Defaults to `NULL`. 
-#' @param `.instruments` A list of instruments for each structural equation. 
-#'   Defaults to `NULL`
+#' @param .instruments A named list of vectors of instruments. The names
+#'   of the list elements are the names of the dependent constructs of the structural
+#'   equation whose explanatory variables are endogenous. The vectors
+#'   contain the names of the instruments corresponding to each equation. Note
+#'   that exogenous variables of a given equation **must** be supplied as 
+#'   instruments for themselves. See the examples section. Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
@@ -181,15 +180,19 @@
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? 
 #'   Defaults to `FALSE`.
+#' @param .second_resample A list containing `.R2` resamples for each of the `.R`
+#'   resamples of the first run.
+#' @param .seed Integer or FALSE. The random seed to use. Defaults to `FALSE` in which
+#'   case an arbitrary seed is choosen.
 #' @param .sign_change_option Character string. Which sign change option should 
 #' be used to handle flipping signs when resampling? One of "*none*","*individual*",
 #' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".
-#' @param .seed Integer or FALSE. The random seed to use. Defaults to `FALSE` in which
-#'   case an arbitrary seed is choosen.
 #' @param .stage Character string. The stage the model is need for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
-#' @param .starting_values list of named vectors containig the starting values. 
-#' Defaults to `NULL`.
+#' @param .starting_values A named list of vectors where the
+#'   list names are the construct names whose indicator weights the user
+#'   wishes to set. The vectors must be named vectors of `"indicator_name" = value` 
+#'   pairs, where `value` is the starting weight. Defaults to `NULL`.
 #' @param .steps A vector containing values where e.g., a function is evaluated.
 #'  Defaults to `seq(-2,2,0.01)`.
 #' @param .terms A vector of construct names to be classified.

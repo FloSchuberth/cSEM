@@ -70,13 +70,10 @@ to "\emph{diff_absolute}".}
 \code{.cv_folds} to \code{N} (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to \code{10}.}
 
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized data.
-Possible column types or classes of the data provided are: logical,
-numeric (double or integer), factor (ordered and unordered)
-or a mix of several types. The data may also include
-\emph{one} character column whose column name must be given to \code{.id}.
-This column is assumed to contain group identifiers used to split
-the data into groups.}
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
+data (indicators/items/manifest variables). Possible column types or classes
+of the data provided are: "logical", "numeric" ("double" or "integer"),
+"factor" ("ordered" and/or "unordered") or a mix of several types.}
 
 \item{.dependent}{Character string. Name of the dependent variable. Defaults to \code{NULL}.}
 
@@ -114,9 +111,6 @@ data obtained by resamplecSEMResults().}
 \item{.full_output}{Logical. Should the full ouput of summarize be printed.
 Defaults to \code{TRUE}.}
 
-\item{.second_resample}{A list containing \code{.R2} resamples for each of the \code{.R}
-resamples of the first run.}
-
 \item{.H}{The (N x J) matrix of construct scores.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
@@ -135,8 +129,12 @@ Defaults to \code{NULL}.}
 \item{.independent}{Character string. The name of the independent variable.
 Defaults to \code{NULL}.}
 
-\item{`.instruments`}{A list of instruments for each structural equation.
-Defaults to \code{NULL}}
+\item{.instruments}{A named list of vectors of instruments. The names
+of the list elements are the names of the dependent constructs of the structural
+equation whose explanatory variables are endogenous. The vectors
+contain the names of the instruments corresponding to each equation. Note
+that exogenous variables of a given equation \strong{must} be supplied as
+instruments for themselves. See the examples section. Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
@@ -243,18 +241,23 @@ resampling from a resample. Defaults to \code{199}.}
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
 
-\item{.sign_change_option}{Character string. Which sign change option should
-be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",
-"\emph{individual_reestimate}", "\emph{construct_reestimate}". Defaults to "\emph{none}".}
+\item{.second_resample}{A list containing \code{.R2} resamples for each of the \code{.R}
+resamples of the first run.}
 
 \item{.seed}{Integer or FALSE. The random seed to use. Defaults to \code{FALSE} in which
 case an arbitrary seed is choosen.}
 
+\item{.sign_change_option}{Character string. Which sign change option should
+be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",
+"\emph{individual_reestimate}", "\emph{construct_reestimate}". Defaults to "\emph{none}".}
+
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 
-\item{.starting_values}{list of named vectors containig the starting values.
-Defaults to \code{NULL}.}
+\item{.starting_values}{A named list of vectors where the
+list names are the construct names whose indicator weights the user
+wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
+pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
 
 \item{.steps}{A vector containing values where e.g., a function is evaluated.
 Defaults to \code{seq(-2,2,0.01)}.}

@@ -31,8 +31,8 @@
 #'
 #' dat <- processData(dat, model)
 #'
-#' is.matrix(dat) # TRUE
-#' colnames(dat)  # "x1", "x2", "a1", "a2", "b1", "b2"
+#' is.data.frame(dat) # TRUE
+#' colnames(dat)      # "x1", "x2", "a1", "a2", "b1", "b2"
 #'
 #' @export
 

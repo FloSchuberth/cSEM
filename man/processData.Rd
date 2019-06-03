@@ -7,16 +7,20 @@
 processData(.data, .model, .instruments = NULL)
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized data.
-Possible column types or classes of the data provided are: logical,
-numeric (double or integer), factor (ordered and unordered)
-or a mix of several types. The data may also include
-\emph{one} character column whose column name must be given to \code{.id}.
-This column is assumed to contain group identifiers used to split
-the data into groups.}
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
+data (indicators/items/manifest variables). Possible column types or classes
+of the data provided are: "logical", "numeric" ("double" or "integer"),
+"factor" ("ordered" and/or "unordered") or a mix of several types.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
+
+\item{.instruments}{A named list of vectors of instruments. The names
+of the list elements are the names of the dependent constructs of the structural
+equation whose explanatory variables are endogenous. The vectors
+contain the names of the instruments corresponding to each equation. Note
+that exogenous variables of a given equation \strong{must} be supplied as
+instruments for themselves. See the examples section. Defaults to \code{NULL}.}
 }
 \value{
 A (N x K) data.frame containing the standardized data with columns ordered
@@ -47,7 +51,7 @@ y3 =~ b1 + b2
 
 dat <- processData(dat, model)
 
-is.matrix(dat) # TRUE
-colnames(dat)  # "x1", "x2", "a1", "a2", "b1", "b2"
+is.data.frame(dat) # TRUE
+colnames(dat)      # "x1", "x2", "a1", "a2", "b1", "b2"
 
 }
