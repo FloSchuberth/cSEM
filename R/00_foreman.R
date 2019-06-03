@@ -202,7 +202,6 @@ foreman <- function(
       .approach_path = .approach_paths,
       .csem_model    = csem_model,
       .H             = H,
-      .instruments   = .instruments,
       .normality     = .normality,
       .P             = P,
       .Q             = Q

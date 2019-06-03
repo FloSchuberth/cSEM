@@ -8,7 +8,6 @@
 #'  .approach_paths = args_default()$.approach_paths,
 #'  .csem_model     = args_default()$.csem_model,
 #'  .H              = args_default()$.H,
-#'  .instruments    = args_default()$.instruments,
 #'  .normality      = args_default()$.normality,
 #'  .P              = args_default()$.P,
 #'  .Q              = args_default()$.Q
@@ -25,7 +24,6 @@ estimatePath <- function(
   .approach_paths = args_default()$.approach_paths,
   .csem_model     = args_default()$.csem_model,
   .H              = args_default()$.H,
-  .instruments    = args_default()$.instruments,
   .normality      = args_default()$.normality,
   .P              = args_default()$.P,
   .Q              = args_default()$.Q
@@ -39,15 +37,17 @@ estimatePath <- function(
   }
   
   ## Warning if instruments are given but .approach_path = "OLS"
-  if(!is.null(.instruments) & .approach_paths == "OLS") {
-    warning2("Instruments supplied but path approach is 'OLS'.\n",
-             "Instruments are ignored.", 
-             " Consider setting `.approach_path = '2SLS'.")
+  if(!is.null(.csem_model$instruments) & .approach_paths == "OLS") {
+    warning2("The following error occured in the `estimatePath()` function:\n",
+      "Instruments supplied but path approach is 'OLS'.\n",
+      "Instruments are ignored.", 
+      " Consider setting `.approach_path = '2SLS'.")
   }
   
-  ## Error if no instruments are given but .approach_path = "2SLS"
-  if(is.null(.instruments) & (.approach_paths == "2SLS" | .approach_paths == "3SLS")) {
-    stop2("`.approach_path = '2SLS' '3SLS' requires instruments.")
+  ## Error if no instruments are given but .approach_path = "2SLS" or "3SLS"
+  if(is.null(.csem_model$instruments) & (.approach_paths %in% c("2SLS", "3SLS"))) {
+    stop2("The following error occured in the `estimatePath()` function:\n",
+    .approach_path, " requires instruments.")
   }
   
   m         <- .csem_model$structural
@@ -67,8 +67,8 @@ estimatePath <- function(
       # have endogenous variables on the RHS. By default: FALSE.
       endo_in_RHS <- FALSE
       
-      if(!is.null(.instruments)) {
-        endo_in_RHS <- x %in% names(.instruments)
+      if(!is.null(.csem_model$instruments)) {
+        endo_in_RHS <- x %in% names(.csem_model$instruments)
       }
       
       ## Independent variables of the structural equation of construct x

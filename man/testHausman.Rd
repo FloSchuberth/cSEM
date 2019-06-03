@@ -30,7 +30,7 @@ testHausman=function(.object,
   .vcv_asymptotic = args_default()$.vcv_asymptotic)
 }
 \arguments{
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+\item{.object}{A 2SLS or 3SLS object}
 
 \item{.seed}{Integer or FALSE. The random seed to use. Defaults to \code{FALSE} in which
 case an arbitrary seed is choosen.}
@@ -43,7 +43,8 @@ Defaults to \code{0.05}.}
 \item{.R2}{Integer. The number of bootstrap replications to use when
 resampling from a resample. Defaults to \code{199}.}
 
-\item{.vcv_asymptotic}{Logical. Should the asymptotic variance-covariance matrix be used.
+\item{.vcv_asymptotic}{Logical. Should the asymptotic variance-covariance matrix be used, i.e.,
+VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) directly computed.
 Defaults to \code{FALSE}.}
 }
 \value{
@@ -58,8 +59,8 @@ what constitues and inadmissible run.}
 }
 }
 \description{
-Calculates a bootstrap-based Hausman test that can be used to compare OLS to 2SLS estimates \insertCite{Wong1996}{cSEM}
-or 2SLS to 3SLS estimates (Needs to be checked whether this can be done, I think so).
+Calculates a bootstrap-based Hausman test that can be used to compare OLS to 2SLS estimates
+or 2SLS to 3SLS estimates \insertCite{Hausman1978,Wong1996}{cSEM} (Needs to be checked whether the implemention is correct, I doubt).
 }
 \section{Methods (by class)}{
 \itemize{

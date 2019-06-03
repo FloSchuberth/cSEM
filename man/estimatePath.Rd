@@ -9,7 +9,6 @@ estimatePath(
  .approach_paths = args_default()$.approach_paths,
  .csem_model     = args_default()$.csem_model,
  .H              = args_default()$.H,
- .instruments    = args_default()$.instruments,
  .normality      = args_default()$.normality,
  .P              = args_default()$.P,
  .Q              = args_default()$.Q
