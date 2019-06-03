@@ -244,7 +244,7 @@ Defaults to \code{FALSE}.}
 \item{.second_resample}{A list containing \code{.R2} resamples for each of the \code{.R}
 resamples of the first run.}
 
-\item{.seed}{Integer or FALSE. The random seed to use. Defaults to \code{FALSE} in which
+\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen.}
 
 \item{.sign_change_option}{Character string. Which sign change option should

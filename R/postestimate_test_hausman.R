@@ -2,14 +2,17 @@
 #' 
 #' Calculates a bootstrap-based Hausman test that can be used to compare 
 #' OLS to 2SLS estimates 
-#' or 2SLS to 3SLS estimates \insertCite{Hausman1978,Wong1996}{cSEM} (Needs to be checked whether the implemention is correct, I doubt).
+#' or 2SLS to 3SLS estimates \insertCite{Hausman1978,Wong1996}{cSEM} 
+#' (TODO: Needs to be checked whether the implemention is correct, I doubt).
 #' 
-#' @usage testHausman=function(.object,
-#'  .seed=1234,
-#'  .alpha = args_default()$.alpha,
-#'  .R = args_default()$.R,
-#'  .R2 = args_default()$.R2,
-#'  .vcv_asymptotic = args_default()$.vcv_asymptotic)
+#' @usage testHausman(
+#'  .object         = NULL,
+#'  .seed           = args_default()$.seed,
+#'  .alpha          = args_default()$.alpha,
+#'  .R              = args_default()$.R,
+#'  .R2             = args_default()$.R2,
+#'  .vcv_asymptotic = args_default()$.vcv_asymptotic
+#'  )
 #' 
 #' @param .object A 2SLS or 3SLS object 
 #' 
@@ -29,12 +32,14 @@
 #'
 #' @export
 
-testHausman=function(.object,
-                     .seed=1234,
-                     .alpha = args_default()$.alpha,
-                     .R = args_default()$.R,
-                     .R2 = args_default()$.R2,
-                     .vcv_asymptotic = args_default()$.vcv_asymptotic) {
+testHausman <- function(
+  .object         = NULL,
+  .seed           = args_default()$.seed,
+  .alpha          = args_default()$.alpha,
+  .R              = args_default()$.R,
+  .R2             = args_default()$.R2,
+  .vcv_asymptotic = args_default()$.vcv_asymptotic
+){
   # Implementation is based on:
   # Wong (1996) - Bootstrapping Hausman's exogeneity test
   
@@ -44,12 +49,14 @@ testHausman=function(.object,
 #' @describeIn testHausman (TODO)
 #' @export
 
-testHausman.cSEMResults_default=function(.object,
-                                         .seed=1234,
-                                         .alpha = args_default()$.alpha,
-                                         .R = args_default()$.R,
-                                         .R2 = args_default()$.R2,
-                                         .vcv_asymptotic = args_default()$.vcv_asymptotic){
+testHausman.cSEMResults_default <- function(
+  .object         = NULL,
+  .seed           = args_default()$.seed,
+  .alpha          = args_default()$.alpha,
+  .R              = args_default()$.R,
+  .R2             = args_default()$.R2,
+  .vcv_asymptotic = args_default()$.vcv_asymptotic
+  ){
   
   # Check whether either 2SLS or 3SLS was used 
   if(!(.object$Information$Arguments$.approach_paths %in% c("2SLS", "3SLS"))){
@@ -107,7 +114,10 @@ testHausman.cSEMResults_default=function(.object,
   # I deliaberatly ignore inadmissible solution to ensure that both habe the same number of bootstrap.
   # For the future that should be allowed
   
-  .seed <- sample(.Random.seed,1)
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
+  }
+
   boot_efficient <- resamplecSEMResults(res_efficient,.seed = .seed,.handle_inadmissibles = 'ignore',.R = .R2)
   coef_efficient <- boot_efficient$Estimates$Estimates_resample$Estimates1$Path_estimates$Original
   
@@ -421,38 +431,45 @@ testHausman.cSEMResults_default=function(.object,
 #' @describeIn testHausman (TODO)
 #' @export
 
-testHausman.cSEMResults_multi <- function(.object,
-                                          .seed=1234,
-                                          .alpha = args_default()$.alpha,
-                                          .R = args_default()$.R,
-                                          .R2 = args_default()$.R2,
-                                          .vcv_asymptotic = args_default()$.vcv_asymptotic){
+testHausman.cSEMResults_multi <- function(
+  .object         = NULL,
+  .seed           = args_default()$.seed,
+  .alpha          = args_default()$.alpha,
+  .R              = args_default()$.R,
+  .R2             = args_default()$.R2,
+  .vcv_asymptotic = args_default()$.vcv_asymptotic
+  ){
+  
   if(inherits(.object, "cSEMResults_2ndorder")) {
     lapply(.object, testHausman.cSEMResults_2ndorder,
-           .seed = 1234,
-           .alpha = args_default()$.alpha,
-           .R = args_default()$.R,
-           .R2 = args_default()$.R2,
-           .vcv_asymptotic = args_default()$.vcv_asymptotic)
+           .seed           = .seed,
+           .alpha          = .alpha,
+           .R              = .R,
+           .R2             = .R2,
+           .vcv_asymptotic = .vcv_asymptotic
+    )
   } else {
     lapply(.object, testHausman.cSEMResults_default,
-           .seed = 1234,
-           .alpha = args_default()$.alpha,
-           .R = args_default()$.R,
-           .R2 = args_default()$.R2,
-           .vcv_asymptotic = args_default()$.vcv_asymptotic)
+           .seed           = .seed,
+           .alpha          = .alpha,
+           .R              = .R,
+           .R2             = .R2,
+           .vcv_asymptotic = .vcv_asymptotic
+           )
   }
 }
 
 #' @describeIn testHausman (TODO)
 #' @export
 
-testHausman.cSEMResults_2ndorder <- function(.object,
-                                             .seed = 1234,
-                                             .alpha = args_default()$.alpha,
-                                             .R = args_default()$.R,
-                                             .R2 = args_default()$.R2,
-                                             .vcv_asymptotic = args_default()$.vcv_asymptotic){
+testHausman.cSEMResults_2ndorder <- function(
+  .object         = NULL,
+  .seed           = args_default()$.seed,
+  .alpha          = args_default()$.alpha,
+  .R              = args_default()$.R,
+  .R2             = args_default()$.R2,
+  .vcv_asymptotic = args_default()$.vcv_asymptotic
+  ){
   
   stop2("Hausman test is not yet implemented for second-order models.")
 }

@@ -12,7 +12,7 @@ resampleData(
  .cv_folds        = 10,
  .id              = NULL,
  .R               = 499,
- .seed            = FALSE
+ .seed            = NULL
 )
 }
 \arguments{
@@ -41,7 +41,7 @@ Defaults to \code{NULL}.}
 \item{.R}{Integer. The number of bootstrap replications, permutation runs
 or cross-validation repetitions to use. Defaults to \code{499}.}
 
-\item{.seed}{Integer or FALSE. The random seed to use. Defaults to \code{FALSE} in which
+\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen.}
 }
 \value{

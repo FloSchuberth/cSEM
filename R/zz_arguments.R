@@ -182,7 +182,7 @@
 #'   Defaults to `FALSE`.
 #' @param .second_resample A list containing `.R2` resamples for each of the `.R`
 #'   resamples of the first run.
-#' @param .seed Integer or FALSE. The random seed to use. Defaults to `FALSE` in which
+#' @param .seed Integer or NULL. The random seed to use. Defaults to `NULL` in which
 #'   case an arbitrary seed is choosen.
 #' @param .sign_change_option Character string. Which sign change option should 
 #' be used to handle flipping signs when resampling? One of "*none*","*individual*",
@@ -381,7 +381,7 @@ args_default <- function(.choices = FALSE) {
     .S                       = NULL,
     .saturated               = FALSE,
     .second_resample         = NULL,
-    .seed                    = FALSE,
+    .seed                    = NULL,
     .sign_change_option      = c("none", "individual", "individual_reestimate",
                                  "construct_reestimate"),
     .stage                   = c("first", "second"),

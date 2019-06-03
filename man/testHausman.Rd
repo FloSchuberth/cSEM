@@ -7,32 +7,34 @@
 \alias{testHausman.cSEMResults_2ndorder}
 \title{Hausman test}
 \usage{
-testHausman=function(.object,
- .seed=1234,
- .alpha = args_default()$.alpha,
- .R = args_default()$.R,
- .R2 = args_default()$.R2,
- .vcv_asymptotic = args_default()$.vcv_asymptotic)
+testHausman(
+ .object         = NULL,
+ .seed           = args_default()$.seed,
+ .alpha          = args_default()$.alpha,
+ .R              = args_default()$.R,
+ .R2             = args_default()$.R2,
+ .vcv_asymptotic = args_default()$.vcv_asymptotic
+ )
 
-\method{testHausman}{cSEMResults_default}(.object, .seed = 1234,
-  .alpha = args_default()$.alpha, .R = args_default()$.R,
-  .R2 = args_default()$.R2,
+\method{testHausman}{cSEMResults_default}(.object = NULL,
+  .seed = args_default()$.seed, .alpha = args_default()$.alpha,
+  .R = args_default()$.R, .R2 = args_default()$.R2,
   .vcv_asymptotic = args_default()$.vcv_asymptotic)
 
-\method{testHausman}{cSEMResults_multi}(.object, .seed = 1234,
-  .alpha = args_default()$.alpha, .R = args_default()$.R,
-  .R2 = args_default()$.R2,
+\method{testHausman}{cSEMResults_multi}(.object = NULL,
+  .seed = args_default()$.seed, .alpha = args_default()$.alpha,
+  .R = args_default()$.R, .R2 = args_default()$.R2,
   .vcv_asymptotic = args_default()$.vcv_asymptotic)
 
-\method{testHausman}{cSEMResults_2ndorder}(.object, .seed = 1234,
-  .alpha = args_default()$.alpha, .R = args_default()$.R,
-  .R2 = args_default()$.R2,
+\method{testHausman}{cSEMResults_2ndorder}(.object = NULL,
+  .seed = args_default()$.seed, .alpha = args_default()$.alpha,
+  .R = args_default()$.R, .R2 = args_default()$.R2,
   .vcv_asymptotic = args_default()$.vcv_asymptotic)
 }
 \arguments{
 \item{.object}{A 2SLS or 3SLS object}
 
-\item{.seed}{Integer or FALSE. The random seed to use. Defaults to \code{FALSE} in which
+\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
@@ -61,7 +63,8 @@ what constitues and inadmissible run.}
 \description{
 Calculates a bootstrap-based Hausman test that can be used to compare
 OLS to 2SLS estimates
-or 2SLS to 3SLS estimates \insertCite{Hausman1978,Wong1996}{cSEM} (Needs to be checked whether the implemention is correct, I doubt).
+or 2SLS to 3SLS estimates \insertCite{Hausman1978,Wong1996}{cSEM}
+(TODO: Needs to be checked whether the implemention is correct, I doubt).
 }
 \section{Methods (by class)}{
 \itemize{

@@ -26,7 +26,7 @@ csem(
   .handle_inadmissibles    = c("drop", "ignore", "replace"),
   .user_funs               = NULL,
   .eval_plan               = c("sequential", "multiprocess"),
-  .seed                    = FALSE,
+  .seed                    = NULL,
   .sign_change_option      = c("none", "individual", "individual_reestimate", 
                                "construct_reestimate"),
   ...
@@ -129,7 +129,7 @@ vectorized (columnwise) in this case. See the examples section for details.}
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
 all available cores will be used. Defaults to "\emph{sequential}".}
 
-\item{.seed}{Integer or FALSE. The random seed to use. Defaults to \code{FALSE} in which
+\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen.}
 
 \item{.sign_change_option}{Character string. Which sign change option should

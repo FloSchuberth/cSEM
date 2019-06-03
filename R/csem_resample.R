@@ -62,7 +62,7 @@
 #'  .cv_folds        = 10,
 #'  .id              = NULL,
 #'  .R               = 499,
-#'  .seed            = FALSE
+#'  .seed            = NULL
 #' )
 #'
 #' @param .data A `data.frame`, a `matrix` or a `list` of data of either type. 
@@ -222,7 +222,7 @@ resampleData <- function(
   .cv_folds        = 10,
   .id              = NULL,
   .R               = 499,
-  .seed            = FALSE
+  .seed            = NULL
 ) {
   .resample_method <- match.arg(.resample_method, 
             c("bootstrap", "jackknife", "permutation", "cross-validation"))
@@ -480,7 +480,7 @@ resampleData <- function(
 #'  .handle_inadmissibles  = c("drop", "ignore", "replace"),
 #'  .user_funs             = NULL,
 #'  .eval_plan             = c("sequential", "multiprocess"),
-#'  .seed                  = FALSE,
+#'  .seed                  = NULL,
 #'  .sign_change_option    = c("none","individual","individual_reestimate",
 #'                             "construct_reestimate"),
 #'  ...
@@ -568,7 +568,7 @@ resamplecSEMResults <- function(
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .user_funs             = NULL,
   .eval_plan             = c("sequential", "multiprocess"),
-  .seed                  = FALSE,
+  .seed                  = NULL,
   .sign_change_option    = c("none","individual","individual_reestimate",
                              "construct_reestimate"),
   ...
@@ -1158,7 +1158,7 @@ resamplecSEMResultsCore <- function(
     while (length(out) < .R) {
       n_attempt <- n_attempt + 1
       R_new <- .R - length(out)
-      if(isFALSE(.seed)) {
+      if(is.null(.seed)) {
         .seed <- sample(.Random.seed, 1)
       } else {
         .seed <- .seed + 1

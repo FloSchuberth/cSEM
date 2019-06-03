@@ -165,7 +165,7 @@
 #'   .handle_inadmissibles    = c("drop", "ignore", "replace"),
 #'   .user_funs               = NULL,
 #'   .eval_plan               = c("sequential", "multiprocess"),
-#'   .seed                    = FALSE,
+#'   .seed                    = NULL,
 #'   .sign_change_option      = c("none", "individual", "individual_reestimate", 
 #'                                "construct_reestimate"),
 #'   ...
@@ -228,7 +228,7 @@ csem <- function(
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .user_funs             = NULL,
   .eval_plan             = c("sequential", "multiprocess"),
-  .seed                  = FALSE,
+  .seed                  = NULL,
   .sign_change_option    = c("none", "individual", "individual_reestimate", 
                              "construct_reestimate"),
   ...
