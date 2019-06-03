@@ -411,13 +411,12 @@ testHausman.cSEMResults_default=function(.object,
   
   indep_vars <- lapply(dep_vars, function(x){
     colnames(m)[which(m[x, ,drop = FALSE] == 1, arr.ind = TRUE)[, "col"]]})
-  
   names(indep_vars) <- dep_vars
   
   endo_vars <- lapply(dep_vars, function(x){setdiff(indep_vars[[x]],colnames(.object$Information$Model$instruments[[x]]))})
-
-  belongs <- lapply(dep_vars,function(x){paste(x,endo_vars, sep = ' ~ ')})
+  names(endo_vars) = dep_vars
   
+  belongs <- lapply(dep_vars,function(x){paste(x,endo_vars, sep = ' ~ ')})
   names(belongs) <- dep_vars
   
   # # Ols approach 
@@ -535,7 +534,9 @@ testHausman.cSEMResults_default=function(.object,
       # in case of PLSc this is tricky as we need the reliabilities
       # As an outcome, we obtain the OLS and the 2SLS estimate of the considered equation
       if(.object$Information$Arguments$.approach_paths == "2SLS"){
-      efficient_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
+      
+        # We need to pay attention when .instruments arguement is removed.
+        efficient_star <- cSEM:::estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
                                      .csem_model = model_star,
                                      .approach_paths = 'OLS',
                                      .H = scores_star,
@@ -577,8 +578,8 @@ testHausman.cSEMResults_default=function(.object,
     
       
       # calculate the difference
-      diff_star <- efficient_star$Path_estimates[,indep_vars[[dep_var]],drop = FALSE] -
-        consistent_star$Path_estimates[,indep_vars[[dep_var]],drop = FALSE]
+      diff_star <- efficient_star$Path_estimates[,endo_vars[[dep_var]],drop = FALSE] -
+        consistent_star$Path_estimates[,endo_vars[[dep_var]],drop = FALSE]
      
       
       
@@ -589,7 +590,7 @@ testHausman.cSEMResults_default=function(.object,
         # daten=as.data.frame(scale(temp))
         
         P_temp <- cSEM:::calculateConstructVCV(.C = cor(scores_temp), #cor ensures that the predicted scores are standardized
-                                              .Q = res_efficient$Estimates$Reliabilities,
+                                              .Q = res_consistent$Estimates$Reliabilities, # From where do the reliabilities come
                                               .csem_model = res_efficient$Information$Model)
         
         # calculate the difference
@@ -635,10 +636,10 @@ testHausman.cSEMResults_default=function(.object,
                                           .instruments = instr)
         }
         
-        diff_temp <- consistent_temp$Path_estimates[,indep_vars[[dep_var]]] - efficient_temp$Path_estimates[,indep_vars[[dep_var]]]
+        diff_temp <- consistent_temp$Path_estimates[,endo_vars[[dep_var]], drop =FALSE] - efficient_temp$Path_estimates[,endo_vars[[dep_var]], drop = FALSE]
         
-        out <- list(diff = diff_temp, OLS = efficient_temp$Path_estimates[,indep_vars[[dep_var]]],
-                    TSLS = consistent_temp$Path_estimates[,indep_vars[[dep_var]]])
+        out <- list(diff = diff_temp, efficient = efficient_temp$Path_estimates[,endo_vars[[dep_var]]],
+                    consistent = consistent_temp$Path_estimates[,endo_vars[[dep_var]], drop =FALSE])
         
         return(out)
         })
@@ -654,14 +655,14 @@ testHausman.cSEMResults_default=function(.object,
       }
       
       if(.vcv_asymptotic == TRUE){
-        VCV_efficient_star <- cov(do.call(rbind,boot_star$OLS))
-        VCV_consistent_star <- cov(do.call(rbind,boot_star$TSLS))
+        VCV_efficient_star <- cov(do.call(rbind,boot_star$efficient))
+        VCV_consistent_star <- cov(do.call(rbind,boot_star$consistent))
 
         vcv_star = VCV_consistent_star - VCV_efficient_star 
       }
       
       # calculate the test statistic
-      refdist[[bb]]=nrow(scores_star)*diff_star%*%solve(vcv_star)%*%t(diff_star)
+      refdist[[bb]]=c(diff_star%*%solve(vcv_star)%*%t(diff_star))
     }#end for loop
     
     do.call(c,refdist)
@@ -690,8 +691,9 @@ testHausman.cSEMResults_default=function(.object,
     "Critical_value"     = critical_values,
     "Decision"           = decision,
     "Information"        = list(
-      "Number_admissibles" = ncol(ref_dist_matrix),
+      # "Number_admissibles" = ncol(ref_dist_matrix),
       # "Total_runs"         = counter + n_inadmissibles,
+      "Total_runs"         = ncol(ref_dist_matrix),
       "Bootstrap_values"   = ref_dist,
       "Consistent_estimator"        = "2SLS",
       "Efficient_estimator"  =  if(.object$Information$Arguments$.approach_paths == "2SLS") {"OLS"
