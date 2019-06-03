@@ -193,7 +193,7 @@ foreman <- function(
   C <- calculateCompositeVCV(.S = S, .W = Weights)
   
   ## Calculate construct correlation matrix
-  P <- calculateConstructVCV(.C = C, .Q = Q, .csem_model = csem_model)
+  P <- calculateConstructVCV(.C = C, .Q = Q)
 
   ## Estimate structural coef
   if(.estimate_structural) {
