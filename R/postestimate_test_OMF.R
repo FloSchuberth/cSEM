@@ -123,29 +123,7 @@ testOMF.cSEMResults_default <- function(
     # its important to use foreman here 
     # instead of csem() to allow for lapply(x, testOMF.cSEMResults_default) when x 
     # is of class cSEMResults_2ndorder.
-    ## NOTE: using do.call(foreman, args) would be more elegant but is much 
-    # much much! slower (especially for larger data sets). 
-    Est_temp <- foreman(
-      .data                        = arguments$.data,
-      .model                       = arguments$.model,
-      .approach_cor_robust         = arguments$.approach_cor_robust,
-      .approach_nl                 = arguments$.approach_nl,
-      .approach_paths              = arguments$.approach_paths,
-      .approach_weights            = arguments$.approach_weights,
-      .conv_criterion              = arguments$.conv_criterion,
-      .disattenuate                = arguments$.disattenuate,
-      .dominant_indicators         = arguments$.dominant_indicators,
-      .estimate_structural         = arguments$.estimate_structural,
-      .id                          = arguments$.id,
-      .iter_max                    = arguments$.iter_max,
-      .normality                   = arguments$.normality,
-      .PLS_approach_cf             = arguments$.PLS_approach_cf,
-      .PLS_ignore_structural_model = arguments$.PLS_ignore_structural_model,
-      .PLS_modes                   = arguments$.PLS_modes,
-      .PLS_weight_scheme_inner     = arguments$.PLS_weight_scheme_inner,
-      .reliabilities               = arguments$.reliabilities,
-      .tolerance                   = arguments$.tolerance
-    )
+    Est_temp <- do.call(foreman, arguments)
 
     # Check status
     status_code <- sum(verify(Est_temp))
