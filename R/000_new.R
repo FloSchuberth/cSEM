@@ -365,18 +365,29 @@ testHausman2 <- function(
         colnames(u_hat) <- paste0("Resid_", names_X)
         
         ## Second stage
+        Q2 <- .object$Estimates$Reliabilities 
+        r1       <- cor(Z)
+        diag(r1) <- Q2[names_Z]
+        
+        rel_X_hat <- t(beta_1st) %*% r1 %*% beta_1st
+        
+        r2 <- cor(cbind(X, X_hat))
+        diag(r2) <- c(Q2[names_X], rel_X_hat)
+        
+        rel_u_hat <- c(c(1, -1) %*%  r2 %*% c(1, -1))
+        names(rel_u_hat) <- colnames(u_hat)
+        
         # Recompute the composite VCV with the u_hats added
         scores1 <- cbind(scores, u_hat) 
         Pnew <- cor(scores1)
         
-        # Replace the composite VCV elements by the disattenuated correlations
-        
-        Pnew[colnames(scores), colnames(scores)] <- .object$Estimates$Construct_VCV
+        Qnew <- sqrt(c(Q2, rel_u_hat))
+        P <- cSEM:::calculateConstructVCV(Pnew, Qnew)
         
         ## Estimate the second stage
         new <- c(indep_var, colnames(u_hat))
-        beta_2nd <- solve(Pnew[new, new, drop = FALSE], 
-                          Pnew[new, x, drop = FALSE]) 
+        beta_2nd <- solve(P[new, new, drop = FALSE], 
+                          P[new, x, drop = FALSE]) 
         
         ## Augmented second stage
         # Note: u_hat is now added as a new regressor

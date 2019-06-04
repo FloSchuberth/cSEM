@@ -99,7 +99,7 @@ calculate2ndOrder <- function(
   colnames(out2$Estimates$Loading_estimates) <- colnames(out2$Information$Model$measurement)
   
   ### Third stage --------------------------------------------------------------
-  # If a 2nd order construct is a composite build by at least on common factor 
+  # If a 2nd order construct is a composite build by at least one common factor 
   # an additional correction is necessary. Mainly based on:
   # VanRiel (2017)- "Estimating hierarchical constructs using consistent 
   # partial least squares: The case of second-order composites of common factors"
