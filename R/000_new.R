@@ -366,11 +366,18 @@ testHausman2 <- function(
         
         ## Second stage
         Q2 <- .object$Estimates$Reliabilities 
+
         r1       <- cor(Z)
         diag(r1) <- Q2[names_Z]
         
         rel_X_hat <- t(beta_1st) %*% r1 %*% beta_1st
+
+        R1       <- cor(Z)
+        r1       <- R1
+        diag(r1) <- Q2[names_Z]
         
+        rel_X_hat <- t(beta_1st) %*% r1 %*% beta_1st / (t(beta_1st) %*% R1 %*% beta_1st)
+
         r2 <- cor(cbind(X, X_hat))
         diag(r2) <- c(Q2[names_X], rel_X_hat)
         
