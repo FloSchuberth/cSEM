@@ -1101,16 +1101,20 @@ resamplecSEMResultsCore <- function(
     
       ## Apply user defined function if specified
       user_funs <- if(!is.null(.user_funs)) {
-        if(is.function(.user_funs)) {
-          list("User_fun" = c(.user_funs(Est_temp, ...)))
-        } else {
-          x <- lapply(.user_funs, function(f) c(f(Est_temp, ...)))
-          if(is.null(names(x))) {
-            names(x) <- paste0("User_fun", 1:length(x))
-          }
-          x
-        }
+        applyUserFuns(Est_temp, .user_funs = .user_funs, ...)
       }
+      
+      # user_funs <- if(!is.null(.user_funs)) {
+      #   if(is.function(.user_funs)) {
+      #     list("User_fun" = c(.user_funs(Est_temp, ...)))
+      #   } else {
+      #     x <- lapply(.user_funs, function(f) c(f(Est_temp, ...)))
+      #     if(is.null(names(x))) {
+      #       names(x) <- paste0("User_fun", 1:length(x))
+      #     }
+      #     x
+      #   }
+      # }
       
       ## Add output of the user functions to x1
       if(!is.null(.user_funs)) {

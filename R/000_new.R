@@ -286,3 +286,148 @@ plot.Two_Way_Effect = function(.TWobject){
   
 
 
+#' Regression-based Hausman-test
+#'
+#' The regression based Hausman test
+#'
+#' @export
+#' 
+testHausman2 <- function(.object) {
+  
+  # Define function to bootstrap
+  fun <- function(.object) {
+    # .object <- bb
+    ## Extract relevant quantities
+    m         <- .object$Information$Model
+    P         <- .object$Estimates$Construct_VCV
+    
+    # Dependent (LHS) variables of the structural equations
+    dep_vars  <- rownames(m$structural)[rowSums(m$structural) != 0]
+    
+    res <- lapply(dep_vars, function(x) {
+      # x <- dep_vars[2]
+      # Which of the variables in dep_vars have instruments specified, i.e.
+      # have endogenous variables on the RHS. By default: FALSE.
+      endo_in_RHS <- FALSE
+      
+      if(!is.null(m$instruments)) {
+        endo_in_RHS <- x %in% names(m$instruments)
+      }
+      
+      # Independent variables of the structural equation of construct x
+      indep_var <-  colnames(m$structural[x, m$structural[x, ] != 0, drop = FALSE])
+      
+      ## Only for equations with endogenous variables on the RHS do we need to compute
+      ##  the Hausman test.
+      if(endo_in_RHS & (.object$Information$Arguments$.approach_paths == "2SLS")) {
+        ## First stage
+        # Note: Technically, we only need to regress the P endogenous variables 
+        #       (X) on the L instruments and the K exogenous independent variables 
+        #       (which must be part of Z).
+        #       Therefore: X (N x P) and Z (N x (L + K)) and
+        #       beta_1st = (Z'Z)^-1*(Z'X)
+        #       
+        #       beta_1st would be ((L + K) x P), i.e. each columns represents the 
+        #       first stage estimates for a regression of the instruments on
+        #       on the p'th endogenous variable.
+        #
+        #       Here we regress every RHS variable
+        names_X <- rownames(m$instruments[[x]]) # names of the endogenous variables
+        names_Z <- colnames(m$instruments[[x]]) # names of the instruments 
+        
+        # Assuming that .P (the construct correlation matrix) also contains 
+        # the instruments (ensured if only internal instruments are allowed)
+        # we can use .P.
+        
+        # beta_1st <- solve(P[names_Z, names_Z, drop = FALSE], 
+        #                   P[names_Z, indep_var, drop = FALSE])
+        
+        beta_1st <- solve(P[names_Z, names_Z, drop = FALSE], 
+                          P[names_Z, names_X, drop = FALSE])
+        
+        # Compute fitted values 
+        scores <- .object$Estimates$Construct_scores
+        X <- scores[, names_X, drop = FALSE]
+        Z <- scores[, names_Z, drop = FALSE]
+        
+        X_hat <- Z %*% beta_1st
+        
+        # Compute residuals
+        u_hat <- X - X_hat
+        colnames(u_hat) <- paste0("Resid_", names_X)
+        
+        # 
+        # u_hat <- matrix(0, ncol = length(names_X), nrow = nrow(scores),
+        #                 dimnames = list(NULL, names_X))
+        # 
+        # 
+        # for(i in names_X) {
+        # 
+        #   i <- names_X[1]
+        #   X <- scores[, i, drop = FALSE]
+        #   Z <- scores[, names_Z, drop = FALSE]
+        #   
+        #   u_hat[, i] <- Y - X %*% beta_1st[, i, drop = FALSE]
+        # }
+        
+        ## Augmented second stage
+        # Note: u_hat is now added as a new regressor
+        Y <- scores[, x, drop = FALSE]
+        X <- cbind(scores[, indep_var, drop = FALSE], u_hat)
+        beta_2nd <- solve(t(X) %*% X) %*% t(X) %*% Y
+      } else {
+        NA
+      }
+    })
+    
+    names(res) <- dep_vars
+    res        <- Filter(Negate(anyNA), res) 
+    
+    # Vectorize "res" to be able to use resamplecSEMResults (which requires
+    # output to be a vector or a matrix)
+    # 1. Assign a unique name to each element
+    res <- lapply(res, function(x) {
+      rownames(x) <- paste0(colnames(x), "_", rownames(x))
+      x
+      })
+    # 2. Combine, vectorize and assign names
+    res2 <- do.call(rbind, res)
+    res <- c(res2)
+    names(res) <- rownames(res2)
+    res
+  }
+
+  ## Resample to get standard errors
+  out <- resamplecSEMResults(
+    .object               = .object,
+    .resample_method      = "bootstrap",
+    .R                    = 200,
+    .handle_inadmissibles = "ignore",
+    .user_funs            = fun,
+    .eval_plan            = "sequential",
+    .seed                 = 2354213
+    )
+  # 
+  # class(out) <- c("cSEMTestHausman", "cSEMResults_resampled")
+  # out
+  
+  ## Get relevant quantities
+  out_infer <- infer(out)
+  beta      <- out$Estimates$Estimates_resample$Estimates1$User_fun$Original
+  se        <- out_infer$User_fun$sd
+  t         <- beta/se
+  p_normal  <- 2*pnorm(abs(t), mean = 0, sd = 1, lower.tail = FALSE) 
+  ci_percentile <- out_infer$User_fun$CI_percentile 
+  
+  out_data_frame <- data.frame(
+    "Name"       = names(beta),
+    "Estimate"   = beta,
+    "Std. error" = se,
+    "t-stat."    = t,
+    "p-value"    = p_normal,
+    "Ci_perc. L" = ci_percentile[1, ],
+    "Ci_perc. H" = ci_percentile[2, ],
+    stringsAsFactors = FALSE
+  )
+  return(out_data_frame)
+}

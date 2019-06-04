@@ -176,15 +176,17 @@ estimatePath <- function(
           coefsj <- res$coef[[j]] 
           VCVresid[i,j] <- .P[i,j] - t(coefsi) %*%  .P[m[i,]!=0,j,drop = FALSE] -
             .P[i, m[j,]!=0, drop = FALSE] %*% coefsj +
-            t(coefsi) %*% .P[m[i,]!=0, m[j,]!=0, drop=FALSE] %*% coefsj}}
-
+            t(coefsi) %*% .P[m[i,]!=0, m[j,]!=0, drop=FALSE] %*% coefsj
+        }
+      }
+      
       part  <-  lapply(vars_endo,function(x){
         independents <- colnames(m)[m[x,]!=0]
         indendo <- intersect(independents,vars_endo)
         indexog <- intersect(independents,vars_exo)
         InvOfVCVresid<-solve(VCVresid)
-
-      LHSpart<-sapply(vars_endo,function(mue){ 
+        
+        LHSpart<-sapply(vars_endo,function(mue){ 
           InvOfVCVresid[x,mue,drop=TRUE]* #Must be a scalar
             .P[c(indendo,indexog),vars_exo , drop = FALSE]%*%
             solve(.P[vars_exo,vars_exo,drop=FALSE])%*%
