@@ -301,6 +301,11 @@ resampleData <- function(
     }
   }
   
+  ## Create seed if none is given
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
+  }
+  
   ## Choose resampling method
   out <- switch (.resample_method,
     "jackknife"   = {
@@ -636,7 +641,10 @@ resamplecSEMResults.cSEMResults <- function(
   }
   
   ### Resample and compute -----------------------------------------------------
-  
+  # Create seed if none is given
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
+  }
   out <- resamplecSEMResultsCore(
     .object                = .object, 
     .resample_method       = .resample_method,
@@ -787,7 +795,7 @@ resamplecSEMResults.cSEMResults_multi <- function(
   ...
 ) {
   out <- lapply(.object, function(x) {
-    resamplecSEMResults.cSEMResults_2ndorder(
+    resamplecSEMResults.cSEMResults(
       .object               = x,
       .resample_method      = .resample_method,
       .resample_method2     = .resample_method2,

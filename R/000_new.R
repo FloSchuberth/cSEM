@@ -292,10 +292,18 @@ plot.Two_Way_Effect = function(.TWobject){
 #'
 #' @export
 #' 
-testHausman2 <- function(.object) {
+testHausman2 <- function(
+  .object               = NULL,
+  .alpha                = args_default()$.alpha,
+  .eval_plan            = args_default()$.eval_plan,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .R                    = args_default()$.R,
+  .resample_method      = args_default()$.resample_method,
+  .seed                 = args_default()$.seed
+  ) {
   
   # Define function to bootstrap
-  fun <- function(.object) {
+  fun_residuals <- function(.object) {
     # .object <- bb
     ## Extract relevant quantities
     m         <- .object$Information$Model
@@ -339,7 +347,7 @@ testHausman2 <- function(.object) {
         # the instruments (ensured if only internal instruments are allowed)
         # we can use .P.
         
-        # beta_1st <- solve(P[names_Z, names_Z, drop = FALSE], 
+        # beta_1st <- solve(P[names_Z, names_Z, drop = FALSE],
         #                   P[names_Z, indep_var, drop = FALSE])
         
         beta_1st <- solve(P[names_Z, names_Z, drop = FALSE], 
@@ -372,6 +380,9 @@ testHausman2 <- function(.object) {
         
         ## Augmented second stage
         # Note: u_hat is now added as a new regressor
+        # Need to think about how to adress disattenuation here. We need
+        # to know the reliability of u_hat. Maybe it is not necessary, but 
+        # we need to think about it.
         Y <- scores[, x, drop = FALSE]
         X <- cbind(scores[, indep_var, drop = FALSE], u_hat)
         beta_2nd <- solve(t(X) %*% X) %*% t(X) %*% Y
@@ -400,19 +411,19 @@ testHausman2 <- function(.object) {
   ## Resample to get standard errors
   out <- resamplecSEMResults(
     .object               = .object,
-    .resample_method      = "bootstrap",
-    .R                    = 200,
-    .handle_inadmissibles = "ignore",
-    .user_funs            = fun,
-    .eval_plan            = "sequential",
-    .seed                 = 2354213
+    .resample_method      = .resample_method,
+    .R                    = .R,
+    .handle_inadmissibles = .handle_inadmissibles,
+    .user_funs            = fun_residuals,
+    .eval_plan            = .eval_plan,
+    .seed                 = .seed
     )
   # 
   # class(out) <- c("cSEMTestHausman", "cSEMResults_resampled")
   # out
   
   ## Get relevant quantities
-  out_infer <- infer(out)
+  out_infer <- infer(out, .alpha = .alpha)
   beta      <- out$Estimates$Estimates_resample$Estimates1$User_fun$Original
   se        <- out_infer$User_fun$sd
   t         <- beta/se
