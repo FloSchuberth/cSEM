@@ -347,7 +347,7 @@ print(summarize(res), .full_output = FALSE)
 # ===========================================================================
 # `csem()` provides defaults for all arguments except `.data` and `.model`.
 #   Below some common options/tasks that users are likely to be interested in.
-#   we use the threecommonfactors data set again:
+#   We use the threecommonfactors data set again:
 
 model <- "
 # Structural model

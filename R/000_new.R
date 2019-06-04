@@ -304,7 +304,7 @@ testHausman2 <- function(
   
   # Define function to bootstrap
   fun_residuals <- function(.object) {
-    # .object <- bb
+    # .object <- TwoSLScsem
     ## Extract relevant quantities
     m         <- .object$Information$Model
     P         <- .object$Estimates$Construct_VCV
@@ -364,28 +364,32 @@ testHausman2 <- function(
         u_hat <- X - X_hat
         colnames(u_hat) <- paste0("Resid_", names_X)
         
-        # 
-        # u_hat <- matrix(0, ncol = length(names_X), nrow = nrow(scores),
-        #                 dimnames = list(NULL, names_X))
-        # 
-        # 
-        # for(i in names_X) {
-        # 
-        #   i <- names_X[1]
-        #   X <- scores[, i, drop = FALSE]
-        #   Z <- scores[, names_Z, drop = FALSE]
-        #   
-        #   u_hat[, i] <- Y - X %*% beta_1st[, i, drop = FALSE]
-        # }
+        ## Second stage
+        # Recompute the composite VCV with the u_hats added
+        scores1 <- cbind(scores, u_hat) 
+        Pnew <- cor(scores1)
+        
+        # Replace the composite VCV elements by the disattenuated correlations
+        
+        Pnew[colnames(scores), colnames(scores)] <- .object$Estimates$Construct_VCV
+        
+        ## Estimate the second stage
+        new <- c(indep_var, colnames(u_hat))
+        beta_2nd <- solve(Pnew[new, new, drop = FALSE], 
+                          Pnew[new, x, drop = FALSE]) 
         
         ## Augmented second stage
         # Note: u_hat is now added as a new regressor
         # Need to think about how to adress disattenuation here. We need
         # to know the reliability of u_hat. Maybe it is not necessary, but 
         # we need to think about it.
-        Y <- scores[, x, drop = FALSE]
-        X <- cbind(scores[, indep_var, drop = FALSE], u_hat)
-        beta_2nd <- solve(t(X) %*% X) %*% t(X) %*% Y
+        # Y <- scores[, x, drop = FALSE]
+        # X <- cbind(scores[, indep_var, drop = FALSE], u_hat)
+        # beta_2nd <- solve(t(X) %*% X) %*% t(X) %*% Y
+        
+        ## Add u_hat 
+        
+        
       } else {
         NA
       }
@@ -440,5 +444,6 @@ testHausman2 <- function(
     "Ci_perc. H" = ci_percentile[2, ],
     stringsAsFactors = FALSE
   )
+  rownames(out_data_frame) <- NULL
   return(out_data_frame)
 }

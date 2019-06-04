@@ -166,10 +166,18 @@ estimatePath <- function(
       # Approach based on Zellner & Theil (1962)
       
       ## Get variance covariance matrix of the error term
+      # Note: u_i    := vector of error of structural equation i; 
+      #       beta_i := vector of parameter estimates of structural equation i 
+      #       eta_i  := vector of explanatory variables of structural equation i
+      #       y_i  := the dependent variable of equation i
+      #       Regression equation: 
+      #                y_i = beta_i1 eta_i1 + beta_i2*eta_i2 + ... + u
+      #       V(u_i) = E(u_iu_i') = (y_i - eta_i beta_i)*(y_i - eta_i beta_i)' 
+      #              = y_i*y'_i - y_i*(eta_i*beta_i)' - eta_i*beta_i*y'_i + (eta_i*beta_i)(eta_i*beta_i)'
       VCVresid <- matrix(0, nrow = length(vars_endo), ncol = length(vars_endo),
                          dimnames = list(vars_endo, vars_endo))
       
-      # Fill the VCV of the error terms
+      ## Fill the VCV of the error terms
       for(i in   vars_endo){
         for(j in  vars_endo){
           coefsi <- res$coef[[i]]
