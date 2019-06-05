@@ -51,10 +51,10 @@ estimatePath <- function(
   }
   
   m         <- .csem_model$structural
-  vars_endo <- rownames(m)[rowSums(m) != 0]
-  vars_exo  <- setdiff(colnames(m), vars_endo)
-  explained_by_exo_endo <- vars_endo[rowSums(m[vars_endo, vars_endo, drop = FALSE]) != 0]
-  vars_ex_by_exo <- setdiff(vars_endo, explained_by_exo_endo)
+  dep_vars  <- rownames(m)[rowSums(m) != 0] # dependent (LHS variables)
+  vars_exo  <- setdiff(colnames(m), dep_vars)
+  explained_by_exo_endo <- dep_vars[rowSums(m[dep_vars, dep_vars, drop = FALSE]) != 0]
+  vars_ex_by_exo <- setdiff(dep_vars, explained_by_exo_endo)
   vars_explana   <- colnames(m)[colSums(m) != 0]
 
   # Number of observations (required for the adjusted R^2)
@@ -62,39 +62,40 @@ estimatePath <- function(
   
   if(.csem_model$model_type == "Linear") {
 
-    res <- lapply(vars_endo, function(x) {
-      # Which of the variables in vars_endo have instruments specified, i.e.
+    res <- lapply(dep_vars, function(y) {
+      # Which of the variables in dep_vars have instruments specified, i.e.
       # have endogenous variables on the RHS. By default: FALSE.
       endo_in_RHS <- FALSE
       
       if(!is.null(.csem_model$instruments)) {
-        endo_in_RHS <- x %in% names(.csem_model$instruments)
+        endo_in_RHS <- y %in% names(.csem_model$instruments)
       }
       
-      ## Independent variables of the structural equation of construct x
-      indep_var <-  colnames(m[x, m[x, ] != 0, drop = FALSE])
+      ## Independent variables of the structural equation of construct y
+      names_X <-  colnames(m[y, m[y, ] != 0, drop = FALSE])
       
       # Compute "OLS" if endo_in_RHS is FALSE, i.e no instruments are 
       # given for this particular equation or .approach_path is "OLS"
       if(!endo_in_RHS | .approach_paths == "OLS") {
         
         # Coef = (X'X)^-1X'y = V(eta_indep)^-1 Cov(eta_indep, eta_dep)
-        coef <- solve(.P[indep_var, indep_var, drop = FALSE]) %*% .P[indep_var, x, drop = FALSE]
+        coef <- solve(.P[names_X, names_X, drop = FALSE]) %*% 
+          .P[names_X, y, drop = FALSE]
         
-        # Since Var(dep_Var) = 1 we have R2 = Var(X coef) = t(coef) %*% X'X %*% coef
-        r2   <- c(t(coef) %*% .P[indep_var, indep_var, drop = FALSE] %*% coef)
-        # names(r2) <- x
+        # Since Var(y) = 1 we have R2 = Var(y_hat) = Var(X*coef) = t(coef) %*% E(X'X) %*% coef
+        r2   <- c(t(coef) %*% .P[names_X, names_X, drop = FALSE] %*% coef)
+        # names(r2) <- y
         
         # Calculation of the adjusted R^2
-        r2adj <- c(1 - (1 - r2)*(n - 1)/(n - length(indep_var)-1))
-        # names(r2adj) <- x
+        r2adj <- c(1 - (1 - r2)*(n - 1)/(n - length(names_X)-1))
+        # names(r2adj) <- y
         
         # Calculation of the VIF values (VIF_k = 1 / (1 - R^2_k)) where R_k is
         # the R^2 from a regression of the k'th explanatory variable on all other
         # explanatory variables of the same structural equation.
         # VIF's require at least two explanatory variables to be meaningful
-        vif <- if(length(indep_var) > 1) {
-          diag(solve(cov2cor(.P[indep_var, indep_var, drop = FALSE])))
+        vif <- if(length(names_X) > 1) {
+          diag(solve(cov2cor(.P[names_X, names_X, drop = FALSE])))
         } else {
           NA
         } 
@@ -102,7 +103,7 @@ estimatePath <- function(
       
       
       # Compute "2SLS" if endo_in_RHS is TRUE, i.e instruments are 
-      # given for this particular equation and .approach_path is "2SLS".
+      # given for this particular equation and .approach_path is "2SLS" or "3SLS".
       
       ## Two stage least squares (2SLS) and three stage least squares (3SLS)
       if(endo_in_RHS & (.approach_paths == "2SLS" | .approach_paths == "3SLS")) {
@@ -112,16 +113,16 @@ estimatePath <- function(
         #       and the K exogenous independent variables (which must be part of Z).
         #       Therefore: X (N x P) and Z (N x (L + K)) and
         #       beta_1st = (Z'Z)^-1*(Z'X)
-        names_X <- rownames(.csem_model$instruments[[x]])
-        names_Z <- colnames(.csem_model$instruments[[x]])
+        names_endo <- rownames(.csem_model$instruments[[y]])
+        names_Z    <- colnames(.csem_model$instruments[[y]])
         
         ## Error if the number of instruments (including the K exogenous variables)
         ## is less than the number of independent variables in the original 
-        ## structural equation for construct "x"
-        if(length(names_Z) < length(indep_var)) {
+        ## structural equation for construct "y"
+        if(length(names_Z) < length(names_X)) {
           stop2("The following error occured in the `estimatePath()` function:\n",
                 "The number of instruments for the structural equation of construct ",
-                paste0("'", x, "'"), " is less than the number of independent ",
+                paste0("'", y, "'"), " is less than the number of independent ",
                 "variables.\n", "Make sure all exogenous variables correctly ",
                 " supplied as instruments to `.instruments`.")
         }
@@ -131,13 +132,13 @@ estimatePath <- function(
         # we can use .P.
         
         beta_1st <- solve(.P[names_Z, names_Z, drop = FALSE], 
-                          .P[names_Z, indep_var, drop = FALSE])
+                          .P[names_Z, names_X, drop = FALSE])
         
         ## Second stage
         # Note: X_hat = beta_1st*Z --> X_hat'X_hat = beta_1st' (Z'Z) beta_1st
         
         coef <- solve(t(beta_1st) %*% .P[names_Z, names_Z, drop = FALSE] %*% beta_1st, 
-                      t(beta_1st) %*% .P[names_Z, x, drop = FALSE])
+                      t(beta_1st) %*% .P[names_Z, y, drop = FALSE])
         
         
         # Although the r^2 can be calculated in case of 2SLS,
@@ -159,7 +160,7 @@ estimatePath <- function(
       list("coef" = coef, "r2" = r2, "r2adj" = r2adj, "vif" = vif)
     }) # END lapply
     
-    names(res) <- vars_endo
+    names(res) <- dep_vars
     res <- purrr::transpose(res)
 
     if(.approach_paths == "3SLS"){
@@ -168,82 +169,89 @@ estimatePath <- function(
       ## Get variance covariance matrix of the error term
       # Note: u_i    := vector of error of structural equation i; 
       #       beta_i := vector of parameter estimates of structural equation i 
-      #       eta_i  := vector of explanatory variables of structural equation i
-      #       y_i  := the dependent variable of equation i
+      #       X_i    := matrix of explanatory variables of structural equation i
+      #       y_i    := the dependent variable of equation i
+      #
       #       Regression equation: 
       #                y_i = beta_i1 eta_i1 + beta_i2*eta_i2 + ... + u
-      #       V(u_i) = E(u_iu_i') = (y_i - eta_i beta_i)*(y_i - eta_i beta_i)' 
-      #              = y_i*y'_i - y_i*(eta_i*beta_i)' - eta_i*beta_i*y'_i + (eta_i*beta_i)(eta_i*beta_i)'
-      VCVresid <- matrix(0, nrow = length(vars_endo), ncol = length(vars_endo),
-                         dimnames = list(vars_endo, vars_endo))
+      #
+      #       Covariance between error u_i of equation i and error u_j of
+      #       equation j:
+      #       E(u_i'u_j) = E(y_i - X_i beta_i)'*(y_j - X_j beta_j) 
+      #              = E[y'_i*y_j] - # (1 x 1)
+      #                E[y'_i*X_i]*beta_i - # (1 X 1) 
+      #                beta_i * E[X'_iy_i] + # (1 x 1)
+      #                E[(X_i*beta_i)(X_i*beta_i)'
+      #
+      vcv_resid <- matrix(0, nrow = length(dep_vars), ncol = length(dep_vars),
+                         dimnames = list(dep_vars, dep_vars))
       
       ## Fill the VCV of the error terms
-      for(i in   vars_endo){
-        for(j in  vars_endo){
+      for(i in   dep_vars){
+        for(j in  dep_vars){
           coefsi <- res$coef[[i]]
           coefsj <- res$coef[[j]] 
-          VCVresid[i,j] <- .P[i,j] - t(coefsi) %*%  .P[m[i,]!=0,j,drop = FALSE] -
-            .P[i, m[j,]!=0, drop = FALSE] %*% coefsj +
-            t(coefsi) %*% .P[m[i,]!=0, m[j,]!=0, drop=FALSE] %*% coefsj
+          vcv_resid[i,j] <- .P[i,j] - 
+            .P[i, m[j,]!=0, drop = FALSE] %*% coefsj -
+            t(coefsi) %*% .P[m[i,] !=0, j, drop = FALSE] +
+            t(coefsi) %*% .P[m[i, ] !=0, m[j, ]!=0, drop = FALSE] %*% coefsj
         }
       }
       
-      part  <-  lapply(vars_endo,function(x){
-        independents <- colnames(m)[m[x,]!=0]
-        indendo <- intersect(independents,vars_endo)
-        indexog <- intersect(independents,vars_exo)
-        InvOfVCVresid<-solve(VCVresid)
+      inv_vcv_resid <- solve(vcv_resid)
+      
+      part <- lapply(dep_vars, function(y) {
         
-        LHSpart<-sapply(vars_endo,function(mue){ 
-          InvOfVCVresid[x,mue,drop=TRUE]* #Must be a scalar
-            .P[c(indendo,indexog),vars_exo , drop = FALSE]%*%
-            solve(.P[vars_exo,vars_exo,drop=FALSE])%*%
-            .P[vars_exo,mue,drop=FALSE]
+        names_X       <- colnames(m)[m[y, ] != 0]
+        indendo       <- intersect(names_X, dep_vars)
+        indexog       <- intersect(names_X, vars_exo)
+
+        LHS_part <- sapply(dep_vars, function(mue) {
+          inv_vcv_resid[y, mue, drop = TRUE] * # Must be a scalar
+            .P[c(indendo, indexog), vars_exo , drop = FALSE] %*%
+            solve(.P[vars_exo, vars_exo, drop = FALSE]) %*%
+            .P[vars_exo, mue, drop = FALSE]
         })
       
       # sum up all elements Not sure whether this required anymore might be that 
       # using drop argument solved that issue
-      if(is.matrix(LHSpart)){
-        LHSpart=matrix(rowSums(LHSpart),ncol=1)
+      if(is.matrix(LHS_part)){
+        LHS_part <- matrix(rowSums(LHS_part), ncol = 1)
       }else{ 
-        LHSpart=sum(LHSpart)
+        LHS_part <- sum(LHS_part)
       }
       
-      RHSpart=lapply(vars_endo, function(mue){
-        InvOfVCVresid[x,mue, drop=TRUE]* 
-          .P[c(indendo,indexog),vars_exo,drop=FALSE]%*%
-          solve(.P[vars_exo,vars_exo])%*%
-          .P[vars_exo,c(intersect(colnames(m)[m[mue,]!=0],vars_endo),
-                        intersect(colnames(m)[m[mue,]!=0],vars_exo))]
+        RHS_part <- lapply(dep_vars, function(mue) {
+          inv_vcv_resid[y, mue, drop = TRUE] *
+            .P[c(indendo, indexog), vars_exo, drop = FALSE] %*%
+            solve(.P[vars_exo, vars_exo]) %*%
+            .P[vars_exo, c(intersect(colnames(m)[m[mue, ] != 0], dep_vars),
+                           intersect(colnames(m)[m[mue, ] != 0], vars_exo))]
         })
       
-      RHSpart = do.call(cbind,RHSpart)
+      RHS_part <- do.call(cbind, RHS_part)
         
-      list(LHSpart = LHSpart,RHSpart = RHSpart)
+      list(LHS_part = LHS_part, RHS_part = RHS_part)
       })
       
       
-      part = purrr::transpose(part)
-      LHS = do.call(rbind,part[["LHSpart"]])
-      RHS = do.call(rbind,part[["RHSpart"]])
+      part <- purrr::transpose(part)
+      LHS  <- do.call(rbind,part[["LHS_part"]])
+      RHS  <- do.call(rbind,part[["RHS_part"]])
       
       # solve equation
-      allparas=solve(RHS,LHS)
+      allparas <- solve(RHS, LHS)
       
       # Overwrite res object
-      nrcoefs=cumsum(c(0,lengths(res$coef)))
+      nrcoefs <- cumsum(c(0, lengths(res$coef)))
       
       # Overwrite parameters; There must be a better way, i.e., more secure way.
       # Doesn't work yet!!!!
     
-      for(endo in vars_endo){
-        independents = colnames(m)[m[endo,]!=0]
-        res$coef[[endo]]=allparas[(nrcoefs[which(endo == vars_endo)]+1):nrcoefs[which(endo == vars_endo)+1],1,drop=FALSE][rownames(res$coef[[endo]]),1,drop=FALSE]
+      for(endo in dep_vars){
+        names_X = colnames(m)[m[endo,]!=0]
+        res$coef[[endo]]=allparas[(nrcoefs[which(endo == dep_vars)]+1):nrcoefs[which(endo == dep_vars)+1],1,drop=FALSE][rownames(res$coef[[endo]]),1,drop=FALSE]
       }
-      
-      
-      # stop2("3SLS is not implemented yet.")
-      
     }
     
     
@@ -306,11 +314,11 @@ estimatePath <- function(
     
     # Create list with each list element holding the VCV matrix of the
     # explanatory variables of one endogenous variable
-    vcv_explana_ls <- lapply(vars_endo, function(x) {
+    vcv_explana_ls <- lapply(dep_vars, function(x) {
       res <- colnames(m[x, m[x, , drop = FALSE] == 1, drop = FALSE])
       vcv_explana[res, res, drop = FALSE]
     })
-    names(vcv_explana_ls) <- vars_endo
+    names(vcv_explana_ls) <- dep_vars
     
     ## Check if all vcv matrices are semi positive-definite and warn if not
     semidef <- lapply(vcv_explana_ls, function(x) {
@@ -327,26 +335,26 @@ estimatePath <- function(
     
     # Define the class of the moments in the VCV matrix between explanatory
     # and endogenous variables
-    class_endo_explana <- outer(vars_endo, vars_explana, FUN = Vectorize(f1))
-    rownames(class_endo_explana) <- vars_endo
+    class_endo_explana <- outer(dep_vars, vars_explana, FUN = Vectorize(f1))
+    rownames(class_endo_explana) <- dep_vars
     colnames(class_endo_explana) <- vars_explana
     
     # Calculate
-    cv_endo_explana <- outer(vars_endo, vars_explana,
+    cv_endo_explana <- outer(dep_vars, vars_explana,
                              FUN = Vectorize(f2, vectorize.args = c(".i", ".j")),
                              .select_from = class_endo_explana,
                              .Q = .Q,
                              .H = .H)
-    rownames(cv_endo_explana) <- vars_endo
+    rownames(cv_endo_explana) <- dep_vars
     colnames(cv_endo_explana) <- vars_explana
     
     # Create list with each list element holding the covariances between one
     # endogenous variable and its corresponding explanatory variables
-    cv_endo_explana_ls <- lapply(vars_endo, function(x) {
+    cv_endo_explana_ls <- lapply(dep_vars, function(x) {
       res <- colnames(m[x, m[x, , drop = FALSE] == 1, drop = FALSE])
       cv_endo_explana[x, res, drop = FALSE]
     })
-    names(cv_endo_explana_ls) <- vars_endo
+    names(cv_endo_explana_ls) <- dep_vars
     
     ## Calculate path coef, R2 and VIF ----------------------------------------------
     # Path coefficients
@@ -408,7 +416,7 @@ estimatePath <- function(
       vcv  <- list()
 
       ## Loop over each endogenous variable
-      for(k in vars_endo) {
+      for(k in dep_vars) {
         
         if(k %in% vars_ex_by_exo) {
           # If the endogenous variable is only explained by exogenous variables:
@@ -482,7 +490,7 @@ estimatePath <- function(
           struc_coef_ls[[k]][paste0("zeta_", k)] <- 1
           
         } # END else
-      } # END for k in vars_endo
+      } # END for k in dep_vars
     } # END if(.approach_nlhod = replace)
     res <- list("coef" = coef, "r2" = r2, "r2adj" = r2adj, "vif" = vif)
   } # END if nonlinear
