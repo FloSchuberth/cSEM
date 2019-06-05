@@ -62,6 +62,12 @@ calculateInnerWeightsPLS <- function(
   E   <- .csem_model$structural[tmp, tmp]
   D   <- E + t(E)
   
+  # Note: June 2019
+  if(any(D == 2)) { # non recursive model
+    # Set elements back to 1 
+    D[D == 2] <- 1 
+  }
+  
   ## (Inner) weightning scheme:
   if(.PLS_weight_scheme_inner == "path" & .PLS_ignore_structural_model) {
     .PLS_ignore_structural_model <- FALSE
