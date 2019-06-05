@@ -22,33 +22,69 @@ An introduction.
 # Syntax & Options {#syntax}
 
 ```{r eval=FALSE}
-test_OMF(
+testOMF(
   .arg1 = NULL,
   .arg2 = NULL,
   .arg3 = NULL,
   ...
 )
 
-test_MGD(
+testMGD(
   .arg1 = NULL,
   .arg2 = NULL,
   .arg3 = NULL,
   ...
+)
+
+testHausman2(
+ .object               = NULL,
+ .alpha                = args_default()$.alpha,
+ .eval_plan            = args_default()$.eval_plan,
+ .handle_inadmissibles = args_default()$.handle_inadmissibles,
+ .R                    = args_default()$.R,
+ .resample_method      = args_default()$.resample_method,
+ .seed                 = args_default()$.seed
 )
 ```
 
-`.arg1`
+`.object`
 
-:  description for `.arg1`
+:   An object of class `cSEMResults` resulting from a call to `csem()`.
    
-`.arg2`
+`.alpha`
 
-:  description for `.arg2`
+:  	An integer or a numeric vector of significance levels. Defaults to `0.05`.
   
-`.arg3`
+`.eval_plan`
 
-:  description for `.arg3`
+:   Character string. The evaluation plan to use. One of "sequential" or 
+    "multiprocess". In the latter case all available cores will be used. 
+    Defaults to "sequential". See `resamplecSEMResults()` for details.
+   
+`.handle_inadmissibles`
 
+:   Character string. How should inadmissible results be treated? One of 
+    "drop", "ignore", or "replace". If "drop", all replications/resamples 
+    yielding an inadmissible result will be dropped (i.e. the number of 
+    results returned will be less than .R). For "ignore" all results are 
+    returned even if they are inadmissible (i.e. number of results
+    returned = .R). For "replace" resampling continues until there are 
+    exactly .R admissible solutions. Defaults to "drop".
+
+`R`
+
+:   Integer. The number of bootstrap replications. Defaults to `499`.
+
+`.resample_method`
+
+:   Character string. The resampling method to use. One of: "bootstrap" or "jackknife". 
+    Defaults to "bootstrap".
+
+`.seed`
+
+:   Integer or `NULL`. The random seed to use. Defaults to `NULL` in which case
+    an arbitrary seed is choosen.
+    
 ## Details
 
 Details if there are any.

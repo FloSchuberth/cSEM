@@ -4,8 +4,8 @@
 #' a model written in [lavaan model syntax][lavaan::model.syntax] 
 #' to a [cSEMModel] list use [parseModel()].
 #'
-#' @return An object of class `cSEMModel` is a standardized list containing the following
-#' components. J stands for the number of constructs and K for the number
+#' @return An object of class `cSEMModel` is a standardized list containing the 
+#' following components. J stands for the number of constructs and K for the number
 #' of indicators.
 #' \describe{
 #'   \item{`$structural`}{A matrix mimicking the structural relationship between
@@ -29,6 +29,8 @@
 #'   \item{`$construct_order`}{A named vector containing the names of each construct
 #'     and their respective order ("First order" or "Second order").}
 #'   \item{`$model_type`}{The type of model ("Linear" or "Nonlinear").}
+#'   \item{`$instruments`}{Only if instruments are supplied: a list of structural 
+#'     equations relating endogenous RHS variables to instruments.}
 #' }
 #' It is possible to supply an incomplete list to `parseModel()`, resulting
 #' in an incomplete `cSEMModel` list which can be passed

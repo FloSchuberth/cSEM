@@ -68,7 +68,7 @@
 #' the structural model are modeled as a common factor!
 #' 
 #' By default. path coefficients are estimated using OLS (`.approach_path = "OLS"`). 
-#' For linear model, two-stage least squares (`"2SLS"`) is available , however, *only if* 
+#' For linear models, two-stage least squares (`"2SLS"`) is available , however, *only if* 
 #' *instruments are internal*, i.e. part of the structural model. Future versions
 #' will add support for external instruments. Instruments must be supplied to 
 #' `.instruments` as a named list where the names
@@ -176,10 +176,8 @@
 #'   Additionally, a `list` of data sets (data frames or matrices) is accepted in which 
 #'   case estimation is repeated for each data set. Possible column types or classes 
 #'   of the data provided are: "logical", "numeric" ("double" or "integer"), 
-#'   "factor" ("ordered" and/or "unordered") or a mix of several types. 
-#'   The data may also include *one* character column whose column name must be 
-#'   given to `.id`. This column is assumed to contain group identifiers used to split 
-#'   the data into groups.
+#'   "factor" ("ordered" and/or "unordered"), "character" (converted to factor),
+#'   or a mix of several types.
 #' @inheritParams csem_arguments
 #' @param ... Further arguments to be passed down to lower level functions of `csem()`.
 #'   See [args_csem_dotdotdot] for a complete list of available arguments.

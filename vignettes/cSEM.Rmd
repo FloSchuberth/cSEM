@@ -423,7 +423,7 @@ b <- csem(
 
 ### Applying a postestimation function
 
-Currently, there are 4 major postestimation function and 3 test-family functions:
+Currently, there are 4 major postestimation function and 4 test-family functions:
 
 `assess()`
 
@@ -453,6 +453,10 @@ Currently, there are 4 major postestimation function and 3 test-family functions
     is not positive (semi-)definite. 
 
 #### The `test_*` family of postestimation functions
+
+`testHausman2()`
+
+:   The regression-based Hausman test.
 
 `testOMF()` 
 

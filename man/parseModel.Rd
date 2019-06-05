@@ -18,8 +18,8 @@ that exogenous variables of a given equation \strong{must} be supplied as
 instruments for themselves. See the examples section. Defaults to \code{NULL}.}
 }
 \value{
-An object of class \code{cSEMModel} is a standardized list containing the following
-components. J stands for the number of constructs and K for the number
+An object of class \code{cSEMModel} is a standardized list containing the
+following components. J stands for the number of constructs and K for the number
 of indicators.
 \describe{
 \item{\code{$structural}}{A matrix mimicking the structural relationship between
@@ -43,6 +43,8 @@ and their respective type ("Common factor" or "Composite").}
 \item{\code{$construct_order}}{A named vector containing the names of each construct
 and their respective order ("First order" or "Second order").}
 \item{\code{$model_type}}{The type of model ("Linear" or "Nonlinear").}
+\item{\code{$instruments}}{Only if instruments are supplied: a list of structural
+equations relating endogenous RHS variables to instruments.}
 }
 It is possible to supply an incomplete list to \code{parseModel()}, resulting
 in an incomplete \code{cSEMModel} list which can be passed

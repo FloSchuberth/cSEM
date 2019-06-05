@@ -32,7 +32,8 @@ foreman(
 \item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
 data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "logical", "numeric" ("double" or "integer"),
-"factor" ("ordered" and/or "unordered") or a mix of several types.}
+"factor" ("ordered" and/or "unordered"), "character" (converted to factor),
+or a mix of several types.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}

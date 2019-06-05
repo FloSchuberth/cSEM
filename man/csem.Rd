@@ -38,10 +38,8 @@ data (indicators/items/manifest variables).
 Additionally, a \code{list} of data sets (data frames or matrices) is accepted in which
 case estimation is repeated for each data set. Possible column types or classes
 of the data provided are: "logical", "numeric" ("double" or "integer"),
-"factor" ("ordered" and/or "unordered") or a mix of several types.
-The data may also include \emph{one} character column whose column name must be
-given to \code{.id}. This column is assumed to contain group identifiers used to split
-the data into groups.}
+"factor" ("ordered" and/or "unordered"), "character" (converted to factor),
+or a mix of several types.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
@@ -221,7 +219,7 @@ estimates for their construct level counterparts if any of the constructs in
 the structural model are modeled as a common factor!
 
 By default. path coefficients are estimated using OLS (\code{.approach_path = "OLS"}).
-For linear model, two-stage least squares (\code{"2SLS"}) is available , however, \emph{only if}
+For linear models, two-stage least squares (\code{"2SLS"}) is available , however, \emph{only if}
 \emph{instruments are internal}, i.e. part of the structural model. Future versions
 will add support for external instruments. Instruments must be supplied to
 \code{.instruments} as a named list where the names

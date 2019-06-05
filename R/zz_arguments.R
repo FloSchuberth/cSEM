@@ -57,7 +57,8 @@
 #' @param .data A `data.frame` or a `matrix` of standardized or unstandarized 
 #'   data (indicators/items/manifest variables). Possible column types or classes 
 #'   of the data provided are: "logical", "numeric" ("double" or "integer"), 
-#'   "factor" ("ordered" and/or "unordered") or a mix of several types.
+#'   "factor" ("ordered" and/or "unordered"), "character" (converted to factor),
+#'   or a mix of several types.
 #' @param .dependent Character string. Name of the dependent variable. Defaults to `NULL`. 
 #' @param .disattenuate Logical. Should composite/proxy correlations 
 #'   be disattenuated to yield consisten loadings and path estimates if at least
