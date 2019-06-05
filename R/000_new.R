@@ -283,5 +283,3 @@ plot.Two_Way_Effect = function(.TWobject){
   # Plot
   plot1
 }
-  
-

@@ -9,7 +9,6 @@ estimatePath(
  .approach_paths = args_default()$.approach_paths,
  .csem_model     = args_default()$.csem_model,
  .H              = args_default()$.H,
- .instruments    = args_default()$.instruments,
  .normality      = args_default()$.normality,
  .P              = args_default()$.P,
  .Q              = args_default()$.Q
@@ -21,7 +20,7 @@ structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}" (not yet implemented).
+structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}

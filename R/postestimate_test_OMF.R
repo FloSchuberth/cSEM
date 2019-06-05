@@ -123,29 +123,7 @@ testOMF.cSEMResults_default <- function(
     # its important to use foreman here 
     # instead of csem() to allow for lapply(x, testOMF.cSEMResults_default) when x 
     # is of class cSEMResults_2ndorder.
-    ## NOTE: using do.call(foreman, args) would be more elegant but is much 
-    # much much! slower (especially for larger data sets). 
-    Est_temp <- foreman(
-      .data                        = arguments$.data,
-      .model                       = arguments$.model,
-      .approach_cor_robust         = arguments$.approach_cor_robust,
-      .approach_nl                 = arguments$.approach_nl,
-      .approach_paths              = arguments$.approach_paths,
-      .approach_weights            = arguments$.approach_weights,
-      .conv_criterion              = arguments$.conv_criterion,
-      .disattenuate                = arguments$.disattenuate,
-      .dominant_indicators         = arguments$.dominant_indicators,
-      .estimate_structural         = arguments$.estimate_structural,
-      .id                          = arguments$.id,
-      .iter_max                    = arguments$.iter_max,
-      .normality                   = arguments$.normality,
-      .PLS_approach_cf             = arguments$.PLS_approach_cf,
-      .PLS_ignore_structural_model = arguments$.PLS_ignore_structural_model,
-      .PLS_modes                   = arguments$.PLS_modes,
-      .PLS_weight_scheme_inner     = arguments$.PLS_weight_scheme_inner,
-      .reliabilities               = arguments$.reliabilities,
-      .tolerance                   = arguments$.tolerance
-    )
+    Est_temp <- do.call(foreman, arguments)
 
     # Check status
     status_code <- sum(verify(Est_temp))
@@ -198,14 +176,14 @@ testOMF.cSEMResults_default <- function(
   
   # Combine
   ref_dist_matrix <- do.call(cbind, ref_dist1) 
-  ## Compute critical values (Result is a (2 x p) matrix, where n is the number
+  ## Compute critical values (Result is a (3 x p) matrix, where p is the number
   ## of quantiles that have been computed (1 by default)
   .alpha <- .alpha[order(.alpha)]
   critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
                                                probs =  1-.alpha, drop = FALSE)
   
   ## Compare critical value and teststatistic
-  decision <- teststat < critical_values # a logical (2 x p) matrix with each column
+  decision <- teststat < critical_values # a logical (3 x p) matrix with each column
                                          # representing the decision for one
                                          # significance level. TRUE = no evidence 
                                          # against the H0 --> not reject

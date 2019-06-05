@@ -166,8 +166,7 @@ calculateCompositeVCV <- function(
 #'
 #' @usage calculateConstructVCV(
 #'  .C          = args_default()$.C, 
-#'  .Q          = args_default()$.Q, 
-#'  .csem_model = args_default()$.csem_model
+#'  .Q          = args_default()$.Q
 #'  )
 #'  
 #' @inheritParams csem_arguments
@@ -177,13 +176,11 @@ calculateCompositeVCV <- function(
 
 calculateConstructVCV <- function(
   .C          = args_default()$.C, 
-  .Q          = args_default()$.Q, 
-  .csem_model = args_default()$.csem_model
+  .Q          = args_default()$.Q
   ) {
 
   f <- function(.i, .j) { .C[.i, .j] / (.Q[.i] * .Q[.j]) }
-  m <- rownames(.csem_model$measurement)
-
+  m <- rownames(.C)
   x <- outer(m, m, FUN = Vectorize(f))
   diag(x) <- 1
   rownames(x) <- colnames(x) <- m

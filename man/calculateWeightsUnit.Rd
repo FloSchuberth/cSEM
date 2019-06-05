@@ -15,8 +15,10 @@ calculateWeightsUnit(
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.starting_values}{list of named vectors containig the starting values.
-Defaults to \code{NULL}.}
+\item{.starting_values}{A named list of vectors where the
+list names are the construct names whose indicator weights the user
+wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
+pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
 }
 \value{
 A list with the elements

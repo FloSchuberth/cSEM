@@ -29,13 +29,10 @@ foreman(
   )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized data.
-Possible column types or classes of the data provided are: logical,
-numeric (double or integer), factor (ordered and unordered)
-or a mix of several types. The data may also include
-\emph{one} character column whose column name must be given to \code{.id}.
-This column is assumed to contain group identifiers used to split
-the data into groups.}
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
+data (indicators/items/manifest variables). Possible column types or classes
+of the data provided are: "logical", "numeric" ("double" or "integer"),
+"factor" ("ordered" and/or "unordered") or a mix of several types.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
@@ -52,7 +49,7 @@ structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}" (not yet implemented).
+structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
 
 \item{.approach_weights}{Character string. Approach used to
@@ -80,6 +77,13 @@ be estimated? Defaults to \code{TRUE}.}
 \item{.id}{Character string or integer. The name or position of the column of
 \code{.data} used to split the data into groups.
 Defaults to \code{NULL}.}
+
+\item{.instruments}{A named list of vectors of instruments. The names
+of the list elements are the names of the dependent constructs of the structural
+equation whose explanatory variables are endogenous. The vectors
+contain the names of the instruments corresponding to each equation. Note
+that exogenous variables of a given equation \strong{must} be supplied as
+instruments for themselves. See the examples section. Defaults to \code{NULL}.}
 
 \item{.iter_max}{Integer. The maximum number of iterations allowed.
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
@@ -124,8 +128,10 @@ may be given for a subset of the constructs. Defaults to \code{NULL} in which ca
 reliabilities are estimated by \code{csem()}. Currently, only supported for
 \code{.approach_weights = "PLS-PM"}.}
 
-\item{.starting_values}{list of named vectors containig the starting values.
-Defaults to \code{NULL}.}
+\item{.starting_values}{A named list of vectors where the
+list names are the construct names whose indicator weights the user
+wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
+pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}

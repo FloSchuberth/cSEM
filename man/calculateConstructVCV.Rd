@@ -6,8 +6,7 @@
 \usage{
 calculateConstructVCV(
  .C          = args_default()$.C, 
- .Q          = args_default()$.Q, 
- .csem_model = args_default()$.csem_model
+ .Q          = args_default()$.Q
  )
 }
 \arguments{
@@ -16,8 +15,6 @@ calculateConstructVCV(
 \item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.}
-
-\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 }
 \value{
 The (J x J) construct VCV matrix. Disattenuated if requested.

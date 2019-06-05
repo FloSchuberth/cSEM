@@ -62,7 +62,7 @@
 #'  .cv_folds        = 10,
 #'  .id              = NULL,
 #'  .R               = 499,
-#'  .seed            = FALSE
+#'  .seed            = NULL
 #' )
 #'
 #' @param .data A `data.frame`, a `matrix` or a `list` of data of either type. 
@@ -222,7 +222,7 @@ resampleData <- function(
   .cv_folds        = 10,
   .id              = NULL,
   .R               = 499,
-  .seed            = FALSE
+  .seed            = NULL
 ) {
   .resample_method <- match.arg(.resample_method, 
             c("bootstrap", "jackknife", "permutation", "cross-validation"))
@@ -299,6 +299,11 @@ resampleData <- function(
       data <- .data
       id   <- NULL
     }
+  }
+  
+  ## Create seed if none is given
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
   }
   
   ## Choose resampling method
@@ -480,7 +485,7 @@ resampleData <- function(
 #'  .handle_inadmissibles  = c("drop", "ignore", "replace"),
 #'  .user_funs             = NULL,
 #'  .eval_plan             = c("sequential", "multiprocess"),
-#'  .seed                  = FALSE,
+#'  .seed                  = NULL,
 #'  .sign_change_option    = c("none","individual","individual_reestimate",
 #'                             "construct_reestimate"),
 #'  ...
@@ -568,7 +573,7 @@ resamplecSEMResults <- function(
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .user_funs             = NULL,
   .eval_plan             = c("sequential", "multiprocess"),
-  .seed                  = FALSE,
+  .seed                  = NULL,
   .sign_change_option    = c("none","individual","individual_reestimate",
                              "construct_reestimate"),
   ...
@@ -636,7 +641,10 @@ resamplecSEMResults.cSEMResults <- function(
   }
   
   ### Resample and compute -----------------------------------------------------
-  
+  # Create seed if none is given
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
+  }
   out <- resamplecSEMResultsCore(
     .object                = .object, 
     .resample_method       = .resample_method,
@@ -787,7 +795,7 @@ resamplecSEMResults.cSEMResults_multi <- function(
   ...
 ) {
   out <- lapply(.object, function(x) {
-    resamplecSEMResults.cSEMResults_2ndorder(
+    resamplecSEMResults.cSEMResults(
       .object               = x,
       .resample_method      = .resample_method,
       .resample_method2     = .resample_method2,
@@ -1101,16 +1109,20 @@ resamplecSEMResultsCore <- function(
     
       ## Apply user defined function if specified
       user_funs <- if(!is.null(.user_funs)) {
-        if(is.function(.user_funs)) {
-          list("User_fun" = c(.user_funs(Est_temp, ...)))
-        } else {
-          x <- lapply(.user_funs, function(f) c(f(Est_temp, ...)))
-          if(is.null(names(x))) {
-            names(x) <- paste0("User_fun", 1:length(x))
-          }
-          x
-        }
+        applyUserFuns(Est_temp, .user_funs = .user_funs, ...)
       }
+      
+      # user_funs <- if(!is.null(.user_funs)) {
+      #   if(is.function(.user_funs)) {
+      #     list("User_fun" = c(.user_funs(Est_temp, ...)))
+      #   } else {
+      #     x <- lapply(.user_funs, function(f) c(f(Est_temp, ...)))
+      #     if(is.null(names(x))) {
+      #       names(x) <- paste0("User_fun", 1:length(x))
+      #     }
+      #     x
+      #   }
+      # }
       
       ## Add output of the user functions to x1
       if(!is.null(.user_funs)) {
@@ -1158,7 +1170,7 @@ resamplecSEMResultsCore <- function(
     while (length(out) < .R) {
       n_attempt <- n_attempt + 1
       R_new <- .R - length(out)
-      if(isFALSE(.seed)) {
+      if(is.null(.seed)) {
         .seed <- sample(.Random.seed, 1)
       } else {
         .seed <- .seed + 1

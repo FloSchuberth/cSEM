@@ -13,13 +13,10 @@ calculateOuterWeightsPLS(
    )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized data.
-Possible column types or classes of the data provided are: logical,
-numeric (double or integer), factor (ordered and unordered)
-or a mix of several types. The data may also include
-\emph{one} character column whose column name must be given to \code{.id}.
-This column is assumed to contain group identifiers used to split
-the data into groups.}
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
+data (indicators/items/manifest variables). Possible column types or classes
+of the data provided are: "logical", "numeric" ("double" or "integer"),
+"factor" ("ordered" and/or "unordered") or a mix of several types.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 

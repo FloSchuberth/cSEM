@@ -93,6 +93,12 @@ summarize.cSEMResults_default <- function(
     i <- rownames(x1$Inner_weight_estimates)
     D <- x2$Model$structural[i, i , drop = FALSE] + t(x2$Model$structural[i, i, drop = FALSE])
     
+    # Note: June 2019
+    if(any(D == 2)) { # non recursive model
+      # Set elements back to 1 
+      D[D == 2] <- 1 
+    }
+    
     temp <- outer(i, i, FUN = function(x, y) paste(x, y, sep = " -- "))
     type <- rep(x2$Model$construct_type, times = colSums(D))
     

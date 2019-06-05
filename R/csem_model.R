@@ -373,26 +373,18 @@ parseModel <- function(.model, .instruments = NULL) {
     
     model_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
-    ### Order model ==============================================================
+    ### Order model ============================================================
     # Order the structual equations in a way that every equation depends on
     # exogenous variables and variables that have been explained in a previous equation
     # This is necessary for the estimation of models containing non-linear structual
     # relationships.
     
-    ### Preparation --------------------------------------------------------------
+    ### Preparation ------------------------------------------------------------
     temp <- model_structural
     
     ## Extract endogenous and exogenous variables
     vars_endo <- rownames(temp)[rowSums(temp) != 0]
     var_exo  <- setdiff(colnames(temp), vars_endo)
-    
-    ## Return error if the structural model contains feedback loops
-    if(any(temp[vars_endo, vars_endo] + t(temp[vars_endo, vars_endo]) == 2)) {
-      stop2(
-        "The following error occured in the `parseModel()` function:\n",
-        "The structural model contains feedback loops.",
-        " Currently no feedback loops are allowed.")
-    }
     
     # Endo variables that are explained by exo and endo variables
     explained_by_exo_endo <- vars_endo[rowSums(temp[vars_endo, vars_endo, drop = FALSE]) != 0]
@@ -408,33 +400,44 @@ parseModel <- function(.model, .instruments = NULL) {
     # (including exogenous variables and interaction terms)
     already_ordered <- c(var_exo, explained_by_exo)
     
-    ## Order in a way that the current structural equation does only depend on
-    ## exogenous variables and/or variables that have already been ordered
-    counter <- 1
-    explained_by_exo_endo_temp <- explained_by_exo_endo
-    if(length(explained_by_exo_endo) > 0) {
-      repeat {
-        
-        counter <- counter + 1
-        
-        for(i in explained_by_exo_endo_temp) {
-          names_temp <- colnames(temp[i, temp[i, ] == 1, drop = FALSE])
-          endo_temp  <- setdiff(names_temp, already_ordered)
+    ## When there are feedback loops ordering does not work anymor, therefore
+    #  ordering is skiped if there are feedback loops. Except for the
+    #  the "replace" approach, this should not be a problem.
+    
+    # Does the structural model contain feedback loops
+    if(any(temp[vars_endo, vars_endo] + t(temp[vars_endo, vars_endo]) == 2)) {
+      
+      model_ordered <- temp[c(already_ordered, explained_by_exo_endo), , drop = FALSE]
+      
+    } else {
+      ## Order in a way that the current structural equation does only depend on
+      ## exogenous variables and/or variables that have already been ordered
+      counter <- 1
+      explained_by_exo_endo_temp <- explained_by_exo_endo
+      if(length(explained_by_exo_endo) > 0) {
+        repeat {
           
-          if(length(endo_temp) == 0) {
-            model_ordered <- rbind(model_ordered, temp[i, , drop = FALSE])
-            already_ordered <- c(already_ordered, i)
-            explained_by_exo_endo_temp <- setdiff(explained_by_exo_endo_temp, already_ordered)
-          }
-        } # END for-loop
-        if(counter > 50)
-          stop2(
-            "The following error occured in the `parseModel()` function:\n",
-            "Reordering the structural equations was not succesful."
+          counter <- counter + 1
+          
+          for(i in explained_by_exo_endo_temp) {
+            names_temp <- colnames(temp[i, temp[i, ] == 1, drop = FALSE])
+            endo_temp  <- setdiff(names_temp, already_ordered)
+            
+            if(length(endo_temp) == 0) {
+              model_ordered <- rbind(model_ordered, temp[i, , drop = FALSE])
+              already_ordered <- c(already_ordered, i)
+              explained_by_exo_endo_temp <- setdiff(explained_by_exo_endo_temp, already_ordered)
+            }
+          } # END for-loop
+          if(counter > 50)
+            stop2(
+              "The following error occured in the `parseModel()` function:\n",
+              "Reordering the structural equations was not succesful."
             )
-        if(length(explained_by_exo_endo_temp) == 0) break
-      } # END repeat
-    } # END if-statement
+          if(length(explained_by_exo_endo_temp) == 0) break
+        } # END repeat
+      } # END if-statement
+    } # END else
     
     ## Return a cSEMModel object.
     # A cSEMModel objects contains all the information about the model and its

@@ -360,7 +360,7 @@ Carlo studies and an empirical application.},
 }
 
 @Article{Henseler2016,
-  author    = {J{\"o}rrg Henseler and Christian M. Ringle and Marko Sarstedt},
+  author    = {J{\"o}rg Henseler and Christian M. Ringle and Marko Sarstedt},
   title     = {Testing Measurement Invariance of Composites Using Partial Least Squares},
   journal   = {International Marketing Review},
   year      = {2016},
@@ -386,6 +386,45 @@ Carlo studies and an empirical application.},
   doi       = {10.1509/jmr.12.0420},
   file      = {:Spiller2013.pdf:PDF;:Spiller2013_WebAppendix.pdf:PDF},
   publisher = {{SAGE} Publications},
+}
+
+@Article{Wong1996,
+  author    = {Wong, Ka-fu},
+  title     = {Bootstrapping {H}ausman's exogeneity test},
+  journal   = {Economics Letters},
+  year      = {1996},
+  volume    = {53},
+  number    = {2},
+  pages     = {139--143},
+  abstract  = {This paper compares, via simulations, the performance of Hausman's test of exogeneity based on tirst-order
+asymptotics and a bootstrap procedure ill i.i.d, samples. The result shows that a third-order correct bootstrap-based
+inference procedure performs substantially better than the lirst-order asymptotics.},
+  file      = {Wong1996.pdf:Wong1996.pdf:PDF},
+  keywords  = {Bootstrap; Exogeneity},
+  publisher = {Elsevier},
+}
+
+@Article{Hausman1978,
+  author    = {Hausman, Jerry A},
+  title     = {Specification tests in econometrics},
+  journal   = {Econometrica: Journal of the Econometric Society},
+  year      = {1978},
+  volume    = {46},
+  number    = {6},
+  pages     = {1251--1271},
+  abstract  = {Using the result that under the null hypothesis of no misspecification an asymptotically
+efficient estimator must have zero asymptotic covariance with its difference from a
+consistent but asymptotically inefficient estimator, specification tests are devised for a
+number of model specifications in econometrics. Local power is calculated for small
+departures from the null hypothesis. An instrumental variable test as well as tests for a
+time series cross section model and the simultaneous equation model are presented. An
+empirical model provides evidence that unobserved individual factors are present which
+are not orthogonal to the included right-hand-side variable in a common econometric
+specification of an individual wage equation.},
+  file      = {Hausman1978.pdf:Hausman1978.pdf:PDF},
+  owner     = {fls44rr},
+  publisher = {JSTOR},
+  timestamp = {2015.10.07},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}

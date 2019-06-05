@@ -13,36 +13,45 @@
 #' 
 #' \subsection{Data and model:}{
 #' The `.data` and `.model` arguments are required. Data must be
-#' provided as either a `matrix` or a `data.frame` with column names matching
+#' in a `matrix` or a `data.frame` with column names matching
 #' the indicator names used in the model description of the measurement model.
-#' Alternatively, a list of matrices or `data.frame`'s may be provided
+#' Alternatively, a `list` of data sets (matrices or data frames) may be provided
 #' in which case estimation is repeated for each data set. 
-#' The data provided via `.data` may contain **one** character column whose column name 
-#' must be provided to `.id`. Values of this column are interpreted as group 
-#' identifiers and `csem()` will split the data by levels of that column and run
-#' the estimation for each level separately.
+#' Possible column types/classes of the data provided are: "logical", 
+#' "numeric" ("double" or "integer"), "factor" ("ordered" and/or "unordered"),
+#' "character", or a mix of several types. Character columns will be treated 
+#' as (undordered) factors.
 #'
 #' To provide a model use the [lavaan model syntax][lavaan::model.syntax].
 #' Note, however, that \pkg{cSEM} currently only supports the "standard" lavaan
 #' model syntax (Types 1, 2, 3, and 7 as described on the help page). 
 #' Therefore, specifying e.g. a threshold or scaling factors is ignored. 
 #' Alternatively a standardized (possibly incomplete) [cSEMModel]-list may be supplied.
+#' See [parseModel()] for details.
 #' }
 #'
 #' \subsection{Weights and path coefficients:}{
-#' By default weights are estimated using the partial least squares (path) algorithm (`"PLS-PM"`).
-#' A broad range of alternative weightning algorithms may be supplied to `.approach_weights`.
-#' Currently the following approaches are implemented 
+#' By default weights are estimated using the partial least squares (path) 
+#' algorithm (`"PLS-PM"`).
+#' A range of alternative weightning algorithms may be supplied to 
+#' `.approach_weights`. Currently, the following approaches are implemented 
 #' \enumerate{
 #' \item{(Default) Partial least squares path modeling (`"PLS-PM"`). The algorithm
 #'    can be customized. See [calculateWeightsPLS()] for details.}
-#' \item{Generalized structured component analysis (`"GSCA"`)}
-#' \item{Generalized canoncial correlation analysis (*GCCA*), including 
-#'   `"SUMCORR"`, `"MAXVAR"`, `"SSQCORR"`, `"MINVAR"`, `"GENVAR"`}
+#' \item{Generalized structured component analysis (`"GSCA"`). The algorithm 
+#'   can be customized. See [calculateWeightsGSCA()] for details.}
+#' \item{Generalized canonical correlation analysis (*GCCA*), including 
+#'   `"SUMCORR"`, `"MAXVAR"`, `"SSQCORR"`, `"MINVAR"`, `"GENVAR"`.}
 #' \item{Principal component analysis (`"PCA"`)}
 #' \item{Factor score regression using sum scores (`"unit"`), 
 #'    regression (`"regression"`) or bartlett scores (`"bartlett"`)}
 #' }
+#' 
+#' Its possible to supply starting values for the weightning algorithm 
+#' via `.starting_values`. The argument accepts a named list of vectors where the
+#' list names are the construct names whose indicator weights the user
+#' wishes to set. The vectors must be named vectors of `"indicator_name" = value` 
+#' pairs, where `value` is the starting weight. See the examples section below for details.
 #'
 #' Composite-indicator and composite-composite correlations are properly
 #' disattenuated by default to yield consistent loadings, construct correlations, 
@@ -57,6 +66,21 @@
 #' Note, however, that quantities in this case are inconsistent 
 #' estimates for their construct level counterparts if any of the constructs in 
 #' the structural model are modeled as a common factor!
+#' 
+#' By default. path coefficients are estimated using OLS (`.approach_path = "OLS"`). 
+#' For linear model, two-stage least squares (`"2SLS"`) is available , however, *only if* 
+#' *instruments are internal*, i.e. part of the structural model. Future versions
+#' will add support for external instruments. Instruments must be supplied to 
+#' `.instruments` as a named list where the names
+#' of the list elements are the names of the dependent constructs of the structural 
+#' equations whose explanatory variables are believed to be endogenous. 
+#' The list consists of vectors of names of instruments corresponding to each equation. 
+#' Note that exogenous variables of a given equation **must** be supplied as 
+#'instruments for themselves. See the examples section.
+#'
+#' If reliabilities are known they can be supplied as `"name" = value` pairs to 
+#' `.reliabilities`, where `value` is a numeric value between 0 and 1. 
+#' Currently, only supported for "PLS-PM".
 #' }
 #'
 #' \subsection{Nonlinear models:}{
@@ -68,9 +92,9 @@
 #' terms up to a power of three (i.e. three-way interactions) are allowed.
 #'
 #' The current version of the package allows two kinds of estimation:
-#' estimation of the reduced form equation (`.approach_nl = "reduced"`) and 
-#' sequential estimation (`.approach_nl = "sequential"`). The latter does not 
-#' not allow for multivariate normality of all exogenous variables, i.e., 
+#' estimation of the reduced form equation (`.approach_nl = "replace"`) and 
+#' sequential estimation (`.approach_nl = "sequential"`, the default). The latter does not 
+#' allow for multivariate normality of all exogenous variables, i.e., 
 #' the latent variables and the error terms.
 #'
 #' Distributional assumptions are kept to a minimum (an i.i.d. sample from a 
@@ -101,7 +125,20 @@
 #' QUAL =~ IMAG + EXPE
 #' "
 #' }
-#'} 
+#'}
+#' Currently, two approaches are available: `"repeated_indicators"` and 
+#' `"2stage"` (the default). 
+#' \subsection{Multigroup analysis}{
+#' To perform multigroup analysis provide either a list of data sets or one 
+#' data set containing a group-identifyer-column whose column 
+#' name must be provided to `.id`. Values of this column are interpreted as group 
+#' identifiers and `csem()` will split the data by levels of that column and run
+#' the estimation for each level separately. Note that the more levels
+#' the group-identifyer-column has, the more estimation runs are required.
+#' This can considerably slow down estimation, especially if resampling is
+#' requested. For the latter it will generally be faster to use 
+#' `.eval_plan = "multiprocess"`.
+#' } 
 #' \subsection{Inference:}{
 #' Inference is done via resampling. See [resamplecSEMResults] for details.
 #' }
@@ -111,7 +148,7 @@
 #'   .model                   = NULL,
 #'   .approach_2ndorder       = c("3stage", "repeated_indicators"),
 #'   .approach_nl             = c("sequential", "replace"),
-#'   .approach_paths          = c("OLS", "2SLS"),
+#'   .approach_paths          = c("OLS", "2SLS", "3SLS"),
 #'   .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
 #'                                "MINVAR", "GENVAR", "GSCA", "PCA", 
 #'                                "unit", "bartlett", "regression"),
@@ -128,7 +165,7 @@
 #'   .handle_inadmissibles    = c("drop", "ignore", "replace"),
 #'   .user_funs               = NULL,
 #'   .eval_plan               = c("sequential", "multiprocess"),
-#'   .seed                    = FALSE,
+#'   .seed                    = NULL,
 #'   .sign_change_option      = c("none", "individual", "individual_reestimate", 
 #'                                "construct_reestimate"),
 #'   ...
@@ -136,7 +173,7 @@
 #'
 #' @param .data A `data.frame` or a `matrix` of standardized or unstandarized 
 #'   data (indicators/items/manifest variables). 
-#'   Additionally, a `list` of `data.frame`(s) or `matrice`(s) is accepted in which 
+#'   Additionally, a `list` of data sets (data frames or matrices) is accepted in which 
 #'   case estimation is repeated for each data set. Possible column types or classes 
 #'   of the data provided are: "logical", "numeric" ("double" or "integer"), 
 #'   "factor" ("ordered" and/or "unordered") or a mix of several types. 
@@ -164,6 +201,8 @@
 #'
 #' @seealso [args_default], [cSEMArguments], [cSEMResults], [foreman] 
 #' 
+#' @example inst/examples/example_csem.R
+#' 
 #' @export
 #' 
 
@@ -172,7 +211,7 @@ csem <- function(
   .model                 = NULL,
   .approach_2ndorder     = c("3stage", "repeated_indicators"),
   .approach_nl           = c("sequential", "replace"),
-  .approach_paths        = c("OLS", "2SLS"),
+  .approach_paths        = c("OLS", "2SLS", "3SLS"),
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                              "MINVAR", "GENVAR","GSCA", "PCA",
                              "unit", "bartlett", "regression"),
@@ -189,7 +228,7 @@ csem <- function(
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .user_funs             = NULL,
   .eval_plan             = c("sequential", "multiprocess"),
-  .seed                  = FALSE,
+  .seed                  = NULL,
   .sign_change_option    = c("none", "individual", "individual_reestimate", 
                              "construct_reestimate"),
   ...
