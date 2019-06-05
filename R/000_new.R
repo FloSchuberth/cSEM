@@ -304,109 +304,92 @@ testHausman2 <- function(
   
   # Define function to bootstrap
   fun_residuals <- function(.object) {
-    # .object <- TwoSLScsem
+
     ## Extract relevant quantities
-    m         <- .object$Information$Model
-    P         <- .object$Estimates$Construct_VCV
+    m  <- .object$Information$Model
+    P  <- .object$Estimates$Construct_VCV
     
     # Dependent (LHS) variables of the structural equations
     dep_vars  <- rownames(m$structural)[rowSums(m$structural) != 0]
     
-    res <- lapply(dep_vars, function(x) {
-      # x <- dep_vars[2]
+    res <- lapply(dep_vars, function(y) {
       # Which of the variables in dep_vars have instruments specified, i.e.
       # have endogenous variables on the RHS. By default: FALSE.
       endo_in_RHS <- FALSE
       
       if(!is.null(m$instruments)) {
-        endo_in_RHS <- x %in% names(m$instruments)
+        endo_in_RHS <- y %in% names(m$instruments)
       }
       
-      # Independent variables of the structural equation of construct x
-      indep_var <-  colnames(m$structural[x, m$structural[x, ] != 0, drop = FALSE])
+      # All independent variables (X) of the structural equation of construct y
+      # (including the endogenous RHS variables)
+      names_X <-  colnames(m$structural[y, m$structural[y, ] != 0, drop = FALSE])
       
       ## Only for equations with endogenous variables on the RHS do we need to compute
       ##  the Hausman test.
       if(endo_in_RHS & (.object$Information$Arguments$.approach_paths == "2SLS")) {
         ## First stage
         # Note: Technically, we only need to regress the P endogenous variables 
-        #       (X) on the L instruments and the K exogenous independent variables 
+        #       (y1) on the L instruments and the K exogenous independent variables 
         #       (which must be part of Z).
-        #       Therefore: X (N x P) and Z (N x (L + K)) and
-        #       beta_1st = (Z'Z)^-1*(Z'X)
+        #       Therefore: y1 (N x P) and Z (N x (L + K)) and
+        #       beta_1st = (Z'Z)^-1*(Z'y1)
         #       
         #       beta_1st would be ((L + K) x P), i.e. each columns represents the 
         #       first stage estimates for a regression of the instruments on
         #       on the p'th endogenous variable.
-        #
-        #       Here we regress every RHS variable
-        names_X <- rownames(m$instruments[[x]]) # names of the endogenous variables
-        names_Z <- colnames(m$instruments[[x]]) # names of the instruments 
+        names_endo <- rownames(m$instruments[[y]]) # names of the endogenous variables (y1's)
+        names_Z <- colnames(m$instruments[[y]]) # names of the instruments 
         
-        # Assuming that .P (the construct correlation matrix) also contains 
+        # Assuming that P (the construct correlation matrix) also contains 
         # the instruments (ensured if only internal instruments are allowed)
-        # we can use .P.
-        
-        # beta_1st <- solve(P[names_Z, names_Z, drop = FALSE],
-        #                   P[names_Z, indep_var, drop = FALSE])
         
         beta_1st <- solve(P[names_Z, names_Z, drop = FALSE], 
-                          P[names_Z, names_X, drop = FALSE])
-        
-        # Compute fitted values 
-        scores <- .object$Estimates$Construct_scores
-        X <- scores[, names_X, drop = FALSE]
-        Z <- scores[, names_Z, drop = FALSE]
-        
-        X_hat <- Z %*% beta_1st
-        
-        # Compute residuals
-        u_hat <- X - X_hat
-        colnames(u_hat) <- paste0("Resid_", names_X)
+                          P[names_Z, names_endo, drop = FALSE])
         
         ## Second stage
-        Q2 <- .object$Estimates$Reliabilities 
+        # Note: we have to use (construct) correlations here since using 
+        #       the plain score would yield inconsistent estimates for concepts
+        #       modeled as common factors. Hence we need to "translate" the
+        #       regression based second stage estimation 
+        #                  y = X * beta_1 + v_hat*beta_2 + u
+        #       and the estimator
+        #                  beta_2nd = (W'W)^-1W'y
+        #       into correlations.
+        #
+        #   y1_hat = Z*beta_1st
+        #   v_hat  = y1 - y1_hat = y1 - Z*beta_1st
+        #
+        #   y = X * beta_1 + v_hat*beta_2 + u
+        #
+        #   Define W = [X; v_hat]
+        #
+        #   E(W'W ) = E[X'X ; X'v_hat
+        #               v_hat'X ; v_hat'v_hat]
+        #   E(W'y)  = E[X'y ; v_hat'y]'
+        
+        ww11 <- P[names_X, names_X, drop = FALSE]
+        ww12 <- P[names_X, names_endo, drop = FALSE] - P[names_X, names_Z, drop = FALSE] %*% beta_1st
+        ww21 <- t(ww12)
+        ww22 <- P[names_endo, names_endo, drop = FALSE] - 
+          P[names_endo, names_Z, drop = FALSE] %*% beta_1st -
+          t(beta_1st) %*% P[names_Z, names_endo, drop = FALSE] +
+          t(beta_1st) %*% P[names_Z, names_Z, drop = FALSE] %*% beta_1st
+        
+        WW <- rbind(cbind(ww11, ww12), cbind(ww21, ww22))
+        
+        wy1 <- P[names_X, y, drop = FALSE]
+        wy2 <- P[names_endo, y, drop = FALSE] - t(beta_1st) %*% P[names_Z, y, drop = FALSE]
 
-        r1       <- cor(Z)
-        diag(r1) <- Q2[names_Z]
+        Wy <- rbind(wy1, wy2)
         
-        rel_X_hat <- t(beta_1st) %*% r1 %*% beta_1st
+        ## Estimate the second stage estimation
 
-        R1       <- cor(Z)
-        r1       <- R1
-        diag(r1) <- Q2[names_Z]
+        beta_2nd <- solve(WW, Wy)
+        rownames(beta_2nd) <- c(names_X, paste0("Resid_", names_endo))
+        colnames(beta_2nd) <- y
         
-        rel_X_hat <- t(beta_1st) %*% r1 %*% beta_1st / (t(beta_1st) %*% R1 %*% beta_1st)
-
-        r2 <- cor(cbind(X, X_hat))
-        diag(r2) <- c(Q2[names_X], rel_X_hat)
-        
-        rel_u_hat <- c(c(1, -1) %*%  r2 %*% c(1, -1))
-        names(rel_u_hat) <- colnames(u_hat)
-        
-        # Recompute the composite VCV with the u_hats added
-        scores1 <- cbind(scores, u_hat) 
-        Pnew <- cor(scores1)
-        
-        Qnew <- sqrt(c(Q2, rel_u_hat))
-        P <- cSEM:::calculateConstructVCV(Pnew, Qnew)
-        
-        ## Estimate the second stage
-        new <- c(indep_var, colnames(u_hat))
-        beta_2nd <- solve(P[new, new, drop = FALSE], 
-                          P[new, x, drop = FALSE]) 
-        
-        ## Augmented second stage
-        # Note: u_hat is now added as a new regressor
-        # Need to think about how to adress disattenuation here. We need
-        # to know the reliability of u_hat. Maybe it is not necessary, but 
-        # we need to think about it.
-        # Y <- scores[, x, drop = FALSE]
-        # X <- cbind(scores[, indep_var, drop = FALSE], u_hat)
-        # beta_2nd <- solve(t(X) %*% X) %*% t(X) %*% Y
-        
-        ## Add u_hat 
-        
+        return(beta_2nd)
         
       } else {
         NA
