@@ -336,6 +336,8 @@ assess(res)
 #       output use:
 print(summarize(res), .full_output = FALSE)
 
+## Dealing with endogeneity -------------------------------------------------
+
 ### Nonlinear model ---------------------------------------------------------
 
 ### Second order model ------------------------------------------------------
@@ -414,6 +416,19 @@ data.frame(
 
 sv <- list("eta1" = c("y12" = 10, "y13" = 4, "y11" = 1))
 res <- csem(threecommonfactors, model, .starting_values = sv)
+
+## Choosing a different inner weighting scheme 
+?args_csem_dotdotdot
+
+res <- csem(threecommonfactors, model, .PLS_weight_scheme_inner = "factorial",
+            .PLS_ignore_structural_model = TRUE)
+
+
+## Choosing different modes for PLS
+# By default, concepts modeled as common factors uses PLS Mode A weights.
+modes <- list("eta1" = "unit", "eta2" = "modeB", "eta3" = "unit")
+res   <- csem(threecommonfactors, model, .PLS_modes = modes)
+summarize(res)
 }
 \references{
 \insertAllCited{}
