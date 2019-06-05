@@ -4,7 +4,11 @@
 \alias{processData}
 \title{Process data}
 \usage{
-processData(.data, .model, .instruments = NULL)
+processData(
+  .data        = NULL, 
+  .model       = NuLL, 
+  .instruments = NULL
+  )
 }
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized

@@ -2,7 +2,11 @@
 #'
 #' Prepare, standardize, check, and clean data provided via the `.data` argument.
 #'
-#' @usage processData(.data, .model, .instruments = NULL)
+#' @usage processData(
+#'   .data        = NULL, 
+#'   .model       = NuLL, 
+#'   .instruments = NULL
+#'   )
 #'
 #' @inheritParams csem_arguments
 #'
@@ -36,7 +40,11 @@
 #'
 #' @export
 
-processData <- function(.data, .model, .instruments = NULL) {
+processData <- function(
+  .data        = NULL, 
+  .model       = NULL, 
+  .instruments = NULL
+  ) {
 
   ### Checks, errors and warnings ========
   # Check if any data set is provided
@@ -45,9 +53,9 @@ processData <- function(.data, .model, .instruments = NULL) {
   }
 
   # Check class of the .data object and stop if not of class "data.frame" or "matrix"
-  if(!any(class(.data) %in% c("data.frame", "matrix"))) {
+  if(!inherits(.data, c("data.frame", "matrix"))) {
     stop2("Don't know how to deal with a data object of class: ", class(.data), ".\n",
-         "Please provide the data as a `data.frame` or a `matrix`.")
+          "Please provide the data as a `data.frame` or a `matrix`.")
   }
 
   ### Processing and further checking =========
@@ -64,29 +72,36 @@ processData <- function(.data, .model, .instruments = NULL) {
   .data <- as.data.frame(.data)
 
   # Convert .model to cSEMModel format if not already in this format
-  if(!(class(.model) == "cSEMModel")) {
+  if(!inherits(.model, "cSEMModel")) {
     .model <- parseModel(.model, .instruments = .instruments)
   }
   
-  # Check if any of the columns is a character. 
-  # Allowed types: numeric (double, integer), factor (ordered and unordered), or logical 
+  ## Check if any of the columns are character and convert them to factors
+  # Allowed types: character (converted to factor), numeric (double, integer), 
+  # factor (ordered and unordered), or logical 
   x <- names(.data[unlist(lapply(.data, is.character))])
   
-  if(length(x) == 1) {
-    stop("Column: ",paste0("`", x, "`", collapse = ", "), " of `.data` is of type `character`.\n",
-         "Have you forgotten to set `", paste0(".id = '", x, "'`?"), call. = FALSE)
-  } else if(length(x) > 1) {
-    stop("Columns: ",paste0("`", x, "`", collapse = ", "), "of `.data` are of type `character`.\n",
-         "The column type must be one of: `logical`, `numeric`, or `factor`",
-         call. = FALSE)
+  if(length(x) != 0) {
+    for(i in x) {
+      .data[, i] <- as.factor(.data[, i])
+    }
   }
+
+  # if(length(x) == 1) {
+  #   stop("Column: ",paste0("`", x, "`", collapse = ", "), " of `.data` is of type `character`.\n",
+  #        "Have you forgotten to set `", paste0(".id = '", x, "'`?"), call. = FALSE)
+  # } else if(length(x) > 1) {
+  #   stop("Columns: ",paste0("`", x, "`", collapse = ", "), "of `.data` are of type `character`.\n",
+  #        "The column type must be one of: `logical`, `numeric`, or `factor`",
+  #        call. = FALSE)
+  # }
   ## Add indicators to .data if the repeated indicators approach is used
   # Error:
   # Note: the indicators to be added are identified by the string "_2nd_". Hence
   # the string is basically a reserved word. If indicators supplied by the
   # users contain the string this causes and error (unlikely to happen).
   if(any(grepl("_2nd_", colnames(.data)))) {
-    stop("Indicator names must not contain the string `_2nd_`.", call. = FALSE)
+    stop2("Indicator names must not contain the string `_2nd_`.")
   }
   
   names_2nd <- colnames(.model$measurement)[grep("_2nd", colnames(.model$measurement))]
@@ -103,10 +118,10 @@ processData <- function(.data, .model, .instruments = NULL) {
   
   ## Check indicator names
   if(!all(colnames(.model$measurement) %in% colnames(.data))) {
-    stop("Unknown indicator(s): ",  
-         paste0("`", setdiff(colnames(.model$measurement), colnames(.data)), "`.", collapse = ", "),
-         " Please verify your model description.",
-         call. = FALSE)
+    stop2("The following error occured while processing the data:\n",
+      "Unknown indicator(s): ", paste0("`", setdiff(colnames(.model$measurement), 
+                                                    colnames(.data)), "`.", collapse = ", "),
+         " Please verify your model description.")
   }
   # Order data according to the ordering of the measurement model
   .data <- .data[, colnames(.model$measurement)]

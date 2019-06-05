@@ -305,7 +305,7 @@ Inference is done via resampling. See \link{resamplecSEMResults} for details.
 #  `threecommonfactors` dataset. 
 
 ## Take a look at the dataset
-?threecommonfactors
+#?threecommonfactors
 
 ## Specify the (correct) model
 model <- "
@@ -418,7 +418,7 @@ sv <- list("eta1" = c("y12" = 10, "y13" = 4, "y11" = 1))
 res <- csem(threecommonfactors, model, .starting_values = sv)
 
 ## Choosing a different inner weighting scheme 
-?args_csem_dotdotdot
+#?args_csem_dotdotdot
 
 res <- csem(threecommonfactors, model, .PLS_weight_scheme_inner = "factorial",
             .PLS_ignore_structural_model = TRUE)
