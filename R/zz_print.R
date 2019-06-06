@@ -178,8 +178,8 @@ print.cSEMVerify_default <- function(x, ...) {
   text <- c("1" = "Convergence", 
             "2" = "At least one standardized loading > 1", 
             "3" = "Construct VCV not positive semi-definite", 
-            "4" = "Model-implied VCV not positive semi-definite",
-            "5" = "At least one reliability > 1")
+            "4" = "At least one reliability > 1",
+            "5" = "Model-implied VCV not positive semi-definite")
   cat2("\nDetails:\n\n")
   
   cat2("  ", col_align("Code", 7), col_align("Status", 10), "Description\n")
@@ -215,8 +215,8 @@ print.cSEMVerify_2ndorder <- function(x, ...) {
   text <- c("1" = "Convergence", 
             "2" = "At least one standardized loading > 1", 
             "3" = "Construct VCV not positive semi-definite", 
-            "4" = "Model-implied VCV not positive semi-definite",
-            "5" = "At least one reliability > 1")
+            "4" = "At least one reliability > 1",
+            "5" = "Model-implied VCV not positive semi-definite")
   
   cat2("\n\nDetails:\n\n")
   
