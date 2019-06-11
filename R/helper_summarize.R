@@ -62,16 +62,32 @@ calculateEffects <- function(.object, .output_type = c("data.frame", "matrix")) 
       #       there is a better way to check if a number is "acutally zero".
       type <- rep(m$construct_type, times = rowSums(round(x, 10) != 0))
       
-      data.frame(
-        "Name"           = t(temp)[round(t(x), 10) != 0 ],
-        "Construct_type" = type,
-        "Estimate"       = t(x)[round(t(x), 10) != 0 ],
-        "Std_err"        = NA,
-        "t_stat"         = NA,
-        "p_value"        = NA,
-        stringsAsFactors = FALSE,
-        row.names = NULL
+      # If there are no indirect effects the matrix "indirect" is the zero matrix
+      # return an empty data frame in this case
+      if(all(round(x, 10) == 0)) {
+        data.frame(
+          "Name"           = character(),
+          "Construct_type" = character(),
+          "Estimate"       = double(),
+          "Std_err"        = double(),
+          "t_stat"         = double(),
+          "p_value"        = double(),
+          stringsAsFactors = FALSE,
+          row.names = NULL
         )
+      } else {
+        data.frame(
+          "Name"           = t(temp)[round(t(x), 10) != 0 ],
+          "Construct_type" = type,
+          "Estimate"       = t(x)[round(t(x), 10) != 0 ],
+          "Std_err"        = NA,
+          "t_stat"         = NA,
+          "p_value"        = NA,
+          stringsAsFactors = FALSE,
+          row.names = NULL
+        )
+      }
+
     })
     
     out[["Direct_effect"]]   <- lout[[1]]

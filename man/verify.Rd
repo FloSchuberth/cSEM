@@ -27,7 +27,7 @@ is returned. Status codes are:
 \item 1: The algorithm has not converged.
 \item 2: At least one absolute standardized loading estimate is larger than 1,
 \item 3: The construct VCV is not positive semi-definite.
-\item 4: At least one proxy reliability is larger than 1.
+\item 4: At least one reliability is larger than 1.
 \item 5: The model-implied indicator VCV is not positive semi-definite.
 This is only checked for linear models.
 }
