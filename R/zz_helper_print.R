@@ -185,7 +185,7 @@ printSummarizePath <- function(.summarize_object, .ci_colnames, .what = "Path") 
     )
   }
   
-  l <- max(nchar(x[, "Name"]))
+  l <- max(nchar(x[, "Name"]), nchar(.what))
   
   if(length(.ci_colnames) != 0) {
     xx <- regmatches(.ci_colnames, regexpr("\\.", .ci_colnames), invert = TRUE)
@@ -199,7 +199,7 @@ printSummarizePath <- function(.summarize_object, .ci_colnames, .what = "Path") 
   }
   cat2(
     "\n  ", 
-    col_align(.what, max(l, nchar(.what)) + 2), 
+    col_align(.what, l + 2), 
     col_align("Estimate", 10, align = "right"), 
     col_align("Std. error", 12, align = "right"),
     col_align("t-stat.", 10, align = "right"), 
@@ -214,7 +214,7 @@ printSummarizePath <- function(.summarize_object, .ci_colnames, .what = "Path") 
   for(i in 1:nrow(x)) {
     cat2(
       "\n  ", 
-      col_align(x[i, "Name"], max(l, nchar(.what)) + 2), 
+      col_align(x[i, "Name"], l + 2), 
       col_align(sprintf("%.4f", x[i, "Estimate"]), 10, align = "right"),
       col_align(sprintf("%.4f", x[i, "Std_err"]), 12, align = "right"),
       col_align(sprintf("%.4f", x[i, "t_stat"]), 10, align = "right"),

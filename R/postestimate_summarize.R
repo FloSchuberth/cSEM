@@ -58,6 +58,9 @@ summarize.cSEMResults_default <- function(
     "p_value"        = NA,
     stringsAsFactors = FALSE)
   
+  # Delete rownames
+  rownames(path_estimates) <- NULL
+  
   ## Loading estimates ---------------------------------------------------------
   # Get construct type for relevant variables
   type <- rep(x2$Model$construct_type, times = rowSums(x2$Model$measurement))
@@ -75,6 +78,9 @@ summarize.cSEMResults_default <- function(
     "p_value"        = NA,
     stringsAsFactors = FALSE)
   
+  # Delete rownames
+  rownames(loading_estimates) <- NULL
+  
   ## Weight estimates ----------------------------------------------------------
   temp <- rep(rownames(x1$Weight_estimates), times = rowSums(x2$Model$measurement))
   temp <- paste0(temp, " <~ ", colnames(x1$Weight_estimates))
@@ -87,6 +93,9 @@ summarize.cSEMResults_default <- function(
     "t_stat"         = NA,
     "p_value"        = NA,
     stringsAsFactors = FALSE)
+  
+  # Delete rownames
+  rownames(weight_estimates) <- NULL
   
   ## Inner weight estimates ----------------------------------------------------
   if(x2$Arguments$.approach_weights == "PLS-PM") {
@@ -107,6 +116,10 @@ summarize.cSEMResults_default <- function(
       "Construct_type" = type, 
       "Estimate"       = t(x1$Inner_weight_estimates)[t(D) != 0 ], 
       stringsAsFactors = FALSE)
+    
+    # Delete rownames
+    rownames(inner_weight_estimates) <- NULL
+    
   }
 
   ## Construct scores ----------------------------------------------------------
