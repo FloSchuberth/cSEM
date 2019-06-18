@@ -107,6 +107,9 @@ parseModel <- function(.model, .instruments = NULL) {
     tbl_m  <- m_lav[m_lav$op %in% c("=~", "<~"), ] # measurement 
     tbl_e  <- m_lav[m_lav$op == "~~" & m_lav$user == 1, ] # error 
     
+    ## Check if there are population starting values
+    pop_values <- c(tbl_s$ustart, tbl_m$ustart, tbl_e$ustart)
+    
     ## Get all relevant subsets of constructs and/or indicators
     # i := indicators
     # c := constructs
@@ -198,6 +201,12 @@ parseModel <- function(.model, .instruments = NULL) {
     }
 
     ### Checks, errors and warnings --------------------------------------------
+    ## Stop if only a subset of starting values is given
+    if(!all(is.na(pop_values)) & anyNA(pop_values)) {
+      stop2("The following error occured in the `parseModel()` function:\n",
+            "Only a subset of population values given. Please specify",
+            " all population values or none.")
+    }
     if(!is.null(.instruments)) {
       # Note (05/2019): Currently, we only allow instruments from within the model, 
       #                 i.e instruments need to have a structural   
@@ -361,17 +370,67 @@ parseModel <- function(.model, .instruments = NULL) {
     
     model_structural[cbind(row_index, col_index)] <- 1
     
+    ## If starting values are given create a supplementary strucutral matrx
+    ## that contains the starting values, otherwise assign a 1
+    if(!anyNA(pop_values)) {
+      model_structural2 <- model_structural
+      model_structural2[cbind(row_index, col_index)] <- tbl_s$ustart
+    }
+    
     ## Measurement model
     row_index <- match(tbl_m$lhs, names_c)
     col_index <- match(tbl_m$rhs, names_i)
     
     model_measurement[cbind(row_index, col_index)] <- 1
+
+    ## If starting values are given create a supplementary strucutral matrx
+    ## that contains the starting values, otherwise assign a 1
+    if(!anyNA(pop_values)) {
+      model_measurement2 <- model_measurement
+      model_measurement2[cbind(row_index, col_index)] <- tbl_m$ustart
+    }
     
-    ## Error model
-    row_index <- match(tbl_e$lhs, names_i)
-    col_index <- match(tbl_e$rhs, names_i)
+    
+    ## Error covariance matrix
+    m_errors   <- tbl_e[tbl_e$lhs %in% names_i, , drop = FALSE]
+    con_errors <- tbl_e[tbl_e$lhs %in% names_c, , drop = FALSE] 
+    
+    row_index <- match(m_errors$lhs, names_i)
+    col_index <- match(m_errors$rhs, names_i)
     
     model_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
+    
+    ## If starting values are given create a supplementary strucutral matrx
+    ## that contains the starting values, otherwise assign a 1
+    if(!anyNA(pop_values)) {
+      
+      model_error2 <- model_error
+      
+      # Extract endogenous and exogenous variables
+      vars_endo <- rownames(model_structural)[rowSums(model_structural) != 0]
+      vars_exo  <- setdiff(colnames(model_structural), vars_endo)
+      
+      ## Phi
+      Phi <- matrix(0,
+                    nrow = length(vars_exo),
+                    ncol = length(vars_exo),
+                    dimnames = list(vars_exo, vars_exo)
+      )
+      # Set diagonal elements to 1
+      diag(Phi) <- 1
+      
+      if(length(tbl_e$ustart) != 0) {
+        
+        model_error2[cbind(c(row_index, col_index), c(col_index, row_index))] <- m_errors$ustart
+        
+        # Get row and column index for constructs
+        row_index <- match(con_errors$lhs, vars_exo)
+        col_index <- match(con_errors$rhs, vars_exo)
+        
+        Phi[cbind(row_index, col_index)] <- con_errors$ustart
+        Phi[upper.tri(Phi)] <- t(Phi)[upper.tri(Phi)]
+      }
+    }
     
     ### Order model ============================================================
     # Order the structual equations in a way that every equation depends on
@@ -384,7 +443,7 @@ parseModel <- function(.model, .instruments = NULL) {
     
     ## Extract endogenous and exogenous variables
     vars_endo <- rownames(temp)[rowSums(temp) != 0]
-    var_exo  <- setdiff(colnames(temp), vars_endo)
+    vars_exo  <- setdiff(colnames(temp), vars_endo)
     
     # Endo variables that are explained by exo and endo variables
     explained_by_exo_endo <- vars_endo[rowSums(temp[vars_endo, vars_endo, drop = FALSE]) != 0]
@@ -398,7 +457,7 @@ parseModel <- function(.model, .instruments = NULL) {
     
     # Add variables that have already been ordered/taken care of to a vector
     # (including exogenous variables and interaction terms)
-    already_ordered <- c(var_exo, explained_by_exo)
+    already_ordered <- c(vars_exo, explained_by_exo)
     
     ## When there are feedback loops ordering does not work anymor, therefore
     #  ordering is skiped if there are feedback loops. Except for the
@@ -456,10 +515,19 @@ parseModel <- function(.model, .instruments = NULL) {
       "construct_order"    = construct_order[match(n, names(construct_order))],
       "model_type"         = type_of_model
       # "vars_endo"          = rownames(model_ordered),
-      # "vars_exo"           = var_exo,
+      # "vars_exo"           = vars_exo,
       # "vars_explana"       = colnames(structural_ordered)[colSums(structural_ordered) != 0],
       # "explained_by_exo"   = explained_by_exo
     )
+    
+    ## 
+    if(!anyNA(pop_values)) {
+      model_ls$structural2  <- model_structural2[rownames(structural_ordered), 
+                                                 colnames(structural_ordered)]
+      model_ls$measurement2 <- model_measurement2[n, m]
+      model_ls$error_cor2   <- model_error[m, m]
+      model_ls$Phi          <- Phi
+    }
     
     ## Are there instruments?
     if(!is.null(.instruments)) {
