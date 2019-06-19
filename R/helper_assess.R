@@ -553,7 +553,7 @@ calculateDML <- function(
   #             - log(det(S)) - p)
   
   # Bentler & Yuan (1999)
-  (nobs -1)*sum(diag(S %*% solve(Sigma_hat)))-log(det(S%*%solve(Sigma_hat)))-p
+  (n -1)*sum(diag(S %*% solve(Sigma_hat)))-log(det(S%*%solve(Sigma_hat)))-p
   
 }
 
