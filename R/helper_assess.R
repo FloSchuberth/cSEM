@@ -548,9 +548,13 @@ calculateDML <- function(
   p         <- dim(S)[1]
   Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
   
-  (n - 1)*(log(det(Sigma_hat)) 
-              + sum(diag(S %*% solve(Sigma_hat))) 
-              - log(det(S)) - p)
+  # (n - 1)*(log(det(Sigma_hat)) 
+  #             + sum(diag(S %*% solve(Sigma_hat))) 
+  #             - log(det(S)) - p)
+  
+  # Bentler & Yuan (1999)
+  (nobs -1)*sum(diag(S %*% solve(Sigma_hat)))-log(det(S%*%solve(Sigma_hat)))-p
+  
 }
 
 
