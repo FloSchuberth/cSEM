@@ -552,8 +552,8 @@ calculateDML <- function(
   #             + sum(diag(S %*% solve(Sigma_hat))) 
   #             - log(det(S)) - p)
   
-  # Bentler & Yuan (1999)
-  (n -1)*sum(diag(S %*% solve(Sigma_hat)))-log(det(S%*%solve(Sigma_hat)))-p
+  # Bentler & Yuan (1999), we already return the chi-square statistic
+  (n -1)*(sum(diag(S %*% solve(Sigma_hat)))-log(det(S%*%solve(Sigma_hat)))-p)
   
 }
 
