@@ -16,7 +16,7 @@ csem(
   .disattenuate            = TRUE,
   .id                      = NULL,
   .instruments             = NULL,
-  .normality               = TRUE,
+  .normality               = FALSE,
   .reliabilities           = NULL,
   .starting_values         = NULL,
   .resample_method         = c("none", "bootstrap", "jackknife"),
@@ -80,7 +80,7 @@ instruments for themselves. See the examples section. Defaults to \code{NULL}.}
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
-Defaults to \code{TRUE}. Ignored if the model is linear.}
+Defaults to \code{FALSE}. Ignored if the model is linear.}
 
 \item{.reliabilities}{A character vector of \code{"name" = value} pairs,
 where \code{value} is a number between 0 and 1 and \code{"name"} a character string

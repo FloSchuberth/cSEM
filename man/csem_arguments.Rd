@@ -161,7 +161,7 @@ Only used internally.}
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
-Defaults to \code{TRUE}. Ignored if the model is linear.}
+Defaults to \code{FALSE}. Ignored if the model is linear.}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 

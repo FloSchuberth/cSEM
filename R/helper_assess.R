@@ -600,6 +600,7 @@ calculateDML <- function(
 #'
 #' @keywords internal
 #' @name fit_measures 
+NULL
 
 #' @describeIn fit_measures The goodness of fit index (GFI).
 
@@ -676,6 +677,10 @@ calculateRMSTheta <- function(.object) {
   Lambda <- .object$Estimates$Loading_estimates
   P      <- .object$Estimates$Construct_VCV
   
+  # Not sure if this is correct
+  # Questions:
+  #  1. Do we somehow have to disattenuate the "cross-loadings" S*W' ?
+  #  2. Is the formula correct?
   Theta <- S - S %*% t(W) %*% Lambda - t(S %*% t(W) %*% Lambda) + t(Lambda) %*% P %*% Lambda
   
   ## For compsites, within block indicator correlations should be excluded as 

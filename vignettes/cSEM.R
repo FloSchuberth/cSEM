@@ -87,7 +87,7 @@ a
 #     .estimate_structural         = TRUE,
 #     .id                          = NULL,
 #     .iter_max                    = 100,
-#     .normality                   = TRUE,
+#     .normality                   = FALSE,
 #     .PLS_approach_cf             = "dist_squared_euclid",
 #     .PLS_ignore_structural_model = FALSE,
 #     .PLS_modes                   = NULL,

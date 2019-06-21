@@ -120,7 +120,7 @@
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
-#'  Defaults to `TRUE`. Ignored if the model is linear.
+#'  Defaults to `FALSE`. Ignored if the model is linear.
 #' @param .object An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .only_common_factors Logical. Should only concepts modeled as common 
 #'   factors be included when calculating one of the following quality critera: 
@@ -359,7 +359,7 @@ args_default <- function(.choices = FALSE) {
     .model                   = NULL,
     .moderator               = NULL,
     .modes                   = NULL,
-    .normality               = TRUE,
+    .normality               = FALSE,
     .only_common_factors     = TRUE,
     .object                  = NULL,
     .P                       = NULL,
