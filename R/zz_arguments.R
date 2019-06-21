@@ -204,8 +204,9 @@
 #' @param .verbose Logical. Should information be printed to the console? Defaults
 #'   to `TRUE`.
 #' @param .user_funs A function or a (named) list of functions to apply to every
-#'   resample. Takes `.object` as an input (e.g., `myFun <- function(.object) {...}`).
-#'   Output should preferably be a (named)
+#'   resample. The functions must take `.object` as its first input (e.g., 
+#'   `myFun <- function(.object, ...) {...}`).
+#'   Function output should preferably be a (named)
 #'   vector but matrices are also accepted. However, the output will be 
 #'   vectorized (columnwise) in this case. See the examples section for details.
 #' @param .vcv_asymptotic Logical. Should the asymptotic variance-covariance matrix be used, i.e., 

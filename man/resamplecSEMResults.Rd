@@ -46,8 +46,9 @@ there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
-resample. Takes \code{.object} as an input (e.g., \code{myFun <- function(.object) {...}}).
-Output should preferably be a (named)
+resample. The functions must take \code{.object} as its first input (e.g.,
+\code{myFun <- function(.object, ...) {...}}).
+Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
 

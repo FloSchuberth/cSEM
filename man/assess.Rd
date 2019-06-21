@@ -150,6 +150,11 @@ It is possible to force computation of all quality criteria for constructs
 modeled as composites by setting \code{.only_common_factors = FALSE}, however,
 we explicitly warn to interpret quality criteria in this case with caution,
 as they may not even have a conceptual meaning.
+
+\subsection{Resampling}{
+To resample a given quality criterion supply the name of the function
+that calculates the desired quality criterion to \code{\link[=csem]{csem()}}'s \code{.user_funs} argument.
+}
 }
 \examples{
 # ===========================================================================
@@ -161,7 +166,7 @@ eta2 ~ eta1
 eta3 ~ eta1 + eta2
 
 # (Reflective) measurement model
-eta1 =~ y11 + y12 + y13
+csem#' eta1 =~ y11 + y12 + y13
 eta2 =~ y21 + y22 + y23
 eta3 =~ y31 + y32 + y33
 "
@@ -172,6 +177,14 @@ a   <- assess(res) # computes all quality criteria (.quality_criterion = "all")
 ## The return value is a named list
 str(a)
 a$HTMT
+
+## Resampling ---------------------------------------------------------------
+# To resample a given quality criterion use csem's .user_funs argument
+
+csem(threecommonfactors, model, 
+  .resample_method = "bootstrap", 
+  .user_funs       = cSEM:::calculateHTMT
+  )
 
 }
 \seealso{
