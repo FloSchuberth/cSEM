@@ -76,8 +76,11 @@ calculateAVE <- function(
 #' 
 #' Calculates the degrees of freedom from a [cSEMResults] object.
 #' 
-#' @usage calculateDF(.object = NULL)
-#'
+#' @usage calculateDF(
+#'   .object     = NULL,
+#'   .null_model = FALSE
+#'   )
+#' 
 #' @return A single numeric value.
 #'   
 #' @inheritParams csem_arguments
@@ -85,52 +88,85 @@ calculateAVE <- function(
 #' @seealso [assess], [cSEMResults]
 #' @keywords internal
 
-calculateDf <- function(.object) {
+calculateDf <- function(
+  .object     = NULL, 
+  .null_model = FALSE
+  ) {
   
-  x1 <- .object$Estimates
-  x2 <- .object$Information
-  
-  ## Df for composite models ---------------------------------------------------
-  if(all(x2$Model$construct_type == "Composite")) {
-    if(inherits(.object, "cSEMResults_default")) {
-      # Number of non-redundant off-diagonal elements of the indicator covariance 
-      # matrix
-      nS <- sum(lower.tri(x1$Indicator_VCV)) # same as dim_nS *(dim_nS - 1) / 2
-      
-      # Number of free correlations among the composites
-      n_cor_composites <- sum(lower.tri(x1$Construct_VCV))
-      
-      # Number of free covariances between the composites and indicators not forming
-      # a composite
-      # Note 21.06.2019: I think this is not nessary yet, as indicators are always attached 
-      #                  to a composite in cSEM
-      
-      # Number pf free non-redundant off-diagonal element of each intra-block
-      # covariance matrix
-      n_intra_block <- c()
-      for(i in 1:nrow(x2$Model$measurement)) {
-        dim <- sum((x2$Model$measurement[i, ] == 1))
-        n_intra_block[i] <- dim * (dim - 1) / 2
-      }
-      
-      # Number of weights
-      n_weights <- ncol(x2$Model$measurement)
-      
-      # Number of blocks
-      n_blocks  <- nrow(x2$Model$measurement)
-      
-      ## Calculate Dfs
-      df <- nS - n_cor_composites - sum(n_intra_block) - n_weights + n_blocks
-    } else {
-      stop("not yet implemented")
-    }
+  if(inherits(.object, "cSEMResults_default")) { 
+    x1 <- .object$Estimates
+    x2 <- .object$Information$Model
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2("Degrees of freedom for 2nd order composites not implemented yet.")
   } else {
-    # DF for common factor model -----------------------------------------------
     
-    stop2("Not yet implement for common factor models.")
+    df <- lapply(.object, calculateDf)
+    
+    ## Return
+    names(df) <- names(.object)
+    return(df)
   }
   
-  df
+  ## Number of non-redundant off-diagonal elements of the indicator covariance 
+  ## matrix (S)
+  vS <- sum(lower.tri(x1$Indicator_VCV)) # same as dim_nS *(dim_nS - 1) / 2
+  
+  ## Caculate the degrees of freedom of a null model (Sigma_hat = I)
+  if(.null_model) {
+    # The degrees of freedom of the null model are identical to 
+    # the number of non-redundant elements of S (since there is nothing to
+    # estimate. Everything is set to 0 a priori)
+    return(vS)
+  }
+  
+  ## Number of correlations between exogenous constructs
+  temp <- sum(rowSums(x2$structural) == 0)
+  n_exo <- temp * (temp - 1) / 2
+  
+  ## Number of structural parameters
+  n_structural <- sum(x2$structural)
+  
+  ## Number of measurement errors assumed to correlate
+  n_error <- sum(x2$error_cor == 1) / 2
+  
+  if(.object$Information$Arguments$.approach_weights %in% c("bartlett", "regression", "unit")) {
+    # If one of these estimators is used degrees of freedom are counted 
+    # the same way as one would count in CB-SEM: 
+    # df = non_redundant_elements_of_S - 
+    #      - (structural_parameter + cor_between_exos) 
+    #      - loadings
+    #      - assumed_measurement_error_cors (usually 0)
+    
+    n_loadings <- ncol(x2$measurement)
+    
+    df_total <- vS - (n_exo + n_structural) - n_loadings
+  } else {
+    ## Construct names
+    names_constructs <- rownames(x2$structural)
+    k <- c()
+    for(j in names_constructs) {
+      # DF for 
+      ## Number of free covariances between the composites and indicators not forming
+      ## a composite
+      # Not relevant, as indicators are always attached to a composite in cSEM
+      
+      ## Number of free non-redundant off-diagonal element of each intra-block
+      #+ covariance matrix
+      temp    <- sum((x2$measurement[j, ] == 1))
+      n_intra <- temp * (temp - 1) / 2
+      
+      ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
+      n_weights <- sum(x2$measurement[j, ]) - 1
+      
+      ## Calculate Dfs
+      k[j] <- n_intra + n_weights
+    }
+    
+    df_total <- vS - (n_exo + n_structural) - sum(k)
+  }
+  
+  # return degrees of freedom
+  df_total
 }
 
 
@@ -461,10 +497,11 @@ calculateHTMT <- function(
   if(isTRUE(.only_common_factors)) {
     cf_names <- names(m$construct_type[m$construct_type == "Common factor"])
     
-    ## Stop if there are no common factors
+    ## Return NA if there are not at least 2 common factors
     if(length(cf_names) < 2) {
-      stop2("Computation of the HTMT requires at least two common factors, ",
-            "unless `.only_common_factors = FALSE`.")
+      warning2("Computation of the HTMT requires at least two common factors, ",
+               "unless `.only_common_factors = FALSE`. NA is returned.")
+      return(NA)
     }
   } else {
     cf_names <- names(m$construct_type)
@@ -584,12 +621,11 @@ calculateDML <- function(
   
   # This is the distance function. The test statistic is T_ML = (n-1) or n * DML! 
   sum(diag(S %*% solve(Sigma_hat))) - log(det(S%*%solve(Sigma_hat))) - p
-  
 }
 
 #' Internal: Fit measures
 #' 
-#' Calculate common fit measures
+#' Calculate common fit measures.
 #' 
 #' The functions are only applicable to objects inheriting class `cSEMResults_default`.
 #' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
@@ -602,6 +638,25 @@ calculateDML <- function(
 #' @name fit_measures 
 NULL
 
+#' @describeIn fit_measures The comparative fit index (CFI).
+
+calculateCFI <- function(.object) {
+  
+  n    <- nrow(.object$Information$Data)
+  S <- .object$Estimates$Indicator_VCV
+  p <- dim(S)[1]
+  df_T <- calculateDf(.object)
+  df_0 <- calculateDf(.object, .null_model = TRUE)
+  
+  F0 <- log(det(diag(nrow(S)))) + 
+    sum(diag(S %*% solve(diag(nrow(S))))) - log(det(S)) - p
+  
+  FT <- max((n-1)*calculateDML(.object) - calculateDf(.object), 0)
+  F0 <- max((n-1)*F0 - df_0 , (n-1)*calculateDML(.object) - calculateDf(.object), 0)
+  
+  1 - FT/F0
+}
+
 #' @describeIn fit_measures The goodness of fit index (GFI).
 
 calculateGFI <- function(.object) {
@@ -611,6 +666,23 @@ calculateGFI <- function(.object) {
   
   1 - matrixcalc::matrix.trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
     matrixcalc::matrix.trace(t(S) %*% S)
+}
+
+#' @describeIn fit_measures The incremental fit index (IFI).
+
+calculateIFI <- function(.object) {
+  
+  n <- nrow(.object$Information$Data)
+  S <- .object$Estimates$Indicator_VCV
+  p <- dim(S)[1]
+  df <- calculateDf(.object)
+  
+  F0 <- log(det(diag(nrow(S)))) + 
+    sum(diag(S %*% solve(diag(nrow(S))))) - log(det(S)) - p
+  
+  FT <- calculateDML(.object)
+  
+  ((n-1)*F0 - (n-1)*FT) / ((n-1)*F0 - df)
 }
 
 #' @describeIn fit_measures The normed fit index (NFI).
@@ -629,6 +701,24 @@ calculateNFI <- function(.object) {
   (F0 - FT) / F0
 }
 
+#' @describeIn fit_measures The non-normed fit index (NNFI).
+
+calculateNNFI <- function(.object) {
+  
+  n <- nrow(.object$Information$Data)
+  S <- .object$Estimates$Indicator_VCV
+  p <- dim(S)[1]
+  df_T <- calculateDf(.object)
+  df_0 <- calculateDf(.object, .null_model = TRUE)
+  
+  F0 <- log(det(diag(nrow(S)))) + 
+    sum(diag(S %*% solve(diag(nrow(S))))) - log(det(S)) - p
+  
+  FT <- calculateDML(.object)
+  
+  (F0/df_0 - FT/df_T) / (F0/df_0 - 1/(n-1))
+}
+
 #' @describeIn fit_measures The root mean square error of approximation (RMSEA).
 
 calculateRMSEA <- function(.object) {
@@ -639,6 +729,39 @@ calculateRMSEA <- function(.object) {
   F0 <- max(calculateDML(.object) - calculateDf(.object)/(n - 1), 0)
   
   sqrt(F0 / df) # RMSEA
+}
+
+#' @describeIn fit_measures The RMS theta.
+
+calculateRMSTheta <- function(
+  .object, 
+  .model_implied = args_default()$.model_implied
+  ) {
+  S      <- .object$Estimates$Indicator_VCV
+  W      <- .object$Estimates$Weight_estimates
+  Lambda <- .object$Estimates$Loading_estimates
+  P      <- .object$Estimates$Construct_VCV
+  
+  
+  if(.model_implied) {
+    Theta <- S - S %*% t(W) %*% Lambda - t(S %*% t(W) %*% Lambda) + t(Lambda) %*%  fit(.object, .type_vcv = "construct") %*% Lambda
+  } else {
+    Theta <- S - S %*% t(W) %*% Lambda - t(S %*% t(W) %*% Lambda) + t(Lambda) %*% P %*% Lambda
+  }
+  
+  # Check how its done in smartpls
+  
+  ## For compsites, within block indicator correlations should be excluded as 
+  ## they are allowed to freely covary.
+  
+  comp <- which(.object$Information$Model$construct_type == "Composite")
+  
+  for(i in comp) {
+    indi <- which(.object$Information$Model$measurement[i, ] == 1)
+    Theta[indi, indi] <- NA
+  }
+  
+  sqrt(mean(Theta[lower.tri(Theta)]^2, na.rm = TRUE))
 }
 
 #' @describeIn fit_measures The standardized root mean square residual (SRMR).
@@ -669,32 +792,8 @@ calculateSRMR <- function(
   sqrt(sum(C_diff[lower.tri(C_diff, diag = T)]^2) / sum(lower.tri(C_diff, diag = T)))
 } 
 
-#' @describeIn fit_measures The RMS theta (SRMR).
 
-calculateRMSTheta <- function(.object) {
-  S      <- .object$Estimates$Indicator_VCV
-  W      <- .object$Estimates$Weight_estimates
-  Lambda <- .object$Estimates$Loading_estimates
-  P      <- .object$Estimates$Construct_VCV
-  
-  # Not sure if this is correct
-  # Questions:
-  #  1. Do we somehow have to disattenuate the "cross-loadings" S*W' ?
-  #  2. Is the formula correct?
-  Theta <- S - S %*% t(W) %*% Lambda - t(S %*% t(W) %*% Lambda) + t(Lambda) %*% P %*% Lambda
-  
-  ## For compsites, within block indicator correlations should be excluded as 
-  ## they are allowed to freely covary.
-  
-  comp <- which(.object$Information$Model$construct_type == "Composite")
-  
-  for(i in comp) {
-    indi <- which(.object$Information$Model$measurement[i, ] == 1)
-    Theta[indi, indi] <- NA
-  }
-  
-  sqrt(mean(Theta[lower.tri(Theta1)]^2, na.rm = TRUE))
-}
+
 
 #' Internal: Calculate effect size
 #'

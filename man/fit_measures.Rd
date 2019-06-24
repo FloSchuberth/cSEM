@@ -2,26 +2,41 @@
 % Please edit documentation in R/helper_assess.R
 \name{fit_measures}
 \alias{fit_measures}
+\alias{calculateCFI}
 \alias{calculateGFI}
+\alias{calculateIFI}
 \alias{calculateNFI}
+\alias{calculateNNFI}
 \alias{calculateRMSEA}
-\alias{calculateSRMR}
 \alias{calculateRMSTheta}
+\alias{calculateSRMR}
 \title{Internal: Fit measures}
 \usage{
+calculateCFI(.object)
+
 calculateGFI(.object)
+
+calculateIFI(.object)
 
 calculateNFI(.object)
 
+calculateNNFI(.object)
+
 calculateRMSEA(.object)
+
+calculateRMSTheta(.object,
+  .model_implied = args_default()$.model_implied)
 
 calculateSRMR(.object = NULL, .saturated = args_default()$.saturated,
   .type_vcv = args_default()$.type_vcv, ...)
-
-calculateRMSTheta(.object)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.model_implied}{Logical. Should the RMS_theta be computed using the
+model-implied construct correlation matrix (\code{TRUE})or the construct correlation matrix
+based on V(eta) = WSW' divided by the square root of the respective
+reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
@@ -33,7 +48,7 @@ One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".
 A single numeric value.
 }
 \description{
-Calculate common fit measures
+Calculate common fit measures.
 }
 \details{
 The functions are only applicable to objects inheriting class \code{cSEMResults_default}.
@@ -41,15 +56,21 @@ For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} us
 }
 \section{Functions}{
 \itemize{
+\item \code{calculateCFI}: The comparative fit index (CFI).
+
 \item \code{calculateGFI}: The goodness of fit index (GFI).
+
+\item \code{calculateIFI}: The incremental fit index (IFI).
 
 \item \code{calculateNFI}: The normed fit index (NFI).
 
+\item \code{calculateNNFI}: The non-normed fit index (NNFI).
+
 \item \code{calculateRMSEA}: The root mean square error of approximation (RMSEA).
 
-\item \code{calculateSRMR}: The standardized root mean square residual (SRMR).
+\item \code{calculateRMSTheta}: The RMS theta.
 
-\item \code{calculateRMSTheta}: The RMS theta (SRMR).
+\item \code{calculateSRMR}: The standardized root mean square residual (SRMR).
 }}
 
 \keyword{internal}

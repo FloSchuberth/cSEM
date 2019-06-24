@@ -114,6 +114,10 @@
 #' @param .matrices A list of at least two matrices.
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
 #'   or a [cSEMModel] list.
+#' @param .model_implied Logical. Should the RMS_theta be computed using the
+#'   model-implied construct correlation matrix (`TRUE`)or the construct correlation matrix
+#'   based on V(eta) = WSW' divided by the square root of the respective 
+#'   reliabilities (`FALSE`). Defaults to `FALSE`.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .moderator Character string. The name of the moderator variable. Defaults to `NULL`.
@@ -295,6 +299,7 @@ args_csem_dotdotdot <- function(
 args_assess_dotdotdot <- function(
   .alpha               = 0.05,
   .closed_form_ci      = FALSE,
+  .model_implied       = FALSE,
   .saturated           = FALSE,
   .type_vcv            = "indicator"
 ) {NULL}
@@ -357,6 +362,7 @@ args_default <- function(.choices = FALSE) {
     .matrix2                 = NULL,
     .matrices                = NULL,
     .model                   = NULL,
+    .model_implied           = FALSE,
     .moderator               = NULL,
     .modes                   = NULL,
     .normality               = FALSE,
@@ -366,8 +372,10 @@ args_default <- function(.choices = FALSE) {
     .probs                   = NULL,
     .quality_criterion       = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
                                  "cronbachs_alpha_weighted", "dg", "dl", "dml",
-                                 "esize", "gof", "htmt", "r2", "r2_adj", "ra",
-                                 "srmr", "rho_T", "rho_T_weighted", "vif", 
+                                 "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                                 "rmsea", "rms_theta", "srmr",
+                                 "gof", "htmt", "r2", "r2_adj", "ra",
+                                 "rho_T", "rho_T_weighted", "vif", 
                                  "vifmodeb",  "fl_criterion"),
     
     .quantity                = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",

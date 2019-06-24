@@ -4,7 +4,10 @@
 \alias{calculateDf}
 \title{Internal: Degrees of freedom}
 \usage{
-calculateDF(.object = NULL)
+calculateDF(
+  .object     = NULL,
+  .null_model = FALSE
+  )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
