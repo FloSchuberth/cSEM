@@ -153,6 +153,11 @@ If the algorithm exceeds the specified number, weights of iteration step
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
 
+\item{.model_implied}{Logical. Should the RMS_theta be computed using the
+model-implied construct correlation matrix (\code{TRUE})or the construct correlation matrix
+based on V(eta) = WSW' divided by the square root of the respective
+reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
+
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
 
@@ -161,7 +166,7 @@ Only used internally.}
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
-Defaults to \code{TRUE}. Ignored if the model is linear.}
+Defaults to \code{FALSE}. Ignored if the model is linear.}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 

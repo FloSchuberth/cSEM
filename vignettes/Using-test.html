@@ -105,7 +105,7 @@ code > span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Postestimation: Testing a model</h1>
 <h3 class="subtitle project-tagline">Using the <code>test_*()</code> family of functions</h3>
-<h4 class="date project-date">Last edited: 2019-05-14</h4>
+<h4 class="date project-date">Last edited: 2019-06-21</h4>
 </section>
 
 
@@ -146,28 +146,50 @@ code > span.ot { color: #007020; }
 </div>
 <div id="syntax" class="section level1">
 <h1>Syntax &amp; Options</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">test_OMF</span>(</a>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">testOMF</span>(</a>
 <a class="sourceLine" id="cb1-2" title="2">  <span class="dt">.arg1 =</span> <span class="ot">NULL</span>,</a>
 <a class="sourceLine" id="cb1-3" title="3">  <span class="dt">.arg2 =</span> <span class="ot">NULL</span>,</a>
 <a class="sourceLine" id="cb1-4" title="4">  <span class="dt">.arg3 =</span> <span class="ot">NULL</span>,</a>
 <a class="sourceLine" id="cb1-5" title="5">  ...</a>
 <a class="sourceLine" id="cb1-6" title="6">)</a>
 <a class="sourceLine" id="cb1-7" title="7"></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="kw">test_MGD</span>(</a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="kw">testMGD</span>(</a>
 <a class="sourceLine" id="cb1-9" title="9">  <span class="dt">.arg1 =</span> <span class="ot">NULL</span>,</a>
 <a class="sourceLine" id="cb1-10" title="10">  <span class="dt">.arg2 =</span> <span class="ot">NULL</span>,</a>
 <a class="sourceLine" id="cb1-11" title="11">  <span class="dt">.arg3 =</span> <span class="ot">NULL</span>,</a>
 <a class="sourceLine" id="cb1-12" title="12">  ...</a>
-<a class="sourceLine" id="cb1-13" title="13">)</a></code></pre></div>
+<a class="sourceLine" id="cb1-13" title="13">)</a>
+<a class="sourceLine" id="cb1-14" title="14"></a>
+<a class="sourceLine" id="cb1-15" title="15"><span class="kw">testHausman2</span>(</a>
+<a class="sourceLine" id="cb1-16" title="16"> <span class="dt">.object               =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb1-17" title="17"> <span class="dt">.alpha                =</span> <span class="kw">args_default</span>()<span class="op">$</span>.alpha,</a>
+<a class="sourceLine" id="cb1-18" title="18"> <span class="dt">.eval_plan            =</span> <span class="kw">args_default</span>()<span class="op">$</span>.eval_plan,</a>
+<a class="sourceLine" id="cb1-19" title="19"> <span class="dt">.handle_inadmissibles =</span> <span class="kw">args_default</span>()<span class="op">$</span>.handle_inadmissibles,</a>
+<a class="sourceLine" id="cb1-20" title="20"> <span class="dt">.R                    =</span> <span class="kw">args_default</span>()<span class="op">$</span>.R,</a>
+<a class="sourceLine" id="cb1-21" title="21"> <span class="dt">.resample_method      =</span> <span class="kw">args_default</span>()<span class="op">$</span>.resample_method,</a>
+<a class="sourceLine" id="cb1-22" title="22"> <span class="dt">.seed                 =</span> <span class="kw">args_default</span>()<span class="op">$</span>.seed</a>
+<a class="sourceLine" id="cb1-23" title="23">)</a></code></pre></div>
 <dl>
-<dt><code>.arg1</code></dt>
-<dd><p>description for <code>.arg1</code></p>
+<dt><code>.object</code></dt>
+<dd><p>An object of class <code>cSEMResults</code> resulting from a call to <code>csem()</code>.</p>
 </dd>
-<dt><code>.arg2</code></dt>
-<dd><p>description for <code>.arg2</code></p>
+<dt><code>.alpha</code></dt>
+<dd><p>An integer or a numeric vector of significance levels. Defaults to <code>0.05</code>.</p>
 </dd>
-<dt><code>.arg3</code></dt>
-<dd><p>description for <code>.arg3</code></p>
+<dt><code>.eval_plan</code></dt>
+<dd><p>Character string. The evaluation plan to use. One of “sequential” or “multiprocess”. In the latter case all available cores will be used. Defaults to “sequential”. See <code>resamplecSEMResults()</code> for details.</p>
+</dd>
+<dt><code>.handle_inadmissibles</code></dt>
+<dd><p>Character string. How should inadmissible results be treated? One of “drop”, “ignore”, or “replace”. If “drop”, all replications/resamples yielding an inadmissible result will be dropped (i.e. the number of results returned will be less than .R). For “ignore” all results are returned even if they are inadmissible (i.e. number of results returned = .R). For “replace” resampling continues until there are exactly .R admissible solutions. Defaults to “drop”.</p>
+</dd>
+<dt><code>R</code></dt>
+<dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p>
+</dd>
+<dt><code>.resample_method</code></dt>
+<dd><p>Character string. The resampling method to use. One of: “bootstrap” or “jackknife”. Defaults to “bootstrap”.</p>
+</dd>
+<dt><code>.seed</code></dt>
+<dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which case an arbitrary seed is choosen.</p>
 </dd>
 </dl>
 <div id="details" class="section level2">

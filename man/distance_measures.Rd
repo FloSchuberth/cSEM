@@ -2,15 +2,11 @@
 % Please edit documentation in R/helper_assess.R
 \name{distance_measures}
 \alias{distance_measures}
-\alias{calculateSRMR}
 \alias{calculateDG}
 \alias{calculateDL}
 \alias{calculateDML}
 \title{Internal: Calculate difference between S and Sigma_hat}
 \usage{
-calculateSRMR(.object = NULL, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv, ...)
-
 calculateDG(.object = NULL, .saturated = args_default()$.saturated,
   .type_vcv = args_default()$.type_vcv, ...)
 
@@ -45,8 +41,6 @@ For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} us
 }
 \section{Functions}{
 \itemize{
-\item \code{calculateSRMR}: The standardized root mean square residual (SRMR).
-
 \item \code{calculateDG}: The geodesic distance (dG).
 
 \item \code{calculateDL}: The squared Euclidian distance

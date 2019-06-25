@@ -72,6 +72,104 @@ calculateAVE <- function(
 }
 
 
+#' Internal: Degrees of freedom
+#' 
+#' Calculates the degrees of freedom from a [cSEMResults] object.
+#' 
+#' @usage calculateDF(
+#'   .object     = NULL,
+#'   .null_model = FALSE
+#'   )
+#' 
+#' @return A single numeric value.
+#'   
+#' @inheritParams csem_arguments
+#'
+#' @seealso [assess], [cSEMResults]
+#' @keywords internal
+
+calculateDf <- function(
+  .object     = NULL, 
+  .null_model = FALSE
+  ) {
+  
+  if(inherits(.object, "cSEMResults_default")) { 
+    x1 <- .object$Estimates
+    x2 <- .object$Information$Model
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2("Degrees of freedom for 2nd order composites not implemented yet.")
+  } else {
+    
+    df <- lapply(.object, calculateDf)
+    
+    ## Return
+    names(df) <- names(.object)
+    return(df)
+  }
+  
+  ## Number of non-redundant off-diagonal elements of the indicator covariance 
+  ## matrix (S)
+  vS <- sum(lower.tri(x1$Indicator_VCV)) # same as dim_nS *(dim_nS - 1) / 2
+  
+  ## Caculate the degrees of freedom of a null model (Sigma_hat = I)
+  if(.null_model) {
+    # The degrees of freedom of the null model are identical to 
+    # the number of non-redundant elements of S (since there is nothing to
+    # estimate. Everything is set to 0 a priori)
+    return(vS)
+  }
+  
+  ## Number of correlations between exogenous constructs
+  temp <- sum(rowSums(x2$structural) == 0)
+  n_exo <- temp * (temp - 1) / 2
+  
+  ## Number of structural parameters
+  n_structural <- sum(x2$structural)
+  
+  ## Number of measurement errors assumed to correlate
+  n_error <- sum(x2$error_cor == 1) / 2
+  
+  if(.object$Information$Arguments$.approach_weights %in% c("bartlett", "regression", "unit")) {
+    # If one of these estimators is used degrees of freedom are counted 
+    # the same way as one would count in CB-SEM: 
+    # df = non_redundant_elements_of_S - 
+    #      - (structural_parameter + cor_between_exos) 
+    #      - loadings
+    #      - assumed_measurement_error_cors (usually 0)
+    
+    n_loadings <- ncol(x2$measurement)
+    
+    df_total <- vS - (n_exo + n_structural) - n_loadings
+  } else {
+    ## Construct names
+    names_constructs <- rownames(x2$structural)
+    k <- c()
+    for(j in names_constructs) {
+      # DF for 
+      ## Number of free covariances between the composites and indicators not forming
+      ## a composite
+      # Not relevant, as indicators are always attached to a composite in cSEM
+      
+      ## Number of free non-redundant off-diagonal element of each intra-block
+      #+ covariance matrix
+      temp    <- sum((x2$measurement[j, ] == 1))
+      n_intra <- temp * (temp - 1) / 2
+      
+      ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
+      n_weights <- sum(x2$measurement[j, ]) - 1
+      
+      ## Calculate Dfs
+      k[j] <- n_intra + n_weights
+    }
+    
+    df_total <- vS - (n_exo + n_structural) - sum(k)
+  }
+  
+  # return degrees of freedom
+  df_total
+}
+
+
 
 #' Internal: GoF
 #'
@@ -399,10 +497,11 @@ calculateHTMT <- function(
   if(isTRUE(.only_common_factors)) {
     cf_names <- names(m$construct_type[m$construct_type == "Common factor"])
     
-    ## Stop if there are no common factors
+    ## Return NA if there are not at least 2 common factors
     if(length(cf_names) < 2) {
-      stop2("Computation of the HTMT requires at least two common factors, ",
-            "unless `.only_common_factors = FALSE`.")
+      warning2("Computation of the HTMT requires at least two common factors, ",
+               "unless `.only_common_factors = FALSE`. NA is returned.")
+      return(NA)
     }
   } else {
     cf_names <- names(m$construct_type)
@@ -451,34 +550,6 @@ calculateHTMT <- function(
 #' @keywords internal
 #' @name distance_measures
 NULL
-
-#' @describeIn distance_measures The standardized root mean square residual (SRMR).
-
-calculateSRMR <- function(
-  .object    = NULL, 
-  .saturated = args_default()$.saturated,
-  .type_vcv  = args_default()$.type_vcv,
-  ...
-  ) {
-  
-  # Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
-  }
-  
-  # The SRMR as calculated by us is always based on the the difference 
-  # between correlation matrices.
-  
-  S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
-
-  
-  # Perhaps in the future we allow to estimate unstandardized coefficients
-  C_diff    <- cov2cor(S) -  cov2cor(Sigma_hat)
-  
-  sqrt(sum(C_diff[lower.tri(C_diff, diag = T)]^2) / sum(lower.tri(C_diff, diag = T)))
-} 
 
 #' @describeIn distance_measures The geodesic distance (dG).
 
@@ -548,14 +619,179 @@ calculateDML <- function(
   p         <- dim(S)[1]
   Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
   
-  # (n - 1)*(log(det(Sigma_hat)) 
-  #             + sum(diag(S %*% solve(Sigma_hat))) 
-  #             - log(det(S)) - p)
-  
-  # Bentler & Yuan (1999), we already return the chi-square statistic
-  (n -1)*(sum(diag(S %*% solve(Sigma_hat)))-log(det(S%*%solve(Sigma_hat)))-p)
-  
+  # This is the distance function. The test statistic is T_ML = (n-1) or n * DML! 
+  sum(diag(S %*% solve(Sigma_hat))) - log(det(S%*%solve(Sigma_hat))) - p
 }
+
+#' Internal: Fit measures
+#' 
+#' Calculate common fit measures.
+#' 
+#' The functions are only applicable to objects inheriting class `cSEMResults_default`.
+#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
+#' 
+#' @return A single numeric value.
+#' 
+#' @inheritParams csem_arguments
+#'
+#' @keywords internal
+#' @name fit_measures 
+NULL
+
+#' @describeIn fit_measures The comparative fit index (CFI).
+
+calculateCFI <- function(.object) {
+  
+  n    <- nrow(.object$Information$Data)
+  S <- .object$Estimates$Indicator_VCV
+  p <- dim(S)[1]
+  df_T <- calculateDf(.object)
+  df_0 <- calculateDf(.object, .null_model = TRUE)
+  
+  F0 <- log(det(diag(nrow(S)))) + 
+    sum(diag(S %*% solve(diag(nrow(S))))) - log(det(S)) - p
+  
+  FT <- max((n-1)*calculateDML(.object) - calculateDf(.object), 0)
+  F0 <- max((n-1)*F0 - df_0 , (n-1)*calculateDML(.object) - calculateDf(.object), 0)
+  
+  1 - FT/F0
+}
+
+#' @describeIn fit_measures The goodness of fit index (GFI).
+
+calculateGFI <- function(.object) {
+  
+  S         <- .object$Estimates$Indicator_VCV
+  Sigma_hat <- fit(.object)
+  
+  1 - matrixcalc::matrix.trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
+    matrixcalc::matrix.trace(t(S) %*% S)
+}
+
+#' @describeIn fit_measures The incremental fit index (IFI).
+
+calculateIFI <- function(.object) {
+  
+  n <- nrow(.object$Information$Data)
+  S <- .object$Estimates$Indicator_VCV
+  p <- dim(S)[1]
+  df <- calculateDf(.object)
+  
+  F0 <- log(det(diag(nrow(S)))) + 
+    sum(diag(S %*% solve(diag(nrow(S))))) - log(det(S)) - p
+  
+  FT <- calculateDML(.object)
+  
+  ((n-1)*F0 - (n-1)*FT) / ((n-1)*F0 - df)
+}
+
+#' @describeIn fit_measures The normed fit index (NFI).
+
+calculateNFI <- function(.object) {
+  
+  n <- nrow(.object$Information$Data)
+  S <- .object$Estimates$Indicator_VCV
+  p <- dim(S)[1]
+  
+  F0 <- log(det(diag(nrow(S)))) + 
+    sum(diag(S %*% solve(diag(nrow(S))))) - log(det(S)) - p
+  
+  FT <- calculateDML(.object)
+  
+  (F0 - FT) / F0
+}
+
+#' @describeIn fit_measures The non-normed fit index (NNFI).
+
+calculateNNFI <- function(.object) {
+  
+  n <- nrow(.object$Information$Data)
+  S <- .object$Estimates$Indicator_VCV
+  p <- dim(S)[1]
+  df_T <- calculateDf(.object)
+  df_0 <- calculateDf(.object, .null_model = TRUE)
+  
+  F0 <- log(det(diag(nrow(S)))) + 
+    sum(diag(S %*% solve(diag(nrow(S))))) - log(det(S)) - p
+  
+  FT <- calculateDML(.object)
+  
+  (F0/df_0 - FT/df_T) / (F0/df_0 - 1/(n-1))
+}
+
+#' @describeIn fit_measures The root mean square error of approximation (RMSEA).
+
+calculateRMSEA <- function(.object) {
+  
+  n  <- nrow(.object$Information$Data)
+  df <- calculateDf(.object)
+  
+  F0 <- max(calculateDML(.object) - calculateDf(.object)/(n - 1), 0)
+  
+  sqrt(F0 / df) # RMSEA
+}
+
+#' @describeIn fit_measures The RMS theta.
+
+calculateRMSTheta <- function(
+  .object, 
+  .model_implied = args_default()$.model_implied
+  ) {
+  S      <- .object$Estimates$Indicator_VCV
+  W      <- .object$Estimates$Weight_estimates
+  Lambda <- .object$Estimates$Loading_estimates
+  P      <- .object$Estimates$Construct_VCV
+  
+  
+  if(.model_implied) {
+    Theta <- S - S %*% t(W) %*% Lambda - t(S %*% t(W) %*% Lambda) + t(Lambda) %*%  fit(.object, .type_vcv = "construct") %*% Lambda
+  } else {
+    Theta <- S - S %*% t(W) %*% Lambda - t(S %*% t(W) %*% Lambda) + t(Lambda) %*% P %*% Lambda
+  }
+  
+  # Check how its done in smartpls
+  
+  ## For compsites, within block indicator correlations should be excluded as 
+  ## they are allowed to freely covary.
+  
+  comp <- which(.object$Information$Model$construct_type == "Composite")
+  
+  for(i in comp) {
+    indi <- which(.object$Information$Model$measurement[i, ] == 1)
+    Theta[indi, indi] <- NA
+  }
+  
+  sqrt(mean(Theta[lower.tri(Theta)]^2, na.rm = TRUE))
+}
+
+#' @describeIn fit_measures The standardized root mean square residual (SRMR).
+
+calculateSRMR <- function(
+  .object    = NULL, 
+  .saturated = args_default()$.saturated,
+  .type_vcv  = args_default()$.type_vcv,
+  ...
+) {
+  
+  # Only applicable to objects of class cSEMResults_default
+  if(!any(class(.object) == "cSEMResults_default")) {
+    stop2("`", match.call()[1], "` only applicable to objects of",
+          " class `cSEMResults_default`. Use `assess()` instead.")
+  }
+  
+  # The SRMR as calculated by us is always based on the the difference 
+  # between correlation matrices.
+  
+  S         <- .object$Estimates$Indicator_VCV
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
+  
+  
+  # Perhaps in the future we allow to estimate unstandardized coefficients
+  C_diff    <- cov2cor(S) -  cov2cor(Sigma_hat)
+  
+  sqrt(sum(C_diff[lower.tri(C_diff, diag = T)]^2) / sum(lower.tri(C_diff, diag = T)))
+} 
+
 
 
 
