@@ -126,9 +126,6 @@ calculateDf <- function(
   ## Number of structural parameters
   n_structural <- sum(x2$structural)
   
-  ## Number of measurement errors assumed to correlate
-  n_error <- sum(x2$error_cor == 1) / 2
-  
   if(.object$Information$Arguments$.approach_weights %in% c("bartlett", "regression", "unit")) {
     # If one of these estimators is used degrees of freedom are counted 
     # the same way as one would count in CB-SEM: 
@@ -137,9 +134,12 @@ calculateDf <- function(
     #      - loadings
     #      - assumed_measurement_error_cors (usually 0)
     
+    ## Number of measurement errors assumed to correlate
+    n_error <- sum(x2$error_cor == 1) / 2
+    
     n_loadings <- ncol(x2$measurement)
     
-    df_total <- vS - (n_exo + n_structural) - n_loadings
+    df_total <- vS - (n_exo + n_structural) - n_loadings - n_error
   } else {
     ## Construct names
     names_constructs <- rownames(x2$structural)
