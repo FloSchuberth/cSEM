@@ -525,14 +525,14 @@ parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
     # components such as the type of construct used. 
     n  <- c(setdiff(names_c, rownames(model_ordered)), rownames(model_ordered))
     n1 <- intersect(n, colnames(model_ordered))
-    m <- order(which(model_measurement[n, ] == 1, arr.ind = TRUE)[, "row"])
-    structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n))]
+    m <- order(which(model_measurement[n, , drop = FALSE] == 1, arr.ind = TRUE)[, "row"])
+    structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n)), drop = FALSE]
     # structural_ordered <- model_structural[n1, c(n1, setdiff(colnames(model_ordered), n1))]
     
     model_ls <- list(
       "structural"         = structural_ordered,
-      "measurement"        = model_measurement[n, m],
-      "error_cor"          = model_error[m, m],
+      "measurement"        = model_measurement[n, m, drop = FALSE],
+      "error_cor"          = model_error[m, m, drop = FALSE],
       "construct_type"     = construct_type[match(n, names(construct_type))],
       "construct_order"    = construct_order[match(n, names(construct_order))],
       "model_type"         = type_of_model
