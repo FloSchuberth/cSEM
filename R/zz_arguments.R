@@ -51,6 +51,8 @@
 #'   For possible choices see [infer()].
 #' @param .closed_form_ci Logical. Should a closed-form confidence interval be computed?
 #'   Defaults to `FALSE`.
+#' @param .comparison A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
+#' parameters are compared.   
 #' @param .conv_criterion Character string. The criterion to use for the convergence check.
 #'   One of: "*diff_absolute*", "*diff_squared*", or "*diff_relative*". Defaults
 #'   to "*diff_absolute*".
@@ -343,6 +345,7 @@ args_default <- function(.choices = FALSE) {
     .C                       = NULL,
     .check_errors            = TRUE,
     .choices                 = FALSE,
+    .comparison              = NULL,
     .ci                      = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .closed_form_ci          = FALSE, 
