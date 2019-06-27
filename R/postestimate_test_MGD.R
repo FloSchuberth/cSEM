@@ -7,6 +7,7 @@
 #' 
 #' @usage testMGD(
 #'  .object               = args_default()$.object,
+#'  .approach_mgd          = args_default()$.approach_mgd,
 #'  .alpha                = args_default()$.alpha,
 #'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
 #'  .R                    = args_default()$.R,
@@ -54,6 +55,7 @@
 
 testMGD <- function(
   .object                = args_default()$.object,
+  .approach_mgd          = args_default()$.approach_mgd,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
@@ -66,7 +68,7 @@ testMGD <- function(
   # Klesel & Schuberth (forthcoming) - (TODO) name
   
   if(.verbose) {
-    cat(rule(center = "Test for multigroup differences based on Klesel (forthcoming)",
+    cat(rule(center = "Test for multigroup differences based on Klesel et al. (forthcoming)",
              line = "bar3"), "\n\n")
   }
   UseMethod("testMGD")
@@ -78,6 +80,7 @@ testMGD <- function(
 
 testMGD.cSEMResults_default <- function(
   .object                = args_default()$.object,
+  .approach_mgd          = args_default()$.approach_mgd,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
@@ -93,6 +96,7 @@ testMGD.cSEMResults_default <- function(
 
 testMGD.cSEMResults_multi <- function(
   .object                = args_default()$.object,
+  .approach_mgd          = args_default()$.approach_mgd,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
@@ -253,6 +257,7 @@ testMGD.cSEMResults_multi <- function(
 
 testMGD.cSEMResults_2ndorder <- function(
   .object                = args_default()$.object,
+  .approach_mgd          = args_default()$.approach_mgd,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
