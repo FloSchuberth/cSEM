@@ -3,7 +3,7 @@
 #' Turns a model written in [lavaan model syntax][lavaan::model.syntax] into a
 #' [cSEMModel] list.
 #'
-#' @usage parseModel(.model, .instruments = NULL)
+#' @usage parseModel(.model, .instruments = NULL, ,check_errors = TRUE)
 #'
 #' @inheritParams csem_arguments
 #' 
@@ -63,7 +63,7 @@
 #' 
 #' @export
 #'
-parseModel <- function(.model, .instruments = NULL) {
+parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
 
   ### Check if already a cSEMModel list  
   if(class(.model) == "cSEMModel") {
@@ -199,125 +199,129 @@ parseModel <- function(.model, .instruments = NULL) {
       }
       names_instruments <- unique(unlist(strsplit(unlist(.instruments),  "\\.")))
     }
-
-    ### Checks, errors and warnings --------------------------------------------
-    ## Stop if only a subset of starting values is given
-    if(!all(is.na(pop_values)) & anyNA(pop_values)) {
-      stop2("The following error occured in the `parseModel()` function:\n",
-            "Only a subset of population values given. Please specify",
-            " all population values or none.")
-    }
-    if(!is.null(.instruments)) {
-      # Note (05/2019): Currently, we only allow instruments from within the model, 
-      #                 i.e instruments need to have a structural   
-      #                 and a measurement/composite equation. 
-      #                 Reason: we need to figure out, how to deal with 
-      #                 instruments that have no structural equation. If they are
-      #                 not part of the structural model its unclear how to 
-      #                 get composites/scores for them.
-      
-      ## Check if all instruments are part of the structural model (i.e. internal)
-      tmp <- setdiff(names_instruments, names_c)
-      
-      if(!is.null(.instruments) && length(tmp) != 0) {
+    
+    ## Sometimes (e.g. for testMGD) we need to parse an incomplete model, hence
+    ## errors and warnings should be ignored
+    if(.check_errors) {
+      ### Checks, errors and warnings --------------------------------------------
+      ## Stop if only a subset of starting values is given
+      if(!all(is.na(pop_values)) & anyNA(pop_values)) {
         stop2("The following error occured in the `parseModel()` function:\n",
-              "Currently, only internal instruments allowed. External instruments: ", 
-              paste0("`", tmp,  "`", collapse = ", "))
+              "Only a subset of population values given. Please specify",
+              " all population values or none.")
+      }
+      if(!is.null(.instruments)) {
+        # Note (05/2019): Currently, we only allow instruments from within the model, 
+        #                 i.e instruments need to have a structural   
+        #                 and a measurement/composite equation. 
+        #                 Reason: we need to figure out, how to deal with 
+        #                 instruments that have no structural equation. If they are
+        #                 not part of the structural model its unclear how to 
+        #                 get composites/scores for them.
+        
+        ## Check if all instruments are part of the structural model (i.e. internal)
+        tmp <- setdiff(names_instruments, names_c)
+        
+        if(!is.null(.instruments) && length(tmp) != 0) {
+          stop2("The following error occured in the `parseModel()` function:\n",
+                "Currently, only internal instruments allowed. External instruments: ", 
+                paste0("`", tmp,  "`", collapse = ", "))
+        }
+        
+        ## Check if construct names for instruments are correct
+        tmp <- setdiff(names_construct_instruments, names_c)
+        
+        if(!is.null(.instruments) && length(tmp) != 0) {
+          stop2("The following error occured in the `parseModel()` function:\n",
+                "Instruments supplied for unknown constructs: ", 
+                paste0("`", tmp,  "`", collapse = ", "))
+        } 
       }
       
-      ## Check if construct names for instruments are correct
-      tmp <- setdiff(names_construct_instruments, names_c)
+      ## Stop if one indicator is connected to several constructs
+      if(any(duplicated(tbl_m$rhs))) {
+        stop2(
+          "The following error occured in the `parseModel()` function:\n",
+          "At least one indicator is connected to several constructs.")
+      }
       
-      if(!is.null(.instruments) && length(tmp) != 0) {
-        stop2("The following error occured in the `parseModel()` function:\n",
-              "Instruments supplied for unknown constructs: ", 
-              paste0("`", tmp,  "`", collapse = ", "))
-      } 
-    }
-    
-    ## Stop if one indicator is connected to several constructs
-    if(any(duplicated(tbl_m$rhs))) {
-      stop2(
-        "The following error occured in the `parseModel()` function:\n",
-        "At least one indicator is connected to several constructs.")
-    }
-    
-    ## Stop if any interaction/nonlinear term is used as an endogenous (lhs) variable in the
-    ## structural model 
-    if(length(names_c_s_lhs_nl)) {
-      
-      stop2(
-        "The following error occured in the `parseModel()` function:\n",
-        "Interaction terms cannot appear on the left-hand side of a structural equation.")
-    }
-    
-    ## Stop if any interaction/nonlinear term is used as an endogenous (lhs) variable in the
-    ## measurement model 
-    if(length(names_c_m_lhs_nl)) {
-      
-      stop2(
-        "The following error occured in the `parseModel()` function:\n",
-        "Interaction terms cannot appear on the left-hand side of a measurement equation.")
-    }
-    
-    ## Stop if any construct has no observables/indicators attached
-    tmp <- setdiff(c(names_c_s_l, names_c_m_rhs_l), names_c_m_lhs)
-    
-    # Note: code below not required as long as only internal instruments 
-    #       are allowed 
-    ## Check if any of the individual components of the instruments has no 
-    ## observables/indicators attached
-    # if(!is.null(.instruments)) {
-    #   tmp <- c(tmp, setdiff(names_instruments, names_c_m_lhs))
-    # }
-
-    if(length(tmp) != 0) {
-      
-      stop2(
-        "The following error occured in the `parseModel()` function:\n",
-        "No measurement equation provided for: ", 
-        paste0("`", tmp,  "`", collapse = ", ")
-      )
-    } 
-    
-    ## Stop if a construct appears in the measurement but not in the 
-    ## structural model
-    tmp <- setdiff(names_c_m_lhs, c(names_c_s_l, names_c_m_rhs_l))
-    
-    # Note: code below not required as long as only internal instruments 
-    #       are allowed 
-    # If tmp is non-empty: check if the constructs are instruments
-    # (only if not an error should be returned)
-    # if(length(tmp) != 0 & !is.null(.instruments)) {
-    #   tmp <- setdiff(tmp, names_instruments)
-    # }
-    
-    if(length(tmp) != 0) {
-      
-      stop2(
-        "The following error occured in the `parseModel()` function:\n",
-        "The following constructs of the measurement model do not appear",
-        " in the structural model: ", paste0("`", tmp, "`", collapse = ", ")
-        )
-    }
-    
-    ## Stop if any construct has a higher order than 2 (currently not allowed)
-    if(length(names_c_higher) != 0) {
-      stop2(
-        "The following error occured in the `parseModel()` function:\n",
-        paste0("`", names_c_higher, "`"), " has order > 2.", 
-        " Currently, only first and second-order constructs are supported.")
-    }
-    
-    ## Stop if at least one of the components of an interaction term does not appear
-    ## in any of the structural equations.
-    tmp <- setdiff(names_c_s_l, names_c_s_no_nl)
-    if(length(tmp) != 0) {
+      ## Stop if any interaction/nonlinear term is used as an endogenous (lhs) variable in the
+      ## structural model 
+      if(length(names_c_s_lhs_nl)) {
         
-      stop2(
-        "The following error occured in the `parseModel()` function:\n",
-        "The nonlinear terms containing ", paste0("`", tmp, "`", collapse = ", "), 
-        " are not embeded in a nomological net.")
+        stop2(
+          "The following error occured in the `parseModel()` function:\n",
+          "Interaction terms cannot appear on the left-hand side of a structural equation.")
+      }
+      
+      ## Stop if any interaction/nonlinear term is used as an endogenous (lhs) variable in the
+      ## measurement model 
+      if(length(names_c_m_lhs_nl)) {
+        
+        stop2(
+          "The following error occured in the `parseModel()` function:\n",
+          "Interaction terms cannot appear on the left-hand side of a measurement equation.")
+      }
+      
+      ## Stop if any construct has no observables/indicators attached
+      tmp <- setdiff(c(names_c_s_l, names_c_m_rhs_l), names_c_m_lhs)
+      
+      # Note: code below not required as long as only internal instruments 
+      #       are allowed 
+      ## Check if any of the individual components of the instruments has no 
+      ## observables/indicators attached
+      # if(!is.null(.instruments)) {
+      #   tmp <- c(tmp, setdiff(names_instruments, names_c_m_lhs))
+      # }
+      
+      if(length(tmp) != 0) {
+        
+        stop2(
+          "The following error occured in the `parseModel()` function:\n",
+          "No measurement equation provided for: ", 
+          paste0("`", tmp,  "`", collapse = ", ")
+        )
+      } 
+      
+      ## Stop if a construct appears in the measurement but not in the 
+      ## structural model
+      tmp <- setdiff(names_c_m_lhs, c(names_c_s_l, names_c_m_rhs_l))
+      
+      # Note: code below not required as long as only internal instruments 
+      #       are allowed 
+      # If tmp is non-empty: check if the constructs are instruments
+      # (only if not an error should be returned)
+      # if(length(tmp) != 0 & !is.null(.instruments)) {
+      #   tmp <- setdiff(tmp, names_instruments)
+      # }
+      
+      if(length(tmp) != 0) {
+        
+        stop2(
+          "The following error occured in the `parseModel()` function:\n",
+          "The following constructs of the measurement model do not appear",
+          " in the structural model: ", paste0("`", tmp, "`", collapse = ", ")
+        )
+      }
+      
+      ## Stop if any construct has a higher order than 2 (currently not allowed)
+      if(length(names_c_higher) != 0) {
+        stop2(
+          "The following error occured in the `parseModel()` function:\n",
+          paste0("`", names_c_higher, "`"), " has order > 2.", 
+          " Currently, only first and second-order constructs are supported.")
+      }
+      
+      ## Stop if at least one of the components of an interaction term does not appear
+      ## in any of the structural equations.
+      tmp <- setdiff(names_c_s_l, names_c_s_no_nl)
+      if(length(tmp) != 0) {
+        
+        stop2(
+          "The following error occured in the `parseModel()` function:\n",
+          "The nonlinear terms containing ", paste0("`", tmp, "`", collapse = ", "), 
+          " are not embeded in a nomological net.")
+      }
     }
     
     ## Construct type
