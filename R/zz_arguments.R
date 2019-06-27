@@ -20,7 +20,7 @@
 #'   "*spearman*" for the Spearman rank correlation, or
 #'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
 #'   Defaults to "*none*".
-#' @param .approach_mgd Chrachter string. Approach used for the multi-group comparison. 
+#' @param .approach_mgd Character string. Approach used for the multi-group comparison. 
 #' One of "*Klesel*", "*Chin*", or "*Sarstedt*".      
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".

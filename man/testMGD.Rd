@@ -9,6 +9,7 @@
 \usage{
 testMGD(
  .object               = args_default()$.object,
+ .approach_mgd          = args_default()$.approach_mgd,
  .alpha                = args_default()$.alpha,
  .handle_inadmissibles = args_default()$.handle_inadmissibles,
  .R                    = args_default()$.R,
@@ -18,6 +19,7 @@ testMGD(
  )
 
 \method{testMGD}{cSEMResults_default}(.object = args_default()$.object,
+  .approach_mgd = args_default()$.approach_mgd,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .saturated = args_default()$.saturated,
@@ -25,6 +27,7 @@ testMGD(
   .verbose = args_default()$.verbose)
 
 \method{testMGD}{cSEMResults_multi}(.object = args_default()$.object,
+  .approach_mgd = args_default()$.approach_mgd,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .saturated = args_default()$.saturated,
@@ -32,6 +35,7 @@ testMGD(
   .verbose = args_default()$.verbose)
 
 \method{testMGD}{cSEMResults_2ndorder}(.object = args_default()$.object,
+  .approach_mgd = args_default()$.approach_mgd,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .saturated = args_default()$.saturated,
@@ -40,6 +44,9 @@ testMGD(
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.approach_mgd}{Character string. Approach used for the multi-group comparison.
+One of "\emph{Klesel}", "\emph{Chin}", or "\emph{Sarstedt}".}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}

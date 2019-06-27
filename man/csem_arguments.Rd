@@ -8,7 +8,7 @@
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.approach}{Character string. The Kettenring approach to use. One of
+\item{.approach_gcca}{Character string. The Kettenring approach to use for GCCA. One of
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
 "\emph{SUMCORR}".}
 
@@ -22,6 +22,9 @@ Bravais-Person correlation is used,
 "\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}".}
+
+\item{.approach_mgd}{Character string. Approach used for the multi-group comparison.
+One of "\emph{Klesel}", "\emph{Chin}", or "\emph{Sarstedt}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
@@ -48,6 +51,10 @@ where \code{theta*_hat} is the average over all .R bootstrap estimates of \code{
 Defaults to \code{TRUE}}
 
 \item{.C}{A (J x J) composite variance-covariance matrix.}
+
+\item{.check_errors}{Logical. Should the model be checked for appropriateness
+in a sense that all necessary components to estimate the model are given?
+Defaults to \code{TRUE}.}
 
 \item{.choices}{Logical. Should candidate values for the arguments be returned?
 Defaults to \code{FALSE}.}

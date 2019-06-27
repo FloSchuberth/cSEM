@@ -4,7 +4,7 @@
 \alias{parseModel}
 \title{Parse lavaan model}
 \usage{
-parseModel(.model, .instruments = NULL)
+parseModel(.model, .instruments = NULL, ,check_errors = TRUE)
 }
 \arguments{
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
@@ -16,6 +16,10 @@ equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation \strong{must} be supplied as
 instruments for themselves. See the examples section. Defaults to \code{NULL}.}
+
+\item{.check_errors}{Logical. Should the model be checked for appropriateness
+in a sense that all necessary components to estimate the model are given?
+Defaults to \code{TRUE}.}
 }
 \value{
 An object of class \code{cSEMModel} is a standardized list containing the
