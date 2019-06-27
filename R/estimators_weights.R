@@ -179,7 +179,7 @@ calculateWeightsPLS <- function(
 #' @usage calculateWeightsKettenring(
 #'   .S           = args_default()$.S, 
 #'   .csem_model  = args_default()$.csem_model,   
-#'   .approach    = args_default()$.approach
+#'   .approach_gcca    = args_default()$.approach_gcca
 #'   )
 #'
 #' @inheritParams csem_arguments
@@ -190,7 +190,7 @@ calculateWeightsPLS <- function(
 calculateWeightsKettenring <- function(
   .S              = args_default()$.S,
   .csem_model     = args_default()$.csem_model,
-  .approach       = args_default()$.approach
+  .approach_gcca       = args_default()$.approach_gcca
 ) {
   
   ### Preparation ==============================================================
@@ -218,13 +218,13 @@ calculateWeightsKettenring <- function(
   H <- as.matrix(Matrix::bdiag(sqrt_S_jj_list))
   dimnames(H) <- list(indicator_names, indicator_names)
   
-  if(.approach %in% c("MAXVAR", "MINVAR")) {
+  if(.approach_gcca %in% c("MAXVAR", "MINVAR")) {
     # Note: The MAXVAR implementation is based on a MATLAB code provided 
     #       by Theo K. Dijkstra
     Rs <- H %*% .S %*% H
     
     ## Calculate eigenvalues and eigenvectors of Rs and ...
-    u <- switch (.approach,
+    u <- switch (.approach_gcca,
           "MINVAR" = {
             # ... select the eigenvector corresponding to the smallest eigenvalue
             as.matrix(eigen(Rs)$vectors[, length(Rs[,1])], nocl = 1)
@@ -243,7 +243,7 @@ calculateWeightsKettenring <- function(
       
       return(w)
     })
-  } else if(.approach %in% c("SUMCORR", "GENVAR", "SSQCORR")) {
+  } else if(.approach_gcca %in% c("SUMCORR", "GENVAR", "SSQCORR")) {
     
     # Maximize the sum of the composite correlations sum(w_i%*%S_ii%*%t(w_i)), 
     #   see Asendorf (2015, Appendix B.3.2 Empirical, p. 295)
@@ -254,7 +254,7 @@ calculateWeightsKettenring <- function(
     # nameInd := List with indicator names per block (indicator_names_ls)
     # name    := Vector of composites names (construct_names)
     
-    fn <- switch (.approach,
+    fn <- switch (.approach_gcca,
       "SUMCORR" = {
         function(wtilde, R, RDsqrt, nameInd, nameLV) {
           -(t(wtilde) %*% RDsqrt %*% R %*% RDsqrt %*% t(t(wtilde)))
@@ -314,7 +314,7 @@ calculateWeightsKettenring <- function(
   W <- scaleWeights(.S, W)
 
   ## Prepare for output
-  modes <- rep(.approach, length(construct_names))
+  modes <- rep(.approach_gcca, length(construct_names))
   names(modes) <- construct_names
   
   ## Prepare output and return
@@ -322,8 +322,8 @@ calculateWeightsKettenring <- function(
     "W"           = W, 
     "E"           = NULL, 
     "Modes"       = modes,
-    "Conv_status" = if(.approach %in% c("MINVAR", "MAXVAR")) NULL else res$convergence == 0,  
-    "Iterations"  = if(.approach %in% c("MINVAR", "MAXVAR")) 0 else res$counts[1]
+    "Conv_status" = if(.approach_gcca %in% c("MINVAR", "MAXVAR")) NULL else res$convergence == 0,  
+    "Iterations"  = if(.approach_gcca %in% c("MINVAR", "MAXVAR")) 0 else res$counts[1]
     )
   
   return(l)
