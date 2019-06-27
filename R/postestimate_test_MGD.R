@@ -8,6 +8,7 @@
 #' @usage testMGD(
 #'  .object               = args_default()$.object,
 #'  .approach_mgd          = args_default()$.approach_mgd,
+#'  .comparison            = args_default()$comparison,
 #'  .alpha                = args_default()$.alpha,
 #'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
 #'  .R                    = args_default()$.R,
@@ -56,6 +57,7 @@
 testMGD <- function(
   .object                = args_default()$.object,
   .approach_mgd          = args_default()$.approach_mgd,
+  .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
@@ -93,6 +95,7 @@ testMGD <- function(
 testMGD.cSEMResults_default <- function(
   .object                = args_default()$.object,
   .approach_mgd          = args_default()$.approach_mgd,
+  .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
@@ -109,6 +112,7 @@ testMGD.cSEMResults_default <- function(
 testMGD.cSEMResults_multi <- function(
   .object                = args_default()$.object,
   .approach_mgd          = args_default()$.approach_mgd,
+  .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
@@ -287,6 +291,7 @@ testMGD.cSEMResults_multi <- function(
 testMGD.cSEMResults_2ndorder <- function(
   .object                = args_default()$.object,
   .approach_mgd          = args_default()$.approach_mgd,
+  .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
