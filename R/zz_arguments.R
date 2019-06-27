@@ -328,7 +328,7 @@ args_default <- function(.choices = FALSE) {
   
   args <- list(
     .alpha                   = 0.05,
-    .approach_gcca                = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
+    .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("3stage", "repeated_indicators"),
     .approach_mgd            = c("Klesel", "Dibbern", "Sarstedt"),
     .approach_nl             = c("sequential", "replace"),
