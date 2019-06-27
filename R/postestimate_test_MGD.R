@@ -140,6 +140,9 @@ testMGD.cSEMResults_multi <- function(
       } 
     }
     
+    
+    switch(.approach_mgd,
+           "Klesel" = {
     ### Calculation===============================================================
     ## Get the fitted values
     fit <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
@@ -149,7 +152,13 @@ testMGD.cSEMResults_multi <- function(
       "dG" = calculateDistance(.matrices = fit, .distance = "geodesic"),
       "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")
     )
-    
+           },
+    "Chin" = {
+      
+    },
+    "Sarstedt" = {
+      
+    })
     # Put data of each groups in a list and combine
     X_all_list  <- lapply(.object, function(x) x$Information$Data)
     X_all       <- do.call(rbind, X_all_list)
@@ -191,12 +200,20 @@ testMGD.cSEMResults_multi <- function(
       if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
         # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
         # not ok
+        switch(.approach_mgd,
+               "Klesel" = {
         fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
         ref_dist[[counter]] <- c(
           "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
           "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
         )
-        
+               },
+        "Chin" = {
+          stop2("Not implemented Chin & Dibbern")
+        },
+        "Sarstedt" = {
+          stop2("Not implemented Sarstedt et al")
+        })
       } else if(status_code != 0 & .handle_inadmissibles == "drop") {
         # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
         ref_dist[[counter]] <- NA
