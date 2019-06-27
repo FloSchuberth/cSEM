@@ -7,7 +7,7 @@
 calculateWeightsKettenring(
   .S           = args_default()$.S, 
   .csem_model  = args_default()$.csem_model,   
-  .approach    = args_default()$.approach
+  .approach_gcca    = args_default()$.approach_gcca
   )
 }
 \arguments{
@@ -15,7 +15,7 @@ calculateWeightsKettenring(
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
-\item{.approach}{Character string. The Kettenring approach to use. One of
+\item{.approach_gcca}{Character string. The Kettenring approach to use for GCCA. One of
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
 "\emph{SUMCORR}".}
 }

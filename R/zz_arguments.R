@@ -20,7 +20,7 @@
 #'   "*spearman*" for the Spearman rank correlation, or
 #'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
 #'   Defaults to "*none*".
-#' @param .approach_mgd Chrachter string. Approach used for the multi-group comparison. 
+#' @param .approach_mgd Character string. Approach used for the multi-group comparison. 
 #' One of "*Klesel*", "*Chin*", or "*Sarstedt*".      
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
@@ -42,6 +42,9 @@
 #'   where `theta*_hat` is the average over all .R bootstrap estimates of `theta`.
 #'   Defaults to `TRUE`
 #' @param .C A (J x J) composite variance-covariance matrix.
+#' @param .check_errors Logical. Should the model be checked for appropriateness
+#'   in a sense that all necessary components to estimate the model are given?
+#'   Defaults to `TRUE`.
 #' @param .choices Logical. Should candidate values for the arguments be returned?
 #'   Defaults to `FALSE`.
 #' @param .ci A vector of character strings naming the confidence interval to compute.
@@ -338,10 +341,11 @@ args_default <- function(.choices = FALSE) {
     .arguments               = NULL,
     .bias_corrected          = TRUE,
     .C                       = NULL,
-    .closed_form_ci          = FALSE, 
+    .check_errors            = TRUE,
     .choices                 = FALSE,
     .ci                      = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
+    .closed_form_ci          = FALSE, 
     .csem_model              = NULL,
     .csem_resample           = NULL,
     .cv_folds                = 10,
