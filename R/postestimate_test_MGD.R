@@ -7,6 +7,7 @@
 #' 
 #' @usage testMGD(
 #'  .object               = args_default()$.object,
+#'  .approach_mgd          = args_default()$.approach_mgd,
 #'  .alpha                = args_default()$.alpha,
 #'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
 #'  .R                    = args_default()$.R,
@@ -54,6 +55,7 @@
 
 testMGD <- function(
   .object                = args_default()$.object,
+  .approach_mgd          = args_default()$.approach_mgd,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
@@ -62,12 +64,24 @@ testMGD <- function(
   .verbose               = args_default()$.verbose
 ){
   
-  # Implementation is based on:
-  # Klesel & Schuberth (forthcoming) - (TODO) name
-  
-  if(.verbose) {
-    cat(rule(center = "Test for multigroup differences based on Klesel (forthcoming)",
-             line = "bar3"), "\n\n")
+  if(.verbose) {  
+    if(.approach_mgd == "Klesel"){
+        # Implementation is based on:
+        # Klesel et al. (2019) - (TODO) name
+      cat(rule(center = "Test for multigroup differences based on Klesel et al. (2019)",
+               line = "bar3"), "\n\n")
+    
+    }else if(.approach_mgd == "Chin"){
+      # Implementation is based on:
+      # Chin & Dibbern (2010) - (TODO) name
+      cat(rule(center = "Test for multigroup differences based on Chin & Dibbern (2010)",
+               line = "bar3"), "\n\n")
+    }else if(.approach_mgd == "Sarstedt"){
+      # Implementation is based on:
+      # Sarstedt et al. (2011) - (TODO) name
+      cat(rule(center = "Test for multigroup differences based on Sarstedt et al. (2011)",
+               line = "bar3"), "\n\n")
+    }
   }
   UseMethod("testMGD")
   
@@ -78,6 +92,7 @@ testMGD <- function(
 
 testMGD.cSEMResults_default <- function(
   .object                = args_default()$.object,
+  .approach_mgd          = args_default()$.approach_mgd,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
@@ -93,6 +108,7 @@ testMGD.cSEMResults_default <- function(
 
 testMGD.cSEMResults_multi <- function(
   .object                = args_default()$.object,
+  .approach_mgd          = args_default()$.approach_mgd,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
@@ -253,6 +269,7 @@ testMGD.cSEMResults_multi <- function(
 
 testMGD.cSEMResults_2ndorder <- function(
   .object                = args_default()$.object,
+  .approach_mgd          = args_default()$.approach_mgd,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,

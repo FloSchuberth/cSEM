@@ -8,7 +8,7 @@
 #'
 #' @param .alpha An integer or a numeric vector of significance levels. 
 #'   Defaults to `0.05`.
-#' @param .approach Character string. The Kettenring approach to use. One of 
+#' @param .approach_gcca Character string. The Kettenring approach to use for GCCA. One of 
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
 #' @param .approach_2ndorder Character string. Approach used for models containing
@@ -20,6 +20,8 @@
 #'   "*spearman*" for the Spearman rank correlation, or
 #'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
 #'   Defaults to "*none*".
+#' @param .approach_mgd Chrachter string. Approach used for the multi-group comparison. 
+#' One of "*Klesel*", "*Chin*", or "*Sarstedt*".      
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
@@ -329,8 +331,9 @@ args_default <- function(.choices = FALSE) {
   
   args <- list(
     .alpha                   = 0.05,
-    .approach                = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
+    .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("3stage", "repeated_indicators"),
+    .approach_mgd            = c("Klesel", "Chin", "Sarstedt"),
     .approach_nl             = c("sequential", "replace"),
     .approach_paths          = c("OLS", "2SLS", "3SLS"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
