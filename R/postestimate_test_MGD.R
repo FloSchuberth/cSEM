@@ -64,12 +64,24 @@ testMGD <- function(
   .verbose               = args_default()$.verbose
 ){
   
-  # Implementation is based on:
-  # Klesel & Schuberth (forthcoming) - (TODO) name
-  
-  if(.verbose) {
-    cat(rule(center = "Test for multigroup differences based on Klesel et al. (forthcoming)",
-             line = "bar3"), "\n\n")
+  if(.verbose) {  
+    if(.approach_mgd == "Klesel"){
+        # Implementation is based on:
+        # Klesel et al. (2019) - (TODO) name
+      cat(rule(center = "Test for multigroup differences based on Klesel et al. (2019)",
+               line = "bar3"), "\n\n")
+    
+    }else if(.approach_mgd == "Chin"){
+      # Implementation is based on:
+      # Chin & Dibbern (2010) - (TODO) name
+      cat(rule(center = "Test for multigroup differences based on Chin & Dibbern (2010)",
+               line = "bar3"), "\n\n")
+    }else if(.approach_mgd == "Sarstedt"){
+      # Implementation is based on:
+      # Sarstedt et al. (2011) - (TODO) name
+      cat(rule(center = "Test for multigroup differences based on Sarstedt et al. (2011)",
+               line = "bar3"), "\n\n")
+    }
   }
   UseMethod("testMGD")
   

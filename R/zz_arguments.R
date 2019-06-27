@@ -21,7 +21,7 @@
 #'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
 #'   Defaults to "*none*".
 #' @param .approach_mgd Chrachter string. Approach used for the multi-group comparison. 
-#' One of "*Klesel*", "*Dibbern*", or "*Sarstedt*".      
+#' One of "*Klesel*", "*Chin*", or "*Sarstedt*".      
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
@@ -330,7 +330,7 @@ args_default <- function(.choices = FALSE) {
     .alpha                   = 0.05,
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("3stage", "repeated_indicators"),
-    .approach_mgd            = c("Klesel", "Dibbern", "Sarstedt"),
+    .approach_mgd            = c("Klesel", "Chin", "Sarstedt"),
     .approach_nl             = c("sequential", "replace"),
     .approach_paths          = c("OLS", "2SLS", "3SLS"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
