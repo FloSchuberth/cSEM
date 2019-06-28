@@ -94,6 +94,12 @@ parameter_difference=function(.object=args_default()$.object,
   }
   
 
+  # Check whether the constructs specified in the comparison are equal to the constructs in the original model
+  construct_type_comp=model_comp$construct_type[!is.na(model_comp$construct_type)]
+  if(!all(construct_type_comp==construct_type[names(construct_type_comp)])){
+    stop2("At least one construct's type in the comparison model differs from the original model.")
+  }
+  
   
   
   # Calculate differences
