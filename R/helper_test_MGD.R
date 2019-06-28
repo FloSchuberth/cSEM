@@ -173,3 +173,33 @@ parameter_difference=function(.object=args_default()$.object,
   
   return(out)
 }
+
+
+
+#' Function that adjust the significance level
+#'
+#' 
+#' 
+#' @usage alpha_adjust(
+#' .alpha=args_default()$.alpha,
+#' .approach_alpha_adjust=args_default()$.approach_alpha_adjust,
+#' .nr_comparisons=args_default()$.nr_comparisons)
+#' 
+#' @inheritParams csem_arguments
+#' 
+#'
+#' @seealso [cSEMResults]
+#'
+alpha_adjust=function(.alpha=args_default()$.alpha,
+             .approach_alpha_adjust=args_default()$.approach_alpha_adjust,
+             .nr_comparisons=args_default()$.nr_comparisons){
+  if(.approach_alpha_adjust == 'none'){
+    return(.alpha)
+  }
+  
+  if(.approach_alpha_adjust == 'bonferroni'){
+    return(.alpha/n)
+  }
+  
+  
+}
