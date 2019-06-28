@@ -67,26 +67,7 @@ testMGD <- function(
   .type_vcv              = args_default()$.type_vcv,
   .verbose               = args_default()$.verbose
 ){
-  
-  if(.verbose) {  
-    if(.approach_mgd == "Klesel"){
-        # Implementation is based on:
-        # Klesel et al. (2019) - (TODO) name
-      cat(rule(center = "Test for multigroup differences based on Klesel et al. (2019)",
-               line = "bar3"), "\n\n")
-    
-    }else if(.approach_mgd == "Chin"){
-      # Implementation is based on:
-      # Chin & Dibbern (2010) - (TODO) name
-      cat(rule(center = "Test for multigroup differences based on Chin & Dibbern (2010)",
-               line = "bar3"), "\n\n")
-    }else if(.approach_mgd == "Sarstedt"){
-      # Implementation is based on:
-      # Sarstedt et al. (2011) - (TODO) name
-      cat(rule(center = "Test for multigroup differences based on Sarstedt et al. (2011)",
-               line = "bar3"), "\n\n")
-    }
-  }
+
   UseMethod("testMGD")
   
 }
@@ -313,12 +294,12 @@ testMGD.cSEMResults_multi <- function(
     
     names(critical_values_Chin) = paste0(alpha_Chin*100,'%')
 
-    decision_Chin <- mapply(function(teststat,critical){
-      temp=lapply(critical, function(x){
-        x[,1]< teststat & teststat < x[,2]
+    decision_Chin <- lapply(critical_values_Chin,function(critical){
+      temp=mapply(function(stat,crit){
+        crit[,1]< stat & stat < crit[,2]
 
-        })
-    },teststat = teststat_Chin, critical = critical_values_Chin,SIMPLIFY = FALSE)
+        },stat=teststat_Chin,crit=critical,SIMPLIFY = FALSE)
+    })
     
     names(decision_Chin) = paste0(alpha_Chin*100,'%')
     
@@ -333,7 +314,7 @@ testMGD.cSEMResults_multi <- function(
         "Test_statistic"     = teststat_Chin,
         "Critical_value"     = critical_values_Chin, 
         "Decision"           = decision_Chin,
-        "Alpha adjusted"     =  NULL),
+        "Alpha adjusted"     =  alpha_Chin),
     "Information"        = list(
       "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
       "Total_runs"            = counter + n_inadmissibles,
