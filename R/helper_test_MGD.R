@@ -93,8 +93,7 @@ parameter_difference=function(.object=args_default()$.object,
     
   }
   
-  # Check whether the parameters to compare are valid, i.e., do they occur in the model
-  # Check weights
+
   
   
   # Calculate differences
