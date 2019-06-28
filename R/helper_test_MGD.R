@@ -14,11 +14,14 @@
 parameter_difference=function(.object=args_default()$.object,
                               .comparison=args_default()$.comparison){
   
-  if(is.null(.comparison)){
-    out = NA
-  } else {
+
   # Parse model that indicates which parameters should be compared
+  # if no model indicating the comparisons is provided, all parameters are compared
+  if(is.null(.comparison)){
+  model_comp = .object[[1]]$Information$Model  
+  }else{
   model_comp=cSEM:::parseModel(.comparison,.check_errors = F)
+  }
   
   # extract different types of constructs
   construct_type = .object[[1]]$Information$Model$construct_type
@@ -36,6 +39,12 @@ parameter_difference=function(.object=args_default()$.object,
     
     path_ind[path_ind_temp]=1
 
+    # check whether specified path coefficients occur in the original model
+    path_ind_org = .object[[1]]$Information$Model$structural
+    if(!all(path_ind_org[path_ind_temp]==1)){
+      stop2("Path coefficients specified for comparison are not part of the original model.")
+    }
+    
   }
   
   # Create indication matrix for loadings
@@ -52,7 +61,13 @@ parameter_difference=function(.object=args_default()$.object,
     load_ind_temp = cbind(rownames(model_comp$measurement[cf_name_comp,,drop = FALSE])[load_ind_temp[, 'row']],
                           colnames(model_comp$measurement[cf_name_comp,,drop = FALSE])[load_ind_temp[, 'col']])
     load_ind[load_ind_temp]=1
-  }
+  
+    # check whether specified loadings occur in the original model
+    load_ind_org = .object[[1]]$Information$Model$measurement[cf_name,,drop=FALSE]
+    if(!all(load_ind_org[load_ind_temp]==1)){
+      stop2("Loadings specified for comparison are not part of the original model.")
+    }
+    }
   
   # Create indication matrix for weights
   weight=.object[[1]]$Estimates$Weight_estimates
@@ -69,7 +84,18 @@ parameter_difference=function(.object=args_default()$.object,
                             colnames(model_comp$measurement[co_name_comp,,drop = FALSE])[weight_ind_temp[, 'col']])
     
     weight_ind[weight_ind_temp]=1
+    
+    # check whether specified weights occur in the original model
+    weight_ind_org = .object[[1]]$Information$Model$measurement[co_name,,drop=FALSE]
+    if(!all(weight_ind_org[weight_ind_temp]==1)){
+      stop2("Weights specified for comparison are not part of the original model.")
+    }
+    
   }
+  
+  # Check whether the parameters to compare are valid, i.e., do they occur in the model
+  # Check weights
+  
   
   # Calculate differences
   # Path coefficients
@@ -130,6 +156,6 @@ parameter_difference=function(.object=args_default()$.object,
   out=mapply(function(x,y,z){c(x,y,z)},
              x=difference_path,y=difference_load,z=difference_weight,
              SIMPLIFY = FALSE)
-  }
+  
   return(out)
 }
