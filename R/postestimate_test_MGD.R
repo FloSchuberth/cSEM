@@ -1,4 +1,4 @@
-#' Estimates the distance between multiple groups. 
+#' Tests for multiple groups. 
 #'
 #' 
 #' The geodesic distance (dG) and the Euclidean distance (dE) is used
@@ -160,80 +160,10 @@ testMGD.cSEMResults_multi <- function(
     )
            },
     "Chin" = {
-      # Parse model that indicates which parameters should be compared
-      model_comp=cSEM:::parseModel(.comparison,.check_errors = F)
-      construct_type = .object[[1]]$Information$Model$construct_type
       
-            
-      # Create indication matrix for structural model 
-      path_org=.object[[1]]$Estimates$Path_estimates
-      path_ind=path_org
-      path_ind[]=0
-      path_ind_temp=which(model_comp$structural==1,arr.ind = TRUE)
-      if(!is.null(dim(path_ind_temp))){
-      path_ind_temp=cbind(rownames(model_comp$structural)[path_ind_temp[, 'row']],
-            colnames(model_comp$structural)[path_ind_temp[, 'col']])
+      parameter_difference(.object=.object,.comparison = .comparison)
       
-      path_ind[path_ind_temp]=1
-      }
-      
-      # Create indication matrix for loadings
-      load_org=.object[[1]]$Estimates$Loading_estimates
-      load_ind=load_org
-      load_ind[]=0
-      
-      cf_name= names(which(construct_type == 'Common factor'))
-      cf_name_comp=intersect(rownames(model_comp$measurement),cf_name)
-      
-      load_ind_temp = which(model_comp$measurement[cf_name_comp,]==1,arr.ind = TRUE)
-      
-      if(!is.null(dim(load_ind_temp))){
-      load_ind_temp = cbind(rownames(model_comp$measurement[cf_name_comp,,drop = FALSE])[load_ind_temp[, 'row']],
-                            colnames(model_comp$measurement[cf_name_comp,,drop = FALSE])[load_ind_temp[, 'col']])
-      load_ind[load_ind_temp]=1
-      }
   
-      # Create indication matrix for weights
-      weight_org=.object[[1]]$Estimates$Weight_estimates
-      weight_ind=weight_org
-      weight_ind[]=0
-      
-      co_name= names(which(construct_type == 'Composite'))
-      co_name_comp=intersect(rownames(model_comp$measurement),co_name)
-      
-      weight_ind_temp = which(model_comp$measurement[co_name_comp,]==1,arr.ind = TRUE)
-      
-      if(!is.null(dim(weight_ind_temp))){
-      weight_ind_temp = cbind(rownames(model_comp$measurement[co_name_comp,,drop = FALSE])[weight_ind_temp[, 'row']],
-                            colnames(model_comp$measurement[co_name_comp,,drop = FALSE])[weight_ind_temp[, 'col']])
-      
-      load_ind[load_ind_temp]=1
-      }
-      
-      # Calculate differences
-      # Path coefficients
-      matrices_path_org=lapply(.object,function(x){x$Estimates$Path_estimates})
-      
-      temp <- utils::combn(matrices_path_org, 2, simplify = FALSE)
-      diff_path_org=lapply(temp, function(x){
-        x[[1]]-x[[2]]
-      })
-      
-      # Loadings
-      matrices_load_org=lapply(.object,function(x){x$Estimates$Loading_estimates})
-      temp <- utils::combn(matrices_load_org, 2, simplify = FALSE)
-      diff_load_org=lapply(temp, function(x){
-        x[[1]]-x[[2]]
-        })
-      
-      # Weights
-      matrices_weight_org=lapply(.object,function(x){x$Estimates$Weight_estimates})
-      temp <- utils::combn(matrices_weight_org, 2, simplify = FALSE)
-      diff_weight_org=lapply(temp, function(x){
-        x[[1]]-x[[2]]
-      })
-      
-      names(diff_load_org) <- names(diff_weight_org) <- names(diff_path_org) <- sapply(temp, function(x) paste(names(x)[1], 'vs.', names(x)[2]))
       
     },
     "Sarstedt" = {
