@@ -14,7 +14,7 @@
 #' @param .approach_2ndorder Character string. Approach used for models containing
 #'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
 #'   Defaults to "*3stage*".
-#' @param .approach_alpha_adjust Chracter string. Approach used to adjust the significance level.
+#' @param .approach_alpha_adjust Character string. Approach used to adjust the significance level.
 #' One of: "*none*", "*bonferroni*", 
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
 #'   indicator correlation matrix. One of: "*none*" in which case the standard 
