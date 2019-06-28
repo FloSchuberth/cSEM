@@ -13,6 +13,7 @@ testOMF(
  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
  .R                     = args_default()$.R, 
  .saturated             = args_default()$.saturated,
+ .seed                  = args_default()$.seed,
  .verbose               = args_default()$.verbose
 )
 
@@ -20,19 +21,19 @@ testOMF(
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .verbose = args_default()$.verbose)
+  .seed = args_default()$.seed, .verbose = args_default()$.verbose)
 
 \method{testOMF}{cSEMResults_multi}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .verbose = args_default()$.verbose)
+  .seed = args_default()$.seed, .verbose = args_default()$.verbose)
 
 \method{testOMF}{cSEMResults_2ndorder}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .verbose = args_default()$.verbose)
+  .seed = args_default()$.seed, .verbose = args_default()$.verbose)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -53,6 +54,9 @@ Defaults to "\emph{drop}".}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
+
+\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen.}
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}

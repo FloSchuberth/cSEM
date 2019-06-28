@@ -346,12 +346,12 @@ print.cSEMTestOMF <- function(x, ...) {
 
   ## Additional information ----------------------------------------------------
   cat("\nAdditonal information:")
-  cat(
+  cat2(
     "\n\n\tOut of ", x$Information$Total_runs , " bootstrap replications ", 
     x$Information$Number_admissibles, " are admissible.\n\t",
     "See ", yellow("?"), magenta("verify"), "()",
-    " for what constitutes an inadmissible result.\n", 
-    sep = ""
+    " for what constitutes an inadmissible result.\n\n\t",
+    "The seed used was: ", x$Information$Seed, "\n"
   )
   cat(rule(line = "bar2", width = 80), sep = "")
 }

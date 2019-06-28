@@ -12,6 +12,7 @@
 #'  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
 #'  .R                     = args_default()$.R, 
 #'  .saturated             = args_default()$.saturated,
+#'  .seed                  = args_default()$.seed,
 #'  .verbose               = args_default()$.verbose
 #' )
 #' 
@@ -37,6 +38,7 @@ testOMF <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
+  .seed                  = args_default()$.seed,
   .verbose               = args_default()$.verbose
 ) {
   # Implementation is based on:
@@ -59,6 +61,7 @@ testOMF.cSEMResults_default <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
+  .seed                  = args_default()$.seed,
   .verbose               = args_default()$.verbose
 ){
   ## Check arguments
@@ -104,6 +107,13 @@ testOMF.cSEMResults_default <- function(
   if(.verbose){
     pb <- txtProgressBar(min = 0, max = .R, style = 3)
   }
+  
+  ## Create seed if not already set
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
+  }
+  ## Set seed
+  set.seed(.seed)
   
   ## Calculate reference distribution
   ref_dist         <- list()
@@ -195,12 +205,20 @@ testOMF.cSEMResults_default <- function(
     "Critical_value"     = critical_values, 
     "Decision"           = decision, 
     "Information"        = list(
+      "Bootstrap_values"   = ref_dist,
       "Number_admissibles" = ncol(ref_dist_matrix),
-      "Total_runs"         = counter + n_inadmissibles,
-      "Bootstrap_values"   = ref_dist
+      "Seed"               = .seed,
+      "Total_runs"         = counter + n_inadmissibles
     )
   )
   
+  ## Remove the seed since it is set globally. Reset immediately by calling
+  ## any kind of function that requires .Random.seed as this causes R to
+  ## to create a new one.
+  rm(.Random.seed, envir=.GlobalEnv)
+  runif(1) # dont remove; this sets up a new .Random.seed
+  
+  ## Set class and return
   class(out) <- "cSEMTestOMF"
   return(out)
 }
@@ -214,14 +232,21 @@ testOMF.cSEMResults_multi <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
+  .seed                  = args_default()$.seed,
   .verbose               = args_default()$.verbose
 ){
+  ## Create seed if not already set
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
+  }
+  
   if(inherits(.object, "cSEMResults_2ndorder")) {
     lapply(.object, testOMF.cSEMResults_2ndorder,
            .alpha                = .alpha,
            .handle_inadmissibles = .handle_inadmissibles,
            .R                    = .R,
            .saturated            = .saturated,
+           .seed                 = .seed,
            .verbose              = .verbose
     )
   } else {
@@ -230,6 +255,7 @@ testOMF.cSEMResults_multi <- function(
            .handle_inadmissibles = .handle_inadmissibles,
            .R                    = .R,
            .saturated            = .saturated,
+           .seed                 = .seed,
            .verbose              = .verbose
     )
   }
@@ -244,6 +270,7 @@ testOMF.cSEMResults_2ndorder <- function(
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
+  .seed                  = args_default()$.seed,
   .verbose               = args_default()$.verbose
 ){
   ## Check arguments
@@ -286,6 +313,13 @@ testOMF.cSEMResults_2ndorder <- function(
   if(.verbose){
     pb <- txtProgressBar(min = 0, max = .R, style = 3)
   }
+  
+  ## Create seed if not already set
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
+  }
+  ## Set seed
+  set.seed(.seed)
   
   ## Calculate reference distribution
   ref_dist         <- list()
@@ -373,13 +407,19 @@ testOMF.cSEMResults_2ndorder <- function(
     "Critical_value"     = critical_values, 
     "Decision"           = decision, 
     "Information"        = list(
+      "Bootstrap_values"   = ref_dist,
       "Number_admissibles" = ncol(ref_dist_matrix),
-      "Total_runs"         = counter + n_inadmissibles,
-      "Bootstrap_values"   = ref_dist
+      "Seed"               = .seed,
+      "Total_runs"         = counter + n_inadmissibles
     )
   ) 
   
+  ## Remove the seed since it is set globally. Reset immediately by calling
+  ## any kind of function that requires .Random.seed as this causes R to
+  ## to create a new one.
+  rm(.Random.seed, envir=.GlobalEnv)
+  runif(1) # dont remove; this sets up a new .Random.seed
+  
   class(out) <- "cSEMTestOMF"
   return(out)
-  
 }
