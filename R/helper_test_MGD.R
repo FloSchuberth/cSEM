@@ -122,7 +122,9 @@ parameter_difference=function(.object=args_default()$.object,
                                                                .sep = '<~'))
   
   # merge list together
-  out=mapply(function(x,y,z){c(x,y,z)},x=difference_path,y=difference_load,z=difference_weight)
+  out=mapply(function(x,y,z){c(x,y,z)},
+             x=difference_path,y=difference_load,z=difference_weight,
+             SIMPLIFY = FALSE)
   
   return(out)
 }
