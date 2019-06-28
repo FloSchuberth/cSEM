@@ -10,6 +10,7 @@
 #'  .approach_mgd          = args_default()$.approach_mgd,
 #'  .comparison            = args_default()$comparison,
 #'  .alpha                = args_default()$.alpha,
+#'  .alpha_adjustment     = args_default()$.alpha_adjustment,
 #'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
 #'  .R                    = args_default()$.R,
 #'  .saturated            = args_default()$.saturated,
@@ -59,6 +60,7 @@ testMGD <- function(
   .approach_mgd          = args_default()$.approach_mgd,
   .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
+  .alpha_adjustment     = args_default()$.alpha_adjustment,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
@@ -97,6 +99,7 @@ testMGD.cSEMResults_default <- function(
   .approach_mgd          = args_default()$.approach_mgd,
   .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
+  .alpha_adjustment     = args_default()$.alpha_adjustment,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
@@ -114,6 +117,7 @@ testMGD.cSEMResults_multi <- function(
   .approach_mgd          = args_default()$.approach_mgd,
   .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
+  .alpha_adjustment     = args_default()$.alpha_adjustment,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
@@ -278,15 +282,43 @@ testMGD.cSEMResults_multi <- function(
     # FALSE --> reject
     
     # Approach suggested by Chin & Dibbern (2010)
-    teststat_Chin 
+    teststat_Chin = lapply(teststat$Chin, function(x){
+      x[!is.na(x)]
+    })
     
     ref_dist_Chin = lapply(ref_dist1,function(x){
       x$Chin
     })
     
     ref_dist_Chin_temp=purrr::transpose(ref_dist_Chin)
-    ref_dist_matrices_Chin =lapply(ref_dist_Chin_temp,function(x)do.call(cbind,x))
+    ref_dist_matrices_Chin =lapply(ref_dist_Chin_temp,function(x){
+      temp = do.call(cbind,x)
+      temp_ind = stats::complete.cases(temp)
+      temp[temp_ind,]
+      }
+      )
     
+    # Here we can correct alpha for multiple test
+    alpha_Chin=.alpha
+    
+
+    critical_values_Chin = lapply(alpha_Chin,function(alpha){
+      probs_Chin = c(alpha/2,1-alpha/2)
+      temp=lapply(ref_dist_matrices_Chin, function(x){
+        matrixStats::rowQuantiles(x, probs = probs_Chin, drop = FALSE)
+        })
+    })
+    
+    names(critical_values_Chin) = paste0(alpha_Chin*100,'%')
+
+    decision_Chin <- mapply(function(teststat,critical){
+      temp=lapply(critical, function(x){
+        x[,1]< teststat | teststat < x[,2]
+
+        })
+    },teststat = teststat_Chin, critical = critical_values_Chin,SIMPLIFY = FALSE)
+    
+    names(decision_Chin) = paste0(alpha_Chin*100,'%')
     
     # Return output
     out <- list(
@@ -297,16 +329,18 @@ testMGD.cSEMResults_multi <- function(
 
       "Chin" = list(
         "Test_statistic"     = teststat_Chin,
-        "Critical_value"     = ref_dist_matrices_Chin, 
+        "Critical_value"     = critical_values_Chin, 
         "Decision"           = NULL,
         "Alpha adjusted"     =  NULL),
     "Information"        = list(
-      "Number_admissibles"    = ncol(ref_dist_matrix),
+      "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
       "Total_runs"            = counter + n_inadmissibles,
       "Group_names"           = names(.object),
       "Number_of_observations"= sapply(X_all_list, nrow),
-      "Bootstrap_values"      = ref_dist
-    )
+      "Bootstrap_values"      = list(
+        "Klesel" = ref_dist_Klesel,
+        "Chin"   = ref_dist_matrices_Chin)
+      )
     )
   }
   
@@ -322,6 +356,7 @@ testMGD.cSEMResults_2ndorder <- function(
   .approach_mgd          = args_default()$.approach_mgd,
   .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
+  .alpha_adjustment     = args_default()$.alpha_adjustment,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
