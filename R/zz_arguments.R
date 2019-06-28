@@ -14,6 +14,8 @@
 #' @param .approach_2ndorder Character string. Approach used for models containing
 #'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
 #'   Defaults to "*3stage*".
+#' @param .approach_alpha_adjust Chracter string. Approach used to adjust the significance level.
+#' One of: "*none*", "*bonferroni*", 
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
 #'   indicator correlation matrix. One of: "*none*" in which case the standard 
 #'   Bravais-Person correlation is used,
@@ -132,6 +134,7 @@
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 #'  Defaults to `FALSE`. Ignored if the model is linear.
+#' @param .nr_comparisons Numeric. Indicating the number of comparisons. Defaults to `NULL`.  
 #' @param .object An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .only_common_factors Logical. Should only concepts modeled as common 
 #'   factors be included when calculating one of the following quality critera: 
@@ -335,6 +338,7 @@ args_default <- function(.choices = FALSE) {
     .alpha                   = 0.05,
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("3stage", "repeated_indicators"),
+    .approach_alpha_adjust   = c("none", "bonferroni"),
     .approach_mgd            = c("Klesel", "Chin", "Sarstedt"),
     .approach_nl             = c("sequential", "replace"),
     .approach_paths          = c("OLS", "2SLS", "3SLS"),
@@ -376,6 +380,7 @@ args_default <- function(.choices = FALSE) {
     .moderator               = NULL,
     .modes                   = NULL,
     .normality               = FALSE,
+    .nr_comparisons          = NULL,
     .only_common_factors     = TRUE,
     .object                  = NULL,
     .P                       = NULL,
