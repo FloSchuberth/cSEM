@@ -26,6 +26,17 @@ parameter_difference=function(.object=args_default()$.object,
   # extract different types of constructs
   construct_type = .object[[1]]$Information$Model$construct_type
   
+  # Check whether the constructs specified in the comparison are equal to the constructs in the original model
+  construct_type_comp=model_comp$construct_type[!is.na(model_comp$construct_type)]
+  if(!all(construct_type_comp==construct_type[names(construct_type_comp)])){
+    stop2("At least one construct's type in the comparison model differs from the original model.")
+  }
+  
+  # Check whether indicators used in the comparison model are the same as in the original model
+  if(!all(colnames(model_comp$measurement)%in%colnames(.object[[1]]$Information$Model$measurement))){
+    stop2("Indicators used in the comparison model are not specified in the original model.")
+  }
+  
   
   # Create indication matrix for structural coefficients 
   path=.object[[1]]$Estimates$Path_estimates
@@ -94,14 +105,7 @@ parameter_difference=function(.object=args_default()$.object,
   }
   
 
-  # Check whether the constructs specified in the comparison are equal to the constructs in the original model
-  construct_type_comp=model_comp$construct_type[!is.na(model_comp$construct_type)]
-  if(!all(construct_type_comp==construct_type[names(construct_type_comp)])){
-    stop2("At least one construct's type in the comparison model differs from the original model.")
-  }
-  
-  
-  
+
   # Calculate differences
   # Path coefficients
   matrices_path=lapply(.object,function(x){x$Estimates$Path_estimates})
