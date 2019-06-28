@@ -155,12 +155,12 @@ testMGD.cSEMResults_multi <- function(
     ## Compute the test statistics 
     teststat <- list(
       #  Approach suggested by Klesel et al. (2019)
-      c(
-      "dG" = calculateDistance(.matrices = fit, .distance = "geodesic"),
-      "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")
+      Klesel=c(
+      "dG" = cSEM:::calculateDistance(.matrices = fit, .distance = "geodesic"),
+      "dL" = cSEM:::calculateDistance(.matrices = fit, .distance = "squared_euclidian")
     ),
     # Approach suggested by Chin & Dibbern (2010)
-     parameter_difference(.object=.object,.comparison = .comparison))
+    Chin=cSEM:::parameter_difference(.object=.object,.comparison = .comparison))
       
       
 
@@ -212,10 +212,10 @@ testMGD.cSEMResults_multi <- function(
 
         fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
         
-        ref_dist[[counter]] <- list(c(
-          "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
-          "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
-        ),parameter_difference(.object=Est_temp,.comparison = .comparison))
+        ref_dist[[counter]] <- list(Klesel=c(
+          "dG" = cSEM:::calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
+          "dL" = cSEM:::calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
+        ),Chin=cSEM:::parameter_difference(.object=Est_temp,.comparison = .comparison))
 
       # Approach suggested by Chin & Dibbern
           # Calculate differences based on the estimation based on the permutation sample
@@ -254,34 +254,59 @@ testMGD.cSEMResults_multi <- function(
     # Delete potential NA's
     ref_dist1 <- Filter(Negate(anyNA), ref_dist)
     
+    
+    # Appraoch suggest by Klesel et al. (2019)
+    ref_dist_Klesel = lapply(ref_dist1,function(x){
+      x$Klesel
+    })
+    
     # Combine
-    ref_dist_matrix <- do.call(cbind, ref_dist1)
+    ref_dist_matrix_Klesel <- do.call(cbind, ref_dist_Klesel)
+    
     
     ## Compute critical values (Result is a (2 x p) matrix, where n is the number
     ## of quantiles that have been computed (1 by default)
     .alpha <- .alpha[order(.alpha)]
-    critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
+    critical_values_Klesel <- matrixStats::rowQuantiles(ref_dist_matrix_Klesel, 
                                                  probs =  1-.alpha, drop = FALSE)
-    
+    teststat_Klesel <- teststat$Klesel
     ## Compare critical value and teststatistic
-    decision <- teststat_Klesel < critical_values # a logical (2 x p) matrix with each column
+    decision_Klesel <- teststat_Klesel < critical_values_Klesel # a logical (2 x p) matrix with each column
     # representing the decision for one
     # significance level. TRUE = no evidence 
     # against the H0 --> not reject
     # FALSE --> reject
     
+    # Approach suggested by Chin & Dibbern (2010)
+    teststat_Chin 
+    
+    ref_dist_Chin = lapply(ref_dist1,function(x){
+      x$Chin
+    })
+    
+    ref_dist_Chin_temp=purrr::transpose(ref_dist_Chin)
+    ref_dist_matrices_Chin =lapply(ref_dist_Chin_temp,function(x)do.call(cbind,x))
+    
+    
     # Return output
     out <- list(
+      "Klesel"=list(
       "Test_statistic"     = teststat_Klesel,
-      "Critical_value"     = critical_values, 
-      "Decision"           = decision, 
-      "Information"        = list(
-        "Number_admissibles"    = ncol(ref_dist_matrix),
-        "Total_runs"            = counter + n_inadmissibles,
-        "Group_names"           = names(.object),
-        "Number_of_observations"= sapply(X_all_list, nrow),
-        "Bootstrap_values"      = ref_dist
-      )
+      "Critical_value"     = critical_values_Klesel, 
+      "Decision"           = decision_Klesel), 
+
+      "Chin" = list(
+        "Test_statistic"     = teststat_Chin,
+        "Critical_value"     = ref_dist_matrices_Chin, 
+        "Decision"           = NULL,
+        "Alpha adjusted"     =  NULL),
+    "Information"        = list(
+      "Number_admissibles"    = ncol(ref_dist_matrix),
+      "Total_runs"            = counter + n_inadmissibles,
+      "Group_names"           = names(.object),
+      "Number_of_observations"= sapply(X_all_list, nrow),
+      "Bootstrap_values"      = ref_dist
+    )
     )
   }
   
