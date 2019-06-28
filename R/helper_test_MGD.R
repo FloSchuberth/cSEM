@@ -41,7 +41,7 @@ parameter_difference=function(.object=args_default()$.object,
   cf_name= names(which(construct_type == 'Common factor'))
   cf_name_comp=intersect(rownames(model_comp$measurement),cf_name)
   
-  load_ind_temp = which(model_comp$measurement[cf_name_comp,]==1,arr.ind = TRUE)
+  load_ind_temp = which(model_comp$measurement[cf_name_comp,,drop=FALSE]==1,arr.ind = TRUE)
   
   if(!is.null(dim(load_ind_temp))){
     load_ind_temp = cbind(rownames(model_comp$measurement[cf_name_comp,,drop = FALSE])[load_ind_temp[, 'row']],
@@ -57,7 +57,7 @@ parameter_difference=function(.object=args_default()$.object,
   co_name= names(which(construct_type == 'Composite'))
   co_name_comp=intersect(rownames(model_comp$measurement),co_name)
   
-  weight_ind_temp = which(model_comp$measurement[co_name_comp,]==1,arr.ind = TRUE)
+  weight_ind_temp = which(model_comp$measurement[co_name_comp,,drop=FALSE]==1,arr.ind = TRUE)
   
   if(!is.null(dim(weight_ind_temp))){
     weight_ind_temp = cbind(rownames(model_comp$measurement[co_name_comp,,drop = FALSE])[weight_ind_temp[, 'row']],
