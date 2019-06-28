@@ -198,7 +198,7 @@ alpha_adjust=function(.alpha=args_default()$.alpha,
   }
   
   if(.approach_alpha_adjust == 'bonferroni'){
-    return(.alpha/n)
+    return(.alpha/.nr_comparisons)
   }
   
   
