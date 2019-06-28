@@ -97,7 +97,7 @@ parameter_difference=function(.object=args_default()$.object,
                         .ind_matrix,
                         .name_matrix,
                         .sep){
-    if(!is.null(dim(.name_matrix))){
+    if(!(dim(.name_matrix)[1]==0)){
       temp=c(.para_diff_matrix[.ind_matrix==1])
       # give names
       name=paste(.name_matrix[,1], .sep, .name_matrix[,2])
