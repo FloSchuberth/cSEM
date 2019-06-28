@@ -37,6 +37,11 @@ parameter_difference=function(.object=args_default()$.object,
     stop2("Indicators used in the comparison model are not specified in the original model.")
   }
   
+  # Check whether construct specified in the comparison model are the same as in the original model
+  if(!all(rownames(model_comp$measurement)%in%rownames(.object[[1]]$Information$Model$measurement))){
+    stop2("Constructs used in the comparison model are not specified in the original model.")
+  }
+  
   
   # Create indication matrix for structural coefficients 
   path=.object[[1]]$Estimates$Path_estimates
