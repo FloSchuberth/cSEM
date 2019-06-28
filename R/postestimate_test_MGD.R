@@ -291,10 +291,12 @@ testMGD.cSEMResults_multi <- function(
     })
     
     ref_dist_Chin_temp=purrr::transpose(ref_dist_Chin)
+    
+    # Outcome of the following needs to be matrix
     ref_dist_matrices_Chin =lapply(ref_dist_Chin_temp,function(x){
       temp = do.call(cbind,x)
       temp_ind = stats::complete.cases(temp)
-      temp[temp_ind,]
+      temp[temp_ind,,drop=FALSE]
       }
       )
     
@@ -339,7 +341,8 @@ testMGD.cSEMResults_multi <- function(
       "Number_of_observations"= sapply(X_all_list, nrow),
       "Bootstrap_values"      = list(
         "Klesel" = ref_dist_Klesel,
-        "Chin"   = ref_dist_matrices_Chin)
+        "Chin"   = ref_dist_matrices_Chin),
+      "Approach" = .approach_mgd
       )
     )
   }
