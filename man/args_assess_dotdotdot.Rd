@@ -10,6 +10,11 @@ Defaults to \code{0.05}.}
 \item{.closed_form_ci}{Logical. Should a closed-form confidence interval be computed?
 Defaults to \code{FALSE}.}
 
+\item{.model_implied}{Logical. Should the RMS_theta be computed using the
+model-implied construct correlation matrix (\code{TRUE})or the construct correlation matrix
+based on V(eta) = WSW' divided by the square root of the respective
+reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
+
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
 

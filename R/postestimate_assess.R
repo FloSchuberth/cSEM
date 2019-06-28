@@ -55,6 +55,10 @@
 #'   R2_inclded and R2_excluded are the R squares of the 
 #'   original structural model regression equation (R2_included) and the
 #'   alternative speficication with the k'th variable dropped (R2_excluded).}
+#' \item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "srmr"}{
+#'   Several absolute and incremental fit indices. Note that their suitability
+#'   for models containing composites modeled as common factors is still an
+#'   open research question.}
 #' \item{Fornell-Larcker criterion; "fl"}{An estimate of the 
 #'   convergent and/or discriminant validity of a construct. The Fornell-Larcker
 #'   criterion is a decision rule based on a comparison between the squared
@@ -82,9 +86,6 @@
 #'   composite or if the construct was explicitly given Mode B.
 #'   Hence RA is only conducated if `.object` was obtained using 
 #'   `.approach_weights = "PLS-PM"` and if at least one constructs mode is Mode B.}
-#' \item{Standardized root mean square residual; "srmr"}{The square root of the 
-#'   average elementwise squared distance between elements of the model-implied
-#'   and the empirical indicator corrleation matrix.}
 #' \item{Tau-equivalent reliability; "rho_T"}{An estimate of the
 #'   reliability assuming a tau-equivalent measurement model (i.e. a measurement
 #'   model with equal loadings) and a test score (proxy) based on unit weights.
@@ -255,21 +256,57 @@ assess.cSEMResults_default <- function(
     # Effect size
     out[["Effect_size"]] <- calculateEffectSize(.object)
   }
+  if(any(.quality_criterion %in% c("all", "cfi"))) {
+    # Effect size
+    out[["CFI"]] <- calculateCFI(.object)
+  }
+  if(any(.quality_criterion %in% c("all", "gfi"))) {
+    # Effect size
+    out[["GFI"]] <- calculateGFI(.object)
+  }
+  if(any(.quality_criterion %in% c("all", "ifi"))) {
+    # Effect size
+    out[["IFI"]] <- calculateIFI(.object)
+  }
+  if(any(.quality_criterion %in% c("all", "nfi"))) {
+    # Effect size
+    out[["NFI"]] <- calculateNFI(.object)
+  }
+  if(any(.quality_criterion %in% c("all", "nnfi"))) {
+    # Effect size
+    out[["NNFI"]] <- calculateNNFI(.object)
+  }
+  if(any(.quality_criterion %in% c("all", "rmsea"))) {
+    # Effect size
+    out[["RMSEA"]] <- calculateRMSEA(.object)
+  }
+  if(any(.quality_criterion %in% c("all", "rms_theta"))) {
+    # Effect size
+    out[["RMS_theta"]] <- calculateRMSTheta(.object, ...)
+  }
+  if(any(.quality_criterion %in% c("all", "srmr"))) {
+    # Effect size
+    out[["SRMR"]] <- calculateSRMR(.object, ...)
+  }
   if(any(.quality_criterion %in% c("all", "fl"))) {
     # Fornell-Larcker
     ## Get relevant objects
     con_types <-.object$Information$Model$construct_type
     names_cf  <- names(con_types[con_types == "Common factor"])
-    P <- .object$Estimates$Construct_VCV
+    P         <- .object$Estimates$Construct_VCV
     
     if(.only_common_factors) {
       P <- P[names_cf, names_cf]
     }
     
-    FL_matrix <- cov2cor(P)^2
-    diag(FL_matrix) <- calculateAVE(.object, 
-                                    .only_common_factors = .only_common_factors)
-    out[["Fornell-Larcker"]] <- FL_matrix
+    if(sum(dim(P)) > 0) {
+      FL_matrix <- cov2cor(P)^2
+      diag(FL_matrix) <- calculateAVE(.object, 
+                                      .only_common_factors = .only_common_factors)
+      out[["Fornell-Larcker"]] <- FL_matrix
+    }
+
+
   }
   if(any(.quality_criterion %in% c("all", "gof"))) {
     # GoF
@@ -296,10 +333,6 @@ assess.cSEMResults_default <- function(
   if(any(.quality_criterion %in% c("all", "ra"))) {
     # Redundancy analysis (RA)
     out[["RA"]] <- calculateRA(.object)
-  }
-  if(any(.quality_criterion %in% c("all", "srmr"))) {
-    # SRMR
-    out[["SRMR"]]  <- calculateSRMR(.object, ...)
   }
   if(any(.quality_criterion %in% c("all", "rho_T"))) {
     # RhoT

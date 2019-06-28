@@ -87,6 +87,10 @@ is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where
 R2_inclded and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
 alternative speficication with the k'th variable dropped (R2_excluded).}
+\item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "srmr"}{
+Several absolute and incremental fit indices. Note that their suitability
+for models containing composites modeled as common factors is still an
+open research question.}
 \item{Fornell-Larcker criterion; "fl"}{An estimate of the
 convergent and/or discriminant validity of a construct. The Fornell-Larcker
 criterion is a decision rule based on a comparison between the squared
@@ -114,9 +118,6 @@ whose mode is Mode B. This is the case if the construct is modeled as a
 composite or if the construct was explicitly given Mode B.
 Hence RA is only conducated if \code{.object} was obtained using
 \code{.approach_weights = "PLS-PM"} and if at least one constructs mode is Mode B.}
-\item{Standardized root mean square residual; "srmr"}{The square root of the
-average elementwise squared distance between elements of the model-implied
-and the empirical indicator corrleation matrix.}
 \item{Tau-equivalent reliability; "rho_T"}{An estimate of the
 reliability assuming a tau-equivalent measurement model (i.e. a measurement
 model with equal loadings) and a test score (proxy) based on unit weights.

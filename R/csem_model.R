@@ -432,6 +432,24 @@ parseModel <- function(.model, .instruments = NULL) {
       }
     }
     
+    # Currently, composite-based approaches (except GSCA ?) are unable to deal 
+    # with measurement errors accros blocks (even if they were, it is not implemented in cSEM).
+    # Which errors are across block
+    model_error_temp <- model_error
+    for(i in names_c) {
+      x              <- which(model_measurement[i, ] == 1)
+      model_error_temp[x, x] <- NA 
+    }
+    
+    contains_error <- sum(model_error_temp, na.rm = TRUE)
+
+    if(contains_error > 0) {
+      warning2("The following warning occured in the `parseModel()` function:\n",
+               "Measurement errors across blocks not supported (yet).",
+               " Specified error correlation is ignored.")
+    }
+
+    
     ### Order model ============================================================
     # Order the structual equations in a way that every equation depends on
     # exogenous variables and variables that have been explained in a previous equation

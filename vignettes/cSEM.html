@@ -111,7 +111,7 @@ code > span.ot { color: #007020; }
 
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Introduction to cSEM</h1>
-<h4 class="date project-date">Last edited: 2019-05-17</h4>
+<h4 class="date project-date">Last edited: 2019-06-21</h4>
 </section>
 
 
@@ -352,7 +352,7 @@ code > span.ot { color: #007020; }
 <a class="sourceLine" id="cb7-11" title="11">   <span class="dt">.estimate_structural         =</span> <span class="ot">TRUE</span>,</a>
 <a class="sourceLine" id="cb7-12" title="12">   <span class="dt">.id                          =</span> <span class="ot">NULL</span>,</a>
 <a class="sourceLine" id="cb7-13" title="13">   <span class="dt">.iter_max                    =</span> <span class="dv">100</span>,</a>
-<a class="sourceLine" id="cb7-14" title="14">   <span class="dt">.normality                   =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb7-14" title="14">   <span class="dt">.normality                   =</span> <span class="ot">FALSE</span>,</a>
 <a class="sourceLine" id="cb7-15" title="15">   <span class="dt">.PLS_approach_cf             =</span> <span class="st">&quot;dist_squared_euclid&quot;</span>,</a>
 <a class="sourceLine" id="cb7-16" title="16">   <span class="dt">.PLS_ignore_structural_model =</span> <span class="ot">FALSE</span>,</a>
 <a class="sourceLine" id="cb7-17" title="17">   <span class="dt">.PLS_modes                   =</span> <span class="ot">NULL</span>,</a>
@@ -397,7 +397,7 @@ code > span.ot { color: #007020; }
 </div>
 <div id="applying-a-postestimation-function" class="section level3">
 <h3>Applying a postestimation function</h3>
-<p>Currently, there are 4 major postestimation function and 3 test-family functions:</p>
+<p>Currently, there are 4 major postestimation function and 4 test-family functions:</p>
 <dl>
 <dt><code>assess()</code></dt>
 <dd><p>Assess the quality of the estimated model <em>without conducting a statistical test</em>. Quality in this case is taken to be a catch-all term for all common aspects of model assessment. This mainly comprises fit indices, reliability estimates, common validity assessment criteria and other related quality measures/indices that do not rely on a formal test procedure. In <strong>cSEM</strong> a generic (fit) index or quality/assessment measure is refered to as a <strong>quality criterion</strong>.</p>
@@ -415,6 +415,9 @@ code > span.ot { color: #007020; }
 <div id="the-test_-family-of-postestimation-functions" class="section level4">
 <h4>The <code>test_*</code> family of postestimation functions</h4>
 <dl>
+<dt><code>testHausman2()</code></dt>
+<dd><p>The regression-based Hausman test.</p>
+</dd>
 <dt><code>testOMF()</code></dt>
 <dd><p>Test for overall model fit based on <span class="citation">Beran and Srivastava (1985)</span>. See also <span class="citation">Dijkstra and Henseler (2015)</span>.</p>
 </dd>
@@ -520,7 +523,7 @@ code > span.ot { color: #007020; }
 <p>Dijkstra, Theo K., and Jörg Henseler. 2015. “Consistent and Asymptotically Normal PLS Estimators for Linear Structural Equations.” <em>Computational Statistics &amp; Data Analysis</em> 81: 10–23.</p>
 </div>
 <div id="ref-Henseler2016">
-<p>Henseler, Jörrg, Christian M. Ringle, and Marko Sarstedt. 2016. “Testing Measurement Invariance of Composites Using Partial Least Squares.” Edited by Ruey-Jer “Bryan” Jean Rudolf R. Sinkovics. <em>International Marketing Review</em> 33 (3): 405–31. <a href="https://doi.org/10.1108/imr-09-2014-0304">https://doi.org/10.1108/imr-09-2014-0304</a>.</p>
+<p>Henseler, Jörg, Christian M. Ringle, and Marko Sarstedt. 2016. “Testing Measurement Invariance of Composites Using Partial Least Squares.” Edited by Ruey-Jer “Bryan” Jean Rudolf R. Sinkovics. <em>International Marketing Review</em> 33 (3): 405–31. <a href="https://doi.org/10.1108/imr-09-2014-0304">https://doi.org/10.1108/imr-09-2014-0304</a>.</p>
 </div>
 <div id="ref-Rigdon2012">
 <p>Rigdon, Edward E. 2012. “Rethinking Partial Least Squares Path Modeling: In Praise of Simple Methods.” <em>Long Range Planning</em> 45 (5-6): 341–58. <a href="https://doi.org/10.1016/j.lrp.2012.09.010">https://doi.org/10.1016/j.lrp.2012.09.010</a>.</p>
