@@ -156,7 +156,8 @@
 #' @param .probs A vector of probabilities.
 #' @param .quality_criterion Character string. A single character string or a
 #'   vector of character strings naming the quality criterion to compute. See 
-#'   the Details section below for a list of possible candidates. Defaults to "*all*".
+#'   the Details section for a list of possible candidates. 
+#'   Defaults to "*all*".
 #' @param .quantity Character string. Which statistic should be returned?
 #'   One of (TODO) 
 #'   Defaults to (TODO).

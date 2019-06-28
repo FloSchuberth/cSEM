@@ -21,7 +21,8 @@ Defaults to \code{TRUE}.}
 
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
-the Details section below for a list of possible candidates. Defaults to "\emph{all}".}
+the Details section for a list of possible candidates.
+Defaults to "\emph{all}".}
 
 \item{...}{Further arguments passed to functions called by \code{assess()}.
 See \link{args_assess_dotdotdot} for a complete list of available arguments.}
@@ -87,10 +88,13 @@ is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where
 R2_inclded and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
 alternative speficication with the k'th variable dropped (R2_excluded).}
-\item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "srmr"}{
+\item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "rms_theta"
+"srmr"}{
 Several absolute and incremental fit indices. Note that their suitability
 for models containing composites modeled as common factors is still an
-open research question.}
+open research question. Also note that fit indices are not tests and
+decisions based on common cut-offs proposed in the literature should always
+be acompanied by theoretical reasoning.}
 \item{Fornell-Larcker criterion; "fl"}{An estimate of the
 convergent and/or discriminant validity of a construct. The Fornell-Larcker
 criterion is a decision rule based on a comparison between the squared

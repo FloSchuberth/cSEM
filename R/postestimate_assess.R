@@ -55,10 +55,13 @@
 #'   R2_inclded and R2_excluded are the R squares of the 
 #'   original structural model regression equation (R2_included) and the
 #'   alternative speficication with the k'th variable dropped (R2_excluded).}
-#' \item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "srmr"}{
+#' \item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "rms_theta"
+#'   "srmr"}{
 #'   Several absolute and incremental fit indices. Note that their suitability
 #'   for models containing composites modeled as common factors is still an
-#'   open research question.}
+#'   open research question. Also note that fit indices are not tests and
+#'   decisions based on common cut-offs proposed in the literature should always
+#'   be acompanied by theoretical reasoning.}
 #' \item{Fornell-Larcker criterion; "fl"}{An estimate of the 
 #'   convergent and/or discriminant validity of a construct. The Fornell-Larcker
 #'   criterion is a decision rule based on a comparison between the squared
