@@ -283,7 +283,7 @@ testMGD.cSEMResults_multi <- function(
     
     # Here we can correct alpha for multiple test
     alpha_Chin=alpha_adjust(.alpha=.alpha,
-                            ..approach_alpha_adjust=.approach_alpha_adjust,
+                            .approach_alpha_adjust=.approach_alpha_adjust,
                             .nr_comparison=sum(sapply(teststat_Chin,length))*length(.alpha))
     
 
