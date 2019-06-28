@@ -14,6 +14,9 @@
 parameter_difference=function(.object=args_default()$.object,
                               .comparison=args_default()$.comparison){
   
+  if(is.null(.comparison)){
+    out = NA
+  } else {
   # Parse model that indicates which parameters should be compared
   model_comp=cSEM:::parseModel(.comparison,.check_errors = F)
   
@@ -127,6 +130,6 @@ parameter_difference=function(.object=args_default()$.object,
   out=mapply(function(x,y,z){c(x,y,z)},
              x=difference_path,y=difference_load,z=difference_weight,
              SIMPLIFY = FALSE)
-  
+  }
   return(out)
 }

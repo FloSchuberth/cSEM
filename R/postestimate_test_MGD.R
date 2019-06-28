@@ -144,31 +144,28 @@ testMGD.cSEMResults_multi <- function(
       } 
     }
     
+    
 
+    ### Calculation of the test statistics======================================
     
-    
-    switch(.approach_mgd,
-           "Klesel" = {
-    ### Calculation===============================================================
-    ## Get the fitted values
+
+    ## Get the model-implied VCV
     fit <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
     
-    ## Compute the test statistics
-    teststat <- c(
+    ## Compute the test statistics 
+    teststat <- list(
+      #  Approach suggested by Klesel et al. (2019)
+      c(
       "dG" = calculateDistance(.matrices = fit, .distance = "geodesic"),
       "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")
-    )
-           },
-    "Chin" = {
+    ),
+    # Approach suggested by Chin & Dibbern (2010)
+     parameter_difference(.object=.object,.comparison = .comparison))
       
-     teststat_Dibbern= parameter_difference(.object=.object,.comparison = .comparison)
       
-  
-      
-    },
-    "Sarstedt" = {
-      stop2("Sarstedt et al. approach is not implemented.")
-    })
+
+
+    ## Start Permutation
     # Put data of each groups in a list and combine
     X_all_list  <- lapply(.object, function(x) x$Information$Data)
     X_all       <- do.call(rbind, X_all_list)
@@ -187,7 +184,7 @@ testMGD.cSEMResults_multi <- function(
     }
     
     ## Calculate reference distribution
-    ref_dist         <- list()
+    ref_dist        <- list()
     n_inadmissibles  <- 0
     counter <- 0
     repeat{
@@ -210,25 +207,21 @@ testMGD.cSEMResults_multi <- function(
       if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
         # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
         # not ok
-        switch(.approach_mgd,
-               "Klesel" = {
+
+        # Calculate test statistic for permutation sample
+
         fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
-        ref_dist[[counter]] <- c(
+        
+        ref_dist[[counter]] <- list(c(
           "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
           "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
-        )
-               },
-        "Chin" = {
+        ),parameter_difference(.object=Est_temp,.comparison = .comparison))
 
+      # Approach suggested by Chin & Dibbern
           # Calculate differences based on the estimation based on the permutation sample
-          parameter_difference(.object=Est_temp,.comparison = .comparison)
+          # ref_dist[[counter]] <- parameter_difference(.object=Est_temp,.comparison = .comparison)
           
           
-          
-        },
-        "Sarstedt" = {
-          stop2("Not implemented Sarstedt et al")
-        })
       } else if(status_code != 0 & .handle_inadmissibles == "drop") {
         # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
         ref_dist[[counter]] <- NA
@@ -271,7 +264,7 @@ testMGD.cSEMResults_multi <- function(
                                                  probs =  1-.alpha, drop = FALSE)
     
     ## Compare critical value and teststatistic
-    decision <- teststat < critical_values # a logical (2 x p) matrix with each column
+    decision <- teststat_Klesel < critical_values # a logical (2 x p) matrix with each column
     # representing the decision for one
     # significance level. TRUE = no evidence 
     # against the H0 --> not reject
@@ -279,7 +272,7 @@ testMGD.cSEMResults_multi <- function(
     
     # Return output
     out <- list(
-      "Test_statistic"     = teststat,
+      "Test_statistic"     = teststat_Klesel,
       "Critical_value"     = critical_values, 
       "Decision"           = decision, 
       "Information"        = list(
