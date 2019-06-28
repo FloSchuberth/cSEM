@@ -31,6 +31,7 @@ parameter_difference=function(.object=args_default()$.object,
                         colnames(model_comp$structural)[path_ind_temp[, 'col']])
     
     path_ind[path_ind_temp]=1
+
   }
   
   # Create indication matrix for loadings
