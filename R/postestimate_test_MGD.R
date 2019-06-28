@@ -315,7 +315,7 @@ testMGD.cSEMResults_multi <- function(
 
     decision_Chin <- mapply(function(teststat,critical){
       temp=lapply(critical, function(x){
-        x[,1]< teststat | teststat < x[,2]
+        x[,1]< teststat & teststat < x[,2]
 
         })
     },teststat = teststat_Chin, critical = critical_values_Chin,SIMPLIFY = FALSE)
@@ -332,7 +332,7 @@ testMGD.cSEMResults_multi <- function(
       "Chin" = list(
         "Test_statistic"     = teststat_Chin,
         "Critical_value"     = critical_values_Chin, 
-        "Decision"           = NULL,
+        "Decision"           = decision_Chin,
         "Alpha adjusted"     =  NULL),
     "Information"        = list(
       "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
