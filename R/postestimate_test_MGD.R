@@ -10,7 +10,7 @@
 #'  .approach_mgd          = args_default()$.approach_mgd,
 #'  .comparison            = args_default()$comparison,
 #'  .alpha                = args_default()$.alpha,
-#'  .alpha_adjustment     = args_default()$.alpha_adjustment,
+#'  .approach_alpha_adjust= args_default()$.approach_alpha_adjust,
 #'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
 #'  .R                    = args_default()$.R,
 #'  .saturated            = args_default()$.saturated,
@@ -60,7 +60,7 @@ testMGD <- function(
   .approach_mgd          = args_default()$.approach_mgd,
   .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
-  .alpha_adjustment     = args_default()$.alpha_adjustment,
+  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
@@ -282,7 +282,9 @@ testMGD.cSEMResults_multi <- function(
       )
     
     # Here we can correct alpha for multiple test
-    alpha_Chin=.alpha
+    alpha_Chin=alpha_adjust(.alpha=.alpha,
+                            ..approach_alpha_adjust=.approach_alpha_adjust,
+                            .nr_comparison=sum(sapply(teststat_Chin,length))*length(.alpha))
     
 
     critical_values_Chin = lapply(alpha_Chin,function(alpha){
