@@ -371,7 +371,7 @@ print.cSEMTestMGD <- function(x, ...) {
   if("Klesel" %in% x$Information$Approach){
   cat(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Test for multigroup differences based on Klesel (forthcoming)",
+    rule(center = "Test for multigroup differences based on Klesel et al. (2019)",
          width = 80), 
     sep = ""
   )
@@ -379,7 +379,7 @@ print.cSEMTestMGD <- function(x, ...) {
   ## Null hypothesis -----------------------------------------------------------
   cat(
     "\n\nNull hypothesis:\n\n", 
-    boxx("H0: No significant difference between groups.", float = "center"), 
+    boxx("H0: Model-implied variance-covariance matrix is equal across groups.", float = "center"), 
     sep = ""
   )
   
@@ -468,6 +468,133 @@ print.cSEMTestMGD <- function(x, ...) {
     }
     cat("\n\t")
   }
+  }
+  
+  
+  if("Chin" %in% x$Information$Approach){
+    # cat(
+    #   rule(line = "bar2", width = 80), "\n",
+    #   rule(center = "Test for multigroup differences based on Chin & Dibbern (2010).",
+    #        width = 80), 
+    #   sep = ""
+    # )
+    # 
+    # ## Null hypothesis -----------------------------------------------------------
+    # cat(
+    #   "\n\nNull hypothesis:\n\n", 
+    #   boxx("H0: Parameter is equal across groups.", float = "center"), 
+    #   sep = ""
+    # )
+    
+    ## Test statistic and critical value -----------------------------------------
+    for(alpha in 1:length(x$Chin$Critical_value)){
+      alpha_name=names(x$Chin$Critical_value)[alpha]
+      alpha_val=x$Chin$`Alpha adjusted`
+      cat("Significance level:",alpha_name,"\n",sep=' ')
+      for(comp in 1:length(x$Chin$Test_statistic)){
+      
+        
+        temp=cbind(x$Chin$Test_statistic[[comp]],
+              x$Chin$Critical_value[[alpha]][[comp]])
+        cat("\n","Comparison:", names(x$Chin$Test_statistic)[comp],"\n", sep=" ")
+        cat("Parameter","Test statistic",paste0(alpha_val[alpha]/2*100, "% Lower bound"),
+            paste0((1-alpha_val[alpha]/2)*100, "% Upper bound"),"Decision","\n")
+        for(ii in 1:dim(temp)[1]){
+          cat(rownames(temp)[ii],temp[ii,],
+              ifelse(x$Chin$Decision[[alpha]][[comp]][ii],
+                     "Do not reject", 
+                     "reject"), "\n",sep=" ")
+        }
+      }
+    }
+    
+    
+    
+    
+    # cat("\n\nTest statistic and critical value: \n\n\t", sep = "")
+    # 
+    # cat(
+    #   col_align("", width = 20),
+    #   col_align("", width = 14), 
+    #   "\t",
+    #   col_align("Critical value", width = 8*ncol(x$Klesel$Critical_value), 
+    #             align = "center"),
+    #   sep = ""
+    # )
+    # cat(
+    #   "\n\t",
+    #   col_align("Distance measure", width = 20),
+    #   col_align("Test statistic", width = 14), 
+    #   "\t",
+    #   sep = ""
+    # )
+    # 
+    # for(i in colnames(x$Klesel$Critical_value)) {
+    #   cat(col_align(i, width = 6, align = "center"), "\t", sep = "")
+    # }
+    # 
+    # cat("\n\t")
+    # 
+    # for(j in seq_along(x$Klesel$Test_statistic)) {
+    #   cat(
+    #     col_align(names(x$Klesel$Test_statistic)[j], width = 20),
+    #     col_align(sprintf("%.4f", x$Klesel$Test_statistic[j]), width = 14, 
+    #               align = "center"), 
+    #     "\t", 
+    #     sep = ""
+    #   )
+    #   for(k in 1:ncol(x$Klesel$Critical_value)) {
+    #     cat(sprintf("%.4f", x$Klesel$Critical_value[j, k]), "\t", sep = "")
+    #   }
+    #   cat("\n\t")
+    # }
+    # 
+    # ## Decision ------------------------------------------------------------------
+    # cat("\n\nDecision: \n\n\t", sep = "")
+    # 
+    # # Width of columns
+    # l <- apply(x$Klesel$Decision, 2, function(x) {
+    #   ifelse(any(x == TRUE), nchar("Do not reject"), nchar("reject"))
+    # })
+    # 
+    # l1 <- max(c(sum(l) + 3*(ncol(x$Klesel$Decision) - 1)), nchar("Significance level"))
+    # 
+    # cat(
+    #   col_align("", width = 20), 
+    #   "\t",
+    #   col_align("Significance level", 
+    #             width = l1, 
+    #             align = "center"),
+    #   sep = ""
+    # )
+    # cat(
+    #   "\n\t",
+    #   col_align("Distance measure", width = 20), 
+    #   "\t",
+    #   sep = ""
+    # )
+    # 
+    # for(i in colnames(x$Klesel$Critical_value)) {
+    #   cat(col_align(i, width = l[i], align = "center"), "\t", sep = "")
+    # }
+    # 
+    # cat("\n\t")
+    # 
+    # for(j in seq_along(x$Klesel$Test_statistic)) {
+    #   
+    #   cat(col_align(names(x$Klesel$Test_statistic)[j], width = 20), "\t", sep = "")
+    #   
+    #   for(k in 1:ncol(x$Klesel$Critical_value)) {
+    #     cat(
+    #       col_align(ifelse(x$Klesel$Decision[j, k], 
+    #                        green("Do not reject"), red("reject")), 
+    #                 width = l[k], align = "center"), 
+    #       "\t", 
+    #       sep = ""
+    #     )
+    #   }
+    #   cat("\n\t")
+    # }
   }
   ## Additional information ----------------------------------------------------
   cat("\nAdditional information:")
