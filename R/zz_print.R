@@ -368,6 +368,7 @@ print.cSEMTestOMF <- function(x, ...) {
 #' @keywords internal
 print.cSEMTestMGD <- function(x, ...) {
   
+  if("Klesel" %in% x$Information$Approach){
   cat(
     rule(line = "bar2", width = 80), "\n",
     rule(center = "Test for multigroup differences based on Klesel (forthcoming)",
@@ -389,7 +390,7 @@ print.cSEMTestMGD <- function(x, ...) {
     col_align("", width = 20),
     col_align("", width = 14), 
     "\t",
-    col_align("Critical value", width = 8*ncol(x$Critical_value), 
+    col_align("Critical value", width = 8*ncol(x$Klesel$Critical_value), 
               align = "center"),
     sep = ""
   )
@@ -401,22 +402,22 @@ print.cSEMTestMGD <- function(x, ...) {
     sep = ""
   )
   
-  for(i in colnames(x$Critical_value)) {
+  for(i in colnames(x$Klesel$Critical_value)) {
     cat(col_align(i, width = 6, align = "center"), "\t", sep = "")
   }
   
   cat("\n\t")
   
-  for(j in seq_along(x$Test_statistic)) {
+  for(j in seq_along(x$Klesel$Test_statistic)) {
     cat(
-      col_align(names(x$Test_statistic)[j], width = 20),
-      col_align(sprintf("%.4f", x$Test_statistic[j]), width = 14, 
+      col_align(names(x$Klesel$Test_statistic)[j], width = 20),
+      col_align(sprintf("%.4f", x$Klesel$Test_statistic[j]), width = 14, 
                 align = "center"), 
       "\t", 
       sep = ""
     )
-    for(k in 1:ncol(x$Critical_value)) {
-      cat(sprintf("%.4f", x$Critical_value[j, k]), "\t", sep = "")
+    for(k in 1:ncol(x$Klesel$Critical_value)) {
+      cat(sprintf("%.4f", x$Klesel$Critical_value[j, k]), "\t", sep = "")
     }
     cat("\n\t")
   }
@@ -425,11 +426,11 @@ print.cSEMTestMGD <- function(x, ...) {
   cat("\n\nDecision: \n\n\t", sep = "")
   
   # Width of columns
-  l <- apply(x$Decision, 2, function(x) {
+  l <- apply(x$Klesel$Decision, 2, function(x) {
     ifelse(any(x == TRUE), nchar("Do not reject"), nchar("reject"))
   })
   
-  l1 <- max(c(sum(l) + 3*(ncol(x$Decision) - 1)), nchar("Significance level"))
+  l1 <- max(c(sum(l) + 3*(ncol(x$Klesel$Decision) - 1)), nchar("Significance level"))
   
   cat(
     col_align("", width = 20), 
@@ -446,19 +447,19 @@ print.cSEMTestMGD <- function(x, ...) {
     sep = ""
   )
   
-  for(i in colnames(x$Critical_value)) {
+  for(i in colnames(x$Klesel$Critical_value)) {
     cat(col_align(i, width = l[i], align = "center"), "\t", sep = "")
   }
   
   cat("\n\t")
   
-  for(j in seq_along(x$Test_statistic)) {
+  for(j in seq_along(x$Klesel$Test_statistic)) {
     
-    cat(col_align(names(x$Test_statistic)[j], width = 20), "\t", sep = "")
+    cat(col_align(names(x$Klesel$Test_statistic)[j], width = 20), "\t", sep = "")
     
-    for(k in 1:ncol(x$Critical_value)) {
+    for(k in 1:ncol(x$Klesel$Critical_value)) {
       cat(
-        col_align(ifelse(x$Decision[j, k], 
+        col_align(ifelse(x$Klesel$Decision[j, k], 
                          green("Do not reject"), red("reject")), 
                   width = l[k], align = "center"), 
         "\t", 
@@ -467,7 +468,7 @@ print.cSEMTestMGD <- function(x, ...) {
     }
     cat("\n\t")
   }
-  
+  }
   ## Additional information ----------------------------------------------------
   cat("\nAdditional information:")
   cat(
@@ -497,6 +498,7 @@ print.cSEMTestMGD <- function(x, ...) {
   }
   
   cat("\n", rule(line = "bar2", width = 80), sep = "")
+  
 }
 
 #' `cSEMTestMICOM` method for `print()`
