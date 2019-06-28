@@ -26,7 +26,8 @@ parameter_difference=function(.object=args_default()$.object,
   path_ind=path
   path_ind[]=0
   path_ind_temp=which(model_comp$structural==1,arr.ind = TRUE)
-  if(!is.null(dim(path_ind_temp))){
+
+  if(!(dim(path_ind_temp)[1]==0)){  
     path_ind_temp=cbind(rownames(model_comp$structural)[path_ind_temp[, 'row']],
                         colnames(model_comp$structural)[path_ind_temp[, 'col']])
     
@@ -44,7 +45,7 @@ parameter_difference=function(.object=args_default()$.object,
   
   load_ind_temp = which(model_comp$measurement[cf_name_comp,,drop=FALSE]==1,arr.ind = TRUE)
   
-  if(!is.null(dim(load_ind_temp))){
+  if(!(dim(load_ind_temp)[1]==0)){
     load_ind_temp = cbind(rownames(model_comp$measurement[cf_name_comp,,drop = FALSE])[load_ind_temp[, 'row']],
                           colnames(model_comp$measurement[cf_name_comp,,drop = FALSE])[load_ind_temp[, 'col']])
     load_ind[load_ind_temp]=1
@@ -60,7 +61,7 @@ parameter_difference=function(.object=args_default()$.object,
   
   weight_ind_temp = which(model_comp$measurement[co_name_comp,,drop=FALSE]==1,arr.ind = TRUE)
   
-  if(!is.null(dim(weight_ind_temp))){
+  if(!(dim(weight_ind_temp)[1]==0)){
     weight_ind_temp = cbind(rownames(model_comp$measurement[co_name_comp,,drop = FALSE])[weight_ind_temp[, 'row']],
                             colnames(model_comp$measurement[co_name_comp,,drop = FALSE])[weight_ind_temp[, 'col']])
     
