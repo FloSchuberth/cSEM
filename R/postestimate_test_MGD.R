@@ -161,7 +161,7 @@ testMGD.cSEMResults_multi <- function(
            },
     "Chin" = {
       
-      parameter_difference(.object=.object,.comparison = .comparison)
+     teststat_Dibbern= parameter_difference(.object=.object,.comparison = .comparison)
       
   
       
@@ -221,27 +221,7 @@ testMGD.cSEMResults_multi <- function(
         "Chin" = {
 
           # Calculate differences based on the estimation based on the permutation sample
-          # Path coefficients
-          matrices_path_per=lapply(Est_temp,function(x){x$Estimates$Path_estimates})
-          
-          temp <- utils::combn(matrices_path_per, 2, simplify = FALSE)
-          diff_path_per=lapply(temp, function(x){
-            x[[1]]-x[[2]]
-          })
-          
-          # Loadings
-          matrices_load_per=lapply(Est_temp,function(x){x$Estimates$Loading_estimates})
-          temp <- utils::combn(matrices_load_per, 2, simplify = FALSE)
-          diff_load_per=lapply(temp, function(x){
-            x[[1]]-x[[2]]
-          })
-          
-          # Weights
-          matrices_weight_per=lapply(Est_temp,function(x){x$Estimates$Weight_estimates})
-          temp <- utils::combn(matrices_weight_per, 2, simplify = FALSE)
-          diff_weight_per=lapply(temp, function(x){
-            x[[1]]-x[[2]]
-          })
+          parameter_difference(.object=Est_temp,.comparison = .comparison)
           
           
           
