@@ -275,9 +275,8 @@ testMGD.cSEMResults_multi <- function(
     teststat_Klesel <- teststat$Klesel
     ## Compare critical value and teststatistic
     decision_Klesel <- teststat_Klesel < critical_values_Klesel # a logical (2 x p) matrix with each column
-    # representing the decision for one
-    # significance level. TRUE = no evidence 
-    # against the H0 --> not reject
+    # representing the decision for one significance level. 
+    # TRUE = no evidence against the H0 --> not reject
     # FALSE --> reject
     
     # Approach suggested by Chin & Dibbern (2010)
