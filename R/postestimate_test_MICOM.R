@@ -1,22 +1,23 @@
 #' Test measurement invariance of composites
 #'
 #' This functions performs the test for measurement invariance of composites
-#' proposed by Henseler et al. (2016).
+#' proposed by \insertCite{Henseler2016}{cSEM}.
 #'
-#' The test is only meaningful for composite models.
+#' The test is only meaningful for concepts modeled as composites.
 #'
 #' If more than two groups are to be compared issues related to multiple testing
 #' should be taken into account.
 #'
 #' The number of permutation runs defaults to `args_default()$.R` for performance reasons.
-#' According to Henseler et al. (2016) the number of permutations should be at least 5000 for
-#' assessment to be reliable.
+#' According to \insertCite{Henseler2016}{cSEM} the number of permutations should 
+#' be at least 5000 for assessment to be sufficiently reliable.
 #'
 #' @usage testMICOM(
 #'  .object               = args_default()$.object,
 #'  .alpha                = args_default()$.alpha,
 #'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
 #'  .R                    = args_default()$.R,
+#'  .seed                 = args_default()$.seed,
 #'  .verbose              = args_default()$.verbose
 #'  )
 #'
@@ -31,10 +32,8 @@
 #' \item{**Meta_information**}{A list of additional information on the test.}
 #' }
 #'
-#' @examples
-#' \dontrun{
-#' # TODO
-#' }
+#' @references
+#'   \insertAllCited{}
 #'
 #' @export
 #'
@@ -44,6 +43,7 @@ testMICOM <- function(
   .alpha                = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R                    = args_default()$.R,
+  .seed                 = args_default()$.seed,
   .verbose              = args_default()$.verbose
 ) {
   # Implementation is based on:
@@ -66,9 +66,10 @@ testMICOM.cSEMResults_default <- function(
   .alpha                = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R                    = args_default()$.R,
+  .seed                 = args_default()$.seed,
   .verbose              = args_default()$.verbose
 ) {
-  stop("At least 2 groups required for the MICOM test.", call. = FALSE)
+  stop2("At least 2 groups required for the MICOM test.")
 }
 
 #' @describeIn testMICOM (TODO)
@@ -79,6 +80,7 @@ testMICOM.cSEMResults_multi <- function(
   .alpha                = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R                    = args_default()$.R,
+  .seed                 = args_default()$.seed,
   .verbose              = args_default()$.verbose
 ) {
   ## If second-order
@@ -154,6 +156,13 @@ testMICOM.cSEMResults_multi <- function(
     if(.verbose){
       pb <- txtProgressBar(min = 0, max = .R, style = 3)
     }
+    
+    ## Create seed if not already set
+    if(is.null(.seed)) {
+      .seed <- sample(.Random.seed, 1)
+    }
+    ## Set seed
+    set.seed(.seed)
     
     ## Calculate reference distribution
     ref_dist         <- list()
@@ -363,6 +372,12 @@ testMICOM.cSEMResults_multi <- function(
       ) 
     ) 
   }
+  
+  ## Remove the seed since it is set globally. Reset immediately by calling
+  ## any kind of function that requires .Random.seed as this causes R to
+  ## to create a new one.
+  rm(.Random.seed, envir=.GlobalEnv)
+  runif(1) # dont remove; this sets up a new .Random.seed
   
   class(out) <- "cSEMTestMICOM"
   return(out)

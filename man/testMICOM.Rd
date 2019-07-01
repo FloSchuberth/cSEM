@@ -12,6 +12,7 @@ testMICOM(
  .alpha                = args_default()$.alpha,
  .handle_inadmissibles = args_default()$.handle_inadmissibles,
  .R                    = args_default()$.R,
+ .seed                 = args_default()$.seed,
  .verbose              = args_default()$.verbose
  )
 
@@ -19,12 +20,14 @@ testMICOM(
   \method{testMICOM}{cSEMResults_default}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .verbose = args_default()$.verbose)
+  .R = args_default()$.R, .seed = args_default()$.seed,
+  .verbose = args_default()$.verbose)
 
 \method{testMICOM}{cSEMResults_multi}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .verbose = args_default()$.verbose)
+  .R = args_default()$.R, .seed = args_default()$.seed,
+  .verbose = args_default()$.verbose)
 
 
   \method{testMICOM}{cSEMResults_2ndorder}(.object = args_default()$.object,
@@ -49,6 +52,9 @@ Defaults to "\emph{drop}".}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
+\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen.}
+
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
 }
@@ -64,17 +70,17 @@ An object of class "testMICOM" is a named list containing the following list ele
 }
 \description{
 This functions performs the test for measurement invariance of composites
-proposed by Henseler et al. (2016).
+proposed by \insertCite{Henseler2016}{cSEM}.
 }
 \details{
-The test is only meaningful for composite models.
+The test is only meaningful for concepts modeled as composites.
 
 If more than two groups are to be compared issues related to multiple testing
 should be taken into account.
 
 The number of permutation runs defaults to \code{args_default()$.R} for performance reasons.
-According to Henseler et al. (2016) the number of permutations should be at least 5000 for
-assessment to be reliable.
+According to \insertCite{Henseler2016}{cSEM} the number of permutations should
+be at least 5000 for assessment to be sufficiently reliable.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -85,9 +91,6 @@ assessment to be reliable.
 \item \code{cSEMResults_2ndorder}: (TODO)
 }}
 
-\examples{
-\dontrun{
-# TODO
-}
-
+\references{
+\insertAllCited{}
 }
