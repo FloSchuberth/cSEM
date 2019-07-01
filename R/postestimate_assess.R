@@ -155,8 +155,7 @@
 #' eta3 ~ eta1 + eta2
 #' 
 #' # (Reflective) measurement model
-
-#' csem#' eta1 =~ y11 + y12 + y13
+#' eta1 =~ y11 + y12 + y13
 #' eta2 =~ y21 + y22 + y23
 #' eta3 =~ y31 + y32 + y33
 #' "
@@ -169,7 +168,7 @@
 #' a$HTMT
 #' 
 #' ## Resampling ---------------------------------------------------------------
-#' # To resample a given quality criterion use csem's .user_funs argument
+#' # To resample a given quality criterion use csem()'s .user_funs argument
 #' 
 #' csem(threecommonfactors, model, 
 #'   .resample_method = "bootstrap", 
