@@ -33,7 +33,8 @@ testMICOM(
   \method{testMICOM}{cSEMResults_2ndorder}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .verbose = args_default()$.verbose)
+  .R = args_default()$.R, .seed = args_default()$.seed,
+  .verbose = args_default()$.verbose)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}

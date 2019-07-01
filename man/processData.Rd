@@ -6,7 +6,7 @@
 \usage{
 processData(
   .data        = NULL, 
-  .model       = NuLL, 
+  .model       = NULL, 
   .instruments = NULL
   )
 }

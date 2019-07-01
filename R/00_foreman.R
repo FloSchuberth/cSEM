@@ -198,13 +198,13 @@ foreman <- function(
   ## Estimate structural coef
   if(.estimate_structural) {
     estim_results <- estimatePath(
-      .approach_nl   = .approach_nl,
-      .approach_path = .approach_paths,
-      .csem_model    = csem_model,
-      .H             = H,
-      .normality     = .normality,
-      .P             = P,
-      .Q             = Q
+      .approach_nl    = .approach_nl,
+      .approach_paths = .approach_paths,
+      .csem_model     = csem_model,
+      .H              = H,
+      .normality      = .normality,
+      .P              = P,
+      .Q              = Q
     ) 
   } else {
     estim_results <- NULL

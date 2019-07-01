@@ -365,10 +365,11 @@ testMICOM.cSEMResults_multi <- function(
         )
       ),
       "Information" = list(
-        "Number_admissibles"    = length(ref_dist),
-        "Total_runs"            = counter + n_inadmissibles,
-        "Group_names"           = names(.object),
-        "Number_of_observations"= sapply(X_list, nrow)
+        "Group_names"            = names(.object),
+        "Number_admissibles"     = length(ref_dist),
+        "Number_of_observations" = sapply(X_list, nrow),
+        "Total_runs"             = counter + n_inadmissibles,
+        "Seed"                   = .seed
       ) 
     ) 
   }
@@ -391,6 +392,7 @@ testMICOM.cSEMResults_2ndorder <- function(
   .alpha                = args_default()$.alpha,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R                    = args_default()$.R,
+  .seed                 = args_default()$.seed,           
   .verbose              = args_default()$.verbose
 ) {
   stop2("Currently, second-order models are not supported by `testMICOM()`.")
