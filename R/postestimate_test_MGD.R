@@ -343,7 +343,8 @@ testMGD.cSEMResults_multi <- function(
         "Klesel" = ref_dist_Klesel,
         "Chin"   = ref_dist_matrices_Chin),
       "Approach" = .approach_mgd,
-      "Seed"     = .seed
+      "Seed"     = .seed,
+      "Alpha"    = .alpha
       )
     )
   }
