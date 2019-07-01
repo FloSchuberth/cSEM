@@ -313,12 +313,13 @@ testMGD.cSEMResults_multi <- function(
     
     names(critical_values_Chin) = paste0(alpha_Chin*100,'%')
 
-    decision_Chin <- lapply(critical_values_Chin,function(critical){
-      temp=mapply(function(stat,crit){
+    decision_Chin <- lapply(critical_values_Chin,function(critical){# goes over the different significance levels
+      temp=mapply(function(stat,crit){# goes over the different group comparisons
         crit[,1]< stat & stat < crit[,2]
 
         },stat=teststat_Chin,crit=critical,SIMPLIFY = FALSE)
-    })
+    return(temp)
+      })
     
     names(decision_Chin) = paste0(alpha_Chin*100,'%')
     
