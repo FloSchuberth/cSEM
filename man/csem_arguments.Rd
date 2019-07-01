@@ -16,6 +16,9 @@ Defaults to \code{0.05}.}
 second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
 Defaults to "\emph{3stage}".}
 
+\item{.approach_alpha_adjust}{Character string. Approach used to adjust the significance level.
+One of: "\emph{none}", "\emph{bonferroni}",}
+
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "\emph{none}" in which case the standard
 Bravais-Person correlation is used,
@@ -64,6 +67,9 @@ For possible choices see \code{\link[=infer]{infer()}}.}
 
 \item{.closed_form_ci}{Logical. Should a closed-form confidence interval be computed?
 Defaults to \code{FALSE}.}
+
+\item{.comparison}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
+parameters are compared.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
@@ -174,6 +180,8 @@ Only used internally.}
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 Defaults to \code{FALSE}. Ignored if the model is linear.}
+
+\item{.nr_comparisons}{Numeric. Indicating the number of comparisons. Defaults to \code{NULL}.}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 

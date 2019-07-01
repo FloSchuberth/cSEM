@@ -5,51 +5,66 @@
 \alias{testMGD.cSEMResults_default}
 \alias{testMGD.cSEMResults_multi}
 \alias{testMGD.cSEMResults_2ndorder}
-\title{Estimates the distance between multiple groups.}
+\title{Tests for multiple groups.}
 \usage{
 testMGD(
- .object               = args_default()$.object,
+ .object                = args_default()$.object,
+ .alpha                 = args_default()$.alpha,
+ .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
  .approach_mgd          = args_default()$.approach_mgd,
- .alpha                = args_default()$.alpha,
- .handle_inadmissibles = args_default()$.handle_inadmissibles,
- .R                    = args_default()$.R,
- .saturated            = args_default()$.saturated,
- .type_vcv             = args_default()$.type_vcv,
- .verbose              = args_default()$.verbose
+ .comparison            = args_default()$.comparison,
+ .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+ .R                     = args_default()$.R,
+ .saturated             = args_default()$.saturated,
+ .seed                  = args_default()$.seed,
+ .type_vcv              = args_default()$.type_vcv,
+ .verbose               = args_default()$.verbose
  )
 
 \method{testMGD}{cSEMResults_default}(.object = args_default()$.object,
-  .approach_mgd = args_default()$.approach_mgd,
   .alpha = args_default()$.alpha,
+  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+  .approach_mgd = args_default()$.approach_mgd,
+  .comparison = args_default()$.comparison,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv,
+  .seed = args_default()$.seed, .type_vcv = args_default()$.type_vcv,
   .verbose = args_default()$.verbose)
 
 \method{testMGD}{cSEMResults_multi}(.object = args_default()$.object,
-  .approach_mgd = args_default()$.approach_mgd,
   .alpha = args_default()$.alpha,
+  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+  .approach_mgd = args_default()$.approach_mgd,
+  .comparison = args_default()$.comparison,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv,
+  .seed = args_default()$.seed, .type_vcv = args_default()$.type_vcv,
   .verbose = args_default()$.verbose)
 
 \method{testMGD}{cSEMResults_2ndorder}(.object = args_default()$.object,
-  .approach_mgd = args_default()$.approach_mgd,
   .alpha = args_default()$.alpha,
+  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+  .approach_mgd = args_default()$.approach_mgd,
+  .comparison = args_default()$.comparison,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv,
+  .seed = args_default()$.seed, .type_vcv = args_default()$.type_vcv,
   .verbose = args_default()$.verbose)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
+
+\item{.approach_alpha_adjust}{Character string. Approach used to adjust the significance level.
+One of: "\emph{none}", "\emph{bonferroni}",}
+
 \item{.approach_mgd}{Character string. Approach used for the multi-group comparison.
 One of "\emph{Klesel}", "\emph{Chin}", or "\emph{Sarstedt}".}
 
-\item{.alpha}{An integer or a numeric vector of significance levels.
-Defaults to \code{0.05}.}
+\item{.comparison}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
+parameters are compared.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -64,6 +79,9 @@ Defaults to "\emph{drop}".}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
+
+\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen.}
 
 \item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}

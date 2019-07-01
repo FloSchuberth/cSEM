@@ -6,16 +6,17 @@
 #' reference distribtuion. 
 #' 
 #' @usage testMGD(
-#'  .object               = args_default()$.object,
+#'  .object                = args_default()$.object,
+#'  .alpha                 = args_default()$.alpha,
+#'  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
 #'  .approach_mgd          = args_default()$.approach_mgd,
-#'  .comparison            = args_default()$comparison,
-#'  .alpha                = args_default()$.alpha,
-#'  .approach_alpha_adjust= args_default()$.approach_alpha_adjust,
-#'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-#'  .R                    = args_default()$.R,
-#'  .saturated            = args_default()$.saturated,
-#'  .type_vcv             = args_default()$.type_vcv,
-#'  .verbose              = args_default()$.verbose
+#'  .comparison            = args_default()$.comparison,
+#'  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+#'  .R                     = args_default()$.R,
+#'  .saturated             = args_default()$.saturated,
+#'  .seed                  = args_default()$.seed,
+#'  .type_vcv              = args_default()$.type_vcv,
+#'  .verbose               = args_default()$.verbose
 #'  ) 
 #' 
 #' @inheritParams csem_arguments
@@ -57,13 +58,14 @@
 
 testMGD <- function(
   .object                = args_default()$.object,
-  .approach_mgd          = args_default()$.approach_mgd,
-  .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
   .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+  .approach_mgd          = args_default()$.approach_mgd,
+  .comparison            = args_default()$.comparison,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
+  .seed                  = args_default()$.seed,
   .type_vcv              = args_default()$.type_vcv,
   .verbose               = args_default()$.verbose
 ){
@@ -77,17 +79,18 @@ testMGD <- function(
 
 testMGD.cSEMResults_default <- function(
   .object                = args_default()$.object,
-  .approach_mgd          = args_default()$.approach_mgd,
-  .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
   .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+  .approach_mgd          = args_default()$.approach_mgd,
+  .comparison            = args_default()$.comparison,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
+  .seed                  = args_default()$.seed,
   .type_vcv              = args_default()$.type_vcv,
   .verbose               = args_default()$.verbose
 ) { 
-  stop("At least two groups required.", call. = FALSE)
+  stop2("At least two groups required.")
 }
 
 #' @describeIn testMGD (TODO)
@@ -95,13 +98,14 @@ testMGD.cSEMResults_default <- function(
 
 testMGD.cSEMResults_multi <- function(
   .object                = args_default()$.object,
-  .approach_mgd          = args_default()$.approach_mgd,
-  .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
   .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+  .approach_mgd          = args_default()$.approach_mgd,
+  .comparison            = args_default()$.comparison,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
+  .seed                  = args_default()$.seed,
   .type_vcv              = args_default()$.type_vcv,
   .verbose               = args_default()$.verbose
 ){
@@ -117,15 +121,19 @@ testMGD.cSEMResults_multi <- function(
     
     # Check if any of the group estimates are inadmissible
     if(sum(unlist(verify(.object))) != 0) {
-      stop("Initial estimation results for at least one group are inadmissible.\n", 
-           "See `verify(.object)` for details.",  call. = FALSE)
+      stop2(
+        "The following error occured in the testMGD() function:\n",
+        "Initial estimation results for at least one group are inadmissible.\n", 
+        "See `verify(.object)` for details.")
     }
     
     # Check if data for different groups is identical
     if(.verbose) {
       if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
                           function(x){ identical(x[[1]], x[[2]])})){
-        warning("At least two groups are identical.", call. = FALSE)
+        warning2(
+          "The following warning occured in the testMGD() function:\n",
+          "At least two groups are identical.")
       } 
     }
     
@@ -167,6 +175,13 @@ testMGD.cSEMResults_multi <- function(
     if(.verbose){
       pb <- txtProgressBar(min = 0, max = .R, style = 3)
     }
+    
+    ## Create seed if not already set
+    if(is.null(.seed)) {
+      .seed <- sample(.Random.seed, 1)
+    }
+    ## Set seed
+    set.seed(.seed)
     
     ## Calculate reference distribution
     ref_dist        <- list()
@@ -330,6 +345,12 @@ testMGD.cSEMResults_multi <- function(
     )
   }
   
+  ## Remove the seed since it is set globally. Reset immediately by calling
+  ## any kind of function that requires .Random.seed as this causes R to
+  ## to create a new one.
+  rm(.Random.seed, envir=.GlobalEnv)
+  runif(1) # dont remove; this sets up a new .Random.seed
+  
   class(out) <- "cSEMTestMGD"
   return(out)
 }
@@ -339,13 +360,14 @@ testMGD.cSEMResults_multi <- function(
 
 testMGD.cSEMResults_2ndorder <- function(
   .object                = args_default()$.object,
-  .approach_mgd          = args_default()$.approach_mgd,
-  .comparison            = args_default()$comparison,
   .alpha                 = args_default()$.alpha,
   .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+  .approach_mgd          = args_default()$.approach_mgd,
+  .comparison            = args_default()$.comparison,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
+  .seed                  = args_default()$.seed,
   .type_vcv              = args_default()$.type_vcv,
   .verbose               = args_default()$.verbose
 ){
