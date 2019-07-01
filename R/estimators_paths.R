@@ -36,18 +36,18 @@ estimatePath <- function(
           " is an unknown approach to estimate the path model.")
   }
   
-  ## Warning if instruments are given but .approach_path = "OLS"
+  ## Warning if instruments are given but .approach_paths = "OLS"
   if(!is.null(.csem_model$instruments) & .approach_paths == "OLS") {
     warning2("The following error occured in the `estimatePath()` function:\n",
       "Instruments supplied but path approach is 'OLS'.\n",
       "Instruments are ignored.", 
-      " Consider setting `.approach_path = '2SLS'.")
+      " Consider setting `.approach_paths = '2SLS'.")
   }
   
-  ## Error if no instruments are given but .approach_path = "2SLS" or "3SLS"
+  ## Error if no instruments are given but .approach_paths = "2SLS" or "3SLS"
   if(is.null(.csem_model$instruments) & (.approach_paths %in% c("2SLS", "3SLS"))) {
     stop2("The following error occured in the `estimatePath()` function:\n",
-    .approach_path, " requires instruments.")
+    .approach_paths, " requires instruments.")
   }
   
   m         <- .csem_model$structural
@@ -75,7 +75,7 @@ estimatePath <- function(
       names_X <-  colnames(m[y, m[y, ] != 0, drop = FALSE])
       
       # Compute "OLS" if endo_in_RHS is FALSE, i.e no instruments are 
-      # given for this particular equation or .approach_path is "OLS"
+      # given for this particular equation or .approach_paths is "OLS"
       if(!endo_in_RHS | .approach_paths == "OLS") {
         
         # Coef = (X'X)^-1X'y = V(eta_indep)^-1 Cov(eta_indep, eta_dep)
@@ -103,7 +103,7 @@ estimatePath <- function(
       
       
       # Compute "2SLS" if endo_in_RHS is TRUE, i.e instruments are 
-      # given for this particular equation and .approach_path is "2SLS" or "3SLS".
+      # given for this particular equation and .approach_paths is "2SLS" or "3SLS".
       
       ## Two stage least squares (2SLS) and three stage least squares (3SLS)
       if(endo_in_RHS & (.approach_paths == "2SLS" | .approach_paths == "3SLS")) {

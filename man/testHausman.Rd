@@ -2,79 +2,49 @@
 % Please edit documentation in R/postestimate_test_hausman.R
 \name{testHausman}
 \alias{testHausman}
-\alias{testHausman.cSEMResults_default}
-\alias{testHausman.cSEMResults_multi}
-\alias{testHausman.cSEMResults_2ndorder}
-\title{Hausman test}
+\title{Regression-based Hausman test}
 \usage{
 testHausman(
- .object         = NULL,
- .seed           = args_default()$.seed,
- .alpha          = args_default()$.alpha,
- .R              = args_default()$.R,
- .R2             = args_default()$.R2,
- .vcv_asymptotic = args_default()$.vcv_asymptotic
+ .object               = NULL,
+ .alpha                = args_default()$.alpha,
+ .eval_plan            = args_default()$.eval_plan,
+ .handle_inadmissibles = args_default()$.handle_inadmissibles,
+ .R                    = args_default()$.R,
+ .resample_method      = args_default()$.resample_method,
+ .seed                 = args_default()$.seed
  )
-
-\method{testHausman}{cSEMResults_default}(.object = NULL,
-  .seed = args_default()$.seed, .alpha = args_default()$.alpha,
-  .R = args_default()$.R, .R2 = args_default()$.R2,
-  .vcv_asymptotic = args_default()$.vcv_asymptotic)
-
-\method{testHausman}{cSEMResults_multi}(.object = NULL,
-  .seed = args_default()$.seed, .alpha = args_default()$.alpha,
-  .R = args_default()$.R, .R2 = args_default()$.R2,
-  .vcv_asymptotic = args_default()$.vcv_asymptotic)
-
-\method{testHausman}{cSEMResults_2ndorder}(.object = NULL,
-  .seed = args_default()$.seed, .alpha = args_default()$.alpha,
-  .R = args_default()$.R, .R2 = args_default()$.R2,
-  .vcv_asymptotic = args_default()$.vcv_asymptotic)
 }
 \arguments{
-\item{.object}{A 2SLS or 3SLS object}
-
-\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is choosen.}
+\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
+\item{.eval_plan}{Character string. The evaluation plan to use. One of
+"\emph{sequential}" or "\emph{multiprocess}". In the latter case
+all available cores will be used. Defaults to "\emph{sequential}".}
+
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications/resamples yielding an inadmissible result will be dropped
+(i.e. the number of results returned will be less than .R). For "\emph{ignore}"
+all results are returned even if they are inadmissible (i.e.
+number of results returned = .R). For "\emph{replace}" resampling continues until
+there are exactly .R admissible solutions.
+Defaults to "\emph{drop}".}
+
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
-\item{.R2}{Integer. The number of bootstrap replications to use when
-resampling from a resample. Defaults to \code{199}.}
+\item{.resample_method}{Character string. The resampling method to use. One of:
+"\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
 
-\item{.vcv_asymptotic}{Logical. Should the asymptotic variance-covariance matrix be used, i.e.,
-VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) directly computed.
-Defaults to \code{FALSE}.}
-}
-\value{
-A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
-list containing the following list elements:
-\describe{
-\item{\code{$Test_statistic}}{The value of test statistic(s).}
-\item{\code{$Critical_value}}{The critical value(s).}
-\item{\code{$Decision}}{The test decision. One of: \strong{Reject} or \strong{Do not reject}}
-\item{\code{$Number_admissibles}}{The number of admissible runs. See \code{\link[=verify]{verify()}} for
-what constitues and inadmissible run.}
-}
+\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen.}
 }
 \description{
-Calculates a bootstrap-based Hausman test that can be used to compare
-OLS to 2SLS estimates
-or 2SLS to 3SLS estimates \insertCite{Hausman1978,Wong1996}{cSEM}
-(TODO: Needs to be checked whether the implemention is correct, I doubt).
+Calculates the regression-based Hausman test to be used to compare
+OLS to 2SLS estimates or 2SLS to 3SLS estimates.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{cSEMResults_default}: (TODO)
-
-\item \code{cSEMResults_multi}: (TODO)
-
-\item \code{cSEMResults_2ndorder}: (TODO)
-}}
-
 \examples{
 \dontrun{
 # TODO

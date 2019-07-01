@@ -4,7 +4,7 @@
 \alias{calculateDf}
 \title{Internal: Degrees of freedom}
 \usage{
-calculateDF(
+calculateDf(
   .object     = NULL,
   .null_model = FALSE
   )

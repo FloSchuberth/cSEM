@@ -67,5 +67,6 @@ Suggests:
     prettydoc,
     rmarkdown,
     listviewer,
-    testthat
+    testthat,
+    ggplot2
 VignetteBuilder: knitr

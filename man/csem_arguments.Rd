@@ -76,8 +76,6 @@ of the data provided are: "logical", "numeric" ("double" or "integer"),
 "factor" ("ordered" and/or "unordered"), "character" (converted to factor),
 or a mix of several types.}
 
-\item{.dependent}{Character string. Name of the dependent variable. Defaults to \code{NULL}.}
-
 \item{.disattenuate}{Logical. Should composite/proxy correlations
 be disattenuated to yield consisten loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
@@ -127,9 +125,6 @@ Defaults to "\emph{drop}".}
 \code{.data} used to split the data into groups.
 Defaults to \code{NULL}.}
 
-\item{.independent}{Character string. The name of the independent variable.
-Defaults to \code{NULL}.}
-
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
@@ -141,8 +136,6 @@ instruments for themselves. See the examples section. Defaults to \code{NULL}.}
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
-
-\item{.n}{Integer. The number of observations of the original data.}
 
 \item{.matrix1}{A \code{matrix} to compare.}
 
@@ -161,7 +154,10 @@ reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
 
-\item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
+\item{.n}{Integer. The number of observations of the original data.}
+
+\item{.n_spotlights}{Integer. A numeric value giving the number of spotlights (= values of .z)
+between min(.z) and max(.z) to use. Defaults to \code{100}.}
 
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
@@ -266,9 +262,6 @@ list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
 pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
 
-\item{.steps}{A vector containing values where e.g., a function is evaluated.
-Defaults to \code{seq(-2,2,0.01)}.}
-
 \item{.terms}{A vector of construct names to be classified.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
@@ -304,10 +297,16 @@ Defaults to \code{FALSE}.}
 \item{.weighted}{Logical. Should estimation be based on a score that uses
 the weights of the weight approach used to obtain \code{.object}?. Defaults to \code{FALSE}.}
 
+\item{.x}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
+
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 
 \item{.X_cleaned}{A data.frame of processed data (cleaned and ordered). Note: \code{X_cleaned}
 may not be scaled!}
+
+\item{.y}{Character string. The name of the dependent variable. Defaults to \code{NULL}.}
+
+\item{.z}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
 }
 \description{
 An alphabetical list of all arguments used by functions of the \code{cSEM} package,

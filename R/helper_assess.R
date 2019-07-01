@@ -76,7 +76,7 @@ calculateAVE <- function(
 #' 
 #' Calculates the degrees of freedom from a [cSEMResults] object.
 #' 
-#' @usage calculateDF(
+#' @usage calculateDf(
 #'   .object     = NULL,
 #'   .null_model = FALSE
 #'   )

@@ -59,7 +59,6 @@
 #'   of the data provided are: "logical", "numeric" ("double" or "integer"), 
 #'   "factor" ("ordered" and/or "unordered"), "character" (converted to factor),
 #'   or a mix of several types.
-#' @param .dependent Character string. Name of the dependent variable. Defaults to `NULL`. 
 #' @param .disattenuate Logical. Should composite/proxy correlations 
 #'   be disattenuated to yield consisten loadings and path estimates if at least
 #'   one of the construct is modeled as a common factor? Defaults to `TRUE`.
@@ -96,8 +95,6 @@
 #' @param .id Character string or integer. The name or position of the column of 
 #'   `.data` used to split the data into groups.
 #'    Defaults to `NULL`.
-#' @param .independent Character string. The name of the independent variable. 
-#'    Defaults to `NULL`. 
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent constructs of the structural
 #'   equation whose explanatory variables are endogenous. The vectors
@@ -108,7 +105,6 @@
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
 #'   `.iter_max - 1`  will be returned with a warning. Defaults to `100`.
-#' @param .n Integer. The number of observations of the original data.
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
@@ -120,7 +116,9 @@
 #'   reliabilities (`FALSE`). Defaults to `FALSE`.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
-#' @param .moderator Character string. The name of the moderator variable. Defaults to `NULL`.
+#' @param .n Integer. The number of observations of the original data.
+#' @param .n_spotlights Integer. A numeric value giving the number of spotlights (= values of .z) 
+#'   between min(.z) and max(.z) to use. Defaults to `100`.
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
@@ -199,8 +197,6 @@
 #'   list names are the construct names whose indicator weights the user
 #'   wishes to set. The vectors must be named vectors of `"indicator_name" = value` 
 #'   pairs, where `value` is the starting weight. Defaults to `NULL`.
-#' @param .steps A vector containing values where e.g., a function is evaluated.
-#'  Defaults to `seq(-2,2,0.01)`.
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
@@ -224,9 +220,12 @@
 #' @param .W_old A (J x K) matrix of weights.
 #' @param .weighted Logical. Should estimation be based on a score that uses 
 #'   the weights of the weight approach used to obtain `.object`?. Defaults to `FALSE`.
+#' @param .x Character string. The name of the moderator variable. Defaults to `NULL`. 
 #' @param .X A matrix of processed data (scaled, cleaned and ordered).
 #' @param .X_cleaned A data.frame of processed data (cleaned and ordered). Note: `X_cleaned`
 #'   may not be scaled!
+#' @param .y Character string. The name of the dependent variable. Defaults to `NULL`. 
+#' @param .z Character string. The name of the independent variable. Defaults to `NULL`.
 #'
 #' @name csem_arguments
 #' @aliases cSEMArguments
@@ -345,7 +344,6 @@ args_default <- function(.choices = FALSE) {
     .csem_resample           = NULL,
     .cv_folds                = 10,
     .data                    = NULL,
-    .dependent               = NULL,
     .disattenuate            = TRUE,
     .dist                    = c("z", "t"),
     .distance                = c("geodesic", "squared_euclidian"),
@@ -357,7 +355,6 @@ args_default <- function(.choices = FALSE) {
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
-    .independent             = NULL,
     .instruments             = NULL,
     .listMatrices            = NULL, 
     .matrix1                 = NULL,
@@ -365,8 +362,8 @@ args_default <- function(.choices = FALSE) {
     .matrices                = NULL,
     .model                   = NULL,
     .model_implied           = FALSE,
-    .moderator               = NULL,
     .modes                   = NULL,
+    .n_spotlights            = 100,
     .normality               = FALSE,
     .only_common_factors     = TRUE,
     .object                  = NULL,
@@ -397,7 +394,6 @@ args_default <- function(.choices = FALSE) {
                                  "construct_reestimate"),
     .stage                   = c("first", "second"),
     .starting_values         = NULL,
-    .steps                   = seq(-2,2,0.01),
     .terms                   = NULL,
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,
@@ -408,7 +404,8 @@ args_default <- function(.choices = FALSE) {
     .x                       = NULL,
     .X                       = NULL,
     .X_cleaned               = NULL,
-    .y                       = NULL
+    .y                       = NULL,
+    .z                       = NULL
   )
   
   args_dotdotdot_csem <- list(
