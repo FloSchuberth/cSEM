@@ -322,7 +322,7 @@ testMGD.cSEMResults_multi <- function(
       })
     
     # Overall decision 
-    decision_overall_Chin = lapply(decision_Chin,function(x){sum(unlist(x))})
+    decision_overall_Chin = lapply(decision_Chin,function(x){all(unlist(x))})
     
     names(decision_Chin)=  names(decision_overall_Chin) = paste0(alpha_Chin*100,'%')
     
