@@ -1,9 +1,20 @@
 #' Tests for multiple groups. 
 #'
+#' This function performs several permutation tests, i.e., the reference distribution 
+#' of the test statistic is obtained by permutation:
+#'
+#' Approach suugested by Klesel et al. (2019)
 #' 
-#' The geodesic distance (dG) and the Euclidean distance (dE) is used
-#' to assess group differences. Permutation is used to generate a 
-#' reference distribtuion. 
+#' The model-implied variance-covariance matrix (either indicator or construct) is
+#' compared across groups. 
+#' 
+#' To measure the distance between the model-implied variance-covariance matrices, different 
+#' distance measures are used:
+#' The geodesic distance (dG) and the Euclidean distance (dL) 
+#' 
+#' Approach suggested by Chin & Dibbern (2010)
+#' 
+#' A set of parameters is compared across groups. 
 #' 
 #' @usage testMGD(
 #'  .object                = args_default()$.object,
@@ -141,7 +152,7 @@ testMGD.cSEMResults_multi <- function(
 
     ### Calculation of the test statistics======================================
     
-
+    
     ## Get the model-implied VCV
     fit <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
     
@@ -155,9 +166,6 @@ testMGD.cSEMResults_multi <- function(
     # Approach suggested by Chin & Dibbern (2010)
     Chin=cSEM:::parameter_difference(.object=.object,.comparison = .comparison))
       
-      
-
-
     ## Start Permutation
     # Put data of each groups in a list and combine
     X_all_list  <- lapply(.object, function(x) x$Information$Data)

@@ -17,6 +17,7 @@ parameter_difference=function(.object=args_default()$.object,
 
   # Parse model that indicates which parameters should be compared
   # if no model indicating the comparisons is provided, all parameters are compared
+  # This prevents the the test_MGD function to break down if no comparison model is supplied.
   if(is.null(.comparison)){
   model_comp = .object[[1]]$Information$Model  
   }else{
@@ -25,6 +26,8 @@ parameter_difference=function(.object=args_default()$.object,
   
   # extract different types of constructs
   construct_type = .object[[1]]$Information$Model$construct_type
+  
+  # Several checks:
   
   # Check whether the constructs specified in the comparison are equal to the constructs in the original model
   construct_type_comp=model_comp$construct_type[!is.na(model_comp$construct_type)]
@@ -135,7 +138,9 @@ parameter_difference=function(.object=args_default()$.object,
   })
   
   names(diff_load) <- names(diff_weight) <- names(diff_path) <- sapply(temp, function(x) paste(names(x)[1], 'vs.', names(x)[2]))
+ 
   
+   #Function that verctorizes the matrix and name the vector 
   vec_and_name=function(.para_diff_matrix,
                         .ind_matrix,
                         .name_matrix,
