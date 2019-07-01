@@ -225,11 +225,6 @@ testMGD.cSEMResults_multi <- function(
           "dL" = cSEM:::calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
         ),Chin=cSEM:::parameter_difference(.object=Est_temp,.comparison = .comparison))
 
-      # Approach suggested by Chin & Dibbern
-          # Calculate differences based on the estimation based on the permutation sample
-          # ref_dist[[counter]] <- parameter_difference(.object=Est_temp,.comparison = .comparison)
-          
-          
       } else if(status_code != 0 & .handle_inadmissibles == "drop") {
         # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
         ref_dist[[counter]] <- NA
@@ -263,7 +258,7 @@ testMGD.cSEMResults_multi <- function(
     ref_dist1 <- Filter(Negate(anyNA), ref_dist)
     
     
-    # Appraoch suggest by Klesel et al. (2019)
+    # Approach suggested by Klesel et al. (2019)
     ref_dist_Klesel = lapply(ref_dist1,function(x){
       x$Klesel
     })

@@ -21,7 +21,7 @@ parameter_difference=function(.object=args_default()$.object,
   if(is.null(.comparison)){
   model_comp = .object[[1]]$Information$Model  
   }else{
-  model_comp=cSEM:::parseModel(.comparison,.check_errors = F)
+  model_comp=cSEM:::parseModel(.comparison,.check_errors = FALSE)
   }
   
   # extract different types of constructs
