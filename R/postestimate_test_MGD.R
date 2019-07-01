@@ -321,7 +321,13 @@ testMGD.cSEMResults_multi <- function(
     return(temp)
       })
     
-    names(decision_Chin) = paste0(alpha_Chin*100,'%')
+    # Overall decision 
+    decision_overall_Chin = lapply(decision_Chin,function(x){sum(unlist(x))})
+    
+    names(decision_Chin)=  names(decision_overall_Chin) = paste0(alpha_Chin*100,'%')
+    
+
+  
     
     # Return output
     out <- list(
@@ -334,6 +340,7 @@ testMGD.cSEMResults_multi <- function(
         "Test_statistic"     = teststat_Chin,
         "Critical_value"     = critical_values_Chin, 
         "Decision"           = decision_Chin,
+        "Decision_overall"   = decision_overall_Chin,
         "Alpha adjusted"     =  alpha_Chin),
     "Information"        = list(
       "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
