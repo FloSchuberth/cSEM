@@ -1,10 +1,12 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
-r:
-  - oldrel
-  - release
-  - devel
+# As long as we are in development stage only the relase version will be checked
+# Uncomment below once uploaded to CRAN
+#r:
+#  - oldrel
+#  - release
+#  - devel
   
 cache: packages
 # As long as we are in the development stage warnings are not considered errors
