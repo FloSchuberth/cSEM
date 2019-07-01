@@ -337,7 +337,7 @@ testMGD.cSEMResults_multi <- function(
       "Total_runs"            = counter + n_inadmissibles,
       "Group_names"           = names(.object),
       "Number_of_observations"= sapply(X_all_list, nrow),
-      "Bootstrap_values"      = list(
+      "Permutation_values"      = list(
         "Klesel" = ref_dist_Klesel,
         "Chin"   = ref_dist_matrices_Chin),
       "Approach" = .approach_mgd,
