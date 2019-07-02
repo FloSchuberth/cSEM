@@ -1,203 +1,224 @@
-#' Function that calculates the parameter differences across groups
+#' Internal: Calculate matrix difference using distance measure
 #'
+#' Calculates the differences between symmetric matrices using a given 
+#' distance measure. This is typically used to calculate the difference between
+#' the model-implied and the empirical indicator covariance matrix.
 #' 
+#' `.matrices` must be a list of at least two matrices. If more than two matrices 
+#' are supplied the arithmetic mean over all possible matrix 
+#' distances is computed. Hence, supplying a large number of matrices will 
+#' quickly become computationally challenging. Use with care.
 #' 
-#' @usage parameter_difference(
-#' .object=args_default()$.object,
-#' .comparison=args_default()$.comparison)
+#' Currently two distance measures are supported:
+#' \describe{
+#'   \item{`geodesic`}{The geodesic distance}
+#'   \item{`squared_euclidian`}{The squared Euclidian distance}
+#' }
+#' 
+#' @usage calculateDistance(
+#'   .matrices = args_default()$.matrices, 
+#'   .distance = args_default()$.distance
+#'   )
 #' 
 #' @inheritParams csem_arguments
 #' 
+#' @return A numeric vector of length one containing the (arithmetic mean) of 
+#'   the differences between all possible combinations of matrices.
+#' @keywords internal
+
+calculateDistance <- function(
+  .matrices = args_default()$.matrices, 
+  .distance = args_default()$.distance
+){
+  ### Checks and errors ========================================================
+  ## Check if list and at least of length 2
+  if(!is.list(.matrices) && length(.matrices) < 2) {
+    stop2("`.matrices` must be a list of at least length two.")
+  }
+
+  ## Check if matrices are all symmetric
+  if(!all(sapply(.matrices, matrixcalc::is.symmetric.matrix))) {
+    stop2("All matrices in `.matrices` must be symmetric.")
+  }
+  
+  ### Calculation ==============================================================
+  ## Combine all matrices into lists of two
+  temp <- utils::combn(.matrices, 2, simplify = FALSE)
+  
+  ## Compute the distance measure for each group combination
+  distances <- lapply(temp, function(x) {
+    switch (.distance,
+            "geodesic" = {calculateDG(.matrix1 = x[[1]], .matrix2 = x[[2]])},
+            "squared_euclidian" = {calculateDL(.matrix1 = x[[1]], .matrix2 = x[[2]])}
+    )
+  })
+  
+  ## Compute the mean. Since dG and dL are defined as the mean of difference between
+  ## two matrices (1/2 is part of the definition). This must be corrected if 
+  ## more than two matrices are to be compared.
+  
+  if(length(.matrices) > 2) {
+    out <- mean(2 * unlist(distances))
+  } else {
+    out <- unlist(distances)
+  }
+  return(out)
+}
+
+
+#' Parameter differences across groups
+#' 
+#' Calculates the difference between one or more paramater estimates based 
+#' one different groups (data sets).
 #'
-#' @seealso [cSEMResults]
-#'
-parameter_difference=function(.object=args_default()$.object,
-                              .comparison=args_default()$.comparison){
+#' @usage calculateParameterDifference(
+#'   .object     = NULL,
+#'   .comparison = args_default()$.comparison
+#' )
+#' 
+#' @inheritParams csem_arguments
+#' 
+#' @return A list of length equal to the number of possible combinations of
+#'   groups in .object (basically n choose k = 2), e.g., 3 if there are three 
+#'   groups and 6 if there are 4 groups. Each list elements contains the
+#'   values of the difference between the parameter estimates based on the
+#'   data of group i and and group j.
+#' @keywords internal
+#' 
+calculateParameterDifference <- function(
+  .object     = NULL,
+  .comparison = args_default()$.comparison
+  ){
+  
+  ## Summarize
+  x <- summarize(.object)
+  
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    
+    x22 <- x[[1]]$Second_stage$Information
+    
+  } else {
+
+    x22  <- x[[1]]$Information
+  }
   
 
   # Parse model that indicates which parameters should be compared
   # if no model indicating the comparisons is provided, all parameters are compared
   # This prevents the the test_MGD function to break down if no comparison model is supplied.
-  if(is.null(.comparison)){
-  model_comp = .object[[1]]$Information$Model  
-  }else{
-  model_comp=cSEM:::parseModel(.comparison,.check_errors = FALSE)
+  
+  if(is.null(.comparison)) {
+    model_comp <- x22$Model  
+  } else {
+    model_comp <- parseModel(.comparison, .check_errors = FALSE)
   }
   
-  # extract different types of constructs
-  construct_type = .object[[1]]$Information$Model$construct_type
+  # # Extract different types of constructs
+  construct_type <- x22$Model$construct_type
   
-  # Several checks:
+  ### Extract names ============================================================
+  # Extract names of the path to be tested
+  temp <- outer(rownames(model_comp$structural), colnames(model_comp$structural), 
+                FUN = function(x, y) paste(x, y, sep = " ~ "))
   
-  # Check whether the constructs specified in the comparison are equal to the constructs in the original model
-  construct_type_comp=model_comp$construct_type[!is.na(model_comp$construct_type)]
-  if(!all(construct_type_comp==construct_type[names(construct_type_comp)])){
-    stop2("At least one construct's type in the comparison model differs from the original model.")
+  names_path <- t(temp)[t(model_comp$structural) != 0]
+  
+  # Extract names of the loadings to be tested
+  names_row <- rownames(model_comp$measurement)
+  names_col <- colnames(model_comp$measurement)
+  
+  i <- intersect(names(which(construct_type == "Common factor")), names_row)
+  
+  temp <- rep(rownames(model_comp$measurement[i, , drop = FALSE]), times = rowSums(model_comp$measurement[i, , drop = FALSE]))
+  names_loadings <- paste0(temp, " =~ ", colnames(model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]))
+  
+  # Extract names of the weights to be tested
+  i <- intersect(names(which(construct_type == "Composite")), names_row)
+  temp <- rep(rownames(model_comp$measurement[i, , drop = FALSE]), times = rowSums(model_comp$measurement[i, , drop = FALSE]))
+  names_weights <- paste0(temp, " <~ ", colnames(model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]))
+  
+  ### Compute differences ======================================================
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    path_estimates  <- lapply(x, function(y) {y$Second_stage$Estimates$Path_estimates})
+    loading_estimates <- lapply(x, function(y) {y$Second_stage$Estimates$Loading_estimates})
+    weight_estimates <- lapply(x, function(y) {y$Second_stage$Estimates$Weight_estimates})
+  } else {
+    path_estimates  <- lapply(x, function(y) {y$Estimates$Path_estimates})
+    loading_estimates <- lapply(x, function(y) {y$Estimates$Loading_estimates})
+    weight_estimates <- lapply(x, function(y) {y$Estimates$Weight_estimates})
   }
   
-  # Check whether indicators used in the comparison model are the same as in the original model
-  if(!all(colnames(model_comp$measurement)%in%colnames(.object[[1]]$Information$Model$measurement))){
-    stop2("Indicators used in the comparison model are not specified in the original model.")
-  }
-  
-  # Check whether construct specified in the comparison model are the same as in the original model
-  if(!all(rownames(model_comp$measurement)%in%rownames(.object[[1]]$Information$Model$measurement))){
-    stop2("Constructs used in the comparison model are not specified in the original model.")
-  }
-  
-  
-  # Create indication matrix for structural coefficients 
-  path=.object[[1]]$Estimates$Path_estimates
-  path_ind=path
-  path_ind[]=0
-  path_ind_temp=which(model_comp$structural==1,arr.ind = TRUE)
-
-  if(!(dim(path_ind_temp)[1]==0)){  
-    path_ind_temp=cbind(rownames(model_comp$structural)[path_ind_temp[, 'row']],
-                        colnames(model_comp$structural)[path_ind_temp[, 'col']])
-    
-    path_ind[path_ind_temp]=1
-
-    # check whether specified path coefficients occur in the original model
-    path_ind_org = .object[[1]]$Information$Model$structural
-    if(!all(path_ind_org[path_ind_temp]==1)){
-      stop2("Path coefficients specified for comparison are not part of the original model.")
+  ## Select
+  path_estimates  <- lapply(path_estimates, function(y) {
+    y1 <- y[y$Name %in% names_path, "Estimate"]
+    if(length(y1) != 0) {
+      names(y1) <- names_path
     }
-    
-  }
-  
-  # Create indication matrix for loadings
-  load=.object[[1]]$Estimates$Loading_estimates
-  load_ind=load
-  load_ind[]=0
-  
-  cf_name= names(which(construct_type == 'Common factor'))
-  cf_name_comp=intersect(rownames(model_comp$measurement),cf_name)
-  
-  load_ind_temp = which(model_comp$measurement[cf_name_comp,,drop=FALSE]==1,arr.ind = TRUE)
-  
-  if(!(dim(load_ind_temp)[1]==0)){
-    load_ind_temp = cbind(rownames(model_comp$measurement[cf_name_comp,,drop = FALSE])[load_ind_temp[, 'row']],
-                          colnames(model_comp$measurement[cf_name_comp,,drop = FALSE])[load_ind_temp[, 'col']])
-    load_ind[load_ind_temp]=1
-  
-    # check whether specified loadings occur in the original model
-    load_ind_org = .object[[1]]$Information$Model$measurement[cf_name,,drop=FALSE]
-    if(!all(load_ind_org[load_ind_temp]==1)){
-      stop2("Loadings specified for comparison are not part of the original model.")
+    y1
+  })
+  loading_estimates <- lapply(loading_estimates, function(y) {
+    y1 <- y[y$Name %in% names_loadings, "Estimate"] 
+    if(length(y1) != 0) {
+      names(y1) <- names_loadings
     }
+    y1
+  })
+  weight_estimates <- lapply(weight_estimates, function(y) {
+    y1 <- y[y$Name %in% names_weights, "Estimate"]
+    if(length(y1) != 0) {
+      names(y1) <- names_weights
     }
-  
-  # Create indication matrix for weights
-  weight=.object[[1]]$Estimates$Weight_estimates
-  weight_ind=weight
-  weight_ind[]=0
-  
-  co_name= names(which(construct_type == 'Composite'))
-  co_name_comp=intersect(rownames(model_comp$measurement),co_name)
-  
-  weight_ind_temp = which(model_comp$measurement[co_name_comp,,drop=FALSE]==1,arr.ind = TRUE)
-  
-  if(!(dim(weight_ind_temp)[1]==0)){
-    weight_ind_temp = cbind(rownames(model_comp$measurement[co_name_comp,,drop = FALSE])[weight_ind_temp[, 'row']],
-                            colnames(model_comp$measurement[co_name_comp,,drop = FALSE])[weight_ind_temp[, 'col']])
-    
-    weight_ind[weight_ind_temp]=1
-    
-    # check whether specified weights occur in the original model
-    weight_ind_org = .object[[1]]$Information$Model$measurement[co_name,,drop=FALSE]
-    if(!all(weight_ind_org[weight_ind_temp]==1)){
-      stop2("Weights specified for comparison are not part of the original model.")
-    }
-    
-  }
-  
-
-
-  # Calculate differences
-  # Path coefficients
-  matrices_path=lapply(.object,function(x){x$Estimates$Path_estimates})
-  
-  temp <- utils::combn(matrices_path, 2, simplify = FALSE)
-  diff_path=lapply(temp, function(x){
-    x[[1]]-x[[2]]
+    y1
   })
   
-  # Loadings
-  matrices_load=lapply(.object,function(x){x$Estimates$Loading_estimates})
-  temp <- utils::combn(matrices_load, 2, simplify = FALSE)
-  diff_load=lapply(temp, function(x){
-    x[[1]]-x[[2]]
-  })
+  ## Path model
+  temp <- utils::combn(path_estimates, 2, simplify = FALSE)
+  diff_path <- lapply(temp, function(y) y[[1]] - y[[2]])
+  names(diff_path) <- sapply(temp, function(x) paste0(names(x)[1], '_', names(x)[2]))
   
-  # Weights
-  matrices_weight=lapply(.object,function(x){x$Estimates$Weight_estimates})
-  temp <- utils::combn(matrices_weight, 2, simplify = FALSE)
-  diff_weight=lapply(temp, function(x){
-    x[[1]]-x[[2]]
-  })
+  ## Loadings
+  temp <- utils::combn(loading_estimates, 2, simplify = FALSE)
+  diff_loadings <- lapply(temp, function(y) y[[1]] - y[[2]])
+  names(diff_loadings) <- sapply(temp, function(x) paste0(names(x)[1], '_', names(x)[2]))
   
-  names(diff_load) <- names(diff_weight) <- names(diff_path) <- sapply(temp, function(x) paste(names(x)[1], 'vs.', names(x)[2]))
- 
-  
-   #Function that verctorizes the matrix and name the vector 
-  vec_and_name=function(.para_diff_matrix,
-                        .ind_matrix,
-                        .name_matrix,
-                        .sep){
-    if(!(dim(.name_matrix)[1]==0)){
-      temp=c(.para_diff_matrix[.ind_matrix==1])
-      # give names
-      name=paste(.name_matrix[,1], .sep, .name_matrix[,2])
-      names(temp)=name
-      temp
-    } else {
-      return(NA)
-    }
-  }
-  
-  difference_path=lapply(diff_path, function(x) vec_and_name(.para_diff_matrix = x,
-                               .ind_matrix = path_ind,
-                               .name_matrix = path_ind_temp,
-                               .sep = '~'))
-  
-  difference_load=lapply(diff_load, function(x) vec_and_name(.para_diff_matrix = x,
-                                                             .ind_matrix = load_ind,
-                                                             .name_matrix = load_ind_temp,
-                                                             .sep = '=~'))
-  
-  difference_weight=lapply(diff_weight, function(x) vec_and_name(.para_diff_matrix = x,
-                                                               .ind_matrix = weight_ind,
-                                                               .name_matrix = weight_ind_temp,
-                                                               .sep = '<~'))
-  
+  ## Weights
+  temp <- utils::combn(weight_estimates, 2, simplify = FALSE)
+  diff_weights <- lapply(temp, function(y) y[[1]] - y[[2]])
+  names(diff_weights) <- sapply(temp, function(x) paste0(names(x)[1], '_', names(x)[2]))
+
   # merge list together
-  out=mapply(function(x,y,z){c(x,y,z)},
-             x=difference_path,y=difference_load,z=difference_weight,
+  out <- mapply(function(x,y,z) c(x,y,z),
+             x = diff_path,
+             y = diff_loadings,
+             z = diff_weights,
              SIMPLIFY = FALSE)
-  
+
   return(out)
 }
 
 
 
-#' Function that adjust the significance level
+#' Multiple testing correction
 #'
+#' Adjust a given significance level .alpha to accomodate multiple testing. 
 #' 
-#' 
-#' @usage alpha_adjust(
-#' .alpha=args_default()$.alpha,
-#' .approach_alpha_adjust=args_default()$.approach_alpha_adjust,
-#' .nr_comparisons=args_default()$.nr_comparisons)
+#' @usage adjustAlpha <- function(
+#'  .alpha                 = args_default()$.alpha,
+#'  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+#'  .nr_comparisons        = args_default()$.nr_comparisons
+#' )
 #' 
 #' @inheritParams csem_arguments
 #' 
+#' @return A vector of (adjusted) significance levels.
 #'
-#' @seealso [cSEMResults]
-#'
-alpha_adjust=function(.alpha=args_default()$.alpha,
-             .approach_alpha_adjust=args_default()$.approach_alpha_adjust,
-             .nr_comparisons=args_default()$.nr_comparisons){
+#' @keywords internal
+adjustAlpha <- function(
+  .alpha                 = args_default()$.alpha,
+  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+  .nr_comparisons        = args_default()$.nr_comparisons
+  ){
+  
   if(.approach_alpha_adjust == 'none'){
     return(.alpha)
   }
@@ -205,6 +226,5 @@ alpha_adjust=function(.alpha=args_default()$.alpha,
   if(.approach_alpha_adjust == 'bonferroni'){
     return(.alpha/.nr_comparisons)
   }
-  
   
 }

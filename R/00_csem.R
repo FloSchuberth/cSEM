@@ -343,7 +343,7 @@ csem <- function(
     out[[1]]$Information$Data_pooled <- if(inherits(.data, "list")) {
       data_pooled <- do.call(rbind, .data)
       data_pooled <- as.data.frame(data_pooled)
-      data_pooled[, "id"] <- rep(names(out), times = sapply(.data, nrow))
+      # data_pooled[, "id"] <- rep(names(out), times = sapply(.data, nrow))
       data_pooled
     } else {
       .data
@@ -367,6 +367,7 @@ csem <- function(
         x$Second_stage$Information$Arguments_original <- args_needed
         
         # Return x
+        class(x) <- c("cSEMResults", "cSEMResults_2ndorder")
         x
       })
       class(out) <- c("cSEMResults", "cSEMResults_multi", "cSEMResults_2ndorder")

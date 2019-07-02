@@ -427,4 +427,28 @@ specification of an individual wage equation.},
   timestamp = {2015.10.07},
 }
 
+@Article{Klesel2019,
+  author    = {Michael Klesel and Florian Schuberth and Jörg Henseler and Bjoern Niehaves},
+  title     = {A Test for Multigroup Comparison Using Partial Least Squares Path Modeling},
+  journal   = {Internet Research},
+  year      = {2019},
+  volume    = {29},
+  number    = {3},
+  pages     = {464--477},
+  month     = {jun},
+  doi       = {10.1108/intr-11-2017-0418},
+  publisher = {Emerald},
+}
+
+@InCollection{Chin2010,
+  author    = {Wynne W. Chin and Jens Dibbern},
+  title     = {An Introduction to a Permutation Based Procedure for Multi-Group {PLS} Analysis: Results of Tests of Differences on Simulated Data and a Cross Cultural Analysis of the Sourcing of Information System Services Between Germany and the {USA}},
+  booktitle = {Handbook of Partial Least Squares},
+  publisher = {Springer Berlin Heidelberg},
+  year      = {2010},
+  pages     = {171--193},
+  month     = {nov},
+  doi       = {10.1007/978-3-540-32827-8_8},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}

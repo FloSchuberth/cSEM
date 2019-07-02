@@ -7,10 +7,12 @@
 \alias{calculateDML}
 \title{Internal: Calculate difference between S and Sigma_hat}
 \usage{
-calculateDG(.object = NULL, .saturated = args_default()$.saturated,
+calculateDG(.object = NULL, .matrix1 = NULL, .matrix2 = NULL,
+  .saturated = args_default()$.saturated,
   .type_vcv = args_default()$.type_vcv, ...)
 
-calculateDL(.object = NULL, .saturated = args_default()$.saturated,
+calculateDL(.object = NULL, .matrix1 = NULL, .matrix2 = NULL,
+  .saturated = args_default()$.saturated,
   .type_vcv = args_default()$.type_vcv, ...)
 
 calculateDML(.object = NULL, .saturated = args_default()$.saturated,
@@ -18,6 +20,10 @@ calculateDML(.object = NULL, .saturated = args_default()$.saturated,
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.matrix1}{A \code{matrix} to compare.}
+
+\item{.matrix2}{A \code{matrix} to compare.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
@@ -28,16 +34,20 @@ One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".
 \item{...}{Ignored.}
 }
 \value{
-A single numeric value.
+A single numeric value giving the distance between two matrices.
 }
 \description{
 Calculate the difference between the empirical (S)
 and the model-implied indicator variance-covariance matrix (Sigma_hat)
-using different distance measures. See vignette assess.
+using different distance measures.
 }
 \details{
 The functions are only applicable to objects inheriting class \code{cSEMResults_default}.
 For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
+
+The geodesic and the squared Euclidian distance may also be
+computed for any two matrices A and B by supplying A and B directly via the
+\code{.matrix1} and \code{.matrix2} arguments. If A and B are supplied \code{.object} is ignored.
 }
 \section{Functions}{
 \itemize{

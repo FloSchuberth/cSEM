@@ -95,7 +95,7 @@ wishes to set. The vectors must be named vectors of \code{"indicator_name" = val
 pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
 
 \item{.resample_method}{Character string. The resampling method to use. One of:
-"\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
+"\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{none}".}
 
 \item{.resample_method2}{Character string. The resampling method to use when resampling
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For

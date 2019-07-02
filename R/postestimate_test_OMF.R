@@ -85,9 +85,9 @@ testOMF.cSEMResults_default <- function(
   
   ## Calculate test statistic
   teststat <- c(
-    "dG"   = dG(S, Sigma_hat),
+    "dG"   = calculateDG(.object),
     "SRMR" = calculateSRMR(.object),
-    "dL"   = dL(S, Sigma_hat)
+    "dL"   = calculateDL(.object)
   )
   
   ## Transform dataset, see Beran & Srivastava (1985)
@@ -132,15 +132,15 @@ testOMF.cSEMResults_default <- function(
     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
-      S_temp         <- Est_temp$Estimates$Indicator_VCV
-      Sigma_hat_temp <- fit(Est_temp,
-                            .saturated = .saturated,
-                            .type_vcv  = "indicator")
+      # S_temp         <- Est_temp$Estimates$Indicator_VCV
+      # Sigma_hat_temp <- fit(Est_temp,
+      #                       .saturated = .saturated,
+      #                       .type_vcv  = "indicator")
       
       ref_dist[[counter]] <- c(
-        "dG"   = dG(S_temp, Sigma_hat_temp),
+        "dG"   = calculateDG(Est_temp),
         "SRMR" = calculateSRMR(Est_temp),
-        "dL"   = dL(S_temp, Sigma_hat_temp)
+        "dL"   = calculateDL(Est_temp)
       ) 
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
@@ -267,9 +267,9 @@ testOMF.cSEMResults_2ndorder <- function(
   
   ## Calculate test statistic
   teststat <- c(
-    "dG"   = dG(S, Sigma_hat),
+    "dG"   = calculateDG(x1),
     "SRMR" = calculateSRMR(x1),
-    "dL"   = dL(S, Sigma_hat)
+    "dL"   = calculateDL(x1)
   )
   
   ## Transform dataset, see Beran & Srivastava (1985)
@@ -316,9 +316,9 @@ testOMF.cSEMResults_2ndorder <- function(
                             .type_vcv  = "indicator")
       
       ref_dist[[counter]] <- c(
-        "dG"   = dG(S_temp, Sigma_hat_temp),
+        "dG"   = calculateDG(Est_temp$First_stage),
         "SRMR" = calculateSRMR(Est_temp$First_stage),
-        "dL"   = dL(S_temp, Sigma_hat_temp)
+        "dL"   = calculateDL(Est_temp$First_stage)
       )  
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {

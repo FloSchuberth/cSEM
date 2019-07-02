@@ -2,9 +2,6 @@
 % Please edit documentation in R/postestimate_test_MGD.R
 \name{testMGD}
 \alias{testMGD}
-\alias{testMGD.cSEMResults_default}
-\alias{testMGD.cSEMResults_multi}
-\alias{testMGD.cSEMResults_2ndorder}
 \title{Tests for multiple groups.}
 \usage{
 testMGD(
@@ -20,36 +17,6 @@ testMGD(
  .type_vcv              = args_default()$.type_vcv,
  .verbose               = args_default()$.verbose
  )
-
-\method{testMGD}{cSEMResults_default}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
-  .approach_mgd = args_default()$.approach_mgd,
-  .comparison = args_default()$.comparison,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .seed = args_default()$.seed, .type_vcv = args_default()$.type_vcv,
-  .verbose = args_default()$.verbose)
-
-\method{testMGD}{cSEMResults_multi}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
-  .approach_mgd = args_default()$.approach_mgd,
-  .comparison = args_default()$.comparison,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .seed = args_default()$.seed, .type_vcv = args_default()$.type_vcv,
-  .verbose = args_default()$.verbose)
-
-\method{testMGD}{cSEMResults_2ndorder}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
-  .approach_mgd = args_default()$.approach_mgd,
-  .comparison = args_default()$.comparison,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .seed = args_default()$.seed, .type_vcv = args_default()$.type_vcv,
-  .verbose = args_default()$.verbose)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -101,19 +68,23 @@ what constitues and inadmissible run.}
 }
 }
 \description{
-The geodesic distance (dG) and the Euclidean distance (dE) is used
-to assess group differences. Permutation is used to generate a
-reference distribtuion.
+This function performs several permutation tests, i.e., the reference distribution
+of the test statistic is obtained by permutation.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{cSEMResults_default}: (TODO)
+\details{
+The following test are implemented:
+\describe{
+\item{Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
+The model-implied variance-covariance matrix (either indicator or construct) is
+compared across groups.
 
-\item \code{cSEMResults_multi}: (TODO)
-
-\item \code{cSEMResults_2ndorder}: (TODO)
-}}
-
+To measure the distance between the model-implied variance-covariance matrices,
+the geodesic distance (dG) and the squared Euclidean distance (dL) are used.}
+\item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
+Groups are compared in terms of parameter differences across groups.
+}
+}
+}
 \examples{
 \dontrun{
 require(cSEM)
@@ -143,6 +114,9 @@ out.cSEM <- csem(listData, model)
 testMGD(.object = out.cSEM, .R = 20, .type_vcv= 'construct')
 }
 
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \link{cSEMResults}

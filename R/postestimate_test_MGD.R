@@ -1,20 +1,20 @@
 #' Tests for multiple groups. 
 #'
 #' This function performs several permutation tests, i.e., the reference distribution 
-#' of the test statistic is obtained by permutation:
-#'
-#' Approach suugested by Klesel et al. (2019)
+#' of the test statistic is obtained by permutation.
 #' 
-#' The model-implied variance-covariance matrix (either indicator or construct) is
-#' compared across groups. 
+#' The following test are implemented:
+#' \describe{
+#' \item{Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
+#'   The model-implied variance-covariance matrix (either indicator or construct) is
+#'   compared across groups. 
 #' 
-#' To measure the distance between the model-implied variance-covariance matrices, different 
-#' distance measures are used:
-#' The geodesic distance (dG) and the Euclidean distance (dL) 
-#' 
-#' Approach suggested by Chin & Dibbern (2010)
-#' 
-#' A set of parameters is compared across groups. 
+#'   To measure the distance between the model-implied variance-covariance matrices, 
+#'   the geodesic distance (dG) and the squared Euclidean distance (dL) are used.}
+#' \item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
+#'   Groups are compared in terms of parameter differences across groups.
+#' }
+#' }
 #' 
 #' @usage testMGD(
 #'  .object                = args_default()$.object,
@@ -34,6 +34,9 @@
 #' 
 #' @inherit csem_test return
 #'
+#' @references
+#'   \insertAllCited{}
+#'   
 #' @seealso [cSEMResults]
 #'
 #' @examples
@@ -81,267 +84,233 @@ testMGD <- function(
   .verbose               = args_default()$.verbose
 ){
 
-  UseMethod("testMGD")
+  ## Match arguments
+  match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
+  match.arg(.type_vcv, args_default(.choices = TRUE)$.type_vcv)
   
-}
-
-#' @describeIn testMGD (TODO)
-#' @export
-
-testMGD.cSEMResults_default <- function(
-  .object                = args_default()$.object,
-  .alpha                 = args_default()$.alpha,
-  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
-  .approach_mgd          = args_default()$.approach_mgd,
-  .comparison            = args_default()$.comparison,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .R                     = args_default()$.R,
-  .saturated             = args_default()$.saturated,
-  .seed                  = args_default()$.seed,
-  .type_vcv              = args_default()$.type_vcv,
-  .verbose               = args_default()$.verbose
-) { 
-  stop2("At least two groups required.")
-}
-
-#' @describeIn testMGD (TODO)
-#' @export
-
-testMGD.cSEMResults_multi <- function(
-  .object                = args_default()$.object,
-  .alpha                 = args_default()$.alpha,
-  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
-  .approach_mgd          = args_default()$.approach_mgd,
-  .comparison            = args_default()$.comparison,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .R                     = args_default()$.R,
-  .saturated             = args_default()$.saturated,
-  .seed                  = args_default()$.seed,
-  .type_vcv              = args_default()$.type_vcv,
-  .verbose               = args_default()$.verbose
-){
-  if(inherits(.object, "cSEMResults_2ndorder")) {
-    
-    out <- lapply(.object, testMICOM.cSEMResults_2ndorder)
-    
-  } else {
-    
-    ### Checks and errors ========================================================
-    match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
-    match.arg(.type_vcv, args_default(.choices = TRUE)$.type_vcv)
-    
-    # Check if any of the group estimates are inadmissible
-    if(sum(unlist(verify(.object))) != 0) {
-      stop2(
-        "The following error occured in the testMGD() function:\n",
-        "Initial estimation results for at least one group are inadmissible.\n", 
-        "See `verify(.object)` for details.")
-    }
-    
-    # Check if data for different groups is identical
-    if(.verbose) {
-      if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
-                          function(x){ identical(x[[1]], x[[2]])})){
-        warning2(
-          "The following warning occured in the testMGD() function:\n",
-          "At least two groups are identical.")
-      } 
-    }
-    
-    
-
-    ### Calculation of the test statistics======================================
-    
-    
-    ## Get the model-implied VCV
-    fit <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
-    
-    ## Compute the test statistics 
-    teststat <- list(
-      #  Approach suggested by Klesel et al. (2019)
-      Klesel=c(
-      "dG" = cSEM:::calculateDistance(.matrices = fit, .distance = "geodesic"),
-      "dL" = cSEM:::calculateDistance(.matrices = fit, .distance = "squared_euclidian")
-    ),
+  ### Checks and errors ========================================================
+  ## Check if at least two groups are present
+  if(!inherits(.object, "cSEMResults_multi")) {
+    stop2(
+      "The following error occured in the testMGD() function:\n",
+      "At least two groups required."
+    )
+  } 
+  
+  ## Check if any of the group estimates are inadmissible
+  if(sum(unlist(verify(.object))) != 0) {
+    stop2(
+      "The following error occured in the testMGD() function:\n",
+      "Initial estimation results for at least one group are inadmissible.\n", 
+      "See `verify(.object)` for details.")
+  }
+  
+  ## Check if data for different groups is identical
+  if(.verbose) {
+    if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
+                        function(x){ identical(x[[1]], x[[2]])})){
+      warning2(
+        "The following warning occured in the testMGD() function:\n",
+        "At least two groups are identical. Results may not be meaningful.")
+    } 
+  }
+  
+  ### Calculation of the test statistics========================================
+  ## Get the model-implied VCV
+  fit <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
+  
+  ## Compute the test statistics 
+  teststat <- list(
+    #  Approach suggested by Klesel et al. (2019)
+    "Klesel" = c(
+      "dG" = calculateDistance(.matrices = fit, .distance = "geodesic"),
+      "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")),
     # Approach suggested by Chin & Dibbern (2010)
-    Chin=cSEM:::parameter_difference(.object=.object,.comparison = .comparison))
+    "Chin" = calculateParameterDifference(.object = .object, .comparison = .comparison)
+    )
+  
+  ## Start Permutation
+  # Put data of each groups in a list and combine
+  X_all_list  <- lapply(.object, function(x) x$Information$Data)
+  X_all       <- do.call(rbind, X_all_list)
+  
+  # Collect initial arguments (from the first object, but could be any other)
+  arguments <- .object[[1]]$Information$Arguments
+  
+  # Create a vector "id" to be used to randomly select groups (permutate) and
+  # set id as an argument in order to identify the groups.
+  id <- rep(1:length(X_all_list), sapply(X_all_list, nrow))
+  arguments[[".id"]] <- "id"
+  
+  # Start progress bar if required
+  if(.verbose){
+    pb <- txtProgressBar(min = 0, max = .R, style = 3)
+  }
+  
+  ## Create seed if not already set
+  if(is.null(.seed)) {
+    .seed <- sample(.Random.seed, 1)
+  }
+  ## Set seed
+  set.seed(.seed)
+  
+  ## Calculate reference distribution
+  ref_dist        <- list()
+  n_inadmissibles  <- 0
+  counter <- 0
+  repeat{
+    # Counter
+    counter <- counter + 1
+    
+    # Permutate data
+    X_temp <- cbind(X_all, id = sample(id))
+    
+    # Replace the old dataset by the new permutated dataset
+    arguments[[".data"]] <- X_temp
+    
+    # Estimate model
+    Est_temp <- do.call(csem, arguments)   
+    
+    # Check status
+    status_code <- sum(unlist(verify(Est_temp)))
+    
+    # Distinguish depending on how inadmissibles should be handled
+    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
+      # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
+      # not ok
       
-    ## Start Permutation
-    # Put data of each groups in a list and combine
-    X_all_list  <- lapply(.object, function(x) x$Information$Data)
-    X_all       <- do.call(rbind, X_all_list)
-    
-    # Collect initial arguments (from the first object, but could be any other)
-    arguments <- .object[[1]]$Information$Arguments
-    
-    # Create a vector "id" to be used to randomly select groups (permutate) and
-    # set id as an argument in order to identify the groups.
-    id <- rep(1:length(X_all_list), sapply(X_all_list, nrow))
-    arguments[[".id"]] <- "id"
-    
-    # Start progress bar if required
-    if(.verbose){
-      pb <- txtProgressBar(min = 0, max = .R, style = 3)
-    }
-    
-    ## Create seed if not already set
-    if(is.null(.seed)) {
-      .seed <- sample(.Random.seed, 1)
-    }
-    ## Set seed
-    set.seed(.seed)
-    
-    ## Calculate reference distribution
-    ref_dist        <- list()
-    n_inadmissibles  <- 0
-    counter <- 0
-    repeat{
-      # Counter
-      counter <- counter + 1
+      # Calculate test statistic for permutation sample
       
-      # Permutate data
-      X_temp <- cbind(X_all, id = sample(id))
+      fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
       
-      # Replace the old dataset by the new permutated dataset
-      arguments[[".data"]] <- X_temp
-      
-      # Estimate model
-      Est_temp <- do.call(csem, arguments)   
-      
-      # Check status
-      status_code <- sum(unlist(verify(Est_temp)))
-      
-      # Distinguish depending on how inadmissibles should be handled
-      if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-        # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
-        # not ok
-
-        # Calculate test statistic for permutation sample
-
-        fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
-        
-        ref_dist[[counter]] <- list(Klesel=c(
-          "dG" = cSEM:::calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
-          "dL" = cSEM:::calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
-        ),Chin=cSEM:::parameter_difference(.object=Est_temp,.comparison = .comparison))
-
-      } else if(status_code != 0 & .handle_inadmissibles == "drop") {
-        # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-        ref_dist[[counter]] <- NA
-        
-      } else {# status is not ok and .handle_inadmissibles == "replace"
-        # Reset counter and raise number of inadmissibles by 1
-        counter <- counter - 1
-        n_inadmissibles <- n_inadmissibles + 1
-      }
-      
-      # Break repeat loop if .R results have been created.
-      if(length(ref_dist) == .R) {
-        break
-      } else if(counter + n_inadmissibles == 10000) { 
-        ## Stop if 10000 runs did not result in insufficient admissible results
-        stop("Not enough admissible result.", call. = FALSE)
-      }
-      
-      if(.verbose){
-        setTxtProgressBar(pb, counter)
-      }
-      
-    } # END repeat 
-    
-    # close progress bar
-    if(.verbose){
-      close(pb)
-    }
-    
-    # Delete potential NA's
-    ref_dist1 <- Filter(Negate(anyNA), ref_dist)
-    
-    
-    # Approach suggested by Klesel et al. (2019)
-    ref_dist_Klesel = lapply(ref_dist1,function(x){
-      x$Klesel
-    })
-    
-    # Combine
-    ref_dist_matrix_Klesel <- do.call(cbind, ref_dist_Klesel)
-    
-    
-    ## Compute critical values (Result is a (2 x p) matrix, where n is the number
-    ## of quantiles that have been computed (1 by default)
-    .alpha <- .alpha[order(.alpha)]
-    critical_values_Klesel <- matrixStats::rowQuantiles(ref_dist_matrix_Klesel, 
-                                                 probs =  1-.alpha, drop = FALSE)
-    teststat_Klesel <- teststat$Klesel
-    ## Compare critical value and teststatistic
-    decision_Klesel <- teststat_Klesel < critical_values_Klesel # a logical (2 x p) matrix with each column
-    # representing the decision for one significance level. 
-    # TRUE = no evidence against the H0 --> not reject
-    # FALSE --> reject
-    
-    # Approach suggested by Chin & Dibbern (2010)
-    teststat_Chin = lapply(teststat$Chin, function(x){
-      x[!is.na(x)]
-    })
-    
-    ref_dist_Chin = lapply(ref_dist1,function(x){
-      x$Chin
-    })
-    
-    ref_dist_Chin_temp=purrr::transpose(ref_dist_Chin)
-    
-    # Outcome of the following needs to be matrix
-    ref_dist_matrices_Chin =lapply(ref_dist_Chin_temp,function(x){
-      temp = do.call(cbind,x)
-      temp_ind = stats::complete.cases(temp)
-      temp[temp_ind,,drop=FALSE]
-      }
+      ref_dist[[counter]] <- list(
+        "Klesel" = c(
+          "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
+          "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")),
+        "Chin" = calculateParameterDifference(.object=Est_temp,.comparison = .comparison)
       )
+      
+    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
+      # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
+      ref_dist[[counter]] <- NA
+      
+    } else {# status is not ok and .handle_inadmissibles == "replace"
+      # Reset counter and raise number of inadmissibles by 1
+      counter <- counter - 1
+      n_inadmissibles <- n_inadmissibles + 1
+    }
     
-    # Here we can correct alpha for multiple test
-    alpha_Chin=alpha_adjust(.alpha=.alpha,
-                            .approach_alpha_adjust=.approach_alpha_adjust,
-                            .nr_comparison=sum(sapply(teststat_Chin,length))*length(.alpha))
+    # Break repeat loop if .R results have been created.
+    if(length(ref_dist) == .R) {
+      break
+    } else if(counter + n_inadmissibles == 10000) { 
+      ## Stop if 10000 runs did not result in insufficient admissible results
+      stop("Not enough admissible result.", call. = FALSE)
+    }
     
-
-    critical_values_Chin = lapply(alpha_Chin,function(alpha){
-      probs_Chin = c(alpha/2,1-alpha/2)
-      temp=lapply(ref_dist_matrices_Chin, function(x){
-        matrixStats::rowQuantiles(x, probs = probs_Chin, drop = FALSE)
-        })
+    if(.verbose){
+      setTxtProgressBar(pb, counter)
+    }
+    
+  } # END repeat 
+  
+  # close progress bar
+  if(.verbose){
+    close(pb)
+  }
+  
+  # Delete potential NA's
+  ref_dist1 <- Filter(Negate(anyNA), ref_dist)
+  
+  ### Approach suggested by Klesel et al. (2019) -------------------------------
+  ## Collect permuation results and combine
+  ref_dist_Klesel <- lapply(ref_dist1, function(x) x$Klesel)
+  ref_dist_matrix_Klesel <- do.call(cbind, ref_dist_Klesel)
+  
+  
+  ## Compute critical values (Result is a (2 x p) matrix, where n is the number
+  ## of quantiles that have been computed (1 by default)
+  .alpha <- .alpha[order(.alpha)]
+  
+  critical_values_Klesel <- matrixStats::rowQuantiles(ref_dist_matrix_Klesel, 
+                                                      probs =  1-.alpha, drop = FALSE)
+  teststat_Klesel <- teststat$Klesel
+  
+  ## Compare critical value and teststatistic
+  decision_Klesel <- teststat_Klesel < critical_values_Klesel 
+  # a logical (2 x p) matrix with each column
+  # representing the decision for one significance level. 
+  # TRUE = no evidence against the H0 --> not reject
+  # FALSE = sufficient evidence against the H0 --> reject
+  
+  ### Approach suggested by Chin & Dibbern (2010) ------------------------------
+  teststat_Chin <- lapply(teststat$Chin, function(x) x[!is.na(x)])
+  ref_dist_Chin <- lapply(ref_dist1,function(x) x$Chin)
+  
+  ref_dist_Chin_temp <- purrr::transpose(ref_dist_Chin)
+  
+  # Outcome of the following needs to be matrix
+  ref_dist_matrices_Chin <- lapply(ref_dist_Chin_temp, function(x) {
+    temp <- do.call(cbind, x)
+    temp_ind <- stats::complete.cases(temp)
+    temp[temp_ind, ,drop = FALSE]
+  })
+  
+  # Calculation of adjusted alphas:
+  alpha_Chin <- lapply(.approach_alpha_adjust, function(x){
+    adjustAlpha(
+      .alpha = .alpha,
+      .approach_alpha_adjust = x,
+      .nr_comparison = sum(sapply(teststat_Chin,length))*length(.alpha))
     })
-    
-    names(critical_values_Chin) = paste0(alpha_Chin*100,'%')
-
-    decision_Chin <- lapply(critical_values_Chin,function(critical){# goes over the different significance levels
+  
+  names(alpha_Chin) <- .approach_alpha_adjust 
+  
+  # Compute the critical values for all alphas
+  critical_values_Chin <- lapply(alpha_Chin, function(alpha_list) {
+    res <- lapply(alpha_list, function(alpha) {
+      probs_Chin <- c(alpha/2,1-alpha/2)
+      temp<- lapply(ref_dist_matrices_Chin, function(x){
+        matrixStats::rowQuantiles(x, probs = probs_Chin, drop = FALSE)
+      })
+    })
+    names(res) <- paste0(alpha_list*100, '%')
+    return(res)
+  })
+  
+  names(critical_values_Chin) <- .approach_alpha_adjust 
+  
+  decision_Chin <- lapply(critical_values_Chin, function(critical_list){
+    lapply(critical_list,function(critical){# goes over the different significance levels
       temp=mapply(function(stat,crit){# goes over the different group comparisons
         crit[,1]< stat & stat < crit[,2]
-
-        },stat=teststat_Chin,crit=critical,SIMPLIFY = FALSE)
-    return(temp)
-      })
-    
-    # Overall decision 
-    decision_overall_Chin = lapply(decision_Chin,function(x){all(unlist(x))})
-    
-    names(decision_Chin)=  names(decision_overall_Chin) = paste0(alpha_Chin*100,'%')
-    
-
+        
+      },stat=teststat_Chin,crit=critical,SIMPLIFY = FALSE)
+      return(temp)
+    })
+  })
   
-    
-    # Return output
-    out <- list(
-      "Klesel"=list(
+  # Overall decision 
+  decision_overall_Chin = lapply(decision_Chin, function(decision_Chin_list){
+    lapply(decision_Chin_list,function(x){
+      all(unlist(x))
+    })
+  })
+  
+  ### Return output ------------------------------------------------------------
+  out <- list(
+    "Klesel"=list(
       "Test_statistic"     = teststat_Klesel,
       "Critical_value"     = critical_values_Klesel, 
       "Decision"           = decision_Klesel), 
-
-      "Chin" = list(
-        "Test_statistic"     = teststat_Chin,
-        "Critical_value"     = critical_values_Chin, 
-        "Decision"           = decision_Chin,
-        "Decision_overall"   = decision_overall_Chin,
-        "Alpha adjusted"     =  alpha_Chin),
+    
+    "Chin" = list(
+      "Test_statistic"     = teststat_Chin,
+      "Critical_value"     = critical_values_Chin, 
+      "Decision"           = decision_Chin,
+      "Decision_overall"   = decision_overall_Chin,
+      "Alpha_adjusted"     = alpha_Chin
+      ),
     "Information"        = list(
       "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
       "Total_runs"            = counter + n_inadmissibles,
@@ -353,35 +322,14 @@ testMGD.cSEMResults_multi <- function(
       "Approach" = .approach_mgd,
       "Seed"     = .seed,
       "Alpha"    = .alpha
-      )
     )
-  }
-  
+  )
   ## Remove the seed since it is set globally. Reset immediately by calling
   ## any kind of function that requires .Random.seed as this causes R to
   ## to create a new one.
-  rm(.Random.seed, envir=.GlobalEnv)
+  rm(.Random.seed, envir = .GlobalEnv)
   runif(1) # dont remove; this sets up a new .Random.seed
   
   class(out) <- "cSEMTestMGD"
   return(out)
-}
-
-#' @describeIn testMGD (TODO)
-#' @export
-
-testMGD.cSEMResults_2ndorder <- function(
-  .object                = args_default()$.object,
-  .alpha                 = args_default()$.alpha,
-  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
-  .approach_mgd          = args_default()$.approach_mgd,
-  .comparison            = args_default()$.comparison,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .R                     = args_default()$.R,
-  .saturated             = args_default()$.saturated,
-  .seed                  = args_default()$.seed,
-  .type_vcv              = args_default()$.type_vcv,
-  .verbose               = args_default()$.verbose
-){
-  stop2("Currently, second-order models are not supported by `testMGD()`.")
 }

@@ -16,7 +16,7 @@ calculateDF(
 A single numeric value.
 }
 \description{
-Calculates the degrees of freedom from a \link{cSEMResults} object.
+Calculates the degrees of freedom for a given model from a \link{cSEMResults} object.
 }
 \seealso{
 \link{assess}, \link{cSEMResults}

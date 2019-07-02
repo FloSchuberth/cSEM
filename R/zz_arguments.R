@@ -180,7 +180,7 @@
 #'   reliabilities are estimated by `csem()`. Currently, only supported for
 #'   `.approach_weights = "PLS-PM"`.
 #' @param .resample_method Character string. The resampling method to use. One of: 
-#'  "*bootstrap*" or "*jackknife*". Defaults to "*bootstrap*".
+#'  "*none*", "*bootstrap*" or "*jackknife*". Defaults to "*none*".
 #' @param .resample_method2 Character string. The resampling method to use when resampling
 #'   from a resample. One of: "*none*", "*bootstrap*" or "*jackknife*". For 
 #'   "*bootstrap*" the number of draws is provided via `.R2`. Currently, 

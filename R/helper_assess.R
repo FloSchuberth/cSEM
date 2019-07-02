@@ -74,7 +74,7 @@ calculateAVE <- function(
 
 #' Internal: Degrees of freedom
 #' 
-#' Calculates the degrees of freedom from a [cSEMResults] object.
+#' Calculates the degrees of freedom for a given model from a [cSEMResults] object.
 #' 
 #' @usage calculateDF(
 #'   .object     = NULL,
@@ -537,12 +537,16 @@ calculateHTMT <- function(
 #'
 #' Calculate the difference between the empirical (S) 
 #' and the model-implied indicator variance-covariance matrix (Sigma_hat)
-#' using different distance measures. See vignette assess.
+#' using different distance measures.
 #'
 #' The functions are only applicable to objects inheriting class `cSEMResults_default`.
 #' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
 #' 
-#' @return A single numeric value.
+#' The geodesic and the squared Euclidian distance may also be 
+#' computed for any two matrices A and B by supplying A and B directly via the 
+#' `.matrix1` and `.matrix2` arguments. If A and B are supplied `.object` is ignored.
+#' 
+#' @return A single numeric value giving the distance between two matrices.
 #' 
 #' @inheritParams csem_arguments
 #' @param ... Ignored.
@@ -555,19 +559,26 @@ NULL
 
 calculateDG <- function(
   .object    = NULL, 
+  .matrix1   = NULL,
+  .matrix2   = NULL,
   .saturated = args_default()$.saturated,
   .type_vcv  = args_default()$.type_vcv,
   ...
   ){
 
-  # Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  if(!is.null(.matrix1) & !is.null(.matrix2)) {
+    S         <- .matrix1
+    Sigma_hat <- .matrix2
+  } else {
+    # Only applicable to objects of class cSEMResults_default
+    if(!any(class(.object) == "cSEMResults_default")) {
+      stop2("`", match.call()[1], "` only applicable to objects of",
+            " class `cSEMResults_default`. Use `assess()` instead.")
+    }
+    
+    S         <- .object$Estimates$Indicator_VCV
+    Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)  
   }
-  
-  S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv) 
   
   # Not sure if logarithm naturalis is used or logarithm with base 10. 
   Eigen            <- eigen(solve(S) %*% Sigma_hat)
@@ -581,19 +592,26 @@ calculateDG <- function(
 
 calculateDL <- function(
   .object    = NULL, 
+  .matrix1   = NULL,
+  .matrix2   = NULL,
   .saturated = args_default()$.saturated,
   .type_vcv  = args_default()$.type_vcv,
   ...
   ){
   
-  # Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
-  }
+  if(!is.null(.matrix1) & !is.null(.matrix2)) {
+    S         <- .matrix1
+    Sigma_hat <- .matrix2
+  } else {
+    # Only applicable to objects of class cSEMResults_default
+    if(!any(class(.object) == "cSEMResults_default")) {
+      stop2("`", match.call()[1], "` only applicable to objects of",
+            " class `cSEMResults_default`. Use `assess()` instead.")
+    }
   
   S         <- .object$Estimates$Indicator_VCV
   Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
+  }
   
   ## Calculate distance
   0.5 * sum((S - Sigma_hat)[lower.tri(S, diag = FALSE)]^2)

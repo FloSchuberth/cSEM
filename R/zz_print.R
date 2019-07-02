@@ -10,63 +10,73 @@
 #' @keywords internal
 print.cSEMResults <- function(x, ...) {
   
-  cat(
+  cat2(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Overview", width = 80), 
-    sep = "")
+    rule(center = "Overview", width = 80)
+    )
   
-  if(class(x)[2] == "cSEMResults_multi") {
-    cat("\n\nEstimation status by group/data set:\n", sep = "")
+  if(inherits(x, "cSEMResults_multi")) {
+    cat2("\n\nEstimation status by group/data set:\n")
+    status <- verify(x)
     for(i in names(x)) {
-      cat("\n\t", col_align(cyan(i), 15), ": ",
-          ifelse(sum(verify.cSEMResults_default(x[[i]])) == 0, 
-                 green("successful"), red("not successful")), ".", sep = "")
+      cat2("\n\t", col_align(cyan(i), max(15, max(nchar(names(x))))), ": ",
+           ifelse(sum(unlist(status[[i]])) == 0, green("successful"), red("not successful")), ".")
     }
-    if(sum(verify.cSEMResults_default(x[[i]])) != 0) {
-      cat("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
-          " for details.", sep = "")
+    if(sum(unlist(status)) != 0) {
+      cat2("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
+          " for details.")
     }
-    cat("\n\nThe result for each group/data set is a list of class " %+% bold("cSEMResults") %+%"",
-        "\nwith list elements:\n\n\t", sep = "")
+    cat2("\n\nThe result for each group/data set is a list of class " %+% bold("cSEMResults") %+%"",
+        "\nwith list elements:\n\n\t")
     
-  } else if(class(x)[2] == "cSEMResults_2ndorder") {
+  } else if(inherits(x, "cSEMResults_2ndorder")) {
     x <- sapply(verify.cSEMResults_2ndorder(x), sum)
-    cat("\n\nEstimation status by stage:\n", sep = "")
+    cat2("\n\nEstimation status by stage:\n")
     for(i in names(x)) {
-      cat("\n\t", col_align(cyan(i), 15), ": ",
-          ifelse(sum(x) == 0, green("successful"), red("not successful")), sep = "")
+      cat2("\n\t", col_align(cyan(i), 15), ": ",
+          ifelse(sum(x) == 0, green("successful"), red("not successful")))
     }
     if(sum(x) != 0) {
-      cat("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
-          " for details.", sep = "")
+      cat2("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
+          " for details.")
     }
-    cat("\n\nThe result for each stage is a list of class " %+% bold("cSEMResults") %+%"",
-        "\nwith list elements:\n\n\t", sep = "")
+    cat2("\n\nThe result for each stage is a list of class " %+% bold("cSEMResults") %+%"",
+        "\nwith list elements:\n\n\t")
   } else {
-    cat(
+    cat2(
       "\n\nEstimation was ", ifelse(sum(verify.cSEMResults_default(x)) == 0, 
-                                    green("successful"), red("not successful")), ".", sep = "")
+                                    green("successful"), red("not successful")), ".")
     if(sum(verify.cSEMResults_default(x)) != 0) {
-      cat(" See ", magenta("verify"), "(", cyan("<object-name>"), ")", 
-          " for details.", sep = "")
+      cat2(" See ", magenta("verify"), "(", cyan("<object-name>"), ")", 
+          " for details.")
     }
     cat("\n\nThe result is a list of class " %+% bold("cSEMResults") %+%" with list elements:\n\n\t")
   }
-  cat(
+  if(inherits(x, "cSEMResults_multi") & inherits(x, "cSEMResults_2ndorder")) {
+    cat2(
+      "- ", green("First_stage\n\t"),
+      "\t- ", green("Estimates\n\t"),
+      "\t- ", green("Information\n\t"),
+      "- ", green("Second_stage\n\t"),
+      "\t- ", green("Estimates\n\t"),
+      "\t- ", green("Information\n\n"))
+  } else {
+    cat2(
       "- ", green("Estimates\n\t"),
-      "- ", green("Information\n\n"), sep = "")
-  cat("To get an overview or help type:\n\n\t",
+      "- ", green("Information\n\n"))
+  }
+  cat2("To get an overview or help type:\n\n\t",
       "- ", yellow("?"), cyan("cSEMResults"),"\n\t",
       "- ", magenta("str"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("listviewer"), yellow("::"), magenta("jsondedit"),
-      "(", cyan("<object-name>"), ", ", red("mode"), " = ", cyan("'view'"), ")\n\n", sep = "")
-  cat("If you wish to access the list elements directly type e.g. \n\n\t",
-      "- ", cyan("<object-name>"), yellow("$"), green("Estimates"), "\n\n", sep = "")
-  cat("Available postestimation commands:\n\n\t",
+      "(", cyan("<object-name>"), ", ", red("mode"), " = ", cyan("'view'"), ")\n\n")
+  cat2("If you wish to access the list elements directly type e.g. \n\n\t",
+      "- ", cyan("<object-name>"), yellow("$"), green("Estimates"), "\n\n")
+  cat2("Available postestimation commands:\n\n\t",
       "- ", magenta("assess"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("predict"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t",
-      "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n", sep = "")
+      "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n")
   cat(rule(line = "bar2", width = 80), "\n")
 }
 
