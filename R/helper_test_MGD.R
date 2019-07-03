@@ -100,6 +100,7 @@ getParameterNames <- function(
     construct_type <- c(x12$Model$construct_type, x22$Model$construct_type)
     construct_type <- construct_type[unique(names(construct_type))]
     measurement_org <- x22$Arguments_original$.model$measurement
+    names_path_org <- x[[1]]$Second_stage$Estimates$Path_estimates$Name
     
   } else {
     
@@ -107,6 +108,7 @@ getParameterNames <- function(
     # Extract different types of constructs
     construct_type <- x22$Model$construct_type
     measurement_org <- x22$Model$measurement
+    names_path_org <- x[[1]]$Estimates$Path_estimates$Name
   }
   
   # Parse model that indicates which parameters should be compared
@@ -139,6 +141,7 @@ getParameterNames <- function(
   if(!all(colnames(model_comp$measurement)%in%colnames(measurement_org))){
     stop2("At least one indicator appears in the comparison model and not in the original model.")
   }
+  
 
   ### Extract names ============================================================
   # Extract names of the path to be tested
@@ -150,6 +153,12 @@ getParameterNames <- function(
   if(length(names_path) == 0) {
     names_path <- NULL
   }
+  
+  # check whether the path to compare occur also in the original mode 
+  if(!all(names_path %in% names_path_org)){
+    stop2("At least one of the paths specified for comparison does not appear in the original model.")
+  }
+  
   
   ## Extract names of the loadings to be tested
   names_row <- rownames(model_comp$measurement)

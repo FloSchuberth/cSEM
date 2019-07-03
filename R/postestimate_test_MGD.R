@@ -99,9 +99,9 @@ testMGD <- function(
     )
   } 
   
-  # Sarstedt et al. (2011) is not allowed to be used in combination with drop as
-  # Permutation Test statistic are be dropped only because of estimations based on the 
-  # permutated dataset are dropped.
+  # Sarstedt et al. (2011) is not allowed to be used in combination with 
+  # .handle_inadmissibles == "drop as permutation test statistic are be dropped
+  # only because of estimations based on the permutated dataset are dropped.
   if("Sarstedt" %in% .approach_mgd & .handle_inadmissibles == "drop"){
     stop2(
       "The following error occured in the testMGD() function:\n",
@@ -128,7 +128,9 @@ testMGD <- function(
   
   ### Calculation of the test statistics========================================
   ## Get the model-implied VCV for Klesel et al. (2019)
-  fit <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
+  fit <- fit(.object = .object,
+             .saturated = .saturated,
+             .type_vcv = .type_vcv)
   
   ## Get bootstrapped parameter estimates for Sarstedt et al. (2011)
   if("Sarstedt" %in% .approach_mgd){
@@ -166,6 +168,8 @@ testMGD <- function(
     
     ll <- lapply(l, function(x) do.call(rbind, x))
     
+    # Matrix that contains all parameter estimate that should compared 
+    # plus an id variable indicating the group
     all_comb <- cbind(ll$path_resamples, ll$loading_resamples, ll$weight_resamples, id = id_Sarstedt)
   }
   
@@ -182,9 +186,10 @@ testMGD <- function(
   # Approach suggested by Sarstedt et al. (2011) 
   if("Sarstedt" %in% .approach_mgd){
     
-    ## Get the parameters to be compared
+    ## Get the name of the parameters to be compared
     names_param <- getParameterNames(.object, .model = .model)
     
+    # Calculate test statistic
     temp <- sapply(unlist(names_param), function(x) {
       calculateFR(
         .Parameter = all_comb[, x],
@@ -345,6 +350,7 @@ testMGD <- function(
   })
   
   # Calculation of adjusted alphas:
+  # Number of comparisons equals the number of parameter times the number of group comparisons
   alpha_Chin <- lapply(.approach_alpha_adjust, function(x){
     adjustAlpha(
       .alpha = .alpha,
@@ -378,14 +384,14 @@ testMGD <- function(
     })
   })
   
-  # Overall decision 
+  # Overall decision, i.e., was any of the test belonging to one significance levl rejected
   decision_overall_Chin = lapply(decision_Chin, function(decision_Chin_list){
     lapply(decision_Chin_list,function(x){
       all(unlist(x))
     })
   })
   
-  # Approach suggested by Sarstedt et al. (2010)
+  # Approach suggested by Sarstedt et al. (2011)-------------------------------------------
   if("Sarstedt" %in% .approach_mgd){
     ## Collect permuation results and combine
     ref_dist_Sarstedt <- lapply(ref_dist1, function(x) x$Sarstedt)
@@ -394,7 +400,8 @@ testMGD <- function(
     # Collect test statistic
     teststat_Sarstedt <- teststat$Sarstedt
     
-   # Calculation of adjusted alphas:
+   # Calculation of adjusted alphas: 
+   # Number of the comparisons equals the number of parameters that are compared 
     alpha_Sarstedt <- lapply(.approach_alpha_adjust, function(x){
       adjustAlpha(
         .alpha = .alpha,
@@ -418,10 +425,13 @@ testMGD <- function(
     # FALSE: Reject
     # TRUE: don't reject
     
-    
     names(decision_Sarstedt) <- .approach_alpha_adjust
 
-
+    # Overall decision, i.e., was any of the test belonging to one significance levl rejected
+    decision_overall_Sarstedt = lapply(decision_Sarstedt, function(x){
+        all(unlist(x))
+      })
+    
   }
   
   ### Return output ------------------------------------------------------------
@@ -457,7 +467,7 @@ testMGD <- function(
       "Test_statistic"   = teststat_Sarstedt,
       "Critical_value"     = critical_values_Sarstedt, 
       "Decision"           = decision_Sarstedt,
-      "Decision_overall"   = NULL,
+      "Decision_overall"   = decision_overall_Sarstedt,
       "Alpha_adjusted"     = alpha_Sarstedt
     )
     
