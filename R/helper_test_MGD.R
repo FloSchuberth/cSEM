@@ -3,7 +3,7 @@
 #' Calculates the differences between symmetric matrices using a given 
 #' distance measure. This is typically used to calculate the difference between
 #' the model-implied and the empirical indicator covariance matrix.
-#' 
+#' C
 #' `.matrices` must be a list of at least two matrices. If more than two matrices 
 #' are supplied the arithmetic mean over all possible matrix 
 #' distances is computed. Hence, supplying a large number of matrices will 
@@ -209,7 +209,7 @@ getParameterNames <- function(
 #'
 #' @usage calculateParameterDifference(
 #'   .object     = NULL,
-#'   .comparison = args_default()$.comparison
+#'   .model = args_default()$.model
 #' )
 #' 
 #' @inheritParams csem_arguments
@@ -223,14 +223,14 @@ getParameterNames <- function(
 #' 
 calculateParameterDifference <- function(
   .object     = NULL,
-  .comparison = args_default()$.comparison
+  .model = args_default()$.model
   ){
 
   ## Summarize
   x <- summarize(.object)
 
   ## Get names to compare
-  names <- getParameterNames(.object, .model = .comparison)
+  names <- getParameterNames(.object, .model = .model)
   names_path     <- names$names_path
   names_loadings <- names$names_loadings
   names_weights  <- names$names_weights

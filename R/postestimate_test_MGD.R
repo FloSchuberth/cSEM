@@ -21,7 +21,7 @@
 #'  .alpha                 = args_default()$.alpha,
 #'  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
 #'  .approach_mgd          = args_default()$.approach_mgd,
-#'  .comparison            = args_default()$.comparison,
+#'  .model            = args_default()$.model,
 #'  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
 #'  .R_permutation         = args_default()$.R_permutation,
 #'  .R_bootstrap           = args_default()$.R_bootstrap,
@@ -76,7 +76,7 @@ testMGD <- function(
   .alpha                 = args_default()$.alpha,
   .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
   .approach_mgd          = args_default()$.approach_mgd,
-  .comparison            = args_default()$.comparison,
+  .model                 = args_default()$.model,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
   .R_permutation         = args_default()$.R_permutation,
   .R_bootstrap           = args_default()$.R_bootstrap,
@@ -176,14 +176,14 @@ testMGD <- function(
       "dG" = calculateDistance(.matrices = fit, .distance = "geodesic"),
       "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")),
     # Approach suggested by Chin & Dibbern (2010)
-    "Chin" = calculateParameterDifference(.object = .object, .comparison = .comparison)
+    "Chin" = calculateParameterDifference(.object = .object, .model = .model)
     )
   
   # Approach suggested by Sarstedt et al. (2011) 
   if("Sarstedt" %in% .approach_mgd){
     
     ## Get the parameters to be compared
-    names_param <- getParameterNames(.object, .model = .comparison)
+    names_param <- getParameterNames(.object, .model = .model)
     
     temp <- sapply(unlist(names_param), function(x) {
       calculateFR(
@@ -261,7 +261,7 @@ testMGD <- function(
         "Klesel" = c(
           "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
           "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")),
-        "Chin" = calculateParameterDifference(.object=Est_temp,.comparison = .comparison))
+        "Chin" = calculateParameterDifference(.object=Est_temp,.model = .model))
       
       if("Sarstedt" %in% .approach_mgd){
         
@@ -415,6 +415,9 @@ testMGD <- function(
     decision_Sarstedt <- lapply(critical_values_Sarstedt, function(critical){
       teststat_Sarstedt < critical
     })
+    # FALSE: Reject
+    # TRUE: don't reject
+    
     
     names(decision_Sarstedt) <- .approach_alpha_adjust
 
