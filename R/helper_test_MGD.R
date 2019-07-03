@@ -99,14 +99,15 @@ getParameterNames <- function(
     # Extract different types of constructs
     construct_type <- c(x12$Model$construct_type, x22$Model$construct_type)
     construct_type <- construct_type[unique(names(construct_type))]
+    measurement_org <- x22$Arguments_original$.model$measurement
     
   } else {
     
     x22  <- x[[1]]$Information
     # Extract different types of constructs
     construct_type <- x22$Model$construct_type
+    measurement_org <- x22$Model$measurement
   }
-  
   
   # Parse model that indicates which parameters should be compared
   # if no model indicating the comparisons is provided, all parameters are compared
@@ -121,6 +122,24 @@ getParameterNames <- function(
   } else {
     model_comp <- parseModel(.model, .check_errors = FALSE)
   }
+  
+  
+  # Check whether the constructs specified in the comparison are equal to the constructs in the original model
+  construct_type_comp=model_comp$construct_type[!is.na(model_comp$construct_type)]
+  
+  if(!all(names(construct_type_comp)%in%names(construct_type))){
+    stop2("At least one construct appears in the comparison model and not in the original model.")
+  }
+  
+  if(!all(construct_type_comp==construct_type[names(construct_type_comp)])){
+    stop2("At least one construct's type in the comparison model differs from the original model.")
+  }
+  
+  # Check wehther the indicators used in the comparison model also appear in the original model
+  if(!all(colnames(model_comp$measurement)%in%colnames(measurement_org))){
+    stop2("At least one indicator appears in the comparison model and not in the original model.")
+  }
+
   ### Extract names ============================================================
   # Extract names of the path to be tested
   temp <- outer(rownames(model_comp$structural), colnames(model_comp$structural), 
@@ -172,6 +191,7 @@ getParameterNames <- function(
     "names_weights"  = names_weights,
     "names_loadings" = names_loadings
     )
+  return(out)
 }
 
 #' Parameter differences across groups
