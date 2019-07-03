@@ -192,6 +192,8 @@
 #' @param .R Integer. The number of bootstrap replications. Defaults to `499`.
 #' @param .R2 Integer. The number of bootstrap replications to use when 
 #'   resampling from a resample. Defaults to `199`.
+#' @param .R_bootstrap Integer. The number of bootstrap runs. Defaults to `499`
+#' @param .R_permutation Integer. The number of permutations. Defaults to `499`
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? 
 #'   Defaults to `FALSE`.
@@ -398,6 +400,8 @@ args_default <- function(.choices = FALSE) {
     .Q                       = NULL,
     .R                       = 499,
     .R2                      = 199,
+    .R_bootstrap             = 499,
+    .R_permutation           = 499,
     .reliabilities           = NULL,
     .resample_method         = c("none", "bootstrap", "jackknife"),
     .resample_method2        = c("none", "bootstrap", "jackknife"),

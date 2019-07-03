@@ -839,6 +839,13 @@ resamplecSEMResultsCore <- function(
     est2 <- summary_original$Second_stage$Estimates
     
     args <- info2$Arguments_original
+    
+    ## Replace original data (which contains either an id column or is a list)
+    ## by the data used for the group that is being resampled.
+    if(!is.null(args$.id) | inherits(args$.data, "list")) {
+      args$.data <- info1$Data
+      args$.id <- NULL
+    }
   } else {
     info1       <- .object$Information
     est_normal  <- .object$Estimates

@@ -66,6 +66,114 @@ calculateDistance <- function(
 }
 
 
+#' Get parameter names
+#' 
+#' Based on a cSEmodelDetermines the names of the parameters to be used for testing 
+#' 
+#' @usage getParameterNames(.object = NULL, .model = NULL)
+#' 
+#' @inheritParams csem_arguments
+#' @param .model A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
+#'   parameters (i.e, path (`~`), loadings (`=~`), or weights (`<~`)) should be
+#'   compared across groups. Defaults to `NULL` in which case all parameters of the model
+#'   are compared.
+#'   
+#' @return A list containing the names of the structural parameters,
+#'   the loadings and weight to be compared.
+#'   
+#' @keywords internal
+#' 
+getParameterNames <- function(
+  .object  = NULL,
+  .model   = NULL
+){
+  
+  ## Summarize
+  x <- summarize(.object)
+  
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    
+    x12 <- x[[1]]$First_stage$Information
+    x22 <- x[[1]]$Second_stage$Information
+    
+    # Extract different types of constructs
+    construct_type <- c(x12$Model$construct_type, x22$Model$construct_type)
+    construct_type <- construct_type[unique(names(construct_type))]
+    
+  } else {
+    
+    x22  <- x[[1]]$Information
+    # Extract different types of constructs
+    construct_type <- x22$Model$construct_type
+  }
+  
+  
+  # Parse model that indicates which parameters should be compared
+  # if no model indicating the comparisons is provided, all parameters are compared
+  # This prevents the the test_MGD function to break down if no comparison model is supplied.
+  
+  if(is.null(.model)) {
+    if(inherits(.object, "cSEMResults_2ndorder")) {
+      model_comp <- x22$Arguments_original$.model
+    } else {
+      model_comp <- x22$Model 
+    }
+  } else {
+    model_comp <- parseModel(.model, .check_errors = FALSE)
+  }
+  ### Extract names ============================================================
+  # Extract names of the path to be tested
+  temp <- outer(rownames(model_comp$structural), colnames(model_comp$structural), 
+                FUN = function(x, y) paste(x, y, sep = " ~ "))
+  
+  names_path <- t(temp)[t(model_comp$structural) != 0]
+  
+  if(length(names_path) == 0) {
+    names_path <- NULL
+  }
+  
+  ## Extract names of the loadings to be tested
+  names_row <- rownames(model_comp$measurement)
+  
+  ## Select only concepts modeled as common factors. Reorder to be have the 
+  ## same order as names_row.
+  i <- intersect(names(which(construct_type == "Common factor")), names_row)
+  i <- i[match(names_row, i)]
+  i <- i[!is.na(i)]
+  
+  if(length(i) != 0) {
+    temp <- rep(rownames(model_comp$measurement[i, , drop = FALSE]), 
+                times = rowSums(model_comp$measurement[i, , drop = FALSE]))
+    temp_n <- model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]
+    names_loadings <- paste0(temp, " =~ ", colnames(temp_n)) 
+  } else {
+    names_loadings <- NULL
+  }
+  
+  ## Extract names of the weights to be tested
+  # Select only concepts modeled as common factors. Reorder to be have the 
+  # same order as names_row.
+  i <- intersect(names(which(construct_type == "Composite")), names_row)
+  i <- i[match(names_row, i)]
+  i <- i[!is.na(i)]
+  
+  if(length(i) != 0) {
+    temp <- rep(rownames(model_comp$measurement[i, , drop = FALSE]), 
+                times = rowSums(model_comp$measurement[i, , drop = FALSE]))
+    temp_n <- model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]
+    names_weights <- paste0(temp, " <~ ", colnames(temp_n)) 
+  } else {
+    names_weights <- NULL
+  }
+  
+  ## Return as list
+  out <- list(
+    "names_path"     = names_path, 
+    "names_weights"  = names_weights,
+    "names_loadings" = names_loadings
+    )
+}
+
 #' Parameter differences across groups
 #' 
 #' Calculates the difference between one or more paramater estimates based 
@@ -89,59 +197,27 @@ calculateParameterDifference <- function(
   .object     = NULL,
   .comparison = args_default()$.comparison
   ){
-  
+
   ## Summarize
   x <- summarize(.object)
-  
-  if(inherits(.object, "cSEMResults_2ndorder")) {
-    
-    x22 <- x[[1]]$Second_stage$Information
-    
-  } else {
 
-    x22  <- x[[1]]$Information
-  }
-  
-
-  # Parse model that indicates which parameters should be compared
-  # if no model indicating the comparisons is provided, all parameters are compared
-  # This prevents the the test_MGD function to break down if no comparison model is supplied.
-  
-  if(is.null(.comparison)) {
-    model_comp <- x22$Model  
-  } else {
-    model_comp <- parseModel(.comparison, .check_errors = FALSE)
-  }
-  
-  # # Extract different types of constructs
-  construct_type <- x22$Model$construct_type
-  
-  ### Extract names ============================================================
-  # Extract names of the path to be tested
-  temp <- outer(rownames(model_comp$structural), colnames(model_comp$structural), 
-                FUN = function(x, y) paste(x, y, sep = " ~ "))
-  
-  names_path <- t(temp)[t(model_comp$structural) != 0]
-  
-  # Extract names of the loadings to be tested
-  names_row <- rownames(model_comp$measurement)
-  names_col <- colnames(model_comp$measurement)
-  
-  i <- intersect(names(which(construct_type == "Common factor")), names_row)
-  
-  temp <- rep(rownames(model_comp$measurement[i, , drop = FALSE]), times = rowSums(model_comp$measurement[i, , drop = FALSE]))
-  names_loadings <- paste0(temp, " =~ ", colnames(model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]))
-  
-  # Extract names of the weights to be tested
-  i <- intersect(names(which(construct_type == "Composite")), names_row)
-  temp <- rep(rownames(model_comp$measurement[i, , drop = FALSE]), times = rowSums(model_comp$measurement[i, , drop = FALSE]))
-  names_weights <- paste0(temp, " <~ ", colnames(model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]))
+  ## Get names to compare
+  names <- getParameterNames(.object, .model = .comparison)
+  names_path     <- names$names_path
+  names_loadings <- names$names_loadings
+  names_weights  <- names$names_weights
   
   ### Compute differences ======================================================
   if(inherits(.object, "cSEMResults_2ndorder")) {
     path_estimates  <- lapply(x, function(y) {y$Second_stage$Estimates$Path_estimates})
-    loading_estimates <- lapply(x, function(y) {y$Second_stage$Estimates$Loading_estimates})
-    weight_estimates <- lapply(x, function(y) {y$Second_stage$Estimates$Weight_estimates})
+    loading_estimates <- lapply(x, function(y) {
+      rbind(y$First_stage$Estimates$Loading_estimates, 
+            y$Second_stage$Estimates$Loading_estimates)
+      })
+    weight_estimates <- lapply(x, function(y) {
+      rbind(y$First_stage$Estimates$Weight_estimates, 
+            y$Second_stage$Estimates$Weight_estimates)
+      })
   } else {
     path_estimates  <- lapply(x, function(y) {y$Estimates$Path_estimates})
     loading_estimates <- lapply(x, function(y) {y$Estimates$Loading_estimates})
@@ -227,4 +303,36 @@ adjustAlpha <- function(
     return(.alpha/.nr_comparisons)
   }
   
+}
+
+#' ANOVA F-test statistic 
+#'
+#' Calculates the ANOVA F-test statistic suggested by Sarstedt et al. (2011) 
+#' 
+#' @usage calculateFR <- function(.Parameter,
+#' .id)
+#' 
+#' @inheritParams csem_arguments
+#' 
+#' @return A named scaler, the test statistic of the ANOVA F-test
+#'
+#' @keywords internal
+
+calculateFR <- function(.Parameter,
+                        .id){
+  ParameterIdMatrix = cbind(.Parameter,.id)
+  
+  G <- length(unique(.id))
+  
+  Agbar <- sapply(1:G, function(x){
+    mean(.Parameter[which(.id == unique(.id)[x])])
+  })
+  
+  B <- nrow(ParameterIdMatrix)
+  Abar <- mean(.Parameter)
+  SSbetween <- G * B *(1/(G-1)) * sum((Agbar - Abar)^2) 
+  
+  SSwithin <- 1/(B-1) * sum((.Parameter - Agbar)^2)
+  
+  SSbetween/SSwithin
 }

@@ -100,8 +100,9 @@ printSummarizeConstructDetails <- function(.summarize_object) {
     # All constructs used in the first step (= all first order constructs)
     c_linear_1step        <- rownames(x1$Model$structural)
     # All second order constructs
-    c_2nd_order           <- grep("_temp", rownames(x2$Model$structural), 
-                                  value = TRUE, invert = TRUE)
+    # c_2nd_order           <- grep("_temp", rownames(x2$Model$structural), 
+    #                               value = TRUE, invert = TRUE)
+    c_2nd_order <- names(x1$Model$construct_order[x1$Model$construct_order == "Second order"])
     # # All linear constructs of the original model
     c_linear_original     <- c(c_linear_1step, c_2nd_order)
     
@@ -148,7 +149,6 @@ printSummarizeConstructDetails <- function(.summarize_object) {
         cat(col_align(x2$Weight_info$Modes[i], 5), sep = "")
       }
     }
-    
   } else {
     for(i in names(x2$Model$construct_type)) {
       cat2(

@@ -257,6 +257,10 @@ or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.}
 \item{.R2}{Integer. The number of bootstrap replications to use when
 resampling from a resample. Defaults to \code{199}.}
 
+\item{.R_bootstrap}{Integer. The number of bootstrap runs. Defaults to \code{499}}
+
+\item{.R_permutation}{Integer. The number of permutations. Defaults to \code{499}}
+
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?

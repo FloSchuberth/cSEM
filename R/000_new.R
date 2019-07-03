@@ -283,3 +283,40 @@ plot.Two_Way_Effect = function(.TWobject){
   # Plot
   plot1
 }
+
+
+# # Function OTG
+# 
+# calculateOTG = function(
+#   .object = args_default()$.object,
+#   .ListParameterNames = NULL){
+# 
+#    #First step: Bootstrap all parameters
+#   res_boot <- resamplecSEMResults(.object,...)
+# 
+#   # Combine bootstrap results
+#   id <- rep(1:length(res_boot), sapply(res_boot, function(x){ 
+#     nrow(x$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled)}))
+#   
+#   path_comb <- do.call(rbind,  lapply(res_boot, function(x) {
+#     path <- x$Estimates$Estimates_resample$Estimates1$Path_estimates$Resampled
+#   }))
+#   
+#   weight_comb <- do.call(rbind,  lapply(res_boot, function(x) {
+#     path <- x$Estimates$Estimates_resample$Estimates1$Weight_estimates$Resampled
+#   }))
+#   
+#   loading_comb <- do.call(rbind,  lapply(res_boot, function(x) {
+#     path <- x$Estimates$Estimates_resample$Estimates1$Loading_estimates$Resampled
+#   }))
+#   
+#   all_comb <- cbind(path_comb, weight_comb, loading_comb, id)
+#   # Select the parameters that should be compared
+#   
+#   
+#  # Second step: calculate F-statistic
+# teststat_all = sapply(colnames(all_comb)[-c(ncol(all_comb))],function(x){calculateFR(.Parameter = all_comb[,x], 
+#                                                   .id = all_comb[,ncol(all_comb)])} )
+# 
+# teststat_Sarstedt =teststat_all[unlist(.ListParameterNames)]
+# }

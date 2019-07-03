@@ -317,14 +317,44 @@ summarize.cSEMResults_2ndorder <- function(
   i <- x21$Weight_estimates$Name[!grepl("_temp", x21$Weight_estimates$Name)]
   x21$Weight_estimates <- x21$Weight_estimates[x21$Weight_estimates$Name %in% i, , drop = FALSE]
   
+  ## Delete _temp suffix wherever it appears ----------------------------------
   ## Inner weight estimates
-  # Delete the "_temp" suffix.
   x21$Inner_weight_estimates$Name <- gsub("_temp", "", x21$Inner_weight_estimates$Name)
   
   ## Construct scores
-  # Delete the "_temp" suffix.
   colnames(x21$Construct_scores) <- gsub("_temp", "", colnames(x21$Construct_scores))
   
+  ## Proxy VCV
+  colnames(x21$Proxy_VCV) <- gsub("_temp", "", colnames(x21$Proxy_VCV))
+  rownames(x21$Proxy_VCV) <- gsub("_temp", "", rownames(x21$Proxy_VCV))
+  
+  ## Construct VCV
+  colnames(x21$Construct_VCV) <- gsub("_temp", "", colnames(x21$Construct_VCV))
+  rownames(x21$Construct_VCV) <- gsub("_temp", "", rownames(x21$Construct_VCV))
+  
+  ## Reliabilities
+  names(x21$Reliabilities) <- gsub("_temp", "", names(x21$Reliabilities))
+  
+  ## R2
+  names(x21$R2) <- gsub("_temp", "", names(x21$R2))
+  names(x21$R2adj) <- gsub("_temp", "", names(x21$R2adj))
+  
+  ## Vif
+  names(x21$VIF) <- gsub("_temp", "", names(x21$VIF))
+  lapply(x21$VIF, function(x) {
+    names(x) <- gsub("_temp", "", names(x)) 
+    x
+  })
+
+  ## Model
+  rownames(x22$Model$structural) <- gsub("_temp", "", rownames(x22$Model$structural))
+  colnames(x22$Model$structural) <- gsub("_temp", "", colnames(x22$Model$structural))
+  
+  rownames(x22$Model$measurement) <- gsub("_temp", "", rownames(x22$Model$measurement))
+  colnames(x22$Model$measurement) <- gsub("_temp", "", colnames(x22$Model$measurement))
+  
+  names(x22$Model$construct_type) <- gsub("_temp", "", names(x22$Model$construct_type))
+  names(x22$Model$construct_order) <- gsub("_temp", "", names(x22$Model$construct_order))
   ## Effects -------------------------------------------------------------------
   if(x22$Model$model_type == "Linear") {
     effects <- calculateEffects(.object, .output_type = "data.frame")

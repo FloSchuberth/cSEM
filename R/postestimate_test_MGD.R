@@ -23,7 +23,8 @@
 #'  .approach_mgd          = args_default()$.approach_mgd,
 #'  .comparison            = args_default()$.comparison,
 #'  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-#'  .R                     = args_default()$.R,
+#'  .R_permutation         = args_default()$.R_permutation,
+#'  .R_bootstrap           = args_default()$.R_bootstrap,
 #'  .saturated             = args_default()$.saturated,
 #'  .seed                  = args_default()$.seed,
 #'  .type_vcv              = args_default()$.type_vcv,
@@ -77,7 +78,8 @@ testMGD <- function(
   .approach_mgd          = args_default()$.approach_mgd,
   .comparison            = args_default()$.comparison,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .R                     = args_default()$.R,
+  .R_permutation         = args_default()$.R_permutation,
+  .R_bootstrap           = args_default()$.R_bootstrap,
   .saturated             = args_default()$.saturated,
   .seed                  = args_default()$.seed,
   .type_vcv              = args_default()$.type_vcv,
@@ -97,16 +99,25 @@ testMGD <- function(
     )
   } 
   
-  ## Check if any of the group estimates are inadmissible
-  if(sum(unlist(verify(.object))) != 0) {
+  # Sarstedt et al. (2011) is not allowed to be used in combination with drop as
+  # Permutation Test statistic are be dropped only because of estimations based on the 
+  # permutated dataset are dropped.
+  if("Sarstedt" %in% .approach_mgd & .handle_inadmissibles == "drop"){
     stop2(
       "The following error occured in the testMGD() function:\n",
-      "Initial estimation results for at least one group are inadmissible.\n", 
-      "See `verify(.object)` for details.")
+      "Approach `'Sarstedt'` not supported if `.handle_inadmissibles == 'drop'`")
   }
   
   ## Check if data for different groups is identical
   if(.verbose) {
+    ## Check if any of the group estimates are inadmissible
+    if(sum(unlist(verify(.object))) != 0) {
+      warning2(
+        "The following warning occured in the testMGD() function:\n",
+        "Initial estimation results for at least one group are inadmissible.\n", 
+        "See `verify(.object)` for details.")
+    }
+    
     if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
                         function(x){ identical(x[[1]], x[[2]])})){
       warning2(
@@ -116,8 +127,47 @@ testMGD <- function(
   }
   
   ### Calculation of the test statistics========================================
-  ## Get the model-implied VCV
+  ## Get the model-implied VCV for Klesel et al. (2019)
   fit <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
+  
+  ## Get bootstrapped parameter estimates for Sarstedt et al. (2011)
+  if("Sarstedt" %in% .approach_mgd){
+    
+    # Check if .object already contains resamples; if not; run bootstrap
+    if(!inherits(.object, "cSEMResults_resampled")) {
+      .object <- resamplecSEMResults(
+        .object               = .object,
+        .resample_method      = "bootstrap",
+        .handle_inadmissibles = .handle_inadmissibles,
+        .R                    = .R_bootstrap) 
+    }
+    
+    ## Combine bootstrap results in one matrix
+    l <- lapply(.object, function(x) {
+      if(inherits(.object, "cSEMResults_2ndorder")) {
+        x <- x$Second_stage$Information$Resamples$Estimates$Estimates1
+      } else {
+        x <- x$Estimates$Estimates_resample$Estimates1
+      }
+      path_resamples    <- x$Path_estimates$Resampled
+      loading_resamples <- x$Loading_estimates$Resampled
+      weight_resamples  <- x$Weight_estimates$Resampled
+      n                 <- nrow(path_resamples)
+      
+      list(
+        "path_resamples"    = path_resamples, 
+        "loading_resamples" = loading_resamples, 
+        "weight_resamples"  = weight_resamples, 
+        "n"                 = n)
+    })
+    
+    l <- purrr::transpose(l)
+    id_Sarstedt <- rep(1:length(.object), unlist(l$n))
+    
+    ll <- lapply(l, function(x) do.call(rbind, x))
+    
+    all_comb <- cbind(ll$path_resamples, ll$loading_resamples, ll$weight_resamples, id = id_Sarstedt)
+  }
   
   ## Compute the test statistics 
   teststat <- list(
@@ -129,13 +179,36 @@ testMGD <- function(
     "Chin" = calculateParameterDifference(.object = .object, .comparison = .comparison)
     )
   
+  # Approach suggested by Sarstedt et al. (2011) 
+  if("Sarstedt" %in% .approach_mgd){
+    
+    ## Get the parameters to be compared
+    names_param <- getParameterNames(.object, .model = .comparison)
+    
+    temp <- sapply(unlist(names_param), function(x) {
+      calculateFR(
+        .Parameter = all_comb[, x],
+        .id        = all_comb[,ncol(all_comb)])
+      })
+    
+    names(temp) <- unlist(names_param)
+    ## Add test statistic
+    teststat[["Sarstedt"]] <- temp
+  } 
+  
   ## Start Permutation
   # Put data of each groups in a list and combine
-  X_all_list  <- lapply(.object, function(x) x$Information$Data)
-  X_all       <- do.call(rbind, X_all_list)
-  
-  # Collect initial arguments (from the first object, but could be any other)
-  arguments <- .object[[1]]$Information$Arguments
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    # Data is saved in the first stage
+    X_all_list  <- lapply(.object, function(x) x$First_stage$Information$Data)
+    # Collect initial arguments (from the first object, but could be any other)
+    arguments <- .object[[1]]$Second_stage$Information$Arguments_original
+  } else {
+    X_all_list  <- lapply(.object, function(x) x$Information$Data)
+    # Collect initial arguments (from the first object, but could be any other)
+    arguments <- .object[[1]]$Information$Arguments
+  }
+  X_all <- do.call(rbind, X_all_list)
   
   # Create a vector "id" to be used to randomly select groups (permutate) and
   # set id as an argument in order to identify the groups.
@@ -144,7 +217,7 @@ testMGD <- function(
   
   # Start progress bar if required
   if(.verbose){
-    pb <- txtProgressBar(min = 0, max = .R, style = 3)
+    pb <- txtProgressBar(min = 0, max = .R_permutation, style = 3)
   }
   
   ## Create seed if not already set
@@ -183,12 +256,27 @@ testMGD <- function(
       
       fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
       
-      ref_dist[[counter]] <- list(
+      
+      teststat_permutation <- list(
         "Klesel" = c(
           "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
           "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")),
-        "Chin" = calculateParameterDifference(.object=Est_temp,.comparison = .comparison)
-      )
+        "Chin" = calculateParameterDifference(.object=Est_temp,.comparison = .comparison))
+      
+      if("Sarstedt" %in% .approach_mgd){
+        
+        # Permutation of the bootstrap parameter estimates
+        all_comb_permutation <- all_comb
+        all_comb_permutation[,"id"] <- sample(id_Sarstedt)
+        
+        teststat_Sarstedt_all <- sapply(unlist(names_param),
+                                        function(x){calculateFR(.Parameter = all_comb_permutation[,x],
+                                                                .id = all_comb_permutation[,"id"])})
+        
+        teststat_permutation[["Sarstedt"]] <- teststat_Sarstedt_all
+      }
+      
+      ref_dist[[counter]] <- teststat_permutation
       
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
@@ -201,7 +289,7 @@ testMGD <- function(
     }
     
     # Break repeat loop if .R results have been created.
-    if(length(ref_dist) == .R) {
+    if(length(ref_dist) == .R_permutation) {
       break
     } else if(counter + n_inadmissibles == 10000) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
@@ -297,6 +385,11 @@ testMGD <- function(
     })
   })
   
+  # Approach suggested by Sarstedt et al. (2010)
+  if("Sarstedt" %in% .approach_mgd){
+    teststat_Sarstedt <- teststat$Sarstedt
+  }
+  
   ### Return output ------------------------------------------------------------
   out <- list(
     "Klesel"=list(
@@ -324,6 +417,21 @@ testMGD <- function(
       "Alpha"    = .alpha
     )
   )
+  
+  if("Sarstedt" %in% .approach_mgd){
+    out[["Sarstedt"]] <- list(
+      "Test_statistic"   = teststat_Sarstedt,
+      "Critical_value"     = NULL, 
+      "Decision"           = NULL,
+      "Decision_overall"   = NULL,
+      "Alpha_adjusted"     = NULL
+    )
+    
+    # Order output
+    out <- out[c("Klesel","Chin","Sarstedt","Information")]
+  }
+
+  
   ## Remove the seed since it is set globally. Reset immediately by calling
   ## any kind of function that requires .Random.seed as this causes R to
   ## to create a new one.

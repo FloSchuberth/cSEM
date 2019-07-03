@@ -11,7 +11,8 @@ testMGD(
  .approach_mgd          = args_default()$.approach_mgd,
  .comparison            = args_default()$.comparison,
  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
- .R                     = args_default()$.R,
+ .R_permutation         = args_default()$.R_permutation,
+ .R_bootstrap           = args_default()$.R_bootstrap,
  .saturated             = args_default()$.saturated,
  .seed                  = args_default()$.seed,
  .type_vcv              = args_default()$.type_vcv,
@@ -42,7 +43,9 @@ number of results returned = .R). For "\emph{replace}" resampling continues unti
 there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
-\item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
+\item{.R_permutation}{Integer. The number of permutations. Defaults to \code{499}}
+
+\item{.R_bootstrap}{Integer. The number of bootstrap runs. Defaults to \code{499}}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
