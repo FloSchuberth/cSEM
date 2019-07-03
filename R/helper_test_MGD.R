@@ -163,8 +163,12 @@ getParameterNames <- function(
   if(length(i) != 0) {
     temp <- rep(rownames(model_comp$measurement[i, , drop = FALSE]), 
                 times = rowSums(model_comp$measurement[i, , drop = FALSE]))
+    if(length(temp)!=0){
     temp_n <- model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]
     names_loadings <- paste0(temp, " =~ ", colnames(temp_n)) 
+    }else{
+      names_loadings = NULL
+    }
   } else {
     names_loadings <- NULL
   }
@@ -179,8 +183,12 @@ getParameterNames <- function(
   if(length(i) != 0) {
     temp <- rep(rownames(model_comp$measurement[i, , drop = FALSE]), 
                 times = rowSums(model_comp$measurement[i, , drop = FALSE]))
+    if(length(temp)!=0){
     temp_n <- model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]
-    names_weights <- paste0(temp, " <~ ", colnames(temp_n)) 
+    names_weights <- paste0(temp, " <~ ", colnames(temp_n))
+    }else{
+      names_weights = NULL
+    } 
   } else {
     names_weights <- NULL
   }

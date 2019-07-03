@@ -269,11 +269,11 @@ testMGD <- function(
         all_comb_permutation <- all_comb
         all_comb_permutation[,"id"] <- sample(id_Sarstedt)
         
-        teststat_Sarstedt_all <- sapply(unlist(names_param),
+        teststat_Sarstedt_permutation <- sapply(unlist(names_param),
                                         function(x){calculateFR(.Parameter = all_comb_permutation[,x],
                                                                 .id = all_comb_permutation[,"id"])})
-        
-        teststat_permutation[["Sarstedt"]] <- teststat_Sarstedt_all
+        names(teststat_Sarstedt_permutation) <- unlist(names_param)
+        teststat_permutation[["Sarstedt"]] <- teststat_Sarstedt_permutation
       }
       
       ref_dist[[counter]] <- teststat_permutation
@@ -324,7 +324,7 @@ testMGD <- function(
                                                       probs =  1-.alpha, drop = FALSE)
   teststat_Klesel <- teststat$Klesel
   
-  ## Compare critical value and teststatistic
+  ## Compare critical value and test statistic
   decision_Klesel <- teststat_Klesel < critical_values_Klesel 
   # a logical (2 x p) matrix with each column
   # representing the decision for one significance level. 
@@ -349,7 +349,7 @@ testMGD <- function(
     adjustAlpha(
       .alpha = .alpha,
       .approach_alpha_adjust = x,
-      .nr_comparison = sum(sapply(teststat_Chin,length))*length(.alpha))
+      .nr_comparison = sum(sapply(teststat_Chin,length))*length(teststat_Chin))
     })
   
   names(alpha_Chin) <- .approach_alpha_adjust 
@@ -387,7 +387,38 @@ testMGD <- function(
   
   # Approach suggested by Sarstedt et al. (2010)
   if("Sarstedt" %in% .approach_mgd){
+    ## Collect permuation results and combine
+    ref_dist_Sarstedt <- lapply(ref_dist1, function(x) x$Sarstedt)
+    ref_dist_matrix_Sarstedt <- do.call(cbind, ref_dist_Sarstedt)
+    
+    # Collect test statistic
     teststat_Sarstedt <- teststat$Sarstedt
+    
+   # Calculation of adjusted alphas:
+    alpha_Sarstedt <- lapply(.approach_alpha_adjust, function(x){
+      adjustAlpha(
+        .alpha = .alpha,
+        .approach_alpha_adjust = x,
+        .nr_comparison = nrow(ref_dist_matrix_Sarstedt))
+    })
+    
+    names(alpha_Sarstedt) <- .approach_alpha_adjust 
+    
+    critical_values_Sarstedt <- lapply(alpha_Sarstedt, function(alpha_list) {
+      matrixStats::rowQuantiles(ref_dist_matrix_Sarstedt, 
+                                probs =  1-alpha_list, drop = FALSE)
+    })
+    
+    names(critical_values_Sarstedt) <- .approach_alpha_adjust 
+
+    ## Compare critical value and test statistic    
+    decision_Sarstedt <- lapply(critical_values_Sarstedt, function(critical){
+      teststat_Sarstedt < critical
+    })
+    
+    names(decision_Sarstedt) <- .approach_alpha_adjust
+
+
   }
   
   ### Return output ------------------------------------------------------------
@@ -421,10 +452,10 @@ testMGD <- function(
   if("Sarstedt" %in% .approach_mgd){
     out[["Sarstedt"]] <- list(
       "Test_statistic"   = teststat_Sarstedt,
-      "Critical_value"     = NULL, 
-      "Decision"           = NULL,
+      "Critical_value"     = critical_values_Sarstedt, 
+      "Decision"           = decision_Sarstedt,
       "Decision_overall"   = NULL,
-      "Alpha_adjusted"     = NULL
+      "Alpha_adjusted"     = alpha_Sarstedt
     )
     
     # Order output
