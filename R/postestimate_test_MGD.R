@@ -458,6 +458,7 @@ testMGD <- function(
         "Klesel" = ref_dist_matrix_Klesel,
         "Chin"   = ref_dist_matrices_Chin),
       "Approach" = .approach_mgd,
+      "Approach_p_adjust" =.approach_p_adjust,
       "Seed"     = .seed,
       "Alpha"    = .alpha
     )
