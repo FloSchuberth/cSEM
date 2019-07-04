@@ -365,7 +365,7 @@ testMGD <- function(
   
   names(pvalue_Chin) <- names(ref_dist_matrices_Chin)
   
-  padjusted_Chin <- lapply(.approach_p_adjust, function(x){
+  padjusted_Chin <- lapply(as.list(.approach_p_adjust), function(x){
     # It is important to unlist the pvalues as pAdjust needs to now how many p-values
     # there are to do a proper adjustment
   pvector <- stats::p.adjust(unlist(pvalue_Chin),method = x)
@@ -411,7 +411,7 @@ testMGD <- function(
     pvalue_Sarstedt=rowMeans(ref_dist_matrix_Sarstedt> teststat_Sarstedt)
     
     # Adjust pvalues:
-    padjusted_Sarstedt<- lapply(.approach_p_adjust, function(x){
+    padjusted_Sarstedt<- lapply(as.list(.approach_p_adjust), function(x){
       pvector <- stats::p.adjust(pvalue_Sarstedt,method = x)
     })
     names(padjusted_Sarstedt) <- .approach_p_adjust
