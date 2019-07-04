@@ -19,7 +19,7 @@
 #' @usage testMGD(
 #'  .object                = args_default()$.object,
 #'  .alpha                 = args_default()$.alpha,
-#'  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+#'  .approach_p_adjust     = args_default()$.approach_p_adjust,
 #'  .approach_mgd          = args_default()$.approach_mgd,
 #'  .model            = args_default()$.model,
 #'  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
@@ -74,7 +74,7 @@
 testMGD <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
-  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+  .approach_p_adjust = args_default()$.approach_p_adjust,
   .approach_mgd          = args_default()$.approach_mgd,
   .model                 = args_default()$.model,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
@@ -365,7 +365,7 @@ testMGD <- function(
   
   names(pvalue_Chin) <- names(ref_dist_matrices_Chin)
   
-  padjusted_Chin <- lapply(.approach_alpha_adjust, function(x){
+  padjusted_Chin <- lapply(.approach_p_adjust, function(x){
     # It is important to unlist the pvalues as pAdjust needs to now how many p-values
     # there are to do a proper adjustment
   pvector <- stats::p.adjust(unlist(pvalue_Chin),method = x)
@@ -373,7 +373,7 @@ testMGD <- function(
     relist(flesh = pvector,skeleton = pvalue_Chin)
   })
   
-  names(padjusted_Chin) <- .approach_alpha_adjust
+  names(padjusted_Chin) <- .approach_p_adjust
   
 
   # Decision 
@@ -411,10 +411,10 @@ testMGD <- function(
     pvalue_Sarstedt=rowMeans(ref_dist_matrix_Sarstedt> teststat_Sarstedt)
     
     # Adjust pvalues:
-    padjusted_Sarstedt<- lapply(.approach_alpha_adjust, function(x){
+    padjusted_Sarstedt<- lapply(.approach_p_adjust, function(x){
       pvector <- stats::p.adjust(pvalue_Sarstedt,method = x)
     })
-    names(padjusted_Sarstedt) <- .approach_alpha_adjust
+    names(padjusted_Sarstedt) <- .approach_p_adjust
     
     # Decision 
     decision_Sarstedt=lapply(padjusted_Sarstedt,function(p_value){

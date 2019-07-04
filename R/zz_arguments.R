@@ -14,8 +14,6 @@
 #' @param .approach_2ndorder Character string. Approach used for models containing
 #'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
 #'   Defaults to "*3stage*".
-#' @param .approach_alpha_adjust Character string. Approach used to adjust the significance level.
-#' One of: "*none*", "*bonferroni*", 
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
 #'   indicator correlation matrix. One of: "*none*" in which case the standard 
 #'   Bravais-Person correlation is used,
@@ -27,6 +25,9 @@
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
+#' @param .approach_p_adjust Character string. Approach used to adjust the p value.
+#' The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
+#' Defaults to "*none*".
 #' @param .approach_paths Character string. Approach used to estimate the
 #'   structural coefficients. One of: "*OLS*", "*2SLS*", or "*3SLS*" (not yet implemented).
 #'   Defaults to "*OLS*".
@@ -338,9 +339,9 @@ args_default <- function(.choices = FALSE) {
     .alpha                   = 0.05,
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("3stage", "repeated_indicators"),
-    .approach_alpha_adjust   = c("none", "bonferroni"),
     .approach_mgd            = c("Klesel", "Chin", "Sarstedt"),
     .approach_nl             = c("sequential", "replace"),
+    .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS", "3SLS"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
