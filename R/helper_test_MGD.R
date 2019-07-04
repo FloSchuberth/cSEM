@@ -435,7 +435,7 @@ decide_by_critical=function(.test_MGD, .approach_alpha_adjust, .alpha){
   # Calculation of adjusted alphas:
   # Number of comparisons equals the number of parameter times the number of group comparisons
   alpha_Chin <- lapply(.approach_alpha_adjust, function(x){
-    adjustAlpha(
+    cSEM:::adjustAlpha(
       .alpha = .alpha,
       .approach_alpha_adjust = x,
       .nr_comparison = sum(sapply(teststat_Chin,length)))
@@ -488,7 +488,7 @@ decide_by_critical=function(.test_MGD, .approach_alpha_adjust, .alpha){
     # Calculation of adjusted alphas: 
     # Number of the comparisons equals the number of parameters that are compared 
     alpha_Sarstedt <- lapply(.approach_alpha_adjust, function(x){
-      adjustAlpha(
+      cSEM:::adjustAlpha(
         .alpha = .alpha,
         .approach_alpha_adjust = x,
         .nr_comparison = nrow(ref_dist_matrix_Sarstedt))
@@ -532,19 +532,19 @@ decide_by_critical=function(.test_MGD, .approach_alpha_adjust, .alpha){
       "Decision"           = decision_Chin,
       "Decision_overall"   = decision_overall_Chin,
       "Alpha_adjusted"     = alpha_Chin
-    ),
-    "Information"        = list(
-      "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
-      "Total_runs"            = counter + n_inadmissibles,
-      "Group_names"           = names(.object),
-      "Number_of_observations"= sapply(X_all_list, nrow),
-      "Permutation_values"      = list(
-        "Klesel" = ref_dist_Klesel,
-        "Chin"   = ref_dist_matrices_Chin),
-      "Approach" = .approach_mgd,
-      "Seed"     = .seed,
-      "Alpha"    = .alpha
     )
+    # "Information"        = list(
+    #   "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
+    #   "Total_runs"            = counter + n_inadmissibles,
+    #   "Group_names"           = names(.object),
+    #   "Number_of_observations"= sapply(X_all_list, nrow),
+    #   "Permutation_values"      = list(
+    #     "Klesel" = ref_dist_Klesel,
+    #     "Chin"   = ref_dist_matrices_Chin),
+    #   "Approach" = .approach_mgd,
+    #   "Seed"     = .seed,
+    #   "Alpha"    = .alpha
+    # )
   )
   
   if("Sarstedt" %in% .approach_mgd){
@@ -557,7 +557,7 @@ decide_by_critical=function(.test_MGD, .approach_alpha_adjust, .alpha){
     )
     
     # Order output
-    out <- out[c("Klesel","Chin","Sarstedt","Information")]
+    out <- out[c("Klesel","Chin","Sarstedt")]
   }  
   
 }
