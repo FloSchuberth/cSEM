@@ -126,13 +126,16 @@ getParameterNames <- function(
   }
   
   
-  # Check whether the constructs specified in the comparison are equal to the constructs in the original model
-  construct_type_comp=model_comp$construct_type[!is.na(model_comp$construct_type)]
-  
-  if(!all(names(construct_type_comp)%in%names(construct_type))){
+  # Check whether the constructs specified in the comparison are equal
+  # to the constructs in the original model
+
+  if(!all(rownames(model_comp$structural)%in%rownames(measurement_org ))){
     stop2("At least one construct appears in the comparison model and not in the original model.")
   }
   
+  # Check whether the construct type specified in the comparison are equal
+  # to the construct types in the original model
+  construct_type_comp=model_comp$construct_type[!is.na(model_comp$construct_type)]  
   if(!all(construct_type_comp==construct_type[names(construct_type_comp)])){
     stop2("At least one construct's type in the comparison model differs from the original model.")
   }
@@ -142,7 +145,18 @@ getParameterNames <- function(
     stop2("At least one indicator appears in the comparison model and not in the original model.")
   }
   
-
+# Check whether the indicators used are correctly assigned, i.e., as in the original model
+  lapply(rownames(model_comp$measurement),function(x){
+    names_ind_comp <- colnames(model_comp$measurement[x,,drop=FALSE][,which(model_comp$measurement[x,,drop=FALSE]==1),drop=FALSE])
+    names_ind_org <- colnames(measurement_org[x,,drop=FALSE][,which(measurement_org[x,,drop=FALSE]==1),drop=FALSE])
+    
+    if(!all(names_ind_comp %in% names_ind_org)){
+      stop2("At least one indicator is not correctly assigned in the comparison model.")
+    }
+    
+    })
+  
+  
   ### Extract names ============================================================
   # Extract names of the path to be tested
   temp <- outer(rownames(model_comp$structural), colnames(model_comp$structural), 
@@ -364,12 +378,21 @@ calculateFR <- function(.Parameter,
   Agbar <- sapply(1:G, function(x){
     mean(.Parameter[which(.id == unique(.id)[x])])
   })
+  names(Agbar)=unique(.id)
   
   B <- nrow(ParameterIdMatrix)
   Abar <- mean(.Parameter)
   SSbetween <- G * B *(1/(G-1)) * sum((Agbar - Abar)^2) 
+
+  # expand Agbar to the same dimension as .Parameter
+  Agbar_ext=.id
+    
+  for(x in unique(.id)){
+    Agbar_ext[which(.id==x)] <- Agbar[names(Agbar)==x]   
+  }
+
   
-  SSwithin <- 1/(B-1) * sum((.Parameter - Agbar)^2)
+  SSwithin <- 1/(B-1) * sum((.Parameter - Agbar_ext)^2)
   
   SSbetween/SSwithin
 }
