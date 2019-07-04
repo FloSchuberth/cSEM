@@ -439,13 +439,11 @@ testMGD <- function(
   out <- list(
     "Klesel"=list(
       "Test_statistic"     = teststat_Klesel,
-      "Critical_value"     = critical_values_Klesel, 
       "P_value"            = pvalue_Klesel,
       "Decision"           = decision_Klesel), 
     
     "Chin" = list(
       "Test_statistic"     = teststat_Chin,
-      "Critical_value"     = critical_values_Chin, 
       "P_value"            = pvalue_Chin,
       "P_value_adjusted"   = padjusted_Chin,
       "Decision"           = decision_Chin,
@@ -468,7 +466,6 @@ testMGD <- function(
   if("Sarstedt" %in% .approach_mgd){
     out[["Sarstedt"]] <- list(
       "Test_statistic"   = teststat_Sarstedt,
-      "Critical_value"     = critical_values_Sarstedt,
       "P_value"            = pvalue_Sarstedt,
       "P_value_adjusted"   = padjusted_Sarstedt,
       "Decision"           = decision_Sarstedt,
