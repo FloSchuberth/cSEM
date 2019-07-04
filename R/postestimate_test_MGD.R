@@ -355,7 +355,7 @@ testMGD <- function(
     adjustAlpha(
       .alpha = .alpha,
       .approach_alpha_adjust = x,
-      .nr_comparison = sum(sapply(teststat_Chin,length))*length(teststat_Chin))
+      .nr_comparison = sum(sapply(teststat_Chin,length)))
     })
   
   names(alpha_Chin) <- .approach_alpha_adjust 
