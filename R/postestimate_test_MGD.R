@@ -427,7 +427,7 @@ testMGD <- function(
     # TRUE -> no rejection 
     
     # Decision overall
-    decision_overall_Sarstedt <- lapply(decision_Sarstedt_pvalue, function(x){#over p-value adjustments
+    decision_overall_Sarstedt <- lapply(decision_Sarstedt, function(x){#over p-value adjustments
       lapply(x, function(xx){ #over different significant levels
         all(xx)
         })
@@ -447,7 +447,7 @@ testMGD <- function(
       "Test_statistic"     = teststat_Chin,
       "Critical_value"     = critical_values_Chin, 
       "P_value"            = pvalue_Chin,
-      "P_value_adjusted"   = padjusted_Chin
+      "P_value_adjusted"   = padjusted_Chin,
       "Decision"           = decision_Chin,
       "Decision_overall"   = decision_overall_Chin
       ),
