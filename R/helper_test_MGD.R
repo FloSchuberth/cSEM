@@ -400,7 +400,7 @@ calculateFR <- function(.Parameter,
 #' Decision fot test of multigroup difference is based on the critical values instead
 #' of p-values 
 
-decide_by_critical=function(.test_MGD, .approach_alpha_adjust){
+decide_by_critical=function(.test_MGD, .approach_alpha_adjust, .alpha){
   ### Approach suggested by Klesel et al. (2019) -------------------------------
   
   # Extract test statistic
@@ -412,7 +412,7 @@ decide_by_critical=function(.test_MGD, .approach_alpha_adjust){
   
   ## Compute critical values (Result is a (2 x p) matrix, where n is the number
   ## of quantiles that have been computed (1 by default)
-  .alpha <- .test_MGD$Information$Alpha
+  .alpha <- .alpha
   
   critical_values_Klesel <- matrixStats::rowQuantiles(ref_dist_matrix_Klesel, 
                                                       probs =  1-.alpha, drop = FALSE)
