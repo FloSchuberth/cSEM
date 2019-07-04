@@ -366,6 +366,8 @@ testMGD <- function(
   names(pvalue_Chin) <- names(ref_dist_matrices_Chin)
   
   padjusted_Chin <- lapply(.approach_alpha_adjust, function(x){
+    # It is important to unlist the pvalues as pAdjust needs to now how many p-values
+    # there are to do a proper adjustment
   pvector <- stats::p.adjust(unlist(pvalue_Chin),method = x)
     # Sort them back into list
     relist(flesh = pvector,skeleton = pvalue_Chin)
@@ -422,66 +424,32 @@ testMGD <- function(
       names(temp) = paste(.alpha*100,"%",sep= '')
       temp
     })
+    # TRUE -> no rejection 
     
     # Decision overall
-    decision_overall_Sarstedt <- lapply(decision_Sarstedt_pvalue, function(x){#over p value adjustment
-      lapply(x, function(xx){ #over different significna
+    decision_overall_Sarstedt <- lapply(decision_Sarstedt_pvalue, function(x){#over p-value adjustments
+      lapply(x, function(xx){ #over different significant levels
         all(xx)
         })
     })
     
-    
-   # Calculation of adjusted alphas: 
-   # Number of the comparisons equals the number of parameters that are compared 
-    alpha_Sarstedt <- lapply(.approach_alpha_adjust, function(x){
-      adjustAlpha(
-        .alpha = .alpha,
-        .approach_alpha_adjust = x,
-        .nr_comparison = nrow(ref_dist_matrix_Sarstedt))
-    })
-    
-    names(alpha_Sarstedt) <- .approach_alpha_adjust 
-    
-    critical_values_Sarstedt <- lapply(alpha_Sarstedt, function(alpha_list) {
-      matrixStats::rowQuantiles(ref_dist_matrix_Sarstedt, 
-                                probs =  1-alpha_list, drop = FALSE)
-    })
-    
-    names(critical_values_Sarstedt) <- .approach_alpha_adjust 
-
-    ## Compare critical value and test statistic    
-    decision_Sarstedt <- lapply(critical_values_Sarstedt, function(critical){
-      teststat_Sarstedt < critical
-    })
-    # FALSE: Reject
-    # TRUE: don't reject
-    
-    names(decision_Sarstedt) <- .approach_alpha_adjust
-
-    # Overall decision, i.e., was any of the test belonging to one significance levl rejected
-    # decision_overall_Sarstedt = lapply(decision_Sarstedt, function(x){
-    #     all(unlist(x))
-    #   })
-    
-  }
+  }#End approach Sarstedt
   
   ### Return output ------------------------------------------------------------
   out <- list(
     "Klesel"=list(
       "Test_statistic"     = teststat_Klesel,
       "Critical_value"     = critical_values_Klesel, 
-      "Decision"           = decision_Klesel,
-      "P_value"            = pvalue_Klesel), 
+      "P_value"            = pvalue_Klesel,
+      "Decision"           = decision_Klesel), 
     
     "Chin" = list(
       "Test_statistic"     = teststat_Chin,
       "Critical_value"     = critical_values_Chin, 
-      "Decision"           = decision_Chin,
-      "Decision_pvalue"    = decision_Chin_pvalue,
-      "Decision_overall"   = decision_overall_Chin,
-      "Alpha_adjusted"     = alpha_Chin,
       "P_value"            = pvalue_Chin,
       "P_value_adjusted"   = padjusted_Chin
+      "Decision"           = decision_Chin,
+      "Decision_overall"   = decision_overall_Chin
       ),
     "Information"        = list(
       "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
@@ -500,15 +468,14 @@ testMGD <- function(
   if("Sarstedt" %in% .approach_mgd){
     out[["Sarstedt"]] <- list(
       "Test_statistic"   = teststat_Sarstedt,
-      "Critical_value"     = critical_values_Sarstedt, 
-      "Decision"           = decision_Sarstedt,
-      "Decision_pvalue"    = decision_Sarstedt_pvalue,
-      "Decision_overall"   = decision_overall_Sarstedt,
-      "Alpha_adjusted"     = alpha_Sarstedt,
+      "Critical_value"     = critical_values_Sarstedt,
       "P_value"            = pvalue_Sarstedt,
-      "P_value_adjusted"   = padjusted_Sarstedt
+      "P_value_adjusted"   = padjusted_Sarstedt,
+      "Decision"           = decision_Sarstedt,
+      "Decision_overall"   = decision_overall_Sarstedt
     )
     
+    # Add the reference distirbutions
     out[["Information"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
     
     # Order output
