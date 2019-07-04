@@ -315,76 +315,80 @@ testMGD <- function(
   # Delete potential NA's
   ref_dist1 <- Filter(Negate(anyNA), ref_dist)
   
+  # Order significance levels
+  .alpha <- .alpha[order(.alpha)]
+  
   ### Approach suggested by Klesel et al. (2019) -------------------------------
   ## Collect permuation results and combine
   ref_dist_Klesel <- lapply(ref_dist1, function(x) x$Klesel)
   ref_dist_matrix_Klesel <- do.call(cbind, ref_dist_Klesel)
   
-  
-  ## Compute critical values (Result is a (2 x p) matrix, where n is the number
-  ## of quantiles that have been computed (1 by default)
-  .alpha <- .alpha[order(.alpha)]
-  
-  critical_values_Klesel <- matrixStats::rowQuantiles(ref_dist_matrix_Klesel, 
-                                                      probs =  1-.alpha, drop = FALSE)
+  # Extract test statistic
   teststat_Klesel <- teststat$Klesel
   
-  ## Compare critical value and test statistic
-  decision_Klesel <- teststat_Klesel < critical_values_Klesel 
-  # a logical (2 x p) matrix with each column
-  # representing the decision for one significance level. 
-  # TRUE = no evidence against the H0 --> not reject
+
+  # Calculation of p-values
+  pvalue_Klesel=rowMeans(ref_dist_matrix_Klesel> teststat_Klesel)
+  
+  # Decision 
+  decision_Klesel <- lapply(.alpha,function(x){
+    pvalue_Klesel > x
+  })
+  names(decision_Klesel) <- paste(.alpha*100,"%",sep= '')
+  # TRUE = p-value > alpha --> not reject
   # FALSE = sufficient evidence against the H0 --> reject
+ 
   
   ### Approach suggested by Chin & Dibbern (2010) ------------------------------
+  
+  # Extract test statistic
   teststat_Chin <- lapply(teststat$Chin, function(x) x[!is.na(x)])
+  
+  # Create list with matrices containing the reference distribution of the parameter differences
   ref_dist_Chin <- lapply(ref_dist1,function(x) x$Chin)
   
   ref_dist_Chin_temp <- purrr::transpose(ref_dist_Chin)
   
-  # Outcome of the following needs to be matrix
   ref_dist_matrices_Chin <- lapply(ref_dist_Chin_temp, function(x) {
     temp <- do.call(cbind, x)
     temp_ind <- stats::complete.cases(temp)
     temp[temp_ind, ,drop = FALSE]
   })
   
-  # Calculation of adjusted alphas:
-  # Number of comparisons equals the number of parameter times the number of group comparisons
-  alpha_Chin <- lapply(.approach_alpha_adjust, function(x){
-    adjustAlpha(
-      .alpha = .alpha,
-      .approach_alpha_adjust = x,
-      .nr_comparison = sum(sapply(teststat_Chin,length)))
-    })
+  # Calculation of the p-values
+  pvalue_Chin <- lapply(1:length(ref_dist_matrices_Chin),function(x){
+    # share of values above the positive test statistic
+    rowMeans(ref_dist_matrices_Chin[[x]]>abs(teststat_Chin[[x]]))+
+    # share of values of the reference distribution below the negative test statistic 
+      rowMeans(ref_dist_matrices_Chin[[x]]< (-abs(teststat_Chin[[x]])))
+  })
   
-  names(alpha_Chin) <- .approach_alpha_adjust 
+  names(pvalue_Chin) <- names(ref_dist_matrices_Chin)
   
-  # Compute the critical values for all alphas
-  critical_values_Chin <- lapply(alpha_Chin, function(alpha_list) {
-    res <- lapply(alpha_list, function(alpha) {
-      probs_Chin <- c(alpha/2,1-alpha/2)
-      temp<- lapply(ref_dist_matrices_Chin, function(x){
-        matrixStats::rowQuantiles(x, probs = probs_Chin, drop = FALSE)
+  padjusted_Chin <- lapply(.approach_alpha_adjust, function(x){
+  pvector <- stats::p.adjust(unlist(pvalue_Chin),method = x)
+    # Sort them back into list
+    relist(flesh = pvector,skeleton = pvalue_Chin)
+  })
+  
+  names(padjusted_Chin) <- .approach_alpha_adjust
+  
+
+  # Decision 
+  decision_Chin=lapply(padjusted_Chin,function(adjust_approach){#over the different p adjustments
+      temp=lapply(.alpha, function(alpha){#over the different significance levels
+        lapply(adjust_approach,function(group_comp){#over the different group comparisons
+          # check whether the p values are larger than a certain alpha
+          group_comp > alpha
+        })
       })
-    })
-    names(res) <- paste0(alpha_list*100, '%')
-    return(res)
-  })
-  
-  names(critical_values_Chin) <- .approach_alpha_adjust 
-  
-  decision_Chin <- lapply(critical_values_Chin, function(critical_list){
-    lapply(critical_list,function(critical){# goes over the different significance levels
-      temp=mapply(function(stat,crit){# goes over the different group comparisons
-        crit[,1]< stat & stat < crit[,2]
-        
-      },stat=teststat_Chin,crit=critical,SIMPLIFY = FALSE)
-      return(temp)
-    })
-  })
-  
-  # Overall decision, i.e., was any of the test belonging to one significance levl rejected
+  names(temp) = paste(.alpha*100,"%",sep= '')
+  temp
+      })
+
+
+  # Overall decision, i.e., was any of the test belonging to one significance level 
+  # and one p value adjustment rejected
   decision_overall_Chin = lapply(decision_Chin, function(decision_Chin_list){
     lapply(decision_Chin_list,function(x){
       all(unlist(x))
@@ -393,12 +397,39 @@ testMGD <- function(
   
   # Approach suggested by Sarstedt et al. (2011)-------------------------------------------
   if("Sarstedt" %in% .approach_mgd){
-    ## Collect permuation results and combine
+
+    # Extract test statistic
+    teststat_Sarstedt <- teststat$Sarstedt
+    
+    # Collect permuation results and combine to matrix
     ref_dist_Sarstedt <- lapply(ref_dist1, function(x) x$Sarstedt)
     ref_dist_matrix_Sarstedt <- do.call(cbind, ref_dist_Sarstedt)
     
-    # Collect test statistic
-    teststat_Sarstedt <- teststat$Sarstedt
+    # Calculation of the p-value
+    pvalue_Sarstedt=rowMeans(ref_dist_matrix_Sarstedt> teststat_Sarstedt)
+    
+    # Adjust pvalues:
+    padjusted_Sarstedt<- lapply(.approach_alpha_adjust, function(x){
+      pvector <- stats::p.adjust(pvalue_Sarstedt,method = x)
+    })
+    names(padjusted_Sarstedt) <- .approach_alpha_adjust
+    
+    # Decision 
+    decision_Sarstedt=lapply(padjusted_Sarstedt,function(p_value){
+      temp=lapply(.alpha, function(alpha){
+        p_value > alpha
+      })
+      names(temp) = paste(.alpha*100,"%",sep= '')
+      temp
+    })
+    
+    # Decision overall
+    decision_overall_Sarstedt <- lapply(decision_Sarstedt_pvalue, function(x){#over p value adjustment
+      lapply(x, function(xx){ #over different significna
+        all(xx)
+        })
+    })
+    
     
    # Calculation of adjusted alphas: 
    # Number of the comparisons equals the number of parameters that are compared 
@@ -428,9 +459,9 @@ testMGD <- function(
     names(decision_Sarstedt) <- .approach_alpha_adjust
 
     # Overall decision, i.e., was any of the test belonging to one significance levl rejected
-    decision_overall_Sarstedt = lapply(decision_Sarstedt, function(x){
-        all(unlist(x))
-      })
+    # decision_overall_Sarstedt = lapply(decision_Sarstedt, function(x){
+    #     all(unlist(x))
+    #   })
     
   }
   
@@ -439,14 +470,18 @@ testMGD <- function(
     "Klesel"=list(
       "Test_statistic"     = teststat_Klesel,
       "Critical_value"     = critical_values_Klesel, 
-      "Decision"           = decision_Klesel), 
+      "Decision"           = decision_Klesel,
+      "P_value"            = pvalue_Klesel), 
     
     "Chin" = list(
       "Test_statistic"     = teststat_Chin,
       "Critical_value"     = critical_values_Chin, 
       "Decision"           = decision_Chin,
+      "Decision_pvalue"    = decision_Chin_pvalue,
       "Decision_overall"   = decision_overall_Chin,
-      "Alpha_adjusted"     = alpha_Chin
+      "Alpha_adjusted"     = alpha_Chin,
+      "P_value"            = pvalue_Chin,
+      "P_value_adjusted"   = padjusted_Chin
       ),
     "Information"        = list(
       "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
@@ -454,7 +489,7 @@ testMGD <- function(
       "Group_names"           = names(.object),
       "Number_of_observations"= sapply(X_all_list, nrow),
       "Permutation_values"      = list(
-        "Klesel" = ref_dist_Klesel,
+        "Klesel" = ref_dist_matrix_Klesel,
         "Chin"   = ref_dist_matrices_Chin),
       "Approach" = .approach_mgd,
       "Seed"     = .seed,
@@ -467,9 +502,14 @@ testMGD <- function(
       "Test_statistic"   = teststat_Sarstedt,
       "Critical_value"     = critical_values_Sarstedt, 
       "Decision"           = decision_Sarstedt,
+      "Decision_pvalue"    = decision_Sarstedt_pvalue,
       "Decision_overall"   = decision_overall_Sarstedt,
-      "Alpha_adjusted"     = alpha_Sarstedt
+      "Alpha_adjusted"     = alpha_Sarstedt,
+      "P_value"            = pvalue_Sarstedt,
+      "P_value_adjusted"   = padjusted_Sarstedt
     )
+    
+    out[["Information"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
     
     # Order output
     out <- out[c("Klesel","Chin","Sarstedt","Information")]
