@@ -258,10 +258,8 @@ testMGD <- function(
       # not ok
       
       # Calculate test statistic for permutation sample
-      
       fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
-      
-      
+
       teststat_permutation <- list(
         "Klesel" = c(
           "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
@@ -297,7 +295,7 @@ testMGD <- function(
     if(length(ref_dist) == .R_permutation) {
       break
     } else if(counter + n_inadmissibles == 10000) { 
-      ## Stop if 10000 runs did not result in insufficient admissible results
+      # Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
     
@@ -318,8 +316,8 @@ testMGD <- function(
   # Order significance levels
   .alpha <- .alpha[order(.alpha)]
   
-  ### Approach suggested by Klesel et al. (2019) -------------------------------
-  ## Collect permuation results and combine
+  ## Approach suggested by Klesel et al. (2019) -------------------------------
+  # Collect permuation results and combine
   ref_dist_Klesel <- lapply(ref_dist1, function(x) x$Klesel)
   ref_dist_matrix_Klesel <- do.call(cbind, ref_dist_Klesel)
   
