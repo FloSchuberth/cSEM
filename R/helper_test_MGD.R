@@ -419,6 +419,11 @@ decide_by_critical=function(
   .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
   .alpha = args_default()$.alpha){
 
+  # Check whether .test_MGD is of class "cSEMTestMGD"
+  if(class(.test_MGD) != "cSEMTestMGD"){
+    stop2("Please provide an object of class cSEMTestMGD to the function decide_by_crtical")
+  }
+  
   .alpha <- .alpha[order(.alpha)]
   
     ### Approach suggested by Klesel et al. (2019) -------------------------------
@@ -491,7 +496,7 @@ decide_by_critical=function(
   })
   
   # Approach suggested by Sarstedt et al. (2011)-------------------------------------------
-  if(length(.test_MGD)==4){
+  if("Sarstedt" %in% names(.test_MGD)){
     
     # Extract test statistic
     teststat_Sarstedt <- .test_MGD$Sarstedt$Test_statistic 
@@ -561,7 +566,7 @@ decide_by_critical=function(
     # )
   )
   
-  if(length(.test_MGD)==4){
+  if("Sarstedt" %in% names(.test_MGD)){
     out[["Sarstedt"]] <- list(
       "Test_statistic"   = teststat_Sarstedt,
       "Critical_value"     = critical_values_Sarstedt, 

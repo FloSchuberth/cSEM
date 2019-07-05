@@ -108,6 +108,22 @@ testMGD <- function(
       "Approach `'Sarstedt'` not supported if `.handle_inadmissibles == 'drop'`")
   }
   
+  # If a non-linear model is used Klesel et al. approach cannot be used as 
+  # it is not clear how to calculate the model-implied VCV
+  # Extract model type information
+  if(inherits(.object[[1]], "cSEMResults_2ndorder")){
+    model_type <- .object[[1]]$Second_stage$Information$Model$model_type
+  } else {
+    model_type <- .object[[1]]$Information$Model$model_type
+  }
+  
+  if(.approach_mgd == "Klesel" & model_type == "Nonlinear"){
+    stop2("The following error occured in the testMGD() function:\n",
+          "The approach suggested by Klesel et al. (2019) cannot be applied to non-linear models
+          as the model-implied VCV cannot be calculate for such models.")
+  }
+  
+  
   ## Check if data for different groups is identical
   if(.verbose) {
     ## Check if any of the group estimates are inadmissible
@@ -127,11 +143,7 @@ testMGD <- function(
   }
   
   ### Calculation of the test statistics========================================
-  ## Get the model-implied VCV for Klesel et al. (2019)
-  fit <- fit(.object = .object,
-             .saturated = .saturated,
-             .type_vcv = .type_vcv)
-  
+
   ## Get bootstrapped parameter estimates for Sarstedt et al. (2011)
   if("Sarstedt" %in% .approach_mgd){
     
@@ -173,6 +185,11 @@ testMGD <- function(
     all_comb <- cbind(ll$path_resamples, ll$loading_resamples, ll$weight_resamples, id = id_Sarstedt)
   }
   
+  ## Get the model-implied VCV for Klesel et al. (2019)
+  if(model_type != "Nonlinear"){
+  fit <- fit(.object = .object,
+             .saturated = .saturated,
+             .type_vcv = .type_vcv)
   ## Compute the test statistics 
   teststat <- list(
     #  Approach suggested by Klesel et al. (2019)
@@ -181,7 +198,13 @@ testMGD <- function(
       "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")),
     # Approach suggested by Chin & Dibbern (2010)
     "Chin" = calculateParameterDifference(.object = .object, .model = .model)
+  )} else{
+    teststat <- list(
+      # Approach suggested by Chin & Dibbern (2010)
+      "Chin" = calculateParameterDifference(.object = .object, .model = .model)
     )
+    
+    }
   
   # Approach suggested by Sarstedt et al. (2011) 
   if("Sarstedt" %in% .approach_mgd){
@@ -258,6 +281,7 @@ testMGD <- function(
       # not ok
       
       # Calculate test statistic for permutation sample
+      if(model_type != "Nonlinear"){
       fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
 
       teststat_permutation <- list(
@@ -265,7 +289,10 @@ testMGD <- function(
           "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
           "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")),
         "Chin" = calculateParameterDifference(.object=Est_temp,.model = .model))
-      
+      }else{
+        teststat_permutation <- list(
+          "Chin" = calculateParameterDifference(.object=Est_temp,.model = .model))
+      }
       if("Sarstedt" %in% .approach_mgd){
         
         # Permutation of the bootstrap parameter estimates
@@ -316,6 +343,7 @@ testMGD <- function(
   # Order significance levels
   .alpha <- .alpha[order(.alpha)]
   
+  if(model_type != "Nonlinear"){
   ## Approach suggested by Klesel et al. (2019) -------------------------------
   # Collect permuation results and combine
   ref_dist_Klesel <- lapply(ref_dist1, function(x) x$Klesel)
@@ -335,7 +363,7 @@ testMGD <- function(
   names(decision_Klesel) <- paste(.alpha*100,"%",sep= '')
   # TRUE = p-value > alpha --> not reject
   # FALSE = sufficient evidence against the H0 --> reject
- 
+  }
   
   ### Approach suggested by Chin & Dibbern (2010) ------------------------------
   
@@ -434,6 +462,7 @@ testMGD <- function(
   }#End approach Sarstedt
   
   ### Return output ------------------------------------------------------------
+  if(model_type != "Nonlinear"){
   out <- list(
     "Klesel"=list(
       "Test_statistic"     = teststat_Klesel,
@@ -461,7 +490,29 @@ testMGD <- function(
       "Alpha"    = .alpha
     )
   )
-  
+  }else{
+    out <- list(
+      "Chin" = list(
+        "Test_statistic"     = teststat_Chin,
+        "P_value"            = pvalue_Chin,
+        "P_value_adjusted"   = padjusted_Chin,
+        "Decision"           = decision_Chin,
+        "Decision_overall"   = decision_overall_Chin
+      ),
+      "Information"        = list(
+        "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
+        "Total_runs"            = counter + n_inadmissibles,
+        "Group_names"           = names(.object),
+        "Number_of_observations"= sapply(X_all_list, nrow),
+        "Permutation_values"      = list(
+          "Chin"   = ref_dist_matrices_Chin),
+        "Approach" = .approach_mgd,
+        "Approach_p_adjust" =.approach_p_adjust,
+        "Seed"     = .seed,
+        "Alpha"    = .alpha
+      )
+    )
+  }
   if("Sarstedt" %in% .approach_mgd){
     out[["Sarstedt"]] <- list(
       "Test_statistic"   = teststat_Sarstedt,
@@ -475,7 +526,11 @@ testMGD <- function(
     out[["Information"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
     
     # Order output
+    if(model_type != "Nonlinear"){
     out <- out[c("Klesel","Chin","Sarstedt","Information")]
+    } else{
+      out <- out[c("Chin","Sarstedt","Information")]
+    }
   }
 
   
