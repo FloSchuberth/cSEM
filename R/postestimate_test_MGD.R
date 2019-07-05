@@ -186,7 +186,7 @@ testMGD <- function(
   }
   
   ## Get the model-implied VCV for Klesel et al. (2019)
-  if(model_type != "Nonlinear"){
+  if(model_type == "Linear"){
   fit <- fit(.object = .object,
              .saturated = .saturated,
              .type_vcv = .type_vcv)
@@ -198,12 +198,13 @@ testMGD <- function(
       "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")),
     # Approach suggested by Chin & Dibbern (2010)
     "Chin" = calculateParameterDifference(.object = .object, .model = .model)
-  )} else{
+  )} else if(model_type == "Nonlinear"){
     teststat <- list(
       # Approach suggested by Chin & Dibbern (2010)
       "Chin" = calculateParameterDifference(.object = .object, .model = .model)
     )
-    
+  } else{
+      stop2("Model type is not known.")
     }
   
   # Approach suggested by Sarstedt et al. (2011) 
@@ -281,7 +282,7 @@ testMGD <- function(
       # not ok
       
       # Calculate test statistic for permutation sample
-      if(model_type != "Nonlinear"){
+      if(model_type == "Linear"){
       fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
 
       teststat_permutation <- list(
@@ -289,9 +290,11 @@ testMGD <- function(
           "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
           "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")),
         "Chin" = calculateParameterDifference(.object=Est_temp,.model = .model))
-      }else{
+      }else if(model_type == "Nonlinear"){
         teststat_permutation <- list(
           "Chin" = calculateParameterDifference(.object=Est_temp,.model = .model))
+      } else{
+        stop2("Model type is not known.")
       }
       if("Sarstedt" %in% .approach_mgd){
         
@@ -343,7 +346,7 @@ testMGD <- function(
   # Order significance levels
   .alpha <- .alpha[order(.alpha)]
   
-  if(model_type != "Nonlinear"){
+  if(model_type == "Linear"){
   ## Approach suggested by Klesel et al. (2019) -------------------------------
   # Collect permuation results and combine
   ref_dist_Klesel <- lapply(ref_dist1, function(x) x$Klesel)
@@ -462,7 +465,7 @@ testMGD <- function(
   }#End approach Sarstedt
   
   ### Return output ------------------------------------------------------------
-  if(model_type != "Nonlinear"){
+  if(model_type == "Linear"){
   out <- list(
     "Klesel"=list(
       "Test_statistic"     = teststat_Klesel,
@@ -490,7 +493,7 @@ testMGD <- function(
       "Alpha"    = .alpha
     )
   )
-  }else{
+  }else if(model_type == "Nonlinear"){
     out <- list(
       "Chin" = list(
         "Test_statistic"     = teststat_Chin,
@@ -500,7 +503,7 @@ testMGD <- function(
         "Decision_overall"   = decision_overall_Chin
       ),
       "Information"        = list(
-        "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
+        "Number_admissibles"    = ncol(ref_dist_matrix_Chin),
         "Total_runs"            = counter + n_inadmissibles,
         "Group_names"           = names(.object),
         "Number_of_observations"= sapply(X_all_list, nrow),
@@ -512,6 +515,8 @@ testMGD <- function(
         "Alpha"    = .alpha
       )
     )
+  } else {
+    stop2("Model type is not known.")
   }
   if("Sarstedt" %in% .approach_mgd){
     out[["Sarstedt"]] <- list(
@@ -526,10 +531,12 @@ testMGD <- function(
     out[["Information"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
     
     # Order output
-    if(model_type != "Nonlinear"){
+    if(model_type == "Linear"){
     out <- out[c("Klesel","Chin","Sarstedt","Information")]
-    } else{
+    } else if(model_type == "Nonlinear"){
       out <- out[c("Chin","Sarstedt","Information")]
+    } else{
+      stop2("Model type is not known.")
     }
   }
 
