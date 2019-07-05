@@ -427,6 +427,7 @@ decide_by_critical=function(
   .alpha <- .alpha[order(.alpha)]
   
     ### Approach suggested by Klesel et al. (2019) -------------------------------
+  if("Klesel" %in% names(.test_MGD)){
   # Extract test statistic
   teststat_Klesel <- .test_MGD$Klesel$Test_statistic
   
@@ -444,9 +445,10 @@ decide_by_critical=function(
   # representing the decision for one significance level. 
   # TRUE = no evidence against the H0 --> not reject
   # FALSE = sufficient evidence against the H0 --> reject
+  }
   
   ### Approach suggested by Chin & Dibbern (2010) ------------------------------
-  
+  if("Chin" %in% names(.test_MGD)){
   # Extract test statistic
   teststat_Chin <- .test_MGD$Chin$Test_statistic
   
@@ -494,7 +496,7 @@ decide_by_critical=function(
       all(unlist(x))
     })
   })
-  
+  }
   # Approach suggested by Sarstedt et al. (2011)-------------------------------------------
   if("Sarstedt" %in% names(.test_MGD)){
     
@@ -539,19 +541,22 @@ decide_by_critical=function(
   }
   
   ### Return output ------------------------------------------------------------
-  out <- list(
-    "Klesel"=list(
+  out <- list()
+  if("Klesel" %in% names(.test_MGD)){
+  out[["Klesel"]] <- list(
       "Test_statistic"     = teststat_Klesel,
       "Critical_value"     = critical_values_Klesel, 
-      "Decision"           = decision_Klesel), 
-    
-    "Chin" = list(
+      "Decision"           = decision_Klesel) 
+  }
+  if("Chin" %in% names(.test_MGD)){
+    out[["Chin"]] <- list(
       "Test_statistic"     = teststat_Chin,
       "Critical_value"     = critical_values_Chin, 
       "Decision"           = decision_Chin,
       "Decision_overall"   = decision_overall_Chin,
       "Alpha_adjusted"     = alpha_Chin
     )
+  }
     # "Information"        = list(
     #   "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
     #   "Total_runs"            = counter + n_inadmissibles,
@@ -564,7 +569,7 @@ decide_by_critical=function(
     #   "Seed"     = .seed,
     #   "Alpha"    = .alpha
     # )
-  )
+  
   
   if("Sarstedt" %in% names(.test_MGD)){
     out[["Sarstedt"]] <- list(
@@ -574,9 +579,8 @@ decide_by_critical=function(
       "Decision_overall"   = decision_overall_Sarstedt,
       "Alpha_adjusted"     = alpha_Sarstedt
     )
-    
-    # Order output
-    out <- out[c("Klesel","Chin","Sarstedt")]
   }  
-  
+
+  return(out)
+    
 }
