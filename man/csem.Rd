@@ -46,7 +46,10 @@ or a \link{cSEMModel} list.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
 second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
-Defaults to "\emph{3stage}".}
+Defaults to "\emph{3stage}".
+@param .approach_alpha_adjust Character string. Approach used to adjust the significance level
+in case of multiple comparison test. Several of the following can be selected: "\emph{none}", "\emph{bonferroni}".
+Defaults to "\emph{none}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".

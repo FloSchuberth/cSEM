@@ -6,14 +6,14 @@
 \usage{
 calculateParameterDifference(
   .object     = NULL,
-  .comparison = args_default()$.comparison
+  .model = args_default()$.model
 )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.comparison}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
-parameters are compared.}
+\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
+or a \link{cSEMModel} list.}
 }
 \value{
 A list of length equal to the number of possible combinations of

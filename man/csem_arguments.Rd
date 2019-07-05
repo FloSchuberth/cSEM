@@ -14,10 +14,10 @@ Defaults to \code{0.05}.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
 second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
-Defaults to "\emph{3stage}".}
-
-\item{.approach_alpha_adjust}{Character string. Approach used to adjust the significance level.
-One of: "\emph{none}", "\emph{bonferroni}",}
+Defaults to "\emph{3stage}".
+@param .approach_alpha_adjust Character string. Approach used to adjust the significance level
+in case of multiple comparison test. Several of the following can be selected: "\emph{none}", "\emph{bonferroni}".
+Defaults to "\emph{none}".}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "\emph{none}" in which case the standard
@@ -27,11 +27,15 @@ Bravais-Person correlation is used,
 Defaults to "\emph{none}".}
 
 \item{.approach_mgd}{Character string. Approach used for the multi-group comparison.
-One of "\emph{Klesel}", "\emph{Chin}", or "\emph{Sarstedt}".}
+Several of the following can be selected: "\emph{Klesel}", "\emph{Chin}", or "\emph{Sarstedt}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
+
+\item{.approach_p_adjust}{Character string. Approach used to adjust the p value.
+The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
+Defaults to "\emph{none}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
@@ -67,9 +71,6 @@ For possible choices see \code{\link[=infer]{infer()}}.}
 
 \item{.closed_form_ci}{Logical. Should a closed-form confidence interval be computed?
 Defaults to \code{FALSE}.}
-
-\item{.comparison}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
-parameters are compared.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults

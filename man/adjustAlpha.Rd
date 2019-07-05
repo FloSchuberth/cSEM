@@ -14,9 +14,6 @@ adjustAlpha <- function(
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.approach_alpha_adjust}{Character string. Approach used to adjust the significance level.
-One of: "\emph{none}", "\emph{bonferroni}",}
-
 \item{.nr_comparisons}{Numeric. Indicating the number of comparisons. Defaults to \code{NULL}.}
 }
 \value{

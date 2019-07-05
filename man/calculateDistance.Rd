@@ -23,13 +23,13 @@ the differences between all possible combinations of matrices.
 Calculates the differences between symmetric matrices using a given
 distance measure. This is typically used to calculate the difference between
 the model-implied and the empirical indicator covariance matrix.
-}
-\details{
+C
 \code{.matrices} must be a list of at least two matrices. If more than two matrices
 are supplied the arithmetic mean over all possible matrix
 distances is computed. Hence, supplying a large number of matrices will
 quickly become computationally challenging. Use with care.
-
+}
+\details{
 Currently two distance measures are supported:
 \describe{
 \item{\code{geodesic}}{The geodesic distance}

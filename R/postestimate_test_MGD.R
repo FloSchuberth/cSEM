@@ -371,7 +371,7 @@ testMGD <- function(
   ### Approach suggested by Chin & Dibbern (2010) ------------------------------
   
   # Extract test statistic
-  teststat_Chin <- lapply(teststat$Chin, function(x) x[!is.na(x)])
+  teststat_Chin <- teststat$Chin
   
   # Create list with matrices containing the reference distribution of the parameter differences
   ref_dist_Chin <- lapply(ref_dist1,function(x) x$Chin)
@@ -503,7 +503,7 @@ testMGD <- function(
         "Decision_overall"   = decision_overall_Chin
       ),
       "Information"        = list(
-        "Number_admissibles"    = ncol(ref_dist_matrix_Chin),
+        "Number_admissibles"    = ncol(ref_dist_matrices_Chin),
         "Total_runs"            = counter + n_inadmissibles,
         "Group_names"           = names(.object),
         "Number_of_observations"= sapply(X_all_list, nrow),

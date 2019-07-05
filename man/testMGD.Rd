@@ -7,9 +7,9 @@
 testMGD(
  .object                = args_default()$.object,
  .alpha                 = args_default()$.alpha,
- .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+ .approach_p_adjust     = args_default()$.approach_p_adjust,
  .approach_mgd          = args_default()$.approach_mgd,
- .comparison            = args_default()$.comparison,
+ .model            = args_default()$.model,
  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
  .R_permutation         = args_default()$.R_permutation,
  .R_bootstrap           = args_default()$.R_bootstrap,
@@ -25,14 +25,15 @@ testMGD(
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.approach_alpha_adjust}{Character string. Approach used to adjust the significance level.
-One of: "\emph{none}", "\emph{bonferroni}",}
+\item{.approach_p_adjust}{Character string. Approach used to adjust the p value.
+The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
+Defaults to "\emph{none}".}
 
 \item{.approach_mgd}{Character string. Approach used for the multi-group comparison.
-One of "\emph{Klesel}", "\emph{Chin}", or "\emph{Sarstedt}".}
+Several of the following can be selected: "\emph{Klesel}", "\emph{Chin}", or "\emph{Sarstedt}".}
 
-\item{.comparison}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
-parameters are compared.}
+\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
+or a \link{cSEMModel} list.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
