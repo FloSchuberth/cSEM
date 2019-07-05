@@ -399,21 +399,37 @@ calculateFR <- function(.Parameter,
 
 #' Decision fot test of multigroup difference is based on the critical values instead
 #' of p-values 
+#' 
+#' @usage decide_by_critical=function(
+#' .test_MGD = NULL,
+#' .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+#' .alpha = args_default()$.alpha)
+#' 
+#' @inheritParams csem_arguments
+#' 
+#'
+#' @references
+#'   \insertAllCited{}
+#'   
+#' @seealso [cSEMResults]
+#'
+#' @export
+decide_by_critical=function(
+  .test_MGD = NULL,
+  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
+  .alpha = args_default()$.alpha){
 
-decide_by_critical=function(.test_MGD, .approach_alpha_adjust, .alpha){
-  ### Approach suggested by Klesel et al. (2019) -------------------------------
+  .alpha <- .alpha[order(.alpha)]
   
+    ### Approach suggested by Klesel et al. (2019) -------------------------------
   # Extract test statistic
   teststat_Klesel <- .test_MGD$Klesel$Test_statistic
   
   # Extract reference distribution
   ref_dist_matrix_Klesel <- .test_MGD$Information$Permutation_values$Klesel
   
-  
-  ## Compute critical values (Result is a (2 x p) matrix, where n is the number
-  ## of quantiles that have been computed (1 by default)
-  .alpha <- .alpha
-  
+  # Compute critical values (Result is a (2 x p) matrix, where n is the number
+  # of quantiles that have been computed (1 by default)
   critical_values_Klesel <- matrixStats::rowQuantiles(ref_dist_matrix_Klesel, 
                                                       probs =  1-.alpha, drop = FALSE)
   
@@ -475,15 +491,13 @@ decide_by_critical=function(.test_MGD, .approach_alpha_adjust, .alpha){
   })
   
   # Approach suggested by Sarstedt et al. (2011)-------------------------------------------
-  if("Sarstedt" %in% .test_MGD$Information$Approach){
+  if(length(.test_MGD)==4){
     
     # Extract test statistic
     teststat_Sarstedt <- .test_MGD$Sarstedt$Test_statistic 
     
-    
     #Extract reference distribution 
     ref_dist_matrix_Sarstedt <- .test_MGD$Information$Permutation_values$Sarstedt
-    
     
     # Calculation of adjusted alphas: 
     # Number of the comparisons equals the number of parameters that are compared 
@@ -503,7 +517,7 @@ decide_by_critical=function(.test_MGD, .approach_alpha_adjust, .alpha){
     
     names(critical_values_Sarstedt) <- .approach_alpha_adjust 
     
-    ## Compare critical value and test statistic    
+    # Compare critical value and test statistic    
     decision_Sarstedt <- lapply(critical_values_Sarstedt, function(critical){
       teststat_Sarstedt < critical
     })
@@ -547,7 +561,7 @@ decide_by_critical=function(.test_MGD, .approach_alpha_adjust, .alpha){
     # )
   )
   
-  if("Sarstedt" %in% .approach_mgd){
+  if(length(.test_MGD)==4){
     out[["Sarstedt"]] <- list(
       "Test_statistic"   = teststat_Sarstedt,
       "Critical_value"     = critical_values_Sarstedt, 
