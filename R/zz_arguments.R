@@ -14,6 +14,9 @@
 #' @param .approach_2ndorder Character string. Approach used for models containing
 #'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
 #'   Defaults to "*3stage*".
+#'  @param .approach_alpha_adjust Character string. Approach used to adjust the significance level
+#'  in case of multiple comparison test. Several of the following can be selected: "*none*", "*bonferroni*".
+#'  Defaults to "*none*". 
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
 #'   indicator correlation matrix. One of: "*none*" in which case the standard 
 #'   Bravais-Person correlation is used,
@@ -21,7 +24,7 @@
 #'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
 #'   Defaults to "*none*".
 #' @param .approach_mgd Character string. Approach used for the multi-group comparison. 
-#' One of "*Klesel*", "*Chin*", or "*Sarstedt*".      
+#' Several of the following can be selected: "*Klesel*", "*Chin*", or "*Sarstedt*".      
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
@@ -339,6 +342,7 @@ args_default <- function(.choices = FALSE) {
     .alpha                   = 0.05,
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("3stage", "repeated_indicators"),
+    .approach_alpha_adjust   = c("none"),
     .approach_mgd            = c("Klesel", "Chin", "Sarstedt"),
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
