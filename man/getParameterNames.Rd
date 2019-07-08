@@ -2,9 +2,12 @@
 % Please edit documentation in R/helper_test_MGD.R
 \name{getParameterNames}
 \alias{getParameterNames}
-\title{Get parameter names}
+\title{Internal: Parameter names}
 \usage{
-getParameterNames(.object = NULL, .model = NULL)
+getParameterNames(
+  .object = NULL, 
+  .model  = NULL
+  )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -15,10 +18,18 @@ compared across groups. Defaults to \code{NULL} in which case all parameters of 
 are compared.}
 }
 \value{
-A list containing the names of the structural parameters,
-the loadings and weight to be compared.
+A list with elements \code{names_path}, \code{names_loadings}, and \code{names_weights}
+containing the names of the structural parameters, the loadings,
+and the weight to compare across groups.
 }
 \description{
-Based on a cSEmodelDetermines the names of the parameters to be used for testing
+Based on a model in \link[lavaan:model.syntax]{lavaan model syntax}, returns the
+names of the parameters of the structural
+model, the measurement/composite model and the weight relationship. Used
+by \code{\link[=testMGD]{testMGD()}} to extract the names of the parameters to compare across groups
+according to the test proposed by \insertCite{Chin2010;textual}{cSEM}.
+}
+\references{
+\insertAllCited{}
 }
 \keyword{internal}

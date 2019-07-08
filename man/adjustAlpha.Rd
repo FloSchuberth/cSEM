@@ -2,9 +2,9 @@
 % Please edit documentation in R/helper_test_MGD.R
 \name{adjustAlpha}
 \alias{adjustAlpha}
-\title{Multiple testing correction}
+\title{Internal: Multiple testing correction}
 \usage{
-adjustAlpha <- function(
+adjustAlpha(
  .alpha                 = args_default()$.alpha,
  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
  .nr_comparisons        = args_default()$.nr_comparisons
@@ -14,12 +14,16 @@ adjustAlpha <- function(
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.nr_comparisons}{Numeric. Indicating the number of comparisons. Defaults to \code{NULL}.}
+\item{.approach_alpha_adjust}{Character string. Approach used to adjust the
+significance level to accomodate mutiple testing.
+One of "\emph{none}" or "\emph{bonferroni}". Defaults to "\emph{none}".}
+
+\item{.nr_comparisons}{Numeric. The number of comparisons. Defaults to \code{NULL}.}
 }
 \value{
-A vector of (adjusted) significance levels.
+A vector of (possibly adjusted) significance levels.
 }
 \description{
-Adjust a given significance level .alpha to accomodate multiple testing.
+Adjust a given significance level \code{.alpha} to accomodate multiple testing.
 }
 \keyword{internal}

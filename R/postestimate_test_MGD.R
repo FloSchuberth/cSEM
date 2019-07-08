@@ -21,7 +21,7 @@
 #'  .alpha                 = args_default()$.alpha,
 #'  .approach_p_adjust     = args_default()$.approach_p_adjust,
 #'  .approach_mgd          = args_default()$.approach_mgd,
-#'  .model            = args_default()$.model,
+#'  .model                 = args_default()$.model,
 #'  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
 #'  .R_permutation         = args_default()$.R_permutation,
 #'  .R_bootstrap           = args_default()$.R_bootstrap,
@@ -32,7 +32,11 @@
 #'  ) 
 #' 
 #' @inheritParams csem_arguments
-#' 
+#' @param .model A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
+#'   parameters (i.e, path (`~`), loadings (`=~`), or weights (`<~`)) should be
+#'   compared across groups. Defaults to `NULL` in which case all parameters of the model
+#'   are compared.
+#'   
 #' @inherit csem_test return
 #'
 #' @references
@@ -74,7 +78,7 @@
 testMGD <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
-  .approach_p_adjust = args_default()$.approach_p_adjust,
+  .approach_p_adjust     = args_default()$.approach_p_adjust,
   .approach_mgd          = args_default()$.approach_mgd,
   .model                 = args_default()$.model,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
@@ -102,7 +106,7 @@ testMGD <- function(
   # Sarstedt et al. (2011) is not allowed to be used in combination with 
   # .handle_inadmissibles == "drop as permutation test statistic are be dropped
   # only because of estimations based on the permutated dataset are dropped.
-  if("Sarstedt" %in% .approach_mgd & .handle_inadmissibles == "drop"){
+  if(.approach_mgd %in% c("all", "Sarstedt") & .handle_inadmissibles == "drop"){
     stop2(
       "The following error occured in the testMGD() function:\n",
       "Approach `'Sarstedt'` not supported if `.handle_inadmissibles == 'drop'`")
@@ -117,12 +121,13 @@ testMGD <- function(
     model_type <- .object[[1]]$Information$Model$model_type
   }
   
-  if(.approach_mgd == "Klesel" & model_type == "Nonlinear"){
+  if(.approach_mgd %in% c("all", "Klesel") & model_type == "Nonlinear"){
     stop2("The following error occured in the testMGD() function:\n",
-          "The approach suggested by Klesel et al. (2019) cannot be applied to non-linear models
-          as the model-implied VCV cannot be calculate for such models.")
+          "The approach suggested by Klesel et al. (2019) cannot be applied",
+          " to nonlinear models as cSEM currently cannot calculate",
+          " the model-implied VCV matrix for such models.\n", 
+          "Consider setting `.appraoch_mgd = c('Chin',  'Sarstedt')`")
   }
-  
   
   ## Check if data for different groups is identical
   if(.verbose) {
@@ -143,21 +148,49 @@ testMGD <- function(
   }
   
   ### Calculation of the test statistics========================================
-
-  ## Get bootstrapped parameter estimates for Sarstedt et al. (2011)
-  if("Sarstedt" %in% .approach_mgd){
+  teststat <- list()
+  
+  ## Klesel et al. (2019) ------------------------------------------------------
+  if(.approach_mgd %in% c("all", "Klesel")) {
+    ## Get the model-implied VCV
+    fit <- fit(.object    = .object,
+               .saturated = .saturated,
+               .type_vcv  = .type_vcv)
     
-    # Check if .object already contains resamples; if not; run bootstrap
+    ## Compute test statistic
+    temp <- list(
+      "Klesel" = c(
+        "dG" = calculateDistance(.matrices = fit, .distance = "geodesic"),
+        "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")
+      )
+    )
+    
+    ## Save test statistic
+    teststat[["Klesel"]] <- temp
+  }
+  
+  ## Chin & Dibbern (2010) -----------------------------------------------------
+  if(.approach_mgd %in% c("all", "Chin")) {
+    ## Compute and save test statistic
+    teststat[["Chin"]] <- calculateParameterDifference(.object = .object, 
+                                                       .model = .model)
+  }
+  
+  ## Sarstedt et al. (2011) ----------------------------------------------------
+  if(.approach_mgd %in% c("all", "Sarstedt")) {
+    
+    ## Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
       .object <- resamplecSEMResults(
         .object               = .object,
         .resample_method      = "bootstrap",
         .handle_inadmissibles = .handle_inadmissibles,
-        .R                    = .R_bootstrap) 
+        .R                    = .R_bootstrap,
+        .seed                 = .seed) 
     }
     
     ## Combine bootstrap results in one matrix
-    l <- lapply(.object, function(x) {
+    ll <- lapply(.object, function(x) {
       if(inherits(.object, "cSEMResults_2ndorder")) {
         x <- x$Second_stage$Information$Resamples$Estimates$Estimates1
       } else {
@@ -175,57 +208,30 @@ testMGD <- function(
         "n"                 = n)
     })
     
-    l <- purrr::transpose(l)
-    id_Sarstedt <- rep(1:length(.object), unlist(l$n))
+    ## Transpose, get id column, bind rows and columns
+    ll <- purrr::transpose(ll)
+    group_id <- rep(1:length(.object), unlist(ll$n))
+    ll <- lapply(ll, function(x) do.call(rbind, x))
     
-    ll <- lapply(l, function(x) do.call(rbind, x))
-    
-    # Matrix that contains all parameter estimate that should compared 
-    # plus an id variable indicating the group
-    all_comb <- cbind(ll$path_resamples, ll$loading_resamples, ll$weight_resamples, id = id_Sarstedt)
-  }
-  
-  ## Get the model-implied VCV for Klesel et al. (2019)
-  if(model_type == "Linear"){
-  fit <- fit(.object = .object,
-             .saturated = .saturated,
-             .type_vcv = .type_vcv)
-  ## Compute the test statistics 
-  teststat <- list(
-    #  Approach suggested by Klesel et al. (2019)
-    "Klesel" = c(
-      "dG" = calculateDistance(.matrices = fit, .distance = "geodesic"),
-      "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")),
-    # Approach suggested by Chin & Dibbern (2010)
-    "Chin" = calculateParameterDifference(.object = .object, .model = .model)
-  )} else if(model_type == "Nonlinear"){
-    teststat <- list(
-      # Approach suggested by Chin & Dibbern (2010)
-      "Chin" = calculateParameterDifference(.object = .object, .model = .model)
-    )
-  } else{
-      stop2("Model type is not known.")
-    }
-  
-  # Approach suggested by Sarstedt et al. (2011) 
-  if("Sarstedt" %in% .approach_mgd){
+    all_comb <- cbind(ll$path_resamples, 
+                      ll$loading_resamples, 
+                      ll$weight_resamples, 
+                      "group_id" = group_id)
+    # all_comb contains all parameter estimate that could potentially be compared 
+    # plus an id column indicating the group adherance of each row.
     
     ## Get the name of the parameters to be compared
-    names_param <- getParameterNames(.object, .model = .model)
+    names_param <- unlist(getParameterNames(.object, .model = .model))
     
-    # Calculate test statistic
-    temp <- sapply(unlist(names_param), function(x) {
-      calculateFR(
-        .Parameter = all_comb[, x],
-        .id        = all_comb[,ncol(all_comb)])
-      })
+    ## Select relevant columns
+    all_comb <- all_comb[, c(names_param, "group_id")]
     
-    names(temp) <- unlist(names_param)
     ## Add test statistic
-    teststat[["Sarstedt"]] <- temp
-  } 
+    teststat[["Sarstedt"]] <- calculateFR(.resample_sarstedt = all_comb)
+  }
   
-  ## Start Permutation
+  ### Permutation ==============================================================
+  ## Preparation
   # Put data of each groups in a list and combine
   if(inherits(.object, "cSEMResults_2ndorder")) {
     # Data is saved in the first stage
@@ -281,32 +287,41 @@ testMGD <- function(
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
       
-      # Calculate test statistic for permutation sample
-      if(model_type == "Linear"){
-      fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
-
-      teststat_permutation <- list(
-        "Klesel" = c(
-          "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
-          "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")),
-        "Chin" = calculateParameterDifference(.object=Est_temp,.model = .model))
-      }else if(model_type == "Nonlinear"){
-        teststat_permutation <- list(
-          "Chin" = calculateParameterDifference(.object=Est_temp,.model = .model))
-      } else{
-        stop2("Model type is not known.")
+      ### Calculation of the test statistic for each resample ==================
+      teststat_permutation <- list()
+      
+      ## Klesel et al. (2019) --------------------------------------------------
+      if(.approach_mgd %in% c("all", "Klesel")) {
+        ## Get the model-implied VCV
+        fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
+        
+        ## Compute test statistic
+        temp <- list(
+          "Klesel" = c(
+            "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
+            "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
+          )
+        )
+        
+        ## Save test statistic
+        teststat_permutation[["Klesel"]] <- temp
       }
-      if("Sarstedt" %in% .approach_mgd){
+      
+      ## Chin & Dibbern (2010) -------------------------------------------------
+      if(.approach_mgd %in% c("all", "Chin")) {
+        ## Compute and save test statistic
+        teststat_permutation[["Chin"]] <- calculateParameterDifference(
+          .object = Est_temp, 
+          .model  = .model)
+      }
+      ## Sarstedt et al. (2011) ------------------------------------------------
+      if(.approach_mgd %in% c("all", "Sarstedt")){
         
         # Permutation of the bootstrap parameter estimates
         all_comb_permutation <- all_comb
-        all_comb_permutation[,"id"] <- sample(id_Sarstedt)
-        
-        teststat_Sarstedt_permutation <- sapply(unlist(names_param),
-                                        function(x){calculateFR(.Parameter = all_comb_permutation[,x],
-                                                                .id = all_comb_permutation[,"id"])})
-        names(teststat_Sarstedt_permutation) <- unlist(names_param)
-        teststat_permutation[["Sarstedt"]] <- teststat_Sarstedt_permutation
+        all_comb_permutation[ , "group_id"] <- sample(group_id)
+
+        teststat_permutation[["Sarstedt"]] <- calculateFR(all_comb_permutation)
       }
       
       ref_dist[[counter]] <- teststat_permutation
@@ -340,14 +355,15 @@ testMGD <- function(
     close(pb)
   }
   
+  ### Postprocessing ===========================================================
   # Delete potential NA's
   ref_dist1 <- Filter(Negate(anyNA), ref_dist)
   
   # Order significance levels
   .alpha <- .alpha[order(.alpha)]
   
-  if(model_type == "Linear"){
-  ## Approach suggested by Klesel et al. (2019) -------------------------------
+  if(.approach_mgd %in% c("all", "Klesel")) {
+    
   # Collect permuation results and combine
   ref_dist_Klesel <- lapply(ref_dist1, function(x) x$Klesel)
   ref_dist_matrix_Klesel <- do.call(cbind, ref_dist_Klesel)
@@ -355,9 +371,8 @@ testMGD <- function(
   # Extract test statistic
   teststat_Klesel <- teststat$Klesel
   
-
   # Calculation of p-values
-  pvalue_Klesel=rowMeans(ref_dist_matrix_Klesel> teststat_Klesel)
+  pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel > teststat_Klesel)
   
   # Decision 
   decision_Klesel <- lapply(.alpha,function(x){

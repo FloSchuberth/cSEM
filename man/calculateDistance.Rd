@@ -2,10 +2,10 @@
 % Please edit documentation in R/helper_test_MGD.R
 \name{calculateDistance}
 \alias{calculateDistance}
-\title{Internal: Calculate matrix difference using distance measure}
+\title{Internal: Matrix difference}
 \usage{
 calculateDistance(
-  .matrices = args_default()$.matrices, 
+  .matrices = NULL, 
   .distance = args_default()$.distance
   )
 }
@@ -16,23 +16,23 @@ calculateDistance(
 or "\emph{squared_euclidian}". Defaults to "\emph{geodesic}".}
 }
 \value{
-A numeric vector of length one containing the (arithmetic mean) of
-the differences between all possible combinations of matrices.
+A numeric vector of length one containing the (arithmetic) mean of
+the differences between all possible pairs of matrices supplied via \code{.matrices}.
 }
 \description{
-Calculates the differences between symmetric matrices using a given
-distance measure. This is typically used to calculate the difference between
-the model-implied and the empirical indicator covariance matrix.
-C
-\code{.matrices} must be a list of at least two matrices. If more than two matrices
-are supplied the arithmetic mean over all possible matrix
-distances is computed. Hence, supplying a large number of matrices will
-quickly become computationally challenging. Use with care.
+Calculates the average of the differences between all possible pairs of
+(symmetric) matrices in a list using a given distance measure.
 }
 \details{
+\code{.matrices} must be a list of at least two matrices. If more than two matrices
+are supplied the arithmetic mean of the differences between all possible pairs of
+(symmetric) matrices in a list is computed. Mathematically this is
+n chose 2. Hence, supplying a large number of matrices will
+become computationally challenging. Use with care.
+
 Currently two distance measures are supported:
 \describe{
-\item{\code{geodesic}}{The geodesic distance}
+\item{\code{geodesic}}{(Default) The geodesic distance.}
 \item{\code{squared_euclidian}}{The squared Euclidian distance}
 }
 }

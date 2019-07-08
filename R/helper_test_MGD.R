@@ -1,33 +1,34 @@
-#' Internal: Calculate matrix difference using distance measure
+#' Internal: Matrix difference
 #'
-#' Calculates the differences between symmetric matrices using a given 
-#' distance measure. This is typically used to calculate the difference between
-#' the model-implied and the empirical indicator covariance matrix.
-#' C
+#' Calculates the average of the differences between all possible pairs of 
+#' (symmetric) matrices in a list using a given distance measure.
+#' 
 #' `.matrices` must be a list of at least two matrices. If more than two matrices 
-#' are supplied the arithmetic mean over all possible matrix 
-#' distances is computed. Hence, supplying a large number of matrices will 
-#' quickly become computationally challenging. Use with care.
+#' are supplied the arithmetic mean of the differences between all possible pairs of 
+#' (symmetric) matrices in a list is computed. Mathematically this is
+#' n chose 2. Hence, supplying a large number of matrices will 
+#' become computationally challenging. Use with care.
 #' 
 #' Currently two distance measures are supported:
 #' \describe{
-#'   \item{`geodesic`}{The geodesic distance}
+#'   \item{`geodesic`}{(Default) The geodesic distance.}
 #'   \item{`squared_euclidian`}{The squared Euclidian distance}
 #' }
 #' 
 #' @usage calculateDistance(
-#'   .matrices = args_default()$.matrices, 
+#'   .matrices = NULL, 
 #'   .distance = args_default()$.distance
 #'   )
 #' 
 #' @inheritParams csem_arguments
 #' 
-#' @return A numeric vector of length one containing the (arithmetic mean) of 
-#'   the differences between all possible combinations of matrices.
+#' @return A numeric vector of length one containing the (arithmetic) mean of 
+#' the differences between all possible pairs of matrices supplied via `.matrices`.
+#' 
 #' @keywords internal
 
 calculateDistance <- function(
-  .matrices = args_default()$.matrices, 
+  .matrices = NULL, 
   .distance = args_default()$.distance
 ){
   ### Checks and errors ========================================================
@@ -66,11 +67,19 @@ calculateDistance <- function(
 }
 
 
-#' Get parameter names
+
+#' Internal: Parameter names
 #' 
-#' Based on a cSEmodelDetermines the names of the parameters to be used for testing 
+#' Based on a model in [lavaan model syntax][lavaan::model.syntax], returns the 
+#' names of the parameters of the structural
+#' model, the measurement/composite model and the weight relationship. Used 
+#' by [testMGD()] to extract the names of the parameters to compare across groups
+#' according to the test proposed by \insertCite{Chin2010;textual}{cSEM}. 
 #' 
-#' @usage getParameterNames(.object = NULL, .model = NULL)
+#' @usage getParameterNames(
+#'   .object = NULL, 
+#'   .model  = NULL
+#'   )
 #' 
 #' @inheritParams csem_arguments
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
@@ -78,11 +87,15 @@ calculateDistance <- function(
 #'   compared across groups. Defaults to `NULL` in which case all parameters of the model
 #'   are compared.
 #'   
-#' @return A list containing the names of the structural parameters,
-#'   the loadings and weight to be compared.
+#' @return A list with elements `names_path`, `names_loadings`, and `names_weights`
+#' containing the names of the structural parameters, the loadings, 
+#' and the weight to compare across groups.
+#' 
+#' @references
+#'   \insertAllCited{}
 #'   
 #' @keywords internal
-#' 
+
 getParameterNames <- function(
   .object  = NULL,
   .model   = NULL
@@ -99,6 +112,7 @@ getParameterNames <- function(
     # Extract different types of constructs
     construct_type <- c(x12$Model$construct_type, x22$Model$construct_type)
     construct_type <- construct_type[unique(names(construct_type))]
+    
     measurement_org <- x22$Arguments_original$.model$measurement
     names_path_org <- x[[1]]$Second_stage$Estimates$Path_estimates$Name
     
@@ -107,13 +121,13 @@ getParameterNames <- function(
     x22  <- x[[1]]$Information
     # Extract different types of constructs
     construct_type <- x22$Model$construct_type
+    
     measurement_org <- x22$Model$measurement
     names_path_org <- x[[1]]$Estimates$Path_estimates$Name
   }
   
-  # Parse model that indicates which parameters should be compared
-  # if no model indicating the comparisons is provided, all parameters are compared
-  # This prevents the the test_MGD function to break down if no comparison model is supplied.
+  # Parse model that indicates which parameters should be compared.
+  # If no model indicating the comparisons is provided, all parameters are compared.
   
   if(is.null(.model)) {
     if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -125,37 +139,47 @@ getParameterNames <- function(
     model_comp <- parseModel(.model, .check_errors = FALSE)
   }
   
-  
   # Check whether the constructs specified in the comparison are equal
   # to the constructs in the original model
-
-  if(!all(rownames(model_comp$structural)%in%rownames(measurement_org ))){
-    stop2("At least one construct appears in the comparison model and not in the original model.")
+  if(!all(rownames(model_comp$structural) %in% rownames(measurement_org))){
+    stop2(
+      "The following error occured in the `getParameterNames()` function:\n",
+      "At least one construct appears in the comparison model but",
+      " not in the original model."
+      )
   }
   
   # Check whether the construct type specified in the comparison are equal
   # to the construct types in the original model
-  construct_type_comp=model_comp$construct_type[!is.na(model_comp$construct_type)]  
-  if(!all(construct_type_comp==construct_type[names(construct_type_comp)])){
-    stop2("At least one construct's type in the comparison model differs from the original model.")
+  construct_type_comp <- model_comp$construct_type[!is.na(model_comp$construct_type)]  
+  if(!all(construct_type_comp == construct_type[names(construct_type_comp)])){
+    stop2(
+      "The following error occured in the `getParameterNames()` function:\n",
+      "At least one construct's type in the comparison model differs ", 
+      "from the original model.")
   }
   
-  # Check wehther the indicators used in the comparison model also appear in the original model
-  if(!all(colnames(model_comp$measurement)%in%colnames(measurement_org))){
-    stop2("At least one indicator appears in the comparison model and not in the original model.")
+  # Check wehther the indicators used in the comparison model also appear 
+  # in the original model
+  if(!all(colnames(model_comp$measurement) %in% colnames(measurement_org))){
+    stop2(
+      "The following error occured in the `getParameterNames()` function:\n",
+      "At least one indicator appears in the comparison model and not in ",
+      " the original model.")
   }
   
-# Check whether the indicators used are correctly assigned, i.e., as in the original model
-  lapply(rownames(model_comp$measurement),function(x){
+  # Check whether the indicators used are correctly assigned, i.e., 
+  # as in the original model
+  lapply(rownames(model_comp$measurement), function(x) {
     names_ind_comp <- colnames(model_comp$measurement[x,,drop=FALSE][,which(model_comp$measurement[x,,drop=FALSE]==1),drop=FALSE])
-    names_ind_org <- colnames(measurement_org[x,,drop=FALSE][,which(measurement_org[x,,drop=FALSE]==1),drop=FALSE])
+    names_ind_org  <- colnames(measurement_org[x,,drop=FALSE][,which(measurement_org[x,,drop=FALSE]==1),drop=FALSE])
     
     if(!all(names_ind_comp %in% names_ind_org)){
-      stop2("At least one indicator is not correctly assigned in the comparison model.")
+      stop2(
+        "The following error occured in the `getParameterNames()` function:\n",
+        "At least one indicator is not correctly assigned in the comparison model.")
     }
-    
-    })
-  
+  })
   
   ### Extract names ============================================================
   # Extract names of the path to be tested
@@ -168,13 +192,15 @@ getParameterNames <- function(
     names_path <- NULL
   }
   
-  # check whether the path to compare occur also in the original mode 
+  # Check whether the path to compare occur also in the original mode 
   if(!all(names_path %in% names_path_org)){
-    stop2("At least one of the paths specified for comparison does not appear in the original model.")
+    stop2(
+      "The following error occured in the `getParameterNames()` function:\n",
+      "At least one of the paths specified for comparison does not ",
+      " appear in the original model.")
   }
   
-  
-  ## Extract names of the loadings to be tested
+  # Extract names of the loadings to be tested
   names_row <- rownames(model_comp$measurement)
   
   ## Select only concepts modeled as common factors. Reorder to be have the 
@@ -225,28 +251,37 @@ getParameterNames <- function(
   return(out)
 }
 
-#' Parameter differences across groups
+
+
+#' Internal: Parameter differences across groups
 #' 
-#' Calculates the difference between one or more paramater estimates based 
-#' one different groups (data sets).
+#' Calculate the difference between one or more paramater estimates across
+#' all possible pairs of groups (data sets) in `.object`.
 #'
 #' @usage calculateParameterDifference(
 #'   .object     = NULL,
-#'   .model = args_default()$.model
+#'   .model      = NULL
 #' )
 #' 
 #' @inheritParams csem_arguments
+#' @param .model A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
+#'   parameters (i.e, path (`~`), loadings (`=~`), or weights (`<~`)) should be
+#'   compared across groups. Defaults to `NULL` in which case all parameters of the model
+#'   are compared.
 #' 
-#' @return A list of length equal to the number of possible combinations of
-#'   groups in .object (basically n choose k = 2), e.g., 3 if there are three 
-#'   groups and 6 if there are 4 groups. Each list elements contains the
-#'   values of the difference between the parameter estimates based on the
-#'   data of group i and and group j.
+#' @return A list of length equal to the number of possible pairs of
+#'   groups in `.object` (mathematically, this is n choose 2, i.e., 3 if there are three 
+#'   groups and 6 if there are 4 groups). Each list elements is itself a list of
+#'   three. The first list element contains
+#'   the difference between parameter estimates of the structural model, the second
+#'   list element the difference between estimated loadings, and the third
+#'   the difference between estimated weights.
+#'   
 #' @keywords internal
-#' 
+
 calculateParameterDifference <- function(
-  .object     = NULL,
-  .model = args_default()$.model
+  .object  = NULL,
+  .model   = NULL
   ){
 
   ## Summarize
@@ -325,11 +360,11 @@ calculateParameterDifference <- function(
 
 
 
-#' Multiple testing correction
+#' Internal: Multiple testing correction
 #'
-#' Adjust a given significance level .alpha to accomodate multiple testing. 
+#' Adjust a given significance level `.alpha` to accomodate multiple testing. 
 #' 
-#' @usage adjustAlpha <- function(
+#' @usage adjustAlpha(
 #'  .alpha                 = args_default()$.alpha,
 #'  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
 #'  .nr_comparisons        = args_default()$.nr_comparisons
@@ -337,9 +372,10 @@ calculateParameterDifference <- function(
 #' 
 #' @inheritParams csem_arguments
 #' 
-#' @return A vector of (adjusted) significance levels.
+#' @return A vector of (possibly adjusted) significance levels.
 #'
 #' @keywords internal
+
 adjustAlpha <- function(
   .alpha                 = args_default()$.alpha,
   .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
@@ -356,231 +392,40 @@ adjustAlpha <- function(
   
 }
 
-#' ANOVA F-test statistic 
+#' Internal: ANOVA F-test statistic 
 #'
-#' Calculates the ANOVA F-test statistic suggested by Sarstedt et al. (2011) 
+#' Calculate the ANOVA F-test statistic suggested by 
+#' \insertCite{Sarstedt2011;textual}{cSEM}.
 #' 
-#' @usage calculateFR <- function(.Parameter,
-#' .id)
+#' @usage calculateFR(
+#'  .parameter,
+#'  .id
+#'  )
 #' 
 #' @inheritParams csem_arguments
 #' 
 #' @return A named scaler, the test statistic of the ANOVA F-test
 #'
-#' @keywords internal
-
-calculateFR <- function(.Parameter,
-                        .id){
-  ParameterIdMatrix = cbind(.Parameter,.id)
-  
-  G <- length(unique(.id))
-  
-  Agbar <- sapply(1:G, function(x){
-    mean(.Parameter[which(.id == unique(.id)[x])])
-  })
-  names(Agbar)=unique(.id)
-  
-  B <- nrow(ParameterIdMatrix)
-  Abar <- mean(.Parameter)
-  SSbetween <- G * B *(1/(G-1)) * sum((Agbar - Abar)^2) 
-
-  # expand Agbar to the same dimension as .Parameter
-  Agbar_ext=.id
-    
-  for(x in unique(.id)){
-    Agbar_ext[which(.id==x)] <- Agbar[names(Agbar)==x]   
-  }
-
-  
-  SSwithin <- 1/(B-1) * sum((.Parameter - Agbar_ext)^2)
-  
-  SSbetween/SSwithin
-}
-
-#' Decision fot test of multigroup difference is based on the critical values instead
-#' of p-values 
-#' 
-#' @usage decide_by_critical=function(
-#' .test_MGD = NULL,
-#' .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
-#' .alpha = args_default()$.alpha)
-#' 
-#' @inheritParams csem_arguments
-#' 
-#'
 #' @references
 #'   \insertAllCited{}
 #'   
-#' @seealso [cSEMResults]
-#'
-#' @export
-decide_by_critical=function(
-  .test_MGD = NULL,
-  .approach_alpha_adjust = args_default()$.approach_alpha_adjust,
-  .alpha = args_default()$.alpha){
+#' @keywords internal
 
-  # Check whether .test_MGD is of class "cSEMTestMGD"
-  if(class(.test_MGD) != "cSEMTestMGD"){
-    stop2("Please provide an object of class cSEMTestMGD to the function decide_by_crtical")
-  }
+calculateFR <- function(.resample_sarstedt) {
   
-  .alpha <- .alpha[order(.alpha)]
+  names_param <- colnames(.resample_sarstedt)[-ncol(.resample_sarstedt)]
   
-    ### Approach suggested by Klesel et al. (2019) -------------------------------
-  if("Klesel" %in% names(.test_MGD)){
-  # Extract test statistic
-  teststat_Klesel <- .test_MGD$Klesel$Test_statistic
+  G <- length(unique(.resample_sarstedt[, "group_id"]))
+  B <- nrow(.resample_sarstedt)
   
-  # Extract reference distribution
-  ref_dist_matrix_Klesel <- .test_MGD$Information$Permutation_values$Klesel
+  x <- .resample_sarstedt
+  mean_all <- colMeans(x[, names_param])
+  mean_group <- aggregate(x[, names_param], by = list(x[, "group_id"]), FUN = mean)
   
-  # Compute critical values (Result is a (2 x p) matrix, where n is the number
-  # of quantiles that have been computed (1 by default)
-  critical_values_Klesel <- matrixStats::rowQuantiles(ref_dist_matrix_Klesel, 
-                                                      probs =  1-.alpha, drop = FALSE)
+  mean_matrix <- apply(mean_group[, -1], 2, function(y) rep(y, times = table(x[, "group_id"])))
   
-  ## Compare critical value and test statistic
-  decision_Klesel <- teststat_Klesel < critical_values_Klesel 
-  # a logical (2 x p) matrix with each column
-  # representing the decision for one significance level. 
-  # TRUE = no evidence against the H0 --> not reject
-  # FALSE = sufficient evidence against the H0 --> reject
-  }
+  SS_between <- G * B *(1/(G-1)) * rowSums((t(mean_group[, -1]) - mean_all)^2)
+  SS_within  <- 1/(B - 1) * colSums((x[, names_param] - mean_matrix)^2)
   
-  ### Approach suggested by Chin & Dibbern (2010) ------------------------------
-  if("Chin" %in% names(.test_MGD)){
-  # Extract test statistic
-  teststat_Chin <- .test_MGD$Chin$Test_statistic
-  
-  #Extract reference distribution
-  ref_dist_matrices_Chin <- .test_MGD$Information$Permutation_values$Chin
-  
-  # Calculation of adjusted alphas:
-  # Number of comparisons equals the number of parameter times the number of group comparisons
-  alpha_Chin <- lapply(.approach_alpha_adjust, function(x){
-    cSEM:::adjustAlpha(
-      .alpha = .alpha,
-      .approach_alpha_adjust = x,
-      .nr_comparison = sum(sapply(teststat_Chin,length)))
-  })
-  
-  names(alpha_Chin) <- .approach_alpha_adjust 
-  
-  # Compute the critical values for all alphas
-  critical_values_Chin <- lapply(alpha_Chin, function(alpha_list) {
-    res <- lapply(alpha_list, function(alpha) {
-      probs_Chin <- c(alpha/2,1-alpha/2)
-      temp<- lapply(ref_dist_matrices_Chin, function(x){
-        matrixStats::rowQuantiles(x, probs = probs_Chin, drop = FALSE)
-      })
-    })
-    names(res) <- paste0(alpha_list*100, '%')
-    return(res)
-  })
-  
-  names(critical_values_Chin) <- .approach_alpha_adjust 
-  
-  decision_Chin <- lapply(critical_values_Chin, function(critical_list){
-    lapply(critical_list,function(critical){# goes over the different significance levels
-      temp=mapply(function(stat,crit){# goes over the different group comparisons
-        crit[,1]< stat & stat < crit[,2]
-        
-      },stat=teststat_Chin,crit=critical,SIMPLIFY = FALSE)
-      return(temp)
-    })
-  })
-  
-  # Overall decision, i.e., was any of the test belonging to one significance levl rejected
-  decision_overall_Chin = lapply(decision_Chin, function(decision_Chin_list){
-    lapply(decision_Chin_list,function(x){
-      all(unlist(x))
-    })
-  })
-  }
-  # Approach suggested by Sarstedt et al. (2011)-------------------------------------------
-  if("Sarstedt" %in% names(.test_MGD)){
-    
-    # Extract test statistic
-    teststat_Sarstedt <- .test_MGD$Sarstedt$Test_statistic 
-    
-    #Extract reference distribution 
-    ref_dist_matrix_Sarstedt <- .test_MGD$Information$Permutation_values$Sarstedt
-    
-    # Calculation of adjusted alphas: 
-    # Number of the comparisons equals the number of parameters that are compared 
-    alpha_Sarstedt <- lapply(.approach_alpha_adjust, function(x){
-      cSEM:::adjustAlpha(
-        .alpha = .alpha,
-        .approach_alpha_adjust = x,
-        .nr_comparison = nrow(ref_dist_matrix_Sarstedt))
-    })
-    
-    names(alpha_Sarstedt) <- .approach_alpha_adjust 
-    
-    critical_values_Sarstedt <- lapply(alpha_Sarstedt, function(alpha_list) {
-      matrixStats::rowQuantiles(ref_dist_matrix_Sarstedt, 
-                                probs =  1-alpha_list, drop = FALSE)
-    })
-    
-    names(critical_values_Sarstedt) <- .approach_alpha_adjust 
-    
-    # Compare critical value and test statistic    
-    decision_Sarstedt <- lapply(critical_values_Sarstedt, function(critical){
-      teststat_Sarstedt < critical
-    })
-    # FALSE: Reject
-    # TRUE: don't reject
-    
-    names(decision_Sarstedt) <- .approach_alpha_adjust
-    
-    # Overall decision, i.e., was any of the test belonging to one significance levl rejected
-    decision_overall_Sarstedt = lapply(decision_Sarstedt, function(x){
-      all(unlist(x))
-    })
-    
-  }
-  
-  ### Return output ------------------------------------------------------------
-  out <- list()
-  if("Klesel" %in% names(.test_MGD)){
-  out[["Klesel"]] <- list(
-      "Test_statistic"     = teststat_Klesel,
-      "Critical_value"     = critical_values_Klesel, 
-      "Decision"           = decision_Klesel) 
-  }
-  if("Chin" %in% names(.test_MGD)){
-    out[["Chin"]] <- list(
-      "Test_statistic"     = teststat_Chin,
-      "Critical_value"     = critical_values_Chin, 
-      "Decision"           = decision_Chin,
-      "Decision_overall"   = decision_overall_Chin,
-      "Alpha_adjusted"     = alpha_Chin
-    )
-  }
-    # "Information"        = list(
-    #   "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
-    #   "Total_runs"            = counter + n_inadmissibles,
-    #   "Group_names"           = names(.object),
-    #   "Number_of_observations"= sapply(X_all_list, nrow),
-    #   "Permutation_values"      = list(
-    #     "Klesel" = ref_dist_Klesel,
-    #     "Chin"   = ref_dist_matrices_Chin),
-    #   "Approach" = .approach_mgd,
-    #   "Seed"     = .seed,
-    #   "Alpha"    = .alpha
-    # )
-  
-  
-  if("Sarstedt" %in% names(.test_MGD)){
-    out[["Sarstedt"]] <- list(
-      "Test_statistic"   = teststat_Sarstedt,
-      "Critical_value"     = critical_values_Sarstedt, 
-      "Decision"           = decision_Sarstedt,
-      "Decision_overall"   = decision_overall_Sarstedt,
-      "Alpha_adjusted"     = alpha_Sarstedt
-    )
-  }  
-
-  return(out)
-    
+  SS_between/SS_within 
 }

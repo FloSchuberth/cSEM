@@ -14,10 +14,11 @@ Defaults to \code{0.05}.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
 second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
-Defaults to "\emph{3stage}".
-@param .approach_alpha_adjust Character string. Approach used to adjust the significance level
-in case of multiple comparison test. Several of the following can be selected: "\emph{none}", "\emph{bonferroni}".
-Defaults to "\emph{none}".}
+Defaults to "\emph{3stage}".}
+
+\item{.approach_alpha_adjust}{Character string. Approach used to adjust the
+significance level to accomodate mutiple testing.
+One of "\emph{none}" or "\emph{bonferroni}". Defaults to "\emph{none}".}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "\emph{none}" in which case the standard
@@ -26,8 +27,10 @@ Bravais-Person correlation is used,
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}".}
 
-\item{.approach_mgd}{Character string. Approach used for the multi-group comparison.
-Several of the following can be selected: "\emph{Klesel}", "\emph{Chin}", or "\emph{Sarstedt}".}
+\item{.approach_mgd}{Character string or a vector of character strings.
+Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
+or "\emph{Sarstedt}". Default to "\emph{all}" in which case all approaches are
+computed (if possible).}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
@@ -182,7 +185,7 @@ Only used internally.}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 Defaults to \code{FALSE}. Ignored if the model is linear.}
 
-\item{.nr_comparisons}{Numeric. Indicating the number of comparisons. Defaults to \code{NULL}.}
+\item{.nr_comparisons}{Numeric. The number of comparisons. Defaults to \code{NULL}.}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
@@ -192,6 +195,9 @@ AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to \code{TRUE}.}
 
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
+
+\item{.parameter}{Character string. The name of the parameter to compute the
+test statistic for.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",

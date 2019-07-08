@@ -14,17 +14,19 @@
 #' @param .approach_2ndorder Character string. Approach used for models containing
 #'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
 #'   Defaults to "*3stage*".
-#'  @param .approach_alpha_adjust Character string. Approach used to adjust the significance level
-#'  in case of multiple comparison test. Several of the following can be selected: "*none*", "*bonferroni*".
-#'  Defaults to "*none*". 
+#' @param .approach_alpha_adjust Character string. Approach used to adjust the 
+#'   significance level to accomodate mutiple testing. 
+#'   One of "*none*" or "*bonferroni*". Defaults to "*none*". 
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
 #'   indicator correlation matrix. One of: "*none*" in which case the standard 
 #'   Bravais-Person correlation is used,
 #'   "*spearman*" for the Spearman rank correlation, or
 #'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
 #'   Defaults to "*none*".
-#' @param .approach_mgd Character string. Approach used for the multi-group comparison. 
-#' Several of the following can be selected: "*Klesel*", "*Chin*", or "*Sarstedt*".      
+#' @param .approach_mgd Character string or a vector of character strings. 
+#'   Approach used for the multi-group comparison. One: "*all*", "*Klesel*", "*Chin*", 
+#'   or "*Sarstedt*". Default to "*all*" in which case all approaches are
+#'   computed (if possible).      
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
@@ -136,13 +138,15 @@
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 #'  Defaults to `FALSE`. Ignored if the model is linear.
-#' @param .nr_comparisons Numeric. Indicating the number of comparisons. Defaults to `NULL`.  
+#' @param .nr_comparisons Numeric. The number of comparisons. Defaults to `NULL`.  
 #' @param .object An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .only_common_factors Logical. Should only concepts modeled as common 
 #'   factors be included when calculating one of the following quality critera: 
 #'   AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates. 
 #'   Defaults to `TRUE`.
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
+#' @param .parameter Character string. The name of the parameter to compute the
+#'   test statistic for.
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
@@ -342,8 +346,8 @@ args_default <- function(.choices = FALSE) {
     .alpha                   = 0.05,
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("3stage", "repeated_indicators"),
-    .approach_alpha_adjust   = c("none"),
-    .approach_mgd            = c("Klesel", "Chin", "Sarstedt"),
+    .approach_alpha_adjust   = c("none", "bonferroni"),
+    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt"),
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS", "3SLS"),
@@ -387,6 +391,7 @@ args_default <- function(.choices = FALSE) {
     .nr_comparisons          = NULL,
     .only_common_factors     = TRUE,
     .object                  = NULL,
+    .parameter               = NULL,
     .P                       = NULL,
     .probs                   = NULL,
     .quality_criterion       = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 

@@ -2,28 +2,32 @@
 % Please edit documentation in R/helper_test_MGD.R
 \name{calculateParameterDifference}
 \alias{calculateParameterDifference}
-\title{Parameter differences across groups}
+\title{Internal: Parameter differences across groups}
 \usage{
 calculateParameterDifference(
   .object     = NULL,
-  .model = args_default()$.model
+  .model      = NULL
 )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list.}
+\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
+parameters (i.e, path (\code{~}), loadings (\code{=~}), or weights (\code{<~})) should be
+compared across groups. Defaults to \code{NULL} in which case all parameters of the model
+are compared.}
 }
 \value{
-A list of length equal to the number of possible combinations of
-groups in .object (basically n choose k = 2), e.g., 3 if there are three
-groups and 6 if there are 4 groups. Each list elements contains the
-values of the difference between the parameter estimates based on the
-data of group i and and group j.
+A list of length equal to the number of possible pairs of
+groups in \code{.object} (mathematically, this is n choose 2, i.e., 3 if there are three
+groups and 6 if there are 4 groups). Each list elements is itself a list of
+three. The first list element contains
+the difference between parameter estimates of the structural model, the second
+list element the difference between estimated loadings, and the third
+the difference between estimated weights.
 }
 \description{
-Calculates the difference between one or more paramater estimates based
-one different groups (data sets).
+Calculate the difference between one or more paramater estimates across
+all possible pairs of groups (data sets) in \code{.object}.
 }
 \keyword{internal}

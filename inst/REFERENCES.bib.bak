@@ -428,7 +428,7 @@ specification of an individual wage equation.},
 }
 
 @Article{Klesel2019,
-  author    = {Michael Klesel and Florian Schuberth and Jörg Henseler and Bjoern Niehaves},
+  author    = {Michael Klesel and Florian Schuberth and J{\"o}rg Henseler and Bjoern Niehaves},
   title     = {A Test for Multigroup Comparison Using Partial Least Squares Path Modeling},
   journal   = {Internet Research},
   year      = {2019},
@@ -449,6 +449,17 @@ specification of an individual wage equation.},
   pages     = {171--193},
   month     = {nov},
   doi       = {10.1007/978-3-540-32827-8_8},
+}
+
+@InCollection{Sarstedt2011,
+  author    = {Marko Sarstedt and J{\"o}rg Henseler and Christian M. Ringle},
+  title     = {Multigroup Analysis in Partial Least Squares ({PLS}) Path Modeling: Alternative Methods and Empirical Results},
+  booktitle = {Advances in International Marketing},
+  publisher = {Emerald Group Publishing Limited},
+  year      = {2011},
+  pages     = {195--218},
+  month     = {jan},
+  doi       = {10.1108/s1474-7979(2011)0000022012},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}

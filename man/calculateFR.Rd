@@ -2,20 +2,21 @@
 % Please edit documentation in R/helper_test_MGD.R
 \name{calculateFR}
 \alias{calculateFR}
-\title{ANOVA F-test statistic}
+\title{Internal: ANOVA F-test statistic}
 \usage{
-calculateFR <- function(.Parameter,
-.id)
-}
-\arguments{
-\item{.id}{Character string or integer. The name or position of the column of
-\code{.data} used to split the data into groups.
-Defaults to \code{NULL}.}
+calculateFR(
+ .parameter,
+ .id
+ )
 }
 \value{
 A named scaler, the test statistic of the ANOVA F-test
 }
 \description{
-Calculates the ANOVA F-test statistic suggested by Sarstedt et al. (2011)
+Calculate the ANOVA F-test statistic suggested by
+\insertCite{Sarstedt2011;textual}{cSEM}.
+}
+\references{
+\insertAllCited{}
 }
 \keyword{internal}

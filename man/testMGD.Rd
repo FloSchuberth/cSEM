@@ -9,7 +9,7 @@ testMGD(
  .alpha                 = args_default()$.alpha,
  .approach_p_adjust     = args_default()$.approach_p_adjust,
  .approach_mgd          = args_default()$.approach_mgd,
- .model            = args_default()$.model,
+ .model                 = args_default()$.model,
  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
  .R_permutation         = args_default()$.R_permutation,
  .R_bootstrap           = args_default()$.R_bootstrap,
@@ -29,11 +29,15 @@ Defaults to \code{0.05}.}
 The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
 Defaults to "\emph{none}".}
 
-\item{.approach_mgd}{Character string. Approach used for the multi-group comparison.
-Several of the following can be selected: "\emph{Klesel}", "\emph{Chin}", or "\emph{Sarstedt}".}
+\item{.approach_mgd}{Character string or a vector of character strings.
+Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
+or "\emph{Sarstedt}". Default to "\emph{all}" in which case all approaches are
+computed (if possible).}
 
-\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list.}
+\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
+parameters (i.e, path (\code{~}), loadings (\code{=~}), or weights (\code{<~})) should be
+compared across groups. Defaults to \code{NULL} in which case all parameters of the model
+are compared.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
