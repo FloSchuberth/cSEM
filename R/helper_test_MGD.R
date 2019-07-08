@@ -397,10 +397,7 @@ adjustAlpha <- function(
 #' Calculate the ANOVA F-test statistic suggested by 
 #' \insertCite{Sarstedt2011;textual}{cSEM}.
 #' 
-#' @usage calculateFR(
-#'  .parameter,
-#'  .id
-#'  )
+#' @usage calculateFR(.resample_sarstedt)
 #' 
 #' @inheritParams csem_arguments
 #' 

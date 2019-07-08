@@ -196,9 +196,6 @@ Defaults to \code{TRUE}.}
 
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 
-\item{.parameter}{Character string. The name of the parameter to compute the
-test statistic for.}
-
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
@@ -258,6 +255,10 @@ intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\
 \item{`.resample_object`}{An R object of class \code{cSEMResults_resampled}
 obtained from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
 or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.}
+
+\item{.resample_sarstedt}{A matrix containing the parameter estimates that
+could potentially be compared and an id column indicating the group adherance
+of each row.}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 

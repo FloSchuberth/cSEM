@@ -126,7 +126,7 @@ testMGD <- function(
           "The approach suggested by Klesel et al. (2019) cannot be applied",
           " to nonlinear models as cSEM currently cannot calculate",
           " the model-implied VCV matrix for such models.\n", 
-          "Consider setting `.appraoch_mgd = c('Chin',  'Sarstedt')`")
+          "Consider setting `.approach_mgd = c('Chin',  'Sarstedt')`")
   }
   
   ## Check if data for different groups is identical
@@ -158,13 +158,11 @@ testMGD <- function(
                .type_vcv  = .type_vcv)
     
     ## Compute test statistic
-    temp <- list(
-      "Klesel" = c(
-        "dG" = calculateDistance(.matrices = fit, .distance = "geodesic"),
-        "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")
-      )
+    temp <- c(
+      "dG" = calculateDistance(.matrices = fit, .distance = "geodesic"),
+      "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")
     )
-    
+
     ## Save test statistic
     teststat[["Klesel"]] <- temp
   }
@@ -296,11 +294,9 @@ testMGD <- function(
         fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
         
         ## Compute test statistic
-        temp <- list(
-          "Klesel" = c(
-            "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
-            "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
-          )
+        temp <- c(
+          "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
+          "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
         )
         
         ## Save test statistic
@@ -362,6 +358,7 @@ testMGD <- function(
   # Order significance levels
   .alpha <- .alpha[order(.alpha)]
   
+  ## Klesel et al. (2019) ------------------------------------------------------
   if(.approach_mgd %in% c("all", "Klesel")) {
     
   # Collect permuation results and combine
@@ -378,71 +375,75 @@ testMGD <- function(
   decision_Klesel <- lapply(.alpha,function(x){
     pvalue_Klesel > x
   })
-  names(decision_Klesel) <- paste(.alpha*100,"%",sep= '')
+  
+  names(decision_Klesel) <- paste0(.alpha * 100, "%")
   # TRUE = p-value > alpha --> not reject
   # FALSE = sufficient evidence against the H0 --> reject
   }
   
-  ### Approach suggested by Chin & Dibbern (2010) ------------------------------
-  
-  # Extract test statistic
-  teststat_Chin <- teststat$Chin
-  
-  # Create list with matrices containing the reference distribution of the parameter differences
-  ref_dist_Chin <- lapply(ref_dist1,function(x) x$Chin)
-  
-  ref_dist_Chin_temp <- purrr::transpose(ref_dist_Chin)
-  
-  ref_dist_matrices_Chin <- lapply(ref_dist_Chin_temp, function(x) {
-    temp <- do.call(cbind, x)
-    temp_ind <- stats::complete.cases(temp)
-    temp[temp_ind, ,drop = FALSE]
-  })
-  
-  # Calculation of the p-values
-  pvalue_Chin <- lapply(1:length(ref_dist_matrices_Chin),function(x){
-    # share of values above the positive test statistic
-    rowMeans(ref_dist_matrices_Chin[[x]]>abs(teststat_Chin[[x]]))+
-    # share of values of the reference distribution below the negative test statistic 
-      rowMeans(ref_dist_matrices_Chin[[x]]< (-abs(teststat_Chin[[x]])))
-  })
-  
-  names(pvalue_Chin) <- names(ref_dist_matrices_Chin)
-  
-  padjusted_Chin <- lapply(as.list(.approach_p_adjust), function(x){
-    # It is important to unlist the pvalues as pAdjust needs to now how many p-values
-    # there are to do a proper adjustment
-  pvector <- stats::p.adjust(unlist(pvalue_Chin),method = x)
-    # Sort them back into list
-    relist(flesh = pvector,skeleton = pvalue_Chin)
-  })
-  
-  names(padjusted_Chin) <- .approach_p_adjust
-  
-
-  # Decision 
-  decision_Chin=lapply(padjusted_Chin,function(adjust_approach){#over the different p adjustments
-      temp=lapply(.alpha, function(alpha){#over the different significance levels
-        lapply(adjust_approach,function(group_comp){#over the different group comparisons
+  ## Chin & Dibbern (2010) -----------------------------------------------------
+  if(.approach_mgd %in% c("all", "Chin")) {
+    
+    # Extract test statistic
+    teststat_Chin <- teststat$Chin
+    
+    # Create list with matrices containing the reference distribution 
+    # of the parameter differences
+    ref_dist_Chin <- lapply(ref_dist1, function(x) x$Chin)
+    
+    # Transpose
+    ref_dist_Chin_temp <- purrr::transpose(ref_dist_Chin)
+    
+    ref_dist_matrices_Chin <- lapply(ref_dist_Chin_temp, function(x) {
+      temp <- do.call(cbind, x)
+      temp_ind <- stats::complete.cases(temp)
+      temp[temp_ind, ,drop = FALSE]
+    })
+    
+    # Calculation of the p-values
+    pvalue_Chin <- lapply(1:length(ref_dist_matrices_Chin), function(x) {
+      # Share of values above the positive test statistic
+      rowMeans(ref_dist_matrices_Chin[[x]] > abs(teststat_Chin[[x]])) +
+        # share of values of the reference distribution below the negative test statistic 
+        rowMeans(ref_dist_matrices_Chin[[x]] < (-abs(teststat_Chin[[x]])))
+    })
+    
+    names(pvalue_Chin) <- names(ref_dist_matrices_Chin)
+    
+    # Adjust p-values
+    padjusted_Chin <- lapply(as.list(.approach_p_adjust), function(x){
+      # It is important to unlist the pvalues as pAdjust needs to now how many p-values
+      # there are to do a proper adjustment
+      pvector <- stats::p.adjust(unlist(pvalue_Chin),method = x)
+      # Sort them back into list
+      relist(flesh = pvector,skeleton = pvalue_Chin)
+    })
+    
+    names(padjusted_Chin) <- .approach_p_adjust
+    
+    # Decision 
+    decision_Chin <- lapply(padjusted_Chin, function(adjust_approach){ # over the different p adjustments
+      temp <- lapply(.alpha, function(alpha){# over the different significance levels
+        lapply(adjust_approach,function(group_comp){# over the different group comparisons
           # check whether the p values are larger than a certain alpha
           group_comp > alpha
         })
       })
-  names(temp) = paste(.alpha*100,"%",sep= '')
-  temp
-      })
-
-
-  # Overall decision, i.e., was any of the test belonging to one significance level 
-  # and one p value adjustment rejected
-  decision_overall_Chin = lapply(decision_Chin, function(decision_Chin_list){
-    lapply(decision_Chin_list,function(x){
-      all(unlist(x))
+      names(temp) <- paste0(.alpha*100, "%")
+      temp
     })
-  })
+    
+    # Overall decision, i.e., was any of the test belonging to one significance level 
+    # and one p value adjustment rejected
+    decision_overall_Chin <- lapply(decision_Chin, function(decision_Chin_list){
+      lapply(decision_Chin_list,function(x){
+        all(unlist(x))
+      })
+    })
+  }
   
-  # Approach suggested by Sarstedt et al. (2011)-------------------------------------------
-  if("Sarstedt" %in% .approach_mgd){
+  ## Sarstedt et al. (2011) ----------------------------------------------------
+  if(.approach_mgd %in% c("all", "Sarstedt")) {
 
     # Extract test statistic
     teststat_Sarstedt <- teststat$Sarstedt
@@ -452,11 +453,11 @@ testMGD <- function(
     ref_dist_matrix_Sarstedt <- do.call(cbind, ref_dist_Sarstedt)
     
     # Calculation of the p-value
-    pvalue_Sarstedt=rowMeans(ref_dist_matrix_Sarstedt> teststat_Sarstedt)
+    pvalue_Sarstedt <- rowMeans(ref_dist_matrix_Sarstedt > teststat_Sarstedt)
     
     # Adjust pvalues:
     padjusted_Sarstedt<- lapply(as.list(.approach_p_adjust), function(x){
-      pvector <- stats::p.adjust(pvalue_Sarstedt,method = x)
+      pvector <- stats::p.adjust(pvalue_Sarstedt, method = x)
     })
     names(padjusted_Sarstedt) <- .approach_p_adjust
     
@@ -468,7 +469,6 @@ testMGD <- function(
       names(temp) = paste(.alpha*100,"%",sep= '')
       temp
     })
-    # TRUE -> no rejection 
     
     # Decision overall
     decision_overall_Sarstedt <- lapply(decision_Sarstedt, function(x){#over p-value adjustments
@@ -476,85 +476,57 @@ testMGD <- function(
         all(xx)
         })
     })
-    
-  }#End approach Sarstedt
+  }
   
-  ### Return output ------------------------------------------------------------
-  if(model_type == "Linear"){
-  out <- list(
-    "Klesel"=list(
+  ### Return output ============================================================
+  out <- list()
+  
+  ## Information
+  out[["Information"]] <- list(
+    "Number_admissibles"    = ncol(ref_dist1),
+    "Total_runs"            = counter + n_inadmissibles,
+    "Group_names"           = names(.object),
+    "Number_of_observations"= sapply(X_all_list, nrow),
+    "Approach"              = .approach_mgd,
+    "Approach_p_adjust"     = .approach_p_adjust,
+    "Seed"                  = .seed,
+    "Alpha"                 = .alpha,
+    "Permutation_values"    = list()
+  )
+  
+  if(.approach_mgd %in% c("all", "Klesel")) {
+    out[["Klesel"]] <- list(
       "Test_statistic"     = teststat_Klesel,
       "P_value"            = pvalue_Klesel,
-      "Decision"           = decision_Klesel), 
+      "Decision"           = decision_Klesel
+    )
     
-    "Chin" = list(
+    out[["Information"]][["Permutation_values"]][["Klesel"]] <- ref_dist_matrix_Klesel
+  }
+  
+  if(.approach_mgd %in% c("all", "Chin")) {
+    out[["Chin"]] <- list(
       "Test_statistic"     = teststat_Chin,
       "P_value"            = pvalue_Chin,
       "P_value_adjusted"   = padjusted_Chin,
       "Decision"           = decision_Chin,
       "Decision_overall"   = decision_overall_Chin
-      ),
-    "Information"        = list(
-      "Number_admissibles"    = ncol(ref_dist_matrix_Klesel),
-      "Total_runs"            = counter + n_inadmissibles,
-      "Group_names"           = names(.object),
-      "Number_of_observations"= sapply(X_all_list, nrow),
-      "Permutation_values"      = list(
-        "Klesel" = ref_dist_matrix_Klesel,
-        "Chin"   = ref_dist_matrices_Chin),
-      "Approach" = .approach_mgd,
-      "Approach_p_adjust" =.approach_p_adjust,
-      "Seed"     = .seed,
-      "Alpha"    = .alpha
     )
-  )
-  }else if(model_type == "Nonlinear"){
-    out <- list(
-      "Chin" = list(
-        "Test_statistic"     = teststat_Chin,
-        "P_value"            = pvalue_Chin,
-        "P_value_adjusted"   = padjusted_Chin,
-        "Decision"           = decision_Chin,
-        "Decision_overall"   = decision_overall_Chin
-      ),
-      "Information"        = list(
-        "Number_admissibles"    = ncol(ref_dist_matrices_Chin),
-        "Total_runs"            = counter + n_inadmissibles,
-        "Group_names"           = names(.object),
-        "Number_of_observations"= sapply(X_all_list, nrow),
-        "Permutation_values"      = list(
-          "Chin"   = ref_dist_matrices_Chin),
-        "Approach" = .approach_mgd,
-        "Approach_p_adjust" =.approach_p_adjust,
-        "Seed"     = .seed,
-        "Alpha"    = .alpha
-      )
-    )
-  } else {
-    stop2("Model type is not known.")
+    
+    out[["Information"]][["Permutation_values"]][["Chin"]] <- ref_dist_matrices_Chin
   }
-  if("Sarstedt" %in% .approach_mgd){
+  
+  if(.approach_mgd %in% c("all", "Sarstedt")) {
     out[["Sarstedt"]] <- list(
-      "Test_statistic"   = teststat_Sarstedt,
+      "Test_statistic"     = teststat_Sarstedt,
       "P_value"            = pvalue_Sarstedt,
       "P_value_adjusted"   = padjusted_Sarstedt,
       "Decision"           = decision_Sarstedt,
       "Decision_overall"   = decision_overall_Sarstedt
     )
     
-    # Add the reference distirbutions
     out[["Information"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
-    
-    # Order output
-    if(model_type == "Linear"){
-    out <- out[c("Klesel","Chin","Sarstedt","Information")]
-    } else if(model_type == "Nonlinear"){
-      out <- out[c("Chin","Sarstedt","Information")]
-    } else{
-      stop2("Model type is not known.")
-    }
   }
-
   
   ## Remove the seed since it is set globally. Reset immediately by calling
   ## any kind of function that requires .Random.seed as this causes R to

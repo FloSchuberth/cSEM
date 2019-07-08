@@ -4,10 +4,12 @@
 \alias{calculateFR}
 \title{Internal: ANOVA F-test statistic}
 \usage{
-calculateFR(
- .parameter,
- .id
- )
+calculateFR(.resample_sarstedt)
+}
+\arguments{
+\item{.resample_sarstedt}{A matrix containing the parameter estimates that
+could potentially be compared and an id column indicating the group adherance
+of each row.}
 }
 \value{
 A named scaler, the test statistic of the ANOVA F-test

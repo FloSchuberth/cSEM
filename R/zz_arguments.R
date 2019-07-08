@@ -145,8 +145,6 @@
 #'   AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates. 
 #'   Defaults to `TRUE`.
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
-#' @param .parameter Character string. The name of the parameter to compute the
-#'   test statistic for.
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
@@ -195,6 +193,9 @@
 #' @param `.resample_object` An R object of class `cSEMResults_resampled`
 #'   obtained from [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
 #'   or `"jackknife"` when calling [csem()].
+#' @param .resample_sarstedt A matrix containing the parameter estimates that 
+#'   could potentially be compared and an id column indicating the group adherance
+#'   of each row.
 #' @param .R Integer. The number of bootstrap replications. Defaults to `499`.
 #' @param .R2 Integer. The number of bootstrap replications to use when 
 #'   resampling from a resample. Defaults to `199`.
@@ -391,7 +392,6 @@ args_default <- function(.choices = FALSE) {
     .nr_comparisons          = NULL,
     .only_common_factors     = TRUE,
     .object                  = NULL,
-    .parameter               = NULL,
     .P                       = NULL,
     .probs                   = NULL,
     .quality_criterion       = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
@@ -413,6 +413,7 @@ args_default <- function(.choices = FALSE) {
     .resample_method         = c("none", "bootstrap", "jackknife"),
     .resample_method2        = c("none", "bootstrap", "jackknife"),
     .resample_object         = NULL,
+    .resample_sarstedt       = NULL,
     .S                       = NULL,
     .saturated               = FALSE,
     .second_resample         = NULL,
