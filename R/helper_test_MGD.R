@@ -410,6 +410,11 @@ adjustAlpha <- function(
 
 calculateFR <- function(.resample_sarstedt) {
   
+  # In Sarstedt et al. (2011), it is assumed that you have the same number of bootstrap estimates per group. 
+  # Consequently, the total number of estimates equals B*G.
+  # Since, there might be different numbers of bootstrap estimates per group, we adjusted the calculation of the 
+  # F test statistic.
+  
   names_param <- colnames(.resample_sarstedt)[-ncol(.resample_sarstedt)]
   
   # Number of grousp
@@ -426,11 +431,13 @@ calculateFR <- function(.resample_sarstedt) {
   
   group_mean_matrix <- apply(mean_group[, -1, drop = FALSE], 2, function(y) rep(y, times = table(x[, "group_id"])))
   
-  SS_between <- rowSums((t(group_mean_matrix) - grand_means)^2) / (G -1)
-  SS_within  <- colSums((x[, names_param, drop = FALSE] - group_mean_matrix)^2) / (N - G)
+  SS_between <- rowSums((t(group_mean_matrix) - grand_means)^2)
+  MSA_between <- SS_between/ (G -1)
+  SS_within  <- colSums((x[, names_param, drop = FALSE] - group_mean_matrix)^2)
+  MSA_within <- SS_within/(N - G)
   # Note: in the original paper (B -1) was used. This is incorrect. It should
   # be B - G (G = the number of groups). See the F-statistic derived from ANOVA
   # for comparision.
   
-  SS_between/SS_within 
+  MSA_between/MSA_within 
 }
