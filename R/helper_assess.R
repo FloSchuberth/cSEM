@@ -1246,10 +1246,8 @@ doFloodlightAnalysis <- function(
 #' Plot the direct effect of an independent variable (z) on a dependent variable
 #' (y) conditional on the values of a moderator variable (x), including
 #' the confidence interval and the Johnson-Neyman points. 
-#'
-#' @usage plot.cSEMFloodlight(x, ...)
 #' 
-#' @param x An R object of class [cSEMResults] resulting from a call to [csem()].
+#' @param x An R object of class `cSEMFloodlight` resulting from a call to [doFloodlightAnalysis].
 #' @param ... ignored.
 #' 
 #' @export

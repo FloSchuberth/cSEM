@@ -96,7 +96,8 @@ test_that("All .approach_mgd options work", {
     testMGD(
       .object       = res_linear,
       .approach_mgd = "Sarstedt",
-      .R_permutation = 10
+      .R_permutation = 10,
+      .handle_inadmissibles = "ignore"
     )
   )
   expect_output(
@@ -127,27 +128,27 @@ test_that("Chin and Sarstedt work for nonlinear models", {
   )
 })
 
-test_that("Chin and Sarstedt work for '2ndorder' models", {
-  expect_output(
-    testMGD(
-      .object       = res_linear,
-      .approach_mgd = "Chin",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_linear,
-      .approach_mgd = "Chin",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_nonlinear,
-      .approach_mgd = "Sarstedt",
-      .R_permutation = 10,
-      .handle_inadmissibles = "ignore"
-    )
-  )
-})
+# test_that("Chin and Sarstedt work for '2ndorder' models", {
+#   expect_output(
+#     testMGD(
+#       .object       = res_linear,
+#       .approach_mgd = "Chin",
+#       .R_permutation = 10
+#     )
+#   )
+#   expect_output(
+#     testMGD(
+#       .object       = res_linear,
+#       .approach_mgd = "Chin",
+#       .R_permutation = 10
+#     )
+#   )
+#   expect_output(
+#     testMGD(
+#       .object       = res_nonlinear,
+#       .approach_mgd = "Sarstedt",
+#       .R_permutation = 10,
+#       .handle_inadmissibles = "ignore"
+#     )
+#   )
+# })

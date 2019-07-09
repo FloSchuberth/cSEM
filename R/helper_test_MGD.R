@@ -420,9 +420,7 @@ calculateFR <- function(.resample_sarstedt) {
   mean_all <- colMeans(x[, names_param])
   mean_group <- aggregate(x[, names_param], by = list(x[, "group_id"]), FUN = mean)
   
-  mean_matrix_all
   mean_matrix <- apply(mean_group[, -1], 2, function(y) rep(y, times = table(x[, "group_id"])))
-  
   
   SS_between <- rowSums((t(mean_matrix) - mean_all)^2) / (G -1)
   SS_within  <- colSums((x[, names_param] - mean_matrix)^2) / (B - G)

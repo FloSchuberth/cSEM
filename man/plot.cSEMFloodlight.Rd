@@ -4,10 +4,10 @@
 \alias{plot.cSEMFloodlight}
 \title{\code{cSEMFloodlight} method for \code{plot()}}
 \usage{
-plot.cSEMFloodlight(x, ...)
+\method{plot}{cSEMFloodlight}(x, ...)
 }
 \arguments{
-\item{x}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+\item{x}{An R object of class \code{cSEMFloodlight} resulting from a call to \link{doFloodlightAnalysis}.}
 
 \item{...}{ignored.}
 }

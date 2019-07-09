@@ -4,7 +4,7 @@
 \alias{parseModel}
 \title{Parse lavaan model}
 \usage{
-parseModel(.model, .instruments = NULL, ,check_errors = TRUE)
+parseModel(.model, .instruments = NULL, .check_errors = TRUE)
 }
 \arguments{
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
@@ -60,6 +60,20 @@ and errors. Use with care.
 \description{
 Turns a model written in \link[lavaan:model.syntax]{lavaan model syntax} into a
 \link{cSEMModel} list.
+}
+\details{
+Instruments must be supplied seperately as a named list
+of vectors of instruments.
+The names of the list elements are the names of the dependent constructs of
+the structural equation whose explanatory variables are endogenous.
+The vectors contain the names of the instruments corresponding to each
+equation. Note that exogenous variables of a given equation must be
+supplied as instruments for themselves.
+
+By default \code{parseModel()} attempts to check if the model provided is correct
+in a sense that all necessary components required to estimate the
+model are specified (e.g., a construct of the structural model has at least
+1 item). To prevent checking for errors use \code{.check_errors = FALSE}.
 }
 \examples{
 # ===========================================================================
