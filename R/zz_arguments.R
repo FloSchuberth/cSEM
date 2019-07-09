@@ -8,21 +8,31 @@
 #'
 #' @param .alpha An integer or a numeric vector of significance levels. 
 #'   Defaults to `0.05`.
-#' @param .approach Character string. The Kettenring approach to use. One of 
+#' @param .approach_gcca Character string. The Kettenring approach to use for GCCA. One of 
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
 #' @param .approach_2ndorder Character string. Approach used for models containing
 #'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
 #'   Defaults to "*3stage*".
+#' @param .approach_alpha_adjust Character string. Approach used to adjust the 
+#'   significance level to accomodate mutiple testing. 
+#'   One of "*none*" or "*bonferroni*". Defaults to "*none*". 
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
 #'   indicator correlation matrix. One of: "*none*" in which case the standard 
 #'   Bravais-Person correlation is used,
 #'   "*spearman*" for the Spearman rank correlation, or
 #'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
 #'   Defaults to "*none*".
+#' @param .approach_mgd Character string or a vector of character strings. 
+#'   Approach used for the multi-group comparison. One: "*all*", "*Klesel*", "*Chin*", 
+#'   or "*Sarstedt*". Default to "*all*" in which case all approaches are
+#'   computed (if possible).      
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
+#' @param .approach_p_adjust Character string. Approach used to adjust the p value.
+#' The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
+#' Defaults to "*none*".
 #' @param .approach_paths Character string. Approach used to estimate the
 #'   structural coefficients. One of: "*OLS*", "*2SLS*", or "*3SLS*" (not yet implemented).
 #'   Defaults to "*OLS*".
@@ -40,6 +50,9 @@
 #'   where `theta*_hat` is the average over all .R bootstrap estimates of `theta`.
 #'   Defaults to `TRUE`
 #' @param .C A (J x J) composite variance-covariance matrix.
+#' @param .check_errors Logical. Should the model be checked for appropriateness
+#'   in a sense that all necessary components to estimate the model are given?
+#'   Defaults to `TRUE`.
 #' @param .choices Logical. Should candidate values for the arguments be returned?
 #'   Defaults to `FALSE`.
 #' @param .ci A vector of character strings naming the confidence interval to compute.
@@ -123,6 +136,7 @@
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 #'  Defaults to `FALSE`. Ignored if the model is linear.
+#' @param .nr_comparisons Numeric. The number of comparisons. Defaults to `NULL`.  
 #' @param .object An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .only_common_factors Logical. Should only concepts modeled as common 
 #'   factors be included when calculating one of the following quality critera: 
@@ -169,7 +183,7 @@
 #'   reliabilities are estimated by `csem()`. Currently, only supported for
 #'   `.approach_weights = "PLS-PM"`.
 #' @param .resample_method Character string. The resampling method to use. One of: 
-#'  "*bootstrap*" or "*jackknife*". Defaults to "*bootstrap*".
+#'  "*none*", "*bootstrap*" or "*jackknife*". Defaults to "*none*".
 #' @param .resample_method2 Character string. The resampling method to use when resampling
 #'   from a resample. One of: "*none*", "*bootstrap*" or "*jackknife*". For 
 #'   "*bootstrap*" the number of draws is provided via `.R2`. Currently, 
@@ -178,9 +192,14 @@
 #' @param `.resample_object` An R object of class `cSEMResults_resampled`
 #'   obtained from [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
 #'   or `"jackknife"` when calling [csem()].
+#' @param .resample_sarstedt A matrix containing the parameter estimates that 
+#'   could potentially be compared and an id column indicating the group adherance
+#'   of each row.
 #' @param .R Integer. The number of bootstrap replications. Defaults to `499`.
 #' @param .R2 Integer. The number of bootstrap replications to use when 
 #'   resampling from a resample. Defaults to `199`.
+#' @param .R_bootstrap Integer. The number of bootstrap runs. Defaults to `499`
+#' @param .R_permutation Integer. The number of permutations. Defaults to `499`
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? 
 #'   Defaults to `FALSE`.
@@ -327,19 +346,23 @@ args_default <- function(.choices = FALSE) {
   
   args <- list(
     .alpha                   = 0.05,
-    .approach                = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
+    .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("3stage", "repeated_indicators"),
+    .approach_alpha_adjust   = c("none", "bonferroni"),
+    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt"),
     .approach_nl             = c("sequential", "replace"),
+    .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS", "3SLS"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
     .bias_corrected          = TRUE,
     .C                       = NULL,
-    .closed_form_ci          = FALSE, 
+    .check_errors            = TRUE,
     .choices                 = FALSE,
     .ci                      = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
+    .closed_form_ci          = FALSE, 
     .csem_model              = NULL,
     .csem_resample           = NULL,
     .cv_folds                = 10,
@@ -365,6 +388,7 @@ args_default <- function(.choices = FALSE) {
     .modes                   = NULL,
     .n_spotlights            = 100,
     .normality               = FALSE,
+    .nr_comparisons          = NULL,
     .only_common_factors     = TRUE,
     .object                  = NULL,
     .P                       = NULL,
@@ -382,10 +406,13 @@ args_default <- function(.choices = FALSE) {
     .Q                       = NULL,
     .R                       = 499,
     .R2                      = 199,
+    .R_bootstrap             = 499,
+    .R_permutation           = 499,
     .reliabilities           = NULL,
     .resample_method         = c("none", "bootstrap", "jackknife"),
     .resample_method2        = c("none", "bootstrap", "jackknife"),
     .resample_object         = NULL,
+    .resample_sarstedt       = NULL,
     .S                       = NULL,
     .saturated               = FALSE,
     .second_resample         = NULL,

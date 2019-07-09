@@ -63,7 +63,7 @@ Defaults to (TODO).}
 data obtained by resamplecSEMResults().}
 
 \item{.resample_method}{Character string. The resampling method to use. One of:
-"\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
+"\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{none}".}
 
 \item{.n}{Integer. The number of observations of the original data.}
 

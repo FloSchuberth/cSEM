@@ -3,7 +3,8 @@
 ^CONTRIBUTING\.Rmd$
 ^CONTRIBUTING\.md$
 ^Temp$
+^dev$
 ^docs$
 ^README\.Rmd$
 ^NEWS.
-.travis.yml
+^\.travis\.yml

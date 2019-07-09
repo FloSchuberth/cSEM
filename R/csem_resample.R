@@ -492,6 +492,8 @@ resampleData <- function(
 #' ) 
 #'
 #' @inheritParams csem_arguments
+#' @param .resample_method Character string. The resampling method to use. One of: 
+#'  "*bootstrap*" or "*jackknife*". Defaults to "*bootstrap*".
 #' @param ... Further arguments passed to functions supplied to `.user_funs`.
 #'   
 #' @return The core structure is the same structure as that of `.object` with
@@ -605,18 +607,48 @@ resamplecSEMResults <- function(
 #' @export
 
 resamplecSEMResults.cSEMResults <- function(
-  .object                = args_default()$.object, 
-  .resample_method       = args_default()$.resample_method,
-  .resample_method2      = args_default()$.resample_method2,
-  .R                     = args_default()$.R,
-  .R2                    = args_default()$.R2,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .user_funs             = args_default()$.user_funs,
-  .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed,
-  .sign_change_option    = args_default()$.sign_change_option,
+  .object                = NULL, 
+  .resample_method       = c("bootstrap", "jackknife"),
+  .resample_method2      = c("none", "bootstrap", "jackknife"),
+  .R                     = 499,
+  .R2                    = 199,
+  .handle_inadmissibles  = c("drop", "ignore", "replace"),
+  .user_funs             = NULL,
+  .eval_plan             = c("sequential", "multiprocess"),
+  .seed                  = NULL,
+  .sign_change_option    = c("none","individual","individual_reestimate",
+                             "construct_reestimate"),
   ...
-) {
+  ) {
+  
+  ## Match arguments
+  .resample_method  <- match.arg(.resample_method)
+  .resample_method2 <- match.arg(.resample_method2)
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+  .eval_plan <- match.arg(.eval_plan)
+  .sign_change_option <- match.arg(.sign_change_option)
+  
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, function(x) {
+      resamplecSEMResults(
+        .object               = x,
+        .resample_method      = .resample_method,
+        .resample_method2     = .resample_method2,
+        .R                    = .R,
+        .R2                   = .R2,
+        .handle_inadmissibles = .handle_inadmissibles,
+        .user_funs            = .user_funs,
+        .eval_plan            = .eval_plan,
+        .seed                 = .seed,
+        .sign_change_option   = .sign_change_option,
+        ...
+      )
+    })
+    
+    ## Add/ set class
+    class(out) <- c(class(.object), "cSEMResults_resampled")
+    return(out)
+  }
   
   # Set plan on how to resolve futures; reset at the end
   oplan <- future::plan()
@@ -624,9 +656,6 @@ resamplecSEMResults.cSEMResults <- function(
   future::plan(.eval_plan)
   
   ### Process original data ----------------------------------------------------
-  # ## Summarize
-  # summary_original <- summarize(.object)
-  
   ## Select relevant statistics/parameters/quantities and vectorize 
   Est_original <- selectAndVectorize(.object)
   
@@ -779,42 +808,6 @@ resamplecSEMResults.cSEMResults <- function(
   }
 }
 
-#' @export
-
-resamplecSEMResults.cSEMResults_multi <- function(
-  .object                = args_default()$.object, 
-  .resample_method       = args_default()$.resample_method,
-  .resample_method2      = args_default()$.resample_method2,
-  .R                     = args_default()$.R,
-  .R2                    = args_default()$.R2,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .user_funs             = args_default()$.user_funs,
-  .eval_plan             = args_default()$.eval_plan,
-  .seed                  = args_default()$.seed,
-  .sign_change_option    = args_default()$.sign_change_option,
-  ...
-) {
-  out <- lapply(.object, function(x) {
-    resamplecSEMResults.cSEMResults(
-      .object               = x,
-      .resample_method      = .resample_method,
-      .resample_method2     = .resample_method2,
-      .R                    = .R,
-      .R2                   = .R2,
-      .handle_inadmissibles = .handle_inadmissibles,
-      .user_funs            = .user_funs,
-      .eval_plan            = .eval_plan,
-      .seed                 = .seed,
-      .sign_change_option   = .sign_change_option,
-      ...
-    )
-  })
-  
-  ## Add/ set class
-  class(out) <- c(class(.object), "cSEMResults_resampled")
-  return(out)
-}
-
 #' Core tasks of the resamplecSEMResults function
 #' @noRd
 #' 
@@ -846,6 +839,13 @@ resamplecSEMResultsCore <- function(
     est2 <- summary_original$Second_stage$Estimates
     
     args <- info2$Arguments_original
+    
+    ## Replace original data (which contains either an id column or is a list)
+    ## by the data used for the group that is being resampled.
+    if(!is.null(args$.id) | inherits(args$.data, "list")) {
+      args$.data <- info1$Data
+      args$.id <- NULL
+    }
   } else {
     info1       <- .object$Information
     est_normal  <- .object$Estimates

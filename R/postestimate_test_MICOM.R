@@ -115,8 +115,8 @@ testMICOM.cSEMResults_multi <- function(
     
     ### Preparation ==============================================================
     ## Get pooled data (potentially unstandardized) and remove id column
-    X <- .object[[1]]$Information$Data_pooled
-    X <- as.matrix(X[, -which(colnames(X) == .object[[1]]$Information$Arguments$.id)])
+    X <- as.matrix(.object[[1]]$Information$Data_pooled)
+    # X <- as.matrix(X[, -which(colnames(X) == .object[[1]]$Information$Arguments$.id)])
     
     # Collect initial arguments (from the first object, but could be any other)
     arguments <- .object[[1]]$Information$Arguments

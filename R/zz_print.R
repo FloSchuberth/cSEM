@@ -10,63 +10,73 @@
 #' @keywords internal
 print.cSEMResults <- function(x, ...) {
   
-  cat(
+  cat2(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Overview", width = 80), 
-    sep = "")
+    rule(center = "Overview", width = 80)
+    )
   
-  if(class(x)[2] == "cSEMResults_multi") {
-    cat("\n\nEstimation status by group/data set:\n", sep = "")
+  if(inherits(x, "cSEMResults_multi")) {
+    cat2("\n\nEstimation status by group/data set:\n")
+    status <- verify(x)
     for(i in names(x)) {
-      cat("\n\t", col_align(cyan(i), 15), ": ",
-          ifelse(sum(verify.cSEMResults_default(x[[i]])) == 0, 
-                 green("successful"), red("not successful")), ".", sep = "")
+      cat2("\n\t", col_align(cyan(i), max(15, max(nchar(names(x))))), ": ",
+           ifelse(sum(unlist(status[[i]])) == 0, green("successful"), red("not successful")), ".")
     }
-    if(sum(verify.cSEMResults_default(x[[i]])) != 0) {
-      cat("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
-          " for details.", sep = "")
+    if(sum(unlist(status)) != 0) {
+      cat2("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
+          " for details.")
     }
-    cat("\n\nThe result for each group/data set is a list of class " %+% bold("cSEMResults") %+%"",
-        "\nwith list elements:\n\n\t", sep = "")
+    cat2("\n\nThe result for each group/data set is a list of class " %+% bold("cSEMResults") %+%"",
+        "\nwith list elements:\n\n\t")
     
-  } else if(class(x)[2] == "cSEMResults_2ndorder") {
+  } else if(inherits(x, "cSEMResults_2ndorder")) {
     x <- sapply(verify.cSEMResults_2ndorder(x), sum)
-    cat("\n\nEstimation status by stage:\n", sep = "")
+    cat2("\n\nEstimation status by stage:\n")
     for(i in names(x)) {
-      cat("\n\t", col_align(cyan(i), 15), ": ",
-          ifelse(sum(x) == 0, green("successful"), red("not successful")), sep = "")
+      cat2("\n\t", col_align(cyan(i), 15), ": ",
+          ifelse(sum(x) == 0, green("successful"), red("not successful")))
     }
     if(sum(x) != 0) {
-      cat("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
-          " for details.", sep = "")
+      cat2("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
+          " for details.")
     }
-    cat("\n\nThe result for each stage is a list of class " %+% bold("cSEMResults") %+%"",
-        "\nwith list elements:\n\n\t", sep = "")
+    cat2("\n\nThe result for each stage is a list of class " %+% bold("cSEMResults") %+%"",
+        "\nwith list elements:\n\n\t")
   } else {
-    cat(
+    cat2(
       "\n\nEstimation was ", ifelse(sum(verify.cSEMResults_default(x)) == 0, 
-                                    green("successful"), red("not successful")), ".", sep = "")
+                                    green("successful"), red("not successful")), ".")
     if(sum(verify.cSEMResults_default(x)) != 0) {
-      cat(" See ", magenta("verify"), "(", cyan("<object-name>"), ")", 
-          " for details.", sep = "")
+      cat2(" See ", magenta("verify"), "(", cyan("<object-name>"), ")", 
+          " for details.")
     }
     cat("\n\nThe result is a list of class " %+% bold("cSEMResults") %+%" with list elements:\n\n\t")
   }
-  cat(
+  if(inherits(x, "cSEMResults_multi") & inherits(x, "cSEMResults_2ndorder")) {
+    cat2(
+      "- ", green("First_stage\n\t"),
+      "\t- ", green("Estimates\n\t"),
+      "\t- ", green("Information\n\t"),
+      "- ", green("Second_stage\n\t"),
+      "\t- ", green("Estimates\n\t"),
+      "\t- ", green("Information\n\n"))
+  } else {
+    cat2(
       "- ", green("Estimates\n\t"),
-      "- ", green("Information\n\n"), sep = "")
-  cat("To get an overview or help type:\n\n\t",
+      "- ", green("Information\n\n"))
+  }
+  cat2("To get an overview or help type:\n\n\t",
       "- ", yellow("?"), cyan("cSEMResults"),"\n\t",
       "- ", magenta("str"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("listviewer"), yellow("::"), magenta("jsondedit"),
-      "(", cyan("<object-name>"), ", ", red("mode"), " = ", cyan("'view'"), ")\n\n", sep = "")
-  cat("If you wish to access the list elements directly type e.g. \n\n\t",
-      "- ", cyan("<object-name>"), yellow("$"), green("Estimates"), "\n\n", sep = "")
-  cat("Available postestimation commands:\n\n\t",
+      "(", cyan("<object-name>"), ", ", red("mode"), " = ", cyan("'view'"), ")\n\n")
+  cat2("If you wish to access the list elements directly type e.g. \n\n\t",
+      "- ", cyan("<object-name>"), yellow("$"), green("Estimates"), "\n\n")
+  cat2("Available postestimation commands:\n\n\t",
       "- ", magenta("assess"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("predict"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t",
-      "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n", sep = "")
+      "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n")
   cat(rule(line = "bar2", width = 80), "\n")
 }
 
@@ -368,9 +378,10 @@ print.cSEMTestOMF <- function(x, ...) {
 #' @keywords internal
 print.cSEMTestMGD <- function(x, ...) {
   
+  if("Klesel" %in% x$Information$Approach){
   cat(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Test for multigroup differences based on Klesel (forthcoming)",
+    rule(center = "Test for multigroup differences based on Klesel et al. (2019)",
          width = 80), 
     sep = ""
   )
@@ -378,7 +389,7 @@ print.cSEMTestMGD <- function(x, ...) {
   ## Null hypothesis -----------------------------------------------------------
   cat(
     "\n\nNull hypothesis:\n\n", 
-    boxx("H0: No significant difference between groups.", float = "center"), 
+    boxx("H0: Model-implied variance-covariance matrix is equal across groups.", float = "center"), 
     sep = ""
   )
   
@@ -389,7 +400,7 @@ print.cSEMTestMGD <- function(x, ...) {
     col_align("", width = 20),
     col_align("", width = 14), 
     "\t",
-    col_align("Critical value", width = 8*ncol(x$Critical_value), 
+    col_align("Critical value", width = 8*ncol(x$Klesel$Critical_value), 
               align = "center"),
     sep = ""
   )
@@ -401,22 +412,22 @@ print.cSEMTestMGD <- function(x, ...) {
     sep = ""
   )
   
-  for(i in colnames(x$Critical_value)) {
+  for(i in colnames(x$Klesel$Critical_value)) {
     cat(col_align(i, width = 6, align = "center"), "\t", sep = "")
   }
   
   cat("\n\t")
   
-  for(j in seq_along(x$Test_statistic)) {
+  for(j in seq_along(x$Klesel$Test_statistic)) {
     cat(
-      col_align(names(x$Test_statistic)[j], width = 20),
-      col_align(sprintf("%.4f", x$Test_statistic[j]), width = 14, 
+      col_align(names(x$Klesel$Test_statistic)[j], width = 20),
+      col_align(sprintf("%.4f", x$Klesel$Test_statistic[j]), width = 14, 
                 align = "center"), 
       "\t", 
       sep = ""
     )
-    for(k in 1:ncol(x$Critical_value)) {
-      cat(sprintf("%.4f", x$Critical_value[j, k]), "\t", sep = "")
+    for(k in 1:ncol(x$Klesel$Critical_value)) {
+      cat(sprintf("%.4f", x$Klesel$Critical_value[j, k]), "\t", sep = "")
     }
     cat("\n\t")
   }
@@ -425,11 +436,11 @@ print.cSEMTestMGD <- function(x, ...) {
   cat("\n\nDecision: \n\n\t", sep = "")
   
   # Width of columns
-  l <- apply(x$Decision, 2, function(x) {
+  l <- apply(x$Klesel$Decision, 2, function(x) {
     ifelse(any(x == TRUE), nchar("Do not reject"), nchar("reject"))
   })
   
-  l1 <- max(c(sum(l) + 3*(ncol(x$Decision) - 1)), nchar("Significance level"))
+  l1 <- max(c(sum(l) + 3*(ncol(x$Klesel$Decision) - 1)), nchar("Significance level"))
   
   cat(
     col_align("", width = 20), 
@@ -446,19 +457,19 @@ print.cSEMTestMGD <- function(x, ...) {
     sep = ""
   )
   
-  for(i in colnames(x$Critical_value)) {
+  for(i in colnames(x$Klesel$Critical_value)) {
     cat(col_align(i, width = l[i], align = "center"), "\t", sep = "")
   }
   
   cat("\n\t")
   
-  for(j in seq_along(x$Test_statistic)) {
+  for(j in seq_along(x$Klesel$Test_statistic)) {
     
-    cat(col_align(names(x$Test_statistic)[j], width = 20), "\t", sep = "")
+    cat(col_align(names(x$Klesel$Test_statistic)[j], width = 20), "\t", sep = "")
     
-    for(k in 1:ncol(x$Critical_value)) {
+    for(k in 1:ncol(x$Klesel$Critical_value)) {
       cat(
-        col_align(ifelse(x$Decision[j, k], 
+        col_align(ifelse(x$Klesel$Decision[j, k], 
                          green("Do not reject"), red("reject")), 
                   width = l[k], align = "center"), 
         "\t", 
@@ -467,7 +478,134 @@ print.cSEMTestMGD <- function(x, ...) {
     }
     cat("\n\t")
   }
+  }
   
+  
+  if("Chin" %in% x$Information$Approach){
+    # cat(
+    #   rule(line = "bar2", width = 80), "\n",
+    #   rule(center = "Test for multigroup differences based on Chin & Dibbern (2010).",
+    #        width = 80), 
+    #   sep = ""
+    # )
+    # 
+    # ## Null hypothesis -----------------------------------------------------------
+    # cat(
+    #   "\n\nNull hypothesis:\n\n", 
+    #   boxx("H0: Parameter is equal across groups.", float = "center"), 
+    #   sep = ""
+    # )
+    
+    ## Test statistic and critical value -----------------------------------------
+    for(alpha in 1:length(x$Chin$Critical_value)){
+      alpha_name=names(x$Chin$Critical_value)[alpha]
+      alpha_val=x$Chin$`Alpha adjusted`
+      cat("Significance level:",alpha_name,"\n",sep=' ')
+      for(comp in 1:length(x$Chin$Test_statistic)){
+      
+        
+        temp=cbind(x$Chin$Test_statistic[[comp]],
+              x$Chin$Critical_value[[alpha]][[comp]])
+        cat("\n","Comparison:", names(x$Chin$Test_statistic)[comp],"\n", sep=" ")
+        cat("Parameter","Test statistic",paste0(alpha_val[alpha]/2*100, "% Lower bound"),
+            paste0((1-alpha_val[alpha]/2)*100, "% Upper bound"),"Decision","\n")
+        for(ii in 1:dim(temp)[1]){
+          cat(rownames(temp)[ii],temp[ii,],
+              ifelse(x$Chin$Decision[[alpha]][[comp]][ii],
+                     "Do not reject", 
+                     "reject"), "\n",sep=" ")
+        }
+      }
+    }
+    
+    
+    
+    
+    # cat("\n\nTest statistic and critical value: \n\n\t", sep = "")
+    # 
+    # cat(
+    #   col_align("", width = 20),
+    #   col_align("", width = 14), 
+    #   "\t",
+    #   col_align("Critical value", width = 8*ncol(x$Klesel$Critical_value), 
+    #             align = "center"),
+    #   sep = ""
+    # )
+    # cat(
+    #   "\n\t",
+    #   col_align("Distance measure", width = 20),
+    #   col_align("Test statistic", width = 14), 
+    #   "\t",
+    #   sep = ""
+    # )
+    # 
+    # for(i in colnames(x$Klesel$Critical_value)) {
+    #   cat(col_align(i, width = 6, align = "center"), "\t", sep = "")
+    # }
+    # 
+    # cat("\n\t")
+    # 
+    # for(j in seq_along(x$Klesel$Test_statistic)) {
+    #   cat(
+    #     col_align(names(x$Klesel$Test_statistic)[j], width = 20),
+    #     col_align(sprintf("%.4f", x$Klesel$Test_statistic[j]), width = 14, 
+    #               align = "center"), 
+    #     "\t", 
+    #     sep = ""
+    #   )
+    #   for(k in 1:ncol(x$Klesel$Critical_value)) {
+    #     cat(sprintf("%.4f", x$Klesel$Critical_value[j, k]), "\t", sep = "")
+    #   }
+    #   cat("\n\t")
+    # }
+    # 
+    # ## Decision ------------------------------------------------------------------
+    # cat("\n\nDecision: \n\n\t", sep = "")
+    # 
+    # # Width of columns
+    # l <- apply(x$Klesel$Decision, 2, function(x) {
+    #   ifelse(any(x == TRUE), nchar("Do not reject"), nchar("reject"))
+    # })
+    # 
+    # l1 <- max(c(sum(l) + 3*(ncol(x$Klesel$Decision) - 1)), nchar("Significance level"))
+    # 
+    # cat(
+    #   col_align("", width = 20), 
+    #   "\t",
+    #   col_align("Significance level", 
+    #             width = l1, 
+    #             align = "center"),
+    #   sep = ""
+    # )
+    # cat(
+    #   "\n\t",
+    #   col_align("Distance measure", width = 20), 
+    #   "\t",
+    #   sep = ""
+    # )
+    # 
+    # for(i in colnames(x$Klesel$Critical_value)) {
+    #   cat(col_align(i, width = l[i], align = "center"), "\t", sep = "")
+    # }
+    # 
+    # cat("\n\t")
+    # 
+    # for(j in seq_along(x$Klesel$Test_statistic)) {
+    #   
+    #   cat(col_align(names(x$Klesel$Test_statistic)[j], width = 20), "\t", sep = "")
+    #   
+    #   for(k in 1:ncol(x$Klesel$Critical_value)) {
+    #     cat(
+    #       col_align(ifelse(x$Klesel$Decision[j, k], 
+    #                        green("Do not reject"), red("reject")), 
+    #                 width = l[k], align = "center"), 
+    #       "\t", 
+    #       sep = ""
+    #     )
+    #   }
+    #   cat("\n\t")
+    # }
+  }
   ## Additional information ----------------------------------------------------
   cat("\nAdditional information:")
   cat(
@@ -497,6 +635,7 @@ print.cSEMTestMGD <- function(x, ...) {
   }
   
   cat("\n", rule(line = "bar2", width = 80), sep = "")
+  
 }
 
 #' `cSEMTestMICOM` method for `print()`

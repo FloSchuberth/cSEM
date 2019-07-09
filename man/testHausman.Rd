@@ -36,7 +36,7 @@ Defaults to "\emph{drop}".}
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
 \item{.resample_method}{Character string. The resampling method to use. One of:
-"\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
+"\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{none}".}
 
 \item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen.}

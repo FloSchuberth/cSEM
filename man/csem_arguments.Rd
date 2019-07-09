@@ -8,13 +8,17 @@
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.approach}{Character string. The Kettenring approach to use. One of
+\item{.approach_gcca}{Character string. The Kettenring approach to use for GCCA. One of
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
 "\emph{SUMCORR}".}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
 second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
 Defaults to "\emph{3stage}".}
+
+\item{.approach_alpha_adjust}{Character string. Approach used to adjust the
+significance level to accomodate mutiple testing.
+One of "\emph{none}" or "\emph{bonferroni}". Defaults to "\emph{none}".}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "\emph{none}" in which case the standard
@@ -23,9 +27,18 @@ Bravais-Person correlation is used,
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}".}
 
+\item{.approach_mgd}{Character string or a vector of character strings.
+Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
+or "\emph{Sarstedt}". Default to "\emph{all}" in which case all approaches are
+computed (if possible).}
+
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
+
+\item{.approach_p_adjust}{Character string. Approach used to adjust the p value.
+The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
+Defaults to "\emph{none}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
@@ -48,6 +61,10 @@ where \code{theta*_hat} is the average over all .R bootstrap estimates of \code{
 Defaults to \code{TRUE}}
 
 \item{.C}{A (J x J) composite variance-covariance matrix.}
+
+\item{.check_errors}{Logical. Should the model be checked for appropriateness
+in a sense that all necessary components to estimate the model are given?
+Defaults to \code{TRUE}.}
 
 \item{.choices}{Logical. Should candidate values for the arguments be returned?
 Defaults to \code{FALSE}.}
@@ -164,6 +181,8 @@ between min(.z) and max(.z) to use. Defaults to \code{100}.}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 Defaults to \code{FALSE}. Ignored if the model is linear.}
 
+\item{.nr_comparisons}{Numeric. The number of comparisons. Defaults to \code{NULL}.}
+
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
@@ -222,7 +241,7 @@ reliabilities are estimated by \code{csem()}. Currently, only supported for
 \code{.approach_weights = "PLS-PM"}.}
 
 \item{.resample_method}{Character string. The resampling method to use. One of:
-"\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{bootstrap}".}
+"\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{none}".}
 
 \item{.resample_method2}{Character string. The resampling method to use when resampling
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
@@ -234,10 +253,18 @@ intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\
 obtained from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
 or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.}
 
+\item{.resample_sarstedt}{A matrix containing the parameter estimates that
+could potentially be compared and an id column indicating the group adherance
+of each row.}
+
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
 \item{.R2}{Integer. The number of bootstrap replications to use when
 resampling from a resample. Defaults to \code{199}.}
+
+\item{.R_bootstrap}{Integer. The number of bootstrap runs. Defaults to \code{499}}
+
+\item{.R_permutation}{Integer. The number of permutations. Defaults to \code{499}}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 

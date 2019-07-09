@@ -2,47 +2,42 @@
 % Please edit documentation in R/postestimate_test_MGD.R
 \name{testMGD}
 \alias{testMGD}
-\alias{testMGD.cSEMResults_default}
-\alias{testMGD.cSEMResults_multi}
-\alias{testMGD.cSEMResults_2ndorder}
-\title{Estimates the distance between multiple groups.}
+\title{Tests for multiple groups.}
 \usage{
 testMGD(
- .object               = args_default()$.object,
- .alpha                = args_default()$.alpha,
- .handle_inadmissibles = args_default()$.handle_inadmissibles,
- .R                    = args_default()$.R,
- .saturated            = args_default()$.saturated,
- .type_vcv             = args_default()$.type_vcv,
- .verbose              = args_default()$.verbose
+ .object                = args_default()$.object,
+ .alpha                 = args_default()$.alpha,
+ .approach_p_adjust     = args_default()$.approach_p_adjust,
+ .approach_mgd          = args_default()$.approach_mgd,
+ .model                 = args_default()$.model,
+ .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+ .R_permutation         = args_default()$.R_permutation,
+ .R_bootstrap           = args_default()$.R_bootstrap,
+ .saturated             = args_default()$.saturated,
+ .seed                  = args_default()$.seed,
+ .type_vcv              = args_default()$.type_vcv,
+ .verbose               = args_default()$.verbose
  )
-
-\method{testMGD}{cSEMResults_default}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv,
-  .verbose = args_default()$.verbose)
-
-\method{testMGD}{cSEMResults_multi}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv,
-  .verbose = args_default()$.verbose)
-
-\method{testMGD}{cSEMResults_2ndorder}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv,
-  .verbose = args_default()$.verbose)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
+
+\item{.approach_p_adjust}{Character string. Approach used to adjust the p value.
+The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
+Defaults to "\emph{none}".}
+
+\item{.approach_mgd}{Character string or a vector of character strings.
+Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
+or "\emph{Sarstedt}". Default to "\emph{all}" in which case all approaches are
+computed (if possible).}
+
+\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
+parameters (i.e, path (\code{~}), loadings (\code{=~}), or weights (\code{<~})) should be
+compared across groups. Defaults to \code{NULL} in which case all parameters of the model
+are compared.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -53,10 +48,15 @@ number of results returned = .R). For "\emph{replace}" resampling continues unti
 there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
 
-\item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
+\item{.R_permutation}{Integer. The number of permutations. Defaults to \code{499}}
+
+\item{.R_bootstrap}{Integer. The number of bootstrap runs. Defaults to \code{499}}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
+
+\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen.}
 
 \item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
@@ -76,19 +76,23 @@ what constitues and inadmissible run.}
 }
 }
 \description{
-The geodesic distance (dG) and the Euclidean distance (dE) is used
-to assess group differences. Permutation is used to generate a
-reference distribtuion.
+This function performs several permutation tests, i.e., the reference distribution
+of the test statistic is obtained by permutation.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{cSEMResults_default}: (TODO)
+\details{
+The following test are implemented:
+\describe{
+\item{Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
+The model-implied variance-covariance matrix (either indicator or construct) is
+compared across groups.
 
-\item \code{cSEMResults_multi}: (TODO)
-
-\item \code{cSEMResults_2ndorder}: (TODO)
-}}
-
+To measure the distance between the model-implied variance-covariance matrices,
+the geodesic distance (dG) and the squared Euclidean distance (dL) are used.}
+\item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
+Groups are compared in terms of parameter differences across groups.
+}
+}
+}
 \examples{
 \dontrun{
 require(cSEM)
@@ -118,6 +122,9 @@ out.cSEM <- csem(listData, model)
 testMGD(.object = out.cSEM, .R = 20, .type_vcv= 'construct')
 }
 
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \link{cSEMResults}

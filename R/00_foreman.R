@@ -107,7 +107,7 @@ foreman <- function(
     W <- calculateWeightsKettenring(
       .S                        = S,
       .csem_model               = csem_model,
-      .approach                 = .approach_weights
+      .approach_gcca            = .approach_weights
     )
   } else if(.approach_weights == "GSCA") {
     if(.disattenuate & all(csem_model$construct_type == "Common factor")) {
