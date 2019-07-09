@@ -412,18 +412,22 @@ calculateFR <- function(.resample_sarstedt) {
   
   names_param <- colnames(.resample_sarstedt)[-ncol(.resample_sarstedt)]
   
+  # Number of grousp
   G <- length(unique(.resample_sarstedt[, "group_id"]))
-  B <- nrow(.resample_sarstedt)
   
+  # Total number of estimates 
+  N <- nrow(.resample_sarstedt)
+  
+  # Order the estimates by the grouping variable
   x <- .resample_sarstedt[order(.resample_sarstedt[, "group_id"]), ]
 
-  mean_all <- colMeans(x[, names_param, drop = FALSE])
+  grand_means <- colMeans(x[, names_param, drop = FALSE])
   mean_group <- aggregate(x[, names_param, drop = FALSE], by = list(x[, "group_id"]), FUN = mean)
   
-  mean_matrix <- apply(mean_group[, -1, drop = FALSE], 2, function(y) rep(y, times = table(x[, "group_id"])))
+  group_mean_matrix <- apply(mean_group[, -1, drop = FALSE], 2, function(y) rep(y, times = table(x[, "group_id"])))
   
-  SS_between <- rowSums((t(mean_matrix) - mean_all)^2) / (G -1)
-  SS_within  <- colSums((x[, names_param, drop = FALSE] - mean_matrix)^2) / (B - G)
+  SS_between <- rowSums((t(group_mean_matrix) - grand_means)^2) / (G -1)
+  SS_within  <- colSums((x[, names_param, drop = FALSE] - group_mean_matrix)^2) / (N - G)
   # Note: in the original paper (B -1) was used. This is incorrect. It should
   # be B - G (G = the number of groups). See the F-statistic derived from ANOVA
   # for comparision.
