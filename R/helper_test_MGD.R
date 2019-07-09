@@ -415,14 +415,20 @@ calculateFR <- function(.resample_sarstedt) {
   G <- length(unique(.resample_sarstedt[, "group_id"]))
   B <- nrow(.resample_sarstedt)
   
-  x <- .resample_sarstedt
+  x <- .resample_sarstedt[order(.resample_sarstedt[, "group_id"]), ]
+
   mean_all <- colMeans(x[, names_param])
   mean_group <- aggregate(x[, names_param], by = list(x[, "group_id"]), FUN = mean)
   
+  mean_matrix_all
   mean_matrix <- apply(mean_group[, -1], 2, function(y) rep(y, times = table(x[, "group_id"])))
   
-  SS_between <- G * B *(1/(G-1)) * rowSums((t(mean_group[, -1]) - mean_all)^2)
-  SS_within  <- 1/(B - 1) * colSums((x[, names_param] - mean_matrix)^2)
+  
+  SS_between <- rowSums((t(mean_matrix) - mean_all)^2) / (G -1)
+  SS_within  <- colSums((x[, names_param] - mean_matrix)^2) / (B - G)
+  # Note: in the original paper (B -1) was used. This is incorrect. It should
+  # be B - G (G = the number of groups). See the F-statistic derived from ANOVA
+  # for comparision.
   
   SS_between/SS_within 
 }
