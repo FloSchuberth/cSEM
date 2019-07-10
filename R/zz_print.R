@@ -253,19 +253,17 @@ print.cSEMVerify_2ndorder <- function(x, ...) {
 #' @keywords internal
 print.cSEMTestOMF <- function(x, ...) {
   
-  cat(
+  cat2(
     rule(line = "bar2", width = 80), "\n",
     rule(center = "Test for overall model fit based on Beran & Srivastava (1985)",
-         width = 80), 
-    sep = ""
+         width = 80)
   )
   
   ## Null hypothesis -----------------------------------------------------------
-  cat(
+  cat2(
     "\n\nNull hypothesis:\n\n", 
-    boxx(c("H0: No significant difference between empirical and", 
-           "model-implied indicator covariance matrix."), float = "center"), 
-    sep = ""
+    boxx(c("H0: Population indicator covariance matrix is equal to", 
+           "model-implied indicator covariance matrix."), float = "center")
   )
   
   ## Test statistic and critical value -----------------------------------------
@@ -377,265 +375,205 @@ print.cSEMTestOMF <- function(x, ...) {
 #' @export
 #' @keywords internal
 print.cSEMTestMGD <- function(x, ...) {
+
+  info <- x$Information
   
-  if("Klesel" %in% x$Information$Approach){
-  cat(
+  ## Additional information ----------------------------------------------------
+  cat2(
     rule(line = "bar2", width = 80), "\n",
-    rule(center = "Test for multigroup differences based on Klesel et al. (2019)",
-         width = 80), 
-    sep = ""
+    rule(center = "Overview", width = 80)
+  )
+  cat2(
+    "\n\n\tOut of ", info$Total_runs , " permutation runs, ", 
+    info$Number_admissibles, " where admissible.\n\t",
+    "See ", yellow("?"), magenta("verify"), "()",
+    " for what constitutes an inadmissible result.\n\n\t", 
+    "The seed used was: ", info$Seed, "\n"
   )
   
-  ## Null hypothesis -----------------------------------------------------------
-  cat(
-    "\n\nNull hypothesis:\n\n", 
-    boxx("H0: Model-implied variance-covariance matrix is equal across groups.", float = "center"), 
-    sep = ""
+  cat2("\n\n\tNumber of observations per group:")
+  
+  l <- max(nchar(c(info$Group_names, "Group")))
+  
+  cat2("\n\n\t",
+       col_align("Group", width = l + 6),
+       col_align("No. observations", width = 15)
   )
-  
-  ## Test statistic and critical value -----------------------------------------
-  cat("\n\nTest statistic and critical value: \n\n\t", sep = "")
-  
-  cat(
-    col_align("", width = 20),
-    col_align("", width = 14), 
-    "\t",
-    col_align("Critical value", width = 8*ncol(x$Klesel$Critical_value), 
-              align = "center"),
-    sep = ""
-  )
-  cat(
-    "\n\t",
-    col_align("Distance measure", width = 20),
-    col_align("Test statistic", width = 14), 
-    "\t",
-    sep = ""
-  )
-  
-  for(i in colnames(x$Klesel$Critical_value)) {
-    cat(col_align(i, width = 6, align = "center"), "\t", sep = "")
-  }
-  
-  cat("\n\t")
-  
-  for(j in seq_along(x$Klesel$Test_statistic)) {
-    cat(
-      col_align(names(x$Klesel$Test_statistic)[j], width = 20),
-      col_align(sprintf("%.4f", x$Klesel$Test_statistic[j]), width = 14, 
-                align = "center"), 
-      "\t", 
-      sep = ""
+  for(i in seq_along(info$Group_names)) {
+    cat2(
+      "\n\t",
+      col_align(info$Group_names[i], width = l + 6), 
+      col_align(info$Number_of_observations[i], width = 15, align = "right")
     )
-    for(k in 1:ncol(x$Klesel$Critical_value)) {
-      cat(sprintf("%.4f", x$Klesel$Critical_value[j, k]), "\t", sep = "")
+  }
+  cat2("\n\n")
+  
+  ## Klesel et al. (2019) ======================================================
+  if(any(info$Approach %in% c("all", "Klesel"))) {
+    xk <- x$Klesel
+    
+    cat2(
+      rule(line = "bar2", width = 80), "\n",
+      rule(center = "Test for multigroup differences based on Klesel et al. (2019)",
+           width = 80)
+    )
+    
+    ## Null hypothesis ---------------------------------------------------------
+    cat2(
+      "\n\nNull hypothesis:\n\n", 
+      boxx("H0: Model-implied indicator covariance matrix is equal across groups.",
+           float = "center")
+    )
+    
+    ## Test statistic and p-value ----------------------------------------------
+    cat2("\n\nTest statistic and p-value: \n\n\t")
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    if(length(info$Alpha) > 1) {
+      cat2(
+        "Decision is based on alpha = ", names(xk$Decision)[1],
+        "\n\n\t")
     }
-    cat("\n\t")
-  }
-  
-  ## Decision ------------------------------------------------------------------
-  cat("\n\nDecision: \n\n\t", sep = "")
-  
-  # Width of columns
-  l <- apply(x$Klesel$Decision, 2, function(x) {
-    ifelse(any(x == TRUE), nchar("Do not reject"), nchar("reject"))
-  })
-  
-  l1 <- max(c(sum(l) + 3*(ncol(x$Klesel$Decision) - 1)), nchar("Significance level"))
-  
-  cat(
-    col_align("", width = 20), 
-    "\t",
-    col_align("Significance level", 
-              width = l1, 
-              align = "center"),
-    sep = ""
-  )
-  cat(
-    "\n\t",
-    col_align("Distance measure", width = 20), 
-    "\t",
-    sep = ""
-  )
-  
-  for(i in colnames(x$Klesel$Critical_value)) {
-    cat(col_align(i, width = l[i], align = "center"), "\t", sep = "")
-  }
-  
-  cat("\n\t")
-  
-  for(j in seq_along(x$Klesel$Test_statistic)) {
     
-    cat(col_align(names(x$Klesel$Test_statistic)[j], width = 20), "\t", sep = "")
+    cat2(
+      col_align("Distance measure", width = 20),
+      col_align("Test statistic", width = 14, align = "right"), 
+      col_align("p-value", width = 16, align = "right"),
+      col_align("Decision", width = 16, align = "right")
+    )
     
-    for(k in 1:ncol(x$Klesel$Critical_value)) {
-      cat(
-        col_align(ifelse(x$Klesel$Decision[j, k], 
-                         green("Do not reject"), red("reject")), 
-                  width = l[k], align = "center"), 
-        "\t", 
-        sep = ""
+    for(j in seq_along(xk$Test_statistic)) {
+      
+      cat2(
+        "\n\t",
+        col_align(names(xk$Test_statistic)[j], width = 20),
+        col_align(sprintf("%.4f", xk$Test_statistic[j]), width = 14, 
+                  align = "right"), 
+        col_align(sprintf("%.4f", xk$P_value[j]), width = 16, align = "right"),
+        col_align(ifelse(xk$Decision[[1]][j], green("Do not reject"), red("reject")),
+                  width = 16, align = "right")
       )
     }
-    cat("\n\t")
-  }
+    cat2("\n\n")
   }
   
-  
-  if("Chin" %in% x$Information$Approach){
-    # cat(
-    #   rule(line = "bar2", width = 80), "\n",
-    #   rule(center = "Test for multigroup differences based on Chin & Dibbern (2010).",
-    #        width = 80), 
-    #   sep = ""
-    # )
-    # 
-    # ## Null hypothesis -----------------------------------------------------------
-    # cat(
-    #   "\n\nNull hypothesis:\n\n", 
-    #   boxx("H0: Parameter is equal across groups.", float = "center"), 
-    #   sep = ""
-    # )
+  ## Sarstedt et al. (2011) ----------------------------------------------------
+  if(any(info$Approach %in% c("all", "Sarstedt"))) {
+    xs <- x$Sarstedt
     
-    ## Test statistic and critical value -----------------------------------------
-    for(alpha in 1:length(x$Chin$Critical_value)){
-      alpha_name=names(x$Chin$Critical_value)[alpha]
-      alpha_val=x$Chin$`Alpha adjusted`
-      cat("Significance level:",alpha_name,"\n",sep=' ')
-      for(comp in 1:length(x$Chin$Test_statistic)){
+    cat2(
+      rule(line = "bar2", width = 80), "\n",
+      rule(center = "Test for multigroup differences based on Chin & Dibbern (2010)",
+           width = 80)
+    )
+    
+    ## Null hypothesis ---------------------------------------------------------
+    cat2(
+      "\n\nNull hypothesis:\n\n",
+      boxx("H0: Parameter k is equal across all groups.", float = "center")
+    )
+    
+    ## Test statistic and p-value ----------------------------------------------
+    cat2("\n\nTest statistic and p-value: \n\n")
+    
+    l <- max(10, nchar(names(xs$Test_statistic)))
+    
+    # Create table for every p-value adjustment method
+    for(i in seq_along(xs$P_value_adjusted)) {
       
-        
-        temp=cbind(x$Chin$Test_statistic[[comp]],
-              x$Chin$Critical_value[[alpha]][[comp]])
-        cat("\n","Comparison:", names(x$Chin$Test_statistic)[comp],"\n", sep=" ")
-        cat("Parameter","Test statistic",paste0(alpha_val[alpha]/2*100, "% Lower bound"),
-            paste0((1-alpha_val[alpha]/2)*100, "% Upper bound"),"Decision","\n")
-        for(ii in 1:dim(temp)[1]){
-          cat(rownames(temp)[ii],temp[ii,],
-              ifelse(x$Chin$Decision[[alpha]][[comp]][ii],
-                     "Do not reject", 
-                     "reject"), "\n",sep=" ")
-        }
+      # Are several .alphas given? Inform the user that only the first .alpha is
+      # is used for decision
+      if(length(info$Alpha) > 1) {
+        cat2(
+          "\tDecision is based on alpha = ", names(xs$Decision[[i]])[1],
+          "\n\tMultiple testing adjustment: ", names(xs$P_value_adjusted)[i],
+          "\n\n\t")
       }
+      
+      cat2(
+        col_align("Parameter", width = l),
+        col_align("Test statistic", width = 14, align = "right"), 
+        col_align("p-value", width = 16, align = "right"),
+        col_align("Decision", width = 16, align = "right")
+      )
+      
+      for(j in seq_along(xs$Test_statistic)) {
+        
+        cat2(
+          "\n\t",
+          col_align(names(xs$Test_statistic)[j], width = l),
+          col_align(sprintf("%.4f", xs$Test_statistic[j]), width = 14, 
+                    align = "right"), 
+          col_align(sprintf("%.4f", xs$P_value[j]), width = 16, align = "right"),
+          col_align(ifelse(xs$Decision[[i]][[1]][j], green("Do not reject"), red("reject")),
+                    width = 16, align = "right")
+        )
+      }
+      cat2("\n\n")
+    }
+  }
+  
+  ## Chin & Dibbern (2010) =====================================================
+  if(any(info$Approach %in% c("all", "Chin"))) {
+    xc <- x$Chin
+    
+    cat2(
+      rule(line = "bar2", width = 80), "\n",
+      rule(center = "Test for multigroup differences based on Chin & Dibbern (2010)",
+           width = 80)
+    )
+    
+    ## Null hypothesis ---------------------------------------------------------
+    cat2(
+      "\n\nNull hypothesis:\n\n",
+      boxx("H0: Parameter k is equal across two groups.", float = "center")
+    )
+    
+    ## Test statistic and p-value ----------------------------------------------
+    cat2("\n\nTest statistic and p-value: \n\n")
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    # If multipe p-value adjustment methods are given; take the first
+    if(length(info$Alpha) > 1) {
+      cat2(
+        "\tDecision is based on alpha = ", names(xc$Decision[[1]])[1],
+        "\n\tMultiple testing adjustment: ", names(xc$P_value_adjusted)[1],
+        "\n\n")
     }
     
+    l <- max(10, nchar(names(xc$Test_statistic[[1]])))
     
-    
-    
-    # cat("\n\nTest statistic and critical value: \n\n\t", sep = "")
-    # 
-    # cat(
-    #   col_align("", width = 20),
-    #   col_align("", width = 14), 
-    #   "\t",
-    #   col_align("Critical value", width = 8*ncol(x$Klesel$Critical_value), 
-    #             align = "center"),
-    #   sep = ""
-    # )
-    # cat(
-    #   "\n\t",
-    #   col_align("Distance measure", width = 20),
-    #   col_align("Test statistic", width = 14), 
-    #   "\t",
-    #   sep = ""
-    # )
-    # 
-    # for(i in colnames(x$Klesel$Critical_value)) {
-    #   cat(col_align(i, width = 6, align = "center"), "\t", sep = "")
-    # }
-    # 
-    # cat("\n\t")
-    # 
-    # for(j in seq_along(x$Klesel$Test_statistic)) {
-    #   cat(
-    #     col_align(names(x$Klesel$Test_statistic)[j], width = 20),
-    #     col_align(sprintf("%.4f", x$Klesel$Test_statistic[j]), width = 14, 
-    #               align = "center"), 
-    #     "\t", 
-    #     sep = ""
-    #   )
-    #   for(k in 1:ncol(x$Klesel$Critical_value)) {
-    #     cat(sprintf("%.4f", x$Klesel$Critical_value[j, k]), "\t", sep = "")
-    #   }
-    #   cat("\n\t")
-    # }
-    # 
-    # ## Decision ------------------------------------------------------------------
-    # cat("\n\nDecision: \n\n\t", sep = "")
-    # 
-    # # Width of columns
-    # l <- apply(x$Klesel$Decision, 2, function(x) {
-    #   ifelse(any(x == TRUE), nchar("Do not reject"), nchar("reject"))
-    # })
-    # 
-    # l1 <- max(c(sum(l) + 3*(ncol(x$Klesel$Decision) - 1)), nchar("Significance level"))
-    # 
-    # cat(
-    #   col_align("", width = 20), 
-    #   "\t",
-    #   col_align("Significance level", 
-    #             width = l1, 
-    #             align = "center"),
-    #   sep = ""
-    # )
-    # cat(
-    #   "\n\t",
-    #   col_align("Distance measure", width = 20), 
-    #   "\t",
-    #   sep = ""
-    # )
-    # 
-    # for(i in colnames(x$Klesel$Critical_value)) {
-    #   cat(col_align(i, width = l[i], align = "center"), "\t", sep = "")
-    # }
-    # 
-    # cat("\n\t")
-    # 
-    # for(j in seq_along(x$Klesel$Test_statistic)) {
-    #   
-    #   cat(col_align(names(x$Klesel$Test_statistic)[j], width = 20), "\t", sep = "")
-    #   
-    #   for(k in 1:ncol(x$Klesel$Critical_value)) {
-    #     cat(
-    #       col_align(ifelse(x$Klesel$Decision[j, k], 
-    #                        green("Do not reject"), red("reject")), 
-    #                 width = l[k], align = "center"), 
-    #       "\t", 
-    #       sep = ""
-    #     )
-    #   }
-    #   cat("\n\t")
-    # }
+    for(i in seq_along(xc$Test_statistic)) {
+      
+      cat2("  Compared groups: ", names(xc$Test_statistic)[i], "\n\n\t")
+      
+      cat2(
+        col_align("Parameter", width = l),
+        col_align("Test statistic", width = 14, align = "right"), 
+        col_align("p-value", width = 16, align = "right"),
+        col_align("Decision", width = 16, align = "right")
+      )
+      
+      for(j in seq_along(xc$Test_statistic[[i]])) {
+        
+        cat2(
+          "\n\t",
+          col_align(names(xc$Test_statistic[[i]])[j], width = l),
+          col_align(sprintf("%.4f", xc$Test_statistic[[i]][j]), width = 14, 
+                    align = "right"), 
+          col_align(sprintf("%.4f", xc$P_value[[i]][j]), width = 16, align = "right"),
+          col_align(ifelse(xc$Decision[[1]][[1]][[i]][j], green("Do not reject"), red("reject")),
+                    width = 16, align = "right")
+        )
+      }
+      cat2("\n\n")
+      
+    }
   }
-  ## Additional information ----------------------------------------------------
-  cat("\nAdditional information:")
-  cat(
-    "\n\n\tOut of ", x$Information$Total_runs , " permutation runs, ", 
-    x$Information$Number_admissibles, " where admissible.\n\t",
-    "See ", yellow("?"), magenta("verify"), "()",
-    " for what constitutes an inadmissible result.", 
-    sep = ""
-  )
-  
-  cat("\n\n\tNumber of observations per group:")
-  
-  l <- max(nchar(c(x$Information$Group_names, "Group")))
-  
-  cat("\n\n\t",
-      col_align("Group", width = l + 6),
-      col_align("No. observations", width = 15),
-      sep = ""
-  )
-  for(i in seq_along(x$Information$Group_names)) {
-    cat(
-      "\n\t",
-      col_align(x$Information$Group_names[i], width = l + 6), 
-      col_align(x$Information$Number_of_observations[i], width = 15),
-      sep = ""
-    )
-  }
-  
-  cat("\n", rule(line = "bar2", width = 80), sep = "")
-  
+  cat2("\n", rule(line = "bar2", width = 80))
 }
 
 #' `cSEMTestMICOM` method for `print()`

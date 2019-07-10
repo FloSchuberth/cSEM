@@ -106,7 +106,7 @@ testMGD <- function(
   # Sarstedt et al. (2011) is not allowed to be used in combination with 
   # .handle_inadmissibles == "drop as permutation test statistic are be dropped
   # only because of estimations based on the permutated dataset are dropped.
-  if(.approach_mgd %in% c("all", "Sarstedt") & .handle_inadmissibles == "drop"){
+  if(any(.approach_mgd %in% c("all", "Sarstedt")) & .handle_inadmissibles == "drop"){
     stop2(
       "The following error occured in the testMGD() function:\n",
       "Approach `'Sarstedt'` not supported if `.handle_inadmissibles == 'drop'`")
@@ -121,7 +121,7 @@ testMGD <- function(
     model_type <- .object[[1]]$Information$Model$model_type
   }
   
-  if(.approach_mgd %in% c("all", "Klesel") & model_type == "Nonlinear"){
+  if(any(.approach_mgd %in% c("all", "Klesel")) & model_type == "Nonlinear"){
     stop2("The following error occured in the testMGD() function:\n",
           "The approach suggested by Klesel et al. (2019) cannot be applied",
           " to nonlinear models as cSEM currently cannot calculate",
@@ -151,7 +151,7 @@ testMGD <- function(
   teststat <- list()
   
   ## Klesel et al. (2019) ------------------------------------------------------
-  if(.approach_mgd %in% c("all", "Klesel")) {
+  if(any(.approach_mgd %in% c("all", "Klesel"))) {
     ## Get the model-implied VCV
     fit <- fit(.object    = .object,
                .saturated = .saturated,
@@ -168,14 +168,14 @@ testMGD <- function(
   }
   
   ## Chin & Dibbern (2010) -----------------------------------------------------
-  if(.approach_mgd %in% c("all", "Chin")) {
+  if(any(.approach_mgd %in% c("all", "Chin"))) {
     ## Compute and save test statistic
     teststat[["Chin"]] <- calculateParameterDifference(.object = .object, 
                                                        .model = .model)
   }
   
   ## Sarstedt et al. (2011) ----------------------------------------------------
-  if(.approach_mgd %in% c("all", "Sarstedt")) {
+  if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
     
     ## Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
@@ -289,7 +289,7 @@ testMGD <- function(
       teststat_permutation <- list()
       
       ## Klesel et al. (2019) --------------------------------------------------
-      if(.approach_mgd %in% c("all", "Klesel")) {
+      if(any(.approach_mgd %in% c("all", "Klesel"))) {
         ## Get the model-implied VCV
         fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
         
@@ -304,14 +304,14 @@ testMGD <- function(
       }
       
       ## Chin & Dibbern (2010) -------------------------------------------------
-      if(.approach_mgd %in% c("all", "Chin")) {
+      if(any(.approach_mgd %in% c("all", "Chin"))) {
         ## Compute and save test statistic
         teststat_permutation[["Chin"]] <- calculateParameterDifference(
           .object = Est_temp, 
           .model  = .model)
       }
       ## Sarstedt et al. (2011) ------------------------------------------------
-      if(.approach_mgd %in% c("all", "Sarstedt")){
+      if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
         
         # Permutation of the bootstrap parameter estimates
         all_comb_permutation <- all_comb
@@ -359,7 +359,7 @@ testMGD <- function(
   .alpha <- .alpha[order(.alpha)]
   
   ## Klesel et al. (2019) ------------------------------------------------------
-  if(.approach_mgd %in% c("all", "Klesel")) {
+  if(any(.approach_mgd %in% c("all", "Klesel"))) {
     
   # Collect permuation results and combine
   ref_dist_Klesel <- lapply(ref_dist1, function(x) x$Klesel)
@@ -372,7 +372,7 @@ testMGD <- function(
   pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel > teststat_Klesel)
   
   # Decision 
-  decision_Klesel <- lapply(.alpha,function(x){
+  decision_Klesel <- lapply(.alpha, function(x) {
     pvalue_Klesel > x
   })
   
@@ -382,7 +382,7 @@ testMGD <- function(
   }
   
   ## Chin & Dibbern (2010) -----------------------------------------------------
-  if(.approach_mgd %in% c("all", "Chin")) {
+  if(any(.approach_mgd %in% c("all", "Chin"))) {
     
     # Extract test statistic
     teststat_Chin <- teststat$Chin
@@ -443,7 +443,7 @@ testMGD <- function(
   }
   
   ## Sarstedt et al. (2011) ----------------------------------------------------
-  if(.approach_mgd %in% c("all", "Sarstedt")) {
+  if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
 
     # Extract test statistic
     teststat_Sarstedt <- teststat$Sarstedt
@@ -483,7 +483,7 @@ testMGD <- function(
   
   ## Information
   out[["Information"]] <- list(
-    "Number_admissibles"    = ncol(ref_dist1),
+    "Number_admissibles"    = length(ref_dist1),
     "Total_runs"            = counter + n_inadmissibles,
     "Group_names"           = names(.object),
     "Number_of_observations"= sapply(X_all_list, nrow),
@@ -494,7 +494,7 @@ testMGD <- function(
     "Permutation_values"    = list()
   )
   
-  if(.approach_mgd %in% c("all", "Klesel")) {
+  if(any(.approach_mgd %in% c("all", "Klesel"))) {
     out[["Klesel"]] <- list(
       "Test_statistic"     = teststat_Klesel,
       "P_value"            = pvalue_Klesel,
@@ -504,7 +504,7 @@ testMGD <- function(
     out[["Information"]][["Permutation_values"]][["Klesel"]] <- ref_dist_matrix_Klesel
   }
   
-  if(.approach_mgd %in% c("all", "Chin")) {
+  if(any(.approach_mgd %in% c("all", "Chin"))) {
     out[["Chin"]] <- list(
       "Test_statistic"     = teststat_Chin,
       "P_value"            = pvalue_Chin,
@@ -516,7 +516,7 @@ testMGD <- function(
     out[["Information"]][["Permutation_values"]][["Chin"]] <- ref_dist_matrices_Chin
   }
   
-  if(.approach_mgd %in% c("all", "Sarstedt")) {
+  if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
     out[["Sarstedt"]] <- list(
       "Test_statistic"     = teststat_Sarstedt,
       "P_value"            = pvalue_Sarstedt,
