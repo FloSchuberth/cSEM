@@ -167,9 +167,6 @@ foreman <- function(
       .S = S)
   }
 
-  # ## Calculate proxies/scores
-  # H <- X %*% t(W$W)
-  
   LambdaQ2W <- calculateReliabilities(
     .X                = X,
     .S                = S,
@@ -187,7 +184,6 @@ foreman <- function(
   
   ## Calculate proxies/scores
   H <- X %*% t(Weights)
-  
   
   ## Calculate proxy covariance matrix
   C <- calculateCompositeVCV(.S = S, .W = Weights)

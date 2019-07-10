@@ -725,7 +725,15 @@ convertModel <- function(
         temp <- paste0(i, ifelse(.csem_model$construct_type[i] == "Composite", "<~", "=~"), paste0(temp, collapse = "+"))
         x2b <- paste(x2b, temp, sep = "\n")
         ## add second order structural equation
-        x2b <- paste(x2b, paste0(i, "~", paste0(col_names_1, collapse = "+" )), sep = "\n")
+        if(.csem_model$construct_type[i] == "Composite") {
+          x2b <- paste(x2b, paste0(i, "~", paste0(col_names_1, collapse = "+" )), sep = "\n")
+        } else {
+          x2ba <- c()
+          for(j in i_linear_original) {
+            x2ba <- paste(x2ba, paste0(j, "~", i), sep = "\n")
+          }
+          x2b <- paste(x2b, x2ba, sep = "\n")
+        }
       }
       
       ## Error_cor
