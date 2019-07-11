@@ -562,7 +562,6 @@ calculateDG <- function(
   .matrix1   = NULL,
   .matrix2   = NULL,
   .saturated = args_default()$.saturated,
-  .type_vcv  = args_default()$.type_vcv,
   ...
   ){
 
@@ -577,7 +576,7 @@ calculateDG <- function(
     }
     
     S         <- .object$Estimates$Indicator_VCV
-    Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)  
+    Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')  
   }
   
   # Not sure if logarithm naturalis is used or logarithm with base 10. 
@@ -595,7 +594,6 @@ calculateDL <- function(
   .matrix1   = NULL,
   .matrix2   = NULL,
   .saturated = args_default()$.saturated,
-  .type_vcv  = args_default()$.type_vcv,
   ...
   ){
   
@@ -610,7 +608,7 @@ calculateDL <- function(
     }
   
   S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')
   }
   
   ## Calculate distance
@@ -622,7 +620,6 @@ calculateDL <- function(
 calculateDML <- function(
   .object    = NULL, 
   .saturated = args_default()$.saturated,
-  .type_vcv  = args_default()$.type_vcv,
   ...
   ){
 
@@ -635,7 +632,7 @@ calculateDML <- function(
   n         <- nrow(.object$Information$Data)
   S         <- .object$Estimates$Indicator_VCV
   p         <- dim(S)[1]
-  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')
   
   # This is the distance function. The test statistic is T_ML = (n-1) or n * DML! 
   sum(diag(S %*% solve(Sigma_hat))) - log(det(S%*%solve(Sigma_hat))) - p
@@ -787,7 +784,6 @@ calculateRMSTheta <- function(
 calculateSRMR <- function(
   .object    = NULL, 
   .saturated = args_default()$.saturated,
-  .type_vcv  = args_default()$.type_vcv,
   ...
 ) {
   
@@ -801,7 +797,7 @@ calculateSRMR <- function(
   # between correlation matrices.
   
   S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = .type_vcv)
+  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')
   
   
   # Perhaps in the future we allow to estimate unstandardized coefficients
