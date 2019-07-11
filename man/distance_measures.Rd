@@ -8,15 +8,13 @@
 \title{Internal: Calculate difference between S and Sigma_hat}
 \usage{
 calculateDG(.object = NULL, .matrix1 = NULL, .matrix2 = NULL,
-  .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv, ...)
+  .saturated = args_default()$.saturated, ...)
 
 calculateDL(.object = NULL, .matrix1 = NULL, .matrix2 = NULL,
-  .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv, ...)
+  .saturated = args_default()$.saturated, ...)
 
 calculateDML(.object = NULL, .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv, ...)
+  ...)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -27,9 +25,6 @@ calculateDML(.object = NULL, .saturated = args_default()$.saturated,
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
-
-\item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
-One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 
 \item{...}{Ignored.}
 }

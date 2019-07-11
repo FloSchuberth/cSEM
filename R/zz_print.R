@@ -451,7 +451,7 @@ print.cSEMTestMGD <- function(x, ...) {
     ## Null hypothesis ---------------------------------------------------------
     cat2(
       "\n\nNull hypothesis:\n\n", 
-      boxx("H0: Model-implied indicator covariance matrix is equal across groups.",
+      boxx(paste0("H0: Model-implied ", info$VCV_type, " covariance matrix is equal across groups."),
            float = "center")
     )
     

@@ -523,6 +523,7 @@ testMGD <- function(
     "Approach_p_adjust"     = .approach_p_adjust,
     "Seed"                  = .seed,
     "Alpha"                 = .alpha,
+    "VCV_type"              = .type_vcv,
     "Permutation_values"    = list()
   )
   
