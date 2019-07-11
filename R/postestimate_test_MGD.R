@@ -332,6 +332,11 @@ testMGD <- function(
       n_inadmissibles <- n_inadmissibles + 1
     }
     
+    # Update progres bar
+    if(.verbose){
+      setTxtProgressBar(pb, counter)
+    }
+    
     # Break repeat loop if .R results have been created.
     if(length(ref_dist) == .R_permutation) {
       break
@@ -339,11 +344,6 @@ testMGD <- function(
       # Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
-    
-    if(.verbose){
-      setTxtProgressBar(pb, counter)
-    }
-    
   } # END repeat 
   
   # close progress bar
