@@ -6,15 +6,40 @@
 #' The following test are implemented:
 #' \describe{
 #' \item{Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
-#'   The model-implied variance-covariance matrix (either indicator or construct) is
-#'   compared across groups. 
+#'   The model-implied variance-covariance matrix (either indicator 
+#'   `.type_vcv = "indicator"` or construct `.type_vcv = "construct"`) 
+#'   is compared across groups. 
 #' 
 #'   To measure the distance between the model-implied variance-covariance matrices, 
-#'   the geodesic distance (dG) and the squared Euclidean distance (dL) are used.}
+#'   the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
+#'   If more than two groups are compared, the average distance over all groups
+#'   is used.}
+#' \item{Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
+#'   Groups are compared in terms of parameter differences across groups.
+#'   \insertCite{Sarstedt2011;textual}{cSEM} tests if parameter k is equal
+#'   across all groups. If several parameters are tested simulaneously 
+#'   it is recommended to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+#'   done by p-value). By default
+#'   no multiple testing correction is done, however, several common
+#'   adjustments are available via `.approach_p_adjust`. See 
+#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
+#' }
 #' \item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
+#'   \insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
+#'   between two groups. If more than two groups are tested it is recommended
+#'   to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+#'   done by p-value). If several parameters are tested simultaneously, correction
+#'   is by group and number of parameters. By default
+#'   no multiple testing correction is done, however, several common
+#'   adjustments are available via `.approach_p_adjust`. See 
+#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
 #' }
+#' 
+#' Use `.approach_mgd` to choose the approach. By default all approaches are computed
+#' (`.approach_mgd = "all"`)
+#' 
 #' 
 #' @usage testMGD(
 #'  .object                = args_default()$.object,
@@ -37,8 +62,15 @@
 #'   compared across groups. Defaults to `NULL` in which case all parameters of the model
 #'   are compared.
 #'   
-#' @inherit csem_test return
+#' @return A list of class `cSEMTestMGD`. Technically, `cSEMTestMGD` is a 
+#'   named list containing the following list elements:
 #'
+#' \describe{
+#'   \item{`$Information`}{Additional information.}
+#'   \item{`$Klesel`}{A list with elements, `Test_statistic`, `P_value`, and `Decision`}
+#'   \item{`$Chin`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
+#'   \item{`$Sarstedt`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
+#' }
 #' @references
 #'   \insertAllCited{}
 #'   
@@ -507,8 +539,7 @@ testMGD <- function(
   if(any(.approach_mgd %in% c("all", "Chin"))) {
     out[["Chin"]] <- list(
       "Test_statistic"     = teststat_Chin,
-      "P_value"            = pvalue_Chin,
-      "P_value_adjusted"   = padjusted_Chin,
+      "P_value"            = padjusted_Chin,
       "Decision"           = decision_Chin,
       "Decision_overall"   = decision_overall_Chin
     )
@@ -519,8 +550,7 @@ testMGD <- function(
   if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
     out[["Sarstedt"]] <- list(
       "Test_statistic"     = teststat_Sarstedt,
-      "P_value"            = pvalue_Sarstedt,
-      "P_value_adjusted"   = padjusted_Sarstedt,
+      "P_value"            = padjusted_Sarstedt,
       "Decision"           = decision_Sarstedt,
       "Decision_overall"   = decision_overall_Sarstedt
     )

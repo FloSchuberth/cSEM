@@ -65,14 +65,14 @@ One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".
 to \code{TRUE}.}
 }
 \value{
-A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
-list containing the following list elements:
+A list of class \code{cSEMTestMGD}. Technically, \code{cSEMTestMGD} is a
+named list containing the following list elements:
+
 \describe{
-\item{\code{$Test_statistic}}{The value of test statistic(s).}
-\item{\code{$Critical_value}}{The critical value(s).}
-\item{\code{$Decision}}{The test decision. One of: \strong{Reject} or \strong{Do not reject}}
-\item{\code{$Number_admissibles}}{The number of admissible runs. See \code{\link[=verify]{verify()}} for
-what constitues and inadmissible run.}
+\item{\code{$Information}}{Additional information.}
+\item{\code{$Klesel}}{A list with elements, \code{Test_statistic}, \code{P_value}, and \code{Decision}}
+\item{\code{$Chin}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
+\item{\code{$Sarstedt}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
 }
 }
 \description{
@@ -83,15 +83,39 @@ of the test statistic is obtained by permutation.
 The following test are implemented:
 \describe{
 \item{Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
-The model-implied variance-covariance matrix (either indicator or construct) is
-compared across groups.
+The model-implied variance-covariance matrix (either indicator
+\code{.type_vcv = "indicator"} or construct \code{.type_vcv = "construct"})
+is compared across groups.
 
 To measure the distance between the model-implied variance-covariance matrices,
-the geodesic distance (dG) and the squared Euclidean distance (dL) are used.}
+the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
+If more than two groups are compared, the average distance over all groups
+is used.}
+\item{Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
+Groups are compared in terms of parameter differences across groups.
+\insertCite{Sarstedt2011;textual}{cSEM} tests if parameter k is equal
+across all groups. If several parameters are tested simulaneously
+it is recommended to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+done by p-value). By default
+no multiple testing correction is done, however, several common
+adjustments are available via \code{.approach_p_adjust}. See
+\code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
+}
 \item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
+\insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
+between two groups. If more than two groups are tested it is recommended
+to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+done by p-value). If several parameters are tested simultaneously, correction
+is by group and number of parameters. By default
+no multiple testing correction is done, however, several common
+adjustments are available via \code{.approach_p_adjust}. See
+\code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 }
 }
+
+Use \code{.approach_mgd} to choose the approach. By default all approaches are computed
+(\code{.approach_mgd = "all"})
 }
 \examples{
 \dontrun{
