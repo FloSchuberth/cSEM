@@ -2,9 +2,6 @@
 % Please edit documentation in R/postestimate_test_OMF.R
 \name{testOMF}
 \alias{testOMF}
-\alias{testOMF.cSEMResults_default}
-\alias{testOMF.cSEMResults_multi}
-\alias{testOMF.cSEMResults_2ndorder}
 \title{Test for overall model fit}
 \usage{
 testOMF(
@@ -16,24 +13,6 @@ testOMF(
  .seed                  = args_default()$.seed,
  .verbose               = args_default()$.verbose
 )
-
-\method{testOMF}{cSEMResults_default}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .seed = args_default()$.seed, .verbose = args_default()$.verbose)
-
-\method{testOMF}{cSEMResults_multi}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .seed = args_default()$.seed, .verbose = args_default()$.verbose)
-
-\method{testOMF}{cSEMResults_2ndorder}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .saturated = args_default()$.saturated,
-  .seed = args_default()$.seed, .verbose = args_default()$.verbose)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -80,15 +59,6 @@ Based on \insertCite{Beran1985;textual}{cSEM}. See also
 \insertCite{Dijkstra2015;textual}{cSEM}.
 After 10000 iterations it stops automatically.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{cSEMResults_default}: (TODO)
-
-\item \code{cSEMResults_multi}: (TODO)
-
-\item \code{cSEMResults_2ndorder}: (TODO)
-}}
-
 \examples{
 \dontrun{
 # TODO

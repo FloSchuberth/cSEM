@@ -41,6 +41,7 @@ testOMF <- function(
   .seed                  = args_default()$.seed,
   .verbose               = args_default()$.verbose
 ) {
+
   # Implementation is based on:
   # Dijkstra & Henseler (2015) - Consistent Paritial Least Squares Path Modeling
   
@@ -49,39 +50,67 @@ testOMF <- function(
              line = "bar3"), "\n\n")
   }
   
-  UseMethod("testOMF")
-}
+  if(inherits(.object, "cSEMResults_default")) {
+    
+    x11 <- .object$Estimates
+    x12 <- .object$Information
+    
+    ## Collect arguments
+    arguments <- x12$Arguments
+    
+  } else if(inherits(.object, "cSEMResults_multi")) {
+    
+    out <- lapply(.object, testOMF,
+                  .alpha                = .alpha,
+                  .handle_inadmissibles = .handle_inadmissibles,
+                  .R                    = .R,
+                  .saturated            = .saturated,
+                  .seed                 = .seed,
+                  .verbose              = .verbose
+    )
+    ## Return
+    return(out)
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) { 
+    
+    x11 <- .object$First_stage$Estimates
+    x12 <- .object$First_stage$Information
+    
+    x21 <- .object$Second_stage$Estimates
+    x22 <- .object$Second_stage$Information
+    
+    ## Collect arguments
+    arguments <- .object$Second_stage$Information$Arguments_original
+  } else {
+    stop2(
+      "The following error occured in the testOMF() function:\n",
+      "`.object` must be a `cSEMResults` object."
+    )
+  }
   
-#' @describeIn testOMF (TODO)
-#' @export
-
-testOMF.cSEMResults_default <- function(
-  .object                = args_default()$.object,
-  .alpha                 = args_default()$.alpha,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .R                     = args_default()$.R,
-  .saturated             = args_default()$.saturated,
-  .seed                  = args_default()$.seed,
-  .verbose               = args_default()$.verbose
-){
+  ### Checks and errors ========================================================
   ## Check arguments
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
-  
+
   ## Check if initial results are inadmissible
-  if(sum(verify(.object)) != 0) {
-    stop("Initial estimation results are inadmissible.\n", 
-         "See `verify(.object)` for details.",
-         call. = FALSE)
+  if(sum(unlist(verify(.object))) != 0) {
+    stop2(
+      "The following error occured in the `testOMF()` function:\n",
+      "Initial estimation results are inadmissible. See `verify(.object)` for details.")
   }
   
   # Return error if used for ordinal variables
-  if(.object$Information$Type_of_indicator_correlation == "Polyserial" | .object$Information$Type_of_indicator_correlation == "Polychoric"){
-    stop2("Test for overall model fit can currently not applied if the polychoric or polyserial correlation were used.")
+  if(any(x12$Type_of_indicator_correlation %in% c("Polyserial", "Polychoric"))){
+    stop2(
+      "The following error occured in the `testOMF()` function:\n",
+      "Test for overall model fit currently not applicable if polychoric or",
+      " polyserial correlation is used.")
   }
   
+  ### Preparation ==============================================================
   ## Extract required information 
-  X         <- .object$Information$Data
-  S         <- .object$Estimates$Indicator_VCV
+  X         <- x12$Data
+  S         <- x11$Indicator_VCV
   Sigma_hat <- fit(.object,
                    .saturated = .saturated,
                    .type_vcv  = "indicator")
@@ -100,9 +129,6 @@ testOMF.cSEMResults_default <- function(
   X_trans           <- X %*% S_half %*% Sig_half
   colnames(X_trans) <- colnames(X)
   
-  ## Collect arguments
-  arguments <- .object$Information$Arguments
-  
   # Start progress bar if required
   if(.verbose){
     pb <- txtProgressBar(min = 0, max = .R, style = 3)
@@ -115,6 +141,7 @@ testOMF.cSEMResults_default <- function(
   ## Set seed
   set.seed(.seed)
   
+  ### Start resampling =========================================================
   ## Calculate reference distribution
   ref_dist         <- list()
   n_inadmissibles  <- 0
@@ -130,22 +157,15 @@ testOMF.cSEMResults_default <- function(
     arguments[[".data"]] <- X_temp
     
     # Estimate model
-    # its important to use foreman here 
-    # instead of csem() to allow for lapply(x, testOMF.cSEMResults_default) when x 
-    # is of class cSEMResults_2ndorder.
-    Est_temp <- do.call(foreman, arguments)
-
-    # Check status
-    status_code <- sum(verify(Est_temp))
+    Est_temp <- do.call(csem, arguments)               
     
+    # Check status (Note: output of verify for second orders is a list)
+    status_code <- sum(unlist(verify(Est_temp)))
+      
     # Distinguish depending on how inadmissibles should be handled
     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
-      # S_temp         <- Est_temp$Estimates$Indicator_VCV
-      # Sigma_hat_temp <- fit(Est_temp,
-      #                       .saturated = .saturated,
-      #                       .type_vcv  = "indicator")
       
       ref_dist[[counter]] <- c(
         "dG"   = calculateDG(Est_temp),
@@ -224,204 +244,37 @@ testOMF.cSEMResults_default <- function(
   return(out)
 }
 
-#' @describeIn testOMF (TODO)
-#' @export
-
-testOMF.cSEMResults_multi <- function(
-  .object                = args_default()$.object,
-  .alpha                 = args_default()$.alpha,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .R                     = args_default()$.R,
-  .saturated             = args_default()$.saturated,
-  .seed                  = args_default()$.seed,
-  .verbose               = args_default()$.verbose
-){
-  ## Create seed if not already set
-  if(is.null(.seed)) {
-    .seed <- sample(.Random.seed, 1)
-  }
-  
-  if(inherits(.object, "cSEMResults_2ndorder")) {
-    lapply(.object, testOMF.cSEMResults_2ndorder,
-           .alpha                = .alpha,
-           .handle_inadmissibles = .handle_inadmissibles,
-           .R                    = .R,
-           .saturated            = .saturated,
-           .seed                 = .seed,
-           .verbose              = .verbose
-    )
-  } else {
-    lapply(.object, testOMF.cSEMResults_default,
-           .alpha                = .alpha,
-           .handle_inadmissibles = .handle_inadmissibles,
-           .R                    = .R,
-           .saturated            = .saturated,
-           .seed                 = .seed,
-           .verbose              = .verbose
-    )
-  }
-}
-
-#' @describeIn testOMF (TODO)
-#' @export
-
-testOMF.cSEMResults_2ndorder <- function(
-  .object                = args_default()$.object,
-  .alpha                 = args_default()$.alpha,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .R                     = args_default()$.R,
-  .saturated             = args_default()$.saturated,
-  .seed                  = args_default()$.seed,
-  .verbose               = args_default()$.verbose
-){
-  ## Check arguments
-  match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
-
-  ## Check if initial results are inadmissible
-  if(sum(unlist(verify(.object))) != 0) {
-    stop("Initial estimation results are inadmissible.\n", 
-         "See `verify(.object)` for details.",
-         call. = FALSE)
-  }
-  
-  ## Extract required information 
-  x1 <- .object$First_stage
-  x2 <- .object$Second_stage
-  X         <- x1$Information$Data
-  S         <- x1$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object,
-                   .saturated = .saturated,
-                   .type_vcv  = "indicator")
-  
-  ## Calculate test statistic
-  teststat <- c(
-    "dG"   = calculateDG(x1),
-    "SRMR" = calculateSRMR(x1),
-    "dL"   = calculateDL(x1)
-  )
-  
-  ## Transform dataset, see Beran & Srivastava (1985)
-  S_half   <- solve(expm::sqrtm(S))
-  Sig_half <- expm::sqrtm(Sigma_hat)
-  
-  X_trans           <- X %*% S_half %*% Sig_half
-  colnames(X_trans) <- colnames(X)
-  
-  ## Collect arguments
-  arguments <- x2$Information$Arguments_original
-  
-  # Start progress bar if required
-  if(.verbose){
-    pb <- txtProgressBar(min = 0, max = .R, style = 3)
-  }
-  
-  ## Create seed if not already set
-  if(is.null(.seed)) {
-    .seed <- sample(.Random.seed, 1)
-  }
-  ## Set seed
-  set.seed(.seed)
-  
-  ## Calculate reference distribution
-  ref_dist         <- list()
-  n_inadmissibles  <- 0
-  counter <- 0
-  repeat{
-    # Counter
-    counter <- counter + 1
-    
-    # Draw dataset
-    X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
-    
-    # Replace the old dataset by the new one
-    arguments[[".data"]] <- X_temp
-    
-    # Estimate model
-    Est_temp <- do.call(csem, arguments)               
-    
-    # Check status (Note: output of verify for second orders is a list)
-    status_code <- sum(unlist(verify(Est_temp)))
-    
-    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-      # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
-      # not ok
-      S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
-      Sigma_hat_temp <- fit(Est_temp,
-                            .saturated = .saturated,
-                            .type_vcv  = "indicator")
-      
-      ref_dist[[counter]] <- c(
-        "dG"   = calculateDG(Est_temp$First_stage),
-        "SRMR" = calculateSRMR(Est_temp$First_stage),
-        "dL"   = calculateDL(Est_temp$First_stage)
-      )  
-      
-    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
-      # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[counter]] <- NA
-      
-    } else {# status is not ok and .handle_inadmissibles == "replace"
-      # Reset counter and raise number of inadmissibles by 1
-      counter <- counter - 1
-      n_inadmissibles <- n_inadmissibles + 1
-    }
-    
-    # Update progress bar
-    if(.verbose){
-      setTxtProgressBar(pb, counter)
-    }
-    
-    # Break repeat loop if .R results have been created.
-    if(length(ref_dist) == .R) {
-      break
-    } else if(counter + n_inadmissibles == 10000) { 
-      ## Stop if 10000 runs did not result in insufficient admissible results
-      stop("Not enough admissible result.", call. = FALSE)
-    }
-  } # END repeat 
-  
-  # close progress bar
-  if(.verbose){
-    close(pb)
-  }
-  
-  # Delete potential NA's
-  ref_dist1 <- Filter(Negate(anyNA), ref_dist)
-
-  # Combine
-  ref_dist_matrix <- do.call(cbind, ref_dist1)
-  ## Compute critical values (Result is a (2 x p) matrix, where n is the number
-  ## of quantiles that have been computed (1 by default)
-  .alpha <- .alpha[order(.alpha)]
-  critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
-                                               probs =  1-.alpha, drop = FALSE)
-  
-  ## Compare critical value and teststatistic
-  decision <- teststat < critical_values # a logical (2 x p) matrix with each column
-                                         # representing the decision for one
-                                         # significance level. TRUE = no evidence 
-                                         # against the H0 --> not reject
-                                         # FALSE --> reject
-  
-  # Return output
-  out <- list(
-    "Test_statistic"     = teststat,
-    "Critical_value"     = critical_values, 
-    "Decision"           = decision, 
-    "Information"        = list(
-      "Bootstrap_values"   = ref_dist,
-      "Number_admissibles" = ncol(ref_dist_matrix),
-      "Seed"               = .seed,
-      "Total_runs"         = counter + n_inadmissibles
-    )
-  ) 
-  
-  ## Remove the seed since it is set globally. Reset immediately by calling
-  ## any kind of function that requires .Random.seed as this causes R to
-  ## to create a new one.
-  rm(.Random.seed, envir=.GlobalEnv)
-  runif(1) # dont remove; this sets up a new .Random.seed
-  
-  class(out) <- "cSEMTestOMF"
-  return(out)
-}
+# testOMF.cSEMResults_multi <- function(
+#   .object                = args_default()$.object,
+#   .alpha                 = args_default()$.alpha,
+#   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+#   .R                     = args_default()$.R,
+#   .saturated             = args_default()$.saturated,
+#   .seed                  = args_default()$.seed,
+#   .verbose               = args_default()$.verbose
+# ){
+#   ## Create seed if not already set
+#   if(is.null(.seed)) {
+#     .seed <- sample(.Random.seed, 1)
+#   }
+#   
+#   if(inherits(.object, "cSEMResults_2ndorder")) {
+#     lapply(.object, testOMF.cSEMResults_2ndorder,
+#            .alpha                = .alpha,
+#            .handle_inadmissibles = .handle_inadmissibles,
+#            .R                    = .R,
+#            .saturated            = .saturated,
+#            .seed                 = .seed,
+#            .verbose              = .verbose
+#     )
+#   } else {
+#     lapply(.object, testOMF.cSEMResults_default,
+#            .alpha                = .alpha,
+#            .handle_inadmissibles = .handle_inadmissibles,
+#            .R                    = .R,
+#            .saturated            = .saturated,
+#            .seed                 = .seed,
+#            .verbose              = .verbose
+#     )
+#   }
+# }
