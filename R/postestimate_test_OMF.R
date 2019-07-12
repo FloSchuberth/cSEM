@@ -243,38 +243,3 @@ testOMF <- function(
   class(out) <- "cSEMTestOMF"
   return(out)
 }
-
-# testOMF.cSEMResults_multi <- function(
-#   .object                = args_default()$.object,
-#   .alpha                 = args_default()$.alpha,
-#   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-#   .R                     = args_default()$.R,
-#   .saturated             = args_default()$.saturated,
-#   .seed                  = args_default()$.seed,
-#   .verbose               = args_default()$.verbose
-# ){
-#   ## Create seed if not already set
-#   if(is.null(.seed)) {
-#     .seed <- sample(.Random.seed, 1)
-#   }
-#   
-#   if(inherits(.object, "cSEMResults_2ndorder")) {
-#     lapply(.object, testOMF.cSEMResults_2ndorder,
-#            .alpha                = .alpha,
-#            .handle_inadmissibles = .handle_inadmissibles,
-#            .R                    = .R,
-#            .saturated            = .saturated,
-#            .seed                 = .seed,
-#            .verbose              = .verbose
-#     )
-#   } else {
-#     lapply(.object, testOMF.cSEMResults_default,
-#            .alpha                = .alpha,
-#            .handle_inadmissibles = .handle_inadmissibles,
-#            .R                    = .R,
-#            .saturated            = .saturated,
-#            .seed                 = .seed,
-#            .verbose              = .verbose
-#     )
-#   }
-# }
