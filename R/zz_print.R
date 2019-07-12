@@ -387,26 +387,23 @@ print.cSEMTestMGD <- function(x, ...) {
     rule(center = "Overview", width = 80)
   )
   cat2(
-    "\n\n\tOut of ", info$Total_runs , " permutation runs, ", 
-    info$Number_admissibles, " where admissible.\n\t",
-    "See ", yellow("?"), magenta("verify"), "()",
-    " for what constitutes an inadmissible result.\n\n\t", 
-    "The seed used was: ", info$Seed, "\n"
+    col_align("\n\n\tTotal runs (permutation)", width = 37), "= ", info$Total_runs,
+    col_align("\n\tAdmissible results (permutation)", width = 36), "= ", info$Number_admissibles,
+    col_align("\n\tPermutation seed", width = 36), "= ", info$Permutation_seed,
+    "\n\n\tNumber of observations per group:"
   )
-  
-  cat2("\n\tNumber of observations per group:")
   
   l <- max(nchar(c(info$Group_names, "Group")))
   
   cat2("\n\n\t",
        col_align("Group", width = l + 6),
-       col_align("No. observations", width = 15)
+       col_align("No. Obs.", width = 10, align = "center")
   )
   for(i in seq_along(info$Group_names)) {
     cat2(
       "\n\t",
       col_align(info$Group_names[i], width = l + 6), 
-      col_align(info$Number_of_observations[i], width = 15, align = "right")
+      col_align(info$Number_of_observations[i], width = 10, align = "center")
     )
   }
   
@@ -419,7 +416,7 @@ print.cSEMTestMGD <- function(x, ...) {
     )
     for(j in names(x[[approach[1]]]$Decision_overall)) {
       cat2(
-        col_align(paste0("p_adjust_", j ), width = 20, align = "right")
+        col_align(paste0("p_adjust = '", j, "'"), width = 25, align = "right")
       )
     }
     for(i in approach) {
@@ -498,7 +495,7 @@ print.cSEMTestMGD <- function(x, ...) {
     )
     
     cat2(
-      red("\n\n\t!WARNING: the test is unreliable. Usage is discouraged!\n\n")
+      red("\n\n\t!WARNING: the test is unreliable. Usage is discouraged!")
     )
     ## Null hypothesis ---------------------------------------------------------
     cat2(

@@ -223,8 +223,18 @@ testMGD <- function(
     ll <- lapply(.object, function(x) {
       if(inherits(.object, "cSEMResults_2ndorder")) {
         x <- x$Second_stage$Information$Resamples$Estimates$Estimates1
+        
+        ## Get bootstrap seeds
+        # bootstrap_seeds <- sapply(.object, function(x)  {
+        #   x$Second_stage$Information$Resamples$Information_resample$Seed 
+        # })
       } else {
         x <- x$Estimates$Estimates_resample$Estimates1
+        
+        ## Get bootstrap seeds
+        # bootstrap_seeds <- sapply(.object, function(x) {
+        #   x$Information$Information_resample$Seed
+        # }) 
       }
       path_resamples    <- x$Path_estimates$Resampled
       loading_resamples <- x$Loading_estimates$Resampled
@@ -521,7 +531,8 @@ testMGD <- function(
     "Number_of_observations"= sapply(X_all_list, nrow),
     "Approach"              = .approach_mgd,
     "Approach_p_adjust"     = .approach_p_adjust,
-    "Seed"                  = .seed,
+    "Permutation_seed"      = .seed,
+    # "Bootstrap_seeds"        = bootstrap_seeds,
     "Alpha"                 = .alpha,
     "VCV_type"              = .type_vcv,
     "Permutation_values"    = list()
