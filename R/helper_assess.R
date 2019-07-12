@@ -540,7 +540,8 @@ calculateHTMT <- function(
 #' using different distance measures.
 #'
 #' The functions are only applicable to objects inheriting class `cSEMResults_default`.
-#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
+#' or `cSEMResults_2ndorder`. For objects of class `cSEMResults_multi` 
+#' use `lapply(.object, calculateXX())`.
 #' 
 #' The geodesic and the squared Euclidian distance may also be 
 #' computed for any two matrices A and B by supplying A and B directly via the 
@@ -569,13 +570,17 @@ calculateDG <- function(
     S         <- .matrix1
     Sigma_hat <- .matrix2
   } else {
-    # Only applicable to objects of class cSEMResults_default
-    if(!any(class(.object) == "cSEMResults_default")) {
-      stop2("`", match.call()[1], "` only applicable to objects of",
-            " class `cSEMResults_default`. Use `assess()` instead.")
+    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_default")) {
+      S <- .object$Estimates$Indicator_VCV
+    } else if(inherits(.object, "cSEMResults_2ndorder")) {
+      S <- .object$First_stage$Estimates$Indicator_VCV
+    } else {
+      stop2(
+        "The following error occured in the calculateDG() function:\n",
+        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
     }
     
-    S         <- .object$Estimates$Indicator_VCV
     Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')  
   }
   
@@ -601,14 +606,18 @@ calculateDL <- function(
     S         <- .matrix1
     Sigma_hat <- .matrix2
   } else {
-    # Only applicable to objects of class cSEMResults_default
-    if(!any(class(.object) == "cSEMResults_default")) {
-      stop2("`", match.call()[1], "` only applicable to objects of",
-            " class `cSEMResults_default`. Use `assess()` instead.")
+    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_default")) {
+      S <- .object$Estimates$Indicator_VCV
+    } else if(inherits(.object, "cSEMResults_2ndorder")) {
+      S <- .object$First_stage$Estimates$Indicator_VCV
+    } else {
+      stop2(
+        "The following error occured in the calculateDL() function:\n",
+        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
     }
-  
-  S         <- .object$Estimates$Indicator_VCV
-  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')
+    
+    Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')
   }
   
   ## Calculate distance
@@ -622,15 +631,20 @@ calculateDML <- function(
   .saturated = args_default()$.saturated,
   ...
   ){
-
-  # Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
-  }
   
-  n         <- nrow(.object$Information$Data)
-  S         <- .object$Estimates$Indicator_VCV
+  # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+  if(inherits(.object, "cSEMResults_default")) {
+    n <- nrow(.object$First_stage$Information$Data)
+    S <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n <- nrow(.object$Information$Data)
+    S <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateDML() function:\n",
+      "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+  }
+
   p         <- dim(S)[1]
   Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')
   
@@ -642,7 +656,8 @@ calculateDML <- function(
 #' 
 #' Calculate common fit measures.
 #' 
-#' The functions are only applicable to objects inheriting class `cSEMResults_default`.
+#' All functions, except for `calculateSRMR()` are only applicable to 
+#' objects inheriting class `cSEMResults_default`.
 #' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
 #' 
 #' @return A single numeric value.
@@ -787,16 +802,19 @@ calculateSRMR <- function(
   ...
 ) {
   
-  # Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+  if(inherits(.object, "cSEMResults_default")) {
+    S <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    S <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateSRMR() function:\n",
+      "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
   }
   
   # The SRMR as calculated by us is always based on the the difference 
   # between correlation matrices.
-  
-  S         <- .object$Estimates$Indicator_VCV
   Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')
   
   

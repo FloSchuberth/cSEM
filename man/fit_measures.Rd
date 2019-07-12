@@ -48,7 +48,8 @@ A single numeric value.
 Calculate common fit measures.
 }
 \details{
-The functions are only applicable to objects inheriting class \code{cSEMResults_default}.
+All functions, except for \code{calculateSRMR()} are only applicable to
+objects inheriting class \code{cSEMResults_default}.
 For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
 }
 \section{Functions}{
