@@ -136,7 +136,7 @@ and Formula sections.
 | $w_{kj}$          | $(1 \times 1)$          |  The $k$'th weight |
 | $\bar\eta_j$      | $(1 \times 1)$          |  The $j$'th (proxy) true score, i.e. the weighted sum of (indicator) true scores|
 | $\delta_{kl}$     | $(1 \times 1)$          |  The covariance between the $k$'th and the $l$'th measurement error|
-| $\bm{w}$          | $(K \times 1)$          |  A vector of weight|
+| $\bm{w}$          | $(K \times 1)$          |  A vector of weights|
 | $\bm\lambda$      | $(K \times 1)$          |  A vector of loadings|
 | $\bm{\varepsilon}$| $(K \times 1)$          |  A vector of measurement errors|
 | $\bm\Sigma$       | $(K \times K)$          |  The model-implied indicator covariance matrix|

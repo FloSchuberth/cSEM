@@ -18,7 +18,7 @@ stable relase will be version 0.0.1, most likely in mid 2019.
 Estimate, analyse, test, and study linear, non-linear, hierachical
 structural equation models using composite-based approaches and
 procedures, including estimation techniques such as partial least
-squares path modeling (PLS-PM) and its derivatives (PLSc, ordPLSc,
+squares path modeling (PLS-PM) and its derivatives (PLSc, OrdPLSc,
 robustPLSc), generalized structured component analysis (GSCA),
 generalized structured component analysis with uniqueness terms (GSCAm),
 generalized canonical correlation analysis (GCCA), principal component
