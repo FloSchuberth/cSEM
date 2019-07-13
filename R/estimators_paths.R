@@ -1,7 +1,7 @@
 #' Estimate the structural coefficients
 #'
-#' Estimates the coefficients of the structural model (nonlinear and linear) using
-#' OLS or 2SLS.
+#' Estimates the coefficients of the structural model (non-linear and linear) using
+#' OLS, 2SLS, or 3SLS. The two latters currently works only for linear models.
 #'
 #' @usage estimatePath(
 #'  .approach_nl    = args_default()$.approach_nl,
