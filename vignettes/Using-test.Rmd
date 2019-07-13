@@ -60,6 +60,7 @@ testHausman2(
 testMICOM(
   .object               = args_default()$.object,
   .alpha                = args_default()$.alpha,
+  .approach_p_adjust    = args_default()$.approach_p_adjust, 
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R                    = args_default()$.R,
   .seed                 = args_default()$.seed,
@@ -75,36 +76,51 @@ testMICOM(
 
 :  	An integer or a numeric vector of significance levels. Defaults to `0.05`.
   
+
 `.eval_plan`
 
 :   Character string. The evaluation plan to use. One of "sequential" or 
     "multiprocess". In the latter case all available cores will be used. 
-    Defaults to "sequential". See `resamplecSEMResults()` for details.
+Defaults to "sequential". See `resamplecSEMResults()` for details.
    
 `.handle_inadmissibles`
 
-:   Character string. How should inadmissible results be treated? One of 
-    "drop", "ignore", or "replace". If "drop", all replications/resamples 
-    yielding an inadmissible result will be dropped (i.e. the number of 
-    results returned will be less than .R). For "ignore" all results are 
-    returned even if they are inadmissible (i.e. number of results
-    returned = .R). For "replace" resampling continues until there are 
-    exactly .R admissible solutions. Defaults to "drop".
+:   Character string. How should inadmissible results be treated during 
+    bootstrap/permutation? One of "drop", "ignore", or "replace". 
+    If "drop", inadmissibles estimations are dropped (i.e., the number of 
+    results returned will be likely less than .R). For "ignore" inadmissible estimations are 
+    returned even if they are inadmissible (i.e., number of results
+    returned = .R). For "replace" inadmissible estimations are replaced, i.e.,
+    resampling continues until there are exactly .R admissible solutions 
+    (i.e., number of results returned equal .R). Defaults to "drop".
 
-`R`
+`.R`
 
-:   Integer. The number of bootstrap replications. Defaults to `499`.
+:   Integer. The number of bootstrap/permutation runs. Defaults to `499`.
 
 `.resample_method`
 
 :   Character string. The resampling method to use. One of: "bootstrap" or "jackknife". 
     Defaults to "bootstrap".
 
+`.saturated`
+
+:   Logical. Whether the model-implied indicator variance-covariance matrix 
+    should be based on the a saturated structural model. Defaults to `FALSE` 
+
 `.seed`
 
 :   Integer or `NULL`. The random seed to use. Defaults to `NULL` in which case
     an arbitrary seed is choosen.
+
+`.type_vcv`
+
+:   Character string. Indicates which model-implied correlation matrix is compared
+    across groups. One of "*indicator*" or "*construct*". Defaults to "*indicator*".
     
+`.verbose`
+
+:   
 ## Details
 
 Details if there are any.
@@ -117,7 +133,7 @@ Details if there are any.
 
 # Methods & Formulae {#methods}
 
-## Topic 1 {#topic1}
+## Test for overall model fit {#topic1}
 ### Definition
 
 ### Formula
@@ -126,7 +142,25 @@ Details if there are any.
 
 ### See also
 
-## Topic 2 {#topic2}
+## Test for multigroup differences {#topic2}
+### Definition
+
+### Formula
+
+### Implementation
+
+### See also
+
+## Hausman test for endogeneity {#topic3}
+### Definition
+
+### Formula
+
+### Implementation
+
+### See also
+
+## Test for composite measurement invariance {#topic4}
 ### Definition
 
 ### Formula
