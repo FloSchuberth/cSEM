@@ -17,7 +17,13 @@
 #' @inheritParams csem_arguments
 #'
 #' @return Either a (K x K) matrix or a (J x J) matrix depending on the `*type_vcv*`.
-#'
+#' 
+#' @example 
+#' \dontrun{
+#' res <- csem(.data = dataset, .model = model)
+#' 
+#' fit(.object = res, .saturated = FALSE, .type_vcv = "indicator")
+#' }
 #' @references
 #'   \insertAllCited{}
 #'   
