@@ -18,7 +18,7 @@
 #'
 #' @return Either a (K x K) matrix or a (J x J) matrix depending on the `*type_vcv*`.
 #' 
-#' @example 
+#' @examples 
 #' \dontrun{
 #' res <- csem(.data = dataset, .model = model)
 #' 

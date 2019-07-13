@@ -56,6 +56,13 @@ by their correlation matrix). Hence: V(eta) = WSW' (possibly disattenuated).
 \item \code{cSEMResults_2ndorder}: (TODO)
 }}
 
+\examples{
+\dontrun{
+res <- csem(.data = dataset, .model = model)
+
+fit(.object = res, .saturated = FALSE, .type_vcv = "indicator")
+}
+}
 \references{
 \insertAllCited{}
 }
