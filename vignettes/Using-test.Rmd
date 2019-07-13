@@ -39,7 +39,45 @@ testOMF(
   )
 ```
 
+`.object`
 
+:   An object of class `cSEMResults` resulting from a call to `csem()`.
+   
+`.alpha`
+
+:  	An integer or a numeric vector of significance levels. Defaults to `0.05`.
+
+  
+`.handle_inadmissibles`
+
+:   Character string. How should inadmissible results be treated during 
+    bootstrap/permutation? One of "drop", "ignore", or "replace". 
+    If "drop", inadmissibles estimations are dropped (i.e., the number of 
+    results returned will be likely less than .R). For "ignore" inadmissible estimations are 
+    returned even if they are inadmissible (i.e., number of results
+    returned = .R). For "replace" inadmissible estimations are replaced, i.e.,
+    resampling continues until there are exactly .R admissible solutions 
+    (i.e., number of results returned equal .R). Defaults to "drop".
+
+`.R`
+
+:   Integer. The number of bootstrap runs. Defaults to `499`.
+
+
+`.saturated`
+
+:   Logical. Whether the model-implied indicator variance-covariance matrix 
+    should be based on the a saturated structural model. Defaults to `FALSE` 
+
+`.seed`
+
+:   Integer or `NULL`. The random seed to use. Defaults to `NULL` in which case
+    an arbitrary seed is choosen.
+
+    
+`.verbose`
+
+:
 
 # Test for multi-group differences (`testMGD`)
 The test for multigroup differences is generally used to compare groups. In doing so, various 
@@ -64,6 +102,68 @@ testMGD(
   ) 
 ```
 
+`.object`
+
+:   An object of class `cSEMResults_multi` resulting from a call to `csem()`.
+   
+`.alpha`
+
+:  	An integer or a numeric vector of significance levels. Defaults to `0.05`.
+
+`.approach_p_adjust`
+
+:  	Character string. Approach used for the correction of the p-value in case of 
+    multiple comparisons. One of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",
+   "fdr", and "none". Defaults to "none".
+  
+`.approach_mgd`
+
+:  	Character string. Approach used for multi-group comparison. One of "Chin", "Sarstedt",
+    and "Klesel". Defaults to "none".
+
+`.model`
+
+:   A model in lavaan model syntax or `NULL`. The specified model determines which parameters 
+    are compared across groups. If set to `NULL` all model parameters are comapred across groups.
+    Defaults to `NULL`. 
+
+`.handle_inadmissibles`
+
+:   Character string. How should inadmissible results be treated during 
+    bootstrap/permutation? One of "drop", "ignore", or "replace". 
+    If "drop", inadmissibles estimations are dropped (i.e., the number of 
+    results returned will be likely less than .R). For "ignore" inadmissible estimations are 
+    returned even if they are inadmissible (i.e., number of results
+    returned = .R). For "replace" inadmissible estimations are replaced, i.e.,
+    resampling continues until there are exactly .R admissible solutions 
+    (i.e., number of results returned equal .R). Defaults to "drop".
+
+`.R_permutation`
+
+:   Integer. The number of permutation runs. Defaults to `499`.
+
+`.R_bootstrap`
+
+:   Integer. The number of bootstrap runs. Defaults to `499`.
+
+`.saturated`
+
+:   Logical. Whether the model-implied indicator variance-covariance matrix 
+    should be based on a saturated structural model. Defaults to `FALSE` 
+
+`.seed`
+
+:   Integer or `NULL`. The random seed to use. Defaults to `NULL` in which case
+    an arbitrary seed is choosen.
+
+`.type_vcv`
+
+:   Character string. Indicates which model-implied correlation matrix is compared
+    across groups. One of "*indicator*" or "*construct*". Defaults to "*indicator*".
+    
+`.verbose`
+
+:
 
 # Hausman test for endogeneity (`testHausman2`)
 
@@ -79,6 +179,49 @@ testHausman2(
  .seed                 = args_default()$.seed
 )
 ```
+
+
+`.object`
+
+:   An object of class `cSEMResults` resulting from a call to `csem()`.
+   
+`.alpha`
+
+:  	An integer or a numeric vector of significance levels. Defaults to `0.05`.
+
+
+`.eval_plan`
+
+:   Character string. The evaluation plan to use. One of "sequential" or 
+    "multiprocess". In the latter case all available cores will be used. 
+Defaults to "sequential". See `resamplecSEMResults()` for details.
+   
+`.handle_inadmissibles`
+
+:   Character string. How should inadmissible results be treated during 
+    bootstrap/permutation? One of "drop", "ignore", or "replace". 
+    If "drop", inadmissibles estimations are dropped (i.e., the number of 
+    results returned will be likely less than .R). For "ignore" inadmissible estimations are 
+    returned even if they are inadmissible (i.e., number of results
+    returned = .R). For "replace" inadmissible estimations are replaced, i.e.,
+    resampling continues until there are exactly .R admissible solutions 
+    (i.e., number of results returned equal .R). Defaults to "drop".
+
+`.R`
+
+:   Integer. The number of bootstrap/permutation runs. Defaults to `499`.
+
+`.resample_method`
+
+:   Character string. The resampling method to use. One of: "bootstrap" or "jackknife". 
+    Defaults to "bootstrap".
+
+
+`.seed`
+
+:   Integer or `NULL`. The random seed to use. Defaults to `NULL` in which case
+    an arbitrary seed is choosen.
+
 
 
 # Test for measurement invariance of composite models (`testMICOM`)
@@ -110,20 +253,7 @@ testMICOM(
 :  	Character string. Approach used for the correction of the p-value in case of 
     multiple comparisons. One of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",
    "fdr", and "none". Defaults to "none".
-  
-`.approach_mgd`
 
-:  	Character string. Approach used for multi-group comparison. One of "Chin", "Sarstedt",
-    and "Klesel". Defaults to "none".
-
-
-
-`.eval_plan`
-
-:   Character string. The evaluation plan to use. One of "sequential" or 
-    "multiprocess". In the latter case all available cores will be used. 
-Defaults to "sequential". See `resamplecSEMResults()` for details.
-   
 `.handle_inadmissibles`
 
 :   Character string. How should inadmissible results be treated during 
@@ -139,26 +269,13 @@ Defaults to "sequential". See `resamplecSEMResults()` for details.
 
 :   Integer. The number of bootstrap/permutation runs. Defaults to `499`.
 
-`.resample_method`
-
-:   Character string. The resampling method to use. One of: "bootstrap" or "jackknife". 
-    Defaults to "bootstrap".
-
-`.saturated`
-
-:   Logical. Whether the model-implied indicator variance-covariance matrix 
-    should be based on the a saturated structural model. Defaults to `FALSE` 
 
 `.seed`
 
 :   Integer or `NULL`. The random seed to use. Defaults to `NULL` in which case
     an arbitrary seed is choosen.
 
-`.type_vcv`
 
-:   Character string. Indicates which model-implied correlation matrix is compared
-    across groups. One of "*indicator*" or "*construct*". Defaults to "*indicator*".
-    
 `.verbose`
 
 :   
