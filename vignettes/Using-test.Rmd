@@ -21,15 +21,11 @@ The family of test function includes `testOMF` (test for overall model fit), `te
 (test for multigroup differences), `testHausman2` (Hausman test for endogeneity), and 
 `testMICOM` (test for composite measurement invariance).
 
-## `testOMF`
+# Test for overall model fit (`testOMF`)
 The test for overall model fit is used to test whether the specified model fits the
 dataset. A bootstrap-based test suggested by is employed.
 
-## `testMGD`
-The test for multigroup differences is generally used to compare groups. In doing so, various 
-suggested test are implemented. 
-
-# Syntax & Options {#syntax}
+## Syntax & Options {#syntax}
 
 ```{r eval=FALSE}
 testOMF(
@@ -41,7 +37,17 @@ testOMF(
   .seed                  = args_default()$.seed,
   .verbose               = args_default()$.verbose
   )
+```
 
+
+
+# Test for multi-group differences (`testMGD`)
+The test for multigroup differences is generally used to compare groups. In doing so, various 
+suggested test are implemented:
+- Approach suggested by @Chin1999 to compare a single parameter between two groups 
+
+## Syntax & Options {#syntax}
+```{r eval=FALSE}
 testMGD(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
@@ -56,7 +62,13 @@ testMGD(
   .type_vcv              = args_default()$.type_vcv,
   .verbose               = args_default()$.verbose
   ) 
+```
 
+
+# Hausman test for endogeneity (`testHausman2`)
+
+## Syntax & Options {#syntax}
+```{r eval=FALSE}
 testHausman2(
  .object               = NULL,
  .alpha                = args_default()$.alpha,
@@ -66,7 +78,14 @@ testHausman2(
  .resample_method      = args_default()$.resample_method,
  .seed                 = args_default()$.seed
 )
+```
 
+
+# Test for measurement invariance of composite models (`testMICOM`)
+
+## Syntax & Options {#syntax}
+
+```{r eval=FALSE}
 testMICOM(
   .object               = args_default()$.object,
   .alpha                = args_default()$.alpha,
@@ -85,7 +104,19 @@ testMICOM(
 `.alpha`
 
 :  	An integer or a numeric vector of significance levels. Defaults to `0.05`.
+
+`.approach_p_adjust`
+
+:  	Character string. Approach used for the correction of the p-value in case of 
+    multiple comparisons. One of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",
+   "fdr", and "none". Defaults to "none".
   
+`.approach_mgd`
+
+:  	Character string. Approach used for multi-group comparison. One of "Chin", "Sarstedt",
+    and "Klesel". Defaults to "none".
+
+
 
 `.eval_plan`
 
