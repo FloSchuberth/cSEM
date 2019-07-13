@@ -23,11 +23,14 @@ An introduction.
 
 ```{r eval=FALSE}
 testOMF(
-  .arg1 = NULL,
-  .arg2 = NULL,
-  .arg3 = NULL,
-  ...
-)
+  .object                = args_default()$.object, 
+  .alpha                 = args_default()$.alpha, 
+  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
+  .R                     = args_default()$.R, 
+  .saturated             = args_default()$.saturated,
+  .seed                  = args_default()$.seed,
+  .verbose               = args_default()$.verbose
+  )
 
 testMGD(
   .object                = args_default()$.object,
@@ -53,6 +56,15 @@ testHausman2(
  .resample_method      = args_default()$.resample_method,
  .seed                 = args_default()$.seed
 )
+
+testMICOM(
+  .object               = args_default()$.object,
+  .alpha                = args_default()$.alpha,
+  .handle_inadmissibles = args_default()$.handle_inadmissibles,
+  .R                    = args_default()$.R,
+  .seed                 = args_default()$.seed,
+  .verbose              = args_default()$.verbose
+  )
 ```
 
 `.object`
