@@ -79,6 +79,28 @@ testOMF(
 
 :
 
+
+### Details
+
+Details if there are any.
+
+## Usage & Examples {#examples}
+
+### Example 1 {#example1}
+### Example 2 {#example2}
+### Example 3 {#example3}
+
+## Methods & Formulae {#methods}
+
+### Definition
+
+### Formula
+
+### Implementation
+
+### See also
+
+
 # Test for multi-group differences (`testMGD`)
 The test for multigroup differences is generally used to compare groups. In doing so, various 
 suggested test are implemented:
@@ -165,6 +187,26 @@ testMGD(
 
 :
 
+### Details
+
+Details if there are any.
+
+## Usage & Examples {#examples}
+
+### Example 1 {#example1}
+### Example 2 {#example2}
+### Example 3 {#example3}
+
+## Methods & Formulae {#methods}
+
+### Definition
+
+### Formula
+
+### Implementation
+
+### See also
+
 # Hausman test for endogeneity (`testHausman2`)
 
 ## Syntax & Options {#syntax}
@@ -222,7 +264,25 @@ Defaults to "sequential". See `resamplecSEMResults()` for details.
 :   Integer or `NULL`. The random seed to use. Defaults to `NULL` in which case
     an arbitrary seed is choosen.
 
+### Details
 
+Details if there are any.
+
+## Usage & Examples {#examples}
+
+### Example 1 {#example1}
+### Example 2 {#example2}
+### Example 3 {#example3}
+
+## Methods & Formulae {#methods}
+
+### Definition
+
+### Formula
+
+### Implementation
+
+### See also
 
 # Test for measurement invariance of composite models (`testMICOM`)
 
@@ -279,46 +339,18 @@ testMICOM(
 `.verbose`
 
 :   
-## Details
+### Details
 
 Details if there are any.
 
-# Usage & Examples {#examples}
+## Usage & Examples {#examples}
 
-## Example 1 {#example1}
-## Example 2 {#example2}
-## Example 3 {#example3}
+### Example 1 {#example1}
+### Example 2 {#example2}
+### Example 3 {#example3}
 
-# Methods & Formulae {#methods}
+## Methods & Formulae {#methods}
 
-## Test for overall model fit {#topic1}
-### Definition
-
-### Formula
-
-### Implementation
-
-### See also
-
-## Test for multigroup differences {#topic2}
-### Definition
-
-### Formula
-
-### Implementation
-
-### See also
-
-## Hausman test for endogeneity {#topic3}
-### Definition
-
-### Formula
-
-### Implementation
-
-### See also
-
-## Test for composite measurement invariance {#topic4}
 ### Definition
 
 ### Formula
