@@ -17,13 +17,16 @@ WARNING: this document is work in progress.
 
 # Introduction {#introduction}
 
-The family of test function includes `testOMF` (test for overall model fit), `testMGD`
-(test for multigroup differences), `testHausman2` (Hausman test for endogeneity), and 
-`testMICOM` (test for composite measurement invariance).
+The family of test function includes the following tests:
+-`testOMF`: test for overall model fit
+-`testMGD`: test for multigroup differences
+-`testHausman2`: Hausman test for endogeneity
+-`testMICOM`: test for measurement invariance of composites 
 
 # Test for overall model fit (`testOMF`)
 The test for overall model fit is used to test whether the specified model fits the
-dataset. A bootstrap-based test suggested by is employed.
+dataset. In general, a bootstrap-based test suggested by @Beran1985 is employed. 
+In the context of PLS-PM, this test was introduced by @Dijkstra2015. 
 
 ## Syntax & Options {#syntax}
 
@@ -104,8 +107,10 @@ Details if there are any.
 # Test for multi-group differences (`testMGD`)
 The test for multigroup differences is generally used to compare groups. In doing so, various 
 suggested test are implemented:
-- Approach suggested by @Chin1999 to compare a single parameter between two groups 
-
+- Approach suggested by @Chin2010 to compare a single parameter between two groups. 
+- Approach suggested by @Sarstedt2011 to compare a single parameter across several groups.
+- Approach suggested by @Klesel2019 to compare the model-implied indicator/construct correlation matrix 
+across several groups.
 ## Syntax & Options {#syntax}
 ```{r eval=FALSE}
 testMGD(
@@ -284,7 +289,10 @@ Details if there are any.
 
 ### See also
 
-# Test for measurement invariance of composite models (`testMICOM`)
+# Test for measurement invariance of composites (`testMICOM`)
+
+The test for measurement invariance of composites suggested by @Henseler2016 is used to 
+test measurement of composites across groups.
 
 ## Syntax & Options {#syntax}
 
