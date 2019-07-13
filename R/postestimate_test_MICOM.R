@@ -15,6 +15,7 @@
 #' @usage testMICOM(
 #'  .object               = args_default()$.object,
 #'  .alpha                = args_default()$.alpha,
+#'  .approach_p_adjust    = args_default()$.approach_p_adjust,
 #'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
 #'  .R                    = args_default()$.R,
 #'  .seed                 = args_default()$.seed,
@@ -41,6 +42,7 @@
 testMICOM <- function(
   .object               = args_default()$.object,
   .alpha                = args_default()$.alpha,
+  .approach_p_adjust    = args_default()$.approach_p_adjust,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R                    = args_default()$.R,
   .seed                 = args_default()$.seed,
@@ -64,6 +66,7 @@ testMICOM <- function(
 testMICOM.cSEMResults_default <- function(
   .object               = args_default()$.object,
   .alpha                = args_default()$.alpha,
+  .approach_p_adjust    = args_default()$.approach_p_adjust,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R                    = args_default()$.R,
   .seed                 = args_default()$.seed,
@@ -78,6 +81,7 @@ testMICOM.cSEMResults_default <- function(
 testMICOM.cSEMResults_multi <- function(
   .object               = args_default()$.object,
   .alpha                = args_default()$.alpha,
+  .approach_p_adjust    = args_default()$.approach_p_adjust,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R                    = args_default()$.R,
   .seed                 = args_default()$.seed,
@@ -111,6 +115,10 @@ testMICOM.cSEMResults_multi <- function(
         "Comparing more than two groups inflates the familywise error rate.\n",
         "Interpret statistical significance with caution.\n",
         "Future versions of the package will likely include appropriate correction options.")
+    }
+    
+    if(.approach_p_adjust != 'none'){
+      stop2("Adjustment of p-values is not supported yet.")
     }
     
     ### Preparation ==============================================================
@@ -390,6 +398,7 @@ testMICOM.cSEMResults_multi <- function(
 testMICOM.cSEMResults_2ndorder <- function(
   .object               = args_default()$.object,
   .alpha                = args_default()$.alpha,
+  .approach_p_adjust    = args_default()$.approach_p_adjust,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R                    = args_default()$.R,
   .seed                 = args_default()$.seed,           
