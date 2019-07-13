@@ -17,7 +17,17 @@ WARNING: this document is work in progress.
 
 # Introduction {#introduction}
 
-An introduction.
+The family of test function includes `testOMF` (test for overall model fit), `testMGD`
+(test for multigroup differences), `testHausman2` (Hausman test for endogeneity), and 
+`testMICOM` (test for composite measurement invariance).
+
+## `testOMF`
+The test for overall model fit is used to test whether the specified model fits the
+dataset. A bootstrap-based test suggested by is employed.
+
+## `testMGD`
+The test for multigroup differences is generally used to compare groups. In doing so, various 
+suggested test are implemented. 
 
 # Syntax & Options {#syntax}
 
