@@ -1,12 +1,12 @@
-#' Model-implied indicator covariance matrix
+#' Model-implied indicator and construct variance-covariance matrix
 #'
 #' Calculate the model-implied indicator or construct variance-covariance (VCV) 
 #' matrix. Currently only the model-implied VCV for linear model is implemented.
 #' 
 #' Notation is taken from \insertCite{Bollen1989;textual}{cSEM}.
-#' By default the model-implied VCV matrix is based on the structural model. 
-#' If `.saturated = TRUE` the structural model is ignored (i.e. a full graph is estimated). 
-#' Hence: V(eta) = WSW' (possibly disattenuated).
+#' If `.saturated = TRUE` the model-implied variance-covariance matrix is calculated 
+#' for a saturated structural model (i.e., the VCV of the constructs is replaced 
+#' by their correlation matrix). Hence: V(eta) = WSW' (possibly disattenuated).
 #'
 #' @usage fit(
 #'   .object    = args_default()$.object, 
@@ -15,6 +15,8 @@
 #'   )
 #'
 #' @inheritParams csem_arguments
+#'
+#' @return Either a (K x K) matrix or a (J x J) matrix depending on the `*type_vcv*`.
 #'
 #' @references
 #'   \insertAllCited{}
