@@ -28,7 +28,7 @@ The test for overall model fit is used to test whether the specified model fits 
 dataset. In general, a bootstrap-based test suggested by @Beran1985 is employed. 
 In the context of PLS-PM, this test was introduced by @Dijkstra2015. 
 
-## Syntax & Options {#syntax}
+## Syntax & Options {#syntaxOMF}
 
 ```{r eval=FALSE}
 testOMF(
@@ -87,13 +87,13 @@ testOMF(
 
 Details if there are any.
 
-## Usage & Examples {#examples}
+## Usage & Examples {#examplesOMF}
 
-### Example 1 {#example1}
-### Example 2 {#example2}
-### Example 3 {#example3}
+### Example 1 {#example1OMF}
+### Example 2 {#example2OMF}
+### Example 3 {#example3OMF}
 
-## Methods & Formulae {#methods}
+## Methods & Formulae {#methodsOMF}
 
 ### Definition
 
@@ -111,7 +111,7 @@ suggested test are implemented:
 - Approach suggested by @Sarstedt2011 to compare a single parameter across several groups.
 - Approach suggested by @Klesel2019 to compare the model-implied indicator/construct correlation matrix 
 across several groups.
-## Syntax & Options {#syntax}
+## Syntax & Options {#syntaxMGD}
 ```{r eval=FALSE}
 testMGD(
   .object                = args_default()$.object,
@@ -196,13 +196,13 @@ testMGD(
 
 Details if there are any.
 
-## Usage & Examples {#examples}
+## Usage & Examples {#examplesMGD}
 
-### Example 1 {#example1}
-### Example 2 {#example2}
-### Example 3 {#example3}
+### Example 1 {#example1MGD}
+### Example 2 {#example2MGD}
+### Example 3 {#example3MGD}
 
-## Methods & Formulae {#methods}
+## Methods & Formulae {#methodsMGD}
 
 ### Definition
 
@@ -214,7 +214,7 @@ Details if there are any.
 
 # Hausman test for endogeneity (`testHausman2`)
 
-## Syntax & Options {#syntax}
+## Syntax & Options {#syntaxHausman}
 ```{r eval=FALSE}
 testHausman2(
  .object               = NULL,
@@ -273,13 +273,13 @@ Defaults to "sequential". See `resamplecSEMResults()` for details.
 
 Details if there are any.
 
-## Usage & Examples {#examples}
+## Usage & Examples {#examplesHausman}
 
-### Example 1 {#example1}
-### Example 2 {#example2}
-### Example 3 {#example3}
+### Example 1 {#example1Hausman}
+### Example 2 {#example2Hausman}
+### Example 3 {#example3Hausman}
 
-## Methods & Formulae {#methods}
+## Methods & Formulae {#methodsHausman}
 
 ### Definition
 
@@ -294,7 +294,7 @@ Details if there are any.
 The test for measurement invariance of composites suggested by @Henseler2016 is used to 
 test measurement of composites across groups.
 
-## Syntax & Options {#syntax}
+## Syntax & Options {#syntaxMICOM}
 
 ```{r eval=FALSE}
 testMICOM(
@@ -351,13 +351,13 @@ testMICOM(
 
 Details if there are any.
 
-## Usage & Examples {#examples}
+## Usage & Examples {#examplesMICOM}
 
-### Example 1 {#example1}
-### Example 2 {#example2}
-### Example 3 {#example3}
+### Example 1 {#example1MICOM}
+### Example 2 {#example2MICOM}
+### Example 3 {#example3MICOM}
 
-## Methods & Formulae {#methods}
+## Methods & Formulae {#methodsMICOM}
 
 ### Definition
 
