@@ -1,7 +1,7 @@
 #' Resample data 
 #'
 #' Resample data from a dataset using common resampling methods. 
-#' For bootstrap or jackknife resampling, package users usually dont need to 
+#' For bootstrap or jackknife resampling, package users usually do not need to 
 #' call this function but directly use [resamplecSEMResults()] instead.
 #'
 #' The function `resampleData()` is general purpose. It simply resamples data 
@@ -10,7 +10,7 @@
 #' Currently, `bootstrap`, `jackknife`, `permutation`, and  `cross-validation`
 #' (both leave-one-out (LOOCV) and k-fold cross-validation) are implemented. 
 #' 
-#' The user may provide the dataset to resample from explicitly via the `.data` 
+#' The user may provide the dataset to resample from can be either explicitly via the `.data` 
 #' argument or implicitly by providing a [cSEMResults] objects to `.object`
 #' in which case the original data used in the call that created the 
 #' [cSEMResults] object is used for resampling. 
@@ -26,15 +26,15 @@
 #' 
 #' To split data provided via the `.data` argument into groups, the column name or 
 #' the column index of the column containing the group levels to split the data 
-#' by must be given to `.id`. If data that contains grouping is taken from 
-#' a [cSEMResults] object, `.id` is taken from within the object. Hence, 
+#'  must be given to `.id`. If data that contains grouping is taken from 
+#' a [cSEMResults] object, `.id` is taken from the object information. Hence, 
 #' providing  `.id` is redundant in this case and therefore ignored.
 #' 
 #' The number of bootstrap or permutation runs as well as the number of 
 #' cross-validation repetitions is given by `.R`. The default is
 #' `499` but should be increased in real applications. See e.g.,
 #' \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations concerning
-#' the bootstrap. For jackknife `.R` is ignored.
+#' the bootstrap. For jackknife `.R` is ignored as it is based on the N leave-one-out datasets.
 #' 
 #' Choosing `resample_method = "permutation"` for ungrouped data causes an error
 #' as permutation will simply reorder the observations which is usually not 
@@ -75,7 +75,7 @@
 #' @param .resample_method Character string. The resampling method to use. One of: 
 #'  "*bootstrap*", "*jackknife*", "*permutation*", or "*cross-validation*". 
 #'  Defaults to "*bootstrap*".
-#' @param .R Integer. The number of bootstrap replications, permutation runs
+#' @param .R Integer. The number of bootstrap runs, permutation runs
 #'   or cross-validation repetitions to use. Defaults to `499`.
 #' @inheritParams csem_arguments
 #' 
@@ -83,12 +83,12 @@
 #'   resampling method:
 #' \describe{
 #' \item{Bootstrap}{If a `matrix` or `data.frame` without grouping variable 
-#'   is provided (`.id = NULL`), the result is a list of length `.R` 
+#'   is provided (i.e., `.id = NULL`), the result is a list of length `.R` 
 #'   (default `499`). Each element of that list is a bootstrap (re)sample.
 #'   If a grouping variable is specified or a list of data is provided 
 #'   (where each list element is assumed to contain data for one group), 
 #'   resampling is done by group. Hence, 
-#'   the result is a list of length equal to the number of group levels 
+#'   the result is a list of length equal to the number of groups 
 #'   with each list element containing `.R` bootstrap samples based on the 
 #'   `N_g` observations of group `g`.}
 #' \item{Jackknife}{If a `matrix` or `data.frame` without grouping variable 
@@ -104,7 +104,7 @@
 #' \item{Permutation}{If a `matrix` or `data.frame` without grouping variable 
 #'   is provided an error is returned as permutation will simply reorder the observations.
 #'   If a grouping variable is specified or a list of data is provided 
-#'   (where each list element is assumed to contain data for one group), 
+#'   (where each list element is assumed to contain data of one group), 
 #'   group membership is permutated. Hence, the result is a list of length `.R`
 #'   where each element of that list is a permutation (re)sample.}
 #' \item{Cross-validation}{If a `matrix` or `data.frame` without grouping variable 
@@ -114,8 +114,8 @@
 #'   If a grouping variable is specified or a list of data is provided 
 #'   (where each list element is assumed to contain data for one group), 
 #'   cross-validation is repeated `.R` times for each group. Hence, 
-#'   the result is a list of length equal to the number of group levels,
-#'   each containing `.R` list element (the repetitions) which in turn contain 
+#'   the result is a list of length equal to the number of groups,
+#'   each containing `.R` list elements (the repetitions) which in turn contain 
 #'   the `k` splits/folds.
 #'   }
 #' }
@@ -394,7 +394,7 @@ resampleData <- function(
 #' Resample a [cSEMResults] object using bootstrap or jackknife resampling. 
 #' The function is called by [csem()] if the user sets 
 #' `csem(..., .resample_method = "bootstrap")` or 
-#' `csem(..., .resample_method = "jackknife")` but may also be called indenpendently.
+#' `csem(..., .resample_method = "jackknife")` but may also be called directly.
 #' Technically, `resamplecSEMResults()` is a generic function with methods for
 #' classes `cSEMResults_default`, `cSEMResults_multi` and `cSEMResults_2ndorder`.
 #' 
@@ -404,19 +404,19 @@ resampleData <- function(
 #' [csem()] on each resample using the arguments of the origianl call (ignoring any arguments
 #' related to resampling) and returns estimates for each of a subset of 
 #' practically useful resampled parameters/statistics computed by [csem()]. 
-#' Currently, the following quantities are computed and returned by default based 
+#' Currently, the following estimates are computed and returned by default based 
 #' on each resample: Path estimates, Loading estimates, Weight estimates.
 #' 
 #' In practical application users may need to resample a specific statistic (e.g,
-#' the heterotrait-monotrait ratio of correlations (HTMT) or restrictions on path 
-#' coefficients such as beta_1 = beta_2).
-#' Such statistics may be provided by a function `f(.object, ...)` or a list of 
+#' the heterotrait-monotrait ratio of correlations (HTMT) or differences between path 
+#' coefficients such as beta_1 - beta_2).
+#' Such statistics may be provided by a function `fun(.object, ...)` or a list of 
 #' such functions via the `.user_funs` argument. The first argument of 
 #' these functions must always be `.object`. 
 #' Internally, the function will be applied on each  
 #' resample to produce the desired statistic. Hence, arbitrary complicated statistics
 #' may be resampled as long as the body of the function draws on elements contained
-#' in the [cSEMResults] object only. Output of `f(.object, ...)` should preferably 
+#' in the [cSEMResults] object only. Output of `fun(.object, ...)` should preferably 
 #' be a (named) vector but matrices are also accepted. 
 #' However, the output will be vectorized (columnwise) in this case. 
 #' See the examples section for details.
@@ -428,17 +428,17 @@ resampleData <- function(
 #' by default (`.resample_method2 = "none"`) as this significantly
 #' increases computation time (there are now `M * M2` resamples to compute, where
 #' `M2` is `.R2` or `N`).
-#' Currently, resamples of a resample are only required for the studentized confidence
-#' intervall computed by the [infer()] function. Typically, bootstrap resamples
+#' Resamples of a resample are required, e.g., for the studentized confidence
+#' interval computed by the [infer()] function. Typically, bootstrap resamples
 #' are used in this case \insertCite{Davison1997}{cSEM}.
 #' 
 #' As [csem()] accepts a single dataset, a list of datasets as well as datasets
 #' that contain a column name used to split the data into groups,
 #' the [cSEMResults] object may contain multiple datasets. 
 #' In this case, resampling is done by dataset or group. Note that depending
-#' on the number of datasets/groups provided this computation may be considerably
+#' on the number of datasets/groups, the computation may be considerably
 #' slower as resampling will be repeated for each dataset/group. However, apart
-#' from speed considerations users dont need to worry about the type of
+#' from speed considerations users don not need to worry about the type of
 #' input used to compute the [cSEMResults] object as `resamplecSEMResults()`
 #' is able to deal with each case.
 #' 
@@ -452,17 +452,17 @@ resampleData <- function(
 #' 
 #' Resampling may produce inadmissble results (as checked by [verify()]).
 #' By default these results are dropped however users may choose to `"ignore"`
-#' or `"replace"` inadmissble results in which case resampling continious until
+#' or `"replace"` inadmissble results in which resampling continious until
 #' the necessary number of admissble results is reached.
 #' 
 #' The \pkg{cSEM} package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future} 
 #' framework \insertCite{Bengtsson2018}{cSEM}. Users may simply choose an evaluation plan
 #' via `.eval_plan` and the package takes care of all the complicated backend 
-#' issues. Currently, users may chose between standard single-core/single-session
+#' issues. Currently, users may choose between standard single-core/single-session
 #'  evaluation (`"sequential"`) and multiprocessing (`"multiprocess"`). The future package
-#' provides other options (e.g. `"cluster"` or `"remote"`), however, they probably 
-#' wont be needed in the context of the \pkg{cSEM} package as simulations usually
-#' dont require high-performance clusters. Depeding on the platform, the future
+#' provides other options (e.g., `"cluster"` or `"remote"`), however, they probably 
+#' will not be needed in the context of the \pkg{cSEM} package as simulations usually
+#' do not require high-performance clusters. Depeding on the operating system, the future
 #' package will manage to distribute tasks to multiple R sessions (Windows)
 #' or multiple cores. Note that multiprocessing is not necessary always faster
 #' when only a "small" number of replications is required as the overhead of
@@ -1209,7 +1209,7 @@ resamplecSEMResultsCore <- function(
 
 #' Inference
 #'
-#' Calculate common inferencial quantities (e.g. estimated standard error, estimates bias,
+#' Calculate common inferencial quantities (e.g., estimated standard error, estimated bias,
 #' several confidence intervals) based on a `cSEMResults_resampled` object as obtained
 #' by calling [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
 #' or `"jackknife"` when calling [csem()]. Currently, the following quantities are
