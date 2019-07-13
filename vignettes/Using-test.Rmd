@@ -18,10 +18,10 @@ WARNING: this document is work in progress.
 # Introduction {#introduction}
 
 The family of test function includes the following tests:
--`testOMF`: test for overall model fit
--`testMGD`: test for multigroup differences
--`testHausman2`: Hausman test for endogeneity
--`testMICOM`: test for measurement invariance of composites 
+- `testOMF`: test for overall model fit
+- `testMGD`: test for multigroup differences
+- `testHausman2`: Hausman test for endogeneity
+- `testMICOM`: test for measurement invariance of composites 
 
 # Test for overall model fit (`testOMF`)
 The test for overall model fit is used to test whether the specified model fits the
