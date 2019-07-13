@@ -10,6 +10,7 @@
 testMICOM(
  .object               = args_default()$.object,
  .alpha                = args_default()$.alpha,
+ .approach_p_adjust    = args_default()$.approach_p_adjust,
  .handle_inadmissibles = args_default()$.handle_inadmissibles,
  .R                    = args_default()$.R,
  .seed                 = args_default()$.seed,
@@ -19,12 +20,14 @@ testMICOM(
 
   \method{testMICOM}{cSEMResults_default}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
+  .approach_p_adjust = args_default()$.approach_p_adjust,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .seed = args_default()$.seed,
   .verbose = args_default()$.verbose)
 
 \method{testMICOM}{cSEMResults_multi}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
+  .approach_p_adjust = args_default()$.approach_p_adjust,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .seed = args_default()$.seed,
   .verbose = args_default()$.verbose)
@@ -32,6 +35,7 @@ testMICOM(
 
   \method{testMICOM}{cSEMResults_2ndorder}(.object = args_default()$.object,
   .alpha = args_default()$.alpha,
+  .approach_p_adjust = args_default()$.approach_p_adjust,
   .handle_inadmissibles = args_default()$.handle_inadmissibles,
   .R = args_default()$.R, .seed = args_default()$.seed,
   .verbose = args_default()$.verbose)
@@ -41,6 +45,10 @@ testMICOM(
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
+
+\item{.approach_p_adjust}{Character string. Approach used to adjust the p value.
+The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
+Defaults to "\emph{none}".}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all

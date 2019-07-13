@@ -183,7 +183,7 @@ See \code{\link[=parseModel]{parseModel()}} for details.
 }
 
 \subsection{Weights and path coefficients:}{
-By default weights are estimated using the partial least squares (path)
+By default weights are estimated using the partial least squares path modeling
 algorithm (\code{"PLS-PM"}).
 A range of alternative weightning algorithms may be supplied to
 \code{.approach_weights}. Currently, the following approaches are implemented
@@ -219,7 +219,7 @@ Note, however, that quantities in this case are inconsistent
 estimates for their construct level counterparts if any of the constructs in
 the structural model are modeled as a common factor!
 
-By default. path coefficients are estimated using OLS (\code{.approach_path = "OLS"}).
+By default. path coefficients are estimated using ordinary least squares (\code{.approach_path = "OLS"}).
 For linear models, two-stage least squares (\code{"2SLS"}) is available , however, \emph{only if}
 \emph{instruments are internal}, i.e. part of the structural model. Future versions
 will add support for external instruments. Instruments must be supplied to
@@ -240,8 +240,8 @@ If the model is nonlinear \code{csem()} estimates a polynomial structural equati
 using a non-iterative method of moments approach described in
 \insertCite{Dijkstra2014}{cSEM}. Nonlinear terms include interactions and
 exponential terms. The latter is described in model syntax as an
-"interaction with itself", e.g., \code{x_1^3 = x1.x1.x1}. Currently only exponential
-terms up to a power of three (i.e. three-way interactions) are allowed.
+"interaction with itself", e.g., \code{xi^3 = xi.xi.xi}. Currently only exponential
+terms up to a power of three (e.g., three-way interactions or cubic terms) are allowed.
 
 The current version of the package allows two kinds of estimation:
 estimation of the reduced form equation (\code{.approach_nl = "replace"}) and

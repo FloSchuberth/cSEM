@@ -5,7 +5,7 @@
 \alias{fit.cSEMResults_default}
 \alias{fit.cSEMResults_multi}
 \alias{fit.cSEMResults_2ndorder}
-\title{Model-implied indicator covariance matrix}
+\title{Model-implied indicator and construct variance-covariance matrix}
 \usage{
 fit(
   .object    = args_default()$.object, 
@@ -34,15 +34,18 @@ Defaults to \code{FALSE}.}
 \item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 }
+\value{
+Either a (K x K) matrix or a (J x J) matrix depending on the \code{*type_vcv*}.
+}
 \description{
 Calculate the model-implied indicator or construct variance-covariance (VCV)
 matrix. Currently only the model-implied VCV for linear model is implemented.
 }
 \details{
 Notation is taken from \insertCite{Bollen1989;textual}{cSEM}.
-By default the model-implied VCV matrix is based on the structural model.
-If \code{.saturated = TRUE} the structural model is ignored (i.e. a full graph is estimated).
-Hence: V(eta) = WSW' (possibly disattenuated).
+If \code{.saturated = TRUE} the model-implied variance-covariance matrix is calculated
+for a saturated structural model (i.e., the VCV of the constructs is replaced
+by their correlation matrix). Hence: V(eta) = WSW' (possibly disattenuated).
 }
 \section{Methods (by class)}{
 \itemize{
