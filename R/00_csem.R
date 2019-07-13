@@ -31,7 +31,7 @@
 #' }
 #'
 #' \subsection{Weights and path coefficients:}{
-#' By default weights are estimated using the partial least squares (path) 
+#' By default weights are estimated using the partial least squares path modeling 
 #' algorithm (`"PLS-PM"`).
 #' A range of alternative weightning algorithms may be supplied to 
 #' `.approach_weights`. Currently, the following approaches are implemented 
@@ -67,7 +67,7 @@
 #' estimates for their construct level counterparts if any of the constructs in 
 #' the structural model are modeled as a common factor!
 #' 
-#' By default. path coefficients are estimated using OLS (`.approach_path = "OLS"`). 
+#' By default. path coefficients are estimated using ordinary least squares (`.approach_path = "OLS"`). 
 #' For linear models, two-stage least squares (`"2SLS"`) is available , however, *only if* 
 #' *instruments are internal*, i.e. part of the structural model. Future versions
 #' will add support for external instruments. Instruments must be supplied to 
@@ -88,8 +88,8 @@
 #' using a non-iterative method of moments approach described in
 #' \insertCite{Dijkstra2014}{cSEM}. Nonlinear terms include interactions and
 #' exponential terms. The latter is described in model syntax as an
-#' "interaction with itself", e.g., `x_1^3 = x1.x1.x1`. Currently only exponential
-#' terms up to a power of three (i.e. three-way interactions) are allowed.
+#' "interaction with itself", e.g., `xi^3 = xi.xi.xi`. Currently only exponential
+#' terms up to a power of three (e.g., three-way interactions or cubic terms) are allowed.
 #'
 #' The current version of the package allows two kinds of estimation:
 #' estimation of the reduced form equation (`.approach_nl = "replace"`) and 
