@@ -104,19 +104,25 @@ estimatePath <- function(
         
         if(!is.null(.approach_se)){
           
-          if(.approach_se == 'closed'){
-            # This requires that we know how the composites scores are obtained. 
-            # Liikely we have to give that over to this function.
-            # Have a look at he Devlieger paper to get the SEs
-            
-            
-            
-          }
+          # if(.approach_se == 'closed'){
+          #   # This requires that we know how the composites scores are obtained. 
+          #   # Liikely we have to give that over to this function.
+          #   # Have a look at he Devlieger paper to get the SEs
+          #   if(.approach_weights = 'regression'){
+          #     
+          #   }else if(.approach_weights = 'bartlett'){
+          #     
+          #   }else{
+          #     se <- coef
+          #     se[[1:length(se)] <- NA
+          #   }
+          #   
+          #   
+          # }
           
           if(.approach_se == 'closed_OLS'){
             # calculate the OLs SEs
-            # we require the sample size. Likely we need new argument for the dataset. or n
-            sig_square = 0 /(0-nrow(coef))
+            sig_square <-(-1* (r2adj-1)*var(.H[,y]))
             
             sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]))*
               sig_square)
