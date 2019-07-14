@@ -23,7 +23,7 @@
 \alias{ThrwInterThrwInter}
 \alias{ThrwInterQuadTwInter}
 \alias{QuadTwInercQuadTwInter}
-\title{Internal: Calculate moments}
+\title{Internal: Calculate consistent moments of a non-linear model}
 \usage{
 SingleSingle(.i, .j, .Q, .H)
 
@@ -79,13 +79,13 @@ Q^2 is also called the reliability coefficient.}
 \item{.H}{The (N x J) matrix of construct scores.}
 }
 \description{
-Collection of moment estimators. See \link{classifyConstructs} for a list of
+Collection of various moment estimators. See \link{classifyConstructs} for a list of
 possible moments.
 }
 \details{
 M is the matrix of the sample counterparts (estimates) of the
-left-hand side terms in equation (21) - (24) in the
-Dijkstra & Schermelleh-Engel (2014) paper. The label "M" did not appear in
-the paper and is only used in the package.
+left-hand side terms in Equation (21) - (24) \insertCite{Dijkstra2014}{cSEM}.
+The label "M" did not appear in the paper and is only used in the package.
+Similar is suggested by \insertCite{Wall2000;textual}{cSEM} using classical factor scores.
 }
 \keyword{internal}

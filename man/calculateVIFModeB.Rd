@@ -16,7 +16,7 @@ The vectors contain the VIF values obtained from a regression of each
 explanatory variable of a given construct on the remaining explanatory
 variables of that construct.
 
-If the weightning approach is not \code{"PLS-PM"} or for none of the constructs Mode B is used,
+If the weighting approach is not \code{"PLS-PM"} or for none of the constructs Mode B is used,
 the function silently returns \code{NA}.
 }
 \description{

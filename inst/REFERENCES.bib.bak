@@ -496,4 +496,49 @@ specification of an individual wage equation.},
   author    = {Hair, Joseph F and Hult, G Tomas M and Ringle, Christian and Sarstedt, Marko},
 }
 
+@InBook{Chin1998,
+  chapter   = {The Partial Least Squares Approach to Structural Equation Modeling},
+  pages     = {295--358},
+  title     = {Modern Methods for Business Research},
+  publisher = {Mahwah, NJ: Lawrence Erlbaum},
+  year      = {1998},
+  author    = {Chin, W. W.},
+  editor    = {Marcoulides, G. A.},
+}
+
+@Article{Wall2000,
+  author    = {Wall, Melanie M and Amemiya, Yasuo},
+  title     = {Estimation for polynomial structural equation models},
+  journal   = {Journal of the American Statistical Association},
+  year      = {2000},
+  volume    = {95},
+  number    = {451},
+  pages     = {929--940},
+  abstract  = {Structural equation analysis is one of the most widely used statistical methods in social and behavioral science research and has become a popular tool in marketing. Subject matter needs for considering nonlinear structural models have been well documented. But current fitting procedures are available only for a limited class of models. In this article a systematic statistical approach is developed for the general polynomial structural equation model. The new procedure applies a method of moments procedure similar to the one used in errors-in-variables regression to the factor score estimates from the measurement model fit. The asymptotic properties of the estimator are derived, and a modified estimator with better small-sample properties is introduced. Simulation studies are reported to show the usefulness of the procedure and to compare its performance to other methods. An example from a substance abuse prevention study is also discussed.},
+  file      = {Wall2000.pdf:Wall2000.pdf:PDF},
+  keywords  = {Asymptotic inferences; Errors in variables; Factor scores; Latent variable analysis; Social and behavioral applications.},
+  publisher = {Taylor \& Francis},
+}
+
+@Book{Lohmoeller1989,
+  title     = {Latent Variable Path Modeling with Partial Least Squares},
+  publisher = {Physica, Heidelberg},
+  year      = {1989},
+  author    = {Lohm{\"o}ller, Jan-Bernd},
+  file      = {Lohmoeller2013.pdf:Lohmoeller2013.pdf:PDF},
+}
+
+@Article{Rousseeuw1999,
+  author    = {Peter J. Rousseeuw and Katrien Van Driessen},
+  title     = {A Fast Algorithm for the Minimum Covariance Determinant Estimator},
+  journal   = {Technometrics},
+  year      = {1999},
+  volume    = {41},
+  number    = {3},
+  pages     = {212--223},
+  month     = {aug},
+  doi       = {10.1080/00401706.1999.10485670},
+  publisher = {Informa {UK} Limited},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}

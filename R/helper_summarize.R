@@ -1,4 +1,8 @@
 #' Calculate direct, indirect and total effect
+#' 
+#' The direct effects are equal to the estimated coefficients. The total effect 
+#' equals (I-B)^{-1}Gam. The indirect effect equals the difference between
+#' the total effect and the indirect effect. 
 #' Helper for generic function summarize()
 #' @noRd
 #' 

@@ -33,7 +33,7 @@
 #' \subsection{Weights and path coefficients:}{
 #' By default weights are estimated using the partial least squares path modeling 
 #' algorithm (`"PLS-PM"`).
-#' A range of alternative weightning algorithms may be supplied to 
+#' A range of alternative weighting algorithms may be supplied to 
 #' `.approach_weights`. Currently, the following approaches are implemented 
 #' \enumerate{
 #' \item{(Default) Partial least squares path modeling (`"PLS-PM"`). The algorithm
@@ -47,7 +47,7 @@
 #'    regression (`"regression"`) or bartlett scores (`"bartlett"`)}
 #' }
 #' 
-#' Its possible to supply starting values for the weightning algorithm 
+#' Its possible to supply starting values for the weighting algorithm 
 #' via `.starting_values`. The argument accepts a named list of vectors where the
 #' list names are the construct names whose indicator weights the user
 #' wishes to set. The vectors must be named vectors of `"indicator_name" = value` 

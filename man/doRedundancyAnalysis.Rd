@@ -11,7 +11,7 @@ doRedundancyAnalysis(.object = NULL)
 }
 \value{
 A named numeric vector of correlations. If
-the weightning approach is not \code{"PLS-PM"} or non of the PLS outer modes
+the weighting approach is not \code{"PLS-PM"} or non of the PLS outer modes
 was mode B, the function silently returns \code{NA}.
 }
 \description{

@@ -122,7 +122,7 @@
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
-#'   or a [cSEMModel] list.
+#'   or a [cSEMModel] list. Defaults to `NULL`.
 #' @param .model_implied Logical. Should the RMS_theta be computed using the
 #'   model-implied construct correlation matrix (`TRUE`)or the construct correlation matrix
 #'   based on V(eta) = WSW' divided by the square root of the respective 

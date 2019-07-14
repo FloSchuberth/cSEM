@@ -7,7 +7,7 @@
 #' are supplied the arithmetic mean of the differences between all possible pairs of 
 #' (symmetric) matrices in a list is computed. Mathematically this is
 #' n chose 2. Hence, supplying a large number of matrices will 
-#' become computationally challenging. Use with care.
+#' become computationally challenging.
 #' 
 #' Currently two distance measures are supported:
 #' \describe{
@@ -77,8 +77,8 @@ calculateDistance <- function(
 #' according to the test proposed by \insertCite{Chin2010;textual}{cSEM}. 
 #' 
 #' @usage getParameterNames(
-#'   .object = NULL, 
-#'   .model  = NULL
+#'            .object  = args_default()$.object,
+#'            .model   = args_default()$.model
 #'   )
 #' 
 #' @inheritParams csem_arguments
@@ -97,8 +97,8 @@ calculateDistance <- function(
 #' @keywords internal
 
 getParameterNames <- function(
-  .object  = NULL,
-  .model   = NULL
+  .object  = args_default()$.object,
+  .model   = args_default()$.model
 ){
   
   ## Summarize
@@ -259,13 +259,13 @@ getParameterNames <- function(
 #' all possible pairs of groups (data sets) in `.object`.
 #'
 #' @usage calculateParameterDifference(
-#'   .object     = NULL,
-#'   .model      = NULL
+#'   .object     = args_default()$.object,
+#'   .model      = args_default()$.model
 #' )
 #' 
 #' @inheritParams csem_arguments
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
-#'   parameters (i.e, path (`~`), loadings (`=~`), or weights (`<~`)) should be
+#'   parameters (i.e., path (`~`), loadings (`=~`), or weights (`<~`)) should be
 #'   compared across groups. Defaults to `NULL` in which case all parameters of the model
 #'   are compared.
 #' 
@@ -280,8 +280,8 @@ getParameterNames <- function(
 #' @keywords internal
 
 calculateParameterDifference <- function(
-  .object  = NULL,
-  .model   = NULL
+  .object  = args_default()$.object,
+  .model   = args_default()$.model
   ){
 
   ## Summarize
@@ -362,7 +362,13 @@ calculateParameterDifference <- function(
 
 #' Internal: Multiple testing correction
 #'
-#' Adjust a given significance level `.alpha` to accomodate multiple testing. 
+#' Adjust a given significance level `.alpha` to accomodate multiple testing.
+#' The following corrections are implemented:
+#' \describe{
+#'   \item{`none`}{(Default) No correction is done.}
+#'   \item{`bonferroni`}{A Bonferroni correction is done, i.e., alpha is divided by the 
+#'   number of comparisons `.nr_comparisons`.}
+#' }
 #' 
 #' @usage adjustAlpha(
 #'  .alpha                 = args_default()$.alpha,
@@ -395,7 +401,7 @@ adjustAlpha <- function(
 #' Internal: ANOVA F-test statistic 
 #'
 #' Calculate the ANOVA F-test statistic suggested by 
-#' \insertCite{Sarstedt2011;textual}{cSEM}.
+#' \insertCite{Sarstedt2011;textual}{cSEM} in the OTG testing procedure.
 #' 
 #' @usage calculateFR(.resample_sarstedt)
 #' 

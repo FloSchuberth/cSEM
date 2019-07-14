@@ -387,7 +387,7 @@ calculateRhoT <- function(
       # Calculation of the CIs are based on Trinchera et al. (2018).
       # In the paper, the CI was proposed and studied using Monte Carlo simulation
       # assuming scores are build as sum scores. Therefore a warning is
-      # given if a weightning scheme other than "unit" is used, since they have
+      # given if a weighting scheme other than "unit" is used, since they have
       # not been formally studied yet.
       
       if(.object$Information$Arguments$.approach_weights != "unit" & .weighted) {
@@ -833,7 +833,7 @@ calculateSRMR <- function(
 
 #' Internal: Calculate effect size
 #'
-#' Calculate the effect size for regression analysis \insertcite{Cohen1992}.
+#' Calculate the effect size for regression analysis \insertCite{Cohen1992}.
 #'
 #' @usage calculateEffectSize(.object = NULL)
 #'
@@ -928,7 +928,7 @@ calculateEffectSize <- function(.object = NULL) {
 #'   explanatory variable of a given construct on the remaining explanatory 
 #'   variables of that construct.
 #'   
-#'   If the weightning approach is not `"PLS-PM"` or for none of the constructs Mode B is used,
+#'   If the weighting approach is not `"PLS-PM"` or for none of the constructs Mode B is used,
 #'   the function silently returns `NA`.
 #'   
 #' @inheritParams csem_arguments
@@ -952,7 +952,7 @@ calculateVIFModeB <- function(.object = NULL) {
   modesB <- modes[modes == "modeB"] 
   
   # Only compute if 1. PLS-PM is the weight approach, 2. at least
-  # one construct has outer weightning scheme Mode B 
+  # one construct has outer weighting scheme Mode B 
   if (.object$Information$Arguments$.approach_weights == "PLS-PM" &&
       length(modesB) > 0) {
     
@@ -1024,7 +1024,7 @@ calculateVIFModeB <- function(.object = NULL) {
 #' @usage doRedundancyAnalysis(.object = NULL)
 #'
 #' @return A named numeric vector of correlations. If 
-#'   the weightning approach is not `"PLS-PM"` or non of the PLS outer modes
+#'   the weighting approach is not `"PLS-PM"` or non of the PLS outer modes
 #'   was mode B, the function silently returns `NA`.
 #'   
 #' @inheritParams csem_arguments

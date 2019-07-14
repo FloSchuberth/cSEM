@@ -1,7 +1,7 @@
 #' Calculate composite weights using PLS-PM
 #'
 #' Calculates composite weights using the partial least squares path modeling 
-#' (PLS-PM) algorithm \insertcite{Wold1975}. (TODO)
+#' (PLS-PM) algorithm \insertCite{Wold1975}. (TODO)
 #'
 #' More details here. (TODO)
 #'
