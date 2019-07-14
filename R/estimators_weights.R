@@ -1,6 +1,7 @@
 #' Calculate composite weights using PLS-PM
 #'
-#' Calculates composite weights using the PLS-PM algorithm. (TODO)
+#' Calculates composite weights using the partial least squares path modeling 
+#' (PLS-PM) algorithm \insertcite{Wold1969}. (TODO)
 #'
 #' More details here. (TODO)
 #'
@@ -333,32 +334,31 @@ calculateWeightsKettenring <- function(
 
 #' Calculate weights using GSCA
 #'
-#' Calculates weights of a structural model using the GSCA-procedure. This approach 
-#' is an alternative to PLS in structural equation modeling with composites. 
+#' Calculates weights of a structural model using generalized structure component analysis (GSCA). This approach 
+#' is an alternative to PLS-PM in structural equation modeling with composites. 
 #' The first version of this approach was presented in \insertCite{Hwang2004;textual}{cSEM}. 
 #' Since then, there had been several advancements, such that the latest version 
 #' of GSCA can been found in \insertCite{Hwang2014;textual}{cSEM}. This is also 
 #' the GSCA version the implementation in this package relies on.
 #'
-#' GSCA models latent variables (constructs) as composites, i.e. as an exact linear 
-#' combination of its corresponding indicators. The main idea of GSCA is to 
+#' GSCA models concepts as composites, i.e. as an exact linear 
+#' combination of indicators. The main idea of GSCA is to 
 #' divide the overall structural model into three submodels: the structural model, 
 #' the measurement model and the weighted relation model. These sub-models and their
 #' corresponding matrices are provided by the `.csem_model` argument.
 #' 
 #' Weights as well as structural coefficients and loadings are estimated with the 
-#' Alternating Least Squares Algorithm.
+#' Alternating Least Squares (ALS) algorithm.
 #' This algorithm consists of two main steps. In the first step, structural coefficients
-#' and loadings are updated for fixed weights. Then, in the second step, weights
-#' are updated keeping the other parameters constant. Doing this, the value of a 
-#' global optimization decreases.
+#' and loadings are updated for fixed weights. Subsequently, in the second step, weights
+#' are updated keeping the other parameters constant. In doing so, the sum squared residuals 
+#' of all equations is minimized.
 #' 
 #' These two steps are iterated until convergence is reached or the prescribed 
 #' maximum number of iteration steps, '.iter_max', was carried out. In their example
 #' in \insertCite{Hwang2014;textual}{cSEM}, p. 75, the authors set '.iter_max' 
-#' equal to 100, but this is an arbitrary choice. The user might try several values
-#' for '.iter_max' and eventually increase its value if convergence happened previously
-#' due to reaching the maximum number of steps (indicated by a `Conv_status` equal 
+#' equal to 100, but this is an arbitrary choice. The user might increase the maximum number of iterations
+#' (.iter_max) if convergence could not been achieved (indicated by a `Conv_status` equal 
 #' to `FALSE`). 
 #' 
 #' Several convergence criterion are possible, all consisting in calculating some
