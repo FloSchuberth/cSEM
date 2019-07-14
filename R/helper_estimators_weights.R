@@ -1,7 +1,7 @@
 #' Internal: Calculate the inner weights for PLS-PM
 #'
 #' PLS-PM forms "inner" composites as a weighted sum of its *I* related composites.
-#' These inner weights are obtained using one of the following schemes \inserCite{Lohmoeller1989}:
+#' These inner weights are obtained using one of the following schemes \insertCite{Lohmoeller1989}{cSEM}:
 #' \describe{
 #'   \item{`centroid`}{According to the centroid weighting scheme each inner weight used
 #'     to form composite *j* is either 1 if the correlation between composite *j* and 

@@ -44,6 +44,8 @@ Defaults to "\emph{none}".}
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
 
+\item{.approach_se}{Chraracter string. Approach used to determined the SEs. Defaults to \code{NULL}.}
+
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
@@ -161,7 +163,7 @@ If the algorithm exceeds the specified number, weights of iteration step
 \item{.matrices}{A list of at least two matrices.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list.}
+or a \link{cSEMModel} list. Defaults to \code{NULL}.}
 
 \item{.model_implied}{Logical. Should the RMS_theta be computed using the
 model-implied construct correlation matrix (\code{TRUE})or the construct correlation matrix

@@ -42,7 +42,7 @@ of the data provided are: "logical", "numeric" ("double" or "integer"),
 or a mix of several types.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list.}
+or a \link{cSEMModel} list. Defaults to \code{NULL}.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
 second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".

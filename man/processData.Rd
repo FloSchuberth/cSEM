@@ -18,7 +18,7 @@ of the data provided are: "logical", "numeric" ("double" or "integer"),
 or a mix of several types.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list.}
+or a \link{cSEMModel} list. Defaults to \code{NULL}.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent constructs of the structural

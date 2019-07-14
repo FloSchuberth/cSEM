@@ -8,6 +8,7 @@ testOMF(
  .object                = args_default()$.object, 
  .alpha                 = args_default()$.alpha, 
  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
+ .iter_max              = 10000
  .R                     = args_default()$.R, 
  .saturated             = args_default()$.saturated,
  .seed                  = args_default()$.seed,
@@ -28,6 +29,11 @@ all results are returned even if they are inadmissible (i.e.
 number of results returned = .R). For "\emph{replace}" resampling continues until
 there are exactly .R admissible solutions.
 Defaults to "\emph{drop}".}
+
+\item{.iter_max}{Integer. The maximum number of iterations allowed.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
+If the algorithm exceeds the specified number, weights of iteration step
+\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
@@ -52,11 +58,13 @@ what constitues and inadmissible run.}
 }
 }
 \description{
-Test the overall model fit.
-}
-\details{
-Based on \insertCite{Beran1985;textual}{cSEM}. See also
-\insertCite{Dijkstra2015;textual}{cSEM}.
+Bootstrap-based test for overall model fit. It tests the null hypothesis that the
+population indicator correlation matrix equals the population model-implied
+correlation matirx. The geodesic distance, the suqared Euclidean distance between the
+sample indicator correlation matrix and the estimated model-implied correlation matrix
+and the SRMR serve as test statistic. The reference distribution is obtained by
+bootstrap \insertCite{Beran1985;textual}{cSEM}. See also
+\insertCite{Dijkstra2015;textual}{cSEM} who suggested it in the context of PLS-PM.
 After 10000 iterations it stops automatically.
 }
 \examples{

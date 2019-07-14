@@ -2,7 +2,7 @@
 % Please edit documentation in R/postestimate_test_MGD.R
 \name{testMGD}
 \alias{testMGD}
-\title{Tests for multiple groups.}
+\title{Tests for multi-group comparison.}
 \usage{
 testMGD(
  .object                = args_default()$.object,
@@ -80,7 +80,7 @@ This function performs several permutation tests, i.e., the reference distributi
 of the test statistic is obtained by permutation.
 }
 \details{
-The following test are implemented:
+The following tests are implemented:
 \describe{
 \item{Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
 The model-implied variance-covariance matrix (either indicator
@@ -104,7 +104,8 @@ adjustments are available via \code{.approach_p_adjust}. See
 \item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
 \insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
-between two groups. If more than two groups are tested it is recommended
+between two groups. If more than two groups are tested the parameter is compared
+between all pairs of groups. In this case, it is recommended
 to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
 done by p-value). If several parameters are tested simultaneously, correction
 is by group and number of parameters. By default

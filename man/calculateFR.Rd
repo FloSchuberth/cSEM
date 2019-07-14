@@ -16,7 +16,7 @@ A named scaler, the test statistic of the ANOVA F-test
 }
 \description{
 Calculate the ANOVA F-test statistic suggested by
-\insertCite{Sarstedt2011;textual}{cSEM}.
+\insertCite{Sarstedt2011;textual}{cSEM} in the OTG testing procedure.
 }
 \references{
 \insertAllCited{}

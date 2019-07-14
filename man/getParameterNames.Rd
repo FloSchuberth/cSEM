@@ -5,8 +5,8 @@
 \title{Internal: Parameter names}
 \usage{
 getParameterNames(
-  .object = NULL, 
-  .model  = NULL
+           .object  = args_default()$.object,
+           .model   = args_default()$.model
   )
 }
 \arguments{

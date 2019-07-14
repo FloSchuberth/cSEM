@@ -7,6 +7,7 @@
 estimatePath(
  .approach_nl    = args_default()$.approach_nl,
  .approach_paths = args_default()$.approach_paths,
+ .approach_se    = args_default()$.approach_se,
  .csem_model     = args_default()$.csem_model,
  .H              = args_default()$.H,
  .normality      = args_default()$.normality,
@@ -22,6 +23,8 @@ Defaults to "\emph{sequential}".}
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
+
+\item{.approach_se}{Chraracter string. Approach used to determined the SEs. Defaults to \code{NULL}.}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 

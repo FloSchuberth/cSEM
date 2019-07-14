@@ -36,6 +36,7 @@
 #' @param .approach_paths Character string. Approach used to estimate the
 #'   structural coefficients. One of: "*OLS*", "*2SLS*", or "*3SLS*" (not yet implemented).
 #'   Defaults to "*OLS*".
+#' @param .approach_se Chraracter string. Approach used to determined the SEs. Defaults to `NULL`. 
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
@@ -353,6 +354,7 @@ args_default <- function(.choices = FALSE) {
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS", "3SLS"),
+    .approach_se             = NULL,
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,

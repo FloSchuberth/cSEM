@@ -196,7 +196,7 @@ calculateConstructVCV <- function(
 #' 
 #' If `"none"` the method depends on the type of column of `.X_cleaned`:
 #' \describe{
-#'   \item{`Numeric-numeric`}{Bravais-Pearson product-moment correlation implemented via `stats::cor()``}
+#'   \item{`Numeric-numeric`}{Bravais-Pearson product-moment correlation implemented via `stats::cor()`}
 #'   \item{`Numeric-factor`}{Polyserial correlation \insertCite{Drasgow1988}{cSEM} implemented via `polycor::hetcor()`. 
 #'   See `?polycor::hetcor` for details.}
 #'   \item{`Factor-factor`}{Polychoric correlation \insertCite{Drasgow1988}{cSEM} implemented via `polycor::hetcor()`.

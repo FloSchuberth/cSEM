@@ -183,7 +183,7 @@ assess <- function(
   .only_common_factors = TRUE, 
   .quality_criterion   = args_default()$.quality_criterion,
   ...
-  ){
+){
   UseMethod("assess")
 }
 
@@ -194,7 +194,7 @@ assess.cSEMResults_default <- function(
   .only_common_factors = TRUE, 
   .quality_criterion   = args_default()$.quality_criterion,
   ...
-  ){
+){
   
   ## Check arguments
   match.arg(.quality_criterion, 
@@ -209,14 +209,14 @@ assess.cSEMResults_default <- function(
     out[["AVE"]] <- calculateAVE(
       .object, 
       .only_common_factors = .only_common_factors
-      )
+    )
   }
   if(any(.quality_criterion %in% c("all", "rho_C"))) {
     # RhoC
     out[["RhoC"]]  <- calculateRhoC(
       .object, 
       .only_common_factors = .only_common_factors
-      )
+    )
   }
   if(any(.quality_criterion %in% c("all", "rho_C_weighted"))) {
     # RhoC weighted
@@ -224,7 +224,7 @@ assess.cSEMResults_default <- function(
       .object, 
       .only_common_factors = .only_common_factors, 
       .weighted = TRUE
-      )
+    )
   }
   if(any(.quality_criterion %in% c("all", "cronbachs_alpha"))) {
     # Cronbach's alpha aka RhoT
@@ -232,7 +232,7 @@ assess.cSEMResults_default <- function(
       .object, 
       .only_common_factors = .only_common_factors, 
       ...
-      )
+    )
   }
   if(any(.quality_criterion %in% c("all", "cronbachs_alpha_weighted"))) {
     # Cronbach's alpha weighted aka RhoT weighted
@@ -241,7 +241,7 @@ assess.cSEMResults_default <- function(
       .only_common_factors = .only_common_factors, 
       .weighted = TRUE,
       ...
-      )
+    )
   }
   if(any(.quality_criterion %in% c("all", "dg"))) {
     # dG
@@ -308,22 +308,22 @@ assess.cSEMResults_default <- function(
                                       .only_common_factors = .only_common_factors)
       out[["Fornell-Larcker"]] <- FL_matrix
     }
-
-
+    
+    
   }
   if(any(.quality_criterion %in% c("all", "gof"))) {
     # GoF
     out[["GoF"]]   <- calculateGoF(
       .object, 
       .only_common_factors = .only_common_factors
-      )
+    )
   }
   if(any(.quality_criterion %in% c("all", "htmt"))) {
     # HTMT 
     out[["HTMT"]]  <- calculateHTMT(
       .object, 
       .only_common_factors = .only_common_factors
-      )
+    )
   }
   if(any(.quality_criterion %in% c("all", "r2"))) {
     # R2
@@ -343,7 +343,7 @@ assess.cSEMResults_default <- function(
       .object, 
       .only_common_factors = .only_common_factors, 
       ...
-      )
+    )
   }
   if(any(.quality_criterion %in% c("all", "rho_C_weighted"))) {
     # RhoC weighted
@@ -352,7 +352,7 @@ assess.cSEMResults_default <- function(
       .only_common_factors = .only_common_factors, 
       .weighted = TRUE, 
       ...
-      )
+    )
   }
   if(any(.quality_criterion %in% c("all", "vif"))) {
     # VIF
@@ -374,20 +374,20 @@ assess.cSEMResults_multi <- function(
   .only_common_factors = TRUE,
   .quality_criterion   = args_default()$.quality_criterion,
   ...
-  ){
+){
   
   if(inherits(.object, "cSEMResults_2ndorder")) {
     lapply(.object, assess.cSEMResults_2ndorder, 
            .only_common_factors = .only_common_factors, 
            .quality_criterion = .quality_criterion, 
            ...
-           )
+    )
   } else {
     lapply(.object, assess.cSEMResults_default, 
            .only_common_factors = .only_common_factors,
            .quality_criterion = .quality_criterion,
            ...
-           )
+    )
   }
 }
 

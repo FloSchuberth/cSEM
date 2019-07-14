@@ -36,10 +36,9 @@ This is only checked for linear models.
 Verify admissibility of the estimated quantities for a given model.
 }
 \details{
-Results based on an estimated model exhibiting one of the
-following defects are deemed inadmissible: non-convergence, loadings and/or
+The following is declared as inadmissible : non-convergence, loadings and/or
 (congeneric) reliabilities larger than 1, a construct VCV and/or a
-model-implied VCV matrix that is not positive (semi-)definite.
+model-implied VCV matrix that is not positive semi-definite.
 
 For models containing second order constructs estimation is by default done
 in a two/three stage procedure. In this case both the first and the second/third

@@ -6,6 +6,7 @@
 #' @usage estimatePath(
 #'  .approach_nl    = args_default()$.approach_nl,
 #'  .approach_paths = args_default()$.approach_paths,
+#'  .approach_se    = args_default()$.approach_se,
 #'  .csem_model     = args_default()$.csem_model,
 #'  .H              = args_default()$.H,
 #'  .normality      = args_default()$.normality,
@@ -22,6 +23,7 @@
 estimatePath <- function(
   .approach_nl    = args_default()$.approach_nl,
   .approach_paths = args_default()$.approach_paths,
+  .approach_se    = args_default()$.approach_se,
   .csem_model     = args_default()$.csem_model,
   .H              = args_default()$.H,
   .normality      = args_default()$.normality,
@@ -99,6 +101,28 @@ estimatePath <- function(
         } else {
           NA
         } 
+        
+        if(!is.null(.approach_se)){
+          
+          if(.approach_se == 'closed'){
+            # This requires that we know how the composites scores are obtained. 
+            # Liikely we have to give that over to this function.
+            # Have a look at he Devlieger paper to get the SEs
+            
+            
+            
+          }
+          
+          if(.approach_se == 'closed_OLS'){
+            # calculate the OLs SEs
+            # we require the sample size. Likely we need new argument for the dataset. or n
+            sig_square = 0 /(0-nrow(coef))
+            
+            sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]))*
+              sig_square)
+          }
+          
+        }
       } # END OLS
       
       

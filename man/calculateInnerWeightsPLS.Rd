@@ -32,7 +32,7 @@ The (J x J) matrix \code{E} of inner weights.
 }
 \description{
 PLS-PM forms "inner" composites as a weighted sum of its \emph{I} related composites.
-These inner weights are obtained using one of the following schemes \inserCite{Lohmoeller1989}:
+These inner weights are obtained using one of the following schemes \insertCite{Lohmoeller1989}{cSEM}:
 \describe{
 \item{\code{centroid}}{According to the centroid weighting scheme each inner weight used
 to form composite \emph{j} is either 1 if the correlation between composite \emph{j} and

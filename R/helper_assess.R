@@ -833,7 +833,7 @@ calculateSRMR <- function(
 
 #' Internal: Calculate effect size
 #'
-#' Calculate the effect size for regression analysis \insertCite{Cohen1992}.
+#' Calculate the effect size for regression analysis \insertCite{Cohen1992}{cSEM}.
 #'
 #' @usage calculateEffectSize(.object = NULL)
 #'
