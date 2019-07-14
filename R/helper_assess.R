@@ -6,10 +6,10 @@
 #'
 #' The AVE is inherently tied to the common factor model. It is therefore 
 #' unclear how to meaningfully interpret AVE results in the context of a 
-#' composite model. It is possible to report the AVE for concepts
-#' modeled as composites by setting `.only_common_factors = FALSE`, 
-#' however, we explicitly warn to interpret results with caution, 
-#' as they may not even have a conceptual meaning.
+#' composite model. It is possible to report the AVE for composites by
+#'  setting `.only_common_factors = FALSE`, 
+#' however, result should be interpreted with caution 
+#' as they may not have a conceptual meaning.
 #' 
 #' The function is only applicable to objects inheriting class `cSEMResults_default`.
 #' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
@@ -60,7 +60,7 @@ calculateAVE <- function(
   
   names(AVEs) <- c_names
   
-  # By default AVE's for constructs modeled as composites are not returned
+  # By default AVE's for composites are not returned
   if(.only_common_factors){
     con_types <-.object$Information$Model$construct_type
     names_cf  <- names(con_types[con_types == "Common factor"])
@@ -175,16 +175,17 @@ calculateDf <- function(
 #'
 #' Calculate the Goodness of Fit (GoF) proposed by \insertCite{Tenenhaus2004;textual}{cSEM}. 
 #' Note that, contrary to what the name suggests, the GoF is **not** a 
-#' measure of model fit in a Chi-square fit test sense. See e.g. \insertCite{Henseler2012a;textual}{cSEM}
+#' measure of model fit in the sense of SEM. See e.g. \insertCite{Henseler2012a;textual}{cSEM}
 #' for a discussion.
 #'
-#' The GoF is inherently tied to the common factor model. It is therefore 
-#' unclear how to meaningfully interpret the GoF in the context of a 
-#' composite model. Hence, only constructs modeled as common factors are 
-#' considered. It is possible to force computation of the GoF including constructs
-#' modeled as composites as well by setting `.only_common_factors = FALSE`,
-#' however, we explicitly discourage to do so as the result may not even 
-#' have a conceptual meaning.
+
+# The GoF is inherently tied to the common factor model. It is therefore 
+# unclear how to meaningfully interpret the GoF in the context of a 
+# composite model. Hence, only constructs modeled as common factors are 
+# considered. It is possible to force computation of the GoF including constructs
+# modeled as composites as well by setting `.only_common_factors = FALSE`,
+# however, we explicitly discourage to do so as the result may not even 
+# have a conceptual meaning.
 #' 
 #' The function is only applicable to objects inheriting class `cSEMResults_default`.
 #' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
@@ -250,8 +251,8 @@ calculateGoF <- function(
 #' for details.
 #' 
 #' Since reliability is defined with respect to a classical true score measurement
-#' model only constructs modeled as common factors are considered by default.
-#' For constructs modeled as composites reliability may be estimated by setting
+#' model only concepts modeled as common factors are considered by default.
+#' For concepts modeled as composites reliability may be estimated by setting
 #' `.only_common_factors = FALSE`, however, it is unclear how to
 #' interpret reliability in this case.
 #' 
@@ -260,7 +261,7 @@ calculateGoF <- function(
 #' uses the weights of the weight approach used to obtain `.object` use `.weighted = TRUE` 
 #' instead.
 #' 
-#' For the the tau-equivalent reliability (rhoT or Cronbach alpha) a closed-form 
+#' For the the tau-equivalent reliability (rhoT or Cronbach's alpha) a closed-form 
 #' confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 #' `.closed_form_ci = TRUE` (default is `FALSE`). If `.alpha` is a vector
 #' several CI's are returned.
@@ -463,6 +464,9 @@ calculateRhoT <- function(
 #'
 #' Compute the heterotrait-monotrait ratio of correlations (HTMT) based on 
 #' \insertCite{Henseler2015;textual}{cSEM}.
+#'
+#' Similarly to the Cronbach's alpha, the HTMT is a consistent estimator for the
+#' construct correlations in case of tau equivalent measurement models. 
 #'
 #' The HTMT is used to assess discriminant validity.
 #' 
@@ -761,7 +765,7 @@ calculateRMSEA <- function(.object) {
   sqrt(F0 / df) # RMSEA
 }
 
-#' @describeIn fit_measures The RMS theta.
+#' @describeIn fit_measures The root mean squared residual covariance matrix of the outer model residuals (RMS theta).
 
 calculateRMSTheta <- function(
   .object, 
@@ -829,7 +833,7 @@ calculateSRMR <- function(
 
 #' Internal: Calculate effect size
 #'
-#' Calculate the effect size.
+#' Calculate the effect size for regression analysis \insertcite{Cohen1992}.
 #'
 #' @usage calculateEffectSize(.object = NULL)
 #'
@@ -906,12 +910,11 @@ calculateEffectSize <- function(.object = NULL) {
 
 
 
-#' Internal: Calculate VIF values for PLS Mode B
+#' Internal: Calculate variance inflation factors (VIF) for weights obtained by PLS Mode B
 #'
-#' Calculate the variance inflation factor (VIF) for indicators of constructs whose
-#' outer PLS estimation scheme is Mode B.
+#' Calculate the variance inflation factor (VIF) for weights obtained by PLS-PM's Mode B.
 #'
-#' Weights obtained using Mode B often suffer from multicollinearity. VIF values
+#' Weight estimates obtained by Mode B can suffer from multicollinearity. VIF values
 #' are commonly used to assess the severity of multicollinearity. 
 #' 
 #' The function is only applicable to objects of class `cSEMResults_default`.
@@ -920,12 +923,12 @@ calculateEffectSize <- function(.object = NULL) {
 #' @usage calculateVIFModeB(.object = NULL)
 #'
 #' @return A named list of vectors containing the VIF values. Each list name
-#'   is the name of a construct whose weights were obtained using Mode B. 
+#'   is the name of a construct whose weights were obtained by Mode B. 
 #'   The vectors contain the VIF values obtained from a regression of each 
 #'   explanatory variable of a given construct on the remaining explanatory 
 #'   variables of that construct.
 #'   
-#'   If the weightning approach was not `"PLS-PM"` or non of the constructs had Mode B,
+#'   If the weightning approach is not `"PLS-PM"` or for none of the constructs Mode B is used,
 #'   the function silently returns `NA`.
 #'   
 #' @inheritParams csem_arguments
