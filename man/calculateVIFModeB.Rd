@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_assess.R
 \name{calculateVIFModeB}
 \alias{calculateVIFModeB}
-\title{Internal: Calculate VIF values for PLS Mode B}
+\title{Internal: Calculate variance inflation factors (VIF) for weights obtained by PLS Mode B}
 \usage{
 calculateVIFModeB(.object = NULL)
 }
@@ -11,20 +11,19 @@ calculateVIFModeB(.object = NULL)
 }
 \value{
 A named list of vectors containing the VIF values. Each list name
-is the name of a construct whose weights were obtained using Mode B.
+is the name of a construct whose weights were obtained by Mode B.
 The vectors contain the VIF values obtained from a regression of each
 explanatory variable of a given construct on the remaining explanatory
 variables of that construct.
 
-If the weightning approach was not \code{"PLS-PM"} or non of the constructs had Mode B,
+If the weightning approach is not \code{"PLS-PM"} or for none of the constructs Mode B is used,
 the function silently returns \code{NA}.
 }
 \description{
-Calculate the variance inflation factor (VIF) for indicators of constructs whose
-outer PLS estimation scheme is Mode B.
+Calculate the variance inflation factor (VIF) for weights obtained by PLS-PM's Mode B.
 }
 \details{
-Weights obtained using Mode B often suffer from multicollinearity. VIF values
+Weight estimates obtained by Mode B can suffer from multicollinearity. VIF values
 are commonly used to assess the severity of multicollinearity.
 
 The function is only applicable to objects of class \code{cSEMResults_default}.

@@ -66,7 +66,7 @@ For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} us
 
 \item \code{calculateRMSEA}: The root mean square error of approximation (RMSEA).
 
-\item \code{calculateRMSTheta}: The RMS theta.
+\item \code{calculateRMSTheta}: The root mean squared residual covariance matrix of the outer model residuals (RMS theta).
 
 \item \code{calculateSRMR}: The standardized root mean square residual (SRMR).
 }}

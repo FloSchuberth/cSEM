@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_assess.R
 \name{doFloodlightAnalysis}
 \alias{doFloodlightAnalysis}
-\title{Floodlight analysis}
+\title{Do a floodlight analysis}
 \usage{
 doFloodlightAnalysis(
  .object        = NULL,

@@ -43,6 +43,6 @@ A named list containing the estimated structural coefficients, the
 R2, the adjusted R2, and the VIF's for each regression.
 }
 \description{
-Estimates the coefficients of the structural model (nonlinear and linear) using
-OLS or 2SLS.
+Estimates the coefficients of the structural model (non-linear and linear) using
+OLS, 2SLS, or 3SLS. The two latters currently works only for linear models.
 }

@@ -23,18 +23,10 @@ A single numeric value.
 \description{
 Calculate the Goodness of Fit (GoF) proposed by \insertCite{Tenenhaus2004;textual}{cSEM}.
 Note that, contrary to what the name suggests, the GoF is \strong{not} a
-measure of model fit in a Chi-square fit test sense. See e.g. \insertCite{Henseler2012a;textual}{cSEM}
+measure of model fit in the sense of SEM. See e.g. \insertCite{Henseler2012a;textual}{cSEM}
 for a discussion.
 }
 \details{
-The GoF is inherently tied to the common factor model. It is therefore
-unclear how to meaningfully interpret the GoF in the context of a
-composite model. Hence, only constructs modeled as common factors are
-considered. It is possible to force computation of the GoF including constructs
-modeled as composites as well by setting \code{.only_common_factors = FALSE},
-however, we explicitly discourage to do so as the result may not even
-have a conceptual meaning.
-
 The function is only applicable to objects inheriting class \code{cSEMResults_default}.
 For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
 }

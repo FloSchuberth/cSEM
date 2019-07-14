@@ -993,12 +993,12 @@ calculateVIFModeB <- function(.object = NULL) {
 
 
 
-#' Internal: Calculate a redundancy analysis
+#' Internal: Do a redundancy analysis
 #'
-#' Calculate/do a redundancy analysis (RA) as proposed by Hair (2014) with
-#' reference to Chin (1998).
+#' Calculate/do a redundancy analysis (RA) as proposed by \insertCite{Hair2016;textual}{cSEM}
+#' with reference to \insertCite{Chin1998;textual}{cSEM}.
 #'
-#' According to Hair (2014), redundancy analysis (RA)
+#' According to Hair \insertCite{Hair2016;textual}{cSEM}, redundancy analysis (RA)
 #' is the process of regressing the scores of a reflectivly measured construct
 #' on the scores of a formatively measured construct in order to gain empirical
 #' evidence for convergent validity of a formatively measured construct. 
@@ -1021,9 +1021,9 @@ calculateVIFModeB <- function(.object = NULL) {
 #' 
 #' The function is only applicable to objects of class `cSEMResults_default`.
 #' 
-#' @usage calculateRA(.object = NULL)
+#' @usage doRedundancyAnalysis(.object = NULL)
 #'
-#' @return A named numeric vector of correlations obtained by the RA. If 
+#' @return A named numeric vector of correlations. If 
 #'   the weightning approach is not `"PLS-PM"` or non of the PLS outer modes
 #'   was mode B, the function silently returns `NA`.
 #'   
@@ -1035,7 +1035,7 @@ calculateVIFModeB <- function(.object = NULL) {
 #' \insertAllCited{}
 #' @keywords internal
 
-calculateRA <- function(.object = NULL) {
+doRedundancyAnalysis <- function(.object = NULL) {
   
   ## Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
@@ -1083,7 +1083,7 @@ calculateRA <- function(.object = NULL) {
   return(beta)
 }
 
-#' Floodlight analysis
+#' Do a floodlight analysis
 #'
 #' Calculate the the effect of an independent variable (z) on a dependent variable
 #' (y) conditional on the values of a (continous) moderator variable (x) 

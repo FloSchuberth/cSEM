@@ -38,7 +38,7 @@ leave-one-out cross-validation samples. Defaults to \code{10}.}
 \code{.data} used to split the data into groups.
 Defaults to \code{NULL}.}
 
-\item{.R}{Integer. The number of bootstrap replications, permutation runs
+\item{.R}{Integer. The number of bootstrap runs, permutation runs
 or cross-validation repetitions to use. Defaults to \code{499}.}
 
 \item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
@@ -49,12 +49,12 @@ The structure of the output depends on the type of input and the
 resampling method:
 \describe{
 \item{Bootstrap}{If a \code{matrix} or \code{data.frame} without grouping variable
-is provided (\code{.id = NULL}), the result is a list of length \code{.R}
+is provided (i.e., \code{.id = NULL}), the result is a list of length \code{.R}
 (default \code{499}). Each element of that list is a bootstrap (re)sample.
 If a grouping variable is specified or a list of data is provided
 (where each list element is assumed to contain data for one group),
 resampling is done by group. Hence,
-the result is a list of length equal to the number of group levels
+the result is a list of length equal to the number of groups
 with each list element containing \code{.R} bootstrap samples based on the
 \code{N_g} observations of group \code{g}.}
 \item{Jackknife}{If a \code{matrix} or \code{data.frame} without grouping variable
@@ -70,7 +70,7 @@ with each list element containing \code{N} jackknife samples based on the
 \item{Permutation}{If a \code{matrix} or \code{data.frame} without grouping variable
 is provided an error is returned as permutation will simply reorder the observations.
 If a grouping variable is specified or a list of data is provided
-(where each list element is assumed to contain data for one group),
+(where each list element is assumed to contain data of one group),
 group membership is permutated. Hence, the result is a list of length \code{.R}
 where each element of that list is a permutation (re)sample.}
 \item{Cross-validation}{If a \code{matrix} or \code{data.frame} without grouping variable
@@ -80,15 +80,15 @@ used as test and training datasets.
 If a grouping variable is specified or a list of data is provided
 (where each list element is assumed to contain data for one group),
 cross-validation is repeated \code{.R} times for each group. Hence,
-the result is a list of length equal to the number of group levels,
-each containing \code{.R} list element (the repetitions) which in turn contain
+the result is a list of length equal to the number of groups,
+each containing \code{.R} list elements (the repetitions) which in turn contain
 the \code{k} splits/folds.
 }
 }
 }
 \description{
 Resample data from a dataset using common resampling methods.
-For bootstrap or jackknife resampling, package users usually dont need to
+For bootstrap or jackknife resampling, package users usually do not need to
 call this function but directly use \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} instead.
 }
 \details{
@@ -98,7 +98,7 @@ via the \code{.resample_method} argument and returns a list of resamples.
 Currently, \code{bootstrap}, \code{jackknife}, \code{permutation}, and  \code{cross-validation}
 (both leave-one-out (LOOCV) and k-fold cross-validation) are implemented.
 
-The user may provide the dataset to resample from explicitly via the \code{.data}
+The user may provide the dataset to resample from can be either explicitly via the \code{.data}
 argument or implicitly by providing a \link{cSEMResults} objects to \code{.object}
 in which case the original data used in the call that created the
 \link{cSEMResults} object is used for resampling.
@@ -114,15 +114,15 @@ as resampling will be repeated for each dataset/group.
 
 To split data provided via the \code{.data} argument into groups, the column name or
 the column index of the column containing the group levels to split the data
-by must be given to \code{.id}. If data that contains grouping is taken from
-a \link{cSEMResults} object, \code{.id} is taken from within the object. Hence,
+must be given to \code{.id}. If data that contains grouping is taken from
+a \link{cSEMResults} object, \code{.id} is taken from the object information. Hence,
 providing  \code{.id} is redundant in this case and therefore ignored.
 
 The number of bootstrap or permutation runs as well as the number of
 cross-validation repetitions is given by \code{.R}. The default is
 \code{499} but should be increased in real applications. See e.g.,
 \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations concerning
-the bootstrap. For jackknife \code{.R} is ignored.
+the bootstrap. For jackknife \code{.R} is ignored as it is based on the N leave-one-out datasets.
 
 Choosing \code{resample_method = "permutation"} for ungrouped data causes an error
 as permutation will simply reorder the observations which is usually not

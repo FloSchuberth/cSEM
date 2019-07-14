@@ -474,4 +474,26 @@ specification of an individual wage equation.},
   publisher = {American Psychological Association},
 }
 
+@InCollection{Wold1975,
+  author    = {Wold, Herman},
+  title     = {Path models with latent variables: The {NIPALS} approach},
+  booktitle = {Quantitative Sociology},
+  publisher = {Academic Press},
+  year      = {1975},
+  editor    = {Blalock, H.M. and Aganbegian, A. and Borodkin, F.M. and Boudon, Raymond and Capecchi, Vittorio},
+  series    = {International Perspectives on Mathematical and Statistical Modeling},
+  chapter   = {11},
+  pages     = {307--357},
+  address   = {New York},
+  owner     = {s343185},
+  timestamp = {2015.09.07},
+}
+
+@Book{Hair2016,
+  title     = {A Primer on Partial Least Squares Structural Equation Modeling ({PLS-SEM})},
+  publisher = {Sage publications},
+  year      = {2016},
+  author    = {Hair, Joseph F and Hult, G Tomas M and Ringle, Christian and Sarstedt, Marko},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}

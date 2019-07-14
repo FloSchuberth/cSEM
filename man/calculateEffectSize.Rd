@@ -15,7 +15,7 @@ number of columns is equal to the total number of right-hand side variables
 of these equations.
 }
 \description{
-Calculate the effect size.
+Calculate the effect size for regression analysis \insertcite{Cohen1992}.
 }
 \seealso{
 \link{assess}, \link{csem}, \link{cSEMResults}

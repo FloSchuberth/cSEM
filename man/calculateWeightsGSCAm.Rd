@@ -57,7 +57,7 @@ an error.
 The GSCA_M procedure is an alternative approach to PLSc in structural equation
 modeling with composites where indicators (or/and constructs) are observed with
 errors. In this case parameter estimators, especially loadings, might be biased,
-when using GSCA or PLS for estimation.
+when using GSCA or PLS-PM for estimation.
 However, GSCA_M provides a way to estimate the parameters consistently also in
 this situation. The term 'GSCA_M' stands for 'GSCA with measurement errors incorporated'.
 This approach was first presented in \insertCite{Hwang2017;textual}{cSEM}.

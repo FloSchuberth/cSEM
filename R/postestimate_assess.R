@@ -334,7 +334,7 @@ assess.cSEMResults_default <- function(
   }
   if(any(.quality_criterion %in% c("all", "ra"))) {
     # Redundancy analysis (RA)
-    out[["RA"]] <- calculateRA(.object)
+    out[["RA"]] <- doRedundancyAnalysis(.object)
   }
   if(any(.quality_criterion %in% c("all", "rho_T"))) {
     # RhoT

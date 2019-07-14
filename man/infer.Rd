@@ -86,7 +86,7 @@ resampling from each resample is only required for the studentized confidence
 intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 }
 \description{
-Calculate common inferencial quantities (e.g. estimated standard error, estimates bias,
+Calculate common inferencial quantities (e.g., estimated standard error, estimated bias,
 several confidence intervals) based on a \code{cSEMResults_resampled} object as obtained
 by calling \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
 or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}. Currently, the following quantities are

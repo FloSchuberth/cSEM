@@ -29,10 +29,10 @@ Calculate the average variance extracted (AVE) as proposed by
 \details{
 The AVE is inherently tied to the common factor model. It is therefore
 unclear how to meaningfully interpret AVE results in the context of a
-composite model. It is possible to report the AVE for concepts
-modeled as composites by setting \code{.only_common_factors = FALSE},
-however, we explicitly warn to interpret results with caution,
-as they may not even have a conceptual meaning.
+composite model. It is possible to report the AVE for composites by
+setting \code{.only_common_factors = FALSE},
+however, result should be interpreted with caution
+as they may not have a conceptual meaning.
 
 The function is only applicable to objects inheriting class \code{cSEMResults_default}.
 For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
