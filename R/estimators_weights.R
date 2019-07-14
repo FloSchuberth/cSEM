@@ -358,7 +358,7 @@ calculateWeightsKettenring <- function(
 #' maximum number of iteration steps, '.iter_max', was carried out. In their example
 #' in \insertCite{Hwang2014;textual}{cSEM}, p. 75, the authors set '.iter_max' 
 #' equal to 100, but this is an arbitrary choice. The user might increase the maximum number of iterations
-#' (.iter_max) if convergence could not been achieved (indicated by a `Conv_status` equal 
+#' (.iter_max) if the algorithm has not converged (indicated by a `Conv_status` equal 
 #' to `FALSE`). 
 #' 
 #' Several convergence criterion are possible, all consisting in calculating some
@@ -371,18 +371,18 @@ calculateWeightsKettenring <- function(
 #' , p. 75. Nevertheless, the argument `.tolerance` can take any other value as well.
 #' 
 #' The ALS algorithm as outlined in \insertCite{Hwang2014;textual}{cSEM} essentially 
-#' consists of regressions of endogenous constructs (resp. their proxies) on 
-#' exogenous constructs for the structural model coefficients and in regressions 
-#' of all common factor constructs on their related indicators for the loadings 
-#' (steps 1a and 1b). If a construct is not of common factor type but a pure composite
+#' consists of regressions of endogenous constructs on 
+#' exogenous constructs for the structural model coefficients and of regressions 
+#' of all constructs on their related indicators for the loadings 
+#' (steps 1a and 1b). If a construct is not a common factor/latent variable,  but a pure composite
 #' the corresponding "construct" loadings do not need to be calculated because the 
 #' constructs are exact linear combinations of their indicators. Instead, "composite" 
 #' loadings are calculated and provided as the estimated loadings. These "composite" 
 #' loadings are the "true" correlations between a construct and indicator. This correlation 
 #' always exists, no matter which is the type of the construct under consideration.
-#' Considering a construct of common factor type, estimated ("construct") loadings 
+#' Considering common factors/latent variables, estimated ("construct") loadings 
 #' are the correlations between indicators and proxies, but not the "true" correlation
-#' between indicator and underlying but unknown construct.
+#' between indicator and the latent variable because of attenuation.
 #' 
 #' In the case that there is at least one construct which is not modeled as a 
 #' common factor but as a pure composite, the user imperatively has to use GSCA 
