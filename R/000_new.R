@@ -4,44 +4,124 @@
 # Empirical Bayes correction for loadings suggested by Dijkstra (2018) can be 
 # extended to other parameter as well .
 # I recommend to extend it to construct correlations instead of the path 
-# coefficients and restimate them as we now the bounds of such correlations
+# coefficients and restimate them as we know the bounds of such correlations
 # However, this requires that we bootstrap the SEs for the construct correlations.
-quasiEmpiricalBayesCorrection <- function(.object,.method=c('median','mean')){
-  # Loadings=.object$Estimates$Loading_estimates
-  # Loadings[1,2]=2
-  # Indmatrix=which(abs(Loadings)>1,arr.ind = F)
 
+## Things to discuss
+# 1. Correction only for one single data set not each bootstrap data set, as this
+#    does not make much sense because we can always set .handle_inadmissibles = "replace"
+# 2. Not clear how to tackle inadmissible results due to not semi-positive 
+#    construct correlation matrix. not semi-positve definite does not mean
+#    that correlations are larger/smaller than 1 /-1...
+# 2. Not clear how to handle reliabilities. 
+#    - if loadings are corrected: reliabilities change --> construct correlations
+#      change --> path coefficients change
+#    - if construct correlations are corrected, path coefficients change but for 
+#      nonlinear models we would need the reliabilities 
+correctInadmissibles <- function(
+  .object = NULL, 
+  .method = c("median","mean")
+  ){
   
-  L=.object$Estimates$Loading_estimates[.object$Information$Model$measurement!=0]
+  .object <- res1
   
+  if(inherits(.object, "cSEMResults_2ndorder")) {
 
+    stop("Not implemented yet")
     
-    sig_hat=apply(.object$Estimates$Estimates_resample$Estimates1$Loading_estimates$Resampled,2,sd)
+  } else {
+    x2 <- .object$Estimates
+    sd <- cSEM:::SdResample(.object$Estimates$Estimates_resample$Estimates1,
+                            .resample_method = "bootstrap") 
+  }
+
+  if(verify(.object)["2"]) {
+    ### Loadings larger than 1 in absolute value
+    L    <- x2$Loading_estimates[.object$Information$Model$measurement != 0]
+    L_sd <- sd$Loading_estimates
     
-    # adjustedLoading=c()
-    if(.method=='median'){
-    for(i in which(abs(L)>1)){
-      A=pnorm((-1-L[i])/sig_hat[i])
-      B=pnorm((1-L[i])/sig_hat[i])
-      # Overwrite the old loadings
-      L[i]=L[i] + sig_hat[i] * qnorm(mean(c(A,B)),0,1)
+    for(i in which(abs(L) > 1)) {
+      A <- pnorm((-1 - L[i]) / L_sd[i])
+      B <- pnorm((1 - L[i]) / L_sd[i]) 
+      
+      ## Replace VCV elements
+      if(.method == "median"){
+        ## Overwrite the old loadings
+        L[i] <- L[i] + L_sd[i] * qnorm(mean(c(A , B)))
+      }
+      
+      if(.method == "mean"){
+        ## Overwrite the old loadings
+        L[i] <- L[i] + L_sd[i] / (B - A) * 
+          (dnorm((-1 - L[i]) / L_sd[i]) - 
+             dnorm((1 - L[i]) / L_sd[i]))
       }
     }
-
-    if(.method=='mean'){
-      for(i in which(abs(L)>1)){
-        A=pnorm((-1-L[i])/sig_hat[i])
-        B=pnorm((1-L[i])/sig_hat[i])
-        # Overwrite the old loadings
-        L[i]=L[i] + sig_hat[i]/(B-A) *( dnorm((-1-L[i])/sig_hat[i],0,1) - dnorm((1-L[i])/sig_hat[i],0,1))
-      }
-     }
+    # Overwrite original construct VCV
+    .object$Estimates$Loading_estimates[.object$Information$Model$measurement != 0] <- L
     
-    # Overwrite the old loadings
-    .object$Estimates$Loading_estimates[.object$Information$Model$measurement!=0]=L
+    # Recompute reliabilities based on the new loadings
+    L  <- .object$Estimates$Loading_estimates
+    W  <- .object$Estimates$Weight_estimates
+    Q2 <- .object$Estimates$Reliabilities
     
-    .object
+    for(j in rownames(L)) {
+      Q2[j] <- c(W[j, ] %*% L[j, ])^2
+    }
+    
+    .object$Estimates$Reliabilities <- Q2
   }
+  
+  if(verify(.object)["3"]) {
+    ### Construct VCV not positive semi-definite (because construct correlations 
+    ### are larger than 1)
+    VCV <- x2$Construct_VCV
+    VCV_sd <- matrix(sd$User_fun, nrow = nrow(VCV), ncol = ncol(VCV),
+                     dimnames = list(rownames(VCV), colnames(VCV)))
+    
+    for(j in rownames(VCV)) {
+      for(i in colnames(VCV)) {
+        if(abs(VCV[j, i]) > 1) {
+          A <- pnorm((-1 - VCV[j, i]) / VCV_sd[j, i])
+          B <- pnorm((1 - VCV[j, i]) / VCV_sd[j, i]) 
+          
+          ## Replace VCV elements
+          if(.method == "median"){
+            ## Overwrite the old loadings
+            VCV[j, i] <- VCV[j, i] + VCV_sd[j, i] * qnorm(mean(c(A , B)))
+          }
+          
+          if(.method == "mean"){
+            ## Overwrite the old loadings
+            VCV[j, i] <- VCV[j, i] + VCV_sd[j, i] / (B - A) * 
+              (dnorm((-1 - VCV[j, i]) / VCV_sd[j, i]) - 
+                 dnorm((1 - VCV[j, i]) / VCV_sd[j, i]))
+          }
+        }
+      }
+    }
+    # Overwrite original construct VCV
+    .object$Estimates$Construct_VCV <- VCV
+    
+    # Reestimate path model
+    P <- .object$Estimates$Construct_VCV
+    
+    path <- cSEM:::estimatePath(
+      .approach_nl    = .object$Information$Arguments$.approach_nl,
+      .approach_paths = .object$Information$Arguments$.approach_paths,
+      .csem_model     = .object$Information$Arguments$.model,
+      .H              = .object$Estimates$Construct_scores,
+      .normality      = .object$Information$Arguments$.normality,
+      .P              = .object$Estimates$Construct_VCV,
+      .Q              = .object$Estimates$Reliabilities # only for nonlinear models
+    )
+    
+    .object$Estimates$Path_estimates <- path
+  }
+  
+  ## Return
+  .object
+}
  
 predict=function(.object, testDataset){
   
