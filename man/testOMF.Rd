@@ -8,7 +8,7 @@ testOMF(
  .object                = args_default()$.object, 
  .alpha                 = args_default()$.alpha, 
  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
- .iter_max              = 10000
+ .iter_max              = 10000,
  .R                     = args_default()$.R, 
  .saturated             = args_default()$.saturated,
  .seed                  = args_default()$.seed,

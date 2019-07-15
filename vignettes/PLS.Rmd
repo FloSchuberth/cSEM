@@ -1,13 +1,12 @@
 ---
-title: "PLS-PM"
-subtitle: "Partial least squares path modeling" 
+title: "Weighting approaches"
 date: "`r Sys.Date()`"
 output:
   prettydoc::html_pretty:
     theme: cayman
     highlight: github
 vignette: >
-  %\VignetteIndexEntry{PLS-PM}
+  %\VignetteIndexEntry{Weighting approaches}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: ../inst/REFERENCES.bib
@@ -16,7 +15,9 @@ WARNING: this document is work in progress.
 
 # Introduction {#introduction}
 
-# Syntax and Options {#usage}
+# Partial Least Squares Path Modeling {#PLSPM}
+
+## Syntax and Options {#usagePLSPM}
 
 ```{r eval=FALSE}
 calculateWeightsPLS(
@@ -39,14 +40,14 @@ calculateWeightsPLS(
 
 :  description for `.arg3`
 
-# Usage & Examples {#examples}
+## Usage & Examples {#examplesPLSPM}
 
-## Example 1 {#example1}
+### Example 1 {#example1PLSPM}
 
-## Example 2 {#example2}
+### Example 2 {#example2PLSPM}
 
-## Example 3 {#example3}
+### Example 3 {#example3PLSPM}
 
-# Methods & Formula {#methods}
+## Methods & Formula {#methodsPLSPM}
 
 # References
