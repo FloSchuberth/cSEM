@@ -13,6 +13,7 @@
 #'   .approach_cor_robust         = args_default()$.approach_cor_robust,
 #'   .approach_nl                 = args_default()$.approach_nl,
 #'   .approach_paths              = args_default()$.approach_paths,
+#'   .approach_se                 = args_default()$.approach_se,
 #'   .approach_weights            = args_default()$.approach_weights,
 #'   .conv_criterion              = args_default()$.conv_criterion,
 #'   .disattenuate                = args_default()$.disattenuate,
@@ -46,6 +47,7 @@ foreman <- function(
   .approach_cor_robust         = args_default()$.approach_cor_robust,
   .approach_nl                 = args_default()$.approach_nl,
   .approach_paths              = args_default()$.approach_paths,
+  .approach_se                 = args_default()$.approach_se,
   .approach_weights            = args_default()$.approach_weights,
   .conv_criterion              = args_default()$.conv_criterion,
   .disattenuate                = args_default()$.disattenuate,
@@ -196,6 +198,7 @@ foreman <- function(
     estim_results <- estimatePath(
       .approach_nl    = .approach_nl,
       .approach_paths = .approach_paths,
+      .approach_se    = .approach_se,
       .csem_model     = csem_model,
       .H              = H,
       .normality      = .normality,
