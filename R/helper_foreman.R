@@ -366,15 +366,24 @@ calculateReliabilities <- function(
     } else if(.approach_weights %in% c("unit", "bartlett", "regression", "PCA", 
                 "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     
-      #   Note: "bartlett" and "regression" weights are obtained AFTER running a CFA. 
-      #   Therefore loadings are consistent and as such "disattenuation"
-      #   has already implicitly happend. Hence, it is impossible to 
-      #   specify "bartlett" or "regression" when .disattenuate = FALSE.
+      #  Note: "bartlett" and "regression" weights are obtained AFTER running a CFA. 
+      #  Therefore loadings are consistent and as such "disattenuation"
+      #  has already implicitly happend. Hence, it is impossible to 
+      #  specify "bartlett" or "regression" when .disattenuate = FALSE.
       if(!.disattenuate & .approach_weights %in% c("bartlett", "regression")) {
-        stop2("Unable to use `bartlett` or `regression` weights when `.disattenuate = FALSE`.")
+        stop2(
+          "The following error occured in the `calculateReliabilities()` function:\n",
+          "Unable to obtain `bartlett` or `regression` weights when `.disattenuate = FALSE`.")
       }
       
-      #   Note: Only necessary if at least one common factor is in the model
+      if(any(.csem_model$construct_type == "Composite") & .approach_weights %in% c("bartlett", "regression")) {
+        stop2(
+          "The following error occured in the `calculateReliabilities()` function:\n",
+          "Unable to obtain `bartlett` or `regression` weights ",
+          " for models containing constructs modeled as composites.")
+      }
+      
+      # Note: Only necessary if at least one common factor is in the model
       if(.disattenuate & any(.csem_model$construct_type == "Common factor")) {
         ## "Croon" approach
         # The Croon reliabilities assume that the scores are built by sumscores 
@@ -382,8 +391,9 @@ calculateReliabilities <- function(
         # Moreover, all constructs must be modeled as common factors.
         
         if(any(.csem_model$construct_type == "Composite")) {
-          stop2("The following error occured in the `calculateReliabilities()` function:\n",
-                "Disattenuation only applicable if all constructs are modeled as common factors.")
+          stop2(
+            "The following error occured in the `calculateReliabilities()` function:\n",
+            "Disattenuation only applicable if all constructs are modeled as common factors.")
         }
         
         for(j in names_cf) {

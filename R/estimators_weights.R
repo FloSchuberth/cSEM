@@ -191,7 +191,7 @@ calculateWeightsPLS <- function(
 calculateWeightsKettenring <- function(
   .S              = args_default()$.S,
   .csem_model     = args_default()$.csem_model,
-  .approach_gcca       = args_default()$.approach_gcca
+  .approach_gcca  = args_default()$.approach_gcca
 ) {
   
   ### Preparation ==============================================================
