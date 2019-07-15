@@ -200,11 +200,17 @@ estimatePath <- function(
         ses = coef
         ses[] <- NA
         
-        # if(.approach_se == "closed_estimator"){
-        #   
-        # sig_squared <- .H[,y,drop=FALSE]-
+        if(.approach_se == "closed_estimator"){
+
+        sig_squared <- as.numeric((.P[y,y,drop=FALSE]-.P[y,names_X,drop = FALSE]%*%coef-
+        t(coef)%*%.P[names_X,y,drop = FALSE] +
+          t(coef)%*%.P[names_X,names_X,drop=FALSE]%*%coef)*(n-1)/(n-length(names_X)-1))
         
-        # }
+        ses[] <- sqrt(diag(solve(.P[names_X,names_Z,drop=FALSE]%*%
+                     solve(.P[names_Z,names_Z,drop=FALSE])%*%
+                     .P[names_Z,names_X,drop=FALSE]*n-1))*sig_squared)
+        
+         }
         
         
       } # END 2SLS
