@@ -238,6 +238,7 @@ csem <- function(
   .approach_2ndorder    <- match.arg(.approach_2ndorder)
   .approach_paths       <- match.arg(.approach_paths)
   .approach_weights     <- match.arg(.approach_weights)
+  .approach_se          <- match.arg(.approach_se)
   .resample_method      <- match.arg(.resample_method)
   .resample_method2     <- match.arg(.resample_method2)
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
