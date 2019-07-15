@@ -117,7 +117,7 @@ estimatePath <- function(
             # ses[] <- NA
             
             if(.approach_weights == 'regression'){
-# See Devlieger & Rosseel (2016)
+            # See Devlieger & Rosseel (2016)
             }
             
             if(.approach_weights == 'bartlett'){
