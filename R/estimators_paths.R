@@ -105,30 +105,32 @@ estimatePath <- function(
         } 
         
         if(.approach_se == "none"){
-          ses <- NULL
+          ses <- coef
+          ses[] <- NA
         }
           
-          # if(.approach_se == 'closed'){
-          #   # This requires that we know how the composites scores are obtained. 
-          #   # Liikely we have to give that over to this function.
-          #   # Have a look at he Devlieger paper to get the SEs
-          #   if(.approach_weights = 'regression'){
-          #     
-          #   }else if(.approach_weights = 'bartlett'){
-          #     
-          #   }else{
-          #     se <- coef
-          #     se[[1:length(se)] <- NA
-          #   }
-          #   
-          #   
-          # }
+          if(.approach_se == 'closed'){
+            # This requires that we know how the composites scores are obtained.
+            # Have a look at he Devlieger paper to get the SEs
+            
+            ses <- coef
+            ses[] <- NA
+            
+            if(.approach_weights == 'regression'){
+
+            }
+            
+            if(.approach_weights == 'bartlett'){
+
+            }
+
+          } #.approach_se == "closed"
           
-          if(.approach_se == 'closed_OLS'){
+          if(.approach_se == 'closed_estimator'){
             # calculate the OLs SEs
             sig_square <-(-1* (r2adj-1)*var(.H[,y]))
             
-            ses <- sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]))*
+            ses[] <- sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]))*
               sig_square)
           }
           
@@ -543,5 +545,5 @@ estimatePath <- function(
   res$vif <- Filter(Negate(anyNA), res$vif)
   
   ## Return result -------------------------------------------------------------
-  list("Path_estimates" = t(tm), "R2" = unlist(res$r2),"R2adj" = unlist(res$r2adj), "VIF" = res$vif, "SEs" = res$ses)
+  list("Path_estimates" = t(tm), "R2" = unlist(res$r2),"R2adj" = unlist(res$r2adj), "VIF" = res$vif, "SE" = res$ses)
 }
