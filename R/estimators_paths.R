@@ -104,7 +104,9 @@ estimatePath <- function(
           NA
         } 
         
-        if(!is.null(.approach_se)){
+        if(.approach_se == "none"){
+          ses <- NULL
+        }
           
           # if(.approach_se == 'closed'){
           #   # This requires that we know how the composites scores are obtained. 
@@ -130,7 +132,7 @@ estimatePath <- function(
               sig_square)
           }
           
-        }
+        
       } # END OLS
       
       
@@ -186,6 +188,9 @@ estimatePath <- function(
         } else {
           NA
         }
+        
+        ses = NULL
+        
       } # END 2SLS
       
       ## Collect results
@@ -449,7 +454,7 @@ estimatePath <- function(
       
       ## Preallocate
       vcv  <- list()
-
+      ses <- NULL
       ## Loop over each endogenous variable
       for(k in dep_vars) {
         
@@ -514,6 +519,7 @@ estimatePath <- function(
           r2adj[[k]] = 1-(1-r2[[k]])*(n-1)/(n-nrow(coef[[k]]))
           vif[[k]] = diag(solve(cov2cor(vcv[[k]])))
           var_struc_error[k]    <- 1 - r2[[k]]
+          ses[[k]] = NULL
           
           temp <- mapply(function(x, y) x * y,
                          x = temp,

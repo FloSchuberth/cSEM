@@ -354,7 +354,7 @@ args_default <- function(.choices = FALSE) {
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS", "3SLS"),
-    .approach_se             = NULL,
+    .approach_se             = "none",
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,

@@ -875,7 +875,7 @@ calculateEffectSize <- function(.object = NULL) {
       out <- estimatePath(
         .approach_nl      = approach_nl,
         .approach_paths   = approach_paths,
-        .approach_se      = NULL,
+        .approach_se      = "none",
         .approach_weights = approach_weights,
         .csem_model       = model_temp,
         .H                = H,
