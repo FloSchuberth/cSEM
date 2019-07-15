@@ -1,0 +1,509 @@
+% Encoding: windows-1252
+
+@Article{Dijkstra2014,
+  author    = {Dijkstra, Theo K. and Schermelleh-Engel, Karin},
+  title     = {Consistent Partial Least Squares For Nonlinear Structural Equation Models},
+  journal   = {Psychometrika},
+  year      = {2014},
+  volume    = {79},
+  number    = {4},
+  pages     = {585--604},
+  comment   = {Partial Least Squares as applied to models with latent variables, measured indirectly by indicators,
+is well-known to be inconsistent. The linear compounds of indicators that PLS substitutes for the latent
+variables do not obey the equations that the latter satisfy. We propose simple, non-iterative corrections
+leading to consistent and asymptotically normal (CAN)-estimators for the loadings and for the correlations
+between the latent variables. Moreover, we show how to obtain CAN-estimators for the parameters of
+structural recursive systems of equations, containing linear and interaction terms, without the need to
+specify a particular joint distribution. If quadratic and higher order terms are included, the approach will
+produce CAN-estimators as well when predictor variables and error terms are jointly normal.We compare
+the adjusted PLS, denoted by PLSc, with Latent Moderated Structural Equations (LMS), using Monte
+Carlo studies and an empirical application.},
+  file      = {:Papers/SEM/Dijkstra2014.pdf:PDF},
+  keywords  = {consistent partial least squares, latent moderated structural equations, nonlinear structural equation model, interaction effect, quadratic effect},
+  owner     = {fls44rr},
+  publisher = {Springer},
+  timestamp = {2017.06.06},
+}
+
+@Article{Dijkstra2015,
+  author   = {Theo K. Dijkstra and J{\"o}rg Henseler},
+  title    = {Consistent and Asymptotically Normal {PLS} Estimators for Linear Structural Equations},
+  journal  = {Computational Statistics \& Data Analysis},
+  year     = {2015},
+  volume   = {81},
+  pages    = {10--23},
+  file     = {:Papers/SEM/Dijkstra2015.pdf:PDF},
+  keywords = {Partial least squares, Structural equation modeling, Consistency, Recursiveness, Goodness-of-fit},
+}
+
+@Article{Dijkstra2015a,
+  author  = {Dijkstra, Theo K and Henseler, J{\"o}rg},
+  title   = {Consistent Partial Least Squares Path Modeling},
+  journal = {{MIS} Quarterly},
+  year    = {2015},
+  volume  = {39},
+  number  = {2},
+  pages   = {297--316},
+  file    = {:Papers/SEM/Dijkstra2015a.pdf:PDF},
+}
+
+@Article{Dijkstra2013,
+  author    = {Dijkstra, Theo K.},
+  title     = {A Note on How to Make Partial Least Squares Consistent},
+  journal   = {Working Paper},
+  year      = {2013},
+  doi       = {10.13140/RG.2.1.4547.5688},
+  file      = {:Papers/SEM/Dijkstra2013.pdf:PDF},
+  timestamp = {2017.10.05},
+}
+
+@Article{Kettenring1971,
+  author    = {Kettenring, Jon R.},
+  title     = {Canonical Analysis of Several Sets of Variables},
+  journal   = {Biometrika},
+  year      = {1971},
+  volume    = {58},
+  number    = {3},
+  pages     = {433--451},
+  file      = {:Papers/SEM/Kettenring1971.pdf:PDF},
+  owner     = {s343185},
+  publisher = {Biometrika Trust},
+  timestamp = {2015.09.07},
+}
+
+@Book{Bollen1989,
+  title     = {Structural Equations with Latent Variables},
+  publisher = {Wiley-Interscience},
+  year      = {1989},
+  author    = {Kenneth A. Bollen},
+  isbn      = {978-0471011712},
+}
+
+@Article{Beran1985,
+  author    = {Rudolf Beran and Muni S. Srivastava},
+  title     = {Bootstrap Tests and Confidence Regions for Functions of a Covariance Matrix},
+  journal   = {The Annals of Statistics},
+  year      = {1985},
+  volume    = {13},
+  number    = {1},
+  pages     = {95--115},
+  month     = {mar},
+  doi       = {10.1214/aos/1176346579},
+  file      = {:Papers/SEM/Beran1985.pdf:PDF},
+  publisher = {Institute of Mathematical Statistics},
+}
+
+@Article{Raykov1997,
+  author    = {Raykov, Tenko},
+  title     = {Estimation of composite reliability for congeneric measures},
+  journal   = {Applied Psychological Measurement},
+  year      = {1997},
+  volume    = {21},
+  number    = {2},
+  pages     = {173--184},
+  abstract  = {A structural equation model is described that permits estimation of the reliability index and coefficient of a composite test for congeneric measures. The method is also helpful in exploring the factorial structure of an item set, and its use in scale reliability estimation and development is illustrated. The modeling. estimator of composite reliability it yields does not possess the general underestimation property of Cronbach's coefficient a.},
+  file      = {Raykov1997.pdf:Raykov1997.pdf:PDF},
+  publisher = {Sage Publications},
+}
+
+@Article{Cronbach1951,
+  author    = {Lee J. Cronbach},
+  title     = {Coefficient alpha and the internal structure of tests},
+  journal   = {Psychometrika},
+  year      = {1951},
+  volume    = {16},
+  number    = {3},
+  pages     = {297--334},
+  month     = {sep},
+  doi       = {10.1007/bf02310555},
+  file      = {:Cronbach1951.pdf:PDF},
+  publisher = {Springer Nature},
+}
+
+@Article{Fornell1981,
+  author    = {C. Fornell and D. F. Larcker},
+  title     = {Evaluating structural equation models with unobservable variables and measurement error},
+  journal   = {Journal of Marketing Research},
+  year      = {1981},
+  volume    = {XVIII},
+  pages     = {39--50},
+  month     = {February},
+  abstract  = {The statistical tests used in the analysis of structural equation models with unobservable variables and measurement error are examined. A drawback of the commonly applied chi square test, in addition to the known problems related to sample size and power, is that it may indicate an increasing correspondence between the hypothesized model and the observed data as both the measurement properties and the relationship between constructs decline. Further, and contrary to common assertion, the risk of making a Type II error can be substantial even when the sample size is large. Moreover, the present testing methods are unable to assess a model's explanatory power. To overcome these problems, the authors develop and apply a testing system based on measures of shared variance within the structural model, measurement model, and overall model.},
+  file      = {Fornell1981.pdf:Fornell1981.pdf:PDF},
+  owner     = {fls44rr},
+  timestamp = {2012.11.22},
+}
+
+@Article{Hesterberg2015,
+  author    = {Tim C. Hesterberg},
+  title     = {What Teachers Should Know About the Bootstrap: Resampling in the Undergraduate Statistics Curriculum},
+  journal   = {The American Statistician},
+  year      = {2015},
+  volume    = {69},
+  number    = {4},
+  pages     = {371--386},
+  month     = {oct},
+  doi       = {10.1080/00031305.2015.1089789},
+  publisher = {Informa {UK} Limited},
+}
+
+@Article{Hwang2017,
+  Title                    = {Generalized {Structured} {Component} {Analysis} with {Uniqueness} {Terms} for {Accommodating} {Measurement} {Error}},
+  Author                   = {Hwang, Heungsun and Takane, Yoshio and Jung, Kwanghee},
+  Journal                  = {Frontiers in Psychology},
+  Year                     = {2017},
+  Number                   = {2137},
+  Pages                    = {1--12},
+  Volume                   = {8},
+  Language                 = {English},
+  Publisher                = {Frontiers Media}
+}
+
+@book{Hwang2014,
+  Title =     {Generalized Structured Component Analysis: A Component-Based Approach to Structural Equation Modeling},
+   Author =    {Hwang, Heungsun and Takane, Yoshio},
+   publisher = {Chapman and Hall/CRC},
+   year =      {2014},
+   series =    {Chapman $\&$ Hall/CRC Statistics in the Social and Behavioral Sciences},
+}
+
+@Article{Hwang2004,
+  Title                    = {Generalized {Structured} {Component} {Analysis}},
+  Author                   = {Hwang, Heungsun and Takane, Yoshio},
+  Journal                  = {Psychometrika},
+  Year                     = {2004},
+  Number                   = {1},
+  Pages                    = {81--99},
+  Volume                   = {69},
+  Language                 = {English},
+  Publisher                = {Springer}
+}
+
+@Article{Hwang2010,
+  Title                    = {A {Comparative} {Study} on {Parameter} {Recovery} of {Three} {Approaches} to {Structural} {Equation} {Modeling}},
+  Author                   = {Hwang, Heungsun and Malhotra, Naresh K. and Kim, Youngchan and Tomiuk, Marc A. and Hong, Sungjin},
+  Journal                  = {Journal of Marketing Research},
+  Year                     = {2010},
+  Number                   = {4},
+  Pages                    = {699--712},
+  Volume                   = {47},
+  Language                 = {English},
+  Publisher                = {American Marketing Association}
+}
+
+@Manual{Bengtsson2018,
+  title  = {future: Unified Parallel and Distributed Processing in {R} for Everyone},
+  author = {Henrik Bengtsson},
+  year   = {2018},
+  note   = {R package version 1.10.0},
+  url    = {https://CRAN.R-project.org/package=future},
+}
+
+@Book{Efron2016,
+  title     = {Computer Age Statistical Inference},
+  publisher = {Cambridge University Pr.},
+  year      = {2016},
+  author    = {Efron, Bradley and Hastie, Trevor},
+  isbn      = {1107149894},
+  date      = {2016-07-31},
+  ean       = {9781107149892},
+}
+
+@Book{Davison1997,
+  title     = {Bootstrap Methods and their Application},
+  publisher = {Cambridge University Press},
+  year      = {1997},
+  author    = {A. C. Davison and D. V. Hinkley},
+  doi       = {10.1017/cbo9780511802843},
+}
+
+@Manual{Bengtsson2018a,
+  title  = {future.apply: Apply Function to Elements in Parallel using Futures},
+  author = {Henrik Bengtsson},
+  year   = {2018},
+  note   = {R package version 1.0.1},
+  url    = {https://CRAN.R-project.org/package=future.apply},
+}
+
+@Article{Cho2016,
+  author    = {Eunseong Cho},
+  title     = {Making Reliability Reliable},
+  journal   = {Organizational Research Methods},
+  year      = {2016},
+  volume    = {19},
+  number    = {4},
+  pages     = {651--682},
+  month     = {jul},
+  doi       = {10.1177/1094428116656239},
+  publisher = {{SAGE} Publications},
+}
+
+@Article{Trinchera2018,
+  author    = {Laura Trinchera and Nicolas Marie and George A. Marcoulides},
+  title     = {A Distribution Free Interval Estimate for Coefficient Alpha},
+  journal   = {Structural Equation Modeling: A Multidisciplinary Journal},
+  year      = {2018},
+  volume    = {25},
+  number    = {6},
+  pages     = {876--887},
+  month     = {mar},
+  doi       = {10.1080/10705511.2018.1431544},
+  publisher = {Informa {UK} Limited},
+}
+
+@InProceedings{Tenenhaus2004,
+  author    = {Tenenhaus, Michel and Amanto, Silvano and Vinzi, Vincenzo Esposito},
+  title     = {A Global Goodness-of-Fit Index for {PLS} Structural Equation Modelling},
+  booktitle = {Proceedings of the {XLII SIS} Scientific Meeting},
+  year      = {2004},
+  pages     = {739--742},
+}
+
+@Article{Henseler2012a,
+  author    = {J{\"o}rg Henseler and Marko Sarstedt},
+  title     = {Goodness-of-fit Indices for Partial Least Squares Path Modeling},
+  journal   = {Computational Statistics},
+  year      = {2012},
+  volume    = {28},
+  number    = {2},
+  pages     = {565--580},
+  month     = {mar},
+  doi       = {10.1007/s00180-012-0317-1},
+  file      = {:Papers/Henseler2012a.pdf:PDF},
+  publisher = {Springer Nature},
+}
+
+@Article{Henseler2015,
+  author    = {J{\"o}rg Henseler and Christian M. Ringle and Marko Sarstedt},
+  title     = {A New Criterion for Assessing Discriminant Validity in Variance-based Structural Equation Modeling},
+  journal   = {Journal of the Academy of Marketing Science},
+  year      = {2015},
+  volume    = {43},
+  number    = {1},
+  pages     = {115--135},
+  month     = {aug},
+  doi       = {10.1007/s11747-014-0403-8},
+  publisher = {Springer Nature},
+}
+
+@InBook{Croon2002,
+  chapter   = {10},
+  pages     = {195--224},
+  title     = {Using predicted latent scores in general latent structure models},
+  publisher = {Lawrence Erlbaum},
+  year      = {2002},
+  author    = {M.A. Croon},
+  editor    = {G.A. Marcoulides and I. Moustaki},
+  isbn      = {080584046X},
+  note      = {Pagination: 288},
+  booktitle = {Latent Variable and Latent Structure Models},
+  language  = {English},
+}
+
+@Article{Rigdon2012,
+  author    = {Edward E. Rigdon},
+  title     = {Rethinking Partial Least Squares Path Modeling: In Praise of Simple Methods},
+  journal   = {Long Range Planning},
+  year      = {2012},
+  volume    = {45},
+  number    = {5-6},
+  pages     = {341--358},
+  month     = {oct},
+  doi       = {10.1016/j.lrp.2012.09.010},
+  file      = {:Papers/Rigdon2012.pdf:PDF},
+  publisher = {Elsevier {BV}},
+}
+
+@Article{Rigdon2016,
+  author    = {Edward E. Rigdon},
+  title     = {Choosing {PLS} Path Modeling As Analytical Method in European Management Research: A Realist Perspective},
+  journal   = {European Management Journal},
+  year      = {2016},
+  volume    = {34},
+  number    = {6},
+  pages     = {598--605},
+  doi       = {10.1016/j.emj.2016.05.006},
+  file      = {:Papers/Rigdon2016.pdf:PDF},
+  publisher = {Elsevier {BV}},
+}
+
+@Article{Rigdon2019,
+  author    = {Edward E. Rigdon and Jan-Michael Becker and Marko Sarstedt},
+  title     = {Factor Indeterminacy as Metrological Uncertainty: Implications for Advancing Psychological Measurement},
+  journal   = {Multivariate Behavioral Research},
+  year      = {2019},
+  pages     = {1--15},
+  month     = {mar},
+  doi       = {10.1080/00273171.2018.1535420},
+  publisher = {Informa {UK} Limited},
+}
+
+@Article{Holzinger1939,
+  author  = {Holzinger, Karl John and Swineford, Frances},
+  title   = {A Study in Factor Analysis: The Stability of a Bi-factor Solution.},
+  journal = {Supplementary Educational Monographs},
+  year    = {1939},
+  number  = {48},
+}
+
+@Article{Joereskog1969,
+  author    = {K. G. Joereskog},
+  title     = {A General Approach to Confirmatory Maximum Likelihood Factor Analysis},
+  journal   = {Psychometrika},
+  year      = {1969},
+  volume    = {34},
+  number    = {2},
+  pages     = {183--202},
+  month     = {jun},
+  doi       = {10.1007/bf02289343},
+  publisher = {Springer Nature},
+}
+
+@Article{Henseler2016,
+  author    = {J{\"o}rg Henseler and Christian M. Ringle and Marko Sarstedt},
+  title     = {Testing Measurement Invariance of Composites Using Partial Least Squares},
+  journal   = {International Marketing Review},
+  year      = {2016},
+  volume    = {33},
+  number    = {3},
+  pages     = {405--431},
+  month     = {may},
+  doi       = {10.1108/imr-09-2014-0304},
+  editor    = {Rudolf R. Sinkovics, Ruey-Jer {\textquotedblleft}Bryan{\textquotedblright} Jean},
+  file      = {:Papers/Henseler2016.pdf:PDF},
+  publisher = {Emerald},
+}
+
+@Article{Spiller2013,
+  author    = {Stephen A. Spiller and Gavan J. Fitzsimons and John G. Lynch and Gary H. Mcclelland},
+  title     = {Spotlights, Floodlights, and the Magic Number Zero: Simple Effects Tests in Moderated Regression},
+  journal   = {Journal of Marketing Research},
+  year      = {2013},
+  volume    = {50},
+  number    = {2},
+  pages     = {277--288},
+  month     = {apr},
+  doi       = {10.1509/jmr.12.0420},
+  file      = {:Spiller2013.pdf:PDF;:Spiller2013_WebAppendix.pdf:PDF},
+  publisher = {{SAGE} Publications},
+}
+
+@Article{Wong1996,
+  author    = {Wong, Ka-fu},
+  title     = {Bootstrapping {H}ausman's exogeneity test},
+  journal   = {Economics Letters},
+  year      = {1996},
+  volume    = {53},
+  number    = {2},
+  pages     = {139--143},
+  abstract  = {This paper compares, via simulations, the performance of Hausman's test of exogeneity based on tirst-order
+asymptotics and a bootstrap procedure ill i.i.d, samples. The result shows that a third-order correct bootstrap-based
+inference procedure performs substantially better than the lirst-order asymptotics.},
+  file      = {Wong1996.pdf:Wong1996.pdf:PDF},
+  keywords  = {Bootstrap; Exogeneity},
+  publisher = {Elsevier},
+}
+
+@Article{Hausman1978,
+  author    = {Hausman, Jerry A},
+  title     = {Specification tests in econometrics},
+  journal   = {Econometrica: Journal of the Econometric Society},
+  year      = {1978},
+  volume    = {46},
+  number    = {6},
+  pages     = {1251--1271},
+  abstract  = {Using the result that under the null hypothesis of no misspecification an asymptotically
+efficient estimator must have zero asymptotic covariance with its difference from a
+consistent but asymptotically inefficient estimator, specification tests are devised for a
+number of model specifications in econometrics. Local power is calculated for small
+departures from the null hypothesis. An instrumental variable test as well as tests for a
+time series cross section model and the simultaneous equation model are presented. An
+empirical model provides evidence that unobserved individual factors are present which
+are not orthogonal to the included right-hand-side variable in a common econometric
+specification of an individual wage equation.},
+  file      = {Hausman1978.pdf:Hausman1978.pdf:PDF},
+  owner     = {fls44rr},
+  publisher = {JSTOR},
+  timestamp = {2015.10.07},
+}
+
+@Article{Klesel2019,
+  author    = {Michael Klesel and Florian Schuberth and J{\"o}rg Henseler and Bjoern Niehaves},
+  title     = {A Test for Multigroup Comparison Using Partial Least Squares Path Modeling},
+  journal   = {Internet Research},
+  year      = {2019},
+  volume    = {29},
+  number    = {3},
+  pages     = {464--477},
+  month     = {jun},
+  doi       = {10.1108/intr-11-2017-0418},
+  publisher = {Emerald},
+}
+
+@InCollection{Chin2010,
+  author    = {Wynne W. Chin and Jens Dibbern},
+  title     = {An Introduction to a Permutation Based Procedure for Multi-Group {PLS} Analysis: Results of Tests of Differences on Simulated Data and a Cross Cultural Analysis of the Sourcing of Information System Services Between Germany and the {USA}},
+  booktitle = {Handbook of Partial Least Squares},
+  publisher = {Springer Berlin Heidelberg},
+  year      = {2010},
+  pages     = {171--193},
+  month     = {nov},
+  doi       = {10.1007/978-3-540-32827-8_8},
+}
+
+@InCollection{Sarstedt2011,
+  author    = {Marko Sarstedt and J{\"o}rg Henseler and Christian M. Ringle},
+  title     = {Multigroup Analysis in Partial Least Squares ({PLS}) Path Modeling: Alternative Methods and Empirical Results},
+  booktitle = {Advances in International Marketing},
+  publisher = {Emerald Group Publishing Limited},
+  year      = {2011},
+  pages     = {195--218},
+  month     = {jan},
+  doi       = {10.1108/s1474-7979(2011)0000022012},
+}
+
+@Article{Cohen1992,
+  author    = {Cohen, Jacob},
+  title     = {A power primer},
+  journal   = {Psychological Bulletin},
+  year      = {1992},
+  volume    = {112},
+  number    = {1},
+  pages     = {155--159},
+  file      = {:Cohen1992.pdf:PDF},
+  publisher = {American Psychological Association},
+}
+
+@InCollection{Wold1975,
+  author    = {Wold, Herman},
+  title     = {Path models with latent variables: The {NIPALS} approach},
+  booktitle = {Quantitative Sociology},
+  publisher = {Academic Press},
+  year      = {1975},
+  editor    = {Blalock, H.M. and Aganbegian, A. and Borodkin, F.M. and Boudon, Raymond and Capecchi, Vittorio},
+  series    = {International Perspectives on Mathematical and Statistical Modeling},
+  chapter   = {11},
+  pages     = {307--357},
+  address   = {New York},
+  owner     = {s343185},
+  timestamp = {2015.09.07},
+}
+
+@Book{Hair2016,
+  title     = {A Primer on Partial Least Squares Structural Equation Modeling ({PLS-SEM})},
+  publisher = {Sage publications},
+  year      = {2016},
+  author    = {Hair, Joseph F and Hult, G Tomas M and Ringle, Christian and Sarstedt, Marko},
+}
+
+@InBook{Chin1998,
+  chapter   = {The Partial Least Squares Approach to Structural Equation Modeling},
+  pages     = {295--358},
+  title     = {Modern Methods for Business Research},
+  publisher = {Mahwah, NJ: Lawrence Erlbaum},
+  year      = {1998},
+  author    = {Chin, W. W.},
+  editor    = {Marcoulides, G. A.},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}
