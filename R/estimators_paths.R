@@ -104,17 +104,16 @@ estimatePath <- function(
           NA
         } 
         
+        # Calculation of closed-form standard errors
         # by default the standard errors are set to NA
           ses <- coef
           ses[] <- NA
 
           
           if(.approach_se == 'closed'){
-            # This requires that we know how the composites scores are obtained.
-            # Have a look at he Devlieger paper to get the SEs
-            # 
-            # ses <- coef
-            # ses[] <- NA
+
+            stop2("The following error occured in the `estimatePath()` function:\n",
+                  "Closed-form standard errors are not yet implemented.")
             
             if(.approach_weights == 'regression'){
             # See Devlieger & Rosseel (2016)
@@ -127,7 +126,7 @@ estimatePath <- function(
           } #.approach_se == "closed"
           
           if(.approach_se == 'closed_estimator'){
-            # calculate the OLS SEs (X'X){-1} * sig^2
+            # calculate the OLS SEs sqrt((X'X){-1} * sig^2)
             sig_square <- (1 - r2adj)*var(.H[,y])
 
             ses[] <- sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]*(n-1)))*
@@ -200,8 +199,14 @@ estimatePath <- function(
         ses = coef
         ses[] <- NA
         
+        if(.approach_se == "closed"){
+          stop2("The following error occured in the `estimatePath()` function:\n",
+                "Closed-form standard errors are not yet implemented yet for 2SLS")
+        }
+        
         if(.approach_se == "closed_estimator"){
-
+        # 2SLS standard errors sqrt(sig^2 * (X'P_Z X)^{-1})
+          
         sig_squared <- as.numeric((.P[y,y,drop=FALSE]-.P[y,names_X,drop = FALSE]%*%coef-
         t(coef)%*%.P[names_X,y,drop = FALSE] +
           t(coef)%*%.P[names_X,names_X,drop=FALSE]%*%coef)*(n-1)/(n-length(names_X)-1))
@@ -310,8 +315,14 @@ estimatePath <- function(
       for(endo in dep_vars){
         names_X = colnames(m)[m[endo,]!=0]
         res$coef[[endo]]=allparas[(nrcoefs[which(endo == dep_vars)]+1):nrcoefs[which(endo == dep_vars)+1],1,drop=FALSE][rownames(res$coef[[endo]]),1,drop=FALSE]
-      }
-    }
+        
+        # Calculation of the standard errors
+        # No closed form SEs for 3SLS are implemented yet, i.e., they are set to NA in any case
+        res$ses[[endo]][] = NA 
+        }
+    
+      
+      }#end 3SLS
     
     
   } else {
@@ -366,7 +377,7 @@ estimatePath <- function(
       # It can happen that this matrix is not symmetric
       vcv_explana[lower.tri(vcv_explana)] = t(vcv_explana)[lower.tri(vcv_explana)]
       
-      }
+      }  #Outcome: The VCV of the explanatory variables
     
     # Set row- and colnames for matrix
     rownames(vcv_explana) <- colnames(vcv_explana) <- vars_explana
@@ -415,7 +426,7 @@ estimatePath <- function(
     })
     names(cv_endo_explana_ls) <- dep_vars
     
-    ## Calculate path coef, R2 and VIF ----------------------------------------------
+    ## Calculate path coef, R2, VIF, and SEs ----------------------------------------------
     # Path coefficients
     coef <- mapply(function(x, y) solve(x) %*% t(y),
                    x = vcv_explana_ls,
@@ -436,9 +447,28 @@ estimatePath <- function(
     # Variance inflation factor
     vif = lapply(vcv_explana_ls, function(x) diag(solve(cov2cor(x))))
     
-    # Add standard error Wall & Amemyia 2SMM
-    ses = NULL
+    # Calculation of closed-form standard errors
+    # by default they are set to NA
+      ses = lapply(coef,function(x){
+        x[]=NA
+        x
+      }) 
+
     
+    if(.approach_se == "closed"){
+      stop2("The following error occured in the `estimatePath()` function:\n",
+        "Closed-form standard errors are not yet implemented for nonlinear models and NAs are returned.")
+      # ses = lapply(coef,function(x){
+      #   x[]=NA
+      #   x
+      # })
+    }
+    
+    
+    if(.approach_se == "closed_estimator"){
+      stop2("The following error occured in the `estimatePath()` function:\n",
+        "Closed-form OLS standard errors are not yet implemented for nonlinear models and NAs are returned.")
+    }
     ##==========================================================================
     # Replacement approach
     ### ========================================================================
@@ -476,7 +506,7 @@ estimatePath <- function(
       
       ## Preallocate
       vcv  <- list()
-      ses <- NULL
+
       ## Loop over each endogenous variable
       for(k in dep_vars) {
         
@@ -541,7 +571,7 @@ estimatePath <- function(
           r2adj[[k]] = 1-(1-r2[[k]])*(n-1)/(n-nrow(coef[[k]]))
           vif[[k]] = diag(solve(cov2cor(vcv[[k]])))
           var_struc_error[k]    <- 1 - r2[[k]]
-          ses[[k]] = NULL
+          # ses[[k]] = NULL
           
           temp <- mapply(function(x, y) x * y,
                          x = temp,
@@ -554,7 +584,7 @@ estimatePath <- function(
           
         } # END else
       } # END for k in dep_vars
-    } # END if(.approach_nlhod = replace)
+    } # END if(.approach_nl = replace)
     res <- list("coef" = coef, "r2" = r2, "r2adj" = r2adj, "vif" = vif, "ses" = ses)
   } # END if nonlinear
   ### Structure results --------------------------------------------------------
