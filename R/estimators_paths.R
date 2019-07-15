@@ -104,17 +104,17 @@ estimatePath <- function(
           NA
         } 
         
-        if(.approach_se == "none"){
+        # by default the standard errors are set to NA
           ses <- coef
           ses[] <- NA
-        }
+
           
           if(.approach_se == 'closed'){
             # This requires that we know how the composites scores are obtained.
             # Have a look at he Devlieger paper to get the SEs
-            
-            ses <- coef
-            ses[] <- NA
+            # 
+            # ses <- coef
+            # ses[] <- NA
             
             if(.approach_weights == 'regression'){
 
@@ -127,10 +127,10 @@ estimatePath <- function(
           } #.approach_se == "closed"
           
           if(.approach_se == 'closed_estimator'){
-            # calculate the OLs SEs
-            sig_square <-(-1* (r2adj-1)*var(.H[,y]))
-            
-            ses[] <- sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]))*
+            # calculate the OLS SEs (X'X){-1} * sig^2
+            sig_square <- (1 - r2adj)*var(.H[,y])
+
+            ses[] <- sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]*(n-1)))*
               sig_square)
           }
           
