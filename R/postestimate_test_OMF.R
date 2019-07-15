@@ -46,7 +46,7 @@ testOMF <- function(
   .seed                  = args_default()$.seed,
   .verbose               = args_default()$.verbose
 ) {
-
+  
   # Implementation is based on:
   # Dijkstra & Henseler (2015) - Consistent Paritial Least Squares Path Modeling
   
@@ -96,7 +96,7 @@ testOMF <- function(
   ### Checks and errors ========================================================
   ## Check arguments
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
-
+  
   ## Check if initial results are inadmissible
   if(sum(unlist(verify(.object))) != 0) {
     stop2(
@@ -166,7 +166,7 @@ testOMF <- function(
     
     # Check status (Note: output of verify for second orders is a list)
     status_code <- sum(unlist(verify(Est_temp)))
-      
+    
     # Distinguish depending on how inadmissibles should be handled
     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
@@ -220,10 +220,10 @@ testOMF <- function(
   
   ## Compare critical value and teststatistic
   decision <- teststat < critical_values # a logical (3 x p) matrix with each column
-                                         # representing the decision for one
-                                         # significance level. TRUE = no evidence 
-                                         # against the H0 --> not reject
-                                         # FALSE --> reject
+  # representing the decision for one
+  # significance level. TRUE = no evidence 
+  # against the H0 --> not reject
+  # FALSE --> reject
   
   # Return output
   out <- list(
