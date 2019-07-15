@@ -576,7 +576,7 @@ print.cSEMTestMGD <- function(x, ...) {
     l <- max(10, nchar(names(xc$Test_statistic[[1]])))
     
     # Create table for every p-value adjustment method
-    for(p in seq_along(xs$P_value)) {
+    for(p in seq_along(xc$P_value)) {
       cat2("\n\tMultiple testing adjustment: ", names(xc$P_value)[p],
            "\n\n")
       for(i in seq_along(xc$Test_statistic)) {

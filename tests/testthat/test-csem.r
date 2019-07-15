@@ -133,7 +133,7 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR")) {
 load(file = "../data/DGP_2ndorder_cf_of_cfs.RData")  
 
 ## Draw data
-dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma)), Sigma = Sigma, empirical = TRUE)
+dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)
 
 ## Estimate
 res <-  csem(dat, model_Sigma)
@@ -158,7 +158,7 @@ test_that("DPG_2ndorder_cf_of_cfs is correctly estimated", {
 load(file = "../data/DGP_2ndorder_cf_of_composites.RData")  
 
 ## Draw data
-dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma)), Sigma = Sigma, empirical = TRUE)
+dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)
 
 ## Estimate
 res <-  csem(dat, model_Sigma)
@@ -185,7 +185,7 @@ test_that("DPG_2ndorder_cf_of_composites is correctly estimated", {
 load(file = "../data/DGP_2ndorder_composite_of_cfs.RData")  
 
 ## Draw data
-dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma)), Sigma = Sigma, empirical = TRUE)
+dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)
 
 ## Estimate
 res <-  csem(dat, model_Sigma)
@@ -211,7 +211,7 @@ test_that("DPG_2ndorder_composites_of_cfs is correctly estimated", {
 load(file = "../data/DGP_2ndorder_composite_of_composites.RData")  
 
 ## Draw data
-dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma)), Sigma = Sigma, empirical = TRUE)
+dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)
 
 ## Estimate
 res <-  csem(dat, model_Sigma)
