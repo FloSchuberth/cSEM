@@ -191,7 +191,18 @@ estimatePath <- function(
           NA
         }
         
-        ses = NULL
+        
+        # Calculation of the standard errors
+        # By default they are set to NA
+        ses = coef
+        ses[] <- NA
+        
+        # if(.approach_se == "closed_estimator"){
+        #   
+        # sig_squared <- .H[,y,drop=FALSE]-
+        
+        # }
+        
         
       } # END 2SLS
       
