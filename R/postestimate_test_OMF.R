@@ -1,15 +1,19 @@
 #' Test for overall model fit
 #'
-#' Test the overall model fit.
-#' 
-#' Based on \insertCite{Beran1985;textual}{cSEM}. See also 
-#' \insertCite{Dijkstra2015;textual}{cSEM}.
+#' Bootstrap-based test for overall model fit. It tests the null hypothesis that the 
+#' population indicator correlation matrix equals the population model-implied
+#' correlation matirx. The geodesic distance, the suqared Euclidean distance between the
+#' sample indicator correlation matrix and the estimated model-implied correlation matrix
+#'  and the SRMR serve as test statistic. The reference distribution is obtained by 
+#'  bootstrap \insertCite{Beran1985;textual}{cSEM}. See also 
+#' \insertCite{Dijkstra2015;textual}{cSEM} who suggested it in the context of PLS-PM.
 #' After 10000 iterations it stops automatically.
 #' 
 #' @usage testOMF(
 #'  .object                = args_default()$.object, 
 #'  .alpha                 = args_default()$.alpha, 
 #'  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
+#'  .iter_max              = 10000,
 #'  .R                     = args_default()$.R, 
 #'  .saturated             = args_default()$.saturated,
 #'  .seed                  = args_default()$.seed,
@@ -36,6 +40,7 @@ testOMF <- function(
   .object                = args_default()$.object,
   .alpha                 = args_default()$.alpha,
   .handle_inadmissibles  = args_default()$.handle_inadmissibles,
+  .iter_max              = 10000,
   .R                     = args_default()$.R,
   .saturated             = args_default()$.saturated,
   .seed                  = args_default()$.seed,
@@ -191,7 +196,7 @@ testOMF <- function(
     # Break repeat loop if .R results have been created.
     if(length(ref_dist) == .R) {
       break
-    } else if(counter + n_inadmissibles == 10000) { 
+    } else if(counter + n_inadmissibles == .iter_max) { 
       ## Stop if 10000 runs did not result in insufficient admissible results
       stop("Not enough admissible result.", call. = FALSE)
     }
@@ -229,7 +234,8 @@ testOMF <- function(
       "Bootstrap_values"   = ref_dist,
       "Number_admissibles" = ncol(ref_dist_matrix),
       "Seed"               = .seed,
-      "Total_runs"         = counter + n_inadmissibles
+      "Total_runs"         = counter + n_inadmissibles, 
+      "Maximum_iteration"  = .iter_max
     )
   )
   

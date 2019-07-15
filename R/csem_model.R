@@ -343,7 +343,7 @@ parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
     names(construct_type) <- unique(tbl_m[, c("lhs", "op")])$lhs
     construct_type <- construct_type[names_c]
     
-    ## Type of model (linear or non-linear)
+    ## Type of model (linear or nonlinear)
     
     type_of_model <- if(length(names_c_nl) != 0) {
       "Nonlinear"
@@ -470,7 +470,7 @@ parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
     ### Order model ============================================================
     # Order the structual equations in a way that every equation depends on
     # exogenous variables and variables that have been explained in a previous equation
-    # This is necessary for the estimation of models containing non-linear structual
+    # This is necessary for the estimation of models containing nonlinear structual
     # relationships.
     
     ### Preparation ------------------------------------------------------------

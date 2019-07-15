@@ -1,15 +1,15 @@
 #' Internal: Calculate the inner weights for PLS-PM
 #'
 #' PLS-PM forms "inner" composites as a weighted sum of its *I* related composites.
-#' These inner weights are obtained using one of the following schemes:
+#' These inner weights are obtained using one of the following schemes \insertCite{Lohmoeller1989}{cSEM}:
 #' \describe{
-#'   \item{`centroid`}{According to the centroid scheme each inner weight used
+#'   \item{`centroid`}{According to the centroid weighting scheme each inner weight used
 #'     to form composite *j* is either 1 if the correlation between composite *j* and 
-#'     its related composite *i = 1, ..., I* is positive 
+#'     its via the structural model related composite *i = 1, ..., I* is positive 
 #'     and -1 if it is negative.}
-#'   \item{`factorial`}{According to the factorial scheme each inner weight used
-#'     to form composite *j* is equal to the correlation between composite *j* 
-#'     and its related composite *i = 1, ..., I*.}
+#'   \item{`factorial`}{According to the factorial weighting scheme each inner weight used
+#'     to form inner composite *j* is equal to the correlation between composite *j* 
+#'     and its via the structural model related composite *i = 1, ..., I*.}
 #'   \item{`path`}{Lets call all construct that have an arrow pointing to construct *j*
 #'     **predecessors of j** and all arrows going from j to other constructs **followers of j**.
 #'     According the path weighting scheme, inner weights are computed as follows.
@@ -68,7 +68,7 @@ calculateInnerWeightsPLS <- function(
     D[D == 2] <- 1 
   }
   
-  ## (Inner) weightning scheme:
+  ## (Inner) weighting scheme:
   if(.PLS_weight_scheme_inner == "path" & .PLS_ignore_structural_model) {
     .PLS_ignore_structural_model <- FALSE
     warning("Structural model is required for the path weighting scheme.\n",
@@ -122,7 +122,9 @@ calculateInnerWeightsPLS <- function(
 
 #' Internal: Calculate the outer weights for PLS-PM
 #'
-#' Calculates outer weights using default or user supplied modes.
+#' Calculates outer weights in PLS-PM. Currently, the originally suggested mode A
+#' and mode B are suggested. Additionally, non-negative least squares (modeBNNLS) and 
+#' weights of principal component analysis (PCA) are implemented.  
 #'
 #' @usage calculateOuterWeightsPLS(
 #'    .data   = args_default()$.data,  
@@ -260,7 +262,7 @@ checkConvergence <- function(
 
 #' Internal: Scale weights
 #'
-#' Scale weights such that the composite variance is one.
+#' Scale weights such that the formed composite has unit variance.
 #'
 #' @usage scaleWeights(
 #'   .S = args_default()$.S, 

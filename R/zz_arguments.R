@@ -36,6 +36,7 @@
 #' @param .approach_paths Character string. Approach used to estimate the
 #'   structural coefficients. One of: "*OLS*", "*2SLS*", or "*3SLS*" (not yet implemented).
 #'   Defaults to "*OLS*".
+#' @param .approach_se Chraracter string. Approach used to determined the SEs. Defaults to `NULL`. 
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
@@ -122,7 +123,7 @@
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
-#'   or a [cSEMModel] list.
+#'   or a [cSEMModel] list. Defaults to `NULL`.
 #' @param .model_implied Logical. Should the RMS_theta be computed using the
 #'   model-implied construct correlation matrix (`TRUE`)or the construct correlation matrix
 #'   based on V(eta) = WSW' divided by the square root of the respective 
@@ -353,6 +354,7 @@ args_default <- function(.choices = FALSE) {
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS", "3SLS"),
+    .approach_se             = NULL,
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,

@@ -1,11 +1,12 @@
 #' Estimate the structural coefficients
 #'
-#' Estimates the coefficients of the structural model (non-linear and linear) using
+#' Estimates the coefficients of the structural model (nonlinear and linear) using
 #' OLS, 2SLS, or 3SLS. The two latters currently works only for linear models.
 #'
 #' @usage estimatePath(
 #'  .approach_nl    = args_default()$.approach_nl,
 #'  .approach_paths = args_default()$.approach_paths,
+#'  .approach_se    = args_default()$.approach_se,
 #'  .csem_model     = args_default()$.csem_model,
 #'  .H              = args_default()$.H,
 #'  .normality      = args_default()$.normality,
@@ -22,6 +23,7 @@
 estimatePath <- function(
   .approach_nl    = args_default()$.approach_nl,
   .approach_paths = args_default()$.approach_paths,
+  .approach_se    = args_default()$.approach_se,
   .csem_model     = args_default()$.csem_model,
   .H              = args_default()$.H,
   .normality      = args_default()$.normality,
@@ -99,6 +101,34 @@ estimatePath <- function(
         } else {
           NA
         } 
+        
+        if(!is.null(.approach_se)){
+          
+          # if(.approach_se == 'closed'){
+          #   # This requires that we know how the composites scores are obtained. 
+          #   # Liikely we have to give that over to this function.
+          #   # Have a look at he Devlieger paper to get the SEs
+          #   if(.approach_weights = 'regression'){
+          #     
+          #   }else if(.approach_weights = 'bartlett'){
+          #     
+          #   }else{
+          #     se <- coef
+          #     se[[1:length(se)] <- NA
+          #   }
+          #   
+          #   
+          # }
+          
+          if(.approach_se == 'closed_OLS'){
+            # calculate the OLs SEs
+            sig_square <-(-1* (r2adj-1)*var(.H[,y]))
+            
+            sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]))*
+              sig_square)
+          }
+          
+        }
       } # END OLS
       
       

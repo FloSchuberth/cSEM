@@ -32,15 +32,15 @@ The (J x J) matrix \code{E} of inner weights.
 }
 \description{
 PLS-PM forms "inner" composites as a weighted sum of its \emph{I} related composites.
-These inner weights are obtained using one of the following schemes:
+These inner weights are obtained using one of the following schemes \insertCite{Lohmoeller1989}{cSEM}:
 \describe{
-\item{\code{centroid}}{According to the centroid scheme each inner weight used
+\item{\code{centroid}}{According to the centroid weighting scheme each inner weight used
 to form composite \emph{j} is either 1 if the correlation between composite \emph{j} and
-its related composite \emph{i = 1, ..., I} is positive
+its via the structural model related composite \emph{i = 1, ..., I} is positive
 and -1 if it is negative.}
-\item{\code{factorial}}{According to the factorial scheme each inner weight used
-to form composite \emph{j} is equal to the correlation between composite \emph{j}
-and its related composite \emph{i = 1, ..., I}.}
+\item{\code{factorial}}{According to the factorial weighting scheme each inner weight used
+to form inner composite \emph{j} is equal to the correlation between composite \emph{j}
+and its via the structural model related composite \emph{i = 1, ..., I}.}
 \item{\code{path}}{Lets call all construct that have an arrow pointing to construct \emph{j}
 \strong{predecessors of j} and all arrows going from j to other constructs \strong{followers of j}.
 According the path weighting scheme, inner weights are computed as follows.

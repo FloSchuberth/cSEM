@@ -18,6 +18,6 @@ scaleWeights(
 The (J x K) matrix of scaled weights.
 }
 \description{
-Scale weights such that the composite variance is one.
+Scale weights such that the formed composite has unit variance.
 }
 \keyword{internal}

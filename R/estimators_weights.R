@@ -1,7 +1,7 @@
 #' Calculate composite weights using PLS-PM
 #'
 #' Calculates composite weights using the partial least squares path modeling 
-#' (PLS-PM) algorithm \insertcite{Wold1975}. (TODO)
+#' (PLS-PM) algorithm \insertCite{Wold1975}{cSEM}. (TODO)
 #'
 #' More details here. (TODO)
 #'
@@ -695,7 +695,7 @@ calculateWeightsGSCAm <- function(
   #   step 2) Currently i use R's cor() function. If we want to allow for different
   #   correlation types we need to use our calculateIndicatorCor() function instead
   # - Currently implementation assumes that B0 is a symmetric matrix. This 
-  #   is not the case if we include non-linear model. This has to be checked
+  #   is not the case if we include nonlinear model. This has to be checked
   #   once the algorithm is implemented for linear models.
   #
   ### For maintenance: ---------------------------------------------------------

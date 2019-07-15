@@ -121,10 +121,10 @@ summarize.cSEMResults_default <- function(
     rownames(inner_weight_estimates) <- NULL
     
   }
-
+  
   ## Construct scores ----------------------------------------------------------
   construct_scores <- as.data.frame(x1$Construct_scores)
-
+  
   ## Effects -------------------------------------------------------------------
   if(x2$Model$model_type == "Linear") {
     ## Effects are currently only for linear models. See issue #252 on github.
@@ -165,7 +165,7 @@ summarize.cSEMResults_default <- function(
       ## Add CI's
       # Column names
       ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
-             unlist(lapply(temp[.ci], rownames)))
+                            unlist(lapply(temp[.ci], rownames)))
       
       # Add cis to data frame and set names
       path_estimates <- cbind(path_estimates, t(do.call(rbind, temp[.ci])))
@@ -188,7 +188,7 @@ summarize.cSEMResults_default <- function(
       loading_estimates <- cbind(loading_estimates, t(do.call(rbind, temp[.ci])))
       rownames(loading_estimates) <- NULL
       colnames(loading_estimates)[(length(colnames(loading_estimates)) - 
-                                  (length(ci_colnames) - 1)):length(colnames(loading_estimates))] <- ci_colnames
+                                     (length(ci_colnames) - 1)):length(colnames(loading_estimates))] <- ci_colnames
     }
     
     ## Weight estimates --------------------------------------------------------
@@ -205,7 +205,7 @@ summarize.cSEMResults_default <- function(
       weight_estimates <- cbind(weight_estimates, t(do.call(rbind, temp[.ci])))
       rownames(weight_estimates) <- NULL
       colnames(weight_estimates)[(length(colnames(weight_estimates)) - 
-                                  (length(ci_colnames) - 1)):length(colnames(weight_estimates))] <- ci_colnames
+                                    (length(ci_colnames) - 1)):length(colnames(weight_estimates))] <- ci_colnames
     }
     
     ## Effects -----------------------------------------------------------------
@@ -237,7 +237,7 @@ summarize.cSEMResults_default <- function(
       .object$Estimates$Effect_estimates$Indirect_effect <- effects[[2]] # Indirect effect
       .object$Estimates$Effect_estimates$Total_effect <- effects[[1]] # Total effect!
     }
-
+    
   }
   
   ### Modify relevant .object elements =========================================
@@ -245,10 +245,10 @@ summarize.cSEMResults_default <- function(
   .object$Estimates$Loading_estimates <- loading_estimates
   .object$Estimates$Weight_estimates  <- weight_estimates
   if(x2$Arguments$.approach_weights == "PLS-PM") {
-  .object$Estimates$Inner_weight_estimates <- inner_weight_estimates
+    .object$Estimates$Inner_weight_estimates <- inner_weight_estimates
   }
   .object$Estimates$Construct_scores <- construct_scores
-
+  
   
   ## Set class for printing and return
   
@@ -269,8 +269,8 @@ summarize.cSEMResults_multi <- function(
   .alpha                 = args_default()$.alpha,
   .ci                    = NULL,
   ...
-  ) {
-
+) {
+  
   if(inherits(.object, "cSEMResults_2ndorder")) {
     lapply(.object, summarize.cSEMResults_2ndorder, 
            .alpha, .ci, ...)
@@ -304,7 +304,7 @@ summarize.cSEMResults_2ndorder <- function(
   # Only second order path model estimates are relevant. Delete the "_temp" 
   # suffix.
   x21$Path_estimates$Name <- gsub("_temp", "", x21$Path_estimates$Name)
-
+  
   ## Loading estimates 
   # Loadings for first stage (=all loadings except those of the 2nd order constructs)
   # Loadings for second stage (all loadings for 2nd order constructs)
@@ -345,7 +345,7 @@ summarize.cSEMResults_2ndorder <- function(
     names(x) <- gsub("_temp", "", names(x)) 
     x
   })
-
+  
   ## Model
   rownames(x22$Model$structural) <- gsub("_temp", "", rownames(x22$Model$structural))
   colnames(x22$Model$structural) <- gsub("_temp", "", colnames(x22$Model$structural))
@@ -385,7 +385,7 @@ summarize.cSEMResults_2ndorder <- function(
     ### Path estimates ---------------------------------------------------------
     temp   <- infer_out$Path_estimates
     t_temp <- x21$Path_estimates$Estimate / temp$sd
-
+    
     x21$Path_estimates["Std_err"] <- temp$sd
     x21$Path_estimates["t_stat"]  <- t_temp
     x21$Path_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
@@ -400,9 +400,9 @@ summarize.cSEMResults_2ndorder <- function(
       x21$Path_estimates <- cbind(x21$Path_estimates, t(do.call(rbind, temp[.ci])))
       rownames(x21$Path_estimates) <- NULL
       colnames(x21$Path_estimates)[(length(colnames(x21$Path_estimates)) - 
-                                  (length(ci_colnames) - 1)):length(colnames(x21$Path_estimates))] <- ci_colnames
+                                      (length(ci_colnames) - 1)):length(colnames(x21$Path_estimates))] <- ci_colnames
     }
-
+    
     ### Loadings ----------------------
     L <- lapply(list(x11$Loading_estimates, x21$Loading_estimates), function(y) {
       

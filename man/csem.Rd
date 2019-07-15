@@ -42,7 +42,7 @@ of the data provided are: "logical", "numeric" ("double" or "integer"),
 or a mix of several types.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list.}
+or a \link{cSEMModel} list. Defaults to \code{NULL}.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
 second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
@@ -185,7 +185,7 @@ See \code{\link[=parseModel]{parseModel()}} for details.
 \subsection{Weights and path coefficients:}{
 By default weights are estimated using the partial least squares path modeling
 algorithm (\code{"PLS-PM"}).
-A range of alternative weightning algorithms may be supplied to
+A range of alternative weighting algorithms may be supplied to
 \code{.approach_weights}. Currently, the following approaches are implemented
 \enumerate{
 \item{(Default) Partial least squares path modeling (\code{"PLS-PM"}). The algorithm
@@ -199,7 +199,7 @@ can be customized. See \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()
 regression (\code{"regression"}) or bartlett scores (\code{"bartlett"})}
 }
 
-Its possible to supply starting values for the weightning algorithm
+Its possible to supply starting values for the weighting algorithm
 via \code{.starting_values}. The argument accepts a named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}

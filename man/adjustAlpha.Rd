@@ -25,5 +25,11 @@ A vector of (possibly adjusted) significance levels.
 }
 \description{
 Adjust a given significance level \code{.alpha} to accomodate multiple testing.
+The following corrections are implemented:
+\describe{
+\item{\code{none}}{(Default) No correction is done.}
+\item{\code{bonferroni}}{A Bonferroni correction is done, i.e., alpha is divided by the
+number of comparisons \code{.nr_comparisons}.}
+}
 }
 \keyword{internal}

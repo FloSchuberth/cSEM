@@ -79,7 +79,7 @@ or a non-iterative procedure was used, the convergence status is set to \code{NU
 }
 \description{
 Calculates composite weights using the partial least squares path modeling
-(PLS-PM) algorithm \insertcite{Wold1975}. (TODO)
+(PLS-PM) algorithm \insertCite{Wold1975}{cSEM}. (TODO)
 }
 \details{
 More details here. (TODO)

@@ -551,23 +551,23 @@ csem(threecommonfactors, model, .disattenuate = FALSE)
 ```
 
 Note that since `.approach_weights = "PLS-PM"` and `.disattentuate = TRUE`
-by default (see for [The role of the weightning scheme and partial least squares (PLS)](#roleofpls) below)
+by default (see for [The role of the weighting scheme and partial least squares (PLS)](#roleofpls) below)
 and one of the concepts in the model above is modeled as a common factor,
 composite (proxy) correlations, loadings and path coefficients are adequately
 disattenuated using the correction approach commonly known as **consistent partial
 least squares (PLSc)**.
 If `.disattenuate = FALSE` or all concepts are modeled as composites "proper"
 PLS values are returned. To learn more about disattenuation, see the Methods
-and Formulae section of the respective weightning approach.
+and Formulae section of the respective weighting approach.
 
-### The role of the weightning scheme and partial least squares (PLS) {#roleofpls}
+### The role of the weighting scheme and partial least squares (PLS) {#roleofpls}
 
 In principal, any weighted combination of
 appropriately choosen observables can be used to estimate structural relationships
 between these compounts. Hence, any conceptual or methodological issue
-disscussed based on a composite build by a given (weightning) approach may
-equally well be discussed for any other potential weightning scheme. The
-appropriatness or potential superiority of a specific weightning approach such as
+disscussed based on a composite build by a given (weighting) approach may
+equally well be discussed for any other potential weighting scheme. The
+appropriatness or potential superiority of a specific weighting approach such as
 "partial least squares path modeling" (PLS) over another such as "unit weights" (sum scores) 
 is therfore to some extent a question of *relative* appropriatness and
 *relative* superiority.
@@ -575,7 +575,7 @@ is therfore to some extent a question of *relative* appropriatness and
 As a notable consequence, we belief that well known approach such partial least
 squares path modeling (PLS) and generalized structured component analysis (GSCA)
 are - contrary to common belief - best exclusivly understood as prescriptions for forming
-linear compunts based on observables, i.e. as weightning approaches. Not more, not less.
+linear compunts based on observables, i.e. as weighting approaches. Not more, not less.
 In cSEM this is reflected by the fact that `"PLS"` and `"GSCA"` are choices of 
 the `.approach_weights` argument.
 

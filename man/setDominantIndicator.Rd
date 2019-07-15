@@ -24,6 +24,9 @@ Dominant indicators may be specified for a subset of the constructs.}
 The (J x K) matrix of weights with the dominant indicator set.
 }
 \description{
-Set the dominant indicator for each construct.
+Set the dominant indicator for each construct. Since the sign of the weights,
+and thus the loadings is often not determined, a dominant indicator can be chosen
+per block. The sign of the weights are chosen that the correlation between the
+dominant indicator and the composite is positive.
 }
 \keyword{internal}

@@ -36,7 +36,7 @@ of the data provided are: "logical", "numeric" ("double" or "integer"),
 or a mix of several types.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list.}
+or a \link{cSEMModel} list. Defaults to \code{NULL}.}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "\emph{none}" in which case the standard

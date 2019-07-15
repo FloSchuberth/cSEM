@@ -387,7 +387,7 @@ calculateRhoT <- function(
       # Calculation of the CIs are based on Trinchera et al. (2018).
       # In the paper, the CI was proposed and studied using Monte Carlo simulation
       # assuming scores are build as sum scores. Therefore a warning is
-      # given if a weightning scheme other than "unit" is used, since they have
+      # given if a weighting scheme other than "unit" is used, since they have
       # not been formally studied yet.
       
       if(.object$Information$Arguments$.approach_weights != "unit" & .weighted) {
@@ -833,7 +833,7 @@ calculateSRMR <- function(
 
 #' Internal: Calculate effect size
 #'
-#' Calculate the effect size for regression analysis \insertcite{Cohen1992}.
+#' Calculate the effect size for regression analysis \insertCite{Cohen1992}{cSEM}.
 #'
 #' @usage calculateEffectSize(.object = NULL)
 #'
@@ -874,6 +874,7 @@ calculateEffectSize <- function(.object = NULL) {
       out <- estimatePath(
         .approach_nl    = approach_nl,
         .approach_paths = approach_paths,
+        .approach_se    = NULL,
         .csem_model     = model_temp,
         .H              = H,
         .normality      = normality,
@@ -928,7 +929,7 @@ calculateEffectSize <- function(.object = NULL) {
 #'   explanatory variable of a given construct on the remaining explanatory 
 #'   variables of that construct.
 #'   
-#'   If the weightning approach is not `"PLS-PM"` or for none of the constructs Mode B is used,
+#'   If the weighting approach is not `"PLS-PM"` or for none of the constructs Mode B is used,
 #'   the function silently returns `NA`.
 #'   
 #' @inheritParams csem_arguments
@@ -952,7 +953,7 @@ calculateVIFModeB <- function(.object = NULL) {
   modesB <- modes[modes == "modeB"] 
   
   # Only compute if 1. PLS-PM is the weight approach, 2. at least
-  # one construct has outer weightning scheme Mode B 
+  # one construct has outer weighting scheme Mode B 
   if (.object$Information$Arguments$.approach_weights == "PLS-PM" &&
       length(modesB) > 0) {
     
@@ -998,12 +999,8 @@ calculateVIFModeB <- function(.object = NULL) {
 #' Calculate/do a redundancy analysis (RA) as proposed by \insertCite{Hair2016;textual}{cSEM}
 #' with reference to \insertCite{Chin1998;textual}{cSEM}.
 #'
-#' According to Hair \insertCite{Hair2016;textual}{cSEM}, redundancy analysis (RA)
-#' is the process of regressing the scores of a reflectivly measured construct
-#' on the scores of a formatively measured construct in order to gain empirical
-#' evidence for convergent validity of a formatively measured construct. 
-#' RA is therefore confined to PLS, specifically PLS with at least one construct
-#' whose mode is Mode B. This is the case if the construct is modeled as a 
+#' RA is therefore confined to PLS-PM, specifically PLS-PM with at least one construct
+#' whose weight are obtained by Mode B. This is the case if the construct is modeled as a 
 #' composite or if the construct was explicitly given Mode B.
 #' Hence RA is only conducated if `.approach_weights = "PLS-PM"` and if at least
 #' one construct's mode is Mode B.
@@ -1024,7 +1021,7 @@ calculateVIFModeB <- function(.object = NULL) {
 #' @usage doRedundancyAnalysis(.object = NULL)
 #'
 #' @return A named numeric vector of correlations. If 
-#'   the weightning approach is not `"PLS-PM"` or non of the PLS outer modes
+#'   the weighting approach is not `"PLS-PM"` or non of the PLS outer modes
 #'   was mode B, the function silently returns `NA`.
 #'   
 #' @inheritParams csem_arguments
@@ -1147,11 +1144,11 @@ doFloodlightAnalysis <- function(
   dep_vars   <- rownames(m$structural[rowSums(m$structural) !=0, , drop = FALSE])
   indep_vars <- colnames(m$structural[, colSums(m$structural[.y, ,drop = FALSE]) !=0 , drop = FALSE])
   
-  ## Check if model is non-linear.
+  ## Check if model is nonlinear.
   if(m$model_type != "Nonlinear"){
     stop2(
       "The following error occured in the `doFloodlightAnalysis()`` function:\n",
-      "The structural model must be non-linear (i.e. contain interactions).")
+      "The structural model must be nonlinear (i.e. contain interactions).")
   }
   
   ## Works only for one significance level, i.e., no vector of significances is allowed

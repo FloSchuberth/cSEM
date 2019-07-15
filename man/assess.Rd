@@ -45,12 +45,12 @@ the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
 
 By default every possible quality criterion is calculated (\code{.quality_criterion = "all"}).
 If only a subset of quality criteria needs to be computed a single character string
-or a vector of character strings naming the quantity to compute may be
+or a vector of character strings naming the statistics to be computed may be
 supplied to \code{assess()} via the \code{.quality_criterion} argument. Currently, the
 following quality crieria are implemented (in alphabetical order):
 \describe{
 \item{Average variance extracted (AVE)]; "ave"}{An estimate of the
-amount of variation in the indicators that is due to the assumed latent variable.
+amount of variation in the indicators that is due to the underlying latent variable.
 Practically, it is calculated as the ratio of the (indicator) true score variances
 (i.e., the sum of the squared loadings)
 relative to the sum of the total indicator variances.}
@@ -95,8 +95,8 @@ for models containing composites modeled as common factors is still an
 open research question. Also note that fit indices are not tests and
 decisions based on common cut-offs proposed in the literature should always
 be acompanied by theoretical reasoning.}
-\item{Fornell-Larcker criterion; "fl"}{An estimate of the
-convergent and/or discriminant validity of a construct. The Fornell-Larcker
+\item{Fornell-Larcker criterion; "fl"}{A rule suggested by \insertCite{Fornell1981}{cSEM}
+to assess discriminant validity. The Fornell-Larcker
 criterion is a decision rule based on a comparison between the squared
 construct correlations and the average variance extracted. FL returns
 a matrix with the squared construct correlations on the off-diagonal and
@@ -109,7 +109,8 @@ as they explain their indicator variance in contrast to a composite where
 indicators actually build the construct.
 Note that, contrary to what the name suggests, the GoF is \strong{not} a
 measure of model fit in a Chi-square fit test sense.}
-\item{Heterotrait-monotrait ratio of correlations (HTMT); "htmt"}{An estimate of the
+\item{Heterotrait-monotrait ratio of correlations (HTMT); "htmt"}{An estimate of the latent variable correlation
+used to assess discriminant validity.
 convergent and/or discriminant validity of a construct.}
 \item{R square and R square adjusted; "r2", "r2_adj"}{The R square and the adjusted
 R square for each structural regression equation.}
@@ -170,7 +171,7 @@ model <- "
 eta2 ~ eta1
 eta3 ~ eta1 + eta2
 
-# (Reflective) measurement model
+# Each concept os measured by 3 indicators, i.e., modeled as latent variable
 eta1 =~ y11 + y12 + y13
 eta2 =~ y21 + y22 + y23
 eta3 =~ y31 + y32 + y33

@@ -15,7 +15,7 @@ WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES TO THE API ARE VERY LIKELY.
 
 ## Purpose
 
-Estimate, analyse, test, and study linear, non-linear, hierachical structural equation models using composite-based approaches and 
+Estimate, analyse, test, and study linear, nonlinear, hierachical structural equation models using composite-based approaches and 
 procedures, including estimation techniques such as partial least squares path 
 modeling (PLS-PM) and its derivatives (PLSc, OrdPLSc, robustPLSc), generalized 
 structured component analysis (GSCA), generalized structured component 

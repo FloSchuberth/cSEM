@@ -1,4 +1,5 @@
-#' Internal: Utility functions for nonlinear estimation
+#' Internal: Utility functions for the estimation of nonlinear models
+#' 
 #' 
 #' @param .i Row index
 #' @param .j Column index
@@ -38,8 +39,8 @@ f1 <- function(.i, .j) {
           "QuadTwInter_TwInter"   = {class_ij <- "TwInter_QuadTwInter"},
           # Class "ThrwInter_x"
           "QuadTwInter_ThrwInter" = {class_ij <- "ThrwInter_QuadTwInter"},
-          # Dont change the object if non of the above apply
-          # Note: If non of the alternatives apply,
+          # Dont change the object if none of the above apply
+          # Note: If none of the alternatives apply,
           # switch evaluates the last alternative...not sure anymore if thats
           # true. Needs to be checked!
           "None_of_the_above"     = {class_ij}
@@ -247,15 +248,15 @@ f5 <- function(.i, .j, .H, .Q, .var_struc_error) {
   x
 }
 
-#' Internal: Calculate moments 
+#' Internal: Calculate consistent moments of a nonlinear model 
 #' 
-#' Collection of moment estimators. See [classifyConstructs] for a list of
+#' Collection of various moment estimators. See [classifyConstructs] for a list of
 #' possible moments.
 #' 
 #' M is the matrix of the sample counterparts (estimates) of the
-#' left-hand side terms in equation (21) - (24) in the
-#' Dijkstra & Schermelleh-Engel (2014) paper. The label "M" did not appear in
-#' the paper and is only used in the package.
+#' left-hand side terms in Equation (21) - (24) \insertCite{Dijkstra2014}{cSEM}.
+#' The label "M" did not appear in the paper and is only used in the package.
+#' Similar is suggested by \insertCite{Wall2000;textual}{cSEM} using classical factor scores.
 #' 
 #' @param .i Row index
 #' @param .j Column index

@@ -32,6 +32,8 @@ Only used internally.}
 A (J x K) matrix of outer weights.
 }
 \description{
-Calculates outer weights using default or user supplied modes.
+Calculates outer weights in PLS-PM. Currently, the originally suggested mode A
+and mode B are suggested. Additionally, non-negative least squares (modeBNNLS) and
+weights of principal component analysis (PCA) are implemented.
 }
 \keyword{internal}

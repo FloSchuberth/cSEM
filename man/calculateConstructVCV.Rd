@@ -20,6 +20,7 @@ Q^2 is also called the reliability coefficient.}
 The (J x J) construct VCV matrix. Disattenuated if requested.
 }
 \description{
-Calculate the variance-covariance matrix (VCV) of the constructs.
+Calculate the variance-covariance matrix (VCV) of the constructs, i.e., correlations
+that involve common factors/latent variables are diattenuated.
 }
 \keyword{internal}

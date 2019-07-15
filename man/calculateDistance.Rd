@@ -28,7 +28,7 @@ Calculates the average of the differences between all possible pairs of
 are supplied the arithmetic mean of the differences between all possible pairs of
 (symmetric) matrices in a list is computed. Mathematically this is
 n chose 2. Hence, supplying a large number of matrices will
-become computationally challenging. Use with care.
+become computationally challenging.
 
 Currently two distance measures are supported:
 \describe{

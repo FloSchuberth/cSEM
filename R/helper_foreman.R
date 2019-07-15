@@ -131,7 +131,7 @@ calculateCorrectionFactors <- function(
 
 #' Internal: Calculate composite variance-covariance matrix
 #'
-#' Calculate the variance-covariance (VCV) matrix of the composites/proxies.
+#' Calculate the sample variance-covariance (VCV) matrix of the composites/proxies.
 #'
 #' @usage calculateCompositeVCV(
 #'  .S  = args_default()$.S,
@@ -162,7 +162,8 @@ calculateCompositeVCV <- function(
 
 #' Internal: Calculate construct variance-covariance matrix
 #'
-#' Calculate the variance-covariance matrix (VCV) of the constructs.
+#' Calculate the variance-covariance matrix (VCV) of the constructs, i.e., correlations 
+#' that involve common factors/latent variables are diattenuated.
 #'
 #' @usage calculateConstructVCV(
 #'  .C          = args_default()$.C, 
@@ -195,14 +196,20 @@ calculateConstructVCV <- function(
 #' 
 #' If `"none"` the method depends on the type of column of `.X_cleaned`:
 #' \describe{
-#'   \item{`Numeric-numeric`}{Bravais-Pearson product-moment correlation}
-#'   \item{`Numeric-factor`}{Polyserial correlation}
-#'   \item{`Factor-factor`}{Polychoric correlation}
+#'   \item{`Numeric-numeric`}{Bravais-Pearson product-moment correlation implemented via `stats::cor()`}
+#'   \item{`Numeric-factor`}{Polyserial correlation \insertCite{Drasgow1988}{cSEM} implemented via `polycor::hetcor()`. 
+#'   See `?polycor::hetcor` for details.}
+#'   \item{`Factor-factor`}{Polychoric correlation \insertCite{Drasgow1988}{cSEM} implemented via `polycor::hetcor()`.
+#'   See `?polycor::hetcor` for details.}
 #' }
 #' Note: logical input is treated as a 0-1 factor variable.
 #' 
-#' If  `"mcd"` (= minimum covariance determinant) a robust covariance is estimated
-#' via `MASS::cov.rob()`. See `?MASS::cov.rob()` for details.
+#' If  `"mcd"` (= minimum covariance determinant), the MCD estimator \insertCite{Rousseeuw1999}{cSEM}
+#' , a robust covariance estimator, is applied
+#' via `MASS::cov.rob()`. See `?MASS::cov.rob` for details.
+#' 
+#' If `"spearman"`, the Spearman rank correlation is applied via `stats::cor()`. See
+#' `"?stats::cor"` for details. 
 #'
 #' @usage calculateIndicatorCor(
 #'   .X_cleaned           = args_default()$.X_cleaned, 
@@ -529,7 +536,10 @@ calculateReliabilities <- function(
 
 #' Internal: Set the dominant indicator
 #' 
-#' Set the dominant indicator for each construct.
+#' Set the dominant indicator for each construct. Since the sign of the weights, 
+#' and thus the loadings is often not determined, a dominant indicator can be chosen
+#' per block. The sign of the weights are chosen that the correlation between the 
+#' dominant indicator and the composite is positive. 
 #'
 #' @usage setDominantIndicator(
 #'  .W                   = args_default()$.W,

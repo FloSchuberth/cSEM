@@ -29,13 +29,19 @@ Calculate the indicator correlation matrix using conventional or robust methods.
 \details{
 If \code{"none"} the method depends on the type of column of \code{.X_cleaned}:
 \describe{
-\item{\code{Numeric-numeric}}{Bravais-Pearson product-moment correlation}
-\item{\code{Numeric-factor}}{Polyserial correlation}
-\item{\code{Factor-factor}}{Polychoric correlation}
+\item{\code{Numeric-numeric}}{Bravais-Pearson product-moment correlation implemented via \code{stats::cor()}}
+\item{\code{Numeric-factor}}{Polyserial correlation \insertCite{Drasgow1988}{cSEM} implemented via \code{polycor::hetcor()}.
+See \code{?polycor::hetcor} for details.}
+\item{\code{Factor-factor}}{Polychoric correlation \insertCite{Drasgow1988}{cSEM} implemented via \code{polycor::hetcor()}.
+See \code{?polycor::hetcor} for details.}
 }
 Note: logical input is treated as a 0-1 factor variable.
 
-If  \code{"mcd"} (= minimum covariance determinant) a robust covariance is estimated
-via \code{MASS::cov.rob()}. See \code{?MASS::cov.rob()} for details.
+If  \code{"mcd"} (= minimum covariance determinant), the MCD estimator \insertCite{Rousseeuw1999}{cSEM}
+, a robust covariance estimator, is applied
+via \code{MASS::cov.rob()}. See \code{?MASS::cov.rob} for details.
+
+If \code{"spearman"}, the Spearman rank correlation is applied via \code{stats::cor()}. See
+\code{"?stats::cor"} for details.
 }
 \keyword{internal}
