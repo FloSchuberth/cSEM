@@ -7,7 +7,7 @@
 \alias{f3}
 \alias{f4}
 \alias{f5}
-\title{Internal: Utility functions for the estimation of non-linear models}
+\title{Internal: Utility functions for the estimation of nonlinear models}
 \usage{
 f1(.i, .j)
 
@@ -33,6 +33,6 @@ Q^2 is also called the reliability coefficient.}
 \item{.H}{The (N x J) matrix of construct scores.}
 }
 \description{
-Internal: Utility functions for the estimation of non-linear models
+Internal: Utility functions for the estimation of nonlinear models
 }
 \keyword{internal}

@@ -23,7 +23,7 @@
 \alias{ThrwInterThrwInter}
 \alias{ThrwInterQuadTwInter}
 \alias{QuadTwInercQuadTwInter}
-\title{Internal: Calculate consistent moments of a non-linear model}
+\title{Internal: Calculate consistent moments of a nonlinear model}
 \usage{
 SingleSingle(.i, .j, .Q, .H)
 
