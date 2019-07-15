@@ -167,6 +167,9 @@ estimatePath <- function(
         # the instruments (ensured if only internal instruments are allowed)
         # we can use .P.
         
+        # Multivariate regression is conducted, i.e., all independent variables of an equation 
+        # including the endogenous variables are regressed on the instruments
+        
         beta_1st <- solve(.P[names_Z, names_Z, drop = FALSE], 
                           .P[names_Z, names_X, drop = FALSE])
         
