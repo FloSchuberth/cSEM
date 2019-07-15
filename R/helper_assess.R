@@ -849,9 +849,10 @@ calculateSRMR <- function(
 calculateEffectSize <- function(.object = NULL) {
   
   ## Get relevant quantities
-  approach_nl    <- .object$Information$Arguments$.approach_nl
-  approach_paths <- .object$Information$Arguments$.approach_paths
-  csem_model     <- .object$Information$Model
+  approach_nl      <- .object$Information$Arguments$.approach_nl
+  approach_paths   <- .object$Information$Arguments$.approach_paths
+  approach_weights <- .object$Information$Arguments$.approach_weights
+  csem_model       <- .object$Information$Model
   H <- .object$Estimates$Construct_scores
   normality <- .object$Information$Arguments$.normality
   P <- .object$Estimates$Construct_VCV
@@ -872,14 +873,15 @@ calculateEffectSize <- function(.object = NULL) {
       model_temp$structural[x, i] <- 0 
       
       out <- estimatePath(
-        .approach_nl    = approach_nl,
-        .approach_paths = approach_paths,
-        .approach_se    = NULL,
-        .csem_model     = model_temp,
-        .H              = H,
-        .normality      = normality,
-        .P              = P,
-        .Q              = Q
+        .approach_nl      = approach_nl,
+        .approach_paths   = approach_paths,
+        .approach_se      = NULL,
+        .approach_weights = approach_weights,
+        .csem_model       = model_temp,
+        .H                = H,
+        .normality        = normality,
+        .P                = P,
+        .Q                = Q
       )
       
       ## Calculate effect size

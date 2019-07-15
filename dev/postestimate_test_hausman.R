@@ -262,6 +262,7 @@ testHausman.cSEMResults_default <- function(
                                               .csem_model = model_star,
                                               .approach_paths = 'OLS',
                                               .approach_se    = NULL,
+                                              .approach_weights = res_efficient$Information$Arguments$.approach_weights,
                                               .H = scores_star,
                                               .normality = res_efficient$Information$Arguments$.normality,
                                               .P = P_star,
@@ -271,6 +272,7 @@ testHausman.cSEMResults_default <- function(
                                                .csem_model = model_star,
                                                .approach_paths = '2SLS',
                                                .approach_se    = NULL,
+                                               .approach_weights = res_efficient$Information$Arguments$.approach_weights,
                                                .H = scores_star,
                                                .normality = res_efficient$Information$Arguments$.normality,
                                                .P = P_star,
@@ -284,6 +286,7 @@ testHausman.cSEMResults_default <- function(
                                                .csem_model = model_star,
                                                .approach_paths = '2SLS',
                                                .approach_se    = NULL,
+                                               .approach_weights = res_efficient$Information$Arguments$.approach_weights,
                                                .H = scores_star,
                                                .normality = res_efficient$Information$Arguments$.normality,
                                                .P = P_star,
@@ -294,6 +297,7 @@ testHausman.cSEMResults_default <- function(
                                               .csem_model = model_star,
                                               .approach_paths = '3SLS',
                                               .approach_se    = NULL,
+                                              .approach_weights = res_efficient$Information$Arguments$.approach_weights,
                                               .H = scores_star,
                                               .normality = res_efficient$Information$Arguments$.normality,
                                               .P = P_star,
@@ -327,6 +331,7 @@ testHausman.cSEMResults_default <- function(
                                                 .csem_model = model_star,
                                                 .approach_paths = 'OLS',
                                                 .approach_se    = NULL,
+                                                .approach_weights = res_efficient$Information$Arguments$.approach_weights,
                                                 .H = scores_temp,
                                                 .normality = res_efficient$Information$Arguments$.normality,
                                                 .P = P_temp,
@@ -336,6 +341,7 @@ testHausman.cSEMResults_default <- function(
                                                  .csem_model = model_star,
                                                  .approach_paths = '2SLS',
                                                  .approach_se    = NULL,
+                                                 .approach_weights = res_efficient$Information$Arguments$.approach_weights,
                                                  .H = scores_temp,
                                                  .normality = res_consistent$Information$Arguments$.normality,
                                                  .P = P_temp,
@@ -348,7 +354,8 @@ testHausman.cSEMResults_default <- function(
           consistent_temp <- estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
                                                  .csem_model = model_star,
                                                  .approach_paths = '2SLS',
-                                          .approach_se    = NULL,
+                                                 .approach_se    = NULL,
+                                          .approach_weights = res_efficient$Information$Arguments$.approach_weights,
                                                  .H = scores_temp,
                                                  .normality = res_efficient$Information$Arguments$.normality,
                                                  .P = P_temp,
@@ -358,6 +365,8 @@ testHausman.cSEMResults_default <- function(
           efficient_temp <- estimatePath(.approach_nl = res_efficient$Information$Arguments$.approach_nl,
                                                 .csem_model = model_star,
                                                 .approach_paths = '3SLS',
+                                                .approach_se  = NULL,
+                                                .approach_weights = res_efficient$Information$Arguments$.approach_weights,
                                                 .H = scores_temp,
                                                 .normality = res_efficient$Information$Arguments$.normality,
                                                 .P = P_temp,
@@ -445,7 +454,7 @@ testHausman.cSEMResults_multi <- function(
   .R              = args_default()$.R,
   .R2             = args_default()$.R2,
   .vcv_asymptotic = args_default()$.vcv_asymptotic
-  ){
+){
   
   if(inherits(.object, "cSEMResults_2ndorder")) {
     lapply(.object, testHausman.cSEMResults_2ndorder,
@@ -462,7 +471,7 @@ testHausman.cSEMResults_multi <- function(
            .R              = .R,
            .R2             = .R2,
            .vcv_asymptotic = .vcv_asymptotic
-           )
+    )
   }
 }
 
@@ -476,7 +485,7 @@ testHausman.cSEMResults_2ndorder <- function(
   .R              = args_default()$.R,
   .R2             = args_default()$.R2,
   .vcv_asymptotic = args_default()$.vcv_asymptotic
-  ){
+){
   
   stop2("Hausman test is not yet implemented for second-order models.")
 }

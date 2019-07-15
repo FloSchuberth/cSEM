@@ -4,14 +4,15 @@
 #' OLS, 2SLS, or 3SLS. The two latters currently works only for linear models.
 #'
 #' @usage estimatePath(
-#'  .approach_nl    = args_default()$.approach_nl,
-#'  .approach_paths = args_default()$.approach_paths,
-#'  .approach_se    = args_default()$.approach_se,
-#'  .csem_model     = args_default()$.csem_model,
-#'  .H              = args_default()$.H,
-#'  .normality      = args_default()$.normality,
-#'  .P              = args_default()$.P,
-#'  .Q              = args_default()$.Q
+#'  .approach_nl      = args_default()$.approach_nl,
+#'  .approach_paths   = args_default()$.approach_paths,
+#'  .approach_se      = args_default()$.approach_se,
+#'  .approach_weights = args_default()$.approach_weights,
+#'  .csem_model       = args_default()$.csem_model,
+#'  .H                = args_default()$.H,
+#'  .normality        = args_default()$.normality,
+#'  .P                = args_default()$.P,
+#'  .Q                = args_default()$.Q
 #'  )
 #'   
 #' @inheritParams csem_arguments
@@ -21,14 +22,15 @@
 #'
 
 estimatePath <- function(
-  .approach_nl    = args_default()$.approach_nl,
-  .approach_paths = args_default()$.approach_paths,
-  .approach_se    = args_default()$.approach_se,
-  .csem_model     = args_default()$.csem_model,
-  .H              = args_default()$.H,
-  .normality      = args_default()$.normality,
-  .P              = args_default()$.P,
-  .Q              = args_default()$.Q
+  .approach_nl      = args_default()$.approach_nl,
+  .approach_paths   = args_default()$.approach_paths,
+  .approach_se      = args_default()$.approach_se,
+  .approach_weights = args_default()$.approach_weights,
+  .csem_model       = args_default()$.csem_model,
+  .H                = args_default()$.H,
+  .normality        = args_default()$.normality,
+  .P                = args_default()$.P,
+  .Q                = args_default()$.Q
   ) {
   
   ## Check approach_path argument:

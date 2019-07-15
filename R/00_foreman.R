@@ -199,6 +199,7 @@ foreman <- function(
       .approach_nl    = .approach_nl,
       .approach_paths = .approach_paths,
       .approach_se    = .approach_se,
+      .approach_weights = .approach_weights,
       .csem_model     = csem_model,
       .H              = H,
       .normality      = .normality,
