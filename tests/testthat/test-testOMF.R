@@ -6,7 +6,7 @@ for(i in DGPs) {
   load(paste0("../data/", i))
   
   ## Draw data
-  dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = FALSE)
+  dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)
   
   ## Estimate
   res <- csem(dat, model_Sigma) 
