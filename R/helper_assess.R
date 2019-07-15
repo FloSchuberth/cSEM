@@ -998,12 +998,8 @@ calculateVIFModeB <- function(.object = NULL) {
 #' Calculate/do a redundancy analysis (RA) as proposed by \insertCite{Hair2016;textual}{cSEM}
 #' with reference to \insertCite{Chin1998;textual}{cSEM}.
 #'
-#' According to Hair \insertCite{Hair2016;textual}{cSEM}, redundancy analysis (RA)
-#' is the process of regressing the scores of a reflectivly measured construct
-#' on the scores of a formatively measured construct in order to gain empirical
-#' evidence for convergent validity of a formatively measured construct. 
 #' RA is therefore confined to PLS-PM, specifically PLS-PM with at least one construct
-#' whose mode is Mode B. This is the case if the construct is modeled as a 
+#' whose weight are obtained by Mode B. This is the case if the construct is modeled as a 
 #' composite or if the construct was explicitly given Mode B.
 #' Hence RA is only conducated if `.approach_weights = "PLS-PM"` and if at least
 #' one construct's mode is Mode B.
