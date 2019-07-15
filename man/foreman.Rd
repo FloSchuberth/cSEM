@@ -10,6 +10,7 @@ foreman(
   .approach_cor_robust         = args_default()$.approach_cor_robust,
   .approach_nl                 = args_default()$.approach_nl,
   .approach_paths              = args_default()$.approach_paths,
+  .approach_se                 = args_default()$.approach_se,
   .approach_weights            = args_default()$.approach_weights,
   .conv_criterion              = args_default()$.conv_criterion,
   .disattenuate                = args_default()$.disattenuate,
@@ -52,6 +53,8 @@ Defaults to "\emph{sequential}".}
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
+
+\item{.approach_se}{Chraracter string. Approach used to determined the SEs. Defaults to \code{NULL}.}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",

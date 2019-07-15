@@ -1,22 +1,12 @@
 context("csem")
 
+## Source 
+source("test-main.R")
+
 # ==============================================================================
-# Tests 
+# General tests 
 # ==============================================================================
-### 2 Common factors -----------------------------------------------------------
-## Load data
-load(file = "../data/1_DGPs_models_pop_params.RData")
-
-## Draw data
-dat <- MASS::mvrnorm(200, rep(0, 6), Sigma = Sigma$Sigma, empirical = TRUE)
-
-## Estimate
-res <-  csem(dat, model_Sigma)
-res_sum <- summarize(res)
-
-### Test
-
-test_that("No data/model provided should give an error", {
+test_that("No data/model provided causes an error", {
   expect_error(
     csem(.model = model)
   )
@@ -25,7 +15,220 @@ test_that("No data/model provided should give an error", {
   )
 })
 
-test_that("Linear model: correctly specified models are correctly estimated", {
-  expect_equal(res_sum$Estimates$Path_estimates$Estimate, pop_params_Sigma$Path_coefficients)
-  expect_equal(res_sum$Estimates$Loading_estimates$Estimate, unname(pop_params_Sigma$Loadings))
+# ==============================================================================
+# DGPs
+# ==============================================================================
+### DGP_linear_2commonfactors --------------------------------------------------
+# Loads Sigma, models and population values
+load(file = "../data/DGP_linear_2commonfactors.RData")
+
+## Draw data
+dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), 
+                     Sigma = Sigma$Sigma, empirical = TRUE)
+
+## Estimate
+res <-  csem(dat, model_Sigma)
+
+## Comparison
+path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
+loadings <- comparecSEM(res, .what = "Loading_estimates", pop_params_Sigma$Loadings)
+
+## Test
+test_that("DPG_linear_2commonfactors is correctly estimated", {
+  expect_equal(path$Estimate, path$Pop_value)
+  expect_equal(loadings$Estimate, loadings$Pop_value)
+})
+
+### DGP_linear_2composites =====================================================
+# Loads Sigma, models and population values
+load(file = "../data/DGP_linear_2composites.RData")
+
+## Draw data
+dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), 
+                     Sigma = Sigma$Sigma, empirical = TRUE)
+
+## Estimate
+res <-  csem(dat, model_Sigma)
+
+## Comparison
+path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
+loadings <- comparecSEM(res, .what = "Loading_estimates", pop_params_Sigma$Loadings)
+weights  <- comparecSEM(res, .what = "Weight_estimates", pop_params_Sigma$Weights)
+
+## Test
+test_that("DPG_linear_2composites is correctly estimated", {
+  expect_equal(path$Estimate, path$Pop_value)
+  expect_equal(loadings$Estimate, loadings$Pop_value)
+  expect_equal(weights$Estimate, weights$Pop_value)
+})
+
+### DGP_linear_3commonfactors ==================================================
+# Loads Sigma, models and population values
+load(file = "../data/DGP_linear_3commonfactors.RData") 
+
+## Draw data
+dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)), 
+                     Sigma = Sigma$Sigma, empirical = TRUE)
+
+## Estimate
+for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
+           "unit", "bartlett", "regression")) {
+  ## - "SSQCOR" is excluded as it rather unstable regularily producing differences
+  ##   between estimate and population value larger than 0.01.
+
+  res <-  csem(dat, model_Sigma, .approach_weights = i, 
+               .dominant_indicators = c("eta1" = "y11", "eta2" = "y21", "eta3" = "y31"))
+  
+  ## Comparison
+  path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
+  loadings <- comparecSEM(res, .what = "Loading_estimates", pop_params_Sigma$Loadings)
+  
+  ## Test
+  # Note: the tolerance is necessary since Croon correction requires a CFA (i.e. ML estimation)
+  # which is only consistent (i.e. will not exactly reproduce the population
+  # values for a finite sample size)
+  test_that(paste("Weighting approach", i, "yields correct results"), {
+    expect_equal(path$Estimate, path$Pop_value, tolerance = 0.01)
+    expect_equal(loadings$Estimate, loadings$Pop_value, tolerance = 0.01)
+  })
+}
+
+
+### DGP_linear_3compostites ====================================================
+# Loads Sigma, models and population values
+load(file = "../data/DGP_linear_3composites.RData") 
+
+## Draw data
+dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)), 
+                     Sigma = Sigma$Sigma, empirical = TRUE)
+
+## Estimate
+for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR")) {
+  ## - "SSQCOR" is excluded as it rather unstable regularily producing differences
+  ##   between estimate and population value larger than 0.01.
+  ## - "PCA" is excluded as weights obtained by PCA are not population weights but 
+  ##   simply the first principal component of S_jj.
+  ## - "unit" is excluded as unit weights are inconsitent "estimates" for the
+  ##   population weights (weights are simply set to 1 and scaled).
+  ## - "bartlett" and "regression" are excluded as they are not meaningful 
+  ##   for models containing concepts modeled as composites
+  res <-  csem(dat, model_Sigma, .approach_weights = i, 
+               .dominant_indicators = c("eta1" = "y11", "eta2" = "y21", "eta3" = "y31"))
+  
+  ## Comparison
+  path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
+  loadings <- comparecSEM(res, .what = "Loading_estimates", pop_params_Sigma$Loadings)
+  weights  <- comparecSEM(res, .what = "Weight_estimates", pop_params_Sigma$Weights)
+  
+  ## Test
+  test_that(paste("Weighting approach", i, "yields correct results"), {
+    expect_equal(path$Estimate, path$Pop_value, tolerance = 0.001)
+    expect_equal(loadings$Estimate, loadings$Pop_value, tolerance = 0.001)
+    expect_equal(weights$Estimate, weights$Pop_value, tolerance = 0.001)
+  })
+}
+
+### DGP_2ndorder - Common factor of common factors =============================
+# Loads Sigma, models and population values
+load(file = "../data/DGP_2ndorder_cf_of_cfs.RData")  
+
+## Draw data
+dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma)), Sigma = Sigma, empirical = TRUE)
+
+## Estimate
+res <-  csem(dat, model_Sigma)
+
+## Comparison
+path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
+loadings <- comparecSEM(res, .what = "Loading_estimates", pop_params_Sigma$Loadings)
+
+## Reorder to match estimate and population value
+l1 <- loadings[, c("Pop_value", "Pop_value_name")]
+l1 <- l1[c(15:17,1:14,18:23), ]
+loadings <- cbind(loadings[, 1:2], l1)
+
+## Test
+test_that("DPG_2ndorder_cf_of_cfs is correctly estimated", {
+  expect_equal(path$Estimate, path$Pop_value)
+  expect_equal(loadings$Estimate, loadings$Pop_value)
+})
+
+### DGP_2ndorder - Common factor of composites =================================
+# Loads Sigma, models and population values
+load(file = "../data/DGP_2ndorder_cf_of_composites.RData")  
+
+## Draw data
+dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma)), Sigma = Sigma, empirical = TRUE)
+
+## Estimate
+res <-  csem(dat, model_Sigma)
+
+## Comparison
+path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
+loadings <- comparecSEM(res, .what = "Loading_estimates", pop_params_Sigma$Loadings)
+weights  <- comparecSEM(res, .what = "Weight_estimates", pop_params_Sigma$Weights)
+
+## Reorder to match estimate and population value
+l1 <- loadings[, c("Pop_value", "Pop_value_name")]
+l1 <- l1[c(15:17,1:14,18:23), ]
+loadings <- cbind(loadings[, 1:2], l1)
+
+## Test
+test_that("DPG_2ndorder_cf_of_composites is correctly estimated", {
+  expect_equal(path$Estimate, path$Pop_value)
+  expect_equal(loadings$Estimate, loadings$Pop_value)
+  expect_equal(weights$Estimate, weights$Pop_value)
+})
+
+### DGP_2ndorder - Composite of common factors =================================
+# Loads Sigma, models and population values
+load(file = "../data/DGP_2ndorder_composite_of_cfs.RData")  
+
+## Draw data
+dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma)), Sigma = Sigma, empirical = TRUE)
+
+## Estimate
+res <-  csem(dat, model_Sigma)
+
+## Comparison
+path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
+loadings <- comparecSEM(res, .what = "Loading_estimates", pop_params_Sigma$Loadings)
+weights  <- comparecSEM(res, .what = "Weight_estimates", pop_params_Sigma$Weights)
+
+## Reorder to match estimate and population value
+l1 <- loadings[, c("Pop_value", "Pop_value_name")]
+l1 <- l1[c(15:17,1:14,18:23), ]
+loadings <- cbind(loadings[, 1:2], l1)
+
+## Test
+test_that("DPG_2ndorder_composites_of_cfs is correctly estimated", {
+  expect_equal(path$Estimate, path$Pop_value, tolerance = 0.01)
+  expect_equal(loadings$Estimate, loadings$Pop_value)
+  expect_equal(weights$Estimate, weights$Pop_value)
+})
+### DGP_2ndorder - Composite of composites =====================================
+# Loads Sigma, models and population values
+load(file = "../data/DGP_2ndorder_composite_of_composites.RData")  
+
+## Draw data
+dat <- MASS::mvrnorm(200, rep(0, nrow(Sigma)), Sigma = Sigma, empirical = TRUE)
+
+## Estimate
+res <-  csem(dat, model_Sigma)
+
+## Comparison
+path     <- comparecSEM(res, .what = "Path_estimates", pop_params_Sigma$Path_coefficients)
+loadings <- comparecSEM(res, .what = "Loading_estimates", pop_params_Sigma$Loadings)
+weights  <- comparecSEM(res, .what = "Weight_estimates", pop_params_Sigma$Weights)
+
+## Reorder to match estimate and population value
+l1 <- loadings[, c("Pop_value", "Pop_value_name")]
+l1 <- l1[c(15:17,1:14,18:23), ]
+loadings <- cbind(loadings[, 1:2], l1)
+
+## Test
+test_that("DPG_2ndorder_composites_of_composites is correctly estimated", {
+  expect_equal(path$Estimate, path$Pop_value)
+  expect_equal(loadings$Estimate, loadings$Pop_value)
+  expect_equal(weights$Estimate, weights$Pop_value)
 })
