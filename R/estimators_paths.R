@@ -126,7 +126,7 @@ estimatePath <- function(
             # calculate the OLs SEs
             sig_square <-(-1* (r2adj-1)*var(.H[,y]))
             
-            sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]))*
+            ses <- sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]))*
               sig_square)
           }
           
@@ -189,7 +189,7 @@ estimatePath <- function(
       } # END 2SLS
       
       ## Collect results
-      list("coef" = coef, "r2" = r2, "r2adj" = r2adj, "vif" = vif)
+      list("coef" = coef, "r2" = r2, "r2adj" = r2adj, "vif" = vif, "ses" = ses)
     }) # END lapply
     
     names(res) <- dep_vars
@@ -409,6 +409,9 @@ estimatePath <- function(
     # Variance inflation factor
     vif = lapply(vcv_explana_ls, function(x) diag(solve(cov2cor(x))))
     
+    # Add standard error Wall & Amemyia 2SMM
+    ses = NULL
+    
     ##==========================================================================
     # Replacement approach
     ### ========================================================================
@@ -524,7 +527,7 @@ estimatePath <- function(
         } # END else
       } # END for k in dep_vars
     } # END if(.approach_nlhod = replace)
-    res <- list("coef" = coef, "r2" = r2, "r2adj" = r2adj, "vif" = vif)
+    res <- list("coef" = coef, "r2" = r2, "r2adj" = r2adj, "vif" = vif, "ses" = ses)
   } # END if nonlinear
   ### Structure results --------------------------------------------------------
   tm <- t(.csem_model$structural)
@@ -534,5 +537,5 @@ estimatePath <- function(
   res$vif <- Filter(Negate(anyNA), res$vif)
   
   ## Return result -------------------------------------------------------------
-  list("Path_estimates" = t(tm), "R2" = unlist(res$r2),"R2adj" = unlist(res$r2adj), "VIF" = res$vif)
+  list("Path_estimates" = t(tm), "R2" = unlist(res$r2),"R2adj" = unlist(res$r2adj), "VIF" = res$vif, "SEs" = res$ses)
 }
