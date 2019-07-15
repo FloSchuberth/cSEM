@@ -15,7 +15,7 @@ stable relase will be version 0.0.1, most likely in mid 2019.
 
 ## Purpose
 
-Estimate, analyse, test, and study linear, non-linear, hierachical
+Estimate, analyse, test, and study linear, nonlinear, hierachical
 structural equation models using composite-based approaches and
 procedures, including estimation techniques such as partial least
 squares path modeling (PLS-PM) and its derivatives (PLSc, OrdPLSc,

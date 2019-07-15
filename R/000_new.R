@@ -50,7 +50,7 @@ predict=function(.object, testDataset){
     stop('The same indicators as in the original estimation need to be provided') #Perhaps we do not need to be tha strict as we only need the exogenous indicators
   }
   
-  # Return error if model is non-linear. See danks et al how this can be addressed.
+  # Return error if model is nonlinear. See danks et al how this can be addressed.
   if(.object$Information$Model$model_type != 'Linear'){
     stop2('Currenlty, predictPLS works only for linear models.')
   }

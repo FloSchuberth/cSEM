@@ -1147,11 +1147,11 @@ doFloodlightAnalysis <- function(
   dep_vars   <- rownames(m$structural[rowSums(m$structural) !=0, , drop = FALSE])
   indep_vars <- colnames(m$structural[, colSums(m$structural[.y, ,drop = FALSE]) !=0 , drop = FALSE])
   
-  ## Check if model is non-linear.
+  ## Check if model is nonlinear.
   if(m$model_type != "Nonlinear"){
     stop2(
       "The following error occured in the `doFloodlightAnalysis()`` function:\n",
-      "The structural model must be non-linear (i.e. contain interactions).")
+      "The structural model must be nonlinear (i.e. contain interactions).")
   }
   
   ## Works only for one significance level, i.e., no vector of significances is allowed

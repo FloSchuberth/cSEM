@@ -145,7 +145,7 @@ testMGD <- function(
       "Approach `'Sarstedt'` not supported if `.handle_inadmissibles == 'drop'`")
   }
   
-  # If a non-linear model is used Klesel et al. approach cannot be used as 
+  # If a nonlinear model is used Klesel et al. approach cannot be used as 
   # it is not clear how to calculate the model-implied VCV
   # Extract model type information
   if(inherits(.object[[1]], "cSEMResults_2ndorder")){

@@ -1,4 +1,4 @@
-#' Internal: Utility functions for the estimation of non-linear models
+#' Internal: Utility functions for the estimation of nonlinear models
 #' 
 #' 
 #' @param .i Row index
@@ -248,7 +248,7 @@ f5 <- function(.i, .j, .H, .Q, .var_struc_error) {
   x
 }
 
-#' Internal: Calculate consistent moments of a non-linear model 
+#' Internal: Calculate consistent moments of a nonlinear model 
 #' 
 #' Collection of various moment estimators. See [classifyConstructs] for a list of
 #' possible moments.
