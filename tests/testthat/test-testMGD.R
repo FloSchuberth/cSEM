@@ -26,6 +26,7 @@ eta3 =~ y31 + y32 + y33
 
 # Model and Sigma matrix for 2nd order DGP
 load("../data/DGP_2ndorder_cf_of_composites.RData")
+# load("tests//data/DGP_2ndorder_cf_of_composites.RData")
 model_2ndorder <- model_Sigma
 
 ## Data
@@ -33,7 +34,7 @@ dat <- list(threecommonfactors,
              threecommonfactors[1:200, ], 
              threecommonfactors[130:250,])
 
-dat2ndorder <- lapply(1:2, function(x) MASS::mvrnorm(200, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma))
+dat2ndorder <- lapply(c(200, 300), function(x) MASS::mvrnorm(x, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE))
 
 ## Estimates (.R is small to save computation time)
 res_error <- csem(threecommonfactors, model_linear)
