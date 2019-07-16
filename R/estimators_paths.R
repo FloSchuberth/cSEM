@@ -120,7 +120,7 @@ estimatePath <- function(
             }
             
             if(.approach_weights == 'bartlett'){
-
+              # See Devlieger & Rosseel (2016)
             }
 
           } #.approach_se == "closed"
@@ -195,7 +195,7 @@ estimatePath <- function(
         
         
         # Calculation of the standard errors
-        # By default they are set to NA
+        # By default they are set to NA and if .approach_se == "none" nothing is done
         ses = coef
         ses[] <- NA
         
@@ -293,10 +293,12 @@ estimatePath <- function(
                            intersect(colnames(m)[m[mue, ] != 0], vars_exo))]
         })
       
-      RHS_part <- do.call(cbind, RHS_part)
+      names(RHS_part) <- dep_vars  
+      
+      RHS_part_stacked <- do.call(cbind, RHS_part)
         
-      list(LHS_part = LHS_part, RHS_part = RHS_part)
-      })
+      list(LHS_part = LHS_part, RHS_part = RHS_part_stacked)
+      }) #end lapply
       
       
       part <- purrr::transpose(part)
@@ -309,6 +311,9 @@ estimatePath <- function(
       # Overwrite res object
       nrcoefs <- cumsum(c(0, lengths(res$coef)))
       
+      
+      ses_all <- sqrt(diag(solve(RHS)))
+      
       # Overwrite parameters; There must be a better way, i.e., more secure way.
       # Doesn't work yet!!!!
     
@@ -319,7 +324,11 @@ estimatePath <- function(
         # Calculation of the standard errors
         # No closed form SEs for 3SLS are implemented yet, i.e., they are set to NA in any case
         res$ses[[endo]][] = NA 
-        }
+        
+        
+        
+        
+      } #end for loop
     
       
       }#end 3SLS
