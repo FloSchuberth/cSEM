@@ -4,7 +4,7 @@
 \name{threecommonfactors}
 \alias{threecommonfactors}
 \title{Data: threecommonfactors}
-\format{A matrix with 400 rows and 9 variables:
+\format{A matrix with 500 rows and 9 variables:
 \describe{
 \item{y11-y13}{Indicators attachted to the first common factor (\code{eta1}).
 Population loadings are: 0.7; 0.7; 0.7}

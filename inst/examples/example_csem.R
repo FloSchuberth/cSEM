@@ -42,7 +42,40 @@ print(summarize(res), .full_output = FALSE)
 ### Nonlinear model ---------------------------------------------------------
 
 ### Second order model ------------------------------------------------------
+## Take a look at the dataset
+#?dgp_2ndorder
+dgp_2ndorder_cf_of_c
 
+model <- "
+# Path model / Regressions 
+c4   ~ eta1
+eta2 ~ eta1 + c4
+
+# Reflective measurement model
+c1   <~ y11 + y12 
+c2   <~ y21 + y22 + y23 + y24
+c3   <~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38
+eta1 =~ y41 + y42 + y43
+eta2 =~ y51 + y52 + y53
+
+# Composite model
+c4   =~ c1 + c2 + c3
+"
+
+m1 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "3stage")
+m2 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "repeated_indicators")
+
+# By default .disattenuate = TRUE. The repeated indicators approach will
+# fairly often produce inadmissible results in this case. Set .disattenuate = FALSE,
+# however, path coefficients are inconsistent estimates for their popupulation
+# counterpart in this case.
+verify(m2) 
+
+## P
+m3 <- csem(dgp_2ndorder_cf_of_c, model, 
+           .approach_2ndorder = "repeated_indicators",
+           .disattenuate = FALSE)
+verify(m3)
 ### Multigroup analysis -----------------------------------------------------
 
 # ===========================================================================
