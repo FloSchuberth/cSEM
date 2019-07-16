@@ -104,7 +104,7 @@
 #' 
 #' @docType data
 #' 
-#' @format A matrix with 400 rows and 9 variables:
+#' @format A matrix with 500 rows and 9 variables:
 #' \describe{
 #'   \item{y11-y13}{Indicators attachted to the first common factor (`eta1`). 
 #'                  Population loadings are: 0.7; 0.7; 0.7}
@@ -139,6 +139,66 @@
 #' ## The overall model fit is evidently almost perfect:
 #' testOMF(a, .R = 50) # .R = 50 to speed up the example
 "threecommonfactors"
+
+#' Data: Second order common factor of composites
+#'
+#' A dataset containing 500 standardized observations on 19 indicator generated from a 
+#' population model with 6 concepts, three of which (`c1-c3`) are composites 
+#' forming a second order common factor (`c4`). The remaining two (`eta1`, `eta2`)
+#' are concepts modeled as common factors .
+#' 
+#' @docType data
+#' 
+#' @format A matrix with 500 rows and 19 variables:
+#' \describe{
+#'   \item{y11-y12}{Indicators attachted to `c1`. 
+#'                  Population weights are: 0.8; 0.4.
+#'                  Population loadings are: 0.925; 0.65}
+#'   \item{y21-y24}{Indicators attachted to `c2`.
+#'                  Population weights are: 0.5; 0.3; 0.2; 0.4.
+#'                  Population loadings are: 0.804; 0.68; 0.554; 0.708}
+#'   \item{y31-y38}{Indicators attachted to `c3`.
+#'                  Population weights are: 0.3; 0.3; 0.1; 0.1; 0.2; 0.3; 0.4; 0.2.
+#'                  Population loadings are: 0.496; 0.61; 0.535; 0.391; 0.391; 0.6; 0.5285; 0.53}
+#'   \item{y41-y43}{Indicators attachted to `eta1`.
+#'                  Population loadings are: 0.8; 0.7; 0.7}      
+#'   \item{y51-y53}{Indicators attachted to `eta1`.
+#'                  Population loadings are: 0.8; 0.8; 0.7}           
+#' }
+#'                  
+#' The model is:
+#' \deqn{`c4` = gamma1 * `eta1` + zeta1}
+#' \deqn{`eta2` = gamma2 * `eta1` + beta * `c4` + zeta2}
+#'
+#' with population values `gamma1` = 0.6, `gamma2` = 0.4 and `beta` = 0.35.
+#' The second order common factor is
+#' \deqn{`c4` = lambdac1 * `c1` + lambdac2 * `c2` + lambdac3 * `c3` + epsilon}
+#' 
+#' @examples 
+#' #============================================================================
+#' # Correct model (the model used to generate the data)
+#' #============================================================================
+#'model <- "
+#' # Path model / Regressions 
+#' c4   ~ eta1
+#' eta2 ~ eta1 + c4
+#' 
+#' # Reflective measurement model
+#' c1   <~ y11 + y12 
+#' c2   <~ y21 + y22 + y23 + y24
+#' c3   <~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38
+#' eta1 =~ y41 + y42 + y43
+#' eta2 =~ y51 + y52 + y53
+#' 
+#' # Composite model
+#' c4   =~ c1 + c2 + c3
+#' "
+#'  
+#' a <- csem(dgp_2ndorder_cf_of_c, model)
+#' 
+#' ## The overall model fit is evidently almost perfect:
+#' testOMF(a, .R = 50) # .R = 50 to speed up the example
+"dgp_2ndorder_cf_of_c"
 
 #' Data: political democracy
 #'
