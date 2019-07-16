@@ -1,3 +1,11 @@
+# This function contains the 3SLS estimator which does not work properly. 
+# I think the problem is that the exogenous and endogenous variables and 
+# the instruments used are not peroperly matched. 
+
+# 16-7-2019
+
+
+
 #' Estimate the structural coefficients
 #'
 #' Estimates the coefficients of the structural model (nonlinear and linear) using
@@ -31,7 +39,7 @@ estimatePath <- function(
   .normality        = args_default()$.normality,
   .P                = args_default()$.P,
   .Q                = args_default()$.Q
-  ) {
+) {
   
   ## Check approach_path argument:
   if(!any(.approach_paths %in% c("OLS", "2SLS", "3SLS"))) {
@@ -43,15 +51,15 @@ estimatePath <- function(
   ## Warning if instruments are given but .approach_paths = "OLS"
   if(!is.null(.csem_model$instruments) & .approach_paths == "OLS") {
     warning2("The following error occured in the `estimatePath()` function:\n",
-      "Instruments supplied but path approach is 'OLS'.\n",
-      "Instruments are ignored.", 
-      " Consider setting `.approach_paths = '2SLS'.")
+             "Instruments supplied but path approach is 'OLS'.\n",
+             "Instruments are ignored.", 
+             " Consider setting `.approach_paths = '2SLS'.")
   }
   
   ## Error if no instruments are given but .approach_paths = "2SLS" or "3SLS"
   if(is.null(.csem_model$instruments) & (.approach_paths %in% c("2SLS", "3SLS"))) {
     stop2("The following error occured in the `estimatePath()` function:\n",
-    .approach_paths, " requires instruments.")
+          .approach_paths, " requires instruments.")
   }
   
   m         <- .csem_model$structural
@@ -60,12 +68,12 @@ estimatePath <- function(
   explained_by_exo_endo <- dep_vars[rowSums(m[dep_vars, dep_vars, drop = FALSE]) != 0]
   vars_ex_by_exo <- setdiff(dep_vars, explained_by_exo_endo)
   vars_explana   <- colnames(m)[colSums(m) != 0]
-
+  
   # Number of observations (required for the adjusted R^2)
   n <- dim(.H)[1]
   
   if(.csem_model$model_type == "Linear") {
-
+    
     res <- lapply(dep_vars, function(y) {
       # Which of the variables in dep_vars have instruments specified, i.e.
       # have endogenous variables on the RHS. By default: FALSE.
@@ -106,33 +114,33 @@ estimatePath <- function(
         
         # Calculation of closed-form standard errors
         # by default the standard errors are set to NA
-          ses <- coef
-          ses[] <- NA
-
+        ses <- coef
+        ses[] <- NA
+        
+        
+        if(.approach_se == 'closed'){
           
-          if(.approach_se == 'closed'){
-
-            stop2("The following error occured in the `estimatePath()` function:\n",
-                  "Closed-form standard errors are not yet implemented.")
-            
-            if(.approach_weights == 'regression'){
+          stop2("The following error occured in the `estimatePath()` function:\n",
+                "Closed-form standard errors are not yet implemented.")
+          
+          if(.approach_weights == 'regression'){
             # See Devlieger & Rosseel (2016)
-            }
-            
-            if(.approach_weights == 'bartlett'){
-              # See Devlieger & Rosseel (2016)
-            }
-
-          } #.approach_se == "closed"
-          
-          if(.approach_se == 'closed_estimator'){
-            # calculate the OLS SEs sqrt((X'X){-1} * sig^2)
-            sig_square <- (1 - r2adj)*var(.H[,y])
-
-            ses[] <- sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]*(n-1)))*
-              sig_square)
           }
           
+          if(.approach_weights == 'bartlett'){
+            # See Devlieger & Rosseel (2016)
+          }
+          
+        } #.approach_se == "closed"
+        
+        if(.approach_se == 'closed_estimator'){
+          # calculate the OLS SEs sqrt((X'X){-1} * sig^2)
+          sig_square <- (1 - r2adj)*var(.H[,y])
+          
+          ses[] <- sqrt(diag(solve(.P[names_X, names_X, drop = FALSE]*(n-1)))*
+                          sig_square)
+        }
+        
         
       } # END OLS
       
@@ -205,17 +213,17 @@ estimatePath <- function(
         }
         
         if(.approach_se == "closed_estimator"){
-        # 2SLS standard errors sqrt(sig^2 * (X'P_Z X)^{-1})
+          # 2SLS standard errors sqrt(sig^2 * (X'P_Z X)^{-1})
           
-        sig_squared <- as.numeric((.P[y,y,drop=FALSE]-.P[y,names_X,drop = FALSE]%*%coef-
-        t(coef)%*%.P[names_X,y,drop = FALSE] +
-          t(coef)%*%.P[names_X,names_X,drop=FALSE]%*%coef)*(n-1)/(n-length(names_X)-1))
-        
-        ses[] <- sqrt(diag(solve(.P[names_X,names_Z,drop=FALSE]%*%
-                     solve(.P[names_Z,names_Z,drop=FALSE])%*%
-                     .P[names_Z,names_X,drop=FALSE]*n-1))*sig_squared)
-        
-         }
+          sig_squared <- as.numeric((.P[y,y,drop=FALSE]-.P[y,names_X,drop = FALSE]%*%coef-
+                                       t(coef)%*%.P[names_X,y,drop = FALSE] +
+                                       t(coef)%*%.P[names_X,names_X,drop=FALSE]%*%coef)*(n-1)/(n-length(names_X)-1))
+          
+          ses[] <- sqrt(diag(solve(.P[names_X,names_Z,drop=FALSE]%*%
+                                     solve(.P[names_Z,names_Z,drop=FALSE])%*%
+                                     .P[names_Z,names_X,drop=FALSE]*n-1))*sig_squared)
+          
+        }
         
         
       } # END 2SLS
@@ -226,120 +234,117 @@ estimatePath <- function(
     
     names(res) <- dep_vars
     res <- purrr::transpose(res)
-
+    
     if(.approach_paths == "3SLS"){
-      # # Approach based on Zellner & Theil (1962)
-      # 
-      # ## Get variance covariance matrix of the error term
-      # # Note: u_i    := vector of error of structural equation i; 
-      # #       beta_i := vector of parameter estimates of structural equation i 
-      # #       X_i    := matrix of explanatory variables of structural equation i
-      # #       y_i    := the dependent variable of equation i
-      # #
-      # #       Regression equation: 
-      # #                y_i = beta_i1 eta_i1 + beta_i2*eta_i2 + ... + u
-      # #
-      # #       Covariance between error u_i of equation i and error u_j of
-      # #       equation j:
-      # #       E(u_i'u_j) = E(y_i - X_i beta_i)'*(y_j - X_j beta_j) 
-      # #              = E[y'_i*y_j] - # (1 x 1)
-      # #                E[y'_i*X_i]*beta_i - # (1 X 1) 
-      # #                beta_i * E[X'_iy_i] + # (1 x 1)
-      # #                E[(X_i*beta_i)(X_i*beta_i)'
-      # #
-      # vcv_resid <- matrix(0, nrow = length(dep_vars), ncol = length(dep_vars),
-      #                    dimnames = list(dep_vars, dep_vars))
-      # 
-      # ## Fill the VCV of the error terms
-      # # see the systemtfit documentation for a nice discussion of the estmiation of
-      # # the variance covariance matrix of the structural error terms (Section 2.3) 
-      # for(i in   dep_vars){
-      #   for(j in  dep_vars){
-      #     coefsi <- res$coef[[i]]
-      #     coefsj <- res$coef[[j]] 
-      #     vcv_resid[i,j] <- (.P[i,j] - 
-      #       .P[i, m[j,]!=0, drop = FALSE] %*% coefsj -
-      #       t(coefsi) %*% .P[m[i,] !=0, j, drop = FALSE] +
-      #       t(coefsi) %*% .P[m[i, ] !=0, m[j, ]!=0, drop = FALSE] %*% coefsj)*(n-1)/n
-      #   }
-      # }
-      # 
-      # # calculate the inverse of the estimated structural error term VCV
-      # inv_vcv_resid <- solve(vcv_resid)
-      # 
-      # # Obtain the 
-      # part <- lapply(dep_vars, function(y) {
-      #   
-      #   # names of the independent variables of the equation y 
-      #   names_X       <- colnames(m)[m[y, ] != 0]
-      #   indendo       <- intersect(names_X, dep_vars)
-      #   indexog       <- intersect(names_X, vars_exo)
-      # 
-      #   LHS_part <- sapply(dep_vars, function(mue) {
-      #     inv_vcv_resid[y, mue, drop = TRUE] * # Must be a scalar
-      #       .P[c(indendo, indexog), vars_exo , drop = FALSE] %*%
-      #       solve(.P[vars_exo, vars_exo, drop = FALSE]) %*%
-      #       .P[vars_exo, mue, drop = FALSE]
-      #   })
-      # 
-      # # sum up all elements Not sure whether this required anymore might be that 
-      # # using drop argument solved that issue
-      # if(is.matrix(LHS_part)){
-      #   LHS_part <- matrix(rowSums(LHS_part), ncol = 1)
-      # }else{ 
-      #   LHS_part <- sum(LHS_part)
-      # }
-      # 
-      #   RHS_part <- lapply(dep_vars, function(mue) {
-      #     inv_vcv_resid[y, mue, drop = TRUE] *
-      #       .P[c(indendo, indexog), vars_exo, drop = FALSE] %*%
-      #       solve(.P[vars_exo, vars_exo]) %*%
-      #       .P[vars_exo, c(intersect(colnames(m)[m[mue, ] != 0], dep_vars),
-      #                      intersect(colnames(m)[m[mue, ] != 0], vars_exo))]
-      #   })
-      # 
-      # names(RHS_part) <- dep_vars  
-      # 
-      # RHS_part_stacked <- do.call(cbind, RHS_part)
-      #   
-      # list(LHS_part = LHS_part, RHS_part = RHS_part_stacked)
-      # }) #end lapply
-      # 
-      # 
-      # part <- purrr::transpose(part)
-      # LHS  <- do.call(rbind,part[["LHS_part"]])
-      # RHS  <- do.call(rbind,part[["RHS_part"]])
-      # 
-      # # solve equation
-      # allparas <- solve(RHS, LHS)
-      # 
-      # # Overwrite res object
-      # nrcoefs <- cumsum(c(0, lengths(res$coef)))
-      # 
-      # 
-      # ses_all <- sqrt(diag(solve(RHS)))
-      # 
-      # # Overwrite parameters; There must be a better way, i.e., more secure way.
-      # # Doesn't work yet!!!!
-      # 
-      # for(endo in dep_vars){
-      #   names_X = colnames(m)[m[endo,]!=0]
-      #   res$coef[[endo]]=allparas[(nrcoefs[which(endo == dep_vars)]+1):nrcoefs[which(endo == dep_vars)+1],1,drop=FALSE][rownames(res$coef[[endo]]),1,drop=FALSE]
-      #   
-      #   # Calculation of the standard errors
-      #   # No closed form SEs for 3SLS are implemented yet, i.e., they are set to NA in any case
-      #   res$ses[[endo]][] = NA 
-      #   
-      #   
-      #   
-      #   
-      # } #end for loop
-      # 
+      # Approach based on Zellner & Theil (1962)
       
-      stop2("The following error occured in the `estimatePath()` function:\n",
-            'Currently 3SLS is not implemented.')
+      ## Get variance covariance matrix of the error term
+      # Note: u_i    := vector of error of structural equation i; 
+      #       beta_i := vector of parameter estimates of structural equation i 
+      #       X_i    := matrix of explanatory variables of structural equation i
+      #       y_i    := the dependent variable of equation i
+      #
+      #       Regression equation: 
+      #                y_i = beta_i1 eta_i1 + beta_i2*eta_i2 + ... + u
+      #
+      #       Covariance between error u_i of equation i and error u_j of
+      #       equation j:
+      #       E(u_i'u_j) = E(y_i - X_i beta_i)'*(y_j - X_j beta_j) 
+      #              = E[y'_i*y_j] - # (1 x 1)
+      #                E[y'_i*X_i]*beta_i - # (1 X 1) 
+      #                beta_i * E[X'_iy_i] + # (1 x 1)
+      #                E[(X_i*beta_i)(X_i*beta_i)'
+      #
+      vcv_resid <- matrix(0, nrow = length(dep_vars), ncol = length(dep_vars),
+                          dimnames = list(dep_vars, dep_vars))
       
-      }#end 3SLS
+      ## Fill the VCV of the error terms
+      # see the systemtfit documentation for a nice discussion of the estmiation of
+      # the variance covariance matrix of the structural error terms (Section 2.3) 
+      for(i in   dep_vars){
+        for(j in  dep_vars){
+          coefsi <- res$coef[[i]]
+          coefsj <- res$coef[[j]] 
+          vcv_resid[i,j] <- (.P[i,j] - 
+                               .P[i, m[j,]!=0, drop = FALSE] %*% coefsj -
+                               t(coefsi) %*% .P[m[i,] !=0, j, drop = FALSE] +
+                               t(coefsi) %*% .P[m[i, ] !=0, m[j, ]!=0, drop = FALSE] %*% coefsj)*(n-1)/n
+        }
+      }
+      
+      # calculate the inverse of the estimated structural error term VCV
+      inv_vcv_resid <- solve(vcv_resid)
+      
+      # Obtain the 
+      part <- lapply(dep_vars, function(y) {
+        
+        # names of the independent variables of the equation y 
+        names_X       <- colnames(m)[m[y, ] != 0]
+        indendo       <- intersect(names_X, dep_vars)
+        indexog       <- intersect(names_X, vars_exo)
+        
+        LHS_part <- sapply(dep_vars, function(mue) {
+          inv_vcv_resid[y, mue, drop = TRUE] * # Must be a scalar
+            .P[c(indendo, indexog), vars_exo , drop = FALSE] %*%
+            solve(.P[vars_exo, vars_exo, drop = FALSE]) %*%
+            .P[vars_exo, mue, drop = FALSE]
+        })
+        
+        # sum up all elements Not sure whether this required anymore might be that 
+        # using drop argument solved that issue
+        if(is.matrix(LHS_part)){
+          LHS_part <- matrix(rowSums(LHS_part), ncol = 1)
+        }else{ 
+          LHS_part <- sum(LHS_part)
+        }
+        
+        RHS_part <- lapply(dep_vars, function(mue) {
+          inv_vcv_resid[y, mue, drop = TRUE] *
+            .P[c(indendo, indexog), vars_exo, drop = FALSE] %*%
+            solve(.P[vars_exo, vars_exo]) %*%
+            .P[vars_exo, c(intersect(colnames(m)[m[mue, ] != 0], dep_vars),
+                           intersect(colnames(m)[m[mue, ] != 0], vars_exo))]
+        })
+        
+        names(RHS_part) <- dep_vars  
+        
+        RHS_part_stacked <- do.call(cbind, RHS_part)
+        
+        list(LHS_part = LHS_part, RHS_part = RHS_part_stacked)
+      }) #end lapply
+      
+      
+      part <- purrr::transpose(part)
+      LHS  <- do.call(rbind,part[["LHS_part"]])
+      RHS  <- do.call(rbind,part[["RHS_part"]])
+      
+      # solve equation
+      allparas <- solve(RHS, LHS)
+      
+      # Overwrite res object
+      nrcoefs <- cumsum(c(0, lengths(res$coef)))
+      
+      
+      ses_all <- sqrt(diag(solve(RHS)))
+      
+      # Overwrite parameters; There must be a better way, i.e., more secure way.
+      # Doesn't work yet!!!!
+      
+      for(endo in dep_vars){
+        names_X = colnames(m)[m[endo,]!=0]
+        res$coef[[endo]]=allparas[(nrcoefs[which(endo == dep_vars)]+1):nrcoefs[which(endo == dep_vars)+1],1,drop=FALSE][rownames(res$coef[[endo]]),1,drop=FALSE]
+        
+        # Calculation of the standard errors
+        # No closed form SEs for 3SLS are implemented yet, i.e., they are set to NA in any case
+        res$ses[[endo]][] = NA 
+        
+        
+        
+        
+      } #end for loop
+      
+      
+    }#end 3SLS
     
     
   } else {
@@ -347,7 +352,7 @@ estimatePath <- function(
     # Note (05/2019): Currently, only "OLS" is allowed for nonlinear models
     if(.approach_paths != "OLS") {
       stop2("The following error occured in the `estimatePath()` function:\n",
-           "Currently, ", .approach_paths, " is only applicable to linear models.")
+            "Currently, ", .approach_paths, " is only applicable to linear models.")
     }
     
     ### Preparation ============================================================
@@ -372,7 +377,7 @@ estimatePath <- function(
                              .Q  = .Q,
                              .H  = .H)
       }
-
+      
       # It can happen that this matrix is not symmetric
       vcv_explana[lower.tri(vcv_explana)] = t(vcv_explana)[lower.tri(vcv_explana)]
       
@@ -390,11 +395,11 @@ estimatePath <- function(
                            .select_from = class_explana,
                            .Q = .Q,
                            .H = .H)
-    
+      
       # It can happen that this matrix is not symmetric
       vcv_explana[lower.tri(vcv_explana)] = t(vcv_explana)[lower.tri(vcv_explana)]
       
-      }  #Outcome: The VCV of the explanatory variables
+    }  #Outcome: The VCV of the explanatory variables
     
     # Set row- and colnames for matrix
     rownames(vcv_explana) <- colnames(vcv_explana) <- vars_explana
@@ -466,15 +471,15 @@ estimatePath <- function(
     
     # Calculation of closed-form standard errors
     # by default they are set to NA
-      ses = lapply(coef,function(x){
-        x[]=NA
-        x
-      }) 
-
+    ses = lapply(coef,function(x){
+      x[]=NA
+      x
+    }) 
+    
     
     if(.approach_se == "closed"){
       stop2("The following error occured in the `estimatePath()` function:\n",
-        "Closed-form standard errors are not yet implemented for nonlinear models and NAs are returned.")
+            "Closed-form standard errors are not yet implemented for nonlinear models and NAs are returned.")
       # ses = lapply(coef,function(x){
       #   x[]=NA
       #   x
@@ -484,7 +489,7 @@ estimatePath <- function(
     
     if(.approach_se == "closed_estimator"){
       stop2("The following error occured in the `estimatePath()` function:\n",
-        "Closed-form OLS standard errors are not yet implemented for nonlinear models and NAs are returned.")
+            "Closed-form OLS standard errors are not yet implemented for nonlinear models and NAs are returned.")
     }
     ##==========================================================================
     # Replacement approach
@@ -523,7 +528,7 @@ estimatePath <- function(
       
       ## Preallocate
       vcv  <- list()
-
+      
       ## Loop over each endogenous variable
       for(k in dep_vars) {
         
