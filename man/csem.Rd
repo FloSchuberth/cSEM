@@ -10,7 +10,7 @@ csem(
   .approach_2ndorder       = c("3stage", "repeated_indicators"),
   .approach_nl             = c("sequential", "replace"),
   .approach_paths          = c("OLS", "2SLS", "3SLS"),
-  .approach_se             = NULL, 
+  .approach_se             = c("none","closed","closed_estimator"), 
   .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                                "MINVAR", "GENVAR", "GSCA", "PCA", 
                                "unit", "bartlett", "regression"),
@@ -57,7 +57,8 @@ Defaults to "\emph{sequential}".}
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
 
-\item{.approach_se}{Chraracter string. Approach used to determined the SEs. Defaults to \code{NULL}.}
+\item{.approach_se}{Chraracter string. Approach used to determined the SEs.One of:
+"\emph{none}", "\emph{closed}", "\emph{closed_estimator}". Defaults to "\emph{none}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",

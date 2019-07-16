@@ -44,7 +44,8 @@ Defaults to "\emph{none}".}
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
 
-\item{.approach_se}{Chraracter string. Approach used to determined the SEs. Defaults to \code{NULL}.}
+\item{.approach_se}{Chraracter string. Approach used to determined the SEs.One of:
+"\emph{none}", "\emph{closed}", "\emph{closed_estimator}". Defaults to "\emph{none}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
