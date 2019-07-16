@@ -251,21 +251,26 @@ estimatePath <- function(
                          dimnames = list(dep_vars, dep_vars))
       
       ## Fill the VCV of the error terms
+      # see the systemtfit documentation for a nice discussion of the estmiation of
+      # the variance covariance matrix of the structural error terms (Section 2.3) 
       for(i in   dep_vars){
         for(j in  dep_vars){
           coefsi <- res$coef[[i]]
           coefsj <- res$coef[[j]] 
-          vcv_resid[i,j] <- .P[i,j] - 
+          vcv_resid[i,j] <- (.P[i,j] - 
             .P[i, m[j,]!=0, drop = FALSE] %*% coefsj -
             t(coefsi) %*% .P[m[i,] !=0, j, drop = FALSE] +
-            t(coefsi) %*% .P[m[i, ] !=0, m[j, ]!=0, drop = FALSE] %*% coefsj
+            t(coefsi) %*% .P[m[i, ] !=0, m[j, ]!=0, drop = FALSE] %*% coefsj)*(n-1)/n
         }
       }
       
+      # calculate the inverse of the estimated structural error term VCV
       inv_vcv_resid <- solve(vcv_resid)
       
+      # Obtain the 
       part <- lapply(dep_vars, function(y) {
         
+        # names of the independent variables of the equation y 
         names_X       <- colnames(m)[m[y, ] != 0]
         indendo       <- intersect(names_X, dep_vars)
         indexog       <- intersect(names_X, vars_exo)
