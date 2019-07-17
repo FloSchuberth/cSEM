@@ -69,20 +69,19 @@ calculateCorrectionFactors <- function(
       
       ## Set indicator pairs whose measurement errors are correlated to zero and
       ## extract non-zero off-diagonal elements of S_jj (result is vectorized)
-      S_vect <- replace(S_jj, which(E_jj == 1), 0) %>%
+      S_vect <- replace(S_jj, which(E_jj == 1), NA) %>%
         .[lower.tri(.) | upper.tri(.)] %>%
-        .[. != 0]
+        .[!is.na(.)]
       
       ## Set indicator pairs whose measurement errors are correlated to zero and
       ## extract non-zero off-diagonal elements of W_jj (vectorized)
-      W_vect <- replace(W_jj, which(E_jj == 1), 0)  %>%
+      W_vect <- replace(W_jj, which(E_jj == 1), NA)  %>%
         .[lower.tri(.) | upper.tri(.)] %>%
-        .[. != 0]
+        .[!is.na(.)]
       
       if(length(S_vect) == 0) {
-        stop("At least one pair of indicators with uncorrelated measurement
-             errors required.\n Please revise your model.",
-             call. = FALSE)
+        stop2("At least one pair of indicators with uncorrelated measurement
+             errors required.\n Please revise your model.")
       }
       
       ## Do the actual computation ---------------------------------------------
