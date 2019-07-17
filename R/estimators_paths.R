@@ -457,13 +457,21 @@ estimatePath <- function(
                  SIMPLIFY = FALSE)
     
     # Adjusted R^2 
-    r2adj = mapply(function(x,y) 1-(1-x)*(n-1)/(n-nrow(y)),
+    r2adj <- mapply(function(x,y) 1-(1-x)*(n-1)/(n-nrow(y)),
                    x = r2,
                    y = coef)
     
     # Variance inflation factor
-    vif = lapply(vcv_explana_ls, function(x) diag(solve(cov2cor(x))))
-    
+    vif <- lapply(vcv_explana_ls, function(x) { 
+      tryCatch(
+        expr = {diag(solve(cov2cor(x)))},
+        error = function(e) {
+         NA 
+        }
+      )
+      })
+      
+
     # Calculation of closed-form standard errors
     # by default they are set to NA
       ses = lapply(coef,function(x){
@@ -583,10 +591,15 @@ estimatePath <- function(
           ## structural equations) and "var_struc_error" (= vector of
           ## structural error variances) ---------------------------------------
           
-          coef[[k]] <- solve(vcv[[k]]) %*% t(cv_endo_explana_ls[[k]])
-          r2[[k]]   <- t(coef[[k]]) %*% vcv[[k]] %*% coef[[k]]
-          r2adj[[k]] = 1-(1-r2[[k]])*(n-1)/(n-nrow(coef[[k]]))
-          vif[[k]] = diag(solve(cov2cor(vcv[[k]])))
+          coef[[k]]  <- solve(vcv[[k]]) %*% t(cv_endo_explana_ls[[k]])
+          r2[[k]]    <- t(coef[[k]]) %*% vcv[[k]] %*% coef[[k]]
+          r2adj[[k]] <- 1-(1-r2[[k]])*(n-1)/(n-nrow(coef[[k]]))
+          vif[[k]]   <-       tryCatch(
+            expr  = {diag(solve(cov2cor(vcv[[k]])))},
+            error = function(e) {
+              NA 
+            }
+          )
           var_struc_error[k]    <- 1 - r2[[k]]
           # ses[[k]] = NULL
           
