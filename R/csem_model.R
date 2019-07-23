@@ -16,9 +16,16 @@
 #' model are specified (e.g., a construct of the structural model has at least
 #' 1 item). To prevent checking for errors use `.check_errors = FALSE`.
 #' 
-#' @usage parseModel(.model, .instruments = NULL, .check_errors = TRUE)
+#' @usage parseModel(
+#'   .model        = NULL, 
+#'   .instruments  = NULL, 
+#'   .check_errors = TRUE,
+#'   .full_output  = FALSE
+#'   )
 #'
 #' @inheritParams csem_arguments
+#' @param .full_output Logical. Should the full output be returned. Defaults to
+#'   `FALSE`. Only required for internal purposes.
 #' 
 #' @inherit csem_model return
 #'
@@ -76,7 +83,12 @@
 #' 
 #' @export
 #'
-parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
+parseModel <- function(
+  .model        = NULL, 
+  .instruments  = NULL, 
+  .check_errors = TRUE,
+  .full_output  = FALSE
+  ) {
 
   ### Check if already a cSEMModel list  
   if(class(.model) == "cSEMModel") {
@@ -124,9 +136,16 @@ parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
     pop_values <- c(tbl_s$ustart, tbl_m$ustart, tbl_e$ustart)
     
     ## Get all relevant subsets of constructs and/or indicators
-    # i := indicators
-    # c := constructs
+    # i  := indicators
+    # c  := constructs
+    # s  := structural model
+    # m  := measurement/composite model
+    # l  := only linear (terms)
+    # [no]_nl := [no] only nonlinear (terms)
+    # 
+    # Typical name: "name_i/c_s/m_[lhs/rhs]_nl/l"
     
+    ### Structural model ---------------------
     # Construct names of the structural model (including nonlinear terms)
     names_c_s_lhs    <- unique(tbl_s$lhs)
     names_c_s_rhs    <- unique(tbl_s$rhs)
@@ -145,15 +164,19 @@ parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
     # Construct names of the structural model without nonlinear terms
     names_c_s_no_nl  <- setdiff(names_c_s, names_c_s_rhs_nl)
     
-    # Indicator names (including constructs that serve as indicators for a 
-    # 2nd order construct)
+    ### Measurement/composite model -----------------
+    # All indicator names (observables AND constructs that serve as indicators for a 
+    # 2nd order construct (linear and nonlinear))
     names_i          <- unique(tbl_m$rhs)
     
-    # Indicator names that contain a "."
+    # Indicator names that contain a "." (should only contain 
+    # nonlinear 2ndorder terms!)
     names_i_nl       <- names_i[grep("\\.", names_i)] # this catches all terms 
                                                       # with a "."!
     
-    # Construct names of the measurement model (including nonlinear terms)
+    # Construct names of the measurement model (including nonlinear terms;
+    # Constructs of the rhs of the measurment model are considered first order constructs
+    # attached to a second order construct)
     names_c_m_lhs    <- unique(tbl_m$lhs)
     names_c_m_rhs    <- intersect(names_i, c(names_c_m_lhs, names_i_nl))
     names_c_m        <- union(names_c_m_lhs, names_c_m_rhs)
@@ -166,17 +189,25 @@ parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
     
     # Nonlinear construct names of the measurement model 
     names_c_m_lhs_nl <- names_c_m_lhs[grep("\\.", names_c_m_lhs)] # must be empty
-    names_c_m_rhs_nl <- names_c_m_lhs[grep("\\.", names_c_m_lhs)]
+    names_c_m_rhs_nl <- names_c_m_rhs[grep("\\.", names_c_m_rhs)]
     
     # Construct names of the measurement model without nonlinear terms
     names_c_m_no_nl  <- setdiff(names_c_s, names_c_s_rhs_nl)
     
+    ## Hierachical constructs -------------------------
+    # 1st order constructs attached to a second order construct
+    names_c_attached_to_2nd <- names_c_m_rhs
+    
     # 2nd order construct names
-    names_c_2nd      <- unique(tbl_m[tbl_m$rhs %in% names_c_m_rhs, "lhs"])
+    names_c_2nd      <- unique(tbl_m[tbl_m$rhs %in% names_c_attached_to_2nd, "lhs"])
+    
+    # 1st order constructs not attached to a second order construct
+    names_c_not_attachted_to_2nd <- setdiff(c(names_c_s, names_c_m), c(names_c_attached_to_2nd, names_c_2nd))
     
     # Higher order construct names
     names_c_higher   <- intersect(names_c_2nd, names_c_m_rhs) # must be empty
     
+    ## Summary --------------------
     # All construct names (including nonlinear terms)
     names_c_all      <- union(names_c_s, names_c_m) 
     
@@ -185,7 +216,6 @@ parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
     
     # All nonlinear construct names
     names_c_nl       <- names_c_all[grepl("\\.", names_c_all)]
-  
 
     ## The the number of...
     number_of_constructs_all  <- length(names_c_all)
@@ -555,7 +585,7 @@ parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
       # "explained_by_exo"   = explained_by_exo
     )
     
-    ## 
+    ## Population values 
     if(!anyNA(pop_values)) {
       model_ls$structural2  <- model_structural2[rownames(structural_ordered), 
                                                  colnames(structural_ordered)]
@@ -564,7 +594,7 @@ parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
       model_ls$Phi          <- Phi
     }
     
-    ## Are there instruments?
+    ## Are there instruments? If yes add them
     if(!is.null(.instruments)) {
       # Structural equations are named according to the name of the RHS variable
       # of each equation (i.e. the name of the dependent variables).
@@ -592,6 +622,13 @@ parseModel <- function(.model, .instruments = NULL, .check_errors = TRUE) {
       model_ls$instruments <- .instruments
     }
     
+    ## Should the full output be returned
+    if(.full_output) {
+      model_ls$vars_2nd <- names_c_2nd
+      model_ls$vars_attached_to_2nd <- names_c_attached_to_2nd
+      model_ls$vars_not_attached_to_2nd <- names_c_not_attachted_to_2nd
+    }
+      
     class(model_ls) <- "cSEMModel"
     return(model_ls) 
   } # END else

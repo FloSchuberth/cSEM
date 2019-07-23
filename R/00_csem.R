@@ -254,7 +254,8 @@ csem <- function(
   args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))]
   
   ## Parse model
-  model_original <- parseModel(.model, .instruments = .instruments)
+  model_original <- parseModel(.model, .instruments = .instruments, 
+                               .full_output = TRUE)
   
   ## Modify model if model contains second order constructs
   if(any(model_original$construct_order == "Second order")) {

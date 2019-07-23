@@ -4,7 +4,12 @@
 \alias{parseModel}
 \title{Parse lavaan model}
 \usage{
-parseModel(.model, .instruments = NULL, .check_errors = TRUE)
+parseModel(
+  .model        = NULL, 
+  .instruments  = NULL, 
+  .check_errors = TRUE,
+  .full_output  = FALSE
+  )
 }
 \arguments{
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
@@ -20,6 +25,9 @@ instruments for themselves. See the examples section. Defaults to \code{NULL}.}
 \item{.check_errors}{Logical. Should the model be checked for appropriateness
 in a sense that all necessary components to estimate the model are given?
 Defaults to \code{TRUE}.}
+
+\item{.full_output}{Logical. Should the full output be returned. Defaults to
+\code{FALSE}. Only required for internal purposes.}
 }
 \value{
 An object of class \code{cSEMModel} is a standardized list containing the
