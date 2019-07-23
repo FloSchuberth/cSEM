@@ -44,21 +44,21 @@ progress).
 
 ## Philosophy
 
-  - User-centered design\!
+  - Above and all: user-centered design\!
   - Easy to use by non-R experts:
       - One central function `csem()` provides default choices for most
         of its arguments (similarity to the `sem()` and `cfa()`
         functions of the [lavaan](http://lavaan.ugent.be/) package is
         intended).
-      - (Eventually…) well documented (vignettes, HTML output, a
-        website, intro course(s), cheatsheets)
+      - Well documented (vignettes, HTML output, a website, (eventually)
+        intro course(s) and cheatsheets)
       - Structured output/results that aims to be “easy”" in a sense
         that it is
           - … descriptive/verbose
-          - … easy to export to other environments such as MS Word,
-            Latex files etc. (exportability)
-          - … easy to migrate from/to/between other PLS/VB/CB-based
-            systems (lavaan, semPLS, ADANCO, SmartPLS)
+          - … (eventually) easy to export to other environments such as
+            MS Word, Latex files etc. (exportability)
+          - … (eventually) easy to migrate from/to/between other
+            PLS/VB/CB-based systems (lavaan, semPLS, ADANCO, SmartPLS)
   - The package is designed to be flexible/modular enough so that
     researchers developing new methods can take specific function
     provided by the package and alter them according to their need
@@ -69,6 +69,8 @@ progress).
     within the R community. This mainly includes
     ideas/recommendations/design choices that fead into the packages of
     the [tidyverse](https://github.com/tidyverse/tidyverse).
+  - State of the art in a sense that we seek to quickly implement recent
+    methodological developments in composite-based SEM.
 
 ## Basic usage
 
@@ -177,33 +179,14 @@ listviewer::jsonedit(res, mode = "view") # requires the listviewer package.
 ## Get a summary
 summarize(res) 
     
-# Alter the model to obtain a linear model:
-model <- "
-    # Structural model
-    EXPE ~ IMAG
-    QUAL ~ EXPE
-    VAL  ~ EXPE + QUAL
-    SAT  ~ IMAG + EXPE + QUAL + VAL
-    LOY  ~ IMAG + SAT
-    
-    # Composite models
-    IMAG <~ imag1 + imag2 + imag3
-    EXPE <~ expe1 + expe2 + expe3 
-    QUAL <~ qual1 + qual2 + qual3 + qual4 + qual5
-    VAL  <~ val1  + val2  + val3
-     
-    # Reflective measurement model
-    SAT  =~ sat1  + sat2  + sat3  + sat4
-    LOY  =~ loy1  + loy2  + loy3  + loy4
-    "
-    
-res <- csem(.data = satisfaction, .model = model)
-    
 ## Apply postestimation functions, e.g.
 verify(res) 
     
 ## Test overall model fit
 testOMF(res)
+
+## Assess the model
+assess(res)
 ```
 
 #### Inference
@@ -270,11 +253,13 @@ Currently we have four major postestimation verbs.
     measures
   - `predict()` : (not yet implemented)
 
-Tests are performed by using the test family of functions. Currently
-three tests are implemented.
+Tests are performed by using the test family of functions. Currently the
+following tests are implemented.
 
   - `testOMF()` : performs a test for overall model fit
   - `testMICOM()` : performs a test for composite measurement invariance
-  - `testMGD` : performs a test to assess multi-group differences
+  - `testMGD` : performs several test to assess multi-group differences
+  - `testHausman()` : performs the regression-based Hausam test used to
+    test endogeneity.
 
 All functions require a `cSEMResults` object.
