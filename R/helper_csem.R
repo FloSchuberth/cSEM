@@ -42,33 +42,40 @@ calculate2ndOrder <- function(
   }
   
   ## Collect all necessary sets
-  # All linear constructs of the original model
-  c_linear_original     <- rownames(original_model$structural)
-  # All constructs used in the first step (= all first order constructs)
-  c_linear_1step        <- names(original_model$construct_order[
-    original_model$construct_order == "First order"])
-  # All second order constructs
-  c_2nd_order           <- setdiff(c_linear_original, c_linear_1step)
-  # All indicators of the original model (including linear and nonlinear 
-  # constructs that form/measure a second order construct)
-  i_original            <- colnames(original_model$measurement)
-  i_linear_original     <- intersect(c_linear_original, i_original)
-  i_nonlinear_original  <- grep("\\.", i_original, value = TRUE) 
-  # Linear constructs not attatched to second order constructs
-  c_not_attached_to_2nd <- setdiff(c_linear_1step, i_linear_original)
-  # Linear constructs attached to second order constructs
-  c_attached_to_2nd     <- intersect(c_linear_1step, i_linear_original)
+  vars_2nd <- original_model$vars_2nd 
+  vars_attached_to_2nd <- original_model$vars_attached_to_2nd
+  vars_not_attached_to_2nd <- original_model$vars_not_attached_to_2nd
   
   ## Get all reliabilities from first stage 
   rel_all_1step  <- .first_stage_results$Estimates$Reliabilities
   
   # Select reliabilities for those constructs that are not attached
   # to a second order factor
-  rel_not_attached_to_2nd <- rel_all_1step[c_not_attached_to_2nd]
-  names(rel_not_attached_to_2nd) <- paste0(c_not_attached_to_2nd, "_temp")
+  rel_not_attached_to_2nd <- rel_all_1step[vars_not_attached_to_2nd]
+  names(rel_not_attached_to_2nd) <- paste0(vars_not_attached_to_2nd, "_temp")
   
-  ## Perform second stage
+  ## Save arguments of the first stage 
   args <- .first_stage_results$Information$Arguments
+  
+  ## Update dominant indicators if supplied
+  if(!is.null(.first_stage_results$Information$Arguments$.dominant_indicators)) {
+    # Dominant indicators are only necessary for second order constructs as
+    # the first order constructs not attached to a second order are single indicators.
+    
+    doms <- c()
+    for(i in vars_2nd) {
+      indicators <- names(model2$measurement[i, model2$measurement[i, ] != 0])
+      
+      # Pick the first indicator as the dominant one (this is arbitray; usually
+      # the one with the highest loading is choosen)
+      doms[i] <- indicators[1]
+    }
+    names(doms) <- vars_2nd
+    
+    args$.dominant_indicators <- doms
+  }
+  
+  ## Estimate second stage
   out2 <- csem(
     .data                        = scores, 
     .model                       = model2,
@@ -104,19 +111,19 @@ calculate2ndOrder <- function(
   # VanRiel (2017)- "Estimating hierarchical constructs using consistent 
   # partial least squares: The case of second-order composites of common factors"
   
-  if(any(original_model$construct_type[c_attached_to_2nd] == "Common factor")) {
+  if(any(original_model$construct_type[vars_attached_to_2nd] == "Common factor")) {
     
     # Which second order constructs are composites?
-    c_2nd_order_composites <- original_model$construct_type[c_2nd_order]
-    c_2nd_order_composites <- names(c_2nd_order_composites[
-      c_2nd_order_composites == "Composite"])
+    vars_2nd_composites <- original_model$construct_type[vars_2nd]
+    vars_2nd_composites <- names(vars_2nd_composites[
+      vars_2nd_composites == "Composite"])
     
-    if(length(c_2nd_order_composites) != 0) {
+    if(length(vars_2nd_composites) != 0) {
       
-      rel_2nd_order        <- rep(1, length(c_2nd_order_composites))
-      names(rel_2nd_order) <- c_2nd_order_composites
+      rel_2nd_order        <- rep(1, length(vars_2nd_composites))
+      names(rel_2nd_order) <- vars_2nd_composites
       
-      for(i in c_2nd_order_composites) {
+      for(i in vars_2nd_composites) {
         
         col_names   <- colnames(original_model$measurement[
           i, original_model$measurement[i, , drop = FALSE ] == 1, drop = FALSE])
@@ -128,7 +135,7 @@ calculate2ndOrder <- function(
       }
       
       rel                         <- out2$Estimates$Reliabilities
-      rel[c_2nd_order_composites] <- rel_2nd_order 
+      rel[vars_2nd_composites] <- rel_2nd_order 
       
       ## Redo second stage including new reliabilities (= third stage)
       out2 <- csem(
@@ -154,7 +161,7 @@ calculate2ndOrder <- function(
         .tolerance                   = args$.tolerance
       )
       
-      for(i in c_2nd_order_composites) {
+      for(i in vars_2nd_composites) {
         
         col_names <- colnames(original_model$measurement[
           i, original_model$measurement[i, , drop = FALSE ] == 1, drop = FALSE])
@@ -179,12 +186,12 @@ calculate2ndOrder <- function(
       }
       
       ## Correct sinlge indicator loadings
-      for(i in paste0(c_not_attached_to_2nd, "_temp")) {
+      for(i in paste0(vars_not_attached_to_2nd, "_temp")) {
         out2$Estimates$Loading_estimates[i, ] <- 
           out2$Estimates$Loading_estimates[i, ] / 
           sqrt(rel_all_1step[colnames(out2$Information$Model$measurement)])
       } # END correct single indicator loadings
-    } # END if length(c_2nd_order_composites) != 0
+    } # END if length(vars_2nd_composites) != 0
   } # END third stage
   
   return(out2)
