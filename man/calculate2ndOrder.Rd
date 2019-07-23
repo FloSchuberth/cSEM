@@ -4,7 +4,9 @@
 \alias{calculate2ndOrder}
 \title{Second order constructs}
 \usage{
-calculate2ndOrder(.csem_model, .first_stage_results)
+calculate2ndOrder(
+  .csem_model, 
+  .first_stage_results)
 }
 \arguments{
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}

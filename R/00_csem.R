@@ -86,7 +86,7 @@
 #' \subsection{Nonlinear models:}{
 #' If the model is nonlinear `csem()` estimates a polynomial structural equation model
 #' using a non-iterative method of moments approach described in
-#' \insertCite{Dijkstra2014}{cSEM}. Nonlinear terms include interactions and
+#' \insertCite{Dijkstra2014;textual}{cSEM}. Nonlinear terms include interactions and
 #' exponential terms. The latter is described in model syntax as an
 #' "interaction with itself", e.g., `xi^3 = xi.xi.xi`. Currently only exponential
 #' terms up to a power of three (e.g., three-way interactions or cubic terms) are allowed.
@@ -126,8 +126,14 @@
 #' "
 #' }
 #'}
-#' Currently, two approaches are available: `"repeated_indicators"` and 
-#' `"2stage"` (the default). 
+#' Currently, four approaches are available: 
+#' \itemize{
+#' \item{(Default) `"2stage"`. The (disjoint) two stage approach as proposed by \insertCite{Agarwal2000;textual}{cSEM}.}
+#' \item{`"RI_original"`. The original repeated indicators approach as proposed by \insertCite{Joereskog1982b;textual}{cSEM}.}
+#' \item{`"RI_extended"`. The extended repeated indicators approach as proposed by \insertCite{Becker2012;textual}{cSEM}.}
+#' \item{`"mixed"`. The mixed repeated indicators/two-stage approach as proposed by \insertCite{Ringle2012;textual}{cSEM}.}
+#' }
+#' 
 #' \subsection{Multigroup analysis}{
 #' To perform multigroup analysis provide either a list of data sets or one 
 #' data set containing a group-identifyer-column whose column 
@@ -146,7 +152,7 @@
 #' @usage csem(
 #'   .data                    = NULL,
 #'   .model                   = NULL,
-#'   .approach_2ndorder       = c("3stage", "repeated_indicators"),
+#'   .approach_2ndorder       = c("2stage", "RI_original", "RI_extended", "mixed"),
 #'   .approach_nl             = c("sequential", "replace"),
 #'   .approach_paths          = c("OLS", "2SLS", "3SLS"),
 #'   .approach_se             = c("none","closed","closed_estimator"), 
@@ -208,7 +214,7 @@
 csem <- function(
   .data                  = NULL,
   .model                 = NULL,
-  .approach_2ndorder     = c("3stage", "repeated_indicators"),
+  .approach_2ndorder     = c("2stage", "RI_original", "RI_extended", "mixed"),
   .approach_nl           = c("sequential", "replace"),
   .approach_paths        = c("OLS", "2SLS", "3SLS"),
   .approach_se           = c("none","closed","closed_estimator"),
@@ -358,7 +364,7 @@ csem <- function(
 
     ## Second order (2/3 stage approach)
     if(any(model_original$construct_order == "Second order") && 
-       args$.approach_2ndorder == "3stage") {
+       args$.approach_2ndorder %in% c("2stage", "mixed")) {
       
       ### Second step
       out <- lapply(out, function(x) {
@@ -378,10 +384,9 @@ csem <- function(
     }
     
   } else if(any(model_original$construct_order == "Second order") && 
-            args$.approach_2ndorder == "3stage") {
+            args$.approach_2ndorder %in% c("2stage", "mixed")) {
     
     ### Second step
-    # Note: currently data supplied as a list or grouped data is not allowed
     out2 <- calculate2ndOrder(model_original, out)
     out <- list("First_stage" = out, "Second_stage" = out2)
     

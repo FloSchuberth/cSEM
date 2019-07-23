@@ -361,7 +361,7 @@ IMAG <~ imag1 + imag2
 ## Tests
 
 test_that("Second-order model: incorrectly specified models provide an error", {
-  
+  expect_error(parseModel(model2))
   expect_error(parseModel(model3))
 })
 
@@ -370,11 +370,6 @@ test_that("Second-order model: correctly specified models are correctly returned
   expect_s3_class(parseModel(model1), "cSEMModel")
   expect_output(str(parseModel(model1)), "List of 6")
   expect_equal(names(parseModel(model1)), c("structural", "measurement", 
-                                            "error_cor", "construct_type", 
-                                            "construct_order","model_type"))
-  expect_s3_class(parseModel(model2), "cSEMModel")
-  expect_output(str(parseModel(model2)), "List of 6")
-  expect_equal(names(parseModel(model2)), c("structural", "measurement", 
                                             "error_cor", "construct_type", 
                                             "construct_order","model_type"))
 })

@@ -3,7 +3,9 @@
 #' Performs the second and third stage for a model containing second order 
 #' constructs.
 #'
-#' @usage calculate2ndOrder(.csem_model, .first_stage_results)
+#' @usage calculate2ndOrder(
+#'   .csem_model, 
+#'   .first_stage_results)
 #'
 #' @inheritParams csem_arguments
 #
@@ -21,7 +23,7 @@ calculate2ndOrder <- function(
   ## Parse second stage model
   model2 <- convertModel(
     .csem_model        = original_model,
-    .approach_2ndorder = "3stage",
+    .approach_2ndorder = "2stage",
     .stage             = "second")
   
   ## Get scores for the second stage
@@ -29,22 +31,28 @@ calculate2ndOrder <- function(
   
   # Add scores for nonlinear terms if a second order construct is attached
   # to a nonlinear term
-  if(any(grepl("\\.", colnames(model2$measurement)))) {
-    
-    temp_names <- grep("\\.", colnames(model2$measurement), value = TRUE)
-    temp <- lapply(strsplit(temp_names, "\\."), function(x) {
-      matrixStats::rowProds(scores[, x, drop = FALSE])
-    })
-    
-    temp <- do.call(cbind, temp)
-    colnames(temp) <- temp_names
-    scores <- cbind(scores, temp)
-  }
+  # Note: 23.07.2019: We dont allow for first order nonlinear terms to build/
+  #                   measure a second order construct. Hence the code below 
+  #                   is superfluos.
+  # if(any(grepl("\\.", colnames(model2$measurement)))) {
+  #   
+  #   temp_names <- grep("\\.", colnames(model2$measurement), value = TRUE)
+  #   temp <- lapply(strsplit(temp_names, "\\."), function(x) {
+  #     matrixStats::rowProds(scores[, x, drop = FALSE])
+  #   })
+  #   
+  #   temp <- do.call(cbind, temp)
+  #   colnames(temp) <- temp_names
+  #   scores <- cbind(scores, temp)
+  # }
   
   ## Collect all necessary sets
   vars_2nd <- original_model$vars_2nd 
   vars_attached_to_2nd <- original_model$vars_attached_to_2nd
   vars_not_attached_to_2nd <- original_model$vars_not_attached_to_2nd
+  
+  ## Only linear terms required for subsetting reliabilities
+  vars_not_attached_to_2nd <- unique(unlist(strsplit(vars_not_attached_to_2nd, "\\.")))
   
   ## Get all reliabilities from first stage 
   rel_all_1step  <- .first_stage_results$Estimates$Reliabilities

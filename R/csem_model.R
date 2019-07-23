@@ -355,6 +355,14 @@ parseModel <- function(
           " Currently, only first and second-order constructs are supported.")
       }
       
+      ## Stop if a nonlinear term is used as a first order construct to build/measure
+      ## a second order construct
+      if(length(names_i_nl) != 0) {
+        stop2("The following error occured in the `parseModel()` function:\n",
+              "Only linear first order constructs may be attached to second order constructs.",
+              " Dont know how to handle: ", 
+              paste0("`", names_i_nl, "`", collapse = ", "))
+      }
       ## Stop if at least one of the components of an interaction term does not appear
       ## in any of the structural equations.
       tmp <- setdiff(names_c_s_l, names_c_s_no_nl)
@@ -642,7 +650,7 @@ parseModel <- function(
 #'
 #' @usage convertModel(
 #'  .csem_model        = NULL, 
-#'  .approach_2ndorder = "3stage",
+#'  .approach_2ndorder = "2stage",
 #'  .stage             = "first"
 #'  )
 #'
@@ -655,7 +663,7 @@ parseModel <- function(
 #'
 convertModel <- function(
   .csem_model        = NULL, 
-  .approach_2ndorder = "3stage",
+  .approach_2ndorder = "2stage",
   .stage             = "first"
 ) {
   
@@ -726,7 +734,7 @@ convertModel <- function(
     lav_model <- paste(x1, x2a, x2b, sep = "\n")
   } else { # BEGIN: first step
     
-    if(.approach_2ndorder == "repeated_indicators") {
+    if(.approach_2ndorder %in% c("RI_original", "RI_extended", "mixed")) {
       
       ## Structural model
       # First order equations
@@ -741,6 +749,23 @@ convertModel <- function(
         x1 <- paste(x1, temp, sep = "\n")
       }
       
+      # Add indirect effect for the extended repeated indicators approach
+      if(.approach_2ndorder == "RI_extended") {
+        # 1. Which constructs are attached to which 2nd order construct
+        # 2. Which antecedent constructs does the second order have
+        # 3. Add structural equations for all antecedent constructs of second order
+        #    construct j on all first order constructs building/measuring the
+        #    second order construct
+        
+        for(j in c_2nd_order) {
+          attached <-  names(.csem_model$measurement[j, .csem_model$measurement[j, ] == 1])
+          antecedents <- names(which(.csem_model$structural[j, ] == 1))
+          
+          for(i in attached) {
+            x1 <- paste(x1, paste0(i, "~", antecedents, collapse = "+"), sep = "\n")
+          } 
+        }
+      }
       ## Measurement model + second order structural equation 
       # First order constructs
       x2a <- c()
@@ -825,7 +850,7 @@ convertModel <- function(
       }
       ## Model to be parsed
       lav_model <- paste(x1, x2, x3, sep = "\n")
-    } # END first step of the 3 step approach
+    } # END first step of the 2/3 stage approach
   } # END first step
 
   ## Parse model

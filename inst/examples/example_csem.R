@@ -62,10 +62,11 @@ eta2 =~ y51 + y52 + y53
 c4   =~ c1 + c2 + c3
 "
 
-m1 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "3stage")
-m2 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "repeated_indicators")
+m1 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "2stage")
+m2 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "RI_original")
 
-# By default .disattenuate = TRUE. The repeated indicators approach will
+# By default .disattenuate = TRUE. The standard repeated indicators approach
+# ("RI1") will
 # fairly often produce inadmissible results in this case. Set .disattenuate = FALSE,
 # however, path coefficients are inconsistent estimates for their popupulation
 # counterpart in this case.
@@ -73,7 +74,7 @@ verify(m2)
 
 ## P
 m3 <- csem(dgp_2ndorder_cf_of_c, model, 
-           .approach_2ndorder = "repeated_indicators",
+           .approach_2ndorder = "RI_original",
            .disattenuate = FALSE)
 verify(m3)
 ### Multigroup analysis -----------------------------------------------------

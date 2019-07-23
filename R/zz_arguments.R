@@ -12,8 +12,8 @@
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
 #' @param .approach_2ndorder Character string. Approach used for models containing
-#'   second order constructs. One of: "*3stage*" or "*repeated_indicators*". 
-#'   Defaults to "*3stage*".
+#'   second order constructs. One of: "*2stage*", "*RI_original*", "*RI_extended*"
+#'   or "*mixed*". Defaults to "*2stage*".
 #' @param .approach_alpha_adjust Character string. Approach used to adjust the 
 #'   significance level to accomodate mutiple testing. 
 #'   One of "*none*" or "*bonferroni*". Defaults to "*none*". 
@@ -349,7 +349,7 @@ args_default <- function(.choices = FALSE) {
   args <- list(
     .alpha                   = 0.05,
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
-    .approach_2ndorder       = c("3stage", "repeated_indicators"),
+    .approach_2ndorder       = c("2stage", "RI_original", "RI_extended", "mixed"),
     .approach_alpha_adjust   = c("none", "bonferroni"),
     .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt"),
     .approach_nl             = c("sequential", "replace"),

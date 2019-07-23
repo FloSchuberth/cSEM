@@ -7,7 +7,7 @@
 csem(
   .data                    = NULL,
   .model                   = NULL,
-  .approach_2ndorder       = c("3stage", "repeated_indicators"),
+  .approach_2ndorder       = c("2stage", "RI_original", "RI_extended", "mixed"),
   .approach_nl             = c("sequential", "replace"),
   .approach_paths          = c("OLS", "2SLS", "3SLS"),
   .approach_se             = c("none","closed","closed_estimator"), 
@@ -46,8 +46,8 @@ or a mix of several types.}
 or a \link{cSEMModel} list. Defaults to \code{NULL}.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{3stage}" or "\emph{repeated_indicators}".
-Defaults to "\emph{3stage}".}
+second order constructs. One of: "\emph{2stage}", "\emph{RI_original}", "\emph{RI_extended}"
+or "\emph{mixed}". Defaults to "\emph{2stage}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
@@ -242,7 +242,7 @@ Currently, only supported for "PLS-PM".
 \subsection{Nonlinear models:}{
 If the model is nonlinear \code{csem()} estimates a polynomial structural equation model
 using a non-iterative method of moments approach described in
-\insertCite{Dijkstra2014}{cSEM}. Nonlinear terms include interactions and
+\insertCite{Dijkstra2014;textual}{cSEM}. Nonlinear terms include interactions and
 exponential terms. The latter is described in model syntax as an
 "interaction with itself", e.g., \code{xi^3 = xi.xi.xi}. Currently only exponential
 terms up to a power of three (e.g., three-way interactions or cubic terms) are allowed.
@@ -282,8 +282,14 @@ QUAL =~ IMAG + EXPE
 "
 }
 }
-Currently, two approaches are available: \code{"repeated_indicators"} and
-\code{"2stage"} (the default).
+Currently, four approaches are available:
+\itemize{
+\item{(Default) \code{"2stage"}. The (disjoint) two stage approach as proposed by \insertCite{Agarwal2000;textual}{cSEM}.}
+\item{\code{"RI_original"}. The original repeated indicators approach as proposed by \insertCite{Joereskog1982b;textual}{cSEM}.}
+\item{\code{"RI_extended"}. The extended repeated indicators approach as proposed by \insertCite{Becker2012;textual}{cSEM}.}
+\item{\code{"mixed"}. The mixed repeated indicators/two-stage approach as proposed by \insertCite{Ringle2012;textual}{cSEM}.}
+}
+
 \subsection{Multigroup analysis}{
 To perform multigroup analysis provide either a list of data sets or one
 data set containing a group-identifyer-column whose column
@@ -364,10 +370,11 @@ eta2 =~ y51 + y52 + y53
 c4   =~ c1 + c2 + c3
 "
 
-m1 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "3stage")
-m2 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "repeated_indicators")
+m1 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "2stage")
+m2 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "RI_original")
 
-# By default .disattenuate = TRUE. The repeated indicators approach will
+# By default .disattenuate = TRUE. The standard repeated indicators approach
+# ("RI1") will
 # fairly often produce inadmissible results in this case. Set .disattenuate = FALSE,
 # however, path coefficients are inconsistent estimates for their popupulation
 # counterpart in this case.
@@ -375,7 +382,7 @@ verify(m2)
 
 ## P
 m3 <- csem(dgp_2ndorder_cf_of_c, model, 
-           .approach_2ndorder = "repeated_indicators",
+           .approach_2ndorder = "RI_original",
            .disattenuate = FALSE)
 verify(m3)
 ### Multigroup analysis -----------------------------------------------------
