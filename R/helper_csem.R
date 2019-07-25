@@ -65,25 +65,6 @@ calculate2ndOrder <- function(
   ## Save arguments of the first stage 
   args <- .first_stage_results$Information$Arguments
   
-  ## Update dominant indicators if supplied
-  if(!is.null(.first_stage_results$Information$Arguments$.dominant_indicators)) {
-    args$.dominant_indicators <- NULL
-    # # Dominant indicators are only necessary for second order constructs as
-    # # the first order constructs not attached to a second order are single indicators.
-    # 
-    # doms <- c()
-    # for(i in vars_2nd) {
-    #   indicators <- names(model2$measurement[i, model2$measurement[i, ] != 0])
-    # 
-    #   # Pick the first indicator as the dominant one (this is arbitray; usually
-    #   # the one with the highest loading is choosen)
-    #   doms[i] <- indicators[1]
-    # }
-    # names(doms) <- vars_2nd
-    # 
-    # args$.dominant_indicators <- doms
-  }
-  
   ## Estimate second stage
   out2 <- csem(
     .data                        = scores, 
@@ -94,7 +75,7 @@ calculate2ndOrder <- function(
     .approach_weights            = args$.approach_weights,
     .conv_criterion              = args$.conv_criterion,
     .disattenuate                = args$.disattenuate,
-    .dominant_indicators         = args$.dominant_indicators,
+    .dominant_indicators         = NULL,
     .estimate_structural         = args$.estimate_structural,
     .id                          = NULL,
     .iter_max                    = args$.iter_max,
@@ -156,7 +137,7 @@ calculate2ndOrder <- function(
         .approach_weights            = args$.approach_weights,
         .conv_criterion              = args$.conv_criterion,
         .disattenuate                = args$.disattenuate,
-        .dominant_indicators         = args$.dominant_indicators,
+        .dominant_indicators         = NULL,
         .estimate_structural         = args$.estimate_structural,
         .id                          = NULL,
         .iter_max                    = args$.iter_max,
@@ -202,6 +183,15 @@ calculate2ndOrder <- function(
       } # END correct single indicator loadings
     } # END if length(vars_2nd_composites) != 0
   } # END third stage
+  
+  out <- list("First_stage" = out, "Second_stage" = out2)
+  
+  ## Append original arguments needed as they are required by e.g. testOMF.
+  # Since 
+  args_needed[[".model"]] <- model_original
+  out$Second_stage$Information$Arguments_original <- args_needed
+  
+  class(out) <- c("cSEMResults", "cSEMResults_2ndorder")
   
   return(out2)
 }
