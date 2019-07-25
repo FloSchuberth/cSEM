@@ -532,7 +532,7 @@ parseModel <- function(
     # (including exogenous variables and interaction terms)
     already_ordered <- c(vars_exo, explained_by_exo)
     
-    ## When there are feedback loops ordering does not work anymor, therefore
+    ## When there are feedback loops ordering does not work anymore, therefore
     #  ordering is skiped if there are feedback loops. Except for the
     #  the "replace" approach, this should not be a problem.
     

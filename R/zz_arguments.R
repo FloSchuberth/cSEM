@@ -36,8 +36,9 @@
 #' @param .approach_paths Character string. Approach used to estimate the
 #'   structural coefficients. One of: "*OLS*", "*2SLS*", or "*3SLS*" (not yet implemented).
 #'   Defaults to "*OLS*".
-#' @param .approach_se Chraracter string. Approach used to determined the SEs.One of:
-#' "*none*", "*closed*", "*closed_estimator*". Defaults to "*none*". 
+#' @param .approach_se Chraracter string. Approach used to obtain the standard errors (SEs)
+#'   for parameter estimates. One of: "*none*", "*closed*", "*closed_estimator*".
+#'   Defaults to "*none*". 
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 

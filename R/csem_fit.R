@@ -1,7 +1,8 @@
 #' Model-implied indicator and construct variance-covariance matrix
 #'
 #' Calculate the model-implied indicator or construct variance-covariance (VCV) 
-#' matrix. Currently only the model-implied VCV for linear model is implemented.
+#' matrix. Currently only the model-implied VCV for recursive linear models 
+#' is implemented (including models containing second order constructs).
 #' 
 #' Notation is taken from \insertCite{Bollen1989;textual}{cSEM}.
 #' If `.saturated = TRUE` the model-implied variance-covariance matrix is calculated 
@@ -9,7 +10,7 @@
 #' by their correlation matrix). Hence: V(eta) = WSW' (possibly disattenuated).
 #'
 #' @usage fit(
-#'   .object    = args_default()$.object, 
+#'   .object    = NULL, 
 #'   .saturated = args_default()$.saturated,
 #'   .type_vcv  = args_default()$.type_vcv
 #'   )
@@ -32,7 +33,7 @@
 #' @export
 
 fit <- function(
-  .object    = args_default()$.object, 
+  .object    = NULL, 
   .saturated = args_default()$.saturated,
   .type_vcv  = args_default()$.type_vcv
   ) {
@@ -43,7 +44,7 @@ fit <- function(
 #' @export
 
 fit.cSEMResults_default <- function(
-  .object    = args_default()$.object, 
+  .object    = NULL, 
   .saturated = args_default()$.saturated,
   .type_vcv  = args_default()$.type_vcv
   ) {
@@ -69,19 +70,26 @@ fit.cSEMResults_default <- function(
   ## Corr_endo     := (J_endo x J_endo)  model-implied correlation matrix between
   ##                  endogenous constructs.
   
-  
   ### Preparation ==============================================================
   ## Check if linear
   if(.object$Information$Model$model_type != "Linear"){
-    stop("`fit()` currently not applicable to nonlinear models.",
-         call. = FALSE)
+    stop2("`fit()` currently not applicable to nonlinear models.")
   }
   
-  ## Collect matrices
+  ## Collect relevant 
+  m         <- .object$Information$Model$structural
+  Cons_endo <- rownames(m)[rowSums(m) != 0]
+  Cons_exo  <- setdiff(colnames(m), Cons_endo)
   S      <- .object$Estimates$Indicator_VCV
   Lambda <- .object$Estimates$Loading_estimates
   Theta  <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   dimnames(Theta) <- dimnames(S)
+  
+  ## Check if recursive, otherwise return a warning
+  if(any(m[Cons_endo, Cons_endo] + t(m[Cons_endo, Cons_endo]) == 2)){
+    warning2("`fit()` currently not applicable to non-recursive models.",
+             " The model-implied indicator covariance matrix is likely to be wrong.")
+  }
   
   if(.saturated) {
     # If a saturated model is assumed the structural model is ignored in
@@ -90,10 +98,6 @@ fit.cSEMResults_default <- function(
     vcv_construct <- .object$Estimates$Construct_VCV
     
   } else {
-    
-    m         <- .object$Information$Model$structural
-    Cons_endo <- rownames(m)[rowSums(m) != 0]
-    Cons_exo  <- setdiff(colnames(m), Cons_endo)
     
     B      <- .object$Estimates$Path_estimates[Cons_endo, Cons_endo, drop = FALSE]
     Gamma  <- .object$Estimates$Path_estimates[Cons_endo, Cons_exo, drop = FALSE]
@@ -155,7 +159,7 @@ fit.cSEMResults_default <- function(
 #' @export
 
 fit.cSEMResults_multi <- function(
-  .object    = args_default()$.object,
+  .object    = NULL,
   .saturated = args_default()$.saturated,
   .type_vcv  = args_default()$.type_vcv
   ) {
@@ -176,7 +180,7 @@ fit.cSEMResults_multi <- function(
 #' @export
 
 fit.cSEMResults_2ndorder <- function(
-  .object    = args_default()$.object,
+  .object    = NULL,
   .saturated = args_default()$.saturated,
   .type_vcv  = args_default()$.type_vcv
   ) {
@@ -191,7 +195,6 @@ fit.cSEMResults_2ndorder <- function(
   
   # Reorder dimnames to match the order of Lambda and ensure symmetrie
   vcv_construct <- vcv_construct[rownames(Lambda), rownames(Lambda)]
-  vcv_construct[lower.tri(vcv_construct)] <- t(vcv_construct)[lower.tri(vcv_construct)]
   
   ## If only the fitted construct VCV is needed, return it now
   if(.type_vcv == "construct") {

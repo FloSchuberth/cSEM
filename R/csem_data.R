@@ -95,8 +95,8 @@ processData <- function(
   #        "The column type must be one of: `logical`, `numeric`, or `factor`",
   #        call. = FALSE)
   # }
+  
   ## Add indicators to .data if the repeated indicators approach is used
-  # Error:
   # Note: the indicators to be added are identified by the string "_2nd_". Hence
   # the string is basically a reserved word. If indicators supplied by the
   # users contain the string this causes and error (unlikely to happen).

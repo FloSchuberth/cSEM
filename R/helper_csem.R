@@ -67,20 +67,21 @@ calculate2ndOrder <- function(
   
   ## Update dominant indicators if supplied
   if(!is.null(.first_stage_results$Information$Arguments$.dominant_indicators)) {
-    # Dominant indicators are only necessary for second order constructs as
-    # the first order constructs not attached to a second order are single indicators.
-    
-    doms <- c()
-    for(i in vars_2nd) {
-      indicators <- names(model2$measurement[i, model2$measurement[i, ] != 0])
-      
-      # Pick the first indicator as the dominant one (this is arbitray; usually
-      # the one with the highest loading is choosen)
-      doms[i] <- indicators[1]
-    }
-    names(doms) <- vars_2nd
-    
-    args$.dominant_indicators <- doms
+    args$.dominant_indicators <- NULL
+    # # Dominant indicators are only necessary for second order constructs as
+    # # the first order constructs not attached to a second order are single indicators.
+    # 
+    # doms <- c()
+    # for(i in vars_2nd) {
+    #   indicators <- names(model2$measurement[i, model2$measurement[i, ] != 0])
+    # 
+    #   # Pick the first indicator as the dominant one (this is arbitray; usually
+    #   # the one with the highest loading is choosen)
+    #   doms[i] <- indicators[1]
+    # }
+    # names(doms) <- vars_2nd
+    # 
+    # args$.dominant_indicators <- doms
   }
   
   ## Estimate second stage
