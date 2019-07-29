@@ -71,6 +71,7 @@
 #'   \item{`$Klesel`}{A list with elements, `Test_statistic`, `P_value`, and `Decision`}
 #'   \item{`$Chin`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
 #'   \item{`$Sarstedt`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
+#'   \item{`$Keil`}{}
 #' }
 #' @references
 #'   \insertAllCited{}
@@ -208,7 +209,7 @@ testMGD <- function(
   }
   
   ## Sarstedt et al. (2011) ----------------------------------------------------
-  if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
+  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil"))) {
     
     ## Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
@@ -220,6 +221,10 @@ testMGD <- function(
         .seed                 = .seed) 
     }
     
+    if(.approach_mgd == "Keil"){
+      diff_para_Keil <- <- calculateParameterDifference(.object = .object, 
+                                                        .model = .model)
+    }else{ #if approach_mgd == "Sarstedt" or "all"
     ## Combine bootstrap results in one matrix
     ll <- lapply(.object, function(x) {
       if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -267,8 +272,9 @@ testMGD <- function(
     ## Select relevant columns
     all_comb <- all_comb[, c(names_param, "group_id")]
     
-    ## Add test statistic
+    ## Add test statistic Sarstedt
     teststat[["Sarstedt"]] <- calculateFR(.resample_sarstedt = all_comb)
+    }#approach_mgd "Sarstedt"and "all"
   }
   
   ### Permutation ==============================================================
