@@ -221,24 +221,22 @@ testMGD <- function(
         .seed                 = .seed) 
     }
     
-    if(.approach_mgd == "Keil"){
-      diff_para_Keil <- calculateParameterDifference(.object = .object, 
-                                                        .model = .model)
-      
-      
-    }else{ #if approach_mgd == "Sarstedt" or "all"
+
     ## Combine bootstrap results in one matrix
-    ll <- lapply(.object, function(x) {
+    ll_org <- lapply(.object, function(y) {
       if(inherits(.object, "cSEMResults_2ndorder")) {
-        x <- x$Second_stage$Information$Resamples$Estimates$Estimates1
+        x <- y$Second_stage$Information$Resamples$Estimates$Estimates1
+        
+        nobs <- nrow(y$First_stage$Information$Data)
         
         ## Get bootstrap seeds
         # bootstrap_seeds <- sapply(.object, function(x)  {
         #   x$Second_stage$Information$Resamples$Information_resample$Seed 
         # })
       } else {
-        x <- x$Estimates$Estimates_resample$Estimates1
-        
+        x <- y$Estimates$Estimates_resample$Estimates1
+        # Read out sample size of the group
+        nobs <- nrow(y$Information$Data)
         ## Get bootstrap seeds
         # bootstrap_seeds <- sapply(.object, function(x) {
         #   x$Information$Information_resample$Seed
@@ -249,13 +247,51 @@ testMGD <- function(
       weight_resamples  <- x$Weight_estimates$Resampled
       n                 <- nrow(path_resamples)
       
+      ses <- infer(.object=y,.quantity = "sd")
+      
+      path_se <- ses$Path_estimates$sd 
+      loading_se <- ses$Loading_estimates$sd
+      weight_se <- ses$Weight_estimates$sd
+      
       list(
         "path_resamples"    = path_resamples, 
         "loading_resamples" = loading_resamples, 
         "weight_resamples"  = weight_resamples, 
-        "n"                 = n)
+        "n"                 = n,
+        "nObs"              = nobs,
+        "ses_all"           = c(path_se, loading_se, weight_se))
     })
     
+    if(any(.approach_mgd %in% c("Keil","all"))){
+      diff_para_Keil <- calculateParameterDifference(.object = .object, 
+                                                     .model = .model)
+      
+      # permute .objects
+      object_permu <- utils::combn(.object, 2, simplify = FALSE)
+      names(object_permu) <- sapply(object_permu, function(x) paste0(names(x)[1], '_', names(x)[2]))
+      
+      teststat_Keil <- lapply(names(object_permu),function(x){
+       diff <- diff_para_Keil[[x]]
+        ses1 <- ll_org[[names(object_permu[[x]][1])]]$ses_all
+        ses2 <- ll_org[[names(object_permu[[x]][2])]]$ses_all
+        
+        n1<-ll_org[[names(object_permu[[x]][1])]]$nObs
+        n2<-ll_org[[names(object_permu[[x]][2])]]$nObs
+        
+        ses_total=sqrt((n1-1)^2/(n1+n2-2)*ses1^2 + 
+            (n2-1)^2/(n1+n2-2)*ses2^2)*sqrt(1/n1+1/n2) 
+          
+        test_stat<-diff/ses_total
+        list("teststat"=test_stat,"obs_both"=n1+n2)
+        
+      })
+      names(teststat_Keil) <- names(object_permu)
+      teststat[["Keil"]] <- teststat_Keil 
+    
+  }
+  if(any(.approach_mgd %in% c("Sarstedt","all"))){ #if approach_mgd == "Sarstedt" or "all"
+    # Remove SEs
+    ll <- ll_org[1:5]
     ## Transpose, get id column, bind rows and columns
     ll <- purrr::transpose(ll)
     group_id <- rep(1:length(.object), unlist(ll$n))
@@ -527,6 +563,22 @@ testMGD <- function(
         all(xx)
         })
     })
+  }
+  if(any(.approach_mgd %in% c("all", "Keil"))) {
+    # critical values
+    
+    pvalue_Keil <- lapply(teststat$Keil,function(x){
+      p_value <- 2*(1-pt(abs(x[[1]]),df = x[[2]]-2))
+    })
+    
+    padjusted_Keil<- lapply(as.list(.approach_p_adjust), function(x){
+      pvector <- stats::p.adjust(unlist(pvalue_Keil),method = x)
+      # Sort them back into list
+      relist(flesh = pvector,skeleton = pvalue_Keil)
+    })
+    names(padjusted_Keil) <- .approach_p_adjust
+    
+    
   }
   
   ### Return output ============================================================

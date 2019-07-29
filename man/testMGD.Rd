@@ -31,7 +31,7 @@ Defaults to "\emph{none}".}
 
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
-or "\emph{Sarstedt}". Default to "\emph{all}" in which case all approaches are
+"\emph{Sarstedt}", or "\emph{Keil}. Default to "\emph{all}" in which case all approaches are
 computed (if possible).}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
@@ -73,6 +73,7 @@ named list containing the following list elements:
 \item{\code{$Klesel}}{A list with elements, \code{Test_statistic}, \code{P_value}, and \code{Decision}}
 \item{\code{$Chin}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
 \item{\code{$Sarstedt}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
+\item{\code{$Keil}}{}
 }
 }
 \description{
