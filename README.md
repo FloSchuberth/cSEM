@@ -109,7 +109,7 @@ following tests are implemented.
 
 All functions require a `cSEMResults` object.
 
-### Example
+## Example
 
 Models are defined using [lavaan
 syntax](http://lavaan.ugent.be/tutorial/syntax1.html) with some slight
