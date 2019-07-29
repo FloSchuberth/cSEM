@@ -26,7 +26,8 @@ analysis (PCA), factor score regression (FSR) using sum score,
 regression or bartlett scores (including bias correction using Croon’s
 approach), as well as several tests and typical postestimation
 procedures (e.g., verify admissibility of the estimates, assess the
-model fit, test the model fit, compare groups, etc.).
+model fit, test the model fit, compute confidence intervals, compare
+groups, etc.).
 
 ## Installation
 
@@ -79,10 +80,34 @@ The basic usage is illustrated below.
 
 Roughly speaking using `cSEM` is always the same 3 step procedure
 
-1.  Pick a dataset and specify a model using [lavaan
-    syntax](http://lavaan.ugent.be/tutorial/syntax1.html)
-2.  Use `csem()`
-3.  Apply one of the postestimation functions on the resulting object.
+> 1.  Pick a dataset and specify a model using [lavaan
+>     syntax](http://lavaan.ugent.be/tutorial/syntax1.html)
+> 2.  Use `csem()`
+> 3.  Apply one of the postestimation functions listed below on the
+>     resulting object.
+
+## Postestimation functions
+
+Currently we have five major postestimation verbs.
+
+  - `assess()` : assess the model using common fit and assessment
+    measures
+  - `infer()` : calculate common inferencial quantities (e.g, standard
+    errors)
+  - `predict()` : predict indicator values (not yet implemented)
+  - `summarize()` : summarize the results
+  - `verify()` : verify admissibility of the estimates
+
+Tests are performed by using the test family of functions. Currently the
+following tests are implemented.
+
+  - `testOMF()` : performs a test for overall model fit
+  - `testMICOM()` : performs a test for composite measurement invariance
+  - `testMGD` : performs several test to assess multi-group differences
+  - `testHausman()` : performs the regression-based Hausam test to test
+    for endogeneity.
+
+All functions require a `cSEMResults` object.
 
 ### Example
 
@@ -163,7 +188,7 @@ csem(
 ```
 
 The result is always an object of class `cSEMResults`. Technically, the
-resulting object has an additional class attribute (namely
+resulting object has at least one additional class attribute (namely
 `cSEMResults_default`, `cSEMResults_multi` or `cSEMResults_2ndorder`),
 however, users usually do not need to care about since postestimation
 functions (will eventually) automatically work on all classes.
@@ -193,18 +218,20 @@ assess(res)
 
 By default no inferential quantities are calculated since most
 composite-based estimators have no closed-form expressions for standard
-errors. `cSEM` mostly relies on the `bootstrap` and the `jackknife`
-procedure to estimate standard errors, test statistics, and critical
-quantiles.
+errors. Some closed form standard error are implemented, however, this
+feature is still rather preliminary. It is therefore recommoned to use
+resampling instead. `cSEM` mostly relies on the `bootstrap` procedure
+(although `jackknife` is implemented as well) to estimate standard
+errors, test statistics, and critical quantiles.
 
 `cSEM` offers two ways to compute resamples:
 
-1.  Inference can be done by first setting `.resample_method` to
-    `"jackkinfe"` or `"bootstrap"` and subsequently using `summarize()`
-    or `infer()`.
-2.  The same result is achieved by passing a `cSEMResults` object to
-    `resamplecSEMResults()` and subsequently using `summarize()` or
+1.  Setting `.resample_method` to `"jackkinfe"` or `"bootstrap"` and
+    subsequently using postestimation functions `summarize()` or
     `infer()`.
+2.  The same result is achieved by passing a `cSEMResults` object to
+    `resamplecSEMResults()` and subsequently using postestimation
+    functions `summarize()` or `infer()`.
 
 <!-- end list -->
 
@@ -242,24 +269,3 @@ b <- csem(
   .seed            = 98234,
   .eval_plan       = "multiprocess")
 ```
-
-## Postestimation functions
-
-Currently we have four major postestimation verbs.
-
-  - `summarize()` : usually all that is need.
-  - `verify()` : verify if the estimation produced admissible results
-  - `assess()` : asses the model using common fit and assessment
-    measures
-  - `predict()` : (not yet implemented)
-
-Tests are performed by using the test family of functions. Currently the
-following tests are implemented.
-
-  - `testOMF()` : performs a test for overall model fit
-  - `testMICOM()` : performs a test for composite measurement invariance
-  - `testMGD` : performs several test to assess multi-group differences
-  - `testHausman()` : performs the regression-based Hausam test used to
-    test endogeneity.
-
-All functions require a `cSEMResults` object.

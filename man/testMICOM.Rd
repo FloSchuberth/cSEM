@@ -2,9 +2,6 @@
 % Please edit documentation in R/postestimate_test_MICOM.R
 \name{testMICOM}
 \alias{testMICOM}
-\alias{testMICOM.cSEMResults_default}
-\alias{testMICOM.cSEMResults_multi}
-\alias{testMICOM.cSEMResults_2ndorder}
 \title{Test measurement invariance of composites}
 \usage{
 testMICOM(
@@ -16,29 +13,6 @@ testMICOM(
  .seed                 = args_default()$.seed,
  .verbose              = args_default()$.verbose
  )
-
-
-  \method{testMICOM}{cSEMResults_default}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .approach_p_adjust = args_default()$.approach_p_adjust,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .seed = args_default()$.seed,
-  .verbose = args_default()$.verbose)
-
-\method{testMICOM}{cSEMResults_multi}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .approach_p_adjust = args_default()$.approach_p_adjust,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .seed = args_default()$.seed,
-  .verbose = args_default()$.verbose)
-
-
-  \method{testMICOM}{cSEMResults_2ndorder}(.object = args_default()$.object,
-  .alpha = args_default()$.alpha,
-  .approach_p_adjust = args_default()$.approach_p_adjust,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R = args_default()$.R, .seed = args_default()$.seed,
-  .verbose = args_default()$.verbose)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -68,9 +42,7 @@ case an arbitrary seed is choosen.}
 to \code{TRUE}.}
 }
 \value{
-An object of class "testMICOM"
-
-An object of class "testMICOM" is a named list containing the following list element:
+A named list of class "testMICOM" containing the following list element:
 \describe{
 \item{\strong{Step2}}{A list containing the results of the test for compositional invariance (Step 2).}
 \item{\strong{Step3}}{A list containing the results of the test for mean and variance equality (Step 3).}
@@ -91,15 +63,6 @@ The number of permutation runs defaults to \code{args_default()$.R} for performa
 According to \insertCite{Henseler2016}{cSEM} the number of permutations should
 be at least 5000 for assessment to be sufficiently reliable.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{cSEMResults_default}: (TODO)
-
-\item \code{cSEMResults_multi}: (TODO)
-
-\item \code{cSEMResults_2ndorder}: (TODO)
-}}
-
 \references{
 \insertAllCited{}
 }

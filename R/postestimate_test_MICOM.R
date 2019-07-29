@@ -24,9 +24,8 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return An object of class "testMICOM"
-#'
-#' An object of class "testMICOM" is a named list containing the following list element:
+#' @return 
+#' A named list of class "testMICOM" containing the following list element:
 #' \describe{
 #' \item{**Step2**}{A list containing the results of the test for compositional invariance (Step 2).}
 #' \item{**Step3**}{A list containing the results of the test for mean and variance equality (Step 3).}
@@ -56,44 +55,22 @@ testMICOM <- function(
     cat(rule(center = "Test for measurement invariance based on Henseler et al (2016)",
              line = "bar3"), "\n\n")
   }
-  UseMethod("testMICOM")
-
-}
-
-#' @describeIn testMICOM (TODO)
-#' @export
-
-testMICOM.cSEMResults_default <- function(
-  .object               = args_default()$.object,
-  .alpha                = args_default()$.alpha,
-  .approach_p_adjust    = args_default()$.approach_p_adjust,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R                    = args_default()$.R,
-  .seed                 = args_default()$.seed,
-  .verbose              = args_default()$.verbose
-) {
-  stop2("At least 2 groups required for the MICOM test.")
-}
-
-#' @describeIn testMICOM (TODO)
-#' @export
-
-testMICOM.cSEMResults_multi <- function(
-  .object               = args_default()$.object,
-  .alpha                = args_default()$.alpha,
-  .approach_p_adjust    = args_default()$.approach_p_adjust,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R                    = args_default()$.R,
-  .seed                 = args_default()$.seed,
-  .verbose              = args_default()$.verbose
-) {
+  
   ## If second-order
   if(inherits(.object, "cSEMResults_2ndorder")) {
     
-    out <- lapply(.object, testMICOM.cSEMResults_2ndorder)
+    stop2("Currently, second-order models are not supported by `testMICOM()`.")
     
   } else {
     ### Checks and errors ========================================================
+    
+    ## Check if at least two groups are present
+    if(!inherits(.object, "cSEMResults_multi")) {
+      stop2(
+        "The following error occured in the `testMICOM()` function:\n",
+        "At least two groups required."
+      )
+    } 
     
     if(sum(unlist(verify(.object))) != 0) {
       stop2(
@@ -390,19 +367,4 @@ testMICOM.cSEMResults_multi <- function(
   
   class(out) <- "cSEMTestMICOM"
   return(out)
-}
-
-#' @describeIn testMICOM (TODO)
-#' @export
-
-testMICOM.cSEMResults_2ndorder <- function(
-  .object               = args_default()$.object,
-  .alpha                = args_default()$.alpha,
-  .approach_p_adjust    = args_default()$.approach_p_adjust,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R                    = args_default()$.R,
-  .seed                 = args_default()$.seed,           
-  .verbose              = args_default()$.verbose
-) {
-  stop2("Currently, second-order models are not supported by `testMICOM()`.")
 }
