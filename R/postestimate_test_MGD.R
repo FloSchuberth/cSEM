@@ -222,8 +222,10 @@ testMGD <- function(
     }
     
     if(.approach_mgd == "Keil"){
-      diff_para_Keil <- <- calculateParameterDifference(.object = .object, 
+      diff_para_Keil <- calculateParameterDifference(.object = .object, 
                                                         .model = .model)
+      
+      
     }else{ #if approach_mgd == "Sarstedt" or "all"
     ## Combine bootstrap results in one matrix
     ll <- lapply(.object, function(x) {
