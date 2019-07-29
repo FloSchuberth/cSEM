@@ -367,7 +367,11 @@ csem <- function(
         x$Information$Approach_2ndorder <- .approach_2ndorder
         x
       })
-
+    } else {
+      out <- lapply(out, function(x){
+        x$Information$Approach_2ndorder <- NA
+        x
+      })
     }
     ## Set class
     class(out) <- c("cSEMResults", "cSEMResults_multi")
@@ -395,6 +399,8 @@ csem <- function(
     ## Add second order approach to $Information
     if(any(model_original$construct_order == "Second order")) {
       out$Information$Approach_2ndorder <- .approach_2ndorder
+    } else {
+      out$Information$Approach_2ndorder <- NA
     }
     
     class(out) <- c("cSEMResults", "cSEMResults_default")

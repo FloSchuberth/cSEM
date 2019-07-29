@@ -78,19 +78,22 @@ calculateAVE <- function(
 #' 
 #' @usage calculateDf(
 #'   .object     = NULL,
-#'   .null_model = FALSE
+#'   .null_model = args_default()$.null_model,
+#'   ...
 #'   )
 #' 
 #' @return A single numeric value.
 #'   
 #' @inheritParams csem_arguments
+#' @param ... Ignored.
 #'
 #' @seealso [assess], [cSEMResults]
 #' @keywords internal
 
 calculateDf <- function(
   .object     = NULL, 
-  .null_model = FALSE
+  .null_model = args_default()$.null_model,
+  ...
   ) {
   
   if(inherits(.object, "cSEMResults_default")) { 
@@ -1105,8 +1108,6 @@ doRedundancyAnalysis <- function(.object = NULL) {
 #'   
 #' @seealso [csem()], [foreman()], [cSEMResults]
 #'
-#' @export
-#' 
 doFloodlightAnalysis <- function(
   .object        = NULL,
   .alpha         = args_default()$.alpha,
@@ -1264,7 +1265,6 @@ doFloodlightAnalysis <- function(
 #' @param x An R object of class `cSEMFloodlight` resulting from a call to [doFloodlightAnalysis].
 #' @param ... ignored.
 #' 
-#' @export
 plot.cSEMFloodlight <- function(x, ...) {
   
   ## Install ggplot2 if not already installed

@@ -5,9 +5,11 @@
 \title{Second order constructs}
 \usage{
 calculate2ndStage(
-  .csem_model, 
-  .first_stage_results
-  .original_arguments)
+ .csem_model          = args_default()$.csem_model,
+ .first_stage_results = args_default()$.first_stage_results,
+ .original_arguments  = args_default()$.original_arguments,
+ .approach_2ndorder   = args_default()$.approach_2ndorder
+  )
 }
 \arguments{
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}

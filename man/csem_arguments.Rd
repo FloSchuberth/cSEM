@@ -168,7 +168,7 @@ If the algorithm exceeds the specified number, weights of iteration step
 or a \link{cSEMModel} list. Defaults to \code{NULL}.}
 
 \item{.model_implied}{Logical. Should the RMS_theta be computed using the
-model-implied construct correlation matrix (\code{TRUE})or the construct correlation matrix
+model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix
 based on V(eta) = WSW' divided by the square root of the respective
 reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
 
@@ -186,6 +186,9 @@ be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for detai
 Defaults to \code{FALSE}. Ignored if the model is linear.}
 
 \item{.nr_comparisons}{Numeric. The number of comparisons. Defaults to \code{NULL}.}
+
+\item{.null_model}{Logical. Should the degrees of freedom for the null model
+be computed? Defaults to \code{FALSE}.}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 

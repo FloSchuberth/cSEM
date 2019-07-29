@@ -127,7 +127,7 @@
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
 #'   or a [cSEMModel] list. Defaults to `NULL`.
 #' @param .model_implied Logical. Should the RMS_theta be computed using the
-#'   model-implied construct correlation matrix (`TRUE`)or the construct correlation matrix
+#'   model-implied construct correlation matrix (`TRUE`) or the construct correlation matrix
 #'   based on V(eta) = WSW' divided by the square root of the respective 
 #'   reliabilities (`FALSE`). Defaults to `FALSE`.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
@@ -140,6 +140,8 @@
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 #'  Defaults to `FALSE`. Ignored if the model is linear.
 #' @param .nr_comparisons Numeric. The number of comparisons. Defaults to `NULL`.  
+#' @param .null_model Logical. Should the degrees of freedom for the null model
+#'   be computed? Defaults to `FALSE`.
 #' @param .object An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .only_common_factors Logical. Should only concepts modeled as common 
 #'   factors be included when calculating one of the following quality critera: 
@@ -310,6 +312,8 @@ args_csem_dotdotdot <- function(
 #' \describe{
 #' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
+#' \item{.model_implied}{Accepted by/Passed down to: [calculateRMSTheta()]}
+#' \item{.null_model}{Accepted by/Passed down to: [calculateDf()]}
 #' \item{.saturated}{Accepted by/Passed down to: [calculateSRMR()], 
 #'   [calculateDG()], [calculateDL()], [calculateDML()]and subsequently [fit()].}
 #' \item{.type_vcv}{Accepted by/Passed down to: [calculateSRMR()], 
@@ -324,6 +328,7 @@ args_assess_dotdotdot <- function(
   .alpha               = 0.05,
   .closed_form_ci      = FALSE,
   .model_implied       = FALSE,
+  .null_model          = FALSE,
   .saturated           = FALSE,
   .type_vcv            = "indicator"
 ) {NULL}
@@ -394,17 +399,18 @@ args_default <- function(.choices = FALSE) {
     .n_spotlights            = 100,
     .normality               = FALSE,
     .nr_comparisons          = NULL,
+    .null_model              = FALSE,
     .only_common_factors     = TRUE,
     .object                  = NULL,
     .P                       = NULL,
     .probs                   = NULL,
     .quality_criterion       = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
-                                 "cronbachs_alpha_weighted", "dg", "dl", "dml",
+                                 "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
                                  "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
                                  "rmsea", "rms_theta", "srmr",
                                  "gof", "htmt", "r2", "r2_adj", "ra",
                                  "rho_T", "rho_T_weighted", "vif", 
-                                 "vifmodeb",  "fl_criterion"),
+                                 "vifmodeb",  "fl_criterionB"),
     
     .quantity                = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
                                  "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
