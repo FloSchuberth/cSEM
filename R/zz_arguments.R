@@ -145,6 +145,7 @@
 #'   factors be included when calculating one of the following quality critera: 
 #'   AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates. 
 #'   Defaults to `TRUE`.
+#' @param .original_arguments The list of arguments used within [csem()].
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",

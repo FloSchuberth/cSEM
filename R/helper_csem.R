@@ -3,9 +3,10 @@
 #' Performs the second and third stage for a model containing second order 
 #' constructs.
 #'
-#' @usage calculate2ndOrder(
+#' @usage calculate2ndStage(
 #'   .csem_model, 
-#'   .first_stage_results)
+#'   .first_stage_results
+#'   .original_arguments)
 #'
 #' @inheritParams csem_arguments
 #
@@ -13,9 +14,11 @@
 #'
 #' @keywords internal
 #'
-calculate2ndOrder <- function(
+calculate2ndStage <- function(
   .csem_model          = args_default()$.csem_model,
-  .first_stage_results = args_default()$.first_stage_results
+  .first_stage_results = args_default()$.first_stage_results,
+  .original_arguments  = args_default()$.original_arguments,
+  .approach_2ndorder   = args_default()$.approach_2ndorder
 ) {
   
   original_model <- .csem_model
@@ -184,14 +187,17 @@ calculate2ndOrder <- function(
     } # END if length(vars_2nd_composites) != 0
   } # END third stage
   
-  out <- list("First_stage" = out, "Second_stage" = out2)
+  out <- list("First_stage" = .first_stage_results, "Second_stage" = out2)
   
   ## Append original arguments needed as they are required by e.g. testOMF.
   # Since 
-  args_needed[[".model"]] <- model_original
-  out$Second_stage$Information$Arguments_original <- args_needed
+  .original_arguments[[".model"]] <- original_model
+  out$Second_stage$Information$Arguments_original <- .original_arguments
+  
+  ## Add second order approach to $Information
+  out$Second_stage$Information$Approach_2ndorder <- .approach_2ndorder
   
   class(out) <- c("cSEMResults", "cSEMResults_2ndorder")
   
-  return(out2)
+  return(out)
 }

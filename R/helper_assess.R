@@ -638,10 +638,8 @@ calculateDML <- function(
   
   # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
   if(inherits(.object, "cSEMResults_default")) {
-    n <- nrow(.object$First_stage$Information$Data)
     S <- .object$Estimates$Indicator_VCV
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
-    n <- nrow(.object$Information$Data)
     S <- .object$First_stage$Estimates$Indicator_VCV
   } else {
     stop2(
@@ -677,8 +675,8 @@ NULL
 calculateCFI <- function(.object) {
   
   n    <- nrow(.object$Information$Data)
-  S <- .object$Estimates$Indicator_VCV
-  p <- dim(S)[1]
+  S    <- .object$Estimates$Indicator_VCV
+  p    <- dim(S)[1]
   df_T <- calculateDf(.object)
   df_0 <- calculateDf(.object, .null_model = TRUE)
   
@@ -706,9 +704,9 @@ calculateGFI <- function(.object) {
 
 calculateIFI <- function(.object) {
   
-  n <- nrow(.object$Information$Data)
-  S <- .object$Estimates$Indicator_VCV
-  p <- dim(S)[1]
+  n  <- nrow(.object$Information$Data)
+  S  <- .object$Estimates$Indicator_VCV
+  p  <- dim(S)[1]
   df <- calculateDf(.object)
   
   F0 <- log(det(diag(nrow(S)))) + 
@@ -739,9 +737,9 @@ calculateNFI <- function(.object) {
 
 calculateNNFI <- function(.object) {
   
-  n <- nrow(.object$Information$Data)
-  S <- .object$Estimates$Indicator_VCV
-  p <- dim(S)[1]
+  n    <- nrow(.object$Information$Data)
+  S    <- .object$Estimates$Indicator_VCV
+  p    <- dim(S)[1]
   df_T <- calculateDf(.object)
   df_0 <- calculateDf(.object, .null_model = TRUE)
   
@@ -853,10 +851,10 @@ calculateEffectSize <- function(.object = NULL) {
   approach_paths   <- .object$Information$Arguments$.approach_paths
   approach_weights <- .object$Information$Arguments$.approach_weights
   csem_model       <- .object$Information$Model
-  H <- .object$Estimates$Construct_scores
+  H         <- .object$Estimates$Construct_scores
   normality <- .object$Information$Arguments$.normality
-  P <- .object$Estimates$Construct_VCV
-  Q <- sqrt(.object$Estimates$Reliabilities)
+  P         <- .object$Estimates$Construct_VCV
+  Q         <- sqrt(.object$Estimates$Reliabilities)
   
   s <- csem_model$structural
   
@@ -960,7 +958,7 @@ calculateVIFModeB <- function(.object = NULL) {
       length(modesB) > 0) {
     
     m <- .object$Information$Model$measurement
-    X <- .object$Information$Data
+    X <- .object$Information$Data_with_RI
     
     VIF <- lapply(names(modesB), function(j) {
       indicator_names <- colnames(m[j, m[j,] != 0, drop = FALSE])

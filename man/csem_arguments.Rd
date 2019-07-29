@@ -194,6 +194,8 @@ factors be included when calculating one of the following quality critera:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to \code{TRUE}.}
 
+\item{.original_arguments}{The list of arguments used within \code{\link[=csem]{csem()}}.}
+
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction

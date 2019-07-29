@@ -192,7 +192,7 @@ foreman <- function(
   
   ## Calculate construct correlation matrix
   P <- calculateConstructVCV(.C = C, .Q = Q)
-
+  
   ## Estimate structural coef
   if(.estimate_structural) {
     estim_results <- estimatePath(
@@ -225,7 +225,6 @@ foreman <- function(
       "Indicator_VCV"          = S,
       "Proxy_VCV"              = C,
       "Construct_VCV"          = P,
-      # "Cross_loadings"         = Lambda,
       "Reliabilities"          = Q^2,
       "R2"                     = if(.estimate_structural) {
         estim_results$R2
@@ -251,7 +250,6 @@ foreman <- function(
     "Information" = list(
       "Data"          = X,
       "Model"         = csem_model,
-      # "Arguments"     = as.list(match.call())[-1],
       "Arguments"     = args_used,
       "Type_of_indicator_correlation" = Cor$cor_type,
       "Threshold_parameter_estimates" = Cor$thres_est,

@@ -287,7 +287,9 @@ Currently, four approaches are available:
 \itemize{
 \item{(Default) \code{"2stage"}. The (disjoint) two stage approach as proposed by \insertCite{Agarwal2000;textual}{cSEM}.}
 \item{\code{"RI_original"}. The original repeated indicators approach as proposed by \insertCite{Joereskog1982b;textual}{cSEM}.}
-\item{\code{"RI_extended"}. The extended repeated indicators approach as proposed by \insertCite{Becker2012;textual}{cSEM}.}
+\item{\code{"RI_extended"}. The extended repeated indicators approach as proposed by \insertCite{Becker2012;textual}{cSEM} with
+the slight modification that all path between constructs attached to a second order construct are specified as well.
+This is necessary to retain model fit.}
 \item{\code{"mixed"}. The mixed repeated indicators/two-stage approach as proposed by \insertCite{Ringle2012;textual}{cSEM}.}
 }
 
