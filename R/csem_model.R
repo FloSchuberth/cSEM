@@ -756,6 +756,8 @@ convertModel <- function(
         # 3. Add structural equations for all antecedent constructs of second order
         #    construct j on all first order constructs building/measuring the
         #    second order construct
+        # 4. Add path between all constructs attached to second construct j
+        #    (done at the end of the functions)
         
         for(j in c_2nd_order) {
           attached <-  names(.csem_model$measurement[j, .csem_model$measurement[j, ] == 1])
@@ -766,6 +768,7 @@ convertModel <- function(
           } 
         }
       }
+      
       ## Measurement model + second order structural equation 
       # First order constructs
       x2a <- c()
@@ -853,7 +856,21 @@ convertModel <- function(
     } # END first step of the 2/3 stage approach
   } # END first step
 
-  ## Parse model
   model <- parseModel(lav_model)
+  
+  ## Add path between all constructs attached to second construct j
+  ## if the extended repeated indicators approach was used
+
+  if(.approach_2ndorder == "RI_extended") {
+    # Note there must not be feedback loops, so we make sure model$structural is
+    # lower triangular
+    
+    m <- model$structural[.csem_model$vars_attached_to_2nd, .csem_model$vars_attached_to_2nd]
+    m[lower.tri(m)] <- 1
+    
+    model$structural[.csem_model$vars_attached_to_2nd, .csem_model$vars_attached_to_2nd] <- m
+    }
+  
+  ## add
   return(model)
 }

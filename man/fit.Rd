@@ -5,7 +5,7 @@
 \alias{fit.cSEMResults_default}
 \alias{fit.cSEMResults_multi}
 \alias{fit.cSEMResults_2ndorder}
-\title{Model-implied indicator and construct variance-covariance matrix}
+\title{Model-implied indicator or construct variance-covariance matrix}
 \usage{
 fit(
   .object    = NULL, 

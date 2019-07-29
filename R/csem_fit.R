@@ -1,4 +1,4 @@
-#' Model-implied indicator and construct variance-covariance matrix
+#' Model-implied indicator or construct variance-covariance matrix
 #'
 #' Calculate the model-implied indicator or construct variance-covariance (VCV) 
 #' matrix. Currently only the model-implied VCV for recursive linear models 
@@ -76,13 +76,14 @@ fit.cSEMResults_default <- function(
     stop2("`fit()` currently not applicable to nonlinear models.")
   }
   
-  ## Collect relevant 
-  m         <- .object$Information$Model$structural
+  
+  mod    <- .object$Information$Model
+  S      <- .object$Estimates$Indicator
+  Lambda <- .object$Estimates$Loading_estimates
+  m         <- mod$structural
   Cons_endo <- rownames(m)[rowSums(m) != 0]
   Cons_exo  <- setdiff(colnames(m), Cons_endo)
-  S      <- .object$Estimates$Indicator_VCV
-  Lambda <- .object$Estimates$Loading_estimates
-  Theta  <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
+  Theta     <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   dimnames(Theta) <- dimnames(S)
   
   ## Check if recursive, otherwise return a warning
@@ -142,15 +143,13 @@ fit.cSEMResults_default <- function(
   Sigma[lower.tri(Sigma)] <- t(Sigma)[lower.tri(Sigma)]
   
   ## Replace indicators connected to a composite by their correponding elements of S.
-  
-  mod <- .object$Information$Model
   composites <- names(mod$construct_type[mod$construct_type == "Composite"])
   index <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
   
   Sigma[which(index == 1)] <- S[which(index == 1)]
   
   # Replace indicators whose measurement errors are allowed to be correlated by s_ij
-  Sigma[.object$Information$Model$error_cor == 1] = S[.object$Information$Model$error_cor == 1]
+  Sigma[mod$error_cor == 1] = S[mod$error_cor == 1]
   
   return(Sigma)
 }
@@ -187,9 +186,12 @@ fit.cSEMResults_2ndorder <- function(
   
   ## Get relevant quantities
   S             <- .object$First_stage$Estimates$Indicator_VCV
+  
   vcv_construct <- fit.cSEMResults_default(.object$Second_stage, 
                                            .saturated = .saturated,
                                            .type_vcv  = .type_vcv)
+  # vcv_construct is the "indicator" vcv of the second stage. 
+  
   Lambda        <- .object$First_stage$Estimates$Loading_estimates
   Theta         <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   
@@ -213,7 +215,7 @@ fit.cSEMResults_2ndorder <- function(
   Sigma[which(index == 1)] <- S[which(index == 1)]
   
   # Replace indicators whose measurement errors are allowed to be correlated by s_ij
-  Sigma[.object$Information$Model$error_cor == 1] = S[.object$Information$Model$error_cor == 1]
+  Sigma[m$error_cor == 1] = S[m$error_cor == 1]
   Sigma
   
   return(Sigma)

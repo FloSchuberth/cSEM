@@ -7,7 +7,13 @@
 assess(
   .object              = NULL, 
   .only_common_factors = TRUE, 
-  .quality_criterion   = args_default()$.quality_criterion,
+  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+                          "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
+                          "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                          "rmsea", "rms_theta", "srmr",
+                          "gof", "htmt", "r2", "r2_adj", "ra",
+                          "rho_T", "rho_T_weighted", "vif", 
+                          "vifmodeB",  "fl_criterion"),
   ...
 )
 }
@@ -44,76 +50,89 @@ parlance) like computing the (congeneric) reliability,
 the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
 
 By default every possible quality criterion is calculated (\code{.quality_criterion = "all"}).
-If only a subset of quality criteria needs to be computed a single character string
+If only a subset of quality criteria is needed a single character string
 or a vector of character strings naming the statistics to be computed may be
 supplied to \code{assess()} via the \code{.quality_criterion} argument. Currently, the
-following quality crieria are implemented (in alphabetical order):
+following quality criteria are implemented (in alphabetical order):
 \describe{
-\item{Average variance extracted (AVE)]; "ave"}{An estimate of the
+\item{Average variance extracted (AVE); "ave"}{An estimate of the
 amount of variation in the indicators that is due to the underlying latent variable.
 Practically, it is calculated as the ratio of the (indicator) true score variances
 (i.e., the sum of the squared loadings)
-relative to the sum of the total indicator variances.}
+relative to the sum of the total indicator variances. Calculation is done
+by \code{\link[=calculateAVE]{calculateAVE()}}.}
 \item{Congeneric reliability; "rho_C"}{An estimate of the
 reliability assuming a congeneric measurement model (i.e., loadings are
 allowed to differ) and a test score (proxy) based on unit weights.
 To compute the congeneric reliability based on a score that uses the weights of the
-weight approach used to obtain \code{.object} use \code{"rho_C_weighted"} instead.
+weight approach used to obtain \code{.object}, use \code{"rho_C_weighted"} instead.
 Congeneric reliability is the unified name for
 reliability estimates that assume a congeneric measurement model.
 Alternative but synonemmous names for \code{"rho_C"} are:
 composite reliability, construct reliablity, reliability coefficient,
 Jöreskog's rho, coefficient omega, or Dillon-Goldstein's rho.
-For \code{"rho_C_weighted"}: rho_A, or rho_B.}
+For \code{"rho_C_weighted"}: rho_A, or rho_B. Calculation is done by \code{\link[=calculateRhoC]{calculateRhoC()}}.}
 \item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
 reliability assuming a tau-equivalent measurement model (i.e., a measurement
 model with equal loadings) and a test score (proxy) based on unit weights.
 To compute Cronbach's alpha based on a score that uses the weights of the
-weight approach used to obtain \code{.object} use \code{"cronbachs_alpha_weighted"} instead.
-Cronbach's alpha is an alias for \code{"rho_T"} (the tau-equivalent
-reliability) which is
+weight approach used to obtain \code{.object}, use \code{"cronbachs_alpha_weighted"} instead.
+Cronbach's alpha is an alias for \code{"rho_T"} the tau-equivalent
+reliability which is
 the prefered name for this kind of reliability in \pkg{cSEM}, as it clearly states what
 it actually estimates (the tau-equivalent reliability as opposed to
 the congeneric reliability). "rho_T" and "cronbachs_alpha" are therefore
-always identical.}
+always identical. Calculation is done by \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
 between the model-implied and the empirical indicator correlation matrix.
 Currently, the geodesic distance (\code{"dg"}), the squared Euclidian distance
 (\code{"dl"}) and the the maximum likelihood-based distance function are implemented
-(\code{"dml"}).}
+(\code{"dml"}). Calculation is done by \code{\link[=calculateDL]{calculateDL()}}, \code{\link[=calculateDG]{calculateDG()}},
+and \code{\link[=calculateDML]{calculateDML()}}.}
+\item{Degrees of freedom, "df"}{
+Returns the degrees of freedom. Calculation is done by \code{\link[=calculateDf]{calculateDf()}}.
+}
 \item{Effect size; "esize"}{An index of the effect size of an independent
 variable in a structural regression equation. The effect size of the k'th
 independent variable in this case
 is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where
 R2_inclded and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
-alternative speficication with the k'th variable dropped (R2_excluded).}
+alternative speficication with the k'th variable dropped (R2_excluded).
+Calculation is done by \code{\link[=calculateEffectSize]{calculateEffectSize()}}.}
 \item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "rms_theta"
 "srmr"}{
 Several absolute and incremental fit indices. Note that their suitability
 for models containing composites modeled as common factors is still an
-open research question. Also note that fit indices are not tests and
-decisions based on common cut-offs proposed in the literature should always
-be acompanied by theoretical reasoning.}
-\item{Fornell-Larcker criterion; "fl"}{A rule suggested by \insertCite{Fornell1981}{cSEM}
+open research question. Also note that fit indices are not tests in a
+hypothesis testing sense and
+decisions based on common cut-offs proposed in the literature should be
+considered with caution!. Calculation is done by \code{\link[=calculateCFI]{calculateCFI()}},
+\code{\link[=calculateGFI]{calculateGFI()}}, \code{\link[=calculateIFI]{calculateIFI()}}, \code{\link[=calculateNFI]{calculateNFI()}}, \code{\link[=calculateNNFI]{calculateNNFI()}},
+\code{\link[=calculateRMSEA]{calculateRMSEA()}}, \code{\link[=calculateRMSTheta]{calculateRMSTheta()}} and \code{\link[=calculateSRMR]{calculateSRMR()}}.}
+\item{Fornell-Larcker criterion; "fl_criterion"}{A rule suggested by \insertCite{Fornell1981;textual}{cSEM}
 to assess discriminant validity. The Fornell-Larcker
 criterion is a decision rule based on a comparison between the squared
 construct correlations and the average variance extracted. FL returns
 a matrix with the squared construct correlations on the off-diagonal and
-the AVE's on the main diagonal.}
-\item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root of the mean
-of the R squares of the structural model times the mean of the variances in the indicators
-that are explained by their related constructs (i.e., the average over all lambda^2_k).
+the AVE's on the main diagonal. Calculation is done by \code{assess()}.}
+\item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root
+of the mean of the R squares of the structural model times the mean
+of the variances in the indicators that are explained by their
+related constructs (i.e., the average over all lambda^2_k).
 For the latter, only constructs modeled as common factors are considered
 as they explain their indicator variance in contrast to a composite where
 indicators actually build the construct.
 Note that, contrary to what the name suggests, the GoF is \strong{not} a
-measure of model fit in a Chi-square fit test sense.}
-\item{Heterotrait-monotrait ratio of correlations (HTMT); "htmt"}{An estimate of the latent variable correlation
-used to assess discriminant validity.
-convergent and/or discriminant validity of a construct.}
+measure of model fit in a Chi-square fit test sense. Calculation is done
+by \code{\link[=calculateGoF]{calculateGoF()}}.}
+\item{Heterotrait-monotrait ratio of correlations (HTMT); "htmt"}{
+An estimate of the latent variable correlation used to assess
+convergent and/or discriminant validity of a construct. Calculation is done
+by \code{\link[=calculateHTMT]{calculateHTMT()}}.}
 \item{R square and R square adjusted; "r2", "r2_adj"}{The R square and the adjusted
-R square for each structural regression equation.}
+R square for each structural regression equation.
+Calculated when running \code{\link[=csem]{csem()}}.}
 \item{Redundancy analysis (RA); "ra"}{The process of regressing the scores
 of a reflectively measured construct on the scores of a formatively measured
 construct in order to gain empirical evidence for convergent validity of a
@@ -121,25 +140,29 @@ formatively measured construct.
 RA is therefore confined to PLS, specifically PLS with at least one construct
 whose mode is Mode B. This is the case if the construct is modeled as a
 composite or if the construct was explicitly given Mode B.
-Hence RA is only conducated if \code{.object} was obtained using
-\code{.approach_weights = "PLS-PM"} and if at least one constructs mode is Mode B.}
+Hence RA is only done if \code{.object} was obtained using
+\code{.approach_weights = "PLS-PM"} and if at least one constructs mode is Mode B.
+Performed by \code{\link[=doRedundancyAnalysis]{doRedundancyAnalysis()}}.}
 \item{Tau-equivalent reliability; "rho_T"}{An estimate of the
 reliability assuming a tau-equivalent measurement model (i.e. a measurement
 model with equal loadings) and a test score (proxy) based on unit weights.
 Tau-equivalent reliability is the preferred name for reliability estimates
-that assume a tau-equivalent measurment model such as Cronbach's alpha.}
+that assume a tau-equivalent measurment model such as Cronbach's alpha.
+Calculation is done by \code{\link[=calculateRhoT]{calculateRhoT()}}.}
 \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-)
 collinearity between independent variables of a regression equation. Computed
 for each structural equation. Practically, VIF_k is defined
 as the ratio of 1 over (1 - R2_k) where R2_k is the R squared from a regression
-of the k'th independent variable on all remaining independent variables.}
+of the k'th independent variable on all remaining independent variables.
+Calculated when running \code{\link[=csem]{csem()}}.}
 \item{Variance inflation factors for PLS-PM mode B (VIF-ModeB); "vifmodeB"}{An index for
 the amount of (multi-) collinearity between independent variables (indicators) in
 mode B regression equations. Computed only if \code{.object} was obtained using
 \code{.weight_approach = "PLS-PM"} and at least one mode was mode B.
 Practically, VIF-ModeB_k is defined as the ratio of 1 over (1 - R2_k) where
 R2_k is the R squared from a regression of the k'th indicator of block j on
-all remaining indicators of the same block.}
+all remaining indicators of the same block.
+Calculation is done by \code{\link[=calculateVIFModeB]{calculateVIFModeB()}}.}
 }
 
 For details on all quality criteria see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
@@ -160,6 +183,7 @@ as they may not even have a conceptual meaning.
 \subsection{Resampling}{
 To resample a given quality criterion supply the name of the function
 that calculates the desired quality criterion to \code{\link[=csem]{csem()}}'s \code{.user_funs} argument.
+See \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} for details.
 }
 }
 \examples{
@@ -187,13 +211,25 @@ a$HTMT
 ## Resampling ---------------------------------------------------------------
 # To resample a given quality criterion use csem()'s .user_funs argument
 
-csem(threecommonfactors, model, 
-  .resample_method = "bootstrap", 
-  .user_funs       = cSEM:::calculateHTMT
-  )
+res <- csem(threecommonfactors, model, 
+            .resample_method = "bootstrap", 
+            .user_funs       = cSEM:::calculateHTMT,
+            .R               = 80 
+)
+
+## Look at the resamples
+res$Estimates$Estimates_resample$Estimates1$User_fun$Resampled[1:4, ]
+
+## Use infer() to compute e.g. the 95\% percentile confidence interval
+res_infer <- infer(res, .quantity = "CI_percentile")
+res_infer$User_fun
+
+  
+# Note that .user_funs expects a function that returns a vector or a matrix
+# Some functions return (e.g. calculateRhoT()) currently return other data types.
+# Resampling will likely fail in this case.
 
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=calculateAVE]{calculateAVE()}}, \code{\link[=calculateRhoC]{calculateRhoC()}}, \code{\link[=calculateRhoT]{calculateRhoT()}},
-\code{\link[=calculateGoF]{calculateGoF()}}
+\code{\link[=csem]{csem()}}, \link{resamplecSEMResults}
 }

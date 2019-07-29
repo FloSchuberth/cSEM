@@ -6,11 +6,17 @@
 \usage{
 calculateDf(
   .object     = NULL,
-  .null_model = FALSE
+  .null_model = args_default()$.null_model,
+  ...
   )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.null_model}{Logical. Should the degrees of freedom for the null model
+be computed? Defaults to \code{FALSE}.}
+
+\item{...}{Ignored.}
 }
 \value{
 A single numeric value.

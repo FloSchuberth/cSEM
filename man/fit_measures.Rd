@@ -34,7 +34,7 @@ calculateSRMR(.object = NULL, .saturated = args_default()$.saturated,
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.model_implied}{Logical. Should the RMS_theta be computed using the
-model-implied construct correlation matrix (\code{TRUE})or the construct correlation matrix
+model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix
 based on V(eta) = WSW' divided by the square root of the respective
 reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
 

@@ -839,6 +839,9 @@ resamplecSEMResultsCore <- function(
     est2 <- summary_original$Second_stage$Estimates
     
     args <- info2$Arguments_original
+
+    ## Append the 2ndorder approach to args
+    args$.approach_2ndorder <- info2$Approach_2ndorder
     
     ## Replace original data (which contains either an id column or is a list)
     ## by the data used for the group that is being resampled.
@@ -863,8 +866,8 @@ resamplecSEMResultsCore <- function(
   } 
   
   ### Start resampling loop ====================================================
-  Est_ls <- future.apply::future_lapply(1:.R, function(i) {
-  # Est_ls <- lapply(1:.R, function(i) {
+  # Est_ls <- future.apply::future_lapply(1:.R, function(i) {
+  Est_ls <- lapply(1:.R, function(i) {
     # Replace the old dataset by a resampled data set (resampleData always returns
     # a list so for just one draw we need to pick the first list element)
     
@@ -1155,8 +1158,8 @@ resamplecSEMResultsCore <- function(
     }
     ## Return
     x1
-  }, future.seed = .seed)
-  # })
+  # }, future.seed = .seed)
+  })
           
   ## Process data --------------------------------------------------------------
   # Delete potential NA's

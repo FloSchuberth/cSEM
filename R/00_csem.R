@@ -130,7 +130,9 @@
 #' \itemize{
 #' \item{(Default) `"2stage"`. The (disjoint) two stage approach as proposed by \insertCite{Agarwal2000;textual}{cSEM}.}
 #' \item{`"RI_original"`. The original repeated indicators approach as proposed by \insertCite{Joereskog1982b;textual}{cSEM}.}
-#' \item{`"RI_extended"`. The extended repeated indicators approach as proposed by \insertCite{Becker2012;textual}{cSEM}.}
+#' \item{`"RI_extended"`. The extended repeated indicators approach as proposed by \insertCite{Becker2012;textual}{cSEM} with
+#'   the slight modification that all path between constructs attached to a second order construct are specified as well.
+#'   This is necessary to retain model fit.}
 #' \item{`"mixed"`. The mixed repeated indicators/two-stage approach as proposed by \insertCite{Ringle2012;textual}{cSEM}.}
 #' }
 #' 
@@ -269,6 +271,7 @@ csem <- function(
       .csem_model        = model_original, 
       .approach_2ndorder = args$.approach_2ndorder,
       .stage             = "first")
+    
     ## Update model
     model_1stage$construct_order <- model_original$construct_order
     args_needed[[".model"]] <- model_1stage
@@ -358,7 +361,18 @@ csem <- function(
     } else {
       .data
     }
-    
+    ## Add second order approach to $Information
+    if(any(model_original$construct_order == "Second order")) {
+      out <- lapply(out, function(x){
+        x$Information$Approach_2ndorder <- .approach_2ndorder
+        x
+      })
+    } else {
+      out <- lapply(out, function(x){
+        x$Information$Approach_2ndorder <- NA
+        x
+      })
+    }
     ## Set class
     class(out) <- c("cSEMResults", "cSEMResults_multi")
 
@@ -368,18 +382,10 @@ csem <- function(
       
       ### Second step
       out <- lapply(out, function(x) {
-        out2 <- calculate2ndOrder(model_original, x)
-        x <- list("First_stage" = x, "Second_stage" = out2)
-        
-        ## Append original arguments needed as they are required by e.g. testOMF.
-        # Since 
-        args_needed[[".model"]] <- model_original
-        x$Second_stage$Information$Arguments_original <- args_needed
-        
-        # Return x
-        class(x) <- c("cSEMResults", "cSEMResults_2ndorder")
-        x
-      })
+        calculate2ndStage(model_original, x, args_needed, .approach_2ndorder)
+        })
+      
+      ## Set class
       class(out) <- c("cSEMResults", "cSEMResults_multi", "cSEMResults_2ndorder")
     }
     
@@ -387,17 +393,15 @@ csem <- function(
             args$.approach_2ndorder %in% c("2stage", "mixed")) {
     
     ### Second step
-    out2 <- calculate2ndOrder(model_original, out)
-    out <- list("First_stage" = out, "Second_stage" = out2)
-    
-    ## Append original arguments needed as they are required by e.g. testOMF.
-    # Since 
-    args_needed[[".model"]] <- model_original
-    out$Second_stage$Information$Arguments_original <- args_needed
-    
-    class(out) <- c("cSEMResults", "cSEMResults_2ndorder")
+    out <- calculate2ndStage(model_original, out, args_needed, .approach_2ndorder)
     
   } else {
+    ## Add second order approach to $Information
+    if(any(model_original$construct_order == "Second order")) {
+      out$Information$Approach_2ndorder <- .approach_2ndorder
+    } else {
+      out$Information$Approach_2ndorder <- NA
+    }
     
     class(out) <- c("cSEMResults", "cSEMResults_default")
     

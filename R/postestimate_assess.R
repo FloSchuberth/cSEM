@@ -11,76 +11,89 @@
 #' the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
 #' 
 #' By default every possible quality criterion is calculated (`.quality_criterion = "all"`). 
-#' If only a subset of quality criteria needs to be computed a single character string
+#' If only a subset of quality criteria is needed a single character string
 #' or a vector of character strings naming the statistics to be computed may be 
 #' supplied to `assess()` via the `.quality_criterion` argument. Currently, the
-#' following quality crieria are implemented (in alphabetical order):
+#' following quality criteria are implemented (in alphabetical order):
 #' \describe{
-#' \item{Average variance extracted (AVE)]; "ave"}{An estimate of the 
+#' \item{Average variance extracted (AVE); "ave"}{An estimate of the 
 #'   amount of variation in the indicators that is due to the underlying latent variable. 
 #'   Practically, it is calculated as the ratio of the (indicator) true score variances 
 #'   (i.e., the sum of the squared loadings)
-#'   relative to the sum of the total indicator variances.}
+#'   relative to the sum of the total indicator variances. Calculation is done
+#'   by [calculateAVE()].}
 #' \item{Congeneric reliability; "rho_C"}{An estimate of the 
 #'   reliability assuming a congeneric measurement model (i.e., loadings are
 #'   allowed to differ) and a test score (proxy) based on unit weights.
 #'   To compute the congeneric reliability based on a score that uses the weights of the
-#'   weight approach used to obtain `.object` use `"rho_C_weighted"` instead.
+#'   weight approach used to obtain `.object`, use `"rho_C_weighted"` instead.
 #'   Congeneric reliability is the unified name for 
 #'   reliability estimates that assume a congeneric measurement model. 
 #'   Alternative but synonemmous names for `"rho_C"` are: 
 #'   composite reliability, construct reliablity, reliability coefficient, 
 #'   Jöreskog's rho, coefficient omega, or Dillon-Goldstein's rho. 
-#'   For `"rho_C_weighted"`: rho_A, or rho_B.}
+#'   For `"rho_C_weighted"`: rho_A, or rho_B. Calculation is done by [calculateRhoC()].}
 #' \item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
 #'   reliability assuming a tau-equivalent measurement model (i.e., a measurement
 #'   model with equal loadings) and a test score (proxy) based on unit weights. 
 #'   To compute Cronbach's alpha based on a score that uses the weights of the
-#'   weight approach used to obtain `.object` use `"cronbachs_alpha_weighted"` instead.
-#'   Cronbach's alpha is an alias for `"rho_T"` (the tau-equivalent
-#'   reliability) which is
+#'   weight approach used to obtain `.object`, use `"cronbachs_alpha_weighted"` instead.
+#'   Cronbach's alpha is an alias for `"rho_T"` the tau-equivalent
+#'   reliability which is
 #'   the prefered name for this kind of reliability in \pkg{cSEM}, as it clearly states what
 #'   it actually estimates (the tau-equivalent reliability as opposed to
 #'   the congeneric reliability). "rho_T" and "cronbachs_alpha" are therefore
-#'   always identical.}
+#'   always identical. Calculation is done by [calculateRhoT()]}
 #' \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
 #'   between the model-implied and the empirical indicator correlation matrix.
 #'   Currently, the geodesic distance (`"dg"`), the squared Euclidian distance
 #'   (`"dl"`) and the the maximum likelihood-based distance function are implemented 
-#'   (`"dml"`).}
+#'   (`"dml"`). Calculation is done by [calculateDL()], [calculateDG()], 
+#'   and [calculateDML()].}
+#' \item{Degrees of freedom, "df"}{
+#'   Returns the degrees of freedom. Calculation is done by [calculateDf()].
+#'   }
 #' \item{Effect size; "esize"}{An index of the effect size of an independent
 #'   variable in a structural regression equation. The effect size of the k'th
 #'   independent variable in this case
 #'   is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where 
 #'   R2_inclded and R2_excluded are the R squares of the 
 #'   original structural model regression equation (R2_included) and the
-#'   alternative speficication with the k'th variable dropped (R2_excluded).}
+#'   alternative speficication with the k'th variable dropped (R2_excluded).
+#'   Calculation is done by [calculateEffectSize()].}
 #' \item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "rms_theta"
 #'   "srmr"}{
 #'   Several absolute and incremental fit indices. Note that their suitability
 #'   for models containing composites modeled as common factors is still an
-#'   open research question. Also note that fit indices are not tests and
-#'   decisions based on common cut-offs proposed in the literature should always
-#'   be acompanied by theoretical reasoning.}
-#' \item{Fornell-Larcker criterion; "fl"}{A rule suggested by \insertCite{Fornell1981}{cSEM}
-#' to assess discriminant validity. The Fornell-Larcker
+#'   open research question. Also note that fit indices are not tests in a 
+#'   hypothesis testing sense and
+#'   decisions based on common cut-offs proposed in the literature should be
+#'   considered with caution!. Calculation is done by [calculateCFI()], 
+#'   [calculateGFI()], [calculateIFI()], [calculateNFI()], [calculateNNFI()], 
+#'   [calculateRMSEA()], [calculateRMSTheta()] and [calculateSRMR()].}
+#' \item{Fornell-Larcker criterion; "fl_criterion"}{A rule suggested by \insertCite{Fornell1981;textual}{cSEM}
+#'   to assess discriminant validity. The Fornell-Larcker
 #'   criterion is a decision rule based on a comparison between the squared
 #'   construct correlations and the average variance extracted. FL returns
 #'   a matrix with the squared construct correlations on the off-diagonal and 
-#'   the AVE's on the main diagonal.}
-#' \item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root of the mean 
-#'   of the R squares of the structural model times the mean of the variances in the indicators 
-#'   that are explained by their related constructs (i.e., the average over all lambda^2_k).
+#'   the AVE's on the main diagonal. Calculation is done by `assess()`.}
+#' \item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root 
+#'   of the mean of the R squares of the structural model times the mean 
+#'   of the variances in the indicators that are explained by their 
+#'   related constructs (i.e., the average over all lambda^2_k).
 #'   For the latter, only constructs modeled as common factors are considered
 #'   as they explain their indicator variance in contrast to a composite where 
 #'   indicators actually build the construct.
 #'   Note that, contrary to what the name suggests, the GoF is **not** a 
-#'   measure of model fit in a Chi-square fit test sense.}
-#' \item{Heterotrait-monotrait ratio of correlations (HTMT); "htmt"}{An estimate of the latent variable correlation
-#' used to assess discriminant validity. 
-#'   convergent and/or discriminant validity of a construct.}
+#'   measure of model fit in a Chi-square fit test sense. Calculation is done 
+#'   by [calculateGoF()].}
+#' \item{Heterotrait-monotrait ratio of correlations (HTMT); "htmt"}{
+#'   An estimate of the latent variable correlation used to assess
+#'   convergent and/or discriminant validity of a construct. Calculation is done
+#'   by [calculateHTMT()].}
 #' \item{R square and R square adjusted; "r2", "r2_adj"}{The R square and the adjusted
-#'   R square for each structural regression equation.}
+#'   R square for each structural regression equation.
+#'   Calculated when running [csem()].}
 #' \item{Redundancy analysis (RA); "ra"}{The process of regressing the scores 
 #'   of a reflectively measured construct on the scores of a formatively measured 
 #'   construct in order to gain empirical evidence for convergent validity of a 
@@ -88,25 +101,29 @@
 #'   RA is therefore confined to PLS, specifically PLS with at least one construct
 #'   whose mode is Mode B. This is the case if the construct is modeled as a 
 #'   composite or if the construct was explicitly given Mode B.
-#'   Hence RA is only conducated if `.object` was obtained using 
-#'   `.approach_weights = "PLS-PM"` and if at least one constructs mode is Mode B.}
+#'   Hence RA is only done if `.object` was obtained using 
+#'   `.approach_weights = "PLS-PM"` and if at least one constructs mode is Mode B.
+#'   Performed by [doRedundancyAnalysis()].}
 #' \item{Tau-equivalent reliability; "rho_T"}{An estimate of the
 #'   reliability assuming a tau-equivalent measurement model (i.e. a measurement
 #'   model with equal loadings) and a test score (proxy) based on unit weights.
 #'   Tau-equivalent reliability is the preferred name for reliability estimates
-#'   that assume a tau-equivalent measurment model such as Cronbach's alpha.}
+#'   that assume a tau-equivalent measurment model such as Cronbach's alpha.
+#'   Calculation is done by [calculateRhoT()].}
 #' \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-) 
 #'   collinearity between independent variables of a regression equation. Computed
 #'   for each structural equation. Practically, VIF_k is defined
 #'   as the ratio of 1 over (1 - R2_k) where R2_k is the R squared from a regression
-#'   of the k'th independent variable on all remaining independent variables.}
+#'   of the k'th independent variable on all remaining independent variables.
+#'   Calculated when running [csem()].}
 #' \item{Variance inflation factors for PLS-PM mode B (VIF-ModeB); "vifmodeB"}{An index for 
 #'   the amount of (multi-) collinearity between independent variables (indicators) in
 #'   mode B regression equations. Computed only if `.object` was obtained using
 #'   `.weight_approach = "PLS-PM"` and at least one mode was mode B. 
 #'   Practically, VIF-ModeB_k is defined as the ratio of 1 over (1 - R2_k) where 
 #'   R2_k is the R squared from a regression of the k'th indicator of block j on
-#'   all remaining indicators of the same block.}
+#'   all remaining indicators of the same block.
+#'   Calculation is done by [calculateVIFModeB()].}
 #' }
 #' 
 #' For details on all quality criteria see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
@@ -127,12 +144,19 @@
 #' \subsection{Resampling}{
 #' To resample a given quality criterion supply the name of the function
 #' that calculates the desired quality criterion to [csem()]'s `.user_funs` argument.
+#' See [resamplecSEMResults()] for details.
 #' }
 #' 
 #' @usage assess(
 #'   .object              = NULL, 
 #'   .only_common_factors = TRUE, 
-#'   .quality_criterion   = args_default()$.quality_criterion,
+#'   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+#'                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
+#'                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+#'                           "rmsea", "rms_theta", "srmr",
+#'                           "gof", "htmt", "r2", "r2_adj", "ra",
+#'                           "rho_T", "rho_T_weighted", "vif", 
+#'                           "vifmodeB",  "fl_criterion"),
 #'   ...
 #' )
 #' 
@@ -140,8 +164,7 @@
 #' @param ... Further arguments passed to functions called by `assess()`.
 #'   See [args_assess_dotdotdot] for a complete list of available arguments.
 #'
-#' @seealso [csem()], [calculateAVE()], [calculateRhoC()], [calculateRhoT()],
-#'   [calculateGoF()]
+#' @seealso [csem()], [resamplecSEMResults]
 #'
 #' @return A named list of quality criteria. Note that if only a single quality
 #'   criteria is computed the return value is still a list!
@@ -171,17 +194,36 @@
 #' ## Resampling ---------------------------------------------------------------
 #' # To resample a given quality criterion use csem()'s .user_funs argument
 #' 
-#' csem(threecommonfactors, model, 
-#'   .resample_method = "bootstrap", 
-#'   .user_funs       = cSEM:::calculateHTMT
-#'   )
+#' res <- csem(threecommonfactors, model, 
+#'             .resample_method = "bootstrap", 
+#'             .user_funs       = cSEM:::calculateHTMT,
+#'             .R               = 80 
+#' )
+#' 
+#' ## Look at the resamples
+#' res$Estimates$Estimates_resample$Estimates1$User_fun$Resampled[1:4, ]
+#' 
+#' ## Use infer() to compute e.g. the 95% percentile confidence interval
+#' res_infer <- infer(res, .quantity = "CI_percentile")
+#' res_infer$User_fun
+#' 
+#'   
+#' # Note that .user_funs expects a function that returns a vector or a matrix
+#' # Some functions return (e.g. calculateRhoT()) currently return other data types.
+#' # Resampling will likely fail in this case.
 #' 
 #' @export
 
 assess <- function(
   .object              = NULL, 
   .only_common_factors = TRUE, 
-  .quality_criterion   = args_default()$.quality_criterion,
+  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
+                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "rmsea", "rms_theta", "srmr",
+                           "gof", "htmt", "r2", "r2_adj", "ra",
+                           "rho_T", "rho_T_weighted", "vif", 
+                           "vifmodeB",  "fl_criterion"),
   ...
 ){
   UseMethod("assess")
@@ -192,7 +234,13 @@ assess <- function(
 assess.cSEMResults_default <- function(
   .object              = NULL, 
   .only_common_factors = TRUE, 
-  .quality_criterion   = args_default()$.quality_criterion,
+  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
+                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "rmsea", "rms_theta", "srmr",
+                           "gof", "htmt", "r2", "r2_adj", "ra",
+                           "rho_T", "rho_T_weighted", "vif", 
+                           "vifmodeB",  "fl_criterion"),
   ...
 ){
   
@@ -200,6 +248,12 @@ assess.cSEMResults_default <- function(
   match.arg(.quality_criterion, 
             args_default(.choices = TRUE)$.quality_criterion, several.ok = TRUE)
   
+  if(.object$Information$Approach_2ndorder %in% c("RI_original", "RI_extended")) {
+    stop2("The following error occured in the assess() function:\n",
+      "Computation of some of the qualtiy criteria for estimates obtained by the",
+      " repeated indicator approach requires manual modification. Use the individual ",
+      "functions to compute the qualitiy criteria of interest.")
+  }
   ## Set up empty list
   out <- list()
   
@@ -255,6 +309,10 @@ assess.cSEMResults_default <- function(
     # dML
     out[["DML"]]   <- calculateDML(.object, ...)
   }
+  if(any(.quality_criterion %in% c("all", "df"))) {
+    # dML
+    out[["Df"]]   <- calculateDf(.object, ...)
+  }
   if(any(.quality_criterion %in% c("all", "esize"))) {
     # Effect size
     out[["Effect_size"]] <- calculateEffectSize(.object)
@@ -291,7 +349,7 @@ assess.cSEMResults_default <- function(
     # Effect size
     out[["SRMR"]] <- calculateSRMR(.object, ...)
   }
-  if(any(.quality_criterion %in% c("all", "fl"))) {
+  if(any(.quality_criterion %in% c("all", "fl_criterion"))) {
     # Fornell-Larcker
     ## Get relevant objects
     con_types <-.object$Information$Model$construct_type
@@ -372,7 +430,13 @@ assess.cSEMResults_default <- function(
 assess.cSEMResults_multi <- function(
   .object              = NULL,
   .only_common_factors = TRUE,
-  .quality_criterion   = args_default()$.quality_criterion,
+  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
+                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "rmsea", "rms_theta", "srmr",
+                           "gof", "htmt", "r2", "r2_adj", "ra",
+                           "rho_T", "rho_T_weighted", "vif", 
+                           "vifmodeB",  "fl_criterion"),
   ...
 ){
   
@@ -393,7 +457,18 @@ assess.cSEMResults_multi <- function(
 
 #' @export
 
-assess.cSEMResults_2ndorder <- function(.object, ...){
+assess.cSEMResults_2ndorder <- function(
+  .object              = NULL,
+  .only_common_factors = TRUE,
+  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
+                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "rmsea", "rms_theta", "srmr",
+                           "gof", "htmt", "r2", "r2_adj", "ra",
+                           "rho_T", "rho_T_weighted", "vif", 
+                           "vifmodeB",  "fl_criterion"),
+  ...
+  ){
   
-  stop2("Currently, second-order models are not supported by `assess()`.")
+  stop2("Currently, models containing second-order constructs are not supported by `assess()`.")
 }

@@ -168,7 +168,7 @@ If the algorithm exceeds the specified number, weights of iteration step
 or a \link{cSEMModel} list. Defaults to \code{NULL}.}
 
 \item{.model_implied}{Logical. Should the RMS_theta be computed using the
-model-implied construct correlation matrix (\code{TRUE})or the construct correlation matrix
+model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix
 based on V(eta) = WSW' divided by the square root of the respective
 reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
 
@@ -187,12 +187,17 @@ Defaults to \code{FALSE}. Ignored if the model is linear.}
 
 \item{.nr_comparisons}{Numeric. The number of comparisons. Defaults to \code{NULL}.}
 
+\item{.null_model}{Logical. Should the degrees of freedom for the null model
+be computed? Defaults to \code{FALSE}.}
+
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality critera:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to \code{TRUE}.}
+
+\item{.original_arguments}{The list of arguments used within \code{\link[=csem]{csem()}}.}
 
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 
