@@ -377,9 +377,12 @@ print.cSEMTestOMF <- function(x, ...) {
 print.cSEMTestMGD <- function(x, ...) {
 
   info <- x$Information
+  approaches <- c("Klesel", "Sarstedt", "Chin", "Keil")
   
   if(any(info$Approach == "all")) {
-    info$Approach <- c("Klesel", "Sarstedt", "Chin", "Keil")
+    info$Approach <- approaches
+  } else {
+    info$Approach <- info$Approach[match(info$Approach, intersect(approaches, info$Approach))]
   }
   ## Additional information ----------------------------------------------------
   cat2(

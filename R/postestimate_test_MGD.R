@@ -139,6 +139,14 @@ testMGD <- function(
 ){
 
   ## Match arguments
+  diff <- setdiff(.approach_mgd, args_default(.choices =  TRUE)$.approach_mgd)
+  if(length(diff) != 0) {
+    stop2(
+      "The following error occured in the testMGD() function:\n",
+      "Unknown approach: ", paste0(diff, collapse = ", "), ".",
+      " Possible choices are: ", 
+      paste0(args_default(.choices =  TRUE)$.approach_mgd, collapse = ", "))
+  }
   match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
   match.arg(.type_vcv, args_default(.choices = TRUE)$.type_vcv)
   
