@@ -76,6 +76,7 @@ progress).
 ## Basic usage
 
 The basic usage is illustrated below.
+
 <img src="man/figures/api.png" width="80%" style="display: block; margin: auto;" />
 
 Roughly speaking using `cSEM` is always the same 3 step procedure

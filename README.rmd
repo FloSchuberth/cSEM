@@ -65,7 +65,8 @@ The best place to get started is the [cSEM-website](https://m-e-rademaker.github
 ## Basic usage
 
 The basic usage is illustrated below.
-```{r out.width = "80%", fig.align = "center", echo=FALSE}
+
+```{r out.width = "80%", fig.align = "center", echo=FALSE} 
 knitr::include_graphics("man/figures/api.png")
 ```
 
