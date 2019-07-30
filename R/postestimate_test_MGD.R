@@ -261,6 +261,7 @@ testMGD <- function(
       weight_resamples  <- x$Weight_estimates$Resampled
       n                 <- nrow(path_resamples)
       
+      # Calculation of the bootstrap SEs
       ses <- infer(.object=y,.quantity = "sd")
       
       path_se <- ses$Path_estimates$sd 
@@ -292,6 +293,8 @@ testMGD <- function(
         n1<-ll_org[[names(object_permu[[x]][1])]]$nObs
         n2<-ll_org[[names(object_permu[[x]][2])]]$nObs
         
+        # Calculation of the SE of the parameter difference as proposed by 
+        # Henseler (2007a), Henseler et al. (2009)
         ses_total=sqrt((n1-1)^2/(n1+n2-2)*ses1^2 + 
             (n2-1)^2/(n1+n2-2)*ses2^2)*sqrt(1/n1+1/n2) 
           
