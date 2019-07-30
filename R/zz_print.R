@@ -379,7 +379,7 @@ print.cSEMTestMGD <- function(x, ...) {
   info <- x$Information
   
   if(any(info$Approach == "all")) {
-    info$Approach <- c("Klesel", "Sarstedt", "Chin")
+    info$Approach <- c("Klesel", "Sarstedt", "Chin", "Keil")
   }
   ## Additional information ----------------------------------------------------
   cat2(
@@ -407,8 +407,8 @@ print.cSEMTestMGD <- function(x, ...) {
     )
   }
   
-  ## Overall descision only for Sarstedt and Chin
-  approach <- intersect(info$Approach, c("Sarstedt", "Chin"))
+  ## Overall descision only for Sarstedt, Chin and Keil
+  approach <- intersect(info$Approach, c("Sarstedt", "Chin", "Keil"))
   if(length(approach) > 0) {
     cat2("\n\n\tOverall decision (based on alpha = ", paste0(info$Alpha[1] * 100, "%)"))
     cat2("\n\n\t",
@@ -599,6 +599,70 @@ print.cSEMTestMGD <- function(x, ...) {
                       align = "right"), 
             col_align(sprintf("%.4f", xc$P_value[[p]][[i]][j]), width = 16, align = "right"),
             col_align(ifelse(xc$Decision[[p]][[1]][[i]][j], green("Do not reject"), red("reject")),
+                      width = 16, align = "right")
+          )
+        }
+        cat2("\n\n")
+        
+      } 
+    }
+  }
+  ## Chin & Dibbern (2010) =====================================================
+  if(any(info$Approach == "Keil")) {
+    xk <- x$Keil
+    
+    cat2(
+      rule(line = "bar2", width = 80), "\n",
+      rule(center = "Test for multigroup differences based on Keil et al. (2000)",
+           width = 80)
+    )
+    
+    ## Null hypothesis ---------------------------------------------------------
+    cat2(
+      "\n\nNull hypothesis:\n\n",
+      boxx("H0: Parameter k is equal across two groups.", float = "center")
+    )
+    
+    ## Test statistic and p-value ----------------------------------------------
+    cat2("\n\nTest statistic and p-value: \n\n")
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    # If multipe p-value adjustment methods are given; take the first
+    if(length(info$Alpha) > 1) {
+      cat2(
+        "\tDecision is based on alpha = ", names(xk$Decision[[1]])[1]
+      )
+    }
+    
+    l <- max(10, nchar(names(xk$Test_statistic[[1]])))
+    
+    # Create table for every p-value adjustment method
+    for(p in seq_along(xk$P_value)) {
+      cat2("\n\tMultiple testing adjustment: ", names(xk$P_value)[p],
+           "\n\n")
+      for(i in seq_along(xk$Test_statistic)) {
+        
+        cat2("  Compared groups: ", names(xk$Test_statistic)[i], "\n\n\t")
+        
+        cat2(
+          col_align("Parameter", width = l),
+          col_align("Test statistic", width = 14, align = "right"), 
+          col_align("p-value", width = 16, align = "right"),
+          col_align("Decision", width = 16, align = "right")
+        )
+        
+        for(j in seq_along(xk$Test_statistic[[i]])) {
+          
+          cat2(
+            "\n\t",
+            col_align(names(xk$Test_statistic[[i]])[j], width = l),
+            col_align(sprintf("%.4f", xk$Test_statistic[[i]][j]), width = 14, 
+                      align = "right"), 
+            col_align(sprintf("%.4f", xk$P_value[[p]][[i]][j]), width = 16, align = "right"),
+            col_align(ifelse(xk$Decision[[p]][[1]][[i]][j], green("Do not reject"), red("reject")),
                       width = 16, align = "right")
           )
         }

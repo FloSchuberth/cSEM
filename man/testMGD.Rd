@@ -73,7 +73,7 @@ named list containing the following list elements:
 \item{\code{$Klesel}}{A list with elements, \code{Test_statistic}, \code{P_value}, and \code{Decision}}
 \item{\code{$Chin}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
 \item{\code{$Sarstedt}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
-\item{\code{$Keil}}{}
+\item{\code{$Keil}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
 }
 }
 \description{

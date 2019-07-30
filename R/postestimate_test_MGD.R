@@ -85,7 +85,7 @@
 #'   \item{`$Klesel`}{A list with elements, `Test_statistic`, `P_value`, and `Decision`}
 #'   \item{`$Chin`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
 #'   \item{`$Sarstedt`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
-#'   \item{`$Keil`}{}
+#'   \item{`$Keil`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
 #' }
 #' @references
 #'   \insertAllCited{}
@@ -583,8 +583,7 @@ testMGD <- function(
     })
   }
   
-  ## Keil et al. 2000 -----------------------------------------------------
-  
+  ## Keil et al. 2000 ----------------------------------------------------------
   if(any(.approach_mgd %in% c("all", "Keil"))){
 
     # Calculate p-values
