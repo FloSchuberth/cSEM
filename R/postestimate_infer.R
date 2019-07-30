@@ -60,12 +60,32 @@ infer <- function(
     .quantity <- "all"
   }
   
-  if(!any(class(.object) == "cSEMResults")) {
+  if(!inherits(.object, "cSEMResults")) {
     stop2("The following error occured in the `infer()` function:\n",
           "Object must be of class `cSEMResults`")
   }
   
-  if(!any(class(.object) == "cSEMResults_resampled")) {
+  ## If multi object, do recursive call
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, function(x) {
+      y <- infer(
+        .object = x,
+        .alpha = .alpha,
+        .bias_corrected = .bias_corrected,
+        .quantity = .quantity
+      )
+      
+      ## Add/ set class
+      class(y) <- c("cSEMInfer")
+      y
+    })
+    
+    ## Add/ set class
+    class(out) <- c("cSEMInfer", "cSEMInfer_multi")
+    return(out)
+  }
+  
+  if(!inherits(.object, "cSEMResults_resampled")) {
     stop2("The following error occured in the `infer()` function:\n",
           "Object must contain resamples.", 
           " Use `resamplecSEMResults(.object = .object, ...)` first."
@@ -193,5 +213,8 @@ infer <- function(
     }
   }
   
-  return(purrr::transpose(out))
+  out <- purrr::transpose(out)
+  ## Add/ set class
+  class(out) <- c("cSEMInfer")
+  out
 }
