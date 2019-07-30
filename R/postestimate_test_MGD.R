@@ -36,6 +36,20 @@
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
+#' \item{Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
+#'   Groups are compared in terms of parameter differences across groups.
+#'   \insertCite{Keil2000;textual}{cSEM} tests if parameter k is equal
+#'   between two groups. The calculation of the standard error of the parameter 
+#'   difference is adjusted as proposed by \insertCite{Henseler2009;textual}{cSEM}.
+#'   If more than two groups are tested the parameter is compared 
+#'   between all pairs of groups. In this case, it is recommended
+#'   to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+#'   done by p-value). If several parameters are tested simultaneously, correction
+#'   is by group and number of parameters. By default
+#'   no multiple testing correction is done, however, several common
+#'   adjustments are available via `.approach_p_adjust`. See 
+#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
+#' }
 #' }
 #' 
 #' Use `.approach_mgd` to choose the approach. By default all approaches are computed
@@ -652,7 +666,7 @@ testMGD <- function(
   }
   if(any(.approach_mgd %in% c("all", "Keil"))) {
     out[["Keil"]] <- list(
-      "Test_statistic"     = teststat_Keil,
+      "Test_statistic"     = purrr::transpose(teststat_Keil)$teststat,
       "P_value"            = padjusted_Keil,
       "Decision"           = decision_Keil,
       "Decision_overall"   = decision_overall_Keil
