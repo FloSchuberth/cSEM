@@ -281,7 +281,7 @@ testMGD <- function(
         ses_total=sqrt((n1-1)^2/(n1+n2-2)*ses1^2 + 
             (n2-1)^2/(n1+n2-2)*ses2^2)*sqrt(1/n1+1/n2) 
           
-        test_stat<-diff/ses_total
+        test_stat<-diff/ses_total[names(diff)]
         list("teststat"=test_stat,"obs_both"=n1+n2)
         
       })
@@ -291,7 +291,8 @@ testMGD <- function(
   }
   if(any(.approach_mgd %in% c("Sarstedt","all"))){ #if approach_mgd == "Sarstedt" or "all"
     # Remove SEs
-    ll <- ll_org[1:5]
+    ll <- lapply(ll_org, function(x)x[1:5])
+    names(ll) <- names(ll_org)
     ## Transpose, get id column, bind rows and columns
     ll <- purrr::transpose(ll)
     group_id <- rep(1:length(.object), unlist(ll$n))
@@ -569,6 +570,7 @@ testMGD <- function(
     
     pvalue_Keil <- lapply(teststat$Keil,function(x){
       p_value <- 2*(1-pt(abs(x[[1]]),df = x[[2]]-2))
+      p_value
     })
     
     padjusted_Keil<- lapply(as.list(.approach_p_adjust), function(x){
@@ -578,6 +580,17 @@ testMGD <- function(
     })
     names(padjusted_Keil) <- .approach_p_adjust
     
+    # Decision 
+    decision_Keil <- lapply(padjusted_Keil, function(adjust_approach){ # over the different p adjustments
+      temp <- lapply(.alpha, function(alpha){# over the different significance levels
+        lapply(adjust_approach,function(group_comp){# over the different group comparisons
+          # check whether the p values are larger than a certain alpha
+          group_comp > alpha
+        })
+      })
+      names(temp) <- paste0(.alpha*100, "%")
+      temp
+    })
     
   }
   
@@ -629,6 +642,14 @@ testMGD <- function(
     )
     
     out[["Information"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
+  }
+  if(any(.approach_mgd %in% c("all", "Keil"))) {
+    out[["Keil"]] <- list(
+      "Test_statistic"     = teststat_Keil,
+      "P_value"            = padjusted_Keil,
+      "Decision"           = decision_Keil,
+      "Decision_overall"   = NULL
+    )
   }
   
   ## Remove the seed since it is set globally. Reset immediately by calling
