@@ -565,7 +565,7 @@ testMGD <- function(
         })
     })
   }
-  if(any(.approach_mgd %in% c("all", "Keil"))) {
+  if(any(.approach_mgd %in% c("all", "Keil"))){
     # critical values
     
     pvalue_Keil <- lapply(teststat$Keil,function(x){
@@ -591,6 +591,13 @@ testMGD <- function(
       names(temp) <- paste0(.alpha*100, "%")
       temp
     })
+    
+    decision_overall_Keil <- lapply(decision_Keil, function(decision_Keil_list){
+      lapply(decision_Keil_list,function(x){
+        all(unlist(x))
+      })
+    })
+    
     
   }
   
@@ -648,7 +655,7 @@ testMGD <- function(
       "Test_statistic"     = teststat_Keil,
       "P_value"            = padjusted_Keil,
       "Decision"           = decision_Keil,
-      "Decision_overall"   = NULL
+      "Decision_overall"   = decision_overall_Keil
     )
   }
   
