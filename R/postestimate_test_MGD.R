@@ -579,14 +579,18 @@ testMGD <- function(
         })
     })
   }
+  
+  ## Keil et al. 2000 -----------------------------------------------------
+  
   if(any(.approach_mgd %in% c("all", "Keil"))){
-    # critical values
-    
+
+    # Calculate p-values
     pvalue_Keil <- lapply(teststat$Keil,function(x){
       p_value <- 2*(1-pt(abs(x[[1]]),df = x[[2]]-2))
       p_value
     })
     
+    # Adjust p-values in case of more than one comparison
     padjusted_Keil<- lapply(as.list(.approach_p_adjust), function(x){
       pvector <- stats::p.adjust(unlist(pvalue_Keil),method = x)
       # Sort them back into list
@@ -606,6 +610,7 @@ testMGD <- function(
       temp
     })
     
+    # One rejection leads to overall rejection
     decision_overall_Keil <- lapply(decision_Keil, function(decision_Keil_list){
       lapply(decision_Keil_list,function(x){
         all(unlist(x))
