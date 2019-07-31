@@ -366,10 +366,17 @@ testMGD <- function(
     pb <- txtProgressBar(min = 0, max = .R_permutation, style = 3)
   }
   
+  # Save old seed and restore on exit! This is important since users may have
+  # set a seed before calling testMGD, in which case the global seed would be
+  # overwritten by testMGD if not explicitly restored
+  old_seed <- .Random.seed
+  on.exit({.Random.seed <<- old_seed})
+  
   ## Create seed if not already set
   if(is.null(.seed)) {
     .seed <- sample(.Random.seed, 1)
   }
+  
   ## Set seed
   set.seed(.seed)
   
@@ -687,12 +694,6 @@ testMGD <- function(
       "Decision_overall"   = decision_overall_Keil
     )
   }
-  
-  ## Remove the seed since it is set globally. Reset immediately by calling
-  ## any kind of function that requires .Random.seed as this causes R to
-  ## to create a new one.
-  rm(.Random.seed, envir = .GlobalEnv)
-  runif(1) # dont remove; this sets up a new .Random.seed
   
   class(out) <- "cSEMTestMGD"
   return(out)
