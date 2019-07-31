@@ -44,7 +44,6 @@ print(summarize(res), .full_output = FALSE)
 ### Second order model ------------------------------------------------------
 ## Take a look at the dataset
 #?dgp_2ndorder
-dgp_2ndorder_cf_of_c
 
 model <- "
 # Path model / Regressions 

@@ -150,6 +150,9 @@ rule2 <- function(x = "", type = 1, align = "center") {
   }
 }
 
+#' A rule of with 80 
+#' @noRd
+#' 
 makeLine <- function(type = 1, width) {
   x <- switch(type,
               "1" = "-",

@@ -53,7 +53,6 @@ verify <- function(.object){
     x1 <- .object$Information
     x2 <- .object$Estimates  
     
-    
     stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE, "5" = FALSE)
     
     if(!(is.null(x1$Weight_info$Convergence_status) || x1$Weight_info$Convergence_status)) {

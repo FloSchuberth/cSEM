@@ -86,8 +86,6 @@ Resample a \link{cSEMResults} object using bootstrap or jackknife resampling.
 The function is called by \code{\link[=csem]{csem()}} if the user sets
 \code{csem(..., .resample_method = "bootstrap")} or
 \code{csem(..., .resample_method = "jackknife")} but may also be called directly.
-Technically, \code{resamplecSEMResults()} is a generic function with methods for
-classes \code{cSEMResults_default}, \code{cSEMResults_multi} and \code{cSEMResults_2ndorder}.
 }
 \details{
 Given \code{M} resamples (for bootstrap \code{M = .R} and for jackknife \code{M = N}, where
