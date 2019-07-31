@@ -121,3 +121,40 @@ stop2 <- function(...) {
 warning2 <- function(...) {
   warning(..., call.= FALSE, immediate. = TRUE)
 }
+
+#' A rule of with 80 
+#' @noRd
+#' 
+rule2 <- function(x = "", type = 1, align = "center") {
+  
+  nt <- nchar(x)
+  
+  if(nt == 0) {
+    makeLine(type = type, width = 80)
+  } else {
+    width <- (80 - nt) / 2 - 1
+    
+    if(align == "center") {
+      paste0(
+        makeLine(type = type, width = width),
+        paste0(" ", x, " "),
+        makeLine(type = type, width = width)
+      )
+    } else if(align == "right") {
+      
+    } else if(align == "left") {
+      
+    } else {
+      stop2("`align` must be one of 'center', 'right', or 'left'.")
+    } 
+  }
+}
+
+makeLine <- function(type = 1, width) {
+  x <- switch(type,
+              "1" = "-",
+              "2" = "_",
+              "3" = "=")
+  
+  paste(rep(x,  width), collapse = "")
+}

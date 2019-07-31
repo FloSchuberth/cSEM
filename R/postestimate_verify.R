@@ -1,27 +1,27 @@
 #' Verify admissibility
 #'
-#' Verify admissibility of the estimated quantities for a given model. 
+#' Verify admissibility of the estimated quantities in `.object`. 
 #' 
-#' The following is declared as inadmissible : non-convergence, loadings and/or 
-#' (congeneric) reliabilities larger than 1, a construct VCV and/or a
+#' Result exhibiting one of the following defects are deemed inadmissible: 
+#' non-convergence of the algorithm used to obtain weights, loadings and/or 
+#' (congeneric) reliabilities larger than 1, a construct variance-covariance (VCV) and/or
 #' model-implied VCV matrix that is not positive semi-definite.
 #' 
-#' For models containing second order constructs estimation is by default done
-#' in a two/three stage procedure. In this case both the first and the second/third
-#' stage model quantities are checked.
+#' If the two stage approach was used for models containing second order 
+#' constructs, both the first and the second stage is checked separately.
 #' 
 #' Currently, a model-implied indicator VCV matrix for nonlinear model is not
-#' available. `verify()` therefore skips the check for positive definiteness of the
-#' model-implied indicator VCV matrix and return an ok-status by default.
+#' available. `verify()` therefore skips the check for positive definitness of the
+#' model-implied indicator VCV matrix for nonlinear models and returns "ok".
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [cSEMResults]
 #'
 #' @return A logical vector indicating which (if any) problem occurred. 
 #'   A `TRUE` indicates that the problem has occured. For models containg second order
-#'   constructs a list of two such vectors (one for the first and one for the second stage)
-#'   is returned. Status codes are:
+#'   constructs estimated by a two stage approach a list of two such vectors 
+#'   (one for the first and one for the second stage) is returned. Status codes are:
 #'  \itemize{
 #' \item 1: The algorithm has not converged.
 #' \item 2: At least one absolute standardized loading estimate is larger than 1,
@@ -34,117 +34,52 @@
 #' }
 #'
 #' @export
-
-verify <- function(.object) {
-  UseMethod("verify")
-}
-
-#' @describeIn verify (TODO)
-#' @export
  
-verify.cSEMResults_default <- function(.object){
+verify <- function(.object){
   
-  stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE, "5" = FALSE)
-  
-  if(!(is.null(.object$Information$Weight_info$Convergence_status) || 
-       .object$Information$Weight_info$Convergence_status)) {
-    stat["1"] <- TRUE
-  }
-  
-  if(max(abs(.object$Estimates$Loading_estimates)) > 1) {
-    stat["2"] <- TRUE
-  }
-  
-  if(!matrixcalc::is.positive.semi.definite(.object$Estimates$Construct_VCV)) {
-    stat["3"] <- TRUE
-  }
-  
-  if(max(.object$Estimates$Reliabilities)>1) {
-    stat["4"] <- TRUE
-  }
-  
-  if(.object$Information$Model$model_type == "Linear" && 
-     !matrixcalc::is.positive.semi.definite(fit(.object, 
-                                                .saturated = FALSE,
-                                                .type_vcv = 'indicator'))) {
-    stat["5"] <- TRUE
-  }
-  
-  class(stat) <- "cSEMVerify_default"
-  return(stat) 
-}
-
-#' @describeIn verify (TODO)
-#' @export
-
-verify.cSEMResults_multi <- function(.object){
-  
-  if(inherits(.object, "cSEMResults_2ndorder")) {
-    lapply(.object, verify.cSEMResults_2ndorder)
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, verify)
+    
+    class(out) <- c("cSEMVerify", "cSEMVerify_multi")
+    out
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    out <- lapply(.object, verify)
+    names(out) <- c("First_stage", "Second_stage")
+    
+    class(out) <- c("cSEMVerify", "cSEMVerify_2ndorder")
+    out
   } else {
-    lapply(.object, verify.cSEMResults_default)
-  }
-}
 
-#' @describeIn verify (TODO)
-#' @export
-
-verify.cSEMResults_2ndorder <- function(.object){
-  
-  stat1 <- stat2 <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE, "5" = FALSE)
-  
-  ## First stage checks
-  x1i <- .object$First_stage$Information
-  x1e <- .object$First_stage$Estimates
-  
-  if(!(is.null(x1i$Weight_info$Convergence_status) || x1i$Weight_info$Convergence_status)) {
-    stat1["1"] <- TRUE
+    x1 <- .object$Information
+    x2 <- .object$Estimates  
+    
+    
+    stat <- c("1" = FALSE, "2" = FALSE, "3" = FALSE, "4" = FALSE, "5" = FALSE)
+    
+    if(!(is.null(x1$Weight_info$Convergence_status) || x1$Weight_info$Convergence_status)) {
+      stat["1"] <- TRUE
+    }
+    
+    if(max(abs(x2$Loading_estimates)) > 1) {
+      stat["2"] <- TRUE
+    }
+    
+    if(!matrixcalc::is.positive.semi.definite(x2$Construct_VCV)) {
+      stat["3"] <- TRUE
+    }
+    
+    if(max(x2$Reliabilities) > 1) {
+      stat["4"] <- TRUE
+    }
+    
+    if(x1$Model$model_type == "Linear" && 
+       !matrixcalc::is.positive.semi.definite(fit(.object, 
+                                                  .saturated = FALSE,
+                                                  .type_vcv = 'indicator'))) {
+      stat["5"] <- TRUE
+    }
+    
+    class(stat) <- "cSEMVerify"
+    stat 
   }
-  
-  if(max(abs(x1e$Loading_estimates)) > 1) {
-    stat1["2"] <- TRUE
-  }
-  
-  if(!matrixcalc::is.positive.semi.definite(x1e$Construct_VCV)) {
-    stat1["3"] <- TRUE
-  }
-  
-  if(max(x1e$Reliabilities)>1) {
-    stat1["4"] <- TRUE
-  }
-  
-  if(x1i$Model$model_type == "Linear" && 
-     !matrixcalc::is.positive.semi.definite(fit.cSEMResults_default(.object$First_stage))) {
-    stat1["5"] <- TRUE
-  }
-  
-  ## Second stage checks
-  x2i <- .object$Second_stage$Information
-  x2e <- .object$Second_stage$Estimates  
-  
-  if(!(is.null(x2i$Weight_info$Convergence_status) || x2i$Weight_info$Convergence_status)) {
-    stat2["1"] <- TRUE
-  }
-  
-  if(max(abs(x2e$Loading_estimates)) > 1) {
-    stat2["2"] <- TRUE
-  }
-  
-  if(!matrixcalc::is.positive.semi.definite(x2e$Construct_VCV)) {
-    stat2["3"] <- TRUE
-  }
-  
-  if(max(x1e$Reliabilities) > 1) {
-    stat2["4"] <- TRUE
-  }
-  
-  if(x2i$Model$model_type == "Linear" && 
-     !matrixcalc::is.positive.semi.definite(fit.cSEMResults_default(.object$Second_stage))) {
-    stat2["5"] <- TRUE
-  }
-  
-  stat <- list("First_stage" = stat1, "Second_stage" = stat2)
-  
-  class(stat) <- "cSEMVerify_2ndorder"
-  return(stat) 
 }

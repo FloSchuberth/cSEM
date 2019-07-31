@@ -68,16 +68,12 @@ infer <- function(
   ## If multi object, do recursive call
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, function(x) {
-      y <- infer(
+      infer(
         .object = x,
         .alpha = .alpha,
         .bias_corrected = .bias_corrected,
         .quantity = .quantity
       )
-      
-      ## Add/ set class
-      class(y) <- c("cSEMInfer")
-      y
     })
     
     ## Add/ set class

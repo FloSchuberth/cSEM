@@ -352,3 +352,40 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
   # x2$Weight_estimates <- x2$Weight_estimates[x2$Weight_estimates$Construct_type == "Composite", , drop = FALSE] 
   printLoadingsWeights(x2, "Weights")
 }
+
+printDetailsVerify <- function(x) {
+  
+  text <- c("1" = "Convergence", 
+            "2" = "At least one standardized loading > 1", 
+            "3" = "Construct VCV not positive semi-definite", 
+            "4" = "At least one reliability > 1",
+            "5" = "Model-implied VCV not positive semi-definite")
+  
+  if(inherits(x, "cSEMVerify_2ndorder")) {
+    cat2(
+      "  ", 
+      col_align("Code", 7), 
+      col_align("Stage 1", 10), 
+      col_align("Stage 2", 10), 
+      "Description\n"
+      )
+    
+    for(i in names(x$First_stage)) {
+      cat2("  ", col_align(i, 7), 
+           col_align(ifelse(x$First_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
+           col_align(ifelse(x$Second_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
+           col_align(text[i], max(nchar(text) + 2), align = "left"), "\n")
+    }
+  } else {
+    cat2("  ", 
+         col_align("Code", 7), 
+         col_align("Status", 10), 
+         "Description\n")
+    
+    for(i in names(x)) {
+      cat2("  ", col_align(i, 7), 
+           col_align(ifelse(x[i] == FALSE, green("ok"), red("not ok")), 10), 
+           col_align(text[i], max(nchar(text)) + 2, align = "left"), "\n")
+    }
+  }
+}

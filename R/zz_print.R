@@ -11,8 +11,8 @@
 print.cSEMResults <- function(x, ...) {
   
   cat2(
-    rule(line = "bar2", width = 80), "\n",
-    rule(center = "Overview", width = 80)
+    rule2(type = 2), "\n",
+    rule2("Overview", type = 1, align = "center")
     )
   
   if(inherits(x, "cSEMResults_multi")) {
@@ -173,72 +173,53 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
 #'
 #' @export
 #' @keywords internal
-print.cSEMVerify_default <- function(x, ...) {
+print.cSEMVerify <- function(x, ...) {
   
-  cat2(rule(line = "bar2", width = 80))
+  cat2(rule2(type = 2))
   
   cat2("\n\nVerify admissibility:\n")
   
-  if(sum(x) == 0) {
-    cat2(green("\n\t admissible\n"))
-  } else {
-    cat2(red("\n\t inadmissible\n"))
-  }
+  if(inherits(x, "cSEMVerify_multi")) {
+    l <- max(nchar(names(x)), nchar("Dataset")) + 2
+    
+    cat2(
+      "\n\t", 
+      col_align("Dataset", l, align = "left"),
+      "Status"
+      )
 
-  text <- c("1" = "Convergence", 
-            "2" = "At least one standardized loading > 1", 
-            "3" = "Construct VCV not positive semi-definite", 
-            "4" = "At least one reliability > 1",
-            "5" = "Model-implied VCV not positive semi-definite")
-  cat2("\nDetails:\n\n")
-  
-  cat2("  ", col_align("Code", 7), col_align("Status", 10), "Description\n")
-  for(i in names(x)) {
-    cat2("  ", col_align(i, 7), 
-        col_align(ifelse(x[i] == FALSE, green("ok"), red("not ok")), 10), 
-        col_align(text[i], max(nchar(text)) + 2, align = "left"), "\n")
-  }
-  cat2(rule(line = "bar2", width = 80))
-}
-
-#' `cSEMVerify_2ndorder` method for `print()`
-#'
-#' The `cSEMVerify_default` method for the generic function [print()]. 
-#'
-#' @inheritParams csem_arguments
-#'
-#' @seealso [csem()], [foreman()], [cSEMResults]
-#'
-#' @export
-#' @keywords internal
-print.cSEMVerify_2ndorder <- function(x, ...) {
-  
-  cat2(rule(line = "bar2", width = 80))
-  cat2("\n\nVerify admissibility:\n")
-  
-  if(sum(x$First_stage) == 0 & sum(x$Second_stage) == 0) {
-    cat2(green("\n\t admissible"))
+    for(j in seq_along(x)) {
+      n_defects <- sum(sapply(x[[j]], sum))
+      
+      cat2(
+        "\n\t", 
+        col_align(names(x)[j], l, align = "left"),
+        ifelse(n_defects == 0, green("admissible"), red("inadmissible"))
+        )
+    }
   } else {
-    cat2(red("\n\t inadmissible"))
+    n_defects <- sum(sapply(x, sum))
+    
+    if(n_defects == 0) {
+      cat2(green("\n\t admissible"))
+    } else {
+      cat2(red("\n\t inadmissible"))
+    }
   }
   
-  text <- c("1" = "Convergence", 
-            "2" = "At least one standardized loading > 1", 
-            "3" = "Construct VCV not positive semi-definite", 
-            "4" = "At least one reliability > 1",
-            "5" = "Model-implied VCV not positive semi-definite")
+  cat2("\n\nDetails:\n")
   
-  cat2("\n\nDetails:\n\n")
-  
-  cat2("  ", col_align("Code", 7), col_align("Stage 1", 10), 
-      col_align("Stage 2", 10), "Description\n")
-  for(i in names(x$First_stage)) {
-    cat2("  ", col_align(i, 7), 
-        col_align(ifelse(x$First_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
-        col_align(ifelse(x$Second_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
-        col_align(text[i], max(nchar(text) + 2), align = "left"), "\n")
+  if(inherits(x, "cSEMVerify_multi")) {
+    for(j in seq_along(x)) {
+      cat2("\n", names(x)[j], "\n\n")
+      printDetailsVerify(x[[j]])
+    } 
+  } else {
+    cat2("\n")
+    printDetailsVerify(x)
   }
-  cat2(rule(line = "bar2", width = 80))
+  
+  cat2(rule2(type = 2))
 }
 
 #' `cSEMTestOMF` method for `print()`

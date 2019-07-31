@@ -2,18 +2,9 @@
 % Please edit documentation in R/postestimate_verify.R
 \name{verify}
 \alias{verify}
-\alias{verify.cSEMResults_default}
-\alias{verify.cSEMResults_multi}
-\alias{verify.cSEMResults_2ndorder}
 \title{Verify admissibility}
 \usage{
 verify(.object)
-
-\method{verify}{cSEMResults_default}(.object)
-
-\method{verify}{cSEMResults_multi}(.object)
-
-\method{verify}{cSEMResults_2ndorder}(.object)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -21,8 +12,8 @@ verify(.object)
 \value{
 A logical vector indicating which (if any) problem occurred.
 A \code{TRUE} indicates that the problem has occured. For models containg second order
-constructs a list of two such vectors (one for the first and one for the second stage)
-is returned. Status codes are:
+constructs estimated by a two stage approach a list of two such vectors
+(one for the first and one for the second stage) is returned. Status codes are:
 \itemize{
 \item 1: The algorithm has not converged.
 \item 2: At least one absolute standardized loading estimate is larger than 1,
@@ -33,30 +24,21 @@ This is only checked for linear models.
 }
 }
 \description{
-Verify admissibility of the estimated quantities for a given model.
+Verify admissibility of the estimated quantities in \code{.object}.
 }
 \details{
-The following is declared as inadmissible : non-convergence, loadings and/or
-(congeneric) reliabilities larger than 1, a construct VCV and/or a
+Result exhibiting one of the following defects are deemed inadmissible:
+non-convergence of the algorithm used to obtain weights, loadings and/or
+(congeneric) reliabilities larger than 1, a construct variance-covariance (VCV) and/or
 model-implied VCV matrix that is not positive semi-definite.
 
-For models containing second order constructs estimation is by default done
-in a two/three stage procedure. In this case both the first and the second/third
-stage model quantities are checked.
+If the two stage approach was used for models containing second order
+constructs, both the first and the second stage is checked separately.
 
 Currently, a model-implied indicator VCV matrix for nonlinear model is not
-available. \code{verify()} therefore skips the check for positive definiteness of the
-model-implied indicator VCV matrix and return an ok-status by default.
+available. \code{verify()} therefore skips the check for positive definitness of the
+model-implied indicator VCV matrix for nonlinear models and returns "ok".
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{cSEMResults_default}: (TODO)
-
-\item \code{cSEMResults_multi}: (TODO)
-
-\item \code{cSEMResults_2ndorder}: (TODO)
-}}
-
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \link{cSEMResults}
 }
