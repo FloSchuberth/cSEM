@@ -395,8 +395,6 @@ resampleData <- function(
 #' The function is called by [csem()] if the user sets 
 #' `csem(..., .resample_method = "bootstrap")` or 
 #' `csem(..., .resample_method = "jackknife")` but may also be called directly.
-#' Technically, `resamplecSEMResults()` is a generic function with methods for
-#' classes `cSEMResults_default`, `cSEMResults_multi` and `cSEMResults_2ndorder`.
 #' 
 #' Given `M` resamples (for bootstrap `M = .R` and for jackknife `M = N`, where
 #' `N` is the number of observations) based on the data used to compute the
@@ -579,7 +577,8 @@ resamplecSEMResults <- function(
   .sign_change_option    = c("none","individual","individual_reestimate",
                              "construct_reestimate"),
   ...
-) {
+  ) {
+  
   ## Does .object already contain resamples
   if(any(class(.object) == "cSEMResults_resampled")) {
     stop2("The following issue was encountered in the `resamplecSEMResults()` function:\n",
@@ -600,26 +599,6 @@ resamplecSEMResults <- function(
       "This may be a sign that something is wrong.",
       " Resampling will continue but may not produce reliable results.")
   }
-  
-  UseMethod("resamplecSEMResults")
-}
-
-#' @export
-
-resamplecSEMResults.cSEMResults <- function(
-  .object                = NULL, 
-  .resample_method       = c("bootstrap", "jackknife"),
-  .resample_method2      = c("none", "bootstrap", "jackknife"),
-  .R                     = 499,
-  .R2                    = 199,
-  .handle_inadmissibles  = c("drop", "ignore", "replace"),
-  .user_funs             = NULL,
-  .eval_plan             = c("sequential", "multiprocess"),
-  .seed                  = NULL,
-  .sign_change_option    = c("none","individual","individual_reestimate",
-                             "construct_reestimate"),
-  ...
-  ) {
   
   ## Match arguments
   .resample_method  <- match.arg(.resample_method)
@@ -674,6 +653,7 @@ resamplecSEMResults.cSEMResults <- function(
   if(is.null(.seed)) {
     .seed <- sample(.Random.seed, 1)
   }
+  
   out <- resamplecSEMResultsCore(
     .object                = .object, 
     .resample_method       = .resample_method,
@@ -774,6 +754,9 @@ resamplecSEMResults.cSEMResults <- function(
           "Information" = resample_out
         )
       )
+      
+      # Renew class for 2nd stage
+      class(out$Second_stage) <- class(.object$Second_stage) 
       
     } else {
       # Estimates
