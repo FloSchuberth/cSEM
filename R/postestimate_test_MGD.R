@@ -294,10 +294,10 @@ testMGD <- function(
         
         # Calculation of the SE of the parameter difference as proposed by 
         # Henseler (2007a), Henseler et al. (2009)
-        ses_total=sqrt((n1-1)^2/(n1+n2-2)*ses1^2 + 
+        ses_total <- sqrt((n1-1)^2/(n1+n2-2)*ses1^2 + 
             (n2-1)^2/(n1+n2-2)*ses2^2)*sqrt(1/n1+1/n2) 
           
-        test_stat<-diff/ses_total[names(diff)]
+        test_stat <- diff/ses_total[names(diff)]
         list("teststat"=test_stat,"obs_both"=n1+n2)
         
       })
@@ -573,11 +573,11 @@ testMGD <- function(
     names(padjusted_Sarstedt) <- .approach_p_adjust
     
     # Decision 
-    decision_Sarstedt=lapply(padjusted_Sarstedt,function(p_value){
-      temp=lapply(.alpha, function(alpha){
+    decision_Sarstedt <- lapply(padjusted_Sarstedt,function(p_value){
+      temp <- lapply(.alpha, function(alpha){
         p_value > alpha
       })
-      names(temp) = paste(.alpha*100,"%",sep= '')
+      names(temp) <- paste(.alpha*100,"%",sep= '')
       temp
     })
     
