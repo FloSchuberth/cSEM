@@ -32,7 +32,7 @@
 #'   Defaults to "*sequential*".
 #' @param .approach_p_adjust Character string or a vector of character strings. 
 #' Approach used to adjust the p value in multiple testing. 
-#' See \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
+#' See the `methods` argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
 #' their description. Defaults to "*none*".
 #' @param .approach_paths Character string. Approach used to estimate the
 #'   structural coefficients. One of: "*OLS*", "*2SLS*", or "*3SLS*" (not yet implemented).

@@ -22,7 +22,7 @@ Defaults to \code{0.05}.}
 
 \item{.approach_p_adjust}{Character string or a vector of character strings.
 Approach used to adjust the p value in multiple testing.
-See \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
+See the \code{methods} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
 their description. Defaults to "\emph{none}".}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results

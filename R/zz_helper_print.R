@@ -355,11 +355,11 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
 
 printDetailsVerify <- function(x) {
   
-  text <- c("1" = "Convergence", 
-            "2" = "At least one standardized loading > 1", 
-            "3" = "Construct VCV not positive semi-definite", 
-            "4" = "At least one reliability > 1",
-            "5" = "Model-implied VCV not positive semi-definite")
+  text <- c("1" = "Convergence achieved", 
+            "2" = "All absolute standardized loading estimates <= 1", 
+            "3" = "Construct VCV is positive semi-definite", 
+            "4" = "All reliability estimates <= 1",
+            "5" = "Model-implied indicator VCV is positive semi-definite")
   
   if(inherits(x, "cSEMVerify_2ndorder")) {
     cat2(

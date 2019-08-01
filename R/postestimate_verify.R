@@ -19,18 +19,19 @@
 #' @seealso [csem()], [cSEMResults]
 #'
 #' @return A logical vector indicating which (if any) problem occurred. 
-#'   A `TRUE` indicates that the problem has occured. For models containg second order
+#'   A `FALSE` indicates that the specific problem has not occured. For models containg second order
 #'   constructs estimated by a two stage approach a list of two such vectors 
 #'   (one for the first and one for the second stage) is returned. Status codes are:
 #'  \itemize{
-#' \item 1: The algorithm has not converged.
-#' \item 2: At least one absolute standardized loading estimate is larger than 1,
-#    which implies either a negative variance of the measurement error or
+#' \item 1: The algorithm has converged.
+#' \item 2: All absolute standardized loading estimates are smaller than or equal to 1.
+#'   A violation implies either a negative variance of the measurement error or
 #    a correlation larger than 1.
-#' \item 3: The construct VCV is not positive semi-definite.
-#' \item 4: At least one reliability is larger than 1. 
-#' \item 5: The model-implied indicator VCV is not positive semi-definite. 
-#'   This is only checked for linear models.
+#' \item 3: The construct VCV is positive semi-definite.
+#' \item 4: All reliability estimates are smaller than or equal to 1. 
+#' \item 5: The model-implied indicator VCV is positive semi-definite. 
+#'   This is only checked for linear models (including models containing 
+#'   second-order constructs).
 #' }
 #'
 #' @export

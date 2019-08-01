@@ -45,7 +45,7 @@ progress).
 
 ## Philosophy
 
-  - Above and all: user-centered design\!
+  - Above all: user-centered design\!
   - Easy to use by non-R experts:
       - One central function `csem()` provides default choices for most
         of its arguments (similarity to the `sem()` and `cfa()`
