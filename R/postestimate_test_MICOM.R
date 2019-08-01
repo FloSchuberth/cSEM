@@ -365,12 +365,6 @@ testMICOM <- function(
     ) 
   }
   
-  ## Remove the seed since it is set globally. Reset immediately by calling
-  ## any kind of function that requires .Random.seed as this causes R to
-  ## to create a new one.
-  rm(.Random.seed, envir=.GlobalEnv)
-  runif(1) # dont remove; this sets up a new .Random.seed
-  
   class(out) <- "cSEMTestMICOM"
   return(out)
 }

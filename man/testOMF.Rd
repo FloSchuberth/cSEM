@@ -5,14 +5,13 @@
 \title{Test for overall model fit}
 \usage{
 testOMF(
- .object                = args_default()$.object, 
- .alpha                 = args_default()$.alpha, 
- .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
- .iter_max              = 10000,
- .R                     = args_default()$.R, 
- .saturated             = args_default()$.saturated,
- .seed                  = args_default()$.seed,
- .verbose               = args_default()$.verbose
+ .object                = NULL, 
+ .alpha                 = 0.05, 
+ .handle_inadmissibles  = c("drop", "ignore", "replace"), 
+ .R                     = 499, 
+ .saturated             = FALSE,
+ .seed                  = NULL,
+ .verbose               = TRUE
 )
 }
 \arguments{
@@ -24,58 +23,72 @@ Defaults to \code{0.05}.}
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
 replications/resamples yielding an inadmissible result will be dropped
-(i.e. the number of results returned will be less than .R). For "\emph{ignore}"
-all results are returned even if they are inadmissible (i.e.
-number of results returned = .R). For "\emph{replace}" resampling continues until
-there are exactly .R admissible solutions.
+(i.e. the number of results returned will potentially be less than \code{.R}).
+For "\emph{ignore}" all results are returned even if all or some of the replications
+yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
+For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
 Defaults to "\emph{drop}".}
-
-\item{.iter_max}{Integer. The maximum number of iterations allowed.
-If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
-If the algorithm exceeds the specified number, weights of iteration step
-\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
 
-\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is choosen.}
+\item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen. Note that the scope of the seed is limited
+to the body of the function it is used in. Hence, the gloabal seed will
+not me altered!}
 
 \item{.verbose}{Logical. Should information be printed to the console? Defaults
 to \code{TRUE}.}
 }
 \value{
-A standardized list of class \code{cSEMTest}. Technically \code{cSEMTest} is a named
-list containing the following list elements:
+A list of class \code{cSEMTestOMF} containing the following list elements:
 \describe{
-\item{\code{$Test_statistic}}{The value of test statistic(s).}
-\item{\code{$Critical_value}}{The critical value(s).}
-\item{\code{$Decision}}{The test decision. One of: \strong{Reject} or \strong{Do not reject}}
-\item{\code{$Number_admissibles}}{The number of admissible runs. See \code{\link[=verify]{verify()}} for
-what constitues and inadmissible run.}
+\item{\code{$Test_statistic}}{The value of the test statistics.}
+\item{\code{$Critical_value}}{The correponding critical values obtained by the bootstrap.}
+\item{\code{$Decision}}{The test decision. One of: \code{FALSE} (\strong{Reject}) or \code{TRUE} (\strong{Do not reject}).}
+\item{\code{$Information}}{The \code{.R} bootstrap values; The number of admissible results;
+The seed used and the number of total runs.}
 }
 }
 \description{
-Bootstrap-based test for overall model fit. It tests the null hypothesis that the
-population indicator correlation matrix equals the population model-implied
-correlation matirx. The geodesic distance, the suqared Euclidean distance between the
-sample indicator correlation matrix and the estimated model-implied correlation matrix
-and the SRMR serve as test statistic. The reference distribution is obtained by
-bootstrap \insertCite{Beran1985;textual}{cSEM}. See also
-\insertCite{Dijkstra2015;textual}{cSEM} who suggested it in the context of PLS-PM.
-After 10000 iterations it stops automatically.
+Bootstrap-based test for overall model fit.
+}
+\details{
+\code{testOMF()} tests the null hypothesis that the population indicator
+correlation matrix equals the population model-implied indicator correlation matrix.
+Several potential test statistics may be used. \code{testOMF()} uses the
+geodesic distance and the squared Euclidean distance between the
+sample indicator correlation matrix and the estimated model-implied indicator correlation matrix
+as well as the standardized root mean square residual (SRMR).
+The reference distribution for each test statistic is obtained by
+the bootstrap as proposed by \insertCite{Beran1985;textual}{cSEM}.
+See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in
+the context of PLS-PM.
 }
 \examples{
-\dontrun{
-# TODO
-}
+model <- "
+# Structural model
+eta2 ~ eta1
+eta3 ~ eta1 + eta2
+
+# (Reflective) measurement model
+eta1 =~ y11 + y12 + y13
+eta2 =~ y21 + y22 + y23
+eta3 =~ y31 + y32 + y33
+"
+out <- csem(threecommonfactors, model, .approach_weights = "PLS-PM")
+out1 <- csem(threecommonfactors, model, .approach_weights = "GSCA")
+
+## Test (.R is small to save time; should be higher in real applications)
+testOMF(out, .R = 50)
+testOMF(out1, .R = 50)
 
 }
 \references{
 \insertAllCited{}
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \link{cSEMResults}
 }

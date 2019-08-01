@@ -10,14 +10,12 @@ two class attributes. The first class attribute is always \code{cSEMResults} no 
 the type of data or model provided.
 The second is one of \code{cSEMResults_default}, \code{cSEMResults_multi}, or
 \code{cSEMResults_2ndorder} and depends on the estimated model and/or the type of
-data provided to the \code{.model} and \code{.data} arguments of \code{\link[=csem]{csem()}}. Technically,
-method dispatch for all postestimation functions is based on the second
-class attribute.
+data provided to the \code{.model} and \code{.data} arguments of \code{\link[=csem]{csem()}}.
 The third class attribute \code{cSEMResults_resampled} is only added if resampling
 was conducted.
 }
 \details{
-Depending on the type of data and/or model provided three different outputs
+Depending on the type of data and/or model provided three different output
 types exists.
 \describe{
 \item{_default}{This will be the structure for the vaste majority of applications.
@@ -33,7 +31,7 @@ The resulting object has classes \code{cSEMResults} and \code{cSEMResults_defaul
 an id-column to split the data by \code{G} group levels
 or if a list of \code{G} datasets is provided, the resulting object is a list of \code{G}
 lists, where \code{G} is equal to the number of groups or the number of datasets
-in the list of datasets provided. Each of the \code{G} list elements are itself
+in the list of datasets provided. Each of the \code{G} list elements is itself
 a \code{cSEMResults_default} object. Hence its structure is identical to
 the structure described in \code{_default}.
 
@@ -41,7 +39,7 @@ The resulting object has classes \code{cSEMResults} and \code{cSEMResults_multi}
 }
 \item{_2ndorder}{
 A special output is generated if the model to estimate contains hierachical constructs
-\strong{and} the 2step (3step) approach is used to estimate the model. In this case
+\strong{and} the "2stage" or "mixed" approach is used to estimate the model. In this case
 the resulting object is a list containing two elements \code{First_stage} and
 \code{ Second_stage}.
 
@@ -55,7 +53,7 @@ are attached to each object. For objects of class \code{cSEMResults_default} the
 attached to \code{.object$Estimates$Estimates_resample}. For objects of class
 \code{cSEMResults_multi} the same is done by group. For objects of class
 \code{cSEMResults_2ndorder} the resamples are attached to the
-\code{.object$Second_stage$Estimates$Estimates_resample}. All objects containing
+\code{.object$Second_stage$Information$Resamples}. All objects containing
 these elements gain the \code{cSEMResults_resampled} class.
 }
 \keyword{internal}

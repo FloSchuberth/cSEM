@@ -27,13 +27,13 @@ This is only checked for linear models.
 Verify admissibility of the estimated quantities in \code{.object}.
 }
 \details{
-Result exhibiting one of the following defects are deemed inadmissible:
+Results exhibiting one of the following defects are deemed inadmissible:
 non-convergence of the algorithm used to obtain weights, loadings and/or
 (congeneric) reliabilities larger than 1, a construct variance-covariance (VCV) and/or
 model-implied VCV matrix that is not positive semi-definite.
 
 If the two stage approach was used for models containing second order
-constructs, both the first and the second stage is checked separately.
+constructs, both the first and the second stage are checked separately.
 
 Currently, a model-implied indicator VCV matrix for nonlinear model is not
 available. \code{verify()} therefore skips the check for positive definitness of the

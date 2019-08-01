@@ -103,10 +103,10 @@
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
 #'   replications/resamples yielding an inadmissible result will be dropped 
-#'   (i.e. the number of results returned will be less than .R). For "*ignore*" 
-#'   all results are returned even if they are inadmissible (i.e. 
-#'   number of results returned = .R). For "*replace*" resampling continues until 
-#'   there are exactly .R admissible solutions. 
+#'   (i.e. the number of results returned will potentially be less than `.R`). 
+#'   For "*ignore*" all results are returned even if all or some of the replications
+#'   yieled inadmissible results (i.e. number of results returned is equal to `.R`). 
+#'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions. 
 #'   Defaults to "*drop*".
 #' @param .id Character string or integer. The name or position of the column of 
 #'   `.data` used to split the data into groups.
@@ -211,8 +211,10 @@
 #'   Defaults to `FALSE`.
 #' @param .second_resample A list containing `.R2` resamples for each of the `.R`
 #'   resamples of the first run.
-#' @param .seed Integer or NULL. The random seed to use. Defaults to `NULL` in which
-#'   case an arbitrary seed is choosen.
+#' @param .seed Integer or `NULL`. The random seed to use. Defaults to `NULL` in which
+#'   case an arbitrary seed is choosen. Note that the scope of the seed is limited
+#'   to the body of the function it is used in. Hence, the global seed will
+#'   not be altered!
 #' @param .sign_change_option Character string. Which sign change option should 
 #' be used to handle flipping signs when resampling? One of "*none*","*individual*",
 #' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".
@@ -227,7 +229,7 @@
 #'   Defaults to `1e-05`.
 #' @param .type_vcv Character string. Indicates which model-implied correlation matrix is calcuted
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
-#' @param .verbose Logical. Should information be printed to the console? Defaults
+#' @param .verbose Logical. Should information (e.g., progress bar) be printed to the console? Defaults
 #'   to `TRUE`.
 #' @param .user_funs A function or a (named) list of functions to apply to every
 #'   resample. The functions must take `.object` as its first input (e.g., 

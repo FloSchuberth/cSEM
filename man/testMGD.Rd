@@ -42,10 +42,10 @@ are compared.}
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
 replications/resamples yielding an inadmissible result will be dropped
-(i.e. the number of results returned will be less than .R). For "\emph{ignore}"
-all results are returned even if they are inadmissible (i.e.
-number of results returned = .R). For "\emph{replace}" resampling continues until
-there are exactly .R admissible solutions.
+(i.e. the number of results returned will potentially be less than \code{.R}).
+For "\emph{ignore}" all results are returned even if all or some of the replications
+yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
+For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
 Defaults to "\emph{drop}".}
 
 \item{.R_permutation}{Integer. The number of permutations. Defaults to \code{499}}
@@ -55,8 +55,10 @@ Defaults to "\emph{drop}".}
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
 
-\item{.seed}{Integer or NULL. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is choosen.}
+\item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is choosen. Note that the scope of the seed is limited
+to the body of the function it is used in. Hence, the gloabal seed will
+not me altered!}
 
 \item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}

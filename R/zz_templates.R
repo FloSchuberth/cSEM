@@ -52,13 +52,11 @@ NULL
 #' the type of data or model provided. 
 #' The second is one of `cSEMResults_default`, `cSEMResults_multi`, or 
 #' `cSEMResults_2ndorder` and depends on the estimated model and/or the type of 
-#' data provided to the `.model` and `.data` arguments of [csem()]. Technically, 
-#' method dispatch for all postestimation functions is based on the second 
-#' class attribute.
+#' data provided to the `.model` and `.data` arguments of [csem()].
 #' The third class attribute `cSEMResults_resampled` is only added if resampling
 #' was conducted.
 #' 
-#' Depending on the type of data and/or model provided three different outputs
+#' Depending on the type of data and/or model provided three different output
 #' types exists.
 #' \describe{
 #' \item{_default}{This will be the structure for the vaste majority of applications.
@@ -74,7 +72,7 @@ NULL
 #'  an id-column to split the data by `G` group levels 
 #'  or if a list of `G` datasets is provided, the resulting object is a list of `G` 
 #'  lists, where `G` is equal to the number of groups or the number of datasets 
-#'  in the list of datasets provided. Each of the `G` list elements are itself 
+#'  in the list of datasets provided. Each of the `G` list elements is itself 
 #'  a `cSEMResults_default` object. Hence its structure is identical to 
 #'  the structure described in `_default`.
 #' 
@@ -82,7 +80,7 @@ NULL
 #' }
 #' \item{_2ndorder}{
 #'  A special output is generated if the model to estimate contains hierachical constructs
-#'  **and** the 2step (3step) approach is used to estimate the model. In this case
+#'  **and** the "2stage" or "mixed" approach is used to estimate the model. In this case
 #'  the resulting object is a list containing two elements `First_stage` and 
 #' ` Second_stage`.
 #' 
@@ -96,7 +94,7 @@ NULL
 #' attached to `.object$Estimates$Estimates_resample`. For objects of class
 #' `cSEMResults_multi` the same is done by group. For objects of class
 #' `cSEMResults_2ndorder` the resamples are attached to the 
-#' `.object$Second_stage$Estimates$Estimates_resample`. All objects containing 
+#' `.object$Second_stage$Information$Resamples`. All objects containing 
 #' these elements gain the `cSEMResults_resampled` class.
 #' 
 #' @name csem_results

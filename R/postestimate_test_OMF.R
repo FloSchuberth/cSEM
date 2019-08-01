@@ -1,59 +1,85 @@
 #' Test for overall model fit
 #'
-#' Bootstrap-based test for overall model fit. It tests the null hypothesis that the 
-#' population indicator correlation matrix equals the population model-implied
-#' correlation matirx. The geodesic distance, the suqared Euclidean distance between the
-#' sample indicator correlation matrix and the estimated model-implied correlation matrix
-#'  and the SRMR serve as test statistic. The reference distribution is obtained by 
-#'  bootstrap \insertCite{Beran1985;textual}{cSEM}. See also 
-#' \insertCite{Dijkstra2015;textual}{cSEM} who suggested it in the context of PLS-PM.
-#' After 10000 iterations it stops automatically.
+#' Bootstrap-based test for overall model fit. 
+#' 
+#' `testOMF()` tests the null hypothesis that the population indicator 
+#' correlation matrix equals the population model-implied indicator correlation matrix. 
+#' Several potential test statistics may be used. `testOMF()` uses the 
+#' geodesic distance and the squared Euclidean distance between the
+#' sample indicator correlation matrix and the estimated model-implied indicator correlation matrix
+#' as well as the standardized root mean square residual (SRMR). 
+#' The reference distribution for each test statistic is obtained by 
+#' the bootstrap as proposed by \insertCite{Beran1985;textual}{cSEM}. 
+#' See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in 
+#' the context of PLS-PM.
 #' 
 #' @usage testOMF(
-#'  .object                = args_default()$.object, 
-#'  .alpha                 = args_default()$.alpha, 
-#'  .handle_inadmissibles  = args_default()$.handle_inadmissibles, 
-#'  .iter_max              = 10000,
-#'  .R                     = args_default()$.R, 
-#'  .saturated             = args_default()$.saturated,
-#'  .seed                  = args_default()$.seed,
-#'  .verbose               = args_default()$.verbose
+#'  .object                = NULL, 
+#'  .alpha                 = 0.05, 
+#'  .handle_inadmissibles  = c("drop", "ignore", "replace"), 
+#'  .R                     = 499, 
+#'  .saturated             = FALSE,
+#'  .seed                  = NULL,
+#'  .verbose               = TRUE
 #' )
 #' 
 #' @inheritParams  csem_arguments
 #' 
-#' @inherit csem_test return
+#' @return
+#' A list of class `cSEMTestOMF` containing the following list elements:
+#' \describe{
+#'   \item{`$Test_statistic`}{The value of the test statistics.}
+#'   \item{`$Critical_value`}{The correponding critical values obtained by the bootstrap.}
+#'   \item{`$Decision`}{The test decision. One of: `FALSE` (**Reject**) or `TRUE` (**Do not reject**).}
+#'   \item{`$Information`}{The `.R` bootstrap values; The number of admissible results;
+#'                         The seed used and the number of total runs.}
+#' }
 #' 
-#' @seealso [csem()], [foreman()], [cSEMResults]
+#' @seealso [csem()], [cSEMResults]
 #' 
 #' @references
 #'   \insertAllCited{}
 #'   
 #' @examples
-#' \dontrun{
-#' # TODO
-#' }
+#' model <- "
+#' # Structural model
+#' eta2 ~ eta1
+#' eta3 ~ eta1 + eta2
+#' 
+#' # (Reflective) measurement model
+#' eta1 =~ y11 + y12 + y13
+#' eta2 =~ y21 + y22 + y23
+#' eta3 =~ y31 + y32 + y33
+#' "
+#' out <- csem(threecommonfactors, model, .approach_weights = "PLS-PM")
+#' out1 <- csem(threecommonfactors, model, .approach_weights = "GSCA")
+#' 
+#' ## Test (.R is small to save time; should be higher in real applications)
+#' testOMF(out, .R = 50)
+#' testOMF(out1, .R = 50)
 #'
 #' @export
 
 testOMF <- function(
-  .object                = args_default()$.object,
-  .alpha                 = args_default()$.alpha,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .iter_max              = 10000,
-  .R                     = args_default()$.R,
-  .saturated             = args_default()$.saturated,
-  .seed                  = args_default()$.seed,
-  .verbose               = args_default()$.verbose
+  .object                = NULL, 
+  .alpha                 = 0.05, 
+  .handle_inadmissibles  = c("drop", "ignore", "replace"), 
+  .R                     = 499, 
+  .saturated             = FALSE,
+  .seed                  = NULL,
+  .verbose               = TRUE
 ) {
   
   # Implementation is based on:
   # Dijkstra & Henseler (2015) - Consistent Paritial Least Squares Path Modeling
   
   if(.verbose) {
-    cat(rule(center = "Test for overall model fit based on Dijkstra & Henseler (2015)",
-             line = "bar3"), "\n\n")
+    cat(rule2("Test for overall model fit based on Beran & Srivastava (1985)",
+              type = 3), "\n\n")
   }
+  
+  ## Match arguments
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   
   if(inherits(.object, "cSEMResults_default")) {
     
@@ -94,9 +120,6 @@ testOMF <- function(
   }
   
   ### Checks and errors ========================================================
-  ## Check arguments
-  match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
-  
   ## Check if initial results are inadmissible
   if(sum(unlist(verify(.object))) != 0) {
     stop2(
@@ -202,9 +225,6 @@ testOMF <- function(
     # Break repeat loop if .R results have been created.
     if(length(ref_dist) == .R) {
       break
-    } else if(counter + n_inadmissibles == .iter_max) { 
-      ## Stop if 10000 runs did not result in insufficient admissible results
-      stop("Not enough admissible result.", call. = FALSE)
     }
   } # END repeat 
   
@@ -240,16 +260,9 @@ testOMF <- function(
       "Bootstrap_values"   = ref_dist,
       "Number_admissibles" = ncol(ref_dist_matrix),
       "Seed"               = .seed,
-      "Total_runs"         = counter + n_inadmissibles, 
-      "Maximum_iteration"  = .iter_max
+      "Total_runs"         = counter + n_inadmissibles
     )
   )
-  
-  ## Remove the seed since it is set globally. Reset immediately by calling
-  ## any kind of function that requires .Random.seed as this causes R to
-  ## to create a new one.
-  rm(.Random.seed, envir=.GlobalEnv)
-  runif(1) # dont remove; this sets up a new .Random.seed
   
   ## Set class and return
   class(out) <- "cSEMTestOMF"
