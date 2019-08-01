@@ -40,8 +40,8 @@ Defaults to "\emph{drop}".}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen. Note that the scope of the seed is limited
-to the body of the function it is used in. Hence, the gloabal seed will
-not me altered!}
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 }
 \description{
 Calculates the regression-based Hausman test to be used to compare

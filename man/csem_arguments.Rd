@@ -36,9 +36,10 @@ computed (if possible).}
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
-\item{.approach_p_adjust}{Character string. Approach used to adjust the p value.
-The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
-Defaults to "\emph{none}".}
+\item{.approach_p_adjust}{Character string or a vector of character strings.
+Approach used to adjust the p value in multiple testing.
+See \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
+their description. Defaults to "\emph{none}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
@@ -201,6 +202,11 @@ Defaults to \code{TRUE}.}
 
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 
+\item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
+parameters (i.e, path (\code{~}), loadings (\code{=~}), or weights (\code{<~})) should be
+compared across groups. Defaults to \code{NULL} in which case all parameters of the
+originally specified model are compared.}
+
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
@@ -271,7 +277,8 @@ of each row.}
 \item{.R2}{Integer. The number of bootstrap replications to use when
 resampling from a resample. Defaults to \code{199}.}
 
-\item{.R_bootstrap}{Integer. The number of bootstrap runs. Defaults to \code{499}}
+\item{.R_bootstrap}{Integer. The number of bootstrap runs. Ignored if \code{.object}
+contains resamples. Defaults to \code{499}}
 
 \item{.R_permutation}{Integer. The number of permutations. Defaults to \code{499}}
 
@@ -285,8 +292,8 @@ resamples of the first run.}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen. Note that the scope of the seed is limited
-to the body of the function it is used in. Hence, the gloabal seed will
-not me altered!}
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 
 \item{.sign_change_option}{Character string. Which sign change option should
 be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",
@@ -308,7 +315,7 @@ Defaults to \code{1e-05}.}
 \item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 
-\item{.verbose}{Logical. Should information be printed to the console? Defaults
+\item{.verbose}{Logical. Should information (e.g., progress bar) be printed to the console? Defaults
 to \code{TRUE}.}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every

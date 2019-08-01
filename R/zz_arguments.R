@@ -30,9 +30,10 @@
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
-#' @param .approach_p_adjust Character string. Approach used to adjust the p value.
-#' The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
-#' Defaults to "*none*".
+#' @param .approach_p_adjust Character string or a vector of character strings. 
+#' Approach used to adjust the p value in multiple testing. 
+#' See \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
+#' their description. Defaults to "*none*".
 #' @param .approach_paths Character string. Approach used to estimate the
 #'   structural coefficients. One of: "*OLS*", "*2SLS*", or "*3SLS*" (not yet implemented).
 #'   Defaults to "*OLS*".
@@ -149,6 +150,10 @@
 #'   Defaults to `TRUE`.
 #' @param .original_arguments The list of arguments used within [csem()].
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
+#' @param .parameters_to_compare A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
+#'   parameters (i.e, path (`~`), loadings (`=~`), or weights (`<~`)) should be
+#'   compared across groups. Defaults to `NULL` in which case all parameters of the 
+#'   originally specified model are compared.
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
@@ -204,7 +209,8 @@
 #' @param .R Integer. The number of bootstrap replications. Defaults to `499`.
 #' @param .R2 Integer. The number of bootstrap replications to use when 
 #'   resampling from a resample. Defaults to `199`.
-#' @param .R_bootstrap Integer. The number of bootstrap runs. Defaults to `499`
+#' @param .R_bootstrap Integer. The number of bootstrap runs. Ignored if `.object`
+#'   contains resamples. Defaults to `499`
 #' @param .R_permutation Integer. The number of permutations. Defaults to `499`
 #' @param .S The (K x K) empirical indicator correlation matrix.
 #' @param .saturated Logical. Should a saturated structural model be used? 
@@ -405,6 +411,7 @@ args_default <- function(.choices = FALSE) {
     .only_common_factors     = TRUE,
     .object                  = NULL,
     .P                       = NULL,
+    .parameters_to_compare   = NULL,
     .probs                   = NULL,
     .quality_criterion       = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
                                  "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",

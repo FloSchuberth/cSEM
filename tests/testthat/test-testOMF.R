@@ -18,7 +18,7 @@ for(i in DGPs) {
     expect_output(
       testOMF(
         .object = res,
-        .R      = 20,
+        .R      = 10,
         .handle_inadmissibles = "replace" # to make sure there are enough admissibles
       )
     )
@@ -28,7 +28,7 @@ for(i in DGPs) {
     expect_output(
       testOMF(
         .object = res,
-        .R      = 20,
+        .R      = 10,
         .alpha  = c(0.1, 0.05),
         .handle_inadmissibles = "replace", # to make sure there are enough admissibles
         .seed   = 2010
@@ -45,7 +45,7 @@ test_that(paste(".seed in testOMF works corretly"),  {
   
   a <- testOMF(
     .object = res,
-    .R      = 20,
+    .R      = 10,
     .seed   = 1303
   )
   
@@ -54,7 +54,7 @@ test_that(paste(".seed in testOMF works corretly"),  {
   
   b <- testOMF(
     .object = res,
-    .R      = 20,
+    .R      = 10,
     .seed   = 1303
   )
   

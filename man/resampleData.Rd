@@ -43,8 +43,8 @@ or cross-validation repetitions to use. Defaults to \code{499}.}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen. Note that the scope of the seed is limited
-to the body of the function it is used in. Hence, the gloabal seed will
-not me altered!}
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 }
 \value{
 The structure of the output depends on the type of input and the

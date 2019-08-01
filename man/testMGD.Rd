@@ -2,21 +2,21 @@
 % Please edit documentation in R/postestimate_test_MGD.R
 \name{testMGD}
 \alias{testMGD}
-\title{Tests for multi-group comparison.}
+\title{Tests for multi-group comparisons}
 \usage{
 testMGD(
- .object                = args_default()$.object,
- .alpha                 = args_default()$.alpha,
- .approach_p_adjust     = args_default()$.approach_p_adjust,
- .approach_mgd          = args_default()$.approach_mgd,
- .model                 = args_default()$.model,
- .handle_inadmissibles  = args_default()$.handle_inadmissibles,
- .R_permutation         = args_default()$.R_permutation,
- .R_bootstrap           = args_default()$.R_bootstrap,
- .saturated             = args_default()$.saturated,
- .seed                  = args_default()$.seed,
- .type_vcv              = args_default()$.type_vcv,
- .verbose               = args_default()$.verbose
+ .object                = NULL,
+ .alpha                 = 0.05,
+ .approach_p_adjust     = "none",
+ .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil"),
+ .parameters_to_compare = NULL,
+ .handle_inadmissibles  = c("replace", "drop", "none"),
+ .R_permutation         = 499,
+ .R_bootstrap           = 499,
+ .saturated             = FALSE,
+ .seed                  = NULL,
+ .type_vcv              = c("indicator", "construct"),
+ .verbose               = TRUE
  )
 }
 \arguments{
@@ -25,19 +25,20 @@ testMGD(
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.approach_p_adjust}{Character string. Approach used to adjust the p value.
-The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
-Defaults to "\emph{none}".}
+\item{.approach_p_adjust}{Character string or a vector of character strings.
+Approach used to adjust the p value in multiple testing.
+See \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
+their description. Defaults to "\emph{none}".}
 
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
 "\emph{Sarstedt}", or "\emph{Keil}. Default to "\emph{all}" in which case all approaches are
 computed (if possible).}
 
-\item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
+\item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
 parameters (i.e, path (\code{~}), loadings (\code{=~}), or weights (\code{<~})) should be
-compared across groups. Defaults to \code{NULL} in which case all parameters of the model
-are compared.}
+compared across groups. Defaults to \code{NULL} in which case all parameters of the
+originally specified model are compared.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -46,24 +47,25 @@ replications/resamples yielding an inadmissible result will be dropped
 For "\emph{ignore}" all results are returned even if all or some of the replications
 yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Defaults to "\emph{drop}".}
+Defaults to "\emph{replace}" to accomodate all approaches.}
 
 \item{.R_permutation}{Integer. The number of permutations. Defaults to \code{499}}
 
-\item{.R_bootstrap}{Integer. The number of bootstrap runs. Defaults to \code{499}}
+\item{.R_bootstrap}{Integer. The number of bootstrap runs. Ignored if \code{.object}
+contains resamples. Defaults to \code{499}}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen. Note that the scope of the seed is limited
-to the body of the function it is used in. Hence, the gloabal seed will
-not me altered!}
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 
 \item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 
-\item{.verbose}{Logical. Should information be printed to the console? Defaults
+\item{.verbose}{Logical. Should information (e.g., progress bar) be printed to the console? Defaults
 to \code{TRUE}.}
 }
 \value{
@@ -133,13 +135,21 @@ adjustments are available via \code{.approach_p_adjust}. See
 }
 
 Use \code{.approach_mgd} to choose the approach. By default all approaches are computed
-(\code{.approach_mgd = "all"})
+(\code{.approach_mgd = "all"}).
+
+By default, approaches based on parameter differences across groups compare
+all parameters (\code{.parameters_to_compare = NULL}). To compare only
+a subset of parameters provide the parameters in lavaan model syntax just like
+providing the model. Note that the "model" provided to \code{.parameters_to_compare}
+does not have to be an estimatable model! See the example below.
+
+Note that compared to all other functions in \pkg{cSEM}, \code{.handle_inadmissibles}
+defaults to \code{"replace"} to accomdate the Sarstedt et al. (2011) approach.
 }
 \examples{
-\dontrun{
-require(cSEM)
-data(satisfaction)
-
+# ===========================================================================
+# Basic usage
+# ===========================================================================
 model <- "
 # Structural model
 QUAL ~ EXPE
@@ -158,11 +168,53 @@ SAT  <~ sat1  + sat2  + sat3  + sat4
 VAL  <~ val1  + val2  + val3  + val4
 "
 
-listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
-out.cSEM <- csem(listData, model) 
+## Create list of virtually identical data sets
+dat <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
+out <- csem(dat, model, .resample_method = "bootstrap", .R = 20) 
 
-testMGD(.object = out.cSEM, .R = 20, .type_vcv= 'construct')
-}
+## Test 
+testMGD(out, .R_permutation = 20)
+
+# Notes: 
+#  1. .R_permutation (and .R in the call to csem) is small to save time; should be
+#     higher in real applications.
+#  2. Test will not reject their respective H0s since the groups are virtually
+#     identical.
+#  3. Only exception is the approach suggested by Sarstedt et al. (2011), a
+#     sign that the test is unreliable.
+#  4. As opposed to other functions involing the argument, 
+#     '.handle_inadmissibles' the default is "replace" as this is
+#     required by Sarstedt et al. (2011)'s approach.
+
+# ===========================================================================
+# Extended usage
+# ===========================================================================
+### Test only a subset ------------------------------------------------------
+# By default all parameters are compared. Select a subset by providing a 
+# model in lavaan model syntax:
+
+to_compare <- "
+# Path coefficients
+QUAL ~ EXPE
+
+# Loadings
+EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
+"
+
+## Test 
+testMGD(out, .parameters_to_compare = to_compare, .R_permutation = 20, .R_bootstrap = 20)
+
+### Different p_adjustments --------------------------------------------------
+# To adjust p-values to accomodate multiple testing use .approach_p_adjust. 
+# The number of tests to use for adjusting depends on the approach choosen. For
+# the Chin approach for example it is the number of parameters to test times the
+# number of possible group comparisons. To compare the results for different
+# adjustments, a vector of p-adjustments may be choosen.
+
+## Test 
+testMGD(out, .parameters_to_compare = to_compare, 
+        .approach_p_adjust = c("none", "bonferroni"),
+        .R_permutation = 20, .R_bootstrap = 20)
 
 }
 \references{

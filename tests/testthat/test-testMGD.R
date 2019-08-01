@@ -58,16 +58,14 @@ test_that("All .approach_mgd options work for linear models", {
     testMGD(
       .object       = res_multi_linear_boot,
       .approach_mgd = "Sarstedt",
-      .R_permutation = 10,
-      .handle_inadmissibles = "replace"
+      .R_permutation = 10
     )
   )
   expect_output(
     testMGD(
       .object       = res_multi_linear_boot,
       .approach_mgd = "all",
-      .R_permutation = 10,
-      .handle_inadmissibles = "replace"
+      .R_permutation = 10
     )
   )
 })
@@ -91,8 +89,7 @@ test_that("Chin, Keil and Sarstedt work for nonlinear models", {
     testMGD(
       .object       = res_multi_nonlinear_boot,
       .approach_mgd = "Sarstedt",
-      .R_permutation = 10,
-      .handle_inadmissibles = "replace"
+      .R_permutation = 10
     )
   )
 })
@@ -110,32 +107,28 @@ test_that("All .approach_mgd options work for '2ndorder' models", {
     testMGD(
       .object       = res_multi_2ndorder,
       .approach_mgd = "Chin",
-      .R_permutation = 10,
-      .handle_inadmissibles = "replace" # to make sure we have enough admissibles
+      .R_permutation = 10
     )
   )
   expect_output(
     testMGD(
       .object       = res_multi_2ndorder,
       .approach_mgd = "Keil",
-      .R_permutation = 10,
-      .handle_inadmissibles = "replace" # to make sure we have enough admissibles
+      .R_permutation = 10
     )
   )
   expect_output(
     testMGD(
       .object       = res_multi_2ndorder_boot,
       .approach_mgd = "Sarstedt",
-      .R_permutation = 10,
-      .handle_inadmissibles = "replace"
+      .R_permutation = 10
     )
   )
   expect_output(
     testMGD(
       .object       = res_multi_2ndorder_boot,
       .approach_mgd = "all",
-      .R_permutation = 10,
-      .handle_inadmissibles = "replace"
+      .R_permutation = 10
     )
   )
 })

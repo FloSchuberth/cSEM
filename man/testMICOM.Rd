@@ -20,9 +20,10 @@ testMICOM(
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.approach_p_adjust}{Character string. Approach used to adjust the p value.
-The methods employed in the \code{\link[stats:p.adjust]{stats::p.adjust()}} can be used.
-Defaults to "\emph{none}".}
+\item{.approach_p_adjust}{Character string or a vector of character strings.
+Approach used to adjust the p value in multiple testing.
+See \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
+their description. Defaults to "\emph{none}".}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -37,10 +38,10 @@ Defaults to "\emph{drop}".}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen. Note that the scope of the seed is limited
-to the body of the function it is used in. Hence, the gloabal seed will
-not me altered!}
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 
-\item{.verbose}{Logical. Should information be printed to the console? Defaults
+\item{.verbose}{Logical. Should information (e.g., progress bar) be printed to the console? Defaults
 to \code{TRUE}.}
 }
 \value{

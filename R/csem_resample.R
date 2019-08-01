@@ -445,7 +445,7 @@ resampleData <- function(
 #' but should be increased in real applications. See e.g.,
 #' \insertCite{Hesterberg2015;textual}{cSEM}, p.380, 
 #' \insertCite{Davison1997;textual}{cSEM}, and
-#' \insertCite{Efron2016}{cSEM} for recommendations.
+#' \insertCite{Efron2016;textual}{cSEM} for recommendations.
 #' For jackknife `.R` are `.R2` are ignored. 
 #' 
 #' Resampling may produce inadmissble results (as checked by [verify()]).
@@ -514,54 +514,8 @@ resampleData <- function(
 #'   
 #' @seealso [csem], [cSEMResults]
 #'
-#' @examples
-#' \donttest{
-#' model <- "
-#' # Structural model
-#' QUAL ~ EXPE
-#' EXPE ~ IMAG
-#' SAT  ~ IMAG + EXPE + QUAL + VAL
-#' LOY  ~ IMAG + SAT
-#' VAL  ~ EXPE + QUAL
+#' @example inst/examples/example_resamplecSEMResults.R
 #' 
-#' # Measurement model
-#' EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5
-#' IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5
-#' LOY  =~ loy1  + loy2  + loy3  + loy4
-#' QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
-#' SAT  =~ sat1  + sat2  + sat3  + sat4
-#' VAL  =~ val1  + val2  + val3  + val4
-#' "
-#' 
-#' a <- csem(satisfaction, model)
-#' 
-#' # Bootstrap and jackknife estimation
-#' boot <- resamplecSEMResults(a)
-#' jack <- resamplecSEMResults(a, .resample_method = "jackknife") 
-#' 
-#' # Bootstrap resampling with resampling each resample (totals .R*R2 runs).
-#' boot1 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,
-#'                              .resample_method2 = "bootstrap", .R2 = 20,
-#'                              .seed = 1303)
-#'
-#' # To get inferencial quanitites such as the estimated standard error or
-#' # the percentile confidence intervall for each resampled quantity use infer()
-#' inference <- infer(boot1)
-#' inference$Path_estimates$Standard_deviation
-#' inference$Path_estimates$CI_percentile
-#' 
-#' # As usual summarize() can be called directly
-#' summarize(boot1)
-#' 
-#' # In the example above .R x .R2 = 50 x 20 = 1000. Multiprocessing will be
-#' # faster here and is therefore recommended. Note that multiprocessing
-#' # does not affect the random number generation
-#' boot2 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,
-#'                              .resample_method2 = "bootstrap", .R2 = 20,
-#'                              .eval_plan = "multiprocess", .seed = 1303)
-#'
-#' identical(boot1, boot2)
-#' }                  
 #' @export
 #'
 resamplecSEMResults <- function(

@@ -1,4 +1,4 @@
-#' Tests for multi-group comparison. 
+#' Tests for multi-group comparisons
 #'
 #' This function performs several permutation tests, i.e., the reference distribution 
 #' of the test statistic is obtained by permutation.
@@ -53,29 +53,42 @@
 #' }
 #' 
 #' Use `.approach_mgd` to choose the approach. By default all approaches are computed
-#' (`.approach_mgd = "all"`)
+#' (`.approach_mgd = "all"`).
+#' 
+#' By default, approaches based on parameter differences across groups compare
+#' all parameters (`.parameters_to_compare = NULL`). To compare only
+#' a subset of parameters provide the parameters in lavaan model syntax just like
+#' providing the model. Note that the "model" provided to `.parameters_to_compare`
+#' does not have to be an estimatable model! See the example below.
+#' 
+#' Note that compared to all other functions in \pkg{cSEM}, `.handle_inadmissibles`
+#' defaults to `"replace"` to accomdate the Sarstedt et al. (2011) approach.
 #' 
 #' 
 #' @usage testMGD(
-#'  .object                = args_default()$.object,
-#'  .alpha                 = args_default()$.alpha,
-#'  .approach_p_adjust     = args_default()$.approach_p_adjust,
-#'  .approach_mgd          = args_default()$.approach_mgd,
-#'  .model                 = args_default()$.model,
-#'  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-#'  .R_permutation         = args_default()$.R_permutation,
-#'  .R_bootstrap           = args_default()$.R_bootstrap,
-#'  .saturated             = args_default()$.saturated,
-#'  .seed                  = args_default()$.seed,
-#'  .type_vcv              = args_default()$.type_vcv,
-#'  .verbose               = args_default()$.verbose
+#'  .object                = NULL,
+#'  .alpha                 = 0.05,
+#'  .approach_p_adjust     = "none",
+#'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil"),
+#'  .parameters_to_compare = NULL,
+#'  .handle_inadmissibles  = c("replace", "drop", "none"),
+#'  .R_permutation         = 499,
+#'  .R_bootstrap           = 499,
+#'  .saturated             = FALSE,
+#'  .seed                  = NULL,
+#'  .type_vcv              = c("indicator", "construct"),
+#'  .verbose               = TRUE
 #'  ) 
 #' 
 #' @inheritParams csem_arguments
-#' @param .model A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
-#'   parameters (i.e, path (`~`), loadings (`=~`), or weights (`<~`)) should be
-#'   compared across groups. Defaults to `NULL` in which case all parameters of the model
-#'   are compared.
+#' @param .handle_inadmissibles Character string. How should inadmissible results 
+#'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
+#'   replications/resamples yielding an inadmissible result will be dropped 
+#'   (i.e. the number of results returned will potentially be less than `.R`). 
+#'   For "*ignore*" all results are returned even if all or some of the replications
+#'   yieled inadmissible results (i.e. number of results returned is equal to `.R`). 
+#'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions. 
+#'   Defaults to "*replace*" to accomodate all approaches.
 #'   
 #' @return A list of class `cSEMTestMGD`. Technically, `cSEMTestMGD` is a 
 #'   named list containing the following list elements:
@@ -92,63 +105,38 @@
 #'   
 #' @seealso [cSEMResults]
 #'
-#' @examples
-#' \dontrun{
-#' require(cSEM)
-#' data(satisfaction)
-#'
-#' model <- "
-#' # Structural model
-#' QUAL ~ EXPE
-#' EXPE ~ IMAG
-#' SAT  ~ IMAG + EXPE + QUAL + VAL
-#' LOY  ~ IMAG + SAT
-#' VAL  ~ EXPE + QUAL
-#'
-#' # Measurement model
-#'
-#' EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
-#' IMAG <~ imag1 + imag2 + imag3 + imag4 + imag5
-#' LOY  =~ loy1  + loy2  + loy3  + loy4
-#' QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
-#' SAT  <~ sat1  + sat2  + sat3  + sat4
-#' VAL  <~ val1  + val2  + val3  + val4
-#' "
+#' @example inst/examples/example_testMGD.R
 #' 
-#' listData <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
-#' out.cSEM <- csem(listData, model) 
-#'
-#' testMGD(.object = out.cSEM, .R = 20, .type_vcv= 'construct')
-#' }
-#'
 #' @export
 
 testMGD <- function(
-  .object                = args_default()$.object,
-  .alpha                 = args_default()$.alpha,
-  .approach_p_adjust     = args_default()$.approach_p_adjust,
-  .approach_mgd          = args_default()$.approach_mgd,
-  .model                 = args_default()$.model,
-  .handle_inadmissibles  = args_default()$.handle_inadmissibles,
-  .R_permutation         = args_default()$.R_permutation,
-  .R_bootstrap           = args_default()$.R_bootstrap,
-  .saturated             = args_default()$.saturated,
-  .seed                  = args_default()$.seed,
-  .type_vcv              = args_default()$.type_vcv,
-  .verbose               = args_default()$.verbose
+ .object                = NULL,
+ .alpha                 = 0.05,
+ .approach_p_adjust     = "none",
+ .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil"),
+ .parameters_to_compare = NULL,
+ .handle_inadmissibles  = c("replace", "drop", "none"),
+ .R_permutation         = 499,
+ .R_bootstrap           = 499,
+ .saturated             = FALSE,
+ .seed                  = NULL,
+ .type_vcv              = c("indicator", "construct"),
+ .verbose               = TRUE
 ){
 
   ## Match arguments
   diff <- setdiff(.approach_mgd, args_default(.choices =  TRUE)$.approach_mgd)
+  
   if(length(diff) != 0) {
     stop2(
       "The following error occured in the testMGD() function:\n",
       "Unknown approach: ", paste0(diff, collapse = ", "), ".",
-      " Possible choices are: ", 
+      " Possible choices are: ",
       paste0(args_default(.choices =  TRUE)$.approach_mgd, collapse = ", "))
   }
-  match.arg(.handle_inadmissibles, args_default(.choices = TRUE)$.handle_inadmissibles)
-  match.arg(.type_vcv, args_default(.choices = TRUE)$.type_vcv)
+  .approach_mgd         <- match.arg(.approach_mgd, several.ok = TRUE)
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+  .type_vcv             <- match.arg(.type_vcv)
   
   ### Checks and errors ========================================================
   ## Check if at least two groups are present
@@ -185,22 +173,25 @@ testMGD <- function(
           "Consider setting `.approach_mgd = c('Chin',  'Sarstedt')`")
   }
   
+  ## Check if any of the group estimates are inadmissible
+  if(sum(unlist(verify(.object))) != 0) {
+    warning2(
+      "The following warning occured in the testMGD() function:\n",
+      "Initial estimation results for at least one group are inadmissible.\n", 
+      "See `verify(.object)` for details.")
+  }
+  
   ## Check if data for different groups is identical
+  if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
+                      function(x){ identical(x[[1]], x[[2]])})){
+    warning2(
+      "The following warning occured in the testMGD() function:\n",
+      "At least two groups are identical. Results may not be meaningful.")
+  } 
+  
   if(.verbose) {
-    ## Check if any of the group estimates are inadmissible
-    if(sum(unlist(verify(.object))) != 0) {
-      warning2(
-        "The following warning occured in the testMGD() function:\n",
-        "Initial estimation results for at least one group are inadmissible.\n", 
-        "See `verify(.object)` for details.")
-    }
-    
-    if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
-                        function(x){ identical(x[[1]], x[[2]])})){
-      warning2(
-        "The following warning occured in the testMGD() function:\n",
-        "At least two groups are identical. Results may not be meaningful.")
-    } 
+    cat(rule2("Several tests for multi-group comparisons",
+              type = 3), "\n\n")
   }
   
   ### Calculation of the test statistics========================================
@@ -227,7 +218,7 @@ testMGD <- function(
   if(any(.approach_mgd %in% c("all", "Chin"))) {
     ## Compute and save test statistic
     teststat[["Chin"]] <- calculateParameterDifference(.object = .object, 
-                                                       .model = .model)
+                                                       .model = .parameters_to_compare)
   }
   
   ## Sarstedt et al. (2011) ----------------------------------------------------
@@ -287,7 +278,7 @@ testMGD <- function(
     
     if(any(.approach_mgd %in% c("Keil","all"))){
       diff_para_Keil <- calculateParameterDifference(.object = .object, 
-                                                     .model = .model)
+                                                     .model = .parameters_to_compare)
       
       # permute .objects
       object_permu <- utils::combn(.object, 2, simplify = FALSE)
@@ -331,7 +322,7 @@ testMGD <- function(
     # plus an id column indicating the group adherance of each row.
     
     ## Get the name of the parameters to be compared
-    names_param <- unlist(getParameterNames(.object, .model = .model))
+    names_param <- unlist(getParameterNames(.object, .model = .parameters_to_compare))
     
     ## Select relevant columns
     all_comb <- all_comb[, c(names_param, "group_id")]
@@ -428,7 +419,7 @@ testMGD <- function(
         ## Compute and save test statistic
         teststat_permutation[["Chin"]] <- calculateParameterDifference(
           .object = Est_temp, 
-          .model  = .model)
+          .model  = .parameters_to_compare)
       }
       ## Sarstedt et al. (2011) ------------------------------------------------
       if(any(.approach_mgd %in% c("all", "Sarstedt"))) {

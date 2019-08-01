@@ -58,8 +58,8 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen. Note that the scope of the seed is limited
-to the body of the function it is used in. Hence, the gloabal seed will
-not me altered!}
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 
 \item{.sign_change_option}{Character string. Which sign change option should
 be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",
@@ -139,7 +139,7 @@ The default is \code{499} for the first and \code{199} for the second run
 but should be increased in real applications. See e.g.,
 \insertCite{Hesterberg2015;textual}{cSEM}, p.380,
 \insertCite{Davison1997;textual}{cSEM}, and
-\insertCite{Efron2016}{cSEM} for recommendations.
+\insertCite{Efron2016;textual}{cSEM} for recommendations.
 For jackknife \code{.R} are \code{.R2} are ignored.
 
 Resampling may produce inadmissble results (as checked by \code{\link[=verify]{verify()}}).
@@ -169,7 +169,9 @@ for both \code{.eval_plan = "sequential"} and \code{.eval_plan = "multiprocess"}
 See \link[future.apply:future_lapply]{?future_lapply} for details.
 }
 \examples{
-\donttest{
+\donttest{# ===========================================================================
+# Basic usage
+# ===========================================================================
 model <- "
 # Structural model
 QUAL ~ EXPE
@@ -187,35 +189,73 @@ SAT  =~ sat1  + sat2  + sat3  + sat4
 VAL  =~ val1  + val2  + val3  + val4
 "
 
+## Estimate the model without resampling 
 a <- csem(satisfaction, model)
 
-# Bootstrap and jackknife estimation
+## Bootstrap and jackknife estimation
 boot <- resamplecSEMResults(a)
 jack <- resamplecSEMResults(a, .resample_method = "jackknife") 
 
-# Bootstrap resampling with resampling each resample (totals .R*R2 runs).
-boot1 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,
-                             .resample_method2 = "bootstrap", .R2 = 20,
-                             .seed = 1303)
+## Alternatively use .resample_method in csem()
+boot_csem <- csem(satisfaction, model, .resample_method = "bootstrap")
+jack_csem <- csem(satisfaction, model, .resample_method = "jackknife")
 
+# ===========================================================================
+# Extended usage
+# ===========================================================================
+### Double resampling  ------------------------------------------------------
+# The confidence intervals (e.g. the bias-corrected and accelearated CI) 
+# require double resampling. Use .resample_method2 for this.
+
+boot1 <- resamplecSEMResults(
+  .object = a, 
+  .resample_method  = "bootstrap", 
+  .R                = 50,
+  .resample_method2 = "bootstrap", 
+  .R2               = 20,
+  .seed             = 1303
+  )
+
+## Again, this is identical to using csem 
+boot1_csem <- csem(
+  .data             = satisfaction, 
+  .model            = model, 
+  .resample_method  = "bootstrap",
+  .R                = 50,
+  .resample_method2 = "bootstrap",
+  .R2               = 20,
+  .seed             = 1303
+  )
+
+identical(boot1, boot1_csem) # only true if .seed was set
+
+### Inference ---------------------------------------------------------------
 # To get inferencial quanitites such as the estimated standard error or
-# the percentile confidence intervall for each resampled quantity use infer()
+# the percentile confidence intervall for each resampled quantity use 
+# postestimation function infer()
+
 inference <- infer(boot1)
-inference$Path_estimates$Standard_deviation
+inference$Path_estimates$sd
 inference$Path_estimates$CI_percentile
 
 # As usual summarize() can be called directly
 summarize(boot1)
 
 # In the example above .R x .R2 = 50 x 20 = 1000. Multiprocessing will be
-# faster here and is therefore recommended. Note that multiprocessing
+# faster on most systems here and is therefore recommended. Note that multiprocessing
 # does not affect the random number generation
-boot2 <- resamplecSEMResults(a, .resample_method = "bootstrap", .R = 50,
-                             .resample_method2 = "bootstrap", .R2 = 20,
-                             .eval_plan = "multiprocess", .seed = 1303)
 
-identical(boot1, boot2)
-}                  
+boot2 <- resamplecSEMResults(
+  .object           = a, 
+  .resample_method  = "bootstrap", 
+  .R                = 50,
+  .resample_method2 = "bootstrap", 
+  .R2               = 20,
+  .eval_plan        = "multiprocess", 
+  .seed             = 1303
+  )
+
+identical(boot1, boot2)}
 }
 \references{
 \insertAllCited{}

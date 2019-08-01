@@ -135,8 +135,8 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen. Note that the scope of the seed is limited
-to the body of the function it is used in. Hence, the gloabal seed will
-not me altered!}
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 
 \item{.sign_change_option}{Character string. Which sign change option should
 be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",

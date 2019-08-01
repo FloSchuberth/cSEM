@@ -36,10 +36,10 @@ Defaults to \code{FALSE}.}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is choosen. Note that the scope of the seed is limited
-to the body of the function it is used in. Hence, the gloabal seed will
-not me altered!}
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 
-\item{.verbose}{Logical. Should information be printed to the console? Defaults
+\item{.verbose}{Logical. Should information (e.g., progress bar) be printed to the console? Defaults
 to \code{TRUE}.}
 }
 \value{
@@ -68,6 +68,9 @@ See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in
 the context of PLS-PM.
 }
 \examples{
+\donttest{# ===========================================================================
+# Basic usage
+# ===========================================================================
 model <- "
 # Structural model
 eta2 ~ eta1
@@ -78,13 +81,14 @@ eta1 =~ y11 + y12 + y13
 eta2 =~ y21 + y22 + y23
 eta3 =~ y31 + y32 + y33
 "
+
+## Estimate using two different estimators
 out <- csem(threecommonfactors, model, .approach_weights = "PLS-PM")
 out1 <- csem(threecommonfactors, model, .approach_weights = "GSCA")
 
 ## Test (.R is small to save time; should be higher in real applications)
 testOMF(out, .R = 50)
-testOMF(out1, .R = 50)
-
+testOMF(out1, .R = 50)}
 }
 \references{
 \insertAllCited{}
