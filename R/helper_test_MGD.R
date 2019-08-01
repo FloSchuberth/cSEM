@@ -216,7 +216,7 @@ getParameterNames <- function(
     temp_n <- model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]
     names_loadings <- paste0(temp, " =~ ", colnames(temp_n)) 
     }else{
-      names_loadings = NULL
+      names_loadings <- NULL
     }
   } else {
     names_loadings <- NULL
@@ -236,7 +236,7 @@ getParameterNames <- function(
     temp_n <- model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]
     names_weights <- paste0(temp, " <~ ", colnames(temp_n))
     }else{
-      names_weights = NULL
+      names_weights <- NULL
     } 
   } else {
     names_weights <- NULL
