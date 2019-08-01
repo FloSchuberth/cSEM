@@ -10,7 +10,7 @@ output: github_document
 [![Build Status](https://travis-ci.com/M-E-Rademaker/cSEM.svg?branch=master)](https://travis-ci.com/M-E-Rademaker/cSEM)
 
 WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES TO THE API ARE VERY LIKELY. 
-         Use the package with caution and please report bugs to [the package developer](mailto:manuel.rademaker@uni-wuerzburg.de). 
+         Use the package with caution and please report bugs to [the package developers](mailto:manuel.rademaker@uni-wuerzburg.de,f.schuberth@utwente.nl). 
          The first stable relase will be version 0.0.1, most likely in mid 2019.
 
 ## Purpose
