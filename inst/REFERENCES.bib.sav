@@ -647,7 +647,7 @@ Moreover, we checked for applications of PLS in combination with one or more add
 @InCollection{Nitzl2010,
   author    = {Nitzl, Christian},
   title     = {{Eine anwenderorientierte Einf{\"u}hrung in die Partial Least Square (PLS)-Methode}},
-  booktitle = {Arbeitspapier},
+  booktitle = {A},
   publisher = {Universit{\"a}t Hamburg, Institut f{\"u}r Industrielles Management},
   year      = {2010},
   number    = {21},

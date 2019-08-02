@@ -29,7 +29,7 @@ Defaults to "\emph{none}".}
 
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
-"\emph{Sarstedt}", or "\emph{Keil}. Default to "\emph{all}" in which case all approaches are
+"\emph{Sarstedt}", "\emph{Keil}, or "\emph{Nitzl}". Default to "\emph{all}" in which case all approaches are
 computed (if possible).}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear

@@ -25,7 +25,7 @@
 #'   Defaults to "*none*".
 #' @param .approach_mgd Character string or a vector of character strings. 
 #'   Approach used for the multi-group comparison. One: "*all*", "*Klesel*", "*Chin*", 
-#'   "*Sarstedt*", or "*Keil*. Default to "*all*" in which case all approaches are
+#'   "*Sarstedt*", "*Keil*, or "*Nitzl*". Default to "*all*" in which case all approaches are
 #'   computed (if possible).      
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
@@ -366,7 +366,7 @@ args_default <- function(.choices = FALSE) {
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("2stage", "RI_original", "RI_extended", "mixed"),
     .approach_alpha_adjust   = c("none", "bonferroni"),
-    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil"),
+    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl"),
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS", "3SLS"),

@@ -8,7 +8,7 @@ testMGD(
  .object                = NULL,
  .alpha                 = 0.05,
  .approach_p_adjust     = "none",
- .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil"),
+ .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil","Nitzl"),
  .parameters_to_compare = NULL,
  .handle_inadmissibles  = c("replace", "drop", "none"),
  .R_permutation         = 499,
@@ -32,7 +32,7 @@ their description. Defaults to "\emph{none}".}
 
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
-"\emph{Sarstedt}", or "\emph{Keil}. Default to "\emph{all}" in which case all approaches are
+"\emph{Sarstedt}", "\emph{Keil}, or "\emph{Nitzl}". Default to "\emph{all}" in which case all approaches are
 computed (if possible).}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
@@ -78,6 +78,7 @@ named list containing the following list elements:
 \item{\code{$Chin}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
 \item{\code{$Sarstedt}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
 \item{\code{$Keil}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
+\item{\code{$Nitzl}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
 }
 }
 \description{
@@ -121,8 +122,24 @@ adjustments are available via \code{.approach_p_adjust}. See
 \item{Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
 \insertCite{Keil2000;textual}{cSEM} tests if parameter k is equal
-between two groups. The calculation of the standard error of the parameter
+between two groups. It is assumed, that the standard errors of the coefficients are
+equal across groups. The calculation of the standard error of the parameter
 difference is adjusted as proposed by \insertCite{Henseler2009;textual}{cSEM}.
+If more than two groups are tested the parameter is compared
+between all pairs of groups. In this case, it is recommended
+to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+done by p-value). If several parameters are tested simultaneously, correction
+is by group and number of parameters. By default
+no multiple testing correction is done, however, several common
+adjustments are available via \code{.approach_p_adjust}. See
+\code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
+}
+#' \item{Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
+Groups are compared in terms of parameter differences across groups.
+Similarly to \insertCite{Keil2000;textual}{cSEM}, a single parameter k is tested
+whether it is equal between two groups. In contrast to \insertCite{Keil2000;textual}{cSEM},
+it is assumed, that the standard errors of the coefficients are
+equal across groups \insertCite{Sarstedt2011}{cSEM}.
 If more than two groups are tested the parameter is compared
 between all pairs of groups. In this case, it is recommended
 to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
