@@ -215,6 +215,10 @@ using R's `:::` mechanism.
 
 The AVE is the basis for the Fornell-Larcker criterion.
 
+## Fit Indices {#fit_indices}
+
+To do
+
 ## Reliability {#reliability}
 
 ### Definition
