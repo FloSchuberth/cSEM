@@ -92,7 +92,7 @@ print.cSEMResults <- function(x, ...) {
       "- ", magenta("predict"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n")
-  cat(rule(line = "bar2", width = 80), "\n")
+  cat(rule2(type = 2), "\n")
 }
 
 #' `cSEMSummarize` method for `print()`
