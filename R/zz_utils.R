@@ -126,28 +126,34 @@ warning2 <- function(...) {
 #' @noRd
 #' 
 rule2 <- function(x = "", type = 1, align = "center") {
-  
+  # type1 : "-"
+  # type2 : "_"
+  # type3 : "="
   nt <- nchar(x)
   
   if(nt == 0) {
-    makeLine(type = type, width = 80)
-  } else {
-    width <- (80 - nt) / 2 - 1
-    
-    if(align == "center") {
-      paste0(
-        makeLine(type = type, width = width),
-        paste0(" ", x, " "),
-        makeLine(type = type, width = width)
-      )
-    } else if(align == "right") {
-      
-    } else if(align == "left") {
-      
-    } else {
-      stop2("`align` must be one of 'center', 'right', or 'left'.")
-    } 
+    return(makeLine(type = type, width = 80))
+  } else if(nt != 0 & (nt %% 2) == 0) { # number is not zero and even
+    width1 <- width2 <- (80 - nt) / 2
+  } else { # number is not zero and odd
+    width1 <- ceiling((80 - nt) / 2)
+    width2 <- width1 - 1
   }
+  
+  if(align == "center") {
+    paste0(
+      # The "-1" is for the " " characters
+      makeLine(type = type, width = width1 - 1),
+      paste0(" ", x, " "),
+      makeLine(type = type, width = width2 - 1)
+    )
+  } else if(align == "right") {
+    paste0(makeLine(type = type, width = 2*width1 - 1), " ", x)
+  } else if(align == "left") {
+    paste0(x, " ", makeLine(type = type, width = 2*width1 - 1))
+  } else {
+    stop2("`align` must be one of 'center', 'right', or 'left'.")
+  } 
 }
 
 #' A rule of with 80 

@@ -8,7 +8,7 @@ testMGD(
  .object                = NULL,
  .alpha                 = 0.05,
  .approach_p_adjust     = "none",
- .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil","Nitzl"),
+ .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl"),
  .parameters_to_compare = NULL,
  .handle_inadmissibles  = c("replace", "drop", "none"),
  .R_permutation         = 499,
@@ -134,7 +134,7 @@ no multiple testing correction is done, however, several common
 adjustments are available via \code{.approach_p_adjust}. See
 \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 }
-#' \item{Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
+\item{Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
 Similarly to \insertCite{Keil2000;textual}{cSEM}, a single parameter k is tested
 whether it is equal between two groups. In contrast to \insertCite{Keil2000;textual}{cSEM},

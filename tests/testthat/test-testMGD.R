@@ -21,7 +21,7 @@ test_that(".approach_mgd = 'Klesel' does not work for nonlinear models", {
   expect_error(testMGD(res_single_nonlinear_boot, .approach_mgd = "all"))
 })
 
-test_that(".approach_mgd = 'Sarstedt' cant be combined with .handle_inadmissibles = 'drop'", {
+test_that(".approach_mgd = 'Sarstedt' can not be combined with .handle_inadmissibles = 'drop'", {
   expect_error(
     testMGD(res_single_linear, .approach_mgd = "Sarstedt", .handle_inadmissibles = "drop")
   )
@@ -32,25 +32,18 @@ test_that(".approach_mgd = 'Sarstedt' cant be combined with .handle_inadmissible
 
 ## Correct
 
-test_that("All .approach_mgd options work for linear models", {
+test_that("None of the .approach_mgd choices causes an error for linear models", {
+  expect_output(
+    testMGD(
+      .object       = res_multi_linear_boot,
+      .approach_mgd = "all",
+      .R_permutation = 10
+    )
+  )
   expect_output(
     testMGD(
       .object       = res_multi_linear,
       .approach_mgd = "Klesel",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_linear,
-      .approach_mgd = "Chin",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_linear,
-      .approach_mgd = "Keil",
       .R_permutation = 10
     )
   )
@@ -63,14 +56,28 @@ test_that("All .approach_mgd options work for linear models", {
   )
   expect_output(
     testMGD(
-      .object       = res_multi_linear_boot,
-      .approach_mgd = "all",
+      .object       = res_multi_linear,
+      .approach_mgd = "Chin",
+      .R_permutation = 10
+    )
+  )
+  expect_output(
+    testMGD(
+      .object       = res_multi_linear,
+      .approach_mgd = "Keil",
+      .R_permutation = 10
+    )
+  )
+  expect_output(
+    testMGD(
+      .object       = res_multi_linear,
+      .approach_mgd = "Nitzl",
       .R_permutation = 10
     )
   )
 })
 
-test_that("Chin, Keil and Sarstedt work for nonlinear models", {
+test_that("Chin, Keil, Nitzl and Sarstedt work for nonlinear models", {
   expect_output(
     testMGD(
       .object       = res_multi_nonlinear,
@@ -82,6 +89,13 @@ test_that("Chin, Keil and Sarstedt work for nonlinear models", {
     testMGD(
       .object       = res_multi_nonlinear,
       .approach_mgd = "Keil",
+      .R_permutation = 10
+    )
+  )
+  expect_output(
+    testMGD(
+      .object       = res_multi_nonlinear,
+      .approach_mgd = "Nitzl",
       .R_permutation = 10
     )
   )
@@ -94,13 +108,26 @@ test_that("Chin, Keil and Sarstedt work for nonlinear models", {
   )
 })
 
-test_that("All .approach_mgd options work for '2ndorder' models", {
+test_that("None of the .approach_mgd choices causes an error for '2ndorder' models", {
+  expect_output(
+    testMGD(
+      .object       = res_multi_2ndorder_boot,
+      .approach_mgd = "all",
+      .R_permutation = 10
+    )
+  )
   expect_output(
     testMGD(
       .object       = res_multi_2ndorder,
       .approach_mgd = "Klesel",
-      .R_permutation = 10,
-      .handle_inadmissibles = "replace" # to make sure we have enough admissibles
+      .R_permutation = 10
+    )
+  )
+  expect_output(
+    testMGD(
+      .object       = res_multi_2ndorder_boot,
+      .approach_mgd = "Sarstedt",
+      .R_permutation = 10
     )
   )
   expect_output(
@@ -119,15 +146,8 @@ test_that("All .approach_mgd options work for '2ndorder' models", {
   )
   expect_output(
     testMGD(
-      .object       = res_multi_2ndorder_boot,
-      .approach_mgd = "Sarstedt",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_2ndorder_boot,
-      .approach_mgd = "all",
+      .object       = res_multi_2ndorder,
+      .approach_mgd = "Nitzl",
       .R_permutation = 10
     )
   )

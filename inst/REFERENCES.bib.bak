@@ -644,13 +644,15 @@ Moreover, we checked for applications of PLS in combination with one or more add
   file     = {Henseler2009.pdf:Henseler2009.pdf:PDF},
 }
 
-@Article{Nitzl2010,
-  author  = {Nitzl, Christian},
-  title   = {{Eine anwenderorientierte Einf{\"u}hrung in die Partial Least Square (PLS)-Methode}},
-  journal = {Universit{\"a}t Hamburg, Institut f{\"u}r Industrielles Management, Hamburg},
-  year    = {2010},
-  number  = {21},
-  file    = {Nitzl2010.pdf:Nitzl2010.pdf:PDF},
+@InCollection{Nitzl2010,
+  author    = {Nitzl, Christian},
+  title     = {{Eine anwenderorientierte Einf{\"u}hrung in die Partial Least Square (PLS)-Methode}},
+  booktitle = {Arbeitspapier},
+  publisher = {Universit{\"a}t Hamburg, Institut f{\"u}r Industrielles Management},
+  year      = {2010},
+  number    = {21},
+  address   = {Hamburg},
+  file      = {Nitzl2010.pdf:Nitzl2010.pdf:PDF},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}

@@ -51,7 +51,7 @@
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
-#' #' \item{Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
+#' \item{Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   Similarly to \insertCite{Keil2000;textual}{cSEM}, a single parameter k is tested
 #'   whether it is equal between two groups. In contrast to \insertCite{Keil2000;textual}{cSEM},
@@ -85,7 +85,7 @@
 #'  .object                = NULL,
 #'  .alpha                 = 0.05,
 #'  .approach_p_adjust     = "none",
-#'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil","Nitzl"),
+#'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl"),
 #'  .parameters_to_compare = NULL,
 #'  .handle_inadmissibles  = c("replace", "drop", "none"),
 #'  .R_permutation         = 499,
@@ -141,18 +141,22 @@ testMGD <- function(
  .verbose               = TRUE
 ){
 
-  ## Match arguments
-  diff <- setdiff(.approach_mgd, args_default(.choices =  TRUE)$.approach_mgd)
-  
+  # Check .approach_mgd argument choices
+  diff <- setdiff(.approach_mgd, args_default(TRUE)$.approach_mgd)
+
   if(length(diff) != 0) {
     stop2(
       "The following error occured in the testMGD() function:\n",
       "Unknown approach: ", paste0(diff, collapse = ", "), ".",
       " Possible choices are: ",
-      paste0(args_default(.choices =  TRUE)$.approach_mgd, collapse = ", "))
+      paste0(args_default(TRUE)$.approach_mgd, collapse = ", "))
   }
+  
+  ## Match arguments
   .approach_mgd         <- match.arg(.approach_mgd, several.ok = TRUE)
-  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles) # no reference to 
+                           # args_default, because args_default()$.handle_inadmissibles
+                           # has "drop" as default, but testMGD hast "replace".
   .type_vcv             <- match.arg(.type_vcv)
   
   ### Checks and errors ========================================================
@@ -238,11 +242,14 @@ testMGD <- function(
                                                        .model = .parameters_to_compare)
   }
   
-  ## Sarstedt et al. (2011) ----------------------------------------------------
-  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil","Nitzl"))) {
+  ## Sarstedt et al. (2011), Keil et al. (2000), Nitzl (2010) ------------------
+  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl"))) {
     
     ## Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
+      if(.verbose) {
+        cat("Bootstrapping cSEMResults object ...\n\n")
+      }
       .object <- resamplecSEMResults(
         .object               = .object,
         .resample_method      = "bootstrap",
@@ -251,26 +258,14 @@ testMGD <- function(
         .seed                 = .seed) 
     }
     
-
     ## Combine bootstrap results in one matrix
     ll_org <- lapply(.object, function(y) {
       if(inherits(.object, "cSEMResults_2ndorder")) {
-        x <- y$Second_stage$Information$Resamples$Estimates$Estimates1
-        
+        x    <- y$Second_stage$Information$Resamples$Estimates$Estimates1
         nobs <- nrow(y$First_stage$Information$Data)
-        
-        ## Get bootstrap seeds
-        # bootstrap_seeds <- sapply(.object, function(x)  {
-        #   x$Second_stage$Information$Resamples$Information_resample$Seed 
-        # })
       } else {
-        x <- y$Estimates$Estimates_resample$Estimates1
-        # Read out sample size of the group
+        x    <- y$Estimates$Estimates_resample$Estimates1
         nobs <- nrow(y$Information$Data)
-        ## Get bootstrap seeds
-        # bootstrap_seeds <- sapply(.object, function(x) {
-        #   x$Information$Information_resample$Seed
-        # }) 
       }
       path_resamples    <- x$Path_estimates$Resampled
       loading_resamples <- x$Loading_estimates$Resampled
@@ -293,18 +288,21 @@ testMGD <- function(
         "ses_all"           = c(path_se, loading_se, weight_se))
     })
     
-    if(any(.approach_mgd %in% c("Nitzl","Keil","all"))){
-      diff_para_Keil<-diff_para_Nitzl <- calculateParameterDifference(.object = .object, 
-                                                     .model = .parameters_to_compare)
-      
+    ## Keil and Nitzl approach 
+    if(any(.approach_mgd %in% c("all", "Nitzl", "Keil"))) {
+      diff_para_Keil <- diff_para_Nitzl <- calculateParameterDifference(
+        .object = .object, 
+        .model  = .parameters_to_compare
+        )
       
       # permute .objects
       object_permu <- utils::combn(.object, 2, simplify = FALSE)
       names(object_permu) <- sapply(object_permu, function(x) paste0(names(x)[1], '_', names(x)[2]))
  
       # Approach suggested by Keil 
-      if(any(.approach_mgd %in% c("Keil","all"))){     
-      teststat_Keil <- lapply(names(object_permu),function(x){
+      if(any(.approach_mgd %in% c("all", "Keil"))) {     
+        
+      teststat_Keil <- lapply(names(object_permu), function(x) {
        diff <- diff_para_Keil[[x]]
         ses1 <- ll_org[[names(object_permu[[x]][1])]]$ses_all
         ses2 <- ll_org[[names(object_permu[[x]][2])]]$ses_all
@@ -318,16 +316,16 @@ testMGD <- function(
             (n2-1)^2/(n1+n2-2)*ses2^2)*sqrt(1/n1+1/n2) 
           
         test_stat <- diff/ses_total[names(diff)]
-        list("teststat"=test_stat,"df"=n1+n2-2)
-        
+        list("teststat" = test_stat, "df" = n1 + n2 - 2)
       })
       names(teststat_Keil) <- names(object_permu)
       teststat[["Keil"]] <- teststat_Keil 
       }
       
       # Approach suggested by Nitzl (2010)
-      if(any(.approach_mgd %in% c("Nitzl","all"))){     
-        teststat_Nitzl <- lapply(names(object_permu),function(x){
+      if(any(.approach_mgd %in% c("all", "Nitzl"))) { 
+        
+        teststat_Nitzl <- lapply(names(object_permu), function(x){
           diff <- diff_para_Nitzl[[x]]
           ses1 <- ll_org[[names(object_permu[[x]][1])]]$ses_all
           ses2 <- ll_org[[names(object_permu[[x]][2])]]$ses_all
@@ -346,42 +344,45 @@ testMGD <- function(
           numerator <- ((n1-1)/n1*ses1^2+(n2-1)/n2*ses2^2)^2
           denominator <- (n1-1)/n1^2*ses1^4+(n2-1)/n2^2*ses2^4
           df <- round(numerator/denominator-2)
-          list("teststat"=test_stat,"df"=df)
-          
+          list("teststat" = test_stat, "df" = df)
         })
         names(teststat_Nitzl) <- names(object_permu)
         teststat[["Nitzl"]] <- teststat_Nitzl 
       }
       
-  }
-  if(any(.approach_mgd %in% c("Sarstedt","all"))){ #if approach_mgd == "Sarstedt" or "all"
-    # Remove SEs
-    ll <- lapply(ll_org, function(x)x[1:5])
-    names(ll) <- names(ll_org)
-    ## Transpose, get id column, bind rows and columns
-    ll <- purrr::transpose(ll)
-    group_id <- rep(1:length(.object), unlist(ll$n))
-    ll <- lapply(ll, function(x) do.call(rbind, x))
-    
-    all_comb <- cbind(ll$path_resamples, 
-                      ll$loading_resamples, 
-                      ll$weight_resamples, 
-                      "group_id" = group_id)
-    # all_comb contains all parameter estimate that could potentially be compared 
-    # plus an id column indicating the group adherance of each row.
-    
-    ## Get the name of the parameters to be compared
-    names_param <- unlist(getParameterNames(.object, .model = .parameters_to_compare))
-    
-    ## Select relevant columns
-    all_comb <- all_comb[, c(names_param, "group_id")]
-    
-    ## Add test statistic Sarstedt
-    teststat[["Sarstedt"]] <- calculateFR(.resample_sarstedt = all_comb)
-    }#approach_mgd "Sarstedt"and "all"
-  }
+    }
+    ## Sarstedt approach
+    if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
+      # Remove SEs
+      ll <- lapply(ll_org, function(x)x[1:5])
+      names(ll) <- names(ll_org)
+      ## Transpose, get id column, bind rows and columns
+      ll <- purrr::transpose(ll)
+      group_id <- rep(1:length(.object), unlist(ll$n))
+      ll <- lapply(ll, function(x) do.call(rbind, x))
+      
+      all_comb <- cbind(ll$path_resamples, 
+                        ll$loading_resamples, 
+                        ll$weight_resamples, 
+                        "group_id" = group_id)
+      # all_comb contains all parameter estimate that could potentially be compared 
+      # plus an id column indicating the group adherance of each row.
+      
+      ## Get the name of the parameters to be compared
+      names_param <- unlist(getParameterNames(.object, .model = .parameters_to_compare))
+      
+      ## Select relevant columns
+      all_comb <- all_comb[, c(names_param, "group_id")]
+      
+      ## Add test statistic Sarstedt
+      teststat[["Sarstedt"]] <- calculateFR(.resample_sarstedt = all_comb)
+    } # END approach_mgd %in% c("all", "Sarstedt")
+  } # END .approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl")
   
   ### Permutation ==============================================================
+  if(.verbose) {
+    cat("Start permutation:\n\n")
+  }
   ## Preparation
   # Put data of each groups in a list and combine
   if(inherits(.object, "cSEMResults_2ndorder")) {
