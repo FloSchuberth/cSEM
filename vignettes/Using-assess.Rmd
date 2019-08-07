@@ -51,6 +51,15 @@ Currently the following quality criteria are implemented:
     - The **geodesic distance** (DG)
     - The **squared Euclidian distance** (DL)
     - The **maximum-likelihood distance** (DML)
+- Fit indices
+    - The **goodness-of-fit index** (GFI) 
+    - The **standardized root mean square residual** (SRMR)
+    - The **root mean square error of approximation** (RMSEA)
+    - The **normed fit index** (NFI)
+    - The **non-normed fit index** (NNFI)
+    - The **comparative fit index** (CFI)
+    - The **incremental fit index** (IFI)
+    - The **root mean square outer residual covariance** ($\text{RMS}_{\theta}$) in two alternative versions
 - The **Goodness-of-Fit** (GoF) proposed by [@Tenenhaus2004]
 - The **variance inflation factors** (VIF) for the structural equations as
   well as for Mode B regressions equations.
@@ -67,12 +76,13 @@ For implementation details see the [Methods & Formulae](#methods) section.
 ```{r eval=FALSE}
 assess(
   .object              = NULL,
-  .only_common_factors = TRUE
+  .only_common_factors = TRUE,
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbach_alpha", 
                            "cronbach_alpha_weighted", "dg", "dl", "dml",
                            "esize", "gof", "htmt", "r2", "r2_adj", "ra",
                            "srmr", "rho_T", "rho_T_weighted", "vif", 
-                           "vifmodeb",  "fl_criterion"),
+                           "vifmodeb",  "fl_criterion", "gfi", "rmsea",                                "cfi", "ifi", "nfi", "nnfi", "rms_theta"),
+  .model_implied       = TRUE,
   ...
 )
 ```
@@ -94,6 +104,13 @@ assess(
    AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates. 
    Defaults to `TRUE`.
 
+`.model_implied`
+
+:  Logical. Refers to the calculation of the quality criterion
+   $\text{RMS}_{\theta}$. Should the covariance matrix of the constructs be
+   calculated taking into account the restrictions of the structural model? 
+   Defaults to `TRUE`.
+ 
 `...`
 
 :  Further arguments passed to functions called by `assess()`.
@@ -216,8 +233,36 @@ using R's `:::` mechanism.
 The AVE is the basis for the Fornell-Larcker criterion.
 
 ## Fit Indices {#fit_indices}
+### Definition
+First fit indices for CFA were introduced by @Bentler1980 in 1980. Since then a large number of indices has been defined. Contrary to exact tests of model fit, the purpose of fit indices is to measure the approximate fit of a structural equation model. The values of fit indices are continuous and - in the case of normed indices - between 0 and 1. Fit indices are divided into two classes: 
+- 'badness of fit' (resp. 'lack of fit') indices where smaller values indicate a better fit
+- 'goodness of fit' indices where higher values represent a better fit.
 
-To do
+Whereas fit indices in CFA were subject of several studies analyzing their empirical or theoretical properties, barely anything is known about fit indices in composite-based methods. Much research remains to be done (which also applies to the area of fit indices in CFA). A highly controversial issue are cutoff criteria for fit indices. For CFA, based on an empirical study, cutoff criteria for some fit indices were proposed by @Hu1999. Cutoff criteria for composite-based methods are still to be analyzed. Using `assess()` to calculate fit indices, the user should always keep in mind that the value of a fit index is just an indication of good or bad fit. Other aspects related to model fit have to be considered. It is inappropriate to make a binary decision about acceptance or rejection of a model by comparing the value of the fit index with a (more or less) arbitrary cutoff value.  
+
+The definitions of those fit indices which can be calculated by `assess()` are given below:
+- The **goodness-of-fit index** (GFI) measures the increase in fit when specifying the model under consideration compared with no model at all. 
+- The **standardized root mean square residual** (SRMR) is the square root of the mean of squared residual correlations.
+- The **root mean square error of approximation** (RMSEA) is the square root of the discrepancy due to approximation per degree of freedom.
+- The **normed fit index** (NFI) measures the increase in fit when specifying the model under consideration relative to the fit of a certain baseline model (also called null model).
+- The **non-normed fit index** (NNFI) accounts for the degrees of freedom of the involved models. It is the ratio of the distance between the fit of the baseline model and the fit of the specified model (each per degree of freedom) and the distance beetween the fit of the baseline model and the expected fit of the specified model (each per degree of freedom).
+- The **comparative fit index** (CFI) estimates the relative decrease in non-centrality when specifying the model under consideration instead of the baseline model. 
+- The **incremental fit index** (IFI) is the ratio of the distance between the fit of the baseline model and the fit of the specified model and the distance beetween the fit of the baseline model and the expected fit of the specified model. Its definition differs only slighty from the definition of NNFI.
+- The **root mean square outer residual covariance** ($\text{RMS}_{\theta}$) is defined as the square root of the mean squared covariances of the residuals of the outer model. The calculation of the indicator's residual covariance matrix involves the calculation of the construct's covariance matrix. In @Lohmoeller1989, this is not stated more precisely. That is why, two alternatives are possible:
+    - the restrictions of the structural model are taken into account basing       the calculation on the model-implied construct covariance matrix
+    - the restrictions of the structural are not taken into account basing        the calculation on the empirical construct covariance matrix
+
+It should be noted that not all of the above fit indices were originally designed for the use with composite-based methods of structural equation modeling (CCA). The indices RMSEA and CFI are non-centrality based and require specific assumptions on model and data typically made in CFA. The same applies for IFI and NNFI since their calculation relies on the properties (primarily the expectation) of the test statistic when data follow a normal distribution. In general, those assumptions and requirements are not valid for CCA. For this reason, the intuition behind these indices does not hold for composite-based SEM. Nevertheless, calculation of these indices is also possible in this case. Whether the values of these indices are then still meaningful and can be used for assessment of model fit is an open question. Furthermore, values of fit indices in CCA and CFA may not be compared. Users should always keep this aspect and the general limitations of fit indices in mind. It is worthwile to emphasize another time that the usage of fit indices should happen in a careful and reflected way.
+ 
+### Formulae
+
+### Implementation
+The functions are implemented as: `calculateCFI()`, `calculateNFI()`, `calculateNNFI()`, `calculateIFI()`, `calculateGFI()`, `calculateRMSEA()`, `calculateRMSTheta()`, `calculateSRMR()`. It may be called directly 
+using R's `:::` mechanism.
+
+### See also
+
+Several fit indices require a fitting function, that is to say a distance measure like the geodesic distance, the squared Euclidian distance or the maximum-likelihood distance.
 
 ## Reliability {#reliability}
 
