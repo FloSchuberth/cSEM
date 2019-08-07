@@ -57,11 +57,6 @@ testOMF <- function(
   # Implementation is based on:
   # Dijkstra & Henseler (2015) - Consistent Paritial Least Squares Path Modeling
   
-  if(.verbose) {
-    cat(rule2("Test for overall model fit based on Beran & Srivastava (1985)",
-              type = 3), "\n\n")
-  }
-  
   ## Match arguments
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   
@@ -72,6 +67,17 @@ testOMF <- function(
     
     ## Collect arguments
     arguments <- x12$Arguments
+    
+    if(!is.na(x12$Approach_2ndorder)) {
+      # Which variables are second orders
+      vars_2nd <- x12$Model_original$vars_2nd
+      # Select only columns that are not repeated indicators
+      selector <- !grepl("_2nd_", colnames(x12$Model$measurement))
+      
+      ## Its important to use the original arguments here
+      arguments <- x12$Arguments
+    }
+
     
   } else if(inherits(.object, "cSEMResults_multi")) {
     
@@ -94,13 +100,27 @@ testOMF <- function(
     x21 <- .object$Second_stage$Estimates
     x22 <- .object$Second_stage$Information
     
+    # Which variables are second orders
+    vars_2nd <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
+    # Select only columns that are not repeated indicators
+    selector <- !grepl("_2nd_", colnames(x12$Model$measurement))
+    
     ## Collect arguments
-    arguments <- .object$Second_stage$Information$Arguments_original
+    arguments <- x22$Arguments_original
+    
+    ## Append the 2ndorder approach to args
+    arguments$.approach_2ndorder <- x22$Approach_2ndorder
+    
   } else {
     stop2(
       "The following error occured in the testOMF() function:\n",
       "`.object` must be a `cSEMResults` object."
     )
+  }
+  
+  if(.verbose) {
+    cat(rule2("Test for overall model fit based on Beran & Srivastava (1985)",
+              type = 3), "\n\n")
   }
   
   ### Checks and errors ========================================================
@@ -127,11 +147,17 @@ testOMF <- function(
                    .saturated = .saturated,
                    .type_vcv  = "indicator")
   
+  if(!is.na(x12$Approach_2ndorder)) {
+    ## Prune S and X (Sigma_hat is already pruned)
+    S <- S[selector, selector]
+    X <- X[, selector]
+  }
+  
   ## Calculate test statistic
   teststat <- c(
-    "dG"   = calculateDG(.object),
-    "SRMR" = calculateSRMR(.object),
-    "dL"   = calculateDL(.object)
+    "dG"   = calculateDG(.matrix1 = S, .matrix2 = Sigma_hat),
+    "SRMR" = calculateSRMR(.matrix1 = S, .matrix2 = Sigma_hat),
+    "dL"   = calculateDL(.matrix1 = S, .matrix2 = Sigma_hat)
   )
   
   ## Transform dataset, see Beran & Srivastava (1985)
@@ -175,7 +201,15 @@ testOMF <- function(
     arguments[[".data"]] <- X_temp
     
     # Estimate model
-    Est_temp <- do.call(csem, arguments)               
+    Est_temp <- if(inherits(.object, "cSEMResults_2ndorder")) {
+      
+      do.call(csem, arguments) 
+      
+    } else {
+      # It is important to use foreman() since the repeated indicators approach
+      # will fail otherwise
+      do.call(foreman, arguments)
+    }           
     
     # Check status (Note: output of verify for second orders is a list)
     status_code <- sum(unlist(verify(Est_temp)))
@@ -185,12 +219,34 @@ testOMF <- function(
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
       
-      ref_dist[[counter]] <- c(
-        "dG"   = calculateDG(Est_temp),
-        "SRMR" = calculateSRMR(Est_temp),
-        "dL"   = calculateDL(Est_temp)
-      ) 
-      
+      if(!is.na(x12$Approach_2ndorder)) {
+        
+        if(inherits(.object, "cSEMResults_default")) {
+          S_temp         <- Est_temp$Estimates$Indicator_VCV
+        } else if(inherits(.object, "cSEMResults_2ndorder")) { 
+          S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
+        }
+        
+        Sigma_hat_temp <- fit(Est_temp,
+                              .saturated = .saturated,
+                              .type_vcv  = "indicator")
+        
+        ## Prune S_temp (Sigma_hat is already pruned)
+        S_temp <- S_temp[selector, selector]
+        
+        # Standard case when there are no repeated indicators
+        ref_dist[[counter]] <- c(
+          "dG"   = calculateDG(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
+          "SRMR" = calculateSRMR(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
+          "dL"   = calculateDL(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp)
+        ) 
+      } else {
+        ref_dist[[counter]] <- c(
+          "dG"   = calculateDG(Est_temp),
+          "SRMR" = calculateSRMR(Est_temp),
+          "dL"   = calculateDL(Est_temp)
+        ) 
+      }
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
       ref_dist[[counter]] <- NA
@@ -219,6 +275,14 @@ testOMF <- function(
   
   # Delete potential NA's
   ref_dist1 <- Filter(Negate(anyNA), ref_dist)
+  
+  # Check if at least 3 admissible results were obtained
+  n_admissibles <- length(ref_dist1)
+  if(n_admissibles < 3) {
+    stop2("The following error occured in the `testOMF()` functions:\n",
+         "Less than 2 admissible results produced.", 
+         " Consider setting `.handle_inadmissibles == 'replace'` instead.")
+  }
   
   # Combine
   ref_dist_matrix <- do.call(cbind, ref_dist1) 

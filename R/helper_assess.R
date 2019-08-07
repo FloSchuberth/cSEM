@@ -803,25 +803,31 @@ calculateRMSTheta <- function(
 
 calculateSRMR <- function(
   .object    = NULL, 
+  .matrix1   = NULL,
+  .matrix2   = NULL,
   .saturated = args_default()$.saturated,
   ...
 ) {
-  
-  # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
-  if(inherits(.object, "cSEMResults_default")) {
-    S <- .object$Estimates$Indicator_VCV
-  } else if(inherits(.object, "cSEMResults_2ndorder")) {
-    S <- .object$First_stage$Estimates$Indicator_VCV
+
+  if(!is.null(.matrix1) & !is.null(.matrix2)) {
+    S         <- .matrix1
+    Sigma_hat <- .matrix2
   } else {
-    stop2(
-      "The following error occured in the calculateSRMR() function:\n",
-      "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_default")) {
+      S <- .object$Estimates$Indicator_VCV
+    } else if(inherits(.object, "cSEMResults_2ndorder")) {
+      S <- .object$First_stage$Estimates$Indicator_VCV
+    } else {
+      stop2(
+        "The following error occured in the calculateDG() function:\n",
+        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+    }
+    
+    # The SRMR as calculated by us is always based on the the difference 
+    # between correlation matrices.
+    Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator') 
   }
-  
-  # The SRMR as calculated by us is always based on the the difference 
-  # between correlation matrices.
-  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')
-  
   
   # Perhaps in the future we allow to estimate unstandardized coefficients
   C_diff    <- cov2cor(S) -  cov2cor(Sigma_hat)

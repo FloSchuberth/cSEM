@@ -87,7 +87,7 @@
 #'  .approach_p_adjust     = "none",
 #'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl"),
 #'  .parameters_to_compare = NULL,
-#'  .handle_inadmissibles  = c("replace", "drop", "none"),
+#'  .handle_inadmissibles  = c("replace", "drop", "ignore"),
 #'  .R_permutation         = 499,
 #'  .R_bootstrap           = 499,
 #'  .saturated             = FALSE,

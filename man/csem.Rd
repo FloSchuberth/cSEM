@@ -435,7 +435,7 @@ data.frame(
 
 ### Resampling --------------------------------------------------------------
 ## Basic resampling
-res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap")
+res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 40)
 res_jack <- csem(threecommonfactors, model, .resample_method = "jackknife")
 
 # See ?resamplecSEMResults for more examples
@@ -476,6 +476,7 @@ res <- csem(threecommonfactors, model, .PLS_weight_scheme_inner = "factorial",
 modes <- list("eta1" = "unit", "eta2" = "modeB", "eta3" = "unit")
 res   <- csem(threecommonfactors, model, .PLS_modes = modes)
 summarize(res)
+
 }
 \references{
 \insertAllCited{}

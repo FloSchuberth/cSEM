@@ -10,7 +10,7 @@ testMGD(
  .approach_p_adjust     = "none",
  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl"),
  .parameters_to_compare = NULL,
- .handle_inadmissibles  = c("replace", "drop", "none"),
+ .handle_inadmissibles  = c("replace", "drop", "ignore"),
  .R_permutation         = 499,
  .R_bootstrap           = 499,
  .saturated             = FALSE,
@@ -187,7 +187,7 @@ VAL  <~ val1  + val2  + val3  + val4
 
 ## Create list of virtually identical data sets
 dat <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
-out <- csem(dat, model, .resample_method = "bootstrap", .R = 20) 
+out <- csem(dat, model, .resample_method = "bootstrap", .R = 40) 
 
 ## Test 
 testMGD(out, .R_permutation = 20)

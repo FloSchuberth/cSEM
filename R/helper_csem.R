@@ -197,6 +197,7 @@ calculate2ndStage <- function(
   out$Second_stage$Information$Arguments_original <- .original_arguments
   
   ## Add second order approach to $Information
+  out$First_stage$Information$Approach_2ndorder  <- .approach_2ndorder
   out$Second_stage$Information$Approach_2ndorder <- .approach_2ndorder
   
   class(out) <- c("cSEMResults", "cSEMResults_2ndorder")
