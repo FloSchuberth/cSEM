@@ -469,23 +469,26 @@ calculatePr <- function(
   .parameters_to_compare   = NULL
   ){
   
+  # Remove names from .parameters_to_compare
+  names(.parameters_to_compare) <- NULL
+  
   group1 <- .resample_centered[[1]][,.parameters_to_compare,drop=FALSE]
   
   group2 <- .resample_centered[[2]][,.parameters_to_compare,drop=FALSE]
   
-  ret <- lapply(.parameters_to_compare, function(x){
+  ret <- sapply(.parameters_to_compare, function(x){
     # Matrix where each element of the first vector is substracted from the complete second vector 
     # theta^1 <= theta^2
-    temp12 <- outer(group1[,x],group2[,x],"-")
+    temp12 <- outer(group2[,x],group1[,x],"-")
     g1leqg2<-mean((1+sign(temp12))/2)
-    # theta^2 <= theta^1
-    temp21 <- outer(group2[,x],group1[,x],"-") 
-    g2leqg1<-mean((1+sign(temp21))/2)
+    # theta^2 <= theta^1 is equal to 1 - g1leqg2, therefore we do not need the following calculations
+    # temp21 <- outer(group1[,x],group2[,x],"-") 
+    # g2leqg1<-mean((1+sign(temp21))/2)
   
     # Return
-    c(g1leqg2,g2leqg1)
+    g1leqg2
     })
-  
+  names(ret) <- .parameters_to_compare
   ret
   
 }

@@ -324,9 +324,11 @@ testMGD <- function(
         }))
       })
       
+      names(ll_centered) <- names(ll_org)
+      
       # Create pairs which should be compared
       pairs_centered <- utils::combn(ll_centered, 2, simplify = FALSE)
-      
+      names(pairs_centered) <- sapply(pairs_centered, function(x) paste0(names(x)[1], '_', names(x)[2]))
       
       prob_Henseler <- lapply(pairs_centered,function(x){
         calculatePr(.resample_centered = x,
