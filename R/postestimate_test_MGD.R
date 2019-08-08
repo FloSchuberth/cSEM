@@ -312,31 +312,6 @@ testMGD <- function(
       
     })
     
-    
-    ## Hensler (2009) approach
-    if(any(.approach_mgd %in% c("all", "Henseler"))) {
-      # center the bootstrap sample Sarstedt et al. (2011) Eq. 4
-      ll_centered <- lapply(ll_org, function(x){
-
-        # Substract from each row of para_all the corresponding bias
-        t(apply(x$para_all,1,function(row){
-          row-x$bias_all
-        }))
-      })
-      
-      names(ll_centered) <- names(ll_org)
-      
-      # Create pairs which should be compared
-      pairs_centered <- utils::combn(ll_centered, 2, simplify = FALSE)
-      names(pairs_centered) <- sapply(pairs_centered, function(x) paste0(names(x)[1], '_', names(x)[2]))
-      
-      prob_Henseler <- lapply(pairs_centered,function(x){
-        calculatePr(.resample_centered = x,
-                    .parameters_to_compare = names_param)
-      })
-    }
-    
-    
     ## Keil and Nitzl approach 
     if(any(.approach_mgd %in% c("all", "Nitzl", "Keil"))) {
       diff_para_Keil <- diff_para_Nitzl <- calculateParameterDifference(
@@ -755,6 +730,58 @@ testMGD <- function(
   }
   
   
+  ## Henseler (2009) approach  --------------------------------------------------
+  if(any(.approach_mgd %in% c("all", "Henseler"))) {
+    # center the bootstrap sample Sarstedt et al. (2011) Eq. 4
+    ll_centered <- lapply(ll_org, function(x){
+      
+      # Substract from each row of para_all the corresponding bias
+      t(apply(x$para_all,1,function(row){
+        row-x$bias_all
+      }))
+    })
+    
+    names(ll_centered) <- names(ll_org)
+    
+    # Create pairs which should be compared
+    pairs_centered <- utils::combn(ll_centered, 2, simplify = FALSE)
+    names(pairs_centered) <- sapply(pairs_centered, function(x) paste0(names(x)[1], '_', names(x)[2]))
+    
+    # Since Henseler's approach is a one-sided test, the p-value is 1-P is the 
+    # original p-value is larger than 0.5
+    pvalue_Henseler <- lapply(pairs_centered,function(x){
+      calculatePr(.resample_centered = x,
+                  .parameters_to_compare = names_param)
+    })
+    
+    # Adjust p-value in case of multiple comparisons
+    padjusted_Henseler<- lapply(as.list(.approach_p_adjust), function(x){
+      pvector <- stats::p.adjust(unlist(pvalue_Henseler),method = x)
+      # Sort them back into list
+      relist(flesh = pvector,skeleton = pvalue_Henseler)
+    })
+    names(padjusted_Henseler) <- .approach_p_adjust
+
+    # Decision
+    decision_Henseler <- lapply(padjusted_Henseler, function(adjust_approach){ # over the different p adjustments
+      temp <- lapply(.alpha, function(alpha){# over the different significance levels
+        lapply(adjust_approach,function(group_comp){# over the different group comparisons
+          # check whether the p values are larger than a certain alpha
+          group_comp > alpha
+        })
+      })
+      names(temp) <- paste0(.alpha*100, "%")
+      temp
+    })
+    
+    # One rejection leads to overall rejection
+    decision_overall_Henseler <- lapply(decision_Henseler, function(decision_Henseler_list){
+      lapply(decision_Henseler_list,function(x){
+        all(unlist(x))
+      })
+    })
+  }
+    
   
   ### Return output ============================================================
   out <- list()
@@ -826,7 +853,15 @@ testMGD <- function(
     )
   }
   
+  if(any(.approach_mgd %in% c("all", "Henseler"))) {
+    out[["Henseler"]] <- list(
+      "P_value"            = padjusted_Henseler,
+      "Decision"           = decision_Henseler,
+      "Decision_overall"   = decision_overall_Henseler
+    )
+  }
   
+   
   class(out) <- "cSEMTestMGD"
   return(out)
 }
