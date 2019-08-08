@@ -234,14 +234,15 @@ The AVE is the basis for the Fornell-Larcker criterion.
 
 ## Fit Indices {#fit_indices}
 ### Definition
-First fit indices for CFA were introduced by @Bentler1980 in 1980. Since then a large number of indices has been defined. Contrary to exact tests of model fit, the purpose of fit indices is to measure the approximate fit of a structural equation model. The values of fit indices are continuous and - in the case of normed indices - between 0 and 1. Fit indices are divided into two classes: 
-- 'badness of fit' (resp. 'lack of fit') indices where smaller values indicate a better fit
-- 'goodness of fit' indices where higher values represent a better fit.
+First fit indices for CFA were introduced by @Bentler1980 in 1980. Since then a large number of indices has been defined. Contrary to exact tests of model fit, the purpose of fit indices is to measure the fit of a structural equation model. The values of fit indices are continuous and - in the case of normed indices - between 0 and 1. Fit indices can be divided into two classes: 
+- 'badness of fit' (resp. 'lack of fit') indices; a smaller value indicates a better fit.
+- 'goodness of fit' indices; a higher value represents a better fit.
 
-Whereas fit indices in CFA were subject of several studies analyzing their empirical or theoretical properties, barely anything is known about fit indices in composite-based methods. Much research remains to be done (which also applies to the area of fit indices in CFA). A highly controversial issue are cutoff criteria for fit indices. For CFA, based on an empirical study, cutoff criteria for some fit indices were proposed by @Hu1999. Cutoff criteria for composite-based methods are still to be analyzed. Using `assess()` to calculate fit indices, the user should always keep in mind that the value of a fit index is just an indication of good or bad fit. Other aspects related to model fit have to be considered. It is inappropriate to make a binary decision about acceptance or rejection of a model by comparing the value of the fit index with a (more or less) arbitrary cutoff value.  
+Several studies have analyzed the empirical and theoretical properties of fit indices in the context of confirmatory factor analysis (CFA), i.e., theoretical concepts are expressed by latent variables. However, only little is known about the properties and the performance of fit indices in composite models. 
+A highly controversial issue are cutoff values for fit indices. For latent variable/factor models, cutoff values have been proposed for some fit indices by a simulation study \insertcite{Hu1999}{cSEM}. In contrast, for composite models, no cutoff values have been suggested. Using 'assess()' to calculate fit indices, the user should always keep in mind that the value of a fit index is just an indication of good or bad fit. Other aspects related to model fit must be considered. It is unreasonable to make a binary decision about acceptance or rejection of a model by comparing the value of a fit index with a (more or less) arbitrary cutoff value.
 
-The definitions of those fit indices which can be calculated by `assess()` are given below:
-- The **goodness-of-fit index** (GFI) measures the increase in fit when specifying the model under consideration compared with no model at all. 
+The definitions of fit indices that can be calculated by 'assess()' are given in the following:
+- The **goodness-of-fit index** (GFI) measures the relative increase in fit of the specified model compared to no model at all. 
 - The **standardized root mean square residual** (SRMR) is the square root of the mean of squared residual correlations.
 - The **root mean square error of approximation** (RMSEA) is the square root of the discrepancy due to approximation per degree of freedom.
 - The **normed fit index** (NFI) measures the increase in fit when specifying the model under consideration relative to the fit of a certain baseline model (also called null model).
@@ -252,9 +253,35 @@ The definitions of those fit indices which can be calculated by `assess()` are g
     - the restrictions of the structural model are taken into account basing       the calculation on the model-implied construct covariance matrix
     - the restrictions of the structural are not taken into account basing        the calculation on the empirical construct covariance matrix
 
-It should be noted that not all of the above fit indices were originally designed for the use with composite-based methods of structural equation modeling (CCA). The indices RMSEA and CFI are non-centrality based and require specific assumptions on model and data typically made in CFA. The same applies for IFI and NNFI since their calculation relies on the properties (primarily the expectation) of the test statistic when data follow a normal distribution. In general, those assumptions and requirements are not valid for CCA. For this reason, the intuition behind these indices does not hold for composite-based SEM. Nevertheless, calculation of these indices is also possible in this case. Whether the values of these indices are then still meaningful and can be used for assessment of model fit is an open question. Furthermore, values of fit indices in CCA and CFA may not be compared. Users should always keep this aspect and the general limitations of fit indices in mind. It is worthwile to emphasize another time that the usage of fit indices should happen in a careful and reflected way.
+It should be noted that none of the above mentioned fit indices were originally designed for composite models. The indices RMSEA and CFI are non-centrality based and require specific assumptions on model and data typically made in CFA. The same applies for IFI and NNFI since their calculation relies on the properties (primarily the expectation) of the test statistic when data follow a normal distribution. In general, those assumptions are not made in composite models and composite-based estimators, respectively. For this reason, the intuition behind these indices does not hold for composite-based SEM. Nevertheless, calculation of these indices is also possible in this case. Whether the values of these indices are then still meaningful and can be used for assessment of model fit is an open question. Furthermore, values of fit indices for composite-based estimators and factor-based estimators may not be compared. Users should always keep this aspect and the general limitations of fit indices in mind. It is worthwile to emphasize another time that the usage of fit indices should happen in a careful and reflected way.
  
 ### Formulae
+
+The formulae of the fit indices are given in the following. In addition to the results and notation derived and defined in the [Notation][Notation] help file, the term $F = F(S, \Sigma(\hat{\theta})) = F(S, \hat{\Sigma})$ stands for the value of a fitting function evaluated at $S$ (the empirical covariance matrix of indicators) and $\hat{\Sigma}$ (the estimated model-implied covariance matrix). In the context of composite-based estimators, the distance measures $d_{G}$ (geodesic distance), $d_{L}$ (squared Euclidian distance) and $d_{ML}$ (maximum likelihood distance) serve as fitting functions.
+
+The GFI is defined as:
+$$ \text{GFI} = 1 - \frac{\text{trace}\lbrack (S-\hat{\Sigma})^{2} \rbrack }{\text{trace}(S^{2})}$$
+The numerator of the GFI (in the version used in **cSEM**) is the sum of squared residuals after fitting the specified model. The denominator is the sum of the squared entries of $S$ and can be interpreted as the total amount of covariances to be explained. This is the situation, when no model at all is specified. Thus, the GFI is a measure for the relative portion of covariances explained by the model. Other fitting functions could be deployed in the numerator of GFI. However, in this case, the intuition behind the formula of GFI will not hold any longer.
+
+The SRMR is defined as
+$$  \text{SRMR} = \sqrt{2 \sum_{j=1}^{p} \sum_{i=1}^{j} \frac{ \lbrack (s_{ij} - \hat{\sigma}_{ij})/(s_{ii} s_{jj})^{1/2} \rbrack^{2}}{p (p+1)}} $$
+where $p$ stands for the number of indicators, $s_{ij}$ is the empirical covariance between two indicators and $\hat{\sigma}_{ij}$ the estimated counterpart. The SRMR describes with which distance the observed correlations are reproduced on average by the model. Therefore, smaller values are associated with a better fit. If data are standardized, $s_{ii} = s_{jj} = 1$ holds, and the formula becomes shorter. For details see @Bentler1995.
+
+The RMSEA is defined as
+$$ \hat{\epsilon} = \sqrt{\frac{\hat{F}_0}{df_{M}}} \quad \text{where} \quad \hat{F}_{0} = \max \Bigl( 0, F(S, \hat{\Sigma}) - \frac{df_{M}}{N-1} \Bigr) $$
+In this formula, $df_{M}$ stands for the degrees of freedom of the specified model. The term $\hat{F}_{0}$ is an estimator for the discrepancy due to approximation. Thus, the RMSEA measures the discrepancy due to approximation per degree of freedom. For details see @Browne1992. The intuition of RMSEA does not apply to composite-based estimators.
+
+The fit indices NFI and NNFI were among the first fit indices to be introduced (see @Bentler1980). They are defined as:
+$$ \text{NFI} = \frac{F_{B} - F_{M}}{F_{B}} \quad \text{and} \quad \text{NNFI} = \frac{F_{B}/df_{B} - F_{M}/df_{M}}{F_{B}/df_{B} - 1/N-1} $$
+The term $F_{B}$ refers to the value of the fitting function in the null model, $F_{M}$ to the value of the fitting function in the model under consideration. Thus, the NFI measures the increase in fit relative to the fit of the null model when specifying the model. The intuition of NNFI is that (in factor-based methods) the expectation of $F_{M}/df_{M}$ is equal to $1/N-1$. This does not hold for composite-based estimators. It measures the relative departure of the numerator's term from it's expectation (in the denominator). That is why, the NNFI is not normed and can take values larger than $1$.  
+
+The CFI is defined as:
+$$ \text{CFI} = 1 - \frac{\max(0, F_{M}-df_{M})}{\max(0, F_{M}-df_{M}, F_{B}-df_{B})} $$
+Like the RMSEA, the CFI is a non-centrality based index. It measures the increase in fit (that is to say the reduction in non-centrality) when specifying the model under consideration relative to the fit of the null model. The CFI is a normed index with a value of $1$ indicating the best fit. Since it makes use of the assumptions in factor-based methods, its intuition does not apply to composite-based estimators. For details see @Bentler1990.
+
+IFI
+RMS-theta
+
 
 ### Implementation
 The functions are implemented as: `calculateCFI()`, `calculateNFI()`, `calculateNNFI()`, `calculateIFI()`, `calculateGFI()`, `calculateRMSEA()`, `calculateRMSTheta()`, `calculateSRMR()`. It may be called directly 
