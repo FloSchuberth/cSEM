@@ -8,7 +8,7 @@ testMGD(
  .object                = NULL,
  .alpha                 = 0.05,
  .approach_p_adjust     = "none",
- .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl"),
+ .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler"),
  .parameters_to_compare = NULL,
  .handle_inadmissibles  = c("replace", "drop", "none"),
  .R_permutation         = 499,
@@ -32,7 +32,7 @@ their description. Defaults to "\emph{none}".}
 
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
-"\emph{Sarstedt}", "\emph{Keil}, or "\emph{Nitzl}". Default to "\emph{all}" in which case all approaches are
+"\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", "\emph{Henseler}". Default to "\emph{all}" in which case all approaches are
 computed (if possible).}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
@@ -142,6 +142,18 @@ it is assumed, that the standard errors of the coefficients are
 equal across groups \insertCite{Sarstedt2011}{cSEM}.
 If more than two groups are tested the parameter is compared
 between all pairs of groups. In this case, it is recommended
+to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+done by p-value). If several parameters are tested simultaneously, correction
+is by group and number of parameters. By default
+no multiple testing correction is done, however, several common
+adjustments are available via \code{.approach_p_adjust}. See
+\code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
+}
+\item{Approach suggested by \insertCite{Henseler2009;textual}{cSEM}}{
+This approach is also known as PLS-MGA. It compares \insertCite{Henseler2009,Sarstedt2011}{cSEM}
+Groups are compared in terms of parameter differences across groups.
+A single parameter k is tested whether it is equal between two groups.
+In this case, it is recommended
 to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
 done by p-value). If several parameters are tested simultaneously, correction
 is by group and number of parameters. By default

@@ -66,6 +66,18 @@
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
+#' \item{Approach suggested by \insertCite{Henseler2009;textual}{cSEM}}{
+#'   This approach is also known as PLS-MGA. It compares \insertCite{Henseler2009,Sarstedt2011}{cSEM}
+#'   Groups are compared in terms of parameter differences across groups.
+#'   A single parameter k is tested whether it is equal between two groups. 
+#'   In this case, it is recommended
+#'   to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+#'   done by p-value). If several parameters are tested simultaneously, correction
+#'   is by group and number of parameters. By default
+#'   no multiple testing correction is done, however, several common
+#'   adjustments are available via `.approach_p_adjust`. See 
+#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
+#' }
 #' }
 #' 
 #' Use `.approach_mgd` to choose the approach. By default all approaches are computed
@@ -85,7 +97,7 @@
 #'  .object                = NULL,
 #'  .alpha                 = 0.05,
 #'  .approach_p_adjust     = "none",
-#'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl"),
+#'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler"),
 #'  .parameters_to_compare = NULL,
 #'  .handle_inadmissibles  = c("replace", "drop", "none"),
 #'  .R_permutation         = 499,
@@ -215,6 +227,10 @@ testMGD <- function(
               type = 3), "\n\n")
   }
   
+  
+  ## Get the name of the parameters to be compared. This is required for Sarstedt and Hensler
+  names_param <- unlist(getParameterNames(.object, .model = .parameters_to_compare))
+  
   ### Calculation of the test statistics========================================
   teststat <- list()
   
@@ -243,7 +259,7 @@ testMGD <- function(
   }
   
   ## Sarstedt et al. (2011), Keil et al. (2000), Nitzl (2010) ------------------
-  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl"))) {
+  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler"))) {
     
     ## Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
@@ -279,14 +295,45 @@ testMGD <- function(
       loading_se <- ses$Loading_estimates$sd
       weight_se <- ses$Weight_estimates$sd
       
+      # Calculation of the bias
+      bias <- infer(.object=y,.quantity = "bias")
+      
+      path_bias <- bias$Path_estimates$bias
+      loading_bias <- bias$Loading_estimates$bias
+      weight_bias <- bias$Weight_estimates$bias
+      # Return object
       list(
-        "path_resamples"    = path_resamples, 
-        "loading_resamples" = loading_resamples, 
-        "weight_resamples"  = weight_resamples, 
         "n"                 = n,
         "nObs"              = nobs,
-        "ses_all"           = c(path_se, loading_se, weight_se))
+        "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples),
+        "ses_all"           = c(path_se, loading_se, weight_se),
+        "bias_all"          = c(path_bias, loading_bias, weight_bias)
+       )
+      
     })
+    
+    
+    ## Hensler (2009) approach
+    if(any(.approach_mgd %in% c("all", "Henseler"))) {
+      # center the bootstrap sample Sarstedt et al. (2011) Eq. 4
+      ll_centered <- lapply(ll_org, function(x){
+
+        # Substract from each row of para_all the corresponding bias
+        t(apply(x$para_all,1,function(row){
+          row-x$bias_all
+        }))
+      })
+      
+      # Create pairs which should be compared
+      pairs_centered <- utils::combn(ll_centered, 2, simplify = FALSE)
+      
+      
+      prob_Henseler <- lapply(pairs_centered,function(x){
+        calculatePr(.resample_centered = x,
+                    .parameters_to_compare = names_param)
+      })
+    }
+    
     
     ## Keil and Nitzl approach 
     if(any(.approach_mgd %in% c("all", "Nitzl", "Keil"))) {
@@ -353,23 +400,16 @@ testMGD <- function(
     }
     ## Sarstedt approach
     if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
-      # Remove SEs
-      ll <- lapply(ll_org, function(x)x[1:5])
-      names(ll) <- names(ll_org)
-      ## Transpose, get id column, bind rows and columns
-      ll <- purrr::transpose(ll)
+      ## Transpose
+      ll <- purrr::transpose(ll_org)
       group_id <- rep(1:length(.object), unlist(ll$n))
-      ll <- lapply(ll, function(x) do.call(rbind, x))
-      
-      all_comb <- cbind(ll$path_resamples, 
-                        ll$loading_resamples, 
-                        ll$weight_resamples, 
+
+      all_comb <- cbind(do.call(rbind,ll$para_all), 
                         "group_id" = group_id)
+      
       # all_comb contains all parameter estimate that could potentially be compared 
       # plus an id column indicating the group adherance of each row.
       
-      ## Get the name of the parameters to be compared
-      names_param <- unlist(getParameterNames(.object, .model = .parameters_to_compare))
       
       ## Select relevant columns
       all_comb <- all_comb[, c(names_param, "group_id")]

@@ -449,4 +449,43 @@ calculateFR <- function(.resample_sarstedt) {
   
 }
 
-
+#' Internal: Calculation of the CDF used in Henseler et al. (2009) 
+#'
+#' Calculates the probability that theta^1 is smaller than or equal to theta^2. 
+#' See Equation 6 in \insertCite{Sarstedt2011;textual}{cSEM}.
+#' 
+#' @usage calculatePr(.resample_centered)
+#' 
+#' @inheritParams csem_arguments
+#' 
+#' @return A named scaler
+#'
+#' @references
+#'   \insertAllCited{}
+#'   
+#' @keywords internal
+calculatePr <- function(
+  .resample_centered = NULL,
+  .parameters_to_compare   = NULL
+  ){
+  
+  group1 <- .resample_centered[[1]][,.parameters_to_compare,drop=FALSE]
+  
+  group2 <- .resample_centered[[2]][,.parameters_to_compare,drop=FALSE]
+  
+  ret <- lapply(.parameters_to_compare, function(x){
+    # Matrix where each element of the first vector is substracted from the complete second vector 
+    # theta^1 <= theta^2
+    temp12 <- outer(group1[,x],group2[,x],"-")
+    g1leqg2<-mean((1+sign(temp12))/2)
+    # theta^2 <= theta^1
+    temp21 <- outer(group2[,x],group1[,x],"-") 
+    g2leqg1<-mean((1+sign(temp21))/2)
+  
+    # Return
+    c(g1leqg2,g2leqg1)
+    })
+  
+  ret
+  
+}
