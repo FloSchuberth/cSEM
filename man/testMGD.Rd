@@ -149,17 +149,13 @@ no multiple testing correction is done, however, several common
 adjustments are available via \code{.approach_p_adjust}. See
 \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 }
-\item{Approach suggested by \insertCite{Henseler2009;textual}{cSEM}}{
-This approach is also known as PLS-MGA. It compares \insertCite{Henseler2009,Sarstedt2011}{cSEM}
-Groups are compared in terms of parameter differences across groups.
-A single parameter k is tested whether it is equal between two groups.
-In this case, it is recommended
-to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
-done by p-value). If several parameters are tested simultaneously, correction
-is by group and number of parameters. By default
-no multiple testing correction is done, however, several common
-adjustments are available via \code{.approach_p_adjust}. See
-\code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
+\item{Approach suggested by \insertCite{Henseler2007a,Henseler2009;textual}{cSEM}}{
+This approach is also known as PLS-MGA \insertCite{Henseler2009,Sarstedt2011}{cSEM}.
+It tests whether a a population parameter of group 1 is larger than or equal to
+the population coefficient of group 2. The decision is based on whether the probability is
+smaller than alpha or larger than 1-alpha. Therefore, tow null hypotheses are testedt, namely
+H_0: theta_1<=theta_2 and H_0: theta_1 >= theta_2. As a consequence, it is currently not possible to
+adjust the p-value in case of multiple comparisons, i.e., it is always no adjustment applied.
 }
 }
 
