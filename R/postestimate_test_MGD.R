@@ -835,7 +835,8 @@ testMGD <- function(
      "Number_admissibles"    = length(ref_dist1), 
      "Total_runs"            = counter + n_inadmissibles,
      "Permutation_seed"      = .seed,
-     "Permutation_values"    = list()
+     "Permutation_values"    = list(),
+     "Handle_inadmissibles"  = .handle_inadmissibles
    ) 
   }
  
@@ -847,12 +848,14 @@ testMGD <- function(
         list(
           "Number_admissibles"=x$Second_stage$Information$Resamples$Information_resample$Number_of_admissibles,
           "Total_runs"=x$Second_stage$Information$Resamples$Information_resample$Number_of_runs,
-          "Bootstrap_seed"=x$Second_stage$Information$Resamples$Information_resample$Seed)
+          "Bootstrap_seed"=x$Second_stage$Information$Resamples$Information_resample$Seed,
+          "Handle_inadmissibles"=x$Second_stage$Information$Resamples$Information_resample$Handle_inadmissibles)
       }else{
       list(
         "Number_admissibles"=x$Information$Information_resample$Number_of_admissibles,
         "Total_runs"=x$Information$Information_resample$Number_of_runs,
-        "Bootstrap_seed"=x$Information$Information_resample$Seed)
+        "Bootstrap_seed"=x$Information$Information_resample$Seed,
+        "Handle_inadmissibles"=x$Information$Information_resample$Handle_inadmissibles)
       }
     })
     names(info_boot) <- names(.object)
@@ -861,7 +864,8 @@ testMGD <- function(
     out[["Information"]][["Information_bootstrap"]]<-list(
       "Number_admissibles"    = info_boot$Number_admissibles, 
       "Total_runs"            = info_boot$Total_runs,
-      "Bootstrap_seed"      = info_boot$Bootstrap_seed
+      "Bootstrap_seed"      = info_boot$Bootstrap_seed,
+      "Handle_inadmissibles" = info_boot$Handle_inadmissibles
     ) 
   }
    
