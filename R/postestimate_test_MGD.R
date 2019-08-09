@@ -773,7 +773,6 @@ testMGD <- function(
 
     # Decision is made:
     # The probability is compared to alpha and 1-alpha
-    
     decision_Henseler <- lapply(padjusted_Henseler, function(adjust_approach){ # over the different p adjustments
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
