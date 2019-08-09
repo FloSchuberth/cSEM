@@ -276,12 +276,21 @@ $$ \text{NFI} = \frac{F_{B} - F_{M}}{F_{B}} \quad \text{and} \quad \text{NNFI} =
 The term $F_{B}$ refers to the value of the fitting function in the null model, $F_{M}$ to the value of the fitting function in the model under consideration. Thus, the NFI measures the increase in fit relative to the fit of the null model when specifying the model. The intuition of NNFI is that (in factor-based methods) the expectation of $F_{M}/df_{M}$ is equal to $1/N-1$. This does not hold for composite-based estimators. It measures the relative departure of the numerator's term from it's expectation (in the denominator). That is why, the NNFI is not normed and can take values larger than $1$.  
 
 The CFI is defined as:
-$$ \text{CFI} = 1 - \frac{\max(0, F_{M}-df_{M})}{\max(0, F_{M}-df_{M}, F_{B}-df_{B})} $$
+$$ \text{CFI} = 1 - \frac{\max(0, (N-1) F_{M}-df_{M})}{\max(0, (N-1) F_{M}-df_{M}, (N-1)F_{B}-df_{B})} $$
 Like the RMSEA, the CFI is a non-centrality based index. It measures the increase in fit (that is to say the reduction in non-centrality) when specifying the model under consideration relative to the fit of the null model. The CFI is a normed index with a value of $1$ indicating the best fit. Since it makes use of the assumptions in factor-based methods, its intuition does not apply to composite-based estimators. For details see @Bentler1990.
 
-IFI
-RMS-theta
+The IFI is defined as:
+$$ \text{IFI} = \frac{F_{B} - F_{M}}{F_{B} - df_{M}/(N-1)} $$
+The rationale underlying the IFI is that the term $F_{B} - F_{M}$ (in the numerator) is compared with its expectation $F_{B} - df_{M}/(N-1)$ (in the denominator). This intuition only holds for factor-based estimators. For details see @Bollen1989.
 
+The last fit index is the $\text{RMS}_{\theta}$. The $\text{RMS}_{\theta}$ is defined as the square root of the average squared covariances of the residuals of the indicators. Since indicators of the same block are allowed to correlate freely in composite-based methods, only the covariances of residuals of different blocks should be included. The calculation of $\text{RMS}_{\theta}$ necessitates the calculation of the correlation matrix of the residuals, called $\Theta$:
+$$ \Theta = V(X - \hat{X}) = E((X - \hat{X}) \, (X - \hat{X})')$$
+Since $\hat{X} = \Lambda' W X$ it follows that:
+$$\Theta = S - S \, W' \, \Lambda - (S \, W' \, \Lambda)' + \Lambda' \, V(W X) \, \Lambda$$
+The covariance matrix of the constructs (resp. their proxies) can be calculated in two ways. On the one hand, the restrictions of the structural can be incorporated. This is done by setting the argument '.model_implied' of 'assess()' to TRUE (default). In this case, the matrix $V(W X)$ is the fitted construct covariance matrix. On the other, the structural restrictions can be neglected. Then, it holds that $V(W X)$ is just the empirical covariance matrix of the constructs, called $P$. Calculation is carried out this way, when '.model_implied' is set to FALSE. The literature does not comment on how to calculate $V(W X)$ (see @Lohmoeller89).
+Having set all entries of $\Theta$ that belong to indicators of the same block to NA, the $\text{RMS}_{\theta}$ can be calculated as:
+$$ \sqrt{\frac{1}{n} \sum_{j=1}^{p} \sum_{i=1}^{j-1} \theta_{ji}^{2}} $$
+In this formula, $p$ is the number of indicators, $\theta_{ji}$ stands for the entry at position $(j,i)$ of the (NA-modified) matrix $\Theta$ and $n$ is the number of non-NA entries below the diagonal of $\Theta$.
 
 ### Implementation
 The functions are implemented as: `calculateCFI()`, `calculateNFI()`, `calculateNNFI()`, `calculateIFI()`, `calculateGFI()`, `calculateRMSEA()`, `calculateRMSTheta()`, `calculateSRMR()`. It may be called directly 
