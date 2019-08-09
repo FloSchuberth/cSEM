@@ -563,13 +563,13 @@ testMGD <- function(
   pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel > teststat_Klesel)
   
   # Decision 
+  # TRUE = p-value > alpha --> not reject
+  # FALSE = sufficient evidence against the H0 --> reject
   decision_Klesel <- lapply(.alpha, function(x) {
     pvalue_Klesel > x
   })
   
   names(decision_Klesel) <- paste0(.alpha * 100, "%")
-  # TRUE = p-value > alpha --> not reject
-  # FALSE = sufficient evidence against the H0 --> reject
   }
   
   ## Chin & Dibbern (2010) -----------------------------------------------------
@@ -613,6 +613,8 @@ testMGD <- function(
     names(padjusted_Chin) <- .approach_p_adjust
     
     # Decision 
+    # TRUE = p-value > alpha --> not reject
+    # FALSE = sufficient evidence against the H0 --> reject
     decision_Chin <- lapply(padjusted_Chin, function(adjust_approach){ # over the different p adjustments
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
@@ -653,6 +655,8 @@ testMGD <- function(
     names(padjusted_Sarstedt) <- .approach_p_adjust
     
     # Decision 
+    # TRUE = p-value > alpha --> not reject
+    # FALSE = sufficient evidence against the H0 --> reject
     decision_Sarstedt <- lapply(padjusted_Sarstedt,function(p_value){
       temp <- lapply(.alpha, function(alpha){
         p_value > alpha
@@ -687,6 +691,8 @@ testMGD <- function(
     names(padjusted_Keil) <- .approach_p_adjust
     
     # Decision 
+    # TRUE = p-value > alpha --> not reject
+    # FALSE = sufficient evidence against the H0 --> reject
     decision_Keil <- lapply(padjusted_Keil, function(adjust_approach){ # over the different p adjustments
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
@@ -723,6 +729,8 @@ testMGD <- function(
     names(padjusted_Nitzl) <- .approach_p_adjust
     
     # Decision 
+    # TRUE = p-value > alpha --> not reject
+    # FALSE = sufficient evidence against the H0 --> reject
     decision_Nitzl <- lapply(padjusted_Nitzl, function(adjust_approach){ # over the different p adjustments
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
@@ -789,6 +797,10 @@ testMGD <- function(
 
     # Decision is made:
     # The probability is compared to alpha and 1-alpha
+    # In doing so, we assess both hypotheses theta^1 <= theta^2 and 
+    # theta^1 => theta^2
+    # TRUE = p-value > alpha & p-value < 1-alpha --> not reject
+    # FALSE = sufficient evidence against the H0 --> reject
     decision_Henseler <- lapply(padjusted_Henseler, function(adjust_approach){ # over the different p adjustments
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
@@ -812,7 +824,7 @@ testMGD <- function(
   ### Return output ============================================================
   out <- list()
   
-  ## Information
+  ## General Information
   out[["Information"]] <- list(
     "Group_names"           = names(.object),
     "Number_of_observations"= sapply(X_all_list, nrow),
@@ -821,6 +833,7 @@ testMGD <- function(
     "Alpha"                 = .alpha
   )
 
+  # Permutation-specific information
   if(any(.approach_mgd %in% c("all","Klesel","Chin","Sarstedt"))) {
    out[["Information"]][["Information_permutation"]]<-list(
      "Number_admissibles"    = length(ref_dist1), 
@@ -830,6 +843,7 @@ testMGD <- function(
    ) 
   }
  
+  # Bootstrap-sprecific information
   if(any(.approach_mgd %in% c("all","Sarstedt","Keil","Nitzl","Henseler"))) {
     # Collect bootstrap information
     info_boot <-lapply(.object,function(x){
