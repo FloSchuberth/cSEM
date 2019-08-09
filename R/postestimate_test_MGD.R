@@ -142,7 +142,7 @@ testMGD <- function(
  .object                = NULL,
  .alpha                 = 0.05,
  .approach_p_adjust     = "none",
- .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl"),
+ .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl","Henseler"),
  .parameters_to_compare = NULL,
  .handle_inadmissibles  = c("replace", "drop", "ignore"),
  .R_permutation         = 499,
@@ -313,14 +313,22 @@ testMGD <- function(
     })
     
     ## Keil and Nitzl approach 
-    if(any(.approach_mgd %in% c("all", "Nitzl", "Keil"))) {
+    if(any(.approach_mgd %in% c("all", "Nitzl", "Keil","Henseler"))) {
       
       # Calculate the difference for one parameter between two groups
-      diff_para_Keil <- diff_para_Nitzl <- calculateParameterDifference(
+      # Although Henseler approach does not compute a test statistic,
+      # I calculate the difference to create a dummy test statistic list
+      diff_para_Keil <- diff_para_Nitzl <- diff_para_Henseler<- calculateParameterDifference(
         .object = .object, 
         .model  = .parameters_to_compare
         )
       
+      
+      if(any(.approach_mgd %in% c("all","Henseler"))) {
+        temp <- rep(NA,length(unlist(diff_para_Henseler)))
+        teststat[["Henseler"]] <-relist(flesh = temp,skeleton = diff_para_Henseler)
+         
+      }
       # permute .objects, i.e., build a list of where each element contains two groups
       object_permu <- utils::combn(.object, 2, simplify = FALSE)
       names(object_permu) <- sapply(object_permu, function(x) paste0(names(x)[1], '_', names(x)[2]))
@@ -400,10 +408,7 @@ testMGD <- function(
   } # END .approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl")
   
   ### Permutation ==============================================================
-  if(.verbose) {
-    cat("Start permutation:\n\n")
-  }
-  
+
   ## Preparation
   # Put data of each groups in a list and combine
   if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -423,8 +428,11 @@ testMGD <- function(
   id <- rep(1:length(X_all_list), sapply(X_all_list, nrow))
   arguments[[".id"]] <- "id"
   
+  if(any(.approach_mgd %in% c("all","Klesel","Chin","Sarstedt"))) {
+    
   # Start progress bar if required
   if(.verbose){
+    cat("Start permutation:\n\n")
     pb <- txtProgressBar(min = 0, max = .R_permutation, style = 3)
   }
   
@@ -536,6 +544,7 @@ testMGD <- function(
   ### Postprocessing ===========================================================
   # Delete potential NA's
   ref_dist1 <- Filter(Negate(anyNA), ref_dist)
+  }
   
   # Order significance levels
   .alpha <- .alpha[order(.alpha)]
@@ -736,6 +745,10 @@ testMGD <- function(
   
   ## Henseler (2009) approach  --------------------------------------------------
   if(any(.approach_mgd %in% c("all", "Henseler"))) {
+    
+    # Pseudo teststat for convenience
+    teststat_Henseler <- teststat$Henseler
+    
     # center the bootstrap sample Sarstedt et al. (2011) Eq. 4
     ll_centered <- lapply(ll_org, function(x){
       
@@ -750,6 +763,9 @@ testMGD <- function(
     # Create pairs which should be compared
     pairs_centered <- utils::combn(ll_centered, 2, simplify = FALSE)
     names(pairs_centered) <- sapply(pairs_centered, function(x) paste0(names(x)[1], '_', names(x)[2]))
+    
+    # Create dummy list with NULL 
+    
     
     # Calculation of the probability
     pvalue_Henseler <- lapply(pairs_centered,function(x){
@@ -787,7 +803,7 @@ testMGD <- function(
     # It is not clear how an overall decision should be made  
     decision_overall_Henseler <- lapply(decision_Henseler, function(decision_Henseler_list){
       lapply(decision_Henseler_list,function(x){
-        NULL
+        NA
       })
     })
   }
@@ -798,27 +814,49 @@ testMGD <- function(
   
   ## Information
   out[["Information"]] <- list(
-    "Number_admissibles"    = length(ref_dist1),
-    "Total_runs"            = counter + n_inadmissibles,
     "Group_names"           = names(.object),
     "Number_of_observations"= sapply(X_all_list, nrow),
     "Approach"              = .approach_mgd,
     "Approach_p_adjust"     = .approach_p_adjust,
-    "Permutation_seed"      = .seed,
-    # "Bootstrap_seeds"        = bootstrap_seeds,
-    "Alpha"                 = .alpha,
-    "VCV_type"              = .type_vcv,
-    "Permutation_values"    = list()
+    "Alpha"                 = .alpha
   )
-  
+
+  if(any(.approach_mgd %in% c("all","Klesel","Chin","Sarstedt"))) {
+   out[["Information"]][["Information_permutation"]]<-list(
+     "Number_admissibles"    = length(ref_dist1), 
+     "Total_runs"            = counter + n_inadmissibles,
+     "Permutation_seed"      = .seed,
+     "Permutation_values"    = list()
+   ) 
+  }
+ 
+  if(any(.approach_mgd %in% c("all","Sarstedt","Keil","Nitzl","Henseler"))) {
+    # Collect bootstrap information
+    info_boot <-lapply(.object,function(x){
+      list("Number_admissibles"=x$Information$Information_resample$Number_of_admissibles,
+        "Total_runs"=x$Information$Information_resample$Number_of_runs,
+        "Bootstrap_seed"=x$Information$Information_resample$Seed)
+    })
+    names(info_boot) <- names(.object)
+    info_boot=purrr::transpose(info_boot)
+    
+    out[["Information"]][["Information_bootstrap"]]<-list(
+      "Number_admissibles"    = info_boot$Number_admissibles, 
+      "Total_runs"            = info_boot$Total_runs,
+      "Bootstrap_seed"      = info_boot$Bootstrap_seed
+    ) 
+  }
+   
+
   if(any(.approach_mgd %in% c("all", "Klesel"))) {
     out[["Klesel"]] <- list(
       "Test_statistic"     = teststat_Klesel,
       "P_value"            = pvalue_Klesel,
-      "Decision"           = decision_Klesel
+      "Decision"           = decision_Klesel,
+      "VCV_type"           = .type_vcv
     )
     
-    out[["Information"]][["Permutation_values"]][["Klesel"]] <- ref_dist_matrix_Klesel
+    out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Klesel"]] <- ref_dist_matrix_Klesel
   }
   
   if(any(.approach_mgd %in% c("all", "Chin"))) {
@@ -829,7 +867,7 @@ testMGD <- function(
       "Decision_overall"   = decision_overall_Chin
     )
     
-    out[["Information"]][["Permutation_values"]][["Chin"]] <- ref_dist_matrices_Chin
+    out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Chin"]] <- ref_dist_matrices_Chin
   }
   
   if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
@@ -840,7 +878,7 @@ testMGD <- function(
       "Decision_overall"   = decision_overall_Sarstedt
     )
     
-    out[["Information"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
+    out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
   }
   if(any(.approach_mgd %in% c("all", "Keil"))) {
     out[["Keil"]] <- list(
@@ -865,10 +903,10 @@ testMGD <- function(
   
   if(any(.approach_mgd %in% c("all", "Henseler"))) {
     out[["Henseler"]] <- list(
-      "Test-statistic"     = NULL,
+      "Test-statistic"     = teststat_Henseler,
       "P_value"            = pvalue_Henseler,
       "Decision"           = decision_Henseler,
-      "Decision_overall"   = NULL
+      "Decision_overall"   = decision_overall_Henseler
     )
   }
   
