@@ -228,17 +228,16 @@ testMGD <- function(
     )
   }
   
-  
   if(.verbose) {
     cat(rule2("Several tests for multi-group comparisons",
               type = 3), "\n\n")
   }
   
   
-  ## Get the name of the parameters to be compared. This is required for Sarstedt and Hensler
+  # Get the name of the parameters to be compared. This is required for Sarstedt and Henseler
   names_param <- unlist(getParameterNames(.object, .model = .parameters_to_compare))
   
-  ### Calculation of the test statistics========================================
+  ## Calculation of the test statistics========================================
   teststat <- list()
   
   ## Klesel et al. (2019) ------------------------------------------------------
@@ -265,10 +264,11 @@ testMGD <- function(
                                                        .model = .parameters_to_compare)
   }
   
-  ## Sarstedt et al. (2011), Keil et al. (2000), Nitzl (2010) ------------------
+  ## Sarstedt et al. (2011), Keil et al. (2000), Nitzl (2010), Henseler (2007) ------------------
+  # All these approaches require bootstrap
   if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler"))) {
     
-    ## Check if .object already contains resamples; if not, run bootstrap
+    # Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
       if(.verbose) {
         cat("Bootstrapping cSEMResults object ...\n\n")
@@ -282,7 +282,7 @@ testMGD <- function(
     }
     
     ## Combine bootstrap results in one matrix
-    ll_org <- lapply(.object, function(y) {
+    bootstrap_results <- lapply(.object, function(y) {
       if(inherits(.object, "cSEMResults_2ndorder")) {
         x    <- y$Second_stage$Information$Resamples$Estimates$Estimates1
         nobs <- nrow(y$First_stage$Information$Data)
@@ -319,12 +319,12 @@ testMGD <- function(
       
     })
     
-    ## Keil and Nitzl approach 
+    ## Keil, Nitzl, Henseler 
     if(any(.approach_mgd %in% c("all", "Nitzl", "Keil","Henseler"))) {
       
       # Calculate the difference for one parameter between two groups
       # Although Henseler approach does not compute a test statistic,
-      # I calculate the difference to create a dummy test statistic list
+      # The difference is calculated to create a dummy test statistic list
       diff_para_Keil <- diff_para_Nitzl <- diff_para_Henseler<- calculateParameterDifference(
         .object = .object, 
         .model  = .parameters_to_compare
@@ -332,11 +332,13 @@ testMGD <- function(
       
       
       if(any(.approach_mgd %in% c("all","Henseler"))) {
+        # Create dummy test statistic list containing NAs
         temp <- rep(NA,length(unlist(diff_para_Henseler)))
         teststat[["Henseler"]] <-relist(flesh = temp,skeleton = diff_para_Henseler)
          
       }
-      # permute .objects, i.e., build a list of where each element contains two groups
+      
+      # Build list that contains pairs of objects.
       object_permu <- utils::combn(.object, 2, simplify = FALSE)
       names(object_permu) <- sapply(object_permu, function(x) paste0(names(x)[1], '_', names(x)[2]))
  
@@ -345,11 +347,11 @@ testMGD <- function(
         
       teststat_Keil <- lapply(names(object_permu), function(x) {
        diff <- diff_para_Keil[[x]]
-        ses1 <- ll_org[[names(object_permu[[x]][1])]]$ses_all
-        ses2 <- ll_org[[names(object_permu[[x]][2])]]$ses_all
+        ses1 <- bootstrap_results[[names(object_permu[[x]][1])]]$ses_all
+        ses2 <- bootstrap_results[[names(object_permu[[x]][2])]]$ses_all
         
-        n1<-ll_org[[names(object_permu[[x]][1])]]$nObs
-        n2<-ll_org[[names(object_permu[[x]][2])]]$nObs
+        n1<-bootstrap_results[[names(object_permu[[x]][1])]]$nObs
+        n2<-bootstrap_results[[names(object_permu[[x]][2])]]$nObs
         
         # Calculation of the SE of the parameter difference as proposed by 
         # Henseler (2007a), Henseler et al. (2009)
@@ -368,11 +370,11 @@ testMGD <- function(
         
         teststat_Nitzl <- lapply(names(object_permu), function(x){
           diff <- diff_para_Nitzl[[x]]
-          ses1 <- ll_org[[names(object_permu[[x]][1])]]$ses_all
-          ses2 <- ll_org[[names(object_permu[[x]][2])]]$ses_all
+          ses1 <- bootstrap_results[[names(object_permu[[x]][1])]]$ses_all
+          ses2 <- bootstrap_results[[names(object_permu[[x]][2])]]$ses_all
           
-          n1<-ll_org[[names(object_permu[[x]][1])]]$nObs
-          n2<-ll_org[[names(object_permu[[x]][2])]]$nObs
+          n1<-bootstrap_results[[names(object_permu[[x]][1])]]$nObs
+          n2<-bootstrap_results[[names(object_permu[[x]][2])]]$nObs
           
           # Calculation of the SE of the parameter difference as proposed by 
           # Henseler (2007a), Henseler et al. (2009)
@@ -396,23 +398,21 @@ testMGD <- function(
     ## Sarstedt approach
     if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
       ## Transpose
-      ll <- purrr::transpose(ll_org)
+      ll <- purrr::transpose(bootstrap_results)
       group_id <- rep(1:length(.object), unlist(ll$n))
 
-      all_comb <- cbind(do.call(rbind,ll$para_all), 
-                        "group_id" = group_id)
-      
       # all_comb contains all parameter estimate that could potentially be compared 
       # plus an id column indicating the group adherance of each row.
-      
-      
+      all_comb <- cbind(do.call(rbind,ll$para_all), 
+                        "group_id" = group_id)
+
       ## Select relevant columns
       all_comb <- all_comb[, c(names_param, "group_id")]
       
       ## Add test statistic Sarstedt
       teststat[["Sarstedt"]] <- calculateFR(.resample_sarstedt = all_comb)
     } # END approach_mgd %in% c("all", "Sarstedt")
-  } # END .approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl")
+  } # END .approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl","Henseler")
   
   ### Permutation ==============================================================
 
@@ -435,6 +435,7 @@ testMGD <- function(
   id <- rep(1:length(X_all_list), sapply(X_all_list, nrow))
   arguments[[".id"]] <- "id"
   
+  # Permutation is only performed for approaches that require it
   if(any(.approach_mgd %in% c("all","Klesel","Chin","Sarstedt"))) {
     
   # Start progress bar if required
@@ -765,7 +766,7 @@ testMGD <- function(
     teststat_Henseler <- teststat$Henseler
     
     # center the bootstrap sample Sarstedt et al. (2011) Eq. 4
-    ll_centered <- lapply(ll_org, function(x){
+    ll_centered <- lapply(bootstrap_results, function(x){
       
       # Substract from each row of para_all the corresponding bias
       t(apply(x$para_all,1,function(row){
@@ -773,7 +774,7 @@ testMGD <- function(
       }))
     })
     
-    names(ll_centered) <- names(ll_org)
+    names(ll_centered) <- names(bootstrap_results)
     
     # Create pairs which should be compared
     pairs_centered <- utils::combn(ll_centered, 2, simplify = FALSE)
