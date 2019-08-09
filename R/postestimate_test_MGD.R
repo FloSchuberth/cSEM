@@ -149,6 +149,7 @@ testMGD <- function(
  .verbose               = TRUE
 ){
 
+  ### Checks and errors ========================================================
   # Check .approach_mgd argument choices
   diff <- setdiff(.approach_mgd, args_default(TRUE)$.approach_mgd)
 
@@ -167,8 +168,8 @@ testMGD <- function(
                            # has "drop" as default, but testMGD hast "replace".
   .type_vcv             <- match.arg(.type_vcv)
   
-  ### Checks and errors ========================================================
-  ## Check if at least two groups are present
+
+  # Check if at least two groups are present
   if(!inherits(.object, "cSEMResults_multi")) {
     stop2(
       "The following error occured in the testMGD() function:\n",
@@ -202,7 +203,7 @@ testMGD <- function(
           "Consider setting `.approach_mgd = c('Chin',  'Sarstedt')`")
   }
   
-  ## Check if any of the group estimates are inadmissible
+  # Check if any of the group estimates are inadmissible
   if(sum(unlist(verify(.object))) != 0) {
     warning2(
       "The following warning occured in the testMGD() function:\n",
@@ -210,13 +211,22 @@ testMGD <- function(
       "See `verify(.object)` for details.")
   }
   
-  ## Check if data for different groups is identical
+  # Check if data for different groups is identical
   if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
                       function(x){ identical(x[[1]], x[[2]])})){
     warning2(
       "The following warning occured in the testMGD() function:\n",
       "At least two groups are identical. Results may not be meaningful.")
   } 
+  
+  # If Henseler is used with adjustment of p-value different than "none" return warning
+  if(any(.approach_mgd %in% c("all", "Klesel")) & !all(.approach_p_adjust %in% "none")){
+    warning2(
+      "The following warning occured in the testMGD() function:\n",
+      "Currently, there is adjustment of the p-value possible for the approach suggested by Henseler (2007)."
+    )
+  }
+  
   
   if(.verbose) {
     cat(rule2("Several tests for multi-group comparisons",
