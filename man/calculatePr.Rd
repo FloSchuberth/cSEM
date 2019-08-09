@@ -13,7 +13,7 @@ compared across groups. Defaults to \code{NULL} in which case all parameters of 
 originally specified model are compared.}
 }
 \value{
-A named scaler
+A named vector
 }
 \description{
 Calculates the probability that theta^1 is smaller than or equal to theta^2.
