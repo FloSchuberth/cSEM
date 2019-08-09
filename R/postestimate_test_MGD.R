@@ -66,17 +66,13 @@
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
-#' \item{Approach suggested by \insertCite{Henseler2009;textual}{cSEM}}{
-#'   This approach is also known as PLS-MGA. It compares \insertCite{Henseler2009,Sarstedt2011}{cSEM}
-#'   Groups are compared in terms of parameter differences across groups.
-#'   A single parameter k is tested whether it is equal between two groups. 
-#'   In this case, it is recommended
-#'   to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
-#'   done by p-value). If several parameters are tested simultaneously, correction
-#'   is by group and number of parameters. By default
-#'   no multiple testing correction is done, however, several common
-#'   adjustments are available via `.approach_p_adjust`. See 
-#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
+#' \item{Approach suggested by \insertCite{Henseler2007a,Henseler2009;textual}{cSEM}}{
+#'   This approach is also known as PLS-MGA \insertCite{Henseler2009,Sarstedt2011}{cSEM}.
+#'   It tests whether a a population parameter of group 1 is larger than or equal to
+#'   the population coefficient of group 2. The decision is based on whether the probability is 
+#'   smaller than alpha or larger than 1-alpha. Therefore, tow null hypotheses are testedt, namely
+#'   H_0: theta_1<=theta_2 and H_0: theta_1 >= theta_2. As a consequence, it is currently not possible to
+#'   adjust the p-value in case of multiple comparisons, i.e., it is always no adjustment applied.  
 #' }
 #' }
 #' 
@@ -847,9 +843,17 @@ testMGD <- function(
   if(any(.approach_mgd %in% c("all","Sarstedt","Keil","Nitzl","Henseler"))) {
     # Collect bootstrap information
     info_boot <-lapply(.object,function(x){
-      list("Number_admissibles"=x$Information$Information_resample$Number_of_admissibles,
+      if(inherits(.object, "cSEMResults_2ndorder")) {
+        list(
+          "Number_admissibles"=x$Second_stage$Information$Resamples$Information_resample$Number_of_admissibles,
+          "Total_runs"=x$Second_stage$Information$Resamples$Information_resample$Number_of_runs,
+          "Bootstrap_seed"=x$Second_stage$Information$Resamples$Information_resample$Seed)
+      }else{
+      list(
+        "Number_admissibles"=x$Information$Information_resample$Number_of_admissibles,
         "Total_runs"=x$Information$Information_resample$Number_of_runs,
         "Bootstrap_seed"=x$Information$Information_resample$Seed)
+      }
     })
     names(info_boot) <- names(.object)
     info_boot=purrr::transpose(info_boot)
@@ -861,7 +865,7 @@ testMGD <- function(
     ) 
   }
    
-
+# Information for Klesel et al. approach
   if(any(.approach_mgd %in% c("all", "Klesel"))) {
     out[["Klesel"]] <- list(
       "Test_statistic"     = teststat_Klesel,
@@ -873,6 +877,8 @@ testMGD <- function(
     out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Klesel"]] <- ref_dist_matrix_Klesel
   }
   
+  
+# Information for Chin & Dibbern approach
   if(any(.approach_mgd %in% c("all", "Chin"))) {
     out[["Chin"]] <- list(
       "Test_statistic"     = teststat_Chin,
@@ -883,7 +889,8 @@ testMGD <- function(
     
     out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Chin"]] <- ref_dist_matrices_Chin
   }
-  
+
+# Information for Sarstedt et al. approach  
   if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
     out[["Sarstedt"]] <- list(
       "Test_statistic"     = teststat_Sarstedt,
@@ -894,6 +901,8 @@ testMGD <- function(
     
     out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
   }
+  
+# Information for Keil approach  
   if(any(.approach_mgd %in% c("all", "Keil"))) {
     out[["Keil"]] <- list(
       "Test_statistic"     = purrr::transpose(teststat_Keil)$teststat,
@@ -904,6 +913,7 @@ testMGD <- function(
     )
   }
   
+# Information for Nitzl approach
   if(any(.approach_mgd %in% c("all", "Nitzl"))) {
     out[["Nitzl"]] <- list(
       "Test_statistic"     = purrr::transpose(teststat_Nitzl)$teststat,
@@ -914,7 +924,8 @@ testMGD <- function(
       
     )
   }
-  
+
+# Information for Henseler approach  
   if(any(.approach_mgd %in% c("all", "Henseler"))) {
     out[["Henseler"]] <- list(
       "Test-statistic"     = teststat_Henseler,
