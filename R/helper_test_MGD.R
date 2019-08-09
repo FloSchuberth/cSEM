@@ -458,7 +458,7 @@ calculateFR <- function(.resample_sarstedt) {
 #' 
 #' @inheritParams csem_arguments
 #' 
-#' @return A named scaler
+#' @return A named vector
 #'
 #' @references
 #'   \insertAllCited{}
