@@ -223,7 +223,8 @@ testMGD <- function(
   if(any(.approach_mgd %in% c("all", "Klesel")) & !all(.approach_p_adjust %in% "none")){
     warning2(
       "The following warning occured in the testMGD() function:\n",
-      "Currently, there is adjustment of the p-value possible for the approach suggested by Henseler (2007)."
+      "Currently, there is no p-value adjustment possible for the approach suggested by Henseler (2007).",
+      "Every adjustment is ignored for this approach."
     )
   }
   
