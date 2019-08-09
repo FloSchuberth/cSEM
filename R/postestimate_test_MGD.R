@@ -314,12 +314,14 @@ testMGD <- function(
     
     ## Keil and Nitzl approach 
     if(any(.approach_mgd %in% c("all", "Nitzl", "Keil"))) {
+      
+      # Calculate the difference for one parameter between two groups
       diff_para_Keil <- diff_para_Nitzl <- calculateParameterDifference(
         .object = .object, 
         .model  = .parameters_to_compare
         )
       
-      # permute .objects
+      # permute .objects, i.e., build a list of where each element contains two groups
       object_permu <- utils::combn(.object, 2, simplify = FALSE)
       names(object_permu) <- sapply(object_permu, function(x) paste0(names(x)[1], '_', names(x)[2]))
  
@@ -368,6 +370,7 @@ testMGD <- function(
           numerator <- ((n1-1)/n1*ses1^2+(n2-1)/n2*ses2^2)^2
           denominator <- (n1-1)/n1^2*ses1^4+(n2-1)/n2^2*ses2^4
           df <- round(numerator/denominator-2)
+          df <- df[names(diff)]
           list("teststat" = test_stat, "df" = df)
         })
         names(teststat_Nitzl) <- names(object_permu)
@@ -400,6 +403,7 @@ testMGD <- function(
   if(.verbose) {
     cat("Start permutation:\n\n")
   }
+  
   ## Preparation
   # Put data of each groups in a list and combine
   if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -747,37 +751,44 @@ testMGD <- function(
     pairs_centered <- utils::combn(ll_centered, 2, simplify = FALSE)
     names(pairs_centered) <- sapply(pairs_centered, function(x) paste0(names(x)[1], '_', names(x)[2]))
     
-    # Since Henseler's approach is a one-sided test, the p-value is 1-P is the 
-    # original p-value is larger than 0.5
+    # Calculation of the probability
     pvalue_Henseler <- lapply(pairs_centered,function(x){
       calculatePr(.resample_centered = x,
                   .parameters_to_compare = names_param)
     })
     
     # Adjust p-value in case of multiple comparisons
-    padjusted_Henseler<- lapply(as.list(.approach_p_adjust), function(x){
+    # Adjusting p-values is not straight forward. 
+    # First it is a one-sided test, so we need to know the hypothesis
+    # Just flipping the p-value is not reaaly an option as it might causes problems 
+    # in situation where the order of the p-values is required for the correction
+    # Therefore only the "none"method is applied
+   
+    padjusted_Henseler<- lapply(as.list("none"), function(x){
       pvector <- stats::p.adjust(unlist(pvalue_Henseler),method = x)
       # Sort them back into list
       relist(flesh = pvector,skeleton = pvalue_Henseler)
     })
-    names(padjusted_Henseler) <- .approach_p_adjust
+    names(padjusted_Henseler) <- "none"
 
-    # Decision
+    # Decision is made:
+    # The probability is compared to alpha and 1-alpha
+    
     decision_Henseler <- lapply(padjusted_Henseler, function(adjust_approach){ # over the different p adjustments
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
           # check whether the p values are larger than a certain alpha
-          group_comp > alpha
+          group_comp > alpha & group_comp < 1- alpha
         })
       })
       names(temp) <- paste0(.alpha*100, "%")
       temp
     })
     
-    # One rejection leads to overall rejection
+    # It is not clear how an overall decision should be made  
     decision_overall_Henseler <- lapply(decision_Henseler, function(decision_Henseler_list){
       lapply(decision_Henseler_list,function(x){
-        all(unlist(x))
+        NULL
       })
     })
   }
@@ -855,9 +866,10 @@ testMGD <- function(
   
   if(any(.approach_mgd %in% c("all", "Henseler"))) {
     out[["Henseler"]] <- list(
-      "P_value"            = padjusted_Henseler,
+      "Test-statistic"     = NULL,
+      "P_value"            = pvalue_Henseler,
       "Decision"           = decision_Henseler,
-      "Decision_overall"   = decision_overall_Henseler
+      "Decision_overall"   = NULL
     )
   }
   

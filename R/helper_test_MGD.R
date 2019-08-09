@@ -485,14 +485,14 @@ calculatePr <- function(
     # temp21 <- outer(group1[,x],group2[,x],"-") 
     # g2leqg1<-mean((1+sign(temp21))/2)
   
-    # The problem is that Henseler's approach is a one-sided test. 
-    # Therefore, the p-value is flipped if it larger than 0.5
-    # Return
-    if(g1leqg2<0.5){
-      g1leqg2
-    }else{
-      1-g1leqg2
-    }
+    # # The problem is that Henseler's approach is a one-sided test. 
+    # # Therefore, the p-value is flipped if it larger than 0.5
+    # # Return
+    # if(g1leqg2<0.5){
+    #   g1leqg2
+    # }else{
+    #   1-g1leqg2
+    # }
     })
   names(ret) <- .parameters_to_compare
   ret
