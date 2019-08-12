@@ -4,7 +4,7 @@
 \alias{calculatePr}
 \title{Internal: Calculation of the CDF used in Henseler et al. (2009)}
 \usage{
-calculatePr(.resample_centered)
+calculatePr(.resample_centered = NULL, .parameters_to_compare = NULL)
 }
 \arguments{
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
@@ -17,7 +17,7 @@ A named vector
 }
 \description{
 Calculates the probability that theta^1 is smaller than or equal to theta^2.
-See Equation 6 in \insertCite{Sarstedt2011;textual}{cSEM}.
+See Equation (6) in \insertCite{Sarstedt2011;textual}{cSEM}.
 }
 \references{
 \insertAllCited{}

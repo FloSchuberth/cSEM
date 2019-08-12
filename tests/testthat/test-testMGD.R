@@ -31,123 +31,35 @@ test_that(".approach_mgd = 'Sarstedt' can not be combined with .handle_inadmissi
 })
 
 ## Correct
+for(i in args_default(.choices = TRUE)$.approach_mgd) { 
+  test_that(paste("testMGD works for .approach_mgd = ", i), {
+    expect_output(
+      testMGD(
+        .object       = res_multi_linear_boot,
+        .approach_mgd = i,
+        .R_permutation = 10
+      )
+    )
+  })
+  if(i %in% c("Chin", "Keil", "Nitzl", "Sarstedt", "Henseler"))
+  test_that("Chin, Keil, Nitzl and Sarstedt work for nonlinear models", {
+    expect_output(
+      testMGD(
+        .object       = res_multi_nonlinear,
+        .approach_mgd = i,
+        .R_permutation = 10
+      )
+    )
+  })
+}
 
-test_that("None of the .approach_mgd choices causes an error for linear models", {
-  expect_output(
-    testMGD(
-      .object       = res_multi_linear_boot,
-      .approach_mgd = "all",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_linear,
-      .approach_mgd = "Klesel",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_linear_boot,
-      .approach_mgd = "Sarstedt",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_linear,
-      .approach_mgd = "Chin",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_linear,
-      .approach_mgd = "Keil",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_linear,
-      .approach_mgd = "Nitzl",
-      .R_permutation = 10
-    )
-  )
-})
 
-test_that("Chin, Keil, Nitzl and Sarstedt work for nonlinear models", {
-  expect_output(
-    testMGD(
-      .object       = res_multi_nonlinear,
-      .approach_mgd = "Chin",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_nonlinear,
-      .approach_mgd = "Keil",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_nonlinear,
-      .approach_mgd = "Nitzl",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_nonlinear_boot,
-      .approach_mgd = "Sarstedt",
-      .R_permutation = 10
-    )
-  )
-})
 
-test_that("None of the .approach_mgd choices causes an error for '2ndorder' models", {
+test_that("testMGD() works for second order models (.approach_mgd = 'all')", {
   expect_output(
     testMGD(
       .object       = res_multi_2ndorder_boot,
       .approach_mgd = "all",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_2ndorder,
-      .approach_mgd = "Klesel",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_2ndorder_boot,
-      .approach_mgd = "Sarstedt",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_2ndorder,
-      .approach_mgd = "Chin",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_2ndorder,
-      .approach_mgd = "Keil",
-      .R_permutation = 10
-    )
-  )
-  expect_output(
-    testMGD(
-      .object       = res_multi_2ndorder,
-      .approach_mgd = "Nitzl",
       .R_permutation = 10
     )
   )

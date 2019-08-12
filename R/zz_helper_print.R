@@ -421,14 +421,31 @@ printTestMGDResults <- function(.x, .approach, .info) {
         rule2(type = 2), "\n",
         rule2("Test for multigroup differences based on Nitzl (2010)")
       )
-      }
+    },
+    "Henseler" = {
+      x <- .x$Henseler
+      cat2(
+        rule2(type = 2), "\n",
+        rule2("Test for multigroup differences based on Henseler (2009)")
+      )
+    }
   )
   
   ## Null hypothesis -----------------------------------------------------------
-  cat2(
-    "\n\nNull hypothesis:\n\n",
-    boxx("H0: Parameter k is equal across two groups.", float = "center")
-  )
+  if(.approach == "Henseler") {
+    cat2(
+      "\n\nNull hypothesis:\n\n",
+      boxx(c("(1) H0: Parameter k of group 1 is smaller than that of group 2.", 
+           "(2) H0: Parameter k of group 1 is larger than that of group 2."),
+           float = "center")
+    )
+  } else {
+    cat2(
+      "\n\nNull hypothesis:\n\n",
+      boxx("H0: Parameter k is equal across two groups.", float = "center")
+    )
+  }
+
   
   ## Test statistic and p-value ------------------------------------------------
   cat2("\n\nTest statistic and p-value: \n\n")
@@ -437,7 +454,6 @@ printTestMGDResults <- function(.x, .approach, .info) {
   
   # Are several .alphas given? Inform the user that only the first .alpha is
   # is used for decision
-  # If multipe p-value adjustment methods are given; take the first
   if(length(.info$Alpha) > 1) {
     cat2(
       "\tDecision is based on alpha = ", names(x$Decision[[1]])[1]
@@ -448,11 +464,10 @@ printTestMGDResults <- function(.x, .approach, .info) {
   
   # Create table for every p-value adjustment method
   for(p in seq_along(x$P_value)) {
-    cat2("\n\tMultiple testing adjustment: ", names(x$P_value)[p],
-         "\n\n")
+    cat2("\n\tMultiple testing adjustment: '", names(x$P_value)[p], "'")
     for(i in seq_along(x$Test_statistic)) {
       
-      cat2("  Compared groups: ", names(x$Test_statistic)[i], "\n\n\t")
+      cat2("\n\n  Compared groups: ", names(x$Test_statistic)[i], "\n\n\t")
       
       cat2(
         col_align("Parameter", width = l),
@@ -473,7 +488,7 @@ printTestMGDResults <- function(.x, .approach, .info) {
                     width = 16, align = "right")
         )
       }
-      cat2("\n\n")
     } 
+    cat2("\n")
   }
 }

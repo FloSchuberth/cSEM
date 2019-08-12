@@ -25,8 +25,8 @@
 #'   Defaults to "*none*".
 #' @param .approach_mgd Character string or a vector of character strings. 
 #'   Approach used for the multi-group comparison. One: "*all*", "*Klesel*", "*Chin*", 
-#'   "*Sarstedt*", "*Keil*, "*Nitzl*", "*Henseler*". Default to "*all*" in which case all approaches are
-#'   computed (if possible).      
+#'   "*Sarstedt*", "*Keil*, "*Nitzl*", or "*Henseler*". 
+#'   Default to "*all*" in which case all approaches are computed (if possible).      
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
