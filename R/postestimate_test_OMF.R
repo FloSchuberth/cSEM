@@ -68,15 +68,15 @@ testOMF <- function(
     ## Collect arguments
     arguments <- x12$Arguments
     
-    if(!is.na(x12$Approach_2ndorder)) {
+    # if(!is.na(x12$Approach_2ndorder)) {
       # Which variables are second orders
-      vars_2nd <- x12$Model_original$vars_2nd
+      # vars_2nd <- x12$Model_original$vars_2nd
       # Select only columns that are not repeated indicators
-      selector <- !grepl("_2nd_", colnames(x12$Model$measurement))
+      # selector <- !grepl("_2nd_", colnames(x12$Model$measurement))
       
-      ## Its important to use the original arguments here
-      arguments <- x12$Arguments
-    }
+      # ## Its important to use the original arguments here
+      # arguments <- x12$Arguments
+    # }
 
     
   } else if(inherits(.object, "cSEMResults_multi")) {
@@ -147,11 +147,13 @@ testOMF <- function(
                    .saturated = .saturated,
                    .type_vcv  = "indicator")
   
-  if(!is.na(x12$Approach_2ndorder)) {
+  # if(!is.na(x12$Approach_2ndorder)) {
     ## Prune S and X (Sigma_hat is already pruned)
+  selector <- !grepl("_temp", colnames(x12$Model$measurement))
     S <- S[selector, selector]
     X <- X[, selector]
-  }
+    Sigma_hat <- Sigma_hat[selector, selector]
+  # }
   
   ## Calculate test statistic
   teststat <- c(
@@ -196,7 +198,10 @@ testOMF <- function(
     
     # Draw dataset
     X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
+    coln <- c(colnames(X_temp), paste0(colnames(X_temp), "_temp"))
     
+    X_temp <- X_temp[, c(1:20, 1:20)]
+    colnames(X_temp) <- coln
     # Replace the old dataset by the new one
     arguments[[".data"]] <- X_temp
     
@@ -219,7 +224,7 @@ testOMF <- function(
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
       
-      if(!is.na(x12$Approach_2ndorder)) {
+      # if(!is.na(x12$Approach_2ndorder)) {
         
         if(inherits(.object, "cSEMResults_default")) {
           S_temp         <- Est_temp$Estimates$Indicator_VCV
@@ -230,6 +235,7 @@ testOMF <- function(
         Sigma_hat_temp <- fit(Est_temp,
                               .saturated = .saturated,
                               .type_vcv  = "indicator")
+        Sigma_hat_temp <- Sigma_hat_temp[selector, selector]
         
         ## Prune S_temp (Sigma_hat is already pruned)
         S_temp <- S_temp[selector, selector]
@@ -240,13 +246,13 @@ testOMF <- function(
           "SRMR" = calculateSRMR(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
           "dL"   = calculateDL(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp)
         ) 
-      } else {
-        ref_dist[[counter]] <- c(
-          "dG"   = calculateDG(Est_temp),
-          "SRMR" = calculateSRMR(Est_temp),
-          "dL"   = calculateDL(Est_temp)
-        ) 
-      }
+      # } else {
+      #   ref_dist[[counter]] <- c(
+      #     "dG"   = calculateDG(Est_temp),
+      #     "SRMR" = calculateSRMR(Est_temp),
+      #     "dL"   = calculateDL(Est_temp)
+      #   ) 
+      # }
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
       ref_dist[[counter]] <- NA

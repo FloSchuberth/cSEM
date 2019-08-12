@@ -99,7 +99,7 @@ fit.cSEMResults_default <- function(
     selector <- !grepl("_2nd_", colnames(S))
     
     S        <- S[selector, selector]
-    Lambda    <- Lambda[setdiff(rownames(Lambda), cons_2nd), selector]
+    Lambda   <- Lambda[setdiff(rownames(Lambda), cons_2nd), selector]
     
     ## The model-implied construct VCV of a model containing second order
     ## constructs is:
@@ -121,6 +121,7 @@ fit.cSEMResults_default <- function(
     
     ## Compute V_atto2nd
     V_atto2nd  <- .object$Estimates$Construct_VCV[cons_atto2nd, cons_atto2nd, drop = FALSE] 
+    # fallunterscheidung composite common factor; measurement errors
     
     ## Construct names required to estimate V_2nd_to_natto2nd and V_natto2nd
     m         <- mod$structural
