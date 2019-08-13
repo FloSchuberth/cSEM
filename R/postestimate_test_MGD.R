@@ -390,6 +390,7 @@ testMGD <- function(
         ses1 <- bootstrap_results[[names(object_permu[[x]][1])]]$ses_all
         ses2 <- bootstrap_results[[names(object_permu[[x]][2])]]$ses_all
         
+        # Get sample size per group
         n1<-bootstrap_results[[names(object_permu[[x]][1])]]$nObs
         n2<-bootstrap_results[[names(object_permu[[x]][2])]]$nObs
         
@@ -413,6 +414,7 @@ testMGD <- function(
           ses1 <- bootstrap_results[[names(object_permu[[x]][1])]]$ses_all
           ses2 <- bootstrap_results[[names(object_permu[[x]][2])]]$ses_all
           
+          # Get sample size per group
           n1<-bootstrap_results[[names(object_permu[[x]][1])]]$nObs
           n2<-bootstrap_results[[names(object_permu[[x]][2])]]$nObs
           
