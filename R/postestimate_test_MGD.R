@@ -73,8 +73,9 @@
 #' \item{Approach suggested by \insertCite{Henseler2007a;textual}{cSEM} and \insertCite{Henseler2009;textual}{cSEM}}{
 #'   This approach is also known as PLS-MGA \insertCite{Henseler2009,Sarstedt2011}{cSEM}.
 #'   It tests whether a population parameter of group 1 is larger than or equal to
-#'   the population parameter of group 2. The decision is based on whether the 
-#'   probability is smaller than `.alpha` or larger than 1 - `.alpha`. 
+#'   the population parameter of group 2. In doing so, we make a comparison between all the bias-corrected 
+#'   bootstrap estimates of group 1 with group 2. The outcome is an estimated probability.
+#'   The decision is based on whether this probability is smaller than `.alpha` or larger than 1 - `.alpha`. 
 #'   Therefore, two null hypotheses are tested, namely H_0: theta_1 <= theta_2 
 #'   and H_0: theta_1 >= theta_2. As a consequence, it is currently not possible to
 #'   adjust the p-value in case of multiple comparisons, i.e., `.approach_p_adjust` is ignored.
