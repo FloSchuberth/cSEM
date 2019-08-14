@@ -15,7 +15,7 @@ setStartingValues(
 \item{.starting_values}{A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
-pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
+pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
 }
 \value{
 The (J x K) matrix of starting values.

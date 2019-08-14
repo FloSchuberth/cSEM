@@ -257,7 +257,8 @@ foreman <- function(
         "Modes"              = W$Modes,
         "Number_iterations"  = W$Iterations,
         "Convergence_status" = W$Conv_status
-      )
+      ),
+      "Approach_2ndorder"  = NA
     )
   )
   

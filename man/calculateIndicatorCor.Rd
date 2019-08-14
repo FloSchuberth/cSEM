@@ -18,7 +18,10 @@ indicator correlation matrix. One of: "\emph{none}" in which case the standard
 Bravais-Person correlation is used,
 "\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
-Defaults to "\emph{none}".}
+Defaults to "\emph{none}". Note that many postestimation procedures (such as
+\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continous
+indicator correlation matrix (i.e Bravais-Pearson correlation matrix).
+Only use if you know what you are doing.}
 }
 \value{
 A list containing the (K x K) indicator correlation matrix S.

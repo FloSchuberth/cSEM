@@ -1,6 +1,8 @@
 #' Test for overall model fit
 #'
-#' Bootstrap-based test for overall model fit. 
+#' Bootstrap-based test for overall model fit based on \insertCite{Beran1985;textual}{cSEM}. 
+#' See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in 
+#' the context of PLS-PM.
 #' 
 #' `testOMF()` tests the null hypothesis that the population indicator 
 #' correlation matrix equals the population model-implied indicator correlation matrix. 
@@ -10,8 +12,6 @@
 #' as well as the standardized root mean square residual (SRMR). 
 #' The reference distribution for each test statistic is obtained by 
 #' the bootstrap as proposed by \insertCite{Beran1985;textual}{cSEM}. 
-#' See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in 
-#' the context of PLS-PM.
 #' 
 #' @usage testOMF(
 #'  .object                = NULL, 
@@ -57,11 +57,6 @@ testOMF <- function(
   # Implementation is based on:
   # Dijkstra & Henseler (2015) - Consistent Paritial Least Squares Path Modeling
   
-  if(.verbose) {
-    cat(rule2("Test for overall model fit based on Beran & Srivastava (1985)",
-              type = 3), "\n\n")
-  }
-  
   ## Match arguments
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   
@@ -69,6 +64,9 @@ testOMF <- function(
     
     x11 <- .object$Estimates
     x12 <- .object$Information
+    
+    # Select only columns that are not repeated indicators
+    selector <- !grepl("_2nd_", colnames(x12$Model$measurement))
     
     ## Collect arguments
     arguments <- x12$Arguments
@@ -94,13 +92,25 @@ testOMF <- function(
     x21 <- .object$Second_stage$Estimates
     x22 <- .object$Second_stage$Information
     
+    # Select only columns that are not repeated indicators
+    selector <- !grepl("_2nd_", colnames(x12$Model$measurement))
+    
     ## Collect arguments
-    arguments <- .object$Second_stage$Information$Arguments_original
+    arguments <- x22$Arguments_original
+    
+    ## Append the 2ndorder approach to args
+    arguments$.approach_2ndorder <- x22$Approach_2ndorder
+    
   } else {
     stop2(
       "The following error occured in the testOMF() function:\n",
       "`.object` must be a `cSEMResults` object."
     )
+  }
+  
+  if(.verbose) {
+    cat(rule2("Test for overall model fit based on Beran & Srivastava (1985)",
+              type = 3), "\n\n")
   }
   
   ### Checks and errors ========================================================
@@ -127,11 +137,16 @@ testOMF <- function(
                    .saturated = .saturated,
                    .type_vcv  = "indicator")
   
+  # Prune S and X, Sigma_hat is already pruned
+  S <- S[selector, selector]
+  X <- X[, selector]
+  Sigma_hat <- Sigma_hat
+  
   ## Calculate test statistic
   teststat <- c(
-    "dG"   = calculateDG(.object),
-    "SRMR" = calculateSRMR(.object),
-    "dL"   = calculateDL(.object)
+    "dG"   = calculateDG(.matrix1 = S, .matrix2 = Sigma_hat),
+    "SRMR" = calculateSRMR(.matrix1 = S, .matrix2 = Sigma_hat),
+    "dL"   = calculateDL(.matrix1 = S, .matrix2 = Sigma_hat)
   )
   
   ## Transform dataset, see Beran & Srivastava (1985)
@@ -170,12 +185,19 @@ testOMF <- function(
     
     # Draw dataset
     X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
-    
+
     # Replace the old dataset by the new one
     arguments[[".data"]] <- X_temp
     
     # Estimate model
-    Est_temp <- do.call(csem, arguments)               
+    Est_temp <- if(inherits(.object, "cSEMResults_2ndorder")) {
+      
+      do.call(csem, arguments) 
+      
+    } else {
+
+      do.call(foreman, arguments)
+    }           
     
     # Check status (Note: output of verify for second orders is a list)
     status_code <- sum(unlist(verify(Est_temp)))
@@ -184,13 +206,27 @@ testOMF <- function(
     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
+        
+      if(inherits(.object, "cSEMResults_default")) {
+        S_temp         <- Est_temp$Estimates$Indicator_VCV
+      } else if(inherits(.object, "cSEMResults_2ndorder")) { 
+        S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
+      }
       
+      Sigma_hat_temp <- fit(Est_temp,
+                            .saturated = .saturated,
+                            .type_vcv  = "indicator")
+      
+      ## Prune S_temp (Sigma_hat is already pruned)
+      S_temp <- S_temp[selector, selector]
+      
+      # Standard case when there are no repeated indicators
       ref_dist[[counter]] <- c(
-        "dG"   = calculateDG(Est_temp),
-        "SRMR" = calculateSRMR(Est_temp),
-        "dL"   = calculateDL(Est_temp)
+        "dG"   = calculateDG(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
+        "SRMR" = calculateSRMR(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
+        "dL"   = calculateDL(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp)
       ) 
-      
+
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
       ref_dist[[counter]] <- NA
@@ -219,6 +255,14 @@ testOMF <- function(
   
   # Delete potential NA's
   ref_dist1 <- Filter(Negate(anyNA), ref_dist)
+  
+  # Check if at least 3 admissible results were obtained
+  n_admissibles <- length(ref_dist1)
+  if(n_admissibles < 3) {
+    stop2("The following error occured in the `testOMF()` functions:\n",
+         "Less than 2 admissible results produced.", 
+         " Consider setting `.handle_inadmissibles == 'replace'` instead.")
+  }
   
   # Combine
   ref_dist_matrix <- do.call(cbind, ref_dist1) 

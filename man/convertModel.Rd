@@ -2,7 +2,7 @@
 % Please edit documentation in R/csem_model.R
 \name{convertModel}
 \alias{convertModel}
-\title{Convert second order cSEMModel}
+\title{Internal: Convert second order cSEMModel}
 \usage{
 convertModel(
  .csem_model        = NULL, 
@@ -14,8 +14,7 @@ convertModel(
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{2stage}", "\emph{RI_original}", "\emph{RI_extended}"
-or "\emph{mixed}". Defaults to "\emph{2stage}".}
+second order constructs. One of: "\emph{2stage}", or "\emph{mixed}". Defaults to "\emph{2stage}".}
 
 \item{.stage}{Character string. The stage the model is need for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
@@ -26,7 +25,6 @@ A \link{cSEMModel} list that may be passed to any function requiring
 }
 \description{
 Uses a \link{cSEMModel} containg second order constructs and turns it into an
-estimable model using either the "repeated indicators" approach or a
-two-step procedure (TODO; link to literature)
+estimable model using either the "2stage" approach or the "mixed" approach.
 }
 \keyword{internal}
