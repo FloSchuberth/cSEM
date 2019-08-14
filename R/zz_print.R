@@ -121,8 +121,8 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   }
   
   cat2(
-    rule(line = "bar2", width = 80), "\n",
-    rule(center = "Overview", width = 80), 
+    rule2(type = 2), "\n",
+    rule2("Overview"), 
     "\n"
   )
   
@@ -136,7 +136,7 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   printSummarizeConstructDetails(x)
   
   ### Estimates ----------------------------------------------------------------
-  cat2("\n\n", rule(center = "Estimates", width = 80), "\n\n")
+  cat2("\n\n", rule2("Estimates"), "\n\n")
   
   ## Confidence intervals
   # Get the column names of the columns containing confidence intervals
@@ -164,7 +164,7 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
 
   if(.full_output && x22$Model$model_type == "Linear") {
     ### Effects ----------------------------------------------------------------
-    cat2("\n\n", rule(center = "Effects", width = 80), "\n\n")
+    cat2("\n\n", rule2("Effects"), "\n\n")
     ## Path estimates
     cat2("Estimated total effects:\n========================")
     
@@ -175,7 +175,7 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     printSummarizePath(x, .ci_colnames = ci_colnames, .what = "Indirect effect")
   }
 
-  cat2("\n", rule(line = "bar2", width = 80))
+  cat2("\n", rule2(type = 2))
 }
 
 #' `cSEMVerify_default` method for `print()`

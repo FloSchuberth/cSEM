@@ -1,6 +1,8 @@
 #' Test for overall model fit
 #'
-#' Bootstrap-based test for overall model fit. 
+#' Bootstrap-based test for overall model fit based on \insertCite{Beran1985;textual}{cSEM}. 
+#' See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in 
+#' the context of PLS-PM.
 #' 
 #' `testOMF()` tests the null hypothesis that the population indicator 
 #' correlation matrix equals the population model-implied indicator correlation matrix. 
@@ -10,8 +12,6 @@
 #' as well as the standardized root mean square residual (SRMR). 
 #' The reference distribution for each test statistic is obtained by 
 #' the bootstrap as proposed by \insertCite{Beran1985;textual}{cSEM}. 
-#' See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in 
-#' the context of PLS-PM.
 #' 
 #' @usage testOMF(
 #'  .object                = NULL, 
@@ -65,19 +65,11 @@ testOMF <- function(
     x11 <- .object$Estimates
     x12 <- .object$Information
     
+    # Select only columns that are not repeated indicators
+    selector <- !grepl("_2nd_", colnames(x12$Model$measurement))
+    
     ## Collect arguments
     arguments <- x12$Arguments
-    
-    # if(!is.na(x12$Approach_2ndorder)) {
-      # Which variables are second orders
-      # vars_2nd <- x12$Model_original$vars_2nd
-      # Select only columns that are not repeated indicators
-      # selector <- !grepl("_2nd_", colnames(x12$Model$measurement))
-      
-      # ## Its important to use the original arguments here
-      # arguments <- x12$Arguments
-    # }
-
     
   } else if(inherits(.object, "cSEMResults_multi")) {
     
@@ -100,8 +92,6 @@ testOMF <- function(
     x21 <- .object$Second_stage$Estimates
     x22 <- .object$Second_stage$Information
     
-    # Which variables are second orders
-    vars_2nd <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
     # Select only columns that are not repeated indicators
     selector <- !grepl("_2nd_", colnames(x12$Model$measurement))
     
@@ -147,13 +137,10 @@ testOMF <- function(
                    .saturated = .saturated,
                    .type_vcv  = "indicator")
   
-  # if(!is.na(x12$Approach_2ndorder)) {
-    ## Prune S and X (Sigma_hat is already pruned)
-  selector <- !grepl("_temp", colnames(x12$Model$measurement))
-    S <- S[selector, selector]
-    X <- X[, selector]
-    Sigma_hat <- Sigma_hat[selector, selector]
-  # }
+  # Prune S and X, Sigma_hat is already pruned
+  S <- S[selector, selector]
+  X <- X[, selector]
+  Sigma_hat <- Sigma_hat
   
   ## Calculate test statistic
   teststat <- c(
@@ -198,10 +185,7 @@ testOMF <- function(
     
     # Draw dataset
     X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
-    coln <- c(colnames(X_temp), paste0(colnames(X_temp), "_temp"))
-    
-    X_temp <- X_temp[, c(1:20, 1:20)]
-    colnames(X_temp) <- coln
+
     # Replace the old dataset by the new one
     arguments[[".data"]] <- X_temp
     
@@ -211,8 +195,7 @@ testOMF <- function(
       do.call(csem, arguments) 
       
     } else {
-      # It is important to use foreman() since the repeated indicators approach
-      # will fail otherwise
+
       do.call(foreman, arguments)
     }           
     
@@ -223,36 +206,27 @@ testOMF <- function(
     if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
       # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
       # not ok
+        
+      if(inherits(.object, "cSEMResults_default")) {
+        S_temp         <- Est_temp$Estimates$Indicator_VCV
+      } else if(inherits(.object, "cSEMResults_2ndorder")) { 
+        S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
+      }
       
-      # if(!is.na(x12$Approach_2ndorder)) {
-        
-        if(inherits(.object, "cSEMResults_default")) {
-          S_temp         <- Est_temp$Estimates$Indicator_VCV
-        } else if(inherits(.object, "cSEMResults_2ndorder")) { 
-          S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
-        }
-        
-        Sigma_hat_temp <- fit(Est_temp,
-                              .saturated = .saturated,
-                              .type_vcv  = "indicator")
-        Sigma_hat_temp <- Sigma_hat_temp[selector, selector]
-        
-        ## Prune S_temp (Sigma_hat is already pruned)
-        S_temp <- S_temp[selector, selector]
-        
-        # Standard case when there are no repeated indicators
-        ref_dist[[counter]] <- c(
-          "dG"   = calculateDG(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
-          "SRMR" = calculateSRMR(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
-          "dL"   = calculateDL(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp)
-        ) 
-      # } else {
-      #   ref_dist[[counter]] <- c(
-      #     "dG"   = calculateDG(Est_temp),
-      #     "SRMR" = calculateSRMR(Est_temp),
-      #     "dL"   = calculateDL(Est_temp)
-      #   ) 
-      # }
+      Sigma_hat_temp <- fit(Est_temp,
+                            .saturated = .saturated,
+                            .type_vcv  = "indicator")
+      
+      ## Prune S_temp (Sigma_hat is already pruned)
+      S_temp <- S_temp[selector, selector]
+      
+      # Standard case when there are no repeated indicators
+      ref_dist[[counter]] <- c(
+        "dG"   = calculateDG(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
+        "SRMR" = calculateSRMR(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
+        "dL"   = calculateDL(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp)
+      ) 
+
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
       ref_dist[[counter]] <- NA

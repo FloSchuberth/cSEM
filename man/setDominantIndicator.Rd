@@ -13,10 +13,11 @@ setDominantIndicator(
 \arguments{
 \item{.W}{A (J x K) matrix of weights.}
 
-\item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
-where \code{"value"} is a character string giving the name of the dominant indicator
-and \code{"name"} a character string of the corresponding construct name.
-Dominant indicators may be specified for a subset of the constructs.}
+\item{.dominant_indicators}{A character vector of \code{"construct_name" = "indicator_name"} pairs,
+where \code{"indicator_name"} is a character string giving the name of the dominant indicator
+and \code{"construct_name"} a character string of the corresponding construct name.
+Dominant indicators may be specified for a subset of the constructs.
+Default to \code{NULL}.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
 }

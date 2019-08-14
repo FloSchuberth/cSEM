@@ -1,53 +1,14 @@
-#' Model-implied indicator or construct variance-covariance matrix
-#'
-#' Calculate the model-implied indicator or construct variance-covariance (VCV) 
-#' matrix. Currently only the model-implied VCV for recursive linear models 
-#' is implemented (including models containing second order constructs).
-#' 
-#' Notation is taken from \insertCite{Bollen1989;textual}{cSEM}.
-#' If `.saturated = TRUE` the model-implied variance-covariance matrix is calculated 
-#' for a saturated structural model (i.e., the VCV of the constructs is replaced 
-#' by their correlation matrix). Hence: V(eta) = WSW' (possibly disattenuated).
-#'
-#' @usage fit(
-#'   .object    = NULL, 
-#'   .saturated = args_default()$.saturated,
-#'   .type_vcv  = args_default()$.type_vcv
-#'   )
-#'
-#' @inheritParams csem_arguments
-#'
-#' @return Either a (K x K) matrix or a (J x J) matrix depending on the `*type_vcv*`.
-#' 
-#' @examples 
-#' \dontrun{
-#' res <- csem(.data = dataset, .model = model)
-#' 
-#' fit(.object = res, .saturated = FALSE, .type_vcv = "indicator")
-#' }
-#' @references
-#'   \insertAllCited{}
-#'   
-#' @seealso [csem()], [foreman()], [cSEMResults]
-#'
-#' @export
-
-fit <- function(
-  .object    = NULL, 
-  .saturated = args_default()$.saturated,
-  .type_vcv  = args_default()$.type_vcv
-  ) {
-  UseMethod("fit")
-}
-
-#' @describeIn fit (TODO)
-#' @export
+### 
+# Date: 14.08.2019
+# This is the fit function when i was trying to make it work with the repeated
+# indicators approach. Decided to delete the appraoch. unless we decided to 
+# put it back in, this will not be required anymore.
 
 fit.cSEMResults_default <- function(
   .object    = NULL, 
   .saturated = args_default()$.saturated,
   .type_vcv  = args_default()$.type_vcv
-  ) {
+) {
   
   ### For maintenance: ---------------------------------------------------------
   ## Cons_exo  := (J_exo x 1) vector of exogenous constructs names.
@@ -80,12 +41,61 @@ fit.cSEMResults_default <- function(
   S         <- .object$Estimates$Indicator
   Lambda    <- .object$Estimates$Loading_estimates
   
+  # Prune S, Lambda and Theta if there are repeated indicators.
+  # Its important to have the if clause here because fit.cSEMResults_default
+  # is also called on the second stage of the 2stage/mixed approach. There the
+  # rows for "cons_2nd" must not be deleted!
+  # if(.object$Information$Approach_2ndorder %in% c("RI_original", "RI_extended")) {
+  
+  # # Which constructs are second orders (NULL for models containing no 2nd orders)
+  # cons_2nd      <- .object$Information$Model_original$vars_2nd
+  # # Which constructs are constructs attachted to a second order (atto2nd)
+  # cons_atto2nd  <- .object$Information$Model_original$vars_attached_to_2nd
+  # # Which constructs are constructs not attached to a second order (natto2nd)
+  # cons_natto2nd <- .object$Information$Model_original$vars_not_attached_to_2nd
+  # 
+  # # Select only columns/rows that are not repeated indicators (if there are no
+  # # repeated indicators this will simply select all columns of S and Lambda)
+  # # Also delete rows in Lambda that are second orders
+  # selector <- !grepl("_2nd_", colnames(S))
+  # 
+  # S        <- S[selector, selector]
+  # Lambda   <- Lambda[setdiff(rownames(Lambda), cons_2nd), selector]
+  
+  ## The model-implied construct VCV of a model containing second order
+  ## constructs is:
+  #
+  #     V(eta) = (         V_atto2nd                    lambda_2nd %*% V_2nd_to_natto2nd')
+  #              ((lambda_2nd %*% V_2nd_to_natto2nd)'           V_natto2nd               )
+  #
+  #  2nd      := second order 
+  #  atto2nd  := attached to second order construct
+  #  natto2nd := not attachted to second order construct
+  
+  #  V_atto2nd  := VCV of cons_atto2nd
+  #  lambda_2nd := correlation ("loadings") between cons_atto2n and cons_2nd
+  #  V_2nd_to_natto2nd := correlation between cons_2nd and cons_natto2nd
+  #  V_natto2nd := VCV of cons_natto2nd
+  
+  # ## Extract lambda_2nd:
+  # lambda_2nd <- .object$Estimates$Construct_VCV[cons_atto2nd, cons_2nd, drop = FALSE]
+  # 
+  # ## Compute V_atto2nd
+  # V_atto2nd  <- .object$Estimates$Construct_VCV[cons_atto2nd, cons_atto2nd, drop = FALSE] 
+  # # fallunterscheidung composite common factor; measurement errors
+  # 
+  # ## Construct names required to estimate V_2nd_to_natto2nd and V_natto2nd
+  # m         <- mod$structural
+  # Cons_endo <- setdiff(rownames(m)[rowSums(m) != 0], cons_atto2nd)
+  # Cons_exo  <- setdiff(colnames(m), c(Cons_endo, cons_atto2nd))
+  # } else {
   
   m         <- mod$structural
   Cons_endo <- rownames(m)[rowSums(m) != 0]
   Cons_exo  <- setdiff(colnames(m), Cons_endo)
   Theta     <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   dimnames(Theta) <- dimnames(S)
+  # }
   
   ## Check if recursive, otherwise return a warning
   if(any(m[Cons_endo, Cons_endo] + t(m[Cons_endo, Cons_endo]) == 2)){
@@ -127,10 +137,30 @@ fit.cSEMResults_default <- function(
     vcv_construct <- rbind(
       cbind(Phi, Corr_exo_endo),
       cbind(t(Corr_exo_endo), Cor_endo)
-      ) 
+    ) 
     ## Make symmetric
     vcv_construct[lower.tri(vcv_construct)] <- t(vcv_construct)[lower.tri(vcv_construct)]
   }
+  
+  ## If repeated indicators appraoch: assemble construct vcv matrix
+  # if(.object$Information$Approach_2ndorder %in% c("RI_original", "RI_extended")) { 
+  #   # V_2nd_to_natto2nd := correlation between cons_2nd and cons_natto2nd
+  #   V_2nd_to_natto2nd <- vcv_construct[cons_natto2nd, cons_2nd]
+  #   # V_natto2nd := VCV of cons_natto2nd
+  #   V_natto2nd <- vcv_construct[cons_natto2nd, cons_natto2nd]
+  #   
+  #   vcv_construct <- rbind(
+  #     cbind(V_atto2nd, lambda_2nd %*% t(V_2nd_to_natto2nd)),
+  #     cbind(t(lambda_2nd %*% t(V_2nd_to_natto2nd)), V_natto2nd)
+  #   )
+  # 
+  #   ## Reoder to match Lambda
+  #   selector2 <- setdiff(colnames(.object$Estimates$Construct_VCV), cons_2nd)
+  #   vcv_construct <- vcv_construct[selector2, selector2]
+  # 
+  #   Theta           <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
+  #   dimnames(Theta) <- dimnames(S)
+  # }
   
   ## If only the fitted construct VCV is needed, return it now
   if(.type_vcv == "construct") {
@@ -148,7 +178,12 @@ fit.cSEMResults_default <- function(
   ## Replace indicators connected to a composite by their correponding elements of S.
   composites <- names(mod$construct_type[mod$construct_type == "Composite"])
   index  <- t(mod$measurement[composites, , drop = FALSE]) %*% mod$measurement[composites, , drop = FALSE]
-
+  
+  # if(.object$Information$Approach_2ndorder %in% c("RI_original", "RI_extended")) { 
+  #   index <- index[selector, selector]
+  #   mod$error_cor <- mod$error_cor[selector, selector]
+  # }
+  
   Sigma[which(index == 1)] <- S[which(index == 1)]
   
   # Replace indicators whose measurement errors are allowed to be correlated by s_ij
@@ -156,80 +191,3 @@ fit.cSEMResults_default <- function(
   
   return(Sigma)
 }
-
-#' @describeIn fit (TODO)
-#' @export
-
-fit.cSEMResults_multi <- function(
-  .object    = NULL,
-  .saturated = args_default()$.saturated,
-  .type_vcv  = args_default()$.type_vcv
-  ) {
-  
-  if(inherits(.object, "cSEMResults_2ndorder")) {
-    lapply(.object, fit.cSEMResults_2ndorder, 
-           .saturated = .saturated,
-           .type_vcv  = .type_vcv)
-  } else {
-    lapply(.object, fit.cSEMResults_default, 
-           .saturated = .saturated,
-           .type_vcv  = .type_vcv)
-  }
-}
-
-#' @describeIn fit (TODO)
-#' @export
-
-fit.cSEMResults_2ndorder <- function(
-  .object    = NULL,
-  .saturated = args_default()$.saturated,
-  .type_vcv  = args_default()$.type_vcv
-  ) {
-  
-  # Which variables are second orders
-  vars_2nd <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
-  
-  ## Get relevant quantities
-  S <- .object$First_stage$Estimates$Indicator_VCV
-  # Select only columns/rows that are not repeated indicators (if there are no
-  # repeated indicators this will simply select all columns of S)
-  selector <- !grepl("_2nd_", colnames(S))
-  S <- S[selector, selector]
-  
-  # vcv_construct is the "indicator" vcv of the second stage. 
-  vcv_construct <- fit.cSEMResults_default(.object$Second_stage, 
-                                           .saturated = .saturated,
-                                           .type_vcv  = .type_vcv)
-  
-  # Select Lambda and Theta (without repeated indicator and second
-  # order constructs if there are any)
-  Lambda   <- .object$First_stage$Estimates$Loading_estimates
-  Lambda   <- Lambda[setdiff(rownames(Lambda), vars_2nd), selector]
-  Theta    <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
-  
-  # Reorder dimnames to match the order of Lambda and ensure symmetrie
-  vcv_construct <- vcv_construct[rownames(Lambda), rownames(Lambda)]
-  
-  ## If only the fitted construct VCV is needed, return it now
-  if(.type_vcv == "construct") {
-    return(vcv_construct)
-  }
-  
-  # Compute VCV and ensure symmetrie
-  Sigma <- t(Lambda) %*% vcv_construct %*% Lambda + Theta
-  Sigma[lower.tri(Sigma)] <- t(Sigma)[lower.tri(Sigma)]
-  
-  # Replace composite blocks by corresponding elements of S
-  m          <- .object$First_stage$Information$Model
-  composites <- setdiff(names(m$construct_type[m$construct_type == "Composite"]), vars_2nd)
-  index      <- t(m$measurement[composites, selector , drop = FALSE]) %*% m$measurement[composites, selector, drop = FALSE]
-  
-  Sigma[which(index == 1)] <- S[which(index == 1)]
-  
-  # Replace indicators whose measurement errors are allowed to be correlated by s_ij
-  Sigma[m$error_cor[selector, selector] == 1] = S[m$error_cor[selector, selector] == 1]
-  Sigma
-  
-  return(Sigma)
-}
-  

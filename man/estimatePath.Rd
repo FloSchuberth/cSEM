@@ -25,7 +25,7 @@ Defaults to "\emph{sequential}".}
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
 
-\item{.approach_se}{Chraracter string. Approach used to obtain the standard errors (SEs)
+\item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)
 for parameter estimates. One of: "\emph{none}", "\emph{closed}", "\emph{closed_estimator}".
 Defaults to "\emph{none}".}
 
@@ -42,7 +42,7 @@ Defaults to "\emph{PLS-PM}".}
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
-Defaults to \code{FALSE}. Ignored if the model is linear.}
+Defaults to \code{FALSE}. Ignored if the model is not nonlinear.}
 
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 

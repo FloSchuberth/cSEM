@@ -12,14 +12,14 @@
 #' equation models using a composite-based approach. 
 #' 
 #' \subsection{Data and model:}{
-#' The `.data` and `.model` arguments are required. Data must be
-#' in a `matrix` or a `data.frame` with column names matching
-#' the indicator names used in the model description of the measurement model.
-#' Alternatively, a `list` of data sets (matrices or data frames) may be provided
+#' The `.data` and `.model` arguments are required. `.data` must be given
+#' a `matrix` or a `data.frame` with column names matching
+#' the indicator names used in the model description. Alternatively, 
+#' a `list` of data sets (matrices or data frames) may be provided
 #' in which case estimation is repeated for each data set. 
-#' Possible column types/classes of the data provided are: "logical", 
-#' "numeric" ("double" or "integer"), "factor" ("ordered" and/or "unordered"),
-#' "character", or a mix of several types. Character columns will be treated 
+#' Possible column types/classes of the data provided are: "`logical`", 
+#' "`numeric`" ("`double`" or "`integer`"), "`factor`" ("`ordered`" and/or "`unordered`"),
+#' "`character`", or a mix of several types. Character columns will be treated 
 #' as (undordered) factors.
 #'
 #' To provide a model use the [lavaan model syntax][lavaan::model.syntax].
@@ -38,8 +38,11 @@
 #' \enumerate{
 #' \item{(Default) Partial least squares path modeling (`"PLS-PM"`). The algorithm
 #'    can be customized. See [calculateWeightsPLS()] for details.}
-#' \item{Generalized structured component analysis (`"GSCA"`). The algorithm 
-#'   can be customized. See [calculateWeightsGSCA()] for details.}
+#' \item{Generalized structured component analysis (`"GSCA"`) and generalized 
+#'   structured component analysis with uniqueness terms (GSCAm). The algorithms
+#'   can be customized. See [calculateWeightsGSCA()] and [calculateWeightsGSCAm()] for details.
+#'   Note that GSCAm is called indirectly when the model contains constructs
+#'   modeled as common factors only and `.disattenuate = TRUE`. See below.}
 #' \item{Generalized canonical correlation analysis (*GCCA*), including 
 #'   `"SUMCORR"`, `"MAXVAR"`, `"SSQCORR"`, `"MINVAR"`, `"GENVAR"`.}
 #' \item{Principal component analysis (`"PCA"`)}
@@ -84,7 +87,7 @@
 #' }
 #'
 #' \subsection{Nonlinear models:}{
-#' If the model is nonlinear `csem()` estimates a polynomial structural equation model
+#' If the model contains nonlinear terms `csem()` estimates a polynomial structural equation model
 #' using a non-iterative method of moments approach described in
 #' \insertCite{Dijkstra2014;textual}{cSEM}. Nonlinear terms include interactions and
 #' exponential terms. The latter is described in model syntax as an
@@ -106,41 +109,69 @@
 #' }
 #' 
 #' \subsection{Second-order model}{
-#'  Second-order models are specified using the operators `=~` and `<~`. These
-#'  operators are usually used with indicators on their right-hand side. For 
-#'  second-order models the right-hand side variables are constructs instead:
+#' Second-order models are specified using the operators `=~` and `<~`. These
+#' operators are usually used with indicators on their right-hand side. For 
+#' second-order models the right-hand side variables are constructs instead.
+#' If c1, and c2 are constructs forming or measuring a higher order
+#' construct, a model would look like this:
 #' \preformatted{my_model <- "
 #' # Structural model
-#' SAT ~ QUAL
-#' VAL ~ SAT
+#' SAT  ~ QUAL
+#' VAL  ~ SAT
 #'
-#' # Measurement model
-#' EXPE <~ expe1 + expe2
-#'
-#' SAT =~ sat1 + sat2
-#' VAL =~ val1 + val2
-#' IMAG <~ imag1 + imag2
+#' # Measurement/composite model
+#' QUAL =~ qual1 + qual2
+#' SAT  =~ sat1 + sat2
+#' VAL  =~ val1 + val2
 #' 
-#' # Second-order term (in this case a second-order common factor)
-#' QUAL =~ IMAG + EXPE
+#' c1 =~ x11 + x12
+#' c2 =~ x21 + x22
+#' 
+#' # Second-order term (in this case a second-order composite build by common
+#' # factors)
+#' VAL <~ c1 + c2
 #' "
 #' }
-#'}
-#' Currently, four approaches are available: 
+#' Currently, two approaches are explicitly implemented: 
 #' \itemize{
 #' \item{(Default) `"2stage"`. The (disjoint) two stage approach as proposed by \insertCite{Agarwal2000;textual}{cSEM}.}
-#' \item{`"RI_original"`. The original repeated indicators approach as proposed by \insertCite{Joereskog1982b;textual}{cSEM}.}
-#' \item{`"RI_extended"`. The extended repeated indicators approach as proposed by \insertCite{Becker2012;textual}{cSEM} with
-#'   the slight modification that all path between constructs attached to a second order construct are specified as well.
-#'   This is necessary to retain model fit.}
 #' \item{`"mixed"`. The mixed repeated indicators/two-stage approach as proposed by \insertCite{Ringle2012;textual}{cSEM}.}
 #' }
+#' 
+#' The reapeated indicators approach as proposed by \insertCite{Joereskog1982b;textual}{cSEM}
+#' and the extention proposed by \insertCite{Becker2012;textual}{cSEM} are 
+#' not directly implemented as they simply require a respecification of the model. 
+#' In the above example the repeated indicators approach
+#' would require to change the model and to append the repeated indicators to 
+#' the data supplied to `.data`. Note that the indicators need to be renamed in this case as 
+#' `csem()` does not allow for one indicator to be attached to multiple constructs.
+#' \preformatted{my_model <- "
+#' # Structural model
+#' SAT  ~ QUAL
+#' VAL  ~ SAT
+#' 
+#' VAL ~ c1 + c2
+#'
+#' # Measurement/composite model
+#' QUAL =~ qual1 + qual2
+#' SAT  =~ sat1 + sat2
+#' VAL  =~ val1 + val2
+#' VAL  =~ x11_temp + x12_temp + x21_temp + x22_temp
+#' 
+#' c1 =~ x11 + x12
+#' c2 =~ x21 + x22
+#' "
+#' }
+#' According to the extended approach indirect effects of `QUAL` on `VAL` via `c1` 
+#' and `c2` would have to be specified as well.
+#'}
 #' 
 #' \subsection{Multigroup analysis}{
 #' To perform multigroup analysis provide either a list of data sets or one 
 #' data set containing a group-identifyer-column whose column 
-#' name must be provided to `.id`. Values of this column are interpreted as group 
-#' identifiers and `csem()` will split the data by levels of that column and run
+#' name must be provided to `.id`. Values of this column are taken as levels of a
+#' factor and are interpreted as group 
+#' identifiers. `csem()` will split the data by levels of that column and run
 #' the estimation for each level separately. Note that the more levels
 #' the group-identifyer-column has, the more estimation runs are required.
 #' This can considerably slow down estimation, especially if resampling is
@@ -148,13 +179,13 @@
 #' `.eval_plan = "multiprocess"`.
 #' } 
 #' \subsection{Inference:}{
-#' Inference is done via resampling. See [resamplecSEMResults] for details.
+#' Inference is done via resampling. See [resamplecSEMResults()] and [infer()] for details.
 #' }
 #' 
 #' @usage csem(
 #'   .data                    = NULL,
 #'   .model                   = NULL,
-#'   .approach_2ndorder       = c("2stage", "RI_original", "RI_extended", "mixed"),
+#'   .approach_2ndorder       = c("2stage", "mixed"),
 #'   .approach_nl             = c("sequential", "replace"),
 #'   .approach_paths          = c("OLS", "2SLS", "3SLS"),
 #'   .approach_se             = c("none","closed","closed_estimator"), 
@@ -193,30 +224,50 @@
 #'
 #' @return
 #' An object of class `cSEMResults` with methods for all postestimation generics.
-#' Note that, technically, a call to [csem()] results in an object with at least 
+#' T2echnically, a call to [csem()] results in an object with at least 
 #' two class attributes. The first class attribute is always `cSEMResults`. 
 #' The second is one of `cSEMResults_default`, `cSEMResults_multi`, or 
 #' `cSEMResults_2ndorder` and depends on the estimated model and/or the type of 
 #' data provided to the `.model` and `.data` arguments. The third class attribute
 #' `cSEMResults_resampled` is only added if resampling was conducted. 
-#' Technically, method dispatch for all postestimation 
-#' functions is based on the second class attribute. For a details see the 
-#' [cSEMResults helpfile ][cSEMResults].
+#' For a details see the [cSEMResults helpfile ][cSEMResults].
 #'
+#' @section Postestimation:
+#' \describe{
+#' \item{[assess()]}{Assess results using common quality criteria, e.g., reliability,
+#'   fit measures, HTMT, R2 etc.}
+#' \item{[infer()]}{Calculate common inferencial quantities, e.g, standard errors, 
+#'   confidence intervals.}
+#' \item{[predict()]}{Predict indicator values (not yet implemented).}
+#' \item{[summarize()]}{Summarize the results.}
+#' \item{[verify()]}{Verify/Check admissibility of the estimates.}
+#' }
+#' 
+#' Tests are performed using the test family of functions. Currently the following
+#' tests are implemented.
+#' \describe{
+#' \item{[testOMF()]}{Bootstrap-based test for overall model fit based on 
+#'   \insertCite{Beran1985;textual}{cSEM}}
+#' \item{[testMICOM()]}{Permutation-based test for measurement invariance of composites
+#' proposed by \insertCite{Henseler2016;textual}{cSEM}}
+#' \item{[testMGD()]}{Several (mainly) permutation-based tests for multi-group comparisons.}
+#' \item{[testHausman()]}{Regression-based Hausman test to test for endogeneity.}
+#' }
+
 #' @references
 #'   \insertAllCited{}
 #'
-#' @seealso [args_default], [cSEMArguments], [cSEMResults], [foreman] 
+#' @seealso [args_default()], [cSEMArguments], [cSEMResults], [foreman()], [resamplecSEMResults()],
+#'   [verify()], [summarize()], [assess()], [infer()]
 #' 
 #' @example inst/examples/example_csem.R
 #' 
 #' @export
-#' 
 
 csem <- function(
   .data                  = NULL,
   .model                 = NULL,
-  .approach_2ndorder     = c("2stage", "RI_original", "RI_extended", "mixed"),
+  .approach_2ndorder     = c("2stage", "mixed"),
   .approach_nl           = c("sequential", "replace"),
   .approach_paths        = c("OLS", "2SLS", "3SLS"),
   .approach_se           = c("none","closed","closed_estimator"),

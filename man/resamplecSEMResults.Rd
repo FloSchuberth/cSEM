@@ -43,11 +43,12 @@ replications/resamples yielding an inadmissible result will be dropped
 For "\emph{ignore}" all results are returned even if all or some of the replications
 yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Defaults to "\emph{drop}".}
+Depending on the frequency of inadmissible solutions this may significantly increase
+computing time. Defaults to "\emph{drop}".}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
 resample. The functions must take \code{.object} as its first input (e.g.,
-\code{myFun <- function(.object, ...) {...}}).
+\code{myFun <- function(.object, ...) {body-of-the-function}}).
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}

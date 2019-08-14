@@ -32,19 +32,22 @@ foreman(
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
 data (indicators/items/manifest variables). Possible column types or classes
-of the data provided are: "logical", "numeric" ("double" or "integer"),
-"factor" ("ordered" and/or "unordered"), "character" (converted to factor),
+of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
+"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
 or a mix of several types.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list. Defaults to \code{NULL}.}
+or a \link{cSEMModel} list.}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "\emph{none}" in which case the standard
 Bravais-Person correlation is used,
 "\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
-Defaults to "\emph{none}".}
+Defaults to "\emph{none}". Note that many postestimation procedures (such as
+\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continous
+indicator correlation matrix (i.e Bravais-Pearson correlation matrix).
+Only use if you know what you are doing.}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
@@ -54,7 +57,7 @@ Defaults to "\emph{sequential}".}
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
 
-\item{.approach_se}{Chraracter string. Approach used to obtain the standard errors (SEs)
+\item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)
 for parameter estimates. One of: "\emph{none}", "\emph{closed}", "\emph{closed_estimator}".
 Defaults to "\emph{none}".}
 
@@ -69,20 +72,21 @@ One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}"
 to "\emph{diff_absolute}".}
 
 \item{.disattenuate}{Logical. Should composite/proxy correlations
-be disattenuated to yield consisten loadings and path estimates if at least
+be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
-\item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
-where \code{"value"} is a character string giving the name of the dominant indicator
-and \code{"name"} a character string of the corresponding construct name.
-Dominant indicators may be specified for a subset of the constructs.}
+\item{.dominant_indicators}{A character vector of \code{"construct_name" = "indicator_name"} pairs,
+where \code{"indicator_name"} is a character string giving the name of the dominant indicator
+and \code{"construct_name"} a character string of the corresponding construct name.
+Dominant indicators may be specified for a subset of the constructs.
+Default to \code{NULL}.}
 
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
 
-\item{.id}{Character string or integer. The name or position of the column of
-\code{.data} used to split the data into groups.
-Defaults to \code{NULL}.}
+\item{.id}{Character string or integer. A character string giving the name or
+an integer of the position of the column of \code{.data} whose levels are used
+to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent constructs of the structural
@@ -99,7 +103,7 @@ If the algorithm exceeds the specified number, weights of iteration step
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
-Defaults to \code{FALSE}. Ignored if the model is linear.}
+Defaults to \code{FALSE}. Ignored if the model is not nonlinear.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
@@ -112,12 +116,12 @@ when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FA
 Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
-each construct in the form \code{"name" = "mode"}, a single character
+each construct in the form \code{"construct_name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
 "\emph{unit}", "\emph{PCA}", a single integer or
 a vector of fixed weights of the same length as there are indicators for the
-construct given by \code{"name"}. If only a single number is provided this is identical to
+construct given by \code{"construct_name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
 has unit variance.  Defaults to \code{NULL}.
 If \code{NULL} the appropriate mode according to the type
@@ -137,7 +141,7 @@ reliabilities are estimated by \code{csem()}. Currently, only supported for
 \item{.starting_values}{A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
-pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
+pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}

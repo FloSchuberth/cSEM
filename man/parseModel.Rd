@@ -13,7 +13,7 @@ parseModel(
 }
 \arguments{
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list. Defaults to \code{NULL}.}
+or a \link{cSEMModel} list.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent constructs of the structural
@@ -57,6 +57,16 @@ and their respective order ("First order" or "Second order").}
 \item{\code{$model_type}}{The type of model ("Linear" or "Nonlinear").}
 \item{\code{$instruments}}{Only if instruments are supplied: a list of structural
 equations relating endogenous RHS variables to instruments.}
+}
+
+If the \code{.full_output} argument to \code{\link[=parseModel]{parseModel()}} is set to \code{TRUE} the \link{cSEMModel}
+object will contain three additional list elements, namely:
+\describe{
+\item{\code{$vars_2nd}}{The names of the constructs modeled as second orders.}
+\item{\code{$vars_attached_to_2nd}}{The names of the constructs forming or building
+a second order construct.}
+\item{\code{$vars_not_attached_to_2nd}}{The names of the constructs not forming or building
+a second order construct.}
 }
 It is possible to supply an incomplete list to \code{parseModel()}, resulting
 in an incomplete \code{cSEMModel} list which can be passed

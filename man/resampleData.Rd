@@ -34,9 +34,9 @@ Defaults to "\emph{bootstrap}".}
 \code{.cv_folds} to \code{N} (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to \code{10}.}
 
-\item{.id}{Character string or integer. The name or position of the column of
-\code{.data} used to split the data into groups.
-Defaults to \code{NULL}.}
+\item{.id}{Character string or integer. A character string giving the name or
+an integer of the position of the column of \code{.data} whose levels are used
+to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.R}{Integer. The number of bootstrap runs, permutation runs
 or cross-validation repetitions to use. Defaults to \code{499}.}

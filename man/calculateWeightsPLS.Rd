@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators_weights.R
 \name{calculateWeightsPLS}
 \alias{calculateWeightsPLS}
-\title{Calculate composite weights using PLS-PM}
+\title{Internal: Calculate composite weights using PLS-PM}
 \usage{
 calculateWeightsPLS(
   .data                        = args_default()$.data,
@@ -20,8 +20,8 @@ calculateWeightsPLS(
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
 data (indicators/items/manifest variables). Possible column types or classes
-of the data provided are: "logical", "numeric" ("double" or "integer"),
-"factor" ("ordered" and/or "unordered"), "character" (converted to factor),
+of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
+"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
 or a mix of several types.}
 
 \item{.S}{The (K x K) empirical indicator correlation matrix.}
@@ -42,12 +42,12 @@ when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FA
 Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
-each construct in the form \code{"name" = "mode"}, a single character
+each construct in the form \code{"construct_name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
 "\emph{unit}", "\emph{PCA}", a single integer or
 a vector of fixed weights of the same length as there are indicators for the
-construct given by \code{"name"}. If only a single number is provided this is identical to
+construct given by \code{"construct_name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
 has unit variance.  Defaults to \code{NULL}.
 If \code{NULL} the appropriate mode according to the type
@@ -60,13 +60,14 @@ Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 \item{.starting_values}{A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
-pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
+pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 }
 \value{
-A list with the elements
+A named list. J stands for the number of constructs and K for the number
+of indicators.
 \describe{
 \item{\code{$W}}{A (J x K) matrix of estimated weights.}
 \item{\code{$E}}{A (J x J) matrix of inner weights.}
@@ -74,13 +75,13 @@ A list with the elements
 \item{\code{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
 and \code{FALSE} otherwise. If one-step weights are used via \code{.iter_max = 1}
 or a non-iterative procedure was used, the convergence status is set to \code{NULL}.}
-\item{\code{$Iterations}}{The number of iterations used.}
+\item{\code{$Iterations}}{The number of iterations required.}
 }
 }
 \description{
-Calculates composite weights using the partial least squares path modeling
-(PLS-PM) algorithm \insertCite{Wold1975}{cSEM}. (TODO)
+Calculate composite weights using the partial least squares path modeling
+(PLS-PM) algorithm \insertCite{Wold1975}{cSEM}.
 }
-\details{
-More details here. (TODO)
+\references{
+\insertAllCited{}
 }

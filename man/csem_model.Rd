@@ -33,6 +33,16 @@ and their respective order ("First order" or "Second order").}
 \item{\code{$instruments}}{Only if instruments are supplied: a list of structural
 equations relating endogenous RHS variables to instruments.}
 }
+
+If the \code{.full_output} argument to \code{\link[=parseModel]{parseModel()}} is set to \code{TRUE} the \link{cSEMModel}
+object will contain three additional list elements, namely:
+\describe{
+\item{\code{$vars_2nd}}{The names of the constructs modeled as second orders.}
+\item{\code{$vars_attached_to_2nd}}{The names of the constructs forming or building
+a second order construct.}
+\item{\code{$vars_not_attached_to_2nd}}{The names of the constructs not forming or building
+a second order construct.}
+}
 It is possible to supply an incomplete list to \code{parseModel()}, resulting
 in an incomplete \code{cSEMModel} list which can be passed
 to all functions that require \code{.csem_model} as a mandatory argument. Currently,
