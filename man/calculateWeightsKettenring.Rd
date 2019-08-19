@@ -2,12 +2,12 @@
 % Please edit documentation in R/estimators_weights.R
 \name{calculateWeightsKettenring}
 \alias{calculateWeightsKettenring}
-\title{Calculate composite weights using one of Kettenrings's approaches}
+\title{Internal: Calculate composite weights using GCCA}
 \usage{
 calculateWeightsKettenring(
-  .S           = args_default()$.S, 
-  .csem_model  = args_default()$.csem_model,   
-  .approach_gcca    = args_default()$.approach_gcca
+  .S              = args_default()$.S, 
+  .csem_model     = args_default()$.csem_model,   
+  .approach_gcca  = args_default()$.approach_gcca
   )
 }
 \arguments{
@@ -20,22 +20,24 @@ calculateWeightsKettenring(
 "\emph{SUMCORR}".}
 }
 \value{
-A list with the elements
+A named list. J stands for the number of constructs and K for the number
+of indicators.
 \describe{
 \item{\code{$W}}{A (J x K) matrix of estimated weights.}
-\item{\code{$E}}{A (J x J) matrix of inner weights.}
-\item{\code{$Modes}}{A named vector of modes used for the outer estimation.}
+\item{\code{$E}}{\code{NULL}}
+\item{\code{$Modes}}{The GCCA mode used for the estimation.}
 \item{\code{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
-and \code{FALSE} otherwise. If one-step weights are used via \code{.iter_max = 1}
-or a non-iterative procedure was used, the convergence status is set to \code{NULL}.}
-\item{\code{$Iterations}}{The number of iterations used.}
+and \code{FALSE} otherwise. For \code{.approach_gcca = "MINVAR"} or \code{.approach_gcca = "MAXVAR"}
+the convergence status is \code{NULL} since both are closed-form estimators.}
+\item{\code{$Iterations}}{The number of iterations required. 0 for
+\code{.approach_gcca = "MINVAR"} or \code{.approach_gcca = "MAXVAR"}}
 }
 }
 \description{
-Calculates weights according to on of the the five criteria
+Calculates composite weights according to one of the the five criteria
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}", and "\emph{GENVAR}"
 suggested by \insertCite{Kettenring1971;textual}{cSEM}.
 }
-\details{
-Some more description...
+\references{
+\insertAllCited{}
 }

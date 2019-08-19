@@ -13,8 +13,7 @@ Defaults to \code{0.05}.}
 "\emph{SUMCORR}".}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{2stage}", "\emph{RI_original}", "\emph{RI_extended}"
-or "\emph{mixed}". Defaults to "\emph{2stage}".}
+second order constructs. One of: "\emph{2stage}", or "\emph{mixed}". Defaults to "\emph{2stage}".}
 
 \item{.approach_alpha_adjust}{Character string. Approach used to adjust the
 significance level to accomodate mutiple testing.
@@ -25,7 +24,10 @@ indicator correlation matrix. One of: "\emph{none}" in which case the standard
 Bravais-Person correlation is used,
 "\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
-Defaults to "\emph{none}".}
+Defaults to "\emph{none}". Note that many postestimation procedures (such as
+\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continous
+indicator correlation matrix (i.e Bravais-Pearson correlation matrix).
+Only use if you know what you are doing.}
 
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
@@ -45,7 +47,7 @@ their description. Defaults to "\emph{none}".}
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
 
-\item{.approach_se}{Chraracter string. Approach used to obtain the standard errors (SEs)
+\item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)
 for parameter estimates. One of: "\emph{none}", "\emph{closed}", "\emph{closed_estimator}".
 Defaults to "\emph{none}".}
 
@@ -94,12 +96,12 @@ leave-one-out cross-validation samples. Defaults to \code{10}.}
 
 \item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
 data (indicators/items/manifest variables). Possible column types or classes
-of the data provided are: "logical", "numeric" ("double" or "integer"),
-"factor" ("ordered" and/or "unordered"), "character" (converted to factor),
+of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
+"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
 or a mix of several types.}
 
 \item{.disattenuate}{Logical. Should composite/proxy correlations
-be disattenuated to yield consisten loadings and path estimates if at least
+be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
 \item{.dist}{Character string. The distribution to use for the critical value.
@@ -112,10 +114,11 @@ or "\emph{squared_euclidian}". Defaults to "\emph{geodesic}".}
 \item{.df}{Character string. The method for obtaining the degrees of freedom.
 Choices are "\emph{type1}" and "\emph{type2}". Defaults to "\emph{type1}" .}
 
-\item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
-where \code{"value"} is a character string giving the name of the dominant indicator
-and \code{"name"} a character string of the corresponding construct name.
-Dominant indicators may be specified for a subset of the constructs.}
+\item{.dominant_indicators}{A character vector of \code{"construct_name" = "indicator_name"} pairs,
+where \code{"indicator_name"} is a character string giving the name of the dominant indicator
+and \code{"construct_name"} a character string of the corresponding construct name.
+Dominant indicators may be specified for a subset of the constructs.
+Default to \code{NULL}.}
 
 \item{.E}{A (J x J) matrix of inner weights.}
 
@@ -141,11 +144,12 @@ replications/resamples yielding an inadmissible result will be dropped
 For "\emph{ignore}" all results are returned even if all or some of the replications
 yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Defaults to "\emph{drop}".}
+Depending on the frequency of inadmissible solutions this may significantly increase
+computing time. Defaults to "\emph{drop}".}
 
-\item{.id}{Character string or integer. The name or position of the column of
-\code{.data} used to split the data into groups.
-Defaults to \code{NULL}.}
+\item{.id}{Character string or integer. A character string giving the name or
+an integer of the position of the column of \code{.data} whose levels are used
+to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent constructs of the structural
@@ -166,7 +170,7 @@ If the algorithm exceeds the specified number, weights of iteration step
 \item{.matrices}{A list of at least two matrices.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list. Defaults to \code{NULL}.}
+or a \link{cSEMModel} list.}
 
 \item{.model_implied}{Logical. Should the RMS_theta be computed using the
 model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix
@@ -184,7 +188,7 @@ between min(.z) and max(.z) to use. Defaults to \code{100}.}
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
-Defaults to \code{FALSE}. Ignored if the model is linear.}
+Defaults to \code{FALSE}. Ignored if the model is not nonlinear.}
 
 \item{.nr_comparisons}{Numeric. The number of comparisons. Defaults to \code{NULL}.}
 
@@ -218,12 +222,12 @@ when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FA
 Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
-each construct in the form \code{"name" = "mode"}, a single character
+each construct in the form \code{"construct_name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
 "\emph{unit}", "\emph{PCA}", a single integer or
 a vector of fixed weights of the same length as there are indicators for the
-construct given by \code{"name"}. If only a single number is provided this is identical to
+construct given by \code{"construct_name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
 has unit variance.  Defaults to \code{NULL}.
 If \code{NULL} the appropriate mode according to the type
@@ -305,7 +309,7 @@ One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 \item{.starting_values}{A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
-pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
+pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
 
 \item{.terms}{A vector of construct names to be classified.}
 
@@ -320,7 +324,7 @@ to \code{TRUE}.}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
 resample. The functions must take \code{.object} as its first input (e.g.,
-\code{myFun <- function(.object, ...) {...}}).
+\code{myFun <- function(.object, ...) {body-of-the-function}}).
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}

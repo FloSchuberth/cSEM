@@ -31,7 +31,8 @@ replications/resamples yielding an inadmissible result will be dropped
 For "\emph{ignore}" all results are returned even if all or some of the replications
 yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Defaults to "\emph{drop}".}
+Depending on the frequency of inadmissible solutions this may significantly increase
+computing time. Defaults to "\emph{drop}".}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 

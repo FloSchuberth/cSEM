@@ -1,9 +1,10 @@
 #' Calculate direct, indirect and total effect
 #' 
 #' The direct effects are equal to the estimated coefficients. The total effect 
-#' equals (I-B)^{-1}Gam. The indirect effect equals the difference between
+#' equals (I-B)^{-1}Gamma. The indirect effect equals the difference between
 #' the total effect and the indirect effect. 
-#' Helper for generic function summarize()
+#' Helper for generic function summarize().
+#' Only effects for endogenous constructs are returned as exogenous constructs
 #' @noRd
 #' 
 calculateEffects <- function(.object, .output_type = c("data.frame", "matrix")) {
@@ -66,6 +67,15 @@ calculateEffects <- function(.object, .output_type = c("data.frame", "matrix")) 
       #       there is a better way to check if a number is "acutally zero".
       type <- rep(m$construct_type, times = rowSums(round(x, 10) != 0))
       
+      # Note (07.08.2019): Rounding may be confusing. I was using the repeated 
+      #       indicators approach for the model
+      #       c4 ~ eta1
+      #       eta2 ~ eta1 + c4
+      #       and expecting there to be an effect of eta1 on c4 (knowlingly that 
+      #       it should be zero). Round killed it, but it should be there as it
+      #       is an effect that is falsley estimated to zero.
+      # type <- rep(m$construct_type, times = rowSums(x != 0))
+      
       # If there are no indirect effects the matrix "indirect" is the zero matrix
       # return an empty data frame in this case
       if(all(round(x, 10) == 0)) {
@@ -84,6 +94,9 @@ calculateEffects <- function(.object, .output_type = c("data.frame", "matrix")) 
           "Name"           = t(temp)[round(t(x), 10) != 0 ],
           "Construct_type" = type,
           "Estimate"       = t(x)[round(t(x), 10) != 0 ],
+          # "Name"           = t(temp)[t(x) != 0 ],
+          # "Construct_type" = type,
+          # "Estimate"       = t(x)[t(x) != 0 ],
           "Std_err"        = NA,
           "t_stat"         = NA,
           "p_value"        = NA,
