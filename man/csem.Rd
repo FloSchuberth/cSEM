@@ -38,8 +38,8 @@ csem(
 data (indicators/items/manifest variables).
 Additionally, a \code{list} of data sets (data frames or matrices) is accepted in which
 case estimation is repeated for each data set. Possible column types or classes
-of the data provided are: "logical", "numeric" ("double" or "integer"),
-"factor" ("ordered" and/or "unordered"), "character" (converted to factor),
+of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
+"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (will be converted to factor),
 or a mix of several types.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
@@ -147,7 +147,7 @@ See \link{args_csem_dotdotdot} for a complete list of available arguments.}
 }
 \value{
 An object of class \code{cSEMResults} with methods for all postestimation generics.
-T2echnically, a call to \code{\link[=csem]{csem()}} results in an object with at least
+Technically, a call to \code{\link[=csem]{csem()}} results in an object with at least
 two class attributes. The first class attribute is always \code{cSEMResults}.
 The second is one of \code{cSEMResults_default}, \code{cSEMResults_multi}, or
 \code{cSEMResults_2ndorder} and depends on the estimated model and/or the type of
@@ -279,7 +279,6 @@ VAL  ~ SAT
 # Measurement/composite model
 QUAL =~ qual1 + qual2
 SAT  =~ sat1 + sat2
-VAL  =~ val1 + val2
 
 c1 =~ x11 + x12
 c2 =~ x21 + x22
@@ -312,7 +311,6 @@ VAL ~ c1 + c2
 # Measurement/composite model
 QUAL =~ qual1 + qual2
 SAT  =~ sat1 + sat2
-VAL  =~ val1 + val2
 VAL  =~ x11_temp + x12_temp + x21_temp + x22_temp
 
 c1 =~ x11 + x12

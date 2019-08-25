@@ -22,9 +22,9 @@ be computed? Defaults to \code{FALSE}.}
 A single numeric value.
 }
 \description{
-Calculates the degrees of freedom for a given model from a \link{cSEMResults} object.
+Calculate the degrees of freedom for a given model from a \link{cSEMResults} object.
 }
 \seealso{
-\link{assess}, \link{cSEMResults}
+\code{\link[=assess]{assess()}}, \link{cSEMResults}
 }
 \keyword{internal}

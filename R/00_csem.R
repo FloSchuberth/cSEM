@@ -122,7 +122,6 @@
 #' # Measurement/composite model
 #' QUAL =~ qual1 + qual2
 #' SAT  =~ sat1 + sat2
-#' VAL  =~ val1 + val2
 #' 
 #' c1 =~ x11 + x12
 #' c2 =~ x21 + x22
@@ -155,7 +154,6 @@
 #' # Measurement/composite model
 #' QUAL =~ qual1 + qual2
 #' SAT  =~ sat1 + sat2
-#' VAL  =~ val1 + val2
 #' VAL  =~ x11_temp + x12_temp + x21_temp + x22_temp
 #' 
 #' c1 =~ x11 + x12
@@ -215,8 +213,8 @@
 #'   data (indicators/items/manifest variables). 
 #'   Additionally, a `list` of data sets (data frames or matrices) is accepted in which 
 #'   case estimation is repeated for each data set. Possible column types or classes 
-#'   of the data provided are: "logical", "numeric" ("double" or "integer"), 
-#'   "factor" ("ordered" and/or "unordered"), "character" (converted to factor),
+#'   of the data provided are: "`logical`", "`numeric`" ("`double`" or "`integer`"), 
+#'   "`factor`" ("`ordered`" and/or "`unordered`"), "`character`" (will be converted to factor),
 #'   or a mix of several types.
 #' @inheritParams csem_arguments
 #' @param ... Further arguments to be passed down to lower level functions of `csem()`.
@@ -224,7 +222,7 @@
 #'
 #' @return
 #' An object of class `cSEMResults` with methods for all postestimation generics.
-#' T2echnically, a call to [csem()] results in an object with at least 
+#' Technically, a call to [csem()] results in an object with at least 
 #' two class attributes. The first class attribute is always `cSEMResults`. 
 #' The second is one of `cSEMResults_default`, `cSEMResults_multi`, or 
 #' `cSEMResults_2ndorder` and depends on the estimated model and/or the type of 

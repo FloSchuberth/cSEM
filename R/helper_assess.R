@@ -24,7 +24,7 @@
 #'   
 #' @inheritParams csem_arguments
 #'
-#' @seealso [assess], [cSEMResults]
+#' @seealso [assess()], [cSEMResults]
 #'
 #' @references 
 #' \insertAllCited{}
@@ -74,7 +74,7 @@ calculateAVE <- function(
 
 #' Internal: Degrees of freedom
 #' 
-#' Calculates the degrees of freedom for a given model from a [cSEMResults] object.
+#' Calculate the degrees of freedom for a given model from a [cSEMResults] object.
 #' 
 #' @usage calculateDf(
 #'   .object     = NULL,
@@ -87,7 +87,7 @@ calculateAVE <- function(
 #' @inheritParams csem_arguments
 #' @param ... Ignored.
 #'
-#' @seealso [assess], [cSEMResults]
+#' @seealso [assess()], [cSEMResults]
 #' @keywords internal
 
 calculateDf <- function(
@@ -202,7 +202,7 @@ calculateDf <- function(
 #'   
 #' @inheritParams csem_arguments
 #'
-#' @seealso [assess], [cSEMResults]
+#' @seealso [assess()], [cSEMResults]
 #'
 #' @references 
 #' \insertAllCited{}
@@ -259,12 +259,12 @@ calculateGoF <- function(
 #' `.only_common_factors = FALSE`, however, it is unclear how to
 #' interpret reliability in this case.
 #' 
-#' Reliability is are traditionally based on a test score (proxy) based on unit weights.
+#' Reliability is traditionally based on a test score (proxy) based on unit weights.
 #' To compute congeneric and tau-equivalent reliability based on a score that 
 #' uses the weights of the weight approach used to obtain `.object` use `.weighted = TRUE` 
 #' instead.
 #' 
-#' For the the tau-equivalent reliability (rhoT or Cronbach's alpha) a closed-form 
+#' For the tau-equivalent reliability ("`rhoT`" or "`Cronbach's alpha`") a closed-form 
 #' confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 #' `.closed_form_ci = TRUE` (default is `FALSE`). If `.alpha` is a vector
 #' several CI's are returned.
@@ -285,7 +285,7 @@ calculateGoF <- function(
 #' @inheritParams csem_arguments
 #' @param ... Ignored.
 #'
-#' @seealso [assess], [cSEMResults]
+#' @seealso [assess()], [cSEMResults]
 #'
 #' @references 
 #' 
@@ -485,7 +485,7 @@ calculateRhoT <- function(
 #'
 #' @return A lower tringular matrix of HTMT values.
 #' 
-#' @seealso [assess], [csem], [cSEMResults]
+#' @seealso [assess()], [csem], [cSEMResults]
 #' @keywords internal
 
 calculateHTMT <- function(
@@ -850,7 +850,7 @@ calculateSRMR <- function(
 #'   number of columns is equal to the total number of right-hand side variables
 #'   of these equations.
 #' 
-#' @seealso [assess], [csem], [cSEMResults]
+#' @seealso [assess()], [csem], [cSEMResults]
 #' @keywords internal
 
 calculateEffectSize <- function(.object = NULL) {
@@ -943,7 +943,7 @@ calculateEffectSize <- function(.object = NULL) {
 #'   
 #' @inheritParams csem_arguments
 #'
-#' @seealso [assess], [cSEMResults]
+#' @seealso [assess()], [cSEMResults]
 #'
 #' @references 
 #' \insertAllCited{}

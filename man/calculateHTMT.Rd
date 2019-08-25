@@ -34,6 +34,6 @@ The function is only applicable to objects inheriting class \code{cSEMResults_de
 For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
 }
 \seealso{
-\link{assess}, \link{csem}, \link{cSEMResults}
+\code{\link[=assess]{assess()}}, \link{csem}, \link{cSEMResults}
 }
 \keyword{internal}

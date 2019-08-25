@@ -57,12 +57,12 @@ For concepts modeled as composites reliability may be estimated by setting
 \code{.only_common_factors = FALSE}, however, it is unclear how to
 interpret reliability in this case.
 
-Reliability is are traditionally based on a test score (proxy) based on unit weights.
+Reliability is traditionally based on a test score (proxy) based on unit weights.
 To compute congeneric and tau-equivalent reliability based on a score that
 uses the weights of the weight approach used to obtain \code{.object} use \code{.weighted = TRUE}
 instead.
 
-For the the tau-equivalent reliability (rhoT or Cronbach's alpha) a closed-form
+For the tau-equivalent reliability ("\code{rhoT}" or "\code{Cronbach's alpha}") a closed-form
 confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 \code{.closed_form_ci = TRUE} (default is \code{FALSE}). If \code{.alpha} is a vector
 several CI's are returned.
@@ -86,6 +86,6 @@ parallel reliability.
 \insertAllCited{}
 }
 \seealso{
-\link{assess}, \link{cSEMResults}
+\code{\link[=assess]{assess()}}, \link{cSEMResults}
 }
 \keyword{internal}

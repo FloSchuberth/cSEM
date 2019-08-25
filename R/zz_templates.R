@@ -4,7 +4,7 @@
 #' a model written in [lavaan model syntax][lavaan::model.syntax] 
 #' to a [cSEMModel] list use [parseModel()].
 #'
-#' @return An object of class `cSEMModel` is a standardized list containing the 
+#' @return An object of class [cSEMModel] is a standardized list containing the 
 #' following components. J stands for the number of constructs and K for the number
 #' of indicators.
 #' \describe{
@@ -16,8 +16,8 @@
 #'     nonlinear terms. Rows are ordered such that exogenous constructs are always
 #'     first, followed by constructs that only depend on exogenous constructs and/or
 #'     previously ordered constructs.}
-#'   \item{`$measurement`}{A (J x K) matrix mimicking the measurement relationship
-#'     between constructs and their related indicators. Rows are in the same
+#'   \item{`$measurement`}{A (J x K) matrix mimicking the measurement/composite 
+#'     relationship between constructs and their related indicators. Rows are in the same
 #'     order as the matrix `$structural` with row names equal to
 #'     the construct names. The order of the columns is such that `$measurement`
 #'     forms a block diagonal matrix.}
@@ -42,11 +42,11 @@
 #'   \item{`$vars_not_attached_to_2nd`}{The names of the constructs not forming or building
 #'     a second order construct.}
 #' }
-#' It is possible to supply an incomplete list to `parseModel()`, resulting
-#' in an incomplete `cSEMModel` list which can be passed
+#' It is possible to supply an incomplete list to [parseModel()], resulting
+#' in an incomplete [cSEMModel] list which can be passed
 #' to all functions that require `.csem_model` as a mandatory argument. Currently,
 #' only the structural and the measurement matrix are required.
-#' However, specifying an incomplete `cSEMModel` list may lead to unexpected behavior 
+#' However, specifying an incomplete [cSEMModel] list may lead to unexpected behavior 
 #' and errors. Use with care.
 #'
 #' @seealso [parseModel]

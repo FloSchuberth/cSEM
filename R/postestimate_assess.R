@@ -1,6 +1,6 @@
 #' Assess model
 #'
-#' Assess a model using common evaluation criteria and fit measures.
+#' Assess a model using common quality criteria.
 #' See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
 #' article on the
 #' \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
@@ -11,9 +11,9 @@
 #' the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
 #' 
 #' By default every possible quality criterion is calculated (`.quality_criterion = "all"`). 
-#' If only a subset of quality criteria is needed a single character string
-#' or a vector of character strings naming the statistics to be computed may be 
-#' supplied to `assess()` via the `.quality_criterion` argument. Currently, the
+#' If only a subset of quality criteria are needed a single character string
+#' or a vector of character strings naming the criteria to be computed may be 
+#' supplied to [assess()] via the `.quality_criterion` argument. Currently, the
 #' following quality criteria are implemented (in alphabetical order):
 #' \describe{
 #' \item{Average variance extracted (AVE); "ave"}{An estimate of the 
@@ -57,14 +57,14 @@
 #'   variable in a structural regression equation. The effect size of the k'th
 #'   independent variable in this case
 #'   is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where 
-#'   R2_inclded and R2_excluded are the R squares of the 
+#'   R2_included and R2_excluded are the R squares of the 
 #'   original structural model regression equation (R2_included) and the
-#'   alternative speficication with the k'th variable dropped (R2_excluded).
+#'   alternative specification with the k'th variable dropped (R2_excluded).
 #'   Calculation is done by [calculateEffectSize()].}
 #' \item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "rms_theta"
 #'   "srmr"}{
 #'   Several absolute and incremental fit indices. Note that their suitability
-#'   for models containing composites modeled as common factors is still an
+#'   for models containing constructs modeled as common factors is still an
 #'   open research question. Also note that fit indices are not tests in a 
 #'   hypothesis testing sense and
 #'   decisions based on common cut-offs proposed in the literature should be
@@ -161,10 +161,10 @@
 #' )
 #' 
 #' @inheritParams csem_arguments
-#' @param ... Further arguments passed to functions called by `assess()`.
+#' @param ... Further arguments passed to functions called by [assess()].
 #'   See [args_assess_dotdotdot] for a complete list of available arguments.
 #'
-#' @seealso [csem()], [resamplecSEMResults]
+#' @seealso [csem()], [resamplecSEMResults()]
 #'
 #' @return A named list of quality criteria. Note that if only a single quality
 #'   criteria is computed the return value is still a list!
