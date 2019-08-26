@@ -264,7 +264,7 @@ calculateGoF <- function(
 #' uses the weights of the weight approach used to obtain `.object` use `.weighted = TRUE` 
 #' instead.
 #' 
-#' For the tau-equivalent reliability ("`rhoT`" or "`Cronbach's alpha`") a closed-form 
+#' For the tau-equivalent reliability ("`rho_T`" or "`cronbachs_alpha`") a closed-form 
 #' confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 #' `.closed_form_ci = TRUE` (default is `FALSE`). If `.alpha` is a vector
 #' several CI's are returned.
@@ -272,9 +272,9 @@ calculateGoF <- function(
 #' The function is only applicable to objects inheriting class `cSEMResults_default`.
 #' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
 #'
-#' @return For `calculateRhoC()` a named numeric vector containing the reliability
-#'   estimates.
-#'   For `calculateRhoT()` a `data.frame` with as many rows as there are
+#' @return For `calculateRhoC()` and `calculateRhoT()` (if `.output_type = "vector"`) 
+#'   a named numeric vector containing the reliability estimates.
+#'   If `.output_type = "data.frame"` `calculateRhoT()` returns a `data.frame` with as many rows as there are
 #'   constructs modeled as common factors in the model (unless 
 #'   `.only_common_factors = FALSE` in which case the number of rows equals the
 #'   total number of constructs in the model). The first column contains the name of the construct.
@@ -283,6 +283,8 @@ calculateGoF <- function(
 #'   for the (1 - `.alpha`) confidence interval(s).
 #'   
 #' @inheritParams csem_arguments
+#' @param .output_type Character string. The type of output. One of "vector" or
+#'   "data.frame". Defaults to "vector".
 #' @param ... Ignored.
 #'
 #' @seealso [assess()], [cSEMResults]
@@ -290,6 +292,7 @@ calculateGoF <- function(
 #' @references 
 #' 
 #' \insertAllCited{}
+#' 
 #' @keywords internal
 #' @name reliability
 NULL
@@ -349,10 +352,11 @@ calculateRhoT <- function(
   .alpha               = args_default()$.alpha,
   .closed_form_ci      = args_default()$.closed_form_ci,
   .only_common_factors = TRUE,
+  .output_type         = c("vector", "data.frame"),
   .weighted            = args_default()$.weighted,
   ...
   ) {
-  
+  .output_type <- match.arg(.output_type)
   ## Only applicable to objects of class cSEMResults_default
   if(!any(class(.object) == "cSEMResults_default")) {
     stop2("`", match.call()[1], "` only applicable to objects of",
@@ -370,16 +374,21 @@ calculateRhoT <- function(
   }
   
   ## Calculate tau-equivalent reliability by block/construct
-  out <- data.frame()
+  out_df  <- data.frame()
+  out_vec <- c()
+  
   for(j in rownames(W)) {
     indicator_names <- colnames(W[j, W[j,] != 0, drop = FALSE])
     S_jj            <- S[indicator_names, indicator_names]
     rho_bar_j <- mean(S_jj[upper.tri(S_jj)])
     rhoT      <- rho_bar_j * sum(W[j, ])^2  
     
+    # Add to vector 
+    out_vec[j] <- rhoT
+    
     ## Add to data.frame
-    out[j, "Construct"] <- j
-    out[j, "Estimate"]  <- rhoT
+    out_df[j, "Construct"] <- j
+    out_df[j, "Estimate"]  <- rhoT
     
     ## Calculate confidence interval for rhoT
     if(.closed_form_ci) {
@@ -402,9 +411,16 @@ calculateRhoT <- function(
                  " have not been formally examined yet.")
       }
       
+      ## If .closed_form_ci == TRUE then .output_type must be "data.frame"
+      if(.output_type != "data.frame") {
+        stop2(
+          "The following error occured in the `calculateRhoT()` function:\n",
+          "Output type must be 'data.frame' if `.closed_form_ci = TRUE`"
+        )
+      }
       
       K <- length(indicator_names)
-      X <- .object$Information$Data[, indicator_names, drop=FALSE]
+      X <- .object$Information$Data[, indicator_names, drop = FALSE]
       N <- nrow(X)
       H <- .object$Estimates$Construct_scores[, j]
       
@@ -444,8 +460,8 @@ calculateRhoT <- function(
         name_L <- sprintf("%.6g%%L", 100* (1 - i))
         name_U <- sprintf("%.6g%%U", 100* (1 - i))
         
-        out[j, name_L] <- low
-        out[j, name_U] <- up
+        out_df[j, name_L] <- low
+        out_df[j, name_U] <- up
       }
     }
   }
@@ -454,11 +470,16 @@ calculateRhoT <- function(
   if(.only_common_factors){
     con_types <- .object$Information$Model$construct_type
     names_cf  <- names(con_types[con_types == "Common factor"])
-    out       <- out[names_cf, ]
+    out_vec   <- out_vec[names_cf]
+    out_df    <- out_df[names_cf, ]
   }
   
-  # Return named vector of reliabilities
-  return(out)
+  # Return reliabilities
+  if(.output_type == "vector") {
+    return(out_vec) 
+  } else {
+    return(out_df)
+  }
 }
 
 
@@ -967,7 +988,7 @@ calculateVIFModeB <- function(.object = NULL) {
       length(modesB) > 0) {
     
     m <- .object$Information$Model$measurement
-    X <- .object$Information$Data_with_RI
+    X <- .object$Information$Data
     
     VIF <- lapply(names(modesB), function(j) {
       indicator_names <- colnames(m[j, m[j,] != 0, drop = FALSE])

@@ -11,8 +11,8 @@ calculateRhoC(.object = NULL, .only_common_factors = TRUE,
 
 calculateRhoT(.object = NULL, .alpha = args_default()$.alpha,
   .closed_form_ci = args_default()$.closed_form_ci,
-  .only_common_factors = TRUE, .weighted = args_default()$.weighted,
-  ...)
+  .only_common_factors = TRUE, .output_type = c("vector",
+  "data.frame"), .weighted = args_default()$.weighted, ...)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -31,12 +31,15 @@ Defaults to \code{0.05}.}
 \item{.closed_form_ci}{Logical. Should a closed-form confidence interval be computed?
 Defaults to \code{FALSE}.}
 
+\item{.output_type}{Character string. The type of output. One of "vector" or
+"data.frame". Defaults to "vector".}
+
 \item{...}{Ignored.}
 }
 \value{
-For \code{calculateRhoC()} a named numeric vector containing the reliability
-estimates.
-For \code{calculateRhoT()} a \code{data.frame} with as many rows as there are
+For \code{calculateRhoC()} and \code{calculateRhoT()} (if \code{.output_type = "vector"})
+a named numeric vector containing the reliability estimates.
+If \code{.output_type = "data.frame"} \code{calculateRhoT()} returns a \code{data.frame} with as many rows as there are
 constructs modeled as common factors in the model (unless
 \code{.only_common_factors = FALSE} in which case the number of rows equals the
 total number of constructs in the model). The first column contains the name of the construct.
@@ -62,7 +65,7 @@ To compute congeneric and tau-equivalent reliability based on a score that
 uses the weights of the weight approach used to obtain \code{.object} use \code{.weighted = TRUE}
 instead.
 
-For the tau-equivalent reliability ("\code{rhoT}" or "\code{Cronbach's alpha}") a closed-form
+For the tau-equivalent reliability ("\code{rho_T}" or "\code{cronbachs_alpha}") a closed-form
 confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 \code{.closed_form_ci = TRUE} (default is \code{FALSE}). If \code{.alpha} is a vector
 several CI's are returned.

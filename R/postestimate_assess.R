@@ -285,6 +285,7 @@ assess.cSEMResults_default <- function(
     out[["Cronbachs_alpha"]]  <- calculateRhoT(
       .object, 
       .only_common_factors = .only_common_factors, 
+      .output_type         = "vector",
       ...
     )
   }
@@ -293,7 +294,8 @@ assess.cSEMResults_default <- function(
     out[["Cronbachs_alpha_weighted"]]  <- calculateRhoT(
       .object, 
       .only_common_factors = .only_common_factors, 
-      .weighted = TRUE,
+      .output_type         = "vector",
+      .weighted            = TRUE,
       ...
     )
   }
@@ -400,6 +402,7 @@ assess.cSEMResults_default <- function(
     out[["RhoT"]]  <- calculateRhoT(
       .object, 
       .only_common_factors = .only_common_factors, 
+      .output_type         = "vector",
       ...
     )
   }
@@ -408,13 +411,28 @@ assess.cSEMResults_default <- function(
     out[["RhoT_weighted"]]  <- calculateRhoT(
       .object, 
       .only_common_factors = .only_common_factors, 
-      .weighted = TRUE, 
+      .output_type         = "vector",
+      .weighted            = TRUE, 
       ...
     )
   }
   if(any(.quality_criterion %in% c("all", "vif"))) {
     # VIF
     out[["VIF"]]  <- .object$Estimates$VIF
+    
+    # Make output a matrix:
+    # Note: this is necessary to be able to bootstrap the VIFs
+    #       via the .user_funs argument. Currently, .user_funs functions 
+    #       need to return a vector or a matrix. I may change that in the future.
+    m <- matrix(0, nrow = length(names(out$VIF)), ncol = length(unique(unlist(sapply(out$VIF, names)))),
+                dimnames = list(names(out$VIF), unique(unlist(sapply(out$VIF, names)))))
+    
+    for(i in names(out$VIF)) {
+      m[i, match(names(out$VIF[[i]]), colnames(m))] <- out$VIF[[i]]
+    }
+    
+    out$VIF <- m
+    
   }
   if(any(.quality_criterion %in% c("all", "vifmodeB"))) {
     # VIFModeB
