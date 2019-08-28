@@ -186,10 +186,14 @@
 #' 
 #' res <- csem(threecommonfactors, model)
 #' a   <- assess(res) # computes all quality criteria (.quality_criterion = "all")
+#' a
 #' 
 #' ## The return value is a named list
 #' str(a)
 #' a$HTMT
+#' 
+#' # You may also just compute a subset of quality criteria
+#' assess(res, .quality_criterion = c("ave", "rho_C", "htmt"))
 #' 
 #' ## Resampling ---------------------------------------------------------------
 #' # To resample a given quality criterion use csem()'s .user_funs argument
