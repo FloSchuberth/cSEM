@@ -76,7 +76,8 @@ progress).
 
 ## Basic usage
 
-The basic usage is illustrated below.
+The basic usage is illustrated
+below.
 
 <img src="man/figures/api.png" width="80%" style="display: block; margin: auto;" />
 
@@ -92,8 +93,7 @@ Roughly speaking using `cSEM` is always the same 3 step procedure
 
 Currently we have five major postestimation verbs.
 
-  - `assess()` : assess the model using common fit and assessment
-    measures
+  - `assess()` : assess the model using common quality criteria
   - `infer()` : calculate common inferencial quantities (e.g, standard
     errors)
   - `predict()` : predict indicator values (not yet implemented)
@@ -106,7 +106,7 @@ following tests are implemented.
   - `testOMF()` : performs a test for overall model fit
   - `testMICOM()` : performs a test for composite measurement invariance
   - `testMGD` : performs several test to assess multi-group differences
-  - `testHausman()` : performs the regression-based Hausam test to test
+  - `testHausman()` : performs the regression-based Hausman test to test
     for endogeneity.
 
 All functions require a `cSEMResults` object.
