@@ -182,7 +182,7 @@ res$Information$Model
 ```
 
 A usefule tool to examine a list is the [listviewer package](https://github.com/timelyportfolio/listviewer). 
-If you are new to `cSEM` this might be a good why to familiarize yourself with the structure
+If you are new to `cSEM` this might be a good way to familiarize yourself with the structure
 of a `cSEMResults` object.
 
 ```{r eval=FALSE}
@@ -230,10 +230,19 @@ b1 <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
 b2 <- resamplecSEMResults(res)
 ```
 
+```{r echo=FALSE, results='hide'}
+b1 <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
+```
+
+Now `summarize()` shows inferencial quantities as well:
+
+```{r}
+summarize(b1)
+```
+
 Several resample-based confidence intervals are implemented, see `?infer()`:
 
 ```{r eval=FALSE}
-summarize(b1)
 infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
 ```
 
