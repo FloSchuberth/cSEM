@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# cSEM: a package for composite-based SEM <img src='man/figures/cSEMsticker.svg' align="right" height="200" /></a>
+# cSEM: Composite-based SEM <img src='man/figures/cSEMsticker.svg' align="right" height="200" /></a>
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/cSEM)](https://cran.r-project.org/package=cSEM)
@@ -41,26 +41,22 @@ devtools::install_github("M-E-Rademaker/cSEM")
 ## Getting started
 
 The best place to get started is the
-[cSEM-website](https://m-e-rademaker.github.io/cSEM/) (Work in
+[cSEM-website](https://m-e-rademaker.github.io/cSEM/) (work in
 progress).
 
 ## Philosophy
 
-  - Above all: user-centered design\!
-  - Easy to use by non-R experts:
-      - One central function `csem()` provides default choices for most
-        of its arguments (similarity to the `sem()` and `cfa()`
-        functions of the [lavaan](http://lavaan.ugent.be/) package is
-        intended).
-      - Well documented (vignettes, HTML output, a website, (eventually)
-        intro course(s) and cheatsheets)
-      - Structured output/results that aims to be “easy”" in a sense
-        that it is
-          - … descriptive/verbose
-          - … (eventually) easy to export to other environments such as
-            MS Word, Latex files etc. (exportability)
-          - … (eventually) easy to migrate from/to/between other
-            PLS/VB/CB-based systems (lavaan, semPLS, ADANCO, SmartPLS)
+  - First and foremost: `cSEM` has a user-centered design\!
+  - “User-centered” mainly boils down to: `cSEM` is easy, i.e. intuitive
+    to use by non-R experts\!
+    <!--  - There is one central function called `csem()` that provides default choices -->
+    <!--    for most of its arguments (similarity to the `sem()` and `cfa()` functions of the [lavaan](http://lavaan.ugent.be/)  -->
+    <!--    package is intended). --> <!-- -  -->
+    <!--  - cSEM is Well documented (vignettes, HTML output, a website, (eventually) intro course(s) and cheatsheets) -->
+    <!--  - Structured output/results  that aims to be "easy"" in a sense that it is -->
+    <!--      - ... descriptive/verbose -->
+    <!--      - ... (eventually) easy to export to other environments such as MS Word, Latex files etc. (exportability) -->
+    <!--      - ... (eventually) easy to migrate from/to/between other PLS/VB/CB-based systems (lavaan, semPLS, ADANCO, SmartPLS) -->
   - The package is designed to be flexible/modular enough so that
     researchers developing new methods can take specific function
     provided by the package and alter them according to their need
@@ -76,12 +72,11 @@ progress).
 
 ## Basic usage
 
-The basic usage is illustrated
-below.
+The basic usage is illustrated below.
 
 <img src="man/figures/api.png" width="80%" style="display: block; margin: auto;" />
 
-Roughly speaking using `cSEM` is always the same 3 step procedure
+Usully, using `cSEM` is the same 3 step procedure:
 
 > 1.  Pick a dataset and specify a model using [lavaan
 >     syntax](http://lavaan.ugent.be/tutorial/syntax1.html)
@@ -91,7 +86,7 @@ Roughly speaking using `cSEM` is always the same 3 step procedure
 
 ## Postestimation functions
 
-Currently we have five major postestimation verbs.
+Currently we have five major postestimation verbs:
 
   - `assess()` : assess the model using common quality criteria
   - `infer()` : calculate common inferencial quantities (e.g, standard
@@ -101,7 +96,7 @@ Currently we have five major postestimation verbs.
   - `verify()` : verify admissibility of the estimates
 
 Tests are performed by using the test family of functions. Currently the
-following tests are implemented.
+following tests are implemented:
 
   - `testOMF()` : performs a test for overall model fit
   - `testMICOM()` : performs a test for composite measurement invariance
@@ -115,12 +110,14 @@ All functions require a `cSEMResults` object.
 
 Models are defined using [lavaan
 syntax](http://lavaan.ugent.be/tutorial/syntax1.html) with some slight
-modifications. For illustration we use the build-in and well-known
-`satisfaction` dataset.
+modifications (see the [Specifying a
+model](https://m-e-rademaker.github.io/cSEM/articles/cSEM.html#using-csem)
+section on the [cSEM-website](https://m-e-rademaker.github.io/cSEM/)).
+For illustration we use the build-in and well-known `satisfaction`
+dataset.
 
 ``` r
 require(cSEM)
-data(satisfaction)
     
 ## Note: The operator "<~" tells cSEM that the construct to its left is modelled
 ##       as a composite.
@@ -149,13 +146,46 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 "
 ```
 
-Estimation is conducted by the `csem()` function.
+The estimation is conducted using the `csem()` function.
 
 ``` r
 # Estimate using defaults
 res <- csem(.data = satisfaction, .model = model)
+res
+```
 
-# This is equal to
+    ## ________________________________________________________________________________
+    ## ----------------------------------- Overview -----------------------------------
+    ## 
+    ## Estimation was successful.
+    ## 
+    ## The result is a list of class cSEMResults with list elements:
+    ## 
+    ##  - Estimates
+    ##  - Information
+    ## 
+    ## To get an overview or help type:
+    ## 
+    ##  - ?cSEMResults
+    ##  - str(<object-name>)
+    ##  - listviewer::jsondedit(<object-name>, mode = 'view')
+    ## 
+    ## If you wish to access the list elements directly type e.g. 
+    ## 
+    ##  - <object-name>$Estimates
+    ## 
+    ## Available postestimation commands:
+    ## 
+    ##  - assess(<object-name>)
+    ##  - infer(<object-name)
+    ##  - predict(<object-name>)
+    ##  - summarize(<object-name>)
+    ##  - verify(<object-name>)
+    ## ________________________________________________________________________________
+
+This is equal to:
+
+``` r
 csem(
    .data                        = satisfaction,
    .model                       = model,
@@ -189,34 +219,338 @@ csem(
     )
 ```
 
-The result is always an object of class `cSEMResults`. Technically, the
-resulting object has at least one additional class attribute (namely
-`cSEMResults_default`, `cSEMResults_multi` or `cSEMResults_2ndorder`),
-however, users usually do not need to care about since postestimation
-functions (will eventually) automatically work on all classes.
+The result is always a named list of class `cSEMResults`.
+
+To access list elements use `$`:
 
 ``` r
-## Access elements using `$`. E.g.:
 res$Estimates$Loading_estimates 
 res$Information$Model
-    
-## Examine the structure:
+```
+
+A usefule tool to examine a list is the [listviewer
+package](https://github.com/timelyportfolio/listviewer). If you are new
+to `cSEM` this might be a good why to familiarize yourself with the
+structure of a `cSEMResults` object.
+
+``` r
 listviewer::jsonedit(res, mode = "view") # requires the listviewer package.
-    
+```
+
+Apply postestimation functions:
+
+``` r
 ## Get a summary
 summarize(res) 
-    
-## Apply postestimation functions, e.g.
-verify(res) 
-    
-## Test overall model fit
-testOMF(res)
+```
 
+    ## ________________________________________________________________________________
+    ## ----------------------------------- Overview -----------------------------------
+    ## 
+    ##  General information:
+    ##  ------------------------
+    ##  Number of observations           = 250
+    ##  Weight estimator                 = PLS-PM
+    ##  Inner weighting scheme           = path
+    ##  Type of indicator correlation    = Bravais-Pearson
+    ##  Path model estimator             = OLS
+    ##  Second order approach            = NA
+    ##  Type of path model               = Linear
+    ##  Disattenuated                    = Yes (PLSc)
+    ## 
+    ##  Construct details:
+    ##  ------------------
+    ##  Name  Modeled as     Order         Mode 
+    ## 
+    ##  IMAG  Composite      First order   modeB
+    ##  EXPE  Composite      First order   modeB
+    ##  QUAL  Composite      First order   modeB
+    ##  VAL   Composite      First order   modeB
+    ##  SAT   Common factor  First order   modeA
+    ##  LOY   Common factor  First order   modeA
+    ## 
+    ## ----------------------------------- Estimates ----------------------------------
+    ## 
+    ## Estimated path coefficients:
+    ## ============================
+    ##   Path           Estimate  Std. error   t-stat.   p-value
+    ##   EXPE ~ IMAG      0.4714          NA        NA        NA
+    ##   QUAL ~ EXPE      0.8344          NA        NA        NA
+    ##   VAL ~ EXPE       0.0457          NA        NA        NA
+    ##   VAL ~ QUAL       0.7013          NA        NA        NA
+    ##   SAT ~ IMAG       0.2450          NA        NA        NA
+    ##   SAT ~ EXPE      -0.0172          NA        NA        NA
+    ##   SAT ~ QUAL       0.2215          NA        NA        NA
+    ##   SAT ~ VAL        0.5270          NA        NA        NA
+    ##   LOY ~ IMAG       0.1819          NA        NA        NA
+    ##   LOY ~ SAT        0.6283          NA        NA        NA
+    ## 
+    ## Estimated Loadings:
+    ## ===================
+    ##   Loading          Estimate  Std. error   t-stat.   p-value
+    ##   IMAG =~ imag1      0.6306          NA        NA        NA
+    ##   IMAG =~ imag2      0.9246          NA        NA        NA
+    ##   IMAG =~ imag3      0.9577          NA        NA        NA
+    ##   EXPE =~ expe1      0.7525          NA        NA        NA
+    ##   EXPE =~ expe2      0.9348          NA        NA        NA
+    ##   EXPE =~ expe3      0.7295          NA        NA        NA
+    ##   QUAL =~ qual1      0.7861          NA        NA        NA
+    ##   QUAL =~ qual2      0.9244          NA        NA        NA
+    ##   QUAL =~ qual3      0.7560          NA        NA        NA
+    ##   QUAL =~ qual4      0.7632          NA        NA        NA
+    ##   QUAL =~ qual5      0.7834          NA        NA        NA
+    ##   VAL =~ val1        0.9518          NA        NA        NA
+    ##   VAL =~ val2        0.8056          NA        NA        NA
+    ##   VAL =~ val3        0.6763          NA        NA        NA
+    ##   SAT =~ sat1        0.9243          NA        NA        NA
+    ##   SAT =~ sat2        0.8813          NA        NA        NA
+    ##   SAT =~ sat3        0.7127          NA        NA        NA
+    ##   SAT =~ sat4        0.7756          NA        NA        NA
+    ##   LOY =~ loy1        0.9097          NA        NA        NA
+    ##   LOY =~ loy2        0.5775          NA        NA        NA
+    ##   LOY =~ loy3        0.9043          NA        NA        NA
+    ##   LOY =~ loy4        0.4917          NA        NA        NA
+    ## 
+    ## Estimated Weights:
+    ## ==================
+    ##   Weights          Estimate  Std. error   t-stat.   p-value
+    ##   IMAG <~ imag1      0.0156          NA        NA        NA
+    ##   IMAG <~ imag2      0.4473          NA        NA        NA
+    ##   IMAG <~ imag3      0.6020          NA        NA        NA
+    ##   EXPE <~ expe1      0.2946          NA        NA        NA
+    ##   EXPE <~ expe2      0.6473          NA        NA        NA
+    ##   EXPE <~ expe3      0.2374          NA        NA        NA
+    ##   QUAL <~ qual1      0.2370          NA        NA        NA
+    ##   QUAL <~ qual2      0.4712          NA        NA        NA
+    ##   QUAL <~ qual3      0.1831          NA        NA        NA
+    ##   QUAL <~ qual4      0.1037          NA        NA        NA
+    ##   QUAL <~ qual5      0.2049          NA        NA        NA
+    ##   VAL <~ val1        0.7163          NA        NA        NA
+    ##   VAL <~ val2        0.2202          NA        NA        NA
+    ##   VAL <~ val3        0.2082          NA        NA        NA
+    ##   SAT <~ sat1        0.3209          NA        NA        NA
+    ##   SAT <~ sat2        0.3059          NA        NA        NA
+    ##   SAT <~ sat3        0.2474          NA        NA        NA
+    ##   SAT <~ sat4        0.2692          NA        NA        NA
+    ##   LOY <~ loy1        0.3834          NA        NA        NA
+    ##   LOY <~ loy2        0.2434          NA        NA        NA
+    ##   LOY <~ loy3        0.3812          NA        NA        NA
+    ##   LOY <~ loy4        0.2073          NA        NA        NA
+    ## 
+    ## ------------------------------------ Effects -----------------------------------
+    ## 
+    ## Estimated total effects:
+    ## ========================
+    ##   Total effect    Estimate  Std. error   t-stat.   p-value
+    ##   EXPE ~ IMAG       0.4714          NA        NA        NA
+    ##   QUAL ~ IMAG       0.3933          NA        NA        NA
+    ##   QUAL ~ EXPE       0.8344          NA        NA        NA
+    ##   VAL ~ IMAG        0.2974          NA        NA        NA
+    ##   VAL ~ EXPE        0.6309          NA        NA        NA
+    ##   VAL ~ QUAL        0.7013          NA        NA        NA
+    ##   SAT ~ IMAG        0.4807          NA        NA        NA
+    ##   SAT ~ EXPE        0.5001          NA        NA        NA
+    ##   SAT ~ QUAL        0.5911          NA        NA        NA
+    ##   SAT ~ VAL         0.5270          NA        NA        NA
+    ##   LOY ~ IMAG        0.4840          NA        NA        NA
+    ##   LOY ~ EXPE        0.3142          NA        NA        NA
+    ##   LOY ~ QUAL        0.3714          NA        NA        NA
+    ##   LOY ~ VAL         0.3311          NA        NA        NA
+    ##   LOY ~ SAT         0.6283          NA        NA        NA
+    ## 
+    ## Estimated indirect effects:
+    ## ===========================
+    ##   Indirect effect    Estimate  Std. error   t-stat.   p-value
+    ##   QUAL ~ IMAG          0.3933          NA        NA        NA
+    ##   VAL ~ IMAG           0.2974          NA        NA        NA
+    ##   VAL ~ EXPE           0.5852          NA        NA        NA
+    ##   SAT ~ IMAG           0.2357          NA        NA        NA
+    ##   SAT ~ EXPE           0.5173          NA        NA        NA
+    ##   SAT ~ QUAL           0.3696          NA        NA        NA
+    ##   LOY ~ IMAG           0.3020          NA        NA        NA
+    ##   LOY ~ EXPE           0.3142          NA        NA        NA
+    ##   LOY ~ QUAL           0.3714          NA        NA        NA
+    ##   LOY ~ VAL            0.3311          NA        NA        NA
+    ## ________________________________________________________________________________
+
+``` r
+## Verify admissibility of the results
+verify(res) 
+```
+
+    ## ________________________________________________________________________________
+    ## 
+    ## Verify admissibility:
+    ## 
+    ##   admissible
+    ## 
+    ## Details:
+    ## 
+    ##   Code   Status    Description
+    ##   1      ok        Convergence achieved                                   
+    ##   2      ok        All absolute standardized loading estimates <= 1       
+    ##   3      ok        Construct VCV is positive semi-definite                
+    ##   4      ok        All reliability estimates <= 1                         
+    ##   5      ok        Model-implied indicator VCV is positive semi-definite  
+    ## ________________________________________________________________________________
+
+``` r
+# ## Test overall model fit
+testOMF(res, .verbose = FALSE)
+```
+
+    ## ________________________________________________________________________________
+    ## --------- Test for overall model fit based on Beran & Srivastava (1985) --------
+    ## 
+    ## Null hypothesis:
+    ## 
+    ##                                      +------------------------------------------------------------+
+    ##                                      |                                                            |
+    ##                                      |   H0: Population indicator covariance matrix is equal to   |
+    ##                                      |   model-implied indicator covariance matrix.               |
+    ##                                      |                                                            |
+    ##                                      +------------------------------------------------------------+
+    ## 
+    ## Test statistic and critical value: 
+    ## 
+    ##                                      Critical value
+    ##  Distance measure    Test statistic    95%   
+    ##  dG                      0.6493      0.3401  
+    ##  SRMR                    0.0940      0.0524  
+    ##  dL                      1.1170      0.3473  
+    ##  
+    ## 
+    ## Decision: 
+    ## 
+    ##                          Significance level
+    ##  Distance measure          95%   
+    ##  dG                      reject  
+    ##  SRMR                    reject  
+    ##  dL                      reject  
+    ##  
+    ## Additonal information:
+    ## 
+    ##  Out of 499 bootstrap replications 476 are admissible.
+    ##  See ?verify() for what constitutes an inadmissible result.
+    ## 
+    ##  The seed used was: -1138362722
+    ## ________________________________________________________________________________
+
+``` r
 ## Assess the model
 assess(res)
 ```
 
-#### Inference
+    ## ________________________________________________________________________________
+    ## 
+    ##  Construct        AVE          RhoC      RhoC_weighted      R2          R2_adj         RhoT      RhoT_weighted
+    ##  SAT            0.6851        0.8938        0.9051        0.7624        0.7585        0.8940        0.8869    
+    ##  LOY            0.5552        0.8011        0.8761        0.5868        0.5834        0.8194        0.7850    
+    ## 
+    ## --------------------------- Distance and fit measures --------------------------
+    ## 
+    ##  Geodesic distance           = 0.6493432
+    ##  Squared Euclidian distance  = 1.11701
+    ##  ML distance                 = 2.921932
+    ## 
+    ##  CFI          = 0.8573048
+    ##  GFI          = 0.9642375
+    ##  IFI          = 0.8593711
+    ##  NFI          = 0.8229918
+    ##  NNFI         = 0.8105598
+    ##  RMSEA        = 0.1130338
+    ##  RMS_theta    = 0.05069299
+    ##  SRMR         = 0.09396871
+    ## 
+    ##  Degrees of freedom    = 174
+    ## 
+    ## ----------------------- Variance inflation factors (VIFs) ----------------------
+    ## 
+    ##   Dependent construct: 'VAL'
+    ## 
+    ##  Independent construct    VIF value 
+    ##  EXPE                      3.2928   
+    ##  QUAL                      3.2928   
+    ##  IMAG                      0.0000   
+    ##  VAL                       0.0000   
+    ##  SAT                       0.0000   
+    ## 
+    ##   Dependent construct: 'SAT'
+    ## 
+    ##  Independent construct    VIF value 
+    ##  EXPE                      3.2985   
+    ##  QUAL                      4.4151   
+    ##  IMAG                      1.7280   
+    ##  VAL                       2.6726   
+    ##  SAT                       0.0000   
+    ## 
+    ##   Dependent construct: 'LOY'
+    ## 
+    ##  Independent construct    VIF value 
+    ##  EXPE                      0.0000   
+    ##  QUAL                      0.0000   
+    ##  IMAG                      1.9345   
+    ##  VAL                       0.0000   
+    ##  SAT                       1.9345   
+    ## 
+    ## --------------------------- Effect sizes (f_squared) ---------------------------
+    ## 
+    ##   Dependent construct: 'EXPE'
+    ## 
+    ##  Independent construct   Effect size
+    ##  IMAG                      0.2856   
+    ## 
+    ##   Dependent construct: 'QUAL'
+    ## 
+    ##  Independent construct   Effect size
+    ##  EXPE                      2.2928   
+    ## 
+    ##   Dependent construct: 'VAL'
+    ## 
+    ##  Independent construct   Effect size
+    ##  EXPE                      0.0014   
+    ##  QUAL                      0.3301   
+    ## 
+    ##   Dependent construct: 'SAT'
+    ## 
+    ##  Independent construct   Effect size
+    ##  IMAG                      0.1462   
+    ##  EXPE                      0.0004   
+    ##  QUAL                      0.0468   
+    ##  VAL                       0.4373   
+    ## 
+    ##   Dependent construct: 'LOY'
+    ## 
+    ##  Independent construct   Effect size
+    ##  IMAG                      0.0414   
+    ##  SAT                       0.4938   
+    ## 
+    ## ------------------------------ Validity assessment -----------------------------
+    ## 
+    ##  Heterotrait-montrait ratio of correlation matrix (HTMT matrix)
+    ## 
+    ##           SAT LOY
+    ## SAT 0.0000000   0
+    ## LOY 0.7432489   0
+    ## 
+    ## 
+    ##  Fornell-Larcker matrix
+    ## 
+    ##           SAT       LOY
+    ## SAT 0.6851491 0.5696460
+    ## LOY 0.5696460 0.5551718
+    ## 
+    ## 
+    ##  Redundancy analysis
+    ## 
+    ##  Construct       Value    
+    ##  IMAG           0.9750    
+    ##  EXPE           0.9873    
+    ##  QUAL           0.9909    
+    ##  VAL            0.9744    
+    ## ________________________________________________________________________________
+
+#### Resampling and Inference
 
 By default no inferential quantities are calculated since most
 composite-based estimators have no closed-form expressions for standard

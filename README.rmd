@@ -4,7 +4,7 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# cSEM: a package for composite-based SEM <img src='man/figures/cSEMsticker.svg' align="right" height="200" /></a>
+# cSEM: Composite-based SEM <img src='man/figures/cSEMsticker.svg' align="right" height="200" /></a>
 
 [![CRAN status](https://www.r-pkg.org/badges/version/cSEM)](https://cran.r-project.org/package=cSEM)
 [![Build Status](https://travis-ci.com/M-E-Rademaker/cSEM.svg?branch=master)](https://travis-ci.com/M-E-Rademaker/cSEM)
@@ -37,20 +37,21 @@ devtools::install_github("M-E-Rademaker/cSEM")
 
 ## Getting started
 
-The best place to get started is the [cSEM-website](https://m-e-rademaker.github.io/cSEM/) (Work in progress).
+The best place to get started is the [cSEM-website](https://m-e-rademaker.github.io/cSEM/) (work in progress).
 
 ## Philosophy
 
-- Above all: user-centered design!
-- Easy to use by non-R experts: 
-    - One central function `csem()` provides default choices for most of its arguments 
-      (similarity to the `sem()` and `cfa()` functions of the [lavaan](http://lavaan.ugent.be/) 
-      package is intended).
-    - Well documented (vignettes, HTML output, a website, (eventually) intro course(s) and cheatsheets)
-    - Structured output/results  that aims to be "easy"" in a sense that it is
-        - ... descriptive/verbose
-        - ... (eventually) easy to export to other environments such as MS Word, Latex files etc. (exportability)
-        - ... (eventually) easy to migrate from/to/between other PLS/VB/CB-based systems (lavaan, semPLS, ADANCO, SmartPLS)
+- First and foremost: `cSEM` has a user-centered design!
+- "User-centered" mainly boils down to: `cSEM` is easy, i.e. intuitive to use by non-R experts! 
+   <!--  - There is one central function called `csem()` that provides default choices -->
+   <!--    for most of its arguments (similarity to the `sem()` and `cfa()` functions of the [lavaan](http://lavaan.ugent.be/)  -->
+   <!--    package is intended). -->
+   <!-- -  -->
+   <!--  - cSEM is Well documented (vignettes, HTML output, a website, (eventually) intro course(s) and cheatsheets) -->
+   <!--  - Structured output/results  that aims to be "easy"" in a sense that it is -->
+   <!--      - ... descriptive/verbose -->
+   <!--      - ... (eventually) easy to export to other environments such as MS Word, Latex files etc. (exportability) -->
+   <!--      - ... (eventually) easy to migrate from/to/between other PLS/VB/CB-based systems (lavaan, semPLS, ADANCO, SmartPLS) -->
 - The package is designed to be flexible/modular enough so that researchers 
   developing new methods can take specific function provided by the package and 
   alter them according to their need without working their way through a chain
@@ -70,16 +71,15 @@ The basic usage is illustrated below.
 knitr::include_graphics("man/figures/api.png")
 ```
 
-Roughly speaking using `cSEM` is always the same 3 step procedure
+Usully, using `cSEM` is the same 3 step procedure:
 
 > 1. Pick a dataset and specify a model using [lavaan syntax](http://lavaan.ugent.be/tutorial/syntax1.html)
 > 2. Use `csem()`
 > 3. Apply one of the postestimation functions listed below on the resulting object.
 
-
 ## Postestimation functions
 
-Currently we have five major postestimation verbs. 
+Currently we have five major postestimation verbs: 
 
 - `assess()` : assess the model using common quality criteria
 - `infer()` : calculate common inferencial quantities (e.g, standard errors)
@@ -88,7 +88,7 @@ Currently we have five major postestimation verbs.
 - `verify()` : verify admissibility of the estimates
 
 Tests are performed by using the test family of functions. Currently the following
-tests are implemented.
+tests are implemented:
 
 - `testOMF()` : performs a test for overall model fit
 - `testMICOM()` : performs a test for composite measurement invariance
@@ -99,12 +99,11 @@ All functions require a `cSEMResults` object.
 
 ## Example
 Models are defined using [lavaan syntax](http://lavaan.ugent.be/tutorial/syntax1.html) 
-with some slight modifications. For illustration we use the build-in and well-known 
+with some slight modifications (see the [Specifying a model](https://m-e-rademaker.github.io/cSEM/articles/cSEM.html#using-csem) section on the [cSEM-website](https://m-e-rademaker.github.io/cSEM/)). For illustration we use the build-in and well-known 
 `satisfaction` dataset.
 
-```{r eval=FALSE}
+```{r warning=FALSE, error=FALSE, message=FALSE}
 require(cSEM)
-data(satisfaction)
     
 ## Note: The operator "<~" tells cSEM that the construct to its left is modelled
 ##       as a composite.
@@ -132,12 +131,14 @@ SAT  =~ sat1  + sat2  + sat3  + sat4
 LOY  =~ loy1  + loy2  + loy3  + loy4
 "
 ```
-Estimation is conducted by the `csem()` function.
-```{r eval=FALSE}
+The estimation is conducted using the `csem()` function.
+```{r }
 # Estimate using defaults
 res <- csem(.data = satisfaction, .model = model)
-
-# This is equal to
+res
+```
+This is equal to:
+```{r eval=FALSE}
 csem(
    .data                        = satisfaction,
    .model                       = model,
@@ -171,33 +172,43 @@ csem(
     )
 ```
 
-The result is always an object of class `cSEMResults`. Technically, the resulting
-object has at least one additional class attribute (namely `cSEMResults_default`, `cSEMResults_multi`
-or `cSEMResults_2ndorder`), however, users usually do not need to care about since postestimation
-functions (will eventually) automatically work on all classes. 
+The result is always a named list of class `cSEMResults`. 
+
+To access list elements use `$`:
 
 ```{r eval=FALSE}
-## Access elements using `$`. E.g.:
 res$Estimates$Loading_estimates 
 res$Information$Model
-    
-## Examine the structure:
+```
+
+A usefule tool to examine a list is the [listviewer package](https://github.com/timelyportfolio/listviewer). 
+If you are new to `cSEM` this might be a good why to familiarize yourself with the structure
+of a `cSEMResults` object.
+
+```{r eval=FALSE}
 listviewer::jsonedit(res, mode = "view") # requires the listviewer package.
-    
+```
+
+Apply postestimation functions:
+```{r echo=FALSE, results='hide'}
+rnorm(1) # necessary to initialize a .Random.seed object
+```
+
+```{r, message=FALSE, warning=FALSE}
 ## Get a summary
 summarize(res) 
     
-## Apply postestimation functions, e.g.
+## Verify admissibility of the results
 verify(res) 
     
-## Test overall model fit
-testOMF(res)
+# ## Test overall model fit
+testOMF(res, .verbose = FALSE)
 
 ## Assess the model
 assess(res)
 ```
 
-#### Inference
+#### Resampling and Inference
 
 By default no inferential quantities are calculated since most composite-based estimators 
 have no closed-form expressions for standard errors. Some closed form standard error 
