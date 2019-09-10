@@ -649,7 +649,7 @@ calculateDL <- function(
   }
   
   ## Calculate distance
-  0.5 * sum((S - Sigma_hat)[lower.tri(S, diag = FALSE)]^2)
+  0.5 * sum((S - Sigma_hat)^2)
 }
 
 #' @describeIn  distance_measures The distance measure used by FIML
