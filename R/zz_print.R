@@ -36,7 +36,7 @@ print.cSEMResults <- function(x, ...) {
       }
 
     }
-    if(sum(unlist(status)) != 0) {
+    if(sum(status) != 0) {
       cat2(
         "\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", " for details.")
     }
@@ -50,7 +50,7 @@ print.cSEMResults <- function(x, ...) {
       cat2("\n\t", col_align(cyan(i), 18), ": ",
           ifelse(sum(status[[i]]) == 0, green("successful"), red("not successful")))
     }
-    if(sum(x) != 0) {
+    if(sum(unlist(status)) != 0) {
       cat2("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
           " for details.")
     }
@@ -60,7 +60,7 @@ print.cSEMResults <- function(x, ...) {
     cat2(
       "\n\nEstimation was ", ifelse(sum(status) == 0, 
                                     green("successful"), red("not successful")), ".")
-    if(sum(status) != 0) {
+    if(sum(unlist(status)) != 0) {
       cat2(" See ", magenta("verify"), "(", cyan("<object-name>"), ")", 
           " for details.")
     }

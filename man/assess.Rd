@@ -229,9 +229,7 @@ res_infer <- infer(res, .quantity = "CI_percentile")
 res_infer$User_fun
 
   
-# Note that .user_funs expects a function that returns a vector or a matrix
-# Some functions return (e.g. calculateRhoT()) currently return other data types.
-# Resampling will likely fail in this case.
+# Note that .user_funs expects a function that returns a vector or a matrix!
 
 }
 \seealso{
