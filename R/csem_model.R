@@ -445,7 +445,6 @@ parseModel <- function(
       model_measurement2[cbind(row_index, col_index)] <- tbl_m$ustart
     }
     
-    
     ## Error covariance matrix
     m_errors   <- tbl_e[tbl_e$lhs %in% names_i, , drop = FALSE]
     con_errors <- tbl_e[tbl_e$lhs %in% names_c, , drop = FALSE] 
@@ -458,6 +457,8 @@ parseModel <- function(
     ## If starting values are given create a supplementary strucutral matrix
     ## that contains the starting values, otherwise assign a 1
     if(!anyNA(pop_values)) {
+      
+      model_error2 <- model_error
       
       # Extract endogenous and exogenous variables
       vars_endo <- rownames(model_structural)[rowSums(model_structural) != 0]
@@ -473,7 +474,7 @@ parseModel <- function(
       diag(Phi) <- 1
       
       if(length(tbl_e$ustart) != 0) {
-        model_error2 <- model_error
+        
         model_error2[cbind(c(row_index, col_index), c(col_index, row_index))] <- m_errors$ustart
         
         # Get row and column index for constructs
