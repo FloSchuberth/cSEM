@@ -44,6 +44,10 @@ verify <- function(.object){
     class(out) <- c("cSEMVerify", "cSEMVerify_multi")
     out
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    ## Assign stage to be able to handle first and second stage differently below
+    .object$First_stage$Information$Stage <- "First_stage"
+    .object$Second_stage$Information$Stage <- "Second_stage"
+    
     out <- lapply(.object, verify)
     names(out) <- c("First_stage", "Second_stage")
     
@@ -72,11 +76,20 @@ verify <- function(.object){
       stat["4"] <- TRUE
     }
     
-    if(x1$Model$model_type == "Linear" && 
-       !matrixcalc::is.positive.semi.definite(fit(.object, 
-                                                  .saturated = FALSE,
-                                                  .type_vcv = 'indicator'))) {
-      stat["5"] <- TRUE
+    ## In the first stage of the "2stage" and the "mixed" approach it is 
+    ## unnecessary to check if the indicator correlation matrix is semi positive 
+    ## definite; therefore it is skipped in the first stage of these approaches.
+    Stage <- x1$Stage
+    
+    if(!is.null(Stage) && Stage == "First_stage") {
+      # do nothing 
+    } else {
+      if(x1$Model$model_type == "Linear" && 
+         !matrixcalc::is.positive.semi.definite(fit(.object, 
+                                                    .saturated = FALSE,
+                                                    .type_vcv = 'indicator'))) {
+        stat["5"] <- TRUE
+      } 
     }
     
     class(stat) <- "cSEMVerify"

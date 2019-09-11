@@ -425,7 +425,7 @@ parseModel <- function(
     
     model_structural[cbind(row_index, col_index)] <- 1
     
-    ## If starting values are given create a supplementary strucutral matrx
+    ## If starting values are given create a supplementary strucutral matrix
     ## that contains the starting values, otherwise assign a 1
     if(!anyNA(pop_values)) {
       model_structural2 <- model_structural
@@ -438,7 +438,7 @@ parseModel <- function(
     
     model_measurement[cbind(row_index, col_index)] <- 1
 
-    ## If starting values are given create a supplementary strucutral matrx
+    ## If starting values are given create a supplementary strucutral matrix
     ## that contains the starting values, otherwise assign a 1
     if(!anyNA(pop_values)) {
       model_measurement2 <- model_measurement
@@ -455,11 +455,9 @@ parseModel <- function(
     
     model_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
-    ## If starting values are given create a supplementary strucutral matrx
+    ## If starting values are given create a supplementary strucutral matrix
     ## that contains the starting values, otherwise assign a 1
     if(!anyNA(pop_values)) {
-      
-      model_error2 <- model_error
       
       # Extract endogenous and exogenous variables
       vars_endo <- rownames(model_structural)[rowSums(model_structural) != 0]
@@ -475,7 +473,7 @@ parseModel <- function(
       diag(Phi) <- 1
       
       if(length(tbl_e$ustart) != 0) {
-        
+        model_error2 <- model_error
         model_error2[cbind(c(row_index, col_index), c(col_index, row_index))] <- m_errors$ustart
         
         # Get row and column index for constructs
@@ -483,7 +481,7 @@ parseModel <- function(
         col_index <- match(con_errors$rhs, vars_exo)
         
         Phi[cbind(row_index, col_index)] <- con_errors$ustart
-        Phi[upper.tri(Phi)] <- t(Phi)[upper.tri(Phi)]
+        Phi[lower.tri(Phi)] <- t(Phi)[lower.tri(Phi)]
       }
     }
     
@@ -598,7 +596,7 @@ parseModel <- function(
       model_ls$structural2  <- model_structural2[rownames(structural_ordered), 
                                                  colnames(structural_ordered)]
       model_ls$measurement2 <- model_measurement2[n, m]
-      model_ls$error_cor2   <- model_error[m, m]
+      model_ls$error_cor2   <- model_error2[m, m]
       model_ls$Phi          <- Phi
     }
     
