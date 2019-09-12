@@ -103,7 +103,7 @@ parseModel <- function(
       x <- setdiff(names(.model), c("structural", "measurement", "error_cor", 
                                     "construct_type", "construct_order", 
                                     "model_type", "instruments", "structural2",
-                                    "measurement2", "error_cor"))
+                                    "measurement2", "error_cor2", "Phi"))
       if(length(x) == 0) {
         
         class(.model) <- "cSEMModel"
