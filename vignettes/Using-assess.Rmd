@@ -234,14 +234,16 @@ The AVE is the basis for the Fornell-Larcker criterion.
 
 ## Fit Indices {#fit_indices}
 ### Definition
-First fit indices for CFA were introduced by @Bentler1980 in 1980. Since then a large number of indices has been defined. Contrary to exact tests of model fit, the purpose of fit indices is to measure the fit of a structural equation model. The values of fit indices are continuous and - in the case of normed indices - between 0 and 1. Fit indices can be divided into two classes: 
+Fit indices for confirmatory factor analysis (CFA) were first introduced by @Bentler1980. Since then a large number of indices has been defined. Contrary to exact tests of model fit, the purpose of fit indices is to measure the fit of a structural equation model. The values of fit indices are continuous and - in the case of normed indices - between 0 and 1. Fit indices can be divided into two classes: 
+
 - 'badness of fit' (resp. 'lack of fit') indices; a smaller value indicates a better fit.
 - 'goodness of fit' indices; a higher value represents a better fit.
 
-Several studies have analyzed the empirical and theoretical properties of fit indices in the context of confirmatory factor analysis (CFA), i.e., theoretical concepts are expressed by latent variables. However, only little is known about the properties and the performance of fit indices in composite models. 
-A highly controversial issue are cutoff values for fit indices. For latent variable/factor models, cutoff values have been proposed for some fit indices by a simulation study \insertcite{Hu1999}{cSEM}. In contrast, for composite models, no cutoff values have been suggested. Using 'assess()' to calculate fit indices, the user should always keep in mind that the value of a fit index is just an indication of good or bad fit. Other aspects related to model fit must be considered. It is unreasonable to make a binary decision about acceptance or rejection of a model by comparing the value of a fit index with a (more or less) arbitrary cutoff value.
+Several studies have analyzed the empirical and theoretical properties of fit indices in the context of CFA, i.e., theoretical concepts are expressed by latent variables. However, only little is known about the properties and the performance of fit indices in composite models. 
+A highly controversial issue are cutoff values for fit indices. For latent variable/factor models, cutoff values have been proposed for some fit indices by a simulation study \insertcite{Hu1999}{cSEM}. In contrast, for composite models, no cutoff values have been suggested. Using `assess()` to calculate fit indices, the user should always keep in mind that the value of a fit index is just an indication of good or bad fit. Other aspects related to model fit must be considered. It is unreasonable to make a binary decision about acceptance or rejection of a model by comparing the value of a fit index with a (more or less) arbitrary cutoff value.
 
-The definitions of fit indices that can be calculated by 'assess()' are given in the following:
+The definitions of fit indices calculated by `assess()` are given in the following:
+
 - The **goodness-of-fit index** (GFI) measures the relative increase in fit of the specified model compared to no model at all. 
 - The **standardized root mean square residual** (SRMR) is the square root of the mean of squared residual correlations.
 - The **root mean square error of approximation** (RMSEA) is the square root of the discrepancy due to approximation per degree of freedom.

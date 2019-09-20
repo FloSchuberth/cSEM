@@ -11,7 +11,8 @@ output: github_document
 
 WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES TO THE API ARE VERY LIKELY. 
          Use the package with caution and please report bugs to [the package developers](mailto:manuel.rademaker@uni-wuerzburg.de;f.schuberth@utwente.nl). 
-         The first stable relase will be version 0.0.1, most likely in mid 2019.
+         The first stable relase will be version 0.0.1, most likely towards the end
+         of 2019.
 
 ## Purpose
 

@@ -22,17 +22,56 @@ WARNING: this document is work in progress and may still contain mistakes!
 
 ## The structural model
 
-The structural model specifies the relationships between the latent variables (resp. their proxies) in form of paths (arrows) and associated path coefficients. The path coefficients express the magnitude of the influence exerted by the latent variable at the arrow beginning on the variable at the arrow end. Every proxy $\hat\eta_j$ ($j = 1, \dots, J$) of a latent variable $\eta_j$ ($j = 1, \dots, J$) is assumed to be standardized. Therefore, it holds that $E(\hat\eta_j) = 0$ and $Var(\hat\eta_j) = 1$.
+The structural model specifies the relationships between constructs (i.e. the statistical
+representation of the concept) via paths (arrows) and associated path coefficients.
+The path coefficients - somethimes also called structural coefficients - express the magnitude of the influence exerted by the 
+construct at the start of the arrow on the variable at the arrow's end. 
+In composite-based SEM constructs are always operationalized as composites, i.e.,
+weighted linear combinations of its respective indicators. Consequently, depending on how
+a given construct is modeled, such a composite may either serve as a proxy for
+an underlying latent variable (common factor) or as a composite in its own right.
+Despite this crucial difference, we stick with the common - although somewhat 
+ambivalent - notation and represent both the latent variable and the construct
+by $\eta_j$. Let $x_{kj}$ be an indicator (observable) and $\varepsilon_{kj}$ be a measurement error.
+A composite is definied as:
+$$\hat{\eta}_j = \sum^{K_j}_{k = 1} w_{kj} x_{kj} $$ 
+Again, $\hat{\eta}_j$ may represent a latent variable $\eta_j$ but may also serve
+as composite in its own right in which case we would essentially say that  
+$\hat{\eta}_j = \eta_j$ and refer to $\eta_j$ as a construct instead of a latent variable.
+Since $\hat{\eta}_j$ generally does not have a 
+natural scale, weights are usually chosen such that $\hat{\eta}_j$ is standardized. 
+Therefore, unless otherwise stated:
 
-Since the relations between latent variables are a product of the researcher's theory and assumptions to be analyzed, they do not necessarily exist between all variables. Instead, it is likely that some variables are not directly connected by a path. If all paths exist, the structural model is called 'saturated'. In the case that some paths are not specified, the structural model is called 'non-saturated'. Whether the structural model is saturated or not can have an influence on the model fit when variables or indicators are 'falsely' missing in the model specification (that means in comparison to the 'true' model).
+$$E(\hat\eta_j) = 0\quad\quad \text{and}\quad\quad Var(\hat\eta_j) = 1$$
 
-Suppose that there are latent variables $\eta_k$ and $\eta_l$ with a path leading from $\eta_k$ to $\eta_l$ with no other latent variable having an influence on $\eta_l$. The corresponding path coefficient shall be denoted by $\gamma$. Then
+Since the relations between constructs are a product of the researcher's theory
+and assumptions to be analyzed, they do not necessarily exist between all 
+variables. Instead, it is likely that some variables are not directly connected 
+by a path. If all paths exist, we call the structural model  'saturated' model. 
+In the case that some paths are not specified, the structural model is called 
+'non-saturated'. Whether the structural model is saturated or not can have an 
+influence on the model fit when variables or indicators are 'falsely' missing 
+in the model specification (that means in comparison to the 'true' model).
+
+Suppose that there are constructs $\eta_k$ and $\eta_l$ with a path 
+leading from $\eta_k$ to $\eta_l$ with no other latent variable having an
+influence on $\eta_l$. The corresponding path coefficient shall be
+denoted by $\gamma$. Then
 $$\hat\eta_l = \gamma \, \hat\eta_k + \zeta_l$$
 and therefore
 $$ Cov(\hat\eta_l,\hat\eta_k) = Cor(\hat\eta_l, \hat\eta_k) = E(\hat\eta_l * \hat\eta_k) = \gamma \, E(\hat\eta_k^2) = \gamma $$
-More complex relationships (with $\eta_l$ depending on more than one other latent variable) are handled the same way (via backward-induction) by taking into account all path coefficients of related variables and correlations of latent variables which do not depend on any other latent variable (so called exogenous variables). Carrying out this calculation for all pairs of proxies of latent variables by accountig for the specific associated paths, the variance covariance matrix of the proxies $V_{\eta}$ can be built up. 
+More complex relationships (with $\eta_l$ depending on more than one other latent variable)
+are handled the same way (via backward-induction) by taking into account all 
+path coefficients of related variables and correlations of latent variables which
+do not depend on any other latent variable (so called exogenous variables). 
+Carrying out this calculation for all pairs of proxies of latent variables by 
+accountig for the specific associated paths, the variance covariance matrix of 
+the proxies $V_{\eta}$ can be built up. 
 
-The matrix $V_{\eta}$ is needed together with the intra-block variance covariance matrices of the indicators ($\Sigma_{j} \quad j = 1, \dots, J$) and the matrix of loadings ($\Lambda$) when deriving the 'true' population indicator covariance matrix $\Sigma$. This is done via the relationship:
+The matrix $V_{\eta}$ is needed together with the intra-block variance covariance
+matrices of the indicators ($\Sigma_{j} \quad j = 1, \dots, J$) and the matrix 
+of loadings ($\Lambda$) when deriving the 'true' population indicator 
+covariance matrix $\Sigma$. This is done via the relationship:
 
 $$ \Sigma = \Lambda \, V_{\eta} \, \Lambda'+ \Theta $$
 where $\Theta$ is the variance covariance matrix of the indicator error terms. 
