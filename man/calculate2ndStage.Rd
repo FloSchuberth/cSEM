@@ -17,8 +17,7 @@ calculate2ndStage(
 \item{.original_arguments}{The list of arguments used within \code{\link[=csem]{csem()}}.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{2stage}", "\emph{RI_original}", "\emph{RI_extended}"
-or "\emph{mixed}". Defaults to "\emph{2stage}".}
+second order constructs. One of: "\emph{2stage}", or "\emph{mixed}". Defaults to "\emph{2stage}".}
 }
 \value{
 A cSEMResults object.

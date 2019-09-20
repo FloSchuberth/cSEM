@@ -7,7 +7,7 @@
 csem(
   .data                    = NULL,
   .model                   = NULL,
-  .approach_2ndorder       = c("2stage", "RI_original", "RI_extended", "mixed"),
+  .approach_2ndorder       = c("2stage", "mixed"),
   .approach_nl             = c("sequential", "replace"),
   .approach_paths          = c("OLS", "2SLS", "3SLS"),
   .approach_se             = c("none","closed","closed_estimator"), 
@@ -38,16 +38,15 @@ csem(
 data (indicators/items/manifest variables).
 Additionally, a \code{list} of data sets (data frames or matrices) is accepted in which
 case estimation is repeated for each data set. Possible column types or classes
-of the data provided are: "logical", "numeric" ("double" or "integer"),
-"factor" ("ordered" and/or "unordered"), "character" (converted to factor),
+of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
+"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (will be converted to factor),
 or a mix of several types.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
-or a \link{cSEMModel} list. Defaults to \code{NULL}.}
+or a \link{cSEMModel} list.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{2stage}", "\emph{RI_original}", "\emph{RI_extended}"
-or "\emph{mixed}". Defaults to "\emph{2stage}".}
+second order constructs. One of: "\emph{2stage}", or "\emph{mixed}". Defaults to "\emph{2stage}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
@@ -57,7 +56,7 @@ Defaults to "\emph{sequential}".}
 structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
 Defaults to "\emph{OLS}".}
 
-\item{.approach_se}{Chraracter string. Approach used to obtain the standard errors (SEs)
+\item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)
 for parameter estimates. One of: "\emph{none}", "\emph{closed}", "\emph{closed_estimator}".
 Defaults to "\emph{none}".}
 
@@ -68,12 +67,12 @@ or "\emph{regression}".
 Defaults to "\emph{PLS-PM}".}
 
 \item{.disattenuate}{Logical. Should composite/proxy correlations
-be disattenuated to yield consisten loadings and path estimates if at least
+be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
 
-\item{.id}{Character string or integer. The name or position of the column of
-\code{.data} used to split the data into groups.
-Defaults to \code{NULL}.}
+\item{.id}{Character string or integer. A character string giving the name or
+an integer of the position of the column of \code{.data} whose levels are used
+to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent constructs of the structural
@@ -85,7 +84,7 @@ instruments for themselves. See the examples section. Defaults to \code{NULL}.}
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
-Defaults to \code{FALSE}. Ignored if the model is linear.}
+Defaults to \code{FALSE}. Ignored if the model is not nonlinear.}
 
 \item{.reliabilities}{A character vector of \code{"name" = value} pairs,
 where \code{value} is a number between 0 and 1 and \code{"name"} a character string
@@ -97,7 +96,7 @@ reliabilities are estimated by \code{csem()}. Currently, only supported for
 \item{.starting_values}{A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
-pairs, where \code{value} is the starting weight. Defaults to \code{NULL}.}
+pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
 
 \item{.resample_method}{Character string. The resampling method to use. One of:
 "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". Defaults to "\emph{none}".}
@@ -120,11 +119,12 @@ replications/resamples yielding an inadmissible result will be dropped
 For "\emph{ignore}" all results are returned even if all or some of the replications
 yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Defaults to "\emph{drop}".}
+Depending on the frequency of inadmissible solutions this may significantly increase
+computing time. Defaults to "\emph{drop}".}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
 resample. The functions must take \code{.object} as its first input (e.g.,
-\code{myFun <- function(.object, ...) {...}}).
+\code{myFun <- function(.object, ...) {body-of-the-function}}).
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
@@ -147,15 +147,13 @@ See \link{args_csem_dotdotdot} for a complete list of available arguments.}
 }
 \value{
 An object of class \code{cSEMResults} with methods for all postestimation generics.
-Note that, technically, a call to \code{\link[=csem]{csem()}} results in an object with at least
+Technically, a call to \code{\link[=csem]{csem()}} results in an object with at least
 two class attributes. The first class attribute is always \code{cSEMResults}.
 The second is one of \code{cSEMResults_default}, \code{cSEMResults_multi}, or
 \code{cSEMResults_2ndorder} and depends on the estimated model and/or the type of
 data provided to the \code{.model} and \code{.data} arguments. The third class attribute
 \code{cSEMResults_resampled} is only added if resampling was conducted.
-Technically, method dispatch for all postestimation
-functions is based on the second class attribute. For a details see the
-\link[=cSEMResults]{cSEMResults helpfile }.
+For a details see the \link[=cSEMResults]{cSEMResults helpfile }.
 }
 \description{
 Estimate linear, nonlinear, hierachical or multigroup structural equation
@@ -171,14 +169,14 @@ for details.
 equation models using a composite-based approach.
 
 \subsection{Data and model:}{
-The \code{.data} and \code{.model} arguments are required. Data must be
-in a \code{matrix} or a \code{data.frame} with column names matching
-the indicator names used in the model description of the measurement model.
-Alternatively, a \code{list} of data sets (matrices or data frames) may be provided
+The \code{.data} and \code{.model} arguments are required. \code{.data} must be given
+a \code{matrix} or a \code{data.frame} with column names matching
+the indicator names used in the model description. Alternatively,
+a \code{list} of data sets (matrices or data frames) may be provided
 in which case estimation is repeated for each data set.
-Possible column types/classes of the data provided are: "logical",
-"numeric" ("double" or "integer"), "factor" ("ordered" and/or "unordered"),
-"character", or a mix of several types. Character columns will be treated
+Possible column types/classes of the data provided are: "\code{logical}",
+"\code{numeric}" ("\code{double}" or "\code{integer}"), "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"),
+"\code{character}", or a mix of several types. Character columns will be treated
 as (undordered) factors.
 
 To provide a model use the \link[lavaan:model.syntax]{lavaan model syntax}.
@@ -197,8 +195,11 @@ A range of alternative weighting algorithms may be supplied to
 \enumerate{
 \item{(Default) Partial least squares path modeling (\code{"PLS-PM"}). The algorithm
 can be customized. See \code{\link[=calculateWeightsPLS]{calculateWeightsPLS()}} for details.}
-\item{Generalized structured component analysis (\code{"GSCA"}). The algorithm
-can be customized. See \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}} for details.}
+\item{Generalized structured component analysis (\code{"GSCA"}) and generalized
+structured component analysis with uniqueness terms (GSCAm). The algorithms
+can be customized. See \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}} and \code{\link[=calculateWeightsGSCAm]{calculateWeightsGSCAm()}} for details.
+Note that GSCAm is called indirectly when the model contains constructs
+modeled as common factors only and \code{.disattenuate = TRUE}. See below.}
 \item{Generalized canonical correlation analysis (\emph{GCCA}), including
 \code{"SUMCORR"}, \code{"MAXVAR"}, \code{"SSQCORR"}, \code{"MINVAR"}, \code{"GENVAR"}.}
 \item{Principal component analysis (\code{"PCA"})}
@@ -243,7 +244,7 @@ Currently, only supported for "PLS-PM".
 }
 
 \subsection{Nonlinear models:}{
-If the model is nonlinear \code{csem()} estimates a polynomial structural equation model
+If the model contains nonlinear terms \code{csem()} estimates a polynomial structural equation model
 using a non-iterative method of moments approach described in
 \insertCite{Dijkstra2014;textual}{cSEM}. Nonlinear terms include interactions and
 exponential terms. The latter is described in model syntax as an
@@ -267,39 +268,65 @@ For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 \subsection{Second-order model}{
 Second-order models are specified using the operators \code{=~} and \code{<~}. These
 operators are usually used with indicators on their right-hand side. For
-second-order models the right-hand side variables are constructs instead:
+second-order models the right-hand side variables are constructs instead.
+If c1, and c2 are constructs forming or measuring a higher order
+construct, a model would look like this:
 \preformatted{my_model <- "
 # Structural model
-SAT ~ QUAL
-VAL ~ SAT
+SAT  ~ QUAL
+VAL  ~ SAT
 
-# Measurement model
-EXPE <~ expe1 + expe2
+# Measurement/composite model
+QUAL =~ qual1 + qual2
+SAT  =~ sat1 + sat2
 
-SAT =~ sat1 + sat2
-VAL =~ val1 + val2
-IMAG <~ imag1 + imag2
+c1 =~ x11 + x12
+c2 =~ x21 + x22
 
-# Second-order term (in this case a second-order common factor)
-QUAL =~ IMAG + EXPE
+# Second-order term (in this case a second-order composite build by common
+# factors)
+VAL <~ c1 + c2
 "
 }
-}
-Currently, four approaches are available:
+Currently, two approaches are explicitly implemented:
 \itemize{
 \item{(Default) \code{"2stage"}. The (disjoint) two stage approach as proposed by \insertCite{Agarwal2000;textual}{cSEM}.}
-\item{\code{"RI_original"}. The original repeated indicators approach as proposed by \insertCite{Joereskog1982b;textual}{cSEM}.}
-\item{\code{"RI_extended"}. The extended repeated indicators approach as proposed by \insertCite{Becker2012;textual}{cSEM} with
-the slight modification that all path between constructs attached to a second order construct are specified as well.
-This is necessary to retain model fit.}
 \item{\code{"mixed"}. The mixed repeated indicators/two-stage approach as proposed by \insertCite{Ringle2012;textual}{cSEM}.}
+}
+
+The reapeated indicators approach as proposed by \insertCite{Joereskog1982b;textual}{cSEM}
+and the extention proposed by \insertCite{Becker2012;textual}{cSEM} are
+not directly implemented as they simply require a respecification of the model.
+In the above example the repeated indicators approach
+would require to change the model and to append the repeated indicators to
+the data supplied to \code{.data}. Note that the indicators need to be renamed in this case as
+\code{csem()} does not allow for one indicator to be attached to multiple constructs.
+\preformatted{my_model <- "
+# Structural model
+SAT  ~ QUAL
+VAL  ~ SAT
+
+VAL ~ c1 + c2
+
+# Measurement/composite model
+QUAL =~ qual1 + qual2
+SAT  =~ sat1 + sat2
+VAL  =~ x11_temp + x12_temp + x21_temp + x22_temp
+
+c1 =~ x11 + x12
+c2 =~ x21 + x22
+"
+}
+According to the extended approach indirect effects of \code{QUAL} on \code{VAL} via \code{c1}
+and \code{c2} would have to be specified as well.
 }
 
 \subsection{Multigroup analysis}{
 To perform multigroup analysis provide either a list of data sets or one
 data set containing a group-identifyer-column whose column
-name must be provided to \code{.id}. Values of this column are interpreted as group
-identifiers and \code{csem()} will split the data by levels of that column and run
+name must be provided to \code{.id}. Values of this column are taken as levels of a
+factor and are interpreted as group
+identifiers. \code{csem()} will split the data by levels of that column and run
 the estimation for each level separately. Note that the more levels
 the group-identifyer-column has, the more estimation runs are required.
 This can considerably slow down estimation, especially if resampling is
@@ -307,9 +334,33 @@ requested. For the latter it will generally be faster to use
 \code{.eval_plan = "multiprocess"}.
 }
 \subsection{Inference:}{
-Inference is done via resampling. See \link{resamplecSEMResults} for details.
+Inference is done via resampling. See \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} and \code{\link[=infer]{infer()}} for details.
 }
 }
+\section{Postestimation}{
+
+\describe{
+\item{\code{\link[=assess]{assess()}}}{Assess results using common quality criteria, e.g., reliability,
+fit measures, HTMT, R2 etc.}
+\item{\code{\link[=infer]{infer()}}}{Calculate common inferencial quantities, e.g, standard errors,
+confidence intervals.}
+\item{\code{\link[=predict]{predict()}}}{Predict indicator values (not yet implemented).}
+\item{\code{\link[=summarize]{summarize()}}}{Summarize the results.}
+\item{\code{\link[=verify]{verify()}}}{Verify/Check admissibility of the estimates.}
+}
+
+Tests are performed using the test family of functions. Currently the following
+tests are implemented.
+\describe{
+\item{\code{\link[=testOMF]{testOMF()}}}{Bootstrap-based test for overall model fit based on
+\insertCite{Beran1985;textual}{cSEM}}
+\item{\code{\link[=testMICOM]{testMICOM()}}}{Permutation-based test for measurement invariance of composites
+proposed by \insertCite{Henseler2016;textual}{cSEM}}
+\item{\code{\link[=testMGD]{testMGD()}}}{Several (mainly) permutation-based tests for multi-group comparisons.}
+\item{\code{\link[=testHausman]{testHausman()}}}{Regression-based Hausman test to test for endogeneity.}
+}
+}
+
 \examples{
 # ===========================================================================
 # Basic usage
@@ -356,7 +407,7 @@ print(summarize(res), .full_output = FALSE)
 
 ### Second order model ------------------------------------------------------
 ## Take a look at the dataset
-#?dgp_2ndorder
+#?dgp_2ndorder_cf_of_c
 
 model <- "
 # Path model / Regressions 
@@ -374,21 +425,42 @@ eta2 =~ y51 + y52 + y53
 c4   =~ c1 + c2 + c3
 "
 
-m1 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "2stage")
-m2 <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "RI_original")
+res_2stage <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "2stage")
+res_mixed  <- csem(dgp_2ndorder_cf_of_c, model, .approach_2ndorder = "mixed")
 
-# By default .disattenuate = TRUE. The standard repeated indicators approach
-# ("RI1") will
-# fairly often produce inadmissible results in this case. Set .disattenuate = FALSE,
-# however, path coefficients are inconsistent estimates for their popupulation
-# counterpart in this case.
-verify(m2) 
+# The standard repeated indicators approach is done by 1.) respecifying the model
+# and 2.) adding the repeated indicators to the data set
 
-## P
-m3 <- csem(dgp_2ndorder_cf_of_c, model, 
-           .approach_2ndorder = "RI_original",
-           .disattenuate = FALSE)
-verify(m3)
+# 1.) Respecify the model
+model_RI <- "
+# Path model / Regressions 
+c4   ~ eta1
+eta2 ~ eta1 + c4
+c4   ~ c1 + c2 + c3
+
+# Reflective measurement model
+c1   <~ y11 + y12 
+c2   <~ y21 + y22 + y23 + y24
+c3   <~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38
+eta1 =~ y41 + y42 + y43
+eta2 =~ y51 + y52 + y53
+
+# c4 is a common factor measured by composites
+c4 =~ y11_temp + y12_temp + y21_temp + y22_temp + y23_temp + y24_temp +
+      y31_temp + y32_temp + y33_temp + y34_temp + y35_temp + y36_temp + 
+      y37_temp + y38_temp
+"
+
+# 2.) Update data set
+data_RI <- dgp_2ndorder_cf_of_c
+coln <- c(colnames(data_RI), paste0(colnames(data_RI), "_temp"))
+data_RI <- data_RI[, c(1:ncol(data_RI), 1:ncol(data_RI))]
+colnames(data_RI) <- coln
+
+# Estimate
+res_RI <- csem(data_RI, model_RI)
+summarize(res_RI)
+
 ### Multigroup analysis -----------------------------------------------------
 
 # ===========================================================================
@@ -435,7 +507,7 @@ data.frame(
 
 ### Resampling --------------------------------------------------------------
 ## Basic resampling
-res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap")
+res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 40)
 res_jack <- csem(threecommonfactors, model, .resample_method = "jackknife")
 
 # See ?resamplecSEMResults for more examples
@@ -476,10 +548,12 @@ res <- csem(threecommonfactors, model, .PLS_weight_scheme_inner = "factorial",
 modes <- list("eta1" = "unit", "eta2" = "modeB", "eta3" = "unit")
 res   <- csem(threecommonfactors, model, .PLS_modes = modes)
 summarize(res)
+
 }
 \references{
 \insertAllCited{}
 }
 \seealso{
-\link{args_default}, \link{cSEMArguments}, \link{cSEMResults}, \link{foreman}
+\code{\link[=args_default]{args_default()}}, \link{cSEMArguments}, \link{cSEMResults}, \code{\link[=foreman]{foreman()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}},
+\code{\link[=verify]{verify()}}, \code{\link[=summarize]{summarize()}}, \code{\link[=assess]{assess()}}, \code{\link[=infer]{infer()}}
 }

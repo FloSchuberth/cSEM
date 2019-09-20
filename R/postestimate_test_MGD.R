@@ -7,7 +7,7 @@
 #' \describe{
 #' \item{Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
 #'   The model-implied variance-covariance matrix (either indicator 
-#'   `.type_vcv = "indicator"` or construct `.type_vcv = "construct"`) 
+#'   (`.type_vcv = "indicator"`) or construct (`.type_vcv = "construct"`)) 
 #'   is compared across groups. 
 #' 
 #'   To measure the distance between the model-implied variance-covariance matrices, 
@@ -22,16 +22,18 @@
 #'   done by p-value). By default
 #'   no multiple testing correction is done, however, several common
 #'   adjustments are available via `.approach_p_adjust`. See 
-#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
+#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details. Note: the 
+#'   test has some severe shortcommings. Use with caution.
 #' }
 #' \item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
-#'   between two groups. If more than two groups are tested the parameter is compared 
-#'   between all pairs of groups. In this case, it is recommended
+#'   between two groups. If more than two groups are tested for equality, parameter 
+#'   k is compared between all pairs of groups. In this case, it is recommended
 #'   to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
-#'   done by p-value). If several parameters are tested simultaneously, correction
-#'   is by group and number of parameters. By default
+#'   done by p-value) since this is essentially a multiple testing setup. 
+#'   If several parameters are tested simultaneously, correction is by group 
+#'   and number of parameters. By default
 #'   no multiple testing correction is done, however, several common
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
@@ -39,16 +41,44 @@
 #' \item{Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Keil2000;textual}{cSEM} tests if parameter k is equal
-#'   between two groups. The calculation of the standard error of the parameter 
+#'   between two groups. It is assumed, that the standard errors of the coefficients are 
+#'   equal across groups. The calculation of the standard error of the parameter 
 #'   difference is adjusted as proposed by \insertCite{Henseler2009;textual}{cSEM}.
-#'   If more than two groups are tested the parameter is compared 
+#'   If more than two groups are tested for equality, parameter k is compared 
 #'   between all pairs of groups. In this case, it is recommended
 #'   to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
-#'   done by p-value). If several parameters are tested simultaneously, correction
+#'   done by p-value) since this is essentially a multiple testing setup. 
+#'   If several parameters are tested simultaneously, correction
 #'   is by group and number of parameters. By default
 #'   no multiple testing correction is done, however, several common
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
+#' }
+#' \item{Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
+#'   Groups are compared in terms of parameter differences across groups.
+#'   Similarly to \insertCite{Keil2000;textual}{cSEM}, a single parameter k is tested
+#'   for equality between two groups. In contrast to \insertCite{Keil2000;textual}{cSEM},
+#'   it is assumed, that the standard errors of the coefficients are 
+#'   unequal across groups \insertCite{Sarstedt2011}{cSEM}.
+#'   If more than two groups are tested for equality, parameter k is compared 
+#'   between all pairs of groups. In this case, it is recommended
+#'   to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+#'   done by p-value) since this is essentially a multiple testing setup. 
+#'   If several parameters are tested simultaneously, correction
+#'   is by group and number of parameters. By default
+#'   no multiple testing correction is done, however, several common
+#'   adjustments are available via `.approach_p_adjust`. See 
+#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
+#' }
+#' \item{Approach suggested by \insertCite{Henseler2007a;textual}{cSEM} and \insertCite{Henseler2009;textual}{cSEM}}{
+#'   This approach is also known as PLS-MGA \insertCite{Henseler2009,Sarstedt2011}{cSEM}.
+#'   It tests whether a population parameter of group 1 is larger than or equal to
+#'   the population parameter of group 2. In doing so, we make a comparison between all the bias-corrected 
+#'   bootstrap estimates of group 1 with group 2. The outcome is an estimated probability.
+#'   The decision is based on whether this probability is smaller than `.alpha` or larger than 1 - `.alpha`. 
+#'   Therefore, two null hypotheses are tested, namely H_0: theta_1 <= theta_2 
+#'   and H_0: theta_1 >= theta_2. As a consequence, it is currently not possible to
+#'   adjust the p-value in case of multiple comparisons, i.e., `.approach_p_adjust` is ignored.
 #' }
 #' }
 #' 
@@ -57,21 +87,53 @@
 #' 
 #' By default, approaches based on parameter differences across groups compare
 #' all parameters (`.parameters_to_compare = NULL`). To compare only
-#' a subset of parameters provide the parameters in lavaan model syntax just like
-#' providing the model. Note that the "model" provided to `.parameters_to_compare`
-#' does not have to be an estimatable model! See the example below.
+#' a subset of parameters provide the parameters in [lavaan model syntax][lavaan::model.syntax]  just like
+#' the model to estimate. Take the simple model:
+#' 
+#' \preformatted{
+#' model_to_estimate <- "
+#' Structural model
+#' eta2 ~ eta1
+#' eta3 ~ eta1 + eta2
+#' 
+#' # Each concept os measured by 3 indicators, i.e., modeled as latent variable
+#' eta1 =~ y11 + y12 + y13
+#' eta2 =~ y21 + y22 + y23
+#' eta3 =~ y31 + y32 + y33
+#' "
+#' }
+#' If only the path from eta1 to eta3 and the loadings of eta1 are to be compared
+#' across groups, write:
+#' \preformatted{
+#'to_compare <- "
+#' Structural parameters to compare
+#' eta3 ~ eta1
+#' 
+#' # Loadings to compare
+#' eta1 =~ y11 + y12 + y13
+#' "
+#' }
+#' Note that the "model" provided to `.parameters_to_compare`
+#' does not have to be an estimatable model! 
 #' 
 #' Note that compared to all other functions in \pkg{cSEM}, `.handle_inadmissibles`
 #' defaults to `"replace"` to accomdate the Sarstedt et al. (2011) approach.
 #' 
+#' Argument `.R_permuation` is ignored for the `"Nitzl"` and the `"Keil"` approach. 
+#' `.R_bootstrap` is ignored if  `.object` already contains resamples, 
+#' i.e. has class `cSEMResults_resampled` and if only the `"Klesel"` or the `"Chin"`
+#' approach are used.
+#' 
+#' The argument `.saturated` is used by `"Klesel"` only.
 #' 
 #' @usage testMGD(
 #'  .object                = NULL,
 #'  .alpha                 = 0.05,
 #'  .approach_p_adjust     = "none",
-#'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil"),
+#'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
+#'                             "Keil", "Nitzl", "Henseler"),
 #'  .parameters_to_compare = NULL,
-#'  .handle_inadmissibles  = c("replace", "drop", "none"),
+#'  .handle_inadmissibles  = c("replace", "drop", "ignore"),
 #'  .R_permutation         = 499,
 #'  .R_bootstrap           = 499,
 #'  .saturated             = FALSE,
@@ -99,6 +161,8 @@
 #'   \item{`$Chin`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
 #'   \item{`$Sarstedt`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
 #'   \item{`$Keil`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
+#'   \item{`$Nitzl`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
+#'   \item{`$Henseler`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
 #' }
 #' @references
 #'   \insertAllCited{}
@@ -113,9 +177,10 @@ testMGD <- function(
  .object                = NULL,
  .alpha                 = 0.05,
  .approach_p_adjust     = "none",
- .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", "Keil"),
+ .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
+                            "Keil", "Nitzl","Henseler"),
  .parameters_to_compare = NULL,
- .handle_inadmissibles  = c("replace", "drop", "none"),
+ .handle_inadmissibles  = c("replace", "drop", "ignore"),
  .R_permutation         = 499,
  .R_bootstrap           = 499,
  .saturated             = FALSE,
@@ -124,22 +189,27 @@ testMGD <- function(
  .verbose               = TRUE
 ){
 
-  ## Match arguments
-  diff <- setdiff(.approach_mgd, args_default(.choices =  TRUE)$.approach_mgd)
-  
+  ### Checks and errors ========================================================
+  # Check .approach_mgd argument choices
+  diff <- setdiff(.approach_mgd, args_default(TRUE)$.approach_mgd)
+
   if(length(diff) != 0) {
     stop2(
       "The following error occured in the testMGD() function:\n",
       "Unknown approach: ", paste0(diff, collapse = ", "), ".",
       " Possible choices are: ",
-      paste0(args_default(.choices =  TRUE)$.approach_mgd, collapse = ", "))
+      paste0(args_default(TRUE)$.approach_mgd, collapse = ", "))
   }
+  
+  ## Match arguments
   .approach_mgd         <- match.arg(.approach_mgd, several.ok = TRUE)
-  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles) # no reference to 
+                           # args_default, because args_default()$.handle_inadmissibles
+                           # has "drop" as default, but testMGD hast "replace".
   .type_vcv             <- match.arg(.type_vcv)
   
-  ### Checks and errors ========================================================
-  ## Check if at least two groups are present
+
+  # Check if at least two groups are present
   if(!inherits(.object, "cSEMResults_multi")) {
     stop2(
       "The following error occured in the testMGD() function:\n",
@@ -168,12 +238,12 @@ testMGD <- function(
   if(any(.approach_mgd %in% c("all", "Klesel")) & model_type == "Nonlinear"){
     stop2("The following error occured in the testMGD() function:\n",
           "The approach suggested by Klesel et al. (2019) cannot be applied",
-          " to nonlinear models as cSEM currently cannot calculate",
+          " to nonlinear models as cSEM currently can not calculate",
           " the model-implied VCV matrix for such models.\n", 
           "Consider setting `.approach_mgd = c('Chin',  'Sarstedt')`")
   }
   
-  ## Check if any of the group estimates are inadmissible
+  # Check if any of the group estimates are inadmissible
   if(sum(unlist(verify(.object))) != 0) {
     warning2(
       "The following warning occured in the testMGD() function:\n",
@@ -181,7 +251,7 @@ testMGD <- function(
       "See `verify(.object)` for details.")
   }
   
-  ## Check if data for different groups is identical
+  # Check if data for different groups is identical
   if(TRUE %in% lapply(utils::combn(.object, 2, simplify = FALSE),
                       function(x){ identical(x[[1]], x[[2]])})){
     warning2(
@@ -189,12 +259,25 @@ testMGD <- function(
       "At least two groups are identical. Results may not be meaningful.")
   } 
   
+  # If Henseler is used with adjustment of p-value different than "none" return warning
+  if(any(.approach_mgd %in% c("all", "Klesel")) & !all(.approach_p_adjust %in% "none")){
+    warning2(
+      "The following warning occured in the testMGD() function:\n",
+      "Currently, there is no p-value adjustment possible for the approach suggested by Henseler (2007).",
+      "Every adjustment is ignored for this approach."
+    )
+  }
+  
   if(.verbose) {
     cat(rule2("Several tests for multi-group comparisons",
               type = 3), "\n\n")
   }
   
-  ### Calculation of the test statistics========================================
+  
+  # Get the name of the parameters to be compared. This is required for Sarstedt and Henseler
+  names_param <- unlist(getParameterNames(.object, .model = .parameters_to_compare))
+  
+  ## Calculation of the test statistics========================================
   teststat <- list()
   
   ## Klesel et al. (2019) ------------------------------------------------------
@@ -221,11 +304,15 @@ testMGD <- function(
                                                        .model = .parameters_to_compare)
   }
   
-  ## Sarstedt et al. (2011) ----------------------------------------------------
-  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil"))) {
+  ## Sarstedt et al. (2011), Keil et al. (2000), Nitzl (2010), Henseler (2007) -----
+  # All these approaches require bootstrap
+  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler"))) {
     
-    ## Check if .object already contains resamples; if not, run bootstrap
+    # Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
+      if(.verbose) {
+        cat("Bootstrapping cSEMResults object ...\n\n")
+      }
       .object <- resamplecSEMResults(
         .object               = .object,
         .resample_method      = "bootstrap",
@@ -234,26 +321,14 @@ testMGD <- function(
         .seed                 = .seed) 
     }
     
-
     ## Combine bootstrap results in one matrix
-    ll_org <- lapply(.object, function(y) {
+    bootstrap_results <- lapply(.object, function(y) {
       if(inherits(.object, "cSEMResults_2ndorder")) {
-        x <- y$Second_stage$Information$Resamples$Estimates$Estimates1
-        
+        x    <- y$Second_stage$Information$Resamples$Estimates$Estimates1
         nobs <- nrow(y$First_stage$Information$Data)
-        
-        ## Get bootstrap seeds
-        # bootstrap_seeds <- sapply(.object, function(x)  {
-        #   x$Second_stage$Information$Resamples$Information_resample$Seed 
-        # })
       } else {
-        x <- y$Estimates$Estimates_resample$Estimates1
-        # Read out sample size of the group
+        x    <- y$Estimates$Estimates_resample$Estimates1
         nobs <- nrow(y$Information$Data)
-        ## Get bootstrap seeds
-        # bootstrap_seeds <- sapply(.object, function(x) {
-        #   x$Information$Information_resample$Seed
-        # }) 
       }
       path_resamples    <- x$Path_estimates$Resampled
       loading_resamples <- x$Loading_estimates$Resampled
@@ -267,30 +342,57 @@ testMGD <- function(
       loading_se <- ses$Loading_estimates$sd
       weight_se <- ses$Weight_estimates$sd
       
+      # Calculation of the bias
+      bias <- infer(.object=y,.quantity = "bias")
+      
+      path_bias <- bias$Path_estimates$bias
+      loading_bias <- bias$Loading_estimates$bias
+      weight_bias <- bias$Weight_estimates$bias
+      # Return object
       list(
-        "path_resamples"    = path_resamples, 
-        "loading_resamples" = loading_resamples, 
-        "weight_resamples"  = weight_resamples, 
         "n"                 = n,
         "nObs"              = nobs,
-        "ses_all"           = c(path_se, loading_se, weight_se))
+        "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples),
+        "ses_all"           = c(path_se, loading_se, weight_se),
+        "bias_all"          = c(path_bias, loading_bias, weight_bias)
+       )
+      
     })
     
-    if(any(.approach_mgd %in% c("Keil","all"))){
-      diff_para_Keil <- calculateParameterDifference(.object = .object, 
-                                                     .model = .parameters_to_compare)
+    ## Keil, Nitzl, Henseler 
+    if(any(.approach_mgd %in% c("all", "Nitzl", "Keil","Henseler"))) {
       
-      # permute .objects
+      # Calculate the difference for one parameter between two groups
+      # Although Henseler approach does not compute a test statistic,
+      # The difference is calculated to create a dummy test statistic list
+      diff_para_Keil <- diff_para_Nitzl <- diff_para_Henseler<- calculateParameterDifference(
+        .object = .object, 
+        .model  = .parameters_to_compare
+        )
+      
+      
+      if(any(.approach_mgd %in% c("all","Henseler"))) {
+        # Create dummy test statistic list containing NAs
+        temp <- rep(NA,length(unlist(diff_para_Henseler)))
+        teststat[["Henseler"]] <-relist(flesh = temp,skeleton = diff_para_Henseler)
+         
+      }
+      
+      # Build list that contains pairs of objects.
       object_permu <- utils::combn(.object, 2, simplify = FALSE)
       names(object_permu) <- sapply(object_permu, function(x) paste0(names(x)[1], '_', names(x)[2]))
-      
-      teststat_Keil <- lapply(names(object_permu),function(x){
-       diff <- diff_para_Keil[[x]]
-        ses1 <- ll_org[[names(object_permu[[x]][1])]]$ses_all
-        ses2 <- ll_org[[names(object_permu[[x]][2])]]$ses_all
+ 
+      # Approach suggested by Keil 
+      if(any(.approach_mgd %in% c("all", "Keil"))) {     
         
-        n1<-ll_org[[names(object_permu[[x]][1])]]$nObs
-        n2<-ll_org[[names(object_permu[[x]][2])]]$nObs
+      teststat_Keil <- lapply(names(object_permu), function(x) {
+       diff <- diff_para_Keil[[x]]
+        ses1 <- bootstrap_results[[names(object_permu[[x]][1])]]$ses_all
+        ses2 <- bootstrap_results[[names(object_permu[[x]][2])]]$ses_all
+        
+        # Get sample size per group
+        n1<-bootstrap_results[[names(object_permu[[x]][1])]]$nObs
+        n2<-bootstrap_results[[names(object_permu[[x]][2])]]$nObs
         
         # Calculation of the SE of the parameter difference as proposed by 
         # Henseler (2007a), Henseler et al. (2009)
@@ -298,41 +400,64 @@ testMGD <- function(
             (n2-1)^2/(n1+n2-2)*ses2^2)*sqrt(1/n1+1/n2) 
           
         test_stat <- diff/ses_total[names(diff)]
-        list("teststat"=test_stat,"obs_both"=n1+n2)
-        
+        list("teststat" = test_stat, "df" = n1 + n2 - 2)
       })
       names(teststat_Keil) <- names(object_permu)
       teststat[["Keil"]] <- teststat_Keil 
-    
-  }
-  if(any(.approach_mgd %in% c("Sarstedt","all"))){ #if approach_mgd == "Sarstedt" or "all"
-    # Remove SEs
-    ll <- lapply(ll_org, function(x)x[1:5])
-    names(ll) <- names(ll_org)
-    ## Transpose, get id column, bind rows and columns
-    ll <- purrr::transpose(ll)
-    group_id <- rep(1:length(.object), unlist(ll$n))
-    ll <- lapply(ll, function(x) do.call(rbind, x))
-    
-    all_comb <- cbind(ll$path_resamples, 
-                      ll$loading_resamples, 
-                      ll$weight_resamples, 
-                      "group_id" = group_id)
-    # all_comb contains all parameter estimate that could potentially be compared 
-    # plus an id column indicating the group adherance of each row.
-    
-    ## Get the name of the parameters to be compared
-    names_param <- unlist(getParameterNames(.object, .model = .parameters_to_compare))
-    
-    ## Select relevant columns
-    all_comb <- all_comb[, c(names_param, "group_id")]
-    
-    ## Add test statistic Sarstedt
-    teststat[["Sarstedt"]] <- calculateFR(.resample_sarstedt = all_comb)
-    }#approach_mgd "Sarstedt"and "all"
-  }
+      }
+      
+      # Approach suggested by Nitzl (2010)
+      if(any(.approach_mgd %in% c("all", "Nitzl"))) { 
+        
+        teststat_Nitzl <- lapply(names(object_permu), function(x){
+          diff <- diff_para_Nitzl[[x]]
+          ses1 <- bootstrap_results[[names(object_permu[[x]][1])]]$ses_all
+          ses2 <- bootstrap_results[[names(object_permu[[x]][2])]]$ses_all
+          
+          # Get sample size per group
+          n1<-bootstrap_results[[names(object_permu[[x]][1])]]$nObs
+          n2<-bootstrap_results[[names(object_permu[[x]][2])]]$nObs
+          
+          # Calculation of the SE of the parameter difference as proposed by 
+          # Henseler (2007a), Henseler et al. (2009)
+          ses_total <- sqrt((n1-1)/(n1)*ses1^2 + 
+                              (n2-1)/(n2)*ses2^2) 
+          
+          test_stat <- diff/ses_total[names(diff)]
+          
+          # calculation of the degrees of freedom
+          numerator <- ((n1-1)/n1*ses1^2+(n2-1)/n2*ses2^2)^2
+          denominator <- (n1-1)/n1^2*ses1^4+(n2-1)/n2^2*ses2^4
+          df <- round(numerator/denominator-2)
+          df <- df[names(diff)]
+          list("teststat" = test_stat, "df" = df)
+        })
+        names(teststat_Nitzl) <- names(object_permu)
+        teststat[["Nitzl"]] <- teststat_Nitzl 
+      }
+      
+    }
+    ## Sarstedt approach
+    if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
+      ## Transpose
+      ll <- purrr::transpose(bootstrap_results)
+      group_id <- rep(1:length(.object), unlist(ll$n))
+
+      # all_comb contains all parameter estimate that could potentially be compared 
+      # plus an id column indicating the group adherance of each row.
+      all_comb <- cbind(do.call(rbind,ll$para_all), 
+                        "group_id" = group_id)
+
+      ## Select relevant columns
+      all_comb <- all_comb[, c(names_param, "group_id")]
+      
+      ## Add test statistic Sarstedt
+      teststat[["Sarstedt"]] <- calculateFR(.resample_sarstedt = all_comb)
+    } # END approach_mgd %in% c("all", "Sarstedt")
+  } # END .approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler")
   
   ### Permutation ==============================================================
+
   ## Preparation
   # Put data of each groups in a list and combine
   if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -352,8 +477,12 @@ testMGD <- function(
   id <- rep(1:length(X_all_list), sapply(X_all_list, nrow))
   arguments[[".id"]] <- "id"
   
+  # Permutation is only performed for approaches that require it
+  if(any(.approach_mgd %in% c("all", "Klesel", "Chin", "Sarstedt"))) {
+    
   # Start progress bar if required
   if(.verbose){
+    cat("Start permutation:\n\n")
     pb <- txtProgressBar(min = 0, max = .R_permutation, style = 3)
   }
   
@@ -465,6 +594,7 @@ testMGD <- function(
   ### Postprocessing ===========================================================
   # Delete potential NA's
   ref_dist1 <- Filter(Negate(anyNA), ref_dist)
+  }
   
   # Order significance levels
   .alpha <- .alpha[order(.alpha)]
@@ -483,13 +613,13 @@ testMGD <- function(
   pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel > teststat_Klesel)
   
   # Decision 
+  # TRUE = p-value > alpha --> not reject
+  # FALSE = sufficient evidence against the H0 --> reject
   decision_Klesel <- lapply(.alpha, function(x) {
     pvalue_Klesel > x
   })
   
   names(decision_Klesel) <- paste0(.alpha * 100, "%")
-  # TRUE = p-value > alpha --> not reject
-  # FALSE = sufficient evidence against the H0 --> reject
   }
   
   ## Chin & Dibbern (2010) -----------------------------------------------------
@@ -533,6 +663,8 @@ testMGD <- function(
     names(padjusted_Chin) <- .approach_p_adjust
     
     # Decision 
+    # TRUE = p-value > alpha --> not reject
+    # FALSE = sufficient evidence against the H0 --> reject
     decision_Chin <- lapply(padjusted_Chin, function(adjust_approach){ # over the different p adjustments
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
@@ -573,6 +705,8 @@ testMGD <- function(
     names(padjusted_Sarstedt) <- .approach_p_adjust
     
     # Decision 
+    # TRUE = p-value > alpha --> not reject
+    # FALSE = sufficient evidence against the H0 --> reject
     decision_Sarstedt <- lapply(padjusted_Sarstedt,function(p_value){
       temp <- lapply(.alpha, function(alpha){
         p_value > alpha
@@ -589,12 +723,12 @@ testMGD <- function(
     })
   }
   
-  ## Keil et al. 2000 ----------------------------------------------------------
+  ## Keil et al. (2000) --------------------------------------------------------
   if(any(.approach_mgd %in% c("all", "Keil"))){
 
     # Calculate p-values
     pvalue_Keil <- lapply(teststat$Keil,function(x){
-      p_value <- 2*(1-pt(abs(x[[1]]),df = x[[2]]-2))
+      p_value <- 2*(1-pt(abs(x$teststat),df = x$df))
       p_value
     })
     
@@ -607,6 +741,8 @@ testMGD <- function(
     names(padjusted_Keil) <- .approach_p_adjust
     
     # Decision 
+    # TRUE = p-value > alpha --> not reject
+    # FALSE = sufficient evidence against the H0 --> reject
     decision_Keil <- lapply(padjusted_Keil, function(adjust_approach){ # over the different p adjustments
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
@@ -626,34 +762,187 @@ testMGD <- function(
     })
   }
   
+  ## Nitzl et al. (2010) -------------------------------------------------------
+  if(any(.approach_mgd %in% c("all", "Nitzl"))){
+    
+    # Calculate p-values
+    pvalue_Nitzl <- lapply(teststat$Nitzl,function(x){
+      p_value <- 2*(1-pt(abs(x$teststat),df = x$df))
+      p_value
+    })
+    
+    # Adjust p-values in case of more than one comparison
+    padjusted_Nitzl<- lapply(as.list(.approach_p_adjust), function(x){
+      pvector <- stats::p.adjust(unlist(pvalue_Nitzl),method = x)
+      # Sort them back into list
+      relist(flesh = pvector,skeleton = pvalue_Nitzl)
+    })
+    names(padjusted_Nitzl) <- .approach_p_adjust
+    
+    # Decision 
+    # TRUE = p-value > alpha --> not reject
+    # FALSE = sufficient evidence against the H0 --> reject
+    decision_Nitzl <- lapply(padjusted_Nitzl, function(adjust_approach){ # over the different p adjustments
+      temp <- lapply(.alpha, function(alpha){# over the different significance levels
+        lapply(adjust_approach,function(group_comp){# over the different group comparisons
+          # check whether the p values are larger than a certain alpha
+          group_comp > alpha
+        })
+      })
+      names(temp) <- paste0(.alpha*100, "%")
+      temp
+    })
+    
+    # One rejection leads to overall rejection
+    decision_overall_Nitzl <- lapply(decision_Nitzl, function(decision_Nitzl_list){
+      lapply(decision_Nitzl_list,function(x){
+        all(unlist(x))
+      })
+    })
+  }
+  
+  ## Henseler (2009) approach  -------------------------------------------------
+  if(any(.approach_mgd %in% c("all", "Henseler"))) {
+    
+    # Pseudo teststat for convenience
+    teststat_Henseler <- teststat$Henseler
+    
+    # center the bootstrap sample Sarstedt et al. (2011) Eq. 4
+    ll_centered <- lapply(bootstrap_results, function(x){
+      
+      # Substract from each row of para_all the corresponding bias
+      t(apply(x$para_all,1,function(row){
+        row-x$bias_all
+      }))
+    })
+    
+    names(ll_centered) <- names(bootstrap_results)
+    
+    # Create pairs which should be compared
+    pairs_centered <- utils::combn(ll_centered, 2, simplify = FALSE)
+    names(pairs_centered) <- sapply(pairs_centered, function(x) paste0(names(x)[1], '_', names(x)[2]))
+    
+    # Create dummy list with NULL 
+    
+    
+    # Calculation of the probability
+    pvalue_Henseler <- lapply(pairs_centered,function(x){
+      calculatePr(.resample_centered = x,
+                  .parameters_to_compare = names_param)
+    })
+    
+    # Adjust p-value in case of multiple comparisons
+    # Adjusting p-values is not straight forward. 
+    # First it is a one-sided test, so we need to know the hypothesis
+    # Just flipping the p-value is not reaaly an option as it might causes problems 
+    # in situation where the order of the p-values is required for the correction
+    # Therefore only the "none"method is applied
+    padjusted_Henseler<- lapply(as.list("none"), function(x){
+      pvector <- stats::p.adjust(unlist(pvalue_Henseler),method = x)
+      # Sort them back into list
+      relist(flesh = pvector,skeleton = pvalue_Henseler)
+    })
+    names(padjusted_Henseler) <- "none"
+
+    # Decision is made:
+    # The probability is compared to alpha and 1-alpha
+    # In doing so, we assess both hypotheses theta^1 <= theta^2 and 
+    # theta^1 => theta^2
+    # TRUE = p-value > alpha & p-value < 1-alpha --> not reject
+    # FALSE = sufficient evidence against the H0 --> reject
+    decision_Henseler <- lapply(padjusted_Henseler, function(adjust_approach){ # over the different p adjustments
+      temp <- lapply(.alpha, function(alpha){# over the different significance levels
+        lapply(adjust_approach,function(group_comp){# over the different group comparisons
+          # check whether the p values are larger than a certain alpha
+          group_comp > alpha & group_comp < 1- alpha
+        })
+      })
+      names(temp) <- paste0(.alpha*100, "%")
+      temp
+    })
+    
+    # It is not clear how an overall decision should be made  
+    decision_overall_Henseler <- lapply(decision_Henseler, function(decision_Henseler_list){
+      lapply(decision_Henseler_list,function(x){
+        NA
+      })
+    })
+  }
+    
+  
   ### Return output ============================================================
   out <- list()
   
-  ## Information
+  ## General Information
   out[["Information"]] <- list(
-    "Number_admissibles"    = length(ref_dist1),
-    "Total_runs"            = counter + n_inadmissibles,
     "Group_names"           = names(.object),
     "Number_of_observations"= sapply(X_all_list, nrow),
     "Approach"              = .approach_mgd,
     "Approach_p_adjust"     = .approach_p_adjust,
-    "Permutation_seed"      = .seed,
-    # "Bootstrap_seeds"        = bootstrap_seeds,
-    "Alpha"                 = .alpha,
-    "VCV_type"              = .type_vcv,
-    "Permutation_values"    = list()
+    "Alpha"                 = .alpha
   )
-  
+
+  ## Permutation-specific information
+  if(any(.approach_mgd %in% c("all", "Klesel", "Chin", "Sarstedt"))) {
+   out[["Information"]][["Information_permutation"]] <- list(
+     "Number_admissibles"    = length(ref_dist1), 
+     "Total_runs"            = counter + n_inadmissibles,
+     "Permutation_seed"      = .seed,
+     "Permutation_values"    = list(),
+     "Handle_inadmissibles"  = .handle_inadmissibles
+   ) 
+  } else {
+    out[["Information"]][["Information_permutation"]] <- list(
+      "Number_admissibles"    = NA, 
+      "Total_runs"            = NA,
+      "Permutation_seed"      = NA,
+      "Permutation_values"    = NA,
+      "Handle_inadmissibles"  = NA
+    ) 
+  }
+ 
+  ## Bootstrap-sprecific information
+  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler"))) {
+    # Collect bootstrap information
+    info_boot <-lapply(.object, function(x){
+      if(inherits(.object, "cSEMResults_2ndorder")) {
+        x <- x$Second_stage$Information$Resamples$Information_resample
+      } else {
+        x <- x$Information$Information_resample
+      }
+      
+      list(
+        "Number_admissibles"   = x$Number_of_admissibles,
+        "Total_runs"           = x$Number_of_runs,
+        "Bootstrap_seed"       = x$Seed,
+        "Handle_inadmissibles" = x$Handle_inadmissibles
+      )
+    })
+    
+    names(info_boot) <- names(.object)
+    info_boot <- purrr::transpose(info_boot)
+    
+    out[["Information"]][["Information_bootstrap"]] <- list(
+      "Number_admissibles"    = info_boot$Number_admissibles, 
+      "Total_runs"            = info_boot$Total_runs,
+      "Bootstrap_seed"        = info_boot$Bootstrap_seed,
+      "Handle_inadmissibles"  = info_boot$Handle_inadmissibles
+    ) 
+  }
+   
+# Information for Klesel et al. approach
   if(any(.approach_mgd %in% c("all", "Klesel"))) {
     out[["Klesel"]] <- list(
       "Test_statistic"     = teststat_Klesel,
       "P_value"            = pvalue_Klesel,
-      "Decision"           = decision_Klesel
+      "Decision"           = decision_Klesel,
+      "VCV_type"           = .type_vcv
     )
     
-    out[["Information"]][["Permutation_values"]][["Klesel"]] <- ref_dist_matrix_Klesel
+    out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Klesel"]] <- ref_dist_matrix_Klesel
   }
   
+# Information for Chin & Dibbern approach
   if(any(.approach_mgd %in% c("all", "Chin"))) {
     out[["Chin"]] <- list(
       "Test_statistic"     = teststat_Chin,
@@ -662,9 +951,10 @@ testMGD <- function(
       "Decision_overall"   = decision_overall_Chin
     )
     
-    out[["Information"]][["Permutation_values"]][["Chin"]] <- ref_dist_matrices_Chin
+    out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Chin"]] <- ref_dist_matrices_Chin
   }
-  
+
+# Information for Sarstedt et al. approach  
   if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
     out[["Sarstedt"]] <- list(
       "Test_statistic"     = teststat_Sarstedt,
@@ -673,17 +963,43 @@ testMGD <- function(
       "Decision_overall"   = decision_overall_Sarstedt
     )
     
-    out[["Information"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
+    out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
   }
+  
+# Information for Keil approach  
   if(any(.approach_mgd %in% c("all", "Keil"))) {
     out[["Keil"]] <- list(
       "Test_statistic"     = purrr::transpose(teststat_Keil)$teststat,
       "P_value"            = padjusted_Keil,
       "Decision"           = decision_Keil,
-      "Decision_overall"   = decision_overall_Keil
+      "Decision_overall"   = decision_overall_Keil,
+      "df"                 = purrr::transpose(teststat_Keil)$df[[1]]   
     )
   }
   
+# Information for Nitzl approach
+  if(any(.approach_mgd %in% c("all", "Nitzl"))) {
+    out[["Nitzl"]] <- list(
+      "Test_statistic"     = purrr::transpose(teststat_Nitzl)$teststat,
+      "P_value"            = padjusted_Nitzl,
+      "Decision"           = decision_Nitzl,
+      "Decision_overall"   = decision_overall_Nitzl,
+      "df"                 = purrr::transpose(teststat_Nitzl)$df[[1]]
+      
+    )
+  }
+
+# Information for Henseler approach  
+  if(any(.approach_mgd %in% c("all", "Henseler"))) {
+    out[["Henseler"]] <- list(
+      "Test_statistic"     = teststat_Henseler,
+      "P_value"            = padjusted_Henseler,
+      "Decision"           = decision_Henseler,
+      "Decision_overall"   = decision_overall_Henseler
+    )
+  }
+  
+   
   class(out) <- "cSEMTestMGD"
   return(out)
 }

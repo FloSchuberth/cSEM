@@ -12,8 +12,7 @@
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
 #' @param .approach_2ndorder Character string. Approach used for models containing
-#'   second order constructs. One of: "*2stage*", "*RI_original*", "*RI_extended*"
-#'   or "*mixed*". Defaults to "*2stage*".
+#'   second order constructs. One of: "*2stage*", or "*mixed*". Defaults to "*2stage*".
 #' @param .approach_alpha_adjust Character string. Approach used to adjust the 
 #'   significance level to accomodate mutiple testing. 
 #'   One of "*none*" or "*bonferroni*". Defaults to "*none*". 
@@ -22,11 +21,14 @@
 #'   Bravais-Person correlation is used,
 #'   "*spearman*" for the Spearman rank correlation, or
 #'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
-#'   Defaults to "*none*".
+#'   Defaults to "*none*". Note that many postestimation procedures (such as
+#'   [testOMF()] or [fit()] implicitly assume a continous 
+#'   indicator correlation matrix (i.e Bravais-Pearson correlation matrix).
+#'   Only use if you know what you are doing.
 #' @param .approach_mgd Character string or a vector of character strings. 
 #'   Approach used for the multi-group comparison. One: "*all*", "*Klesel*", "*Chin*", 
-#'   "*Sarstedt*", or "*Keil*. Default to "*all*" in which case all approaches are
-#'   computed (if possible).      
+#'   "*Sarstedt*", "*Keil*, "*Nitzl*", or "*Henseler*". 
+#'   Default to "*all*" in which case all approaches are computed (if possible).      
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
@@ -37,9 +39,9 @@
 #' @param .approach_paths Character string. Approach used to estimate the
 #'   structural coefficients. One of: "*OLS*", "*2SLS*", or "*3SLS*" (not yet implemented).
 #'   Defaults to "*OLS*".
-#' @param .approach_se Chraracter string. Approach used to obtain the standard errors (SEs)
+#' @param .approach_se Character string. Approach used to obtain the standard errors (SEs)
 #'   for parameter estimates. One of: "*none*", "*closed*", "*closed_estimator*".
-#'   Defaults to "*none*". 
+#'   Defaults to "*none*".
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
@@ -73,11 +75,11 @@
 #'   leave-one-out cross-validation samples. Defaults to `10`.
 #' @param .data A `data.frame` or a `matrix` of standardized or unstandarized 
 #'   data (indicators/items/manifest variables). Possible column types or classes 
-#'   of the data provided are: "logical", "numeric" ("double" or "integer"), 
-#'   "factor" ("ordered" and/or "unordered"), "character" (converted to factor),
+#'   of the data provided are: "`logical`", "`numeric`" ("`double`" or "`integer`"), 
+#'   "`factor`" ("`ordered`" and/or "`unordered`"), "`character`" (converted to factor),
 #'   or a mix of several types.
 #' @param .disattenuate Logical. Should composite/proxy correlations 
-#'   be disattenuated to yield consisten loadings and path estimates if at least
+#'   be disattenuated to yield consistent loadings and path estimates if at least
 #'   one of the construct is modeled as a common factor? Defaults to `TRUE`.
 #' @param .dist Character string. The distribution to use for the critical value.
 #'  One of *"t"* for Student's t-distribution or *"z"* for the standard normal distribution.
@@ -86,10 +88,11 @@
 #'   or "*squared_euclidian*". Defaults to "*geodesic*".
 #' @param .df Character string. The method for obtaining the degrees of freedom.
 #'   Choices are "*type1*" and "*type2*". Defaults to "*type1*" .
-#' @param .dominant_indicators A character vector of `"name" = "value"` pairs, 
-#'   where `"value"` is a character string giving the name of the dominant indicator
-#'   and `"name"` a character string of the corresponding construct name.
+#' @param .dominant_indicators A character vector of `"construct_name" = "indicator_name"` pairs, 
+#'   where `"indicator_name"` is a character string giving the name of the dominant indicator
+#'   and `"construct_name"` a character string of the corresponding construct name.
 #'   Dominant indicators may be specified for a subset of the constructs. 
+#'   Default to `NULL`.
 #' @param .E A (J x J) matrix of inner weights.
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
@@ -107,11 +110,12 @@
 #'   (i.e. the number of results returned will potentially be less than `.R`). 
 #'   For "*ignore*" all results are returned even if all or some of the replications
 #'   yieled inadmissible results (i.e. number of results returned is equal to `.R`). 
-#'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions. 
-#'   Defaults to "*drop*".
-#' @param .id Character string or integer. The name or position of the column of 
-#'   `.data` used to split the data into groups.
-#'    Defaults to `NULL`.
+#'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions.
+#'   Depending on the frequency of inadmissible solutions this may significantly increase
+#'   computing time. Defaults to "*drop*".
+#' @param .id Character string or integer. A character string giving the name or 
+#'   an integer of the position of the column of `.data` whose levels are used
+#'   to split `.data` into groups. Defaults to `NULL`.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent constructs of the structural
 #'   equation whose explanatory variables are endogenous. The vectors
@@ -126,7 +130,7 @@
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
-#'   or a [cSEMModel] list. Defaults to `NULL`.
+#'   or a [cSEMModel] list.
 #' @param .model_implied Logical. Should the RMS_theta be computed using the
 #'   model-implied construct correlation matrix (`TRUE`) or the construct correlation matrix
 #'   based on V(eta) = WSW' divided by the square root of the respective 
@@ -139,7 +143,7 @@
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
-#'  Defaults to `FALSE`. Ignored if the model is linear.
+#'  Defaults to `FALSE`. Ignored if the model is not nonlinear.
 #' @param .nr_comparisons Numeric. The number of comparisons. Defaults to `NULL`.  
 #' @param .null_model Logical. Should the degrees of freedom for the null model
 #'   be computed? Defaults to `FALSE`.
@@ -163,12 +167,12 @@
 #'   when calculating the inner weights of the PLS-PM algorithm? Defaults to `FALSE`.
 #'   Ignored if `.approach_weights` is not PLS-PM.
 #' @param .PLS_modes Either a named list specifying the mode that should be used for
-#'   each construct in the form `"name" = "mode"`, a single character
+#'   each construct in the form `"construct_name" = "mode"`, a single character
 #'   string giving the mode that should be used for all constructs, or `NULL`.
 #'   Possible choices for `"mode"` are: "*modeA*", "*modeB*", "*modeBNNLS*", 
 #'   "*unit*", "*PCA*", a single integer or 
 #'   a vector of fixed weights of the same length as there are indicators for the
-#'   construct given by `"name"`. If only a single number is provided this is identical to
+#'   construct given by `"construct_name"`. If only a single number is provided this is identical to
 #'   using unit weights, as weights are rescaled such that the related composite 
 #'   has unit variance.  Defaults to `NULL`.
 #'   If `NULL` the appropriate mode according to the type
@@ -229,7 +233,7 @@
 #' @param .starting_values A named list of vectors where the
 #'   list names are the construct names whose indicator weights the user
 #'   wishes to set. The vectors must be named vectors of `"indicator_name" = value` 
-#'   pairs, where `value` is the starting weight. Defaults to `NULL`.
+#'   pairs, where `value` is the (scaled or unscaled) starting weight. Defaults to `NULL`.
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
@@ -239,7 +243,7 @@
 #'   to `TRUE`.
 #' @param .user_funs A function or a (named) list of functions to apply to every
 #'   resample. The functions must take `.object` as its first input (e.g., 
-#'   `myFun <- function(.object, ...) {...}`).
+#'   `myFun <- function(.object, ...) {body-of-the-function}`).
 #'   Function output should preferably be a (named)
 #'   vector but matrices are also accepted. However, the output will be 
 #'   vectorized (columnwise) in this case. See the examples section for details.
@@ -364,9 +368,9 @@ args_default <- function(.choices = FALSE) {
   args <- list(
     .alpha                   = 0.05,
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
-    .approach_2ndorder       = c("2stage", "RI_original", "RI_extended", "mixed"),
+    .approach_2ndorder       = c("2stage", "mixed"),
     .approach_alpha_adjust   = c("none", "bonferroni"),
-    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil"),
+    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler"),
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS", "3SLS"),

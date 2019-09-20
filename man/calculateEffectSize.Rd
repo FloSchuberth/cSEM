@@ -18,6 +18,6 @@ of these equations.
 Calculate the effect size for regression analysis \insertCite{Cohen1992}{cSEM}.
 }
 \seealso{
-\link{assess}, \link{csem}, \link{cSEMResults}
+\code{\link[=assess]{assess()}}, \link{csem}, \link{cSEMResults}
 }
 \keyword{internal}

@@ -9,16 +9,20 @@ indicator correlation matrix. One of: "\emph{none}" in which case the standard
 Bravais-Person correlation is used,
 "\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
-Defaults to "\emph{none}".}
+Defaults to "\emph{none}". Note that many postestimation procedures (such as
+\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continous
+indicator correlation matrix (i.e Bravais-Pearson correlation matrix).
+Only use if you know what you are doing.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
 to "\emph{diff_absolute}".}
 
-\item{.dominant_indicators}{A character vector of \code{"name" = "value"} pairs,
-where \code{"value"} is a character string giving the name of the dominant indicator
-and \code{"name"} a character string of the corresponding construct name.
-Dominant indicators may be specified for a subset of the constructs.}
+\item{.dominant_indicators}{A character vector of \code{"construct_name" = "indicator_name"} pairs,
+where \code{"indicator_name"} is a character string giving the name of the dominant indicator
+and \code{"construct_name"} a character string of the corresponding construct name.
+Dominant indicators may be specified for a subset of the constructs.
+Default to \code{NULL}.}
 
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
@@ -29,12 +33,12 @@ If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
-each construct in the form \code{"name" = "mode"}, a single character
+each construct in the form \code{"construct_name" = "mode"}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
 Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
 "\emph{unit}", "\emph{PCA}", a single integer or
 a vector of fixed weights of the same length as there are indicators for the
-construct given by \code{"name"}. If only a single number is provided this is identical to
+construct given by \code{"construct_name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
 has unit variance.  Defaults to \code{NULL}.
 If \code{NULL} the appropriate mode according to the type

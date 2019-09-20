@@ -1,4 +1,4 @@
-#' Helper for print.summarize_default and print.summerize_2ndorder
+#' Helper for print.cSEMSummarize
 #' @noRd
 #' 
 printSummarizeOverview <- function(.summarize_object) {
@@ -88,7 +88,7 @@ printSummarizeOverview <- function(.summarize_object) {
   }
 }
 
-#' Helper for print.summarize_default and print.summerize_2ndorder
+#' Helper for print.cSEMSummarize
 #' @noRd
 #' 
 printSummarizeConstructDetails <- function(.summarize_object) {
@@ -167,7 +167,7 @@ printSummarizeConstructDetails <- function(.summarize_object) {
   }
 }
 
-#' Helper for print.summarize_default and print.summerize_2ndorder
+#' Helper for print.cSEMSummarize
 #' @noRd
 #' 
 printSummarizePath <- function(.summarize_object, .ci_colnames, .what = "Path") {
@@ -235,7 +235,7 @@ printSummarizePath <- function(.summarize_object, .ci_colnames, .what = "Path") 
   }
 }
 
-#' Helper for print.summarize_default and print.summerize_2ndorder
+#' Helper for print.cSEMSummarize
 #' @noRd
 #' 
 printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
@@ -353,7 +353,10 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
   printLoadingsWeights(x2, "Weights")
 }
 
-printDetailsVerify <- function(x) {
+#' Helper for print.cSEMVerify
+#' @noRd
+#'
+printVerifyDetails <- function(.x) {
   
   text <- c("1" = "Convergence achieved", 
             "2" = "All absolute standardized loading estimates <= 1", 
@@ -361,7 +364,7 @@ printDetailsVerify <- function(x) {
             "4" = "All reliability estimates <= 1",
             "5" = "Model-implied indicator VCV is positive semi-definite")
   
-  if(inherits(x, "cSEMVerify_2ndorder")) {
+  if(inherits(.x, "cSEMVerify_2ndorder")) {
     cat2(
       "  ", 
       col_align("Code", 7), 
@@ -370,10 +373,10 @@ printDetailsVerify <- function(x) {
       "Description\n"
       )
     
-    for(i in names(x$First_stage)) {
+    for(i in names(.x$First_stage)) {
       cat2("  ", col_align(i, 7), 
-           col_align(ifelse(x$First_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
-           col_align(ifelse(x$Second_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
+           col_align(ifelse(.x$First_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
+           col_align(ifelse(.x$Second_stage[i] == FALSE, green("ok"), red("not ok")), 10), 
            col_align(text[i], max(nchar(text) + 2), align = "left"), "\n")
     }
   } else {
@@ -382,10 +385,110 @@ printDetailsVerify <- function(x) {
          col_align("Status", 10), 
          "Description\n")
     
-    for(i in names(x)) {
+    for(i in names(.x)) {
       cat2("  ", col_align(i, 7), 
-           col_align(ifelse(x[i] == FALSE, green("ok"), red("not ok")), 10), 
+           col_align(ifelse(.x[i] == FALSE, green("ok"), red("not ok")), 10), 
            col_align(text[i], max(nchar(text)) + 2, align = "left"), "\n")
     }
+  }
+}
+
+#' Helper for print.cSEMTestMGD
+#' @noRd
+#'
+printTestMGDResults <- function(.x, .approach, .info) {
+  
+  switch(.approach,
+    "Chin"  = {
+      x <- .x$Chin
+      
+      cat2(
+        rule2(type = 2), "\n",
+        rule2("Test for multigroup differences based on Chin & Dibbern (2010)")
+      )
+      },
+    "Keil"  = {
+      x <- .x$Keil
+      
+      cat2(
+        rule2(type = 2), "\n",
+        rule2("Test for multigroup differences based on Keil et al. (2000)")
+      )
+      },
+    "Nitzl" = {
+      x <- .x$Nitzl
+      cat2(
+        rule2(type = 2), "\n",
+        rule2("Test for multigroup differences based on Nitzl (2010)")
+      )
+    },
+    "Henseler" = {
+      x <- .x$Henseler
+      cat2(
+        rule2(type = 2), "\n",
+        rule2("Test for multigroup differences based on Henseler (2009)")
+      )
+    }
+  )
+  
+  ## Null hypothesis -----------------------------------------------------------
+  if(.approach == "Henseler") {
+    cat2(
+      "\n\nNull hypothesis:\n\n",
+      boxx(c("(1) H0: Parameter k of group 1 is smaller than that of group 2.", 
+           "(2) H0: Parameter k of group 1 is larger than that of group 2."),
+           float = "center")
+    )
+  } else {
+    cat2(
+      "\n\nNull hypothesis:\n\n",
+      boxx("H0: Parameter k is equal across two groups.", float = "center")
+    )
+  }
+
+  
+  ## Test statistic and p-value ------------------------------------------------
+  cat2("\n\nTest statistic and p-value: \n\n")
+  # Are several .alphas given? Inform the user that only the first .alpha is
+  # is used for decision
+  
+  # Are several .alphas given? Inform the user that only the first .alpha is
+  # is used for decision
+  if(length(.info$Alpha) > 1) {
+    cat2(
+      "\tDecision is based on alpha = ", names(x$Decision[[1]])[1]
+    )
+  }
+  
+  l <- max(10, nchar(names(x$Test_statistic[[1]])))
+  
+  # Create table for every p-value adjustment method
+  for(p in seq_along(x$P_value)) {
+    cat2("\n\tMultiple testing adjustment: '", names(x$P_value)[p], "'")
+    for(i in seq_along(x$Test_statistic)) {
+      
+      cat2("\n\n  Compared groups: ", names(x$Test_statistic)[i], "\n\n\t")
+      
+      cat2(
+        col_align("Parameter", width = l),
+        col_align("Test statistic", width = 14, align = "right"), 
+        col_align("p-value", width = 16, align = "right"),
+        col_align("Decision", width = 16, align = "right")
+      )
+      
+      for(j in seq_along(x$Test_statistic[[i]])) {
+        
+        cat2(
+          "\n\t",
+          col_align(names(x$Test_statistic[[i]])[j], width = l),
+          col_align(sprintf("%.4f", x$Test_statistic[[i]][j]), width = 14, 
+                    align = "right"), 
+          col_align(sprintf("%.4f", x$P_value[[p]][[i]][j]), width = 16, align = "right"),
+          col_align(ifelse(x$Decision[[p]][[1]][[i]][j], green("Do not reject"), red("reject")),
+                    width = 16, align = "right")
+        )
+      }
+    } 
+    cat2("\n")
   }
 }

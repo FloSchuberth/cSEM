@@ -102,7 +102,8 @@ parseModel <- function(
       
       x <- setdiff(names(.model), c("structural", "measurement", "error_cor", 
                                     "construct_type", "construct_order", 
-                                    "model_type", "instruments"))
+                                    "model_type", "instruments", "structural2",
+                                    "measurement2", "error_cor2", "Phi"))
       if(length(x) == 0) {
         
         class(.model) <- "cSEMModel"
@@ -124,6 +125,10 @@ parseModel <- function(
     ### Convert to lavaan partable ---------------------------------------------
     m_lav <- lavaan::lavaanify(model = .model, fixed.x = FALSE)
     
+    ## Add column with starting values or labels
+    m_lav$ustart2 <- ifelse(
+      is.na(m_lav$ustart) & m_lav$label != "", m_lav$label, m_lav$ustart) 
+
     ### Extract relevant information -------------------------------------------
     # s := structural
     # m := measurement
@@ -132,8 +137,7 @@ parseModel <- function(
     tbl_m  <- m_lav[m_lav$op %in% c("=~", "<~"), ] # measurement 
     tbl_e  <- m_lav[m_lav$op == "~~" & m_lav$user == 1, ] # error 
     
-    ## Check if there are population starting values
-    pop_values <- c(tbl_s$ustart, tbl_m$ustart, tbl_e$ustart)
+    pop_values <- c(tbl_s$ustart2, tbl_m$ustart2, tbl_e$ustart2)
     
     ## Get all relevant subsets of constructs and/or indicators
     # i  := indicators
@@ -247,7 +251,7 @@ parseModel <- function(
     ## errors and warnings should be ignored
     if(.check_errors) {
       ### Checks, errors and warnings --------------------------------------------
-      ## Stop if only a subset of starting values is given
+      ## Stop if pop_values contains only a subset of values or labels
       if(!all(is.na(pop_values)) & anyNA(pop_values)) {
         stop2("The following error occured in the `parseModel()` function:\n",
               "Only a subset of population values given. Please specify",
@@ -425,26 +429,25 @@ parseModel <- function(
     
     model_structural[cbind(row_index, col_index)] <- 1
     
-    ## If starting values are given create a supplementary strucutral matrx
+    ## If starting values are given create a supplementary structural matrix
     ## that contains the starting values, otherwise assign a 1
     if(!anyNA(pop_values)) {
       model_structural2 <- model_structural
-      model_structural2[cbind(row_index, col_index)] <- tbl_s$ustart
+      model_structural2[cbind(row_index, col_index)] <- tbl_s$ustart2
     }
-    
+
     ## Measurement model
     row_index <- match(tbl_m$lhs, names_c)
     col_index <- match(tbl_m$rhs, names_i)
     
     model_measurement[cbind(row_index, col_index)] <- 1
 
-    ## If starting values are given create a supplementary strucutral matrx
+    ## If starting values are given create a supplementary strucutral matrix
     ## that contains the starting values, otherwise assign a 1
     if(!anyNA(pop_values)) {
       model_measurement2 <- model_measurement
-      model_measurement2[cbind(row_index, col_index)] <- tbl_m$ustart
+      model_measurement2[cbind(row_index, col_index)] <- tbl_m$ustart2
     }
-    
     
     ## Error covariance matrix
     m_errors   <- tbl_e[tbl_e$lhs %in% names_i, , drop = FALSE]
@@ -455,7 +458,7 @@ parseModel <- function(
     
     model_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
-    ## If starting values are given create a supplementary strucutral matrx
+    ## If starting values are given create a supplementary strucutral matrix
     ## that contains the starting values, otherwise assign a 1
     if(!anyNA(pop_values)) {
       
@@ -476,14 +479,14 @@ parseModel <- function(
       
       if(length(tbl_e$ustart) != 0) {
         
-        model_error2[cbind(c(row_index, col_index), c(col_index, row_index))] <- m_errors$ustart
+        model_error2[cbind(c(row_index, col_index), c(col_index, row_index))] <- m_errors$ustart2
         
         # Get row and column index for constructs
         row_index <- match(con_errors$lhs, vars_exo)
         col_index <- match(con_errors$rhs, vars_exo)
         
-        Phi[cbind(row_index, col_index)] <- con_errors$ustart
-        Phi[upper.tri(Phi)] <- t(Phi)[upper.tri(Phi)]
+        Phi[cbind(row_index, col_index)] <- con_errors$ustart2
+        Phi[lower.tri(Phi)] <- t(Phi)[lower.tri(Phi)]
       }
     }
     
@@ -598,7 +601,7 @@ parseModel <- function(
       model_ls$structural2  <- model_structural2[rownames(structural_ordered), 
                                                  colnames(structural_ordered)]
       model_ls$measurement2 <- model_measurement2[n, m]
-      model_ls$error_cor2   <- model_error[m, m]
+      model_ls$error_cor2   <- model_error2[m, m]
       model_ls$Phi          <- Phi
     }
     
@@ -642,11 +645,10 @@ parseModel <- function(
   } # END else
 }
 
-#' Convert second order cSEMModel
+#' Internal: Convert second order cSEMModel
 #'
 #' Uses a [cSEMModel] containg second order constructs and turns it into an
-#' estimable model using either the "repeated indicators" approach or a 
-#' two-step procedure (TODO; link to literature)
+#' estimable model using either the "2stage" approach or the "mixed" approach.
 #'
 #' @usage convertModel(
 #'  .csem_model        = NULL, 
@@ -734,7 +736,7 @@ convertModel <- function(
     lav_model <- paste(x1, x2a, x2b, sep = "\n")
   } else { # BEGIN: first step
     
-    if(.approach_2ndorder %in% c("RI_original", "RI_extended", "mixed")) {
+    if(.approach_2ndorder %in% c("mixed")) {
       
       ## Structural model
       # First order equations
@@ -750,24 +752,24 @@ convertModel <- function(
       }
       
       # Add indirect effect for the extended repeated indicators approach
-      if(.approach_2ndorder == "RI_extended") {
-        # 1. Which constructs are attached to which 2nd order construct
-        # 2. Which antecedent constructs does the second order have
-        # 3. Add structural equations for all antecedent constructs of second order
-        #    construct j on all first order constructs building/measuring the
-        #    second order construct
-        # 4. Add path between all constructs attached to second construct j
-        #    (done at the end of the functions)
-        
-        for(j in c_2nd_order) {
-          attached <-  names(.csem_model$measurement[j, .csem_model$measurement[j, ] == 1])
-          antecedents <- names(which(.csem_model$structural[j, ] == 1))
-          
-          for(i in attached) {
-            x1 <- paste(x1, paste0(i, "~", antecedents, collapse = "+"), sep = "\n")
-          } 
-        }
-      }
+      # if(.approach_2ndorder == "RI_extended") {
+      #   # 1. Which constructs are attached to which 2nd order construct
+      #   # 2. Which antecedent constructs does the second order have
+      #   # 3. Add structural equations for all antecedent constructs of second order
+      #   #    construct j on all first order constructs building/measuring the
+      #   #    second order construct
+      #   # 4. Add path between all constructs attached to second construct j
+      #   #    (done at the end of the functions)
+      #   
+      #   for(j in c_2nd_order) {
+      #     attached <-  names(.csem_model$measurement[j, .csem_model$measurement[j, ] == 1])
+      #     antecedents <- names(which(.csem_model$structural[j, ] == 1))
+      #     
+      #     for(i in attached) {
+      #       x1 <- paste(x1, paste0(i, "~", antecedents, collapse = "+"), sep = "\n")
+      #     } 
+      #   }
+      # }
       
       ## Measurement model + second order structural equation 
       # First order constructs
@@ -860,16 +862,15 @@ convertModel <- function(
   
   ## Add path between all constructs attached to second construct j
   ## if the extended repeated indicators approach was used
-
-  if(.approach_2ndorder == "RI_extended") {
-    # Note there must not be feedback loops, so we make sure model$structural is
-    # lower triangular
-    
-    m <- model$structural[.csem_model$vars_attached_to_2nd, .csem_model$vars_attached_to_2nd]
-    m[lower.tri(m)] <- 1
-    
-    model$structural[.csem_model$vars_attached_to_2nd, .csem_model$vars_attached_to_2nd] <- m
-    }
+  # if(.approach_2ndorder == "RI_extended") {
+  #   # Note there must not be feedback loops, so we make sure model$structural is
+  #   # lower triangular
+  #   
+  #   m <- model$structural[.csem_model$vars_attached_to_2nd, .csem_model$vars_attached_to_2nd]
+  #   m[lower.tri(m)] <- 1
+  #   
+  #   model$structural[.csem_model$vars_attached_to_2nd, .csem_model$vars_attached_to_2nd] <- m
+  #   }
   
   ## add
   return(model)

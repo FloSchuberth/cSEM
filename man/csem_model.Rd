@@ -5,7 +5,7 @@
 \alias{cSEMModel}
 \title{cSEMModel}
 \value{
-An object of class \code{cSEMModel} is a standardized list containing the
+An object of class \link{cSEMModel} is a standardized list containing the
 following components. J stands for the number of constructs and K for the number
 of indicators.
 \describe{
@@ -17,8 +17,8 @@ names. If the structural model contains nonlinear relationships
 nonlinear terms. Rows are ordered such that exogenous constructs are always
 first, followed by constructs that only depend on exogenous constructs and/or
 previously ordered constructs.}
-\item{\code{$measurement}}{A (J x K) matrix mimicking the measurement relationship
-between constructs and their related indicators. Rows are in the same
+\item{\code{$measurement}}{A (J x K) matrix mimicking the measurement/composite
+relationship between constructs and their related indicators. Rows are in the same
 order as the matrix \code{$structural} with row names equal to
 the construct names. The order of the columns is such that \code{$measurement}
 forms a block diagonal matrix.}
@@ -33,11 +33,21 @@ and their respective order ("First order" or "Second order").}
 \item{\code{$instruments}}{Only if instruments are supplied: a list of structural
 equations relating endogenous RHS variables to instruments.}
 }
-It is possible to supply an incomplete list to \code{parseModel()}, resulting
-in an incomplete \code{cSEMModel} list which can be passed
+
+If the \code{.full_output} argument to \code{\link[=parseModel]{parseModel()}} is set to \code{TRUE} the \link{cSEMModel}
+object will contain three additional list elements, namely:
+\describe{
+\item{\code{$vars_2nd}}{The names of the constructs modeled as second orders.}
+\item{\code{$vars_attached_to_2nd}}{The names of the constructs forming or building
+a second order construct.}
+\item{\code{$vars_not_attached_to_2nd}}{The names of the constructs not forming or building
+a second order construct.}
+}
+It is possible to supply an incomplete list to \code{\link[=parseModel]{parseModel()}}, resulting
+in an incomplete \link{cSEMModel} list which can be passed
 to all functions that require \code{.csem_model} as a mandatory argument. Currently,
 only the structural and the measurement matrix are required.
-However, specifying an incomplete \code{cSEMModel} list may lead to unexpected behavior
+However, specifying an incomplete \link{cSEMModel} list may lead to unexpected behavior
 and errors. Use with care.
 }
 \description{

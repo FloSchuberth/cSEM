@@ -30,7 +30,7 @@ vector of character strings naming the quality criterion to compute. See
 the Details section for a list of possible candidates.
 Defaults to "\emph{all}".}
 
-\item{...}{Further arguments passed to functions called by \code{assess()}.
+\item{...}{Further arguments passed to functions called by \code{\link[=assess]{assess()}}.
 See \link{args_assess_dotdotdot} for a complete list of available arguments.}
 }
 \value{
@@ -38,7 +38,7 @@ A named list of quality criteria. Note that if only a single quality
 criteria is computed the return value is still a list!
 }
 \description{
-Assess a model using common evaluation criteria and fit measures.
+Assess a model using common quality criteria.
 See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
 article on the
 \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
@@ -50,9 +50,9 @@ parlance) like computing the (congeneric) reliability,
 the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
 
 By default every possible quality criterion is calculated (\code{.quality_criterion = "all"}).
-If only a subset of quality criteria is needed a single character string
-or a vector of character strings naming the statistics to be computed may be
-supplied to \code{assess()} via the \code{.quality_criterion} argument. Currently, the
+If only a subset of quality criteria are needed a single character string
+or a vector of character strings naming the criteria to be computed may be
+supplied to \code{\link[=assess]{assess()}} via the \code{.quality_criterion} argument. Currently, the
 following quality criteria are implemented (in alphabetical order):
 \describe{
 \item{Average variance extracted (AVE); "ave"}{An estimate of the
@@ -96,14 +96,14 @@ Returns the degrees of freedom. Calculation is done by \code{\link[=calculateDf]
 variable in a structural regression equation. The effect size of the k'th
 independent variable in this case
 is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where
-R2_inclded and R2_excluded are the R squares of the
+R2_included and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
-alternative speficication with the k'th variable dropped (R2_excluded).
+alternative specification with the k'th variable dropped (R2_excluded).
 Calculation is done by \code{\link[=calculateEffectSize]{calculateEffectSize()}}.}
 \item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "rms_theta"
 "srmr"}{
 Several absolute and incremental fit indices. Note that their suitability
-for models containing composites modeled as common factors is still an
+for models containing constructs modeled as common factors is still an
 open research question. Also note that fit indices are not tests in a
 hypothesis testing sense and
 decisions based on common cut-offs proposed in the literature should be
@@ -203,10 +203,14 @@ eta3 =~ y31 + y32 + y33
 
 res <- csem(threecommonfactors, model)
 a   <- assess(res) # computes all quality criteria (.quality_criterion = "all")
+a
 
 ## The return value is a named list
 str(a)
 a$HTMT
+
+# You may also just compute a subset of quality criteria
+assess(res, .quality_criterion = c("ave", "rho_C", "htmt"))
 
 ## Resampling ---------------------------------------------------------------
 # To resample a given quality criterion use csem()'s .user_funs argument
@@ -225,11 +229,9 @@ res_infer <- infer(res, .quantity = "CI_percentile")
 res_infer$User_fun
 
   
-# Note that .user_funs expects a function that returns a vector or a matrix
-# Some functions return (e.g. calculateRhoT()) currently return other data types.
-# Resampling will likely fail in this case.
+# Note that .user_funs expects a function that returns a vector or a matrix!
 
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \link{resamplecSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}
 }

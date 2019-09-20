@@ -36,7 +36,7 @@ print.cSEMResults <- function(x, ...) {
       }
 
     }
-    if(sum(unlist(status)) != 0) {
+    if(sum(status) != 0) {
       cat2(
         "\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", " for details.")
     }
@@ -50,7 +50,7 @@ print.cSEMResults <- function(x, ...) {
       cat2("\n\t", col_align(cyan(i), 18), ": ",
           ifelse(sum(status[[i]]) == 0, green("successful"), red("not successful")))
     }
-    if(sum(x) != 0) {
+    if(sum(unlist(status)) != 0) {
       cat2("\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", 
           " for details.")
     }
@@ -60,7 +60,7 @@ print.cSEMResults <- function(x, ...) {
     cat2(
       "\n\nEstimation was ", ifelse(sum(status) == 0, 
                                     green("successful"), red("not successful")), ".")
-    if(sum(status) != 0) {
+    if(sum(unlist(status)) != 0) {
       cat2(" See ", magenta("verify"), "(", cyan("<object-name>"), ")", 
           " for details.")
     }
@@ -92,8 +92,172 @@ print.cSEMResults <- function(x, ...) {
       "- ", magenta("predict"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("summarize"), "(", cyan("<object-name>"), ")\n\t",
       "- ", magenta("verify"), "(", cyan("<object-name>"), ")\n")
-  cat(rule(line = "bar2", width = 80), "\n")
+  cat(rule2(type = 2), "\n")
 }
+
+
+#' `cSEMAssess` method for `print()`
+#'
+#' The `cSEMAssess` method for the generic function [print()]. 
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem()], [assess()]
+#'
+#' @export
+#' @keywords internal
+print.cSEMAssess <- function(x, ...) {
+  
+  cat2(rule2(type = 2))
+  nn <- intersect(names(x), c("AVE", "RhoC", "RhoC_weighted", "RhoT", "RhoT_weighted", "R2", "R2_adj"))
+  
+  if(length(nn) > 0) {
+    # Max name length 
+    c_names <- names(x[[nn[1]]])
+    if(length(c_names) > 0) {
+      l <- max(nchar(c_names)) 
+      
+      ## If more than 4 quality criteria are to be printed: open a second block
+      ## otherwise print one block
+      cat2(
+        "\n\n\t", 
+        col_align("Construct", max(l, nchar("Construct")) + 2)
+      )
+      for(k in nn) {
+        cat2(
+          col_align(k, 14, align = "center")
+        )
+      }
+      
+      for(i in c_names) {
+        cat2(
+          "\n\t", 
+          col_align(i, max(l, nchar("Construct")) + 2)
+        )
+        
+        for(k in nn) {
+          cat2(col_align(sprintf("%.4f",x[[k]][i]), 14, align = "center"))
+        }
+      }
+    }
+  }
+  
+  if(any(names(x) %in% c("CFI", "GFI", "IFI", "NFI", "NNFI", "RMSEA", 
+                         "RMS_theta", "SRMR", "DG", "DL", "DML"))) {
+    cat2("\n\n", rule2("Distance and fit measures"), "\n")
+    
+    if(any(names(x) == "DG")) {
+      cat2(col_align("\n\tGeodesic distance", 30), "= ", x$DG)
+    }
+    if(any(names(x) == "DL")) {
+      cat2(col_align("\n\tSquared Euclidian distance", 30), "= ", x$DL)
+    }
+    if(any(names(x) == "DML")) {
+      cat2(col_align("\n\tML distance", 30), "= ", x$DML)
+    }
+    
+    cat2("\n")
+    
+    if(any(names(x) == "CFI")) {
+      cat2(col_align("\n\tCFI", 15), "= ", x$CFI)
+    }
+    if(any(names(x) == "GFI")) {
+      cat2(col_align("\n\tGFI", 15), "= ", x$GFI)
+    }
+    if(any(names(x) == "IFI")) {
+      cat2(col_align("\n\tIFI", 15), "= ", x$IFI)
+    }
+    if(any(names(x) == "NFI")) {
+      cat2(col_align("\n\tNFI", 15), "= ", x$NFI)
+    }
+    if(any(names(x) == "NNFI")) {
+      cat2(col_align("\n\tNNFI", 15), "= ", x$NNFI)
+    }
+    if(any(names(x) == "RMSEA")) {
+      cat2(col_align("\n\tRMSEA", 15), "= ", x$RMSEA)
+    }
+    if(any(names(x) == "RMS_theta")) {
+      cat2(col_align("\n\tRMS_theta", 15), "= ", x$RMS_theta)
+    }
+    if(any(names(x) == "SRMR")) {
+      cat2(col_align("\n\tSRMR", 15), "= ", x$SRMR)
+    }
+    
+    if(any(names(x) == "Df")) {
+      cat2(col_align("\n\n\tDegrees of freedom", 25), "= ", x$Df)
+    }
+  }
+  
+  if(any(names(x) == "VIF")) {
+    cat2("\n\n", rule2("Variance inflation factors (VIFs)"))
+    for(i in rownames(x$VIF)) {
+      cat2("\n\n  Dependent construct: '", i, "'\n")
+      cat2(
+        "\n\t", 
+        col_align("Independent construct", max(l, nchar("Independent construct")) + 2), 
+        col_align("VIF value", 12, align = "center")
+      )
+      for(j in names(x$VIF[i, ])) {
+        cat2(
+          "\n\t", 
+          col_align(j, max(l, nchar("Independent construct")) + 2), 
+          col_align(sprintf("%.4f", x$VIF[i, j]), 12, align = "center")
+        )  
+      }
+    }
+  }
+  
+  if(any(names(x) == "Effect_size")) {
+    cat2("\n\n", rule2("Effect sizes (f_squared)"))
+    for(i in rownames(x$Effect_size)) {
+      cat2("\n\n  Dependent construct: '", i, "'\n")
+      cat2(
+        "\n\t", 
+        col_align("Independent construct", max(l, nchar("Independent construct")) + 2), 
+        col_align("Effect size", 12, align = "center")
+      )
+      for(j in colnames(x$Effect_size[i, x$Effect_size[i, ] != 0, drop = FALSE])) {
+        cat2(
+          "\n\t", 
+          col_align(j, max(l, nchar("Independent construct")) + 2), 
+          col_align(sprintf("%.4f", x$Effect_size[i, j]), 12, align = "center")
+        )  
+      }
+    }
+  }
+  
+  if(any(names(x) %in% c("Fornell-Larcker", "HTMT", "RA"))) {
+    cat2("\n\n", rule2("Validity assessment"))
+    if(any(names(x) == "HTMT") && !anyNA(x$HTMT)) {
+      cat2("\n\n\tHeterotrait-montrait ratio of correlation matrix (HTMT matrix)\n\n")
+      print(x$HTMT)
+    }
+    
+    if(any(names(x) == "Fornell-Larcker")) {
+      cat2("\n\n\tFornell-Larcker matrix\n\n")
+      print(x$`Fornell-Larcker`)
+    }
+    
+    if(any(names(x) == "RA") && !anyNA(x$RA)) {
+      cat2("\n\n\tRedundancy analysis")
+      cat2(
+        "\n\n\t", 
+        col_align("Construct", max(l, nchar("Construct")) + 2),
+        col_align("Value", 14, align = "center")
+      )
+      for(i in names(x$RA)) {
+        cat2(
+          "\n\t", 
+          col_align(i, max(l, nchar("Construct")) + 2),
+          col_align(sprintf("%.4f",x$RA[i]), 14, align = "center")
+        ) 
+      }
+    }
+  }
+  
+  cat2("\n", rule2(type = 2))
+}
+
 
 #' `cSEMSummarize` method for `print()`
 #'
@@ -121,8 +285,8 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   }
   
   cat2(
-    rule(line = "bar2", width = 80), "\n",
-    rule(center = "Overview", width = 80), 
+    rule2(type = 2), "\n",
+    rule2("Overview"), 
     "\n"
   )
   
@@ -136,7 +300,7 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   printSummarizeConstructDetails(x)
   
   ### Estimates ----------------------------------------------------------------
-  cat2("\n\n", rule(center = "Estimates", width = 80), "\n\n")
+  cat2("\n\n", rule2("Estimates"), "\n\n")
   
   ## Confidence intervals
   # Get the column names of the columns containing confidence intervals
@@ -164,7 +328,7 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
 
   if(.full_output && x22$Model$model_type == "Linear") {
     ### Effects ----------------------------------------------------------------
-    cat2("\n\n", rule(center = "Effects", width = 80), "\n\n")
+    cat2("\n\n", rule2("Effects"), "\n\n")
     ## Path estimates
     cat2("Estimated total effects:\n========================")
     
@@ -175,8 +339,9 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     printSummarizePath(x, .ci_colnames = ci_colnames, .what = "Indirect effect")
   }
 
-  cat2("\n", rule(line = "bar2", width = 80))
+  cat2("\n", rule2(type = 2))
 }
+
 
 #' `cSEMVerify_default` method for `print()`
 #'
@@ -227,15 +392,16 @@ print.cSEMVerify <- function(x, ...) {
   if(inherits(x, "cSEMVerify_multi")) {
     for(j in seq_along(x)) {
       cat2("\n", names(x)[j], "\n\n")
-      printDetailsVerify(x[[j]])
+      printVerifyDetails(x[[j]])
     } 
   } else {
     cat2("\n")
-    printDetailsVerify(x)
+    printVerifyDetails(x)
   }
   
   cat2(rule2(type = 2))
 }
+
 
 #' `cSEMTestOMF` method for `print()`
 #'
@@ -373,7 +539,7 @@ print.cSEMTestOMF <- function(x, ...) {
 print.cSEMTestMGD <- function(x, ...) {
 
   info <- x$Information
-  approaches <- c("Klesel", "Sarstedt", "Chin", "Keil")
+  approaches <- c("Klesel", "Sarstedt", "Chin", "Keil", "Nitzl", "Henseler")
   
   if(any(info$Approach == "all")) {
     info$Approach <- approaches
@@ -382,13 +548,13 @@ print.cSEMTestMGD <- function(x, ...) {
   }
   ## Additional information ----------------------------------------------------
   cat2(
-    rule(line = "bar2", width = 80), "\n",
-    rule(center = "Overview", width = 80)
+    rule2(type = 2), "\n",
+    rule2("Overview")
   )
   cat2(
-    col_align("\n\n\tTotal runs (permutation)", width = 37), "= ", info$Total_runs,
-    col_align("\n\tAdmissible results (permutation)", width = 36), "= ", info$Number_admissibles,
-    col_align("\n\tPermutation seed", width = 36), "= ", info$Permutation_seed,
+    col_align("\n\n\tTotal runs (permutation)", width = 37), "= ", info$Information_permutation$Total_runs,
+    col_align("\n\tAdmissible results (permutation)", width = 36), "= ", info$Information_permutation$Number_admissibles,
+    col_align("\n\tPermutation seed", width = 36), "= ", info$Information_permutation$Permutation_seed,
     "\n\n\tNumber of observations per group:"
   )
   
@@ -407,15 +573,13 @@ print.cSEMTestMGD <- function(x, ...) {
   }
   
   ## Overall descision only for Sarstedt, Chin and Keil
-  approach <- intersect(info$Approach, c("Sarstedt", "Chin", "Keil"))
+  approach <- intersect(info$Approach, c("Sarstedt", "Chin", "Keil", "Nitzl", "Henseler"))
   if(length(approach) > 0) {
-    cat2("\n\n\tOverall decision (based on alpha = ", paste0(info$Alpha[1] * 100, "%)"))
-    cat2("\n\n\t",
-         col_align("Approach", width = 10)
-    )
+    cat2("\n\n\tOverall decision (based on alpha = ", paste0(info$Alpha[1] * 100, "%):"))
+    cat2("\n\n\t",col_align("", width = 10))
     for(j in names(x[[approach[1]]]$Decision_overall)) {
       cat2(
-        col_align(paste0("p_adjust = '", j, "'"), width = 25, align = "right")
+        col_align(paste0("p_adjust = '", j, "'"), width = 20, align = "right")
       )
     }
     for(i in approach) {
@@ -432,22 +596,31 @@ print.cSEMTestMGD <- function(x, ...) {
     }
   }
   
-  cat2("\n\n")
+  cat2("\n")
+  
+  # If alpha contains more than one element, inform the user that only one alpha 
+  # is printed
+  if(length(info$Alpha)  > 1) {
+    cat2(
+      "\n\tNote: Due to space constraits of the console only results for\n ",
+      "\t      alpha = ", paste0(info$Alpha[1] * 100, "%", " are shown.")
+      )
+    cat2("\n")
+  }
   
   ## Klesel et al. (2019) ======================================================
   if(any(info$Approach == "Klesel")) {
     xk <- x$Klesel
     
     cat2(
-      rule(line = "bar2", width = 80), "\n",
-      rule(center = "Test for multigroup differences based on Klesel et al. (2019)",
-           width = 80)
+      rule2(type = 2), "\n",
+      rule2("Test for multigroup differences based on Klesel et al. (2019)")
     )
     
     ## Null hypothesis ---------------------------------------------------------
     cat2(
       "\n\nNull hypothesis:\n\n", 
-      boxx(paste0("H0: Model-implied ", info$VCV_type, " covariance matrix is equal across groups."),
+      boxx(paste0("H0: Model-implied ", xk$VCV_type, " covariance matrix is equal across groups."),
            float = "center")
     )
     
@@ -480,17 +653,16 @@ print.cSEMTestMGD <- function(x, ...) {
                   width = 16, align = "right")
       )
     }
-    cat2("\n\n")
+    cat2("\n")
   }
   
-  ## Sarstedt et al. (2011) ----------------------------------------------------
+  ## Sarstedt et al. (2011) ====================================================
   if(any(info$Approach == "Sarstedt")) {
     xs <- x$Sarstedt
     
     cat2(
-      rule(line = "bar2", width = 80), "\n",
-      rule(center = "Test for multigroup differences based on Sarstedt et al. (2011)",
-           width = 80)
+      rule2(type = 2), "\n",
+      rule2("Test for multigroup differences based on Sarstedt et al. (2011)")
     )
     
     cat2(
@@ -505,22 +677,21 @@ print.cSEMTestMGD <- function(x, ...) {
     ## Test statistic and p-value ----------------------------------------------
     cat2("\n\nTest statistic and p-value: \n\n")
     
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    if(length(info$Alpha) > 1) {
+      cat2("\tDecision is based on the alpha = ", names(xs$Decision[[1]])[1])
+    }
+    
     l <- max(10, nchar(names(xs$Test_statistic)))
     
     # Create table for every p-value adjustment method
     for(i in seq_along(xs$P_value)) {
       
-      # Are several .alphas given? Inform the user that only the first .alpha is
-      # is used for decision
-      if(length(info$Alpha) > 1) {
-        cat2(
-          "\tDecision is based on the alpha = ", names(xs$Decision[[i]])[1],
-          "\n\tMultiple testing adjustment: ", names(xs$P_value)[i],
-          "\n\n\t")
-      }
+      cat2("\n\tMultiple testing adjustment: '", names(xs$P_value)[i], "'\n\n\t")
       
       cat2(
-        col_align("Parameter", width = l),
+        col_align("Parameter", width = l + 4),
         col_align("Test statistic", width = 14, align = "right"), 
         col_align("p-value", width = 16, align = "right"),
         col_align("Decision", width = 16, align = "right")
@@ -530,7 +701,7 @@ print.cSEMTestMGD <- function(x, ...) {
         
         cat2(
           "\n\t",
-          col_align(names(xs$Test_statistic)[j], width = l),
+          col_align(names(xs$Test_statistic)[j], width = l + 4),
           col_align(sprintf("%.4f", xs$Test_statistic[j]), width = 14, 
                     align = "right"), 
           col_align(sprintf("%.4f", xs$P_value[[i]][j]), width = 16, align = "right"),
@@ -538,140 +709,32 @@ print.cSEMTestMGD <- function(x, ...) {
                     width = 16, align = "right")
         )
       }
-      cat2("\n\n")
+      cat2("\n")
     }
   }
   
   ## Chin & Dibbern (2010) =====================================================
   if(any(info$Approach == "Chin")) {
-    xc <- x$Chin
-    
-    cat2(
-      rule(line = "bar2", width = 80), "\n",
-      rule(center = "Test for multigroup differences based on Chin & Dibbern (2010)",
-           width = 80)
-    )
-    
-    ## Null hypothesis ---------------------------------------------------------
-    cat2(
-      "\n\nNull hypothesis:\n\n",
-      boxx("H0: Parameter k is equal across two groups.", float = "center")
-    )
-    
-    ## Test statistic and p-value ----------------------------------------------
-    cat2("\n\nTest statistic and p-value: \n\n")
-    # Are several .alphas given? Inform the user that only the first .alpha is
-    # is used for decision
-    
-    # Are several .alphas given? Inform the user that only the first .alpha is
-    # is used for decision
-    # If multipe p-value adjustment methods are given; take the first
-    if(length(info$Alpha) > 1) {
-      cat2(
-        "\tDecision is based on alpha = ", names(xc$Decision[[1]])[1]
-      )
-    }
-    
-    l <- max(10, nchar(names(xc$Test_statistic[[1]])))
-    
-    # Create table for every p-value adjustment method
-    for(p in seq_along(xc$P_value)) {
-      cat2("\n\tMultiple testing adjustment: ", names(xc$P_value)[p],
-           "\n\n")
-      for(i in seq_along(xc$Test_statistic)) {
-        
-        cat2("  Compared groups: ", names(xc$Test_statistic)[i], "\n\n\t")
-        
-        cat2(
-          col_align("Parameter", width = l),
-          col_align("Test statistic", width = 14, align = "right"), 
-          col_align("p-value", width = 16, align = "right"),
-          col_align("Decision", width = 16, align = "right")
-        )
-        
-        for(j in seq_along(xc$Test_statistic[[i]])) {
-          
-          cat2(
-            "\n\t",
-            col_align(names(xc$Test_statistic[[i]])[j], width = l),
-            col_align(sprintf("%.4f", xc$Test_statistic[[i]][j]), width = 14, 
-                      align = "right"), 
-            col_align(sprintf("%.4f", xc$P_value[[p]][[i]][j]), width = 16, align = "right"),
-            col_align(ifelse(xc$Decision[[p]][[1]][[i]][j], green("Do not reject"), red("reject")),
-                      width = 16, align = "right")
-          )
-        }
-        cat2("\n\n")
-        
-      } 
-    }
+    printTestMGDResults(.x = x, .approach = "Chin", .info = info)
   }
-  ## Chin & Dibbern (2010) =====================================================
+  
+  ## Keil et. al (2000)=========================================================
   if(any(info$Approach == "Keil")) {
-    xk <- x$Keil
-    
-    cat2(
-      rule(line = "bar2", width = 80), "\n",
-      rule(center = "Test for multigroup differences based on Keil et al. (2000)",
-           width = 80)
-    )
-    
-    ## Null hypothesis ---------------------------------------------------------
-    cat2(
-      "\n\nNull hypothesis:\n\n",
-      boxx("H0: Parameter k is equal across two groups.", float = "center")
-    )
-    
-    ## Test statistic and p-value ----------------------------------------------
-    cat2("\n\nTest statistic and p-value: \n\n")
-    # Are several .alphas given? Inform the user that only the first .alpha is
-    # is used for decision
-    
-    # Are several .alphas given? Inform the user that only the first .alpha is
-    # is used for decision
-    # If multipe p-value adjustment methods are given; take the first
-    if(length(info$Alpha) > 1) {
-      cat2(
-        "\tDecision is based on alpha = ", names(xk$Decision[[1]])[1]
-      )
-    }
-    
-    l <- max(10, nchar(names(xk$Test_statistic[[1]])))
-    
-    # Create table for every p-value adjustment method
-    for(p in seq_along(xk$P_value)) {
-      cat2("\n\tMultiple testing adjustment: ", names(xk$P_value)[p],
-           "\n\n")
-      for(i in seq_along(xk$Test_statistic)) {
-        
-        cat2("  Compared groups: ", names(xk$Test_statistic)[i], "\n\n\t")
-        
-        cat2(
-          col_align("Parameter", width = l),
-          col_align("Test statistic", width = 14, align = "right"), 
-          col_align("p-value", width = 16, align = "right"),
-          col_align("Decision", width = 16, align = "right")
-        )
-        
-        for(j in seq_along(xk$Test_statistic[[i]])) {
-          
-          cat2(
-            "\n\t",
-            col_align(names(xk$Test_statistic[[i]])[j], width = l),
-            col_align(sprintf("%.4f", xk$Test_statistic[[i]][j]), width = 14, 
-                      align = "right"), 
-            col_align(sprintf("%.4f", xk$P_value[[p]][[i]][j]), width = 16, align = "right"),
-            col_align(ifelse(xk$Decision[[p]][[1]][[i]][j], green("Do not reject"), red("reject")),
-                      width = 16, align = "right")
-          )
-        }
-        cat2("\n\n")
-        
-      } 
-    }
+    printTestMGDResults(.x = x, .approach = "Keil", .info = info)
   }
-  cat2("\n", rule(line = "bar2", width = 80))
+  
+  ## Nitzl (2010) ==============================================================
+  if(any(info$Approach == "Nitzl")) {
+    printTestMGDResults(.x = x, .approach = "Nitzl", .info = info)
+  }
+  
+  ## Henseler (2009) ===========================================================
+  if(any(info$Approach == "Henseler")) {
+    printTestMGDResults(.x = x, .approach = "Henseler", .info = info)
+  }
+  cat2(rule2(type = 2))
 }
+
 
 #' `cSEMTestMICOM` method for `print()`
 #'

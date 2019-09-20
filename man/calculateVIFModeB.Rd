@@ -33,6 +33,6 @@ For other object classes use \code{\link[=assess]{assess()}}.
 \insertAllCited{}
 }
 \seealso{
-\link{assess}, \link{cSEMResults}
+\code{\link[=assess]{assess()}}, \link{cSEMResults}
 }
 \keyword{internal}

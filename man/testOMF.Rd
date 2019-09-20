@@ -27,7 +27,8 @@ replications/resamples yielding an inadmissible result will be dropped
 For "\emph{ignore}" all results are returned even if all or some of the replications
 yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Defaults to "\emph{drop}".}
+Depending on the frequency of inadmissible solutions this may significantly increase
+computing time. Defaults to "\emph{drop}".}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
@@ -53,7 +54,9 @@ The seed used and the number of total runs.}
 }
 }
 \description{
-Bootstrap-based test for overall model fit.
+Bootstrap-based test for overall model fit originally proposed by \insertCite{Beran1985;textual}{cSEM}.
+See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in
+the context of PLS-PM.
 }
 \details{
 \code{testOMF()} tests the null hypothesis that the population indicator
@@ -64,8 +67,6 @@ sample indicator correlation matrix and the estimated model-implied indicator co
 as well as the standardized root mean square residual (SRMR).
 The reference distribution for each test statistic is obtained by
 the bootstrap as proposed by \insertCite{Beran1985;textual}{cSEM}.
-See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in
-the context of PLS-PM.
 }
 \examples{
 \donttest{# ===========================================================================
@@ -82,13 +83,11 @@ eta2 =~ y21 + y22 + y23
 eta3 =~ y31 + y32 + y33
 "
 
-## Estimate using two different estimators
+## Estimate
 out <- csem(threecommonfactors, model, .approach_weights = "PLS-PM")
-out1 <- csem(threecommonfactors, model, .approach_weights = "GSCA")
 
 ## Test (.R is small to save time; should be higher in real applications)
-testOMF(out, .R = 50)
-testOMF(out1, .R = 50)}
+testOMF(out, .R = 50)}
 }
 \references{
 \insertAllCited{}

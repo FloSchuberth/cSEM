@@ -34,6 +34,6 @@ For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} us
 \insertAllCited{}
 }
 \seealso{
-\link{assess}, \link{cSEMResults}
+\code{\link[=assess]{assess()}}, \link{cSEMResults}
 }
 \keyword{internal}
