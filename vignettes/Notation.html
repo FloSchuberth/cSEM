@@ -52,7 +52,7 @@ code span.ot { color: #007020; }
 
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Notation</h1>
-<h4 class="date project-date">Last edited: 2019-07-30</h4>
+<h4 class="date project-date">Last edited: 2019-09-20</h4>
 </section>
 
 
@@ -69,7 +69,13 @@ code span.ot { color: #007020; }
 
 <div id="the-structural-model" class="section level2">
 <h2>The structural model</h2>
-<p>To do</p>
+<p>The structural model specifies the relationships between constructs (i.e. the statistical representation of the concept) via paths (arrows) and associated path coefficients. The path coefficients - somethimes also called structural coefficients - express the magnitude of the influence exerted by the construct at the start of the arrow on the variable at the arrow’s end. In composite-based SEM constructs are always operationalized as composites, i.e., weighted linear combinations of its respective indicators. Consequently, depending on how a given construct is modeled, such a composite may either serve as a proxy for an underlying latent variable (common factor) or as a composite in its own right. Despite this crucial difference, we stick with the common - although somewhat ambivalent - notation and represent both the latent variable and the construct by <span class="math inline">\(\eta_j\)</span>. Let <span class="math inline">\(x_{kj}\)</span> be an indicator (observable) and <span class="math inline">\(\varepsilon_{kj}\)</span> be a measurement error. A composite is definied as: <span class="math display">\[\hat{\eta}_j = \sum^{K_j}_{k = 1} w_{kj} x_{kj} \]</span> Again, <span class="math inline">\(\hat{\eta}_j\)</span> may represent a latent variable <span class="math inline">\(\eta_j\)</span> but may also serve as composite in its own right in which case we would essentially say that<br />
+<span class="math inline">\(\hat{\eta}_j = \eta_j\)</span> and refer to <span class="math inline">\(\eta_j\)</span> as a construct instead of a latent variable. Since <span class="math inline">\(\hat{\eta}_j\)</span> generally does not have a natural scale, weights are usually chosen such that <span class="math inline">\(\hat{\eta}_j\)</span> is standardized. Therefore, unless otherwise stated:</p>
+<p><span class="math display">\[E(\hat\eta_j) = 0\quad\quad \text{and}\quad\quad Var(\hat\eta_j) = 1\]</span></p>
+<p>Since the relations between constructs are a product of the researcher’s theory and assumptions to be analyzed, they do not necessarily exist between all variables. Instead, it is likely that some variables are not directly connected by a path. If all paths exist, we call the structural model ‘saturated’ model. In the case that some paths are not specified, the structural model is called ‘non-saturated’. Whether the structural model is saturated or not can have an influence on the model fit when variables or indicators are ‘falsely’ missing in the model specification (that means in comparison to the ‘true’ model).</p>
+<p>Suppose that there are constructs <span class="math inline">\(\eta_k\)</span> and <span class="math inline">\(\eta_l\)</span> with a path leading from <span class="math inline">\(\eta_k\)</span> to <span class="math inline">\(\eta_l\)</span> with no other latent variable having an influence on <span class="math inline">\(\eta_l\)</span>. The corresponding path coefficient shall be denoted by <span class="math inline">\(\gamma\)</span>. Then <span class="math display">\[\hat\eta_l = \gamma \, \hat\eta_k + \zeta_l\]</span> and therefore <span class="math display">\[ Cov(\hat\eta_l,\hat\eta_k) = Cor(\hat\eta_l, \hat\eta_k) = E(\hat\eta_l * \hat\eta_k) = \gamma \, E(\hat\eta_k^2) = \gamma \]</span> More complex relationships (with <span class="math inline">\(\eta_l\)</span> depending on more than one other latent variable) are handled the same way (via backward-induction) by taking into account all path coefficients of related variables and correlations of latent variables which do not depend on any other latent variable (so called exogenous variables). Carrying out this calculation for all pairs of proxies of latent variables by accountig for the specific associated paths, the variance covariance matrix of the proxies <span class="math inline">\(V_{\eta}\)</span> can be built up.</p>
+<p>The matrix <span class="math inline">\(V_{\eta}\)</span> is needed together with the intra-block variance covariance matrices of the indicators (<span class="math inline">\(\Sigma_{j} \quad j = 1, \dots, J\)</span>) and the matrix of loadings (<span class="math inline">\(\Lambda\)</span>) when deriving the ‘true’ population indicator covariance matrix <span class="math inline">\(\Sigma\)</span>. This is done via the relationship:</p>
+<p><span class="math display">\[ \Sigma = \Lambda \, V_{\eta} \, \Lambda&#39;+ \Theta \]</span> where <span class="math inline">\(\Theta\)</span> is the variance covariance matrix of the indicator error terms.</p>
 </div>
 <div id="the-reflective-measurement-model" class="section level2">
 <h2>The reflective measurement model</h2>
@@ -82,7 +88,7 @@ code span.ot { color: #007020; }
 <p>It often suffices to look at a generic test score/latent variable. For the sake of clarity the index <span class="math inline">\(j\)</span> is therefore dropped unless it is necessary to avoid confusion.</p>
 <p>Note that most of the classical literature on quality criteria such as reliability is centered around the idea that the proxy <span class="math inline">\(\hat\eta\)</span> is a in fact a simple sum score which implies that all weighs are set to one. Treatment is more general here since <span class="math inline">\(\hat{\eta}\)</span> is allowed to be <em>any</em> weighted sum of related indicators. Readers familiar with the “classical treatment” may simply set weights to one (unit weights) to “translate” results to known formulae.</p>
 <p>Based on the assumptions and definitions above the following quantities necessarily follow:</p>
-<p>$$ <span class="math display">\[\begin{align}
+<p><span class="math display">\[\begin{align}
 Cov(x_k, \eta) &amp;= \lambda_k \\
 Var(\eta_k) &amp;= \lambda^2_k \\
 Var(x_k)    &amp;= \lambda^2_k + Var(\varepsilon_k) \\
@@ -103,7 +109,7 @@ Var(\hat\eta) &amp;= E(\hat\eta^2) = \sum w_k^2(\lambda^2_k + Var(\varepsilon_k)
 &amp;=Var(\bar\eta) + Var(\bar\varepsilon) = (\boldsymbol{\mathbf{w}}&#39;\boldsymbol{\mathbf{\lambda}})^2 + Var(\bar\varepsilon) = \boldsymbol{\mathbf{w}}&#39;\boldsymbol{\mathbf{\Sigma}}\boldsymbol{\mathbf{w}} \\
 
 Cov(\eta, \hat\eta) &amp;= E\left(\sum w_k \lambda_k \eta^2\right) = \sum w_k\lambda_k = \boldsymbol{\mathbf{w}}&#39;\boldsymbol{\mathbf{\lambda}}= \sqrt{Var(\bar\eta)}
-\end{align}\]</span> $$</p>
+\end{align}\]</span></p>
 <p>where <span class="math inline">\(\delta_{kl} = Cov(\varepsilon_{k}, \varepsilon_{l})\)</span> for <span class="math inline">\(k \neq l\)</span> is the measurment error covariance and <span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}\)</span> is the indicator variance-covariance matrix implied by the measurement model:</p>
 <p><span class="math display">\[
 \boldsymbol{\mathbf{\Sigma }}= \begin{pmatrix}
@@ -199,14 +205,34 @@ Var(\bar\varepsilon) &amp;= \sum w_k^2 (1 - \lambda_k^2)
 <td align="left">A vector of loadings</td>
 </tr>
 <tr class="even">
+<td align="left"><span class="math inline">\(\boldsymbol{\mathbf{\Lambda}}\)</span></td>
+<td align="left"><span class="math inline">\((K \times K)\)</span></td>
+<td align="left">A matrix of loadings</td>
+</tr>
+<tr class="odd">
 <td align="left"><span class="math inline">\(\boldsymbol{\mathbf{\varepsilon}}\)</span></td>
 <td align="left"><span class="math inline">\((K \times 1)\)</span></td>
 <td align="left">A vector of measurement errors</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}\)</span></td>
 <td align="left"><span class="math inline">\((K \times K)\)</span></td>
 <td align="left">The model-implied indicator covariance matrix</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}_{j}\)</span></td>
+<td align="left"><span class="math inline">\((K_{j} \times K_{j})\)</span></td>
+<td align="left">The ‘true’ intra-block indicator covariance matrix of block j</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\boldsymbol{\mathbf{\V}}_{\eta}\)</span></td>
+<td align="left"><span class="math inline">\((J \times J)\)</span></td>
+<td align="left">The (model-implied) construct covariance matrix</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\boldsymbol{\mathbf{\Theta}}\)</span></td>
+<td align="left"><span class="math inline">\((K \times K)\)</span></td>
+<td align="left">The covariance matrix of the indicator error terms</td>
 </tr>
 </tbody>
 </table>
