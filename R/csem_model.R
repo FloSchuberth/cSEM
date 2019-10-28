@@ -520,7 +520,8 @@ parseModel <- function(
     ### Preparation ------------------------------------------------------------
     temp <- model_structural
     
-    ## Extract endogenous and exogenous variables
+    ## Extract endogenous and exogenous variables 
+    # ARE HERE ONLY CONSTRUCTS OR ALSO INDICATORS CONSIDERED?
     vars_endo <- rownames(temp)[rowSums(temp) != 0]
     vars_exo  <- setdiff(colnames(temp), vars_endo)
     
