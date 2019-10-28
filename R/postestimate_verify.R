@@ -78,7 +78,8 @@ verify <- function(.object){
     
     ## In the first stage of the "2stage" and the "mixed" approach it is 
     ## unnecessary to check if the indicator correlation matrix is semi positive 
-    ## definite; therefore it is skipped in the first stage of these approaches.
+    ## definite since it is irrelevant for the second stage; 
+    ## therefore it is skipped in the first stage of these approaches.
     Stage <- x1$Stage
     
     if(!is.null(Stage) && Stage == "First_stage") {

@@ -697,16 +697,16 @@ in the {Analysis} of {Covariance} {Structures}},
   Publisher 			   = {The American Psychological Association, Inc.}
 }
 
-@Article{Bollen1989a,
-  author    = {Bollen, Kenneth A.},
-  title     = {A {New} {Incremental} {Fit} {Index} for {General} {Structural} {Equation} {Models}},
-  journal   = {Sociological Methods $\&$ Research},
-  year      = {1989},
-  volume    = {3},
-  number    = {17},
-  pages     = {303--316},
-  language  = {English},
-  publisher = {Sage Publications, Inc.},
+@Article{Bollen1989,
+  Title                    = {A {New} {Incremental} {Fit} {Index} for {General} {Structural} {Equation} {Models}},
+  Author                   = {Bollen, Kenneth A.},
+  Journal                  = {Sociological Methods $\&$ Research},
+  Year                     = {1989},
+  Number				   = {17},	
+  Pages                    = {303--316},
+  Volume                   = {3},
+  Language                 = {English},
+  Publisher 			   = {Sage Publications, Inc.}
 }
 
 @InCollection{Nitzl2010,
