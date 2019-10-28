@@ -511,9 +511,9 @@ parseModel <- function(
       model_measurement_error_temp[x, x] <- NA 
     }
     
-    contains_error <- sum(model_measurement_error_temp, na.rm = TRUE)
+    contains_measurement_error <- sum(model_measurement_error_temp, na.rm = TRUE)
 
-    if(contains_error > 0) {
+    if(contains_measurement_error > 0) {
       warning2("The following warning occured in the `parseModel()` function:\n",
                "Measurement errors across blocks not supported (yet).",
                " Specified error correlation is ignored.")
