@@ -175,7 +175,7 @@ parseModel <- function(
     names_i          <- unique(tbl_m$rhs)
     
     # Indicator names that contain a "." (should only contain 
-    # nonlinear 2ndorder terms!)
+    # nonlinear 2nd order terms!)
     names_i_nl       <- names_i[grep("\\.", names_i)] # this catches all terms 
                                                       # with a "."!
     
@@ -393,7 +393,7 @@ parseModel <- function(
     } else {
       "Linear"
     }
-    ### Construct matrices specifying the relationship between constructs,
+    ### Create matrices specifying the relationship between constructs,
     ### indicators and errors --------------------------------------------------
     # Note: code below not required as long as only internal instruments 
     #       are allowed 
@@ -450,8 +450,10 @@ parseModel <- function(
       model_measurement2[cbind(row_index, col_index)] <- tbl_m$ustart2
     }
     
-    ## Error covariance matrix
+    ## Measurement Error covariance matrix 
     m_errors   <- tbl_e[tbl_e$lhs %in% names_i, , drop = FALSE]
+    
+    ## Structural error covariance matrix and/or covariances among exogenous constructs 
     con_errors <- tbl_e[tbl_e$lhs %in% names_c, , drop = FALSE] 
     
     row_index <- match(m_errors$lhs, names_i)
@@ -512,7 +514,7 @@ parseModel <- function(
     ### Order model ============================================================
     # Order the structual equations in a way that every equation depends on
     # exogenous variables and variables that have been explained in a previous equation
-    # This is necessary for the estimation of models containing nonlinear structual
+    # This is necessary for the estimation of models containing nonlinear structural
     # relationships.
     
     ### Preparation ------------------------------------------------------------
@@ -574,6 +576,15 @@ parseModel <- function(
         } # END repeat
       } # END if-statement
     } # END else
+    
+    ## Create matrix that indicates the exogenous variables that are allowed to be correlated
+    # By default all exogenous constructs are allowed to be correlated 
+    # Currently, no approach can put restrictions therefore, this is amtrix with 1s on 
+    # the off-diagonal
+    exog_construct_corr <- matrix(1,nrow+length(vars_exo),ncol=length(vars_exo),
+                                  dimnames = list(vars_exo, vars_exo))
+    
+    
     
     ## Return a cSEMModel object.
     # A cSEMModel objects contains all the information about the model and its
