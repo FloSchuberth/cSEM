@@ -614,11 +614,15 @@ parseModel <- function(
     structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n)), drop = FALSE]
     # structural_ordered <- model_structural[n1, c(n1, setdiff(colnames(model_ordered), n1))]
     
+    # order construct names without first-order constructs
+    n2 <- setdiff(n,names_c_attached_to_2nd)
+    
+    
     model_ls <- list(
       "structural"         = structural_ordered,
       "measurement"        = model_measurement[n, m, drop = FALSE],
       "error_cor"          = model_measurement_error[m, m, drop = FALSE],
-      "structural_cor"     = model_structural_cor[n, n, drop = FALSE],
+      "structural_cor"     = model_structural_cor[n2, n2, drop = FALSE],
       "construct_type"     = construct_type[match(n, names(construct_type))],
       "construct_order"    = construct_order[match(n, names(construct_order))],
       "model_type"         = type_of_model
