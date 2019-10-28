@@ -516,7 +516,7 @@ parseModel <- function(
     if(contains_measurement_error > 0) {
       warning2("The following warning occured in the `parseModel()` function:\n",
                "Measurement errors across blocks not supported (yet).",
-               " Specified error correlation is ignored.")
+               "Specified error correlation is ignored.")
     }
 
     
@@ -525,6 +525,18 @@ parseModel <- function(
     col_index <- match(con_errors$rhs, names_c)
     
     model_structural_cor[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
+    
+    # Currently it is not allowed to specify correlations among exogenous constructs, 
+    #  and/or structiral error terms
+    if(.check_errors) {
+      if(1 %in% c(model_structural_cor)){
+        stop2("The following warning occured in the `parseModel()` function:\n",
+              "It is currently not possible to specify correlations among exogenous variable\n",
+              "and/or structural error terms.")
+      }
+      
+      
+    }
     
     ### Order model ============================================================
     # Order the structual equations in a way that every equation depends on
