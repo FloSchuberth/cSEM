@@ -520,6 +520,12 @@ parseModel <- function(
     }
 
     
+    # Fill matrix model_structural_corr
+    row_index <- match(con_errors$lhs, names_c)
+    col_index <- match(con_errors$rhs, names_c)
+    
+    model_structural_corr[cbind(row_index, col_index)] <- 1
+    
     ### Order model ============================================================
     # Order the structual equations in a way that every equation depends on
     # exogenous variables and variables that have been explained in a previous equation
