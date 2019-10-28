@@ -424,7 +424,7 @@ parseModel <- function(
     # endogenous constructs (currently not relevant) and correlation among exogenous
     # constructs. Non-linear terms are excluded.
     
-    model_structural_corr <- matrix(0,
+    model_structural_cor <- matrix(0,
                                     nrow = number_of_constructs,
                                     ncol = number_of_constructs,
                                     dimnames = list (names_c, names_c))
@@ -459,7 +459,7 @@ parseModel <- function(
       model_measurement2[cbind(row_index, col_index)] <- tbl_m$ustart2
     }
     
-    ## Measurement Error covariance matrix 
+    ## Measurement error covariance matrix 
     m_errors   <- tbl_e[tbl_e$lhs %in% names_i, , drop = FALSE]
     
     ## Structural error covariance matrix and/or covariances among exogenous constructs 
@@ -477,14 +477,14 @@ parseModel <- function(
       model_measurement_error2 <- model_measurement_error
       
       # Extract endogenous and exogenous variables
-      vars_endo <- rownames(model_structural)[rowSums(model_structural) != 0]
-      vars_exo  <- setdiff(colnames(model_structural), vars_endo)
+      cons_endo <- rownames(model_structural)[rowSums(model_structural) != 0]
+      cons_exo  <- setdiff(colnames(model_structural), cons_endo)
       
       ## Phi
       Phi <- matrix(0,
-                    nrow = length(vars_exo),
-                    ncol = length(vars_exo),
-                    dimnames = list(vars_exo, vars_exo)
+                    nrow = length(cons_exo),
+                    ncol = length(cons_exo),
+                    dimnames = list(cons_exo, cons_exo)
       )
       # Set diagonal elements to 1
       diag(Phi) <- 1
@@ -494,8 +494,8 @@ parseModel <- function(
         model_measurement_error2[cbind(c(row_index, col_index), c(col_index, row_index))] <- m_errors$ustart2
         
         # Get row and column index for constructs
-        row_index <- match(con_errors$lhs, vars_exo)
-        col_index <- match(con_errors$rhs, vars_exo)
+        row_index <- match(con_errors$lhs, cons_exo)
+        col_index <- match(con_errors$rhs, cons_exo)
         
         Phi[cbind(row_index, col_index)] <- con_errors$ustart2
         Phi[lower.tri(Phi)] <- t(Phi)[lower.tri(Phi)]
@@ -520,46 +520,45 @@ parseModel <- function(
     }
 
     
-    # Fill matrix model_structural_corr
+    # Fill matrix model_structural_cor
     row_index <- match(con_errors$lhs, names_c)
     col_index <- match(con_errors$rhs, names_c)
     
-    model_structural_corr[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
+    model_structural_cor[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
     ### Order model ============================================================
     # Order the structual equations in a way that every equation depends on
-    # exogenous variables and variables that have been explained in a previous equation
+    # exogenous constructs and constructs that have been explained in a previous equation
     # This is necessary for the estimation of models containing nonlinear structural
     # relationships.
     
     ### Preparation ------------------------------------------------------------
     temp <- model_structural
     
-    ## Extract endogenous and exogenous variables 
-    # ARE HERE ONLY CONSTRUCTS OR ALSO INDICATORS CONSIDERED?
-    vars_endo <- rownames(temp)[rowSums(temp) != 0]
-    vars_exo  <- setdiff(colnames(temp), vars_endo)
+    ## Extract endogenous and exogenous constructs 
+    cons_endo <- rownames(temp)[rowSums(temp) != 0]
+    cons_exo  <- setdiff(colnames(temp), cons_endo)
     
-    # Endo variables that are explained by exo and endo variables
-    explained_by_exo_endo <- vars_endo[rowSums(temp[vars_endo, vars_endo, drop = FALSE]) != 0]
+    # Endogenous constructs that are explained by exogenous and endogenous constructs
+    explained_by_exo_endo <- cons_endo[rowSums(temp[cons_endo, cons_endo, drop = FALSE]) != 0]
     
-    # Endo variables explained by exo variables only
-    explained_by_exo <- setdiff(vars_endo, explained_by_exo_endo)
+    # Endogenous constructs explained by exogenous constructs only
+    explained_by_exo <- setdiff(cons_endo, explained_by_exo_endo)
     
     ### Order =======================
-    # First the endo variables that are soley explained by the exo variables
+    # First the endogenous constructs that are soley explained by the exogenous constructs
     model_ordered <- temp[explained_by_exo, , drop = FALSE]
     
-    # Add variables that have already been ordered/taken care of to a vector
-    # (including exogenous variables and interaction terms)
-    already_ordered <- c(vars_exo, explained_by_exo)
+    # Add constructs that have already been ordered/taken care of to a vector
+    # (including exogenous constructs and interaction terms)
+    already_ordered <- c(cons_exo, explained_by_exo)
     
     ## When there are feedback loops ordering does not work anymore, therefore
     #  ordering is skiped if there are feedback loops. Except for the
     #  the "replace" approach, this should not be a problem.
     
     # Does the structural model contain feedback loops
-    if(any(temp[vars_endo, vars_endo] + t(temp[vars_endo, vars_endo]) == 2)) {
+    if(any(temp[cons_endo, cons_endo] + t(temp[cons_endo, cons_endo]) == 2)) {
       
       model_ordered <- temp[c(already_ordered, explained_by_exo_endo), , drop = FALSE]
       
@@ -606,13 +605,13 @@ parseModel <- function(
       "structural"         = structural_ordered,
       "measurement"        = model_measurement[n, m, drop = FALSE],
       "error_cor"          = model_measurement_error[m, m, drop = FALSE],
-      "structural_cor"     = model_structural_corr[n, n, drop = FALSE],
+      "structural_cor"     = model_structural_cor[n, n, drop = FALSE],
       "construct_type"     = construct_type[match(n, names(construct_type))],
       "construct_order"    = construct_order[match(n, names(construct_order))],
       "model_type"         = type_of_model
-      # "vars_endo"          = rownames(model_ordered),
-      # "vars_exo"           = vars_exo,
-      # "vars_explana"       = colnames(structural_ordered)[colSums(structural_ordered) != 0],
+      # "cons_endo"          = rownames(model_ordered),
+      # "cons_exo"           = cons_exo,
+      # "cons_explana"       = colnames(structural_ordered)[colSums(structural_ordered) != 0],
       # "explained_by_exo"   = explained_by_exo
     )
     
