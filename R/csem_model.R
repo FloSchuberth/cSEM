@@ -394,7 +394,7 @@ parseModel <- function(
       "Linear"
     }
     ### Create matrices specifying the relationship between constructs,
-    ### indicators and errors --------------------------------------------------
+    ### indicators and measurement errors --------------------------------------------------
     # Note: code below not required as long as only internal instruments 
     #       are allowed 
     # model_structural  <- matrix(0,
