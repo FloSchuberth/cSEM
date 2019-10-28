@@ -414,7 +414,7 @@ parseModel <- function(
                                 dimnames = list(names_c, names_i)
     )
     
-    model_error       <- matrix(0,
+    model_measurement_error       <- matrix(0,
                                 nrow = number_of_indicators,
                                 ncol = number_of_indicators,
                                 dimnames = list(names_i, names_i)
@@ -468,13 +468,13 @@ parseModel <- function(
     row_index <- match(m_errors$lhs, names_i)
     col_index <- match(m_errors$rhs, names_i)
     
-    model_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
+    model_measurement_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
     ## If starting values are given create a supplementary strucutral matrix
     ## that contains the starting values, otherwise assign a 1
     if(!anyNA(pop_values)) {
       
-      model_error2 <- model_error
+      model_measurement_error2 <- model_measurement_error
       
       # Extract endogenous and exogenous variables
       vars_endo <- rownames(model_structural)[rowSums(model_structural) != 0]
@@ -491,7 +491,7 @@ parseModel <- function(
       
       if(length(tbl_e$ustart) != 0) {
         
-        model_error2[cbind(c(row_index, col_index), c(col_index, row_index))] <- m_errors$ustart2
+        model_measurement_error2[cbind(c(row_index, col_index), c(col_index, row_index))] <- m_errors$ustart2
         
         # Get row and column index for constructs
         row_index <- match(con_errors$lhs, vars_exo)
@@ -505,13 +505,13 @@ parseModel <- function(
     # Currently, composite-based approaches (except GSCA ?) are unable to deal 
     # with measurement errors accros blocks (even if they were, it is not implemented in cSEM).
     # Which errors are across block
-    model_error_temp <- model_error
+    model_measurement_error_temp <- model_measurement_error
     for(i in names_c) {
       x              <- which(model_measurement[i, ] == 1)
-      model_error_temp[x, x] <- NA 
+      model_measurement_error_temp[x, x] <- NA 
     }
     
-    contains_error <- sum(model_error_temp, na.rm = TRUE)
+    contains_error <- sum(model_measurement_error_temp, na.rm = TRUE)
 
     if(contains_error > 0) {
       warning2("The following warning occured in the `parseModel()` function:\n",
@@ -599,7 +599,7 @@ parseModel <- function(
     model_ls <- list(
       "structural"         = structural_ordered,
       "measurement"        = model_measurement[n, m, drop = FALSE],
-      "error_cor"          = model_error[m, m, drop = FALSE],
+      "error_cor"          = model_measurement_error[m, m, drop = FALSE],
       "construct_type"     = construct_type[match(n, names(construct_type))],
       "construct_order"    = construct_order[match(n, names(construct_order))],
       "model_type"         = type_of_model
@@ -614,7 +614,7 @@ parseModel <- function(
       model_ls$structural2  <- model_structural2[rownames(structural_ordered), 
                                                  colnames(structural_ordered)]
       model_ls$measurement2 <- model_measurement2[n, m]
-      model_ls$error_cor2   <- model_error2[m, m]
+      model_ls$error_cor2   <- model_measurement_error2[m, m]
       model_ls$Phi          <- Phi
     }
     
