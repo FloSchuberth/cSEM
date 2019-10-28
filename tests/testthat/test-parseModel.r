@@ -2,14 +2,18 @@ context("csem")
 
 ### Linear models ==============================================================
 ## 1. One exogenous and one endogenous construct -------------------------------
+
 # 1.1 Construct of the measurement model forgotten/misspelled
+# 1.1 Everything is correctly specified
 model1 <- "
 # Structural model
 EXPE ~ IMAG
 
 # Measurement model
 EXPE <~ expe1 + expe2
+IMAG <~ imag1 + imag2
 "
+
 
 # 1.2 One measurement equation is redundant
 model2 <- "
@@ -31,30 +35,28 @@ EXPE ~ IMAG
 EXPE <~ expe1 + expe2
 IMAG =~ imag1 + imag4 + expe1
 "
-
-# 1.4 Everything is correctly specified
+# 1.4 Construct of the measurement model forgotten/misspelled
 model4 <- "
 # Structural model
 EXPE ~ IMAG
 
 # Measurement model
 EXPE <~ expe1 + expe2
-IMAG <~ imag1 + imag2
 "
 
 ## Tests
 
 test_that("Linear model: incorrectly specified models provide an error", {
   
-  expect_error(parseModel(model1))
   expect_error(parseModel(model2))
   expect_error(parseModel(model3))
+  expect_error(parseModel(model4))
 })
 
 test_that("Linear model: correctly specified models are correctly returned", {
-  expect_s3_class(parseModel(model4), "cSEMModel")
-  expect_output(str(parseModel(model4)), "List of 6")
-  expect_equal(names(parseModel(model4)), c("structural", "measurement", 
+  expect_s3_class(parseModel(model1), "cSEMModel")
+  expect_output(str(parseModel(model1)), "List of 6")
+  expect_equal(names(parseModel(model1)), c("structural", "measurement", 
                                             "error_cor", "construct_type", 
                                             "construct_order","model_type"))
 })
