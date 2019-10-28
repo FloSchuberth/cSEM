@@ -44,6 +44,19 @@ EXPE ~ IMAG
 EXPE <~ expe1 + expe2
 "
 
+# 1.5 Correlation between exogenous construct and structural error is specified
+model5 <- "
+# Structural model
+EXPE ~ IMAG
+
+# Correlation between exogenous construct & structural error
+EXPE ~~ IMAG
+
+# Measurement model
+EXPE <~ expe1 + expe2
+IMAG <~ imag1 + imag2
+"
+
 ## Tests
 
 test_that("Linear model: incorrectly specified models provide an error", {
@@ -51,6 +64,7 @@ test_that("Linear model: incorrectly specified models provide an error", {
   expect_error(parseModel(model2))
   expect_error(parseModel(model3))
   expect_error(parseModel(model4))
+  expect_error(parseModel(model5))
 })
 
 test_that("Linear model: correctly specified models are correctly returned", {
@@ -142,6 +156,29 @@ EXPE ~ IMAG + IMAG.IMAG
 # Measurement model
 EXPE <~ expe1 + expe2
 "
+# 1.6 Correlation between exogenous construct and structural error is specified
+model6 <- "
+# Structural model
+EXPE ~ IMAG + IMAG.IMAG
+
+EXPE ~~ IMAG
+
+# Measurement model
+EXPE <~ expe1 + expe2
+IMAG <~ imag1 + imag2
+"
+
+# 1.7 Correlation between exogenous construct and interaction term is specified
+model7 <- "
+# Structural model
+EXPE ~ IMAG + IMAG.IMAG
+
+EXPE ~~ IMAG.IMAG
+
+# Measurement model
+EXPE <~ expe1 + expe2
+IMAG <~ imag1 + imag2
+"
 
 ## Tests
 
@@ -151,6 +188,8 @@ test_that("Nonlinear model: incorrectly specified models provide an error", {
   expect_error(parseModel(model3))
   expect_error(parseModel(model4))
   expect_error(parseModel(model5))
+  expect_error(parseModel(model6))
+  expect_error(parseModel(model7))
 })
 
 ## Tests
