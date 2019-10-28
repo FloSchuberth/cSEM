@@ -578,15 +578,6 @@ parseModel <- function(
       } # END if-statement
     } # END else
     
-    ## Create matrix that indicates the exogenous variables that are allowed to be correlated
-    # By default all exogenous constructs are allowed to be correlated 
-    # Currently, no approach can put restrictions therefore, this is amtrix with 1s on 
-    # the off-diagonal
-    exog_construct_corr <- matrix(1,nrow+length(vars_exo),ncol=length(vars_exo),
-                                  dimnames = list(vars_exo, vars_exo))
-    
-    
-    
     ## Return a cSEMModel object.
     # A cSEMModel objects contains all the information about the model and its
     # components such as the type of construct used. 
