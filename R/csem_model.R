@@ -527,8 +527,10 @@ parseModel <- function(
     model_structural_cor[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
     # Currently it is not allowed to specify correlations among exogenous constructs, 
-    #  and/or structiral error terms
+    #  and/or structural error terms
     if(.check_errors) {
+      # Currently the error is too strong as it is also thrown when we allow correlation between 
+      # two first order constructs specified as common factors
       if(1 %in% c(model_structural_cor)){
         stop2("The following warning occured in the `parseModel()` function:\n",
               "It is currently not possible to specify correlations among exogenous variable\n",
