@@ -606,6 +606,7 @@ parseModel <- function(
       "structural"         = structural_ordered,
       "measurement"        = model_measurement[n, m, drop = FALSE],
       "error_cor"          = model_measurement_error[m, m, drop = FALSE],
+      "structural_cor"     = model_structural_corr[n, n, drop = FALSE],
       "construct_type"     = construct_type[match(n, names(construct_type))],
       "construct_order"    = construct_order[match(n, names(construct_order))],
       "model_type"         = type_of_model
