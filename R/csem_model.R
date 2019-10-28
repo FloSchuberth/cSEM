@@ -126,6 +126,7 @@ parseModel <- function(
     m_lav <- lavaan::lavaanify(model = .model, fixed.x = FALSE)
     
     ## Add column with starting values or labels
+    # WHY?
     m_lav$ustart2 <- ifelse(
       is.na(m_lav$ustart) & m_lav$label != "", m_lav$label, m_lav$ustart) 
 
