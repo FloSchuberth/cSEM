@@ -524,8 +524,8 @@ parseModel <- function(
 
     
     # Fill matrix model_structural_cor
-    row_index <- match(con_errors$lhs, names_c)
-    col_index <- match(con_errors$rhs, names_c)
+    row_index <- match(con_errors$lhs, setdiff(names_c,names_c_attached_to_2nd))
+    col_index <- match(con_errors$rhs, setdiff(names_c,names_c_attached_to_2nd))
     
     model_structural_cor[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
