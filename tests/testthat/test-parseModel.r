@@ -87,13 +87,14 @@ test_that("Linear model: correctly specified models are correctly returned", {
 
 ### Nonlinear models ===========================================================
 ## 1. One exogenous and one endogenous construct -------------------------------
-# 1.1 Construct of the measurement model forgotten/misspelled
+## 1.1 Everything correctly specified
 model1 <- "
 # Structural model
 EXPE ~ IMAG + IMAG.IMAG
 
 # Measurement model
 EXPE <~ expe1 + expe2
+IMAG <~ imag1 + imag2
 "
 
 ## 1.2 An interaction term does not appears individually in the structural model
@@ -131,31 +132,30 @@ IMAG =~ imag1 + imag4
 QUAL =~ qual1 + qual3
 "
 
-## 1.5 Everything correctly specified
+# 1.5 Construct of the measurement model forgotten/misspelled
 model5 <- "
 # Structural model
 EXPE ~ IMAG + IMAG.IMAG
 
 # Measurement model
 EXPE <~ expe1 + expe2
-IMAG <~ imag1 + imag2
 "
 
 ## Tests
 
 test_that("Nonlinear model: incorrectly specified models provide an error", {
   
-  expect_error(parseModel(model1))
   expect_error(parseModel(model2))
   expect_error(parseModel(model3))
   expect_error(parseModel(model4))
+  expect_error(parseModel(model5))
 })
 
 ## Tests
 test_that("Nonlinear model: correctly specified models are correctly returned", {
-  expect_s3_class(parseModel(model5), "cSEMModel")
-  expect_output(str(parseModel(model5)), "List of 6")
-  expect_equal(names(parseModel(model5)), c("structural", "measurement", 
+  expect_s3_class(parseModel(model1), "cSEMModel")
+  expect_output(str(parseModel(model1)), "List of 6")
+  expect_equal(names(parseModel(model1)), c("structural", "measurement", 
                                            "error_cor", "construct_type", 
                                            "construct_order","model_type"))
 })
