@@ -421,13 +421,16 @@ parseModel <- function(
     )
     
     # Add matrix that can indicates correlations among the structural errors of 
-    # endogenous constructs (currently not relevant) and correlation among exogenous
-    # constructs. Non-linear terms are excluded.
-    
+    # endogenous constructs and/or exogenous
+    # constructs. 
+    # Non-linear terms as well as first-order constructs are excluded
+        
     model_structural_cor <- matrix(0,
-                                    nrow = number_of_constructs,
-                                    ncol = number_of_constructs,
-                                    dimnames = list (names_c, names_c))
+                                    nrow = length(setdiff(names_c,names_c_attached_to_2nd)),
+                                    ncol = length(setdiff(names_c,names_c_attached_to_2nd)),
+                                    dimnames = list (setdiff(names_c,names_c_attached_to_2nd),
+                                                     setdiff(names_c,names_c_attached_to_2nd)))
+
     
     ## Structural model
     row_index <- match(tbl_s$lhs, names_c)
@@ -531,7 +534,14 @@ parseModel <- function(
     if(.check_errors) {
       # Currently the error is too strong as it is also thrown when we allow correlation between 
       # two first order constructs specified as common factors
+      # So we need to check whether there is a one 
+      
+      intersect(names_c,colnames(model_measurement_error))
+      
       if(1 %in% c(model_structural_cor)){
+        
+
+        
         stop2("The following warning occured in the `parseModel()` function:\n",
               "It is currently not possible to specify correlations among exogenous variable\n",
               "and/or structural error terms.")
