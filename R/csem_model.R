@@ -532,22 +532,11 @@ parseModel <- function(
     # Currently it is not allowed to specify correlations among exogenous constructs, 
     #  and/or structural error terms
     if(.check_errors) {
-      # Currently the error is too strong as it is also thrown when we allow correlation between 
-      # two first order constructs specified as common factors
-      # So we need to check whether there is a one 
-      
-      intersect(names_c,colnames(model_measurement_error))
-      
-      if(1 %in% c(model_structural_cor)){
-        
-
-        
+     if(1 %in% c(model_structural_cor)){
         stop2("The following warning occured in the `parseModel()` function:\n",
               "It is currently not possible to specify correlations among exogenous variable\n",
               "and/or structural error terms.")
       }
-      
-      
     }
     
     ### Order model ============================================================
