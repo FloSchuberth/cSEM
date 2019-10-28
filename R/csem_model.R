@@ -420,6 +420,15 @@ parseModel <- function(
                                 dimnames = list(names_i, names_i)
     )
     
+    # Add matrix that can indicates correlations among the structural errors of 
+    # endogenous constructs (currently not relevant) and correlation among exogenous
+    # constructs. Non-linear terms are excluded.
+    
+    model_structural_corr <- matrix(0,
+                                    nrow = number_of_constructs,
+                                    ncol = number_of_constructs,
+                                    dimnames = list (names_c, names_c))
+    
     ## Structural model
     row_index <- match(tbl_s$lhs, names_c)
     col_index <- match(tbl_s$rhs, names_c_all)
