@@ -128,6 +128,9 @@ getParameterNames <- function(
   
   # Parse model that indicates which parameters should be compared.
   # If no model indicating the comparisons is provided, all parameters are compared.
+  # Correlation among the measurement errors cannot be compared yet across groups as 
+  # theta is not part of the csem outpup 
+
   
   if(is.null(.model)) {
     if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -138,6 +141,9 @@ getParameterNames <- function(
   } else {
     model_comp <- parseModel(.model, .check_errors = FALSE)
   }
+  
+  # Check whether measurement error correlation are defined. If yes drop an error
+  
   
   # Check whether the constructs specified in the comparison are equal
   # to the constructs in the original model

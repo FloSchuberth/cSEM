@@ -473,7 +473,7 @@ parseModel <- function(
     
     model_measurement_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
-    ## If starting values are given create a supplementary strucutral matrix
+    ## If starting values are given create a supplementary structural matrix
     ## that contains the starting values, otherwise assign a 1
     if(!anyNA(pop_values)) {
       
@@ -523,21 +523,25 @@ parseModel <- function(
     }
 
     
+    # Ich glaube es ist besser wenn wir es über die Phi matrix machen
     # Fill matrix model_structural_cor
     row_index <- match(con_errors$lhs, setdiff(names_c,names_c_attached_to_2nd))
     col_index <- match(con_errors$rhs, setdiff(names_c,names_c_attached_to_2nd))
     
     model_structural_cor[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
+    
     # Currently it is not allowed to specify correlations among exogenous constructs, 
     #  and/or structural error terms
     if(.check_errors) {
      if(1 %in% c(model_structural_cor)){
-        stop2("The following warning occured in the `parseModel()` function:\n",
+        warning2("The following warning occured in the `parseModel()` function:\n",
               "It is currently not possible to specify correlations among exogenous variable\n",
-              "and/or structural error terms.")
+              "and/or structural error terms. And the specification will be ignored.")
       }
     }
+    
+    
     
     ### Order model ============================================================
     # Order the structual equations in a way that every equation depends on
