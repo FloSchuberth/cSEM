@@ -309,10 +309,16 @@ testMGD <- function(
   # All these approaches require bootstrap
   if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler"))) {
     
+    # Check whether correlations are compared; if so, error as cSEMResults_resampled
+    # does not contain bootstrap correlations
+    # if(){
+      # error2("If correlations are compared, no cSEMResults_resampled object is allowed as input.")
+    # }
+    
     # Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
       if(.verbose) {
-        cat("Bootstrapping cSEMResults object ...\n\n")
+        cat("Bootstrap cSEMResults object ...\n\n")
       }
       .object <- resamplecSEMResults(
         .object               = .object,
