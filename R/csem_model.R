@@ -420,18 +420,17 @@ parseModel <- function(
                                 dimnames = list(names_i, names_i)
     )
     
-    # Add matrix that can indicates correlations among the structural errors of 
-    # endogenous constructs and/or exogenous
-    # constructs. 
-    # Non-linear terms as well as first-order constructs are excluded
+    # Matrix that indicates correlations among variables
         
-    model_structural_cor <- matrix(0,
-                                    nrow = length(setdiff(names_c,names_c_attached_to_2nd)),
-                                    ncol = length(setdiff(names_c,names_c_attached_to_2nd)),
-                                    dimnames = list (setdiff(names_c,names_c_attached_to_2nd),
-                                                     setdiff(names_c,names_c_attached_to_2nd)))
+    model_cor_specified <- matrix(0,
+                                    nrow = length(unique(c(tbl_e$lhs,tbl_e$rhs))),
+                                    ncol = length(unique(c(tbl_e$lhs,tbl_e$rhs))),
+                                    dimnames = list (unique(c(tbl_e$lhs,tbl_e$rhs)),
+                                                     unique(c(tbl_e$lhs,tbl_e$rhs))))
 
     
+ 
+    ###  Sill matrices
     ## Structural model
     row_index <- match(tbl_s$lhs, names_c)
     col_index <- match(tbl_s$rhs, names_c_all)
@@ -472,6 +471,9 @@ parseModel <- function(
     col_index <- match(m_errors$rhs, names_i)
     
     model_measurement_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
+    
+    
+    
     
     ## If starting values are given create a supplementary structural matrix
     ## that contains the starting values, otherwise assign a 1
@@ -523,24 +525,11 @@ parseModel <- function(
     }
 
     
-    # Ich glaube es ist besser wenn wir es über die Phi matrix machen
-    # Fill matrix model_structural_cor
-    row_index <- match(con_errors$lhs, setdiff(names_c,names_c_attached_to_2nd))
-    col_index <- match(con_errors$rhs, setdiff(names_c,names_c_attached_to_2nd))
+    # Fill matrix model_cor_specified
+    row_index <- match(tbl_e$lhs, unique(c(tbl_e$lhs,tbl_e$rhs)))
+    col_index <- match(tbl_e$rhs, unique(c(tbl_e$lhs,tbl_e$rhs)))
     
-    model_structural_cor[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
-    
-    
-    # Currently it is not allowed to specify correlations among exogenous constructs, 
-    #  and/or structural error terms
-    if(.check_errors) {
-     if(1 %in% c(model_structural_cor)){
-        warning2("The following warning occured in the `parseModel()` function:\n",
-              "It is currently not possible to specify correlations among exogenous variable\n",
-              "and/or structural error terms. And the specification will be ignored.")
-      }
-    }
-    
+    model_cor_specified[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
     
     ### Order model ============================================================
@@ -618,15 +607,14 @@ parseModel <- function(
     structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n)), drop = FALSE]
     # structural_ordered <- model_structural[n1, c(n1, setdiff(colnames(model_ordered), n1))]
     
-    # order construct names without first-order constructs
-    n2 <- setdiff(n,names_c_attached_to_2nd)
+
     
     
     model_ls <- list(
       "structural"         = structural_ordered,
       "measurement"        = model_measurement[n, m, drop = FALSE],
       "error_cor"          = model_measurement_error[m, m, drop = FALSE],
-      "structural_cor"     = model_structural_cor[n2, n2, drop = FALSE],
+      "cor_specified"     = model_cor_specified,
       "construct_type"     = construct_type[match(n, names(construct_type))],
       "construct_order"    = construct_order[match(n, names(construct_order))],
       "model_type"         = type_of_model
@@ -675,6 +663,8 @@ parseModel <- function(
     
     ## Should the full output be returned
     if(.full_output) {
+      model_ls$cons_exo <- cons_exo
+      model_ls$cons_endo <- cons_endo 
       model_ls$vars_2nd <- names_c_2nd
       model_ls$vars_attached_to_2nd <- names_c_attached_to_2nd
       model_ls$vars_not_attached_to_2nd <- names_c_not_attachted_to_2nd
