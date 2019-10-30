@@ -116,6 +116,8 @@ getParameterNames <- function(
     measurement_org <- x22$Arguments_original$.model$measurement
     names_path_org <- x[[1]]$Second_stage$Estimates$Path_estimates$Name
     
+    # EXTRACT INFO THAT I HAVE EXTRACTED ALREADY FOR THE NON_HIERARCHICAL CONSTRUCTS
+    
   } else {
     
     x22  <- x[[1]]$Information
@@ -124,6 +126,10 @@ getParameterNames <- function(
     
     measurement_org <- x22$Model$measurement
     names_path_org <- x[[1]]$Estimates$Path_estimates$Name
+    
+    indicators <- x22$Model$indicators
+    cons_exo <- x22$Model$cons_exo
+    cons_endo <- x22$Model$cons_endo
   }
   
   # Parse model that indicates which parameters should be compared.
@@ -139,12 +145,10 @@ getParameterNames <- function(
       model_comp <- x22$Model 
     }
   } else {
-    model_comp <- parseModel(.model, .check_errors = FALSE)
+    model_comp <- parseModel(.model, .check_errors = FALSE,.full_output = TRUE)
   }
   
-  # Check whether measurement error correlation are defined. If yes drop an error
-  
-  
+
   # Check whether the constructs specified in the comparison are equal
   # to the constructs in the original model
   if(!all(rownames(model_comp$structural) %in% rownames(measurement_org))){
@@ -248,11 +252,39 @@ getParameterNames <- function(
     names_weights <- NULL
   }
   
+  # Extract Information from model_cor_specified and matched with the original output
+  
+  # all correlated variables, i.e., that have been specified with ~~
+  vars_correlated_comp <- rownames(model_comp$cor_specified)
+  
+  ind_correlated_comp <- intersect(vars_correlated_comp, indicators)
+  # NEEDS TO BE DONE: Select only those indicators that are connected to a common factor
+  cor_measurement_error <- model_comp$cor_specified[ind_correlated_comp,ind_correlated_comp]
+  index <- which(cor_measurement_error == 1, arr.ind = TRUE)
+  correlated_measurement_error <- index
+  correlated_measurement_error[,"row"] <- rownames(cor_measurement_error)[index[,"row"]]
+  correlated_measurement_error[,"col"] <- colnames(cor_measurement_error)[index[,"col"]]
+  
+  cons_exo_correlated_comp <- intersect(vars_correlated_comp, cons_exo)
+  cons_endo_correlated_comp <- intersect(vars_correlated_comp, cons_endo) 
+  
+  # Consider only exogenous constructs
+  cor_cons_exo <- model_comp$cor_specified[cons_exo_correlated_comp,cons_exo_correlated_comp]
+  # Which are correlated
+  index <- which(cor_cons_exo == 1,arr.ind = TRUE) 
+  correlated_exo_cons <- index
+  correlated_exo_cons[,"row"] <- rownames(cor_cons_exo)[index[,"row"]]
+  correlated_exo_cons[,"col"] <- colnames(cor_cons_exo)[index[,"col"]]
+  
+  
+  
   ## Return as list
   out <- list(
     "names_path"     = names_path, 
     "names_weights"  = names_weights,
-    "names_loadings" = names_loadings
+    "names_loadings" = names_loadings,
+    "names_cor_exo_cons" = correlated_exo_cons,
+    "names_cor_measurement_error" = correlated_measurement_error
     )
   return(out)
 }
