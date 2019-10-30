@@ -330,6 +330,8 @@ calculateParameterDifference <- function(
   names_path     <- names$names_path
   names_loadings <- names$names_loadings
   names_weights  <- names$names_weights
+  names_cor_exo_cons <- names$names_cor_exo_cons
+  names_cor_measurement_error <- names$names_cor_measurement_error
   
   ### Compute differences ======================================================
   if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -342,10 +344,17 @@ calculateParameterDifference <- function(
       rbind(y$First_stage$Estimates$Weight_estimates, 
             y$Second_stage$Estimates$Weight_estimates)
       })
+    # EINFUEGEN
+    # cor_cons_exo_estimates <-
+    
   } else {
     path_estimates  <- lapply(x, function(y) {y$Estimates$Path_estimates})
     loading_estimates <- lapply(x, function(y) {y$Estimates$Loading_estimates})
     weight_estimates <- lapply(x, function(y) {y$Estimates$Weight_estimates})
+    cor_cons_exo_estimates <- lapply(x, function(y) {
+      temp = y$Estimates$Construct_VCV[names_cor_exo_cons]
+      names(temp) = paste(names_cor_exo_cons[,"row"],"~~", names_cor_exo_cons[,"col"], sep=" ")
+    })
   }
   
   ## Select
@@ -370,6 +379,7 @@ calculateParameterDifference <- function(
     }
     y1
   })
+
   
   ## Path model
   temp <- utils::combn(path_estimates, 2, simplify = FALSE)

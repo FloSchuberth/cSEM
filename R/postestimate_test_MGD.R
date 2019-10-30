@@ -275,7 +275,8 @@ testMGD <- function(
   
   
   # Get the name of the parameters to be compared. This is required for Sarstedt and Henseler
-  names_param <- unlist(getParameterNames(.object, .model = .parameters_to_compare))
+  names_all_param <- getParameterNames(.object, .model = .parameters_to_compare)
+  names_param <- unlist(names_all_param[c("names_path","names_loadings","names_weights")])
   
   ## Calculation of the test statistics========================================
   teststat <- list()
