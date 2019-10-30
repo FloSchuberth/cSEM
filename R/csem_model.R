@@ -529,7 +529,7 @@ parseModel <- function(
     row_index <- match(tbl_e$lhs, unique(c(tbl_e$lhs,tbl_e$rhs)))
     col_index <- match(tbl_e$rhs, unique(c(tbl_e$lhs,tbl_e$rhs)))
     
-    model_cor_specified[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
+    model_cor_specified[cbind(row_index, col_index)] <- 1
     
     
     ### Order model ============================================================
@@ -663,6 +663,7 @@ parseModel <- function(
     
     ## Should the full output be returned
     if(.full_output) {
+      model_ls$indicators <- names_i 
       model_ls$cons_exo <- cons_exo
       model_ls$cons_endo <- cons_endo 
       model_ls$vars_2nd <- names_c_2nd
