@@ -276,6 +276,9 @@ getParameterNames <- function(
   correlated_exo_cons[,"row"] <- rownames(cor_cons_exo)[index[,"row"]]
   correlated_exo_cons[,"col"] <- colnames(cor_cons_exo)[index[,"col"]]
   
+  if(dim(correlated_exo_con)[1] == 0){
+    correlated_exo_con <- NULL
+  }
   
   
   ## Return as list
