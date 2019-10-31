@@ -311,8 +311,10 @@ testMGD <- function(
     
     # Check whether correlations are compared; if so, error as cSEMResults_resampled
     # does not contain bootstrap correlations
-    if(nrow(names_all_param$names_cor_exo_cons)==0 | nrow(names_all_param$names_cor_measurement_error)==0){
-      stop2("If correlations are compared, no cSEMResults_resampled object is allowed as input.")
+    if(inherits(.object, "cSEMResults_resampled") & 
+       (nrow(names_all_param$names_cor_exo_cons)==0 | nrow(names_all_param$names_cor_measurement_error)==0)){
+      stop2("If correlations are specified for comparison,\n",
+      "cSEMResults_resampled object is not allowed as input.")
     }
     
     # Check if .object already contains resamples; if not, run bootstrap
@@ -321,7 +323,14 @@ testMGD <- function(
         cat("Bootstrap cSEMResults object ...\n\n")
       }
       
-      # User fun befüllen
+      # User fun befüllen; distinguish between default and secondorder models
+      bootstrap_cor <- function(.object){
+        
+      exo_cons_cor <- .object$Estimates$Construct_VCV[names_all_param$names_cor_exo_cons]
+      names(exo_cons_cor) <- paste(names_all_param$names_cor_exo_cons[,"row"], "~~", 
+                                   names_all_param$names_cor_exo_cons[,"col"], sep= " ")
+        }
+      
       .object <- resamplecSEMResults(
         .object               = .object,
         .resample_method      = "bootstrap",
