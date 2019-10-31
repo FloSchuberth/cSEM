@@ -342,7 +342,8 @@ testMGD <- function(
         .resample_method      = "bootstrap",
         .handle_inadmissibles = .handle_inadmissibles,
         .R                    = .R_bootstrap,
-        .seed                 = .seed) 
+        .seed                 = .seed,
+        .user_funs = bootstrap_cor) 
     }
     
     ## Combine bootstrap results in one matrix
@@ -357,6 +358,7 @@ testMGD <- function(
       path_resamples    <- x$Path_estimates$Resampled
       loading_resamples <- x$Loading_estimates$Resampled
       weight_resamples  <- x$Weight_estimates$Resampled
+      exo_cons_cor_resamples <- x$exo_cons_cor_estimates$Resampled
       n                 <- nrow(path_resamples)
       
       # Calculation of the bootstrap SEs
@@ -365,6 +367,7 @@ testMGD <- function(
       path_se <- ses$Path_estimates$sd 
       loading_se <- ses$Loading_estimates$sd
       weight_se <- ses$Weight_estimates$sd
+      exo_cons_cor_se <- ses$exo_cons_cor_estimates$sd
       
       # Calculation of the bias
       bias <- infer(.object=y,.quantity = "bias")
@@ -372,13 +375,14 @@ testMGD <- function(
       path_bias <- bias$Path_estimates$bias
       loading_bias <- bias$Loading_estimates$bias
       weight_bias <- bias$Weight_estimates$bias
+      exo_cons_cor_bias <- bias$exo_cons_cor_estimates$bias
       # Return object
       list(
         "n"                 = n,
         "nObs"              = nobs,
-        "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples),
-        "ses_all"           = c(path_se, loading_se, weight_se),
-        "bias_all"          = c(path_bias, loading_bias, weight_bias)
+        "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples, exo_cons_cor_resamples),
+        "ses_all"           = c(path_se, loading_se, weight_se, exo_cons_cor_se),
+        "bias_all"          = c(path_bias, loading_bias, weight_bias, exo_cons_cor_bias)
        )
       
     })
