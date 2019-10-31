@@ -38,7 +38,8 @@ URL: https://github.com/M-E-Rademaker/cSEM, https://m-e-rademaker.github.io/cSEM
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: alabama,
+Imports: 
+    alabama,
     cli,
     crayon,
     expm,
@@ -63,7 +64,6 @@ Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: 
     knitr,
     nnls,
-    pkgdown,
     prettydoc,
     rmarkdown,
     listviewer,

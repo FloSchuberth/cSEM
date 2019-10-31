@@ -1,26 +1,28 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
-# As long as we are in development stage only the relase version will be checked
-# Uncomment below once uploaded to CRAN
-#r:
-#  - oldrel
-#  - release
-#  - devel
-  
 cache: packages
-# As long as we are in the development stage warnings are not considered errors
-warnings_are_errors: false
+dist: xenial
+latex: false
+# Change to false when developing; true since CRAN will complain about WARNINGS
+warnings_are_errors: true
 
-after_success:
-  - R CMD INSTALL .
-  - Rscript -e 'pkgdown::build_site()'
-
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_PAT
-  keep-history: false
-  local-dir: docs
-  on:
-    branch: master
+jobs:
+  include:
+  - os: osx  # check package on macOS 10.13 (all other checks are on linux)
+  - r: devel # check package for development version of R
+#  - r: 3.5   # Check package for version 3.5.x
+  - r: release # Check package for current release and deploy to ghpages
+    after_success:
+    - R CMD INSTALL . # Install package and build site
+    - Rscript -e 'remotes::install_cran("pkgdown")'
+    - Rscript -e 'pkgdown::build_site()'
+    # Deploy to github pages
+    deploy:
+      provider: pages
+      skip-cleanup: true
+      github-token: $GITHUB_PAT
+      keep-history: false
+      local-dir: docs
+      on:
+        branch: master
