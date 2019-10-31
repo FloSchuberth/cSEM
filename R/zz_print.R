@@ -119,25 +119,35 @@ print.cSEMAssess <- function(x, ...) {
       
       ## If more than 4 quality criteria are to be printed: open a second block
       ## otherwise print one block
-      cat2(
-        "\n\n\t", 
-        col_align("Construct", max(l, nchar("Construct")) + 2)
-      )
-      for(k in nn) {
-        cat2(
-          col_align(k, 14, align = "center")
-        )
+      if(length(nn) > 4) {
+        nn1 <- nn[1:4]
+        nn2 <- setdiff(nn, nn1)
+        nn <- list(nn1, nn2)
+      } else {
+        nn <- list(nn)
       }
       
-      for(i in c_names) {
+      for(j in seq_along(nn)) {
         cat2(
-          "\n\t", 
-          col_align(i, max(l, nchar("Construct")) + 2)
+          "\n\n\t", 
+          col_align("Construct", max(l, nchar("Construct")) + 2)
         )
-        
-        for(k in nn) {
-          cat2(col_align(sprintf("%.4f",x[[k]][i]), 14, align = "center"))
+        for(k in nn[[j]]) {
+          cat2(
+            col_align(k, 14, align = "center")
+          )
         }
+        
+        for(i in c_names) {
+          cat2(
+            "\n\t", 
+            col_align(i, max(l, nchar("Construct")) + 2)
+          )
+          
+          for(k in nn[[j]]) {
+            cat2(col_align(sprintf("%.4f",x[[k]][i]), 14, align = "center"))
+          }
+        } 
       }
     }
   }

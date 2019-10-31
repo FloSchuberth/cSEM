@@ -250,12 +250,6 @@ assess.cSEMResults_default <- function(
   match.arg(.quality_criterion, 
             args_default(.choices = TRUE)$.quality_criterion, several.ok = TRUE)
   
-  if(.object$Information$Approach_2ndorder %in% c("RI_original", "RI_extended")) {
-    stop2("The following error occured in the assess() function:\n",
-      "Computation of some of the qualtiy criteria for estimates obtained by the",
-      " repeated indicator approach requires manual modification. Use the individual ",
-      "functions to compute the qualitiy criteria of interest.")
-  }
   ## Set up empty list
   out <- list()
   
