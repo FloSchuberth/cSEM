@@ -329,6 +329,7 @@ testMGD <- function(
       exo_cons_cor <- .object$Estimates$Construct_VCV[names_all_param$names_cor_exo_cons]
       names(exo_cons_cor) <- paste(names_all_param$names_cor_exo_cons[,"row"], "~~", 
                                    names_all_param$names_cor_exo_cons[,"col"], sep= " ")
+      # Here measurement error correlation can be added at a later point
         }
       
       .object <- resamplecSEMResults(
