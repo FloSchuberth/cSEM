@@ -334,6 +334,7 @@ testMGD <- function(
       # collect output
       
       # return output
+      exo_cons_cor
         }
       
       .object <- resamplecSEMResults(
