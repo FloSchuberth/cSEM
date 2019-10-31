@@ -264,6 +264,10 @@ getParameterNames <- function(
   correlated_measurement_error <- index
   correlated_measurement_error[,"row"] <- rownames(cor_measurement_error)[index[,"row"]]
   correlated_measurement_error[,"col"] <- colnames(cor_measurement_error)[index[,"col"]]
+  if(nrow(correlated_measurement_error)==0){
+    correlated_measurement_error <-NULL
+  }
+  
   
   cons_exo_correlated_comp <- intersect(vars_correlated_comp, cons_exo)
   cons_endo_correlated_comp <- intersect(vars_correlated_comp, cons_endo) 
@@ -276,8 +280,8 @@ getParameterNames <- function(
   correlated_exo_cons[,"row"] <- rownames(cor_cons_exo)[index[,"row"]]
   correlated_exo_cons[,"col"] <- colnames(cor_cons_exo)[index[,"col"]]
   
-  if(dim(correlated_exo_con)[1] == 0){
-    correlated_exo_con <- NULL
+  if(dim(correlated_exo_cons)[1] == 0){
+    correlated_exo_cons <- NULL
   }
   
   
@@ -355,9 +359,14 @@ calculateParameterDifference <- function(
     loading_estimates <- lapply(x, function(y) {y$Estimates$Loading_estimates})
     weight_estimates <- lapply(x, function(y) {y$Estimates$Weight_estimates})
     cor_cons_exo_estimates <- lapply(x, function(y) {
+      if(!is.null(names_cor_exo_cons)){
       temp = y$Estimates$Construct_VCV[names_cor_exo_cons]
       names(temp) = paste(names_cor_exo_cons[,"row"],"~~", names_cor_exo_cons[,"col"], sep=" ")
-    })
+      temp
+      }else{
+        NULL
+      }
+      })
   }
   
   ## Select
@@ -383,7 +392,6 @@ calculateParameterDifference <- function(
     y1
   })
 
-  
   ## Path model
   temp <- utils::combn(path_estimates, 2, simplify = FALSE)
   diff_path <- lapply(temp, function(y) y[[1]] - y[[2]])
@@ -399,11 +407,17 @@ calculateParameterDifference <- function(
   diff_weights <- lapply(temp, function(y) y[[1]] - y[[2]])
   names(diff_weights) <- sapply(temp, function(x) paste0(names(x)[1], '_', names(x)[2]))
 
+  # Exogenous construct correlations
+  temp <- utils::combn(cor_cons_exo_estimates, 2, simplify = FALSE)
+  cor_cons_exo <- lapply(temp, function(y) y[[1]] - y[[2]])
+  names(cor_cons_exo) <- sapply(temp, function(x) paste0(names(x)[1], '_', names(x)[2]))
+  
   # merge list together
-  out <- mapply(function(x,y,z) c(x,y,z),
-             x = diff_path,
-             y = diff_loadings,
-             z = diff_weights,
+  out <- mapply(function(w,x,y,z) c(w,x,y,z),
+             w = diff_path,
+             x = diff_loadings,
+             y = diff_weights,
+             z = cor_cons_exo,
              SIMPLIFY = FALSE)
 
   return(out)

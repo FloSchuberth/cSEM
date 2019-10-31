@@ -312,7 +312,7 @@ testMGD <- function(
     # Check whether correlations are compared; if so, error as cSEMResults_resampled
     # does not contain bootstrap correlations
     if(inherits(.object, "cSEMResults_resampled") & 
-       (nrow(names_all_param$names_cor_exo_cons)==0 | nrow(names_all_param$names_cor_measurement_error)==0)){
+       (is.null(names_all_param$names_cor_exo_cons)| is.null(names_all_param$names_cor_measurement_error))){
       stop2("If correlations are specified for comparison,\n",
       "cSEMResults_resampled object is not allowed as input.")
     }
