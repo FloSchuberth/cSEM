@@ -274,7 +274,7 @@ testMGD <- function(
   }
   
   
-  # Get the name of the parameters to be compared. This is required for Sarstedt and Henseler
+  # Get the names of the parameters to be compared. 
   names_all_param <- getParameterNames(.object, .model = .parameters_to_compare)
   names_param <- unlist(names_all_param[c("names_path","names_loadings","names_weights")])
   
@@ -311,15 +311,17 @@ testMGD <- function(
     
     # Check whether correlations are compared; if so, error as cSEMResults_resampled
     # does not contain bootstrap correlations
-    # if(){
-      # error2("If correlations are compared, no cSEMResults_resampled object is allowed as input.")
-    # }
+    if(nrow(names_all_param$names_cor_exo_cons)==0 | nrow(names_all_param$names_cor_measurement_error)==0){
+      stop2("If correlations are compared, no cSEMResults_resampled object is allowed as input.")
+    }
     
     # Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
       if(.verbose) {
         cat("Bootstrap cSEMResults object ...\n\n")
       }
+      
+      # User fun befüllen
       .object <- resamplecSEMResults(
         .object               = .object,
         .resample_method      = "bootstrap",
