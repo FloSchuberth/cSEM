@@ -364,7 +364,7 @@ calculateParameterDifference <- function(
     path_estimates  <- lapply(x, function(y) {y$Estimates$Path_estimates})
     loading_estimates <- lapply(x, function(y) {y$Estimates$Loading_estimates})
     weight_estimates <- lapply(x, function(y) {y$Estimates$Weight_estimates})
-    # all exogenous construct correltaions
+    # all exogenous construct correlations
     cor_cons_exo_estimates <- lapply(x, function(y) {
       temp = c(y$Estimates$Construct_VCV)
       names(temp) = paste(rownames(y$Estimates$Construct_VCV),"~~", 
@@ -399,7 +399,7 @@ calculateParameterDifference <- function(
   })
 
   cor_cons_exo_estimates <- lapply(cor_cons_exo_estimates, function(y) {
-    y1 <- y[y$Name %in% names_cor_cons_exo, "Estimate"]
+    y1 <- y[names(y) %in% names_cor_exo_cons]
     if(length(y1) != 0) {
       names(y1) <- names_cor_cons_exo
     }
