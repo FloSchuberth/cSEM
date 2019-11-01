@@ -338,7 +338,7 @@ calculateParameterDifference <- function(
   names_loadings <- names$names_loadings
   names_weights  <- names$names_weights
   names_cor_exo_cons <- names$names_cor_exo_cons
-  names_cor_measurement_error <- names$names_cor_measurement_error
+  # names_cor_measurement_error <- names$names_cor_measurement_error
   
   ### Compute differences ======================================================
   if(inherits(.object, "cSEMResults_2ndorder")) {
