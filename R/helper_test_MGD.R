@@ -233,7 +233,7 @@ getParameterNames <- function(
   }
   
   ## Extract names of the weights to be tested
-  # Select only concepts modeled as common factors. Reorder to be have the 
+  # Select only concepts modeled as common factors. Reorder that it has the 
   # same order as names_row.
   i <- intersect(names(which(construct_type == "Composite")), names_row)
   i <- i[match(names_row, i)]
@@ -262,13 +262,16 @@ getParameterNames <- function(
   cor_measurement_error <- model_comp$cor_specified[ind_correlated_comp,ind_correlated_comp]
   index <- which(cor_measurement_error == 1, arr.ind = TRUE)
   correlated_measurement_error <- index
-  # correlated_measurement_error[,"row"] <- rownames(cor_measurement_error)[index[,"row"]]
-  # correlated_measurement_error[,"col"] <- colnames(cor_measurement_error)[index[,"col"]]
 
-  correlated_measurement_error <- paste(rownames(cor_measurement_error)[index[,"row"]],
+  # In case that no measurement error correlations are compared set it to NULL
+  if(nrow(correlated_measurement_error) ==0 ){
+    correlated_measurement_error <- NULL
+  }else{
+    correlated_measurement_error <- paste(rownames(cor_measurement_error)[index[,"row"]],
                                         " ~~ ",
                                         colnames(cor_measurement_error)[index[,"col"]],
                                         sep="")
+  }
   
   cons_exo_correlated_comp <- intersect(vars_correlated_comp, cons_exo)
   cons_endo_correlated_comp <- intersect(vars_correlated_comp, cons_endo) 
@@ -278,13 +281,15 @@ getParameterNames <- function(
   # Which are correlated
   index <- which(cor_cons_exo == 1,arr.ind = TRUE) 
   correlated_exo_cons <- index
-  # correlated_exo_cons[,"row"] <- rownames(cor_cons_exo)[index[,"row"]]
-  # correlated_exo_cons[,"col"] <- colnames(cor_cons_exo)[index[,"col"]]
   
-  correlated_exo_cons <-paste(rownames(cor_cons_exo)[index[,"row"]],
+  # In case that no measurement error correlations are compared set it to NULL
+  if(nrow(correlated_exo_cons) == 0){
+    correlated_exo_cons <- NULL 
+  }else{
+    correlated_exo_cons <-paste(rownames(cor_cons_exo)[index[,"row"]],
                               " ~~ ",
                               colnames(cor_cons_exo)[index[,"col"]], sep="")
-
+  }
   
   ## Return as list
   out <- list(
