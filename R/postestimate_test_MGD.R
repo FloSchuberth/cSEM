@@ -323,12 +323,14 @@ testMGD <- function(
         cat("Bootstrap cSEMResults object ...\n\n")
       }
       
-      # User fun befüllen; distinguish between default and secondorder models
-      bootstrap_cor <- function(.object){
+      # User function that bootstraps all construct correlations
+      # distinguish between default and secondorder models
+      bootstrap_cons_cor <- function(.object){
         
-      exo_cons_cor <- .object$Estimates$Construct_VCV[names_all_param$names_cor_exo_cons]
-      names(exo_cons_cor) <- paste(names_all_param$names_cor_exo_cons[,"row"], "~~", 
-                                   names_all_param$names_cor_exo_cons[,"col"], sep= " ")
+      exo_cons_cor <- c(.object$Estimates$Construct_VCV)
+      names(exo_cons_cor) <- paste(rownames(.object$Estimates$Construct_VCV), "~~", 
+                                   rep(colnames(.object$Estimates$Construct_VCV),
+                                       each=ncol(.object$Estimates$Construct_VCV)), sep= " ")
       # Here measurement error correlation can be added at a later point
       
       # collect output

@@ -262,12 +262,13 @@ getParameterNames <- function(
   cor_measurement_error <- model_comp$cor_specified[ind_correlated_comp,ind_correlated_comp]
   index <- which(cor_measurement_error == 1, arr.ind = TRUE)
   correlated_measurement_error <- index
-  correlated_measurement_error[,"row"] <- rownames(cor_measurement_error)[index[,"row"]]
-  correlated_measurement_error[,"col"] <- colnames(cor_measurement_error)[index[,"col"]]
-  if(nrow(correlated_measurement_error)==0){
-    correlated_measurement_error <-NULL
-  }
-  
+  # correlated_measurement_error[,"row"] <- rownames(cor_measurement_error)[index[,"row"]]
+  # correlated_measurement_error[,"col"] <- colnames(cor_measurement_error)[index[,"col"]]
+
+  correlated_measurement_error <- paste(rownames(cor_measurement_error)[index[,"row"]],
+                                        " ~~ ",
+                                        colnames(cor_measurement_error)[index[,"col"]],
+                                        sep="")
   
   cons_exo_correlated_comp <- intersect(vars_correlated_comp, cons_exo)
   cons_endo_correlated_comp <- intersect(vars_correlated_comp, cons_endo) 
@@ -277,13 +278,13 @@ getParameterNames <- function(
   # Which are correlated
   index <- which(cor_cons_exo == 1,arr.ind = TRUE) 
   correlated_exo_cons <- index
-  correlated_exo_cons[,"row"] <- rownames(cor_cons_exo)[index[,"row"]]
-  correlated_exo_cons[,"col"] <- colnames(cor_cons_exo)[index[,"col"]]
+  # correlated_exo_cons[,"row"] <- rownames(cor_cons_exo)[index[,"row"]]
+  # correlated_exo_cons[,"col"] <- colnames(cor_cons_exo)[index[,"col"]]
   
-  if(dim(correlated_exo_cons)[1] == 0){
-    correlated_exo_cons <- NULL
-  }
-  
+  correlated_exo_cons <-paste(rownames(cor_cons_exo)[index[,"row"]],
+                              " ~~ ",
+                              colnames(cor_cons_exo)[index[,"col"]], sep="")
+
   
   ## Return as list
   out <- list(
@@ -358,14 +359,14 @@ calculateParameterDifference <- function(
     path_estimates  <- lapply(x, function(y) {y$Estimates$Path_estimates})
     loading_estimates <- lapply(x, function(y) {y$Estimates$Loading_estimates})
     weight_estimates <- lapply(x, function(y) {y$Estimates$Weight_estimates})
+    # all exogenous construct correltaions
     cor_cons_exo_estimates <- lapply(x, function(y) {
-      if(!is.null(names_cor_exo_cons)){
-      temp = y$Estimates$Construct_VCV[names_cor_exo_cons]
-      names(temp) = paste(names_cor_exo_cons[,"row"],"~~", names_cor_exo_cons[,"col"], sep=" ")
+      temp = c(y$Estimates$Construct_VCV)
+      names(temp) = paste(rownames(y$Estimates$Construct_VCV),"~~", 
+                          rep(colnames(y$Estimates$Construct_VCV),
+                              each=ncol(y$Estimates$Construct_VCV)), sep=" ")
       temp
-      }else{
-        NULL
-      }
+      
       })
   }
   
@@ -392,6 +393,14 @@ calculateParameterDifference <- function(
     y1
   })
 
+  cor_cons_exo_estimates <- lapply(cor_cons_exo_estimates, function(y) {
+    y1 <- y[y$Name %in% names_cor_cons_exo, "Estimate"]
+    if(length(y1) != 0) {
+      names(y1) <- names_cor_cons_exo
+    }
+    y1
+  })
+  
   ## Path model
   temp <- utils::combn(path_estimates, 2, simplify = FALSE)
   diff_path <- lapply(temp, function(y) y[[1]] - y[[2]])
