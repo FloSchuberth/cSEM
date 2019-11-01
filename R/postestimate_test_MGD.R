@@ -358,7 +358,7 @@ testMGD <- function(
       path_resamples    <- x$Path_estimates$Resampled
       loading_resamples <- x$Loading_estimates$Resampled
       weight_resamples  <- x$Weight_estimates$Resampled
-      exo_cons_cor_resamples <- x$exo_cons_cor_estimates$Resampled
+      exo_cons_cor_resamples <- x$User_fun$Resampled
       n                 <- nrow(path_resamples)
       
       # Calculation of the bootstrap SEs
@@ -367,7 +367,7 @@ testMGD <- function(
       path_se <- ses$Path_estimates$sd 
       loading_se <- ses$Loading_estimates$sd
       weight_se <- ses$Weight_estimates$sd
-      exo_cons_cor_se <- ses$exo_cons_cor_estimates$sd
+      exo_cons_cor_se <- ses$User_fun$sd
       
       # Calculation of the bias
       bias <- infer(.object=y,.quantity = "bias")
@@ -375,7 +375,7 @@ testMGD <- function(
       path_bias <- bias$Path_estimates$bias
       loading_bias <- bias$Loading_estimates$bias
       weight_bias <- bias$Weight_estimates$bias
-      exo_cons_cor_bias <- bias$exo_cons_cor_estimates$bias
+      exo_cons_cor_bias <- bias$User_fun$bias
       # Return object
       list(
         "n"                 = n,
