@@ -276,7 +276,8 @@ testMGD <- function(
   
   # Get the names of the parameters to be compared. 
   names_all_param <- getParameterNames(.object, .model = .parameters_to_compare)
-  names_param <- unlist(names_all_param[c("names_path","names_loadings","names_weights")])
+  # names_param <- unlist(names_all_param[c("names_path","names_loadings","names_weights")])
+  names_param <- unlist(names_all_param)
   
   ## Calculation of the test statistics========================================
   teststat <- list()
@@ -345,7 +346,7 @@ testMGD <- function(
         .handle_inadmissibles = .handle_inadmissibles,
         .R                    = .R_bootstrap,
         .seed                 = .seed,
-        .user_funs = bootstrap_cor) 
+        .user_funs = bootstrap_cons_cor) 
     }
     
     ## Combine bootstrap results in one matrix
@@ -851,9 +852,7 @@ testMGD <- function(
     # Create pairs which should be compared
     pairs_centered <- utils::combn(ll_centered, 2, simplify = FALSE)
     names(pairs_centered) <- sapply(pairs_centered, function(x) paste0(names(x)[1], '_', names(x)[2]))
-    
-    # Create dummy list with NULL 
-    
+
     
     # Calculation of the probability
     pvalue_Henseler <- lapply(pairs_centered,function(x){

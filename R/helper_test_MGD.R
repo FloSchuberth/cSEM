@@ -116,7 +116,10 @@ getParameterNames <- function(
     measurement_org <- x22$Arguments_original$.model$measurement
     names_path_org <- x[[1]]$Second_stage$Estimates$Path_estimates$Name
     
-    # EXTRACT INFO THAT I HAVE EXTRACTED ALREADY FOR THE NON_HIERARCHICAL CONSTRUCTS
+    # CHECK WHETHER THIS WORKS
+    indicators <- x22$Model$indicators
+    cons_exo <- x22$Model$cons_exo
+    cons_endo <- x22$Model$cons_endo
     
   } else {
     
@@ -401,7 +404,7 @@ calculateParameterDifference <- function(
   cor_cons_exo_estimates <- lapply(cor_cons_exo_estimates, function(y) {
     y1 <- y[names(y) %in% names_cor_exo_cons]
     if(length(y1) != 0) {
-      names(y1) <- names_cor_cons_exo
+      names(y1) <- names_cor_exo_cons
     }
     y1
   })
