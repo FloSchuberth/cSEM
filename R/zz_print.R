@@ -36,7 +36,7 @@ print.cSEMResults <- function(x, ...) {
       }
 
     }
-    if(sum(status) != 0) {
+    if(sum(unlist(status)) != 0) {
       cat2(
         "\n\nSee ", magenta("verify"), "(", cyan("<object-name>"), ")", " for details.")
     }
