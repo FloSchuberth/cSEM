@@ -274,8 +274,10 @@ testMGD <- function(
   }
   
   
-  # Get the name of the parameters to be compared. This is required for Sarstedt and Henseler
-  names_param <- unlist(getParameterNames(.object, .model = .parameters_to_compare))
+  # Get the names of the parameters to be compared. 
+  names_all_param <- getParameterNames(.object, .model = .parameters_to_compare)
+  # names_param <- unlist(names_all_param[c("names_path","names_loadings","names_weights")])
+  names_param <- unlist(names_all_param)
   
   ## Calculation of the test statistics========================================
   teststat <- list()
@@ -308,17 +310,43 @@ testMGD <- function(
   # All these approaches require bootstrap
   if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler"))) {
     
+    # Check whether correlations are compared; if so, error as cSEMResults_resampled
+    # does not contain bootstrap correlations
+    if(inherits(.object, "cSEMResults_resampled") & 
+       (is.null(names_all_param$names_cor_exo_cons)| is.null(names_all_param$names_cor_measurement_error))){
+      stop2("If correlations are specified for comparison,\n",
+      "cSEMResults_resampled object is not allowed as input.")
+    }
+    
     # Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
       if(.verbose) {
-        cat("Bootstrapping cSEMResults object ...\n\n")
+        cat("Bootstrap cSEMResults object ...\n\n")
       }
+      
+      # User function that bootstraps all construct correlations
+      # distinguish between default and secondorder models
+      bootstrap_cons_cor <- function(.object){
+        
+      exo_cons_cor <- c(.object$Estimates$Construct_VCV)
+      names(exo_cons_cor) <- paste(rownames(.object$Estimates$Construct_VCV), "~~", 
+                                   rep(colnames(.object$Estimates$Construct_VCV),
+                                       each=ncol(.object$Estimates$Construct_VCV)), sep= " ")
+      # Here measurement error correlation can be added at a later point
+      
+      # collect output
+      
+      # return output
+      exo_cons_cor
+        }
+      
       .object <- resamplecSEMResults(
         .object               = .object,
         .resample_method      = "bootstrap",
         .handle_inadmissibles = .handle_inadmissibles,
         .R                    = .R_bootstrap,
-        .seed                 = .seed) 
+        .seed                 = .seed,
+        .user_funs = bootstrap_cons_cor) 
     }
     
     ## Combine bootstrap results in one matrix
@@ -333,6 +361,7 @@ testMGD <- function(
       path_resamples    <- x$Path_estimates$Resampled
       loading_resamples <- x$Loading_estimates$Resampled
       weight_resamples  <- x$Weight_estimates$Resampled
+      exo_cons_cor_resamples <- x$User_fun$Resampled
       n                 <- nrow(path_resamples)
       
       # Calculation of the bootstrap SEs
@@ -341,6 +370,7 @@ testMGD <- function(
       path_se <- ses$Path_estimates$sd 
       loading_se <- ses$Loading_estimates$sd
       weight_se <- ses$Weight_estimates$sd
+      exo_cons_cor_se <- ses$User_fun$sd
       
       # Calculation of the bias
       bias <- infer(.object=y,.quantity = "bias")
@@ -348,13 +378,14 @@ testMGD <- function(
       path_bias <- bias$Path_estimates$bias
       loading_bias <- bias$Loading_estimates$bias
       weight_bias <- bias$Weight_estimates$bias
+      exo_cons_cor_bias <- bias$User_fun$bias
       # Return object
       list(
         "n"                 = n,
         "nObs"              = nobs,
-        "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples),
-        "ses_all"           = c(path_se, loading_se, weight_se),
-        "bias_all"          = c(path_bias, loading_bias, weight_bias)
+        "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples, exo_cons_cor_resamples),
+        "ses_all"           = c(path_se, loading_se, weight_se, exo_cons_cor_se),
+        "bias_all"          = c(path_bias, loading_bias, weight_bias, exo_cons_cor_bias)
        )
       
     })
@@ -821,9 +852,7 @@ testMGD <- function(
     # Create pairs which should be compared
     pairs_centered <- utils::combn(ll_centered, 2, simplify = FALSE)
     names(pairs_centered) <- sapply(pairs_centered, function(x) paste0(names(x)[1], '_', names(x)[2]))
-    
-    # Create dummy list with NULL 
-    
+
     
     # Calculation of the probability
     pvalue_Henseler <- lapply(pairs_centered,function(x){

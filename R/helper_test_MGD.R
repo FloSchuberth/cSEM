@@ -116,6 +116,11 @@ getParameterNames <- function(
     measurement_org <- x22$Arguments_original$.model$measurement
     names_path_org <- x[[1]]$Second_stage$Estimates$Path_estimates$Name
     
+    # CHECK WHETHER THIS WORKS
+    indicators <- x22$Model$indicators
+    cons_exo <- x22$Model$cons_exo
+    cons_endo <- x22$Model$cons_endo
+    
   } else {
     
     x22  <- x[[1]]$Information
@@ -124,10 +129,17 @@ getParameterNames <- function(
     
     measurement_org <- x22$Model$measurement
     names_path_org <- x[[1]]$Estimates$Path_estimates$Name
+    
+    indicators <- x22$Model$indicators
+    cons_exo <- x22$Model$cons_exo
+    cons_endo <- x22$Model$cons_endo
   }
   
   # Parse model that indicates which parameters should be compared.
   # If no model indicating the comparisons is provided, all parameters are compared.
+  # Correlation among the measurement errors cannot be compared yet across groups as 
+  # theta is not part of the csem outpup 
+
   
   if(is.null(.model)) {
     if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -136,9 +148,10 @@ getParameterNames <- function(
       model_comp <- x22$Model 
     }
   } else {
-    model_comp <- parseModel(.model, .check_errors = FALSE)
+    model_comp <- parseModel(.model, .check_errors = FALSE,.full_output = TRUE)
   }
   
+
   # Check whether the constructs specified in the comparison are equal
   # to the constructs in the original model
   if(!all(rownames(model_comp$structural) %in% rownames(measurement_org))){
@@ -223,7 +236,7 @@ getParameterNames <- function(
   }
   
   ## Extract names of the weights to be tested
-  # Select only concepts modeled as common factors. Reorder to be have the 
+  # Select only concepts modeled as common factors. Reorder that it has the 
   # same order as names_row.
   i <- intersect(names(which(construct_type == "Composite")), names_row)
   i <- i[match(names_row, i)]
@@ -242,11 +255,52 @@ getParameterNames <- function(
     names_weights <- NULL
   }
   
+  # Extract Information from model_cor_specified and matched with the original output
+  
+  # all correlated variables, i.e., that have been specified with ~~
+  vars_correlated_comp <- rownames(model_comp$cor_specified)
+  
+  ind_correlated_comp <- intersect(vars_correlated_comp, indicators)
+  # NEEDS TO BE DONE: Select only those indicators that are connected to a common factor
+  cor_measurement_error <- model_comp$cor_specified[ind_correlated_comp,ind_correlated_comp]
+  index <- which(cor_measurement_error == 1, arr.ind = TRUE)
+  correlated_measurement_error <- index
+
+  # In case that no measurement error correlations are compared set it to NULL
+  if(nrow(correlated_measurement_error) ==0 ){
+    correlated_measurement_error <- NULL
+  }else{
+    correlated_measurement_error <- paste(rownames(cor_measurement_error)[index[,"row"]],
+                                        " ~~ ",
+                                        colnames(cor_measurement_error)[index[,"col"]],
+                                        sep="")
+  }
+  
+  cons_exo_correlated_comp <- intersect(vars_correlated_comp, cons_exo)
+  cons_endo_correlated_comp <- intersect(vars_correlated_comp, cons_endo) 
+  
+  # Consider only exogenous constructs
+  cor_cons_exo <- model_comp$cor_specified[cons_exo_correlated_comp,cons_exo_correlated_comp]
+  # Which are correlated
+  index <- which(cor_cons_exo == 1,arr.ind = TRUE) 
+  correlated_exo_cons <- index
+  
+  # In case that no measurement error correlations are compared set it to NULL
+  if(nrow(correlated_exo_cons) == 0){
+    correlated_exo_cons <- NULL 
+  }else{
+    correlated_exo_cons <-paste(rownames(cor_cons_exo)[index[,"row"]],
+                              " ~~ ",
+                              colnames(cor_cons_exo)[index[,"col"]], sep="")
+  }
+  
   ## Return as list
   out <- list(
     "names_path"     = names_path, 
     "names_weights"  = names_weights,
-    "names_loadings" = names_loadings
+    "names_loadings" = names_loadings,
+    "names_cor_exo_cons" = correlated_exo_cons,
+    "names_cor_measurement_error" = correlated_measurement_error
     )
   return(out)
 }
@@ -292,6 +346,8 @@ calculateParameterDifference <- function(
   names_path     <- names$names_path
   names_loadings <- names$names_loadings
   names_weights  <- names$names_weights
+  names_cor_exo_cons <- names$names_cor_exo_cons
+  # names_cor_measurement_error <- names$names_cor_measurement_error
   
   ### Compute differences ======================================================
   if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -304,10 +360,22 @@ calculateParameterDifference <- function(
       rbind(y$First_stage$Estimates$Weight_estimates, 
             y$Second_stage$Estimates$Weight_estimates)
       })
+    # EINFUEGEN
+    # cor_cons_exo_estimates <-
+    
   } else {
     path_estimates  <- lapply(x, function(y) {y$Estimates$Path_estimates})
     loading_estimates <- lapply(x, function(y) {y$Estimates$Loading_estimates})
     weight_estimates <- lapply(x, function(y) {y$Estimates$Weight_estimates})
+    # all exogenous construct correlations
+    cor_cons_exo_estimates <- lapply(x, function(y) {
+      temp = c(y$Estimates$Construct_VCV)
+      names(temp) = paste(rownames(y$Estimates$Construct_VCV),"~~", 
+                          rep(colnames(y$Estimates$Construct_VCV),
+                              each=ncol(y$Estimates$Construct_VCV)), sep=" ")
+      temp
+      
+      })
   }
   
   ## Select
@@ -332,6 +400,14 @@ calculateParameterDifference <- function(
     }
     y1
   })
+
+  cor_cons_exo_estimates <- lapply(cor_cons_exo_estimates, function(y) {
+    y1 <- y[names(y) %in% names_cor_exo_cons]
+    if(length(y1) != 0) {
+      names(y1) <- names_cor_exo_cons
+    }
+    y1
+  })
   
   ## Path model
   temp <- utils::combn(path_estimates, 2, simplify = FALSE)
@@ -348,11 +424,17 @@ calculateParameterDifference <- function(
   diff_weights <- lapply(temp, function(y) y[[1]] - y[[2]])
   names(diff_weights) <- sapply(temp, function(x) paste0(names(x)[1], '_', names(x)[2]))
 
+  # Exogenous construct correlations
+  temp <- utils::combn(cor_cons_exo_estimates, 2, simplify = FALSE)
+  cor_cons_exo <- lapply(temp, function(y) y[[1]] - y[[2]])
+  names(cor_cons_exo) <- sapply(temp, function(x) paste0(names(x)[1], '_', names(x)[2]))
+  
   # merge list together
-  out <- mapply(function(x,y,z) c(x,y,z),
-             x = diff_path,
-             y = diff_loadings,
-             z = diff_weights,
+  out <- mapply(function(w,x,y,z) c(w,x,y,z),
+             w = diff_path,
+             x = diff_loadings,
+             y = diff_weights,
+             z = cor_cons_exo,
              SIMPLIFY = FALSE)
 
   return(out)

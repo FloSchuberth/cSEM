@@ -71,7 +71,7 @@ test_that("Linear model: correctly specified models are correctly returned", {
   expect_s3_class(parseModel(model1), "cSEMModel")
   expect_output(str(parseModel(model1)), "List of 7")
   expect_equal(names(parseModel(model1)), c("structural", "measurement", 
-                                            "error_cor", "structural_cor",
+                                            "error_cor", "cor_specified",
                                             "construct_type", "construct_order",
                                             "model_type"))
 })
@@ -96,7 +96,7 @@ test_that("Linear model: correctly specified models are correctly returned", {
   expect_s3_class(parseModel(model), "cSEMModel")
   expect_output(str(parseModel(model)), "List of 7")
   expect_equal(names(parseModel(model)), c("structural", "measurement", 
-                                            "error_cor", "structural_cor",
+                                            "error_cor", "cor_specified",
                                            "construct_type", "construct_order",
                                            "model_type"))
 })
@@ -197,7 +197,7 @@ test_that("Nonlinear model: correctly specified models are correctly returned", 
   expect_s3_class(parseModel(model1), "cSEMModel")
   expect_output(str(parseModel(model1)), "List of 7")
   expect_equal(names(parseModel(model1)), c("structural", "measurement", 
-                                           "error_cor", "structural_cor",
+                                           "error_cor", "cor_specified",
                                            "construct_type","construct_order",
                                            "model_type"))
 })
@@ -222,7 +222,7 @@ test_that("Nonlinear model: correctly specified models are correctly returned", 
   expect_s3_class(parseModel(model), "cSEMModel")
   expect_output(str(parseModel(model)), "List of 7")
   expect_equal(names(parseModel(model)), c("structural", "measurement", 
-                                            "error_cor", "structural_cor",
+                                            "error_cor", "cor_specified",
                                            "construct_type", "construct_order",
                                            "model_type"))
 })
@@ -337,19 +337,19 @@ test_that("Second-order model: correctly specified models are correctly returned
   expect_s3_class(parseModel(model4), "cSEMModel")
   expect_output(str(parseModel(model4)), "List of 7")
   expect_equal(names(parseModel(model4)), c("structural", "measurement", 
-                                            "error_cor", "structural_cor",
+                                            "error_cor", "cor_specified",
                                             "construct_type","construct_order",
                                             "model_type"))
   expect_s3_class(parseModel(model5), "cSEMModel")
   expect_output(str(parseModel(model5)), "List of 7")
   expect_equal(names(parseModel(model5)), c("structural", "measurement", 
-                                            "error_cor", "structural_cor",
+                                            "error_cor", "cor_specified",
                                             "construct_type", "construct_order",
                                             "model_type"))
   expect_s3_class(parseModel(model6), "cSEMModel")
   expect_output(str(parseModel(model6)), "List of 7")
   expect_equal(names(parseModel(model6)), c("structural", "measurement", 
-                                            "error_cor", "structural_cor",
+                                            "error_cor", "cor_specified",
                                             "construct_type", "construct_order",
                                             "model_type"))
 })
@@ -418,7 +418,7 @@ test_that("Second-order model: correctly specified models are correctly returned
   expect_s3_class(parseModel(model1), "cSEMModel")
   expect_output(str(parseModel(model1)), "List of 7")
   expect_equal(names(parseModel(model1)), c("structural", "measurement", 
-                                            "error_cor", "structural_cor",
+                                            "error_cor", "cor_specified",
                                             "construct_type", "construct_order",
                                             "model_type"))
 })
