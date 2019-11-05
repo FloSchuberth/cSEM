@@ -263,6 +263,11 @@ getParameterNames <- function(
   ind_correlated_comp <- intersect(vars_correlated_comp, indicators)
   # NEEDS TO BE DONE: Select only those indicators that are connected to a common factor
   cor_measurement_error <- model_comp$cor_specified[ind_correlated_comp,ind_correlated_comp]
+  
+  # cor_measurement_error is a symmetric matrix, therefore, the lower triangular elements are replaced by 0
+  cor_measurement_error[lower.tri(cor_measurement_error)] <- 0
+  
+  
   index <- which(cor_measurement_error == 1, arr.ind = TRUE)
   correlated_measurement_error <- index
 
@@ -281,6 +286,8 @@ getParameterNames <- function(
   
   # Consider only exogenous constructs
   cor_cons_exo <- model_comp$cor_specified[cons_exo_correlated_comp,cons_exo_correlated_comp]
+  # As cor-specified and thus cor_cons_exo is a symmetric matrix, therefore, the lower triangular elements are replaced by 0
+  cor_cons_exo[lower.tri(cor_cons_exo)] <- 0
   # Which are correlated
   index <- which(cor_cons_exo == 1,arr.ind = TRUE) 
   correlated_exo_cons <- index
