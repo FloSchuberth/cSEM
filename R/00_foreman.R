@@ -184,6 +184,10 @@ foreman <- function(
   Lambda  <- LambdaQ2W$Lambda
   Q       <- sqrt(LambdaQ2W$Q2)
   
+  ## Calcualte measurement error correlation
+  # Compute theta
+  Theta <- S - t(Lambda) %*% Lambda
+  
   ## Calculate proxies/scores
   H <- X %*% t(Weights)
   
@@ -221,6 +225,7 @@ foreman <- function(
       "Loading_estimates"      = Lambda,
       "Weight_estimates"       = Weights,
       "Inner_weight_estimates" = W$E,
+      "Measurement_error_correlation" = Theta,
       "Construct_scores"       = H,
       "Indicator_VCV"          = S,
       "Proxy_VCV"              = C,
