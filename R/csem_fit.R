@@ -199,7 +199,7 @@ fit.cSEMResults_2ndorder <- function(
   # vcv_construct is the "indicator" vcv of the second stage. 
   vcv_construct <- fit.cSEMResults_default(.object$Second_stage, 
                                            .saturated = .saturated,
-                                           .type_vcv  = .type_vcv)
+                                           .type_vcv  = 'indicator')
   
   # Select Lambda and Theta (without repeated indicator and second
   # order constructs if there are any)
