@@ -24,6 +24,10 @@
 #'   \item{`$error_cor`}{A (K x K) matrix mimicking the measurement error
 #'     correlation relationship. The row and column order is identical to 
 #'     the column order of `$measurement`.}
+#'   \item{`$cor_specified`}{A matrix indicating the correlation relationships 
+#'     between any variables of the model as specified by the user. Mainly for internal purposes.
+#'     Note that `$cor_specified` may also contain inadmissible correlations
+#'     such as a correlation between measurement errors indicators and constructs.}
 #'   \item{`$construct_type`}{A named vector containing the names of each construct
 #'     and their respective type ("Common factor" or "Composite").}
 #'   \item{`$construct_order`}{A named vector containing the names of each construct
@@ -36,6 +40,10 @@
 #' If the `.full_output` argument to [parseModel()] is set to `TRUE` the [cSEMModel]
 #' object will contain three additional list elements, namely:
 #' \describe{
+#'   \item{`$cons_exo`}{The names of the exogenous constructs of the structural model 
+#'     (i.e., variables that do not appear on the LHS of any structural equation)}
+#'   \item{`$cons_endo`}{The names of the endogenous constructs of the structural model 
+#'     (i.e., variables that appear on the LHS of at least one structural equation)}
 #'   \item{`$vars_2nd`}{The names of the constructs modeled as second orders.}
 #'   \item{`$vars_attached_to_2nd`}{The names of the constructs forming or building
 #'     a second order construct.}

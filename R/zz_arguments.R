@@ -121,7 +121,7 @@
 #'   equation whose explanatory variables are endogenous. The vectors
 #'   contain the names of the instruments corresponding to each equation. Note
 #'   that exogenous variables of a given equation **must** be supplied as 
-#'   instruments for themselves. See the examples section. Defaults to `NULL`.
+#'   instruments for themselves. Defaults to `NULL`.
 #' @param .iter_max Integer. The maximum number of iterations allowed.
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 

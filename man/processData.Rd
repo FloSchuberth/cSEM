@@ -25,7 +25,7 @@ of the list elements are the names of the dependent constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation \strong{must} be supplied as
-instruments for themselves. See the examples section. Defaults to \code{NULL}.}
+instruments for themselves. Defaults to \code{NULL}.}
 }
 \value{
 A (N x K) data.frame containing the standardized data with columns ordered

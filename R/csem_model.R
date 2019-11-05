@@ -8,7 +8,7 @@
 #' The names of the list elements are the names of the dependent constructs of 
 #' the structural equation whose explanatory variables are endogenous. 
 #' The vectors contain the names of the instruments corresponding to each 
-#' equation. Note that exogenous variables of a given equation must be 
+#' equation. Note that exogenous variables of a given equation **must** be 
 #' supplied as instruments for themselves.
 #' 
 #' By default `parseModel()` attempts to check if the model provided is correct
@@ -90,7 +90,7 @@ parseModel <- function(
   .full_output  = FALSE
   ) {
 
-  ### Check if already a cSEMModel list  
+  ### Check if already a cSEMModel list; if yes return as is
   if(class(.model) == "cSEMModel") {
 
     return(.model)
@@ -99,11 +99,14 @@ parseModel <- function(
   } else if(is.list(.model)) {
     ## Check if list contains minimum necessary elements (structural, measurement)
     if(all(c("structural", "measurement") %in% names(.model))) {
-      
-      x <- setdiff(names(.model), c("structural", "measurement", "error_cor", 
-                                    "construct_type", "construct_order", 
-                                    "model_type", "instruments", "structural2",
-                                    "measurement2", "error_cor2", "Phi"))
+      # Note: whenever a new element is added to cSEMModel it needs to be added
+      # to this list to be able to detect valid and non valid elements.
+      x <- setdiff(names(.model), c("structural", "measurement", "error_cor",
+                                    "cor_specified", "construct_type", 
+                                    "construct_order", "model_type", "instruments", 
+                                    "structural2", "measurement2", "error_cor2", 
+                                    "Phi", "cons_exo", "cons_endo", "vars_2nd",
+                                    "vars_attached_to_2nd", "vars_not_attached_to_2nd"))
       if(length(x) == 0) {
         
         class(.model) <- "cSEMModel"
@@ -126,18 +129,18 @@ parseModel <- function(
     m_lav <- lavaan::lavaanify(model = .model, fixed.x = FALSE)
     
     ## Add column with starting values or labels
-    # WHY?
     m_lav$ustart2 <- ifelse(
       is.na(m_lav$ustart) & m_lav$label != "", m_lav$label, m_lav$ustart) 
 
     ### Extract relevant information -------------------------------------------
     # s := structural
     # m := measurement
-    # e := error
+    # e := error 
     tbl_s  <- m_lav[m_lav$op == "~", ] # structural 
     tbl_m  <- m_lav[m_lav$op %in% c("=~", "<~"), ] # measurement 
     tbl_e  <- m_lav[m_lav$op == "~~" & m_lav$user == 1, ] # error 
     
+    ## Collect starting values/population values if any are given
     pop_values <- c(tbl_s$ustart2, tbl_m$ustart2, tbl_e$ustart2)
     
     ## Get all relevant subsets of constructs and/or indicators
@@ -146,9 +149,9 @@ parseModel <- function(
     # s  := structural model
     # m  := measurement/composite model
     # l  := only linear (terms)
-    # [no]_nl := [no] only nonlinear (terms)
+    # nl := only nonlinear (terms)
     # 
-    # Typical name: "name_i/c_s/m_[lhs/rhs]_nl/l"
+    # Typical name: "name_[i/c]_[s/m]_[lhs/rhs]_[nl/l]"
     
     ### Structural model ---------------------
     # Construct names of the structural model (including nonlinear terms)
@@ -249,7 +252,7 @@ parseModel <- function(
     }
     
     ## Sometimes (e.g. for testMGD) we need to parse an incomplete model, hence
-    ## errors and warnings should be ignored
+    ## errors and warnings related to incomplete models should be ignored in this case.
     if(.check_errors) {
       ### Checks, errors and warnings --------------------------------------------
       ## Stop if pop_values contains only a subset of values or labels
@@ -394,7 +397,7 @@ parseModel <- function(
       "Linear"
     }
     ### Create matrices specifying the relationship between constructs,
-    ### indicators and measurement errors --------------------------------------------------
+    ### indicators, and measurement errors -------------------------------------
     # Note: code below not required as long as only internal instruments 
     #       are allowed 
     # model_structural  <- matrix(0,
@@ -402,6 +405,7 @@ parseModel <- function(
     #                             ncol = length(names_c_s),
     #                             dimnames = list(names_c_s_l, names_c_s)
     # )
+    ### Set up empty matrices
     model_structural  <- matrix(0,
                                 nrow = number_of_constructs,
                                 ncol = number_of_constructs_all,
@@ -413,25 +417,21 @@ parseModel <- function(
                                 ncol = number_of_indicators,
                                 dimnames = list(names_c, names_i)
     )
-    
-    model_measurement_error       <- matrix(0,
-                                nrow = number_of_indicators,
-                                ncol = number_of_indicators,
-                                dimnames = list(names_i, names_i)
-    )
-    
-    # Matrix that indicates correlations among variables
         
     model_cor_specified <- matrix(0,
-                                    nrow = length(unique(c(tbl_e$lhs,tbl_e$rhs))),
-                                    ncol = length(unique(c(tbl_e$lhs,tbl_e$rhs))),
-                                    dimnames = list (unique(c(tbl_e$lhs,tbl_e$rhs)),
-                                                     unique(c(tbl_e$lhs,tbl_e$rhs))))
-
+                                  nrow = length(unique(c(tbl_e$lhs,tbl_e$rhs))),
+                                  ncol = length(unique(c(tbl_e$lhs,tbl_e$rhs))),
+                                  dimnames = list (unique(c(tbl_e$lhs,tbl_e$rhs)),
+                                                   unique(c(tbl_e$lhs,tbl_e$rhs))))
     
- 
-    ###  Sill matrices
-    ## Structural model
+    ## For convenience its useful to have a separate matrix of measurement errors 
+    model_measurement_error <- matrix(0,
+                                      nrow = number_of_indicators,
+                                      ncol = number_of_indicators,
+                                      dimnames = list(names_i, names_i)
+    )
+    
+    ## Fill model_structural
     row_index <- match(tbl_s$lhs, names_c)
     col_index <- match(tbl_s$rhs, names_c_all)
     # Note: code below not required as long as only internal instruments 
@@ -441,96 +441,109 @@ parseModel <- function(
     
     model_structural[cbind(row_index, col_index)] <- 1
     
-    ## If starting values are given create a supplementary structural matrix
-    ## that contains the starting values, otherwise assign a 1
+    ## If starting/population values are given create a supplementary structural 
+    ## matrix that contains the starting values
     if(!anyNA(pop_values)) {
       model_structural2 <- model_structural
       model_structural2[cbind(row_index, col_index)] <- tbl_s$ustart2
     }
 
-    ## Measurement model
+    ## Fill model measurement
     row_index <- match(tbl_m$lhs, names_c)
     col_index <- match(tbl_m$rhs, names_i)
     
     model_measurement[cbind(row_index, col_index)] <- 1
 
-    ## If starting values are given create a supplementary strucutral matrix
-    ## that contains the starting values, otherwise assign a 1
+    ## If starting values are given create a supplementary measurement matrix
+    ## that contains the starting values
     if(!anyNA(pop_values)) {
+
       model_measurement2 <- model_measurement
       model_measurement2[cbind(row_index, col_index)] <- tbl_m$ustart2
     }
     
-    ## Measurement error covariance matrix 
+    ## Fill model_measurement_error
     m_errors   <- tbl_e[tbl_e$lhs %in% names_i, , drop = FALSE]
-    
-    ## Structural error covariance matrix and/or covariances among exogenous constructs 
-    con_errors <- tbl_e[tbl_e$lhs %in% names_c, , drop = FALSE] 
     
     row_index <- match(m_errors$lhs, names_i)
     col_index <- match(m_errors$rhs, names_i)
     
     model_measurement_error[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
-    
-    
-    
-    ## If starting values are given create a supplementary structural matrix
-    ## that contains the starting values, otherwise assign a 1
-    if(!anyNA(pop_values)) {
+    # Currently, composite-based approaches (except GSCA ?) are unable to deal 
+    # with measurement errors accros blocks (even if they were, it is not implemented in cSEM).
+    if(.check_errors) {
+      model_measurement_error_temp <- model_measurement_error
+      for(i in names_c) {
+        x <- which(model_measurement[i, ] == 1)
+        model_measurement_error_temp[x, x] <- NA 
+      }
       
-      model_measurement_error2 <- model_measurement_error
+      contains_measurement_error <- sum(model_measurement_error_temp, na.rm = TRUE)
       
-      # Extract endogenous and exogenous variables
-      cons_endo <- rownames(model_structural)[rowSums(model_structural) != 0]
-      cons_exo  <- setdiff(colnames(model_structural), cons_endo)
-      
-      ## Phi
-      Phi <- matrix(0,
-                    nrow = length(cons_exo),
-                    ncol = length(cons_exo),
-                    dimnames = list(cons_exo, cons_exo)
-      )
-      # Set diagonal elements to 1
-      diag(Phi) <- 1
-      
-      if(length(tbl_e$ustart) != 0) {
-        
-        model_measurement_error2[cbind(c(row_index, col_index), c(col_index, row_index))] <- m_errors$ustart2
-        
-        # Get row and column index for constructs
-        row_index <- match(con_errors$lhs, cons_exo)
-        col_index <- match(con_errors$rhs, cons_exo)
-        
-        Phi[cbind(row_index, col_index)] <- con_errors$ustart2
-        Phi[lower.tri(Phi)] <- t(Phi)[lower.tri(Phi)]
+      if(contains_measurement_error > 0) {
+        stop2("The following warning occured in the `parseModel()` function:\n",
+              "Measurement errors across blocks not supported (yet).",
+              " Remove specified across-block error correlation.")
       }
     }
     
-    # Currently, composite-based approaches (except GSCA ?) are unable to deal 
-    # with measurement errors accros blocks (even if they were, it is not implemented in cSEM).
-    # Which errors are across block
-    model_measurement_error_temp <- model_measurement_error
-    for(i in names_c) {
-      x              <- which(model_measurement[i, ] == 1)
-      model_measurement_error_temp[x, x] <- NA 
-    }
-    
-    contains_measurement_error <- sum(model_measurement_error_temp, na.rm = TRUE)
-
-    if(contains_measurement_error > 0) {
-      warning2("The following warning occured in the `parseModel()` function:\n",
-               "Measurement errors across blocks not supported (yet).",
-               "Specified error correlation is ignored.")
-    }
-
-    
-    # Fill matrix model_cor_specified
+    # Fill model_cor_specified
     row_index <- match(tbl_e$lhs, unique(c(tbl_e$lhs,tbl_e$rhs)))
     col_index <- match(tbl_e$rhs, unique(c(tbl_e$lhs,tbl_e$rhs)))
     
-    model_cor_specified[cbind(row_index, col_index)] <- 1
+    model_cor_specified[cbind(c(row_index, col_index), c(col_index, row_index))] <- 1
     
+    # Currently, only correlations between indicators (within block), 
+    # measurement errors (within block), and exogenous 
+    # constructs are supported. The rest causes an error (if .check_errors = TRUE)
+    
+    if(.check_errors) {
+      # Extract endogenous and exogenous variables
+      # vars_endo <- rownames(model_structural)[rowSums(model_structural) != 0]
+      # vars_exo  <- setdiff(colnames(model_structural), vars_endo)
+     
+      ## TO DO: Figure out how to write this error
+    }
+    
+    ## If starting values are given create one matrix containing the correlation between
+    ## indicators, one for the correlation between measurement errors, and one for the
+    ## correlation between constructs. Each contains the starting values
+    if(!anyNA(pop_values)) {
+      # Note: when a correlation between indicators is given with population values 
+      # it depends on the construct
+      # type whether this correlation represents a measurement error correlation
+      # or a correlation between indicators. Suppose we have:
+      #               indicator1 ~~ 0.3*indicator2
+      #
+      # 1. If the construct the indicators are attached to is modeled as a common factor
+      #    the expression refers to a correlation between the measurement errors
+      #    of indicator 1 and 2.
+      # 2. If the construct the indicators are attached to is modeled as a composite
+      #    the expression refers to the correlation between the indicators itself.
+      
+      m_errors   <- tbl_e[tbl_e$lhs %in% names_i, , drop = FALSE]
+      con_errors <- tbl_e[tbl_e$lhs %in% names_c, , drop = FALSE] 
+      
+      ## Correlation between indicators / measurement errors 
+      row_index <- match(m_errors$lhs, names_i)
+      col_index <- match(m_errors$rhs, names_i)
+      
+      model_cor_indicators <- model_measurement_error
+      model_cor_indicators[cbind(c(row_index, col_index), c(col_index, row_index))] <- m_errors$ustart2
+      
+      ## Correlation between constructs (so far only the correlation between
+      ## exogenous constructs is relevant)
+      model_cor_constructs <- model_cor_specified[unique(c(con_errors$lhs, con_errors$rhs)),
+                                                  unique(c(con_errors$lhs, con_errors$rhs)), drop = FALSE]
+
+      row_index <- match(con_errors$lhs, rownames(model_cor_constructs))
+      col_index <- match(con_errors$rhs, colnames(model_cor_constructs))
+      
+      if(nrow(model_cor_constructs) > 0) {
+        model_cor_constructs[cbind(c(row_index, col_index), c(col_index, row_index))] <- con_errors$ustart2 
+      }
+    }
     
     ### Order model ============================================================
     # Order the structual equations in a way that every equation depends on
@@ -614,36 +627,23 @@ parseModel <- function(
       "structural"         = structural_ordered,
       "measurement"        = model_measurement[n, m, drop = FALSE],
       "error_cor"          = model_measurement_error[m, m, drop = FALSE],
-      "cor_specified"     = model_cor_specified,
+      "cor_specified"      = model_cor_specified,
       "construct_type"     = construct_type[match(n, names(construct_type))],
       "construct_order"    = construct_order[match(n, names(construct_order))],
       "model_type"         = type_of_model
-      # "cons_endo"          = rownames(model_ordered),
-      # "cons_exo"           = cons_exo,
-      # "cons_explana"       = colnames(structural_ordered)[colSums(structural_ordered) != 0],
-      # "explained_by_exo"   = explained_by_exo
     )
     
-    ## Population values 
+    ## Add population values to output if any are given
     if(!anyNA(pop_values)) {
-      model_ls$structural2  <- model_structural2[rownames(structural_ordered), 
+      model_ls$structural2   <- model_structural2[rownames(structural_ordered), 
                                                  colnames(structural_ordered)]
-      model_ls$measurement2 <- model_measurement2[n, m]
-      model_ls$error_cor2   <- model_measurement_error2[m, m]
-      model_ls$Phi          <- Phi
+      model_ls$measurement2  <- model_measurement2[n, m]
+      model_ls$indicator_cor <- model_cor_indicators
+      model_ls$construct_cor <- model_cor_constructs
     }
     
     ## Are there instruments? If yes add them
     if(!is.null(.instruments)) {
-      # Structural equations are named according to the name of the RHS variable
-      # of each equation (i.e. the name of the dependent variables).
-      
-      # # Name of the equation
-      # names_dependent <- names(which((rowSums(structural_ordered) != 0)))
-      # 
-      # # For which equation are instruments given
-      # eq_with_instruments <- intersect(names_dependent, names(.instruments))
-      
       for(i in names(.instruments)) {
         
         names_independent <- names(which(structural_ordered[i, ] == 1))
@@ -663,7 +663,7 @@ parseModel <- function(
     
     ## Should the full output be returned
     if(.full_output) {
-      model_ls$indicators <- names_i 
+      # model_ls$indicators <- names_i 
       model_ls$cons_exo <- cons_exo
       model_ls$cons_endo <- cons_endo 
       model_ls$vars_2nd <- names_c_2nd

@@ -25,6 +25,10 @@ forms a block diagonal matrix.}
 \item{\code{$error_cor}}{A (K x K) matrix mimicking the measurement error
 correlation relationship. The row and column order is identical to
 the column order of \code{$measurement}.}
+\item{\code{$cor_specified}}{A matrix indicating the correlation relationships
+between any variables of the model as specified by the user. Mainly for internal purposes.
+Note that \code{$cor_specified} may also contain inadmissible correlations
+such as a correlation between measurement errors indicators and constructs.}
 \item{\code{$construct_type}}{A named vector containing the names of each construct
 and their respective type ("Common factor" or "Composite").}
 \item{\code{$construct_order}}{A named vector containing the names of each construct
@@ -37,6 +41,10 @@ equations relating endogenous RHS variables to instruments.}
 If the \code{.full_output} argument to \code{\link[=parseModel]{parseModel()}} is set to \code{TRUE} the \link{cSEMModel}
 object will contain three additional list elements, namely:
 \describe{
+\item{\code{$cons_exo}}{The names of the exogenous constructs of the structural model
+(i.e., variables that do not appear on the LHS of any structural equation)}
+\item{\code{$cons_endo}}{The names of the endogenous constructs of the structural model
+(i.e., variables that appear on the LHS of at least one structural equation)}
 \item{\code{$vars_2nd}}{The names of the constructs modeled as second orders.}
 \item{\code{$vars_attached_to_2nd}}{The names of the constructs forming or building
 a second order construct.}
