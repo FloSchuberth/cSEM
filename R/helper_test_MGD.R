@@ -145,8 +145,12 @@ getParameterNames <- function(
   if(is.null(.model)) {
     if(inherits(.object, "cSEMResults_2ndorder")) {
       model_comp <- x22$Arguments_original$.model
+      # add the correlations among the exogenous constructs
     } else {
       model_comp <- x22$Model 
+      # add the correlations among the exogenous constructs
+      # add to model_cor_specified and expand 
+      # Attention if the some of the variables are already in that matrix
     }
   } else {
     model_comp <- parseModel(.model, .check_errors = FALSE,.full_output = TRUE)
