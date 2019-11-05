@@ -40,6 +40,8 @@
 #' If the `.full_output` argument to [parseModel()] is set to `TRUE` the [cSEMModel]
 #' object will contain three additional list elements, namely:
 #' \describe{
+#'   \item{`$indicators`}{The names of the indicators 
+#'     (i.e., observed variables and/or first-order constructs)}
 #'   \item{`$cons_exo`}{The names of the exogenous constructs of the structural model 
 #'     (i.e., variables that do not appear on the LHS of any structural equation)}
 #'   \item{`$cons_endo`}{The names of the endogenous constructs of the structural model 
