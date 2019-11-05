@@ -663,7 +663,7 @@ parseModel <- function(
     
     ## Should the full output be returned
     if(.full_output) {
-      # model_ls$indicators <- names_i 
+      model_ls$indicators <- colnames(model_measurement[n, m, drop = FALSE]) 
       model_ls$cons_exo <- cons_exo
       model_ls$cons_endo <- cons_endo 
       model_ls$vars_2nd <- names_c_2nd
