@@ -369,10 +369,10 @@ calculateParameterDifference <- function(
             y$Second_stage$Estimates$Weight_estimates)
       })
     cor_cons_exo_estimates <- lapply(x, function(y) {
-      temp = c(y$Estimates$Construct_VCV)
-      names(temp) = paste(rownames(y$Estimates$Construct_VCV),"~~", 
-                          rep(colnames(y$Estimates$Construct_VCV),
-                              each=ncol(y$Estimates$Construct_VCV)), sep=" ")
+      temp = c(y$Second_stage$Estimates$Construct_VCV)
+      names(temp) = paste(rownames(y$Second_stage$Estimates$Construct_VCV),"~~", 
+                          rep(colnames(y$Second_stage$Estimates$Construct_VCV),
+                              each=ncol(y$Second_stage$Estimates$Construct_VCV)), sep=" ")
       temp
       
     })
@@ -383,13 +383,14 @@ calculateParameterDifference <- function(
     weight_estimates <- lapply(x, function(y) {y$Estimates$Weight_estimates})
     # all exogenous construct correlations
     cor_cons_exo_estimates <- lapply(x, function(y) {
-      temp = c(y$Second_stage$Estimates$Construct_VCV)
-      names(temp) = paste(rownames(y$Second_stage$Estimates$Construct_VCV),"~~", 
-                          rep(colnames(y$Second_stage$Estimates$Construct_VCV),
-                              each=ncol(y$Second_stage$Estimates$Construct_VCV)), sep=" ")
+      temp = c(y$Estimates$Construct_VCV)
+      names(temp) = paste(rownames(y$Estimates$Construct_VCV),"~~", 
+                          rep(colnames(y$Estimates$Construct_VCV),
+                              each=ncol(y$Estimates$Construct_VCV)), sep=" ")
       temp
       
-      })
+    })
+    
   }
   
   ## Select
