@@ -116,10 +116,11 @@ getParameterNames <- function(
     measurement_org <- x22$Arguments_original$.model$measurement
     names_path_org <- x[[1]]$Second_stage$Estimates$Path_estimates$Name
     
-    # CHECK WHETHER THIS WORKS
-    indicators <- x22$Model$indicators
-    cons_exo <- x22$Model$cons_exo
-    cons_endo <- x22$Model$cons_endo
+    indicators <- x12$Model_original$indicators
+    cons_exo <- x12$Model_original$cons_exo
+    # Remove first-order constructs from cons_exo 
+    cons_exo <- setdiff(cons_exo,x12$Model_original$vars_attached_to_2nd)
+    cons_endo <- x12$Model_original$cons_endo
     
   } else {
     
