@@ -276,6 +276,15 @@ testMGD <- function(
   
   # Get the names of the parameters to be compared. 
   names_all_param <- getParameterNames(.object, .model = .parameters_to_compare)
+  
+  # getParameterNames() returns also measurement error correlations
+  # Currently this cannot be handeled, therefore an error is returned. 
+  # NEEDS TO BE FIXED
+  if(!is.null(names_all_param$names_cor_measurement_error)){
+    stop2("The following error occured in the testMGD() function:\n",
+          "Currenlty it is not allowed to compare measurement error covariance across groups.")
+  }
+  
   # names_param <- unlist(names_all_param[c("names_path","names_loadings","names_weights")])
   names_param <- unlist(names_all_param)
   
