@@ -504,7 +504,7 @@ parseModel <- function(
     ### Preparation ------------------------------------------------------------
     temp <- model_structural
     
-    ## Extract endogenous and exogenous constructs 
+    ## Extract endogenous and exogenous constructs
     cons_endo <- rownames(temp)[rowSums(temp) != 0]
     cons_exo  <- setdiff(colnames(temp), cons_endo)
     
@@ -614,7 +614,7 @@ parseModel <- function(
     ## Should the full output be returned
     if(.full_output) {
       model_ls$indicators <- colnames(model_measurement[n, m, drop = FALSE]) 
-      model_ls$cons_exo <- cons_exo
+      model_ls$cons_exo <- setdiff(cons_exo, names_c_attached_to_2nd) # maybe do earlier
       model_ls$cons_endo <- cons_endo 
       model_ls$vars_2nd <- names_c_2nd
       model_ls$vars_attached_to_2nd <- names_c_attached_to_2nd

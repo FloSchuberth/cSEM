@@ -129,18 +129,6 @@ summarize.cSEMResults_default <- function(
   # Set up empty matrix to select the relevant residual correlations 
   cor_selector <- x2$Model$error_cor
 
-  ## Modify and fill Lambda
-  for(i in names(x2$Model$construct_type)) {
-    indicators <- colnames(x2$Model$measurement[i, x2$Model$measurement[i, ] != 0, drop = FALSE])
-    
-    # For common factors only the measurment errors specified by the user
-    # are returned. Since they are already contained in cor_selector nothing needs
-    # to be done
-    if(x2$Model$construct_type[i] == "Composite") {
-      # For composites all residual correlations within a block are returned
-      cor_selector[indicators, indicators] <-  1
-    } 
-  }
   # Variances are not of interest and each correlation should appear only once
   cor_selector[upper.tri(cor_selector, diag = TRUE)] <- 0
   
@@ -148,6 +136,7 @@ summarize.cSEMResults_default <- function(
   temp <- outer(rownames(x1$Residual_correlation), colnames(x1$Residual_correlation), 
                 FUN = function(x, y) paste(x, y, sep = " ~~ "))
   
+  ## For composites we need the indicator correlations not the residuals
   if(sum(cor_selector) != 0) {
     residual_correlation <- data.frame(
       "Name"           = t(temp)[cor_selector != 0],
@@ -162,6 +151,71 @@ summarize.cSEMResults_default <- function(
   } else {
     residual_correlation <- data.frame(NULL)
   }
+  
+  ## Indicator correlation ------------------------------------------------------
+  # Set up empty matrix to select the relevant residual correlations 
+  cor_selector[] <- 0
+  
+  ## Modify and fill Lambda
+  for(i in names(x2$Model$construct_type)) {
+    indicators <- colnames(x2$Model$measurement[i, x2$Model$measurement[i, ] != 0, drop = FALSE])
+    
+    # For common factors only the measurment errors specified by the user
+    # are returned. Since they are already contained in cor_selector nothing needs
+    # to be done
+    if(x2$Model$construct_type[i] == "Composite") {
+      cor_selector[indicators, indicators] <- 1
+    }
+  }
+  
+  # Variances are not of interest and each correlation should appear only once
+  cor_selector[upper.tri(cor_selector, diag = TRUE)] <- 0
+  
+  # Build names
+  temp <- outer(rownames(x1$Indicator_VCV), colnames(x1$Indicator_VCV), 
+                FUN = function(x, y) paste(x, y, sep = " ~~ "))
+  
+  ## For composites we need the indicator correlations not the residuals
+  if(sum(cor_selector) != 0) {
+    indicator_correlation <- data.frame(
+      "Name"           = t(temp)[cor_selector != 0],
+      "Estimate"       = x1$Indicator_VCV[cor_selector != 0],
+      "Std_err"        = NA,
+      "t_stat"         = NA,
+      "p_value"        = NA,
+      stringsAsFactors = FALSE)
+    
+    # Delete rownames
+    rownames(indicator_correlation) <- NULL 
+  } else {
+    indicator_correlation <- data.frame(NULL)
+  }
+  
+  ## Exogenous construct correlations ------------------------------------------
+  # Set up empty matrix to select the relevant residual correlations 
+  exo_cors <- as.matrix(x1$Construct_VCV[x2$Model$cons_exo, x2$Model$cons_exo])
+  
+  # Build names
+  temp <- outer(rownames(x1$Construct_VCV[x2$Model$cons_exo, x2$Model$cons_exo]), 
+                colnames(x1$Construct_VCV[x2$Model$cons_exo, x2$Model$cons_exo]), 
+                FUN = function(x, y) paste(x, y, sep = " ~~ "))
+  
+  ## For composites we need the indicator correlations not the residuals
+  if(nrow(exo_cors) > 1) {
+    exo_construct_correlation <- data.frame(
+      "Name"           = t(temp)[lower.tri(exo_cors, diag = FALSE)],
+      "Estimate"       = exo_cors[lower.tri(exo_cors, diag = FALSE)],
+      "Std_err"        = NA,
+      "t_stat"         = NA,
+      "p_value"        = NA,
+      stringsAsFactors = FALSE)
+    
+    # Delete rownames
+    rownames(exo_construct_correlation) <- NULL 
+  } else {
+    exo_construct_correlation <- data.frame(NULL)
+  }
+
   
   ## Construct scores ----------------------------------------------------------
   construct_scores <- as.data.frame(x1$Construct_scores)
@@ -267,6 +321,45 @@ summarize.cSEMResults_default <- function(
                                           (length(ci_colnames) - 1)):length(colnames(residual_correlation))] <- ci_colnames
       }
     }
+    
+    ## Indicator correlation ---------------------------------------------------
+    temp   <- infer_out$Indicator_correlation
+    if(!is.null(temp)) {
+      t_temp <- exo_construct_correlation$Estimate / temp$sd
+      
+      exo_construct_correlation["Std_err"] <- temp$sd
+      exo_construct_correlation["t_stat"]  <- t_temp
+      exo_construct_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+      
+      if(!is.null(.ci)) {
+        ## Add CI's
+        # Add cis to data frame and set names
+        exo_construct_correlation <- cbind(exo_construct_correlation, t(do.call(rbind, temp[.ci])))
+        rownames(exo_construct_correlation) <- NULL
+        colnames(exo_construct_correlation)[(length(colnames(exo_construct_correlation)) - 
+                                          (length(ci_colnames) - 1)):length(colnames(exo_construct_correlation))] <- ci_colnames
+      }
+    }
+    
+    ## Indicator correlation ---------------------------------------------------
+    temp   <- infer_out$Indicator_correlation
+    if(!is.null(temp)) {
+      t_temp <- indicator_correlation$Estimate / temp$sd
+      
+      indicator_correlation["Std_err"] <- temp$sd
+      indicator_correlation["t_stat"]  <- t_temp
+      indicator_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+      
+      if(!is.null(.ci)) {
+        ## Add CI's
+        # Add cis to data frame and set names
+        indicator_correlation <- cbind(indicator_correlation, t(do.call(rbind, temp[.ci])))
+        rownames(indicator_correlation) <- NULL
+        colnames(indicator_correlation)[(length(colnames(indicator_correlation)) - 
+                                           (length(ci_colnames) - 1)):length(colnames(indicator_correlation))] <- ci_colnames
+      }
+    }
+    
 
     
     ## Effects -----------------------------------------------------------------
@@ -306,6 +399,9 @@ summarize.cSEMResults_default <- function(
   .object$Estimates$Loading_estimates <- loading_estimates
   .object$Estimates$Weight_estimates  <- weight_estimates
   .object$Estimates$Residual_correlation <- residual_correlation
+  .object$Estimates$Indicator_correlation <- indicator_correlation
+  .object$Estimates$Exo_construct_correlation <- exo_construct_correlation
+  
   if(x2$Arguments$.approach_weights == "PLS-PM") {
     .object$Estimates$Inner_weight_estimates <- inner_weight_estimates
   }
@@ -529,6 +625,25 @@ summarize.cSEMResults_2ndorder <- function(
         rownames(x11$Residual_correlationn) <- NULL
         colnames(x11$Residual_correlation)[(length(colnames(x11$Residual_correlation)) - 
                                           (length(ci_colnames) - 1)):length(colnames(x11$Residual_correlation))] <- ci_colnames
+      }
+    }
+    
+    ## Indicator correlation ---------------------------------------------------
+    temp   <- infer_out$Indicator_correlation
+    if(!is.null(temp)) {
+      t_temp <- x11$Indicator_correlation$Estimate / temp$sd
+      
+      x11$Indicator_correlation["Std_err"] <- temp$sd
+      x11$Indicator_correlation["t_stat"]  <- t_temp
+      x11$Indicator_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+      
+      if(!is.null(.ci)) {
+        ## Add CI's
+        # Add cis to data frame and set names
+        x11$Indicator_correlation <- cbind(x11$Indicator_correlation, t(do.call(rbind, temp[.ci])))
+        rownames(x11$Indicator_correlationn) <- NULL
+        colnames(x11$Indicator_correlation)[(length(colnames(x11$Indicator_correlation)) - 
+                                              (length(ci_colnames) - 1)):length(colnames(x11$Indicator_correlation))] <- ci_colnames
       }
     }
     

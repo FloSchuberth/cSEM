@@ -280,14 +280,16 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     x22 <- x$Second_stage$Information
     
     # Residual correlation
-    res_cor <- x11$Residual_correlation
+    res_cor  <- x11$Residual_correlation
+    indi_cor <- x11$Indicator_correlation 
   } else {
     
     x21 <- x$Estimates
     x22 <- x$Information
     
     # Residual correlation
-    res_cor <- x21$Residual_correlation
+    res_cor  <- x21$Residual_correlation
+    indi_cor <- x21$Indicator_correlation 
   }
   
   cat2(
@@ -336,6 +338,14 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     cat2("\n\nResidual correlation:\n============================")
     printSummarizePathResdiualCorrelation(x, .ci_colnames = ci_colnames, 
                                           .what = "Residual correlation")
+  }
+  
+  ## Indicator correlation
+  
+  if(.full_output && nrow(indi_cor) != 0) {
+    cat2("\n\nIndicator correlation:\n============================")
+    printSummarizePathResdiualCorrelation(x, .ci_colnames = ci_colnames, 
+                                          .what = "Indicator correlation")
   }
 
   if(.full_output && x22$Model$model_type == "Linear") {

@@ -178,7 +178,8 @@ printSummarizePathResdiualCorrelation <- function(.summarize_object, .ci_colname
       "Path" = {x <- .summarize_object$Second_stage$Estimates$Path_estimates},
       "Total effect" = {.summarize_object$Second_stage$Estimates$Effect_estimates$Total_effect},
       "Indirect effect" = {.summarize_object$Second_stage$Estimates$Effect_estimates$Indirect_effect},
-      "Residual correlation" = {.summarize_object$First_stage$Estimates$Residual_correlation}
+      "Residual correlation" = {.summarize_object$First_stage$Estimates$Residual_correlation},
+      "Indicator correlation" = {.summarize_object$First_stage$Estimates$Indicator_correlation}
     )
 
   } else {
@@ -186,7 +187,8 @@ printSummarizePathResdiualCorrelation <- function(.summarize_object, .ci_colname
       "Path" = {.summarize_object$Estimates$Path_estimates},
       "Total effect" = {.summarize_object$Estimates$Effect_estimates$Total_effect},
       "Indirect effect" = {.summarize_object$Estimates$Effect_estimates$Indirect_effect},
-      "Residual correlation" = {.summarize_object$Estimates$Residual_correlation}
+      "Residual correlation" = {.summarize_object$Estimates$Residual_correlation},
+      "Indicator correlation" = {.summarize_object$Estimates$Indicator_correlation}
     )
   }
   
@@ -226,7 +228,8 @@ printSummarizePathResdiualCorrelation <- function(.summarize_object, .ci_colname
       col_align(sprintf("%.4f", x[i, "p_value"]), 10, align = "right")
     )
     if(length(.ci_colnames) != 0) {
-      for(j in seq(1, length(.ci_colnames), by = 2) + ifelse(.what == "Residual correlation", 5, 6)) {
+      for(j in seq(1, length(.ci_colnames), by = 2) + 
+          ifelse(.what %in% c("Residual correlation", "Indicator correlation"), 5, 6)) {
         cat2(
           col_align(
             paste0("[", sprintf("%7.4f", x[i, j]), ";", 
