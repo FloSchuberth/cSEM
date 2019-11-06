@@ -120,8 +120,7 @@ getParameterNames <- function(
     cons_exo <- x12$Model_original$cons_exo
     # Remove first-order constructs from cons_exo 
     cons_exo <- setdiff(cons_exo,x12$Model_original$vars_attached_to_2nd)
-    cons_endo <- x12$Model_original$cons_endo
-    
+
   } else {
     
     x22  <- x[[1]]$Information
@@ -133,7 +132,6 @@ getParameterNames <- function(
     
     indicators <- x22$Model$indicators
     cons_exo <- x22$Model$cons_exo
-    cons_endo <- x22$Model$cons_endo
   }
   
   # Parse model that indicates which parameters should be compared.
@@ -322,8 +320,7 @@ getParameterNames <- function(
   ## Construct correlations 
   
   cons_exo_correlated_compare <- intersect(vars_correlated_compare, cons_exo)
-  cons_endo_correlated_compare <- intersect(vars_correlated_compare, cons_endo) 
-  
+
   # Consider only exogenous constructs
   cor_cons_exo <- model_compare$cor_specified[cons_exo_correlated_compare,cons_exo_correlated_compare]
   # As cor-specified and thus cor_cons_exo is a symmetric matrix, therefore, the lower triangular elements are replaced by 0
