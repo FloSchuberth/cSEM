@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators_paths.R
 \name{estimatePath}
 \alias{estimatePath}
-\title{Estimate the structural coefficients}
+\title{Internal: Estimate the structural coefficients}
 \usage{
 estimatePath(
  .approach_nl      = args_default()$.approach_nl,
@@ -56,5 +56,6 @@ R2, the adjusted R2, and the VIF's for each regression.
 }
 \description{
 Estimates the coefficients of the structural model (nonlinear and linear) using
-OLS, 2SLS, or 3SLS. The two latters currently works only for linear models.
+OLS, 2SLS, or 3SLS. The latter two currently work for linear models only.
 }
+\keyword{internal}

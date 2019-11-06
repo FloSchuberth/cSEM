@@ -2,7 +2,7 @@
 % Please edit documentation in R/00_foreman.R
 \name{foreman}
 \alias{foreman}
-\title{Composite-based SEM}
+\title{Internal: Composite-based SEM}
 \usage{
 foreman(
   .data                        = args_default()$.data,
@@ -157,3 +157,4 @@ be more convenient to use \code{\link[=csem]{csem()}} instead.
 \seealso{
 \link{csem}, \link{cSEMResults}
 }
+\keyword{internal}

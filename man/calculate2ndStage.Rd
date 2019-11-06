@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_csem.R
 \name{calculate2ndStage}
 \alias{calculate2ndStage}
-\title{Second order constructs}
+\title{Internal: Second/Third stage of the two-stage approach for second order constructs}
 \usage{
 calculate2ndStage(
  .csem_model          = args_default()$.csem_model,

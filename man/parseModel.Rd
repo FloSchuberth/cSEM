@@ -154,5 +154,4 @@ parseModel(m_incomplete)
 m_incomplete <- m[c("structural", "construct_type")]
 parseModel(m_incomplete)
 }
-
 }

@@ -1,4 +1,4 @@
-#' Internal: Calculate composite weights using PLS-PM
+#' Calculate composite weights using PLS-PM
 #'
 #' Calculate composite weights using the partial least squares path modeling 
 #' (PLS-PM) algorithm \insertCite{Wold1975}{cSEM}.
@@ -169,7 +169,7 @@ calculateWeightsPLS <- function(
   # D (J x J) := An "adjacency" matrix with elements equal to one, if proxy j and j' are adjacent
 } # END calculateWeightsPLS
 
-#' Internal: Calculate composite weights using GCCA
+#' Calculate composite weights using GCCA
 #'
 #' Calculates composite weights according to one of the the five criteria
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*", and "*GENVAR*"
@@ -343,7 +343,7 @@ calculateWeightsKettenring <- function(
 } # END calculateWeightsKettenring
 
 
-#' Internal: Calculate composite weights using GSCA
+#' Calculate composite weights using GSCA
 #'
 #' Calculate composite weights using generalized structure component analysis (GSCA). 
 #' The first version of this approach was presented in \insertCite{Hwang2004;textual}{cSEM}. 
@@ -532,7 +532,7 @@ calculateWeightsGSCA <- function(
   
 } # END calculateWeightsGSCA
 
-#' Intenral: Calculate weights using GSCAm
+#' Calculate weights using GSCAm
 #'
 #' Calculate composite weights using generalized structured component analysis
 #' with uniqueness terms (GSCAm) proposed by \insertCite{Hwang2017;textual}{cSEM}.
@@ -743,7 +743,7 @@ calculateWeightsGSCAm <- function(
   
 } # END calculateWeightsGSCA
 
-#' Internal: Calculate composite weights using unit weights
+#' Calculate composite weights using unit weights
 #'
 #' Calculate unit weights for all blocks, i.e., each indicator of a block is
 #' equally weighted.
@@ -790,7 +790,7 @@ calculateWeightsUnit = function(
   return(l)  
 }
 
-#' Internal: Calculate composite weights using principal component analysis (PCA)
+#' Calculate composite weights using principal component analysis (PCA)
 #'
 #' Calculate weights for each block by extracting the first principal component
 #' of the indicator correlation matrix S_jj for each blocks, i.e., weights

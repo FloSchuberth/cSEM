@@ -2,9 +2,6 @@
 % Please edit documentation in R/csem_fit.R
 \name{fit}
 \alias{fit}
-\alias{fit.cSEMResults_default}
-\alias{fit.cSEMResults_multi}
-\alias{fit.cSEMResults_2ndorder}
 \title{Model-implied indicator or construct variance-covariance matrix}
 \usage{
 fit(
@@ -12,18 +9,6 @@ fit(
   .saturated = args_default()$.saturated,
   .type_vcv  = args_default()$.type_vcv
   )
-
-\method{fit}{cSEMResults_default}(.object = NULL,
-  .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv)
-
-\method{fit}{cSEMResults_multi}(.object = NULL,
-  .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv)
-
-\method{fit}{cSEMResults_2ndorder}(.object = NULL,
-  .saturated = args_default()$.saturated,
-  .type_vcv = args_default()$.type_vcv)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -47,22 +32,6 @@ Notation is taken from \insertCite{Bollen1989;textual}{cSEM}.
 If \code{.saturated = TRUE} the model-implied variance-covariance matrix is calculated
 for a saturated structural model (i.e., the VCV of the constructs is replaced
 by their correlation matrix). Hence: V(eta) = WSW' (possibly disattenuated).
-}
-\section{Methods (by class)}{
-\itemize{
-\item \code{cSEMResults_default}: (TODO)
-
-\item \code{cSEMResults_multi}: (TODO)
-
-\item \code{cSEMResults_2ndorder}: (TODO)
-}}
-
-\examples{
-\dontrun{
-res <- csem(.data = dataset, .model = model)
-
-fit(.object = res, .saturated = FALSE, .type_vcv = "indicator")
-}
 }
 \references{
 \insertAllCited{}

@@ -144,12 +144,7 @@ the CI based on bootstraped t-values and bootstraped/jackknife SE's
 \item \code{BcaCIResample}: (TODO)
 }}
 
-\examples{
-\dontrun{
-# still to implement
-}
-
-}
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}, \link{cSEMResults}
 }
+\keyword{internal}

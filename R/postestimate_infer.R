@@ -35,11 +35,6 @@
 #' @inheritParams csem_arguments
 #' 
 #' @seealso [csem()], [resamplecSEMResults()], [cSEMResults]
-#'
-#' @examples
-#' \dontrun{
-#' # still to implement
-#' }
 #' 
 #' @export
 #'

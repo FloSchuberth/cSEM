@@ -1,4 +1,4 @@
-#' Composite-based SEM
+#' Internal: Composite-based SEM
 #'
 #' The central hub of the \pkg{cSEM} package. It acts like a 
 #' foreman by collecting all (estimation) tasks, distributing them to lower 
@@ -37,7 +37,8 @@
 #' @inherit csem_results return
 #'
 #' @seealso [csem], [cSEMResults]
-#'
+#' 
+#' @keywords internal
 
 foreman <- function(
   .data                        = args_default()$.data,

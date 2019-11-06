@@ -19,12 +19,6 @@
 #'
 #' @return Either a (K x K) matrix or a (J x J) matrix depending on the `*type_vcv*`.
 #' 
-#' @examples 
-#' \dontrun{
-#' res <- csem(.data = dataset, .model = model)
-#' 
-#' fit(.object = res, .saturated = FALSE, .type_vcv = "indicator")
-#' }
 #' @references
 #'   \insertAllCited{}
 #'   
@@ -40,7 +34,6 @@ fit <- function(
   UseMethod("fit")
 }
 
-#' @describeIn fit (TODO)
 #' @export
 
 fit.cSEMResults_default <- function(
@@ -157,7 +150,6 @@ fit.cSEMResults_default <- function(
   return(Sigma)
 }
 
-#' @describeIn fit (TODO)
 #' @export
 
 fit.cSEMResults_multi <- function(
@@ -177,7 +169,6 @@ fit.cSEMResults_multi <- function(
   }
 }
 
-#' @describeIn fit (TODO)
 #' @export
 
 fit.cSEMResults_2ndorder <- function(

@@ -295,8 +295,6 @@ calculateIndicatorCor <- function(
 }
 
 #' Internal: Calculate Reliabilities
-#'
-#' (TODO)
 #'  
 #' @inheritParams csem_arguments
 #'

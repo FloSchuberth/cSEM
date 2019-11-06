@@ -1,4 +1,4 @@
-#' Second order constructs
+#' Internal: Second/Third stage of the two-stage approach for second order constructs
 #'
 #' Performs the second and third stage for a model containing second order 
 #' constructs.

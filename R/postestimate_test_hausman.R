@@ -5,37 +5,33 @@
 #' 
 #' @usage testHausman(
 #'  .object               = NULL,
-#'  .alpha                = args_default()$.alpha,
-#'  .eval_plan            = args_default()$.eval_plan,
-#'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-#'  .R                    = args_default()$.R,
-#'  .resample_method      = args_default()$.resample_method,
-#'  .seed                 = args_default()$.seed
+#'  .alpha                = 0.05,
+#'  .eval_plan            = c("sequential", "multiprocess"),
+#'  .handle_inadmissibles = c("drop", "ignore", "replace"),
+#'  .R                    = 499,
+#'  .resample_method      = c("bootstrap", "jackknife"),
+#'  .seed                 = NULL
 #'  )
 #' 
 #' @inheritParams csem_arguments
 #' 
-#' @seealso [csem()], [foreman()], [cSEMResults]
-#' 
-#' @references
-#'   \insertAllCited{}
+#' @seealso [csem()], [cSEMResults]
 #'   
-#' @examples
-#' \dontrun{
-#' # TODO
-#' }
-#'
 #' @export
 
 testHausman <- function(
   .object               = NULL,
-  .alpha                = args_default()$.alpha,
-  .eval_plan            = args_default()$.eval_plan,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R                    = args_default()$.R,
-  .resample_method      = args_default()$.resample_method,
-  .seed                 = args_default()$.seed
+  .alpha                = 0.05,
+  .eval_plan            = c("sequential", "multiprocess"),
+  .handle_inadmissibles = c("drop", "ignore", "replace"),
+  .R                    = 499,
+  .resample_method      = c("bootstrap", "jackknife"),
+  .seed                 = NULL
 ) {
+  
+  .eval_plan <- match.arg(.eval_plan)
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+  .resample_method      <- match.arg(.resample_method)
   
   if(!inherits(.object, "cSEMResults_default")) {
     stop2("Hausman test currently only available for linear models.")
@@ -162,9 +158,6 @@ testHausman <- function(
     .eval_plan            = .eval_plan,
     .seed                 = .seed
   )
-  # 
-  # class(out) <- c("cSEMTestHausman", "cSEMResults_resampled")
-  # out
   
   ## Get relevant quantities
   out_infer <- infer(out, .alpha = .alpha)

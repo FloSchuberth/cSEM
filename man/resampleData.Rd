@@ -222,7 +222,7 @@ VAL  =~ val1  + val2  + val3  + val4
 a <- csem(satisfaction, model)
 
 # Create bootstrap and jackknife samples
-res_boot <- resampleData(a, .resample_method = "bootstrap", .R = 999)
+res_boot <- resampleData(a, .resample_method = "bootstrap", .R = 499)
 res_jack <- resampleData(a, .resample_method = "jackknife")
 
 # Since `satisfaction` is the dataset used the following approaches yield

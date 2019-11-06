@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators_weights.R
 \name{calculateWeightsKettenring}
 \alias{calculateWeightsKettenring}
-\title{Internal: Calculate composite weights using GCCA}
+\title{Calculate composite weights using GCCA}
 \usage{
 calculateWeightsKettenring(
   .S              = args_default()$.S, 

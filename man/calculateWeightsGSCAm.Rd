@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators_weights.R
 \name{calculateWeightsGSCAm}
 \alias{calculateWeightsGSCAm}
-\title{Intenral: Calculate weights using GSCAm}
+\title{Calculate weights using GSCAm}
 \usage{
 calculateWeightsGSCAm(
   .X                           = args_default()$.X,

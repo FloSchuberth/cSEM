@@ -1,12 +1,16 @@
 #' Summarize model
 #'
-#' Summarize the model (TODO). 
-#' 
-#' Summary (TODO)
+#' Summarize an estimated model.
 #'
+#' @return The return object has the exact same structure as `.object`. 
+#'   As opposed to `.object`, the results for the Path coefficients, the loadings,
+#'   the weights, the indirect effect, the total effects, and (if present) the
+#'   residual correlations are returned as standarized data.frames! This is usually
+#'   much more convenient if users intend to present the results in e.g., a paper.
+#'   
 #' @usage summarize(
 #'  .object = NULL, 
-#'  .alpha  = args_default()$.alpha,
+#'  .alpha  = 0.05,
 #'  .ci     = NULL,
 #'  ...
 #'  )
@@ -20,19 +24,18 @@
 #'
 summarize <- function(
   .object                = NULL, 
-  .alpha                 = args_default()$.alpha,
+  .alpha                 = 0.05,
   .ci                    = NULL,
   ...
   ) {
   UseMethod("summarize")
 }
 
-#' @describeIn summarize (TODO)
 #' @export
 
 summarize.cSEMResults_default <- function(
   .object                = NULL, 
-  .alpha                 = args_default()$.alpha,
+  .alpha                 = 0.05,
   .ci                    = NULL,
   ...
   ) {
@@ -320,12 +323,11 @@ summarize.cSEMResults_default <- function(
   return(.object)
 }
 
-#' @describeIn summarize (TODO)
 #' @export
 
 summarize.cSEMResults_multi <- function(
   .object                = NULL, 
-  .alpha                 = args_default()$.alpha,
+  .alpha                 = 0.05,
   .ci                    = NULL,
   ...
 ) {
@@ -339,12 +341,11 @@ summarize.cSEMResults_multi <- function(
   }
 }
 
-#' @describeIn summarize (TODO)
 #' @export
 
 summarize.cSEMResults_2ndorder <- function(
   .object                = NULL, 
-  .alpha                 = args_default()$.alpha,
+  .alpha                 = 0.05,
   .ci                    = NULL,
   ...
 ) {

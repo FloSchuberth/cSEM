@@ -1,4 +1,4 @@
-#' Process data
+#' Internal: Process data
 #'
 #' Prepare, standardize, check, and clean data provided via the `.data` argument.
 #'
@@ -14,31 +14,7 @@
 #'   according to the order they appear in the measurement model equations provided
 #'   via the `.model` argument.
 #'
-#' @examples
-#' dat <- data.frame(x2 = rnorm(100),
-#'                   x1 = rnorm(100),
-#'                   b2 = rnorm(100),
-#'                   b1 = rnorm(100),
-#'                   a1 = rnorm(100),
-#'                   a2 = rnorm(100)
-#'                   )
-#'
-#' model <- '
-#' # Structural model
-#' y1 ~ y2 + y3
-#'
-#' # Measurement model
-#' y1 =~ x1 + x2
-#' y2 =~ a1 + a2
-#' y3 =~ b1 + b2
-#' '
-#'
-#' dat <- processData(dat, model)
-#'
-#' is.data.frame(dat) # TRUE
-#' colnames(dat)      # "x1", "x2", "a1", "a2", "b1", "b2"
-#'
-#' @export
+#' @keywords internal
 
 processData <- function(
   .data        = NULL, 
