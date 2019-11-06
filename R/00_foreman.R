@@ -38,8 +38,6 @@
 #'
 #' @seealso [csem], [cSEMResults]
 #'
-#' @export
-#'
 
 foreman <- function(
   .data                        = args_default()$.data,
