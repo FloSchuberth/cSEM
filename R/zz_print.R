@@ -278,10 +278,16 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     
     x21 <- x$Second_stage$Estimates
     x22 <- x$Second_stage$Information
+    
+    # Residual correlation
+    res_cor <- x11$Residual_correlation
   } else {
     
     x21 <- x$Estimates
     x22 <- x$Information
+    
+    # Residual correlation
+    res_cor <- x21$Residual_correlation
   }
   
   cat2(
@@ -304,7 +310,6 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   
   ## Confidence intervals
   # Get the column names of the columns containing confidence intervals
-  ## Check the class
   ci_colnames <- colnames(x21$Path_estimates)[-c(1:6)]
   
   # Are there more confidence intervals than the default (the 95% percentile CI)
@@ -320,11 +325,18 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   
   ## Path estimates
   cat2("Estimated path coefficients:\n============================")
-  printSummarizePath(x, .ci_colnames = ci_colnames)
+  printSummarizePathResdiualCorrelation(x, .ci_colnames = ci_colnames)
   
   ## Loadings and Weights
   printSummarizeLoadingsWeights(x, .ci_colnames = ci_colnames)
   
+  ## Residual correlation
+
+  if(.full_output && nrow(res_cor) != 0) {
+    cat2("\n\nResidual correlation:\n============================")
+    printSummarizePathResdiualCorrelation(x, .ci_colnames = ci_colnames, 
+                                          .what = "Residual correlation")
+  }
 
   if(.full_output && x22$Model$model_type == "Linear") {
     ### Effects ----------------------------------------------------------------
@@ -332,11 +344,13 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     ## Path estimates
     cat2("Estimated total effects:\n========================")
     
-    printSummarizePath(x, .ci_colnames = ci_colnames, .what = "Total effect")
+    printSummarizePathResdiualCorrelation(x, .ci_colnames = ci_colnames, 
+                                          .what = "Total effect")
     
     cat2("\n\nEstimated indirect effects:\n===========================")
     
-    printSummarizePath(x, .ci_colnames = ci_colnames, .what = "Indirect effect")
+    printSummarizePathResdiualCorrelation(x, .ci_colnames = ci_colnames, 
+                                          .what = "Indirect effect")
   }
 
   cat2("\n", rule2(type = 2))

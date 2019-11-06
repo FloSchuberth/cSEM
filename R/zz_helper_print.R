@@ -170,21 +170,23 @@ printSummarizeConstructDetails <- function(.summarize_object) {
 #' Helper for print.cSEMSummarize
 #' @noRd
 #' 
-printSummarizePath <- function(.summarize_object, .ci_colnames, .what = "Path") {
+printSummarizePathResdiualCorrelation <- function(.summarize_object, .ci_colnames, .what = "Path") {
   
   ## Check the class
   x <- if(inherits(.summarize_object, "cSEMSummarize_2ndorder")) {
     switch (.what,
       "Path" = {x <- .summarize_object$Second_stage$Estimates$Path_estimates},
       "Total effect" = {.summarize_object$Second_stage$Estimates$Effect_estimates$Total_effect},
-      "Indirect effect" = {.summarize_object$Second_stage$Estimates$Effect_estimates$Indirect_effect}
+      "Indirect effect" = {.summarize_object$Second_stage$Estimates$Effect_estimates$Indirect_effect},
+      "Residual correlation" = {.summarize_object$First_stage$Estimates$Residual_correlation}
     )
 
   } else {
     switch (.what,
       "Path" = {.summarize_object$Estimates$Path_estimates},
       "Total effect" = {.summarize_object$Estimates$Effect_estimates$Total_effect},
-      "Indirect effect" = {.summarize_object$Estimates$Effect_estimates$Indirect_effect}
+      "Indirect effect" = {.summarize_object$Estimates$Effect_estimates$Indirect_effect},
+      "Residual correlation" = {.summarize_object$Estimates$Residual_correlation}
     )
   }
   
@@ -224,11 +226,11 @@ printSummarizePath <- function(.summarize_object, .ci_colnames, .what = "Path") 
       col_align(sprintf("%.4f", x[i, "p_value"]), 10, align = "right")
     )
     if(length(.ci_colnames) != 0) {
-      for(j in seq(1, length(.ci_colnames), by = 2) + 6) {
+      for(j in seq(1, length(.ci_colnames), by = 2) + ifelse(.what == "Residual correlation", 5, 6)) {
         cat2(
           col_align(
             paste0("[", sprintf("%7.4f", x[i, j]), ";", 
-                   sprintf("%7.4f", x[i, j+1]), "]"), 20, align = "center")
+                   sprintf("%7.4f", x[i, j+1]), " ]"), 20, align = "center")
         )
       } 
     }
@@ -262,7 +264,7 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
           cat2(
             col_align(
               paste0("[", sprintf("%7.4f", x[i, j]), ";", 
-                     sprintf("%7.4f", x[i, j+1]), "]"), 20, align = "center")
+                     sprintf("%7.4f", x[i, j+1]), " ]"), 20, align = "center")
           )
         } 
       }

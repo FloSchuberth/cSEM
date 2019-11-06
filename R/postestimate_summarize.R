@@ -122,6 +122,44 @@ summarize.cSEMResults_default <- function(
     
   }
   
+  ## Residual correlation ------------------------------------------------------
+  # Set up empty matrix to select the relevant residual correlations 
+  cor_selector <- x2$Model$error_cor
+
+  ## Modify and fill Lambda
+  for(i in names(x2$Model$construct_type)) {
+    indicators <- colnames(x2$Model$measurement[i, x2$Model$measurement[i, ] != 0, drop = FALSE])
+    
+    # For common factors only the measurment errors specified by the user
+    # are returned. Since they are already contained in cor_selector nothing needs
+    # to be done
+    if(x2$Model$construct_type[i] == "Composite") {
+      # For composites all residual correlations within a block are returned
+      cor_selector[indicators, indicators] <-  1
+    } 
+  }
+  # Variances are not of interest and each correlation should appear only once
+  cor_selector[upper.tri(cor_selector, diag = TRUE)] <- 0
+  
+  # Build names
+  temp <- outer(rownames(x1$Residual_correlation), colnames(x1$Residual_correlation), 
+                FUN = function(x, y) paste(x, y, sep = " ~~ "))
+  
+  if(sum(cor_selector) != 0) {
+    residual_correlation <- data.frame(
+      "Name"           = t(temp)[cor_selector != 0],
+      "Estimate"       = x1$Residual_correlation[cor_selector != 0],
+      "Std_err"        = NA,
+      "t_stat"         = NA,
+      "p_value"        = NA,
+      stringsAsFactors = FALSE)
+    
+    # Delete rownames
+    rownames(residual_correlation) <- NULL 
+  } else {
+    residual_correlation <- data.frame(NULL)
+  }
+  
   ## Construct scores ----------------------------------------------------------
   construct_scores <- as.data.frame(x1$Construct_scores)
   
@@ -155,7 +193,7 @@ summarize.cSEMResults_default <- function(
     
     ## Path estimates ----------------------------------------------------------
     temp   <- infer_out$Path_estimates
-    t_temp <- t(x1$Path_estimates)[t(x2$Model$structural) != 0 ] / temp$sd
+    t_temp <- path_estimates$Estimate / temp$sd
     
     path_estimates["Std_err"] <- temp$sd
     path_estimates["t_stat"]  <- t_temp
@@ -176,7 +214,7 @@ summarize.cSEMResults_default <- function(
     
     ## Loading estimates -------------------------------------------------------
     temp   <- infer_out$Loading_estimates
-    t_temp <- t(x1$Loading_estimates)[t(x2$Model$measurement) != 0 ] / temp$sd
+    t_temp <- loading_estimates$Estimate / temp$sd
     
     loading_estimates["Std_err"] <- temp$sd
     loading_estimates["t_stat"]  <- t_temp
@@ -193,7 +231,7 @@ summarize.cSEMResults_default <- function(
     
     ## Weight estimates --------------------------------------------------------
     temp   <- infer_out$Weight_estimates
-    t_temp <- t(x1$Weight_estimates)[t(x2$Model$measurement) != 0 ] / temp$sd
+    t_temp <- weight_estimates$Estimate / temp$sd
     
     weight_estimates["Std_err"] <- temp$sd
     weight_estimates["t_stat"]  <- t_temp
@@ -207,6 +245,26 @@ summarize.cSEMResults_default <- function(
       colnames(weight_estimates)[(length(colnames(weight_estimates)) - 
                                     (length(ci_colnames) - 1)):length(colnames(weight_estimates))] <- ci_colnames
     }
+    
+    ## Residual correlation ----------------------------------------------------
+    temp   <- infer_out$Residual_correlation
+    if(!is.null(temp)) {
+      t_temp <- residual_correlation$Estimate / temp$sd
+      
+      residual_correlation["Std_err"] <- temp$sd
+      residual_correlation["t_stat"]  <- t_temp
+      residual_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+      
+      if(!is.null(.ci)) {
+        ## Add CI's
+        # Add cis to data frame and set names
+        residual_correlation <- cbind(residual_correlation, t(do.call(rbind, temp[.ci])))
+        rownames(residual_correlation) <- NULL
+        colnames(residual_correlation)[(length(colnames(residual_correlation)) - 
+                                          (length(ci_colnames) - 1)):length(colnames(residual_correlation))] <- ci_colnames
+      }
+    }
+
     
     ## Effects -----------------------------------------------------------------
     if(x2$Model$model_type == "Linear") {
@@ -244,6 +302,7 @@ summarize.cSEMResults_default <- function(
   .object$Estimates$Path_estimates    <- path_estimates
   .object$Estimates$Loading_estimates <- loading_estimates
   .object$Estimates$Weight_estimates  <- weight_estimates
+  .object$Estimates$Residual_correlation <- residual_correlation
   if(x2$Arguments$.approach_weights == "PLS-PM") {
     .object$Estimates$Inner_weight_estimates <- inner_weight_estimates
   }
@@ -452,6 +511,25 @@ summarize.cSEMResults_2ndorder <- function(
     x21$Loading_estimates <- L[[2]]
     x11$Weight_estimates  <- W[[1]]
     x21$Weight_estimates  <- W[[2]]
+    
+    ## Residual correlation ----------------------------------------------------
+    temp   <- infer_out$Residual_correlation
+    if(!is.null(temp)) {
+      t_temp <- x11$Residual_correlation$Estimate / temp$sd
+      
+      x11$Residual_correlation["Std_err"] <- temp$sd
+      x11$Residual_correlation["t_stat"]  <- t_temp
+      x11$Residual_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+      
+      if(!is.null(.ci)) {
+        ## Add CI's
+        # Add cis to data frame and set names
+        x11$Residual_correlation <- cbind(x11$Residual_correlation, t(do.call(rbind, temp[.ci])))
+        rownames(x11$Residual_correlationn) <- NULL
+        colnames(x11$Residual_correlation)[(length(colnames(x11$Residual_correlation)) - 
+                                          (length(ci_colnames) - 1)):length(colnames(x11$Residual_correlation))] <- ci_colnames
+      }
+    }
     
     ## Effects -----------------------------------------------------------------
     if(x22$Model$model_type == "Linear") {

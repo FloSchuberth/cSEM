@@ -225,7 +225,7 @@ foreman <- function(
       "Loading_estimates"      = Lambda,
       "Weight_estimates"       = Weights,
       "Inner_weight_estimates" = W$E,
-      "Measurement_error_correlation" = Theta,
+      "Residual_correlation"   = Theta,
       "Construct_scores"       = H,
       "Indicator_VCV"          = S,
       "Proxy_VCV"              = C,
