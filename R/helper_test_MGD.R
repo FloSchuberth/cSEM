@@ -347,6 +347,7 @@ getParameterNames <- function(
     "names_weights"  = names_weights,
     "names_loadings" = names_loadings,
     "names_cor_exo_cons" = correlated_exo_cons,
+    "names_cor_indicator" = correlated_indicator,
     "names_cor_measurement_error" = correlated_measurement_error
     )
   return(out)
