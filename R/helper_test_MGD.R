@@ -134,20 +134,22 @@ getParameterNames <- function(
     cons_exo <- x22$Model$cons_exo
   }
   
+  # Perhaps it is better to transfer the following code to the testMGD function directly.
+  
   # Parse model that indicates which parameters should be compared.
   # If no model indicating the comparisons is provided, all parameters are compared.
-  # Correlation among the measurement errors cannot be compared yet across groups as 
-  # theta is not part of the csem outpup 
+  # Correlation among the measurement errors and or indicators cannot be compared yet across groups as 
+  # theta is not part of the csem output 
 
-  
+    
   if(is.null(.model)) {
     if(inherits(.object, "cSEMResults_2ndorder")) {
       model_compare <- x22$Arguments_original$.model
       # add the correlations among the exogenous constructs
     } else {
-      model_compare <- x22$Model 
+      model_compare <- x22$Model
       # add the correlations among the exogenous constructs
-      # add to model_cor_specified and expand 
+      # add to model_cor_specified and expand
       # Attention if the some of the variables are already in that matrix
     }
   } else {

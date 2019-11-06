@@ -273,13 +273,13 @@ testMGD <- function(
               type = 3), "\n\n")
   }
   
-  
+
   # Get the names of the parameters to be compared. 
   names_all_param <- getParameterNames(.object, .model = .parameters_to_compare)
   
   # getParameterNames() returns also measurement error and indicator correlations
   # Currently they cannot be handeled, therefore an error is returned. 
-  # NEEDS TO BE FIXED
+  # CAN BE FIXED
   if(!is.null(names_all_param$names_cor_measurement_error)|!is.null(names_all_param$names_cor_indicator)){
     stop2("The following error occured in the testMGD() function:\n",
           "Currenlty it is not allowed to compare measurement error covariance",
