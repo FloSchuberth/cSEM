@@ -279,14 +279,13 @@ testMGD <- function(
   
   # getParameterNames() returns also measurement error and indicator correlations
   # Currently they cannot be handeled, therefore an error is returned. 
-  # CAN BE FIXED
+  # CAN BE FIXED 
   if(!is.null(names_all_param$names_cor_measurement_error)|!is.null(names_all_param$names_cor_indicator)){
     stop2("The following error occured in the testMGD() function:\n",
           "Currenlty it is not allowed to compare measurement error covariance",
           " and/or indicator covariances across groups.")
   }
   
-  # names_param <- unlist(names_all_param[c("names_path","names_loadings","names_weights")])
   names_param <- unlist(names_all_param)
   
   ## Calculation of the test statistics========================================
@@ -322,6 +321,7 @@ testMGD <- function(
     
     # Check whether correlations are compared; if so, error as cSEMResults_resampled
     # does not contain bootstrap correlations
+    # FOR FUTURE: If the resample_object contains these qunatities by default we can remove that error
     if(inherits(.object, "cSEMResults_resampled") & 
        (is.null(names_all_param$names_cor_exo_cons)| is.null(names_all_param$names_cor_measurement_error))){
       stop2("If correlations are specified for comparison,\n",
@@ -335,7 +335,9 @@ testMGD <- function(
       }
       
       # User function that bootstraps all construct correlations
-      # distinguish between default and secondorder models
+      # distinguish between default and second-order models
+      # FOR FUTURE: If the resmaple_object contains these quantities, this can be removed
+    
       if(inherits(.object[[1]], "cSEMResults_2ndorder")){
         bootstrap_cons_cor <- function(.object){
         cons_cor <- c(.object$Second_stage$Estimates$Construct_VCV)
