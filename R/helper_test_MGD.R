@@ -241,7 +241,7 @@ getParameterNames <- function(
   }
   
   ## Extract names of the weights to be tested
-  # Select only concepts modeled as common factors. Reorder that it has the 
+  # Select only concepts modeled as composite. Reorder that it has the 
   # same order as names_row.
   i <- intersect(names(which(construct_type == "Composite")), names_row)
   i <- i[match(names_row, i)]
