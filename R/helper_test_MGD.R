@@ -134,14 +134,18 @@ getParameterNames <- function(
     cons_exo <- x22$Model$cons_exo
   }
   
+  # FOR FUTURE:
   # Perhaps it is better to transfer the following code to the testMGD function directly.
+  # As getParameterNames should just return the names of a model and not internally select a model?
   
   # Parse model that indicates which parameters should be compared.
   # If no model indicating the comparisons is provided, all parameters are compared.
   # Correlation among the measurement errors and or indicators cannot be compared yet across groups as 
   # theta is not part of the csem output 
 
-    
+  
+  # FOR FUTURE: Add all model parameters to the comparison if no model is specified 
+  
   if(is.null(.model)) {
     if(inherits(.object, "cSEMResults_2ndorder")) {
       model_compare <- x22$Arguments_original$.model
@@ -260,6 +264,8 @@ getParameterNames <- function(
     names_weights <- NULL
   }
   
+  # FOR FUTURE: The following should be hamronized, i.e., should be brought in the same format as e.g., 
+  # weights and loadings
   # Extract Information from model_cor_specified and matched with the original output
   
   # all correlated variables, i.e., that have been specified with ~~
@@ -275,7 +281,6 @@ getParameterNames <- function(
   measurement_error_correlated <- intersect(ind_correlated_compare,ind_connected_to_cf)
 
   cor_measurement_error <- model_compare$cor_specified[ measurement_error_correlated, measurement_error_correlated]
-  
   # cor_measurement_error is a symmetric matrix, therefore, the lower triangular elements are replaced by 0
   cor_measurement_error[lower.tri(cor_measurement_error)] <- 0
   
@@ -301,14 +306,13 @@ getParameterNames <- function(
   
   cor_indicator <- model_compare$cor_specified[indicator_correlated, indicator_correlated]
   
-  # cor_measurement_error is a symmetric matrix, therefore, the lower triangular elements are replaced by 0
+  # cor_indicator is a symmetric matrix, therefore, the lower triangular elements are replaced by 0
   cor_indicator[lower.tri(cor_indicator)] <- 0
-  
-  
+
   index <- which(cor_indicator == 1, arr.ind = TRUE)
   correlated_indicator <- index
   
-  # In case that no measurement error correlations are compared set it to NULL
+  # In case that no indicator correlations are compared set it to NULL
   if(nrow(correlated_indicator) ==0 ){
     correlated_indicator <- NULL
   }else{
@@ -320,7 +324,6 @@ getParameterNames <- function(
   
   
   ## Construct correlations 
-  
   cons_exo_correlated_compare <- intersect(vars_correlated_compare, cons_exo)
 
   # Consider only exogenous constructs
