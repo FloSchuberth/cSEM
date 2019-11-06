@@ -41,6 +41,8 @@ equations relating endogenous RHS variables to instruments.}
 If the \code{.full_output} argument to \code{\link[=parseModel]{parseModel()}} is set to \code{TRUE} the \link{cSEMModel}
 object will contain three additional list elements, namely:
 \describe{
+\item{\code{$indicators}}{The names of the indicators
+(i.e., observed variables and/or first-order constructs)}
 \item{\code{$cons_exo}}{The names of the exogenous constructs of the structural model
 (i.e., variables that do not appear on the LHS of any structural equation)}
 \item{\code{$cons_endo}}{The names of the endogenous constructs of the structural model

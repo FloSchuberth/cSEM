@@ -116,10 +116,11 @@ getParameterNames <- function(
     measurement_org <- x22$Arguments_original$.model$measurement
     names_path_org <- x[[1]]$Second_stage$Estimates$Path_estimates$Name
     
-    # CHECK WHETHER THIS WORKS
-    indicators <- x22$Model$indicators
-    cons_exo <- x22$Model$cons_exo
-    cons_endo <- x22$Model$cons_endo
+    indicators <- x12$Model_original$indicators
+    cons_exo <- x12$Model_original$cons_exo
+    # Remove first-order constructs from cons_exo 
+    cons_exo <- setdiff(cons_exo,x12$Model_original$vars_attached_to_2nd)
+    cons_endo <- x12$Model_original$cons_endo
     
   } else {
     
@@ -144,8 +145,12 @@ getParameterNames <- function(
   if(is.null(.model)) {
     if(inherits(.object, "cSEMResults_2ndorder")) {
       model_comp <- x22$Arguments_original$.model
+      # add the correlations among the exogenous constructs
     } else {
       model_comp <- x22$Model 
+      # add the correlations among the exogenous constructs
+      # add to model_cor_specified and expand 
+      # Attention if the some of the variables are already in that matrix
     }
   } else {
     model_comp <- parseModel(.model, .check_errors = FALSE,.full_output = TRUE)
@@ -263,6 +268,11 @@ getParameterNames <- function(
   ind_correlated_comp <- intersect(vars_correlated_comp, indicators)
   # NEEDS TO BE DONE: Select only those indicators that are connected to a common factor
   cor_measurement_error <- model_comp$cor_specified[ind_correlated_comp,ind_correlated_comp]
+  
+  # cor_measurement_error is a symmetric matrix, therefore, the lower triangular elements are replaced by 0
+  cor_measurement_error[lower.tri(cor_measurement_error)] <- 0
+  
+  
   index <- which(cor_measurement_error == 1, arr.ind = TRUE)
   correlated_measurement_error <- index
 
@@ -281,6 +291,8 @@ getParameterNames <- function(
   
   # Consider only exogenous constructs
   cor_cons_exo <- model_comp$cor_specified[cons_exo_correlated_comp,cons_exo_correlated_comp]
+  # As cor-specified and thus cor_cons_exo is a symmetric matrix, therefore, the lower triangular elements are replaced by 0
+  cor_cons_exo[lower.tri(cor_cons_exo)] <- 0
   # Which are correlated
   index <- which(cor_cons_exo == 1,arr.ind = TRUE) 
   correlated_exo_cons <- index
@@ -360,8 +372,14 @@ calculateParameterDifference <- function(
       rbind(y$First_stage$Estimates$Weight_estimates, 
             y$Second_stage$Estimates$Weight_estimates)
       })
-    # EINFUEGEN
-    # cor_cons_exo_estimates <-
+    cor_cons_exo_estimates <- lapply(x, function(y) {
+      temp = c(y$Second_stage$Estimates$Construct_VCV)
+      names(temp) = paste(rownames(y$Second_stage$Estimates$Construct_VCV),"~~", 
+                          rep(colnames(y$Second_stage$Estimates$Construct_VCV),
+                              each=ncol(y$Second_stage$Estimates$Construct_VCV)), sep=" ")
+      temp
+      
+    })
     
   } else {
     path_estimates  <- lapply(x, function(y) {y$Estimates$Path_estimates})
@@ -375,7 +393,8 @@ calculateParameterDifference <- function(
                               each=ncol(y$Estimates$Construct_VCV)), sep=" ")
       temp
       
-      })
+    })
+    
   }
   
   ## Select

@@ -184,7 +184,7 @@ foreman <- function(
   Lambda  <- LambdaQ2W$Lambda
   Q       <- sqrt(LambdaQ2W$Q2)
   
-  ## Calcualte measurement error correlation
+  ## Calculate measurement error correlation
   # Compute theta
   Theta <- S - t(Lambda) %*% Lambda
   
