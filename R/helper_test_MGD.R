@@ -264,10 +264,14 @@ getParameterNames <- function(
   
   # all correlated variables, i.e., that have been specified with ~~
   vars_correlated_comp <- rownames(model_comp$cor_specified)
-  
+  # Select only those that are indicators
   ind_correlated_comp <- intersect(vars_correlated_comp, indicators)
-  # NEEDS TO BE DONE: Select only those indicators that are connected to a common factor
-  cor_measurement_error <- model_comp$cor_specified[ind_correlated_comp,ind_correlated_comp]
+  # Select only those indicators that are connected to a common factor
+  temp <- measurement_org[which(construct_type == "Common factor"),,drop=FALSE]
+  ind_connected_to_cf <- colnames(temp)[colSums(temp)!=0]
+  measurement_error_correlated <- intersect(ind_correlated_comp,ind_connected_to_cf)
+
+  cor_measurement_error <- model_comp$cor_specified[ measurement_error_correlated, measurement_error_correlated]
   
   # cor_measurement_error is a symmetric matrix, therefore, the lower triangular elements are replaced by 0
   cor_measurement_error[lower.tri(cor_measurement_error)] <- 0
