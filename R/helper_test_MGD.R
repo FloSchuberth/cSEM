@@ -264,8 +264,11 @@ getParameterNames <- function(
   
   # all correlated variables, i.e., that have been specified with ~~
   vars_correlated_comp <- rownames(model_comp$cor_specified)
+
   # Select only those that are indicators
   ind_correlated_comp <- intersect(vars_correlated_comp, indicators)
+  
+  ## Measurement error correlation 
   # Select only those indicators that are connected to a common factor
   temp <- measurement_org[which(construct_type == "Common factor"),,drop=FALSE]
   ind_connected_to_cf <- colnames(temp)[colSums(temp)!=0]
@@ -289,6 +292,34 @@ getParameterNames <- function(
                                         colnames(cor_measurement_error)[index[,"col"]],
                                         sep="")
   }
+  
+  
+  ## Indicator correlation, i.e., variables that belong to a composite
+  temp <- measurement_org[which(construct_type == "Composite"),,drop=FALSE]
+  ind_connected_to_composite <- colnames(temp)[colSums(temp)!=0]
+  indicator_correlated <- intersect(ind_correlated_comp,ind_connected_to_composite)
+  
+  cor_indicator <- model_comp$cor_specified[indicator_correlated, indicator_correlated]
+  
+  # cor_measurement_error is a symmetric matrix, therefore, the lower triangular elements are replaced by 0
+  cor_indicator[lower.tri(cor_indicator)] <- 0
+  
+  
+  index <- which(cor_indicator == 1, arr.ind = TRUE)
+  correlated_indicator <- index
+  
+  # In case that no measurement error correlations are compared set it to NULL
+  if(nrow(correlated_indicator) ==0 ){
+    correlated_indicator <- NULL
+  }else{
+    correlated_indicator <- paste(rownames(cor_indicator)[index[,"row"]],
+                                          " ~~ ",
+                                          colnames(cor_indicator)[index[,"col"]],
+                                          sep="")
+  }
+  
+  
+  ## Construct correlations 
   
   cons_exo_correlated_comp <- intersect(vars_correlated_comp, cons_exo)
   cons_endo_correlated_comp <- intersect(vars_correlated_comp, cons_endo) 
