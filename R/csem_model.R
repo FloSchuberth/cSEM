@@ -715,12 +715,12 @@ convertModel <- function(
     
     ## Error_cor
     error_cor <- .csem_model$error_cor
+    # - Only upper triagular matrix as lavaan does not allow for double entries such
+    #   as x11 ~~ x12 and x12 ~~ x11
     error_cor[lower.tri(error_cor)] <- 0
     
     x3 <- list()
     for(i in .csem_model$vars_attached_to_2nd) {
-      # - Only upper triagular matrix as lavaan does not allow for double entries such
-      #   as x11 ~~ x12 and x12 ~~ x11
       col_names <- colnames(error_cor[i, error_cor[i, , drop = FALSE] == 1, drop = FALSE])
 
       ## Continue here
@@ -736,7 +736,31 @@ convertModel <- function(
     }
     x3 <- paste(unlist(x3), collapse = "\n")
     
+    # ## Construct correlation
+    # construct_cor <- .csem_model$construct[.csem_model$cons_exo, .csem_model$cons_exo]
+    # # - Only upper triagular matrix as lavaan does not allow for double entries such
+    # #   as eta1 ~~ eta2 and eta2 ~~ eta1
+    # construct_cor[lower.tri(construct_cor)] <- 0
+    # 
+    # x4 <- list()
+    # for(i in .csem_model$cons_exo) {
+    #   col_names <- colnames(construct_cor[i, construct_cor[i, , drop = FALSE] == 1, drop = FALSE])
+    #   
+    #   ## Continue here
+    #   temp <- c()
+    #   if(!is.null(col_names)) {
+    #     for(j in col_names) {
+    #       temp[j] <- paste0(i, "_temp", "~~", j, "_temp") 
+    #     }
+    #   } else {
+    #     temp <- "\n"
+    #   }
+    #   x4[[i]] <- temp
+    # }
+    # x4 <- paste(unlist(x4), collapse = "\n")
+    
     ## Model to be parsed
+    # lav_model <- paste(x1, x2a, x2b, x3, x4, sep = "\n")
     lav_model <- paste(x1, x2a, x2b, x3, sep = "\n")
   } else { # BEGIN: first step
     
@@ -841,7 +865,7 @@ convertModel <- function(
     } # END first step of the 2/3 stage approach
   } # END first step
 
-  model <- parseModel(lav_model)
+  model <- parseModel(lav_model, .full_output = TRUE)
   
   ## add
   return(model)

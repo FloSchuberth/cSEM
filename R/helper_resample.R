@@ -40,10 +40,10 @@ selectAndVectorize <- function(.object) {
       names(x1[["Indicator_correlation"]]) <- est1_temp$Indicator_correlation$Name 
     }
     
-    if(nrow(est1_temp$Exo_construct_correlation) != 0) {
+    if(nrow(est2_temp$Exo_construct_correlation) != 0) {
       # Residual correlation
-      x1[["Exo_construct_correlation"]] <- est1_temp$Exo_construct_correlation$Estimate
-      names(x1[["Exo_construct_correlation"]]) <- est1_temp$Exo_construct_correlation$Name 
+      x1[["Exo_construct_correlation"]] <- est2_temp$Exo_construct_correlation$Estimate
+      names(x1[["Exo_construct_correlation"]]) <- est2_temp$Exo_construct_correlation$Name 
     }
     
     if(.object$Second_stage$Information$Model$model_type == "Linear") {

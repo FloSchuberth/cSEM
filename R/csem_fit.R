@@ -75,8 +75,8 @@ fit.cSEMResults_default <- function(
   
   
   m         <- mod$structural
-  Cons_endo <- rownames(m)[rowSums(m) != 0]
-  Cons_exo  <- setdiff(colnames(m), Cons_endo)
+  Cons_endo <- mod$cons_endo
+  Cons_exo  <- mod$cons_exo
   Theta     <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   dimnames(Theta) <- dimnames(S)
   

@@ -279,7 +279,8 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     x21 <- x$Second_stage$Estimates
     x22 <- x$Second_stage$Information
     
-    # Residual correlation
+    # Correlations
+    construct_cor <- x21$Exo_construct_correlation
     res_cor  <- x11$Residual_correlation
     indi_cor <- x11$Indicator_correlation 
   } else {
@@ -287,7 +288,8 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     x21 <- x$Estimates
     x22 <- x$Information
     
-    # Residual correlation
+    # Correlation
+    construct_cor <- x21$Exo_construct_correlation
     res_cor  <- x21$Residual_correlation
     indi_cor <- x21$Indicator_correlation 
   }
@@ -327,25 +329,30 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   
   ## Path estimates
   cat2("Estimated path coefficients:\n============================")
-  printSummarizePathResdiualCorrelation(x, .ci_colnames = ci_colnames)
+  printSummarizePathCorrelation(x, .ci_colnames = ci_colnames)
   
   ## Loadings and Weights
   printSummarizeLoadingsWeights(x, .ci_colnames = ci_colnames)
   
+  ## Exogenous construct correlation
+  if(.full_output && nrow(construct_cor) != 0) {
+    cat2("\n\nEstimated construct correlations:\n=================================")
+    printSummarizePathCorrelation(x, .ci_colnames = ci_colnames, 
+                                  .what = "Construct correlation")
+  }
+  
   ## Residual correlation
-
   if(.full_output && nrow(res_cor) != 0) {
-    cat2("\n\nResidual correlation:\n============================")
-    printSummarizePathResdiualCorrelation(x, .ci_colnames = ci_colnames, 
-                                          .what = "Residual correlation")
+    cat2("\n\nEstimated measurement error correlations:\n=========================================")
+    printSummarizePathCorrelation(x, .ci_colnames = ci_colnames, 
+                                  .what = "Residual correlation")
   }
   
   ## Indicator correlation
-  
   if(.full_output && nrow(indi_cor) != 0) {
-    cat2("\n\nIndicator correlation:\n============================")
-    printSummarizePathResdiualCorrelation(x, .ci_colnames = ci_colnames, 
-                                          .what = "Indicator correlation")
+    cat2("\n\nEstimated indicator correlations:\n=================================")
+    printSummarizePathCorrelation(x, .ci_colnames = ci_colnames, 
+                                  .what = "Indicator correlation")
   }
 
   if(.full_output && x22$Model$model_type == "Linear") {
@@ -354,13 +361,13 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     ## Path estimates
     cat2("Estimated total effects:\n========================")
     
-    printSummarizePathResdiualCorrelation(x, .ci_colnames = ci_colnames, 
-                                          .what = "Total effect")
+    printSummarizePathCorrelation(x, .ci_colnames = ci_colnames, 
+                                  .what = "Total effect")
     
     cat2("\n\nEstimated indirect effects:\n===========================")
     
-    printSummarizePathResdiualCorrelation(x, .ci_colnames = ci_colnames, 
-                                          .what = "Indirect effect")
+    printSummarizePathCorrelation(x, .ci_colnames = ci_colnames, 
+                                  .what = "Indirect effect")
   }
 
   cat2("\n", rule2(type = 2))

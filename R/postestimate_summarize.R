@@ -43,6 +43,9 @@ summarize.cSEMResults_default <- function(
   x1  <- .object$Estimates
   x2  <- .object$Information
 
+  ## Add estimation Status
+  .object$Information$Estimation_status <- unclass(verify(.object))
+  
   ### Structure output =========================================================
   ## Path estimates ------------------------------------------------------------
   # Get construct type for relevant variables
@@ -322,8 +325,8 @@ summarize.cSEMResults_default <- function(
       }
     }
     
-    ## Indicator correlation ---------------------------------------------------
-    temp   <- infer_out$Indicator_correlation
+    ## Exogenous construct correlation -----------------------------------------
+    temp   <- infer_out$Exo_construct_correlation
     if(!is.null(temp)) {
       t_temp <- exo_construct_correlation$Estimate / temp$sd
       
@@ -359,8 +362,6 @@ summarize.cSEMResults_default <- function(
                                            (length(ci_colnames) - 1)):length(colnames(indicator_correlation))] <- ci_colnames
       }
     }
-    
-
     
     ## Effects -----------------------------------------------------------------
     if(x2$Model$model_type == "Linear") {
@@ -407,7 +408,6 @@ summarize.cSEMResults_default <- function(
   }
   .object$Estimates$Construct_scores <- construct_scores
   
-  
   ## Set class for printing and return
   
   class(.object) <- if(inherits(.object, "cSEMResults_resampled")) {
@@ -448,7 +448,7 @@ summarize.cSEMResults_2ndorder <- function(
   
   ## Run summarize for each stage
   x <- lapply(.object, summarize.cSEMResults_default)
-  
+
   x11 <- x$First_stage$Estimates
   x12 <- x$First_stage$Information
   
@@ -472,6 +472,9 @@ summarize.cSEMResults_2ndorder <- function(
   # Weights for second stage (all weights for 2nd order constructs)
   i <- x21$Weight_estimates$Name[!grepl("_temp", x21$Weight_estimates$Name)]
   x21$Weight_estimates <- x21$Weight_estimates[x21$Weight_estimates$Name %in% i, , drop = FALSE]
+  
+  ## Exogenous construct correlation matrix
+  x21$Exo_construct_correlation$Name <- gsub("_temp", "", x21$Exo_construct_correlation$Name)
   
   ## Delete _temp suffix wherever it appears ----------------------------------
   ## Inner weight estimates
@@ -609,7 +612,26 @@ summarize.cSEMResults_2ndorder <- function(
     x11$Weight_estimates  <- W[[1]]
     x21$Weight_estimates  <- W[[2]]
     
-    ## Residual correlation ----------------------------------------------------
+    ### Exo construct correlation -----------------------------------------------
+    temp   <- infer_out$Exo_construct_correlation
+    if(!is.null(temp)) {
+      t_temp <- x21$Exo_construct_correlation$Estimate / temp$sd
+      
+      x21$Exo_construct_correlation["Std_err"] <- temp$sd
+      x21$Exo_construct_correlation["t_stat"]  <- t_temp
+      x21$Exo_construct_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+      
+      if(!is.null(.ci)) {
+        ## Add CI's
+        # Add cis to data frame and set names
+        x21$Exo_construct_correlation <- cbind(x21$Exo_construct_correlation, t(do.call(rbind, temp[.ci])))
+        rownames(x21$Exo_construct_correlation) <- NULL
+        colnames(x21$Exo_construct_correlation)[(length(colnames(x21$Exo_construct_correlation)) - 
+                                              (length(ci_colnames) - 1)):length(colnames(x21$Exo_construct_correlation))] <- ci_colnames
+      }
+    }
+    
+    ### Residual correlation ---------------------------------------------------
     temp   <- infer_out$Residual_correlation
     if(!is.null(temp)) {
       t_temp <- x11$Residual_correlation$Estimate / temp$sd
