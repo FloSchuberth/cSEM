@@ -279,7 +279,7 @@ testMGD <- function(
   
   # getParameterNames() returns also measurement error and indicator correlations
   # Currently they cannot be handeled, therefore an error is returned. 
-  # CAN BE FIXED 
+  # FOR FUTURE: MEasurement errors and indicator correlations can be added to the parameters allowed in the comparison  
   if(!is.null(names_all_param$names_cor_measurement_error)|!is.null(names_all_param$names_cor_indicator)){
     stop2("The following error occured in the testMGD() function:\n",
           "Currenlty it is not allowed to compare measurement error covariance",
@@ -318,51 +318,11 @@ testMGD <- function(
   ## Sarstedt et al. (2011), Keil et al. (2000), Nitzl (2010), Henseler (2007) -----
   # All these approaches require bootstrap
   if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler"))) {
-    
-    # Check whether correlations are compared; if so, error as cSEMResults_resampled
-    # does not contain bootstrap correlations
-    # FOR FUTURE: If the resample_object contains these qunatities by default we can remove that error
-    if(inherits(.object, "cSEMResults_resampled") & 
-       (is.null(names_all_param$names_cor_exo_cons)| is.null(names_all_param$names_cor_measurement_error))){
-      stop2("If correlations are specified for comparison,\n",
-      "cSEMResults_resampled object is not allowed as input.")
-    }
-    
+
     # Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
       if(.verbose) {
         cat("Bootstrap cSEMResults object ...\n\n")
-      }
-      
-      # User function that bootstraps all construct correlations
-      # distinguish between default and second-order models
-      # FOR FUTURE: If the resmaple_object contains these quantities, this can be removed
-    
-      if(inherits(.object[[1]], "cSEMResults_2ndorder")){
-        bootstrap_cons_cor <- function(.object){
-        cons_cor <- c(.object$Second_stage$Estimates$Construct_VCV)
-          
-        # Remove _temp from the construct names, otherwise, there is a problem with the model to compares
-        names_cons_cor <- unlist(strsplit(rownames(.object$Second_stage$Estimates$Construct_VCV)
-                                          , split = "_temp"))
-        
-        names(cons_cor) <- paste(names_cons_cor, "~~", 
-                                 rep(names_cons_cor,
-                                     each=ncol(.object$Second_stage$Estimates$Construct_VCV)), sep= " ")
-        
-        cons_cor
-          }
-      }else{
-        bootstrap_cons_cor <- function(.object){
-            cons_cor <- c(.object$Estimates$Construct_VCV)
-            names(cons_cor) <- paste(rownames(.object$Estimates$Construct_VCV), "~~", 
-                                   rep(colnames(.object$Estimates$Construct_VCV),
-                                       each=ncol(.object$Estimates$Construct_VCV)), sep= " ")
-            # Here measurement error correlation can be added at a later point
-      
-            # return output
-            cons_cor
-            }
       }
       
       .object <- resamplecSEMResults(
@@ -370,8 +330,7 @@ testMGD <- function(
         .resample_method      = "bootstrap",
         .handle_inadmissibles = .handle_inadmissibles,
         .R                    = .R_bootstrap,
-        .seed                 = .seed,
-        .user_funs = bootstrap_cons_cor) 
+        .seed                 = .seed) 
     }
     
     ## Combine bootstrap results in one matrix
@@ -386,7 +345,8 @@ testMGD <- function(
       path_resamples    <- x$Path_estimates$Resampled
       loading_resamples <- x$Loading_estimates$Resampled
       weight_resamples  <- x$Weight_estimates$Resampled
-      cons_cor_resamples <- x$User_fun$Resampled
+      # Rename
+      cor_exo_cons_resamples <- x$Exo_construct_correlation$Resampled
       n                 <- nrow(path_resamples)
       
       # Calculation of the bootstrap SEs
@@ -395,7 +355,7 @@ testMGD <- function(
       path_se <- ses$Path_estimates$sd 
       loading_se <- ses$Loading_estimates$sd
       weight_se <- ses$Weight_estimates$sd
-      cons_cor_se <- ses$User_fun$sd
+      cor_exo_cons_se <- ses$Exo_construct_correlation$sd
       
       # Calculation of the bias
       bias <- infer(.object=y,.quantity = "bias")
@@ -403,14 +363,14 @@ testMGD <- function(
       path_bias <- bias$Path_estimates$bias
       loading_bias <- bias$Loading_estimates$bias
       weight_bias <- bias$Weight_estimates$bias
-      cons_cor_bias <- bias$User_fun$bias
+      cor_exo_cons_bias <- bias$Exo_construct_correlation$bias
       # Return object
       list(
         "n"                 = n,
         "nObs"              = nobs,
-        "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples, cons_cor_resamples),
-        "ses_all"           = c(path_se, loading_se, weight_se, cons_cor_se),
-        "bias_all"          = c(path_bias, loading_bias, weight_bias, cons_cor_bias)
+        "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples, cor_exo_cons_resamples),
+        "ses_all"           = c(path_se, loading_se, weight_se, cor_exo_cons_se),
+        "bias_all"          = c(path_bias, loading_bias, weight_bias, cor_exo_cons_bias)
        )
       
     })
@@ -431,7 +391,6 @@ testMGD <- function(
         # Create dummy test statistic list containing NAs
         temp <- rep(NA,length(unlist(diff_para_Henseler)))
         teststat[["Henseler"]] <-relist(flesh = temp,skeleton = diff_para_Henseler)
-         
       }
       
       # Build list that contains pairs of objects.
@@ -493,7 +452,7 @@ testMGD <- function(
       }
       
     }
-    ## Sarstedt approach
+    ## Sarstedt et al. approach
     if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
       ## Transpose
       ll <- purrr::transpose(bootstrap_results)
