@@ -45,6 +45,6 @@ reliabilities are estimated by \code{csem()}. Currently, only supported for
 \code{.approach_weights = "PLS-PM"}.}
 }
 \description{
-(TODO)
+Internal: Calculate Reliabilities
 }
 \keyword{internal}

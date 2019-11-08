@@ -2,26 +2,14 @@
 % Please edit documentation in R/postestimate_summarize.R
 \name{summarize}
 \alias{summarize}
-\alias{summarize.cSEMResults_default}
-\alias{summarize.cSEMResults_multi}
-\alias{summarize.cSEMResults_2ndorder}
 \title{Summarize model}
 \usage{
 summarize(
  .object = NULL, 
- .alpha  = args_default()$.alpha,
+ .alpha  = 0.05,
  .ci     = NULL,
  ...
  )
-
-\method{summarize}{cSEMResults_default}(.object = NULL,
-  .alpha = args_default()$.alpha, .ci = NULL, ...)
-
-\method{summarize}{cSEMResults_multi}(.object = NULL,
-  .alpha = args_default()$.alpha, .ci = NULL, ...)
-
-\method{summarize}{cSEMResults_2ndorder}(.object = NULL,
-  .alpha = args_default()$.alpha, .ci = NULL, ...)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -34,21 +22,16 @@ For possible choices see \code{\link[=infer]{infer()}}.}
 
 \item{...}{Further arguments to \code{summarize()}. Currently ignored.}
 }
+\value{
+The return object has the exact same structure as \code{.object}.
+As opposed to \code{.object}, the results for the Path coefficients, the loadings,
+the weights, the indirect effect, the total effects, and (if present) the
+residual correlations are returned as standarized data.frames! This is usually
+much more convenient if users intend to present the results in e.g., a paper.
+}
 \description{
-Summarize the model (TODO).
+Summarize an estimated model.
 }
-\details{
-Summary (TODO)
-}
-\section{Methods (by class)}{
-\itemize{
-\item \code{cSEMResults_default}: (TODO)
-
-\item \code{cSEMResults_multi}: (TODO)
-
-\item \code{cSEMResults_2ndorder}: (TODO)
-}}
-
 \seealso{
 \link{csem}, \link{cSEMResults}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators_weights.R
 \name{calculateWeightsPCA}
 \alias{calculateWeightsPCA}
-\title{Internal: Calculate composite weights using principal component analysis (PCA)}
+\title{Calculate composite weights using principal component analysis (PCA)}
 \usage{
 calculateWeightsPCA(
  .S                 = args_default()$.S,

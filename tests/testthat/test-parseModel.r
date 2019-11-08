@@ -2,22 +2,28 @@ context("csem")
 
 ### Linear models ==============================================================
 ## 1. One exogenous and one endogenous construct -------------------------------
+
 # 1.1 Construct of the measurement model forgotten/misspelled
+# 1.1 Everything is correctly specified
 model1 <- "
 # Structural model
 EXPE ~ IMAG
 
-# Measurement model
+# Composite model
 EXPE <~ expe1 + expe2
+IMAG <~ imag1 + imag2
 "
+
 
 # 1.2 One measurement equation is redundant
 model2 <- "
 # Structural model
 EXPE ~ IMAG
 
-# Measurement model
+# Composite model
 EXPE <~ expe1 + expe2
+
+# Measurement model
 IMAG =~ imag1 + imag4
 QUAL =~ qual1 + qual3
 "
@@ -27,71 +33,99 @@ model3 <- "
 # Structural model
 EXPE ~ IMAG
 
-# Measurement model
+# Composite model
 EXPE <~ expe1 + expe2
+
+# Measurement model
 IMAG =~ imag1 + imag4 + expe1
 "
-
-# 1.4 Everything is correctly specified
+# 1.4 Construct of the measurement model forgotten/misspelled
 model4 <- "
 # Structural model
 EXPE ~ IMAG
 
-# Measurement model
+# Composite model
 EXPE <~ expe1 + expe2
-IMAG <~ imag1 + imag2
+"
+
+# 1.5 Measurement errors across blocks 
+model5 <- "
+# Structural model
+EXPE ~ IMAG
+
+# Composite model
+EXPE <~ expe1 + expe2
+IMAG =~ imag1 + imag2
+
+imag1 ~~ expe1
 "
 
 ## Tests
 
 test_that("Linear model: incorrectly specified models provide an error", {
   
-  expect_error(parseModel(model1))
   expect_error(parseModel(model2))
   expect_error(parseModel(model3))
+  expect_error(parseModel(model4))
+  expect_error(parseModel(model5))
 })
 
 test_that("Linear model: correctly specified models are correctly returned", {
-  expect_s3_class(parseModel(model4), "cSEMModel")
-  expect_output(str(parseModel(model4)), "List of 6")
-  expect_equal(names(parseModel(model4)), c("structural", "measurement", 
-                                            "error_cor", "construct_type", 
-                                            "construct_order","model_type"))
+  expect_s3_class(parseModel(model1), "cSEMModel")
+  expect_output(str(parseModel(model1)), "List of 7")
+  expect_equal(names(parseModel(model1)), c("structural", "measurement", 
+                                            "error_cor", "cor_specified",
+                                            "construct_type", "construct_order",
+                                            "model_type"))
 })
 
-## 2. Several endogenous and exogenous constructs -----------------------------
+## 2. Several endogenous and exogenous constructs ------------------------------
+# Including
+# - Exogenous construct correlations
+# - Measurement error correlations
+
 model <- "
 # Structural model
 QUAL ~ IMAG + VAL + SAT
 VAL  ~ IMAG + EXPE
 SAT  ~ EXPE
 
-# Measurement model
+# Composite Model
 EXPE <~ expe1 + expe2
 IMAG <~ imag1 + imag2
+
+# Measurement model
 SAT  =~ sat1 + sat4
-QUAL =~ qual1 + qual2
+QUAL =~ qual1 + qual2 + qual3
 VAL  =~ val3 + val4
+
+# Measurement correlation
+qual1 ~~ qual2
+
+# Construct correlation
+IMAG ~~ EXPE
 "
 
 ## Tests
 test_that("Linear model: correctly specified models are correctly returned", {
   expect_s3_class(parseModel(model), "cSEMModel")
-  expect_output(str(parseModel(model)), "List of 6")
+  expect_output(str(parseModel(model)), "List of 7")
   expect_equal(names(parseModel(model)), c("structural", "measurement", 
-                                            "error_cor", "construct_type", 
-                                            "construct_order","model_type"))
+                                            "error_cor", "cor_specified",
+                                           "construct_type", "construct_order",
+                                           "model_type"))
 })
 
 ### Nonlinear models ===========================================================
 ## 1. One exogenous and one endogenous construct -------------------------------
-# 1.1 Construct of the measurement model forgotten/misspelled
+## 1.1 Everything correctly specified
 model1 <- "
 # Structural model
 EXPE ~ IMAG + IMAG.IMAG
 
 # Measurement model
 EXPE <~ expe1 + expe2
+IMAG <~ imag1 + imag2
 "
 
 ## 1.2 An interaction term does not appears individually in the structural model
@@ -129,10 +163,21 @@ IMAG =~ imag1 + imag4
 QUAL =~ qual1 + qual3
 "
 
-## 1.5 Everything correctly specified
+# 1.5 Construct of the measurement model forgotten/misspelled
 model5 <- "
 # Structural model
 EXPE ~ IMAG + IMAG.IMAG
+
+# Measurement model
+EXPE <~ expe1 + expe2
+"
+
+# 1.6 Correlation between exogenous construct and interaction term is specified
+model6 <- "
+# Structural model
+EXPE ~ IMAG + IMAG.IMAG
+
+EXPE ~~ IMAG.IMAG
 
 # Measurement model
 EXPE <~ expe1 + expe2
@@ -143,19 +188,21 @@ IMAG <~ imag1 + imag2
 
 test_that("Nonlinear model: incorrectly specified models provide an error", {
   
-  expect_error(parseModel(model1))
   expect_error(parseModel(model2))
   expect_error(parseModel(model3))
   expect_error(parseModel(model4))
+  expect_error(parseModel(model5))
+  expect_error(parseModel(model6))
 })
 
 ## Tests
 test_that("Nonlinear model: correctly specified models are correctly returned", {
-  expect_s3_class(parseModel(model5), "cSEMModel")
-  expect_output(str(parseModel(model5)), "List of 6")
-  expect_equal(names(parseModel(model5)), c("structural", "measurement", 
-                                           "error_cor", "construct_type", 
-                                           "construct_order","model_type"))
+  expect_s3_class(parseModel(model1), "cSEMModel")
+  expect_output(str(parseModel(model1)), "List of 7")
+  expect_equal(names(parseModel(model1)), c("structural", "measurement", 
+                                           "error_cor", "cor_specified",
+                                           "construct_type","construct_order",
+                                           "model_type"))
 })
 
 ## 2. Several endogenous and exogenous constructs ------------------------------
@@ -176,10 +223,11 @@ VAL  =~ val3 + val4
 ## Tests
 test_that("Nonlinear model: correctly specified models are correctly returned", {
   expect_s3_class(parseModel(model), "cSEMModel")
-  expect_output(str(parseModel(model)), "List of 6")
+  expect_output(str(parseModel(model)), "List of 7")
   expect_equal(names(parseModel(model)), c("structural", "measurement", 
-                                            "error_cor", "construct_type", 
-                                            "construct_order","model_type"))
+                                            "error_cor", "cor_specified",
+                                           "construct_type", "construct_order",
+                                           "model_type"))
 })
 
 ### Second-order model =========================================================
@@ -290,20 +338,23 @@ test_that("Second-order model: incorrectly specified models provide an error", {
 ## Tests
 test_that("Second-order model: correctly specified models are correctly returned", {
   expect_s3_class(parseModel(model4), "cSEMModel")
-  expect_output(str(parseModel(model4)), "List of 6")
+  expect_output(str(parseModel(model4)), "List of 7")
   expect_equal(names(parseModel(model4)), c("structural", "measurement", 
-                                            "error_cor", "construct_type", 
-                                            "construct_order","model_type"))
+                                            "error_cor", "cor_specified",
+                                            "construct_type","construct_order",
+                                            "model_type"))
   expect_s3_class(parseModel(model5), "cSEMModel")
-  expect_output(str(parseModel(model5)), "List of 6")
+  expect_output(str(parseModel(model5)), "List of 7")
   expect_equal(names(parseModel(model5)), c("structural", "measurement", 
-                                            "error_cor", "construct_type", 
-                                            "construct_order","model_type"))
+                                            "error_cor", "cor_specified",
+                                            "construct_type", "construct_order",
+                                            "model_type"))
   expect_s3_class(parseModel(model6), "cSEMModel")
-  expect_output(str(parseModel(model6)), "List of 6")
+  expect_output(str(parseModel(model6)), "List of 7")
   expect_equal(names(parseModel(model6)), c("structural", "measurement", 
-                                            "error_cor", "construct_type", 
-                                            "construct_order","model_type"))
+                                            "error_cor", "cor_specified",
+                                            "construct_type", "construct_order",
+                                            "model_type"))
 })
 
 
@@ -368,8 +419,9 @@ test_that("Second-order model: incorrectly specified models provide an error", {
 ## Tests
 test_that("Second-order model: correctly specified models are correctly returned", {
   expect_s3_class(parseModel(model1), "cSEMModel")
-  expect_output(str(parseModel(model1)), "List of 6")
+  expect_output(str(parseModel(model1)), "List of 7")
   expect_equal(names(parseModel(model1)), c("structural", "measurement", 
-                                            "error_cor", "construct_type", 
-                                            "construct_order","model_type"))
+                                            "error_cor", "cor_specified",
+                                            "construct_type", "construct_order",
+                                            "model_type"))
 })

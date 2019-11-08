@@ -1,4 +1,4 @@
-#' Composite-based SEM
+#' Internal: Composite-based SEM
 #'
 #' The central hub of the \pkg{cSEM} package. It acts like a 
 #' foreman by collecting all (estimation) tasks, distributing them to lower 
@@ -37,9 +37,8 @@
 #' @inherit csem_results return
 #'
 #' @seealso [csem], [cSEMResults]
-#'
-#' @export
-#'
+#' 
+#' @keywords internal
 
 foreman <- function(
   .data                        = args_default()$.data,
@@ -69,7 +68,7 @@ foreman <- function(
   
   ### Preprocessing ============================================================
   ## Parse and order model to "cSEMModel" list
-  csem_model <- parseModel(.model, .instruments = .instruments)
+  csem_model <- parseModel(.model, .instruments = .instruments, .full_output = TRUE)
 
   ## Prepare, check, and clean data (a data.frame)
   X_cleaned <- processData(.data = .data, 
@@ -184,6 +183,10 @@ foreman <- function(
   Lambda  <- LambdaQ2W$Lambda
   Q       <- sqrt(LambdaQ2W$Q2)
   
+  ## Calculate measurement error correlation
+  # Compute theta
+  Theta <- S - t(Lambda) %*% Lambda
+  
   ## Calculate proxies/scores
   H <- X %*% t(Weights)
   
@@ -221,6 +224,7 @@ foreman <- function(
       "Loading_estimates"      = Lambda,
       "Weight_estimates"       = Weights,
       "Inner_weight_estimates" = W$E,
+      "Residual_correlation"   = Theta,
       "Construct_scores"       = H,
       "Indicator_VCV"          = S,
       "Proxy_VCV"              = C,

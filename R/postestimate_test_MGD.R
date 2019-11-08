@@ -273,9 +273,20 @@ testMGD <- function(
               type = 3), "\n\n")
   }
   
+
+  # Get the names of the parameters to be compared. 
+  names_all_param <- getParameterNames(.object, .model = .parameters_to_compare)
   
-  # Get the name of the parameters to be compared. This is required for Sarstedt and Henseler
-  names_param <- unlist(getParameterNames(.object, .model = .parameters_to_compare))
+  # getParameterNames() returns also measurement error and indicator correlations
+  # Currently they cannot be handeled, therefore an error is returned. 
+  # FOR FUTURE: MEasurement errors and indicator correlations can be added to the parameters allowed in the comparison  
+  if(!is.null(names_all_param$names_cor_measurement_error)|!is.null(names_all_param$names_cor_indicator)){
+    stop2("The following error occured in the testMGD() function:\n",
+          "Currenlty it is not allowed to compare measurement error covariance",
+          " and/or indicator covariances across groups.")
+  }
+  
+  names_param <- unlist(names_all_param)
   
   ## Calculation of the test statistics========================================
   teststat <- list()
@@ -307,12 +318,13 @@ testMGD <- function(
   ## Sarstedt et al. (2011), Keil et al. (2000), Nitzl (2010), Henseler (2007) -----
   # All these approaches require bootstrap
   if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler"))) {
-    
+
     # Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
       if(.verbose) {
-        cat("Bootstrapping cSEMResults object ...\n\n")
+        cat("Bootstrap cSEMResults object ...\n\n")
       }
+      
       .object <- resamplecSEMResults(
         .object               = .object,
         .resample_method      = "bootstrap",
@@ -333,6 +345,8 @@ testMGD <- function(
       path_resamples    <- x$Path_estimates$Resampled
       loading_resamples <- x$Loading_estimates$Resampled
       weight_resamples  <- x$Weight_estimates$Resampled
+      # Rename
+      cor_exo_cons_resamples <- x$Exo_construct_correlation$Resampled
       n                 <- nrow(path_resamples)
       
       # Calculation of the bootstrap SEs
@@ -341,6 +355,7 @@ testMGD <- function(
       path_se <- ses$Path_estimates$sd 
       loading_se <- ses$Loading_estimates$sd
       weight_se <- ses$Weight_estimates$sd
+      cor_exo_cons_se <- ses$Exo_construct_correlation$sd
       
       # Calculation of the bias
       bias <- infer(.object=y,.quantity = "bias")
@@ -348,13 +363,14 @@ testMGD <- function(
       path_bias <- bias$Path_estimates$bias
       loading_bias <- bias$Loading_estimates$bias
       weight_bias <- bias$Weight_estimates$bias
+      cor_exo_cons_bias <- bias$Exo_construct_correlation$bias
       # Return object
       list(
         "n"                 = n,
         "nObs"              = nobs,
-        "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples),
-        "ses_all"           = c(path_se, loading_se, weight_se),
-        "bias_all"          = c(path_bias, loading_bias, weight_bias)
+        "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples, cor_exo_cons_resamples),
+        "ses_all"           = c(path_se, loading_se, weight_se, cor_exo_cons_se),
+        "bias_all"          = c(path_bias, loading_bias, weight_bias, cor_exo_cons_bias)
        )
       
     })
@@ -375,7 +391,6 @@ testMGD <- function(
         # Create dummy test statistic list containing NAs
         temp <- rep(NA,length(unlist(diff_para_Henseler)))
         teststat[["Henseler"]] <-relist(flesh = temp,skeleton = diff_para_Henseler)
-         
       }
       
       # Build list that contains pairs of objects.
@@ -437,7 +452,7 @@ testMGD <- function(
       }
       
     }
-    ## Sarstedt approach
+    ## Sarstedt et al. approach
     if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
       ## Transpose
       ll <- purrr::transpose(bootstrap_results)
@@ -821,9 +836,7 @@ testMGD <- function(
     # Create pairs which should be compared
     pairs_centered <- utils::combn(ll_centered, 2, simplify = FALSE)
     names(pairs_centered) <- sapply(pairs_centered, function(x) paste0(names(x)[1], '_', names(x)[2]))
-    
-    # Create dummy list with NULL 
-    
+
     
     # Calculation of the probability
     pvalue_Henseler <- lapply(pairs_centered,function(x){

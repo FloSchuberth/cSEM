@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators_weights.R
 \name{calculateWeightsUnit}
 \alias{calculateWeightsUnit}
-\title{Internal: Calculate composite weights using unit weights}
+\title{Calculate composite weights using unit weights}
 \usage{
 calculateWeightsUnit(
  .S                 = args_default()$.S,

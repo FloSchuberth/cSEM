@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators_weights.R
 \name{calculateWeightsGSCA}
 \alias{calculateWeightsGSCA}
-\title{Internal: Calculate composite weights using GSCA}
+\title{Calculate composite weights using GSCA}
 \usage{
 calculateWeightsGSCA(
   .X                           = args_default()$.X,

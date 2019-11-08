@@ -1,5 +1,6 @@
 #' @describeIn infer Computes the mean over all resamples for each resampled 
 #'                   statistic/parameter.
+#' @keywords internal
 MeanResample <- function(.first_resample) {
   
   lapply(.first_resample, function(x) {

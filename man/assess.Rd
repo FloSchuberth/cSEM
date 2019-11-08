@@ -214,11 +214,10 @@ assess(res, .quality_criterion = c("ave", "rho_C", "htmt"))
 
 ## Resampling ---------------------------------------------------------------
 # To resample a given quality criterion use csem()'s .user_funs argument
-
+\donttest{
 res <- csem(threecommonfactors, model, 
             .resample_method = "bootstrap", 
-            .user_funs       = cSEM:::calculateHTMT,
-            .R               = 80 
+            .user_funs       = cSEM:::calculateHTMT
 )
 
 ## Look at the resamples
@@ -226,11 +225,11 @@ res$Estimates$Estimates_resample$Estimates1$User_fun$Resampled[1:4, ]
 
 ## Use infer() to compute e.g. the 95\% percentile confidence interval
 res_infer <- infer(res, .quantity = "CI_percentile")
-res_infer$User_fun
+res_infer$User_fun 
+}
 
   
 # Note that .user_funs expects a function that returns a vector or a matrix!
-
 }
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}

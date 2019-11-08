@@ -28,6 +28,24 @@ selectAndVectorize <- function(.object) {
     names(x1[["Weight_estimates"]]) <- c(est1_temp$Weight_estimates$Name,
                                          est2_temp$Weight_estimates$Name)
     
+    if(nrow(est1_temp$Residual_correlation) != 0) {
+      # Residual correlation
+      x1[["Residual_correlation"]] <- est1_temp$Residual_correlation$Estimate
+      names(x1[["Residual_correlation"]]) <- est1_temp$Residual_correlation$Name 
+    }
+    
+    if(nrow(est1_temp$Indicator_correlation) != 0) {
+      # Residual correlation
+      x1[["Indicator_correlation"]] <- est1_temp$Indicator_correlation$Estimate
+      names(x1[["Indicator_correlation"]]) <- est1_temp$Indicator_correlation$Name 
+    }
+    
+    if(nrow(est2_temp$Exo_construct_correlation) != 0) {
+      # Residual correlation
+      x1[["Exo_construct_correlation"]] <- est2_temp$Exo_construct_correlation$Estimate
+      names(x1[["Exo_construct_correlation"]]) <- est2_temp$Exo_construct_correlation$Name 
+    }
+    
     if(.object$Second_stage$Information$Model$model_type == "Linear") {
       # Indirect effects
       x1[["Indirect_effect"]] <- est2_temp$Effect_estimates$Indirect_effect$Estimate
@@ -53,6 +71,24 @@ selectAndVectorize <- function(.object) {
     # Weight estimates
     x1[["Weight_estimates"]] <- est_temp$Weight_estimates$Estimate
     names(x1[["Weight_estimates"]]) <- est_temp$Weight_estimates$Name
+    
+    if(nrow(est_temp$Residual_correlation) != 0) {
+      # Residual correlation
+      x1[["Residual_correlation"]] <- est_temp$Residual_correlation$Estimate
+      names(x1[["Residual_correlation"]]) <- est_temp$Residual_correlation$Name 
+    }
+    
+    if(nrow(est_temp$Indicator_correlation) != 0) {
+      # Residual correlation
+      x1[["Indicator_correlation"]] <- est_temp$Indicator_correlation$Estimate
+      names(x1[["Indicator_correlation"]]) <- est_temp$Indicator_correlation$Name 
+    }
+    
+    if(nrow(est_temp$Exo_construct_correlation) != 0) {
+      # Residual correlation
+      x1[["Exo_construct_correlation"]] <- est_temp$Exo_construct_correlation$Estimate
+      names(x1[["Exo_construct_correlation"]]) <- est_temp$Exo_construct_correlation$Name 
+    }
     
     if(.object$Information$Model$model_type == "Linear") {
       # Indirect effects

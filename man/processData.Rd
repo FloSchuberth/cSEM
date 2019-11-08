@@ -2,7 +2,7 @@
 % Please edit documentation in R/csem_data.R
 \name{processData}
 \alias{processData}
-\title{Process data}
+\title{Internal: Process data}
 \usage{
 processData(
   .data        = NULL, 
@@ -25,7 +25,7 @@ of the list elements are the names of the dependent constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation \strong{must} be supplied as
-instruments for themselves. See the examples section. Defaults to \code{NULL}.}
+instruments for themselves. Defaults to \code{NULL}.}
 }
 \value{
 A (N x K) data.frame containing the standardized data with columns ordered
@@ -35,28 +35,4 @@ via the \code{.model} argument.
 \description{
 Prepare, standardize, check, and clean data provided via the \code{.data} argument.
 }
-\examples{
-dat <- data.frame(x2 = rnorm(100),
-                  x1 = rnorm(100),
-                  b2 = rnorm(100),
-                  b1 = rnorm(100),
-                  a1 = rnorm(100),
-                  a2 = rnorm(100)
-                  )
-
-model <- '
-# Structural model
-y1 ~ y2 + y3
-
-# Measurement model
-y1 =~ x1 + x2
-y2 =~ a1 + a2
-y3 =~ b1 + b2
-'
-
-dat <- processData(dat, model)
-
-is.data.frame(dat) # TRUE
-colnames(dat)      # "x1", "x2", "a1", "a2", "b1", "b2"
-
-}
+\keyword{internal}

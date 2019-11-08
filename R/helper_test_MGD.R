@@ -116,7 +116,28 @@ getParameterNames <- function(
     measurement_org <- x22$Arguments_original$.model$measurement
     names_path_org <- x[[1]]$Second_stage$Estimates$Path_estimates$Name
     
-  } else {
+    indicators <- x12$Model_original$indicators
+    cons_exo <- x12$Model_original$cons_exo
+     
+    names_cor_exo_cons_org <- x[[1]]$Second_stage$Estimates$Exo_construct_correlation$Name
+    names_cor_indicator_org <- c(x[[1]]$First_stage$Estimates$Indicator_correlation$Name,
+                                 x[[1]]$Second_stage$Estimates$Indicator_correlation$Name)
+    
+    if(nrow(x[[1]]$First_stage$Estimates$Residual_correlation)!=0){
+      temp <- x[[1]]$First_stage$Estimates$Residual_correlation$Name
+    }else{
+      temp <- NULL
+    }
+    
+    if(nrow(x[[1]]$Second_stage$Estimates$Residual_correlation)!=0){
+      temp1 <- x[[1]]$Second_stage$Estimates$Residual_correlation$Name
+    }else{
+      temp1 <- NULL
+    }
+    names_cor_measurement_error_org <- c(temp,temp1)
+    
+    
+  } else {#if no second-order model
     
     x22  <- x[[1]]$Information
     # Extract different types of constructs
@@ -124,24 +145,50 @@ getParameterNames <- function(
     
     measurement_org <- x22$Model$measurement
     names_path_org <- x[[1]]$Estimates$Path_estimates$Name
+    
+    indicators <- x22$Model$indicators
+    cons_exo <- x22$Model$cons_exo
+    
+    names_cor_exo_cons_org <- x[[1]]$Estimates$Exo_construct_correlation$Name
+    names_cor_indicator_org <- x[[1]]$Estimates$Indicator_correlation$Name
+    
+    if(nrow(x[[1]]$Estimates$Residual_correlation)!=0){
+      names_cor_measurement_error_org <- x[[1]]$Estimates$Residual_correlation$Name
+    }else{
+      names_cor_measurement_error_org<-NULL
+    }
   }
+  
+  # FOR FUTURE:
+  # Perhaps it is better to transfer the following code to the testMGD function directly.
+  # As getParameterNames should just return the names of a model and not internally select a model?
   
   # Parse model that indicates which parameters should be compared.
   # If no model indicating the comparisons is provided, all parameters are compared.
+  # Correlation among the measurement errors and or indicators cannot be compared yet across groups as 
+  # theta is not part of the csem output 
+
+  
+  # FOR FUTURE: Add all model parameters to the comparison if no model is specified 
   
   if(is.null(.model)) {
     if(inherits(.object, "cSEMResults_2ndorder")) {
-      model_comp <- x22$Arguments_original$.model
+      model_compare <- x22$Arguments_original$.model
+      # add the correlations among the exogenous constructs
     } else {
-      model_comp <- x22$Model 
+      model_compare <- x22$Model
+      # add the correlations among the exogenous constructs
+      # add to model_cor_specified and expand
+      # Attention if the some of the variables are already in that matrix
     }
   } else {
-    model_comp <- parseModel(.model, .check_errors = FALSE)
+    model_compare <- parseModel(.model, .check_errors = FALSE,.full_output = TRUE)
   }
   
+
   # Check whether the constructs specified in the comparison are equal
   # to the constructs in the original model
-  if(!all(rownames(model_comp$structural) %in% rownames(measurement_org))){
+  if(!all(rownames(model_compare$structural) %in% rownames(measurement_org))){
     stop2(
       "The following error occured in the `getParameterNames()` function:\n",
       "At least one construct appears in the comparison model but",
@@ -151,8 +198,8 @@ getParameterNames <- function(
   
   # Check whether the construct type specified in the comparison are equal
   # to the construct types in the original model
-  construct_type_comp <- model_comp$construct_type[!is.na(model_comp$construct_type)]  
-  if(!all(construct_type_comp == construct_type[names(construct_type_comp)])){
+  construct_type_compare <- model_compare$construct_type[!is.na(model_compare$construct_type)]  
+  if(!all(construct_type_compare == construct_type[names(construct_type_compare)])){
     stop2(
       "The following error occured in the `getParameterNames()` function:\n",
       "At least one construct's type in the comparison model differs ", 
@@ -161,7 +208,7 @@ getParameterNames <- function(
   
   # Check wehther the indicators used in the comparison model also appear 
   # in the original model
-  if(!all(colnames(model_comp$measurement) %in% colnames(measurement_org))){
+  if(!all(colnames(model_compare$measurement) %in% colnames(measurement_org))){
     stop2(
       "The following error occured in the `getParameterNames()` function:\n",
       "At least one indicator appears in the comparison model and not in ",
@@ -170,11 +217,11 @@ getParameterNames <- function(
   
   # Check whether the indicators used are correctly assigned, i.e., 
   # as in the original model
-  lapply(rownames(model_comp$measurement), function(x) {
-    names_ind_comp <- colnames(model_comp$measurement[x,,drop=FALSE][,which(model_comp$measurement[x,,drop=FALSE]==1),drop=FALSE])
+  lapply(rownames(model_compare$measurement), function(x) {
+    names_ind_compare <- colnames(model_compare$measurement[x,,drop=FALSE][,which(model_compare$measurement[x,,drop=FALSE]==1),drop=FALSE])
     names_ind_org  <- colnames(measurement_org[x,,drop=FALSE][,which(measurement_org[x,,drop=FALSE]==1),drop=FALSE])
     
-    if(!all(names_ind_comp %in% names_ind_org)){
+    if(!all(names_ind_compare %in% names_ind_org)){
       stop2(
         "The following error occured in the `getParameterNames()` function:\n",
         "At least one indicator is not correctly assigned in the comparison model.")
@@ -183,25 +230,32 @@ getParameterNames <- function(
   
   ### Extract names ============================================================
   # Extract names of the path to be tested
-  temp <- outer(rownames(model_comp$structural), colnames(model_comp$structural), 
+  temp <- outer(rownames(model_compare$structural), colnames(model_compare$structural), 
                 FUN = function(x, y) paste(x, y, sep = " ~ "))
   
-  names_path <- t(temp)[t(model_comp$structural) != 0]
+  names_path_compare <- t(temp)[t(model_compare$structural) != 0]
   
-  if(length(names_path) == 0) {
-    names_path <- NULL
+  if(length(names_path_compare) == 0) {
+    names_path_compare <- NULL
   }
   
   # Check whether the path to compare occur also in the original mode 
-  if(!all(names_path %in% names_path_org)){
+  if(!all(names_path_compare %in% names_path_org)){
     stop2(
       "The following error occured in the `getParameterNames()` function:\n",
       "At least one of the paths specified for comparison does not ",
       " appear in the original model.")
   }
   
-  # Extract names of the loadings to be tested
-  names_row <- rownames(model_comp$measurement)
+  
+  # all correlated variables, i.e., that have been specified with ~~
+  vars_correlated_compare <- rownames(model_compare$cor_specified)
+  
+  # Select only those that are indicators
+  ind_correlated_compare <- intersect(vars_correlated_compare, indicators)
+  
+  # Extract names of the loadings and measurement error to be tested
+  names_row <- rownames(model_compare$measurement)
   
   ## Select only concepts modeled as common factors. Reorder to be have the 
   ## same order as names_row.
@@ -210,43 +264,118 @@ getParameterNames <- function(
   i <- i[!is.na(i)]
   
   if(length(i) != 0) {
-    temp <- rep(rownames(model_comp$measurement[i, , drop = FALSE]), 
-                times = rowSums(model_comp$measurement[i, , drop = FALSE]))
+    temp <- rep(rownames(model_compare$measurement[i, , drop = FALSE]), 
+                times = rowSums(model_compare$measurement[i, , drop = FALSE]))
     if(length(temp)!=0){
-    temp_n <- model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]
-    names_loadings <- paste0(temp, " =~ ", colnames(temp_n)) 
+      # Loadings
+    temp_n <- model_compare$measurement[i, colSums(model_compare$measurement[i, , drop = FALSE]) != 0, drop = FALSE]
+    names_loadings_compare <- paste0(temp, " =~ ", colnames(temp_n)) 
+    # Measurement error
+    measurement_error_correlated <- intersect(ind_correlated_compare,colnames(temp_n))
+    cor_measurement_error <- model_compare$cor_specified[ measurement_error_correlated, measurement_error_correlated]
+
+    index <- which(cor_measurement_error == 1, arr.ind = TRUE)
+    names_correlated_measurement_error_compare <- index
+    
+    if(nrow(names_correlated_measurement_error_compare) ==0 ){
+      names_correlated_measurement_error_compare <- NULL
     }else{
-      names_loadings <- NULL
+      names_correlated_measurement_error_compare <- paste(rownames(cor_measurement_error)[index[,"row"]],
+                                                    " ~~ ",
+                                                    colnames(cor_measurement_error)[index[,"col"]],
+                                                    sep="")
+      
+      # Select those that have the same order as in the original model
+      names_correlated_measurement_error_compare <- names_correlated_measurement_error_compare[names_correlated_measurement_error_compare %in% names_cor_measurement_error_org]
+    }
+    
+    }else{
+      names_loadings_compare <- NULL
+      names_correlated_measurement_error_compare <- NULL
     }
   } else {
-    names_loadings <- NULL
+    names_loadings_compare <- NULL
+    names_correlated_measurement_error_compare <- NULL
   }
   
-  ## Extract names of the weights to be tested
-  # Select only concepts modeled as common factors. Reorder to be have the 
+  ## Extract names of the weights and indicator correlations (composites) to be tested
+  # Select only concepts modeled as composite. Reorder that it has the 
   # same order as names_row.
+  ## Indicator correlation, i.e., variables that belong to a composite
   i <- intersect(names(which(construct_type == "Composite")), names_row)
   i <- i[match(names_row, i)]
   i <- i[!is.na(i)]
   
   if(length(i) != 0) {
-    temp <- rep(rownames(model_comp$measurement[i, , drop = FALSE]), 
-                times = rowSums(model_comp$measurement[i, , drop = FALSE]))
+    temp <- rep(rownames(model_compare$measurement[i, , drop = FALSE]), 
+                times = rowSums(model_compare$measurement[i, , drop = FALSE]))
     if(length(temp)!=0){
-    temp_n <- model_comp$measurement[i, colSums(model_comp$measurement[i, , drop = FALSE]) != 0, drop = FALSE]
-    names_weights <- paste0(temp, " <~ ", colnames(temp_n))
+      # weights
+    temp_n <- model_compare$measurement[i, colSums(model_compare$measurement[i, , drop = FALSE]) != 0, drop = FALSE]
+    names_weights_compare <- paste0(temp, " <~ ", colnames(temp_n))
+    
+    # indicator correlations
+    ind_connected_to_composite <- colnames(temp_n)
+    indicator_correlated <- intersect(ind_correlated_compare,ind_connected_to_composite)
+    
+    cor_indicator <- model_compare$cor_specified[indicator_correlated, indicator_correlated]
+    
+    
+    index <- which(cor_indicator == 1, arr.ind = TRUE)
+    names_correlated_indicator_compare <- index
+    
+    # In case that no indicator correlations are compared set it to NULL
+    if(nrow(names_correlated_indicator_compare) ==0 ){
+      names_correlated_indicator_compare <- NULL
     }else{
-      names_weights <- NULL
+      names_correlated_indicator_compare <- paste(rownames(cor_indicator)[index[,"row"]],
+                                            " ~~ ",
+                                            colnames(cor_indicator)[index[,"col"]],
+                                            sep="")
+      
+      # Select those that have the same order as in the original model
+      names_correlated_indicator_compare <- names_correlated_indicator_compare[names_correlated_indicator_compare %in% names_cor_indicator_org]
+    }
+    }else{
+      names_weights_compare <- NULL
+      names_correlated_indicator_compare <- NULL
     } 
   } else {
-    names_weights <- NULL
+    names_weights_compare <- NULL
+    names_correlated_indicator_compare <- NULL
+  }
+  
+
+  ## Exogenous construct correlations 
+  cons_exo_correlated_compare <- intersect(vars_correlated_compare, cons_exo)
+
+  # Consider only exogenous constructs
+  cor_cons_exo <- model_compare$cor_specified[cons_exo_correlated_compare,cons_exo_correlated_compare]
+
+  # Which are correlated
+  index <- which(cor_cons_exo == 1,arr.ind = TRUE) 
+  names_correlated_exo_cons_compare <- index
+  
+  # In case that no measurement error correlations are compared set it to NULL
+  if(nrow(names_correlated_exo_cons_compare) == 0){
+    names_correlated_exo_cons_compare <- NULL 
+  }else{
+    names_correlated_exo_cons_compare <-paste(rownames(cor_cons_exo)[index[,"row"]],
+                              " ~~ ",
+                              colnames(cor_cons_exo)[index[,"col"]], sep="")
+    # Select those that have the same order as in the original model
+    names_correlated_exo_cons_compare <- names_correlated_exo_cons_compare[names_correlated_exo_cons_compare %in% names_cor_exo_cons_org]
+    
   }
   
   ## Return as list
   out <- list(
-    "names_path"     = names_path, 
-    "names_weights"  = names_weights,
-    "names_loadings" = names_loadings
+    "names_path"     = names_path_compare, 
+    "names_weights"  = names_weights_compare,
+    "names_loadings" = names_loadings_compare,
+    "names_cor_exo_cons" = names_correlated_exo_cons_compare,
+    "names_cor_indicator" = names_correlated_indicator_compare,
+    "names_cor_measurement_error" = names_correlated_measurement_error_compare
     )
   return(out)
 }
@@ -292,6 +421,8 @@ calculateParameterDifference <- function(
   names_path     <- names$names_path
   names_loadings <- names$names_loadings
   names_weights  <- names$names_weights
+  names_cor_exo_cons <- names$names_cor_exo_cons
+  # names_cor_measurement_error <- names$names_cor_measurement_error
   
   ### Compute differences ======================================================
   if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -304,10 +435,17 @@ calculateParameterDifference <- function(
       rbind(y$First_stage$Estimates$Weight_estimates, 
             y$Second_stage$Estimates$Weight_estimates)
       })
-  } else {
+    cor_cons_exo_estimates <- lapply(x, function(y) {
+      y$Second_stage$Estimates$Exo_construct_correlation})
+    
+  } else { # no second-order model
     path_estimates  <- lapply(x, function(y) {y$Estimates$Path_estimates})
     loading_estimates <- lapply(x, function(y) {y$Estimates$Loading_estimates})
     weight_estimates <- lapply(x, function(y) {y$Estimates$Weight_estimates})
+    # all exogenous construct correlations
+    cor_cons_exo_estimates <- lapply(x, function(y) {
+      y$Estimates$Exo_construct_correlation
+    })
   }
   
   ## Select
@@ -318,6 +456,7 @@ calculateParameterDifference <- function(
     }
     y1
   })
+  
   loading_estimates <- lapply(loading_estimates, function(y) {
     y1 <- y[y$Name %in% names_loadings, "Estimate"] 
     if(length(y1) != 0) {
@@ -325,10 +464,19 @@ calculateParameterDifference <- function(
     }
     y1
   })
+  
   weight_estimates <- lapply(weight_estimates, function(y) {
     y1 <- y[y$Name %in% names_weights, "Estimate"]
     if(length(y1) != 0) {
       names(y1) <- names_weights
+    }
+    y1
+  })
+
+  cor_cons_exo_estimates <- lapply(cor_cons_exo_estimates, function(y) {
+    y1 <- y[y$Name %in% names_cor_exo_cons, "Estimate"]
+    if(length(y1) != 0) {
+      names(y1) <- names_cor_exo_cons
     }
     y1
   })
@@ -348,11 +496,17 @@ calculateParameterDifference <- function(
   diff_weights <- lapply(temp, function(y) y[[1]] - y[[2]])
   names(diff_weights) <- sapply(temp, function(x) paste0(names(x)[1], '_', names(x)[2]))
 
+  # Exogenous construct correlations
+  temp <- utils::combn(cor_cons_exo_estimates, 2, simplify = FALSE)
+  cor_cons_exo <- lapply(temp, function(y) y[[1]] - y[[2]])
+  names(cor_cons_exo) <- sapply(temp, function(x) paste0(names(x)[1], '_', names(x)[2]))
+  
   # merge list together
-  out <- mapply(function(x,y,z) c(x,y,z),
-             x = diff_path,
-             y = diff_loadings,
-             z = diff_weights,
+  out <- mapply(function(w,x,y,z) c(w,x,y,z),
+             w = diff_path,
+             x = diff_loadings,
+             y = diff_weights,
+             z = cor_cons_exo,
              SIMPLIFY = FALSE)
 
   return(out)

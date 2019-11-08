@@ -6,12 +6,12 @@
 \usage{
 testHausman(
  .object               = NULL,
- .alpha                = args_default()$.alpha,
- .eval_plan            = args_default()$.eval_plan,
- .handle_inadmissibles = args_default()$.handle_inadmissibles,
- .R                    = args_default()$.R,
- .resample_method      = args_default()$.resample_method,
- .seed                 = args_default()$.seed
+ .alpha                = 0.05,
+ .eval_plan            = c("sequential", "multiprocess"),
+ .handle_inadmissibles = c("drop", "ignore", "replace"),
+ .R                    = 499,
+ .resample_method      = c("bootstrap", "jackknife"),
+ .seed                 = NULL
  )
 }
 \arguments{
@@ -48,15 +48,6 @@ not be altered!}
 Calculates the regression-based Hausman test to be used to compare
 OLS to 2SLS estimates or 2SLS to 3SLS estimates.
 }
-\examples{
-\dontrun{
-# TODO
-}
-
-}
-\references{
-\insertAllCited{}
-}
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=foreman]{foreman()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \link{cSEMResults}
 }

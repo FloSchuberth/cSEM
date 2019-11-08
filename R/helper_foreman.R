@@ -80,8 +80,11 @@ calculateCorrectionFactors <- function(
         .[!is.na(.)]
       
       if(length(S_vect) == 0) {
-        stop2("At least one pair of indicators with uncorrelated measurement
-             errors required.\n Please revise your model.")
+        stop2(
+          "The following error occured while calculating the correction factor:\n",
+          "At least one pair of indicators with uncorrelated measurement errors",
+          " required in each measurment equation.\n", 
+          "Measurement equation: `", j, "` has none.")
       }
       
       ## Do the actual computation ---------------------------------------------
@@ -120,7 +123,7 @@ calculateCorrectionFactors <- function(
       ## Compute absolute value and take the sqrt since cf = c^2
       correction_factors[j] <- sqrt(abs(cf))
     }
-    }
+  }
   return(correction_factors)
   ### For maintenance: ### -------------------------------------------------------------------------
   # w_j (K_j x 1)      := Column vector of indicator weights of block j
@@ -292,8 +295,6 @@ calculateIndicatorCor <- function(
 }
 
 #' Internal: Calculate Reliabilities
-#'
-#' (TODO)
 #'  
 #' @inheritParams csem_arguments
 #'

@@ -12,6 +12,10 @@ printSummarizeOverview <- function(.summarize_object) {
   
   cat2("\n\tGeneral information:\n\t","------------------------")
   cat2(
+    col_align("\n\tEstimation status", 35), "= ", ifelse(sum(x$Estimation_status) == 0, green("Ok"), 
+                                                         c(red("Not ok!"), "Use: verify()."))
+  )
+  cat2(
     col_align("\n\tNumber of observations", 35), "= ", nrow(x$Arguments$.data),
     col_align("\n\tWeight estimator", 35), "= ", 
     ifelse(x$Arguments$.approach_weights == "PLS-PM" && 
@@ -170,23 +174,33 @@ printSummarizeConstructDetails <- function(.summarize_object) {
 #' Helper for print.cSEMSummarize
 #' @noRd
 #' 
-printSummarizePath <- function(.summarize_object, .ci_colnames, .what = "Path") {
+printSummarizePathCorrelation <- function(.summarize_object, .ci_colnames, .what = "Path") {
   
   ## Check the class
   x <- if(inherits(.summarize_object, "cSEMSummarize_2ndorder")) {
     switch (.what,
       "Path" = {x <- .summarize_object$Second_stage$Estimates$Path_estimates},
       "Total effect" = {.summarize_object$Second_stage$Estimates$Effect_estimates$Total_effect},
-      "Indirect effect" = {.summarize_object$Second_stage$Estimates$Effect_estimates$Indirect_effect}
+      "Indirect effect" = {.summarize_object$Second_stage$Estimates$Effect_estimates$Indirect_effect},
+      "Residual correlation" = {.summarize_object$First_stage$Estimates$Residual_correlation},
+      "Indicator correlation" = {.summarize_object$First_stage$Estimates$Indicator_correlation},
+      "Construct correlation" = {.summarize_object$Second_stage$Estimates$Exo_construct_correlation}
     )
 
   } else {
     switch (.what,
       "Path" = {.summarize_object$Estimates$Path_estimates},
       "Total effect" = {.summarize_object$Estimates$Effect_estimates$Total_effect},
-      "Indirect effect" = {.summarize_object$Estimates$Effect_estimates$Indirect_effect}
+      "Indirect effect" = {.summarize_object$Estimates$Effect_estimates$Indirect_effect},
+      "Residual correlation" = {.summarize_object$Estimates$Residual_correlation},
+      "Indicator correlation" = {.summarize_object$Estimates$Indicator_correlation},
+      "Construct correlation" = {.summarize_object$Estimates$Exo_construct_correlation}
     )
   }
+  
+  # Rename .what
+  .what <- ifelse(.what %in% c("Residual correlation", "Indicator correlation", "Construct correlation"), 
+         "Correlation", .what)
   
   l <- max(nchar(x[, "Name"]), nchar(.what))
   
@@ -224,11 +238,12 @@ printSummarizePath <- function(.summarize_object, .ci_colnames, .what = "Path") 
       col_align(sprintf("%.4f", x[i, "p_value"]), 10, align = "right")
     )
     if(length(.ci_colnames) != 0) {
-      for(j in seq(1, length(.ci_colnames), by = 2) + 6) {
+      for(j in seq(1, length(.ci_colnames), by = 2) + 
+          ifelse(.what == "Correlation", 5, 6)) {
         cat2(
           col_align(
             paste0("[", sprintf("%7.4f", x[i, j]), ";", 
-                   sprintf("%7.4f", x[i, j+1]), "]"), 20, align = "center")
+                   sprintf("%7.4f", x[i, j+1]), " ]"), 20, align = "center")
         )
       } 
     }
@@ -262,7 +277,7 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
           cat2(
             col_align(
               paste0("[", sprintf("%7.4f", x[i, j]), ";", 
-                     sprintf("%7.4f", x[i, j+1]), "]"), 20, align = "center")
+                     sprintf("%7.4f", x[i, j+1]), " ]"), 20, align = "center")
           )
         } 
       }
@@ -290,7 +305,7 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
     sig_level_names   <- unique(gsub("[LU]", "", sapply(xx, `[`, 2)))
     }
 
-  cat2("\n\nEstimated Loadings:\n===================")
+  cat2("\n\nEstimated loadings:\n===================")
   
   if(length(.ci_colnames) != 0) {
     cat2("\n  ",  col_align("", width = max(l, nchar("Loadings")) + 44))
@@ -319,7 +334,7 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
   } 
   printLoadingsWeights(x2, "Loadings")
 
-  cat2("\n\nEstimated Weights:\n==================")
+  cat2("\n\nEstimated weights:\n==================")
   
   if(length(.ci_colnames) != 0) {
     cat2("\n  ",  col_align("", width = max(l, nchar("Weights")) + 44))

@@ -19,12 +19,6 @@
 #'
 #' @return Either a (K x K) matrix or a (J x J) matrix depending on the `*type_vcv*`.
 #' 
-#' @examples 
-#' \dontrun{
-#' res <- csem(.data = dataset, .model = model)
-#' 
-#' fit(.object = res, .saturated = FALSE, .type_vcv = "indicator")
-#' }
 #' @references
 #'   \insertAllCited{}
 #'   
@@ -40,7 +34,6 @@ fit <- function(
   UseMethod("fit")
 }
 
-#' @describeIn fit (TODO)
 #' @export
 
 fit.cSEMResults_default <- function(
@@ -82,8 +75,8 @@ fit.cSEMResults_default <- function(
   
   
   m         <- mod$structural
-  Cons_endo <- rownames(m)[rowSums(m) != 0]
-  Cons_exo  <- setdiff(colnames(m), Cons_endo)
+  Cons_endo <- mod$cons_endo
+  Cons_exo  <- mod$cons_exo
   Theta     <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   dimnames(Theta) <- dimnames(S)
   
@@ -157,7 +150,6 @@ fit.cSEMResults_default <- function(
   return(Sigma)
 }
 
-#' @describeIn fit (TODO)
 #' @export
 
 fit.cSEMResults_multi <- function(
@@ -177,7 +169,6 @@ fit.cSEMResults_multi <- function(
   }
 }
 
-#' @describeIn fit (TODO)
 #' @export
 
 fit.cSEMResults_2ndorder <- function(
@@ -199,7 +190,7 @@ fit.cSEMResults_2ndorder <- function(
   # vcv_construct is the "indicator" vcv of the second stage. 
   vcv_construct <- fit.cSEMResults_default(.object$Second_stage, 
                                            .saturated = .saturated,
-                                           .type_vcv  = .type_vcv)
+                                           .type_vcv  = 'indicator')
   
   # Select Lambda and Theta (without repeated indicator and second
   # order constructs if there are any)

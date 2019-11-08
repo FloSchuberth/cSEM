@@ -1,7 +1,7 @@
 context("testMGD")
 
 source("test-main.R")
-# source("tests/testthat/test-main.R")
+# source("tests/testthat/test-main.R") 
 # ==============================================================================
 # Tests 
 # ==============================================================================
@@ -37,7 +37,8 @@ for(i in args_default(.choices = TRUE)$.approach_mgd) {
       testMGD(
         .object       = res_multi_linear_boot,
         .approach_mgd = i,
-        .R_permutation = 10
+        .R_permutation = 5,
+        .handle_inadmissibles = "replace"
       )
     )
   })
@@ -47,7 +48,8 @@ for(i in args_default(.choices = TRUE)$.approach_mgd) {
       testMGD(
         .object       = res_multi_nonlinear,
         .approach_mgd = i,
-        .R_permutation = 10
+        .R_permutation = 5,
+        .handle_inadmissibles = "replace"
       )
     )
   })
@@ -60,7 +62,8 @@ test_that("testMGD() works for second order models (.approach_mgd = 'all')", {
     testMGD(
       .object       = res_multi_2ndorder_boot,
       .approach_mgd = "all",
-      .R_permutation = 10
+      .R_permutation = 5,
+      .handle_inadmissibles = "replace"
     )
   )
 })

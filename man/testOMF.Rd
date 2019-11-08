@@ -86,8 +86,8 @@ eta3 =~ y31 + y32 + y33
 ## Estimate
 out <- csem(threecommonfactors, model, .approach_weights = "PLS-PM")
 
-## Test (.R is small to save time; should be higher in real applications)
-testOMF(out, .R = 50)}
+## Test
+testOMF(out)}
 }
 \references{
 \insertAllCited{}

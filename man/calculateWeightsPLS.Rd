@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators_weights.R
 \name{calculateWeightsPLS}
 \alias{calculateWeightsPLS}
-\title{Internal: Calculate composite weights using PLS-PM}
+\title{Calculate composite weights using PLS-PM}
 \usage{
 calculateWeightsPLS(
   .data                        = args_default()$.data,

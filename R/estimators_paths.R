@@ -1,7 +1,7 @@
-#' Estimate the structural coefficients
+#' Internal: Estimate the structural coefficients
 #'
 #' Estimates the coefficients of the structural model (nonlinear and linear) using
-#' OLS, 2SLS, or 3SLS. The two latters currently works only for linear models.
+#' OLS, 2SLS, or 3SLS. The latter two currently work for linear models only.
 #'
 #' @usage estimatePath(
 #'  .approach_nl      = args_default()$.approach_nl,
@@ -20,6 +20,7 @@
 #' @return A named list containing the estimated structural coefficients, the
 #'   R2, the adjusted R2, and the VIF's for each regression.
 #'
+#' @keywords internal
 
 estimatePath <- function(
   .approach_nl      = args_default()$.approach_nl,
