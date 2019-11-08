@@ -9,7 +9,7 @@ model1 <- "
 # Structural model
 EXPE ~ IMAG
 
-# Measurement model
+# Composite model
 EXPE <~ expe1 + expe2
 IMAG <~ imag1 + imag2
 "
@@ -20,8 +20,10 @@ model2 <- "
 # Structural model
 EXPE ~ IMAG
 
-# Measurement model
+# Composite model
 EXPE <~ expe1 + expe2
+
+# Measurement model
 IMAG =~ imag1 + imag4
 QUAL =~ qual1 + qual3
 "
@@ -31,8 +33,10 @@ model3 <- "
 # Structural model
 EXPE ~ IMAG
 
-# Measurement model
+# Composite model
 EXPE <~ expe1 + expe2
+
+# Measurement model
 IMAG =~ imag1 + imag4 + expe1
 "
 # 1.4 Construct of the measurement model forgotten/misspelled
@@ -40,21 +44,20 @@ model4 <- "
 # Structural model
 EXPE ~ IMAG
 
-# Measurement model
+# Composite model
 EXPE <~ expe1 + expe2
 "
 
-# 1.5 Correlation between exogenous construct and structural error is specified
+# 1.5 Measurement errors across blocks 
 model5 <- "
 # Structural model
 EXPE ~ IMAG
 
-# Correlation between exogenous construct & structural error
-EXPE ~~ IMAG
-
-# Measurement model
+# Composite model
 EXPE <~ expe1 + expe2
-IMAG <~ imag1 + imag2
+IMAG =~ imag1 + imag2
+
+imag1 ~~ expe1
 "
 
 ## Tests
@@ -76,19 +79,31 @@ test_that("Linear model: correctly specified models are correctly returned", {
                                             "model_type"))
 })
 
-## 2. Several endogenous and exogenous constructs -----------------------------
+## 2. Several endogenous and exogenous constructs ------------------------------
+# Including
+# - Exogenous construct correlations
+# - Measurement error correlations
+
 model <- "
 # Structural model
 QUAL ~ IMAG + VAL + SAT
 VAL  ~ IMAG + EXPE
 SAT  ~ EXPE
 
-# Measurement model
+# Composite Model
 EXPE <~ expe1 + expe2
 IMAG <~ imag1 + imag2
+
+# Measurement model
 SAT  =~ sat1 + sat4
-QUAL =~ qual1 + qual2
+QUAL =~ qual1 + qual2 + qual3
 VAL  =~ val3 + val4
+
+# Measurement correlation
+qual1 ~~ qual2
+
+# Construct correlation
+IMAG ~~ EXPE
 "
 
 ## Tests
@@ -156,20 +171,9 @@ EXPE ~ IMAG + IMAG.IMAG
 # Measurement model
 EXPE <~ expe1 + expe2
 "
-# 1.6 Correlation between exogenous construct and structural error is specified
+
+# 1.6 Correlation between exogenous construct and interaction term is specified
 model6 <- "
-# Structural model
-EXPE ~ IMAG + IMAG.IMAG
-
-EXPE ~~ IMAG
-
-# Measurement model
-EXPE <~ expe1 + expe2
-IMAG <~ imag1 + imag2
-"
-
-# 1.7 Correlation between exogenous construct and interaction term is specified
-model7 <- "
 # Structural model
 EXPE ~ IMAG + IMAG.IMAG
 
@@ -189,7 +193,6 @@ test_that("Nonlinear model: incorrectly specified models provide an error", {
   expect_error(parseModel(model4))
   expect_error(parseModel(model5))
   expect_error(parseModel(model6))
-  expect_error(parseModel(model7))
 })
 
 ## Tests

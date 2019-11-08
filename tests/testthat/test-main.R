@@ -74,8 +74,9 @@ eta3 =~ y31 + y32 + y33
 "
 
 # Model and Sigma matrix for 2nd order DGP
-load("../data/DGP_2ndorder_cf_of_composites.RData")
-# load("tests//data/DGP_2ndorder_cf_of_composites.RData")
+load("../data/DGP_2ndorder_cf_of_composites.RData") # needs to be uncommented
+# load("tests//data/DGP_2ndorder_cf_of_composites.RData") # uncomment to source
+# on local machine
 model_2ndorder <- model_Sigma
 
 ## Data
@@ -83,7 +84,7 @@ dat <- list(threecommonfactors,
             threecommonfactors[1:200, ], 
             threecommonfactors[130:250,])
 
-dat2ndorder <- lapply(c(200, 300), function(x) {
+dat2ndorder <- lapply(c(100, 200), function(x) {
   MASS::mvrnorm(x, rep(0, nrow(Sigma$Sigma)), Sigma = Sigma$Sigma, empirical = TRUE)
 })
 
@@ -101,16 +102,22 @@ res_multi_2ndorder  <- csem(dat2ndorder, model_2ndorder)
 
 ## Single data set including bootstrap 
 res_single_linear_boot    <- csem(threecommonfactors, model_linear, 
-                                  .resample_method = "bootstrap", .R = 30)
+                                  .resample_method = "bootstrap", .R = 6,
+                                  .handle_inadmissibles = "replace")
 res_single_nonlinear_boot <- csem(threecommonfactors, model_nonlinear, 
-                                  .resample_method = "bootstrap", .R = 30)
+                                  .resample_method = "bootstrap", .R = 6,
+                                  .handle_inadmissibles = "replace")
 res_single_2ndorder_boot  <- csem(dat2ndorder[[1]], model_2ndorder, 
-                                  .resample_method = "bootstrap", .R = 30)
+                                  .resample_method = "bootstrap", .R = 6,
+                                  .handle_inadmissibles = "replace")
 
 ## Multiple data sets including bootstrap 
 res_multi_linear_boot    <- csem(dat, model_linear, 
-                                 .resample_method = "bootstrap", .R = 20)
+                                 .resample_method = "bootstrap", .R = 6,
+                                 .handle_inadmissibles = "replace")
 res_multi_nonlinear_boot <- csem(dat, model_nonlinear, 
-                                 .resample_method = "bootstrap", .R = 20)
+                                 .resample_method = "bootstrap", .R = 6,
+                                 .handle_inadmissibles = "replace")
 res_multi_2ndorder_boot  <- csem(dat2ndorder, model_2ndorder, 
-                                 .resample_method = "bootstrap", .R = 20)
+                                 .resample_method = "bootstrap", .R = 6,
+                                 .handle_inadmissibles = "replace")

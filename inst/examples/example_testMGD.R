@@ -1,4 +1,4 @@
-# ===========================================================================
+\donttest{# ===========================================================================
 # Basic usage
 # ===========================================================================
 model <- "
@@ -21,10 +21,10 @@ VAL  <~ val1  + val2  + val3  + val4
 
 ## Create list of virtually identical data sets
 dat <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
-out <- csem(dat, model, .resample_method = "bootstrap", .R = 40) 
+out <- csem(dat, model, .resample_method = "bootstrap", .R = 499) 
 
 ## Test 
-testMGD(out, .R_permutation = 20)
+testMGD(out)
 
 # Notes: 
 #  1. .R_permutation (and .R in the call to csem) is small to save time; should be
@@ -66,4 +66,4 @@ testMGD(out, .parameters_to_compare = to_compare, .R_permutation = 20, .R_bootst
 testMGD(out, .parameters_to_compare = to_compare, 
         .approach_p_adjust = c("none", "bonferroni"),
         .R_permutation = 20, .R_bootstrap = 20)
-
+}

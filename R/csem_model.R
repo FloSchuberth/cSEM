@@ -454,11 +454,19 @@ parseModel <- function(
       # vars_exo  <- setdiff(colnames(model_structural), vars_endo)
      
       ## TO DO: Figure out how to write this error
+      
+      ## Stop if construct correlation involving nonlinear terms are specified
+      tmp <- intersect(rownames(model_cor_specified), c(names_c_attached_to_2nd, names_c_s_rhs_nl, names_c_m_rhs_nl))
+      if(length(tmp) > 0) {
+        stop2("The following warning occured in the `parseModel()` function:\n",
+              "Correlation between nonlinear terms not supported (yet).",
+              " Remove specified construct correlations.")
+      }
     }
     
     ## If starting values are given create one matrix containing the correlation between
     ## indicators, one for the correlation between measurement errors, and one for the
-    ## correlation between constructs. Each contains the starting values
+    ## correlation between constructs. Each contains the tarting values
     if(!anyNA(pop_values)) {
       # Note: when a correlation between indicators is given with population values 
       # it depends on the construct
@@ -613,8 +621,12 @@ parseModel <- function(
     
     ## Should the full output be returned
     if(.full_output) {
-      model_ls$indicators <- colnames(model_measurement[n, m, drop = FALSE]) 
-      model_ls$cons_exo <- setdiff(cons_exo, names_c_attached_to_2nd) # maybe do earlier
+      model_ls$indicators <- colnames(model_measurement[n, m, drop = FALSE])
+      # 08.11.2019: 
+      # 1. First order constructs are never considered exogenous.
+      # 2. Nonlinear terms are also never considered exogenous.
+  
+      model_ls$cons_exo <- setdiff(cons_exo, c(names_c_attached_to_2nd, names_c_s_rhs_nl, names_c_m_rhs_nl))
       model_ls$cons_endo <- cons_endo 
       model_ls$vars_2nd <- names_c_2nd
       model_ls$vars_attached_to_2nd <- names_c_attached_to_2nd
