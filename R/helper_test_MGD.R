@@ -118,8 +118,7 @@ getParameterNames <- function(
     
     indicators <- x12$Model_original$indicators
     cons_exo <- x12$Model_original$cons_exo
-    # Remove first-order constructs from cons_exo 
-    cons_exo <- setdiff(cons_exo,x12$Model_original$vars_attached_to_2nd)
+
 
   } else {
     
