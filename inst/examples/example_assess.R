@@ -1,4 +1,4 @@
-# ===========================================================================
+\donttest{# ===========================================================================
 # Using the threecommonfactors dataset
 # ===========================================================================
 model <- "
@@ -25,7 +25,6 @@ assess(res, .quality_criterion = c("ave", "rho_C", "htmt"))
 
 ## Resampling ---------------------------------------------------------------
 # To resample a given quality criterion use csem()'s .user_funs argument
-\donttest{
 res <- csem(threecommonfactors, model, 
             .resample_method = "bootstrap", 
             .user_funs       = cSEM:::calculateHTMT
