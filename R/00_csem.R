@@ -21,6 +21,9 @@
 #' "`numeric`" ("`double`" or "`integer`"), "`factor`" ("`ordered`" and/or "`unordered`"),
 #' "`character`", or a mix of several types. Character columns will be treated 
 #' as (undordered) factors.
+#' 
+#' Depending on the type/class of the indicator data provided cSEM computes the indicator 
+#' correlation matrix in differnt ways. See [calculateIndicatorCor()] for details.
 #'
 #' To provide a model use the [lavaan model syntax][lavaan::model.syntax].
 #' Note, however, that \pkg{cSEM} currently only supports the "standard" lavaan
@@ -251,7 +254,6 @@
 #' \item{[testMGD()]}{Several (mainly) permutation-based tests for multi-group comparisons.}
 #' \item{[testHausman()]}{Regression-based Hausman test to test for endogeneity.}
 #' }
-
 #' @references
 #'   \insertAllCited{}
 #'

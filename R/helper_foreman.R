@@ -196,36 +196,49 @@ calculateConstructVCV <- function(
 #' 
 #' Calculate the indicator correlation matrix using conventional or robust methods.
 #' 
-#' If `"none"` the method depends on the type of column of `.X_cleaned`:
+#' If `.approach_cor_robust = "none"` (the default) the type of correlation computed
+#' depends on the types of the columns of `.X_cleaned` (i.e., the indicators) 
+#' involved in the computation. 
 #' \describe{
-#'   \item{`Numeric-numeric`}{Bravais-Pearson product-moment correlation implemented via `stats::cor()`}
-#'   \item{`Numeric-factor`}{Polyserial correlation \insertCite{Drasgow1988}{cSEM} implemented via `polycor::hetcor()`. 
-#'   See `?polycor::hetcor` for details.}
-#'   \item{`Factor-factor`}{Polychoric correlation \insertCite{Drasgow1988}{cSEM} implemented via `polycor::hetcor()`.
-#'   See `?polycor::hetcor` for details.}
+#'   \item{`Numeric-numeric`}{If both columns (indicators) involved are numeric, the
+#'      Bravais-Pearson product-moment correlation is computed (via [stats::cor()][stats::cor()]).}
+#'   \item{`Numeric-factor`}{If any of the columns is a factor variable, the 
+#'     polyserial correlation \insertCite{Drasgow1988}{cSEM} is computed (via 
+#'     [polycor::hetcor()][polycor::hetcor()]).}
+#'   \item{`Factor-factor`}{If both columns are factor variables, the 
+#'     polychoric correlation \insertCite{Drasgow1988}{cSEM} is computed (via 
+#'     [polycor::hetcor()][polycor::hetcor()]).}
 #' }
 #' Note: logical input is treated as a 0-1 factor variable.
 #' 
-#' If  `"mcd"` (= minimum covariance determinant), the MCD estimator \insertCite{Rousseeuw1999}{cSEM}
-#' , a robust covariance estimator, is applied
-#' via `MASS::cov.rob()`. See `?MASS::cov.rob` for details.
+#' If  `"mcd"` (= minimum covariance determinant), the MCD estimator 
+#' \insertCite{Rousseeuw1999}{cSEM}, a robust covariance estimator, is applied
+#' (via [MASS::cov.rob()][MASS::cov.rob()]).
 #' 
-#' If `"spearman"`, the Spearman rank correlation is applied via `stats::cor()`. See
-#' `"?stats::cor"` for details. 
+#' If `"spearman"`, the Spearman rank correlation is used (via [stats::cor()][stats::cor()]).
 #'
 #' @usage calculateIndicatorCor(
-#'   .X_cleaned           = args_default()$.X_cleaned, 
-#'   .approach_cor_robust = args_default()$.approach_cor
+#'   .X_cleaned           = NULL, 
+#'   .approach_cor_robust = "none"
 #'  )
 #'
 #' @inheritParams csem_arguments
 #' 
-#' @return A list containing the (K x K) indicator correlation matrix S. 
+#' @references
+#'   \insertAllCited{}
+#'   
+#' @return A list with elements:
+#' \describe{
+#'   \item{`$S`}{The (K x K) indicator correlation matrix}
+#'   \item{`$cor_type`}{The type(s) of indicator correlation computed ( 
+#'    "Pearson", "Polyserial", "Polychoric")}
+#'    \item{`$thre_est`}{Currently ignored (NULL)}
+#' }
 #' @keywords internal
 
 calculateIndicatorCor <- function(
-  .X_cleaned           = args_default()$.X_cleaned,
-  .approach_cor_robust = args_default()$.approach_cor
+  .X_cleaned           = NULL,
+  .approach_cor_robust = "none"
 ){
   
   only_numeric_cols <- all(unlist(lapply(.X_cleaned, is.numeric)))
@@ -241,7 +254,7 @@ calculateIndicatorCor <- function(
           "none" = {
             if(only_numeric_cols) {
               S <- cor(.X_cleaned)
-              cor_type <- "Bravais-Pearson" 
+              cor_type <- "Pearson" 
               thres_est = NULL
             } else {
               # Pd is TRUE by default. See ?hetcor for details
@@ -250,7 +263,7 @@ calculateIndicatorCor <- function(
               cor_type <- unique(c(temp$type))
               cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""'
               
-              thres_est <- "Needs to be implemented"
+              thres_est <- NULL
               
               # The lavCor function does no smoothing in case of empty cells, which creates problems during bootstrap
               # # Use lavCor function from the lavaan package for the calculation of the polychoric and polyserial correlation 

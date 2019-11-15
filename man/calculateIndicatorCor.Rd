@@ -5,8 +5,8 @@
 \title{Internal: Calculate indicator correlation matrix}
 \usage{
 calculateIndicatorCor(
-  .X_cleaned           = args_default()$.X_cleaned, 
-  .approach_cor_robust = args_default()$.approach_cor
+  .X_cleaned           = NULL, 
+  .approach_cor_robust = "none"
  )
 }
 \arguments{
@@ -24,27 +24,40 @@ indicator correlation matrix (i.e Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.}
 }
 \value{
-A list containing the (K x K) indicator correlation matrix S.
+A list with elements:
+\describe{
+\item{\code{$S}}{The (K x K) indicator correlation matrix}
+\item{\code{$cor_type}}{The type(s) of indicator correlation computed (
+"Pearson", "Polyserial", "Polychoric")}
+\item{\code{$thre_est}}{Currently ignored (NULL)}
+}
 }
 \description{
 Calculate the indicator correlation matrix using conventional or robust methods.
 }
 \details{
-If \code{"none"} the method depends on the type of column of \code{.X_cleaned}:
+If \code{.approach_cor_robust = "none"} (the default) the type of correlation computed
+depends on the types of the columns of \code{.X_cleaned} (i.e., the indicators)
+involved in the computation.
 \describe{
-\item{\code{Numeric-numeric}}{Bravais-Pearson product-moment correlation implemented via \code{stats::cor()}}
-\item{\code{Numeric-factor}}{Polyserial correlation \insertCite{Drasgow1988}{cSEM} implemented via \code{polycor::hetcor()}.
-See \code{?polycor::hetcor} for details.}
-\item{\code{Factor-factor}}{Polychoric correlation \insertCite{Drasgow1988}{cSEM} implemented via \code{polycor::hetcor()}.
-See \code{?polycor::hetcor} for details.}
+\item{\code{Numeric-numeric}}{If both columns (indicators) involved are numeric, the
+Bravais-Pearson product-moment correlation is computed (via \code{\link[stats:cor]{stats::cor()}}).}
+\item{\code{Numeric-factor}}{If any of the columns is a factor variable, the
+polyserial correlation \insertCite{Drasgow1988}{cSEM} is computed (via
+\code{\link[polycor:hetcor]{polycor::hetcor()}}).}
+\item{\code{Factor-factor}}{If both columns are factor variables, the
+polychoric correlation \insertCite{Drasgow1988}{cSEM} is computed (via
+\code{\link[polycor:hetcor]{polycor::hetcor()}}).}
 }
 Note: logical input is treated as a 0-1 factor variable.
 
-If  \code{"mcd"} (= minimum covariance determinant), the MCD estimator \insertCite{Rousseeuw1999}{cSEM}
-, a robust covariance estimator, is applied
-via \code{MASS::cov.rob()}. See \code{?MASS::cov.rob} for details.
+If  \code{"mcd"} (= minimum covariance determinant), the MCD estimator
+\insertCite{Rousseeuw1999}{cSEM}, a robust covariance estimator, is applied
+(via \code{\link[MASS:cov.rob]{MASS::cov.rob()}}).
 
-If \code{"spearman"}, the Spearman rank correlation is applied via \code{stats::cor()}. See
-\code{"?stats::cor"} for details.
+If \code{"spearman"}, the Spearman rank correlation is used (via \code{\link[stats:cor]{stats::cor()}}).
+}
+\references{
+\insertAllCited{}
 }
 \keyword{internal}

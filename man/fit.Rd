@@ -20,7 +20,7 @@ Defaults to \code{FALSE}.}
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 }
 \value{
-Either a (K x K) matrix or a (J x J) matrix depending on the \code{*type_vcv*}.
+Either a (K x K) matrix or a (J x J) matrix depending on the \code{type_vcv}.
 }
 \description{
 Calculate the model-implied indicator or construct variance-covariance (VCV)

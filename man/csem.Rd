@@ -179,6 +179,9 @@ Possible column types/classes of the data provided are: "\code{logical}",
 "\code{character}", or a mix of several types. Character columns will be treated
 as (undordered) factors.
 
+Depending on the type/class of the indicator data provided cSEM computes the indicator
+correlation matrix in differnt ways. See \code{\link[=calculateIndicatorCor]{calculateIndicatorCor()}} for details.
+
 To provide a model use the \link[lavaan:model.syntax]{lavaan model syntax}.
 Note, however, that \pkg{cSEM} currently only supports the "standard" lavaan
 model syntax (Types 1, 2, 3, and 7 as described on the help page).

@@ -17,7 +17,7 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return Either a (K x K) matrix or a (J x J) matrix depending on the `*type_vcv*`.
+#' @return Either a (K x K) matrix or a (J x J) matrix depending on the `type_vcv`.
 #' 
 #' @references
 #'   \insertAllCited{}
@@ -66,8 +66,22 @@ fit.cSEMResults_default <- function(
   ### Preparation ==============================================================
   ## Check if linear
   if(.object$Information$Model$model_type != "Linear"){
-    stop2("`fit()` currently not applicable to nonlinear models.")
+    stop2(
+      "The following error occured while computing the model-implied",
+      " indicator correlation matrix:\n",
+      "`fit()` currently not applicable to nonlinear models.")
   }
+  
+  ## Check if the indicator-correlation matrix is continuous, warn otherwise
+  if(any(.object$Information$Type_of_indicator_correlation %in% 
+         c("Polyserial", "Polychoric"))){
+    warning2(
+      "The following warning occured while computing the model-implied",
+      " indicator correlation matrix:\n",
+      "Some indicators are categorial. Model-implied indicator correlation matrix",
+      " is likely to be wrong.")
+  }
+  
   
   mod       <- .object$Information$Model
   S         <- .object$Estimates$Indicator
@@ -82,8 +96,11 @@ fit.cSEMResults_default <- function(
   
   ## Check if recursive, otherwise return a warning
   if(any(m[Cons_endo, Cons_endo] + t(m[Cons_endo, Cons_endo]) == 2)){
-    warning2("`fit()` currently not applicable to non-recursive models.",
-             " The model-implied indicator covariance matrix is likely to be wrong.")
+    warning2(
+      "The following warning occured while computing the model-implied",
+      " indicator correlation matrix:\n",
+      "Currently, `fit()` does not handle non-recursive models correctly.",
+      " The model-implied indicator correlation matrix is likely to be wrong.")
   }
   
   ### VCV of the constructs ====================================================
