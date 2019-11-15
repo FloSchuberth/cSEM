@@ -452,7 +452,7 @@ parseModel <- function(
       ## TO DO: Figure out how to write this error
       
       ## Stop if construct correlation involving nonlinear terms are specified
-      tmp <- intersect(rownames(model_cor_specified), c(names_c_attached_to_2nd, names_c_s_rhs_nl, names_c_m_rhs_nl))
+      tmp <- intersect(rownames(model_cor_specified), c(names_c_s_rhs_nl, names_c_m_rhs_nl))
       if(length(tmp) > 0) {
         stop2("The following warning occured in the `parseModel()` function:\n",
               "Correlation between nonlinear terms not supported (yet).",
