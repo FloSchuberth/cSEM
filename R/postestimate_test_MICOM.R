@@ -1,7 +1,7 @@
 #' Test measurement invariance of composites
 #'
 #' This functions performs the test for measurement invariance of composites
-#' proposed by \insertCite{Henseler2016}{cSEM}.
+#' proposed by \insertCite{Henseler2016;textual}{cSEM}.
 #'
 #' The test is only meaningful for concepts modeled as composites.
 #'
@@ -13,13 +13,13 @@
 #' be at least 5000 for assessment to be sufficiently reliable.
 #'
 #' @usage testMICOM(
-#'  .object               = args_default()$.object,
-#'  .alpha                = args_default()$.alpha,
-#'  .approach_p_adjust    = args_default()$.approach_p_adjust,
-#'  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-#'  .R                    = args_default()$.R,
-#'  .seed                 = args_default()$.seed,
-#'  .verbose              = args_default()$.verbose
+#'  .object               = NULL,
+#'  .alpha                = 0.05,
+#'  .approach_p_adjust    = "none",
+#'  .handle_inadmissibles = c("drop", "ignore", "replace"), 
+#'  .R                    = 499,
+#'  .seed                 = NULL,
+#'  .verbose              = TRUE
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -35,18 +35,23 @@
 #' @references
 #'   \insertAllCited{}
 #'
+#' @example inst/examples/example_testMICOM.R
+#' 
 #' @export
 #'
 
 testMICOM <- function(
-  .object               = args_default()$.object,
-  .alpha                = args_default()$.alpha,
-  .approach_p_adjust    = args_default()$.approach_p_adjust,
-  .handle_inadmissibles = args_default()$.handle_inadmissibles,
-  .R                    = args_default()$.R,
-  .seed                 = args_default()$.seed,
-  .verbose              = args_default()$.verbose
+  .object               = NULL,
+  .alpha                = 0.05,
+  .approach_p_adjust    = "none",
+  .handle_inadmissibles = c("replace", "drop", "ignore"),
+  .R                    = 499,
+  .seed                 = NULL,
+  .verbose              = TRUE
 ) {
+  
+  # Match arguments
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   # Implementation is based on:
   # Henseler et al. (2016) - Testing measurement invariance of composites using
   #                          partial least squares
@@ -95,7 +100,7 @@ testMICOM <- function(
     }
     
     if(.approach_p_adjust != 'none'){
-      stop2("Adjustment of p-values is not supported yet.")
+      stop2("P-value adjustment to control the familywise error rate not supported yet.")
     }
     
     ### Preparation ==============================================================
@@ -336,12 +341,13 @@ testMICOM <- function(
                          y = critical_values_step3[[2]],
                          SIMPLIFY = FALSE)
     
-    # Return output
+    ### Return output ==========================================================
     out <- list(
       "Step2" = list(
         "Test_statistic"     = c,
         "Critical_value"     = critical_values_step2, 
-        "Decision"           = decision 
+        "Decision"           = decision,
+        "Bootstrap_values"   = ref_dist
       ),
       "Step3" = list(
         "Mean" = list(

@@ -5,13 +5,13 @@
 \title{Test measurement invariance of composites}
 \usage{
 testMICOM(
- .object               = args_default()$.object,
- .alpha                = args_default()$.alpha,
- .approach_p_adjust    = args_default()$.approach_p_adjust,
- .handle_inadmissibles = args_default()$.handle_inadmissibles,
- .R                    = args_default()$.R,
- .seed                 = args_default()$.seed,
- .verbose              = args_default()$.verbose
+ .object               = NULL,
+ .alpha                = 0.05,
+ .approach_p_adjust    = "none",
+ .handle_inadmissibles = c("drop", "ignore", "replace"), 
+ .R                    = 499,
+ .seed                 = NULL,
+ .verbose              = TRUE
  )
 }
 \arguments{
@@ -55,7 +55,7 @@ A named list of class "testMICOM" containing the following list element:
 }
 \description{
 This functions performs the test for measurement invariance of composites
-proposed by \insertCite{Henseler2016}{cSEM}.
+proposed by \insertCite{Henseler2016;textual}{cSEM}.
 }
 \details{
 The test is only meaningful for concepts modeled as composites.
@@ -66,6 +66,52 @@ should be taken into account.
 The number of permutation runs defaults to \code{args_default()$.R} for performance reasons.
 According to \insertCite{Henseler2016}{cSEM} the number of permutations should
 be at least 5000 for assessment to be sufficiently reliable.
+}
+\examples{
+require(cSEM.DGP)
+
+# Create two data generating processes (DGPs) that only differ in how the composite
+# X is build. Hence, the two groups are not compositionally invariant.
+dgp1 <- "
+# Structural model
+Y ~ 0.6*X
+
+# Measurement model
+Y =~ 1*y1
+X <~ 0.4*x1 + 0.8*x2
+
+x1 ~~ 0.3125*x2
+"
+
+dgp2 <- "
+# Structural model
+Y ~ 0.6*X
+
+# Measurement model
+Y =~ 1*y1
+X <~ 0.8*x1 + 0.4*x2
+
+x1 ~~ 0.3125*x2
+"
+
+g1 <- generateData(dgp1, .empirical = TRUE) 
+g2 <- generateData(dgp2, .empirical = TRUE)
+
+# Model is the same for both DGPs
+model <- "
+# Structural model
+Y ~ X
+
+# Measurement model
+Y =~ y1
+X <~ x1 + x2
+"
+
+# Estimate
+csem_results <- csem(.data = list("group1" = g1, "group2" = g2), model)
+
+# Test
+testMICOM(csem_results, .R = 50, .alpha = c(0.01, 0.05))
 }
 \references{
 \insertAllCited{}

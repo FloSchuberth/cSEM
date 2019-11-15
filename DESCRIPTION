@@ -69,4 +69,5 @@ Suggests:
     listviewer,
     testthat,
     ggplot2
+Remotes: M-E-Rademaker/cSEM.DGP
 VignetteBuilder: knitr

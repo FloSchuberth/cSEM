@@ -940,14 +940,14 @@ print.cSEMTestMICOM <- function(x, ...) {
     
     cat("  Compared groups: ", names(x2$Test_statistic)[i], "\n\n\t", sep = "")
     for(type in names(x3)) {
-      x <- x3[[type]]
+      x3_type <- x3[[type]]
       cat(type, "\n\t", sep = "")
       cat(
         col_align("", width = l_names),
         "\t",
         col_align("", width = 14), 
         "\t",
-        col_align("Critical values", width = 8*ncol(x$Critical_value[[i]]), 
+        col_align("Critical values", width = 8*ncol(x3_type$Critical_value[[i]]), 
                   align = "center"),
         sep = ""
       )
@@ -960,7 +960,7 @@ print.cSEMTestMICOM <- function(x, ...) {
         sep = ""
       )
       
-      for(j in colnames(x$Critical_value[[i]])) {
+      for(j in colnames(x3_type$Critical_value[[i]])) {
         cat(col_align(j, width = 6, align = "center"), "\t", sep = "")
       }
       
@@ -970,14 +970,14 @@ print.cSEMTestMICOM <- function(x, ...) {
         cat(
           col_align(j, width = l_names), 
           "\t",
-          col_align(sprintf("%.4f", x$Test_statistic[[i]][j]), width = 14,
+          col_align(sprintf("%.4f", x3_type$Test_statistic[[i]][j]), width = 14,
                     align = "center"),
           "\t",
           sep = ""
         )
         
-        for(k in colnames(x$Critical_value[[i]])) {
-          cat(sprintf("%.4f", x$Critical_value[[i]][j, k]), "\t", sep = "")
+        for(k in colnames(x3_type$Critical_value[[i]])) {
+          cat(sprintf("%.4f", x3_type$Critical_value[[i]][j, k]), "\t", sep = "")
         } # END for j (each construct)
         cat("\n\t")
       } # END for k (each significance level)
@@ -994,18 +994,18 @@ print.cSEMTestMICOM <- function(x, ...) {
     cat("  Compared groups: ", names(x2$Test_statistic)[i], "\n\n\t")
     
     for(type in names(x3)) {
-      x <- x3[[type]]
+      x3_type <- x3[[type]]
       
       # Width of columns
-      l <- apply(x$Decision[[i]], 2, function(x) {
+      l <- apply(x3_type$Decision[[i]], 2, function(x) {
         ifelse(any(x == TRUE), nchar("Do not reject"), nchar("reject"))
       })
       
-      n1 <- colnames(x$Critical_value[[i]])
+      n1 <- colnames(x3_type$Critical_value[[i]])
       n2 <- paste0("[", n1[seq(1, (length(n1) - 1), by = 2)], ";", 
                    n1[seq(2, length(n1), by = 2)], "]")
       
-      l1 <- max(c(sum(l) + 3*(ncol(x$Decision[[i]]) - 1)), 
+      l1 <- max(c(sum(l) + 3*(ncol(x3_type$Decision[[i]]) - 1)), 
                 nchar("Significance levels"),
                 nchar(n2))
       
@@ -1032,13 +1032,13 @@ print.cSEMTestMICOM <- function(x, ...) {
       
       cat("\n\t")
       
-      for(j in seq_along(x$Test_statistic[[i]])) {
+      for(j in seq_along(x3_type$Test_statistic[[i]])) {
         
-        cat(col_align(names(x$Test_statistic[[i]])[j], width = l_names), "\t", sep = "")
+        cat(col_align(names(x3_type$Test_statistic[[i]])[j], width = l_names), "\t", sep = "")
         
-        for(k in 1:ncol(x$Decision[[i]])) {
+        for(k in 1:ncol(x3_type$Decision[[i]])) {
           cat(
-            col_align(ifelse(x$Decision[[i]][j, k], 
+            col_align(ifelse(x3_type$Decision[[i]][j, k], 
                              green("Do not reject"), red("reject")),
                       width = max(l[k], nchar(n2[k])), align = "center"), 
             "\t", 
@@ -1047,7 +1047,6 @@ print.cSEMTestMICOM <- function(x, ...) {
         } # END for k (each construct)
         cat("\n\t")
       } # END for j (each significance level)
-      cat("\n\t")
     } # END for type (one of "Mean" and "Var")
     cat("\n")
   } # END for i (each group)
@@ -1058,11 +1057,12 @@ print.cSEMTestMICOM <- function(x, ...) {
     "\n\n\tOut of ", x$Information$Total_runs , " permutation runs, ", 
     x$Information$Number_admissibles, " where admissible.\n\t",
     "See ", yellow("?"), magenta("verify"), "()",
-    " for what constitutes an inadmissible result.", 
+    " for what constitutes an inadmissible result.\n\n\t",
+    "The seed used was: ", x$Information$Seed, "\n", 
     sep = ""
   )
   
-  cat("\n\n\tNumber of observations per group:")
+  cat("\n\tNumber of observations per group:")
   
   l <- max(nchar(c(x$Information$Group_names, "Group")))
   
