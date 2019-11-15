@@ -44,7 +44,7 @@ testMICOM <- function(
   .object               = NULL,
   .alpha                = 0.05,
   .approach_p_adjust    = "none",
-  .handle_inadmissibles = c("replace", "drop", "ignore"),
+  .handle_inadmissibles = c("drop", "ignore", "replace"),
   .R                    = 499,
   .seed                 = NULL,
   .verbose              = TRUE
