@@ -35,11 +35,6 @@
 #'   \item{`$model_type`}{The type of model ("Linear" or "Nonlinear").}
 #'   \item{`$instruments`}{Only if instruments are supplied: a list of structural 
 #'     equations relating endogenous RHS variables to instruments.}
-#' }
-#' 
-#' If the `.full_output` argument to [parseModel()] is set to `TRUE` the [cSEMModel]
-#' object will contain three additional list elements, namely:
-#' \describe{
 #'   \item{`$indicators`}{The names of the indicators 
 #'     (i.e., observed variables and/or first-order constructs)}
 #'   \item{`$cons_exo`}{The names of the exogenous constructs of the structural model 

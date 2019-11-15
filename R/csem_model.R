@@ -19,13 +19,10 @@
 #' @usage parseModel(
 #'   .model        = NULL, 
 #'   .instruments  = NULL, 
-#'   .check_errors = TRUE,
-#'   .full_output  = FALSE
+#'   .check_errors = TRUE
 #'   )
 #'
 #' @inheritParams csem_arguments
-#' @param .full_output Logical. Should the full output be returned. Defaults to
-#'   `FALSE`. Only required for internal purposes.
 #' 
 #' @inherit csem_model return
 #'
@@ -36,8 +33,7 @@
 parseModel <- function(
   .model        = NULL, 
   .instruments  = NULL, 
-  .check_errors = TRUE,
-  .full_output  = FALSE
+  .check_errors = TRUE
   ) {
 
   ### Check if already a cSEMModel list; if yes return as is
@@ -588,7 +584,16 @@ parseModel <- function(
       "cor_specified"      = model_cor_specified,
       "construct_type"     = construct_type[match(n, names(construct_type))],
       "construct_order"    = construct_order[match(n, names(construct_order))],
-      "model_type"         = type_of_model
+      "model_type"         = type_of_model,
+      "indicators"         = colnames(model_measurement[n, m, drop = FALSE]),
+      # 08.11.2019: 
+      # 1. First order constructs are never considered exogenous.
+      # 2. Nonlinear terms are also never considered exogenous.
+      "cons_exo"           = setdiff(cons_exo, c(names_c_attached_to_2nd, names_c_s_rhs_nl, names_c_m_rhs_nl)),
+      "cons_endo"          = cons_endo,
+      "vars_2nd"           = names_c_2nd,
+      "vars_attached_to_2nd"     = names_c_attached_to_2nd,
+      "vars_not_attached_to_2nd" = names_c_not_attachted_to_2nd
     )
     
     ## Add population values to output if any are given
@@ -619,20 +624,6 @@ parseModel <- function(
       model_ls$instruments <- .instruments
     }
     
-    ## Should the full output be returned
-    if(.full_output) {
-      model_ls$indicators <- colnames(model_measurement[n, m, drop = FALSE])
-      # 08.11.2019: 
-      # 1. First order constructs are never considered exogenous.
-      # 2. Nonlinear terms are also never considered exogenous.
-  
-      model_ls$cons_exo <- setdiff(cons_exo, c(names_c_attached_to_2nd, names_c_s_rhs_nl, names_c_m_rhs_nl))
-      model_ls$cons_endo <- cons_endo 
-      model_ls$vars_2nd <- names_c_2nd
-      model_ls$vars_attached_to_2nd <- names_c_attached_to_2nd
-      model_ls$vars_not_attached_to_2nd <- names_c_not_attachted_to_2nd
-    }
-      
     class(model_ls) <- "cSEMModel"
     return(model_ls) 
   } # END else
@@ -877,7 +868,7 @@ convertModel <- function(
     } # END first step of the 2/3 stage approach
   } # END first step
 
-  model <- parseModel(lav_model, .full_output = TRUE)
+  model <- parseModel(lav_model)
   
   ## add
   return(model)

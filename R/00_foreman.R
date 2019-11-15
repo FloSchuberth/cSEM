@@ -68,7 +68,7 @@ foreman <- function(
   
   ### Preprocessing ============================================================
   ## Parse and order model to "cSEMModel" list
-  csem_model <- parseModel(.model, .instruments = .instruments, .full_output = TRUE)
+  csem_model <- parseModel(.model, .instruments = .instruments)
 
   ## Prepare, check, and clean data (a data.frame)
   X_cleaned <- processData(.data = .data, 

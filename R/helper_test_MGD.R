@@ -182,7 +182,7 @@ getParameterNames <- function(
       # Attention if the some of the variables are already in that matrix
     }
   } else {
-    model_compare <- parseModel(.model, .check_errors = FALSE,.full_output = TRUE)
+    model_compare <- parseModel(.model, .check_errors = FALSE)
   }
   
 

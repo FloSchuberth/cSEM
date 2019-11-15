@@ -7,8 +7,7 @@
 parseModel(
   .model        = NULL, 
   .instruments  = NULL, 
-  .check_errors = TRUE,
-  .full_output  = FALSE
+  .check_errors = TRUE
   )
 }
 \arguments{
@@ -25,9 +24,6 @@ instruments for themselves. Defaults to \code{NULL}.}
 \item{.check_errors}{Logical. Should the model be checked for appropriateness
 in a sense that all necessary components to estimate the model are given?
 Defaults to \code{TRUE}.}
-
-\item{.full_output}{Logical. Should the full output be returned. Defaults to
-\code{FALSE}. Only required for internal purposes.}
 }
 \value{
 An object of class \link{cSEMModel} is a standardized list containing the
@@ -61,11 +57,6 @@ and their respective order ("First order" or "Second order").}
 \item{\code{$model_type}}{The type of model ("Linear" or "Nonlinear").}
 \item{\code{$instruments}}{Only if instruments are supplied: a list of structural
 equations relating endogenous RHS variables to instruments.}
-}
-
-If the \code{.full_output} argument to \code{\link[=parseModel]{parseModel()}} is set to \code{TRUE} the \link{cSEMModel}
-object will contain three additional list elements, namely:
-\describe{
 \item{\code{$indicators}}{The names of the indicators
 (i.e., observed variables and/or first-order constructs)}
 \item{\code{$cons_exo}}{The names of the exogenous constructs of the structural model

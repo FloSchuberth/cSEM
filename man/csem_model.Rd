@@ -36,11 +36,6 @@ and their respective order ("First order" or "Second order").}
 \item{\code{$model_type}}{The type of model ("Linear" or "Nonlinear").}
 \item{\code{$instruments}}{Only if instruments are supplied: a list of structural
 equations relating endogenous RHS variables to instruments.}
-}
-
-If the \code{.full_output} argument to \code{\link[=parseModel]{parseModel()}} is set to \code{TRUE} the \link{cSEMModel}
-object will contain three additional list elements, namely:
-\describe{
 \item{\code{$indicators}}{The names of the indicators
 (i.e., observed variables and/or first-order constructs)}
 \item{\code{$cons_exo}}{The names of the exogenous constructs of the structural model

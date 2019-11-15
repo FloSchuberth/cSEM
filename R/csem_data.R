@@ -49,7 +49,7 @@ processData <- function(
 
   # Convert .model to cSEMModel format if not already in this format
   if(!inherits(.model, "cSEMModel")) {
-    .model <- parseModel(.model, .instruments = .instruments, .full_output = TRUE)
+    .model <- parseModel(.model, .instruments = .instruments)
   }
   
   ## Check if data set is symmetric. This is an indicator that a covariance
