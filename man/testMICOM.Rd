@@ -64,11 +64,12 @@ If more than two groups are to be compared issues related to multiple testing
 should be taken into account.
 
 The number of permutation runs defaults to \code{args_default()$.R} for performance reasons.
-According to \insertCite{Henseler2016}{cSEM} the number of permutations should
+According to \insertCite{Henseler2016;textual}{cSEM} the number of permutations should
 be at least 5000 for assessment to be sufficiently reliable.
 }
 \examples{
-require(cSEM.DGP)
+\donttest{# NOTE: to run the example. Download and load the newst version of cSEM.DGP
+# from GitHub using devtools::install_github("M-E-Rademaker/cSEM.DGP").
 
 # Create two data generating processes (DGPs) that only differ in how the composite
 # X is build. Hence, the two groups are not compositionally invariant.
@@ -94,8 +95,8 @@ X <~ 0.8*x1 + 0.4*x2
 x1 ~~ 0.3125*x2
 "
 
-g1 <- generateData(dgp1, .empirical = TRUE) 
-g2 <- generateData(dgp2, .empirical = TRUE)
+g1 <- generateData(dgp1, .empirical = TRUE) # requires cSEM.DGP 
+g2 <- generateData(dgp2, .empirical = TRUE) # requires cSEM.DGP
 
 # Model is the same for both DGPs
 model <- "
@@ -112,6 +113,7 @@ csem_results <- csem(.data = list("group1" = g1, "group2" = g2), model)
 
 # Test
 testMICOM(csem_results, .R = 50, .alpha = c(0.01, 0.05))
+}
 }
 \references{
 \insertAllCited{}

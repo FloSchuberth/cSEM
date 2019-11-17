@@ -42,7 +42,6 @@ Imports:
     alabama,
     cli,
     crayon,
-    cSEM.DGP,
     expm,
     future.apply,
     future,
@@ -70,5 +69,4 @@ Suggests:
     listviewer,
     testthat,
     ggplot2
-Remotes: M-E-Rademaker/cSEM.DGP
 VignetteBuilder: knitr

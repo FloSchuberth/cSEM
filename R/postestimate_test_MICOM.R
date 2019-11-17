@@ -9,7 +9,7 @@
 #' should be taken into account.
 #'
 #' The number of permutation runs defaults to `args_default()$.R` for performance reasons.
-#' According to \insertCite{Henseler2016}{cSEM} the number of permutations should 
+#' According to \insertCite{Henseler2016;textual}{cSEM} the number of permutations should 
 #' be at least 5000 for assessment to be sufficiently reliable.
 #'
 #' @usage testMICOM(
