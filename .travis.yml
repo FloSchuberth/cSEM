@@ -9,8 +9,8 @@ warnings_are_errors: true
 
 jobs:
   include:
-  - os: osx  # check package on macOS 10.13 (all other checks are on linux)
-  - r: devel # check package for development version of R
+#  - os: osx  # check package on macOS 10.13 (all other checks are on linux)
+#  - r: devel # check package for development version of R
 #  - r: 3.5   # Check package for version 3.5.x
   - r: release # Check package for current release and deploy to ghpages
     after_success:
