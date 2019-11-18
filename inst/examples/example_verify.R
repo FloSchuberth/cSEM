@@ -17,7 +17,7 @@ out <- csem(threecommonfactors, model)
 verify(out) # ok!
 
 ## Examine the structure of a cSEMVerify object
-str(verify)
+str(verify(out))
 
 ### With higher order constructs -----------------------------------------------
 # If the model containes higher order constructs both the first and the second-

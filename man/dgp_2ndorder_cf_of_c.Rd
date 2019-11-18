@@ -60,6 +60,6 @@ c4   =~ c1 + c2 + c3
 a <- csem(dgp_2ndorder_cf_of_c, model)
 
 ## The overall model fit is evidently almost perfect:
-testOMF(a, .R = 50) # .R = 50 to speed up the example
+testOMF(a, .R = 50, .verbose = TRUE) # .R = 50 to speed up the example
 }
 \keyword{datasets}

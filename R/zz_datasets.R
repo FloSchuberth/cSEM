@@ -137,7 +137,7 @@
 #' a <- csem(threecommonfactors, model_correct)
 #' 
 #' ## The overall model fit is evidently almost perfect:
-#' testOMF(a, .R = 50) # .R = 50 to speed up the example
+#' testOMF(a, .R = 50, .verbose = FALSE) # .R = 50 to speed up the example
 "threecommonfactors"
 
 #' Data: Second order common factor of composites
@@ -197,7 +197,7 @@
 #' a <- csem(dgp_2ndorder_cf_of_c, model)
 #' 
 #' ## The overall model fit is evidently almost perfect:
-#' testOMF(a, .R = 50) # .R = 50 to speed up the example
+#' testOMF(a, .R = 50, .verbose = TRUE) # .R = 50 to speed up the example
 "dgp_2ndorder_cf_of_c"
 
 #' Data: political democracy

@@ -1,14 +1,14 @@
 #' Verify admissibility
 #'
-#' Verify admissibility of the estimated quantities in `.object`. 
+#' Verify admissibility of the results obtained using [csem()].
 #' 
 #' Results exhibiting one of the following defects are deemed inadmissible: 
 #' non-convergence of the algorithm used to obtain weights, loadings and/or 
 #' (congeneric) reliabilities larger than 1, a construct variance-covariance (VCV) and/or
 #' model-implied VCV matrix that is not positive semi-definite.
 #' 
-#' If the two stage approach was used for models containing second order 
-#' constructs, both the first and the second stage are checked separately.
+#' If `.object` is of class `cSEMResults_2ndorder` (i.e., estimates are
+#' based on a model containing second-order constructs) both the first and the second stage are checked separately.
 #' 
 #' Currently, a model-implied indicator VCV matrix for nonlinear model is not
 #' available. `verify()` therefore skips the check for positive definitness of the
@@ -16,13 +16,13 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cSEMResults]
+#' @seealso [csem()], [summarize()], [cSEMResults]
 #'
 #' @return A logical vector indicating which (if any) problem occurred. 
-#'   A `FALSE` indicates that the specific problem has not occured. For models containg second order
-#'   constructs estimated by a two stage approach a list of two such vectors 
+#'   A `FALSE` indicates that the specific problem has not occured. For models containg second-order
+#'   constructs estimated by a two stage approach, a list of two such vectors 
 #'   (one for the first and one for the second stage) is returned. Status codes are:
-#'  \itemize{
+#'\itemize{
 #' \item 1: The algorithm has converged.
 #' \item 2: All absolute standardized loading estimates are smaller than or equal to 1.
 #'   A violation implies either a negative variance of the measurement error or

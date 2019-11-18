@@ -11,8 +11,8 @@ verify(.object)
 }
 \value{
 A logical vector indicating which (if any) problem occurred.
-A \code{FALSE} indicates that the specific problem has not occured. For models containg second order
-constructs estimated by a two stage approach a list of two such vectors
+A \code{FALSE} indicates that the specific problem has not occured. For models containg second-order
+constructs estimated by a two stage approach, a list of two such vectors
 (one for the first and one for the second stage) is returned. Status codes are:
 \itemize{
 \item 1: The algorithm has converged.
@@ -26,7 +26,7 @@ second-order constructs).
 }
 }
 \description{
-Verify admissibility of the estimated quantities in \code{.object}.
+Verify admissibility of the results obtained using \code{\link[=csem]{csem()}}.
 }
 \details{
 Results exhibiting one of the following defects are deemed inadmissible:
@@ -34,8 +34,8 @@ non-convergence of the algorithm used to obtain weights, loadings and/or
 (congeneric) reliabilities larger than 1, a construct variance-covariance (VCV) and/or
 model-implied VCV matrix that is not positive semi-definite.
 
-If the two stage approach was used for models containing second order
-constructs, both the first and the second stage are checked separately.
+If \code{.object} is of class \code{cSEMResults_2ndorder} (i.e., estimates are
+based on a model containing second-order constructs) both the first and the second stage are checked separately.
 
 Currently, a model-implied indicator VCV matrix for nonlinear model is not
 available. \code{verify()} therefore skips the check for positive definitness of the
@@ -61,7 +61,7 @@ out <- csem(threecommonfactors, model)
 verify(out) # ok!
 
 ## Examine the structure of a cSEMVerify object
-str(verify)
+str(verify(out))
 
 ### With higher order constructs -----------------------------------------------
 # If the model containes higher order constructs both the first and the second-
@@ -95,5 +95,5 @@ verify(out) # not ok
 }
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=summarize]{summarize()}}, \link{cSEMResults}
 }
