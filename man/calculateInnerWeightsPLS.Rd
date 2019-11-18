@@ -24,7 +24,7 @@ when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FA
 Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+used by PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 }
 \value{

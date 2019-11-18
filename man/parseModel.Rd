@@ -15,13 +15,13 @@ parseModel(
 or a \link{cSEMModel} list.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
-of the list elements are the names of the dependent constructs of the structural
+of the list elements are the names of the dependent (LHS) constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation \strong{must} be supplied as
 instruments for themselves. Defaults to \code{NULL}.}
 
-\item{.check_errors}{Logical. Should the model be checked for appropriateness
+\item{.check_errors}{Logical. Should the model to parse be checked for correctness
 in a sense that all necessary components to estimate the model are given?
 Defaults to \code{TRUE}.}
 }

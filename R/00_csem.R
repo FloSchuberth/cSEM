@@ -215,7 +215,7 @@
 #'   ...
 #'   )
 #'
-#' @param .data A `data.frame` or a `matrix` of standardized or unstandarized 
+#' @param .data A `data.frame` or a `matrix` of standardized or unstandardized  
 #'   data (indicators/items/manifest variables). 
 #'   Additionally, a `list` of data sets (data frames or matrices) is accepted in which 
 #'   case estimation is repeated for each data set. Possible column types or classes 

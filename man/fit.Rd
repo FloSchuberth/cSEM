@@ -16,7 +16,8 @@ fit(
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
 
-\item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
+\item{.type_vcv}{Character string. Which model-implied correlation
+matrix is calculated?
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 }
 \value{

@@ -19,8 +19,8 @@ Bravais-Person correlation is used,
 "\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}". Note that many postestimation procedures (such as
-\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continous
-indicator correlation matrix (i.e Bravais-Pearson correlation matrix).
+\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continuous
+indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.}
 }
 \value{

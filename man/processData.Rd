@@ -11,7 +11,7 @@ processData(
   )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
 data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
 "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
@@ -21,7 +21,7 @@ or a mix of several types.}
 or a \link{cSEMModel} list.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
-of the list elements are the names of the dependent constructs of the structural
+of the list elements are the names of the dependent (LHS) constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation \strong{must} be supplied as

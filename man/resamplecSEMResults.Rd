@@ -29,7 +29,7 @@ resamplecSEMResults(
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
 "\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
 resampling from each resample is only required for the studentized confidence
-intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
+intervall ("\emph{CI_t_interval}") computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
@@ -41,13 +41,13 @@ be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emp
 replications/resamples yielding an inadmissible result will be dropped
 (i.e. the number of results returned will potentially be less than \code{.R}).
 For "\emph{ignore}" all results are returned even if all or some of the replications
-yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
+yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "\emph{drop}".}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
-resample. The functions must take \code{.object} as its first input (e.g.,
+resample. The functions must take \code{.object} as its first argument (e.g.,
 \code{myFun <- function(.object, ...) {body-of-the-function}}).
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
@@ -58,7 +58,7 @@ vectorized (columnwise) in this case. See the examples section for details.}
 all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is choosen. Note that the scope of the seed is limited
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
 

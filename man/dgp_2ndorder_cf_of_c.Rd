@@ -6,18 +6,18 @@
 \title{Data: Second order common factor of composites}
 \format{A matrix with 500 rows and 19 variables:
 \describe{
-\item{y11-y12}{Indicators attachted to \code{c1}.
+\item{y11-y12}{Indicators attached  to \code{c1}.
 Population weights are: 0.8; 0.4.
 Population loadings are: 0.925; 0.65}
-\item{y21-y24}{Indicators attachted to \code{c2}.
+\item{y21-y24}{Indicators attached  to \code{c2}.
 Population weights are: 0.5; 0.3; 0.2; 0.4.
 Population loadings are: 0.804; 0.68; 0.554; 0.708}
-\item{y31-y38}{Indicators attachted to \code{c3}.
+\item{y31-y38}{Indicators attached  to \code{c3}.
 Population weights are: 0.3; 0.3; 0.1; 0.1; 0.2; 0.3; 0.4; 0.2.
 Population loadings are: 0.496; 0.61; 0.535; 0.391; 0.391; 0.6; 0.5285; 0.53}
-\item{y41-y43}{Indicators attachted to \code{eta1}.
+\item{y41-y43}{Indicators attached  to \code{eta1}.
 Population loadings are: 0.8; 0.7; 0.7}
-\item{y51-y53}{Indicators attachted to \code{eta1}.
+\item{y51-y53}{Indicators attached  to \code{eta1}.
 Population loadings are: 0.8; 0.8; 0.7}
 }
 

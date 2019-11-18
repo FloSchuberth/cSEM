@@ -13,7 +13,7 @@ calculateOuterWeightsPLS(
    )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
 data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
 "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),

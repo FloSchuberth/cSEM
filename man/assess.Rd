@@ -28,7 +28,7 @@ Defaults to \code{TRUE}.}
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
 the Details section for a list of possible candidates.
-Defaults to "\emph{all}".}
+Defaults to "\emph{all}" in which case all possible quality criteria are computed.}
 
 \item{...}{Further arguments passed to functions called by \code{\link[=assess]{assess()}}.
 See \link{args_assess_dotdotdot} for a complete list of available arguments.}

@@ -10,8 +10,8 @@ Bravais-Person correlation is used,
 "\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}". Note that many postestimation procedures (such as
-\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continous
-indicator correlation matrix (i.e Bravais-Pearson correlation matrix).
+\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continuous
+indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
@@ -33,23 +33,23 @@ If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
 
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
-each construct in the form \code{"construct_name" = "mode"}, a single character
+each construct in the form \code{"construct_name" = mode}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
-Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
+Possible choices for \code{mode} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
 "\emph{unit}", "\emph{PCA}", a single integer or
 a vector of fixed weights of the same length as there are indicators for the
 construct given by \code{"construct_name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
 has unit variance.  Defaults to \code{NULL}.
 If \code{NULL} the appropriate mode according to the type
-of construct used is choosen. Ignored if \code{.approach_weight} is not PLS-PM.}
+of construct used is chosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
 when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FALSE}.
 Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+used by PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction

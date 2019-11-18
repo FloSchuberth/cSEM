@@ -30,7 +30,7 @@ foreman(
   )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
 data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
 "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
@@ -45,8 +45,8 @@ Bravais-Person correlation is used,
 "\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}". Note that many postestimation procedures (such as
-\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continous
-indicator correlation matrix (i.e Bravais-Pearson correlation matrix).
+\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continuous
+indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
@@ -54,8 +54,8 @@ structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
-Defaults to "\emph{OLS}".}
+structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}". If "\emph{2SLS}", instruments
+need to be supplied to \code{.instruments}. Defaults to "\emph{OLS}".}
 
 \item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)
 for parameter estimates. One of: "\emph{none}", "\emph{closed}", "\emph{closed_estimator}".
@@ -64,8 +64,7 @@ Defaults to "\emph{none}".}
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
-or "\emph{regression}".
-Defaults to "\emph{PLS-PM}".}
+or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.conv_criterion}{Character string. The criterion to use for the convergence check.
 One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
@@ -89,7 +88,7 @@ an integer of the position of the column of \code{.data} whose levels are used
 to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
-of the list elements are the names of the dependent constructs of the structural
+of the list elements are the names of the dependent (LHS) constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation \strong{must} be supplied as
@@ -116,19 +115,19 @@ when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FA
 Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
-each construct in the form \code{"construct_name" = "mode"}, a single character
+each construct in the form \code{"construct_name" = mode}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
-Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
+Possible choices for \code{mode} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
 "\emph{unit}", "\emph{PCA}", a single integer or
 a vector of fixed weights of the same length as there are indicators for the
 construct given by \code{"construct_name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
 has unit variance.  Defaults to \code{NULL}.
 If \code{NULL} the appropriate mode according to the type
-of construct used is choosen. Ignored if \code{.approach_weight} is not PLS-PM.}
+of construct used is chosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+used by PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.reliabilities}{A character vector of \code{"name" = value} pairs,

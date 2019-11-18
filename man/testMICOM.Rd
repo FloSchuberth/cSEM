@@ -21,7 +21,7 @@ testMICOM(
 Defaults to \code{0.05}.}
 
 \item{.approach_p_adjust}{Character string or a vector of character strings.
-Approach used to adjust the p value in multiple testing.
+Approach used to adjust the p-value in multiple testing.
 See the \code{methods} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
 their description. Defaults to "\emph{none}".}
 
@@ -30,7 +30,7 @@ be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emp
 replications/resamples yielding an inadmissible result will be dropped
 (i.e. the number of results returned will potentially be less than \code{.R}).
 For "\emph{ignore}" all results are returned even if all or some of the replications
-yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
+yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "\emph{drop}".}
@@ -38,12 +38,12 @@ computing time. Defaults to "\emph{drop}".}
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is choosen. Note that the scope of the seed is limited
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
 
-\item{.verbose}{Logical. Should information (e.g., progress bar) be printed to the console? Defaults
-to \code{TRUE}.}
+\item{.verbose}{Logical. Should information (e.g., progress bar) be printed
+to the console? Defaults to \code{TRUE}.}
 }
 \value{
 A named list of class "testMICOM" containing the following list element:

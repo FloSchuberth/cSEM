@@ -1,6 +1,6 @@
 #' cSEMArguments
 #'
-#' An alphabetical list of all arguments used by functions of the `cSEM` package,
+#' An alphabetical list of all arguments used by functions of the `cSEM` package
 #' including their description and defaults.
 #' Mainly used for internal purposes (parameter inheritance). To list all arguments
 #' and their defaults, use [args_default()]. To list all arguments and
@@ -12,9 +12,9 @@
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
 #' @param .approach_2ndorder Character string. Approach used for models containing
-#'   second order constructs. One of: "*2stage*", or "*mixed*". Defaults to "*2stage*".
+#'   second-order constructs. One of: "*2stage*", or "*mixed*". Defaults to "*2stage*".
 #' @param .approach_alpha_adjust Character string. Approach used to adjust the 
-#'   significance level to accomodate mutiple testing. 
+#'   significance level to accommodate multiple testing. 
 #'   One of "*none*" or "*bonferroni*". Defaults to "*none*". 
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
 #'   indicator correlation matrix. One of: "*none*" in which case the standard 
@@ -22,41 +22,41 @@
 #'   "*spearman*" for the Spearman rank correlation, or
 #'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
 #'   Defaults to "*none*". Note that many postestimation procedures (such as
-#'   [testOMF()] or [fit()] implicitly assume a continous 
-#'   indicator correlation matrix (i.e Bravais-Pearson correlation matrix).
+#'   [testOMF()] or [fit()] implicitly assume a continuous  
+#'   indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 #'   Only use if you know what you are doing.
 #' @param .approach_mgd Character string or a vector of character strings. 
-#'   Approach used for the multi-group comparison. One: "*all*", "*Klesel*", "*Chin*", 
+#'   Approach used for the multi-group comparison. One of: "*all*", "*Klesel*", "*Chin*", 
 #'   "*Sarstedt*", "*Keil*, "*Nitzl*", or "*Henseler*". 
-#'   Default to "*all*" in which case all approaches are computed (if possible).      
+#'   Default to "*all*" in which case all approaches are computed (if possible).
+#'   Note that the output will be quite long in this case. 
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
 #' @param .approach_p_adjust Character string or a vector of character strings. 
-#' Approach used to adjust the p value in multiple testing. 
+#' Approach used to adjust the p-value in multiple testing. 
 #' See the `methods` argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
 #' their description. Defaults to "*none*".
 #' @param .approach_paths Character string. Approach used to estimate the
-#'   structural coefficients. One of: "*OLS*" or "*2SLS*".
-#'   Defaults to "*OLS*".
+#'   structural coefficients. One of: "*OLS*" or "*2SLS*". If "*2SLS*", instruments
+#'   need to be supplied to `.instruments`. Defaults to "*OLS*".
 #' @param .approach_se Character string. Approach used to obtain the standard errors (SEs)
 #'   for parameter estimates. One of: "*none*", "*closed*", "*closed_estimator*".
 #'   Defaults to "*none*".
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
-#'   or "*regression*".
-#'   Defaults to "*PLS-PM*".
-#' @param .args_used A list of function argument names to `fun()` whose value 
-#'   was modified by the user.
+#'   or "*regression*". Defaults to "*PLS-PM*".
+#' @param .args_used A list of function argument names whose value was modified 
+#'   by the user.
 #' @param .bias_corrected Logical. Should the standard and the tStat
-#'   confidence intervall be bias-corrected using the bootstraped bias estimate? 
-#'   If `TRUE` the confidence intervall for some estimated parameter `theta` 
+#'   confidence interval be bias-corrected using the bootstrapped bias estimate? 
+#'   If `TRUE` the confidence interval for some estimated parameter `theta` 
 #'   is centered at `2*theta - theta*_hat`,
-#'   where `theta*_hat` is the average over all .R bootstrap estimates of `theta`.
+#'   where `theta*_hat` is the average over all `.R` bootstrap estimates of `theta`.
 #'   Defaults to `TRUE`
 #' @param .C A (J x J) composite variance-covariance matrix.
-#' @param .check_errors Logical. Should the model be checked for appropriateness
+#' @param .check_errors Logical. Should the model to parse be checked for correctness 
 #'   in a sense that all necessary components to estimate the model are given?
 #'   Defaults to `TRUE`.
 #' @param .choices Logical. Should candidate values for the arguments be returned?
@@ -73,7 +73,7 @@
 #' @param .cv_folds Integer. The number of cross-validation folds to use. Setting
 #'   `.cv_folds` to `N` (the number of observations) produces 
 #'   leave-one-out cross-validation samples. Defaults to `10`.
-#' @param .data A `data.frame` or a `matrix` of standardized or unstandarized 
+#' @param .data A `data.frame` or a `matrix` of standardized or unstandardized  
 #'   data (indicators/items/manifest variables). Possible column types or classes 
 #'   of the data provided are: "`logical`", "`numeric`" ("`double`" or "`integer`"), 
 #'   "`factor`" ("`ordered`" and/or "`unordered`"), "`character`" (converted to factor),
@@ -101,7 +101,7 @@
 #'   all available cores will be used. Defaults to "*sequential*".
 #' @param .first_resample A list containing the `.R` resamples based on the original
 #'   data obtained by resamplecSEMResults().
-#' @param .full_output Logical. Should the full ouput of summarize be printed.
+#' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
@@ -109,7 +109,7 @@
 #'   replications/resamples yielding an inadmissible result will be dropped 
 #'   (i.e. the number of results returned will potentially be less than `.R`). 
 #'   For "*ignore*" all results are returned even if all or some of the replications
-#'   yieled inadmissible results (i.e. number of results returned is equal to `.R`). 
+#'   yielded inadmissible results (i.e. number of results returned is equal to `.R`). 
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions.
 #'   Depending on the frequency of inadmissible solutions this may significantly increase
 #'   computing time. Defaults to "*drop*".
@@ -117,7 +117,7 @@
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
 #' @param .instruments A named list of vectors of instruments. The names
-#'   of the list elements are the names of the dependent constructs of the structural
+#'   of the list elements are the names of the dependent (LHS) constructs of the structural
 #'   equation whose explanatory variables are endogenous. The vectors
 #'   contain the names of the instruments corresponding to each equation. Note
 #'   that exogenous variables of a given equation **must** be supplied as 
@@ -144,7 +144,7 @@
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 #'  Defaults to `FALSE`. Ignored if the model is not nonlinear.
-#' @param .nr_comparisons Numeric. The number of comparisons. Defaults to `NULL`.  
+#' @param .nr_comparisons Integer. The number of comparisons. Defaults to `NULL`.  
 #' @param .null_model Logical. Should the degrees of freedom for the null model
 #'   be computed? Defaults to `FALSE`.
 #' @param .object An R object of class [cSEMResults] resulting from a call to [csem()].
@@ -155,7 +155,7 @@
 #' @param .original_arguments The list of arguments used within [csem()].
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
 #' @param .parameters_to_compare A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
-#'   parameters (i.e, path (`~`), loadings (`=~`), or weights (`<~`)) should be
+#'   parameters (i.e, path (`~`), loadings (`=~`), weights (`<~`), or correlations (`~~`)) should be
 #'   compared across groups. Defaults to `NULL` in which case all parameters of the 
 #'   originally specified model are compared.
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
@@ -167,27 +167,29 @@
 #'   when calculating the inner weights of the PLS-PM algorithm? Defaults to `FALSE`.
 #'   Ignored if `.approach_weights` is not PLS-PM.
 #' @param .PLS_modes Either a named list specifying the mode that should be used for
-#'   each construct in the form `"construct_name" = "mode"`, a single character
+#'   each construct in the form `"construct_name" = mode`, a single character
 #'   string giving the mode that should be used for all constructs, or `NULL`.
-#'   Possible choices for `"mode"` are: "*modeA*", "*modeB*", "*modeBNNLS*", 
+#'   Possible choices for `mode` are: "*modeA*", "*modeB*", "*modeBNNLS*", 
 #'   "*unit*", "*PCA*", a single integer or 
 #'   a vector of fixed weights of the same length as there are indicators for the
 #'   construct given by `"construct_name"`. If only a single number is provided this is identical to
 #'   using unit weights, as weights are rescaled such that the related composite 
 #'   has unit variance.  Defaults to `NULL`.
 #'   If `NULL` the appropriate mode according to the type
-#'   of construct used is choosen. Ignored if `.approach_weight` is not PLS-PM.  
+#'   of construct used is chosen. Ignored if `.approach_weight` is not PLS-PM.  
 #' @param .PLS_weight_scheme_inner Character string. The inner weighting scheme
-#'   used in PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
+#'   used by PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
 #'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS-PM.
 #' @param .probs A vector of probabilities.
 #' @param .quality_criterion Character string. A single character string or a
 #'   vector of character strings naming the quality criterion to compute. See 
 #'   the Details section for a list of possible candidates. 
-#'   Defaults to "*all*".
+#'   Defaults to "*all*" in which case all possible quality criteria are computed.
 #' @param .quantity Character string. Which statistic should be returned?
-#'   One of (TODO) 
-#'   Defaults to (TODO).
+#'   One of "*all*", "*mean*", "*sd*", "*bias*", "*CI_standard_z*", "*CI_standard_t*",
+#'   "*CI_percentile*", "*CI_basic*", "*CI_bc*", "*CI_bca*", "*CI_t_interval*"
+#'   Defaults to "*all*" in which case all quantities that do not require
+#'   additional resampling are returned, i.e., all quantities but "*CI_bca*", "*CI_t_interval*". 
 #' @param .Q A vector of composite-construct correlations with element names equal to
 #'   the names of the J construct names used in the measurement model. Note 
 #'   Q^2 is also called the reliability coefficient.
@@ -203,12 +205,12 @@
 #'   from a resample. One of: "*none*", "*bootstrap*" or "*jackknife*". For 
 #'   "*bootstrap*" the number of draws is provided via `.R2`. Currently, 
 #'   resampling from each resample is only required for the studentized confidence
-#'   intervall computed by the [infer()] function. Defaults to "*none*".  
+#'   intervall ("*CI_t_interval*") computed by the [infer()] function. Defaults to "*none*".  
 #' @param `.resample_object` An R object of class `cSEMResults_resampled`
 #'   obtained from [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
 #'   or `"jackknife"` when calling [csem()].
 #' @param .resample_sarstedt A matrix containing the parameter estimates that 
-#'   could potentially be compared and an id column indicating the group adherance
+#'   could potentially be compared and an id column indicating the group adherence
 #'   of each row.
 #' @param .R Integer. The number of bootstrap replications. Defaults to `499`.
 #' @param .R2 Integer. The number of bootstrap replications to use when 
@@ -222,13 +224,13 @@
 #' @param .second_resample A list containing `.R2` resamples for each of the `.R`
 #'   resamples of the first run.
 #' @param .seed Integer or `NULL`. The random seed to use. Defaults to `NULL` in which
-#'   case an arbitrary seed is choosen. Note that the scope of the seed is limited
+#'   case an arbitrary seed is chosen. Note that the scope of the seed is limited
 #'   to the body of the function it is used in. Hence, the global seed will
 #'   not be altered!
 #' @param .sign_change_option Character string. Which sign change option should 
 #' be used to handle flipping signs when resampling? One of "*none*","*individual*",
 #' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".
-#' @param .stage Character string. The stage the model is need for.
+#' @param .stage Character string. The stage the model is needed for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .starting_values A named list of vectors where the
 #'   list names are the construct names whose indicator weights the user
@@ -237,18 +239,19 @@
 #' @param .terms A vector of construct names to be classified.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
-#' @param .type_vcv Character string. Indicates which model-implied correlation matrix is calcuted
+#' @param .type_vcv Character string. Which model-implied correlation 
+#'  matrix is calculated?
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
-#' @param .verbose Logical. Should information (e.g., progress bar) be printed to the console? Defaults
-#'   to `TRUE`.
+#' @param .verbose Logical. Should information (e.g., progress bar) be printed 
+#'   to the console? Defaults to `TRUE`.
 #' @param .user_funs A function or a (named) list of functions to apply to every
-#'   resample. The functions must take `.object` as its first input (e.g., 
+#'   resample. The functions must take `.object` as its first argument (e.g., 
 #'   `myFun <- function(.object, ...) {body-of-the-function}`).
 #'   Function output should preferably be a (named)
 #'   vector but matrices are also accepted. However, the output will be 
 #'   vectorized (columnwise) in this case. See the examples section for details.
 #' @param .vcv_asymptotic Logical. Should the asymptotic variance-covariance matrix be used, i.e., 
-#' VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) directly computed. 
+#' VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) be computed directly? 
 #'  Defaults to `FALSE`.
 #' @param .vector1 A vector of numeric values.
 #' @param .vector2 A vector of numeric values.
@@ -348,7 +351,7 @@ args_assess_dotdotdot <- function(
 #' Show argument defaults or candidates
 #'
 #' Show all arguments used by package functions including default or candidate
-#' values. For argument descriptions, see: [csem_arguments].
+#' values. For argument descriptions see: [csem_arguments].
 #'
 #' By default `args_default()`returns a list of default values by argument name.
 #' If the list of accepted candidate values is required instead, use `.choices = TRUE`.
@@ -460,7 +463,7 @@ args_default <- function(.choices = FALSE) {
   )
   
   args_dotdotdot_csem <- list(
-    # Arguments passt to calculateIndicatorCor()
+    # Arguments passed to calculateIndicatorCor()
     .approach_cor_robust     = c("none", "mcd", "spearman"),
     
     # Arguments passed to calculateWeightsPLS()

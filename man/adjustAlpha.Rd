@@ -15,10 +15,10 @@ adjustAlpha(
 Defaults to \code{0.05}.}
 
 \item{.approach_alpha_adjust}{Character string. Approach used to adjust the
-significance level to accomodate mutiple testing.
+significance level to accommodate multiple testing.
 One of "\emph{none}" or "\emph{bonferroni}". Defaults to "\emph{none}".}
 
-\item{.nr_comparisons}{Numeric. The number of comparisons. Defaults to \code{NULL}.}
+\item{.nr_comparisons}{Integer. The number of comparisons. Defaults to \code{NULL}.}
 }
 \value{
 A vector of (possibly adjusted) significance levels.

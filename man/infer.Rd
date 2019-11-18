@@ -52,10 +52,10 @@ data obtained by resamplecSEMResults().}
 \item{.n}{Integer. The number of observations of the original data.}
 
 \item{.bias_corrected}{Logical. Should the standard and the tStat
-confidence intervall be bias-corrected using the bootstraped bias estimate?
-If \code{TRUE} the confidence intervall for some estimated parameter \code{theta}
+confidence interval be bias-corrected using the bootstrapped bias estimate?
+If \code{TRUE} the confidence interval for some estimated parameter \code{theta}
 is centered at \code{2*theta - theta*_hat},
-where \code{theta*_hat} is the average over all .R bootstrap estimates of \code{theta}.
+where \code{theta*_hat} is the average over all \code{.R} bootstrap estimates of \code{theta}.
 Defaults to \code{TRUE}}
 
 \item{.dist}{Character string. The distribution to use for the critical value.
@@ -74,7 +74,7 @@ resamples of the first run.}
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
 "\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
 resampling from each resample is only required for the studentized confidence
-intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
+intervall ("\emph{CI_t_interval}") computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
@@ -82,8 +82,10 @@ intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\
 Defaults to \code{0.05}.}
 
 \item{.quantity}{Character string. Which statistic should be returned?
-One of (TODO)
-Defaults to (TODO).}
+One of "\emph{all}", "\emph{mean}", "\emph{sd}", "\emph{bias}", "\emph{CI_standard_z}", "\emph{CI_standard_t}",
+"\emph{CI_percentile}", "\emph{CI_basic}", "\emph{CI_bc}", "\emph{CI_bca}", "\emph{CI_t_interval}"
+Defaults to "\emph{all}" in which case all quantities that do not require
+additional resampling are returned, i.e., all quantities but "\emph{CI_bca}", "\emph{CI_t_interval}".}
 }
 \description{
 Calculate common inferencial quantities (e.g., estimated standard error, estimated bias,

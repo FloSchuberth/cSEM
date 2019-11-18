@@ -6,12 +6,16 @@
 #' 
 #' `testOMF()` tests the null hypothesis that the population indicator 
 #' correlation matrix equals the population model-implied indicator correlation matrix. 
-#' Several potential test statistics may be used. `testOMF()` uses the 
-#' geodesic distance and the squared Euclidean distance between the
-#' sample indicator correlation matrix and the estimated model-implied indicator correlation matrix
-#' as well as the standardized root mean square residual (SRMR). 
+#' Several potential test statistics may be used. `testOMF()` uses three distance
+#' measures to assess the distance between the sample indicator correlation matrix
+#' and the estimated model-implied indicator correlation matrix, namely the geodesic distance, 
+#' the squared Euclidean distance, and the standardized root mean square residual (SRMR). 
 #' The reference distribution for each test statistic is obtained by 
 #' the bootstrap as proposed by \insertCite{Beran1985;textual}{cSEM}. 
+#' 
+#' If `.saturated = TRUE` the original structural model is ignored and replaced by
+#' a saturated model, i.e. a model in which all constructs are allowed to correlate freely. 
+#' This is useful to test misspecification of the measurement model in isolation.
 #' 
 #' @usage testOMF(
 #'  .object                = NULL, 
@@ -29,13 +33,13 @@
 #' A list of class `cSEMTestOMF` containing the following list elements:
 #' \describe{
 #'   \item{`$Test_statistic`}{The value of the test statistics.}
-#'   \item{`$Critical_value`}{The correponding critical values obtained by the bootstrap.}
+#'   \item{`$Critical_value`}{The corresponding  critical values obtained by the bootstrap.}
 #'   \item{`$Decision`}{The test decision. One of: `FALSE` (**Reject**) or `TRUE` (**Do not reject**).}
 #'   \item{`$Information`}{The `.R` bootstrap values; The number of admissible results;
 #'                         The seed used and the number of total runs.}
 #' }
 #' 
-#' @seealso [csem()], [cSEMResults]
+#' @seealso [csem()], [calculateSRMR()], [calculateDG()], [calculateDL()], [cSEMResults]
 #' 
 #' @references
 #'   \insertAllCited{}

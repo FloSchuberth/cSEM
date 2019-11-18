@@ -34,7 +34,7 @@ csem(
   )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
 data (indicators/items/manifest variables).
 Additionally, a \code{list} of data sets (data frames or matrices) is accepted in which
 case estimation is repeated for each data set. Possible column types or classes
@@ -46,15 +46,15 @@ or a mix of several types.}
 or a \link{cSEMModel} list.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{2stage}", or "\emph{mixed}". Defaults to "\emph{2stage}".}
+second-order constructs. One of: "\emph{2stage}", or "\emph{mixed}". Defaults to "\emph{2stage}".}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
-Defaults to "\emph{OLS}".}
+structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}". If "\emph{2SLS}", instruments
+need to be supplied to \code{.instruments}. Defaults to "\emph{OLS}".}
 
 \item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)
 for parameter estimates. One of: "\emph{none}", "\emph{closed}", "\emph{closed_estimator}".
@@ -63,8 +63,7 @@ Defaults to "\emph{none}".}
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
-or "\emph{regression}".
-Defaults to "\emph{PLS-PM}".}
+or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.disattenuate}{Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
@@ -75,7 +74,7 @@ an integer of the position of the column of \code{.data} whose levels are used
 to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
-of the list elements are the names of the dependent constructs of the structural
+of the list elements are the names of the dependent (LHS) constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation \strong{must} be supplied as
@@ -105,7 +104,7 @@ pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults 
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
 "\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
 resampling from each resample is only required for the studentized confidence
-intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
+intervall ("\emph{CI_t_interval}") computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
@@ -117,13 +116,13 @@ be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emp
 replications/resamples yielding an inadmissible result will be dropped
 (i.e. the number of results returned will potentially be less than \code{.R}).
 For "\emph{ignore}" all results are returned even if all or some of the replications
-yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
+yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "\emph{drop}".}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
-resample. The functions must take \code{.object} as its first input (e.g.,
+resample. The functions must take \code{.object} as its first argument (e.g.,
 \code{myFun <- function(.object, ...) {body-of-the-function}}).
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
@@ -134,7 +133,7 @@ vectorized (columnwise) in this case. See the examples section for details.}
 all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is choosen. Note that the scope of the seed is limited
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
 

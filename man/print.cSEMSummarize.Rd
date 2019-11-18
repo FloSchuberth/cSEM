@@ -7,7 +7,7 @@
 \method{print}{cSEMSummarize}(x, .full_output = TRUE, ...)
 }
 \arguments{
-\item{.full_output}{Logical. Should the full ouput of summarize be printed.
+\item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}
 }
 \description{

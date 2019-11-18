@@ -27,17 +27,18 @@ testMGD(
 Defaults to \code{0.05}.}
 
 \item{.approach_p_adjust}{Character string or a vector of character strings.
-Approach used to adjust the p value in multiple testing.
+Approach used to adjust the p-value in multiple testing.
 See the \code{methods} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
 their description. Defaults to "\emph{none}".}
 
 \item{.approach_mgd}{Character string or a vector of character strings.
-Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
+Approach used for the multi-group comparison. One of: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
 "\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", or "\emph{Henseler}".
-Default to "\emph{all}" in which case all approaches are computed (if possible).}
+Default to "\emph{all}" in which case all approaches are computed (if possible).
+Note that the output will be quite long in this case.}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
-parameters (i.e, path (\code{~}), loadings (\code{=~}), or weights (\code{<~})) should be
+parameters (i.e, path (\code{~}), loadings (\code{=~}), weights (\code{<~}), or correlations (\code{~~})) should be
 compared across groups. Defaults to \code{NULL} in which case all parameters of the
 originally specified model are compared.}
 
@@ -59,15 +60,16 @@ contains resamples. Defaults to \code{499}}
 Defaults to \code{FALSE}.}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is choosen. Note that the scope of the seed is limited
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
 
-\item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
+\item{.type_vcv}{Character string. Which model-implied correlation
+matrix is calculated?
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 
-\item{.verbose}{Logical. Should information (e.g., progress bar) be printed to the console? Defaults
-to \code{TRUE}.}
+\item{.verbose}{Logical. Should information (e.g., progress bar) be printed
+to the console? Defaults to \code{TRUE}.}
 }
 \value{
 A list of class \code{cSEMTestMGD}. Technically, \code{cSEMTestMGD} is a

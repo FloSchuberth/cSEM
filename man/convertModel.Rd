@@ -14,9 +14,9 @@ convertModel(
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{2stage}", or "\emph{mixed}". Defaults to "\emph{2stage}".}
+second-order constructs. One of: "\emph{2stage}", or "\emph{mixed}". Defaults to "\emph{2stage}".}
 
-\item{.stage}{Character string. The stage the model is need for.
+\item{.stage}{Character string. The stage the model is needed for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 }
 \value{

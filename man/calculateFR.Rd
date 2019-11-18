@@ -8,7 +8,7 @@ calculateFR(.resample_sarstedt)
 }
 \arguments{
 \item{.resample_sarstedt}{A matrix containing the parameter estimates that
-could potentially be compared and an id column indicating the group adherance
+could potentially be compared and an id column indicating the group adherence
 of each row.}
 }
 \value{

@@ -42,7 +42,7 @@ to split \code{.data} into groups. Defaults to \code{NULL}.}
 or cross-validation repetitions to use. Defaults to \code{499}.}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is choosen. Note that the scope of the seed is limited
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
 }

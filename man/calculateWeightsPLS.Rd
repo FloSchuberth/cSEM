@@ -18,7 +18,7 @@ calculateWeightsPLS(
    )
 }
 \arguments{
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
 data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
 "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
@@ -42,19 +42,19 @@ when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FA
 Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
-each construct in the form \code{"construct_name" = "mode"}, a single character
+each construct in the form \code{"construct_name" = mode}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
-Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
+Possible choices for \code{mode} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
 "\emph{unit}", "\emph{PCA}", a single integer or
 a vector of fixed weights of the same length as there are indicators for the
 construct given by \code{"construct_name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
 has unit variance.  Defaults to \code{NULL}.
 If \code{NULL} the appropriate mode according to the type
-of construct used is choosen. Ignored if \code{.approach_weight} is not PLS-PM.}
+of construct used is chosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+used by PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.starting_values}{A named list of vectors where the

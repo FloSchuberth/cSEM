@@ -15,7 +15,7 @@ A named list of argument names and defaults or accepted candidates.
 }
 \description{
 Show all arguments used by package functions including default or candidate
-values. For argument descriptions, see: \link{csem_arguments}.
+values. For argument descriptions see: \link{csem_arguments}.
 }
 \details{
 By default \code{args_default()}returns a list of default values by argument name.

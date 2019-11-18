@@ -13,10 +13,10 @@ Defaults to \code{0.05}.}
 "\emph{SUMCORR}".}
 
 \item{.approach_2ndorder}{Character string. Approach used for models containing
-second order constructs. One of: "\emph{2stage}", or "\emph{mixed}". Defaults to "\emph{2stage}".}
+second-order constructs. One of: "\emph{2stage}", or "\emph{mixed}". Defaults to "\emph{2stage}".}
 
 \item{.approach_alpha_adjust}{Character string. Approach used to adjust the
-significance level to accomodate mutiple testing.
+significance level to accommodate multiple testing.
 One of "\emph{none}" or "\emph{bonferroni}". Defaults to "\emph{none}".}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
@@ -25,27 +25,28 @@ Bravais-Person correlation is used,
 "\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}". Note that many postestimation procedures (such as
-\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continous
-indicator correlation matrix (i.e Bravais-Pearson correlation matrix).
+\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continuous
+indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.}
 
 \item{.approach_mgd}{Character string or a vector of character strings.
-Approach used for the multi-group comparison. One: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
+Approach used for the multi-group comparison. One of: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
 "\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", or "\emph{Henseler}".
-Default to "\emph{all}" in which case all approaches are computed (if possible).}
+Default to "\emph{all}" in which case all approaches are computed (if possible).
+Note that the output will be quite long in this case.}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_p_adjust}{Character string or a vector of character strings.
-Approach used to adjust the p value in multiple testing.
+Approach used to adjust the p-value in multiple testing.
 See the \code{methods} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
 their description. Defaults to "\emph{none}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
-Defaults to "\emph{OLS}".}
+structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}". If "\emph{2SLS}", instruments
+need to be supplied to \code{.instruments}. Defaults to "\emph{OLS}".}
 
 \item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)
 for parameter estimates. One of: "\emph{none}", "\emph{closed}", "\emph{closed_estimator}".
@@ -54,22 +55,21 @@ Defaults to "\emph{none}".}
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
-or "\emph{regression}".
-Defaults to "\emph{PLS-PM}".}
+or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
-\item{.args_used}{A list of function argument names to \code{fun()} whose value
-was modified by the user.}
+\item{.args_used}{A list of function argument names whose value was modified
+by the user.}
 
 \item{.bias_corrected}{Logical. Should the standard and the tStat
-confidence intervall be bias-corrected using the bootstraped bias estimate?
-If \code{TRUE} the confidence intervall for some estimated parameter \code{theta}
+confidence interval be bias-corrected using the bootstrapped bias estimate?
+If \code{TRUE} the confidence interval for some estimated parameter \code{theta}
 is centered at \code{2*theta - theta*_hat},
-where \code{theta*_hat} is the average over all .R bootstrap estimates of \code{theta}.
+where \code{theta*_hat} is the average over all \code{.R} bootstrap estimates of \code{theta}.
 Defaults to \code{TRUE}}
 
 \item{.C}{A (J x J) composite variance-covariance matrix.}
 
-\item{.check_errors}{Logical. Should the model be checked for appropriateness
+\item{.check_errors}{Logical. Should the model to parse be checked for correctness
 in a sense that all necessary components to estimate the model are given?
 Defaults to \code{TRUE}.}
 
@@ -94,7 +94,7 @@ to "\emph{diff_absolute}".}
 \code{.cv_folds} to \code{N} (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to \code{10}.}
 
-\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandarized
+\item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
 data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
 "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
@@ -132,7 +132,7 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
 data obtained by resamplecSEMResults().}
 
-\item{.full_output}{Logical. Should the full ouput of summarize be printed.
+\item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}
 
 \item{.H}{The (N x J) matrix of construct scores.}
@@ -142,7 +142,7 @@ be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emp
 replications/resamples yielding an inadmissible result will be dropped
 (i.e. the number of results returned will potentially be less than \code{.R}).
 For "\emph{ignore}" all results are returned even if all or some of the replications
-yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
+yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "\emph{drop}".}
@@ -152,7 +152,7 @@ an integer of the position of the column of \code{.data} whose levels are used
 to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
-of the list elements are the names of the dependent constructs of the structural
+of the list elements are the names of the dependent (LHS) constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation \strong{must} be supplied as
@@ -190,7 +190,7 @@ between min(.z) and max(.z) to use. Defaults to \code{100}.}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 Defaults to \code{FALSE}. Ignored if the model is not nonlinear.}
 
-\item{.nr_comparisons}{Numeric. The number of comparisons. Defaults to \code{NULL}.}
+\item{.nr_comparisons}{Integer. The number of comparisons. Defaults to \code{NULL}.}
 
 \item{.null_model}{Logical. Should the degrees of freedom for the null model
 be computed? Defaults to \code{FALSE}.}
@@ -207,7 +207,7 @@ Defaults to \code{TRUE}.}
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
-parameters (i.e, path (\code{~}), loadings (\code{=~}), or weights (\code{<~})) should be
+parameters (i.e, path (\code{~}), loadings (\code{=~}), weights (\code{<~}), or correlations (\code{~~})) should be
 compared across groups. Defaults to \code{NULL} in which case all parameters of the
 originally specified model are compared.}
 
@@ -222,19 +222,19 @@ when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FA
 Ignored if \code{.approach_weights} is not PLS-PM.}
 
 \item{.PLS_modes}{Either a named list specifying the mode that should be used for
-each construct in the form \code{"construct_name" = "mode"}, a single character
+each construct in the form \code{"construct_name" = mode}, a single character
 string giving the mode that should be used for all constructs, or \code{NULL}.
-Possible choices for \code{"mode"} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
+Possible choices for \code{mode} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
 "\emph{unit}", "\emph{PCA}", a single integer or
 a vector of fixed weights of the same length as there are indicators for the
 construct given by \code{"construct_name"}. If only a single number is provided this is identical to
 using unit weights, as weights are rescaled such that the related composite
 has unit variance.  Defaults to \code{NULL}.
 If \code{NULL} the appropriate mode according to the type
-of construct used is choosen. Ignored if \code{.approach_weight} is not PLS-PM.}
+of construct used is chosen. Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
-used in PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+used by PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.probs}{A vector of probabilities.}
@@ -242,11 +242,13 @@ Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
 the Details section for a list of possible candidates.
-Defaults to "\emph{all}".}
+Defaults to "\emph{all}" in which case all possible quality criteria are computed.}
 
 \item{.quantity}{Character string. Which statistic should be returned?
-One of (TODO)
-Defaults to (TODO).}
+One of "\emph{all}", "\emph{mean}", "\emph{sd}", "\emph{bias}", "\emph{CI_standard_z}", "\emph{CI_standard_t}",
+"\emph{CI_percentile}", "\emph{CI_basic}", "\emph{CI_bc}", "\emph{CI_bca}", "\emph{CI_t_interval}"
+Defaults to "\emph{all}" in which case all quantities that do not require
+additional resampling are returned, i.e., all quantities but "\emph{CI_bca}", "\emph{CI_t_interval}".}
 
 \item{.Q}{A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
@@ -266,14 +268,14 @@ reliabilities are estimated by \code{csem()}. Currently, only supported for
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
 "\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
 resampling from each resample is only required for the studentized confidence
-intervall computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
+intervall ("\emph{CI_t_interval}") computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
 \item{`.resample_object`}{An R object of class \code{cSEMResults_resampled}
 obtained from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
 or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.}
 
 \item{.resample_sarstedt}{A matrix containing the parameter estimates that
-could potentially be compared and an id column indicating the group adherance
+could potentially be compared and an id column indicating the group adherence
 of each row.}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
@@ -295,7 +297,7 @@ Defaults to \code{FALSE}.}
 resamples of the first run.}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is choosen. Note that the scope of the seed is limited
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
 
@@ -303,7 +305,7 @@ not be altered!}
 be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",
 "\emph{individual_reestimate}", "\emph{construct_reestimate}". Defaults to "\emph{none}".}
 
-\item{.stage}{Character string. The stage the model is need for.
+\item{.stage}{Character string. The stage the model is needed for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 
 \item{.starting_values}{A named list of vectors where the
@@ -316,21 +318,22 @@ pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 
-\item{.type_vcv}{Character string. Indicates which model-implied correlation matrix is calcuted
+\item{.type_vcv}{Character string. Which model-implied correlation
+matrix is calculated?
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 
-\item{.verbose}{Logical. Should information (e.g., progress bar) be printed to the console? Defaults
-to \code{TRUE}.}
+\item{.verbose}{Logical. Should information (e.g., progress bar) be printed
+to the console? Defaults to \code{TRUE}.}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
-resample. The functions must take \code{.object} as its first input (e.g.,
+resample. The functions must take \code{.object} as its first argument (e.g.,
 \code{myFun <- function(.object, ...) {body-of-the-function}}).
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
 
 \item{.vcv_asymptotic}{Logical. Should the asymptotic variance-covariance matrix be used, i.e.,
-VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) directly computed.
+VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) be computed directly?
 Defaults to \code{FALSE}.}
 
 \item{.vector1}{A vector of numeric values.}
@@ -358,7 +361,7 @@ may not be scaled!}
 \item{.z}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
 }
 \description{
-An alphabetical list of all arguments used by functions of the \code{cSEM} package,
+An alphabetical list of all arguments used by functions of the \code{cSEM} package
 including their description and defaults.
 Mainly used for internal purposes (parameter inheritance). To list all arguments
 and their defaults, use \code{\link[=args_default]{args_default()}}. To list all arguments and

@@ -25,7 +25,7 @@ be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emp
 replications/resamples yielding an inadmissible result will be dropped
 (i.e. the number of results returned will potentially be less than \code{.R}).
 For "\emph{ignore}" all results are returned even if all or some of the replications
-yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
+yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "\emph{drop}".}
@@ -36,18 +36,18 @@ computing time. Defaults to "\emph{drop}".}
 Defaults to \code{FALSE}.}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is choosen. Note that the scope of the seed is limited
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
 
-\item{.verbose}{Logical. Should information (e.g., progress bar) be printed to the console? Defaults
-to \code{TRUE}.}
+\item{.verbose}{Logical. Should information (e.g., progress bar) be printed
+to the console? Defaults to \code{TRUE}.}
 }
 \value{
 A list of class \code{cSEMTestOMF} containing the following list elements:
 \describe{
 \item{\code{$Test_statistic}}{The value of the test statistics.}
-\item{\code{$Critical_value}}{The correponding critical values obtained by the bootstrap.}
+\item{\code{$Critical_value}}{The corresponding  critical values obtained by the bootstrap.}
 \item{\code{$Decision}}{The test decision. One of: \code{FALSE} (\strong{Reject}) or \code{TRUE} (\strong{Do not reject}).}
 \item{\code{$Information}}{The \code{.R} bootstrap values; The number of admissible results;
 The seed used and the number of total runs.}
@@ -61,12 +61,16 @@ the context of PLS-PM.
 \details{
 \code{testOMF()} tests the null hypothesis that the population indicator
 correlation matrix equals the population model-implied indicator correlation matrix.
-Several potential test statistics may be used. \code{testOMF()} uses the
-geodesic distance and the squared Euclidean distance between the
-sample indicator correlation matrix and the estimated model-implied indicator correlation matrix
-as well as the standardized root mean square residual (SRMR).
+Several potential test statistics may be used. \code{testOMF()} uses three distance
+measures to assess the distance between the sample indicator correlation matrix
+and the estimated model-implied indicator correlation matrix, namely the geodesic distance,
+the squared Euclidean distance, and the standardized root mean square residual (SRMR).
 The reference distribution for each test statistic is obtained by
 the bootstrap as proposed by \insertCite{Beran1985;textual}{cSEM}.
+
+If \code{.saturated = TRUE} the original structural model is ignored and replaced by
+a saturated model, i.e. a model in which all constructs are allowed to correlate freely.
+This is useful to test misspecification of the measurement model in isolation.
 }
 \examples{
 \donttest{# ===========================================================================
@@ -87,11 +91,12 @@ eta3 =~ y31 + y32 + y33
 out <- csem(threecommonfactors, model, .approach_weights = "PLS-PM")
 
 ## Test
-testOMF(out)}
+testOMF(out, .R = 50, .verbose = FALSE, .seed = 320)
+}
 }
 \references{
 \insertAllCited{}
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=calculateSRMR]{calculateSRMR()}}, \code{\link[=calculateDG]{calculateDG()}}, \code{\link[=calculateDL]{calculateDL()}}, \link{cSEMResults}
 }
