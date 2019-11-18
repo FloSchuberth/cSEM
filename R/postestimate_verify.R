@@ -35,6 +35,8 @@
 #' }
 #'
 #' @export
+#' 
+#' @example inst/examples/example_verify.R
  
 verify <- function(.object){
   
