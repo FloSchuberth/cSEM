@@ -1,7 +1,7 @@
 #' Internal: Estimate the structural coefficients
 #'
 #' Estimates the coefficients of the structural model (nonlinear and linear) using
-#' OLS, 2SLS, or 3SLS. The latter two currently work for linear models only.
+#' OLS, 2SLS. The latter currently work for linear models only.
 #'
 #' @usage estimatePath(
 #'  .approach_nl      = args_default()$.approach_nl,
@@ -35,7 +35,7 @@ estimatePath <- function(
   ) {
   
   ## Check approach_path argument:
-  if(!any(.approach_paths %in% c("OLS", "2SLS", "3SLS"))) {
+  if(!any(.approach_paths %in% c("OLS", "2SLS"))) {
     stop2("The following error occured in the `estimatePath()` function:\n",
           paste0("'", .approach_paths, "'"), 
           " is an unknown approach to estimate the path model.")
@@ -43,8 +43,8 @@ estimatePath <- function(
   
   ## Warning if instruments are given but .approach_paths = "OLS"
   if(!is.null(.csem_model$instruments) & .approach_paths == "OLS") {
-    warning2("The following error occured in the `estimatePath()` function:\n",
-      "Instruments supplied but path approach is 'OLS'.\n",
+    warning2("The following warning occured in the `estimatePath()` function:\n",
+      "Instruments supplied but .approach_path = 'OLS'.\n",
       "Instruments are ignored.", 
       " Consider setting `.approach_paths = '2SLS'.")
   }
@@ -68,7 +68,7 @@ estimatePath <- function(
   if(.csem_model$model_type == "Linear") {
 
     res <- lapply(dep_vars, function(y) {
-      # Which of the variables in dep_vars have instruments specified, i.e.
+      # Which of the variables in dep_vars have instruments specified, i.e.,
       # have endogenous variables on the RHS. By default: FALSE.
       endo_in_RHS <- FALSE
       
@@ -79,7 +79,7 @@ estimatePath <- function(
       ## Independent variables of the structural equation of construct y
       names_X <-  colnames(m[y, m[y, ] != 0, drop = FALSE])
       
-      # Compute "OLS" if endo_in_RHS is FALSE, i.e no instruments are 
+      # Compute "OLS" if endo_in_RHS is FALSE, i.e., no instruments are 
       # given for this particular equation or .approach_paths is "OLS"
       if(!endo_in_RHS | .approach_paths == "OLS") {
         
@@ -92,6 +92,7 @@ estimatePath <- function(
         # names(r2) <- y
         
         # Calculation of the adjusted R^2
+        # We calculate it as: R^2_adj = 
         r2adj <- c(1 - (1 - r2)*(n - 1)/(n - length(names_X)-1))
         # names(r2adj) <- y
         
@@ -202,7 +203,7 @@ estimatePath <- function(
         
         if(.approach_se == "closed"){
           stop2("The following error occured in the `estimatePath()` function:\n",
-                "Closed-form standard errors are not yet implemented yet for 2SLS")
+                "Closed-form standard errors not yet implemented for 2SLS")
         }
         
         if(.approach_se == "closed_estimator"){
@@ -228,7 +229,8 @@ estimatePath <- function(
     names(res) <- dep_vars
     res <- purrr::transpose(res)
 
-    if(.approach_paths == "3SLS"){
+    ##  Note (11/2019): 3SLS not implemented properly
+    #if(.approach_paths == "3SLS"){
       # # Approach based on Zellner & Theil (1962)
       # 
       # ## Get variance covariance matrix of the error term
@@ -336,11 +338,11 @@ estimatePath <- function(
       #   
       # } #end for loop
       # 
+      # 
+      # stop2("The following error occured in the `estimatePath()` function:\n",
+      #       'Currently 3SLS is not implemented.')
       
-      stop2("The following error occured in the `estimatePath()` function:\n",
-            'Currently 3SLS is not implemented.')
-      
-      }#end 3SLS
+    #  }#end 3SLS
     
     
   } else {

@@ -44,7 +44,7 @@ See the \code{methods} argument of \code{\link[stats:p.adjust]{stats::p.adjust()
 their description. Defaults to "\emph{none}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
+structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
 Defaults to "\emph{OLS}".}
 
 \item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)

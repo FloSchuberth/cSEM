@@ -22,7 +22,7 @@ structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
+structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
 Defaults to "\emph{OLS}".}
 
 \item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)
@@ -56,6 +56,6 @@ R2, the adjusted R2, and the VIF's for each regression.
 }
 \description{
 Estimates the coefficients of the structural model (nonlinear and linear) using
-OLS, 2SLS, or 3SLS. The latter two currently work for linear models only.
+OLS, 2SLS. The latter currently work for linear models only.
 }
 \keyword{internal}

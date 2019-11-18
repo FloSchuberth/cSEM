@@ -37,7 +37,7 @@
 #' See the `methods` argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
 #' their description. Defaults to "*none*".
 #' @param .approach_paths Character string. Approach used to estimate the
-#'   structural coefficients. One of: "*OLS*", "*2SLS*", or "*3SLS*" (not yet implemented).
+#'   structural coefficients. One of: "*OLS*" or "*2SLS*".
 #'   Defaults to "*OLS*".
 #' @param .approach_se Character string. Approach used to obtain the standard errors (SEs)
 #'   for parameter estimates. One of: "*none*", "*closed*", "*closed_estimator*".
@@ -373,7 +373,7 @@ args_default <- function(.choices = FALSE) {
     .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler"),
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
-    .approach_paths          = c("OLS", "2SLS", "3SLS"),
+    .approach_paths          = c("OLS", "2SLS"),
     .approach_se             = c("none","closed","closed_estimator"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 

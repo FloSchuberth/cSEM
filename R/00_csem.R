@@ -25,11 +25,14 @@
 #' Depending on the type/class of the indicator data provided cSEM computes the indicator 
 #' correlation matrix in differnt ways. See [calculateIndicatorCor()] for details.
 #'
+#' In the current version `.data` must not contain missing values. Future versions
+#' are likely to handle missing values as well.
+#' 
 #' To provide a model use the [lavaan model syntax][lavaan::model.syntax].
 #' Note, however, that \pkg{cSEM} currently only supports the "standard" lavaan
 #' model syntax (Types 1, 2, 3, and 7 as described on the help page). 
-#' Therefore, specifying e.g. a threshold or scaling factors is ignored. 
-#' Alternatively a standardized (possibly incomplete) [cSEMModel]-list may be supplied.
+#' Therefore, specifying e.g., a threshold or scaling factors is ignored. 
+#' Alternatively, a standardized (possibly incomplete) [cSEMModel]-list may be supplied.
 #' See [parseModel()] for details.
 #' }
 #'
@@ -188,7 +191,7 @@
 #'   .model                   = NULL,
 #'   .approach_2ndorder       = c("2stage", "mixed"),
 #'   .approach_nl             = c("sequential", "replace"),
-#'   .approach_paths          = c("OLS", "2SLS", "3SLS"),
+#'   .approach_paths          = c("OLS", "2SLS"),
 #'   .approach_se             = c("none","closed","closed_estimator"), 
 #'   .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
 #'                                "MINVAR", "GENVAR", "GSCA", "PCA", 
@@ -258,7 +261,8 @@
 #'   \insertAllCited{}
 #'
 #' @seealso [args_default()], [cSEMArguments], [cSEMResults], [foreman()], [resamplecSEMResults()],
-#'   [verify()], [summarize()], [assess()], [infer()]
+#'   [assess()], [infer()], [predict()], [summarize()], [verify()], [testOMF()],
+#'   [testMGD()], [testMICOM()], [testHausman()]
 #' 
 #' @example inst/examples/example_csem.R
 #' 
@@ -269,7 +273,7 @@ csem <- function(
   .model                 = NULL,
   .approach_2ndorder     = c("2stage", "mixed"),
   .approach_nl           = c("sequential", "replace"),
-  .approach_paths        = c("OLS", "2SLS", "3SLS"),
+  .approach_paths        = c("OLS", "2SLS"),
   .approach_se           = c("none","closed","closed_estimator"),
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                              "MINVAR", "GENVAR","GSCA", "PCA",

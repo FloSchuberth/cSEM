@@ -9,7 +9,7 @@ csem(
   .model                   = NULL,
   .approach_2ndorder       = c("2stage", "mixed"),
   .approach_nl             = c("sequential", "replace"),
-  .approach_paths          = c("OLS", "2SLS", "3SLS"),
+  .approach_paths          = c("OLS", "2SLS"),
   .approach_se             = c("none","closed","closed_estimator"), 
   .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                                "MINVAR", "GENVAR", "GSCA", "PCA", 
@@ -53,7 +53,7 @@ structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_paths}{Character string. Approach used to estimate the
-structural coefficients. One of: "\emph{OLS}", "\emph{2SLS}", or "\emph{3SLS}" (not yet implemented).
+structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}".
 Defaults to "\emph{OLS}".}
 
 \item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)
@@ -182,11 +182,14 @@ as (undordered) factors.
 Depending on the type/class of the indicator data provided cSEM computes the indicator
 correlation matrix in differnt ways. See \code{\link[=calculateIndicatorCor]{calculateIndicatorCor()}} for details.
 
+In the current version \code{.data} must not contain missing values. Future versions
+are likely to handle missing values as well.
+
 To provide a model use the \link[lavaan:model.syntax]{lavaan model syntax}.
 Note, however, that \pkg{cSEM} currently only supports the "standard" lavaan
 model syntax (Types 1, 2, 3, and 7 as described on the help page).
-Therefore, specifying e.g. a threshold or scaling factors is ignored.
-Alternatively a standardized (possibly incomplete) \link{cSEMModel}-list may be supplied.
+Therefore, specifying e.g., a threshold or scaling factors is ignored.
+Alternatively, a standardized (possibly incomplete) \link{cSEMModel}-list may be supplied.
 See \code{\link[=parseModel]{parseModel()}} for details.
 }
 
@@ -558,5 +561,6 @@ summarize(res)
 }
 \seealso{
 \code{\link[=args_default]{args_default()}}, \link{cSEMArguments}, \link{cSEMResults}, \code{\link[=foreman]{foreman()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}},
-\code{\link[=verify]{verify()}}, \code{\link[=summarize]{summarize()}}, \code{\link[=assess]{assess()}}, \code{\link[=infer]{infer()}}
+\code{\link[=assess]{assess()}}, \code{\link[=infer]{infer()}}, \code{\link[=predict]{predict()}}, \code{\link[=summarize]{summarize()}}, \code{\link[=verify]{verify()}}, \code{\link[=testOMF]{testOMF()}},
+\code{\link[=testMGD]{testMGD()}}, \code{\link[=testMICOM]{testMICOM()}}, \code{\link[=testHausman]{testHausman()}}
 }
