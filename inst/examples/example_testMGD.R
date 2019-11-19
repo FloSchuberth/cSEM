@@ -24,7 +24,7 @@ dat <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
 out <- csem(dat, model, .resample_method = "bootstrap", .R = 499) 
 
 ## Test 
-testMGD(out)
+testMGD(out, .verbose = FALSE)
 
 # Notes: 
 #  1. .R_permutation (and .R in the call to csem) is small to save time; should be
@@ -33,7 +33,7 @@ testMGD(out)
 #     identical.
 #  3. Only exception is the approach suggested by Sarstedt et al. (2011), a
 #     sign that the test is unreliable.
-#  4. As opposed to other functions involing the argument, 
+#  4. As opposed to other functions involving the argument, 
 #     '.handle_inadmissibles' the default is "replace" as this is
 #     required by Sarstedt et al. (2011)'s approach.
 
@@ -53,17 +53,17 @@ EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
 "
 
 ## Test 
-testMGD(out, .parameters_to_compare = to_compare, .R_permutation = 20, .R_bootstrap = 20)
+testMGD(out, .parameters_to_compare = to_compare, .R_permutation = 20, .R_bootstrap = 20, .verbose = FALSE)
 
 ### Different p_adjustments --------------------------------------------------
-# To adjust p-values to accomodate multiple testing use .approach_p_adjust. 
-# The number of tests to use for adjusting depends on the approach choosen. For
+# To adjust p-values to accommodate multiple testing use .approach_p_adjust. 
+# The number of tests to use for adjusting depends on the approach chosen. For
 # the Chin approach for example it is the number of parameters to test times the
 # number of possible group comparisons. To compare the results for different
-# adjustments, a vector of p-adjustments may be choosen.
+# adjustments, a vector of p-adjustments may be chosen.
 
 ## Test 
 testMGD(out, .parameters_to_compare = to_compare, 
         .approach_p_adjust = c("none", "bonferroni"),
-        .R_permutation = 20, .R_bootstrap = 20)
+        .R_permutation = 20, .R_bootstrap = 20, .verbose = FALSE)
 }

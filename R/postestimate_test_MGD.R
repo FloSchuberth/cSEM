@@ -17,20 +17,20 @@
 #' \item{Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Sarstedt2011;textual}{cSEM} tests if parameter k is equal
-#'   across all groups. If several parameters are tested simulaneously 
-#'   it is recommended to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+#'   across all groups. If several parameters are tested simultaneously  
+#'   it is recommended to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
 #'   done by p-value). By default
 #'   no multiple testing correction is done, however, several common
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details. Note: the 
-#'   test has some severe shortcommings. Use with caution.
+#'   test has some severe shortcomings. Use with caution.
 #' }
 #' \item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
 #'   between two groups. If more than two groups are tested for equality, parameter 
 #'   k is compared between all pairs of groups. In this case, it is recommended
-#'   to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+#'   to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
 #'   done by p-value) since this is essentially a multiple testing setup. 
 #'   If several parameters are tested simultaneously, correction is by group 
 #'   and number of parameters. By default
@@ -46,7 +46,7 @@
 #'   difference is adjusted as proposed by \insertCite{Henseler2009;textual}{cSEM}.
 #'   If more than two groups are tested for equality, parameter k is compared 
 #'   between all pairs of groups. In this case, it is recommended
-#'   to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+#'   to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
 #'   done by p-value) since this is essentially a multiple testing setup. 
 #'   If several parameters are tested simultaneously, correction
 #'   is by group and number of parameters. By default
@@ -62,7 +62,7 @@
 #'   unequal across groups \insertCite{Sarstedt2011}{cSEM}.
 #'   If more than two groups are tested for equality, parameter k is compared 
 #'   between all pairs of groups. In this case, it is recommended
-#'   to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+#'   to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
 #'   done by p-value) since this is essentially a multiple testing setup. 
 #'   If several parameters are tested simultaneously, correction
 #'   is by group and number of parameters. By default
@@ -114,17 +114,21 @@
 #' "
 #' }
 #' Note that the "model" provided to `.parameters_to_compare`
-#' does not have to be an estimatable model! 
+#' does not have to be an estimable model! 
 #' 
-#' Note that compared to all other functions in \pkg{cSEM}, `.handle_inadmissibles`
-#' defaults to `"replace"` to accomdate the Sarstedt et al. (2011) approach.
+#' Note also that compared to all other functions in \pkg{cSEM} using the argument,
+#'  `.handle_inadmissibles` defaults to `"replace"` to accomdate the Sarstedt et al. (2011) approach.
 #' 
 #' Argument `.R_permuation` is ignored for the `"Nitzl"` and the `"Keil"` approach. 
 #' `.R_bootstrap` is ignored if  `.object` already contains resamples, 
 #' i.e. has class `cSEMResults_resampled` and if only the `"Klesel"` or the `"Chin"`
 #' approach are used.
 #' 
-#' The argument `.saturated` is used by `"Klesel"` only.
+#' The argument `.saturated` is used by `"Klesel"` only. If `.saturated = TRUE` 
+#' the original structural model is ignored and replaced by a saturated model, 
+#' i.e. a model in which all constructs are allowed to correlate freely. 
+#' This is useful to test differences in the measurement models between groups 
+#' in isolation.
 #' 
 #' @usage testMGD(
 #'  .object                = NULL,
@@ -148,9 +152,9 @@
 #'   replications/resamples yielding an inadmissible result will be dropped 
 #'   (i.e. the number of results returned will potentially be less than `.R`). 
 #'   For "*ignore*" all results are returned even if all or some of the replications
-#'   yieled inadmissible results (i.e. number of results returned is equal to `.R`). 
+#'   yielded inadmissible results (i.e. number of results returned is equal to `.R`). 
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions. 
-#'   Defaults to "*replace*" to accomodate all approaches.
+#'   Defaults to "*replace*" to accommodate all approaches.
 #'   
 #' @return A list of class `cSEMTestMGD`. Technically, `cSEMTestMGD` is a 
 #'   named list containing the following list elements:

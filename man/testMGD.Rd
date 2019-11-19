@@ -47,9 +47,9 @@ be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emp
 replications/resamples yielding an inadmissible result will be dropped
 (i.e. the number of results returned will potentially be less than \code{.R}).
 For "\emph{ignore}" all results are returned even if all or some of the replications
-yieled inadmissible results (i.e. number of results returned is equal to \code{.R}).
+yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Defaults to "\emph{replace}" to accomodate all approaches.}
+Defaults to "\emph{replace}" to accommodate all approaches.}
 
 \item{.R_permutation}{Integer. The number of permutations. Defaults to \code{499}}
 
@@ -104,20 +104,20 @@ is used.}
 \item{Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
 \insertCite{Sarstedt2011;textual}{cSEM} tests if parameter k is equal
-across all groups. If several parameters are tested simulaneously
-it is recommended to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+across all groups. If several parameters are tested simultaneously
+it is recommended to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
 done by p-value). By default
 no multiple testing correction is done, however, several common
 adjustments are available via \code{.approach_p_adjust}. See
 \code{\link[stats:p.adjust]{stats::p.adjust()}} for details. Note: the
-test has some severe shortcommings. Use with caution.
+test has some severe shortcomings. Use with caution.
 }
 \item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
 \insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
 between two groups. If more than two groups are tested for equality, parameter
 k is compared between all pairs of groups. In this case, it is recommended
-to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
 done by p-value) since this is essentially a multiple testing setup.
 If several parameters are tested simultaneously, correction is by group
 and number of parameters. By default
@@ -133,7 +133,7 @@ equal across groups. The calculation of the standard error of the parameter
 difference is adjusted as proposed by \insertCite{Henseler2009;textual}{cSEM}.
 If more than two groups are tested for equality, parameter k is compared
 between all pairs of groups. In this case, it is recommended
-to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
 done by p-value) since this is essentially a multiple testing setup.
 If several parameters are tested simultaneously, correction
 is by group and number of parameters. By default
@@ -149,7 +149,7 @@ it is assumed, that the standard errors of the coefficients are
 unequal across groups \insertCite{Sarstedt2011}{cSEM}.
 If more than two groups are tested for equality, parameter k is compared
 between all pairs of groups. In this case, it is recommended
-to adjust the signficance level or the p-values (in \pkg{cSEM} correction is
+to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
 done by p-value) since this is essentially a multiple testing setup.
 If several parameters are tested simultaneously, correction
 is by group and number of parameters. By default
@@ -201,17 +201,21 @@ eta1 =~ y11 + y12 + y13
 "
 }
 Note that the "model" provided to \code{.parameters_to_compare}
-does not have to be an estimatable model!
+does not have to be an estimable model!
 
-Note that compared to all other functions in \pkg{cSEM}, \code{.handle_inadmissibles}
-defaults to \code{"replace"} to accomdate the Sarstedt et al. (2011) approach.
+Note also that compared to all other functions in \pkg{cSEM} using the argument,
+\code{.handle_inadmissibles} defaults to \code{"replace"} to accomdate the Sarstedt et al. (2011) approach.
 
 Argument \code{.R_permuation} is ignored for the \code{"Nitzl"} and the \code{"Keil"} approach.
 \code{.R_bootstrap} is ignored if  \code{.object} already contains resamples,
 i.e. has class \code{cSEMResults_resampled} and if only the \code{"Klesel"} or the \code{"Chin"}
 approach are used.
 
-The argument \code{.saturated} is used by \code{"Klesel"} only.
+The argument \code{.saturated} is used by \code{"Klesel"} only. If \code{.saturated = TRUE}
+the original structural model is ignored and replaced by a saturated model,
+i.e. a model in which all constructs are allowed to correlate freely.
+This is useful to test differences in the measurement models between groups
+in isolation.
 }
 \examples{
 \donttest{# ===========================================================================
@@ -240,7 +244,7 @@ dat <- list(satisfaction[-3,], satisfaction[-5, ], satisfaction[-10, ])
 out <- csem(dat, model, .resample_method = "bootstrap", .R = 499) 
 
 ## Test 
-testMGD(out)
+testMGD(out, .verbose = FALSE)
 
 # Notes: 
 #  1. .R_permutation (and .R in the call to csem) is small to save time; should be
@@ -249,7 +253,7 @@ testMGD(out)
 #     identical.
 #  3. Only exception is the approach suggested by Sarstedt et al. (2011), a
 #     sign that the test is unreliable.
-#  4. As opposed to other functions involing the argument, 
+#  4. As opposed to other functions involving the argument, 
 #     '.handle_inadmissibles' the default is "replace" as this is
 #     required by Sarstedt et al. (2011)'s approach.
 
@@ -269,19 +273,19 @@ EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
 "
 
 ## Test 
-testMGD(out, .parameters_to_compare = to_compare, .R_permutation = 20, .R_bootstrap = 20)
+testMGD(out, .parameters_to_compare = to_compare, .R_permutation = 20, .R_bootstrap = 20, .verbose = FALSE)
 
 ### Different p_adjustments --------------------------------------------------
-# To adjust p-values to accomodate multiple testing use .approach_p_adjust. 
-# The number of tests to use for adjusting depends on the approach choosen. For
+# To adjust p-values to accommodate multiple testing use .approach_p_adjust. 
+# The number of tests to use for adjusting depends on the approach chosen. For
 # the Chin approach for example it is the number of parameters to test times the
 # number of possible group comparisons. To compare the results for different
-# adjustments, a vector of p-adjustments may be choosen.
+# adjustments, a vector of p-adjustments may be chosen.
 
 ## Test 
 testMGD(out, .parameters_to_compare = to_compare, 
         .approach_p_adjust = c("none", "bonferroni"),
-        .R_permutation = 20, .R_bootstrap = 20)
+        .R_permutation = 20, .R_bootstrap = 20, .verbose = FALSE)
 }
 }
 \references{

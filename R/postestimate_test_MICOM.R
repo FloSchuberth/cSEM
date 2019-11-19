@@ -6,7 +6,10 @@
 #' The test is only meaningful for concepts modeled as composites.
 #'
 #' If more than two groups are to be compared issues related to multiple testing
-#' should be taken into account.
+#' should be taken into account. Future versions of the package will include
+#' appropriate corrections.
+#' 
+#' Moreover, second-order models are not supported yet.
 #'
 #' The number of permutation runs defaults to `args_default()$.R` for performance reasons.
 #' According to \insertCite{Henseler2016;textual}{cSEM} the number of permutations should 
@@ -15,7 +18,6 @@
 #' @usage testMICOM(
 #'  .object               = NULL,
 #'  .alpha                = 0.05,
-#'  .approach_p_adjust    = "none",
 #'  .handle_inadmissibles = c("drop", "ignore", "replace"), 
 #'  .R                    = 499,
 #'  .seed                 = NULL,
@@ -25,11 +27,11 @@
 #' @inheritParams csem_arguments
 #'
 #' @return 
-#' A named list of class "testMICOM" containing the following list element:
+#' A named list of class `cSEMTestMICOM` containing the following list element:
 #' \describe{
-#' \item{**Step2**}{A list containing the results of the test for compositional invariance (Step 2).}
-#' \item{**Step3**}{A list containing the results of the test for mean and variance equality (Step 3).}
-#' \item{**Meta_information**}{A list of additional information on the test.}
+#' \item{`$Step2`}{A list containing the results of the test for compositional invariance (Step 2).}
+#' \item{`$Step3`}{A list containing the results of the test for mean and variance equality (Step 3).}
+#' \item{`$Information`}{A list of additional information on the test.}
 #' }
 #'
 #' @references
@@ -37,13 +39,15 @@
 #'
 #' @example inst/examples/example_testMICOM.R
 #' 
+#' @seealso [csem()], [cSEMResults]
+#' 
 #' @export
 #'
 
 testMICOM <- function(
   .object               = NULL,
   .alpha                = 0.05,
-  .approach_p_adjust    = "none",
+  # .approach_p_adjust    = "none",
   .handle_inadmissibles = c("drop", "ignore", "replace"),
   .R                    = 499,
   .seed                 = NULL,
@@ -99,9 +103,9 @@ testMICOM <- function(
         "Future versions of the package will likely include appropriate correction options.")
     }
     
-    if(.approach_p_adjust != 'none'){
-      stop2("P-value adjustment to control the familywise error rate not supported yet.")
-    }
+    # if(.approach_p_adjust != 'none'){
+    #   stop2("P-value adjustment to control the familywise error rate not supported yet.")
+    # }
     
     ### Preparation ==============================================================
     ## Get pooled data (potentially unstandardized) and remove id column
