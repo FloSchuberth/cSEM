@@ -273,7 +273,8 @@ EXPE <~ expe1 + expe2 + expe3 + expe4 + expe5
 "
 
 ## Test 
-testMGD(out, .parameters_to_compare = to_compare, .R_permutation = 20, .R_bootstrap = 20, .verbose = FALSE)
+testMGD(out, .parameters_to_compare = to_compare, .R_permutation = 20, 
+        .R_bootstrap = 20, .verbose = FALSE)
 
 ### Different p_adjustments --------------------------------------------------
 # To adjust p-values to accommodate multiple testing use .approach_p_adjust. 

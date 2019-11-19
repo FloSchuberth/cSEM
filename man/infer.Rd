@@ -189,9 +189,10 @@ inf <- infer(a, .quantity = c("all", "CI_bca")) # requires jackknife estimates
 ## Estimate the model with double bootstrap resampling:
 # Notes:
 #   1. The .resample_method2 arguments triggers a bootstrap of each bootstrap sample
-#   2. The double bootstrap is is very time consuming, consider setting `.eval_plan = "multiprocess`. 
-#      To speed things up for the example, .R and .R2 are reduced. Results are
-#      probably quite
+#   2. The double bootstrap is is very time consuming, consider setting 
+#      `.eval_plan = "multiprocess`. 
+#      To speed things up .R and .R2 are reduced for the example. Results are
+#      therefore rather unreliable.
 a1 <- csem(satisfaction, model, .resample_method = "bootstrap", .R = 40,
           .resample_method2 = "bootstrap", .R2 = 20, .handle_inadmissibles = "replace") 
 infer(a1, .quantity = "CI_t_interval")}
