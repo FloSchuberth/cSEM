@@ -23,15 +23,66 @@ For possible choices see \code{\link[=infer]{infer()}}.}
 \item{...}{Further arguments to \code{summarize()}. Currently ignored.}
 }
 \value{
-The return object has the exact same structure as \code{.object}.
-As opposed to \code{.object}, the results for the Path coefficients, the loadings,
-the weights, the indirect effect, the total effects, and (if present) the
-residual correlations are returned as standarized data.frames! This is usually
-much more convenient if users intend to present the results in e.g., a paper.
+An object of class \code{cSEMSummarize}. A \code{cSEMSummarize} object has
+the same structure as the \link{cSEMResults} object with a couple differences:
+\enumerate{
+\item{Elements \code{$Path_estimates}, \code{$Loadings_estimates}, \code{$Weight_estimates},
+\code{$Weight_estimates}, and  \code{$Residual_correlation} are standardized data frames instead of matrices.}
+\item{Data frames \code{$Effect_estimates}, \code{$Indicator_correlation}, and
+\code{$Exo_construct_correlation} are added to \code{$Estimates}.}
+}
+The data frame format is usually much more convenient if users intend to
+present the results in e.g., a paper or a presentation.
 }
 \description{
-Summarize an estimated model.
+The summary is mainly focused on estimated parameters. For quality criteria
+such as the average variance extracted (AVE), reliability estiamtes,
+effect size estimates etc. use \code{\link[=assess]{assess()}}.
+}
+\details{
+If \code{.object} contains resamples, standard errors, t-values and p-values
+(assuming estimates are standard normally distributed) are printed as well.
+By default the percentile confidence interval is given as well. For other
+confidence intervals use the \code{.ci} argument. See \code{\link[=infer]{infer()}} for possible choices
+and a description.
+}
+\examples{
+## Take a look at the dataset
+#?threecommonfactors
+
+## Specify the (correct) model
+model <- "
+# Structural model
+eta2 ~ eta1
+eta3 ~ eta1 + eta2
+
+# (Reflective) measurement model
+eta1 =~ y11 + y12 + y13
+eta2 =~ y21 + y22 + y23
+eta3 =~ y31 + y32 + y33
+"
+
+## Estimate
+res <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 50)
+
+## Postestimation
+res_summarize <- summarize(res)
+res_summarize
+
+# Extract e.g. the loadings
+res_summarize$Estimates$Loading_estimates
+
+## By default only the 95\% percentile confidence interval is printed. User
+## can have several confidence interval computed, however, only the first
+## will be printed.
+
+res_summarize <- summarize(res, .ci = c("CI_standard_t", "CI_percentile"), 
+                           .alpha = c(0.05, 0.01))
+res_summarize
+
+# Extract the loading including both confidence intervals
+res_summarize$Estimates$Path_estimates
 }
 \seealso{
-\link{csem}, \link{cSEMResults}
+\link{csem}, \code{\link[=assess]{assess()}}, \link{cSEMResults}
 }

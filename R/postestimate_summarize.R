@@ -1,12 +1,25 @@
 #' Summarize model
 #'
-#' Summarize an estimated model.
+#' The summary is mainly focused on estimated parameters. For quality criteria 
+#' such as the average variance extracted (AVE), reliability estimates, 
+#' effect size estimates etc., use [assess()].
+#' 
+#' If `.object` contains resamples, standard errors, t-values and p-values
+#' (assuming estimates are standard normally distributed) are printed as well.
+#' By default the percentile confidence interval is given as well. For other
+#' confidence intervals use the `.ci` argument. See [infer()] for possible choices
+#' and a description.
 #'
-#' @return The return object has the exact same structure as `.object`. 
-#'   As opposed to `.object`, the results for the Path coefficients, the loadings,
-#'   the weights, the indirect effect, the total effects, and (if present) the
-#'   residual correlations are returned as standarized data.frames! This is usually
-#'   much more convenient if users intend to present the results in e.g., a paper.
+#' @return An object of class `cSEMSummarize`. A `cSEMSummarize` object has
+#'   the same structure as the [cSEMResults] object with a couple differences:
+#'   \enumerate{
+#'   \item{Elements `$Path_estimates`, `$Loadings_estimates`, `$Weight_estimates`,
+#'     `$Weight_estimates`, and  `$Residual_correlation` are standardized data frames instead of matrices.}
+#'   \item{Data frames `$Effect_estimates`, `$Indicator_correlation`, and
+#'     `$Exo_construct_correlation` are added to `$Estimates`.}
+#'   } 
+#'   The data frame format is usually much more convenient if users intend to
+#'   present the results in e.g., a paper or a presentation.
 #'   
 #' @usage summarize(
 #'  .object = NULL, 
@@ -18,8 +31,9 @@
 #' @inheritParams csem_arguments
 #' @param ... Further arguments to `summarize()`. Currently ignored.
 #'
-#' @seealso [csem], [cSEMResults]
+#' @seealso [csem], [assess()], [cSEMResults]
 #'
+#' @example inst/examples/example_summarize.R
 #' @export
 #'
 summarize <- function(
