@@ -155,8 +155,7 @@ the CI based on bootstraped t-values and bootstraped/jackknife SE's
 }}
 
 \examples{
-\donttest{
-model <- "
+\donttest{model <- "
 # Structural model
 QUAL ~ EXPE
 EXPE ~ IMAG
@@ -195,8 +194,7 @@ inf <- infer(a, .quantity = c("all", "CI_bca")) # requires jackknife estimates
 #      probably quite
 a1 <- csem(satisfaction, model, .resample_method = "bootstrap", .R = 40,
           .resample_method2 = "bootstrap", .R2 = 20, .handle_inadmissibles = "replace") 
-infer(a1, .quantity = "CI_t_interval") 
-}
+infer(a1, .quantity = "CI_t_interval")}
 }
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}, \code{\link[=summarize]{summarize()}} \link{cSEMResults}

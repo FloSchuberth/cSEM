@@ -426,7 +426,7 @@ resampleData <- function(
 #' @references
 #'   \insertAllCited{} 
 #'   
-#' @seealso [csem], [cSEMResults]
+#' @seealso [csem], [summarize()], [infer()], [cSEMResults]
 #'
 #' @example inst/examples/example_resamplecSEMResults.R
 #' 
