@@ -10,7 +10,7 @@ MeanResample <- function(.first_resample) {
   })
 }
 #' @describeIn infer Computes the standard deviation over all resamples for each resampled 
-#'                   statistic/estimator This is usually taken to be the estimate
+#'                   statistic/estimator. This is usually taken to be the estimate
 #'                   of the standard error of the statistic/estimator.
 SdResample <- function(.first_resample, .resample_method, .n) {
   
@@ -38,9 +38,9 @@ BiasResample <- function(.first_resample, .resample_method, .n) {
 }
 #' @describeIn infer Computes the *Standard CI with bootstrap SE's*.
 #'  Critical quantiles can be based on both the `t`- or the 
-#' standard normal distribution (`z`). The former may perform better in
-#' small samples but there is no clear consenus on what the degrees of freedom
-#' should be.
+#'  standard normal distribution (`z`). The former may perform better in
+#'  small samples but there is no clear consenus on what the degrees of freedom
+#'  should be. We use N - 1 ("type1").
 StandardCIResample <- function(
   .first_resample, 
   .bias_corrected,
@@ -223,7 +223,7 @@ TStatCIResample <- function(
   names(out) <- names(.first_resample)
   return(out)
 }
-#' @describeIn infer (TODO)
+#' @describeIn infer Computes the *Basic bias-corrected CI*.
 BcCIResample <- function(.first_resample, .probs) {
   
   ## confidence level (for rownames)
@@ -253,8 +253,8 @@ BcCIResample <- function(.first_resample, .probs) {
     })
   
   return(out)
-}
-#' @describeIn infer (TODO)
+} 
+#' @describeIn infer Computes the *Basic bias-corrected and accelerated CI*.
 BcaCIResample <- function(.object, .first_resample, .probs) {
   ## confidence level (for rownames)
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2

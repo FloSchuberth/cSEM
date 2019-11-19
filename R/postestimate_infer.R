@@ -1,27 +1,32 @@
 #' Inference
 #'
-#' Calculate common inferencial quantities (e.g., estimated standard error, estimated bias,
-#' several confidence intervals) based on a `cSEMResults_resampled` object as obtained
+#' Calculate common inferential quantities. For ssers interested in the
+#' estimated standard errors and/or confidences intervals [summarize()] will usually
+#' be more helpful as it has a much more user-friendly print method.
+#'
+#' Calculate common inferential quantities (e.g., estimated standard errors, estimated bias,
+#' confidence intervals) based on a `cSEMResults_resampled` object as obtained
 #' by calling [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
 #' or `"jackknife"` when calling [csem()]. Currently, the following quantities are
 #' returned by default (`.quantity = "all"`):
 #' \describe{
 #' \item{`"mean"`, `"sd"` and `"bias"`}{The mean, the standard 
-#'   deviation and the bias (defined as the difference between the resample mean
+#'   deviation and the estimated bias (defined as the difference between the resample mean
 #'   and the original estimate).}
 #' \item{`"CI_standard_z"` and `"CI_standard_t"`}{The standard confidence interval 
 #'   with standard errors estimated by the resample standard deviation. 
-#'   While `"CI_standard_z"` assumes a standard-normally distributed statistic,
-#'   `"CI_standard_t"` assumes a t-statistic with `.df = c("type1", "type2")`}
+#'   While `"CI_standard_z"` assumes a standard normally distributed statistic,
+#'   `"CI_standard_t"` assumes a t-statistic with N - 1 degrees of freedom.}
 #' \item{`"CI_percentile"`}{The percentile confidence interval}
 #' \item{`"CI_basic"`}{The basic confidence interval}
 #' \item{`"CI_bc"`}{The bias corrected confidence interval}
 #' }
 #' 
-#' In addtion, the bias-corrected and accelerated (`"CI_bca"`) and/or the "studentized"
-#' confidence interval (`"CI_t_interval"`) can be returned. The former requires jackknife estimates
-#' to compute influence values and the latter requires double bootstrap 
-#' both take time. Hence, the will only be computed if explicitly given.
+#' In addition, the bias-corrected and accelerated (`.quantity = "CI_bca"`) and/or the "studentized"
+#' confidence interval (`".quantity = CI_t_interval"`) may be computed. The former requires 
+#' jackknife estimates to compute influence values and the latter requires 
+#' double bootstrap. Both can potentially be time consuming. Hence, computation is triggerd 
+#' only if explicitly chosen.
 #' 
 #' @usage infer(
 #'  .object            = NULL,
@@ -34,8 +39,11 @@
 #'
 #' @inheritParams csem_arguments
 #' 
-#' @seealso [csem()], [resamplecSEMResults()], [cSEMResults]
+#' @return A list of class `cSEMInfer`.
 #' 
+#' @seealso [csem()], [resamplecSEMResults()], [summarize()] [cSEMResults]
+#' 
+#' @example inst/examples/example_infer.R
 #' @export
 #'
 

@@ -87,30 +87,38 @@ One of "\emph{all}", "\emph{mean}", "\emph{sd}", "\emph{bias}", "\emph{CI_standa
 Defaults to "\emph{all}" in which case all quantities that do not require
 additional resampling are returned, i.e., all quantities but "\emph{CI_bca}", "\emph{CI_t_interval}".}
 }
+\value{
+A list of class \code{cSEMInfer}.
+}
 \description{
-Calculate common inferencial quantities (e.g., estimated standard error, estimated bias,
-several confidence intervals) based on a \code{cSEMResults_resampled} object as obtained
+Calculate common inferential quantities. For ssers interested in the
+estimated standard errors and/or confidences intervals \code{\link[=summarize]{summarize()}} will usually
+be more helpful as it has a much more user-friendly print method.
+}
+\details{
+Calculate common inferential quantities (e.g., estimated standard errors, estimated bias,
+confidence intervals) based on a \code{cSEMResults_resampled} object as obtained
 by calling \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}
 or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}. Currently, the following quantities are
 returned by default (\code{.quantity = "all"}):
 \describe{
 \item{\code{"mean"}, \code{"sd"} and \code{"bias"}}{The mean, the standard
-deviation and the bias (defined as the difference between the resample mean
+deviation and the estimated bias (defined as the difference between the resample mean
 and the original estimate).}
 \item{\code{"CI_standard_z"} and \code{"CI_standard_t"}}{The standard confidence interval
 with standard errors estimated by the resample standard deviation.
-While \code{"CI_standard_z"} assumes a standard-normally distributed statistic,
-\code{"CI_standard_t"} assumes a t-statistic with \code{.df = c("type1", "type2")}}
+While \code{"CI_standard_z"} assumes a standard normally distributed statistic,
+\code{"CI_standard_t"} assumes a t-statistic with N - 1 degrees of freedom.}
 \item{\code{"CI_percentile"}}{The percentile confidence interval}
 \item{\code{"CI_basic"}}{The basic confidence interval}
 \item{\code{"CI_bc"}}{The bias corrected confidence interval}
 }
-}
-\details{
-In addtion, the bias-corrected and accelerated (\code{"CI_bca"}) and/or the "studentized"
-confidence interval (\code{"CI_t_interval"}) can be returned. The former requires jackknife estimates
-to compute influence values and the latter requires double bootstrap
-both take time. Hence, the will only be computed if explicitly given.
+
+In addition, the bias-corrected and accelerated (\code{.quantity = "CI_bca"}) and/or the "studentized"
+confidence interval (\code{".quantity = CI_t_interval"}) may be computed. The former requires
+jackknife estimates to compute influence values and the latter requires
+double bootstrap. Both can potentially be time consuming. Hence, computation is triggerd
+only if explicitly chosen.
 }
 \section{Functions}{
 \itemize{
@@ -118,7 +126,7 @@ both take time. Hence, the will only be computed if explicitly given.
 statistic/parameter.
 
 \item \code{SdResample}: Computes the standard deviation over all resamples for each resampled
-statistic/estimator This is usually taken to be the estimate
+statistic/estimator. This is usually taken to be the estimate
 of the standard error of the statistic/estimator.
 
 \item \code{BiasResample}: Computes the estimated bias for each resampled
@@ -128,7 +136,7 @@ statistic/estimator.
 Critical quantiles can be based on both the \code{t}- or the
 standard normal distribution (\code{z}). The former may perform better in
 small samples but there is no clear consenus on what the degrees of freedom
-should be.
+should be. We use N - 1 ("type1").
 
 \item \code{PercentilCIResample}: Computes the \emph{Percentile CI}.
 The function takes the distribution F* (the CDF) of the resamples as an estimator for
@@ -141,12 +149,56 @@ Quantiles of the estimated distribution are then used as lower and upper bound.
 The function computes a boostrap t-statisic (since it is roughly pivotal) and constructs
 the CI based on bootstraped t-values and bootstraped/jackknife SE's
 
-\item \code{BcCIResample}: (TODO)
+\item \code{BcCIResample}: Computes the \emph{Basic bias-corrected CI}.
 
-\item \code{BcaCIResample}: (TODO)
+\item \code{BcaCIResample}: Computes the \emph{Basic bias-corrected and accelerated CI}.
 }}
 
+\examples{
+\donttest{
+model <- "
+# Structural model
+QUAL ~ EXPE
+EXPE ~ IMAG
+SAT  ~ IMAG + EXPE + QUAL + VAL
+LOY  ~ IMAG + SAT
+VAL  ~ EXPE + QUAL
+
+# Measurement model
+EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5
+IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5
+LOY  =~ loy1  + loy2  + loy3  + loy4
+QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
+SAT  =~ sat1  + sat2  + sat3  + sat4
+VAL  =~ val1  + val2  + val3  + val4
+"
+  
+## Estimate the model with bootstrap resampling 
+a <- csem(satisfaction, model, .resample_method = "bootstrap", .R = 50)
+
+## Compute inferential quantities
+inf <- infer(a)
+
+inf$Path_estimates$CI_basic
+inf$Indirect_effect$sd
+
+### To compute the bias-corrected and accelerated and/or the studentized t-inverval
+### confidence interval:
+inf <- infer(a, .quantity = c("all", "CI_bca")) # requires jackknife estimates
+
+## For the studentied t-interval confidence interval, a double bootstrap is required:
+## Estimate the model with double bootstrap resampling:
+# Notes:
+#   1. The .resample_method2 arguments triggers a bootstrap of each bootstrap sample
+#   2. The double bootstrap is is very time consuming, consider setting `.eval_plan = "multiprocess`. 
+#      To speed things up for the example, .R and .R2 are reduced. Results are
+#      probably quite
+a1 <- csem(satisfaction, model, .resample_method = "bootstrap", .R = 40,
+          .resample_method2 = "bootstrap", .R2 = 20, .handle_inadmissibles = "replace") 
+infer(a1, .quantity = "CI_t_interval") 
+}
+}
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}, \code{\link[=summarize]{summarize()}} \link{cSEMResults}
 }
 \keyword{internal}

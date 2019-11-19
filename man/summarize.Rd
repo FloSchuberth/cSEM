@@ -36,8 +36,8 @@ present the results in e.g., a paper or a presentation.
 }
 \description{
 The summary is mainly focused on estimated parameters. For quality criteria
-such as the average variance extracted (AVE), reliability estiamtes,
-effect size estimates etc. use \code{\link[=assess]{assess()}}.
+such as the average variance extracted (AVE), reliability estimates,
+effect size estimates etc., use \code{\link[=assess]{assess()}}.
 }
 \details{
 If \code{.object} contains resamples, standard errors, t-values and p-values
