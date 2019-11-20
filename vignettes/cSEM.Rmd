@@ -35,7 +35,7 @@ true for users new to SEM or practitioners who are overwhelmed
 by terminology of their own field only to find that the term they
 just thought to have finally grasped is defined differently in another field, 
 making the confusion complete. A prime example is the term formative. See
-e.g., Henseler (XXXX, p.) for a clarifiction.
+e.g., @Henseler2017 for a clarifiction.
 
 Ultimately, this is a matter of (mis)communication which, in our opinion, can 
 only be satisfactorily solved by establishing a clear, unambiguous definition 
@@ -56,7 +56,7 @@ files carefully to avoid potential misunderstandings.
    the package authors intended them to be understood.
 1. The [Notation][Notation] files contains some fundamental mathematical notation/
    symbols used in the package documentation alongside a definition. Bearing some
-   expections, we mostly follow standard notation as layed out in e.g. Bollen (1989)
+   expections, we mostly follow standard notation as layed out in e.g., @Bollen1989
 
 The package is designed based on a set of principles that are partly in contrast
 to commonly used open-source and commercial software packages offering similar content (e.g., smartPLS).
@@ -209,7 +209,7 @@ only comprises three steps:
    5. `verify()`
    6. `testOMF()`
    7. `testMICOM()`
-   8. `testHausman(`)`
+   8. `testHausman()`
    9. `testMGD()`
    
    All verbs accept the result of a call to `csem()` as input which makes working
@@ -488,7 +488,7 @@ generally, do not have closed-form solutions for standard errors. **cSEM** relie
 x <- runif(1) # to intialize .Random.seed
 ```
 
-```{r cache=TRUE}
+```{r}
 b1 <- csem(.data = threecommonfactors, .model = model, .resample_method = "bootstrap")
 b2 <- resamplecSEMResults(a)
 ```

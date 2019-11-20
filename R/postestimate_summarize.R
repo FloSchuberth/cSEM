@@ -266,115 +266,30 @@ summarize.cSEMResults_default <- function(
     )
     
     ## Path estimates ----------------------------------------------------------
-    temp   <- infer_out$Path_estimates
-    t_temp <- path_estimates$Estimate / temp$sd
-    
-    path_estimates["Std_err"] <- temp$sd
-    path_estimates["t_stat"]  <- t_temp
-    path_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-    
-    if(!is.null(.ci)) {
-      ## Add CI's
-      # Column names
-      ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
-                            unlist(lapply(temp[.ci], rownames)))
-      
-      # Add cis to data frame and set names
-      path_estimates <- cbind(path_estimates, t(do.call(rbind, temp[.ci])))
-      rownames(path_estimates) <- NULL
-      colnames(path_estimates)[(length(colnames(path_estimates)) - 
-                                  (length(ci_colnames) - 1)):length(colnames(path_estimates))] <- ci_colnames
-    }
+    path_estimates <- addInfer(infer_out$Path_estimates, path_estimates, .ci)
     
     ## Loading estimates -------------------------------------------------------
-    temp   <- infer_out$Loading_estimates
-    t_temp <- loading_estimates$Estimate / temp$sd
-    
-    loading_estimates["Std_err"] <- temp$sd
-    loading_estimates["t_stat"]  <- t_temp
-    loading_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-    
-    if(!is.null(.ci)) {
-      ## Add CI's
-      # Add cis to data frame and set names
-      loading_estimates <- cbind(loading_estimates, t(do.call(rbind, temp[.ci])))
-      rownames(loading_estimates) <- NULL
-      colnames(loading_estimates)[(length(colnames(loading_estimates)) - 
-                                     (length(ci_colnames) - 1)):length(colnames(loading_estimates))] <- ci_colnames
-    }
+    loading_estimates <- addInfer(infer_out$Loading_estimates, loading_estimates, .ci)
     
     ## Weight estimates --------------------------------------------------------
-    temp   <- infer_out$Weight_estimates
-    t_temp <- weight_estimates$Estimate / temp$sd
-    
-    weight_estimates["Std_err"] <- temp$sd
-    weight_estimates["t_stat"]  <- t_temp
-    weight_estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-    
-    if(!is.null(.ci)) {
-      ## Add CI's
-      # Add cis to data frame and set names
-      weight_estimates <- cbind(weight_estimates, t(do.call(rbind, temp[.ci])))
-      rownames(weight_estimates) <- NULL
-      colnames(weight_estimates)[(length(colnames(weight_estimates)) - 
-                                    (length(ci_colnames) - 1)):length(colnames(weight_estimates))] <- ci_colnames
-    }
+    weight_estimates <- addInfer(infer_out$Weight_estimates, weight_estimates, .ci)
     
     ## Residual correlation ----------------------------------------------------
-    temp   <- infer_out$Residual_correlation
-    if(!is.null(temp)) {
-      t_temp <- residual_correlation$Estimate / temp$sd
-      
-      residual_correlation["Std_err"] <- temp$sd
-      residual_correlation["t_stat"]  <- t_temp
-      residual_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-      
-      if(!is.null(.ci)) {
-        ## Add CI's
-        # Add cis to data frame and set names
-        residual_correlation <- cbind(residual_correlation, t(do.call(rbind, temp[.ci])))
-        rownames(residual_correlation) <- NULL
-        colnames(residual_correlation)[(length(colnames(residual_correlation)) - 
-                                          (length(ci_colnames) - 1)):length(colnames(residual_correlation))] <- ci_colnames
-      }
+    if(!is.null(infer_out$Residual_correlation)) {
+      residual_correlation <- addInfer(infer_out$Residual_correlation, 
+                                       residual_correlation, .ci)
     }
     
     ## Exogenous construct correlation -----------------------------------------
-    temp   <- infer_out$Exo_construct_correlation
-    if(!is.null(temp)) {
-      t_temp <- exo_construct_correlation$Estimate / temp$sd
-      
-      exo_construct_correlation["Std_err"] <- temp$sd
-      exo_construct_correlation["t_stat"]  <- t_temp
-      exo_construct_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-      
-      if(!is.null(.ci)) {
-        ## Add CI's
-        # Add cis to data frame and set names
-        exo_construct_correlation <- cbind(exo_construct_correlation, t(do.call(rbind, temp[.ci])))
-        rownames(exo_construct_correlation) <- NULL
-        colnames(exo_construct_correlation)[(length(colnames(exo_construct_correlation)) - 
-                                          (length(ci_colnames) - 1)):length(colnames(exo_construct_correlation))] <- ci_colnames
-      }
+    if(!is.null(infer_out$Exo_construct_correlation)) {
+      exo_construct_correlation <- addInfer(infer_out$Residual_correlation, 
+                                            exo_construct_correlation, .ci)
     }
     
     ## Indicator correlation ---------------------------------------------------
-    temp   <- infer_out$Indicator_correlation
-    if(!is.null(temp)) {
-      t_temp <- indicator_correlation$Estimate / temp$sd
-      
-      indicator_correlation["Std_err"] <- temp$sd
-      indicator_correlation["t_stat"]  <- t_temp
-      indicator_correlation["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-      
-      if(!is.null(.ci)) {
-        ## Add CI's
-        # Add cis to data frame and set names
-        indicator_correlation <- cbind(indicator_correlation, t(do.call(rbind, temp[.ci])))
-        rownames(indicator_correlation) <- NULL
-        colnames(indicator_correlation)[(length(colnames(indicator_correlation)) - 
-                                           (length(ci_colnames) - 1)):length(colnames(indicator_correlation))] <- ci_colnames
-      }
+    if(!is.null(infer_out$Indicator_correlation)) {
+      indicator_correlation <- addInfer(infer_out$Residual_correlation, 
+                                        indicator_correlation, .ci)
     }
     
     ## Effects -----------------------------------------------------------------

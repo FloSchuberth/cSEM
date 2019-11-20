@@ -116,3 +116,29 @@ calculateEffects <- function(.object, .output_type = c("data.frame", "matrix")) 
   ## Return
   out
 }
+
+#' Helper for summarize
+#' @noRd
+
+addInfer <- function(.what = NULL, .estimates = NULL, .ci = NULL) {
+  temp <- .what
+  t_temp <- .estimates$Estimate / temp$sd
+  
+  .estimates["Std_err"] <- temp$sd
+  .estimates["t_stat"]  <- t_temp
+  .estimates["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+  
+  if(!is.null(.ci)) {
+    ## Add CI's
+    # Column names
+    ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
+                          unlist(lapply(temp[.ci], rownames)))
+    
+    # Add cis to data frame and set names
+    .estimates <- cbind(.estimates, t(do.call(rbind, temp[.ci])))
+    rownames(.estimates) <- NULL
+    colnames(.estimates)[(length(colnames(.estimates)) - 
+                                (length(ci_colnames) - 1)):length(colnames(.estimates))] <- ci_colnames
+  }
+  .estimates
+}
