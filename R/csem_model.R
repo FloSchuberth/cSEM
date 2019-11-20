@@ -3,7 +3,7 @@
 #' Turns a model written in [lavaan model syntax][lavaan::model.syntax] into a
 #' [cSEMModel] list.
 #'
-#' Instruments must be supplied seperately as a named list 
+#' Instruments must be supplied separately as a named list 
 #' of vectors of instruments. 
 #' The names of the list elements are the names of the dependent constructs of 
 #' the structural equation whose explanatory variables are endogenous. 

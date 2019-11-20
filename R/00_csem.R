@@ -2,7 +2,7 @@
 #'
 #' Estimate linear, nonlinear, hierarchical or multigroup structural equation
 #' models using a composite-based approach. In \pkg{cSEM} 
-#' any method or approach that involves linear compounts (scores/proxies/composites)
+#' any method or approach that involves linear compounds (scores/proxies/composites)
 #' of observables (indicators/items/manifest variables) is defined as composite-based.
 #' See the \href{https://m-e-rademaker.github.io/cSEM/articles/cSEM.html}{Get started} 
 #' section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
@@ -56,7 +56,7 @@
 #'    regression (`"regression"`) or bartlett scores (`"bartlett"`)}
 #' }
 #' 
-#' Its possible to supply starting values for the weighting algorithm 
+#' It is possible to supply starting values for the weighting algorithm 
 #' via `.starting_values`. The argument accepts a named list of vectors where the
 #' list names are the construct names whose indicator weights the user
 #' wishes to set. The vectors must be named vectors of `"indicator_name" = value` 
@@ -64,7 +64,7 @@
 #'
 #' Composite-indicator and composite-composite correlations are properly
 #' disattenuated by default to yield consistent loadings, construct correlations, 
-#' and path coefficients if any of the concepts in the model are modeled as a 
+#' and path coefficients if any of the concepts are modeled as a 
 #' common factor. 
 #' 
 #' For *PLS-PM* disattenuation is done using *PLSc* \insertCite{Dijkstra2015}{cSEM}.
@@ -78,14 +78,14 @@
 #' 
 #' By default path coefficients are estimated using ordinary least squares (`.approach_path = "OLS"`). 
 #' For linear models, two-stage least squares (`"2SLS"`) is available, however, *only if* 
-#' *instruments are internal*, i.e. part of the structural model. Future versions
-#' will add support for external instruments. Instruments must be supplied to 
+#' *instruments are internal*, i.e., part of the structural model. Future versions
+#' will add support for external instruments if possible. Instruments must be supplied to 
 #' `.instruments` as a named list where the names
 #' of the list elements are the names of the dependent constructs of the structural 
 #' equations whose explanatory variables are believed to be endogenous. 
 #' The list consists of vectors of names of instruments corresponding to each equation. 
 #' Note that exogenous variables of a given equation **must** be supplied as 
-#'instruments for themselves. See the examples section.
+#'instruments for themselves.
 #'
 #' If reliabilities are known they can be supplied as `"name" = value` pairs to 
 #' `.reliabilities`, where `value` is a numeric value between 0 and 1. 
@@ -177,7 +177,7 @@
 #' factor and are interpreted as group 
 #' identifiers. `csem()` will split the data by levels of that column and run
 #' the estimation for each level separately. Note that the more levels
-#' the group-identifyer-column has, the more estimation runs are required.
+#' the group-identifier-column has, the more estimation runs are required.
 #' This can considerably slow down estimation, especially if resampling is
 #' requested. For the latter it will generally be faster to use 
 #' `.eval_plan = "multiprocess"`.
@@ -242,7 +242,7 @@
 #'   fit measures, HTMT, R2 etc.}
 #' \item{[infer()]}{Calculate common inferential quantities, e.g., standard errors, 
 #'   confidence intervals.}
-#' \item{[predict()]}{Predict indicator values (not yet implemented).}
+#' \item{[predict()]}{Predict indicator or composite scores}
 #' \item{[summarize()]}{Summarize the results.}
 #' \item{[verify()]}{Verify/Check admissibility of the estimates.}
 #' }

@@ -544,9 +544,9 @@ calculateWeightsGSCA <- function(
 #' in \pkg{cSEM} is based on (the appendix) of \insertCite{Hwang2017;textual}{cSEM}.
 #' Following the appendix, GSCAm fails if there is at least one construct 
 #' modeled as a composite because calculating weight estimates with GSCAm leads to a product 
-#' involving the measurement matrix. This matrix does not have full rank in 
+#' involving the measurement matrix. This matrix does not have full rank
 #' if a construct modeled as a composite is present. 
-#' The reason is that the measurment matrix has a zero row for every construct
+#' The reason is that the measurement matrix has a zero row for every construct
 #' which is a pure composite (i.e. all related loadings are zero) 
 #' and, therefore, leads to a non-invertible matrix when multiplying it with its transposed.
 #' 

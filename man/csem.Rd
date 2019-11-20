@@ -157,7 +157,7 @@ For a details see the \link[=cSEMResults]{cSEMResults helpfile }.
 \description{
 Estimate linear, nonlinear, hierarchical or multigroup structural equation
 models using a composite-based approach. In \pkg{cSEM}
-any method or approach that involves linear compounts (scores/proxies/composites)
+any method or approach that involves linear compounds (scores/proxies/composites)
 of observables (indicators/items/manifest variables) is defined as composite-based.
 See the \href{https://m-e-rademaker.github.io/cSEM/articles/cSEM.html}{Get started}
 section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
@@ -212,7 +212,7 @@ modeled as common factors only and \code{.disattenuate = TRUE}. See below.}
 regression (\code{"regression"}) or bartlett scores (\code{"bartlett"})}
 }
 
-Its possible to supply starting values for the weighting algorithm
+It is possible to supply starting values for the weighting algorithm
 via \code{.starting_values}. The argument accepts a named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
@@ -220,7 +220,7 @@ pairs, where \code{value} is the starting weight. See the examples section below
 
 Composite-indicator and composite-composite correlations are properly
 disattenuated by default to yield consistent loadings, construct correlations,
-and path coefficients if any of the concepts in the model are modeled as a
+and path coefficients if any of the concepts are modeled as a
 common factor.
 
 For \emph{PLS-PM} disattenuation is done using \emph{PLSc} \insertCite{Dijkstra2015}{cSEM}.
@@ -234,14 +234,14 @@ the structural model are modeled as a common factor!
 
 By default path coefficients are estimated using ordinary least squares (\code{.approach_path = "OLS"}).
 For linear models, two-stage least squares (\code{"2SLS"}) is available, however, \emph{only if}
-\emph{instruments are internal}, i.e. part of the structural model. Future versions
-will add support for external instruments. Instruments must be supplied to
+\emph{instruments are internal}, i.e., part of the structural model. Future versions
+will add support for external instruments if possible. Instruments must be supplied to
 \code{.instruments} as a named list where the names
 of the list elements are the names of the dependent constructs of the structural
 equations whose explanatory variables are believed to be endogenous.
 The list consists of vectors of names of instruments corresponding to each equation.
 Note that exogenous variables of a given equation \strong{must} be supplied as
-instruments for themselves. See the examples section.
+instruments for themselves.
 
 If reliabilities are known they can be supplied as \code{"name" = value} pairs to
 \code{.reliabilities}, where \code{value} is a numeric value between 0 and 1.
@@ -333,7 +333,7 @@ name must be provided to \code{.id}. Values of this column are taken as levels o
 factor and are interpreted as group
 identifiers. \code{csem()} will split the data by levels of that column and run
 the estimation for each level separately. Note that the more levels
-the group-identifyer-column has, the more estimation runs are required.
+the group-identifier-column has, the more estimation runs are required.
 This can considerably slow down estimation, especially if resampling is
 requested. For the latter it will generally be faster to use
 \code{.eval_plan = "multiprocess"}.
@@ -349,7 +349,7 @@ Inference is done via resampling. See \code{\link[=resamplecSEMResults]{resample
 fit measures, HTMT, R2 etc.}
 \item{\code{\link[=infer]{infer()}}}{Calculate common inferential quantities, e.g., standard errors,
 confidence intervals.}
-\item{\code{\link[=predict]{predict()}}}{Predict indicator values (not yet implemented).}
+\item{\code{\link[=predict]{predict()}}}{Predict indicator or composite scores}
 \item{\code{\link[=summarize]{summarize()}}}{Summarize the results.}
 \item{\code{\link[=verify]{verify()}}}{Verify/Check admissibility of the estimates.}
 }
