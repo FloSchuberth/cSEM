@@ -155,16 +155,16 @@ data provided to the \code{.model} and \code{.data} arguments. The third class a
 For a details see the \link[=cSEMResults]{cSEMResults helpfile }.
 }
 \description{
-Estimate linear, nonlinear, hierachical or multigroup structural equation
+Estimate linear, nonlinear, hierarchical or multigroup structural equation
 models using a composite-based approach. In \pkg{cSEM}
 any method or approach that involves linear compounts (scores/proxies/composites)
 of observables (indicators/items/manifest variables) is defined as composite-based.
 See the \href{https://m-e-rademaker.github.io/cSEM/articles/cSEM.html}{Get started}
 section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
-for details.
+for a general introduction to composite-based SEM and \pkg{cSEM}.
 }
 \details{
-\code{csem()} estimates linear, nonlinear, hierachical or multigroup structural
+\code{csem()} estimates linear, nonlinear, hierarchical  or multigroup structural
 equation models using a composite-based approach.
 
 \subsection{Data and model:}{
@@ -176,10 +176,10 @@ in which case estimation is repeated for each data set.
 Possible column types/classes of the data provided are: "\code{logical}",
 "\code{numeric}" ("\code{double}" or "\code{integer}"), "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"),
 "\code{character}", or a mix of several types. Character columns will be treated
-as (undordered) factors.
+as (unordered) factors.
 
 Depending on the type/class of the indicator data provided cSEM computes the indicator
-correlation matrix in differnt ways. See \code{\link[=calculateIndicatorCor]{calculateIndicatorCor()}} for details.
+correlation matrix in different ways. See \code{\link[=calculateIndicatorCor]{calculateIndicatorCor()}} for details.
 
 In the current version \code{.data} must not contain missing values. Future versions
 are likely to handle missing values as well.
@@ -232,8 +232,8 @@ Note, however, that quantities in this case are inconsistent
 estimates for their construct level counterparts if any of the constructs in
 the structural model are modeled as a common factor!
 
-By default. path coefficients are estimated using ordinary least squares (\code{.approach_path = "OLS"}).
-For linear models, two-stage least squares (\code{"2SLS"}) is available , however, \emph{only if}
+By default path coefficients are estimated using ordinary least squares (\code{.approach_path = "OLS"}).
+For linear models, two-stage least squares (\code{"2SLS"}) is available, however, \emph{only if}
 \emph{instruments are internal}, i.e. part of the structural model. Future versions
 will add support for external instruments. Instruments must be supplied to
 \code{.instruments} as a named list where the names
@@ -299,9 +299,9 @@ Currently, two approaches are explicitly implemented:
 \item{\code{"mixed"}. The mixed repeated indicators/two-stage approach as proposed by \insertCite{Ringle2012;textual}{cSEM}.}
 }
 
-The reapeated indicators approach as proposed by \insertCite{Joereskog1982b;textual}{cSEM}
-and the extention proposed by \insertCite{Becker2012;textual}{cSEM} are
-not directly implemented as they simply require a respecification of the model.
+The repeated indicators approach as proposed by \insertCite{Joereskog1982b;textual}{cSEM}
+and the extension proposed by \insertCite{Becker2012;textual}{cSEM} are
+not directly implemented as they simply require a respecification  of the model.
 In the above example the repeated indicators approach
 would require to change the model and to append the repeated indicators to
 the data supplied to \code{.data}. Note that the indicators need to be renamed in this case as
@@ -328,7 +328,7 @@ and \code{c2} would have to be specified as well.
 
 \subsection{Multigroup analysis}{
 To perform multigroup analysis provide either a list of data sets or one
-data set containing a group-identifyer-column whose column
+data set containing a group-identifier-column whose column
 name must be provided to \code{.id}. Values of this column are taken as levels of a
 factor and are interpreted as group
 identifiers. \code{csem()} will split the data by levels of that column and run
@@ -347,7 +347,7 @@ Inference is done via resampling. See \code{\link[=resamplecSEMResults]{resample
 \describe{
 \item{\code{\link[=assess]{assess()}}}{Assess results using common quality criteria, e.g., reliability,
 fit measures, HTMT, R2 etc.}
-\item{\code{\link[=infer]{infer()}}}{Calculate common inferencial quantities, e.g, standard errors,
+\item{\code{\link[=infer]{infer()}}}{Calculate common inferential quantities, e.g., standard errors,
 confidence intervals.}
 \item{\code{\link[=predict]{predict()}}}{Predict indicator values (not yet implemented).}
 \item{\code{\link[=summarize]{summarize()}}}{Summarize the results.}

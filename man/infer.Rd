@@ -91,7 +91,7 @@ additional resampling are returned, i.e., all quantities but "\emph{CI_bca}", "\
 A list of class \code{cSEMInfer}.
 }
 \description{
-Calculate common inferential quantities. For ssers interested in the
+Calculate common inferential quantities. For users interested in the
 estimated standard errors and/or confidences intervals \code{\link[=summarize]{summarize()}} will usually
 be more helpful as it has a much more user-friendly print method.
 }

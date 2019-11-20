@@ -1,6 +1,6 @@
 #' Inference
 #'
-#' Calculate common inferential quantities. For ssers interested in the
+#' Calculate common inferential quantities. For users interested in the
 #' estimated standard errors and/or confidences intervals [summarize()] will usually
 #' be more helpful as it has a much more user-friendly print method.
 #'
