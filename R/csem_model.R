@@ -569,12 +569,14 @@ parseModel <- function(
     # A cSEMModel objects contains all the information about the model and its
     # components such as the type of construct used. 
     n  <- c(setdiff(names_c, rownames(model_ordered)), rownames(model_ordered))
-    n1 <- intersect(n, colnames(model_ordered))
     m <- order(which(model_measurement[n, , drop = FALSE] == 1, arr.ind = TRUE)[, "row"])
     structural_ordered <- model_structural[n, c(n, setdiff(colnames(model_ordered), n)), drop = FALSE]
+    # n1 <- intersect(n, colnames(model_ordered))
     # structural_ordered <- model_structural[n1, c(n1, setdiff(colnames(model_ordered), n1))]
     
-
+    ## Renew endogenous and exogenous constructs as the ordering may have changed
+    cons_endo <- rownames(structural_ordered)[rowSums(structural_ordered) != 0]
+    cons_exo  <- setdiff(colnames(structural_ordered), cons_endo)
     
     
     model_ls <- list(
