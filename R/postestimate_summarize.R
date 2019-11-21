@@ -282,13 +282,13 @@ summarize.cSEMResults_default <- function(
     
     ## Exogenous construct correlation -----------------------------------------
     if(!is.null(infer_out$Exo_construct_correlation)) {
-      exo_construct_correlation <- addInfer(infer_out$Residual_correlation, 
+      exo_construct_correlation <- addInfer(infer_out$Exo_construct_correlation, 
                                             exo_construct_correlation, .ci)
     }
     
     ## Indicator correlation ---------------------------------------------------
     if(!is.null(infer_out$Indicator_correlation)) {
-      indicator_correlation <- addInfer(infer_out$Residual_correlation, 
+      indicator_correlation <- addInfer(infer_out$Indicator_correlation, 
                                         indicator_correlation, .ci)
     }
     
