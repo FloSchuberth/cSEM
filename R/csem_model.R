@@ -600,10 +600,9 @@ parseModel <- function(
     
     ## Add population values to output if any are given
     if(!anyNA(pop_values)) {
-      model_ls$structural2   <- model_structural2[rownames(structural_ordered), 
-                                                 colnames(structural_ordered)]
+      model_ls$structural2   <- model_structural2[n, colnames(structural_ordered)]
       model_ls$measurement2  <- model_measurement2[n, m]
-      model_ls$indicator_cor <- model_cor_indicators
+      model_ls$indicator_cor <- model_cor_indicators[m, m]
       model_ls$construct_cor <- model_cor_constructs
     }
     
