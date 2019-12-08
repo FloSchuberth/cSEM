@@ -8,8 +8,7 @@ predict(
  .object               = NULL,
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
- .r                    = 10,
- .seed                 = NULL
+ .r                    = 10
  )
 }
 \arguments{
@@ -20,19 +19,14 @@ predict(
 leave-one-out cross-validation samples. Defaults to \code{10}.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
-be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
-replications/resamples yielding an inadmissible result will be dropped
-(i.e. the number of results returned will potentially be less than \code{.R}).
-For "\emph{ignore}" all results are returned even if all or some of the replications
-yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
-For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Depending on the frequency of inadmissible solutions this may significantly increase
-computing time. Defaults to "\emph{drop}".}
+be treated? One of "\emph{stop}", "\emph{ignore}", or "\emph{set_NA}". If "\emph{stop}", \code{\link[=predict]{predict()}}
+will stop immediatly if estimation yields an inadmissible result.
+For "\emph{ignore}" all results are returned even if all or some of the estimates
+yielded inadmissible results.
+For "\emph{set_NA}" predictions based on inadmissible parameter estimates are
+set to \code{NA}.}
 
-\item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is chosen. Note that the scope of the seed is limited
-to the body of the function it is used in. Hence, the global seed will
-not be altered!}
+\item{.r}{Integer. The number of repetitions to use. Defaults to \code{10}.}
 }
 \value{
 An object of class cSEMPredict.

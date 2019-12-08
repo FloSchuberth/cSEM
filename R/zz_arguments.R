@@ -212,6 +212,7 @@
 #' @param .resample_sarstedt A matrix containing the parameter estimates that 
 #'   could potentially be compared and an id column indicating the group adherence
 #'   of each row.
+#' @param .r Integer. The number of repetitions to use. Defaults to `10`.
 #' @param .R Integer. The number of bootstrap replications. Defaults to `499`.
 #' @param .R2 Integer. The number of bootstrap replications to use when 
 #'   resampling from a resample. Defaults to `199`.
@@ -431,6 +432,7 @@ args_default <- function(.choices = FALSE) {
     .quantity                = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
                                  "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
     .Q                       = NULL,
+    .r                       = 10,
     .R                       = 499,
     .R2                      = 199,
     .R_bootstrap             = 499,

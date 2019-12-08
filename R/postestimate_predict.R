@@ -10,11 +10,17 @@
 #'  .object               = NULL,
 #'  .cv_folds             = 10,
 #'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
-#'  .r                    = 10,
-#'  .seed                 = NULL
+#'  .r                    = 10
 #'  )
 #'
 #' @inheritParams csem_arguments
+#' @param .handle_inadmissibles Character string. How should inadmissible results 
+#'   be treated? One of "*stop*", "*ignore*", or "*set_NA*". If "*stop*", [predict()] 
+#'   will stop immediatly if estimation yields an inadmissible result.
+#'   For "*ignore*" all results are returned even if all or some of the estimates
+#'   yielded inadmissible results. 
+#'   For "*set_NA*" predictions based on inadmissible parameter estimates are
+#'   set to `NA`.
 #'
 #' @seealso [csem], [cSEMResults]
 #'
@@ -26,8 +32,7 @@ predict <- function(
   .object               = NULL, 
   .cv_folds             = 10,
   .handle_inadmissibles = c("stop", "ignore", "set_NA"),
-  .r                    = 10, 
-  .seed                 = NULL
+  .r                    = 10
   ) {
   
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)

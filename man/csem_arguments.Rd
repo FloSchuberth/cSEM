@@ -278,6 +278,8 @@ or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.}
 could potentially be compared and an id column indicating the group adherence
 of each row.}
 
+\item{.r}{Integer. The number of repetitions to use. Defaults to \code{10}.}
+
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
 \item{.R2}{Integer. The number of bootstrap replications to use when

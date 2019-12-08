@@ -63,6 +63,8 @@ RdMacros: Rdpack
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: 
+    dplyr,
+    tidyr,
     knitr,
     nnls,
     prettydoc,
