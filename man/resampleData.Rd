@@ -61,7 +61,7 @@ with each list element containing \code{.R} bootstrap samples based on the
 \code{N_g} observations of group \code{g}.}
 \item{Jackknife}{If a \code{matrix} or \code{data.frame} without grouping variable
 is provided (\code{.id = NULL}), the result is a list of length equal to the number
-of observations/rows (\code{N}) of the dataset provided.
+of observations/rows (\code{N}) of the data set provided.
 Each element of that list is a jackknife (re)sample.
 If a grouping variable is specified or a list of data is provided
 (where each list element is assumed to contain data for one group),
@@ -78,7 +78,7 @@ where each element of that list is a permutation (re)sample.}
 \item{Cross-validation}{If a \code{matrix} or \code{data.frame} without grouping variable
 is provided a list of length \code{.R} is returned. Each list element
 contains a list containing the \code{k} splits/folds subsequently
-used as test and training datasets.
+used as test and training data sets.
 If a grouping variable is specified or a list of data is provided
 (where each list element is assumed to contain data for one group),
 cross-validation is repeated \code{.R} times for each group. Hence,
@@ -89,30 +89,30 @@ the \code{k} splits/folds.
 }
 }
 \description{
-Resample data from a dataset using common resampling methods.
+Resample data from a data set using common resampling methods.
 For bootstrap or jackknife resampling, package users usually do not need to
 call this function but directly use \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} instead.
 }
 \details{
 The function \code{resampleData()} is general purpose. It simply resamples data
-from a dataset according to the resampling method provided
+from a data set according to the resampling method provided
 via the \code{.resample_method} argument and returns a list of resamples.
 Currently, \code{bootstrap}, \code{jackknife}, \code{permutation}, and  \code{cross-validation}
 (both leave-one-out (LOOCV) and k-fold cross-validation) are implemented.
 
-The user may provide the dataset to resample from can be either explicitly via the \code{.data}
+The user may provide the data set to resample either explicitly via the \code{.data}
 argument or implicitly by providing a \link{cSEMResults} objects to \code{.object}
 in which case the original data used in the call that created the
 \link{cSEMResults} object is used for resampling.
-If both, a \link{cSEMResults} object and a dataset via \code{.data} are provided
+If both, a \link{cSEMResults} object and a data set via \code{.data} are provided
 the former is ignored.
 
-As \code{\link[=csem]{csem()}} accepts a single dataset, a list of datasets as well as datasets
+As \code{\link[=csem]{csem()}} accepts a single data set, a list of data sets as well as data sets
 that contain a column name used to split the data into groups,
-the \link{cSEMResults} object may contain multiple datasets.
-In this case, resampling is done by dataset or group. Note that depending
-on the number of datasets/groups provided this computation may be slower
-as resampling will be repeated for each dataset/group.
+the \link{cSEMResults} object may contain multiple data sets.
+In this case, resampling is done by data set or group. Note that depending
+on the number of data sets/groups provided this computation may be slower
+as resampling will be repeated for each data set/group.
 
 To split data provided via the \code{.data} argument into groups, the column name or
 the column index of the column containing the group levels to split the data
@@ -124,25 +124,26 @@ The number of bootstrap or permutation runs as well as the number of
 cross-validation repetitions is given by \code{.R}. The default is
 \code{499} but should be increased in real applications. See e.g.,
 \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations concerning
-the bootstrap. For jackknife \code{.R} is ignored as it is based on the N leave-one-out datasets.
+the bootstrap. For jackknife \code{.R} is ignored as it is based on the N leave-one-out data sets.
 
 Choosing \code{resample_method = "permutation"} for ungrouped data causes an error
 as permutation will simply reorder the observations which is usually not
 meaningful. If a list of data is provided
 each list element is assumed to represent the observations belonging to one
-group. In this case, data is pooled and group adherance permutated.
+group. In this case, data is pooled and group adherence permutated.
 
 For cross-validation the number of folds (\code{k}) defaults to \code{10}. It may be
-changed via the \code{.cv_folds} argument. Setting \code{k = N} (where \code{N} is the
+changed via the \code{.cv_folds} argument. Setting \code{k = 2} (not 1!) splits
+the data into a single training and test data set. Setting \code{k = N} (where \code{N} is the
 number of observations) produces leave-one-out cross-validation samples.
-Note: 1. \code{k} can not be larger than the \code{N}. 2. If \code{N/k} is not not an integer
-the last fold will have less observations.
+Note: 1.) At least 2 folds required  (\code{k > 1}); 2.) \code{k} can not be larger than \code{N};
+3.) If \code{N/k} is not not an integer the last fold will have less observations.
 
 Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented
 in the \href{https://github.com/HenrikBengtsson/future.apply}{future.apply package}
 \insertCite{Bengtsson2018a}{cSEM}.
 See \link[future.apply:future_lapply]{?future_lapply} for details. By default
-a random seed is choosen.
+a random seed is chosen.
 }
 \examples{
 # ===========================================================================

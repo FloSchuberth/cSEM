@@ -1,28 +1,28 @@
 #' Resample data 
 #'
-#' Resample data from a dataset using common resampling methods. 
+#' Resample data from a data set using common resampling methods. 
 #' For bootstrap or jackknife resampling, package users usually do not need to 
 #' call this function but directly use [resamplecSEMResults()] instead.
 #'
 #' The function `resampleData()` is general purpose. It simply resamples data 
-#' from a dataset according to the resampling method provided 
+#' from a data set according to the resampling method provided 
 #' via the `.resample_method` argument and returns a list of resamples. 
 #' Currently, `bootstrap`, `jackknife`, `permutation`, and  `cross-validation`
 #' (both leave-one-out (LOOCV) and k-fold cross-validation) are implemented. 
 #' 
-#' The user may provide the dataset to resample from can be either explicitly via the `.data` 
+#' The user may provide the data set to resample either explicitly via the `.data` 
 #' argument or implicitly by providing a [cSEMResults] objects to `.object`
 #' in which case the original data used in the call that created the 
 #' [cSEMResults] object is used for resampling. 
-#' If both, a [cSEMResults] object and a dataset via `.data` are provided 
+#' If both, a [cSEMResults] object and a data set via `.data` are provided 
 #' the former is ignored. 
 #' 
-#' As [csem()] accepts a single dataset, a list of datasets as well as datasets
+#' As [csem()] accepts a single data set, a list of data sets as well as data sets
 #' that contain a column name used to split the data into groups,
-#' the [cSEMResults] object may contain multiple datasets.
-#' In this case, resampling is done by dataset or group. Note that depending
-#' on the number of datasets/groups provided this computation may be slower
-#' as resampling will be repeated for each dataset/group. 
+#' the [cSEMResults] object may contain multiple data sets.
+#' In this case, resampling is done by data set or group. Note that depending
+#' on the number of data sets/groups provided this computation may be slower
+#' as resampling will be repeated for each data set/group. 
 #' 
 #' To split data provided via the `.data` argument into groups, the column name or 
 #' the column index of the column containing the group levels to split the data 
@@ -34,25 +34,26 @@
 #' cross-validation repetitions is given by `.R`. The default is
 #' `499` but should be increased in real applications. See e.g.,
 #' \insertCite{Hesterberg2015;textual}{cSEM}, p.380 for recommendations concerning
-#' the bootstrap. For jackknife `.R` is ignored as it is based on the N leave-one-out datasets.
+#' the bootstrap. For jackknife `.R` is ignored as it is based on the N leave-one-out data sets.
 #' 
 #' Choosing `resample_method = "permutation"` for ungrouped data causes an error
 #' as permutation will simply reorder the observations which is usually not 
 #' meaningful. If a list of data is provided 
 #' each list element is assumed to represent the observations belonging to one
-#' group. In this case, data is pooled and group adherance permutated.
+#' group. In this case, data is pooled and group adherence permutated.
 #' 
 #' For cross-validation the number of folds (`k`) defaults to `10`. It may be
-#' changed via the `.cv_folds` argument. Setting `k = N` (where `N` is the 
+#' changed via the `.cv_folds` argument. Setting `k = 2` (not 1!) splits
+#' the data into a single training and test data set. Setting `k = N` (where `N` is the 
 #' number of observations) produces leave-one-out cross-validation samples.
-#' Note: 1. `k` can not be larger than the `N`. 2. If `N/k` is not not an integer 
-#' the last fold will have less observations.
+#' Note: 1.) At least 2 folds required  (`k > 1`); 2.) `k` can not be larger than `N`;
+#'  3.) If `N/k` is not not an integer the last fold will have less observations.
 #' 
 #' Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented
 #' in the \href{https://github.com/HenrikBengtsson/future.apply}{future.apply package} 
 #' \insertCite{Bengtsson2018a}{cSEM}.
 #' See [?future_lapply][future.apply::future_lapply] for details. By default
-#' a random seed is choosen.
+#' a random seed is chosen.
 #' 
 #' @usage resampleData(
 #'  .object          = NULL,
@@ -93,7 +94,7 @@
 #'   `N_g` observations of group `g`.}
 #' \item{Jackknife}{If a `matrix` or `data.frame` without grouping variable 
 #'   is provided (`.id = NULL`), the result is a list of length equal to the number
-#'   of observations/rows (`N`) of the dataset provided. 
+#'   of observations/rows (`N`) of the data set provided. 
 #'   Each element of that list is a jackknife (re)sample.
 #'   If a grouping variable is specified or a list of data is provided 
 #'   (where each list element is assumed to contain data for one group), 
@@ -110,7 +111,7 @@
 #' \item{Cross-validation}{If a `matrix` or `data.frame` without grouping variable 
 #'   is provided a list of length `.R` is returned. Each list element
 #'   contains a list containing the `k` splits/folds subsequently
-#'   used as test and training datasets.  
+#'   used as test and training data sets.  
 #'   If a grouping variable is specified or a list of data is provided 
 #'   (where each list element is assumed to contain data for one group), 
 #'   cross-validation is repeated `.R` times for each group. Hence, 
@@ -215,10 +216,24 @@ resampleData <- function(
     }
   }
   
-  ## Create seed if none is given
+  # Save old seed and restore on exit! This is important since users may have
+  # set a seed before, in which case the global seed would be
+  # overwritten if not explicitly restored
+  old_seed <- .Random.seed
+  on.exit({.Random.seed <<- old_seed})
+  
+  ## Create seed if not already set
   if(is.null(.seed)) {
+    set.seed(seed = NULL)
+    # Note (08.12.2019): Its crucial to call set.seed(seed = NULL) before
+    # drawing a random seed out of .Random.seed. If set.seed(seed = NULL) is not
+    # called sample(.Random.seed, 1) would result in the same random seed as
+    # long as .Random.seed remains unchanged. By resetting the seed we make 
+    # sure that sample draws a different element everytime it is called.
     .seed <- sample(.Random.seed, 1)
   }
+  ## Set seed
+  set.seed(.seed)
   
   ## Choose resampling method
   out <- switch (.resample_method,
@@ -256,6 +271,11 @@ resampleData <- function(
       }
     },
     "cross-validation" = {
+      if(.cv_folds < 2) {
+        stop2(
+          "The following error occured in the `resampleData()` function:\n",
+          "A minimum of 2 cross-validation folds required.")
+      }
       # k-fold cross-validation (=draw k samples of equal size.).
       # Note the last sample may contain less observations if equal sized
       # samples are not possible
@@ -344,12 +364,12 @@ resampleData <- function(
 #' interval computed by the [infer()] function. Typically, bootstrap resamples
 #' are used in this case \insertCite{Davison1997}{cSEM}.
 #' 
-#' As [csem()] accepts a single dataset, a list of datasets as well as datasets
+#' As [csem()] accepts a single data set, a list of data sets as well as data sets
 #' that contain a column name used to split the data into groups,
-#' the [cSEMResults] object may contain multiple datasets. 
-#' In this case, resampling is done by dataset or group. Note that depending
-#' on the number of datasets/groups, the computation may be considerably
-#' slower as resampling will be repeated for each dataset/group. However, apart
+#' the [cSEMResults] object may contain multiple data sets. 
+#' In this case, resampling is done by data set or group. Note that depending
+#' on the number of data sets/groups, the computation may be considerably
+#' slower as resampling will be repeated for each data set/group. However, apart
 #' from speed considerations users don not need to worry about the type of
 #' input used to compute the [cSEMResults] object as `resamplecSEMResults()`
 #' is able to deal with each case.
@@ -517,8 +537,20 @@ resamplecSEMResults <- function(
   }
   
   ### Resample and compute -----------------------------------------------------
-  # Create seed if none is given
+  # Save old seed and restore on exit! This is important since users may have
+  # set a seed before, in which case the global seed would be
+  # overwritten if not explicitly restored
+  old_seed <- .Random.seed
+  on.exit({.Random.seed <<- old_seed})
+  
+  ## Create seed if not already set
   if(is.null(.seed)) {
+    set.seed(seed = NULL)
+    # Note (08.12.2019): Its crucial to call set.seed(seed = NULL) before
+    # drawing a random seed out of .Random.seed. If set.seed(seed = NULL) is not
+    # called sample(.Random.seed, 1) would result in the same random seed as
+    # long as .Random.seed remains unchanged. By resetting the seed we make 
+    # sure that sample draws a different element everytime it is called.
     .seed <- sample(.Random.seed, 1)
   }
   
@@ -719,7 +751,7 @@ resamplecSEMResultsCore <- function(
   ### Start resampling loop ====================================================
   Est_ls <- future.apply::future_lapply(1:.R, function(i) {
   # Est_ls <- lapply(1:.R, function(i) {
-    # Replace the old dataset by a resampled data set (resampleData always returns
+    # Replace the old data set by a resampled data set (resampleData always returns
     # a list so for just one draw we need to pick the first list element)
     
     data_temp <- if(.resample_method == "jackknife") {

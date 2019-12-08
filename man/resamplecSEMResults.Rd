@@ -125,12 +125,12 @@ Resamples of a resample are required, e.g., for the studentized confidence
 interval computed by the \code{\link[=infer]{infer()}} function. Typically, bootstrap resamples
 are used in this case \insertCite{Davison1997}{cSEM}.
 
-As \code{\link[=csem]{csem()}} accepts a single dataset, a list of datasets as well as datasets
+As \code{\link[=csem]{csem()}} accepts a single data set, a list of data sets as well as data sets
 that contain a column name used to split the data into groups,
-the \link{cSEMResults} object may contain multiple datasets.
-In this case, resampling is done by dataset or group. Note that depending
-on the number of datasets/groups, the computation may be considerably
-slower as resampling will be repeated for each dataset/group. However, apart
+the \link{cSEMResults} object may contain multiple data sets.
+In this case, resampling is done by data set or group. Note that depending
+on the number of data sets/groups, the computation may be considerably
+slower as resampling will be repeated for each data set/group. However, apart
 from speed considerations users don not need to worry about the type of
 input used to compute the \link{cSEMResults} object as \code{resamplecSEMResults()}
 is able to deal with each case.
