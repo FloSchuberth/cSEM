@@ -269,6 +269,69 @@ print.cSEMAssess <- function(x, ...) {
 }
 
 
+#' `cSEMPredict` method for `print()`
+#'
+#' The `cSEMPredict` method for the generic function [print()]. 
+#'
+#' @inheritParams csem_arguments
+#'
+#' @seealso [csem()], [predict()]
+#'
+#' @export
+#' @keywords internal
+print.cSEMPredict <- function(x, ...) {
+  
+  x1 <- x$Prediction_metrics
+  x2 <- x$Information
+  
+  cat2(
+    rule2(type = 2), "\n",
+    rule2("Overview"), 
+    "\n"
+  )
+  
+  # cat2("\n\tGeneral information:\n\t","------------------------")
+  cat2(
+    col_align("\n\tNumber of obs. total", 35), "= ", x2$Number_of_observations,
+    col_align("\n\tNumber of obs. training", 35), "= ", x2$Number_of_observations_training,
+    col_align("\n\tNumber of obs. test", 35), "= ", x2$Number_of_observations_test,
+    col_align("\n\tNumber of cv folds", 35), "= ", x2$Number_of_folds,
+    col_align("\n\tNumber of repetitions", 35), "= ", x2$Number_of_repetitions,
+    col_align("\n\tHandle_inadmissibles", 35), "= ", x2$Handle_inadmissibles
+    )
+  
+  ### Prediction metricts-------------------------------------------------------
+  cat2("\n\n", rule2("Prediction metrics"), "\n\n")
+
+  l <- max(nchar(x1[, "Name"]))
+  
+  cat2(
+    "\n  ", 
+    col_align("Name", l + 2), 
+    col_align("MAE_target", 13, align = "right"), 
+    col_align("RMSE_target", 13, align = "right"),
+    col_align("MAE_lm", 10, align = "right"), 
+    col_align("RMSE_lm", 10, align = "right"),
+    col_align("Q2_predict", 13, align = "right")
+  )
+  
+  for(i in 1:nrow(x1)) {
+    cat2(
+      "\n  ", 
+      col_align(x1[i, "Name"], l + 2), 
+      col_align(sprintf("%.4f", x1[i, "MAE_target"]), 13, align = "right"),
+      col_align(sprintf("%.4f", x1[i, "RMSE_target"]), 13, align = "right"),
+      col_align(sprintf("%.4f", x1[i, "MAE_lm"]), 10, align = "right"),
+      col_align(sprintf("%.4f", x1[i, "RMSE_lm"]), 10, align = "right"),
+      col_align(sprintf("%.4f", x1[i, "Q2_predict"]), 13, align = "right")
+    )
+  }
+
+  
+  cat2("\n", rule2(type = 2))
+}
+
+
 #' `cSEMSummarize` method for `print()`
 #'
 #' The [cSEMSummary] method for the generic function [print()]. 

@@ -1,13 +1,17 @@
-#' Predict indicator or construct scores
+#' Predict indicator scores
 #'
-#' Predict indicator or construct scores
+#' Predict the indicator scores of a endogenous constructs.
 #' 
 #' Details and argument description
 #'
 #' @return An object of class cSEMPredict.
 #'   
 #' @usage predict(
-#'  .object = NULL
+#'  .object               = NULL,
+#'  .cv_folds             = 10,
+#'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
+#'  .r                    = 10,
+#'  .seed                 = NULL
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -19,11 +23,12 @@
 #' @export
 
 predict <- function(
-  .object, 
-  .cv_folds = 10, 
-  .r = 10, 
-  .seed = NULL, 
-  .handle_inadmissibles = c("stop", "ignore", "set_NA")) {
+  .object               = NULL, 
+  .cv_folds             = 10,
+  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
+  .r                    = 10, 
+  .seed                 = NULL
+  ) {
   
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   ## Errors and warnings -------------------------------------------------------
@@ -35,6 +40,11 @@ predict <- function(
   # Stop if indicator correlation is not Bravais-Pearson
   if(.object$Information$Type_of_indicator_correlation != 'Pearson'){
     stop2('Currently, `predict()` works only in combination with Pearson correlation.')
+  }
+  
+  # Stop if indicator correlation is not Bravais-Pearson
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2('Currently, `predict()` is not implemented for models containing higher-order constructs.')
   }
   
   ## Get relevant quantities
@@ -149,18 +159,17 @@ predict <- function(
       )
     } # END for j in 1:length(dat)  
     
-    out_temp <- purrr::transpose(out_cv)
-    out_temp2 <- lapply(out_temp, function(x) {
+    out_temp <- lapply(purrr::transpose(out_cv), function(x) {
       x <- do.call(rbind, x)
       x <- x[order(as.numeric(rownames(x))), ]
       x
     })
     
-    out_all[[i]] <- out_temp2
+    out_all[[i]] <- out_temp
   }
-  out <- purrr::transpose(out_all)
   
-  out2 <- lapply(out, function(x) {
+  # Compute average prediction over all .r runs that are not NA
+  out_temp <- lapply(purrr::transpose(out_all), function(x) {
     
     a <- apply(abind::abind(x, along = 3), 1:2, function(y) sum(y, na.rm = TRUE))
     b <- Reduce("+", lapply(x, function(y) !is.na(y)))
@@ -168,5 +177,49 @@ predict <- function(
     a / b
   })
   
-  out2
+  ## Compute prediction metrics ------------------------------------------------
+  
+  mae_target  <- apply(out_temp$Residuals_target, 2, function(x) mean(abs(x - mean(x))))
+  mae_lm      <- apply(out_temp$Residuals_lm, 2, function(x) mean(abs(x - mean(x))))
+  rmse_target <- apply(out_temp$Residuals_target, 2, function(x) sqrt(mean((x - mean(x))^2)))
+  rmse_lm     <- apply(out_temp$Residuals_lm, 2, function(x) sqrt(mean((x - mean(x))^2)))
+  
+  q2_predict  <- c()
+  for(i in colnames(out_temp$Residuals_target)) {
+    
+    q2_predict[i] <- 1- sum((out_temp$Residuals_target[, i] - mean(out_temp$Residuals_target[, i]))^2) /
+      sum((out_temp$Residuals_lm[, i] - mean(out_temp$Residuals_lm[, i]))^2)
+  } 
+  
+  ## Create data fram
+  df_metrics <- data.frame(
+    "Name"        = endo_indicators,
+    "MAE_target"  = mae_target,
+    "RMSE_target" = rmse_target,
+    "MAE_lm"      = mae_lm,
+    "RMSE_lm"     = rmse_lm,
+    "Q2_predict"  = q2_predict,
+    stringsAsFactors = FALSE
+  )
+  rownames(df_metrics) <- NULL
+  
+  out <- list(
+    "Actual_target"      = .object$Information$Data[, endo_indicators],
+    "Predictions_target" = out_temp$Predictions_target,
+    "Residuals_target"   = out_temp$Residuals_target,
+    "Residuals_lm"       = out_temp$Residuals_target,
+    "Prediction_metrics" = df_metrics,
+    "Information"        = list(
+      "Number_of_observations" = nrow(.object$Information$Data),
+      "Number_of_observations_training" = nrow(X_train),
+      "Number_of_observations_test" = nrow(X_test),
+      "Number_of_folds"        = .cv_folds,
+      "Number_of_repetitions"  = .r,
+      "Handle_inadmissibles"   = .handle_inadmissibles
+    )
+  )
+  
+  ## Return
+  class(out) <- "cSEMPredict"
+  out
 }

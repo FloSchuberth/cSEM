@@ -2,10 +2,14 @@
 % Please edit documentation in R/postestimate_predict.R
 \name{predict}
 \alias{predict}
-\title{Predict indicator or construct scores}
+\title{Predict indicator scores}
 \usage{
 predict(
- .object = NULL
+ .object               = NULL,
+ .cv_folds             = 10,
+ .handle_inadmissibles = c("stop", "ignore", "set_NA"),
+ .r                    = 10,
+ .seed                 = NULL
  )
 }
 \arguments{
@@ -14,11 +18,6 @@ predict(
 \item{.cv_folds}{Integer. The number of cross-validation folds to use. Setting
 \code{.cv_folds} to \code{N} (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to \code{10}.}
-
-\item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
-case an arbitrary seed is chosen. Note that the scope of the seed is limited
-to the body of the function it is used in. Hence, the global seed will
-not be altered!}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -29,12 +28,17 @@ yielded inadmissible results (i.e. number of results returned is equal to \code{
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "\emph{drop}".}
+
+\item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 }
 \value{
 An object of class cSEMPredict.
 }
 \description{
-Predict indicator or construct scores
+Predict the indicator scores of a endogenous constructs.
 }
 \details{
 Details and argument description
