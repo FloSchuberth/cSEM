@@ -85,7 +85,7 @@ Currently we have five major postestimation verbs:
 
 - `assess()` : assess the model using common quality criteria
 - `infer()` : calculate common inferencial quantities (e.g, standard errors)
-- `predict()` : predict indicator values (not yet implemented)
+- `predict()` : predict endogenous indicator values
 - `summarize()` : summarize the results
 - `verify()` : verify admissibility of the estimates
 
@@ -203,11 +203,14 @@ summarize(res)
 ## Verify admissibility of the results
 verify(res) 
     
-# ## Test overall model fit
+## Test overall model fit
 testOMF(res, .verbose = FALSE)
 
 ## Assess the model
 assess(res)
+
+## Predict indicator scores of endogenous constructs
+predict(res)
 ```
 
 #### Resampling and Inference

@@ -1,15 +1,55 @@
 #' Predict indicator scores
 #'
-#' Predict the indicator scores of a endogenous constructs.
+#' Predict the indicator scores of endogenous constructs.
 #' 
-#' Details and argument description
+#' Predict uses the procedure introduced by \insertCite{Shmueli2016;textual}{cSEM} in the context of
+#' PLS (commonly called: "PLSPredict" \insertCite{Shmueli2019}{cSEM}). 
+#' Predict uses k-fold cross-validation to randomly 
+#' split the data into training and test data and subsequently predicts the 
+#' relevant values in the test data  based on the model parameter estimates obtained 
+#' using the training data. The number of cross-validation folds is 10 by default but
+#' may be changed using the `.cv_folds` argument.
+#' By default, the procedure is repeated `.r = 10` times to avoid irregularities
+#' due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for 
+#' details.
+#' 
+#' By default (`.only_common_factors  = TRUE`), only the indicator scores of 
+#' constructs modeled as common factors
+#' are predicted. While technicallly possible, prediction for constructs modeled
+#' as composites is conceptually difficult since composites are by design build
+#' by their indicators, i.e. not necessarily predictive.
+#' 
+#' Each estimation run is checked for admissibility using [verify()]. If the 
+#' estimation yields inadmissible results, predict() stops with an error warning.
+#' Users may choose to `"ignore"` inadmissible results or to simply set predictions
+#' to `NA` (`"set_NA"`) for the particular run that failed. 
 #'
-#' @return An object of class cSEMPredict.
+#' @return An object of class `cSEMPredict` with print and plot methods.
+#'   Technically, `cSEMPredict` is a 
+#'   named list containing the following list elements:
+#'
+#' \describe{
+#'   \item{`$Actual`}{A matrix of the actual values/indicator scores of the endogenous constructs.}
+#'   \item{`$Prediction_target`}{A matrix of the predicted indicator scores of the endogenous constructs 
+#'     based on the target model. Target refers to }
+#'   \item{`$Residuals_target`}{A matrix of the residuals indicator scores of the endogenous constructs 
+#'     based on the target model.}
+#'   \item{`$Residuals_lm`}{A matrix of the residuals indicator scores of the endogenous constructs 
+#'     based on a linear model in which the indicator scores of endogenous constructs
+#'     are predicted by exogenous indicator scores. This serves as a benchmark for
+#'     comparisons.}
+#'   \item{`$Prediction_metrics`}{A data frame containing the predictions metrics
+#'     MAE, RMSE, and Q2_predict.}
+#'   \item{`$Information`}{A list with elements, `Number_of_observations`, 
+#'     `Number_of_observations_training`, `Number_of_observations_test`, `Number_of_folds`,
+#'     `Number_of_repetitions`, and `Handle_inadmissibles`.}
+#'     }
 #'   
 #' @usage predict(
 #'  .object               = NULL,
 #'  .cv_folds             = 10,
 #'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
+#'  .only_common_factors  = TRUE,
 #'  .r                    = 10
 #'  )
 #'
@@ -21,8 +61,14 @@
 #'   yielded inadmissible results. 
 #'   For "*set_NA*" predictions based on inadmissible parameter estimates are
 #'   set to `NA`.
+#' @param .only_common_factors Logical. Should only indicator scores for concepts 
+#'   modeled as common factors be predicted? 
+#'   Defaults to `TRUE`.
 #'
 #' @seealso [csem], [cSEMResults]
+#' 
+#' @references
+#'   \insertAllCited{}
 #'
 #' @example inst/examples/example_predict.R
 #' 
@@ -32,6 +78,7 @@ predict <- function(
   .object               = NULL, 
   .cv_folds             = 10,
   .handle_inadmissibles = c("stop", "ignore", "set_NA"),
+  .only_common_factors  = TRUE,
   .r                    = 10
   ) {
   
@@ -52,8 +99,12 @@ predict <- function(
     stop2('Currently, `predict()` is not implemented for models containing higher-order constructs.')
   }
   
-  ## Get relevant quantities
+  ## Get arguments and relevant indicators
+  #  Note: it is possible that the original data set used to obtain .object
+  #        contains variables that have not been used in the model. These need
+  #        to be deleted.
   args <- .object$Information$Arguments
+  indicators <- colnames(.object$Information$Data)
   
   out_all <- list()
   for(i in 1:.r) {
@@ -70,8 +121,8 @@ predict <- function(
     out_cv <- list() 
     for(j in 1:length(dat)) {
       
-      X_train    <- as.matrix(do.call(rbind, dat[-j]))
-      X_test     <- dat[[j]]
+      X_train    <- as.matrix(do.call(rbind, dat[-j]))[, indicators]
+      X_test     <- dat[[j]][, indicators]
       
       mean_train      <- colMeans(X_train)
       sd_train        <- matrixStats::colSds(as.matrix(X_train))
@@ -86,6 +137,7 @@ predict <- function(
       })
       
       # Keep rownames to be able to find individual observations
+      colnames(X_test_scaled) <- colnames(X_test)
       rownames(X_test_scaled) <- rownames(X_test)
       
       # Estimate using dat and original arguments
@@ -96,10 +148,15 @@ predict <- function(
       cons_exo  <- Est$Information$Model$cons_exo
       cons_endo <- Est$Information$Model$cons_endo
       
+      ## Remove endogenous constructs that are modeled as composites
+      if(.only_common_factors) {
+        cons_endo <- setdiff(cons_endo, names(which(Est$Information$Model$construct_type == "Composite")))
+      }
+      
       # Which indicators are connected to endogenous constructs?
-      endo_indicators <- colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[cons_endo, ]) != 0]
+      endo_indicators <- colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[cons_endo, , drop = FALSE]) != 0]
       # Which indicators are connected to exogenous constructs?
-      exo_indicators <- setdiff(colnames(Est$Information$Model$measurement), endo_indicators)
+      exo_indicators <- colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[cons_exo, , drop = FALSE]) != 0]
       
       W_train        <- Est$Estimates$Weight_estimates
       loadings_train <- Est$Estimates$Loading_estimates
@@ -209,7 +266,7 @@ predict <- function(
   rownames(df_metrics) <- NULL
   
   out <- list(
-    "Actual_target"      = .object$Information$Data[, endo_indicators],
+    "Actual"      = .object$Information$Data[, endo_indicators],
     "Predictions_target" = out_temp$Predictions_target,
     "Residuals_target"   = out_temp$Residuals_target,
     "Residuals_lm"       = out_temp$Residuals_target,

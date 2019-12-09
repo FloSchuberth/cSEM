@@ -8,6 +8,7 @@ predict(
  .object               = NULL,
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
+ .only_common_factors  = TRUE,
  .r                    = 10
  )
 }
@@ -26,19 +27,65 @@ yielded inadmissible results.
 For "\emph{set_NA}" predictions based on inadmissible parameter estimates are
 set to \code{NA}.}
 
+\item{.only_common_factors}{Logical. Should only indicator scores for concepts
+modeled as common factors be predicted?
+Defaults to \code{TRUE}.}
+
 \item{.r}{Integer. The number of repetitions to use. Defaults to \code{10}.}
 }
 \value{
-An object of class cSEMPredict.
+An object of class \code{cSEMPredict} with print and plot methods.
+Technically, \code{cSEMPredict} is a
+named list containing the following list elements:
+
+\describe{
+\item{\code{$Actual}}{A matrix of the actual values/indicator scores of the endogenous constructs.}
+\item{\code{$Prediction_target}}{A matrix of the predicted indicator scores of the endogenous constructs
+based on the target model. Target refers to }
+\item{\code{$Residuals_target}}{A matrix of the residuals indicator scores of the endogenous constructs
+based on the target model.}
+\item{\code{$Residuals_lm}}{A matrix of the residuals indicator scores of the endogenous constructs
+based on a linear model in which the indicator scores of endogenous constructs
+are predicted by exogenous indicator scores. This serves as a benchmark for
+comparisons.}
+\item{\code{$Prediction_metrics}}{A data frame containing the predictions metrics
+MAE, RMSE, and Q2_predict.}
+\item{\code{$Information}}{A list with elements, \code{Number_of_observations},
+\code{Number_of_observations_training}, \code{Number_of_observations_test}, \code{Number_of_folds},
+\code{Number_of_repetitions}, and \code{Handle_inadmissibles}.}
+}
 }
 \description{
-Predict the indicator scores of a endogenous constructs.
+Predict the indicator scores of endogenous constructs.
 }
 \details{
-Details and argument description
+Predict uses the procedure introduced by \insertCite{Shmueli2016;textual}{cSEM} in the context of
+PLS (commonly called: "PLSPredict" \insertCite{Shmueli2019}{cSEM}).
+Predict uses k-fold cross-validation to randomly
+split the data into training and test data and subsequently predicts the
+relevant values in the test data  based on the model parameter estimates obtained
+using the training data. The number of cross-validation folds is 10 by default but
+may be changed using the \code{.cv_folds} argument.
+By default, the procedure is repeated \code{.r = 10} times to avoid irregularities
+due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for
+details.
+
+By default (\code{.only_common_factors  = TRUE}), only the indicator scores of
+constructs modeled as common factors
+are predicted. While technicallly possible, prediction for constructs modeled
+as composites is conceptually difficult since composites are by design build
+by their indicators, i.e. not necessarily predictive.
+
+Each estimation run is checked for admissibility using \code{\link[=verify]{verify()}}. If the
+estimation yields inadmissible results, predict() stops with an error warning.
+Users may choose to \code{"ignore"} inadmissible results or to simply set predictions
+to \code{NA} (\code{"set_NA"}) for the particular run that failed.
 }
 \examples{
 
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \link{csem}, \link{cSEMResults}

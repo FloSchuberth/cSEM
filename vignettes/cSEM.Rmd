@@ -548,7 +548,7 @@ There are 5 major postestimation function and 4 test-family functions:
    
 `predict()`
 
-:   Predict the indicator or construct scores.
+:   Predict indicator scores of endogenous constructs.
 
 `summarize()`
 

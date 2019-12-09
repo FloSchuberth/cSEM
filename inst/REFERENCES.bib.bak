@@ -719,4 +719,16 @@ in the {Analysis} of {Covariance} {Structures}},
   address   = {Hamburg}
 }
 
+@Article{Henseler2017,
+  author  = {J{\"o}rg Henseler},
+  title   = {Bridging Design and Behavioral Research With Variance-Based Structural Equation Modeling},
+  journal = {Journal of Advertising},
+  year    = {2017},
+  volume  = {46},
+  number  = {1},
+  pages   = {178--192},
+  doi     = {10.1080/00913367.2017.1281780},
+  file    = {:Papers/Henseler2017.pdf:PDF},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}
