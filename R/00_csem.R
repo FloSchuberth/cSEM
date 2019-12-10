@@ -316,6 +316,28 @@ csem <- function(
   args        <- handleArgs(args_used)
   args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))]
   
+  ## Check if columnames of .data contain a "." and stop if so
+  ## Check data
+  if(!any(class(.data) %in% c("data.frame", "matrix", "list"))) {
+    stop2(
+      "The following error occured in the `csem()` function:\n",
+      "Data must be provided as a `matrix`, a `data.frame` or a `list`. ", 
+      ".data has class: ", 
+      paste0(class(.data), collapse = ", ")
+    )
+  }
+  if(inherits(.data,  "list")) {
+    c_names <- unique(unlist(lapply(.data, colnames)))
+  } else {
+    c_names <- colnames(.data)
+  }
+  
+  if(length(grep("\\.", c_names)) > 0) {
+   stop2(
+   "At least one variable name in your data set contain a `.` (dot).",
+   " Dots are a reserved special character in cSEM. Please rename these variables in your data and the model description.") 
+  }
+  
   ## Parse model
   model_original <- parseModel(.model, .instruments = .instruments)
   
@@ -333,15 +355,6 @@ csem <- function(
     args_needed[[".model"]] <- model_original
   }
     
-  ## Check data
-  if(!any(class(.data) %in% c("data.frame", "matrix", "list"))) {
-    stop2(
-      "The following error occured in the `csem()` function:\n",
-      "Data must be provided as a `matrix`, a `data.frame` or a `list`. ", 
-      ".data has class: ", 
-      paste0(class(.data), collapse = ", ")
-      )
-  }
   ## Select cases
   if(!is.null(.id) && !inherits(.data, "list")) {
 
