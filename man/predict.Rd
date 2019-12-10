@@ -9,7 +9,8 @@ predict(
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
  .only_common_factors  = TRUE,
- .r                    = 10
+ .r                    = 10,
+ .test_data            = NULL
  )
 }
 \arguments{
@@ -70,14 +71,21 @@ By default, the procedure is repeated \code{.r = 10} times to avoid irregulariti
 due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for
 details.
 
+Alternatively, users may supply a \code{.test_data} set with the same column names.
+as those in the data used to obtain \code{.object} (the training data).
+In this case, arguments \code{.cv_folds} and \code{.r} are
+ignored and predict uses the estimated coefficients from \code{.object} to
+predict the values in the columns of \code{.test_data}.
+
 By default (\code{.only_common_factors  = TRUE}), only the indicator scores of
 constructs modeled as common factors
-are predicted. While technicallly possible, prediction for constructs modeled
+are predicted. While technically  possible, prediction for constructs modeled
 as composites is conceptually difficult since composites are by design build
-by their indicators, i.e. not necessarily predictive.
+by their indicators, i.e. composites are not though of as being predictive of
+their indicators.
 
 Each estimation run is checked for admissibility using \code{\link[=verify]{verify()}}. If the
-estimation yields inadmissible results, predict() stops with an error warning.
+estimation yields inadmissible results, \code{predict()} stops with an error warning.
 Users may choose to \code{"ignore"} inadmissible results or to simply set predictions
 to \code{NA} (\code{"set_NA"}) for the particular run that failed.
 }

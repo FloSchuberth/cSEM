@@ -35,7 +35,7 @@ plot.cSEMPredict <- function(x, ...) {
   
   ## Actual vs. predicted
   plot_actual_vs_predicted <- 
-    ggplot2::ggplot(xx, ggplot2::aes(x = xx[, "Actual_target"], y = xx[, "Predictions_target"])) +
+    ggplot2::ggplot(xx, ggplot2::aes(x = xx[, "Actual"], y = xx[, "Predictions_target"])) +
     ggplot2::geom_point() +
     ggplot2::facet_wrap(. ~ Indicator, ncol = 4) + 
     ggplot2::geom_smooth(method = "lm", se = FALSE) +

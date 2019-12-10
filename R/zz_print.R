@@ -292,7 +292,6 @@ print.cSEMPredict <- function(x, ...) {
   
   # cat2("\n\tGeneral information:\n\t","------------------------")
   cat2(
-    col_align("\n\tNumber of obs. total", 35), "= ", x2$Number_of_observations,
     col_align("\n\tNumber of obs. training", 35), "= ", x2$Number_of_observations_training,
     col_align("\n\tNumber of obs. test", 35), "= ", x2$Number_of_observations_test,
     col_align("\n\tNumber of cv folds", 35), "= ", x2$Number_of_folds,

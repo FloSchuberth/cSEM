@@ -13,14 +13,21 @@
 #' due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for 
 #' details.
 #' 
+#' Alternatively, users may supply a `.test_data` set with the same column names.
+#' as those in the data used to obtain `.object` (the training data). 
+#' In this case, arguments `.cv_folds` and `.r` are
+#' ignored and predict uses the estimated coefficients from `.object` to
+#' predict the values in the columns of `.test_data`.
+#' 
 #' By default (`.only_common_factors  = TRUE`), only the indicator scores of 
 #' constructs modeled as common factors
-#' are predicted. While technicallly possible, prediction for constructs modeled
+#' are predicted. While technically  possible, prediction for constructs modeled
 #' as composites is conceptually difficult since composites are by design build
-#' by their indicators, i.e. not necessarily predictive.
+#' by their indicators, i.e. composites are not though of as being predictive of
+#' their indicators.
 #' 
 #' Each estimation run is checked for admissibility using [verify()]. If the 
-#' estimation yields inadmissible results, predict() stops with an error warning.
+#' estimation yields inadmissible results, `predict()` stops with an error warning.
 #' Users may choose to `"ignore"` inadmissible results or to simply set predictions
 #' to `NA` (`"set_NA"`) for the particular run that failed. 
 #'
@@ -50,7 +57,8 @@
 #'  .cv_folds             = 10,
 #'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
 #'  .only_common_factors  = TRUE,
-#'  .r                    = 10
+#'  .r                    = 10,
+#'  .test_data            = NULL
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -79,7 +87,8 @@ predict <- function(
   .cv_folds             = 10,
   .handle_inadmissibles = c("stop", "ignore", "set_NA"),
   .only_common_factors  = TRUE,
-  .r                    = 10
+  .r                    = 10,
+  .test_data            = NULL
   ) {
   
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
@@ -104,22 +113,45 @@ predict <- function(
   #        contains variables that have not been used in the model. These need
   #        to be deleted.
   args <- .object$Information$Arguments
-  indicators <- colnames(.object$Information$Data)
+  indicators <- colnames(.object$Information$Data) # the data used for the estimation 
+                                        # (standardized and clean) with variables
+                                        # ordered accoriding to model$measurement.  
+  
+  ## Has .test_data been supplied?
+  if(!is.null(.test_data)) {
+    .r <- 1
+    .cv_folds <- NA
+    
+    dat_train <- args$.data[, indicators]
+    
+    if(length(setdiff(colnames(.test_data), colnames(dat_train))) > 0) {
+      stop2("The following error occured in the `predict()` function:\n",
+            "Some variable names in the test data are not part of the training data.")
+    }
+    dat_test  <- .test_data[, indicators]
+    
+    dat <- list("test" = dat_test, "train" = dat_train)
+  }
   
   out_all <- list()
   for(i in 1:.r) {
     
-    ## Draw cross-validation samples
-    dat <- resampleData(
-      .object          = .object, 
-      .resample_method = "cross-validation", 
-      .cv_folds        = .cv_folds,
-      .R               = 1,
-      .seed            = NULL
-    )[[1]]
+    if(is.null(.test_data)) {
+      ## Draw cross-validation samples
+      dat <- resampleData(
+        .object          = .object, 
+        .resample_method = "cross-validation", 
+        .cv_folds        = .cv_folds,
+        .R               = 1,
+        .seed            = NULL
+      )[[1]]
+      ii <- length(dat)
+    } else {
+      ii <- 1
+    }
     
     out_cv <- list() 
-    for(j in 1:length(dat)) {
+    for(j in 1:ii) {
       
       X_train    <- as.matrix(do.call(rbind, dat[-j]))[, indicators]
       X_test     <- dat[[j]][, indicators]
@@ -251,7 +283,7 @@ predict <- function(
     
     q2_predict[i] <- 1- sum((out_temp$Residuals_target[, i] - mean(out_temp$Residuals_target[, i]))^2) /
       sum((out_temp$Residuals_lm[, i] - mean(out_temp$Residuals_lm[, i]))^2)
-  } 
+  }
   
   ## Create data fram
   df_metrics <- data.frame(
@@ -272,7 +304,6 @@ predict <- function(
     "Residuals_lm"       = out_temp$Residuals_target,
     "Prediction_metrics" = df_metrics,
     "Information"        = list(
-      "Number_of_observations" = nrow(.object$Information$Data),
       "Number_of_observations_training" = nrow(X_train),
       "Number_of_observations_test" = nrow(X_test),
       "Number_of_folds"        = .cv_folds,
