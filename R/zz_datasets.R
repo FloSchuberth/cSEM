@@ -173,31 +173,6 @@
 #' with population values `gamma1` = 0.6, `gamma2` = 0.4 and `beta` = 0.35.
 #' The second order common factor is
 #' \deqn{`c4` = lambdac1 * `c1` + lambdac2 * `c2` + lambdac3 * `c3` + epsilon}
-#' 
-#' @examples 
-#' #============================================================================
-#' # Correct model (the model used to generate the data)
-#' #============================================================================
-#'model <- "
-#' # Path model / Regressions 
-#' c4   ~ eta1
-#' eta2 ~ eta1 + c4
-#' 
-#' # Reflective measurement model
-#' c1   <~ y11 + y12 
-#' c2   <~ y21 + y22 + y23 + y24
-#' c3   <~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38
-#' eta1 =~ y41 + y42 + y43
-#' eta2 =~ y51 + y52 + y53
-#' 
-#' # Composite model
-#' c4   =~ c1 + c2 + c3
-#' "
-#'  
-#' a <- csem(dgp_2ndorder_cf_of_c, model)
-#' 
-#' ## The overall model fit is evidently almost perfect:
-#' testOMF(a, .R = 50, .verbose = TRUE) # .R = 50 to speed up the example
 "dgp_2ndorder_cf_of_c"
 
 #' Data: political democracy
@@ -251,3 +226,16 @@
 #' 
 #' aa <- csem(PoliticalDemocracy, model)
 "PoliticalDemocracy"
+
+
+#' Data: Anime
+#'
+#' The data set for the example on \href{https://github.com/ISS-Analytics/pls-predict}
+#' with irrelevant variables removed.
+#'
+#' @docType data
+#'
+#' @description A data frame with 183 observations and 13 variables. 
+#' 
+#' @source Original source: \href{https://github.com/ISS-Analytics/pls-predict}
+"Anime"

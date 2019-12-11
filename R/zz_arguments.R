@@ -238,6 +238,8 @@
 #'   wishes to set. The vectors must be named vectors of `"indicator_name" = value` 
 #'   pairs, where `value` is the (scaled or unscaled) starting weight. Defaults to `NULL`.
 #' @param .terms A vector of construct names to be classified.
+#' @param .test_data A matrix of test data with the same column names as the 
+#'   training data.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
 #' @param .type_vcv Character string. Which model-implied correlation 
@@ -451,6 +453,7 @@ args_default <- function(.choices = FALSE) {
     .stage                   = c("first", "second"),
     .starting_values         = NULL,
     .terms                   = NULL,
+    .test_data               = NULL,
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,
     .vcv_asymptotic          = c(FALSE, TRUE),

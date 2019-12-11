@@ -37,29 +37,4 @@ population model with 6 concepts, three of which (\code{c1-c3}) are composites
 forming a second order common factor (\code{c4}). The remaining two (\code{eta1}, \code{eta2})
 are concepts modeled as common factors .
 }
-\examples{
-#============================================================================
-# Correct model (the model used to generate the data)
-#============================================================================
-model <- "
-# Path model / Regressions 
-c4   ~ eta1
-eta2 ~ eta1 + c4
-
-# Reflective measurement model
-c1   <~ y11 + y12 
-c2   <~ y21 + y22 + y23 + y24
-c3   <~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38
-eta1 =~ y41 + y42 + y43
-eta2 =~ y51 + y52 + y53
-
-# Composite model
-c4   =~ c1 + c2 + c3
-"
- 
-a <- csem(dgp_2ndorder_cf_of_c, model)
-
-## The overall model fit is evidently almost perfect:
-testOMF(a, .R = 50, .verbose = TRUE) # .R = 50 to speed up the example
-}
 \keyword{datasets}

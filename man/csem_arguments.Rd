@@ -317,6 +317,9 @@ pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults 
 
 \item{.terms}{A vector of construct names to be classified.}
 
+\item{.test_data}{A matrix of test data with the same column names as the
+training data.}
+
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 
