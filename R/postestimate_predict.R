@@ -13,21 +13,21 @@
 #' due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for 
 #' details.
 #' 
-#' Alternatively, users may supply a `.test_data` set with the same column names.
+#' Alternatively, users may supply a matrix of `.test_data` with the same column names
 #' as those in the data used to obtain `.object` (the training data). 
 #' In this case, arguments `.cv_folds` and `.r` are
 #' ignored and predict uses the estimated coefficients from `.object` to
 #' predict the values in the columns of `.test_data`.
 #' 
-#' By default (`.only_common_factors  = TRUE`), only the indicator scores of 
-#' constructs modeled as common factors
-#' are predicted. While technically  possible, prediction for constructs modeled
+#' By default, only the indicator scores of 
+#' constructs modeled as common factors are predicted (`.only_common_factors  = TRUE`). 
+#' While technically possible, prediction for constructs modeled
 #' as composites is conceptually difficult since composites are by design build
 #' by their indicators, i.e. composites are not though of as being predictive of
 #' their indicators.
 #' 
 #' Each estimation run is checked for admissibility using [verify()]. If the 
-#' estimation yields inadmissible results, `predict()` stops with an error warning.
+#' estimation yields inadmissible results, `predict()` stops with an error (`"stop"`).
 #' Users may choose to `"ignore"` inadmissible results or to simply set predictions
 #' to `NA` (`"set_NA"`) for the particular run that failed. 
 #'
@@ -47,7 +47,7 @@
 #'     comparisons.}
 #'   \item{`$Prediction_metrics`}{A data frame containing the predictions metrics
 #'     MAE, RMSE, and Q2_predict.}
-#'   \item{`$Information`}{A list with elements, `Number_of_observations`, 
+#'   \item{`$Information`}{A list with elements
 #'     `Number_of_observations_training`, `Number_of_observations_test`, `Number_of_folds`,
 #'     `Number_of_repetitions`, and `Handle_inadmissibles`.}
 #'     }

@@ -10,7 +10,6 @@ csem(
   .approach_2ndorder       = c("2stage", "mixed"),
   .approach_nl             = c("sequential", "replace"),
   .approach_paths          = c("OLS", "2SLS"),
-  .approach_se             = c("none","closed","closed_estimator"), 
   .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                                "MINVAR", "GENVAR", "GSCA", "PCA", 
                                "unit", "bartlett", "regression"),
@@ -55,10 +54,6 @@ Defaults to "\emph{sequential}".}
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}". If "\emph{2SLS}", instruments
 need to be supplied to \code{.instruments}. Defaults to "\emph{OLS}".}
-
-\item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)
-for parameter estimates. One of: "\emph{none}", "\emph{closed}", "\emph{closed_estimator}".
-Defaults to "\emph{none}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
@@ -349,8 +344,8 @@ Inference is done via resampling. See \code{\link[=resamplecSEMResults]{resample
 fit measures, HTMT, R2 etc.}
 \item{\code{\link[=infer]{infer()}}}{Calculate common inferential quantities, e.g., standard errors,
 confidence intervals.}
-\item{\code{\link[=predict]{predict()}}}{Predict indicator or composite scores}
-\item{\code{\link[=summarize]{summarize()}}}{Summarize the results.}
+\item{\code{\link[=predict]{predict()}}}{Predict endogenous indicator scores and compute common prediction metrics.}
+\item{\code{\link[=summarize]{summarize()}}}{Summarize the results. Mainly called for its side-effect the print method.}
 \item{\code{\link[=verify]{verify()}}}{Verify/Check admissibility of the estimates.}
 }
 

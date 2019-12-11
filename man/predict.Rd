@@ -54,7 +54,7 @@ are predicted by exogenous indicator scores. This serves as a benchmark for
 comparisons.}
 \item{\code{$Prediction_metrics}}{A data frame containing the predictions metrics
 MAE, RMSE, and Q2_predict.}
-\item{\code{$Information}}{A list with elements, \code{Number_of_observations},
+\item{\code{$Information}}{A list with elements
 \code{Number_of_observations_training}, \code{Number_of_observations_test}, \code{Number_of_folds},
 \code{Number_of_repetitions}, and \code{Handle_inadmissibles}.}
 }
@@ -74,21 +74,21 @@ By default, the procedure is repeated \code{.r = 10} times to avoid irregulariti
 due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for
 details.
 
-Alternatively, users may supply a \code{.test_data} set with the same column names.
+Alternatively, users may supply a matrix of \code{.test_data} with the same column names
 as those in the data used to obtain \code{.object} (the training data).
 In this case, arguments \code{.cv_folds} and \code{.r} are
 ignored and predict uses the estimated coefficients from \code{.object} to
 predict the values in the columns of \code{.test_data}.
 
-By default (\code{.only_common_factors  = TRUE}), only the indicator scores of
-constructs modeled as common factors
-are predicted. While technically  possible, prediction for constructs modeled
+By default, only the indicator scores of
+constructs modeled as common factors are predicted (\code{.only_common_factors  = TRUE}).
+While technically possible, prediction for constructs modeled
 as composites is conceptually difficult since composites are by design build
 by their indicators, i.e. composites are not though of as being predictive of
 their indicators.
 
 Each estimation run is checked for admissibility using \code{\link[=verify]{verify()}}. If the
-estimation yields inadmissible results, \code{predict()} stops with an error warning.
+estimation yields inadmissible results, \code{predict()} stops with an error (\code{"stop"}).
 Users may choose to \code{"ignore"} inadmissible results or to simply set predictions
 to \code{NA} (\code{"set_NA"}) for the particular run that failed.
 }
@@ -105,8 +105,8 @@ data(Anime) # data is similar to the Anime.csv found on
 set.seed(123)
 
 index     <- sample.int(dim(Anime)[1], 83, replace = FALSE)
-dat_train <- dat_all[-index, ]
-dat_test  <- dat_all[index, ]
+dat_train <- Anime[-index, ]
+dat_test  <- Anime[index, ]
 
 # Specify model
 model <- "

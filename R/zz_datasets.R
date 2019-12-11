@@ -230,12 +230,12 @@
 
 #' Data: Anime
 #'
-#' The data set for the example on \href{https://github.com/ISS-Analytics/pls-predict}
+#' The data set for the example on \href{https://github.com/ISS-Analytics/pls-predict}{github.com/ISS-Analytics/pls-predict}
 #' with irrelevant variables removed.
 #'
 #' @docType data
 #'
 #' @description A data frame with 183 observations and 13 variables. 
 #' 
-#' @source Original source: \href{https://github.com/ISS-Analytics/pls-predict}
+#' @source Original source: \href{https://github.com/ISS-Analytics/pls-predict}{github.com/ISS-Analytics/pls-predict}
 "Anime"

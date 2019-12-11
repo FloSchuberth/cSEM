@@ -10,7 +10,6 @@ foreman(
   .approach_cor_robust         = args_default()$.approach_cor_robust,
   .approach_nl                 = args_default()$.approach_nl,
   .approach_paths              = args_default()$.approach_paths,
-  .approach_se                 = args_default()$.approach_se,
   .approach_weights            = args_default()$.approach_weights,
   .conv_criterion              = args_default()$.conv_criterion,
   .disattenuate                = args_default()$.disattenuate,
@@ -56,10 +55,6 @@ Defaults to "\emph{sequential}".}
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}". If "\emph{2SLS}", instruments
 need to be supplied to \code{.instruments}. Defaults to "\emph{OLS}".}
-
-\item{.approach_se}{Character string. Approach used to obtain the standard errors (SEs)
-for parameter estimates. One of: "\emph{none}", "\emph{closed}", "\emph{closed_estimator}".
-Defaults to "\emph{none}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",

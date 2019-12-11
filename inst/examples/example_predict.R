@@ -10,8 +10,8 @@ data(Anime) # data is similar to the Anime.csv found on
 set.seed(123)
 
 index     <- sample.int(dim(Anime)[1], 83, replace = FALSE)
-dat_train <- dat_all[-index, ]
-dat_test  <- dat_all[index, ]
+dat_train <- Anime[-index, ]
+dat_test  <- Anime[index, ]
 
 # Specify model
 model <- "

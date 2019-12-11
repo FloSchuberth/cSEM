@@ -440,7 +440,6 @@ csem(
    .approach_cor_robust         = "none",
    .approach_nl                 = "sequential",
    .approach_paths              = "OLS",
-   .approach_se                 = "none",
    .approach_weights            = "PLS-PM",
    .conv_criterion              = "diff_absolute",
    .disattenuate                = TRUE,

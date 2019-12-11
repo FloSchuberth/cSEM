@@ -192,7 +192,6 @@
 #'   .approach_2ndorder       = c("2stage", "mixed"),
 #'   .approach_nl             = c("sequential", "replace"),
 #'   .approach_paths          = c("OLS", "2SLS"),
-#'   .approach_se             = c("none","closed","closed_estimator"), 
 #'   .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
 #'                                "MINVAR", "GENVAR", "GSCA", "PCA", 
 #'                                "unit", "bartlett", "regression"),
@@ -242,8 +241,8 @@
 #'   fit measures, HTMT, R2 etc.}
 #' \item{[infer()]}{Calculate common inferential quantities, e.g., standard errors, 
 #'   confidence intervals.}
-#' \item{[predict()]}{Predict indicator or composite scores}
-#' \item{[summarize()]}{Summarize the results.}
+#' \item{[predict()]}{Predict endogenous indicator scores and compute common prediction metrics.}
+#' \item{[summarize()]}{Summarize the results. Mainly called for its side-effect the print method.}
 #' \item{[verify()]}{Verify/Check admissibility of the estimates.}
 #' }
 #' 
@@ -274,7 +273,6 @@ csem <- function(
   .approach_2ndorder     = c("2stage", "mixed"),
   .approach_nl           = c("sequential", "replace"),
   .approach_paths        = c("OLS", "2SLS"),
-  .approach_se           = c("none","closed","closed_estimator"),
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                              "MINVAR", "GENVAR","GSCA", "PCA",
                              "unit", "bartlett", "regression"),
@@ -301,7 +299,6 @@ csem <- function(
   .approach_2ndorder    <- match.arg(.approach_2ndorder)
   .approach_paths       <- match.arg(.approach_paths)
   .approach_weights     <- match.arg(.approach_weights)
-  .approach_se          <- match.arg(.approach_se)
   .resample_method      <- match.arg(.resample_method)
   .resample_method2     <- match.arg(.resample_method2)
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
