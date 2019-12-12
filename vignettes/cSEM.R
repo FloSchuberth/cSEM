@@ -1,3 +1,6 @@
+## ----eval = FALSE--------------------------------------------------------
+#  csem(.data = my_data, .model = my_model)
+
 ## ------------------------------------------------------------------------
 model <- "
 # Structural model
@@ -26,6 +29,9 @@ IMAG =~ imag1 + imag2
 #  # Reflective measurement model
 #  SAT  =~ sat1  + sat2  + sat3  + sat4           # common factor
 #  LOY  =~ loy1  + loy2  + loy3  + loy4           # common factor
+#  
+#  # Measurement error correlation
+#  sat1 ~~ sat2
 #  "
 
 ## ------------------------------------------------------------------------
@@ -106,14 +112,19 @@ a
 #     .sign_change_option          = "no"
 #      )
 
-## ----eval=FALSE----------------------------------------------------------
-#  # Setting `.resample_method`
-#  b1 <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
-#  b2 <- resamplecSEMResults(a)
+## ----echo=FALSE, include=FALSE-------------------------------------------
+x <- runif(1) # to intialize .Random.seed
 
-## ----eval=FALSE----------------------------------------------------------
-#  summarize(b1)
-#  infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
+## ------------------------------------------------------------------------
+b1 <- csem(.data = threecommonfactors, .model = model, .resample_method = "bootstrap")
+b2 <- resamplecSEMResults(a)
+
+## ------------------------------------------------------------------------
+summarize(b1)
+
+## ------------------------------------------------------------------------
+ii <- infer(b1, .quantity = c("CI_standard_z", "CI_percentile"), .alpha = c(0.01, 0.05))
+ii$Path_estimates
 
 ## ----eval=FALSE----------------------------------------------------------
 #  b <- csem(
@@ -123,6 +134,8 @@ a
 #    .R               = 999,
 #    .seed            = 98234,
 #    .eval_plan       = "multiprocess")
+#  
+#  # Output omitted
 
 ## ----eval=FALSE----------------------------------------------------------
 #  model <- "
