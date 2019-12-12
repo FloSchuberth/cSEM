@@ -296,7 +296,8 @@ print.cSEMPredict <- function(x, ...) {
     col_align("\n\tNumber of obs. test", 35), "= ", x2$Number_of_observations_test,
     col_align("\n\tNumber of cv folds", 35), "= ", x2$Number_of_folds,
     col_align("\n\tNumber of repetitions", 35), "= ", x2$Number_of_repetitions,
-    col_align("\n\tHandle inadmissibles", 35), "= ", x2$Handle_inadmissibles
+    col_align("\n\tHandle inadmissibles", 35), "= ", x2$Handle_inadmissibles,
+    col_align("\n\tBenchmark", 35), "= ", paste0("'", x2$Benchmark, "'")
     )
   
   ### Prediction metricts-------------------------------------------------------
@@ -307,10 +308,10 @@ print.cSEMPredict <- function(x, ...) {
   cat2(
     "\n  ", 
     col_align("Name", l + 2), 
-    col_align("MAE_target", 13, align = "right"), 
-    col_align("RMSE_target", 13, align = "right"),
-    col_align("MAE_lm", 10, align = "right"), 
-    col_align("RMSE_lm", 10, align = "right"),
+    col_align("MAE target", 13, align = "right"), 
+    col_align("MAE benchmark", 15, align = "right"), 
+    col_align("RMSE target", 13, align = "right"),
+    col_align("RMSE benchmark", 15, align = "right"),
     col_align("Q2_predict", 13, align = "right")
   )
   
@@ -319,9 +320,9 @@ print.cSEMPredict <- function(x, ...) {
       "\n  ", 
       col_align(x1[i, "Name"], l + 2), 
       col_align(sprintf("%.4f", x1[i, "MAE_target"]), 13, align = "right"),
+      col_align(sprintf("%.4f", x1[i, "MAE_benchmark"]), 15, align = "right"),
       col_align(sprintf("%.4f", x1[i, "RMSE_target"]), 13, align = "right"),
-      col_align(sprintf("%.4f", x1[i, "MAE_lm"]), 10, align = "right"),
-      col_align(sprintf("%.4f", x1[i, "RMSE_lm"]), 10, align = "right"),
+      col_align(sprintf("%.4f", x1[i, "RMSE_benchmark"]), 15, align = "right"),
       col_align(sprintf("%.4f", x1[i, "Q2_predict"]), 13, align = "right")
     )
   }

@@ -6,6 +6,7 @@
 \usage{
 predict(
  .object               = NULL,
+ .benchmark            = c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "lm")
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
  .only_common_factors  = TRUE,
@@ -15,6 +16,10 @@ predict(
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.benchmark}{Character string. The procedure to obtain benachmark predictions.
+One of "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", "\emph{MAXVAR}", or "\emph{lm}".
+Default to "\emph{unit}".}
 
 \item{.cv_folds}{Integer. The number of cross-validation folds to use. Setting
 \code{.cv_folds} to \code{N} (the number of observations) produces
@@ -80,6 +85,14 @@ In this case, arguments \code{.cv_folds} and \code{.r} are
 ignored and predict uses the estimated coefficients from \code{.object} to
 predict the values in the columns of \code{.test_data}.
 
+In \insertCite{Shmueli2016;textual}{cSEM} PLS-based predictions for indicator \code{i}
+are compared to the predictions based on a multiple regression of indicator \code{i}
+on all available exogenous indicators (\code{.benachmark = "lm"}) and
+a simple mean-based prediction summarized in the Q2predict metric.
+\code{predict()} offers several alternative benchmarks including predictions
+based on unit weights (i.e. sum scores), GSCA weights, PCA weights, and
+MAXVAR weights.
+
 By default, only the indicator scores of
 constructs modeled as common factors are predicted (\code{.only_common_factors  = TRUE}).
 While technically possible, prediction for constructs modeled
@@ -130,19 +143,21 @@ res <- csem(dat_train,
 )
 
 # Predict using a user-supplied training data set
-pp <- predict(res, .test_data = dat_test)
+pp <- predict(res, .test_data = dat_test, .benchmark = "lm")
 pp$Predictions_target[1:6, ]
 
+pp
 ### Compute prediction metrics  ------------------------------------------------
 res2 <- csem(Anime, # whole data set
             model, 
             .disattenuate = FALSE, # original PLS
+            
             .iter_max = 300, 
             .tolerance = 1e-07, 
             .PLS_weight_scheme_inner = "factorial"
 )
 # Predict using 10-fold cross-validation with 5 repetitions
-pp2 <- predict(res)
+pp2 <- predict(res, .benchmark = "lm")
 pp2
 }
 \references{

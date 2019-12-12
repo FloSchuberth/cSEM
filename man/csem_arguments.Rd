@@ -56,6 +56,10 @@ or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 \item{.args_used}{A list of function argument names whose value was modified
 by the user.}
 
+\item{.benchmark}{Character string. The procedure to obtain benachmark predictions.
+One of "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", "\emph{MAXVAR}", or "\emph{lm}".
+Default to "\emph{unit}".}
+
 \item{.bias_corrected}{Logical. Should the standard and the tStat
 confidence interval be bias-corrected using the bootstrapped bias estimate?
 If \code{TRUE} the confidence interval for some estimated parameter \code{theta}

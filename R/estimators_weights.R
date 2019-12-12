@@ -434,7 +434,7 @@ calculateWeightsGSCA <- function(
     # Step 1b: Estimate Lambda (the loadings for a given W)
     if(length(vars_cf) > 0) {
       Lambda_tilde <- W_iter %*% .S
-      dep_vars <- names(which(colSums(Lambda0[vars_cf, ]) !=0))
+      dep_vars <- names(which(colSums(Lambda0[vars_cf, , drop = FALSE]) !=0))
       Lambda <- lapply(dep_vars, function(y) {
         x <-  which(Lambda0[vars_cf, y] != 0)
         coef <- solve(C[x, x, drop = FALSE]) %*% Lambda_tilde[x, y, drop = FALSE]

@@ -19,6 +19,14 @@
 #' ignored and predict uses the estimated coefficients from `.object` to
 #' predict the values in the columns of `.test_data`.
 #' 
+#' In \insertCite{Shmueli2016;textual}{cSEM} PLS-based predictions for indicator `i`
+#' are compared to the predictions based on a multiple regression of indicator `i`
+#' on all available exogenous indicators (`.benachmark = "lm"`) and 
+#' a simple mean-based prediction summarized in the Q2predict metric.
+#' `predict()` offers several alternative benchmarks including predictions
+#' based on unit weights (i.e. sum scores), GSCA weights, PCA weights, and 
+#' MAXVAR weights.
+#' 
 #' By default, only the indicator scores of 
 #' constructs modeled as common factors are predicted (`.only_common_factors  = TRUE`). 
 #' While technically possible, prediction for constructs modeled
@@ -54,6 +62,7 @@
 #'   
 #' @usage predict(
 #'  .object               = NULL,
+#'  .benchmark            = c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "lm")
 #'  .cv_folds             = 10,
 #'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
 #'  .only_common_factors  = TRUE,
@@ -84,6 +93,7 @@
 
 predict <- function(
   .object               = NULL, 
+  .benchmark            = c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "lm"),
   .cv_folds             = 10,
   .handle_inadmissibles = c("stop", "ignore", "set_NA"),
   .only_common_factors  = TRUE,
@@ -91,8 +101,14 @@ predict <- function(
   .test_data            = NULL
   ) {
   
+  .benchmark            <- match.arg(.benchmark)
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   ## Errors and warnings -------------------------------------------------------
+  # Stop if second order
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2('Currently, `predict()` is not implemented for models containing higher-order constructs.')
+  }
+  
   # Stop if nonlinear. See Danks et al. (?) for how this can be addressed.
   if(.object$Information$Model$model_type != 'Linear'){
     stop2('Currently, `predict()` works only for linear models.')
@@ -103,19 +119,33 @@ predict <- function(
     stop2('Currently, `predict()` works only in combination with Pearson correlation.')
   }
   
-  # Stop if indicator correlation is not Bravais-Pearson
-  if(inherits(.object, "cSEMResults_2ndorder")) {
-    stop2('Currently, `predict()` is not implemented for models containing higher-order constructs.')
-  }
-  
   ## Get arguments and relevant indicators
-  #  Note: it is possible that the original data set used to obtain .object
+  #  Note: It is possible that the original data set used to obtain .object
   #        contains variables that have not been used in the model. These need
-  #        to be deleted.
+  #        to be deleted. Thats why we take the column names of .object$Information$Data.
   args <- .object$Information$Arguments
   indicators <- colnames(.object$Information$Data) # the data used for the estimation 
                                         # (standardized and clean) with variables
                                         # ordered accoriding to model$measurement.  
+  
+  ## Is the benchmark the same as what was used to obtain .object
+  if(.benchmark == args$.approach_weights) {
+    warning2(
+      "The following warning occured in the `predict()` function:\n",
+      "Original estimation is based on the same approach as the benchmark approach.",
+      " Target and benchmark predicitons are identical."
+    )
+  }
+  
+  if(args$.disattenuate & .benchmark %in% c("unit", "GSCA", "MAXVAR") & 
+     any(.object$Information$Model$construct_type == "Composite")) {
+    args$.disattenuate <- FALSE
+    warning2(
+      "The following warning occured in the `predict()` function:\n",
+      "Disattenuation only applicable if all constructs are modeled as common factors.",
+      " Results based on benchmark = `", .benchmark, "` are not disattenuated."
+    )
+  }
   
   ## Has .test_data been supplied?
   if(!is.null(.test_data)) {
@@ -127,6 +157,13 @@ predict <- function(
     if(length(setdiff(colnames(.test_data), colnames(dat_train))) > 0) {
       stop2("The following error occured in the `predict()` function:\n",
             "Some variable names in the test data are not part of the training data.")
+    }
+    # Warn if .test_data doesnt have row names
+    if(is.null(rownames(.test_data))) {
+      warning2(
+        "The following warning occured in the `predict()` function:\n",
+        "The test data does not have row names to identify observations. "
+      )
     }
     dat_test  <- .test_data[, indicators]
     
@@ -172,84 +209,107 @@ predict <- function(
       colnames(X_test_scaled) <- colnames(X_test)
       rownames(X_test_scaled) <- rownames(X_test)
       
-      # Estimate using dat and original arguments
+      ### Estimate target and benchmark using training data and original arguments
       args$.data <- X_train
-      Est        <- do.call(foreman, args) 
       
-      # Identify exogenous construct in the structural model
-      cons_exo  <- Est$Information$Model$cons_exo
-      cons_endo <- Est$Information$Model$cons_endo
+      args_target <- args_benchmark <- args
       
-      ## Remove endogenous constructs that are modeled as composites
-      if(.only_common_factors) {
-        cons_endo <- setdiff(cons_endo, names(which(Est$Information$Model$construct_type == "Composite")))
-      }
-      
-      # Which indicators are connected to endogenous constructs?
-      endo_indicators <- colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[cons_endo, , drop = FALSE]) != 0]
-      # Which indicators are connected to exogenous constructs?
-      exo_indicators <- colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[cons_exo, , drop = FALSE]) != 0]
-      
-      W_train        <- Est$Estimates$Weight_estimates
-      loadings_train <- Est$Estimates$Loading_estimates
-      path_train     <- Est$Estimates$Path_estimates
-      
-      # Path coefficients of exogenous and endogenous constructs
-      B_train      <- path_train[cons_endo, cons_endo, drop = FALSE]
-      Gamma_train  <- path_train[cons_endo, cons_exo, drop = FALSE]
-      
-      # Check status
-      status_code <- sum(unlist(verify(Est)))
-      
-      ## Compute predictions based on path and measurement model ("target prediction")
-      # Compute predictions if status is ok or inadmissibles should be ignored
-      if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-        
-        ## Predict scores for the exogenous constructs (validity prediction)
-        eta_hat_exo  <- X_test_scaled %*% t(W_train[cons_exo, ,drop = FALSE])
-        
-        # Predict scores for the endogenous constructs (structural prediction)
-        eta_hat_endo <- eta_hat_exo %*% t(Gamma_train) %*% t(solve(diag(nrow(B_train)) - B_train))
-        
-        # Predict scores for indicators of endogenous constructs (communality prediction)
-        X_hat <- eta_hat_endo %*% loadings_train[cons_endo, , drop = FALSE]
-        
-        # Denormalize predictions
-        X_hat_rescaled <- sapply(colnames(X_hat), function(x) {
-          mean_train[x] + X_hat[, x] * sd_train[x]
-        })
-        
-        # Select only endogenous indicators
-        X_hat_rescaled <- X_hat_rescaled[, endo_indicators]
-        
-        # Calculate the difference between original and predicted values
-        residuals_target <- X_test[, endo_indicators] - X_hat_rescaled[, endo_indicators]
-      } else if(status_code != 0 & .handle_inadmissibles == "set_NA"){
-        X_hat_rescaled  <- residuals_target <- X_test[, endo_indicators] 
-        X_hat_rescaled[] <- NA
-        residuals_target[] <- NA
+      if(.benchmark %in% c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR")) {
+        args_benchmark$.approach_weights <- .benchmark
+        kk <- 2
       } else {
-        stop2("Estimation based on one of the cross-validation folds yielded an inadmissible results.\n",
-              " Consider setting handle_inadmissibles = 'ignore'.")
+        kk <- 1
       }
-      ## Compute naiv mean-based predictions
-      residuals_mb <- t(t(X_test[, endo_indicators]) - mean_train[endo_indicators])
       
-      ## Compute naiv predictions based on a linear model that explains each
-      ## endogenous indicator by all exogenous indicators
-      beta_exo <- solve(t(X_train[, exo_indicators]) %*% 
-                          X_train[, exo_indicators]) %*% 
-        t(X_train[, exo_indicators]) %*% X_train[, endo_indicators, drop = FALSE]
+      ## Run for target and benchmark 
+      args_list <- list(args_target, args_benchmark)
+      results <- list()
+      for(k in 1:kk) {
+        
+        Est        <- do.call(foreman, args_list[[k]]) 
+        
+        # Identify exogenous construct in the structural model
+        cons_exo  <- Est$Information$Model$cons_exo
+        cons_endo <- Est$Information$Model$cons_endo
+        
+        ## Remove endogenous constructs that are modeled as composites
+        if(.only_common_factors) {
+          cons_endo <- setdiff(cons_endo, names(which(Est$Information$Model$construct_type == "Composite")))
+        }
+        
+        # Which indicators are connected to endogenous constructs?
+        endo_indicators <- colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[cons_endo, , drop = FALSE]) != 0]
+        # Which indicators are connected to exogenous constructs?
+        exo_indicators <- colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[cons_exo, , drop = FALSE]) != 0]
+        
+        W_train        <- Est$Estimates$Weight_estimates
+        loadings_train <- Est$Estimates$Loading_estimates
+        path_train     <- Est$Estimates$Path_estimates
+        
+        # Path coefficients of exogenous and endogenous constructs
+        B_train      <- path_train[cons_endo, cons_endo, drop = FALSE]
+        Gamma_train  <- path_train[cons_endo, cons_exo, drop = FALSE]
+        
+        # Check status
+        status_code <- sum(unlist(verify(Est)))
+        
+        ## Compute predictions based on path and measurement model ("target prediction")
+        # Compute predictions if status is ok or inadmissibles should be ignored
+        if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
+          
+          ## Predict scores for the exogenous constructs (validity prediction)
+          eta_hat_exo  <- X_test_scaled %*% t(W_train[cons_exo, ,drop = FALSE])
+          
+          # Predict scores for the endogenous constructs (structural prediction)
+          eta_hat_endo <- eta_hat_exo %*% t(Gamma_train) %*% t(solve(diag(nrow(B_train)) - B_train))
+          
+          # Predict scores for indicators of endogenous constructs (communality prediction)
+          X_hat <- eta_hat_endo %*% loadings_train[cons_endo, , drop = FALSE]
+          
+          # Denormalize predictions
+          X_hat_rescaled <- sapply(colnames(X_hat), function(x) {
+            mean_train[x] + X_hat[, x] * sd_train[x]
+          })
+          
+          # Select only endogenous indicators
+          X_hat_rescaled <- X_hat_rescaled[, endo_indicators]
+          
+          # Calculate the difference between original and predicted values
+          residuals_target <- X_test[, endo_indicators] - X_hat_rescaled[, endo_indicators]
+        } else if(status_code != 0 & .handle_inadmissibles == "set_NA"){
+          X_hat_rescaled  <- residuals_target <- X_test[, endo_indicators] 
+          X_hat_rescaled[] <- NA
+          residuals_target[] <- NA
+        } else {
+          stop2("Estimation based on one of the cross-validation folds yielded an inadmissible results.\n",
+                " Consider setting handle_inadmissibles = 'ignore'.")
+        }
+        results[[k]] <- list(X_hat_rescaled, residuals_target)
+      }
       
-      X_hat_lm <- as.matrix(X_test[, exo_indicators]) %*% beta_exo
-      residuals_lm <- X_test[, endo_indicators] - X_hat_lm
-      
+      if(.benchmark %in% c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR")) {
+        predictions_benchmark <- results[[2]][[1]]
+        residuals_benchmark   <- results[[2]][[2]]
+      } else if(.benchmark == "lm") {
+        ## Compute naiv predictions based on a linear model that explains each
+        ## endogenous indicator by all exogenous indicators
+        beta_exo <- solve(t(X_train[, exo_indicators]) %*% 
+                            X_train[, exo_indicators]) %*% 
+          t(X_train[, exo_indicators]) %*% X_train[, endo_indicators, drop = FALSE]
+        
+        predictions_benchmark <- as.matrix(X_test[, exo_indicators]) %*% beta_exo
+        residuals_benchmark   <- X_test[, endo_indicators] - predictions_benchmark
+      }
+        ## Compute naiv mean-based predictions and residuals
+        residuals_mb   <- t(t(X_test[, endo_indicators]) - mean_train[endo_indicators])
+        
       ## Output
       out_cv[[j]] <- list(
-        "Predictions_target" = X_hat_rescaled,
-        "Residuals_target"   = residuals_target,
-        "Residuals_mb"       = residuals_mb,
-        "Residuals_lm"       = residuals_lm
+        "Predictions_target"    = results[[1]][[1]],
+        "Residuals_target"      = results[[1]][[2]],
+        "Predictions_benchmark" = predictions_benchmark,
+        "Residuals_benchmark"   = residuals_benchmark,
+        "Residuals_mb"          = residuals_mb
       )
     } # END for j in 1:length(dat)  
     
@@ -273,42 +333,47 @@ predict <- function(
   
   ## Compute prediction metrics ------------------------------------------------
   
-  mae_target  <- apply(out_temp$Residuals_target, 2, function(x) mean(abs(x - mean(x))))
-  mae_lm      <- apply(out_temp$Residuals_lm, 2, function(x) mean(abs(x - mean(x))))
-  rmse_target <- apply(out_temp$Residuals_target, 2, function(x) sqrt(mean((x - mean(x))^2)))
-  rmse_lm     <- apply(out_temp$Residuals_lm, 2, function(x) sqrt(mean((x - mean(x))^2)))
+  mae_target    <- apply(out_temp$Residuals_target, 2, function(x) mean(abs(x - mean(x))))
+  mae_benchmark <- apply(out_temp$Residuals_benchmark, 2, function(x) mean(abs(x - mean(x))))
+  rmse_target   <- apply(out_temp$Residuals_target, 2, function(x) sqrt(mean((x - mean(x))^2)))
+  rmse_benchmark<- apply(out_temp$Residuals_benchmark, 2, function(x) sqrt(mean((x - mean(x))^2)))
   
   q2_predict  <- c()
   for(i in colnames(out_temp$Residuals_target)) {
     
     q2_predict[i] <- 1- sum((out_temp$Residuals_target[, i] - mean(out_temp$Residuals_target[, i]))^2) /
-      sum((out_temp$Residuals_lm[, i] - mean(out_temp$Residuals_lm[, i]))^2)
+      sum((out_temp$Residuals_mb[, i] - mean(out_temp$Residuals_mb[, i]))^2)
   }
   
   ## Create data fram
   df_metrics <- data.frame(
-    "Name"        = endo_indicators,
-    "MAE_target"  = mae_target,
-    "RMSE_target" = rmse_target,
-    "MAE_lm"      = mae_lm,
-    "RMSE_lm"     = rmse_lm,
-    "Q2_predict"  = q2_predict,
+    "Name"           = endo_indicators,
+    "MAE_target"     = mae_target,
+    "MAE_benchmark" = mae_benchmark,
+    "RMSE_target"    = rmse_target,
+    "RMSE_benchmark" = rmse_benchmark,
+    "Q2_predict"     = q2_predict,
     stringsAsFactors = FALSE
   )
   rownames(df_metrics) <- NULL
   
   out <- list(
-    "Actual"      = .object$Information$Data[, endo_indicators],
-    "Predictions_target" = out_temp$Predictions_target,
-    "Residuals_target"   = out_temp$Residuals_target,
-    "Residuals_lm"       = out_temp$Residuals_target,
-    "Prediction_metrics" = df_metrics,
-    "Information"        = list(
+    "Actual"      = if(is.null(.test_data)) {
+      .object$Information$Arguments$.data[, endo_indicators]
+    } else {
+      .test_data[, endo_indicators]
+    },
+    "Predictions_target"  = out_temp$Predictions_target,
+    "Residuals_target"    = out_temp$Residuals_target,
+    "Residuals_benchmark" = out_temp$Residuals_benchmark,
+    "Prediction_metrics"  = df_metrics,
+    "Information"         = list(
+      "Benchmark"              = .benchmark,
+      "Handle_inadmissibles"   = .handle_inadmissibles,
       "Number_of_observations_training" = nrow(X_train),
       "Number_of_observations_test" = nrow(X_test),
       "Number_of_folds"        = .cv_folds,
-      "Number_of_repetitions"  = .r,
-      "Handle_inadmissibles"   = .handle_inadmissibles
+      "Number_of_repetitions"  = .r
     )
   )
   

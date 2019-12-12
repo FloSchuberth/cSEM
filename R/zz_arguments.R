@@ -46,6 +46,9 @@
 #'   or "*regression*". Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names whose value was modified 
 #'   by the user.
+#' @param .benchmark Character string. The procedure to obtain benachmark predictions.
+#'   One of "*unit*", "*PLS-PM*", "*GSCA*", "*PCA*", "*MAXVAR*", or "*lm*".
+#'   Default to "*unit*".
 #' @param .bias_corrected Logical. Should the standard and the tStat
 #'   confidence interval be bias-corrected using the bootstrapped bias estimate? 
 #'   If `TRUE` the confidence interval for some estimated parameter `theta` 
@@ -380,6 +383,7 @@ args_default <- function(.choices = FALSE) {
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
+    .benchmark               = c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "lm"),
     .bias_corrected          = TRUE,
     .C                       = NULL,
     .check_errors            = TRUE,
