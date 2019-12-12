@@ -62,7 +62,7 @@
 #'   
 #' @usage predict(
 #'  .object               = NULL,
-#'  .benchmark            = c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "lm")
+#'  .benchmark            = c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "lm"),
 #'  .cv_folds             = 10,
 #'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
 #'  .only_common_factors  = TRUE,
