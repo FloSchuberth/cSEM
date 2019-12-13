@@ -7,7 +7,7 @@ source("test-main.R")
 # Tests 
 # ==============================================================================
 # Default
-predict(res_single_linear, .benchmark = "lm", .cv_folds = 2, .r = 2)
+predict(res_single_linear, .cv_folds = 2, .r = 2)
 
 # Using test data
 index <- sample(1:500, 400, replace = FALSE)
@@ -15,7 +15,7 @@ train_dat <- threecommonfactors[index, ]
 test_dat  <- threecommonfactors[-index, ] 
 rownames(test_dat) <- 1:nrow(test_dat)
 
-predict(csem(train_dat, model_linear), .test_data = test_dat, .benchmark = "lm")
+predict(csem(train_dat, model_linear), .test_data = test_dat)
 
 # Different benchmarks
 ## Linear

@@ -293,5 +293,5 @@ testMGD(out, .parameters_to_compare = to_compare,
 \insertAllCited{}
 }
 \seealso{
-\link{cSEMResults}
+\code{\link[=csem]{csem()}}, \link{cSEMResults}, \code{\link[=testMICOM]{testMICOM()}}, \code{\link[=testOMF]{testOMF()}}
 }

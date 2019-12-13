@@ -6,7 +6,7 @@
 \usage{
 predict(
  .object               = NULL,
- .benchmark            = c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "lm"),
+ .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
  .only_common_factors  = TRUE,
@@ -17,9 +17,9 @@ predict(
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.benchmark}{Character string. The procedure to obtain benachmark predictions.
-One of "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", "\emph{MAXVAR}", or "\emph{lm}".
-Default to "\emph{unit}".}
+\item{.benchmark}{Character string. The procedure to obtain benchmark predictions.
+One of "\emph{lm}", "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", or "\emph{MAXVAR}".
+Default to "\emph{lm}".}
 
 \item{.cv_folds}{Integer. The number of cross-validation folds to use. Setting
 \code{.cv_folds} to \code{N} (the number of observations) produces
@@ -143,15 +143,13 @@ res <- csem(dat_train,
 )
 
 # Predict using a user-supplied training data set
-pp <- predict(res, .test_data = dat_test, .benchmark = "lm")
+pp <- predict(res, .test_data = dat_test)
 pp$Predictions_target[1:6, ]
-
 pp
 ### Compute prediction metrics  ------------------------------------------------
 res2 <- csem(Anime, # whole data set
             model, 
             .disattenuate = FALSE, # original PLS
-            
             .iter_max = 300, 
             .tolerance = 1e-07, 
             .PLS_weight_scheme_inner = "factorial"

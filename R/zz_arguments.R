@@ -46,9 +46,9 @@
 #'   or "*regression*". Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names whose value was modified 
 #'   by the user.
-#' @param .benchmark Character string. The procedure to obtain benachmark predictions.
-#'   One of "*unit*", "*PLS-PM*", "*GSCA*", "*PCA*", "*MAXVAR*", or "*lm*".
-#'   Default to "*unit*".
+#' @param .benchmark Character string. The procedure to obtain benchmark predictions.
+#'   One of "*lm*", "*unit*", "*PLS-PM*", "*GSCA*", "*PCA*", or "*MAXVAR*".
+#'   Default to "*lm*".
 #' @param .bias_corrected Logical. Should the standard and the tStat
 #'   confidence interval be bias-corrected using the bootstrapped bias estimate? 
 #'   If `TRUE` the confidence interval for some estimated parameter `theta` 
@@ -383,7 +383,7 @@ args_default <- function(.choices = FALSE) {
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
-    .benchmark               = c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "lm"),
+    .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
     .bias_corrected          = TRUE,
     .C                       = NULL,
     .check_errors            = TRUE,
@@ -427,7 +427,7 @@ args_default <- function(.choices = FALSE) {
                                  "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
                                  "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
                                  "rmsea", "rms_theta", "srmr",
-                                 "gof", "htmt", "r2", "r2_adj", "ra",
+                                 "gof", "htmt", "r2", "r2_adj",
                                  "rho_T", "rho_T_weighted", "vif", 
                                  "vifmodeb",  "fl_criterionB"),
     

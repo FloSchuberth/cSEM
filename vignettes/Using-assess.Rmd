@@ -66,7 +66,6 @@ Currently the following quality criteria are implemented:
 - The coefficient of determination and the adjusted coefficient of determination
   ($R^2$ and $R^2_{adj}$)
 - A measure of the **effect size**
-- **Redundancy analysis** (RA)
 
 
 For implementation details see the [Methods & Formulae](#methods) section.
@@ -77,12 +76,13 @@ For implementation details see the [Methods & Formulae](#methods) section.
 assess(
   .object              = NULL,
   .only_common_factors = TRUE,
-  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbach_alpha", 
-                           "cronbach_alpha_weighted", "dg", "dl", "dml",
-                           "esize", "gof", "htmt", "r2", "r2_adj", "ra",
-                           "srmr", "rho_T", "rho_T_weighted", "vif", 
-                           "vifmodeb",  "fl_criterion", "gfi", "rmsea",                                "cfi", "ifi", "nfi", "nnfi", "rms_theta"),
-  .model_implied       = TRUE,
+  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
+                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "rmsea", "rms_theta", "srmr",
+                           "gof", "htmt", "r2", "r2_adj",
+                           "rho_T", "rho_T_weighted", "vif", 
+                           "vifmodeB",  "fl_criterion"),
   ...
 )
 ```
@@ -102,13 +102,6 @@ assess(
 :  Logical. Should only concepts modeled as common 
    factors be included when calculating one of the following quality criteria: 
    AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates. 
-   Defaults to `TRUE`.
-
-`.model_implied`
-
-:  Logical. Refers to the calculation of the quality criterion
-   $\text{RMS}_{\theta}$. Should the covariance matrix of the constructs be
-   calculated taking into account the restrictions of the structural model? 
    Defaults to `TRUE`.
  
 `...`

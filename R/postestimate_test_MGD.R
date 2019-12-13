@@ -171,7 +171,7 @@
 #' @references
 #'   \insertAllCited{}
 #'   
-#' @seealso [cSEMResults]
+#' @seealso [csem()], [cSEMResults], [testMICOM()], [testOMF()]
 #'
 #' @example inst/examples/example_testMGD.R
 #' 

@@ -14,8 +14,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 bibliography: ../inst/REFERENCES.bib
 ---
-
-WARNING: this document is work in progress and may still contain mistakes!
 <!-- used to print boldface greek symbols (\mathbf only works for latin symbols) -->
 ```{r child="preamble-tex.tex", echo=FALSE, include=FALSE}
 ```
@@ -25,7 +23,7 @@ WARNING: this document is work in progress and may still contain mistakes!
 A common factor or latent variable is a type of construct. The defining feature of a
 common factor is the idea that the common factor is the common underlying 
 (latent) cause of the realizations of a set of indicators that are said to measure 
-the common factor. The common factor model is also referred to as 
+the common factor. The common factor model is also referred to as the
 reflective measurement model. Accordingly, indicators related to the common factor
 are modeled as measurement error-prone manifestations of a common variable, 
 cause or factor. The idea of a common factor is closely related to the true
@@ -35,21 +33,27 @@ true score, and latent variable are mostly used synommenoulsy in **cSEM**.
 #### Composite
 
 A composite is a weighted sum of indicators. Composites may 
-either serve as constructs in their own right or as proxies for a latent variable. 
+either serve as constructs in their own right or as proxies for a latent variable,
+which, in turn, serves as a "statistical proxy" for a concept under study. 
 The nature of the composite is therefore defined by the type of (measurement) 
 model. If composites are error-free representations 
 of a concept we refer to the measurement model as composite measurement. If 
 composites are used as stand-ins, the measurement model is called 
 causal-formative (Henseler, 2017). 
+
+Note that, although we sometimes use it this way as well, the term "measurement" 
+is acutally inadequate for the composite model since in a composite model
+the construct is build/formed by its related indicators. Hence no measurement 
+in the acutal sense of the word takes place.
     
 #### Composite-based methods 
 
 Composite-based methods or composite-based SEM refers to the entirety of methods 
 centered around the use as of composites (linear compounts of observables) 
 as stand-ins or error-free representations for the concepts under investigation.
-Composite-based methods are also called
+Composite-based methods are often also called
 variance-based methods as focal parameters are usually retrived such that explained 
-variance is maximized.
+variance of the dependend constructs in a structural model is maximized.
     
 #### Concept
 
@@ -68,14 +72,15 @@ are covered by the definition.
 Construct refer to a representation of a concept *within a given statistical 
 model*. While a concept is defined by a conceptual (theoretical) definition, 
 a construct for a concept is defined/created by the researcher's operationalization
-of a concept within a statistical model. concepts are either modeled
+of a concept within a statistical model. Concepts are either modeled
 as common factors/latent variables or as composites. Both operationalizations
 - the common factor and the composite - are called constructs in **cSEM** .
 As opposed to concepts, constructs therefore exist because they arise as 
 the result of the act of modeling their relation to the observable 
 variables (indicators) based on a specific set of assumptions. 
 Constructs may therefore best be understood as stand-ins for concepts. Consequently,
-constructs do not necessarily represent the concept they seek to represent.
+constructs do not necessarily represent the concept they seek to represent, i.e.,
+there may be a validity gap.
 
 #### Factor-based methods or covariance-based SEM 
 
@@ -95,6 +100,21 @@ observable (variable) are sometimes used synommenoulsy.
 #### Latent variable
 
 See: Common factor
+
+#### Measurement model
+
+The measurement model is a statistical model relating indicators to constructs
+(the statistical representiation of a concept). If the concept to study is modeled
+as a common factor two measurement models exist:
+
+- The reflective measurement model
+- The causal-formative measurement model
+
+Note that, although we sometimes use it this way as well, the term "measurement" 
+is acutally inadequate for the composite model since in a composite model
+the construct is build/formed by its related indicators. Hence no measurement 
+in the acutal sense of the word takes place.
+
 
 #### Test score
 

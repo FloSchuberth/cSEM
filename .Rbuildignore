@@ -10,3 +10,4 @@
 ^NEWS.
 ^\.travis\.yml
 ^appveyor\.yml$
+^cran-comments\.md$

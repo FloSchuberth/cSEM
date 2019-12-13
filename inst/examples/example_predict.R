@@ -35,15 +35,13 @@ res <- csem(dat_train,
 )
 
 # Predict using a user-supplied training data set
-pp <- predict(res, .test_data = dat_test, .benchmark = "lm")
+pp <- predict(res, .test_data = dat_test)
 pp$Predictions_target[1:6, ]
-
 pp
 ### Compute prediction metrics  ------------------------------------------------
 res2 <- csem(Anime, # whole data set
             model, 
             .disattenuate = FALSE, # original PLS
-            
             .iter_max = 300, 
             .tolerance = 1e-07, 
             .PLS_weight_scheme_inner = "factorial"

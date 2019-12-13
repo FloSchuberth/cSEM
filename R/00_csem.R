@@ -246,8 +246,8 @@
 #' \item{[verify()]}{Verify/Check admissibility of the estimates.}
 #' }
 #' 
-#' Tests are performed using the test family of functions. Currently the following
-#' tests are implemented.
+#' Tests are performed using the test-family of functions. Currently the following
+#' tests are implemented:
 #' \describe{
 #' \item{[testOMF()]}{Bootstrap-based test for overall model fit based on 
 #'   \insertCite{Beran1985;textual}{cSEM}}
@@ -256,6 +256,16 @@
 #' \item{[testMGD()]}{Several (mainly) permutation-based tests for multi-group comparisons.}
 #' \item{[testHausman()]}{Regression-based Hausman test to test for endogeneity.}
 #' }
+#' 
+#' Other miscellaneous postestimation functions belong do the do-family of functions.
+#' Currently two do functions are implemented:
+#' \describe{
+#' \item{[doFloodlightAnalysis()]}{Perform a floodlight analysis as described in
+#'   \insertCite{Spiller2013;textual}{cSEM}}
+#' \item{[doRedundancyAnalysis()]}{Perform a redundancy analysis (RA) as proposed by 
+#' \insertCite{Hair2016;textual}{cSEM} with reference to \insertCite{Chin1998;textual}{cSEM}}
+#' }
+#' 
 #' @references
 #'   \insertAllCited{}
 #'

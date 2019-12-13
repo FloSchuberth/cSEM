@@ -349,8 +349,8 @@ confidence intervals.}
 \item{\code{\link[=verify]{verify()}}}{Verify/Check admissibility of the estimates.}
 }
 
-Tests are performed using the test family of functions. Currently the following
-tests are implemented.
+Tests are performed using the test-family of functions. Currently the following
+tests are implemented:
 \describe{
 \item{\code{\link[=testOMF]{testOMF()}}}{Bootstrap-based test for overall model fit based on
 \insertCite{Beran1985;textual}{cSEM}}
@@ -358,6 +358,15 @@ tests are implemented.
 proposed by \insertCite{Henseler2016;textual}{cSEM}}
 \item{\code{\link[=testMGD]{testMGD()}}}{Several (mainly) permutation-based tests for multi-group comparisons.}
 \item{\code{\link[=testHausman]{testHausman()}}}{Regression-based Hausman test to test for endogeneity.}
+}
+
+Other miscellaneous postestimation functions belong do the do-family of functions.
+Currently two do functions are implemented:
+\describe{
+\item{\code{\link[=doFloodlightAnalysis]{doFloodlightAnalysis()}}}{Perform a floodlight analysis as described in
+\insertCite{Spiller2013;textual}{cSEM}}
+\item{\code{\link[=doRedundancyAnalysis]{doRedundancyAnalysis()}}}{Perform a redundancy analysis (RA) as proposed by
+\insertCite{Hair2016;textual}{cSEM} with reference to \insertCite{Chin1998;textual}{cSEM}}
 }
 }
 

@@ -14,8 +14,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 bibliography: ../inst/REFERENCES.bib
 ---
-
-WARNING: this document is work in progress and may still contain mistakes!
 <!-- used to print boldface greek symbols (\mathbf only works for latin symbols) -->
 ```{r child="preamble-tex.tex", echo=FALSE, include=FALSE}
 ```
@@ -33,9 +31,10 @@ methodological issues, and, even worse, promotes systematic misuse (e.g., the us
 of Cronbach's alpha as an estimator for congeneric reliability). This is particularly
 true for users new to SEM or practitioners who are overwhelmed
 by terminology of their own field only to find that the term they
-just thought to have finally grasped is defined differently in another field, 
-making the confusion complete. A prime example is the term formative. See
-e.g., @Henseler2017 for a clarifiction.
+just thought to have finally completely grasped is defined differently in another field, 
+making the confusion complete. A prime example is the term "formative" (measurement)
+which has been used to describe a causal-formative as well as [a composite model](#cmodel).
+See e.g., @Henseler2017 for a clarifiction.
 
 Ultimately, this is a matter of (mis)communication which, in our opinion, can 
 only be satisfactorily solved by establishing a clear, unambiguous definition 
@@ -58,10 +57,11 @@ files carefully to avoid potential misunderstandings.
    symbols used in the package documentation alongside a definition. Bearing some
    expections, we mostly follow standard notation as layed out in e.g., @Bollen1989
 
-The package is designed based on a set of principles that are partly in contrast
-to commonly used open-source and commercial software packages offering similar content (e.g., smartPLS).
-This introduction explains these principles, contrasts them against the principles
-of existing software packages and points readers to further reading.
+The package is designed based on a set of principles and are Terminology that 
+are partly in contrast to commonly used open-source or commercial software packages
+offering similar content (e.g., smartPLS).
+Togther with the [Terminology][Terminology] and [Notation][Notation] file this introduction seeks to explains 
+these principles.
 Lastly, to use **cSEM** effectively, it is helpful to understand its design. 
 Hence, the package architecture and design as well as what we consider the "cSEM workflow" are discussed.
 
@@ -606,7 +606,8 @@ termionolgy and scope. These principles are discussed below
 The way different concepts and their relationship
 are *modeled* is strictly distinct from how they are *estimated*. Hence we
 strictly distinguish between concepts modeled as common factors (or composites)
-and the actual estimation **for a given model**. 
+and the actual estimation **for a given model**. In our opinion, these differences
+are fundamental to understanding the scope and limits of a certain approach.
 
 ### Composites in a composite model vs. composites in a common factor model and disattenuation
 By virtue of the package, **cSEM** uses composite-based estimators/approaches only. Depending
