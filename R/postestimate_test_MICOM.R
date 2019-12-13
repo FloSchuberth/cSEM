@@ -39,7 +39,7 @@
 #'
 #' @example inst/examples/example_testMICOM.R
 #' 
-#' @seealso [csem()], [cSEMResults]
+#' @seealso [csem()], [cSEMResults], [testOMF()], [testMGD()]
 #' 
 #' @export
 #'

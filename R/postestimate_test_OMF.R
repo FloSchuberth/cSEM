@@ -39,7 +39,8 @@
 #'                         The seed used and the number of total runs.}
 #' }
 #' 
-#' @seealso [csem()], [calculateSRMR()], [calculateDG()], [calculateDL()], [cSEMResults]
+#' @seealso [csem()], [calculateSRMR()], [calculateDG()], [calculateDL()], [cSEMResults],
+#'   [testMICOM()], [testMGD()]
 #' 
 #' @references
 #'   \insertAllCited{}

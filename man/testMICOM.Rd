@@ -116,5 +116,5 @@ testMICOM(csem_results, .R = 50, .alpha = c(0.01, 0.05), .seed = 1987)
 \insertAllCited{}
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \link{cSEMResults}
+\code{\link[=csem]{csem()}}, \link{cSEMResults}, \code{\link[=testOMF]{testOMF()}}, \code{\link[=testMGD]{testMGD()}}
 }

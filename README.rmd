@@ -81,7 +81,8 @@ Usully, using `cSEM` is the same 3 step procedure:
 
 ## Postestimation functions
 
-Currently we have five major postestimation verbs: 
+Currently we have five major postestimation verbs, four test family functions and
+two do-family of function: 
 
 - `assess()` : assess the model using common quality criteria
 - `infer()` : calculate common inferencial quantities (e.g, standard errors)
@@ -96,6 +97,12 @@ tests are implemented:
 - `testMICOM()` : performs a test for composite measurement invariance
 - `testMGD` : performs several test to assess multi-group differences
 - `testHausman()` : performs the regression-based Hausman test to test for endogeneity.
+
+Other miscellaneous postestimation functions belong do the do-family of functions.
+Currently two do functions are implemented:
+
+- `doFloodlightAnalysis()`: performs a floodlight analysis
+- `doRedundancyAnalysis()`: performs a redundancy analysis
 
 All functions require a `cSEMResults` object.
 

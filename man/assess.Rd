@@ -11,7 +11,7 @@ assess(
                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
                           "rmsea", "rms_theta", "srmr",
-                          "gof", "htmt", "r2", "r2_adj", "ra",
+                          "gof", "htmt", "r2", "r2_adj",
                           "rho_T", "rho_T_weighted", "vif", 
                           "vifmodeB",  "fl_criterion"),
   ...
@@ -133,16 +133,6 @@ by \code{\link[=calculateHTMT]{calculateHTMT()}}.}
 \item{R square and R square adjusted; "r2", "r2_adj"}{The R square and the adjusted
 R square for each structural regression equation.
 Calculated when running \code{\link[=csem]{csem()}}.}
-\item{Redundancy analysis (RA); "ra"}{The process of regressing the scores
-of a reflectively measured construct on the scores of a formatively measured
-construct in order to gain empirical evidence for convergent validity of a
-formatively measured construct.
-RA is therefore confined to PLS, specifically PLS with at least one construct
-whose mode is Mode B. This is the case if the construct is modeled as a
-composite or if the construct was explicitly given Mode B.
-Hence RA is only done if \code{.object} was obtained using
-\code{.approach_weights = "PLS-PM"} and if at least one constructs mode is Mode B.
-Performed by \code{\link[=doRedundancyAnalysis]{doRedundancyAnalysis()}}.}
 \item{Tau-equivalent reliability; "rho_T"}{An estimate of the
 reliability assuming a tau-equivalent measurement model (i.e. a measurement
 model with equal loadings) and a test score (proxy) based on unit weights.
