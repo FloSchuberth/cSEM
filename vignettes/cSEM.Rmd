@@ -201,16 +201,18 @@ only comprises three steps:
 1. **Postestimate**: Inspired by the [grammar of data manipulation](https://dplyr.tidyverse.org/) 
    underlying the [dplyr](https://dplyr.tidyverse.org/) package, cSEM provides a
    5 postestimation verbs that concisely cover all common postestimation task
-   as well as 4 additional test commands:
+   as well as 4 additional test commands and 2 general do command:
    1. `assess()`
-   2. `infer()`
-   3. `predict()`
-   4. `summarize()`
-   5. `verify()`
-   6. `testOMF()`
-   7. `testMICOM()`
-   8. `testHausman()`
-   9. `testMGD()`
+   1. `infer()`
+   1. `predict()`
+   1. `summarize()`
+   1. `verify()`
+   1. `testOMF()`
+   1. `testMICOM()`
+   1. `testHausman()`
+   1. `testMGD()`
+   1. `doFloodlightAnalysis()`
+   1. `doRedundancyAnalysis()`
    
    All verbs accept the result of a call to `csem()` as input which makes working
    with these function extremely simple. You only need to remember the word, not any
@@ -547,7 +549,8 @@ There are 5 major postestimation function and 4 test-family functions:
    
 `predict()`
 
-:   Predict indicator scores of endogenous constructs.
+:   Predict indicator scores of endogenous constructs based on the procedure 
+    introduced by @Shmueli2016.
 
 `summarize()`
 
@@ -576,11 +579,23 @@ There are 5 major postestimation function and 4 test-family functions:
     
 `testMGD()`
 
-:   Test for group differences using difference measures
+:   Test for group differences using several different approach such as e.g.,
+    the one described in @Klesel2019.
 
 `testMICOM()`
 
 :   Test of measurement invariance of composites proposed by @Henseler2016
+
+#### The `do_*` family of postestimation functions
+
+`doFloodlightAnalysis()`
+
+:   Performs a floodlight analysis as described in @Spiller2013.
+
+`doRedundancyAnalysis()`
+
+:   Perform a redundancy analysis (RA) as proposed by @Hair2016 with reference to 
+    @Chin1998.
 
 Technically, postestimation functions are generic function with methods for objects of class
 `cSEMResults_default`, `cSEMResults_multi`, `cSEMResults_2ndorder`. In **cSEM**
@@ -608,6 +623,9 @@ are *modeled* is strictly distinct from how they are *estimated*. Hence we
 strictly distinguish between concepts modeled as common factors (or composites)
 and the actual estimation **for a given model**. In our opinion, these differences
 are fundamental to understanding the scope and limits of a certain approach.
+The most notable consequence is that approaches such as partial least squares
+and everything related to it (e.g., the modes) or generalized structured component 
+analysis are "only" considered as estimators/estimation approaches **for a given model**.
 
 ### Composites in a composite model vs. composites in a common factor model and disattenuation
 By virtue of the package, **cSEM** uses composite-based estimators/approaches only. Depending
