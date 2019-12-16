@@ -1,6 +1,7 @@
 ---
 title: "Terminology"
 date: "Last edited: `r Sys.Date()`"
+author: "Manuel Rademaker"
 output:
   prettydoc::html_pretty:
     theme: cayman
@@ -18,59 +19,76 @@ bibliography: ../inst/REFERENCES.bib
 ```{r child="preamble-tex.tex", echo=FALSE, include=FALSE}
 ```
 
-#### Common factor
+### Common factor{#commonfactor}
 
-A common factor or latent variable is a type of construct. The defining feature of a
-common factor is the idea that the common factor is the common underlying 
-(latent) cause of the realizations of a set of indicators that are said to measure 
-the common factor. The common factor model is also referred to as the
-reflective measurement model. Accordingly, indicators related to the common factor
+A common factor or latent variable is a type of [construct](#construct). The name common factor
+is motivated by the theorized relationship to its [indicators](#indicator). This relation is commonly refered to as
+the [measurement model](#mm). Two kinds of 
+measurement models exist: the reflective and the (causal-)formative measurement model. 
+The defining feature of a common factor in a reflective measurement model is the 
+idea that the common factor is the common underlying  (latent) cause of the realizations
+of a set of indicators that are said to measure the common factor. 
+The idea of the reflective measurement model is closely related to the 
+[true score](#truescore) theory. Accordingly, indicators related to the common factor
 are modeled as measurement error-prone manifestations of a common variable, 
-cause or factor. The idea of a common factor is closely related to the true
-score theory. Although, there a subtle conceptional differences, the terms common factor,
-true score, and latent variable are mostly used synommenoulsy in **cSEM**.
+cause or factor. Although, there are subtle conceptional differences, the terms 
+common factor, true score, and latent variable are mostly used synommenoulsy in **cSEM**.
 
-#### Composite
+The common factor is also the central entity in the causal-formative 
+measurment model. Here the indicators are modeled as causing the/one common factor.
+This type of measurement looks similar to the [composite (measurement) model](#composite), however, 
+both models are, in fact, quite different. While the causal-formative measurement
+model assumes that the common factor is imperfectly measured by its indicators (i.e., 
+there is an error term with non-zero variance) the composite in a composite model
+is build/defined by its indicators, i.e., error-free by definition.
 
-A composite is a weighted sum of indicators. Composites may 
-either serve as constructs in their own right or as proxies for a latent variable,
-which, in turn, serves as a "statistical proxy" for a concept under study. 
-The nature of the composite is therefore defined by the type of (measurement) 
+### Composite{#composite}
+
+A composite is a weighted sum of [indicators](#indicator). Composites may 
+either serve as [constructs](#construct) in their own right or as [proxies](#proxy) 
+for a [latent variable](#latentvariable) which, in turn, serves as a 
+"statistical proxy" for a [concept](#concept) under study. The nature of the 
+composite is therefore defined by the type of (measurement) 
 model. If composites are error-free representations 
-of a concept we refer to the measurement model as composite measurement. If 
-composites are used as stand-ins, the measurement model is called 
-causal-formative (Henseler, 2017). 
+of a concept we refer to the measurement model as the composite measurement (model). If 
+composites are used as [stand-ins](#standin) for a [latent variable](#latentvariable), 
+the measurement model is called 
+causal-formative [@Henseler2017]. 
 
 Note that, although we sometimes use it this way as well, the term "measurement" 
-is acutally inadequate for the composite model since in a composite model
+is acutally rather inadequate for the composite model since in a composite model
 the construct is build/formed by its related indicators. Hence no measurement 
 in the acutal sense of the word takes place.
     
-#### Composite-based methods 
+### Composite-based methods{#cbased}
 
 Composite-based methods or composite-based SEM refers to the entirety of methods 
-centered around the use as of composites (linear compounts of observables) 
-as stand-ins or error-free representations for the concepts under investigation.
+centered around the use as of [composites](#composite) (linear compounts of observables) 
+as [stand-ins](#standin) or error-free representations for the [concepts](#concept) under investigation.
 Composite-based methods are often also called
 variance-based methods as focal parameters are usually retrived such that explained 
 variance of the dependend constructs in a structural model is maximized.
-    
-#### Concept
 
-An entity defined by a conceptual/theoretical definition. In line with Rigdon (2016)
-variables representing or subsuming a concept are called **conceptual variables**. 
+### Composite-based SEM{#cbasedsem}
+
+See: [Composite-based methods](#cbased)
+
+### Concept{#concept}
+
+An entity defined by a conceptual/theoretical definition. In line with @Rigdon2016
+variables representing or subsuming a concept are called conceptual variables. 
 The precise nature/meaning of a conceptual variable depends on 
 "differnt assumptions, philosophies or worldviews [of the researcher]" 
-(Rigdon, 2016, p. 2). Unless otherwise stated, in **cSEM**, it is sufficient
+[@Rigdon2016, p. 2]. Unless otherwise stated, in **cSEM**, it is sufficient
 to think of concepts as entities that exist simply because they 
 have been defined. Hence, abstract terms such as "loyalty" or "depression" as 
 well as designed entities (artifacts) such as the "OECD Better Life Index"
 are covered by the definition.
 
-#### Construct
+### Construct{#construct}
 
-Construct refer to a representation of a concept *within a given statistical 
-model*. While a concept is defined by a conceptual (theoretical) definition, 
+Construct refer to a representation of a [concept](#concept) within a given statistical 
+model. While a concept is defined by a conceptual (theoretical) definition, 
 a construct for a concept is defined/created by the researcher's operationalization
 of a concept within a statistical model. Concepts are either modeled
 as common factors/latent variables or as composites. Both operationalizations
@@ -78,82 +96,127 @@ as common factors/latent variables or as composites. Both operationalizations
 As opposed to concepts, constructs therefore exist because they arise as 
 the result of the act of modeling their relation to the observable 
 variables (indicators) based on a specific set of assumptions. 
-Constructs may therefore best be understood as stand-ins for concepts. Consequently,
+Constructs may therefore best be understood as [stand-ins](#standin), i.e. statistical proxies for concepts. Consequently,
 constructs do not necessarily represent the concept they seek to represent, i.e.,
 there may be a validity gap.
 
-#### Factor-based methods or covariance-based SEM 
+### Covariance-based SEM 
+
+See: [Factor-based methods](#fbmethods)
+
+### Factor-based methods{#fbmethods}
 
 Factor-based methods or factor-based SEM refers to the entirety of methods 
-centered around the use of the common factors/latent variables as stand-ins for 
-the concepts under investigation. Factor-based methods are also called
+centered around the use of [common factors](#commonfactor) as statistical 
+[proxies](#proxy) for the [concepts](#concept) under investigation. Factor-based methods are also called
 covariance-based methods as focal parameters are retrived such that the
 difference between the model-implied $\bm\Sigma(\theta)$ and the empirical indicator covariance 
 matrix $\bm S$ is minimized.
     
-#### Indicator
+### Indicator{#indicator}
 
 An observable variable. In **cSEM** observable variables are generally refered 
 to as indicators, however, terms such as item, manifest variable, or 
 observable (variable) are sometimes used synommenoulsy.
     
-#### Latent variable
+### Latent variable{#latentvariable}
 
-See: Common factor
+See: [Common factor](#commonfactor)
 
-#### Measurement model
+### Measurement model{#mm}
 
-The measurement model is a statistical model relating indicators to constructs
-(the statistical representiation of a concept). If the concept to study is modeled
-as a common factor two measurement models exist:
+The measurement model is a statistical model relating [indicators](#indicator) to [constructs](#construct)
+(the statistical representiation of a [concept](#concept)). If the concept under 
+study is modeled as a [common factor](#commonfactor) two measurement models exist:
 
 - The reflective measurement model
 - The causal-formative measurement model
 
+If the concept under study is modeled as a [composite](#composite) we call the
+measurement model:
+
+- composite (measurement) model
+
 Note that, although we sometimes use it this way as well, the term "measurement" 
-is acutally inadequate for the composite model since in a composite model
+is acutally rather inadequate for the composite model since in a composite model
 the construct is build/formed by its related indicators. Hence no measurement 
 in the acutal sense of the word takes place.
 
+### Model
 
-#### Test score
+There are many ways to define the term "model". In **cSEM** we use the term model to 
+refer to both the theoretical and the statistical model.
 
-A proxy for a true score. Usually, the test score is a simple (unweighted) 
-sum score of observables/indicators, i.e. unit weights are assumed when
+Simply speaking theoretical models are a formalized set of hypothesis stating if and 
+how entities (observable or unobservable) are related. Since theoretical models are
+by definition theoretical any statistical analysis inevitably mandates a statistical
+model based. 
+
+A statistical model is typically defined by a set of (testable) restrictions. Statistical 
+models are best understood as the operationalized version of the theoretical model. 
+Note that the act of operationalizing a given theoretical model always entails
+the possibility  for error. Using a [construct](#construct) modeled as a [composite](#composite) 
+or a [common factor](#commonfactor), for instance, is an attempt to map a theoretical entity (the [concept](#concept))
+from the theoretical space into the statistical space. If this mapping is not
+one-to-one the construct  is only an imperfect representation  of the concept.
+Consequently, there is a validity gap.
+
+NOTE: Note that we try to refrain from using the term "model" when describing
+an estimation approach or algorithm such as partial least squares (PLS) as this
+helps to clearly distinguish between the model and the approach used to estimate
+*a given model*.
+
+### Test score{#testscore}
+
+A [proxy](#proxy) for a [true score](#truescore). Usually, the test score is a simple (unweighted) 
+sum score of [observables/indicators](#indicators), i.e. unit weights are assumed when
 building the test score. More generally, 
-the test score can be any weighted sum of observables (i.e. a composite), 
+the test score can be any weighted sum of observables (i.e. a [composite](#composite)), 
 however, the term "test score" is historically closely tied to the idea that it is
 indeed a simple sum score. Hence, whenever it is important to distinguish
 between a true score as representing a sum score and a true score
 as representing a weighted sum of indicators (where indicator weights a not necessarily
 one) we will explicitly state what kind of test score we mean.
     
-#### True score
+### True score{#truescore}
 
 The term true score derives from the true score theory which theorizes/models
-an outcome/indicator as the sum of a true score and an error score. The term is 
-closely linked to the latent variable/common factor model in that the true
+an [indicator](#indicator) or outcome as the sum of a true score and an error score. The term is 
+closely linked to the [latent variable/common factor](#commonfactor) model in that the true
 score of a set of indicators are linear functions of some underlying common factor. 
 Mathematically speaking, the correspondence is $\eta_{jk} = \lambda_{jk}\eta_j$  
-where $\eta_{jk}$, $\eta_j$ the underlying latent variable and $\lambda_{jk}$ the loading.
-Despite the difference, the term true score can generally be used synommenoulsy 
-to the terms common factor and latent variable without risking a misunderstanding.
+where $\eta_{jk}$ is the true score, $\eta_j$ the underlying latent variable and $\lambda_{jk}$ the loading.
+Despite some differences, the term true score can generally be used synommenoulsy 
+to the terms common factor and latent variable in **cSEM** without risking a misunderstanding.
     
-#### Proxy
+### Proxy {#proxy}
 
 Any quantity that functions as a representation of some other quantity.
-Prominent proxies are the test score - which serves as a stand-in/proxy
-for the true score - and the composite - which serves as a stand-in/proxy
-for a common factor. 
+Prominent proxies are the [test score](#testscore) - which serves as a stand-in/proxy
+for the [true score](#truescore) - and the [composite](#composite) - which serves as a stand-in/proxy for a common factor if not used as a composite in its own right. 
 Proxies are usually - but not necessarily - error-prone representations
 of the quantity they seek to represent.
 
-#### Stand-in
+### Saturated and non-saturated models
 
-See: Proxy    
+A structural model is called "saturated" if all [constructs](#construct) of the model are
+allowed to freely covary. This is equivalent to saying that none of the path
+of the structural model are restricted to zero. A saturated model has zero degrees
+of freedom and hence carries no testable restrictions. If at least one path is 
+restricted to zero, the structural model is called "non-saturated".
 
-#### Structural Equation Modeling (SEM)
+### Stand-in{#standin}
+
+See: [Proxy](#proxy)
+
+### Structural Equation Modeling (SEM)
 
 The entirety of a set of related theories, mathematical models, methods, 
 algorithms and terminologies related to analyzing the relationships 
-between (unobserved) concepts and/or observables. 
+between [concepts](#concept) and/or observables. 
+
+### Variance-based methods {#vbmethods}
+
+See: [Composite-based methods](#cbased)
+
+## Literatur

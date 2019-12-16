@@ -1,6 +1,7 @@
 ---
 title: "Introduction to cSEM"
 date: "Last edited: `r Sys.Date()`"
+author: Manuel Rademaker
 output:
   prettydoc::html_pretty:
     theme: cayman
