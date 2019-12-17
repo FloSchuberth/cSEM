@@ -147,7 +147,7 @@ in the acutal sense of the word takes place.
 There are many ways to define the term "model". In **cSEM** we use the term model to 
 refer to both the theoretical and the statistical model.
 
-Simply speaking theoretical models are a formalized set of hypothesis stating if and 
+Simply speaking theoretical models are a formalized set of hypotheses stating if and 
 how entities (observable or unobservable) are related. Since theoretical models are
 by definition theoretical any statistical analysis inevitably mandates a statistical
 model based. 

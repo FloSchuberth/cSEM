@@ -11,6 +11,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<meta name="author" content="Manuel Rademaker" />
 
 
 <title>Introduction to cSEM</title>
@@ -140,7 +141,8 @@ code span.ot { color: #007020; }
 
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Introduction to cSEM</h1>
-<h4 class="date project-date">Last edited: 2019-12-12</h4>
+<h4 class="author project-author">Manuel Rademaker</h4>
+<h4 class="date project-date">Last edited: 2019-12-17</h4>
 </section>
 
 
@@ -172,19 +174,19 @@ code span.ot { color: #007020; }
 </div>
 
 <section class="main-content">
-<p>WARNING: this document is work in progress and may still contain mistakes! <!-- used to print boldface greek symbols (\mathbf only works for latin symbols) --></p>
+<!-- used to print boldface greek symbols (\mathbf only works for latin symbols) -->
 
 <div id="preface" class="section level1">
 <h1>Preface</h1>
 <p>Structural equation modeling (SEM) has been used developed for decades across various research fields such as (among others) psychology, sociology, and business research.</p>
-<p>As an almost inevitable consequence, a different terminology system and, to some extent, mathematical notation has evolved within each field over the years. This “terminology mess” is one of the major obstacles in interdisciplinary research and (scientific) debates, since it hampers a broader understanding of methodological issues, and, even worse, promotes systematic misuse (e.g., the use of Cronbach’s alpha as an estimator for congeneric reliability). This is particularly true for users new to SEM or practitioners who are overwhelmed by terminology of their own field only to find that the term they just thought to have finally grasped is defined differently in another field, making the confusion complete. A prime example is the term formative. See e.g., <span class="citation">Henseler (2017)</span> for a clarifiction.</p>
+<p>As an almost inevitable consequence, a different terminology system and, to some extent, mathematical notation has evolved within each field over the years. This “terminology mess” is one of the major obstacles in interdisciplinary research and (scientific) debates, since it hampers a broader understanding of methodological issues, and, even worse, promotes systematic misuse (e.g., the use of Cronbach’s alpha as an estimator for congeneric reliability). This is particularly true for users new to SEM or practitioners who are overwhelmed by terminology of their own field only to find that the term they just thought to have finally completely grasped is defined differently in another field, making the confusion complete. A prime example is the term “formative” (measurement) which has been used to describe a causal-formative as well as <a href="#cmodel">a composite model</a>. See e.g., <span class="citation">Henseler (2017)</span> for a clarifiction.</p>
 <p>Ultimately, this is a matter of (mis)communication which, in our opinion, can only be satisfactorily solved by establishing a clear, unambiguous definition for each term and symbol that is used within the package. We emphasize that we do not seek to impose “our” conventions, nor do we claim they are the “correct” conventions, but merely seek to make communication between us (the authors of the package) and you (the package user) as unambiguous and error-free as possible.</p>
 <p>Hence, we provide a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Terminology</a> and a <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation</a> file that contains key terms and mathematical notation/symbols that we consider crucial, alongside our definition. Users are encouraged to read these files carefully to avoid potential misunderstandings.</p>
 <ol style="list-style-type: decimal">
 <li>The <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Terminology</a> file contains each term that we think should be defined and explained in order to make sure package users understand complementary help files and vignettes the way the package authors intended them to be understood.</li>
 <li>The <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation</a> files contains some fundamental mathematical notation/ symbols used in the package documentation alongside a definition. Bearing some expections, we mostly follow standard notation as layed out in e.g., <span class="citation">Bollen (1989)</span></li>
 </ol>
-<p>The package is designed based on a set of principles that are partly in contrast to commonly used open-source and commercial software packages offering similar content (e.g., smartPLS). This introduction explains these principles, contrasts them against the principles of existing software packages and points readers to further reading. Lastly, to use <strong>cSEM</strong> effectively, it is helpful to understand its design. Hence, the package architecture and design as well as what we consider the “cSEM workflow” are discussed.</p>
+<p>The package is designed based on a set of principles and are Terminology that are partly in contrast to commonly used open-source or commercial software packages offering similar content (e.g., smartPLS). Togther with the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Terminology</a> and <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation</a> file this introduction seeks to explains these principles. Lastly, to use <strong>cSEM</strong> effectively, it is helpful to understand its design. Hence, the package architecture and design as well as what we consider the “cSEM workflow” are discussed.</p>
 </div>
 <div id="composite-based-structural-equation-modeling" class="section level1">
 <h1>Composite-based structural equation modeling</h1>
@@ -226,7 +228,7 @@ code span.ot { color: #007020; }
 <li><p><strong>Estimate</strong>: no matter the model and type of data, estimation is always done using one central function with the data as its first and the model as its second argument:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">csem</span>(<span class="dt">.data =</span> my_data, <span class="dt">.model =</span> my_model)</span></code></pre></div>
 <p>Naturally, the <code>csem()</code> function has a number of additional arguments to fine-tune the estimation, however, since <code>csem()</code> automatically recognizes, for instance, whether a concept was modeled as a common factor or composite and automatically applies appropriate correction for attenuation, default arguments are often sufficient. See the <a href="#estimate">Estimate using csem()</a> section below.</p></li>
-<li><p><strong>Postestimate</strong>: Inspired by the <a href="https://dplyr.tidyverse.org/">grammar of data manipulation</a> underlying the <a href="https://dplyr.tidyverse.org/">dplyr</a> package, cSEM provides a 5 postestimation verbs that concisely cover all common postestimation task as well as 4 additional test commands:</p>
+<li><p><strong>Postestimate</strong>: Inspired by the <a href="https://dplyr.tidyverse.org/">grammar of data manipulation</a> underlying the <a href="https://dplyr.tidyverse.org/">dplyr</a> package, cSEM provides a 5 postestimation verbs that concisely cover all common postestimation task as well as 4 additional test commands and 2 general do command:</p>
 <ol style="list-style-type: decimal">
 <li><code>assess()</code></li>
 <li><code>infer()</code></li>
@@ -237,6 +239,8 @@ code span.ot { color: #007020; }
 <li><code>testMICOM()</code></li>
 <li><code>testHausman()</code></li>
 <li><code>testMGD()</code></li>
+<li><code>doFloodlightAnalysis()</code></li>
+<li><code>doRedundancyAnalysis()</code></li>
 </ol>
 <p>All verbs accept the result of a call to <code>csem()</code> as input which makes working with these function extremely simple. You only need to remember the word, not any specific syntax or arguments. Of course, all functions have a number of additional arguments to fine-tune the postestimation. See the <a href="#postestimate">Apply postestimation functions</a> sections below. For details on the arguments consult the individual help files.</p></li>
 </ol>
@@ -467,7 +471,7 @@ code span.ot { color: #007020; }
 ##  Number of admissible results     = 499
 ##  Approach to handle inadmissibles = drop
 ##  Sign change option               = none
-##  Random seed                      = -1449453253
+##  Random seed                      = -258624731
 ## 
 ##  Construct details:
 ##  ------------------
@@ -483,37 +487,37 @@ code span.ot { color: #007020; }
 ## ============================
 ##                                                              CI_percentile   
 ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1      0.6713      0.0432   15.5237    0.0000 [ 0.5727; 0.7516 ] 
-##   eta3 ~ eta1      0.4585      0.0795    5.7682    0.0000 [ 0.3108; 0.6177 ] 
-##   eta3 ~ eta2      0.3052      0.0856    3.5653    0.0004 [ 0.1275; 0.4717 ] 
+##   eta2 ~ eta1      0.6713      0.0418   16.0533    0.0000 [ 0.5927; 0.7491 ] 
+##   eta3 ~ eta1      0.4585      0.0832    5.5083    0.0000 [ 0.2929; 0.6199 ] 
+##   eta3 ~ eta2      0.3052      0.0862    3.5392    0.0004 [ 0.1401; 0.4741 ] 
 ## 
 ## Estimated loadings:
 ## ===================
 ##                                                              CI_percentile   
 ##   Loading        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 =~ y11      0.6631      0.0422   15.6994    0.0000 [ 0.5772; 0.7473 ] 
-##   eta1 =~ y12      0.6493      0.0406   15.9778    0.0000 [ 0.5695; 0.7235 ] 
-##   eta1 =~ y13      0.7613      0.0334   22.7924    0.0000 [ 0.6904; 0.8243 ] 
-##   eta2 =~ y21      0.5165      0.0527    9.7950    0.0000 [ 0.4011; 0.6080 ] 
-##   eta2 =~ y22      0.7554      0.0374   20.2080    0.0000 [ 0.6816; 0.8256 ] 
-##   eta2 =~ y23      0.7997      0.0369   21.6637    0.0000 [ 0.7218; 0.8647 ] 
-##   eta3 =~ y31      0.8223      0.0344   23.8954    0.0000 [ 0.7536; 0.8906 ] 
-##   eta3 =~ y32      0.6581      0.0392   16.7675    0.0000 [ 0.5755; 0.7330 ] 
-##   eta3 =~ y33      0.7474      0.0416   17.9645    0.0000 [ 0.6665; 0.8317 ] 
+##   eta1 =~ y11      0.6631      0.0392   16.9240    0.0000 [ 0.5726; 0.7270 ] 
+##   eta1 =~ y12      0.6493      0.0392   16.5830    0.0000 [ 0.5668; 0.7231 ] 
+##   eta1 =~ y13      0.7613      0.0319   23.8486    0.0000 [ 0.7016; 0.8282 ] 
+##   eta2 =~ y21      0.5165      0.0537    9.6259    0.0000 [ 0.3994; 0.6097 ] 
+##   eta2 =~ y22      0.7554      0.0348   21.7003    0.0000 [ 0.6803; 0.8146 ] 
+##   eta2 =~ y23      0.7997      0.0370   21.6192    0.0000 [ 0.7203; 0.8661 ] 
+##   eta3 =~ y31      0.8223      0.0321   25.6203    0.0000 [ 0.7511; 0.8800 ] 
+##   eta3 =~ y32      0.6581      0.0385   17.1086    0.0000 [ 0.5801; 0.7299 ] 
+##   eta3 =~ y33      0.7474      0.0388   19.2785    0.0000 [ 0.6751; 0.8172 ] 
 ## 
 ## Estimated weights:
 ## ==================
 ##                                                              CI_percentile   
 ##   Weights        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 &lt;~ y11      0.3956      0.0231   17.1178    0.0000 [ 0.3538; 0.4408 ] 
-##   eta1 &lt;~ y12      0.3873      0.0212   18.3091    0.0000 [ 0.3481; 0.4287 ] 
-##   eta1 &lt;~ y13      0.4542      0.0197   23.0179    0.0000 [ 0.4170; 0.4930 ] 
-##   eta2 &lt;~ y21      0.3058      0.0270   11.3285    0.0000 [ 0.2486; 0.3557 ] 
-##   eta2 &lt;~ y22      0.4473      0.0224   19.9988    0.0000 [ 0.4078; 0.4948 ] 
-##   eta2 &lt;~ y23      0.4735      0.0213   22.2385    0.0000 [ 0.4362; 0.5210 ] 
-##   eta3 &lt;~ y31      0.4400      0.0198   22.1926    0.0000 [ 0.3992; 0.4775 ] 
-##   eta3 &lt;~ y32      0.3521      0.0183   19.2828    0.0000 [ 0.3121; 0.3859 ] 
-##   eta3 &lt;~ y33      0.3999      0.0200   20.0435    0.0000 [ 0.3621; 0.4368 ] 
+##   eta1 &lt;~ y11      0.3956      0.0210   18.8514    0.0000 [ 0.3484; 0.4330 ] 
+##   eta1 &lt;~ y12      0.3873      0.0188   20.6330    0.0000 [ 0.3504; 0.4258 ] 
+##   eta1 &lt;~ y13      0.4542      0.0202   22.4799    0.0000 [ 0.4176; 0.4993 ] 
+##   eta2 &lt;~ y21      0.3058      0.0285   10.7309    0.0000 [ 0.2476; 0.3557 ] 
+##   eta2 &lt;~ y22      0.4473      0.0207   21.6164    0.0000 [ 0.4123; 0.4910 ] 
+##   eta2 &lt;~ y23      0.4735      0.0206   23.0223    0.0000 [ 0.4357; 0.5139 ] 
+##   eta3 &lt;~ y31      0.4400      0.0177   24.8995    0.0000 [ 0.4066; 0.4731 ] 
+##   eta3 &lt;~ y32      0.3521      0.0185   19.0386    0.0000 [ 0.3173; 0.3913 ] 
+##   eta3 &lt;~ y33      0.3999      0.0187   21.3605    0.0000 [ 0.3664; 0.4361 ] 
 ## 
 ## ------------------------------------ Effects -----------------------------------
 ## 
@@ -521,32 +525,32 @@ code span.ot { color: #007020; }
 ## ========================
 ##                                                               CI_percentile   
 ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1       0.6713      0.0432   15.5237    0.0000 [ 0.5727; 0.7516 ] 
-##   eta3 ~ eta1       0.6634      0.0374   17.7606    0.0000 [ 0.5897; 0.7421 ] 
-##   eta3 ~ eta2       0.3052      0.0856    3.5653    0.0004 [ 0.1275; 0.4717 ] 
+##   eta2 ~ eta1       0.6713      0.0418   16.0533    0.0000 [ 0.5927; 0.7491 ] 
+##   eta3 ~ eta1       0.6634      0.0397   16.6919    0.0000 [ 0.5864; 0.7395 ] 
+##   eta3 ~ eta2       0.3052      0.0862    3.5392    0.0004 [ 0.1401; 0.4741 ] 
 ## 
 ## Estimated indirect effects:
 ## ===========================
 ##                                                                  CI_percentile   
 ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta3 ~ eta1          0.2049      0.0578    3.5450    0.0004 [ 0.0852; 0.3132 ] 
+##   eta3 ~ eta1          0.2049      0.0579    3.5365    0.0004 [ 0.0960; 0.3225 ] 
 ## ________________________________________________________________________________</code></pre>
 <p>Or directly via <code>infer()</code></p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>ii &lt;-<span class="st"> </span><span class="kw">infer</span>(b1, <span class="dt">.quantity =</span> <span class="kw">c</span>(<span class="st">&quot;CI_standard_z&quot;</span>, <span class="st">&quot;CI_percentile&quot;</span>), <span class="dt">.alpha =</span> <span class="kw">c</span>(<span class="fl">0.01</span>, <span class="fl">0.05</span>))</span>
 <span id="cb12-2"><a href="#cb12-2"></a>ii<span class="op">$</span>Path_estimates</span></code></pre></div>
 <pre><code>## $CI_standard_z
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5605568   0.2466131  0.09228651
-## 99%U   0.7833436   0.6561110  0.53320934
-## 95%L   0.5871903   0.2955673  0.14499751
-## 95%U   0.7567101   0.6071567  0.48049834
+## 99%L   0.5615612   0.2417754  0.08440417
+## 99%U   0.7769988   0.6705942  0.52858660
+## 95%L   0.5873161   0.2930394  0.13750485
+## 95%U   0.7512439   0.6193302  0.47548593
 ## 
 ## $CI_percentile
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5514556   0.2568535  0.07619449
-## 99%U   0.7719291   0.6688808  0.50594095
-## 95%L   0.5726571   0.3107509  0.12752908
-## 95%U   0.7516168   0.6177034  0.47169218</code></pre>
+## 99%L   0.5597046   0.2152224  0.08795876
+## 99%U   0.7752139   0.6620408  0.54197170
+## 95%L   0.5927201   0.2928990  0.14007982
+## 95%U   0.7491083   0.6199237  0.47412424</code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future">future framework</a>. For multiprocessing simply set <code>.eval_plan = &quot;multiprocess&quot;</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the background as there are cores available instead. Note that this naturally has some overhead. Consequently, for a small number of resamples multiprocessing will generally not be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument. A typical call would look like this:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>b &lt;-<span class="st"> </span><span class="kw">csem</span>(</span>
 <span id="cb14-2"><a href="#cb14-2"></a>  <span class="dt">.data            =</span> satisfaction,</span>
@@ -570,7 +574,7 @@ code span.ot { color: #007020; }
 <dd><p>Calculate common inferential quantities. For users interested in the estimated standard errors and/or confidences intervals <code>summarize()</code> will usually be more helpful as it has a much more user-friendly print method.</p>
 </dd>
 <dt><code>predict()</code></dt>
-<dd><p>Predict indicator scores of endogenous constructs.</p>
+<dd><p>Predict indicator scores of endogenous constructs based on the procedure introduced by <span class="citation">Shmueli et al. (2016)</span>.</p>
 </dd>
 <dt><code>summarize()</code></dt>
 <dd><p>Summarize a model. The function is mainly called for its side effect, the printing of a structured summary of the estimates. It also provides most estimates in user-friendly data frames. The data frame format is usually much more convenient if users intend to present the results in e.g., a paper or a presentation.</p>
@@ -589,10 +593,21 @@ code span.ot { color: #007020; }
 <dd><p>Test for overall model fit based on <span class="citation">Beran and Srivastava (1985)</span>. See also <span class="citation">Dijkstra and Henseler (2015)</span>.</p>
 </dd>
 <dt><code>testMGD()</code></dt>
-<dd><p>Test for group differences using difference measures</p>
+<dd><p>Test for group differences using several different approach such as e.g., the one described in <span class="citation">Klesel et al. (2019)</span>.</p>
 </dd>
 <dt><code>testMICOM()</code></dt>
 <dd><p>Test of measurement invariance of composites proposed by <span class="citation">Henseler, Ringle, and Sarstedt (2016)</span></p>
+</dd>
+</dl>
+</div>
+<div id="the-do_-family-of-postestimation-functions" class="section level4">
+<h4>The <code>do_*</code> family of postestimation functions</h4>
+<dl>
+<dt><code>doFloodlightAnalysis()</code></dt>
+<dd><p>Performs a floodlight analysis as described in <span class="citation">Spiller et al. (2013)</span>.</p>
+</dd>
+<dt><code>doRedundancyAnalysis()</code></dt>
+<dd><p>Perform a redundancy analysis (RA) as proposed by <span class="citation">Hair et al. (2016)</span> with reference to <span class="citation">Chin (1998)</span>.</p>
 </dd>
 </dl>
 <p>Technically, postestimation functions are generic function with methods for objects of class <code>cSEMResults_default</code>, <code>cSEMResults_multi</code>, <code>cSEMResults_2ndorder</code>. In <strong>cSEM</strong> every <code>cSEMResults_*</code> object must also have class <code>cSEMResults</code> for internal reasons. When using one of the major postestimation functions, method dispatch is therefore technically done on one of the <code>cSEMResults_*</code> class attributes, ignoring the <code>cSEMResults</code> class attribute. As long as a postestimation function is used directly method dispatch is not of any practical concern to the end-user. The difference, however, becomes important if a user seeks to directly invoke an internal function which is called by one of the postestimation functions (e.g., <code>calculateAVE()</code> or <code>calculateHTMT()</code> as called by <code>assess()</code>). In this case, only objects of class <code>cSEMResults_default</code> are accepted as this ensures a specific structure. Therefore, it is important to remember that <em>internal functions are generally <strong>not</strong> generic.</em></p>
@@ -604,7 +619,7 @@ code span.ot { color: #007020; }
 <p><strong>cSEM</strong> is based on a number of principles, that have shaped its design, termionolgy and scope. These principles are discussed below</p>
 <div id="model-vs.-estimation" class="section level3">
 <h3>Model vs. Estimation</h3>
-<p>The way different concepts and their relationship are <em>modeled</em> is strictly distinct from how they are <em>estimated</em>. Hence we strictly distinguish between concepts modeled as common factors (or composites) and the actual estimation <strong>for a given model</strong>.</p>
+<p>The way different concepts and their relationship are <em>modeled</em> is strictly distinct from how they are <em>estimated</em>. Hence we strictly distinguish between concepts modeled as common factors (or composites) and the actual estimation <strong>for a given model</strong>. In our opinion, these differences are fundamental to understanding the scope and limits of a certain approach. The most notable consequence is that approaches such as partial least squares and everything related to it (e.g., the modes) or generalized structured component analysis are “only” considered as estimators/estimation approaches <strong>for a given model</strong>.</p>
 </div>
 <div id="composites-in-a-composite-model-vs.-composites-in-a-common-factor-model-and-disattenuation" class="section level3">
 <h3>Composites in a composite model vs. composites in a common factor model and disattenuation</h3>
@@ -673,14 +688,23 @@ code span.ot { color: #007020; }
 <div id="ref-Bollen1989">
 <p>Bollen, Kenneth A. 1989. <em>Structural Equations with Latent Variables</em>. Wiley-Interscience.</p>
 </div>
+<div id="ref-Chin1998">
+<p>Chin, W. W. 1998. “Modern Methods for Business Research.” In, edited by G. A. Marcoulides, 295–358. Mahwah, NJ: Lawrence Erlbaum.</p>
+</div>
 <div id="ref-Dijkstra2015">
 <p>Dijkstra, Theo K., and Jörg Henseler. 2015. “Consistent and Asymptotically Normal PLS Estimators for Linear Structural Equations.” <em>Computational Statistics &amp; Data Analysis</em> 81: 10–23.</p>
+</div>
+<div id="ref-Hair2016">
+<p>Hair, Joseph F, G Tomas M Hult, Christian Ringle, and Marko Sarstedt. 2016. <em>A Primer on Partial Least Squares Structural Equation Modeling (PLS-SEM)</em>. Sage publications.</p>
 </div>
 <div id="ref-Henseler2017">
 <p>Henseler, Jörg. 2017. “Bridging Design and Behavioral Research with Variance-Based Structural Equation Modeling.” <em>Journal of Advertising</em> 46 (1): 178–92. <a href="https://doi.org/10.1080/00913367.2017.1281780">https://doi.org/10.1080/00913367.2017.1281780</a>.</p>
 </div>
 <div id="ref-Henseler2016">
 <p>Henseler, Jörg, Christian M. Ringle, and Marko Sarstedt. 2016. “Testing Measurement Invariance of Composites Using Partial Least Squares.” Edited by Ruey-Jer “Bryan” Jean Rudolf R. Sinkovics. <em>International Marketing Review</em> 33 (3): 405–31. <a href="https://doi.org/10.1108/imr-09-2014-0304">https://doi.org/10.1108/imr-09-2014-0304</a>.</p>
+</div>
+<div id="ref-Klesel2019">
+<p>Klesel, Michael, Florian Schuberth, Jörg Henseler, and Bjoern Niehaves. 2019. “A Test for Multigroup Comparison Using Partial Least Squares Path Modeling.” <em>Internet Research</em> 29 (3): 464–77. <a href="https://doi.org/10.1108/intr-11-2017-0418">https://doi.org/10.1108/intr-11-2017-0418</a>.</p>
 </div>
 <div id="ref-Rigdon2016">
 <p>Rigdon, Edward E. 2016. “Choosing PLS Path Modeling as Analytical Method in European Management Research: A Realist Perspective.” <em>European Management Journal</em> 34 (6): 598–605. <a href="https://doi.org/10.1016/j.emj.2016.05.006">https://doi.org/10.1016/j.emj.2016.05.006</a>.</p>
@@ -690,6 +714,12 @@ code span.ot { color: #007020; }
 </div>
 <div id="ref-Rigdon2019">
 <p>Rigdon, Edward E., Jan-Michael Becker, and Marko Sarstedt. 2019. “Factor Indeterminacy as Metrological Uncertainty: Implications for Advancing Psychological Measurement.” <em>Multivariate Behavioral Research</em>, March, 1–15. <a href="https://doi.org/10.1080/00273171.2018.1535420">https://doi.org/10.1080/00273171.2018.1535420</a>.</p>
+</div>
+<div id="ref-Shmueli2016">
+<p>Shmueli, Galit, Soumya Ray, Juan Manuel Velasquez Estrada, and Suneel Babu Chatla. 2016. “The Elephant in the Room: Predictive Performance of PLS Models.” <em>Journal of Business Research</em> 69 (10): 4552–64. <a href="https://doi.org/10.1016/j.jbusres.2016.03.049">https://doi.org/10.1016/j.jbusres.2016.03.049</a>.</p>
+</div>
+<div id="ref-Spiller2013">
+<p>Spiller, Stephen A., Gavan J. Fitzsimons, John G. Lynch, and Gary H. Mcclelland. 2013. “Spotlights, Floodlights, and the Magic Number Zero: Simple Effects Tests in Moderated Regression.” <em>Journal of Marketing Research</em> 50 (2): 277–88. <a href="https://doi.org/10.1509/jmr.12.0420">https://doi.org/10.1509/jmr.12.0420</a>.</p>
 </div>
 </div>
 </div>
