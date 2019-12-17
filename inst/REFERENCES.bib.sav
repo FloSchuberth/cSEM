@@ -677,12 +677,12 @@ in the {Analysis} of {Covariance} {Structures}},
   Publisher 			   = {Sage Periodicals Press}
 }
 
-@book{Bentler1995,
-   title 		=   {EQS 6 {Structural} {Equations} {Program} {Manual}},
-   author 		=   {Bentler, Peter M.},
-   publisher 	= 	{Encino, CA: Multivariate Software,  Inc.},
-   year 		=   {2006},
-   version  	=   {6}
+@Book{Bentler2006,
+  author    = {Bentler, Peter M.},
+  publisher = {Encino, CA: Multivariate Software, Inc.},
+  title     = {EQS 6 {Structural} {Equations} {Program} {Manual}},
+  year      = {2006},
+  version   = {6},
 }
 
 @Article{Bentler1990,
@@ -757,6 +757,33 @@ in the {Analysis} of {Covariance} {Structures}},
   doi       = {10.1108/ejm-02-2019-0189},
   file      = {:Literatur/Shmueli2019.pdf:PDF},
   publisher = {Emerald},
+}
+
+@Article{Marsh2004,
+  author    = {Herbert W. Marsh and Kit-Tai Hau and Zhonglin Wen},
+  journal   = {Structural Equation Modeling: A Multidisciplinary Journal},
+  title     = {In Search of Golden Rules: Comment on Hypothesis-Testing Approaches to Setting Cutoff Values for Fit Indexes and Dangers in Overgeneralizing Hu and Bentler's (1999) Findings},
+  year      = {2004},
+  month     = {jul},
+  number    = {3},
+  pages     = {320--341},
+  volume    = {11},
+  doi       = {10.1207/s15328007sem1103_2},
+  file      = {:Literatur/Marsh2004.pdf:PDF},
+  publisher = {Informa {UK} Limited},
+}
+
+@Article{Joereskog1982,
+  author    = {Karl G. J{\"o}reskog and Dag S{\"o}rbom},
+  journal   = {Journal of Marketing Research},
+  title     = {Recent Developments in Structural Equation Modeling},
+  year      = {1982},
+  number    = {4},
+  pages     = {404--416},
+  volume    = {19},
+  abstract  = {The authors describe new developments in structural equation modeling as incorporated in LISREL V. The procedures are illustrated on data from three previous studies.},
+  file      = {:Literatur/Joereskog1982.pdf:PDF},
+  publisher = {American Marketing Association},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
