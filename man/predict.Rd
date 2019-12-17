@@ -60,6 +60,7 @@ comparisons.}
 \item{\code{$Prediction_metrics}}{A data frame containing the predictions metrics
 MAE, RMSE, and Q2_predict.}
 \item{\code{$Information}}{A list with elements
+\code{Target}, \code{Benchmark},
 \code{Number_of_observations_training}, \code{Number_of_observations_test}, \code{Number_of_folds},
 \code{Number_of_repetitions}, and \code{Handle_inadmissibles}.}
 }
@@ -87,17 +88,19 @@ predict the values in the columns of \code{.test_data}.
 
 In \insertCite{Shmueli2016;textual}{cSEM} PLS-based predictions for indicator \code{i}
 are compared to the predictions based on a multiple regression of indicator \code{i}
-on all available exogenous indicators (\code{.benachmark = "lm"}) and
-a simple mean-based prediction summarized in the Q2predict metric.
-\code{predict()} offers several alternative benchmarks including predictions
-based on unit weights (i.e. sum scores), GSCA weights, PCA weights, and
+on all available exogenous indicators (\code{.benchmark = "lm"}) and
+a simple mean-based prediction summarized in the Q2_predict metric.
+\code{predict()} is more general in that is allows users to compare the predictions
+based on a so-called target model/specificiation to predictions based on an
+alternative benchmark. Available benchmarks include predictions
+based on a linear model, PLS-PM weights, unit weights (i.e. sum scores), GSCA weights, PCA weights, and
 MAXVAR weights.
 
 By default, only the indicator scores of
 constructs modeled as common factors are predicted (\code{.only_common_factors  = TRUE}).
 While technically possible, prediction for constructs modeled
 as composites is conceptually difficult since composites are by design build
-by their indicators, i.e. composites are not though of as being predictive of
+by their indicators, i.e., composites are not though of as being predictive of
 their indicators.
 
 Each estimation run is checked for admissibility using \code{\link[=verify]{verify()}}. If the
@@ -106,7 +109,7 @@ Users may choose to \code{"ignore"} inadmissible results or to simply set predic
 to \code{NA} (\code{"set_NA"}) for the particular run that failed.
 }
 \examples{
-### Anime example from https://github.com/ISS-Analytics/pls-predict
+### Anime example taken from https://github.com/ISS-Analytics/pls-predict
 
 # Load data
 data(Anime) # data is similar to the Anime.csv found on 
@@ -124,16 +127,17 @@ dat_test  <- Anime[index, ]
 # Specify model
 model <- "
 # Structural model
+
 ApproachAvoidance ~ PerceivedVisualComplexity + Arousal
 
-# Measurement model
+# Measurement/composite model
 
 ApproachAvoidance         =~ AA0 + AA1 + AA2 + AA3
 PerceivedVisualComplexity <~ VX0 + VX1 + VX2 + VX3 + VX4
 Arousal                   <~ Aro1 + Aro2 + Aro3 + Aro4
 "
 
-# Estimate (Replicating the results from of the `simplePLS()` function)
+# Estimate (replicating the results of the `simplePLS()` function)
 res <- csem(dat_train, 
             model, 
             .disattenuate = FALSE, # original PLS
@@ -146,6 +150,7 @@ res <- csem(dat_train,
 pp <- predict(res, .test_data = dat_test)
 pp$Predictions_target[1:6, ]
 pp
+
 ### Compute prediction metrics  ------------------------------------------------
 res2 <- csem(Anime, # whole data set
             model, 
@@ -154,6 +159,7 @@ res2 <- csem(Anime, # whole data set
             .tolerance = 1e-07, 
             .PLS_weight_scheme_inner = "factorial"
 )
+
 # Predict using 10-fold cross-validation with 5 repetitions
 pp2 <- predict(res, .benchmark = "lm")
 pp2
