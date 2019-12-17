@@ -21,17 +21,19 @@
 #' 
 #' In \insertCite{Shmueli2016;textual}{cSEM} PLS-based predictions for indicator `i`
 #' are compared to the predictions based on a multiple regression of indicator `i`
-#' on all available exogenous indicators (`.benachmark = "lm"`) and 
-#' a simple mean-based prediction summarized in the Q2predict metric.
-#' `predict()` offers several alternative benchmarks including predictions
-#' based on unit weights (i.e. sum scores), GSCA weights, PCA weights, and 
+#' on all available exogenous indicators (`.benchmark = "lm"`) and 
+#' a simple mean-based prediction summarized in the Q2_predict metric.
+#' `predict()` is more general in that is allows users to compare the predictions
+#' based on a so-called target model/specificiation to predictions based on an
+#' alternative benchmark. Available benchmarks include predictions
+#' based on a linear model, PLS-PM weights, unit weights (i.e. sum scores), GSCA weights, PCA weights, and 
 #' MAXVAR weights.
 #' 
 #' By default, only the indicator scores of 
 #' constructs modeled as common factors are predicted (`.only_common_factors  = TRUE`). 
 #' While technically possible, prediction for constructs modeled
 #' as composites is conceptually difficult since composites are by design build
-#' by their indicators, i.e. composites are not though of as being predictive of
+#' by their indicators, i.e., composites are not though of as being predictive of
 #' their indicators.
 #' 
 #' Each estimation run is checked for admissibility using [verify()]. If the 
@@ -56,6 +58,7 @@
 #'   \item{`$Prediction_metrics`}{A data frame containing the predictions metrics
 #'     MAE, RMSE, and Q2_predict.}
 #'   \item{`$Information`}{A list with elements
+#'     `Target`, `Benchmark`,
 #'     `Number_of_observations_training`, `Number_of_observations_test`, `Number_of_folds`,
 #'     `Number_of_repetitions`, and `Handle_inadmissibles`.}
 #'     }
@@ -383,6 +386,7 @@ predict <- function(
       "Residuals_benchmark" = out_temp$Residuals_benchmark,
       "Prediction_metrics"  = df_metrics,
       "Information"         = list(
+        "Target"                 = .object$Information$Arguments$.approach_weights,
         "Benchmark"              = .benchmark,
         "Handle_inadmissibles"   = .handle_inadmissibles,
         "Number_of_observations_training" = nrow(X_train),

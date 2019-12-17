@@ -1,4 +1,4 @@
-### Anime example from https://github.com/ISS-Analytics/pls-predict
+### Anime example taken from https://github.com/ISS-Analytics/pls-predict
 
 # Load data
 data(Anime) # data is similar to the Anime.csv found on 
@@ -16,16 +16,17 @@ dat_test  <- Anime[index, ]
 # Specify model
 model <- "
 # Structural model
+
 ApproachAvoidance ~ PerceivedVisualComplexity + Arousal
 
-# Measurement model
+# Measurement/composite model
 
 ApproachAvoidance         =~ AA0 + AA1 + AA2 + AA3
 PerceivedVisualComplexity <~ VX0 + VX1 + VX2 + VX3 + VX4
 Arousal                   <~ Aro1 + Aro2 + Aro3 + Aro4
 "
 
-# Estimate (Replicating the results from of the `simplePLS()` function)
+# Estimate (replicating the results of the `simplePLS()` function)
 res <- csem(dat_train, 
             model, 
             .disattenuate = FALSE, # original PLS
@@ -38,6 +39,7 @@ res <- csem(dat_train,
 pp <- predict(res, .test_data = dat_test)
 pp$Predictions_target[1:6, ]
 pp
+
 ### Compute prediction metrics  ------------------------------------------------
 res2 <- csem(Anime, # whole data set
             model, 
@@ -46,6 +48,7 @@ res2 <- csem(Anime, # whole data set
             .tolerance = 1e-07, 
             .PLS_weight_scheme_inner = "factorial"
 )
+
 # Predict using 10-fold cross-validation with 5 repetitions
 pp2 <- predict(res, .benchmark = "lm")
 pp2
