@@ -11,23 +11,14 @@
 print.cSEMAssess <- function(x, ...) {
   
   cat2(rule2(type = 2))
-  nn <- intersect(names(x), c("AVE", "RhoC", "RhoC_weighted", "RhoT", "RhoT_weighted", "R2", "R2_adj"))
+  nn <- intersect(names(x), c("AVE", "R2", "R2_adj"))
   
   if(length(nn) > 0) {
     # Max name length 
     c_names <- names(x[[nn[1]]])
     if(length(c_names) > 0) {
       l <- max(nchar(c_names)) 
-      
-      ## If more than 4 quality criteria are to be printed: open a second block
-      ## otherwise print one block
-      if(length(nn) > 4) {
-        nn1 <- nn[1:4]
-        nn2 <- setdiff(nn, nn1)
-        nn <- list(nn1, nn2)
-      } else {
-        nn <- list(nn)
-      }
+      nn <- list(nn)
       
       for(j in seq_along(nn)) {
         cat2(
@@ -52,6 +43,26 @@ print.cSEMAssess <- function(x, ...) {
         } 
       }
     }
+  }
+  nn <- intersect(names(x), c("RhoC", "RhoC_weighted", "RhoT", "RhoT_weighted",
+                              "R2", "R2_adj", "reliability"))
+  
+  if(any(names(x) %in% c("CFI", "GFI", "IFI", "NFI", "NNFI", "RMSEA", 
+                         "RMS_theta", "SRMR", "DG", "DL", "DML"))) {
+    cat2("\n\n", rule2("Reliability"), "\n")
+    # # Reliability
+    # nn <- c("AVE", "RhoC", "RhoC_weighted", "RhoT", "RhoT_weighted", 
+    #   "R2", "R2_adj", "reliability")
+    # ## If more than 4 quality criteria are to be printed: open a second block
+    # ## otherwise print one block
+    # if(length(nn) > 4) {
+    #   nn1 <- nn[1:4]
+    #   nn2 <- setdiff(nn, nn1)
+    #   nn <- list(nn1, nn2)
+    # } else {
+    #   nn <- list(nn)
+    # }
+    
   }
   
   if(any(names(x) %in% c("CFI", "GFI", "IFI", "NFI", "NNFI", "RMSEA", 
@@ -120,7 +131,7 @@ print.cSEMAssess <- function(x, ...) {
   }
   
   if(any(names(x) == "Effect_size")) {
-    cat2("\n\n", rule2("Effect sizes (f_squared)"))
+    cat2("\n\n", rule2("Effect sizes (Cohen's f^2)"))
     for(i in rownames(x$Effect_size)) {
       cat2("\n\n  Dependent construct: '", i, "'\n")
       cat2(
@@ -138,7 +149,7 @@ print.cSEMAssess <- function(x, ...) {
     }
   }
   
-  if(any(names(x) %in% c("Fornell-Larcker", "HTMT", "RA"))) {
+  if(any(names(x) %in% c("Fornell-Larcker", "HTMT"))) {
     cat2("\n\n", rule2("Validity assessment"))
     if(any(names(x) == "HTMT") && !anyNA(x$HTMT)) {
       cat2("\n\n\tHeterotrait-montrait ratio of correlation matrix (HTMT matrix)\n\n")
@@ -150,21 +161,21 @@ print.cSEMAssess <- function(x, ...) {
       print(x$`Fornell-Larcker`)
     }
     
-    if(any(names(x) == "RA") && !anyNA(x$RA)) {
-      cat2("\n\n\tRedundancy analysis")
-      cat2(
-        "\n\n\t", 
-        col_align("Construct", max(l, nchar("Construct")) + 2),
-        col_align("Value", 14, align = "center")
-      )
-      for(i in names(x$RA)) {
-        cat2(
-          "\n\t", 
-          col_align(i, max(l, nchar("Construct")) + 2),
-          col_align(sprintf("%.4f",x$RA[i]), 14, align = "center")
-        ) 
-      }
-    }
+    # if(any(names(x) == "RA") && !anyNA(x$RA)) {
+    #   cat2("\n\n\tRedundancy analysis")
+    #   cat2(
+    #     "\n\n\t", 
+    #     col_align("Construct", max(l, nchar("Construct")) + 2),
+    #     col_align("Value", 14, align = "center")
+    #   )
+    #   for(i in names(x$RA)) {
+    #     cat2(
+    #       "\n\t", 
+    #       col_align(i, max(l, nchar("Construct")) + 2),
+    #       col_align(sprintf("%.4f",x$RA[i]), 14, align = "center")
+    #     ) 
+    #   }
+    # }
   }
   
   cat2("\n", rule2(type = 2))
