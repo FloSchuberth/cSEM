@@ -33,8 +33,8 @@
 #'   \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
 #'   Alternative but synonemmous names for `"rho_C_mm"` are: 
 #'   composite reliability, construct reliablity, reliability coefficient, 
-#'   Jöreskog's rho, coefficient omega, or Dillon-Goldstein's rho. 
-#'   For `"rho_C_weighted_mm"`: rho_A, or rho_B. 
+#'   Joereskog's rho, coefficient omega, or Dillon-Goldstein's rho. 
+#'   For `"rho_C_weighted_mm"`: (Dijkstra-Henselers) rhoA, or rhoB. 
 #'   Calculation is done by [calculateRhoC()].}
 #' \item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
 #'   reliability assuming a tau-equivalent measurement model (i.e., a measurement
@@ -128,7 +128,7 @@
 #'   Calculation is done by [calculateVIFModeB()].}
 #' }
 #' 
-#' For details on all quality criteria see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
+#' For details on the most important quality criteria see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
 #' of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
 #' article on the on the
 #' \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}.

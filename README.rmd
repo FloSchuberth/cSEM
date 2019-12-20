@@ -223,15 +223,13 @@ predict(res)
 #### Resampling and Inference
 
 By default no inferential quantities are calculated since most composite-based estimators 
-have no closed-form expressions for standard errors. Some closed form standard error 
-are implemented, however, this feature is still rather preliminary.
-It is therefore recommoned to use resampling instead. `cSEM` mostly relies on the 
- `bootstrap` procedure (although `jackknife` is implemented as well) to estimate
-standard errors, test statistics, and critical quantiles.
+have no closed-form expressions for standard errors. Resampling is used instead.
+`cSEM` mostly relies on the `bootstrap` procedure (although `jackknife` is implemented as well)
+to estimate standard errors, test statistics, and critical quantiles.
 
 `cSEM` offers two ways to compute resamples:
 
-1. Setting `.resample_method` to `"jackkinfe"` or `"bootstrap"` and subsequently using 
+1. Setting `.resample_method` in `csem()` to `"jackkinfe"` or `"bootstrap"` and subsequently using 
    postestimation functions `summarize()` or `infer()`.
 2. The same result is achieved by passing a `cSEMResults` object to `resamplecSEMResults()`
    and subsequently using postestimation functions `summarize()` or `infer()`.
@@ -239,6 +237,7 @@ standard errors, test statistics, and critical quantiles.
 ```{r eval=FALSE}
 # Setting `.resample_method`
 b1 <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
+# Using resamplecSEMResults()
 b2 <- resamplecSEMResults(res)
 ```
 

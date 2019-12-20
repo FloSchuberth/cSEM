@@ -44,26 +44,78 @@ print.cSEMAssess <- function(x, ...) {
       }
     }
   }
-  nn <- intersect(names(x), c("RhoC", "RhoC_weighted", "RhoT", "RhoT_weighted",
-                              "R2", "R2_adj", "reliability"))
   
-  if(any(names(x) %in% c("CFI", "GFI", "IFI", "NFI", "NNFI", "RMSEA", 
-                         "RMS_theta", "SRMR", "DG", "DL", "DML"))) {
-    cat2("\n\n", rule2("Reliability"), "\n")
-    # # Reliability
-    # nn <- c("AVE", "RhoC", "RhoC_weighted", "RhoT", "RhoT_weighted", 
-    #   "R2", "R2_adj", "reliability")
-    # ## If more than 4 quality criteria are to be printed: open a second block
-    # ## otherwise print one block
-    # if(length(nn) > 4) {
-    #   nn1 <- nn[1:4]
-    #   nn2 <- setdiff(nn, nn1)
-    #   nn <- list(nn1, nn2)
-    # } else {
-    #   nn <- list(nn)
-    # }
+  if(any(names(x) == "reliability")) {
+    cat2("\n\n", rule2("Common (internal consistency) reliability estimates"), "\n")
+    rel <- x$reliability
+    c_names <- names(rel[[1]])
+    l <- max(nchar(c_names))
     
+    cat2(
+      "\n\t", 
+      col_align("Construct", l + 2, align = "left"), 
+      col_align(names(rel)[1], 17, align = "center"), 
+      col_align(names(rel)[2], 18, align = "center"),
+      col_align(names(rel)[3], 26, align = "center")
+    )
+    
+    for(i in c_names) {
+      cat2(
+        "\n\t",
+        col_align(i, l + 2, align = "left"),
+        col_align(sprintf("%.4f", rel[[1]][i]), 17, align = "center"),
+        col_align(sprintf("%.4f", rel[[2]][i]), 18, align = "center"),
+        col_align(sprintf("%.4f", rel[[3]][i]), 26, align = "center")
+        )
+
+    }
   }
+  
+  nn <- intersect(names(x), c("RhoC", "RhoC_mm", "RhoC_weighted", "RhoC_weighted_mm",
+                              "RhoT", "RhoT_weighted"))
+  
+  if(length(nn) > 0) {
+    cat2("\n\n", rule2("Alternative (internal consistency) reliability estimates"))
+    # Max name length 
+    c_names <- names(x[[nn[1]]])
+    if(length(c_names) > 0) {
+      l <- max(nchar(c_names)) 
+      
+      ## If more than 4 quality criteria are to be printed: open a second block
+      ## otherwise print one block
+      if(length(nn) > 3) {
+        nn1 <- nn[1:3]
+        nn2 <- setdiff(nn, nn1)
+        nn <- list(nn1, nn2)
+      } else {
+        nn <- list(nn)
+      }
+      
+      for(j in seq_along(nn)) {
+        cat2(
+          "\n\n\t", 
+          col_align("Construct", max(l, nchar("Construct")) + 2)
+        )
+        for(k in nn[[j]]) {
+          cat2(
+            col_align(k, 14, align = "center")
+          )
+        }
+        
+        for(i in c_names) {
+          cat2(
+            "\n\t", 
+            col_align(i, max(l, nchar("Construct")) + 2)
+          )
+          
+          for(k in nn[[j]]) {
+            cat2(col_align(sprintf("%.4f",x[[k]][i]), 14, align = "center"))
+          }
+        } 
+      }
+    }
+  }
+  
   
   if(any(names(x) %in% c("CFI", "GFI", "IFI", "NFI", "NNFI", "RMSEA", 
                          "RMS_theta", "SRMR", "DG", "DL", "DML"))) {
