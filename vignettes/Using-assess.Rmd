@@ -491,7 +491,7 @@ The most general formula for reliability is the **weighted congeneric reliabilit
 
 $$ \rho_{C; \text{weighted}} = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\bm{w}'\bm{\lambda})^2}{\bm{w}'\bm{\Sigma}\bm{w}}$$
 Assuming $w_k = 1$, i.e. unit weights, the "classical" formula for congeneric reliability follows:
-$$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{\left(\sum\lambda_k\right)^2}{\left(\sum\lambda_k\right)^2 + Var(\bar\varepsilon_k)}$$
+$$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{\left(\sum\lambda_k\right)^2}{\left(\sum\lambda_k\right)^2 + Var(\bar\varepsilon)}$$
 Using the assumptions imposed by the tau-equivalent measurement model we obtain
 the **weighted tau-equivalent reliability (weighted Cronbach's alpha)**:
 

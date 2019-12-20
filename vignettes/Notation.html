@@ -54,7 +54,7 @@ code span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Notation</h1>
 <h4 class="author project-author">Manuel Rademaker</h4>
-<h4 class="date project-date">Last edited: 2019-12-17</h4>
+<h4 class="date project-date">Last edited: 2019-12-20</h4>
 </section>
 
 
@@ -107,7 +107,7 @@ code span.ot { color: #007020; }
 <p>It often suffices to look at a generic test score/latent variable. For the sake of clarity the index <span class="math inline">\(j\)</span> is therefore dropped unless it is necessary to avoid confusion.</p>
 <p>Note that most of the classical literature on quality criteria such as reliability is centered around the idea that the proxy <span class="math inline">\(\hat\eta\)</span> is a in fact a simple sum score which implies that all weighs are set to one. Treatment is more general here since <span class="math inline">\(\hat{\eta}\)</span> is allowed to be <em>any</em> weighted sum of related indicators. Readers familiar with the “classical treatment” may simply set weights to one (unit weights) to “translate” results to known formulae.</p>
 <p>Based on the assumptions and definitions above the following quantities necessarily follow:</p>
-<p><span class="math display">\[\begin{align}
+<p>$$ <span class="math display">\[\begin{align}
 Cov(x_k, \eta) &amp;= \lambda_k \\
 Var(\eta_k) &amp;= \lambda^2_k \\
 Var(x_k)    &amp;= \lambda^2_k + Var(\varepsilon_k) \\
@@ -128,7 +128,7 @@ Var(\hat\eta) &amp;= E(\hat\eta^2) = \sum w_k^2(\lambda^2_k + Var(\varepsilon_k)
 &amp;=Var(\bar\eta) + Var(\bar\varepsilon) = (\boldsymbol{\mathbf{w}}&#39;\boldsymbol{\mathbf{\lambda}})^2 + Var(\bar\varepsilon) = \boldsymbol{\mathbf{w}}&#39;\boldsymbol{\mathbf{\Sigma}}\boldsymbol{\mathbf{w}} \\
 
 Cov(\eta, \hat\eta) &amp;= E\left(\sum w_k \lambda_k \eta^2\right) = \sum w_k\lambda_k = \boldsymbol{\mathbf{w}}&#39;\boldsymbol{\mathbf{\lambda}}= \sqrt{Var(\bar\eta)}
-\end{align}\]</span></p>
+\end{align}\]</span> $$</p>
 <p>where <span class="math inline">\(\delta_{kl} = Cov(\varepsilon_{k}, \varepsilon_{l})\)</span> for <span class="math inline">\(k \neq l\)</span> is the measurement error covariance and <span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}\)</span> is the indicator variance-covariance matrix implied by the measurement model:</p>
 <p><span class="math display">\[
 \boldsymbol{\mathbf{\Sigma }}= \begin{pmatrix}

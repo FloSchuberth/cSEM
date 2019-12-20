@@ -7,7 +7,7 @@
 #' 
 #' The function is essentially a wrapper around a number of internal functions
 #' that perform an "assessment task" (called a **quality criterion** in \pkg{cSEM}
-#' parlance) like computing the (congeneric) reliability,
+#' parlance) like computing reliability estimates,
 #' the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
 #' 
 #' By default every possible quality criterion is calculated (`.quality_criterion = "all"`). 
@@ -15,6 +15,7 @@
 #' or a vector of character strings naming the criteria to be computed may be 
 #' supplied to [assess()] via the `.quality_criterion` argument. Currently, the
 #' following quality criteria are implemented (in alphabetical order):
+#' 
 #' \describe{
 #' \item{Average variance extracted (AVE); "ave"}{An estimate of the 
 #'   amount of variation in the indicators that is due to the underlying latent variable. 
@@ -22,17 +23,19 @@
 #'   (i.e., the sum of the squared loadings)
 #'   relative to the sum of the total indicator variances. Calculation is done
 #'   by [calculateAVE()].}
-#' \item{Congeneric reliability; "rho_C"}{An estimate of the 
-#'   reliability assuming a congeneric measurement model (i.e., loadings are
+#' \item{Congeneric reliability; "rho_C", "rho_C_mm,", "rho_C_weighted", "rho_C_weighted_mm"}{
+#'   An estimate of the reliability assuming a congeneric measurement model (i.e., loadings are
 #'   allowed to differ) and a test score (proxy) based on unit weights.
-#'   To compute the congeneric reliability based on a score that uses the weights of the
-#'   weight approach used to obtain `.object`, use `"rho_C_weighted"` instead.
-#'   Congeneric reliability is the unified name for 
-#'   reliability estimates that assume a congeneric measurement model. 
-#'   Alternative but synonemmous names for `"rho_C"` are: 
+#'   There are four different versions implemented. See the 
+#'   \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
+#'   of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
+#'   article on the on the
+#'   \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
+#'   Alternative but synonemmous names for `"rho_C_mm"` are: 
 #'   composite reliability, construct reliablity, reliability coefficient, 
-#'   Jöreskog's rho, coefficient omega, or Dillon-Goldstein's rho. 
-#'   For `"rho_C_weighted"`: rho_A, or rho_B. Calculation is done by [calculateRhoC()].}
+#'   Joereskog's rho, coefficient omega, or Dillon-Goldstein's rho. 
+#'   For `"rho_C_weighted_mm"`: (Dijkstra-Henselers) rhoA, or rhoB. 
+#'   Calculation is done by [calculateRhoC()].}
 #' \item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
 #'   reliability assuming a tau-equivalent measurement model (i.e., a measurement
 #'   model with equal loadings) and a test score (proxy) based on unit weights. 
@@ -60,6 +63,7 @@
 #'   R2_included and R2_excluded are the R squares of the 
 #'   original structural model regression equation (R2_included) and the
 #'   alternative specification with the k'th variable dropped (R2_excluded).
+#'   This measure is commonly known as Cohen's f^2.
 #'   Calculation is done by [calculateEffectSize()].}
 #' \item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "rms_theta"
 #'   "srmr"}{
@@ -91,6 +95,14 @@
 #'   An estimate of the latent variable correlation used to assess
 #'   convergent and/or discriminant validity of a construct. Calculation is done
 #'   by [calculateHTMT()].}
+#' \item{Reliability: "reliability"}{
+#'   As described in the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} 
+#'   section of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
+#'   article on the on the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} 
+#'   there are many different estimators for the (internal consistency) reliability.
+#'   Choosing `.quality_criterion = "reliability"` computes the three most common
+#'   measures, namely: "Cronbachs alpha" (identical to "rho_T"), "Jöreskogs rho" (identical to "rho_C_mm"),
+#'   and "Dijkstra-Henselers rho A" (identical to "rho_C_weighted_mm").}
 #' \item{R square and R square adjusted; "r2", "r2_adj"}{The R square and the adjusted
 #'   R square for each structural regression equation.
 #'   Calculated when running [csem()].}
@@ -116,7 +128,7 @@
 #'   Calculation is done by [calculateVIFModeB()].}
 #' }
 #' 
-#' For details on all quality criteria see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
+#' For details on the most important quality criteria see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
 #' of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
 #' article on the on the
 #' \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}.
@@ -140,9 +152,11 @@
 #' @usage assess(
 #'   .object              = NULL, 
 #'   .only_common_factors = TRUE, 
-#'   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+#'   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
+#'                            "rho_C_weighted_mm", "cronbachs_alpha", 
 #'                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
 #'                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+#'                           "reliability", 
 #'                           "rmsea", "rms_theta", "srmr",
 #'                           "gof", "htmt", "r2", "r2_adj",
 #'                           "rho_T", "rho_T_weighted", "vif", 
@@ -166,9 +180,11 @@
 assess <- function(
   .object              = NULL, 
   .only_common_factors = TRUE, 
-  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
+                           "rho_C_weighted_mm", "cronbachs_alpha", 
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
                            "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "reliability",
                            "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
@@ -183,9 +199,11 @@ assess <- function(
 assess.cSEMResults_default <- function(
   .object              = NULL, 
   .only_common_factors = TRUE, 
-  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
+                           "rho_C_weighted_mm", "cronbachs_alpha", 
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
                            "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "reliability",
                            "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
@@ -215,6 +233,14 @@ assess.cSEMResults_default <- function(
       .only_common_factors = .only_common_factors
     )
   }
+  if(any(.quality_criterion %in% c("all", "rho_C_mm"))) {
+    # RhoC
+    out[["RhoC_mm"]]  <- calculateRhoC(
+      .object, 
+      .only_common_factors = .only_common_factors,
+      .model_implied = TRUE
+    )
+  }
   if(any(.quality_criterion %in% c("all", "rho_C_weighted"))) {
     # RhoC weighted
     out[["RhoC_weighted"]]  <- calculateRhoC(
@@ -223,25 +249,34 @@ assess.cSEMResults_default <- function(
       .weighted = TRUE
     )
   }
-  if(any(.quality_criterion %in% c("all", "cronbachs_alpha"))) {
-    # Cronbach's alpha aka RhoT
-    out[["Cronbachs_alpha"]]  <- calculateRhoT(
+  if(any(.quality_criterion %in% c("all", "rho_C_weighted_mm"))) {
+    # RhoC weighted
+    out[["RhoC_weighted_mm"]]  <- calculateRhoC(
       .object, 
       .only_common_factors = .only_common_factors, 
-      .output_type         = "vector",
-      ...
+      .weighted = TRUE,
+      .model_implied = TRUE
     )
   }
-  if(any(.quality_criterion %in% c("all", "cronbachs_alpha_weighted"))) {
-    # Cronbach's alpha weighted aka RhoT weighted
-    out[["Cronbachs_alpha_weighted"]]  <- calculateRhoT(
-      .object, 
-      .only_common_factors = .only_common_factors, 
-      .output_type         = "vector",
-      .weighted            = TRUE,
-      ...
-    )
-  }
+  # if(any(.quality_criterion %in% c("all", "cronbachs_alpha"))) {
+  #   # Cronbach's alpha aka RhoT
+  #   out[["Cronbachs_alpha"]]  <- calculateRhoT(
+  #     .object, 
+  #     .only_common_factors = .only_common_factors, 
+  #     .output_type         = "vector",
+  #     ...
+  #   )
+  # }
+  # if(any(.quality_criterion %in% c("all", "cronbachs_alpha_weighted"))) {
+  #   # Cronbach's alpha weighted aka RhoT weighted
+  #   out[["Cronbachs_alpha_weighted"]]  <- calculateRhoT(
+  #     .object, 
+  #     .only_common_factors = .only_common_factors, 
+  #     .output_type         = "vector",
+  #     .weighted            = TRUE,
+  #     ...
+  #   )
+  # }
   if(any(.quality_criterion %in% c("all", "dg"))) {
     # dG
     out[["DG"]]    <- calculateDG(.object, ...)
@@ -336,6 +371,33 @@ assess.cSEMResults_default <- function(
     # Adjusted R2
     out[["R2_adj"]]  <- .object$Estimates$R2adj
   }
+  if(any(.quality_criterion %in% c("all", "reliability"))) {
+    # RhoT
+    out[["reliability"]]  <- list()
+    
+    # Cronbachs alpha (rho_T)
+    out$reliability[["Cronbachs_alpha"]] <- calculateRhoT(
+      .object, 
+      .only_common_factors = .only_common_factors, 
+      .output_type         = "vector",
+      ...
+    )
+    
+    # Joereskogs rho (rho_C_mm)
+    out$reliability[["Joereskogs_rho"]] <- calculateRhoC(
+      .object, 
+      .only_common_factors = .only_common_factors,
+      .model_implied = TRUE
+    )
+    
+    # Dijkstra-Henselers rho A (rho_C_weighted_mm)
+    out$reliability[["Dijkstra-Henselers_rho_A"]] <- calculateRhoC(
+      .object, 
+      .only_common_factors = .only_common_factors, 
+      .weighted = TRUE,
+      .model_implied = TRUE
+    )
+  }
   if(any(.quality_criterion %in% c("all", "rho_T"))) {
     # RhoT
     out[["RhoT"]]  <- calculateRhoT(
@@ -378,6 +440,13 @@ assess.cSEMResults_default <- function(
     out[["VIF_modeB"]] <- calculateVIFModeB(.object)
   }
   
+  out[["Information"]] <- list()
+  out$Information[["All"]] <- FALSE
+  
+  if(any(.quality_criterion == "all")) {
+    out$Information$All <- TRUE
+  }
+  
   class(out) <- "cSEMAssess"
   return(out)
 }
@@ -387,9 +456,11 @@ assess.cSEMResults_default <- function(
 assess.cSEMResults_multi <- function(
   .object              = NULL,
   .only_common_factors = TRUE,
-  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
+                           "rho_C_weighted_mm", "cronbachs_alpha",  
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
                            "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "reliability",
                            "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
@@ -417,9 +488,11 @@ assess.cSEMResults_multi <- function(
 assess.cSEMResults_2ndorder <- function(
   .object              = NULL,
   .only_common_factors = TRUE,
-  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
+                           "rho_C_weighted_mm", "cronbachs_alpha",  
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
                            "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "reliability",
                            "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 

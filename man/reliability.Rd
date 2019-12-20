@@ -6,8 +6,8 @@
 \alias{calculateRhoT}
 \title{Internal: Reliability}
 \usage{
-calculateRhoC(.object = NULL, .only_common_factors = TRUE,
-  .weighted = args_default()$.weighted)
+calculateRhoC(.object = NULL, .model_implied = FALSE,
+  .only_common_factors = TRUE, .weighted = args_default()$.weighted)
 
 calculateRhoT(.object = NULL, .alpha = args_default()$.alpha,
   .closed_form_ci = args_default()$.closed_form_ci,
@@ -16,6 +16,11 @@ calculateRhoT(.object = NULL, .alpha = args_default()$.alpha,
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.model_implied}{Logical. Should the RMS_theta be computed using the
+model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix
+based on V(eta) = WSW' divided by the square root of the respective
+reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality critera:

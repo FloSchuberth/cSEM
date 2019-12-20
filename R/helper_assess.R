@@ -301,6 +301,7 @@ NULL
 #'                         composite reliability or rho_A.
 calculateRhoC <- function(
   .object              = NULL,
+  .model_implied       = FALSE,
   .only_common_factors = TRUE,
   .weighted            = args_default()$.weighted
   ) {
@@ -316,8 +317,15 @@ calculateRhoC <- function(
     W <- .object$Estimates$Weight_estimates
   } else {
     W <- .object$Information$Model$measurement
-    W <- scaleWeights(.object$Estimates$Indicator_VCV, W)
   }
+  
+  if(.model_implied) {
+    indicator_vcv <- fit(.object)
+  } else {
+    indicator_vcv <- .object$Estimates$Indicator_VCV
+  }
+  
+  W <- scaleWeights(indicator_vcv, W)
   
   rhoC <- rep(1, times = nrow(W))
   names(rhoC) <- rownames(W)

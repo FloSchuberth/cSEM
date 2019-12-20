@@ -7,9 +7,11 @@
 assess(
   .object              = NULL, 
   .only_common_factors = TRUE, 
-  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_weighted", "cronbachs_alpha", 
+  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
+                           "rho_C_weighted_mm", "cronbachs_alpha", 
                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                          "reliability", 
                           "rmsea", "rms_theta", "srmr",
                           "gof", "htmt", "r2", "r2_adj",
                           "rho_T", "rho_T_weighted", "vif", 
@@ -46,7 +48,7 @@ article on the
 \details{
 The function is essentially a wrapper around a number of internal functions
 that perform an "assessment task" (called a \strong{quality criterion} in \pkg{cSEM}
-parlance) like computing the (congeneric) reliability,
+parlance) like computing reliability estimates,
 the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
 
 By default every possible quality criterion is calculated (\code{.quality_criterion = "all"}).
@@ -54,6 +56,7 @@ If only a subset of quality criteria are needed a single character string
 or a vector of character strings naming the criteria to be computed may be
 supplied to \code{\link[=assess]{assess()}} via the \code{.quality_criterion} argument. Currently, the
 following quality criteria are implemented (in alphabetical order):
+
 \describe{
 \item{Average variance extracted (AVE); "ave"}{An estimate of the
 amount of variation in the indicators that is due to the underlying latent variable.
@@ -61,17 +64,19 @@ Practically, it is calculated as the ratio of the (indicator) true score varianc
 (i.e., the sum of the squared loadings)
 relative to the sum of the total indicator variances. Calculation is done
 by \code{\link[=calculateAVE]{calculateAVE()}}.}
-\item{Congeneric reliability; "rho_C"}{An estimate of the
-reliability assuming a congeneric measurement model (i.e., loadings are
+\item{Congeneric reliability; "rho_C", "rho_C_mm,", "rho_C_weighted", "rho_C_weighted_mm"}{
+An estimate of the reliability assuming a congeneric measurement model (i.e., loadings are
 allowed to differ) and a test score (proxy) based on unit weights.
-To compute the congeneric reliability based on a score that uses the weights of the
-weight approach used to obtain \code{.object}, use \code{"rho_C_weighted"} instead.
-Congeneric reliability is the unified name for
-reliability estimates that assume a congeneric measurement model.
-Alternative but synonemmous names for \code{"rho_C"} are:
+There are four different versions implemented. See the
+\href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
+of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
+article on the on the
+\href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
+Alternative but synonemmous names for \code{"rho_C_mm"} are:
 composite reliability, construct reliablity, reliability coefficient,
-Jöreskog's rho, coefficient omega, or Dillon-Goldstein's rho.
-For \code{"rho_C_weighted"}: rho_A, or rho_B. Calculation is done by \code{\link[=calculateRhoC]{calculateRhoC()}}.}
+Joereskog's rho, coefficient omega, or Dillon-Goldstein's rho.
+For \code{"rho_C_weighted_mm"}: (Dijkstra-Henselers) rhoA, or rhoB.
+Calculation is done by \code{\link[=calculateRhoC]{calculateRhoC()}}.}
 \item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
 reliability assuming a tau-equivalent measurement model (i.e., a measurement
 model with equal loadings) and a test score (proxy) based on unit weights.
@@ -99,6 +104,7 @@ is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where
 R2_included and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
 alternative specification with the k'th variable dropped (R2_excluded).
+This measure is commonly known as Cohen's f^2.
 Calculation is done by \code{\link[=calculateEffectSize]{calculateEffectSize()}}.}
 \item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "rms_theta"
 "srmr"}{
@@ -130,6 +136,14 @@ by \code{\link[=calculateGoF]{calculateGoF()}}.}
 An estimate of the latent variable correlation used to assess
 convergent and/or discriminant validity of a construct. Calculation is done
 by \code{\link[=calculateHTMT]{calculateHTMT()}}.}
+\item{Reliability: "reliability"}{
+As described in the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae}
+section of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
+article on the on the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+there are many different estimators for the (internal consistency) reliability.
+Choosing \code{.quality_criterion = "reliability"} computes the three most common
+measures, namely: "Cronbachs alpha" (identical to "rho_T"), "Jöreskogs rho" (identical to "rho_C_mm"),
+and "Dijkstra-Henselers rho A" (identical to "rho_C_weighted_mm").}
 \item{R square and R square adjusted; "r2", "r2_adj"}{The R square and the adjusted
 R square for each structural regression equation.
 Calculated when running \code{\link[=csem]{csem()}}.}
@@ -155,7 +169,7 @@ all remaining indicators of the same block.
 Calculation is done by \code{\link[=calculateVIFModeB]{calculateVIFModeB()}}.}
 }
 
-For details on all quality criteria see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
+For details on the most important quality criteria see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
 of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
 article on the on the
 \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}.
