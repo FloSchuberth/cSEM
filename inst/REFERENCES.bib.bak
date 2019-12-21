@@ -677,12 +677,12 @@ in the {Analysis} of {Covariance} {Structures}},
   Publisher 			   = {Sage Periodicals Press}
 }
 
-@book{Bentler1995,
-   title 		=   {EQS 6 {Structural} {Equations} {Program} {Manual}},
-   author 		=   {Bentler, Peter M.},
-   publisher 	= 	{Encino, CA: Multivariate Software,  Inc.},
-   year 		=   {2006},
-   version  	=   {6}
+@Book{Bentler2006,
+  author    = {Bentler, Peter M.},
+  publisher = {Encino, CA: Multivariate Software, Inc.},
+  title     = {EQS 6 {Structural} {Equations} {Program} {Manual}},
+  year      = {2006},
+  version   = {6},
 }
 
 @Article{Bentler1990,
@@ -784,6 +784,14 @@ in the {Analysis} of {Covariance} {Structures}},
   abstract  = {The authors describe new developments in structural equation modeling as incorporated in LISREL V. The procedures are illustrated on data from three previous studies.},
   file      = {:Literatur/Joereskog1982.pdf:PDF},
   publisher = {American Marketing Association},
+}
+
+@Book{Wooldrige2010,
+  title     = {Econometric Analysis of Cross Section and Panel Data},
+  publisher = {MIT Press},
+  year      = {2010},
+  author    = {Jeffrey M. Wooldrige},
+  edition   = {2},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}

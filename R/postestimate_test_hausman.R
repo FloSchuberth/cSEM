@@ -1,27 +1,33 @@
 #' Regression-based Hausman test
 #' 
 #' Calculates the regression-based Hausman test to be used to compare 
-#' OLS to 2SLS estimates or 2SLS to 3SLS estimates.
+#' OLS to 2SLS estimates or 2SLS to 3SLS estimates. See e.g., \insertCite{Wooldridge2010;textual}{cSEM}
+#' (pages 131 f.) for details.
+#' 
+#' The function is somewhat experimental. Only use if you know what you are doing.
 #' 
 #' @usage testHausman(
 #'  .object               = NULL,
-#'  .alpha                = 0.05,
 #'  .eval_plan            = c("sequential", "multiprocess"),
 #'  .handle_inadmissibles = c("drop", "ignore", "replace"),
 #'  .R                    = 499,
 #'  .resample_method      = c("bootstrap", "jackknife"),
 #'  .seed                 = NULL
 #'  )
-#' 
+#'  
 #' @inheritParams csem_arguments
 #' 
-#' @seealso [csem()], [cSEMResults]
+#' @references
+#'   \insertAllCited{}
 #'   
+#' @seealso [csem()], [cSEMResults]
+#' 
+#' @example inst/examples/example_testHausman.R
+#' 
 #' @export
 
 testHausman <- function(
   .object               = NULL,
-  .alpha                = 0.05,
   .eval_plan            = c("sequential", "multiprocess"),
   .handle_inadmissibles = c("drop", "ignore", "replace"),
   .R                    = 499,
@@ -54,6 +60,9 @@ testHausman <- function(
       
       if(!is.null(m$instruments)) {
         endo_in_RHS <- y %in% names(m$instruments)
+      } else {
+        stop2("The following error occured in the testHausman() function:\n",
+              "Instruments required.")
       }
       
       # All independent variables (X) of the structural equation of construct y
@@ -160,23 +169,41 @@ testHausman <- function(
   )
   
   ## Get relevant quantities
-  out_infer <- infer(out, .alpha = .alpha)
+  out_infer <- infer(out)
   beta      <- out$Estimates$Estimates_resample$Estimates1$User_fun$Original
   se        <- out_infer$User_fun$sd
   t         <- beta/se
   p_normal  <- 2*pnorm(abs(t), mean = 0, sd = 1, lower.tail = FALSE) 
-  ci_percentile <- out_infer$User_fun$CI_percentile 
+  # ci_percentile <- out_infer$User_fun$CI_percentile 
   
   out_data_frame <- data.frame(
+    "Dep_construct" = rep(out$Information$Model$cons_endo, 
+                           sapply(out$Information$Model$instruments, sum)),
     "Name"       = names(beta),
     "Estimate"   = beta,
-    "Std. error" = se,
-    "t-stat."    = t,
-    "p-value"    = p_normal,
-    "Ci_perc. L" = ci_percentile[1, ],
-    "Ci_perc. H" = ci_percentile[2, ],
+    "Std_error"  = se,
+    "t_stat"     = t,
+    "p_value"    = p_normal,
+    # "Ci_perc_L" = ci_percentile[1, ],
+    # "Ci_perc_H" = ci_percentile[2, ],
     stringsAsFactors = FALSE
   )
   rownames(out_data_frame) <- NULL
-  return(out_data_frame)
+  
+  ## Split data frames
+  out_temp <- split(out_data_frame, out_data_frame$Dep_construct)
+  for(i in names(out_temp)) {
+    out_temp[[i]] <- out_temp[[i]][, -1] # remove Dep_construct column
+    out_temp[[i]][, "Name"] <- gsub(paste0(i, "_"), "", out_temp[[i]][, "Name"])
+  }
+  
+  out <- list(
+    "Regressions" = out_temp,
+    "Information" = list(
+      "Seed" = .seed,
+      "Number_of_runs" = .R
+    )
+  )
+  class(out) <- "cSEMTestHausman"
+  return(out)
 }

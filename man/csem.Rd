@@ -412,9 +412,9 @@ print(summarize(res), .full_output = FALSE)
 
 ## Dealing with endogeneity -------------------------------------------------
 
-### Nonlinear model ---------------------------------------------------------
+# See: ?testHausman()
 
-### Second order model ------------------------------------------------------
+### Models containing second constructs--------------------------------------
 ## Take a look at the dataset
 #?dgp_2ndorder_cf_of_c
 
@@ -430,7 +430,7 @@ c3   <~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38
 eta1 =~ y41 + y42 + y43
 eta2 =~ y51 + y52 + y53
 
-# Composite model
+# Composite model (second order)
 c4   =~ c1 + c2 + c3
 "
 
@@ -471,6 +471,8 @@ res_RI <- csem(data_RI, model_RI)
 summarize(res_RI)
 
 ### Multigroup analysis -----------------------------------------------------
+
+# See: ?testMGD()
 
 # ===========================================================================
 # Extended usage
@@ -521,7 +523,7 @@ res_jack <- csem(threecommonfactors, model, .resample_method = "jackknife")
 
 # See ?resamplecSEMResults for more examples
 
-### Choosing a different weightning scheme --------------------------------------------
+### Choosing a different weightning scheme ----------------------------------
 
 res_gscam  <- csem(threecommonfactors, model, .approach_weights = "GSCA")
 res_gsca   <- csem(threecommonfactors, model, 
