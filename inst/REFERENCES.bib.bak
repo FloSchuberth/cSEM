@@ -557,14 +557,13 @@ categorical variables that result from polychotomizing one or two underlying con
 
 @Article{Agarwal2000,
   author    = {Ritu Agarwal and Elena Karahanna},
-  title     = {Time Flies When You're Having Fun: Cognitive Absorption and Beliefs about Information Technology Usage},
   journal   = {{MIS} Quarterly},
+  title     = {Time Flies When You're Having Fun: Cognitive Absorption and Beliefs about Information Technology Usage},
   year      = {2000},
-  volume    = {24},
+  month     = {dec},
   number    = {4},
   pages     = {665},
-  month     = {dec},
-  doi       = {10.2307/3250951},
+  volume    = {24},
   publisher = {{JSTOR}},
 }
 
@@ -786,11 +785,11 @@ in the {Analysis} of {Covariance} {Structures}},
   publisher = {American Marketing Association},
 }
 
-@Book{Wooldrige2010,
-  title     = {Econometric Analysis of Cross Section and Panel Data},
+@Book{Wooldridge2010,
+  author    = {Jeffrey M. Wooldridge},
   publisher = {MIT Press},
+  title     = {Econometric Analysis of Cross Section and Panel Data},
   year      = {2010},
-  author    = {Jeffrey M. Wooldrige},
   edition   = {2},
 }
 

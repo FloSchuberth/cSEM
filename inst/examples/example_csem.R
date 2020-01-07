@@ -144,6 +144,7 @@ data.frame(
   )
 
 ### Resampling --------------------------------------------------------------
+\donttest{
 ## Basic resampling
 res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 40)
 res_jack <- csem(threecommonfactors, model, .resample_method = "jackknife")
@@ -154,9 +155,9 @@ res_jack <- csem(threecommonfactors, model, .resample_method = "jackknife")
 
 res_gscam  <- csem(threecommonfactors, model, .approach_weights = "GSCA")
 res_gsca   <- csem(threecommonfactors, model, 
-                  .approach_weights = "GSCA",
-                  .disattenuate = FALSE
-                  )
+                   .approach_weights = "GSCA",
+                   .disattenuate = FALSE
+)
 
 s_gscam <- summarize(res_gscam)
 s_gsca  <- summarize(res_gsca)
@@ -185,5 +186,6 @@ res <- csem(threecommonfactors, model, .PLS_weight_scheme_inner = "factorial",
 # By default, concepts modeled as common factors uses PLS Mode A weights.
 modes <- list("eta1" = "unit", "eta2" = "modeB", "eta3" = "unit")
 res   <- csem(threecommonfactors, model, .PLS_modes = modes)
-summarize(res)
+summarize(res) 
+}
 
