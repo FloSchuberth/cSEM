@@ -1,5 +1,4 @@
-# cSEM 0.0.0:9000
-To be released as 0.0.1 (end of 2018)
+# cSEM 0.1.0:9000
 
 ## Breaking changes
 
@@ -8,3 +7,5 @@ To be released as 0.0.1 (end of 2018)
 ## Minor changes
 
 * None
+
+# Initial release: cSEM 0.1.0 (07.01.2020)
