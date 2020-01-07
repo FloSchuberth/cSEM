@@ -26,10 +26,10 @@ Only use if you know what you are doing.}
 \value{
 A list with elements:
 \describe{
-\item{\code{$S}}{The (K x K) indicator correlation matrix}
-\item{\code{$cor_type}}{The type(s) of indicator correlation computed (
+\item{\verb{$S}}{The (K x K) indicator correlation matrix}
+\item{\verb{$cor_type}}{The type(s) of indicator correlation computed (
 "Pearson", "Polyserial", "Polychoric")}
-\item{\code{$thre_est}}{Currently ignored (NULL)}
+\item{\verb{$thre_est}}{Currently ignored (NULL)}
 }
 }
 \description{

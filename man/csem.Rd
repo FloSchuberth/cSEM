@@ -118,7 +118,7 @@ computing time. Defaults to "\emph{drop}".}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
 resample. The functions must take \code{.object} as its first argument (e.g.,
-\code{myFun <- function(.object, ...) {body-of-the-function}}).
+\verb{myFun <- function(.object, ...) \{body-of-the-function\}}).
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
@@ -266,7 +266,7 @@ For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 }
 
 \subsection{Second-order model}{
-Second-order models are specified using the operators \code{=~} and \code{<~}. These
+Second-order models are specified using the operators \verb{=~} and \verb{<~}. These
 operators are usually used with indicators on their right-hand side. For
 second-order models the right-hand side variables are constructs instead.
 If c1, and c2 are constructs forming or measuring a higher order

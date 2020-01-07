@@ -22,8 +22,8 @@ types exists.
 If the data is a single \code{matrix} or \code{data.frame} with no id-column,
 the result is a \code{list} with elements:
 \describe{
-\item{\code{$Estimates}}{A list containing a list of estimated quantities.}
-\item{\code{$Information}}{A list containing a list of additional information.}
+\item{\verb{$Estimates}}{A list containing a list of estimated quantities.}
+\item{\verb{$Information}}{A list containing a list of additional information.}
 }
 The resulting object has classes \code{cSEMResults} and \code{cSEMResults_default}.
 }
@@ -33,7 +33,7 @@ or if a list of \code{G} datasets is provided, the resulting object is a list of
 lists, where \code{G} is equal to the number of groups or the number of datasets
 in the list of datasets provided. Each of the \code{G} list elements is itself
 a \code{cSEMResults_default} object. Hence its structure is identical to
-the structure described in \code{_default}.
+the structure described in \verb{_default}.
 
 The resulting object has classes \code{cSEMResults} and \code{cSEMResults_multi}.
 }
@@ -44,7 +44,7 @@ the resulting object is a list containing two elements \code{First_stage} and
 \code{ Second_stage}.
 
 Each list element is itself a \code{cSEMResults_default} object. Hence its structure is identical to
-the structure described in \code{_default}.
+the structure described in \verb{_default}.
 }
 }
 

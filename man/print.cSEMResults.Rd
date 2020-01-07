@@ -6,6 +6,9 @@
 \usage{
 \method{print}{cSEMResults}(x, ...)
 }
+\arguments{
+\item{x}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
+}
 \description{
 The \link{cSEMResults} method for the generic function \code{\link[=print]{print()}}.
 }

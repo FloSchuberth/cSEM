@@ -4,13 +4,16 @@
 \alias{calculateReliabilities}
 \title{Internal: Calculate Reliabilities}
 \usage{
-calculateReliabilities(.X = args_default()$.X, .S = args_default()$.S,
+calculateReliabilities(
+  .X = args_default()$.X,
+  .S = args_default()$.S,
   .W = args_default()$.W,
   .approach_weights = args_default()$.approach_weights,
   .csem_model = args_default()$.csem_model,
   .disattenuate = args_default()$.disattenuate,
   .PLS_approach_cf = args_default()$.PLS_approach_cf,
-  .reliabilities = args_default()$.reliabilities)
+  .reliabilities = args_default()$.reliabilities
+)
 }
 \arguments{
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}

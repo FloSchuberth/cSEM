@@ -8,7 +8,7 @@ calculatePr(.resample_centered = NULL, .parameters_to_compare = NULL)
 }
 \arguments{
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
-parameters (i.e, path (\code{~}), loadings (\code{=~}), weights (\code{<~}), or correlations (\code{~~})) should be
+parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or correlations (\verb{~~})) should be
 compared across groups. Defaults to \code{NULL} in which case all parameters of the
 originally specified model are compared.}
 }

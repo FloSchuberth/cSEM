@@ -63,8 +63,8 @@ Default to "\emph{lm}".}
 \item{.bias_corrected}{Logical. Should the standard and the tStat
 confidence interval be bias-corrected using the bootstrapped bias estimate?
 If \code{TRUE} the confidence interval for some estimated parameter \code{theta}
-is centered at \code{2*theta - theta*_hat},
-where \code{theta*_hat} is the average over all \code{.R} bootstrap estimates of \code{theta}.
+is centered at \verb{2*theta - theta*_hat},
+where \verb{theta*_hat} is the average over all \code{.R} bootstrap estimates of \code{theta}.
 Defaults to \code{TRUE}}
 
 \item{.C}{A (J x J) composite variance-covariance matrix.}
@@ -207,7 +207,7 @@ Defaults to \code{TRUE}.}
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
-parameters (i.e, path (\code{~}), loadings (\code{=~}), weights (\code{<~}), or correlations (\code{~~})) should be
+parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or correlations (\verb{~~})) should be
 compared across groups. Defaults to \code{NULL} in which case all parameters of the
 originally specified model are compared.}
 
@@ -332,7 +332,7 @@ to the console? Defaults to \code{TRUE}.}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
 resample. The functions must take \code{.object} as its first argument (e.g.,
-\code{myFun <- function(.object, ...) {body-of-the-function}}).
+\verb{myFun <- function(.object, ...) \{body-of-the-function\}}).
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}

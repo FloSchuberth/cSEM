@@ -7,14 +7,23 @@
 \alias{calculateDML}
 \title{Internal: Calculate difference between S and Sigma_hat}
 \usage{
-calculateDG(.object = NULL, .matrix1 = NULL, .matrix2 = NULL,
-  .saturated = args_default()$.saturated, ...)
+calculateDG(
+  .object = NULL,
+  .matrix1 = NULL,
+  .matrix2 = NULL,
+  .saturated = args_default()$.saturated,
+  ...
+)
 
-calculateDL(.object = NULL, .matrix1 = NULL, .matrix2 = NULL,
-  .saturated = args_default()$.saturated, ...)
+calculateDL(
+  .object = NULL,
+  .matrix1 = NULL,
+  .matrix2 = NULL,
+  .saturated = args_default()$.saturated,
+  ...
+)
 
-calculateDML(.object = NULL, .saturated = args_default()$.saturated,
-  ...)
+calculateDML(.object = NULL, .saturated = args_default()$.saturated, ...)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}

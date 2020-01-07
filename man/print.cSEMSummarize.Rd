@@ -7,6 +7,8 @@
 \method{print}{cSEMSummarize}(x, .full_output = TRUE, ...)
 }
 \arguments{
+\item{x}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
+
 \item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}
 }

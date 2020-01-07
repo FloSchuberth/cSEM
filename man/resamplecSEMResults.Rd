@@ -48,7 +48,7 @@ computing time. Defaults to "\emph{drop}".}
 
 \item{.user_funs}{A function or a (named) list of functions to apply to every
 resample. The functions must take \code{.object} as its first argument (e.g.,
-\code{myFun <- function(.object, ...) {body-of-the-function}}).
+\verb{myFun <- function(.object, ...) \{body-of-the-function\}}).
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
@@ -72,17 +72,17 @@ be used to handle flipping signs when resampling? One of "\emph{none}","\emph{in
 The core structure is the same structure as that of \code{.object} with
 the following elements added:
 \itemize{
-\item{ \code{$Estimates_resamples}: A list containing the \code{.R} resamples and
+\item{ \verb{$Estimates_resamples}: A list containing the \code{.R} resamples and
 the original estimates for each of the resampled quantities (Path_estimates,
 Loading_estimates, Weight_estimates, user defined functions).
 Each list element is a list containing elements
-\code{$Resamples} and \code{$Original}. \code{$Resamples} is a \code{(.R x K)} matrix with each
+\verb{$Resamples} and \verb{$Original}. \verb{$Resamples} is a \verb{(.R x K)} matrix with each
 row representing one resample for each of the \code{K} parameters/statistics.
-\code{$Original} contains the original estimates (vectorized by column if the output of
+\verb{$Original} contains the original estimates (vectorized by column if the output of
 the user provided function is a matrix.}
-\item {\code{$Information_resamples}: A list containing addtional information.}
+\item {\verb{$Information_resamples}: A list containing addtional information.}
 }
-Use \code{str(<.object>, list.len = 3)} on the resulting object for an overview.
+Use \verb{str(<.object>, list.len = 3)} on the resulting object for an overview.
 }
 \description{
 Resample a \link{cSEMResults} object using bootstrap or jackknife resampling.

@@ -6,13 +6,22 @@
 \alias{calculateRhoT}
 \title{Internal: Reliability}
 \usage{
-calculateRhoC(.object = NULL, .model_implied = FALSE,
-  .only_common_factors = TRUE, .weighted = args_default()$.weighted)
+calculateRhoC(
+  .object = NULL,
+  .model_implied = FALSE,
+  .only_common_factors = TRUE,
+  .weighted = args_default()$.weighted
+)
 
-calculateRhoT(.object = NULL, .alpha = args_default()$.alpha,
+calculateRhoT(
+  .object = NULL,
+  .alpha = args_default()$.alpha,
   .closed_form_ci = args_default()$.closed_form_ci,
-  .only_common_factors = TRUE, .output_type = c("vector",
-  "data.frame"), .weighted = args_default()$.weighted, ...)
+  .only_common_factors = TRUE,
+  .output_type = c("vector", "data.frame"),
+  .weighted = args_default()$.weighted,
+  ...
+)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}

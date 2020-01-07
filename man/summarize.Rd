@@ -26,10 +26,10 @@ For possible choices see \code{\link[=infer]{infer()}}.}
 An object of class \code{cSEMSummarize}. A \code{cSEMSummarize} object has
 the same structure as the \link{cSEMResults} object with a couple differences:
 \enumerate{
-\item{Elements \code{$Path_estimates}, \code{$Loadings_estimates}, \code{$Weight_estimates},
-\code{$Weight_estimates}, and  \code{$Residual_correlation} are standardized data frames instead of matrices.}
-\item{Data frames \code{$Effect_estimates}, \code{$Indicator_correlation}, and
-\code{$Exo_construct_correlation} are added to \code{$Estimates}.}
+\item{Elements \verb{$Path_estimates}, \verb{$Loadings_estimates}, \verb{$Weight_estimates},
+\verb{$Weight_estimates}, and  \verb{$Residual_correlation} are standardized data frames instead of matrices.}
+\item{Data frames \verb{$Effect_estimates}, \verb{$Indicator_correlation}, and
+\verb{$Exo_construct_correlation} are added to \verb{$Estimates}.}
 }
 The data frame format is usually much more convenient if users intend to
 present the results in e.g., a paper or a presentation.

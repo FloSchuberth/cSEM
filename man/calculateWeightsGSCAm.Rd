@@ -38,15 +38,15 @@ Defaults to \code{1e-05}.}
 \value{
 A list with the elements
 \describe{
-\item{\code{$W}}{A (J x K) matrix of estimated weights.}
-\item{\code{$C}}{The (J x K) matrix of estimated loadings.}
-\item{\code{$B}}{The (J x J) matrix of estimated path coefficients.}
-\item{\code{$E}}{\code{NULL}}
-\item{\code{$Modes}}{A named vector of Modes used for the outer estimation, for GSCA
+\item{\verb{$W}}{A (J x K) matrix of estimated weights.}
+\item{\verb{$C}}{The (J x K) matrix of estimated loadings.}
+\item{\verb{$B}}{The (J x J) matrix of estimated path coefficients.}
+\item{\verb{$E}}{\code{NULL}}
+\item{\verb{$Modes}}{A named vector of Modes used for the outer estimation, for GSCA
 the mode is automatically set to 'gsca'.}
-\item{\code{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
+\item{\verb{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
 and \code{FALSE} otherwise.}
-\item{\code{$Iterations}}{The number of iterations required.}
+\item{\verb{$Iterations}}{The number of iterations required.}
 }
 }
 \description{

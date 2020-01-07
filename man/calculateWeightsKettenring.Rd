@@ -23,13 +23,13 @@ calculateWeightsKettenring(
 A named list. J stands for the number of constructs and K for the number
 of indicators.
 \describe{
-\item{\code{$W}}{A (J x K) matrix of estimated weights.}
-\item{\code{$E}}{\code{NULL}}
-\item{\code{$Modes}}{The GCCA mode used for the estimation.}
-\item{\code{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
+\item{\verb{$W}}{A (J x K) matrix of estimated weights.}
+\item{\verb{$E}}{\code{NULL}}
+\item{\verb{$Modes}}{The GCCA mode used for the estimation.}
+\item{\verb{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
 and \code{FALSE} otherwise. For \code{.approach_gcca = "MINVAR"} or \code{.approach_gcca = "MAXVAR"}
 the convergence status is \code{NULL} since both are closed-form estimators.}
-\item{\code{$Iterations}}{The number of iterations required. 0 for
+\item{\verb{$Iterations}}{The number of iterations required. 0 for
 \code{.approach_gcca = "MINVAR"} or \code{.approach_gcca = "MAXVAR"}}
 }
 }

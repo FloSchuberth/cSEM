@@ -48,18 +48,18 @@ Technically, \code{cSEMPredict} is a
 named list containing the following list elements:
 
 \describe{
-\item{\code{$Actual}}{A matrix of the actual values/indicator scores of the endogenous constructs.}
-\item{\code{$Prediction_target}}{A matrix of the predicted indicator scores of the endogenous constructs
+\item{\verb{$Actual}}{A matrix of the actual values/indicator scores of the endogenous constructs.}
+\item{\verb{$Prediction_target}}{A matrix of the predicted indicator scores of the endogenous constructs
 based on the target model. Target refers to }
-\item{\code{$Residuals_target}}{A matrix of the residuals indicator scores of the endogenous constructs
+\item{\verb{$Residuals_target}}{A matrix of the residuals indicator scores of the endogenous constructs
 based on the target model.}
-\item{\code{$Residuals_lm}}{A matrix of the residuals indicator scores of the endogenous constructs
+\item{\verb{$Residuals_lm}}{A matrix of the residuals indicator scores of the endogenous constructs
 based on a linear model in which the indicator scores of endogenous constructs
 are predicted by exogenous indicator scores. This serves as a benchmark for
 comparisons.}
-\item{\code{$Prediction_metrics}}{A data frame containing the predictions metrics
+\item{\verb{$Prediction_metrics}}{A data frame containing the predictions metrics
 MAE, RMSE, and Q2_predict.}
-\item{\code{$Information}}{A list with elements
+\item{\verb{$Information}}{A list with elements
 \code{Target}, \code{Benchmark},
 \code{Number_of_observations_training}, \code{Number_of_observations_test}, \code{Number_of_folds},
 \code{Number_of_repetitions}, and \code{Handle_inadmissibles}.}

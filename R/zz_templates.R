@@ -12,7 +12,7 @@
 #'     constructs. If constructs are only linearly related, `structural` is
 #'     of dimension (J x J) with row- and column names equal to the construct
 #'     names. If the structural model contains nonlinear relationships
-#'     `structural` is (J x (J + J\*)) where J\* is the number of
+#'     `structural` is (J x (J + J*)) where J* is the number of
 #'     nonlinear terms. Rows are ordered such that exogenous constructs are always
 #'     first, followed by constructs that only depend on exogenous constructs and/or
 #'     previously ordered constructs.}

@@ -46,10 +46,10 @@ to the console? Defaults to \code{TRUE}.}
 \value{
 A list of class \code{cSEMTestOMF} containing the following list elements:
 \describe{
-\item{\code{$Test_statistic}}{The value of the test statistics.}
-\item{\code{$Critical_value}}{The corresponding  critical values obtained by the bootstrap.}
-\item{\code{$Decision}}{The test decision. One of: \code{FALSE} (\strong{Reject}) or \code{TRUE} (\strong{Do not reject}).}
-\item{\code{$Information}}{The \code{.R} bootstrap values; The number of admissible results;
+\item{\verb{$Test_statistic}}{The value of the test statistics.}
+\item{\verb{$Critical_value}}{The corresponding  critical values obtained by the bootstrap.}
+\item{\verb{$Decision}}{The test decision. One of: \code{FALSE} (\strong{Reject}) or \code{TRUE} (\strong{Do not reject}).}
+\item{\verb{$Information}}{The \code{.R} bootstrap values; The number of admissible results;
 The seed used and the number of total runs.}
 }
 }

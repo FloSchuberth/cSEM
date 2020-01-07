@@ -69,13 +69,13 @@ Defaults to \code{1e-05}.}
 A named list. J stands for the number of constructs and K for the number
 of indicators.
 \describe{
-\item{\code{$W}}{A (J x K) matrix of estimated weights.}
-\item{\code{$E}}{A (J x J) matrix of inner weights.}
-\item{\code{$Modes}}{A named vector of modes used for the outer estimation.}
-\item{\code{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
+\item{\verb{$W}}{A (J x K) matrix of estimated weights.}
+\item{\verb{$E}}{A (J x J) matrix of inner weights.}
+\item{\verb{$Modes}}{A named vector of modes used for the outer estimation.}
+\item{\verb{$Conv_status}}{The convergence status. \code{TRUE} if the algorithm has converged
 and \code{FALSE} otherwise. If one-step weights are used via \code{.iter_max = 1}
 or a non-iterative procedure was used, the convergence status is set to \code{NULL}.}
-\item{\code{$Iterations}}{The number of iterations required.}
+\item{\verb{$Iterations}}{The number of iterations required.}
 }
 }
 \description{

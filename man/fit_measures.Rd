@@ -24,11 +24,15 @@ calculateNNFI(.object)
 
 calculateRMSEA(.object)
 
-calculateRMSTheta(.object,
-  .model_implied = args_default()$.model_implied)
+calculateRMSTheta(.object, .model_implied = args_default()$.model_implied)
 
-calculateSRMR(.object = NULL, .matrix1 = NULL, .matrix2 = NULL,
-  .saturated = args_default()$.saturated, ...)
+calculateSRMR(
+  .object = NULL,
+  .matrix1 = NULL,
+  .matrix2 = NULL,
+  .saturated = args_default()$.saturated,
+  ...
+)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}

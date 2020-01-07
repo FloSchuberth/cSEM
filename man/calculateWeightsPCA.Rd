@@ -18,11 +18,11 @@ calculateWeightsPCA(
 A named list. J stands for the number of constructs and K for the number
 of indicators.
 \describe{
-\item{\code{$W}}{A (J x K) matrix of estimated weights.}
-\item{\code{$E}}{\code{NULL}}
-\item{\code{$Modes}}{The mode used. Always "PCA".}
-\item{\code{$Conv_status}}{\code{NULL} as there are no iterations}
-\item{\code{$Iterations}}{0 as there are no iterations}
+\item{\verb{$W}}{A (J x K) matrix of estimated weights.}
+\item{\verb{$E}}{\code{NULL}}
+\item{\verb{$Modes}}{The mode used. Always "PCA".}
+\item{\verb{$Conv_status}}{\code{NULL} as there are no iterations}
+\item{\verb{$Iterations}}{0 as there are no iterations}
 }
 }
 \description{

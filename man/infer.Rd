@@ -19,15 +19,29 @@ SdResample(.first_resample, .resample_method, .n)
 
 BiasResample(.first_resample, .resample_method, .n)
 
-StandardCIResample(.first_resample, .bias_corrected, .dist = c("z", "t"),
-  .df = c("type1", "type2"), .resample_method, .n, .probs)
+StandardCIResample(
+  .first_resample,
+  .bias_corrected,
+  .dist = c("z", "t"),
+  .df = c("type1", "type2"),
+  .resample_method,
+  .n,
+  .probs
+)
 
 PercentilCIResample(.first_resample, .probs)
 
 BasicCIResample(.first_resample, .bias_corrected, .probs)
 
-TStatCIResample(.first_resample, .second_resample, .bias_corrected,
-  .resample_method, .resample_method2, .n, .probs)
+TStatCIResample(
+  .first_resample,
+  .second_resample,
+  .bias_corrected,
+  .resample_method,
+  .resample_method2,
+  .n,
+  .probs
+)
 
 BcCIResample(.first_resample, .probs)
 
@@ -54,8 +68,8 @@ data obtained by resamplecSEMResults().}
 \item{.bias_corrected}{Logical. Should the standard and the tStat
 confidence interval be bias-corrected using the bootstrapped bias estimate?
 If \code{TRUE} the confidence interval for some estimated parameter \code{theta}
-is centered at \code{2*theta - theta*_hat},
-where \code{theta*_hat} is the average over all \code{.R} bootstrap estimates of \code{theta}.
+is centered at \verb{2*theta - theta*_hat},
+where \verb{theta*_hat} is the average over all \code{.R} bootstrap estimates of \code{theta}.
 Defaults to \code{TRUE}}
 
 \item{.dist}{Character string. The distribution to use for the critical value.

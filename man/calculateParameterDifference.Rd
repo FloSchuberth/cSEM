@@ -13,7 +13,7 @@ calculateParameterDifference(
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
-parameters (i.e., path (\code{~}), loadings (\code{=~}), or weights (\code{<~})) should be
+parameters (i.e., path (\code{~}), loadings (\verb{=~}), or weights (\verb{<~})) should be
 compared across groups. Defaults to \code{NULL} in which case all parameters of the model
 are compared.}
 }

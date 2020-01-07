@@ -38,7 +38,7 @@ Default to "\emph{all}" in which case all approaches are computed (if possible).
 Note that the output will be quite long in this case.}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
-parameters (i.e, path (\code{~}), loadings (\code{=~}), weights (\code{<~}), or correlations (\code{~~})) should be
+parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or correlations (\verb{~~})) should be
 compared across groups. Defaults to \code{NULL} in which case all parameters of the
 originally specified model are compared.}
 
@@ -76,13 +76,13 @@ A list of class \code{cSEMTestMGD}. Technically, \code{cSEMTestMGD} is a
 named list containing the following list elements:
 
 \describe{
-\item{\code{$Information}}{Additional information.}
-\item{\code{$Klesel}}{A list with elements, \code{Test_statistic}, \code{P_value}, and \code{Decision}}
-\item{\code{$Chin}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
-\item{\code{$Sarstedt}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
-\item{\code{$Keil}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
-\item{\code{$Nitzl}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
-\item{\code{$Henseler}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
+\item{\verb{$Information}}{Additional information.}
+\item{\verb{$Klesel}}{A list with elements, \code{Test_statistic}, \code{P_value}, and \code{Decision}}
+\item{\verb{$Chin}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
+\item{\verb{$Sarstedt}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
+\item{\verb{$Keil}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
+\item{\verb{$Nitzl}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
+\item{\verb{$Henseler}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
 }
 }
 \description{

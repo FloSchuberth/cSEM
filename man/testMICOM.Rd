@@ -42,9 +42,9 @@ to the console? Defaults to \code{TRUE}.}
 \value{
 A named list of class \code{cSEMTestMICOM} containing the following list element:
 \describe{
-\item{\code{$Step2}}{A list containing the results of the test for compositional invariance (Step 2).}
-\item{\code{$Step3}}{A list containing the results of the test for mean and variance equality (Step 3).}
-\item{\code{$Information}}{A list of additional information on the test.}
+\item{\verb{$Step2}}{A list containing the results of the test for compositional invariance (Step 2).}
+\item{\verb{$Step3}}{A list containing the results of the test for mean and variance equality (Step 3).}
+\item{\verb{$Information}}{A list of additional information on the test.}
 }
 }
 \description{
