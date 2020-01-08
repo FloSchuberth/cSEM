@@ -188,4 +188,3 @@ modes <- list("eta1" = "unit", "eta2" = "modeB", "eta3" = "unit")
 res   <- csem(threecommonfactors, model, .PLS_modes = modes)
 summarize(res) 
 }
-

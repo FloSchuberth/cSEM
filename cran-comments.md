@@ -1,13 +1,10 @@
 ## Resubmission
 
-This is a resubmission. Compared to the first submission I have:
+This is the second resubmission. Compared to the last resubmission I have:
 
-* excluded test for the package version submitted to CRAN
+* tried to reduce computation time for all examples to less than 5 second
 
-* added donttest to slow examples
-
-* removed the GPL-3 license file
-
+* Added \donttest to slower examples
 
 ## Test environments
 

@@ -109,7 +109,7 @@ Users may choose to \code{"ignore"} inadmissible results or to simply set predic
 to \code{NA} (\code{"set_NA"}) for the particular run that failed.
 }
 \examples{
-### Anime example taken from https://github.com/ISS-Analytics/pls-predict
+\donttest{### Anime example taken from https://github.com/ISS-Analytics/pls-predict
 
 # Load data
 data(Anime) # data is similar to the Anime.csv found on 
@@ -162,7 +162,7 @@ res2 <- csem(Anime, # whole data set
 
 # Predict using 10-fold cross-validation with 5 repetitions
 pp2 <- predict(res, .benchmark = "lm")
-pp2
+pp2}
 }
 \references{
 \insertAllCited{}

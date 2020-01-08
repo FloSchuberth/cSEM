@@ -1,4 +1,4 @@
-### Example from Dijkstra & Hensler (2015)
+\donttest{### Example from Dijkstra & Hensler (2015)
 ## Prepartion (values are from p. 15-16 of the paper)
 Lambda <- t(kronecker(diag(6), c(0.7, 0.7, 0.7)))
 Phi <- matrix(c(1.0000, 0.5000, 0.5000, 0.5000, 0.0500, 0.4000, 
@@ -53,4 +53,4 @@ sum_res_2sls <- summarize(res_2sls)
 
 ## Test for endogeneity
 test_ha <- testHausman(res_2sls, .R = 200)
-test_ha
+test_ha}

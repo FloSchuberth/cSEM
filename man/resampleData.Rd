@@ -232,7 +232,6 @@ res_boot_data   <- resampleData(.data = satisfaction, .seed = 2364)
 res_boot_object <- resampleData(a, .seed = 2364)
 
 identical(res_boot_data, res_boot_object) # TRUE
-
 }
 \references{
 \insertAllCited{}
