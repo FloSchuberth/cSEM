@@ -35,7 +35,7 @@ Description: Estimate, assess, test, and study linear, nonlinear, hierarchical
   test the model fit etc.).
 BugReports: https://github.com/M-E-Rademaker/cSEM/issues
 URL: https://github.com/M-E-Rademaker/cSEM, https://m-e-rademaker.github.io/cSEM/
-License: GPL-3 | file LICENSE
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: 

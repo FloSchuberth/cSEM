@@ -1,10 +1,8 @@
 ## Resubmission
 
-This is the second resubmission. Compared to the last resubmission I have:
+This is the third resubmission. Compared to the last resubmission I have:
 
-* tried to reduce computation time for all examples to less than 5 second
-
-* Added \donttest to slower examples
+* removed the license file
 
 ## Test environments
 
