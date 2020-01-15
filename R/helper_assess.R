@@ -897,43 +897,50 @@ calculateEffectSize <- function(.object = NULL) {
   s <- csem_model$structural
   
   vars_endo <- rownames(s)[rowSums(s) != 0]
-  ## Start loop
+  
+  ## Loop over each structural equation
   outer_out <- lapply(vars_endo, function(x) {
     
-    # Get names of the independent variables
+    # Get names of the independent variables of equation x
     indep_vars <- colnames(s[x , s[x, ] != 0, drop = FALSE])
     
+    # Compute R_excluded by regressing variable x on all other variables of
+    # that equation except the independent variable i
     inner_out <- lapply(indep_vars, function(i) {
       # Update csem_model
       model_temp <- csem_model
       model_temp$structural[x, i] <- 0 
       
-      out <- estimatePath(
-        .approach_nl      = approach_nl,
-        .approach_paths   = approach_paths,
-        .approach_weights = approach_weights,
-        .csem_model       = model_temp,
-        .H                = H,
-        .normality        = normality,
-        .P                = P,
-        .Q                = Q
-      )
-      
-      ## Calculate effect size
-      # For equations with only one independet variable the R2_excluded is 0
-      r2_excluded <- ifelse(is.na(out$R2[x]), 0, out$R2[x])
+      # If there is only one independent variable the R^2_excluded is 0
+      # since s_u_dach^2 = s_y^2
+      if(sum(model_temp$structural[x, i]) > 0) { 
+        out <- estimatePath(
+          .approach_nl      = approach_nl,
+          .approach_paths   = approach_paths,
+          .approach_weights = approach_weights,
+          .csem_model       = model_temp,
+          .H                = H,
+          .normality        = normality,
+          .P                = P,
+          .Q                = Q
+        )
+        ## Calculate effect size
+        r2_excluded <- out$R2[x]
+      } else {
+        r2_excluded <- 0
+      }
       names(r2_excluded) <- x
       r2_included <- .object$Estimates$R2[x]
       
       effect_size <- unname((r2_included - r2_excluded)/(1 - r2_included))
-
-      # list("r2_ex" = r2_excluded, "r2_in" = r2_included, "eff_size" = effect_size)
     })
     inner_out <- unlist(inner_out)
     names(inner_out) <- indep_vars
-    inner_out
+    inner_out 
   })
   names(outer_out) <- vars_endo
+  
+  ## Remove 
   
   ## Make output a matrix
   # Note: this is necessary for calculateEffectSize to work

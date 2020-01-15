@@ -46,28 +46,30 @@ print.cSEMAssess <- function(x, ...) {
   }
   
   if(any(names(x) == "reliability")) {
-    cat2("\n\n", rule2("Common (internal consistency) reliability estimates"), "\n")
     rel <- x$reliability
     c_names <- names(rel[[1]])
-    l <- max(nchar(c_names))
-    
-    cat2(
-      "\n\t", 
-      col_align("Construct", l + 2, align = "left"), 
-      col_align(names(rel)[1], 17, align = "center"), 
-      col_align(names(rel)[2], 18, align = "center"),
-      col_align(names(rel)[3], 26, align = "center")
-    )
-    
-    for(i in c_names) {
+    if(length(c_names) > 0) {
+      l <- max(nchar(c_names))
+      cat2("\n\n", rule2("Common (internal consistency) reliability estimates"), "\n")
+      
       cat2(
-        "\n\t",
-        col_align(i, l + 2, align = "left"),
-        col_align(sprintf("%.4f", rel[[1]][i]), 17, align = "center"),
-        col_align(sprintf("%.4f", rel[[2]][i]), 18, align = "center"),
-        col_align(sprintf("%.4f", rel[[3]][i]), 26, align = "center")
+        "\n\t", 
+        col_align("Construct", l + 2, align = "left"), 
+        col_align(names(rel)[1], 17, align = "center"), 
+        col_align(names(rel)[2], 18, align = "center"),
+        col_align(names(rel)[3], 26, align = "center")
+      )
+      
+      for(i in c_names) {
+        cat2(
+          "\n\t",
+          col_align(i, l + 2, align = "left"),
+          col_align(sprintf("%.4f", rel[[1]][i]), 17, align = "center"),
+          col_align(sprintf("%.4f", rel[[2]][i]), 18, align = "center"),
+          col_align(sprintf("%.4f", rel[[3]][i]), 26, align = "center")
         )
-
+        
+      } 
     }
   }
   
@@ -75,10 +77,10 @@ print.cSEMAssess <- function(x, ...) {
                               "RhoT", "RhoT_weighted"))
   
   if(length(nn) > 0) {
-    cat2("\n\n", rule2("Alternative (internal consistency) reliability estimates"))
     # Max name length 
     c_names <- names(x[[nn[1]]])
     if(length(c_names) > 0) {
+      cat2("\n\n", rule2("Alternative (internal consistency) reliability estimates"))
       l <- max(nchar(c_names)) 
       
       ## If more than 4 quality criteria are to be printed: open a second block
@@ -169,13 +171,13 @@ print.cSEMAssess <- function(x, ...) {
       cat2("\n\n  Dependent construct: '", i, "'\n")
       cat2(
         "\n\t", 
-        col_align("Independent construct", max(l, nchar("Independent construct")) + 2), 
+        col_align("Independent construct", max(nchar(names(x$VIF[i, ])), nchar("Independent construct")) + 2), 
         col_align("VIF value", 12, align = "center")
       )
       for(j in names(x$VIF[i, ])) {
         cat2(
           "\n\t", 
-          col_align(j, max(l, nchar("Independent construct")) + 2), 
+          col_align(j, max(nchar(names(x$VIF[i, ])), nchar("Independent construct")) + 2), 
           col_align(sprintf("%.4f", x$VIF[i, j]), 12, align = "center")
         )  
       }
@@ -185,16 +187,17 @@ print.cSEMAssess <- function(x, ...) {
   if(any(names(x) == "Effect_size")) {
     cat2("\n\n", rule2("Effect sizes (Cohen's f^2)"))
     for(i in rownames(x$Effect_size)) {
+      ll <- nchar(colnames(x$Effect_size[i, x$Effect_size[i, ] != 0, drop = FALSE]))
       cat2("\n\n  Dependent construct: '", i, "'\n")
       cat2(
         "\n\t", 
-        col_align("Independent construct", max(l, nchar("Independent construct")) + 2), 
+        col_align("Independent construct", max(ll, nchar("Independent construct")) + 2), 
         col_align("Effect size", 12, align = "center")
       )
       for(j in colnames(x$Effect_size[i, x$Effect_size[i, ] != 0, drop = FALSE])) {
         cat2(
           "\n\t", 
-          col_align(j, max(l, nchar("Independent construct")) + 2), 
+          col_align(j, max(ll, nchar("Independent construct")) + 2), 
           col_align(sprintf("%.4f", x$Effect_size[i, j]), 12, align = "center")
         )  
       }
