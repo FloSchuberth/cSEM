@@ -2,7 +2,7 @@
 
 This is the third resubmission. Compared to the last resubmission I have:
 
-* removed the license file
+* removed the LISENCE file and its reference in the DESCRIPTION file
 
 ## Test environments
 
