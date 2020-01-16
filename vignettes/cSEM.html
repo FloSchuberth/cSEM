@@ -84,6 +84,11 @@ code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 
+/* A workaround for https://github.com/jgm/pandoc/issues/4278 */
+a.sourceLine {
+  pointer-events: auto;
+}
+
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -142,7 +147,7 @@ code span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Introduction to cSEM</h1>
 <h4 class="author project-author">Manuel Rademaker</h4>
-<h4 class="date project-date">Last edited: 2019-12-17</h4>
+<h4 class="date project-date">Last edited: 2020-01-16</h4>
 </section>
 
 
@@ -178,15 +183,15 @@ code span.ot { color: #007020; }
 
 <div id="preface" class="section level1">
 <h1>Preface</h1>
-<p>Structural equation modeling (SEM) has been used developed for decades across various research fields such as (among others) psychology, sociology, and business research.</p>
-<p>As an almost inevitable consequence, a different terminology system and, to some extent, mathematical notation has evolved within each field over the years. This “terminology mess” is one of the major obstacles in interdisciplinary research and (scientific) debates, since it hampers a broader understanding of methodological issues, and, even worse, promotes systematic misuse (e.g., the use of Cronbach’s alpha as an estimator for congeneric reliability). This is particularly true for users new to SEM or practitioners who are overwhelmed by terminology of their own field only to find that the term they just thought to have finally completely grasped is defined differently in another field, making the confusion complete. A prime example is the term “formative” (measurement) which has been used to describe a causal-formative as well as <a href="#cmodel">a composite model</a>. See e.g., <span class="citation">Henseler (2017)</span> for a clarifiction.</p>
+<p>Structural equation modeling (SEM) has been used and developed for decades across various research fields such as (among others) psychology, sociology, and business research.</p>
+<p>As an almost inevitable consequence, a different terminology system and, to some extent, mathematical notation has evolved within each field over the years. This “terminology mess” is one of the major obstacles in interdisciplinary research and (scientific) debates, since it hampers a broader understanding of methodological issues, and, even worse, promotes systematic misuse (e.g., the use of Cronbach’s alpha as an estimator for congeneric reliability). This is particularly true for users new to SEM or practitioners who are overwhelmed by terminology of their own field only to find that the term they just thought to have finally completely grasped is defined differently in another field, making the confusion complete. A prime example is the term “formative” (measurement) which has been used to describe a causal-formative as well as <a href="#cmodel">a composite model</a>. See e.g., <span class="citation">Henseler (2017)</span> for a clarification</p>
 <p>Ultimately, this is a matter of (mis)communication which, in our opinion, can only be satisfactorily solved by establishing a clear, unambiguous definition for each term and symbol that is used within the package. We emphasize that we do not seek to impose “our” conventions, nor do we claim they are the “correct” conventions, but merely seek to make communication between us (the authors of the package) and you (the package user) as unambiguous and error-free as possible.</p>
 <p>Hence, we provide a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Terminology</a> and a <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation</a> file that contains key terms and mathematical notation/symbols that we consider crucial, alongside our definition. Users are encouraged to read these files carefully to avoid potential misunderstandings.</p>
 <ol style="list-style-type: decimal">
 <li>The <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Terminology</a> file contains each term that we think should be defined and explained in order to make sure package users understand complementary help files and vignettes the way the package authors intended them to be understood.</li>
-<li>The <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation</a> files contains some fundamental mathematical notation/ symbols used in the package documentation alongside a definition. Bearing some expections, we mostly follow standard notation as layed out in e.g., <span class="citation">Bollen (1989)</span></li>
+<li>The <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation</a> files contains some fundamental mathematical notation/ symbols used in the package documentation alongside a definition. Bearing some exceptions, we mostly follow standard notation as laid out in e.g., <span class="citation">Bollen (1989)</span></li>
 </ol>
-<p>The package is designed based on a set of principles and are Terminology that are partly in contrast to commonly used open-source or commercial software packages offering similar content (e.g., smartPLS). Togther with the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Terminology</a> and <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation</a> file this introduction seeks to explains these principles. Lastly, to use <strong>cSEM</strong> effectively, it is helpful to understand its design. Hence, the package architecture and design as well as what we consider the “cSEM workflow” are discussed.</p>
+<p>The package is designed based on a set of principles and a terminology that is partly in contrast to commonly used open-source or commercial software packages offering similar content (e.g., smartPLS). Together with the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Terminology</a> and <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation</a> file this introduction seeks to explains these principles. Lastly, to use <strong>cSEM</strong> effectively, it is helpful to understand its design. Hence, the package architecture and design as well as what we consider the “cSEM workflow” are discussed.</p>
 </div>
 <div id="composite-based-structural-equation-modeling" class="section level1">
 <h1>Composite-based structural equation modeling</h1>
@@ -212,7 +217,7 @@ code span.ot { color: #007020; }
 <li><a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Concepts</a>/<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Constructs</a> modeled as common factors (or alternatively latent variables)</li>
 <li><a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Concepts</a>/<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Constructs</a> modeled as composites</li>
 </ul>
-<p>These phrases will repeateatly appear in help files and other complementary files. It is therefore crucial to remember what they supposed to convey.</p>
+<p>These phrases will repeatedly appear in help files and other complementary files. It is therefore crucial to remember what they supposed to convey.</p>
 </div>
 </div>
 <div id="using-csem" class="section level1">
@@ -245,7 +250,7 @@ code span.ot { color: #007020; }
 <p>All verbs accept the result of a call to <code>csem()</code> as input which makes working with these function extremely simple. You only need to remember the word, not any specific syntax or arguments. Of course, all functions have a number of additional arguments to fine-tune the postestimation. See the <a href="#postestimate">Apply postestimation functions</a> sections below. For details on the arguments consult the individual help files.</p></li>
 </ol>
 <p>The price we pay for an increase in flexibility is primarily a, mostly minor, loss in computational speed, in particular, when intense resampling is involved (i.e., 5000 bootstrap run for a complex model with, say, 1000 observations). Users looking for the most efficient implementation of common resampling routines may find faster implementations. That said, we believe, the time saved when using a standardized estimate-postestimate workflow, no matter the model or data used, well outweighs the potential loss in computational efficiency.</p>
-<p>The following sections describe the workflow in more detaill.</p>
+<p>The following sections describe the workflow in more detail.</p>
 <div id="the-csem-workflow" class="section level2">
 <h2>The cSEM-Workflow</h2>
 <p>As described in the previous section, working with <strong>cSEM</strong> consists of 3-4 steps:</p>
@@ -471,7 +476,7 @@ code span.ot { color: #007020; }
 ##  Number of admissible results     = 499
 ##  Approach to handle inadmissibles = drop
 ##  Sign change option               = none
-##  Random seed                      = -258624731
+##  Random seed                      = 1361261886
 ## 
 ##  Construct details:
 ##  ------------------
@@ -487,37 +492,37 @@ code span.ot { color: #007020; }
 ## ============================
 ##                                                              CI_percentile   
 ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1      0.6713      0.0418   16.0533    0.0000 [ 0.5927; 0.7491 ] 
-##   eta3 ~ eta1      0.4585      0.0832    5.5083    0.0000 [ 0.2929; 0.6199 ] 
-##   eta3 ~ eta2      0.3052      0.0862    3.5392    0.0004 [ 0.1401; 0.4741 ] 
+##   eta2 ~ eta1      0.6713      0.0434   15.4828    0.0000 [ 0.5868; 0.7537 ] 
+##   eta3 ~ eta1      0.4585      0.0805    5.6968    0.0000 [ 0.3026; 0.6142 ] 
+##   eta3 ~ eta2      0.3052      0.0834    3.6603    0.0003 [ 0.1446; 0.4592 ] 
 ## 
 ## Estimated loadings:
 ## ===================
 ##                                                              CI_percentile   
 ##   Loading        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 =~ y11      0.6631      0.0392   16.9240    0.0000 [ 0.5726; 0.7270 ] 
-##   eta1 =~ y12      0.6493      0.0392   16.5830    0.0000 [ 0.5668; 0.7231 ] 
-##   eta1 =~ y13      0.7613      0.0319   23.8486    0.0000 [ 0.7016; 0.8282 ] 
-##   eta2 =~ y21      0.5165      0.0537    9.6259    0.0000 [ 0.3994; 0.6097 ] 
-##   eta2 =~ y22      0.7554      0.0348   21.7003    0.0000 [ 0.6803; 0.8146 ] 
-##   eta2 =~ y23      0.7997      0.0370   21.6192    0.0000 [ 0.7203; 0.8661 ] 
-##   eta3 =~ y31      0.8223      0.0321   25.6203    0.0000 [ 0.7511; 0.8800 ] 
-##   eta3 =~ y32      0.6581      0.0385   17.1086    0.0000 [ 0.5801; 0.7299 ] 
-##   eta3 =~ y33      0.7474      0.0388   19.2785    0.0000 [ 0.6751; 0.8172 ] 
+##   eta1 =~ y11      0.6631      0.0389   17.0595    0.0000 [ 0.5861; 0.7327 ] 
+##   eta1 =~ y12      0.6493      0.0415   15.6620    0.0000 [ 0.5612; 0.7256 ] 
+##   eta1 =~ y13      0.7613      0.0342   22.2362    0.0000 [ 0.6949; 0.8317 ] 
+##   eta2 =~ y21      0.5165      0.0524    9.8472    0.0000 [ 0.4134; 0.6121 ] 
+##   eta2 =~ y22      0.7554      0.0370   20.4201    0.0000 [ 0.6790; 0.8200 ] 
+##   eta2 =~ y23      0.7997      0.0386   20.7255    0.0000 [ 0.7180; 0.8697 ] 
+##   eta3 =~ y31      0.8223      0.0336   24.5018    0.0000 [ 0.7608; 0.8869 ] 
+##   eta3 =~ y32      0.6581      0.0403   16.3298    0.0000 [ 0.5694; 0.7289 ] 
+##   eta3 =~ y33      0.7474      0.0386   19.3417    0.0000 [ 0.6712; 0.8222 ] 
 ## 
 ## Estimated weights:
 ## ==================
 ##                                                              CI_percentile   
 ##   Weights        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 &lt;~ y11      0.3956      0.0210   18.8514    0.0000 [ 0.3484; 0.4330 ] 
-##   eta1 &lt;~ y12      0.3873      0.0188   20.6330    0.0000 [ 0.3504; 0.4258 ] 
-##   eta1 &lt;~ y13      0.4542      0.0202   22.4799    0.0000 [ 0.4176; 0.4993 ] 
-##   eta2 &lt;~ y21      0.3058      0.0285   10.7309    0.0000 [ 0.2476; 0.3557 ] 
-##   eta2 &lt;~ y22      0.4473      0.0207   21.6164    0.0000 [ 0.4123; 0.4910 ] 
-##   eta2 &lt;~ y23      0.4735      0.0206   23.0223    0.0000 [ 0.4357; 0.5139 ] 
-##   eta3 &lt;~ y31      0.4400      0.0177   24.8995    0.0000 [ 0.4066; 0.4731 ] 
-##   eta3 &lt;~ y32      0.3521      0.0185   19.0386    0.0000 [ 0.3173; 0.3913 ] 
-##   eta3 &lt;~ y33      0.3999      0.0187   21.3605    0.0000 [ 0.3664; 0.4361 ] 
+##   eta1 &lt;~ y11      0.3956      0.0222   17.8397    0.0000 [ 0.3527; 0.4375 ] 
+##   eta1 &lt;~ y12      0.3873      0.0200   19.3358    0.0000 [ 0.3493; 0.4279 ] 
+##   eta1 &lt;~ y13      0.4542      0.0203   22.3660    0.0000 [ 0.4149; 0.4958 ] 
+##   eta2 &lt;~ y21      0.3058      0.0280   10.9153    0.0000 [ 0.2511; 0.3564 ] 
+##   eta2 &lt;~ y22      0.4473      0.0210   21.3028    0.0000 [ 0.4040; 0.4863 ] 
+##   eta2 &lt;~ y23      0.4735      0.0216   21.9106    0.0000 [ 0.4336; 0.5183 ] 
+##   eta3 &lt;~ y31      0.4400      0.0181   24.2959    0.0000 [ 0.4053; 0.4772 ] 
+##   eta3 &lt;~ y32      0.3521      0.0188   18.6935    0.0000 [ 0.3126; 0.3858 ] 
+##   eta3 &lt;~ y33      0.3999      0.0199   20.1200    0.0000 [ 0.3650; 0.4442 ] 
 ## 
 ## ------------------------------------ Effects -----------------------------------
 ## 
@@ -525,32 +530,32 @@ code span.ot { color: #007020; }
 ## ========================
 ##                                                               CI_percentile   
 ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1       0.6713      0.0418   16.0533    0.0000 [ 0.5927; 0.7491 ] 
-##   eta3 ~ eta1       0.6634      0.0397   16.6919    0.0000 [ 0.5864; 0.7395 ] 
-##   eta3 ~ eta2       0.3052      0.0862    3.5392    0.0004 [ 0.1401; 0.4741 ] 
+##   eta2 ~ eta1       0.6713      0.0434   15.4828    0.0000 [ 0.5868; 0.7537 ] 
+##   eta3 ~ eta1       0.6634      0.0387   17.1553    0.0000 [ 0.5905; 0.7354 ] 
+##   eta3 ~ eta2       0.3052      0.0834    3.6603    0.0003 [ 0.1446; 0.4592 ] 
 ## 
 ## Estimated indirect effects:
 ## ===========================
 ##                                                                  CI_percentile   
 ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta3 ~ eta1          0.2049      0.0579    3.5365    0.0004 [ 0.0960; 0.3225 ] 
+##   eta3 ~ eta1          0.2049      0.0558    3.6717    0.0002 [ 0.0984; 0.3068 ] 
 ## ________________________________________________________________________________</code></pre>
 <p>Or directly via <code>infer()</code></p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>ii &lt;-<span class="st"> </span><span class="kw">infer</span>(b1, <span class="dt">.quantity =</span> <span class="kw">c</span>(<span class="st">&quot;CI_standard_z&quot;</span>, <span class="st">&quot;CI_percentile&quot;</span>), <span class="dt">.alpha =</span> <span class="kw">c</span>(<span class="fl">0.01</span>, <span class="fl">0.05</span>))</span>
 <span id="cb12-2"><a href="#cb12-2"></a>ii<span class="op">$</span>Path_estimates</span></code></pre></div>
 <pre><code>## $CI_standard_z
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5615612   0.2417754  0.08440417
-## 99%U   0.7769988   0.6705942  0.52858660
-## 95%L   0.5873161   0.2930394  0.13750485
-## 95%U   0.7512439   0.6193302  0.47548593
+## 99%L   0.5595913   0.2494304  0.09095478
+## 99%U   0.7829675   0.6640633  0.52043992
+## 95%L   0.5862953   0.2989985  0.14229844
+## 95%U   0.7562636   0.6144952  0.46909626
 ## 
 ## $CI_percentile
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5597046   0.2152224  0.08795876
-## 99%U   0.7752139   0.6620408  0.54197170
-## 95%L   0.5927201   0.2928990  0.14007982
-## 95%U   0.7491083   0.6199237  0.47412424</code></pre>
+## 99%L   0.5673286   0.2502781  0.06329353
+## 99%U   0.7662522   0.6766403  0.51940374
+## 95%L   0.5868185   0.3026110  0.14460038
+## 95%U   0.7536570   0.6142224  0.45920377</code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future">future framework</a>. For multiprocessing simply set <code>.eval_plan = &quot;multiprocess&quot;</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the background as there are cores available instead. Note that this naturally has some overhead. Consequently, for a small number of resamples multiprocessing will generally not be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument. A typical call would look like this:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>b &lt;-<span class="st"> </span><span class="kw">csem</span>(</span>
 <span id="cb14-2"><a href="#cb14-2"></a>  <span class="dt">.data            =</span> satisfaction,</span>

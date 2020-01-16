@@ -20,7 +20,7 @@ bibliography: ../inst/REFERENCES.bib
 ```
 # Preface
 
-Structural equation modeling (SEM) has been used developed for decades
+Structural equation modeling (SEM) has been used and developed for decades
 across various research fields such as (among others) psychology, 
 sociology, and business research. 
 
@@ -35,7 +35,7 @@ by terminology of their own field only to find that the term they
 just thought to have finally completely grasped is defined differently in another field, 
 making the confusion complete. A prime example is the term "formative" (measurement)
 which has been used to describe a causal-formative as well as [a composite model](#cmodel).
-See e.g., @Henseler2017 for a clarifiction.
+See e.g., @Henseler2017 for a clarification
 
 Ultimately, this is a matter of (mis)communication which, in our opinion, can 
 only be satisfactorily solved by establishing a clear, unambiguous definition 
@@ -56,12 +56,12 @@ files carefully to avoid potential misunderstandings.
    the package authors intended them to be understood.
 1. The [Notation][Notation] files contains some fundamental mathematical notation/
    symbols used in the package documentation alongside a definition. Bearing some
-   expections, we mostly follow standard notation as layed out in e.g., @Bollen1989
+   exceptions, we mostly follow standard notation as laid out in e.g., @Bollen1989
 
-The package is designed based on a set of principles and are Terminology that 
-are partly in contrast to commonly used open-source or commercial software packages
+The package is designed based on a set of principles and a terminology that 
+is partly in contrast to commonly used open-source or commercial software packages
 offering similar content (e.g., smartPLS).
-Togther with the [Terminology][Terminology] and [Notation][Notation] file this introduction seeks to explains 
+Together with the [Terminology][Terminology] and [Notation][Notation] file this introduction seeks to explains 
 these principles.
 Lastly, to use **cSEM** effectively, it is helpful to understand its design. 
 Hence, the package architecture and design as well as what we consider the "cSEM workflow" are discussed.
@@ -159,7 +159,7 @@ specifies. Across the package we therefore strictly distinguish between
 - [Concepts][Terminology]/[Constructs][Terminology]   modeled as common factors (or alternatively latent variables)
 - [Concepts][Terminology]/[Constructs][Terminology]   modeled as composites
 
-These phrases will repeateatly appear in help files and other complementary files. It
+These phrases will repeatedly appear in help files and other complementary files. It
 is therefore crucial to remember what they supposed to convey.
 
 # Using cSEM
@@ -231,7 +231,7 @@ standardized estimate-postestimate workflow, no matter the model or data used,
 well outweighs the potential loss in computational
 efficiency.
 
-The following sections describe the workflow in more detaill.
+The following sections describe the workflow in more detail.
 
 ## The cSEM-Workflow
 
