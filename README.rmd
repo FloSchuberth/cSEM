@@ -17,8 +17,8 @@ output: github_document
 
 ## Purpose
 
-Estimate, analyse, test, and study linear, nonlinear, hierachical structural 
-equation models using composite-based approaches and procedures, including 
+Estimate, analyse, test, and study linear, nonlinear, hierachical and
+multi-group structural equation models using composite-based approaches and procedures, including 
 estimation techniques such as partial least squares path 
 modeling (PLS-PM) and its derivatives (PLSc, OrdPLSc, robustPLSc), generalized 
 structured component analysis (GSCA), generalized structured component 

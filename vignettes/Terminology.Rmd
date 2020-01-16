@@ -31,7 +31,7 @@ of a set of indicators that are said to measure the common factor.
 The idea of the reflective measurement model is closely related to the 
 [true score](#truescore) theory. Accordingly, indicators related to the common factor
 are modeled as measurement error-prone manifestations of a common variable, 
-cause or factor. Although, there are subtle conceptional differences, the terms 
+cause or factor. Although there are subtle conceptional differences, the terms 
 common factor, true score, and latent variable are mostly used synommenoulsy in **cSEM**.
 
 The common factor is also the central entity in the causal-formative 
@@ -50,10 +50,9 @@ for a [latent variable](#latentvariable) which, in turn, serves as a
 "statistical proxy" for a [concept](#concept) under study. The nature of the 
 composite is therefore defined by the type of (measurement) 
 model. If composites are error-free representations 
-of a concept we refer to the measurement model as the composite measurement (model). If 
+of a concept we refer to the measurement model as the composite (measurement) model. If 
 composites are used as [stand-ins](#standin) for a [latent variable](#latentvariable), 
-the measurement model is called 
-causal-formative [@Henseler2017]. 
+the measurement model is called causal-formative [@Henseler2017]. 
 
 Note that, although we sometimes use it this way as well, the term "measurement" 
 is acutally rather inadequate for the composite model since in a composite model
@@ -87,12 +86,12 @@ are covered by the definition.
 
 ### Construct{#construct}
 
-Construct refer to a representation of a [concept](#concept) within a given statistical 
+Construct refers to a representation of a [concept](#concept) within a given statistical 
 model. While a concept is defined by a conceptual (theoretical) definition, 
 a construct for a concept is defined/created by the researcher's operationalization
 of a concept within a statistical model. Concepts are either modeled
 as common factors/latent variables or as composites. Both operationalizations
-- the common factor and the composite - are called constructs in **cSEM** .
+- the common factor and the composite - are called constructs in **cSEM**.
 As opposed to concepts, constructs therefore exist because they arise as 
 the result of the act of modeling their relation to the observable 
 variables (indicators) based on a specific set of assumptions. 
@@ -150,12 +149,12 @@ refer to both the theoretical and the statistical model.
 Simply speaking theoretical models are a formalized set of hypotheses stating if and 
 how entities (observable or unobservable) are related. Since theoretical models are
 by definition theoretical any statistical analysis inevitably mandates a statistical
-model based. 
+model. 
 
 A statistical model is typically defined by a set of (testable) restrictions. Statistical 
 models are best understood as the operationalized version of the theoretical model. 
 Note that the act of operationalizing a given theoretical model always entails
-the possibility  for error. Using a [construct](#construct) modeled as a [composite](#composite) 
+the possibility for error. Using a [construct](#construct) modeled as a [composite](#composite) 
 or a [common factor](#commonfactor), for instance, is an attempt to map a theoretical entity (the [concept](#concept))
 from the theoretical space into the statistical space. If this mapping is not
 one-to-one the construct  is only an imperfect representation  of the concept.
