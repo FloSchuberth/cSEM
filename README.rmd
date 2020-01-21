@@ -45,29 +45,15 @@ devtools::install_github("M-E-Rademaker/cSEM")
 
 The best place to get started is the [cSEM-website](https://m-e-rademaker.github.io/cSEM/).
 
-## Philosophy
+<!-- ## Philosophy -->
 
-- First and foremost: `cSEM` has a user-centered design!
-- "User-centered" mainly boils down to: `cSEM` is easy, i.e. intuitive to use by non-R experts! 
-   <!--  - There is one central function called `csem()` that provides default choices -->
-   <!--    for most of its arguments (similarity to the `sem()` and `cfa()` functions of the [lavaan](http://lavaan.ugent.be/)  -->
-   <!--    package is intended). -->
-   <!-- -  -->
-   <!--  - cSEM is Well documented (vignettes, HTML output, a website, (eventually) intro course(s) and cheatsheets) -->
-   <!--  - Structured output/results  that aims to be "easy"" in a sense that it is -->
-   <!--      - ... descriptive/verbose -->
-   <!--      - ... (eventually) easy to export to other environments such as MS Word, Latex files etc. (exportability) -->
-   <!--      - ... (eventually) easy to migrate from/to/between other PLS/VB/CB-based systems (lavaan, semPLS, ADANCO, SmartPLS) -->
-- The package is designed to be flexible/modular enough so that researchers 
-  developing new methods can take specific function provided by the package and 
-  alter them according to their need without working their way through a chain
-  of other functions (naturally this will not always be possible). Modularity is
-  largly inspired by the `matrixpls` package.
-- Modern in a sense that the package integrates modern developments within 
-  the R community. This mainly includes ideas/recommendations/design choices that
-  fead into the packages of the [tidyverse](https://github.com/tidyverse/tidyverse).
-- State of the art in a sense that we seek to quickly implement recent methodological
-  developments in composite-based SEM. 
+<!-- - First and foremost: `cSEM` has a user-centered design!. "User-centered" mainly  -->
+<!--   boils down to: `cSEM` is easy, i.e. intuitive to use by non-R experts!  -->
+<!-- - Modern in a sense that the package integrates modern developments within  -->
+<!--   the R community. This mainly includes ideas/recommendations/design choices that -->
+<!--   fead into the packages of the [tidyverse](https://github.com/tidyverse/tidyverse). -->
+<!-- - State of the art in a sense that we seek to quickly implement recent methodological -->
+<!--   developments in composite-based SEM.  -->
   
 ## Basic usage
 
@@ -85,11 +71,11 @@ Usully, using `cSEM` is the same 3 step procedure:
 
 ## Postestimation functions
 
-Currently we have five major postestimation verbs, four test family functions and
+There are five major postestimation verbs, four test family functions and
 two do-family of function: 
 
 - `assess()` : assess the model using common quality criteria
-- `infer()` : calculate common inferencial quantities (e.g, standard errors)
+- `infer()` : calculate common inferencial quantities (e.g., standard errors, confidence intervals)
 - `predict()` : predict endogenous indicator values
 - `summarize()` : summarize the results
 - `verify()` : verify admissibility of the estimates
@@ -99,8 +85,8 @@ tests are implemented:
 
 - `testOMF()` : performs a test for overall model fit
 - `testMICOM()` : performs a test for composite measurement invariance
-- `testMGD()` : performs several test to assess multi-group differences
-- `testHausman()` : performs the regression-based Hausman test to test for endogeneity.
+- `testMGD()` : performs several tests to assess multi-group differences
+- `testHausman()` : performs the regression-based Hausman test to test for endogeneity
 
 Other miscellaneous postestimation functions belong do the do-family of functions.
 Currently two do functions are implemented:
@@ -194,7 +180,7 @@ res$Estimates$Loading_estimates
 res$Information$Model
 ```
 
-A usefule tool to examine a list is the [listviewer package](https://github.com/timelyportfolio/listviewer). 
+A useful tool to examine a list is the [listviewer package](https://github.com/timelyportfolio/listviewer). 
 If you are new to `cSEM` this might be a good way to familiarize yourself with the structure
 of a `cSEMResults` object.
 

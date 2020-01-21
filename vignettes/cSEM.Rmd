@@ -35,7 +35,7 @@ by terminology of their own field only to find that the term they
 just thought to have finally completely grasped is defined differently in another field, 
 making the confusion complete. A prime example is the term "formative" (measurement)
 which has been used to describe a causal-formative as well as [a composite model](#cmodel).
-See e.g., @Henseler2017 for a clarification
+See e.g., @Henseler2017 for a clarification.
 
 Ultimately, this is a matter of (mis)communication which, in our opinion, can 
 only be satisfactorily solved by establishing a clear, unambiguous definition 
@@ -56,12 +56,12 @@ files carefully to avoid potential misunderstandings.
    the package authors intended them to be understood.
 1. The [Notation][Notation] files contains some fundamental mathematical notation/
    symbols used in the package documentation alongside a definition. Bearing some
-   exceptions, we mostly follow standard notation as laid out in e.g., @Bollen1989
+   exceptions, we mostly follow standard notation as laid out in e.g., @Bollen1989.
 
 The package is designed based on a set of principles and a terminology that 
 is partly in contrast to commonly used open-source or commercial software packages
 offering similar content (e.g., smartPLS).
-Together with the [Terminology][Terminology] and [Notation][Notation] file this introduction seeks to explains 
+Together with the [Terminology][Terminology] and [Notation][Notation] file this introduction seeks to explain
 these principles.
 Lastly, to use **cSEM** effectively, it is helpful to understand its design. 
 Hence, the package architecture and design as well as what we consider the "cSEM workflow" are discussed.
@@ -120,14 +120,14 @@ a [latent variable][Terminology]. Hence, designed entities (artifacts) such as t
 adequately described by a [composite][Terminology], i.e., the linear combination of observables defining
 the composite. Composites may also be formed to represent [latent variables/common factors][Terminology] 
 (or more precisely [concepts][Terminology] modeled as [common factors][Terminology]) in which case
-the [composite][Terminology] serves as a [proxy or stand-in][Terminology] for the the [latent variable][Terminology].
+the [composite][Terminology] serves as a [proxy or stand-in][Terminology] for the [latent variable][Terminology].
 However, in **cSEM**, the term "composite *__model__*" is only used to refer to a model
 in a the former sense, i.e., a model in which the [composite][Terminology] is a direct representation
 of [concept/construct][Terminology]!
 
 Parameters in composite models are retrivied by a composite-based approach such as partial 
 least squares path modeling (PLS-PM), generalized structured component analysis (GSCA) or 
-a dimension reduction techniques such as principal component analysis (PCA). The basic idea of any composite-based approach
+dimension reduction techniques such as principal component analysis (PCA). The basic idea of any composite-based approach
 is to build scores/composites for each concept and subsequently retrieve structural
 model parameters by a series of (linear) regressions. 
 Such estimation methods are therefore often referred to as 
@@ -200,9 +200,9 @@ only comprises three steps:
    correction for attenuation, default arguments are often sufficient. See the 
    [Estimate using csem()](#estimate) section below.
 1. **Postestimate**: Inspired by the [grammar of data manipulation](https://dplyr.tidyverse.org/) 
-   underlying the [dplyr](https://dplyr.tidyverse.org/) package, cSEM provides a
-   5 postestimation verbs that concisely cover all common postestimation task
-   as well as 4 additional test commands and 2 general do command:
+   underlying the [dplyr](https://dplyr.tidyverse.org/) package, cSEM provides
+   5 postestimation verbs that concisely cover all common postestimation tasks
+   as well as 4 additional test commands and 2 general do commands:
    1. `assess()`
    1. `infer()`
    1. `predict()`
@@ -250,9 +250,9 @@ this step is nevertheless considered an explicit part of the cSEM-workflow is mo
 applied/causal users tend to shy away from software like R because
 "just getting the data in" and understanding how to show, manipulate and work with
 data can be frustrating if one is not aware of R's rich and easy to learn
-data import and data processing capabilities. WWhile these topics may have been
+data import and data processing capabilities. While these topics may have been
 overwhelming for newcomers several years ago, data import and data transformation
-have become extremely simple and user-friendly if the right tools packages/ packages
+have become extremely simple and user-friendly if the right tools packages
 are used. The best place to start is
 the [Rstudio Cheat sheet webpage](https://www.rstudio.com/resources/cheatsheets/),
 especially the *Data Import* and the *Data Transformation* cheat sheets.
@@ -299,7 +299,7 @@ data types/structures are accepted:
 1. A list of data frames or matrices. In this case estimation is repeated for
    each data frame or matrix separately.
 
-A major shortcoming that the current version 0.1.0 available on CRAN does not 
+The current version 0.1.0 available on CRAN does not 
 provide any tools to handle missing values. Future versions are likely to include 
 at least the basic approaches for handling missing values. Regularly check <https://github.com/M-E-Rademaker/cSEM>
 to get the latest updates.
@@ -321,7 +321,7 @@ model is illustrated below using variables of the build-in `satisfaction` datase
 For more information see the [lavaan syntax tutorial](http://lavaan.ugent.be/tutorial/syntax1.html).
 
 #### Linear models
-A typical linear model would looks like this:
+A typical linear model would look like this:
 ```{r eval=FALSE}
 model <- "
 # Structural model
@@ -407,7 +407,7 @@ where `IMAG` is modeled as a composite and and `EXPE` is itself a common factor.
 estimate a model using individual functions called by `csem()` (such as
 `parseModel()`, `processData()`, `calculateWeightsPLS()`, `estimatePath()` etc.) 
 using R's `:::`mechanism for non-exported functions, it is virtually
-always easier, saver and quicker to use `csem()` instead (this is why these functions
+always easier, safer and quicker to use `csem()` instead (this is why these functions
 are not exported).
 
 `csem()` accepts all models and data types described above. The result of a call to
@@ -580,7 +580,7 @@ There are 5 major postestimation function and 4 test-family functions:
     
 `testMGD()`
 
-:   Test for group differences using several different approach such as e.g.,
+:   Test for group differences using several different approaches such as e.g.,
     the one described in @Klesel2019.
 
 `testMICOM()`
@@ -595,7 +595,7 @@ There are 5 major postestimation function and 4 test-family functions:
 
 `doRedundancyAnalysis()`
 
-:   Perform a redundancy analysis (RA) as proposed by @Hair2016 with reference to 
+:   Performs a redundancy analysis (RA) as proposed by @Hair2016 with reference to 
     @Chin1998.
 
 Technically, postestimation functions are generic function with methods for objects of class
@@ -615,7 +615,7 @@ ensures a specific structure. Therefore, it is important to remember that
 ## Principles underlying cSEM
 
 **cSEM** is based on a number of principles, that have shaped its design, 
-termionolgy and scope. These principles are discussed below
+terminology and scope. These principles are discussed below
 
 ### Model vs. Estimation
 
@@ -639,8 +639,8 @@ path coefficients) unless the proxy is a perfect representation of its
 construct level counterpart. This is commonly referred to as **attenuation bias**.
 Several approaches have been suggested to correct for these biases.
 In **cSEM** estimates are correctly dissattenuated by default if any of the
-concepts involved are modeled as a common factor! Disattentuation is controlled
-by the `.disattenuate` argument of `csem()`
+concepts involved is modeled as a common factor! Disattentuation is controlled
+by the `.disattenuate` argument of `csem()`.
 
 **Example**
 ```{r eval=FALSE}
@@ -683,8 +683,8 @@ or generalized structured component analysis (GSCA)
 is therefore to some extent a question of *relative* appropriateness and
 *relative* superiority.
 
-As a notable consequence, we belief that well known approach such partial least
-PLS-PM and generalized structured component analysis (GSCA)
+As a notable consequence, we believe that well known approaches such partial least 
+squares path modeling (PLS-PM) and generalized structured component analysis (GSCA)
 are - contrary to common belief - best exclusively understood as prescriptions for forming
 linear compounds based on observables, i.e., as weighting approaches. Not more, not less.[^1]
 In **cSEM** this is reflected by the fact that `"PLS"` and `"GSCA"` are choices of 
