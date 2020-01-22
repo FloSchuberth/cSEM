@@ -285,6 +285,8 @@ calculateGoF <- function(
 #' @inheritParams csem_arguments
 #' @param .output_type Character string. The type of output. One of "vector" or
 #'   "data.frame". Defaults to "vector".
+#' @param .model_implied Logical. Should weights be scaled using the model-implied
+#'   indicator correlation matrix? Defaults to `TRUE`.
 #' @param ... Ignored.
 #'
 #' @seealso [assess()], [cSEMResults]
@@ -297,11 +299,10 @@ calculateGoF <- function(
 #' @name reliability
 NULL
 
-#' @describeIn reliability Calculate the congeneric reliability, also known as
-#'                         composite reliability or rho_A.
+#' @describeIn reliability Calculate the congeneric reliability
 calculateRhoC <- function(
   .object              = NULL,
-  .model_implied       = FALSE,
+  .model_implied       = TRUE,
   .only_common_factors = TRUE,
   .weighted            = args_default()$.weighted
   ) {
@@ -312,6 +313,19 @@ calculateRhoC <- function(
           " class `cSEMResults_default`. Use `assess()` instead.")
   }
   
+  # Note (21.01.2020): The actual formula for congeneric reliability assuming
+  #   1. constructs modeled as common factors
+  #   2. scores build using unit weights
+  #   is given by (notation from cSEM website):
+  #
+  #      rhoC = Var(eta_bar)/ Var(eta_hat_k) = (sum lambda_k)^2 / (sum lambda_k)^2 + Var(epsilon_bar)
+  #
+  # Reliability in general is given by
+  # 
+  #  rhoC = Var(eta_bar)/ Var(eta_hat_k) = (w'lambda)^2 / w'S w
+  # We can write the formula es
+  # In cSEM weights are chosen such that Var(eta_hat_k) is 1. We always use
+  
   ## Get relevant objects
   if(.weighted) {
     W <- .object$Estimates$Weight_estimates
@@ -320,7 +334,19 @@ calculateRhoC <- function(
   }
   
   if(.model_implied) {
+    ## Redefine the construct types: all composites to common factor
+    ## Reason: to compute Joereskogs rho we need the model-implied indicator
+    ## correlation matrix as if the model was a common factor model.
+    c_type_original <- .object$Information$Model$construct_type 
+    c_type <- c_type_original
+    c_type[c_type == "Composite"] <- "Common factor" 
+    # Replace
+    .object$Information$Model$construct_type <- c_type
+    
     indicator_vcv <- fit(.object)
+
+    # Reset
+    .object$Information$Model$construct_type <- c_type_original
   } else {
     indicator_vcv <- .object$Estimates$Indicator_VCV
   }
@@ -349,11 +375,7 @@ calculateRhoC <- function(
   return(rhoC)
 }
 
-#' @describeIn reliability Calculate the tau-equivalent reliability, also known
-#'                         as Cronbach's alpha or coefficient alpha. Since
-#'                         indicators are always standarized in `cSEM`, 
-#'                         tau-equivalent reliability is identical to the
-#'                         parallel reliability.
+#' @describeIn reliability Calculate the tau-equivalent reliability
 #' 
 calculateRhoT <- function(
   .object              = NULL,
@@ -535,8 +557,6 @@ calculateHTMT <- function(
     
     ## Return NA if there are not at least 2 common factors
     if(length(cf_names) < 2) {
-      warning2("Computation of the HTMT requires at least two common factors, ",
-               "unless `.only_common_factors = FALSE`. NA is returned.")
       return(NA)
     }
   } else {
@@ -913,7 +933,7 @@ calculateEffectSize <- function(.object = NULL) {
       
       # If there is only one independent variable the R^2_excluded is 0
       # since s_u_dach^2 = s_y^2
-      if(sum(model_temp$structural[x, i]) > 0) { 
+      if(sum(model_temp$structural[x, ]) > 0) { 
         out <- estimatePath(
           .approach_nl      = approach_nl,
           .approach_paths   = approach_paths,
