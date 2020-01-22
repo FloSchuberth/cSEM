@@ -130,12 +130,12 @@ ensures a specific structure. Therefore, it is important to remember that
 Some assessment measures are inherently tied to the common factor model. It
 is therefore unclear how to interpret their results in the context of a 
 composite model. Consequently, their computation is suppressed by default for 
-constructs modeled as common factors. Currently, this applies to the following
+constructs modeled as composites. Currently, this applies to the following
 quality criteria: 
 
 - AVE and validity assessment based theron (i.e., the Fornell-Larcker criterion)
 - HTMT and validity assessment based theron
-- All reliability measures (congeneric, tau-equivalent, Cronbach's alpha)
+- All reliability measures
  
 It is possible to force computation of all quality criteria for constructs
 modeled as composites, however, we explicitly warn to interpret results, 
@@ -193,6 +193,13 @@ common definitions are given below:
 
 It is important to stress that, although different in wording, all definitions 
 are synonymous! 
+
+The AVE is inherently tied to the common factor model. It
+is therefore unclear how to interpret the AVE for constructs modeled as composites. 
+Consequently, their computation is suppressed by default for 
+constructs modeled as common factors. It is possible to force computation of the
+AVE for constructs modeled as composites, however, we explicitly warn to interpret results, 
+as they may not even have a conceptual meaning.
 
 ### Formulae
 Using the results and notation derived and defined in the [Notation][Notation] help file,
@@ -452,7 +459,7 @@ which provides the foundation for the measurement model described
 in the [Notation][Notation] help file. 
 Based on the true score framework and using the terminology and notation of
 the [Notation][Notation] and [Termniology][Terminology] help files, reliability 
-is defined as:
+of a generic measurement is defined as:
 
 1. The amount of proxy true score variance, $Var(\bar\eta)$, relative to the 
    the proxy or test score variance, $Var(\hat\eta)$.
@@ -468,43 +475,44 @@ to the formulae written below. The well-established names for the different
 types of measurement model provide natural naming candidates for their corresponding
 (internal consistency) reliabilities measure:
 
-1. **Parallel** -- Assumption: $\eta_k = \eta \longrightarrow \lambda_k = \lambda$ and $Var(\varepsilon_k) = Var(\varepsilon)$.
-1. **Tau-equivalent** -- Assumption: $\eta_k = \eta \longrightarrow \lambda_k = \lambda$ and $Var(\varepsilon_k) \neq Var(\varepsilon_l)$.
-1. **Congeneric** -- Assumption: $\eta_k = \lambda_k\eta$ and $Var(\varepsilon_k) \neq Var(\varepsilon_l)$.
+1. **Parallel** -- Assumption: $\eta_{kj} = \eta_j \longrightarrow \lambda_{kj} = \lambda_j$ and $Var(\varepsilon_{kj}) = Var(\varepsilon_j)$.
+1. **Tau-equivalent** -- Assumption: $\eta_{kj} = \eta_j \longrightarrow \lambda_{kj} = \lambda_j$ and $Var(\varepsilon_{kj}) \neq Var(\varepsilon_{lj})$.
+1. **Congeneric** -- Assumption: $\eta_{kj} = \lambda_{kj}\eta_j$ and $Var(\varepsilon_{kj}) \neq Var(\varepsilon_{lj})$.
 
-In principal the test score $\hat\eta$ is weighted linear combinations of 
+In principal the test score $\hat\eta$ is a weighted linear combinations of 
 the indicators, i.e., a proxy or stand-in for the true score/common factor. 
 Historically, however, the test score is generally assumed to be a simple sum 
-score,i.e., a weighted sum of indicators with all weights assumed to be equal to 
-one. Hence, well-known reliability measures such as Cronbach's alpha are definied
+score, i.e., a weighted sum of indicators with all weights assumed to be equal to 
+one. Hence, well-known reliability measures such as Jöreskog's $\rho$ or Cronbach's $\alpha$ are defined
 with respect to a test score that indeed represents a simple sum score. 
-Yet, all reliability measures originally developped assuming a sum score may 
+Yet, all reliability measures originally developed assuming a sum score may 
 equally well be computed with respect to a composite, i.e., a weighted score 
 with weights not necessarily equal to one.
 
-Apart form the distinction between congeneric and tau-equivalent reliability 
-(Cronbach's alpha) we therefore distinguish between reliability estimates based on
+Apart form the distinction between congeneric (i.e., Jöreskog's $\rho$) and tau-equivalent reliability 
+(i.e., Cronbach's $\alpha$) we therefore distinguish between reliability estimates based on
 a test score (composite) that uses the weights of the weight approach used 
 to obtain `.object` and a test score (proxy) based on unit weights. The former
-is indicated by adding "**weighted**" to the original name.
+is indicated by adding "**weighted**" to the original name. 
 
 ### Formulae
 
-The most general formula for reliability is the **weighted congeneric reliability**:
+The most general formula for reliability is the **(weighted) congeneric reliability**:
 
 $$ \rho_{C; \text{weighted}} = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\bm{w}'\bm{\lambda})^2}{\bm{w}'\bm{\Sigma}\bm{w}}$$
-Assuming $w_k = 1$, i.e. unit weights, the "classical" formula for congeneric reliability follows:
+Assuming $\bm w = \bm\iota$, i.e., unit weights, the "classical" formula for congeneric reliability
+(i.e., Jöreskog's $\rho$), follows:
 $$ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{\left(\sum\lambda_k\right)^2}{\left(\sum\lambda_k\right)^2 + Var(\bar\varepsilon)}$$
 Using the assumptions imposed by the tau-equivalent measurement model we obtain
-the **weighted tau-equivalent reliability (weighted Cronbach's alpha)**:
+the **(weighted) tau-equivalent reliability, i.e., (weighted) Cronbach's alpha)**:
 
 $$ \rho_{T; \text{weighted}}  = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + \sum w_k^2Var(\varepsilon_k)}
  = \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + \sum w_k^2Var(x_k)}$$
 where we used the fact that if $\lambda_k = \lambda$ (tau-equivalence), 
-$\lambda^2_k$ equals the average covariance between indicators:
+$\lambda^2$ equals the average covariance between indicators:
  $$\bar\sigma_x = \frac{1}{K(K-1)}\sum^K_{k=1}\sum^K_{l=1} \sigma_{kl}$$
-Again, assuming $w_k = 1$, i.e. unit weights, the "classical" formula for 
-tau-equivalent reliability (Cronbach's alpha) follows:
+Again, assuming $w_k = 1$, i.e., unit weights, the "classical" formula for 
+tau-equivalent reliability (Cronbach's $\alpha$) follows:
 $$ \rho_T = \frac{\lambda^2K^2}{\lambda^2K^2 + \sum Var(\bar\varepsilon_k)}
  = \frac{\bar\sigma_xK^2}{\bar\sigma_x[K^2 - K] + K Var(x_k)}$$
 Using the assumptions imposed by the parallel measurement model we obtain
@@ -513,40 +521,46 @@ the **parallel reliability**:
 $$ \rho_P = \frac{\lambda^2(\sum w_k)^2}{\lambda^2(\sum w_k)^2 + Var(\varepsilon)\sum w_k^2} = 
  \frac{\bar\sigma_x(\sum w_k)^2}{\bar\sigma_x[(\sum w_k)^2 - \sum w_k^2] + Var(x)\sum w_k^2} $$
 
-In **cSEM** indicators are always standardized and weights are choosen such 
-that $Var(\hat\eta_k) = 1$. This significantly simplifies the formulae and 
-$\rho_T = \rho_P$ are in fact identical:
-
+In **cSEM** indicators are always standardized and weights are chosen such 
+that $Var(\hat\eta_k) = 1$. This is done by scaling the weight vector $\bm{w}$
+by $(\bm{w}'\bm{\Sigma}\bm{w})^{-\frac{1}{2}}$. This simplifies the
+formulae:
 $$
 \begin{align}
 \rho_{C; \text{weighted}} &= (\sum w_k\lambda_k)^2 = (\bm{w}'\bm{\lambda})^2 \\
-\rho_C &=  (\sum \lambda_k)^2 \\
 \rho_{T; \text{weighted}} = \rho_{P; \text{weighted}} &=  \bar\rho_x(\sum w_k)^2 \\
-\rho_{T} = \rho_P = \bar\rho_x K^2
 \end{align}
 $$
-
 where $\bar\rho_x = \bar\sigma_x$ is the average correlation between indicators. Consequently,
 parallel and tau-equivalent reliability are always identical in **cSEM**.
 
-<!-- It is important to realize that $\rho_T$ ($\rho_P$) based on the average covariance/ -->
-<!-- correlation (if $x_k$ is standardized as it is always the case in **cSEM**) are nested within the  -->
-<!-- general formula, however, **if and only if the assumptions of the tau-equivalent -->
-<!-- and/or the parallel model hold do they represent reliability measures.** -->
-<!-- In pratice, these assumptions are unlikely to hold. We therefore explicitly discourage -->
-<!-- their use as congeneric reliability is virtually always preferable in empirical -->
-<!-- work! In fact, as shown above, congeneric reliability is identical to the  -->
-<!-- tau-equivalent/parallel reliability *if their respective assumptions actually hold*, -->
-<!-- essentially offering robustness against violation of the tau-equivalence and/or -->
-<!-- parallel measurement assumption. -->
+So far formulae have been motivated theoretically. Since $\bm{\Sigma}$ is unknown
+it can be replaced by $\bm{S}$ (the empirical indicator correlation matrix) or 
+$\hat{\bm{\Sigma}}$ (the model-implied indicator correlation matrix), however, 
+$\bm{S}$ and $\hat{\bm{\Sigma}}$ are generally not equal. The practical implication 
+is that if $\rho_{C}$ is computed as $(\bm{w}'\bm{\lambda})^2$ using unit weights 
+the weights can in fact be scaled by both $(\bm{w}'\bm{S}\bm{w})^{-\frac{1}{2}}$ 
+or $(\bm{w}'\hat{\bm{\Sigma}}\bm{w})^{-\frac{1}{2}}$! Similarly, $\rho_{C; \text{weighted}}$
+can be computed using weights scaled using either $\bm{S}$ or $\hat{\bm{\Sigma}}$.
+Consequently there are in fact four types of congeneric reliability depending the type
+of weight and the type of scaling for the weights. Hence, the calculation is 
+of "the" congeneric reliability is always:
+$$(\bm{w}'\bm{\lambda})^2$$
+where $\bm{w}$ can be: 
 
-#### Closed-form confidence interval
-
-@Trinchera2018 proposed a closed-form confidence interval (CI) for
-the tau-equivalent reliability (Cronbach's alpha). To compute the CI, set
-`.closed_form_ci = TRUE` when calling `assess()` or invoke 
-`calculateRhoT(..., .closed_form_ci = TRUE)` directly. The level of the CI
-can be changed by supplying a single value or a vector of values to `.alpha`.
+1. a vector of unit weights scaled by $(\bm{w}'\hat{\bm{\Sigma}}\bm{w})^{-\frac{1}{2}}$. This
+   is typically what people refer to as *the* congeneric reliability (Jöreskog's $\rho$).
+   We label this type of reliability estimate $\rho_C$.
+1. a vector of unit weights scaled by $(\bm{w}'\bm{S}\bm{w})^{-\frac{1}{2}}$.
+   This has no known name. Its usefulness is an open question. We label this type
+   of reliability estimate $\rho_{C;mm}$.
+1. a vector of weights obtained using a composite-based estimator (e.g. PLS-PM)
+   scaled by $(\bm{w}'\bm{S}\bm{w})^{-\frac{1}{2}}$. This is
+   Dijkstra Henseler's $\rho_A$. We label this type of reliability estimate $\rho_{C;\text{weighted}}$.
+1. a vector of weights obtained using a composite-based estimator (e.g. PLS-PM)
+   scaled by $(\bm{w}'\hat{\bm{\Sigma}}\bm{w})^{-\frac{1}{2}}$.
+   This has no known name. Its usefulness is an open question.
+   We label this type of reliability estimate $\rho_{C;\text{weighted};mm}$
 
 #### A note on the terminology
 
@@ -558,7 +572,7 @@ or applied users whose primary concern is to apply the appropriate method
 to the appropriate case without poring over books and research papers
 to understand each intricate detail.
 
-In **cSEM** we seek to make working with reliabilities as consistent and easy as
+In **cSEM** we seek to make working with reliabilities as consistent as
 possible by relying on a paper by @Cho2016 who proposed uniform 
 formula-generating methods and a systematic naming conventions for all
 common reliability measures. Naturally, some of the conventional terminonolgy 
@@ -586,17 +600,29 @@ different naming systems and conventions we provide a "translation table" below:
 
  Tau-equivalent reliability        $\rho_T$                      Cronbach's alpha, $\alpha$, Coefficient alpha
                                                                  Guttmans $\lambda_3$, KR-20
+
+ Tau-equivalent reliability        $\rho_{T;\text{weighted}}$    --
+ weighted  
   
  Congeneric reliability            $\rho_C$                      Composite reliability, Jöreskog's $\rho$,
                                                                  Construct reliability, $\omega$,
                                                                  reliability coefficient, Dillon-Goldsteins's $\rho$
                                                                  
- Weighted Congeneric reliability   $\rho_{C;\text{weighted}}$    $\rho_A$, $\rho_B$
+ Congeneric reliability            $\rho_{C;\text{weighted}}$    Dijkstra-Henseler's $\rho_A$
+ weighted
 -----------------------------------------------------------------------------------------------------------------
 
 Table: Systematic names and common synonymous names for the
-reliability found in the literature
+reliability estimates found in the literature
 </center>
+
+#### Closed-form confidence interval
+
+@Trinchera2018 proposed a closed-form confidence interval (CI) for
+the tau-equivalent reliability (Cronbach's alpha). To compute the CI, set
+`.closed_form_ci = TRUE` when calling `assess()` or invoke 
+`calculateRhoT(..., .closed_form_ci = TRUE)` directly. The level of the CI
+can be changed by supplying a single value or a vector of values to `.alpha`.
 
 ### Implementation
 The functions are implemented as: `calculateRhoC()` and `calculateRhoT()`. 

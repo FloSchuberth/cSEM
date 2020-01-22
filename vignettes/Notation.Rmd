@@ -35,7 +35,7 @@ an underlying [latent variable][Terminology] ([common factor][Terminology]) or a
 Despite this crucial difference, we stick with the common - although somewhat 
 ambivalent - notation and represent both the construct and the latent variable (which is
 only **a** possible construct) by $\eta$. Let $x_{kj}$ $(k = 1,\dots, K_j)$ be an 
-indicator (observable) belonging to construct $eta_j$ $(j = 1\dots, J)$ and $w_{kj}$
+indicator (observable) belonging to construct $\eta_j$ $(j = 1\dots, J)$ and $w_{kj}$
 be a weight.
 A composite is definied as:
 $$\hat{\eta}_j = \sum^{K_j}_{k = 1} w_{kj} x_{kj} $$ 
