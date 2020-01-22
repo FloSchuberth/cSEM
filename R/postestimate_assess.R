@@ -21,7 +21,12 @@
 #'   amount of variation in the indicators that is due to the underlying latent variable. 
 #'   Practically, it is calculated as the ratio of the (indicator) true score variances 
 #'   (i.e., the sum of the squared loadings)
-#'   relative to the sum of the total indicator variances. Calculation is done
+#'   relative to the sum of the total indicator variances. The AVE is inherently
+#'   tied to the common factor model. It is therefore unclear how to meaningfully 
+#'   interpret AVE results for constructs modeled as composites. 
+#'   It is possible to report the AVE for constructs modeled as composites by setting 
+#'   `.only_common_factors = FALSE`, however, result should be interpreted with caution 
+#'   as they may not have a conceptual meaning. Calculation is done
 #'   by [calculateAVE()].}
 #' \item{Congeneric reliability; "rho_C", "rho_C_mm,", "rho_C_weighted", "rho_C_weighted_mm"}{
 #'   An estimate of the reliability assuming a congeneric measurement model (i.e., loadings are
@@ -29,12 +34,21 @@
 #'   There are four different versions implemented. See the 
 #'   \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
 #'   of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
-#'   article on the on the
+#'   article on the
 #'   \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
-#'   Alternative but synonemmous names for `"rho_C_mm"` are: 
+#'   Alternative but synonemmous names for `"rho_C"` are: 
 #'   composite reliability, construct reliablity, reliability coefficient, 
 #'   Joereskog's rho, coefficient omega, or Dillon-Goldstein's rho. 
-#'   For `"rho_C_weighted_mm"`: (Dijkstra-Henselers) rhoA, or rhoB. 
+#'   For `"rho_C_weighted"`: (Dijkstra-Henselers) rhoA. `rho_C_mm` and `rho_C_weighted_mm`
+#'   have no corresponding names. The former uses unit weights scaled by (w'Sw)^(-1/2) and
+#'   the latter weights scaled by (w'Sigma_hat w)^(-1/2) where Sigma_hat is 
+#'   the model-implied indicator correlation matrix.
+#'   The Congeneric reliability is inherently
+#'   tied to the common factor model. It is therefore unclear how to meaningfully 
+#'   interpret congeneric reliability estimates for constructs modeled as composites. 
+#'   It is possible to report the congeneric reliability for constructs modeled as 
+#'   composites by setting `.only_common_factors = FALSE`, however, result should be 
+#'   interpreted with caution as they may not have a conceptual meaning.
 #'   Calculation is done by [calculateRhoC()].}
 #' \item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
 #'   reliability assuming a tau-equivalent measurement model (i.e., a measurement
@@ -46,7 +60,17 @@
 #'   the prefered name for this kind of reliability in \pkg{cSEM}, as it clearly states what
 #'   it actually estimates (the tau-equivalent reliability as opposed to
 #'   the congeneric reliability). "rho_T" and "cronbachs_alpha" are therefore
-#'   always identical. Calculation is done by [calculateRhoT()]}
+#'   always identical. 
+#'   The tau-equivalent
+#'   reliability (Cronbach's alpha) is inherently
+#'   tied to the common factor model. It is therefore unclear how to meaningfully 
+#'   interpret tau-equivalent
+#'   reliability estimates for constructs modeled as composites. 
+#'   It is possible to report tau-equivalent
+#'   reliability estimates for constructs modeled as 
+#'   composites by setting `.only_common_factors = FALSE`, however, result should be 
+#'   interpreted with caution as they may not have a conceptual meaning.
+#'   Calculation is done by [calculateRhoT()]}
 #' \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
 #'   between the model-implied and the empirical indicator correlation matrix.
 #'   Currently, the geodesic distance (`"dg"`), the squared Euclidian distance
@@ -92,17 +116,30 @@
 #'   measure of model fit in a Chi-square fit test sense. Calculation is done 
 #'   by [calculateGoF()].}
 #' \item{Heterotrait-monotrait ratio of correlations (HTMT); "htmt"}{
-#'   An estimate of the latent variable correlation used to assess
-#'   convergent and/or discriminant validity of a construct. Calculation is done
-#'   by [calculateHTMT()].}
+#'   An estimate of the correlation between latent variables. The HTMT is used 
+#'   to assess convergent and/or discriminant validity of a construct. 
+#'   The HTMT is inherently tied to the common factor model. If the model contains
+#'   less than two constructs modeled as common factors and 
+#'   `.only_common_factors = TRUE`, `NA` is returned.
+#'   It is possible to report the HTMT for constructs modeled as 
+#'   composites by setting `.only_common_factors = FALSE`, however, result should be 
+#'   interpreted with caution as they may not have a conceptual meaning.
+#'   Calculation is done by [calculateHTMT()].}
 #' \item{Reliability: "reliability"}{
 #'   As described in the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} 
 #'   section of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
-#'   article on the on the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} 
+#'   article on the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} 
 #'   there are many different estimators for the (internal consistency) reliability.
 #'   Choosing `.quality_criterion = "reliability"` computes the three most common
 #'   measures, namely: "Cronbachs alpha" (identical to "rho_T"), "Jöreskogs rho" (identical to "rho_C_mm"),
-#'   and "Dijkstra-Henselers rho A" (identical to "rho_C_weighted_mm").}
+#'   and "Dijkstra-Henselers rho A" (identical to "rho_C_weighted_mm").
+#'   Reliability is inherently
+#'   tied to the common factor model. It is therefore unclear how to meaningfully 
+#'   interpret reliability estimates for constructs modeled as composites. 
+#'   It is possible to report the three common reliability estimates for constructs modeled as 
+#'   composites by setting `.only_common_factors = FALSE`, however, result should be 
+#'   interpreted with caution as they may not have a conceptual meaning.
+#'   }
 #' \item{R square and R square adjusted; "r2", "r2_adj"}{The R square and the adjusted
 #'   R square for each structural regression equation.
 #'   Calculated when running [csem()].}
@@ -111,6 +148,15 @@
 #'   model with equal loadings) and a test score (proxy) based on unit weights.
 #'   Tau-equivalent reliability is the preferred name for reliability estimates
 #'   that assume a tau-equivalent measurment model such as Cronbach's alpha.
+#'   The tau-equivalent
+#'   reliability (Cronbach's alpha) is inherently
+#'   tied to the common factor model. It is therefore unclear how to meaningfully 
+#'   interpret tau-equivalent
+#'   reliability estimates for constructs modeled as composites. 
+#'   It is possible to report tau-equivalent
+#'   reliability estimates for constructs modeled as 
+#'   composites by setting `.only_common_factors = FALSE`, however, result should be 
+#'   interpreted with caution as they may not have a conceptual meaning.
 #'   Calculation is done by [calculateRhoT()].}
 #' \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-) 
 #'   collinearity between independent variables of a regression equation. Computed
@@ -230,7 +276,9 @@ assess.cSEMResults_default <- function(
     # RhoC
     out[["RhoC"]]  <- calculateRhoC(
       .object, 
-      .only_common_factors = .only_common_factors
+      .only_common_factors = .only_common_factors,
+      .weighted = FALSE,
+      .model_implied = TRUE
     )
   }
   if(any(.quality_criterion %in% c("all", "rho_C_mm"))) {
@@ -238,7 +286,8 @@ assess.cSEMResults_default <- function(
     out[["RhoC_mm"]]  <- calculateRhoC(
       .object, 
       .only_common_factors = .only_common_factors,
-      .model_implied = TRUE
+      .weighted = FALSE,
+      .model_implied = FALSE
     )
   }
   if(any(.quality_criterion %in% c("all", "rho_C_weighted"))) {
@@ -246,7 +295,8 @@ assess.cSEMResults_default <- function(
     out[["RhoC_weighted"]]  <- calculateRhoC(
       .object, 
       .only_common_factors = .only_common_factors, 
-      .weighted = TRUE
+      .weighted = TRUE,
+      .model_implied = FALSE
     )
   }
   if(any(.quality_criterion %in% c("all", "rho_C_weighted_mm"))) {
@@ -258,25 +308,6 @@ assess.cSEMResults_default <- function(
       .model_implied = TRUE
     )
   }
-  # if(any(.quality_criterion %in% c("all", "cronbachs_alpha"))) {
-  #   # Cronbach's alpha aka RhoT
-  #   out[["Cronbachs_alpha"]]  <- calculateRhoT(
-  #     .object, 
-  #     .only_common_factors = .only_common_factors, 
-  #     .output_type         = "vector",
-  #     ...
-  #   )
-  # }
-  # if(any(.quality_criterion %in% c("all", "cronbachs_alpha_weighted"))) {
-  #   # Cronbach's alpha weighted aka RhoT weighted
-  #   out[["Cronbachs_alpha_weighted"]]  <- calculateRhoT(
-  #     .object, 
-  #     .only_common_factors = .only_common_factors, 
-  #     .output_type         = "vector",
-  #     .weighted            = TRUE,
-  #     ...
-  #   )
-  # }
   if(any(.quality_criterion %in% c("all", "dg"))) {
     # dG
     out[["DG"]]    <- calculateDG(.object, ...)
@@ -387,6 +418,7 @@ assess.cSEMResults_default <- function(
     out$reliability[["Joereskogs_rho"]] <- calculateRhoC(
       .object, 
       .only_common_factors = .only_common_factors,
+      .weighted = FALSE,
       .model_implied = TRUE
     )
     
@@ -395,7 +427,7 @@ assess.cSEMResults_default <- function(
       .object, 
       .only_common_factors = .only_common_factors, 
       .weighted = TRUE,
-      .model_implied = TRUE
+      .model_implied = FALSE
     )
   }
   if(any(.quality_criterion %in% c("all", "rho_T"))) {
@@ -407,7 +439,7 @@ assess.cSEMResults_default <- function(
       ...
     )
   }
-  if(any(.quality_criterion %in% c("all", "rho_C_weighted"))) {
+  if(any(.quality_criterion %in% c("all", "rho_T_weighted"))) {
     # RhoC weighted
     out[["RhoT_weighted"]]  <- calculateRhoT(
       .object, 

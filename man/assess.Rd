@@ -62,7 +62,12 @@ following quality criteria are implemented (in alphabetical order):
 amount of variation in the indicators that is due to the underlying latent variable.
 Practically, it is calculated as the ratio of the (indicator) true score variances
 (i.e., the sum of the squared loadings)
-relative to the sum of the total indicator variances. Calculation is done
+relative to the sum of the total indicator variances. The AVE is inherently
+tied to the common factor model. It is therefore unclear how to meaningfully
+interpret AVE results for constructs modeled as composites.
+It is possible to report the AVE for constructs modeled as composites by setting
+\code{.only_common_factors = FALSE}, however, result should be interpreted with caution
+as they may not have a conceptual meaning. Calculation is done
 by \code{\link[=calculateAVE]{calculateAVE()}}.}
 \item{Congeneric reliability; "rho_C", "rho_C_mm,", "rho_C_weighted", "rho_C_weighted_mm"}{
 An estimate of the reliability assuming a congeneric measurement model (i.e., loadings are
@@ -70,12 +75,21 @@ allowed to differ) and a test score (proxy) based on unit weights.
 There are four different versions implemented. See the
 \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
 of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
-article on the on the
+article on the
 \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
-Alternative but synonemmous names for \code{"rho_C_mm"} are:
+Alternative but synonemmous names for \code{"rho_C"} are:
 composite reliability, construct reliablity, reliability coefficient,
 Joereskog's rho, coefficient omega, or Dillon-Goldstein's rho.
-For \code{"rho_C_weighted_mm"}: (Dijkstra-Henselers) rhoA, or rhoB.
+For \code{"rho_C_weighted"}: (Dijkstra-Henselers) rhoA. \code{rho_C_mm} and \code{rho_C_weighted_mm}
+have no corresponding names. The former uses unit weights scaled by (w'Sw)^(-1/2) and
+the latter weights scaled by (w'Sigma_hat w)^(-1/2) where Sigma_hat is
+the model-implied indicator correlation matrix.
+The Congeneric reliability is inherently
+tied to the common factor model. It is therefore unclear how to meaningfully
+interpret congeneric reliability estimates for constructs modeled as composites.
+It is possible to report the congeneric reliability for constructs modeled as
+composites by setting \code{.only_common_factors = FALSE}, however, result should be
+interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by \code{\link[=calculateRhoC]{calculateRhoC()}}.}
 \item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
 reliability assuming a tau-equivalent measurement model (i.e., a measurement
@@ -87,7 +101,17 @@ reliability which is
 the prefered name for this kind of reliability in \pkg{cSEM}, as it clearly states what
 it actually estimates (the tau-equivalent reliability as opposed to
 the congeneric reliability). "rho_T" and "cronbachs_alpha" are therefore
-always identical. Calculation is done by \code{\link[=calculateRhoT]{calculateRhoT()}}}
+always identical.
+The tau-equivalent
+reliability (Cronbach's alpha) is inherently
+tied to the common factor model. It is therefore unclear how to meaningfully
+interpret tau-equivalent
+reliability estimates for constructs modeled as composites.
+It is possible to report tau-equivalent
+reliability estimates for constructs modeled as
+composites by setting \code{.only_common_factors = FALSE}, however, result should be
+interpreted with caution as they may not have a conceptual meaning.
+Calculation is done by \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
 between the model-implied and the empirical indicator correlation matrix.
 Currently, the geodesic distance (\code{"dg"}), the squared Euclidian distance
@@ -133,17 +157,30 @@ Note that, contrary to what the name suggests, the GoF is \strong{not} a
 measure of model fit in a Chi-square fit test sense. Calculation is done
 by \code{\link[=calculateGoF]{calculateGoF()}}.}
 \item{Heterotrait-monotrait ratio of correlations (HTMT); "htmt"}{
-An estimate of the latent variable correlation used to assess
-convergent and/or discriminant validity of a construct. Calculation is done
-by \code{\link[=calculateHTMT]{calculateHTMT()}}.}
+An estimate of the correlation between latent variables. The HTMT is used
+to assess convergent and/or discriminant validity of a construct.
+The HTMT is inherently tied to the common factor model. If the model contains
+less than two constructs modeled as common factors and
+\code{.only_common_factors = TRUE}, \code{NA} is returned.
+It is possible to report the HTMT for constructs modeled as
+composites by setting \code{.only_common_factors = FALSE}, however, result should be
+interpreted with caution as they may not have a conceptual meaning.
+Calculation is done by \code{\link[=calculateHTMT]{calculateHTMT()}}.}
 \item{Reliability: "reliability"}{
 As described in the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae}
 section of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
-article on the on the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+article on the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
 there are many different estimators for the (internal consistency) reliability.
 Choosing \code{.quality_criterion = "reliability"} computes the three most common
 measures, namely: "Cronbachs alpha" (identical to "rho_T"), "Jöreskogs rho" (identical to "rho_C_mm"),
-and "Dijkstra-Henselers rho A" (identical to "rho_C_weighted_mm").}
+and "Dijkstra-Henselers rho A" (identical to "rho_C_weighted_mm").
+Reliability is inherently
+tied to the common factor model. It is therefore unclear how to meaningfully
+interpret reliability estimates for constructs modeled as composites.
+It is possible to report the three common reliability estimates for constructs modeled as
+composites by setting \code{.only_common_factors = FALSE}, however, result should be
+interpreted with caution as they may not have a conceptual meaning.
+}
 \item{R square and R square adjusted; "r2", "r2_adj"}{The R square and the adjusted
 R square for each structural regression equation.
 Calculated when running \code{\link[=csem]{csem()}}.}
@@ -152,6 +189,15 @@ reliability assuming a tau-equivalent measurement model (i.e. a measurement
 model with equal loadings) and a test score (proxy) based on unit weights.
 Tau-equivalent reliability is the preferred name for reliability estimates
 that assume a tau-equivalent measurment model such as Cronbach's alpha.
+The tau-equivalent
+reliability (Cronbach's alpha) is inherently
+tied to the common factor model. It is therefore unclear how to meaningfully
+interpret tau-equivalent
+reliability estimates for constructs modeled as composites.
+It is possible to report tau-equivalent
+reliability estimates for constructs modeled as
+composites by setting \code{.only_common_factors = FALSE}, however, result should be
+interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by \code{\link[=calculateRhoT]{calculateRhoT()}}.}
 \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-)
 collinearity between independent variables of a regression equation. Computed

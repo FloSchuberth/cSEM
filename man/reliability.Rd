@@ -8,7 +8,7 @@
 \usage{
 calculateRhoC(
   .object = NULL,
-  .model_implied = FALSE,
+  .model_implied = TRUE,
   .only_common_factors = TRUE,
   .weighted = args_default()$.weighted
 )
@@ -26,10 +26,8 @@ calculateRhoT(
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.model_implied}{Logical. Should the RMS_theta be computed using the
-model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix
-based on V(eta) = WSW' divided by the square root of the respective
-reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
+\item{.model_implied}{Logical. Should weights be scaled using the model-implied
+indicator correlation matrix? Defaults to \code{TRUE}.}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality critera:
@@ -89,14 +87,9 @@ For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} us
 }
 \section{Functions}{
 \itemize{
-\item \code{calculateRhoC}: Calculate the congeneric reliability, also known as
-composite reliability or rho_A.
+\item \code{calculateRhoC}: Calculate the congeneric reliability
 
-\item \code{calculateRhoT}: Calculate the tau-equivalent reliability, also known
-as Cronbach's alpha or coefficient alpha. Since
-indicators are always standarized in \code{cSEM},
-tau-equivalent reliability is identical to the
-parallel reliability.
+\item \code{calculateRhoT}: Calculate the tau-equivalent reliability
 }}
 
 \references{
