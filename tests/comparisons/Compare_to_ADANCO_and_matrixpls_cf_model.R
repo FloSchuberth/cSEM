@@ -1,9 +1,11 @@
 #===============================================================================
 #
-#   Topic: Compare results from cSEM (0.0.0.9000), ADANCO 2.1.1., 
+#   Topic: Compare results from cSEM (0.1.0.9000), ADANCO 2.1.1., 
 #          and matrixpls (v. 1.0.6)
 #
-#   Date: 20.12.2019
+#   Type of model: common factor model
+#
+#   Date: 21.01.2020
 #
 #===============================================================================
 rm(list = ls())
@@ -13,9 +15,11 @@ require(xlsx)
 require(matrixpls)
 data("satisfaction")
 
+path_to_results <- "tests/comparisons/results_cf_model.xls"
+
 ### Import ADANCO results ------------------------------------------------------
 ## Import weights
-weights_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+weights_ADANCO <- read.xlsx(path_to_results, 
                             sheetName = "Weights", 
                             startRow = 2, endRow = 29, colIndex = c(2:8),
                             colClasses = c("character", rep("numeric", 6)))
@@ -24,7 +28,7 @@ rownames(weights_ADANCO) <- weights_ADANCO$Indicator
 weights_ADANCO <- weights_ADANCO[, -1]
 
 ## Import loadings
-loadings_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+loadings_ADANCO <- read.xlsx(path_to_results, 
                              sheetName = "Loadings", 
                              startRow = 2, endRow = 29, colIndex = c(2:8),
                              colClasses = c("character", rep("numeric", 6)))
@@ -33,7 +37,7 @@ rownames(loadings_ADANCO) <- loadings_ADANCO$Indicator
 loadings_ADANCO <- loadings_ADANCO[, -1]
 
 ## Import path
-path_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+path_ADANCO <- read.xlsx(path_to_results, 
                          sheetName = "Path Coefficients", 
                          startRow = 3, endRow = 8, colIndex = c(2:7),
                          colClasses = c("character", rep("numeric", 5)))
@@ -42,13 +46,13 @@ rownames(path_ADANCO) <- path_ADANCO$c..IMAG....EXPE....QUAL....VAL....SAT..
 path_ADANCO <- as.matrix(path_ADANCO[, -1])
 
 ## Import standardized scores
-scores_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+scores_ADANCO <- read.xlsx(path_to_results, 
                            sheetName = "Standardized Construct Scores", 
                            startRow = 2, endRow = 252, colIndex = c(3:8),
                            colClasses = rep("numeric", 5))
 
 ## Import Goodness of model fit (saturated)
-gof_s_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+gof_s_ADANCO <- read.xlsx(path_to_results, 
                           sheetName = "Goodness of model fit (saturate", 
                           startRow = 2, endRow = 5, colIndex = c(2:5),
                           colClasses = c("character", rep("numeric", 3)))
@@ -57,7 +61,7 @@ names(gof_s_ADANCO1) <- gof_s_ADANCO$c..SRMR....dULS....dG..
 gof_s_ADANCO <- gof_s_ADANCO1
 
 ## Import Goodness of model fit (estimated)
-gof_e_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+gof_e_ADANCO <- read.xlsx(path_to_results, 
                           sheetName = "Goodness of model fit (estimate", 
                           startRow = 2, endRow = 5, colIndex = c(2:5),
                           colClasses = c("character", rep("numeric", 3)))
@@ -66,12 +70,12 @@ names(gof_e_ADANCO1) <- gof_e_ADANCO$c..SRMR....dULS....dG..
 gof_e_ADANCO <- gof_e_ADANCO1
 
 ## Reliability
-reliability_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+reliability_ADANCO <- read.xlsx(path_to_results, 
                                 sheetName = "Construct Reliability", 
                                 startRow = 2, endRow = 8, colIndex = c(2:5))
 
 ## AVE
-ave_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+ave_ADANCO <- read.xlsx(path_to_results, 
                         sheetName = "Convergent Validity", 
                         startRow = 2, endRow = 8, colIndex = c(2:3))
 ave_name <- ave_ADANCO$Construct
@@ -79,7 +83,7 @@ ave_ADANCO <- ave_ADANCO$Average.variance.extracted..AVE.
 names(ave_ADANCO) <- ave_name
 
 ## HTMT
-htmt_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+htmt_ADANCO <- read.xlsx(path_to_results, 
                               sheetName = "Discriminant Validity  Heterotr", 
                               startRow = 2, endRow = 8, colIndex = c(3:8))
 
@@ -89,7 +93,7 @@ rownames(htmt_ADANCO) <- colnames(htmt_ADANCO)
 htmt_ADANCO[is.na(htmt_ADANCO)] <- 0
 
 ### Fornell-Larcker Criterion
-fl_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+fl_ADANCO <- read.xlsx(path_to_results, 
                          sheetName = "Fornell-Larcker Criterion", 
                          startRow = 2, endRow = 8, colIndex = c(3:8))
 
@@ -99,19 +103,19 @@ fl_ADANCO[upper.tri(fl_ADANCO)] <- t(fl_ADANCO)[upper.tri(fl_ADANCO)]
 rownames(fl_ADANCO) <- colnames(fl_ADANCO)
 
 ## R2
-r2_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+r2_ADANCO <- read.xlsx(path_to_results, 
                          sheetName = "R-Squared", 
                          startRow = 2, endRow = 7, colIndex = c(2:4))
 
 ## Cohens f2 (effect size)
-f2_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+f2_ADANCO <- read.xlsx(path_to_results, 
                        sheetName = "Effect Overview", 
                        startRow = 3, endRow = 17, colIndex = 6, header = FALSE,
                        colClasses = "numeric")
 f2_ADANCO <- as.numeric(f2_ADANCO$X6)[!is.na(as.numeric(f2_ADANCO$X6))]
 
 ## Proxy cor
-construct_cor_ADANCO <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+construct_cor_ADANCO <- read.xlsx(path_to_results, 
                               sheetName = "Inter-Construct Correlations", 
                               startRow = 2, endRow = 8, colIndex = c(3:8))
 construct_cor_ADANCO <- as.matrix(construct_cor_ADANCO)
@@ -120,14 +124,14 @@ construct_cor_ADANCO <- apply(construct_cor_ADANCO, 2, as.numeric)
 rownames(construct_cor_ADANCO) <- colnames(construct_cor_ADANCO)
 
 ## Model-implied indicator cor (saturated)
-sigma_hat_saturated <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+sigma_hat_saturated <- read.xlsx(path_to_results, 
                                  sheetName = "Impl_Cor Saturated Model", 
                                  startRow = 2, endRow = 29, colIndex = c(3:29))
 sigma_hat_saturated <- as.matrix(sigma_hat_saturated)
 rownames(sigma_hat_saturated) <- colnames(sigma_hat_saturated)
 
 ## Model-implied indicator cor (estimated)
-sigma_hat_estimated <- read.xlsx("Temp/Testing/Compare_to_Adanco/result.xls", 
+sigma_hat_estimated <- read.xlsx(path_to_results, 
                                  sheetName = "Impl_Cor Estimated Model", 
                                  startRow = 2, endRow = 29, colIndex = c(3:29))
 sigma_hat_estimated <- as.matrix(sigma_hat_estimated)
