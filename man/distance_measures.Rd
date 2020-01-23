@@ -23,7 +23,13 @@ calculateDL(
   ...
 )
 
-calculateDML(.object = NULL, .saturated = args_default()$.saturated, ...)
+calculateDML(
+  .object = NULL,
+  .matrix1 = NULL,
+  .matrix2 = NULL,
+  .saturated = args_default()$.saturated,
+  ...
+)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}

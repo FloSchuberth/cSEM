@@ -684,23 +684,31 @@ calculateDL <- function(
 
 calculateDML <- function(
   .object    = NULL, 
+  .matrix1   = NULL,
+  .matrix2   = NULL,
   .saturated = args_default()$.saturated,
   ...
   ){
   
-  # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
-  if(inherits(.object, "cSEMResults_default")) {
-    S <- .object$Estimates$Indicator_VCV
-  } else if(inherits(.object, "cSEMResults_2ndorder")) {
-    S <- .object$First_stage$Estimates$Indicator_VCV
+  if(!is.null(.matrix1) & !is.null(.matrix2)) {
+    S         <- .matrix1
+    Sigma_hat <- .matrix2
   } else {
-    stop2(
-      "The following error occured in the calculateDML() function:\n",
-      "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_default")) {
+      S <- .object$Estimates$Indicator_VCV
+    } else if(inherits(.object, "cSEMResults_2ndorder")) {
+      S <- .object$First_stage$Estimates$Indicator_VCV
+    } else {
+      stop2(
+        "The following error occured in the calculateDML() function:\n",
+        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+    }
+    
+    Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')  
   }
 
-  p         <- dim(S)[1]
-  Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')
+  p <- dim(S)[1]
   
   # This is the distance function. The test statistic is T_ML = (n-1) or n * DML! 
   sum(diag(S %*% solve(Sigma_hat))) - log(det(S%*%solve(Sigma_hat))) - p
@@ -773,7 +781,6 @@ calculateIFI <- function(.object) {
 
 calculateNFI <- function(.object) {
   
-  n <- nrow(.object$Information$Data)
   S <- .object$Estimates$Indicator_VCV
   p <- dim(S)[1]
   
