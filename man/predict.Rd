@@ -9,7 +9,6 @@ predict(
  .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
- .only_common_factors  = TRUE,
  .r                    = 10,
  .test_data            = NULL
  )
@@ -32,10 +31,6 @@ For "\emph{ignore}" all results are returned even if all or some of the estimate
 yielded inadmissible results.
 For "\emph{set_NA}" predictions based on inadmissible parameter estimates are
 set to \code{NA}.}
-
-\item{.only_common_factors}{Logical. Should only indicator scores for concepts
-modeled as common factors be predicted?
-Defaults to \code{TRUE}.}
 
 \item{.r}{Integer. The number of repetitions to use. Defaults to \code{10}.}
 
@@ -73,7 +68,7 @@ Predict uses the procedure introduced by \insertCite{Shmueli2016;textual}{cSEM} 
 PLS (commonly called: "PLSPredict" \insertCite{Shmueli2019}{cSEM}).
 Predict uses k-fold cross-validation to randomly
 split the data into training and test data and subsequently predicts the
-relevant values in the test data  based on the model parameter estimates obtained
+relevant values in the test data based on the model parameter estimates obtained
 using the training data. The number of cross-validation folds is 10 by default but
 may be changed using the \code{.cv_folds} argument.
 By default, the procedure is repeated \code{.r = 10} times to avoid irregularities
@@ -93,15 +88,8 @@ a simple mean-based prediction summarized in the Q2_predict metric.
 \code{predict()} is more general in that is allows users to compare the predictions
 based on a so-called target model/specificiation to predictions based on an
 alternative benchmark. Available benchmarks include predictions
-based on a linear model, PLS-PM weights, unit weights (i.e. sum scores), GSCA weights, PCA weights, and
-MAXVAR weights.
-
-By default, only the indicator scores of
-constructs modeled as common factors are predicted (\code{.only_common_factors  = TRUE}).
-While technically possible, prediction for constructs modeled
-as composites is conceptually difficult since composites are by design build
-by their indicators, i.e., composites are not though of as being predictive of
-their indicators.
+based on a linear model, PLS-PM weights, unit weights (i.e. sum scores),
+GSCA weights, PCA weights, and MAXVAR weights.
 
 Each estimation run is checked for admissibility using \code{\link[=verify]{verify()}}. If the
 estimation yields inadmissible results, \code{predict()} stops with an error (\code{"stop"}).

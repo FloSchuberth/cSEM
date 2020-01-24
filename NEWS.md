@@ -1,5 +1,11 @@
 # cSEM 0.1.0:9000
 
+- Remove argument `.only_common_factors` for postestimation function `predict()`.
+  Now `predict()` retruns predictions for composite models as well.
+  This will break existing code that uses `predict(..., .only_common_factors = ...)`.
+  You will get an `unused argument (.only_common_factors = FALSE)` error. 
+  Simply remove the argument to fix it.
+
 - Fix bug in `calculateEffectSize()`/`assess()` when one of the equations
   of the structural model has only one explanatory variable. 
 

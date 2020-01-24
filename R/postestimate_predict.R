@@ -6,7 +6,7 @@
 #' PLS (commonly called: "PLSPredict" \insertCite{Shmueli2019}{cSEM}). 
 #' Predict uses k-fold cross-validation to randomly 
 #' split the data into training and test data and subsequently predicts the 
-#' relevant values in the test data  based on the model parameter estimates obtained 
+#' relevant values in the test data based on the model parameter estimates obtained 
 #' using the training data. The number of cross-validation folds is 10 by default but
 #' may be changed using the `.cv_folds` argument.
 #' By default, the procedure is repeated `.r = 10` times to avoid irregularities
@@ -26,15 +26,8 @@
 #' `predict()` is more general in that is allows users to compare the predictions
 #' based on a so-called target model/specificiation to predictions based on an
 #' alternative benchmark. Available benchmarks include predictions
-#' based on a linear model, PLS-PM weights, unit weights (i.e. sum scores), GSCA weights, PCA weights, and 
-#' MAXVAR weights.
-#' 
-#' By default, only the indicator scores of 
-#' constructs modeled as common factors are predicted (`.only_common_factors  = TRUE`). 
-#' While technically possible, prediction for constructs modeled
-#' as composites is conceptually difficult since composites are by design build
-#' by their indicators, i.e., composites are not though of as being predictive of
-#' their indicators.
+#' based on a linear model, PLS-PM weights, unit weights (i.e. sum scores), 
+#' GSCA weights, PCA weights, and MAXVAR weights.
 #' 
 #' Each estimation run is checked for admissibility using [verify()]. If the 
 #' estimation yields inadmissible results, `predict()` stops with an error (`"stop"`).
@@ -68,7 +61,6 @@
 #'  .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
 #'  .cv_folds             = 10,
 #'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
-#'  .only_common_factors  = TRUE,
 #'  .r                    = 10,
 #'  .test_data            = NULL
 #'  )
@@ -81,9 +73,6 @@
 #'   yielded inadmissible results. 
 #'   For "*set_NA*" predictions based on inadmissible parameter estimates are
 #'   set to `NA`.
-#' @param .only_common_factors Logical. Should only indicator scores for concepts 
-#'   modeled as common factors be predicted? 
-#'   Defaults to `TRUE`.
 #'
 #' @seealso [csem], [cSEMResults]
 #' 
@@ -99,7 +88,6 @@ predict <- function(
   .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
   .cv_folds             = 10,
   .handle_inadmissibles = c("stop", "ignore", "set_NA"),
-  .only_common_factors  = TRUE,
   .r                    = 10,
   .test_data            = NULL
   ) {
@@ -112,7 +100,6 @@ predict <- function(
                   .benchmark = .benchmark, 
                   .cv_folds = .cv_folds,
                   .handle_inadmissibles = .handle_inadmissibles,
-                  .only_common_factors = .only_common_factors,
                   .r = .r,
                   .test_data = .test_data
                   )
@@ -249,11 +236,6 @@ predict <- function(
           # Identify exogenous construct in the structural model
           cons_exo  <- Est$Information$Model$cons_exo
           cons_endo <- Est$Information$Model$cons_endo
-          
-          ## Remove endogenous constructs that are modeled as composites
-          if(.only_common_factors) {
-            cons_endo <- setdiff(cons_endo, names(which(Est$Information$Model$construct_type == "Composite")))
-          }
           
           # Which indicators are connected to endogenous constructs?
           endo_indicators <- colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[cons_endo, , drop = FALSE]) != 0]
