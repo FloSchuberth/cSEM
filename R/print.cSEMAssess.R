@@ -119,7 +119,8 @@ print.cSEMAssess <- function(x, ...) {
   }
   
   
-  if(any(names(x) %in% c("CFI", "GFI", "IFI", "NFI", "NNFI", "RMSEA", 
+  if(any(names(x) %in% c("Chi_square", "Chi_square_df", "CFI", "GFI", "IFI", 
+                         "NFI", "NNFI", "RMSEA", 
                          "RMS_theta", "SRMR", "DG", "DL", "DML"))) {
     cat2("\n\n", rule2("Distance and fit measures"), "\n")
     
@@ -135,29 +136,35 @@ print.cSEMAssess <- function(x, ...) {
     
     cat2("\n")
     
+    if(any(names(x) == "Chi_square")) {
+      cat2(col_align("\n\tChi_square", 17), "= ", x$Chi_square)
+    }
+    if(any(names(x) == "Chi_square_df")) {
+      cat2(col_align("\n\tChi_square_df", 17), "= ", x$Chi_square_df)
+    }
     if(any(names(x) == "CFI")) {
-      cat2(col_align("\n\tCFI", 15), "= ", x$CFI)
+      cat2(col_align("\n\tCFI", 17), "= ", x$CFI)
     }
     if(any(names(x) == "GFI")) {
-      cat2(col_align("\n\tGFI", 15), "= ", x$GFI)
+      cat2(col_align("\n\tGFI", 17), "= ", x$GFI)
     }
     if(any(names(x) == "IFI")) {
-      cat2(col_align("\n\tIFI", 15), "= ", x$IFI)
+      cat2(col_align("\n\tIFI", 17), "= ", x$IFI)
     }
     if(any(names(x) == "NFI")) {
-      cat2(col_align("\n\tNFI", 15), "= ", x$NFI)
+      cat2(col_align("\n\tNFI", 17), "= ", x$NFI)
     }
     if(any(names(x) == "NNFI")) {
-      cat2(col_align("\n\tNNFI", 15), "= ", x$NNFI)
+      cat2(col_align("\n\tNNFI", 17), "= ", x$NNFI)
     }
     if(any(names(x) == "RMSEA")) {
-      cat2(col_align("\n\tRMSEA", 15), "= ", x$RMSEA)
+      cat2(col_align("\n\tRMSEA", 17), "= ", x$RMSEA)
     }
     if(any(names(x) == "RMS_theta")) {
-      cat2(col_align("\n\tRMS_theta", 15), "= ", x$RMS_theta)
+      cat2(col_align("\n\tRMS_theta", 17), "= ", x$RMS_theta)
     }
     if(any(names(x) == "SRMR")) {
-      cat2(col_align("\n\tSRMR", 15), "= ", x$SRMR)
+      cat2(col_align("\n\tSRMR", 17), "= ", x$SRMR)
     }
     
     if(any(names(x) == "Df")) {
