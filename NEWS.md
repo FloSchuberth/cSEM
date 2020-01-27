@@ -1,5 +1,7 @@
 # cSEM 0.1.0:9000
 
+- Add the Chi_square statistic and the Chi_square statistic divided by its
+  degrees of freedom to the list of fit indices
 - Remove argument `.only_common_factors` for postestimation function `predict()`.
   Now `predict()` retruns predictions for composite models as well.
   This will break existing code that uses `predict(..., .only_common_factors = ...)`.

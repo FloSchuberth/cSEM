@@ -716,7 +716,7 @@ calculateDML <- function(
 
 #' Internal: Fit measures
 #' 
-#' Calculate common fit measures.
+#' Calculate fit measures.
 #' 
 #' All functions, except for `calculateSRMR()` are only applicable to 
 #' objects inheriting class `cSEMResults_default`.
@@ -729,6 +729,26 @@ calculateDML <- function(
 #' @keywords internal
 #' @name fit_measures 
 NULL
+
+#' @describeIn fit_measures The ChiSquare statistic.
+
+calculateChiSquare <- function(.object) {
+  
+  n    <- nrow(.object$Information$Data)
+  F0   <- calculateDML(.object)
+  
+  (n - 1) * F0
+}
+
+#' @describeIn fit_measures The ChiSquare statistic divided by its degrees of freedom.
+
+calculateChiSquareDf <- function(.object) {
+  
+  n    <- nrow(.object$Information$Data)
+  F0   <- calculateDML(.object)
+  
+  ((n - 1) * F0) / calculateDf(.object)
+}
 
 #' @describeIn fit_measures The comparative fit index (CFI).
 
@@ -792,7 +812,7 @@ calculateNFI <- function(.object) {
   (F0 - FT) / F0
 }
 
-#' @describeIn fit_measures The non-normed fit index (NNFI).
+#' @describeIn fit_measures The non-normed fit index (NNFI). Also called the Tucker-Lewis index (TLI).
 
 calculateNNFI <- function(.object) {
   

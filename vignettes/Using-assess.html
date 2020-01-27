@@ -148,7 +148,7 @@ code span.ot { color: #007020; }
 <h1 class="title toc-ignore project-name">Postestimation: Assessing a model</h1>
 <h3 class="subtitle project-tagline">Using the <code>assess()</code> function</h3>
 <h4 class="author project-author">Manuel Rademaker</h4>
-<h4 class="date project-date">Last edited: 2020-01-22</h4>
+<h4 class="date project-date">Last edited: 2020-01-27</h4>
 </section>
 
 
@@ -222,6 +222,9 @@ code span.ot { color: #007020; }
 </ul></li>
 <li>Fit indices
 <ul>
+<li>The <span class="math inline">\(\chi^2\)</span>-<strong>statistic</strong></li>
+<li>The <span class="math inline">\(\chi^2/df\)</span>-<strong>statistic</strong></li>
+<li>The <strong>comparative fit index</strong> (CFI)</li>
 <li>The <strong>goodness-of-fit index</strong> (GFI)</li>
 <li>The <strong>standardized root mean square residual</strong> (SRMR)</li>
 <li>The <strong>root mean square error of approximation</strong> (RMSEA)</li>
@@ -244,15 +247,16 @@ code span.ot { color: #007020; }
 <span id="cb1-3"><a href="#cb1-3"></a>  <span class="dt">.only_common_factors =</span> <span class="ot">TRUE</span>, </span>
 <span id="cb1-4"><a href="#cb1-4"></a>  <span class="dt">.quality_criterion   =</span> <span class="kw">c</span>(<span class="st">&quot;all&quot;</span>, <span class="st">&quot;ave&quot;</span>, <span class="st">&quot;rho_C&quot;</span>, <span class="st">&quot;rho_C_mm&quot;</span>, <span class="st">&quot;rho_C_weighted&quot;</span>, </span>
 <span id="cb1-5"><a href="#cb1-5"></a>                           <span class="st">&quot;rho_C_weighted_mm&quot;</span>, <span class="st">&quot;cronbachs_alpha&quot;</span>, </span>
-<span id="cb1-6"><a href="#cb1-6"></a>                          <span class="st">&quot;cronbachs_alpha_weighted&quot;</span>, <span class="st">&quot;dg&quot;</span>, <span class="st">&quot;dl&quot;</span>, <span class="st">&quot;dml&quot;</span>, <span class="st">&quot;df&quot;</span>,</span>
-<span id="cb1-7"><a href="#cb1-7"></a>                          <span class="st">&quot;esize&quot;</span>, <span class="st">&quot;cfi&quot;</span>, <span class="st">&quot;gfi&quot;</span>, <span class="st">&quot;ifi&quot;</span>, <span class="st">&quot;nfi&quot;</span>, <span class="st">&quot;nnfi&quot;</span>, </span>
-<span id="cb1-8"><a href="#cb1-8"></a>                          <span class="st">&quot;reliability&quot;</span>, </span>
-<span id="cb1-9"><a href="#cb1-9"></a>                          <span class="st">&quot;rmsea&quot;</span>, <span class="st">&quot;rms_theta&quot;</span>, <span class="st">&quot;srmr&quot;</span>,</span>
-<span id="cb1-10"><a href="#cb1-10"></a>                          <span class="st">&quot;gof&quot;</span>, <span class="st">&quot;htmt&quot;</span>, <span class="st">&quot;r2&quot;</span>, <span class="st">&quot;r2_adj&quot;</span>,</span>
-<span id="cb1-11"><a href="#cb1-11"></a>                          <span class="st">&quot;rho_T&quot;</span>, <span class="st">&quot;rho_T_weighted&quot;</span>, <span class="st">&quot;vif&quot;</span>, </span>
-<span id="cb1-12"><a href="#cb1-12"></a>                          <span class="st">&quot;vifmodeB&quot;</span>,  <span class="st">&quot;fl_criterion&quot;</span>),</span>
-<span id="cb1-13"><a href="#cb1-13"></a>  ...</span>
-<span id="cb1-14"><a href="#cb1-14"></a>)</span></code></pre></div>
+<span id="cb1-6"><a href="#cb1-6"></a>                           <span class="st">&quot;cronbachs_alpha_weighted&quot;</span>, <span class="st">&quot;dg&quot;</span>, <span class="st">&quot;dl&quot;</span>, <span class="st">&quot;dml&quot;</span>, <span class="st">&quot;df&quot;</span>,</span>
+<span id="cb1-7"><a href="#cb1-7"></a>                           <span class="st">&quot;esize&quot;</span>, <span class="st">&quot;chi_square&quot;</span>, <span class="st">&quot;chi_square_df&quot;</span>,</span>
+<span id="cb1-8"><a href="#cb1-8"></a>                           <span class="st">&quot;cfi&quot;</span>, <span class="st">&quot;gfi&quot;</span>, <span class="st">&quot;ifi&quot;</span>, <span class="st">&quot;nfi&quot;</span>, <span class="st">&quot;nnfi&quot;</span>, </span>
+<span id="cb1-9"><a href="#cb1-9"></a>                           <span class="st">&quot;reliability&quot;</span>,</span>
+<span id="cb1-10"><a href="#cb1-10"></a>                           <span class="st">&quot;rmsea&quot;</span>, <span class="st">&quot;rms_theta&quot;</span>, <span class="st">&quot;srmr&quot;</span>,</span>
+<span id="cb1-11"><a href="#cb1-11"></a>                           <span class="st">&quot;gof&quot;</span>, <span class="st">&quot;htmt&quot;</span>, <span class="st">&quot;r2&quot;</span>, <span class="st">&quot;r2_adj&quot;</span>,</span>
+<span id="cb1-12"><a href="#cb1-12"></a>                           <span class="st">&quot;rho_T&quot;</span>, <span class="st">&quot;rho_T_weighted&quot;</span>, <span class="st">&quot;vif&quot;</span>, </span>
+<span id="cb1-13"><a href="#cb1-13"></a>                           <span class="st">&quot;vifmodeB&quot;</span>,  <span class="st">&quot;fl_criterion&quot;</span>),</span>
+<span id="cb1-14"><a href="#cb1-14"></a>  ...</span>
+<span id="cb1-15"><a href="#cb1-15"></a>)</span></code></pre></div>
 <dl>
 <dt><code>.object</code></dt>
 <dd><p>An object of class <code>cSEMResults</code> resulting from a call to <code>csem()</code>.</p>

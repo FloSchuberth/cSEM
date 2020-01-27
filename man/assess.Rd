@@ -10,7 +10,8 @@ assess(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                          "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                          "esize", "chi_square", "chi_square_df",
+                          "cfi", "gfi", "ifi", "nfi", "nnfi", 
                           "reliability", 
                           "rmsea", "rms_theta", "srmr",
                           "gof", "htmt", "r2", "r2_adj",
@@ -130,14 +131,15 @@ original structural model regression equation (R2_included) and the
 alternative specification with the k'th variable dropped (R2_excluded).
 This measure is commonly known as Cohen's f^2.
 Calculation is done by \code{\link[=calculateEffectSize]{calculateEffectSize()}}.}
-\item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "rms_theta"
-"srmr"}{
+\item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi",
+"nnfi",  "rmsea", "rms_theta", "srmr"}{
 Several absolute and incremental fit indices. Note that their suitability
-for models containing constructs modeled as common factors is still an
+for models containing constructs modeled as composites is still an
 open research question. Also note that fit indices are not tests in a
 hypothesis testing sense and
 decisions based on common cut-offs proposed in the literature should be
-considered with caution!. Calculation is done by \code{\link[=calculateCFI]{calculateCFI()}},
+considered with caution!. Calculation is done by \code{\link[=calculateChiSquare]{calculateChiSquare()}},
+\code{\link[=calculateChiSquareDf]{calculateChiSquareDf()}}, \code{\link[=calculateCFI]{calculateCFI()}},
 \code{\link[=calculateGFI]{calculateGFI()}}, \code{\link[=calculateIFI]{calculateIFI()}}, \code{\link[=calculateNFI]{calculateNFI()}}, \code{\link[=calculateNNFI]{calculateNNFI()}},
 \code{\link[=calculateRMSEA]{calculateRMSEA()}}, \code{\link[=calculateRMSTheta]{calculateRMSTheta()}} and \code{\link[=calculateSRMR]{calculateSRMR()}}.}
 \item{Fornell-Larcker criterion; "fl_criterion"}{A rule suggested by \insertCite{Fornell1981;textual}{cSEM}

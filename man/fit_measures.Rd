@@ -2,6 +2,8 @@
 % Please edit documentation in R/helper_assess.R
 \name{fit_measures}
 \alias{fit_measures}
+\alias{calculateChiSquare}
+\alias{calculateChiSquareDf}
 \alias{calculateCFI}
 \alias{calculateGFI}
 \alias{calculateIFI}
@@ -12,6 +14,10 @@
 \alias{calculateSRMR}
 \title{Internal: Fit measures}
 \usage{
+calculateChiSquare(.object)
+
+calculateChiSquareDf(.object)
+
 calculateCFI(.object)
 
 calculateGFI(.object)
@@ -53,7 +59,7 @@ Defaults to \code{FALSE}.}
 A single numeric value.
 }
 \description{
-Calculate common fit measures.
+Calculate fit measures.
 }
 \details{
 All functions, except for \code{calculateSRMR()} are only applicable to
@@ -62,6 +68,10 @@ For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} us
 }
 \section{Functions}{
 \itemize{
+\item \code{calculateChiSquare}: The ChiSquare statistic.
+
+\item \code{calculateChiSquareDf}: The ChiSquare statistic divided by its degrees of freedom.
+
 \item \code{calculateCFI}: The comparative fit index (CFI).
 
 \item \code{calculateGFI}: The goodness of fit index (GFI).
@@ -70,7 +80,7 @@ For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} us
 
 \item \code{calculateNFI}: The normed fit index (NFI).
 
-\item \code{calculateNNFI}: The non-normed fit index (NNFI).
+\item \code{calculateNNFI}: The non-normed fit index (NNFI). Also called the Tucker-Lewis index (TLI).
 
 \item \code{calculateRMSEA}: The root mean square error of approximation (RMSEA).
 

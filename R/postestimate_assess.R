@@ -89,14 +89,15 @@
 #'   alternative specification with the k'th variable dropped (R2_excluded).
 #'   This measure is commonly known as Cohen's f^2.
 #'   Calculation is done by [calculateEffectSize()].}
-#' \item{Fit indices; "cfi", "gfi", "ifi", "nfi", "nnfi",  "rmsea", "rms_theta"
-#'   "srmr"}{
+#' \item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi", 
+#'       "nnfi",  "rmsea", "rms_theta", "srmr"}{
 #'   Several absolute and incremental fit indices. Note that their suitability
-#'   for models containing constructs modeled as common factors is still an
+#'   for models containing constructs modeled as composites is still an
 #'   open research question. Also note that fit indices are not tests in a 
 #'   hypothesis testing sense and
 #'   decisions based on common cut-offs proposed in the literature should be
-#'   considered with caution!. Calculation is done by [calculateCFI()], 
+#'   considered with caution!. Calculation is done by [calculateChiSquare()],
+#'   [calculateChiSquareDf()], [calculateCFI()], 
 #'   [calculateGFI()], [calculateIFI()], [calculateNFI()], [calculateNNFI()], 
 #'   [calculateRMSEA()], [calculateRMSTheta()] and [calculateSRMR()].}
 #' \item{Fornell-Larcker criterion; "fl_criterion"}{A rule suggested by \insertCite{Fornell1981;textual}{cSEM}
@@ -201,7 +202,8 @@
 #'   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
 #'                            "rho_C_weighted_mm", "cronbachs_alpha", 
 #'                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-#'                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+#'                           "esize", "chi_square", "chi_square_df",
+#'                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
 #'                           "reliability", 
 #'                           "rmsea", "rms_theta", "srmr",
 #'                           "gof", "htmt", "r2", "r2_adj",
@@ -229,7 +231,8 @@ assess <- function(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "esize", "chi_square", "chi_square_df",
+                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
@@ -248,7 +251,8 @@ assess.cSEMResults_default <- function(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "esize", "chi_square", "chi_square_df",
+                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
@@ -327,6 +331,14 @@ assess.cSEMResults_default <- function(
   if(any(.quality_criterion %in% c("all", "esize"))) {
     # Effect size
     out[["Effect_size"]] <- calculateEffectSize(.object)
+  }
+  if(any(.quality_criterion %in% c("all", "chi_square"))) {
+    # Effect size
+    out[["Chi_square"]] <- calculateChiSquare(.object)
+  }
+  if(any(.quality_criterion %in% c("all", "chi_square_df"))) {
+    # Effect size
+    out[["Chi_square_df"]] <- calculateChiSquareDf(.object)
   }
   if(any(.quality_criterion %in% c("all", "cfi"))) {
     # Effect size
@@ -491,7 +503,8 @@ assess.cSEMResults_multi <- function(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha",  
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "esize", "chi_square", "chi_square_df",
+                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
@@ -523,7 +536,8 @@ assess.cSEMResults_2ndorder <- function(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha",  
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                           "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "esize", "chi_square", "chi_square_df",
+                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",

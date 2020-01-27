@@ -52,6 +52,9 @@ Currently the following quality criteria are implemented:
     - The **squared Euclidian distance** (DL)
     - The **maximum-likelihood distance** (DML)
 - Fit indices
+    - The $\chi^2$-**statistic**
+    - The $\chi^2/df$-**statistic**
+    - The **comparative fit index** (CFI)
     - The **goodness-of-fit index** (GFI) 
     - The **standardized root mean square residual** (SRMR)
     - The **root mean square error of approximation** (RMSEA)
@@ -78,13 +81,14 @@ assess(
   .only_common_factors = TRUE, 
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
-                          "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                          "esize", "cfi", "gfi", "ifi", "nfi", "nnfi", 
-                          "reliability", 
-                          "rmsea", "rms_theta", "srmr",
-                          "gof", "htmt", "r2", "r2_adj",
-                          "rho_T", "rho_T_weighted", "vif", 
-                          "vifmodeB",  "fl_criterion"),
+                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
+                           "esize", "chi_square", "chi_square_df",
+                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "reliability",
+                           "rmsea", "rms_theta", "srmr",
+                           "gof", "htmt", "r2", "r2_adj",
+                           "rho_T", "rho_T_weighted", "vif", 
+                           "vifmodeB",  "fl_criterion"),
   ...
 )
 ```
