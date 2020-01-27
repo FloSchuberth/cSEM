@@ -109,9 +109,19 @@ processData <- function(
                                                     colnames(.data)), "`.", collapse = ", "),
          " Please verify your model description.")
   }
-  # Order data according to the ordering of the measurement model
+  # Order data according to the ordering of the measurement model; delete
+  # all columns that are not needed
   .data <- .data[, colnames(.model$measurement)]
 
+  # Check if remaining data set contains NAs
+  .data_temp <- .data[!complete.cases(.data), , drop = FALSE]
+  
+  if(length(rownames(.data_temp)) > 0) {
+    stop2("The following error occured while processing the data:\n",
+          "Data set contains missing values in rows:", 
+          paste0("`", rownames(.data_temp), "`", collapse = ", "),
+          "\nRemove NAs or use imputation methods to replace them.")
+  }
   ## Return
   return(.data)
 }
