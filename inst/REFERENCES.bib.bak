@@ -602,14 +602,13 @@ categorical variables that result from polychotomizing one or two underlying con
 
 @Article{Keil2000,
   author   = {Keil, Mark and Tan, Bernard CY and Wei, Kwok-Kee and Saarinen, Timo and Tuunainen, Virpi and Wassenaar, Arjen},
-  title    = {A cross-cultural study on escalation of commitment behavior in software projects},
   journal  = {{MIS} Quarterly},
+  title    = {A cross-cultural study on escalation of commitment behavior in software projects},
   year     = {2000},
-  volume   = {24},
   number   = {2},
   pages    = {299--325},
+  volume   = {24},
   abstract = {One of the most challenging decisions that a manager must confront is whether to continue or abandon a troubled project. Published studies suggest that failing software projects are often allowed to continue for too long before appropriate management action is taken to discontinue or redirect the efforts. The level of sunk cost asso- ciated with such projects has been offered as one explanation for this escalation of commitment behavior. What prior studies fail to consideris how concepts from risk-taking theory (such as risk propensity and risk perception) affect decision makers' willingness to continue a project under conditions of sunk cost. To better understand factors that may cause decision makers to con- tinue such projects, this study examines the level of sunk cost together with the risk propensity and risk perception of decision makers. These factors are assessed for cross-cultural robustness using matching laboratory experiments carried out in three cultures (Finland, the Netherlands, and Singapore). With a wider set of explanatory factors than prior studies, we could account for a higher amount of variance in decision makers' willingness to continue a project. The level of sunk cost and the risk perception of decision makers contributed significantly to their willingness to continue a project. Moreover, the risk propensity of decision makers was inversely related to risk perception. This inverse relationship was significantly stronger in Singapore (a low uncertainty avoidance culture) than in Finland and the Netherlands (high uncer- tainty avoidance cultures). These results reveal that some factors behind decision makers'willing- ness to continue a project are consistent across cultures while others may be culture-sensitive. Implications of these results for further research and practice are discussed.},
-  doi      = {10.2307/3250940},
   file     = {Keil2000.pdf:Keil2000.pdf:PDF},
   keywords = {Software project management, esca- lation of commitment behavior, sunk cost, risk propensity, risk perception, uncertainty avoidance},
 }

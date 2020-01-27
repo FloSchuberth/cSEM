@@ -343,6 +343,8 @@ code span.ot { color: #007020; }
 <p>Independent of the approach and model used, a particularily controversial issue are cutoff values for fit indices <span class="citation">(e.g., Marsh, Hau, and Wen 2004)</span>. In factor-based SEM cutoff values are rather popular. The basis for these are numerous simulation studies, most notably <span class="citation">Hu and Bentler (1999)</span>. In contrast for composite models - for better or worse - no cutoff values have been suggested.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Using <code>assess()</code> to calculate fit indices, the user should always keep in mind that the value of a fit index is just <em>some</em> indication of good or bad fit. Other aspects related to model fit must be considered as well. It is unreasonable to make a binary decision about rejection or non-rejection of a model by soley comparing the value of a fit index with a (more or less) arbitrary cutoff value.</p>
 <p>The definitions of fit indices calculated by <code>assess()</code> are given in the following:</p>
 <ul>
+<li>The <span class="math inline">\(\chi^2\)</span>-<strong>statistic</strong> is the value of the fitting function times the sample size minus 1.</li>
+<li>The <span class="math inline">\(\chi^2/df\)</span>-ratio is the <span class="math inline">\(\chi^2\)</span>-statistic divided by its degrees of freedom.</li>
 <li>The <strong>goodness-of-fit index</strong> (GFI) measures the relative increase in fit of the specified model compared to no model at all.</li>
 <li>The <strong>standardized root mean square residual</strong> (SRMR) is the square root of the mean of squared residual correlations.</li>
 <li>The <strong>root mean square error of approximation</strong> (RMSEA) is the square root of the discrepancy due to approximation per degree of freedom.</li>
@@ -362,6 +364,16 @@ the calculation on the empirical construct covariance matrix, i.e., the model-im
 <div id="formulae-1" class="section level3">
 <h3>Formulae</h3>
 <p>The exact formulae of the fit indices as implemented in <strong>cSEM</strong> are given in the following. The term <span class="math inline">\(F = F(S, \Sigma(\hat{\theta})) = F(S, \hat{\Sigma})\)</span> stands for the value of a fitting function evaluated at <span class="math inline">\(S\)</span> (the empirical covariance matrix of the indicators) and <span class="math inline">\(\hat{\Sigma}\)</span> (the estimated model-implied covariance matrix of the indicators). In the context of composite-based estimators, the distance measures <span class="math inline">\(d_{G}\)</span> (geodesic distance), <span class="math inline">\(d_{L}\)</span> (squared Euclidian distance) and <span class="math inline">\(d_{ML}\)</span> (maximum likelihood distance) serve as fitting functions.</p>
+<div id="the-chi2-statistic" class="section level4">
+<h4>The <span class="math inline">\(\chi^2\)</span>-statistic</h4>
+<p>The <span class="math inline">\(\chi^2\)</span>-<strong>statistic</strong> is defined as: <span class="math display">\[ \chi^2 = (N-1)\cdot F(S, \hat{\Sigma})\]</span> where <span class="math inline">\(F(S, \hat{\Sigma})\)</span> is the maximum likelihood distance function <span class="math inline">\(d_{ML}\)</span> and <span class="math inline">\(N\)</span> the sample size.</p>
+<p>Main reference: <span class="citation">Joereskog (1969)</span></p>
+</div>
+<div id="the-chi2df-ratio" class="section level4">
+<h4>The <span class="math inline">\(\chi^2/df\)</span>-ratio</h4>
+<p>The <span class="math inline">\(\chi^2\)</span>-<strong>statistic</strong> is defined as: <span class="math display">\[ \chi^2 = (N-1)\cdot F(S, \hat{\Sigma})/df_M\]</span> where <span class="math inline">\(F(S, \hat{\Sigma})\)</span> is the maximum likelihood distance function <span class="math inline">\(d_{ML}\)</span>, <span class="math inline">\(N\)</span> the sample size and <span class="math inline">\(df_M\)</span> the degrees of the estimated model.</p>
+<p>Main reference: <span class="citation">Joereskog (1969)</span></p>
+</div>
 <div id="the-goodness-of-fit-index-gfi" class="section level4">
 <h4>The goodness-of-fit index (GFI)</h4>
 <p>The GFI is defined as: <span class="math display">\[ \text{GFI} = 1 - \frac{\text{trace}\lbrack (S-\hat{\Sigma})^{2} \rbrack }{\text{trace}(S^{2})} = 1 - \frac{\sum_{i,j} (s_{ij} - \hat\sigma_{ij})^2}{\sum_{ij} s_{ij}^2}\]</span> The numerator of the GFI (in the version used in <strong>cSEM</strong>) is the sum of squared differences betwenn each element of <span class="math inline">\(S\)</span> and its corresponding element in <span class="math inline">\(\hat\Sigma\)</span> after fitting the specified model. The denominator is the sum of the squared entries of <span class="math inline">\(S\)</span> and can be interpreted as the total amount of covariances to be explained. Thus, the GFI is a measure of the amount of variance of S explained by the postulated model relative to the total amount of variance to be explained. Other fitting functions could be deployed in the numerator of the GFI. However, in this case, the intuition behind the formula of GFI will not hold any longer.</p>
@@ -399,7 +411,7 @@ the calculation on the empirical construct covariance matrix, i.e., the model-im
 </div>
 <div id="implementation-2" class="section level3">
 <h3>Implementation</h3>
-<p>The functions are implemented as: <code>calculateCFI()</code>, <code>calculateNFI()</code>, <code>calculateNNFI()</code>, <code>calculateIFI()</code>, <code>calculateGFI()</code>, <code>calculateRMSEA()</code>, <code>calculateRMSTheta()</code>, <code>calculateSRMR()</code>. They may be called directly using R’s <code>:::</code> mechanism.</p>
+<p>The functions are implemented as: <code>calculateChiSquare()</code>, <code>calculateChiSquareDf()</code>, <code>calculateCFI()</code>, <code>calculateNFI()</code>, <code>calculateNNFI()</code>, <code>calculateIFI()</code>, <code>calculateGFI()</code>, <code>calculateRMSEA()</code>, <code>calculateRMSTheta()</code>, <code>calculateSRMR()</code>. They may be called directly using R’s <code>:::</code> mechanism.</p>
 </div>
 <div id="see-also-1" class="section level3">
 <h3>See also</h3>
@@ -579,6 +591,9 @@ the calculation on the empirical construct covariance matrix, i.e., the model-im
 </div>
 <div id="ref-Hu1999">
 <p>Hu, Li-tze, and Peter M. Bentler. 1999. “Cutoff Criteria for Fit Indexes in Covariance Structure Analysis: Conventional Criteria Versus New Alternatives.” <em>Structural Equation Modeling</em> 6 (1): 1–55.</p>
+</div>
+<div id="ref-Joereskog1969">
+<p>Joereskog, K. G. 1969. “A General Approach to Confirmatory Maximum Likelihood Factor Analysis.” <em>Psychometrika</em> 34 (2): 183–202. <a href="https://doi.org/10.1007/bf02289343">https://doi.org/10.1007/bf02289343</a>.</p>
 </div>
 <div id="ref-Joereskog1982">
 <p>Jöreskog, Karl G., and Dag Sörbom. 1982. “Recent Developments in Structural Equation Modeling.” <em>Journal of Marketing Research</em> 19 (4): 404–16.</p>

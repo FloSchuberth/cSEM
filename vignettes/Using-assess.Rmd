@@ -272,6 +272,10 @@ arbitrary cutoff value.
 
 The definitions of fit indices calculated by `assess()` are given in the following:
 
+- The $\chi^2$-**statistic** is the value of the fitting function times the
+  sample size minus 1.
+- The $\chi^2/df$-ratio is the $\chi^2$-statistic divided by its
+  degrees of freedom.
 - The **goodness-of-fit index** (GFI) measures the relative increase in fit of 
   the specified model compared to no model at all. 
 - The **standardized root mean square residual** (SRMR) is the square root of
@@ -328,6 +332,21 @@ stands for the value of a fitting function evaluated at $S$
 In the context of composite-based estimators, the distance measures $d_{G}$ 
 (geodesic distance), $d_{L}$ (squared Euclidian distance) and $d_{ML}$
 (maximum likelihood distance) serve as fitting functions.
+
+#### The $\chi^2$-statistic
+The $\chi^2$-**statistic** is defined as:
+$$ \chi^2 = (N-1)\cdot F(S, \hat{\Sigma})$$
+where $F(S, \hat{\Sigma})$ is the maximum likelihood distance function $d_{ML}$ and $N$ the sample size.
+
+Main reference: @Joereskog1969
+
+#### The $\chi^2/df$-ratio
+The $\chi^2$-**statistic** is defined as:
+$$ \chi^2 = (N-1)\cdot F(S, \hat{\Sigma})/df_M$$
+where $F(S, \hat{\Sigma})$ is the maximum likelihood distance function $d_{ML}$, $N$ the sample size and
+$df_M$ the degrees of the estimated model.
+
+Main reference: @Joereskog1969
 
 #### The goodness-of-fit index (GFI)
 The GFI is defined as:
@@ -436,7 +455,8 @@ the entry at position $(j,i)$ of the (NA-modified) matrix $\Theta$ and $n$ is
 the number of non-NA entries below the diagonal of $\Theta$.
 
 ### Implementation
-The functions are implemented as: `calculateCFI()`, `calculateNFI()`, 
+The functions are implemented as: `calculateChiSquare()`, `calculateChiSquareDf()`, 
+`calculateCFI()`, `calculateNFI()`, 
 `calculateNNFI()`, `calculateIFI()`, `calculateGFI()`, `calculateRMSEA()`, 
 `calculateRMSTheta()`, `calculateSRMR()`. They may be called directly 
 using R's `:::` mechanism.
