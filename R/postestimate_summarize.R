@@ -62,24 +62,28 @@ summarize.cSEMResults_default <- function(
   
   ### Structure output =========================================================
   ## Path estimates ------------------------------------------------------------
-  # Get construct type for relevant variables
-  type <- rep(x2$Model$construct_type, times = rowSums(x2$Model$structural))
-  
-  # Build names
-  temp <- outer(rownames(x1$Path_estimates), colnames(x1$Path_estimates), 
-                FUN = function(x, y) paste(x, y, sep = " ~ "))
-  
-  path_estimates <- data.frame(
-    "Name"           = t(temp)[t(x2$Model$structural) != 0],
-    "Construct_type" = type,
-    "Estimate"       = t(x1$Path_estimates)[t(x2$Model$structural) != 0 ],
-    "Std_err"        = NA,
-    "t_stat"         = NA,
-    "p_value"        = NA,
-    stringsAsFactors = FALSE)
-  
-  # Delete rownames
-  rownames(path_estimates) <- NULL
+  if(!all(x2$Model$structural == 0)) {
+    # Get construct type for relevant variables
+    type <- rep(x2$Model$construct_type, times = rowSums(x2$Model$structural))
+    
+    # Build names
+    temp <- outer(rownames(x1$Path_estimates), colnames(x1$Path_estimates), 
+                  FUN = function(x, y) paste(x, y, sep = " ~ "))
+    
+    path_estimates <- data.frame(
+      "Name"           = t(temp)[t(x2$Model$structural) != 0],
+      "Construct_type" = type,
+      "Estimate"       = t(x1$Path_estimates)[t(x2$Model$structural) != 0 ],
+      "Std_err"        = NA,
+      "t_stat"         = NA,
+      "p_value"        = NA,
+      stringsAsFactors = FALSE)
+    
+    # Delete rownames
+    rownames(path_estimates) <- NULL 
+  } else {
+    path_estimates <- NULL
+  }
   
   ## Loading estimates ---------------------------------------------------------
   # Get construct type for relevant variables
@@ -120,7 +124,11 @@ summarize.cSEMResults_default <- function(
   ## Inner weight estimates ----------------------------------------------------
   if(x2$Arguments$.approach_weights == "PLS-PM") {
     i <- rownames(x1$Inner_weight_estimates)
-    D <- x2$Model$structural[i, i , drop = FALSE] + t(x2$Model$structural[i, i, drop = FALSE])
+    if(all(x2$Model$structural == 0)) {
+      D <- x2$Model$cor_specified[i, i , drop = FALSE]
+    } else {
+      D <- x2$Model$structural[i, i , drop = FALSE] + t(x2$Model$structural[i, i, drop = FALSE]) 
+    }
     
     # Note: June 2019
     if(any(D == 2)) { # non recursive model
@@ -139,7 +147,6 @@ summarize.cSEMResults_default <- function(
     
     # Delete rownames
     rownames(inner_weight_estimates) <- NULL
-    
   }
   
   ## Residual correlation ------------------------------------------------------
@@ -208,7 +215,7 @@ summarize.cSEMResults_default <- function(
     indicator_correlation <- data.frame(NULL)
   }
   
-  ## Exogenous construct correlations ------------------------------------------
+  ## (Exogenous) construct correlations ----------------------------------------
   # Set up empty matrix to select the relevant residual correlations 
   exo_cors <- as.matrix(x1$Construct_VCV[x2$Model$cons_exo, x2$Model$cons_exo])
   
@@ -238,7 +245,7 @@ summarize.cSEMResults_default <- function(
   construct_scores <- as.data.frame(x1$Construct_scores)
   
   ## Effects -------------------------------------------------------------------
-  if(x2$Model$model_type == "Linear") {
+  if(x2$Model$model_type == "Linear" & !all(x2$Model$structural == 0)) {
     ## Effects are currently only for linear models. See issue #252 on github.
     effects <- calculateEffects(.object, .output_type = "data.frame")
     # Add effects to .object
@@ -266,7 +273,9 @@ summarize.cSEMResults_default <- function(
     )
     
     ## Path estimates ----------------------------------------------------------
-    path_estimates <- addInfer(infer_out$Path_estimates, path_estimates, .ci)
+    if(!all(x2$Model$structural == 0)) {
+      path_estimates <- addInfer(infer_out$Path_estimates, path_estimates, .ci)
+    }
     
     ## Loading estimates -------------------------------------------------------
     loading_estimates <- addInfer(infer_out$Loading_estimates, loading_estimates, .ci)
@@ -293,7 +302,7 @@ summarize.cSEMResults_default <- function(
     }
     
     ## Effects -----------------------------------------------------------------
-    if(x2$Model$model_type == "Linear") {
+    if(x2$Model$model_type == "Linear" & !all(x2$Model$structural == 0)) {
       effects <- lapply(c("Total_effect", "Indirect_effect"), function(nx) {
         temp   <- infer_out[[nx]]
         x <- effects[[nx]]

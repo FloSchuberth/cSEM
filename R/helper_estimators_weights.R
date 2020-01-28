@@ -57,10 +57,19 @@ calculateInnerWeightsPLS <- function(
   
   C[lower.tri(C)] <- t(C)[lower.tri(C)]
   
-  # Path model relationship
+  # Structural model relationship; if only correlations are specified
+  # use these
   tmp <- rownames(.csem_model$structural)
-  E   <- .csem_model$structural[tmp, tmp]
-  D   <- E + t(E)
+  if(sum(rowSums(.csem_model$structural)) == 0) {
+    if(.PLS_weight_scheme_inner == "path") {
+      stop2("Structural model is required for the PLS path weighting scheme.\n",
+            "Please change the inner weighting scheme or supply a path model.")
+    }
+    D <- .csem_model$cor_specified[tmp, tmp]
+  } else {
+    E <- .csem_model$structural[tmp, tmp]
+    D <- E + t(E)
+  }
   
   # Note: June 2019
   if(any(D == 2)) { # non recursive model

@@ -395,3 +395,4 @@ test_that("Second-order model: correctly specified models are correctly returned
   expect_s3_class(parseModel(model1), "cSEMModel")
   expect_output(str(parseModel(model1)), "List of 13")
 })
+

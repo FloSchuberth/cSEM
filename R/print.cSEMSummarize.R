@@ -49,11 +49,11 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   printSummarizeConstructDetails(x)
   
   ### Estimates ----------------------------------------------------------------
-  cat2("\n\n", rule2("Estimates"), "\n\n")
+  cat2("\n\n", rule2("Estimates"))
   
   ## Confidence intervals
   # Get the column names of the columns containing confidence intervals
-  ci_colnames <- colnames(x21$Path_estimates)[-c(1:6)]
+  ci_colnames <- colnames(x21$Loading_estimates)[-c(1:6)]
   
   # Are there more confidence intervals than the default (the 95% percentile CI)
   # Inform the user to use xxx instead.
@@ -67,8 +67,10 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
   }
   
   ## Path estimates
-  cat2("Estimated path coefficients:\n============================")
-  printSummarizePathCorrelation(x, .ci_colnames = ci_colnames)
+  if(!is.null(x21$Path_estimates)) {
+    cat2("\n\nEstimated path coefficients:\n============================")
+    printSummarizePathCorrelation(x, .ci_colnames = ci_colnames) 
+  }
   
   ## Loadings and Weights
   printSummarizeLoadingsWeights(x, .ci_colnames = ci_colnames)
@@ -94,7 +96,7 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
                                   .what = "Indicator correlation")
   }
   
-  if(.full_output && x22$Model$model_type == "Linear") {
+  if(.full_output && x22$Model$model_type == "Linear" && !is.null(x21$Path_estimates)) {
     ### Effects ----------------------------------------------------------------
     cat2("\n\n", rule2("Effects"), "\n\n")
     ## Path estimates

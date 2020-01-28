@@ -86,22 +86,11 @@ fit.cSEMResults_default <- function(
   mod       <- .object$Information$Model
   S         <- .object$Estimates$Indicator
   Lambda    <- .object$Estimates$Loading_estimates
-  
-  
-  m         <- mod$structural
-  Cons_endo <- mod$cons_endo
-  Cons_exo  <- mod$cons_exo
   Theta     <- diag(diag(S) - diag(t(Lambda) %*% Lambda))
   dimnames(Theta) <- dimnames(S)
   
-  ## Check if recursive, otherwise return a warning
-  if(any(m[Cons_endo, Cons_endo] + t(m[Cons_endo, Cons_endo]) == 2)){
-    warning2(
-      "The following warning occured while computing the model-implied",
-      " indicator correlation matrix:\n",
-      "Currently, `fit()` does not handle non-recursive models correctly.",
-      " The model-implied indicator correlation matrix is likely to be wrong.")
-  }
+  m         <- mod$structural
+  if(all(m == 0)) {.saturated <- TRUE}
   
   ### VCV of the constructs ====================================================
   if(.saturated) {
@@ -111,6 +100,17 @@ fit.cSEMResults_default <- function(
     vcv_construct <- .object$Estimates$Construct_VCV
     
   } else {
+    Cons_endo <- mod$cons_endo
+    Cons_exo  <- mod$cons_exo
+    
+    ## Check if recursive, otherwise return a warning
+    if(any(m[Cons_endo, Cons_endo] + t(m[Cons_endo, Cons_endo]) == 2)){
+      warning2(
+        "The following warning occured while computing the model-implied",
+        " indicator correlation matrix:\n",
+        "Currently, `fit()` does not handle non-recursive models correctly.",
+        " The model-implied indicator correlation matrix is likely to be wrong.")
+    }
     
     B      <- .object$Estimates$Path_estimates[Cons_endo, Cons_endo, drop = FALSE]
     Gamma  <- .object$Estimates$Path_estimates[Cons_endo, Cons_exo, drop = FALSE]
