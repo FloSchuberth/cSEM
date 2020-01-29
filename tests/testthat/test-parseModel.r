@@ -126,7 +126,11 @@ IMAG <~ imag1 + imag2
 
 test_that("Linear model: incorrectly specified models provide an error", {
   expect_error(parseModel(model1))
-  expect_error(parseModel(model3))
+})
+
+test_that("Linear model: correctly specified models are correctly returned", {
+  expect_s3_class(parseModel(model2), "cSEMModel")
+  expect_output(str(parseModel(model2)), "List of 13")
 })
 
 ### Nonlinear models ===========================================================
