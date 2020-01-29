@@ -114,6 +114,11 @@ predict <- function(
       stop2('Currently, `predict()` is not implemented for models containing higher-order constructs.')
     }
     
+    # Stop if second order
+    if(all(.object$Information$Model$structural == 0)) {
+      stop2("`predict()` requires a structural model.")
+    }
+    
     # Stop if nonlinear. See Danks et al. (?) for how this can be addressed.
     if(.object$Information$Model$model_type != 'Linear'){
       stop2('Currently, `predict()` works only for linear models.')

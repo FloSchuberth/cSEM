@@ -265,6 +265,7 @@ assess.cSEMResults_default <- function(
   match.arg(.quality_criterion, 
             args_default(.choices = TRUE)$.quality_criterion, several.ok = TRUE)
   
+  m <- .object$Information$Model
   ## Set up empty list
   out <- list()
   
@@ -328,7 +329,7 @@ assess.cSEMResults_default <- function(
     # dML
     out[["Df"]]   <- calculateDf(.object, ...)
   }
-  if(any(.quality_criterion %in% c("all", "esize"))) {
+  if(any(.quality_criterion %in% c("all", "esize")) && !all(m$structural == 0)) {
     # Effect size
     out[["Effect_size"]] <- calculateEffectSize(.object)
   }
@@ -392,7 +393,7 @@ assess.cSEMResults_default <- function(
     
     
   }
-  if(any(.quality_criterion %in% c("all", "gof"))) {
+  if(any(.quality_criterion %in% c("all", "gof")) && !all(m$structural == 0)) {
     # GoF
     out[["GoF"]]   <- calculateGoF(
       .object, 
@@ -406,11 +407,11 @@ assess.cSEMResults_default <- function(
       .only_common_factors = .only_common_factors
     )
   }
-  if(any(.quality_criterion %in% c("all", "r2"))) {
+  if(any(.quality_criterion %in% c("all", "r2")) && !all(m$structural == 0)) {
     # R2
     out[["R2"]]  <- .object$Estimates$R2
   }
-  if(any(.quality_criterion %in% c("all", "r2_adj"))) {
+  if(any(.quality_criterion %in% c("all", "r2_adj")) && !all(m$structural == 0)) {
     # Adjusted R2
     out[["R2_adj"]]  <- .object$Estimates$R2adj
   }
@@ -461,7 +462,7 @@ assess.cSEMResults_default <- function(
       ...
     )
   }
-  if(any(.quality_criterion %in% c("all", "vif"))) {
+  if(any(.quality_criterion %in% c("all", "vif")) && !all(m$structural == 0)) {
     # VIF
     out[["VIF"]]  <- .object$Estimates$VIF
     

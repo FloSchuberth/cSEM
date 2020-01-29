@@ -61,7 +61,6 @@ imag1 ~~ expe1
 "
 
 ## Tests
-
 test_that("Linear model: incorrectly specified models provide an error", {
   
   expect_error(parseModel(model2))
@@ -106,6 +105,28 @@ IMAG ~~ EXPE
 test_that("Linear model: correctly specified models are correctly returned", {
   expect_s3_class(parseModel(model), "cSEMModel")
   expect_output(str(parseModel(model)), "List of 13")
+})
+
+## 3. Only measurement model (no structural model) -----------------------------
+# 3.1 Only one measurement equation
+model1 <- "
+# Composite model
+IMAG <~ imag1 + imag2 + imag3
+"
+
+# 3.2 Two measurement equations and correlation given
+model2 <- "
+# Construct correlations
+EXPE ~~ IMAG
+
+# Measurement and composite model
+EXPE =~ expe1 + expe2
+IMAG <~ imag1 + imag2
+"
+
+test_that("Linear model: incorrectly specified models provide an error", {
+  expect_error(parseModel(model1))
+  expect_error(parseModel(model3))
 })
 
 ### Nonlinear models ===========================================================
@@ -395,3 +416,4 @@ test_that("Second-order model: correctly specified models are correctly returned
   expect_s3_class(parseModel(model1), "cSEMModel")
   expect_output(str(parseModel(model1)), "List of 13")
 })
+

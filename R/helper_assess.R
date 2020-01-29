@@ -122,7 +122,7 @@ calculateDf <- function(
     return(vS)
   }
   
-  ## Number of correlations between exogenous constructs
+  ## Number of correlations between (exogenous) constructs
   temp <- sum(rowSums(x2$structural) == 0)
   n_exo <- temp * (temp - 1) / 2
   

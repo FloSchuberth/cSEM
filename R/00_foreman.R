@@ -195,6 +195,8 @@ foreman <- function(
   P <- calculateConstructVCV(.C = C, .Q = Q)
   
   ## Estimate structural coef
+  if(sum(rowSums(csem_model$structural)) == 0) {.estimate_structural <- FALSE}
+  
   if(.estimate_structural) {
     estim_results <- estimatePath(
       .approach_nl    = .approach_nl,
