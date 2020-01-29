@@ -1,0 +1,18 @@
+citHeader("To cite cSEM in publications use:")
+
+vers <- paste0("Package version: ", meta$Version)
+
+citEntry(entry = "Manual",
+  title        = "cSEM: Composite-Based Structural Equation Modeling",
+  author       = personList(as.person("Manuel Rademaker"),
+                            as.person("Florian Schuberth")),
+  year         = "2020",
+  url          = "https://m-e-rademaker.github.io/cSEM/",
+  note         = vers,
+  
+  textVersion =
+              paste0("Rademaker, Manuel and Schuberth Florian (2020).",
+                    " cSEM: Composite-Based Structural Equation Modeling. ",
+                    vers, ". ", "URL: ",
+                    "https://m-e-rademaker.github.io/cSEM/", ".")
+)

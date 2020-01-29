@@ -1,5 +1,12 @@
 # cSEM 0.1.0:9000
 
+- Allow users to specify a lavaan model without a structural model. Now, users
+  can specify a model with several measurement equations (via `<~` or `=~`)
+  but no strucutral equations. Instead the correlations between all! constructs
+  must be given. Failing to do so causes an error.
+
+- Add CITATION file
+
 - Add informative error message if `.data` contains missing values.
 
 - Add the Chi_square statistic and the Chi_square statistic divided by its
