@@ -122,8 +122,17 @@ parseModel <- function(
           "The following error occured in the `parseModel()` function:\n",
           "No measurement equation provided for: ", 
           paste0("`", tmp,  "`", collapse = ", ")
+        )#
+      }
+      
+      ## Stop if only a single measurement equation is given
+      if(length(names_c) == 1) {
+        stop2(
+          "The following error occured in the `parseModel()` function:\n",
+          "At least two constructs required for the estimation."
         )
       }
+      
       # Note
       # - when there is no structural model supplied only correlations between
       #   first order constructs is allowed 
@@ -636,9 +645,9 @@ parseModel <- function(
     
     ## Add population values to output if any are given
     if(!anyNA(pop_values)) {
-      model_ls$structural2   <- model_structural2[n, colnames(structural_ordered)]
-      model_ls$measurement2  <- model_measurement2[n, m]
-      model_ls$indicator_cor <- model_cor_indicators[m, m]
+      model_ls$structural2   <- model_structural2[n, colnames(structural_ordered), drop = FALSE]
+      model_ls$measurement2  <- model_measurement2[n, m, drop = FALSE]
+      model_ls$indicator_cor <- model_cor_indicators[m, m, drop = FALSE]
       model_ls$construct_cor <- model_cor_constructs
     }
     
