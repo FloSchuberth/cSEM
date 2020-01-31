@@ -13,7 +13,7 @@ assess(
                           "esize", "chi_square", "chi_square_df",
                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
                           "reliability", 
-                          "rmsea", "rms_theta", "srmr",
+                          "rmsea", "rms_theta", "rms_theta_mi", "srmr",
                           "gof", "htmt", "r2", "r2_adj",
                           "rho_T", "rho_T_weighted", "vif", 
                           "vifmodeB",  "fl_criterion"),
@@ -132,7 +132,7 @@ alternative specification with the k'th variable dropped (R2_excluded).
 This measure is commonly known as Cohen's f^2.
 Calculation is done by \code{\link[=calculateEffectSize]{calculateEffectSize()}}.}
 \item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi",
-"nnfi",  "rmsea", "rms_theta", "srmr"}{
+"nnfi",  "rmsea", "rms_theta", "rms_theta_mi", "srmr"}{
 Several absolute and incremental fit indices. Note that their suitability
 for models containing constructs modeled as composites is still an
 open research question. Also note that fit indices are not tests in a

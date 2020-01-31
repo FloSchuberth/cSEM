@@ -330,7 +330,6 @@ args_csem_dotdotdot <- function(
 #' \describe{
 #' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
-#' \item{.model_implied}{Accepted by/Passed down to: [calculateRMSTheta()]}
 #' \item{.null_model}{Accepted by/Passed down to: [calculateDf()]}
 #' \item{.saturated}{Accepted by/Passed down to: [calculateSRMR()], 
 #'   [calculateDG()], [calculateDL()], [calculateDML()]and subsequently [fit()].}
@@ -345,7 +344,6 @@ args_csem_dotdotdot <- function(
 args_assess_dotdotdot <- function(
   .alpha               = 0.05,
   .closed_form_ci      = FALSE,
-  .model_implied       = FALSE,
   .null_model          = FALSE,
   .saturated           = FALSE,
   .type_vcv            = "indicator"
@@ -429,7 +427,7 @@ args_default <- function(.choices = FALSE) {
                                  "esize", "chi_square", "chi_square_df",
                                  "cfi", "gfi", "ifi", "nfi", "nnfi", 
                                  "reliability",
-                                 "rmsea", "rms_theta", "srmr",
+                                 "rmsea", "rms_theta", "rms_theta_mi", "srmr",
                                  "gof", "htmt", "r2", "r2_adj",
                                  "rho_T", "rho_T_weighted", "vif", 
                                  "vifmodeB",  "fl_criterion"),

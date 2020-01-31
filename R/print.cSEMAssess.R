@@ -121,7 +121,7 @@ print.cSEMAssess <- function(x, ...) {
   
   if(any(names(x) %in% c("Chi_square", "Chi_square_df", "CFI", "GFI", "IFI", 
                          "NFI", "NNFI", "RMSEA", 
-                         "RMS_theta", "SRMR", "DG", "DL", "DML"))) {
+                         "RMS_theta", "RMS_theta_mi", "SRMR", "DG", "DL", "DML"))) {
     cat2("\n\n", rule2("Distance and fit measures"), "\n")
     
     if(any(names(x) == "DG")) {
@@ -162,6 +162,9 @@ print.cSEMAssess <- function(x, ...) {
     }
     if(any(names(x) == "RMS_theta")) {
       cat2(col_align("\n\tRMS_theta", 17), "= ", x$RMS_theta)
+    }
+    if(any(names(x) == "RMS_theta_mi")) {
+      cat2(col_align("\n\tRMS_theta_mi", 17), "= ", x$RMS_theta)
     }
     if(any(names(x) == "SRMR")) {
       cat2(col_align("\n\tSRMR", 17), "= ", x$SRMR)

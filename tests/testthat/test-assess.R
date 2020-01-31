@@ -39,6 +39,7 @@ test_that("Assess works for all choices of .quality_criterion", {
   expect_equivalent(a$NNFI, 1.004782, tolerance = 1e-06)
   expect_equivalent(a$RMSEA, 0, tolerance = 1e-07)
   expect_equivalent(a$RMS_theta, 0.08470806, tolerance = 1e-07)
+  expect_equivalent(a$RMS_theta_mi, 0.08470806, tolerance = 1e-07)
   expect_equivalent(a$SRMR, 0.01521318, tolerance = 1e-07)
   expect_equivalent(c(a$`Fornell-Larcker`), c(0.4802837, 0.3466694, 0.4402532, 
                                               0.3466694, 0.6318118, 0.2969352,

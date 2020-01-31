@@ -1,5 +1,10 @@
 # cSEM 0.1.0:9000
 
+- Add both versions of the RMS_theta to `assess()`. `"RMS_theta"` is the RMS_theta
+  based on WSW'. `"RMS_theta_mi"` uses the model-implied construct correlation matrix.
+  The argument `.model_implied` is thus no longer available to assess's `...`
+  arguments and therefore removed.
+  
 - Allow users to specify a lavaan model without a structural model. Now, users
   can specify a model with several measurement equations (via `<~` or `=~`)
   but no strucutral equations. Instead the correlations between all! constructs

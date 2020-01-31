@@ -10,11 +10,6 @@ Defaults to \code{0.05}.}
 \item{.closed_form_ci}{Logical. Should a closed-form confidence interval be computed?
 Defaults to \code{FALSE}.}
 
-\item{.model_implied}{Logical. Should the RMS_theta be computed using the
-model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix
-based on V(eta) = WSW' divided by the square root of the respective
-reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
-
 \item{.null_model}{Logical. Should the degrees of freedom for the null model
 be computed? Defaults to \code{FALSE}.}
 
@@ -36,7 +31,6 @@ list shows which argument is passed to which (internal) function:
 \describe{
 \item{.alpha}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{.closed_form_ci}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}}
-\item{.model_implied}{Accepted by/Passed down to: \code{\link[=calculateRMSTheta]{calculateRMSTheta()}}}
 \item{.null_model}{Accepted by/Passed down to: \code{\link[=calculateDf]{calculateDf()}}}
 \item{.saturated}{Accepted by/Passed down to: \code{\link[=calculateSRMR]{calculateSRMR()}},
 \code{\link[=calculateDG]{calculateDG()}}, \code{\link[=calculateDL]{calculateDL()}}, \code{\link[=calculateDML]{calculateDML()}}and subsequently \code{\link[=fit]{fit()}}.}

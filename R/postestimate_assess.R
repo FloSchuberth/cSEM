@@ -90,7 +90,7 @@
 #'   This measure is commonly known as Cohen's f^2.
 #'   Calculation is done by [calculateEffectSize()].}
 #' \item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi", 
-#'       "nnfi",  "rmsea", "rms_theta", "srmr"}{
+#'       "nnfi",  "rmsea", "rms_theta", "rms_theta_mi", "srmr"}{
 #'   Several absolute and incremental fit indices. Note that their suitability
 #'   for models containing constructs modeled as composites is still an
 #'   open research question. Also note that fit indices are not tests in a 
@@ -205,7 +205,7 @@
 #'                           "esize", "chi_square", "chi_square_df",
 #'                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
 #'                           "reliability", 
-#'                           "rmsea", "rms_theta", "srmr",
+#'                           "rmsea", "rms_theta", "rms_theta_mi", "srmr",
 #'                           "gof", "htmt", "r2", "r2_adj",
 #'                           "rho_T", "rho_T_weighted", "vif", 
 #'                           "vifmodeB",  "fl_criterion"),
@@ -234,7 +234,7 @@ assess <- function(
                            "esize", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
-                           "rmsea", "rms_theta", "srmr",
+                           "rmsea", "rms_theta", "rms_theta_mi", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
                            "vifmodeB",  "fl_criterion"),
@@ -254,7 +254,7 @@ assess.cSEMResults_default <- function(
                            "esize", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
-                           "rmsea", "rms_theta", "srmr",
+                           "rmsea", "rms_theta", "rms_theta_mi", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
                            "vifmodeB",  "fl_criterion"),
@@ -366,8 +366,12 @@ assess.cSEMResults_default <- function(
     out[["RMSEA"]] <- calculateRMSEA(.object)
   }
   if(any(.quality_criterion %in% c("all", "rms_theta"))) {
-    # Effect size
-    out[["RMS_theta"]] <- calculateRMSTheta(.object, ...)
+    # RMS theta using the the construct correlation matrix WSW'
+    out[["RMS_theta"]] <- calculateRMSTheta(.object, .model_implied = FALSE)
+  }
+  if(any(.quality_criterion %in% c("all", "rms_theta_mi"))) {
+    # RMS theta using the model-implied construct vCV
+    out[["RMS_theta_mi"]] <- calculateRMSTheta(.object, .model_implied = TRUE)
   }
   if(any(.quality_criterion %in% c("all", "srmr"))) {
     # Effect size
@@ -507,7 +511,7 @@ assess.cSEMResults_multi <- function(
                            "esize", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
-                           "rmsea", "rms_theta", "srmr",
+                           "rmsea", "rms_theta", "rms_theta_mi", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
                            "vifmodeB",  "fl_criterion"),
@@ -540,7 +544,7 @@ assess.cSEMResults_2ndorder <- function(
                            "esize", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
-                           "rmsea", "rms_theta", "srmr",
+                           "rmsea", "rms_theta", "rms_theta_mi", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
                            "vifmodeB",  "fl_criterion"),
