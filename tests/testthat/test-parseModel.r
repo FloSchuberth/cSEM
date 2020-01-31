@@ -114,8 +114,15 @@ model1 <- "
 IMAG <~ imag1 + imag2 + imag3
 "
 
-# 3.2 Two measurement equations and correlation given
+# 3.2 Only measurement equations without construct correlations given
 model2 <- "
+# Measurement and composite model
+EXPE =~ expe1 + expe2
+IMAG <~ imag1 + imag2
+"
+
+# 3.3 Two measurement equations and correlation given
+model3 <- "
 # Construct correlations
 EXPE ~~ IMAG
 
@@ -126,11 +133,12 @@ IMAG <~ imag1 + imag2
 
 test_that("Linear model: incorrectly specified models provide an error", {
   expect_error(parseModel(model1))
+  expect_error(parseModel(model2))
 })
 
 test_that("Linear model: correctly specified models are correctly returned", {
-  expect_s3_class(parseModel(model2), "cSEMModel")
-  expect_output(str(parseModel(model2)), "List of 13")
+  expect_s3_class(parseModel(model3), "cSEMModel")
+  expect_output(str(parseModel(model3)), "List of 13")
 })
 
 ### Nonlinear models ===========================================================

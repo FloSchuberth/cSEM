@@ -84,7 +84,8 @@ parseModel <- function(
     # co := error 
     tbl_s  <- m_lav[m_lav$op == "~", ] # structural 
     tbl_m  <- m_lav[m_lav$op %in% c("=~", "<~"), ] # measurement 
-    tbl_co  <- m_lav[m_lav$op == "~~" & m_lav$user == 1, ] # correlation
+    tbl_co <- m_lav[m_lav$op == "~~" & m_lav$user == 1, ] # correlations
+    # variances are ignored
     
     ## Collect starting values/population values if any are given
     pop_values <- c(tbl_s$ustart2, tbl_m$ustart2, tbl_co$ustart2)
@@ -101,7 +102,8 @@ parseModel <- function(
     # Typical name: "name_[i/c]_[s/m]_[lhs/rhs]_[nl/l]"
     
     ### Structural model ---------------------
-    ## Check if structural model has been supplied
+    # Check if structural model has been supplied as subsets are collected
+    # differently in this case
     if(nrow(tbl_s) == 0) {
       names_i  <- tbl_m$rhs
       names_c  <- names_c_all <- unique(tbl_m$lhs)
@@ -115,6 +117,34 @@ parseModel <- function(
       names_c_not_attachted_to_2nd <- NULL
       
       ## Checks and errors
+      ## Stop if only a single measurement equation is given
+      if(length(names_c) == 1) {
+        stop2(
+          "The following error occured in the `parseModel()` function:\n",
+          "At least two constructs required for the estimation."
+        )
+      }
+      
+      # Note (01/2020) If only measurement model equations are given two cases 
+      #                need to be distinguised:
+      #         1. The model contains fixed values to be used by cSEM.DGP
+      #         2. The model is used for the estimation
+      #  The first case should cause an error since defaulting the correlations
+      #  between constructs to zero (as lavaan does it) does not work for composites
+      #  (identification requires at least two correlated composites).
+      #  The second case currently also causes an error, i.e. users are forced
+      #  to explicitly specify all correlations between constructs. This 
+      #  is differnt to lavaan which has option auto.cov.y = TRUE set by default
+      
+      tmp <- setdiff(names_c, intersect(names_c, names_co))
+      if(length(tmp) != 0) {
+        stop2(
+          "The following error occured in the `parseModel()` function:\n",
+          "All construct correlations must be supplied explicitly using e.g.,: ", 
+          paste0("`", names_c[1], " ~~ ", names_c[2],  "`")
+        )
+      }
+      
       ## Stop if any construct has no observables/indicators attached
       tmp <- setdiff(setdiff(names_co, names_i), names_c)
       if(length(tmp) != 0) {
@@ -122,14 +152,6 @@ parseModel <- function(
           "The following error occured in the `parseModel()` function:\n",
           "No measurement equation provided for: ", 
           paste0("`", tmp,  "`", collapse = ", ")
-        )#
-      }
-      
-      ## Stop if only a single measurement equation is given
-      if(length(names_c) == 1) {
-        stop2(
-          "The following error occured in the `parseModel()` function:\n",
-          "At least two constructs required for the estimation."
         )
       }
       
