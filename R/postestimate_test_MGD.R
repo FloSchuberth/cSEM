@@ -414,7 +414,8 @@ testMGD <- function(
         n2<-bootstrap_results[[names(object_permu[[x]][2])]]$nObs
         
         # Calculation of the SE of the parameter difference as proposed by 
-        # Henseler (2007a), Henseler et al. (2009)
+        # Henseler (2007a), Henseler et al. (2009) 
+        # Assumption of equal variances
         ses_total <- sqrt((n1-1)^2/(n1+n2-2)*ses1^2 + 
             (n2-1)^2/(n1+n2-2)*ses2^2)*sqrt(1/n1+1/n2) 
           
@@ -438,7 +439,8 @@ testMGD <- function(
           n2<-bootstrap_results[[names(object_permu[[x]][2])]]$nObs
           
           # Calculation of the SE of the parameter difference as proposed by 
-          # Henseler (2007a), Henseler et al. (2009)
+          # Henseler (2007a), Henseler et al. (2009) 
+          # Assumption of unequal variances
           ses_total <- sqrt((n1-1)/(n1)*ses1^2 + 
                               (n2-1)/(n2)*ses2^2) 
           
