@@ -1,5 +1,8 @@
 # cSEM 0.1.0:9000
 
+- Change the name of the the quality criterion "effect size (f2)" from `esize` to `f2` 
+  as this is more common. (#336)
+  
 - Fix bug related to dotdotdot arguments incorrectly passed to functions supplied
   to `.user_funs` when resampling. Add additional example to `assess()` illustrating
   the use of the `.user_funs` arguments when given multiple functions. (#334) 

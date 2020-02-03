@@ -27,8 +27,8 @@ test_that("Assess works for all choices of .quality_criterion", {
   expect_equivalent(a$DL, 0.01041484, tolerance = 1e-07)
   expect_equivalent(a$DML, 0.02928953, tolerance = 1e-07)
   expect_equivalent(a$Df, 18, tolerance = 1e-07)
-  expect_equivalent(c(a$Effect_size), c(0.53061872, 0.34344601, 0,
-                                        0.06958792, 0.00000000, 0), 
+  expect_equivalent(c(a$f2), c(0.53061872, 0.34344601, 0,
+                               0.06958792, 0.00000000, 0), 
                     tolerance = 1e-07)
   expect_equivalent(a$Chi_square, 14.61547, tolerance = 1e-05)
   expect_equivalent(a$Chi_square_df, 0.8119708, tolerance = 1e-07)

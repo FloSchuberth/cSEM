@@ -194,21 +194,21 @@ print.cSEMAssess <- function(x, ...) {
     }
   }
   
-  if(any(names(x) == "Effect_size")) {
+  if(any(names(x) == "F2")) {
     cat2("\n\n", rule2("Effect sizes (Cohen's f^2)"))
-    for(i in rownames(x$Effect_size)) {
-      ll <- nchar(colnames(x$Effect_size[i, x$Effect_size[i, ] != 0, drop = FALSE]))
+    for(i in rownames(x$F2)) {
+      ll <- nchar(colnames(x$F2[i, x$F2[i, ] != 0, drop = FALSE]))
       cat2("\n\n  Dependent construct: '", i, "'\n")
       cat2(
         "\n\t", 
         col_align("Independent construct", max(ll, nchar("Independent construct")) + 2), 
-        col_align("Effect size", 12, align = "center")
+        col_align("f^2", 12, align = "center")
       )
-      for(j in colnames(x$Effect_size[i, x$Effect_size[i, ] != 0, drop = FALSE])) {
+      for(j in colnames(x$F2[i, x$F2[i, ] != 0, drop = FALSE])) {
         cat2(
           "\n\t", 
           col_align(j, max(ll, nchar("Independent construct")) + 2), 
-          col_align(sprintf("%.4f", x$Effect_size[i, j]), 12, align = "center")
+          col_align(sprintf("%.4f", x$F2[i, j]), 12, align = "center")
         )  
       }
     }

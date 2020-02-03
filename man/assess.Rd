@@ -10,7 +10,7 @@ assess(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                          "esize", "chi_square", "chi_square_df",
+                          "f2", "chi_square", "chi_square_df",
                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
                           "reliability", 
                           "rmsea", "rms_theta", "rms_theta_mi", "srmr",
@@ -122,14 +122,14 @@ and \code{\link[=calculateDML]{calculateDML()}}.}
 \item{Degrees of freedom, "df"}{
 Returns the degrees of freedom. Calculation is done by \code{\link[=calculateDf]{calculateDf()}}.
 }
-\item{Effect size; "esize"}{An index of the effect size of an independent
-variable in a structural regression equation. The effect size of the k'th
+\item{Effect size; "f2"}{An index of the effect size of an independent
+variable in a structural regression equation. This measure is commonly
+known as Cohen's f^2. The effect size of the k'th
 independent variable in this case
 is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where
 R2_included and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
 alternative specification with the k'th variable dropped (R2_excluded).
-This measure is commonly known as Cohen's f^2.
 Calculation is done by \code{\link[=calculateEffectSize]{calculateEffectSize()}}.}
 \item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi",
 "nnfi",  "rmsea", "rms_theta", "rms_theta_mi", "srmr"}{

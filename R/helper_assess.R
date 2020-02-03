@@ -914,11 +914,12 @@ calculateSRMR <- function(
 
 
 
-#' Internal: Calculate effect size
+#' Internal: Calculate Cohens f^2
 #'
-#' Calculate the effect size for regression analysis \insertCite{Cohen1992}{cSEM}.
+#' Calculate the effect size for regression analysis \insertCite{Cohen1992}{cSEM}
+#' known as Cohen's f^2
 #'
-#' @usage calculateEffectSize(.object = NULL)
+#' @usage calculatef2(.object = NULL)
 #'
 #' @inheritParams csem_arguments
 #'
@@ -929,7 +930,7 @@ calculateSRMR <- function(
 #' @seealso [assess()], [csem], [cSEMResults]
 #' @keywords internal
 
-calculateEffectSize <- function(.object = NULL) {
+calculatef2 <- function(.object = NULL) {
   
   ## Get relevant quantities
   approach_nl      <- .object$Information$Arguments$.approach_nl
@@ -990,7 +991,7 @@ calculateEffectSize <- function(.object = NULL) {
   ## Remove 
   
   ## Make output a matrix
-  # Note: this is necessary for calculateEffectSize to work
+  # Note: this is necessary for calculatef2() to work
   #       when supplied to the .user_funs argument. Currently, .user_funs functions 
   #       need to return a vector or a matrix. I may change that in the future.
   ss <- s[vars_endo, , drop = FALSE]
