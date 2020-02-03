@@ -279,6 +279,21 @@ res$Estimates$Estimates_resample$Estimates1$User_fun$Resampled[1:4, ]
 ## Use infer() to compute e.g. the 95\% percentile confidence interval
 res_infer <- infer(res, .quantity = "CI_percentile")
 res_infer$User_fun 
+
+## Several quality criteria can be resampeled simultaneously
+res <- csem(threecommonfactors, model, 
+            .resample_method = "bootstrap",
+            .R               = 40,
+            .user_funs       = list(
+              "HTMT" = cSEM:::calculateHTMT,
+              "SRMR" = cSEM:::calculateSRMR,
+              "RMS_theta" = cSEM:::calculateRMSTheta
+            ),
+            .model_implied = TRUE, # will be passed to calculateRMSTheta
+            .tolerance = 1e-04
+)
+res$Estimates$Estimates_resample$Estimates1$HTMT$Resampled[1:4, ]
+res$Estimates$Estimates_resample$Estimates1$RMS_theta$Resampled[1:4]
 }
 }
 \seealso{
