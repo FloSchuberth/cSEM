@@ -6,7 +6,7 @@
 #' 
 #' @param x An R object of class `cSEMFloodlight`.
 #' @param ... Currently ignored.
-#' 
+#' @export
 plot.cSEMFloodlight <- function(x, ...) {
   
   ## Install ggplot2 if not already installed
@@ -20,10 +20,11 @@ plot.cSEMFloodlight <- function(x, ...) {
     ggplot2::geom_line() +
     ggplot2::geom_ribbon(ggplot2::aes(ymin = x$out[,'lb'], ymax = x$out[, 'ub']), alpha = 0.2) +
     ggplot2::labs(
-      "x" = paste('Level of ', x$Information['moderator']), 
-      "y" = paste('Effect of', x$Information['independent'], 'on \n', x$Information['dependent'])) +
+      x = paste('Level of ', x$Information['moderator']), 
+      y = paste('Effect of', x$Information['independent'], 'on \n', x$Information['dependent']),
+      caption = paste0("Created using cSEM version: ", packageVersion("cSEM"), 
+                       " (", Sys.Date(), ")")) +
     ggplot2::theme_bw() +
-    # scale_x_continuous(breaks=seq(-3,3,0.5))+
     ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
   
   # Add Johnson-Neyman points, if they exist in the considered range

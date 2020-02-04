@@ -1,5 +1,7 @@
 # cSEM 0.1.0:9000
 
+- Export plot method for cSEMFloodlight objects.
+
 - Update documentation for `predict()`.
 
 - Integrate and document `cSEMPredict` method for generic function `plot()`. Now 
