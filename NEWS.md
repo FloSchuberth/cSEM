@@ -7,7 +7,7 @@
 
 - Add the density of the residuals as plot to `plot.cSEMPredict()`. (#337)
 
--`assess()` now also computes and prints the total and indirect effects for each
+- `assess()` now also computes and prints the total and indirect effects for each
   variable as they are often used for model assessment and may thus be considered 
   a quality criteria.
   In addition, the variance accounted for (VAF) is computed and printed as well. (#335)
