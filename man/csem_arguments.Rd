@@ -79,6 +79,8 @@ Defaults to \code{FALSE}.}
 \item{.ci}{A vector of character strings naming the confidence interval to compute.
 For possible choices see \code{\link[=infer]{infer()}}.}
 
+\item{.ci_colnames}{Internal argument used by several print helper functions.}
+
 \item{.closed_form_ci}{Logical. Should a closed-form confidence interval be computed?
 Defaults to \code{FALSE}.}
 
@@ -121,6 +123,8 @@ Dominant indicators may be specified for a subset of the constructs.
 Default to \code{NULL}.}
 
 \item{.E}{A (J x J) matrix of inner weights.}
+
+\item{.effect}{Internal argument used by helper printEffects().}
 
 \item{.estimate_structural}{Logical. Should the structural coefficients
 be estimated? Defaults to \code{TRUE}.}
@@ -346,6 +350,8 @@ Defaults to \code{FALSE}.}
 \item{.vector2}{A vector of numeric values.}
 
 \item{.W}{A (J x K) matrix of weights.}
+
+\item{.what}{Internal argument used by several print helper functions.}
 
 \item{.W_new}{A (J x K) matrix of weights.}
 

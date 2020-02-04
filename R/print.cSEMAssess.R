@@ -225,22 +225,54 @@ print.cSEMAssess <- function(x, ...) {
       cat2("\n\n\tFornell-Larcker matrix\n\n")
       print(x$`Fornell-Larcker`)
     }
+  }
+  
+  if(any(names(x) == "Effects")) {
+    ### Effects ----------------------------------------------------------------
+    cat2("\n\n", rule2("Effects"), "\n\n")
     
-    # if(any(names(x) == "RA") && !anyNA(x$RA)) {
-    #   cat2("\n\n\tRedundancy analysis")
-    #   cat2(
-    #     "\n\n\t", 
-    #     col_align("Construct", max(l, nchar("Construct")) + 2),
-    #     col_align("Value", 14, align = "center")
-    #   )
-    #   for(i in names(x$RA)) {
-    #     cat2(
-    #       "\n\t", 
-    #       col_align(i, max(l, nchar("Construct")) + 2),
-    #       col_align(sprintf("%.4f",x$RA[i]), 14, align = "center")
-    #     ) 
-    #   }
-    # }
+    ## Confidence intervals
+    # Get the column names of the columns containing confidence intervals
+    ci_colnames <- colnames(x$Effects$Total_effects)[-c(1:6)]
+    
+    # Are there more confidence intervals than the default (the 95% percentile CI)
+    # Inform the user to use xxx instead.
+    if(length(ci_colnames) > 2) {
+      cat2(
+        "By default, only one confidence interval is printed."
+      )
+      ci_colnames <- ci_colnames[1:2]
+      cat("\n\n")
+    }
+    
+    ## Total effects
+    cat2("Estimated total effects:\n========================")
+    printEffects(x$Effects$Total_effect, .ci_colnames = ci_colnames, .what = "Total effect")
+    
+    ## Indirect effects
+    cat2("\n\nEstimated indirect effects:\n===========================")
+    printEffects(x$Effects$Indirect_effect, .ci_colnames = ci_colnames, .what = "Indirect effect")
+  }
+  
+  ## Variance accounted for (VAF)
+  if(any(names(x) == "VAF")) {
+    ## Confidence intervals
+    # Get the column names of the columns containing confidence intervals
+    ci_colnames <- colnames(x$VAF)[-c(1:6)]
+    
+    # Are there more confidence intervals than the default (the 95% percentile CI)
+    # Inform the user to use xxx instead.
+    if(length(ci_colnames) > 2) {
+      cat2(
+        "By default, only one confidence interval is printed."
+      )
+      ci_colnames <- ci_colnames[1:2]
+      cat("\n\n")
+    }
+    ### Variance accounted for -------------------------------------------------
+    cat2("\n\n", rule2("Variance accounted for (VAF)"), "\n\n")
+    # cat2("\n\nVariance accounted for (VAF):\n===========================")
+    printEffects(x$VAF, .ci_colnames = ci_colnames, .what = "Effects")
   }
   
   cat2("\n", rule2(type = 2))

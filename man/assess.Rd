@@ -10,7 +10,7 @@ assess(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                          "f2", "chi_square", "chi_square_df",
+                          "effects", "f2", "chi_square", "chi_square_df",
                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
                           "reliability", 
                           "rmsea", "rms_theta", "rms_theta_mi", "srmr",
@@ -50,7 +50,7 @@ article on the
 The function is essentially a wrapper around a number of internal functions
 that perform an "assessment task" (called a \strong{quality criterion} in \pkg{cSEM}
 parlance) like computing reliability estimates,
-the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
+the effect size (Cohen's f^2), the heterotrait-monotrait ratio of correlations (HTMT) etc.
 
 By default every possible quality criterion is calculated (\code{.quality_criterion = "all"}).
 If only a subset of quality criteria are needed a single character string
@@ -122,6 +122,8 @@ and \code{\link[=calculateDML]{calculateDML()}}.}
 \item{Degrees of freedom, "df"}{
 Returns the degrees of freedom. Calculation is done by \code{\link[=calculateDf]{calculateDf()}}.
 }
+\item{Effects; "effects"}{Total and indirect effect estimates. Calculation is done
+by \code{\link[=calculateEffects]{calculateEffects()}}.}
 \item{Effect size; "f2"}{An index of the effect size of an independent
 variable in a structural regression equation. This measure is commonly
 known as Cohen's f^2. The effect size of the k'th
@@ -130,7 +132,7 @@ is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where
 R2_included and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
 alternative specification with the k'th variable dropped (R2_excluded).
-Calculation is done by \code{\link[=calculateEffectSize]{calculateEffectSize()}}.}
+Calculation is done by \code{\link[=calculatef2]{calculatef2()}}.}
 \item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi",
 "nnfi",  "rmsea", "rms_theta", "rms_theta_mi", "srmr"}{
 Several absolute and incremental fit indices. Note that their suitability
@@ -201,6 +203,8 @@ reliability estimates for constructs modeled as
 composites by setting \code{.only_common_factors = FALSE}, however, result should be
 interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by \code{\link[=calculateRhoT]{calculateRhoT()}}.}
+\item{Variance accounted for (VAF); "vaf"}{The VAF is defined as the ratio of a variables
+indirect effect to its total effect. Calculation is done by \code{\link[=calculateEffects]{calculateEffects()}}.}
 \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-)
 collinearity between independent variables of a regression equation. Computed
 for each structural equation. Practically, VIF_k is defined

@@ -68,7 +68,7 @@ Currently the following quality criteria are implemented:
   well as for Mode B regression equations (if `.approach_weights = "PLS-PM"`).
 - The coefficient of determination and the adjusted coefficient of determination
   ($R^2$ and $R^2_{adj}$)
-- A measure of the **effect size** ($f^2$).
+- A measure of the **effect size** (Cohen's $f^2$).
 
 
 For implementation details see the [Methods & Formulae](#methods) section.
@@ -82,7 +82,7 @@ assess(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                           "esize", "chi_square", "chi_square_df",
+                           "f2", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "srmr",

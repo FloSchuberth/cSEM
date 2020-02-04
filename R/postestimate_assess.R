@@ -8,7 +8,7 @@
 #' The function is essentially a wrapper around a number of internal functions
 #' that perform an "assessment task" (called a **quality criterion** in \pkg{cSEM}
 #' parlance) like computing reliability estimates,
-#' the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
+#' the effect size (Cohen's f^2), the heterotrait-monotrait ratio of correlations (HTMT) etc.
 #' 
 #' By default every possible quality criterion is calculated (`.quality_criterion = "all"`). 
 #' If only a subset of quality criteria are needed a single character string
@@ -80,6 +80,8 @@
 #' \item{Degrees of freedom, "df"}{
 #'   Returns the degrees of freedom. Calculation is done by [calculateDf()].
 #'   }
+#' \item{Effects; "effects"}{Total and indirect effect estimates. Calculation is done
+#'   by [calculateEffects()].}
 #' \item{Effect size; "f2"}{An index of the effect size of an independent
 #'   variable in a structural regression equation. This measure is commonly 
 #'   known as Cohen's f^2. The effect size of the k'th
@@ -88,7 +90,7 @@
 #'   R2_included and R2_excluded are the R squares of the 
 #'   original structural model regression equation (R2_included) and the
 #'   alternative specification with the k'th variable dropped (R2_excluded).
-#'   Calculation is done by [calculateEffectSize()].}
+#'   Calculation is done by [calculatef2()].}
 #' \item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi", 
 #'       "nnfi",  "rmsea", "rms_theta", "rms_theta_mi", "srmr"}{
 #'   Several absolute and incremental fit indices. Note that their suitability
@@ -159,6 +161,8 @@
 #'   composites by setting `.only_common_factors = FALSE`, however, result should be 
 #'   interpreted with caution as they may not have a conceptual meaning.
 #'   Calculation is done by [calculateRhoT()].}
+#' \item{Variance accounted for (VAF); "vaf"}{The VAF is defined as the ratio of a variables
+#'   indirect effect to its total effect. Calculation is done by [calculateEffects()].}
 #' \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-) 
 #'   collinearity between independent variables of a regression equation. Computed
 #'   for each structural equation. Practically, VIF_k is defined
@@ -202,7 +206,7 @@
 #'   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
 #'                            "rho_C_weighted_mm", "cronbachs_alpha", 
 #'                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-#'                           "f2", "chi_square", "chi_square_df",
+#'                           "effects", "f2", "chi_square", "chi_square_df",
 #'                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
 #'                           "reliability", 
 #'                           "rmsea", "rms_theta", "rms_theta_mi", "srmr",
@@ -231,7 +235,7 @@ assess <- function(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                           "f2", "chi_square", "chi_square_df",
+                           "effects", "f2", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "rms_theta_mi", "srmr",
@@ -251,7 +255,7 @@ assess.cSEMResults_default <- function(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                           "f2", "chi_square", "chi_square_df",
+                           "effects", "f2", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "rms_theta_mi", "srmr",
@@ -266,6 +270,7 @@ assess.cSEMResults_default <- function(
             args_default(.choices = TRUE)$.quality_criterion, several.ok = TRUE)
   
   m <- .object$Information$Model
+  
   ## Set up empty list
   out <- list()
   
@@ -328,6 +333,10 @@ assess.cSEMResults_default <- function(
   if(any(.quality_criterion %in% c("all", "df"))) {
     # dML
     out[["Df"]]   <- calculateDf(.object, ...)
+  }
+  if(any(.quality_criterion %in% c("all", "effects")) && !all(m$structural == 0)) {
+    # Direct, total and indirect effects
+    out[["Effects"]] <- summarize(.object)$Estimates$Effect_estimates[1:3]
   }
   if(any(.quality_criterion %in% c("all", "f2")) && !all(m$structural == 0)) {
     # Effect size (f2)
@@ -466,6 +475,10 @@ assess.cSEMResults_default <- function(
       ...
     )
   }
+  if(any(.quality_criterion %in% c("all", "vaf")) && !all(m$structural == 0)) {
+    # Total and indirect effects
+    out[["VAF"]] <- summarize(.object)$Estimates$Effect_estimates[[4]]
+  }
   if(any(.quality_criterion %in% c("all", "vif")) && !all(m$structural == 0)) {
     # VIF
     out[["VIF"]]  <- .object$Estimates$VIF
@@ -508,7 +521,7 @@ assess.cSEMResults_multi <- function(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha",  
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                           "f2", "chi_square", "chi_square_df",
+                           "effects", "f2", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "rms_theta_mi", "srmr",
@@ -541,7 +554,7 @@ assess.cSEMResults_2ndorder <- function(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha",  
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                           "f2", "chi_square", "chi_square_df",
+                           "effects", "f2", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "rms_theta_mi", "srmr",

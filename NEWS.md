@@ -1,5 +1,17 @@
 # cSEM 0.1.0:9000
 
+- Update documentation for `predict()`.
+
+- Integrate and document `cSEMPredict` method for generic function `plot()`. Now 
+  users may call `plot()` on an object created by `predict()`.
+
+- Add the density of the residuals as plot to `plot.cSEMPredict()`. (#337)
+
+-`assess()` now also computes and prints the total and indirect effects for each
+  variable as they are often used for model assessment and may thus be considered 
+  a quality criteria.
+  In addition, the variance accounted for (VAF) is computed and printed as well. (#335)
+
 - Change the name of the the quality criterion "effect size (f2)" from `esize` to `f2` 
   as this is more common. (#336)
   
