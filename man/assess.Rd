@@ -122,7 +122,9 @@ and \code{\link[=calculateDML]{calculateDML()}}.}
 \item{Degrees of freedom, "df"}{
 Returns the degrees of freedom. Calculation is done by \code{\link[=calculateDf]{calculateDf()}}.
 }
-\item{Effects; "effects"}{Total and indirect effect estimates. Calculation is done
+\item{Effects; "effects"}{Total and indirect effect estimates. Additionally,
+the variance accounted for (VAF) is computed. The VAF is defined as the ratio of a variables
+indirect effect to its total effect. Calculation is done
 by \code{\link[=calculateEffects]{calculateEffects()}}.}
 \item{Effect size; "f2"}{An index of the effect size of an independent
 variable in a structural regression equation. This measure is commonly
@@ -203,8 +205,6 @@ reliability estimates for constructs modeled as
 composites by setting \code{.only_common_factors = FALSE}, however, result should be
 interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by \code{\link[=calculateRhoT]{calculateRhoT()}}.}
-\item{Variance accounted for (VAF); "vaf"}{The VAF is defined as the ratio of a variables
-indirect effect to its total effect. Calculation is done by \code{\link[=calculateEffects]{calculateEffects()}}.}
 \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-)
 collinearity between independent variables of a regression equation. Computed
 for each structural equation. Practically, VIF_k is defined

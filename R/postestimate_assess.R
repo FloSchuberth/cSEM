@@ -80,7 +80,9 @@
 #' \item{Degrees of freedom, "df"}{
 #'   Returns the degrees of freedom. Calculation is done by [calculateDf()].
 #'   }
-#' \item{Effects; "effects"}{Total and indirect effect estimates. Calculation is done
+#' \item{Effects; "effects"}{Total and indirect effect estimates. Additionally, 
+#'   the variance accounted for (VAF) is computed. The VAF is defined as the ratio of a variables
+#'   indirect effect to its total effect. Calculation is done
 #'   by [calculateEffects()].}
 #' \item{Effect size; "f2"}{An index of the effect size of an independent
 #'   variable in a structural regression equation. This measure is commonly 
@@ -161,8 +163,6 @@
 #'   composites by setting `.only_common_factors = FALSE`, however, result should be 
 #'   interpreted with caution as they may not have a conceptual meaning.
 #'   Calculation is done by [calculateRhoT()].}
-#' \item{Variance accounted for (VAF); "vaf"}{The VAF is defined as the ratio of a variables
-#'   indirect effect to its total effect. Calculation is done by [calculateEffects()].}
 #' \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-) 
 #'   collinearity between independent variables of a regression equation. Computed
 #'   for each structural equation. Practically, VIF_k is defined
@@ -336,7 +336,7 @@ assess.cSEMResults_default <- function(
   }
   if(any(.quality_criterion %in% c("all", "effects")) && !all(m$structural == 0)) {
     # Direct, total and indirect effects
-    out[["Effects"]] <- summarize(.object)$Estimates$Effect_estimates[1:3]
+    out[["Effects"]] <- summarize(.object)$Estimates$Effect_estimates
   }
   if(any(.quality_criterion %in% c("all", "f2")) && !all(m$structural == 0)) {
     # Effect size (f2)
@@ -474,10 +474,6 @@ assess.cSEMResults_default <- function(
       .weighted            = TRUE, 
       ...
     )
-  }
-  if(any(.quality_criterion %in% c("all", "vaf")) && !all(m$structural == 0)) {
-    # Total and indirect effects
-    out[["VAF"]] <- summarize(.object)$Estimates$Effect_estimates[[4]]
   }
   if(any(.quality_criterion %in% c("all", "vif")) && !all(m$structural == 0)) {
     # VIF
