@@ -1,3 +1,5 @@
+
+# Function that calculates unstandardized construct scores
 calclateUnstandardizedConstructScores=function(.object){
   
   dataScaled=.object$Information$Data
