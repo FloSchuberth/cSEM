@@ -122,7 +122,8 @@ doFloodlightAnalysis <- function(
     
     # Effect names
     beta_z  <- paste(.y, .x, sep = ' ~ ')
-    beta_xz <- paste(.y, .z, sep = ' ~ ')
+    # beta_xz <- paste(.y, .z, sep = ' ~ ')
+    beta_xz <- paste(.y, xy, sep = ' ~ ')
     
     ## Compute spotlights (= effects of independent (z) on dependent (y) for given 
     ## values of moderator (x))
