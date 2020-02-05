@@ -63,6 +63,7 @@
 #'   Defaults to `FALSE`.
 #' @param .ci A vector of character strings naming the confidence interval to compute.
 #'   For possible choices see [infer()].
+#' @param .ci_colnames Internal argument used by several print helper functions.
 #' @param .closed_form_ci Logical. Should a closed-form confidence interval be computed?
 #'   Defaults to `FALSE`.
 #' @param .conv_criterion Character string. The criterion to use for the convergence check.
@@ -94,6 +95,7 @@
 #'   Dominant indicators may be specified for a subset of the constructs. 
 #'   Default to `NULL`.
 #' @param .E A (J x J) matrix of inner weights.
+#' @param .effect Internal argument used by helper printEffects().
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
 #' @param .eval_plan Character string. The evaluation plan to use. One of 
@@ -259,6 +261,7 @@
 #' @param .vector1 A vector of numeric values.
 #' @param .vector2 A vector of numeric values.
 #' @param .W A (J x K) matrix of weights.
+#' @param .what Internal argument used by several print helper functions.
 #' @param .W_new A (J x K) matrix of weights.
 #' @param .W_old A (J x K) matrix of weights.
 #' @param .weighted Logical. Should estimation be based on a score that uses 
@@ -388,6 +391,7 @@ args_default <- function(.choices = FALSE) {
     .choices                 = FALSE,
     .ci                      = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
+    .ci_colnames             = NULL,
     .closed_form_ci          = FALSE, 
     .csem_model              = NULL,
     .csem_resample           = NULL,
@@ -398,6 +402,7 @@ args_default <- function(.choices = FALSE) {
     .distance                = c("geodesic", "squared_euclidian"),
     .df                      = c("type1", "type2"),
     .E                       = NULL,
+    .effect                  = NULL,
     .eval_plan               = c("sequential", "multiprocess"),
     .first_resample          = NULL,
     .full_output             = TRUE,
@@ -424,7 +429,7 @@ args_default <- function(.choices = FALSE) {
     .quality_criterion       = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                                  "rho_C_weighted_mm", "cronbachs_alpha", 
                                  "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                                 "esize", "chi_square", "chi_square_df",
+                                 "effects", "f2", "chi_square", "chi_square_df",
                                  "cfi", "gfi", "ifi", "nfi", "nnfi", 
                                  "reliability",
                                  "rmsea", "rms_theta", "rms_theta_mi", "srmr",
@@ -461,6 +466,7 @@ args_default <- function(.choices = FALSE) {
     .verbose                 = TRUE,
     .W                       = NULL,
     .weighted                = FALSE,
+    .what                    = NULL,
     .x                       = NULL,
     .X                       = NULL,
     .X_cleaned               = NULL,

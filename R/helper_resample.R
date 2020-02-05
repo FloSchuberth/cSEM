@@ -121,8 +121,12 @@ applyUserFuns <- function(.object, .user_funs, ...) {
             "The first argument of the function(s) provided to `.user_funs` must",
             " always be `.object`.")
     } else {
+      # Delete unused ... arguments
+      args <- list(...)[intersect(names(list(...)), names(formals(.user_funs)))]
+      args$.object <- .object
+
       # Compute functions
-      fun_out <- .user_funs(.object, ...)
+      fun_out <- do.call(.user_funs, args)
       
       ## Check that the output is a vector or a matrix. Currently, no other
       ## format is allowed 
@@ -143,8 +147,13 @@ applyUserFuns <- function(.object, .user_funs, ...) {
     }
   } else {
     x <- lapply(.user_funs, function(f) {
+      # Delete unused ... arguments
+      args <- list(...)[intersect(names(list(...)), names(formals(f)))]
+      args$.object <- .object
+      
       # Compute functions
-      fun_out <- f(.object, ...)
+      fun_out <- do.call(f, args)
+      
       ## Check that the output is a vector or a matrix. Currently, no other
       ## format is allowed 
       if(is.vector(fun_out) & !is.list(fun_out)) { 

@@ -148,7 +148,7 @@ code span.ot { color: #007020; }
 <h1 class="title toc-ignore project-name">Postestimation: Assessing a model</h1>
 <h3 class="subtitle project-tagline">Using the <code>assess()</code> function</h3>
 <h4 class="author project-author">Manuel Rademaker</h4>
-<h4 class="date project-date">Last edited: 2020-01-27</h4>
+<h4 class="date project-date">Last edited: 2020-02-04</h4>
 </section>
 
 
@@ -237,7 +237,7 @@ code span.ot { color: #007020; }
 <li>The <strong>Goodness-of-Fit</strong> (GoF) proposed by <span class="citation">Tenenhaus, Amanto, and Vinzi (2004)</span>.</li>
 <li>The <strong>variance inflation factors</strong> (VIF) for the structural equations as well as for Mode B regression equations (if <code>.approach_weights = &quot;PLS-PM&quot;</code>).</li>
 <li>The coefficient of determination and the adjusted coefficient of determination (<span class="math inline">\(R^2\)</span> and <span class="math inline">\(R^2_{adj}\)</span>)</li>
-<li>A measure of the <strong>effect size</strong> (<span class="math inline">\(f^2\)</span>).</li>
+<li>A measure of the <strong>effect size</strong> (Cohen’s <span class="math inline">\(f^2\)</span>).</li>
 </ul>
 <p>For implementation details see the <a href="#methods">Methods &amp; Formulae</a> section.</p>
 <div id="syntax-options" class="section level2">
@@ -248,7 +248,7 @@ code span.ot { color: #007020; }
 <span id="cb1-4"><a href="#cb1-4"></a>  <span class="dt">.quality_criterion   =</span> <span class="kw">c</span>(<span class="st">&quot;all&quot;</span>, <span class="st">&quot;ave&quot;</span>, <span class="st">&quot;rho_C&quot;</span>, <span class="st">&quot;rho_C_mm&quot;</span>, <span class="st">&quot;rho_C_weighted&quot;</span>, </span>
 <span id="cb1-5"><a href="#cb1-5"></a>                           <span class="st">&quot;rho_C_weighted_mm&quot;</span>, <span class="st">&quot;cronbachs_alpha&quot;</span>, </span>
 <span id="cb1-6"><a href="#cb1-6"></a>                           <span class="st">&quot;cronbachs_alpha_weighted&quot;</span>, <span class="st">&quot;dg&quot;</span>, <span class="st">&quot;dl&quot;</span>, <span class="st">&quot;dml&quot;</span>, <span class="st">&quot;df&quot;</span>,</span>
-<span id="cb1-7"><a href="#cb1-7"></a>                           <span class="st">&quot;esize&quot;</span>, <span class="st">&quot;chi_square&quot;</span>, <span class="st">&quot;chi_square_df&quot;</span>,</span>
+<span id="cb1-7"><a href="#cb1-7"></a>                           <span class="st">&quot;f2&quot;</span>, <span class="st">&quot;chi_square&quot;</span>, <span class="st">&quot;chi_square_df&quot;</span>,</span>
 <span id="cb1-8"><a href="#cb1-8"></a>                           <span class="st">&quot;cfi&quot;</span>, <span class="st">&quot;gfi&quot;</span>, <span class="st">&quot;ifi&quot;</span>, <span class="st">&quot;nfi&quot;</span>, <span class="st">&quot;nnfi&quot;</span>, </span>
 <span id="cb1-9"><a href="#cb1-9"></a>                           <span class="st">&quot;reliability&quot;</span>,</span>
 <span id="cb1-10"><a href="#cb1-10"></a>                           <span class="st">&quot;rmsea&quot;</span>, <span class="st">&quot;rms_theta&quot;</span>, <span class="st">&quot;srmr&quot;</span>,</span>

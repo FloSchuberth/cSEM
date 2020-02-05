@@ -5,7 +5,7 @@
 #    .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted",
 #                             "rho_C_weighted_mm", "cronbachs_alpha",
 #                             "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-#                             "esize", "chi_square", "chi_square_df",
+#                             "f2", "chi_square", "chi_square_df",
 #                             "cfi", "gfi", "ifi", "nfi", "nnfi",
 #                             "reliability",
 #                             "rmsea", "rms_theta", "srmr",

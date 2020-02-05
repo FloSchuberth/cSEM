@@ -41,13 +41,13 @@
 #' \describe{
 #'   \item{`$Actual`}{A matrix of the actual values/indicator scores of the endogenous constructs.}
 #'   \item{`$Prediction_target`}{A matrix of the predicted indicator scores of the endogenous constructs 
-#'     based on the target model. Target refers to }
-#'   \item{`$Residuals_target`}{A matrix of the residuals indicator scores of the endogenous constructs 
+#'     based on the target model. Target refers to procedure used to estimate 
+#'     the parameters in `.object`.}
+#'   \item{`$Residuals_target`}{A matrix of the residual indicator scores of the endogenous constructs 
 #'     based on the target model.}
-#'   \item{`$Residuals_lm`}{A matrix of the residuals indicator scores of the endogenous constructs 
-#'     based on a linear model in which the indicator scores of endogenous constructs
-#'     are predicted by exogenous indicator scores. This serves as a benchmark for
-#'     comparisons.}
+#'   \item{`$Residuals_benchmark`}{A matrix of the residual indicator scores 
+#'     of the endogenous constructs based on a model estimated by the procedure
+#'     given to `.benchmark`.}
 #'   \item{`$Prediction_metrics`}{A data frame containing the predictions metrics
 #'     MAE, RMSE, and Q2_predict.}
 #'   \item{`$Information`}{A list with elements

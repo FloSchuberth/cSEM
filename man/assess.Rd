@@ -10,7 +10,7 @@ assess(
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                          "esize", "chi_square", "chi_square_df",
+                          "effects", "f2", "chi_square", "chi_square_df",
                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
                           "reliability", 
                           "rmsea", "rms_theta", "rms_theta_mi", "srmr",
@@ -50,7 +50,7 @@ article on the
 The function is essentially a wrapper around a number of internal functions
 that perform an "assessment task" (called a \strong{quality criterion} in \pkg{cSEM}
 parlance) like computing reliability estimates,
-the effect size, the heterotrait-monotrait ratio of correlations (HTMT) etc.
+the effect size (Cohen's f^2), the heterotrait-monotrait ratio of correlations (HTMT) etc.
 
 By default every possible quality criterion is calculated (\code{.quality_criterion = "all"}).
 If only a subset of quality criteria are needed a single character string
@@ -122,15 +122,19 @@ and \code{\link[=calculateDML]{calculateDML()}}.}
 \item{Degrees of freedom, "df"}{
 Returns the degrees of freedom. Calculation is done by \code{\link[=calculateDf]{calculateDf()}}.
 }
-\item{Effect size; "esize"}{An index of the effect size of an independent
-variable in a structural regression equation. The effect size of the k'th
+\item{Effects; "effects"}{Total and indirect effect estimates. Additionally,
+the variance accounted for (VAF) is computed. The VAF is defined as the ratio of a variables
+indirect effect to its total effect. Calculation is done
+by \code{\link[=calculateEffects]{calculateEffects()}}.}
+\item{Effect size; "f2"}{An index of the effect size of an independent
+variable in a structural regression equation. This measure is commonly
+known as Cohen's f^2. The effect size of the k'th
 independent variable in this case
 is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where
 R2_included and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
 alternative specification with the k'th variable dropped (R2_excluded).
-This measure is commonly known as Cohen's f^2.
-Calculation is done by \code{\link[=calculateEffectSize]{calculateEffectSize()}}.}
+Calculation is done by \code{\link[=calculatef2]{calculatef2()}}.}
 \item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi",
 "nnfi",  "rmsea", "rms_theta", "rms_theta_mi", "srmr"}{
 Several absolute and incremental fit indices. Note that their suitability
@@ -279,6 +283,21 @@ res$Estimates$Estimates_resample$Estimates1$User_fun$Resampled[1:4, ]
 ## Use infer() to compute e.g. the 95\% percentile confidence interval
 res_infer <- infer(res, .quantity = "CI_percentile")
 res_infer$User_fun 
+
+## Several quality criteria can be resampeled simultaneously
+res <- csem(threecommonfactors, model, 
+            .resample_method = "bootstrap",
+            .R               = 40,
+            .user_funs       = list(
+              "HTMT" = cSEM:::calculateHTMT,
+              "SRMR" = cSEM:::calculateSRMR,
+              "RMS_theta" = cSEM:::calculateRMSTheta
+            ),
+            .model_implied = TRUE, # will be passed to calculateRMSTheta
+            .tolerance = 1e-04
+)
+res$Estimates$Estimates_resample$Estimates1$HTMT$Resampled[1:4, ]
+res$Estimates$Estimates_resample$Estimates1$RMS_theta$Resampled[1:4]
 }
 }
 \seealso{

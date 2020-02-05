@@ -1,5 +1,26 @@
 # cSEM 0.1.0:9000
 
+- Export plot method for cSEMFloodlight objects.
+
+- Update documentation for `predict()`.
+
+- Integrate and document `cSEMPredict` method for generic function `plot()`. Now 
+  users may call `plot()` on an object created by `predict()`.
+
+- Add the density of the residuals as plot to `plot.cSEMPredict()`. (#337)
+
+- `assess()` now also computes and prints the total and indirect effects for each
+  variable as they are often used for model assessment and may thus be considered 
+  a quality criteria.
+  In addition, the variance accounted for (VAF) is computed and printed as well. (#335)
+
+- Change the name of the the quality criterion "effect size (f2)" from `esize` to `f2` 
+  as this is more common. (#336)
+  
+- Fix bug related to dotdotdot arguments incorrectly passed to functions supplied
+  to `.user_funs` when resampling. Add additional example to `assess()` illustrating
+  the use of the `.user_funs` arguments when given multiple functions. (#334) 
+
 - Add both versions of the RMS_theta to `assess()`. `"RMS_theta"` is the RMS_theta
   based on WSW'. `"RMS_theta_mi"` uses the model-implied construct correlation matrix.
   The argument `.model_implied` is thus no longer available to assess's `...`
@@ -10,7 +31,7 @@
   but no strucutral equations. Instead the correlations between all! constructs
   must be given. Failing to do so causes an error.
 
-- Add CITATION file
+- Add CITATION file (#331)
 
 - Add informative error message if `.data` contains missing values.
 
@@ -21,7 +42,7 @@
   Now `predict()` retruns predictions for composite models as well.
   This will break existing code that uses `predict(..., .only_common_factors = ...)`.
   You will get an `unused argument (.only_common_factors = FALSE)` error. 
-  Simply remove the argument to fix it.
+  Simply remove the argument to fix it. (#330)
 
 - Fix bug in `calculateEffectSize()`/`assess()` when one of the equations
   of the structural model has only one explanatory variable. 
@@ -30,7 +51,7 @@
   model containing only constructs modeled as composites.
 
 - Remove warning produced by `calculateHTMT()` when the estimated model contains
-  < 2 common factors. 
+  < 2 common factors. (#325)
 
 - Update documentation for `assess()` and `calcaulateRhoC()`
 

@@ -45,13 +45,13 @@ named list containing the following list elements:
 \describe{
 \item{\verb{$Actual}}{A matrix of the actual values/indicator scores of the endogenous constructs.}
 \item{\verb{$Prediction_target}}{A matrix of the predicted indicator scores of the endogenous constructs
-based on the target model. Target refers to }
-\item{\verb{$Residuals_target}}{A matrix of the residuals indicator scores of the endogenous constructs
+based on the target model. Target refers to procedure used to estimate
+the parameters in \code{.object}.}
+\item{\verb{$Residuals_target}}{A matrix of the residual indicator scores of the endogenous constructs
 based on the target model.}
-\item{\verb{$Residuals_lm}}{A matrix of the residuals indicator scores of the endogenous constructs
-based on a linear model in which the indicator scores of endogenous constructs
-are predicted by exogenous indicator scores. This serves as a benchmark for
-comparisons.}
+\item{\verb{$Residuals_benchmark}}{A matrix of the residual indicator scores
+of the endogenous constructs based on a model estimated by the procedure
+given to \code{.benchmark}.}
 \item{\verb{$Prediction_metrics}}{A data frame containing the predictions metrics
 MAE, RMSE, and Q2_predict.}
 \item{\verb{$Information}}{A list with elements
@@ -150,7 +150,10 @@ res2 <- csem(Anime, # whole data set
 
 # Predict using 10-fold cross-validation with 5 repetitions
 pp2 <- predict(res, .benchmark = "lm")
-pp2}
+pp2
+## There is a plot method available
+plot(pp2)}
+
 }
 \references{
 \insertAllCited{}

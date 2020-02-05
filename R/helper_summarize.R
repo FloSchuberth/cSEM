@@ -1,13 +1,25 @@
-#' Calculate direct, indirect and total effect
+#' Internal: Calculate direct, indirect and total effect
 #' 
 #' The direct effects are equal to the estimated coefficients. The total effect 
 #' equals (I-B)^{-1}Gamma. The indirect effect equals the difference between
-#' the total effect and the indirect effect. 
-#' Helper for generic function summarize().
-#' Only effects for endogenous constructs are returned as exogenous constructs
-#' @noRd
+#' the total effect and the indirect effect. In addition, the variance accounted
+#' for (VAF) is calculated. The VAF is defined as the ratio of a variables
+#' indirect effect to its total effect. Helper for generic functions [summarize()] and [assess()].
 #' 
-calculateEffects <- function(.object, .output_type = c("data.frame", "matrix")) {
+#' @usage calculateEffects(
+#'  .object       = NULL,
+#'  .output_type  = c("data.frame", "matrix")
+#' )
+#'
+#' @return A matrix or a data frame of effects.
+#'   
+#' @inheritParams csem_arguments
+#'
+#' @seealso [assess()], [summarize()] [cSEMResults]
+#'
+#' @keywords internal
+
+calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "matrix")) {
   
   output_type <- match.arg(.output_type)
   
@@ -41,15 +53,15 @@ calculateEffects <- function(.object, .output_type = c("data.frame", "matrix")) 
   ## Matrix of indirect effects:
   indirect <- total - direct
   
-  # MAtrix containing the variance accounted for (VAR)
-  VAR <- indirect/total
-  VAR[which(is.nan(VAR), arr.ind = TRUE)] <- 0
+  # Matrix containing the variance accounted for (VAF)
+  VAF <- indirect/total
+  VAF[which(is.nan(VAF), arr.ind = TRUE)] <- 0
   
   out <- list(
     "Direct_effect"          = direct, 
     "Indirect_effect"        = indirect, 
     "Total_effect"           = total,
-    "Variance_accounted_for" = VAR
+    "Variance_accounted_for" = VAF
   )
   
   ## Convert to data frame
