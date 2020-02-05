@@ -1,6 +1,13 @@
 # cSEM 0.1.0:9000
 
-- Export plot method for cSEMFloodlight objects.
+- Fix bug in `doFloodlightAnalysis()`. There was an internal bug. Earlier versions
+  returned the wrong direct effect. If you have used `doFloodlightAnalysis()`
+  from cSEM v. 0.1.0 results are likely wrong.
+
+- Add new function `getConstructScores()`. The function returns the standardized
+  or unstandardized construct scores. Requires a `cSEMResults` object as input.
+
+- Export plot method for `cSEMFloodlight` objects.
 
 - Update documentation for `predict()`.
 

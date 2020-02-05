@@ -14,7 +14,7 @@
 #' @seealso [csem()], [cSEMResults]
 #' @export
 
-getConstructScores <- function(.object, .standardized = TRUE){
+getConstructScores <- function(.object = NULL, .standardized = TRUE){
   
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, getConstructScores, .standardized = .standardized)
