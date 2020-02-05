@@ -314,6 +314,9 @@ be used to handle flipping signs when resampling? One of "\emph{none}","\emph{in
 \item{.stage}{Character string. The stage the model is needed for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 
+\item{.standardized}{Logical. Should standardized scores be returned? Defaults
+to \code{TRUE}.}
+
 \item{.starting_values}{A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}

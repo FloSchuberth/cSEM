@@ -235,6 +235,8 @@
 #' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".
 #' @param .stage Character string. The stage the model is needed for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
+#' @param .standardized Logical. Should standardized scores be returned? Defaults
+#'   to `TRUE`.
 #' @param .starting_values A named list of vectors where the
 #'   list names are the construct names whose indicator weights the user
 #'   wishes to set. The vectors must be named vectors of `"indicator_name" = value` 
@@ -457,6 +459,7 @@ args_default <- function(.choices = FALSE) {
     .sign_change_option      = c("none", "individual", "individual_reestimate",
                                  "construct_reestimate"),
     .stage                   = c("first", "second"),
+    .standardized            = TRUE,
     .starting_values         = NULL,
     .terms                   = NULL,
     .test_data               = NULL,
