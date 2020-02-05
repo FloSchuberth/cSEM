@@ -29,8 +29,8 @@ getConstructScores <- function(.object, .standardized = TRUE){
     .object$Information$Arguments$.data
     
     # Unscale
-    indicators_unscaled = indicators_scaled * attr(indicators_scaled, 'scaled:scale') + 
-      attr(indicators_scaled, 'scaled:center') 
+    indicators_unscaled = t(t(indicators_scaled) * attr(indicators_scaled, 'scaled:scale') + 
+      attr(indicators_scaled, 'scaled:center')) 
     
     #Unstandardized scores equal X_i%*%w_i/sum(w_i)
     
