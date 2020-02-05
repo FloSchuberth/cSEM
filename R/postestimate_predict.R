@@ -72,7 +72,7 @@
 #'   For "*ignore*" all results are returned even if all or some of the estimates
 #'   yielded inadmissible results. 
 #'   For "*set_NA*" predictions based on inadmissible parameter estimates are
-#'   set to `NA`.
+#'   set to `NA`. Defaults to "*stop*"
 #'
 #' @seealso [csem], [cSEMResults]
 #' 

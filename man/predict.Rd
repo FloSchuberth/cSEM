@@ -30,7 +30,7 @@ will stop immediatly if estimation yields an inadmissible result.
 For "\emph{ignore}" all results are returned even if all or some of the estimates
 yielded inadmissible results.
 For "\emph{set_NA}" predictions based on inadmissible parameter estimates are
-set to \code{NA}.}
+set to \code{NA}. Defaults to "\emph{stop}"}
 
 \item{.r}{Integer. The number of repetitions to use. Defaults to \code{10}.}
 
