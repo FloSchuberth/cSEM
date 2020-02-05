@@ -22,25 +22,26 @@ getConstructScores <- function(.object, .standardized = TRUE){
     return(out)
   } else if(inherits(.object, "cSEMResults_default")) {
     
-    ## Get scaled indicator scores [E(x) = 0; Var(x) = 1]
-    indicators_scaled <- .object$Information$Data
-    
-    ## Original data
-    .object$Information$Arguments$.data
-    
-    # Unscale
-    indicators_unscaled = t(t(indicators_scaled) * attr(indicators_scaled, 'scaled:scale') + 
-      attr(indicators_scaled, 'scaled:center')) 
-    
-    #Unstandardized scores equal X_i%*%w_i/sum(w_i)
-    
-    w_transformed <- t(.object$Estimates$Weight_estimates) %*% solve(diag(rowSums(.object$Estimates$Weight_estimates)))
-    
-    scores_unstandardized <- indicators_unscaled%*%w_transformed
-    
-    colnames(scores_unstandardized) =  rownames(.object$Estimates$Weight_estimates)
-    
-    return(scores_unstandardized)
+    if(.standardized) {
+      ## Get scaled indicator scores [E(x) = 0; Var(x) = 1]
+      .object$Estimates$Construct_scores
+    } else {
+      ## Get scaled indicator scores [E(x) = 0; Var(x) = 1]
+      indicators_scaled <- .object$Information$Data
+      
+      ## Unscale
+      indicators_unscaled <- t(t(indicators_scaled) * attr(indicators_scaled, 'scaled:scale') + 
+                                attr(indicators_scaled, 'scaled:center')) 
+      
+      w_transformed <- t(.object$Estimates$Weight_estimates) %*% solve(diag(rowSums(.object$Estimates$Weight_estimates)))
+      
+      ## Unstandarized construct scores
+      scores_unstandardized <- indicators_unscaled %*% w_transformed
+      colnames(scores_unstandardized) <-  rownames(.object$Estimates$Weight_estimates)
+      
+      scores_unstandardized
+    }
+
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
     stop2("Currently not implemented for models containing second-order constructs")
   } else {
