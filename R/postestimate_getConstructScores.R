@@ -42,7 +42,7 @@ getConstructScores <- function(.object, .standardized = TRUE){
     
     return(scores_unstandardized)
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
-    stop2("Currently not implemented for models containing second order constructs")
+    stop2("Currently not implemented for models containing second-order constructs")
   } else {
     stop2("Dont know how to handle objects of class: ", paste0(class(.object), collapse = ", "))
   }
