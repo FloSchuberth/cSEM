@@ -10,9 +10,9 @@
 #' @usage doFloodlightAnalysis(
 #'  .object        = NULL,
 #'  .alpha         = 0.05,
-#'  .y             = NULL, 
-#'  .x             = NULL,
-#'  .z             = NULL,
+#'  .dependent     = NULL, 
+#'  .independent   = NULL,
+#'  .moderator     = NULL,
 #'  .n_spotlights  = 100
 #'  )
 #'
@@ -30,11 +30,16 @@
 doFloodlightAnalysis <- function(
   .object        = NULL,
   .alpha         = 0.05,
-  .y             = NULL, 
-  .x             = NULL,
-  .z             = NULL,
+  .dependent     = NULL, 
+  .independent   = NULL,
+  .moderator     = NULL,
   .n_spotlights  = 100
 ){
+  
+  # Save in .x, .y., .z
+   .z = .independent
+   .x = .moderator
+   .y = .dependent
   
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, doFloodlightAnalysis, .alpha = .alpha, 
