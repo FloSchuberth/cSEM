@@ -223,11 +223,15 @@ doSurfaceAnalysis <- function(
   return(ret)
 }
 
+# see rsm package for other plots
+
 # Needs to be added to dependencies
 library(plotly)
 # For plotting 3D figures options(viewer=NULL) must be set, perhaps there is a more elegant way
 
-plot_ly( x = ret$x, y = ret$z, z = ret$y, type = "surface")
+plot_ly( x = ret$x, y = ret$z, z = ret$y, type = "scatter3d",mode='lines')
+
+scatter3d, mode='lines'.
 
 p1 <- plot_ly(x= ret$x, y=ret$y,z = ret$z, scene='scene1', lighting = list(ambient = 0.2)) %>%
   +   add_surface(showscale=FALSE)
