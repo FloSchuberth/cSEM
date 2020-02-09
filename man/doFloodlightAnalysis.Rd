@@ -5,12 +5,12 @@
 \title{Do a floodlight analysis}
 \usage{
 doFloodlightAnalysis(
- .object        = NULL,
- .alpha         = 0.05,
- .y             = NULL, 
- .x             = NULL,
- .z             = NULL,
- .n_spotlights  = 100
+ .object         = NULL,
+ .alpha          = 0.05,
+ .dependent      = NULL, 
+ .moderator      = NULL,
+ .independent    = NULL,
+ .n_steps        = 100
  )
 }
 \arguments{
@@ -19,14 +19,14 @@ doFloodlightAnalysis(
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.y}{Character string. The name of the dependent variable. Defaults to \code{NULL}.}
+\item{.dependent}{Character string. The name of the dependent variable. Defaults to \code{NULL}.}
 
-\item{.x}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
+\item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
 
-\item{.z}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
+\item{.independent}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
 
-\item{.n_spotlights}{Integer. A numeric value giving the number of spotlights (= values of .z)
-between min(.z) and max(.z) to use. Defaults to \code{100}.}
+\item{.n_steps}{Integer. A numeric value giving the number of steps, e.g., in
+floodlight ana;ysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to \code{100}.}
 }
 \value{
 A list of class \code{cSEMFloodlight} with a corresponding method for \code{plot()}.

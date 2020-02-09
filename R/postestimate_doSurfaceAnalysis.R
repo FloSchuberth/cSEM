@@ -192,7 +192,7 @@ doSurfaceAnalysis <- function(
     )
   )
   
-  class(ret) <- "cSEMSurface"
-  return(ret)
+  class(out) <- "cSEMSurface"
+  return(out)
 }
 
