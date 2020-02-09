@@ -1,18 +1,22 @@
 # cSEM 0.1.0:9000
 
+- Fix bug in `testMICOM()`. Function produced an error if the data set provided
+  contained an id-column even if the id-column was correctly supplied to 
+  `csem()`. (#344, ##338)
+  
 - Fix bug in `doFloodlightAnalysis()`. There was an internal bug. Earlier versions
   returned the wrong direct effect. If you have used `doFloodlightAnalysis()`
   from cSEM v. 0.1.0 results are likely wrong.
 
 - Add new function `getConstructScores()`. The function returns the standardized
-  or unstandardized construct scores. Requires a `cSEMResults` object as input.
+  or unstandardized construct scores. Requires a `cSEMResults` object as input. (#340)
 
 - Export plot method for `cSEMFloodlight` objects.
 
 - Update documentation for `predict()`.
 
 - Integrate and document `cSEMPredict` method for generic function `plot()`. Now 
-  users may call `plot()` on an object created by `predict()`.
+  users may call `plot()` on an object created by `predict()`. (#337)
 
 - Add the density of the residuals as plot to `plot.cSEMPredict()`. (#337)
 
