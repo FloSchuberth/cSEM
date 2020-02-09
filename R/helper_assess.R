@@ -583,14 +583,14 @@ calculateHTMT <- function(
     cf_measurement %*% (1 - diag(nrow(S))) %*% t(cf_measurement)
   
   ## Compute HTMT
-  # Geometric means of the average monotrait−heteromethod correlation of 
-  # eta_i with the average monotrait−heteromethod correlation of construct eta_j
+  # Geometric means of the average monotrait-heteromethod correlation of 
+  # eta_i with the average monotrait-heteromethod correlation of construct eta_j
   # (can be negative if some indicators are negatively correlated)
   tryCatch({sqrt(diag(avrg_cor) %o% diag(avrg_cor))},
            warning = function(w) {
-             warning2("The geometric mean of the average monotrait−heteromethod",
+             warning2("The geometric mean of the average monotrait-heteromethod",
                       " correlation of at least one construct with",
-                      " the average monotrait−heteromethod correlation of the",
+                      " the average monotrait-heteromethod correlation of the",
                       " other constructs is negative. NaNs produced")
            }
   )
