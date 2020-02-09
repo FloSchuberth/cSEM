@@ -33,7 +33,7 @@ doFloodlightAnalysis <- function(
   .dependent     = NULL, 
   .moderator     = NULL,
   .independent   = NULL,
-  .n_steps  = 100
+  .n_steps       = 100
 ){
   
   if(inherits(.object, "cSEMResults_multi")) {

@@ -1,7 +1,8 @@
 #' Do a surface analysis
 #'
-#' Calculate the effect of an independent variable (z) on a dependent variable
-#' (y) including their moderation and the respective quadratic terms.
+#' Based on a nonlinear model, the dependent variable of a certain equation is
+#' predicted by a certain independent variable and a certain second variable (moderator)
+#' including their higher-order terms.
 #' 
 #' @usage doSurfaceAnalysis(
 #'  .object             = NULL,
@@ -9,7 +10,7 @@
 #'  .dependent          = NULL, 
 #'  .independent        = NULL,
 #'  .moderator          = NULL,
-#'  .n_steps       = 100
+#'  .n_steps            = 100
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -20,7 +21,7 @@
 #' @return A list of class `cSEMSurface` with a corresponding method for `plot()`. 
 #'   See: [plot.cSEMSurface()].
 #' 
-#' @seealso [csem()], [cSEMResults], [plot.cSEMFloodlight()]
+#' @seealso [csem()], [cSEMResults], [plot.cSEMSurface()]
 #' @export
 
 doSurfaceAnalysis <- function(
@@ -29,7 +30,7 @@ doSurfaceAnalysis <- function(
   .dependent          = NULL, 
   .independent        = NULL,
   .moderator          = NULL,
-  .n_steps       = 100
+  .n_steps            = 100
 ){
   
   
@@ -37,9 +38,9 @@ doSurfaceAnalysis <- function(
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, doSurfaceAnalysis, .alpha = .alpha, 
                   .dependent = .dependent, .independent = .independent,
-                  .moderator = .moderator, .square = .square, .n_steps = .n_steps)
+                  .moderator = .moderator, .n_steps = .n_steps)
     
-    class(out) <- c("cSEMFloodlight", "cSEMFloodlight_multi")
+    class(out) <- c("cSEMSurface", "cSEMSurface_multi")
     return(out)
   } 
   # else {
@@ -66,19 +67,10 @@ doSurfaceAnalysis <- function(
     H   <- .object$Second_stage$Estimates$Construct_scores
   }
   
-  sum_object = summarize(.object = .object)
-  
-  # Character string containing the names of the dependent and independent variables
-  dep_vars   <- rownames(m$structural[rowSums(m$structural) !=0, , drop = FALSE])
-  indep_vars <- colnames(m$structural[, colSums(m$structural[.dependent, ,drop = FALSE]) !=0 , drop = FALSE])
-  
-  # Effects all
-  effects_all <- sum_object$Estimates$Path_estimates
-  
   ## Check if model is nonlinear.
   if(m$model_type != "Nonlinear"){
     stop2(
-      "The following error occured in the `doFloodlightAnalysis()`` function:\n",
+      "The following error occured in the `doSurfaceAnalysis()`` function:\n",
       "The structural model must contain contain nonlinear terms.")
   }
   
@@ -90,7 +82,6 @@ doSurfaceAnalysis <- function(
   }
   
   
-  # CHECKEN OB DAS NOCH SO PASST
   ## Check whether dependent, independent, and moderator variable are provided
   if(is.null(.dependent) | is.null(.moderator) | is.null(.independent)){
     stop2(
@@ -100,7 +91,7 @@ doSurfaceAnalysis <- function(
   
   
   # Check if the name of the dependent variable is valid
-  if(!(.dependent %in% dep_vars)){
+  if(!(.dependent %in% rownames(m$structural[rowSums(m$structural) !=0, , drop = FALSE]))){
     stop2(
       "The following error occured in the `doFloodlightAnalysis()`` function:\n",
       "The dependent variable supplied to `.dependent` is not a dependent variable in the original model.")
@@ -115,6 +106,14 @@ doSurfaceAnalysis <- function(
   }
   
   ### Calculation --------------------------------------------------------------
+  sum_object = summarize(.object = .object)
+  
+  # Character string containing the names of the dependent and independent variables
+  dep_vars   <- rownames(m$structural[rowSums(m$structural) !=0, , drop = FALSE])
+  indep_vars <- colnames(m$structural[, colSums(m$structural[.dependent, ,drop = FALSE]) !=0 , drop = FALSE])
+  
+  # Effects all
+  effects_all <- sum_object$Estimates$Path_estimates
   
   ## Filter interaction, and quadratic terms:
   # Select the terms that either include x or z
