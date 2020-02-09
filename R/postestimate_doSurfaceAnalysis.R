@@ -158,7 +158,7 @@ doSurfaceAnalysis <- function(
   
   # name of the quadratic term
   zz <- paste(.quadratic,.quadratic, sep = '.')
-  beta_zz <- paste(.dependent, xz, sep = ' ~ ')
+  beta_zz <- paste(.dependent, zz, sep = ' ~ ')
   # }
   
   # Hier eventuell adjustment von aussen zulassen 
@@ -176,7 +176,8 @@ doSurfaceAnalysis <- function(
   
   # Calculate the predicted values of the dependent variable
   predicted_dependent <- effects_all[effects_all$Name==beta_z,]$Estimate * steps_independent+
-    effects_all[effects_all$Name==beta_x,]$Estimate  * steps_moderator
+    effects_all[effects_all$Name==beta_x,]$Estimate  * steps_moderator+
+    effects_all[effects_all$Name==beta_zz,]$Estimate  * (steps_independent^2-1)
   
   effects_all[effects_all$Name==beta_xz,]$Estimate  * (steps_moderator *steps_independent 
                                                        - mean(steps_moderator *steps_independent))+
@@ -190,7 +191,7 @@ doSurfaceAnalysis <- function(
   # bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
   
   # Return output
-  ret <- list(y=matrix(predicted_dependent,nrow=length(steps_ind),ncol=length(steps_mod)),
+  out <- list(y=matrix(predicted_dependent,nrow=length(steps_ind),ncol=length(steps_mod)),
               z=steps_ind,x=steps_mod)
   
   
