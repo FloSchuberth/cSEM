@@ -232,18 +232,19 @@ doSurfaceAnalysis <- function(
     
     class(out) <- c("cSEMFloodlight", "cSEMFloodlight_multi")
     return(out)
-  } else {
+  } 
+  # else {
     ## Check whether .object is of class cSEMResults_resampled; if not perform
     ## standard resampling (bootstrap with .R = 499 reps)
-    if(!inherits(.object, "cSEMResults_resampled")) {
-      if(inherits(.object, "cSEMResults_default")) {
-        args <- .object$Information$Arguments
-      } else {
-        args <- .object$Second_stage$Information$Arguments_original
-      }
-      args[".resample_method"] <- "bootstrap"
-      .object <- do.call(csem, args)
-    }
+    # if(!inherits(.object, "cSEMResults_resampled")) {
+    #   if(inherits(.object, "cSEMResults_default")) {
+    #     args <- .object$Information$Arguments
+    #   } else {
+    #     args <- .object$Second_stage$Information$Arguments_original
+    #   }
+    #   args[".resample_method"] <- "bootstrap"
+    #   .object <- do.call(csem, args)
+    # }
     
     ##  Select relevant quantities
     if(inherits(.object, "cSEMResults_default")) {
@@ -409,7 +410,7 @@ doSurfaceAnalysis <- function(
       )
     )
     
-    class(out) <- "cSEMFloodlight"
+    class(out) <- "cSEMSurface"
     return(out)
   }
 } 
