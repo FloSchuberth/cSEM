@@ -8,12 +8,12 @@
 #' estimate of z for a given x switch signs. 
 #' 
 #' @usage doFloodlightAnalysis(
-#'  .object        = NULL,
-#'  .alpha         = 0.05,
-#'  .dependent             = NULL, 
-#'  .moderator             = NULL,
-#'  .independent             = NULL,
-#'  .n_spotlights  = 100
+#'  .object         = NULL,
+#'  .alpha          = 0.05,
+#'  .dependent      = NULL, 
+#'  .moderator      = NULL,
+#'  .independent    = NULL,
+#'  .n_steps        = 100
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -33,12 +33,12 @@ doFloodlightAnalysis <- function(
   .dependent     = NULL, 
   .moderator     = NULL,
   .independent   = NULL,
-  .n_spotlights  = 100
+  .n_steps  = 100
 ){
   
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, doFloodlightAnalysis, .alpha = .alpha, 
-                  .dependent = .dependent, .moderator = .moderator, .independent = .independent, .n_spotlights = .n_spotlights)
+                  .dependent = .dependent, .moderator = .moderator, .independent = .independent, .n_steps = .n_steps)
     
     class(out) <- c("cSEMFloodlight", "cSEMFloodlight_multi")
     return(out)
@@ -127,7 +127,7 @@ doFloodlightAnalysis <- function(
     
     ## Compute spotlights (= effects of independent (z) on dependent (y) for given 
     ## values of moderator (x))
-    steps <- seq(min(H[, .moderator]), max(H[, .moderator]), length.out = .n_spotlights)
+    steps <- seq(min(H[, .moderator]), max(H[, .moderator]), length.out = .n_steps)
     
     dataplot_temp <- lapply(steps, function(step){
       ## Note:
@@ -194,8 +194,7 @@ doFloodlightAnalysis <- function(
 #'  .dependent          = NULL, 
 #'  .independent        = NULL,
 #'  .moderator          = NULL,
-#'  .independent_square = NULL,
-#'  .n_spotlights       = 100
+#'  .n_steps       = 100
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -215,20 +214,15 @@ doSurfaceAnalysis <- function(
     .dependent          = NULL, 
     .independent        = NULL,
     .moderator          = NULL,
-    .independent_square = NULL,
-    .n_spotlights       = 100
+    .n_steps       = 100
 ){
   
-  # Save in .x, .y., .z
-   # .z = .independent
-   # .x = .moderator
-   # .y = .dependent
-   # .sq = .square
+
   
   if(inherits(.object, "cSEMResults_multi")) {
-    out <- lapply(.object, doFloodlightAnalysis, .alpha = .alpha, 
+    out <- lapply(.object, doSurfaceAnalysis, .alpha = .alpha, 
                   .dependent = .dependent, .independent = .independent,
-                  .moderator = .moderator, .square = .square, .n_spotlights = .n_spotlights)
+                  .moderator = .moderator, .square = .square, .n_steps = .n_steps)
     
     class(out) <- c("cSEMFloodlight", "cSEMFloodlight_multi")
     return(out)
@@ -257,15 +251,19 @@ doSurfaceAnalysis <- function(
       H   <- .object$Second_stage$Estimates$Construct_scores
     }
     
+    sum_object = summarize(.object = .object)
+  
     # Character string containing the names of the dependent and independent variables
     dep_vars   <- rownames(m$structural[rowSums(m$structural) !=0, , drop = FALSE])
     indep_vars <- colnames(m$structural[, colSums(m$structural[.dependent, ,drop = FALSE]) !=0 , drop = FALSE])
-    
+  
+    # Effects all
+    effect_all <- sum_object$Estimates$Path_estimates
     ## Check if model is nonlinear.
     if(m$model_type != "Nonlinear"){
       stop2(
         "The following error occured in the `doFloodlightAnalysis()`` function:\n",
-        "The structural model must contain contain interaction terms.")
+        "The structural model must contain contain nonlinear terms.")
     }
     
     ## Works only for one significance level, i.e., no vector of significances is allowed
@@ -275,6 +273,8 @@ doSurfaceAnalysis <- function(
         "Currently only a single significance level (.alpha) is allowed.")
     }
     
+    
+    # CHECKEN OB DAS NOCH SO PASST
     ## Check whether dependent, independent, and moderator variable are provided
     if(is.null(.dependent) | is.null(.moderator) | is.null(.independent)){
       stop2(
@@ -282,12 +282,7 @@ doSurfaceAnalysis <- function(
         "All variables (.dependent, .moderator, and.independent) must be supplied.")
     }
     
-    if(!is.null(.independent_square)&.independent != .independent_square){
-      stop2(
-        "The following error occured in the `doFloodlightAnalysis()`` function:\n",
-        ".squared must equal .independent.")
-    }
-    
+
     # Check if the name of the dependent variable is valid
     if(!(.dependent %in% dep_vars)){
       stop2(
@@ -305,26 +300,39 @@ doSurfaceAnalysis <- function(
     
     ### Calculation --------------------------------------------------------------
     
+    ## Filter interaction, and quadratic terms:
+    # Select the terms that either include x or z
+    
+    # if there are terms that include not only x and z but a third variable stop
+
+    
+    # Output: All interaction terms where the dependent and the moderator are 
+    # included including quadratic and higher order polynomials
+    
+    
+    # Select the corresponidng effects
+    
+    
+    
     # Effect name of the independent variable
     beta_z  <- paste(.dependent,.independent, sep = ' ~ ')
-    
-    # Effect name of the moderator variable
-    beta_x  <- paste(.dependent,.moderator, sep = ' ~ ')
     
     
     # Possible names of the interaction terms
     if(!is.null(.moderator)){
-    possible_names_int <- c(paste(.moderator,.independent, sep = '.'), paste(.independent, .moderator, sep= '.'))
+      # Effect name of the moderator variable
+      beta_x  <- paste(.dependent,.moderator, sep = ' ~ ')
+      
+      possible_names_int <- c(paste(.moderator,.independent, sep = '.'), paste(.independent, .moderator, sep= '.'))
      
     # Name of the interaction term
     xz <- possible_names_int[possible_names_int %in% indep_vars]
     
-
-    if(length(xz) != 1){
-      stop2(
-        "The defined interaction term does not exist in the model or is not",
-        " part of the equation of the dependent variable.")
-    }
+    # if(length(xz) != 1){
+    #   stop2(
+    #     "The defined interaction term does not exist in the model or is not",
+    #     " part of the equation of the dependent variable.")
+    # }
     
     # effect name
     beta_xz <- paste(.dependent, xz, sep = ' ~ ')
@@ -332,45 +340,26 @@ doSurfaceAnalysis <- function(
     } 
     
     
-    if(!is.null(.independent_square)){
-      if(.independent != .independent_square){
-        stop2(
-          "The .indendent does not equal the .independent_square."
-          )
-      }
       # name of the quadratic term
       zz <- paste(.quadratic,.quadratic, sep = '.')
       beta_zz <- paste(.dependent, xz, sep = ' ~ ')
       }
     
-        
+    # Hier eventuell adjustment von aussen zulassen 
     ## Compute steps for the moderator and the independent variable
     # steps <- list(
       steps_independent = seq(min(H[, .independent]), max(H[, .independent]), 
-                              length.out = .n_spotlights),
+                              length.out = .n_steps)
       steps_moderator = seq(min(H[, .moderator]), max(H[, .moderator]), 
-                            length.out = .n_spotlights)
-    # )
-    # dataplot_temp <- lapply(steps, function(step){
-      # if(is.null(.moderator)){
-      #   beta
-      # }
-      ## Note:
-      #   
-      #   y = a + bz + cx + dxz
-      #   The marginal effect delta y = b + dx evaluated at x0 is identical to the
-      #   b' of the regression that uses x' = x - x0, since
-      #   y = a' + b'z + c'x' + d'x'z
-      #     = (a - cx0) + (b - dx0)z + cx + dxz
-      #   ---> b' = b - dx0
-      #
-      # Resamples of the effect of z on y at different levels of x 
-      predicted_dependent <- est$Resampled[ , beta_z] * step$steps_independent+
-        est$Resampled[, beta_x]  * step$steps_moderator+
-        est$Resampled[, beta_xz]  * (step$steps_moderator *step$steps_independent 
-                                     - mean(step$steps_moderator *step$steps_independent))+
-        est$Resampled[, beta_zz]  * (step$steps_independent^2-1)+
-        est$Resampled[, beta_xx]  * (step$steps_moderator^2-1)
+                            length.out = .n_steps)
+
+      # Calculate the predicted values of the dependent variable
+      predicted_dependent <- est$Resampled[ , beta_z] * steps_independent+
+        est$Resampled[, beta_x]  * steps_moderator+
+        est$Resampled[, beta_xz]  * (steps_moderator *steps_independent 
+                                     - mean(steps_moderator *steps_independent))+
+        est$Resampled[, beta_zz]  * (steps_independent^2-1)+
+        est$Resampled[, beta_xx]  * (steps_moderator^2-1)
       
       # Value of the originally estimated effect of z on y at different levels of x
       # effect_original <- est$Original[beta_z] + est$Original[beta_xz] * step
@@ -379,14 +368,9 @@ doSurfaceAnalysis <- function(
       # bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
       
       # Return output
-      ret <- cbind(predicted_dependent,step$steps_independent,step$steps_moderator)
-      colnames(ret) <- c('y','z','x')    
-      # ret
-      # })
-    
-    # out <- do.call(rbind, dataplot_temp)
-    # colnames(out) <- c('direct_effect', 'value_z', 'lb', 'ub')
-    
+      ret <- cbind(y=predicted_dependent,z=steps_independent,x=steps_moderator)
+
+
     # Determine Johnson-Neyman point 
     # Look for sign flips in the upper boundary
     # pos_ub <- which(diff(sign(out[, 'ub'])) != 0)

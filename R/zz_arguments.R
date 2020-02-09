@@ -143,8 +143,8 @@
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .n Integer. The number of observations of the original data.
-#' @param .n_spotlights Integer. A numeric value giving the number of spotlights (= values of .z) 
-#'   between min(.z) and max(.z) to use. Defaults to `100`.
+#' @param .n_steps Integer. A numeric value giving the number of steps, e.g., in 
+#'  floodlight ana;ysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to `100`.
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
@@ -419,7 +419,7 @@ args_default <- function(.choices = FALSE) {
     .model                   = NULL,
     .model_implied           = FALSE,
     .modes                   = NULL,
-    .n_spotlights            = 100,
+    .n_steps                 = 100,
     .normality               = FALSE,
     .nr_comparisons          = NULL,
     .null_model              = FALSE,
