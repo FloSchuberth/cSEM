@@ -192,6 +192,10 @@ predict <- function(
           .R               = 1,
           .seed            = NULL
         )[[1]]
+        
+        ## Clean data
+        dat <- lapply(dat, processData, .model = .object$Information$Model)
+        
         ii <- length(dat)
       } else {
         ii <- 1

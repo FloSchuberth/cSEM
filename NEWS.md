@@ -1,5 +1,8 @@
 # cSEM 0.1.0:9000
 
+- Fixed error in `predict()` when the dataset used to obtain `.object` contained 
+  a character column. (#345)
+
 - When calculating the HTMT via `assess()` the geometric mean of the average 
   monotrait−heteromethod correlation construct eta_i with the average 
   monotrait−heteromethod correlation of other constructs can be negative. 
