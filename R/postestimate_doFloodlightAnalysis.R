@@ -258,7 +258,8 @@ doSurfaceAnalysis <- function(
     indep_vars <- colnames(m$structural[, colSums(m$structural[.dependent, ,drop = FALSE]) !=0 , drop = FALSE])
   
     # Effects all
-    effect_all <- sum_object$Estimates$Path_estimates
+    effects_all <- sum_object$Estimates$Path_estimates
+  
     ## Check if model is nonlinear.
     if(m$model_type != "Nonlinear"){
       stop2(
@@ -314,7 +315,7 @@ doSurfaceAnalysis <- function(
     
     
     
-    # Effect name of the independent variable
+    # Select all relevant effect names 
     beta_z  <- paste(.dependent,.independent, sep = ' ~ ')
     
     
@@ -343,7 +344,7 @@ doSurfaceAnalysis <- function(
       # name of the quadratic term
       zz <- paste(.quadratic,.quadratic, sep = '.')
       beta_zz <- paste(.dependent, xz, sep = ' ~ ')
-      }
+      # }
     
     # Hier eventuell adjustment von aussen zulassen 
     ## Compute steps for the moderator and the independent variable
@@ -354,12 +355,13 @@ doSurfaceAnalysis <- function(
                             length.out = .n_steps)
 
       # Calculate the predicted values of the dependent variable
-      predicted_dependent <- est$Resampled[ , beta_z] * steps_independent+
-        est$Resampled[, beta_x]  * steps_moderator+
-        est$Resampled[, beta_xz]  * (steps_moderator *steps_independent 
+      predicted_dependent <- effects_all[effects_all$Name==beta_z,]$Estimate * steps_independent+
+        effects_all[effects_all$Name==beta_x,]$Estimate  * steps_moderator
+      
+        effects_all[effects_all$Name==beta_xz,]$Estimate  * (steps_moderator *steps_independent 
                                      - mean(steps_moderator *steps_independent))+
-        est$Resampled[, beta_zz]  * (steps_independent^2-1)+
-        est$Resampled[, beta_xx]  * (steps_moderator^2-1)
+        effects_all[effects_all$Name==beta_zz,]$Estimate  * (steps_independent^2-1)+
+        effects_all[effects_all$Name==beta_xx,]$Estimate  * (steps_moderator^2-1)
       
       # Value of the originally estimated effect of z on y at different levels of x
       # effect_original <- est$Original[beta_z] + est$Original[beta_xz] * step
@@ -368,7 +370,7 @@ doSurfaceAnalysis <- function(
       # bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
       
       # Return output
-      ret <- cbind(y=predicted_dependent,z=steps_independent,x=steps_moderator)
+      ret <- data.frame(y=predicted_dependent,z=steps_independent,x=steps_moderator)
 
 
     # Determine Johnson-Neyman point 
@@ -376,25 +378,30 @@ doSurfaceAnalysis <- function(
     # pos_ub <- which(diff(sign(out[, 'ub'])) != 0)
     # pos_lb <- which(diff(sign(out[, 'lb'])) != 0) 
     
-    # Prepare and return output
-    out <- list(
-      "out"                   = out, 
-      "Johnson_Neyman_points" = list(
-        JNlb = c(x = out[,'value_z'][pos_lb], 
-                 y = out[,'lb'][pos_lb]),
-        JNub = c(x = out[,'value_z'][pos_ub], 
-                 y = out[,'ub'][pos_ub]
-        )
-      ),
-      "Information" = list(
-        alpha       = .alpha, 
-        dependent   = .dependent,
-        independent =.independent,
-        moderator   = .moderator
-      )
-    )
+    # # Prepare and return output
+    # out <- list(
+    #   "out"                   = out, 
+    #   "Johnson_Neyman_points" = list(
+    #     JNlb = c(x = out[,'value_z'][pos_lb], 
+    #              y = out[,'lb'][pos_lb]),
+    #     JNub = c(x = out[,'value_z'][pos_ub], 
+    #              y = out[,'ub'][pos_ub]
+    #     )
+    #   ),
+    #   # NEEDS TO BE DONE ADD ALL THE NAMES
+    #   "Information" = list(
+    #     alpha       = .alpha, 
+    #     dependent   = .dependent,
+    #     independent =.independent,
+    #     moderator   = .moderator
+    #   )
+    # )
     
-    class(out) <- "cSEMSurface"
-    return(out)
-  }
-} 
+    class(ret) <- "cSEMSurface"
+    return(ret)
+}
+
+
+# For plotting 3D figures options(viewer=NULL) must be set, perhaps there is a more elegant way
+
+# } 
