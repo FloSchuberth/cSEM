@@ -1,5 +1,11 @@
 # cSEM 0.1.0:9000
 
+- When calculating the HTMT via `assess()` the geometric mean of the average 
+  monotrait−heteromethod correlation construct eta_i with the average 
+  monotrait−heteromethod correlation of other constructs can be negative. 
+  NaNs produced are produced in this case and the HTMT was not printed. 
+  Added a warning and forced printing the NaNs as well. (#346)
+  
 - Fix bug in `testMICOM()`. Function produced an error if the data set provided
   contained an id-column even if the id-column was correctly supplied to 
   `csem()`. (#344, ##338)

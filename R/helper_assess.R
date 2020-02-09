@@ -549,6 +549,7 @@ calculateHTMT <- function(
           " class `cSEMResults_default`. Use `assess()` instead.")
   }
   
+  
   ## Get relevant quantities
   m <- .object$Information$Model
   
@@ -557,7 +558,7 @@ calculateHTMT <- function(
     
     ## Return NA if there are not at least 2 common factors
     if(length(cf_names) < 2) {
-      return(NA)
+      return(NULL)
     }
   } else {
     cf_names <- names(m$construct_type)
@@ -582,7 +583,18 @@ calculateHTMT <- function(
     cf_measurement %*% (1 - diag(nrow(S))) %*% t(cf_measurement)
   
   ## Compute HTMT
-  out <- avrg_cor*lower.tri(avrg_cor) / sqrt(diag(avrg_cor) %o% diag(avrg_cor))
+  # Geometric means of the average monotrait−heteromethod correlation of 
+  # eta_i with the average monotrait−heteromethod correlation of construct eta_j
+  # (can be negative if some indicators are negatively correlated)
+  tryCatch({sqrt(diag(avrg_cor) %o% diag(avrg_cor))},
+           warning = function(w) {
+             warning2("The geometric mean of the average monotrait−heteromethod",
+                      " correlation of at least one construct with",
+                      " the average monotrait−heteromethod correlation of the",
+                      " other constructs is negative. NaNs produced")
+           }
+  )
+  out <- avrg_cor*lower.tri(avrg_cor) / suppressWarnings(sqrt(diag(avrg_cor) %o% diag(avrg_cor))) 
   
   # Return
   return(out)
