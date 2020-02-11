@@ -529,6 +529,7 @@ calculateRhoT <- function(
 #' 
 #' @usage calculateHTMT(
 #'  .object              = NULL,
+#'  .absolute            = TRUE,
 #'  .only_common_factors = TRUE
 #' )
 #'
@@ -541,6 +542,7 @@ calculateRhoT <- function(
 
 calculateHTMT <- function(
   .object              = NULL,
+  .absolute            = TRUE,
   .only_common_factors = TRUE
 ){
   # Only applicable to objects of class cSEMResults_default
@@ -596,6 +598,9 @@ calculateHTMT <- function(
   )
   out <- avrg_cor*lower.tri(avrg_cor) / suppressWarnings(sqrt(diag(avrg_cor) %o% diag(avrg_cor))) 
   
+  if(.absolute) {
+    out <- abs(out)
+  }
   # Return
   return(out)
 }

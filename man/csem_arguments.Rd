@@ -8,6 +8,9 @@
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
+\item{.absolute}{Logical. Should the absolute HTMT values be returned?
+Defaults to \code{TRUE} .}
+
 \item{.approach_gcca}{Character string. The Kettenring approach to use for GCCA. One of
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
 "\emph{SUMCORR}".}

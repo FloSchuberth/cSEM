@@ -4,6 +4,9 @@
 \alias{args_assess_dotdotdot}
 \title{Internal: Complete list of assess()'s ... arguments}
 \arguments{
+\item{.absolute}{Logical. Should the absolute HTMT values be returned?
+Defaults to \code{TRUE} .}
+
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
@@ -29,6 +32,7 @@ Most arguments supplied to the \code{...} argument of \code{assess()} are only
 accepted by a subset of the functions called by \code{assess()}. The following
 list shows which argument is passed to which (internal) function:
 \describe{
+\item{.absolute}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.alpha}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{.closed_form_ci}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{.null_model}{Accepted by/Passed down to: \code{\link[=calculateDf]{calculateDf()}}}
