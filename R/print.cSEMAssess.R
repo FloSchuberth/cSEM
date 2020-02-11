@@ -120,7 +120,7 @@ print.cSEMAssess <- function(x, ...) {
   
   
   if(any(names(x) %in% c("Chi_square", "Chi_square_df", "CFI", "GFI", "IFI", 
-                         "NFI", "NNFI", "RMSEA", 
+                         "NFI", "NNFI", "RMSEA", "Df",
                          "RMS_theta", "RMS_theta_mi", "SRMR", "DG", "DL", "DML"))) {
     cat2("\n\n", rule2("Distance and fit measures"), "\n")
     
