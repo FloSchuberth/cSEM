@@ -28,7 +28,7 @@ plot.cSEMSurface <- function(x,
     # plot_ly(x = x$out$x, y = x$out$z, z = x$out$y, type = 'scatter3d', mode = 'lines')
     
   plot1 <- plotly::plot_ly( x = x$out$x, y = x$out$z, z = x$out$y, type = "surface",
-                            , colors = 'Greys') %>%
+                            colors = 'Greys') %>%
    add_surface(
       contours = list(
         z = list(
