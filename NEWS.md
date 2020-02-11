@@ -1,5 +1,11 @@
 # cSEM 0.1.0:9000
 
+- Add more test for `testMICOM()` and `predict()` (related to #355)
+
+- Fix bug in `testMICOM()`. Function produced an error if the data set provided
+  contained more columns than indicators used in the model used for 
+  `csem()`. (#355)
+  
 - Fixed error in `predict()` when the dataset used to obtain `.object` contained 
   a character column. (#345)
 
@@ -11,7 +17,7 @@
   
 - Fix bug in `testMICOM()`. Function produced an error if the data set provided
   contained an id-column even if the id-column was correctly supplied to 
-  `csem()`. (#344, ##338)
+  `csem()`. (#344, #338)
   
 - Fix bug in `doFloodlightAnalysis()`. There was an internal bug. Earlier versions
   returned the wrong direct effect. If you have used `doFloodlightAnalysis()`

@@ -110,11 +110,13 @@ testMICOM <- function(
     ### Preparation ==============================================================
     ## Get pooled data (potentially unstandardized) 
     X <- .object[[1]]$Information$Data_pooled
+    X <- processData(X, .model = .object[[1]]$Information$Model)
+    
     ## Remove id column: 
     # If .id has been supplied, delete column with the id name otherwise skip
-    if(!is.null(.object[[1]]$Information$Arguments$.id)) {
-      X <- X[, -which(colnames(X) == .object[[1]]$Information$Arguments$.id)]
-    }
+    # if(!is.null(.object[[1]]$Information$Arguments$.id)) {
+    #   X <- X[, -which(colnames(X) == .object[[1]]$Information$Arguments$.id)]
+    # }
     X <- as.matrix(X)
     
     # Collect initial arguments (from the first object, but could be any other)
