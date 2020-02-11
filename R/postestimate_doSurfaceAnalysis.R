@@ -180,9 +180,12 @@ doSurfaceAnalysis <- function(
   out <- list(y=matrix(y_pred,nrow=length(steps_ind),ncol=length(steps_mod)),
               z=steps_ind,x=steps_mod)
   
+  out1 <- list(y=y_pred, z=steps_independent,x=steps_moderator)
+  
   # Prepare and return output
   out <- list(
     "out"                   = out,
+    "out1" = out1,
     "Information" = list(
       alpha       = .alpha,
       dependent   = .dependent,
