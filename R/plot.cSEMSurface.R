@@ -47,7 +47,7 @@ plot.cSEMSurface <- function(x,
           project=list(z=TRUE)
         ))) %>%
     plotly::layout( # Axis labeling
-      title = paste("Surface Analysis:",x$Information$dependent),
+      title = paste("Surface analysis:",x$Information$dependent),
       scene = list(
         xaxis = list(title = paste('Standardized ',x$Information$independent)),
         yaxis = list(title = paste('Standardized ',x$Information$moderator)),
