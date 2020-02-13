@@ -154,9 +154,9 @@ testMICOM <- function(
     
     ## Permutation ---------------------------------------------------------------
     # Start progress bar
-    if(.verbose){
-      pb <- txtProgressBar(min = 0, max = .R, style = 3)
-    }
+    # if(.verbose){
+    #   pb <- txtProgressBar(min = 0, max = .R, style = 3)
+    # }
     
     # Save old seed and restore on exit! This is important since users may have
     # set a seed before, in which case the global seed would be
@@ -181,75 +181,79 @@ testMICOM <- function(
     ref_dist         <- list()
     n_inadmissibles  <- 0
     counter <- 0
-    repeat{
-      # Counter
-      counter <- counter + 1
-      
-      # Permutate data
-      X_temp <- cbind(X, id = sample(id))
-      
-      # Replace the old dataset by the new permutated dataset
-      arguments[[".data"]] <- X_temp
-      
-      # Estimate model
-      Est_temp <- do.call(csem, arguments)   
-      
-      # Check status
-      status_code <- sum(unlist(verify(Est_temp)))
-      
-      # Distinguish depending on how inadmissibles should be handled
-      if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-        # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
-        # not ok
+    progressr::with_progress({
+      progress_bar_csem <- progressr::progressor(along = 1:.R)
+      repeat{
+        # Counter
+        counter <- counter + 1
+        progress_bar_csem(message = sprintf("Permutation run = %g", counter))
         
-        ## Compute weights for each group and use these to compute proxies/scores using
-        # the pooled data (= the original combined data). Note that these
-        # scores are unstandardized, however since we consider the correlation 
-        # it does not matter whether we consider standardized or unstandardized 
-        # proxies
-        H_temp <- lapply(Est_temp, function(x) X %*% t(x$Estimates$Weight_estimates))
+        # Permutate data
+        X_temp <- cbind(X, id = sample(id))
         
-        ## Compute the correlation of the scores for all group combinations
-        # Get the scores for all group combinations
-        H_combn_temp <- utils::combn(H_temp, 2, simplify = FALSE)
+        # Replace the old dataset by the new permutated dataset
+        arguments[[".data"]] <- X_temp
         
-        # Compute the correlation c for each group combination
-        c_temp <- lapply(H_combn_temp, function(x) diag(cor(x[[1]], x[[2]])))
+        # Estimate model
+        Est_temp <- do.call(csem, arguments)   
         
-        # Set the names for each group combination
-        names(c_temp) <- utils::combn(names(H_temp), 2, FUN = paste0, 
-                                      collapse = "_", simplify = FALSE)
+        # Check status
+        status_code <- sum(unlist(verify(Est_temp)))
         
-        ref_dist[[counter]] <- c_temp
+        # Distinguish depending on how inadmissibles should be handled
+        if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
+          # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
+          # not ok
+          
+          ## Compute weights for each group and use these to compute proxies/scores using
+          # the pooled data (= the original combined data). Note that these
+          # scores are unstandardized, however since we consider the correlation 
+          # it does not matter whether we consider standardized or unstandardized 
+          # proxies
+          H_temp <- lapply(Est_temp, function(x) X %*% t(x$Estimates$Weight_estimates))
+          
+          ## Compute the correlation of the scores for all group combinations
+          # Get the scores for all group combinations
+          H_combn_temp <- utils::combn(H_temp, 2, simplify = FALSE)
+          
+          # Compute the correlation c for each group combination
+          c_temp <- lapply(H_combn_temp, function(x) diag(cor(x[[1]], x[[2]])))
+          
+          # Set the names for each group combination
+          names(c_temp) <- utils::combn(names(H_temp), 2, FUN = paste0, 
+                                        collapse = "_", simplify = FALSE)
+          
+          ref_dist[[counter]] <- c_temp
+          
+        } else if(status_code != 0 & .handle_inadmissibles == "drop") {
+          # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
+          ref_dist[[counter]] <- NA
+          
+        } else {# status is not ok and .handle_inadmissibles == "replace"
+          # Reset counter and raise number of inadmissibles by 1
+          counter <- counter - 1
+          n_inadmissibles <- n_inadmissibles + 1
+        }
         
-      } else if(status_code != 0 & .handle_inadmissibles == "drop") {
-        # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-        ref_dist[[counter]] <- NA
+        # Update progress bar
+        # if(.verbose){
+        #   setTxtProgressBar(pb, counter)
+        # }
         
-      } else {# status is not ok and .handle_inadmissibles == "replace"
-        # Reset counter and raise number of inadmissibles by 1
-        counter <- counter - 1
-        n_inadmissibles <- n_inadmissibles + 1
-      }
-      
-      # Update progress bar
-      if(.verbose){
-        setTxtProgressBar(pb, counter)
-      }
-      
-      # Break repeat loop if .R results have been created.
-      if(length(ref_dist) == .R) {
-        break
-      } else if(counter + n_inadmissibles == 10000) { 
-        ## Stop if 10000 runs did not result in insufficient admissible results
-        stop("Not enough admissible result.", call. = FALSE)
-      }
-    } # END repeat 
+        # Break repeat loop if .R results have been created.
+        if(length(ref_dist) == .R) {
+          break
+        } else if(counter + n_inadmissibles == 10000) { 
+          ## Stop if 10000 runs did not result in insufficient admissible results
+          stop("Not enough admissible result.", call. = FALSE)
+        }
+      } # END repeat 
+    }) # END with_progress
     
     # close progress bar
-    if(.verbose){
-      close(pb)
-    }
+    # if(.verbose){
+    #   close(pb)
+    # }
     
     # Delete potential NA's
     ref_dist <- Filter(Negate(anyNA), ref_dist)

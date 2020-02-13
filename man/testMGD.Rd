@@ -10,8 +10,9 @@ testMGD(
  .approach_p_adjust     = "none",
  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
                             "Keil", "Nitzl", "Henseler"),
- .parameters_to_compare = NULL,
+ .eval_plan             = c("sequential", "multiprocess"),
  .handle_inadmissibles  = c("replace", "drop", "ignore"),
+ .parameters_to_compare = NULL,
  .R_permutation         = 499,
  .R_bootstrap           = 499,
  .saturated             = FALSE,
@@ -37,10 +38,9 @@ Approach used for the multi-group comparison. One of: "\emph{all}", "\emph{Klese
 Default to "\emph{all}" in which case all approaches are computed (if possible).
 Note that the output will be quite long in this case.}
 
-\item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
-parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or correlations (\verb{~~})) should be
-compared across groups. Defaults to \code{NULL} in which case all parameters of the
-originally specified model are compared.}
+\item{.eval_plan}{Character string. The evaluation plan to use. One of
+"\emph{sequential}" or "\emph{multiprocess}". In the latter case
+all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -50,6 +50,11 @@ For "\emph{ignore}" all results are returned even if all or some of the replicat
 yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
 Defaults to "\emph{replace}" to accommodate all approaches.}
+
+\item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
+parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or correlations (\verb{~~})) should be
+compared across groups. Defaults to \code{NULL} in which case all parameters of the
+originally specified model are compared.}
 
 \item{.R_permutation}{Integer. The number of permutations. Defaults to \code{499}}
 

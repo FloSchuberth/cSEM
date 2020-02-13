@@ -53,6 +53,7 @@ Imports:
     matrixcalc,
     matrixStats,
     polycor,
+    progressr,
     psych,
     purrr,
     Rdpack,

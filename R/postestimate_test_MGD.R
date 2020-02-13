@@ -136,8 +136,9 @@
 #'  .approach_p_adjust     = "none",
 #'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
 #'                             "Keil", "Nitzl", "Henseler"),
-#'  .parameters_to_compare = NULL,
+#'  .eval_plan             = c("sequential", "multiprocess"),
 #'  .handle_inadmissibles  = c("replace", "drop", "ignore"),
+#'  .parameters_to_compare = NULL,
 #'  .R_permutation         = 499,
 #'  .R_bootstrap           = 499,
 #'  .saturated             = FALSE,
@@ -183,8 +184,9 @@ testMGD <- function(
  .approach_p_adjust     = "none",
  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
                             "Keil", "Nitzl","Henseler"),
- .parameters_to_compare = NULL,
+ .eval_plan             = c("sequential", "multiprocess"),
  .handle_inadmissibles  = c("replace", "drop", "ignore"),
+ .parameters_to_compare = NULL,
  .R_permutation         = 499,
  .R_bootstrap           = 499,
  .saturated             = FALSE,
@@ -326,7 +328,7 @@ testMGD <- function(
     # Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
       if(.verbose) {
-        cat("Bootstrap cSEMResults object ...\n\n")
+        cat("Bootstrap cSEMResults objects ...\n\n")
       }
       
       .object <- resamplecSEMResults(
@@ -334,7 +336,9 @@ testMGD <- function(
         .resample_method      = "bootstrap",
         .handle_inadmissibles = .handle_inadmissibles,
         .R                    = .R_bootstrap,
-        .seed                 = .seed) 
+        .seed                 = .seed,
+        .eval_plan            = .eval_plan
+        ) 
     }
     
     ## Combine bootstrap results in one matrix
@@ -503,8 +507,8 @@ testMGD <- function(
     
   # Start progress bar if required
   if(.verbose){
-    cat("Start permutation:\n\n")
-    pb <- txtProgressBar(min = 0, max = .R_permutation, style = 3)
+    cat("Permutation ...\n\n")
+    # pb <- txtProgressBar(min = 0, max = .R_permutation, style = 3)
   }
   
     # Save old seed and restore on exit! This is important since users may have
@@ -530,92 +534,97 @@ testMGD <- function(
   ref_dist        <- list()
   n_inadmissibles  <- 0
   counter <- 0
-  repeat{
-    # Counter
-    counter <- counter + 1
-    
-    # Permutate data
-    X_temp <- cbind(X_all, id = sample(id))
-    
-    # Replace the old dataset by the new permutated dataset
-    arguments[[".data"]] <- X_temp
-    
-    # Estimate model
-    Est_temp <- do.call(csem, arguments)   
-    
-    # Check status
-    status_code <- sum(unlist(verify(Est_temp)))
-    
-    # Distinguish depending on how inadmissibles should be handled
-    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-      # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
-      # not ok
+  progressr::with_progress({
+    progress_bar_csem <- progressr::progressor(along = 1:.R_permutation)
+    repeat{
+      # Counter
+      counter <- counter + 1
+      progress_bar_csem(message = sprintf("Permutation run = %g", counter))
       
-      ### Calculation of the test statistic for each resample ==================
-      teststat_permutation <- list()
+      # Permutate data
+      X_temp <- cbind(X_all, id = sample(id))
       
-      ## Klesel et al. (2019) --------------------------------------------------
-      if(any(.approach_mgd %in% c("all", "Klesel"))) {
-        ## Get the model-implied VCV
-        fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
+      # Replace the old dataset by the new permutated dataset
+      arguments[[".data"]] <- X_temp
+      
+      # Estimate model
+      Est_temp <- do.call(csem, arguments)   
+      
+      # Check status
+      status_code <- sum(unlist(verify(Est_temp)))
+      
+      # Distinguish depending on how inadmissibles should be handled
+      if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
+        # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
+        # not ok
         
-        ## Compute test statistic
-        temp <- c(
-          "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
-          "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
-        )
+        ### Calculation of the test statistic for each resample ==================
+        teststat_permutation <- list()
         
-        ## Save test statistic
-        teststat_permutation[["Klesel"]] <- temp
+        ## Klesel et al. (2019) --------------------------------------------------
+        if(any(.approach_mgd %in% c("all", "Klesel"))) {
+          ## Get the model-implied VCV
+          fit_temp <- fit(Est_temp, .saturated = .saturated, .type_vcv = .type_vcv)
+          
+          ## Compute test statistic
+          temp <- c(
+            "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
+            "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
+          )
+          
+          ## Save test statistic
+          teststat_permutation[["Klesel"]] <- temp
+        }
+        
+        ## Chin & Dibbern (2010) -------------------------------------------------
+        if(any(.approach_mgd %in% c("all", "Chin"))) {
+          ## Compute and save test statistic
+          teststat_permutation[["Chin"]] <- calculateParameterDifference(
+            .object = Est_temp, 
+            .model  = .parameters_to_compare)
+        }
+        ## Sarstedt et al. (2011) ------------------------------------------------
+        if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
+          
+          # Permutation of the bootstrap parameter estimates
+          all_comb_permutation <- all_comb
+          all_comb_permutation[ , "group_id"] <- sample(group_id)
+          
+          teststat_permutation[["Sarstedt"]] <- calculateFR(all_comb_permutation)
+        }
+        
+        ref_dist[[counter]] <- teststat_permutation
+        
+      } else if(status_code != 0 & .handle_inadmissibles == "drop") {
+        # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
+        ref_dist[[counter]] <- NA
+        
+      } else {# status is not ok and .handle_inadmissibles == "replace"
+        # Reset counter and raise number of inadmissibles by 1
+        counter <- counter - 1
+        n_inadmissibles <- n_inadmissibles + 1
       }
       
-      ## Chin & Dibbern (2010) -------------------------------------------------
-      if(any(.approach_mgd %in% c("all", "Chin"))) {
-        ## Compute and save test statistic
-        teststat_permutation[["Chin"]] <- calculateParameterDifference(
-          .object = Est_temp, 
-          .model  = .parameters_to_compare)
+      # Update progres bar
+      # if(.verbose){
+      #   setTxtProgressBar(pb, counter)
+      # }
+      
+      # Break repeat loop if .R results have been created.
+      if(length(ref_dist) == .R_permutation) {
+        break
+      } else if(counter + n_inadmissibles == 10000) { 
+        # Stop if 10000 runs did not result in insufficient admissible results
+        stop("Not enough admissible result.", call. = FALSE)
       }
-      ## Sarstedt et al. (2011) ------------------------------------------------
-      if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
-        
-        # Permutation of the bootstrap parameter estimates
-        all_comb_permutation <- all_comb
-        all_comb_permutation[ , "group_id"] <- sample(group_id)
+    } # END repeat 
+  }) # END with_progress
 
-        teststat_permutation[["Sarstedt"]] <- calculateFR(all_comb_permutation)
-      }
-      
-      ref_dist[[counter]] <- teststat_permutation
-      
-    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
-      # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[counter]] <- NA
-      
-    } else {# status is not ok and .handle_inadmissibles == "replace"
-      # Reset counter and raise number of inadmissibles by 1
-      counter <- counter - 1
-      n_inadmissibles <- n_inadmissibles + 1
-    }
-    
-    # Update progres bar
-    if(.verbose){
-      setTxtProgressBar(pb, counter)
-    }
-    
-    # Break repeat loop if .R results have been created.
-    if(length(ref_dist) == .R_permutation) {
-      break
-    } else if(counter + n_inadmissibles == 10000) { 
-      # Stop if 10000 runs did not result in insufficient admissible results
-      stop("Not enough admissible result.", call. = FALSE)
-    }
-  } # END repeat 
   
   # close progress bar
-  if(.verbose){
-    close(pb)
-  }
+  # if(.verbose){
+  #   close(pb)
+  # }
   
   ### Postprocessing ===========================================================
   # Delete potential NA's

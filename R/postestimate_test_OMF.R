@@ -162,9 +162,9 @@ testOMF <- function(
   colnames(X_trans) <- colnames(X)
   
   # Start progress bar if required
-  if(.verbose){
-    pb <- txtProgressBar(min = 0, max = .R, style = 3)
-  }
+  # if(.verbose){
+  #   pb <- txtProgressBar(min = 0, max = .R, style = 3)
+  # }
   
   # Save old seed and restore on exit! This is important since users may have
   # set a seed before, in which case the global seed would be
@@ -190,79 +190,83 @@ testOMF <- function(
   ref_dist         <- list()
   n_inadmissibles  <- 0
   counter <- 0
-  repeat{
-    # Counter
-    counter <- counter + 1
-    
-    # Draw dataset
-    X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
-
-    # Replace the old dataset by the new one
-    arguments[[".data"]] <- X_temp
-    
-    # Estimate model
-    Est_temp <- if(inherits(.object, "cSEMResults_2ndorder")) {
+  progressr::with_progress({
+    progress_bar_csem <- progressr::progressor(along = 1:.R)
+    repeat{
+      # Counter
+      counter <- counter + 1
+      progress_bar_csem(message = sprintf("Bootstrap run = %g", counter))
       
-      do.call(csem, arguments) 
+      # Draw dataset
+      X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
       
-    } else {
-
-      do.call(foreman, arguments)
-    }           
-    
-    # Check status (Note: output of verify for second orders is a list)
-    status_code <- sum(unlist(verify(Est_temp)))
-    
-    # Distinguish depending on how inadmissibles should be handled
-    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-      # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
-      # not ok
+      # Replace the old dataset by the new one
+      arguments[[".data"]] <- X_temp
+      
+      # Estimate model
+      Est_temp <- if(inherits(.object, "cSEMResults_2ndorder")) {
         
-      if(inherits(.object, "cSEMResults_default")) {
-        S_temp         <- Est_temp$Estimates$Indicator_VCV
-      } else if(inherits(.object, "cSEMResults_2ndorder")) { 
-        S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
+        do.call(csem, arguments) 
+        
+      } else {
+        
+        do.call(foreman, arguments)
+      }           
+      
+      # Check status (Note: output of verify for second orders is a list)
+      status_code <- sum(unlist(verify(Est_temp)))
+      
+      # Distinguish depending on how inadmissibles should be handled
+      if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
+        # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
+        # not ok
+        
+        if(inherits(.object, "cSEMResults_default")) {
+          S_temp         <- Est_temp$Estimates$Indicator_VCV
+        } else if(inherits(.object, "cSEMResults_2ndorder")) { 
+          S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
+        }
+        
+        Sigma_hat_temp <- fit(Est_temp,
+                              .saturated = .saturated,
+                              .type_vcv  = "indicator")
+        
+        ## Prune S_temp (Sigma_hat is already pruned)
+        S_temp <- S_temp[selector, selector]
+        
+        # Standard case when there are no repeated indicators
+        ref_dist[[counter]] <- c(
+          "dG"   = calculateDG(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
+          "SRMR" = calculateSRMR(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
+          "dL"   = calculateDL(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp)
+        ) 
+        
+      } else if(status_code != 0 & .handle_inadmissibles == "drop") {
+        # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
+        ref_dist[[counter]] <- NA
+        
+      } else {# status is not ok and .handle_inadmissibles == "replace"
+        # Reset counter and raise number of inadmissibles by 1
+        counter <- counter - 1
+        n_inadmissibles <- n_inadmissibles + 1
       }
       
-      Sigma_hat_temp <- fit(Est_temp,
-                            .saturated = .saturated,
-                            .type_vcv  = "indicator")
+      # Update progress bar
+      # if(.verbose){
+      #   setTxtProgressBar(pb, counter)
+      # }
       
-      ## Prune S_temp (Sigma_hat is already pruned)
-      S_temp <- S_temp[selector, selector]
-      
-      # Standard case when there are no repeated indicators
-      ref_dist[[counter]] <- c(
-        "dG"   = calculateDG(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
-        "SRMR" = calculateSRMR(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
-        "dL"   = calculateDL(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp)
-      ) 
-
-    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
-      # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[counter]] <- NA
-      
-    } else {# status is not ok and .handle_inadmissibles == "replace"
-      # Reset counter and raise number of inadmissibles by 1
-      counter <- counter - 1
-      n_inadmissibles <- n_inadmissibles + 1
-    }
-    
-    # Update progress bar
-    if(.verbose){
-      setTxtProgressBar(pb, counter)
-    }
-    
-    # Break repeat loop if .R results have been created.
-    if(length(ref_dist) == .R) {
-      break
-    }
-  } # END repeat 
+      # Break repeat loop if .R results have been created.
+      if(length(ref_dist) == .R) {
+        break
+      }
+    } # END repeat 
+  }) # END with_progress
   
   # close progress bar
-  if(.verbose){
-    close(pb)
-  }
+  # if(.verbose){
+  #   close(pb)
+  # }
   
   # Delete potential NA's
   ref_dist1 <- Filter(Negate(anyNA), ref_dist)
