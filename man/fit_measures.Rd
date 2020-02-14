@@ -61,11 +61,6 @@ A single numeric value.
 \description{
 Calculate fit measures.
 }
-\details{
-All functions, except for \code{calculateSRMR()} are only applicable to
-objects inheriting class \code{cSEMResults_default}.
-For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
-}
 \section{Functions}{
 \itemize{
 \item \code{calculateChiSquare}: The ChiSquare statistic.

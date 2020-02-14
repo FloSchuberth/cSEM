@@ -611,14 +611,10 @@ calculateHTMT <- function(
 #' Calculate the difference between the empirical (S) 
 #' and the model-implied indicator variance-covariance matrix (Sigma_hat)
 #' using different distance measures.
-#'
-#' The functions are only applicable to objects inheriting class `cSEMResults_default`.
-#' or `cSEMResults_2ndorder`. For objects of class `cSEMResults_multi` 
-#' use `lapply(.object, calculateXX())`.
 #' 
-#' The geodesic and the squared Euclidian distance may also be 
-#' computed for any two matrices A and B by supplying A and B directly via the 
-#' `.matrix1` and `.matrix2` arguments. If A and B are supplied `.object` is ignored.
+#' The distances may also be computed for any two matrices A and B by supplying 
+#' A and B directly via the `.matrix1` and `.matrix2` arguments. 
+#' If A and B are supplied `.object` is ignored.
 #' 
 #' @return A single numeric value giving the distance between two matrices.
 #' 
@@ -643,7 +639,10 @@ calculateDG <- function(
     S         <- .matrix1
     Sigma_hat <- .matrix2
   } else {
-    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_multi")) {
+      out <- lapply(.object, calculateDG, .saturated = .saturated)
+      return(out)
+    }
     if(inherits(.object, "cSEMResults_default")) {
       S <- .object$Estimates$Indicator_VCV
     } else if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -651,7 +650,9 @@ calculateDG <- function(
     } else {
       stop2(
         "The following error occured in the calculateDG() function:\n",
-        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+        "`.object` must be of class `cSEMResults_default`", 
+        " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+        )
     }
     
     Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')  
@@ -679,7 +680,10 @@ calculateDL <- function(
     S         <- .matrix1
     Sigma_hat <- .matrix2
   } else {
-    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_multi")) {
+      out <- lapply(.object, calculateDL, .saturated = .saturated)
+      return(out)
+    }
     if(inherits(.object, "cSEMResults_default")) {
       S <- .object$Estimates$Indicator_VCV
     } else if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -687,7 +691,9 @@ calculateDL <- function(
     } else {
       stop2(
         "The following error occured in the calculateDL() function:\n",
-        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+        "`.object` must be of class `cSEMResults_default`", 
+        " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      )
     }
     
     Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')
@@ -697,7 +703,7 @@ calculateDL <- function(
   0.5 * sum((S - Sigma_hat)^2)
 }
 
-#' @describeIn  distance_measures The distance measure used by FIML
+#' @describeIn  distance_measures The distance measure (fit function) used by ML
 
 calculateDML <- function(
   .object    = NULL, 
@@ -711,7 +717,10 @@ calculateDML <- function(
     S         <- .matrix1
     Sigma_hat <- .matrix2
   } else {
-    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_multi")) {
+      out <- lapply(.object, calculateDML, .saturated = .saturated)
+      return(out)
+    }
     if(inherits(.object, "cSEMResults_default")) {
       S <- .object$Estimates$Indicator_VCV
     } else if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -719,7 +728,9 @@ calculateDML <- function(
     } else {
       stop2(
         "The following error occured in the calculateDML() function:\n",
-        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+        "`.object` must be of class `cSEMResults_default`", 
+        " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      )
     }
     
     Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')  
@@ -735,10 +746,6 @@ calculateDML <- function(
 #' 
 #' Calculate fit measures.
 #' 
-#' All functions, except for `calculateSRMR()` are only applicable to 
-#' objects inheriting class `cSEMResults_default`.
-#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
-#' 
 #' @return A single numeric value.
 #' 
 #' @inheritParams csem_arguments
@@ -750,8 +757,22 @@ NULL
 #' @describeIn fit_measures The ChiSquare statistic.
 
 calculateChiSquare <- function(.object) {
-  
-  n    <- nrow(.object$Information$Data)
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateChiSquare)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+  } else {
+    stop2(
+      "The following error occured in the calculateChiSquare() function:\n",
+      "`.object` must be of class `cSEMResults_default`", 
+      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+    )
+  }
+
   F0   <- calculateDML(.object)
   
   (n - 1) * F0
@@ -760,8 +781,22 @@ calculateChiSquare <- function(.object) {
 #' @describeIn fit_measures The ChiSquare statistic divided by its degrees of freedom.
 
 calculateChiSquareDf <- function(.object) {
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateChiSquareDf)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+  } else {
+    stop2(
+      "The following error occured in the calculateChiSquareDf() function:\n",
+      "`.object` must be of class `cSEMResults_default`", 
+      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+    )
+  }
   
-  n    <- nrow(.object$Information$Data)
   F0   <- calculateDML(.object)
   
   ((n - 1) * F0) / calculateDf(.object)
@@ -771,8 +806,24 @@ calculateChiSquareDf <- function(.object) {
 
 calculateCFI <- function(.object) {
   
-  n    <- nrow(.object$Information$Data)
-  S    <- .object$Estimates$Indicator_VCV
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateCFI)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+    S    <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+    S    <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateCFI() function:\n",
+      "`.object` must be of class `cSEMResults_default`", 
+      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+    )
+  }
+  
   p    <- dim(S)[1]
   df_T <- calculateDf(.object)
   df_0 <- calculateDf(.object, .null_model = TRUE)
@@ -790,7 +841,22 @@ calculateCFI <- function(.object) {
 
 calculateGFI <- function(.object) {
   
-  S         <- .object$Estimates$Indicator_VCV
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateGFI)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    S    <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    S    <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateGFI() function:\n",
+      "`.object` must be of class `cSEMResults_default`", 
+      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+    )
+  }
+  
   Sigma_hat <- fit(.object)
   
   1 - matrixcalc::matrix.trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
@@ -801,8 +867,24 @@ calculateGFI <- function(.object) {
 
 calculateIFI <- function(.object) {
   
-  n  <- nrow(.object$Information$Data)
-  S  <- .object$Estimates$Indicator_VCV
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateIFI)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+    S    <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+    S    <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateIFI() function:\n",
+      "`.object` must be of class `cSEMResults_default`", 
+      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+    )
+  }
+  
   p  <- dim(S)[1]
   df <- calculateDf(.object)
   
@@ -818,7 +900,22 @@ calculateIFI <- function(.object) {
 
 calculateNFI <- function(.object) {
   
-  S <- .object$Estimates$Indicator_VCV
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateNFI)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    S    <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    S    <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateNFI() function:\n",
+      "`.object` must be of class `cSEMResults_default`", 
+      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+    )
+  }
+
   p <- dim(S)[1]
   
   F0 <- log(det(diag(nrow(S)))) + 
@@ -833,8 +930,24 @@ calculateNFI <- function(.object) {
 
 calculateNNFI <- function(.object) {
   
-  n    <- nrow(.object$Information$Data)
-  S    <- .object$Estimates$Indicator_VCV
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateNNFI)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+    S    <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+    S    <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateNNFI() function:\n",
+      "`.object` must be of class `cSEMResults_default`", 
+      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+    )
+  }
+  
   p    <- dim(S)[1]
   df_T <- calculateDf(.object)
   df_0 <- calculateDf(.object, .null_model = TRUE)
@@ -851,7 +964,22 @@ calculateNNFI <- function(.object) {
 
 calculateRMSEA <- function(.object) {
   
-  n  <- nrow(.object$Information$Data)
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateRMSEA)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+  } else {
+    stop2(
+      "The following error occured in the calculateRMSEA() function:\n",
+      "`.object` must be of class `cSEMResults_default`", 
+      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+    )
+  }
+  
   df <- calculateDf(.object)
   
   F0 <- max(calculateDML(.object) - calculateDf(.object)/(n - 1), 0)
@@ -865,11 +993,25 @@ calculateRMSTheta <- function(
   .object, 
   .model_implied = args_default()$.model_implied
   ) {
-  S      <- .object$Estimates$Indicator_VCV
-  W      <- .object$Estimates$Weight_estimates
-  Lambda <- .object$Estimates$Loading_estimates
-  P      <- .object$Estimates$Construct_VCV
   
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateRMSTheta, .model_implied = .model_implied)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    S      <- .object$Estimates$Indicator_VCV
+    W      <- .object$Estimates$Weight_estimates
+    Lambda <- .object$Estimates$Loading_estimates
+    P      <- .object$Estimates$Construct_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2("Not yet implemented.")
+  } else {
+    stop2(
+      "The following error occured in the calculateRMSTheta() function:\n",
+      "`.object` must be of class `cSEMResults_default`", 
+      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+    )
+  }
   
   if(.model_implied) {
     Theta <- S - S %*% t(W) %*% Lambda - t(S %*% t(W) %*% Lambda) + t(Lambda) %*%  fit(.object, .type_vcv = "construct") %*% Lambda
@@ -881,12 +1023,15 @@ calculateRMSTheta <- function(
   
   ## For compsites, within block indicator correlations should be excluded as 
   ## they are allowed to freely covary.
-  
-  comp <- which(.object$Information$Model$construct_type == "Composite")
-  
-  for(i in comp) {
-    indi <- which(.object$Information$Model$measurement[i, ] == 1)
-    Theta[indi, indi] <- NA
+  if(inherits(.object, "cSEMResults_default")) {
+    comp <- which(.object$Information$Model$construct_type == "Composite")
+    
+    for(i in comp) {
+      indi <- which(.object$Information$Model$measurement[i, ] == 1)
+      Theta[indi, indi] <- NA
+    }
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2("Not yet implemented.")
   }
   
   sqrt(mean(Theta[lower.tri(Theta)]^2, na.rm = TRUE))
@@ -906,15 +1051,20 @@ calculateSRMR <- function(
     S         <- .matrix1
     Sigma_hat <- .matrix2
   } else {
-    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_multi")) {
+      out <- lapply(.object, calculateSRMR, .saturated = .saturated)
+      return(out)
+    }
     if(inherits(.object, "cSEMResults_default")) {
       S <- .object$Estimates$Indicator_VCV
     } else if(inherits(.object, "cSEMResults_2ndorder")) {
       S <- .object$First_stage$Estimates$Indicator_VCV
     } else {
       stop2(
-        "The following error occured in the calculateDG() function:\n",
-        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+        "The following error occured in the calculateSRMR() function:\n",
+        "`.object` must be of class `cSEMResults_default`", 
+        " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      )
     }
     
     # The SRMR as calculated by us is always based on the the difference 
