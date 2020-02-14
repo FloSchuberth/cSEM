@@ -96,7 +96,7 @@ fit.cSEMResults_default <- function(
   if(.saturated) {
     # If a saturated model is assumed the structural model is ignored in
     # the calculation of the construct VCV (i.e. a full graph is estimated). 
-    # Hence: V(eta) = WSW' (ppssibly disattenuated)
+    # Hence: V(eta) = WSW' (possibly disattenuated)
     vcv_construct <- .object$Estimates$Construct_VCV
     
   } else {
@@ -140,6 +140,19 @@ fit.cSEMResults_default <- function(
       ) 
     ## Make symmetric
     vcv_construct[lower.tri(vcv_construct)] <- t(vcv_construct)[lower.tri(vcv_construct)]
+    
+    # Overwrite the values of the model-implied construct VCV with the values 
+    # of the construct VCV (W'SW, corrected for attenuation) if the constructs are correlated
+    if(all(dim(mod$cor_specified))!=0){
+      
+      correlated_construct_names <- intersect(rownames(vcv_construct),rownames(mod$cor_specified))
+      
+      relevant_correlations<-mod$cor_specified[correlated_construct_names,correlated_construct_names,drop=FALSE]
+      
+      temp=which(relevant_correlations==1,arr.ind = T)
+      
+      vcv_construct[correlated_construct_names,correlated_construct_names][temp] <-.object$Estimates$Construct_VCV[correlated_construct_names,correlated_construct_names][temp]
+    }
   }
   
   ## If only the fitted construct VCV is needed, return it now
