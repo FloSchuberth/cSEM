@@ -52,7 +52,7 @@
 testOMF <- function(
   .object                = NULL, 
   .alpha                 = 0.05, 
-  .handle_inadmissibles  = c("drop", "ignore", "replace"), 
+  .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .R                     = 499, 
   .saturated             = FALSE,
   .seed                  = NULL,
@@ -69,9 +69,6 @@ testOMF <- function(
     
     x11 <- .object$Estimates
     x12 <- .object$Information
-    
-    # Select only columns that are not repeated indicators
-    selector <- !grepl("_2nd_", colnames(x12$Model$measurement))
     
     ## Collect arguments
     arguments <- x12$Arguments
@@ -96,9 +93,6 @@ testOMF <- function(
     
     x21 <- .object$Second_stage$Estimates
     x22 <- .object$Second_stage$Information
-    
-    # Select only columns that are not repeated indicators
-    selector <- !grepl("_2nd_", colnames(x12$Model$measurement))
     
     ## Collect arguments
     arguments <- x22$Arguments_original
@@ -142,16 +136,22 @@ testOMF <- function(
                    .saturated = .saturated,
                    .type_vcv  = "indicator")
   
-  # Prune S and X, Sigma_hat is already pruned
-  S <- S[selector, selector]
-  X <- X[, selector]
-  Sigma_hat <- Sigma_hat
-  
   ## Calculate test statistic
   teststat <- c(
-    "dG"   = calculateDG(.matrix1 = S, .matrix2 = Sigma_hat),
-    "SRMR" = calculateSRMR(.matrix1 = S, .matrix2 = Sigma_hat),
-    "dL"   = calculateDL(.matrix1 = S, .matrix2 = Sigma_hat)
+    "dG"           = calculateDG(.object),
+    "SRMR"         = calculateSRMR(.object),
+    "dL"           = calculateDL(.object),
+    "dML"          = calculateDML(.object),
+    "Chi_square"   = calculateChiSquare(.object),
+    "Chi_square_df"= calculateChiSquareDf(.object),
+    "CFI"          = calculateCFI(.object),
+    "GFI"          = calculateGFI(.object),
+    "IFI"          = calculateIFI(.object),
+    "NFI"          = calculateNFI(.object),
+    "NNFI"         = calculateNNFI(.object),
+    "RMSEA"        = calculateRMSEA(.object),
+    "RMS_theta"    = calculateRMSTheta(.object, .model_implied = FALSE),
+    "RMS_theta_mi" = calculateRMSTheta(.object, .model_implied = TRUE)
   )
   
   ## Transform dataset, see Beran & Srivastava (1985)
@@ -228,14 +228,21 @@ testOMF <- function(
                             .saturated = .saturated,
                             .type_vcv  = "indicator")
       
-      ## Prune S_temp (Sigma_hat is already pruned)
-      S_temp <- S_temp[selector, selector]
-      
-      # Standard case when there are no repeated indicators
       ref_dist[[counter]] <- c(
-        "dG"   = calculateDG(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
-        "SRMR" = calculateSRMR(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp),
-        "dL"   = calculateDL(.matrix1 = S_temp, .matrix2 = Sigma_hat_temp)
+        "dG"           = calculateDG(Est_temp),
+        "SRMR"         = calculateSRMR(Est_temp),
+        "dL"           = calculateDL(Est_temp),
+        "dML"          = calculateDML(Est_temp),
+        "Chi_square"    = calculateChiSquare(Est_temp),
+        "Chi_square_df"= calculateChiSquareDf(Est_temp),
+        "CFI"          = calculateCFI(Est_temp),
+        "GFI"          = calculateGFI(Est_temp),
+        "IFI"          = calculateIFI(Est_temp),
+        "NFI"          = calculateNFI(Est_temp),
+        "NNFI"         = calculateNNFI(Est_temp),
+        "RMSEA"        = calculateRMSEA(Est_temp),
+        "RMS_theta"    = calculateRMSTheta(Est_temp, .model_implied = FALSE),
+        "RMS_theta_mi" = calculateRMSTheta(Est_temp, .model_implied = TRUE)
       ) 
 
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
@@ -277,22 +284,39 @@ testOMF <- function(
   
   # Combine
   ref_dist_matrix <- do.call(cbind, ref_dist1) 
-  ## Compute critical values (Result is a (3 x p) matrix, where p is the number
-  ## of quantiles that have been computed (1 by default)
+  ## Compute critical values (Result is a (d x p) matrix, where p is the number
+  ## of quantiles that have been computed (1 by default) and d the number of
+  ## distance/fit measures
   .alpha <- .alpha[order(.alpha)]
-  critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
-                                               probs =  1-.alpha, drop = FALSE)
   
-  ## Compare critical value and teststatistic
-  decision <- teststat < critical_values # a logical (3 x p) matrix with each column
-  # representing the decision for one
-  # significance level. TRUE = no evidence 
-  # against the H0 --> not reject
-  # FALSE --> reject
+  ## Goodness of fit measures require the 1 - alpha quantile
+  ref_dist_matrix_good <- ref_dist_matrix[c("GFI", "CFI", "IFI", "NFI", "NNFI"), ,drop = FALSE]
+  ref_dist_matrix_bad <- ref_dist_matrix[c("dG", "dL", "SRMR", "dML", 
+                                           "Chi_square", "Chi_square_df", "RMS_theta", "RMS_theta_mi"), ,drop = FALSE]
+  
+  critical_values_good <- matrixStats::rowQuantiles(ref_dist_matrix_good, 
+                                                    probs = .alpha, drop = FALSE)
+  
+  ## Badness-of-fit indices require the alpha quantile
+  critical_values_bad <- matrixStats::rowQuantiles(ref_dist_matrix_bad, 
+                                                   probs =  1 - .alpha, drop = FALSE)
+  
+  ## Compare critical value and teststatistic.
+  # Dont reject when teststat is >= alpha% quantile
+  decision_good <- teststat[rownames(critical_values_good)] >= critical_values_good # a logical (d x p) matrix with each column
+  # Dont reject when teststat is <= alpha% quantile
+  decision_bad  <- teststat[rownames(critical_values_bad)] <= critical_values_bad # a logical (d x p) matrix with each column
+  # representing the decision for one significance level. 
+  # TRUE  = no evidence against the H0 --> not reject
+  # FALSE = evidence against the H0    --> reject
+  
+  # Combine
+  critical_values <- rbind(critical_values_bad, critical_values_good)
+  decision        <- rbind(decision_bad, decision_good)
   
   # Return output
   out <- list(
-    "Test_statistic"     = teststat,
+    "Test_statistic"     = teststat[rownames(critical_values)],
     "Critical_value"     = critical_values, 
     "Decision"           = decision, 
     "Information"        = list(
