@@ -141,6 +141,7 @@ fit.cSEMResults_default <- function(
     ## Make symmetric
     vcv_construct[lower.tri(vcv_construct)] <- t(vcv_construct)[lower.tri(vcv_construct)]
     
+    # Take correlation between construct their error terms into account. 
     # Overwrite the values of the model-implied construct VCV with the values 
     # of the construct VCV (W'SW, corrected for attenuation) if the constructs are correlated
     if(all(dim(mod$cor_specified))!=0){
