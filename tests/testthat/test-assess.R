@@ -56,3 +56,17 @@ test_that("Assess works for all choices of .quality_criterion", {
   expect_equivalent(c(a$VIF), c(1.530619, 1.530619), tolerance = 1e-06)
   expect_equivalent(c(a$VIF_modeB$eta2), c(1.859990, 2.621641, 2.623095), tolerance = 1e-06)
 })
+
+### Test individual assess's helper functions individually ---------------------
+source("test-main.R")
+
+## Calculatef2
+test_that("Test that calculatef2() returns the correct output:", {
+  expect_equal(class(calculatef2(res_single_linear)), "matrix")
+  expect_equal(class(calculatef2(res_single_nonlinear)), "matrix")
+  expect_equal(class(calculatef2(res_single_2ndorder)), "matrix")
+  
+  expect_equal(class(calculatef2(res_multi_linear)), "list")
+  expect_equal(class(calculatef2(res_multi_nonlinear)), "list")
+  expect_equal(class(calculatef2(res_multi_2ndorder)), "list")
+})

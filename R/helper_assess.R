@@ -931,10 +931,10 @@ calculateSRMR <- function(
 
 
 
-#' Internal: Calculate Cohens f^2
+#' Calculate Cohens f^2
 #'
 #' Calculate the effect size for regression analysis \insertCite{Cohen1992}{cSEM}
-#' known as Cohen's f^2
+#' known as Cohen's f^2. 
 #'
 #' @usage calculatef2(.object = NULL)
 #'
@@ -945,7 +945,7 @@ calculateSRMR <- function(
 #'   of these equations.
 #' 
 #' @seealso [assess()], [csem], [cSEMResults]
-#' @keywords internal
+#' @export
 
 calculatef2 <- function(.object = NULL) {
   
