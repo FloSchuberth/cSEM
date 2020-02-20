@@ -1,6 +1,6 @@
 # This function contains the 3SLS estimator which does not work properly. 
 # I think the problem is that the exogenous and endogenous variables and 
-# the instruments used are not peroperly matched. 
+# the instruments used are not properly matched. 
 
 # 16-7-2019
 
