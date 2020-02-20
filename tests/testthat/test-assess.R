@@ -26,17 +26,17 @@ test_that("Assess works for all choices of .quality_criterion", {
   expect_equivalent(a$DG, 0.005499167 , tolerance = 1e-07)
   expect_equivalent(a$DL, 0.01041484, tolerance = 1e-07)
   expect_equivalent(a$DML, 0.02928953, tolerance = 1e-07)
-  expect_equivalent(a$Df, 18, tolerance = 1e-07)
+  expect_equivalent(a$Df, 24, tolerance = 1e-07)
   expect_equivalent(c(a$F2), c(0.53061872, 0.34344601, 0,
                                0.06958792, 0.00000000, 0), 
                     tolerance = 1e-07)
   expect_equivalent(a$Chi_square, 14.61547, tolerance = 1e-05)
-  expect_equivalent(a$Chi_square_df, 0.8119708, tolerance = 1e-07)
+  expect_equivalent(a$Chi_square_df, 0.6089781, tolerance = 1e-07)
   expect_equivalent(a$CFI, 1, tolerance = 1e-07)
   expect_equivalent(a$GFI, 0.9989305, tolerance = 1e-07)
-  expect_equivalent(a$IFI, 1.002361, tolerance = 1e-06)
+  expect_equivalent(a$IFI, 1.006573, tolerance = 1e-06)
   expect_equivalent(a$NFI, 0.9899318 , tolerance = 1e-07)
-  expect_equivalent(a$NNFI, 1.004782, tolerance = 1e-06)
+  expect_equivalent(a$NNFI, 1, tolerance = 1e-06)
   expect_equivalent(a$RMSEA, 0, tolerance = 1e-07)
   expect_equivalent(a$RMS_theta, 0.08470806, tolerance = 1e-07)
   expect_equivalent(a$RMS_theta_mi, 0.08470806, tolerance = 1e-07)
@@ -69,4 +69,18 @@ test_that("Test that calculatef2() returns the correct output:", {
   expect_equal(class(calculatef2(res_multi_linear)), "list")
   expect_equal(class(calculatef2(res_multi_nonlinear)), "list")
   expect_equal(class(calculatef2(res_multi_2ndorder)), "list")
+})
+
+## Calculatef2
+test_that("Test that calculateDf() returns the correct output:", {
+  expect_identical(calculateDf(res_single_linear), 24)
+  expect_identical(calculateDf(res_single_nonlinear), 23)
+  expect_identical(calculateDf(res_single_2ndorder), 135)
+  
+  expect_identical(unlist(calculateDf(res_multi_linear)), 
+                   c("group1" = 24, "group2" = 24, "group3" = 24))
+  expect_identical(unlist(calculateDf(res_multi_nonlinear)), 
+                   c("group1" = 23, "group2" = 23, "group3" = 23))
+  expect_identical(unlist(calculateDf(res_multi_2ndorder)), 
+                   c("group1" = 135, "group2" = 135))
 })

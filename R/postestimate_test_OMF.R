@@ -149,9 +149,9 @@ testOMF <- function(
     "IFI"          = calculateIFI(.object),
     "NFI"          = calculateNFI(.object),
     "NNFI"         = calculateNNFI(.object),
-    "RMSEA"        = calculateRMSEA(.object),
-    "RMS_theta"    = calculateRMSTheta(.object, .model_implied = FALSE),
-    "RMS_theta_mi" = calculateRMSTheta(.object, .model_implied = TRUE)
+    "RMSEA"        = calculateRMSEA(.object)
+    # "RMS_theta"    = calculateRMSTheta(.object, .model_implied = FALSE),
+    # "RMS_theta_mi" = calculateRMSTheta(.object, .model_implied = TRUE)
   )
   
   ## Transform dataset, see Beran & Srivastava (1985)
@@ -240,9 +240,9 @@ testOMF <- function(
         "IFI"          = calculateIFI(Est_temp),
         "NFI"          = calculateNFI(Est_temp),
         "NNFI"         = calculateNNFI(Est_temp),
-        "RMSEA"        = calculateRMSEA(Est_temp),
-        "RMS_theta"    = calculateRMSTheta(Est_temp, .model_implied = FALSE),
-        "RMS_theta_mi" = calculateRMSTheta(Est_temp, .model_implied = TRUE)
+        "RMSEA"        = calculateRMSEA(Est_temp)
+        # "RMS_theta"    = calculateRMSTheta(Est_temp, .model_implied = FALSE),
+        # "RMS_theta_mi" = calculateRMSTheta(Est_temp, .model_implied = TRUE)
       ) 
 
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
@@ -292,7 +292,10 @@ testOMF <- function(
   ## Goodness of fit measures require the 1 - alpha quantile
   ref_dist_matrix_good <- ref_dist_matrix[c("GFI", "CFI", "IFI", "NFI", "NNFI"), ,drop = FALSE]
   ref_dist_matrix_bad <- ref_dist_matrix[c("dG", "dL", "SRMR", "dML", 
-                                           "Chi_square", "Chi_square_df", "RMS_theta", "RMS_theta_mi"), ,drop = FALSE]
+                                           "Chi_square", "Chi_square_df"
+                                           # "RMS_theta", "RMS_theta_mi"
+                                           ), 
+                                         ,drop = FALSE]
   
   critical_values_good <- matrixStats::rowQuantiles(ref_dist_matrix_good, 
                                                     probs = .alpha, drop = FALSE)

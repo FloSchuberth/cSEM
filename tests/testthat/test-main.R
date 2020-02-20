@@ -187,3 +187,4 @@ res_multi_id_2ndorder_boot  <- csem(dat2ndorder_id, model_2ndorder,
                                  .resample_method = "bootstrap", .R = 6,
                                  .handle_inadmissibles = "replace",
                                  .id = "group")
+

@@ -102,8 +102,6 @@ calculateDf <- function(
   .null_model = args_default()$.null_model,
   ...
   ) {
-  # .object <- a_linear
-  # .object <- a_2ndorder
 
   if(inherits(.object, "cSEMResults_multi")) {
     
@@ -1072,8 +1070,10 @@ calculateNNFI <- function(.object) {
     sum(diag(S %*% solve(diag(nrow(S))))) - log(det(S)) - p
   
   FT <- calculateDML(.object)
+  # Note: "If the index is greater than one, it is set at one" 
+  # Source: http://www.davidakenny.net/cm/fit.htm
   
-  (F0/df_0 - FT/df_T) / (F0/df_0 - 1/(n-1))
+  min((F0/df_0 - FT/df_T) / (F0/df_0 - 1/(n-1)), 1)
 }
 
 #' @describeIn fit_measures The root mean square error of approximation (RMSEA).
