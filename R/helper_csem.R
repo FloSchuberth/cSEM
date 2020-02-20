@@ -64,9 +64,13 @@ calculate2ndStage <- function(
   
   # Select reliabilities for those constructs that are not attached
   # to a second order factor
-  rel_not_attached_to_2nd <- rel_all_1step[vars_not_attached_to_2nd]
-  names(rel_not_attached_to_2nd) <- paste0(vars_not_attached_to_2nd, "_temp")
-  
+  if(!is.null(vars_not_attached_to_2nd)) {
+    rel_not_attached_to_2nd <- rel_all_1step[vars_not_attached_to_2nd]
+    names(rel_not_attached_to_2nd) <- paste0(vars_not_attached_to_2nd, "_temp")
+  } else {
+    rel_not_attached_to_2nd <- NULL
+  }
+
   ## Save arguments of the first stage 
   args <- .first_stage_results$Information$Arguments
   
@@ -180,12 +184,14 @@ calculate2ndStage <- function(
         out2$Estimates$Weight_estimates[i, col_names]  <- w
       }
       
-      ## Correct sinlge indicator loadings
-      for(i in paste0(vars_not_attached_to_2nd, "_temp")) {
-        out2$Estimates$Loading_estimates[i, ] <- 
-          out2$Estimates$Loading_estimates[i, ] / 
-          sqrt(rel_all_1step[colnames(out2$Information$Model$measurement)])
-      } # END correct single indicator loadings
+      ## Correct single indicator loadings
+      if(!is.null(vars_not_attached_to_2nd)) {
+        for(i in paste0(vars_not_attached_to_2nd, "_temp")) {
+          out2$Estimates$Loading_estimates[i, ] <- 
+            out2$Estimates$Loading_estimates[i, ] / 
+            sqrt(rel_all_1step[colnames(out2$Information$Model$measurement)])
+        } # END correct single indicator loadings 
+      } # END if
     } # END if length(vars_2nd_composites) != 0
   } # END third stage
   
