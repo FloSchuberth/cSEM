@@ -72,9 +72,16 @@ calculateAVE <- function(
 }
 
 
-#' Internal: Degrees of freedom
+#' Degrees of freedom
 #' 
 #' Calculate the degrees of freedom for a given model from a [cSEMResults] object.
+#' 
+#' Although, composite-based estimators always retrieve parameters of the 
+#' postulated models via the estimation of a composite model,
+#' the computation of the degrees of freedom depends on the postulated model.
+#' 
+#' See: \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{cSEM website} 
+#' for details on how the degrees of freedom are calculated.
 #' 
 #' @usage calculateDf(
 #'   .object     = NULL,
@@ -88,87 +95,206 @@ calculateAVE <- function(
 #' @param ... Ignored.
 #'
 #' @seealso [assess()], [cSEMResults]
-#' @keywords internal
+#' @export
 
 calculateDf <- function(
   .object     = NULL, 
   .null_model = args_default()$.null_model,
   ...
   ) {
-  
-  if(inherits(.object, "cSEMResults_default")) { 
-    x1 <- .object$Estimates
-    x2 <- .object$Information$Model
-  } else if(inherits(.object, "cSEMResults_2ndorder")) {
-    stop2("Degrees of freedom for 2nd order composites not implemented yet.")
-  } else {
+  # .object <- a_linear
+  # .object <- a_2ndorder
+
+  if(inherits(.object, "cSEMResults_multi")) {
     
     df <- lapply(.object, calculateDf)
     
     ## Return
     names(df) <- names(.object)
     return(df)
-  }
-  
-  ## Number of non-redundant off-diagonal elements of the indicator covariance 
-  ## matrix (S)
-  vS <- sum(lower.tri(x1$Indicator_VCV)) # same as dim_nS *(dim_nS - 1) / 2
-  
-  ## Caculate the degrees of freedom of a null model (Sigma_hat = I)
-  if(.null_model) {
-    # The degrees of freedom of the null model are identical to 
-    # the number of non-redundant elements of S (since there is nothing to
-    # estimate. Everything is set to 0 a priori)
-    return(vS)
-  }
-  
-  ## Number of correlations between (exogenous) constructs
-  temp <- sum(rowSums(x2$structural) == 0)
-  n_exo <- temp * (temp - 1) / 2
-  
-  ## Number of structural parameters
-  n_structural <- sum(x2$structural)
-  
-  if(.object$Information$Arguments$.approach_weights %in% c("bartlett", "regression", "unit")) {
-    # If one of these estimators is used degrees of freedom are counted 
-    # the same way as one would count in CB-SEM: 
-    # df = non_redundant_elements_of_S - 
-    #      - (structural_parameter + cor_between_exos) 
-    #      - loadings
-    #      - assumed_measurement_error_cors (usually 0)
     
-    ## Number of measurement errors assumed to correlate
-    n_error <- sum(x2$error_cor == 1) / 2
+  } else if(inherits(.object, "cSEMResults_default")) { 
     
-    n_loadings <- ncol(x2$measurement)
+    x1 <- .object$Estimates
+    x2 <- .object$Information$Model
     
-    df_total <- vS - (n_exo + n_structural) - n_loadings - n_error
-  } else {
+    # Number of non-redundant off-diagonal elements of the indicator covariance 
+    # matrix (S)
+    vS <- sum(lower.tri(x1$Indicator_VCV)) # same as dim_nS *(dim_nS - 1) / 2
+    
+    # Caculate the degrees of freedom of a null model (Sigma_hat = I)
+    if(.null_model) {
+      # The degrees of freedom of the null model are identical to 
+      # the number of non-redundant elements of S (since there is nothing to
+      # estimate. Everything is set to 0 a priori)
+      return(vS)
+    }
+    
+    # Construct correlations and structural model parameters
+    if(!all(x2$structural == 0)) {
+      # Free correlations between exogenous constructs
+      n_cor_exo <- length(x2$cons_exo) * (length(x2$cons_exo) - 1) / 2 
+      
+      # Correlations between endogenous constructs
+      names_cor_endo <- intersect(x2$cons_endo, rownames(x2$cor_specified))
+      if(length(names_cor_endo) != 0) {
+        n_cor_endo <- sum(lower.tri(x2$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE]))
+      } else {
+        n_cor_endo <- 0
+      }
+      
+      # Number of structural parameters
+      n_structural <- sum(x2$structural)
+      
+    } else {
+      n_cor_exo    <- nrow(x2$structural) * (nrow(x2$structural) - 1) / 2
+      n_cor_endo   <- 0
+      n_structural <- 0
+    }
+    
     ## Construct names
     names_constructs <- rownames(x2$structural)
     k <- c()
     for(j in names_constructs) {
-      # DF for 
-      ## Number of free covariances between the composites and indicators not forming
-      ## a composite
-      # Not relevant, as indicators are always attached to a composite in cSEM
-      
-      ## Number of free non-redundant off-diagonal element of each intra-block
-      #+ covariance matrix
-      temp    <- sum((x2$measurement[j, ] == 1))
-      n_intra <- temp * (temp - 1) / 2
-      
-      ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
-      n_weights <- sum(x2$measurement[j, ]) - 1
-      
-      ## Calculate Dfs
-      k[j] <- n_intra + n_weights
+      if(x2$construct_type[j] == "Composite") {
+        
+        ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
+        n_weights <- sum(x2$measurement[j, ]) - 1 
+        
+        ## Number of free non-redundant off-diagonal element of each intra-block
+        #+ covariance matrix
+        temp    <- sum(x2$measurement[j, ] == 1)
+        n_intra <- temp * (temp - 1) / 2
+        
+        ## Calculate dfs per construct
+        k[j] <- n_weights + n_intra 
+        
+      } else {
+        
+        # Number of loadings -1 (since either 1 loading is fixed or the variance 
+        # of the construct is fixed)
+        n_loadings <- sum(x2$measurement[j, ] == 1) - 1
+        
+        # Number of measurement errors assumed to correlate
+        j_names <- names(which(x2$measurement[j, ] == 1))
+        n_error <- sum(x2$error_cor[j_names, j_names, drop = FALSE] == 1) / 2
+        
+        # Calculate dfs per construct
+        k[j] <- n_loadings + n_error
+      }
     }
     
-    df_total <- vS - (n_exo + n_structural) - sum(k)
+    df_total <- vS - (n_cor_exo + n_cor_endo + n_structural) - sum(k)
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    
+    x11 <- .object$First_stage$Estimates
+    x12 <- .object$First_stage$Information$Model
+    
+    x21 <- .object$Second_stage$Estimates
+    x22 <- .object$Second_stage$Information$Model
+    
+    # Number of non-redundant off-diagonal elements of the indicator covariance 
+    # matrix (S) of the first stage
+    vS <- sum(lower.tri(x11$Indicator_VCV)) # same as dim_nS *(dim_nS - 1) / 2
+    
+    # Caculate the degrees of freedom of a null model (Sigma_hat = I)
+    if(.null_model) {
+      # The degrees of freedom of the null model are identical to 
+      # the number of non-redundant elements of S (since there is nothing to
+      # estimate. Everything is set to 0 a priori)
+      return(vS)
+    }
+    
+    # Construct correlations and structural model parameters
+    if(!all(x22$structural == 0)) {
+      # Free correlations between exogenous constructs
+      n_cor_exo <- length(x22$cons_exo) * (length(x22$cons_exo) - 1) / 2 
+      
+      # Correlations between endogenous constructs
+      names_cor_endo <- intersect(x22$cons_endo, rownames(x22$cor_specified))
+      if(!is.null(names_cor_endo)) {
+        n_cor_endo <- sum(lower.tri(x22$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE]))
+      } else {
+        n_cor_endo <- 0
+      }
+      
+      # Number of structural parameters
+      n_structural <- sum(x22$structural)
+      
+    } else {
+      n_cor_exo    <- nrow(x22$structural) * (nrow(x22$structural) - 1) / 2
+      n_cor_endo   <- 0
+      n_structural <- 0
+    }
+    
+    ## Construct names
+    construct_order  <- .object$First_stage$Information$Model$construct_order 
+    names_constructs <- names(construct_order)
+    k <- c()
+    for(j in names_constructs) {
+      if(construct_order[j] == "Second order") {
+        if(x22$construct_type[j] == "Composite") {
+            ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
+            n_weights <- sum(x22$measurement[j, ]) - 1 
+          
+          ## Number of free non-redundant off-diagonal element of each intra-block
+          #+ covariance matrix
+          temp    <- sum(x22$measurement[j, ] == 1)
+          n_intra <- temp * (temp - 1) / 2
+          
+          ## Calculate dfs per construct
+          k[j] <- n_weights + n_intra 
+          
+        } else {
+          
+          # Number of loadings -1 (since either 1 loading is fixed or the variance 
+          # of the construct is fixed)
+          n_loadings <- sum(x22$measurement[j, ] == 1) - 1
+          
+          # Number of measurement errors assumed to correlate
+          n_error <- sum(x22$error_cor == 1) / 2
+          
+          # Calculate dfs per construct
+          k[j] <- n_loadings + n_error
+        }
+      } else {
+        if(x12$construct_type[j] == "Composite") {
+          ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
+          n_weights <- sum(x12$measurement[j, ]) - 1 
+          
+          ## Number of free non-redundant off-diagonal element of each intra-block
+          #+ covariance matrix
+          temp    <- sum(x12$measurement[j, ] == 1)
+          n_intra <- temp * (temp - 1) / 2
+          
+          ## Calculate dfs per construct
+          k[j] <- n_weights + n_intra 
+          
+        } else {
+          
+          # Number of loadings -1 (since either 1 loading is fixed or the variance 
+          # of the construct is fixed)
+          n_loadings <- sum(x12$measurement[j, ] == 1) - 1
+          
+          # Number of measurement errors assumed to correlate
+          n_error <- sum(x12$error_cor == 1) / 2
+          
+          # Calculate dfs per construct
+          k[j] <- n_loadings + n_error
+        }
+      }
+    }
+  } else {
+    stop2(
+      "The following error occured in the calculateDL() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
   }
+  ## Compute degrees of freedom
+  df_total <- vS - (n_cor_exo + n_cor_endo + n_structural) - sum(k)
   
-  # return degrees of freedom
+  ## Return degrees of freedom
   df_total
 }
 
@@ -650,8 +776,7 @@ calculateDG <- function(
     } else {
       stop2(
         "The following error occured in the calculateDG() function:\n",
-        "`.object` must be of class `cSEMResults_default`", 
-        " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+        "`.object` must be of class `cSEMResults`."
         )
     }
     
@@ -691,8 +816,7 @@ calculateDL <- function(
     } else {
       stop2(
         "The following error occured in the calculateDL() function:\n",
-        "`.object` must be of class `cSEMResults_default`", 
-        " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+        "`.object` must be of class `cSEMResults`."
       )
     }
     
@@ -728,8 +852,7 @@ calculateDML <- function(
     } else {
       stop2(
         "The following error occured in the calculateDML() function:\n",
-        "`.object` must be of class `cSEMResults_default`", 
-        " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+        "`.object` must be of class `cSEMResults`."
       )
     }
     
@@ -768,8 +891,7 @@ calculateChiSquare <- function(.object) {
   } else {
     stop2(
       "The following error occured in the calculateChiSquare() function:\n",
-      "`.object` must be of class `cSEMResults_default`", 
-      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      "`.object` must be of class `cSEMResults`."
     )
   }
 
@@ -792,8 +914,7 @@ calculateChiSquareDf <- function(.object) {
   } else {
     stop2(
       "The following error occured in the calculateChiSquareDf() function:\n",
-      "`.object` must be of class `cSEMResults_default`", 
-      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      "`.object` must be of class `cSEMResults`."
     )
   }
   
@@ -819,8 +940,7 @@ calculateCFI <- function(.object) {
   } else {
     stop2(
       "The following error occured in the calculateCFI() function:\n",
-      "`.object` must be of class `cSEMResults_default`", 
-      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      "`.object` must be of class `cSEMResults`."
     )
   }
   
@@ -852,8 +972,7 @@ calculateGFI <- function(.object) {
   } else {
     stop2(
       "The following error occured in the calculateGFI() function:\n",
-      "`.object` must be of class `cSEMResults_default`", 
-      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      "`.object` must be of class `cSEMResults`."
     )
   }
   
@@ -880,8 +999,7 @@ calculateIFI <- function(.object) {
   } else {
     stop2(
       "The following error occured in the calculateIFI() function:\n",
-      "`.object` must be of class `cSEMResults_default`", 
-      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      "`.object` must be of class `cSEMResults`."
     )
   }
   
@@ -911,8 +1029,7 @@ calculateNFI <- function(.object) {
   } else {
     stop2(
       "The following error occured in the calculateNFI() function:\n",
-      "`.object` must be of class `cSEMResults_default`", 
-      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      "`.object` must be of class `cSEMResults`."
     )
   }
 
@@ -943,8 +1060,7 @@ calculateNNFI <- function(.object) {
   } else {
     stop2(
       "The following error occured in the calculateNNFI() function:\n",
-      "`.object` must be of class `cSEMResults_default`", 
-      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      "`.object` must be of class `cSEMResults`."
     )
   }
   
@@ -975,8 +1091,7 @@ calculateRMSEA <- function(.object) {
   } else {
     stop2(
       "The following error occured in the calculateRMSEA() function:\n",
-      "`.object` must be of class `cSEMResults_default`", 
-      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      "`.object` must be of class `cSEMResults`."
     )
   }
   
@@ -1008,8 +1123,7 @@ calculateRMSTheta <- function(
   } else {
     stop2(
       "The following error occured in the calculateRMSTheta() function:\n",
-      "`.object` must be of class `cSEMResults_default`", 
-      " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+      "`.object` must be of class `cSEMResults`."
     )
   }
   
@@ -1062,8 +1176,7 @@ calculateSRMR <- function(
     } else {
       stop2(
         "The following error occured in the calculateSRMR() function:\n",
-        "`.object` must be of class `cSEMResults_default`", 
-        " `cSEMResults_2ndorder` or `cSEMResults_multi`."
+        "`.object` must be of class `cSEMResults`."
       )
     }
     
