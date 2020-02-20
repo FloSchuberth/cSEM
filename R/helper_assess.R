@@ -1194,10 +1194,10 @@ calculateSRMR <- function(
 
 
 
-#' Internal: Calculate Cohens f^2
+#' Calculate Cohens f^2
 #'
 #' Calculate the effect size for regression analysis \insertCite{Cohen1992}{cSEM}
-#' known as Cohen's f^2
+#' known as Cohen's f^2. 
 #'
 #' @usage calculatef2(.object = NULL)
 #'
@@ -1208,22 +1208,39 @@ calculateSRMR <- function(
 #'   of these equations.
 #' 
 #' @seealso [assess()], [csem], [cSEMResults]
-#' @keywords internal
+#' @export
 
 calculatef2 <- function(.object = NULL) {
   
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculatef2)
+    return(out)
+    
+  } else if(inherits(.object, "cSEMResults_default")) {
+    info <- .object
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    info <-  .object$Second_stage
+    
+  } else {
+    stop2(
+      "The following error occured in the calculatef2() function:\n",
+      "`.object` must be a `cSEMResults` object."
+    )
+  }
+    
   ## Get relevant quantities
-  approach_nl      <- .object$Information$Arguments$.approach_nl
-  approach_paths   <- .object$Information$Arguments$.approach_paths
-  approach_weights <- .object$Information$Arguments$.approach_weights
-  csem_model       <- .object$Information$Model
-  H         <- .object$Estimates$Construct_scores
-  normality <- .object$Information$Arguments$.normality
-  P         <- .object$Estimates$Construct_VCV
-  Q         <- sqrt(.object$Estimates$Reliabilities)
+  approach_nl      <- info$Information$Arguments$.approach_nl
+  approach_paths   <- info$Information$Arguments$.approach_paths
+  approach_weights <- info$Information$Arguments$.approach_weights
+  csem_model       <- info$Information$Model
+  H         <- info$Estimates$Construct_scores
+  normality <- info$Information$Arguments$.normality
+  P         <- info$Estimates$Construct_VCV
+  Q         <- sqrt(info$Estimates$Reliabilities)
   
   s <- csem_model$structural
-  
+
   vars_endo <- rownames(s)[rowSums(s) != 0]
   
   ## Loop over each structural equation
@@ -1245,7 +1262,6 @@ calculatef2 <- function(.object = NULL) {
         out <- estimatePath(
           .approach_nl      = approach_nl,
           .approach_paths   = approach_paths,
-          .approach_weights = approach_weights,
           .csem_model       = model_temp,
           .H                = H,
           .normality        = normality,
@@ -1258,8 +1274,10 @@ calculatef2 <- function(.object = NULL) {
         r2_excluded <- 0
       }
       names(r2_excluded) <- x
-      r2_included <- .object$Estimates$R2[x]
       
+      # Obtain the R^2 included
+      r2_included <- info$Estimates$R2[x]
+
       effect_size <- unname((r2_included - r2_excluded)/(1 - r2_included))
     })
     inner_out <- unlist(inner_out)
