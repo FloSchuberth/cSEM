@@ -62,9 +62,9 @@ source("test-main.R")
 
 ## Calculatef2
 test_that("Test that calculatef2() returns the correct output:", {
-  expect_equal(class(calculatef2(res_single_linear)), "matrix")
-  expect_equal(class(calculatef2(res_single_nonlinear)), "matrix")
-  expect_equal(class(calculatef2(res_single_2ndorder)), "matrix")
+  expect_true(inherits(calculatef2(res_single_linear), "matrix"))
+  expect_true(inherits(calculatef2(res_single_nonlinear), "matrix"))
+  expect_true(inherits(calculatef2(res_single_2ndorder), "matrix"))
   
   expect_equal(class(calculatef2(res_multi_linear)), "list")
   expect_equal(class(calculatef2(res_multi_nonlinear)), "list")
