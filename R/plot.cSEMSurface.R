@@ -64,7 +64,7 @@ options(viewer = viewer_old)
     # 
     # using the persp function
     # phi and theta are used for rotation
-    persp::persp(x = x$out$x, y = x$out$z, z = x$out$y, phi = 40, theta = 140,
+    graphics::persp(x = x$out$x, y = x$out$z, z = x$out$y, phi = 40, theta = 140,
           xlab = paste('Standardized ',x$Information$independent),
           ylab = paste('Standardized ',x$Information$moderator),
           zlab = x$Information$dependent,
