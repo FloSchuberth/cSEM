@@ -4,22 +4,32 @@
 #' See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in 
 #' the context of PLS-PM.
 #' 
-#' `testOMF()` tests the null hypothesis that the population indicator 
+#' By default, `testOMF()` tests the null hypothesis that the population indicator 
 #' correlation matrix equals the population model-implied indicator correlation matrix. 
-#' Several potential test statistics may be used. `testOMF()` uses three distance
+#' Several discrepancy measures may be used. By default, `testOMF()` uses four distance
 #' measures to assess the distance between the sample indicator correlation matrix
 #' and the estimated model-implied indicator correlation matrix, namely the geodesic distance, 
-#' the squared Euclidean distance, and the standardized root mean square residual (SRMR). 
+#' the squared Euclidean distance, the standardized root mean square residual (SRMR),
+#' and the distance based on the maximum likelihood fit function. 
 #' The reference distribution for each test statistic is obtained by 
 #' the bootstrap as proposed by \insertCite{Beran1985;textual}{cSEM}. 
 #' 
+#' It is possible to perform the bootstrap-based test using fit measures such 
+#' as the CFI, RMSEA or the GFI if `.fit_measures = TRUE`. This is experimental. 
+#' To the best of our knowledge the applicability and usefulness of the fit 
+#' measures for model fit assessment have not been formally (statistically) 
+#' assessed yet. Theoretically, the logic of the test applies to these fit indices as well. 
+#' Hence, their applicability is theoretically justified. 
+#' Only use if you know what you are doing.
+#' 
 #' If `.saturated = TRUE` the original structural model is ignored and replaced by
-#' a saturated model, i.e. a model in which all constructs are allowed to correlate freely. 
+#' a saturated model, i.e., a model in which all constructs are allowed to correlate freely. 
 #' This is useful to test misspecification of the measurement model in isolation.
 #' 
 #' @usage testOMF(
 #'  .object                = NULL, 
-#'  .alpha                 = 0.05, 
+#'  .alpha                 = 0.05,
+#'  .fit_measures          = FALSE,
 #'  .handle_inadmissibles  = c("drop", "ignore", "replace"), 
 #'  .R                     = 499, 
 #'  .saturated             = FALSE,
@@ -52,6 +62,7 @@
 testOMF <- function(
   .object                = NULL, 
   .alpha                 = 0.05, 
+  .fit_measures          = FALSE,
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .R                     = 499, 
   .saturated             = FALSE,
@@ -137,22 +148,32 @@ testOMF <- function(
                    .type_vcv  = "indicator")
   
   ## Calculate test statistic
-  teststat <- c(
-    "dG"           = calculateDG(.object),
-    "SRMR"         = calculateSRMR(.object),
-    "dL"           = calculateDL(.object),
-    "dML"          = calculateDML(.object),
-    "Chi_square"   = calculateChiSquare(.object),
-    "Chi_square_df"= calculateChiSquareDf(.object),
-    "CFI"          = calculateCFI(.object),
-    "GFI"          = calculateGFI(.object),
-    "IFI"          = calculateIFI(.object),
-    "NFI"          = calculateNFI(.object),
-    "NNFI"         = calculateNNFI(.object),
-    "RMSEA"        = calculateRMSEA(.object)
-    # "RMS_theta"    = calculateRMSTheta(.object, .model_implied = FALSE),
-    # "RMS_theta_mi" = calculateRMSTheta(.object, .model_implied = TRUE)
-  )
+  if(.fit_measures) {
+    teststat <- c(
+      "dG"           = calculateDG(.object),
+      "SRMR"         = calculateSRMR(.object),
+      "dL"           = calculateDL(.object),
+      "dML"          = calculateDML(.object),
+      "Chi_square"   = calculateChiSquare(.object),
+      "Chi_square_df"= calculateChiSquareDf(.object),
+      "CFI"          = calculateCFI(.object),
+      "GFI"          = calculateGFI(.object),
+      "IFI"          = calculateIFI(.object),
+      "NFI"          = calculateNFI(.object),
+      "NNFI"         = calculateNNFI(.object),
+      "RMSEA"        = calculateRMSEA(.object)
+      # "RMS_theta"    = calculateRMSTheta(.object, .model_implied = FALSE),
+      # "RMS_theta_mi" = calculateRMSTheta(.object, .model_implied = TRUE)
+    )
+  } else {
+    teststat <- c(
+      "dG"           = calculateDG(.object),
+      "SRMR"         = calculateSRMR(.object),
+      "dL"           = calculateDL(.object),
+      "dML"          = calculateDML(.object)
+    )
+  }
+
   
   ## Transform dataset, see Beran & Srivastava (1985)
   S_half   <- solve(expm::sqrtm(S))
@@ -228,22 +249,31 @@ testOMF <- function(
                             .saturated = .saturated,
                             .type_vcv  = "indicator")
       
-      ref_dist[[counter]] <- c(
-        "dG"           = calculateDG(Est_temp),
-        "SRMR"         = calculateSRMR(Est_temp),
-        "dL"           = calculateDL(Est_temp),
-        "dML"          = calculateDML(Est_temp),
-        "Chi_square"    = calculateChiSquare(Est_temp),
-        "Chi_square_df"= calculateChiSquareDf(Est_temp),
-        "CFI"          = calculateCFI(Est_temp),
-        "GFI"          = calculateGFI(Est_temp),
-        "IFI"          = calculateIFI(Est_temp),
-        "NFI"          = calculateNFI(Est_temp),
-        "NNFI"         = calculateNNFI(Est_temp),
-        "RMSEA"        = calculateRMSEA(Est_temp)
-        # "RMS_theta"    = calculateRMSTheta(Est_temp, .model_implied = FALSE),
-        # "RMS_theta_mi" = calculateRMSTheta(Est_temp, .model_implied = TRUE)
-      ) 
+      ref_dist[[counter]] <- if(.fit_measures) {
+        c(
+          "dG"           = calculateDG(Est_temp),
+          "SRMR"         = calculateSRMR(Est_temp),
+          "dL"           = calculateDL(Est_temp),
+          "dML"          = calculateDML(Est_temp),
+          "Chi_square"   = calculateChiSquare(Est_temp),
+          "Chi_square_df"= calculateChiSquareDf(Est_temp),
+          "CFI"          = calculateCFI(Est_temp),
+          "GFI"          = calculateGFI(Est_temp),
+          "IFI"          = calculateIFI(Est_temp),
+          "NFI"          = calculateNFI(Est_temp),
+          "NNFI"         = calculateNNFI(Est_temp),
+          "RMSEA"        = calculateRMSEA(Est_temp)
+          # "RMS_theta"    = calculateRMSTheta(Est_temp, .model_implied = FALSE),
+          # "RMS_theta_mi" = calculateRMSTheta(Est_temp, .model_implied = TRUE)
+        ) 
+      } else {
+        c(
+          "dG"           = calculateDG(Est_temp),
+          "SRMR"         = calculateSRMR(Est_temp),
+          "dL"           = calculateDL(Est_temp),
+          "dML"          = calculateDML(Est_temp)
+        ) 
+      }
 
     } else if(status_code != 0 & .handle_inadmissibles == "drop") {
       # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
@@ -290,32 +320,42 @@ testOMF <- function(
   .alpha <- .alpha[order(.alpha)]
   
   ## Goodness of fit measures require the 1 - alpha quantile
-  ref_dist_matrix_good <- ref_dist_matrix[c("GFI", "CFI", "IFI", "NFI", "NNFI"), ,drop = FALSE]
-  ref_dist_matrix_bad <- ref_dist_matrix[c("dG", "dL", "SRMR", "dML", 
-                                           "Chi_square", "Chi_square_df"
-                                           # "RMS_theta", "RMS_theta_mi"
-                                           ), 
-                                         ,drop = FALSE]
-  
-  critical_values_good <- matrixStats::rowQuantiles(ref_dist_matrix_good, 
-                                                    probs = .alpha, drop = FALSE)
-  
-  ## Badness-of-fit indices require the alpha quantile
-  critical_values_bad <- matrixStats::rowQuantiles(ref_dist_matrix_bad, 
-                                                   probs =  1 - .alpha, drop = FALSE)
-  
-  ## Compare critical value and teststatistic.
-  # Dont reject when teststat is >= alpha% quantile
-  decision_good <- teststat[rownames(critical_values_good)] >= critical_values_good # a logical (d x p) matrix with each column
-  # Dont reject when teststat is <= alpha% quantile
-  decision_bad  <- teststat[rownames(critical_values_bad)] <= critical_values_bad # a logical (d x p) matrix with each column
-  # representing the decision for one significance level. 
-  # TRUE  = no evidence against the H0 --> not reject
-  # FALSE = evidence against the H0    --> reject
-  
-  # Combine
-  critical_values <- rbind(critical_values_bad, critical_values_good)
-  decision        <- rbind(decision_bad, decision_good)
+  if(.fit_measures) {
+    ref_dist_matrix_good <- ref_dist_matrix[c("GFI", "CFI", "IFI", "NFI", "NNFI"), ,drop = FALSE]
+    critical_values_good <- matrixStats::rowQuantiles(ref_dist_matrix_good, 
+                                                      probs = .alpha, drop = FALSE)
+    
+    ref_dist_matrix_bad <- ref_dist_matrix[c("dG", "dL", "SRMR", "dML", 
+                                             "Chi_square", "Chi_square_df"
+                                             # "RMS_theta", "RMS_theta_mi"), 
+                                             ), , drop = FALSE]
+    ## Badness-of-fit indices require the alpha quantile
+    critical_values_bad <- matrixStats::rowQuantiles(ref_dist_matrix_bad, 
+                                                     probs =  1 - .alpha, drop = FALSE)
+    
+    ## Compare critical value and teststatistic.
+    # Dont reject when teststat is >= alpha% quantile
+    decision_good <- teststat[rownames(critical_values_good)] >= critical_values_good # a logical (d x p) matrix with each column
+    # Dont reject when teststat is <= alpha% quantile
+    decision_bad  <- teststat[rownames(critical_values_bad)] <= critical_values_bad # a logical (d x p) matrix with each column
+    # representing the decision for one significance level. 
+    # TRUE  = no evidence against the H0 --> not reject
+    # FALSE = evidence against the H0    --> reject
+    
+    # Combine
+    critical_values <- rbind(critical_values_bad, critical_values_good)
+    decision        <- rbind(decision_bad, decision_good)
+  } else {
+    
+    critical_values <- matrixStats::rowQuantiles(ref_dist_matrix, 
+                                                 probs =  1-.alpha, drop = FALSE)
+    
+    ## Compare critical value and teststatistic
+    decision <- teststat < critical_values # a logical (d x p) matrix with each column
+    # representing the decision for one significance level. 
+    # TRUE  = no evidence against the H0 --> not reject
+    # FALSE = evidence against the H0    --> reject
+  }
   
   # Return output
   out <- list(

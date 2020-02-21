@@ -105,6 +105,8 @@
 #'   all available cores will be used. Defaults to "*sequential*".
 #' @param .first_resample A list containing the `.R` resamples based on the original
 #'   data obtained by resamplecSEMResults().
+#' @param .fit_measures Logical. (EXPERIMENTAL) Should additional fit measures 
+#'   be included? Defaults to `FALSE`. 
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .H The (N x J) matrix of construct scores.
@@ -411,6 +413,7 @@ args_default <- function(.choices = FALSE) {
     .E                       = NULL,
     .effect                  = NULL,
     .eval_plan               = c("sequential", "multiprocess"),
+    .fit_measures            = FALSE,
     .first_resample          = NULL,
     .full_output             = TRUE,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
