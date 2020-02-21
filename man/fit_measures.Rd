@@ -12,7 +12,7 @@
 \alias{calculateRMSEA}
 \alias{calculateRMSTheta}
 \alias{calculateSRMR}
-\title{Internal: Fit measures}
+\title{Model fit measures}
 \usage{
 calculateChiSquare(.object)
 
@@ -30,13 +30,13 @@ calculateNNFI(.object)
 
 calculateRMSEA(.object)
 
-calculateRMSTheta(.object, .model_implied = args_default()$.model_implied)
+calculateRMSTheta(.object, .model_implied = FALSE)
 
 calculateSRMR(
   .object = NULL,
   .matrix1 = NULL,
   .matrix2 = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
 )
 }
@@ -54,6 +54,8 @@ reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
+
+\item{...}{Ignored.}
 }
 \value{
 A single numeric value.
@@ -61,9 +63,14 @@ A single numeric value.
 \description{
 Calculate fit measures.
 }
+\details{
+See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#fit_indices}{Fit indices}
+section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+for details on the implementation.
+}
 \section{Functions}{
 \itemize{
-\item \code{calculateChiSquare}: The ChiSquare statistic.
+\item \code{calculateChiSquare}: The chi square statistic.
 
 \item \code{calculateChiSquareDf}: The ChiSquare statistic divided by its degrees of freedom.
 
@@ -84,4 +91,3 @@ Calculate fit measures.
 \item \code{calculateSRMR}: The standardized root mean square residual (SRMR).
 }}
 
-\keyword{internal}

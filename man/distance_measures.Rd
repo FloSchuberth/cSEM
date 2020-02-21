@@ -5,13 +5,13 @@
 \alias{calculateDG}
 \alias{calculateDL}
 \alias{calculateDML}
-\title{Internal: Calculate difference between S and Sigma_hat}
+\title{Calculate difference between S and Sigma_hat}
 \usage{
 calculateDG(
   .object = NULL,
   .matrix1 = NULL,
   .matrix2 = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
 )
 
@@ -19,7 +19,7 @@ calculateDL(
   .object = NULL,
   .matrix1 = NULL,
   .matrix2 = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
 )
 
@@ -27,7 +27,7 @@ calculateDML(
   .object = NULL,
   .matrix1 = NULL,
   .matrix2 = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
 )
 }
@@ -65,4 +65,3 @@ If A and B are supplied \code{.object} is ignored.
 \item \code{calculateDML}: The distance measure (fit function) used by ML
 }}
 
-\keyword{internal}

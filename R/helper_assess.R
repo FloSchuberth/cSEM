@@ -124,7 +124,8 @@ calculateDf <- function(
     if(.null_model) {
       # The degrees of freedom of the null model are identical to 
       # the number of non-redundant elements of S (since there is nothing to
-      # estimate. Everything is set to 0 a priori)
+      # estimate. Everything, except for the main diagonal element, is set to 0 a 
+      # priori).
       return(vS)
     }
     
@@ -136,7 +137,8 @@ calculateDf <- function(
       # Correlations between endogenous constructs
       names_cor_endo <- intersect(x2$cons_endo, rownames(x2$cor_specified))
       if(length(names_cor_endo) != 0) {
-        n_cor_endo <- sum(lower.tri(x2$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE]))
+        n_cor_endo <- sum(x2$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE]
+                          [lower.tri(x2$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE])])
       } else {
         n_cor_endo <- 0
       }
@@ -212,7 +214,8 @@ calculateDf <- function(
       # Correlations between endogenous constructs
       names_cor_endo <- intersect(x22$cons_endo, rownames(x22$cor_specified))
       if(!is.null(names_cor_endo)) {
-        n_cor_endo <- sum(lower.tri(x22$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE]))
+        n_cor_endo <- sum(x22$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE]
+                          [lower.tri(x22$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE])])
       } else {
         n_cor_endo <- 0
       }
@@ -233,8 +236,8 @@ calculateDf <- function(
     for(j in names_constructs) {
       if(construct_order[j] == "Second order") {
         if(x22$construct_type[j] == "Composite") {
-            ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
-            n_weights <- sum(x22$measurement[j, ]) - 1 
+          ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
+          n_weights <- sum(x22$measurement[j, ]) - 1 
           
           ## Number of free non-redundant off-diagonal element of each intra-block
           #+ covariance matrix
@@ -730,7 +733,7 @@ calculateHTMT <- function(
 }
 
 
-#' Internal: Calculate difference between S and Sigma_hat
+#' Calculate difference between S and Sigma_hat
 #'
 #' Calculate the difference between the empirical (S) 
 #' and the model-implied indicator variance-covariance matrix (Sigma_hat)
@@ -745,17 +748,17 @@ calculateHTMT <- function(
 #' @inheritParams csem_arguments
 #' @param ... Ignored.
 #'
-#' @keywords internal
 #' @name distance_measures
 NULL
 
 #' @describeIn distance_measures The geodesic distance (dG).
+#' @export
 
 calculateDG <- function(
   .object    = NULL, 
   .matrix1   = NULL,
   .matrix2   = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
   ){
 
@@ -790,12 +793,13 @@ calculateDG <- function(
 }
 
 #' @describeIn distance_measures The squared Euclidian distance
+#' @export
 
 calculateDL <- function(
   .object    = NULL, 
   .matrix1   = NULL,
   .matrix2   = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
   ){
   
@@ -826,12 +830,13 @@ calculateDL <- function(
 }
 
 #' @describeIn  distance_measures The distance measure (fit function) used by ML
+#' @export
 
 calculateDML <- function(
   .object    = NULL, 
   .matrix1   = NULL,
   .matrix2   = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
   ){
   
@@ -863,19 +868,24 @@ calculateDML <- function(
   sum(diag(S %*% solve(Sigma_hat))) - log(det(S%*%solve(Sigma_hat))) - p
 }
 
-#' Internal: Fit measures
+#' Model fit measures
 #' 
 #' Calculate fit measures.
+#' 
+#' See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#fit_indices}{Fit indices}
+#' section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+#' for details on the implementation.
 #' 
 #' @return A single numeric value.
 #' 
 #' @inheritParams csem_arguments
-#'
-#' @keywords internal
+#' @param ... Ignored.
+#' 
 #' @name fit_measures 
 NULL
 
-#' @describeIn fit_measures The ChiSquare statistic.
+#' @describeIn fit_measures The chi square statistic.
+#' @export
 
 calculateChiSquare <- function(.object) {
   if(inherits(.object, "cSEMResults_multi")) {
@@ -899,6 +909,7 @@ calculateChiSquare <- function(.object) {
 }
 
 #' @describeIn fit_measures The ChiSquare statistic divided by its degrees of freedom.
+#' @export
 
 calculateChiSquareDf <- function(.object) {
   if(inherits(.object, "cSEMResults_multi")) {
@@ -922,6 +933,7 @@ calculateChiSquareDf <- function(.object) {
 }
 
 #' @describeIn fit_measures The comparative fit index (CFI).
+#' @export
 
 calculateCFI <- function(.object) {
   
@@ -956,6 +968,7 @@ calculateCFI <- function(.object) {
 }
 
 #' @describeIn fit_measures The goodness of fit index (GFI).
+#' @export
 
 calculateGFI <- function(.object) {
   
@@ -981,6 +994,7 @@ calculateGFI <- function(.object) {
 }
 
 #' @describeIn fit_measures The incremental fit index (IFI).
+#' @export
 
 calculateIFI <- function(.object) {
   
@@ -1013,6 +1027,7 @@ calculateIFI <- function(.object) {
 }
 
 #' @describeIn fit_measures The normed fit index (NFI).
+#' @export
 
 calculateNFI <- function(.object) {
   
@@ -1042,6 +1057,7 @@ calculateNFI <- function(.object) {
 }
 
 #' @describeIn fit_measures The non-normed fit index (NNFI). Also called the Tucker-Lewis index (TLI).
+#' @export
 
 calculateNNFI <- function(.object) {
   
@@ -1077,6 +1093,7 @@ calculateNNFI <- function(.object) {
 }
 
 #' @describeIn fit_measures The root mean square error of approximation (RMSEA).
+#' @export
 
 calculateRMSEA <- function(.object) {
   
@@ -1103,10 +1120,11 @@ calculateRMSEA <- function(.object) {
 }
 
 #' @describeIn fit_measures The root mean squared residual covariance matrix of the outer model residuals (RMS theta).
+#' @export
 
 calculateRMSTheta <- function(
   .object, 
-  .model_implied = args_default()$.model_implied
+  .model_implied = FALSE
   ) {
   
   if(inherits(.object, "cSEMResults_multi")) {
@@ -1152,12 +1170,13 @@ calculateRMSTheta <- function(
 }
 
 #' @describeIn fit_measures The standardized root mean square residual (SRMR).
+#' @export
 
 calculateSRMR <- function(
   .object    = NULL, 
   .matrix1   = NULL,
   .matrix2   = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
 ) {
 
