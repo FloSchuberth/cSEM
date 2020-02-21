@@ -514,7 +514,7 @@ calculateRhoT <- function(
 
 
 
-#' Internal: HTMT
+#' HTMT
 #'
 #' Compute the heterotrait-monotrait ratio of correlations (HTMT) based on 
 #' \insertCite{Henseler2015;textual}{cSEM}.
@@ -524,33 +524,48 @@ calculateRhoT <- function(
 #'
 #' The HTMT is used to assess discriminant validity.
 #' 
-#' The function is only applicable to objects inheriting class `cSEMResults_default`.
-#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
-#' 
 #' @usage calculateHTMT(
-#'  .object              = NULL,
-#'  .absolute            = TRUE,
-#'  .only_common_factors = TRUE
+#'  .object               = NULL,
+#'  .absolute             = TRUE,
+#'  .alpha                = 0.5,
+#'  .handle_inadmissibles = c("drop", "ignore", "replace"),
+#'  .inference            = TRUE,
+#'  .only_common_factors  = TRUE,
+#'  .R                    = 499,
+#'  .seed                 = NULL
 #' )
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return A lower tringular matrix of HTMT values.
+#' @return A lower tringular matrix of HTMT values. If `.inference = TRUE`
+#'   the upper tringular part is the .alpha%-quantile of the HTMT's bootstrap
+#'   distribution.
 #' 
 #' @seealso [assess()], [csem], [cSEMResults]
-#' @keywords internal
+#' @export
 
 calculateHTMT <- function(
-  .object              = NULL,
-  .absolute            = TRUE,
-  .only_common_factors = TRUE
+  .object               = NULL,
+  .absolute             = TRUE,
+  .alpha                = 0.5,
+  .handle_inadmissibles = c("drop", "ignore", "replace"),
+  .inference            = TRUE,
+  .only_common_factors  = TRUE,
+  .R                    = 499,
+  .seed                 = NULL
 ){
-  # Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  if(inherits(.object, "cSEMResults_multi")) {
+    
+  } else if(inherits(.object, "cSEMResults_default")) {
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+
+  } else {
+    stop2(
+      "The following error occured in the calculateHTMT() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
   }
-  
   
   ## Get relevant quantities
   m <- .object$Information$Model
@@ -600,6 +615,30 @@ calculateHTMT <- function(
   
   if(.absolute) {
     out <- abs(out)
+  }
+  
+  if(.inference) {
+    out_resample <- resamplecSEMResults(.object, .user_funs = list("HTMT" = calculateHTMT), 
+                        .absolute = .absolute,
+                        .handle_inadmissibles = .handle_inadmissibles,
+                        .inference = FALSE,
+                        .only_common_factors = .only_common_factors,
+                        .R = .R,
+                        .seed = .seed)
+    out_htmt <- out_resample$Estimates$Estimates_resample$Estimates1$HTMT
+    
+    quants <- matrixStats::colQuantiles(out_htmt$Resampled, probs = .alpha)
+    
+    ## Reassemble matrix
+    htmt_quantiles <- out
+    htmt_quantiles[] <- quants
+    
+    htmt_inference <- out + t(htmt_quantiles)
+
+    ## print test
+    # testt <- round(htmt_inference, 4)
+    # diag(testt) <- " "
+    return(htmt_inference)
   }
   # Return
   return(out)

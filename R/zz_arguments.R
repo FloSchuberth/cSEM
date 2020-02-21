@@ -120,6 +120,7 @@
 #' @param .id Character string or integer. A character string giving the name or 
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
+#' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
 #'   equation whose explanatory variables are endogenous. The vectors
@@ -336,11 +337,14 @@ args_csem_dotdotdot <- function(
 #' list shows which argument is passed to which (internal) function:
 #' \describe{
 #' \item{.absolute}{Accepted by/Passed down to: [calculateHTMT()]}
-#' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()]}
+#' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()] and [calculateHTMT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
+#' \item{.handle_inadmissibles}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.null_model}{Accepted by/Passed down to: [calculateDf()]}
+#' \item{.R}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.saturated}{Accepted by/Passed down to: [calculateSRMR()], 
 #'   [calculateDG()], [calculateDL()], [calculateDML()]and subsequently [fit()].}
+#' \item{.seed}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.type_vcv}{Accepted by/Passed down to: [calculateSRMR()], 
 #'   [calculateDG()], [calculateDL()], [calculateDML()] and subsequently [fit()].}
 #' }
@@ -353,8 +357,12 @@ args_assess_dotdotdot <- function(
   .absolute            = TRUE,
   .alpha               = 0.05,
   .closed_form_ci      = FALSE,
+  .handle_inadmissibles= c("drop", "ignore", "replace"),
+  .inference           = FALSE,
   .null_model          = FALSE,
+  .R                   = 499,
   .saturated           = FALSE,
+  .seed                = NULL,
   .type_vcv            = "indicator"
 ) {NULL}
   
@@ -416,6 +424,7 @@ args_default <- function(.choices = FALSE) {
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
+    .inference               = FALSE,
     .instruments             = NULL,
     .listMatrices            = NULL, 
     .matrix1                 = NULL,

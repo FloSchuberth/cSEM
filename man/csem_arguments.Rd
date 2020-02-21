@@ -158,6 +158,8 @@ computing time. Defaults to "\emph{drop}".}
 an integer of the position of the column of \code{.data} whose levels are used
 to split \code{.data} into groups. Defaults to \code{NULL}.}
 
+\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
+
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
 equation whose explanatory variables are endogenous. The vectors

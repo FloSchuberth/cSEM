@@ -2,12 +2,17 @@
 % Please edit documentation in R/helper_assess.R
 \name{calculateHTMT}
 \alias{calculateHTMT}
-\title{Internal: HTMT}
+\title{HTMT}
 \usage{
 calculateHTMT(
- .object              = NULL,
- .absolute            = TRUE,
- .only_common_factors = TRUE
+ .object               = NULL,
+ .absolute             = TRUE,
+ .alpha                = 0.5,
+ .handle_inadmissibles = c("drop", "ignore", "replace"),
+ .inference            = TRUE,
+ .only_common_factors  = TRUE,
+ .R                    = 499,
+ .seed                 = NULL
 )
 }
 \arguments{
@@ -16,13 +21,37 @@ calculateHTMT(
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
 Defaults to \code{TRUE} .}
 
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
+
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications/resamples yielding an inadmissible result will be dropped
+(i.e. the number of results returned will potentially be less than \code{.R}).
+For "\emph{ignore}" all results are returned even if all or some of the replications
+yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
+For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
+Depending on the frequency of inadmissible solutions this may significantly increase
+computing time. Defaults to "\emph{drop}".}
+
+\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
+
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality critera:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to \code{TRUE}.}
+
+\item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
+
+\item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 }
 \value{
-A lower tringular matrix of HTMT values.
+A lower tringular matrix of HTMT values. If \code{.inference = TRUE}
+the upper tringular part is the .alpha\%-quantile of the HTMT's bootstrap
+distribution.
 }
 \description{
 Compute the heterotrait-monotrait ratio of correlations (HTMT) based on
@@ -33,11 +62,7 @@ Similarly to the Cronbach's alpha, the HTMT is a consistent estimator for the
 construct correlations in case of tau equivalent measurement models.
 
 The HTMT is used to assess discriminant validity.
-
-The function is only applicable to objects inheriting class \code{cSEMResults_default}.
-For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
 }
 \seealso{
 \code{\link[=assess]{assess()}}, \link{csem}, \link{cSEMResults}
 }
-\keyword{internal}
