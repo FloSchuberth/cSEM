@@ -26,7 +26,7 @@ Defaults to \code{0.05}.}
 \item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
 
 \item{.n_steps}{Integer. A numeric value giving the number of steps, e.g., in
-floodlight ana;ysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to \code{100}.}
+floodlight analysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to \code{100}.}
 }
 \value{
 A list of class \code{cSEMSurface} with a corresponding method for \code{plot()}.

@@ -1,5 +1,9 @@
 # cSEM 0.1.0:9000
 
+- Breaking: Rename argument in `doFloodlightAnalysis()` (#343)
+
+- Implement surface analysis via `doSurfaceAnalysis()` (#349)
+
 - Implement degrees of freedom calculation for second-order constructs. The 
   corresponding function `calculateDf()` is now exported and works for 
   all types of `cSEMResults` objects. (partly #357)

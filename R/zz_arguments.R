@@ -148,7 +148,7 @@
 #'   Only used internally. 
 #' @param .n Integer. The number of observations of the original data.
 #' @param .n_steps Integer. A numeric value giving the number of steps, e.g., in 
-#'  floodlight ana;ysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to `100`.
+#'  floodlight analysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to `100`.
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.

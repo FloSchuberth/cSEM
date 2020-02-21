@@ -199,7 +199,7 @@ Only used internally.}
 \item{.n}{Integer. The number of observations of the original data.}
 
 \item{.n_steps}{Integer. A numeric value giving the number of steps, e.g., in
-floodlight ana;ysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to \code{100}.}
+floodlight analysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to \code{100}.}
 
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
