@@ -1,5 +1,21 @@
 # cSEM 0.1.0:9000
 
+- Implement degrees of freedom calculation for second-order constructs. The 
+  corresponding function `calculateDf()` is now exported and works for 
+  all types of `cSEMResults` objects. (partly #357)
+
+- Export all fit and distance functions. They now work for 
+  all types of `cSEMResults` objects. (partly #357)
+
+- Bug fix: `csem()` produced an error when the structural model contains only
+  second-order constructs (#366)
+  
+- `calculatef2()` is now exported and accepts all `cSEMResults` objects. (#363)
+
+- Add `.fit_measures` argument to `testOMF()`. Now other fit measures such as
+  the RMSEA or the GFI can be used as the test statistic. This is a rather
+  experimental feature. 
+
 - Add more test for `testMICOM()` and `predict()` (related to #355)
 
 - Fix bug in `testMICOM()`. Function produced an error if the data set provided

@@ -5,13 +5,13 @@
 \alias{calculateDG}
 \alias{calculateDL}
 \alias{calculateDML}
-\title{Internal: Calculate difference between S and Sigma_hat}
+\title{Calculate difference between S and Sigma_hat}
 \usage{
 calculateDG(
   .object = NULL,
   .matrix1 = NULL,
   .matrix2 = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
 )
 
@@ -19,7 +19,7 @@ calculateDL(
   .object = NULL,
   .matrix1 = NULL,
   .matrix2 = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
 )
 
@@ -27,7 +27,7 @@ calculateDML(
   .object = NULL,
   .matrix1 = NULL,
   .matrix2 = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
 )
 }
@@ -52,13 +52,9 @@ and the model-implied indicator variance-covariance matrix (Sigma_hat)
 using different distance measures.
 }
 \details{
-The functions are only applicable to objects inheriting class \code{cSEMResults_default}.
-or \code{cSEMResults_2ndorder}. For objects of class \code{cSEMResults_multi}
-use \code{lapply(.object, calculateXX())}.
-
-The geodesic and the squared Euclidian distance may also be
-computed for any two matrices A and B by supplying A and B directly via the
-\code{.matrix1} and \code{.matrix2} arguments. If A and B are supplied \code{.object} is ignored.
+The distances may also be computed for any two matrices A and B by supplying
+A and B directly via the \code{.matrix1} and \code{.matrix2} arguments.
+If A and B are supplied \code{.object} is ignored.
 }
 \section{Functions}{
 \itemize{
@@ -66,7 +62,6 @@ computed for any two matrices A and B by supplying A and B directly via the
 
 \item \code{calculateDL}: The squared Euclidian distance
 
-\item \code{calculateDML}: The distance measure used by FIML
+\item \code{calculateDML}: The distance measure (fit function) used by ML
 }}
 
-\keyword{internal}
