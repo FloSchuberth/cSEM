@@ -217,7 +217,7 @@ print.cSEMAssess <- function(x, ...) {
   if(any(names(x) %in% c("Fornell-Larcker", "HTMT"))) {
     cat2("\n\n", rule2("Validity assessment"))
     if(any(names(x) == "HTMT") && !is.null(x$HTMT)) {
-      cat2("\n\n\tHeterotrait-montrait ratio of correlation matrix (HTMT matrix)\n\n")
+      cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n")
       print(x$HTMT)
     }
     
