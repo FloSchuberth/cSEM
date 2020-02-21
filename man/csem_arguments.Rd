@@ -105,6 +105,8 @@ of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or
 "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
 or a mix of several types.}
 
+\item{.dependent}{Character string. The name of the dependent variable. Defaults to \code{NULL}.}
+
 \item{.disattenuate}{Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
@@ -161,6 +163,8 @@ computing time. Defaults to "\emph{drop}".}
 an integer of the position of the column of \code{.data} whose levels are used
 to split \code{.data} into groups. Defaults to \code{NULL}.}
 
+\item{.independent}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
+
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
@@ -187,13 +191,15 @@ model-implied construct correlation matrix (\code{TRUE}) or the construct correl
 based on V(eta) = WSW' divided by the square root of the respective
 reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
 
+\item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
+
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
 
 \item{.n}{Integer. The number of observations of the original data.}
 
-\item{.n_spotlights}{Integer. A numeric value giving the number of spotlights (= values of .z)
-between min(.z) and max(.z) to use. Defaults to \code{100}.}
+\item{.n_steps}{Integer. A numeric value giving the number of steps, e.g., in
+floodlight analysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to \code{100}.}
 
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
@@ -369,16 +375,10 @@ Defaults to \code{FALSE}.}
 \item{.weighted}{Logical. Should estimation be based on a score that uses
 the weights of the weight approach used to obtain \code{.object}?. Defaults to \code{FALSE}.}
 
-\item{.x}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
-
 \item{.X}{A matrix of processed data (scaled, cleaned and ordered).}
 
 \item{.X_cleaned}{A data.frame of processed data (cleaned and ordered). Note: \code{X_cleaned}
 may not be scaled!}
-
-\item{.y}{Character string. The name of the dependent variable. Defaults to \code{NULL}.}
-
-\item{.z}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
 }
 \description{
 An alphabetical list of all arguments used by functions of the \code{cSEM} package

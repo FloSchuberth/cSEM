@@ -68,6 +68,7 @@ Suggests:
     knitr,
     nnls,
     prettydoc,
+    plotly,
     rmarkdown,
     listviewer,
     testthat,

@@ -2,12 +2,15 @@
 % Please edit documentation in R/helper_assess.R
 \name{calculateHTMT}
 \alias{calculateHTMT}
-\title{Internal: HTMT}
+\title{HTMT}
 \usage{
 calculateHTMT(
  .object              = NULL,
  .absolute            = TRUE,
- .only_common_factors = TRUE
+ .alpha               = 0.5,
+ .inference           = TRUE,
+ .only_common_factors = TRUE,
+ .R                   = 499
 )
 }
 \arguments{
@@ -16,10 +19,15 @@ calculateHTMT(
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
 Defaults to \code{TRUE} .}
 
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
+
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality critera:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to \code{TRUE}.}
+
+\item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 }
 \value{
 A lower tringular matrix of HTMT values.
@@ -33,9 +41,6 @@ Similarly to the Cronbach's alpha, the HTMT is a consistent estimator for the
 construct correlations in case of tau equivalent measurement models.
 
 The HTMT is used to assess discriminant validity.
-
-The function is only applicable to objects inheriting class \code{cSEMResults_default}.
-For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
 }
 \seealso{
 \code{\link[=assess]{assess()}}, \link{csem}, \link{cSEMResults}

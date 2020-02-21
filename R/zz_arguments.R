@@ -81,6 +81,7 @@
 #'   of the data provided are: "`logical`", "`numeric`" ("`double`" or "`integer`"), 
 #'   "`factor`" ("`ordered`" and/or "`unordered`"), "`character`" (converted to factor),
 #'   or a mix of several types.
+#' @param .dependent Character string. The name of the dependent variable. Defaults to `NULL`. 
 #' @param .disattenuate Logical. Should composite/proxy correlations 
 #'   be disattenuated to yield consistent loadings and path estimates if at least
 #'   one of the construct is modeled as a common factor? Defaults to `TRUE`.
@@ -122,6 +123,7 @@
 #' @param .id Character string or integer. A character string giving the name or 
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
+#' @param .independent Character string. The name of the independent variable. Defaults to `NULL`.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
 #'   equation whose explanatory variables are endogenous. The vectors
@@ -141,11 +143,12 @@
 #'   model-implied construct correlation matrix (`TRUE`) or the construct correlation matrix
 #'   based on V(eta) = WSW' divided by the square root of the respective 
 #'   reliabilities (`FALSE`). Defaults to `FALSE`.
+#' @param .moderator Character string. The name of the moderator variable. Defaults to `NULL`. 
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .n Integer. The number of observations of the original data.
-#' @param .n_spotlights Integer. A numeric value giving the number of spotlights (= values of .z) 
-#'   between min(.z) and max(.z) to use. Defaults to `100`.
+#' @param .n_steps Integer. A numeric value giving the number of steps, e.g., in 
+#'  floodlight analysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to `100`.
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
@@ -272,12 +275,9 @@
 #' @param .W_old A (J x K) matrix of weights.
 #' @param .weighted Logical. Should estimation be based on a score that uses 
 #'   the weights of the weight approach used to obtain `.object`?. Defaults to `FALSE`.
-#' @param .x Character string. The name of the moderator variable. Defaults to `NULL`. 
 #' @param .X A matrix of processed data (scaled, cleaned and ordered).
 #' @param .X_cleaned A data.frame of processed data (cleaned and ordered). Note: `X_cleaned`
 #'   may not be scaled!
-#' @param .y Character string. The name of the dependent variable. Defaults to `NULL`. 
-#' @param .z Character string. The name of the independent variable. Defaults to `NULL`.
 #'
 #' @name csem_arguments
 #' @aliases cSEMArguments
@@ -427,7 +427,7 @@ args_default <- function(.choices = FALSE) {
     .model                   = NULL,
     .model_implied           = FALSE,
     .modes                   = NULL,
-    .n_spotlights            = 100,
+    .n_steps                 = 100,
     .normality               = FALSE,
     .nr_comparisons          = NULL,
     .null_model              = FALSE,
