@@ -164,10 +164,10 @@ predict <- function(
       
       dat_train <- args$.data[, indicators]
       
-      if(length(setdiff(colnames(.test_data), colnames(dat_train))) > 0) {
-        stop2("The following error occured in the `predict()` function:\n",
-              "Some variable names in the test data are not part of the training data.")
-      }
+      # if(length(setdiff(colnames(.test_data), colnames(dat_train))) > 0) {
+      #   stop2("The following error occured in the `predict()` function:\n",
+      #         "Some variable names in the test data are not part of the training data.")
+      # }
       # Warn if .test_data doesnt have row names
       if(is.null(rownames(.test_data))) {
         warning2(
@@ -192,6 +192,10 @@ predict <- function(
           .R               = 1,
           .seed            = NULL
         )[[1]]
+        
+        ## Clean data
+        dat <- lapply(dat, processData, .model = .object$Information$Model)
+        
         ii <- length(dat)
       } else {
         ii <- 1

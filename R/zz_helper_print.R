@@ -48,7 +48,7 @@ printSummarizeOverview <- function(.summarize_object) {
   }
 
   cat2(
-    col_align("\n\tSecond order approach", 35), "= ", x$Approach_2ndorder
+    col_align("\n\tSecond-order approach", 35), "= ", x$Approach_2ndorder
   )
   cat2(
     col_align("\n\tType of path model", 35), "= ", x$Model$model_type,

@@ -8,6 +8,9 @@
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
+\item{.absolute}{Logical. Should the absolute HTMT values be returned?
+Defaults to \code{TRUE} .}
+
 \item{.approach_gcca}{Character string. The Kettenring approach to use for GCCA. One of
 "\emph{SUMCORR}", "\emph{MAXVAR}", "\emph{SSQCORR}", "\emph{MINVAR}" or "\emph{GENVAR}". Defaults to
 "\emph{SUMCORR}".}
@@ -137,6 +140,9 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
 data obtained by resamplecSEMResults().}
+
+\item{.fit_measures}{Logical. (EXPERIMENTAL) Should additional fit measures
+be included? Defaults to \code{FALSE}.}
 
 \item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}

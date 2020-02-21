@@ -1,18 +1,53 @@
 # cSEM 0.1.0:9000
 
+- Implement degrees of freedom calculation for second-order constructs. The 
+  corresponding function `calculateDf()` is now exported and works for 
+  all types of `cSEMResults` objects. (partly #357)
+
+- Export all fit and distance functions. They now work for 
+  all types of `cSEMResults` objects. (partly #357)
+
+- Bug fix: `csem()` produced an error when the structural model contains only
+  second-order constructs (#366)
+  
+- `calculatef2()` is now exported and accepts all `cSEMResults` objects. (#363)
+
+- Add `.fit_measures` argument to `testOMF()`. Now other fit measures such as
+  the RMSEA or the GFI can be used as the test statistic. This is a rather
+  experimental feature. 
+
+- Add more test for `testMICOM()` and `predict()` (related to #355)
+
+- Fix bug in `testMICOM()`. Function produced an error if the data set provided
+  contained more columns than indicators used in the model used for 
+  `csem()`. (#355)
+  
+- Fixed error in `predict()` when the dataset used to obtain `.object` contained 
+  a character column. (#345)
+
+- When calculating the HTMT via `assess()` the geometric mean of the average 
+  monotrait−heteromethod correlation construct eta_i with the average 
+  monotrait−heteromethod correlation of other constructs can be negative. 
+  NaNs produced are produced in this case and the HTMT was not printed. 
+  Added a warning and forced printing the NaNs as well. (#346)
+  
+- Fix bug in `testMICOM()`. Function produced an error if the data set provided
+  contained an id-column even if the id-column was correctly supplied to 
+  `csem()`. (#344, #338)
+  
 - Fix bug in `doFloodlightAnalysis()`. There was an internal bug. Earlier versions
   returned the wrong direct effect. If you have used `doFloodlightAnalysis()`
   from cSEM v. 0.1.0 results are likely wrong.
 
 - Add new function `getConstructScores()`. The function returns the standardized
-  or unstandardized construct scores. Requires a `cSEMResults` object as input.
+  or unstandardized construct scores. Requires a `cSEMResults` object as input. (#340)
 
 - Export plot method for `cSEMFloodlight` objects.
 
 - Update documentation for `predict()`.
 
 - Integrate and document `cSEMPredict` method for generic function `plot()`. Now 
-  users may call `plot()` on an object created by `predict()`.
+  users may call `plot()` on an object created by `predict()`. (#337)
 
 - Add the density of the residuals as plot to `plot.cSEMPredict()`. (#337)
 

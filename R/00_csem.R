@@ -423,12 +423,21 @@ csem <- function(
     # (e.g. for permutation and permutation based tests).
     # By convention the original, pooled dataset is therefore added to the first 
     # element of "out" (= results for the first group/dataset)! 
-    # If ".data" was a list of data they are combined to on pooled dataset
+    # If ".data" was a list of data they are combined to one pooled dataset
     # If ".data" was originally pooled and subsequently split by ".id"
     # The original unsplit data is returned.
     
     out[[1]]$Information$Data_pooled <- if(inherits(.data, "list")) {
-      data_pooled <- do.call(rbind, .data)
+      # Clean and order columns according to the first data set
+      data_cleaned <- lapply(.data, function(x) {
+        # Order data according to the ordering of the measurement model; delete
+        # all columns that are not needed
+        x <- x[, setdiff(colnames(model_original$measurement), model_original$vars_attached_to_2nd)]
+        x
+      })
+      
+      # Combine
+      data_pooled <- do.call(rbind, data_cleaned)
       data_pooled <- as.data.frame(data_pooled)
       # data_pooled[, "id"] <- rep(names(out), times = sapply(.data, nrow))
       data_pooled

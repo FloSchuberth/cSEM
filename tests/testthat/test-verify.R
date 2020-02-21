@@ -25,29 +25,29 @@ test_that("Verify work for all cSEMResults classes and subclasses", {
                    "cSEMVerify")
   expect_identical(class(verify(res_multi_linear)), 
                    c("cSEMVerify", "cSEMVerify_multi"))
-  expect_identical(class(verify(res_multi_linear$Data_1)), 
+  expect_identical(class(verify(res_multi_linear[[1]])), 
                    "cSEMVerify")
   expect_identical(class(verify(res_multi_nonlinear)), 
                    c("cSEMVerify", "cSEMVerify_multi"))
-  expect_identical(class(verify(res_multi_nonlinear$Data_1)), 
+  expect_identical(class(verify(res_multi_nonlinear[[1]])), 
                    "cSEMVerify")
-  expect_identical(class(verify(res_multi_2ndorder$Data_1)), 
+  expect_identical(class(verify(res_multi_2ndorder[[1]])), 
                    c("cSEMVerify", "cSEMVerify_2ndorder"))
-  expect_identical(class(verify(res_multi_2ndorder$Data_1$First_stage)), 
+  expect_identical(class(verify(res_multi_2ndorder[[1]]$First_stage)), 
                    "cSEMVerify")
-  expect_identical(class(verify(res_multi_2ndorder$Data_1$Second_stage)), 
+  expect_identical(class(verify(res_multi_2ndorder[[1]]$Second_stage)), 
                    "cSEMVerify")
   expect_identical(class(verify(res_multi_linear_boot)), 
                    c("cSEMVerify", "cSEMVerify_multi"))
-  expect_identical(class(verify(res_multi_linear_boot$Data_1)), 
+  expect_identical(class(verify(res_multi_linear_boot[[1]])), 
                    "cSEMVerify")
-  expect_identical(class(verify(res_multi_nonlinear_boot$Data_1)), 
+  expect_identical(class(verify(res_multi_nonlinear_boot[[1]])), 
                    "cSEMVerify")
-  expect_identical(class(verify(res_multi_2ndorder_boot$Data_1)), 
+  expect_identical(class(verify(res_multi_2ndorder_boot[[1]])), 
                    c("cSEMVerify", "cSEMVerify_2ndorder"))
-  expect_identical(class(verify(res_multi_2ndorder_boot$Data_1$First_stage)), 
+  expect_identical(class(verify(res_multi_2ndorder_boot[[1]]$First_stage)), 
                    "cSEMVerify")
-  expect_identical(class(verify(res_multi_2ndorder_boot$Data_1$Second_stage)), 
+  expect_identical(class(verify(res_multi_2ndorder_boot[[1]]$Second_stage)), 
                    "cSEMVerify")
 })
 

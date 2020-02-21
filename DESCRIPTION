@@ -2,7 +2,7 @@ Package: cSEM
 Title: Composite-Based Structural Equation Modeling
 Version: 0.1.0.9000
 Date: 2020-01-15
-Authors@R: c(person(given = "Manuel", family = "Rademaker",
+Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut", "cre"),
                     email = "manuel.rademaker@uni-wuerzburg.de",
                     comment = c(ORCID = "0000-0002-8902-3561")),

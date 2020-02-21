@@ -29,6 +29,7 @@ for(i in DGPs) {
       testOMF(
         .object = res,
         .R      = 10,
+        .fit_measures = TRUE,
         .alpha  = c(0.1, 0.05),
         .handle_inadmissibles = "replace", # to make sure there are enough admissibles
         .seed   = 2010

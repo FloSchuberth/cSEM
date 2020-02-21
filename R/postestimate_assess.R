@@ -99,8 +99,8 @@
 #'   for models containing constructs modeled as composites is still an
 #'   open research question. Also note that fit indices are not tests in a 
 #'   hypothesis testing sense and
-#'   decisions based on common cut-offs proposed in the literature should be
-#'   considered with caution!. Calculation is done by [calculateChiSquare()],
+#'   decisions based on common one-size-fits-all cut-offs proposed in the literature 
+#'   suffer from serious statistical drawbacks. Calculation is done by [calculateChiSquare()],
 #'   [calculateChiSquareDf()], [calculateCFI()], 
 #'   [calculateGFI()], [calculateIFI()], [calculateNFI()], [calculateNNFI()], 
 #'   [calculateRMSEA()], [calculateRMSTheta()] and [calculateSRMR()].}

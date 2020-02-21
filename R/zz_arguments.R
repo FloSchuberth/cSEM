@@ -8,6 +8,8 @@
 #'
 #' @param .alpha An integer or a numeric vector of significance levels. 
 #'   Defaults to `0.05`.
+#' @param .absolute Logical. Should the absolute HTMT values be returned? 
+#'   Defaults to `TRUE` .
 #' @param .approach_gcca Character string. The Kettenring approach to use for GCCA. One of 
 #' "*SUMCORR*", "*MAXVAR*", "*SSQCORR*", "*MINVAR*" or "*GENVAR*". Defaults to
 #' "*SUMCORR*".
@@ -104,6 +106,8 @@
 #'   all available cores will be used. Defaults to "*sequential*".
 #' @param .first_resample A list containing the `.R` resamples based on the original
 #'   data obtained by resamplecSEMResults().
+#' @param .fit_measures Logical. (EXPERIMENTAL) Should additional fit measures 
+#'   be included? Defaults to `FALSE`. 
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .H The (N x J) matrix of construct scores.
@@ -333,6 +337,7 @@ args_csem_dotdotdot <- function(
 #' accepted by a subset of the functions called by `assess()`. The following
 #' list shows which argument is passed to which (internal) function:
 #' \describe{
+#' \item{.absolute}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
 #' \item{.null_model}{Accepted by/Passed down to: [calculateDf()]}
@@ -347,6 +352,7 @@ args_csem_dotdotdot <- function(
 #' @keywords internal
 
 args_assess_dotdotdot <- function(
+  .absolute            = TRUE,
   .alpha               = 0.05,
   .closed_form_ci      = FALSE,
   .null_model          = FALSE,
@@ -376,6 +382,7 @@ args_default <- function(.choices = FALSE) {
   
   args <- list(
     .alpha                   = 0.05,
+    .absolute                = TRUE,
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("2stage", "mixed"),
     .approach_alpha_adjust   = c("none", "bonferroni"),
@@ -406,6 +413,7 @@ args_default <- function(.choices = FALSE) {
     .E                       = NULL,
     .effect                  = NULL,
     .eval_plan               = c("sequential", "multiprocess"),
+    .fit_measures            = FALSE,
     .first_resample          = NULL,
     .full_output             = TRUE,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
