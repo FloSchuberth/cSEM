@@ -1,7 +1,7 @@
 #' Do a floodlight analysis
 #'
-#' Calculate the effect of an independent variable (z) on a dependent variable
-#' (y) conditional on the values of a (continous) moderator variable (x) 
+#' Calculate the effect of an independent variable on a dependent variable
+#' conditional on the values of a (continous) moderator variable
 #' to perform a floodlight analysis \insertCite{Spiller2013}{cSEM}. Moreover, 
 #' the Johnson-Neyman points are calculated, i.e. the value(s) of x for which 
 #' lower or upper boundary of the confidence interval of the effect
@@ -38,7 +38,8 @@ doFloodlightAnalysis <- function(
   
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, doFloodlightAnalysis, .alpha = .alpha, 
-                  .dependent = .dependent, .moderator = .moderator, .independent = .independent, .n_steps = .n_steps)
+                  .dependent = .dependent, .moderator = .moderator, 
+                  .independent = .independent, .n_steps = .n_steps)
     
     class(out) <- c("cSEMFloodlight", "cSEMFloodlight_multi")
     return(out)
@@ -67,8 +68,8 @@ doFloodlightAnalysis <- function(
     }
     
     # Character string containing the names of the dependent and independent variables
-    dep_vars   <- rownames(m$structural[rowSums(m$structural) !=0, , drop = FALSE])
-    indep_vars <- colnames(m$structural[, colSums(m$structural[.dependent, ,drop = FALSE]) !=0 , drop = FALSE])
+    dep_vars   <- rownames(m$structural[rowSums(m$structural) != 0, , drop = FALSE])
+    indep_vars <- colnames(m$structural[, colSums(m$structural[.dependent, ,drop = FALSE]) != 0 , drop = FALSE])
     
     ## Check if model is nonlinear.
     if(m$model_type != "Nonlinear"){

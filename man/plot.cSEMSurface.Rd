@@ -4,14 +4,15 @@
 \alias{plot.cSEMSurface}
 \title{\code{cSEMSurface} method for \code{plot()}}
 \usage{
-\method{plot}{cSEMSurface}(x, .plot_type = c("plotly", "rsm"), ...)
+\method{plot}{cSEMSurface}(x, .plot_type = c("plotly"), ...)
 }
 \arguments{
 \item{x}{An R object of class \code{cSEMSurface}.}
 
-\item{.plot_type}{A character vector indicating the plot package used.}
+\item{.plot_type}{A character vector indicating the plot package used. Options are
+plotly, persp, and rsm. Defaults to '\emph{plotly}'.}
 
-\item{...}{Currently ignored.}
+\item{...}{Ignored.}
 }
 \description{
 Plot the predicted values of an independent variable (z)

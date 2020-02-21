@@ -33,8 +33,8 @@ A list of class \code{cSEMFloodlight} with a corresponding method for \code{plot
 See: \code{\link[=plot.cSEMFloodlight]{plot.cSEMFloodlight()}}.
 }
 \description{
-Calculate the effect of an independent variable (z) on a dependent variable
-(y) conditional on the values of a (continous) moderator variable (x)
+Calculate the effect of an independent variable on a dependent variable
+conditional on the values of a (continous) moderator variable
 to perform a floodlight analysis \insertCite{Spiller2013}{cSEM}. Moreover,
 the Johnson-Neyman points are calculated, i.e. the value(s) of x for which
 lower or upper boundary of the confidence interval of the effect

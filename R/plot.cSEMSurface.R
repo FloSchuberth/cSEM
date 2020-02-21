@@ -7,37 +7,28 @@
 #' @param x An R object of class `cSEMSurface`.
 #' @param .plot_type A character vector indicating the plot package used. Options are
 #' plotly, persp, and rsm. Defaults to '*plotly*'. 
-#' @param ... arguments that are passed to the used plotting function.
+#' @param ... Ignored.
 #' @export
-plot.cSEMSurface <- function(x,
-                             .plot_type = c('plotly'),
-                             ...) {
+
+plot.cSEMSurface <- function(
+  x,
+  .plot_type = c('plotly'),
+  ...) {
   if(!(.plot_type %in% c('plotly','rsm','persp'))){
     stop2("Currenlty only the plotly and the rsm package are supported.")
   }
   
   if(.plot_type == 'plotly'){
     
-  
-  ## Install ggplot2 if not already installed
+  ## Install plotly if not already installed
   if (!requireNamespace("plotly", quietly = TRUE)) {
     stop2(
       "Package `plotly` required. Use `install.packages(\"plotly\")` and rerun.")
   }
-
-    
-    # plot_ly(x = x$out$x, y = x$out$z, z = x$out$y, type = 'scatter3d', mode = 'lines')
     
   plot1 <- plotly::plot_ly( x = x$out$x, y = x$out$z, z = x$out$y, type = "surface",
                             colors = 'Greys') %>%
-   # plotly::add_surface(
-   #    contours = list(
-   #      z = list(
-   #        show=TRUE,
-   #        usecolormap=TRUE,
-   #        highlightcolor="#ff0000",
-   #        project=list(z=TRUE)
-   #      ))) %>%
+
     plotly::add_surface(
       contours = list(
         z = list(
@@ -73,7 +64,7 @@ options(viewer = viewer_old)
     # 
     # using the persp function
     # phi and theta are used for rotation
-    persp(x = x$out$x, y = x$out$z, z = x$out$y, phi = 40, theta = 140,
+    persp::persp(x = x$out$x, y = x$out$z, z = x$out$y, phi = 40, theta = 140,
           xlab = paste('Standardized ',x$Information$independent),
           ylab = paste('Standardized ',x$Information$moderator),
           zlab = x$Information$dependent,
