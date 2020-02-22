@@ -37,6 +37,7 @@ Other contributors:
   \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de} [contributor]
   \item Michael Klesel [contributor]
   \item Theo K. Dijkstra [contributor]
+  \item Jörg Henseler [contributor]
 }
 
 }
