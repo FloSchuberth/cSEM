@@ -239,3 +239,224 @@
 #' 
 #' @source Original source: \href{https://github.com/ISS-Analytics/pls-predict}{github.com/ISS-Analytics/pls-predict}
 "Anime"
+
+
+
+#' Data: Russett
+#'
+#' The dataset was initially compiled by \insertCite{Russett1964;textual}{cSEM}, discussed and reprinted 
+#' by \insertCite{Gifi1990;textual}{cSEM}, and partially transformed by \insertCite{Tenenhaus2011;textual}{cSEM}.
+#' It is also used in \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes.
+
+#' @format A data frame containing the following variables for 47 countries:
+#'  \describe{
+#'    \item{\code{gini}}{The Gini index of concentration}
+#'    \item{\code{farm}}{The percentage of landholders who collectively occupy
+#'    one-half of all the agricultural land (starting with the farmers
+#'    with the smallest plots of land and working toward the largest)}
+#'    \item{\code{rent}}{The percentage of the total number of farms that rent all
+#'    their land. Transformation: ln (x + 1)}
+#'    \item{\code{gnpr}}{The 1955 gross national product per capita in U.S. dollars.
+#'    Transformation: ln (x)}
+#'    \item{\code{labo}}{The percentage of the labor force employed in agriculture.
+#'    Transformation: ln (x)}
+#'    \item{\code{inst}}{Instability of personnel based on the term of office of the
+#'    chief executive. Transformation: exp (x - 16.3)}
+#'    \item{\code{ecks}}{The total number of politically motivated violent incidents,
+#'    from plots to protracted guerrilla warfare. Transformation: ln (x + 1)}
+#'    \item{\code{deat}}{The number of people killed as a result of internal group 
+#'    violence per 1,000,000 people. Transformation: ln (x + 1)}
+#'    \item{\code{stab}}{One if the country has a stable democracy, and zero otherwise}
+#'    \item{\code{dict}}{One if the country experiences a dictatorship, and zero otherwise}
+#' }
+#' 
+#' @docType data
+#'
+#' @description A data frame containing 10 variables with 47 observations. 
+#' 
+#' @examples 
+#' #============================================================================
+#' # Example is taken from Henseler (2020)
+#' #============================================================================
+#' model_Russett="
+#' AgrIneq <~ gini + farm + rent
+#' IndDev <~ gnpr + labo
+#' PolInst <~ inst + ecks + deat + stab + dict
+#' PolInst ~AgrIneq + IndDev
+#' "
+#' 
+#' out <- csem(.data = Russett, .model = model_Russett,
+#' .PLS_weight_scheme_inner = 'factorial',
+#' .tolerance = 1e-06
+#' )
+#' 
+#' @references
+#'   \insertAllCited{}
+#'     
+#' @source 
+"Russett"
+
+
+#' Data: ITFlex
+#'
+#' The dataset was studied by \insertCite{Benitez2018;textual}{cSEM} and is used in 
+#' \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes (Tutorial 8). 
+#' All questionnaire items are measured on a 5-point scale.
+#' 
+#' @format A data frame containing the following variables:
+#'  \describe{
+#'    \item{\code{ITCOMP1}}{Software applications can be easily transported and
+#'    used across multiple platforms.}
+#'    \item{\code{ITCOMP2}}{Our firm provides multiple interfaces or entry points
+#'    (e. g., web access) for external end users}
+#'    \item{\code{ITCOMP3}}{Our firm establishes corporate rules and standards for
+#'    hardware and operating systems to ensure platform compatibility}
+#'    \item{\code{ITCOMP4}}{Data captured in one part of our organization are 
+#'    immediately available to everyone in the firm}
+#'    \item{\code{ITCONN1}}{Our organization has electronic links and connections
+#'    throughout the entire firm.}
+#'    \item{\code{ITCONN2}}{Our firm is linked to business partners through
+#'    electronic channels (e. g., websites, e-mail, wireless devices, electronic data interchange)}
+#'    \item{\code{ITCONN3}}{All remote, branch, and mobile offices are connected to 
+#'    the central office}
+#'    \item{\code{ITCONN4}}{There are very few identifiable communications
+#'    bottlenecks within our firm}
+#'    \item{\code{MOD1}}{Our firm possesses a great speed in developing new
+#'    business applications ormodifying existing applications}
+#'    \item{\code{MOD2}}{Our corporate database is able to communicate in
+#'    several different protocols}
+#'    \item{\code{MOD3}}{Reusable software modules are widely used in new
+#'    systems development}
+#'    \item{\code{MOD4}}{IT personnel use object-oriented and prepackaged
+#'    modular tools to create software applications}
+#'    \item{\code{ITPSF1}}{Our IT personnel have the ability to work effectively in
+#'    cross-functional teams}
+#'    \item{\code{ITPSF2}}{Our IT personnel are able to interpret business problems
+#'    and develop appropriate technical solutions}
+#'    \item{\code{ITPSF3}}{Our IT personnel are self-directed and proactive}
+#'    \item{\code{ITPSF4}}{Our IT personnel are knowledgeable about the key
+#'    success factors in our firm}
+#' }
+#' 
+#' @docType data
+#'
+#' @description A data frame containing 16 variables with 100 observations. 
+#' 
+#' @examples 
+#' #============================================================================
+#' # Example is taken from Henseler (2020)
+#' #============================================================================
+#' model_IT_Fex="
+#' # Composite models
+#' ITComp <~ ITCOMP1 + ITCOMP2 + ITCOMP3 + ITCOMP4
+#' Modul <~ MOD1 + MOD2 + MOD3 + MOD4
+#' ITConn <~ ITCONN1 + ITCONN2 + ITCONN3 + ITCONN4
+#' ITPers <~ ITPSF1 + ITPSF2 + ITPSF3 + ITPSF4
+#' # Saturated structural model
+#' ITPers ~ ITComp + Modul + ITConn
+#' Modul ~ ITComp + ITConn 
+#' ITConn ~ ITComp 
+#' "
+#' 
+#'out <- csem(.data = ITFlex, .model = model_IT_Fex,
+#'            .PLS_weight_scheme_inner = 'factorial',
+#'            .tolerance = 1e-06,
+#'            .resample_method = 'bootstrap',
+#'            .PLS_ignore_structural_model = TRUE
+#')
+#' 
+#' @references
+#'   \insertAllCited{}
+#'     
+#' @source \insertCite{Benitez2018;textual}{cSEM}
+"ITFlex"
+
+
+
+#' Data: LancelotMiltgen
+#'
+#' The data was analysed by \insertCite{Lancelot-Miltgen2016;textual}{cSEM} 
+#' to study young consumers’ adoption intentions of a location tracker technology 
+#' in the light of privacy concerns. It is also used in 
+#' \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes (Tutorial 9).
+#' 
+#' @docType data
+#'
+#' @description A data frame containing 10 variables with 1090 observations. 
+#' 
+#' @examples 
+#' #============================================================================
+#' # Example is taken from Henseler (2020)
+#' #============================================================================
+#' model_Med="
+#' Trust =~ trust1 + trust2
+#' PrCon =~ privcon1 + privcon2 + privcon3 + privcon4
+#' Risk =~ risk1 + risk2 + risk3
+#' Int =~ intent1 + intent2
+#' Int ~ Trust + PrCon + Risk
+#' Risk ~ Trust + PrCon
+#' Trust ~PrCon
+#' "
+#' 
+#' out <- csem(.data = LancelotMiltgen, .model = model_Med,
+#'             .PLS_weight_scheme_inner = 'factorial',
+#'             .tolerance = 1e-06,
+#'             .resample_method = 'bootstrap'
+#' )
+#' 
+#' @references
+#'   \insertAllCited{}
+#'     
+#' @source This data has been collected through a cooperation with the European Commission 
+#' Joint Research Center Institute for Prospective Technological Studies, contract 
+#' “Young People and Emerging Digital Services: An Exploratory Survey on Motivations, 
+#' Perceptions, and Acceptance of Risk” (EC JRC Contract IPTS № 150876-2007 F1ED-FR).
+"LancelotMiltgen"
+
+
+#' Data: Yoo
+#'
+#' The data is simulated data with the identical correlation matrix as the date
+#' that was analysed by \insertCite{Yoo2001;textual}{cSEM} 
+#' to examine how five elements of the marketing mix, namely price, store
+#' image, distribution intensity, advertising spending, and price deals, are
+#' related to the so-called dimensions of brand equity, i.e., perceived brand
+#' quality, brand loyalty, and brand awareness/associations. It is also used in 
+#' \insertCite{Henseler2017;textual}{cSEM} and \insertCite{Henseler2020;textual}{cSEM} 
+#' for demonstration purposes (Tutorial 10).
+#' 
+#' @docType data
+#'
+#' @description A data frame containing 34 variables with 569 observations. 
+#' 
+#' @examples 
+#' #============================================================================
+#' # Example is taken from Henseler (2020)
+#' #============================================================================
+#' model_HOC="
+#' # Measurement models FOC
+#' PR =~ PR1 + PR2 + PR3
+#' IM =~ IM1 + IM2 + IM3
+#' DI =~ DI1 + DI2 + DI3
+#' AD =~ AD1 + AD2 + AD3
+#' DL =~ DL1 + DL2 + DL3
+#' AA =~ AA1 + AA2 + AA3 + AA4 + AA5 + AA6
+#' LO =~ LO1 + LO3
+#' QL =~ QL1 + QL2 + QL3 + QL4 + QL5 + QL6
+#' # Composite model for SOC
+#' BR <~ QL + LO + AA
+#' # Structural model
+#' BR~ PR + IM + DI + AD + DL 
+#' "
+#' 
+#' out <- csem(.data = Yoo, .model = model_HOC,
+#'             .PLS_weight_scheme_inner = 'factorial',
+#'             .tolerance = 1e-06,
+#'             .resample_method = 'bootstrap'
+#' )
+#' 
+#' @references
+#'   \insertAllCited{}
+#'     
+#' @source Simulated data with the same correlation matrix as the data studied by \insertCite{Yoo2001;textual}{cSEM}.  
+"Yoo"
