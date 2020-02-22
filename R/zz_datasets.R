@@ -308,34 +308,34 @@
 #'    \item{\code{ITCOMP1}}{Software applications can be easily transported and
 #'    used across multiple platforms.}
 #'    \item{\code{ITCOMP2}}{Our firm provides multiple interfaces or entry points
-#'    (e. g., web access) for external end users}
+#'    (e.g., web access) for external end users.}
 #'    \item{\code{ITCOMP3}}{Our firm establishes corporate rules and standards for
-#'    hardware and operating systems to ensure platform compatibility}
+#'    hardware and operating systems to ensure platform compatibility.}
 #'    \item{\code{ITCOMP4}}{Data captured in one part of our organization are 
-#'    immediately available to everyone in the firm}
+#'    immediately available to everyone in the firm.}
 #'    \item{\code{ITCONN1}}{Our organization has electronic links and connections
 #'    throughout the entire firm.}
 #'    \item{\code{ITCONN2}}{Our firm is linked to business partners through
-#'    electronic channels (e. g., websites, e-mail, wireless devices, electronic data interchange)}
+#'    electronic channels (e.g., websites, e-mail, wireless devices, electronic data interchange).}
 #'    \item{\code{ITCONN3}}{All remote, branch, and mobile offices are connected to 
-#'    the central office}
+#'    the central office.}
 #'    \item{\code{ITCONN4}}{There are very few identifiable communications
-#'    bottlenecks within our firm}
+#'    bottlenecks within our firm.}
 #'    \item{\code{MOD1}}{Our firm possesses a great speed in developing new
-#'    business applications ormodifying existing applications}
+#'    business applications ormodifying existing applications.}
 #'    \item{\code{MOD2}}{Our corporate database is able to communicate in
-#'    several different protocols}
+#'    several different protocols.}
 #'    \item{\code{MOD3}}{Reusable software modules are widely used in new
-#'    systems development}
+#'    systems development.}
 #'    \item{\code{MOD4}}{IT personnel use object-oriented and prepackaged
-#'    modular tools to create software applications}
+#'    modular tools to create software applications.}
 #'    \item{\code{ITPSF1}}{Our IT personnel have the ability to work effectively in
-#'    cross-functional teams}
+#'    cross-functional teams.}
 #'    \item{\code{ITPSF2}}{Our IT personnel are able to interpret business problems
-#'    and develop appropriate technical solutions}
-#'    \item{\code{ITPSF3}}{Our IT personnel are self-directed and proactive}
+#'    and develop appropriate technical solutions.}
+#'    \item{\code{ITPSF3}}{Our IT personnel are self-directed and proactive.}
 #'    \item{\code{ITPSF4}}{Our IT personnel are knowledgeable about the key
-#'    success factors in our firm}
+#'    success factors in our firm.}
 #' }
 #' 
 #' @docType data
@@ -366,7 +366,7 @@
 #' @references
 #'   \insertAllCited{}
 #'     
-#' @source From: \insertCite{Benitez2018;textual}{cSEM}
+#' @source The data was collected through a survey by \insertCite{Benitez2018;textual}{cSEM}.
 "ITFlex"
 
 
@@ -407,13 +407,13 @@
 #' @source This data has been collected through a cooperation with the European Commission 
 #' Joint Research Center Institute for Prospective Technological Studies, contract 
 #' “Young People and Emerging Digital Services: An Exploratory Survey on Motivations, 
-#' Perceptions, and Acceptance of Risk” (EC JRC Contract IPTS NO: 150876-2007 F1ED-FR).
+#' Perceptions, and Acceptance of Risk” (EC JRC Contract IPTS No: 150876-2007 F1ED-FR).
 "LancelotMiltgenetal2016"
 
 
 #' Data: Yooetal2001
 #'
-#' The data is simulated data with the identical correlation matrix as the date
+#' The data is simulated and has the identical correlation matrix as the data
 #' that was analysed by \insertCite{Yoo2001;textual}{cSEM} 
 #' to examine how five elements of the marketing mix, namely price, store
 #' image, distribution intensity, advertising spending, and price deals, are
@@ -459,8 +459,8 @@
 
 #' Data: Switching
 #'
-#' The data was studied where they examined the consumers’ intention to switch a
-#'  service provider. It is also used in \insertCite{Henseler2020;textual}{cSEM} 
+#' The data contains variables about the consumers’ intention to switch a
+#' service provider. It is also used in \insertCite{Henseler2020;textual}{cSEM} 
 #' for demonstration purposes (Tutorial 12).
 #' 
 #' @docType data
