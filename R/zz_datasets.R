@@ -373,7 +373,7 @@
 
 
 
-#' Data: LancelotMiltgen
+#' Data: LancelotMiltgenetal2016
 #'
 #' The data was analysed by \insertCite{Lancelot-Miltgen2016;textual}{cSEM} 
 #' to study young consumers’ adoption intentions of a location tracker technology 
@@ -398,7 +398,7 @@
 #' Trust ~PrCon
 #' "
 #' 
-#' out <- csem(.data = LancelotMiltgen, .model = model_Med,
+#' out <- csem(.data = LancelotMiltgenetal2016, .model = model_Med,
 #'             .PLS_weight_scheme_inner = 'factorial',
 #'             .tolerance = 1e-06,
 #'             .resample_method = 'bootstrap'
@@ -411,10 +411,10 @@
 #' Joint Research Center Institute for Prospective Technological Studies, contract 
 #' “Young People and Emerging Digital Services: An Exploratory Survey on Motivations, 
 #' Perceptions, and Acceptance of Risk” (EC JRC Contract IPTS № 150876-2007 F1ED-FR).
-"LancelotMiltgen"
+"LancelotMiltgenetal2016"
 
 
-#' Data: Yoo
+#' Data: Yooetal2001
 #'
 #' The data is simulated data with the identical correlation matrix as the date
 #' that was analysed by \insertCite{Yoo2001;textual}{cSEM} 
@@ -449,7 +449,7 @@
 #' BR~ PR + IM + DI + AD + DL 
 #' "
 #' 
-#' out <- csem(.data = Yoo, .model = model_HOC,
+#' out <- csem(.data = Yooetal2001, .model = model_HOC,
 #'             .PLS_weight_scheme_inner = 'factorial',
 #'             .tolerance = 1e-06,
 #'             .resample_method = 'bootstrap'
@@ -459,4 +459,4 @@
 #'   \insertAllCited{}
 #'     
 #' @source Simulated data with the same correlation matrix as the data studied by \insertCite{Yoo2001;textual}{cSEM}.  
-"Yoo"
+"Yooetal2001"
