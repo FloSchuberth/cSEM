@@ -293,7 +293,7 @@
 #' @references
 #'   \insertAllCited{}
 #'     
-#' @source 
+#' @source From: \insertCite{Henseler2020;textual}{cSEM}
 "Russett"
 
 
@@ -367,7 +367,7 @@
 #' @references
 #'   \insertAllCited{}
 #'     
-#' @source \insertCite{Benitez2018;textual}{cSEM}
+#' @source From: \insertCite{Benitez2018;textual}{cSEM}
 "ITFlex"
 
 
@@ -491,7 +491,7 @@
 #' @references
 #'   \insertAllCited{}
 #'     
-#' @source The dataset was provided by J\"org Henseler.  
+#' @source The dataset is provided by Joerg Henseler.  
 "Switching"
 
 

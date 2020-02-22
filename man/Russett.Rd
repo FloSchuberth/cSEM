@@ -26,7 +26,7 @@ violence per 1,000,000 people. Transformation: ln (x + 1)}
 \item{\code{dict}}{One if the country experiences a dictatorship, and zero otherwise}
 }}
 \source{
-
+From: \insertCite{Henseler2020;textual}{cSEM}
 }
 \usage{
 Russett

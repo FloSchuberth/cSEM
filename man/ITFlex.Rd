@@ -39,7 +39,7 @@ and develop appropriate technical solutions}
 success factors in our firm}
 }}
 \source{
-\insertCite{Benitez2018;textual}{cSEM}
+From: \insertCite{Benitez2018;textual}{cSEM}
 }
 \usage{
 ITFlex

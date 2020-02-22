@@ -6,7 +6,7 @@
 \title{Data: Switching}
 \format{An object of class \code{data.frame} with 767 rows and 26 columns.}
 \source{
-The dataset was provided by J\"org Henseler.
+The dataset is provided by Joerg Henseler.
 }
 \usage{
 Switching
