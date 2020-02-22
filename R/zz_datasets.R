@@ -247,7 +247,7 @@
 #' The dataset was initially compiled by \insertCite{Russett1964;textual}{cSEM}, discussed and reprinted 
 #' by \insertCite{Gifi1990;textual}{cSEM}, and partially transformed by \insertCite{Tenenhaus2011;textual}{cSEM}.
 #' It is also used in \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes.
-
+#'
 #' @format A data frame containing the following variables for 47 countries:
 #'  \describe{
 #'    \item{\code{gini}}{The Gini index of concentration}
@@ -362,8 +362,7 @@
 #'            .PLS_weight_scheme_inner = 'factorial',
 #'            .tolerance = 1e-06,
 #'            .resample_method = 'bootstrap',
-#'            .PLS_ignore_structural_model = TRUE
-#')
+#'            .PLS_ignore_structural_model = TRUE)
 #' 
 #' @references
 #'   \insertAllCited{}
@@ -452,8 +451,7 @@
 #' out <- csem(.data = Yooetal2001, .model = model_HOC,
 #'             .PLS_weight_scheme_inner = 'factorial',
 #'             .tolerance = 1e-06,
-#'             .resample_method = 'bootstrap'
-#' )
+#'             .resample_method = 'bootstrap')
 #' 
 #' @references
 #'   \insertAllCited{}
@@ -488,8 +486,7 @@
 #' out <- csem(.data = Switching, .model = model_Int,
 #'             .PLS_weight_scheme_inner = 'factorial',
 #'             .tolerance = 1e-06,
-#'             .resample_method = 'bootstrap'
-#' )
+#'             .resample_method = 'bootstrap')
 #' 
 #' @references
 #'   \insertAllCited{}
@@ -497,3 +494,46 @@
 #' @source The dataset was provided by J\"org Henseler.  
 "Switching"
 
+
+
+#' Data: BergamiBagozzi2000
+#'
+#' The dataset contains 22 variables and originates 
+#' from a larger survey among South Korean employees conducted and
+#' reported by \insertCite{Bergami2000;textual}{cSEM}. It is
+#' also used in \insertCite{Henseler2020;textual}{cSEM} 
+#' for demonstration purposes (Tutorial 6).
+#' 
+#' @docType data
+#'
+#' @description A data frame containing 22 variables with 305 observations. 
+#' 
+#' @examples 
+#' #============================================================================
+#' # Example is taken from Henseler (2020)
+#' #============================================================================
+#' model_Bergami_Bagozzi="
+#' # Measurement models
+#' OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
+#' OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
+#' AffLove =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+#' AffJoy =~ orgcmt5 + orgcmt8
+#' Gender <~ gender
+#' # Strutcural model 
+#' OrgIden ~ OrgPres
+#' AffLove ~ OrgPres + OrgIden + Gender 
+#'AffJoy ~ OrgPres + OrgIden + Gender 
+#' "
+#' 
+#' out <- csem(.data = BergamiBagozzi2000, .model = model_Bergami_Bagozzi,
+#'             .PLS_weight_scheme_inner = 'factorial',
+#'             .tolerance = 1e-06,
+#'             .resample_method = 'bootstrap'
+#' )
+#' 
+#' @references
+#'   \insertAllCited{}
+#'     
+#' @source Survey among South Korean employees conducted and
+#' reported by \insertCite{Bergami2000;textual}{cSEM}. 
+"BergamiBagozzi2000"
