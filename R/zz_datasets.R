@@ -361,7 +361,6 @@
 #'out <- csem(.data = ITFlex, .model = model_IT_Fex,
 #'            .PLS_weight_scheme_inner = 'factorial',
 #'            .tolerance = 1e-06,
-#'            .resample_method = 'bootstrap',
 #'            .PLS_ignore_structural_model = TRUE)
 #' 
 #' @references
@@ -399,8 +398,7 @@
 #' 
 #' out <- csem(.data = LancelotMiltgenetal2016, .model = model_Med,
 #'             .PLS_weight_scheme_inner = 'factorial',
-#'             .tolerance = 1e-06,
-#'             .resample_method = 'bootstrap'
+#'             .tolerance = 1e-06
 #' )
 #' 
 #' @references
@@ -450,8 +448,7 @@
 #' 
 #' out <- csem(.data = Yooetal2001, .model = model_HOC,
 #'             .PLS_weight_scheme_inner = 'factorial',
-#'             .tolerance = 1e-06,
-#'             .resample_method = 'bootstrap')
+#'             .tolerance = 1e-06)
 #' 
 #' @references
 #'   \insertAllCited{}
@@ -485,8 +482,7 @@
 #' 
 #' out <- csem(.data = Switching, .model = model_Int,
 #'             .PLS_weight_scheme_inner = 'factorial',
-#'             .tolerance = 1e-06,
-#'             .resample_method = 'bootstrap')
+#'             .tolerance = 1e-06)
 #' 
 #' @references
 #'   \insertAllCited{}
@@ -527,8 +523,7 @@
 #' 
 #' out <- csem(.data = BergamiBagozzi2000, .model = model_Bergami_Bagozzi,
 #'             .PLS_weight_scheme_inner = 'factorial',
-#'             .tolerance = 1e-06,
-#'             .resample_method = 'bootstrap'
+#'             .tolerance = 1e-06
 #' )
 #' 
 #' @references

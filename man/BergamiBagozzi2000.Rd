@@ -41,8 +41,7 @@ AffJoy ~ OrgPres + OrgIden + Gender
 
 out <- csem(.data = BergamiBagozzi2000, .model = model_Bergami_Bagozzi,
             .PLS_weight_scheme_inner = 'factorial',
-            .tolerance = 1e-06,
-            .resample_method = 'bootstrap'
+            .tolerance = 1e-06
 )
 
 }

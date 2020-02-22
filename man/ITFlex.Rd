@@ -71,7 +71,6 @@ ITConn ~ ITComp
 out <- csem(.data = ITFlex, .model = model_IT_Fex,
            .PLS_weight_scheme_inner = 'factorial',
            .tolerance = 1e-06,
-           .resample_method = 'bootstrap',
            .PLS_ignore_structural_model = TRUE)
 
 }

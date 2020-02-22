@@ -34,8 +34,7 @@ INT ~ INV + SAT + INV.SAT
 
 out <- csem(.data = Switching, .model = model_Int,
             .PLS_weight_scheme_inner = 'factorial',
-            .tolerance = 1e-06,
-            .resample_method = 'bootstrap')
+            .tolerance = 1e-06)
 
 }
 \references{

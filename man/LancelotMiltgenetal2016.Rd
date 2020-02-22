@@ -39,8 +39,7 @@ Trust ~PrCon
 
 out <- csem(.data = LancelotMiltgenetal2016, .model = model_Med,
             .PLS_weight_scheme_inner = 'factorial',
-            .tolerance = 1e-06,
-            .resample_method = 'bootstrap'
+            .tolerance = 1e-06
 )
 
 }

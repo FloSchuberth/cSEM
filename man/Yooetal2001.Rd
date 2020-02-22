@@ -46,8 +46,7 @@ BR~ PR + IM + DI + AD + DL
 
 out <- csem(.data = Yooetal2001, .model = model_HOC,
             .PLS_weight_scheme_inner = 'factorial',
-            .tolerance = 1e-06,
-            .resample_method = 'bootstrap')
+            .tolerance = 1e-06)
 
 }
 \references{
