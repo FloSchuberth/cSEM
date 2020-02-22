@@ -18,6 +18,9 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     email = ""),
              person(given = "Theo K.", family = "Dijkstra",
                     role  = c("ctb"),
+                    email = ""),
+             person(given = "Jörg", family = "Henseler",
+                    role  = c("ctb"),
                     email = ""))
 Maintainer: Manuel Rademaker <manuel.rademaker@uni-wuerzburg.de>
 Depends: R (>= 3.5.0)
