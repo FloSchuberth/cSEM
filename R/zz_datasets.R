@@ -410,7 +410,7 @@
 #' @source This data has been collected through a cooperation with the European Commission 
 #' Joint Research Center Institute for Prospective Technological Studies, contract 
 #' “Young People and Emerging Digital Services: An Exploratory Survey on Motivations, 
-#' Perceptions, and Acceptance of Risk” (EC JRC Contract IPTS № 150876-2007 F1ED-FR).
+#' Perceptions, and Acceptance of Risk” (EC JRC Contract IPTS NO: 150876-2007 F1ED-FR).
 "LancelotMiltgenetal2016"
 
 
@@ -460,3 +460,40 @@
 #'     
 #' @source Simulated data with the same correlation matrix as the data studied by \insertCite{Yoo2001;textual}{cSEM}.  
 "Yooetal2001"
+
+
+#' Data: Switching
+#'
+#' The data was studied where they examined the consumers’ intention to switch a
+#'  service provider. It is also used in \insertCite{Henseler2020;textual}{cSEM} 
+#' for demonstration purposes (Tutorial 12).
+#' 
+#' @docType data
+#'
+#' @description A data frame containing 26 variables with 767 observations. 
+#' 
+#' @examples 
+#' #============================================================================
+#' # Example is taken from Henseler (2020)
+#' #============================================================================
+#' model_Int="
+#' # Measurement models
+#' INV =~ INV1 + INV2 + INV3 +INV4
+#' SAT=~ SAT1 + SAT2 + SAT3
+#' INT =~ INT1 + INT2
+#' # Structrual model containing an interaction term.
+#' INT ~ INV + SAT + INV.SAT
+#' "
+#' 
+#' out <- csem(.data = Switching, .model = model_Int,
+#'             .PLS_weight_scheme_inner = 'factorial',
+#'             .tolerance = 1e-06,
+#'             .resample_method = 'bootstrap'
+#' )
+#' 
+#' @references
+#'   \insertAllCited{}
+#'     
+#' @source The dataset was provided by J\"org Henseler.  
+"Switching"
+
