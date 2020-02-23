@@ -414,7 +414,7 @@
 #' Data: Yooetal2001
 #'
 #' The data is simulated and has the identical correlation matrix as the data
-#' that was analysed by \insertCite{Yoo2001;textual}{cSEM} 
+#' that was analysed by \insertCite{Yoo2000;textual}{cSEM} 
 #' to examine how five elements of the marketing mix, namely price, store
 #' image, distribution intensity, advertising spending, and price deals, are
 #' related to the so-called dimensions of brand equity, i.e., perceived brand
@@ -453,7 +453,7 @@
 #' @references
 #'   \insertAllCited{}
 #'     
-#' @source Simulated data with the same correlation matrix as the data studied by \insertCite{Yoo2001;textual}{cSEM}.  
+#' @source Simulated data with the same correlation matrix as the data studied by \insertCite{Yoo2000;textual}{cSEM}.  
 "Yooetal2001"
 
 
@@ -497,7 +497,8 @@
 #' The dataset contains 22 variables and originates 
 #' from a larger survey among South Korean employees conducted and
 #' reported by \insertCite{Bergami2000;textual}{cSEM}. It is
-#' also used in \insertCite{Henseler2020;textual}{cSEM} 
+#' also used in  \insertCite{Hwang2014;textual}{cSEM} and 
+#' \insertCite{Henseler2020;textual}{cSEM} 
 #' for demonstration purposes (Tutorial 6).
 #' 
 #' @docType data
