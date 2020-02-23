@@ -73,9 +73,27 @@ eta2 <~ y21 + y22 + y23
 eta3 =~ y31 + y32 + y33
 "
 
+model_nonlinear_2ndorder <- "
+# Structural model
+ETA3 ~ ETA1 + ETA2 + ETA1.ETA2
+
+# 2nd order specification
+ETA1 =~ Y1 + Y2 + Y3
+
+# (Reflective) measurement model
+Y1 =~ y11+y12
+Y2 =~ y21+y22+y23+y24
+Y3 =~ y31+y32+y33+y34+y35+y36+y37+y38
+ETA2 =~ y4 + y5 + y6
+ETA3 =~ y7 + y8 + y9
+"
+
 ## Model and Sigma matrix for 2nd order DGP
 load("../data/DGP_2ndorder_cf_of_composites.RData")
-# load("tests//data/DGP_2ndorder_cf_of_composites.RData") # uncomment to source
+load("../data/Data_nonlinear_2ndorder.RData")
+# load("tests/data/DGP_2ndorder_cf_of_composites.RData") # uncomment to source
+# on local machine
+# load("tests/data/Data_nonlinear_2ndorder.RData") # uncomment to source
 # on local machine
 model_2ndorder <- model_Sigma
 
@@ -88,7 +106,7 @@ threecommonfactors$not_used_character <- sample(letters,
                                                 size = (nrow(threecommonfactors)), 
                                                 replace = TRUE)
 
-# Suffle columns to make sure columns get sorted correctly
+# Shuffle columns to make sure columns get sorted correctly
 threecommonfactors <- threecommonfactors[, sample(1:ncol(threecommonfactors))]
 
 ## List of data without id column
@@ -135,17 +153,25 @@ dat2ndorder <- list(
 dat2ndorder_id <- as.data.frame(rbind(dat2ndorder1_b, dat2ndorder2_b))
 dat2ndorder_id$group <- rep(c("A", "B"), times  = c(100, 200))
 
+## Data for nonlinear + 2ndorder model
+data_nonlinear_2ndorder_list <- list(
+  group1 = data_nonlinear_2ndorder[-c(300:400), ],
+  group2 = data_nonlinear_2ndorder
+)
+
 ### Estimates (.R is small to save computation time) ---------------------------
 
 ## Single data set
 res_single_linear      <- csem(threecommonfactors, model_linear)
 res_single_nonlinear   <- csem(threecommonfactors, model_nonlinear)
 res_single_2ndorder    <- csem(dat2ndorder1_a, model_2ndorder)
+res_single_nonlinear_2ndorder <- csem(data_nonlinear_2ndorder, model_nonlinear_2ndorder)
 
 ## Multiple data sets using list
 res_multi_linear       <- csem(dat, model_linear)
 res_multi_nonlinear    <- csem(dat, model_nonlinear)
 res_multi_2ndorder     <- csem(dat2ndorder, model_2ndorder)
+res_multi_nonlinear_2ndorder <- csem(data_nonlinear_2ndorder_list, model_nonlinear_2ndorder)
 
 ## Multiple data sets using id
 res_multi_id_linear    <- csem(threecommonfactors_id, model_linear, .id = "Group_id")
@@ -154,37 +180,47 @@ res_multi_id_2ndorder  <- csem(dat2ndorder_id, model_2ndorder, .id = "group")
 
 ## Single data set including bootstrap 
 res_single_linear_boot    <- csem(threecommonfactors, model_linear, 
-                                  .resample_method = "bootstrap", .R = 6,
+                                  .resample_method = "bootstrap", .R = 4,
                                   .handle_inadmissibles = "replace")
 res_single_nonlinear_boot <- csem(threecommonfactors, model_nonlinear, 
-                                  .resample_method = "bootstrap", .R = 6,
+                                  .resample_method = "bootstrap", .R = 4,
                                   .handle_inadmissibles = "replace")
 res_single_2ndorder_boot  <- csem(dat2ndorder1_a, model_2ndorder, 
-                                  .resample_method = "bootstrap", .R = 6,
+                                  .resample_method = "bootstrap", .R = 4,
                                   .handle_inadmissibles = "replace")
+res_single_nonlinear_2ndorder_boot  <- csem(data_nonlinear_2ndorder, 
+                                            model_nonlinear_2ndorder, 
+                                            .resample_method = "bootstrap", 
+                                            .R = 4,
+                                            .handle_inadmissibles = "replace")
 
 ## Multiple data sets including bootstrap 
 res_multi_linear_boot    <- csem(dat, model_linear, 
-                                 .resample_method = "bootstrap", .R = 6,
+                                 .resample_method = "bootstrap", .R = 4,
                                  .handle_inadmissibles = "replace")
 res_multi_nonlinear_boot <- csem(dat, model_nonlinear, 
-                                 .resample_method = "bootstrap", .R = 6,
+                                 .resample_method = "bootstrap", .R = 4,
                                  .handle_inadmissibles = "replace")
 res_multi_2ndorder_boot  <- csem(dat2ndorder, model_2ndorder, 
-                                 .resample_method = "bootstrap", .R = 6,
+                                 .resample_method = "bootstrap", .R = 4,
                                  .handle_inadmissibles = "replace")
+res_multi_nonlinear_2ndorder_boot  <- csem(data_nonlinear_2ndorder_list, 
+                                            model_nonlinear_2ndorder, 
+                                            .resample_method = "bootstrap", 
+                                            .R = 4,
+                                            .handle_inadmissibles = "replace")
 
 ## Multiple data sets using id including bootstrap 
 res_multi_id_linear_boot    <- csem(threecommonfactors_id, model_linear, 
-                                 .resample_method = "bootstrap", .R = 6,
+                                 .resample_method = "bootstrap", .R = 4,
                                  .handle_inadmissibles = "replace",
                                  .id = "Group_id")
 res_multi_id_nonlinear_boot <- csem(threecommonfactors_id, model_nonlinear, 
-                                 .resample_method = "bootstrap", .R = 6,
+                                 .resample_method = "bootstrap", .R = 4,
                                  .handle_inadmissibles = "replace",
                                  .id = "Group_id")
 res_multi_id_2ndorder_boot  <- csem(dat2ndorder_id, model_2ndorder, 
-                                 .resample_method = "bootstrap", .R = 6,
+                                 .resample_method = "bootstrap", .R = 4,
                                  .handle_inadmissibles = "replace",
                                  .id = "group")
 

@@ -65,17 +65,19 @@ test_that("Test that calculatef2() returns the correct output:", {
   expect_true(inherits(calculatef2(res_single_linear), "matrix"))
   expect_true(inherits(calculatef2(res_single_nonlinear), "matrix"))
   expect_true(inherits(calculatef2(res_single_2ndorder), "matrix"))
+  expect_true(inherits(calculatef2(res_single_nonlinear_2ndorder), "matrix"))
   
   expect_equal(class(calculatef2(res_multi_linear)), "list")
   expect_equal(class(calculatef2(res_multi_nonlinear)), "list")
   expect_equal(class(calculatef2(res_multi_2ndorder)), "list")
 })
 
-## Calculatef2
+## CalculateDf()
 test_that("Test that calculateDf() returns the correct output:", {
   expect_identical(calculateDf(res_single_linear), 24)
   expect_identical(calculateDf(res_single_nonlinear), 23)
   expect_identical(calculateDf(res_single_2ndorder), 135)
+  expect_identical(calculateDf(res_single_nonlinear_2ndorder), 169)
   
   expect_identical(unlist(calculateDf(res_multi_linear)), 
                    c("group1" = 24, "group2" = 24, "group3" = 24))

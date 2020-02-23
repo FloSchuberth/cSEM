@@ -1,10 +1,10 @@
 
-DGPs <- list.files("../data/")
-# DGPs <- list.files("tests/data/")
+DGPs <- list.files("../data/", pattern = "DGP_")
+# DGPs <- list.files("tests/data/", pattern = "DGP_")
 
 for(i in DGPs) {
   ## Model and Sigma matrix
-  load(paste0("../data/", i))
+  # load(paste0("../data/", i))
   # load(paste0("tests/data/", i))
   
   ## Draw data
@@ -18,7 +18,7 @@ for(i in DGPs) {
     expect_output(
       testOMF(
         .object = res,
-        .R      = 10,
+        .R      = 4,
         .handle_inadmissibles = "replace" # to make sure there are enough admissibles
       )
     )
@@ -28,7 +28,7 @@ for(i in DGPs) {
     expect_output(
       testOMF(
         .object = res,
-        .R      = 10,
+        .R      = 4,
         .fit_measures = TRUE,
         .alpha  = c(0.1, 0.05),
         .handle_inadmissibles = "replace", # to make sure there are enough admissibles
@@ -46,7 +46,7 @@ test_that(paste(".seed in testOMF works corretly"),  {
   
   a <- testOMF(
     .object = res,
-    .R      = 10,
+    .R      = 4,
     .seed   = 1303
   )
   
@@ -55,7 +55,7 @@ test_that(paste(".seed in testOMF works corretly"),  {
   
   b <- testOMF(
     .object = res,
-    .R      = 10,
+    .R      = 4,
     .seed   = 1303
   )
   
