@@ -9,7 +9,7 @@
 This data has been collected through a cooperation with the European Commission
 Joint Research Center Institute for Prospective Technological Studies, contract
 “Young People and Emerging Digital Services: An Exploratory Survey on Motivations,
-Perceptions, and Acceptance of Risk” (EC JRC Contract IPTS NO: 150876-2007 F1ED-FR).
+Perceptions, and Acceptance of Risk” (EC JRC Contract IPTS No: 150876-2007 F1ED-FR).
 }
 \usage{
 LancelotMiltgenetal2016

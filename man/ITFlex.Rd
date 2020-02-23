@@ -9,37 +9,37 @@
 \item{\code{ITCOMP1}}{Software applications can be easily transported and
 used across multiple platforms.}
 \item{\code{ITCOMP2}}{Our firm provides multiple interfaces or entry points
-(e. g., web access) for external end users}
+(e.g., web access) for external end users.}
 \item{\code{ITCOMP3}}{Our firm establishes corporate rules and standards for
-hardware and operating systems to ensure platform compatibility}
+hardware and operating systems to ensure platform compatibility.}
 \item{\code{ITCOMP4}}{Data captured in one part of our organization are
-immediately available to everyone in the firm}
+immediately available to everyone in the firm.}
 \item{\code{ITCONN1}}{Our organization has electronic links and connections
 throughout the entire firm.}
 \item{\code{ITCONN2}}{Our firm is linked to business partners through
-electronic channels (e. g., websites, e-mail, wireless devices, electronic data interchange)}
+electronic channels (e.g., websites, e-mail, wireless devices, electronic data interchange).}
 \item{\code{ITCONN3}}{All remote, branch, and mobile offices are connected to
-the central office}
+the central office.}
 \item{\code{ITCONN4}}{There are very few identifiable communications
-bottlenecks within our firm}
+bottlenecks within our firm.}
 \item{\code{MOD1}}{Our firm possesses a great speed in developing new
-business applications ormodifying existing applications}
+business applications ormodifying existing applications.}
 \item{\code{MOD2}}{Our corporate database is able to communicate in
-several different protocols}
+several different protocols.}
 \item{\code{MOD3}}{Reusable software modules are widely used in new
-systems development}
+systems development.}
 \item{\code{MOD4}}{IT personnel use object-oriented and prepackaged
-modular tools to create software applications}
+modular tools to create software applications.}
 \item{\code{ITPSF1}}{Our IT personnel have the ability to work effectively in
-cross-functional teams}
+cross-functional teams.}
 \item{\code{ITPSF2}}{Our IT personnel are able to interpret business problems
-and develop appropriate technical solutions}
-\item{\code{ITPSF3}}{Our IT personnel are self-directed and proactive}
+and develop appropriate technical solutions.}
+\item{\code{ITPSF3}}{Our IT personnel are self-directed and proactive.}
 \item{\code{ITPSF4}}{Our IT personnel are knowledgeable about the key
-success factors in our firm}
+success factors in our firm.}
 }}
 \source{
-From: \insertCite{Benitez2018;textual}{cSEM}
+The data was collected through a survey by \insertCite{Benitez2018;textual}{cSEM}.
 }
 \usage{
 ITFlex

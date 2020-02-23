@@ -15,7 +15,7 @@ Yooetal2001
 A data frame containing 34 variables with 569 observations.
 }
 \details{
-The data is simulated data with the identical correlation matrix as the date
+The data is simulated and has the identical correlation matrix as the data
 that was analysed by \insertCite{Yoo2001;textual}{cSEM}
 to examine how five elements of the marketing mix, namely price, store
 image, distribution intensity, advertising spending, and price deals, are

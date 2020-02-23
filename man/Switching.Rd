@@ -15,7 +15,7 @@ Switching
 A data frame containing 26 variables with 767 observations.
 }
 \details{
-The data was studied where they examined the consumers’ intention to switch a
+The data contains variables about the consumers’ intention to switch a
 service provider. It is also used in \insertCite{Henseler2020;textual}{cSEM}
 for demonstration purposes (Tutorial 12).
 }

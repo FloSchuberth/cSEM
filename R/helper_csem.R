@@ -59,6 +59,9 @@ calculate2ndStage <- function(
   ## Only linear terms required for subsetting reliabilities
   vars_not_attached_to_2nd <- unique(unlist(strsplit(vars_not_attached_to_2nd, "\\.")))
   
+  ## Remove 2nd order terms if there are any in the interaction terms
+  vars_not_attached_to_2nd <- setdiff(vars_not_attached_to_2nd, vars_2nd)
+  
   ## Get all reliabilities from first stage 
   rel_all_1step  <- .first_stage_results$Estimates$Reliabilities
   
