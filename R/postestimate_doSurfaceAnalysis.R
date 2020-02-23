@@ -33,8 +33,6 @@ doSurfaceAnalysis <- function(
   .n_steps            = 100
 ){
   
-  
-  
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, doSurfaceAnalysis, .alpha = .alpha, 
                   .dependent = .dependent, .independent = .independent,
@@ -43,7 +41,9 @@ doSurfaceAnalysis <- function(
     class(out) <- c("cSEMSurface", "cSEMSurface_multi")
     return(out)
   } 
-  # else {
+
+  # Might be relevant for upcoming CIs
+    # else {
   ## Check whether .object is of class cSEMResults_resampled; if not perform
   ## standard resampling (bootstrap with .R = 499 reps)
   # if(!inherits(.object, "cSEMResults_resampled")) {
@@ -66,7 +66,7 @@ doSurfaceAnalysis <- function(
     m   <- .object$Second_stage$Information$Model
     est <- .object$Second_stage$Information$Resamples$Estimates$Estimates1$Path_estimates
     H   <- .object$Second_stage$Estimates$Construct_scores
-  # add reliabilities 
+    Q <- .object$Second_stage$Estimates$Reliabilities
     }
   
   ## Check if model is nonlinear.
@@ -119,18 +119,11 @@ doSurfaceAnalysis <- function(
   
   nonlinear_vars=indep_vars[grepl(pattern = '.',x = indep_vars,fixed = T)]
   
-
-        
-      
-  
-  
-  
   # Grab quadratic independent
   quad_ind=nonlinear_vars[grepl(paste0(.independent,'.',.independent),nonlinear_vars)]
   quad_mod=nonlinear_vars[grepl(paste0(.moderator,'.',.moderator),nonlinear_vars)]
   
   # interactions of the .independent and the .moderator
-  grepl(paste(c(.moderator, .independent),collapse = '&'  ),nonlinear_vars)
   pointer=sapply(indep_vars,function(x){
     temp=unlist(strsplit(x,'\\.'))
     if(sum(grepl(paste(c(.moderator, .independent),collapse = '|'  ),temp))==length(temp)){
@@ -157,21 +150,17 @@ doSurfaceAnalysis <- function(
   colnames(steps)=c(.independent,.moderator)
   
   y_pred_list=lapply(sum_rel$Name,function(x){
-    temp=sum_rel[sum_rel$Name==x,]
+    temp <- sum_rel[sum_rel$Name==x,]
   
-    indep_names=unlist(strsplit(temp$Name,paste(.dependent,"~ ")))[2]
-    indep_rel=unlist(strsplit(indep_names,'\\.'))
+    indep_names <- unlist(strsplit(temp$Name,paste(.dependent,"~ ")))[2]
+    indep_rel <- unlist(strsplit(indep_names,'\\.'))
     
-    if(temp$Construct_type == "Common factor"){
-       average=mean(matrixStats::rowProds(H[,indep_rel,drop=FALSE]))/prod(Q[indep_rel])
-    
-       }else if (temp$Construct_type == "Composite"){
-        average=mean(matrixStats::rowProds(H[,indep_rel,drop=FALSE]))
-       }
-    
+    #Reliabilities of composites are 1 so nothing happens, except in case of 
+    # SOC of the type composite of common factor
+    average <- mean(matrixStats::rowProds(H[,indep_rel,drop=FALSE]))/prod(Q[indep_rel])
+
     temp$Estimate*(matrixStats::rowProds(steps[,indep_rel,drop=FALSE])-average)  
     }
-    
     )
   
   y_pred = Reduce('+',y_pred_list)
