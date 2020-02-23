@@ -139,6 +139,9 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
 data obtained by resamplecSEMResults().}
 
+\item{.force}{Logical. Should .object be resampled even if it contains resamples
+already?. Defaults to \code{FALSE}.}
+
 \item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}
 
@@ -212,6 +215,9 @@ AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to \code{TRUE}.}
 
 \item{.original_arguments}{The list of arguments used within \code{\link[=csem]{csem()}}.}
+
+\item{.p}{Numeric. The probability used to compute the critical quantile if
+\code{.inference = TRUE}. Defaults to \code{0.9}.}
 
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 

@@ -527,9 +527,9 @@ calculateRhoT <- function(
 #' @usage calculateHTMT(
 #'  .object               = NULL,
 #'  .absolute             = TRUE,
-#'  .alpha                = 0.5,
+#'  .p                    = 0.9,
 #'  .handle_inadmissibles = c("drop", "ignore", "replace"),
-#'  .inference            = TRUE,
+#'  .inference            = FALSE,
 #'  .only_common_factors  = TRUE,
 #'  .R                    = 499,
 #'  .seed                 = NULL
@@ -547,19 +547,32 @@ calculateRhoT <- function(
 calculateHTMT <- function(
   .object               = NULL,
   .absolute             = TRUE,
-  .alpha                = 0.5,
+  .p                    = 0.9,
   .handle_inadmissibles = c("drop", "ignore", "replace"),
-  .inference            = TRUE,
+  .inference            = FALSE,
   .only_common_factors  = TRUE,
   .R                    = 499,
   .seed                 = NULL
 ){
-  if(inherits(.object, "cSEMResults_multi")) {
-    
-  } else if(inherits(.object, "cSEMResults_default")) {
-    
-  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
 
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateHTMT,
+                  .absolute = .absolute,
+                  .p                    = .p,
+                  .handle_inadmissibles = .handle_inadmissibles,
+                  .inference            = .inference,
+                  .only_common_factors  = .only_common_factors,
+                  .R                    = .R,
+                  .seed                 = .seed
+                  )
+    return(out)
+  } else if(inherits(.object, "cSEMResults_default")) {
+    ## Get relevant quantities
+    m <- .object$Information$Model
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    ## Get relevant quantities
+    m <- .object$Second_stage$Information$Arguments_original$.model
   } else {
     stop2(
       "The following error occured in the calculateHTMT() function:\n",
@@ -567,10 +580,7 @@ calculateHTMT <- function(
     )
   }
   
-  ## Get relevant quantities
-  m <- .object$Information$Model
-  
-  if(isTRUE(.only_common_factors)) {
+  if(.only_common_factors) {
     cf_names <- names(m$construct_type[m$construct_type == "Common factor"])
     
     ## Return NA if there are not at least 2 common factors
@@ -589,12 +599,26 @@ calculateHTMT <- function(
   
   ## At least two multi-indicator constructs required
   if(nrow(cf_measurement) < 2) {
-    stop2("Computation of the HTMT requires at least two multi-indicator common factors.")
+    stop2(
+      "The following error occured in the calculateHTMT() function:\n",
+      "Computation of the HTMT requires at least two multi-indicator common factors.")
   }
   
-  i_names <- colnames(cf_measurement)
-  S       <- .object$Estimates$Indicator_VCV[i_names, i_names]
-  
+  if(inherits(.object, "cSEMResults_default")) {
+    
+    i_names <- colnames(cf_measurement)
+    S       <- .object$Estimates$Indicator_VCV[i_names, i_names]
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop("Currently not implemented. In progress.")
+    # Idea:
+    # - Add the scores of c1, c2, c3 to the original data
+    # - Compute S including the second order constructs
+    # - Continue with the computation
+    
+    i_names <- colnames(cf_measurement)
+    S       <- .object$First_stage$Estimates$Indicator_VCV[i_names, i_names]
+  }
   ## Average correlation of the indicators of a block 
   avrg_cor <- cf_measurement %*% (S - diag(diag(S))) %*% t(cf_measurement) /
     cf_measurement %*% (1 - diag(nrow(S))) %*% t(cf_measurement)
@@ -615,29 +639,43 @@ calculateHTMT <- function(
   
   if(.absolute) {
     out <- abs(out)
-  }
+  } 
   
   if(.inference) {
-    out_resample <- resamplecSEMResults(.object, .user_funs = list("HTMT" = calculateHTMT), 
-                        .absolute = .absolute,
-                        .handle_inadmissibles = .handle_inadmissibles,
-                        .inference = FALSE,
-                        .only_common_factors = .only_common_factors,
-                        .R = .R,
-                        .seed = .seed)
-    out_htmt <- out_resample$Estimates$Estimates_resample$Estimates1$HTMT
+    # Bootstrap if necessary
+    out_resample <- resamplecSEMResults(
+      .object, 
+      .user_funs = list("HTMT" = calculateHTMT), 
+      .absolute = .absolute,
+      .handle_inadmissibles = .handle_inadmissibles,
+      .inference = FALSE,
+      .only_common_factors = .only_common_factors,
+      .force = TRUE, # to force computation even if .object already contains resamples
+      .R = .R,
+      .seed = .seed
+    )
     
-    quants <- matrixStats::colQuantiles(out_htmt$Resampled, probs = .alpha)
+    # Compute quantile
+    if(inherits(.object, "cSEMResults_default")) {
+      out_htmt <- out_resample$Estimates$Estimates_resample$Estimates1$HTMT      
+    } else { # 2ndorder
+      out_htmt <- out_resample$Second_stage$Information$Resamples$Estimates$Estimates1$HTMT
+    }
+
+    if(length(.p) == 1) {
+      quants <- matrixStats::colQuantiles(out_htmt$Resampled, probs = .p) 
+    } else {
+      stop2(
+        "The following error occured in the calculateHTMT() function:\n",
+        "Only a single numeric probability accepted. You provided:", paste(.p, sep = ", "))
+    }
     
     ## Reassemble matrix
     htmt_quantiles <- out
     htmt_quantiles[] <- quants
     
     htmt_inference <- out + t(htmt_quantiles)
-
-    ## print test
-    # testt <- round(htmt_inference, 4)
-    # diag(testt) <- " "
+    
     return(htmt_inference)
   }
   # Return
