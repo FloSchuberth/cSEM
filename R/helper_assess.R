@@ -1312,8 +1312,6 @@ calculatef2 <- function(.object = NULL) {
   })
   names(outer_out) <- vars_endo
   
-  ## Remove 
-  
   ## Make output a matrix
   # Note: this is necessary for calculatef2() to work
   #       when supplied to the .user_funs argument. Currently, .user_funs functions 
@@ -1321,6 +1319,11 @@ calculatef2 <- function(.object = NULL) {
   ss <- s[vars_endo, , drop = FALSE]
   tm <- t(ss)
   tm[which(tm == 1)] <- unlist(outer_out)
+  
+  # Remove "_temp" suffix if it appears
+  rownames(tm) <- gsub("_temp", "", rownames(tm))
+  colnames(tm) <- gsub("_temp", "", colnames(tm))
+  
   # Return
   t(tm)
 }
