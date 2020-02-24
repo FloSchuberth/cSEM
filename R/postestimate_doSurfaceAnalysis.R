@@ -126,7 +126,7 @@ doSurfaceAnalysis <- function(
   # interactions of the .independent_1 and the .independent_2 
   pointer=sapply(indep_vars,function(x){
     temp=unlist(strsplit(x,'\\.'))
-    if(sum(grepl(paste(c(.independent_2 , .independent_1 ),collapse = '|'  ),temp))==length(temp)){
+    if(sum(grepl(paste(c(.independent_2, .independent_1 ),collapse = '|'  ),temp))==length(temp)){
       TRUE
     }else{
       FALSE
@@ -135,7 +135,7 @@ doSurfaceAnalysis <- function(
   
   if(!all(pointer)){
     warning2("The considered equation contains other variables as\n",
-    ".independent_1 and .independent_2. These will be ignored.")
+    ".independent_1 and .independent_2. They will be ignored.")
   }
   
   vars_rel=indep_vars[pointer]
@@ -187,8 +187,8 @@ doSurfaceAnalysis <- function(
     "Information" = list(
       alpha           = .alpha,
       dependent       = .dependent,
-      independent_1   = .independent_1 ,
-      independent_2   = .independent_2 ,
+      independent_1   = .independent_1,
+      independent_2   = .independent_2,
       all_independent = vars_rel 
     )
   )
