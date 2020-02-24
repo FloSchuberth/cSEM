@@ -165,6 +165,10 @@ to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.independent}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
 
+\item{.independent_1}{Character string. The name of the first independent variable. Defaults to \code{NULL}.}
+
+\item{.independent_2}{Character string. The name of the second independent variable. Defaults to \code{NULL}.}
+
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
