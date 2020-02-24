@@ -9,7 +9,7 @@
 
 - Implement degrees of freedom calculation for second-order constructs. The 
   corresponding function `calculateDf()` is now exported and works for 
-  all types of `cSEMResults` objects. (partly #357)
+  all types of `cSEMResults` objects. (partly #357, #369)
 
 - Export all fit and distance functions. They now work for 
   all types of `cSEMResults` objects. (partly #357)
