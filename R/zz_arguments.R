@@ -149,8 +149,9 @@
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .n Integer. The number of observations of the original data.
-#' @param .n_steps Integer. A numeric value giving the number of steps, e.g., in 
-#'  floodlight analysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to `100`.
+#' @param .n_steps Integer. A numeric value giving the number of steps, e.g., in
+#' surface analysis or floodlight analysis the spotlights (= values of .moderator)
+#' between min(.moderator) and max(.moderator) to use. Defaults to `100`.
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
