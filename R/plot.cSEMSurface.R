@@ -6,8 +6,11 @@
 #' 
 #' @param x An R object of class `cSEMSurface`.
 #' @param .plot_type A character vector indicating the plot package used. Options are
-#' plotly, persp, and rsm. Defaults to '*plotly*'. 
-#' @param ... Ignored.
+#' "*plotly*", "*rsm*", and "*persp*". Defaults to "*plotly*". 
+#' @param ... Additional parameters that can be passed to 
+#' \code{\link[graphics:persp]{graphics::persp}}, e.g., to rotate the plot.
+#' 
+#' @seealso [doSurfaceAnalysis()]
 #' @export
 
 plot.cSEMSurface <- function(
@@ -15,7 +18,7 @@ plot.cSEMSurface <- function(
   .plot_type = c('plotly'),
   ...) {
   if(!(.plot_type %in% c('plotly','rsm','persp'))){
-    stop2("Currenlty only the plotly and the rsm package are supported.")
+    stop2("Currenlty only plotly and rsm are supported for plotting.")
   }
   
   if(.plot_type == 'plotly'){
@@ -26,7 +29,7 @@ plot.cSEMSurface <- function(
       "Package `plotly` required. Use `install.packages(\"plotly\")` and rerun.")
   }
     
-  plot1 <- plotly::plot_ly( x = x$out$x, y = x$out$z, z = x$out$y, type = "surface",
+  plot1 <- plotly::plot_ly( x = x$out$values_ind1, y = x$out$values_ind2, z = x$out$values_dep, type = "surface",
                             colors = 'Greys') %>%
 
     plotly::add_surface(
@@ -40,41 +43,34 @@ plot.cSEMSurface <- function(
     plotly::layout( # Axis labeling
       title = paste("Surface analysis:",x$Information$dependent),
       scene = list(
-        xaxis = list(title = paste('Standardized ',x$Information$independent)),
-        yaxis = list(title = paste('Standardized ',x$Information$moderator)),
+        xaxis = list(title = paste('Standardized ',x$Information$independent_1)),
+        yaxis = list(title = paste('Standardized ',x$Information$independent_2)),
         zaxis = list(title = x$Information$dependent)
       ))%>% plotly::hide_colorbar()
 
-  # save viewer settings. Set to null that figure is opened in browser
+  # save current viewer settings. Set to null that figure is opened in browser
    op=options()
   viewer_old <- op$viewer
   options(viewer = NULL)
+  # Create plot
   return(plot1)
-options(viewer = viewer_old)
+  # Restore viewer settings
+  options(viewer = viewer_old)
   }
 
   if(.plot_type == 'persp'){
-    # # Using the rgl package
-    # ylim <- range(x$out$z)
-    # ylen <- ylim[2] - ylim[1] + 1
-    # 
-    # colorlut <- terrain.colors(ylen)
-    # col <- colorlut[ x$out$z - ylim[1] + 1 ]
-    # rgl.surface(x = x$out$x, z = x$out$z, y = x$out$y,color = col, back="lines")
-    # 
     # using the persp function
     # phi and theta are used for rotation
-    graphics::persp(x = x$out$x, y = x$out$z, z = x$out$y, phi = 40, theta = 140,
-          xlab = paste('Standardized ',x$Information$independent),
-          ylab = paste('Standardized ',x$Information$moderator),
+    graphics::persp(x = x$out$values_ind1, y = x$out$values_ind2, z = t(x$out$values_dep),
+          xlab = paste('Standardized ',x$Information$independent_1),
+          ylab = paste('Standardized ',x$Information$independent_2),
           zlab = x$Information$dependent,
-          main = paste('Surface analysis: ',x$Information$dependent ))
+          main = paste('Surface analysis: ',x$Information$dependent ),...)
     
   }
-  
-  
-  if(.plot_type == 'rsm'){
-  # see rsm package for other plots
-
-  }
+  # 
+  # if(.plot_type == 'rsm'){
+  # # see rsm package for other plots
+  # 
+  # }
 }

@@ -26,7 +26,8 @@ Defaults to \code{0.05}.}
 \item{.independent}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
 
 \item{.n_steps}{Integer. A numeric value giving the number of steps, e.g., in
-floodlight analysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to \code{100}.}
+surface analysis or floodlight analysis the spotlights (= values of .moderator)
+between min(.moderator) and max(.moderator) to use. Defaults to \code{100}.}
 }
 \value{
 A list of class \code{cSEMFloodlight} with a corresponding method for \code{plot()}.
@@ -36,9 +37,9 @@ See: \code{\link[=plot.cSEMFloodlight]{plot.cSEMFloodlight()}}.
 Calculate the effect of an independent variable on a dependent variable
 conditional on the values of a (continous) moderator variable
 to perform a floodlight analysis \insertCite{Spiller2013}{cSEM}. Moreover,
-the Johnson-Neyman points are calculated, i.e. the value(s) of x for which
+the Johnson-Neyman points are calculated, i.e. the value(s) of the moderator for which
 lower or upper boundary of the confidence interval of the effect
-estimate of z for a given x switch signs.
+estimate of the independent variable on the depedent variable switches signs.
 }
 \references{
 \insertAllCited{}

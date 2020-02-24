@@ -10,12 +10,16 @@
 \item{x}{An R object of class \code{cSEMSurface}.}
 
 \item{.plot_type}{A character vector indicating the plot package used. Options are
-plotly, persp, and rsm. Defaults to '\emph{plotly}'.}
+"\emph{plotly}", "\emph{rsm}", and "\emph{persp}". Defaults to "\emph{plotly}".}
 
-\item{...}{Ignored.}
+\item{...}{Additional parameters that can be passed to
+\code{\link[graphics:persp]{graphics::persp}}, e.g., to rotate the plot.}
 }
 \description{
 Plot the predicted values of an independent variable (z)
 The values are predicted based on a certain moderator and a certain
 independent variable including all their higher-order terms.
+}
+\seealso{
+\code{\link[=doSurfaceAnalysis]{doSurfaceAnalysis()}}
 }

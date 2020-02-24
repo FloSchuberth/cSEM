@@ -1,15 +1,15 @@
 #' Do a surface analysis
 #'
 #' Based on a nonlinear model, the dependent variable of a certain equation is
-#' predicted by a certain independent variable and a certain second variable (moderator)
+#' predicted by two independent variable, i.e., .independent_1 and .independent_2
 #' including their higher-order terms.
 #' 
 #' @usage doSurfaceAnalysis(
 #'  .object             = NULL,
 #'  .alpha              = 0.05,
 #'  .dependent          = NULL, 
-#'  .independent        = NULL,
-#'  .moderator          = NULL,
+#'  .independent_1      = NULL,
+#'  .independent_2      = NULL,
 #'  .n_steps            = 100
 #'  )
 #'
@@ -28,15 +28,15 @@ doSurfaceAnalysis <- function(
   .object             = NULL,
   .alpha              = 0.05,
   .dependent          = NULL, 
-  .independent        = NULL,
-  .moderator          = NULL,
+  .independent_1      = NULL,
+  .independent_2      = NULL,
   .n_steps            = 100
 ){
   
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, doSurfaceAnalysis, .alpha = .alpha, 
-                  .dependent = .dependent, .independent = .independent,
-                  .moderator = .moderator, .n_steps = .n_steps)
+                  .dependent = .dependent, .independent_1 = .independent_1 ,
+                  .independent_2  = .independent_2 , .n_steps = .n_steps)
     
     class(out) <- c("cSEMSurface", "cSEMSurface_multi")
     return(out)
@@ -62,7 +62,8 @@ doSurfaceAnalysis <- function(
     est <- .object$Estimates$Estimates_resample$Estimates1$Path_estimates
     H   <- .object$Estimates$Construct_scores
     Q  <- .object$Estimates$Reliabilities
-  } else {
+  } 
+  else {
     m   <- .object$Second_stage$Information$Model
     est <- .object$Second_stage$Information$Resamples$Estimates$Estimates1$Path_estimates
     H   <- .object$Second_stage$Estimates$Construct_scores
@@ -70,11 +71,11 @@ doSurfaceAnalysis <- function(
     }
   
   ## Check if model is nonlinear.
-  if(m$model_type != "Nonlinear"){
-    stop2(
-      "The following error occured in the `doSurfaceAnalysis()`` function:\n",
-      "The structural model must contain contain nonlinear terms.")
-  }
+  # if(m$model_type != "Nonlinear"){
+  #   stop2(
+  #     "The following error occured in the `doSurfaceAnalysis()`` function:\n",
+  #     "The structural model must contain contain nonlinear terms.")
+  # }
   
   ## Works only for one significance level, i.e., no vector of significances is allowed
   if(length(.alpha) != 1){
@@ -84,32 +85,35 @@ doSurfaceAnalysis <- function(
   }
   
   
-  ## Check whether dependent, independent, and moderator variable are provided
-  if(is.null(.dependent) | is.null(.moderator) | is.null(.independent)){
+  ## Check whether dependent, and two independent  variables are provided
+  if(is.null(.dependent) | is.null(.independent_2 ) | is.null(.independent_1 )){
     stop2(
-      "The following error occured in the `doFloodlightAnalysis()`` function:\n",
-      "All variables (.dependent, .moderator, and.independent) must be supplied.")
+      "The following error occured in the `doSurfaceAnalysis()`` function:\n",
+      "All variables (.dependent, .independent_2 , and.independent_1 ) must be supplied.")
   }
   
   
   # Check if the name of the dependent variable is valid
   if(!(.dependent %in% rownames(m$structural[rowSums(m$structural) !=0, , drop = FALSE]))){
     stop2(
-      "The following error occured in the `doFloodlightAnalysis()`` function:\n",
+      "The following error occured in the `doSurfaceAnalysis()`` function:\n",
       "The dependent variable supplied to `.dependent` is not a dependent variable in the original model.")
   }
   
-  # Check if the name of the moderator (.x) and the dependent variable (.z) supplied are used 
-  # in the original model
-  if(!all(c(.moderator,.independent) %in% colnames(m$structural))){
+  # Check if the names of the two independent variables (.independent_1 and .independent_2)
+  # supplied are used in the original model
+  if(!all(c(.independent_2 ,.independent_1 ) %in% colnames(m$structural))){
     stop2(
-      "The following error occured in the `doFloodlightAnalysis()`` function:\n",
-      "Independent and/or moderator variable are not part of the original model.")
+      "The following error occured in the `doSurfaceAnalysis()`` function:\n",
+      "At least on of the independent variables are not part of the original model.")
   }
   
   ### Calculation --------------------------------------------------------------
-  sum_object = summarize(.object = .object)
-  
+  if(inherits(.object, "cSEMResults_default")) {
+    sum_object = summarize(.object = .object)
+  } else if(inherits(.object, "cSEMResults_2ndorder")){
+    sum_object = summarize(.object = .object$Second_stage)
+  }
   # Character string containing the names of the dependent and independent variables
   dep_vars   <- rownames(m$structural[rowSums(m$structural) !=0, , drop = FALSE])
   indep_vars <- colnames(m$structural[, colSums(m$structural[.dependent, ,drop = FALSE]) !=0 , drop = FALSE])
@@ -119,35 +123,38 @@ doSurfaceAnalysis <- function(
   
   nonlinear_vars=indep_vars[grepl(pattern = '.',x = indep_vars,fixed = T)]
   
-  # Grab quadratic independent
-  quad_ind=nonlinear_vars[grepl(paste0(.independent,'.',.independent),nonlinear_vars)]
-  quad_mod=nonlinear_vars[grepl(paste0(.moderator,'.',.moderator),nonlinear_vars)]
-  
-  # interactions of the .independent and the .moderator
+  # interactions of the .independent_1 and the .independent_2 
   pointer=sapply(indep_vars,function(x){
     temp=unlist(strsplit(x,'\\.'))
-    if(sum(grepl(paste(c(.moderator, .independent),collapse = '|'  ),temp))==length(temp)){
+    if(sum(grepl(paste(c(.independent_2 , .independent_1 ),collapse = '|'  ),temp))==length(temp)){
       TRUE
     }else{
       FALSE
     }
   })
   
+  if(!all(pointer)){
+    warning2("The considered equation contains other variables as\n",
+    ".independent_1 and .independent_2. These will be ignored.")
+  }
+  
   vars_rel=indep_vars[pointer]
   
   sum_rel=sum_object$Estimates$Path_estimates[sum_object$Estimates$Path_estimates$Name%in% 
                                         paste(.dependent,"~",vars_rel),]
   
-  steps_ind = seq(min(H[, .independent]), max(H[, .independent]), 
+  steps_ind1 = seq(min(H[, .independent_1 ]), max(H[, .independent_1 ]),
                   length.out = .n_steps)
-  steps_mod = seq(min(H[, .moderator]), max(H[, .moderator]), 
+  steps_ind2 = seq(min(H[, .independent_2 ]), max(H[, .independent_2 ]),
                   length.out = .n_steps)
+  # steps_ind1 = 1:3
+  # steps_ind2 = 6:7
   
-  steps_independent = rep(steps_ind,each=length(steps_mod))
-  steps_moderator = rep(steps_mod,times = length(steps_ind))
+  steps_independent1 = rep(steps_ind1,each=length(steps_ind2))
+  steps_independent2 = rep(steps_ind2,times = length(steps_ind1))
   
-  steps=cbind(steps_independent,steps_moderator)
-  colnames(steps)=c(.independent,.moderator)
+  steps=cbind(steps_independent1,steps_independent2)
+  colnames(steps)=c(.independent_1 ,.independent_2 )
   
   y_pred_list=lapply(sum_rel$Name,function(x){
     temp <- sum_rel[sum_rel$Name==x,]
@@ -166,20 +173,22 @@ doSurfaceAnalysis <- function(
   y_pred = Reduce('+',y_pred_list)
   
   # Return output
-  out <- list(y=matrix(y_pred,nrow=length(steps_ind),ncol=length(steps_mod)),
-              z=steps_ind,x=steps_mod)
+  # The returned matrix has in the columns the value of the independent variable
+  # and in the rows the values of the moderator
+  out <- list(values_dep=matrix(y_pred,ncol=length(steps_ind1),nrow=length(steps_ind2)),
+              values_ind1=steps_ind1,values_ind2=steps_ind2)
   
-  out1 <- list(y=y_pred, z=steps_independent,x=steps_moderator)
+  # out1 <- list(y=y_pred, z=steps_independent1,x=steps_independent2)
   
   # Prepare and return output
   out <- list(
-    "out"                   = out,
-    "out1" = out1,
+    "out"  = out,
+    # "out1" = out1,
     "Information" = list(
-      alpha       = .alpha,
-      dependent   = .dependent,
-      independent =.independent,
-      moderator   = .moderator,
+      alpha           = .alpha,
+      dependent       = .dependent,
+      independent_1   = .independent_1 ,
+      independent_2   = .independent_2 ,
       all_independent = vars_rel 
     )
   )
