@@ -403,6 +403,17 @@ testMICOM <- function(
     
     names(padjusted_mean) <- .approach_p_adjust
     
+    decision_mean <- lapply(padjusted_mean, function(adjust_approach){ # over the different p adjustments
+      temp <- lapply(.alpha, function(alpha){# over the different significance levels
+        lapply(adjust_approach,function(group_comp){# over the different group comparisons
+          # check whether the p values are larger than a certain alpha
+          group_comp > alpha
+        })
+      })
+      names(temp) <- paste0(.alpha*100, "%")
+      temp
+    })
+    
     
     pvalue_var <- lapply(1:length(ref_dist_var), function(x) {
       # Share of values above the positive test statistic
@@ -424,6 +435,16 @@ testMICOM <- function(
     
     names(padjusted_var) <- .approach_p_adjust
     
+    decision_var <- lapply(padjusted_var, function(adjust_approach){ # over the different p adjustments
+      temp <- lapply(.alpha, function(alpha){# over the different significance levels
+        lapply(adjust_approach,function(group_comp){# over the different group comparisons
+          # check whether the p values are larger than a certain alpha
+          group_comp > alpha
+        })
+      })
+      names(temp) <- paste0(.alpha*100, "%")
+      temp
+    })
     
     critical_values_step3 <- lapply(mv, function(x) lapply(x, function(y) y[-1, ])) %>% 
       lapply(function(x) lapply(x, function(y) matrixStats::colQuantiles(y, probs =  probs, drop = FALSE)))
