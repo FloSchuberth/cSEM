@@ -134,8 +134,10 @@ doSurfaceAnalysis <- function(
   })
   
   if(!all(pointer)){
-    warning2("The considered equation contains other variables as\n",
-    ".independent_1 and .independent_2. They will be ignored.")
+    warning2(paste0("The considered equation contains the following variables that do not\n",
+    "only involve ",.independent_1, " and ", .independent_2, ":\n\n",
+    paste(indep_vars[!pointer],collapse =', '),"\n\n",
+    "They will be ignored in calculating the predicted values of ", .dependent,"."))
   }
   
   vars_rel=indep_vars[pointer]
