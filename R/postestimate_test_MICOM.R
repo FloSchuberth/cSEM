@@ -392,7 +392,7 @@ testMICOM <- function(
     
     names(pvalue_mean) <- names(ref_dist_mean)
     
-    # Adjust p-values
+    # Adjust p-values: Correct pvalues by the number of groups
     padjusted_mean <- lapply(as.list(.approach_p_adjust), function(x){
       # It is important to unlist the pvalues as pAdjust needs to now how many p-values
       # there are to do a proper adjustment
