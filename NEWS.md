@@ -1,5 +1,8 @@
 # cSEM 0.1.0:9000
 
+- Add several new example data sets: See `?BergamiBagozzi2000`, `?ITFlex`, 
+  `?LancelotMiltgenetal2016`, `?Russett`, `Switching`, and `Yooetal2000`.
+  
 - Breaking: Rename argument in `doFloodlightAnalysis()` (#343)
 
 - Implement surface analysis via `doSurfaceAnalysis()` (#349)
