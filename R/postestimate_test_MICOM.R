@@ -18,6 +18,7 @@
 #' @usage testMICOM(
 #'  .object               = NULL,
 #'  .alpha                = 0.05,
+#'  .approach_p_adjust     = "none",
 #'  .handle_inadmissibles = c("drop", "ignore", "replace"), 
 #'  .R                    = 499,
 #'  .seed                 = NULL,
@@ -47,7 +48,7 @@
 testMICOM <- function(
   .object               = NULL,
   .alpha                = 0.05,
-  # .approach_p_adjust    = "none",
+  .approach_p_adjust    = "none",
   .handle_inadmissibles = c("drop", "ignore", "replace"),
   .R                    = 499,
   .seed                 = NULL,
@@ -264,6 +265,38 @@ testMICOM <- function(
                                     probs = .alpha, drop = FALSE) # lower quantile needed, hence 
     # alpha and not 1 - alpha
     
+    # Calculate the p-value for the second step of MICOM
+    pvalue_step2<- lapply(1:length(temp), function(x) {
+    # Share of values above the positive test statistic
+      # temp contains a list of the reference distributions
+    rowMeans(t(temp[[x]]) < c[[x]]) 
+  })
+    names(pvalue_step2) <- names(temp)
+    
+    padjusted_step2 <- lapply(as.list(.approach_p_adjust), function(x){
+      # It is important to unlist the pvalues as pAdjust needs to now how many p-values
+      # there are to do a proper adjustment
+      pvector <- stats::p.adjust(unlist(pvalue_step2),method = x)
+      # Sort them back into list
+      relist(flesh = pvector,skeleton = pvalue_step2)
+    })
+    
+    names(padjusted_step2) <- .approach_p_adjust
+    
+    # Decision 
+    # TRUE = p-value > alpha --> not reject
+    # FALSE = sufficient evidence against the H0 --> reject
+    decision_step2 <- lapply(padjusted_step2, function(adjust_approach){ # over the different p adjustments
+      temp <- lapply(.alpha, function(alpha){# over the different significance levels
+        lapply(adjust_approach,function(group_comp){# over the different group comparisons
+          # check whether the p values are larger than a certain alpha
+          group_comp > alpha
+        })
+      })
+      names(temp) <- paste0(.alpha*100, "%")
+      temp
+    })
+    
     ## Decision
     decision <- mapply(function(x, y) x > y, # dont reject (TRUE) if the value of 
                        x = c,                # the teststat is larger than the critical value
@@ -337,16 +370,65 @@ testMICOM <- function(
     # dataset
     mv_o <- lapply(mv, function(x) lapply(x, function(y) y[1, ]))
     
+    teststat_mean <- mv_o$Mean
+    
+    teststat_var <- mv_o$Var
     ## Compute quantiles/critical values
     probs <- c()
     for(i in seq_along(.alpha)) { 
       probs <- c(probs, .alpha[i]/2, 1 - .alpha[i]/2) 
     }
     
+    ref_dist_mean <- lapply(mv$Mean,function(x){x[-1,,drop=FALSE]}) 
+    
+    ref_dist_var <-  lapply(mv$Var,function(x){x[-1,,drop=FALSE]})
+      
+    pvalue_mean <- lapply(1:length(ref_dist_mean), function(x) {
+      # Share of values above the positive test statistic
+      rowMeans(t(ref_dist_mean[[x]]) > abs(teststat_mean[[x]])) +
+        # share of values of the reference distribution below the negative test statistic 
+        rowMeans(t(ref_dist_mean[[x]]) < (-abs(teststat_mean[[x]])))
+    })
+    
+    names(pvalue_mean) <- names(ref_dist_mean)
+    
+    # Adjust p-values
+    padjusted_mean <- lapply(as.list(.approach_p_adjust), function(x){
+      # It is important to unlist the pvalues as pAdjust needs to now how many p-values
+      # there are to do a proper adjustment
+      pvector <- stats::p.adjust(unlist(pvalue_mean),method = x)
+      # Sort them back into list
+      relist(flesh = pvector,skeleton = pvalue_mean)
+    })
+    
+    names(padjusted_mean) <- .approach_p_adjust
+    
+    
+    pvalue_var <- lapply(1:length(ref_dist_var), function(x) {
+      # Share of values above the positive test statistic
+      rowMeans(t(ref_dist_var[[x]]) > abs(teststat_var[[x]])) +
+        # share of values of the reference distribution below the negative test statistic 
+        rowMeans(t(ref_dist_var[[x]]) < (-abs(teststat_var[[x]])))
+    })
+    
+    names(pvalue_var) <- names(ref_dist_var)
+    
+    # Adjust p-values, e.g., Bonferroni: Multiply all p-values by the number of comparisons
+    padjusted_var <- lapply(as.list(.approach_p_adjust), function(x){
+      # It is important to unlist the pvalues as pAdjust needs to now how many p-values
+      # there are to do a proper adjustment
+      pvector <- stats::p.adjust(unlist(pvalue_var),method = x)
+      # Sort them back into list
+      relist(flesh = pvector,skeleton = pvalue_var)
+    })
+    
+    names(padjusted_var) <- .approach_p_adjust
+    
+    
     critical_values_step3 <- lapply(mv, function(x) lapply(x, function(y) y[-1, ])) %>% 
       lapply(function(x) lapply(x, function(y) matrixStats::colQuantiles(y, probs =  probs, drop = FALSE)))
     
-    ## Compare critical value and teststatistic
+    ## Compare critical value and test statistic
     # For Mean
     decision_m <- mapply(function(x, y) abs(x) < y[, seq(2, length(.alpha)*2, by = 2), drop = FALSE],
                          x = mv_o[[1]],
