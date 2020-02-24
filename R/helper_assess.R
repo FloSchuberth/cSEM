@@ -116,6 +116,12 @@ calculateDf <- function(
     x1 <- .object$Estimates
     x2 <- .object$Information$Model
     
+    if(x2$model_type == "Nonlinear") {
+      warning("Computation of the degrees of freedom for models containing nonlinear",
+              " terms currently only counts the nonlinear term in the structural model once.",
+              " This may not be fully correct.")
+    }
+    
     # Number of non-redundant off-diagonal elements of the indicator covariance 
     # matrix (S)
     vS <- sum(lower.tri(x1$Indicator_VCV)) # same as dim_nS *(dim_nS - 1) / 2
@@ -193,6 +199,12 @@ calculateDf <- function(
     
     x21 <- .object$Second_stage$Estimates
     x22 <- .object$Second_stage$Information$Model
+    
+    if(x11$model_type == "Nonlinear") {
+      warning("Computation of the degrees of freedom for models containing nonlinear",
+              " terms currently only counts the nonlinear term in the structural model once.",
+              " This may not be fully correct.")
+    }
     
     # Number of non-redundant off-diagonal elements of the indicator covariance 
     # matrix (S) of the first stage
