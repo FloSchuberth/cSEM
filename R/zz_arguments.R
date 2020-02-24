@@ -160,8 +160,6 @@
 #'   AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates. 
 #'   Defaults to `TRUE`.
 #' @param .original_arguments The list of arguments used within [csem()].
-#' @param .p Numeric. The probability used to compute the critical quantile if
-#'   `.inference = TRUE`. Defaults to `0.9`.
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
 #' @param .parameters_to_compare A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
 #'   parameters (i.e, path (`~`), loadings (`=~`), weights (`<~`), or correlations (`~~`)) should be
@@ -341,11 +339,10 @@ args_csem_dotdotdot <- function(
 #' list shows which argument is passed to which (internal) function:
 #' \describe{
 #' \item{.absolute}{Accepted by/Passed down to: [calculateHTMT()]}
-#' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()]}
+#' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()] and [calculateHTMT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
 #' \item{.handle_inadmissibles}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.null_model}{Accepted by/Passed down to: [calculateDf()]}
-#' \item{.p}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.R}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.saturated}{Accepted by/Passed down to: [calculateSRMR()], 
 #'   [calculateDG()], [calculateDL()], [calculateDML()]and subsequently [fit()].}
@@ -365,7 +362,6 @@ args_assess_dotdotdot <- function(
   .handle_inadmissibles= c("drop", "ignore", "replace"),
   .inference           = FALSE,
   .null_model          = FALSE,
-  .p                   = 0.9,
   .R                   = 499,
   .saturated           = FALSE,
   .seed                = NULL,
@@ -446,7 +442,6 @@ args_default <- function(.choices = FALSE) {
     .null_model              = FALSE,
     .only_common_factors     = TRUE,
     .object                  = NULL,
-    .p                       = 0.9,
     .P                       = NULL,
     .parameters_to_compare   = NULL,
     .probs                   = NULL,

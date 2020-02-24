@@ -527,7 +527,7 @@ calculateRhoT <- function(
 #' @usage calculateHTMT(
 #'  .object               = NULL,
 #'  .absolute             = TRUE,
-#'  .p                    = 0.9,
+#'  .p                    = 0.05,
 #'  .handle_inadmissibles = c("drop", "ignore", "replace"),
 #'  .inference            = FALSE,
 #'  .only_common_factors  = TRUE,
@@ -547,7 +547,7 @@ calculateRhoT <- function(
 calculateHTMT <- function(
   .object               = NULL,
   .absolute             = TRUE,
-  .p                    = 0.9,
+  .alpha                = 0.05,
   .handle_inadmissibles = c("drop", "ignore", "replace"),
   .inference            = FALSE,
   .only_common_factors  = TRUE,
@@ -556,6 +556,11 @@ calculateHTMT <- function(
 ){
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
 
+  ## to do
+  # 
+  # - remove .p and change to .alpha
+  # - add infer 
+  #
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, calculateHTMT,
                   .absolute = .absolute,
@@ -662,12 +667,12 @@ calculateHTMT <- function(
       out_htmt <- out_resample$Second_stage$Information$Resamples$Estimates$Estimates1$HTMT
     }
 
-    if(length(.p) == 1) {
-      quants <- matrixStats::colQuantiles(out_htmt$Resampled, probs = .p) 
+    if(length(.alpha) == 1) {
+      quants <- matrixStats::colQuantiles(out_htmt$Resampled, probs = 1 - 2*.alpha) 
     } else {
       stop2(
         "The following error occured in the calculateHTMT() function:\n",
-        "Only a single numeric probability accepted. You provided:", paste(.p, sep = ", "))
+        "Only a single numeric probability accepted. You provided:", paste(.alpha, sep = ", "))
     }
     
     ## Reassemble matrix

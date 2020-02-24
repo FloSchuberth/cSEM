@@ -28,9 +28,6 @@ computing time. Defaults to "\emph{drop}".}
 \item{.null_model}{Logical. Should the degrees of freedom for the null model
 be computed? Defaults to \code{FALSE}.}
 
-\item{.p}{Numeric. The probability used to compute the critical quantile if
-\code{.inference = TRUE}. Defaults to \code{0.9}.}
-
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
@@ -55,11 +52,10 @@ accepted by a subset of the functions called by \code{assess()}. The following
 list shows which argument is passed to which (internal) function:
 \describe{
 \item{.absolute}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
-\item{.alpha}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}}
+\item{.alpha}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}} and \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.closed_form_ci}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{.handle_inadmissibles}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.null_model}{Accepted by/Passed down to: \code{\link[=calculateDf]{calculateDf()}}}
-\item{.p}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.R}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.saturated}{Accepted by/Passed down to: \code{\link[=calculateSRMR]{calculateSRMR()}},
 \code{\link[=calculateDG]{calculateDG()}}, \code{\link[=calculateDL]{calculateDL()}}, \code{\link[=calculateDML]{calculateDML()}}and subsequently \code{\link[=fit]{fit()}}.}

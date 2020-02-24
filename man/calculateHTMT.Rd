@@ -7,7 +7,7 @@
 calculateHTMT(
  .object               = NULL,
  .absolute             = TRUE,
- .p                    = 0.9,
+ .p                    = 0.05,
  .handle_inadmissibles = c("drop", "ignore", "replace"),
  .inference            = FALSE,
  .only_common_factors  = TRUE,
@@ -21,8 +21,8 @@ calculateHTMT(
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
 Defaults to \code{TRUE} .}
 
-\item{.p}{Numeric. The probability used to compute the critical quantile if
-\code{.inference = TRUE}. Defaults to \code{0.9}.}
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all

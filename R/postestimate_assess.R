@@ -429,10 +429,10 @@ assess.cSEMResults_default <- function(
       out$Information[[".inference"]] <- formals(calculateHTMT)[[".inference"]]
     }
     
-    if(any(names(args_htmt) == ".p")) {
-      out$Information[[".p"]] <- args_htmt[[".p"]]
+    if(any(names(args_htmt) == ".alpha")) {
+      out$Information[[".alpha"]] <- args_htmt[[".alpha"]]
     } else {
-      out$Information[[".p"]] <- formals(calculateHTMT)[[".p"]]
+      out$Information[[".alpha"]] <- formals(calculateHTMT)[[".alpha"]]
     }
   }
   if(any(.quality_criterion %in% c("all", "r2")) && !all(m$structural == 0)) {

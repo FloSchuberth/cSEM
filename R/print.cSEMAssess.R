@@ -220,19 +220,17 @@ print.cSEMAssess <- function(x, ...) {
       cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n")
       if(x$Information$.inference) {
         cat2("Values in the upper triangular part are the ", 
-             paste0(100*x$Information$.p, "%-Quantile of the bootstrap distribution.\n\n")) 
-        x$HTMT <- round(x$HTMT, 4)
-        diag(x$HTMT) <- "."
+             paste0(100*(1 - 2*x$Information$.alpha), "%-Quantile of the bootstrap distribution.\n\n")) 
+        x$HTMT
       } else {
-        x$HTMT <- round(x$HTMT, 4)
-        x$HTMT[upper.tri(x$HTMT, diag = TRUE)] <- "."
+        x$HTMT
       }
       print(x$HTMT)
     }
     
     if(any(names(x) == "Fornell-Larcker")) {
       cat2("\n\n\tFornell-Larcker matrix\n\n")
-      print(round(x$`Fornell-Larcker`, 4))
+      print(x$`Fornell-Larcker`)
     }
   }
   

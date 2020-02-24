@@ -216,9 +216,6 @@ Defaults to \code{TRUE}.}
 
 \item{.original_arguments}{The list of arguments used within \code{\link[=csem]{csem()}}.}
 
-\item{.p}{Numeric. The probability used to compute the critical quantile if
-\code{.inference = TRUE}. Defaults to \code{0.9}.}
-
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
