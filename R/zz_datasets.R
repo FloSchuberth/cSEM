@@ -411,7 +411,7 @@
 "LancelotMiltgenetal2016"
 
 
-#' Data: Yooetal2001
+#' Data: Yooetal2000
 #'
 #' The data is simulated and has the identical correlation matrix as the data
 #' that was analysed by \insertCite{Yoo2000;textual}{cSEM} 
@@ -446,15 +446,16 @@
 #' BR~ PR + IM + DI + AD + DL 
 #' "
 #' 
-#' out <- csem(.data = Yooetal2001, .model = model_HOC,
+#' out <- csem(.data = Yooetal2000, .model = model_HOC,
 #'             .PLS_weight_scheme_inner = 'factorial',
 #'             .tolerance = 1e-06)
 #' 
 #' @references
 #'   \insertAllCited{}
 #'     
-#' @source Simulated data with the same correlation matrix as the data studied by \insertCite{Yoo2000;textual}{cSEM}.  
-"Yooetal2001"
+#' @source Simulated data with the same correlation matrix as the data studied 
+#' by \insertCite{Yoo2000;textual}{cSEM}.  
+"Yooetal2000"
 
 
 #' Data: Switching
