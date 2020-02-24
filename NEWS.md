@@ -1,5 +1,8 @@
 # cSEM 0.1.0:9000
 
+- Fix `assess()` incorrectly omitting the R2 and the R2_adjusted in the 
+  printed output (#372)
+  
 - Add several new example data sets: See `?BergamiBagozzi2000`, `?ITFlex`, 
   `?LancelotMiltgenetal2016`, `?Russett`, `Switching`, and `Yooetal2000`.
   

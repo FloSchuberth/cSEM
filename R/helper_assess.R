@@ -200,7 +200,7 @@ calculateDf <- function(
     x21 <- .object$Second_stage$Estimates
     x22 <- .object$Second_stage$Information$Model
     
-    if(x11$model_type == "Nonlinear") {
+    if(x12$model_type == "Nonlinear") {
       warning("Computation of the degrees of freedom for models containing nonlinear",
               " terms currently only counts the nonlinear term in the structural model once.",
               " This may not be fully correct.")
