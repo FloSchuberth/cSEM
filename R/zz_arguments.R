@@ -124,6 +124,8 @@
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
 #' @param .independent Character string. The name of the independent variable. Defaults to `NULL`.
+#' @param .independent_1 Character string. The name of the first independent variable. Defaults to `NULL`.
+#' @param .independent_2 Character string. The name of the second independent variable. Defaults to `NULL`.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
 #'   equation whose explanatory variables are endogenous. The vectors
@@ -406,6 +408,7 @@ args_default <- function(.choices = FALSE) {
     .csem_resample           = NULL,
     .cv_folds                = 10,
     .data                    = NULL,
+    .dependent               = NULL,
     .disattenuate            = TRUE,
     .dist                    = c("z", "t"),
     .distance                = c("geodesic", "squared_euclidian"),
@@ -419,6 +422,9 @@ args_default <- function(.choices = FALSE) {
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
+    .independent             = NULL,
+    .independent_1           = NULL,
+    .independent_2           = NULL,
     .instruments             = NULL,
     .listMatrices            = NULL, 
     .matrix1                 = NULL,
@@ -426,6 +432,7 @@ args_default <- function(.choices = FALSE) {
     .matrices                = NULL,
     .model                   = NULL,
     .model_implied           = FALSE,
+    .moderator               = NULL,
     .modes                   = NULL,
     .n_steps                 = 100,
     .normality               = FALSE,
