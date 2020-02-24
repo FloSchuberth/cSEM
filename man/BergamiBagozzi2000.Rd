@@ -19,7 +19,8 @@ A data frame containing 22 variables with 305 observations.
 The dataset contains 22 variables and originates
 from a larger survey among South Korean employees conducted and
 reported by \insertCite{Bergami2000;textual}{cSEM}. It is
-also used in \insertCite{Henseler2020;textual}{cSEM}
+also used in  \insertCite{Hwang2014;textual}{cSEM} and
+\insertCite{Henseler2020;textual}{cSEM}
 for demonstration purposes (Tutorial 6).
 }
 \examples{
