@@ -261,8 +261,8 @@ testMICOM <- function(
     
     # Order alphas (decreasing order)
     .alpha <- .alpha[order(.alpha)]
-    critical_values_step2 <- lapply(lapply(temp, as.matrix), matrixStats::colQuantiles, 
-                                    probs = .alpha, drop = FALSE) # lower quantile needed, hence 
+    # critical_values_step2 <- lapply(lapply(temp, as.matrix), matrixStats::colQuantiles, 
+    #                                 probs = .alpha, drop = FALSE) # lower quantile needed, hence 
     # alpha and not 1 - alpha
     
     # Calculate the p-value for the second step of MICOM
@@ -275,26 +275,15 @@ testMICOM <- function(
     
     padjusted_step2 <- lapply(as.list(.approach_p_adjust), function(x){
       # Select p_values per composite and only adjust those
-      lapply(seq_along(pvalue_step2[[1]]),function(counter){
-        pvectorpercomposite<- sapply(pvalue_step2,function(x){x[counter]})
-        pvector <- stats::p.adjust( pvectorpercomposite,method = x)
-        })
+      temp <- purrr:::transpose(pvalue_step2)
+      temp1 <- lapply(temp,function(comp){
+        stats::p.adjust(unlist(comp),method = x)
+      })
+      # sort them back
+      lapply(purrr:::transpose(temp1),unlist)
     })
-    
-    padjusted_step2 <- lapply(as.list(.approach_p_adjust), function(x){
-      # It is important to unlist the pvalues as pAdjust needs to now how many p-values
-      # there are to do a proper adjustment
-      pvector <- stats::p.adjust(unlist(pvalue_step2),method = x)
-    })
-    
-    # Sort them back into list
-    temp <- do.call(cbind,padjusted_step2[[1]])
-    lapply(1:nrow(temp),function(x){
-      temp[x,,drop=FALSE]
-    })
-    
-    
     names(padjusted_step2) <- .approach_p_adjust
+
     
     # Decision 
     # TRUE = p-value > alpha --> not reject
@@ -303,18 +292,18 @@ testMICOM <- function(
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
           # check whether the p values are larger than a certain alpha
-          group_comp > alpha
+          as.matrix(group_comp > alpha,ncol=1)
         })
       })
       names(temp) <- paste0(.alpha*100, "%")
       temp
     })
-    
+    # TRUE do not reject; FALSE: reject
     ## Decision
-    decision <- mapply(function(x, y) x > y, # dont reject (TRUE) if the value of 
-                       x = c,                # the teststat is larger than the critical value
-                       y = critical_values_step2,
-                       SIMPLIFY = FALSE)
+    # decision <- mapply(function(x, y) x > y, # dont reject (TRUE) if the value of 
+    #                    x = c,                # the teststat is larger than the critical value
+    #                    y = critical_values_step2,
+    #                    SIMPLIFY = FALSE)
     
     ### Step 3 - Equal mean values and variances==================================
     # Update arguments
@@ -383,51 +372,51 @@ testMICOM <- function(
     # dataset
     mv_o <- lapply(mv, function(x) lapply(x, function(y) y[1, ]))
     
+    # Test the means
     teststat_mean <- mv_o$Mean
     
-    teststat_var <- mv_o$Var
-    ## Compute quantiles/critical values
-    probs <- c()
-    for(i in seq_along(.alpha)) { 
-      probs <- c(probs, .alpha[i]/2, 1 - .alpha[i]/2) 
-    }
-    
+    # Collect reference distribution
     ref_dist_mean <- lapply(mv$Mean,function(x){x[-1,,drop=FALSE]}) 
-    
-    ref_dist_var <-  lapply(mv$Var,function(x){x[-1,,drop=FALSE]})
-      
+    # Calculate p-value
     pvalue_mean <- lapply(1:length(ref_dist_mean), function(x) {
       # Share of values above the positive test statistic
       rowMeans(t(ref_dist_mean[[x]]) > abs(teststat_mean[[x]])) +
         # share of values of the reference distribution below the negative test statistic 
         rowMeans(t(ref_dist_mean[[x]]) < (-abs(teststat_mean[[x]])))
     })
-    
     names(pvalue_mean) <- names(ref_dist_mean)
-    
     # Adjust p-values: Correct pvalues by the number of groups
     padjusted_mean <- lapply(as.list(.approach_p_adjust), function(x){
-      # It is important to unlist the pvalues as pAdjust needs to now how many p-values
-      # there are to do a proper adjustment
-      pvector <- stats::p.adjust(unlist(pvalue_mean),method = x)
-      # Sort them back into list
-      relist(flesh = pvector,skeleton = pvalue_mean)
+      # Select p_values per composite and only adjust those
+      temp <- purrr:::transpose(pvalue_mean)
+      # pAdjust needs to now how many p-values there are to do a proper adjustment
+      temp1 <- lapply(temp,function(comp){
+        stats::p.adjust(unlist(comp),method = x)
+      })
+      # sort them back
+      lapply(purrr:::transpose(temp1),unlist)
     })
-    
     names(padjusted_mean) <- .approach_p_adjust
     
+    # Make decision
     decision_mean <- lapply(padjusted_mean, function(adjust_approach){ # over the different p adjustments
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
           # check whether the p values are larger than a certain alpha
-          group_comp > alpha
+          as.matrix(group_comp > alpha,ncol=1)
         })
       })
       names(temp) <- paste0(.alpha*100, "%")
       temp
     })
+    # TRUE: do not reject; FALSE: reject
     
     
+    # Test the variance
+    teststat_var <- mv_o$Var
+    # Collect reference distribution
+    ref_dist_var <-  lapply(mv$Var,function(x){x[-1,,drop=FALSE]})
+    # Calculate p-value
     pvalue_var <- lapply(1:length(ref_dist_var), function(x) {
       # Share of values above the positive test statistic
       rowMeans(t(ref_dist_var[[x]]) > abs(teststat_var[[x]])) +
@@ -439,59 +428,72 @@ testMICOM <- function(
     
     # Adjust p-values, e.g., Bonferroni: Multiply all p-values by the number of comparisons
     padjusted_var <- lapply(as.list(.approach_p_adjust), function(x){
-      # It is important to unlist the pvalues as pAdjust needs to now how many p-values
-      # there are to do a proper adjustment
-      pvector <- stats::p.adjust(unlist(pvalue_var),method = x)
-      # Sort them back into list
-      relist(flesh = pvector,skeleton = pvalue_var)
+      # Select p_values per composite and only adjust those
+      temp <- purrr:::transpose(pvalue_var)
+      # pAdjust needs to now how many p-values there are to do a proper adjustment
+      temp1 <- lapply(temp,function(comp){
+        stats::p.adjust(unlist(comp),method = x)
+      })
+      # sort them back
+      lapply(purrr:::transpose(temp1),unlist)
     })
     
     names(padjusted_var) <- .approach_p_adjust
-    
+    # Make decision
     decision_var <- lapply(padjusted_var, function(adjust_approach){ # over the different p adjustments
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
           # check whether the p values are larger than a certain alpha
-          group_comp > alpha
+          as.matrix(group_comp > alpha,ncol=1)
         })
       })
       names(temp) <- paste0(.alpha*100, "%")
       temp
     })
     
-    critical_values_step3 <- lapply(mv, function(x) lapply(x, function(y) y[-1, ])) %>% 
-      lapply(function(x) lapply(x, function(y) matrixStats::colQuantiles(y, probs =  probs, drop = FALSE)))
     
-    ## Compare critical value and test statistic
-    # For Mean
-    decision_m <- mapply(function(x, y) abs(x) < y[, seq(2, length(.alpha)*2, by = 2), drop = FALSE],
-                         x = mv_o[[1]],
-                         y = critical_values_step3[[1]],
-                         SIMPLIFY = FALSE)
-    # For Var
-    decision_v <- mapply(function(x, y) abs(x) < y[, seq(2, length(.alpha)*2, by = 2), drop = FALSE],
-                         x = mv_o[[2]],
-                         y = critical_values_step3[[2]],
-                         SIMPLIFY = FALSE)
+    
+    ## Compute quantiles/critical values
+    # probs <- c()
+    # for(i in seq_along(.alpha)) { 
+    #   probs <- c(probs, .alpha[i]/2, 1 - .alpha[i]/2) 
+    # }
+    # 
+
+
+    # critical_values_step3 <- lapply(mv, function(x) lapply(x, function(y) y[-1, ])) %>% 
+    #   lapply(function(x) lapply(x, function(y) matrixStats::colQuantiles(y, probs =  probs, drop = FALSE)))
+    # 
+    # ## Compare critical value and test statistic
+    # # For Mean
+    # decision_m <- mapply(function(x, y) abs(x) < y[, seq(2, length(.alpha)*2, by = 2), drop = FALSE],
+    #                      x = mv_o[[1]],
+    #                      y = critical_values_step3[[1]],
+    #                      SIMPLIFY = FALSE)
+    # # For Var
+    # decision_v <- mapply(function(x, y) abs(x) < y[, seq(2, length(.alpha)*2, by = 2), drop = FALSE],
+    #                      x = mv_o[[2]],
+    #                      y = critical_values_step3[[2]],
+    #                      SIMPLIFY = FALSE)
     
     ### Return output ==========================================================
     out <- list(
       "Step2" = list(
         "Test_statistic"     = c,
-        "Critical_value"     = critical_values_step2, 
-        "Decision"           = decision,
+        "P_value"     = padjusted_step2, 
+        "Decision"           = decision_step2,
         "Bootstrap_values"   = ref_dist
       ),
       "Step3" = list(
         "Mean" = list(
-          "Test_statistic"     = mv_o$Mean,
-          "Critical_value"     = critical_values_step3$Mean, 
-          "Decision"           = decision_m
+          "Test_statistic"     = teststat_mean,
+          "P_value"     = padjusted_mean, 
+          "Decision"           = decision_mean
         ),
         "Var" = list(
-          "Test_statistic"     = mv_o$Var,
-          "Critical_value"     = critical_values_step3$Var, 
-          "Decision"           = decision_v
+          "Test_statistic"     = teststat_var,
+          "P_value"     = padjusted_var, 
+          "Decision"           = decision_var
         )
       ),
       "Information" = list(
