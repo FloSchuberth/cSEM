@@ -274,12 +274,25 @@ testMICOM <- function(
     names(pvalue_step2) <- names(temp)
     
     padjusted_step2 <- lapply(as.list(.approach_p_adjust), function(x){
+      # Select p_values per composite and only adjust those
+      lapply(seq_along(pvalue_step2[[1]]),function(counter){
+        pvectorpercomposite<- sapply(pvalue_step2,function(x){x[counter]})
+        pvector <- stats::p.adjust( pvectorpercomposite,method = x)
+        })
+    })
+    
+    padjusted_step2 <- lapply(as.list(.approach_p_adjust), function(x){
       # It is important to unlist the pvalues as pAdjust needs to now how many p-values
       # there are to do a proper adjustment
       pvector <- stats::p.adjust(unlist(pvalue_step2),method = x)
-      # Sort them back into list
-      relist(flesh = pvector,skeleton = pvalue_step2)
     })
+    
+    # Sort them back into list
+    temp <- do.call(cbind,padjusted_step2[[1]])
+    lapply(1:nrow(temp),function(x){
+      temp[x,,drop=FALSE]
+    })
+    
     
     names(padjusted_step2) <- .approach_p_adjust
     
