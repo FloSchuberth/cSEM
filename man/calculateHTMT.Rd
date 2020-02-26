@@ -7,7 +7,7 @@
 calculateHTMT(
  .object               = NULL,
  .absolute             = TRUE,
- .p                    = 0.05,
+ .alpha                = 0.05,
  .handle_inadmissibles = c("drop", "ignore", "replace"),
  .inference            = FALSE,
  .only_common_factors  = TRUE,

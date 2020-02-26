@@ -527,7 +527,7 @@ calculateRhoT <- function(
 #' @usage calculateHTMT(
 #'  .object               = NULL,
 #'  .absolute             = TRUE,
-#'  .p                    = 0.05,
+#'  .alpha                = 0.05,
 #'  .handle_inadmissibles = c("drop", "ignore", "replace"),
 #'  .inference            = FALSE,
 #'  .only_common_factors  = TRUE,
@@ -556,15 +556,10 @@ calculateHTMT <- function(
 ){
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
 
-  ## to do
-  # 
-  # - remove .p and change to .alpha
-  # - add infer 
-  #
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, calculateHTMT,
                   .absolute = .absolute,
-                  .p                    = .p,
+                  .alpha                = .alpha,
                   .handle_inadmissibles = .handle_inadmissibles,
                   .inference            = .inference,
                   .only_common_factors  = .only_common_factors,
@@ -624,27 +619,44 @@ calculateHTMT <- function(
     i_names <- colnames(cf_measurement)
     S       <- .object$First_stage$Estimates$Indicator_VCV[i_names, i_names]
   }
-  ## Average correlation of the indicators of a block 
-  avrg_cor <- cf_measurement %*% (S - diag(diag(S))) %*% t(cf_measurement) /
-    cf_measurement %*% (1 - diag(nrow(S))) %*% t(cf_measurement)
+  
+  ## Warning if S contains negative and positive correlations within a block
+  S_signs    <- cf_measurement %*% (sign(S) - diag(nrow(S))) %*% t(cf_measurement)
+  S_elements <- cf_measurement %*% (1 - diag(nrow(S))) %*% t(cf_measurement)
+  
+  if(any(S_signs != S_elements)) {
+    warning(
+      "The following warning occured in the calculateHTMT() function:\n",
+      "Intra-block and inter-block correlations between indicators", 
+      " must be either all-positive or all-negative.", call. = FALSE)
+  }
+  
+  ## Average correlation of the indicators within and across blocks
+  ## The eta_i - eta_i (main diagonal) element is the monotrait-heteromethod correlation
+  ## The eta_i - eta_j (off-diagonal) element is the heterotrait-heteromethod correlation
+  avrg_cor <- cf_measurement %*% (S - diag(diag(S))) %*% t(cf_measurement) / S_elements
   
   ## Compute HTMT
-  # Geometric means of the average monotrait-heteromethod correlation of 
+  # HTMT_ij = Average heterotrait-heteromethod correlation between i and j divided by 
+  # the geometric means of the average monotrait-heteromethod correlation of 
   # eta_i with the average monotrait-heteromethod correlation of construct eta_j
   # (can be negative if some indicators are negatively correlated)
   tryCatch({sqrt(diag(avrg_cor) %o% diag(avrg_cor))},
            warning = function(w) {
-             warning2("The geometric mean of the average monotrait-heteromethod",
-                      " correlation of at least one construct with",
-                      " the average monotrait-heteromethod correlation of the",
-                      " other constructs is negative. NaNs produced")
+             warning(
+               "The following warning occured in the calculateHTMT() function:\n",
+               "The geometric mean of the average monotrait-heteromethod",
+               " correlation of at least one construct with",
+               " the average monotrait-heteromethod correlation of the",
+               " other constructs is negative. NaNs produced.",
+               call. = FALSE)
            }
   )
   out <- avrg_cor*lower.tri(avrg_cor) / suppressWarnings(sqrt(diag(avrg_cor) %o% diag(avrg_cor))) 
   
   if(.absolute) {
     out <- abs(out)
-  } 
+  }
   
   if(.inference) {
     # Bootstrap if necessary
@@ -668,22 +680,25 @@ calculateHTMT <- function(
     }
 
     if(length(.alpha) == 1) {
-      quants <- matrixStats::colQuantiles(out_htmt$Resampled, probs = 1 - 2*.alpha) 
+      quants <- matrixStats::colQuantiles(out_htmt$Resampled, probs = 1 - .alpha) 
     } else {
       stop2(
         "The following error occured in the calculateHTMT() function:\n",
         "Only a single numeric probability accepted. You provided:", paste(.alpha, sep = ", "))
     }
     
-    ## Reassemble matrix
+    ## Reassemble matr
     htmt_quantiles <- out
     htmt_quantiles[] <- quants
     
     htmt_inference <- out + t(htmt_quantiles)
     
+    # Return
+    diag(htmt_inference) <- 1
     return(htmt_inference)
   }
   # Return
+  diag(out) <- 1
   return(out)
 }
 
