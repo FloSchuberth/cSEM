@@ -83,9 +83,15 @@ calculateAVE <- function(
 #' See: \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{cSEM website} 
 #' for details on how the degrees of freedom are calculated.
 #' 
+#' To compute the degrees of freedom of the null model use `.null_model = TRUE`.
+#' The degrees of freedom of the null model are identical to the number of
+#' non-redundant off-diagonal elements of the empirical indicator correlation matrix.
+#' This implicitly assumes a null model with model-implied indicator correlation
+#' matrix equal to the identity matrix.
+#' 
 #' @usage calculateDf(
 #'   .object     = NULL,
-#'   .null_model = args_default()$.null_model,
+#'   .null_model = FALSE,
 #'   ...
 #'   )
 #' 
@@ -99,7 +105,7 @@ calculateAVE <- function(
 
 calculateDf <- function(
   .object     = NULL, 
-  .null_model = args_default()$.null_model,
+  .null_model = FALSE,
   ...
 ) {
   
@@ -118,8 +124,7 @@ calculateDf <- function(
     
     if(x2$model_type == "Nonlinear") {
       warning("Computation of the degrees of freedom for models containing nonlinear",
-              " terms currently only counts the nonlinear term in the structural model once.",
-              " This may not be fully correct.")
+              " terms is experimental. Computation may not be correct.")
     }
     
     # Number of non-redundant off-diagonal elements of the indicator covariance 
@@ -177,9 +182,9 @@ calculateDf <- function(
         
       } else {
         
-        # Number of loadings -1 (since either 1 loading is fixed or the variance 
+        # Number of loadings (since either 1 loading is fixed or the variance 
         # of the construct is fixed)
-        n_loadings <- sum(x2$measurement[j, ] == 1) - 1
+        n_loadings <- sum(x2$measurement[j, ] == 1)
         
         # Number of measurement errors assumed to correlate
         j_names <- names(which(x2$measurement[j, ] == 1))
@@ -199,11 +204,10 @@ calculateDf <- function(
     
     x21 <- .object$Second_stage$Estimates
     x22 <- .object$Second_stage$Information$Model
-    
-    if(x12$model_type == "Nonlinear") {
+  
+    if(x22$model_type == "Nonlinear") {
       warning("Computation of the degrees of freedom for models containing nonlinear",
-              " terms currently only counts the nonlinear term in the structural model once.",
-              " This may not be fully correct.")
+              " terms is experimental. Computation may not be correct.")
     }
     
     # Number of non-redundant off-diagonal elements of the indicator covariance 
@@ -263,7 +267,7 @@ calculateDf <- function(
           
           # Number of loadings -1 (since either 1 loading is fixed or the variance 
           # of the construct is fixed)
-          n_loadings <- sum(x22$measurement[j, ] == 1) - 1
+          n_loadings <- sum(x22$measurement[j, ] == 1)
           
           # Number of measurement errors assumed to correlate
           n_error <- sum(x22$error_cor == 1) / 2
@@ -274,7 +278,7 @@ calculateDf <- function(
       } else {
         if(x12$construct_type[j] == "Composite") {
           ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
-          n_weights <- sum(x12$measurement[j, ]) - 1 
+          n_weights <- sum(x12$measurement[j, ]) - 1
           
           ## Number of free non-redundant off-diagonal element of each intra-block
           #+ covariance matrix
@@ -288,7 +292,7 @@ calculateDf <- function(
           
           # Number of loadings -1 (since either 1 loading is fixed or the variance 
           # of the construct is fixed)
-          n_loadings <- sum(x12$measurement[j, ] == 1) - 1
+          n_loadings <- sum(x12$measurement[j, ] == 1)
           
           # Number of measurement errors assumed to correlate
           n_error <- sum(x12$error_cor == 1) / 2
@@ -658,7 +662,7 @@ calculateRhoT <- function(
 #' Compute the heterotrait-monotrait ratio of correlations (HTMT) based on 
 #' \insertCite{Henseler2015;textual}{cSEM}.
 #'
-#' Similarly to the Cronbach's alpha, the HTMT is a consistent estimator for the
+#' The HTMT is a consistent estimator for the
 #' construct correlations in case of tau equivalent measurement models. 
 #'
 #' The HTMT is used to assess discriminant validity.

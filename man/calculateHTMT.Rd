@@ -37,7 +37,7 @@ Compute the heterotrait-monotrait ratio of correlations (HTMT) based on
 \insertCite{Henseler2015;textual}{cSEM}.
 }
 \details{
-Similarly to the Cronbach's alpha, the HTMT is a consistent estimator for the
+The HTMT is a consistent estimator for the
 construct correlations in case of tau equivalent measurement models.
 
 The HTMT is used to assess discriminant validity.

@@ -69,11 +69,12 @@ Currently the following quality criteria are implemented:
 - The coefficient of determination and the adjusted coefficient of determination
   ($R^2$ and $R^2_{adj}$)
 - A measure of the **effect size** (Cohen's $f^2$).
+- Direct, indirect and total effect assessment.
 
 
 For implementation details see the [Methods & Formulae](#methods) section.
 
-## Syntax & Options
+# Syntax & Options
 
 ```{r eval=FALSE}
 assess(
@@ -116,6 +117,11 @@ assess(
    See [args_assess_dotdotdot][dotdotdot] 
    for a complete list of available arguments.
 
+Like all postestimation functions `assess()` can be called on any object of
+class `cSEMResults`. The output is a named list of the quality criteria given
+to `.quality_criterion`. By default all possible quality criteria 
+a calculated (`.quality_criterion = "all"`).
+
 ## Details {#details}
 In line with all of **cSEM**'s postestimation functions, `assess()` is a generic 
 function with methods for objects of class `cSEMResults_default`, 
@@ -131,6 +137,13 @@ In this case only objects of class `cSEMResults_default` are accepted as this
 ensures a specific structure. Therefore, it is important to remember that
 *internal functions in **cSEM** are generally **not** generic*!
 
+> Update (24.02.2020): from version 0.2.0 onwards all functions that assess() calls internally
+  will be exported. This mean users can directly invoke functions such as e.g.,
+  `calculateHTMT()` or `calculateRhoT()`. These functions will also be generic 
+  accepting all types of cSEMResults classes.
+
+### Composite models vs. common factor models
+
 Some assessment measures are inherently tied to the common factor model. It
 is therefore unclear how to interpret their results in the context of a 
 composite model. Consequently, their computation is suppressed by default for 
@@ -142,8 +155,8 @@ quality criteria:
 - All reliability measures
  
 It is possible to force computation of all quality criteria for constructs
-modeled as composites, however, we explicitly warn to interpret results, 
-as they may not even have a conceptual meaning.
+modeled as composites using `.only_common_factors = FALSE`, however, we explicitly
+warn to interpret results, as they may not even have a conceptual meaning.
 
 All quality criteria assume that the estimated loadings, construct correlations 
 and path coefficients involved in the computation of a specific qualitiy measure
@@ -152,16 +165,7 @@ the user deliberately chooses an approach that yields inconsistent estimates (by
 setting `.disattenuate = FALSE` in `csem()` when the estimated model contains constructs
 modeled as common factors) `assess()` will still estimate
 all quantities, however, quantities such as
-the AVE or the congeneric reliability $\rho_C$ inherit inconsistency making their 
-interpretation at the very least dubious.
-
-
-# Usage
-
-Like all postestimation functions `assess()` can be called on any object of
-class `cSEMResults`. The output is a named list of the quality criteria given
-to `.quality_criterion`. By default all possible quality criteria 
-a calculated (`.quality_criterion = "all"`).
+the AVE or the congeneric reliability $\rho_C$ inherit inconsistency.
 
 # Methods & Formulae {#methods}
 
@@ -188,8 +192,9 @@ common definitions are given below:
   relative to the sum of the total indicator variances (total variation, i.e., 
   the sum of the indicator variances of all indicators connected to the construct).
 - Since for the regression of $x_k$ on $\eta_k$, the R squared ($R^2_k)$ is equal to the
-  share of the explained variation of $x_k$ relative to the share of total variation of $x_k$,
-  The AVE for a generic construct/latent variable $\eta$ is equal to the average over all $R^2_k$. 
+  share of variation of $x_k$ explained by $\eta_k$ relative to the total 
+  variation of $x_k$, the AVE for a generic construct/latent variable $\eta$ 
+  is equal to the average over all $R^2_k$. 
 - The AVE for a generic construct/latent variable $\eta$ is the sum of the 
   squared correlation between indicator $x_k$ and
   the (indicator) true score $\eta_k$ relative to the sum of the indicator variances of 
@@ -200,10 +205,11 @@ are synonymous!
 
 The AVE is inherently tied to the common factor model. It
 is therefore unclear how to interpret the AVE for constructs modeled as composites. 
-Consequently, their computation is suppressed by default for 
+Consequently, the computation is suppressed by default for 
 constructs modeled as common factors. It is possible to force computation of the
-AVE for constructs modeled as composites, however, we explicitly warn to interpret results, 
-as they may not even have a conceptual meaning.
+AVE for constructs modeled as composites using `.only_common_factors = FALSE`, 
+however, we explicitly warn to interpret results, as they may not even have a 
+conceptual meaning.
 
 ### Formulae
 Using the results and notation derived and defined in the [Notation][Notation] help file,
@@ -235,11 +241,82 @@ using R's `:::` mechanism.
 The AVE is the basis for the Fornell-Larcker criterion.
 
 ## Degrees of freedom{#df}
-### Definition 
+
+### Definition
+
+Degrees of freedom are calculated as the difference between the number 
+of non-redundant free elements of the empirical indicator correlation matrix $\bm{S}$
+and the model parameters. 
+
+Although, composite-based estimators retrieve parameters of the 
+postulated models by forming composites, which involves the estimation of weights
+the computation of the degrees of freedom eventually depends on the postulated 
+model and the parameters implied by the model.
+Most notably, a common factor model estimated by a composite-based
+approach such as PLS has the same degrees of freedom compared to e.g., classical
+maximum likelihood estimation of the same model.
+
+### Formulae
+
+$$ 
+\begin{align} 
+df &= \text{# non-redundant off-diagonal elements of the empirical indicator correlation matrix $\bm{S}$} \\
+      &- \text{# model parameters}
+\end{align}
+$$
+
+If the model contains only linear terms the model parameters are:
+
+- \# free correlations between exogenous constructs
+- \# specified correlations between endogenous constructs
+- \# structural parameters
+
+In addition, for each construct $\eta_j$:
+
+- \# of loadings if $\eta_j$ is modeled as a common factor
+- \# of specified measurement error correlations between items of constructs
+    $\eta_j$ if $\eta_j$ is modeled as a common factor
+- \# of weights of $\eta_j$ __minus 1__ if $\eta_j$ is modeled as a composite. One 
+  weight per block is fixed and hence not counted as a model parameter since
+  the variance of the composite is scaled to be unity.
+- \# of non-redundant off-diagonal elements of $\bm{\Sigma}_j$ if $\eta_j$ is modeled as 
+  a composite.
+
+If the model contains second-order terms the model parameters are similar:
+
+- \# free correlations between exogenous constructs
+- \# specified correlations between endogenous constructs
+- \# structural parameters. Note: relations between constructs measuring/forming
+  the second-order construct are not path!
+
+In addition, for each construct $\eta_j$ (including the second-order constructs):
+
+- \# of loadings if $\eta_j$ is modeled as a common factor
+- \# of specified measurement error correlations between items of constructs
+    $\eta_j$ if $\eta_j$ is modeled as a common factor
+- \# of weights of $\eta_j$ __minus 1__ if $\eta_j$ is modeled as a composite. One 
+  weight per block is fixed and hence not counted as a model parameter since
+  the variance of the composite is scaled to be unity.
+- \# of non-redundant off-diagonal elements of $\bm{\Sigma}_j$ if $\eta_j$ is modeled as 
+  a composite.
+
+#### Notes
+1. If all constructs are allowed to freely covary, i.e., there is no 
+   structural model and no structural parameters, all constructs are considered
+   exogenous.
+2. If the strucutral model contains nonlinear terms (e.g., $\eta^2_1$ or $\eta_1\eta_2$),
+   degrees of freedom computation is currently unclear (at least to us).
+   A warning is printed to inform the user that the calculation is may not be
+   correct.
 
 ### Implementation
+The function is implemented as `calculateDf()`.
+
+### See also:
+Degrees of freedom are required for several [fit measures](#fit_indices).
 
 ## Fit Indices {#fit_indices}
+
 ### Definition
 Fit indices for confirmatory factor analysis (CFA) were first introduced by @Bentler1980. 
 Since then a large number of indices has been defined. Contrary to exact tests 
@@ -683,15 +760,14 @@ The heterotrait-monotrait ratio of correlations (HTMT) was first proposed by
 See: @Henseler2015 on page 121 (equation (6))
 
 ### Implementation
-The function is implemented as: `calculateHTMT()`. It may be called directly 
-using R's `:::` mechanism.
+The function is implemented as: `calculateHTMT()`.
 
 # Literature
 
 [^1]: There are some cutoffs such as e.g., the SRMR should be less than
       0.08 or 0.1, however, these values are essentially arbitrary as they have
       never been formally motivated. Reference is usually done to @Hu1999 which
-      based the cutoff on a simulation using factor-based SEM.
+      based the cut-off on a simulation using factor-based SEM.
       
 [Testing]: https://m-e-rademaker.github.io/cSEM/articles/Using-test.html
 [Notation]: https://m-e-rademaker.github.io/cSEM/articles/Notation.html

@@ -4,7 +4,7 @@
   printed output (#372)
   
 - Add several new example data sets: See `?BergamiBagozzi2000`, `?ITFlex`, 
-  `?LancelotMiltgenetal2016`, `?Russett`, `Switching`, and `Yooetal2000`.
+  `?LancelotMiltgenetal2016`, `?Russett`, `?Switching`, and `?Yooetal2000`.
   
 - Breaking: Rename argument in `doFloodlightAnalysis()` (#343)
 
