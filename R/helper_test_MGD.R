@@ -652,3 +652,103 @@ calculatePr <- function(
   ret
   
 }
+
+#' Internal: Extract relevant parameters from several cSEMResults_multi
+#' 
+#' Extract the relevant parameters from a cSEMResult_multi object in `.object`.
+#'
+#' @usage getRelevantParameters(
+#'   .object     = args_default()$.object,
+#'   .model      = args_default()$.model
+#' )
+#' 
+#' @inheritParams csem_arguments
+#' @param .model A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
+#'   parameters (i.e., path (`~`), loadings (`=~`), or weights (`<~`)) should be
+#'   compared across groups. Defaults to `NULL` in which case all parameters of the model
+#'   are compared.
+#' 
+#' @return A list of length equal to the number of groups in `.object`.
+#'  Each list element is itself a list of three. The first list element contains
+#'   the relevant parameter estimates of the structural model, the second
+#'   list element the relevant estimated loadings, and the third
+#'   the relevant estimated weights.
+#'   
+#' @keywords internal
+
+getRelevantParameters <- function(
+  .object  = args_default()$.object,
+  .model   = args_default()$.model
+){
+  
+  ## Summarize
+  x <- summarize(.object)
+  
+  ## Get names to compare
+  names <- getParameterNames(.object, .model = .model)
+  names_path     <- names$names_path
+  names_loadings <- names$names_loadings
+  names_weights  <- names$names_weights
+  names_cor_exo_cons <- names$names_cor_exo_cons
+  # names_cor_measurement_error <- names$names_cor_measurement_error
+  
+  ### Compute differences ======================================================
+  if(inherits(.object, "cSEMResults_2ndorder")) {
+    path_estimates  <- lapply(x, function(y) {y$Second_stage$Estimates$Path_estimates})
+    loading_estimates <- lapply(x, function(y) {
+      rbind(y$First_stage$Estimates$Loading_estimates, 
+            y$Second_stage$Estimates$Loading_estimates)
+    })
+    weight_estimates <- lapply(x, function(y) {
+      rbind(y$First_stage$Estimates$Weight_estimates, 
+            y$Second_stage$Estimates$Weight_estimates)
+    })
+    cor_cons_exo_estimates <- lapply(x, function(y) {
+      y$Second_stage$Estimates$Exo_construct_correlation})
+    
+  } else { # no second-order model
+    path_estimates  <- lapply(x, function(y) {y$Estimates$Path_estimates})
+    loading_estimates <- lapply(x, function(y) {y$Estimates$Loading_estimates})
+    weight_estimates <- lapply(x, function(y) {y$Estimates$Weight_estimates})
+    # all exogenous construct correlations
+    cor_cons_exo_estimates <- lapply(x, function(y) {
+      y$Estimates$Exo_construct_correlation
+    })
+  }
+  
+  ## Select
+  path_estimates  <- lapply(path_estimates, function(y) {
+    y1 <- y[y$Name %in% names_path, "Estimate"]
+    if(length(y1) != 0) {
+      names(y1) <- names_path
+    }
+    y1
+  })
+  
+  loading_estimates <- lapply(loading_estimates, function(y) {
+    y1 <- y[y$Name %in% names_loadings, "Estimate"] 
+    if(length(y1) != 0) {
+      names(y1) <- names_loadings
+    }
+    y1
+  })
+  
+  weight_estimates <- lapply(weight_estimates, function(y) {
+    y1 <- y[y$Name %in% names_weights, "Estimate"]
+    if(length(y1) != 0) {
+      names(y1) <- names_weights
+    }
+    y1
+  })
+  
+  cor_cons_exo_estimates <- lapply(cor_cons_exo_estimates, function(y) {
+    y1 <- y[y$Name %in% names_cor_exo_cons, "Estimate"]
+    if(length(y1) != 0) {
+      names(y1) <- names_cor_exo_cons
+    }
+    y1
+  })
+}
+
+
+

@@ -255,6 +255,8 @@
 #'   training data.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
+#' @param .type_ci Character string. Which confidence intervall should be calculated? 
+#' Currently used in the testMGD function. 
 #' @param .type_vcv Character string. Which model-implied correlation 
 #'  matrix is calculated?
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
@@ -479,6 +481,8 @@ args_default <- function(.choices = FALSE) {
     .terms                   = NULL,
     .test_data               = NULL,
     .type_vcv                = c("indicator", "construct"),
+    .type_ci                 = c("CI_standard_z", "CI_standard_t","CI_percentile",
+                                 "CI_basic","CI_bc", "CI_bca"),
     .user_funs               = NULL,
     .vcv_asymptotic          = c(FALSE, TRUE),
     .verbose                 = TRUE,

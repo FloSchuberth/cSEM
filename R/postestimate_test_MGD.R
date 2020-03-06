@@ -182,13 +182,15 @@ testMGD <- function(
  .alpha                 = 0.05,
  .approach_p_adjust     = "none",
  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
-                            "Keil", "Nitzl","Henseler"),
+                            "Keil", "Nitzl","Henseler", "CI"),
  .parameters_to_compare = NULL,
  .handle_inadmissibles  = c("replace", "drop", "ignore"),
  .R_permutation         = 499,
  .R_bootstrap           = 499,
  .saturated             = FALSE,
  .seed                  = NULL,
+ .type_ci               = c("CI_standard_z", "CI_standard_t","CI_percentile",
+                            "CI_basic","CI_bc", "CI_bca"),
  .type_vcv              = c("indicator", "construct"),
  .verbose               = TRUE
 ){
@@ -278,6 +280,9 @@ testMGD <- function(
   }
   
 
+  # Order significance levels
+  .alpha <- .alpha[order(.alpha)]
+  
   # Get the names of the parameters to be compared. 
   names_all_param <- getParameterNames(.object, .model = .parameters_to_compare)
   
@@ -321,7 +326,7 @@ testMGD <- function(
   
   ## Sarstedt et al. (2011), Keil et al. (2000), Nitzl (2010), Henseler (2007) -----
   # All these approaches require bootstrap
-  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler"))) {
+  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler", "CI"))) {
 
     # Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
@@ -368,14 +373,43 @@ testMGD <- function(
       loading_bias <- bias$Loading_estimates$bias
       weight_bias <- bias$Weight_estimates$bias
       cor_exo_cons_bias <- bias$Exo_construct_correlation$bias
-      # Return object
-      list(
+      
+      # Structure output
+      out<-list(
         "n"                 = n,
         "nObs"              = nobs,
         "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples, cor_exo_cons_resamples),
         "ses_all"           = c(path_se, loading_se, weight_se, cor_exo_cons_se),
         "bias_all"          = c(path_bias, loading_bias, weight_bias, cor_exo_cons_bias)
-       )
+        )
+      
+      # If comparison should be done via CIs 
+      if(.approach_mgd %in% c("all", "CI")){
+        
+        diff <- setdiff(.type_ci, args_default(TRUE)$.type_ci)
+        
+        if(length(diff) != 0) {
+          stop2(
+            "The following error occured in the testMGD() function:\n",
+            "Unknown approach: ", paste0(diff, collapse = ", "), ".",
+            " Possible choices are: ",
+            paste0(args_default(TRUE)$.type_ci, collapse = ", "))
+        }
+        
+        # calculation of the CIs
+        cis <- infer(.object=y, .quantity=.type_ci, .alpha = .alpha)
+        
+        path_ci <- cis$Path_estimates
+        loading_ci <- cis$Loading_estimates
+        weight_ci <- cis$Weight_estimates
+        cor_exo_cons_ci <- cis$Exo_construct_correlation
+        
+        out[["ci_all"]] <- list(path_ci = path_ci, loading_ci = loading_ci,
+                                   weight_ci = weight_ci, cor_exo_cons_ci = cor_exo_cons_ci)
+      }
+      
+      # Return output
+      return(out)
       
     })
     
@@ -622,8 +656,8 @@ testMGD <- function(
   ref_dist1 <- Filter(Negate(anyNA), ref_dist)
   }
   
-  # Order significance levels
-  .alpha <- .alpha[order(.alpha)]
+  # # Order significance levels
+  # .alpha <- .alpha[order(.alpha)]
   
   ## Klesel et al. (2019) ------------------------------------------------------
   if(any(.approach_mgd %in% c("all", "Klesel"))) {
@@ -893,6 +927,9 @@ testMGD <- function(
     })
   }
     
+  
+  # Comparison via confidence intervals
+  
   
   ### Return output ============================================================
   out <- list()
