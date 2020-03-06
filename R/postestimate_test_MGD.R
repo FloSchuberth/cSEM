@@ -965,6 +965,8 @@ testMGD <- function(
             temp_para<-para_switch[[group]][[param]]
             temp_cis_selected<-temp_cis[,names(temp_para),drop=FALSE]
             # check whether parameter estimates falls within boundaries
+            # Does not work yet if several alpha are supplied
+            paste0(100*(1-.alpha),"%")
             temp_cis_selected[1,]<temp_para & temp_cis_selected[2,]>temp_para
              
           })
@@ -981,6 +983,31 @@ testMGD <- function(
     }#end if .approach_mgd == CI_para
     
     if(.approach_mgd %in% c("all","CI_overlap")){
+      decision_ci_overlap<-lapply(names(cis_comp), function(comp){
+
+        t=lapply(names(cis_comp[[comp]]),function(group){
+          tt<-lapply(names(cis_comp[[comp]][[group]]),function(interval_type){
+            ttt<-lapply(names(cis_comp[[comp]][[group]][[interval_type]]),function(param){
+              temp_cis<-cis_comp[[comp]][[group]][[interval_type]][[param]]
+              temp_para<-para_switch[[group]][[param]]
+              temp_cis_selected<-temp_cis[,names(temp_para),drop=FALSE]
+              # check whether parameter estimates falls within boundaries
+              # Does not work yet if several alpha are supplied
+              temp_cis_selected[1,]<temp_para & temp_cis_selected[2,]>temp_para
+              
+            })
+            names(ttt)<-names(cis_comp[[comp]][[group]][[interval_type]])
+            ttt
+          })
+          names(tt)<-names(cis_comp[[comp]][[group]])
+          tt
+        })
+        names(t)<-names(cis_comp[[comp]])
+        t
+      })
+      names(decision_ci_para)<-names(cis_comp)
+      
+      
       
     }
   }#end if: if one CI approach is requested
