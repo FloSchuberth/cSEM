@@ -748,6 +748,10 @@ getRelevantParameters <- function(
     }
     y1
   })
+  list(path_estimates = path_estimates,
+       loading_estimates = loading_estimates,
+       weight_estimates = weight_estimates,
+       cor_cons_exo_estimates = cor_cons_exo_estimates)
 }
 
 

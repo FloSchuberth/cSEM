@@ -398,14 +398,18 @@ testMGD <- function(
         
         # calculation of the CIs
         cis <- infer(.object=y, .quantity=.type_ci, .alpha = .alpha)
-        
-        path_ci <- cis$Path_estimates
-        loading_ci <- cis$Loading_estimates
-        weight_ci <- cis$Weight_estimates
-        cor_exo_cons_ci <- cis$Exo_construct_correlation
-        
-        out[["ci_all"]] <- list(path_ci = path_ci, loading_ci = loading_ci,
-                                   weight_ci = weight_ci, cor_exo_cons_ci = cor_exo_cons_ci)
+        cis_temp <- purrr::transpose(cis)
+        cis_ret<-lapply(cis_temp,function(x){
+        path_ci <- x$Path_estimates
+        loading_ci <- x$Loading_estimates
+        weight_ci <- x$Weight_estimates
+        cor_exo_cons_ci <- x$Exo_construct_correlation
+        list(path_ci = path_ci, loading_ci = loading_ci,
+             weight_ci = weight_ci, cor_exo_cons_ci = cor_exo_cons_ci)
+        })
+        names(cis_ret) <- names(cis_temp)
+         
+        out[["ci_all"]] <- cis_ret
       }
       
       # Return output
@@ -929,7 +933,41 @@ testMGD <- function(
     
   
   # Comparison via confidence intervals
+  if(any(.approach_mgd %in% c("all", "CI"))) {
+    # Select CIs from the bootstrap_results
+    cis <- lapply(bootstrap_results,function(x){
+      x$ci_all
+    })
+    # Make group pairs of CIs
+    temp_cis <- utils::combn(cis, 2, simplify = FALSE)
+    names(temp_cis) <- sapply(temp_cis, function(x) paste0(names(x)[1], '_', names(x)[2]))
+    
+    
+    # Select the relevant parameters per group and make group pairs
+    param_per_group <- getRelevantParameters(.object = .object,
+                        .model = .parameters_to_compare) 
+    param_per_group <- purrr::transpose(param_per_group)
+    temp_param_per_group <- utils::combn(param_per_group, 2, simplify = FALSE)
+    names(temp_param_per_group) <- sapply(temp_param_per_group,
+                                        function(x) paste0(names(x)[1], '_', names(x)[2]))
   
+  # Investigate whether the estimate of one group is part of the CI of another group
+  
+    # Make sure that temp_param_per_group and temp_cis have 
+    # the same structure before they enter
+    lapply(1:length(temp_cis), function(comp){
+     # Switch datasets in the parameter list
+      temp_cis[[comp]]
+      para_switch<-temp_param_per_group[[comp]][2:1]
+    
+      lapply(1:length(temp_cis[[comp]]),function(group){
+        temp_cis[[comp]][[group]]
+        para_switch[[group]]
+      })
+    
+  })
+  
+  }
   
   ### Return output ============================================================
   out <- list()
