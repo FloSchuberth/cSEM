@@ -182,7 +182,7 @@ testMGD <- function(
  .alpha                 = 0.05,
  .approach_p_adjust     = "none",
  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
-                            "Keil", "Nitzl","Henseler", "CI"),
+                            "Keil", "Nitzl","Henseler", "CI_para","CI_overlap"),
  .parameters_to_compare = NULL,
  .handle_inadmissibles  = c("replace", "drop", "ignore"),
  .R_permutation         = 499,
@@ -326,7 +326,7 @@ testMGD <- function(
   
   ## Sarstedt et al. (2011), Keil et al. (2000), Nitzl (2010), Henseler (2007) -----
   # All these approaches require bootstrap
-  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler", "CI"))) {
+  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler", "CI_para","CI_overlap"))) {
 
     # Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
@@ -384,7 +384,7 @@ testMGD <- function(
         )
       
       # If comparison should be done via CIs 
-      if(.approach_mgd %in% c("all", "CI")){
+      if(.approach_mgd %in% c("all", "CI_para", "CI_overlap")){
         
         diff <- setdiff(.type_ci, args_default(TRUE)$.type_ci)
         
@@ -404,8 +404,9 @@ testMGD <- function(
         loading_ci <- x$Loading_estimates
         weight_ci <- x$Weight_estimates
         cor_exo_cons_ci <- x$Exo_construct_correlation
-        list(path_ci = path_ci, loading_ci = loading_ci,
-             weight_ci = weight_ci, cor_exo_cons_ci = cor_exo_cons_ci)
+        # deliberately name them xyz_estimates to be able to select them later via names.
+        list(path_estimates = path_ci, loading_estimates = loading_ci,
+             weight_estimates = weight_ci, cor_exo_cons_estimates = cor_exo_cons_ci)
         })
         names(cis_ret) <- names(cis_temp)
          
@@ -933,41 +934,56 @@ testMGD <- function(
     
   
   # Comparison via confidence intervals
-  if(any(.approach_mgd %in% c("all", "CI"))) {
+  if(any(.approach_mgd %in% c("all", "CI_para", "CI_overlap"))) {
     # Select CIs from the bootstrap_results
     cis <- lapply(bootstrap_results,function(x){
       x$ci_all
     })
     # Make group pairs of CIs
-    temp_cis <- utils::combn(cis, 2, simplify = FALSE)
-    names(temp_cis) <- sapply(temp_cis, function(x) paste0(names(x)[1], '_', names(x)[2]))
+    cis_comp <- utils::combn(cis, 2, simplify = FALSE)
+    names(cis_comp) <- sapply(cis_comp, function(x) paste0(names(x)[1], '_', names(x)[2]))
     
-    
+    if(.approach_mgd %in% c("all", "CI_para")){
     # Select the relevant parameters per group and make group pairs
     param_per_group <- getRelevantParameters(.object = .object,
                         .model = .parameters_to_compare) 
     param_per_group <- purrr::transpose(param_per_group)
-    temp_param_per_group <- utils::combn(param_per_group, 2, simplify = FALSE)
-    names(temp_param_per_group) <- sapply(temp_param_per_group,
+    param_comp <- utils::combn(param_per_group, 2, simplify = FALSE)
+    names(param_comp) <- sapply(param_comp,
                                         function(x) paste0(names(x)[1], '_', names(x)[2]))
   
   # Investigate whether the estimate of one group is part of the CI of another group
-  
-    # Make sure that temp_param_per_group and temp_cis have 
-    # the same structure before they enter
-    lapply(1:length(temp_cis), function(comp){
+    decision_ci_para<-lapply(names(cis_comp), function(comp){
      # Switch datasets in the parameter list
-      temp_cis[[comp]]
-      para_switch<-temp_param_per_group[[comp]][2:1]
+        para_switch<-param_comp[[comp]]
+        names(para_switch)<-names(para_switch)[2:1]
     
-      lapply(1:length(temp_cis[[comp]]),function(group){
-        temp_cis[[comp]][[group]]
-        para_switch[[group]]
+      t=lapply(names(cis_comp[[comp]]),function(group){
+        tt<-lapply(names(cis_comp[[comp]][[group]]),function(interval_type){
+          ttt<-lapply(names(cis_comp[[comp]][[group]][[interval_type]]),function(param){
+            temp_cis<-cis_comp[[comp]][[group]][[interval_type]][[param]]
+            temp_para<-para_switch[[group]][[param]]
+            temp_cis_selected<-temp_cis[,names(temp_para),drop=FALSE]
+            # check whether parameter estimates falls within boundaries
+            temp_cis_selected[1,]<temp_para & temp_cis_selected[2,]>temp_para
+             
+          })
+          names(ttt)<-names(cis_comp[[comp]][[group]][[interval_type]])
+           ttt
+        })
+        names(tt)<-names(cis_comp[[comp]][[group]])
+        tt
       })
-    
+      names(t)<-names(cis_comp[[comp]])
+      t
   })
-  
-  }
+    names(decision_ci_para)<-names(cis_comp)
+    }#end if .approach_mgd == CI_para
+    
+    if(.approach_mgd %in% c("all","CI_overlap")){
+      
+    }
+  }#end if: if one CI approach is requested
   
   ### Return output ============================================================
   out <- list()

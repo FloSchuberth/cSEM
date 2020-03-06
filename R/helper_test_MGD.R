@@ -748,6 +748,7 @@ getRelevantParameters <- function(
     }
     y1
   })
+  # Do not change the order
   list(path_estimates = path_estimates,
        loading_estimates = loading_estimates,
        weight_estimates = weight_estimates,
