@@ -70,16 +70,15 @@
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
-#' \item{Approach suggested by \insertCite{Henseler2007a;textual}{cSEM} and \insertCite{Henseler2009;textual}{cSEM}}{
-#'   This approach is also known as PLS-MGA \insertCite{Henseler2009,Sarstedt2011}{cSEM}.
-#'   It tests whether a population parameter of group 1 is larger than or equal to
-#'   the population parameter of group 2. In doing so, we make a comparison between all the bias-corrected 
-#'   bootstrap estimates of group 1 with group 2. The outcome is an estimated probability.
-#'   The decision is based on whether this probability is smaller than `.alpha` or larger than 1 - `.alpha`. 
-#'   Therefore, two null hypotheses are tested, namely H_0: theta_1 <= theta_2 
-#'   and H_0: theta_1 >= theta_2. As a consequence, it is currently not possible to
-#'   adjust the p-value in case of multiple comparisons, i.e., `.approach_p_adjust` is ignored.
-#' }
+#' \item{Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM} CI_param}{
+#'   This approach is based on the confidence intervals constructed around the 
+#'   parameter estimates of the two groups. If the parameter of one group falls within 
+#'   the confidence interval of the other group or vice versa, it can be concluded 
+#'   that there is no group difference.   
+#'   Since it is based on the confidence intervals `.approach_p_adjust` is ignored.
+#' } 
+#' 
+#' 
 #' }
 #' 
 #' Use `.approach_mgd` to choose the approach. By default all approaches are computed
@@ -135,7 +134,7 @@
 #'  .alpha                 = 0.05,
 #'  .approach_p_adjust     = "none",
 #'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
-#'                             "Keil", "Nitzl", "Henseler"),
+#'                             "Keil", "Nitzl", "Henseler", "CI_para","CI_overlap"),
 #'  .parameters_to_compare = NULL,
 #'  .handle_inadmissibles  = c("replace", "drop", "ignore"),
 #'  .R_permutation         = 499,
