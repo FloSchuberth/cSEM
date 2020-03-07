@@ -987,33 +987,34 @@ testMGD <- function(
     }#end if .approach_mgd == CI_para
     
     if(.approach_mgd %in% c("all","CI_overlap")){
-      decision_ci_overlap<-lapply(names(cis_comp), function(comp){
-
-        t=lapply(names(cis_comp[[comp]]),function(group){
-          tt<-lapply(names(cis_comp[[comp]][[group]]),function(interval_type){
-            ttt<-lapply(names(cis_comp[[comp]][[group]][[interval_type]]),function(param){
-              temp_cis<-cis_comp[[comp]][[group]][[interval_type]][[param]]
-              temp_para<-para_switch[[group]][[param]]
-              temp_cis_selected<-temp_cis[,names(temp_para),drop=FALSE]
-              # check whether parameter estimates falls within boundaries
-              # Does not work yet if several alpha are supplied
-              temp_cis_selected[1,]<temp_para & temp_cis_selected[2,]>temp_para
+      decision_ci_overlap <- lapply(names(cis_comp), function(comp){
+        # threre can only be two groups 
+        t <- lapply(names(cis_comp[[comp]][[1]]),function(interval_type){
+          tt <- lapply(names(cis_comp[[comp]][[1]][[interval_type]]),function(param){
+            ttt <- lapply(.alpha,function(alpha){
+              lb<-paste0(100*(1-alpha),"%L")
+              ub<-paste0(100*(1-alpha),"%U")
               
+              # SELECT THE RELEVANT PARAMETERS
+              lb1<-cis_comp[[comp]][[1]][[interval_type]][[param]][lb,]
+              ub1<-cis_comp[[comp]][[1]][[interval_type]][[param]][ub,]
+              lb2<-cis_comp[[comp]][[2]][[interval_type]][[param]][lb,]
+              ub2<-cis_comp[[comp]][[2]][[interval_type]][[param]][ub,]
+              
+              # Check whether the boundaries of the CI of the first group fall 
+              # within the boundaries of the second group
+              (lb2<lb1 & lb1<ub2) | (lb2<ub1 & ub1<ub2) 
             })
-            names(ttt)<-names(cis_comp[[comp]][[group]][[interval_type]])
+            names(ttt)<-paste0((1-.alpha)*100,"%")
             ttt
           })
-          names(tt)<-names(cis_comp[[comp]][[group]])
+          names(tt)<-names(cis_comp[[comp]][[1]][[interval_type]])
           tt
         })
-        names(t)<-names(cis_comp[[comp]])
+        names(t)<-names(cis_comp[[comp]][[1]])
         t
       })
-      names(decision_ci_para)<-names(cis_comp)
-      
-      
-      
-    }
+    names(decision_ci_overlap)<-names(cis_comp)
   }#end if: if one CI approach is requested
   
   ### Return output ============================================================
