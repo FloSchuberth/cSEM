@@ -966,9 +966,13 @@ testMGD <- function(
             temp_cis_selected<-temp_cis[,names(temp_para),drop=FALSE]
             # check whether parameter estimates falls within boundaries
             # Does not work yet if several alpha are supplied
-            paste0(100*(1-.alpha),"%")
-            temp_cis_selected[1,]<temp_para & temp_cis_selected[2,]>temp_para
-             
+            tttt<-lapply(.alpha,function(alpha){
+              lb<-paste0(100*(1-alpha),"%L")
+              ub<-paste0(100*(1-alpha),"%U")
+              temp_cis_selected[lb,]<temp_para & temp_cis_selected[ub,]>temp_para
+            })
+            names(tttt)<-paste0((1-.alpha)*100,"%")
+            tttt
           })
           names(ttt)<-names(cis_comp[[comp]][[group]][[interval_type]])
            ttt
