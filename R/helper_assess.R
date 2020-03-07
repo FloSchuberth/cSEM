@@ -993,9 +993,10 @@ calculateCFI <- function(.object) {
 #' @describeIn fit_measures The goodness of fit index (GFI).
 #' @export
 
-calculateGFI <- function(.object) {
-  
-  if(inherits(.object, "cSEMResults_multi")) {
+calculateGFI <- function(.object, .type = c("ML", "ULS")) {
+  .type <- match.arg(.type)
+
+    if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, calculateGFI)
     return(out)
   }
@@ -1012,8 +1013,18 @@ calculateGFI <- function(.object) {
   
   Sigma_hat <- fit(.object)
   
-  1 - matrixcalc::matrix.trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
-    matrixcalc::matrix.trace(t(S) %*% S)
+  # See Mulaik (1989, p. 345)
+  if(.type == "ULS") {
+    # If ULS
+    1 - matrixcalc::matrix.trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
+      matrixcalc::matrix.trace(t(S) %*% S)
+    
+  } else if(.type == "ML") {
+    # If ML
+    1 - matrixcalc::matrix.trace(t(solve(Sigma_hat) %*% S - diag(nrow(S))) %*% 
+                                   (solve(Sigma_hat) %*% S - diag(nrow(S)))) / 
+      matrixcalc::matrix.trace(t(solve(Sigma_hat) %*% S) %*% (solve(Sigma_hat) %*% S))
+  }
 }
 
 #' @describeIn fit_measures The incremental fit index (IFI).

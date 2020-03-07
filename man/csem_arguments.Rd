@@ -346,6 +346,11 @@ training data.}
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 
+\item{.type}{Character string. Which fitting function should the GFI be based
+on? One of \emph{"ML"} for the maximum likelihood fitting function or \emph{"ULS"} for the
+unweighted least squares fitting function (same as the squared Euclidian distance).
+Defaults to \emph{"ML"}.}
+
 \item{.type_vcv}{Character string. Which model-implied correlation
 matrix is calculated?
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}

@@ -255,6 +255,10 @@
 #'   training data.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
+#' @param .type Character string. Which fitting function should the GFI be based 
+#'   on? One of *"ML"* for the maximum likelihood fitting function or *"ULS"* for the
+#'   unweighted least squares fitting function (same as the squared Euclidian distance). 
+#'   Defaults to *"ML"*.
 #' @param .type_vcv Character string. Which model-implied correlation 
 #'  matrix is calculated?
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
@@ -478,6 +482,7 @@ args_default <- function(.choices = FALSE) {
     .starting_values         = NULL,
     .terms                   = NULL,
     .test_data               = NULL,
+    .type                    = c("ML", "ULS"),
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,
     .vcv_asymptotic          = c(FALSE, TRUE),
