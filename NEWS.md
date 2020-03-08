@@ -1,5 +1,8 @@
 # cSEM 0.1.0:9000
 
+- Review `calculateHTMT()`. 1.) Add inference; 2) fix wrong handling of 
+  single-indicator constructs.
+
 - Add more test for `testMICOM()` and `predict()` (related to #355)
 
 - Fix bug in `testMICOM()`. Function produced an error if the data set provided

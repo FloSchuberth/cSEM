@@ -593,31 +593,13 @@ calculateHTMT <- function(
   
   cf_measurement <- m$measurement[cf_names, colSums(m$measurement[cf_names, ]) != 0, drop = FALSE]
   
-  ## HTMT can only be calculated for constructs with more than one indicator
-  x <- rowSums(cf_measurement) > 1
-  cf_measurement <- cf_measurement[x, colSums(cf_measurement[x, ]) != 0, drop = FALSE]
-  
-  ## At least two multi-indicator constructs required
-  if(nrow(cf_measurement) < 2) {
-    stop2(
-      "The following error occured in the calculateHTMT() function:\n",
-      "Computation of the HTMT requires at least two multi-indicator common factors.")
-  }
-  
   if(inherits(.object, "cSEMResults_default")) {
     
     i_names <- colnames(cf_measurement)
     S       <- .object$Estimates$Indicator_VCV[i_names, i_names]
     
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
-    stop("Currently not implemented. In progress.")
-    # Idea:
-    # - Add the scores of c1, c2, c3 to the original data
-    # - Compute S including the second order constructs
-    # - Continue with the computation
-    
-    i_names <- colnames(cf_measurement)
-    S       <- .object$First_stage$Estimates$Indicator_VCV[i_names, i_names]
+    stop2("The HTMT is not implemented for models containing second-order constructs.")
   }
   
   ## Warning if S contains negative and positive correlations within a block
@@ -635,6 +617,10 @@ calculateHTMT <- function(
   ## The eta_i - eta_i (main diagonal) element is the monotrait-heteromethod correlation
   ## The eta_i - eta_j (off-diagonal) element is the heterotrait-heteromethod correlation
   avrg_cor <- cf_measurement %*% (S - diag(diag(S))) %*% t(cf_measurement) / S_elements
+  
+  # Single-indicator constructs monotrait-heteromethod correlation is set to 1
+  x <- rowSums(cf_measurement) == 1
+  diag(avrg_cor[x, x]) <- 1
   
   ## Compute HTMT
   # HTMT_ij = Average heterotrait-heteromethod correlation between i and j divided by 
@@ -673,13 +659,8 @@ calculateHTMT <- function(
     )
     
     # Compute quantile
-    if(inherits(.object, "cSEMResults_default")) {
-      out_htmt <- out_resample$Estimates$Estimates_resample$Estimates1$HTMT      
-    } else { # 2ndorder
-      out_htmt <- out_resample$Second_stage$Information$Resamples$Estimates$Estimates1$HTMT
-    }
-
     if(length(.alpha) == 1) {
+      out_htmt <- out_resample$Estimates$Estimates_resample$Estimates1$HTMT 
       quants <- matrixStats::colQuantiles(out_htmt$Resampled, probs = 1 - .alpha) 
     } else {
       stop2(
