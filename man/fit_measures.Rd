@@ -20,7 +20,7 @@ calculateChiSquareDf(.object)
 
 calculateCFI(.object)
 
-calculateGFI(.object)
+calculateGFI(.object, .type = c("ML", "ULS"))
 
 calculateIFI(.object)
 
@@ -42,6 +42,11 @@ calculateSRMR(
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.type}{Character string. Which fitting function should the GFI be based
+on? One of \emph{"ML"} for the maximum likelihood fitting function or \emph{"ULS"} for the
+unweighted least squares fitting function (same as the squared Euclidian distance).
+Defaults to \emph{"ML"}.}
 
 \item{.model_implied}{Logical. Should the RMS_theta be computed using the
 model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix

@@ -1,5 +1,8 @@
 # cSEM 0.1.0:9000
 
+- Add .type argument to `calculateGFI()`. Now GFI based on the ML and ULS 
+  fitting function can be computed. (#371)
+
 - Fix `assess()` incorrectly omitting the R2 and the R2_adjusted in the 
   printed output (#372)
   
