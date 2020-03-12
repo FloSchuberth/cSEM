@@ -958,8 +958,7 @@ testMGD <- function(
                                 function(x)
                                   paste0(names(x)[1], '_', names(x)[2]))
     
-    browser()
-    
+
     if (.approach_mgd %in% c("all", "CI_para")) {
 
       # Investigate whether the estimate of one group is part of the CI of another group
