@@ -29,7 +29,7 @@
 #'   Only use if you know what you are doing.
 #' @param .approach_mgd Character string or a vector of character strings. 
 #'   Approach used for the multi-group comparison. One of: "*all*", "*Klesel*", "*Chin*", 
-#'   "*Sarstedt*", "*Keil*, "*Nitzl*", or "*Henseler*". 
+#'   "*Sarstedt*", "*Keil*, "*Nitzl*", "*Henseler*", "*CI_para*", or "*CI_overlap*". 
 #'   Default to "*all*" in which case all approaches are computed (if possible).
 #'   Note that the output will be quite long in this case. 
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
@@ -390,7 +390,7 @@ args_default <- function(.choices = FALSE) {
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("2stage", "mixed"),
     .approach_alpha_adjust   = c("none", "bonferroni"),
-    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler"),
+    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler","CI_para","CI_overlap"),
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS"),
