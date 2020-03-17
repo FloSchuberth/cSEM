@@ -1039,7 +1039,7 @@ testMGD <- function(
                 
                 # Check whether the boundaries of the CI of the first group fall
                 # within the boundaries of the second group
-                decision <- (lb2 < lb1 & lb1 < ub2) | (lb2 < ub1 & ub1 < ub2)
+                decision <- (lb2 < lb1 & lb1 < ub2) | (lb2 < ub1 & ub1 < ub2) | (lb1<lb2 & ub1>ub2) | (lb2<lb1 & ub2>ub1)
                 # rownames(temp) <- colnames(lb1)
                 # temp[para_rel,,drop=FALSE]
                 out <- data.frame(lb1,ub1,lb2,ub2,decision)
