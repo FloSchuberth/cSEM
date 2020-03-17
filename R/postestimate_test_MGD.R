@@ -959,8 +959,8 @@ testMGD <- function(
                                   paste0(names(x)[1], '_', names(x)[2]))
     
 
+    
     if (.approach_mgd %in% c("all", "CI_para")) {
-
       # Investigate whether the estimate of one group is part of the CI of another group
       decision_ci_para <- lapply(.alpha, function(alpha) {
         tttt <- lapply(names(cis_comp), function(comp) {
@@ -973,19 +973,33 @@ testMGD <- function(
               lapply(names(cis_comp[[comp]][[group]]), function(interval_type) {
                 ttt <-
                   lapply(names(cis_comp[[comp]][[group]][[interval_type]]), function(param) {
+                    # browser()
                     temp_cis <- cis_comp[[comp]][[group]][[interval_type]][[param]]
                     temp_para <- para_switch[[group]][[param]]
                     temp_cis_selected <-
                       temp_cis[, names(temp_para), drop = FALSE]
-                    # check whether parameter estimates falls within boundaries
                     lb <- paste0(100 * (1 - alpha), "%L")
                     ub <- paste0(100 * (1 - alpha), "%U")
-                    temp_cis_selected[lb,] < temp_para &
-                      temp_cis_selected[ub,] > temp_para
+                    lb_temp <-temp_cis_selected[lb,] 
+                    names(lb_temp) <- colnames(temp_cis_selected[lb,,drop=FALSE])
+                    ub_temp <-temp_cis_selected[ub,] 
+                    names(ub_temp) <- colnames(temp_cis_selected[ub,,drop=FALSE])
+                    out=data.frame("lb"=lb_temp,
+                                   "ub"=ub_temp)
+
+                    out[["Estimate"]]= temp_para
+                    # check whether parameter estimates falls within boundaries
+                    # TRUE parameter estimate of the other group falls within the CI
+                    # Otherwise, FALSE
+                      out[["Decision"]]<-(temp_cis_selected[lb,] < temp_para &
+                      temp_cis_selected[ub,] > temp_para)
+
+                    if(nrow(out)!=0){
+                    out[c("Estimate","lb","ub","Decision")]
+                    }
                   })
-                names(ttt) <-
-                  names(cis_comp[[comp]][[group]][[interval_type]])
-                ttt
+
+                do.call(rbind,ttt)
               })
             names(tt) <- names(cis_comp[[comp]][[group]])
             tt
@@ -998,6 +1012,8 @@ testMGD <- function(
       })
       names(decision_ci_para) <- paste0((1 - .alpha) * 100, "%")
       
+      # Decision overall
+      
       # Sort the outcome: alpha interval estimates
     }#end if .approach_mgd == CI_para
     
@@ -1009,26 +1025,34 @@ testMGD <- function(
           # It does not matter which group is used to select the interval type
           t <- lapply(names(cis_comp[[comp]][[1]]), function(interval_type) {
             tt <- lapply(names(cis_comp[[comp]][[1]][[interval_type]]), function(param) {
-                # ttt <- lapply(.alpha,function(alpha){
                 lb <- paste0(100 * (1 - alpha), "%L")
                 ub <- paste0(100 * (1 - alpha), "%U")
-                
+                # browser()
                 # It does not matter which group is chosen to select the relevant parameters 
                 # as in all groups the relevant parameters are the same
                 para_rel <- names(param_comp[[comp]][[1]][[param]])
 
-                lb1 <- cis_comp[[comp]][[1]][[interval_type]][[param]][lb,,drop=FALSE]
-                ub1 <- cis_comp[[comp]][[1]][[interval_type]][[param]][ub,,drop=FALSE]
-                lb2 <- cis_comp[[comp]][[2]][[interval_type]][[param]][lb,,drop=FALSE]
-                ub2 <- cis_comp[[comp]][[2]][[interval_type]][[param]][ub,,drop=FALSE]
+                lb1 <- cis_comp[[comp]][[1]][[interval_type]][[param]][lb,para_rel ]
+                ub1 <- cis_comp[[comp]][[1]][[interval_type]][[param]][ub,para_rel ]
+                lb2 <- cis_comp[[comp]][[2]][[interval_type]][[param]][lb,para_rel ]
+                ub2 <- cis_comp[[comp]][[2]][[interval_type]][[param]][ub,para_rel ]
                 
                 # Check whether the boundaries of the CI of the first group fall
                 # within the boundaries of the second group
-                temp <- matrix((lb2 < lb1 & lb1 < ub2) | (lb2 < ub1 & ub1 < ub2),ncol=1)
-                rownames(temp) <- colnames(lb1)
-                temp[para_rel,,drop=FALSE]
-              })
-            names(tt) <- names(cis_comp[[comp]][[1]][[interval_type]])
+                decision <- (lb2 < lb1 & lb1 < ub2) | (lb2 < ub1 & ub1 < ub2)
+                # rownames(temp) <- colnames(lb1)
+                # temp[para_rel,,drop=FALSE]
+                out <- data.frame(lb1,ub1,lb2,ub2,decision)
+                colnames(out)=c(paste0("lb_",names(cis_comp[[comp]])[1]),
+                  paste0("ub_",names(cis_comp[[comp]])[1]),
+                  paste0("lb_",names(cis_comp[[comp]])[2]),
+                  paste0("ub_",names(cis_comp[[comp]])[2]),
+                  "Decision"
+                )
+                rownames(out)<-para_rel
+                out
+                  })
+            # names(tt) <- names(cis_comp[[comp]][[1]][[interval_type]])
             do.call(rbind,tt)
           })
           names(t) <- names(cis_comp[[comp]][[1]])
