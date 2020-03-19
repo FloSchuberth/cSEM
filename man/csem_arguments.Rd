@@ -34,7 +34,7 @@ Only use if you know what you are doing.}
 
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One of: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
-"\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", or "\emph{Henseler}".
+"\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", "\emph{Henseler}", "\emph{CI_para}", or "\emph{CI_overlap}".
 Default to "\emph{all}" in which case all approaches are computed (if possible).
 Note that the output will be quite long in this case.}
 
@@ -345,6 +345,9 @@ training data.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
+
+\item{.type_ci}{Character string. Which confidence intervall should be calculated?
+Currently used in the testMGD function.}
 
 \item{.type_vcv}{Character string. Which model-implied correlation
 matrix is calculated?

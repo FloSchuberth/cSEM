@@ -5,7 +5,7 @@
 #' 
 #' The following tests are implemented:
 #' \describe{
-#' \item{Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
+#' \item{`.approach_mgd="Klesel"`: Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
 #'   The model-implied variance-covariance matrix (either indicator 
 #'   (`.type_vcv = "indicator"`) or construct (`.type_vcv = "construct"`)) 
 #'   is compared across groups. 
@@ -14,7 +14,7 @@
 #'   the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
 #'   If more than two groups are compared, the average distance over all groups
 #'   is used.}
-#' \item{Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
+#' \item{`.approach_mgd="Sarstedt"`: Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Sarstedt2011;textual}{cSEM} tests if parameter k is equal
 #'   across all groups. If several parameters are tested simultaneously  
@@ -25,7 +25,7 @@
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details. Note: the 
 #'   test has some severe shortcomings. Use with caution.
 #' }
-#' \item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
+#' \item{`.approach_mgd="Chin"`: Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
 #'   between two groups. If more than two groups are tested for equality, parameter 
@@ -38,7 +38,7 @@
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
-#' \item{Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
+#' \item{`.approach_mgd="Keil"`: Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Keil2000;textual}{cSEM} tests if parameter k is equal
 #'   between two groups. It is assumed, that the standard errors of the coefficients are 
@@ -54,7 +54,7 @@
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
-#' \item{Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
+#' \item{`.approach_mgd="Nitzl"`: Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   Similarly to \insertCite{Keil2000;textual}{cSEM}, a single parameter k is tested
 #'   for equality between two groups. In contrast to \insertCite{Keil2000;textual}{cSEM},
@@ -70,10 +70,17 @@
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
-#' \item{Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM} CI_param}{
+#' \item{`.approach_mgd="CI_param"`: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
 #'   This approach is based on the confidence intervals constructed around the 
 #'   parameter estimates of the two groups. If the parameter of one group falls within 
-#'   the confidence interval of the other group or vice versa, it can be concluded 
+#'   the confidence interval of the other group and/or vice versa, it can be concluded 
+#'   that there is no group difference.   
+#'   Since it is based on the confidence intervals `.approach_p_adjust` is ignored.
+#' } 
+#' 
+#' \item{`.approach_mgd="CI_overlap"`: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
+#'   This approach is based on the confidence intervals (CIs) constructed around the 
+#'   parameter estimates of the two groups. If the two CIs overlap, it can be concluded 
 #'   that there is no group difference.   
 #'   Since it is based on the confidence intervals `.approach_p_adjust` is ignored.
 #' } 
