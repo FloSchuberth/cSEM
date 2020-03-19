@@ -269,12 +269,13 @@ testMGD <- function(
       "At least two groups are identical. Results may not be meaningful.")
   } 
   
-  # If Henseler is used with adjustment of p-value different than "none" return warning
-  if(any(.approach_mgd %in% c("all", "Klesel")) & !all(.approach_p_adjust %in% "none")){
+  # If Henseler, CI_para or CI_overlap are used with 
+  # adjustment of p-value different than "none" return warning
+  if(any(.approach_mgd %in% c("all", "Henseler","CI_para","CI_overlap")) & !all(.approach_p_adjust %in% "none")){
     warning2(
       "The following warning occured in the testMGD() function:\n",
-      "Currently, there is no p-value adjustment possible for the approach suggested by Henseler (2007).",
-      "Every adjustment is ignored for this approach."
+      "Currently, there is no p-value adjustment possible for the approach suggested by\n",
+      "Henseler (2007), CI_para, and CI_overlap. Every adjustment is ignored for this approach."
     )
   }
   
@@ -388,7 +389,7 @@ testMGD <- function(
         )
       
       # If comparison should be done via CIs 
-      if(.approach_mgd %in% c("all", "CI_para", "CI_overlap")){
+      if(any(.approach_mgd %in% c("all", "CI_para", "CI_overlap"))){
         
         diff <- setdiff(.type_ci, args_default(TRUE)$.type_ci)
         
@@ -946,7 +947,7 @@ testMGD <- function(
     # Make group pairs of CIs
     cis_comp <- utils::combn(cis, 2, simplify = FALSE)
     names(cis_comp) <- sapply(cis_comp, function(x) paste0(names(x)[1], '_', names(x)[2]))
-    
+
     # Select the relevant parameters per group and make group pairs
     # This is required fo both CI_para and CI_overlap
     # For the latter it is used to select the appropriate parameters
@@ -957,81 +958,121 @@ testMGD <- function(
     names(param_comp) <- sapply(param_comp,
                                 function(x)
                                   paste0(names(x)[1], '_', names(x)[2]))
-    
 
-    
-    if (.approach_mgd %in% c("all", "CI_para")) {
+    if (any(.approach_mgd %in% c("all", "CI_para"))) {
+      
       # Investigate whether the estimate of one group is part of the CI of another group
       decision_ci_para <- lapply(.alpha, function(alpha) {
+        # lapply over the comparisons
         tttt <- lapply(names(cis_comp), function(comp) {
-        # Switch datasets in the parameter list
-        para_switch <- param_comp[[comp]]
-        names(para_switch) <- names(para_switch)[2:1]
-        
-          t = lapply(names(cis_comp[[comp]]), function(group) {
-            tt <-
-              lapply(names(cis_comp[[comp]][[group]]), function(interval_type) {
-                ttt <-
-                  lapply(names(cis_comp[[comp]][[group]][[interval_type]]), function(param) {
-                    # browser()
-                    temp_cis <- cis_comp[[comp]][[group]][[interval_type]][[param]]
-                    temp_para <- para_switch[[group]][[param]]
-                    temp_cis_selected <-
-                      temp_cis[, names(temp_para), drop = FALSE]
+            # lapply over the type of CI for the first group
+            # As group1 and group2 have the same structure the selection does not matter
+            tt = lapply(names(cis_comp[[comp]][[1]]), function(interval_type){
+              # lapply over the different parameters
+                ttt <- lapply(names(cis_comp[[comp]][[1]][[interval_type]]), 
+                              function(param) {
+
                     lb <- paste0(100 * (1 - alpha), "%L")
                     ub <- paste0(100 * (1 - alpha), "%U")
-                    lb_temp <-temp_cis_selected[lb,] 
-                    names(lb_temp) <- colnames(temp_cis_selected[lb,,drop=FALSE])
-                    ub_temp <-temp_cis_selected[ub,] 
-                    names(ub_temp) <- colnames(temp_cis_selected[ub,,drop=FALSE])
-                    out=data.frame("lb"=lb_temp,
-                                   "ub"=ub_temp)
 
-                    out[["Estimate"]]= temp_para
-                    # check whether parameter estimates falls within boundaries
+                    # Estimate first group
+                    temp_para1 <- param_comp[[comp]][[1]][[param]]
+                    # CIs first group
+                    temp_cis1 <- cis_comp[[comp]][[1]][[interval_type]][[param]]
+                    temp_cis_selected1 <- temp_cis1[, names(temp_para1), drop = FALSE]
+                    lb_temp1 <-temp_cis_selected1[lb,] 
+                    names(lb_temp1) <- colnames(temp_cis_selected1[lb,,drop=FALSE])
+                    ub_temp1 <-temp_cis_selected1[ub,] 
+                    names(ub_temp1) <- colnames(temp_cis_selected1[ub,,drop=FALSE])
+                    
+                    # Estimate second group
+                    temp_para2 <- param_comp[[comp]][[2]][[param]]
+                    # CIs second group
+                    temp_cis2 <- cis_comp[[comp]][[2]][[interval_type]][[param]]
+                    temp_cis_selected2 <- temp_cis2[, names(temp_para2), drop = FALSE]
+                    lb_temp2 <-temp_cis_selected2[lb,] 
+                    names(lb_temp2) <- colnames(temp_cis_selected2[lb,,drop=FALSE])
+                    ub_temp2 <-temp_cis_selected2[ub,] 
+                    names(ub_temp2) <- colnames(temp_cis_selected2[ub,,drop=FALSE])
+
+                    # # check whether parameter estimates of one group 
+                    # falls within boundaries of the CIs of the other group
                     # TRUE parameter estimate of the other group falls within the CI
-                    # Otherwise, FALSE
-                      out[["Decision"]]<-(temp_cis_selected[lb,] < temp_para &
-                      temp_cis_selected[ub,] > temp_para)
+                    # => no group difference
+                    # Otherwise, FALSE => group difference
+                      decision<-
+                        (lb_temp2 < temp_para1 & 
+                           ub_temp2 > temp_para1) |
+                        (lb_temp1 < temp_para2 & 
+                           ub_temp1 > temp_para2)
 
-                    if(nrow(out)!=0){
-                    out[c("Estimate","lb","ub","Decision")]
-                    }
+                      # Structure output
+                      out=data.frame("Estimate"=temp_para1,"lb"=lb_temp2,
+                                     "ub"=ub_temp2,"Estimate"=temp_para2,"lb"=lb_temp1,
+                                     "ub"=ub_temp1,"decision"=decision)
+                      
+                      # that can be solved more elegant
+                      # If there is no parameter to compare the data.frame has zero rows
+                      # If the if is removed there are problems as the number of columns does not match 
+                      # the length of the name vector
+                      if(nrow(out)!=0){
+                      colnames(out)=c(paste0("Est_",names(cis_comp[[comp]])[1]),
+                                      paste0("lb_",names(cis_comp[[comp]])[2]),
+                                      paste0("ub_",names(cis_comp[[comp]])[2]),
+                                      paste0("Est_",names(cis_comp[[comp]])[2]),
+                                      paste0("lb_",names(cis_comp[[comp]])[1]),
+                                      paste0("ub_",names(cis_comp[[comp]])[1]),
+                                      "Decision")
+                      }
+                      out
                   })
 
                 do.call(rbind,ttt)
-              })
-            names(tt) <- names(cis_comp[[comp]][[group]])
+            })
+            names(tt) = names(cis_comp[[comp]][[1]])
             tt
-          })
-          names(t) <- names(cis_comp[[comp]])
-          t
         })
         names(tttt) <- names(cis_comp)
         tttt
       })
       names(decision_ci_para) <- paste0((1 - .alpha) * 100, "%")
+
       
       # Decision overall
+      decision_overall_ci_para<-lapply(names(decision_ci_para), function(alpha) {
+        t <- lapply(names(decision_ci_para[[alpha]]), function(comp) {
+          tt <- lapply(names(decision_ci_para[[alpha]][[comp]]),function(interval_type){
+            # Check whether there is one FALSE among the decisions
+            all(decision_ci_para[[alpha]][[comp]][[interval_type]][,"Decision"])
+          })
+          names(tt) <- names(decision_ci_para[[alpha]][[comp]])
+          tt
+          })
+          names(t) <- names(decision_ci_para[[alpha]])
+          t
+        })
+      names(decision_overall_ci_para) <- names(decision_ci_para)
       
-      # Sort the outcome: alpha interval estimates
     }#end if .approach_mgd == CI_para
     
-    if(.approach_mgd %in% c("all", "CI_overlap")) {
+    if(any(.approach_mgd %in% c("all", "CI_overlap"))) {
       
       decision_ci_overlap <- lapply(.alpha, function(alpha) {
-        # threre can only be two groups
+        # lapply over the group pairs
         ttt <- lapply(names(cis_comp), function(comp) {
-          # It does not matter which group is used to select the interval type
+          # lapply over the type of CI for the first group
+          # As group1 and group2 have the same structure the selection does not matter
           t <- lapply(names(cis_comp[[comp]][[1]]), function(interval_type) {
-            tt <- lapply(names(cis_comp[[comp]][[1]][[interval_type]]), function(param) {
+            # lapply over the parameters that are compared
+              tt <- lapply(names(cis_comp[[comp]][[1]][[interval_type]]), function(param) {
                 lb <- paste0(100 * (1 - alpha), "%L")
                 ub <- paste0(100 * (1 - alpha), "%U")
-                # browser()
+
                 # It does not matter which group is chosen to select the relevant parameters 
                 # as in all groups the relevant parameters are the same
                 para_rel <- names(param_comp[[comp]][[1]][[param]])
 
+                # Select lower and upper bound of the CIs for the two groups
                 lb1 <- cis_comp[[comp]][[1]][[interval_type]][[param]][lb,para_rel ]
                 ub1 <- cis_comp[[comp]][[1]][[interval_type]][[param]][ub,para_rel ]
                 lb2 <- cis_comp[[comp]][[2]][[interval_type]][[param]][lb,para_rel ]
@@ -1039,10 +1080,19 @@ testMGD <- function(
                 
                 # Check whether the boundaries of the CI of the first group fall
                 # within the boundaries of the second group
-                decision <- (lb2 < lb1 & lb1 < ub2) | (lb2 < ub1 & ub1 < ub2) | (lb1<lb2 & ub1>ub2) | (lb2<lb1 & ub2>ub1)
-                # rownames(temp) <- colnames(lb1)
-                # temp[para_rel,,drop=FALSE]
+                decision <- (lb2 < lb1 & lb1 < ub2) | 
+                  (lb2 < ub1 & ub1 < ub2) | 
+                  (lb1<lb2 & ub1>ub2) | 
+                  (lb2<lb1 & ub2>ub1)
+
+                # Structure output
                 out <- data.frame(lb1,ub1,lb2,ub2,decision)
+                
+                # that can be solved more elegant
+                # If there is no parameter to compare the data.frame has zero rows
+                # If the if is removed there are problems as the number of columns does not match 
+                # the length of the name vector
+                if(nrow(out)!=0){
                 colnames(out)=c(paste0("lb_",names(cis_comp[[comp]])[1]),
                   paste0("ub_",names(cis_comp[[comp]])[1]),
                   paste0("lb_",names(cis_comp[[comp]])[2]),
@@ -1050,19 +1100,33 @@ testMGD <- function(
                   "Decision"
                 )
                 rownames(out)<-para_rel
+                }
                 out
                   })
-            # names(tt) <- names(cis_comp[[comp]][[1]][[interval_type]])
             do.call(rbind,tt)
           })
           names(t) <- names(cis_comp[[comp]][[1]])
           t
         })
-        
         names(ttt) <- names(cis_comp)
         ttt
       })
       names(decision_ci_overlap) <- paste0((1 - .alpha) * 100, "%")
+      
+      # Decision overall
+      decision_overall_ci_overlap<-lapply(names(decision_ci_overlap), function(alpha) {
+        t <- lapply(names(decision_ci_overlap[[alpha]]), function(comp) {
+          tt <- lapply(names(decision_ci_overlap[[alpha]][[comp]]),function(interval_type){
+            # Check whether there is one FALSE among the decisions
+            all(decision_ci_overlap[[alpha]][[comp]][[interval_type]][,"Decision"])
+          })
+          names(tt) <- names(decision_ci_overlap[[alpha]][[comp]])
+          tt
+        })
+        names(t) <- names(decision_ci_overlap[[alpha]])
+        t
+      })
+      names(decision_overall_ci_overlap) <- names(decision_ci_overlap)
     }#end if: if one CI approach is requested
   }
   ### Return output ============================================================
@@ -1200,7 +1264,7 @@ testMGD <- function(
     out[["CI_para"]] <- list(
       "Test_statistic"     = NA,
       "Decision"           = decision_ci_para,
-      "Decision_overall"   = NA
+      "Decision_overall"   = decision_overall_ci_para
     )
   }
   
@@ -1208,7 +1272,7 @@ testMGD <- function(
     out[["CI_overlap"]] <- list(
       "Test_statistic"     = NA,
       "Decision"           = decision_ci_overlap,
-      "Decision_overall"   = NA
+      "Decision_overall"   = decision_overall_ci_overlap
     )
   }
    
