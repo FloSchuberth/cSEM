@@ -723,6 +723,7 @@ testMGD <- function(
       temp_ind <- stats::complete.cases(temp)
       temp[temp_ind, ,drop = FALSE]
     })
+
     
     # Calculation of the p-values
     pvalue_Chin <- lapply(1:length(ref_dist_matrices_Chin), function(x) {
@@ -1050,19 +1051,25 @@ testMGD <- function(
       })
       names(decision_ci_para) <- paste0((1 - .alpha) * 100, "%")
 
-      
+
       # Decision overall
       decision_overall_ci_para<-lapply(names(decision_ci_para), function(alpha) {
         t <- lapply(names(decision_ci_para[[alpha]]), function(comp) {
           tt <- lapply(names(decision_ci_para[[alpha]][[comp]]),function(interval_type){
-            # Check whether there is one FALSE among the decisions
+            # Check whether there is one FALSE among the decisions per comparison
             all(decision_ci_para[[alpha]][[comp]][[interval_type]][,"Decision"])
           })
           names(tt) <- names(decision_ci_para[[alpha]][[comp]])
           tt
           })
           names(t) <- names(decision_ci_para[[alpha]])
-          t
+          # Check whether there is one FALSE among the comparions' decisions
+          temp <- purrr::transpose(t)
+          overall_dec<-lapply(names(temp),function(x){
+            all(unlist(temp[[x]]))
+          })
+          names(overall_dec)<-names(temp)
+          overall_dec
         })
       names(decision_overall_ci_para) <- names(decision_ci_para)
       
@@ -1137,7 +1144,13 @@ testMGD <- function(
           tt
         })
         names(t) <- names(decision_ci_overlap[[alpha]])
-        t
+        # Check whether there is one FALSE among the comparions' decisions
+        temp <- purrr::transpose(t)
+        overall_dec<-lapply(names(temp),function(x){
+          all(unlist(temp[[x]]))
+        })
+        names(overall_dec)<-names(temp)
+        overall_dec
       })
       names(decision_overall_ci_overlap) <- names(decision_ci_overlap)
     }#end if: if one CI approach is requested
