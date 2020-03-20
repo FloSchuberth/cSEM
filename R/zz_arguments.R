@@ -481,7 +481,7 @@ args_default <- function(.choices = FALSE) {
     .terms                   = NULL,
     .test_data               = NULL,
     .type_vcv                = c("indicator", "construct"),
-    .type_ci                 = c("CI_standard_z", "CI_standard_t","CI_percentile",
+    .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
                                  "CI_basic","CI_bc", "CI_bca"),
     .user_funs               = NULL,
     .vcv_asymptotic          = c(FALSE, TRUE),

@@ -16,6 +16,7 @@ testMGD(
  .R_bootstrap           = 499,
  .saturated             = FALSE,
  .seed                  = NULL,
+ .type_ci               = "CI_percentile",
  .type_vcv              = c("indicator", "construct"),
  .verbose               = TRUE
  )
@@ -49,7 +50,11 @@ replications/resamples yielding an inadmissible result will be dropped
 For "\emph{ignore}" all results are returned even if all or some of the replications
 yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Defaults to "\emph{replace}" to accommodate all approaches.}
+Defaults to "\emph{replace}" to accommodate all approaches.
+
+@param .type_ci Character string. Which confidence intervals should be used for
+the approach \code{"CI_overlap"} and \code{"CI_para"}. For possible choices, see the
+\code{.quantity} argument of the \code{\link{infer}} function. Defaults to "\emph{CI_percentile}".}
 
 \item{.R_permutation}{Integer. The number of permutations. Defaults to \code{499}}
 

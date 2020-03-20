@@ -148,6 +148,7 @@
 #'  .R_bootstrap           = 499,
 #'  .saturated             = FALSE,
 #'  .seed                  = NULL,
+#'  .type_ci               = "CI_percentile",
 #'  .type_vcv              = c("indicator", "construct"),
 #'  .verbose               = TRUE
 #'  ) 
@@ -161,6 +162,10 @@
 #'   yielded inadmissible results (i.e. number of results returned is equal to `.R`). 
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions. 
 #'   Defaults to "*replace*" to accommodate all approaches.
+#'   
+#'  @param .type_ci Character string. Which confidence intervals should be used for 
+#'  the approach `"CI_overlap"` and `"CI_para"`. For possible choices, see the 
+#'  `.quantity` argument of the \code{\link{infer}} function. Defaults to "*CI_percentile*".
 #'   
 #' @return A list of class `cSEMTestMGD`. Technically, `cSEMTestMGD` is a 
 #'   named list containing the following list elements:
@@ -195,7 +200,7 @@ testMGD <- function(
  .R_bootstrap           = 499,
  .saturated             = FALSE,
  .seed                  = NULL,
- .type_ci               = c("CI_percentile","CI_basic"),
+ .type_ci               = "CI_percentile",
  .type_vcv              = c("indicator", "construct"),
  .verbose               = TRUE
 ){
@@ -218,9 +223,10 @@ testMGD <- function(
                            # args_default, because args_default()$.handle_inadmissibles
                            # has "drop" as default, but testMGD hast "replace".
   .type_vcv             <- match.arg(.type_vcv)
-  if(!all(.type_ci %in%  c("CI_standard_z", "CI_standard_t", "CI_percentile",
-                      "CI_basic", "CI_bc", "CI_bca") )){
-    stop2("The specified confidence interval in .typ.cv is not valid.\n",
+  # if(!all(.type_ci %in%  c("CI_standard_z", "CI_standard_t", "CI_percentile",
+  #                     "CI_basic", "CI_bc", "CI_bca") )){
+  if(!all(.type_ci %in%  args_default(.choices = TRUE)$.type_ci )){
+      stop2("The specified confidence interval in .type.ci is not valid.\n",
           "Please choose one of the following: CI_standard_z, CI_standard_t,\n",
           "CI_percentile, CI_basic, CI_bc, CI_bca.")
   }
