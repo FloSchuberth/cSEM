@@ -1009,6 +1009,7 @@ testMGD <- function(
                     ub_temp2 <-temp_cis_selected2[ub,] 
                     names(ub_temp2) <- colnames(temp_cis_selected2[ub,,drop=FALSE])
 
+                    # browser()
                     # # check whether parameter estimates of one group 
                     # falls within boundaries of the CIs of the other group
                     # TRUE parameter estimate of the other group falls within the CI
