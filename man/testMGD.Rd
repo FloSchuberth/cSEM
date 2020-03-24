@@ -218,7 +218,7 @@ This is useful to test differences in the measurement models between groups
 in isolation.
 }
 \examples{
-\donttest{# ===========================================================================
+\dontrun{# ===========================================================================
 # Basic usage
 # ===========================================================================
 model <- "
