@@ -1384,6 +1384,15 @@ calculatef2 <- function(.object = NULL) {
   
   s <- csem_model$structural
   
+  ## The R2 and the VIF for the 2SLS approach are not implemented yet, hence,
+  ## the f2 statistic cannot be calculated 
+  if(approach_paths != "OLS") {
+    stop2(
+      "The following error occured in the calculatef2() function:\n",
+      "Calculation of the effect size (f2) only implemented for .approach_path = 'OLS'."
+    )
+  }
+  
   vars_endo <- rownames(s)[rowSums(s) != 0]
   
   ## Loop over each structural equation

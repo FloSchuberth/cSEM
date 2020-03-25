@@ -103,14 +103,14 @@ fit.cSEMResults_default <- function(
     Cons_endo <- mod$cons_endo
     Cons_exo  <- mod$cons_exo
     
-    ## Check if recursive, otherwise return a warning
-    if(any(m[Cons_endo, Cons_endo] + t(m[Cons_endo, Cons_endo]) == 2)){
-      warning2(
-        "The following warning occured while computing the model-implied",
-        " indicator correlation matrix:\n",
-        "Currently, `fit()` does not handle non-recursive models correctly.",
-        " The model-implied indicator correlation matrix is likely to be wrong.")
-    }
+    # ## Check if recursive, otherwise return a warning
+    # if(any(m[Cons_endo, Cons_endo] + t(m[Cons_endo, Cons_endo]) == 2)){
+    #   warning2(
+    #     "The following warning occured while computing the model-implied",
+    #     " indicator correlation matrix:\n",
+    #     "Currently, `fit()` does not handle non-recursive models correctly.",
+    #     " The model-implied indicator correlation matrix is likely to be wrong.")
+    # }
     
     B      <- .object$Estimates$Path_estimates[Cons_endo, Cons_endo, drop = FALSE]
     Gamma  <- .object$Estimates$Path_estimates[Cons_endo, Cons_exo, drop = FALSE]

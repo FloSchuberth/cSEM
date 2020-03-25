@@ -339,7 +339,9 @@ assess.cSEMResults_default <- function(
     # Direct, total and indirect effects
     out[["Effects"]] <- summarize(.object)$Estimates$Effect_estimates
   }
-  if(any(.quality_criterion %in% c("all", "f2")) && !all(m$structural == 0)) {
+  if(any(.quality_criterion %in% c("all", "f2")) && !all(m$structural == 0) 
+     && .object$Information$Arguments$.approach_paths == "OLS") {
+    
     # Effect size (f2)
     out[["F2"]] <- calculatef2(.object)
   }
