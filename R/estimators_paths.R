@@ -6,7 +6,6 @@
 #' @usage estimatePath(
 #'  .approach_nl      = args_default()$.approach_nl,
 #'  .approach_paths   = args_default()$.approach_paths,
-#'  .approach_weights = args_default()$.approach_weights,
 #'  .csem_model       = args_default()$.csem_model,
 #'  .H                = args_default()$.H,
 #'  .normality        = args_default()$.normality,
@@ -24,7 +23,6 @@
 estimatePath <- function(
   .approach_nl      = args_default()$.approach_nl,
   .approach_paths   = args_default()$.approach_paths,
-  .approach_weights = args_default()$.approach_weights,
   .csem_model       = args_default()$.csem_model,
   .H                = args_default()$.H,
   .normality        = args_default()$.normality,

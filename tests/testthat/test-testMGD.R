@@ -17,16 +17,17 @@ test_that("Not providing a cSEMResults_multi object causes an error", {
 })
 
 test_that(".approach_mgd = 'Klesel' does not work for nonlinear models", {
-  expect_error(testMGD(res_single_nonlinear, .approach_mgd = "Klesel"))
-  expect_error(testMGD(res_single_nonlinear_boot, .approach_mgd = "all"))
+  expect_error(testMGD(res_multi_nonlinear, .approach_mgd = "Klesel"))
+  expect_error(testMGD(res_multi_nonlinear_boot, .approach_mgd = "all"))
+  expect_error(testMGD(res_multi_nonlinear_2ndorder, .approach_mgd = "all"))
 })
 
 test_that(".approach_mgd = 'Sarstedt' can not be combined with .handle_inadmissibles = 'drop'", {
   expect_error(
-    testMGD(res_single_linear, .approach_mgd = "Sarstedt", .handle_inadmissibles = "drop")
+    testMGD(res_multi_linear, .approach_mgd = "Sarstedt", .handle_inadmissibles = "drop")
   )
   expect_error(
-    testMGD(res_nonlinear, .approach_mgd = "all", .handle_inadmissibles = "drop")
+    testMGD(res_multi_nonlinear, .approach_mgd = "all", .handle_inadmissibles = "drop")
   )
 })
 
@@ -49,13 +50,22 @@ for(i in args_default(.choices = TRUE)$.approach_mgd) {
         .object       = res_multi_nonlinear,
         .approach_mgd = i,
         .R_permutation = 5,
+        .R_bootstrap = 5,
+        .handle_inadmissibles = "replace"
+      )
+    )
+    
+    expect_output(
+      testMGD(
+        .object       = res_multi_nonlinear_2ndorder,
+        .approach_mgd = i,
+        .R_permutation = 5,
+        .R_bootstrap = 5,
         .handle_inadmissibles = "replace"
       )
     )
   })
 }
-
-
 
 test_that("testMGD() works for second order models (.approach_mgd = 'all')", {
   expect_output(

@@ -3,6 +3,35 @@
 - Review `calculateHTMT()`. 1.) Add inference; 2) fix wrong handling of 
   single-indicator constructs. (#351)
 
+- Add .type argument to `calculateGFI()`. Now GFI based on the ML and ULS 
+  fitting function can be computed. (#371)
+
+- Fix `assess()` incorrectly omitting the R2 and the R2_adjusted in the 
+  printed output (#372)
+  
+- Add several new example data sets: See `?BergamiBagozzi2000`, `?ITFlex`, 
+  `?LancelotMiltgenetal2016`, `?Russett`, `?Switching`, and `?Yooetal2000`.
+  
+- Breaking: Rename argument in `doFloodlightAnalysis()` (#343)
+
+- Implement surface analysis via `doSurfaceAnalysis()` (#349)
+
+- Implement degrees of freedom calculation for second-order constructs. The 
+  corresponding function `calculateDf()` is now exported and works for 
+  all types of `cSEMResults` objects. (partly #357, #369)
+
+- Export all fit and distance functions. They now work for 
+  all types of `cSEMResults` objects. (partly #357)
+
+- Bug fix: `csem()` produced an error when the structural model contains only
+  second-order constructs (#366)
+  
+- `calculatef2()` is now exported and accepts all `cSEMResults` objects. (#363)
+
+- Add `.fit_measures` argument to `testOMF()`. Now other fit measures such as
+  the RMSEA or the GFI can be used as the test statistic. This is a rather
+  experimental feature. 
+
 - Add more test for `testMICOM()` and `predict()` (related to #355)
 
 - Fix bug in `testMICOM()`. Function produced an error if the data set provided

@@ -12,7 +12,7 @@
 \alias{calculateRMSEA}
 \alias{calculateRMSTheta}
 \alias{calculateSRMR}
-\title{Internal: Fit measures}
+\title{Model fit measures}
 \usage{
 calculateChiSquare(.object)
 
@@ -20,7 +20,7 @@ calculateChiSquareDf(.object)
 
 calculateCFI(.object)
 
-calculateGFI(.object)
+calculateGFI(.object, .type = c("ML", "ULS"))
 
 calculateIFI(.object)
 
@@ -30,18 +30,23 @@ calculateNNFI(.object)
 
 calculateRMSEA(.object)
 
-calculateRMSTheta(.object, .model_implied = args_default()$.model_implied)
+calculateRMSTheta(.object, .model_implied = FALSE)
 
 calculateSRMR(
   .object = NULL,
   .matrix1 = NULL,
   .matrix2 = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
 )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.type}{Character string. Which fitting function should the GFI be based
+on? One of \emph{"ML"} for the maximum likelihood fitting function or \emph{"ULS"} for the
+unweighted least squares fitting function (same as the squared Euclidian distance).
+Defaults to \emph{"ML"}.}
 
 \item{.model_implied}{Logical. Should the RMS_theta be computed using the
 model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix
@@ -54,6 +59,8 @@ reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
 
 \item{.saturated}{Logical. Should a saturated structural model be used?
 Defaults to \code{FALSE}.}
+
+\item{...}{Ignored.}
 }
 \value{
 A single numeric value.
@@ -62,13 +69,13 @@ A single numeric value.
 Calculate fit measures.
 }
 \details{
-All functions, except for \code{calculateSRMR()} are only applicable to
-objects inheriting class \code{cSEMResults_default}.
-For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
+See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#fit_indices}{Fit indices}
+section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+for details on the implementation.
 }
 \section{Functions}{
 \itemize{
-\item \code{calculateChiSquare}: The ChiSquare statistic.
+\item \code{calculateChiSquare}: The chi square statistic.
 
 \item \code{calculateChiSquareDf}: The ChiSquare statistic divided by its degrees of freedom.
 
@@ -89,4 +96,3 @@ For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} us
 \item \code{calculateSRMR}: The standardized root mean square residual (SRMR).
 }}
 
-\keyword{internal}

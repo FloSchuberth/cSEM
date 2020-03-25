@@ -19,8 +19,8 @@ print.cSEMTestOMF <- function(x, ...) {
   ## Null hypothesis -----------------------------------------------------------
   cat2(
     "\n\nNull hypothesis:\n\n", 
-    boxx(c("H0: Population indicator covariance matrix is equal to", 
-           "model-implied indicator covariance matrix."), float = "center")
+    boxx(c("H0: The model-implied indicator covariance matrix equals the", 
+           "population indicator covariance matrix."), float = "center")
   )
   
   ## Test statistic and critical value -----------------------------------------

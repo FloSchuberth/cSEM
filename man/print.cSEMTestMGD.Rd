@@ -6,9 +6,6 @@
 \usage{
 \method{print}{cSEMTestMGD}(x, ...)
 }
-\arguments{
-\item{x}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
-}
 \description{
 The \code{cSEMTestMGD} method for the generic function \code{\link[=print]{print()}}.
 }

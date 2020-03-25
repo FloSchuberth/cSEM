@@ -81,6 +81,7 @@
 #'   of the data provided are: "`logical`", "`numeric`" ("`double`" or "`integer`"), 
 #'   "`factor`" ("`ordered`" and/or "`unordered`"), "`character`" (converted to factor),
 #'   or a mix of several types.
+#' @param .dependent Character string. The name of the dependent variable. Defaults to `NULL`. 
 #' @param .disattenuate Logical. Should composite/proxy correlations 
 #'   be disattenuated to yield consistent loadings and path estimates if at least
 #'   one of the construct is modeled as a common factor? Defaults to `TRUE`.
@@ -107,6 +108,8 @@
 #'   data obtained by resamplecSEMResults().
 #' @param .force Logical. Should .object be resampled even if it contains resamples
 #'   already?. Defaults to `FALSE`.
+#' @param .fit_measures Logical. (EXPERIMENTAL) Should additional fit measures 
+#'   be included? Defaults to `FALSE`. 
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .H The (N x J) matrix of construct scores.
@@ -123,6 +126,9 @@
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
 #' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
+#' @param .independent Character string. The name of the independent variable. Defaults to `NULL`.
+#' @param .independent_1 Character string. The name of the first independent variable. Defaults to `NULL`.
+#' @param .independent_2 Character string. The name of the second independent variable. Defaults to `NULL`.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
 #'   equation whose explanatory variables are endogenous. The vectors
@@ -142,11 +148,12 @@
 #'   model-implied construct correlation matrix (`TRUE`) or the construct correlation matrix
 #'   based on V(eta) = WSW' divided by the square root of the respective 
 #'   reliabilities (`FALSE`). Defaults to `FALSE`.
+#' @param .moderator Character string. The name of the moderator variable. Defaults to `NULL`. 
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .n Integer. The number of observations of the original data.
-#' @param .n_spotlights Integer. A numeric value giving the number of spotlights (= values of .z) 
-#'   between min(.z) and max(.z) to use. Defaults to `100`.
+#' @param .n_steps Integer. A numeric value giving the number of steps, e.g., in 
+#'  floodlight analysis the spotlights (= values of .z) between min(.z) and max(.z) to use. Defaults to `100`.
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
@@ -251,6 +258,10 @@
 #'   training data.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
+#' @param .type Character string. Which fitting function should the GFI be based 
+#'   on? One of *"ML"* for the maximum likelihood fitting function or *"ULS"* for the
+#'   unweighted least squares fitting function (same as the squared Euclidian distance). 
+#'   Defaults to *"ML"*.
 #' @param .type_vcv Character string. Which model-implied correlation 
 #'  matrix is calculated?
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
@@ -273,12 +284,9 @@
 #' @param .W_old A (J x K) matrix of weights.
 #' @param .weighted Logical. Should estimation be based on a score that uses 
 #'   the weights of the weight approach used to obtain `.object`?. Defaults to `FALSE`.
-#' @param .x Character string. The name of the moderator variable. Defaults to `NULL`. 
 #' @param .X A matrix of processed data (scaled, cleaned and ordered).
 #' @param .X_cleaned A data.frame of processed data (cleaned and ordered). Note: `X_cleaned`
 #'   may not be scaled!
-#' @param .y Character string. The name of the dependent variable. Defaults to `NULL`. 
-#' @param .z Character string. The name of the independent variable. Defaults to `NULL`.
 #'
 #' @name csem_arguments
 #' @aliases cSEMArguments
@@ -414,6 +422,7 @@ args_default <- function(.choices = FALSE) {
     .csem_resample           = NULL,
     .cv_folds                = 10,
     .data                    = NULL,
+    .dependent               = NULL,
     .disattenuate            = TRUE,
     .dist                    = c("z", "t"),
     .distance                = c("geodesic", "squared_euclidian"),
@@ -422,12 +431,16 @@ args_default <- function(.choices = FALSE) {
     .effect                  = NULL,
     .eval_plan               = c("sequential", "multiprocess"),
     .force                   = FALSE,
+    .fit_measures            = FALSE,
     .first_resample          = NULL,
     .full_output             = TRUE,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
     .inference               = FALSE,
+    .independent             = NULL,
+    .independent_1           = NULL,
+    .independent_2           = NULL,
     .instruments             = NULL,
     .listMatrices            = NULL, 
     .matrix1                 = NULL,
@@ -435,8 +448,9 @@ args_default <- function(.choices = FALSE) {
     .matrices                = NULL,
     .model                   = NULL,
     .model_implied           = FALSE,
+    .moderator               = NULL,
     .modes                   = NULL,
-    .n_spotlights            = 100,
+    .n_steps                 = 100,
     .normality               = FALSE,
     .nr_comparisons          = NULL,
     .null_model              = FALSE,
@@ -480,6 +494,7 @@ args_default <- function(.choices = FALSE) {
     .starting_values         = NULL,
     .terms                   = NULL,
     .test_data               = NULL,
+    .type                    = c("ML", "ULS"),
     .type_vcv                = c("indicator", "construct"),
     .user_funs               = NULL,
     .vcv_asymptotic          = c(FALSE, TRUE),

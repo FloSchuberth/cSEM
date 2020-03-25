@@ -25,7 +25,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Manuel Rademaker \email{manuel.rademaker@uni-wuerzburg.de} (\href{https://orcid.org/0000-0002-8902-3561}{ORCID})
+\strong{Maintainer}: Manuel E. Rademaker \email{manuel.rademaker@uni-wuerzburg.de} (\href{https://orcid.org/0000-0002-8902-3561}{ORCID})
 
 Authors:
 \itemize{
@@ -34,9 +34,10 @@ Authors:
 
 Other contributors:
 \itemize{
-  \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de} [contributor]
+  \item Tamara Schamberger \email{tamara.schamberger@uni-wuerzburg.de} (\href{https://orcid.org/0000-0002-7845-784X}{ORCID}) [contributor]
   \item Michael Klesel [contributor]
   \item Theo K. Dijkstra [contributor]
+  \item Jörg Henseler (\href{https://orcid.org/0000-0002-9736-3048}{ORCID}) [contributor]
 }
 
 }

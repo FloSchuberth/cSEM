@@ -1,19 +1,19 @@
 #' Do a floodlight analysis
 #'
-#' Calculate the effect of an independent variable (z) on a dependent variable
-#' (y) conditional on the values of a (continous) moderator variable (x) 
+#' Calculate the effect of an independent variable on a dependent variable
+#' conditional on the values of a (continous) moderator variable
 #' to perform a floodlight analysis \insertCite{Spiller2013}{cSEM}. Moreover, 
 #' the Johnson-Neyman points are calculated, i.e. the value(s) of x for which 
 #' lower or upper boundary of the confidence interval of the effect
 #' estimate of z for a given x switch signs. 
 #' 
 #' @usage doFloodlightAnalysis(
-#'  .object        = NULL,
-#'  .alpha         = 0.05,
-#'  .y             = NULL, 
-#'  .x             = NULL,
-#'  .z             = NULL,
-#'  .n_spotlights  = 100
+#'  .object         = NULL,
+#'  .alpha          = 0.05,
+#'  .dependent      = NULL, 
+#'  .moderator      = NULL,
+#'  .independent    = NULL,
+#'  .n_steps        = 100
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -30,15 +30,16 @@
 doFloodlightAnalysis <- function(
   .object        = NULL,
   .alpha         = 0.05,
-  .y             = NULL, 
-  .x             = NULL,
-  .z             = NULL,
-  .n_spotlights  = 100
+  .dependent     = NULL, 
+  .moderator     = NULL,
+  .independent   = NULL,
+  .n_steps       = 100
 ){
   
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, doFloodlightAnalysis, .alpha = .alpha, 
-                  .y = .y, .x = .x, .z = .z, .n_spotlights = .n_spotlights)
+                  .dependent = .dependent, .moderator = .moderator, 
+                  .independent = .independent, .n_steps = .n_steps)
     
     class(out) <- c("cSEMFloodlight", "cSEMFloodlight_multi")
     return(out)
@@ -67,8 +68,8 @@ doFloodlightAnalysis <- function(
     }
     
     # Character string containing the names of the dependent and independent variables
-    dep_vars   <- rownames(m$structural[rowSums(m$structural) !=0, , drop = FALSE])
-    indep_vars <- colnames(m$structural[, colSums(m$structural[.y, ,drop = FALSE]) !=0 , drop = FALSE])
+    dep_vars   <- rownames(m$structural[rowSums(m$structural) != 0, , drop = FALSE])
+    indep_vars <- colnames(m$structural[, colSums(m$structural[.dependent, ,drop = FALSE]) != 0 , drop = FALSE])
     
     ## Check if model is nonlinear.
     if(m$model_type != "Nonlinear"){
@@ -85,22 +86,22 @@ doFloodlightAnalysis <- function(
     }
     
     ## Check whether dependent, independent, and moderator variable are provided
-    if(is.null(.y) | is.null(.x) | is.null(.z)){
+    if(is.null(.dependent) | is.null(.moderator) | is.null(.independent)){
       stop2(
         "The following error occured in the `doFloodlightAnalysis()`` function:\n",
-        "All variables (.y, .x, and .z) must be supplied.")
+        "All variables (.dependent, .moderator, and .independent) must be supplied.")
     }
     
     # Check if the name of the dependent variable is valid
-    if(!(.y %in% dep_vars)){
+    if(!(.dependent %in% dep_vars)){
       stop2(
         "The following error occured in the `doFloodlightAnalysis()`` function:\n",
-        "The dependent variable supplied to `.y` is not a dependent variable in the original model.")
+        "The dependent variable supplied to `.dependent` is not a dependent variable in the original model.")
     }
     
-    # Check if the name of the moderator (.x) and the dependent variable (.z) supplied are used 
+    # Check if the name of the moderator (.moderator) and the dependent variable (.independent) supplied are used 
     # in the original model
-    if(!all(c(.x, .z) %in% colnames(m$structural))){
+    if(!all(c(.moderator, .independent) %in% colnames(m$structural))){
       stop2(
         "The following error occured in the `doFloodlightAnalysis()`` function:\n",
         "Independent and/or moderator variable are not part of the original model.")
@@ -108,7 +109,7 @@ doFloodlightAnalysis <- function(
     
     ### Calculation --------------------------------------------------------------
     # Possible names of the interaction terms
-    possible_names <- c(paste(.x, .z, sep = '.'), paste(.z, .x, sep= '.'))
+    possible_names <- c(paste(.moderator, .independent, sep = '.'), paste(.independent, .moderator, sep= '.'))
     
     # Name of the interaction term
     xz <- possible_names[possible_names %in% indep_vars]
@@ -121,13 +122,13 @@ doFloodlightAnalysis <- function(
     
     
     # Effect names
-    beta_z  <- paste(.y, .z, sep = ' ~ ')
-
-    beta_xz <- paste(.y, xz, sep = ' ~ ')
+    beta_z  <- paste(.dependent, .independent, sep = ' ~ ')
+    
+    beta_xz <- paste(.dependent, xz, sep = ' ~ ')
     
     ## Compute spotlights (= effects of independent (z) on dependent (y) for given 
     ## values of moderator (x))
-    steps <- seq(min(H[, .x]), max(H[, .x]), length.out = .n_spotlights)
+    steps <- seq(min(H[, .moderator]), max(H[, .moderator]), length.out = .n_steps)
     
     dataplot_temp <- lapply(steps, function(step){
       ## Note:
@@ -172,9 +173,9 @@ doFloodlightAnalysis <- function(
       ),
       "Information" = list(
         alpha       = .alpha, 
-        dependent   = .y,
-        independent = .z,
-        moderator   = .x
+        dependent   = .dependent,
+        independent = .independent,
+        moderator   = .moderator
       )
     )
     
@@ -182,3 +183,4 @@ doFloodlightAnalysis <- function(
     return(out)
   }
 } 
+

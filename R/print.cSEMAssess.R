@@ -14,8 +14,9 @@ print.cSEMAssess <- function(x, ...) {
   nn <- intersect(names(x), c("AVE", "R2", "R2_adj"))
   
   if(length(nn) > 0) {
-    # Max name length 
-    c_names <- names(x[[nn[1]]])
+    # Select all construct names that are either endogenous (LHS) variables (for 
+    # the R2) or constructs for which the AVE was computed. 
+    c_names <- unique(c(names(x[["AVE"]]), names(x[["R2"]])))
     if(length(c_names) > 0) {
       l <- max(nchar(c_names)) 
       nn <- list(nn)

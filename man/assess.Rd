@@ -141,8 +141,8 @@ Several absolute and incremental fit indices. Note that their suitability
 for models containing constructs modeled as composites is still an
 open research question. Also note that fit indices are not tests in a
 hypothesis testing sense and
-decisions based on common cut-offs proposed in the literature should be
-considered with caution!. Calculation is done by \code{\link[=calculateChiSquare]{calculateChiSquare()}},
+decisions based on common one-size-fits-all cut-offs proposed in the literature
+suffer from serious statistical drawbacks. Calculation is done by \code{\link[=calculateChiSquare]{calculateChiSquare()}},
 \code{\link[=calculateChiSquareDf]{calculateChiSquareDf()}}, \code{\link[=calculateCFI]{calculateCFI()}},
 \code{\link[=calculateGFI]{calculateGFI()}}, \code{\link[=calculateIFI]{calculateIFI()}}, \code{\link[=calculateNFI]{calculateNFI()}}, \code{\link[=calculateNNFI]{calculateNNFI()}},
 \code{\link[=calculateRMSEA]{calculateRMSEA()}}, \code{\link[=calculateRMSTheta]{calculateRMSTheta()}} and \code{\link[=calculateSRMR]{calculateSRMR()}}.}
