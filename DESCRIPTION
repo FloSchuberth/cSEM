@@ -2,7 +2,7 @@ Package: cSEM
 Title: Composite-Based Structural Equation Modeling
 Version: 0.1.0.9000
 Date: 2020-01-15
-Authors@R: c(person(given = "Manuel", family = "Rademaker",
+Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut", "cre"),
                     email = "manuel.rademaker@uni-wuerzburg.de",
                     comment = c(ORCID = "0000-0002-8902-3561")),
@@ -12,13 +12,18 @@ Authors@R: c(person(given = "Manuel", family = "Rademaker",
                     comment = c(ORCID = "0000-0002-2110-9086")),
              person(given = "Tamara", family = "Schamberger",
                     role  = c("ctb"),
-                    email = "tamara.schamberger@uni-wuerzburg.de"),
+                    email = "tamara.schamberger@uni-wuerzburg.de",
+                    comment = c(ORCID = "0000-0002-7845-784X")),
              person(given = "Michael", family = "Klesel",
                     role  = c("ctb"),
                     email = ""),
              person(given = "Theo K.", family = "Dijkstra",
                     role  = c("ctb"),
-                    email = ""))
+                    email = ""),
+             person(given = "Jörg", family = "Henseler",
+                    role  = c("ctb"),
+                    email = "",
+                    comment = c(ORCID = "0000-0002-9736-3048")))
 Maintainer: Manuel Rademaker <manuel.rademaker@uni-wuerzburg.de>
 Depends: R (>= 3.5.0)
 Description: Estimate, assess, test, and study linear, nonlinear, hierarchical 
@@ -68,6 +73,7 @@ Suggests:
     knitr,
     nnls,
     prettydoc,
+    plotly,
     rmarkdown,
     listviewer,
     testthat,

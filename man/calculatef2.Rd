@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_assess.R
 \name{calculatef2}
 \alias{calculatef2}
-\title{Internal: Calculate Cohens f^2}
+\title{Calculate Cohens f^2}
 \usage{
 calculatef2(.object = NULL)
 }
@@ -16,9 +16,8 @@ of these equations.
 }
 \description{
 Calculate the effect size for regression analysis \insertCite{Cohen1992}{cSEM}
-known as Cohen's f^2
+known as Cohen's f^2.
 }
 \seealso{
 \code{\link[=assess]{assess()}}, \link{csem}, \link{cSEMResults}
 }
-\keyword{internal}

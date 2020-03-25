@@ -72,13 +72,26 @@ calculateAVE <- function(
 }
 
 
-#' Internal: Degrees of freedom
+#' Degrees of freedom
 #' 
 #' Calculate the degrees of freedom for a given model from a [cSEMResults] object.
 #' 
+#' Although, composite-based estimators always retrieve parameters of the 
+#' postulated models via the estimation of a composite model,
+#' the computation of the degrees of freedom depends on the postulated model.
+#' 
+#' See: \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{cSEM website} 
+#' for details on how the degrees of freedom are calculated.
+#' 
+#' To compute the degrees of freedom of the null model use `.null_model = TRUE`.
+#' The degrees of freedom of the null model are identical to the number of
+#' non-redundant off-diagonal elements of the empirical indicator correlation matrix.
+#' This implicitly assumes a null model with model-implied indicator correlation
+#' matrix equal to the identity matrix.
+#' 
 #' @usage calculateDf(
 #'   .object     = NULL,
-#'   .null_model = args_default()$.null_model,
+#'   .null_model = FALSE,
 #'   ...
 #'   )
 #' 
@@ -88,87 +101,217 @@ calculateAVE <- function(
 #' @param ... Ignored.
 #'
 #' @seealso [assess()], [cSEMResults]
-#' @keywords internal
+#' @export
 
 calculateDf <- function(
   .object     = NULL, 
-  .null_model = args_default()$.null_model,
+  .null_model = FALSE,
   ...
-  ) {
+) {
   
-  if(inherits(.object, "cSEMResults_default")) { 
-    x1 <- .object$Estimates
-    x2 <- .object$Information$Model
-  } else if(inherits(.object, "cSEMResults_2ndorder")) {
-    stop2("Degrees of freedom for 2nd order composites not implemented yet.")
-  } else {
+  if(inherits(.object, "cSEMResults_multi")) {
     
     df <- lapply(.object, calculateDf)
     
     ## Return
     names(df) <- names(.object)
     return(df)
-  }
-  
-  ## Number of non-redundant off-diagonal elements of the indicator covariance 
-  ## matrix (S)
-  vS <- sum(lower.tri(x1$Indicator_VCV)) # same as dim_nS *(dim_nS - 1) / 2
-  
-  ## Caculate the degrees of freedom of a null model (Sigma_hat = I)
-  if(.null_model) {
-    # The degrees of freedom of the null model are identical to 
-    # the number of non-redundant elements of S (since there is nothing to
-    # estimate. Everything is set to 0 a priori)
-    return(vS)
-  }
-  
-  ## Number of correlations between (exogenous) constructs
-  temp <- sum(rowSums(x2$structural) == 0)
-  n_exo <- temp * (temp - 1) / 2
-  
-  ## Number of structural parameters
-  n_structural <- sum(x2$structural)
-  
-  if(.object$Information$Arguments$.approach_weights %in% c("bartlett", "regression", "unit")) {
-    # If one of these estimators is used degrees of freedom are counted 
-    # the same way as one would count in CB-SEM: 
-    # df = non_redundant_elements_of_S - 
-    #      - (structural_parameter + cor_between_exos) 
-    #      - loadings
-    #      - assumed_measurement_error_cors (usually 0)
     
-    ## Number of measurement errors assumed to correlate
-    n_error <- sum(x2$error_cor == 1) / 2
+  } else if(inherits(.object, "cSEMResults_default")) { 
     
-    n_loadings <- ncol(x2$measurement)
+    x1 <- .object$Estimates
+    x2 <- .object$Information$Model
     
-    df_total <- vS - (n_exo + n_structural) - n_loadings - n_error
-  } else {
+    if(x2$model_type == "Nonlinear") {
+      warning("Computation of the degrees of freedom for models containing nonlinear",
+              " terms is experimental. Computation may not be correct.")
+    }
+    
+    # Number of non-redundant off-diagonal elements of the indicator covariance 
+    # matrix (S)
+    vS <- sum(lower.tri(x1$Indicator_VCV)) # same as dim_nS *(dim_nS - 1) / 2
+    
+    # Caculate the degrees of freedom of a null model (Sigma_hat = I)
+    if(.null_model) {
+      # The degrees of freedom of the null model are identical to 
+      # the number of non-redundant elements of S (since there is nothing to
+      # estimate. Everything, except for the main diagonal element, is set to 0 a 
+      # priori).
+      return(vS)
+    }
+    
+    # Construct correlations and structural model parameters
+    if(!all(x2$structural == 0)) {
+      # Free correlations between exogenous constructs
+      n_cor_exo <- length(x2$cons_exo) * (length(x2$cons_exo) - 1) / 2 
+      
+      # Correlations between endogenous constructs
+      names_cor_endo <- intersect(x2$cons_endo, rownames(x2$cor_specified))
+      if(length(names_cor_endo) != 0) {
+        n_cor_endo <- sum(x2$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE]
+                          [lower.tri(x2$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE])])
+      } else {
+        n_cor_endo <- 0
+      }
+      
+      # Number of structural parameters
+      n_structural <- sum(x2$structural)
+      
+    } else {
+      n_cor_exo    <- nrow(x2$structural) * (nrow(x2$structural) - 1) / 2
+      n_cor_endo   <- 0
+      n_structural <- 0
+    }
+    
     ## Construct names
     names_constructs <- rownames(x2$structural)
     k <- c()
     for(j in names_constructs) {
-      # DF for 
-      ## Number of free covariances between the composites and indicators not forming
-      ## a composite
-      # Not relevant, as indicators are always attached to a composite in cSEM
-      
-      ## Number of free non-redundant off-diagonal element of each intra-block
-      #+ covariance matrix
-      temp    <- sum((x2$measurement[j, ] == 1))
-      n_intra <- temp * (temp - 1) / 2
-      
-      ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
-      n_weights <- sum(x2$measurement[j, ]) - 1
-      
-      ## Calculate Dfs
-      k[j] <- n_intra + n_weights
+      if(x2$construct_type[j] == "Composite") {
+        
+        ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
+        n_weights <- sum(x2$measurement[j, ]) - 1 
+        
+        ## Number of free non-redundant off-diagonal element of each intra-block
+        #+ covariance matrix
+        temp    <- sum(x2$measurement[j, ] == 1)
+        n_intra <- temp * (temp - 1) / 2
+        
+        ## Calculate dfs per construct
+        k[j] <- n_weights + n_intra 
+        
+      } else {
+        
+        # Number of loadings (since either 1 loading is fixed or the variance 
+        # of the construct is fixed)
+        n_loadings <- sum(x2$measurement[j, ] == 1)
+        
+        # Number of measurement errors assumed to correlate
+        j_names <- names(which(x2$measurement[j, ] == 1))
+        n_error <- sum(x2$error_cor[j_names, j_names, drop = FALSE] == 1) / 2
+        
+        # Calculate dfs per construct
+        k[j] <- n_loadings + n_error
+      }
     }
     
-    df_total <- vS - (n_exo + n_structural) - sum(k)
-  }
+    df_total <- vS - (n_cor_exo + n_cor_endo + n_structural) - sum(k)
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    
+    x11 <- .object$First_stage$Estimates
+    x12 <- .object$First_stage$Information$Model
+    
+    x21 <- .object$Second_stage$Estimates
+    x22 <- .object$Second_stage$Information$Model
   
-  # return degrees of freedom
+    if(x22$model_type == "Nonlinear") {
+      warning("Computation of the degrees of freedom for models containing nonlinear",
+              " terms is experimental. Computation may not be correct.")
+    }
+    
+    # Number of non-redundant off-diagonal elements of the indicator covariance 
+    # matrix (S) of the first stage
+    vS <- sum(lower.tri(x11$Indicator_VCV)) # same as dim_nS *(dim_nS - 1) / 2
+    
+    # Caculate the degrees of freedom of a null model (Sigma_hat = I)
+    if(.null_model) {
+      # The degrees of freedom of the null model are identical to 
+      # the number of non-redundant elements of S (since there is nothing to
+      # estimate. Everything is set to 0 a priori)
+      return(vS)
+    }
+    
+    # Construct correlations and structural model parameters
+    if(!all(x22$structural == 0)) {
+      # Free correlations between exogenous constructs
+      n_cor_exo <- length(x22$cons_exo) * (length(x22$cons_exo) - 1) / 2 
+      
+      # Correlations between endogenous constructs
+      names_cor_endo <- intersect(x22$cons_endo, rownames(x22$cor_specified))
+      if(!is.null(names_cor_endo)) {
+        n_cor_endo <- sum(x22$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE]
+                          [lower.tri(x22$cor_specified[names_cor_endo, names_cor_endo, drop = FALSE])])
+      } else {
+        n_cor_endo <- 0
+      }
+      
+      # Number of structural parameters
+      n_structural <- sum(x22$structural)
+      
+    } else {
+      n_cor_exo    <- nrow(x22$structural) * (nrow(x22$structural) - 1) / 2
+      n_cor_endo   <- 0
+      n_structural <- 0
+    }
+    
+    ## Construct names
+    construct_order  <- .object$First_stage$Information$Model$construct_order 
+    names_constructs <- names(construct_order)
+    k <- c()
+    for(j in names_constructs) {
+      if(construct_order[j] == "Second order") {
+        if(x22$construct_type[j] == "Composite") {
+          ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
+          n_weights <- sum(x22$measurement[j, ]) - 1 
+          
+          ## Number of free non-redundant off-diagonal element of each intra-block
+          #+ covariance matrix
+          temp    <- sum(x22$measurement[j, ] == 1)
+          n_intra <- temp * (temp - 1) / 2
+          
+          ## Calculate dfs per construct
+          k[j] <- n_weights + n_intra 
+          
+        } else {
+          
+          # Number of loadings -1 (since either 1 loading is fixed or the variance 
+          # of the construct is fixed)
+          n_loadings <- sum(x22$measurement[j, ] == 1)
+          
+          # Number of measurement errors assumed to correlate
+          n_error <- sum(x22$error_cor == 1) / 2
+          
+          # Calculate dfs per construct
+          k[j] <- n_loadings + n_error
+        }
+      } else {
+        if(x12$construct_type[j] == "Composite") {
+          ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
+          n_weights <- sum(x12$measurement[j, ]) - 1
+          
+          ## Number of free non-redundant off-diagonal element of each intra-block
+          #+ covariance matrix
+          temp    <- sum(x12$measurement[j, ] == 1)
+          n_intra <- temp * (temp - 1) / 2
+          
+          ## Calculate dfs per construct
+          k[j] <- n_weights + n_intra 
+          
+        } else {
+          
+          # Number of loadings -1 (since either 1 loading is fixed or the variance 
+          # of the construct is fixed)
+          n_loadings <- sum(x12$measurement[j, ] == 1)
+          
+          # Number of measurement errors assumed to correlate
+          n_error <- sum(x12$error_cor == 1) / 2
+          
+          # Calculate dfs per construct
+          k[j] <- n_loadings + n_error
+        }
+      }
+    }
+  } else {
+    stop2(
+      "The following error occured in the calculateDL() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
+  ## Compute degrees of freedom
+  df_total <- vS - (n_cor_exo + n_cor_endo + n_structural) - sum(k)
+  
+  ## Return degrees of freedom
   df_total
 }
 
@@ -514,48 +657,84 @@ calculateRhoT <- function(
 
 
 
-#' Internal: HTMT
+#' HTMT
 #'
 #' Compute the heterotrait-monotrait ratio of correlations (HTMT) based on 
-#' \insertCite{Henseler2015;textual}{cSEM}.
-#'
-#' Similarly to the Cronbach's alpha, the HTMT is a consistent estimator for the
-#' construct correlations in case of tau equivalent measurement models. 
-#'
-#' The HTMT is used to assess discriminant validity.
+#' \insertCite{Henseler2015;textual}{cSEM}. The HTMT is a consistent estimator for the
+#' construct correlations of tau-equivalent measurement model. It is used to
+#' assess discriminant validity.
 #' 
-#' The function is only applicable to objects inheriting class `cSEMResults_default`.
-#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
+#' Computation of the HTMT assumes that all intra-block and inter-block 
+#' correlations between indicators are either all-positive or all-negative.
+#' A warning is given if this is not the case. If all intra-block or inter-block
+#' correlations are negative the absolute HTMT values are returned (`.absolute = TRUE`).
+#' 
+#' To obtain the alpha%-quantile of the bootstrap distribution for each HTMT 
+#' value set `.inference = TRUE`.
+#' 
+#' Since the HTMT is defined with respect to a classical true score measurement
+#' model only concepts modeled as common factors are considered by default.
+#' For concepts modeled as composites the HTMT may be computed by setting
+#' `.only_common_factors = FALSE`, however, it is unclear how to
+#' interpret values in this case.
 #' 
 #' @usage calculateHTMT(
-#'  .object              = NULL,
-#'  .absolute            = TRUE,
-#'  .only_common_factors = TRUE
+#'  .object               = NULL,
+#'  .absolute             = TRUE,
+#'  .alpha                = 0.05,
+#'  .handle_inadmissibles = c("drop", "ignore", "replace"),
+#'  .inference            = FALSE,
+#'  .only_common_factors  = TRUE,
+#'  .R                    = 499,
+#'  .seed                 = NULL
 #' )
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return A lower tringular matrix of HTMT values.
+#' @return A lower tringular matrix of HTMT values. If `.inference = TRUE`
+#'   the upper tringular part is the .alpha%-quantile of the HTMT's bootstrap
+#'   distribution.
 #' 
 #' @seealso [assess()], [csem], [cSEMResults]
-#' @keywords internal
+#' @export
 
 calculateHTMT <- function(
-  .object              = NULL,
-  .absolute            = TRUE,
-  .only_common_factors = TRUE
+  .object               = NULL,
+  .absolute             = TRUE,
+  .alpha                = 0.05,
+  .handle_inadmissibles = c("drop", "ignore", "replace"),
+  .inference            = FALSE,
+  .only_common_factors  = TRUE,
+  .R                    = 499,
+  .seed                 = NULL
 ){
-  # Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateHTMT,
+                  .absolute = .absolute,
+                  .alpha                = .alpha,
+                  .handle_inadmissibles = .handle_inadmissibles,
+                  .inference            = .inference,
+                  .only_common_factors  = .only_common_factors,
+                  .R                    = .R,
+                  .seed                 = .seed
+                  )
+    return(out)
+  } else if(inherits(.object, "cSEMResults_default")) {
+    ## Get relevant quantities
+    m <- .object$Information$Model
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    ## Get relevant quantities
+    m <- .object$Second_stage$Information$Arguments_original$.model
+  } else {
+    stop2(
+      "The following error occured in the calculateHTMT() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
   }
   
-  
-  ## Get relevant quantities
-  m <- .object$Information$Model
-  
-  if(isTRUE(.only_common_factors)) {
+  if(.only_common_factors) {
     cf_names <- names(m$construct_type[m$construct_type == "Common factor"])
     
     ## Return NA if there are not at least 2 common factors
@@ -568,32 +747,57 @@ calculateHTMT <- function(
   
   cf_measurement <- m$measurement[cf_names, colSums(m$measurement[cf_names, ]) != 0, drop = FALSE]
   
-  ## HTMT can only be calculated for constructs with more than one indicator
-  x <- rowSums(cf_measurement) > 1
-  cf_measurement <- cf_measurement[x, colSums(cf_measurement[x, ]) != 0, drop = FALSE]
-  
-  ## At least two multi-indicator constructs required
-  if(nrow(cf_measurement) < 2) {
-    stop2("Computation of the HTMT requires at least two multi-indicator common factors.")
+  if(inherits(.object, "cSEMResults_default")) {
+    
+    i_names <- colnames(cf_measurement)
+    S       <- .object$Estimates$Indicator_VCV[i_names, i_names]
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2(
+      "The following error occured in the calculateHTMT() function:\n",
+      "The HTMT is not (yet) implemented for models containing second-order constructs."
+    )
   }
   
-  i_names <- colnames(cf_measurement)
-  S       <- .object$Estimates$Indicator_VCV[i_names, i_names]
+  ## Warning if S contains negative and positive correlations within a block
+  S_signs    <- cf_measurement %*% (sign(S) - diag(nrow(S))) %*% t(cf_measurement)
+  S_elements <- cf_measurement %*% (1 - diag(nrow(S))) %*% t(cf_measurement)
   
-  ## Average correlation of the indicators of a block 
-  avrg_cor <- cf_measurement %*% (S - diag(diag(S))) %*% t(cf_measurement) /
-    cf_measurement %*% (1 - diag(nrow(S))) %*% t(cf_measurement)
+  if(any(abs(S_signs) != S_elements)) {
+    warning(
+      "The following warning occured in the calculateHTMT() function:\n",
+      "Intra-block and inter-block correlations between indicators", 
+      " must be either all-positive or all-negative.", call. = FALSE)
+  }
+  
+  ## Average correlation of the indicators within and across blocks
+  ## The eta_i - eta_i (main diagonal) element is the monotrait-heteromethod correlation
+  ## The eta_i - eta_j (off-diagonal) element is the heterotrait-heteromethod correlation
+  avrg_cor <- cf_measurement %*% (S - diag(diag(S))) %*% t(cf_measurement) / S_elements
+  
+  # Single-indicator constructs monotrait-heteromethod correlation is set to 1
+  x <- rowSums(cf_measurement) == 1
+
+  if(sum(x) == 1) {
+    avrg_cor[x, x] <- 1
+  } else if(sum(x) > 1) {
+    diag(avrg_cor[x, x]) <- 1 
+  } # else: dont do anything
   
   ## Compute HTMT
-  # Geometric means of the average monotrait-heteromethod correlation of 
+  # HTMT_ij = Average heterotrait-heteromethod correlation between i and j divided by 
+  # the geometric means of the average monotrait-heteromethod correlation of 
   # eta_i with the average monotrait-heteromethod correlation of construct eta_j
   # (can be negative if some indicators are negatively correlated)
   tryCatch({sqrt(diag(avrg_cor) %o% diag(avrg_cor))},
            warning = function(w) {
-             warning2("The geometric mean of the average monotrait-heteromethod",
-                      " correlation of at least one construct with",
-                      " the average monotrait-heteromethod correlation of the",
-                      " other constructs is negative. NaNs produced")
+             warning(
+               "The following warning occured in the calculateHTMT() function:\n",
+               "The geometric mean of the average monotrait-heteromethod",
+               " correlation of at least one construct with",
+               " the average monotrait-heteromethod correlation of the",
+               " other constructs is negative. NaNs produced.",
+               call. = FALSE)
            }
   )
   out <- avrg_cor*lower.tri(avrg_cor) / suppressWarnings(sqrt(diag(avrg_cor) %o% diag(avrg_cor))) 
@@ -601,49 +805,84 @@ calculateHTMT <- function(
   if(.absolute) {
     out <- abs(out)
   }
+  
+  if(.inference) {
+    # Bootstrap if necessary
+    out_resample <- resamplecSEMResults(
+      .object, 
+      .user_funs = list("HTMT" = calculateHTMT), 
+      .absolute = .absolute,
+      .handle_inadmissibles = .handle_inadmissibles,
+      .inference = FALSE,
+      .only_common_factors = .only_common_factors,
+      .force = TRUE, # to force computation even if .object already contains resamples
+      .R = .R,
+      .seed = .seed
+    )
+    
+    # Compute quantile
+    if(length(.alpha) == 1) {
+      out_htmt <- out_resample$Estimates$Estimates_resample$Estimates1$HTMT 
+      quants <- matrixStats::colQuantiles(out_htmt$Resampled, probs = 1 - .alpha) 
+    } else {
+      stop2(
+        "The following error occured in the calculateHTMT() function:\n",
+        "Only a single numeric probability accepted. You provided:", paste(.alpha, sep = ", "))
+    }
+    
+    ## Reassemble matrix
+    htmt_quantiles <- out
+    htmt_quantiles[] <- quants
+    
+    htmt_inference <- out + t(htmt_quantiles)
+    
+    # Return
+    diag(htmt_inference) <- 1
+    return(htmt_inference)
+  }
   # Return
+  diag(out) <- 1
   return(out)
 }
 
 
-#' Internal: Calculate difference between S and Sigma_hat
+#' Calculate difference between S and Sigma_hat
 #'
 #' Calculate the difference between the empirical (S) 
 #' and the model-implied indicator variance-covariance matrix (Sigma_hat)
 #' using different distance measures.
-#'
-#' The functions are only applicable to objects inheriting class `cSEMResults_default`.
-#' or `cSEMResults_2ndorder`. For objects of class `cSEMResults_multi` 
-#' use `lapply(.object, calculateXX())`.
 #' 
-#' The geodesic and the squared Euclidian distance may also be 
-#' computed for any two matrices A and B by supplying A and B directly via the 
-#' `.matrix1` and `.matrix2` arguments. If A and B are supplied `.object` is ignored.
+#' The distances may also be computed for any two matrices A and B by supplying 
+#' A and B directly via the `.matrix1` and `.matrix2` arguments. 
+#' If A and B are supplied `.object` is ignored.
 #' 
 #' @return A single numeric value giving the distance between two matrices.
 #' 
 #' @inheritParams csem_arguments
 #' @param ... Ignored.
 #'
-#' @keywords internal
 #' @name distance_measures
 NULL
 
 #' @describeIn distance_measures The geodesic distance (dG).
+#' @export
 
 calculateDG <- function(
   .object    = NULL, 
   .matrix1   = NULL,
   .matrix2   = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
-  ){
-
+){
+  
   if(!is.null(.matrix1) & !is.null(.matrix2)) {
     S         <- .matrix1
     Sigma_hat <- .matrix2
   } else {
-    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_multi")) {
+      out <- lapply(.object, calculateDG, .saturated = .saturated)
+      return(out)
+    }
     if(inherits(.object, "cSEMResults_default")) {
       S <- .object$Estimates$Indicator_VCV
     } else if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -651,7 +890,8 @@ calculateDG <- function(
     } else {
       stop2(
         "The following error occured in the calculateDG() function:\n",
-        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+        "`.object` must be of class `cSEMResults`."
+      )
     }
     
     Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')  
@@ -666,20 +906,24 @@ calculateDG <- function(
 }
 
 #' @describeIn distance_measures The squared Euclidian distance
+#' @export
 
 calculateDL <- function(
   .object    = NULL, 
   .matrix1   = NULL,
   .matrix2   = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
-  ){
+){
   
   if(!is.null(.matrix1) & !is.null(.matrix2)) {
     S         <- .matrix1
     Sigma_hat <- .matrix2
   } else {
-    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_multi")) {
+      out <- lapply(.object, calculateDL, .saturated = .saturated)
+      return(out)
+    }
     if(inherits(.object, "cSEMResults_default")) {
       S <- .object$Estimates$Indicator_VCV
     } else if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -687,7 +931,8 @@ calculateDL <- function(
     } else {
       stop2(
         "The following error occured in the calculateDL() function:\n",
-        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+        "`.object` must be of class `cSEMResults`."
+      )
     }
     
     Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')
@@ -697,21 +942,25 @@ calculateDL <- function(
   0.5 * sum((S - Sigma_hat)^2)
 }
 
-#' @describeIn  distance_measures The distance measure used by FIML
+#' @describeIn  distance_measures The distance measure (fit function) used by ML
+#' @export
 
 calculateDML <- function(
   .object    = NULL, 
   .matrix1   = NULL,
   .matrix2   = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
-  ){
+){
   
   if(!is.null(.matrix1) & !is.null(.matrix2)) {
     S         <- .matrix1
     Sigma_hat <- .matrix2
   } else {
-    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_multi")) {
+      out <- lapply(.object, calculateDML, .saturated = .saturated)
+      return(out)
+    }
     if(inherits(.object, "cSEMResults_default")) {
       S <- .object$Estimates$Indicator_VCV
     } else if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -719,60 +968,105 @@ calculateDML <- function(
     } else {
       stop2(
         "The following error occured in the calculateDML() function:\n",
-        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+        "`.object` must be of class `cSEMResults`."
+      )
     }
     
     Sigma_hat <- fit(.object, .saturated = .saturated, .type_vcv = 'indicator')  
   }
-
+  
   p <- dim(S)[1]
   
   # This is the distance function. The test statistic is T_ML = (n-1) or n * DML! 
   sum(diag(S %*% solve(Sigma_hat))) - log(det(S%*%solve(Sigma_hat))) - p
 }
 
-#' Internal: Fit measures
+#' Model fit measures
 #' 
 #' Calculate fit measures.
 #' 
-#' All functions, except for `calculateSRMR()` are only applicable to 
-#' objects inheriting class `cSEMResults_default`.
-#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
+#' See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#fit_indices}{Fit indices}
+#' section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+#' for details on the implementation.
 #' 
 #' @return A single numeric value.
 #' 
 #' @inheritParams csem_arguments
-#'
-#' @keywords internal
+#' @param ... Ignored.
+#' 
 #' @name fit_measures 
 NULL
 
-#' @describeIn fit_measures The ChiSquare statistic.
+#' @describeIn fit_measures The chi square statistic.
+#' @export
 
 calculateChiSquare <- function(.object) {
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateChiSquare)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+  } else {
+    stop2(
+      "The following error occured in the calculateChiSquare() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
   
-  n    <- nrow(.object$Information$Data)
   F0   <- calculateDML(.object)
   
   (n - 1) * F0
 }
 
 #' @describeIn fit_measures The ChiSquare statistic divided by its degrees of freedom.
+#' @export
 
 calculateChiSquareDf <- function(.object) {
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateChiSquareDf)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+  } else {
+    stop2(
+      "The following error occured in the calculateChiSquareDf() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
   
-  n    <- nrow(.object$Information$Data)
   F0   <- calculateDML(.object)
   
   ((n - 1) * F0) / calculateDf(.object)
 }
 
 #' @describeIn fit_measures The comparative fit index (CFI).
+#' @export
 
 calculateCFI <- function(.object) {
   
-  n    <- nrow(.object$Information$Data)
-  S    <- .object$Estimates$Indicator_VCV
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateCFI)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+    S    <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+    S    <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateCFI() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
+  
   p    <- dim(S)[1]
   df_T <- calculateDf(.object)
   df_0 <- calculateDf(.object, .null_model = TRUE)
@@ -787,22 +1081,64 @@ calculateCFI <- function(.object) {
 }
 
 #' @describeIn fit_measures The goodness of fit index (GFI).
+#' @export
 
-calculateGFI <- function(.object) {
+calculateGFI <- function(.object, .type = c("ML", "ULS")) {
+  .type <- match.arg(.type)
+
+    if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateGFI)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    S    <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    S    <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateGFI() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
   
-  S         <- .object$Estimates$Indicator_VCV
   Sigma_hat <- fit(.object)
   
-  1 - matrixcalc::matrix.trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
-    matrixcalc::matrix.trace(t(S) %*% S)
+  # See Mulaik (1989, p. 345)
+  if(.type == "ULS") {
+    # If ULS
+    1 - matrixcalc::matrix.trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
+      matrixcalc::matrix.trace(t(S) %*% S)
+    
+  } else if(.type == "ML") {
+    # If ML
+    1 - matrixcalc::matrix.trace(t(solve(Sigma_hat) %*% S - diag(nrow(S))) %*% 
+                                   (solve(Sigma_hat) %*% S - diag(nrow(S)))) / 
+      matrixcalc::matrix.trace(t(solve(Sigma_hat) %*% S) %*% (solve(Sigma_hat) %*% S))
+  }
 }
 
 #' @describeIn fit_measures The incremental fit index (IFI).
+#' @export
 
 calculateIFI <- function(.object) {
   
-  n  <- nrow(.object$Information$Data)
-  S  <- .object$Estimates$Indicator_VCV
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateIFI)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+    S    <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+    S    <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateIFI() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
+  
   p  <- dim(S)[1]
   df <- calculateDf(.object)
   
@@ -815,10 +1151,25 @@ calculateIFI <- function(.object) {
 }
 
 #' @describeIn fit_measures The normed fit index (NFI).
+#' @export
 
 calculateNFI <- function(.object) {
   
-  S <- .object$Estimates$Indicator_VCV
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateNFI)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    S    <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    S    <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateNFI() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
+  
   p <- dim(S)[1]
   
   F0 <- log(det(diag(nrow(S)))) + 
@@ -830,11 +1181,27 @@ calculateNFI <- function(.object) {
 }
 
 #' @describeIn fit_measures The non-normed fit index (NNFI). Also called the Tucker-Lewis index (TLI).
+#' @export
 
 calculateNNFI <- function(.object) {
   
-  n    <- nrow(.object$Information$Data)
-  S    <- .object$Estimates$Indicator_VCV
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateNNFI)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+    S    <- .object$Estimates$Indicator_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+    S    <- .object$First_stage$Estimates$Indicator_VCV
+  } else {
+    stop2(
+      "The following error occured in the calculateNNFI() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
+  
   p    <- dim(S)[1]
   df_T <- calculateDf(.object)
   df_0 <- calculateDf(.object, .null_model = TRUE)
@@ -843,15 +1210,32 @@ calculateNNFI <- function(.object) {
     sum(diag(S %*% solve(diag(nrow(S))))) - log(det(S)) - p
   
   FT <- calculateDML(.object)
+  # Note: "If the index is greater than one, it is set at one" 
+  # Source: http://www.davidakenny.net/cm/fit.htm
   
-  (F0/df_0 - FT/df_T) / (F0/df_0 - 1/(n-1))
+  min((F0/df_0 - FT/df_T) / (F0/df_0 - 1/(n-1)), 1)
 }
 
 #' @describeIn fit_measures The root mean square error of approximation (RMSEA).
+#' @export
 
 calculateRMSEA <- function(.object) {
   
-  n  <- nrow(.object$Information$Data)
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateRMSEA)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    n    <- nrow(.object$Information$Data)
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    n    <- nrow(.object$First_stage$Information$Data)
+  } else {
+    stop2(
+      "The following error occured in the calculateRMSEA() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
+  
   df <- calculateDf(.object)
   
   F0 <- max(calculateDML(.object) - calculateDf(.object)/(n - 1), 0)
@@ -860,16 +1244,30 @@ calculateRMSEA <- function(.object) {
 }
 
 #' @describeIn fit_measures The root mean squared residual covariance matrix of the outer model residuals (RMS theta).
+#' @export
 
 calculateRMSTheta <- function(
   .object, 
-  .model_implied = args_default()$.model_implied
-  ) {
-  S      <- .object$Estimates$Indicator_VCV
-  W      <- .object$Estimates$Weight_estimates
-  Lambda <- .object$Estimates$Loading_estimates
-  P      <- .object$Estimates$Construct_VCV
+  .model_implied = FALSE
+) {
   
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateRMSTheta, .model_implied = .model_implied)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    S      <- .object$Estimates$Indicator_VCV
+    W      <- .object$Estimates$Weight_estimates
+    Lambda <- .object$Estimates$Loading_estimates
+    P      <- .object$Estimates$Construct_VCV
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2("Not yet implemented.")
+  } else {
+    stop2(
+      "The following error occured in the calculateRMSTheta() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
   
   if(.model_implied) {
     Theta <- S - S %*% t(W) %*% Lambda - t(S %*% t(W) %*% Lambda) + t(Lambda) %*%  fit(.object, .type_vcv = "construct") %*% Lambda
@@ -881,40 +1279,48 @@ calculateRMSTheta <- function(
   
   ## For compsites, within block indicator correlations should be excluded as 
   ## they are allowed to freely covary.
-  
-  comp <- which(.object$Information$Model$construct_type == "Composite")
-  
-  for(i in comp) {
-    indi <- which(.object$Information$Model$measurement[i, ] == 1)
-    Theta[indi, indi] <- NA
+  if(inherits(.object, "cSEMResults_default")) {
+    comp <- which(.object$Information$Model$construct_type == "Composite")
+    
+    for(i in comp) {
+      indi <- which(.object$Information$Model$measurement[i, ] == 1)
+      Theta[indi, indi] <- NA
+    }
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2("Not yet implemented.")
   }
   
   sqrt(mean(Theta[lower.tri(Theta)]^2, na.rm = TRUE))
 }
 
 #' @describeIn fit_measures The standardized root mean square residual (SRMR).
+#' @export
 
 calculateSRMR <- function(
   .object    = NULL, 
   .matrix1   = NULL,
   .matrix2   = NULL,
-  .saturated = args_default()$.saturated,
+  .saturated = FALSE,
   ...
 ) {
-
+  
   if(!is.null(.matrix1) & !is.null(.matrix2)) {
     S         <- .matrix1
     Sigma_hat <- .matrix2
   } else {
-    # Only applicable to objects of class cSEMResults_default and cSEMResults_2ndorder
+    if(inherits(.object, "cSEMResults_multi")) {
+      out <- lapply(.object, calculateSRMR, .saturated = .saturated)
+      return(out)
+    }
     if(inherits(.object, "cSEMResults_default")) {
       S <- .object$Estimates$Indicator_VCV
     } else if(inherits(.object, "cSEMResults_2ndorder")) {
       S <- .object$First_stage$Estimates$Indicator_VCV
     } else {
       stop2(
-        "The following error occured in the calculateDG() function:\n",
-        "`.object` must be of class `cSEMResults_default` or `cSEMResults_2ndorder`.")
+        "The following error occured in the calculateSRMR() function:\n",
+        "`.object` must be of class `cSEMResults`."
+      )
     }
     
     # The SRMR as calculated by us is always based on the the difference 
@@ -931,10 +1337,10 @@ calculateSRMR <- function(
 
 
 
-#' Internal: Calculate Cohens f^2
+#' Calculate Cohens f^2
 #'
 #' Calculate the effect size for regression analysis \insertCite{Cohen1992}{cSEM}
-#' known as Cohen's f^2
+#' known as Cohen's f^2. 
 #'
 #' @usage calculatef2(.object = NULL)
 #'
@@ -945,19 +1351,36 @@ calculateSRMR <- function(
 #'   of these equations.
 #' 
 #' @seealso [assess()], [csem], [cSEMResults]
-#' @keywords internal
+#' @export
 
 calculatef2 <- function(.object = NULL) {
   
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculatef2)
+    return(out)
+    
+  } else if(inherits(.object, "cSEMResults_default")) {
+    info <- .object
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    info <-  .object$Second_stage
+    
+  } else {
+    stop2(
+      "The following error occured in the calculatef2() function:\n",
+      "`.object` must be a `cSEMResults` object."
+    )
+  }
+  
   ## Get relevant quantities
-  approach_nl      <- .object$Information$Arguments$.approach_nl
-  approach_paths   <- .object$Information$Arguments$.approach_paths
-  approach_weights <- .object$Information$Arguments$.approach_weights
-  csem_model       <- .object$Information$Model
-  H         <- .object$Estimates$Construct_scores
-  normality <- .object$Information$Arguments$.normality
-  P         <- .object$Estimates$Construct_VCV
-  Q         <- sqrt(.object$Estimates$Reliabilities)
+  approach_nl      <- info$Information$Arguments$.approach_nl
+  approach_paths   <- info$Information$Arguments$.approach_paths
+  approach_weights <- info$Information$Arguments$.approach_weights
+  csem_model       <- info$Information$Model
+  H         <- info$Estimates$Construct_scores
+  normality <- info$Information$Arguments$.normality
+  P         <- info$Estimates$Construct_VCV
+  Q         <- sqrt(info$Estimates$Reliabilities)
   
   s <- csem_model$structural
   
@@ -982,7 +1405,6 @@ calculatef2 <- function(.object = NULL) {
         out <- estimatePath(
           .approach_nl      = approach_nl,
           .approach_paths   = approach_paths,
-          .approach_weights = approach_weights,
           .csem_model       = model_temp,
           .H                = H,
           .normality        = normality,
@@ -995,7 +1417,9 @@ calculatef2 <- function(.object = NULL) {
         r2_excluded <- 0
       }
       names(r2_excluded) <- x
-      r2_included <- .object$Estimates$R2[x]
+      
+      # Obtain the R^2 included
+      r2_included <- info$Estimates$R2[x]
       
       effect_size <- unname((r2_included - r2_excluded)/(1 - r2_included))
     })
@@ -1005,8 +1429,6 @@ calculatef2 <- function(.object = NULL) {
   })
   names(outer_out) <- vars_endo
   
-  ## Remove 
-  
   ## Make output a matrix
   # Note: this is necessary for calculatef2() to work
   #       when supplied to the .user_funs argument. Currently, .user_funs functions 
@@ -1014,6 +1436,11 @@ calculatef2 <- function(.object = NULL) {
   ss <- s[vars_endo, , drop = FALSE]
   tm <- t(ss)
   tm[which(tm == 1)] <- unlist(outer_out)
+  
+  # Remove "_temp" suffix if it appears
+  rownames(tm) <- gsub("_temp", "", rownames(tm))
+  colnames(tm) <- gsub("_temp", "", colnames(tm))
+  
   # Return
   t(tm)
 }

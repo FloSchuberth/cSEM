@@ -127,7 +127,7 @@ below. For questions: please contact the
     allowed\!
   - Whenever you subset a matrix using `[` use: `[..., ..., drop =
     FALSE]` to avoid accidentally dropping the `dim` attributes.
-  - Generally avoid using attributs (sometimes they are meaningful
+  - Generally avoid using attributes (sometimes they are meaningful
     though)
   - Whenever the output consists of more than 1 element use a named
     list\!

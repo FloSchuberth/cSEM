@@ -417,6 +417,7 @@ resampleData <- function(
 #'  .handle_inadmissibles  = c("drop", "ignore", "replace"),
 #'  .user_funs             = NULL,
 #'  .eval_plan             = c("sequential", "multiprocess"),
+#'  .force                 = FALSE,
 #'  .seed                  = NULL,
 #'  .sign_change_option    = c("none","individual","individual_reestimate",
 #'                             "construct_reestimate"),
@@ -461,33 +462,12 @@ resamplecSEMResults <- function(
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .user_funs             = NULL,
   .eval_plan             = c("sequential", "multiprocess"),
+  .force                 = FALSE,
   .seed                  = NULL,
   .sign_change_option    = c("none","individual","individual_reestimate",
                              "construct_reestimate"),
   ...
   ) {
-  
-  ## Does .object already contain resamples
-  if(any(class(.object) == "cSEMResults_resampled")) {
-    stop2("The following issue was encountered in the `resamplecSEMResults()` function:\n",
-          "The object provided already contains resamples.")
-  }
-  
-  ## Check for the minimum number of necessary resamples
-  if(.R < 3 | .R2 < 3) {
-    stop2("The following error occured in the `resamplecSEMResults()` function:\n",
-          "At least 3 resamples required.")
-  }
-  
-  ## Has the object to use the data to resample from produced admissible results?
-  if(sum(unlist(verify(.object))) != 0) {
-    warning2(
-      "The following issue was encountered in the `resamplecSEMResults()` function:\n",
-      "Estimation based on the original data has produced inadmissible results.\n", 
-      "This may be a sign that something is wrong.",
-      " Resampling will continue but may not produce reliable results.")
-  }
-  
   ## Match arguments
   .resample_method  <- match.arg(.resample_method)
   .resample_method2 <- match.arg(.resample_method2)
@@ -506,6 +486,7 @@ resamplecSEMResults <- function(
         .handle_inadmissibles = .handle_inadmissibles,
         .user_funs            = .user_funs,
         .eval_plan            = .eval_plan,
+        .force                = FALSE,
         .seed                 = .seed,
         .sign_change_option   = .sign_change_option,
         ...
@@ -515,6 +496,39 @@ resamplecSEMResults <- function(
     ## Add/ set class
     class(out) <- c(class(.object), "cSEMResults_resampled")
     return(out)
+  }
+  
+  ## Does .object already contain resamples
+  if(inherits(.object, "cSEMResults_resampled")) {
+    if(.force) {
+      # Delte resamples
+      if(inherits(.object, "cSEMResults_default")) {
+        .object$Estimates[["Estimates_resample"]] <- NULL
+        .object$Information[["Information_resample"]] <- NULL
+        class(.object) <- setdiff(class(.object), "cSEMResults_resampled")
+      } else {
+        .object$Second_stage$Information[["Resamples"]] <- NULL
+      }
+    } else {
+      stop2(
+        "The following issue was encountered in the `resamplecSEMResults()` function:\n",
+        "The object provided already contains resamples. Use `.force = TRUE` to rerun.") 
+    }
+  }
+  
+  ## Check for the minimum number of necessary resamples
+  if(.R < 3 | .R2 < 3) {
+    stop2("The following error occured in the `resamplecSEMResults()` function:\n",
+          "At least 3 resamples required.")
+  }
+  
+  ## Has the object to use the data to resample from produced admissible results?
+  if(sum(unlist(verify(.object))) != 0) {
+    warning2(
+      "The following issue was encountered in the `resamplecSEMResults()` function:\n",
+      "Estimation based on the original data has produced inadmissible results.\n", 
+      "This may be a sign that something is wrong.",
+      " Resampling will continue but may not produce reliable results.")
   }
   
   # Set plan on how to resolve futures; reset at the end
@@ -1029,6 +1043,7 @@ resamplecSEMResultsCore <- function(
           .resample_method2     = "none",
           .user_funs            = .user_funs,
           .seed                 = .seed, 
+          .force                = FALSE,
           .sign_change_option   = "none",
           ...
         )

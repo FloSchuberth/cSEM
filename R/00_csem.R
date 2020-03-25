@@ -506,6 +506,7 @@ csem <- function(
       .handle_inadmissibles = .handle_inadmissibles,
       .user_funs            = .user_funs,
       .eval_plan            = .eval_plan,
+      .force                = FALSE,
       .seed                 = .seed,
       .sign_change_option   = .sign_change_option,
       ...

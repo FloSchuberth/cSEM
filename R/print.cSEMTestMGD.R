@@ -204,5 +204,5 @@ print.cSEMTestMGD <- function(x, ...) {
   if(any(info$Approach == "Henseler")) {
     printTestMGDResults(.x = x, .approach = "Henseler", .info = info)
   }
-  cat2(rule2(type = 2))
+  cat2(rule2(type = 2), "\n")
 }

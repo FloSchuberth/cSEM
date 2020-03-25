@@ -148,17 +148,18 @@ code span.ot { color: #007020; }
 <h1 class="title toc-ignore project-name">Postestimation: Assessing a model</h1>
 <h3 class="subtitle project-tagline">Using the <code>assess()</code> function</h3>
 <h4 class="author project-author">Manuel Rademaker</h4>
-<h4 class="date project-date">Last edited: 2020-02-04</h4>
+<h4 class="date project-date">Last edited: 2020-02-26</h4>
 </section>
 
 
 <div id="TOC" class="toc">
 <ul>
-<li><a href="#introduction">Introduction</a><ul>
-<li><a href="#syntax-options">Syntax &amp; Options</a></li>
-<li><a href="#details">Details</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#syntax-options">Syntax &amp; Options</a><ul>
+<li><a href="#details">Details</a><ul>
+<li><a href="#composite-models-vs.-common-factor-models">Composite models vs. common factor models</a></li>
 </ul></li>
-<li><a href="#usage">Usage</a></li>
+</ul></li>
 <li><a href="#methods">Methods &amp; Formulae</a><ul>
 <li><a href="#ave">Average Variance Extracted (AVE)</a><ul>
 <li><a href="#definition">Definition</a></li>
@@ -168,27 +169,29 @@ code span.ot { color: #007020; }
 </ul></li>
 <li><a href="#df">Degrees of freedom</a><ul>
 <li><a href="#definition-1">Definition</a></li>
+<li><a href="#formulae-1">Formulae</a></li>
 <li><a href="#implementation-1">Implementation</a></li>
+<li><a href="#see-also-1">See also:</a></li>
 </ul></li>
 <li><a href="#fit_indices">Fit Indices</a><ul>
 <li><a href="#definition-2">Definition</a></li>
-<li><a href="#formulae-1">Formulae</a></li>
+<li><a href="#formulae-2">Formulae</a></li>
 <li><a href="#implementation-2">Implementation</a></li>
-<li><a href="#see-also-1">See also</a></li>
+<li><a href="#see-also-2">See also</a></li>
 </ul></li>
 <li><a href="#reliability">Reliability</a><ul>
 <li><a href="#definition-3">Definition</a></li>
-<li><a href="#formulae-2">Formulae</a></li>
+<li><a href="#formulae-3">Formulae</a></li>
 <li><a href="#implementation-3">Implementation</a></li>
 </ul></li>
 <li><a href="#the-goodness-of-fit-gof">The Goodness of Fit (GoF)</a><ul>
 <li><a href="#definition-4">Definition</a></li>
-<li><a href="#formulae-3">Formulae</a></li>
+<li><a href="#formulae-4">Formulae</a></li>
 <li><a href="#implementation-4">Implementation</a></li>
 </ul></li>
 <li><a href="#the-heterotrait-monotrait-ratio-of-correlations-htmt">The Heterotrait-Monotrait-Ratio of Correlations (HTMT)</a><ul>
 <li><a href="#definition-5">Definition</a></li>
-<li><a href="#formulae-4">Formulae</a></li>
+<li><a href="#formulae-5">Formulae</a></li>
 <li><a href="#implementation-5">Implementation</a></li>
 </ul></li>
 </ul></li>
@@ -238,10 +241,12 @@ code span.ot { color: #007020; }
 <li>The <strong>variance inflation factors</strong> (VIF) for the structural equations as well as for Mode B regression equations (if <code>.approach_weights = &quot;PLS-PM&quot;</code>).</li>
 <li>The coefficient of determination and the adjusted coefficient of determination (<span class="math inline">\(R^2\)</span> and <span class="math inline">\(R^2_{adj}\)</span>)</li>
 <li>A measure of the <strong>effect size</strong> (Cohen’s <span class="math inline">\(f^2\)</span>).</li>
+<li>Direct, indirect and total effect assessment.</li>
 </ul>
 <p>For implementation details see the <a href="#methods">Methods &amp; Formulae</a> section.</p>
-<div id="syntax-options" class="section level2">
-<h2>Syntax &amp; Options</h2>
+</div>
+<div id="syntax-options" class="section level1">
+<h1>Syntax &amp; Options</h1>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">assess</span>(</span>
 <span id="cb1-2"><a href="#cb1-2"></a>  <span class="dt">.object              =</span> <span class="ot">NULL</span>, </span>
 <span id="cb1-3"><a href="#cb1-3"></a>  <span class="dt">.only_common_factors =</span> <span class="ot">TRUE</span>, </span>
@@ -271,23 +276,25 @@ code span.ot { color: #007020; }
 <dd><p>Further arguments passed to functions called by <code>assess()</code>. See <a href="https://m-e-rademaker.github.io/cSEM/reference/args_assess_dotdotdot.html">args_assess_dotdotdot</a> for a complete list of available arguments.</p>
 </dd>
 </dl>
-</div>
+<p>Like all postestimation functions <code>assess()</code> can be called on any object of class <code>cSEMResults</code>. The output is a named list of the quality criteria given to <code>.quality_criterion</code>. By default all possible quality criteria a calculated (<code>.quality_criterion = &quot;all&quot;</code>).</p>
 <div id="details" class="section level2">
 <h2>Details</h2>
 <p>In line with all of <strong>cSEM</strong>’s postestimation functions, <code>assess()</code> is a generic function with methods for objects of class <code>cSEMResults_default</code>, <code>cSEMResults_multi</code>, <code>cSEMResults_2ndorder</code>. In <strong>cSEM</strong> every <code>cSEMResults_*</code> object must also have class <code>cSEMResults</code> for internal reasons. When using one of the major postestimation functions, method dispatch is therefore technically done on one of the <code>cSEMResults_*</code> class attributes, ignoring the <code>cSEMResults</code> class attribute. As long as <code>assess()</code> is used directly method dispatch is not of any practical concern to the end-users. The difference, however, becomes important if a user seeks to directly invoke an internal function which is called by <code>assess()</code> (e.g., <code>cSEM:::calculateAVE()</code> or <code>cSEM:::calculateHTMT()</code>). In this case only objects of class <code>cSEMResults_default</code> are accepted as this ensures a specific structure. Therefore, it is important to remember that <em>internal functions in <strong>cSEM</strong> are generally <strong>not</strong> generic</em>!</p>
+<blockquote>
+<p>Update (24.02.2020): from version 0.2.0 onwards all functions that assess() calls internally will be exported. This mean users can directly invoke functions such as e.g., <code>calculateHTMT()</code> or <code>calculateRhoT()</code>. These functions will also be generic accepting all types of cSEMResults classes.</p>
+</blockquote>
+<div id="composite-models-vs.-common-factor-models" class="section level3">
+<h3>Composite models vs. common factor models</h3>
 <p>Some assessment measures are inherently tied to the common factor model. It is therefore unclear how to interpret their results in the context of a composite model. Consequently, their computation is suppressed by default for constructs modeled as composites. Currently, this applies to the following quality criteria:</p>
 <ul>
 <li>AVE and validity assessment based theron (i.e., the Fornell-Larcker criterion)</li>
 <li>HTMT and validity assessment based theron</li>
 <li>All reliability measures</li>
 </ul>
-<p>It is possible to force computation of all quality criteria for constructs modeled as composites, however, we explicitly warn to interpret results, as they may not even have a conceptual meaning.</p>
-<p>All quality criteria assume that the estimated loadings, construct correlations and path coefficients involved in the computation of a specific qualitiy measure are consistent estimates for their theoretical population counterpart. If the user deliberately chooses an approach that yields inconsistent estimates (by setting <code>.disattenuate = FALSE</code> in <code>csem()</code> when the estimated model contains constructs modeled as common factors) <code>assess()</code> will still estimate all quantities, however, quantities such as the AVE or the congeneric reliability <span class="math inline">\(\rho_C\)</span> inherit inconsistency making their interpretation at the very least dubious.</p>
+<p>It is possible to force computation of all quality criteria for constructs modeled as composites using <code>.only_common_factors = FALSE</code>, however, we explicitly warn to interpret results, as they may not even have a conceptual meaning.</p>
+<p>All quality criteria assume that the estimated loadings, construct correlations and path coefficients involved in the computation of a specific qualitiy measure are consistent estimates for their theoretical population counterpart. If the user deliberately chooses an approach that yields inconsistent estimates (by setting <code>.disattenuate = FALSE</code> in <code>csem()</code> when the estimated model contains constructs modeled as common factors) <code>assess()</code> will still estimate all quantities, however, quantities such as the AVE or the congeneric reliability <span class="math inline">\(\rho_C\)</span> inherit inconsistency.</p>
 </div>
 </div>
-<div id="usage" class="section level1">
-<h1>Usage</h1>
-<p>Like all postestimation functions <code>assess()</code> can be called on any object of class <code>cSEMResults</code>. The output is a named list of the quality criteria given to <code>.quality_criterion</code>. By default all possible quality criteria a calculated (<code>.quality_criterion = &quot;all&quot;</code>).</p>
 </div>
 <div id="methods" class="section level1">
 <h1>Methods &amp; Formulae</h1>
@@ -301,11 +308,11 @@ code span.ot { color: #007020; }
 <li>The AVE for a generic construct/latent variable <span class="math inline">\(\eta\)</span> is an estimate of how much of the variation of its indicators is due to the assumed latent variable. Consequently, the share of unexplained, i.e. error variation is 1 - AVE.</li>
 <li>The AVE for a generic construct/latent variable <span class="math inline">\(\eta\)</span> is the share of the total indicator variance (i.e., the sum of the indicator variances of all indicators connected to the construct), that is captured by the (indicator) true scores.</li>
 <li>The AVE for a generic construct/latent variable <span class="math inline">\(\eta\)</span> is the ratio of the sum of the (indicator) true score variances (explained variation) relative to the sum of the total indicator variances (total variation, i.e., the sum of the indicator variances of all indicators connected to the construct).</li>
-<li>Since for the regression of <span class="math inline">\(x_k\)</span> on <span class="math inline">\(\eta_k\)</span>, the R squared (<span class="math inline">\(R^2_k)\)</span> is equal to the share of the explained variation of <span class="math inline">\(x_k\)</span> relative to the share of total variation of <span class="math inline">\(x_k\)</span>, The AVE for a generic construct/latent variable <span class="math inline">\(\eta\)</span> is equal to the average over all <span class="math inline">\(R^2_k\)</span>.</li>
+<li>Since for the regression of <span class="math inline">\(x_k\)</span> on <span class="math inline">\(\eta_k\)</span>, the R squared (<span class="math inline">\(R^2_k)\)</span> is equal to the share of variation of <span class="math inline">\(x_k\)</span> explained by <span class="math inline">\(\eta_k\)</span> relative to the total variation of <span class="math inline">\(x_k\)</span>, the AVE for a generic construct/latent variable <span class="math inline">\(\eta\)</span> is equal to the average over all <span class="math inline">\(R^2_k\)</span>.</li>
 <li>The AVE for a generic construct/latent variable <span class="math inline">\(\eta\)</span> is the sum of the squared correlation between indicator <span class="math inline">\(x_k\)</span> and the (indicator) true score <span class="math inline">\(\eta_k\)</span> relative to the sum of the indicator variances of all indicators connected to the construct in question.</li>
 </ul>
 <p>It is important to stress that, although different in wording, all definitions are synonymous!</p>
-<p>The AVE is inherently tied to the common factor model. It is therefore unclear how to interpret the AVE for constructs modeled as composites. Consequently, their computation is suppressed by default for constructs modeled as common factors. It is possible to force computation of the AVE for constructs modeled as composites, however, we explicitly warn to interpret results, as they may not even have a conceptual meaning.</p>
+<p>The AVE is inherently tied to the common factor model. It is therefore unclear how to interpret the AVE for constructs modeled as composites. Consequently, the computation is suppressed by default for constructs modeled as common factors. It is possible to force computation of the AVE for constructs modeled as composites using <code>.only_common_factors = FALSE</code>, however, we explicitly warn to interpret results, as they may not even have a conceptual meaning.</p>
 </div>
 <div id="formulae" class="section level3">
 <h3>Formulae</h3>
@@ -325,9 +332,58 @@ code span.ot { color: #007020; }
 <h2>Degrees of freedom</h2>
 <div id="definition-1" class="section level3">
 <h3>Definition</h3>
+<p>Degrees of freedom are calculated as the difference between the number of non-redundant free elements of the empirical indicator correlation matrix <span class="math inline">\(\boldsymbol{\mathbf{S}}\)</span> and the model parameters.</p>
+<p>Although, composite-based estimators retrieve parameters of the postulated models by forming composites, which involves the estimation of weights the computation of the degrees of freedom eventually depends on the postulated model and the parameters implied by the model. Most notably, a common factor model estimated by a composite-based approach such as PLS has the same degrees of freedom compared to e.g., classical maximum likelihood estimation of the same model.</p>
+</div>
+<div id="formulae-1" class="section level3">
+<h3>Formulae</h3>
+<p><span class="math display">\[ 
+\begin{align} 
+df &amp;= \text{# non-redundant off-diagonal elements of the empirical indicator correlation matrix $\boldsymbol{\mathbf{S}}$} \\
+      &amp;- \text{# model parameters}
+\end{align}
+\]</span></p>
+<p>If the model contains only linear terms the model parameters are:</p>
+<ul>
+<li># free correlations between exogenous constructs</li>
+<li># specified correlations between endogenous constructs</li>
+<li># structural parameters</li>
+</ul>
+<p>In addition, for each construct <span class="math inline">\(\eta_j\)</span>:</p>
+<ul>
+<li># of loadings if <span class="math inline">\(\eta_j\)</span> is modeled as a common factor</li>
+<li># of specified measurement error correlations between items of constructs <span class="math inline">\(\eta_j\)</span> if <span class="math inline">\(\eta_j\)</span> is modeled as a common factor</li>
+<li># of weights of <span class="math inline">\(\eta_j\)</span> <strong>minus 1</strong> if <span class="math inline">\(\eta_j\)</span> is modeled as a composite. One weight per block is fixed and hence not counted as a model parameter since the variance of the composite is scaled to be unity.</li>
+<li># of non-redundant off-diagonal elements of <span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}_j\)</span> if <span class="math inline">\(\eta_j\)</span> is modeled as a composite.</li>
+</ul>
+<p>If the model contains second-order terms the model parameters are similar:</p>
+<ul>
+<li># free correlations between exogenous constructs</li>
+<li># specified correlations between endogenous constructs</li>
+<li># structural parameters. Note: relations between constructs measuring/forming the second-order construct are not path!</li>
+</ul>
+<p>In addition, for each construct <span class="math inline">\(\eta_j\)</span> (including the second-order constructs):</p>
+<ul>
+<li># of loadings if <span class="math inline">\(\eta_j\)</span> is modeled as a common factor</li>
+<li># of specified measurement error correlations between items of constructs <span class="math inline">\(\eta_j\)</span> if <span class="math inline">\(\eta_j\)</span> is modeled as a common factor</li>
+<li># of weights of <span class="math inline">\(\eta_j\)</span> <strong>minus 1</strong> if <span class="math inline">\(\eta_j\)</span> is modeled as a composite. One weight per block is fixed and hence not counted as a model parameter since the variance of the composite is scaled to be unity.</li>
+<li># of non-redundant off-diagonal elements of <span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}_j\)</span> if <span class="math inline">\(\eta_j\)</span> is modeled as a composite.</li>
+</ul>
+<div id="notes" class="section level4">
+<h4>Notes</h4>
+<ol style="list-style-type: decimal">
+<li>If all constructs are allowed to freely covary, i.e., there is no structural model and no structural parameters, all constructs are considered exogenous.</li>
+<li>If the strucutral model contains nonlinear terms (e.g., <span class="math inline">\(\eta^2_1\)</span> or <span class="math inline">\(\eta_1\eta_2\)</span>), degrees of freedom computation is currently unclear (at least to us). A warning is printed to inform the user that the calculation is may not be correct.</li>
+</ol>
+</div>
 </div>
 <div id="implementation-1" class="section level3">
 <h3>Implementation</h3>
+<p>The function is implemented as <code>calculateDf()</code>.</p>
+</div>
+<div id="see-also-1" class="section level3">
+<h3>See also:</h3>
+<p>Degrees of freedom are required for several <a href="#fit_indices">fit measures</a>.</p>
 </div>
 </div>
 <div id="fit_indices" class="section level2">
@@ -361,18 +417,18 @@ the calculation on the empirical construct covariance matrix, i.e., the model-im
 </ul>
 <p>It should be stressed again that except for the <span class="math inline">\(\text{RMS}_{\theta}\)</span>, none of the above mentioned fit indices were originally designed for composite models. The indices RMSEA and CFI are non-centrality based and require specific assumptions on model and data typically made in CFA. The same applies for IFI and NNFI since their calculation relies on the properties (primarily the expectation) of the test statistic when data follow a normal distribution. In general, those assumptions are not made in composite models and composite-based estimators, respectively. For this reason, the intuition behind these indices does not hold for composite-based SEM. Nevertheless, calculation of these indices is also possible in this case. Whether the values of these indices are still meaningful in a sense that they can be used for assessment of model fit is an open question. Furthermore, values of fit indices for composite-based estimators and factor-based estimators may not be compared. Users should always keep this aspect and the general limitations of fit indices in mind.</p>
 </div>
-<div id="formulae-1" class="section level3">
+<div id="formulae-2" class="section level3">
 <h3>Formulae</h3>
 <p>The exact formulae of the fit indices as implemented in <strong>cSEM</strong> are given in the following. The term <span class="math inline">\(F = F(S, \Sigma(\hat{\theta})) = F(S, \hat{\Sigma})\)</span> stands for the value of a fitting function evaluated at <span class="math inline">\(S\)</span> (the empirical covariance matrix of the indicators) and <span class="math inline">\(\hat{\Sigma}\)</span> (the estimated model-implied covariance matrix of the indicators). In the context of composite-based estimators, the distance measures <span class="math inline">\(d_{G}\)</span> (geodesic distance), <span class="math inline">\(d_{L}\)</span> (squared Euclidian distance) and <span class="math inline">\(d_{ML}\)</span> (maximum likelihood distance) serve as fitting functions.</p>
 <div id="the-chi2-statistic" class="section level4">
 <h4>The <span class="math inline">\(\chi^2\)</span>-statistic</h4>
 <p>The <span class="math inline">\(\chi^2\)</span>-<strong>statistic</strong> is defined as: <span class="math display">\[ \chi^2 = (N-1)\cdot F(S, \hat{\Sigma})\]</span> where <span class="math inline">\(F(S, \hat{\Sigma})\)</span> is the maximum likelihood distance function <span class="math inline">\(d_{ML}\)</span> and <span class="math inline">\(N\)</span> the sample size.</p>
-<p>Main reference: <span class="citation">Joereskog (1969)</span></p>
+<p>Main reference: <span class="citation">Jöreskog (1969)</span></p>
 </div>
 <div id="the-chi2df-ratio" class="section level4">
 <h4>The <span class="math inline">\(\chi^2/df\)</span>-ratio</h4>
 <p>The <span class="math inline">\(\chi^2\)</span>-<strong>statistic</strong> is defined as: <span class="math display">\[ \chi^2 = (N-1)\cdot F(S, \hat{\Sigma})/df_M\]</span> where <span class="math inline">\(F(S, \hat{\Sigma})\)</span> is the maximum likelihood distance function <span class="math inline">\(d_{ML}\)</span>, <span class="math inline">\(N\)</span> the sample size and <span class="math inline">\(df_M\)</span> the degrees of the estimated model.</p>
-<p>Main reference: <span class="citation">Joereskog (1969)</span></p>
+<p>Main reference: <span class="citation">Jöreskog (1969)</span></p>
 </div>
 <div id="the-goodness-of-fit-index-gfi" class="section level4">
 <h4>The goodness-of-fit index (GFI)</h4>
@@ -413,7 +469,7 @@ the calculation on the empirical construct covariance matrix, i.e., the model-im
 <h3>Implementation</h3>
 <p>The functions are implemented as: <code>calculateChiSquare()</code>, <code>calculateChiSquareDf()</code>, <code>calculateCFI()</code>, <code>calculateNFI()</code>, <code>calculateNNFI()</code>, <code>calculateIFI()</code>, <code>calculateGFI()</code>, <code>calculateRMSEA()</code>, <code>calculateRMSTheta()</code>, <code>calculateSRMR()</code>. They may be called directly using R’s <code>:::</code> mechanism.</p>
 </div>
-<div id="see-also-1" class="section level3">
+<div id="see-also-2" class="section level3">
 <h3>See also</h3>
 <p>Several fit indices require a fitting function, that is to say a distance measure like the geodesic distance, the squared Euclidian distance or the maximum-likelihood distance. These are implemented as: <code>calculateDG()</code>, <code>calculateDL()</code>, and <code>calculateDML()</code>. They may be called directly using R’s <code>:::</code> mechanism.</p>
 </div>
@@ -438,7 +494,7 @@ the calculation on the empirical construct covariance matrix, i.e., the model-im
 <p>In principal the test score <span class="math inline">\(\hat\eta\)</span> is a weighted linear combinations of the indicators, i.e., a proxy or stand-in for the true score/common factor. Historically, however, the test score is generally assumed to be a simple sum score, i.e., a weighted sum of indicators with all weights assumed to be equal to one. Hence, well-known reliability measures such as Jöreskog’s <span class="math inline">\(\rho\)</span> or Cronbach’s <span class="math inline">\(\alpha\)</span> are defined with respect to a test score that indeed represents a simple sum score. Yet, all reliability measures originally developed assuming a sum score may equally well be computed with respect to a composite, i.e., a weighted score with weights not necessarily equal to one.</p>
 <p>Apart form the distinction between congeneric (i.e., Jöreskog’s <span class="math inline">\(\rho\)</span>) and tau-equivalent reliability (i.e., Cronbach’s <span class="math inline">\(\alpha\)</span>) we therefore distinguish between reliability estimates based on a test score (composite) that uses the weights of the weight approach used to obtain <code>.object</code> and a test score (proxy) based on unit weights. The former is indicated by adding “<strong>weighted</strong>” to the original name.</p>
 </div>
-<div id="formulae-2" class="section level3">
+<div id="formulae-3" class="section level3">
 <h3>Formulae</h3>
 <p>The most general formula for reliability is the <strong>(weighted) congeneric reliability</strong>:</p>
 <p><span class="math display">\[ \rho_{C; \text{weighted}} = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{(\boldsymbol{\mathbf{w}}&#39;\boldsymbol{\mathbf{\lambda}})^2}{\boldsymbol{\mathbf{w}}&#39;\boldsymbol{\mathbf{\Sigma}}\boldsymbol{\mathbf{w}}}\]</span> Assuming <span class="math inline">\(\boldsymbol{\mathbf{w}} = \boldsymbol{\mathbf{\iota}}\)</span>, i.e., unit weights, the “classical” formula for congeneric reliability (i.e., Jöreskog’s <span class="math inline">\(\rho\)</span>), follows: <span class="math display">\[ \rho_C = \frac{Var(\bar\eta)}{Var(\hat\eta_k)} = \frac{\left(\sum\lambda_k\right)^2}{\left(\sum\lambda_k\right)^2 + Var(\bar\varepsilon)}\]</span> Using the assumptions imposed by the tau-equivalent measurement model we obtain the <strong>(weighted) tau-equivalent reliability, i.e., (weighted) Cronbach’s alpha)</strong>:</p>
@@ -526,7 +582,7 @@ the calculation on the empirical construct covariance matrix, i.e., the model-im
 <h3>Definition</h3>
 <p>Calculate the Goodness of Fit (GoF) proposed by <span class="citation">Tenenhaus, Amanto, and Vinzi (2004)</span>. Note that, contrary to what the name suggests, the GoF is <strong>not</strong> a measure of (overall) model fit in a <span class="math inline">\(\chi^2\)</span>-fit test sense. See e.g. <span class="citation">Henseler and Sarstedt (2012)</span> for a discussion.</p>
 </div>
-<div id="formulae-3" class="section level3">
+<div id="formulae-4" class="section level3">
 <h3>Formulae</h3>
 <p>The GoF is defined as:</p>
 <p><span class="math display">\[\text{GoF} = \sqrt{\varnothing \text{COM}_k \times \varnothing R^2_{structural}} = 
@@ -544,13 +600,13 @@ the calculation on the empirical construct covariance matrix, i.e., the model-im
 <p>The heterotrait-monotrait ratio of correlations (HTMT) was first proposed by<br />
 <span class="citation">Henseler, Ringle, and Sarstedt (2015)</span> to assess convergent and discriminant validity.</p>
 </div>
-<div id="formulae-4" class="section level3">
+<div id="formulae-5" class="section level3">
 <h3>Formulae</h3>
 <p>See: <span class="citation">Henseler, Ringle, and Sarstedt (2015)</span> on page 121 (equation (6))</p>
 </div>
 <div id="implementation-5" class="section level3">
 <h3>Implementation</h3>
-<p>The function is implemented as: <code>calculateHTMT()</code>. It may be called directly using R’s <code>:::</code> mechanism.</p>
+<p>The function is implemented as: <code>calculateHTMT()</code>.</p>
 </div>
 </div>
 </div>
@@ -575,7 +631,7 @@ the calculation on the empirical construct covariance matrix, i.e., the model-im
 <p>Bollen, Kenneth A. 1989. <em>Structural Equations with Latent Variables</em>. Wiley-Interscience.</p>
 </div>
 <div id="ref-Browne1992">
-<p>Browne, Michael W., and Robert Cudeck. 1992. “Alternative Ways of Assessing Model Fit.” <em>Sociological Methods <span class="math inline">\(\&amp;\)</span> Research</em> 21 (2): 230–58.</p>
+<p>Browne, Michael W., and Robert Cudeck. 1992. “Alternative Ways of Assessing Model Fit.” <em>Sociological Methods &amp; Research</em> 21 (2): 230–58.</p>
 </div>
 <div id="ref-Cho2016">
 <p>Cho, Eunseong. 2016. “Making Reliability Reliable.” <em>Organizational Research Methods</em> 19 (4): 651–82. <a href="https://doi.org/10.1177/1094428116656239">https://doi.org/10.1177/1094428116656239</a>.</p>
@@ -592,11 +648,11 @@ the calculation on the empirical construct covariance matrix, i.e., the model-im
 <div id="ref-Hu1999">
 <p>Hu, Li-tze, and Peter M. Bentler. 1999. “Cutoff Criteria for Fit Indexes in Covariance Structure Analysis: Conventional Criteria Versus New Alternatives.” <em>Structural Equation Modeling</em> 6 (1): 1–55.</p>
 </div>
-<div id="ref-Joereskog1969">
-<p>Joereskog, K. G. 1969. “A General Approach to Confirmatory Maximum Likelihood Factor Analysis.” <em>Psychometrika</em> 34 (2): 183–202. <a href="https://doi.org/10.1007/bf02289343">https://doi.org/10.1007/bf02289343</a>.</p>
-</div>
 <div id="ref-Joereskog1982">
 <p>Jöreskog, Karl G., and Dag Sörbom. 1982. “Recent Developments in Structural Equation Modeling.” <em>Journal of Marketing Research</em> 19 (4): 404–16.</p>
+</div>
+<div id="ref-Joereskog1969">
+<p>Jöreskog, K. G. 1969. “A General Approach to Confirmatory Maximum Likelihood Factor Analysis.” <em>Psychometrika</em> 34 (2): 183–202. <a href="https://doi.org/10.1007/bf02289343">https://doi.org/10.1007/bf02289343</a>.</p>
 </div>
 <div id="ref-Lohmoeller1989">
 <p>Lohmöller, Jan-Bernd. 1989. <em>Latent Variable Path Modeling with Partial Least Squares</em>. Physica, Heidelberg.</p>
@@ -615,7 +671,7 @@ the calculation on the empirical construct covariance matrix, i.e., the model-im
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>There are some cutoffs such as e.g., the SRMR should be less than 0.08 or 0.1, however, these values are essentially arbitrary as they have never been formally motivated. Reference is usually done to <span class="citation">Hu and Bentler (1999)</span> which based the cutoff on a simulation using factor-based SEM.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn1"><p>There are some cutoffs such as e.g., the SRMR should be less than 0.08 or 0.1, however, these values are essentially arbitrary as they have never been formally motivated. Reference is usually done to <span class="citation">Hu and Bentler (1999)</span> which based the cut-off on a simulation using factor-based SEM.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 </section>

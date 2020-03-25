@@ -6,9 +6,6 @@
 \usage{
 \method{print}{cSEMTestMICOM}(x, ...)
 }
-\arguments{
-\item{x}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
-}
 \description{
 The \code{cSEMTestMICOM} method for the generic function \code{\link[=print]{print()}}.
 }

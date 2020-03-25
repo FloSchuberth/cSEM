@@ -99,8 +99,8 @@
 #'   for models containing constructs modeled as composites is still an
 #'   open research question. Also note that fit indices are not tests in a 
 #'   hypothesis testing sense and
-#'   decisions based on common cut-offs proposed in the literature should be
-#'   considered with caution!. Calculation is done by [calculateChiSquare()],
+#'   decisions based on common one-size-fits-all cut-offs proposed in the literature 
+#'   suffer from serious statistical drawbacks. Calculation is done by [calculateChiSquare()],
 #'   [calculateChiSquareDf()], [calculateCFI()], 
 #'   [calculateGFI()], [calculateIFI()], [calculateNFI()], [calculateNNFI()], 
 #'   [calculateRMSEA()], [calculateRMSTheta()] and [calculateSRMR()].}
@@ -273,6 +273,7 @@ assess.cSEMResults_default <- function(
   
   ## Set up empty list
   out <- list()
+  out[["Information"]] <- list()
   
   ## Select quality criteria
   if(any(.quality_criterion %in% c("all", "ave"))) {
@@ -416,9 +417,23 @@ assess.cSEMResults_default <- function(
   if(any(.quality_criterion %in% c("all", "htmt"))) {
     # HTMT 
     out[["HTMT"]]  <- calculateHTMT(
-      .object, 
-      .only_common_factors = .only_common_factors
+      .object,
+      .only_common_factors  = .only_common_factors,
+      ...
     )
+    # Get value of argument .p
+    args_htmt <- list(...)
+    if(any(names(args_htmt) == ".inference")) {
+      out$Information[[".inference"]] <- args_htmt[[".inference"]]
+    } else {
+      out$Information[[".inference"]] <- formals(calculateHTMT)[[".inference"]]
+    }
+    
+    if(any(names(args_htmt) == ".alpha")) {
+      out$Information[[".alpha"]] <- args_htmt[[".alpha"]]
+    } else {
+      out$Information[[".alpha"]] <- formals(calculateHTMT)[[".alpha"]]
+    }
   }
   if(any(.quality_criterion %in% c("all", "r2")) && !all(m$structural == 0)) {
     # R2
@@ -498,7 +513,6 @@ assess.cSEMResults_default <- function(
     out[["VIF_modeB"]] <- calculateVIFModeB(.object)
   }
   
-  out[["Information"]] <- list()
   out$Information[["All"]] <- FALSE
   
   if(any(.quality_criterion == "all")) {

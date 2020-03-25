@@ -1,4 +1,4 @@
-\donttest{### Anime example taken from https://github.com/ISS-Analytics/pls-predict
+\dontrun{### Anime example taken from https://github.com/ISS-Analytics/pls-predict
 
 # Load data
 data(Anime) # data is similar to the Anime.csv found on 

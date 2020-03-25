@@ -7,7 +7,6 @@
 estimatePath(
  .approach_nl      = args_default()$.approach_nl,
  .approach_paths   = args_default()$.approach_paths,
- .approach_weights = args_default()$.approach_weights,
  .csem_model       = args_default()$.csem_model,
  .H                = args_default()$.H,
  .normality        = args_default()$.normality,
@@ -23,11 +22,6 @@ Defaults to "\emph{sequential}".}
 \item{.approach_paths}{Character string. Approach used to estimate the
 structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}". If "\emph{2SLS}", instruments
 need to be supplied to \code{.instruments}. Defaults to "\emph{OLS}".}
-
-\item{.approach_weights}{Character string. Approach used to
-obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
-or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
 

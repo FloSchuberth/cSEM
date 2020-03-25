@@ -26,17 +26,17 @@ test_that("Assess works for all choices of .quality_criterion", {
   expect_equivalent(a$DG, 0.005499167 , tolerance = 1e-07)
   expect_equivalent(a$DL, 0.01041484, tolerance = 1e-07)
   expect_equivalent(a$DML, 0.02928953, tolerance = 1e-07)
-  expect_equivalent(a$Df, 18, tolerance = 1e-07)
+  expect_equivalent(a$Df, 22, tolerance = 1e-07)
   expect_equivalent(c(a$F2), c(0.53061872, 0.34344601, 0,
                                0.06958792, 0.00000000, 0), 
                     tolerance = 1e-07)
   expect_equivalent(a$Chi_square, 14.61547, tolerance = 1e-05)
-  expect_equivalent(a$Chi_square_df, 0.8119708, tolerance = 1e-07)
+  expect_equivalent(a$Chi_square_df, 0.6643398, tolerance = 1e-07)
   expect_equivalent(a$CFI, 1, tolerance = 1e-07)
-  expect_equivalent(a$GFI, 0.9989305, tolerance = 1e-07)
-  expect_equivalent(a$IFI, 1.002361, tolerance = 1e-06)
+  expect_equivalent(a$GFI, 0.9927503, tolerance = 1e-07)
+  expect_equivalent(a$IFI, 1.005165, tolerance = 1e-06)
   expect_equivalent(a$NFI, 0.9899318 , tolerance = 1e-07)
-  expect_equivalent(a$NNFI, 1.004782, tolerance = 1e-06)
+  expect_equivalent(a$NNFI, 1, tolerance = 1e-06)
   expect_equivalent(a$RMSEA, 0, tolerance = 1e-07)
   expect_equivalent(a$RMS_theta, 0.08470806, tolerance = 1e-07)
   expect_equivalent(a$RMS_theta_mi, 0.08470806, tolerance = 1e-07)
@@ -46,13 +46,42 @@ test_that("Assess works for all choices of .quality_criterion", {
                                               0.4402532, 0.2969352, 0.5557484), 
                     tolerance = 1e-07)
   expect_equivalent(a$GoF, 0.4784006 , tolerance = 1e-07)
-  expect_equivalent(c(a$HTMT), c(0, 0.6782752, 0.6668841,
-                                 0, 0.0000000, 0.6124418,
-                                 0, 0.0000000, 0.0000000), tolerance = 1e-07)
+  expect_equivalent(c(a$HTMT), c(1, 0.6782752, 0.6668841,
+                                 0, 1.0000000, 0.6124418,
+                                 0, 0.0000000, 1.0000000), tolerance = 1e-07)
   expect_equivalent(a$R2, c(0.3466694, 0.4766706), tolerance = 1e-07)
   expect_equivalent(a$R2_adj, c(0.3453575, 0.4745646), tolerance = 1e-07)
   expect_equivalent(a$RhoT, c(0.7317595, 0.7280738, 0.7859542), tolerance = 1e-07)
   expect_equivalent(a$RhoT_weighted, c(0.7288400, 0.6637134, 0.7821770) , tolerance = 1e-07)
   expect_equivalent(c(a$VIF), c(1.530619, 1.530619), tolerance = 1e-06)
   expect_equivalent(c(a$VIF_modeB$eta2), c(1.859990, 2.621641, 2.623095), tolerance = 1e-06)
+})
+
+### Test individual assess's helper functions individually ---------------------
+source("test-main.R")
+
+## Calculatef2
+test_that("Test that calculatef2() returns the correct output:", {
+  expect_true(inherits(calculatef2(res_single_linear), "matrix"))
+  expect_true(inherits(calculatef2(res_single_nonlinear), "matrix"))
+  expect_true(inherits(calculatef2(res_single_2ndorder), "matrix"))
+  expect_true(inherits(calculatef2(res_single_nonlinear_2ndorder), "matrix"))
+  
+  expect_equal(class(calculatef2(res_multi_linear)), "list")
+  expect_equal(class(calculatef2(res_multi_nonlinear)), "list")
+  expect_equal(class(calculatef2(res_multi_2ndorder)), "list")
+})
+
+## CalculateDf()
+test_that("Test that calculateDf() returns the correct output:", {
+  expect_identical(calculateDf(res_single_linear), 22)
+  expect_warning(calculateDf(res_single_nonlinear))
+  expect_identical(calculateDf(res_single_2ndorder), 132)
+  expect_warning(calculateDf(res_single_nonlinear_2ndorder))
+  
+  expect_identical(unlist(calculateDf(res_multi_linear)), 
+                   c("group1" = 22, "group2" = 22, "group3" = 22))
+  expect_warning(calculateDf(res_multi_nonlinear))
+  expect_identical(unlist(calculateDf(res_multi_2ndorder)), 
+                   c("group1" = 132, "group2" = 132))
 })

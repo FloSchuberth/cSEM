@@ -14,8 +14,9 @@ print.cSEMAssess <- function(x, ...) {
   nn <- intersect(names(x), c("AVE", "R2", "R2_adj"))
   
   if(length(nn) > 0) {
-    # Max name length 
-    c_names <- names(x[[nn[1]]])
+    # Select all construct names that are either endogenous (LHS) variables (for 
+    # the R2) or constructs for which the AVE was computed. 
+    c_names <- unique(c(names(x[["AVE"]]), names(x[["R2"]])))
     if(length(c_names) > 0) {
       l <- max(nchar(c_names)) 
       nn <- list(nn)
@@ -217,7 +218,11 @@ print.cSEMAssess <- function(x, ...) {
   if(any(names(x) %in% c("Fornell-Larcker", "HTMT"))) {
     cat2("\n\n", rule2("Validity assessment"))
     if(any(names(x) == "HTMT") && !is.null(x$HTMT)) {
-      cat2("\n\n\tHeterotrait-montrait ratio of correlation matrix (HTMT matrix)\n\n")
+      cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n")
+      if(x$Information$.inference) {
+        cat2("Values in the upper triangular part are the ", 
+             paste0(100*(1 - x$Information$.alpha), "%-Quantile of the bootstrap distribution.\n\n")) 
+      }
       print(x$HTMT)
     }
     
@@ -258,5 +263,5 @@ print.cSEMAssess <- function(x, ...) {
     printEffects(x$Effects$Variance_accounted_for, .ci_colnames = ci_colnames, .what = "Effects")
   }
   
-  cat2("\n", rule2(type = 2))
+  cat2("\n", rule2(type = 2), "\n")
 }
