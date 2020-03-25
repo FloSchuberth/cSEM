@@ -262,5 +262,5 @@ print.cSEMAssess <- function(x, ...) {
     printEffects(x$Effects$Variance_accounted_for, .ci_colnames = ci_colnames, .what = "Effects")
   }
   
-  cat2("\n", rule2(type = 2))
+  cat2("\n", rule2(type = 2), "\n")
 }

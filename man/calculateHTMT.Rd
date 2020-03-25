@@ -55,13 +55,24 @@ distribution.
 }
 \description{
 Compute the heterotrait-monotrait ratio of correlations (HTMT) based on
-\insertCite{Henseler2015;textual}{cSEM}.
+\insertCite{Henseler2015;textual}{cSEM}. The HTMT is a consistent estimator for the
+construct correlations of tau-equivalent measurement model. It is used to
+assess discriminant validity.
 }
 \details{
-Similarly to the Cronbach's alpha, the HTMT is a consistent estimator for the
-construct correlations in case of tau equivalent measurement models.
+Computation of the HTMT assumes that all intra-block and inter-block
+correlations between indicators are either all-positive or all-negative.
+A warning is given if this is not the case. If all intra-block or inter-block
+correlations are negative the absolute HTMT values are returned (\code{.absolute = TRUE}).
 
-The HTMT is used to assess discriminant validity.
+To obtain the alpha\%-quantile of the bootstrap distribution for each HTMT
+value set \code{.inference = TRUE}.
+
+Since the HTMT is defined with respect to a classical true score measurement
+model only concepts modeled as common factors are considered by default.
+For concepts modeled as composites the HTMT may be computed by setting
+\code{.only_common_factors = FALSE}, however, it is unclear how to
+interpret values in this case.
 }
 \seealso{
 \code{\link[=assess]{assess()}}, \link{csem}, \link{cSEMResults}

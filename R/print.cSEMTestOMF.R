@@ -11,7 +11,7 @@
 print.cSEMTestOMF <- function(x, ...) {
   
   cat2(
-    rule(line = "bar2", width = 80), "\n",
+    rule2(type = 2), "\n",
     rule(center = "Test for overall model fit based on Beran & Srivastava (1985)",
          width = 80)
   )
@@ -118,5 +118,5 @@ print.cSEMTestOMF <- function(x, ...) {
     " for what constitutes an inadmissible result.\n\n\t",
     "The seed used was: ", x$Information$Seed, "\n"
   )
-  cat(rule(line = "bar2", width = 80), sep = "")
+  cat2(rule2(type = 2), "\n")
 }

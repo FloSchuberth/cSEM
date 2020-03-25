@@ -517,12 +517,23 @@ calculateRhoT <- function(
 #' HTMT
 #'
 #' Compute the heterotrait-monotrait ratio of correlations (HTMT) based on 
-#' \insertCite{Henseler2015;textual}{cSEM}.
-#'
-#' Similarly to the Cronbach's alpha, the HTMT is a consistent estimator for the
-#' construct correlations in case of tau equivalent measurement models. 
-#'
-#' The HTMT is used to assess discriminant validity.
+#' \insertCite{Henseler2015;textual}{cSEM}. The HTMT is a consistent estimator for the
+#' construct correlations of tau-equivalent measurement model. It is used to
+#' assess discriminant validity.
+#' 
+#' Computation of the HTMT assumes that all intra-block and inter-block 
+#' correlations between indicators are either all-positive or all-negative.
+#' A warning is given if this is not the case. If all intra-block or inter-block
+#' correlations are negative the absolute HTMT values are returned (`.absolute = TRUE`).
+#' 
+#' To obtain the alpha%-quantile of the bootstrap distribution for each HTMT 
+#' value set `.inference = TRUE`.
+#' 
+#' Since the HTMT is defined with respect to a classical true score measurement
+#' model only concepts modeled as common factors are considered by default.
+#' For concepts modeled as composites the HTMT may be computed by setting
+#' `.only_common_factors = FALSE`, however, it is unclear how to
+#' interpret values in this case.
 #' 
 #' @usage calculateHTMT(
 #'  .object               = NULL,
@@ -599,14 +610,17 @@ calculateHTMT <- function(
     S       <- .object$Estimates$Indicator_VCV[i_names, i_names]
     
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
-    stop2("The HTMT is not implemented for models containing second-order constructs.")
+    stop2(
+      "The following error occured in the calculateHTMT() function:\n",
+      "The HTMT is not (yet) implemented for models containing second-order constructs."
+    )
   }
   
   ## Warning if S contains negative and positive correlations within a block
   S_signs    <- cf_measurement %*% (sign(S) - diag(nrow(S))) %*% t(cf_measurement)
   S_elements <- cf_measurement %*% (1 - diag(nrow(S))) %*% t(cf_measurement)
   
-  if(any(S_signs != S_elements)) {
+  if(any(abs(S_signs) != S_elements)) {
     warning(
       "The following warning occured in the calculateHTMT() function:\n",
       "Intra-block and inter-block correlations between indicators", 
@@ -620,7 +634,12 @@ calculateHTMT <- function(
   
   # Single-indicator constructs monotrait-heteromethod correlation is set to 1
   x <- rowSums(cf_measurement) == 1
-  diag(avrg_cor[x, x]) <- 1
+
+  if(sum(x) == 1) {
+    avrg_cor[x, x] <- 1
+  } else if(sum(x) > 1) {
+    diag(avrg_cor[x, x]) <- 1 
+  } # else: dont do anything
   
   ## Compute HTMT
   # HTMT_ij = Average heterotrait-heteromethod correlation between i and j divided by 
@@ -668,7 +687,7 @@ calculateHTMT <- function(
         "Only a single numeric probability accepted. You provided:", paste(.alpha, sep = ", "))
     }
     
-    ## Reassemble matr
+    ## Reassemble matrix
     htmt_quantiles <- out
     htmt_quantiles[] <- quants
     
