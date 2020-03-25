@@ -565,10 +565,17 @@
 #' 
 #' ## Generate data
 #' summers_dat <- MASS::mvrnorm(n = 300, mu = rep(0, 18), 
-#'                              Sigma = Sigma_Summers_composites, empirical = T)
+#'                              Sigma = Sigma_Summers_composites, empirical = TRUE)
 #' 
 #' ## Estimate
-#' res <- csem(.data = summers_dat, .model = model)
+#' res <- csem(.data = summers_dat, .model = model) # inconsistent
+#' 
+#' ## 
+#' # 2SLS
+#' res_2SLS <- csem(.data = summers_dat, .model = model, .approach_paths = "2SLS",
+#'                  .instruments = list(ETA1 = c('XI1', 'XI2', 'XI3', 'XI4'),
+#'                                      ETA2 = c('XI1', 'XI2', 'XI3', 'XI4'))
+#')
 #' 
 #' @references
 #'   \insertAllCited{}

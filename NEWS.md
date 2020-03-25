@@ -1,5 +1,12 @@
 # cSEM 0.1.0:9000
 
+- Bug fix: model-implied indicator correlation matrix for non-recursive models
+  should now be calculated correctly (#264)
+  
+- Bug fix: `calculatef2()` gives an error when the path model estimator is not "OLS". (#360, #370)
+
+- Add indicator correlation matrix for a modified version of Summers (1965) model.
+
 - Review `calculateHTMT()`. 1.) Add inference; 2) fix wrong handling of 
   single-indicator constructs. (#351)
 
