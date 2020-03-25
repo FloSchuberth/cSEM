@@ -660,44 +660,73 @@ calculateRhoT <- function(
 #' HTMT
 #'
 #' Compute the heterotrait-monotrait ratio of correlations (HTMT) based on 
-#' \insertCite{Henseler2015;textual}{cSEM}.
-#'
-#' The HTMT is a consistent estimator for the
-#' construct correlations in case of tau equivalent measurement models. 
-#'
-#' The HTMT is used to assess discriminant validity.
+#' \insertCite{Henseler2015;textual}{cSEM}. The HTMT is a consistent estimator for the
+#' construct correlations of tau-equivalent measurement model. It is used to
+#' assess discriminant validity.
+#' 
+#' Computation of the HTMT assumes that all intra-block and inter-block 
+#' correlations between indicators are either all-positive or all-negative.
+#' A warning is given if this is not the case. If all intra-block or inter-block
+#' correlations are negative the absolute HTMT values are returned (`.absolute = TRUE`).
+#' 
+#' To obtain the alpha%-quantile of the bootstrap distribution for each HTMT 
+#' value set `.inference = TRUE`.
+#' 
+#' Since the HTMT is defined with respect to a classical true score measurement
+#' model only concepts modeled as common factors are considered by default.
+#' For concepts modeled as composites the HTMT may be computed by setting
+#' `.only_common_factors = FALSE`, however, it is unclear how to
+#' interpret values in this case.
 #' 
 #' @usage calculateHTMT(
-#'  .object              = NULL,
-#'  .absolute            = TRUE,
-#'  .alpha               = 0.5,
-#'  .inference           = TRUE,
-#'  .only_common_factors = TRUE,
-#'  .R                   = 499
+#'  .object               = NULL,
+#'  .absolute             = TRUE,
+#'  .alpha                = 0.05,
+#'  .handle_inadmissibles = c("drop", "ignore", "replace"),
+#'  .inference            = FALSE,
+#'  .only_common_factors  = TRUE,
+#'  .R                    = 499,
+#'  .seed                 = NULL
 #' )
 #'
 #' @inheritParams csem_arguments
 #'
-#' @return A lower tringular matrix of HTMT values.
+#' @return A lower tringular matrix of HTMT values. If `.inference = TRUE`
+#'   the upper tringular part is the .alpha%-quantile of the HTMT's bootstrap
+#'   distribution.
 #' 
 #' @seealso [assess()], [csem], [cSEMResults]
-#' @keywords internal
+#' @export
 
 calculateHTMT <- function(
-  .object              = NULL,
-  .absolute            = TRUE,
-  .alpha               = 0.5,
-  .inference           = TRUE,
-  .only_common_factors = TRUE,
-  .R                   = 499
+  .object               = NULL,
+  .absolute             = TRUE,
+  .alpha                = 0.05,
+  .handle_inadmissibles = c("drop", "ignore", "replace"),
+  .inference            = FALSE,
+  .only_common_factors  = TRUE,
+  .R                    = 499,
+  .seed                 = NULL
 ){
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+
   if(inherits(.object, "cSEMResults_multi")) {
-    
+    out <- lapply(.object, calculateHTMT,
+                  .absolute = .absolute,
+                  .alpha                = .alpha,
+                  .handle_inadmissibles = .handle_inadmissibles,
+                  .inference            = .inference,
+                  .only_common_factors  = .only_common_factors,
+                  .R                    = .R,
+                  .seed                 = .seed
+                  )
+    return(out)
   } else if(inherits(.object, "cSEMResults_default")) {
     ## Get relevant quantities
-    m <- .object$Information$Model 
+    m <- .object$Information$Model
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
-
+    ## Get relevant quantities
+    m <- .object$Second_stage$Information$Arguments_original$.model
   } else {
     stop2(
       "The following error occured in the calculateHTMT() function:\n",
@@ -718,32 +747,57 @@ calculateHTMT <- function(
   
   cf_measurement <- m$measurement[cf_names, colSums(m$measurement[cf_names, ]) != 0, drop = FALSE]
   
-  ## HTMT can only be calculated for constructs with more than one indicator
-  x <- rowSums(cf_measurement) > 1
-  cf_measurement <- cf_measurement[x, colSums(cf_measurement[x, ]) != 0, drop = FALSE]
-  
-  ## At least two multi-indicator constructs required
-  if(nrow(cf_measurement) < 2) {
-    stop2("Computation of the HTMT requires at least two multi-indicator common factors.")
+  if(inherits(.object, "cSEMResults_default")) {
+    
+    i_names <- colnames(cf_measurement)
+    S       <- .object$Estimates$Indicator_VCV[i_names, i_names]
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2(
+      "The following error occured in the calculateHTMT() function:\n",
+      "The HTMT is not (yet) implemented for models containing second-order constructs."
+    )
   }
   
-  i_names <- colnames(cf_measurement)
-  S       <- .object$Estimates$Indicator_VCV[i_names, i_names]
+  ## Warning if S contains negative and positive correlations within a block
+  S_signs    <- cf_measurement %*% (sign(S) - diag(nrow(S))) %*% t(cf_measurement)
+  S_elements <- cf_measurement %*% (1 - diag(nrow(S))) %*% t(cf_measurement)
   
-  ## Average correlation of the indicators of a block 
-  avrg_cor <- cf_measurement %*% (S - diag(diag(S))) %*% t(cf_measurement) /
-    cf_measurement %*% (1 - diag(nrow(S))) %*% t(cf_measurement)
+  if(any(abs(S_signs) != S_elements)) {
+    warning(
+      "The following warning occured in the calculateHTMT() function:\n",
+      "Intra-block and inter-block correlations between indicators", 
+      " must be either all-positive or all-negative.", call. = FALSE)
+  }
+  
+  ## Average correlation of the indicators within and across blocks
+  ## The eta_i - eta_i (main diagonal) element is the monotrait-heteromethod correlation
+  ## The eta_i - eta_j (off-diagonal) element is the heterotrait-heteromethod correlation
+  avrg_cor <- cf_measurement %*% (S - diag(diag(S))) %*% t(cf_measurement) / S_elements
+  
+  # Single-indicator constructs monotrait-heteromethod correlation is set to 1
+  x <- rowSums(cf_measurement) == 1
+
+  if(sum(x) == 1) {
+    avrg_cor[x, x] <- 1
+  } else if(sum(x) > 1) {
+    diag(avrg_cor[x, x]) <- 1 
+  } # else: dont do anything
   
   ## Compute HTMT
-  # Geometric means of the average monotrait-heteromethod correlation of 
+  # HTMT_ij = Average heterotrait-heteromethod correlation between i and j divided by 
+  # the geometric means of the average monotrait-heteromethod correlation of 
   # eta_i with the average monotrait-heteromethod correlation of construct eta_j
   # (can be negative if some indicators are negatively correlated)
   tryCatch({sqrt(diag(avrg_cor) %o% diag(avrg_cor))},
            warning = function(w) {
-             warning2("The geometric mean of the average monotrait-heteromethod",
-                      " correlation of at least one construct with",
-                      " the average monotrait-heteromethod correlation of the",
-                      " other constructs is negative. NaNs produced")
+             warning(
+               "The following warning occured in the calculateHTMT() function:\n",
+               "The geometric mean of the average monotrait-heteromethod",
+               " correlation of at least one construct with",
+               " the average monotrait-heteromethod correlation of the",
+               " other constructs is negative. NaNs produced.",
+               call. = FALSE)
            }
   )
   out <- avrg_cor*lower.tri(avrg_cor) / suppressWarnings(sqrt(diag(avrg_cor) %o% diag(avrg_cor))) 
@@ -751,7 +805,43 @@ calculateHTMT <- function(
   if(.absolute) {
     out <- abs(out)
   }
+  
+  if(.inference) {
+    # Bootstrap if necessary
+    out_resample <- resamplecSEMResults(
+      .object, 
+      .user_funs = list("HTMT" = calculateHTMT), 
+      .absolute = .absolute,
+      .handle_inadmissibles = .handle_inadmissibles,
+      .inference = FALSE,
+      .only_common_factors = .only_common_factors,
+      .force = TRUE, # to force computation even if .object already contains resamples
+      .R = .R,
+      .seed = .seed
+    )
+    
+    # Compute quantile
+    if(length(.alpha) == 1) {
+      out_htmt <- out_resample$Estimates$Estimates_resample$Estimates1$HTMT 
+      quants <- matrixStats::colQuantiles(out_htmt$Resampled, probs = 1 - .alpha) 
+    } else {
+      stop2(
+        "The following error occured in the calculateHTMT() function:\n",
+        "Only a single numeric probability accepted. You provided:", paste(.alpha, sep = ", "))
+    }
+    
+    ## Reassemble matrix
+    htmt_quantiles <- out
+    htmt_quantiles[] <- quants
+    
+    htmt_inference <- out + t(htmt_quantiles)
+    
+    # Return
+    diag(htmt_inference) <- 1
+    return(htmt_inference)
+  }
   # Return
+  diag(out) <- 1
   return(out)
 }
 

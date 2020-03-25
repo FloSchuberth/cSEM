@@ -54,5 +54,5 @@ print.cSEMVerify <- function(x, ...) {
     printVerifyDetails(x)
   }
   
-  cat2(rule2(type = 2))
+  cat2(rule2(type = 2), "\n")
 }

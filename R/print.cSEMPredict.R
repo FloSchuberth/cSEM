@@ -66,5 +66,5 @@ print.cSEMPredict <- function(x, ...) {
     } 
   }
   
-  cat2("\n", rule2(type = 2))
+  cat2("\n", rule2(type = 2), "\n")
 }

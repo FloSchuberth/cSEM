@@ -1,5 +1,8 @@
 # cSEM 0.1.0:9000
 
+- Review `calculateHTMT()`. 1.) Add inference; 2) fix wrong handling of 
+  single-indicator constructs. (#351)
+
 - Add .type argument to `calculateGFI()`. Now GFI based on the ML and ULS 
   fitting function can be computed. (#371)
 
