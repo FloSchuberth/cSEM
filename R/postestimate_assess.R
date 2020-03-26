@@ -411,10 +411,7 @@ assess.cSEMResults_default <- function(
   }
   if(any(.quality_criterion %in% c("all", "gof")) && !all(m$structural == 0)) {
     # GoF
-    out[["GoF"]]   <- calculateGoF(
-      .object, 
-      .only_common_factors = .only_common_factors
-    )
+    out[["GoF"]]   <- calculateGoF(.object)
   }
   if(any(.quality_criterion %in% c("all", "htmt"))) {
     # HTMT 

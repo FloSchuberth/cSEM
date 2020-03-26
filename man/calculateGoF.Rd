@@ -5,17 +5,11 @@
 \title{Internal: GoF}
 \usage{
 calculateGoF(
- .object              = NULL,
- .only_common_factors = TRUE
+ .object              = NULL
 )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
-
-\item{.only_common_factors}{Logical. Should only concepts modeled as common
-factors be included when calculating one of the following quality critera:
-AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
-Defaults to \code{TRUE}.}
 }
 \value{
 A single numeric value.
@@ -27,8 +21,9 @@ measure of model fit in the sense of SEM. See e.g. \insertCite{Henseler2012a;tex
 for a discussion.
 }
 \details{
-The function is only applicable to objects inheriting class \code{cSEMResults_default}.
-For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
+The GoF is inherently tied to the common factor model. It is therefore
+unclear how to meaningfully interpret the GoF in the context of a
+model that contains constructs modeled as composites.
 }
 \references{
 \insertAllCited{}
@@ -36,4 +31,3 @@ For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} us
 \seealso{
 \code{\link[=assess]{assess()}}, \link{cSEMResults}
 }
-\keyword{internal}

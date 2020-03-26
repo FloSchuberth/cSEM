@@ -53,7 +53,7 @@ calculateAVE <- function(
     
   } else {
     stop2(
-      "The following error occured in the calculateDL() function:\n",
+      "The following error occured in the calculateAVE() function:\n",
       "`.object` must be of class `cSEMResults`."
     )
   }
@@ -338,22 +338,13 @@ calculateDf <- function(
 #' Note that, contrary to what the name suggests, the GoF is **not** a 
 #' measure of model fit in the sense of SEM. See e.g. \insertCite{Henseler2012a;textual}{cSEM}
 #' for a discussion.
-#'
-
-# The GoF is inherently tied to the common factor model. It is therefore 
-# unclear how to meaningfully interpret the GoF in the context of a 
-# composite model. Hence, only constructs modeled as common factors are 
-# considered. It is possible to force computation of the GoF including constructs
-# modeled as composites as well by setting `.only_common_factors = FALSE`,
-# however, we explicitly discourage to do so as the result may not even 
-# have a conceptual meaning.
 #' 
-#' The function is only applicable to objects inheriting class `cSEMResults_default`.
-#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
+#' The GoF is inherently tied to the common factor model. It is therefore 
+#' unclear how to meaningfully interpret the GoF in the context of a 
+#' model that contains constructs modeled as composites.
 #' 
 #' @usage calculateGoF(
-#'  .object              = NULL,
-#'  .only_common_factors = TRUE
+#'  .object              = NULL
 #' )
 #'
 #' @return A single numeric value.
@@ -364,38 +355,46 @@ calculateDf <- function(
 #'
 #' @references 
 #' \insertAllCited{}
-#' @keywords internal
+#' @export
 
 calculateGoF <- function(
-  .object              = NULL,
-  .only_common_factors = TRUE
+  .object              = NULL
 ){
   
-  ## Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateGoF)
+    return(out)
+  } else if(inherits(.object, "cSEMResults_default")) {
+    ## Get relevant quantities
+    Lambda    <- .object$Estimates$Loading_estimates
+    R2        <- .object$Estimates$R2
+    
+    # Select only non-zero loadings
+    L  <- Lambda[Lambda != 0]
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    c_names2  <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
+    
+    ## Extract loadings
+    Lambda   <- .object$First_stage$Estimates$Loading_estimates
+    Lambda2  <- .object$Second_stage$Estimates$Loading_estimates 
+    R2       <- .object$Second_stage$Estimates$R2
+    
+    Lambda2   <- Lambda2[c_names2, ]
+
+    L  <- Lambda[Lambda != 0]
+    L2 <- Lambda2[Lambda2 != 0]
+    
+    L <- c(L, L2)
+  } else {
+    stop2(
+      "The following error occured in the calculateGoF() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
   }
-  
-  ## Get relevant quantities
-  Lambda    <- .object$Estimates$Loading_estimates
-  R2        <- .object$Estimates$R2
   
   # The GoF is defined as the sqrt of the mean of the R^2s of the structural model 
   # times the variance in the indicators that is explained by the construct (lambda^2).
-  # For the latter, only constructs modeled as common factors are considered
-  # as they explain their indicators in contrast to a composite where 
-  # indicators acutally build the construct.
-  
-  if(.only_common_factors) {
-    con_types <-.object$Information$Model$construct_type
-    names_cf  <- names(con_types[con_types == "Common factor"])
-    Lambda    <- Lambda[names_cf, ]
-  }
-  
-  # Select only non-zero loadings
-  L <- Lambda[Lambda != 0]
-  
 
   gof <- sqrt(mean(L^2) * mean(R2))
   
