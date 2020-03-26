@@ -595,7 +595,6 @@ setDominantIndicator <- function(
   # Do all indicators names in .dominant_indicators match the indicator
   # names used in the model?
   tmp <- setdiff(.dominant_indicators, colnames(.W))
-  
   if(length(tmp) != 0) {
     stop("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
          " provided to `.dominant_indicators`", 

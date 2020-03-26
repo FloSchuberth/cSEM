@@ -3,17 +3,28 @@
 #' The `cSEMTestMGD` method for the generic function [print()]. 
 #'
 #' @inheritParams csem_arguments
+#' @param .approach_mgd Character string or a vector of character strings. 
+#'   For which approach should details be displayed? One of: "*none*", "*Klesel*", "*Chin*", 
+#'   "*Sarstedt*", "*Keil*, "*Nitzl*", "*Henseler*", "*CI_para*", or "*CI_overlap*". 
+#'   Default to "*none*" in which case no details are displayed.
 #'
 #' @seealso [csem()], [cSEMResults], [testMGD()]
 #'
 #' @export
 #' @keywords internal
-print.cSEMTestMGD <- function(x, ...) {
+print.cSEMTestMGD <- function(
+  x, 
+  .approach_mgd = c("none", "Klesel", "Chin", "Sarstedt", 
+                    "Keil", "Nitzl", "Henseler", "CI_para","CI_overlap"),
+  ...) {
   
+  approach_mgd_to_display <- match.arg(.approach_mgd)
   info <- x$Information
-  approaches <- c("Klesel", "Sarstedt", "Chin", "Keil", "Nitzl", "Henseler")
+  approaches <- c("Klesel", "Sarstedt", "Chin", "Keil", "Nitzl", "Henseler",
+                  "CI_para", "CI_overlap")
   
   if(any(info$Approach == "all")) {
+    approach_all <- TRUE
     info$Approach <- approaches
   } else {
     info$Approach <- info$Approach[match(info$Approach, intersect(approaches, info$Approach))]
@@ -45,7 +56,7 @@ print.cSEMTestMGD <- function(x, ...) {
   }
   
   ## Overall descision only for Sarstedt, Chin and Keil
-  approach <- intersect(info$Approach, c("Sarstedt", "Chin", "Keil", "Nitzl", "Henseler"))
+  approach <- intersect(info$Approach, c("Sarstedt", "Chin", "Keil", "Nitzl"))
   if(length(approach) > 0) {
     cat2("\n\n\tOverall decision (based on alpha = ", paste0(info$Alpha[1] * 100, "%):"))
     cat2("\n\n\t",col_align("", width = 10))
@@ -70,139 +81,156 @@ print.cSEMTestMGD <- function(x, ...) {
   
   cat2("\n")
   
-  # If alpha contains more than one element, inform the user that only one alpha 
-  # is printed
-  if(length(info$Alpha)  > 1) {
+  if(approach_all && approach_mgd_to_display == "none") {
     cat2(
-      "\n\tNote: Due to space constraits of the console only results for\n ",
-      "\t      alpha = ", paste0(info$Alpha[1] * 100, "%", " are shown.")
-    )
-    cat2("\n")
-  }
-  
-  ## Klesel et al. (2019) ======================================================
-  if(any(info$Approach == "Klesel")) {
-    xk <- x$Klesel
-    
-    cat2(
-      rule2(type = 2), "\n",
-      rule2("Test for multigroup differences based on Klesel et al. (2019)")
-    )
-    
-    ## Null hypothesis ---------------------------------------------------------
-    cat2(
-      "\n\nNull hypothesis:\n\n", 
-      boxx(paste0("H0: Model-implied ", xk$VCV_type, " covariance matrix is equal across groups."),
-           float = "center")
-    )
-    
-    ## Test statistic and p-value ----------------------------------------------
-    cat2("\n\nTest statistic and p-value: \n\n\t")
-    # Are several .alphas given? Inform the user that only the first .alpha is
-    # is used for decision
-    if(length(info$Alpha) > 1) {
-      cat2(
-        "Decision is based on alpha = ", names(xk$Decision)[1],
-        "\n\n\t")
-    }
-    
-    cat2(
-      col_align("Distance measure", width = 20),
-      col_align("Test statistic", width = 14, align = "right"), 
-      col_align("p-value", width = 16, align = "right"),
-      col_align("Decision", width = 16, align = "right")
-    )
-    
-    for(j in seq_along(xk$Test_statistic)) {
+      "\n\tFor details on a particular approach type:\n",
+      "\n\t\t- `print(<object-name>, .approach_mgd = '<approach-name>')`",
+      "\n\n"
       
+    )
+  } else {
+    # If alpha contains more than one element, inform the user that only one alpha 
+    # is printed
+    if(length(info$Alpha)  > 1) {
       cat2(
-        "\n\t",
-        col_align(names(xk$Test_statistic)[j], width = 20),
-        col_align(sprintf("%.4f", xk$Test_statistic[j]), width = 14, 
-                  align = "right"), 
-        col_align(sprintf("%.4f", xk$P_value[j]), width = 16, align = "right"),
-        col_align(ifelse(xk$Decision[[1]][j], green("Do not reject"), red("reject")),
-                  width = 16, align = "right")
+        "\n\tNote: Due to space constraits of the console only results for\n ",
+        "\t      alpha = ", paste0(info$Alpha[1] * 100, "%", " are shown.")
       )
-    }
-    cat2("\n")
-  }
-  
-  ## Sarstedt et al. (2011) ====================================================
-  if(any(info$Approach == "Sarstedt")) {
-    xs <- x$Sarstedt
-    
-    cat2(
-      rule2(type = 2), "\n",
-      rule2("Test for multigroup differences based on Sarstedt et al. (2011)")
-    )
-    
-    cat2(
-      red("\n\n\t!WARNING: the test is unreliable. Usage is discouraged!")
-    )
-    ## Null hypothesis ---------------------------------------------------------
-    cat2(
-      "\n\nNull hypothesis:\n\n",
-      boxx("H0: Parameter k is equal across all groups.", float = "center")
-    )
-    
-    ## Test statistic and p-value ----------------------------------------------
-    cat2("\n\nTest statistic and p-value: \n\n")
-    
-    # Are several .alphas given? Inform the user that only the first .alpha is
-    # is used for decision
-    if(length(info$Alpha) > 1) {
-      cat2("\tDecision is based on the alpha = ", names(xs$Decision[[1]])[1])
+      cat2("\n")
     }
     
-    l <- max(10, nchar(names(xs$Test_statistic)))
-    
-    # Create table for every p-value adjustment method
-    for(i in seq_along(xs$P_value)) {
-      
-      cat2("\n\tMultiple testing adjustment: '", names(xs$P_value)[i], "'\n\n\t")
+    ## Klesel et al. (2019) ====================================================
+    if(approach_mgd_to_display == "Klesel") {
+      xk <- x$Klesel
       
       cat2(
-        col_align("Parameter", width = l + 4),
+        rule2(type = 2), "\n",
+        rule2("Test for multigroup differences based on Klesel et al. (2019)")
+      )
+      
+      ## Null hypothesis ---------------------------------------------------------
+      cat2(
+        "\n\nNull hypothesis:\n\n", 
+        boxx(paste0("H0: Model-implied ", xk$VCV_type, " covariance matrix is equal across groups."),
+             float = "center")
+      )
+      
+      ## Test statistic and p-value ----------------------------------------------
+      cat2("\n\nTest statistic and p-value: \n\n\t")
+      # Are several .alphas given? Inform the user that only the first .alpha is
+      # is used for decision
+      if(length(info$Alpha) > 1) {
+        cat2(
+          "Decision is based on alpha = ", names(xk$Decision)[1],
+          "\n\n\t")
+      }
+      
+      cat2(
+        col_align("Distance measure", width = 20),
         col_align("Test statistic", width = 14, align = "right"), 
         col_align("p-value", width = 16, align = "right"),
         col_align("Decision", width = 16, align = "right")
       )
       
-      for(j in seq_along(xs$Test_statistic)) {
+      for(j in seq_along(xk$Test_statistic)) {
         
         cat2(
           "\n\t",
-          col_align(names(xs$Test_statistic)[j], width = l + 4),
-          col_align(sprintf("%.4f", xs$Test_statistic[j]), width = 14, 
+          col_align(names(xk$Test_statistic)[j], width = 20),
+          col_align(sprintf("%.4f", xk$Test_statistic[j]), width = 14, 
                     align = "right"), 
-          col_align(sprintf("%.4f", xs$P_value[[i]][j]), width = 16, align = "right"),
-          col_align(ifelse(xs$Decision[[i]][[1]][j], green("Do not reject"), red("reject")),
+          col_align(sprintf("%.4f", xk$P_value[j]), width = 16, align = "right"),
+          col_align(ifelse(xk$Decision[[1]][j], green("Do not reject"), red("reject")),
                     width = 16, align = "right")
         )
       }
       cat2("\n")
     }
+    
+    ## Sarstedt et al. (2011) ==================================================
+    if(approach_mgd_to_display == "Sarstedt") {
+      xs <- x$Sarstedt
+      
+      cat2(
+        rule2(type = 2), "\n",
+        rule2("Test for multigroup differences based on Sarstedt et al. (2011)")
+      )
+      
+      cat2(
+        red("\n\n\t!WARNING: the test is unreliable. Usage is discouraged!")
+      )
+      ## Null hypothesis ---------------------------------------------------------
+      cat2(
+        "\n\nNull hypothesis:\n\n",
+        boxx("H0: Parameter k is equal across all groups.", float = "center")
+      )
+      
+      ## Test statistic and p-value ----------------------------------------------
+      cat2("\n\nTest statistic and p-value: \n\n")
+      
+      # Are several .alphas given? Inform the user that only the first .alpha is
+      # is used for decision
+      if(length(info$Alpha) > 1) {
+        cat2("\tDecision is based on the alpha = ", names(xs$Decision[[1]])[1])
+      }
+      
+      l <- max(10, nchar(names(xs$Test_statistic)))
+      
+      # Create table for every p-value adjustment method
+      for(i in seq_along(xs$P_value)) {
+        
+        cat2("\n\tMultiple testing adjustment: '", names(xs$P_value)[i], "'\n\n\t")
+        
+        cat2(
+          col_align("Parameter", width = l + 4),
+          col_align("Test statistic", width = 14, align = "right"), 
+          col_align("p-value", width = 16, align = "right"),
+          col_align("Decision", width = 16, align = "right")
+        )
+        
+        for(j in seq_along(xs$Test_statistic)) {
+          
+          cat2(
+            "\n\t",
+            col_align(names(xs$Test_statistic)[j], width = l + 4),
+            col_align(sprintf("%.4f", xs$Test_statistic[j]), width = 14, 
+                      align = "right"), 
+            col_align(sprintf("%.4f", xs$P_value[[i]][j]), width = 16, align = "right"),
+            col_align(ifelse(xs$Decision[[i]][[1]][j], green("Do not reject"), red("reject")),
+                      width = 16, align = "right")
+          )
+        }
+        cat2("\n")
+      }
+    }
+    
+    ## Chin & Dibbern (2010) ===================================================
+    if(approach_mgd_to_display == "Chin") {
+      printTestMGDResults(.x = x, .approach = "Chin", .info = info)
+    }
+    
+    ## Keil et. al (2000)=======================================================
+    if(approach_mgd_to_display == "Keil") {
+      printTestMGDResults(.x = x, .approach = "Keil", .info = info)
+    }
+    
+    ## Nitzl (2010) ============================================================
+    if(approach_mgd_to_display == "Nitzl") {
+      printTestMGDResults(.x = x, .approach = "Nitzl", .info = info)
+    }
+    
+    ## Henseler (2009) =========================================================
+    if(approach_mgd_to_display == "Henseler") {
+      printTestMGDResults(.x = x, .approach = "Henseler", .info = info)
+    }    
+    ## CI_para =================================================================
+    if(approach_mgd_to_display == "CI_para") {
+      printTestMGDResults(.x = x, .approach = "CI_para", .info = info)
+    } 
+    ## CI_overlap ==============================================================
+    if(approach_mgd_to_display == "CI_overlap") {
+      printTestMGDResults(.x = x, .approach = "CI_overlap", .info = info)
+    } 
   }
-  
-  ## Chin & Dibbern (2010) =====================================================
-  if(any(info$Approach == "Chin")) {
-    printTestMGDResults(.x = x, .approach = "Chin", .info = info)
-  }
-  
-  ## Keil et. al (2000)=========================================================
-  if(any(info$Approach == "Keil")) {
-    printTestMGDResults(.x = x, .approach = "Keil", .info = info)
-  }
-  
-  ## Nitzl (2010) ==============================================================
-  if(any(info$Approach == "Nitzl")) {
-    printTestMGDResults(.x = x, .approach = "Nitzl", .info = info)
-  }
-  
-  ## Henseler (2009) ===========================================================
-  if(any(info$Approach == "Henseler")) {
-    printTestMGDResults(.x = x, .approach = "Henseler", .info = info)
-  }
-  cat2(rule2(type = 2))
+  cat2(rule2(type = 2), "\n")
 }

@@ -14,7 +14,7 @@ print.cSEMTestHausman <- function(x, ...) {
   x2 <- x$Information
   
   cat2(
-    rule(line = "bar2", width = 80), "\n",
+    rule2(type = 2), "\n",
     rule(center = "Regression-based Hausman test",
          width = 80)
   )
@@ -52,5 +52,5 @@ print.cSEMTestHausman <- function(x, ...) {
     }
     cat2("\n")
   }
-  cat(rule(line = "bar2", width = 80), sep = "")
+  cat2(rule2(type = 2), "\n")
 }

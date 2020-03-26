@@ -112,5 +112,5 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     }
   }
   
-  cat2("\n", rule2(type = 2))
+  cat2("\n", rule2(type = 2), "\n")
 }

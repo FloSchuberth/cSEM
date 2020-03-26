@@ -6,7 +6,7 @@
 \usage{
 calculateDf(
   .object     = NULL,
-  .null_model = args_default()$.null_model,
+  .null_model = FALSE,
   ...
   )
 }
@@ -31,6 +31,12 @@ the computation of the degrees of freedom depends on the postulated model.
 
 See: \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{cSEM website}
 for details on how the degrees of freedom are calculated.
+
+To compute the degrees of freedom of the null model use \code{.null_model = TRUE}.
+The degrees of freedom of the null model are identical to the number of
+non-redundant off-diagonal elements of the empirical indicator correlation matrix.
+This implicitly assumes a null model with model-implied indicator correlation
+matrix equal to the identity matrix.
 }
 \seealso{
 \code{\link[=assess]{assess()}}, \link{cSEMResults}

@@ -534,3 +534,51 @@
 #' @source Survey among South Korean employees conducted and
 #' reported by \insertCite{Bergami2000;textual}{cSEM}. 
 "BergamiBagozzi2000"
+
+
+#' Data: Summers
+#'
+#' The indicator correlation matrix for a modified version of \insertCite{Summers1965;textual}{cSEM} 
+#' model. All constructs are modeled as composites. 
+#' 
+#' @docType data
+#'
+#' @description A (18 x 18) indicator correlation matrix. 
+#' 
+#' @examples 
+#' 
+#' require(cSEM)
+#' 
+#' model <- "
+#' ETA1 ~ ETA2 + XI1 + XI2
+#' ETA2 ~ ETA1 + XI3 +XI4
+#' 
+#' ETA1 ~~ ETA2
+#' 
+#' XI1  <~ x1 + x2 + x3
+#' XI2  <~ x4 + x5 + x6
+#' XI3  <~ x7 + x8 + x9
+#' XI4  <~ x10 + x11 + x12
+#' ETA1 <~ y1 + y2 + y3
+#' ETA2 <~ y4 + y5 + y6
+#' "
+#' 
+#' ## Generate data
+#' summers_dat <- MASS::mvrnorm(n = 300, mu = rep(0, 18), 
+#'                              Sigma = Sigma_Summers_composites, empirical = TRUE)
+#' 
+#' ## Estimate
+#' res <- csem(.data = summers_dat, .model = model) # inconsistent
+#' 
+#' ## 
+#' # 2SLS
+#' res_2SLS <- csem(.data = summers_dat, .model = model, .approach_paths = "2SLS",
+#'                  .instruments = list(ETA1 = c('XI1', 'XI2', 'XI3', 'XI4'),
+#'                                      ETA2 = c('XI1', 'XI2', 'XI3', 'XI4'))
+#')
+#' 
+#' @references
+#'   \insertAllCited{}
+#'     
+#' @source Own calculation based on \insertCite{Dijkstra2015;textual}{cSEM}.
+"Sigma_Summers_composites"

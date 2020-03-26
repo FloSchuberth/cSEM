@@ -429,3 +429,20 @@ test_that("Second-order model: correctly specified models are correctly returned
   expect_output(str(parseModel(model1)), "List of 13")
 })
 
+## .check errors argument ======================================================
+models <- list(
+  'C ~ A', # single path
+  "B =~ x21", # single loading
+  "D <~ x41", # single weight
+  "A ~ C", # wrong single path, both constructs exist
+  "D ~ E", # wrong path as construct E does not exist
+  "B =~ x31",# wrongly assigned indicator
+  "D <~ x51" # Indicator that does not exist
+  )
+
+for(i in seq_along(models)) {
+  test_that(paste0("Model: ", models[[i]], " does not throw an error when .check_errors = FALSE."), {
+    expect_s3_class(parseModel(models[[i]], .check_errors = FALSE), "cSEMModel")
+    expect_output(str(parseModel(models[[i]], .check_errors = FALSE)), "List of 13")
+  })
+}

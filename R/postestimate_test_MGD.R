@@ -5,7 +5,7 @@
 #' 
 #' The following tests are implemented:
 #' \describe{
-#' \item{Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
+#' \item{`.approach_mgd="Klesel"`: Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
 #'   The model-implied variance-covariance matrix (either indicator 
 #'   (`.type_vcv = "indicator"`) or construct (`.type_vcv = "construct"`)) 
 #'   is compared across groups. 
@@ -14,7 +14,7 @@
 #'   the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
 #'   If more than two groups are compared, the average distance over all groups
 #'   is used.}
-#' \item{Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
+#' \item{`.approach_mgd="Sarstedt"`: Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Sarstedt2011;textual}{cSEM} tests if parameter k is equal
 #'   across all groups. If several parameters are tested simultaneously  
@@ -25,7 +25,7 @@
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details. Note: the 
 #'   test has some severe shortcomings. Use with caution.
 #' }
-#' \item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
+#' \item{`.approach_mgd="Chin"`: Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
 #'   between two groups. If more than two groups are tested for equality, parameter 
@@ -38,7 +38,7 @@
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
-#' \item{Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
+#' \item{`.approach_mgd="Keil"`: Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Keil2000;textual}{cSEM} tests if parameter k is equal
 #'   between two groups. It is assumed, that the standard errors of the coefficients are 
@@ -54,7 +54,7 @@
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
-#' \item{Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
+#' \item{`.approach_mgd="Nitzl"`: Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   Similarly to \insertCite{Keil2000;textual}{cSEM}, a single parameter k is tested
 #'   for equality between two groups. In contrast to \insertCite{Keil2000;textual}{cSEM},
@@ -70,16 +70,22 @@
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 #' }
-#' \item{Approach suggested by \insertCite{Henseler2007a;textual}{cSEM} and \insertCite{Henseler2009;textual}{cSEM}}{
-#'   This approach is also known as PLS-MGA \insertCite{Henseler2009,Sarstedt2011}{cSEM}.
-#'   It tests whether a population parameter of group 1 is larger than or equal to
-#'   the population parameter of group 2. In doing so, we make a comparison between all the bias-corrected 
-#'   bootstrap estimates of group 1 with group 2. The outcome is an estimated probability.
-#'   The decision is based on whether this probability is smaller than `.alpha` or larger than 1 - `.alpha`. 
-#'   Therefore, two null hypotheses are tested, namely H_0: theta_1 <= theta_2 
-#'   and H_0: theta_1 >= theta_2. As a consequence, it is currently not possible to
-#'   adjust the p-value in case of multiple comparisons, i.e., `.approach_p_adjust` is ignored.
-#' }
+#' \item{`.approach_mgd="CI_param"`: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
+#'   This approach is based on the confidence intervals constructed around the 
+#'   parameter estimates of the two groups. If the parameter of one group falls within 
+#'   the confidence interval of the other group and/or vice versa, it can be concluded 
+#'   that there is no group difference.   
+#'   Since it is based on the confidence intervals `.approach_p_adjust` is ignored.
+#' } 
+#' 
+#' \item{`.approach_mgd="CI_overlap"`: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
+#'   This approach is based on the confidence intervals (CIs) constructed around the 
+#'   parameter estimates of the two groups. If the two CIs overlap, it can be concluded 
+#'   that there is no group difference.   
+#'   Since it is based on the confidence intervals `.approach_p_adjust` is ignored.
+#' } 
+#' 
+#' 
 #' }
 #' 
 #' Use `.approach_mgd` to choose the approach. By default all approaches are computed
@@ -135,13 +141,14 @@
 #'  .alpha                 = 0.05,
 #'  .approach_p_adjust     = "none",
 #'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
-#'                             "Keil", "Nitzl", "Henseler"),
+#'                             "Keil", "Nitzl", "Henseler", "CI_para","CI_overlap"),
 #'  .parameters_to_compare = NULL,
 #'  .handle_inadmissibles  = c("replace", "drop", "ignore"),
 #'  .R_permutation         = 499,
 #'  .R_bootstrap           = 499,
 #'  .saturated             = FALSE,
 #'  .seed                  = NULL,
+#'  .type_ci               = "CI_percentile",
 #'  .type_vcv              = c("indicator", "construct"),
 #'  .verbose               = TRUE
 #'  ) 
@@ -155,6 +162,10 @@
 #'   yielded inadmissible results (i.e. number of results returned is equal to `.R`). 
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions. 
 #'   Defaults to "*replace*" to accommodate all approaches.
+#'   
+#'  @param .type_ci Character string. Which confidence intervals should be used for 
+#'  the approach `"CI_overlap"` and `"CI_para"`. For possible choices, see the 
+#'  `.quantity` argument of the \code{\link{infer}} function. Defaults to "*CI_percentile*".
 #'   
 #' @return A list of class `cSEMTestMGD`. Technically, `cSEMTestMGD` is a 
 #'   named list containing the following list elements:
@@ -182,13 +193,14 @@ testMGD <- function(
  .alpha                 = 0.05,
  .approach_p_adjust     = "none",
  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
-                            "Keil", "Nitzl","Henseler"),
+                            "Keil", "Nitzl","Henseler", "CI_para","CI_overlap"),
  .parameters_to_compare = NULL,
  .handle_inadmissibles  = c("replace", "drop", "ignore"),
  .R_permutation         = 499,
  .R_bootstrap           = 499,
  .saturated             = FALSE,
  .seed                  = NULL,
+ .type_ci               = "CI_percentile",
  .type_vcv              = c("indicator", "construct"),
  .verbose               = TRUE
 ){
@@ -211,6 +223,13 @@ testMGD <- function(
                            # args_default, because args_default()$.handle_inadmissibles
                            # has "drop" as default, but testMGD hast "replace".
   .type_vcv             <- match.arg(.type_vcv)
+  # if(!all(.type_ci %in%  c("CI_standard_z", "CI_standard_t", "CI_percentile",
+  #                     "CI_basic", "CI_bc", "CI_bca") )){
+  if(!all(.type_ci %in%  args_default(.choices = TRUE)$.type_ci )){
+      stop2("The specified confidence interval in .type.ci is not valid.\n",
+          "Please choose one of the following: CI_standard_z, CI_standard_t,\n",
+          "CI_percentile, CI_basic, CI_bc, CI_bca.")
+  }
   
 
   # Check if at least two groups are present
@@ -263,12 +282,13 @@ testMGD <- function(
       "At least two groups are identical. Results may not be meaningful.")
   } 
   
-  # If Henseler is used with adjustment of p-value different than "none" return warning
-  if(any(.approach_mgd %in% c("all", "Klesel")) & !all(.approach_p_adjust %in% "none")){
+  # If Henseler, CI_para or CI_overlap are used with 
+  # adjustment of p-value different than "none" return warning
+  if(any(.approach_mgd %in% c("all", "Henseler","CI_para","CI_overlap")) & !all(.approach_p_adjust %in% "none")){
     warning2(
       "The following warning occured in the testMGD() function:\n",
-      "Currently, there is no p-value adjustment possible for the approach suggested by Henseler (2007).",
-      "Every adjustment is ignored for this approach."
+      "Currently, there is no p-value adjustment possible for the approach suggested by\n",
+      "Henseler (2007), CI_para, and CI_overlap. Adjustment is ignored for these approaches."
     )
   }
   
@@ -278,6 +298,9 @@ testMGD <- function(
   }
   
 
+  # Order significance levels
+  .alpha <- .alpha[order(.alpha)]
+  
   # Get the names of the parameters to be compared. 
   names_all_param <- getParameterNames(.object, .model = .parameters_to_compare)
   
@@ -321,7 +344,7 @@ testMGD <- function(
   
   ## Sarstedt et al. (2011), Keil et al. (2000), Nitzl (2010), Henseler (2007) -----
   # All these approaches require bootstrap
-  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler"))) {
+  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler", "CI_para","CI_overlap"))) {
 
     # Check if .object already contains resamples; if not, run bootstrap
     if(!inherits(.object, "cSEMResults_resampled")) {
@@ -368,14 +391,48 @@ testMGD <- function(
       loading_bias <- bias$Loading_estimates$bias
       weight_bias <- bias$Weight_estimates$bias
       cor_exo_cons_bias <- bias$Exo_construct_correlation$bias
-      # Return object
-      list(
+      
+      # Structure output
+      out<-list(
         "n"                 = n,
         "nObs"              = nobs,
         "para_all"          = cbind(path_resamples,loading_resamples,weight_resamples, cor_exo_cons_resamples),
         "ses_all"           = c(path_se, loading_se, weight_se, cor_exo_cons_se),
         "bias_all"          = c(path_bias, loading_bias, weight_bias, cor_exo_cons_bias)
-       )
+        )
+      
+      # If comparison should be done via CIs 
+      if(any(.approach_mgd %in% c("all", "CI_para", "CI_overlap"))){
+        
+        diff <- setdiff(.type_ci, args_default(TRUE)$.type_ci)
+        
+        if(length(diff) != 0) {
+          stop2(
+            "The following error occured in the testMGD() function:\n",
+            "Unknown approach: ", paste0(diff, collapse = ", "), ".",
+            " Possible choices are: ",
+            paste0(args_default(TRUE)$.type_ci, collapse = ", "))
+        }
+        
+        # calculation of the CIs
+        cis <- infer(.object=y, .quantity=.type_ci, .alpha = .alpha)
+        cis_temp <- purrr::transpose(cis)
+        cis_ret<-lapply(cis_temp,function(x){
+        path_ci <- x$Path_estimates
+        loading_ci <- x$Loading_estimates
+        weight_ci <- x$Weight_estimates
+        cor_exo_cons_ci <- x$Exo_construct_correlation
+        # deliberately name them xyz_estimates to be able to select them later via names.
+        list(path_estimates = path_ci, loading_estimates = loading_ci,
+             weight_estimates = weight_ci, cor_exo_cons_estimates = cor_exo_cons_ci)
+        })
+        names(cis_ret) <- names(cis_temp)
+         
+        out[["ci_all"]] <- cis_ret
+      }
+      
+      # Return output
+      return(out)
       
     })
     
@@ -622,8 +679,8 @@ testMGD <- function(
   ref_dist1 <- Filter(Negate(anyNA), ref_dist)
   }
   
-  # Order significance levels
-  .alpha <- .alpha[order(.alpha)]
+  # # Order significance levels
+  # .alpha <- .alpha[order(.alpha)]
   
   ## Klesel et al. (2019) ------------------------------------------------------
   if(any(.approach_mgd %in% c("all", "Klesel"))) {
@@ -666,6 +723,7 @@ testMGD <- function(
       temp_ind <- stats::complete.cases(temp)
       temp[temp_ind, ,drop = FALSE]
     })
+
     
     # Calculation of the p-values
     pvalue_Chin <- lapply(1:length(ref_dist_matrices_Chin), function(x) {
@@ -894,6 +952,218 @@ testMGD <- function(
   }
     
   
+  # Comparison via confidence intervals
+  if(any(.approach_mgd %in% c("all", "CI_para", "CI_overlap"))) {
+    # Select CIs from the bootstrap_results
+    cis <- lapply(bootstrap_results,function(x){
+      x$ci_all
+    })
+    # Make group pairs of CIs
+    cis_comp <- utils::combn(cis, 2, simplify = FALSE)
+    names(cis_comp) <- sapply(cis_comp, function(x) paste0(names(x)[1], '_', names(x)[2]))
+
+    # Select the relevant parameters per group and make group pairs
+    # This is required fo both CI_para and CI_overlap
+    # For the latter it is used to select the appropriate parameters
+    param_per_group <- getRelevantParameters(.object = .object,
+                                             .model = .parameters_to_compare)
+    param_per_group <- purrr::transpose(param_per_group)
+    param_comp <- utils::combn(param_per_group, 2, simplify = FALSE)
+    names(param_comp) <- sapply(param_comp,
+                                function(x)
+                                  paste0(names(x)[1], '_', names(x)[2]))
+
+    if(any(.approach_mgd %in% c("all", "CI_para"))) {
+      
+      # Investigate whether the estimate of one group is part of the CI of another group
+      decision_ci_para <- lapply(.alpha, function(alpha) {
+        # lapply over the comparisons
+        tttt <- lapply(names(cis_comp), function(comp) {
+            # lapply over the type of CI for the first group
+            # As group1 and group2 have the same structure the selection does not matter
+            tt = lapply(names(cis_comp[[comp]][[1]]), function(interval_type){
+              # lapply over the different parameters
+                ttt <- lapply(names(cis_comp[[comp]][[1]][[interval_type]]), 
+                              function(param) {
+
+                    lb <- paste0(100 * (1 - alpha), "%L")
+                    ub <- paste0(100 * (1 - alpha), "%U")
+
+                    # Estimate first group
+                    temp_para1 <- param_comp[[comp]][[1]][[param]]
+                    # CIs first group
+                    temp_cis1 <- cis_comp[[comp]][[1]][[interval_type]][[param]]
+                    temp_cis_selected1 <- temp_cis1[, names(temp_para1), drop = FALSE]
+                    lb_temp1 <-temp_cis_selected1[lb,] 
+                    names(lb_temp1) <- colnames(temp_cis_selected1[lb,,drop=FALSE])
+                    ub_temp1 <-temp_cis_selected1[ub,] 
+                    names(ub_temp1) <- colnames(temp_cis_selected1[ub,,drop=FALSE])
+                    
+                    # Estimate second group
+                    temp_para2 <- param_comp[[comp]][[2]][[param]]
+                    # CIs second group
+                    temp_cis2 <- cis_comp[[comp]][[2]][[interval_type]][[param]]
+                    temp_cis_selected2 <- temp_cis2[, names(temp_para2), drop = FALSE]
+                    lb_temp2 <-temp_cis_selected2[lb,] 
+                    names(lb_temp2) <- colnames(temp_cis_selected2[lb,,drop=FALSE])
+                    ub_temp2 <-temp_cis_selected2[ub,] 
+                    names(ub_temp2) <- colnames(temp_cis_selected2[ub,,drop=FALSE])
+
+                    # browser()
+                    # # check whether parameter estimates of one group 
+                    # falls within boundaries of the CIs of the other group
+                    # TRUE parameter estimate of the other group falls within the CI
+                    # => no group difference
+                    # Otherwise, FALSE => group difference
+                      decision<-
+                        (lb_temp2 < temp_para1 & 
+                           ub_temp2 > temp_para1) |
+                        (lb_temp1 < temp_para2 & 
+                           ub_temp1 > temp_para2)
+
+                      # Structure output
+                      out=data.frame("Estimate"=temp_para1,"lb"=lb_temp2,
+                                     "ub"=ub_temp2,"Estimate"=temp_para2,"lb"=lb_temp1,
+                                     "ub"=ub_temp1,"decision"=decision)
+                      
+                      # that can be solved more elegant
+                      # If there is no parameter to compare the data.frame has zero rows
+                      # If the if is removed there are problems as the number of columns does not match 
+                      # the length of the name vector
+                      if(nrow(out)!=0){
+                      colnames(out)=c(paste0("Est_",names(cis_comp[[comp]])[1]),
+                                      paste0("lb_",names(cis_comp[[comp]])[2]),
+                                      paste0("ub_",names(cis_comp[[comp]])[2]),
+                                      paste0("Est_",names(cis_comp[[comp]])[2]),
+                                      paste0("lb_",names(cis_comp[[comp]])[1]),
+                                      paste0("ub_",names(cis_comp[[comp]])[1]),
+                                      "Decision")
+                      }
+                      # Make rownames explicit
+                      
+                      out$Name <- rownames(out)
+                      out <- out[, c(ncol(out), 1:(ncol(out) -1))]
+                      rownames(out) <- NULL
+                      out
+                  })
+
+                do.call(rbind,ttt)
+            })
+            names(tt) = names(cis_comp[[comp]][[1]])
+            tt
+        })
+        names(tttt) <- names(cis_comp)
+        tttt
+      })
+      names(decision_ci_para) <- paste0((1 - .alpha) * 100, "%")
+
+
+      # Decision overall
+      decision_overall_ci_para<-lapply(names(decision_ci_para), function(alpha) {
+        t <- lapply(names(decision_ci_para[[alpha]]), function(comp) {
+          tt <- lapply(names(decision_ci_para[[alpha]][[comp]]),function(interval_type){
+            # Check whether there is one FALSE among the decisions per comparison
+            all(decision_ci_para[[alpha]][[comp]][[interval_type]][,"Decision"])
+          })
+          names(tt) <- names(decision_ci_para[[alpha]][[comp]])
+          tt
+          })
+          names(t) <- names(decision_ci_para[[alpha]])
+          # Check whether there is one FALSE among the comparions' decisions
+          temp <- purrr::transpose(t)
+          overall_dec<-lapply(names(temp),function(x){
+            all(unlist(temp[[x]]))
+          })
+          names(overall_dec)<-names(temp)
+          overall_dec
+        })
+      names(decision_overall_ci_para) <- names(decision_ci_para)
+      
+    }#end if .approach_mgd == CI_para
+    
+    if(any(.approach_mgd %in% c("all", "CI_overlap"))) {
+      
+      decision_ci_overlap <- lapply(.alpha, function(alpha) {
+        # lapply over the group pairs
+        ttt <- lapply(names(cis_comp), function(comp) {
+          # lapply over the type of CI for the first group
+          # As group1 and group2 have the same structure the selection does not matter
+          t <- lapply(names(cis_comp[[comp]][[1]]), function(interval_type) {
+            # lapply over the parameters that are compared
+              tt <- lapply(names(cis_comp[[comp]][[1]][[interval_type]]), function(param) {
+                lb <- paste0(100 * (1 - alpha), "%L")
+                ub <- paste0(100 * (1 - alpha), "%U")
+
+                # It does not matter which group is chosen to select the relevant parameters 
+                # as in all groups the relevant parameters are the same
+                para_rel <- names(param_comp[[comp]][[1]][[param]])
+
+                # Select lower and upper bound of the CIs for the two groups
+                lb1 <- cis_comp[[comp]][[1]][[interval_type]][[param]][lb,para_rel ]
+                ub1 <- cis_comp[[comp]][[1]][[interval_type]][[param]][ub,para_rel ]
+                lb2 <- cis_comp[[comp]][[2]][[interval_type]][[param]][lb,para_rel ]
+                ub2 <- cis_comp[[comp]][[2]][[interval_type]][[param]][ub,para_rel ]
+                
+                # Check whether the boundaries of the CI of the first group fall
+                # within the boundaries of the second group
+                decision <- (lb2 < lb1 & lb1 < ub2) | 
+                  (lb2 < ub1 & ub1 < ub2) | 
+                  (lb1<lb2 & ub1>ub2) | 
+                  (lb2<lb1 & ub2>ub1)
+
+                # Structure output
+                out <- data.frame(lb1,ub1,lb2,ub2,decision)
+                
+                # that can be solved more elegant
+                # If there is no parameter to compare the data.frame has zero rows
+                # If the if is removed there are problems as the number of columns does not match 
+                # the length of the name vector
+                if(nrow(out)!=0){
+                colnames(out)=c(paste0("lb_",names(cis_comp[[comp]])[1]),
+                  paste0("ub_",names(cis_comp[[comp]])[1]),
+                  paste0("lb_",names(cis_comp[[comp]])[2]),
+                  paste0("ub_",names(cis_comp[[comp]])[2]),
+                  "Decision"
+                )
+                out$Name <- para_rel
+                out <- out[, c(ncol(out), 1:(ncol(out) - 1))]
+                rownames(out) <- NULL
+                out
+                }
+                out
+                  })
+            do.call(rbind,tt)
+          })
+          names(t) <- names(cis_comp[[comp]][[1]])
+          t
+        })
+        names(ttt) <- names(cis_comp)
+        ttt
+      })
+      names(decision_ci_overlap) <- paste0((1 - .alpha) * 100, "%")
+      
+      # Decision overall
+      decision_overall_ci_overlap<-lapply(names(decision_ci_overlap), function(alpha) {
+        t <- lapply(names(decision_ci_overlap[[alpha]]), function(comp) {
+          tt <- lapply(names(decision_ci_overlap[[alpha]][[comp]]),function(interval_type){
+            # Check whether there is one FALSE among the decisions
+            all(decision_ci_overlap[[alpha]][[comp]][[interval_type]][,"Decision"])
+          })
+          names(tt) <- names(decision_ci_overlap[[alpha]][[comp]])
+          tt
+        })
+        names(t) <- names(decision_ci_overlap[[alpha]])
+        # Check whether there is one FALSE among the comparions' decisions
+        temp <- purrr::transpose(t)
+        overall_dec<-lapply(names(temp),function(x){
+          all(unlist(temp[[x]]))
+        })
+        names(overall_dec)<-names(temp)
+        overall_dec
+      })
+      names(decision_overall_ci_overlap) <- names(decision_ci_overlap)
+    }#end if: if one CI approach is requested
+  }
   ### Return output ============================================================
   out <- list()
   
@@ -925,8 +1195,9 @@ testMGD <- function(
     ) 
   }
  
-  ## Bootstrap-sprecific information
-  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler"))) {
+  ## Bootstrap-specific information
+  if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler",
+                              "CI_param","CI_overlap"))) {
     # Collect bootstrap information
     info_boot <-lapply(.object, function(x){
       if(inherits(.object, "cSEMResults_2ndorder")) {
@@ -954,7 +1225,7 @@ testMGD <- function(
     ) 
   }
    
-# Information for Klesel et al. approach
+  # Information for Klesel et al. approach
   if(any(.approach_mgd %in% c("all", "Klesel"))) {
     out[["Klesel"]] <- list(
       "Test_statistic"     = teststat_Klesel,
@@ -966,7 +1237,7 @@ testMGD <- function(
     out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Klesel"]] <- ref_dist_matrix_Klesel
   }
   
-# Information for Chin & Dibbern approach
+  # Information for Chin & Dibbern approach
   if(any(.approach_mgd %in% c("all", "Chin"))) {
     out[["Chin"]] <- list(
       "Test_statistic"     = teststat_Chin,
@@ -978,7 +1249,7 @@ testMGD <- function(
     out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Chin"]] <- ref_dist_matrices_Chin
   }
 
-# Information for Sarstedt et al. approach  
+  # Information for Sarstedt et al. approach  
   if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
     out[["Sarstedt"]] <- list(
       "Test_statistic"     = teststat_Sarstedt,
@@ -990,7 +1261,7 @@ testMGD <- function(
     out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
   }
   
-# Information for Keil approach  
+  # Information for Keil approach  
   if(any(.approach_mgd %in% c("all", "Keil"))) {
     out[["Keil"]] <- list(
       "Test_statistic"     = purrr::transpose(teststat_Keil)$teststat,
@@ -1001,7 +1272,7 @@ testMGD <- function(
     )
   }
   
-# Information for Nitzl approach
+  # Information for Nitzl approach
   if(any(.approach_mgd %in% c("all", "Nitzl"))) {
     out[["Nitzl"]] <- list(
       "Test_statistic"     = purrr::transpose(teststat_Nitzl)$teststat,
@@ -1013,7 +1284,7 @@ testMGD <- function(
     )
   }
 
-# Information for Henseler approach  
+  # Information for Henseler approach  
   if(any(.approach_mgd %in% c("all", "Henseler"))) {
     out[["Henseler"]] <- list(
       "Test_statistic"     = teststat_Henseler,
@@ -1023,6 +1294,23 @@ testMGD <- function(
     )
   }
   
+  # Information CI_param
+  if(any(.approach_mgd %in% c("all", "CI_para"))) {
+    out[["CI_para"]] <- list(
+      "Test_statistic"     = NA,
+      "Decision"           = decision_ci_para,
+      "Decision_overall"   = decision_overall_ci_para
+    )
+  }
+  
+  # Information CI_param
+  if(any(.approach_mgd %in% c("all", "CI_overlap"))) {
+    out[["CI_overlap"]] <- list(
+      "Test_statistic"     = NA,
+      "Decision"           = decision_ci_overlap,
+      "Decision_overall"   = decision_overall_ci_overlap
+    )
+  }
    
   class(out) <- "cSEMTestMGD"
   return(out)

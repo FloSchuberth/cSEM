@@ -46,7 +46,7 @@ test_that(paste(".seed in testOMF works corretly"),  {
   
   a <- testOMF(
     .object = res,
-    .R      = 4,
+    .R      = 10,
     .seed   = 1303
   )
   
@@ -55,7 +55,7 @@ test_that(paste(".seed in testOMF works corretly"),  {
   
   b <- testOMF(
     .object = res,
-    .R      = 4,
+    .R      = 10,
     .seed   = 1303
   )
   
