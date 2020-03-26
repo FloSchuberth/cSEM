@@ -6,10 +6,9 @@
 #' The test is only meaningful for concepts modeled as composites.
 #'
 #' If more than two groups are to be compared issues related to multiple testing
-#' should be taken into account. Future versions of the package will include
-#' appropriate corrections.
+#' should be taken into account.
 #' 
-#' Moreover, second-order models are not supported yet.
+#' Models containing second-order constructs are not supported yet.
 #'
 #' The number of permutation runs defaults to `args_default()$.R` for performance reasons.
 #' According to \insertCite{Henseler2016;textual}{cSEM} the number of permutations should 
@@ -18,7 +17,7 @@
 #' @usage testMICOM(
 #'  .object               = NULL,
 #'  .alpha                = 0.05,
-#'  .approach_p_adjust     = "none",
+#'  .approach_p_adjust    = "none",
 #'  .handle_inadmissibles = c("drop", "ignore", "replace"), 
 #'  .R                    = 499,
 #'  .seed                 = NULL,
@@ -96,13 +95,13 @@ testMICOM <- function(
         "Test results are only meaningful for composite models!")
     }
     
-    if(.verbose & length(.object) > 2) {
-      warning2(
-        "The following warning occured in the `testMICOM()` function:\n",
-        "Comparing more than two groups inflates the familywise error rate.\n",
-        "Interpret statistical significance with caution.\n",
-        "Future versions of the package will likely include appropriate correction options.")
-    }
+    # if(.verbose & length(.object) > 2) {
+    #   warning2(
+    #     "The following warning occured in the `testMICOM()` function:\n",
+    #     "Comparing more than two groups inflates the familywise error rate.\n",
+    #     "Interpret statistical significance with caution.\n",
+    #     "Future versions of the package will likely include appropriate correction options.")
+    # }
     
     # if(.approach_p_adjust != 'none'){
     #   stop2("P-value adjustment to control the familywise error rate not supported yet.")
@@ -480,19 +479,19 @@ testMICOM <- function(
     out <- list(
       "Step2" = list(
         "Test_statistic"     = c,
-        "P_value"     = padjusted_step2, 
+        "P_value"            = padjusted_step2, 
         "Decision"           = decision_step2,
         "Bootstrap_values"   = ref_dist
       ),
       "Step3" = list(
         "Mean" = list(
           "Test_statistic"     = teststat_mean,
-          "P_value"     = padjusted_mean, 
+          "P_value"            = padjusted_mean, 
           "Decision"           = decision_mean
         ),
         "Var" = list(
           "Test_statistic"     = teststat_var,
-          "P_value"     = padjusted_var, 
+          "P_value"            = padjusted_var, 
           "Decision"           = decision_var
         )
       ),

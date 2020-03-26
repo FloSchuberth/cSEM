@@ -7,6 +7,7 @@
 testMICOM(
  .object               = NULL,
  .alpha                = 0.05,
+ .approach_p_adjust    = "none",
  .handle_inadmissibles = c("drop", "ignore", "replace"), 
  .R                    = 499,
  .seed                 = NULL,
@@ -18,6 +19,11 @@ testMICOM(
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
+
+\item{.approach_p_adjust}{Character string or a vector of character strings.
+Approach used to adjust the p-value in multiple testing.
+See the \code{methods} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
+their description. Defaults to "\emph{none}".}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -55,10 +61,9 @@ proposed by \insertCite{Henseler2016;textual}{cSEM}.
 The test is only meaningful for concepts modeled as composites.
 
 If more than two groups are to be compared issues related to multiple testing
-should be taken into account. Future versions of the package will include
-appropriate corrections.
+should be taken into account.
 
-Moreover, second-order models are not supported yet.
+Models containing second-order constructs are not supported yet.
 
 The number of permutation runs defaults to \code{args_default()$.R} for performance reasons.
 According to \insertCite{Henseler2016;textual}{cSEM} the number of permutations should
