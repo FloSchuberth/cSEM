@@ -1,26 +1,21 @@
-#' Internal: AVE
+#' Average variance extracted (AVE)
 #'
 #' Calculate the average variance extracted (AVE) as proposed by 
 #' \insertCite{Fornell1981;textual}{cSEM}. For details see the
 #' \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#ave}{cSEM website} 
 #'
 #' The AVE is inherently tied to the common factor model. It is therefore 
-#' unclear how to meaningfully interpret AVE results in the context of a 
-#' composite model. It is possible to report the AVE for composites by
-#'  setting `.only_common_factors = FALSE`, 
-#' however, result should be interpreted with caution 
-#' as they may not have a conceptual meaning.
-#' 
-#' The function is only applicable to objects inheriting class `cSEMResults_default`.
-#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
+#' unclear how to meaningfully interpret the AVE in the context of a 
+#' composite model. It is possible, however, to force computation of the AVE for constructs 
+#' modeled as composites by setting `.only_common_factors = FALSE`.
 #' 
 #' @usage calculateAVE(
 #'  .object              = NULL,
 #'  .only_common_factors = TRUE
 #' )
 #'
-#' @return A named vector of numeric values of length equal to the number of constructs
-#'   in the model.
+#' @return A named vector of numeric values (the AVEs). If `.object` is a list 
+#'   of `cSEMResults` objects, a list of AVEs is returned.
 #'   
 #' @inheritParams csem_arguments
 #'
@@ -28,22 +23,40 @@
 #'
 #' @references 
 #' \insertAllCited{}
-#' @keywords internal
+#' @export
 
 calculateAVE <- function(
   .object              = NULL,
   .only_common_factors = TRUE
   ){
 
-  ## Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateAVE, .only_common_factors = .only_common_factors)
+    return(out)
+  } else if(inherits(.object, "cSEMResults_default")) {
+    ## Extract construct type
+    con_types <-.object$Information$Model$construct_type
+    ## Extract loadings
+    Lambda   <- .object$Estimates$Loading_estimates
+    c_names  <- rownames(Lambda)
+    c_names2 <- c()
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    ## Extract construct type
+    con_types <- .object$Second_stage$Information$Arguments_original$.model$construct_type
+    
+    ## Extract loadings
+    Lambda   <- .object$First_stage$Estimates$Loading_estimates
+    Lambda2  <- .object$Second_stage$Estimates$Loading_estimates 
+    c_names  <- names(con_types)
+    c_names2 <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
+    
+  } else {
+    stop2(
+      "The following error occured in the calculateDL() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
   }
-  
-  ## Extract loadings
-  Lambda  <- .object$Estimates$Loading_estimates
-  c_names <- rownames(Lambda)
   
   ## Calculate AVE (extracted variance / total variance)
   # Note: Within the cSEM package indicators are always standardized (i.e, have
@@ -53,6 +66,9 @@ calculateAVE <- function(
   #       Since for x_k standardized --> lambda^2_k := (indicator) reliability
   #       the AVE in cSEM is simply the average indicator reliability
   AVEs <- sapply(c_names, function(x){
+    if(x %in% c_names2) {
+      Lambda <- Lambda2
+    }
     lambda <- c(Lambda[x, Lambda[x,] != 0])
     ave    <- sum(lambda^2) / (sum(lambda^2) + sum(1 - lambda^2))
     ave
@@ -62,7 +78,6 @@ calculateAVE <- function(
   
   # By default AVE's for composites are not returned
   if(.only_common_factors){
-    con_types <-.object$Information$Model$construct_type
     names_cf  <- names(con_types[con_types == "Common factor"])
     AVEs      <- AVEs[names_cf]
   }

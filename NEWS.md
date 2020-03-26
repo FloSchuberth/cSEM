@@ -1,5 +1,7 @@
 # cSEM 0.1.0:9000
 
+- `calculateAVE()` is now exported and supportes all of cSEM's `cSEMResults` classes.
+
 - Bug fix: model-implied indicator correlation matrix for non-recursive models
   should now be calculated correctly (#264)
   
