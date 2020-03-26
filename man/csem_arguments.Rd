@@ -140,6 +140,9 @@ all available cores will be used. Defaults to "\emph{sequential}".}
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
 data obtained by resamplecSEMResults().}
 
+\item{.force}{Logical. Should .object be resampled even if it contains resamples
+already?. Defaults to \code{FALSE}.}
+
 \item{.fit_measures}{Logical. (EXPERIMENTAL) Should additional fit measures
 be included? Defaults to \code{FALSE}.}
 
@@ -161,6 +164,8 @@ computing time. Defaults to "\emph{drop}".}
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used
 to split \code{.data} into groups. Defaults to \code{NULL}.}
+
+\item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
 
 \item{.independent}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
 
@@ -347,6 +352,11 @@ Defaults to \code{1e-05}.}
 
 \item{.type_ci}{Character string. Which confidence intervall should be calculated?
 Currently used in the testMGD function.}
+
+\item{.type}{Character string. Which fitting function should the GFI be based
+on? One of \emph{"ML"} for the maximum likelihood fitting function or \emph{"ULS"} for the
+unweighted least squares fitting function (same as the squared Euclidian distance).
+Defaults to \emph{"ML"}.}
 
 \item{.type_vcv}{Character string. Which model-implied correlation
 matrix is calculated?

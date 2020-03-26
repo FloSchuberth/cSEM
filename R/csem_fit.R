@@ -96,21 +96,21 @@ fit.cSEMResults_default <- function(
   if(.saturated) {
     # If a saturated model is assumed the structural model is ignored in
     # the calculation of the construct VCV (i.e. a full graph is estimated). 
-    # Hence: V(eta) = WSW' (ppssibly disattenuated)
+    # Hence: V(eta) = WSW' (possibly disattenuated)
     vcv_construct <- .object$Estimates$Construct_VCV
     
   } else {
     Cons_endo <- mod$cons_endo
     Cons_exo  <- mod$cons_exo
     
-    ## Check if recursive, otherwise return a warning
-    if(any(m[Cons_endo, Cons_endo] + t(m[Cons_endo, Cons_endo]) == 2)){
-      warning2(
-        "The following warning occured while computing the model-implied",
-        " indicator correlation matrix:\n",
-        "Currently, `fit()` does not handle non-recursive models correctly.",
-        " The model-implied indicator correlation matrix is likely to be wrong.")
-    }
+    # ## Check if recursive, otherwise return a warning
+    # if(any(m[Cons_endo, Cons_endo] + t(m[Cons_endo, Cons_endo]) == 2)){
+    #   warning2(
+    #     "The following warning occured while computing the model-implied",
+    #     " indicator correlation matrix:\n",
+    #     "Currently, `fit()` does not handle non-recursive models correctly.",
+    #     " The model-implied indicator correlation matrix is likely to be wrong.")
+    # }
     
     B      <- .object$Estimates$Path_estimates[Cons_endo, Cons_endo, drop = FALSE]
     Gamma  <- .object$Estimates$Path_estimates[Cons_endo, Cons_exo, drop = FALSE]
@@ -140,6 +140,19 @@ fit.cSEMResults_default <- function(
       ) 
     ## Make symmetric
     vcv_construct[lower.tri(vcv_construct)] <- t(vcv_construct)[lower.tri(vcv_construct)]
+    
+    # Take correlation between construct error terms into account. 
+    # Overwrite the values of the model-implied construct VCV with the values 
+    # of the construct VCV (W'SW, corrected for attenuation) if the constructs 
+    # are correlated.
+    if(all(dim(mod$cor_specified)) != 0) {
+      
+      cc_names <- intersect(rownames(vcv_construct), rownames(mod$cor_specified))
+      relevant_correlations <- mod$cor_specified[cc_names, cc_names,drop=FALSE]
+      
+      temp <- which(relevant_correlations == 1, arr.ind = TRUE)
+      vcv_construct[cc_names, cc_names][temp] <-.object$Estimates$Construct_VCV[cc_names, cc_names][temp]
+    }
   }
   
   ## If only the fitted construct VCV is needed, return it now

@@ -33,7 +33,7 @@ test_that("Assess works for all choices of .quality_criterion", {
   expect_equivalent(a$Chi_square, 14.61547, tolerance = 1e-05)
   expect_equivalent(a$Chi_square_df, 0.6643398, tolerance = 1e-07)
   expect_equivalent(a$CFI, 1, tolerance = 1e-07)
-  expect_equivalent(a$GFI, 0.9989305, tolerance = 1e-07)
+  expect_equivalent(a$GFI, 0.9927503, tolerance = 1e-07)
   expect_equivalent(a$IFI, 1.005165, tolerance = 1e-06)
   expect_equivalent(a$NFI, 0.9899318 , tolerance = 1e-07)
   expect_equivalent(a$NNFI, 1, tolerance = 1e-06)
@@ -46,9 +46,9 @@ test_that("Assess works for all choices of .quality_criterion", {
                                               0.4402532, 0.2969352, 0.5557484), 
                     tolerance = 1e-07)
   expect_equivalent(a$GoF, 0.4784006 , tolerance = 1e-07)
-  expect_equivalent(c(a$HTMT), c(0, 0.6782752, 0.6668841,
-                                 0, 0.0000000, 0.6124418,
-                                 0, 0.0000000, 0.0000000), tolerance = 1e-07)
+  expect_equivalent(c(a$HTMT), c(1, 0.6782752, 0.6668841,
+                                 0, 1.0000000, 0.6124418,
+                                 0, 0.0000000, 1.0000000), tolerance = 1e-07)
   expect_equivalent(a$R2, c(0.3466694, 0.4766706), tolerance = 1e-07)
   expect_equivalent(a$R2_adj, c(0.3453575, 0.4745646), tolerance = 1e-07)
   expect_equivalent(a$RhoT, c(0.7317595, 0.7280738, 0.7859542), tolerance = 1e-07)

@@ -105,6 +105,8 @@
 #'   all available cores will be used. Defaults to "*sequential*".
 #' @param .first_resample A list containing the `.R` resamples based on the original
 #'   data obtained by resamplecSEMResults().
+#' @param .force Logical. Should .object be resampled even if it contains resamples
+#'   already?. Defaults to `FALSE`.
 #' @param .fit_measures Logical. (EXPERIMENTAL) Should additional fit measures 
 #'   be included? Defaults to `FALSE`. 
 #' @param .full_output Logical. Should the full output of summarize be printed.
@@ -122,6 +124,7 @@
 #' @param .id Character string or integer. A character string giving the name or 
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
+#' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
 #' @param .independent Character string. The name of the independent variable. Defaults to `NULL`.
 #' @param .independent_1 Character string. The name of the first independent variable. Defaults to `NULL`.
 #' @param .independent_2 Character string. The name of the second independent variable. Defaults to `NULL`.
@@ -256,6 +259,10 @@
 #'   Defaults to `1e-05`.
 #' @param .type_ci Character string. Which confidence intervall should be calculated? 
 #' Currently used in the testMGD function. 
+#' @param .type Character string. Which fitting function should the GFI be based 
+#'   on? One of *"ML"* for the maximum likelihood fitting function or *"ULS"* for the
+#'   unweighted least squares fitting function (same as the squared Euclidian distance). 
+#'   Defaults to *"ML"*.
 #' @param .type_vcv Character string. Which model-implied correlation 
 #'  matrix is calculated?
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
@@ -341,11 +348,14 @@ args_csem_dotdotdot <- function(
 #' list shows which argument is passed to which (internal) function:
 #' \describe{
 #' \item{.absolute}{Accepted by/Passed down to: [calculateHTMT()]}
-#' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()]}
+#' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()] and [calculateHTMT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
+#' \item{.handle_inadmissibles}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.null_model}{Accepted by/Passed down to: [calculateDf()]}
+#' \item{.R}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.saturated}{Accepted by/Passed down to: [calculateSRMR()], 
 #'   [calculateDG()], [calculateDL()], [calculateDML()]and subsequently [fit()].}
+#' \item{.seed}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.type_vcv}{Accepted by/Passed down to: [calculateSRMR()], 
 #'   [calculateDG()], [calculateDL()], [calculateDML()] and subsequently [fit()].}
 #' }
@@ -358,8 +368,12 @@ args_assess_dotdotdot <- function(
   .absolute            = TRUE,
   .alpha               = 0.05,
   .closed_form_ci      = FALSE,
+  .handle_inadmissibles= c("drop", "ignore", "replace"),
+  .inference           = FALSE,
   .null_model          = FALSE,
+  .R                   = 499,
   .saturated           = FALSE,
+  .seed                = NULL,
   .type_vcv            = "indicator"
 ) {NULL}
   
@@ -417,12 +431,14 @@ args_default <- function(.choices = FALSE) {
     .E                       = NULL,
     .effect                  = NULL,
     .eval_plan               = c("sequential", "multiprocess"),
+    .force                   = FALSE,
     .fit_measures            = FALSE,
     .first_resample          = NULL,
     .full_output             = TRUE,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
+    .inference               = FALSE,
     .independent             = NULL,
     .independent_1           = NULL,
     .independent_2           = NULL,
@@ -479,6 +495,7 @@ args_default <- function(.choices = FALSE) {
     .starting_values         = NULL,
     .terms                   = NULL,
     .test_data               = NULL,
+    .type                    = c("ML", "ULS"),
     .type_vcv                = c("indicator", "construct"),
     .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
                                  "CI_basic","CI_bc", "CI_bca"),

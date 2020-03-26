@@ -232,6 +232,5 @@ print.cSEMTestMGD <- function(
       printTestMGDResults(.x = x, .approach = "CI_overlap", .info = info)
     } 
   }
-
-  cat2(rule2(type = 2))
+  cat2(rule2(type = 2), "\n")
 }

@@ -11,7 +11,7 @@
 print.cSEMTestMICOM <- function(x, ...) {
   
   cat(
-    rule(line = "bar2", width = 80), "\n",
+    rule2(type = 2), "\n",
     rule(center = "Test for measurement invariance based on Henseler et al (2016)",
          width = 80),
     "\n",
@@ -301,5 +301,5 @@ print.cSEMTestMICOM <- function(x, ...) {
     )
   }
   
-  cat("\n", rule(line = "bar2", width = 80), sep = "")
+  cat2("\n", rule2(type = 2), "\n")
 }
