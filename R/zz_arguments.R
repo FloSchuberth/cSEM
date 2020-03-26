@@ -29,9 +29,8 @@
 #'   Only use if you know what you are doing.
 #' @param .approach_mgd Character string or a vector of character strings. 
 #'   Approach used for the multi-group comparison. One of: "*all*", "*Klesel*", "*Chin*", 
-#'   "*Sarstedt*", "*Keil*, "*Nitzl*", or "*Henseler*". 
+#'   "*Sarstedt*", "*Keil*, "*Nitzl*", "*Henseler*", "*CI_para*", or "*CI_overlap*". 
 #'   Default to "*all*" in which case all approaches are computed (if possible).
-#'   Note that the output will be quite long in this case. 
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
@@ -258,6 +257,8 @@
 #'   training data.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
+#' @param .type_ci Character string. Which confidence intervall should be calculated? 
+#' Currently used in the testMGD function. 
 #' @param .type Character string. Which fitting function should the GFI be based 
 #'   on? One of *"ML"* for the maximum likelihood fitting function or *"ULS"* for the
 #'   unweighted least squares fitting function (same as the squared Euclidian distance). 
@@ -402,7 +403,7 @@ args_default <- function(.choices = FALSE) {
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("2stage", "mixed"),
     .approach_alpha_adjust   = c("none", "bonferroni"),
-    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler"),
+    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler","CI_para","CI_overlap"),
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS"),
@@ -496,6 +497,8 @@ args_default <- function(.choices = FALSE) {
     .test_data               = NULL,
     .type                    = c("ML", "ULS"),
     .type_vcv                = c("indicator", "construct"),
+    .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
+                                 "CI_basic","CI_bc", "CI_bca"),
     .user_funs               = NULL,
     .vcv_asymptotic          = c(FALSE, TRUE),
     .verbose                 = TRUE,

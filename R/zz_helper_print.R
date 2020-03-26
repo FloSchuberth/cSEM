@@ -443,6 +443,20 @@ printTestMGDResults <- function(.x, .approach, .info) {
         rule2(type = 2), "\n",
         rule2("Test for multigroup differences based on Henseler (2009)")
       )
+    },
+    "CI_para" = {
+      x <- .x$CI_para
+      cat2(
+        rule2(type = 2), "\n",
+        rule2("Test for multigroup differences: CI_para")
+      )
+    },
+    "CI_overlap" = {
+      x <- .x$CI_overlap
+      cat2(
+        rule2(type = 2), "\n",
+        rule2("Test for multigroup differences: CI_overlap")
+      )
     }
   )
   
@@ -460,50 +474,139 @@ printTestMGDResults <- function(.x, .approach, .info) {
       boxx("H0: Parameter k is equal across two groups.", float = "center")
     )
   }
-
   
   ## Test statistic and p-value ------------------------------------------------
   cat2("\n\nTest statistic and p-value: \n\n")
   # Are several .alphas given? Inform the user that only the first .alpha is
   # is used for decision
   
-  # Are several .alphas given? Inform the user that only the first .alpha is
-  # is used for decision
-  if(length(.info$Alpha) > 1) {
-    cat2(
-      "\tDecision is based on alpha = ", names(x$Decision[[1]])[1]
-    )
-  }
-  
-  l <- max(10, nchar(names(x$Test_statistic[[1]])))
-  
-  # Create table for every p-value adjustment method
-  for(p in seq_along(x$P_value)) {
-    cat2("\n\tMultiple testing adjustment: '", names(x$P_value)[p], "'")
-    for(i in seq_along(x$Test_statistic)) {
+  if(.approach == "CI_para") {
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    if(length(.info$Alpha) > 1) {
+      cat2(
+        "\tDecision is based on the ", names(x$Decision)[1], " confidence interval",
+        "\n\tType of confidence interval: ", names(x$Decision[[1]][[1]])[1]
+      )
+    }
+    
+    l <- max(10, nchar(x$Decision[[1]][[1]][[1]]$Name))
+    
+    # Print
+    for(i in seq_along(x$Decision[[1]])) {
       
-      cat2("\n\n  Compared groups: ", names(x$Test_statistic)[i], "\n\n\t")
+      cat2("\n\n  Compared groups: ", names(x$Decision[[1]])[i], "\n\n")
       
       cat2(
-        col_align("Parameter", width = l),
-        col_align("Test statistic", width = 14, align = "right"), 
-        col_align("p-value", width = 16, align = "right"),
-        col_align("Decision", width = 16, align = "right")
+        "  ",
+        col_align("Parameter", width = l + 2),
+        col_align("Est. group 1", width = 14, align = "right"), 
+        col_align("CI group 2", width = 20, align = "center"),
+        col_align("Est. group 2", width = 14, align = "right"), 
+        col_align("CI group 1", width = 20, align = "center")
+        # col_align("Decision", width = 10, align = "right")
       )
+      xx1 <- x$Decision[[1]][[i]][[1]]
       
-      for(j in seq_along(x$Test_statistic[[i]])) {
-        
+      for(j in 1:nrow(xx1)) {
         cat2(
-          "\n\t",
-          col_align(names(x$Test_statistic[[i]])[j], width = l),
-          col_align(sprintf("%.4f", x$Test_statistic[[i]][j]), width = 14, 
-                    align = "right"), 
-          col_align(sprintf("%.4f", x$P_value[[p]][[i]][j]), width = 16, align = "right"),
-          col_align(ifelse(x$Decision[[p]][[1]][[i]][j], green("Do not reject"), red("reject")),
-                    width = 16, align = "right")
+          "\n  ", 
+          col_align(xx1[j, "Name"], l + 2), 
+          col_align(sprintf("%.4f", xx1[j, 2]), 14, align = "right"),
+          col_align(
+            paste0("[", sprintf("%7.4f", xx1[j, 3]), ";", 
+                   sprintf("%7.4f", xx1[j, 4]), " ]"), 20, align = "center"),
+          col_align(sprintf("%.4f", xx1[j, 5]), 14, align = "right"),
+          col_align(
+            paste0("[", sprintf("%7.4f", xx1[j, 6]), ";", 
+                   sprintf("%7.4f", xx1[j, 7]), " ]"), 20, align = "center")
+          # col_align(ifelse(xx1[j, "Decision"], green("Do not reject"), red("reject")), 10, 
+          #                  align = "right")
         )
       }
-    } 
+    }
     cat2("\n")
+  } else if(.approach == "CI_overlap") {
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    if(length(.info$Alpha) > 1) {
+      cat2(
+        "\tDecision is based on the ", names(x$Decision)[1], " confidence interval",
+        "\n\tType of confidence interval: ", names(x$Decision[[1]][[1]])[1]
+      )
+    }
+    
+    l <- max(10, nchar(x$Decision[[1]][[1]][[1]]$Name))
+    
+    # Print
+    for(i in seq_along(x$Decision[[1]])) {
+      
+      cat2("\n\n  Compared groups: ", names(x$Decision[[1]])[i], "\n\n")
+      
+      cat2(
+        "  ",
+        col_align("Parameter", width = l + 2),
+        col_align("CI group 1", width = 20, align = "center"),
+        col_align("CI group 2", width = 20, align = "center"),
+        col_align("Decision", width = 14, align = "right")
+      )
+      xx1 <- x$Decision[[1]][[i]][[1]]
+      
+      for(j in 1:nrow(xx1)) {
+        cat2(
+          "\n  ", 
+          col_align(xx1[j, "Name"], l + 2), 
+          col_align(
+            paste0("[", sprintf("%7.4f", xx1[j, 2]), ";", 
+                   sprintf("%7.4f", xx1[j, 3]), " ]"), 20, align = "center"),
+          col_align(
+            paste0("[", sprintf("%7.4f", xx1[j, 4]), ";", 
+                   sprintf("%7.4f", xx1[j, 5]), " ]"), 20, align = "center"),
+          col_align(ifelse(xx1[j, "Decision"], green("Do not reject"), red("reject")), 14,
+                           align = "right")
+        )
+      }
+    }
+    cat2("\n")
+  } else {
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    if(length(.info$Alpha) > 1) {
+      cat2(
+        "\tDecision is based on alpha = ", names(x$Decision[[1]])[1]
+      )
+    }
+    
+    l <- max(10, nchar(names(x$Test_statistic[[1]])))
+    
+    # Create table for every p-value adjustment method
+    for(p in seq_along(x$P_value)) {
+      cat2("\n\tMultiple testing adjustment: '", names(x$P_value)[p], "'")
+      for(i in seq_along(x$Test_statistic)) {
+        
+        cat2("\n\n  Compared groups: ", names(x$Test_statistic)[i], "\n\n\t")
+        
+        cat2(
+          col_align("Parameter", width = l),
+          col_align("Test statistic", width = 14, align = "right"), 
+          col_align("p-value", width = 16, align = "right"),
+          col_align("Decision", width = 16, align = "right")
+        )
+        
+        for(j in seq_along(x$Test_statistic[[i]])) {
+          
+          cat2(
+            "\n\t",
+            col_align(names(x$Test_statistic[[i]])[j], width = l),
+            col_align(sprintf("%.4f", x$Test_statistic[[i]][j]), width = 14, 
+                      align = "right"), 
+            col_align(sprintf("%.4f", x$P_value[[p]][[i]][j]), width = 16, align = "right"),
+            col_align(ifelse(x$Decision[[p]][[1]][[i]][j], green("Do not reject"), red("reject")),
+                      width = 16, align = "right")
+          )
+        }
+      } 
+      cat2("\n")
+    }
   }
 }

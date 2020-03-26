@@ -9,13 +9,14 @@ testMGD(
  .alpha                 = 0.05,
  .approach_p_adjust     = "none",
  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
-                            "Keil", "Nitzl", "Henseler"),
+                            "Keil", "Nitzl", "Henseler", "CI_para","CI_overlap"),
  .parameters_to_compare = NULL,
  .handle_inadmissibles  = c("replace", "drop", "ignore"),
  .R_permutation         = 499,
  .R_bootstrap           = 499,
  .saturated             = FALSE,
  .seed                  = NULL,
+ .type_ci               = "CI_percentile",
  .type_vcv              = c("indicator", "construct"),
  .verbose               = TRUE
  )
@@ -33,9 +34,8 @@ their description. Defaults to "\emph{none}".}
 
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One of: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
-"\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", or "\emph{Henseler}".
-Default to "\emph{all}" in which case all approaches are computed (if possible).
-Note that the output will be quite long in this case.}
+"\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", "\emph{Henseler}", "\emph{CI_para}", or "\emph{CI_overlap}".
+Default to "\emph{all}" in which case all approaches are computed (if possible).}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
 parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or correlations (\verb{~~})) should be
@@ -49,7 +49,11 @@ replications/resamples yielding an inadmissible result will be dropped
 For "\emph{ignore}" all results are returned even if all or some of the replications
 yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
 For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Defaults to "\emph{replace}" to accommodate all approaches.}
+Defaults to "\emph{replace}" to accommodate all approaches.
+
+@param .type_ci Character string. Which confidence intervals should be used for
+the approach \code{"CI_overlap"} and \code{"CI_para"}. For possible choices, see the
+\code{.quantity} argument of the \code{\link{infer}} function. Defaults to "\emph{CI_percentile}".}
 
 \item{.R_permutation}{Integer. The number of permutations. Defaults to \code{499}}
 
@@ -63,6 +67,9 @@ Defaults to \code{FALSE}.}
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
+
+\item{.type_ci}{Character string. Which confidence intervall should be calculated?
+Currently used in the testMGD function.}
 
 \item{.type_vcv}{Character string. Which model-implied correlation
 matrix is calculated?
@@ -92,7 +99,7 @@ of the test statistic is obtained by permutation.
 \details{
 The following tests are implemented:
 \describe{
-\item{Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
+\item{\code{.approach_mgd="Klesel"}: Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
 The model-implied variance-covariance matrix (either indicator
 (\code{.type_vcv = "indicator"}) or construct (\code{.type_vcv = "construct"}))
 is compared across groups.
@@ -101,7 +108,7 @@ To measure the distance between the model-implied variance-covariance matrices,
 the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
 If more than two groups are compared, the average distance over all groups
 is used.}
-\item{Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
+\item{\code{.approach_mgd="Sarstedt"}: Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
 \insertCite{Sarstedt2011;textual}{cSEM} tests if parameter k is equal
 across all groups. If several parameters are tested simultaneously
@@ -112,7 +119,7 @@ adjustments are available via \code{.approach_p_adjust}. See
 \code{\link[stats:p.adjust]{stats::p.adjust()}} for details. Note: the
 test has some severe shortcomings. Use with caution.
 }
-\item{Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
+\item{\code{.approach_mgd="Chin"}: Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
 \insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
 between two groups. If more than two groups are tested for equality, parameter
@@ -125,7 +132,7 @@ no multiple testing correction is done, however, several common
 adjustments are available via \code{.approach_p_adjust}. See
 \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 }
-\item{Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
+\item{\code{.approach_mgd="Keil"}: Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
 \insertCite{Keil2000;textual}{cSEM} tests if parameter k is equal
 between two groups. It is assumed, that the standard errors of the coefficients are
@@ -141,7 +148,7 @@ no multiple testing correction is done, however, several common
 adjustments are available via \code{.approach_p_adjust}. See
 \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 }
-\item{Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
+\item{\code{.approach_mgd="Nitzl"}: Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
 Groups are compared in terms of parameter differences across groups.
 Similarly to \insertCite{Keil2000;textual}{cSEM}, a single parameter k is tested
 for equality between two groups. In contrast to \insertCite{Keil2000;textual}{cSEM},
@@ -157,16 +164,21 @@ no multiple testing correction is done, however, several common
 adjustments are available via \code{.approach_p_adjust}. See
 \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
 }
-\item{Approach suggested by \insertCite{Henseler2007a;textual}{cSEM} and \insertCite{Henseler2009;textual}{cSEM}}{
-This approach is also known as PLS-MGA \insertCite{Henseler2009,Sarstedt2011}{cSEM}.
-It tests whether a population parameter of group 1 is larger than or equal to
-the population parameter of group 2. In doing so, we make a comparison between all the bias-corrected
-bootstrap estimates of group 1 with group 2. The outcome is an estimated probability.
-The decision is based on whether this probability is smaller than \code{.alpha} or larger than 1 - \code{.alpha}.
-Therefore, two null hypotheses are tested, namely H_0: theta_1 <= theta_2
-and H_0: theta_1 >= theta_2. As a consequence, it is currently not possible to
-adjust the p-value in case of multiple comparisons, i.e., \code{.approach_p_adjust} is ignored.
+\item{\code{.approach_mgd="CI_param"}: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
+This approach is based on the confidence intervals constructed around the
+parameter estimates of the two groups. If the parameter of one group falls within
+the confidence interval of the other group and/or vice versa, it can be concluded
+that there is no group difference.
+Since it is based on the confidence intervals \code{.approach_p_adjust} is ignored.
 }
+
+\item{\code{.approach_mgd="CI_overlap"}: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
+This approach is based on the confidence intervals (CIs) constructed around the
+parameter estimates of the two groups. If the two CIs overlap, it can be concluded
+that there is no group difference.
+Since it is based on the confidence intervals \code{.approach_p_adjust} is ignored.
+}
+
 }
 
 Use \code{.approach_mgd} to choose the approach. By default all approaches are computed
