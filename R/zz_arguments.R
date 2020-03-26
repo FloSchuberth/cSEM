@@ -35,7 +35,7 @@
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
 #' @param .approach_p_adjust Character string or a vector of character strings. 
-#' Approach used to adjust the p-value in multiple testing. 
+#' Approach used to adjust the p-value for multiple testing. 
 #' See the `methods` argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
 #' their description. Defaults to "*none*".
 #' @param .approach_paths Character string. Approach used to estimate the
@@ -169,8 +169,8 @@
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
 #' @param .parameters_to_compare A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
 #'   parameters (i.e, path (`~`), loadings (`=~`), weights (`<~`), or correlations (`~~`)) should be
-#'   compared across groups. Defaults to `NULL` in which case all parameters of the 
-#'   originally specified model are compared.
+#'   compared across groups. Defaults to `NULL` in which case all weights, loadings and 
+#'   path coefficients of the originally specified model are compared.
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
@@ -257,8 +257,9 @@
 #'   training data.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
-#' @param .type_ci Character string. Which confidence intervall should be calculated? 
-#' Currently used in the testMGD function. 
+#' @param .type_ci Character string. It indicates which confidence interval should be calculated. 
+#' For possible choices, see the `.quantity` argument of the \code{\link{infer}} function. 
+#' In the test_mgd function default is to "*CI_percentile*".
 #' @param .type Character string. Which fitting function should the GFI be based 
 #'   on? One of *"ML"* for the maximum likelihood fitting function or *"ULS"* for the
 #'   unweighted least squares fitting function (same as the squared Euclidian distance). 

@@ -1,14 +1,14 @@
 #' Tests for multi-group comparisons
 #'
-#' This function performs several permutation tests, i.e., the reference distribution 
-#' of the test statistic is obtained by permutation.
-#' 
+#' This function performs various tests proposed in the context of multigroup analysis.
+#'  
 #' The following tests are implemented:
 #' \describe{
 #' \item{`.approach_mgd="Klesel"`: Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
 #'   The model-implied variance-covariance matrix (either indicator 
 #'   (`.type_vcv = "indicator"`) or construct (`.type_vcv = "construct"`)) 
-#'   is compared across groups. 
+#'   is compared across groups. If the model-implied indicator or construct correlation 
+#'   matrix based on a saturated structural model should be compared, set `.saturated = TRUE`.
 #' 
 #'   To measure the distance between the model-implied variance-covariance matrices, 
 #'   the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
@@ -120,7 +120,7 @@
 #' "
 #' }
 #' Note that the "model" provided to `.parameters_to_compare`
-#' does not have to be an estimable model! 
+#' does not need to be an estimable model! 
 #' 
 #' Note also that compared to all other functions in \pkg{cSEM} using the argument,
 #'  `.handle_inadmissibles` defaults to `"replace"` to accomdate the Sarstedt et al. (2011) approach.
@@ -163,10 +163,6 @@
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions. 
 #'   Defaults to "*replace*" to accommodate all approaches.
 #'   
-#'  @param .type_ci Character string. Which confidence intervals should be used for 
-#'  the approach `"CI_overlap"` and `"CI_para"`. For possible choices, see the 
-#'  `.quantity` argument of the \code{\link{infer}} function. Defaults to "*CI_percentile*".
-#'   
 #' @return A list of class `cSEMTestMGD`. Technically, `cSEMTestMGD` is a 
 #'   named list containing the following list elements:
 #'
@@ -178,6 +174,8 @@
 #'   \item{`$Keil`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
 #'   \item{`$Nitzl`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
 #'   \item{`$Henseler`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
+#'   \item{`$CI_para`}{A list with elements,  `Decision`, and `Decision_overall`}
+#'   \item{`$CI_overlap`}{A list with elements,  `Decision`, and `Decision_overall`}
 #' }
 #' @references
 #'   \insertAllCited{}
@@ -1297,7 +1295,6 @@ testMGD <- function(
   # Information CI_param
   if(any(.approach_mgd %in% c("all", "CI_para"))) {
     out[["CI_para"]] <- list(
-      "Test_statistic"     = NA,
       "Decision"           = decision_ci_para,
       "Decision_overall"   = decision_overall_ci_para
     )
@@ -1306,7 +1303,6 @@ testMGD <- function(
   # Information CI_param
   if(any(.approach_mgd %in% c("all", "CI_overlap"))) {
     out[["CI_overlap"]] <- list(
-      "Test_statistic"     = NA,
       "Decision"           = decision_ci_overlap,
       "Decision_overall"   = decision_overall_ci_overlap
     )
