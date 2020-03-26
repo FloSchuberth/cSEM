@@ -1,7 +1,13 @@
 # cSEM 0.1.0:9000
 
+- `print.cSEMTestMICOM()` no longer prints the decision.
+
+- `testMICOM()` gains a `.approach_p_adjust` argument. The argument takes a
+  single character string or a vector of character strings naming the p-value
+  adjustment for multiple comparisons. (#138)
+  
 - Bug fix: model-implied indicator correlation matrix for non-recursive models
-  should now be calculated correctly (#264)
+  should now be calculated correctly. (#264)
   
 - Bug fix: `calculatef2()` gives an error when the path model estimator is not "OLS". (#360, #370)
 

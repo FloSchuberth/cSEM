@@ -72,7 +72,6 @@ testMICOM <- function(
     
   } else {
     ### Checks and errors ========================================================
-    
     ## Check if at least two groups are present
     if(!inherits(.object, "cSEMResults_multi")) {
       stop2(
@@ -266,10 +265,10 @@ testMICOM <- function(
     
     # Calculate the p-value for the second step of MICOM
     pvalue_step2<- lapply(1:length(temp), function(x) {
-    # Share of values above the positive test statistic
+      # Share of values above the positive test statistic
       # temp contains a list of the reference distributions
-    rowMeans(t(temp[[x]]) < c[[x]]) 
-  })
+      rowMeans(t(temp[[x]]) < c[[x]]) 
+    })
     names(pvalue_step2) <- names(temp)
     
     padjusted_step2 <- lapply(as.list(.approach_p_adjust), function(x){

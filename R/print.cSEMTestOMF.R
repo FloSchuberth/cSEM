@@ -12,8 +12,7 @@ print.cSEMTestOMF <- function(x, ...) {
   
   cat2(
     rule2(type = 2), "\n",
-    rule(center = "Test for overall model fit based on Beran & Srivastava (1985)",
-         width = 80)
+    rule2("Test for overall model fit based on Beran & Srivastava (1985)")
   )
   
   ## Null hypothesis -----------------------------------------------------------
