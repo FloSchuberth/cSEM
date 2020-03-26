@@ -4,7 +4,18 @@
 \alias{print.cSEMTestMGD}
 \title{\code{cSEMTestMGD} method for \code{print()}}
 \usage{
-\method{print}{cSEMTestMGD}(x, ...)
+\method{print}{cSEMTestMGD}(
+  x,
+  .approach_mgd = c("none", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler",
+    "CI_para", "CI_overlap"),
+  ...
+)
+}
+\arguments{
+\item{.approach_mgd}{Character string or a vector of character strings.
+For which approach should details be displayed? One of: "\emph{none}", "\emph{Klesel}", "\emph{Chin}",
+"\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", "\emph{Henseler}", "\emph{CI_para}", or "\emph{CI_overlap}".
+Default to "\emph{none}" in which case no details are displayed.}
 }
 \description{
 The \code{cSEMTestMGD} method for the generic function \code{\link[=print]{print()}}.

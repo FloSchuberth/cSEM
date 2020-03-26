@@ -288,7 +288,7 @@ testMGD <- function(
     warning2(
       "The following warning occured in the testMGD() function:\n",
       "Currently, there is no p-value adjustment possible for the approach suggested by\n",
-      "Henseler (2007), CI_para, and CI_overlap. Every adjustment is ignored for this approach."
+      "Henseler (2007), CI_para, and CI_overlap. Adjustment is ignored for these approaches."
     )
   }
   
@@ -973,7 +973,7 @@ testMGD <- function(
                                 function(x)
                                   paste0(names(x)[1], '_', names(x)[2]))
 
-    if (any(.approach_mgd %in% c("all", "CI_para"))) {
+    if(any(.approach_mgd %in% c("all", "CI_para"))) {
       
       # Investigate whether the estimate of one group is part of the CI of another group
       decision_ci_para <- lapply(.alpha, function(alpha) {
@@ -1039,6 +1039,11 @@ testMGD <- function(
                                       paste0("ub_",names(cis_comp[[comp]])[1]),
                                       "Decision")
                       }
+                      # Make rownames explicit
+                      
+                      out$Name <- rownames(out)
+                      out <- out[, c(ncol(out), 1:(ncol(out) -1))]
+                      rownames(out) <- NULL
                       out
                   })
 
@@ -1120,7 +1125,10 @@ testMGD <- function(
                   paste0("ub_",names(cis_comp[[comp]])[2]),
                   "Decision"
                 )
-                rownames(out)<-para_rel
+                out$Name <- para_rel
+                out <- out[, c(ncol(out), 1:(ncol(out) - 1))]
+                rownames(out) <- NULL
+                out
                 }
                 out
                   })
@@ -1187,7 +1195,7 @@ testMGD <- function(
     ) 
   }
  
-  ## Bootstrap-sprecific information
+  ## Bootstrap-specific information
   if(any(.approach_mgd %in% c("all", "Sarstedt", "Keil", "Nitzl", "Henseler",
                               "CI_param","CI_overlap"))) {
     # Collect bootstrap information
@@ -1217,7 +1225,7 @@ testMGD <- function(
     ) 
   }
    
-# Information for Klesel et al. approach
+  # Information for Klesel et al. approach
   if(any(.approach_mgd %in% c("all", "Klesel"))) {
     out[["Klesel"]] <- list(
       "Test_statistic"     = teststat_Klesel,
@@ -1229,7 +1237,7 @@ testMGD <- function(
     out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Klesel"]] <- ref_dist_matrix_Klesel
   }
   
-# Information for Chin & Dibbern approach
+  # Information for Chin & Dibbern approach
   if(any(.approach_mgd %in% c("all", "Chin"))) {
     out[["Chin"]] <- list(
       "Test_statistic"     = teststat_Chin,
@@ -1241,7 +1249,7 @@ testMGD <- function(
     out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Chin"]] <- ref_dist_matrices_Chin
   }
 
-# Information for Sarstedt et al. approach  
+  # Information for Sarstedt et al. approach  
   if(any(.approach_mgd %in% c("all", "Sarstedt"))) {
     out[["Sarstedt"]] <- list(
       "Test_statistic"     = teststat_Sarstedt,
@@ -1253,7 +1261,7 @@ testMGD <- function(
     out[["Information"]][["Information_permutation"]][["Permutation_values"]][["Sarstedt"]] <- ref_dist_matrix_Sarstedt
   }
   
-# Information for Keil approach  
+  # Information for Keil approach  
   if(any(.approach_mgd %in% c("all", "Keil"))) {
     out[["Keil"]] <- list(
       "Test_statistic"     = purrr::transpose(teststat_Keil)$teststat,
@@ -1264,7 +1272,7 @@ testMGD <- function(
     )
   }
   
-# Information for Nitzl approach
+  # Information for Nitzl approach
   if(any(.approach_mgd %in% c("all", "Nitzl"))) {
     out[["Nitzl"]] <- list(
       "Test_statistic"     = purrr::transpose(teststat_Nitzl)$teststat,
@@ -1276,7 +1284,7 @@ testMGD <- function(
     )
   }
 
-# Information for Henseler approach  
+  # Information for Henseler approach  
   if(any(.approach_mgd %in% c("all", "Henseler"))) {
     out[["Henseler"]] <- list(
       "Test_statistic"     = teststat_Henseler,
@@ -1286,7 +1294,7 @@ testMGD <- function(
     )
   }
   
-  #Information CI_param
+  # Information CI_param
   if(any(.approach_mgd %in% c("all", "CI_para"))) {
     out[["CI_para"]] <- list(
       "Test_statistic"     = NA,
@@ -1295,6 +1303,7 @@ testMGD <- function(
     )
   }
   
+  # Information CI_param
   if(any(.approach_mgd %in% c("all", "CI_overlap"))) {
     out[["CI_overlap"]] <- list(
       "Test_statistic"     = NA,

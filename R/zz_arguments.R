@@ -31,7 +31,6 @@
 #'   Approach used for the multi-group comparison. One of: "*all*", "*Klesel*", "*Chin*", 
 #'   "*Sarstedt*", "*Keil*, "*Nitzl*", "*Henseler*", "*CI_para*", or "*CI_overlap*". 
 #'   Default to "*all*" in which case all approaches are computed (if possible).
-#'   Note that the output will be quite long in this case. 
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".

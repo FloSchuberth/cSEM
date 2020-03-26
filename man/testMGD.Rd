@@ -35,8 +35,7 @@ their description. Defaults to "\emph{none}".}
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One of: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
 "\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", "\emph{Henseler}", "\emph{CI_para}", or "\emph{CI_overlap}".
-Default to "\emph{all}" in which case all approaches are computed (if possible).
-Note that the output will be quite long in this case.}
+Default to "\emph{all}" in which case all approaches are computed (if possible).}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
 parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or correlations (\verb{~~})) should be

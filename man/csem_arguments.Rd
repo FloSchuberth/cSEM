@@ -35,8 +35,7 @@ Only use if you know what you are doing.}
 \item{.approach_mgd}{Character string or a vector of character strings.
 Approach used for the multi-group comparison. One of: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
 "\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", "\emph{Henseler}", "\emph{CI_para}", or "\emph{CI_overlap}".
-Default to "\emph{all}" in which case all approaches are computed (if possible).
-Note that the output will be quite long in this case.}
+Default to "\emph{all}" in which case all approaches are computed (if possible).}
 
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
