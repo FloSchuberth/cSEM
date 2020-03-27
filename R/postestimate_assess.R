@@ -202,7 +202,6 @@
 #' 
 #' @usage assess(
 #'   .object              = NULL, 
-#'   .only_common_factors = TRUE, 
 #'   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
 #'                            "rho_C_weighted_mm", "cronbachs_alpha", 
 #'                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
@@ -213,6 +212,7 @@
 #'                           "gof", "htmt", "r2", "r2_adj",
 #'                           "rho_T", "rho_T_weighted", "vif", 
 #'                           "vifmodeB",  "fl_criterion"),
+#'   .only_common_factors = TRUE, 
 #'   ...
 #' )
 #' 
@@ -231,7 +231,6 @@
 
 assess <- function(
   .object              = NULL, 
-  .only_common_factors = TRUE, 
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                            "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
@@ -242,6 +241,7 @@ assess <- function(
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
                            "vifmodeB",  "fl_criterion"),
+  .only_common_factors = TRUE, 
   ...
 ){
   

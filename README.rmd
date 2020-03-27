@@ -72,7 +72,7 @@ Usully, using `cSEM` is the same 3 step procedure:
 ## Postestimation functions
 
 There are five major postestimation verbs, four test family functions and
-two do-family of function: 
+three do-family of function: 
 
 - `assess()` : assess the model using common quality criteria
 - `infer()` : calculate common inferencial quantities (e.g., standard errors, confidence intervals)
@@ -92,6 +92,7 @@ Other miscellaneous postestimation functions belong do the do-family of function
 Currently two do functions are implemented:
 
 - `doFloodlightAnalysis()`: performs a floodlight analysis
+- `doSurfaceAnalysis()`: performs a surface analysis
 - `doRedundancyAnalysis()`: performs a redundancy analysis
 
 All functions require a `cSEMResults` object.

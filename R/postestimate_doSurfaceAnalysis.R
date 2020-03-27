@@ -15,9 +15,6 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @references
-#'   \insertAllCited{}
-#' 
 #' @return A list of class `cSEMSurface` with a corresponding method for `plot()`. 
 #'   See: [plot.cSEMSurface()].
 #' 
