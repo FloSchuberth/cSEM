@@ -194,11 +194,6 @@ If the algorithm exceeds the specified number, weights of iteration step
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
 
-\item{.model_implied}{Logical. Should the RMS_theta be computed using the
-model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix
-based on V(eta) = WSW' divided by the square root of the respective
-reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
-
 \item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.

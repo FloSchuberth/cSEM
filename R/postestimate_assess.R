@@ -94,7 +94,7 @@
 #'   alternative specification with the k'th variable dropped (R2_excluded).
 #'   Calculation is done by [calculatef2()].}
 #' \item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi", 
-#'       "nnfi",  "rmsea", "rms_theta", "rms_theta_mi", "srmr"}{
+#'       "nnfi",  "rmsea", "rms_theta", "srmr"}{
 #'   Several absolute and incremental fit indices. Note that their suitability
 #'   for models containing constructs modeled as composites is still an
 #'   open research question. Also note that fit indices are not tests in a 
@@ -209,7 +209,7 @@
 #'                           "effects", "f2", "chi_square", "chi_square_df",
 #'                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
 #'                           "reliability", 
-#'                           "rmsea", "rms_theta", "rms_theta_mi", "srmr",
+#'                           "rmsea", "rms_theta", "srmr",
 #'                           "gof", "htmt", "r2", "r2_adj",
 #'                           "rho_T", "rho_T_weighted", "vif", 
 #'                           "vifmodeB",  "fl_criterion"),
@@ -238,7 +238,7 @@ assess <- function(
                            "effects", "f2", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
-                           "rmsea", "rms_theta", "rms_theta_mi", "srmr",
+                           "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
                            "vifmodeB",  "fl_criterion"),
@@ -394,12 +394,7 @@ assess <- function(
   if(any(.quality_criterion %in% c("all", "rms_theta")) && 
      inherits(.object, "cSEMResults_default")) {
     # RMS theta using the the construct correlation matrix WSW'
-    out[["RMS_theta"]] <- calculateRMSTheta(.object, .model_implied = FALSE)
-  }
-  if(any(.quality_criterion %in% c("all", "rms_theta_mi")) && 
-     inherits(.object, "cSEMResults_default")) {
-    # RMS theta using the model-implied construct vCV
-    out[["RMS_theta_mi"]] <- calculateRMSTheta(.object, .model_implied = TRUE)
+    out[["RMS_theta"]] <- calculateRMSTheta(.object)
   }
   if(any(.quality_criterion %in% c("all", "srmr"))) {
     # Effect size

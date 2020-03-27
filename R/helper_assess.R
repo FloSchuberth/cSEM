@@ -1328,12 +1328,11 @@ calculateRMSEA <- function(.object) {
 #' @export
 
 calculateRMSTheta <- function(
-  .object, 
-  .model_implied = FALSE
+  .object
 ) {
   
   if(inherits(.object, "cSEMResults_multi")) {
-    out <- lapply(.object, calculateRMSTheta, .model_implied = .model_implied)
+    out <- lapply(.object, calculateRMSTheta)
     return(out)
   }
   if(inherits(.object, "cSEMResults_default")) {
@@ -1349,14 +1348,8 @@ calculateRMSTheta <- function(
       "`.object` must be of class `cSEMResults`."
     )
   }
-  
-  if(.model_implied) {
-    Theta <- S - S %*% t(W) %*% Lambda - t(S %*% t(W) %*% Lambda) + t(Lambda) %*%  fit(.object, .type_vcv = "construct") %*% Lambda
-  } else {
-    Theta <- S - S %*% t(W) %*% Lambda - t(S %*% t(W) %*% Lambda) + t(Lambda) %*% P %*% Lambda
-  }
-  
-  # Check how its done in smartpls
+  # This is the "non-model-implied" error correlation matrix 
+  Theta <- S - S %*% t(W) %*% Lambda - t(S %*% t(W) %*% Lambda) + t(Lambda) %*% P %*% Lambda
   
   ## For compsites, within block indicator correlations should be excluded as 
   ## they are allowed to freely covary.

@@ -143,10 +143,6 @@
 #' @param .matrices A list of at least two matrices.
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
 #'   or a [cSEMModel] list.
-#' @param .model_implied Logical. Should the RMS_theta be computed using the
-#'   model-implied construct correlation matrix (`TRUE`) or the construct correlation matrix
-#'   based on V(eta) = WSW' divided by the square root of the respective 
-#'   reliabilities (`FALSE`). Defaults to `FALSE`.
 #' @param .moderator Character string. The name of the moderator variable. Defaults to `NULL`. 
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
@@ -449,7 +445,6 @@ args_default <- function(.choices = FALSE) {
     .matrix2                 = NULL,
     .matrices                = NULL,
     .model                   = NULL,
-    .model_implied           = FALSE,
     .moderator               = NULL,
     .modes                   = NULL,
     .n_steps                 = 100,
@@ -467,7 +462,7 @@ args_default <- function(.choices = FALSE) {
                                  "effects", "f2", "chi_square", "chi_square_df",
                                  "cfi", "gfi", "ifi", "nfi", "nnfi", 
                                  "reliability",
-                                 "rmsea", "rms_theta", "rms_theta_mi", "srmr",
+                                 "rmsea", "rms_theta", "srmr",
                                  "gof", "htmt", "r2", "r2_adj",
                                  "rho_T", "rho_T_weighted", "vif", 
                                  "vifmodeB",  "fl_criterion"),
