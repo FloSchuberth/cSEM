@@ -265,7 +265,7 @@ testMICOM <- function(
     # alpha and not 1 - alpha
     
     ## Decision
-    decision <- mapply(function(x, y) x > y, # dont reject (TRUE) if the value of 
+    decision <- mapply(function(x, y) x >= y, # dont reject (TRUE) if the value of 
                        x = c,                # the teststat is larger than the critical value
                        y = critical_values_step2,
                        SIMPLIFY = FALSE)
