@@ -60,6 +60,34 @@ test_that("Assess works for all choices of .quality_criterion", {
 ### Test individual assess's helper functions individually ---------------------
 source("test-main.R")
 
+## calculateAVE()
+test_that("Test that calculateAVE() returns the correct output:", {
+  expect_length(calculateAVE(res_single_linear), 2)
+  expect_named(calculateAVE(res_single_linear), c("eta1", "eta3"))
+  expect_length(calculateAVE(res_single_nonlinear), 2)
+  expect_named(calculateAVE(res_single_nonlinear), c("eta1", "eta3"))
+  expect_length(calculateAVE(res_single_2ndorder), 3)
+  expect_named(calculateAVE(res_single_2ndorder), c("eta1", "eta2", "c4"))
+  
+  expect_equal(class(calculateAVE(res_multi_linear)), "list")
+  expect_equal(class(calculateAVE(res_multi_nonlinear)), "list")
+  expect_equal(class(calculateAVE(res_multi_2ndorder)), "list")
+})
+
+## calculateDf()
+test_that("Test that calculateDf() returns the correct output:", {
+  expect_identical(calculateDf(res_single_linear), 22)
+  expect_warning(calculateDf(res_single_nonlinear))
+  expect_identical(calculateDf(res_single_2ndorder), 132)
+  expect_warning(calculateDf(res_single_nonlinear_2ndorder))
+  
+  expect_identical(unlist(calculateDf(res_multi_linear)), 
+                   c("group1" = 22, "group2" = 22, "group3" = 22))
+  expect_warning(calculateDf(res_multi_nonlinear))
+  expect_identical(unlist(calculateDf(res_multi_2ndorder)), 
+                   c("group1" = 132, "group2" = 132))
+})
+
 ## Calculatef2
 test_that("Test that calculatef2() returns the correct output:", {
   expect_true(inherits(calculatef2(res_single_linear), "matrix"))
@@ -72,16 +100,13 @@ test_that("Test that calculatef2() returns the correct output:", {
   expect_equal(class(calculatef2(res_multi_2ndorder)), "list")
 })
 
-## CalculateDf()
-test_that("Test that calculateDf() returns the correct output:", {
-  expect_identical(calculateDf(res_single_linear), 22)
-  expect_warning(calculateDf(res_single_nonlinear))
-  expect_identical(calculateDf(res_single_2ndorder), 132)
-  expect_warning(calculateDf(res_single_nonlinear_2ndorder))
+## Fit indices
+test_that("Test that calculateGFI returns the correct output:", {
+  expect_length(calculateGFI(res_single_linear), 1)
+  expect_length(calculateGFI(res_single_linear, .type = "ULS"), 1)
+  expect_error(calculateGFI(res_single_nonlinear))
+  expect_error(calculateGFI(res_single_nonlinear, .type = "ULS"))
+  expect_length(calculateGFI(res_single_2ndorder), 1)
+  expect_length(calculateGFI(res_single_2ndorder, .type = "ULS"), 1)
   
-  expect_identical(unlist(calculateDf(res_multi_linear)), 
-                   c("group1" = 22, "group2" = 22, "group3" = 22))
-  expect_warning(calculateDf(res_multi_nonlinear))
-  expect_identical(unlist(calculateDf(res_multi_2ndorder)), 
-                   c("group1" = 132, "group2" = 132))
 })
