@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_assess.R
 \name{calculateGoF}
 \alias{calculateGoF}
-\title{Internal: GoF}
+\title{Goodness of Fit (GoF)}
 \usage{
 calculateGoF(
  .object              = NULL
