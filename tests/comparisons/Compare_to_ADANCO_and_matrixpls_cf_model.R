@@ -297,7 +297,7 @@ assa1$`Fornell-Larcker` - fl_ADANCO # identical to ADANCO
 
 ## Cohens f^2
 f2_ADANCO
-assa1$Effect_size # identical to ADANCO
+assa1$F2 # identical to ADANCO
 # no measure for matrixpls
 
 ## Reliability
