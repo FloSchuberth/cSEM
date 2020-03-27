@@ -92,10 +92,132 @@ named list containing the following list elements:
 }
 }
 \description{
+This function performs various tests proposed in the context of multigroup analysis.
 
+The following tests are implemented:
+\describe{
+\item{\code{.approach_mgd = "Klesel"}: Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
+The model-implied variance-covariance matrix (either indicator
+(\code{.type_vcv = "indicator"}) or construct (\code{.type_vcv = "construct"}))
+is compared across groups. If the model-implied indicator or construct correlation
+matrix based on a saturated structural model should be compared, set \code{.saturated = TRUE}.
+To measure the distance between the model-implied variance-covariance matrices,
+the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
+If more than two groups are compared, the average distance over all groups
+is used.}
+\item{\code{.approach_mgd = "Sarstedt"}: Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
+Groups are compared in terms of parameter differences across groups.
+\insertCite{Sarstedt2011;textual}{cSEM} tests if parameter k is equal
+across all groups. If several parameters are tested simultaneously
+it is recommended to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
+done by p-value). By default
+no multiple testing correction is done, however, several common
+adjustments are available via \code{.approach_p_adjust}. See
+\code{\link[stats:p.adjust]{stats::p.adjust()}} for details. Note: the
+test has some severe shortcomings. Use with caution.}
+\item{\code{.approach_mgd = "Chin"}: Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
+Groups are compared in terms of parameter differences across groups.
+\insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
+between two groups. If more than two groups are tested for equality, parameter
+k is compared between all pairs of groups. In this case, it is recommended
+to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
+done by p-value) since this is essentially a multiple testing setup.
+If several parameters are tested simultaneously, correction is by group
+and number of parameters. By default
+no multiple testing correction is done, however, several common
+adjustments are available via \code{.approach_p_adjust}. See
+\code{\link[stats:p.adjust]{stats::p.adjust()}} for details.}
+\item{\code{.approach_mgd = "Keil"}: Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
+Groups are compared in terms of parameter differences across groups.
+\insertCite{Keil2000;textual}{cSEM} tests if parameter k is equal
+between two groups. It is assumed, that the standard errors of the coefficients are
+equal across groups. The calculation of the standard error of the parameter
+difference is adjusted as proposed by \insertCite{Henseler2009;textual}{cSEM}.
+If more than two groups are tested for equality, parameter k is compared
+between all pairs of groups. In this case, it is recommended
+to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
+done by p-value) since this is essentially a multiple testing setup.
+If several parameters are tested simultaneously, correction
+is by group and number of parameters. By default
+no multiple testing correction is done, however, several common
+adjustments are available via \code{.approach_p_adjust}. See
+\code{\link[stats:p.adjust]{stats::p.adjust()}} for details.}
+\item{\code{.approach_mgd = "Nitzl"}: Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
+Groups are compared in terms of parameter differences across groups.
+Similarly to \insertCite{Keil2000;textual}{cSEM}, a single parameter k is tested
+for equality between two groups. In contrast to \insertCite{Keil2000;textual}{cSEM},
+it is assumed, that the standard errors of the coefficients are
+unequal across groups \insertCite{Sarstedt2011}{cSEM}.
+If more than two groups are tested for equality, parameter k is compared
+between all pairs of groups. In this case, it is recommended
+to adjust the significance  level or the p-values (in \pkg{cSEM} correction is
+done by p-value) since this is essentially a multiple testing setup.
+If several parameters are tested simultaneously, correction
+is by group and number of parameters. By default
+no multiple testing correction is done, however, several common
+adjustments are available via \code{.approach_p_adjust}. See
+\code{\link[stats:p.adjust]{stats::p.adjust()}} for details.}
+\item{\code{.approach_mgd = "CI_param"}: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
+This approach is based on the confidence intervals constructed around the
+parameter estimates of the two groups. If the parameter of one group falls within
+the confidence interval of the other group and/or vice versa, it can be concluded
+that there is no group difference.
+Since it is based on the confidence intervals \code{.approach_p_adjust} is ignored.}
+\item{\code{.approach_mgd = "CI_overlap"}: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
+This approach is based on the confidence intervals (CIs) constructed around the
+parameter estimates of the two groups. If the two CIs overlap, it can be concluded
+that there is no group difference.
+Since it is based on the confidence intervals \code{.approach_p_adjust} is ignored.}
+}
 }
 \details{
+Use \code{.approach_mgd} to choose the approach. By default all approaches are computed
+(\code{.approach_mgd = "all"}).
 
+By default, approaches based on parameter differences across groups compare
+all parameters (\code{.parameters_to_compare = NULL}). To compare only
+a subset of parameters provide the parameters in \link[lavaan:model.syntax]{lavaan model syntax}  just like
+the model to estimate. Take the simple model:
+
+\preformatted{
+model_to_estimate <- "
+Structural model
+eta2 ~ eta1
+eta3 ~ eta1 + eta2
+
+# Each concept os measured by 3 indicators, i.e., modeled as latent variable
+eta1 =~ y11 + y12 + y13
+eta2 =~ y21 + y22 + y23
+eta3 =~ y31 + y32 + y33
+"
+}
+If only the path from eta1 to eta3 and the loadings of eta1 are to be compared
+across groups, write:
+\preformatted{
+to_compare <- "
+Structural parameters to compare
+eta3 ~ eta1
+
+# Loadings to compare
+eta1 =~ y11 + y12 + y13
+"
+}
+Note that the "model" provided to \code{.parameters_to_compare}
+does not need to be an estimable model!
+
+Note also that compared to all other functions in \pkg{cSEM} using the argument,
+\code{.handle_inadmissibles} defaults to \code{"replace"} to accomdate the Sarstedt et al. (2011) approach.
+
+Argument \code{.R_permuation} is ignored for the \code{"Nitzl"} and the \code{"Keil"} approach.
+\code{.R_bootstrap} is ignored if  \code{.object} already contains resamples,
+i.e. has class \code{cSEMResults_resampled} and if only the \code{"Klesel"} or the \code{"Chin"}
+approach are used.
+
+The argument \code{.saturated} is used by \code{"Klesel"} only. If \code{.saturated = TRUE}
+the original structural model is ignored and replaced by a saturated model,
+i.e. a model in which all constructs are allowed to correlate freely.
+This is useful to test differences in the measurement models between groups
+in isolation.
 }
 \examples{
 \dontrun{# ===========================================================================
