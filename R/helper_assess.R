@@ -1,26 +1,21 @@
-#' Internal: AVE
+#' Average variance extracted (AVE)
 #'
 #' Calculate the average variance extracted (AVE) as proposed by 
 #' \insertCite{Fornell1981;textual}{cSEM}. For details see the
 #' \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#ave}{cSEM website} 
 #'
 #' The AVE is inherently tied to the common factor model. It is therefore 
-#' unclear how to meaningfully interpret AVE results in the context of a 
-#' composite model. It is possible to report the AVE for composites by
-#'  setting `.only_common_factors = FALSE`, 
-#' however, result should be interpreted with caution 
-#' as they may not have a conceptual meaning.
-#' 
-#' The function is only applicable to objects inheriting class `cSEMResults_default`.
-#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
+#' unclear how to meaningfully interpret the AVE in the context of a 
+#' composite model. It is possible, however, to force computation of the AVE for constructs 
+#' modeled as composites by setting `.only_common_factors = FALSE`.
 #' 
 #' @usage calculateAVE(
 #'  .object              = NULL,
 #'  .only_common_factors = TRUE
 #' )
 #'
-#' @return A named vector of numeric values of length equal to the number of constructs
-#'   in the model.
+#' @return A named vector of numeric values (the AVEs). If `.object` is a list 
+#'   of `cSEMResults` objects, a list of AVEs is returned.
 #'   
 #' @inheritParams csem_arguments
 #'
@@ -28,22 +23,40 @@
 #'
 #' @references 
 #' \insertAllCited{}
-#' @keywords internal
+#' @export
 
 calculateAVE <- function(
   .object              = NULL,
   .only_common_factors = TRUE
   ){
 
-  ## Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateAVE, .only_common_factors = .only_common_factors)
+    return(out)
+  } else if(inherits(.object, "cSEMResults_default")) {
+    ## Extract loadings
+    Lambda   <- .object$Estimates$Loading_estimates
+    c_names  <- rownames(Lambda)
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    # ## Extract construct type
+    c_names2 <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
+    
+    out <- lapply(.object, calculateAVE, .only_common_factors = .only_common_factors)
+    out$Second_stage <- out$Second_stage[c_names2]
+    out <- if(is.na(out$Second_stage)) {
+      out$First_stage
+    } else {
+      out <- c(out$First_stage, out$Second_stage)
+    }
+    return(out)
+    
+  } else {
+    stop2(
+      "The following error occured in the calculateAVE() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
   }
-  
-  ## Extract loadings
-  Lambda  <- .object$Estimates$Loading_estimates
-  c_names <- rownames(Lambda)
   
   ## Calculate AVE (extracted variance / total variance)
   # Note: Within the cSEM package indicators are always standardized (i.e, have
@@ -62,6 +75,7 @@ calculateAVE <- function(
   
   # By default AVE's for composites are not returned
   if(.only_common_factors){
+    ## Extract construct type
     con_types <-.object$Information$Model$construct_type
     names_cf  <- names(con_types[con_types == "Common factor"])
     AVEs      <- AVEs[names_cf]
@@ -317,28 +331,19 @@ calculateDf <- function(
 
 
 
-#' Internal: GoF
+#' Goodness of Fit (GoF)
 #'
 #' Calculate the Goodness of Fit (GoF) proposed by \insertCite{Tenenhaus2004;textual}{cSEM}. 
 #' Note that, contrary to what the name suggests, the GoF is **not** a 
 #' measure of model fit in the sense of SEM. See e.g. \insertCite{Henseler2012a;textual}{cSEM}
 #' for a discussion.
-#'
-
-# The GoF is inherently tied to the common factor model. It is therefore 
-# unclear how to meaningfully interpret the GoF in the context of a 
-# composite model. Hence, only constructs modeled as common factors are 
-# considered. It is possible to force computation of the GoF including constructs
-# modeled as composites as well by setting `.only_common_factors = FALSE`,
-# however, we explicitly discourage to do so as the result may not even 
-# have a conceptual meaning.
 #' 
-#' The function is only applicable to objects inheriting class `cSEMResults_default`.
-#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
+#' The GoF is inherently tied to the common factor model. It is therefore 
+#' unclear how to meaningfully interpret the GoF in the context of a 
+#' model that contains constructs modeled as composites.
 #' 
 #' @usage calculateGoF(
-#'  .object              = NULL,
-#'  .only_common_factors = TRUE
+#'  .object              = NULL
 #' )
 #'
 #' @return A single numeric value.
@@ -349,38 +354,46 @@ calculateDf <- function(
 #'
 #' @references 
 #' \insertAllCited{}
-#' @keywords internal
+#' @export
 
 calculateGoF <- function(
-  .object              = NULL,
-  .only_common_factors = TRUE
+  .object              = NULL
 ){
   
-  ## Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateGoF)
+    return(out)
+  } else if(inherits(.object, "cSEMResults_default")) {
+    ## Get relevant quantities
+    Lambda    <- .object$Estimates$Loading_estimates
+    R2        <- .object$Estimates$R2
+    
+    # Select only non-zero loadings
+    L  <- Lambda[Lambda != 0]
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    c_names2  <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
+    
+    ## Extract loadings
+    Lambda   <- .object$First_stage$Estimates$Loading_estimates
+    Lambda2  <- .object$Second_stage$Estimates$Loading_estimates 
+    R2       <- .object$Second_stage$Estimates$R2
+    
+    Lambda2   <- Lambda2[c_names2, ]
+
+    L  <- Lambda[Lambda != 0]
+    L2 <- Lambda2[Lambda2 != 0]
+    
+    L <- c(L, L2)
+  } else {
+    stop2(
+      "The following error occured in the calculateGoF() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
   }
-  
-  ## Get relevant quantities
-  Lambda    <- .object$Estimates$Loading_estimates
-  R2        <- .object$Estimates$R2
   
   # The GoF is defined as the sqrt of the mean of the R^2s of the structural model 
   # times the variance in the indicators that is explained by the construct (lambda^2).
-  # For the latter, only constructs modeled as common factors are considered
-  # as they explain their indicators in contrast to a composite where 
-  # indicators acutally build the construct.
-  
-  if(.only_common_factors) {
-    con_types <-.object$Information$Model$construct_type
-    names_cf  <- names(con_types[con_types == "Common factor"])
-    Lambda    <- Lambda[names_cf, ]
-  }
-  
-  # Select only non-zero loadings
-  L <- Lambda[Lambda != 0]
-  
 
   gof <- sqrt(mean(L^2) * mean(R2))
   
@@ -389,7 +402,7 @@ calculateGoF <- function(
 
 
 
-#' Internal: Reliability
+#' Reliability
 #'
 #' Compute several reliability estimates. See the 
 #' \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#reliability}{Reliability}
@@ -411,9 +424,6 @@ calculateGoF <- function(
 #' confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 #' `.closed_form_ci = TRUE` (default is `FALSE`). If `.alpha` is a vector
 #' several CI's are returned.
-#' 
-#' The function is only applicable to objects inheriting class `cSEMResults_default`.
-#' For objects of class `cSEMResults_multi` and `cSEMResults_2ndorder` use [assess()].
 #'
 #' @return For `calculateRhoC()` and `calculateRhoT()` (if `.output_type = "vector"`) 
 #'   a named numeric vector containing the reliability estimates.
@@ -438,24 +448,50 @@ calculateGoF <- function(
 #' 
 #' \insertAllCited{}
 #' 
-#' @keywords internal
 #' @name reliability
 NULL
 
 #' @describeIn reliability Calculate the congeneric reliability
+#' @export
 calculateRhoC <- function(
   .object              = NULL,
   .model_implied       = TRUE,
   .only_common_factors = TRUE,
-  .weighted            = args_default()$.weighted
+  .weighted            = FALSE
   ) {
 
-  # Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateRhoC, 
+                  .model_implied       = .model_implied,
+                  .only_common_factors = .only_common_factors,
+                  .weighted            = .weighted)
+    return(out)
+  } else if(inherits(.object, "cSEMResults_default")) {
+    # continue
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    # ## Extract construct type
+    c_names2 <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
+    
+    out <- lapply(.object, calculateRhoC, 
+                  .model_implied       = .model_implied,
+                  .only_common_factors = .only_common_factors,
+                  .weighted            = .weighted)
+    
+    out$Second_stage <- out$Second_stage[c_names2]
+    out <- if(is.na(out$Second_stage)) {
+      out$First_stage
+    } else {
+      c(out$First_stage, out$Second_stage)
+    }
+    return(out)
+    
+  } else {
+    stop2(
+      "The following error occured in the calculateRhoC() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
   }
-  
+
   # Note (21.01.2020): The actual formula for congeneric reliability assuming
   #   1. constructs modeled as common factors
   #   2. scores build using unit weights
@@ -519,21 +555,65 @@ calculateRhoC <- function(
 }
 
 #' @describeIn reliability Calculate the tau-equivalent reliability
-#' 
+#' @export
 calculateRhoT <- function(
   .object              = NULL,
-  .alpha               = args_default()$.alpha,
-  .closed_form_ci      = args_default()$.closed_form_ci,
+  .alpha               = 0.05,
+  .closed_form_ci      = FALSE,
   .only_common_factors = TRUE,
   .output_type         = c("vector", "data.frame"),
-  .weighted            = args_default()$.weighted,
+  .weighted            = FALSE,
   ...
   ) {
+
+  # Match arguments
   .output_type <- match.arg(.output_type)
-  ## Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateRhoT,
+                  .alpha               = .alpha,
+                  .closed_form_ci      = .closed_form_ci,
+                  .only_common_factors = .only_common_factors,
+                  .output_type         = .output_type,
+                  .weighted            = .weighted
+                  )
+    return(out)
+  } else if(inherits(.object, "cSEMResults_default")) {
+    # continue
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    # ## Extract construct type
+    c_names2 <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
+    
+    out <- lapply(.object, calculateRhoT,
+                  .alpha               = .alpha,
+                  .closed_form_ci      = .closed_form_ci,
+                  .only_common_factors = .only_common_factors,
+                  .output_type         = .output_type,
+                  .weighted            = .weighted
+    )
+    if(.output_type == "vector") {
+      out$Second_stage <- out$Second_stage[c_names2]
+      out <- if(is.na(out$Second_stage)) {
+        out$First_stage
+      } else {
+        c(out$First_stage, out$Second_stage)
+      }
+    } else {
+      out$Second_stage <- out$Second_stage[out$Second_stage$Construct %in% c_names2, ]
+      out <- if(nrow(out$Second_stage) == 0) {
+        out$First_stage
+      } else {
+        rbind(out$First_stage, out$Second_stage)
+      }
+    }
+
+    return(out)
+    
+  } else {
+    stop2(
+      "The following error occured in the calculateRhoT() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
   }
   
   ## Get relevant objects
@@ -559,7 +639,7 @@ calculateRhoT <- function(
     # Add to vector 
     out_vec[j] <- rhoT
     
-    ## Add to data.frame
+    ## Add to data.frame and remove rownames
     out_df[j, "Construct"] <- j
     out_df[j, "Estimate"]  <- rhoT
     
@@ -651,6 +731,7 @@ calculateRhoT <- function(
   if(.output_type == "vector") {
     return(out_vec) 
   } else {
+    rownames(out_df) <- NULL
     return(out_df)
   }
 }
@@ -1456,7 +1537,7 @@ calculatef2 <- function(.object = NULL) {
 
 
 
-#' Internal: Calculate variance inflation factors (VIF) for weights obtained by PLS Mode B
+#' Calculate variance inflation factors (VIF) for weights obtained by PLS Mode B
 #'
 #' Calculate the variance inflation factor (VIF) for weights obtained by PLS-PM's Mode B.
 #'
@@ -1483,14 +1564,24 @@ calculatef2 <- function(.object = NULL) {
 #'
 #' @references 
 #' \insertAllCited{}
-#' @keywords internal
+#' @export
 
 calculateVIFModeB <- function(.object = NULL) {
   
-  ## Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateVIFModeB)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    # continue
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    out <- lapply(.object, calculateVIFModeB)
+    return(out)
+  } else {
+    stop2(
+      "The following error occured in the calculateVIF() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
   }
   
   ## Get the modes
