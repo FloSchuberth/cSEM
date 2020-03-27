@@ -233,8 +233,8 @@ factor model (see the
 article for details).
 It is possible to force computation of all quality criteria for constructs
 modeled as composites by setting \code{.only_common_factors = FALSE}, however,
-we explicitly warn to interpret quality criteria in this case with caution,
-as they may not even have a conceptual meaning.
+we explicitly warn to interpret quality criteria in analogy to the common factor
+model in this case, as the interpretation often does not carry over to composite models.
 
 \subsection{Resampling}{
 To resample a given quality criterion supply the name of the function

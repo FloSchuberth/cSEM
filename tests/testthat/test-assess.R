@@ -57,8 +57,16 @@ test_that("Assess works for all choices of .quality_criterion", {
   expect_equivalent(c(a$VIF_modeB$eta2), c(1.859990, 2.621641, 2.623095), tolerance = 1e-06)
 })
 
-### Test individual assess's helper functions individually ---------------------
+### Test assess for other classes ----------------------------------------------
 source("test-main.R")
+
+test_that("assess() works for list of data", {
+  expect_equal(class(assess(res_multi_linear)), "list")  
+  expect_error(class(assess(res_multi_nonlinear)))
+  expect_equal(class(assess(res_multi_2ndorder)), "list")
+})
+
+### Test individual assess's helper functions individually ---------------------
 
 ## calculateAVE()
 test_that("Test that calculateAVE() returns the correct output:", {
