@@ -1537,7 +1537,7 @@ calculatef2 <- function(.object = NULL) {
 
 
 
-#' Internal: Calculate variance inflation factors (VIF) for weights obtained by PLS Mode B
+#' Calculate variance inflation factors (VIF) for weights obtained by PLS Mode B
 #'
 #' Calculate the variance inflation factor (VIF) for weights obtained by PLS-PM's Mode B.
 #'
@@ -1564,14 +1564,24 @@ calculatef2 <- function(.object = NULL) {
 #'
 #' @references 
 #' \insertAllCited{}
-#' @keywords internal
+#' @export
 
 calculateVIFModeB <- function(.object = NULL) {
   
-  ## Only applicable to objects of class cSEMResults_default
-  if(!any(class(.object) == "cSEMResults_default")) {
-    stop2("`", match.call()[1], "` only applicable to objects of",
-          " class `cSEMResults_default`. Use `assess()` instead.")
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateVIFModeB)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    # continue
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    out <- lapply(.object, calculateVIFModeB)
+    return(out)
+  } else {
+    stop2(
+      "The following error occured in the calculateVIF() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
   }
   
   ## Get the modes
