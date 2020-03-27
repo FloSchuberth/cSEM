@@ -1,5 +1,8 @@
 # cSEM 0.1.0:9000
 
+- Bug fix: dissatenuation is longer applied to constructs using modes other than 
+  modeA or modeB (#352) 
+  
 - `assess()` now supports all of cSEM's native classes (#323)
 
 - `calculateVIFModeB()` and is now exported and supports all of cSEM's
