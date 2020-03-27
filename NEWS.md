@@ -1,14 +1,17 @@
 # cSEM 0.1.0:9000
 
-- `calculateVIFModeB()` and is now exported and supports all of cSEM's
-  `cSEMResults` classes.
+- `assess()` now supports all of cSEM's native classes (#323)
 
-- `calculateRhoT()` and `calculateRhoC()` are now exported and support all of cSEM's    `cSEMResults` classes.
+- `calculateVIFModeB()` and is now exported and supports all of cSEM's
+  `cSEMResults` classes. (#357)
+
+- `calculateRhoT()` and `calculateRhoC()` are now exported and support all of cSEM's
+  `cSEMResults` classes. (#357)
   
 - `calculateGoF()` is now exported and supports all of cSEM's `cSEMResults` classes.
-  Breaking: the `.only_common_factors` argument has been removed.
+  Breaking: the `.only_common_factors` argument has been removed. (#357)
 
-- `calculateAVE()` is now exported and supports all of cSEM's `cSEMResults` classes.
+- `calculateAVE()` is now exported and supports all of cSEM's `cSEMResults` classes. (#357)
 
 - Bug fix: model-implied indicator correlation matrix for non-recursive models
   should now be calculated correctly (#264)
