@@ -267,7 +267,7 @@ testMICOM <- function(
     pvalue_step2<- lapply(1:length(temp), function(x) {
       # Share of values above the positive test statistic
       # temp contains a list of the reference distributions
-      rowMeans(t(temp[[x]]) < c[[x]]) 
+      rowMeans(t(temp[[x]]) <= c[[x]]) 
     })
     names(pvalue_step2) <- names(temp)
     
