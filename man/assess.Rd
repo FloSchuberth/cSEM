@@ -243,7 +243,7 @@ See \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} for details.
 }
 }
 \examples{
-\donttest{# ===========================================================================
+# ===========================================================================
 # Using the threecommonfactors dataset
 # ===========================================================================
 model <- "
@@ -267,7 +267,7 @@ a$HTMT
 # You may also just compute a subset of the quality criteria
 assess(res, .quality_criterion = c("ave", "rho_C", "htmt"))
 
-## Resampling ---------------------------------------------------------------
+\donttest{## Resampling ---------------------------------------------------------------
 # To resample a given quality criterion use csem()'s .user_funs argument
 # Note: The output of the quality criterion needs to be a vector or a matrix.
 #       Matrices will be vectorized columnwise.
@@ -293,7 +293,6 @@ res <- csem(threecommonfactors, model,
               "SRMR" = cSEM:::calculateSRMR,
               "RMS_theta" = cSEM:::calculateRMSTheta
             ),
-            .model_implied = TRUE, # will be passed to calculateRMSTheta
             .tolerance = 1e-04
 )
 res$Estimates$Estimates_resample$Estimates1$HTMT$Resampled[1:4, ]

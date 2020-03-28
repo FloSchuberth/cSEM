@@ -174,7 +174,9 @@ for both \code{.eval_plan = "sequential"} and \code{.eval_plan = "multiprocess"}
 See \link[future.apply:future_lapply]{?future_lapply} for details.
 }
 \examples{
-\donttest{# ===========================================================================
+\dontrun{
+# Note: example not run as resampling is time consuming
+# ===========================================================================
 # Basic usage
 # ===========================================================================
 model <- "

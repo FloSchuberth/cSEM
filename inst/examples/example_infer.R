@@ -1,4 +1,4 @@
-\donttest{model <- "
+model <- "
 # Structural model
 QUAL ~ EXPE
 EXPE ~ IMAG
@@ -16,7 +16,8 @@ VAL  =~ val1  + val2  + val3  + val4
 "
   
 ## Estimate the model with bootstrap resampling 
-a <- csem(satisfaction, model, .resample_method = "bootstrap", .R = 50)
+a <- csem(satisfaction, model, .resample_method = "bootstrap", .R = 20,
+          .handle_inadmissibles = "replace")
 
 ## Compute inferential quantities
 inf <- infer(a)
@@ -24,18 +25,18 @@ inf <- infer(a)
 inf$Path_estimates$CI_basic
 inf$Indirect_effect$sd
 
-### To compute the bias-corrected and accelerated and/or the studentized t-inverval
-### confidence interval:
-inf <- infer(a, .quantity = c("all", "CI_bca")) # requires jackknife estimates
-
-## For the studentied t-interval confidence interval, a double bootstrap is required:
+### Compute the bias-corrected and accelerated and/or the studentized t-inverval.
+## For the studentied t-interval confidence interval a double bootstrap is required.
+## This is pretty time consuming.
+\dontrun{
+  inf <- infer(a, .quantity = c("all", "CI_bca")) # requires jackknife estimates 
+  
 ## Estimate the model with double bootstrap resampling:
 # Notes:
 #   1. The .resample_method2 arguments triggers a bootstrap of each bootstrap sample
 #   2. The double bootstrap is is very time consuming, consider setting 
 #      `.eval_plan = "multiprocess`. 
-#      To speed things up .R and .R2 are reduced for the example. Results are
-#      therefore rather unreliable.
-a1 <- csem(satisfaction, model, .resample_method = "bootstrap", .R = 40,
-          .resample_method2 = "bootstrap", .R2 = 20, .handle_inadmissibles = "replace") 
+a1 <- csem(satisfaction, model, .resample_method = "bootstrap", .R = 499,
+          .resample_method2 = "bootstrap", .R2 = 199, .handle_inadmissibles = "replace") 
 infer(a1, .quantity = "CI_t_interval")}
+

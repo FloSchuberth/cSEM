@@ -220,7 +220,8 @@ This is useful to test differences in the measurement models between groups
 in isolation.
 }
 \examples{
-\dontrun{# ===========================================================================
+\dontrun{
+# ===========================================================================
 # Basic usage
 # ===========================================================================
 model <- "

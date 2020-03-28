@@ -86,7 +86,7 @@ a saturated model, i.e., a model in which all constructs are allowed to correlat
 This is useful to test misspecification of the measurement model in isolation.
 }
 \examples{
-\dontrun{# ===========================================================================
+\donttest{# ===========================================================================
 # Basic usage
 # ===========================================================================
 model <- "
