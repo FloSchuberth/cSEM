@@ -273,12 +273,12 @@ testMICOM <- function(
     
     padjusted_step2 <- lapply(as.list(.approach_p_adjust), function(x){
       # Select p_values per composite and only adjust those
-      temp <- purrr:::transpose(pvalue_step2)
+      temp <- purrr::transpose(pvalue_step2)
       temp1 <- lapply(temp,function(comp){
         stats::p.adjust(unlist(comp),method = x)
       })
       # sort them back
-      lapply(purrr:::transpose(temp1),unlist)
+      lapply(purrr::transpose(temp1),unlist)
     })
     names(padjusted_step2) <- .approach_p_adjust
 
@@ -381,13 +381,13 @@ testMICOM <- function(
     # Adjust p-values: Correct pvalues by the number of groups
     padjusted_mean <- lapply(as.list(.approach_p_adjust), function(x){
       # Select p_values per composite and only adjust those
-      temp <- purrr:::transpose(pvalue_mean)
+      temp <- purrr::transpose(pvalue_mean)
       # pAdjust needs to now how many p-values there are to do a proper adjustment
       temp1 <- lapply(temp,function(comp){
         stats::p.adjust(unlist(comp),method = x)
       })
       # sort them back
-      lapply(purrr:::transpose(temp1),unlist)
+      lapply(purrr::transpose(temp1),unlist)
     })
     names(padjusted_mean) <- .approach_p_adjust
     
@@ -422,13 +422,13 @@ testMICOM <- function(
     # Adjust p-values, e.g., Bonferroni: Multiply all p-values by the number of comparisons
     padjusted_var <- lapply(as.list(.approach_p_adjust), function(x){
       # Select p_values per composite and only adjust those
-      temp <- purrr:::transpose(pvalue_var)
+      temp <- purrr::transpose(pvalue_var)
       # pAdjust needs to now how many p-values there are to do a proper adjustment
       temp1 <- lapply(temp,function(comp){
         stats::p.adjust(unlist(comp),method = x)
       })
       # sort them back
-      lapply(purrr:::transpose(temp1),unlist)
+      lapply(purrr::transpose(temp1),unlist)
     })
     
     names(padjusted_var) <- .approach_p_adjust

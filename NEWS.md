@@ -1,6 +1,10 @@
 # cSEM 0.1.0:9000
 
-- `print.cSEMTestMICOM()` no longer prints the decision.
+- Using `.approach_weights = "GSCA"` for models containing nonlinear terms
+  gives a more meaningful error message. (#342)
+  
+- `print.cSEMTestMICOM()` no longer prints the decision but additional bootstrap
+  information. (in parts: #339)
 
 - `testMICOM()` gains a `.approach_p_adjust` argument. The argument takes a
   single character string or a vector of character strings naming the p-value
