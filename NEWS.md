@@ -5,7 +5,23 @@
 - `testMICOM()` gains a `.approach_p_adjust` argument. The argument takes a
   single character string or a vector of character strings naming the p-value
   adjustment for multiple comparisons. (#138)
+
+- Bug fix: dissatenuation is longer applied to constructs using modes other than 
+  modeA or modeB (#352) 
   
+- `assess()` now supports all of cSEM's native classes (#323)
+
+- `calculateVIFModeB()` and is now exported and supports all of cSEM's
+  `cSEMResults` classes. (#357)
+
+- `calculateRhoT()` and `calculateRhoC()` are now exported and support all of cSEM's
+  `cSEMResults` classes. (#357)
+  
+- `calculateGoF()` is now exported and supports all of cSEM's `cSEMResults` classes.
+  Breaking: the `.only_common_factors` argument has been removed. (#357)
+
+- `calculateAVE()` is now exported and supports all of cSEM's `cSEMResults` classes. (#357)
+
 - Bug fix: model-implied indicator correlation matrix for non-recursive models
   should now be calculated correctly. (#264)
   

@@ -1,20 +1,19 @@
 #' Tests for multi-group comparisons
 #'
-#' This function performs several permutation tests, i.e., the reference distribution 
-#' of the test statistic is obtained by permutation.
-#' 
+#' This function performs various tests proposed in the context of multigroup analysis.
+#'  
 #' The following tests are implemented:
 #' \describe{
-#' \item{`.approach_mgd="Klesel"`: Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
+#' \item{`.approach_mgd = "Klesel"`: Approach suggested by \insertCite{Klesel2019;textual}{cSEM}}{
 #'   The model-implied variance-covariance matrix (either indicator 
 #'   (`.type_vcv = "indicator"`) or construct (`.type_vcv = "construct"`)) 
-#'   is compared across groups. 
-#' 
+#'   is compared across groups. If the model-implied indicator or construct correlation 
+#'   matrix based on a saturated structural model should be compared, set `.saturated = TRUE`.
 #'   To measure the distance between the model-implied variance-covariance matrices, 
 #'   the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
 #'   If more than two groups are compared, the average distance over all groups
 #'   is used.}
-#' \item{`.approach_mgd="Sarstedt"`: Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
+#' \item{`.approach_mgd = "Sarstedt"`: Approach suggested by \insertCite{Sarstedt2011;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Sarstedt2011;textual}{cSEM} tests if parameter k is equal
 #'   across all groups. If several parameters are tested simultaneously  
@@ -23,9 +22,8 @@
 #'   no multiple testing correction is done, however, several common
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details. Note: the 
-#'   test has some severe shortcomings. Use with caution.
-#' }
-#' \item{`.approach_mgd="Chin"`: Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
+#'   test has some severe shortcomings. Use with caution.}
+#' \item{`.approach_mgd = "Chin"`: Approach suggested by \insertCite{Chin2010;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Chin2010;textual}{cSEM} tests if parameter k is equal
 #'   between two groups. If more than two groups are tested for equality, parameter 
@@ -36,9 +34,8 @@
 #'   and number of parameters. By default
 #'   no multiple testing correction is done, however, several common
 #'   adjustments are available via `.approach_p_adjust`. See 
-#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
-#' }
-#' \item{`.approach_mgd="Keil"`: Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
+#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.}
+#' \item{`.approach_mgd = "Keil"`: Approach suggested by \insertCite{Keil2000;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   \insertCite{Keil2000;textual}{cSEM} tests if parameter k is equal
 #'   between two groups. It is assumed, that the standard errors of the coefficients are 
@@ -52,9 +49,8 @@
 #'   is by group and number of parameters. By default
 #'   no multiple testing correction is done, however, several common
 #'   adjustments are available via `.approach_p_adjust`. See 
-#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
-#' }
-#' \item{`.approach_mgd="Nitzl"`: Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
+#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.}
+#' \item{`.approach_mgd = "Nitzl"`: Approach suggested by \insertCite{Nitzl2010;textual}{cSEM}}{
 #'   Groups are compared in terms of parameter differences across groups.
 #'   Similarly to \insertCite{Keil2000;textual}{cSEM}, a single parameter k is tested
 #'   for equality between two groups. In contrast to \insertCite{Keil2000;textual}{cSEM},
@@ -68,24 +64,18 @@
 #'   is by group and number of parameters. By default
 #'   no multiple testing correction is done, however, several common
 #'   adjustments are available via `.approach_p_adjust`. See 
-#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.
-#' }
-#' \item{`.approach_mgd="CI_param"`: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
+#'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.}
+#' \item{`.approach_mgd = "CI_param"`: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
 #'   This approach is based on the confidence intervals constructed around the 
 #'   parameter estimates of the two groups. If the parameter of one group falls within 
 #'   the confidence interval of the other group and/or vice versa, it can be concluded 
 #'   that there is no group difference.   
-#'   Since it is based on the confidence intervals `.approach_p_adjust` is ignored.
-#' } 
-#' 
-#' \item{`.approach_mgd="CI_overlap"`: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
+#'   Since it is based on the confidence intervals `.approach_p_adjust` is ignored.} 
+#' \item{`.approach_mgd = "CI_overlap"`: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
 #'   This approach is based on the confidence intervals (CIs) constructed around the 
 #'   parameter estimates of the two groups. If the two CIs overlap, it can be concluded 
 #'   that there is no group difference.   
-#'   Since it is based on the confidence intervals `.approach_p_adjust` is ignored.
-#' } 
-#' 
-#' 
+#'   Since it is based on the confidence intervals `.approach_p_adjust` is ignored.} 
 #' }
 #' 
 #' Use `.approach_mgd` to choose the approach. By default all approaches are computed
@@ -120,7 +110,7 @@
 #' "
 #' }
 #' Note that the "model" provided to `.parameters_to_compare`
-#' does not have to be an estimable model! 
+#' does not need to be an estimable model! 
 #' 
 #' Note also that compared to all other functions in \pkg{cSEM} using the argument,
 #'  `.handle_inadmissibles` defaults to `"replace"` to accomdate the Sarstedt et al. (2011) approach.
@@ -163,10 +153,6 @@
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions. 
 #'   Defaults to "*replace*" to accommodate all approaches.
 #'   
-#'  @param .type_ci Character string. Which confidence intervals should be used for 
-#'  the approach `"CI_overlap"` and `"CI_para"`. For possible choices, see the 
-#'  `.quantity` argument of the \code{\link{infer}} function. Defaults to "*CI_percentile*".
-#'   
 #' @return A list of class `cSEMTestMGD`. Technically, `cSEMTestMGD` is a 
 #'   named list containing the following list elements:
 #'
@@ -178,6 +164,8 @@
 #'   \item{`$Keil`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
 #'   \item{`$Nitzl`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
 #'   \item{`$Henseler`}{A list with elements, `Test_statistic`, `P_value`, `Decision`, and `Decision_overall`}
+#'   \item{`$CI_para`}{A list with elements,  `Decision`, and `Decision_overall`}
+#'   \item{`$CI_overlap`}{A list with elements,  `Decision`, and `Decision_overall`}
 #' }
 #' @references
 #'   \insertAllCited{}
@@ -693,7 +681,7 @@ testMGD <- function(
   teststat_Klesel <- teststat$Klesel
   
   # Calculation of p-values
-  pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel > teststat_Klesel)
+  pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel >= teststat_Klesel)
   
   # Decision 
   # TRUE = p-value > alpha --> not reject
@@ -728,9 +716,9 @@ testMGD <- function(
     # Calculation of the p-values
     pvalue_Chin <- lapply(1:length(ref_dist_matrices_Chin), function(x) {
       # Share of values above the positive test statistic
-      rowMeans(ref_dist_matrices_Chin[[x]] > abs(teststat_Chin[[x]])) +
+      rowMeans(ref_dist_matrices_Chin[[x]] >= abs(teststat_Chin[[x]])) +
         # share of values of the reference distribution below the negative test statistic 
-        rowMeans(ref_dist_matrices_Chin[[x]] < (-abs(teststat_Chin[[x]])))
+        rowMeans(ref_dist_matrices_Chin[[x]] <= (-abs(teststat_Chin[[x]])))
     })
     
     names(pvalue_Chin) <- names(ref_dist_matrices_Chin)
@@ -780,7 +768,7 @@ testMGD <- function(
     ref_dist_matrix_Sarstedt <- do.call(cbind, ref_dist_Sarstedt)
     
     # Calculation of the p-value
-    pvalue_Sarstedt <- rowMeans(ref_dist_matrix_Sarstedt > teststat_Sarstedt)
+    pvalue_Sarstedt <- rowMeans(ref_dist_matrix_Sarstedt >= teststat_Sarstedt)
     
     # Adjust pvalues:
     padjusted_Sarstedt<- lapply(as.list(.approach_p_adjust), function(x){
@@ -1016,10 +1004,10 @@ testMGD <- function(
                     # => no group difference
                     # Otherwise, FALSE => group difference
                       decision<-
-                        (lb_temp2 < temp_para1 & 
-                           ub_temp2 > temp_para1) |
-                        (lb_temp1 < temp_para2 & 
-                           ub_temp1 > temp_para2)
+                        (lb_temp2 <= temp_para1 & 
+                           ub_temp2 >= temp_para1) |
+                        (lb_temp1 <= temp_para2 & 
+                           ub_temp1 >= temp_para2)
 
                       # Structure output
                       out=data.frame("Estimate"=temp_para1,"lb"=lb_temp2,
@@ -1106,10 +1094,10 @@ testMGD <- function(
                 
                 # Check whether the boundaries of the CI of the first group fall
                 # within the boundaries of the second group
-                decision <- (lb2 < lb1 & lb1 < ub2) | 
-                  (lb2 < ub1 & ub1 < ub2) | 
-                  (lb1<lb2 & ub1>ub2) | 
-                  (lb2<lb1 & ub2>ub1)
+                decision <- (lb2 <= lb1 & lb1 <= ub2) | 
+                  (lb2 <= ub1 & ub1 <= ub2) | 
+                  (lb1<=lb2 & ub1>=ub2) | 
+                  (lb2<=lb1 & ub2>=ub1)
 
                 # Structure output
                 out <- data.frame(lb1,ub1,lb2,ub2,decision)
@@ -1297,7 +1285,6 @@ testMGD <- function(
   # Information CI_param
   if(any(.approach_mgd %in% c("all", "CI_para"))) {
     out[["CI_para"]] <- list(
-      "Test_statistic"     = NA,
       "Decision"           = decision_ci_para,
       "Decision_overall"   = decision_overall_ci_para
     )
@@ -1306,7 +1293,6 @@ testMGD <- function(
   # Information CI_param
   if(any(.approach_mgd %in% c("all", "CI_overlap"))) {
     out[["CI_overlap"]] <- list(
-      "Test_statistic"     = NA,
       "Decision"           = decision_ci_overlap,
       "Decision_overall"   = decision_overall_ci_overlap
     )

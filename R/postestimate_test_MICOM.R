@@ -297,12 +297,7 @@ testMICOM <- function(
       temp
     })
     # TRUE do not reject; FALSE: reject
-    ## Decision
-    # decision <- mapply(function(x, y) x > y, # dont reject (TRUE) if the value of 
-    #                    x = c,                # the teststat is larger than the critical value
-    #                    y = critical_values_step2,
-    #                    SIMPLIFY = FALSE)
-    
+
     ### Step 3 - Equal mean values and variances==================================
     # Update arguments
     arguments[[".data"]] <- X

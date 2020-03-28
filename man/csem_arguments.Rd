@@ -42,7 +42,7 @@ structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
 \item{.approach_p_adjust}{Character string or a vector of character strings.
-Approach used to adjust the p-value in multiple testing.
+Approach used to adjust the p-value for multiple testing.
 See the \code{methods} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
 their description. Defaults to "\emph{none}".}
 
@@ -194,11 +194,6 @@ If the algorithm exceeds the specified number, weights of iteration step
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
 
-\item{.model_implied}{Logical. Should the RMS_theta be computed using the
-model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix
-based on V(eta) = WSW' divided by the square root of the respective
-reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
-
 \item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
@@ -233,8 +228,8 @@ Defaults to \code{TRUE}.}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
 parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or correlations (\verb{~~})) should be
-compared across groups. Defaults to \code{NULL} in which case all parameters of the
-originally specified model are compared.}
+compared across groups. Defaults to \code{NULL} in which case all weights, loadings and
+path coefficients of the originally specified model are compared.}
 
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
@@ -351,8 +346,9 @@ training data.}
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 
-\item{.type_ci}{Character string. Which confidence intervall should be calculated?
-Currently used in the testMGD function.}
+\item{.type_ci}{Character string. It indicates which confidence interval should be calculated.
+For possible choices, see the \code{.quantity} argument of the \code{\link{infer}} function.
+In the test_mgd function default is to "\emph{CI_percentile}".}
 
 \item{.type}{Character string. Which fitting function should the GFI be based
 on? One of \emph{"ML"} for the maximum likelihood fitting function or \emph{"ULS"} for the

@@ -6,32 +6,32 @@
 \usage{
 assess(
   .object              = NULL, 
-  .only_common_factors = TRUE, 
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
                           "effects", "f2", "chi_square", "chi_square_df",
                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
                           "reliability", 
-                          "rmsea", "rms_theta", "rms_theta_mi", "srmr",
+                          "rmsea", "rms_theta", "srmr",
                           "gof", "htmt", "r2", "r2_adj",
                           "rho_T", "rho_T_weighted", "vif", 
                           "vifmodeB",  "fl_criterion"),
+  .only_common_factors = TRUE, 
   ...
 )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.only_common_factors}{Logical. Should only concepts modeled as common
-factors be included when calculating one of the following quality critera:
-AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
-Defaults to \code{TRUE}.}
-
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
 the Details section for a list of possible candidates.
 Defaults to "\emph{all}" in which case all possible quality criteria are computed.}
+
+\item{.only_common_factors}{Logical. Should only concepts modeled as common
+factors be included when calculating one of the following quality critera:
+AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
+Defaults to \code{TRUE}.}
 
 \item{...}{Further arguments passed to functions called by \code{\link[=assess]{assess()}}.
 See \link{args_assess_dotdotdot} for a complete list of available arguments.}
@@ -136,7 +136,7 @@ original structural model regression equation (R2_included) and the
 alternative specification with the k'th variable dropped (R2_excluded).
 Calculation is done by \code{\link[=calculatef2]{calculatef2()}}.}
 \item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi",
-"nnfi",  "rmsea", "rms_theta", "rms_theta_mi", "srmr"}{
+"nnfi",  "rmsea", "rms_theta", "srmr"}{
 Several absolute and incremental fit indices. Note that their suitability
 for models containing constructs modeled as composites is still an
 open research question. Also note that fit indices are not tests in a
@@ -233,8 +233,8 @@ factor model (see the
 article for details).
 It is possible to force computation of all quality criteria for constructs
 modeled as composites by setting \code{.only_common_factors = FALSE}, however,
-we explicitly warn to interpret quality criteria in this case with caution,
-as they may not even have a conceptual meaning.
+we explicitly warn to interpret quality criteria in analogy to the common factor
+model in this case, as the interpretation often does not carry over to composite models.
 
 \subsection{Resampling}{
 To resample a given quality criterion supply the name of the function

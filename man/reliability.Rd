@@ -4,22 +4,22 @@
 \alias{reliability}
 \alias{calculateRhoC}
 \alias{calculateRhoT}
-\title{Internal: Reliability}
+\title{Reliability}
 \usage{
 calculateRhoC(
   .object = NULL,
   .model_implied = TRUE,
   .only_common_factors = TRUE,
-  .weighted = args_default()$.weighted
+  .weighted = FALSE
 )
 
 calculateRhoT(
   .object = NULL,
-  .alpha = args_default()$.alpha,
-  .closed_form_ci = args_default()$.closed_form_ci,
+  .alpha = 0.05,
+  .closed_form_ci = FALSE,
   .only_common_factors = TRUE,
   .output_type = c("vector", "data.frame"),
-  .weighted = args_default()$.weighted,
+  .weighted = FALSE,
   ...
 )
 }
@@ -81,9 +81,6 @@ For the tau-equivalent reliability ("\code{rho_T}" or "\code{cronbachs_alpha}") 
 confidence interval may be computed \insertCite{Trinchera2018}{cSEM} by setting
 \code{.closed_form_ci = TRUE} (default is \code{FALSE}). If \code{.alpha} is a vector
 several CI's are returned.
-
-The function is only applicable to objects inheriting class \code{cSEMResults_default}.
-For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
 }
 \section{Functions}{
 \itemize{
@@ -98,4 +95,3 @@ For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} us
 \seealso{
 \code{\link[=assess]{assess()}}, \link{cSEMResults}
 }
-\keyword{internal}

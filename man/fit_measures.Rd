@@ -30,7 +30,7 @@ calculateNNFI(.object)
 
 calculateRMSEA(.object)
 
-calculateRMSTheta(.object, .model_implied = FALSE)
+calculateRMSTheta(.object)
 
 calculateSRMR(
   .object = NULL,
@@ -47,11 +47,6 @@ calculateSRMR(
 on? One of \emph{"ML"} for the maximum likelihood fitting function or \emph{"ULS"} for the
 unweighted least squares fitting function (same as the squared Euclidian distance).
 Defaults to \emph{"ML"}.}
-
-\item{.model_implied}{Logical. Should the RMS_theta be computed using the
-model-implied construct correlation matrix (\code{TRUE}) or the construct correlation matrix
-based on V(eta) = WSW' divided by the square root of the respective
-reliabilities (\code{FALSE}). Defaults to \code{FALSE}.}
 
 \item{.matrix1}{A \code{matrix} to compare.}
 
