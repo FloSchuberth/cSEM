@@ -149,7 +149,7 @@ res2 <- csem(Anime, # whole data set
 )
 
 # Predict using 10-fold cross-validation with 5 repetitions
-\donttest{
+\dontrun{
 pp2 <- predict(res, .benchmark = "lm")
 pp2
 ## There is a plot method available
