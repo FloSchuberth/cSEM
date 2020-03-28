@@ -681,7 +681,7 @@ testMGD <- function(
   teststat_Klesel <- teststat$Klesel
   
   # Calculation of p-values
-  pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel > teststat_Klesel)
+  pvalue_Klesel <- rowMeans(ref_dist_matrix_Klesel >= teststat_Klesel)
   
   # Decision 
   # TRUE = p-value > alpha --> not reject
@@ -716,9 +716,9 @@ testMGD <- function(
     # Calculation of the p-values
     pvalue_Chin <- lapply(1:length(ref_dist_matrices_Chin), function(x) {
       # Share of values above the positive test statistic
-      rowMeans(ref_dist_matrices_Chin[[x]] > abs(teststat_Chin[[x]])) +
+      rowMeans(ref_dist_matrices_Chin[[x]] >= abs(teststat_Chin[[x]])) +
         # share of values of the reference distribution below the negative test statistic 
-        rowMeans(ref_dist_matrices_Chin[[x]] < (-abs(teststat_Chin[[x]])))
+        rowMeans(ref_dist_matrices_Chin[[x]] <= (-abs(teststat_Chin[[x]])))
     })
     
     names(pvalue_Chin) <- names(ref_dist_matrices_Chin)
@@ -768,7 +768,7 @@ testMGD <- function(
     ref_dist_matrix_Sarstedt <- do.call(cbind, ref_dist_Sarstedt)
     
     # Calculation of the p-value
-    pvalue_Sarstedt <- rowMeans(ref_dist_matrix_Sarstedt > teststat_Sarstedt)
+    pvalue_Sarstedt <- rowMeans(ref_dist_matrix_Sarstedt >= teststat_Sarstedt)
     
     # Adjust pvalues:
     padjusted_Sarstedt<- lapply(as.list(.approach_p_adjust), function(x){
@@ -1004,10 +1004,10 @@ testMGD <- function(
                     # => no group difference
                     # Otherwise, FALSE => group difference
                       decision<-
-                        (lb_temp2 < temp_para1 & 
-                           ub_temp2 > temp_para1) |
-                        (lb_temp1 < temp_para2 & 
-                           ub_temp1 > temp_para2)
+                        (lb_temp2 <= temp_para1 & 
+                           ub_temp2 >= temp_para1) |
+                        (lb_temp1 <= temp_para2 & 
+                           ub_temp1 >= temp_para2)
 
                       # Structure output
                       out=data.frame("Estimate"=temp_para1,"lb"=lb_temp2,
@@ -1094,10 +1094,10 @@ testMGD <- function(
                 
                 # Check whether the boundaries of the CI of the first group fall
                 # within the boundaries of the second group
-                decision <- (lb2 < lb1 & lb1 < ub2) | 
-                  (lb2 < ub1 & ub1 < ub2) | 
-                  (lb1<lb2 & ub1>ub2) | 
-                  (lb2<lb1 & ub2>ub1)
+                decision <- (lb2 <= lb1 & lb1 <= ub2) | 
+                  (lb2 <= ub1 & ub1 <= ub2) | 
+                  (lb1<=lb2 & ub1>=ub2) | 
+                  (lb2<=lb1 & ub2>=ub1)
 
                 # Structure output
                 out <- data.frame(lb1,ub1,lb2,ub2,decision)
