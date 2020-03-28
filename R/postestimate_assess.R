@@ -400,51 +400,61 @@ assess <- function(
     # Effect size
     out[["SRMR"]] <- calculateSRMR(.object, ...)
   }
-  if(any(.quality_criterion %in% c("all", "fl_criterion")) && 
-     inherits(.object, "cSEMResults_default")) {
-    # Fornell-Larcker
-    ## Get relevant objects
-    con_types <-.object$Information$Model$construct_type
-    names_cf  <- names(con_types[con_types == "Common factor"])
-    P         <- .object$Estimates$Construct_VCV
-    
-    if(.only_common_factors) {
-      P <- P[names_cf, names_cf]
+  if(any(.quality_criterion %in% c("all", "fl_criterion"))) {
+    if(inherits(.object, "cSEMResults_default")) {
+      # Fornell-Larcker
+      ## Get relevant objects
+      con_types <-.object$Information$Model$construct_type
+      names_cf  <- names(con_types[con_types == "Common factor"])
+      P         <- .object$Estimates$Construct_VCV
+      
+      if(.only_common_factors) {
+        P <- P[names_cf, names_cf]
+      }
+      
+      if(sum(dim(P)) > 0) {
+        FL_matrix <- cov2cor(P)^2
+        diag(FL_matrix) <- calculateAVE(.object, 
+                                        .only_common_factors = .only_common_factors)
+        out[["Fornell-Larcker"]] <- FL_matrix
+      } 
+
+    } else { # 2nd order
+      warning("Computation of the Fornell-Larcker criterion",
+              " not supported for models containing second-order constructs:\n",
+              "Argument 'fl_criterion' is ignored.", call. = FALSE)
     }
-    
-    if(sum(dim(P)) > 0) {
-      FL_matrix <- cov2cor(P)^2
-      diag(FL_matrix) <- calculateAVE(.object, 
-                                      .only_common_factors = .only_common_factors)
-      out[["Fornell-Larcker"]] <- FL_matrix
-    }
-    
     
   }
   if(any(.quality_criterion %in% c("all", "gof")) && !all(x22$Model$structural == 0)) {
     # GoF
     out[["GoF"]]   <- calculateGoF(.object)
   }
-  if(any(.quality_criterion %in% c("all", "htmt")) && 
-     inherits(.object, "cSEMResults_default")) {
+  if(any(.quality_criterion %in% c("all", "htmt"))) {
     # HTMT 
-    out[["HTMT"]]  <- calculateHTMT(
-      .object,
-      .only_common_factors  = .only_common_factors,
-      ...
-    )
-    # Get value of argument .p
-    args_htmt <- list(...)
-    if(any(names(args_htmt) == ".inference")) {
-      out$Information[[".inference"]] <- args_htmt[[".inference"]]
-    } else {
-      out$Information[[".inference"]] <- formals(calculateHTMT)[[".inference"]]
-    }
-    
-    if(any(names(args_htmt) == ".alpha")) {
-      out$Information[[".alpha"]] <- args_htmt[[".alpha"]]
-    } else {
-      out$Information[[".alpha"]] <- formals(calculateHTMT)[[".alpha"]]
+    if(inherits(.object, "cSEMResults_default")) {
+      out[["HTMT"]]  <- calculateHTMT(
+        .object,
+        .only_common_factors  = .only_common_factors,
+        ...
+      )
+      # Get value of argument .p
+      args_htmt <- list(...)
+      if(any(names(args_htmt) == ".inference")) {
+        out$Information[[".inference"]] <- args_htmt[[".inference"]]
+      } else {
+        out$Information[[".inference"]] <- formals(calculateHTMT)[[".inference"]]
+      }
+      
+      if(any(names(args_htmt) == ".alpha")) {
+        out$Information[[".alpha"]] <- args_htmt[[".alpha"]]
+      } else {
+        out$Information[[".alpha"]] <- formals(calculateHTMT)[[".alpha"]]
+      } 
+    } else { # 2nd_order
+      warning("Computation of the HTMT",
+              " not supported for models containing second-order constructs:\n",
+              "Argument 'htmt' is ignored.", call. = FALSE) 
     }
   }
   if(any(.quality_criterion %in% c("all", "r2")) && !all(x22$Model$structural == 0)) {
