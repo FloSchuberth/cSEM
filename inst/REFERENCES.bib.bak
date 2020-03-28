@@ -2,22 +2,12 @@
 
 @Article{Dijkstra2014,
   author    = {Dijkstra, Theo K. and Schermelleh-Engel, Karin},
-  title     = {Consistent Partial Least Squares For Nonlinear Structural Equation Models},
   journal   = {Psychometrika},
+  title     = {Consistent Partial Least Squares For Nonlinear Structural Equation Models},
   year      = {2014},
-  volume    = {79},
   number    = {4},
   pages     = {585--604},
-  comment   = {Partial Least Squares as applied to models with latent variables, measured indirectly by indicators,
-is well-known to be inconsistent. The linear compounds of indicators that PLS substitutes for the latent
-variables do not obey the equations that the latter satisfy. We propose simple, non-iterative corrections
-leading to consistent and asymptotically normal (CAN)-estimators for the loadings and for the correlations
-between the latent variables. Moreover, we show how to obtain CAN-estimators for the parameters of
-structural recursive systems of equations, containing linear and interaction terms, without the need to
-specify a particular joint distribution. If quadratic and higher order terms are included, the approach will
-produce CAN-estimators as well when predictor variables and error terms are jointly normal.We compare
-the adjusted PLS, denoted by PLSc, with Latent Moderated Structural Equations (LMS), using Monte
-Carlo studies and an empirical application.},
+  volume    = {79},
   file      = {:Papers/SEM/Dijkstra2014.pdf:PDF},
   keywords  = {consistent partial least squares, latent moderated structural equations, nonlinear structural equation model, interaction effect, quadratic effect},
   owner     = {fls44rr},
