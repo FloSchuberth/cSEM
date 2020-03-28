@@ -37,9 +37,6 @@ Based on a nonlinear model, the dependent variable of a certain equation is
 predicted by a certain independent variable and a certain second variable (moderator)
 including their higher-order terms.
 }
-\references{
-\insertAllCited{}
-}
 \seealso{
 \code{\link[=csem]{csem()}}, \link{cSEMResults}, \code{\link[=plot.cSEMSurface]{plot.cSEMSurface()}}
 }

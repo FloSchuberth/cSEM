@@ -6,7 +6,6 @@
 \usage{
 assess(
   .object              = NULL, 
-  .only_common_factors = TRUE, 
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "cronbachs_alpha", 
                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
@@ -17,21 +16,22 @@ assess(
                           "gof", "htmt", "r2", "r2_adj",
                           "rho_T", "rho_T_weighted", "vif", 
                           "vifmodeB",  "fl_criterion"),
+  .only_common_factors = TRUE, 
   ...
 )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.only_common_factors}{Logical. Should only concepts modeled as common
-factors be included when calculating one of the following quality critera:
-AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
-Defaults to \code{TRUE}.}
-
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
 the Details section for a list of possible candidates.
 Defaults to "\emph{all}" in which case all possible quality criteria are computed.}
+
+\item{.only_common_factors}{Logical. Should only concepts modeled as common
+factors be included when calculating one of the following quality critera:
+AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
+Defaults to \code{TRUE}.}
 
 \item{...}{Further arguments passed to functions called by \code{\link[=assess]{assess()}}.
 See \link{args_assess_dotdotdot} for a complete list of available arguments.}
