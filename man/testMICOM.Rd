@@ -21,7 +21,7 @@ testMICOM(
 Defaults to \code{0.05}.}
 
 \item{.approach_p_adjust}{Character string or a vector of character strings.
-Approach used to adjust the p-value in multiple testing.
+Approach used to adjust the p-value for multiple testing.
 See the \code{methods} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
 their description. Defaults to "\emph{none}".}
 
