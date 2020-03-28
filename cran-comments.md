@@ -1,8 +1,8 @@
-## Resubmission
+## Notes
 
-This is the third resubmission. Compared to the last resubmission I have:
-
-* removed the LISENCE file and its reference in the DESCRIPTION file
+- This is version 0.2.0 including bug fixes and several major and minor
+  changes to the package
+- fixed issue related to broken \donttest examples
 
 ## Test environments
 
