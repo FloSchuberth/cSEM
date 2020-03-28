@@ -27,7 +27,11 @@ print.cSEMTestMGD <- function(
     approach_all <- TRUE
     info$Approach <- approaches
   } else {
+    approach_all <- FALSE
     info$Approach <- info$Approach[match(info$Approach, intersect(approaches, info$Approach))]
+    if(approach_mgd_to_display == "none") {
+      approach_mgd_to_display <- info$Approach
+    }
   }
   ## Additional information ----------------------------------------------------
   cat2(
@@ -55,7 +59,7 @@ print.cSEMTestMGD <- function(
     )
   }
   
-  ## Overall descision only for Sarstedt, Chin and Keil
+  ## Overall decision only for Sarstedt, Chin, Keil, Nitzl
   approach <- intersect(info$Approach, c("Sarstedt", "Chin", "Keil", "Nitzl"))
   if(length(approach) > 0) {
     cat2("\n\n\tOverall decision (based on alpha = ", paste0(info$Alpha[1] * 100, "%):"))
@@ -81,7 +85,7 @@ print.cSEMTestMGD <- function(
   
   cat2("\n")
   
-  if(approach_all && approach_mgd_to_display == "none") {
+  if(approach_all && any(approach_mgd_to_display == "none")) {
     cat2(
       "\n\tFor details on a particular approach type:\n",
       "\n\t\t- `print(<object-name>, .approach_mgd = '<approach-name>')`",
@@ -100,7 +104,7 @@ print.cSEMTestMGD <- function(
     }
     
     ## Klesel et al. (2019) ====================================================
-    if(approach_mgd_to_display == "Klesel") {
+    if(any(approach_mgd_to_display == "Klesel")) {
       xk <- x$Klesel
       
       cat2(
@@ -148,7 +152,7 @@ print.cSEMTestMGD <- function(
     }
     
     ## Sarstedt et al. (2011) ==================================================
-    if(approach_mgd_to_display == "Sarstedt") {
+    if(any(approach_mgd_to_display == "Sarstedt")) {
       xs <- x$Sarstedt
       
       cat2(
@@ -205,30 +209,32 @@ print.cSEMTestMGD <- function(
     }
     
     ## Chin & Dibbern (2010) ===================================================
-    if(approach_mgd_to_display == "Chin") {
+    if(any(approach_mgd_to_display == "Chin")) {
       printTestMGDResults(.x = x, .approach = "Chin", .info = info)
     }
     
     ## Keil et. al (2000)=======================================================
-    if(approach_mgd_to_display == "Keil") {
+    if(any(approach_mgd_to_display == "Keil")) {
       printTestMGDResults(.x = x, .approach = "Keil", .info = info)
     }
     
     ## Nitzl (2010) ============================================================
-    if(approach_mgd_to_display == "Nitzl") {
+    if(any(approach_mgd_to_display == "Nitzl")) {
       printTestMGDResults(.x = x, .approach = "Nitzl", .info = info)
     }
     
     ## Henseler (2009) =========================================================
-    if(approach_mgd_to_display == "Henseler") {
+    if(any(approach_mgd_to_display == "Henseler")) {
       printTestMGDResults(.x = x, .approach = "Henseler", .info = info)
     }    
+    
     ## CI_para =================================================================
-    if(approach_mgd_to_display == "CI_para") {
+    if(any(approach_mgd_to_display == "CI_para")) {
       printTestMGDResults(.x = x, .approach = "CI_para", .info = info)
     } 
+    
     ## CI_overlap ==============================================================
-    if(approach_mgd_to_display == "CI_overlap") {
+    if(any(approach_mgd_to_display == "CI_overlap")) {
       printTestMGDResults(.x = x, .approach = "CI_overlap", .info = info)
     } 
   }
