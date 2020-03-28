@@ -277,7 +277,7 @@ assess <- function(
   }
   
   if(x22$Model$model_type != "Linear") {
-    stop2("Currently, `assess()` does not support modeled containing nonlinear terms.",
+    stop2("Currently, `assess()` does not support models containing nonlinear terms.",
           "Use the individual `calculateXXX()` functions instead.")
   }
   ## Set up empty list
