@@ -39,13 +39,44 @@ print.cSEMTestMGD <- function(
     rule2("Overview")
   )
   cat2(
-    col_align("\n\n\tTotal runs (permutation)", width = 37), "= ", info$Information_permutation$Total_runs,
-    col_align("\n\tAdmissible results (permutation)", width = 36), "= ", info$Information_permutation$Number_admissibles,
-    col_align("\n\tPermutation seed", width = 36), "= ", info$Information_permutation$Permutation_seed,
-    "\n\n\tNumber of observations per group:"
+    col_align("\n\n\tTotal permutation runs", width = 37), "= ", 
+    info$Information_permutation$Total_runs,
+    col_align("\n\tAdmissible permutation results", width = 36), "= ", 
+    info$Information_permutation$Number_admissibles,
+    col_align("\n\tPermutation seed", width = 36), "= ", 
+    info$Information_permutation$Permutation_seed,
+    col_align("\n\n\tTotal bootstrap runs", width = 37), "= ", 
+    info$Information_bootstrap$Total_runs[[1]],
+    "\n\tAdmissible bootstrap results:"
   )
-  
   l <- max(nchar(c(info$Group_names, "Group")))
+  
+  cat2("\n\n\t",
+       col_align("Group", width = l + 6),
+       col_align("Admissibles", width = 14, align = "center")
+  )
+  for(i in seq_along(info$Information_bootstrap$Number_admissibles)) {
+    cat2(
+      "\n\t",
+      col_align(info$Group_names[i], width = l + 6), 
+      col_align(info$Information_bootstrap$Number_admissibles[i], 
+                width = 14, align = "center")
+    )
+  }
+  cat2("\n\n\tBootstrap seed:",
+       "\n\n\t",
+       col_align("Group", width = l + 6),
+       col_align("Seed", width = 14, align = "center")
+  )
+  for(i in seq_along(info$Information_bootstrap$Bootstrap_seed)) {
+    cat2(
+      "\n\t",
+      col_align(info$Group_names[i], width = l + 6), 
+      col_align(info$Information_bootstrap$Bootstrap_seed[i], 
+                width = 14, align = "right")
+    )
+  }
+  cat2("\n\n\tNumber of observations per group:")
   
   cat2("\n\n\t",
        col_align("Group", width = l + 6),

@@ -1211,6 +1211,13 @@ testMGD <- function(
       "Bootstrap_seed"        = info_boot$Bootstrap_seed,
       "Handle_inadmissibles"  = info_boot$Handle_inadmissibles
     ) 
+  } else {
+    out[["Information"]][["Information_bootstrap"]] <- list(
+      "Number_admissibles"    = NA, 
+      "Total_runs"            = NA,
+      "Bootstrap_seed"        = NA,
+      "Handle_inadmissibles"  = NA
+    )
   }
    
   # Information for Klesel et al. approach
