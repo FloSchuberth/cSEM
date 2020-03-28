@@ -23,12 +23,13 @@ for demonstration purposes (Tutorial 12).
 #============================================================================
 # Example is taken from Henseler (2020)
 #============================================================================
-model_Int="
+model_Int <-"
 # Measurement models
 INV =~ INV1 + INV2 + INV3 +INV4
-SAT=~ SAT1 + SAT2 + SAT3
+SAT =~ SAT1 + SAT2 + SAT3
 INT =~ INT1 + INT2
-# Structrual model containing an interaction term.
+
+# Structural model containing an interaction term.
 INT ~ INV + SAT + INV.SAT
 "
 

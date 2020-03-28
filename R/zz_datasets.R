@@ -137,7 +137,7 @@
 #' a <- csem(threecommonfactors, model_correct)
 #' 
 #' ## The overall model fit is evidently almost perfect:
-#' testOMF(a, .R = 50, .verbose = FALSE) # .R = 50 to speed up the example
+#' testOMF(a, .R = 30, .verbose = FALSE) # .R = 30 to speed up the example
 "threecommonfactors"
 
 #' Data: Second order common factor of composites
@@ -244,9 +244,11 @@
 
 #' Data: Russett
 #'
-#' The dataset was initially compiled by \insertCite{Russett1964;textual}{cSEM}, discussed and reprinted 
-#' by \insertCite{Gifi1990;textual}{cSEM}, and partially transformed by \insertCite{Tenenhaus2011;textual}{cSEM}.
-#' It is also used in \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes.
+#' The dataset was initially compiled by \insertCite{Russett1964;textual}{cSEM}, 
+#' discussed and reprinted by \insertCite{Gifi1990;textual}{cSEM}, 
+#' and partially transformed by \insertCite{Tenenhaus2011;textual}{cSEM}.
+#' It is also used in \insertCite{Henseler2020;textual}{cSEM} for demonstration 
+#' purposes.
 #'
 #' @format A data frame containing the following variables for 47 countries:
 #'  \describe{
@@ -279,15 +281,18 @@
 #' # Example is taken from Henseler (2020)
 #' #============================================================================
 #' model_Russett="
+#' # Composite model
 #' AgrIneq <~ gini + farm + rent
-#' IndDev <~ gnpr + labo
+#' IndDev  <~ gnpr + labo
 #' PolInst <~ inst + ecks + deat + stab + dict
-#' PolInst ~AgrIneq + IndDev
+#' 
+#' # Structural model
+#' PolInst ~ AgrIneq + IndDev
 #' "
 #' 
 #' out <- csem(.data = Russett, .model = model_Russett,
-#' .PLS_weight_scheme_inner = 'factorial',
-#' .tolerance = 1e-06
+#'             .PLS_weight_scheme_inner = 'factorial',
+#'             .tolerance = 1e-06
 #' )
 #' 
 #' @references
@@ -348,13 +353,14 @@
 #' #============================================================================
 #' model_IT_Fex="
 #' # Composite models
-#' ITComp <~ ITCOMP1 + ITCOMP2 + ITCOMP3 + ITCOMP4
-#' Modul <~ MOD1 + MOD2 + MOD3 + MOD4
-#' ITConn <~ ITCONN1 + ITCONN2 + ITCONN3 + ITCONN4
-#' ITPers <~ ITPSF1 + ITPSF2 + ITPSF3 + ITPSF4
+#' ITComp  <~ ITCOMP1 + ITCOMP2 + ITCOMP3 + ITCOMP4
+#' Modul   <~ MOD1 + MOD2 + MOD3 + MOD4
+#' ITConn  <~ ITCONN1 + ITCONN2 + ITCONN3 + ITCONN4
+#' ITPers  <~ ITPSF1 + ITPSF2 + ITPSF3 + ITPSF4
+#' 
 #' # Saturated structural model
 #' ITPers ~ ITComp + Modul + ITConn
-#' Modul ~ ITComp + ITConn 
+#' Modul  ~ ITComp + ITConn 
 #' ITConn ~ ITComp 
 #' "
 #' 
@@ -386,14 +392,17 @@
 #' #============================================================================
 #' # Example is taken from Henseler (2020)
 #' #============================================================================
-#' model_Med="
+#' model_Med <- "
+#' # Reflective measurement model
 #' Trust =~ trust1 + trust2
 #' PrCon =~ privcon1 + privcon2 + privcon3 + privcon4
-#' Risk =~ risk1 + risk2 + risk3
-#' Int =~ intent1 + intent2
-#' Int ~ Trust + PrCon + Risk
-#' Risk ~ Trust + PrCon
-#' Trust ~PrCon
+#' Risk  =~ risk1 + risk2 + risk3
+#' Int   =~ intent1 + intent2
+#' 
+#' # Structural model
+#' Int   ~ Trust + PrCon + Risk
+#' Risk  ~ Trust + PrCon
+#' Trust ~ PrCon
 #' "
 #' 
 #' out <- csem(.data = LancelotMiltgenetal2016, .model = model_Med,
@@ -440,8 +449,10 @@
 #' AA =~ AA1 + AA2 + AA3 + AA4 + AA5 + AA6
 #' LO =~ LO1 + LO3
 #' QL =~ QL1 + QL2 + QL3 + QL4 + QL5 + QL6
+#' 
 #' # Composite model for SOC
 #' BR <~ QL + LO + AA
+#' 
 #' # Structural model
 #' BR~ PR + IM + DI + AD + DL 
 #' "
@@ -472,12 +483,13 @@
 #' #============================================================================
 #' # Example is taken from Henseler (2020)
 #' #============================================================================
-#' model_Int="
+#' model_Int <-"
 #' # Measurement models
 #' INV =~ INV1 + INV2 + INV3 +INV4
-#' SAT=~ SAT1 + SAT2 + SAT3
+#' SAT =~ SAT1 + SAT2 + SAT3
 #' INT =~ INT1 + INT2
-#' # Structrual model containing an interaction term.
+#' 
+#' # Structural model containing an interaction term.
 #' INT ~ INV + SAT + INV.SAT
 #' "
 #' 
@@ -515,12 +527,13 @@
 #' OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
 #' OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
 #' AffLove =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
-#' AffJoy =~ orgcmt5 + orgcmt8
-#' Gender <~ gender
-#' # Strutcural model 
+#' AffJoy  =~ orgcmt5 + orgcmt8
+#' Gender  <~ gender
+#' 
+#' # Structural model 
 #' OrgIden ~ OrgPres
 #' AffLove ~ OrgPres + OrgIden + Gender 
-#'AffJoy ~ OrgPres + OrgIden + Gender 
+#' AffJoy  ~ OrgPres + OrgIden + Gender 
 #' "
 #' 
 #' out <- csem(.data = BergamiBagozzi2000, .model = model_Bergami_Bagozzi,

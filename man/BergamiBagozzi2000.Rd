@@ -32,12 +32,13 @@ model_Bergami_Bagozzi="
 OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
 OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
 AffLove =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
-AffJoy =~ orgcmt5 + orgcmt8
-Gender <~ gender
-# Strutcural model 
+AffJoy  =~ orgcmt5 + orgcmt8
+Gender  <~ gender
+
+# Structural model 
 OrgIden ~ OrgPres
 AffLove ~ OrgPres + OrgIden + Gender 
-AffJoy ~ OrgPres + OrgIden + Gender 
+AffJoy  ~ OrgPres + OrgIden + Gender 
 "
 
 out <- csem(.data = BergamiBagozzi2000, .model = model_Bergami_Bagozzi,

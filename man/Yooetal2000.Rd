@@ -39,8 +39,10 @@ DL =~ DL1 + DL2 + DL3
 AA =~ AA1 + AA2 + AA3 + AA4 + AA5 + AA6
 LO =~ LO1 + LO3
 QL =~ QL1 + QL2 + QL3 + QL4 + QL5 + QL6
+
 # Composite model for SOC
 BR <~ QL + LO + AA
+
 # Structural model
 BR~ PR + IM + DI + AD + DL 
 "

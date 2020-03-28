@@ -58,13 +58,14 @@ All questionnaire items are measured on a 5-point scale.
 #============================================================================
 model_IT_Fex="
 # Composite models
-ITComp <~ ITCOMP1 + ITCOMP2 + ITCOMP3 + ITCOMP4
-Modul <~ MOD1 + MOD2 + MOD3 + MOD4
-ITConn <~ ITCONN1 + ITCONN2 + ITCONN3 + ITCONN4
-ITPers <~ ITPSF1 + ITPSF2 + ITPSF3 + ITPSF4
+ITComp  <~ ITCOMP1 + ITCOMP2 + ITCOMP3 + ITCOMP4
+Modul   <~ MOD1 + MOD2 + MOD3 + MOD4
+ITConn  <~ ITCONN1 + ITCONN2 + ITCONN3 + ITCONN4
+ITPers  <~ ITPSF1 + ITPSF2 + ITPSF3 + ITPSF4
+
 # Saturated structural model
 ITPers ~ ITComp + Modul + ITConn
-Modul ~ ITComp + ITConn 
+Modul  ~ ITComp + ITConn 
 ITConn ~ ITComp 
 "
 

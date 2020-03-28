@@ -27,14 +27,17 @@ in the light of privacy concerns. It is also used in
 #============================================================================
 # Example is taken from Henseler (2020)
 #============================================================================
-model_Med="
+model_Med <- "
+# Reflective measurement model
 Trust =~ trust1 + trust2
 PrCon =~ privcon1 + privcon2 + privcon3 + privcon4
-Risk =~ risk1 + risk2 + risk3
-Int =~ intent1 + intent2
-Int ~ Trust + PrCon + Risk
-Risk ~ Trust + PrCon
-Trust ~PrCon
+Risk  =~ risk1 + risk2 + risk3
+Int   =~ intent1 + intent2
+
+# Structural model
+Int   ~ Trust + PrCon + Risk
+Risk  ~ Trust + PrCon
+Trust ~ PrCon
 "
 
 out <- csem(.data = LancelotMiltgenetal2016, .model = model_Med,

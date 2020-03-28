@@ -35,24 +35,29 @@ Russett
 A data frame containing 10 variables with 47 observations.
 }
 \details{
-The dataset was initially compiled by \insertCite{Russett1964;textual}{cSEM}, discussed and reprinted
-by \insertCite{Gifi1990;textual}{cSEM}, and partially transformed by \insertCite{Tenenhaus2011;textual}{cSEM}.
-It is also used in \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes.
+The dataset was initially compiled by \insertCite{Russett1964;textual}{cSEM},
+discussed and reprinted by \insertCite{Gifi1990;textual}{cSEM},
+and partially transformed by \insertCite{Tenenhaus2011;textual}{cSEM}.
+It is also used in \insertCite{Henseler2020;textual}{cSEM} for demonstration
+purposes.
 }
 \examples{
 #============================================================================
 # Example is taken from Henseler (2020)
 #============================================================================
 model_Russett="
+# Composite model
 AgrIneq <~ gini + farm + rent
-IndDev <~ gnpr + labo
+IndDev  <~ gnpr + labo
 PolInst <~ inst + ecks + deat + stab + dict
-PolInst ~AgrIneq + IndDev
+
+# Structural model
+PolInst ~ AgrIneq + IndDev
 "
 
 out <- csem(.data = Russett, .model = model_Russett,
-.PLS_weight_scheme_inner = 'factorial',
-.tolerance = 1e-06
+            .PLS_weight_scheme_inner = 'factorial',
+            .tolerance = 1e-06
 )
 
 }
