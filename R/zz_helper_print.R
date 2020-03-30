@@ -70,12 +70,12 @@ printSummarizeOverview <- function(.summarize_object) {
   if(inherits(.summarize_object, "cSEMSummarize_resampled")) {
     cat2("\n\n\tResample information:\n\t","---------------------")
     cat2(
-      col_align("\n\tResample methode", 35), "= ", xx$Information_resample$Method,
+      col_align("\n\tResample method", 35), "= ", xx$Information_resample$Method,
       col_align("\n\tNumber of resamples", 35), "= ", xx$Information_resample$Number_of_runs
     )
     if(xx$Information_resample$Method2 %in% c("bootstrap", "jackknife")) {
       cat2(
-        col_align("\n\tResample of resample methode", 35), "= ", xx$Information_resample$Method2,
+        col_align("\n\tResample of resample method", 35), "= ", xx$Information_resample$Method2,
         col_align("\n\tNumber of resamples per resample", 35), "= ", xx$Information_resample$Number_of_runs2
       ) 
     }

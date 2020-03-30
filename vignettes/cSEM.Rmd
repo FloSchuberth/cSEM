@@ -290,7 +290,7 @@ data types/structures are accepted:
    composite model equations in the
    model description. In this case any resulting matrix or vector whose (row/column)
    names contain the indicator names would have the order `expe1`, `expe2`,
-   `imag1`, `imag2`.
+   `imag1`, `imag2`. More one model specificaiton below.
 
 1. A `matrix` with column names matching the indicator names used
    in the lavaan model description of the measurement model or composite model 
@@ -311,7 +311,7 @@ Currently, only the "standard" lavaan model syntax is supported. This comprises:
 1. The definition of a latent variable/common factor (or more precisely: the definition of a concept
    modeled as a common factor) by the "`=~`" operator.
 2. The definition of a composite (or more precisely: the definition of a concept
-   modeled as a composite) by the "`<-`" operator.
+   modeled as a composite) by the "`<~`" operator.
 3. The specification of regression equations by the "`~`" operator.
 4. The definition of error (co)variances, indicator correlations, or correlations
    between exogenous constructs using the "`~~`" operator.
@@ -345,10 +345,9 @@ LOY  =~ loy1  + loy2  + loy3  + loy4           # common factor
 sat1 ~~ sat2
 "
 ```
-Note that the operator `<~` tells **cSEM** that the concept to its left is modelled as a composite;
-the operator `=~` tells **cSEM** that the concept to its left is modelled
-as a common factor. `~~` tells **cSEM** that `sat1` and `sat2` are assumed to
-correlate.
+Note that the operator `<~` tells **cSEM** that the concept to its left is modeled as a composite;
+the operator `=~` tells **cSEM** that the concept to its left is modeled
+as a common factor. `~~` tells **cSEM** that the measurement errors of `sat1` and `sat2` are assumed to correlate.
 
 #### Nonlinear models
 
