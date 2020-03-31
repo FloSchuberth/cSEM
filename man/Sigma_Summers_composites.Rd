@@ -4,7 +4,9 @@
 \name{Sigma_Summers_composites}
 \alias{Sigma_Summers_composites}
 \title{Data: Summers}
-\format{An object of class \code{matrix} with 18 rows and 18 columns.}
+\format{
+An object of class \code{matrix} with 18 rows and 18 columns.
+}
 \source{
 Own calculation based on \insertCite{Dijkstra2015;textual}{cSEM}.
 }

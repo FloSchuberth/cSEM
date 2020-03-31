@@ -4,7 +4,8 @@
 \name{threecommonfactors}
 \alias{threecommonfactors}
 \title{Data: threecommonfactors}
-\format{A matrix with 500 rows and 9 variables:
+\format{
+A matrix with 500 rows and 9 variables:
 \describe{
 \item{y11-y13}{Indicators attachted to the first common factor (\code{eta1}).
 Population loadings are: 0.7; 0.7; 0.7}
@@ -18,7 +19,8 @@ The model is:
 \deqn{`eta2` = gamma1 * `eta1` + zeta1}
 \deqn{`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2}
 
-with population values \code{gamma1} = 0.6, \code{gamma2} = 0.4 and \code{beta} = 0.35.}
+with population values \code{gamma1} = 0.6, \code{gamma2} = 0.4 and \code{beta} = 0.35.
+}
 \usage{
 threecommonfactors
 }

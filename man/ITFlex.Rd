@@ -4,7 +4,8 @@
 \name{ITFlex}
 \alias{ITFlex}
 \title{Data: ITFlex}
-\format{A data frame containing the following variables:
+\format{
+A data frame containing the following variables:
 \describe{
 \item{\code{ITCOMP1}}{Software applications can be easily transported and
 used across multiple platforms.}
@@ -37,7 +38,8 @@ and develop appropriate technical solutions.}
 \item{\code{ITPSF3}}{Our IT personnel are self-directed and proactive.}
 \item{\code{ITPSF4}}{Our IT personnel are knowledgeable about the key
 success factors in our firm.}
-}}
+}
+}
 \source{
 The data was collected through a survey by \insertCite{Benitez2018;textual}{cSEM}.
 }

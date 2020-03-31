@@ -4,7 +4,9 @@
 \name{Yooetal2000}
 \alias{Yooetal2000}
 \title{Data: Yooetal2000}
-\format{An object of class \code{data.frame} with 569 rows and 34 columns.}
+\format{
+An object of class \code{data.frame} with 569 rows and 34 columns.
+}
 \source{
 Simulated data with the same correlation matrix as the data studied
 by \insertCite{Yoo2000;textual}{cSEM}.
