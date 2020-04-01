@@ -4,7 +4,9 @@
 \name{LancelotMiltgenetal2016}
 \alias{LancelotMiltgenetal2016}
 \title{Data: LancelotMiltgenetal2016}
-\format{An object of class \code{data.frame} with 1090 rows and 11 columns.}
+\format{
+An object of class \code{data.frame} with 1090 rows and 11 columns.
+}
 \source{
 This data has been collected through a cooperation with the European Commission
 Joint Research Center Institute for Prospective Technological Studies, contract

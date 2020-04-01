@@ -157,6 +157,13 @@ is by group and number of parameters. By default
 no multiple testing correction is done, however, several common
 adjustments are available via \code{.approach_p_adjust}. See
 \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.}
+\item{\code{.approach_mgd = "Henseler"}: Approach suggested by \insertCite{Henseler2007a;textual}{cSEM}}{
+Groups are compared in terms of parameter differences across groups.
+In doing so, the bootstrap estimates of one parameter are compared across groups.
+In the literature, this approach is also known as PLS-MGA.
+As this test is an one-sided test, it is not clear, how a correction for mutiple comparison
+should be applied. Therefore, \code{.approach_p_adjust} is ignored.
+For a more detailed description, see also \insertCite{Henseler2009;textual}{cSEM}.}
 \item{\code{.approach_mgd = "CI_param"}: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
 This approach is based on the confidence intervals constructed around the
 parameter estimates of the two groups. If the parameter of one group falls within

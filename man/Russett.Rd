@@ -4,7 +4,8 @@
 \name{Russett}
 \alias{Russett}
 \title{Data: Russett}
-\format{A data frame containing the following variables for 47 countries:
+\format{
+A data frame containing the following variables for 47 countries:
 \describe{
 \item{\code{gini}}{The Gini index of concentration}
 \item{\code{farm}}{The percentage of landholders who collectively occupy
@@ -24,7 +25,8 @@ from plots to protracted guerrilla warfare. Transformation: ln (x + 1)}
 violence per 1,000,000 people. Transformation: ln (x + 1)}
 \item{\code{stab}}{One if the country has a stable democracy, and zero otherwise}
 \item{\code{dict}}{One if the country experiences a dictatorship, and zero otherwise}
-}}
+}
+}
 \source{
 From: \insertCite{Henseler2020;textual}{cSEM}
 }

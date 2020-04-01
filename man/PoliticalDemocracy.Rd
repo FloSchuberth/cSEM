@@ -4,7 +4,8 @@
 \name{PoliticalDemocracy}
 \alias{PoliticalDemocracy}
 \title{Data: political democracy}
-\format{A data frame of 75 observations of 11 variables.
+\format{
+A data frame of 75 observations of 11 variables.
 \describe{
 \item{\code{y1}}{Expert ratings of the freedom of the press in 1960}
 \item{\code{y2}}{The freedom of political opposition in 1960}
@@ -17,7 +18,8 @@
 \item{\code{x1}}{The gross national product (GNP) per capita in 1960}
 \item{\code{x2}}{The inanimate energy consumption per capita in 1960}
 \item{\code{x3}}{The percentage of the labor force in industry in 1960}
-}}
+}
+}
 \source{
 The \href{http://lavaan.ugent.be/}{lavaan} package (version 0.6-3).
 }

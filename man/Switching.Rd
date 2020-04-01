@@ -4,7 +4,9 @@
 \name{Switching}
 \alias{Switching}
 \title{Data: Switching}
-\format{An object of class \code{data.frame} with 767 rows and 26 columns.}
+\format{
+An object of class \code{data.frame} with 767 rows and 26 columns.
+}
 \source{
 The dataset is provided by Joerg Henseler.
 }

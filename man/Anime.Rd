@@ -4,7 +4,9 @@
 \name{Anime}
 \alias{Anime}
 \title{Data: Anime}
-\format{An object of class \code{data.frame} with 183 rows and 13 columns.}
+\format{
+An object of class \code{data.frame} with 183 rows and 13 columns.
+}
 \source{
 Original source: \href{https://github.com/ISS-Analytics/pls-predict}{github.com/ISS-Analytics/pls-predict}
 }

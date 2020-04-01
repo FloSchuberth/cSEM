@@ -4,7 +4,9 @@
 \name{satisfaction_gender}
 \alias{satisfaction_gender}
 \title{Data: satisfaction including gender}
-\format{An object of class \code{data.frame} with 250 rows and 28 columns.}
+\format{
+An object of class \code{data.frame} with 250 rows and 28 columns.
+}
 \source{
 The \href{https://github.com/gastonstat/plspm}{plspm} package (version  0.4.9).
 Original source according to \pkg{plspm}:
