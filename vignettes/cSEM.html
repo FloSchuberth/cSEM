@@ -147,7 +147,7 @@ code span.ot { color: #007020; }
 <section class="page-header">
 <h1 class="title toc-ignore project-name">Introduction to cSEM</h1>
 <h4 class="author project-author">Manuel Rademaker</h4>
-<h4 class="date project-date">Last edited: 2020-01-21</h4>
+<h4 class="date project-date">Last edited: 2020-04-01</h4>
 </section>
 
 
@@ -276,7 +276,7 @@ code span.ot { color: #007020; }
 <span id="cb2-6"><a href="#cb2-6"></a><span class="st">EXPE =~ expe1 + expe2</span></span>
 <span id="cb2-7"><a href="#cb2-7"></a><span class="st">IMAG =~ imag1 + imag2</span></span>
 <span id="cb2-8"><a href="#cb2-8"></a><span class="st">&quot;</span></span></code></pre></div>
-<p>To estimate the model a data frame with <span class="math inline">\(N\)</span> rows (the observations) and <span class="math inline">\(K = 4\)</span> columns with column names <code>expe1</code>, <code>imag1</code>, <code>expe2</code>, <code>imag2</code> is required. The order of the columns in the dataset is irrelevant. In <strong>cSEM</strong> the order is defined by the order in which the names appear in the measurement or composite model equations in the model description. In this case any resulting matrix or vector whose (row/column) names contain the indicator names would have the order <code>expe1</code>, <code>expe2</code>, <code>imag1</code>, <code>imag2</code>.</p></li>
+<p>To estimate the model a data frame with <span class="math inline">\(N\)</span> rows (the observations) and <span class="math inline">\(K = 4\)</span> columns with column names <code>expe1</code>, <code>imag1</code>, <code>expe2</code>, <code>imag2</code> is required. The order of the columns in the dataset is irrelevant. In <strong>cSEM</strong> the order is defined by the order in which the names appear in the measurement or composite model equations in the model description. In this case any resulting matrix or vector whose (row/column) names contain the indicator names would have the order <code>expe1</code>, <code>expe2</code>, <code>imag1</code>, <code>imag2</code>. More one model specificaiton below.</p></li>
 <li><p>A <code>matrix</code> with column names matching the indicator names used in the lavaan model description of the measurement model or composite model description.</p></li>
 <li><p>A list of data frames or matrices. In this case estimation is repeated for each data frame or matrix separately.</p></li>
 </ol>
@@ -287,7 +287,7 @@ code span.ot { color: #007020; }
 <p>Models are defined using <a href="http://lavaan.ugent.be/tutorial/syntax1.html">lavaan model syntax</a>. Currently, only the “standard” lavaan model syntax is supported. This comprises:</p>
 <ol style="list-style-type: decimal">
 <li>The definition of a latent variable/common factor (or more precisely: the definition of a concept modeled as a common factor) by the “<code>=~</code>” operator.</li>
-<li>The definition of a composite (or more precisely: the definition of a concept modeled as a composite) by the “<code>&lt;-</code>” operator.</li>
+<li>The definition of a composite (or more precisely: the definition of a concept modeled as a composite) by the “<code>&lt;~</code>” operator.</li>
 <li>The specification of regression equations by the “<code>~</code>” operator.</li>
 <li>The definition of error (co)variances, indicator correlations, or correlations between exogenous constructs using the “<code>~~</code>” operator.</li>
 </ol>
@@ -316,7 +316,7 @@ code span.ot { color: #007020; }
 <span id="cb3-19"><a href="#cb3-19"></a><span class="st"># Measurement error correlation</span></span>
 <span id="cb3-20"><a href="#cb3-20"></a><span class="st">sat1 ~~ sat2</span></span>
 <span id="cb3-21"><a href="#cb3-21"></a><span class="st">&quot;</span></span></code></pre></div>
-<p>Note that the operator <code>&lt;~</code> tells <strong>cSEM</strong> that the concept to its left is modelled as a composite; the operator <code>=~</code> tells <strong>cSEM</strong> that the concept to its left is modelled as a common factor. <code>~~</code> tells <strong>cSEM</strong> that <code>sat1</code> and <code>sat2</code> are assumed to correlate.</p>
+<p>Note that the operator <code>&lt;~</code> tells <strong>cSEM</strong> that the concept to its left is modeled as a composite; the operator <code>=~</code> tells <strong>cSEM</strong> that the concept to its left is modeled as a common factor. <code>~~</code> tells <strong>cSEM</strong> that the measurement errors of <code>sat1</code> and <code>sat2</code> are assumed to correlate.</p>
 </div>
 <div id="nonlinear-models" class="section level4">
 <h4>Nonlinear models</h4>
@@ -465,18 +465,18 @@ code span.ot { color: #007020; }
 ##  Inner weighting scheme           = path
 ##  Type of indicator correlation    = Pearson
 ##  Path model estimator             = OLS
-##  Second order approach            = NA
+##  Second-order approach            = NA
 ##  Type of path model               = Linear
 ##  Disattenuated                    = Yes (PLSc)
 ## 
 ##  Resample information:
 ##  ---------------------
-##  Resample methode                 = bootstrap
+##  Resample method                  = bootstrap
 ##  Number of resamples              = 499
 ##  Number of admissible results     = 499
 ##  Approach to handle inadmissibles = drop
 ##  Sign change option               = none
-##  Random seed                      = -1724761741
+##  Random seed                      = 1107295149
 ## 
 ##  Construct details:
 ##  ------------------
@@ -492,37 +492,37 @@ code span.ot { color: #007020; }
 ## ============================
 ##                                                              CI_percentile   
 ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1      0.6713      0.0444   15.1083    0.0000 [ 0.5820; 0.7568 ] 
-##   eta3 ~ eta1      0.4585      0.0787    5.8235    0.0000 [ 0.3088; 0.6426 ] 
-##   eta3 ~ eta2      0.3052      0.0828    3.6842    0.0002 [ 0.1334; 0.4660 ] 
+##   eta2 ~ eta1      0.6713      0.0444   15.1273    0.0000 [ 0.5816; 0.7518 ] 
+##   eta3 ~ eta1      0.4585      0.0819    5.5988    0.0000 [ 0.2888; 0.6324 ] 
+##   eta3 ~ eta2      0.3052      0.0854    3.5752    0.0003 [ 0.1343; 0.4678 ] 
 ## 
 ## Estimated loadings:
 ## ===================
 ##                                                              CI_percentile   
 ##   Loading        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 =~ y11      0.6631      0.0423   15.6928    0.0000 [ 0.5673; 0.7438 ] 
-##   eta1 =~ y12      0.6493      0.0383   16.9410    0.0000 [ 0.5716; 0.7220 ] 
-##   eta1 =~ y13      0.7613      0.0329   23.1504    0.0000 [ 0.6931; 0.8168 ] 
-##   eta2 =~ y21      0.5165      0.0520    9.9225    0.0000 [ 0.4200; 0.6204 ] 
-##   eta2 =~ y22      0.7554      0.0357   21.1595    0.0000 [ 0.6760; 0.8182 ] 
-##   eta2 =~ y23      0.7997      0.0375   21.3181    0.0000 [ 0.7259; 0.8754 ] 
-##   eta3 =~ y31      0.8223      0.0337   24.3642    0.0000 [ 0.7547; 0.8813 ] 
-##   eta3 =~ y32      0.6581      0.0413   15.9356    0.0000 [ 0.5743; 0.7297 ] 
-##   eta3 =~ y33      0.7474      0.0397   18.8232    0.0000 [ 0.6581; 0.8245 ] 
+##   eta1 =~ y11      0.6631      0.0423   15.6602    0.0000 [ 0.5691; 0.7374 ] 
+##   eta1 =~ y12      0.6493      0.0389   16.6839    0.0000 [ 0.5686; 0.7165 ] 
+##   eta1 =~ y13      0.7613      0.0339   22.4615    0.0000 [ 0.6975; 0.8301 ] 
+##   eta2 =~ y21      0.5165      0.0536    9.6322    0.0000 [ 0.4023; 0.6083 ] 
+##   eta2 =~ y22      0.7554      0.0367   20.5869    0.0000 [ 0.6833; 0.8213 ] 
+##   eta2 =~ y23      0.7997      0.0393   20.3369    0.0000 [ 0.7176; 0.8715 ] 
+##   eta3 =~ y31      0.8223      0.0334   24.6270    0.0000 [ 0.7585; 0.8839 ] 
+##   eta3 =~ y32      0.6581      0.0420   15.6531    0.0000 [ 0.5674; 0.7356 ] 
+##   eta3 =~ y33      0.7474      0.0398   18.7892    0.0000 [ 0.6695; 0.8204 ] 
 ## 
 ## Estimated weights:
 ## ==================
 ##                                                              CI_percentile   
 ##   Weights        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 &lt;~ y11      0.3956      0.0220   17.9625    0.0000 [ 0.3496; 0.4402 ] 
-##   eta1 &lt;~ y12      0.3873      0.0192   20.1276    0.0000 [ 0.3533; 0.4274 ] 
-##   eta1 &lt;~ y13      0.4542      0.0206   22.0882    0.0000 [ 0.4156; 0.4943 ] 
-##   eta2 &lt;~ y21      0.3058      0.0271   11.3018    0.0000 [ 0.2557; 0.3586 ] 
-##   eta2 &lt;~ y22      0.4473      0.0218   20.5326    0.0000 [ 0.4077; 0.4884 ] 
-##   eta2 &lt;~ y23      0.4735      0.0204   23.1835    0.0000 [ 0.4363; 0.5149 ] 
-##   eta3 &lt;~ y31      0.4400      0.0185   23.8102    0.0000 [ 0.4053; 0.4768 ] 
-##   eta3 &lt;~ y32      0.3521      0.0192   18.3864    0.0000 [ 0.3134; 0.3877 ] 
-##   eta3 &lt;~ y33      0.3999      0.0201   19.9294    0.0000 [ 0.3603; 0.4410 ] 
+##   eta1 &lt;~ y11      0.3956      0.0221   17.8653    0.0000 [ 0.3492; 0.4339 ] 
+##   eta1 &lt;~ y12      0.3873      0.0192   20.1401    0.0000 [ 0.3456; 0.4236 ] 
+##   eta1 &lt;~ y13      0.4542      0.0213   21.2817    0.0000 [ 0.4173; 0.4976 ] 
+##   eta2 &lt;~ y21      0.3058      0.0285   10.7237    0.0000 [ 0.2458; 0.3608 ] 
+##   eta2 &lt;~ y22      0.4473      0.0217   20.6465    0.0000 [ 0.4073; 0.4960 ] 
+##   eta2 &lt;~ y23      0.4735      0.0221   21.4067    0.0000 [ 0.4325; 0.5183 ] 
+##   eta3 &lt;~ y31      0.4400      0.0194   22.7217    0.0000 [ 0.4031; 0.4801 ] 
+##   eta3 &lt;~ y32      0.3521      0.0193   18.2197    0.0000 [ 0.3121; 0.3863 ] 
+##   eta3 &lt;~ y33      0.3999      0.0195   20.4703    0.0000 [ 0.3616; 0.4379 ] 
 ## 
 ## ------------------------------------ Effects -----------------------------------
 ## 
@@ -530,32 +530,32 @@ code span.ot { color: #007020; }
 ## ========================
 ##                                                               CI_percentile   
 ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1       0.6713      0.0444   15.1083    0.0000 [ 0.5820; 0.7568 ] 
-##   eta3 ~ eta1       0.6634      0.0380   17.4555    0.0000 [ 0.5961; 0.7478 ] 
-##   eta3 ~ eta2       0.3052      0.0828    3.6842    0.0002 [ 0.1334; 0.4660 ] 
+##   eta2 ~ eta1       0.6713      0.0444   15.1273    0.0000 [ 0.5816; 0.7518 ] 
+##   eta3 ~ eta1       0.6634      0.0399   16.6439    0.0000 [ 0.5834; 0.7348 ] 
+##   eta3 ~ eta2       0.3052      0.0854    3.5752    0.0003 [ 0.1343; 0.4678 ] 
 ## 
 ## Estimated indirect effects:
 ## ===========================
 ##                                                                  CI_percentile   
 ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta3 ~ eta1          0.2049      0.0547    3.7436    0.0002 [ 0.0919; 0.3155 ] 
+##   eta3 ~ eta1          0.2049      0.0572    3.5787    0.0003 [ 0.0917; 0.3217 ] 
 ## ________________________________________________________________________________</code></pre>
 <p>Or directly via <code>infer()</code></p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>ii &lt;-<span class="st"> </span><span class="kw">infer</span>(b1, <span class="dt">.quantity =</span> <span class="kw">c</span>(<span class="st">&quot;CI_standard_z&quot;</span>, <span class="st">&quot;CI_percentile&quot;</span>), <span class="dt">.alpha =</span> <span class="kw">c</span>(<span class="fl">0.01</span>, <span class="fl">0.05</span>))</span>
 <span id="cb12-2"><a href="#cb12-2"></a>ii<span class="op">$</span>Path_estimates</span></code></pre></div>
 <pre><code>## $CI_standard_z
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5548469   0.2456058   0.1008003
-## 99%U   0.7837593   0.6512148   0.5274915
-## 95%L   0.5822127   0.2940952   0.1518100
-## 95%U   0.7563935   0.6027255   0.4764819
+## 99%L   0.5590125   0.2483446  0.08544232
+## 99%U   0.7876382   0.6702342  0.52514450
+## 95%L   0.5863440   0.2987803  0.13800740
+## 95%U   0.7603067   0.6197986  0.47257943
 ## 
 ## $CI_percentile
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5610807   0.2777369   0.0727999
-## 99%U   0.7659039   0.6848624   0.5111624
-## 95%L   0.5819829   0.3088322   0.1333518
-## 95%U   0.7567597   0.6425543   0.4659694</code></pre>
+## 99%L   0.5579587   0.2471395  0.05188123
+## 99%U   0.7778529   0.6644846  0.51643830
+## 95%L   0.5816129   0.2887536  0.13433113
+## 95%U   0.7518426   0.6323645  0.46782077</code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future">future framework</a>. For multiprocessing simply set <code>.eval_plan = &quot;multiprocess&quot;</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the background as there are cores available instead. Note that this naturally has some overhead. Consequently, for a small number of resamples multiprocessing will generally not be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument. A typical call would look like this:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>b &lt;-<span class="st"> </span><span class="kw">csem</span>(</span>
 <span id="cb14-2"><a href="#cb14-2"></a>  <span class="dt">.data            =</span> satisfaction,</span>
