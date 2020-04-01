@@ -17,6 +17,11 @@ plot.cSEMSurface <- function(
   x,
   .plot_type = c('plotly'),
   ...) {
+  
+  if(inherits(x, "cSEMSurface")) {
+    stop2("x must be of class `cSEMSurface`")
+  }
+  
   if(!(.plot_type %in% c('plotly','rsm','persp'))){
     stop2("Currenlty only plotly and rsm are supported for plotting.")
   }

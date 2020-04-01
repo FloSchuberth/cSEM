@@ -9,6 +9,9 @@
 #' @export
 plot.cSEMFloodlight <- function(x, ...) {
   
+  if(!inherits(x, "cSEMFloodlight")) {
+    stop2("x must be of class `cSEMFloodlight`.")
+  }
   ## Install ggplot2 if not already installed
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop2(
