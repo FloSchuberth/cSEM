@@ -161,8 +161,10 @@ adjustments are available via \code{.approach_p_adjust}. See
 Groups are compared in terms of parameter differences across groups.
 In doing so, the bootstrap estimates of one parameter are compared across groups.
 In the literature, this approach is also known as PLS-MGA.
-As this test is an one-sided test, it is not clear, how a correction for mutiple comparison
-should be applied. Therefore, \code{.approach_p_adjust} is ignored.
+This test is an one-sided test, therefore we perform a left-sided and a right-sided test
+to investigate whether a parameter differs across two groups.
+Consequently, \code{.approach_p_adjust} is ignored. Moreover, no overall decision
+is returned.
 For a more detailed description, see also \insertCite{Henseler2009;textual}{cSEM}.}
 \item{\code{.approach_mgd = "CI_param"}: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
 This approach is based on the confidence intervals constructed around the
