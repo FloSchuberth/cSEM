@@ -47,6 +47,8 @@
 #'   or "*regression*". Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names whose value was modified 
 #'   by the user.
+#'   
+#' @param .attrbutes Character string. Variables used as attributes in IPMA.
 #' @param .benchmark Character string. The procedure to obtain benchmark predictions.
 #'   One of "*lm*", "*unit*", "*PLS-PM*", "*GSCA*", "*PCA*", or "*MAXVAR*".
 #'   Default to "*lm*".
@@ -138,6 +140,8 @@
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
 #'   `.iter_max - 1`  will be returned with a warning. Defaults to `100`.
+#' @param .level Character. Used in `plot.cSEMIPMA` to indicate whether IPMA should be done 
+#' for constructs or indicators.    
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
@@ -408,6 +412,7 @@ args_default <- function(.choices = FALSE) {
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
+    .attributes              = NULL,
     .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
     .bias_corrected          = TRUE,
     .C                       = NULL,
@@ -442,6 +447,7 @@ args_default <- function(.choices = FALSE) {
     .independent_2           = NULL,
     .instruments             = NULL,
     .listMatrices            = NULL, 
+    .level                   = c('construct',"indicator"),
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,

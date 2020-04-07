@@ -806,14 +806,14 @@ in the {Analysis} of {Covariance} {Structures}},
 }
 
 @Article{Lancelot-Miltgen2016,
-  author    = {Lancelot-Miltgen, Caroline and Henseler, J\"org and Gelhard, Carsten and Popovi{\v{c}}, Ale{\v{s}}},
-  title     = {Introducing new products that affect consumer privacy: A mediation model},
+  author    = {Lancelot-Miltgen, Caroline and Henseler, J\"org and Gelhard, Carsten and Popovic, Ales},
   journal   = {Journal of Business Research},
+  title     = {Introducing new products that affect consumer privacy: A mediation model},
   year      = {2016},
-  volume    = {69},
+  month     = {oct},
   number    = {10},
   pages     = {4659--4666},
-  month     = {oct},
+  volume    = {69},
   doi       = {10.1016/j.jbusres.2016.04.015},
   publisher = {Elsevier {BV}},
 }
@@ -852,6 +852,45 @@ in the {Analysis} of {Covariance} {Structures}},
   pages     = {1--41},
   volume    = {33},
   publisher = {[Wiley, Econometric Society]},
+}
+
+@Article{Ringle2016,
+  Title                    = {Gain more insight from your {PLS-SEM} results: the importance-performance map analysis},
+  Author                   = {Ringle, Christian M and Sarstedt, Marko},
+  Journal                  = {Industrial Management \& Data Systems},
+  Year                     = {2016},
+  Number                   = {9},
+  Pages                    = {2--20},
+  Volume                   = {116},
+  Abstract                 = {Purpose – The purpose of this paper is to introduce the importance-performance map analysis (IPMA)
+and explain how to use it in the context of partial least squares structural equation modeling (PLSSEM).
+A case study, drawing on the IPMA module implemented in the SmartPLS 3 software, illustrates
+the results generation and interpretation.
+Design/methodology/approach – The explications first address the principles of the IPMA and
+introduce a systematic procedure for its use, followed by a detailed discussion of each step. Finally, a
+case study on the use of technology shows how to apply the IPMA in empirical PLS-SEM studies.
+Findings – The IPMA gives researchers the opportunity to enrich their PLS-SEM analysis and,
+thereby, gain additional results and findings. More specifically, instead of only analyzing the path
+coefficients (i.e. the importance dimension), the IPMA also considers the average value of the latent
+variables and their indicators (i.e. performance dimension).
+Research limitations/implications – An IPMA is tied to certain requirements, which relate to the
+measurement scales, variable coding, and indicator weights estimates. Moreover, the IPMA presumes
+linear relationships. This research does not address the computation and interpretation of non-linear
+dependencies.
+Practical implications – The IPMA is particularly useful for generating additional findings and
+conclusions by combining the analysis of the importance and performance dimensions in practical
+PLS-SEM applications. Thereby, the IPMA allows for prioritizing constructs to improve a certain
+target construct. Expanding the analysis to the indicator level facilitates identifying the most
+important areas of specific actions. These results are, for example, particularly important in practical
+studies identifying the differing impacts that certain construct dimensions have on phenomena such as
+technology acceptance, corporate reputation, or customer satisfaction.
+Originality/value – This paper is the first to offer researchers a tutorial and annotated example of an
+IPMA. Based on a state-of-the-art review of the technique and a detailed explanation of the method, this
+paper introduces a systematic procedure for running an IPMA. A case study illustrates the analysis,
+using the SmartPLS 3 software.},
+  File                     = {Ringle2016.pdf:Ringle2016.pdf:PDF},
+  Keywords                 = {Structural equation modeling (SEM), Partial least squares (PLS), Unified theory of acceptance and use of technology (UTAUT), SmartPLS, Importance-performance map analysis (IPMA)},
+  Publisher                = {Emerald Group Publishing Limited}
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
