@@ -1,5 +1,8 @@
 # Development version: cSEM 0.2.0:9000
 
+- Implement importance-performance matrix analysis via `doIPMA()`. A corresponding
+  plot method is also available.
+
 # cSEM 0.2.0 (30.03.2020)
 ## Major changes
   

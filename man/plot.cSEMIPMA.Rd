@@ -4,23 +4,32 @@
 \alias{plot.cSEMIPMA}
 \title{\code{cSEMIPMA} method for \code{plot()}}
 \usage{
-\method{plot}{cSEMIPMA}(x = NULL, .dependent = NULL, .attributes = NULL, .level = "construct")
+\method{plot}{cSEMIPMA}(
+  x = NULL,
+  .dependent = NULL,
+  .attributes = NULL,
+  .level = c("construct", "indicator"),
+  ...
+)
 }
 \arguments{
 \item{x}{An R object of class \code{cSEMIPMA}.}
 
-\item{.dependent}{Character. Name of the target construct for which the
-importance performance matrix should be created.}
+\item{.dependent}{Character string. Name of the target construct for which the
+importance-performance matrix should be created.}
 
-\item{.attributes}{Character string. A vector containing indicator/construct names that
-should be plotted in the importance performance matrix. It must be at least of length 2.}
+\item{.attributes}{Character string. A vector containing indicator/construct
+names that should be plotted in the importance-performance matrix.
+It must be at least of length 2.}
 
-\item{.level}{Character. It indicates whether the importance performance matrix
-should be created on indicator or construct level. Options are \code{'construct'} and \code{'indicator'}.
-Defaults to \code{'construct'}.}
+\item{.level}{Character string. Indicates the level for which the
+importance-performance matrix should be plotted. One of \code{"construct"} or
+\code{"indicator"}. Defaults to \code{"construct"}.}
+
+\item{...}{Currently ignored.}
 }
 \description{
-Plot the importance-performance matrix
+Plot the importance-performance matrix.
 }
 \seealso{
 \code{\link[=doIPMA]{doIPMA()}}

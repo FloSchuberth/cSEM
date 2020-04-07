@@ -2,33 +2,38 @@
 % Please edit documentation in R/postestimate_doIPMA.R
 \name{doIPMA}
 \alias{doIPMA}
-\title{Do a importance performance matrix analysis}
+\title{Do an importance-performance matrix analysis}
 \usage{
-doIPMA(
- .object             = NULL
- )
+doIPMA(.object)
 }
 \arguments{
-\item{.object}{A \code{cSEMResults_default} object.`}
+\item{.object}{A \code{cSEMResults} object.`}
 }
 \value{
 A list of class \code{cSEMIPA} with a corresponding method for \code{plot()}.
 See: \code{\link[=plot.cSEMIPMA]{plot.cSEMIPMA()}}.
 }
 \description{
+Performs an importance-performance matrix analyis (IPMA).
+}
+\details{
 To calculate the performance and importance, the weights of the indicators
 are unstandardized using the standard deviation of the original
-indicators, and normed to have a length of 1.
+indicators but normed to have a length of 1.
 Normed construct scores are calculated based on the original indicators and the
-unstandardized weights. The importance is calculated as the mean of
+unstandardized weights.
+
+The importance is calculated as the mean of
 the original indicators or the unstandardized construct scores, respectively.
-The performance is calculated as the unstandardized total effect in case of
-\code{.level=='construct'} and as normed weight times unstandardized total effect
-in case of \code{.level=='indicator'}. Generally, it is recommended to use an estimation
-as input for doIPMA() that is based on normed indicators, e.g., by scaling all indicators
-to 0 to 100, see e.g., \insertCite{Henseler2020,Ringle2016;textual}{cSEM}.
-Indicators are not normed internally, as theoretical maximum/minimum can differ from the
-empirical maximum/minimum wich leads to a wrong normalization.
+The performance is calculated as the unstandardized total effect if
+\code{.level == "construct"} and as the normed weight times the unstandardized
+total effect if \code{.level == "indicator"}. The literature recommend to use an
+estimation approach as input for `\code{\link[=doIPMA]{doIPMA()}} that is based on normed
+indicators, e.g., by scaling all indicators to 0 to 100,
+see e.g., \insertCite{Henseler2020,Ringle2016;textual}{cSEM}.
+
+Indicators are not normed internally, as theoretical maximum/minimum can
+differ from the empirical maximum/minimum which leads to an incorrect normalization.
 }
 \seealso{
 \code{\link[=csem]{csem()}}, \link{cSEMResults}, \code{\link[=plot.cSEMIPMA]{plot.cSEMIPMA()}}

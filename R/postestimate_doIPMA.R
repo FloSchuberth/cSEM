@@ -1,25 +1,28 @@
-#' Do a importance performance matrix analysis
+#' Do an importance-performance matrix analysis
 #'
+#' Performs an importance-performance matrix analyis (IPMA).
+#' 
 #' To calculate the performance and importance, the weights of the indicators 
 #' are unstandardized using the standard deviation of the original 
-#' indicators, and normed to have a length of 1.
+#' indicators but normed to have a length of 1.
 #' Normed construct scores are calculated based on the original indicators and the 
-#' unstandardized weights. The importance is calculated as the mean of 
+#' unstandardized weights. 
+#' 
+#' The importance is calculated as the mean of 
 #' the original indicators or the unstandardized construct scores, respectively. 
-#' The performance is calculated as the unstandardized total effect in case of
-#' `.level=='construct'` and as normed weight times unstandardized total effect 
-#' in case of `.level=='indicator'`. Generally, it is recommended to use an estimation 
-#' as input for doIPMA() that is based on normed indicators, e.g., by scaling all indicators
-#' to 0 to 100, see e.g., \insertCite{Henseler2020,Ringle2016;textual}{cSEM}.
-#' Indicators are not normed internally, as theoretical maximum/minimum can differ from the 
-#' empirical maximum/minimum wich leads to a wrong normalization.
+#' The performance is calculated as the unstandardized total effect if
+#' `.level == "construct"` and as the normed weight times the unstandardized 
+#' total effect if `.level == "indicator"`. The literature recommend to use an 
+#' estimation approach as input for `[doIPMA()] that is based on normed 
+#' indicators, e.g., by scaling all indicators to 0 to 100, 
+#' see e.g., \insertCite{Henseler2020,Ringle2016;textual}{cSEM}.
 #' 
+#' Indicators are not normed internally, as theoretical maximum/minimum can 
+#' differ from the empirical maximum/minimum which leads to an incorrect normalization.
 #' 
-#' @usage doIPMA(
-#'  .object             = NULL
-#'  )
+#' @usage doIPMA(.object)
 #'
-#' @param .object A `cSEMResults_default` object.`
+#' @param .object A `cSEMResults` object.`
 #'
 #' @return A list of class `cSEMIPA` with a corresponding method for `plot()`. 
 #'   See: [plot.cSEMIPMA()].
@@ -27,19 +30,23 @@
 #' @seealso [csem()], [cSEMResults], [plot.cSEMIPMA()]
 #' @export
 
-doIPMA = function(.object){
+doIPMA <- function(.object){
   
   # Checks ----
-  
   # Check whether .object is a cSEMResults object
-  if(!inherits(.object,'cSEMResults')){
-    stop2(".object must be of class `cSEMResults`.")
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, doIPMA)
+    return(out)
+    class(out) <- c("cSEMIPMA", "cSEMIPMA_multi")
+  } else if(inherits(.object, "cSEMResults_default")) {
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")){
+    stop2("Currently, `doIPMA()` is not implemented for models containing", 
+          " higher-order constructs.")
+  } else {
+    stop2("`.object` must be of class cSEMREsults.")
   }
   
-  # Does not work for objects of class "cSEMResults_2ndorder" and "cSEMResults_multi"
-  if(inherits(.object, "cSEMResults_2ndorder") | inherits(.object, "cSEMResults_multi")) {
-    stop2("Currently, doIPMA can only be applied to object of class `cSEMResults_default`.")
-  }
   
   # Check whether Pearson was applied 
   if(.object$Information$Type_of_indicator_correlation != 'Pearson'){
@@ -64,17 +71,17 @@ doIPMA = function(.object){
   # Check whether all constructs are composite
   if(!all(.object$Information$Model$construct_type %in% "Composite")){
     warning2("At least one construct is modeled as common factor,\n",
-    "IPMA's results are not trustworthy in this case.")
+    " IPMA's results are not trustworthy in this case.")
   }
   
   # Check whether all weights are positive
-  if(!all(.object$Estimates$Weight_estimates>=0)){
+  if(!all(.object$Estimates$Weight_estimates >= 0)){
     warning2("At least one weight is negative,\n",
-    "which makes the performance importance matrix analysis questionable.")
+    " which makes the performance importance matrix analysis questionable.")
   }
   
   
-  out_scores <- getConstructScores(.object = .object,.standardized = FALSE)
+  out_scores <- getConstructScores(.object = .object, .standardized = FALSE)
   
   # Peformance indicators ----
   performance_indicator <- colMeans(out_scores$Indicators_used)
@@ -86,7 +93,7 @@ doIPMA = function(.object){
   performance_construct <- colMeans(scores)
 
   # Calculate importance values for constructs, see Eq. 13.4 in Henseler (2020) ----
-  effects <- calculateEffects(.object = .object,.output_type = 'matrix')
+  effects <- calculateEffects(.object = .object, .output_type = 'matrix')
   total_effects_std <- effects$Total_effect
   
   # calculate unstandardized total effects
