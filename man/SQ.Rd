@@ -15,7 +15,8 @@ SQ
 }
 \description{
 A data frame containing 23 variables with 411 observations. The original
-indicators measured on a 5-point scale were scaled to 0 to 100.
+indicators were measured on a 5-point scale. In this version of the dataset,
+the indidcators are scaled to 0 to 100.
 }
 \details{
 The data comes from a European manufacturer of durable consumer goods and was
