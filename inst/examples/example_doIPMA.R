@@ -55,4 +55,7 @@
     # Apply doIPMA function to obtain the neccesary outcome to 
     # plot the importance performance matrix
     outIPA <- doIPMA(out)
+    
+    plot(x = outIPA,.dependent = 'Sat',.level = 'construct',
+         .attributes = c("Tangibles","Reliability","Responsiveness", "Assurance","Empathy"))
 }
