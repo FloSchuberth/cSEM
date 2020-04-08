@@ -70,7 +70,7 @@ It is possible to report the AVE for constructs modeled as composites by setting
 \code{.only_common_factors = FALSE}, however, result should be interpreted with caution
 as they may not have a conceptual meaning. Calculation is done
 by \code{\link[=calculateAVE]{calculateAVE()}}.}
-\item{Congeneric reliability; "rho_C", "rho_C_mm,", "rho_C_weighted", "rho_C_weighted_mm"}{
+\item{Congeneric reliability; "rho_C", "rho_C_mm", "rho_C_weighted", "rho_C_weighted_mm"}{
 An estimate of the reliability assuming a congeneric measurement model (i.e., loadings are
 allowed to differ) and a test score (proxy) based on unit weights.
 There are four different versions implemented. See the

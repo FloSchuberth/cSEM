@@ -65,6 +65,15 @@
 #'   no multiple testing correction is done, however, several common
 #'   adjustments are available via `.approach_p_adjust`. See 
 #'   \code{\link[stats:p.adjust]{stats::p.adjust()}} for details.}
+#' \item{`.approach_mgd = "Henseler"`: Approach suggested by \insertCite{Henseler2007a;textual}{cSEM}}{
+#'   Groups are compared in terms of parameter differences across groups.
+#'   In doing so, the bootstrap estimates of one parameter are compared across groups.
+#'   In the literature, this approach is also known as PLS-MGA.
+#'   This test is an one-sided test, therefore we perform a left-sided and a right-sided test 
+#'   to investigate whether a parameter differs across two groups. 
+#'   Consequently, `.approach_p_adjust` is ignored. Moreover, no overall decision
+#'   is returned.
+#'   For a more detailed description, see also \insertCite{Henseler2009;textual}{cSEM}.}
 #' \item{`.approach_mgd = "CI_param"`: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
 #'   This approach is based on the confidence intervals constructed around the 
 #'   parameter estimates of the two groups. If the parameter of one group falls within 
@@ -389,7 +398,7 @@ testMGD <- function(
         "bias_all"          = c(path_bias, loading_bias, weight_bias, cor_exo_cons_bias)
         )
       
-      # If comparison should be done via CIs 
+      # Approaches based on CIs comparison ----
       if(any(.approach_mgd %in% c("all", "CI_para", "CI_overlap"))){
         
         diff <- setdiff(.type_ci, args_default(TRUE)$.type_ci)
@@ -702,9 +711,10 @@ testMGD <- function(
     # Create list with matrices containing the reference distribution 
     # of the parameter differences
     ref_dist_Chin <- lapply(ref_dist1, function(x) x$Chin)
-    
+
     # Transpose
     ref_dist_Chin_temp <- purrr::transpose(ref_dist_Chin)
+    names(ref_dist_Chin_temp) <- names(teststat_Chin)
     
     ref_dist_matrices_Chin <- lapply(ref_dist_Chin_temp, function(x) {
       temp <- do.call(cbind, x)
@@ -940,7 +950,7 @@ testMGD <- function(
   }
     
   
-  # Comparison via confidence intervals
+  # Comparison via confidence intervals ------------------
   if(any(.approach_mgd %in% c("all", "CI_para", "CI_overlap"))) {
     # Select CIs from the bootstrap_results
     cis <- lapply(bootstrap_results,function(x){
@@ -960,7 +970,7 @@ testMGD <- function(
     names(param_comp) <- sapply(param_comp,
                                 function(x)
                                   paste0(names(x)[1], '_', names(x)[2]))
-
+    # CI_para -------------------------------------------
     if(any(.approach_mgd %in% c("all", "CI_para"))) {
       
       # Investigate whether the estimate of one group is part of the CI of another group
@@ -1068,6 +1078,8 @@ testMGD <- function(
       names(decision_overall_ci_para) <- names(decision_ci_para)
       
     }#end if .approach_mgd == CI_para
+    
+    # CI_overlap ---------------------------------------------
     
     if(any(.approach_mgd %in% c("all", "CI_overlap"))) {
       

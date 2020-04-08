@@ -94,7 +94,7 @@ NULL
 #' The resulting object has classes `cSEMResults` and `cSEMResults_multi`. 
 #' }
 #' \item{_2ndorder}{
-#'  A special output is generated if the model to estimate contains hierachical constructs
+#'  A special output is generated if the model to estimate contains hierarchical constructs
 #'  **and** the "2stage" or "mixed" approach is used to estimate the model. In this case
 #'  the resulting object is a list containing two elements `First_stage` and 
 #' ` Second_stage`.
