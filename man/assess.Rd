@@ -244,7 +244,7 @@ See \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} for details.
 }
 \examples{
 # ===========================================================================
-# Using the threecommonfactors dataset
+# Using the three common factors dataset
 # ===========================================================================
 model <- "
 # Structural model

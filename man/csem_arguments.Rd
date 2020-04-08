@@ -58,6 +58,8 @@ or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 \item{.args_used}{A list of function argument names whose value was modified
 by the user.}
 
+\item{.attrbutes}{Character string. Variables used as attributes in IPMA.}
+
 \item{.benchmark}{Character string. The procedure to obtain benchmark predictions.
 One of "\emph{lm}", "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", or "\emph{MAXVAR}".
 Default to "\emph{lm}".}
@@ -184,6 +186,9 @@ instruments for themselves. Defaults to \code{NULL}.}
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
+
+\item{.level}{Character. Used in \code{plot.cSEMIPMA} to indicate whether IPMA should be done
+for constructs or indicators.}
 
 \item{.matrix1}{A \code{matrix} to compare.}
 
