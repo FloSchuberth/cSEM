@@ -595,3 +595,23 @@
 #'     
 #' @source Own calculation based on \insertCite{Dijkstra2015;textual}{cSEM}.
 "Sigma_Summers_composites"
+
+#' Data: SQ
+#'
+#' The data comes from a European manufacturer of durable consumer goods and was 
+#' studied by \insertCite{Bliemel2004;textual}{cSEM} who focused on service quality.
+#' It is also used in \insertCite{Henseler2020;textual}{cSEM} 
+#' for demonstration purposes (Tutorial 13).
+#' 
+#' @docType data
+#'
+#' @description A data frame containing 23 variables with 411 observations. The original
+#' indicators were measured on a 5-point scale. In this version of the dataset,
+#' the indidcators are scaled to be between 0 and 100. 
+#' 
+#' 
+#' @references
+#'   \insertAllCited{}
+#'     
+#' @source The dataset is provided by Joerg Henseler.  
+"SQ"
