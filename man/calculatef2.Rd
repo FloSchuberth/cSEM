@@ -18,6 +18,9 @@ of these equations.
 Calculate the effect size for regression analysis \insertCite{Cohen1992}{cSEM}
 known as Cohen's f^2.
 }
+\references{
+\insertAllCited{}
+}
 \seealso{
 \code{\link[=assess]{assess()}}, \link{csem}, \link{cSEMResults}
 }
