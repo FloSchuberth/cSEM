@@ -866,4 +866,15 @@ in the {Analysis} of {Covariance} {Structures}},
   publisher = {Emerald Group Publishing Limited},
 }
 
+@InProceedings{Bliemel2004,
+  author    = {Bliemel, Friedhelm W. and Adolphs, Kai and Henseler, J\"org},
+  booktitle = {Proceedings of the 33rd EMAC Conference},
+  title     = {Reconceptualizing service quality. A formative measurement approach using PLS path modeling},
+  year      = {2004},
+  address   = {Murcia, Spain},
+  editor    = {Munuera-Alem\'an, Jos\'e L.},
+  month     = {May},
+  pages     = {224},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}
