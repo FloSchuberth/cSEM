@@ -107,7 +107,7 @@ plot.cSEMIPMA <- function(
   plot1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = data_plot[, "Importance"], 
                                                    y = data_plot[, "Performance"],
                                                    label = data_plot[, "Name"])) + 
-    ggplot2::geom_text(ggplot2::aes(label = data_plot[, "Name"]), hjust = 0, vjust = 1.1) +
+    ggplot2::geom_text(ggplot2::aes(label = data_plot[, "Name"]), hjust = 0, vjust = 1.2) +
     ggplot2::geom_point() + 
     ggplot2::geom_vline(xintercept = vertical) +
     ggplot2::geom_hline(yintercept = horizontal) +
