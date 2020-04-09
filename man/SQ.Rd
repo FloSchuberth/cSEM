@@ -15,7 +15,7 @@ SQ
 }
 \description{
 A data frame containing 23 variables with 411 observations. The original
-indicators were measured on a 5-point scale. In this version of the dataset,
+indicators were measured on a 6-point scale. In this version of the dataset,
 the indidcators are scaled to be between 0 and 100.
 }
 \details{
