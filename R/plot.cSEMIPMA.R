@@ -48,7 +48,7 @@ plot.cSEMIPMA <- function(
   # If only one attribute is provided the axis cannot be properly be scaled 
   # as I currently use the sd for this purpose. IPMA should be only conducted 
   # if more than one attribute is considered. 
-  if(length(.attributes)<=2){
+  if(length(.attributes)<2){
     stop2("You need to provide at least construct/indicators names", 
           " to argument .attributes.")
   }
@@ -79,8 +79,30 @@ plot.cSEMIPMA <- function(
                           "Name"        = .attributes)
   
   # Calculate coordinates of the lines to seperate the quadrants
+ # browser()
   horizontal <- mean(Performance) 
   vertical   <- mean(Importance)
+  
+  # Make quadrants symmetric
+  # Determine the start and endpoint for the y-axis (Performance)
+  devfrommeanPerf<-abs(c(min(Performance),max(Performance))-horizontal)
+  if(devfrommeanPerf[1]>=devfrommeanPerf[2]){
+    starty<-min(Performance)-sd(Performance)/2
+    endy<-horizontal+devfrommeanPerf[1]+sd(Performance)/2
+  }else{
+    starty<-horizontal-devfrommeanPerf[2]-sd(Performance)/2
+    endy<-max(Performance)+sd(Performance)/2
+  }
+  
+  # Determine the start and endpoint for the x-axis (Importance)
+  devfrommeanImp <-abs(c(min(Importance),max(Importance))-vertical)
+  if(devfrommeanImp[1]>=devfrommeanImp[2]){
+    startx<-min(Importance)-sd(Importance)/2
+    endx<-vertical+devfrommeanImp[1]+sd(Importance)/2
+  }else{
+    startx<-vertical-devfrommeanImp[2]-sd(Importance)/2
+    endx<-max(Importance)+sd(Importance)/2
+  }
   
   plot1 <- ggplot2::ggplot(data_plot, ggplot2::aes(x = data_plot[, "Importance"], 
                                                    y = data_plot[, "Performance"],
@@ -96,8 +118,9 @@ plot.cSEMIPMA <- function(
                        " (", Sys.Date(), ")")) +
     ggplot2::theme_bw() +
     ggplot2::theme(panel.grid.minor = ggplot2::element_blank()) +
-    ggplot2::xlim(min(Importance)-sd(Importance)/2,max(Importance)+sd(Importance)/2) +
-    ggplot2::ylim(min(Performance)-sd(Performance)/2,max(Performance)+sd(Performance)/2)
+    # ggplot2::coord_fixed(ratio = 1, xlim = c(startx,endx), ylim = c(starty,endy), expand = TRUE, clip = "on")
+    ggplot2::xlim(startx,endx) +
+    ggplot2::ylim(starty,endy)
   
   # Return plot
   plot1
