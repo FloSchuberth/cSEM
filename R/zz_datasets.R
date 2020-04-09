@@ -305,7 +305,8 @@
 #' Data: ITFlex
 #'
 #' The dataset was studied by \insertCite{Benitez2018;textual}{cSEM} and is used in 
-#' \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes (Tutorial 8). 
+#' \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes, see the
+#' corresponding tutorial. 
 #' All questionnaire items are measured on a 5-point scale.
 #' 
 #' @format A data frame containing the following variables:
@@ -382,7 +383,8 @@
 #' The data was analysed by \insertCite{Lancelot-Miltgen2016;textual}{cSEM} 
 #' to study young consumers’ adoption intentions of a location tracker technology 
 #' in the light of privacy concerns. It is also used in 
-#' \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes (Tutorial 9).
+#' \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes, see the
+#' corresponding tutorial.
 #' 
 #' @docType data
 #'
@@ -429,7 +431,7 @@
 #' related to the so-called dimensions of brand equity, i.e., perceived brand
 #' quality, brand loyalty, and brand awareness/associations. It is also used in 
 #' \insertCite{Henseler2017;textual}{cSEM} and \insertCite{Henseler2020;textual}{cSEM} 
-#' for demonstration purposes (Tutorial 10).
+#' for demonstration purposes, see the corresponding tutorial.
 #' 
 #' @docType data
 #'
@@ -473,7 +475,7 @@
 #'
 #' The data contains variables about the consumers’ intention to switch a
 #' service provider. It is also used in \insertCite{Henseler2020;textual}{cSEM} 
-#' for demonstration purposes (Tutorial 12).
+#' for demonstration purposes, see the corresponding tutorial.
 #' 
 #' @docType data
 #'
@@ -500,7 +502,7 @@
 #' @references
 #'   \insertAllCited{}
 #'     
-#' @source The dataset is provided by Joerg Henseler.  
+#' @source The dataset is provided by Jörg Henseler.  
 "Switching"
 
 
@@ -512,7 +514,7 @@
 #' reported by \insertCite{Bergami2000;textual}{cSEM}. It is
 #' also used in  \insertCite{Hwang2014;textual}{cSEM} and 
 #' \insertCite{Henseler2020;textual}{cSEM} 
-#' for demonstration purposes (Tutorial 6).
+#' for demonstration purposes, see the corresponding tutorial.
 #' 
 #' @docType data
 #'
@@ -601,7 +603,7 @@
 #' The data comes from a European manufacturer of durable consumer goods and was 
 #' studied by \insertCite{Bliemel2004;textual}{cSEM} who focused on service quality.
 #' It is also used in \insertCite{Henseler2020;textual}{cSEM} 
-#' for demonstration purposes (Tutorial 13).
+#' for demonstration purposes, see the corresponding tutorial.
 #' 
 #' @docType data
 #'
@@ -613,5 +615,5 @@
 #' @references
 #'   \insertAllCited{}
 #'     
-#' @source The dataset is provided by Joerg Henseler.  
+#' @source The dataset is provided by Jörg Henseler.  
 "SQ"

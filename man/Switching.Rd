@@ -8,7 +8,7 @@
 An object of class \code{data.frame} with 767 rows and 26 columns.
 }
 \source{
-The dataset is provided by Joerg Henseler.
+The dataset is provided by Jörg Henseler.
 }
 \usage{
 Switching
@@ -19,7 +19,7 @@ A data frame containing 26 variables with 767 observations.
 \details{
 The data contains variables about the consumers’ intention to switch a
 service provider. It is also used in \insertCite{Henseler2020;textual}{cSEM}
-for demonstration purposes (Tutorial 12).
+for demonstration purposes, see the corresponding tutorial.
 }
 \examples{
 #============================================================================

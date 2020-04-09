@@ -8,7 +8,7 @@
 An object of class \code{data.frame} with 411 rows and 23 columns.
 }
 \source{
-The dataset is provided by Joerg Henseler.
+The dataset is provided by Jörg Henseler.
 }
 \usage{
 SQ
@@ -22,7 +22,7 @@ the indidcators are scaled to be between 0 and 100.
 The data comes from a European manufacturer of durable consumer goods and was
 studied by \insertCite{Bliemel2004;textual}{cSEM} who focused on service quality.
 It is also used in \insertCite{Henseler2020;textual}{cSEM}
-for demonstration purposes (Tutorial 13).
+for demonstration purposes, see the corresponding tutorial.
 }
 \references{
 \insertAllCited{}

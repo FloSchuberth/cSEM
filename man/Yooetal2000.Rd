@@ -25,7 +25,7 @@ image, distribution intensity, advertising spending, and price deals, are
 related to the so-called dimensions of brand equity, i.e., perceived brand
 quality, brand loyalty, and brand awareness/associations. It is also used in
 \insertCite{Henseler2017;textual}{cSEM} and \insertCite{Henseler2020;textual}{cSEM}
-for demonstration purposes (Tutorial 10).
+for demonstration purposes, see the corresponding tutorial.
 }
 \examples{
 #============================================================================
