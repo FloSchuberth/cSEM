@@ -10,7 +10,7 @@
 \item{x}{An R object of class \code{cSEMSurface}.}
 
 \item{.plot_type}{A character vector indicating the plot package used. Options are
-"\emph{plotly}", "\emph{rsm}", and "\emph{persp}". Defaults to "\emph{plotly}".}
+"\emph{plotly}", and "\emph{persp}". Defaults to "\emph{plotly}".}
 
 \item{...}{Additional parameters that can be passed to
 \code{\link[graphics:persp]{graphics::persp}}, e.g., to rotate the plot.}

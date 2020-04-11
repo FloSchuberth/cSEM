@@ -6,7 +6,7 @@
 #' 
 #' @param x An R object of class `cSEMSurface`.
 #' @param .plot_type A character vector indicating the plot package used. Options are
-#' "*plotly*", "*rsm*", and "*persp*". Defaults to "*plotly*". 
+#' "*plotly*", and "*persp*". Defaults to "*plotly*". 
 #' @param ... Additional parameters that can be passed to 
 #' \code{\link[graphics:persp]{graphics::persp}}, e.g., to rotate the plot.
 #' 
@@ -18,7 +18,7 @@ plot.cSEMSurface <- function(
   .plot_type = c('plotly'),
   ...) {
   
-  if(inherits(x, "cSEMSurface")) {
+  if(!inherits(x, "cSEMSurface")) {
     stop2("x must be of class `cSEMSurface`")
   }
   
