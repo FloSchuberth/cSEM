@@ -25,8 +25,8 @@ printSummarizeOverview <- function(.summarize_object) {
   
   if(x$Arguments$.approach_weights == "PLS-PM") {
     cat2(
-      col_align("\n\tInner weighting scheme", 35), "= ", 
-      x$Arguments$.PLS_weight_scheme_inner
+      col_align("\n\tInner weighting scheme", 35), "= ", '"', 
+      x$Arguments$.PLS_weight_scheme_inner, '"'
     )
   }
   cat2(
@@ -70,19 +70,19 @@ printSummarizeOverview <- function(.summarize_object) {
   if(inherits(.summarize_object, "cSEMSummarize_resampled")) {
     cat2("\n\n\tResample information:\n\t","---------------------")
     cat2(
-      col_align("\n\tResample method", 35), "= ", xx$Information_resample$Method,
+      col_align("\n\tResample method", 35), "= ", '"', xx$Information_resample$Method, '"',
       col_align("\n\tNumber of resamples", 35), "= ", xx$Information_resample$Number_of_runs
     )
     if(xx$Information_resample$Method2 %in% c("bootstrap", "jackknife")) {
       cat2(
-        col_align("\n\tResample of resample method", 35), "= ", xx$Information_resample$Method2,
+        col_align("\n\tResample of resample method", 35), "= ", '"',xx$Information_resample$Method2, '"',
         col_align("\n\tNumber of resamples per resample", 35), "= ", xx$Information_resample$Number_of_runs2
       ) 
     }
     cat2(
       col_align("\n\tNumber of admissible results ", 35), "= ", xx$Information_resample$Number_of_admissibles,
-      col_align("\n\tApproach to handle inadmissibles ", 35), "= ", xx$Information_resample$Handle_inadmissibles,
-      col_align("\n\tSign change option", 35), "= ", xx$Information_resample$Sign_change_option
+      col_align("\n\tApproach to handle inadmissibles ", 35), "= ", '"', xx$Information_resample$Handle_inadmissibles, '"', 
+      col_align("\n\tSign change option", 35), "= ", '"', xx$Information_resample$Sign_change_option, '"'
     )
     if(!isFALSE(xx$Information_resample$Seed)) {
       cat2(
@@ -130,7 +130,7 @@ printSummarizeConstructDetails <- function(.summarize_object) {
     col_align("Order", 12 + 2)
   )
   if(x2$Arguments$.approach_weights == "PLS-PM") {
-    cat2(col_align("Mode", 5))
+    cat2(col_align("Mode", 10))
   }
   cat("\n")
   
@@ -138,22 +138,22 @@ printSummarizeConstructDetails <- function(.summarize_object) {
     
     # First stage
     for(i in names(x1$Model$construct_type)) {
-      cat("\n\t", 
+      cat2("\n\t", 
           col_align(i, max(l, nchar("Name")) + 2), 
           col_align(x1$Model$construct_type[i], 13 + 2), 
-          col_align("First order", 12 + 2), sep = "")
+          col_align("First order", 12 + 2))
       if(x1$Arguments$.approach_weights == "PLS-PM") {
-        cat(col_align(x1$Weight_info$Modes[i], 5), sep = "")
+        cat2(col_align(paste0('"', x1$Weight_info$Modes[i],'"'), 10))
       }
     }
     # Second stage
     for(i in names(x2$Model$construct_type[c_2nd_order])) {
-      cat("\n\t", 
+      cat2("\n\t", 
           col_align(i, max(l, nchar("Name")) + 2), 
           col_align(x2$Model$construct_type[i], 13 + 2), 
-          col_align("Second order", 12 + 2), sep = "")
+          col_align("Second order", 12 + 2))
       if(x2$Arguments$.approach_weights == "PLS-PM") {
-        cat(col_align(x2$Weight_info$Modes[i], 5), sep = "")
+        cat2(col_align(paste0('"', x2$Weight_info$Modes[i],'"'), 10))
       }
     }
   } else {
@@ -165,7 +165,7 @@ printSummarizeConstructDetails <- function(.summarize_object) {
         col_align(x2$Model$construct_order[i], 12 + 2)
       )
       if(x2$Arguments$.approach_weights == "PLS-PM") {
-        cat2(col_align(x2$Weight_info$Modes[i], 5))
+        cat2(col_align(paste0('"', x2$Weight_info$Modes[i],'"'), 10))
       }
     }
   }
@@ -345,7 +345,7 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
   
   cat2(
     "\n  ", 
-    col_align("Weights", max(l, nchar("Weights")) + 2), 
+    col_align("Weight", max(l, nchar("Weights")) + 2), 
     col_align("Estimate", 10, align = "right"), 
     col_align("Std. error", 12, align = "right"),
     col_align("t-stat.", 10, align = "right"), 

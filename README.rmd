@@ -9,7 +9,7 @@ output: github_document
 [![CRAN status](https://www.r-pkg.org/badges/version/cSEM)](https://cran.r-project.org/package=cSEM)
 [![Build Status](https://travis-ci.com/M-E-Rademaker/cSEM.svg?branch=master)](https://travis-ci.com/M-E-Rademaker/cSEM)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/M-E-Rademaker/cSEM?branch=master&svg=true)](https://ci.appveyor.com/project/M-E-Rademaker/csem)
-
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/cSEM)](https://cran.r-project.org/package=cSEM)
 <!-- WARNING: THIS IS WORK IN PROGRESS. BREAKING CHANGES TO THE API ARE VERY LIKELY.  -->
 <!--          Use the package with caution and please report bugs to [the package developers](mailto:manuel.rademaker@uni-wuerzburg.de;f.schuberth@utwente.nl).  -->
 <!--          The first stable relase will be version 0.0.1, most likely towards the end -->
@@ -72,7 +72,7 @@ Usully, using `cSEM` is the same 3 step procedure:
 ## Postestimation functions
 
 There are five major postestimation verbs, four test family functions and
-three do-family of function: 
+four do-family of function: 
 
 - `assess()` : assess the model using common quality criteria
 - `infer()` : calculate common inferencial quantities (e.g., standard errors, confidence intervals)
@@ -80,7 +80,7 @@ three do-family of function:
 - `summarize()` : summarize the results
 - `verify()` : verify admissibility of the estimates
 
-Tests are performed by using the test family of functions. Currently the following
+Tests are performed by using the test family of functions. Currently, the following
 tests are implemented:
 
 - `testOMF()` : performs a test for overall model fit
@@ -89,11 +89,12 @@ tests are implemented:
 - `testHausman()` : performs the regression-based Hausman test to test for endogeneity
 
 Other miscellaneous postestimation functions belong do the do-family of functions.
-Currently two do functions are implemented:
+Currently, four do functions are implemented:
 
 - `doFloodlightAnalysis()`: performs a floodlight analysis
 - `doSurfaceAnalysis()`: performs a surface analysis
 - `doRedundancyAnalysis()`: performs a redundancy analysis
+- `doIPMA()`: performs an importance-performance matrix analysis
 
 All functions require a `cSEMResults` object.
 
