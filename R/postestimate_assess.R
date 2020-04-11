@@ -109,7 +109,7 @@
 #'   criterion is a decision rule based on a comparison between the squared
 #'   construct correlations and the average variance extracted. FL returns
 #'   a matrix with the squared construct correlations on the off-diagonal and 
-#'   the AVE's on the main diagonal. Calculation is done by `assess()`.}
+#'   the AVE's on the main diagonal. Calculation is done by `calculateFLCriterion()`.}
 #' \item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root 
 #'   of the mean of the R squares of the structural model times the mean 
 #'   of the variances in the indicators that are explained by their 
@@ -391,10 +391,14 @@ assess <- function(
     # Effect size
     out[["RMSEA"]] <- calculateRMSEA(.object)
   }
-  if(any(.quality_criterion %in% c("all", "rms_theta")) && 
-     inherits(.object, "cSEMResults_default")) {
-    # RMS theta using the the construct correlation matrix WSW'
-    out[["RMS_theta"]] <- calculateRMSTheta(.object)
+  if(any(.quality_criterion %in% c("all", "rms_theta"))) {
+    if(inherits(.object, "cSEMResults_default")) {
+      out[["RMS_theta"]] <- calculateRMSTheta(.object)
+    } else {
+      warning("Computation of the RMS_theta",
+              " not supported for models containing second-order constructs:\n",
+              "Argument 'rms_theta' is ignored.", call. = FALSE) 
+    }
   }
   if(any(.quality_criterion %in% c("all", "srmr"))) {
     # Effect size
@@ -402,29 +406,14 @@ assess <- function(
   }
   if(any(.quality_criterion %in% c("all", "fl_criterion"))) {
     if(inherits(.object, "cSEMResults_default")) {
-      # Fornell-Larcker
-      ## Get relevant objects
-      con_types <-.object$Information$Model$construct_type
-      names_cf  <- names(con_types[con_types == "Common factor"])
-      P         <- .object$Estimates$Construct_VCV
-      
-      if(.only_common_factors) {
-        P <- P[names_cf, names_cf]
-      }
-      
-      if(sum(dim(P)) > 0) {
-        FL_matrix <- cov2cor(P)^2
-        diag(FL_matrix) <- calculateAVE(.object, 
-                                        .only_common_factors = .only_common_factors)
-        out[["Fornell-Larcker"]] <- FL_matrix
-      } 
-
-    } else { # 2nd order
+      out[["Fornell-Larcker"]] <- calculateFLCriterion(
+        .object, 
+        .only_common_factors = .only_common_factors)
+    } else {
       warning("Computation of the Fornell-Larcker criterion",
               " not supported for models containing second-order constructs:\n",
-              "Argument 'fl_criterion' is ignored.", call. = FALSE)
+              "Argument 'fl_criterion' is ignored.", call. = FALSE) 
     }
-    
   }
   if(any(.quality_criterion %in% c("all", "gof")) && !all(x22$Model$structural == 0)) {
     # GoF

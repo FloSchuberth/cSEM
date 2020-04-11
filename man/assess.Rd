@@ -151,7 +151,7 @@ to assess discriminant validity. The Fornell-Larcker
 criterion is a decision rule based on a comparison between the squared
 construct correlations and the average variance extracted. FL returns
 a matrix with the squared construct correlations on the off-diagonal and
-the AVE's on the main diagonal. Calculation is done by \code{assess()}.}
+the AVE's on the main diagonal. Calculation is done by \code{calculateFLCriterion()}.}
 \item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root
 of the mean of the R squares of the structural model times the mean
 of the variances in the indicators that are explained by their
