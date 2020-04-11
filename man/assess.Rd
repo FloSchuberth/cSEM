@@ -7,15 +7,14 @@
 assess(
   .object              = NULL, 
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
-                           "rho_C_weighted_mm", "cronbachs_alpha", 
-                          "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                          "effects", "f2", "chi_square", "chi_square_df",
+                           "rho_C_weighted_mm", "dg", "dl", "dml", "df",
+                          "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
                           "reliability", 
                           "rmsea", "rms_theta", "srmr",
                           "gof", "htmt", "r2", "r2_adj",
                           "rho_T", "rho_T_weighted", "vif", 
-                          "vifmodeB",  "fl_criterion"),
+                          "vifmodeB"),
   .only_common_factors = TRUE, 
   ...
 )
@@ -92,27 +91,6 @@ It is possible to report the congeneric reliability for constructs modeled as
 composites by setting \code{.only_common_factors = FALSE}, however, result should be
 interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by \code{\link[=calculateRhoC]{calculateRhoC()}}.}
-\item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
-reliability assuming a tau-equivalent measurement model (i.e., a measurement
-model with equal loadings) and a test score (proxy) based on unit weights.
-To compute Cronbach's alpha based on a score that uses the weights of the
-weight approach used to obtain \code{.object}, use \code{"cronbachs_alpha_weighted"} instead.
-Cronbach's alpha is an alias for \code{"rho_T"} the tau-equivalent
-reliability which is
-the prefered name for this kind of reliability in \pkg{cSEM}, as it clearly states what
-it actually estimates (the tau-equivalent reliability as opposed to
-the congeneric reliability). "rho_T" and "cronbachs_alpha" are therefore
-always identical.
-The tau-equivalent
-reliability (Cronbach's alpha) is inherently
-tied to the common factor model. It is therefore unclear how to meaningfully
-interpret tau-equivalent
-reliability estimates for constructs modeled as composites.
-It is possible to report tau-equivalent
-reliability estimates for constructs modeled as
-composites by setting \code{.only_common_factors = FALSE}, however, result should be
-interpreted with caution as they may not have a conceptual meaning.
-Calculation is done by \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
 between the model-implied and the empirical indicator correlation matrix.
 Currently, the geodesic distance (\code{"dg"}), the squared Euclidian distance
