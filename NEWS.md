@@ -1,5 +1,8 @@
 # Development version: cSEM 0.2.0:9000
 
+- The Fornell-Larcker criterion is now computed by a its own function `calculateFLCriterion()`.
+  Previously it was only available via `assess()`. (#387)
+
 - Implement importance-performance matrix analysis via `doIPMA()`. A corresponding
   plot method is also available.
 

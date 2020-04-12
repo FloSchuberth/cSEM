@@ -331,6 +331,73 @@ calculateDf <- function(
 
 
 
+#' Fornell-Larcker criterion
+#' 
+#' Computes the Fornell-Larcker matrix.
+#' 
+#' The Fornell-Larcker criterion (FL criterion) is a rule suggested by \insertCite{Fornell1981;textual}{cSEM}
+#' to assess discriminant validity. The Fornell-Larcker
+#' criterion is a decision rule based on a comparison between the squared
+#' construct correlations and the average variance extracted (AVE).
+#' 
+#' The FL criterion is inherently tied to the common factor model. It is therefore 
+#' unclear how to meaningfully interpret the FL criterion in the context of a 
+#' model that contains constructs modeled as composites.
+#' 
+#' @usage calculateFLCriterion(
+#'   .object              = NULL,
+#'   .only_common_factors = TRUE,
+#'   ...
+#'   )
+#'
+#' @return A matrix with the squared construct correlations on the off-diagonal and 
+#' the AVE's on the main diagonal.
+#'   
+#' @inheritParams csem_arguments
+#' @param ... Ignored.
+#'
+#' @seealso [assess()], [cSEMResults]
+#'
+#' @references 
+#' \insertAllCited{}
+#' @export
+
+calculateFLCriterion <- function(
+  .object              = NULL,
+  .only_common_factors = TRUE,
+  ...
+  ) {
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateFLCriterion,
+                  .only_common_factors = .only_common_factors)
+    return(out)
+  } else if(inherits(.object, "cSEMResults_default")) {
+    # Fornell-Larcker
+    ## Get relevant objects
+    con_types <-.object$Information$Model$construct_type
+    names_cf  <- names(con_types[con_types == "Common factor"])
+    P         <- .object$Estimates$Construct_VCV
+    
+    if(.only_common_factors) {
+      P <- P[names_cf, names_cf]
+    }
+    
+    if(sum(dim(P)) > 0) {
+      FL_matrix <- cov2cor(P)^2
+      diag(FL_matrix) <- calculateAVE(.object, 
+                                      .only_common_factors = .only_common_factors)
+      FL_matrix
+    } 
+    
+  } else { # 2nd order
+    stop2(
+      "Computation of the Fornell-Larcker criterion",
+      " not supported for models containing second-order constructs:\n")
+  }
+}
+
+
+
 #' Goodness of Fit (GoF)
 #'
 #' Calculate the Goodness of Fit (GoF) proposed by \insertCite{Tenenhaus2004;textual}{cSEM}. 

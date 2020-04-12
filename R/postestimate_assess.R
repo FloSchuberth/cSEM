@@ -50,27 +50,6 @@
 #'   composites by setting `.only_common_factors = FALSE`, however, result should be 
 #'   interpreted with caution as they may not have a conceptual meaning.
 #'   Calculation is done by [calculateRhoC()].}
-#' \item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
-#'   reliability assuming a tau-equivalent measurement model (i.e., a measurement
-#'   model with equal loadings) and a test score (proxy) based on unit weights. 
-#'   To compute Cronbach's alpha based on a score that uses the weights of the
-#'   weight approach used to obtain `.object`, use `"cronbachs_alpha_weighted"` instead.
-#'   Cronbach's alpha is an alias for `"rho_T"` the tau-equivalent
-#'   reliability which is
-#'   the prefered name for this kind of reliability in \pkg{cSEM}, as it clearly states what
-#'   it actually estimates (the tau-equivalent reliability as opposed to
-#'   the congeneric reliability). "rho_T" and "cronbachs_alpha" are therefore
-#'   always identical. 
-#'   The tau-equivalent
-#'   reliability (Cronbach's alpha) is inherently
-#'   tied to the common factor model. It is therefore unclear how to meaningfully 
-#'   interpret tau-equivalent
-#'   reliability estimates for constructs modeled as composites. 
-#'   It is possible to report tau-equivalent
-#'   reliability estimates for constructs modeled as 
-#'   composites by setting `.only_common_factors = FALSE`, however, result should be 
-#'   interpreted with caution as they may not have a conceptual meaning.
-#'   Calculation is done by [calculateRhoT()]}
 #' \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
 #'   between the model-implied and the empirical indicator correlation matrix.
 #'   Currently, the geodesic distance (`"dg"`), the squared Euclidian distance
@@ -109,7 +88,7 @@
 #'   criterion is a decision rule based on a comparison between the squared
 #'   construct correlations and the average variance extracted. FL returns
 #'   a matrix with the squared construct correlations on the off-diagonal and 
-#'   the AVE's on the main diagonal. Calculation is done by `assess()`.}
+#'   the AVE's on the main diagonal. Calculation is done by `calculateFLCriterion()`.}
 #' \item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root 
 #'   of the mean of the R squares of the structural model times the mean 
 #'   of the variances in the indicators that are explained by their 
@@ -203,15 +182,14 @@
 #' @usage assess(
 #'   .object              = NULL, 
 #'   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
-#'                            "rho_C_weighted_mm", "cronbachs_alpha", 
-#'                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-#'                           "effects", "f2", "chi_square", "chi_square_df",
+#'                            "rho_C_weighted_mm", "dg", "dl", "dml", "df",
+#'                           "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
 #'                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
 #'                           "reliability", 
 #'                           "rmsea", "rms_theta", "srmr",
 #'                           "gof", "htmt", "r2", "r2_adj",
 #'                           "rho_T", "rho_T_weighted", "vif", 
-#'                           "vifmodeB",  "fl_criterion"),
+#'                           "vifmodeB"),
 #'   .only_common_factors = TRUE, 
 #'   ...
 #' )
@@ -232,15 +210,14 @@
 assess <- function(
   .object              = NULL, 
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
-                           "rho_C_weighted_mm", "cronbachs_alpha", 
-                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                           "effects", "f2", "chi_square", "chi_square_df",
+                           "rho_C_weighted_mm", "dg", "dl", "dml", "df",
+                           "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
-                           "vifmodeB",  "fl_criterion"),
+                           "vifmodeB"),
   .only_common_factors = TRUE, 
   ...
 ){
@@ -391,10 +368,14 @@ assess <- function(
     # Effect size
     out[["RMSEA"]] <- calculateRMSEA(.object)
   }
-  if(any(.quality_criterion %in% c("all", "rms_theta")) && 
-     inherits(.object, "cSEMResults_default")) {
-    # RMS theta using the the construct correlation matrix WSW'
-    out[["RMS_theta"]] <- calculateRMSTheta(.object)
+  if(any(.quality_criterion %in% c("all", "rms_theta"))) {
+    if(inherits(.object, "cSEMResults_default")) {
+      out[["RMS_theta"]] <- calculateRMSTheta(.object)
+    } else {
+      warning("Computation of the RMS_theta",
+              " not supported for models containing second-order constructs:\n",
+              "Argument 'rms_theta' is ignored.", call. = FALSE) 
+    }
   }
   if(any(.quality_criterion %in% c("all", "srmr"))) {
     # Effect size
@@ -402,29 +383,14 @@ assess <- function(
   }
   if(any(.quality_criterion %in% c("all", "fl_criterion"))) {
     if(inherits(.object, "cSEMResults_default")) {
-      # Fornell-Larcker
-      ## Get relevant objects
-      con_types <-.object$Information$Model$construct_type
-      names_cf  <- names(con_types[con_types == "Common factor"])
-      P         <- .object$Estimates$Construct_VCV
-      
-      if(.only_common_factors) {
-        P <- P[names_cf, names_cf]
-      }
-      
-      if(sum(dim(P)) > 0) {
-        FL_matrix <- cov2cor(P)^2
-        diag(FL_matrix) <- calculateAVE(.object, 
-                                        .only_common_factors = .only_common_factors)
-        out[["Fornell-Larcker"]] <- FL_matrix
-      } 
-
-    } else { # 2nd order
+      out[["Fornell-Larcker"]] <- calculateFLCriterion(
+        .object, 
+        .only_common_factors = .only_common_factors)
+    } else {
       warning("Computation of the Fornell-Larcker criterion",
               " not supported for models containing second-order constructs:\n",
-              "Argument 'fl_criterion' is ignored.", call. = FALSE)
+              "Argument 'fl_criterion' is ignored.", call. = FALSE) 
     }
-    
   }
   if(any(.quality_criterion %in% c("all", "gof")) && !all(x22$Model$structural == 0)) {
     # GoF
