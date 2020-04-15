@@ -88,4 +88,7 @@ left-hand side terms in Equation (21) - (24) \insertCite{Dijkstra2014}{cSEM}.
 The label "M" did not appear in the paper and is only used in the package.
 Similar is suggested by \insertCite{Wall2000;textual}{cSEM} using classical factor scores.
 }
+\references{
+\insertAllCited{}
+}
 \keyword{internal}
