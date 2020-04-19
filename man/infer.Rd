@@ -54,7 +54,7 @@ Consequently, \code{\link[=infer]{infer()}} requires resamples to work. Technica
 the \link{cSEMResults} object used in the call to \code{\link[=infer]{infer()}} must
 therefore also have class attribute \code{cSEMResults_resampled}. If
 the object provided by the user does not contain resamples yet,
-\code{\link[=infer]{infer()}} will by default obtain bootstrap resamples first.
+\code{\link[=infer]{infer()}} will obtain bootstrap resamples first.
 Naturally, computation will take longer in this case.
 
 \code{\link[=infer]{infer()}} does as much as possible in the  background. Hence, every time
@@ -77,8 +77,8 @@ the resample standard deviation. While \code{"CI_standard_z"} assumes a
 standard normally distributed statistic,
 \code{"CI_standard_t"} assumes a t-statistic with N - 1 degrees of freedom.}
 \item{\code{"CI_percentile"}}{The percentile confidence interval. The lower and
-upper bounds of the confidence interval are estimated as the $\alpha$ and
-$1-\alpha$ quantiles of the distribution of the resample estimates.}
+upper bounds of the confidence interval are estimated as the alpha and
+1-alpha quantiles of the distribution of the resample estimates.}
 \item{\code{"CI_basic"}}{The basic confidence interval also called the reverse
 bootstrap percentile confidence interval. See \insertCite{Hesterberg2015;textual}{cSEM}
 for details.}

@@ -17,7 +17,7 @@
 #' the [cSEMResults] object used in the call to [infer()] must 
 #' therefore also have class attribute `cSEMResults_resampled`. If 
 #' the object provided by the user does not contain resamples yet,
-#' [infer()] will by default obtain bootstrap resamples first. 
+#' [infer()] will obtain bootstrap resamples first. 
 #' Naturally, computation will take longer in this case.
 #' 
 #' [infer()] does as much as possible in the  background. Hence, every time 
@@ -40,8 +40,8 @@
 #'   standard normally distributed statistic,
 #'   `"CI_standard_t"` assumes a t-statistic with N - 1 degrees of freedom.}
 #' \item{`"CI_percentile"`}{The percentile confidence interval. The lower and 
-#'   upper bounds of the confidence interval are estimated as the $\alpha$ and 
-#'   $1-\alpha$ quantiles of the distribution of the resample estimates.}
+#'   upper bounds of the confidence interval are estimated as the alpha and 
+#'   1-alpha quantiles of the distribution of the resample estimates.}
 #' \item{`"CI_basic"`}{The basic confidence interval also called the reverse 
 #'   bootstrap percentile confidence interval. See \insertCite{Hesterberg2015;textual}{cSEM}
 #'   for details.}
@@ -102,13 +102,14 @@ infer <- function(
     .quantity <- "all"
   }
   
-  if(!inherits(.object, "cSEMResults")) {
-    stop2("The following error occured in the `infer()` function:\n",
-          "Object must be of class `cSEMResults`")
+  
+  if(!inherits(.object, "cSEMResults_resampled")) {
+    # Bootstrap if necessary
+    .object <- resamplecSEMResults(.object)
   }
   
-  ## If multi object, do recursive call
   if(inherits(.object, "cSEMResults_multi")) {
+    ## If multi object, do recursive call
     out <- lapply(.object, function(x) {
       infer(
         .object = x,
@@ -121,23 +122,17 @@ infer <- function(
     ## Add/ set class
     class(out) <- c("cSEMInfer", "cSEMInfer_multi")
     return(out)
-  }
-  
-  if(!inherits(.object, "cSEMResults_resampled")) {
-    stop2("The following error occured in the `infer()` function:\n",
-          "Object must contain resamples.", 
-          " Use `resamplecSEMResults(.object = .object, ...)` first."
-    )
-  }
-  
-  if(any(class(.object) == "cSEMResults_2ndorder")) {
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
     first_resample  <- .object$Second_stage$Information$Resamples$Estimates$Estimates1
     second_resample <- .object$Second_stage$Information$Resamples$Estimates$Estimates2
     info            <- .object$Second_stage$Information$Resamples$Information_resample
-  } else {
+  } else if(inherits(.object, "cSEMResults_default")) {
     first_resample  <- .object$Estimates$Estimates_resample$Estimates1
     second_resample <- .object$Estimates$Estimates_resample$Estimates2
     info            <- .object$Information$Information_resample
+  } else {
+    stop2("The following error occured in the `infer()` function:\n",
+          "Object must be of class `cSEMResults`")
   }
   
   ## Compute quantiles/critical values -----------------------------------------
