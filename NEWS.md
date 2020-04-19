@@ -1,12 +1,23 @@
 # Development version: cSEM 0.2.0:9000
 
+- Add tests for `infer()`
+
+- Fix bug in the computation of the Bc and Bca interval. Computation failed for
+  models that had no indirect effects. 
+
+- List element "reliability" of `assess()` is changed to "Reliability" to be 
+  consistent with the naming scheme of the other list elements.
+
+- `infer()` automatically computes bootstrap resamples now by default if `.object`
+  does not have class `cSEMResults_resampled` already.
+
 - Remove .alpha argument from `testMICOM()`. The argument is no longer required
   as decisions are made via (possibly adjusted) p-values.
   
 - Add checks to plot methods for `predict()`, `doFloodlightAnalysis`, and,
   `doFloodlightAnalysis`.
   
-- Several documentation fixes
+- Several documentation updates and typo corrections
 
 - The Fornell-Larcker criterion is now computed by its own function
  `calculateFLCriterion()`. Previously, it was only available via `assess()`. (#387)

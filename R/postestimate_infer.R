@@ -1,58 +1,97 @@
 #' Inference
 #'
 #' Calculate common inferential quantities. For users interested in the
-#' estimated standard errors and/or confidences intervals [summarize()] will usually
-#' be more helpful as it has a much more user-friendly print method.
+#' estimated standard errors, t-values, p-values and/or confidences
+#' intervals of the path, weight or loading estimates, calling [summarize()]
+#' directly will usually be more convenient as it has a much more 
+#' user-friendly print method. [infer()] is useful for comparing 
+#' different confidence interval estimates.
 #'
-#' Calculate common inferential quantities (e.g., estimated standard errors, estimated bias,
-#' confidence intervals) based on a `cSEMResults_resampled` object as obtained
-#' by calling [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
-#' or `"jackknife"` when calling [csem()]. Currently, the following quantities are
-#' returned by default (`.quantity = "all"`):
+#' [infer()] is a convenience wrapper around a 
+#' number of internal functions that compute a particular inferential
+#' quantity, i.e., a value or set of values to be used in statistical inference.
+#' 
+#' \pkg{cSEM} relies on resampling (bootstrap and jackknife) as the basis for 
+#' the computation of e.g., standard errors or confidence intervals.
+#' Consequently, [infer()] requires resamples to work. Technically, 
+#' the [cSEMResults] object used in the call to [infer()] must 
+#' therefore also have class attribute `cSEMResults_resampled`. If 
+#' the object provided by the user does not contain resamples yet,
+#' [infer()] will obtain bootstrap resamples first. 
+#' Naturally, computation will take longer in this case.
+#' 
+#' [infer()] does as much as possible in the  background. Hence, every time 
+#' [infer()] is called on a [cSEMResults] object the quantities chosen by 
+#' the user are automatically computed for every estimated parameter 
+#' contained in the object. By default all possible quantities are 
+#' computed (`.quantity = all`). The following table list the available 
+#' inferential quantities alongside a brief description. Implementation and 
+#' terminology of the confidence intervals is based on 
+#' \insertCite{Hesterberg2015;textual}{cSEM} and 
+#' \insertCite{Davison1997;textual}{cSEM}.
 #' \describe{
-#' \item{`"mean"`, `"sd"` and `"bias"`}{The mean, the standard 
-#'   deviation and the estimated bias (defined as the difference between the resample mean
-#'   and the original estimate).}
+#' \item{`"mean"`, `"sd"`}{The mean or the standard deviation 
+#'   over all `M` resample estimates of a generic statistic or parameter.}
+#' \item{`"bias"`}{The difference between the resample mean and the original 
+#'   estimate of a generic statistic or parameter.}
 #' \item{`"CI_standard_z"` and `"CI_standard_t"`}{The standard confidence interval 
-#'   with standard errors estimated by the resample standard deviation. 
-#'   While `"CI_standard_z"` assumes a standard normally distributed statistic,
+#'   for a generic statistic or parameter with standard errors estimated by 
+#'   the resample standard deviation. While `"CI_standard_z"` assumes a 
+#'   standard normally distributed statistic,
 #'   `"CI_standard_t"` assumes a t-statistic with N - 1 degrees of freedom.}
-#' \item{`"CI_percentile"`}{The percentile confidence interval}
-#' \item{`"CI_basic"`}{The basic confidence interval}
-#' \item{`"CI_bc"`}{The bias corrected confidence interval}
+#' \item{`"CI_percentile"`}{The percentile confidence interval. The lower and 
+#'   upper bounds of the confidence interval are estimated as the alpha and 
+#'   1-alpha quantiles of the distribution of the resample estimates.}
+#' \item{`"CI_basic"`}{The basic confidence interval also called the reverse 
+#'   bootstrap percentile confidence interval. See \insertCite{Hesterberg2015;textual}{cSEM}
+#'   for details.}
+#' \item{`"CI_bc"`}{The bias corrected (Bc) confidence interval. See 
+#'   \insertCite{Davison1997;textual}{cSEM} for details.}
+#' \item{`"CI_bca"`}{The bias-corrected and accelerated (Bca) confidence interval.
+#'   Requires additional jackknife resampling to compute the influence values. 
+#'   See \insertCite{Davison1997;textual}{cSEM} for details.}
+#' \item{`"CI_t_interval"`}{The "studentized" t-confidence interval. If based on bootstrap 
+#'   resamples the interval is also called the bootstrap t-interval 
+#'   confidence interval. See \insertCite{Hesterberg2015;textual}{cSEM} on page 381. 
+#'   Requires resamples of resamples. See [resamplecSEMResults()].}
 #' }
 #' 
-#' In addition, the bias-corrected and accelerated (`.quantity = "CI_bca"`) and/or the "studentized"
-#' confidence interval (`".quantity = CI_t_interval"`) may be computed. The former requires 
+#' By default, all but the studendized t-interval confidence interval and the
+#' bias-corrected and accelerated confidence interval are calculated. The 
+#' reason for excluding these quantities by default are that both require 
+#' an additional resampling step. The former requires 
 #' jackknife estimates to compute influence values and the latter requires 
-#' double bootstrap. Both can potentially be time consuming. Hence, computation is triggerd 
-#' only if explicitly chosen.
+#' double bootstrap. Both can potentially be time consuming. 
+#' Hence, computation is triggered only if explicitly chosen.
 #' 
 #' @usage infer(
 #'  .object            = NULL,
-#'  .alpha             = 0.05,
-#'  .bias_corrected    = TRUE,
 #'  .quantity          = c("all", "mean", "sd", "bias", "CI_standard_z", 
 #'                         "CI_standard_t", "CI_percentile", "CI_basic", 
-#'                         "CI_bc", "CI_bca", "CI_t_interval")
+#'                         "CI_bc", "CI_bca", "CI_t_interval"),
+#'  .alpha             = 0.05,
+#'  .bias_corrected    = TRUE
 #' )
 #'
 #' @inheritParams csem_arguments
 #' 
 #' @return A list of class `cSEMInfer`.
 #' 
+#' @references
+#'   \insertAllCited{} 
+#' 
 #' @seealso [csem()], [resamplecSEMResults()], [summarize()] [cSEMResults]
 #' 
 #' @example inst/examples/example_infer.R
 #' @export
-#'
 
 infer <- function(
-  .object = NULL,
+  .object          = NULL,
+  .quantity        = c("all", "mean", "sd", "bias", "CI_standard_z", 
+                       "CI_standard_t", "CI_percentile", "CI_basic", 
+                       "CI_bc", "CI_bca", "CI_t_interval"),
   .alpha           = 0.05,
-  .bias_corrected  = TRUE,
-  .quantity        = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
-                       "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_interval")
+  .bias_corrected  = TRUE
 ) {
   
   ## Check arguments
@@ -63,13 +102,14 @@ infer <- function(
     .quantity <- "all"
   }
   
-  if(!inherits(.object, "cSEMResults")) {
-    stop2("The following error occured in the `infer()` function:\n",
-          "Object must be of class `cSEMResults`")
+  
+  if(!inherits(.object, "cSEMResults_resampled")) {
+    # Bootstrap if necessary
+    .object <- resamplecSEMResults(.object)
   }
   
-  ## If multi object, do recursive call
   if(inherits(.object, "cSEMResults_multi")) {
+    ## If multi object, do recursive call
     out <- lapply(.object, function(x) {
       infer(
         .object = x,
@@ -82,23 +122,17 @@ infer <- function(
     ## Add/ set class
     class(out) <- c("cSEMInfer", "cSEMInfer_multi")
     return(out)
-  }
-  
-  if(!inherits(.object, "cSEMResults_resampled")) {
-    stop2("The following error occured in the `infer()` function:\n",
-          "Object must contain resamples.", 
-          " Use `resamplecSEMResults(.object = .object, ...)` first."
-    )
-  }
-  
-  if(any(class(.object) == "cSEMResults_2ndorder")) {
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
     first_resample  <- .object$Second_stage$Information$Resamples$Estimates$Estimates1
     second_resample <- .object$Second_stage$Information$Resamples$Estimates$Estimates2
     info            <- .object$Second_stage$Information$Resamples$Information_resample
-  } else {
+  } else if(inherits(.object, "cSEMResults_default")) {
     first_resample  <- .object$Estimates$Estimates_resample$Estimates1
     second_resample <- .object$Estimates$Estimates_resample$Estimates2
     info            <- .object$Information$Information_resample
+  } else {
+    stop2("The following error occured in the `infer()` function:\n",
+          "Object must be of class `cSEMResults`")
   }
   
   ## Compute quantiles/critical values -----------------------------------------

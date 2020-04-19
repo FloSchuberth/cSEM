@@ -261,7 +261,10 @@ f5 <- function(.i, .j, .H, .Q, .var_struc_error) {
 #' @param .i Row index
 #' @param .j Column index
 #' @inheritParams csem_arguments
-#'  
+#' 
+#' @references
+#'   \insertAllCited{} 
+#'     
 #' @name moments
 #' @rdname moments
 #' @keywords internal
