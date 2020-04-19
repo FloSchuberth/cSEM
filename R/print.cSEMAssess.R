@@ -250,17 +250,21 @@ print.cSEMAssess <- function(x, ...) {
       cat("\n\n")
     }
     
-    ## Total effects
-    cat2("Estimated total effects:\n========================")
-    printEffects(x$Effects$Total_effect, .ci_colnames = ci_colnames, .what = "Total effect")
-    
-    ## Indirect effects
-    cat2("\n\nEstimated indirect effects:\n===========================")
-    printEffects(x$Effects$Indirect_effect, .ci_colnames = ci_colnames, .what = "Indirect effect")
-    
-    ### Variance accounted for -------------------------------------------------
-    cat2("\n\nVariance accounted for (VAF):\n=============================")
-    printEffects(x$Effects$Variance_accounted_for, .ci_colnames = ci_colnames, .what = "Effects")
+    if(any(names(x$Effects) == "Total_effect")) {
+      ## Total effects
+      cat2("Estimated total effects:\n========================")
+      printEffects(x$Effects$Total_effect, .ci_colnames = ci_colnames, .what = "Total effect")
+    }
+    if(any(names(x$Effects) == "Indirect_effect")) {
+      ## Indirect effects
+      cat2("\n\nEstimated indirect effects:\n===========================")
+      printEffects(x$Effects$Indirect_effect, .ci_colnames = ci_colnames, .what = "Indirect effect")
+    }
+    if(any(names(x$effects) == "Variance_accounted_for")) {
+      ### Variance accounted for -------------------------------------------------
+      cat2("\n\nVariance accounted for (VAF):\n=============================")
+      printEffects(x$Effects$Variance_accounted_for, .ci_colnames = ci_colnames, .what = "Effects")
+    }
   }
   
   cat2("\n", rule2(type = 2), "\n")

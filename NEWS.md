@@ -1,6 +1,7 @@
 # Development version: cSEM 0.2.0:9000
 
-- Add tests for infer()
+- Add tests for `infer()`
+
 - Fix bug in the computation of the Bc and Bca interval. Computation failed for
   models that had no indirect effects. 
 
