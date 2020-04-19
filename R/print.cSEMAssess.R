@@ -46,8 +46,8 @@ print.cSEMAssess <- function(x, ...) {
     }
   }
   
-  if(any(names(x) == "reliability")) {
-    rel <- x$reliability
+  if(any(names(x) == "Reliability")) {
+    rel <- x$Reliability
     c_names <- names(rel[[1]])
     if(length(c_names) > 0) {
       l <- max(nchar(c_names))
