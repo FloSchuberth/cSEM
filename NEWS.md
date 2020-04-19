@@ -10,6 +10,9 @@
 
 - `infer()` automatically computes bootstrap resamples now by default if `.object`
   does not have class `cSEMResults_resampled` already.
+
+- Remove .alpha argument from `testMICOM()`. The argument is no longer required
+  as decisions are made via (possibly adjusted) p-values.
   
 - Add checks to plot methods for `predict()`, `doFloodlightAnalysis`, and,
   `doFloodlightAnalysis`.

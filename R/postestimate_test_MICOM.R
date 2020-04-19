@@ -1,22 +1,35 @@
 #' Test measurement invariance of composites
 #'
-#' This functions performs the test for measurement invariance of composites
-#' proposed by \insertCite{Henseler2016;textual}{cSEM}.
-#'
-#' The test is only meaningful for concepts modeled as composites.
-#'
-#' If more than two groups are to be compared issues related to multiple testing
-#' should be taken into account.
+#' The functions performs the permutation-based test for measurement invariance 
+#' of composites across groups proposed by \insertCite{Henseler2016;textual}{cSEM}. 
+#' According to the authors assessing measurement invariance in composite 
+#' models can be assessed by a three-step procedure. The first two steps 
+#' involve an assessment of configural and compositional invariance. 
+#' The third steps involves mean and variance comparisons across groups. 
+#' Assessment of configural invariance is qualitative in nature and hence 
+#' not assessed by the [testMICOM()] function. 
 #' 
-#' Models containing second-order constructs are not supported yet.
+#' As [testMICOM()] requires at least two groups, `.object` must be of 
+#' class `cSEMResults_multi`. As of version 0.2.0 of the package, [testMICOM()] 
+#' does not support models containing second-order constructs.
+#'  
+#' It is possible to compare more than two groups, however, multiple-testing 
+#' issues arise in this case. To adjust p-values in this case several p-value 
+#' adjustments are available via the `approach_p_adjust` argument. 
+#' 
+#' The remaining arguments set the number of permutation runs to conduct 
+#' (`.R`), the random number seed (`.seed`), 
+#' instructions how inadmissible results are to be handled (`handle_inadmissibles`),
+#' and whether the function should be verbose in a sense that progress is printed
+#' to the console.
 #'
-#' The number of permutation runs defaults to `args_default()$.R` for performance reasons.
-#' According to \insertCite{Henseler2016;textual}{cSEM} the number of permutations should 
-#' be at least 5000 for assessment to be sufficiently reliable.
+#' The number of permutation runs defaults to `args_default()$.R` for 
+#' performance reasons. According to \insertCite{Henseler2016;textual}{cSEM} 
+#' the number of permutations should be at least 5000 for assessment to be 
+#' sufficiently reliable.
 #'
 #' @usage testMICOM(
 #'  .object               = NULL,
-#'  .alpha                = 0.05,
 #'  .approach_p_adjust    = "none",
 #'  .handle_inadmissibles = c("drop", "ignore", "replace"), 
 #'  .R                    = 499,
@@ -46,7 +59,6 @@
 
 testMICOM <- function(
   .object               = NULL,
-  .alpha                = 0.05,
   .approach_p_adjust    = "none",
   .handle_inadmissibles = c("drop", "ignore", "replace"),
   .R                    = 499,
@@ -258,7 +270,7 @@ testMICOM <- function(
     temp <- split(as.data.frame(temp), rownames(temp))
     
     # Order alphas (decreasing order)
-    .alpha <- .alpha[order(.alpha)]
+    # .alpha <- .alpha[order(.alpha)]
     # critical_values_step2 <- lapply(lapply(temp, as.matrix), matrixStats::colQuantiles, 
     #                                 probs = .alpha, drop = FALSE) # lower quantile needed, hence 
     # alpha and not 1 - alpha
@@ -286,16 +298,16 @@ testMICOM <- function(
     # Decision 
     # TRUE = p-value > alpha --> not reject
     # FALSE = sufficient evidence against the H0 --> reject
-    decision_step2 <- lapply(padjusted_step2, function(adjust_approach){ # over the different p adjustments
-      temp <- lapply(.alpha, function(alpha){# over the different significance levels
-        lapply(adjust_approach,function(group_comp){# over the different group comparisons
-          # check whether the p values are larger than a certain alpha
-          as.matrix(group_comp > alpha,ncol=1)
-        })
-      })
-      names(temp) <- paste0(.alpha*100, "%")
-      temp
-    })
+    # decision_step2 <- lapply(padjusted_step2, function(adjust_approach){ # over the different p adjustments
+    #   temp <- lapply(.alpha, function(alpha){# over the different significance levels
+    #     lapply(adjust_approach,function(group_comp){# over the different group comparisons
+    #       # check whether the p values are larger than a certain alpha
+    #       as.matrix(group_comp > alpha,ncol=1)
+    #     })
+    #   })
+    #   names(temp) <- paste0(.alpha*100, "%")
+    #   temp
+    # })
     # TRUE do not reject; FALSE: reject
 
     ### Step 3 - Equal mean values and variances==================================
@@ -392,16 +404,16 @@ testMICOM <- function(
     names(padjusted_mean) <- .approach_p_adjust
     
     # Make decision
-    decision_mean <- lapply(padjusted_mean, function(adjust_approach){ # over the different p adjustments
-      temp <- lapply(.alpha, function(alpha){# over the different significance levels
-        lapply(adjust_approach,function(group_comp){# over the different group comparisons
-          # check whether the p values are larger than a certain alpha
-          as.matrix(group_comp > alpha,ncol=1)
-        })
-      })
-      names(temp) <- paste0(.alpha*100, "%")
-      temp
-    })
+    # decision_mean <- lapply(padjusted_mean, function(adjust_approach){ # over the different p adjustments
+    #   temp <- lapply(.alpha, function(alpha){# over the different significance levels
+    #     lapply(adjust_approach,function(group_comp){# over the different group comparisons
+    #       # check whether the p values are larger than a certain alpha
+    #       as.matrix(group_comp > alpha,ncol=1)
+    #     })
+    #   })
+    #   names(temp) <- paste0(.alpha*100, "%")
+    #   temp
+    # })
     # TRUE: do not reject; FALSE: reject
     
     
@@ -433,16 +445,16 @@ testMICOM <- function(
     
     names(padjusted_var) <- .approach_p_adjust
     # Make decision
-    decision_var <- lapply(padjusted_var, function(adjust_approach){ # over the different p adjustments
-      temp <- lapply(.alpha, function(alpha){# over the different significance levels
-        lapply(adjust_approach,function(group_comp){# over the different group comparisons
-          # check whether the p values are larger than a certain alpha
-          as.matrix(group_comp > alpha,ncol=1)
-        })
-      })
-      names(temp) <- paste0(.alpha*100, "%")
-      temp
-    })
+    # decision_var <- lapply(padjusted_var, function(adjust_approach){ # over the different p adjustments
+    #   temp <- lapply(.alpha, function(alpha){# over the different significance levels
+    #     lapply(adjust_approach,function(group_comp){# over the different group comparisons
+    #       # check whether the p values are larger than a certain alpha
+    #       as.matrix(group_comp > alpha,ncol=1)
+    #     })
+    #   })
+    #   names(temp) <- paste0(.alpha*100, "%")
+    #   temp
+    # })
     
     
     
@@ -474,19 +486,19 @@ testMICOM <- function(
       "Step2" = list(
         "Test_statistic"     = c,
         "P_value"            = padjusted_step2, 
-        "Decision"           = decision_step2,
+        # "Decision"           = decision_step2,
         "Bootstrap_values"   = ref_dist
       ),
       "Step3" = list(
         "Mean" = list(
           "Test_statistic"     = teststat_mean,
-          "P_value"            = padjusted_mean, 
-          "Decision"           = decision_mean
+          "P_value"            = padjusted_mean 
+          # "Decision"           = decision_mean
         ),
         "Var" = list(
           "Test_statistic"     = teststat_var,
-          "P_value"            = padjusted_var, 
-          "Decision"           = decision_var
+          "P_value"            = padjusted_var
+          # "Decision"           = decision_var
         )
       ),
       "Information" = list(
