@@ -1,5 +1,8 @@
 # Development version: cSEM 0.2.0:9000
 
+- Remove .alpha argument from `testMICOM()`. The argument is no longer required
+  as decisions are made via (possibly adjusted) p-values.
+  
 - Add checks to plot methods for `predict()`, `doFloodlightAnalysis`, and,
   `doFloodlightAnalysis`.
   
