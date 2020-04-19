@@ -303,34 +303,42 @@ summarize.cSEMResults_default <- function(
     
     ## Effects -----------------------------------------------------------------
     if(x2$Model$model_type == "Linear" & !all(x2$Model$structural == 0)) {
-      effects <- lapply(c("Total_effect", "Indirect_effect"), function(nx) {
-        temp   <- infer_out[[nx]]
-        x <- effects[[nx]]
-        t_temp <- x$Estimate / temp$sd
-        
-        x["Std_err"] <- temp$sd
-        x["t_stat"]  <- t_temp
-        x["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-        
-        if(!is.null(.ci)) {
-          ## Add CI's
-          # Column names
-          ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
-                                unlist(lapply(temp[.ci], rownames)))
+      which_effects <- intersect(names(effects), c("Total_effect", "Indirect_effect"))
+      if(length(which_effects) > 0) {
+        effects <- lapply(which_effects, function(nx) {
+          temp   <- infer_out[[nx]]
+          x <- effects[[nx]]
+          t_temp <- x$Estimate / temp$sd
           
-          # Add cis to data frame and set names
-          x <- cbind(x, t(do.call(rbind, temp[.ci])))
-          rownames(x) <- NULL
-          colnames(x)[(length(colnames(x)) - 
-                         (length(ci_colnames) - 1)):length(colnames(x))] <- ci_colnames
+          x["Std_err"] <- temp$sd
+          x["t_stat"]  <- t_temp
+          x["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+          
+          if(!is.null(.ci)) {
+            ## Add CI's
+            # Column names
+            ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
+                                  unlist(lapply(temp[.ci], rownames)))
+            
+            # Add cis to data frame and set names
+            x <- cbind(x, t(do.call(rbind, temp[.ci])))
+            rownames(x) <- NULL
+            colnames(x)[(length(colnames(x)) - 
+                           (length(ci_colnames) - 1)):length(colnames(x))] <- ci_colnames
+          }
+          ## Return
+          x
+        })
+        names(effects) <- which_effects
+        
+        if(any(which_effects == "Total_effect")) {
+          .object$Estimates$Effect_estimates$Total_effect <- effects[["Total_effect"]] # Total effect!
         }
-        ## Return
-        x
-      })
-      .object$Estimates$Effect_estimates$Indirect_effect <- effects[[2]] # Indirect effect
-      .object$Estimates$Effect_estimates$Total_effect <- effects[[1]] # Total effect!
+        if(any(which_effects == "Indirect_effect")) {
+          .object$Estimates$Effect_estimates$Indirect_effect <- effects[["Indirect_effect"]] # Indirect effect 
+        }
+      }          
     }
-    
   }
   
   ### Modify relevant .object elements =========================================
@@ -609,6 +617,41 @@ summarize.cSEMResults_2ndorder <- function(
     
     ## Effects -----------------------------------------------------------------
     if(x22$Model$model_type == "Linear") {
+      which_effects <- intersect(names(effects), c("Total_effect", "Indirect_effect"))
+      if(length(which_effects) > 0) {
+        effects <- lapply(which_effects, function(nx) {
+          temp   <- infer_out[[nx]]
+          x <- effects[[nx]]
+          t_temp <- x$Estimate / temp$sd
+          
+          x["Std_err"] <- temp$sd
+          x["t_stat"]  <- t_temp
+          x["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
+          
+          if(!is.null(.ci)) {
+            ## Add CI's
+            # Column names
+            ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
+                                  unlist(lapply(temp[.ci], rownames)))
+            
+            # Add cis to data frame and set names
+            x <- cbind(x, t(do.call(rbind, temp[.ci])))
+            rownames(x) <- NULL
+            colnames(x)[(length(colnames(x)) - 
+                           (length(ci_colnames) - 1)):length(colnames(x))] <- ci_colnames
+          }
+          ## Return
+          x
+        })
+        names(effects) <- which_effects
+        
+        if(any(which_effects == "Total_effect")) {
+          x21$Effect_estimates$Total_effect <- effects[["Total_effect"]] # Total effect!
+        }
+        if(any(which_effects == "Indirect_effect")) {
+          x21$Effect_estimates$Indirect_effect <- effects[["Indirect_effect"]] # Indirect effect 
+        }
+      }
       effects <- lapply(c("Total_effect", "Indirect_effect"), function(nx) {
         temp   <- infer_out[[nx]]
         x <- effects[[nx]]
