@@ -161,6 +161,33 @@ doFloodlightAnalysis <- function(
     pos_ub <- which(diff(sign(out[, 'ub'])) != 0)
     pos_lb <- which(diff(sign(out[, 'lb'])) != 0) 
     
+    # Calculate information necessary for print
+    dataplot_temp_print <- lapply(c(-2,-1,0,1,2), function(step){
+      ## Note:
+      #   
+      #   y = a + bz + cx + dxz
+      #   The marginal effect delta y = b + dx evaluated at x0 is identical to the
+      #   b' of the regression that uses x' = x - x0, since
+      #   y = a' + b'z + c'x' + d'x'z
+      #     = (a - cx0) + (b - dx0)z + cx + dxz
+      #   ---> b' = b - dx0
+      #
+      # Resamples of the effect of z on y at different levels of x 
+      effect_resampled <- est$Resampled[ , beta_z] + est$Resampled[, beta_xz] * step 
+      
+      # Value of the originally estimated effect of z on y at different levels of x
+      effect_original <- est$Original[beta_z] + est$Original[beta_xz] * step
+      
+      # Compute empirical quantile based on resamples
+      bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
+      
+      # Return output
+      c(effect_original, step, bounds[1],  bounds[2])
+    })
+    
+    out_print <- do.call(rbind, dataplot_temp_print)
+    colnames(out_print) <- c('direct_effect', 'value_z', 'lb', 'ub')
+    
     # Prepare and return output
     out <- list(
       "out"                   = out, 
@@ -171,6 +198,7 @@ doFloodlightAnalysis <- function(
                  y = out[,'ub'][pos_ub]
         )
       ),
+      "Information_print" = out_print,
       "Information" = list(
         alpha       = .alpha, 
         dependent   = .dependent,
