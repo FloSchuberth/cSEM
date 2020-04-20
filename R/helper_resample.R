@@ -47,15 +47,17 @@ selectAndVectorize <- function(.object) {
     }
     
     if(.object$Second_stage$Information$Model$model_type == "Linear") {
-      # Indirect effects
-      x1[["Indirect_effect"]] <- est2_temp$Effect_estimates$Indirect_effect$Estimate
-      names(x1[["Indirect_effect"]]) <- est2_temp$Effect_estimates$Indirect_effect$Name
-      
-      # Total effect
-      x1[["Total_effect"]] <- est2_temp$Effect_estimates$Total_effect$Estimate
-      names(x1[["Total_effect"]]) <- est2_temp$Effect_estimates$Total_effect$Name 
+      if(any(names(est2_temp$Effect_estimates) == "Indirect_effect")) {
+        # Indirect effects
+        x1[["Indirect_effect"]] <- est2_temp$Effect_estimates$Indirect_effect$Estimate
+        names(x1[["Indirect_effect"]]) <- est2_temp$Effect_estimates$Indirect_effect$Name
+      }
+      if(any(names(est2_temp$Effect_estimates) == "Total_effect")) {
+        # Total effect
+        x1[["Total_effect"]] <- est2_temp$Effect_estimates$Total_effect$Estimate
+        names(x1[["Total_effect"]]) <- est2_temp$Effect_estimates$Total_effect$Name         
+      }
     }
-    
   } else {
     
     est_temp <- summary_temp$Estimates
@@ -91,13 +93,17 @@ selectAndVectorize <- function(.object) {
     }
     
     if(.object$Information$Model$model_type == "Linear") {
-      # Indirect effects
-      x1[["Indirect_effect"]] <- est_temp$Effect_estimates$Indirect_effect$Estimate
-      names(x1[["Indirect_effect"]]) <- est_temp$Effect_estimates$Indirect_effect$Name
+      if(any(names(est_temp$Effect_estimates) == "Indirect_effect")){
+        # Indirect effects
+        x1[["Indirect_effect"]] <- est_temp$Effect_estimates$Indirect_effect$Estimate
+        names(x1[["Indirect_effect"]]) <- est_temp$Effect_estimates$Indirect_effect$Name 
+      }
       
+      if(any(names(est_temp$Effect_estimates) == "Total_effect")) {
       # Total effect
       x1[["Total_effect"]] <- est_temp$Effect_estimates$Total_effect$Estimate
       names(x1[["Total_effect"]]) <- est_temp$Effect_estimates$Total_effect$Name
+      }
     }
   }
   

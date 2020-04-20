@@ -126,6 +126,13 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
   }
   
   ## Return
+  # Delete matrices/data frame that are empty
+  if(output_type == "matrix") {
+    sumout <- function(x) sum(x) != 0
+  } else {
+    sumout <- function(x) nrow(x) > 0
+  }
+  out <- Filter(sumout, out)
   out
 }
 

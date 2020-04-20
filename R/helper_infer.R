@@ -1,5 +1,18 @@
-#' @describeIn infer Computes the mean over all resamples for each resampled 
-#'                   statistic/parameter.
+#' Internal: Helper for infer()
+#' 
+#' Collection of various functions that compute an inferential quantity. 
+#' 
+#' Implementation and termionology of the confidence intervals is based on 
+#' \insertCite{Hesterberg2015;textual}{cSEM} and 
+#' \insertCite{Davison1997;textual}{cSEM}.
+#' 
+#' @inheritParams csem_arguments
+#'  
+#' @references
+#'   \insertAllCited{} 
+#'   
+#' @name inference_helper
+#' @rdname inference_helper
 #' @keywords internal
 MeanResample <- function(.first_resample) {
   
@@ -9,9 +22,7 @@ MeanResample <- function(.first_resample) {
     out
   })
 }
-#' @describeIn infer Computes the standard deviation over all resamples for each resampled 
-#'                   statistic/estimator. This is usually taken to be the estimate
-#'                   of the standard error of the statistic/estimator.
+#' @rdname inference_helper
 SdResample <- function(.first_resample, .resample_method, .n) {
   
   lapply(.first_resample, function(x) {
@@ -23,8 +34,7 @@ SdResample <- function(.first_resample, .resample_method, .n) {
     out
   })
 }
-#' @describeIn infer Computes the estimated bias for each resampled 
-#'                   statistic/estimator. 
+#' @rdname inference_helper
 BiasResample <- function(.first_resample, .resample_method, .n) {
   
   lapply(.first_resample, function(x) {
@@ -36,11 +46,12 @@ BiasResample <- function(.first_resample, .resample_method, .n) {
     out
   })
 }
-#' @describeIn infer Computes the *Standard CI with bootstrap SE's*.
-#'  Critical quantiles can be based on both the `t`- or the 
-#'  standard normal distribution (`z`). The former may perform better in
-#'  small samples but there is no clear consenus on what the degrees of freedom
-#'  should be. We use N - 1 ("type1").
+#' @rdname inference_helper
+# Computes the *Standard CI with bootstrap SE's*.
+# Critical quantiles can be based on both the `t`- or the 
+# standard normal distribution (`z`). The former may perform better in
+# small samples but there is no clear consenus on what the degrees of freedom
+# should be. We use N - 1 ("type1").
 StandardCIResample <- function(
   .first_resample, 
   .bias_corrected,
@@ -101,10 +112,10 @@ StandardCIResample <- function(
     })
   return(out)
 }
-#' @describeIn infer Computes the *Percentile CI*.
-#'   The function takes the distribution F* (the CDF) of the resamples as an estimator for
-#'   the true distribution F of the statistic/estimator of interest. 
-#'   Quantiles of the estimated distribution are then used as lower and upper bound.
+#' @rdname inference_helper
+#The function takes the distribution F* (the CDF) of the resamples as an estimator for
+#the true distribution F of the statistic/estimator of interest. 
+#Quantiles of the estimated distribution are then used as lower and upper bound.
 PercentilCIResample <- function(.first_resample, .probs) {
   # Percentile CI 
   # Take the bootstrap distribution F* (the CDF) as an estimator for
@@ -124,7 +135,7 @@ PercentilCIResample <- function(.first_resample, .probs) {
     out
   })
 }
-#' @describeIn infer Computes the *Basic CI*.
+#' @rdname inference_helper
 BasicCIResample <- function(.first_resample, .bias_corrected, .probs) {
   # Basic CI 
   # Estimate the distribution of delta_hat = theta_hat - theta by the bootstrap 
@@ -165,9 +176,10 @@ BasicCIResample <- function(.first_resample, .bias_corrected, .probs) {
     out
   })
 }
-#' @describeIn infer Computes the *Studentized or t-statistic CI*
-#' The function computes a boostrap t-statisic (since it is roughly pivotal) and constructs
-#' the CI based on bootstraped t-values and bootstraped/jackknife SE's
+#' @rdname inference_helper
+# The function computes a boostrap t-statisic (since it is roughly pivotal) 
+# and constructs the CI based on bootstraped t-values and bootstraped/jackknife
+# SE's
 TStatCIResample <- function(
   .first_resample, 
   .second_resample, 
@@ -223,7 +235,7 @@ TStatCIResample <- function(
   names(out) <- names(.first_resample)
   return(out)
 }
-#' @describeIn infer Computes the *Basic bias-corrected CI*.
+#' @rdname inference_helper
 BcCIResample <- function(.first_resample, .probs) {
   
   ## confidence level (for rownames)
@@ -254,7 +266,7 @@ BcCIResample <- function(.first_resample, .probs) {
   
   return(out)
 } 
-#' @describeIn infer Computes the *Basic bias-corrected and accelerated CI*.
+#' @rdname inference_helper
 BcaCIResample <- function(.object, .first_resample, .probs) {
   ## confidence level (for rownames)
   cl <- 1 - .probs[seq(1, length(.probs), by = 2)]*2

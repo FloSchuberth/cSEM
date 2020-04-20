@@ -6,7 +6,6 @@
 \usage{
 testMICOM(
  .object               = NULL,
- .alpha                = 0.05,
  .approach_p_adjust    = "none",
  .handle_inadmissibles = c("drop", "ignore", "replace"), 
  .R                    = 499,
@@ -16,9 +15,6 @@ testMICOM(
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
-
-\item{.alpha}{An integer or a numeric vector of significance levels.
-Defaults to \code{0.05}.}
 
 \item{.approach_p_adjust}{Character string or a vector of character strings.
 Approach used to adjust the p-value for multiple testing.
@@ -54,20 +50,34 @@ A named list of class \code{cSEMTestMICOM} containing the following list element
 }
 }
 \description{
-This functions performs the test for measurement invariance of composites
-proposed by \insertCite{Henseler2016;textual}{cSEM}.
+The functions performs the permutation-based test for measurement invariance
+of composites across groups proposed by \insertCite{Henseler2016;textual}{cSEM}.
+According to the authors assessing measurement invariance in composite
+models can be assessed by a three-step procedure. The first two steps
+involve an assessment of configural and compositional invariance.
+The third steps involves mean and variance comparisons across groups.
+Assessment of configural invariance is qualitative in nature and hence
+not assessed by the \code{\link[=testMICOM]{testMICOM()}} function.
 }
 \details{
-The test is only meaningful for concepts modeled as composites.
+As \code{\link[=testMICOM]{testMICOM()}} requires at least two groups, \code{.object} must be of
+class \code{cSEMResults_multi}. As of version 0.2.0 of the package, \code{\link[=testMICOM]{testMICOM()}}
+does not support models containing second-order constructs.
 
-If more than two groups are to be compared issues related to multiple testing
-should be taken into account.
+It is possible to compare more than two groups, however, multiple-testing
+issues arise in this case. To adjust p-values in this case several p-value
+adjustments are available via the \code{approach_p_adjust} argument.
 
-Models containing second-order constructs are not supported yet.
+The remaining arguments set the number of permutation runs to conduct
+(\code{.R}), the random number seed (\code{.seed}),
+instructions how inadmissible results are to be handled (\code{handle_inadmissibles}),
+and whether the function should be verbose in a sense that progress is printed
+to the console.
 
-The number of permutation runs defaults to \code{args_default()$.R} for performance reasons.
-According to \insertCite{Henseler2016;textual}{cSEM} the number of permutations should
-be at least 5000 for assessment to be sufficiently reliable.
+The number of permutation runs defaults to \code{args_default()$.R} for
+performance reasons. According to \insertCite{Henseler2016;textual}{cSEM}
+the number of permutations should be at least 5000 for assessment to be
+sufficiently reliable.
 }
 \examples{
 \dontrun{

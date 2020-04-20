@@ -445,10 +445,10 @@ assess <- function(
   }
   if(any(.quality_criterion %in% c("all", "reliability"))) {
     # RhoT
-    out[["reliability"]]  <- list()
+    out[["Reliability"]]  <- list()
     
     # Cronbachs alpha (rho_T)
-    out$reliability[["Cronbachs_alpha"]] <- calculateRhoT(
+    out$Reliability[["Cronbachs_alpha"]] <- calculateRhoT(
       .object, 
       .only_common_factors = .only_common_factors, 
       .output_type         = "vector",
@@ -456,7 +456,7 @@ assess <- function(
     )
     
     # Joereskogs rho (rho_C_mm)
-    out$reliability[["Joereskogs_rho"]] <- calculateRhoC(
+    out$Reliability[["Joereskogs_rho"]] <- calculateRhoC(
       .object, 
       .only_common_factors = .only_common_factors,
       .weighted = FALSE,
@@ -464,7 +464,7 @@ assess <- function(
     )
     
     # Dijkstra-Henselers rho A (rho_C_weighted_mm)
-    out$reliability[["Dijkstra-Henselers_rho_A"]] <- calculateRhoC(
+    out$Reliability[["Dijkstra-Henselers_rho_A"]] <- calculateRhoC(
       .object, 
       .only_common_factors = .only_common_factors, 
       .weighted = TRUE,

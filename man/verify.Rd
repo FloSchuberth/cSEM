@@ -38,7 +38,7 @@ If \code{.object} is of class \code{cSEMResults_2ndorder} (i.e., estimates are
 based on a model containing second-order constructs) both the first and the second stage are checked separately.
 
 Currently, a model-implied indicator VCV matrix for nonlinear model is not
-available. \code{verify()} therefore skips the check for positive definitness of the
+available. \code{verify()} therefore skips the check for positive definiteness of the
 model-implied indicator VCV matrix for nonlinear models and returns "ok".
 }
 \examples{
