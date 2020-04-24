@@ -69,9 +69,11 @@
 #'   Groups are compared in terms of parameter differences across groups.
 #'   In doing so, the bootstrap estimates of one parameter are compared across groups.
 #'   In the literature, this approach is also known as PLS-MGA.
-#'   This test is an one-sided test, therefore we perform a left-sided and a right-sided test 
-#'   to investigate whether a parameter differs across two groups. 
-#'   Consequently, `.approach_p_adjust` is ignored. Moreover, no overall decision
+#'   Originally, this test was proposed as an one-sided test. 
+#'   In this function we perform a left-sided and a right-sided test 
+#'   to investigate whether a parameter differs across two groups. In doing so, the significance
+#'   level is divided by 2 and compared to p-value of the left and right-sided test. 
+#'   Moreover, `.approach_p_adjust` is ignored and no overall decision
 #'   is returned.
 #'   For a more detailed description, see also \insertCite{Henseler2009;textual}{cSEM}.}
 #' \item{`.approach_mgd = "CI_param"`: Approach mentioned in \insertCite{Sarstedt2011;textual}{cSEM}}{
@@ -934,7 +936,8 @@ testMGD <- function(
       temp <- lapply(.alpha, function(alpha){# over the different significance levels
         lapply(adjust_approach,function(group_comp){# over the different group comparisons
           # check whether the p values are larger than a certain alpha
-          group_comp > alpha & group_comp < 1- alpha
+          # The alpha is divided by two to mimic a two-sided test.
+          group_comp > alpha/2 & group_comp < 1- alpha/2
         })
       })
       names(temp) <- paste0(.alpha*100, "%")
