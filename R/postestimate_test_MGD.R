@@ -944,10 +944,11 @@ testMGD <- function(
       temp
     })
     
-    # It is not clear how an overall decision should be made  
+    # Overall decision; if one coefficient is significanty different across groups 
+    # it is rejected.
     decision_overall_Henseler <- lapply(decision_Henseler, function(decision_Henseler_list){
       lapply(decision_Henseler_list,function(x){
-        NA
+        all(unlist(x))
       })
     })
   }
