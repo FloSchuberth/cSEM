@@ -1177,8 +1177,7 @@ testMGD <- function(
     "Number_of_observations"= sapply(X_all_list, nrow),
     "Approach"              = .approach_mgd,
     "Approach_p_adjust"     = .approach_p_adjust,
-    "Alpha"                 = .alpha
-  )
+    "Alpha"                 = .alpha)
 
   ## Permutation-specific information
   if(any(.approach_mgd %in% c("all", "Klesel", "Chin", "Sarstedt"))) {
@@ -1324,3 +1323,279 @@ testMGD <- function(
   class(out) <- "cSEMTestMGD"
   return(out)
 }
+
+
+
+# Function to return the test results of an cSEMTestMDG object
+# in a matrix format
+
+testMGDMatrix <- function(.object){
+  
+  # Chef is a testMGD object is used
+  if(!is(.object, "cSEMTestMGD")){
+    stop("Object has not the expected class. Please ensure that .object
+         is from class cSEMTestMGD")
+  }
+  
+  # Help function --------------------------------------------------------------
+  
+  # Change CI alpha equivlanet (1-CI)
+  changeCItoAlphaEquivalent <- function(.names){
+      # .names <- c("99%","95%","90%")
+      tmpNames <- readr::parse_number(.names)
+      tmpNames <- 100-tmpNames
+      tmpNames <- paste0(tmpNames, "%")
+      return(tmpNames)
+  }
+  
+  
+  # Klesel ---------------------------------------------------------------------
+
+  # Test only provides an overall decision 
+  
+  if("Klesel" %in% names(.object)){
+    klesel <- .object$Klesel$Decision %>% 
+                 map(bind_rows) %>% 
+                 bind_rows(.id = "alpha") %>%
+                 # longer format
+                 pivot_longer(cols = c(dG, dL), 
+                              names_to = "distance", 
+                              values_to = "decision") %>%
+                 pivot_wider(names_from = alpha, values_from = decision) %>%
+                mutate(test = "Klesel", comparison = "overall")
+  }
+  
+  # Chin  ----------------------------------------------------------------------
+  
+  if("Chin" %in% names(.object)){
+    
+    # overall decision
+    chin1 <- .object$Chin$Decision_overall %>% 
+              map(bind_rows) %>% 
+              bind_rows(.id = "correction") %>%
+              mutate(test = "Chin", comparison = "overall")
+    
+    chin2 <-  .object$Chin$Decision %>% 
+              modify_depth(3, bind_rows) %>%
+              modify_depth(2, bind_rows, .id = "comparison") %>%
+              modify_depth(1, bind_rows, .id = "alpha") %>%
+              bind_rows(.id = "correction") %>%
+              # Check all comparisons
+              group_by(correction, alpha) %>%
+              summarise_at(vars(contains("Eta")), any) %>%
+              ungroup %>% 
+              # put results into format 
+              pivot_longer(cols = (contains("Eta")),
+                           names_to = "comparison", 
+                           values_to = "decision") %>%
+              # put alphas in cols
+              pivot_wider(names_from = alpha, values_from = decision) %>%
+              mutate(test = "Chin")
+  }
+  
+  # Sarstedt  ------------------------------------------------------------------
+  
+  if("Sarstedt" %in% names(.object)){
+    
+    # overall result
+    sarstedt1 <- .object$Sarstedt$Decision_overall %>% 
+                  map(bind_rows) %>% 
+                  bind_rows(.id = "correction") %>%
+                  mutate(test = "Sarstedt", comparison = "overall")
+    
+    # decision based on single paths
+    sarstedt2 <- .object$Sarstedt$Decision %>%
+                  modify_depth(2, bind_rows) %>%
+                  map(bind_rows, .id = "alpha") %>%
+                  bind_rows(.id = "correction") %>%
+                  # put results into format 
+                  pivot_longer(cols = (contains("Eta")),
+                             names_to = "comparison", 
+                             values_to = "decision") %>%
+                  # put alphas in cols
+                  pivot_wider(names_from = alpha, values_from = decision) %>%
+                  mutate(test = "Sarstedt")
+  }
+  
+  # Keil  ----------------------------------------------------------------------
+  
+  if("Keil" %in% names(.object)){
+    
+    # overall decision
+    keil1 <- .object$Keil$Decision_overall %>% 
+              map(bind_rows) %>% 
+              bind_rows(.id = "correction") %>%
+              mutate(test = "Keil", comparison = "overall")
+    
+    # decision based on single paths
+    keil2 <- .object$Keil$Decision %>%
+              modify_depth(3, bind_rows) %>%
+              modify_depth(2, bind_rows, .id = "comparison") %>%
+              modify_depth(1, bind_rows, .id = "alpha") %>%
+              bind_rows(.id = "correction") %>%
+              group_by(correction, alpha) %>%
+              summarize_at(vars(contains("Eta")), any) %>%
+              ungroup %>%
+              # put results into format 
+              pivot_longer(cols = (contains("Eta")),
+                           names_to = "comparison", 
+                           values_to = "decision") %>%
+              # put alphas in cols
+              pivot_wider(names_from = alpha, values_from = decision) %>%
+              mutate(test = "Keil")
+    
+  }
+  
+  # Nitzl  ---------------------------------------------------------------------
+  
+  if("Nitzl" %in% names(.object)){
+    
+    # overall decision
+    nitzl1 <- .object$Nitzl$Decision_overall %>% 
+              map(bind_rows) %>% 
+              bind_rows(.id = "correction") %>%
+              mutate(test = "Nitzl", comparison = "overall")
+    
+    # decision based on single paths
+    nitzl2 <- .object$Nitzl$Decision %>%
+              modify_depth(3, bind_rows) %>%
+              modify_depth(2, bind_rows, .id = "comparison") %>%
+              modify_depth(1, bind_rows, .id = "alpha") %>%
+              bind_rows(.id = "correction") %>%
+              group_by(correction, alpha) %>%
+              summarize_at(vars(contains("Eta")), any) %>%
+              ungroup %>%
+              # put results into format 
+              pivot_longer(cols = (contains("Eta")),
+                           names_to = "comparison", 
+                           values_to = "decision") %>%
+              # put alphas in cols
+              pivot_wider(names_from = alpha, values_from = decision) %>%
+              mutate(test = "Nitzl")
+    
+  }
+  
+  # Henseler  ------------------------------------------------------------------
+  
+  if("Henseler" %in% names(.object)){
+    
+    # overall decision
+    henseler1 <- .object$Henseler$Decision_overall %>% 
+                  map(bind_rows) %>% 
+                  bind_rows(.id = "correction") %>%
+                  mutate(test = "Henseler", comparison = "overall")
+    
+    # decision based on single paths
+    henseler2 <- .object$Henseler$Decision %>%
+                  modify_depth(3, bind_rows) %>%
+                  modify_depth(2, bind_rows, .id = "comparison") %>%
+                  modify_depth(1, bind_rows, .id = "alpha") %>%
+                  bind_rows(.id = "correction") %>%
+                  group_by(correction, alpha) %>%
+                  summarize_at(vars(contains("Eta")), any) %>%
+                  ungroup %>%
+                  # put results into format 
+                  pivot_longer(cols = (contains("Eta")),
+                               names_to = "comparison", 
+                               values_to = "decision") %>%
+                  # put alphas in cols
+                  pivot_wider(names_from = alpha, values_from = decision) %>%
+                  mutate(test = "Henseler")
+  }
+  
+  # CI para  -------------------------------------------------------------------
+  
+  if("CI_para" %in% names(.object)){
+    
+    # overall decision
+    CIpara1 <- .object$CI_para$Decision_overall %>% 
+                map(bind_rows) %>% 
+                bind_rows(.id = "alpha") %>%
+                pivot_longer(cols = contains("CI"), 
+                           names_to = "type_ci", 
+                           values_to = "decision") %>%
+                pivot_wider(names_from = alpha, values_from = decision) %>%
+                # Change % as equivlanet to alpha
+                rename_at(vars(contains("%")), changeCItoAlphaEquivalent) %>%
+                mutate(test = "CI_para", comparison = "overall")
+    
+    # decision based on single paths
+    CIpara2 <-  .object$CI_para$Decision %>%
+                modify_depth(3, bind_rows) %>%
+                modify_depth(3, ~ select(., Name, Decision)) %>%
+                modify_depth(2, bind_rows, .id = "type_ci") %>%
+                modify_depth(1, bind_rows, .id = "comparison") %>%
+                bind_rows(.id = "alpha") %>%
+                pivot_wider(names_from = Name, values_from = Decision) %>%
+                group_by(alpha, type_ci) %>%
+                summarize_at(vars(contains("Eta")), any) %>%
+                ungroup %>%
+                # put results into format 
+                pivot_longer(cols = (contains("Eta")),
+                             names_to = "comparison", 
+                             values_to = "decision") %>%
+                # put alphas in cols
+                pivot_wider(names_from = alpha, values_from = decision) %>%
+                # Change % as equivlanet to alpha
+                rename_at(vars(contains("%")), changeCItoAlphaEquivalent) %>%
+                mutate(test = "CI_para")
+    
+  }
+  # CI overlap  ----------------------------------------------------------------
+  
+  if("CI_overlap" %in% names(.object)){
+    
+    # overall decision
+    CIoverlap1 <- .object$CI_overlap$Decision_overall %>% 
+                  map(bind_rows) %>% 
+                  bind_rows(.id = "alpha") %>%
+                  pivot_longer(cols = contains("CI"), 
+                      names_to = "type_ci", 
+                      values_to = "decision") %>%
+                  pivot_wider(names_from = alpha, values_from = decision) %>%
+                  # Change % as equivlanet to alpha
+                  rename_at(vars(contains("%")), changeCItoAlphaEquivalent) %>%
+                  mutate(test = "CI_overlap", comparison = "overall")
+    
+    # decision based on single paths
+    CIoverlap2 <-  .object$CI_overlap$Decision %>%
+                    modify_depth(3, bind_rows) %>%
+                    modify_depth(3, ~ select(., Name, Decision)) %>%
+                    modify_depth(2, bind_rows, .id = "type_ci") %>%
+                    modify_depth(1, bind_rows, .id = "comparison") %>%
+                    bind_rows(.id = "alpha") %>%
+                    pivot_wider(names_from = Name, values_from = Decision) %>%
+                    group_by(alpha, type_ci) %>%
+                    summarize_at(vars(contains("Eta")), any) %>%
+                    ungroup %>%
+                    # put results into format 
+                    pivot_longer(cols = (contains("Eta")),
+                                 names_to = "comparison", 
+                                 values_to = "decision") %>%
+                    # put alphas in cols
+                    pivot_wider(names_from = alpha, values_from = decision) %>%
+                    # Change % as equivlanet to alpha
+                    rename_at(vars(contains("%")), changeCItoAlphaEquivalent) %>%
+                    mutate(test = "CI_overlap")
+  }
+  
+  # Summarize all results ------------------------------------------------------
+  
+  results <- bind_rows(klesel, 
+                       chin1, chin2,
+                       sarstedt1, sarstedt2,
+                       keil1, keil2,
+                       nitzl1 , nitzl2,
+                       henseler1, henseler2,
+                       CIpara1, CIpara2,
+                       CIoverlap1, CIoverlap2) %>%
+              # Change order of columns
+              select(test, comparison, contains("%"), 
+                     correction, type_ci, distance)
+  
+}
+
+
+
+
+
