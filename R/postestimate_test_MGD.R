@@ -1595,6 +1595,7 @@ testMGDMatrix <- function(.object){
               dplyr::select(test, comparison, dplyr::contains("%"), 
                      correction, type_ci, distance)
   
+  return(results)
 }
 
 
