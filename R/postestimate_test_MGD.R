@@ -1373,7 +1373,7 @@ testMGDMatrix <- function(.object){
     
     # overall decision
     chin1 <- .object$Chin$Decision_overall %>% 
-              purrr::map(dplyr::mutate) %>% 
+              purrr::map(dplyr::bind_rows) %>% 
               dplyr::bind_rows(.id = "correction") %>%
               dplyr::mutate(test = "Chin", comparison = "overall")
     
@@ -1425,7 +1425,7 @@ testMGDMatrix <- function(.object){
     
     # overall decision
     keil1 <- .object$Keil$Decision_overall %>% 
-              purrr::map(bind_rows) %>% 
+              purrr::map(dplyr::bind_rows) %>% 
               dplyr::bind_rows(.id = "correction") %>%
               dplyr::mutate(test = "Keil", comparison = "overall")
     
