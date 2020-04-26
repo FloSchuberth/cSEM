@@ -1337,6 +1337,8 @@ testMGDMatrix <- function(.object){
          is from class cSEMTestMGD")
   }
   
+  
+  
   # Help function --------------------------------------------------------------
   
   # Change CI alpha equivlanet (1-CI)
@@ -1355,14 +1357,14 @@ testMGDMatrix <- function(.object){
   
   if("Klesel" %in% names(.object)){
     klesel <- .object$Klesel$Decision %>% 
-                 map(bind_rows) %>% 
-                 bind_rows(.id = "alpha") %>%
+                 purrr::map(dplyr::bind_rows) %>% 
+                 dplyr::bind_rows(.id = "alpha") %>%
                  # longer format
-                 pivot_longer(cols = c(dG, dL), 
+                 tidyr::pivot_longer(cols = c(dG, dL), 
                               names_to = "distance", 
                               values_to = "decision") %>%
-                 pivot_wider(names_from = alpha, values_from = decision) %>%
-                mutate(test = "Klesel", comparison = "overall")
+                 tidyr::pivot_wider(names_from = alpha, values_from = decision) %>%
+                 dplyr::mutate(test = "Klesel", comparison = "overall")
   }
   
   # Chin  ----------------------------------------------------------------------
@@ -1371,26 +1373,26 @@ testMGDMatrix <- function(.object){
     
     # overall decision
     chin1 <- .object$Chin$Decision_overall %>% 
-              map(bind_rows) %>% 
-              bind_rows(.id = "correction") %>%
-              mutate(test = "Chin", comparison = "overall")
+              purrr::map(dplyr::mutate) %>% 
+              dplyr::bind_rows(.id = "correction") %>%
+              dplyr::mutate(test = "Chin", comparison = "overall")
     
     chin2 <-  .object$Chin$Decision %>% 
-              modify_depth(3, bind_rows) %>%
-              modify_depth(2, bind_rows, .id = "comparison") %>%
-              modify_depth(1, bind_rows, .id = "alpha") %>%
-              bind_rows(.id = "correction") %>%
+              purrr::modify_depth(3, dplyr::bind_rows) %>%
+              purrr::modify_depth(2, dplyr::bind_rows, .id = "comparison") %>%
+              purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
+              dplyr::bind_rows(.id = "correction") %>%
               # Check all comparisons
-              group_by(correction, alpha) %>%
-              summarise_at(vars(contains("Eta")), any) %>%
+              dplyr::group_by(correction, alpha) %>%
+              dplyr::summarise_at(dplyr::vars(dplyr::contains("Eta")), any) %>%
               ungroup %>% 
               # put results into format 
-              pivot_longer(cols = (contains("Eta")),
+              tidyr::pivot_longer(cols = (dplyr::contains("Eta")),
                            names_to = "comparison", 
                            values_to = "decision") %>%
               # put alphas in cols
-              pivot_wider(names_from = alpha, values_from = decision) %>%
-              mutate(test = "Chin")
+              tidyr::pivot_wider(names_from = alpha, values_from = decision) %>%
+              dplyr::mutate(test = "Chin")
   }
   
   # Sarstedt  ------------------------------------------------------------------
@@ -1399,22 +1401,22 @@ testMGDMatrix <- function(.object){
     
     # overall result
     sarstedt1 <- .object$Sarstedt$Decision_overall %>% 
-                  map(bind_rows) %>% 
-                  bind_rows(.id = "correction") %>%
-                  mutate(test = "Sarstedt", comparison = "overall")
+                  purrr::map(dplyr::bind_rows) %>% 
+                  dplyr::bind_rows(.id = "correction") %>%
+                  dplyr::mutate(test = "Sarstedt", comparison = "overall")
     
     # decision based on single paths
     sarstedt2 <- .object$Sarstedt$Decision %>%
-                  modify_depth(2, bind_rows) %>%
-                  map(bind_rows, .id = "alpha") %>%
-                  bind_rows(.id = "correction") %>%
+                  purrr::modify_depth(2, dplyr::bind_rows) %>%
+                  purrr::map(dplyr::bind_rows, .id = "alpha") %>%
+                  dplyr::bind_rows(.id = "correction") %>%
                   # put results into format 
-                  pivot_longer(cols = (contains("Eta")),
+                  tidyr::pivot_longer(cols = (dplyr::contains("Eta")),
                              names_to = "comparison", 
                              values_to = "decision") %>%
                   # put alphas in cols
-                  pivot_wider(names_from = alpha, values_from = decision) %>%
-                  mutate(test = "Sarstedt")
+                  tidyr::pivot_wider(names_from = alpha, values_from = decision) %>%
+                  dplyr::mutate(test = "Sarstedt")
   }
   
   # Keil  ----------------------------------------------------------------------
@@ -1423,26 +1425,26 @@ testMGDMatrix <- function(.object){
     
     # overall decision
     keil1 <- .object$Keil$Decision_overall %>% 
-              map(bind_rows) %>% 
-              bind_rows(.id = "correction") %>%
-              mutate(test = "Keil", comparison = "overall")
+              purrr::map(bind_rows) %>% 
+              dplyr::bind_rows(.id = "correction") %>%
+              dplyr::mutate(test = "Keil", comparison = "overall")
     
     # decision based on single paths
     keil2 <- .object$Keil$Decision %>%
-              modify_depth(3, bind_rows) %>%
-              modify_depth(2, bind_rows, .id = "comparison") %>%
-              modify_depth(1, bind_rows, .id = "alpha") %>%
-              bind_rows(.id = "correction") %>%
-              group_by(correction, alpha) %>%
-              summarize_at(vars(contains("Eta")), any) %>%
+              purrr::modify_depth(3, dplyr::bind_rows) %>%
+              purrr::modify_depth(2, dplyr::bind_rows, .id = "comparison") %>%
+              purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
+              dplyr::bind_rows(.id = "correction") %>%
+              dplyr::group_by(correction, alpha) %>%
+              dplyr::summarise_at(dplyr::vars(contains("Eta")), any) %>%
               ungroup %>%
               # put results into format 
-              pivot_longer(cols = (contains("Eta")),
+              tidyr::pivot_longer(cols = (contains("Eta")),
                            names_to = "comparison", 
                            values_to = "decision") %>%
               # put alphas in cols
-              pivot_wider(names_from = alpha, values_from = decision) %>%
-              mutate(test = "Keil")
+              tidyr::pivot_wider(names_from = alpha, values_from = decision) %>%
+              dplyr::mutate(test = "Keil")
     
   }
   
@@ -1452,26 +1454,26 @@ testMGDMatrix <- function(.object){
     
     # overall decision
     nitzl1 <- .object$Nitzl$Decision_overall %>% 
-              map(bind_rows) %>% 
-              bind_rows(.id = "correction") %>%
-              mutate(test = "Nitzl", comparison = "overall")
+              purrr::map(dplyr::bind_rows) %>% 
+              dplyr::bind_rows(.id = "correction") %>%
+              dplyr::mutate(test = "Nitzl", comparison = "overall")
     
     # decision based on single paths
     nitzl2 <- .object$Nitzl$Decision %>%
-              modify_depth(3, bind_rows) %>%
-              modify_depth(2, bind_rows, .id = "comparison") %>%
-              modify_depth(1, bind_rows, .id = "alpha") %>%
-              bind_rows(.id = "correction") %>%
-              group_by(correction, alpha) %>%
-              summarize_at(vars(contains("Eta")), any) %>%
+              purrr::modify_depth(3, dplyr::bind_rows) %>%
+              purrr::modify_depth(2, dplyr::bind_rows, .id = "comparison") %>%
+              purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
+              dplyr::bind_rows(.id = "correction") %>%
+              dplyr::group_by(correction, alpha) %>%
+              dplyr::summarise_at(dplyr::vars(contains("Eta")), any) %>%
               ungroup %>%
               # put results into format 
-              pivot_longer(cols = (contains("Eta")),
+              tidyr::pivot_longer(cols = (contains("Eta")),
                            names_to = "comparison", 
                            values_to = "decision") %>%
               # put alphas in cols
-              pivot_wider(names_from = alpha, values_from = decision) %>%
-              mutate(test = "Nitzl")
+              tidyr::pivot_wider(names_from = alpha, values_from = decision) %>%
+              dplyr::mutate(test = "Nitzl")
     
   }
   
@@ -1481,26 +1483,26 @@ testMGDMatrix <- function(.object){
     
     # overall decision
     henseler1 <- .object$Henseler$Decision_overall %>% 
-                  map(bind_rows) %>% 
-                  bind_rows(.id = "correction") %>%
-                  mutate(test = "Henseler", comparison = "overall")
+                  purrr::map(dplyr::bind_rows) %>% 
+                  dplyr::bind_rows(.id = "correction") %>%
+                  dplyr::mutate(test = "Henseler", comparison = "overall")
     
     # decision based on single paths
     henseler2 <- .object$Henseler$Decision %>%
-                  modify_depth(3, bind_rows) %>%
-                  modify_depth(2, bind_rows, .id = "comparison") %>%
-                  modify_depth(1, bind_rows, .id = "alpha") %>%
-                  bind_rows(.id = "correction") %>%
-                  group_by(correction, alpha) %>%
-                  summarize_at(vars(contains("Eta")), any) %>%
+                  purrr::modify_depth(3, dplyr::bind_rows) %>%
+                  purrr::modify_depth(2, dplyr::bind_rows, .id = "comparison") %>%
+                  purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
+                  dplyr::bind_rows(.id = "correction") %>%
+                  dplyr::group_by(correction, alpha) %>%
+                  dplyr::summarise_at(dplyr::vars(contains("Eta")), any) %>%
                   ungroup %>%
                   # put results into format 
-                  pivot_longer(cols = (contains("Eta")),
+                  tidyr::pivot_longer(cols = (contains("Eta")),
                                names_to = "comparison", 
                                values_to = "decision") %>%
                   # put alphas in cols
-                  pivot_wider(names_from = alpha, values_from = decision) %>%
-                  mutate(test = "Henseler")
+                  tidyr::pivot_wider(names_from = alpha, values_from = decision) %>%
+                  dplyr::mutate(test = "Henseler")
   }
   
   # CI para  -------------------------------------------------------------------
@@ -1509,36 +1511,36 @@ testMGDMatrix <- function(.object){
     
     # overall decision
     CIpara1 <- .object$CI_para$Decision_overall %>% 
-                map(bind_rows) %>% 
-                bind_rows(.id = "alpha") %>%
-                pivot_longer(cols = contains("CI"), 
+                purrr::map(dplyr::bind_rows) %>% 
+                dplyr::bind_rows(.id = "alpha") %>%
+                tidyr::pivot_longer(cols = contains("CI"), 
                            names_to = "type_ci", 
                            values_to = "decision") %>%
-                pivot_wider(names_from = alpha, values_from = decision) %>%
+                tidyr::pivot_wider(names_from = alpha, values_from = decision) %>%
                 # Change % as equivlanet to alpha
-                rename_at(vars(contains("%")), changeCItoAlphaEquivalent) %>%
-                mutate(test = "CI_para", comparison = "overall")
+                dplyr::rename_at(dplyr::vars(contains("%")), changeCItoAlphaEquivalent) %>%
+                dplyr::mutate(test = "CI_para", comparison = "overall")
     
     # decision based on single paths
     CIpara2 <-  .object$CI_para$Decision %>%
-                modify_depth(3, bind_rows) %>%
-                modify_depth(3, ~ select(., Name, Decision)) %>%
-                modify_depth(2, bind_rows, .id = "type_ci") %>%
-                modify_depth(1, bind_rows, .id = "comparison") %>%
-                bind_rows(.id = "alpha") %>%
-                pivot_wider(names_from = Name, values_from = Decision) %>%
-                group_by(alpha, type_ci) %>%
-                summarize_at(vars(contains("Eta")), any) %>%
+                purrr::modify_depth(3, dplyr::bind_rows) %>%
+                purrr::modify_depth(3, ~ dplyr::select(., Name, Decision)) %>%
+                purrr::modify_depth(2, dplyr::bind_rows, .id = "type_ci") %>%
+                purrr::modify_depth(1, dplyr::bind_rows, .id = "comparison") %>%
+                dplyr::bind_rows(.id = "alpha") %>%
+                tidyr::pivot_wider(names_from = Name, values_from = Decision) %>%
+                dplyr::group_by(alpha, type_ci) %>%
+                dplyr::summarise_at(dplyr::vars(contains("Eta")), any) %>%
                 ungroup %>%
                 # put results into format 
-                pivot_longer(cols = (contains("Eta")),
+                tidyr::pivot_longer(cols = (contains("Eta")),
                              names_to = "comparison", 
                              values_to = "decision") %>%
                 # put alphas in cols
-                pivot_wider(names_from = alpha, values_from = decision) %>%
+                tidyr::pivot_wider(names_from = alpha, values_from = decision) %>%
                 # Change % as equivlanet to alpha
-                rename_at(vars(contains("%")), changeCItoAlphaEquivalent) %>%
-                mutate(test = "CI_para")
+                dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) %>%
+                dplyr::mutate(test = "CI_para")
     
   }
   # CI overlap  ----------------------------------------------------------------
@@ -1547,41 +1549,41 @@ testMGDMatrix <- function(.object){
     
     # overall decision
     CIoverlap1 <- .object$CI_overlap$Decision_overall %>% 
-                  map(bind_rows) %>% 
-                  bind_rows(.id = "alpha") %>%
-                  pivot_longer(cols = contains("CI"), 
+                  purrr::map(dplyr::bind_rows) %>% 
+                  dplyr::bind_rows(.id = "alpha") %>%
+                  tidyr::pivot_longer(cols = dplyr::contains("CI"), 
                       names_to = "type_ci", 
                       values_to = "decision") %>%
-                  pivot_wider(names_from = alpha, values_from = decision) %>%
+                  tidyr::pivot_wider(names_from = alpha, values_from = decision) %>%
                   # Change % as equivlanet to alpha
-                  rename_at(vars(contains("%")), changeCItoAlphaEquivalent) %>%
-                  mutate(test = "CI_overlap", comparison = "overall")
+                  dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) %>%
+                  dplyr::mutate(test = "CI_overlap", comparison = "overall")
     
     # decision based on single paths
     CIoverlap2 <-  .object$CI_overlap$Decision %>%
-                    modify_depth(3, bind_rows) %>%
-                    modify_depth(3, ~ select(., Name, Decision)) %>%
-                    modify_depth(2, bind_rows, .id = "type_ci") %>%
-                    modify_depth(1, bind_rows, .id = "comparison") %>%
-                    bind_rows(.id = "alpha") %>%
-                    pivot_wider(names_from = Name, values_from = Decision) %>%
-                    group_by(alpha, type_ci) %>%
-                    summarize_at(vars(contains("Eta")), any) %>%
+                    purrr::modify_depth(3, dplyr::bind_rows) %>%
+                    purrr::modify_depth(3, ~ dplyr::select(., Name, Decision)) %>%
+                    purrr::modify_depth(2, dplyr::bind_rows, .id = "type_ci") %>%
+                    purrr::modify_depth(1, dplyr::bind_rows, .id = "comparison") %>%
+                    dplyr::bind_rows(.id = "alpha") %>%
+                    tidyr::pivot_wider(names_from = Name, values_from = Decision) %>%
+                    dplyr::group_by(alpha, type_ci) %>%
+                    dplyr::summarise_at(dplyr::vars(dplyr::contains("Eta")), any) %>%
                     ungroup %>%
                     # put results into format 
-                    pivot_longer(cols = (contains("Eta")),
+                    tidyr::pivot_longer(cols = (dplyr::contains("Eta")),
                                  names_to = "comparison", 
                                  values_to = "decision") %>%
                     # put alphas in cols
-                    pivot_wider(names_from = alpha, values_from = decision) %>%
+                    tidyr::pivot_wider(names_from = alpha, values_from = decision) %>%
                     # Change % as equivlanet to alpha
-                    rename_at(vars(contains("%")), changeCItoAlphaEquivalent) %>%
-                    mutate(test = "CI_overlap")
+                    dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) %>%
+                    dplyr::mutate(test = "CI_overlap")
   }
   
   # Summarize all results ------------------------------------------------------
   
-  results <- bind_rows(klesel, 
+  results <- dplyr::bind_rows(klesel, 
                        chin1, chin2,
                        sarstedt1, sarstedt2,
                        keil1, keil2,
@@ -1590,7 +1592,7 @@ testMGDMatrix <- function(.object){
                        CIpara1, CIpara2,
                        CIoverlap1, CIoverlap2) %>%
               # Change order of columns
-              select(test, comparison, contains("%"), 
+              dplyr::select(test, comparison, dplyr::contains("%"), 
                      correction, type_ci, distance)
   
 }
