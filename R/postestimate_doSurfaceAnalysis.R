@@ -86,14 +86,14 @@ doSurfaceAnalysis <- function(
   if(is.null(.dependent) | is.null(.independent_2 ) | is.null(.independent_1 )){
     stop2(
       "The following error occured in the `doSurfaceAnalysis()`` function:\n",
-      "All variables (.dependent, .independent_2 , and.independent_1 ) must be supplied.")
+      "All variables (.dependent, .independent_2 , and .independent_1) must be supplied.")
   }
   
   
   # Check if the name of the dependent variable is valid
   if(!(.dependent %in% rownames(m$structural[rowSums(m$structural) !=0, , drop = FALSE]))){
     stop2(
-      "The following error occured in the `doSurfaceAnalysis()`` function:\n",
+      "The following error occured in the `doSurfaceAnalysis()` function:\n",
       "The dependent variable supplied to `.dependent` is not a dependent variable in the original model.")
   }
   
@@ -101,7 +101,7 @@ doSurfaceAnalysis <- function(
   # supplied are used in the original model
   if(!all(c(.independent_2 ,.independent_1 ) %in% colnames(m$structural))){
     stop2(
-      "The following error occured in the `doSurfaceAnalysis()`` function:\n",
+      "The following error occured in the `doSurfaceAnalysis()` function:\n",
       "At least on of the independent variables are not part of the original model.")
   }
   
