@@ -142,7 +142,7 @@ doSimpleEffectsAnalysis <- function(
                    length.out = .n_steps),ncol=1)
   colnames(steps_ind)=.independent
   
-  steps_mod = c(-2,-1,0,1,0)
+  steps_mod = c(-2,-1,0,1,2)
 
   # steps_independent1 = rep(steps_ind1,each=length(steps_ind2))
   # steps_independent2 = rep(steps_ind2,times = length(steps_ind1))
@@ -173,15 +173,20 @@ doSimpleEffectsAnalysis <- function(
   }
   )
     temp
+     Reduce('+',temp)
   })
+
+  out <- data.frame(values_dep = unlist(y_pred_list),
+              values_ind = rep(steps_ind,length(steps_mod)),
+              values_mod = as.character(rep(steps_mod,each=length(steps_ind))))
   
-  y_pred = Reduce('+',y_pred_list)
+
   
   # Return output
   # The returned matrix has in the columns the value of the independent variable
   # and in the rows the values of the moderator
-  out <- list(values_dep=matrix(y_pred,ncol=length(steps_ind1),nrow=length(steps_ind2)),
-              values_ind1=steps_ind1,values_ind2=steps_ind2)
+  # out <- list(values_dep=matrix(y_pred_list,ncol=length(steps_ind1),nrow=length(steps_ind2)),
+  #             values_ind1=steps_ind1,values_ind2=steps_ind2)
   
   # out1 <- list(y=y_pred, z=steps_independent1,x=steps_independent2)
   
@@ -190,10 +195,9 @@ doSimpleEffectsAnalysis <- function(
     "out"  = out,
     # "out1" = out1,
     "Information" = list(
-      alpha           = .alpha,
       dependent       = .dependent,
-      independent_1   = .independent_1,
-      independent_2   = .independent_2,
+      independent   = .independent,
+      moderator   = .moderator,
       all_independent = vars_rel 
     )
   )
