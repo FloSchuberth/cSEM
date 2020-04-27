@@ -38,7 +38,7 @@ getTestMGDDecisions <- function(.object){
   # Change CI alpha equivlanet (1-CI)
   changeCItoAlphaEquivalent <- function(.names){
     # .names <- c("99%","95%","90%")
-    tmpNames <- readr::parse_number(.names)
+    tmpNames <- as.numeric(gsub("%", "", .names))
     tmpNames <- 100-tmpNames
     tmpNames <- paste0(tmpNames, "%")
     return(tmpNames)
@@ -77,7 +77,7 @@ getTestMGDDecisions <- function(.object){
       dplyr::bind_rows(.id = "correction") %>%
       # Check all comparisons
       dplyr::group_by(correction, alpha) %>%
-      dplyr::summarise_at(dplyr::vars(-comparison),any) %>%
+      dplyr::summarise_at(dplyr::vars(-comparison),all) %>%
       ungroup %>% 
       # put results into format 
       tidyr::pivot_longer(cols = (-c(correction, alpha)),
@@ -129,7 +129,7 @@ getTestMGDDecisions <- function(.object){
       purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
       dplyr::bind_rows(.id = "correction") %>%
       dplyr::group_by(correction, alpha) %>%
-      dplyr::summarise_at(dplyr::vars(-comparison),any) %>%
+      dplyr::summarise_at(dplyr::vars(-comparison),all) %>%
       ungroup %>%
       # put results into format 
       tidyr::pivot_longer(cols = (-c(correction, alpha)),
@@ -158,7 +158,7 @@ getTestMGDDecisions <- function(.object){
       purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
       dplyr::bind_rows(.id = "correction") %>%
       dplyr::group_by(correction, alpha) %>%
-      dplyr::summarise_at(dplyr::vars(-comparison),any) %>%
+      dplyr::summarise_at(dplyr::vars(-comparison),all) %>%
       ungroup %>%
       # put results into format 
       tidyr::pivot_longer(cols = (-c(correction, alpha)),
@@ -187,7 +187,7 @@ getTestMGDDecisions <- function(.object){
       purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
       dplyr::bind_rows(.id = "correction") %>%
       dplyr::group_by(correction, alpha) %>%
-      dplyr::summarise_at(dplyr::vars(-comparison),any) %>%
+      dplyr::summarise_at(dplyr::vars(-comparison),all) %>%
       ungroup %>%
       # put results into format 
       tidyr::pivot_longer(cols = (-c(correction, alpha)),
@@ -223,7 +223,7 @@ getTestMGDDecisions <- function(.object){
       dplyr::bind_rows(.id = "alpha") %>%
       tidyr::pivot_wider(names_from = Name, values_from = Decision) %>%
       dplyr::group_by(alpha, type_ci) %>%
-      dplyr::summarise_at(dplyr::vars(-comparison),any) %>%
+      dplyr::summarise_at(dplyr::vars(-comparison),all) %>%
       ungroup %>%
       # put results into format 
       tidyr::pivot_longer(cols = (-c(type_ci, alpha)),
@@ -261,7 +261,7 @@ getTestMGDDecisions <- function(.object){
       dplyr::bind_rows(.id = "alpha") %>%
       tidyr::pivot_wider(names_from = Name, values_from = Decision) %>%
       dplyr::group_by(alpha, type_ci) %>%
-      dplyr::summarise_at(dplyr::vars(-comparison),any) %>%
+      dplyr::summarise_at(dplyr::vars(-comparison),all) %>%
       ungroup %>%
       # put results into format 
       tidyr::pivot_longer(cols = (-c(type_ci, alpha)),

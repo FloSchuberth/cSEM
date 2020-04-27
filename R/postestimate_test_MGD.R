@@ -1177,7 +1177,8 @@ testMGD <- function(
     "Number_of_observations"= sapply(X_all_list, nrow),
     "Approach"              = .approach_mgd,
     "Approach_p_adjust"     = .approach_p_adjust,
-    "Alpha"                 = .alpha)
+    "Alpha"                 = .alpha,
+    "Parameters_to_compare" = .parameters_to_compare)
 
   ## Permutation-specific information
   if(any(.approach_mgd %in% c("all", "Klesel", "Chin", "Sarstedt"))) {
