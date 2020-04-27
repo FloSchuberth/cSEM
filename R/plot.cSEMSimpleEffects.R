@@ -16,20 +16,21 @@ plot.cSEMSimpleEffects <- function(x, ...) {
     stop2(
       "Package `ggplot2` required. Use `install.packages(\"ggplot2\")` and rerun.")
   }
-  browser()
+
   plot1 <- ggplot2::ggplot(x$out, ggplot2::aes(x = values_ind, 
                                                y = values_dep,
-                                               color = values_mod))+
-    ggplot2::geom_point() 
-  # +
-  #   ggplot2::geom_ribbon(ggplot2::aes(ymin = x$out[,'lb'], ymax = x$out[, 'ub']), alpha = 0.2) +
-  #   ggplot2::labs(
-  #     x = paste('Level of ', x$Information['moderator']), 
-  #     y = paste('Effect of', x$Information['independent'], 'on \n', x$Information['dependent']),
-  #     caption = paste0("Created using cSEM version: ", packageVersion("cSEM"), 
-  #                      " (", Sys.Date(), ")")) +
-  #   ggplot2::theme_bw() +
-  #   ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
+                                               group = values_mod))+
+    ggplot2::geom_line(ggplot2::aes(linetype=values_mod))  +
+    ggplot2::labs(
+      x = paste('Level of ', x$Information['moderator']),
+      y = paste('Expected value of', x$Information['dependent']),
+      # linetype=paste("Level of",x$Information['moderator']),
+      caption = paste0("Created using cSEM version: ", packageVersion("cSEM"),
+                       " (", Sys.Date(), ")")) +
+    ggplot2::scale_linetype_discrete(name = paste("Level of",x$Information['moderator']),
+                                     labels=c("mean-2*sd","mean-sd","mean","mean+sd","mean+2*sd"))+
+    ggplot2::theme_bw() +
+    ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
   
   # Plot
   plot1
