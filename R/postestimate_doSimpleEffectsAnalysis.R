@@ -164,11 +164,12 @@ doSimpleEffectsAnalysis <- function(
     #Reliabilities of composites are 1 so nothing happens, except in case of 
     # SOC of the type composite of common factor
     
-    # !!! It might be that the calculation for the expected value needs to be adjusted.
+    # The formula for the average is fine, as the expected value are only required 
+    # for terms with a mximum power of 3. In this case, the formula is appropriate
     average <- mean(matrixStats::rowProds(H[,indep_rel,drop=FALSE]))/prod(Q[indep_rel])
     
     temp$Estimate*(matrixStats::rowProds(steps_ind[,indep,drop=FALSE])*
-                     steps_mod^length(moderat)-
+                     stepmode^length(moderat)-
                      average)  
   }
   )
@@ -178,7 +179,7 @@ doSimpleEffectsAnalysis <- function(
 
   out <- data.frame(values_dep = unlist(y_pred_list),
               values_ind = rep(steps_ind,length(steps_mod)),
-              values_mod = as.character(rep(steps_mod,each=length(steps_ind))))
+              values_mod = paste0(rep(steps_mod,each=length(steps_ind)),' sd'))
   
 
   
