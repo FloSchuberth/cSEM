@@ -6,7 +6,6 @@
 #' 
 #' @usage doSimpleEffectsAnalysis(
 #'  .object         = NULL,
-#'  .alpha          = 0.05,
 #'  .dependent      = NULL, 
 #'  .moderator      = NULL,
 #'  .independent    = NULL,
@@ -182,15 +181,6 @@ doSimpleEffectsAnalysis <- function(
               values_mod = paste0(rep(steps_mod,each=length(steps_ind)),' sd'))
   
 
-  
-  # Return output
-  # The returned matrix has in the columns the value of the independent variable
-  # and in the rows the values of the moderator
-  # out <- list(values_dep=matrix(y_pred_list,ncol=length(steps_ind1),nrow=length(steps_ind2)),
-  #             values_ind1=steps_ind1,values_ind2=steps_ind2)
-  
-  # out1 <- list(y=y_pred, z=steps_independent1,x=steps_independent2)
-  
   # Prepare and return output
   out <- list(
     "out"  = out,

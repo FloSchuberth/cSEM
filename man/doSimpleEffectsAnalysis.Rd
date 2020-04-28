@@ -6,7 +6,6 @@
 \usage{
 doSimpleEffectsAnalysis(
  .object         = NULL,
- .alpha          = 0.05,
  .dependent      = NULL, 
  .moderator      = NULL,
  .independent    = NULL,

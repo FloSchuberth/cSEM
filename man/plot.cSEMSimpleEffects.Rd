@@ -13,5 +13,7 @@
 }
 \description{
 Creates a simple effects plot. The expected value of the dependent variable is plotted
-for different values of the independent variable and the moderator
+for different values of the independent variable and the moderator. As levels for the moderator
+-2, -1, 0, 1, and 2 are used. Since the constructs are standardized the values of the moderator
+equals the deviation from its mean measured in standard deviations.
 }

@@ -1,7 +1,9 @@
 #' `cSEMSimpleEffects` method for `plot()`
 #'
 #' Creates a simple effects plot. The expected value of the dependent variable is plotted
-#' for different values of the independent variable and the moderator
+#' for different values of the independent variable and the moderator. As levels for the moderator
+#' -2, -1, 0, 1, and 2 are used. Since the constructs are standardized the values of the moderator
+#' equals the deviation from its mean measured in standard deviations.   
 #' 
 #' @param x An R object of class `cSEMSimpleEffects`.
 #' @param ... Currently ignored.
@@ -22,7 +24,7 @@ plot.cSEMSimpleEffects <- function(x, ...) {
                                                group = values_mod))+
     ggplot2::geom_line(ggplot2::aes(linetype=values_mod))  +
     ggplot2::labs(
-      x = paste('Level of ', x$Information['moderator']),
+      x = paste('Level of ', x$Information['independent']),
       y = paste('Expected value of', x$Information['dependent']),
       # linetype=paste("Level of",x$Information['moderator']),
       caption = paste0("Created using cSEM version: ", packageVersion("cSEM"),
