@@ -5,11 +5,12 @@
 #' are assumed to be zero, i.e., at their mean level. 
 #' 
 #' @usage doSimpleEffectsAnalysis(
-#'  .object         = NULL,
-#'  .dependent      = NULL, 
-#'  .moderator      = NULL,
-#'  .independent    = NULL,
-#'  .n_steps        = 100
+#'  .object           = NULL,
+#'  .dependent        = NULL, 
+#'  .independent      = NULL,
+#'  .moderator        = NULL,
+#'  .n_steps          = 100,
+#'  .values_moderator = c(-2,-1,0,1,2)
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -26,9 +27,10 @@
 doSimpleEffectsAnalysis <- function(
   .object             = NULL,
   .dependent          = NULL, 
-  .independent      = NULL,
-  .moderator      = NULL,
-  .n_steps            = 100
+  .independent        = NULL,
+  .moderator          = NULL,
+  .n_steps            = 100,
+  .values_moderator   = c(-2,-1,0,1,2)
 ){
   
   if(inherits(.object, "cSEMResults_multi")) {
@@ -36,24 +38,10 @@ doSimpleEffectsAnalysis <- function(
                   .dependent = .dependent, .independent = .independent,
                   .moderator   = .moderator, .n_steps = .n_steps)
     
-    class(out) <- c("cSEMSurface", "cSEMSurface_multi")
+    class(out) <- c("cSEMSimpleEffects", "cSEMSimpleEffects_multi")
     return(out)
   } 
-  
-  # Might be relevant for upcoming CIs
-  # else {
-  ## Check whether .object is of class cSEMResults_resampled; if not perform
-  ## standard resampling (bootstrap with .R = 499 reps)
-  # if(!inherits(.object, "cSEMResults_resampled")) {
-  #   if(inherits(.object, "cSEMResults_default")) {
-  #     args <- .object$Information$Arguments
-  #   } else {
-  #     args <- .object$Second_stage$Information$Arguments_original
-  #   }
-  #   args[".resample_method"] <- "bootstrap"
-  #   .object <- do.call(csem, args)
-  # }
-  
+
   ##  Select relevant quantities
   if(inherits(.object, "cSEMResults_default")) {
     m   <- .object$Information$Model
@@ -141,7 +129,7 @@ doSimpleEffectsAnalysis <- function(
                    length.out = .n_steps),ncol=1)
   colnames(steps_ind)=.independent
   
-  steps_mod = c(-2,-1,0,1,2)
+  steps_mod = .values_moderator
 
   # steps_independent1 = rep(steps_ind1,each=length(steps_ind2))
   # steps_independent2 = rep(steps_ind2,times = length(steps_ind1))
@@ -178,7 +166,7 @@ doSimpleEffectsAnalysis <- function(
 
   out <- data.frame(values_dep = unlist(y_pred_list),
               values_ind = rep(steps_ind,length(steps_mod)),
-              values_mod = paste0(rep(steps_mod,each=length(steps_ind)),' sd'))
+              values_mod = paste0(rep(steps_mod,each=length(steps_ind))))
   
 
   # Prepare and return output
@@ -189,7 +177,8 @@ doSimpleEffectsAnalysis <- function(
       dependent       = .dependent,
       independent   = .independent,
       moderator   = .moderator,
-      all_independent = vars_rel 
+      all_independent = vars_rel,
+      values_moderator = .values_moderator
     )
   )
   

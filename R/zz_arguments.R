@@ -276,6 +276,8 @@
 #'   Function output should preferably be a (named)
 #'   vector but matrices are also accepted. However, the output will be 
 #'   vectorized (columnwise) in this case. See the examples section for details.
+#' @param .values_moderator A numeric vector. Provides the values of the moderator, e.g.,
+#' in the simple effects analysis. Defaults to c(-2,-1,0,1,2).
 #' @param .vcv_asymptotic Logical. Should the asymptotic variance-covariance matrix be used, i.e., 
 #' VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) be computed directly? 
 #'  Defaults to `FALSE`.
@@ -503,6 +505,7 @@ args_default <- function(.choices = FALSE) {
     .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
                                  "CI_basic","CI_bc", "CI_bca"),
     .user_funs               = NULL,
+    .values_moderator        = c(-2,-1,0,1,2),
     .vcv_asymptotic          = c(FALSE, TRUE),
     .verbose                 = TRUE,
     .W                       = NULL,

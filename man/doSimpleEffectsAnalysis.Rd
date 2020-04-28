@@ -5,11 +5,12 @@
 \title{Do a simple effects analysis}
 \usage{
 doSimpleEffectsAnalysis(
- .object         = NULL,
- .dependent      = NULL, 
- .moderator      = NULL,
- .independent    = NULL,
- .n_steps        = 100
+ .object           = NULL,
+ .dependent        = NULL, 
+ .independent      = NULL,
+ .moderator        = NULL,
+ .n_steps          = 100,
+ .values_moderator = c(-2,-1,0,1,2)
  )
 }
 \arguments{
@@ -24,6 +25,9 @@ doSimpleEffectsAnalysis(
 \item{.n_steps}{Integer. A numeric value giving the number of steps, e.g., in
 surface analysis or floodlight analysis the spotlights (= values of .moderator)
 between min(.moderator) and max(.moderator) to use. Defaults to \code{100}.}
+
+\item{.values_moderator}{A numeric vector. Provides the values of the moderator, e.g.,
+in the simple effects analysis. Defaults to c(-2,-1,0,1,2).}
 }
 \value{
 A list of class \code{cSEMSimpleEffects} with a corresponding method for \code{plot()}.
