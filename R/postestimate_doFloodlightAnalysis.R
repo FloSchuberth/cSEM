@@ -74,7 +74,7 @@ doFloodlightAnalysis <- function(
     ## Check if model is nonlinear.
     if(m$model_type != "Nonlinear"){
       stop2(
-        "The following error occured in the `doFloodlightAnalysis()`` function:\n",
+        "The following error occured in the `doFloodlightAnalysis()` function:\n",
         "The structural model must contain contain interaction terms.")
     }
     
@@ -88,7 +88,7 @@ doFloodlightAnalysis <- function(
     ## Check whether dependent, independent, and moderator variable are provided
     if(is.null(.dependent) | is.null(.moderator) | is.null(.independent)){
       stop2(
-        "The following error occured in the `doFloodlightAnalysis()`` function:\n",
+        "The following error occured in the `doFloodlightAnalysis()` function:\n",
         "All variables (.dependent, .moderator, and .independent) must be supplied.")
     }
     
@@ -103,7 +103,7 @@ doFloodlightAnalysis <- function(
     # in the original model
     if(!all(c(.moderator, .independent) %in% colnames(m$structural))){
       stop2(
-        "The following error occured in the `doFloodlightAnalysis()`` function:\n",
+        "The following error occured in the `doFloodlightAnalysis()` function:\n",
         "Independent and/or moderator variable are not part of the original model.")
     }
     

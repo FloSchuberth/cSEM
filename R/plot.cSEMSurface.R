@@ -34,7 +34,10 @@ plot.cSEMSurface <- function(
       "Package `plotly` required. Use `install.packages(\"plotly\")` and rerun.")
   }
     
-  plot1 <- plotly::plot_ly( x = x$out$values_ind1, y = x$out$values_ind2, z = x$out$values_dep, type = "surface",
+  plot1 <- plotly::plot_ly( x = x$out$values_ind1,
+                            y = x$out$values_ind2,
+                            z = x$out$values_dep,
+                            type = "surface",
                             colors = 'Greys') %>%
 
     plotly::add_surface(

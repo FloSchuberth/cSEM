@@ -19,6 +19,7 @@ plot.cSEMSimpleEffects <- function(x, ...) {
       "Package `ggplot2` required. Use `install.packages(\"ggplot2\")` and rerun.")
   }
 
+  # places_mod_ordered <- levels(with(x$out, reorder(values_mod,values_ind, values_dep)))
   plot1 <- ggplot2::ggplot(x$out, ggplot2::aes(x = x$out[,'values_ind'], 
                                                y = x$out[,'values_dep'],
                                                group = x$out[,'values_mod']))+
@@ -30,7 +31,8 @@ plot.cSEMSimpleEffects <- function(x, ...) {
       caption = paste0("Created using cSEM version: ", packageVersion("cSEM"),
                        " (", Sys.Date(), ")")) +
     ggplot2::scale_linetype_discrete(name = paste("Level of",x$Information['moderator'],'\n',
-                                                  'SDs from the mean'))+
+                                                  'SDs from the mean'),
+                                     breaks = sort(as.numeric(levels(x$out$values_mod))))+
     ggplot2::theme_bw() +
     ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
   

@@ -19,9 +19,9 @@
 #'   \insertAllCited{}
 #' 
 #' @return A list of class `cSEMSimpleEffects` with a corresponding method for `plot()`. 
-#'   See: [plot.cSEMFloodlight()].
+#'   See: [plot.cSEMSimpleEffects()].
 #' 
-#' @seealso [csem()], [cSEMResults], [plot.cSEMFloodlight()]
+#' @seealso [csem()], [cSEMResults], [plot.cSEMSimpleEffects()]
 #' @export
 
 doSimpleEffectsAnalysis <- function(

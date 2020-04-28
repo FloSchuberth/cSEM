@@ -21,10 +21,6 @@ Defaults to \code{0.05}.}
 
 \item{.dependent}{Character string. The name of the dependent variable. Defaults to \code{NULL}.}
 
-\item{.independent_1}{Character string. The name of the first independent variable. Defaults to \code{NULL}.}
-
-\item{.independent_2}{Character string. The name of the second independent variable. Defaults to \code{NULL}.}
-
 \item{.n_steps}{Integer. A numeric value giving the number of steps, e.g., in
 surface analysis or floodlight analysis the spotlights (= values of .moderator)
 between min(.moderator) and max(.moderator) to use. Defaults to \code{100}.}
