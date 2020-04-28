@@ -29,7 +29,8 @@ plot.cSEMSimpleEffects <- function(x, ...) {
       # linetype=paste("Level of",x$Information['moderator']),
       caption = paste0("Created using cSEM version: ", packageVersion("cSEM"),
                        " (", Sys.Date(), ")")) +
-    ggplot2::scale_linetype_discrete(name = paste("Level of",x$Information['moderator']))+
+    ggplot2::scale_linetype_discrete(name = paste("Level of",x$Information['moderator'],'\n',
+                                                  'SDs from the mean'))+
     ggplot2::theme_bw() +
     ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
   

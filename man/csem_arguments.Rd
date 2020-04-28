@@ -375,7 +375,8 @@ vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
 
 \item{.values_moderator}{A numeric vector. Provides the values of the moderator, e.g.,
-in the simple effects analysis. Defaults to c(-2,-1,0,1,2).}
+in the simple effects analysis. Typically these are difference from the mean (=0)
+measured in standard deviations. Defaults to c(-2,-1,0,1,2).}
 
 \item{.vcv_asymptotic}{Logical. Should the asymptotic variance-covariance matrix be used, i.e.,
 VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) be computed directly?

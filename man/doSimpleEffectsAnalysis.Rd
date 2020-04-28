@@ -27,16 +27,17 @@ surface analysis or floodlight analysis the spotlights (= values of .moderator)
 between min(.moderator) and max(.moderator) to use. Defaults to \code{100}.}
 
 \item{.values_moderator}{A numeric vector. Provides the values of the moderator, e.g.,
-in the simple effects analysis. Defaults to c(-2,-1,0,1,2).}
+in the simple effects analysis. Typically these are difference from the mean (=0)
+measured in standard deviations. Defaults to c(-2,-1,0,1,2).}
 }
 \value{
 A list of class \code{cSEMSimpleEffects} with a corresponding method for \code{plot()}.
 See: \code{\link[=plot.cSEMFloodlight]{plot.cSEMFloodlight()}}.
 }
 \description{
-Calculate the effect of an independent variable on a dependent variable
-conditional on the values of a (continous) moderator variable. All other variables in the model
-are assumed to be zero, i.e., at their mean level.
+Calculate the expected value of the dependent variable conditional on the values of
+an independent variables and a moderator variable. All other variables in the model
+are assumed to be zero, i.e., they are fixed at their mean levels.
 }
 \references{
 \insertAllCited{}

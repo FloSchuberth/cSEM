@@ -1,8 +1,8 @@
 #' Do a simple effects analysis
 #'
-#' Calculate the effect of an independent variable on a dependent variable
-#' conditional on the values of a (continous) moderator variable. All other variables in the model
-#' are assumed to be zero, i.e., at their mean level. 
+#' Calculate the expected value of the dependent variable conditional on the values of 
+#' an independent variables and a moderator variable. All other variables in the model
+#' are assumed to be zero, i.e., they are fixed at their mean levels. 
 #' 
 #' @usage doSimpleEffectsAnalysis(
 #'  .object           = NULL,
