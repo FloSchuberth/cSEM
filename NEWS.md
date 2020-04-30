@@ -1,5 +1,9 @@
 # Development version: cSEM 0.2.0:9000
 
+- Combine plot functions for surface, floodlight and simple effects analysis in one function
+
+- Combine functions for surface, floodlight and simple effects analysis in one function
+
 - Add tests for `infer()`
 
 - Fix bug in the computation of the Bc and Bca interval. Computation failed for
