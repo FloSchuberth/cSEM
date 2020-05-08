@@ -750,9 +750,11 @@ resamplecSEMResultsCore <- function(
   
   ### Start resampling loop ====================================================
   progressr::with_progress({
-    progress_bar_csem <- progressr::progressor(along = 1:.R)
+    progress_bar_csem <- progressr::progressor(steps = floor(.R / 10))
     Est_ls <- future.apply::future_lapply(1:.R, function(i) {
-      progress_bar_csem(message = sprintf("Resample run = %g", i))
+      if (i %% 10 == 0) {
+        progress_bar_csem(message = sprintf("Resample run = %g", i)) 
+      }
       # Est_ls <- lapply(1:.R, function(i) {
       # Replace the old data set by a resampled data set (resampleData always returns
       # a list so for just one draw we need to pick the first list element)
