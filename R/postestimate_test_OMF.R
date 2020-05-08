@@ -118,10 +118,10 @@ testOMF <- function(
     )
   }
   
-  if(.verbose) {
-    cat(rule2("Test for overall model fit based on Beran & Srivastava (1985)",
-              type = 3), "\n\n")
-  }
+  # if(.verbose) {
+  #   cat(rule2("Test for overall model fit based on Beran & Srivastava (1985)",
+  #             type = 3), "\n\n")
+  # }
   
   ### Checks and errors ========================================================
   ## Check if initial results are inadmissible

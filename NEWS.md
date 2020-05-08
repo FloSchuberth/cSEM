@@ -1,5 +1,10 @@
 # Development version: cSEM 0.2.0:9000
 
+- Progress bars are now supported for every function that does resampling. 
+  Progress bars are fully customizable via the `progressr` framework created by
+  @HenrikBengtsson. Note: to suppress the progress bar use
+  `progressr::handlers("void")` and then run your csem commands.
+
 - Add tests for `infer()`
 
 - Fix bug in the computation of the Bc and Bca interval. Computation failed for

@@ -764,7 +764,12 @@ resamplecSEMResultsCore <- function(
   
   ### Start resampling loop ====================================================
   progressr::with_progress({
-    progress_bar_csem <- progressr::progressor(steps = floor(.R / 10))
+    if(.R >= 10) {
+      progress_bar_csem <- progressr::progressor(steps = floor(.R / 10))
+    } else {
+      progress_bar_csem <- progressr::progressor(steps = .R)
+    }
+
     Est_ls <- future.apply::future_lapply(1:.R, function(i) {
       if (i %% 10 == 0) {
         progress_bar_csem(message = sprintf("Resample run = %g", i)) 
@@ -1092,7 +1097,9 @@ resamplecSEMResultsCore <- function(
         .resample_method2     = .resample_method2,
         .R2                   = .R2,
         .user_funs            = .user_funs,
-        .eval_plan            = .eval_plan,
+        .eval_plan            = "sequential", # multiprocessing will generally 
+        # not be meaningful here since we typically 
+        # replace only a small subset of the total runs 
         .seed                 = .seed,
         .sign_change_option   = .sign_change_option,
         ...
