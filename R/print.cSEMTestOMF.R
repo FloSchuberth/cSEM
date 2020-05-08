@@ -11,16 +11,15 @@
 print.cSEMTestOMF <- function(x, ...) {
   
   cat2(
-    rule(line = "bar2", width = 80), "\n",
-    rule(center = "Test for overall model fit based on Beran & Srivastava (1985)",
-         width = 80)
+    rule2(type = 2), "\n",
+    rule2("Test for overall model fit based on Beran & Srivastava (1985)")
   )
   
   ## Null hypothesis -----------------------------------------------------------
   cat2(
     "\n\nNull hypothesis:\n\n", 
-    boxx(c("H0: Population indicator covariance matrix is equal to", 
-           "model-implied indicator covariance matrix."), float = "center")
+    boxx(c("H0: The model-implied indicator covariance matrix equals the", 
+           "population indicator covariance matrix."), float = "center")
   )
   
   ## Test statistic and critical value -----------------------------------------
@@ -118,5 +117,5 @@ print.cSEMTestOMF <- function(x, ...) {
     " for what constitutes an inadmissible result.\n\n\t",
     "The seed used was: ", x$Information$Seed, "\n"
   )
-  cat(rule(line = "bar2", width = 80), sep = "")
+  cat2(rule2(type = 2), "\n")
 }

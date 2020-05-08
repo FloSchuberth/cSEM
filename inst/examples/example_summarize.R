@@ -14,7 +14,7 @@ eta3 =~ y31 + y32 + y33
 "
 
 ## Estimate
-res <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 50)
+res <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 40)
 
 ## Postestimation
 res_summarize <- summarize(res)

@@ -5,12 +5,12 @@
 \title{Do a floodlight analysis}
 \usage{
 doFloodlightAnalysis(
- .object        = NULL,
- .alpha         = 0.05,
- .y             = NULL, 
- .x             = NULL,
- .z             = NULL,
- .n_spotlights  = 100
+ .object         = NULL,
+ .alpha          = 0.05,
+ .dependent      = NULL, 
+ .moderator      = NULL,
+ .independent    = NULL,
+ .n_steps        = 100
  )
 }
 \arguments{
@@ -19,26 +19,27 @@ doFloodlightAnalysis(
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 
-\item{.y}{Character string. The name of the dependent variable. Defaults to \code{NULL}.}
+\item{.dependent}{Character string. The name of the dependent variable. Defaults to \code{NULL}.}
 
-\item{.x}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
+\item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
 
-\item{.z}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
+\item{.independent}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
 
-\item{.n_spotlights}{Integer. A numeric value giving the number of spotlights (= values of .z)
-between min(.z) and max(.z) to use. Defaults to \code{100}.}
+\item{.n_steps}{Integer. A numeric value giving the number of steps, e.g., in
+surface analysis or floodlight analysis the spotlights (= values of .moderator)
+between min(.moderator) and max(.moderator) to use. Defaults to \code{100}.}
 }
 \value{
 A list of class \code{cSEMFloodlight} with a corresponding method for \code{plot()}.
 See: \code{\link[=plot.cSEMFloodlight]{plot.cSEMFloodlight()}}.
 }
 \description{
-Calculate the effect of an independent variable (z) on a dependent variable
-(y) conditional on the values of a (continous) moderator variable (x)
+Calculate the effect of an independent variable on a dependent variable
+conditional on the values of a (continous) moderator variable
 to perform a floodlight analysis \insertCite{Spiller2013}{cSEM}. Moreover,
-the Johnson-Neyman points are calculated, i.e. the value(s) of x for which
+the Johnson-Neyman points are calculated, i.e. the value(s) of the moderator for which
 lower or upper boundary of the confidence interval of the effect
-estimate of z for a given x switch signs.
+estimate of the independent variable on the depedent variable switches signs.
 }
 \references{
 \insertAllCited{}

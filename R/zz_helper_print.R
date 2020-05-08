@@ -25,8 +25,8 @@ printSummarizeOverview <- function(.summarize_object) {
   
   if(x$Arguments$.approach_weights == "PLS-PM") {
     cat2(
-      col_align("\n\tInner weighting scheme", 35), "= ", 
-      x$Arguments$.PLS_weight_scheme_inner
+      col_align("\n\tInner weighting scheme", 35), "= ", '"', 
+      x$Arguments$.PLS_weight_scheme_inner, '"'
     )
   }
   cat2(
@@ -48,7 +48,7 @@ printSummarizeOverview <- function(.summarize_object) {
   }
 
   cat2(
-    col_align("\n\tSecond order approach", 35), "= ", x$Approach_2ndorder
+    col_align("\n\tSecond-order approach", 35), "= ", x$Approach_2ndorder
   )
   cat2(
     col_align("\n\tType of path model", 35), "= ", x$Model$model_type,
@@ -70,19 +70,19 @@ printSummarizeOverview <- function(.summarize_object) {
   if(inherits(.summarize_object, "cSEMSummarize_resampled")) {
     cat2("\n\n\tResample information:\n\t","---------------------")
     cat2(
-      col_align("\n\tResample methode", 35), "= ", xx$Information_resample$Method,
+      col_align("\n\tResample method", 35), "= ", '"', xx$Information_resample$Method, '"',
       col_align("\n\tNumber of resamples", 35), "= ", xx$Information_resample$Number_of_runs
     )
     if(xx$Information_resample$Method2 %in% c("bootstrap", "jackknife")) {
       cat2(
-        col_align("\n\tResample of resample methode", 35), "= ", xx$Information_resample$Method2,
+        col_align("\n\tResample of resample method", 35), "= ", '"',xx$Information_resample$Method2, '"',
         col_align("\n\tNumber of resamples per resample", 35), "= ", xx$Information_resample$Number_of_runs2
       ) 
     }
     cat2(
       col_align("\n\tNumber of admissible results ", 35), "= ", xx$Information_resample$Number_of_admissibles,
-      col_align("\n\tApproach to handle inadmissibles ", 35), "= ", xx$Information_resample$Handle_inadmissibles,
-      col_align("\n\tSign change option", 35), "= ", xx$Information_resample$Sign_change_option
+      col_align("\n\tApproach to handle inadmissibles ", 35), "= ", '"', xx$Information_resample$Handle_inadmissibles, '"', 
+      col_align("\n\tSign change option", 35), "= ", '"', xx$Information_resample$Sign_change_option, '"'
     )
     if(!isFALSE(xx$Information_resample$Seed)) {
       cat2(
@@ -130,7 +130,7 @@ printSummarizeConstructDetails <- function(.summarize_object) {
     col_align("Order", 12 + 2)
   )
   if(x2$Arguments$.approach_weights == "PLS-PM") {
-    cat2(col_align("Mode", 5))
+    cat2(col_align("Mode", 10))
   }
   cat("\n")
   
@@ -138,22 +138,22 @@ printSummarizeConstructDetails <- function(.summarize_object) {
     
     # First stage
     for(i in names(x1$Model$construct_type)) {
-      cat("\n\t", 
+      cat2("\n\t", 
           col_align(i, max(l, nchar("Name")) + 2), 
           col_align(x1$Model$construct_type[i], 13 + 2), 
-          col_align("First order", 12 + 2), sep = "")
+          col_align("First order", 12 + 2))
       if(x1$Arguments$.approach_weights == "PLS-PM") {
-        cat(col_align(x1$Weight_info$Modes[i], 5), sep = "")
+        cat2(col_align(paste0('"', x1$Weight_info$Modes[i],'"'), 10))
       }
     }
     # Second stage
     for(i in names(x2$Model$construct_type[c_2nd_order])) {
-      cat("\n\t", 
+      cat2("\n\t", 
           col_align(i, max(l, nchar("Name")) + 2), 
           col_align(x2$Model$construct_type[i], 13 + 2), 
-          col_align("Second order", 12 + 2), sep = "")
+          col_align("Second order", 12 + 2))
       if(x2$Arguments$.approach_weights == "PLS-PM") {
-        cat(col_align(x2$Weight_info$Modes[i], 5), sep = "")
+        cat2(col_align(paste0('"', x2$Weight_info$Modes[i],'"'), 10))
       }
     }
   } else {
@@ -165,7 +165,7 @@ printSummarizeConstructDetails <- function(.summarize_object) {
         col_align(x2$Model$construct_order[i], 12 + 2)
       )
       if(x2$Arguments$.approach_weights == "PLS-PM") {
-        cat2(col_align(x2$Weight_info$Modes[i], 5))
+        cat2(col_align(paste0('"', x2$Weight_info$Modes[i],'"'), 10))
       }
     }
   }
@@ -345,7 +345,7 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
   
   cat2(
     "\n  ", 
-    col_align("Weights", max(l, nchar("Weights")) + 2), 
+    col_align("Weight", max(l, nchar("Weights")) + 2), 
     col_align("Estimate", 10, align = "right"), 
     col_align("Std. error", 12, align = "right"),
     col_align("t-stat.", 10, align = "right"), 
@@ -443,6 +443,20 @@ printTestMGDResults <- function(.x, .approach, .info) {
         rule2(type = 2), "\n",
         rule2("Test for multigroup differences based on Henseler (2009)")
       )
+    },
+    "CI_para" = {
+      x <- .x$CI_para
+      cat2(
+        rule2(type = 2), "\n",
+        rule2("Test for multigroup differences: CI_para")
+      )
+    },
+    "CI_overlap" = {
+      x <- .x$CI_overlap
+      cat2(
+        rule2(type = 2), "\n",
+        rule2("Test for multigroup differences: CI_overlap")
+      )
     }
   )
   
@@ -460,50 +474,139 @@ printTestMGDResults <- function(.x, .approach, .info) {
       boxx("H0: Parameter k is equal across two groups.", float = "center")
     )
   }
-
   
   ## Test statistic and p-value ------------------------------------------------
   cat2("\n\nTest statistic and p-value: \n\n")
   # Are several .alphas given? Inform the user that only the first .alpha is
   # is used for decision
   
-  # Are several .alphas given? Inform the user that only the first .alpha is
-  # is used for decision
-  if(length(.info$Alpha) > 1) {
-    cat2(
-      "\tDecision is based on alpha = ", names(x$Decision[[1]])[1]
-    )
-  }
-  
-  l <- max(10, nchar(names(x$Test_statistic[[1]])))
-  
-  # Create table for every p-value adjustment method
-  for(p in seq_along(x$P_value)) {
-    cat2("\n\tMultiple testing adjustment: '", names(x$P_value)[p], "'")
-    for(i in seq_along(x$Test_statistic)) {
+  if(.approach == "CI_para") {
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    if(length(.info$Alpha) > 1) {
+      cat2(
+        "\tDecision is based on the ", names(x$Decision)[1], " confidence interval",
+        "\n\tType of confidence interval: ", names(x$Decision[[1]][[1]])[1]
+      )
+    }
+    
+    l <- max(10, nchar(x$Decision[[1]][[1]][[1]]$Name))
+    
+    # Print
+    for(i in seq_along(x$Decision[[1]])) {
       
-      cat2("\n\n  Compared groups: ", names(x$Test_statistic)[i], "\n\n\t")
+      cat2("\n\n  Compared groups: ", names(x$Decision[[1]])[i], "\n\n")
       
       cat2(
-        col_align("Parameter", width = l),
-        col_align("Test statistic", width = 14, align = "right"), 
-        col_align("p-value", width = 16, align = "right"),
-        col_align("Decision", width = 16, align = "right")
+        "  ",
+        col_align("Parameter", width = l + 2),
+        col_align("Est. group 1", width = 14, align = "right"), 
+        col_align("CI group 2", width = 20, align = "center"),
+        col_align("Est. group 2", width = 14, align = "right"), 
+        col_align("CI group 1", width = 20, align = "center")
+        # col_align("Decision", width = 10, align = "right")
       )
+      xx1 <- x$Decision[[1]][[i]][[1]]
       
-      for(j in seq_along(x$Test_statistic[[i]])) {
-        
+      for(j in 1:nrow(xx1)) {
         cat2(
-          "\n\t",
-          col_align(names(x$Test_statistic[[i]])[j], width = l),
-          col_align(sprintf("%.4f", x$Test_statistic[[i]][j]), width = 14, 
-                    align = "right"), 
-          col_align(sprintf("%.4f", x$P_value[[p]][[i]][j]), width = 16, align = "right"),
-          col_align(ifelse(x$Decision[[p]][[1]][[i]][j], green("Do not reject"), red("reject")),
-                    width = 16, align = "right")
+          "\n  ", 
+          col_align(xx1[j, "Name"], l + 2), 
+          col_align(sprintf("%.4f", xx1[j, 2]), 14, align = "right"),
+          col_align(
+            paste0("[", sprintf("%7.4f", xx1[j, 3]), ";", 
+                   sprintf("%7.4f", xx1[j, 4]), " ]"), 20, align = "center"),
+          col_align(sprintf("%.4f", xx1[j, 5]), 14, align = "right"),
+          col_align(
+            paste0("[", sprintf("%7.4f", xx1[j, 6]), ";", 
+                   sprintf("%7.4f", xx1[j, 7]), " ]"), 20, align = "center")
+          # col_align(ifelse(xx1[j, "Decision"], green("Do not reject"), red("reject")), 10, 
+          #                  align = "right")
         )
       }
-    } 
+    }
     cat2("\n")
+  } else if(.approach == "CI_overlap") {
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    if(length(.info$Alpha) > 1) {
+      cat2(
+        "\tDecision is based on the ", names(x$Decision)[1], " confidence interval",
+        "\n\tType of confidence interval: ", names(x$Decision[[1]][[1]])[1]
+      )
+    }
+    
+    l <- max(10, nchar(x$Decision[[1]][[1]][[1]]$Name))
+    
+    # Print
+    for(i in seq_along(x$Decision[[1]])) {
+      
+      cat2("\n\n  Compared groups: ", names(x$Decision[[1]])[i], "\n\n")
+      
+      cat2(
+        "  ",
+        col_align("Parameter", width = l + 2),
+        col_align("CI group 1", width = 20, align = "center"),
+        col_align("CI group 2", width = 20, align = "center"),
+        col_align("Decision", width = 14, align = "right")
+      )
+      xx1 <- x$Decision[[1]][[i]][[1]]
+      
+      for(j in 1:nrow(xx1)) {
+        cat2(
+          "\n  ", 
+          col_align(xx1[j, "Name"], l + 2), 
+          col_align(
+            paste0("[", sprintf("%7.4f", xx1[j, 2]), ";", 
+                   sprintf("%7.4f", xx1[j, 3]), " ]"), 20, align = "center"),
+          col_align(
+            paste0("[", sprintf("%7.4f", xx1[j, 4]), ";", 
+                   sprintf("%7.4f", xx1[j, 5]), " ]"), 20, align = "center"),
+          col_align(ifelse(xx1[j, "Decision"], green("Do not reject"), red("reject")), 14,
+                           align = "right")
+        )
+      }
+    }
+    cat2("\n")
+  } else {
+    # Are several .alphas given? Inform the user that only the first .alpha is
+    # is used for decision
+    if(length(.info$Alpha) > 1) {
+      cat2(
+        "\tDecision is based on alpha = ", names(x$Decision[[1]])[1]
+      )
+    }
+    
+    l <- max(10, nchar(names(x$Test_statistic[[1]])))
+    
+    # Create table for every p-value adjustment method
+    for(p in seq_along(x$P_value)) {
+      cat2("\n\tMultiple testing adjustment: '", names(x$P_value)[p], "'")
+      for(i in seq_along(x$Test_statistic)) {
+        
+        cat2("\n\n  Compared groups: ", names(x$Test_statistic)[i], "\n\n\t")
+        
+        cat2(
+          col_align("Parameter", width = l),
+          col_align("Test statistic", width = 14, align = "right"), 
+          col_align("p-value", width = 16, align = "right"),
+          col_align("Decision", width = 16, align = "right")
+        )
+        
+        for(j in seq_along(x$Test_statistic[[i]])) {
+          
+          cat2(
+            "\n\t",
+            col_align(names(x$Test_statistic[[i]])[j], width = l),
+            col_align(sprintf("%.4f", x$Test_statistic[[i]][j]), width = 14, 
+                      align = "right"), 
+            col_align(sprintf("%.4f", x$P_value[[p]][[i]][j]), width = 16, align = "right"),
+            col_align(ifelse(x$Decision[[p]][[1]][[i]][j], green("Do not reject"), red("reject")),
+                      width = 16, align = "right")
+          )
+        }
+      } 
+      cat2("\n")
+    }
   }
 }

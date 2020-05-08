@@ -10,6 +10,7 @@ source("test-main.R")
 test_that("predict() fails for non-linear and 2ndorder models", {
   expect_error(predict(res_single_nonlinear, .cv_folds = 2, .r = 2))
   expect_error(predict(res_single_2ndorder, .cv_folds = 2, .r = 2))
+  expect_error(predict(res_single_nonlinear_2ndorder, .cv_folds = 2, .r = 2))
   
   expect_error(predict(res_multi_nonlinear, .cv_folds = 2, .r = 2))
   expect_error(predict(res_multi_2ndorder, .cv_folds = 2, .r = 2))

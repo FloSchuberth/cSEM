@@ -1,32 +1,124 @@
-# cSEM 0.1.0:9000
+# Development version: cSEM 0.2.0:9000
 
-- Add more test for `testMICOM()` and `predict()` (related to #355)
+- Add tests for `infer()`
 
-- Fix bug in `testMICOM()`. Function produced an error if the data set provided
-  contained more columns than indicators used in the model used for 
-  `csem()`. (#355)
+- Fix bug in the computation of the Bc and Bca interval. Computation failed for
+  models that had no indirect effects. 
+
+- List element "reliability" of `assess()` is changed to "Reliability" to be 
+  consistent with the naming scheme of the other list elements.
+
+- `infer()` automatically computes bootstrap resamples now by default if `.object`
+  does not have class `cSEMResults_resampled` already.
+
+- Remove .alpha argument from `testMICOM()`. The argument is no longer required
+  as decisions are made via (possibly adjusted) p-values.
   
-- Fixed error in `predict()` when the dataset used to obtain `.object` contained 
-  a character column. (#345)
-
-- When calculating the HTMT via `assess()` the geometric mean of the average 
-  monotrait−heteromethod correlation construct eta_i with the average 
-  monotrait−heteromethod correlation of other constructs can be negative. 
-  NaNs produced are produced in this case and the HTMT was not printed. 
-  Added a warning and forced printing the NaNs as well. (#346)
+- Add checks to plot methods for `predict()`, `doFloodlightAnalysis`, and,
+  `doFloodlightAnalysis`.
   
-- Fix bug in `testMICOM()`. Function produced an error if the data set provided
-  contained an id-column even if the id-column was correctly supplied to 
-  `csem()`. (#344, #338)
+- Several documentation updates and typo corrections
+
+- The Fornell-Larcker criterion is now computed by its own function
+ `calculateFLCriterion()`. Previously, it was only available via `assess()`. (#387)
+
+- Implement importance-performance matrix analysis via `doIPMA()`. A corresponding
+  plot method is also available.
+
+# cSEM 0.2.0 (30.03.2020)
+## Major changes
+  
+- `testMICOM()` gains the `.approach_p_adjust` argument. The argument takes a
+  single character string or a vector of character strings naming the p-value
+  adjustment for multiple comparisons. (#138)
+  
+- Review `calculateHTMT()`. 1.) Add inference; 2) fix wrong handling of 
+  single-indicator constructs (#351); 3) Remove warning produced by 
+  `calculateHTMT()` when the estimated model contains
+  less than 2 common factors. (#325)
+  
+- Breaking: Rename argument in `doFloodlightAnalysis()`. (#343)
+
+- New function `doSurfaceAnalysis()`. See `?doSurfaceAnalysis()`(#349)
+
+- Implement degrees of freedom calculation for second-order constructs. 
+
+- Add new function `getConstructScores()`. The function returns the standardized
+  or unstandardized construct scores. Requires a `cSEMResults` object as input. (#340)
   
 - Fix bug in `doFloodlightAnalysis()`. There was an internal bug. Earlier versions
   returned the wrong direct effect. If you have used `doFloodlightAnalysis()`
   from cSEM v. 0.1.0 results are likely wrong.
-
-- Add new function `getConstructScores()`. The function returns the standardized
-  or unstandardized construct scores. Requires a `cSEMResults` object as input. (#340)
-
+  
 - Export plot method for `cSEMFloodlight` objects.
+
+- Allow users to specify a lavaan model without a structural model. Now, users
+  can specify a model with several measurement equations (via `<~` or `=~`)
+  but no strucutral equations. Instead the correlations between all! constructs
+  must be given. Failing to do so causes an error.
+  
+### New example data
+
+- Add indicator correlation matrix for a modified version of Summers (1965) model.
+  See `?Sigma_Summers_composites`
+  
+- Add example data sets used in Henseler (2020). See `?BergamiBagozzi2000`, `?ITFlex`, 
+  `?LancelotMiltgenetal2016`, `?Russett`, `?Switching`, and `?Yooetal2000`.
+  
+### assess()
+
+- Update documentation and vignettes
+
+- The following functions called by `assess()` are now exported and support all 
+  of cSEM's native classes (#357, #369):
+  
+  - `calculateAVE()`
+  - `calculateDf()`
+  - `calculateGoF()`
+  - `calculateHTMT()` (does not support models containing second-order constructs)
+  - `calculateRhoT()`
+  - `calculateRhoT()`
+  - `calculatef2()`
+  - `calculateDML()`
+  - `calculateDG()`
+  - `calculateDL()`
+  - `calculateChiSquare()`
+  - `calculateChiSquareDf()`
+  - `calculateGFI()`
+  - `calculateNFI()`
+  - `calculateNNFI()`
+  - `calculateIFI()`
+  - `calculateCFI()`
+  - `calculateSRMR()`
+  - `calculateRMSEA()`
+  - `calculateRMSTheta()`
+  - `calculateVIFModeB()`
+  
+- `assess()` now supports all of cSEM's native classes. (#323)
+- `assess()` now also computes and prints the total and indirect effects for each
+  variable as they are often used for model assessment and may thus be considered 
+  a quality criteria.
+  In addition, the variance accounted for (VAF) is computed and printed as well. (#335)
+
+- Breaking: change the name of the the quality criterion "effect size (f2)" from
+  `esize` to `f2` and the corresponding function from `calculateEffectSize()` to 
+  `calculatef2()`as this is more common. (#336)
+  
+- Add the Chi_square statistic and the Chi_square statistic divided by its
+  degrees of freedom to the list of fit indices. See: `?calculateChiSquare()` 
+  and `?calculateChiSquareDf()`
+
+- Fix bug in `calculatef2()`/`assess()` when one of the equations
+  of the structural model has only one explanatory variable. 
+  
+- Fix bug related to dotdotdot arguments incorrectly passed to functions supplied
+  to `.user_funs` when resampling. Add additional example to `assess()` illustrating
+  the use of the `.user_funs` arguments when given multiple functions. (#334) 
+
+- Remove warning produced when printing a `cSEMAssess` object based on a
+  model containing only constructs modeled as composites.
+
+### predict()
 
 - Update documentation for `predict()`.
 
@@ -34,54 +126,61 @@
   users may call `plot()` on an object created by `predict()`. (#337)
 
 - Add the density of the residuals as plot to `plot.cSEMPredict()`. (#337)
-
-- `assess()` now also computes and prints the total and indirect effects for each
-  variable as they are often used for model assessment and may thus be considered 
-  a quality criteria.
-  In addition, the variance accounted for (VAF) is computed and printed as well. (#335)
-
-- Change the name of the the quality criterion "effect size (f2)" from `esize` to `f2` 
-  as this is more common. (#336)
-  
-- Fix bug related to dotdotdot arguments incorrectly passed to functions supplied
-  to `.user_funs` when resampling. Add additional example to `assess()` illustrating
-  the use of the `.user_funs` arguments when given multiple functions. (#334) 
-
-- Add both versions of the RMS_theta to `assess()`. `"RMS_theta"` is the RMS_theta
-  based on WSW'. `"RMS_theta_mi"` uses the model-implied construct correlation matrix.
-  The argument `.model_implied` is thus no longer available to assess's `...`
-  arguments and therefore removed.
-  
-- Allow users to specify a lavaan model without a structural model. Now, users
-  can specify a model with several measurement equations (via `<~` or `=~`)
-  but no strucutral equations. Instead the correlations between all! constructs
-  must be given. Failing to do so causes an error.
-
-- Add CITATION file (#331)
-
-- Add informative error message if `.data` contains missing values.
-
-- Add the Chi_square statistic and the Chi_square statistic divided by its
-  degrees of freedom to the list of fit indices
-  
 - Remove argument `.only_common_factors` for postestimation function `predict()`.
   Now `predict()` retruns predictions for composite models as well.
   This will break existing code that uses `predict(..., .only_common_factors = ...)`.
   You will get an `unused argument (.only_common_factors = FALSE)` error. 
   Simply remove the argument to fix it. (#330)
-
-- Fix bug in `calculateEffectSize()`/`assess()` when one of the equations
-  of the structural model has only one explanatory variable. 
-
-- Remove warning produced when printing a `cSEMAssess` object based on a
-  model containing only constructs modeled as composites.
-
-- Remove warning produced by `calculateHTMT()` when the estimated model contains
-  < 2 common factors. (#325)
-
-- Update documentation for `assess()` and `calcaulateRhoC()`
-
-- Update Vignettes `using-asses` and `csem-notation`
   
+- Fixed error in `predict()` when the dataset used to obtain `.object` contained 
+  a character column. (#345)
+  
+### Experimental features
+
+- Add `.fit_measures` argument to `testOMF()`. Now other fit measures such as
+  the RMSEA or the GFI can be used as the test statistic. This is a rather
+  experimental feature and may be removed in future versions.
+  
+## Minor changes and bug fixes
+
+- Using `.approach_weights = "GSCA"` for models containing nonlinear terms
+  gives a more meaningful error message. (#342)
+  
+- `print.cSEMTestMICOM()` no longer prints the decision but additional bootstrap
+  information. (in parts: #339)
+  
+- If the weighting scheme is `"PLS-PM"` and `.disattenuate = TRUE`, dissatenuation 
+  is longer applied to constructs using modes other than "modeA"" or "modeB". (#352) 
+  
+- Model-implied indicator correlation matrix for non-recursive models
+  should now be calculated correctly. (#264)
+  
+- `calculatef2()` gives an error when the path model estimator is not "OLS". (#360, #370)
+
+- Add `.type` argument to `calculateGFI()`. Now GFI based on the ML and ULS 
+  fitting function can be computed. (#371)
+
+- `csem()` gives a meaningful error when the structural model contains only
+  second-order constructs (#366)
+
+- Fix bug in `testMICOM()`. Function produced an error if the data set provided
+  contained more columns than indicators used in the model used for 
+  `csem()`. (#355)
+  
+- Fix bug in `testMICOM()`. Function produced an error if the data set provided
+  contained an id-column even if the id-column was correctly supplied to 
+  `csem()`. (#344, #338)
+
+- When calculating the HTMT via `assess()` the geometric mean of the average 
+  monotrait−heteromethod correlation construct eta_i with the average 
+  monotrait−heteromethod correlation of other constructs can be negative. 
+  NaNs produced are produced in this case and the HTMT was not printed. 
+  Added a warning and forced printing the NaNs as well. (#346)
+
+- Add CITATION file (#331)
+
+- Add informative error message if `.data` contains missing values.
+
+- Update vignettes `csem-notation`
   
 # Initial release: cSEM 0.1.0 (07.01.2020)

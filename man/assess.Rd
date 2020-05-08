@@ -6,32 +6,31 @@
 \usage{
 assess(
   .object              = NULL, 
-  .only_common_factors = TRUE, 
   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
-                           "rho_C_weighted_mm", "cronbachs_alpha", 
-                          "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                          "effects", "f2", "chi_square", "chi_square_df",
+                           "rho_C_weighted_mm", "dg", "dl", "dml", "df",
+                          "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
                           "reliability", 
-                          "rmsea", "rms_theta", "rms_theta_mi", "srmr",
+                          "rmsea", "rms_theta", "srmr",
                           "gof", "htmt", "r2", "r2_adj",
                           "rho_T", "rho_T_weighted", "vif", 
-                          "vifmodeB",  "fl_criterion"),
+                          "vifmodeB"),
+  .only_common_factors = TRUE, 
   ...
 )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.only_common_factors}{Logical. Should only concepts modeled as common
-factors be included when calculating one of the following quality critera:
-AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
-Defaults to \code{TRUE}.}
-
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
 the Details section for a list of possible candidates.
 Defaults to "\emph{all}" in which case all possible quality criteria are computed.}
+
+\item{.only_common_factors}{Logical. Should only concepts modeled as common
+factors be included when calculating one of the following quality critera:
+AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
+Defaults to \code{TRUE}.}
 
 \item{...}{Further arguments passed to functions called by \code{\link[=assess]{assess()}}.
 See \link{args_assess_dotdotdot} for a complete list of available arguments.}
@@ -70,7 +69,7 @@ It is possible to report the AVE for constructs modeled as composites by setting
 \code{.only_common_factors = FALSE}, however, result should be interpreted with caution
 as they may not have a conceptual meaning. Calculation is done
 by \code{\link[=calculateAVE]{calculateAVE()}}.}
-\item{Congeneric reliability; "rho_C", "rho_C_mm,", "rho_C_weighted", "rho_C_weighted_mm"}{
+\item{Congeneric reliability; "rho_C", "rho_C_mm", "rho_C_weighted", "rho_C_weighted_mm"}{
 An estimate of the reliability assuming a congeneric measurement model (i.e., loadings are
 allowed to differ) and a test score (proxy) based on unit weights.
 There are four different versions implemented. See the
@@ -92,27 +91,6 @@ It is possible to report the congeneric reliability for constructs modeled as
 composites by setting \code{.only_common_factors = FALSE}, however, result should be
 interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by \code{\link[=calculateRhoC]{calculateRhoC()}}.}
-\item{Cronbach's alpha; "cronbachs_alpha"}{An estimate of the
-reliability assuming a tau-equivalent measurement model (i.e., a measurement
-model with equal loadings) and a test score (proxy) based on unit weights.
-To compute Cronbach's alpha based on a score that uses the weights of the
-weight approach used to obtain \code{.object}, use \code{"cronbachs_alpha_weighted"} instead.
-Cronbach's alpha is an alias for \code{"rho_T"} the tau-equivalent
-reliability which is
-the prefered name for this kind of reliability in \pkg{cSEM}, as it clearly states what
-it actually estimates (the tau-equivalent reliability as opposed to
-the congeneric reliability). "rho_T" and "cronbachs_alpha" are therefore
-always identical.
-The tau-equivalent
-reliability (Cronbach's alpha) is inherently
-tied to the common factor model. It is therefore unclear how to meaningfully
-interpret tau-equivalent
-reliability estimates for constructs modeled as composites.
-It is possible to report tau-equivalent
-reliability estimates for constructs modeled as
-composites by setting \code{.only_common_factors = FALSE}, however, result should be
-interpreted with caution as they may not have a conceptual meaning.
-Calculation is done by \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
 between the model-implied and the empirical indicator correlation matrix.
 Currently, the geodesic distance (\code{"dg"}), the squared Euclidian distance
@@ -136,13 +114,13 @@ original structural model regression equation (R2_included) and the
 alternative specification with the k'th variable dropped (R2_excluded).
 Calculation is done by \code{\link[=calculatef2]{calculatef2()}}.}
 \item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi",
-"nnfi",  "rmsea", "rms_theta", "rms_theta_mi", "srmr"}{
+"nnfi",  "rmsea", "rms_theta", "srmr"}{
 Several absolute and incremental fit indices. Note that their suitability
 for models containing constructs modeled as composites is still an
 open research question. Also note that fit indices are not tests in a
 hypothesis testing sense and
-decisions based on common cut-offs proposed in the literature should be
-considered with caution!. Calculation is done by \code{\link[=calculateChiSquare]{calculateChiSquare()}},
+decisions based on common one-size-fits-all cut-offs proposed in the literature
+suffer from serious statistical drawbacks. Calculation is done by \code{\link[=calculateChiSquare]{calculateChiSquare()}},
 \code{\link[=calculateChiSquareDf]{calculateChiSquareDf()}}, \code{\link[=calculateCFI]{calculateCFI()}},
 \code{\link[=calculateGFI]{calculateGFI()}}, \code{\link[=calculateIFI]{calculateIFI()}}, \code{\link[=calculateNFI]{calculateNFI()}}, \code{\link[=calculateNNFI]{calculateNNFI()}},
 \code{\link[=calculateRMSEA]{calculateRMSEA()}}, \code{\link[=calculateRMSTheta]{calculateRMSTheta()}} and \code{\link[=calculateSRMR]{calculateSRMR()}}.}
@@ -151,7 +129,7 @@ to assess discriminant validity. The Fornell-Larcker
 criterion is a decision rule based on a comparison between the squared
 construct correlations and the average variance extracted. FL returns
 a matrix with the squared construct correlations on the off-diagonal and
-the AVE's on the main diagonal. Calculation is done by \code{assess()}.}
+the AVE's on the main diagonal. Calculation is done by \code{calculateFLCriterion()}.}
 \item{Goodness of Fit (GoF); "gof"}{The GoF is defined as the square root
 of the mean of the R squares of the structural model times the mean
 of the variances in the indicators that are explained by their
@@ -233,8 +211,8 @@ factor model (see the
 article for details).
 It is possible to force computation of all quality criteria for constructs
 modeled as composites by setting \code{.only_common_factors = FALSE}, however,
-we explicitly warn to interpret quality criteria in this case with caution,
-as they may not even have a conceptual meaning.
+we explicitly warn to interpret quality criteria in analogy to the common factor
+model in this case, as the interpretation often does not carry over to composite models.
 
 \subsection{Resampling}{
 To resample a given quality criterion supply the name of the function
@@ -243,8 +221,8 @@ See \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} for details.
 }
 }
 \examples{
-\donttest{# ===========================================================================
-# Using the threecommonfactors dataset
+# ===========================================================================
+# Using the three common factors dataset
 # ===========================================================================
 model <- "
 # Structural model
@@ -267,7 +245,7 @@ a$HTMT
 # You may also just compute a subset of the quality criteria
 assess(res, .quality_criterion = c("ave", "rho_C", "htmt"))
 
-## Resampling ---------------------------------------------------------------
+\donttest{## Resampling ---------------------------------------------------------------
 # To resample a given quality criterion use csem()'s .user_funs argument
 # Note: The output of the quality criterion needs to be a vector or a matrix.
 #       Matrices will be vectorized columnwise.
@@ -293,7 +271,6 @@ res <- csem(threecommonfactors, model,
               "SRMR" = cSEM:::calculateSRMR,
               "RMS_theta" = cSEM:::calculateRMSTheta
             ),
-            .model_implied = TRUE, # will be passed to calculateRMSTheta
             .tolerance = 1e-04
 )
 res$Estimates$Estimates_resample$Estimates1$HTMT$Resampled[1:4, ]

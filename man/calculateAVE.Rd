@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_assess.R
 \name{calculateAVE}
 \alias{calculateAVE}
-\title{Internal: AVE}
+\title{Average variance extracted (AVE)}
 \usage{
 calculateAVE(
  .object              = NULL,
@@ -18,8 +18,8 @@ AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to \code{TRUE}.}
 }
 \value{
-A named vector of numeric values of length equal to the number of constructs
-in the model.
+A named vector of numeric values (the AVEs). If \code{.object} is a list
+of \code{cSEMResults} objects, a list of AVEs is returned.
 }
 \description{
 Calculate the average variance extracted (AVE) as proposed by
@@ -28,14 +28,9 @@ Calculate the average variance extracted (AVE) as proposed by
 }
 \details{
 The AVE is inherently tied to the common factor model. It is therefore
-unclear how to meaningfully interpret AVE results in the context of a
-composite model. It is possible to report the AVE for composites by
-setting \code{.only_common_factors = FALSE},
-however, result should be interpreted with caution
-as they may not have a conceptual meaning.
-
-The function is only applicable to objects inheriting class \code{cSEMResults_default}.
-For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} use \code{\link[=assess]{assess()}}.
+unclear how to meaningfully interpret the AVE in the context of a
+composite model. It is possible, however, to force computation of the AVE for constructs
+modeled as composites by setting \code{.only_common_factors = FALSE}.
 }
 \references{
 \insertAllCited{}
@@ -43,4 +38,3 @@ For objects of class \code{cSEMResults_multi} and \code{cSEMResults_2ndorder} us
 \seealso{
 \code{\link[=assess]{assess()}}, \link{cSEMResults}
 }
-\keyword{internal}

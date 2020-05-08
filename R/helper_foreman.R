@@ -52,14 +52,18 @@ calculateCorrectionFactors <- function(
       w_j <- .W[j, ] %>%
         .[. != 0] %>%
         as.matrix(.)
-    } else {
+    } else if(.modes[j] == "modeB") {
       w_j <- L[j, ] %>%
         .[. != 0] %>%
+        as.matrix(.)
+    } else {
+      w_j <- .W[j, ] %>% 
         as.matrix(.)
     }
     
     ## Check if single indicator block or composite; If yes, set cf to 1
-    if(nrow(w_j) == 1 | .csem_model$construct_type[j] == "Composite") {
+    if(!(.modes[j] %in% c("modeA", "modeB")) |
+       nrow(w_j) == 1 | .csem_model$construct_type[j] == "Composite") {
       correction_factors[j] <- 1
     } else {
       ## Extract relevant objects
@@ -354,7 +358,7 @@ calculateReliabilities <- function(
           .csem_model      = .csem_model,
           .PLS_approach_cf = .PLS_approach_cf
         )
-        
+          
         ## 2. Compute consistent loadings and Q (Composite/proxy-construct correlation)
         ## for constructs modeled as common factors.
         for(j in names_cf) {
@@ -595,7 +599,6 @@ setDominantIndicator <- function(
   # Do all indicators names in .dominant_indicators match the indicator
   # names used in the model?
   tmp <- setdiff(.dominant_indicators, colnames(.W))
-  
   if(length(tmp) != 0) {
     stop("Indicator name(s): ", paste0("`", tmp, "`", collapse = ", "), 
          " provided to `.dominant_indicators`", 

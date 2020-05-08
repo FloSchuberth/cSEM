@@ -4,7 +4,8 @@
 \name{dgp_2ndorder_cf_of_c}
 \alias{dgp_2ndorder_cf_of_c}
 \title{Data: Second order common factor of composites}
-\format{A matrix with 500 rows and 19 variables:
+\format{
+A matrix with 500 rows and 19 variables:
 \describe{
 \item{y11-y12}{Indicators attached  to \code{c1}.
 Population weights are: 0.8; 0.4.
@@ -27,7 +28,8 @@ The model is:
 
 with population values \code{gamma1} = 0.6, \code{gamma2} = 0.4 and \code{beta} = 0.35.
 The second order common factor is
-\deqn{`c4` = lambdac1 * `c1` + lambdac2 * `c2` + lambdac3 * `c3` + epsilon}}
+\deqn{`c4` = lambdac1 * `c1` + lambdac2 * `c2` + lambdac3 * `c3` + epsilon}
+}
 \usage{
 dgp_2ndorder_cf_of_c
 }

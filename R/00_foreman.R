@@ -109,6 +109,9 @@ foreman <- function(
       .approach_gcca            = .approach_weights
     )
   } else if(.approach_weights == "GSCA") {
+    if(csem_model$model_type == "Nonlinear") {
+      stop2("cSEM currently does not support GSCA and GSCAm for models containing nonlinear terms.")
+    }
     if(.disattenuate & all(csem_model$construct_type == "Common factor")) {
       W <- calculateWeightsGSCAm(
         .X                        = X,
@@ -201,7 +204,6 @@ foreman <- function(
     estim_results <- estimatePath(
       .approach_nl    = .approach_nl,
       .approach_paths = .approach_paths,
-      .approach_weights = .approach_weights,
       .csem_model     = csem_model,
       .H              = H,
       .normality      = .normality,

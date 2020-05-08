@@ -6,7 +6,8 @@
 \usage{
 testOMF(
  .object                = NULL, 
- .alpha                 = 0.05, 
+ .alpha                 = 0.05,
+ .fit_measures          = FALSE,
  .handle_inadmissibles  = c("drop", "ignore", "replace"), 
  .R                     = 499, 
  .saturated             = FALSE,
@@ -19,6 +20,9 @@ testOMF(
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
+
+\item{.fit_measures}{Logical. (EXPERIMENTAL) Should additional fit measures
+be included? Defaults to \code{FALSE}.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -59,17 +63,26 @@ See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in
 the context of PLS-PM.
 }
 \details{
-\code{testOMF()} tests the null hypothesis that the population indicator
+By default, \code{testOMF()} tests the null hypothesis that the population indicator
 correlation matrix equals the population model-implied indicator correlation matrix.
-Several potential test statistics may be used. \code{testOMF()} uses three distance
+Several discrepancy measures may be used. By default, \code{testOMF()} uses four distance
 measures to assess the distance between the sample indicator correlation matrix
 and the estimated model-implied indicator correlation matrix, namely the geodesic distance,
-the squared Euclidean distance, and the standardized root mean square residual (SRMR).
+the squared Euclidean distance, the standardized root mean square residual (SRMR),
+and the distance based on the maximum likelihood fit function.
 The reference distribution for each test statistic is obtained by
 the bootstrap as proposed by \insertCite{Beran1985;textual}{cSEM}.
 
+It is possible to perform the bootstrap-based test using fit measures such
+as the CFI, RMSEA or the GFI if \code{.fit_measures = TRUE}. This is experimental.
+To the best of our knowledge the applicability and usefulness of the fit
+measures for model fit assessment have not been formally (statistically)
+assessed yet. Theoretically, the logic of the test applies to these fit indices as well.
+Hence, their applicability is theoretically justified.
+Only use if you know what you are doing.
+
 If \code{.saturated = TRUE} the original structural model is ignored and replaced by
-a saturated model, i.e. a model in which all constructs are allowed to correlate freely.
+a saturated model, i.e., a model in which all constructs are allowed to correlate freely.
 This is useful to test misspecification of the measurement model in isolation.
 }
 \examples{

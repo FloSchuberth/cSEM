@@ -104,12 +104,13 @@ print.cSEMSummarize <- function(x, .full_output = TRUE, ...) {
     
     printSummarizePathCorrelation(x, .ci_colnames = ci_colnames, 
                                   .what = "Total effect")
-    
-    cat2("\n\nEstimated indirect effects:\n===========================")
-    
-    printSummarizePathCorrelation(x, .ci_colnames = ci_colnames, 
-                                  .what = "Indirect effect")
+    if(any(names(x21$Effect_estimates) == "Indirect_effect")) {
+      cat2("\n\nEstimated indirect effects:\n===========================")
+      
+      printSummarizePathCorrelation(x, .ci_colnames = ci_colnames, 
+                                    .what = "Indirect effect")  
+    }
   }
   
-  cat2("\n", rule2(type = 2))
+  cat2("\n", rule2(type = 2), "\n")
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_assess.R
 \name{calculateVIFModeB}
 \alias{calculateVIFModeB}
-\title{Internal: Calculate variance inflation factors (VIF) for weights obtained by PLS Mode B}
+\title{Calculate variance inflation factors (VIF) for weights obtained by PLS Mode B}
 \usage{
 calculateVIFModeB(.object = NULL)
 }
@@ -35,4 +35,3 @@ For other object classes use \code{\link[=assess]{assess()}}.
 \seealso{
 \code{\link[=assess]{assess()}}, \link{cSEMResults}
 }
-\keyword{internal}

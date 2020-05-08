@@ -13,6 +13,7 @@ resamplecSEMResults(
  .handle_inadmissibles  = c("drop", "ignore", "replace"),
  .user_funs             = NULL,
  .eval_plan             = c("sequential", "multiprocess"),
+ .force                 = FALSE,
  .seed                  = NULL,
  .sign_change_option    = c("none","individual","individual_reestimate",
                             "construct_reestimate"),
@@ -56,6 +57,9 @@ vectorized (columnwise) in this case. See the examples section for details.}
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
 all available cores will be used. Defaults to "\emph{sequential}".}
+
+\item{.force}{Logical. Should .object be resampled even if it contains resamples
+already?. Defaults to \code{FALSE}.}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
@@ -170,7 +174,9 @@ for both \code{.eval_plan = "sequential"} and \code{.eval_plan = "multiprocess"}
 See \link[future.apply:future_lapply]{?future_lapply} for details.
 }
 \examples{
-\donttest{# ===========================================================================
+\dontrun{
+# Note: example not run as resampling is time consuming
+# ===========================================================================
 # Basic usage
 # ===========================================================================
 model <- "

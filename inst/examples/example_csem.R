@@ -144,9 +144,9 @@ data.frame(
   )
 
 ### Resampling --------------------------------------------------------------
-\donttest{
+\dontrun{
 ## Basic resampling
-res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 40)
+res_boot <- csem(threecommonfactors, model, .resample_method = "bootstrap")
 res_jack <- csem(threecommonfactors, model, .resample_method = "jackknife")
 
 # See ?resamplecSEMResults for more examples
@@ -168,7 +168,7 @@ data.frame(
   "Pop_value" = c(0.6, 0.4, 0.35), # see ?threecommonfactors
   "GSCAm"      = s_gscam$Estimates$Path_estimates$Estimate,
   "GSCA"       = s_gsca$Estimates$Path_estimates$Estimate
-)
+)}
 ### Fine-tuning a weighting scheme ------------------------------------------
 ## Setting starting values
 
@@ -187,4 +187,3 @@ res <- csem(threecommonfactors, model, .PLS_weight_scheme_inner = "factorial",
 modes <- list("eta1" = "unit", "eta2" = "modeB", "eta3" = "unit")
 res   <- csem(threecommonfactors, model, .PLS_modes = modes)
 summarize(res) 
-}

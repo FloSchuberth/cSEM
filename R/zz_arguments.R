@@ -29,14 +29,13 @@
 #'   Only use if you know what you are doing.
 #' @param .approach_mgd Character string or a vector of character strings. 
 #'   Approach used for the multi-group comparison. One of: "*all*", "*Klesel*", "*Chin*", 
-#'   "*Sarstedt*", "*Keil*, "*Nitzl*", or "*Henseler*". 
+#'   "*Sarstedt*", "*Keil*, "*Nitzl*", "*Henseler*", "*CI_para*", or "*CI_overlap*". 
 #'   Default to "*all*" in which case all approaches are computed (if possible).
-#'   Note that the output will be quite long in this case. 
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
 #' @param .approach_p_adjust Character string or a vector of character strings. 
-#' Approach used to adjust the p-value in multiple testing. 
+#' Approach used to adjust the p-value for multiple testing. 
 #' See the `methods` argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
 #' their description. Defaults to "*none*".
 #' @param .approach_paths Character string. Approach used to estimate the
@@ -48,6 +47,8 @@
 #'   or "*regression*". Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names whose value was modified 
 #'   by the user.
+#'   
+#' @param .attrbutes Character string. Variables used as attributes in IPMA.
 #' @param .benchmark Character string. The procedure to obtain benchmark predictions.
 #'   One of "*lm*", "*unit*", "*PLS-PM*", "*GSCA*", "*PCA*", or "*MAXVAR*".
 #'   Default to "*lm*".
@@ -81,6 +82,7 @@
 #'   of the data provided are: "`logical`", "`numeric`" ("`double`" or "`integer`"), 
 #'   "`factor`" ("`ordered`" and/or "`unordered`"), "`character`" (converted to factor),
 #'   or a mix of several types.
+#' @param .dependent Character string. The name of the dependent variable. Defaults to `NULL`. 
 #' @param .disattenuate Logical. Should composite/proxy correlations 
 #'   be disattenuated to yield consistent loadings and path estimates if at least
 #'   one of the construct is modeled as a common factor? Defaults to `TRUE`.
@@ -105,6 +107,10 @@
 #'   all available cores will be used. Defaults to "*sequential*".
 #' @param .first_resample A list containing the `.R` resamples based on the original
 #'   data obtained by resamplecSEMResults().
+#' @param .force Logical. Should .object be resampled even if it contains resamples
+#'   already?. Defaults to `FALSE`.
+#' @param .fit_measures Logical. (EXPERIMENTAL) Should additional fit measures 
+#'   be included? Defaults to `FALSE`. 
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .H The (N x J) matrix of construct scores.
@@ -120,6 +126,10 @@
 #' @param .id Character string or integer. A character string giving the name or 
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
+#' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
+#' @param .independent Character string. The name of the independent variable. Defaults to `NULL`.
+#' @param .independent_1 Character string. The name of the first independent variable. Defaults to `NULL`.
+#' @param .independent_2 Character string. The name of the second independent variable. Defaults to `NULL`.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
 #'   equation whose explanatory variables are endogenous. The vectors
@@ -130,20 +140,20 @@
 #'   If `iter_max = 1` and `.approach_weights = "PLS-PM"` one-step weights are returned. 
 #'   If the algorithm exceeds the specified number, weights of iteration step 
 #'   `.iter_max - 1`  will be returned with a warning. Defaults to `100`.
+#' @param .level Character. Used in `plot.cSEMIPMA` to indicate whether IPMA should be done 
+#' for constructs or indicators.    
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
 #'   or a [cSEMModel] list.
-#' @param .model_implied Logical. Should the RMS_theta be computed using the
-#'   model-implied construct correlation matrix (`TRUE`) or the construct correlation matrix
-#'   based on V(eta) = WSW' divided by the square root of the respective 
-#'   reliabilities (`FALSE`). Defaults to `FALSE`.
+#' @param .moderator Character string. The name of the moderator variable. Defaults to `NULL`. 
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .n Integer. The number of observations of the original data.
-#' @param .n_spotlights Integer. A numeric value giving the number of spotlights (= values of .z) 
-#'   between min(.z) and max(.z) to use. Defaults to `100`.
+#' @param .n_steps Integer. A numeric value giving the number of steps, e.g., in
+#' surface analysis or floodlight analysis the spotlights (= values of .moderator)
+#' between min(.moderator) and max(.moderator) to use. Defaults to `100`.
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
@@ -160,8 +170,8 @@
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
 #' @param .parameters_to_compare A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
 #'   parameters (i.e, path (`~`), loadings (`=~`), weights (`<~`), or correlations (`~~`)) should be
-#'   compared across groups. Defaults to `NULL` in which case all parameters of the 
-#'   originally specified model are compared.
+#'   compared across groups. Defaults to `NULL` in which case all weights, loadings and 
+#'   path coefficients of the originally specified model are compared.
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
@@ -248,6 +258,13 @@
 #'   training data.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
+#' @param .type_ci Character string. It indicates which confidence interval should be calculated. 
+#' For possible choices, see the `.quantity` argument of the \code{\link{infer}} function. 
+#' In the test_mgd function default is to "*CI_percentile*".
+#' @param .type Character string. Which fitting function should the GFI be based 
+#'   on? One of *"ML"* for the maximum likelihood fitting function or *"ULS"* for the
+#'   unweighted least squares fitting function (same as the squared Euclidian distance). 
+#'   Defaults to *"ML"*.
 #' @param .type_vcv Character string. Which model-implied correlation 
 #'  matrix is calculated?
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
@@ -270,12 +287,9 @@
 #' @param .W_old A (J x K) matrix of weights.
 #' @param .weighted Logical. Should estimation be based on a score that uses 
 #'   the weights of the weight approach used to obtain `.object`?. Defaults to `FALSE`.
-#' @param .x Character string. The name of the moderator variable. Defaults to `NULL`. 
 #' @param .X A matrix of processed data (scaled, cleaned and ordered).
 #' @param .X_cleaned A data.frame of processed data (cleaned and ordered). Note: `X_cleaned`
 #'   may not be scaled!
-#' @param .y Character string. The name of the dependent variable. Defaults to `NULL`. 
-#' @param .z Character string. The name of the independent variable. Defaults to `NULL`.
 #'
 #' @name csem_arguments
 #' @aliases cSEMArguments
@@ -336,11 +350,14 @@ args_csem_dotdotdot <- function(
 #' list shows which argument is passed to which (internal) function:
 #' \describe{
 #' \item{.absolute}{Accepted by/Passed down to: [calculateHTMT()]}
-#' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()]}
+#' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()] and [calculateHTMT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
+#' \item{.handle_inadmissibles}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.null_model}{Accepted by/Passed down to: [calculateDf()]}
+#' \item{.R}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.saturated}{Accepted by/Passed down to: [calculateSRMR()], 
 #'   [calculateDG()], [calculateDL()], [calculateDML()]and subsequently [fit()].}
+#' \item{.seed}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.type_vcv}{Accepted by/Passed down to: [calculateSRMR()], 
 #'   [calculateDG()], [calculateDL()], [calculateDML()] and subsequently [fit()].}
 #' }
@@ -353,8 +370,12 @@ args_assess_dotdotdot <- function(
   .absolute            = TRUE,
   .alpha               = 0.05,
   .closed_form_ci      = FALSE,
+  .handle_inadmissibles= c("drop", "ignore", "replace"),
+  .inference           = FALSE,
   .null_model          = FALSE,
+  .R                   = 499,
   .saturated           = FALSE,
+  .seed                = NULL,
   .type_vcv            = "indicator"
 ) {NULL}
   
@@ -384,13 +405,14 @@ args_default <- function(.choices = FALSE) {
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("2stage", "mixed"),
     .approach_alpha_adjust   = c("none", "bonferroni"),
-    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler"),
+    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler","CI_para","CI_overlap"),
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
+    .attributes              = NULL,
     .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
     .bias_corrected          = TRUE,
     .C                       = NULL,
@@ -404,6 +426,7 @@ args_default <- function(.choices = FALSE) {
     .csem_resample           = NULL,
     .cv_folds                = 10,
     .data                    = NULL,
+    .dependent               = NULL,
     .disattenuate            = TRUE,
     .dist                    = c("z", "t"),
     .distance                = c("geodesic", "squared_euclidian"),
@@ -411,20 +434,27 @@ args_default <- function(.choices = FALSE) {
     .E                       = NULL,
     .effect                  = NULL,
     .eval_plan               = c("sequential", "multiprocess"),
+    .force                   = FALSE,
+    .fit_measures            = FALSE,
     .first_resample          = NULL,
     .full_output             = TRUE,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
+    .inference               = FALSE,
+    .independent             = NULL,
+    .independent_1           = NULL,
+    .independent_2           = NULL,
     .instruments             = NULL,
     .listMatrices            = NULL, 
+    .level                   = c('construct',"indicator"),
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,
     .model                   = NULL,
-    .model_implied           = FALSE,
+    .moderator               = NULL,
     .modes                   = NULL,
-    .n_spotlights            = 100,
+    .n_steps                 = 100,
     .normality               = FALSE,
     .nr_comparisons          = NULL,
     .null_model              = FALSE,
@@ -439,7 +469,7 @@ args_default <- function(.choices = FALSE) {
                                  "effects", "f2", "chi_square", "chi_square_df",
                                  "cfi", "gfi", "ifi", "nfi", "nnfi", 
                                  "reliability",
-                                 "rmsea", "rms_theta", "rms_theta_mi", "srmr",
+                                 "rmsea", "rms_theta", "srmr",
                                  "gof", "htmt", "r2", "r2_adj",
                                  "rho_T", "rho_T_weighted", "vif", 
                                  "vifmodeB",  "fl_criterion"),
@@ -468,7 +498,10 @@ args_default <- function(.choices = FALSE) {
     .starting_values         = NULL,
     .terms                   = NULL,
     .test_data               = NULL,
+    .type                    = c("ML", "ULS"),
     .type_vcv                = c("indicator", "construct"),
+    .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
+                                 "CI_basic","CI_bc", "CI_bca"),
     .user_funs               = NULL,
     .vcv_asymptotic          = c(FALSE, TRUE),
     .verbose                 = TRUE,

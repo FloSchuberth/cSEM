@@ -38,7 +38,7 @@ the structure described in \verb{_default}.
 The resulting object has classes \code{cSEMResults} and \code{cSEMResults_multi}.
 }
 \item{_2ndorder}{
-A special output is generated if the model to estimate contains hierachical constructs
+A special output is generated if the model to estimate contains hierarchical constructs
 \strong{and} the "2stage" or "mixed" approach is used to estimate the model. In this case
 the resulting object is a list containing two elements \code{First_stage} and
 \code{ Second_stage}.
