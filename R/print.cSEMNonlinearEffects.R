@@ -4,12 +4,26 @@
 #'
 #' @inheritParams csem_arguments
 #'
-#' @seealso [csem()], [cSEMResults], [doNonlinearEffectsAnalysis()], [plot.NonlinearEffectsAnalysis()]
+#' @seealso [csem()], [cSEMResults], [doNonlinearEffectsAnalysis()], [plot.cSEMNonlinearEffects()]
 #'
 #' @export
 #' @keywords internal
 print.cSEMNonlinearEffects <- function(x, ...) {
   
+  if(!inherits(x, "cSEMNonlinearEffects")) {
+    stop2("x must be of class `cSEMNonlinearEffects`")
+  }
+  cat2(
+    rule2(type = 2), "\n",
+    rule2("Simple slope analysis", type = 1, align = "center")
+  )
+  
+  x <- neffects
+  
+  info  <- x$Information_print
+  dep   <- x$Information$dependent
+  indep <- x$Information$independent
+  mod   <- x$Information$moderator
   # Johnson Neyman-point
   # Es kann folgende Faelle geben kein, ein oder zwei Punkt,
   # da muss man sich was überlegen
@@ -17,6 +31,7 @@ print.cSEMNonlinearEffects <- function(x, ...) {
   
   
   # Slope when moderator = mean(=0)-2SD
+  cat2("\n\nSlope when", mod, " = ? (-2 SD)")
   x$Information_print[x$Information_print[,'value_z']==-2,]['direct_effect']
   # CI
   # lb:
@@ -55,6 +70,5 @@ print.cSEMNonlinearEffects <- function(x, ...) {
   x$Information_print[x$Information_print[,'value_z']==2,]['lb']
   # ub:
   x$Information_print[x$Information_print[,'value_z']==2,]['ub']
-  
-  
+  cat2("\n", rule2(type = 2), "\n")
 }  

@@ -10,6 +10,6 @@
 The \code{cSEMNonlinearEffectsAnalysis} method for the generic function \code{\link[=print]{print()}}.
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \link{cSEMResults}, \code{\link[=doNonlinearEffectsAnalysis]{doNonlinearEffectsAnalysis()}}, \code{\link[=plot.NonlinearEffectsAnalysis]{plot.NonlinearEffectsAnalysis()}}
+\code{\link[=csem]{csem()}}, \link{cSEMResults}, \code{\link[=doNonlinearEffectsAnalysis]{doNonlinearEffectsAnalysis()}}, \code{\link[=plot.cSEMNonlinearEffects]{plot.cSEMNonlinearEffects()}}
 }
 \keyword{internal}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/postestimate_doNonlinearEffectsAnalysis.R
 \name{doNonlinearEffectsAnalysis}
 \alias{doNonlinearEffectsAnalysis}
-\title{Do a non-linear effects analysis}
+\title{Do a nonlinear effects analysis}
 \usage{
 doNonlinearEffectsAnalysis(
  .object           = NULL,
@@ -35,13 +35,52 @@ measured in standard deviations. Defaults to c(-2,-1,0,1,2).}
 Defaults to \code{0.05}.}
 }
 \value{
-A list of class \code{cSEMNonlinearEffects} with a corresponding method for \code{plot()}.
+A list of class \code{cSEMNonlinearEffects} with a corresponding method
+for \code{plot()}.
 See: \code{\link[=plot.cSEMNonlinearEffects]{plot.cSEMNonlinearEffects()}}.
 }
 \description{
 Calculate the expected value of the dependent variable conditional on the values of
 an independent variables and a moderator variable. All other variables in the model
 are assumed to be zero, i.e., they are fixed at their mean levels.
+}
+\examples{
+\dontrun{model_Int <- "
+# Measurement models
+INV =~ INV1 + INV2 + INV3 +INV4
+SAT =~ SAT1 + SAT2 + SAT3
+INT =~ INT1 + INT2
+
+# Structrual model containing an interaction term.
+INT ~ INV + SAT + INV.SAT
+"
+  
+# Estimate model
+out <- csem(.data = Switching, .model = model_Int,
+            # ADANCO settings
+            .PLS_weight_scheme_inner = 'factorial',
+            .tolerance = 1e-06,
+            .resample_method = 'bootstrap'
+)
+  
+# Do nonlinear effects analysis
+neffects <- doNonlinearEffectsAnalysis(out, 
+                                       .dependent = 'INT',
+                                       .moderator = 'INV',
+                                       .independent = 'SAT') 
+
+# Simple effects plot
+plot(neffects, .plot_type = 'simpleeffects')
+
+# Surface plot using plotly
+plot(neffects, .plot_type = 'surface', .plot_package = 'plotly')
+
+# Surface plot using persp
+plot(neffects, .plot_type = 'surface', .plot_package = 'persp')
+
+# Floodlight analysis
+plot(neffects, .plot_type = 'floodlight')
+}
 }
 \references{
 \insertAllCited{}

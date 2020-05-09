@@ -1,4 +1,4 @@
-#' Do a non-linear effects analysis
+#' Do a nonlinear effects analysis
 #'
 #' Calculate the expected value of the dependent variable conditional on the values of 
 #' an independent variables and a moderator variable. All other variables in the model
@@ -19,10 +19,14 @@
 #' @references
 #'   \insertAllCited{}
 #' 
-#' @return A list of class `cSEMNonlinearEffects` with a corresponding method for `plot()`. 
+#' @return A list of class `cSEMNonlinearEffects` with a corresponding method 
+#'   for `plot()`. 
 #'   See: [plot.cSEMNonlinearEffects()].
 #' 
 #' @seealso [csem()], [cSEMResults], [plot.cSEMNonlinearEffects()]
+#' 
+#' @example inst/examples/example_doNonlinearEffectsAnalysis.R
+#' 
 #' @export
 
 doNonlinearEffectsAnalysis <- function(
