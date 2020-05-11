@@ -187,32 +187,44 @@
 #' }
 #' 
 #' @usage csem(
-#'   .data                    = NULL,
-#'   .model                   = NULL,
-#'   .approach_2ndorder       = c("2stage", "mixed"),
-#'   .approach_nl             = c("sequential", "replace"),
-#'   .approach_paths          = c("OLS", "2SLS"),
-#'   .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
-#'                                "MINVAR", "GENVAR", "GSCA", "PCA", 
-#'                                "unit", "bartlett", "regression"),
-#'   .disattenuate            = TRUE,
-#'   .id                      = NULL,
-#'   .instruments             = NULL,
-#'   .normality               = FALSE,
-#'   .reliabilities           = NULL,
-#'   .starting_values         = NULL,
-#'   .resample_method         = c("none", "bootstrap", "jackknife"),
-#'   .resample_method2        = c("none", "bootstrap", "jackknife"),
-#'   .R                       = 499,
-#'   .R2                      = 199,
-#'   .handle_inadmissibles    = c("drop", "ignore", "replace"),
-#'   .user_funs               = NULL,
-#'   .eval_plan               = c("sequential", "multiprocess"),
-#'   .seed                    = NULL,
-#'   .sign_change_option      = c("none", "individual", "individual_reestimate", 
-#'                                "construct_reestimate"),
-#'   ...
-#'   )
+#' .data                  = NULL,
+#' .model                 = NULL,
+#' .approach_2ndorder     = c("2stage", "mixed"),
+#' .approach_cor_robust   = c("none", "mcd", "spearman"),
+#' .approach_nl           = c("sequential", "replace"),
+#' .approach_paths        = c("OLS", "2SLS"),
+#' .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
+#'                            "MINVAR", "GENVAR","GSCA", "PCA",
+#'                            "unit", "bartlett", "regression"),
+#' .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
+#' .disattenuate          = TRUE,
+#' .dominant_indicators   = NULL,
+#' .estimate_structural   = TRUE,
+#' .id                    = NULL,
+#' .instruments           = NULL,
+#' .iter_max              = 100,
+#' .normality             = FALSE,
+#' .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
+#'                            "fisher_transformed", "mean_arithmetic",
+#'                            "mean_geometric", "mean_harmonic",
+#'                            "geo_of_harmonic"),
+#' .PLS_ignore_structural_model = FALSE,
+#' .PLS_modes                   = NULL,
+#' .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
+#' .reliabilities         = NULL,
+#' .starting_values       = NULL,
+#' .resample_method       = c("none", "bootstrap", "jackknife"),
+#' .resample_method2      = c("none", "bootstrap", "jackknife"),
+#' .R                     = 499,
+#' .R2                    = 199,
+#' .handle_inadmissibles  = c("drop", "ignore", "replace"),
+#' .user_funs             = NULL,
+#' .eval_plan             = c("sequential", "multiprocess"),
+#' .seed                  = NULL,
+#' .sign_change_option    = c("none", "individual", "individual_reestimate", 
+#'                            "construct_reestimate"),
+#' .tolerance             = 1e-05
+#' )
 #'
 #' @param .data A `data.frame` or a `matrix` of standardized or unstandardized  
 #'   data (indicators/items/manifest variables). 
@@ -222,8 +234,6 @@
 #'   "`factor`" ("`ordered`" and/or "`unordered`"), "`character`" (will be converted to factor),
 #'   or a mix of several types.
 #' @inheritParams csem_arguments
-#' @param ... Further arguments to be passed down to lower level functions of `csem()`.
-#'   See [args_csem_dotdotdot] for a complete list of available arguments.
 #'
 #' @return
 #' An object of class `cSEMResults` with methods for all postestimation generics.
@@ -283,15 +293,27 @@ csem <- function(
   .data                  = NULL,
   .model                 = NULL,
   .approach_2ndorder     = c("2stage", "mixed"),
+  .approach_cor_robust   = c("none", "mcd", "spearman"),
   .approach_nl           = c("sequential", "replace"),
   .approach_paths        = c("OLS", "2SLS"),
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                              "MINVAR", "GENVAR","GSCA", "PCA",
                              "unit", "bartlett", "regression"),
+  .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
   .disattenuate          = TRUE,
+  .dominant_indicators   = NULL,
+  .estimate_structural   = TRUE,
   .id                    = NULL,
   .instruments           = NULL,
+  .iter_max              = 100,
   .normality             = FALSE,
+  .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
+                             "fisher_transformed", "mean_arithmetic",
+                             "mean_geometric", "mean_harmonic",
+                             "geo_of_harmonic"),
+  .PLS_ignore_structural_model = FALSE,
+  .PLS_modes                   = NULL,
+  .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
   .reliabilities         = NULL,
   .starting_values       = NULL,
   .resample_method       = c("none", "bootstrap", "jackknife"),
@@ -304,24 +326,27 @@ csem <- function(
   .seed                  = NULL,
   .sign_change_option    = c("none", "individual", "individual_reestimate", 
                              "construct_reestimate"),
-  ...
+  .tolerance             = 1e-05
   ) {
   ## Match arguments
-  .approach_nl          <- match.arg(.approach_nl)
   .approach_2ndorder    <- match.arg(.approach_2ndorder)
+  .approach_cor_robust  <- match.arg(.approach_cor_robust)
+  .approach_nl          <- match.arg(.approach_nl)
   .approach_paths       <- match.arg(.approach_paths)
   .approach_weights     <- match.arg(.approach_weights)
+  .conv_criterion       <- match.arg(.conv_criterion)
+  .eval_plan            <- match.arg(.eval_plan)
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+  .PLS_approach_cf      <- match.arg(.PLS_approach_cf)
+  .PLS_weight_scheme_inner <- match.arg(.PLS_weight_scheme_inner)
   .resample_method      <- match.arg(.resample_method)
   .resample_method2     <- match.arg(.resample_method2)
-  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
-  .eval_plan            <- match.arg(.eval_plan)
   .sign_change_option   <- match.arg(.sign_change_option)
   
   ## Collect and handle arguments
   # Note: all.names = TRUE is neccessary for otherwise arguments with a leading
   #       dot will be omitted!
-  args_used <- c(as.list(environment(), all.names = TRUE), list(...))
-  args_used["..."] <- NULL
+  args_used <- c(as.list(environment(), all.names = TRUE))
   args        <- handleArgs(args_used)
   args_needed <- args[intersect(names(args), names(as.list(formals(foreman))))]
   
@@ -510,8 +535,7 @@ csem <- function(
       .eval_plan            = .eval_plan,
       .force                = FALSE,
       .seed                 = .seed,
-      .sign_change_option   = .sign_change_option,
-      ...
+      .sign_change_option   = .sign_change_option
     )
   }
   

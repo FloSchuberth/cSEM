@@ -5,32 +5,44 @@
 \title{Composite-based SEM}
 \usage{
 csem(
-  .data                    = NULL,
-  .model                   = NULL,
-  .approach_2ndorder       = c("2stage", "mixed"),
-  .approach_nl             = c("sequential", "replace"),
-  .approach_paths          = c("OLS", "2SLS"),
-  .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
-                               "MINVAR", "GENVAR", "GSCA", "PCA", 
-                               "unit", "bartlett", "regression"),
-  .disattenuate            = TRUE,
-  .id                      = NULL,
-  .instruments             = NULL,
-  .normality               = FALSE,
-  .reliabilities           = NULL,
-  .starting_values         = NULL,
-  .resample_method         = c("none", "bootstrap", "jackknife"),
-  .resample_method2        = c("none", "bootstrap", "jackknife"),
-  .R                       = 499,
-  .R2                      = 199,
-  .handle_inadmissibles    = c("drop", "ignore", "replace"),
-  .user_funs               = NULL,
-  .eval_plan               = c("sequential", "multiprocess"),
-  .seed                    = NULL,
-  .sign_change_option      = c("none", "individual", "individual_reestimate", 
-                               "construct_reestimate"),
-  ...
-  )
+.data                  = NULL,
+.model                 = NULL,
+.approach_2ndorder     = c("2stage", "mixed"),
+.approach_cor_robust   = c("none", "mcd", "spearman"),
+.approach_nl           = c("sequential", "replace"),
+.approach_paths        = c("OLS", "2SLS"),
+.approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
+                           "MINVAR", "GENVAR","GSCA", "PCA",
+                           "unit", "bartlett", "regression"),
+.conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
+.disattenuate          = TRUE,
+.dominant_indicators   = NULL,
+.estimate_structural   = TRUE,
+.id                    = NULL,
+.instruments           = NULL,
+.iter_max              = 100,
+.normality             = FALSE,
+.PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
+                           "fisher_transformed", "mean_arithmetic",
+                           "mean_geometric", "mean_harmonic",
+                           "geo_of_harmonic"),
+.PLS_ignore_structural_model = FALSE,
+.PLS_modes                   = NULL,
+.PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
+.reliabilities         = NULL,
+.starting_values       = NULL,
+.resample_method       = c("none", "bootstrap", "jackknife"),
+.resample_method2      = c("none", "bootstrap", "jackknife"),
+.R                     = 499,
+.R2                    = 199,
+.handle_inadmissibles  = c("drop", "ignore", "replace"),
+.user_funs             = NULL,
+.eval_plan             = c("sequential", "multiprocess"),
+.seed                  = NULL,
+.sign_change_option    = c("none", "individual", "individual_reestimate", 
+                           "construct_reestimate"),
+.tolerance             = 1e-05
+)
 }
 \arguments{
 \item{.data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
@@ -47,6 +59,16 @@ or a \link{cSEMModel} list.}
 \item{.approach_2ndorder}{Character string. Approach used for models containing
 second-order constructs. One of: "\emph{2stage}", or "\emph{mixed}". Defaults to "\emph{2stage}".}
 
+\item{.approach_cor_robust}{Character string. Approach used to obtain a robust
+indicator correlation matrix. One of: "\emph{none}" in which case the standard
+Bravais-Person correlation is used,
+"\emph{spearman}" for the Spearman rank correlation, or
+"\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
+Defaults to "\emph{none}". Note that many postestimation procedures (such as
+\code{\link[=testOMF]{testOMF()}} or \code{\link[=fit]{fit()}} implicitly assume a continuous
+indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
+Only use if you know what you are doing.}
+
 \item{.approach_nl}{Character string. Approach used to estimate nonlinear
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
@@ -60,9 +82,22 @@ obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXV
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
 or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
+\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", or "\emph{diff_relative}". Defaults
+to "\emph{diff_absolute}".}
+
 \item{.disattenuate}{Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to \code{TRUE}.}
+
+\item{.dominant_indicators}{A character vector of \code{"construct_name" = "indicator_name"} pairs,
+where \code{"indicator_name"} is a character string giving the name of the dominant indicator
+and \code{"construct_name"} a character string of the corresponding construct name.
+Dominant indicators may be specified for a subset of the constructs.
+Default to \code{NULL}.}
+
+\item{.estimate_structural}{Logical. Should the structural coefficients
+be estimated? Defaults to \code{TRUE}.}
 
 \item{.id}{Character string or integer. A character string giving the name or
 an integer of the position of the column of \code{.data} whose levels are used
@@ -75,10 +110,41 @@ contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation \strong{must} be supplied as
 instruments for themselves. Defaults to \code{NULL}.}
 
+\item{.iter_max}{Integer. The maximum number of iterations allowed.
+If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
+If the algorithm exceeds the specified number, weights of iteration step
+\code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
+
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
 Defaults to \code{FALSE}. Ignored if the model is not nonlinear.}
+
+\item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
+factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
+"\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
+"\emph{geo_of_harmonic}". Defaults to "\emph{dist_squared_euclid}".
+Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
+
+\item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
+when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FALSE}.
+Ignored if \code{.approach_weights} is not PLS-PM.}
+
+\item{.PLS_modes}{Either a named list specifying the mode that should be used for
+each construct in the form \code{"construct_name" = mode}, a single character
+string giving the mode that should be used for all constructs, or \code{NULL}.
+Possible choices for \code{mode} are: "\emph{modeA}", "\emph{modeB}", "\emph{modeBNNLS}",
+"\emph{unit}", "\emph{PCA}", a single integer or
+a vector of fixed weights of the same length as there are indicators for the
+construct given by \code{"construct_name"}. If only a single number is provided this is identical to
+using unit weights, as weights are rescaled such that the related composite
+has unit variance.  Defaults to \code{NULL}.
+If \code{NULL} the appropriate mode according to the type
+of construct used is chosen. Ignored if \code{.approach_weight} is not PLS-PM.}
+
+\item{.PLS_weight_scheme_inner}{Character string. The inner weighting scheme
+used by PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
+Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.reliabilities}{A character vector of \code{"name" = value} pairs,
 where \code{value} is a number between 0 and 1 and \code{"name"} a character string
@@ -136,8 +202,8 @@ not be altered!}
 be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",
 "\emph{individual_reestimate}", "\emph{construct_reestimate}". Defaults to "\emph{none}".}
 
-\item{...}{Further arguments to be passed down to lower level functions of \code{csem()}.
-See \link{args_csem_dotdotdot} for a complete list of available arguments.}
+\item{.tolerance}{Double. The tolerance criterion for convergence.
+Defaults to \code{1e-05}.}
 }
 \value{
 An object of class \code{cSEMResults} with methods for all postestimation generics.

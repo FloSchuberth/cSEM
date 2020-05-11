@@ -299,50 +299,6 @@
 #' @keywords internal
 NULL
 
-#' Internal: Complete list of csem()'s ... arguments
-#' 
-#' A complete alphabetical list of all possible arguments accepted by `csem()`'s `...` 
-#' (dotdotdot) argument.
-#' 
-#' Most arguments supplied to the `...` argument of `csem()` are only
-#' accepted by a subset of the functions called by `csem()`. The following
-#' list shows which argument is passed to which (internal) function:
-#' \describe{
-#' \item{.approach_cor_robust}{Accepted by/Passed down to: [calculateIndicatorCor()]}
-#' \item{.conv_criterion}{Accepted by/Passed down to: [calculateWeightsPLS()],
-#'   [calculateWeightsGSCA()], [calculateWeightsGSCAm()] and subsequently 
-#'   [checkConvergence()].}
-#' \item{.dominant_indicators}{Accepted by/Passed down to: [setDominantIndicator()]}
-#' \item{.estimate_structural}{Accepted by/Passed down to: [foreman()]}
-#' \item{.iter_max}{Accepted by/Passed down to: [calculateWeightsPLS()],
-#'   [calculateWeightsGSCA()], [calculateWeightsGSCAm()]}
-#' \item{.PLS_modes, .PLS_ignore_structural_model, .PLS_weight_scheme_inner, .PLS_approach_cf}{
-#'   Accepted by/Passed down to: [calculateWeightsPLS()]}
-#' \item{.tolerance}{Accepted by/Passed down to: [calculateWeightsPLS()],
-#'   [calculateWeightsGSCA()], [calculateWeightsGSCAm()], [calculateWeightsUnit()]}
-#' }
-#' 
-#' @usage NULL
-#' 
-#' @inheritParams csem_arguments
-#' @keywords internal
-
-args_csem_dotdotdot <- function(
-  .approach_cor_robust     = c("none", "mcd", "spearman"),
-  .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
-  .dominant_indicators     = NULL,
-  .estimate_structural     = TRUE,
-  .iter_max                = 100,
-  .PLS_modes               = NULL,
-  .PLS_ignore_structural_model = FALSE,
-  .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
-  .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 
-                               "fisher_transformed", "mean_arithmetic",
-                               "mean_geometric", "mean_harmonic",
-                               "geo_of_harmonic"),
-  .tolerance               = 1e-05
-) {NULL}
-
 #' Internal: Complete list of assess()'s ... arguments
 #' 
 #' A complete alphabetical list of all possible arguments accepted by `assess()`'s `...` 
@@ -405,9 +361,10 @@ args_default <- function(.choices = FALSE) {
   args <- list(
     .alpha                   = 0.05,
     .absolute                = TRUE,
-    .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("2stage", "mixed"),
     .approach_alpha_adjust   = c("none", "bonferroni"),
+    .approach_cor_robust     = c("none", "mcd", "spearman"),
+    .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler","CI_para","CI_overlap"),
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
@@ -425,6 +382,7 @@ args_default <- function(.choices = FALSE) {
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .ci_colnames             = NULL,
     .closed_form_ci          = FALSE, 
+    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
     .csem_model              = NULL,
     .csem_resample           = NULL,
     .cv_folds                = 10,
@@ -434,8 +392,10 @@ args_default <- function(.choices = FALSE) {
     .dist                    = c("z", "t"),
     .distance                = c("geodesic", "squared_euclidian"),
     .df                      = c("type1", "type2"),
+    .dominant_indicators     = NULL,
     .E                       = NULL,
     .effect                  = NULL,
+    .estimate_structural     = TRUE,
     .eval_plan               = c("sequential", "multiprocess"),
     .force                   = FALSE,
     .fit_measures            = FALSE,
@@ -447,6 +407,7 @@ args_default <- function(.choices = FALSE) {
     .inference               = FALSE,
     .independent             = NULL,
     .instruments             = NULL,
+    .iter_max                = 100,
     .listMatrices            = NULL, 
     .level                   = c('construct',"indicator"),
     .matrix1                 = NULL,
@@ -466,6 +427,13 @@ args_default <- function(.choices = FALSE) {
     .plot_package            = NULL,
     .plot_type               = NULL,
     .probs                   = NULL,
+    .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 
+                                 "fisher_transformed", "mean_arithmetic",
+                                 "mean_geometric", "mean_harmonic",
+                                 "geo_of_harmonic"),
+    .PLS_ignore_structural_model = FALSE,
+    .PLS_modes               = NULL,
+    .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
     .quality_criterion       = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                                  "rho_C_weighted_mm", "cronbachs_alpha", 
                                  "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
@@ -501,6 +469,7 @@ args_default <- function(.choices = FALSE) {
     .starting_values         = NULL,
     .terms                   = NULL,
     .test_data               = NULL,
+    .tolerance               = 1e-05,
     .type                    = c("ML", "ULS"),
     .type_vcv                = c("indicator", "construct"),
     .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
@@ -518,45 +487,14 @@ args_default <- function(.choices = FALSE) {
     .y                       = NULL,
     .z                       = NULL
   )
-  
-  args_dotdotdot_csem <- list(
-    # Arguments passed to calculateIndicatorCor()
-    .approach_cor_robust     = c("none", "mcd", "spearman"),
-    
-    # Arguments passed to calculateWeightsPLS()
-    .PLS_modes               = NULL,
-
-    # Arguments passed to calculateInnerWeightsPLS()
-    .PLS_ignore_structural_model = FALSE,
-    .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
-    
-    # Arguments passed to calculateWeights*()
-    .tolerance               = 1e-05,
-    .iter_max                = 100,
-    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
-    
-    # Arguments passed to setDominantIndicator()
-    .dominant_indicators     = NULL,
-    
-    # Arguments passed to calculateReliabilities()
-    .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 
-                                 "fisher_transformed", "mean_arithmetic",
-                                 "mean_geometric", "mean_harmonic",
-                                 "geo_of_harmonic"),
-    
-    #  Arguments passed to foreman()
-    .estimate_structural     = TRUE
-  )
 
   if(!.choices) {
     args <- lapply(args, function(x) eval(x)[1])
-    args_dotdotdot_csem <- lapply(args_dotdotdot_csem, function(x) eval(x)[1])
   }
     
-  args_all <- c(args, args_dotdotdot_csem)
-  args_all <- args_all[sort(names(args_all))]
+  args_sorted <- args[sort(names(args))]
   
-  return(args_all)
+  return(args_sorted)
 }
 
 #' Internal: Handle arguments
