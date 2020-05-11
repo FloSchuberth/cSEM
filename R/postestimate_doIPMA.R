@@ -1,6 +1,6 @@
 #' Do an importance-performance matrix analysis
 #'
-#' Performs an importance-performance matrix analyis (IPMA).
+#' Performs an importance-performance matrix analysis (IPMA).
 #' 
 #' To calculate the performance and importance, the weights of the indicators 
 #' are unstandardized using the standard deviation of the original 

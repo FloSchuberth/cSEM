@@ -128,8 +128,6 @@
 #'   to split `.data` into groups. Defaults to `NULL`.
 #' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
 #' @param .independent Character string. The name of the independent variable. Defaults to `NULL`.
-#' @param .independent_1 Character string. The name of the first independent variable. Defaults to `NULL`.
-#' @param .independent_2 Character string. The name of the second independent variable. Defaults to `NULL`.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
 #'   equation whose explanatory variables are endogenous. The vectors
@@ -177,6 +175,8 @@
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
 #'   "*geo_of_harmonic*". Defaults to "*dist_squared_euclid*". 
 #'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS-PM.
+#' @param .plot_package Character string. Indicates which packages should be used for plotting.
+#' @param .plot_type Character string. Indicates the type of plot that is produced.
 #' @param .PLS_ignore_structural_model Logical. Should the structural model be ignored
 #'   when calculating the inner weights of the PLS-PM algorithm? Defaults to `FALSE`.
 #'   Ignored if `.approach_weights` is not PLS-PM.
@@ -276,6 +276,9 @@
 #'   Function output should preferably be a (named)
 #'   vector but matrices are also accepted. However, the output will be 
 #'   vectorized (columnwise) in this case. See the examples section for details.
+#' @param .values_moderator A numeric vector. Provides the values of the moderator, e.g.,
+#' in the simple effects analysis. Typically these are difference from the mean (=0) 
+#' measured in standard deviations. Defaults to c(-2,-1,0,1,2).
 #' @param .vcv_asymptotic Logical. Should the asymptotic variance-covariance matrix be used, i.e., 
 #' VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) be computed directly? 
 #'  Defaults to `FALSE`.
@@ -443,8 +446,6 @@ args_default <- function(.choices = FALSE) {
     .id                      = NULL,
     .inference               = FALSE,
     .independent             = NULL,
-    .independent_1           = NULL,
-    .independent_2           = NULL,
     .instruments             = NULL,
     .listMatrices            = NULL, 
     .level                   = c('construct',"indicator"),
@@ -462,6 +463,8 @@ args_default <- function(.choices = FALSE) {
     .object                  = NULL,
     .P                       = NULL,
     .parameters_to_compare   = NULL,
+    .plot_package            = NULL,
+    .plot_type               = NULL,
     .probs                   = NULL,
     .quality_criterion       = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                                  "rho_C_weighted_mm", "cronbachs_alpha", 
@@ -503,6 +506,7 @@ args_default <- function(.choices = FALSE) {
     .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
                                  "CI_basic","CI_bc", "CI_bca"),
     .user_funs               = NULL,
+    .values_moderator        = c(-2,-1,0,1,2),
     .vcv_asymptotic          = c(FALSE, TRUE),
     .verbose                 = TRUE,
     .W                       = NULL,

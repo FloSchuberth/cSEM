@@ -91,10 +91,10 @@ tests are implemented:
 Other miscellaneous postestimation functions belong do the do-family of functions.
 Currently, four do functions are implemented:
 
-- `doFloodlightAnalysis()`: performs a floodlight analysis
-- `doSurfaceAnalysis()`: performs a surface analysis
-- `doRedundancyAnalysis()`: performs a redundancy analysis
 - `doIPMA()`: performs an importance-performance matrix analysis
+- `doNonLinearEffectsnalysis()`: performs a nonlinear effects analysis such as 
+   floodlight and surface analysis
+- `doRedundancyAnalysis()`: performs a redundancy analysis
 
 All functions require a `cSEMResults` object.
 
