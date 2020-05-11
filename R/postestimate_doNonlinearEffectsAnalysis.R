@@ -2,7 +2,8 @@
 #'
 #' Calculate the expected value of the dependent variable conditional on the values of 
 #' an independent variables and a moderator variable. All other variables in the model
-#' are assumed to be zero, i.e., they are fixed at their mean levels. 
+#' are assumed to be zero, i.e., they are fixed at their mean levels. Moreover, it produces
+#' the input for the floodlight analysis.
 #' 
 #' @usage doNonlinearEffectsAnalysis(
 #'  .object           = NULL,

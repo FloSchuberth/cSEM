@@ -21,7 +21,9 @@
 #' The plot of a floodlight analysis displays the direct effect of an continuous 
 #' independent variable (z) on a dependent variable (y) conditional on the values
 #' of a continuous moderator variable (x), including
-#' the confidence interval and the Johnson-Neyman points. For more details, see \insertCite{Spiller2013;textual}{cSEM}. 
+#' the confidence interval and the Johnson-Neyman points. It is 
+#' noted that in the floodlight plot only moderation is taken into account and higher
+#' order terms are ignored. For more details, see \insertCite{Spiller2013;textual}{cSEM}. 
 #' }
 #' }
 #' Plot the predicted values of an independent variable (z) 
