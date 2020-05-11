@@ -83,9 +83,6 @@ plot(neffects, .plot_type = 'surface', .plot_package = 'persp')
 plot(neffects, .plot_type = 'floodlight')
 }
 }
-\references{
-\insertAllCited{}
-}
 \seealso{
 \code{\link[=csem]{csem()}}, \link{cSEMResults}, \code{\link[=plot.cSEMNonlinearEffects]{plot.cSEMNonlinearEffects()}}
 }

@@ -16,9 +16,6 @@
 #'  )
 #'
 #' @inheritParams csem_arguments
-#'
-#' @references
-#'   \insertAllCited{}
 #' 
 #' @return A list of class `cSEMNonlinearEffects` with a corresponding method 
 #'   for `plot()`. 
@@ -41,7 +38,7 @@ doNonlinearEffectsAnalysis <- function(
 ){
   
   if(inherits(.object, "cSEMResults_multi")) {
-    out <- lapply(.object, doSurfaceAnalysis, 
+    out <- lapply(.object, doNonlinearEffectsAnalysis, 
                   .dependent = .dependent, .independent = .independent,
                   .moderator   = .moderator, .n_steps = .n_steps)
     

@@ -18,12 +18,10 @@ print.cSEMNonlinearEffects <- function(x, ...) {
     rule2("Simple slope analysis", type = 1, align = "center")
   )
 
-  x <- neffects
   info  <- x$Information_print
   dep   <- x$Information$dependent
   indep <- x$Information$independent
   mod   <- x$Information$moderator
-  xx <-     
   
   for(i in 1:nrow(info)) {
     cat2("\n\nSlope of `", indep, "` when `", mod, "` is at ", 

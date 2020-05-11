@@ -258,9 +258,11 @@
 #' }
 #' 
 #' Other miscellaneous postestimation functions belong do the do-family of functions.
-#' Currently two do functions are implemented:
+#' Currently three do functions are implemented:
 #' \describe{
-#' \item{[doFloodlightAnalysis()]}{Perform a floodlight analysis as described in
+#' \item{[doIPMA()]}{Performs an importance-performance matrix analyis (IPMA).}
+#' \item{[doNonlinearEffectsAnalysis()]}{Perform a nonlinear effects analysis as
+#'   described in e.g.,
 #'   \insertCite{Spiller2013;textual}{cSEM}}
 #' \item{[doRedundancyAnalysis()]}{Perform a redundancy analysis (RA) as proposed by 
 #' \insertCite{Hair2016;textual}{cSEM} with reference to \insertCite{Chin1998;textual}{cSEM}}

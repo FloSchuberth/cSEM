@@ -1,6 +1,8 @@
 # Development version: cSEM 0.2.0:9000
 
-- Combine functions for surface, floodlight and simple effects analysis in one function
+- Combine functions for surface, floodlight and simple effects analysis in 
+  the `doNonlinearEffectsAnalysis()` function; Breaking: functions `doFloodlightAnalysis()`
+  and `doSurfaceAnalysis()` have been removed!
 
 - Add tests for `infer()`
 

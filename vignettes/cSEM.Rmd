@@ -212,7 +212,8 @@ only comprises three steps:
    1. `testMICOM()`
    1. `testHausman()`
    1. `testMGD()`
-   1. `doFloodlightAnalysis()`
+   1. `doIPMA()`
+   1. `doNonlinearRedundancyAnalysis()`
    1. `doRedundancyAnalysis()`
    
    All verbs accept the result of a call to `csem()` as input which makes working
@@ -588,9 +589,14 @@ There are 5 major postestimation function and 4 test-family functions:
 
 #### The `do_*` family of postestimation functions
 
-`doFloodlightAnalysis()`
+`doIPMA()`
 
-:   Performs a floodlight analysis as described in @Spiller2013.
+:   Performs an importance-performance matrix analysis (IPMA).
+
+`doNonlinearEffectsAnalysis()`
+
+:   Performs nonlinear effects analysis such as floodlight and surface analysis
+    as described in e.g., @Spiller2013.
 
 `doRedundancyAnalysis()`
 
