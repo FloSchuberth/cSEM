@@ -206,8 +206,8 @@ doNonlinearEffectsAnalysis <- function(
   
   out_print <- do.call(rbind, dataplot_temp_print)
   
-  colnames(out_print) <- c('direct_effect', 'value_z', sprintf("%.6g%%L", 1-.alpha),
-                           sprintf("%.6g%%U", 1-.alpha))
+  colnames(out_print) <- c('direct_effect', 'value_z', sprintf("%.6g%%L", 100*(1-.alpha)),
+                           sprintf("%.6g%%U", 100*(1-.alpha)))
   
   
   
