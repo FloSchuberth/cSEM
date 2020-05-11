@@ -203,7 +203,7 @@ summarize(res)
 verify(res) 
     
 ## Test overall model fit
-testOMF(res, .verbose = FALSE)
+testOMF(res)
 
 ## Assess the model
 assess(res)

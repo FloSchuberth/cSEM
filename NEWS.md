@@ -3,6 +3,11 @@
 - Combine functions for surface, floodlight and simple effects analysis in 
   the `doNonlinearEffectsAnalysis()` function; Breaking: functions `doFloodlightAnalysis()`
   and `doSurfaceAnalysis()` have been removed!
+  
+- Progress bars are now supported for every function that does resampling. 
+  Progress bars are fully customizable via the `progressr` framework created by
+  @HenrikBengtsson. Note: to suppress the progress bar use
+  `progressr::handlers("void")` and then run your csem commands.
 
 - Add tests for `infer()`
 
