@@ -26,16 +26,16 @@ print.cSEMNonlinearEffects <- function(x, ...) {
   for(i in 1:nrow(info)) {
     cat2("\n\nSlope of `", indep, "` when `", mod, "` is at ", 
          switch (i,
-                 "1" = {paste0(info[i, 2], " SDs from mean (= 0)")},
-                 "2" = {paste0(info[i, 2], " SD from mean (= 0)")},
+                 "1" = {paste0(info[i, 2], " SDs from mean")},
+                 "2" = {paste0(info[i, 2], " SD from mean")},
                  "3" = {"the mean (= 0)"},
-                 "4" = {paste0("+", info[i, 2], " SD from mean (= 0)")},
-                 "5" = {paste0("+", info[i, 2], " SDs from mean (= 0)")}
+                 "4" = {paste0("+", info[i, 2], " SD from mean")},
+                 "5" = {paste0("+", info[i, 2], " SDs from mean")}
          ), "\n")
     
     cat2(
       "\n  ", 
-      col_align("Direct effect", 16, align = "right"), 
+      col_align("Effect", 16, align = "right"), 
       col_align(colnames(info)[3], 12, align = "right"),
       col_align(colnames(info)[4], 12, align = "right"),
       "\n  ", 
