@@ -163,6 +163,9 @@ doNonlinearEffectsAnalysis <- function(
   # Determine Johnson-Neyman point 
   # Look for sign flips in the upper boundary
   pos_ub <- which(diff(sign(res_flood[, 'ub'])) != 0)
+  # Interpolate to obtain a y value of zero
+  res_flood[pos_ub+c(-1,1),'value_z']
+  res_flood[,'ub'][pos_ub+c(-1,1)]
   pos_lb <- which(diff(sign(res_flood[, 'lb'])) != 0) 
   
   out_flood <- list(
