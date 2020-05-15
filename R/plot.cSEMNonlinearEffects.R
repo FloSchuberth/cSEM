@@ -172,18 +172,12 @@ plot.cSEMNonlinearEffects <- function(
       ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
     
     # Add Johnson-Neyman points, if they exist in the considered range
-    if(length(x$out_floodlight$Johnson_Neyman_points$JNlb) == 2){
-      JN <- x$out_floodlight$Johnson_Neyman_points$JNlb
+    for(row in 1:nrow(x$out_floodlight$Johnson_Neyman_points)){
       plot1 <- plot1 +
-        ggplot2::geom_point(x = JN['x'], y = JN['y'], size = 2)  
+            ggplot2::geom_point(x = x$out_floodlight$Johnson_Neyman_points[row,'x'], 
+                                y = x$out_floodlight$Johnson_Neyman_points[row,'y'], size = 2)
     }
-    
-    if(length(x$out_floodlight$Johnson_Neyman_points$JNub) == 2){
-      JN = x$out_floodlight$Johnson_Neyman_points$JNub
-      plot1 = plot1 +
-        ggplot2::geom_point(x = JN['x'], y = JN['y'], size = 2)  
-    }
-    
+
     # Plot
     return(plot1)
   }

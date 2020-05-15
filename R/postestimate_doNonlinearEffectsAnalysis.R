@@ -131,11 +131,7 @@ doNonlinearEffectsAnalysis <- function(
       "The defined interaction term does not exist in the model or is not",
       " part of the equation of the dependent variable.")
   }
-  
-  # Effect names
-  beta_z  <- paste(.dependent, .independent, sep = ' ~ ')
-  beta_xz <- paste(.dependent, xz, sep = ' ~ ')
-  
+
   ## Compute spotlights (= effects of independent (z) on dependent (y) for given 
   ## values of moderator (x))
   steps_flood <- seq(min(H[, .moderator]), max(H[, .moderator]), length.out = .n_steps)
@@ -150,35 +146,9 @@ doNonlinearEffectsAnalysis <- function(
                       .alpha=.alpha
                         )
   
-  # dataplot_temp_flood <- lapply(steps_flood, function(step){
-  #   ## Note:
-  #   #   
-  #   #   y = a + bz + cx + dxz
-  #   #   The marginal effect delta y = b + dx evaluated at x0 is identical to the
-  #   #   b' of the regression that uses x' = x - x0, since
-  #   #   y = a' + b'z + c'x' + d'x'z
-  #   #     = (a - cx0) + (b - dx0)z + cx + dxz
-  #   #   ---> b' = b - dx0
-  #   #
-  #   # Resamples of the effect of z on y at different levels of x 
-  #   effect_resampled <- est$Resampled[ , beta_z] + est$Resampled[, beta_xz] * step 
-  #   
-  #   # Value of the originally estimated effect of z on y at different levels of x
-  #   effect_original <- est$Original[beta_z] + est$Original[beta_xz] * step
-  #   
-  #   # Compute empirical quantile based on resamples
-  #   bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
-  #   
-  #   # Return output
-  #   c(effect_original, step, bounds[1],  bounds[2])
-  # })
-  # 
-  # res_flood1 <- do.call(rbind, dataplot_temp_flood)
-  # 
-  # colnames(res_flood1) <- c('direct_effect', 'value_z', 'lb', 'ub')
-  
   # Determine Johnson-Neyman point 
   JN_temp=lapply(c('lb','ub'),function(x){
+    # Look for sign flips
    pos= which(diff(sign(res_flood[, x])) != 0)
    y = res_flood[,x][pos]
    x= res_flood[,'value_z'][pos]
@@ -186,52 +156,49 @@ doNonlinearEffectsAnalysis <- function(
    colnames(temp) = c('x','y')
    temp
   })
+  # Put all JN Points below each other
   JN_matrix=do.call(rbind,JN_temp)
-  # Look for sign flips in the upper boundary
-  pos_ub <- which(diff(sign(res_flood[, 'ub'])) != 0)
-  # Interpolate to obtain a y value of zero
-  res_flood[pos_ub+c(-1,1),'value_z']
-  res_flood[,'ub'][pos_ub+c(-1,1)]
-  pos_lb <- which(diff(sign(res_flood[, 'lb'])) != 0) 
-  
+
   out_flood <- list(
     "out"                   = res_flood,
-    "Johnson_Neyman_points" = JN_matrix,
-    "JN_old" = list(
-      JNlb = c(x = res_flood[,'value_z'][pos_lb], 
-               y = res_flood[,'lb'][pos_lb]),
-      JNub = c(x = res_flood[,'value_z'][pos_ub], 
-               y = res_flood[,'ub'][pos_ub]
-      )
-    )
+    "Johnson_Neyman_points" = JN_matrix
   )
   
   
   # Calculate information necessary for print -----------------------------
-  dataplot_temp_print <- lapply(c(-2,-1,0,1,2), function(step){
-    ## Note:
-    #   
-    #   y = a + bz + cx + dxz
-    #   The marginal effect delta y = b + dx evaluated at x0 is identical to the
-    #   b' of the regression that uses x' = x - x0, since
-    #   y = a' + b'z + c'x' + d'x'z
-    #     = (a - cx0) + (b - dx0)z + cx + dxz
-    #   ---> b' = b - dx0
-    #
-    # Resamples of the effect of z on y at different levels of x 
-    effect_resampled <- est$Resampled[ , beta_z] + est$Resampled[, beta_xz] * step 
-    
-    # Value of the originally estimated effect of z on y at different levels of x
-    effect_original <- est$Original[beta_z] + est$Original[beta_xz] * step
-    
-    # Compute empirical quantile based on resamples
-    bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
-    
-    # Return output
-    c(effect_original, step, bounds[1],  bounds[2])
-  })
+  out_print<-getValuesFloodlight(.model = m,
+                      .pathcoefficients = est,
+                      .dependent = .dependent,
+                      .independent = .independent,
+                      .moderator = .moderator,
+                      .steps_mod = c(-2,-1,0,1,2),
+                      .level_iv = .value_independent,
+                      .alpha=.alpha
+  )
+ # out_print <- lapply(c(-2,-1,0,1,2), function(step){
+ #    ## Note:
+ #    #   
+ #    #   y = a + bz + cx + dxz
+ #    #   The marginal effect delta y = b + dx evaluated at x0 is identical to the
+ #    #   b' of the regression that uses x' = x - x0, since
+ #    #   y = a' + b'z + c'x' + d'x'z
+ #    #     = (a - cx0) + (b - dx0)z + cx + dxz
+ #    #   ---> b' = b - dx0
+ #    #
+ #    # Resamples of the effect of z on y at different levels of x 
+ #    effect_resampled <- est$Resampled[ , beta_z] + est$Resampled[, beta_xz] * step 
+ #    
+ #    # Value of the originally estimated effect of z on y at different levels of x
+ #    effect_original <- est$Original[beta_z] + est$Original[beta_xz] * step
+ #    
+ #    # Compute empirical quantile based on resamples
+ #    bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
+ #    
+ #    # Return output
+ #    c(effect_original, step, bounds[1],  bounds[2])
+ #  })
   
-  out_print <- do.call(rbind, dataplot_temp_print)
+  # out_print <- do.call(rbind, dataplot_temp_print)
   
   colnames(out_print) <- c('direct_effect', 'value_z', sprintf("%.6g%%L", 100*(1-.alpha)),
                            sprintf("%.6g%%U", 100*(1-.alpha)))
@@ -358,6 +325,7 @@ doNonlinearEffectsAnalysis <- function(
       moderator   = .moderator,
       all_independent = vars_rel,
       values_moderator = .values_moderator,
+      value_independent = .value_independent,
       alpha = .alpha
     ),
     "Information_print" = out_print
