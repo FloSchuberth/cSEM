@@ -178,6 +178,15 @@ doNonlinearEffectsAnalysis <- function(
   # colnames(res_flood1) <- c('direct_effect', 'value_z', 'lb', 'ub')
   
   # Determine Johnson-Neyman point 
+  JN_temp=lapply(c('lb','ub'),function(x){
+   pos= which(diff(sign(res_flood[, x])) != 0)
+   y = res_flood[,x][pos]
+   x= res_flood[,'value_z'][pos]
+   temp=cbind(x,y)
+   colnames(temp) = c('x','y')
+   temp
+  })
+  JN_matrix=do.call(rbind,JN_temp)
   # Look for sign flips in the upper boundary
   pos_ub <- which(diff(sign(res_flood[, 'ub'])) != 0)
   # Interpolate to obtain a y value of zero
@@ -186,8 +195,9 @@ doNonlinearEffectsAnalysis <- function(
   pos_lb <- which(diff(sign(res_flood[, 'lb'])) != 0) 
   
   out_flood <- list(
-    "out"                   = res_flood, 
-    "Johnson_Neyman_points" = list(
+    "out"                   = res_flood,
+    "Johnson_Neyman_points" = JN_matrix,
+    "JN_old" = list(
       JNlb = c(x = res_flood[,'value_z'][pos_lb], 
                y = res_flood[,'lb'][pos_lb]),
       JNub = c(x = res_flood[,'value_z'][pos_ub], 
