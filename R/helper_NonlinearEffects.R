@@ -27,7 +27,7 @@ getValuesFloodlight<-function(.model,
                         .level_iv,
                         .alpha=.alpha){
   # Find variables that include the independent variable
-  all_IV_names<-names(.model$structural[.dependent,m$structural[.dependent,]!=0])
+  all_IV_names<-names(.model$structural[.dependent,.model$structural[.dependent,]!=0])
   
   # Split IVs at the dot
   
