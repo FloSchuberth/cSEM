@@ -374,6 +374,10 @@ Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
 
+\item{.value_independent}{Integer. Provide the value of the independent variable for
+the floodlight analysis in case of terms that contains the independent variable to a
+power unequal to 1.}
+
 \item{.values_moderator}{A numeric vector. Provides the values of the moderator, e.g.,
 in the simple effects analysis. Typically these are difference from the mean (=0)
 measured in standard deviations. Defaults to c(-2,-1,0,1,2).}

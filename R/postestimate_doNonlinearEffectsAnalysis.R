@@ -6,13 +6,14 @@
 #' the input for the floodlight analysis.
 #' 
 #' @usage doNonlinearEffectsAnalysis(
-#'  .object           = NULL,
-#'  .dependent        = NULL, 
-#'  .independent      = NULL,
-#'  .moderator        = NULL,
-#'  .n_steps          = 100,
-#'  .values_moderator = c(-2,-1,0,1,2),
-#'  .alpha            = 0.05
+#'  .object            = NULL,
+#'  .dependent         = NULL, 
+#'  .independent       = NULL,
+#'  .moderator         = NULL,
+#'  .n_steps           = 100,
+#'  .values_moderator  = c(-2,-1,0,1,2),
+#'  .value_independent = 0,
+#'  .alpha             = 0.05
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -34,6 +35,7 @@ doNonlinearEffectsAnalysis <- function(
   .moderator          = NULL,
   .n_steps            = 100,
   .values_moderator   = c(-2,-1,0,1,2),
+  .value_independent  = 0,
   .alpha              = 0.05
 ){
   
@@ -113,6 +115,11 @@ doNonlinearEffectsAnalysis <- function(
       "Independent and/or moderator variable are not part of the original model.")
   }
   
+  if(length(.value_independent)!=1){
+    stop2("The following error occured in the `doNonlinearEffectsAnalysis()` function:\n",
+          "Only one level for the independent variable is allowed for floodlight analysis.")
+  }
+  
   ### Calculation Floodlight Analysis--------------------------------------------
   # Possible names of the interaction terms
   possible_names <- c(paste(.moderator, .independent, sep = '.'), paste(.independent, .moderator, sep= '.'))
@@ -133,32 +140,42 @@ doNonlinearEffectsAnalysis <- function(
   ## values of moderator (x))
   steps_flood <- seq(min(H[, .moderator]), max(H[, .moderator]), length.out = .n_steps)
   
-  dataplot_temp_flood <- lapply(steps_flood, function(step){
-    ## Note:
-    #   
-    #   y = a + bz + cx + dxz
-    #   The marginal effect delta y = b + dx evaluated at x0 is identical to the
-    #   b' of the regression that uses x' = x - x0, since
-    #   y = a' + b'z + c'x' + d'x'z
-    #     = (a - cx0) + (b - dx0)z + cx + dxz
-    #   ---> b' = b - dx0
-    #
-    # Resamples of the effect of z on y at different levels of x 
-    effect_resampled <- est$Resampled[ , beta_z] + est$Resampled[, beta_xz] * step 
-    
-    # Value of the originally estimated effect of z on y at different levels of x
-    effect_original <- est$Original[beta_z] + est$Original[beta_xz] * step
-    
-    # Compute empirical quantile based on resamples
-    bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
-    
-    # Return output
-    c(effect_original, step, bounds[1],  bounds[2])
-  })
+  res_flood<-getValuesFloodlight(.model = m,
+                      .pathcoefficients = est,
+                      .dependent = .dependent,
+                      .independent = .independent,
+                      .moderator = .moderator,
+                      .steps_mod = steps_flood,
+                      .level_iv = .value_independent,
+                      .alpha=.alpha
+                        )
   
-  res_flood <- do.call(rbind, dataplot_temp_flood)
-
-  colnames(res_flood) <- c('direct_effect', 'value_z', 'lb', 'ub')
+  # dataplot_temp_flood <- lapply(steps_flood, function(step){
+  #   ## Note:
+  #   #   
+  #   #   y = a + bz + cx + dxz
+  #   #   The marginal effect delta y = b + dx evaluated at x0 is identical to the
+  #   #   b' of the regression that uses x' = x - x0, since
+  #   #   y = a' + b'z + c'x' + d'x'z
+  #   #     = (a - cx0) + (b - dx0)z + cx + dxz
+  #   #   ---> b' = b - dx0
+  #   #
+  #   # Resamples of the effect of z on y at different levels of x 
+  #   effect_resampled <- est$Resampled[ , beta_z] + est$Resampled[, beta_xz] * step 
+  #   
+  #   # Value of the originally estimated effect of z on y at different levels of x
+  #   effect_original <- est$Original[beta_z] + est$Original[beta_xz] * step
+  #   
+  #   # Compute empirical quantile based on resamples
+  #   bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
+  #   
+  #   # Return output
+  #   c(effect_original, step, bounds[1],  bounds[2])
+  # })
+  # 
+  # res_flood1 <- do.call(rbind, dataplot_temp_flood)
+  # 
+  # colnames(res_flood1) <- c('direct_effect', 'value_z', 'lb', 'ub')
   
   # Determine Johnson-Neyman point 
   # Look for sign flips in the upper boundary

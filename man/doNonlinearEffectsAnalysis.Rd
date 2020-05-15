@@ -5,13 +5,14 @@
 \title{Do a nonlinear effects analysis}
 \usage{
 doNonlinearEffectsAnalysis(
- .object           = NULL,
- .dependent        = NULL, 
- .independent      = NULL,
- .moderator        = NULL,
- .n_steps          = 100,
- .values_moderator = c(-2,-1,0,1,2),
- .alpha            = 0.05
+ .object            = NULL,
+ .dependent         = NULL, 
+ .independent       = NULL,
+ .moderator         = NULL,
+ .n_steps           = 100,
+ .values_moderator  = c(-2,-1,0,1,2),
+ .value_independent = 0,
+ .alpha             = 0.05
  )
 }
 \arguments{
@@ -30,6 +31,10 @@ between min(.moderator) and max(.moderator) to use. Defaults to \code{100}.}
 \item{.values_moderator}{A numeric vector. Provides the values of the moderator, e.g.,
 in the simple effects analysis. Typically these are difference from the mean (=0)
 measured in standard deviations. Defaults to c(-2,-1,0,1,2).}
+
+\item{.value_independent}{Integer. Provide the value of the independent variable for
+the floodlight analysis in case of terms that contains the independent variable to a
+power unequal to 1.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
