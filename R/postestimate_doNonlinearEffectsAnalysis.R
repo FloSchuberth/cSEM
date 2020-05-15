@@ -264,7 +264,7 @@ doNonlinearEffectsAnalysis <- function(
     warning2(paste0("The considered equation contains the following variables that do not\n",
                     "only involve ",.independent, " and ", .moderator, ":\n\n",
                     paste(indep_vars[!pointer],collapse =', '),"\n\n",
-                    "They will be ignored in calculating the predicted values of ", .dependent,"i.e., \n",
+                    "They will be ignored in calculating the predicted values of ", .dependent," i.e., \n",
                     "the other variables are considered at their mean values."))
   }
   
