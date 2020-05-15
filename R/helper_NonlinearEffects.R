@@ -63,12 +63,12 @@ getValuesFloodlight<-function(.model,
       term <- paste0(.dependent,' ~ ',paste0(x,collapse = '.'))
     
     # calculate the effects for the resampled effects and the original effect
-     effect_resampled <- pathcoefficients$Resampled[,term]*
+     effect_resampled <- .pathcoefficients$Resampled[,term]*
         countIV*.level_iv^(countIV-1)*
         step^countMed
       
      # calculate the original effect
-     effect_original <- pathcoefficients$Original[term]*
+     effect_original <- .pathcoefficients$Original[term]*
        countIV*.level_iv^(countIV-1)*
        step^countMed
 
