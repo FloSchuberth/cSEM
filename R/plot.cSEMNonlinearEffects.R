@@ -99,6 +99,8 @@ plot.cSEMNonlinearEffects <- function(
         "Package `plotly` required. Use `install.packages(\"plotly\")` and rerun.")
     }
   
+    
+    
     plot1 <- plotly::plot_ly( x = x$out_surface$values_ind1, 
                               y = x$out_surface$values_ind2, 
                               z = x$out_surface$values_dep, 
