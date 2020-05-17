@@ -277,7 +277,7 @@ doNonlinearEffectsAnalysis <- function(
   
   out_simpleeffects <- data.frame(values_dep = unlist(y_pred_list_simple),
                     values_ind = rep(steps_ind_simple,length(steps_mod_simple)),
-                    values_mod = paste0(rep(steps_mod_simple,each=length(steps_ind_simple))))
+                    values_mod = factor(rep(steps_mod_simple,each=length(steps_ind_simple))))
   
   # Calculation of surface analsyis
   steps_ind_surface = seq(min(H[, .independent ]), max(H[, .independent ]),
