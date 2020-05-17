@@ -22,6 +22,8 @@ neffects <- doNonlinearEffectsAnalysis(out,
                                        .moderator = 'INV',
                                        .independent = 'SAT') 
 
+neffects
+
 # Simple effects plot
 plot(neffects, .plot_type = 'simpleeffects')
 
