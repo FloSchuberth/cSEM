@@ -22,6 +22,7 @@ print.cSEMNonlinearEffects <- function(x, ...) {
   dep   <- x$Information$dependent
   indep <- x$Information$independent
   mod   <- x$Information$moderator
+  JN    <- x$out_floodlight$Johnson_Neyman_points
   
   for(i in 1:nrow(info)) {
     cat2("\n\nSlope of `", indep, "` when `", mod, "` is at ", 
@@ -44,7 +45,27 @@ print.cSEMNonlinearEffects <- function(x, ...) {
       col_align(sprintf("%.4f", info[i, 4]), 12, align = "right")
     )
   }
-   
-  # To do: Johnson-Neyman points
+  
+  ### Johnson-Neyman points ----------------------------------------------------
+  # (18.05.2020) is JN always a matrix?; make sure it is
+  if(nrow(JN) > 0) {
+    cat2("\n\n", rule2("Johnson-Neyman points"))
+    
+    cat2(
+      "\n  ", 
+      col_align("Level indep.", 16, align = "right"), 
+      col_align("x", 12, align = "right"),
+      col_align("y", 12, align = "right"),
+      "\n  ")
+    
+    for(i in 1:nrow(JN)) {
+      cat2(
+        col_align(sprintf("%.4f", x$Information$value_independent[1]), 16, align = "right"),
+        col_align(sprintf("%.4f", JN[i, 1]), 12, align = "right"),
+        col_align(sprintf("%.4f", JN[i, 2]), 12, align = "right")
+      )
+    } 
+  } 
+  
   cat2("\n", rule2(type = 2), "\n")
 }  

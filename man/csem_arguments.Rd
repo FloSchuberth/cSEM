@@ -106,7 +106,7 @@ of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or
 "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
 or a mix of several types.}
 
-\item{.dependent}{Character string. The name of the dependent variable. Defaults to \code{NULL}.}
+\item{.dependent}{Character string. The name of the dependent variable.}
 
 \item{.disattenuate}{Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
@@ -169,7 +169,7 @@ to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
 
-\item{.independent}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
+\item{.independent}{Character string. The name of the independent variable.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -195,16 +195,16 @@ for constructs or indicators.}
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
 
-\item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
+\item{.moderator}{Character string. The name of the moderator variable.}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
 
 \item{.n}{Integer. The number of observations of the original data.}
 
-\item{.n_steps}{Integer. A numeric value giving the number of steps, e.g., in
-surface analysis or floodlight analysis the spotlights (= values of .moderator)
-between min(.moderator) and max(.moderator) to use. Defaults to \code{100}.}
+\item{.n_steps}{Integer. A value giving the number of steps (the spotlights, i.e.,
+values of .moderator in surface analysis or floodlight analysis)
+between the minimum and maximum value of the moderator. Defaults to \code{100}.}
 
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
@@ -374,12 +374,12 @@ Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
 
-\item{.value_independent}{Integer. Provides the value of the independent variable for
+\item{.value_independent}{Integer. The value of the independent variable for
 the floodlight analysis in case that the independent variable appears as a higher-order term.}
 
-\item{.values_moderator}{A numeric vector. Provides the values of the moderator, e.g.,
-in the simple effects analysis. Typically these are difference from the mean (=0)
-measured in standard deviations. Defaults to c(-2,-1,0,1,2).}
+\item{.values_moderator}{A numeric vector. The values of the moderator in a
+the simple effects analysis. Typically these are difference from the mean (=0)
+measured in standard deviations. Defaults to \code{c(-2, -1, 0, 1, 2)}.}
 
 \item{.vcv_asymptotic}{Logical. Should the asymptotic variance-covariance matrix be used, i.e.,
 VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) be computed directly?

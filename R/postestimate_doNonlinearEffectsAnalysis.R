@@ -11,7 +11,7 @@
 #'  .independent       = NULL,
 #'  .moderator         = NULL,
 #'  .n_steps           = 100,
-#'  .values_moderator  = c(-2,-1,0,1,2),
+#'  .values_moderator  = c(-2, -1, 0, 1, 2),
 #'  .value_independent = 0,
 #'  .alpha             = 0.05
 #'  )
@@ -19,8 +19,7 @@
 #' @inheritParams csem_arguments
 #' 
 #' @return A list of class `cSEMNonlinearEffects` with a corresponding method 
-#'   for `plot()`. 
-#'   See: [plot.cSEMNonlinearEffects()].
+#'   for `plot()`. See: [plot.cSEMNonlinearEffects()].
 #' 
 #' @seealso [csem()], [cSEMResults], [plot.cSEMNonlinearEffects()]
 #' 
@@ -34,7 +33,7 @@ doNonlinearEffectsAnalysis <- function(
   .independent        = NULL,
   .moderator          = NULL,
   .n_steps            = 100,
-  .values_moderator   = c(-2,-1,0,1,2),
+  .values_moderator   = c(-2, -1, 0, 1, 2),
   .value_independent  = 0,
   .alpha              = 0.05
 ){
@@ -46,7 +45,7 @@ doNonlinearEffectsAnalysis <- function(
     
     class(out) <- c("cSEMNonlinearEffects", "cSEMNonlinearEffects_multi")
     return(out)
-  }else {
+  } else {
     ## Check whether .object is of class cSEMResults_resampled; if not perform
     ## standard resampling (bootstrap with .R = 499 reps)
     if(!inherits(.object, "cSEMResults_resampled")) {
@@ -120,9 +119,10 @@ doNonlinearEffectsAnalysis <- function(
           "Only one level for the independent variable is allowed for floodlight analysis.")
   }
   
-  ### Calculation Floodlight Analysis--------------------------------------------
+  ### Calculation Floodlight Analysis-------------------------------------------
   # Possible names of the interaction terms
-  possible_names <- c(paste(.moderator, .independent, sep = '.'), paste(.independent, .moderator, sep= '.'))
+  possible_names <- c(paste(.moderator, .independent, sep = '.'), 
+                      paste(.independent, .moderator, sep= '.'))
   
   # Name of the interaction term
   xz <- possible_names[possible_names %in% indep_vars]
@@ -136,25 +136,26 @@ doNonlinearEffectsAnalysis <- function(
   ## values of moderator (x))
   steps_flood <- seq(min(H[, .moderator]), max(H[, .moderator]), length.out = .n_steps)
   
-  res_flood<-getValuesFloodlight(.model = m,
-                      .pathcoefficients = est,
-                      .dependent = .dependent,
-                      .independent = .independent,
-                      .moderator = .moderator,
-                      .steps_mod = steps_flood,
-                      .level_iv = .value_independent,
-                      .alpha=.alpha
-                        )
+  res_flood <- getValuesFloodlight(
+    .model             = m,
+    .path_coefficients = est,
+    .dependent         = .dependent,
+    .independent       = .independent,
+    .moderator         = .moderator,
+    .steps_mod         = steps_flood,
+    .level_iv          = .value_independent,
+    .alpha             =.alpha
+  )
   
   # Determine Johnson-Neyman point 
-  JN_temp=lapply(c('lb','ub'),function(x){
+  JN_temp = lapply(c('lb', 'ub'), function(x) {
     # Look for sign flips
-   pos= which(diff(sign(res_flood[, x])) != 0)
-   y = res_flood[,x][pos]
-   x= res_flood[,'value_z'][pos]
-   temp=cbind(x,y)
-   colnames(temp) = c('x','y')
-   temp
+    pos  = which(diff(sign(res_flood[, x])) != 0)
+    y    = res_flood[, x][pos]
+    x    = res_flood[, 'value_z'][pos]
+    temp = cbind(x, y)
+    colnames(temp) = c('x', 'y')
+    temp
   })
   # Put all JN Points below each other
   JN_matrix=do.call(rbind,JN_temp)
@@ -164,16 +165,16 @@ doNonlinearEffectsAnalysis <- function(
     "Johnson_Neyman_points" = JN_matrix
   )
   
-  
-  # Calculate information necessary for print -----------------------------
-  out_print<-getValuesFloodlight(.model = m,
-                      .pathcoefficients = est,
-                      .dependent = .dependent,
-                      .independent = .independent,
-                      .moderator = .moderator,
-                      .steps_mod = c(-2,-1,0,1,2),
-                      .level_iv = .value_independent,
-                      .alpha=.alpha
+  # Calculate information necessary for print ----------------------------------
+  out_print <- getValuesFloodlight(
+    .model             = m,
+    .path_coefficients = est,
+    .dependent         = .dependent,
+    .independent       = .independent,
+    .moderator         = .moderator,
+    .steps_mod         = c(-2,-1,0,1,2),
+    .level_iv          = .value_independent,
+    .alpha             =.alpha
   )
  # out_print <- lapply(c(-2,-1,0,1,2), function(step){
  #    ## Note:
@@ -228,11 +229,12 @@ doNonlinearEffectsAnalysis <- function(
   })
   
   if(!all(pointer)){
-    warning2(paste0("The considered equation contains the following variables that do not\n",
-                    "only involve ",.independent, " and ", .moderator, ":\n\n",
-                    paste(indep_vars[!pointer],collapse =', '),"\n\n",
-                    "They will be ignored in calculating the predicted values of ", .dependent," i.e., \n",
-                    "the other variables are considered at their mean values."))
+    warning(paste0(
+      "The considered equation contains the following variables that do not\n",
+      "only involve ",.independent, " and ", .moderator, ":\n\n",
+      paste(indep_vars[!pointer],collapse =', '),"\n\n",
+      "They will be ignored in calculating the predicted values of ", .dependent," i.e., \n",
+      "The other variables are considered at their mean values."), call = FALSE)
   }
   
   vars_rel=indep_vars[pointer]
@@ -310,23 +312,25 @@ doNonlinearEffectsAnalysis <- function(
   
   y_pred_surface = Reduce('+',y_pred_list_surface)
   
-  out_surface <- list(values_dep=matrix(y_pred_surface,ncol=length(steps_ind_surface),nrow=length(steps_mod_surface)),
-              values_ind1=steps_ind_surface,values_ind2=steps_mod_surface)
+  out_surface <- list(
+    values_dep = matrix(y_pred_surface,ncol=length(steps_ind_surface),
+                      nrow=length(steps_mod_surface)),
+    values_ind1 = steps_ind_surface,values_ind2=steps_mod_surface
+    )
   
   # Prepare and return output
   out <- list(
-    "out_floodlight"  = out_flood,
-    "out_surface" = out_surface,
-    "out_simpleeffects" = out_simpleeffects,  
-    # "out1" = out1,
+    "out_floodlight"    = out_flood,
+    "out_surface"       = out_surface,
+    "out_simpleeffects" = out_simpleeffects,
     "Information" = list(
-      dependent       = .dependent,
-      independent   = .independent,
-      moderator   = .moderator,
-      all_independent = vars_rel,
-      values_moderator = .values_moderator,
+      dependent         = .dependent,
+      independent       = .independent,
+      moderator         = .moderator,
+      all_independent   = vars_rel,
+      values_moderator  = .values_moderator,
       value_independent = .value_independent,
-      alpha = .alpha
+      alpha             = .alpha
     ),
     "Information_print" = out_print
   )
