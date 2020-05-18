@@ -24,6 +24,9 @@ print.cSEMNonlinearEffects <- function(x, ...) {
   mod   <- x$Information$moderator
   JN    <- x$out_floodlight$Johnson_Neyman_points
   
+  cat2("\n\nBased on a value of ", 
+       surf$Information$value_independent , " for `", indep, "`.")
+  
   for(i in 1:nrow(info)) {
     cat2("\n\nSlope of `", indep, "` when `", mod, "` is at ", 
          switch (i,
@@ -53,14 +56,12 @@ print.cSEMNonlinearEffects <- function(x, ...) {
     
     cat2(
       "\n  ", 
-      col_align("Level indep.", 16, align = "right"), 
       col_align("x", 12, align = "right"),
-      col_align("y", 12, align = "right"),
-      "\n  ")
+      col_align("y", 12, align = "right"))
     
     for(i in 1:nrow(JN)) {
       cat2(
-        col_align(sprintf("%.4f", x$Information$value_independent[1]), 16, align = "right"),
+        "\n  ",
         col_align(sprintf("%.4f", JN[i, 1]), 12, align = "right"),
         col_align(sprintf("%.4f", JN[i, 2]), 12, align = "right")
       )
