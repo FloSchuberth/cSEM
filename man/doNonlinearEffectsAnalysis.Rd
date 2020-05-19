@@ -5,39 +5,43 @@
 \title{Do a nonlinear effects analysis}
 \usage{
 doNonlinearEffectsAnalysis(
- .object           = NULL,
- .dependent        = NULL, 
- .independent      = NULL,
- .moderator        = NULL,
- .n_steps          = 100,
- .values_moderator = c(-2,-1,0,1,2),
- .alpha            = 0.05
+ .object            = NULL,
+ .dependent         = NULL, 
+ .independent       = NULL,
+ .moderator         = NULL,
+ .n_steps           = 100,
+ .values_moderator  = c(-2, -1, 0, 1, 2),
+ .value_independent = 0,
+ .alpha             = 0.05
  )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.dependent}{Character string. The name of the dependent variable. Defaults to \code{NULL}.}
+\item{.dependent}{Character string. The name of the dependent variable.}
 
-\item{.independent}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
+\item{.independent}{Character string. The name of the independent variable.}
 
-\item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
+\item{.moderator}{Character string. The name of the moderator variable.}
 
-\item{.n_steps}{Integer. A numeric value giving the number of steps, e.g., in
-surface analysis or floodlight analysis the spotlights (= values of .moderator)
-between min(.moderator) and max(.moderator) to use. Defaults to \code{100}.}
+\item{.n_steps}{Integer. A value giving the number of steps (the spotlights, i.e.,
+values of .moderator in surface analysis or floodlight analysis)
+between the minimum and maximum value of the moderator. Defaults to \code{100}.}
 
-\item{.values_moderator}{A numeric vector. Provides the values of the moderator, e.g.,
-in the simple effects analysis. Typically these are difference from the mean (=0)
-measured in standard deviations. Defaults to c(-2,-1,0,1,2).}
+\item{.values_moderator}{A numeric vector. The values of the moderator in a
+the simple effects analysis. Typically these are difference from the mean (=0)
+measured in standard deviations. Defaults to \code{c(-2, -1, 0, 1, 2)}.}
+
+\item{.value_independent}{Integer. Only required for floodlight analysis;
+The value of the independent variable in case that it appears as a
+higher-order term.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
 }
 \value{
 A list of class \code{cSEMNonlinearEffects} with a corresponding method
-for \code{plot()}.
-See: \code{\link[=plot.cSEMNonlinearEffects]{plot.cSEMNonlinearEffects()}}.
+for \code{plot()}. See: \code{\link[=plot.cSEMNonlinearEffects]{plot.cSEMNonlinearEffects()}}.
 }
 \description{
 Calculate the expected value of the dependent variable conditional on the values of
@@ -69,6 +73,9 @@ neffects <- doNonlinearEffectsAnalysis(out,
                                        .dependent = 'INT',
                                        .moderator = 'INV',
                                        .independent = 'SAT') 
+
+# Get an overview
+neffects
 
 # Simple effects plot
 plot(neffects, .plot_type = 'simpleeffects')

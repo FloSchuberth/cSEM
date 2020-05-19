@@ -6,20 +6,20 @@
 #' the input for the floodlight analysis.
 #' 
 #' @usage doNonlinearEffectsAnalysis(
-#'  .object           = NULL,
-#'  .dependent        = NULL, 
-#'  .independent      = NULL,
-#'  .moderator        = NULL,
-#'  .n_steps          = 100,
-#'  .values_moderator = c(-2,-1,0,1,2),
-#'  .alpha            = 0.05
+#'  .object            = NULL,
+#'  .dependent         = NULL, 
+#'  .independent       = NULL,
+#'  .moderator         = NULL,
+#'  .n_steps           = 100,
+#'  .values_moderator  = c(-2, -1, 0, 1, 2),
+#'  .value_independent = 0,
+#'  .alpha             = 0.05
 #'  )
 #'
 #' @inheritParams csem_arguments
 #' 
 #' @return A list of class `cSEMNonlinearEffects` with a corresponding method 
-#'   for `plot()`. 
-#'   See: [plot.cSEMNonlinearEffects()].
+#'   for `plot()`. See: [plot.cSEMNonlinearEffects()].
 #' 
 #' @seealso [csem()], [cSEMResults], [plot.cSEMNonlinearEffects()]
 #' 
@@ -33,7 +33,8 @@ doNonlinearEffectsAnalysis <- function(
   .independent        = NULL,
   .moderator          = NULL,
   .n_steps            = 100,
-  .values_moderator   = c(-2,-1,0,1,2),
+  .values_moderator   = c(-2, -1, 0, 1, 2),
+  .value_independent  = 0,
   .alpha              = 0.05
 ){
   
@@ -44,7 +45,7 @@ doNonlinearEffectsAnalysis <- function(
     
     class(out) <- c("cSEMNonlinearEffects", "cSEMNonlinearEffects_multi")
     return(out)
-  }else {
+  } else {
     ## Check whether .object is of class cSEMResults_resampled; if not perform
     ## standard resampling (bootstrap with .R = 499 reps)
     if(!inherits(.object, "cSEMResults_resampled")) {
@@ -113,9 +114,15 @@ doNonlinearEffectsAnalysis <- function(
       "Independent and/or moderator variable are not part of the original model.")
   }
   
-  ### Calculation Floodlight Analysis--------------------------------------------
+  if(length(.value_independent)!=1){
+    stop2("The following error occured in the `doNonlinearEffectsAnalysis()` function:\n",
+          "Only one level for the independent variable is allowed for floodlight analysis.")
+  }
+  
+  ### Calculation Floodlight Analysis-------------------------------------------
   # Possible names of the interaction terms
-  possible_names <- c(paste(.moderator, .independent, sep = '.'), paste(.independent, .moderator, sep= '.'))
+  possible_names <- c(paste(.moderator, .independent, sep = '.'), 
+                      paste(.independent, .moderator, sep= '.'))
   
   # Name of the interaction term
   xz <- possible_names[possible_names %in% indep_vars]
@@ -124,88 +131,66 @@ doNonlinearEffectsAnalysis <- function(
       "The defined interaction term does not exist in the model or is not",
       " part of the equation of the dependent variable.")
   }
-  
-  # Effect names
-  beta_z  <- paste(.dependent, .independent, sep = ' ~ ')
-  beta_xz <- paste(.dependent, xz, sep = ' ~ ')
-  
+
   ## Compute spotlights (= effects of independent (z) on dependent (y) for given 
   ## values of moderator (x))
   steps_flood <- seq(min(H[, .moderator]), max(H[, .moderator]), length.out = .n_steps)
   
-  dataplot_temp_flood <- lapply(steps_flood, function(step){
-    ## Note:
-    #   
-    #   y = a + bz + cx + dxz
-    #   The marginal effect delta y = b + dx evaluated at x0 is identical to the
-    #   b' of the regression that uses x' = x - x0, since
-    #   y = a' + b'z + c'x' + d'x'z
-    #     = (a - cx0) + (b - dx0)z + cx + dxz
-    #   ---> b' = b - dx0
-    #
-    # Resamples of the effect of z on y at different levels of x 
-    effect_resampled <- est$Resampled[ , beta_z] + est$Resampled[, beta_xz] * step 
-    
-    # Value of the originally estimated effect of z on y at different levels of x
-    effect_original <- est$Original[beta_z] + est$Original[beta_xz] * step
-    
-    # Compute empirical quantile based on resamples
-    bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
-    
-    # Return output
-    c(effect_original, step, bounds[1],  bounds[2])
-  })
-  
-  res_flood <- do.call(rbind, dataplot_temp_flood)
+  res_flood <- getValuesFloodlight(
+    .model             = m,
+    .path_coefficients = est,
+    .dependent         = .dependent,
+    .independent       = .independent,
+    .moderator         = .moderator,
+    .steps_mod         = steps_flood,
+    .value_independent = .value_independent,
+    .alpha             = .alpha
+  )
 
-  colnames(res_flood) <- c('direct_effect', 'value_z', 'lb', 'ub')
-  
   # Determine Johnson-Neyman point 
-  # Look for sign flips in the upper boundary
-  pos_ub <- which(diff(sign(res_flood[, 'ub'])) != 0)
-  pos_lb <- which(diff(sign(res_flood[, 'lb'])) != 0) 
+
+  # Create function for interpolation
+  # lower bound of the CI
+  Int_lb<-approxfun(x=res_flood[,'value_z'], y=res_flood[,'lb'])
+  # find zero places
+  zero_lb<-rootSolve::uniroot.all(Int_lb,
+                         interval = range(res_flood[,'value_z']))
+  
+  # Create function for Interpolation 
+  # upper bound of the CI
+  Int_ub<-approxfun(x=res_flood[,'value_z'], y=res_flood[,'ub'])
+  # find zero places
+  zero_ub<-rootSolve::uniroot.all(Int_ub,
+                                  interval = range(res_flood[,'value_z']))
+  
+  zeros=c(zero_lb,zero_ub)
+  
+  if(length(zeros)>0){#At least one JN point
+    JN_matrix<-cbind(zeros,0)
+    colnames(JN_matrix)<-c('x','y')
+  } else if(length(zeros)==0){
+    JN_matrix<-matrix(nrow=0,ncol=2,dimnames = list(c(),c('x','y')))
+  }
   
   out_flood <- list(
-    "out"                   = res_flood, 
-    "Johnson_Neyman_points" = list(
-      JNlb = c(x = res_flood[,'value_z'][pos_lb], 
-               y = res_flood[,'lb'][pos_lb]),
-      JNub = c(x = res_flood[,'value_z'][pos_ub], 
-               y = res_flood[,'ub'][pos_ub]
-      )
-    )
+    "out"                   = res_flood,
+    "Johnson_Neyman_points" = JN_matrix
   )
   
-  
-  # Calculate information necessary for print -----------------------------
-  dataplot_temp_print <- lapply(c(-2,-1,0,1,2), function(step){
-    ## Note:
-    #   
-    #   y = a + bz + cx + dxz
-    #   The marginal effect delta y = b + dx evaluated at x0 is identical to the
-    #   b' of the regression that uses x' = x - x0, since
-    #   y = a' + b'z + c'x' + d'x'z
-    #     = (a - cx0) + (b - dx0)z + cx + dxz
-    #   ---> b' = b - dx0
-    #
-    # Resamples of the effect of z on y at different levels of x 
-    effect_resampled <- est$Resampled[ , beta_z] + est$Resampled[, beta_xz] * step 
-    
-    # Value of the originally estimated effect of z on y at different levels of x
-    effect_original <- est$Original[beta_z] + est$Original[beta_xz] * step
-    
-    # Compute empirical quantile based on resamples
-    bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
-    
-    # Return output
-    c(effect_original, step, bounds[1],  bounds[2])
-  })
-  
-  out_print <- do.call(rbind, dataplot_temp_print)
-  
+  # Calculate information necessary for print ----------------------------------
+  out_print <- getValuesFloodlight(
+    .model             = m,
+    .path_coefficients = est,
+    .dependent         = .dependent,
+    .independent       = .independent,
+    .moderator         = .moderator,
+    .steps_mod         = c(-2,-1,0,1,2),
+    .value_independent = .value_independent,
+    .alpha             =.alpha
+  )
+
   colnames(out_print) <- c('direct_effect', 'value_z', sprintf("%.6g%%L", 100*(1-.alpha)),
                            sprintf("%.6g%%U", 100*(1-.alpha)))
-  
   
   
   ### Calculation Simple effects and surface analysis---------------------------------------
@@ -231,11 +216,12 @@ doNonlinearEffectsAnalysis <- function(
   })
   
   if(!all(pointer)){
-    warning2(paste0("The considered equation contains the following variables that do not\n",
-                    "only involve ",.independent, " and ", .moderator, ":\n\n",
-                    paste(indep_vars[!pointer],collapse =', '),"\n\n",
-                    "They will be ignored in calculating the predicted values of ", .dependent,"i.e., \n",
-                    "the other variables are considered at their mean values."))
+    warning(paste0(
+      "The considered equation contains the following variables that do not\n",
+      "only involve ",.independent, " and ", .moderator, ":\n\n",
+      paste(indep_vars[!pointer],collapse =', '),"\n\n",
+      "They will be ignored in calculating the predicted values of ", .dependent," i.e., \n",
+      "The other variables are considered at their mean values."), call = FALSE)
   }
   
   vars_rel=indep_vars[pointer]
@@ -250,7 +236,6 @@ doNonlinearEffectsAnalysis <- function(
   # Calculation of simple effects analysis
   steps_mod_simple = .values_moderator
 
-  
   y_pred_list_simple=lapply(steps_mod_simple,function(stepmode){
     temp<-lapply(sum_rel$Name,function(x){
       temp <- sum_rel[sum_rel$Name==x,]
@@ -280,7 +265,7 @@ doNonlinearEffectsAnalysis <- function(
   
   out_simpleeffects <- data.frame(values_dep = unlist(y_pred_list_simple),
                     values_ind = rep(steps_ind_simple,length(steps_mod_simple)),
-                    values_mod = paste0(rep(steps_mod_simple,each=length(steps_ind_simple))))
+                    values_mod = factor(rep(steps_mod_simple,each=length(steps_ind_simple))))
   
   # Calculation of surface analsyis
   steps_ind_surface = seq(min(H[, .independent ]), max(H[, .independent ]),
@@ -313,22 +298,25 @@ doNonlinearEffectsAnalysis <- function(
   
   y_pred_surface = Reduce('+',y_pred_list_surface)
   
-  out_surface <- list(values_dep=matrix(y_pred_surface,ncol=length(steps_ind_surface),nrow=length(steps_mod_surface)),
-              values_ind1=steps_ind_surface,values_ind2=steps_mod_surface)
+  out_surface <- list(
+    values_dep = matrix(y_pred_surface,ncol=length(steps_ind_surface),
+                      nrow=length(steps_mod_surface)),
+    values_ind1 = steps_ind_surface,values_ind2=steps_mod_surface
+    )
   
   # Prepare and return output
   out <- list(
-    "out_floodlight"  = out_flood,
-    "out_surface" = out_surface,
-    "out_simpleeffects" = out_simpleeffects,  
-    # "out1" = out1,
+    "out_floodlight"    = out_flood,
+    "out_surface"       = out_surface,
+    "out_simpleeffects" = out_simpleeffects,
     "Information" = list(
-      dependent       = .dependent,
-      independent   = .independent,
-      moderator   = .moderator,
-      all_independent = vars_rel,
-      values_moderator = .values_moderator,
-      alpha = .alpha
+      dependent         = .dependent,
+      independent       = .independent,
+      moderator         = .moderator,
+      all_independent   = vars_rel,
+      values_moderator  = .values_moderator,
+      value_independent = .value_independent,
+      alpha             = .alpha
     ),
     "Information_print" = out_print
   )

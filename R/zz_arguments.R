@@ -82,7 +82,7 @@
 #'   of the data provided are: "`logical`", "`numeric`" ("`double`" or "`integer`"), 
 #'   "`factor`" ("`ordered`" and/or "`unordered`"), "`character`" (converted to factor),
 #'   or a mix of several types.
-#' @param .dependent Character string. The name of the dependent variable. Defaults to `NULL`. 
+#' @param .dependent Character string. The name of the dependent variable.
 #' @param .disattenuate Logical. Should composite/proxy correlations 
 #'   be disattenuated to yield consistent loadings and path estimates if at least
 #'   one of the construct is modeled as a common factor? Defaults to `TRUE`.
@@ -127,7 +127,7 @@
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
 #' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
-#' @param .independent Character string. The name of the independent variable. Defaults to `NULL`.
+#' @param .independent Character string. The name of the independent variable.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
 #'   equation whose explanatory variables are endogenous. The vectors
@@ -145,13 +145,13 @@
 #' @param .matrices A list of at least two matrices.
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
 #'   or a [cSEMModel] list.
-#' @param .moderator Character string. The name of the moderator variable. Defaults to `NULL`. 
+#' @param .moderator Character string. The name of the moderator variable.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
 #' @param .n Integer. The number of observations of the original data.
-#' @param .n_steps Integer. A numeric value giving the number of steps, e.g., in
-#' surface analysis or floodlight analysis the spotlights (= values of .moderator)
-#' between min(.moderator) and max(.moderator) to use. Defaults to `100`.
+#' @param .n_steps Integer. A value giving the number of steps (the spotlights, i.e.,
+#' values of .moderator in surface analysis or floodlight analysis) 
+#' between the minimum and maximum value of the moderator. Defaults to `100`.
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
@@ -170,6 +170,9 @@
 #'   parameters (i.e, path (`~`), loadings (`=~`), weights (`<~`), or correlations (`~~`)) should be
 #'   compared across groups. Defaults to `NULL` in which case all weights, loadings and 
 #'   path coefficients of the originally specified model are compared.
+#' @param .path_coefficients List. A list that contains the resampled and the original 
+#' path coefficient estimates. Typically a part of a `cSEMResults_resampled` object.
+#' Defaults to `NULL`. 
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
@@ -253,6 +256,9 @@
 #'   list names are the construct names whose indicator weights the user
 #'   wishes to set. The vectors must be named vectors of `"indicator_name" = value` 
 #'   pairs, where `value` is the (scaled or unscaled) starting weight. Defaults to `NULL`.
+#' @param .steps_mod A numeric vector. Steps used for the moderator variable in calculating 
+#' the simple effects of an independent variable on the dependent variable. 
+#' Defaults to `NULL`.
 #' @param .terms A vector of construct names to be classified.
 #' @param .test_data A matrix of test data with the same column names as the 
 #'   training data.
@@ -276,9 +282,12 @@
 #'   Function output should preferably be a (named)
 #'   vector but matrices are also accepted. However, the output will be 
 #'   vectorized (columnwise) in this case. See the examples section for details.
-#' @param .values_moderator A numeric vector. Provides the values of the moderator, e.g.,
-#' in the simple effects analysis. Typically these are difference from the mean (=0) 
-#' measured in standard deviations. Defaults to c(-2,-1,0,1,2).
+#' @param .value_independent Integer. Only required for floodlight analysis;
+#' The value of the independent variable in case that it appears as a 
+#' higher-order term.
+#' @param .values_moderator A numeric vector. The values of the moderator in a 
+#' the simple effects analysis. Typically these are difference from the mean (=0) 
+#' measured in standard deviations. Defaults to `c(-2, -1, 0, 1, 2)`.
 #' @param .vcv_asymptotic Logical. Should the asymptotic variance-covariance matrix be used, i.e., 
 #' VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) be computed directly? 
 #'  Defaults to `FALSE`.
@@ -424,6 +433,7 @@ args_default <- function(.choices = FALSE) {
     .object                  = NULL,
     .P                       = NULL,
     .parameters_to_compare   = NULL,
+    .path_coefficients       = NULL,
     .plot_package            = NULL,
     .plot_type               = NULL,
     .probs                   = NULL,
@@ -467,6 +477,7 @@ args_default <- function(.choices = FALSE) {
     .stage                   = c("first", "second"),
     .standardized            = TRUE,
     .starting_values         = NULL,
+    .steps_mod               = NULL,
     .terms                   = NULL,
     .test_data               = NULL,
     .tolerance               = 1e-05,
@@ -475,6 +486,7 @@ args_default <- function(.choices = FALSE) {
     .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
                                  "CI_basic","CI_bc", "CI_bca"),
     .user_funs               = NULL,
+    .value_independent       = 0,
     .values_moderator        = c(-2,-1,0,1,2),
     .vcv_asymptotic          = c(FALSE, TRUE),
     .verbose                 = TRUE,
