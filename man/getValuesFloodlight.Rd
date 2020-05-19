@@ -11,7 +11,7 @@ getValuesFloodlight(
   .independent = args_default()$.independent,
   .moderator = args_default()$.moderator,
   .steps_mod = args_default()$.steps_mod,
-  .level_iv = args_default()$.level_iv,
+  .value_independent = args_default()$.value_independent,
   .alpha = args_default()$.alpha
 )
 }
@@ -19,11 +19,23 @@ getValuesFloodlight(
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
 
+\item{.path_coefficients}{List. A list that contains the resampled and the original
+path coefficient estimates. Typically a part of a \code{cSEMResults_resampled} object.
+Defaults to \code{NULL}.}
+
 \item{.dependent}{Character string. The name of the dependent variable.}
 
 \item{.independent}{Character string. The name of the independent variable.}
 
 \item{.moderator}{Character string. The name of the moderator variable.}
+
+\item{.steps_mod}{A numeric vector. Steps used for the moderator variable in calculating
+the simple effects of an independent variable on the dependent variable.
+Defaults to \code{NULL}.}
+
+\item{.value_independent}{Integer. Only required for floodlight analysis;
+The value of the independent variable in case that it appears as a
+higher-order term.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}

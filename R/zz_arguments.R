@@ -170,6 +170,9 @@
 #'   parameters (i.e, path (`~`), loadings (`=~`), weights (`<~`), or correlations (`~~`)) should be
 #'   compared across groups. Defaults to `NULL` in which case all weights, loadings and 
 #'   path coefficients of the originally specified model are compared.
+#' @param .path_coefficients List. A list that contains the resampled and the original 
+#' path coefficient estimates. Typically a part of a `cSEMResults_resampled` object.
+#' Defaults to `NULL`. 
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
@@ -253,6 +256,9 @@
 #'   list names are the construct names whose indicator weights the user
 #'   wishes to set. The vectors must be named vectors of `"indicator_name" = value` 
 #'   pairs, where `value` is the (scaled or unscaled) starting weight. Defaults to `NULL`.
+#' @param .steps_mod A numeric vector. Steps used for the moderator variable in calculating 
+#' the simple effects of an independent variable on the dependent variable. 
+#' Defaults to `NULL`.
 #' @param .terms A vector of construct names to be classified.
 #' @param .test_data A matrix of test data with the same column names as the 
 #'   training data.
@@ -276,8 +282,9 @@
 #'   Function output should preferably be a (named)
 #'   vector but matrices are also accepted. However, the output will be 
 #'   vectorized (columnwise) in this case. See the examples section for details.
-#' @param .value_independent Integer. The value of the independent variable for 
-#' the floodlight analysis in case that the independent variable appears as a higher-order term.
+#' @param .value_independent Integer. Only required for floodlight analysis;
+#' The value of the independent variable in case that it appears as a 
+#' higher-order term.
 #' @param .values_moderator A numeric vector. The values of the moderator in a 
 #' the simple effects analysis. Typically these are difference from the mean (=0) 
 #' measured in standard deviations. Defaults to `c(-2, -1, 0, 1, 2)`.
@@ -426,6 +433,7 @@ args_default <- function(.choices = FALSE) {
     .object                  = NULL,
     .P                       = NULL,
     .parameters_to_compare   = NULL,
+    .path_coefficients       = NULL,
     .plot_package            = NULL,
     .plot_type               = NULL,
     .probs                   = NULL,
@@ -469,6 +477,7 @@ args_default <- function(.choices = FALSE) {
     .stage                   = c("first", "second"),
     .standardized            = TRUE,
     .starting_values         = NULL,
+    .steps_mod               = NULL,
     .terms                   = NULL,
     .test_data               = NULL,
     .tolerance               = 1e-05,

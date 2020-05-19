@@ -163,8 +163,10 @@ plot.cSEMNonlinearEffects <- function(
                                           y = x$out_floodlight$out[, 'direct_effect'])) +
       ggplot2::geom_line() +
       ggplot2::geom_ribbon(ggplot2::aes(ymin = x$out_floodlight$out[,'lb'], 
-                                        ymax = x$out_floodlight$out[, 'ub']), 
+                                        ymax = x$out_floodlight$out[, 'ub'],
+                                        fill=paste0(100*(1-x$Information$alpha),'% CI')), 
                            alpha = 0.2) +
+      ggplot2::scale_fill_manual('',values="grey12")+
       ggplot2::labs(
         x = paste('Level of ', x$Information['moderator']), 
         y = paste('Effect of', x$Information['independent'], 'on \n', x$Information['dependent']),
@@ -174,12 +176,13 @@ plot.cSEMNonlinearEffects <- function(
       ggplot2::theme(panel.grid.minor = ggplot2::element_blank())
     
     # Add Johnson-Neyman points, if they exist in the considered range
+    if(nrow(x$out_floodlight$Johnson_Neyman_points)>0){
     for(row in 1:nrow(x$out_floodlight$Johnson_Neyman_points)){
       plot1 <- plot1 +
             ggplot2::geom_point(x = x$out_floodlight$Johnson_Neyman_points[row,'x'], 
                                 y = x$out_floodlight$Johnson_Neyman_points[row,'y'], size = 2)
     }
-
+}
     # Plot
     return(plot1)
   }

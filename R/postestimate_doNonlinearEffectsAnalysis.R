@@ -143,23 +143,35 @@ doNonlinearEffectsAnalysis <- function(
     .independent       = .independent,
     .moderator         = .moderator,
     .steps_mod         = steps_flood,
-    .level_iv          = .value_independent,
-    .alpha             =.alpha
+    .value_independent = .value_independent,
+    .alpha             = .alpha
   )
-  
-  # Determine Johnson-Neyman point 
-  JN_temp = lapply(c('lb', 'ub'), function(x) {
-    # Look for sign flips
-    pos  = which(diff(sign(res_flood[, x])) != 0)
-    y    = res_flood[, x][pos]
-    x    = res_flood[, 'value_z'][pos]
-    temp = cbind(x, y)
-    colnames(temp) = c('x', 'y')
-    temp
-  })
-  # Put all JN Points below each other
-  JN_matrix=do.call(rbind,JN_temp)
 
+  # Determine Johnson-Neyman point 
+
+  # Create function for interpolation
+  # lower bound of the CI
+  Int_lb<-approxfun(x=res_flood[,'value_z'], y=res_flood[,'lb'])
+  # find zero places
+  zero_lb<-rootSolve::uniroot.all(Int_lb,
+                         interval = range(res_flood[,'value_z']))
+  
+  # Create function for Interpolation 
+  # upper bound of the CI
+  Int_ub<-approxfun(x=res_flood[,'value_z'], y=res_flood[,'ub'])
+  # find zero places
+  zero_ub<-rootSolve::uniroot.all(Int_ub,
+                                  interval = range(res_flood[,'value_z']))
+  
+  zeros=c(zero_lb,zero_ub)
+  
+  if(length(zeros)>0){#At least one JN point
+    JN_matrix<-cbind(zeros,0)
+    colnames(JN_matrix)<-c('x','y')
+  } else if(length(zeros)==0){
+    JN_matrix<-matrix(nrow=0,ncol=2,dimnames = list(c(),c('x','y')))
+  }
+  
   out_flood <- list(
     "out"                   = res_flood,
     "Johnson_Neyman_points" = JN_matrix
@@ -173,37 +185,12 @@ doNonlinearEffectsAnalysis <- function(
     .independent       = .independent,
     .moderator         = .moderator,
     .steps_mod         = c(-2,-1,0,1,2),
-    .level_iv          = .value_independent,
+    .value_independent = .value_independent,
     .alpha             =.alpha
   )
- # out_print <- lapply(c(-2,-1,0,1,2), function(step){
- #    ## Note:
- #    #   
- #    #   y = a + bz + cx + dxz
- #    #   The marginal effect delta y = b + dx evaluated at x0 is identical to the
- #    #   b' of the regression that uses x' = x - x0, since
- #    #   y = a' + b'z + c'x' + d'x'z
- #    #     = (a - cx0) + (b - dx0)z + cx + dxz
- #    #   ---> b' = b - dx0
- #    #
- #    # Resamples of the effect of z on y at different levels of x 
- #    effect_resampled <- est$Resampled[ , beta_z] + est$Resampled[, beta_xz] * step 
- #    
- #    # Value of the originally estimated effect of z on y at different levels of x
- #    effect_original <- est$Original[beta_z] + est$Original[beta_xz] * step
- #    
- #    # Compute empirical quantile based on resamples
- #    bounds <- quantile(effect_resampled , c(.alpha/2, 1 - .alpha/2))
- #    
- #    # Return output
- #    c(effect_original, step, bounds[1],  bounds[2])
- #  })
-  
-  # out_print <- do.call(rbind, dataplot_temp_print)
-  
+
   colnames(out_print) <- c('direct_effect', 'value_z', sprintf("%.6g%%L", 100*(1-.alpha)),
                            sprintf("%.6g%%U", 100*(1-.alpha)))
-  
   
   
   ### Calculation Simple effects and surface analysis---------------------------------------
@@ -249,7 +236,6 @@ doNonlinearEffectsAnalysis <- function(
   # Calculation of simple effects analysis
   steps_mod_simple = .values_moderator
 
-  
   y_pred_list_simple=lapply(steps_mod_simple,function(stepmode){
     temp<-lapply(sum_rel$Name,function(x){
       temp <- sum_rel[sum_rel$Name==x,]

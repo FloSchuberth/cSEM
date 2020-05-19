@@ -232,6 +232,10 @@ parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or 
 compared across groups. Defaults to \code{NULL} in which case all weights, loadings and
 path coefficients of the originally specified model are compared.}
 
+\item{.path_coefficients}{List. A list that contains the resampled and the original
+path coefficient estimates. Typically a part of a \code{cSEMResults_resampled} object.
+Defaults to \code{NULL}.}
+
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
@@ -343,6 +347,10 @@ list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
 pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
 
+\item{.steps_mod}{A numeric vector. Steps used for the moderator variable in calculating
+the simple effects of an independent variable on the dependent variable.
+Defaults to \code{NULL}.}
+
 \item{.terms}{A vector of construct names to be classified.}
 
 \item{.test_data}{A matrix of test data with the same column names as the
@@ -374,8 +382,9 @@ Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
 
-\item{.value_independent}{Integer. The value of the independent variable for
-the floodlight analysis in case that the independent variable appears as a higher-order term.}
+\item{.value_independent}{Integer. Only required for floodlight analysis;
+The value of the independent variable in case that it appears as a
+higher-order term.}
 
 \item{.values_moderator}{A numeric vector. The values of the moderator in a
 the simple effects analysis. Typically these are difference from the mean (=0)

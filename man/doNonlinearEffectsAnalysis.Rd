@@ -32,8 +32,9 @@ between the minimum and maximum value of the moderator. Defaults to \code{100}.}
 the simple effects analysis. Typically these are difference from the mean (=0)
 measured in standard deviations. Defaults to \code{c(-2, -1, 0, 1, 2)}.}
 
-\item{.value_independent}{Integer. The value of the independent variable for
-the floodlight analysis in case that the independent variable appears as a higher-order term.}
+\item{.value_independent}{Integer. Only required for floodlight analysis;
+The value of the independent variable in case that it appears as a
+higher-order term.}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}

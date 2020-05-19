@@ -21,7 +21,7 @@ getValuesFloodlight <- function(
   .independent       = args_default()$.independent,
   .moderator         = args_default()$.moderator,
   .steps_mod         = args_default()$.steps_mod,
-  .level_iv          = args_default()$.level_iv,
+  .value_independent = args_default()$.value_independent,
   .alpha             = args_default()$.alpha
   ){
   
@@ -46,8 +46,7 @@ getValuesFloodlight <- function(
   
   # terms that contain only the independent and the moderator variable
   relevant_terms <- splitIVrel[IVselect1]
-  
-  
+
   # lapply over the steps of the moderator
   out <- lapply(.steps_mod, function(step){
    # lapply over the various terms of the equation of the dependent variable
@@ -62,12 +61,12 @@ getValuesFloodlight <- function(
       
       # calculate the effects for the resampled effects and the original effect
       effect_resampled <- .path_coefficients$Resampled[, term] *
-        countIV * .level_iv ^ (countIV - 1) *
+        countIV * .value_independent ^ (countIV - 1) *
         step ^ countMed
       
       # calculate the original effect
       effect_original <- .path_coefficients$Original[term] *
-        countIV * .level_iv ^ (countIV - 1) *
+        countIV * .value_independent ^ (countIV - 1) *
         step ^ countMed
       
       list(effect_resampled = effect_resampled,
