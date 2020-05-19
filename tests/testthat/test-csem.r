@@ -75,7 +75,7 @@ dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)),
 #                bug is fixed in the development version and from 0.6.7 onwards
 #                Uncomment once 0.6.7 is available.
 for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
-           "unit", "regression"))
+           "unit", "regression")) {
 # for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
 #            "unit", "bartlett", "regression")) {
   ## - "SSQCOR" is excluded as it is rather unstable, regularily producing differences

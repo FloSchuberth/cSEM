@@ -25,7 +25,7 @@ print.cSEMNonlinearEffects <- function(x, ...) {
   JN    <- x$out_floodlight$Johnson_Neyman_points
   
   cat2("\n\nBased on a value of ", 
-       X$Information$value_independent , " for the independent variable `", indep, "`.")
+       x$Information$value_independent , " for the independent variable `", indep, "`.")
   
   for(i in 1:nrow(info)) {
     cat2("\n\nSlope of `", indep, "` when `", mod, "` is at ", 

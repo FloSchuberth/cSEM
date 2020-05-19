@@ -38,6 +38,12 @@ doNonlinearEffectsAnalysis <- function(
   .alpha              = 0.05
 ){
   
+  ## Install rootSolve if not already installed
+  if (!requireNamespace("rootSolve", quietly = TRUE)) {
+    stop2(
+      "Package `rootSolve` required. Use `install.packages(\"rootSolve\")` and rerun.")
+  }
+  
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, doNonlinearEffectsAnalysis, 
                   .dependent = .dependent, .independent = .independent,
