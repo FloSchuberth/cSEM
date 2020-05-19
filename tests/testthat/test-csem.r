@@ -71,8 +71,13 @@ dat <- MASS::mvrnorm(300, rep(0, nrow(Sigma$Sigma)),
                      Sigma = Sigma$Sigma, empirical = TRUE)
 
 ## Estimate
+# (19.05.2020) - Temporarily remove "bartlett" as lavaan 0.6.6 has a bug; the
+#                bug is fixed in the development version and from 0.6.7 onwards
+#                Uncomment once 0.6.7 is available.
 for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
-           "unit", "bartlett", "regression")) {
+           "unit", "regression"))
+# for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
+#            "unit", "bartlett", "regression")) {
   ## - "SSQCOR" is excluded as it is rather unstable, regularily producing differences
   ##   between estimate and population value larger than 0.01.
 
