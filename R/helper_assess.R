@@ -1,3 +1,54 @@
+#' Akaike information criterion
+#'
+#' Calculate the Akaike information criterion (AIC) as proposed by 
+#' \insertCite{Akaike1974;textual}{cSEM}.
+#'
+#' The AIC is typically used as a model selection criteria.
+#' 
+#' @usage calculateAIC(.object = NULL)
+#'
+#' @return A single numeric value. If `.object` is a list 
+#'   of `cSEMResults` objects, a list of AICs is returned.
+#'   
+#' @inheritParams csem_arguments
+#'
+#' @seealso [assess()], [cSEMResults]
+#'
+#' @references 
+#' \insertAllCited{}
+#' @export
+
+calculateAIC <- function(.object = NULL){
+  
+  if(inherits(.object, "cSEMResults_multi")) {
+    
+    out <- lapply(.object, calculateAIC)
+    return(out)
+    
+  } else if(inherits(.object, "cSEMResults_default")) {
+    x1 <- .object$Estimates
+    
+    # Number of estimated parameters
+    # Note: # estimated parameters = total number of elements of S - df
+    k <- sum(lower.tri(x1$Indicator_VCV)) - calculateDf(.object)
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    
+    out <- lapply(.object, calculateAVE)
+    return(out)
+    
+  } else {
+    stop2(
+      "The following error occured in the calculateAIC() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
+  
+  AIC <- -2*calculateDML(.object) + 2*k
+
+  return(AIC) 
+}
+
 #' Average variance extracted (AVE)
 #'
 #' Calculate the average variance extracted (AVE) as proposed by 
