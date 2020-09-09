@@ -593,7 +593,37 @@ assess <- function(
   }
   if(any(.quality_criterion %in% c("all", "vifmodeB"))) {
     # VIFModeB
-    out[["VIF_modeB"]] <- calculateVIFModeB(.object)
+    if(inherits(.object, "cSEMResults_default")) {
+      out[["VIF_modeB"]] <- calculateVIFModeB(.object)
+    } else {
+      # Combine first and second stage matrix into one
+      nn <- calculateVIFModeB(.object)
+      
+      # If both stages are NA --> return NA
+      # If First_Stage is NA, and Second isnt --> return only Second_stage matrix
+      # If only First_stage is not NA --> return only First_stage matrix
+      # If both are not NA, combine and return combined matrix.
+      out[["VIF_modeB"]] <- if(anyNA(nn$First_stage)) {
+        if(anyNA(nn$Second_stage)) {
+          # 1st is NA and 2nd is NA
+          NA
+        } else {
+          # 1st is NA and 2nd is not NA
+          nn$Second_stage
+        }
+      } else {
+        if(anyNA(nn$Second_stage)) {
+          # 1st is not NA and 2nd is NA
+          nn$First_stage
+        } else {
+          # Non is NA
+          out_temp <- rbind(cbind(nn$First_stage, matrix(0, nrow = nrow(nn$First_stage), ncol = ncol(nn$Second_stage))),
+                cbind(matrix(0, nrow = nrow(nn$Second_stage), ncol = ncol(nn$First_stage)), nn$Second_stage))
+          rownames(out_temp) <- c(rownames(nn$First_stage), rownames(nn$Second_stage))
+          colnames(out_temp) <- c(colnames(nn$First_stage), colnames(nn$Second_stage))
+        }
+      }
+    }
   }
   
   out$Information[["All"]] <- FALSE

@@ -1851,7 +1851,7 @@ calculateVIFModeB <- function(.object = NULL) {
     return(out)
   } else {
     stop2(
-      "The following error occured in the calculateVIF() function:\n",
+      "The following error occured in the calculateVIFModeB() function:\n",
       "`.object` must be of class `cSEMResults`."
     )
   }
@@ -1895,6 +1895,25 @@ calculateVIFModeB <- function(.object = NULL) {
     names(VIF) <- names(modesB)
   } else {
     VIF <- NA
+  }
+  
+  ## Make output a matrix
+  # Note: this is necessary for calculateVIFModeB() to work
+  #       when supplied to the .user_funs argument of resamplecSEMResults(). 
+  #       Currently, the .user_funs functions 
+  #       need to return a vector or a matrix.
+  
+  if(!anyNA(VIF)) {
+    mm <- m[names(modesB), colSums(m[names(modesB), , drop = FALSE]) != 0 , drop = FALSE]
+    tm <- t(mm)
+    tm[which(tm == 1)] <- unlist(VIF)
+    
+    # Remove "_temp" suffix if it appears
+    rownames(tm) <- gsub("_temp", "", rownames(tm))
+    colnames(tm) <- gsub("_temp", "", colnames(tm))
+    
+    # Return
+    VIF <- t(tm)
   }
   
   return(VIF)

@@ -1,5 +1,12 @@
 # Development version: cSEM 0.2.0:9000
 
+- `print.cSEMAssess()` now prints the results of `calculateVIFModeB()`. This had been missing
+  in previous releases. (#384)
+  
+- Breaking: `calculateVIFModeB()` now returns a matrix with the dependent construct
+  in the rows and the VIFs for the coresponding weights in the columns. Previously,
+  the output was a list.
+
 - Add model selection criteria. See the `calculateModelSelectionCriteria()` 
   function for details. As usual, all criteria are available via `assess()`. (#412)
 
