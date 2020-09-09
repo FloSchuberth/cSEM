@@ -275,7 +275,8 @@
 #' For possible choices, see the `.quantity` argument of the \code{\link{infer}} function. 
 #' In the test_mgd function default is to "*CI_percentile*".
 #' @param .type Character string. Which fitting function should the GFI be based 
-#'   on? One of *"ML"* for the maximum likelihood fitting function or *"ULS"* for the
+#'   on? One of *"ML"* for the maximum likelihood fitting function, *"GLS"* for 
+#'   the generalized least squares fitting function or *"ULS"* for the
 #'   unweighted least squares fitting function (same as the squared Euclidian distance). 
 #'   Defaults to *"ML"*.
 #' @param .type_vcv Character string. Which model-implied correlation 
@@ -454,17 +455,18 @@ args_default <- function(.choices = FALSE) {
                                  "geo_of_harmonic"),
     .PLS_ignore_structural_model = FALSE,
     .PLS_modes               = NULL,
-    .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
-    .quality_criterion       = c("all", "aic", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
-                                 "rho_C_weighted_mm", "cronbachs_alpha", 
-                                 "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                                 "effects", "f2", "chi_square", "chi_square_df",
+    .PLS_weight_scheme_inner = c("path", "centroid", "factorial"),
+    .quality_criterion       = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
+                                 "hqc", "mallows_cp", "ave",
+                                 "rho_C", "rho_C_mm", "rho_C_weighted", 
+                                 "rho_C_weighted_mm", "dg", "dl", "dml", "df",
+                                 "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                                  "cfi", "gfi", "ifi", "nfi", "nnfi", 
                                  "reliability",
                                  "rmsea", "rms_theta", "srmr",
                                  "gof", "htmt", "r2", "r2_adj",
                                  "rho_T", "rho_T_weighted", "vif", 
-                                 "vifmodeB",  "fl_criterion"),
+                                 "vifmodeB"),
     
     .quantity                = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
                                  "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
@@ -492,7 +494,7 @@ args_default <- function(.choices = FALSE) {
     .terms                   = NULL,
     .test_data               = NULL,
     .tolerance               = 1e-05,
-    .type                    = c("ML", "ULS"),
+    .type                    = c("ML", "GLS", "ULS"),
     .type_vcv                = c("indicator", "construct"),
     .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
                                  "CI_basic","CI_bc", "CI_bca"),

@@ -20,7 +20,7 @@ calculateChiSquareDf(.object)
 
 calculateCFI(.object)
 
-calculateGFI(.object, .type = c("ML", "ULS"))
+calculateGFI(.object, .type = c("ML", "GLS", "ULS"))
 
 calculateIFI(.object)
 
@@ -44,7 +44,8 @@ calculateSRMR(
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.type}{Character string. Which fitting function should the GFI be based
-on? One of \emph{"ML"} for the maximum likelihood fitting function or \emph{"ULS"} for the
+on? One of \emph{"ML"} for the maximum likelihood fitting function, \emph{"GLS"} for
+the generalized least squares fitting function or \emph{"ULS"} for the
 unweighted least squares fitting function (same as the squared Euclidian distance).
 Defaults to \emph{"ML"}.}
 

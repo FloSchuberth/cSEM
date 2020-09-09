@@ -1439,11 +1439,11 @@ calculateCFI <- function(.object) {
 #' @describeIn fit_measures The goodness of fit index (GFI).
 #' @export
 
-calculateGFI <- function(.object, .type = c("ML", "ULS")) {
+calculateGFI <- function(.object, .type = c("ML", "GLS", "ULS")) {
   .type <- match.arg(.type)
 
-    if(inherits(.object, "cSEMResults_multi")) {
-    out <- lapply(.object, calculateGFI)
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateGFI, .type = .type)
     return(out)
   }
   if(inherits(.object, "cSEMResults_default")) {
@@ -1459,17 +1459,19 @@ calculateGFI <- function(.object, .type = c("ML", "ULS")) {
   
   Sigma_hat <- fit(.object)
   
-  # See Mulaik (1989, p. 345)
-  if(.type == "ULS") {
-    # If ULS
-    1 - matrixcalc::matrix.trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
-      matrixcalc::matrix.trace(t(S) %*% S)
-    
-  } else if(.type == "ML") {
-    # If ML
+  if(.type == "ML") {
+    # If ML; See Mulaik (1989, p. 345)
     1 - matrixcalc::matrix.trace(t(solve(Sigma_hat) %*% S - diag(nrow(S))) %*% 
                                    (solve(Sigma_hat) %*% S - diag(nrow(S)))) / 
       matrixcalc::matrix.trace(t(solve(Sigma_hat) %*% S) %*% (solve(Sigma_hat) %*% S))
+  } else if(.type == "GLS") {
+    # If GLS; See Tanaka & Huba (1985, p. 199; Eq. 16)
+    1 - matrixcalc::matrix.trace(t(diag(nrow(S)) - Sigma_hat %*% solve(S)) %*% 
+                                   (diag(nrow(S)) - Sigma_hat %*% solve(S))) / nrow(S)
+  } else if(.type == "ULS") {
+    # If ULS; See Mulaik (1989, p. 345)
+    1 - matrixcalc::matrix.trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
+      matrixcalc::matrix.trace(t(S) %*% S)
   }
 }
 

@@ -24,15 +24,15 @@ bibliography: ../inst/REFERENCES.bib
 As indicated by the name, `assess()` is used to assess a model estimated using the
 `csem()` function.
 
-In **cSEM** model assessement is considered to be any task that in some way or
+In **cSEM** model assessment is considered to be any task that in some way or
 another seeks to assess the quality of the estimated model *without conducting* 
 *a statistical test* (tests are covered by the `test_*` family of functions). 
 Quality in this case is taken to be a catch-all term for
 all common aspects of model assessment. This mainly comprises
-fit indices, reliability estimates, common validity assessment criteria, 
-effect sizes, and other 
-related quality measures/indices that do not rely on a formal test procedure. Hereinafter, 
-we will refer to a generic (fit) index, quality or assessment measure as 
+fit indices, model selection criteria, reliability estimates, common validity 
+assessment criteria, effect sizes, and other 
+related quality measures/indices that do not rely on a formal test procedure. 
+Hereinafter, we will refer to a generic (fit) index, quality or assessment measure as 
 a **quality criterion**.
 
 Currently the following quality criteria are implemented:
@@ -62,7 +62,7 @@ Currently the following quality criteria are implemented:
     - The **non-normed fit index** (NNFI)
     - The **comparative fit index** (CFI)
     - The **incremental fit index** (IFI)
-    - The **root mean square outer residual covariance** ($\text{RMS}_{\theta}$) in two alternative versions
+    - The **root mean square outer residual covariance** ($\text{RMS}_{\theta}$)
 - The **Goodness-of-Fit** (GoF) proposed by @Tenenhaus2004.
 - The **variance inflation factors** (VIF) for the structural equations as
   well as for Mode B regression equations (if `.approach_weights = "PLS-PM"`).
@@ -70,6 +70,7 @@ Currently the following quality criteria are implemented:
   ($R^2$ and $R^2_{adj}$)
 - A measure of the **effect size** (Cohen's $f^2$).
 - Direct, indirect and total effect assessment.
+- Several model selection criteria as described in @Sharma2019.
 
 
 For implementation details see the [Methods & Formulae](#methods) section.
@@ -80,16 +81,17 @@ For implementation details see the [Methods & Formulae](#methods) section.
 assess(
   .object              = NULL, 
   .only_common_factors = TRUE, 
-  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
-                           "rho_C_weighted_mm", "cronbachs_alpha", 
-                           "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                           "f2", "chi_square", "chi_square_df",
+  .quality_criterion   = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
+                           "hqc", "mallows_cp", "ave",
+                           "rho_C", "rho_C_mm", "rho_C_weighted", 
+                           "rho_C_weighted_mm", "dg", "dl", "dml", "df",
+                           "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
-                           "vifmodeB",  "fl_criterion"),
+                           "vifmodeB"),
   ...
 )
 ```
@@ -120,7 +122,7 @@ assess(
 Like all postestimation functions `assess()` can be called on any object of
 class `cSEMResults`. The output is a named list of the quality criteria given
 to `.quality_criterion`. By default all possible quality criteria 
-a calculated (`.quality_criterion = "all"`).
+are calculated (`.quality_criterion = "all"`).
 
 ## Details {#details}
 In line with all of **cSEM**'s postestimation functions, `assess()` is a generic 
@@ -130,17 +132,18 @@ every `cSEMResults_*` object must also have class `cSEMResults` for internal rea
 When using one of the major postestimation functions, method dispatch is therefore technically
 done on one of the `cSEMResults_*` class attributes, ignoring the 
 `cSEMResults` class attribute. As long as `assess()` is
-used directly method dispatch is not of any practical concern to the end-users. 
-The difference, however, becomes important if a user seeks to directly invoke an internal function 
-which is called by `assess() ` (e.g., `cSEM:::calculateAVE()` or `cSEM:::calculateHTMT()`). 
-In this case only objects of class `cSEMResults_default` are accepted as this
-ensures a specific structure. Therefore, it is important to remember that
-*internal functions in **cSEM** are generally **not** generic*!
+used directly, method dispatch is not of any practical concern to the end-users. 
+<!-- The difference, however, becomes important if a user seeks to directly invoke an  -->
+<!-- internal function which is called by `assess() ` (e.g., `cSEM:::calculateAVE()` or  -->
+<!-- `cSEM:::calculateHTMT()`).  -->
+<!-- In this case only objects of class `cSEMResults_default` are accepted as this -->
+<!-- ensures a specific structure. Therefore, it is important to remember that -->
+<!-- *internal functions in **cSEM** are generally **not** generic*! -->
 
-> Update (24.02.2020): from version 0.2.0 onwards all functions that assess() calls internally
-  will be exported. This mean users can directly invoke functions such as e.g.,
-  `calculateHTMT()` or `calculateRhoT()`. These functions will also be generic 
-  accepting all types of cSEMResults classes.
+<!-- > Update (24.02.2020): from version 0.2.0 onwards all functions that assess() calls internally -->
+<!--   will be exported. This mean users can directly invoke functions such as e.g., -->
+<!--   `calculateHTMT()` or `calculateRhoT()`. These functions will also be generic  -->
+<!--   accepting all types of cSEMResults classes. -->
 
 ### Composite models vs. common factor models
 
@@ -150,8 +153,8 @@ composite model. Consequently, their computation is suppressed by default for
 constructs modeled as composites. Currently, this applies to the following
 quality criteria: 
 
-- AVE and validity assessment based theron (i.e., the Fornell-Larcker criterion)
-- HTMT and validity assessment based theron
+- AVE and validity assessment based thereon (i.e., the Fornell-Larcker criterion)
+- HTMT and validity assessment based thereon
 - All reliability measures
  
 It is possible to force computation of all quality criteria for constructs
@@ -159,7 +162,7 @@ modeled as composites using `.only_common_factors = FALSE`, however, we explicit
 warn to interpret results, as they may not even have a conceptual meaning.
 
 All quality criteria assume that the estimated loadings, construct correlations 
-and path coefficients involved in the computation of a specific qualitiy measure
+and path coefficients involved in the computation of a specific quality measure
 are consistent estimates for their theoretical population counterpart. If
 the user deliberately chooses an approach that yields inconsistent estimates (by
 setting `.disattenuate = FALSE` in `csem()` when the estimated model contains constructs
@@ -233,8 +236,7 @@ which is again simply $\lambda^2_k$. Therefore in **cSEM** we always have:
 $$ AVE = \frac{1}{K}\sum COM_k = \frac{1}{K}\sum \text{Indicator reliability}_k = \frac{1}{K}\sum\lambda^2_k =  \frac{1}{K}\sum R^2_k $$
 
 ### Implementation
-The function is implemented as: `calculateAVE()`. It may be called directly 
-using R's `:::` mechanism.
+The function is implemented as: `calculateAVE()`.
 
 ### See also
 
@@ -260,7 +262,7 @@ maximum likelihood estimation of the same model.
 
 $$ 
 \begin{align} 
-df &= \text{# non-redundant off-diagonal elements of the empirical indicator correlation matrix $\bm{S}$} \\
+\text{df} &= \text{# non-redundant off-diagonal elements of the empirical indicator correlation matrix $\bm{S}$} \\
       &- \text{# model parameters}
 \end{align}
 $$
@@ -375,20 +377,20 @@ The definitions of fit indices calculated by `assess()` are given in the followi
 - The **root mean square outer residual covariance** ($\text{RMS}_{\theta}$) is
   defined as the square root of the mean squared covariances of the residuals of
   the outer model. The calculation of the indicator's residual covariance matrix 
-  involves the calculation of the construct's covariance matrix. In @Lohmoeller1989, 
-  this is not stated more precisely. That is why, two alternatives are possible:
-   - the restrictions of the structural model are taken into account basing
-     the calculation on the model-implied construct covariance matrix.
-   - the restrictions of the structural are not taken into account basing        
-     the calculation on the empirical construct covariance matrix, i.e., the
-     model-implied construct covariance matrix is assumed to be saturated.
+  involves the calculation of the construct's covariance matrix. See @Lohmoeller1989. 
+  <!-- this is not stated more precisely. That is why, two alternatives are possible: -->
+  <!--  - the restrictions of the structural model are taken into account basing -->
+  <!--    the calculation on the model-implied construct covariance matrix. -->
+  <!--  - the restrictions of the structural are not taken into account basing         -->
+  <!--    the calculation on the empirical construct covariance matrix, i.e., the -->
+  <!--    model-implied construct covariance matrix is assumed to be saturated. -->
 
-It should be stressed again that except for the $\text{RMS}_{\theta}$, 
+It should be stressed again that (with the possible exception of the $\text{RMS}_{\theta}$) 
 none of the above mentioned fit indices were originally designed for composite models.
 The indices RMSEA and CFI are non-centrality
 based and require specific assumptions on model and data typically made in CFA.
 The same applies for IFI and NNFI since their calculation relies on the properties 
-(primarily the expectation) of the test statistic when data follow a normal
+(primarily the expectation) of the test statistic when data follows a normal
 distribution. In general, those assumptions are not made in composite models
 and composite-based estimators, respectively. For this reason, the intuition
 behind these indices does not hold for composite-based SEM. Nevertheless, 
@@ -402,43 +404,49 @@ in mind.
 ### Formulae
 
 The exact formulae of the fit indices as implemented in **cSEM** are given in
-the following. The term $F = F(S, \Sigma(\hat{\theta})) = F(S, \hat{\Sigma})$ 
-stands for the value of a fitting function evaluated at $S$ 
-(the empirical covariance matrix of the indicators) and $\hat{\Sigma}$
-(the estimated model-implied covariance matrix of the indicators). 
-In the context of composite-based estimators, the distance measures $d_{G}$ 
-(geodesic distance), $d_{L}$ (squared Euclidian distance) and $d_{ML}$
-(maximum likelihood distance) serve as fitting functions.
+the following. The term $F = F(\bm{S}, \bm{\Sigma}(\hat{\bm{\theta}})) = F(\bm{S}, \hat{\bm{\Sigma}})$ 
+stands for the value of the maximum likelihood fitting function evaluated at $\bm{S}$ 
+(the empirical covariance matrix of the indicators) and $\hat{\bm{\Sigma}}$
+(the estimated model-implied covariance matrix of the indicators). The value of
+the maximum likelihood fitting function is computed by `calculateDML()`.
+<!-- In the context of composite-based estimators, the distance measures $d_{G}$  -->
+<!-- (geodesic distance), $d_{L}$ (squared Euclidian distance) and $d_{ML}$ -->
+<!-- (maximum likelihood distance) serve as fitting functions. -->
 
 #### The $\chi^2$-statistic
 The $\chi^2$-**statistic** is defined as:
-$$ \chi^2 = (N-1)\cdot F(S, \hat{\Sigma})$$
-where $F(S, \hat{\Sigma})$ is the maximum likelihood distance function $d_{ML}$ and $N$ the sample size.
+$$ \chi^2 = (N-1)\cdot F$$
+where $N$ is the sample size.
 
 Main reference: @Joereskog1969
 
-#### The $\chi^2/df$-ratio
-The $\chi^2$-**statistic** is defined as:
-$$ \chi^2 = (N-1)\cdot F(S, \hat{\Sigma})/df_M$$
-where $F(S, \hat{\Sigma})$ is the maximum likelihood distance function $d_{ML}$, $N$ the sample size and
-$df_M$ the degrees of the estimated model.
+#### The $\chi^2/\text{df}$-ratio
+The $\chi^2/\text{df}$-**statistic** is defined as:
+$$ \chi^2 = (N-1)\cdot F/\text{df}_M$$
+where $N$ the sample size and $\text{df}_M$ the degrees of freedom of the estimated model.
 
 Main reference: @Joereskog1969
 
 #### The goodness-of-fit index (GFI)
-The GFI is defined as:
-$$ \text{GFI} = 1 - \frac{\text{trace}\lbrack (S-\hat{\Sigma})^{2} \rbrack }{\text{trace}(S^{2})} = 1 - \frac{\sum_{i,j} (s_{ij} - \hat\sigma_{ij})^2}{\sum_{ij} s_{ij}^2}$$
-The numerator of the GFI (in the version used in **cSEM**) is the sum of 
-squared differences betwenn each element of $S$ and its corresponding element in 
-$\hat\Sigma$  after fitting the specified model. The denominator is the 
-sum of the squared entries of $S$ and can be interpreted as the total amount 
-of covariances to be explained. Thus, the GFI is a measure of the amount of variance of S
-explained by the postulated model relative to the total amount of variance to be explained. 
-Other fitting functions could be deployed in the
-numerator of the GFI. However, in this case, the intuition behind the formula of
-GFI will not hold any longer.
+The GFI is generally defined in analogy to the coefficient of determination ($R^2$) known
+from regression analysis as 1 minus the share of the weighted unexplained variance (SSE; the difference between
+$\bm{S}$ and $\hat{\bm{\Sigma}}$) relative 
+to the weighted total variance (SST; the variance of $\bm{S}$):
+$$ GFI = 1 - \frac{\text{trace}\left\{\left(\bm{W}^{-\frac{1}{2}}\lbrack\bm{S} - \hat{\bm{\Sigma}}\rbrack\bm{W}^{-\frac{1}{2}}\right)^2\right\}}{\text{trace}\left\{\left(\bm{W}^{-\frac{1}{2}}\bm{S}\bm{W}^{-\frac{1}{2}}\right)^2\right\}} $$
+The matrix $\bm{W}$ is a weight matrix. Depending on the estimation technique used
+to obtain $\hat{\bm\theta}$ different types of GFI may be computed by choosing
+a particular weight.
 
-Main reference: @Joereskog1982
+1. If $\bm{W} = \hat{\bm{\Sigma}}$, the GFI is based on the SSE and the SST from a maximum
+   likelihood estimation.
+1. If $\bm{W} = \hat{\bm{S}}$, the GFI is based on SSE and the SST from a generalized least
+   squares (GLS) estimation.
+1. If $\bm{W} = \hat{\bm{I}}$, the GFI is based on SSE and the SST from a unweighted least
+   squares (ULS) estimation.
+   
+Note that for any quadratic matrix \bm{X}, we have: $\text{trace}(\bm{X}^2) = \sum_{i,j} x^2_i$.
+
+Main references: @Joereskog1982, @Mulaik1989 and @Tanaka1985
 
 #### The standardized root mean square residual (SRMR)
 
@@ -457,25 +465,26 @@ Main reference: @Bentler2006
 #### The root mean square error of approximation (RMSEA)
 
 The RMSEA is defined as
-$$ \hat{\epsilon} = \sqrt{\frac{\hat{F}_0}{df_{M}}} \quad \text{where} \quad \hat{F}_{0} = \max \Bigl( 0, F(S, \hat{\Sigma}) - \frac{df_{M}}{N-1} \Bigr) $$
-In this formula, $df_{M}$ stands for the degrees of freedom of the specified model 
+$$ \hat{\epsilon} = \sqrt{\frac{\hat{F}_0}{\text{df}_{M}}} \quad \text{where} \quad \hat{F}_{0} = \max \Bigl( 0, F - \frac{\text{df}_{M}}{N-1} \Bigr) $$
+In this formula, $\text{df}_{M}$ stands for the degrees of freedom of the specified model 
 (see the [Degrees of Freedom](#df) section for details on how the degrees of freedom are calculated).
 The term $\hat{F}_{0}$ is an estimator for the discrepancy due to approximation. 
 Thus, the RMSEA measures the discrepancy due to approximation per degree of freedom.
-The intuition of the RMSEA does not apply to composite-based estimators.
 
 Main reference: @Browne1992
 
 #### The normed and non-normed fit index (NFI and NNFI)
 The fit indices NFI and NNFI were among the first fit indices to be introduced [@Bentler1980]. 
 They are defined as:
-$$ \text{NFI} = \frac{F_{B} - F_{M}}{F_{B}} \quad \text{and} \quad \text{NNFI} = \frac{F_{B}/df_{B} - F_{M}/df_{M}}{F_{B}/df_{B} - 1/(N-1)} $$
+$$ \text{NFI} = \frac{F_{B} - F_{M}}{F_{B}} \quad \text{and} \quad \text{NNFI} = \frac{F_{B}/\text{df}_{B} - F_{M}/\text{df}_{M}}{F_{B}/\text{df}_{B} - 1/(N-1)} $$
 The term $F_{B}$ refers to the value of the fitting function in the null model, 
 $F_{M}$ to the value of the fitting function in the model under consideration. 
 Thus, the NFI measures the increase in fit relative to the fit of the null model
 when specifying the model. The intuition of NNFI is that (in factor-based methods) 
-the expectation of $F_{M}/df_{M}$ is equal to $1/N-1$. This does not hold for
-composite-based estimators. It measures the relative departure of the numerator's 
+the expectation of $F_{M}/\text{df}_{M}$ is equal to $1/N-1$. This does not automatically
+hold for composite-based estimators. 
+
+The NNFI measures the relative departure of the numerator's 
 term from it's expectation (in the denominator). That is why, the NNFI is not
 normed and can take values larger than $1$.  
 
@@ -484,7 +493,7 @@ Main reference: @Bentler1980
 #### The comparative fit index (CFI)
 
 The CFI is defined as:
-$$ \text{CFI} = 1 - \frac{\max(0, (N-1) F_{M}-df_{M})}{\max(0, (N-1) F_{M}-df_{M}, (N-1)F_{B}-df_{B})} $$
+$$ \text{CFI} = 1 - \frac{\max(0, (N-1) F_{M}-\text{df}_{M})}{\max(0, (N-1) F_{M}-\text{df}_{M}, (N-1)F_{B}-\text{df}_{B})} $$
 Like the RMSEA, the CFI is a non-centrality based index. It measures the 
 increase in fit (that is to say the reduction in non-centrality) when 
 specifying the model under consideration relative to the fit of the null model.
@@ -499,51 +508,49 @@ Main reference: @Bentler1990.
 The IFI is defined as:
 $$ \text{IFI} = \frac{F_{B} - F_{M}}{F_{B} - df_{M}/(N-1)} $$
 The rationale underlying the IFI is that the term $F_{B} - F_{M}$ (in the numerator) 
-is compared with its expectation $F_{B} - df_{M}/(N-1)$ (in the denominator).
-This intuition only holds for factor-based estimators. 
+is compared with its expectation $F_{B} - \text{df}_{M}/(N-1)$ (in the denominator).
 
 Main reference: @Bollen1989
 
 #### The root mean square outer residual covariance
 
-The $\text{RMS}_{\theta}$ is defined as the square root of the average 
-squared covariances of the measurement model residuals. Since indicators of 
-the same block are allowed to correlate freely in composite models, only the covariances
-of residuals of different blocks are included in this case. The calculation of 
-$\text{RMS}_{\theta}$ necessitates the calculation of the correlation matrix of 
-the residuals which is usually labeled $\Theta$:
-$$ \Theta = V(X - \hat{X}) = E((X - \hat{X}) \, (X - \hat{X})')$$
-Since in composite based SEM we always have: $\hat{X} = \hat\Lambda' \hat W X$, 
-it follows that:
-$$\hat\Theta = S - S \, \hat W' \, \hat\Lambda - (S \, \hat W' \, \hat\Lambda)' + \hat\Lambda' \, V(\hat W X) \, \hat\Lambda$$
-The covariance matrix of the constructs (resp. their proxies) $V(W X)$ can be calculated 
-in two ways. On the one hand, the restrictions of the structural can be incorporated. 
-This is done by setting the argument `.model_implied` of `assess()` to `TRUE` (the default). 
-In this case, the matrix $V(W X)$ is the model-implied construct covariance matrix. 
-On the other hand (`.model_implied = FALSE`), the structural restrictions can be neglected.
-In this case $V(W X)$ is just the empirical covariance matrix of the constructs, i.e., 
-a saturated structural model is considered.
-The literature does not comment on how to calculate $V(W X)$ (see @Lohmoeller1989).
-Having set all entries of $\Theta$ that belong to indicators of the same block to `NA`, 
-the $\text{RMS}_{\theta}$ is calculated as:
-$$ RMS_{\theta} = \sqrt{\frac{1}{n} \sum_{j=1}^{K} \sum_{i=1}^{j-1} \theta_{ji}^{2}} $$
-where $K$ is the number of indicators, $\theta_{ji}$ stands for 
-the entry at position $(j,i)$ of the (NA-modified) matrix $\Theta$ and $n$ is 
-the number of non-NA entries below the diagonal of $\Theta$.
+<!-- The $\text{RMS}_{\theta}$ is defined as the square root of the average  -->
+<!-- squared covariances of the outer model residuals. Since indicators of  -->
+<!-- the same block are allowed to correlate freely in composite models, only the covariances -->
+<!-- of residuals of different blocks are included in this case. The calculation of  -->
+<!-- $\text{RMS}_{\theta}$ necessitates the calculation of the correlation matrix of  -->
+<!-- the residuals which is usually labeled $\Theta$: -->
+<!-- $$ \Theta = V(X - \hat{X}) = E((X - \hat{X}) \, (X - \hat{X})')$$ -->
+<!-- Since in composite based SEM we always have: $\hat{X} = \hat\Lambda' \hat W X$,  -->
+<!-- it follows that: -->
+<!-- $$\hat\Theta = S - S \, \hat W' \, \hat\Lambda - (S \, \hat W' \, \hat\Lambda)' + \hat\Lambda' \, V(\hat W X) \, \hat\Lambda$$ -->
+<!-- The covariance matrix of the constructs (resp. their proxies) $V(W X)$ can be calculated  -->
+<!-- in two ways. On the one hand, the restrictions of the structural can be incorporated.  -->
+<!-- This is done by setting the argument `.model_implied` of `assess()` to `TRUE` (the default).  -->
+<!-- In this case, the matrix $V(W X)$ is the model-implied construct covariance matrix.  -->
+<!-- On the other hand (`.model_implied = FALSE`), the structural restrictions can be neglected. -->
+<!-- In this case $V(W X)$ is just the empirical covariance matrix of the constructs, i.e.,  -->
+<!-- a saturated structural model is considered. -->
+<!-- The literature does not comment on how to calculate $V(W X)$ (see @Lohmoeller1989). -->
+<!-- Having set all entries of $\Theta$ that belong to indicators of the same block to `NA`,  -->
+<!-- the $\text{RMS}_{\theta}$ is calculated as: -->
+<!-- $$ RMS_{\theta} = \sqrt{\frac{1}{n} \sum_{j=1}^{K} \sum_{i=1}^{j-1} \theta_{ji}^{2}} $$ -->
+<!-- where $K$ is the number of indicators, $\theta_{ji}$ stands for  -->
+<!-- the entry at position $(j,i)$ of the (NA-modified) matrix $\Theta$ and $n$ is  -->
+<!-- the number of non-NA entries below the diagonal of $\Theta$. -->
 
 ### Implementation
 The functions are implemented as: `calculateChiSquare()`, `calculateChiSquareDf()`, 
 `calculateCFI()`, `calculateNFI()`, 
 `calculateNNFI()`, `calculateIFI()`, `calculateGFI()`, `calculateRMSEA()`, 
-`calculateRMSTheta()`, `calculateSRMR()`. They may be called directly 
-using R's `:::` mechanism.
+`calculateRMSTheta()`, `calculateSRMR()`.
 
 ### See also
 
-Several fit indices require a fitting function, that is to say a distance 
-measure like the geodesic distance, the squared Euclidian distance or the maximum-likelihood distance.
-These are implemented as: `calculateDG()`, `calculateDL()`, and `calculateDML()`.
-They may be called directly using R's `:::` mechanism.
+Several fit indices require a fitting function, i.e., a distance 
+measure like the geodesic distance, the squared Euclidian distance or the maximum 
+likelihood distance. These are implemented as: `calculateDG()`, `calculateDL()`, 
+and `calculateDML()`.
 
 ## Reliability {#reliability}
 
@@ -676,12 +683,12 @@ to understand each intricate detail.
 In **cSEM** we seek to make working with reliabilities as consistent as
 possible by relying on a paper by @Cho2016 who proposed uniform 
 formula-generating methods and a systematic naming conventions for all
-common reliability measures. Naturally, some of the conventional terminonolgy 
+common reliability measures. Naturally, some of the conventional terminology 
 is deeply entrenched within the nomenclatura of a particular filed (e.g., coefficient
 alpha alias Cronbach's alpha in pychonometrics) such that a new, albeit consistent,
 naming scheme seems superfluous at best. However, we belief the merit of a 
 "standardized" naming pattern will eventually be helpful to all users as it
-helps clarify potential missconceptions thus preventing potential missue, such as
+helps clarify potential misconceptions thus preventing potential misuse, such as
 the (ab)use of Cronbach alpha as a reliability measure for congernic measurement models.
 
 Apart from these considerations, this package takes a pragmatic stance
@@ -726,8 +733,7 @@ the tau-equivalent reliability (Cronbach's alpha). To compute the CI, set
 can be changed by supplying a single value or a vector of values to `.alpha`.
 
 ### Implementation
-The functions are implemented as: `calculateRhoC()` and `calculateRhoT()`. 
-They may be called directly using R's `:::` mechanism.
+The functions are implemented as `calculateRhoC()` and `calculateRhoT()`.
 
 ## The Goodness of Fit (GoF)
 ### Definition
@@ -746,8 +752,7 @@ that is explained by its connected latent variable and $R^2_{m; structural}$ the
 R squared of the $m$'th equation of the structural model.
 
 ### Implementation
-The function is implemented as: `calculateGoF()`. It may be called directly 
-using R's `:::` mechanism.
+The function is implemented as: `calculateGoF()`.
 
 ## The Heterotrait-Monotrait-Ratio of Correlations (HTMT)
 

@@ -374,7 +374,8 @@ For possible choices, see the \code{.quantity} argument of the \code{\link{infer
 In the test_mgd function default is to "\emph{CI_percentile}".}
 
 \item{.type}{Character string. Which fitting function should the GFI be based
-on? One of \emph{"ML"} for the maximum likelihood fitting function or \emph{"ULS"} for the
+on? One of \emph{"ML"} for the maximum likelihood fitting function, \emph{"GLS"} for
+the generalized least squares fitting function or \emph{"ULS"} for the
 unweighted least squares fitting function (same as the squared Euclidian distance).
 Defaults to \emph{"ML"}.}
 

@@ -430,7 +430,10 @@ assess <- function(
   }
   if(any(.quality_criterion %in% c("all", "gfi"))) {
     # Effect size
-    out[["GFI"]] <- calculateGFI(.object)
+    out[["GFI"]] <- calculateGFI(
+      .object,
+      .type = "ML"
+      )
   }
   if(any(.quality_criterion %in% c("all", "ifi"))) {
     # Effect size

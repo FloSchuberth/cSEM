@@ -940,13 +940,26 @@ in the {Analysis} of {Covariance} {Structures}},
 }
 
 @Article{Sharma2019,
-  author  = {Sharma, Pratyush; Sarstedt, Marko; Shmueli, Galit; Kim, Kevin H.; and Thiele, Kai Oliver},
+  author  = {Sharma, Pratyush and Sarstedt, Marko and Shmueli, Galit and Kim, Kevin H. and Thiele, Kai O.},
   journal = {Journal of the Association for Information Systems},
   title   = {{PLS}-Based Model Selection: The Role of Alternative Explanations in Information Systems Research},
   year    = {2019},
   number  = {4},
   volume  = {20},
   doi     = {10.17005/1.jais.00538},
+}
+
+@Article{Mulaik1989,
+  author    = {Stanley A. Mulaik and Larry R. James and Judith Van Alstine and Nathan Bennett and Sherri Lind and C. Dean Stilwell},
+  journal   = {Psychological Bulletin},
+  title     = {Evaluation of Goodness-of-fit Indices for Structural Equation Models},
+  year      = {1989},
+  number    = {3},
+  pages     = {430--445},
+  volume    = {105},
+  doi       = {10.1037/0033-2909.105.3.430},
+  file      = {:Literatur/Mulaik1989.pdf:PDF},
+  publisher = {American Psychological Association ({APA})},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
