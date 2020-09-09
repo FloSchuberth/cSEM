@@ -109,7 +109,7 @@ print.cSEMTestOMF <- function(x, ...) {
   }
   
   ## Additional information ----------------------------------------------------
-  cat("\nAdditonal information:")
+  cat("\nAdditional information:")
   cat2(
     "\n\n\tOut of ", x$Information$Total_runs , " bootstrap replications ", 
     x$Information$Number_admissibles, " are admissible.\n\t",
