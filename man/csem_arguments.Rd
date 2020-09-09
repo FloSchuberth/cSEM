@@ -71,6 +71,9 @@ is centered at \verb{2*theta - theta*_hat},
 where \verb{theta*_hat} is the average over all \code{.R} bootstrap estimates of \code{theta}.
 Defaults to \code{TRUE}}
 
+\item{.by_equation}{Should the criteria be computed for each structural model
+equation separately? Defaults to \code{TRUE}.}
+
 \item{.C}{A (J x J) composite variance-covariance matrix.}
 
 \item{.check_errors}{Logical. Should the model to parse be checked for correctness
@@ -200,6 +203,10 @@ or a \link{cSEMModel} list.}
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
 
+\item{.ms_criterion}{Character string. Either a single character string or a vector
+of character strings naming the model selection criterion to compute.
+Defaults to \code{"all"}.}
+
 \item{.n}{Integer. The number of observations of the original data.}
 
 \item{.n_steps}{Integer. A value giving the number of steps (the spotlights, i.e.,
@@ -222,6 +229,9 @@ be computed? Defaults to \code{FALSE}.}
 factors be included when calculating one of the following quality critera:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to \code{TRUE}.}
+
+\item{.only_structural}{Should the the log-likelihood be based on the
+structural model? Ignored if \code{.by_equation == TRUE}. Defaults to \code{TRUE}.}
 
 \item{.original_arguments}{The list of arguments used within \code{\link[=csem]{csem()}}.}
 

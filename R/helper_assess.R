@@ -1,14 +1,43 @@
-#' Akaike information criterion
-#'
-#' Calculate the Akaike information criterion (AIC) as proposed by 
-#' \insertCite{Akaike1974;textual}{cSEM}.
-#'
-#' The AIC is typically used as a model selection criteria.
+#' Model selection criteria
 #' 
-#' @usage calculateAIC(.object = NULL)
+#' Calculate several information or model selection criteria (MSC) such as the
+#' Akaike information criterion (AIC), the Bayesian information criterion (BIC) or
+#' the Hannan-Quinn criterion (HQ).
 #'
-#' @return A single numeric value. If `.object` is a list 
-#'   of `cSEMResults` objects, a list of AICs is returned.
+#' By default, all criteria are calculated (`.ms_criterion == "all"`). To compute only
+#' a subset of the criteria a vector of criteria may be given.
+#' 
+#' If `.by_equation == TRUE` (the default), the criteria are computed for each 
+#' structural equation of the model separately, as suggested by 
+#' \insertCite{Sharma2019;textual}{cSEM} in the context of PLS. The relevant formula can be found in
+#'  Table B1 of the appendix of \insertCite{Sharma2019;textual}{cSEM}. 
+#'  
+#' If `.by_equation == FALSE` the AIC, the BIC and the HQ for whole model 
+#' are calculated. All other criteria are currently ignored in this case! 
+#' The relevant formulae are (see, e.g., \insertCite{Akaike1974}{cSEM},
+#' \insertCite{Schwarz1978;textual}{cSEM}, 
+#' \insertCite{Hannan1979;textual}{cSEM}): 
+#' 
+#' \deqn{AIC = - 2*log(L) + 2*k}
+#' \deqn{BIC = - 2*log(L) + k*ln(n)}
+#' \deqn{HQ  = - 2*log(L) + 2*k*ln(ln(n))}
+#' 
+#' where log(L) is the log likelihood function of the multivariate normal
+#' distribution of the observable variables, k the (total) number of estimated parameters,
+#' and n the sample size.
+#' 
+#' If `.only_structural == TRUE`, log(L) is based on the structural model only.
+#' The argument is ignored if `.by_equation == TRUE`.
+#' 
+#' @usage calculateModelSelectionCriteria(
+#'   .object          = NULL,
+#'   .ms_criterion    = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
+#'                        "hqc", "mallows_cp"),
+#'   .by_equation     = TRUE, 
+#'   .only_structural = TRUE 
+#'   )
+#'
+#' @return If `.by_equation == TRUE` a named list of model selection criteria.
 #'   
 #' @inheritParams csem_arguments
 #'
@@ -18,35 +47,163 @@
 #' \insertAllCited{}
 #' @export
 
-calculateAIC <- function(.object = NULL){
+calculateModelSelectionCriteria <- function(
+  .object          = NULL, 
+  .ms_criterion    = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
+                       "hqc", "mallows_cp"),
+  .by_equation     = TRUE,
+  .only_structural = TRUE
+  ){
   
   if(inherits(.object, "cSEMResults_multi")) {
     
-    out <- lapply(.object, calculateAIC)
+    out <- lapply(.object, calculateModelSelectionCriteria,
+                  .ms_criterion    = .ms_criterion,
+                  .by_equation     = .by_equation,
+                  .only_structural = .only_structural)
     return(out)
     
   } else if(inherits(.object, "cSEMResults_default")) {
-    x1 <- .object$Estimates
     
-    # Number of estimated parameters
-    # Note: # estimated parameters = total number of elements of S - df
-    k <- sum(lower.tri(x1$Indicator_VCV)) - calculateDf(.object)
+    x1 <- .object$Estimates
+    x2 <- .object$Information$Model
+    S  <- x1$Indicator_VCV
+    n <- nrow(.object$Information$Data)
+    
+    ## Mean square of the saturated model
+    args <- .object$Information$Arguments
+    args$.model$structural[lower.tri(args$.model$structural)] <- 1
+    
+    out_saturated <- do.call(csem, args)
+    
+    MSE <- (1 - out_saturated$Estimates$R2)
     
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
     
-    out <- lapply(.object, calculateAVE)
-    return(out)
+    x1 <- summarize(.object)$Second_stage$Estimates
+    x2 <- summarize(.object)$Second_stage$Information$Model
+    S  <- .object$First_stage$Estimates$Indicator_VCV
+    # Sample size
+    n <- nrow(.object$First_stage$Information$Data)
+    
+    ## Mean square of the saturated model
+    args <- .object$Second_stage$Information$Arguments
+    args$.model$structural[lower.tri(args$.model$structural)] <- 1
+    
+    out_saturated <- do.call(csem, args)
+    
+    MSE <- (1 - out_saturated$Estimates$R2)
+    # remove _temp suffix in second stage
+    names(MSE) <- gsub("_temp","", names(MSE))
     
   } else {
     stop2(
-      "The following error occured in the calculateAIC() function:\n",
+      "The following error occured in the calculateModelSelectionCriteria() function:\n",
       "`.object` must be of class `cSEMResults`."
     )
   }
   
-  AIC <- -2*calculateDML(.object) + 2*k
+  ## Model-implied indicator covariance matrix
+  Sigma_hat <- fit(.object = .object, 
+                   .saturated  = FALSE, 
+                   .type_vcv = "indicator"
+                   )
+  ## Number of estimated parameters
+  # Note: # estimated parameters = total number of elements of S - df
+  k <- sum(lower.tri(S)) - calculateDf(.object)
+  ## Number of indicators
+  p <- nrow(S)
+  
+  ## Set up empty list
+  out <- list()
+  
+  if(!.by_equation) {
+    if(.only_structural) {
+      # Reassign S, Sigma_hat, k and p. Now:
+      # S         := construct correlation matrix
+      # Sigma_hat := model-implied construct correlation matrix
+      # k         := # of estimated parameters of the structural model (either 
+      #              correlations or structural model parameters)
+      # p         := # of constructs in the structural model
+      S <- x1$Construct_VCV
+      Sigma_hat <- fit(.object, 
+                       .saturated = FALSE, 
+                       .type_vcv = 'construct')
+      
+      # Count construct correlations and/or structural model parameters
+        if(!all(x2$structural == 0)) {
+          # Free correlations between exogenous constructs
+          n_cor_exo <- length(x2$cons_exo) * (length(x2$cons_exo) - 1) / 2 
+          
+          # Number of structural parameters
+          n_structural <- sum(x2$structural)
+        } else {
+          n_cor_exo    <- nrow(x2$structural) * (nrow(x2$structural) - 1) / 2
+          n_structural <- 0
+        }
+      k <- n_cor_exo + n_structural
+      p <- nrow(S)
+    }
 
-  return(AIC) 
+    ## Log Likelihood
+    logL <- - n*p/2*log(2*pi) -n/2*sum(diag(S %*% solve(Sigma_hat))) - n/2*log(det(Sigma_hat))
+    
+    if(any(.ms_criterion %in% c("all", "aic"))) {
+      ## Compute AIC
+      out[["AIC"]] <- -2*logL + 2*k 
+    }
+    if(any(.ms_criterion %in% c("all", "bic"))) {
+      ## Compute BIC
+      out[["BIC"]] <- -2*logL + k*log(n) 
+    }
+    if(any(.ms_criterion %in% c("all", "hq"))) {
+      ## Compute HQ
+      out[["HQ"]] <- -2*logL + 2*k*log(log(n)) 
+    }
+  } else {
+    ### Implementation based on Sharma et al. (2019), p.391, Table B1
+    ## 
+    SSE <- (1 - x1$R2)*(n - 1)
+    
+    ## Update k to contain the number of parameters for each equation instead of
+    ## all model parameters.
+    ## Note: in line with Sharma et. al (2019) the number of paramters per equation
+    ##       is computed as number of regressors + 1 (for the constant).
+    ##       Its unclear if the constant is really necessary since constructs are
+    ##       standardized. Hence, the constant will always be zero.
+    ## 
+    k <- rowSums(x2$structural)[names(x1$R2)] + 1
+   
+    if(any(.ms_criterion %in% c("all", "aic"))) {
+      out[["AIC"]] <- n*(log(SSE / n) + 2*k/n)
+    }
+    if(any(.ms_criterion %in% c("all", "aicc"))) {
+      out[["AICc"]] <- n*(log(SSE / n) + (n + k)/(n - k -2))
+    }
+    if(any(.ms_criterion %in% c("all", "aicu"))) {
+      out[["AICu"]] <- n*(log(SSE / (n - k)) + 2*k/n)
+    }
+    if(any(.ms_criterion %in% c("all", "bic"))) {
+      out[["BIC"]] <- n*(log(SSE / n) + k*log(n)/n)
+    }
+    if(any(.ms_criterion %in% c("all", "fpe"))) {
+      out[["FPE"]] <- (SSE / (n-k)) * (1 + k/n)
+    }
+    if(any(.ms_criterion %in% c("all", "gm"))) {
+      out[["GM"]] <- (SSE / MSE) + k*log(n)
+    }
+    if(any(.ms_criterion %in% c("all", "hq"))) {
+      out[["HQ"]] <- n*(log(SSE / n) + (2*k*log(log(n)))/n)
+    }
+    if(any(.ms_criterion %in% c("all", "hqc"))) {
+      out[["HQc"]] <- n*(log(SSE / n) + (2*k*log(log(n)))/(n - k - 2))
+    }
+    if(any(.ms_criterion %in% c("all", "mallows_cp"))) {
+      out[["Mallows_Cp"]] <- (SSE / MSE) - (n - 2*k)
+    }
+  }
+  
+  return(out)
 }
 
 #' Average variance extracted (AVE)

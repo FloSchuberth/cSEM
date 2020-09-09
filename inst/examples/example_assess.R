@@ -16,7 +16,7 @@ res <- csem(threecommonfactors, model)
 a   <- assess(res) # computes all quality criteria (.quality_criterion = "all")
 a
 
-## The return value is a named list
+## The return value is a named list. Type for example:
 a$HTMT
 
 # You may also just compute a subset of the quality criteria
@@ -35,11 +35,13 @@ res <- csem(threecommonfactors, model,
 ## Look at the resamples
 res$Estimates$Estimates_resample$Estimates1$User_fun$Resampled[1:4, ]
 
-## Use infer() to compute e.g. the 95% percentile confidence interval
+## Use infer() to compute e.g., the 95% percentile confidence interval
 res_infer <- infer(res, .quantity = "CI_percentile")
+
+## The results are saved under the name "User_fun"
 res_infer$User_fun 
 
-## Several quality criteria can be resampeled simultaneously
+## Several quality criteria can be resampled simultaneously
 res <- csem(threecommonfactors, model, 
             .resample_method = "bootstrap",
             .R               = 40,

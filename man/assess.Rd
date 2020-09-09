@@ -6,15 +6,17 @@
 \usage{
 assess(
   .object              = NULL, 
-  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
+  .quality_criterion   = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
+                           "hqc", "mallows_cp", "ave",
+                           "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "dg", "dl", "dml", "df",
-                          "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
-                          "cfi", "gfi", "ifi", "nfi", "nnfi", 
-                          "reliability", 
-                          "rmsea", "rms_theta", "srmr",
-                          "gof", "htmt", "r2", "r2_adj",
-                          "rho_T", "rho_T_weighted", "vif", 
-                          "vifmodeB"),
+                           "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
+                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "reliability",
+                           "rmsea", "rms_theta", "srmr",
+                           "gof", "htmt", "r2", "r2_adj",
+                           "rho_T", "rho_T_weighted", "vif", 
+                           "vifmodeB"),
   .only_common_factors = TRUE, 
   ...
 )
@@ -150,6 +152,10 @@ It is possible to report the HTMT for constructs modeled as
 composites by setting \code{.only_common_factors = FALSE}, however, result should be
 interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by \code{\link[=calculateHTMT]{calculateHTMT()}}.}
+\item{Model selection criteria: "aic", "aicc", "aicu", "bic", "fpe", "gm",
+"hq", "hqc", "mallows_cp"}{
+Several model selection criteria as suggested by \insertCite{Sharma2019;textual}{cSEM}
+in the context of PLS. See: \code{\link[=calculateModelSelectionCriteria]{calculateModelSelectionCriteria()}} for details.}
 \item{Reliability: "reliability"}{
 As described in the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae}
 section of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
@@ -172,7 +178,7 @@ Calculated when running \code{\link[=csem]{csem()}}.}
 reliability assuming a tau-equivalent measurement model (i.e. a measurement
 model with equal loadings) and a test score (proxy) based on unit weights.
 Tau-equivalent reliability is the preferred name for reliability estimates
-that assume a tau-equivalent measurment model such as Cronbach's alpha.
+that assume a tau-equivalent measurement model such as Cronbach's alpha.
 The tau-equivalent
 reliability (Cronbach's alpha) is inherently
 tied to the common factor model. It is therefore unclear how to meaningfully
@@ -239,7 +245,7 @@ res <- csem(threecommonfactors, model)
 a   <- assess(res) # computes all quality criteria (.quality_criterion = "all")
 a
 
-## The return value is a named list
+## The return value is a named list. Type for example:
 a$HTMT
 
 # You may also just compute a subset of the quality criteria
@@ -258,11 +264,13 @@ res <- csem(threecommonfactors, model,
 ## Look at the resamples
 res$Estimates$Estimates_resample$Estimates1$User_fun$Resampled[1:4, ]
 
-## Use infer() to compute e.g. the 95\% percentile confidence interval
+## Use infer() to compute e.g., the 95\% percentile confidence interval
 res_infer <- infer(res, .quantity = "CI_percentile")
+
+## The results are saved under the name "User_fun"
 res_infer$User_fun 
 
-## Several quality criteria can be resampeled simultaneously
+## Several quality criteria can be resampled simultaneously
 res <- csem(threecommonfactors, model, 
             .resample_method = "bootstrap",
             .R               = 40,

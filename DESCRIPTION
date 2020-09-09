@@ -48,7 +48,7 @@ Imports:
     alabama,
     cli,
     crayon,
-    expm,
+    expm (>= 0.999-5),
     future.apply,
     future,
     lavaan,

@@ -109,6 +109,10 @@
 #'   composites by setting `.only_common_factors = FALSE`, however, result should be 
 #'   interpreted with caution as they may not have a conceptual meaning.
 #'   Calculation is done by [calculateHTMT()].}
+#' \item{Model selection criteria: "aic", "aicc", "aicu", "bic", "fpe", "gm", 
+#'       "hq", "hqc", "mallows_cp"}{
+#'   Several model selection criteria as suggested by \insertCite{Sharma2019;textual}{cSEM}
+#'   in the context of PLS. See: [calculateModelSelectionCriteria()] for details.}
 #' \item{Reliability: "reliability"}{
 #'   As described in the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} 
 #'   section of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
@@ -131,7 +135,7 @@
 #'   reliability assuming a tau-equivalent measurement model (i.e. a measurement
 #'   model with equal loadings) and a test score (proxy) based on unit weights.
 #'   Tau-equivalent reliability is the preferred name for reliability estimates
-#'   that assume a tau-equivalent measurment model such as Cronbach's alpha.
+#'   that assume a tau-equivalent measurement model such as Cronbach's alpha.
 #'   The tau-equivalent
 #'   reliability (Cronbach's alpha) is inherently
 #'   tied to the common factor model. It is therefore unclear how to meaningfully 
@@ -181,15 +185,17 @@
 #' 
 #' @usage assess(
 #'   .object              = NULL, 
-#'   .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
+#'   .quality_criterion   = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
+#'                            "hqc", "mallows_cp", "ave",
+#'                            "rho_C", "rho_C_mm", "rho_C_weighted", 
 #'                            "rho_C_weighted_mm", "dg", "dl", "dml", "df",
-#'                           "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
-#'                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
-#'                           "reliability", 
-#'                           "rmsea", "rms_theta", "srmr",
-#'                           "gof", "htmt", "r2", "r2_adj",
-#'                           "rho_T", "rho_T_weighted", "vif", 
-#'                           "vifmodeB"),
+#'                            "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
+#'                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
+#'                            "reliability",
+#'                            "rmsea", "rms_theta", "srmr",
+#'                            "gof", "htmt", "r2", "r2_adj",
+#'                            "rho_T", "rho_T_weighted", "vif", 
+#'                            "vifmodeB"),
 #'   .only_common_factors = TRUE, 
 #'   ...
 #' )
@@ -209,7 +215,9 @@
 
 assess <- function(
   .object              = NULL, 
-  .quality_criterion   = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
+  .quality_criterion   = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
+                           "hqc", "mallows_cp", "ave",
+                           "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "dg", "dl", "dml", "df",
                            "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                            "cfi", "gfi", "ifi", "nfi", "nnfi", 
@@ -268,6 +276,78 @@ assess <- function(
       .object, 
       .only_common_factors = .only_common_factors
     )
+  }
+  if(any(.quality_criterion %in% c("all", "aic"))) {
+    # Akaike information criterion (AIC)
+    out[["AIC"]]  <- calculateModelSelectionCriteria(
+      .object,
+      .ms_criterion = "aic",
+      .by_equation = TRUE
+      )[[1]]
+  }
+  if(any(.quality_criterion %in% c("all", "aicc"))) {
+    # Corrected AIC (AICc)
+    out[["AICc"]]  <- calculateModelSelectionCriteria(
+      .object,
+      .ms_criterion = "aicc",
+      .by_equation = TRUE
+    )[[1]]
+  }
+  if(any(.quality_criterion %in% c("all", "aicu"))) {
+    # Unbiased AIC (AICu)
+    out[["AICu"]]  <- calculateModelSelectionCriteria(
+      .object,
+      .ms_criterion = "aicu",
+      .by_equation = TRUE
+    )[[1]]
+  }
+  if(any(.quality_criterion %in% c("all", "bic"))) {
+    # Bayesian information criterion (BIC)
+    out[["BIC"]]  <- calculateModelSelectionCriteria(
+      .object,
+      .ms_criterion = "bic",
+      .by_equation = TRUE
+    )[[1]]
+  }
+  if(any(.quality_criterion %in% c("all", "fpe"))) {
+    # Bayesian information criterion (BIC)
+    out[["FPE"]]  <- calculateModelSelectionCriteria(
+      .object,
+      .ms_criterion = "fpe",
+      .by_equation = TRUE
+    )[[1]]
+  }
+  if(any(.quality_criterion %in% c("all", "gm"))) {
+    # Bayesian information criterion (BIC)
+    out[["GM"]]  <- calculateModelSelectionCriteria(
+      .object,
+      .ms_criterion = "gm",
+      .by_equation = TRUE
+    )[[1]]
+  }
+  if(any(.quality_criterion %in% c("all", "hq"))) {
+    # Bayesian information criterion (BIC)
+    out[["HQ"]]  <- calculateModelSelectionCriteria(
+      .object,
+      .ms_criterion = "hq",
+      .by_equation = TRUE
+    )[[1]]
+  }
+  if(any(.quality_criterion %in% c("all", "hqc"))) {
+    # Bayesian information criterion (BIC)
+    out[["HQc"]]  <- calculateModelSelectionCriteria(
+      .object,
+      .ms_criterion = "hqc",
+      .by_equation = TRUE
+    )[[1]]
+  }
+  if(any(.quality_criterion %in% c("all", "mallows_cp"))) {
+    # Bayesian information criterion (BIC)
+    out[["Mallows_Cp"]]  <- calculateModelSelectionCriteria(
+      .object,
+      .ms_criterion = "mallows_cp",
+      .by_equation = TRUE
+    )[[1]]
   }
   if(any(.quality_criterion %in% c("all", "rho_C"))) {
     # RhoC

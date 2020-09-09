@@ -58,6 +58,8 @@
 #'   is centered at `2*theta - theta*_hat`,
 #'   where `theta*_hat` is the average over all `.R` bootstrap estimates of `theta`.
 #'   Defaults to `TRUE`
+#' @param .by_equation Should the criteria be computed for each structural model
+#'   equation separately? Defaults to `TRUE`.
 #' @param .C A (J x J) composite variance-covariance matrix.
 #' @param .check_errors Logical. Should the model to parse be checked for correctness 
 #'   in a sense that all necessary components to estimate the model are given?
@@ -148,6 +150,9 @@
 #' @param .moderator Character string. The name of the moderator variable.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
+#' @param .ms_criterion Character string. Either a single character string or a vector
+#'   of character strings naming the model selection criterion to compute.
+#'   Defaults to `"all"`.
 #' @param .n Integer. The number of observations of the original data.
 #' @param .n_steps Integer. A value giving the number of steps (the spotlights, i.e.,
 #' values of .moderator in surface analysis or floodlight analysis) 
@@ -164,6 +169,8 @@
 #'   factors be included when calculating one of the following quality critera: 
 #'   AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates. 
 #'   Defaults to `TRUE`.
+#' @param .only_structural Should the the log-likelihood be based on the 
+#'   structural model? Ignored if `.by_equation == TRUE`. Defaults to `TRUE`.
 #' @param .original_arguments The list of arguments used within [csem()].
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
 #' @param .parameters_to_compare A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
@@ -374,7 +381,8 @@ args_default <- function(.choices = FALSE) {
     .approach_alpha_adjust   = c("none", "bonferroni"),
     .approach_cor_robust     = c("none", "mcd", "spearman"),
     .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
-    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler","CI_para","CI_overlap"),
+    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", 
+                                 "Henseler","CI_para","CI_overlap"),
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS"),
@@ -384,6 +392,7 @@ args_default <- function(.choices = FALSE) {
     .attributes              = NULL,
     .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
     .bias_corrected          = TRUE,
+    .by_equation             = TRUE,
     .C                       = NULL,
     .check_errors            = TRUE,
     .choices                 = FALSE,
@@ -425,6 +434,8 @@ args_default <- function(.choices = FALSE) {
     .model                   = NULL,
     .moderator               = NULL,
     .modes                   = NULL,
+    .ms_criterion            = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
+                                 "hqc", "mallows_cp"),
     .n_steps                 = 100,
     .normality               = FALSE,
     .nr_comparisons          = NULL,
@@ -444,7 +455,7 @@ args_default <- function(.choices = FALSE) {
     .PLS_ignore_structural_model = FALSE,
     .PLS_modes               = NULL,
     .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
-    .quality_criterion       = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
+    .quality_criterion       = c("all", "aic", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
                                  "rho_C_weighted_mm", "cronbachs_alpha", 
                                  "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
                                  "effects", "f2", "chi_square", "chi_square_df",

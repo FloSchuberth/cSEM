@@ -1,5 +1,8 @@
 # Development version: cSEM 0.2.0:9000
 
+- Add model selection criteria. See the `calculateModelSelectionCriteria()` 
+  function for details. As usual, all criteria are available via `assess()`. (#412)
+
 - Combine functions for surface, floodlight and simple effects analysis in 
   the `doNonlinearEffectsAnalysis()` function; Breaking: functions `doFloodlightAnalysis()`
   and `doSurfaceAnalysis()` have been removed!
@@ -7,7 +10,7 @@
 - Progress bars are now supported for every function that does resampling. 
   Progress bars are fully customizable via the `progressr` framework created by
   @HenrikBengtsson. Note: to suppress the progress bar use
-  `progressr::handlers("void")` and then run your csem commands.
+  `progressr::handlers("void")` and then run your csem commands. (#359)
 
 - Add tests for `infer()`
 
@@ -18,15 +21,15 @@
   consistent with the naming scheme of the other list elements.
 
 - `infer()` automatically computes bootstrap resamples now by default if `.object`
-  does not have class `cSEMResults_resampled` already.
+  does not have class `cSEMResults_resampled` already. (#389)
 
-- Remove .alpha argument from `testMICOM()`. The argument is no longer required
-  as decisions are made via (possibly adjusted) p-values.
+- Remove `.alpha` argument from `testMICOM()`. The argument is no longer required
+  as decisions are made via (possibly adjusted) p-values. (#393)
   
 - Add checks to plot methods for `predict()`, `doFloodlightAnalysis`, and,
   `doFloodlightAnalysis`.
   
-- Several documentation updates and typo corrections
+- Several documentation updates and typo corrections.
 
 - The Fornell-Larcker criterion is now computed by its own function
  `calculateFLCriterion()`. Previously, it was only available via `assess()`. (#387)
