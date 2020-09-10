@@ -1,5 +1,8 @@
 # Development version: cSEM 0.2.0:9000
 
+- `print.cSEMAssess()` no longer prints zero for VIF values of constructs that
+   are not part of a particular structural equation.
+
 - `print.cSEMAssess()` now prints the results of `calculateVIFModeB()`. This had been missing
   in previous releases. (#384)
   
