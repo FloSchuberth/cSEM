@@ -925,7 +925,7 @@ testMGD <- function(
     # Adjust p-value in case of multiple comparisons
     # Adjusting p-values is not straight forward. 
     # First it is a one-sided test, so we need to know the hypothesis
-    # Just flipping the p-value is not reaaly an option as it might causes problems 
+    # Just flipping the p-value is not really an option as it might cause problems 
     # in situation where the order of the p-values is required for the correction
     # Therefore only the "none"method is applied
     padjusted_Henseler<- lapply(as.list("none"), function(x){
