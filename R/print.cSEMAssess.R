@@ -232,7 +232,7 @@ print.cSEMAssess <- function(x, ...) {
     }
   }
 
-  ## Variance-inflation factors ------------------------------------------------
+  ## Variance inflation factors ------------------------------------------------
   
   if(any(names(x) == "VIF")) {
     cat2("\n\n", rule2("Variance inflation factors (VIFs)"))
@@ -243,11 +243,32 @@ print.cSEMAssess <- function(x, ...) {
         col_align("Independent construct", max(nchar(names(x$VIF[i, ])), nchar("Independent construct")) + 2), 
         col_align("VIF value", 12, align = "center")
       )
-      for(j in names(x$VIF[i, ])) {
+      for(j in names(which(x$VIF[i, ] != 0))) {
         cat2(
           "\n\t", 
           col_align(j, max(nchar(names(x$VIF[i, ])), nchar("Independent construct")) + 2), 
           col_align(sprintf("%.4f", x$VIF[i, j]), 12, align = "center")
+        )  
+      }
+    }
+  }
+  
+  ## Variance inflation factors for modeB constructs ---------------------------
+  
+  if(any(names(x) == "VIF_modeB") && !is.na(x$VIF_modeB)) {
+    cat2("\n\n", rule2("Variance inflation factors (VIFs) for modeB constructs"))
+    for(i in rownames(x$VIF_modeB)) {
+      cat2("\n\n  Construct: '", i, "'\n")
+      cat2(
+        "\n\t", 
+        col_align("Weight", max(nchar(names(x$VIF_modeB[i, ])), nchar("Weight")) + 2), 
+        col_align("VIF value", 12, align = "center")
+      )
+      for(j in names(which(x$VIF_modeB[i, ] != 0))) {
+        cat2(
+          "\n\t", 
+          col_align(j, max(nchar(names(x$VIF_modeB[i, ])), nchar("Weight")) + 2), 
+          col_align(sprintf("%.4f", x$VIF_modeB[i, j]), 12, align = "center")
         )  
       }
     }
