@@ -757,3 +757,295 @@ getRelevantParameters <- function(
 
 
 
+#' Internal: get structured cSEMTestMGD results
+#'
+#' Convenience function to summarize the results of all tests resulting from a 
+#' call to [testMGD()] in a user-friendly way.
+#' 
+#' @usage structureTestMGDDecisions(.object)
+#'
+#' @inheritParams csem_arguments
+#' 
+#' @return A data.frame.
+#' 
+#' @keywords internal
+
+
+
+structureTestMGDDecisions <- function(.object){
+  
+  ## Install dplyr and tidyr if not already installed
+  if (!requireNamespace("dplyr", quietly = TRUE)) {
+    stop2(
+      "Package `dplyr` required. Use `install.packages(\"dplyr\")` and rerun.")
+  }
+  if (!requireNamespace("tidyr", quietly = TRUE)) {
+    stop2(
+      "Package `tidyr` (> 1.0.0) required. Use `install.packages(\"tidyr\")` and rerun.")
+  }
+  
+  # Check if of class cSEMTestMGD
+  if(!inherits(.object, "cSEMTestMGD")){
+    stop2("The following error occured in the `structureTestMGDDecisions()` function:\n",
+          "Object must be of class `cSEMResults`")
+  }
+  
+  # Helper function ------------------------------------------------------------
+  
+  # Change CI alpha equivlanet (1-CI)
+  changeCItoAlphaEquivalent <- function(.names){
+    # .names <- c("99%","95%","90%")
+    tmpNames <- as.numeric(gsub("%", "", .names))
+    tmpNames <- 100-tmpNames
+    tmpNames <- paste0(tmpNames, "%")
+    return(tmpNames)
+  }
+  
+  # Klesel ---------------------------------------------------------------------
+  
+  # Test only provides an overall decision 
+  
+  if("Klesel" %in% names(.object)){
+    klesel <- .object$Klesel$Decision %>% 
+      purrr::map(dplyr::bind_rows) %>% 
+      dplyr::bind_rows(.id = "alpha") %>%
+      # longer format
+      tidyr::pivot_longer(cols = c(dG, dL), 
+                          names_to = "Distance_metric", 
+                          values_to = "Decision") %>%
+      tidyr::pivot_wider(names_from = alpha, values_from = Decision) %>%
+      dplyr::mutate(Test = "Klesel", Comparison = "overall")
+  }
+  
+  # Chin  ----------------------------------------------------------------------
+  
+  if("Chin" %in% names(.object)){
+    
+    # overall decision
+    chin1 <- .object$Chin$Decision_overall %>% 
+      purrr::map(dplyr::bind_rows) %>% 
+      dplyr::bind_rows(.id = "p-value_correction") %>%
+      dplyr::mutate(Test = "Chin", Comparison = "overall")
+    
+    chin2 <-  .object$Chin$Decision %>% 
+      purrr::modify_depth(3, dplyr::bind_rows) %>%
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") %>%
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
+      dplyr::bind_rows(.id = "p-value_correction") %>%
+      # Check all comparisons
+      dplyr::group_by(`p-value_correction`, alpha) %>%
+      dplyr::summarise_at(dplyr::vars(-Comparison),all) %>%
+      dplyr::ungroup() %>% 
+      # put results into format 
+      tidyr::pivot_longer(cols = (-c(`p-value_correction`, alpha)),
+                          names_to = "Comparison", 
+                          values_to = "Decision") %>%
+      # put alphas in cols
+      tidyr::pivot_wider(names_from = alpha, values_from = Decision) %>%
+      dplyr::mutate(Test = "Chin")
+  }
+  
+  # Sarstedt  ------------------------------------------------------------------
+  
+  if("Sarstedt" %in% names(.object)){
+    
+    # overall result
+    sarstedt1 <- .object$Sarstedt$Decision_overall %>% 
+      purrr::map(dplyr::bind_rows) %>% 
+      dplyr::bind_rows(.id = "p-value_correction") %>%
+      dplyr::mutate(Test = "Sarstedt", Comparison = "overall")
+    
+    # decision based on single paths
+    sarstedt2 <- .object$Sarstedt$Decision %>%
+      purrr::modify_depth(2, dplyr::bind_rows) %>%
+      purrr::map(dplyr::bind_rows, .id = "alpha") %>%
+      dplyr::bind_rows(.id = "p-value_correction") %>%
+      # put results into format 
+      tidyr::pivot_longer(cols = (-c(`p-value_correction`, alpha)),
+                          names_to = "Comparison", 
+                          values_to = "Decision") %>%
+      # put alphas in cols
+      tidyr::pivot_wider(names_from = alpha, values_from = Decision) %>%
+      dplyr::mutate(Test = "Sarstedt")
+  }
+  
+  # Keil  ----------------------------------------------------------------------
+  
+  if("Keil" %in% names(.object)){
+    
+    # overall decision
+    keil1 <- .object$Keil$Decision_overall %>% 
+      purrr::map(dplyr::bind_rows) %>% 
+      dplyr::bind_rows(.id = "p-value_correction") %>%
+      dplyr::mutate(Test = "Keil", Comparison = "overall")
+    
+    # decision based on single paths
+    keil2 <- .object$Keil$Decision %>%
+      purrr::modify_depth(3, dplyr::bind_rows) %>%
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") %>%
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
+      dplyr::bind_rows(.id = "p-value_correction") %>%
+      dplyr::group_by(`p-value_correction`, alpha) %>%
+      dplyr::summarise_at(dplyr::vars(-Comparison),all) %>%
+      dplyr::ungroup() %>%
+      # put results into format 
+      tidyr::pivot_longer(cols = (-c(`p-value_correction`, alpha)),
+                          names_to = "Comparison", 
+                          values_to = "Decision") %>%
+      # put alphas in cols
+      tidyr::pivot_wider(names_from = alpha, values_from = Decision) %>%
+      dplyr::mutate(Test = "Keil")
+    
+  }
+  
+  # Nitzl  ---------------------------------------------------------------------
+  
+  if("Nitzl" %in% names(.object)){
+    
+    # overall decision
+    nitzl1 <- .object$Nitzl$Decision_overall %>% 
+      purrr::map(dplyr::bind_rows) %>% 
+      dplyr::bind_rows(.id = "p-value_correction") %>%
+      dplyr::mutate(Test = "Nitzl", Comparison = "overall")
+    
+    # decision based on single paths
+    nitzl2 <- .object$Nitzl$Decision %>%
+      purrr::modify_depth(3, dplyr::bind_rows) %>%
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") %>%
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
+      dplyr::bind_rows(.id = "p-value_correction") %>%
+      dplyr::group_by(`p-value_correction`, alpha) %>%
+      dplyr::summarise_at(dplyr::vars(-Comparison),all) %>%
+      dplyr::ungroup() %>%
+      # put results into format 
+      tidyr::pivot_longer(cols = (-c(`p-value_correction`, alpha)),
+                          names_to = "Comparison", 
+                          values_to = "Decision") %>%
+      # put alphas in cols
+      tidyr::pivot_wider(names_from = alpha, values_from = Decision) %>%
+      dplyr::mutate(Test = "Nitzl")
+    
+  }
+  
+  # Henseler  ------------------------------------------------------------------
+  
+  if("Henseler" %in% names(.object)){
+    
+    # overall decision
+    henseler1 <- .object$Henseler$Decision_overall %>% 
+      purrr::map(dplyr::bind_rows) %>% 
+      dplyr::bind_rows(.id = "p-value_correction") %>%
+      dplyr::mutate(Test = "Henseler", Comparison = "overall")
+    
+    # decision based on single paths
+    henseler2 <- .object$Henseler$Decision %>%
+      purrr::modify_depth(3, dplyr::bind_rows) %>%
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "Comparison") %>%
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "alpha") %>%
+      dplyr::bind_rows(.id = "p-value_correction") %>%
+      dplyr::group_by(`p-value_correction`, alpha) %>%
+      dplyr::summarise_at(dplyr::vars(-Comparison),all) %>%
+      dplyr::ungroup() %>%
+      # put results into format 
+      tidyr::pivot_longer(cols = (-c(`p-value_correction`, alpha)),
+                          names_to = "Comparison", 
+                          values_to = "Decision") %>%
+      # put alphas in cols
+      tidyr::pivot_wider(names_from = alpha, values_from = Decision) %>%
+      dplyr::mutate(Test = "Henseler")
+  }
+  
+  # CI para  -------------------------------------------------------------------
+  
+  if("CI_para" %in% names(.object)){
+    
+    # overall decision
+    CIpara1 <- .object$CI_para$Decision_overall %>% 
+      purrr::map(dplyr::bind_rows) %>% 
+      dplyr::bind_rows(.id = "alpha") %>%
+      tidyr::pivot_longer(cols = contains("CI"), 
+                          names_to = "CI_type", 
+                          values_to = "Decision") %>%
+      tidyr::pivot_wider(names_from = alpha, values_from = Decision) %>%
+      # Change % as equivlanet to alpha
+      dplyr::rename_at(dplyr::vars(contains("%")), changeCItoAlphaEquivalent) %>%
+      dplyr::mutate(Test = "CI_para", Comparison = "overall")
+    
+    # decision based on single paths
+    CIpara2 <-  .object$CI_para$Decision %>%
+      purrr::modify_depth(3, dplyr::bind_rows) %>%
+      purrr::modify_depth(3, ~ dplyr::select(., Name, Decision)) %>%
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "CI_type") %>%
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "Comparison") %>%
+      dplyr::bind_rows(.id = "alpha") %>%
+      tidyr::pivot_wider(names_from = Name, values_from = Decision) %>%
+      dplyr::group_by(alpha, CI_type) %>%
+      dplyr::summarise_at(dplyr::vars(-Comparison),all) %>%
+      dplyr::ungroup() %>%
+      # put results into format 
+      tidyr::pivot_longer(cols = (-c(CI_type, alpha)),
+                          names_to = "Comparison", 
+                          values_to = "Decision") %>%
+      # put alphas in cols
+      tidyr::pivot_wider(names_from = alpha, values_from = Decision) %>%
+      # Change % as equivlanet to alpha
+      dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) %>%
+      dplyr::mutate(Test = "CI_para")
+    
+  }
+  # CI overlap  ----------------------------------------------------------------
+  
+  if("CI_overlap" %in% names(.object)){
+    
+    # overall decision
+    CIoverlap1 <- .object$CI_overlap$Decision_overall %>% 
+      purrr::map(dplyr::bind_rows) %>% 
+      dplyr::bind_rows(.id = "alpha") %>%
+      tidyr::pivot_longer(cols = dplyr::contains("CI"), 
+                          names_to = "CI_type", 
+                          values_to = "Decision") %>%
+      tidyr::pivot_wider(names_from = alpha, values_from = Decision) %>%
+      # Change % as equivlanet to alpha
+      dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) %>%
+      dplyr::mutate(Test = "CI_overlap", Comparison = "overall")
+    
+    # decision based on single paths
+    CIoverlap2 <-  .object$CI_overlap$Decision %>%
+      purrr::modify_depth(3, dplyr::bind_rows) %>%
+      purrr::modify_depth(3, ~ dplyr::select(., Name, Decision)) %>%
+      purrr::modify_depth(2, dplyr::bind_rows, .id = "CI_type") %>%
+      purrr::modify_depth(1, dplyr::bind_rows, .id = "Comparison") %>%
+      dplyr::bind_rows(.id = "alpha") %>%
+      tidyr::pivot_wider(names_from = Name, values_from = Decision) %>%
+      dplyr::group_by(alpha, CI_type) %>%
+      dplyr::summarise_at(dplyr::vars(-Comparison),all) %>%
+      dplyr::ungroup() %>%
+      # put results into format 
+      tidyr::pivot_longer(cols = (-c(CI_type, alpha)),
+                          names_to = "Comparison", 
+                          values_to = "Decision") %>%
+      # put alphas in cols
+      tidyr::pivot_wider(names_from = alpha, values_from = Decision) %>%
+      # Change % as equivlanet to alpha
+      dplyr::rename_at(dplyr::vars(dplyr::contains("%")), changeCItoAlphaEquivalent) %>%
+      dplyr::mutate(Test = "CI_overlap")
+  }
+  
+  # Summarize all results ------------------------------------------------------
+  
+  results <- dplyr::bind_rows(klesel, 
+                              chin1, chin2,
+                              sarstedt1, sarstedt2,
+                              keil1, keil2,
+                              nitzl1 , nitzl2,
+                              henseler1, henseler2,
+                              CIpara1, CIpara2,
+                              CIoverlap1, CIoverlap2) %>%
+    # Change order of columns
+    dplyr::select(Test, Comparison, dplyr::contains("%"), 
+                  `p-value_correction`, CI_type, Distance_metric)
+  
+  return(results)
+}
+
+
