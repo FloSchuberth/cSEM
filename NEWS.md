@@ -1,5 +1,8 @@
 # Development version: cSEM 0.2.0:9000
 
+- Remove warning from `fit()` when polycoric or polyserial indicator correlation 
+  is used during estimation.
+  
 - `print.cSEMAssess()` no longer prints zero for VIF values of constructs that
    are not part of a particular structural equation.
 

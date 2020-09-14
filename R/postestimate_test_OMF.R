@@ -136,7 +136,7 @@ testOMF <- function(
     stop2(
       "The following error occured in the `testOMF()` function:\n",
       "Test for overall model fit currently not applicable if polychoric or",
-      " polyserial correlation is used.")
+      " polyserial indicator correlation is used.")
   }
   
   ### Preparation ==============================================================
