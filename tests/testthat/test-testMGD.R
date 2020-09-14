@@ -77,3 +77,18 @@ test_that("testMGD() works for second order models (.approach_mgd = 'all')", {
     )
   )
 })
+
+# test_that("does have one (and only one) of the following types (correction, type_ci, distance", {
+#   expect_equal(
+#     testMGD(
+#       .output_type = "data.frame"
+# 
+# results$checkNA <- results %>% select(correction, type_ci, distance) %>% 
+#   apply(1, function(x) sum(is.na(x))) 
+# 
+#     )
+#   )
+# })
+
+
+

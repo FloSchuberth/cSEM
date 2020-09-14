@@ -235,6 +235,10 @@ structural model? Ignored if \code{.by_equation == TRUE}. Defaults to \code{TRUE
 
 \item{.original_arguments}{The list of arguments used within \code{\link[=csem]{csem()}}.}
 
+\item{.output_type}{Character string. The type of output to return. One of
+"\emph{complete}" or "\emph{structured}". See the Values section for details. Defaults to
+"\emph{complete}".}
+
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which

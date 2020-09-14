@@ -10,6 +10,8 @@ testMGD(
  .approach_p_adjust     = "none",
  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
                             "Keil", "Nitzl", "Henseler", "CI_para","CI_overlap"),
+ .output_type           = c("complete", "structured"),
+ .parameters_to_compare = NULL,
  .eval_plan             = c("sequential", "multiprocess"),                           
  .handle_inadmissibles  = c("replace", "drop", "ignore"),
  .parameters_to_compare = NULL,
@@ -37,6 +39,15 @@ their description. Defaults to "\emph{none}".}
 Approach used for the multi-group comparison. One of: "\emph{all}", "\emph{Klesel}", "\emph{Chin}",
 "\emph{Sarstedt}", "\emph{Keil}, "\emph{Nitzl}", "\emph{Henseler}", "\emph{CI_para}", or "\emph{CI_overlap}".
 Default to "\emph{all}" in which case all approaches are computed (if possible).}
+
+\item{.output_type}{Character string. The type of output to return. One of
+"\emph{complete}" or "\emph{structured}". See the Values section for details. Defaults to
+"\emph{complete}".}
+
+\item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
+parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or correlations (\verb{~~})) should be
+compared across groups. Defaults to \code{NULL} in which case all weights, loadings and
+path coefficients of the originally specified model are compared.}
 
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
@@ -81,7 +92,7 @@ One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".
 to the console? Defaults to \code{TRUE}.}
 }
 \value{
-A list of class \code{cSEMTestMGD}. Technically, \code{cSEMTestMGD} is a
+\code{.output_type = "complete"} a list of class \code{cSEMTestMGD}. Technically, \code{cSEMTestMGD} is a
 named list containing the following list elements:
 
 \describe{
@@ -94,6 +105,20 @@ named list containing the following list elements:
 \item{\verb{$Henseler}}{A list with elements, \code{Test_statistic}, \code{P_value}, \code{Decision}, and \code{Decision_overall}}
 \item{\verb{$CI_para}}{A list with elements,  \code{Decision}, and \code{Decision_overall}}
 \item{\verb{$CI_overlap}}{A list with elements,  \code{Decision}, and \code{Decision_overall}}
+}
+
+If \code{.output_type = "structured"} a tibble (data frame) with the following columns
+is returned.
+
+\describe{
+\item{\code{Test}}{The name of the test.}
+\item{\code{Comparision}}{The parameter that was compared across groups. If "overall"
+the overall fit of the model was compared.}
+\item{\verb{alpha\%}}{The test decision for a given "alpha" level. If \code{TRUE} the null
+hypotheses was rejected; if FALSE it was not rejected.}
+\item{\code{p-value_correction}}{The p-value correction.}
+\item{\code{CI_type}}{Only for the "CI_para" and the "CI_overlap" test. Which confidence interval was used.}
+\item{\code{Distance_metric}}{Only for Test = "Klesel". Which distance metric was used.}
 }
 }
 \description{
@@ -189,6 +214,8 @@ Since it is based on the confidence intervals \code{.approach_p_adjust} is ignor
 \details{
 Use \code{.approach_mgd} to choose the approach. By default all approaches are computed
 (\code{.approach_mgd = "all"}).
+
+For convenience, two types of output are available. See the "Value" section below.
 
 By default, approaches based on parameter differences across groups compare
 all parameters (\code{.parameters_to_compare = NULL}). To compare only

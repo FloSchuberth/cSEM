@@ -1,7 +1,12 @@
 # Development version: cSEM 0.2.0:9000
 
+- `testMGD()` gains a new `.output_type` argument. By default (`.output_type = "structured"`),
+  the standard output is returned. If `.output_type = "structured"`, however, 
+  a tibble (data frame) summarizing the test decisions in a user-friendly way 
+  is returned. (#398)
+  
 - Remove warning from `fit()` when polycoric or polyserial indicator correlation 
-  is used during estimation.
+  is used during estimation. (#413)
   
 - `print.cSEMAssess()` no longer prints zero for VIF values of constructs that
    are not part of a particular structural equation.
@@ -24,8 +29,6 @@
   Progress bars are fully customizable via the `progressr` framework created by
   @HenrikBengtsson. Note: to suppress the progress bar use
   `progressr::handlers("void")` and then run your csem commands. (#359)
-
-- Add tests for `infer()`
 
 - Fix bug in the computation of the Bc and Bca interval. Computation failed for
   models that had no indirect effects. 

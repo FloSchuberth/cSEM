@@ -172,6 +172,9 @@
 #' @param .only_structural Should the the log-likelihood be based on the 
 #'   structural model? Ignored if `.by_equation == TRUE`. Defaults to `TRUE`.
 #' @param .original_arguments The list of arguments used within [csem()].
+#' @param .output_type Character string. The type of output to return. One of
+#'   "*complete*" or "*structured*". See the Values section for details. Defaults to
+#'   "*complete*".
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
 #' @param .parameters_to_compare A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
 #'   parameters (i.e, path (`~`), loadings (`=~`), weights (`<~`), or correlations (`~~`)) should be
@@ -441,8 +444,9 @@ args_default <- function(.choices = FALSE) {
     .normality               = FALSE,
     .nr_comparisons          = NULL,
     .null_model              = FALSE,
-    .only_common_factors     = TRUE,
     .object                  = NULL,
+    .only_common_factors     = TRUE,
+    .output_type             = c("complete", "structured"),
     .P                       = NULL,
     .parameters_to_compare   = NULL,
     .path_coefficients       = NULL,

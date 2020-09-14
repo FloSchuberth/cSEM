@@ -92,6 +92,8 @@
 #' Use `.approach_mgd` to choose the approach. By default all approaches are computed
 #' (`.approach_mgd = "all"`).
 #' 
+#' For convenience, two types of output are available. See the "Value" section below.
+#' 
 #' By default, approaches based on parameter differences across groups compare
 #' all parameters (`.parameters_to_compare = NULL`). To compare only
 #' a subset of parameters provide the parameters in [lavaan model syntax][lavaan::model.syntax]  just like
@@ -143,6 +145,8 @@
 #'  .approach_p_adjust     = "none",
 #'  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
 #'                             "Keil", "Nitzl", "Henseler", "CI_para","CI_overlap"),
+#'  .output_type           = c("complete", "structured"),
+#'  .parameters_to_compare = NULL,
 #'  .eval_plan             = c("sequential", "multiprocess"),                           
 #'  .handle_inadmissibles  = c("replace", "drop", "ignore"),
 #'  .parameters_to_compare = NULL,
@@ -165,7 +169,7 @@
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions. 
 #'   Defaults to "*replace*" to accommodate all approaches.
 #'   
-#' @return A list of class `cSEMTestMGD`. Technically, `cSEMTestMGD` is a 
+#' @return `.output_type = "complete"` a list of class `cSEMTestMGD`. Technically, `cSEMTestMGD` is a 
 #'   named list containing the following list elements:
 #'
 #' \describe{
@@ -179,6 +183,21 @@
 #'   \item{`$CI_para`}{A list with elements,  `Decision`, and `Decision_overall`}
 #'   \item{`$CI_overlap`}{A list with elements,  `Decision`, and `Decision_overall`}
 #' }
+#' 
+#' If `.output_type = "structured"` a tibble (data frame) with the following columns 
+#' is returned.
+#' 
+#' \describe{
+#'   \item{`Test`}{The name of the test.}
+#'   \item{`Comparision`}{The parameter that was compared across groups. If "overall" 
+#'     the overall fit of the model was compared.}
+#'   \item{`alpha%`}{The test decision for a given "alpha" level. If `TRUE` the null 
+#'     hypotheses was rejected; if FALSE it was not rejected.}
+#'   \item{`p-value_correction`}{The p-value correction.}
+#'   \item{`CI_type`}{Only for the "CI_para" and the "CI_overlap" test. Which confidence interval was used.}
+#'   \item{`Distance_metric`}{Only for Test = "Klesel". Which distance metric was used.}
+#' }
+#' 
 #' @references
 #'   \insertAllCited{}
 #'   
@@ -194,6 +213,8 @@ testMGD <- function(
  .approach_p_adjust     = "none",
  .approach_mgd          = c("all", "Klesel", "Chin", "Sarstedt", 
                             "Keil", "Nitzl","Henseler", "CI_para","CI_overlap"),
+ .output_type           = c("complete", "structured"),
+ .parameters_to_compare = NULL,
  .eval_plan             = c("sequential", "multiprocess"),
  .handle_inadmissibles  = c("replace", "drop", "ignore"),
  .parameters_to_compare = NULL,
@@ -224,6 +245,7 @@ testMGD <- function(
                            # args_default, because args_default()$.handle_inadmissibles
                            # has "drop" as default, but testMGD hast "replace".
   .type_vcv             <- match.arg(.type_vcv)
+  .output_type          <- match.arg(.output_type)
   # if(!all(.type_ci %in%  c("CI_standard_z", "CI_standard_t", "CI_percentile",
   #                     "CI_basic", "CI_bc", "CI_bca") )){
   if(!all(.type_ci %in%  args_default(.choices = TRUE)$.type_ci )){
@@ -1186,8 +1208,8 @@ testMGD <- function(
     "Number_of_observations"= sapply(X_all_list, nrow),
     "Approach"              = .approach_mgd,
     "Approach_p_adjust"     = .approach_p_adjust,
-    "Alpha"                 = .alpha
-  )
+    "Alpha"                 = .alpha,
+    "Parameters_to_compare" = .parameters_to_compare)
 
   ## Permutation-specific information
   if(any(.approach_mgd %in% c("all", "Klesel", "Chin", "Sarstedt"))) {
@@ -1331,5 +1353,17 @@ testMGD <- function(
   }
    
   class(out) <- "cSEMTestMGD"
-  return(out)
+  
+  if(.output_type == "complete") {
+    return(out)
+  } else {
+    structureTestMGDDecisions(out)
+  }
 }
+
+
+
+
+
+
+
