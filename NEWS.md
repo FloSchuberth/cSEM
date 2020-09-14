@@ -1,5 +1,10 @@
 # Development version: cSEM 0.2.0:9000
 
+- `testMGD()` gains a new `.output_type` argument. By default (`.output_type = "structured"`),
+  the standard output is returned. If `.output_type = "structured"`, however, 
+  a tibble (data frame) summarizing the test decisions in a user-friendly way 
+  is returned.
+  
 - Add tests for `infer()`
 
 - Fix bug in the computation of the Bc and Bca interval. Computation failed for

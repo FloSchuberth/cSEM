@@ -103,7 +103,7 @@ is returned.
 \item{\code{Test}}{The name of the test.}
 \item{\code{Comparision}}{The parameter that was compared across groups. If "overall"
 the overall fit of the model was compared.}
-\item{\verb{<alpha>\%}}{The test decision for a given <alpha> level. If \code{TRUE} the null
+\item{\verb{alpha\%}}{The test decision for a given "alpha" level. If \code{TRUE} the null
 hypotheses was rejected; if FALSE it was not rejected.}
 \item{\code{p-value_correction}}{The p-value correction.}
 \item{\code{CI_type}}{Only for the "CI_para" and the "CI_overlap" test. Which confidence interval was used.}

@@ -189,7 +189,7 @@
 #'   \item{`Test`}{The name of the test.}
 #'   \item{`Comparision`}{The parameter that was compared across groups. If "overall" 
 #'     the overall fit of the model was compared.}
-#'   \item{`<alpha>%`}{The test decision for a given <alpha> level. If `TRUE` the null 
+#'   \item{`alpha%`}{The test decision for a given "alpha" level. If `TRUE` the null 
 #'     hypotheses was rejected; if FALSE it was not rejected.}
 #'   \item{`p-value_correction`}{The p-value correction.}
 #'   \item{`CI_type`}{Only for the "CI_para" and the "CI_overlap" test. Which confidence interval was used.}
