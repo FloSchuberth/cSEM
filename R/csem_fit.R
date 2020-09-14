@@ -72,17 +72,6 @@ fit.cSEMResults_default <- function(
       "`fit()` currently not applicable to nonlinear models.")
   }
   
-  ## Check if the indicator-correlation matrix is continuous, warn otherwise
-  if(any(.object$Information$Type_of_indicator_correlation %in% 
-         c("Polyserial", "Polychoric"))){
-    warning2(
-      "The following warning occured while computing the model-implied",
-      " indicator correlation matrix:\n",
-      "Some indicators are categorial. Model-implied indicator correlation matrix",
-      " is likely to be wrong.")
-  }
-  
-  
   mod       <- .object$Information$Model
   S         <- .object$Estimates$Indicator
   Lambda    <- .object$Estimates$Loading_estimates

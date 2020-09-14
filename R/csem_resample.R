@@ -763,301 +763,312 @@ resamplecSEMResultsCore <- function(
   } 
   
   ### Start resampling loop ====================================================
-  Est_ls <- future.apply::future_lapply(1:.R, function(i) {
-  # Est_ls <- lapply(1:.R, function(i) {
-    # Replace the old data set by a resampled data set (resampleData always returns
-    # a list so for just one draw we need to pick the first list element)
-    
-    data_temp <- if(.resample_method == "jackknife") {
-      resample_jack[[i]]
+  progressr::with_progress({
+    if(.R >= 10) {
+      progress_bar_csem <- progressr::progressor(steps = floor(.R / 10))
     } else {
-      # We could use resampleData here but, bootstrap resampling directly is faster
-      # (not surprising)
-      # (compared both approaches using microbenchmark)
-      data <- args[[".data"]]
-      data[sample(1:nrow(data), size = nrow(data), replace = TRUE), ]
+      progress_bar_csem <- progressr::progressor(steps = .R)
     }
-    
-    args[[".data"]] <- data_temp
-    
-    # Estimate model
-    Est_temp <- if(inherits(.object, "cSEMResults_2ndorder")) {
-      ## NOTE: using do.call(csem, args) would be more elegant but is much 
-      # much much! slower (especially for larger data sets). 
-      do.call(csem, args) 
 
-    } else {
-      # It is important to use foreman() here 
-      # instead of csem() to allow for lapply(x, resamplecSEMResults_default) when x 
-      # is of class cSEMResults_2ndorder.
+    Est_ls <- future.apply::future_lapply(1:.R, function(i) {
+      if (i %% 10 == 0) {
+        progress_bar_csem(message = sprintf("Resample run = %g", i)) 
+      }
+      # Est_ls <- lapply(1:.R, function(i) {
+      # Replace the old data set by a resampled data set (resampleData always returns
+      # a list so for just one draw we need to pick the first list element)
       
-      ## NOTE: 
-      #  01.03.2019: Using do.call(foreman, args) would be more elegant but is much 
-      #              much much! slower (especially for larger data sets).
-      #
-      #  15.05.2019: Apparently do.call(foreman, args) is not that bad
-      #              after all. I did several comparisons using microbenchmark
-      #              but there was no speed difference (anymore?!). When I compared and
-      #              thought that do.call is slow I fixed other parts of 
-      #              foreman as well...maybe they had been the real culprit.
-      #              So we use do.call again, as it avoids redundancy
-      do.call(foreman, args)
-    }
-    
-    # Check status
-    status_code <- sum(unlist(verify(Est_temp)))
-    
-    # Distinguish depending on how inadmissibles should be handled
-    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-      
-      
-      # ## Select relevant statistics/parameters/quantities
-      x1 <- selectAndVectorize(Est_temp)
-      
-      ### Sign change correction for PLS-PM
-      if(.sign_change_option != "none" && info1$Arguments$.approach_weights == "PLS-PM") {
-        
-        if(inherits(.object, "cSEMResults_2ndorder")) {
-          
-          est1_temp_normal <- Est_temp$First_stage$Estimates
-          est2_temp_normal <- Est_temp$Second_stage$Estimates
-        
-          ### Individual_reestimate and construct_reestimate -------------------
-          if(.sign_change_option == "individual_reestimate" | 
-             .sign_change_option == "construct_reestimate") {
-            
-            ## First stage
-            # Is there a sign difference between the first stage resample 
-            # and original weight estimates. If so, which weights differ?
-            sign_diff1 <- sign(est1_normal$Weight_estimates) != 
-              sign(est1_temp_normal$Weight_estimates)
-            
-            # Only if at least one sign differs a correction is needed
-            if(sum(sign_diff1) != 0) {
-              
-              W1_new <- est1_temp_normal$Weight_estimates
-              
-              # Individual_reestimate
-              if(.sign_change_option == "individual_reestimate"){
-                
-                W1_new[sign_diff1] <- W1_new[sign_diff1] * (-1)
-              } # END individual_reestimate
-              
-              if(.sign_change_option == "construct_reestimate"){
-                
-                # In line with Tenenhaus et al. (2005, p 177) loadings are used,
-                # although they have not considered 2nd order models
-                
-                Lambda1 <- est1_normal$Loading_estimates
-                Lambda1_temp <- est1_temp_normal$Loading_estimates
-                
-                Lambda_diff1 <- abs(rowSums(Lambda1 - Lambda1_temp))
-                Lambda_sum1 <- abs(rowSums(Lambda1 + Lambda1_temp))
-                
-                W1_new[Lambda_diff1 > Lambda_sum1, ] <- W1_new[Lambda_diff1 > Lambda_sum1, ] * (-1)
-              } # END construct_reestimate
-              
-              # Put corrected weights in a list to be able to supply them as
-              # fixed weights to .PLS_modes
-              W1_list <- lapply(1:nrow(W1_new), function(x) {
-                temp <- W1_new[x, ]
-                temp[temp !=0]
-              })
-              names(W1_list) <- rownames(W1_new)
-              
-              ## Replace modes by fixed sign-corrected weights
-              args[[".PLS_modes"]] <- W1_list
-              
-              ## Reestimate
-              # Note: calling csem() directly is faster, however, i guess
-              # change option wont be used that often, so for now, I will
-              # use the more elegant, while slower, do.call construction.
-              Est_temp <- do.call(csem, args)
-              
-              ## Update
-              est2_temp_normal <- Est_temp$Second_stage$Estimates
-              
-            } # END first stage
-            
-            ## Second stage
-            # Is there a sign difference between the second stage (sign-corrected) 
-            # resample weight estimates and the original weight estimates. 
-            # If so, which weights differ?
-            sign_diff2 <- sign(est2_normal$Weight_estimates) != 
-              sign(est2_temp_normal$Weight_estimates)
-  
-            # Only if at least one sign differs a correction is needed
-            if(sum(sign_diff2) != 0) {
-              
-              W2_new <- est2_temp_normal$Weight_estimates
-            
-              # Individual_reestimate
-              if(.sign_change_option == "individual_reestimate"){
-                
-                W2_new[sign_diff2] <- W2_new[sign_diff2] * (-1)
-              } # END individual_reestimate
-              
-              if(.sign_change_option == "construct_reestimate"){
-                
-                # In line with Tenenhaus et al. (2005, p 177) loadings are used,
-                # although they have not considered 2nd order models
-                
-                Lambda2 <- est2_normal$Loading_estimates
-                Lambda2_temp <- est2_temp_normal$Loading_estimates
-                
-                Lambda_diff2 <- abs(rowSums(Lambda2 - Lambda2_temp))
-                Lambda_sum2 <- abs(rowSums(Lambda2 + Lambda2_temp))
-                
-                W2_new[Lambda_diff2 > Lambda_sum2, ] <- W2_new[Lambda_diff2 > Lambda_sum2, ] * (-1)
-              } # END construct_reestimate
-              
-              # Put corrected weights in a list to be able to supply them as
-              # fixed weights to .PLS_modes
-              W2_list <- lapply(1:nrow(W2_new), function(x){
-                temp <- W2_new[x, ]
-                temp[temp != 0]
-              })
-              names(W2_list) <- rownames(W2_new)
-              
-              args[[".PLS_modes"]] = W2_list
-              
-              ## Reestimate
-              # Note: calling csem() directly is faster, however, i guess
-              # change option wont be used that often, so for now, I will
-              # use the more elegant, while slower, do.call construction.
-              Est_temp <- do.call(csem, args)
-              
-            } # END second stage
-            
-            # ## Update using estimates based on the sign-corrected weights
-            x1 <- selectAndVectorize(Est_temp)
-          } # END individual_reestimate, construct_reestimate
-          
-          if(.sign_change_option == "individual") {
-            
-            # Reverse the signs off ALL parameter estimates in a bootstrap run if 
-            # their sign differs from the sign of the original estimation
-            x1 <- reverseSign(.Est_temp = Est_temp, .summary_original = summary_original)
-            
-          }
+      data_temp <- if(.resample_method == "jackknife") {
+        resample_jack[[i]]
       } else {
-        est_temp_normal <- Est_temp$Estimates
+        # We could use resampleData here but, bootstrap resampling directly is faster
+        # (not surprising)
+        # (compared both approaches using microbenchmark)
+        data <- args[[".data"]]
+        data[sample(1:nrow(data), size = nrow(data), replace = TRUE), ]
+      }
+      
+      args[[".data"]] <- data_temp
+      
+      # Estimate model
+      Est_temp <- if(inherits(.object, "cSEMResults_2ndorder")) {
+        ## NOTE: using do.call(csem, args) would be more elegant but is much 
+        # much much! slower (especially for larger data sets). 
+        do.call(csem, args) 
         
-        sign_diff <- sign(est_normal$Weight_estimates) != 
-          sign(est_temp_normal$Weight_estimates)
+      } else {
+        # It is important to use foreman() here 
+        # instead of csem() to allow for lapply(x, resamplecSEMResults_default) when x 
+        # is of class cSEMResults_2ndorder.
         
-        # Is there a difference in the signs of th weights? Otherwise no correction of the signs is done
-        # Not sure whether this is a problem for the construct_reestimate approach which only compares the loadings
-        # I think not.
-        if(sum(sign_diff) !=0 ) {
+        ## NOTE: 
+        #  01.03.2019: Using do.call(foreman, args) would be more elegant but is much 
+        #              much much! slower (especially for larger data sets).
+        #
+        #  15.05.2019: Apparently do.call(foreman, args) is not that bad
+        #              after all. I did several comparisons using microbenchmark
+        #              but there was no speed difference (anymore?!). When I compared and
+        #              thought that do.call is slow I fixed other parts of 
+        #              foreman as well...maybe they had been the real culprit.
+        #              So we use do.call again, as it avoids redundancy
+        do.call(foreman, args)
+      }
+      
+      # Check status
+      status_code <- sum(unlist(verify(Est_temp)))
+      
+      # Distinguish depending on how inadmissibles should be handled
+      if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
+        
+        
+        # ## Select relevant statistics/parameters/quantities
+        x1 <- selectAndVectorize(Est_temp)
+        
+        ### Sign change correction for PLS-PM
+        if(.sign_change_option != "none" && info1$Arguments$.approach_weights == "PLS-PM") {
           
-          
-          # Sign change correction individual_reestimate and construct_reestimate
-          if(.sign_change_option == "individual_reestimate" | 
-             .sign_change_option == "construct_reestimate") {
+          if(inherits(.object, "cSEMResults_2ndorder")) {
             
-            W_new <- est_temp_normal$Weight_estimates
+            est1_temp_normal <- Est_temp$First_stage$Estimates
+            est2_temp_normal <- Est_temp$Second_stage$Estimates
             
-            # Individual_reestimate
-            if(.sign_change_option == "individual_reestimate"){
+            ### Individual_reestimate and construct_reestimate -------------------
+            if(.sign_change_option == "individual_reestimate" | 
+               .sign_change_option == "construct_reestimate") {
               
-              W_new[sign_diff] <- W_new[sign_diff] * (-1)
-            } # END individual_reestimate
+              ## First stage
+              # Is there a sign difference between the first stage resample 
+              # and original weight estimates. If so, which weights differ?
+              sign_diff1 <- sign(est1_normal$Weight_estimates) != 
+                sign(est1_temp_normal$Weight_estimates)
+              
+              # Only if at least one sign differs a correction is needed
+              if(sum(sign_diff1) != 0) {
+                
+                W1_new <- est1_temp_normal$Weight_estimates
+                
+                # Individual_reestimate
+                if(.sign_change_option == "individual_reestimate"){
+                  
+                  W1_new[sign_diff1] <- W1_new[sign_diff1] * (-1)
+                } # END individual_reestimate
+                
+                if(.sign_change_option == "construct_reestimate"){
+                  
+                  # In line with Tenenhaus et al. (2005, p 177) loadings are used,
+                  # although they have not considered 2nd order models
+                  
+                  Lambda1 <- est1_normal$Loading_estimates
+                  Lambda1_temp <- est1_temp_normal$Loading_estimates
+                  
+                  Lambda_diff1 <- abs(rowSums(Lambda1 - Lambda1_temp))
+                  Lambda_sum1 <- abs(rowSums(Lambda1 + Lambda1_temp))
+                  
+                  W1_new[Lambda_diff1 > Lambda_sum1, ] <- W1_new[Lambda_diff1 > Lambda_sum1, ] * (-1)
+                } # END construct_reestimate
+                
+                # Put corrected weights in a list to be able to supply them as
+                # fixed weights to .PLS_modes
+                W1_list <- lapply(1:nrow(W1_new), function(x) {
+                  temp <- W1_new[x, ]
+                  temp[temp !=0]
+                })
+                names(W1_list) <- rownames(W1_new)
+                
+                ## Replace modes by fixed sign-corrected weights
+                args[[".PLS_modes"]] <- W1_list
+                
+                ## Reestimate
+                # Note: calling csem() directly is faster, however, i guess
+                # change option wont be used that often, so for now, I will
+                # use the more elegant, while slower, do.call construction.
+                Est_temp <- do.call(csem, args)
+                
+                ## Update
+                est2_temp_normal <- Est_temp$Second_stage$Estimates
+                
+              } # END first stage
+              
+              ## Second stage
+              # Is there a sign difference between the second stage (sign-corrected) 
+              # resample weight estimates and the original weight estimates. 
+              # If so, which weights differ?
+              sign_diff2 <- sign(est2_normal$Weight_estimates) != 
+                sign(est2_temp_normal$Weight_estimates)
+              
+              # Only if at least one sign differs a correction is needed
+              if(sum(sign_diff2) != 0) {
+                
+                W2_new <- est2_temp_normal$Weight_estimates
+                
+                # Individual_reestimate
+                if(.sign_change_option == "individual_reestimate"){
+                  
+                  W2_new[sign_diff2] <- W2_new[sign_diff2] * (-1)
+                } # END individual_reestimate
+                
+                if(.sign_change_option == "construct_reestimate"){
+                  
+                  # In line with Tenenhaus et al. (2005, p 177) loadings are used,
+                  # although they have not considered 2nd order models
+                  
+                  Lambda2 <- est2_normal$Loading_estimates
+                  Lambda2_temp <- est2_temp_normal$Loading_estimates
+                  
+                  Lambda_diff2 <- abs(rowSums(Lambda2 - Lambda2_temp))
+                  Lambda_sum2 <- abs(rowSums(Lambda2 + Lambda2_temp))
+                  
+                  W2_new[Lambda_diff2 > Lambda_sum2, ] <- W2_new[Lambda_diff2 > Lambda_sum2, ] * (-1)
+                } # END construct_reestimate
+                
+                # Put corrected weights in a list to be able to supply them as
+                # fixed weights to .PLS_modes
+                W2_list <- lapply(1:nrow(W2_new), function(x){
+                  temp <- W2_new[x, ]
+                  temp[temp != 0]
+                })
+                names(W2_list) <- rownames(W2_new)
+                
+                args[[".PLS_modes"]] = W2_list
+                
+                ## Reestimate
+                # Note: calling csem() directly is faster, however, i guess
+                # change option wont be used that often, so for now, I will
+                # use the more elegant, while slower, do.call construction.
+                Est_temp <- do.call(csem, args)
+                
+              } # END second stage
+              
+              # ## Update using estimates based on the sign-corrected weights
+              x1 <- selectAndVectorize(Est_temp)
+            } # END individual_reestimate, construct_reestimate
             
-            if(.sign_change_option == "construct_reestimate"){
+            if(.sign_change_option == "individual") {
               
-              Lambda <- est_normal$Loading_estimates
-              Lambda_temp <- est_temp_normal$Loading_estimates
+              # Reverse the signs off ALL parameter estimates in a bootstrap run if 
+              # their sign differs from the sign of the original estimation
+              x1 <- reverseSign(.Est_temp = Est_temp, .summary_original = summary_original)
               
-              Lambda_diff <- abs(rowSums(Lambda - Lambda_temp))
-              Lambda_sum <- abs(rowSums(Lambda + Lambda_temp))
-              
-              W_new[Lambda_diff > Lambda_sum, ] <- W_new[Lambda_diff > Lambda_sum, ] * (-1)
             }
+          } else {
+            est_temp_normal <- Est_temp$Estimates
             
-            # Put corrected weights in a list to be able to supply them as
-            # fixed weights to .PLS_modes
-            W_list <- lapply(1:nrow(W_new), function(x){
-              temp <- W_new[x, ]
-              temp[temp != 0]
-            })
-            names(W_list) <- rownames(W_new)
+            sign_diff <- sign(est_normal$Weight_estimates) != 
+              sign(est_temp_normal$Weight_estimates)
             
-            args[[".PLS_modes"]] = W_list
-            
-            ## Reestimate
-            # Note: calling csem() directly is faster, however, i guess
-            # change option wont be used that often, so for now, I will
-            # use the more elegant, while slower, do.call construction.
-            Est_temp <- do.call(csem, args)
-            
-            ## Update using estimates based on the sign-corrected weights
-            x1 <- selectAndVectorize(Est_temp)
-            
-          } # end if individual_reestimate, construct_reestimate
-          
-          if(.sign_change_option == 'individual') {
-
-            # Reverse the signs off ALL parameter estimates in a bootstrap run if 
-            # their sign differs from the sign of the original estimation
-            x1 <- reverseSign(.Est_temp = Est_temp, .summary_original = summary_original)
-            
-          } # END .sign_change_option == "individual" 
-        } # END sum(sign(.object$Estimates$Weight_estimates)!=sign(Est_temp$Estimates$Weight_estimates)
-      } # END else (= not 2ndorder)
-    } # END .sign_change_option
-    
-      ## Apply user defined function if specified
-      user_funs <- if(!is.null(.user_funs)) {
-        applyUserFuns(Est_temp, .user_funs = .user_funs, ...)
-      }
-      
-      # user_funs <- if(!is.null(.user_funs)) {
-      #   if(is.function(.user_funs)) {
-      #     list("User_fun" = c(.user_funs(Est_temp, ...)))
-      #   } else {
-      #     x <- lapply(.user_funs, function(f) c(f(Est_temp, ...)))
-      #     if(is.null(names(x))) {
-      #       names(x) <- paste0("User_fun", 1:length(x))
-      #     }
-      #     x
-      #   }
-      # }
-      
-      ## Add output of the user functions to x1
-      if(!is.null(.user_funs)) {
-        x1 <- c(x1, user_funs)
-      }
-      
-      ## Resampling from a bootstrap sample is required for the
-      ## bootstraped t-interval CI (studentized CI), hence the second run
-      # In the second run no sign change option is used. We can think about 
-      # applying the same correction as in the first run
-      if(.resample_method2 != "none") {
+            # Is there a difference in the signs of th weights? Otherwise no correction of the signs is done
+            # Not sure whether this is a problem for the construct_reestimate approach which only compares the loadings
+            # I think not.
+            if(sum(sign_diff) !=0 ) {
+              
+              
+              # Sign change correction individual_reestimate and construct_reestimate
+              if(.sign_change_option == "individual_reestimate" | 
+                 .sign_change_option == "construct_reestimate") {
+                
+                W_new <- est_temp_normal$Weight_estimates
+                
+                # Individual_reestimate
+                if(.sign_change_option == "individual_reestimate"){
+                  
+                  W_new[sign_diff] <- W_new[sign_diff] * (-1)
+                } # END individual_reestimate
+                
+                if(.sign_change_option == "construct_reestimate"){
+                  
+                  Lambda <- est_normal$Loading_estimates
+                  Lambda_temp <- est_temp_normal$Loading_estimates
+                  
+                  Lambda_diff <- abs(rowSums(Lambda - Lambda_temp))
+                  Lambda_sum <- abs(rowSums(Lambda + Lambda_temp))
+                  
+                  W_new[Lambda_diff > Lambda_sum, ] <- W_new[Lambda_diff > Lambda_sum, ] * (-1)
+                }
+                
+                # Put corrected weights in a list to be able to supply them as
+                # fixed weights to .PLS_modes
+                W_list <- lapply(1:nrow(W_new), function(x){
+                  temp <- W_new[x, ]
+                  temp[temp != 0]
+                })
+                names(W_list) <- rownames(W_new)
+                
+                args[[".PLS_modes"]] = W_list
+                
+                ## Reestimate
+                # Note: calling csem() directly is faster, however, i guess
+                # change option wont be used that often, so for now, I will
+                # use the more elegant, while slower, do.call construction.
+                Est_temp <- do.call(csem, args)
+                
+                ## Update using estimates based on the sign-corrected weights
+                x1 <- selectAndVectorize(Est_temp)
+                
+              } # end if individual_reestimate, construct_reestimate
+              
+              if(.sign_change_option == 'individual') {
+                
+                # Reverse the signs off ALL parameter estimates in a bootstrap run if 
+                # their sign differs from the sign of the original estimation
+                x1 <- reverseSign(.Est_temp = Est_temp, .summary_original = summary_original)
+                
+              } # END .sign_change_option == "individual" 
+            } # END sum(sign(.object$Estimates$Weight_estimates)!=sign(Est_temp$Estimates$Weight_estimates)
+          } # END else (= not 2ndorder)
+        } # END .sign_change_option
         
-        Est_resamples2 <- resamplecSEMResults(
-          .object               = Est_temp,
-          .R                    = .R2,
-          .handle_inadmissibles = .handle_inadmissibles2,
-          .resample_method      = .resample_method2,
-          .resample_method2     = "none",
-          .user_funs            = .user_funs,
-          .seed                 = .seed, 
-          .force                = FALSE,
-          .sign_change_option   = "none",
-          ...
-        )
-        x1 <- list("Estimates1" = x1, "Estimates2" = Est_resamples2)
+        ## Apply user defined function if specified
+        user_funs <- if(!is.null(.user_funs)) {
+          applyUserFuns(Est_temp, .user_funs = .user_funs, ...)
+        }
+        
+        # user_funs <- if(!is.null(.user_funs)) {
+        #   if(is.function(.user_funs)) {
+        #     list("User_fun" = c(.user_funs(Est_temp, ...)))
+        #   } else {
+        #     x <- lapply(.user_funs, function(f) c(f(Est_temp, ...)))
+        #     if(is.null(names(x))) {
+        #       names(x) <- paste0("User_fun", 1:length(x))
+        #     }
+        #     x
+        #   }
+        # }
+        
+        ## Add output of the user functions to x1
+        if(!is.null(.user_funs)) {
+          x1 <- c(x1, user_funs)
+        }
+        
+        ## Resampling from a bootstrap sample is required for the
+        ## bootstraped t-interval CI (studentized CI), hence the second run
+        # In the second run no sign change option is used. We can think about 
+        # applying the same correction as in the first run
+        if(.resample_method2 != "none") {
+          
+          Est_resamples2 <- resamplecSEMResults(
+            .object               = Est_temp,
+            .R                    = .R2,
+            .handle_inadmissibles = .handle_inadmissibles2,
+            .resample_method      = .resample_method2,
+            .resample_method2     = "none",
+            .user_funs            = .user_funs,
+            .seed                 = .seed, 
+            .force                = FALSE,
+            .sign_change_option   = "none",
+            ...
+          )
+          x1 <- list("Estimates1" = x1, "Estimates2" = Est_resamples2)
+        }
+      } else if(status_code != 0 & .handle_inadmissibles != "ignore") {
+        # Retrun NA if status is not okay and .handle_inadmissibles == "drop" or
+        # "replace"
+        x1 <- NA
       }
-    } else if(status_code != 0 & .handle_inadmissibles != "ignore") {
-      # Retrun NA if status is not okay and .handle_inadmissibles == "drop" or
-      # "replace"
-      x1 <- NA
-    }
-    ## Return
-    x1
-  }, future.seed = .seed)
-  # })
+      ## Return
+      x1
+    }, future.seed = .seed)
+    # })
+  })
           
   ## Process data --------------------------------------------------------------
   # Delete potential NA's
@@ -1086,7 +1097,9 @@ resamplecSEMResultsCore <- function(
         .resample_method2     = .resample_method2,
         .R2                   = .R2,
         .user_funs            = .user_funs,
-        .eval_plan            = .eval_plan,
+        .eval_plan            = "sequential", # multiprocessing will generally 
+        # not be meaningful here since we typically 
+        # replace only a small subset of the total runs 
         .seed                 = .seed,
         .sign_change_option   = .sign_change_option,
         ...

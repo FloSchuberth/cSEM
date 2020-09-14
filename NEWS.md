@@ -3,9 +3,32 @@
 - `testMGD()` gains a new `.output_type` argument. By default (`.output_type = "structured"`),
   the standard output is returned. If `.output_type = "structured"`, however, 
   a tibble (data frame) summarizing the test decisions in a user-friendly way 
-  is returned.
+  is returned. (#398)
   
-- Add tests for `infer()`
+- Remove warning from `fit()` when polycoric or polyserial indicator correlation 
+  is used during estimation. (#413)
+  
+- `print.cSEMAssess()` no longer prints zero for VIF values of constructs that
+   are not part of a particular structural equation.
+
+- `print.cSEMAssess()` now prints the results of `calculateVIFModeB()`. This had been missing
+  in previous releases. (#384)
+  
+- Breaking: `calculateVIFModeB()` now returns a matrix with the dependent construct
+  in the rows and the VIFs for the coresponding weights in the columns. Previously,
+  the output was a list.
+
+- Add model selection criteria. See the `calculateModelSelectionCriteria()` 
+  function for details. As usual, all criteria are available via `assess()`. (#412)
+
+- Combine functions for surface, floodlight and simple effects analysis in 
+  the `doNonlinearEffectsAnalysis()` function; Breaking: functions `doFloodlightAnalysis()`
+  and `doSurfaceAnalysis()` have been removed!
+  
+- Progress bars are now supported for every function that does resampling. 
+  Progress bars are fully customizable via the `progressr` framework created by
+  @HenrikBengtsson. Note: to suppress the progress bar use
+  `progressr::handlers("void")` and then run your csem commands. (#359)
 
 - Fix bug in the computation of the Bc and Bca interval. Computation failed for
   models that had no indirect effects. 
@@ -14,15 +37,15 @@
   consistent with the naming scheme of the other list elements.
 
 - `infer()` automatically computes bootstrap resamples now by default if `.object`
-  does not have class `cSEMResults_resampled` already.
+  does not have class `cSEMResults_resampled` already. (#389)
 
-- Remove .alpha argument from `testMICOM()`. The argument is no longer required
-  as decisions are made via (possibly adjusted) p-values.
+- Remove `.alpha` argument from `testMICOM()`. The argument is no longer required
+  as decisions are made via (possibly adjusted) p-values. (#393)
   
 - Add checks to plot methods for `predict()`, `doFloodlightAnalysis`, and,
   `doFloodlightAnalysis`.
   
-- Several documentation updates and typo corrections
+- Several documentation updates and typo corrections.
 
 - The Fornell-Larcker criterion is now computed by its own function
  `calculateFLCriterion()`. Previously, it was only available via `assess()`. (#387)

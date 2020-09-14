@@ -118,10 +118,10 @@ testOMF <- function(
     )
   }
   
-  if(.verbose) {
-    cat(rule2("Test for overall model fit based on Beran & Srivastava (1985)",
-              type = 3), "\n\n")
-  }
+  # if(.verbose) {
+  #   cat(rule2("Test for overall model fit based on Beran & Srivastava (1985)",
+  #             type = 3), "\n\n")
+  # }
   
   ### Checks and errors ========================================================
   ## Check if initial results are inadmissible
@@ -136,7 +136,7 @@ testOMF <- function(
     stop2(
       "The following error occured in the `testOMF()` function:\n",
       "Test for overall model fit currently not applicable if polychoric or",
-      " polyserial correlation is used.")
+      " polyserial indicator correlation is used.")
   }
   
   ### Preparation ==============================================================
@@ -182,11 +182,6 @@ testOMF <- function(
   X_trans           <- X %*% S_half %*% Sig_half
   colnames(X_trans) <- colnames(X)
   
-  # Start progress bar if required
-  if(.verbose){
-    pb <- txtProgressBar(min = 0, max = .R, style = 3)
-  }
-  
   # Save old seed and restore on exit! This is important since users may have
   # set a seed before, in which case the global seed would be
   # overwritten if not explicitly restored
@@ -211,45 +206,48 @@ testOMF <- function(
   ref_dist         <- list()
   n_inadmissibles  <- 0
   counter <- 0
-  repeat{
-    # Counter
-    counter <- counter + 1
-    
-    # Draw dataset
-    X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
-
-    # Replace the old dataset by the new one
-    arguments[[".data"]] <- X_temp
-    
-    # Estimate model
-    Est_temp <- if(inherits(.object, "cSEMResults_2ndorder")) {
+  progressr::with_progress({
+    progress_bar_csem <- progressr::progressor(along = 1:.R)
+    repeat{
+      # Counter
+      counter <- counter + 1
+      progress_bar_csem(message = sprintf("Bootstrap run = %g", counter))
       
-      do.call(csem, arguments) 
+      # Draw dataset
+      X_temp <- X_trans[sample(1:nrow(X), replace = TRUE), ]
       
-    } else {
-
-      do.call(foreman, arguments)
-    }           
-    
-    # Check status (Note: output of verify for second orders is a list)
-    status_code <- sum(unlist(verify(Est_temp)))
-    
-    # Distinguish depending on how inadmissibles should be handled
-    if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
-      # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
-      # not ok
+      # Replace the old dataset by the new one
+      arguments[[".data"]] <- X_temp
+      
+      # Estimate model
+      Est_temp <- if(inherits(.object, "cSEMResults_2ndorder")) {
         
-      if(inherits(.object, "cSEMResults_default")) {
-        S_temp         <- Est_temp$Estimates$Indicator_VCV
-      } else if(inherits(.object, "cSEMResults_2ndorder")) { 
-        S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
-      }
+        do.call(csem, arguments) 
+        
+      } else {
+        
+        do.call(foreman, arguments)
+      }           
       
-      Sigma_hat_temp <- fit(Est_temp,
-                            .saturated = .saturated,
-                            .type_vcv  = "indicator")
-      
-      ref_dist[[counter]] <- if(.fit_measures) {
+      # Check status (Note: output of verify for second orders is a list)
+      status_code <- sum(unlist(verify(Est_temp)))
+
+      # Distinguish depending on how inadmissibles should be handled
+      if(status_code == 0 | (status_code != 0 & .handle_inadmissibles == "ignore")) {
+        # Compute if status is ok or .handle inadmissibles = "ignore" AND the status is 
+        # not ok
+        
+        if(inherits(.object, "cSEMResults_default")) {
+          S_temp         <- Est_temp$Estimates$Indicator_VCV
+        } else if(inherits(.object, "cSEMResults_2ndorder")) { 
+          S_temp         <- Est_temp$First_stage$Estimates$Indicator_VCV
+        }
+        
+        Sigma_hat_temp <- fit(Est_temp,
+                              .saturated = .saturated,
+                              .type_vcv  = "indicator")
+        
+       ref_dist[[counter]] <- if(.fit_measures) {
         c(
           "dG"           = calculateDG(Est_temp),
           "SRMR"         = calculateSRMR(Est_temp),
@@ -274,32 +272,23 @@ testOMF <- function(
           "dML"          = calculateDML(Est_temp)
         ) 
       }
-
-    } else if(status_code != 0 & .handle_inadmissibles == "drop") {
-      # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
-      ref_dist[[counter]] <- NA
+        
+      } else if(status_code != 0 & .handle_inadmissibles == "drop") {
+        # Set list element to zero if status is not okay and .handle_inadmissibles == "drop"
+        ref_dist[[counter]] <- NA
+        
+      } else {# status is not ok and .handle_inadmissibles == "replace"
+        # Reset counter and raise number of inadmissibles by 1
+        counter <- counter - 1
+        n_inadmissibles <- n_inadmissibles + 1
+      }
       
-    } else {# status is not ok and .handle_inadmissibles == "replace"
-      # Reset counter and raise number of inadmissibles by 1
-      counter <- counter - 1
-      n_inadmissibles <- n_inadmissibles + 1
-    }
-    
-    # Update progress bar
-    if(.verbose){
-      setTxtProgressBar(pb, counter)
-    }
-    
-    # Break repeat loop if .R results have been created.
-    if(length(ref_dist) == .R) {
-      break
-    }
-  } # END repeat 
-  
-  # close progress bar
-  if(.verbose){
-    close(pb)
-  }
+      # Break repeat loop if .R results have been created.
+      if(length(ref_dist) == .R) {
+        break
+      }
+    } # END repeat 
+  }) # END with_progress
   
   # Delete potential NA's
   ref_dist1 <- Filter(Negate(anyNA), ref_dist)
@@ -308,8 +297,8 @@ testOMF <- function(
   n_admissibles <- length(ref_dist1)
   if(n_admissibles < 3) {
     stop2("The following error occured in the `testOMF()` functions:\n",
-         "Less than 2 admissible results produced.", 
-         " Consider setting `.handle_inadmissibles == 'replace'` instead.")
+          "Less than 2 admissible results produced.", 
+          " Consider setting `.handle_inadmissibles == 'replace'` instead.")
   }
   
   # Combine

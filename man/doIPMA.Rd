@@ -14,7 +14,7 @@ A list of class \code{cSEMIPA} with a corresponding method for \code{plot()}.
 See: \code{\link[=plot.cSEMIPMA]{plot.cSEMIPMA()}}.
 }
 \description{
-Performs an importance-performance matrix analyis (IPMA).
+Performs an importance-performance matrix analysis (IPMA).
 }
 \details{
 To calculate the performance and importance, the weights of the indicators

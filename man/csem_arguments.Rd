@@ -71,6 +71,9 @@ is centered at \verb{2*theta - theta*_hat},
 where \verb{theta*_hat} is the average over all \code{.R} bootstrap estimates of \code{theta}.
 Defaults to \code{TRUE}}
 
+\item{.by_equation}{Should the criteria be computed for each structural model
+equation separately? Defaults to \code{TRUE}.}
+
 \item{.C}{A (J x J) composite variance-covariance matrix.}
 
 \item{.check_errors}{Logical. Should the model to parse be checked for correctness
@@ -106,7 +109,7 @@ of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or
 "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (converted to factor),
 or a mix of several types.}
 
-\item{.dependent}{Character string. The name of the dependent variable. Defaults to \code{NULL}.}
+\item{.dependent}{Character string. The name of the dependent variable.}
 
 \item{.disattenuate}{Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
@@ -169,11 +172,7 @@ to split \code{.data} into groups. Defaults to \code{NULL}.}
 
 \item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
 
-\item{.independent}{Character string. The name of the independent variable. Defaults to \code{NULL}.}
-
-\item{.independent_1}{Character string. The name of the first independent variable. Defaults to \code{NULL}.}
-
-\item{.independent_2}{Character string. The name of the second independent variable. Defaults to \code{NULL}.}
+\item{.independent}{Character string. The name of the independent variable.}
 
 \item{.instruments}{A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -199,16 +198,20 @@ for constructs or indicators.}
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
 
-\item{.moderator}{Character string. The name of the moderator variable. Defaults to \code{NULL}.}
+\item{.moderator}{Character string. The name of the moderator variable.}
 
 \item{.modes}{A vector giving the mode for each construct in the form \code{"name" = "mode"}.
 Only used internally.}
 
+\item{.ms_criterion}{Character string. Either a single character string or a vector
+of character strings naming the model selection criterion to compute.
+Defaults to \code{"all"}.}
+
 \item{.n}{Integer. The number of observations of the original data.}
 
-\item{.n_steps}{Integer. A numeric value giving the number of steps, e.g., in
-surface analysis or floodlight analysis the spotlights (= values of .moderator)
-between min(.moderator) and max(.moderator) to use. Defaults to \code{100}.}
+\item{.n_steps}{Integer. A value giving the number of steps (the spotlights, i.e.,
+values of .moderator in surface analysis or floodlight analysis)
+between the minimum and maximum value of the moderator. Defaults to \code{100}.}
 
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
@@ -227,6 +230,9 @@ factors be included when calculating one of the following quality critera:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to \code{TRUE}.}
 
+\item{.only_structural}{Should the the log-likelihood be based on the
+structural model? Ignored if \code{.by_equation == TRUE}. Defaults to \code{TRUE}.}
+
 \item{.original_arguments}{The list of arguments used within \code{\link[=csem]{csem()}}.}
 
 \item{.output_type}{Character string. The type of output to return. One of
@@ -240,11 +246,19 @@ parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or 
 compared across groups. Defaults to \code{NULL} in which case all weights, loadings and
 path coefficients of the originally specified model are compared.}
 
+\item{.path_coefficients}{List. A list that contains the resampled and the original
+path coefficient estimates. Typically a part of a \code{cSEMResults_resampled} object.
+Defaults to \code{NULL}.}
+
 \item{.PLS_approach_cf}{Character string. Approach used to obtain the correction
 factors for PLSc. One of: "\emph{dist_squared_euclid}", "\emph{dist_euclid_weighted}",
 "\emph{fisher_transformed}", "\emph{mean_arithmetic}", "\emph{mean_geometric}", "\emph{mean_harmonic}",
 "\emph{geo_of_harmonic}". Defaults to "\emph{dist_squared_euclid}".
 Ignored if \code{.disattenuate = FALSE} or if \code{.approach_weights} is not PLS-PM.}
+
+\item{.plot_package}{Character string. Indicates which packages should be used for plotting.}
+
+\item{.plot_type}{Character string. Indicates the type of plot that is produced.}
 
 \item{.PLS_ignore_structural_model}{Logical. Should the structural model be ignored
 when calculating the inner weights of the PLS-PM algorithm? Defaults to \code{FALSE}.
@@ -347,6 +361,10 @@ list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of \code{"indicator_name" = value}
 pairs, where \code{value} is the (scaled or unscaled) starting weight. Defaults to \code{NULL}.}
 
+\item{.steps_mod}{A numeric vector. Steps used for the moderator variable in calculating
+the simple effects of an independent variable on the dependent variable.
+Defaults to \code{NULL}.}
+
 \item{.terms}{A vector of construct names to be classified.}
 
 \item{.test_data}{A matrix of test data with the same column names as the
@@ -360,7 +378,8 @@ For possible choices, see the \code{.quantity} argument of the \code{\link{infer
 In the test_mgd function default is to "\emph{CI_percentile}".}
 
 \item{.type}{Character string. Which fitting function should the GFI be based
-on? One of \emph{"ML"} for the maximum likelihood fitting function or \emph{"ULS"} for the
+on? One of \emph{"ML"} for the maximum likelihood fitting function, \emph{"GLS"} for
+the generalized least squares fitting function or \emph{"ULS"} for the
 unweighted least squares fitting function (same as the squared Euclidian distance).
 Defaults to \emph{"ML"}.}
 
@@ -377,6 +396,14 @@ resample. The functions must take \code{.object} as its first argument (e.g.,
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
+
+\item{.value_independent}{Integer. Only required for floodlight analysis;
+The value of the independent variable in case that it appears as a
+higher-order term.}
+
+\item{.values_moderator}{A numeric vector. The values of the moderator in a
+the simple effects analysis. Typically these are difference from the mean (=0)
+measured in standard deviations. Defaults to \code{c(-2, -1, 0, 1, 2)}.}
 
 \item{.vcv_asymptotic}{Logical. Should the asymptotic variance-covariance matrix be used, i.e.,
 VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) be computed directly?

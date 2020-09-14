@@ -58,6 +58,8 @@
 #'   is centered at `2*theta - theta*_hat`,
 #'   where `theta*_hat` is the average over all `.R` bootstrap estimates of `theta`.
 #'   Defaults to `TRUE`
+#' @param .by_equation Should the criteria be computed for each structural model
+#'   equation separately? Defaults to `TRUE`.
 #' @param .C A (J x J) composite variance-covariance matrix.
 #' @param .check_errors Logical. Should the model to parse be checked for correctness 
 #'   in a sense that all necessary components to estimate the model are given?
@@ -82,7 +84,7 @@
 #'   of the data provided are: "`logical`", "`numeric`" ("`double`" or "`integer`"), 
 #'   "`factor`" ("`ordered`" and/or "`unordered`"), "`character`" (converted to factor),
 #'   or a mix of several types.
-#' @param .dependent Character string. The name of the dependent variable. Defaults to `NULL`. 
+#' @param .dependent Character string. The name of the dependent variable.
 #' @param .disattenuate Logical. Should composite/proxy correlations 
 #'   be disattenuated to yield consistent loadings and path estimates if at least
 #'   one of the construct is modeled as a common factor? Defaults to `TRUE`.
@@ -127,9 +129,7 @@
 #'   an integer of the position of the column of `.data` whose levels are used
 #'   to split `.data` into groups. Defaults to `NULL`.
 #' @param .inference Logical. Should critical values be computed? Defaults to `FALSE`.
-#' @param .independent Character string. The name of the independent variable. Defaults to `NULL`.
-#' @param .independent_1 Character string. The name of the first independent variable. Defaults to `NULL`.
-#' @param .independent_2 Character string. The name of the second independent variable. Defaults to `NULL`.
+#' @param .independent Character string. The name of the independent variable.
 #' @param .instruments A named list of vectors of instruments. The names
 #'   of the list elements are the names of the dependent (LHS) constructs of the structural
 #'   equation whose explanatory variables are endogenous. The vectors
@@ -147,13 +147,16 @@
 #' @param .matrices A list of at least two matrices.
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
 #'   or a [cSEMModel] list.
-#' @param .moderator Character string. The name of the moderator variable. Defaults to `NULL`. 
+#' @param .moderator Character string. The name of the moderator variable.
 #' @param .modes A vector giving the mode for each construct in the form `"name" = "mode"`. 
 #'   Only used internally. 
+#' @param .ms_criterion Character string. Either a single character string or a vector
+#'   of character strings naming the model selection criterion to compute.
+#'   Defaults to `"all"`.
 #' @param .n Integer. The number of observations of the original data.
-#' @param .n_steps Integer. A numeric value giving the number of steps, e.g., in
-#' surface analysis or floodlight analysis the spotlights (= values of .moderator)
-#' between min(.moderator) and max(.moderator) to use. Defaults to `100`.
+#' @param .n_steps Integer. A value giving the number of steps (the spotlights, i.e.,
+#' values of .moderator in surface analysis or floodlight analysis) 
+#' between the minimum and maximum value of the moderator. Defaults to `100`.
 #' @param .normality Logical. Should joint normality of 
 #' \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}
 #'  be assumed in the nonlinear model? See \insertCite{Dijkstra2014}{cSEM} for details.
@@ -166,6 +169,8 @@
 #'   factors be included when calculating one of the following quality critera: 
 #'   AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates. 
 #'   Defaults to `TRUE`.
+#' @param .only_structural Should the the log-likelihood be based on the 
+#'   structural model? Ignored if `.by_equation == TRUE`. Defaults to `TRUE`.
 #' @param .original_arguments The list of arguments used within [csem()].
 #' @param .output_type Character string. The type of output to return. One of
 #'   "*complete*" or "*structured*". See the Values section for details. Defaults to
@@ -175,11 +180,16 @@
 #'   parameters (i.e, path (`~`), loadings (`=~`), weights (`<~`), or correlations (`~~`)) should be
 #'   compared across groups. Defaults to `NULL` in which case all weights, loadings and 
 #'   path coefficients of the originally specified model are compared.
+#' @param .path_coefficients List. A list that contains the resampled and the original 
+#' path coefficient estimates. Typically a part of a `cSEMResults_resampled` object.
+#' Defaults to `NULL`. 
 #' @param .PLS_approach_cf Character string. Approach used to obtain the correction
 #'   factors for PLSc. One of: "*dist_squared_euclid*", "*dist_euclid_weighted*",
 #'   "*fisher_transformed*", "*mean_arithmetic*", "*mean_geometric*", "*mean_harmonic*",
 #'   "*geo_of_harmonic*". Defaults to "*dist_squared_euclid*". 
 #'   Ignored if `.disattenuate = FALSE` or if `.approach_weights` is not PLS-PM.
+#' @param .plot_package Character string. Indicates which packages should be used for plotting.
+#' @param .plot_type Character string. Indicates the type of plot that is produced.
 #' @param .PLS_ignore_structural_model Logical. Should the structural model be ignored
 #'   when calculating the inner weights of the PLS-PM algorithm? Defaults to `FALSE`.
 #'   Ignored if `.approach_weights` is not PLS-PM.
@@ -256,6 +266,9 @@
 #'   list names are the construct names whose indicator weights the user
 #'   wishes to set. The vectors must be named vectors of `"indicator_name" = value` 
 #'   pairs, where `value` is the (scaled or unscaled) starting weight. Defaults to `NULL`.
+#' @param .steps_mod A numeric vector. Steps used for the moderator variable in calculating 
+#' the simple effects of an independent variable on the dependent variable. 
+#' Defaults to `NULL`.
 #' @param .terms A vector of construct names to be classified.
 #' @param .test_data A matrix of test data with the same column names as the 
 #'   training data.
@@ -265,7 +278,8 @@
 #' For possible choices, see the `.quantity` argument of the \code{\link{infer}} function. 
 #' In the test_mgd function default is to "*CI_percentile*".
 #' @param .type Character string. Which fitting function should the GFI be based 
-#'   on? One of *"ML"* for the maximum likelihood fitting function or *"ULS"* for the
+#'   on? One of *"ML"* for the maximum likelihood fitting function, *"GLS"* for 
+#'   the generalized least squares fitting function or *"ULS"* for the
 #'   unweighted least squares fitting function (same as the squared Euclidian distance). 
 #'   Defaults to *"ML"*.
 #' @param .type_vcv Character string. Which model-implied correlation 
@@ -279,6 +293,12 @@
 #'   Function output should preferably be a (named)
 #'   vector but matrices are also accepted. However, the output will be 
 #'   vectorized (columnwise) in this case. See the examples section for details.
+#' @param .value_independent Integer. Only required for floodlight analysis;
+#' The value of the independent variable in case that it appears as a 
+#' higher-order term.
+#' @param .values_moderator A numeric vector. The values of the moderator in a 
+#' the simple effects analysis. Typically these are difference from the mean (=0) 
+#' measured in standard deviations. Defaults to `c(-2, -1, 0, 1, 2)`.
 #' @param .vcv_asymptotic Logical. Should the asymptotic variance-covariance matrix be used, i.e., 
 #' VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) be computed directly? 
 #'  Defaults to `FALSE`.
@@ -298,50 +318,6 @@
 #' @aliases cSEMArguments
 #' @keywords internal
 NULL
-
-#' Internal: Complete list of csem()'s ... arguments
-#' 
-#' A complete alphabetical list of all possible arguments accepted by `csem()`'s `...` 
-#' (dotdotdot) argument.
-#' 
-#' Most arguments supplied to the `...` argument of `csem()` are only
-#' accepted by a subset of the functions called by `csem()`. The following
-#' list shows which argument is passed to which (internal) function:
-#' \describe{
-#' \item{.approach_cor_robust}{Accepted by/Passed down to: [calculateIndicatorCor()]}
-#' \item{.conv_criterion}{Accepted by/Passed down to: [calculateWeightsPLS()],
-#'   [calculateWeightsGSCA()], [calculateWeightsGSCAm()] and subsequently 
-#'   [checkConvergence()].}
-#' \item{.dominant_indicators}{Accepted by/Passed down to: [setDominantIndicator()]}
-#' \item{.estimate_structural}{Accepted by/Passed down to: [foreman()]}
-#' \item{.iter_max}{Accepted by/Passed down to: [calculateWeightsPLS()],
-#'   [calculateWeightsGSCA()], [calculateWeightsGSCAm()]}
-#' \item{.PLS_modes, .PLS_ignore_structural_model, .PLS_weight_scheme_inner, .PLS_approach_cf}{
-#'   Accepted by/Passed down to: [calculateWeightsPLS()]}
-#' \item{.tolerance}{Accepted by/Passed down to: [calculateWeightsPLS()],
-#'   [calculateWeightsGSCA()], [calculateWeightsGSCAm()], [calculateWeightsUnit()]}
-#' }
-#' 
-#' @usage NULL
-#' 
-#' @inheritParams csem_arguments
-#' @keywords internal
-
-args_csem_dotdotdot <- function(
-  .approach_cor_robust     = c("none", "mcd", "spearman"),
-  .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
-  .dominant_indicators     = NULL,
-  .estimate_structural     = TRUE,
-  .iter_max                = 100,
-  .PLS_modes               = NULL,
-  .PLS_ignore_structural_model = FALSE,
-  .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
-  .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 
-                               "fisher_transformed", "mean_arithmetic",
-                               "mean_geometric", "mean_harmonic",
-                               "geo_of_harmonic"),
-  .tolerance               = 1e-05
-) {NULL}
 
 #' Internal: Complete list of assess()'s ... arguments
 #' 
@@ -405,10 +381,12 @@ args_default <- function(.choices = FALSE) {
   args <- list(
     .alpha                   = 0.05,
     .absolute                = TRUE,
-    .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
     .approach_2ndorder       = c("2stage", "mixed"),
     .approach_alpha_adjust   = c("none", "bonferroni"),
-    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", "Henseler","CI_para","CI_overlap"),
+    .approach_cor_robust     = c("none", "mcd", "spearman"),
+    .approach_gcca           = c("SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR"),
+    .approach_mgd            = c("all", "Klesel", "Chin", "Sarstedt", "Keil", "Nitzl", 
+                                 "Henseler","CI_para","CI_overlap"),
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS"),
@@ -418,6 +396,7 @@ args_default <- function(.choices = FALSE) {
     .attributes              = NULL,
     .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
     .bias_corrected          = TRUE,
+    .by_equation             = TRUE,
     .C                       = NULL,
     .check_errors            = TRUE,
     .choices                 = FALSE,
@@ -425,6 +404,7 @@ args_default <- function(.choices = FALSE) {
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .ci_colnames             = NULL,
     .closed_form_ci          = FALSE, 
+    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
     .csem_model              = NULL,
     .csem_resample           = NULL,
     .cv_folds                = 10,
@@ -434,8 +414,10 @@ args_default <- function(.choices = FALSE) {
     .dist                    = c("z", "t"),
     .distance                = c("geodesic", "squared_euclidian"),
     .df                      = c("type1", "type2"),
+    .dominant_indicators     = NULL,
     .E                       = NULL,
     .effect                  = NULL,
+    .estimate_structural     = TRUE,
     .eval_plan               = c("sequential", "multiprocess"),
     .force                   = FALSE,
     .fit_measures            = FALSE,
@@ -446,9 +428,8 @@ args_default <- function(.choices = FALSE) {
     .id                      = NULL,
     .inference               = FALSE,
     .independent             = NULL,
-    .independent_1           = NULL,
-    .independent_2           = NULL,
     .instruments             = NULL,
+    .iter_max                = 100,
     .listMatrices            = NULL, 
     .level                   = c('construct',"indicator"),
     .matrix1                 = NULL,
@@ -457,6 +438,8 @@ args_default <- function(.choices = FALSE) {
     .model                   = NULL,
     .moderator               = NULL,
     .modes                   = NULL,
+    .ms_criterion            = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
+                                 "hqc", "mallows_cp"),
     .n_steps                 = 100,
     .normality               = FALSE,
     .nr_comparisons          = NULL,
@@ -466,17 +449,28 @@ args_default <- function(.choices = FALSE) {
     .output_type             = c("complete", "structured"),
     .P                       = NULL,
     .parameters_to_compare   = NULL,
+    .path_coefficients       = NULL,
+    .plot_package            = NULL,
+    .plot_type               = NULL,
     .probs                   = NULL,
-    .quality_criterion       = c("all", "ave", "rho_C", "rho_C_mm", "rho_C_weighted", 
-                                 "rho_C_weighted_mm", "cronbachs_alpha", 
-                                 "cronbachs_alpha_weighted", "dg", "dl", "dml", "df",
-                                 "effects", "f2", "chi_square", "chi_square_df",
+    .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 
+                                 "fisher_transformed", "mean_arithmetic",
+                                 "mean_geometric", "mean_harmonic",
+                                 "geo_of_harmonic"),
+    .PLS_ignore_structural_model = FALSE,
+    .PLS_modes               = NULL,
+    .PLS_weight_scheme_inner = c("path", "centroid", "factorial"),
+    .quality_criterion       = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
+                                 "hqc", "mallows_cp", "ave",
+                                 "rho_C", "rho_C_mm", "rho_C_weighted", 
+                                 "rho_C_weighted_mm", "dg", "dl", "dml", "df",
+                                 "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
                                  "cfi", "gfi", "ifi", "nfi", "nnfi", 
                                  "reliability",
                                  "rmsea", "rms_theta", "srmr",
                                  "gof", "htmt", "r2", "r2_adj",
                                  "rho_T", "rho_T_weighted", "vif", 
-                                 "vifmodeB",  "fl_criterion"),
+                                 "vifmodeB"),
     
     .quantity                = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
                                  "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
@@ -500,13 +494,17 @@ args_default <- function(.choices = FALSE) {
     .stage                   = c("first", "second"),
     .standardized            = TRUE,
     .starting_values         = NULL,
+    .steps_mod               = NULL,
     .terms                   = NULL,
     .test_data               = NULL,
-    .type                    = c("ML", "ULS"),
+    .tolerance               = 1e-05,
+    .type                    = c("ML", "GLS", "ULS"),
     .type_vcv                = c("indicator", "construct"),
     .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
                                  "CI_basic","CI_bc", "CI_bca"),
     .user_funs               = NULL,
+    .value_independent       = 0,
+    .values_moderator        = c(-2,-1,0,1,2),
     .vcv_asymptotic          = c(FALSE, TRUE),
     .verbose                 = TRUE,
     .W                       = NULL,
@@ -518,45 +516,14 @@ args_default <- function(.choices = FALSE) {
     .y                       = NULL,
     .z                       = NULL
   )
-  
-  args_dotdotdot_csem <- list(
-    # Arguments passed to calculateIndicatorCor()
-    .approach_cor_robust     = c("none", "mcd", "spearman"),
-    
-    # Arguments passed to calculateWeightsPLS()
-    .PLS_modes               = NULL,
-
-    # Arguments passed to calculateInnerWeightsPLS()
-    .PLS_ignore_structural_model = FALSE,
-    .PLS_weight_scheme_inner     = c("path", "centroid", "factorial"),
-    
-    # Arguments passed to calculateWeights*()
-    .tolerance               = 1e-05,
-    .iter_max                = 100,
-    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative"),
-    
-    # Arguments passed to setDominantIndicator()
-    .dominant_indicators     = NULL,
-    
-    # Arguments passed to calculateReliabilities()
-    .PLS_approach_cf         = c("dist_squared_euclid", "dist_euclid_weighted", 
-                                 "fisher_transformed", "mean_arithmetic",
-                                 "mean_geometric", "mean_harmonic",
-                                 "geo_of_harmonic"),
-    
-    #  Arguments passed to foreman()
-    .estimate_structural     = TRUE
-  )
 
   if(!.choices) {
     args <- lapply(args, function(x) eval(x)[1])
-    args_dotdotdot_csem <- lapply(args_dotdotdot_csem, function(x) eval(x)[1])
   }
     
-  args_all <- c(args, args_dotdotdot_csem)
-  args_all <- args_all[sort(names(args_all))]
+  args_sorted <- args[sort(names(args))]
   
-  return(args_all)
+  return(args_sorted)
 }
 
 #' Internal: Handle arguments

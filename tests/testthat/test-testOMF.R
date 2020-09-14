@@ -4,7 +4,7 @@ DGPs <- list.files("../data/", pattern = "DGP_")
 
 for(i in DGPs) {
   ## Model and Sigma matrix
-  # load(paste0("../data/", i))
+  load(paste0("../data/", i))
   # load(paste0("tests/data/", i))
   
   ## Draw data
@@ -15,17 +15,14 @@ for(i in DGPs) {
   
   ## Test
   test_that(paste("testOMF works for DGP: ", i, "with default values"),  {
-    expect_output(
       testOMF(
         .object = res,
         .R      = 4,
         .handle_inadmissibles = "replace" # to make sure there are enough admissibles
-      )
     )
   })
   
   test_that(paste("All arguments of testOMF work for DGP: ", i),  {
-    expect_output(
       testOMF(
         .object = res,
         .R      = 4,
@@ -34,7 +31,6 @@ for(i in DGPs) {
         .handle_inadmissibles = "replace", # to make sure there are enough admissibles
         .seed   = 2010
       )
-    )
   })
 }
 

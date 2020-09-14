@@ -71,7 +71,7 @@ Usully, using `cSEM` is the same 3 step procedure:
 
 ## Postestimation functions
 
-There are five major postestimation verbs, four test family functions and
+There are five major postestimation verbs, three test family functions and
 four do-family of function: 
 
 - `assess()` : assess the model using common quality criteria
@@ -89,12 +89,12 @@ tests are implemented:
 - `testHausman()` : performs the regression-based Hausman test to test for endogeneity
 
 Other miscellaneous postestimation functions belong do the do-family of functions.
-Currently, four do functions are implemented:
+Currently, three do functions are implemented:
 
-- `doFloodlightAnalysis()`: performs a floodlight analysis
-- `doSurfaceAnalysis()`: performs a surface analysis
-- `doRedundancyAnalysis()`: performs a redundancy analysis
 - `doIPMA()`: performs an importance-performance matrix analysis
+- `doNonlinearEffectsAnalysis()`: performs a nonlinear effects analysis such as 
+   floodlight and surface analysis
+- `doRedundancyAnalysis()`: performs a redundancy analysis
 
 All functions require a `cSEMResults` object.
 
@@ -203,7 +203,7 @@ summarize(res)
 verify(res) 
     
 ## Test overall model fit
-testOMF(res, .verbose = FALSE)
+testOMF(res)
 
 ## Assess the model
 assess(res)
