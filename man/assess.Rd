@@ -11,7 +11,7 @@ assess(
                            "rho_C", "rho_C_mm", "rho_C_weighted", 
                            "rho_C_weighted_mm", "dg", "dl", "dml", "df",
                            "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
-                           "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                           "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "srmr",
                            "gof", "htmt", "r2", "r2_adj",
@@ -115,7 +115,7 @@ R2_included and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
 alternative specification with the k'th variable dropped (R2_excluded).
 Calculation is done by \code{\link[=calculatef2]{calculatef2()}}.}
-\item{Fit indices; "chi_square", "chi_square_df", "cfi", "gfi", "ifi", "nfi",
+\item{Fit indices; "chi_square", "chi_square_df", "cfi", "cn", "gfi", "ifi", "nfi",
 "nnfi",  "rmsea", "rms_theta", "srmr"}{
 Several absolute and incremental fit indices. Note that their suitability
 for models containing constructs modeled as composites is still an

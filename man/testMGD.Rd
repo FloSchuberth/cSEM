@@ -40,7 +40,7 @@ Approach used for the multi-group comparison. One of: "\emph{all}", "\emph{Klese
 Default to "\emph{all}" in which case all approaches are computed (if possible).}
 
 \item{.output_type}{Character string. The type of output to return. One of
-"\emph{complete}" or "\emph{structured}". See the Values section for details. Defaults to
+"\emph{complete}" or "\emph{structured}". See the Value section for details. Defaults to
 "\emph{complete}".}
 
 \item{.parameters_to_compare}{A model in \link[lavaan:model.syntax]{lavaan model syntax} indicating which
@@ -74,19 +74,20 @@ case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
 
-\item{.type_ci}{Character string. It indicates which confidence interval should be calculated.
-For possible choices, see the \code{.quantity} argument of the \code{\link{infer}} function.
-In the test_mgd function default is to "\emph{CI_percentile}".}
+\item{.type_ci}{Character string. Which confidence interval should be calculated?
+For possible choices, see the \code{.quantity} argument of the \code{\link[=infer]{infer()}} function.
+Only used if \code{.approch_mgd} is one of "\emph{CI_para}" or "\emph{CI_overlap}". Ignored otherwise.
+Defaults to "\emph{CI_percentile}".}
 
 \item{.type_vcv}{Character string. Which model-implied correlation
-matrix is calculated?
+matrix should be calculated?
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 
 \item{.verbose}{Logical. Should information (e.g., progress bar) be printed
 to the console? Defaults to \code{TRUE}.}
 }
 \value{
-\code{.output_type = "complete"} a list of class \code{cSEMTestMGD}. Technically, \code{cSEMTestMGD} is a
+If \code{.output_type = "complete"} a list of class \code{cSEMTestMGD}. Technically, \code{cSEMTestMGD} is a
 named list containing the following list elements:
 
 \describe{

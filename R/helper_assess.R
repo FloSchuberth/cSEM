@@ -1475,6 +1475,40 @@ calculateGFI <- function(.object, .type = c("ML", "GLS", "ULS")) {
   }
 }
 
+#' @describeIn fit_measures The Hoelter index alias Hoelter's (critical) N (CN).
+#' @export
+
+calculateCN <- function(.object, .alpha = 0.05) {
+  
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateCN)
+    return(out)
+  }
+  if(inherits(.object, "cSEMResults_default")) {
+    N    <- nrow(.object$Information$Data)
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    N    <- nrow(.object$First_stage$Information$Data)
+  } else {
+    stop2(
+      "The following error occured in the calculateHoeltersN() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
+  
+  chi_square      <- calculateChiSquare(.object)
+  df              <- calculateDf(.object)
+  chi_square_crit <- qchisq(1 - .alpha, df)
+  # z <- qnorm(1 - .alpha/2ap)                              
+  
+  # (z + sqrt(2*df - 1))^2 / (2*chi_square/(N-1)) + 1 
+  # Formula given in Hoelters (1983), p.331 and Hu & Bentler (1998), p.428; the
+  # formula is less exact than the one below. See Bollen & Liang (1988) - Some properties
+  # of Hoelter's CN; especially footnote 2
+
+  chi_square_crit / (chi_square/(N-1)) + 1 # formula given on David Kennys website and Bollen & Liang (1988)
+  # Motivation: chi_crit = (CN - 1)*F = (CN -1)*Chi_square/(N-1)
+}
+
 #' @describeIn fit_measures The incremental fit index (IFI).
 #' @export
 

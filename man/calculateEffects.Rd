@@ -13,7 +13,7 @@ calculateEffects(
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.output_type}{Character string. The type of output to return. One of
-"\emph{complete}" or "\emph{structured}". See the Values section for details. Defaults to
+"\emph{complete}" or "\emph{structured}". See the Value section for details. Defaults to
 "\emph{complete}".}
 }
 \value{
