@@ -173,7 +173,7 @@
 #'   structural model? Ignored if `.by_equation == TRUE`. Defaults to `TRUE`.
 #' @param .original_arguments The list of arguments used within [csem()].
 #' @param .output_type Character string. The type of output to return. One of
-#'   "*complete*" or "*structured*". See the Values section for details. Defaults to
+#'   "*complete*" or "*structured*". See the Value section for details. Defaults to
 #'   "*complete*".
 #' @param .P A (J x J) construct variance-covariance matrix (possibly disattenuated).
 #' @param .parameters_to_compare A model in [lavaan model syntax][lavaan::model.syntax] indicating which 
@@ -274,16 +274,17 @@
 #'   training data.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
-#' @param .type_ci Character string. It indicates which confidence interval should be calculated. 
-#' For possible choices, see the `.quantity` argument of the \code{\link{infer}} function. 
-#' In the test_mgd function default is to "*CI_percentile*".
 #' @param .type Character string. Which fitting function should the GFI be based 
 #'   on? One of *"ML"* for the maximum likelihood fitting function, *"GLS"* for 
 #'   the generalized least squares fitting function or *"ULS"* for the
 #'   unweighted least squares fitting function (same as the squared Euclidian distance). 
 #'   Defaults to *"ML"*.
+#' @param .type_ci Character string. Which confidence interval should be calculated? 
+#'   For possible choices, see the `.quantity` argument of the [infer()] function.
+#'   Only used if `.approch_mgd` is one of "*CI_para*" or "*CI_overlap*". Ignored otherwise.
+#'   Defaults to "*CI_percentile*". 
 #' @param .type_vcv Character string. Which model-implied correlation 
-#'  matrix is calculated?
+#'  matrix should be calculated?
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
 #' @param .verbose Logical. Should information (e.g., progress bar) be printed 
 #'   to the console? Defaults to `TRUE`.
@@ -329,7 +330,7 @@ NULL
 #' list shows which argument is passed to which (internal) function:
 #' \describe{
 #' \item{.absolute}{Accepted by/Passed down to: [calculateHTMT()]}
-#' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()] and [calculateHTMT()]}
+#' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()], [calculateHTMT()], [calculateCN()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
 #' \item{.handle_inadmissibles}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.null_model}{Accepted by/Passed down to: [calculateDf()]}

@@ -43,6 +43,7 @@ test_that("Assess works for all choices of .quality_criterion", {
   expect_equivalent(a$Chi_square_df, 0.6643398, tolerance = 1e-07)
   expect_equivalent(a$CFI, 1, tolerance = 1e-07)
   expect_equivalent(a$GFI, 0.9927503, tolerance = 1e-07)
+  expect_equivalent(a$CN, 1159.24462058346, tolerance = 1e-07)
   expect_equivalent(a$IFI, 1.005165, tolerance = 1e-06)
   expect_equivalent(a$NFI, 0.9899318 , tolerance = 1e-07)
   expect_equivalent(a$NNFI, 1, tolerance = 1e-06)

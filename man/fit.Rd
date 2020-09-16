@@ -17,7 +17,7 @@ fit(
 Defaults to \code{FALSE}.}
 
 \item{.type_vcv}{Character string. Which model-implied correlation
-matrix is calculated?
+matrix should be calculated?
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 }
 \value{

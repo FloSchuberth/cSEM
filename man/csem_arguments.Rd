@@ -236,7 +236,7 @@ structural model? Ignored if \code{.by_equation == TRUE}. Defaults to \code{TRUE
 \item{.original_arguments}{The list of arguments used within \code{\link[=csem]{csem()}}.}
 
 \item{.output_type}{Character string. The type of output to return. One of
-"\emph{complete}" or "\emph{structured}". See the Values section for details. Defaults to
+"\emph{complete}" or "\emph{structured}". See the Value section for details. Defaults to
 "\emph{complete}".}
 
 \item{.P}{A (J x J) construct variance-covariance matrix (possibly disattenuated).}
@@ -373,18 +373,19 @@ training data.}
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 
-\item{.type_ci}{Character string. It indicates which confidence interval should be calculated.
-For possible choices, see the \code{.quantity} argument of the \code{\link{infer}} function.
-In the test_mgd function default is to "\emph{CI_percentile}".}
-
 \item{.type}{Character string. Which fitting function should the GFI be based
 on? One of \emph{"ML"} for the maximum likelihood fitting function, \emph{"GLS"} for
 the generalized least squares fitting function or \emph{"ULS"} for the
 unweighted least squares fitting function (same as the squared Euclidian distance).
 Defaults to \emph{"ML"}.}
 
+\item{.type_ci}{Character string. Which confidence interval should be calculated?
+For possible choices, see the \code{.quantity} argument of the \code{\link[=infer]{infer()}} function.
+Only used if \code{.approch_mgd} is one of "\emph{CI_para}" or "\emph{CI_overlap}". Ignored otherwise.
+Defaults to "\emph{CI_percentile}".}
+
 \item{.type_vcv}{Character string. Which model-implied correlation
-matrix is calculated?
+matrix should be calculated?
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 
 \item{.verbose}{Logical. Should information (e.g., progress bar) be printed

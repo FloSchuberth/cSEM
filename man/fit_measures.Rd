@@ -6,6 +6,7 @@
 \alias{calculateChiSquareDf}
 \alias{calculateCFI}
 \alias{calculateGFI}
+\alias{calculateCN}
 \alias{calculateIFI}
 \alias{calculateNFI}
 \alias{calculateNNFI}
@@ -21,6 +22,8 @@ calculateChiSquareDf(.object)
 calculateCFI(.object)
 
 calculateGFI(.object, .type = c("ML", "GLS", "ULS"))
+
+calculateCN(.object, .alpha = 0.05)
 
 calculateIFI(.object)
 
@@ -48,6 +51,9 @@ on? One of \emph{"ML"} for the maximum likelihood fitting function, \emph{"GLS"}
 the generalized least squares fitting function or \emph{"ULS"} for the
 unweighted least squares fitting function (same as the squared Euclidian distance).
 Defaults to \emph{"ML"}.}
+
+\item{.alpha}{An integer or a numeric vector of significance levels.
+Defaults to \code{0.05}.}
 
 \item{.matrix1}{A \code{matrix} to compare.}
 
@@ -78,6 +84,8 @@ for details on the implementation.
 \item \code{calculateCFI}: The comparative fit index (CFI).
 
 \item \code{calculateGFI}: The goodness of fit index (GFI).
+
+\item \code{calculateCN}: The Hoelter index alias Hoelter's (critical) N (CN).
 
 \item \code{calculateIFI}: The incremental fit index (IFI).
 

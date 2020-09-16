@@ -39,7 +39,7 @@ to the body of the function it is used in. Hence, the global seed will
 not be altered!}
 
 \item{.type_vcv}{Character string. Which model-implied correlation
-matrix is calculated?
+matrix should be calculated?
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
 }
 \description{
@@ -52,7 +52,7 @@ accepted by a subset of the functions called by \code{assess()}. The following
 list shows which argument is passed to which (internal) function:
 \describe{
 \item{.absolute}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
-\item{.alpha}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}} and \code{\link[=calculateHTMT]{calculateHTMT()}}}
+\item{.alpha}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}, \code{\link[=calculateHTMT]{calculateHTMT()}}, \code{\link[=calculateCN]{calculateCN()}}}
 \item{.closed_form_ci}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{.handle_inadmissibles}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.null_model}{Accepted by/Passed down to: \code{\link[=calculateDf]{calculateDf()}}}

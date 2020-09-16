@@ -168,7 +168,7 @@
 #'   For "*replace*" resampling continues until there are exactly `.R` admissible solutions. 
 #'   Defaults to "*replace*" to accommodate all approaches.
 #'   
-#' @return `.output_type = "complete"` a list of class `cSEMTestMGD`. Technically, `cSEMTestMGD` is a 
+#' @return If `.output_type = "complete"` a list of class `cSEMTestMGD`. Technically, `cSEMTestMGD` is a 
 #'   named list containing the following list elements:
 #'
 #' \describe{
