@@ -441,7 +441,7 @@ printTestMGDResults <- function(.x, .approach, .info) {
       x <- .x$Henseler
       cat2(
         rule2(type = 2), "\n",
-        rule2("Test for multigroup differences based on Henseler (2009)")
+        rule2("Test for multigroup differences based on Henseler (2007)")
       )
     },
     "CI_para" = {
@@ -461,19 +461,25 @@ printTestMGDResults <- function(.x, .approach, .info) {
   )
   
   ## Null hypothesis -----------------------------------------------------------
-  if(.approach == "Henseler") {
-    cat2(
-      "\n\nNull hypothesis:\n\n",
-      boxx(c("(1) H0: Parameter k of group 1 is smaller than that of group 2.", 
-           "(2) H0: Parameter k of group 1 is larger than that of group 2."),
-           float = "center")
-    )
-  } else {
-    cat2(
-      "\n\nNull hypothesis:\n\n",
-      boxx("H0: Parameter k is equal across two groups.", float = "center")
-    )
-  }
+  # if(.approach == "Henseler") {
+  #   cat2(
+  #     "\n\nNull hypothesis:\n\n",
+  #     boxx(c("(1) H0: Parameter k of group 1 is smaller than that of group 2.", 
+  #          "(2) H0: Parameter k of group 1 is larger than that of group 2."),
+  #          float = "center")
+  #   )
+  # } else {
+  #   cat2(
+  #     "\n\nNull hypothesis:\n\n",
+  #     boxx("H0: Parameter k is equal across two groups.", float = "center")
+  #   )
+  # }
+  
+  cat2(
+    "\n\nNull hypothesis:\n\n",
+    boxx("H0: Parameter k is equal across two groups.", float = "center")
+  )
+
   
   ## Test statistic and p-value ------------------------------------------------
   cat2("\n\nTest statistic and p-value: \n\n")

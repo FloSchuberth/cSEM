@@ -50,7 +50,8 @@ are assumed to be zero, i.e., they are fixed at their mean levels. Moreover, it 
 the input for the floodlight analysis.
 }
 \examples{
-\dontrun{model_Int <- "
+\dontrun{
+model_Int <- "
 # Measurement models
 INV =~ INV1 + INV2 + INV3 +INV4
 SAT =~ SAT1 + SAT2 + SAT3

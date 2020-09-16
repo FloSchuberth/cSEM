@@ -1,4 +1,5 @@
-\dontrun{model_Int <- "
+\dontrun{
+model_Int <- "
 # Measurement models
 INV =~ INV1 + INV2 + INV3 +INV4
 SAT =~ SAT1 + SAT2 + SAT3
