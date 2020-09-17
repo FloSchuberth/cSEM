@@ -8,6 +8,8 @@ calculateHTMT(
  .object               = NULL,
  .absolute             = TRUE,
  .alpha                = 0.05,
+ .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
+                           "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
  .handle_inadmissibles = c("drop", "ignore", "replace"),
  .inference            = FALSE,
  .only_common_factors  = TRUE,
@@ -21,8 +23,13 @@ calculateHTMT(
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
 Defaults to \code{TRUE} .}
 
-\item{.alpha}{An integer or a numeric vector of significance levels.
+\item{.alpha}{A numeric value giving the significance level.
 Defaults to \code{0.05}.}
+
+\item{.ci}{A character strings naming the type of confidence interval to use
+to compute the 1-alpha\% quantile of the bootstrap HTMT values. For possible
+choices see \code{\link[=infer]{infer()}}. Ignored
+if \code{.inference = FALSE}. Defaults to "\emph{CI_percentile}".}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
@@ -50,13 +57,13 @@ not be altered!}
 }
 \value{
 A lower tringular matrix of HTMT values. If \code{.inference = TRUE}
-the upper tringular part is the .alpha\%-quantile of the HTMT's bootstrap
+the upper tringular part is the 1-.alpha\%-quantile of the HTMT's bootstrap
 distribution.
 }
 \description{
 Compute the heterotrait-monotrait ratio of correlations (HTMT) based on
 \insertCite{Henseler2015;textual}{cSEM}. The HTMT is a consistent estimator for the
-construct correlations of tau-equivalent measurement model. It is used to
+construct correlations of a tau-equivalent measurement model. It is used to
 assess discriminant validity.
 }
 \details{
@@ -65,8 +72,10 @@ correlations between indicators are either all-positive or all-negative.
 A warning is given if this is not the case. If all intra-block or inter-block
 correlations are negative the absolute HTMT values are returned (\code{.absolute = TRUE}).
 
-To obtain the alpha\%-quantile of the bootstrap distribution for each HTMT
-value set \code{.inference = TRUE}.
+To obtain the 1-alpha\%-quantile of the bootstrap distribution for each HTMT
+value set \code{.inference = TRUE}. To choose the type of confidence interval to use
+to compute the 1-alpha\%-quantile, use \code{.ci}. To control the bootstrap process,
+arguments \code{.handle_inadmissibles}, \code{.R} and \code{.seed} are available.
 
 Since the HTMT is defined with respect to a classical true score measurement
 model only concepts modeled as common factors are considered by default.

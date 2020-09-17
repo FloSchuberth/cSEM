@@ -307,8 +307,9 @@ print.cSEMAssess <- function(x, ...) {
     if(any(names(x) == "HTMT") && !is.null(x$HTMT)) {
       cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n")
       if(x$Information$.inference) {
-        cat2("Values in the upper triangular part are the ", 
-             paste0(100*(1 - x$Information$.alpha), "%-quantile of the bootstrap distribution.\n\n")) 
+        cat2("\tValues in the upper triangular part are the ", 
+             paste0(100*(1 - x$Information$.alpha), "%-quantile of the\n", 
+            "\tbootstrap distribution (using .ci = '", x$Information$.ci, "').\n\n")) 
       }
       print(x$HTMT)
     }

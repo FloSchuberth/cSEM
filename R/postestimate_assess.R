@@ -494,7 +494,7 @@ assess <- function(
         .only_common_factors  = .only_common_factors,
         ...
       )
-      # Get value of argument .p
+      # Get argument values
       args_htmt <- list(...)
       if(any(names(args_htmt) == ".inference")) {
         out$Information[[".inference"]] <- args_htmt[[".inference"]]
@@ -506,6 +506,12 @@ assess <- function(
         out$Information[[".alpha"]] <- args_htmt[[".alpha"]]
       } else {
         out$Information[[".alpha"]] <- formals(calculateHTMT)[[".alpha"]]
+      } 
+      
+      if(any(names(args_htmt) == ".ci")) {
+        out$Information[[".ci"]] <- args_htmt[[".ci"]]
+      } else {
+        out$Information[[".ci"]] <- "CI_percentile"
       } 
     } else { # 2nd_order
       warning("Computation of the HTMT",

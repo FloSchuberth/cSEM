@@ -1017,7 +1017,7 @@ calculateRhoT <- function(
 #'
 #' Compute the heterotrait-monotrait ratio of correlations (HTMT) based on 
 #' \insertCite{Henseler2015;textual}{cSEM}. The HTMT is a consistent estimator for the
-#' construct correlations of tau-equivalent measurement model. It is used to
+#' construct correlations of a tau-equivalent measurement model. It is used to
 #' assess discriminant validity.
 #' 
 #' Computation of the HTMT assumes that all intra-block and inter-block 
@@ -1025,8 +1025,10 @@ calculateRhoT <- function(
 #' A warning is given if this is not the case. If all intra-block or inter-block
 #' correlations are negative the absolute HTMT values are returned (`.absolute = TRUE`).
 #' 
-#' To obtain the alpha%-quantile of the bootstrap distribution for each HTMT 
-#' value set `.inference = TRUE`.
+#' To obtain the 1-alpha%-quantile of the bootstrap distribution for each HTMT 
+#' value set `.inference = TRUE`. To choose the type of confidence interval to use
+#' to compute the 1-alpha%-quantile, use `.ci`. To control the bootstrap process,
+#' arguments `.handle_inadmissibles`, `.R` and `.seed` are available. 
 #' 
 #' Since the HTMT is defined with respect to a classical true score measurement
 #' model only concepts modeled as common factors are considered by default.
@@ -1038,6 +1040,8 @@ calculateRhoT <- function(
 #'  .object               = NULL,
 #'  .absolute             = TRUE,
 #'  .alpha                = 0.05,
+#'  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
+#'                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
 #'  .handle_inadmissibles = c("drop", "ignore", "replace"),
 #'  .inference            = FALSE,
 #'  .only_common_factors  = TRUE,
@@ -1046,9 +1050,15 @@ calculateRhoT <- function(
 #' )
 #'
 #' @inheritParams csem_arguments
+#' @param .alpha A numeric value giving the significance level. 
+#'   Defaults to `0.05`.
+#' @param .ci A character strings naming the type of confidence interval to use 
+#'   to compute the 1-alpha% quantile of the bootstrap HTMT values. For possible 
+#'   choices see [infer()]. Ignored
+#'   if `.inference = FALSE`. Defaults to "*CI_percentile*".
 #'
 #' @return A lower tringular matrix of HTMT values. If `.inference = TRUE`
-#'   the upper tringular part is the .alpha%-quantile of the HTMT's bootstrap
+#'   the upper tringular part is the 1-.alpha%-quantile of the HTMT's bootstrap
 #'   distribution.
 #' 
 #' @seealso [assess()], [csem], [cSEMResults]
@@ -1058,6 +1068,8 @@ calculateHTMT <- function(
   .object               = NULL,
   .absolute             = TRUE,
   .alpha                = 0.05,
+  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
+                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
   .handle_inadmissibles = c("drop", "ignore", "replace"),
   .inference            = FALSE,
   .only_common_factors  = TRUE,
@@ -1065,6 +1077,7 @@ calculateHTMT <- function(
   .seed                 = NULL
 ){
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+  .ci                   <- match.arg(.ci) # allow only one CI
 
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, calculateHTMT,
@@ -1178,8 +1191,8 @@ calculateHTMT <- function(
     
     # Compute quantile
     if(length(.alpha) == 1) {
-      out_htmt <- out_resample$Estimates$Estimates_resample$Estimates1$HTMT 
-      quants <- matrixStats::colQuantiles(out_htmt$Resampled, probs = 1 - .alpha) 
+      out_infer <- infer(out_resample, .alpha = .alpha*2, .quantity = .ci)
+      quants <- out_infer$HTMT[[1]][2, ] 
     } else {
       stop2(
         "The following error occured in the calculateHTMT() function:\n",
