@@ -1,0 +1,10 @@
+pandoc: '2.2'
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  Notation: Notation.html
+  Terminology: Terminology.html
+  Using-assess: Using-assess.html
+  cSEM: cSEM.html
+last_built: 2020-09-17T18:26Z
+
