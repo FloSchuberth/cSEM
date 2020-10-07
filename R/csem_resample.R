@@ -554,6 +554,10 @@ resamplecSEMResults <- function(
   # Save old seed and restore on exit! This is important since users may have
   # set a seed before, in which case the global seed would be
   # overwritten if not explicitly restored
+  # Note (07.10.2020): for some tests performed by testthat .Random.seed is not 
+  #                   available. This is when it is not initialized. To initialize
+  #                   the .Random.seed object a random number is generated.
+  runif(1)
   old_seed <- .Random.seed
   on.exit({.Random.seed <<- old_seed})
   

@@ -1,9 +1,12 @@
 # Development version: cSEM 0.2.0:9000
 
-- `calculateHTMT()` gains a `.ci` argument. Now users can choose the type of
-   confidence interval to use to compute the 1-alpha% quantile of the bootstrap
-   HTMT values.
-   
+- Some arguments accepted by `assess()`'s `...` argument had not been documented
+  properly. This has been fixed. See `args_assess_dotdotdot` for a complete list of
+  available arguments.
+  
+- `calculateHTMT()` now allows users to chose the type of confidence interval to
+  use when computing the critical (1-alpha)% quantile of the HTMT values (#379)
+
 - `testMGD()` gains a new `.output_type` argument. By default (`.output_type = "structured"`),
   the standard output is returned. If `.output_type = "structured"`, however, 
   a tibble (data frame) summarizing the test decisions in a user-friendly way 
