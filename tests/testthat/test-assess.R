@@ -66,6 +66,22 @@ test_that("Assess works for all choices of .quality_criterion", {
   expect_equivalent(c(a$VIF_modeB), c(1.859990, 2.621641, 2.623095), tolerance = 1e-06)
 })
 
+## Assess using additional arguments
+assess(res,   
+            .absolute            = TRUE,
+            .alpha               = 0.05,
+            .ci                  = "CI_percentile",
+            .closed_form_ci      = FALSE,
+            .handle_inadmissibles= "drop",
+            .inference           = TRUE,
+            .null_model          = FALSE,
+            .R                   = 199,
+            .saturated           = FALSE,
+            .seed                = NULL,
+            .type_gfi            = "ML",
+            .type_vcv            = "indicator"
+            )
+
 ### Test assess for other classes ----------------------------------------------
 source("test-main.R")
 

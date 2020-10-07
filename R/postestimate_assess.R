@@ -417,45 +417,37 @@ assess <- function(
     out[["F2"]] <- calculatef2(.object)
   }
   if(any(.quality_criterion %in% c("all", "chi_square"))) {
-    # Effect size
     out[["Chi_square"]] <- calculateChiSquare(.object)
   }
   if(any(.quality_criterion %in% c("all", "chi_square_df"))) {
-    # Effect size
     out[["Chi_square_df"]] <- calculateChiSquareDf(.object)
   }
   if(any(.quality_criterion %in% c("all", "cfi"))) {
-    # Effect size
     out[["CFI"]] <- calculateCFI(.object)
   }
   if(any(.quality_criterion %in% c("all", "gfi"))) {
-    # Effect size
     out[["GFI"]] <- calculateGFI(
       .object,
-      .type = "ML"
+      ...
       )
   }
   if(any(.quality_criterion %in% c("all", "cn"))) {
-    # Effect size
+    # Hoelter's (critical) N (CN)
     out[["CN"]] <- calculateCN(
       .object,
       ...
     )
   }
   if(any(.quality_criterion %in% c("all", "ifi"))) {
-    # Effect size
     out[["IFI"]] <- calculateIFI(.object)
   }
   if(any(.quality_criterion %in% c("all", "nfi"))) {
-    # Effect size
     out[["NFI"]] <- calculateNFI(.object)
   }
   if(any(.quality_criterion %in% c("all", "nnfi"))) {
-    # Effect size
     out[["NNFI"]] <- calculateNNFI(.object)
   }
   if(any(.quality_criterion %in% c("all", "rmsea"))) {
-    # Effect size
     out[["RMSEA"]] <- calculateRMSEA(.object)
   }
   if(any(.quality_criterion %in% c("all", "rms_theta"))) {

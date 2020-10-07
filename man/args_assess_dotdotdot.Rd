@@ -2,13 +2,16 @@
 % Please edit documentation in R/zz_arguments.R
 \name{args_assess_dotdotdot}
 \alias{args_assess_dotdotdot}
-\title{Internal: Complete list of assess()'s ... arguments}
+\title{Complete list of assess()'s ... arguments}
 \arguments{
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
 Defaults to \code{TRUE} .}
 
 \item{.alpha}{An integer or a numeric vector of significance levels.
 Defaults to \code{0.05}.}
+
+\item{.ci}{A vector of character strings naming the confidence interval to compute.
+For possible choices see \code{\link[=infer]{infer()}}.}
 
 \item{.closed_form_ci}{Logical. Should a closed-form confidence interval be computed?
 Defaults to \code{FALSE}.}
@@ -38,6 +41,12 @@ case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
 
+\item{.type_gfi}{Character string. Which fitting function should the GFI be based
+on? One of \emph{"ML"} for the maximum likelihood fitting function, \emph{"GLS"} for
+the generalized least squares fitting function or \emph{"ULS"} for the
+unweighted least squares fitting function (same as the squared Euclidian distance).
+Defaults to \emph{"ML"}.}
+
 \item{.type_vcv}{Character string. Which model-implied correlation
 matrix should be calculated?
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}
@@ -49,10 +58,11 @@ A complete alphabetical list of all possible arguments accepted by \code{assess(
 \details{
 Most arguments supplied to the \code{...} argument of \code{assess()} are only
 accepted by a subset of the functions called by \code{assess()}. The following
-list shows which argument is passed to which (internal) function:
+list shows which argument is passed to which function:
 \describe{
 \item{.absolute}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.alpha}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}, \code{\link[=calculateHTMT]{calculateHTMT()}}, \code{\link[=calculateCN]{calculateCN()}}}
+\item{.ci}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.closed_form_ci}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{.handle_inadmissibles}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.null_model}{Accepted by/Passed down to: \code{\link[=calculateDf]{calculateDf()}}}
@@ -60,6 +70,7 @@ list shows which argument is passed to which (internal) function:
 \item{.saturated}{Accepted by/Passed down to: \code{\link[=calculateSRMR]{calculateSRMR()}},
 \code{\link[=calculateDG]{calculateDG()}}, \code{\link[=calculateDL]{calculateDL()}}, \code{\link[=calculateDML]{calculateDML()}}and subsequently \code{\link[=fit]{fit()}}.}
 \item{.seed}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
+\item{.type_gfi}{Accepted by/Passed down to: \code{\link[=calculateGFI]{calculateGFI()}}}
 \item{.type_vcv}{Accepted by/Passed down to: \code{\link[=calculateSRMR]{calculateSRMR()}},
 \code{\link[=calculateDG]{calculateDG()}}, \code{\link[=calculateDL]{calculateDL()}}, \code{\link[=calculateDML]{calculateDML()}} and subsequently \code{\link[=fit]{fit()}}.}
 }
