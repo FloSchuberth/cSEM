@@ -40,12 +40,7 @@
 
 
 <meta property="og:title" content="Inference — infer" />
-<meta property="og:description" content="Calculate common inferential quantities. For users interested in the
-estimated standard errors, t-values, p-values and/or confidences
-intervals of the path, weight or loading estimates, calling summarize()
-directly will usually be more convenient as it has a much more
-user-friendly print method. infer() is useful for comparing
-different confidence interval estimates." />
+<meta property="og:description" content="" />
 
 
 
@@ -147,12 +142,7 @@ different confidence interval estimates." />
     </div>
 
     <div class="ref-description">
-    <p>Calculate common inferential quantities. For users interested in the
-estimated standard errors, t-values, p-values and/or confidences
-intervals of the path, weight or loading estimates, calling <code><a href='summarize.html'>summarize()</a></code>
-directly will usually be more convenient as it has a much more
-user-friendly print method. <code>infer()</code> is useful for comparing
-different confidence interval estimates.</p>
+    <p><a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a></p>
     </div>
 
     <pre class="usage"><span class='fu'>infer</span><span class='op'>(</span>
@@ -200,7 +190,13 @@ Defaults to <code>TRUE</code></p></td>
     <p>A list of class <code>cSEMInfer</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>infer()</code> is a convenience wrapper around a
+    <p>Calculate common inferential quantities. For users interested in the
+estimated standard errors, t-values, p-values and/or confidences
+intervals of the path, weight or loading estimates, calling <code><a href='summarize.html'>summarize()</a></code>
+directly will usually be more convenient as it has a much more
+user-friendly print method. <code>infer()</code> is useful for comparing
+different confidence interval estimates.</p>
+<p><code>infer()</code> is a convenience wrapper around a
 number of internal functions that compute a particular inferential
 quantity, i.e., a value or set of values to be used in statistical inference.</p>
 <p><span class="pkg">cSEM</span> relies on resampling (bootstrap and jackknife) as the basis for
@@ -299,16 +295,16 @@ VAL  =~ val1  + val2  + val3  + val4
 <span class='va'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
 
 <span class='va'>inf</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_basic</span>
-</div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE
-#&gt; 95%L   0.5820584    1.024353  -5.634705   5.696537 -0.2821521   2.117715
-#&gt; 95%U   0.7767597    1.069304  -4.846808   6.498297  0.1646720   3.626364
+</div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL  SAT ~ IMAG SAT ~ EXPE
+#&gt; 95%L   0.5713217    1.007627  -5.213116   4.018637 -0.51183168   1.870683
+#&gt; 95%U   0.7390210    1.065568  -3.090824   6.072904 -0.03244569   4.045004
 #&gt;      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT
-#&gt; 95%L  -5.094212  1.667240  0.1085050 0.4391749
-#&gt; 95%U  -3.105501  2.995827  0.3946693 0.7354485</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
+#&gt; 95%L  -5.449593  1.864791  0.1183490 0.2974195
+#&gt; 95%U  -2.546611  2.913216  0.4776686 0.6911704</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
 </div><div class='output co'>#&gt; QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL 
-#&gt;  0.05700758  0.06653340  0.23433867  0.09254482  0.43648473  0.55872060 
+#&gt;  0.05139899  0.06657076  0.61756358  0.08963515  0.57779231  0.79645597 
 #&gt;  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL 
-#&gt;  0.05363339  0.08060687  0.28540840  0.19977773 </div><div class='input'>
+#&gt;  0.07520779  0.09563298  0.44599684  0.20373285 </div><div class='input'>
 <span class='co'>### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span>
 <span class='co'>## For the studentied t-interval confidence interval a double bootstrap is required.</span>
 <span class='co'>## This is pretty time consuming.</span>

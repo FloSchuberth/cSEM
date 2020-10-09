@@ -40,102 +40,7 @@
 
 
 <meta property="og:title" content="Tests for multi-group comparisons — testMGD" />
-<meta property="og:description" content="This function performs various tests proposed in the context of multigroup analysis.
-The following tests are implemented:
-.approach_mgd = &quot;Klesel&quot;: Approach suggested by Klesel et al. (2019-jun)
-The model-implied variance-covariance matrix (either indicator
-(.type_vcv = &quot;indicator&quot;) or construct (.type_vcv = &quot;construct&quot;))
-is compared across groups. If the model-implied indicator or construct correlation
-matrix based on a saturated structural model should be compared, set .saturated = TRUE.
-To measure the distance between the model-implied variance-covariance matrices,
-the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
-If more than two groups are compared, the average distance over all groups
-is used.
-.approach_mgd = &quot;Sarstedt&quot;: Approach suggested by Sarstedt et al. (2011-jan)
-Groups are compared in terms of parameter differences across groups.
-Sarstedt et al. (2011-jan)
- tests if parameter k is equal
-across all groups. If several parameters are tested simultaneously
-it is recommended to adjust the significance  level or the p-values (in cSEM correction is
-done by p-value). By default
-no multiple testing correction is done, however, several common
-adjustments are available via .approach_p_adjust. See
-stats::p.adjust() for details. Note: the
-test has some severe shortcomings. Use with caution.
-.approach_mgd = &quot;Chin&quot;: Approach suggested by Chin and Dibbern (2010-nov)
-Groups are compared in terms of parameter differences across groups.
-Chin and Dibbern (2010-nov)
- tests if parameter k is equal
-between two groups. If more than two groups are tested for equality, parameter
-k is compared between all pairs of groups. In this case, it is recommended
-to adjust the significance  level or the p-values (in cSEM correction is
-done by p-value) since this is essentially a multiple testing setup.
-If several parameters are tested simultaneously, correction is by group
-and number of parameters. By default
-no multiple testing correction is done, however, several common
-adjustments are available via .approach_p_adjust. See
-stats::p.adjust() for details.
-.approach_mgd = &quot;Keil&quot;: Approach suggested by Keil et al. (2000)
-Groups are compared in terms of parameter differences across groups.
-Keil et al. (2000)
- tests if parameter k is equal
-between two groups. It is assumed, that the standard errors of the coefficients are
-equal across groups. The calculation of the standard error of the parameter
-difference is adjusted as proposed by Henseler et al. (2009)
-.
-If more than two groups are tested for equality, parameter k is compared
-between all pairs of groups. In this case, it is recommended
-to adjust the significance  level or the p-values (in cSEM correction is
-done by p-value) since this is essentially a multiple testing setup.
-If several parameters are tested simultaneously, correction
-is by group and number of parameters. By default
-no multiple testing correction is done, however, several common
-adjustments are available via .approach_p_adjust. See
-stats::p.adjust() for details.
-.approach_mgd = &quot;Nitzl&quot;: Approach suggested by Nitzl (2010)
-Groups are compared in terms of parameter differences across groups.
-Similarly to Keil et al. (2000)
-, a single parameter k is tested
-for equality between two groups. In contrast to Keil et al. (2000)
-,
-it is assumed, that the standard errors of the coefficients are
-unequal across groups (Sarstedt et al. 2011-jan)
-.
-If more than two groups are tested for equality, parameter k is compared
-between all pairs of groups. In this case, it is recommended
-to adjust the significance  level or the p-values (in cSEM correction is
-done by p-value) since this is essentially a multiple testing setup.
-If several parameters are tested simultaneously, correction
-is by group and number of parameters. By default
-no multiple testing correction is done, however, several common
-adjustments are available via .approach_p_adjust. See
-stats::p.adjust() for details.
-.approach_mgd = &quot;Henseler&quot;: Approach suggested by Henseler (2007)
-Groups are compared in terms of parameter differences across groups.
-In doing so, the bootstrap estimates of one parameter are compared across groups.
-In the literature, this approach is also known as PLS-MGA.
-Originally, this test was proposed as an one-sided test.
-In this function we perform a left-sided and a right-sided test
-to investigate whether a parameter differs across two groups. In doing so, the significance
-level is divided by 2 and compared to p-value of the left and right-sided test.
-Moreover, .approach_p_adjust is ignored and no overall decision
-is returned.
-For a more detailed description, see also Henseler et al. (2009)
-.
-.approach_mgd = &quot;CI_param&quot;: Approach mentioned in Sarstedt et al. (2011-jan)
-This approach is based on the confidence intervals constructed around the
-parameter estimates of the two groups. If the parameter of one group falls within
-the confidence interval of the other group and/or vice versa, it can be concluded
-that there is no group difference.
-Since it is based on the confidence intervals .approach_p_adjust is ignored.
-.approach_mgd = &quot;CI_overlap&quot;: Approach mentioned in Sarstedt et al. (2011-jan)
-This approach is based on the confidence intervals (CIs) constructed around the
-parameter estimates of the two groups. If the two CIs overlap, it can be concluded
-that there is no group difference.
-Since it is based on the confidence intervals .approach_p_adjust is ignored.
-
-
-" />
+<meta property="og:description" content="" />
 
 
 
@@ -237,102 +142,7 @@ Since it is based on the confidence intervals .approach_p_adjust is ignored.
     </div>
 
     <div class="ref-description">
-    <p>This function performs various tests proposed in the context of multigroup analysis.</p>
-<p>The following tests are implemented:</p><dl>
-<dt><code>.approach_mgd = "Klesel"</code>: Approach suggested by Klesel et al. (2019-jun)
-</dt><dd><p>The model-implied variance-covariance matrix (either indicator
-(<code>.type_vcv = "indicator"</code>) or construct (<code>.type_vcv = "construct"</code>))
-is compared across groups. If the model-implied indicator or construct correlation
-matrix based on a saturated structural model should be compared, set <code>.saturated = TRUE</code>.
-To measure the distance between the model-implied variance-covariance matrices,
-the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
-If more than two groups are compared, the average distance over all groups
-is used.</p></dd>
-<dt><code>.approach_mgd = "Sarstedt"</code>: Approach suggested by Sarstedt et al. (2011-jan)
-</dt><dd><p>Groups are compared in terms of parameter differences across groups.
-Sarstedt et al. (2011-jan)
- tests if parameter k is equal
-across all groups. If several parameters are tested simultaneously
-it is recommended to adjust the significance  level or the p-values (in <span class="pkg">cSEM</span> correction is
-done by p-value). By default
-no multiple testing correction is done, however, several common
-adjustments are available via <code>.approach_p_adjust</code>. See
-<code><a href='https://rdrr.io/r/stats/p.adjust.html'>stats::p.adjust()</a></code> for details. Note: the
-test has some severe shortcomings. Use with caution.</p></dd>
-<dt><code>.approach_mgd = "Chin"</code>: Approach suggested by Chin and Dibbern (2010-nov)
-</dt><dd><p>Groups are compared in terms of parameter differences across groups.
-Chin and Dibbern (2010-nov)
- tests if parameter k is equal
-between two groups. If more than two groups are tested for equality, parameter
-k is compared between all pairs of groups. In this case, it is recommended
-to adjust the significance  level or the p-values (in <span class="pkg">cSEM</span> correction is
-done by p-value) since this is essentially a multiple testing setup.
-If several parameters are tested simultaneously, correction is by group
-and number of parameters. By default
-no multiple testing correction is done, however, several common
-adjustments are available via <code>.approach_p_adjust</code>. See
-<code><a href='https://rdrr.io/r/stats/p.adjust.html'>stats::p.adjust()</a></code> for details.</p></dd>
-<dt><code>.approach_mgd = "Keil"</code>: Approach suggested by Keil et al. (2000)
-</dt><dd><p>Groups are compared in terms of parameter differences across groups.
-Keil et al. (2000)
- tests if parameter k is equal
-between two groups. It is assumed, that the standard errors of the coefficients are
-equal across groups. The calculation of the standard error of the parameter
-difference is adjusted as proposed by Henseler et al. (2009)
-.
-If more than two groups are tested for equality, parameter k is compared
-between all pairs of groups. In this case, it is recommended
-to adjust the significance  level or the p-values (in <span class="pkg">cSEM</span> correction is
-done by p-value) since this is essentially a multiple testing setup.
-If several parameters are tested simultaneously, correction
-is by group and number of parameters. By default
-no multiple testing correction is done, however, several common
-adjustments are available via <code>.approach_p_adjust</code>. See
-<code><a href='https://rdrr.io/r/stats/p.adjust.html'>stats::p.adjust()</a></code> for details.</p></dd>
-<dt><code>.approach_mgd = "Nitzl"</code>: Approach suggested by Nitzl (2010)
-</dt><dd><p>Groups are compared in terms of parameter differences across groups.
-Similarly to Keil et al. (2000)
-, a single parameter k is tested
-for equality between two groups. In contrast to Keil et al. (2000)
-,
-it is assumed, that the standard errors of the coefficients are
-unequal across groups (Sarstedt et al. 2011-jan)
-.
-If more than two groups are tested for equality, parameter k is compared
-between all pairs of groups. In this case, it is recommended
-to adjust the significance  level or the p-values (in <span class="pkg">cSEM</span> correction is
-done by p-value) since this is essentially a multiple testing setup.
-If several parameters are tested simultaneously, correction
-is by group and number of parameters. By default
-no multiple testing correction is done, however, several common
-adjustments are available via <code>.approach_p_adjust</code>. See
-<code><a href='https://rdrr.io/r/stats/p.adjust.html'>stats::p.adjust()</a></code> for details.</p></dd>
-<dt><code>.approach_mgd = "Henseler"</code>: Approach suggested by Henseler (2007)
-</dt><dd><p>Groups are compared in terms of parameter differences across groups.
-In doing so, the bootstrap estimates of one parameter are compared across groups.
-In the literature, this approach is also known as PLS-MGA.
-Originally, this test was proposed as an one-sided test.
-In this function we perform a left-sided and a right-sided test
-to investigate whether a parameter differs across two groups. In doing so, the significance
-level is divided by 2 and compared to p-value of the left and right-sided test.
-Moreover, <code>.approach_p_adjust</code> is ignored and no overall decision
-is returned.
-For a more detailed description, see also Henseler et al. (2009)
-.</p></dd>
-<dt><code>.approach_mgd = "CI_param"</code>: Approach mentioned in Sarstedt et al. (2011-jan)
-</dt><dd><p>This approach is based on the confidence intervals constructed around the
-parameter estimates of the two groups. If the parameter of one group falls within
-the confidence interval of the other group and/or vice versa, it can be concluded
-that there is no group difference.
-Since it is based on the confidence intervals <code>.approach_p_adjust</code> is ignored.</p></dd>
-<dt><code>.approach_mgd = "CI_overlap"</code>: Approach mentioned in Sarstedt et al. (2011-jan)
-</dt><dd><p>This approach is based on the confidence intervals (CIs) constructed around the
-parameter estimates of the two groups. If the two CIs overlap, it can be concluded
-that there is no group difference.
-Since it is based on the confidence intervals <code>.approach_p_adjust</code> is ignored.</p></dd>
-
-</dl>
-
+    <p><a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a></p>
     </div>
 
     <pre class="usage"><span class='fu'>testMGD</span><span class='op'>(</span>
@@ -484,7 +294,103 @@ hypotheses was rejected; if FALSE it was not rejected.</p></dd>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Use <code>.approach_mgd</code> to choose the approach. By default all approaches are computed
+    <p>This function performs various tests proposed in the context of multigroup analysis.</p>
+<p>The following tests are implemented:</p><dl>
+<dt><code>.approach_mgd = "Klesel"</code>: Approach suggested by Klesel et al. (2019-jun)
+</dt><dd><p>The model-implied variance-covariance matrix (either indicator
+(<code>.type_vcv = "indicator"</code>) or construct (<code>.type_vcv = "construct"</code>))
+is compared across groups. If the model-implied indicator or construct correlation
+matrix based on a saturated structural model should be compared, set <code>.saturated = TRUE</code>.
+To measure the distance between the model-implied variance-covariance matrices,
+the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
+If more than two groups are compared, the average distance over all groups
+is used.</p></dd>
+<dt><code>.approach_mgd = "Sarstedt"</code>: Approach suggested by Sarstedt et al. (2011-jan)
+</dt><dd><p>Groups are compared in terms of parameter differences across groups.
+Sarstedt et al. (2011-jan)
+ tests if parameter k is equal
+across all groups. If several parameters are tested simultaneously
+it is recommended to adjust the significance  level or the p-values (in <span class="pkg">cSEM</span> correction is
+done by p-value). By default
+no multiple testing correction is done, however, several common
+adjustments are available via <code>.approach_p_adjust</code>. See
+<code><a href='https://rdrr.io/r/stats/p.adjust.html'>stats::p.adjust()</a></code> for details. Note: the
+test has some severe shortcomings. Use with caution.</p></dd>
+<dt><code>.approach_mgd = "Chin"</code>: Approach suggested by Chin and Dibbern (2010-nov)
+</dt><dd><p>Groups are compared in terms of parameter differences across groups.
+Chin and Dibbern (2010-nov)
+ tests if parameter k is equal
+between two groups. If more than two groups are tested for equality, parameter
+k is compared between all pairs of groups. In this case, it is recommended
+to adjust the significance  level or the p-values (in <span class="pkg">cSEM</span> correction is
+done by p-value) since this is essentially a multiple testing setup.
+If several parameters are tested simultaneously, correction is by group
+and number of parameters. By default
+no multiple testing correction is done, however, several common
+adjustments are available via <code>.approach_p_adjust</code>. See
+<code><a href='https://rdrr.io/r/stats/p.adjust.html'>stats::p.adjust()</a></code> for details.</p></dd>
+<dt><code>.approach_mgd = "Keil"</code>: Approach suggested by Keil et al. (2000)
+</dt><dd><p>Groups are compared in terms of parameter differences across groups.
+Keil et al. (2000)
+ tests if parameter k is equal
+between two groups. It is assumed, that the standard errors of the coefficients are
+equal across groups. The calculation of the standard error of the parameter
+difference is adjusted as proposed by Henseler et al. (2009)
+.
+If more than two groups are tested for equality, parameter k is compared
+between all pairs of groups. In this case, it is recommended
+to adjust the significance  level or the p-values (in <span class="pkg">cSEM</span> correction is
+done by p-value) since this is essentially a multiple testing setup.
+If several parameters are tested simultaneously, correction
+is by group and number of parameters. By default
+no multiple testing correction is done, however, several common
+adjustments are available via <code>.approach_p_adjust</code>. See
+<code><a href='https://rdrr.io/r/stats/p.adjust.html'>stats::p.adjust()</a></code> for details.</p></dd>
+<dt><code>.approach_mgd = "Nitzl"</code>: Approach suggested by Nitzl (2010)
+</dt><dd><p>Groups are compared in terms of parameter differences across groups.
+Similarly to Keil et al. (2000)
+, a single parameter k is tested
+for equality between two groups. In contrast to Keil et al. (2000)
+,
+it is assumed, that the standard errors of the coefficients are
+unequal across groups (Sarstedt et al. 2011-jan)
+.
+If more than two groups are tested for equality, parameter k is compared
+between all pairs of groups. In this case, it is recommended
+to adjust the significance  level or the p-values (in <span class="pkg">cSEM</span> correction is
+done by p-value) since this is essentially a multiple testing setup.
+If several parameters are tested simultaneously, correction
+is by group and number of parameters. By default
+no multiple testing correction is done, however, several common
+adjustments are available via <code>.approach_p_adjust</code>. See
+<code><a href='https://rdrr.io/r/stats/p.adjust.html'>stats::p.adjust()</a></code> for details.</p></dd>
+<dt><code>.approach_mgd = "Henseler"</code>: Approach suggested by Henseler (2007)
+</dt><dd><p>Groups are compared in terms of parameter differences across groups.
+In doing so, the bootstrap estimates of one parameter are compared across groups.
+In the literature, this approach is also known as PLS-MGA.
+Originally, this test was proposed as an one-sided test.
+In this function we perform a left-sided and a right-sided test
+to investigate whether a parameter differs across two groups. In doing so, the significance
+level is divided by 2 and compared to p-value of the left and right-sided test.
+Moreover, <code>.approach_p_adjust</code> is ignored and no overall decision
+is returned.
+For a more detailed description, see also Henseler et al. (2009)
+.</p></dd>
+<dt><code>.approach_mgd = "CI_param"</code>: Approach mentioned in Sarstedt et al. (2011-jan)
+</dt><dd><p>This approach is based on the confidence intervals constructed around the
+parameter estimates of the two groups. If the parameter of one group falls within
+the confidence interval of the other group and/or vice versa, it can be concluded
+that there is no group difference.
+Since it is based on the confidence intervals <code>.approach_p_adjust</code> is ignored.</p></dd>
+<dt><code>.approach_mgd = "CI_overlap"</code>: Approach mentioned in Sarstedt et al. (2011-jan)
+</dt><dd><p>This approach is based on the confidence intervals (CIs) constructed around the
+parameter estimates of the two groups. If the two CIs overlap, it can be concluded
+that there is no group difference.
+Since it is based on the confidence intervals <code>.approach_p_adjust</code> is ignored.</p></dd>
+
+</dl>
+
+<p>Use <code>.approach_mgd</code> to choose the approach. By default all approaches are computed
 (<code>.approach_mgd = "all"</code>).</p>
 <p>For convenience, two types of output are available. See the "Value" section below.</p>
 <p>By default, approaches based on parameter differences across groups compare

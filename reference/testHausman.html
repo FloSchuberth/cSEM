@@ -40,10 +40,7 @@
 
 
 <meta property="og:title" content="Regression-based Hausman test — testHausman" />
-<meta property="og:description" content="Calculates the regression-based Hausman test to be used to compare
-OLS to 2SLS estimates or 2SLS to 3SLS estimates. See e.g., Wooldridge (2010)
-
-(pages 131 f.) for details." />
+<meta property="og:description" content="" />
 
 
 
@@ -145,10 +142,7 @@ OLS to 2SLS estimates or 2SLS to 3SLS estimates. See e.g., Wooldridge (2010)
     </div>
 
     <div class="ref-description">
-    <p>Calculates the regression-based Hausman test to be used to compare
-OLS to 2SLS estimates or 2SLS to 3SLS estimates. See e.g., Wooldridge (2010)
-
-(pages 131 f.) for details.</p>
+    <p><a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a></p>
     </div>
 
     <pre class="usage"><span class='fu'>testHausman</span><span class='op'>(</span>
@@ -205,7 +199,11 @@ not be altered!</p></td>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The function is somewhat experimental. Only use if you know what you are doing.</p>
+    <p>Calculates the regression-based Hausman test to be used to compare
+OLS to 2SLS estimates or 2SLS to 3SLS estimates. See e.g., Wooldridge (2010)
+
+(pages 131 f.) for details.</p>
+<p>The function is somewhat experimental. Only use if you know what you are doing.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Wooldridge JM (2010).
@@ -290,18 +288,18 @@ eta6 =~ x61 + x62 + x63
 #&gt;   Dependent construct: 'eta5'
 #&gt; 
 #&gt; 	Independent construct    Estimate  Std. error   t-stat.   p-value
-#&gt; 	eta1                      -0.3000      0.1031   -2.9106    0.0036
-#&gt; 	eta2                       0.4999      0.0833    6.0009    0.0000
-#&gt; 	eta6                       0.2501      0.1091    2.2914    0.0219
-#&gt; 	Resid_eta6                 0.9784      0.2353    4.1585    0.0000
+#&gt; 	eta1                      -0.3000      0.0948   -3.1650    0.0016
+#&gt; 	eta2                       0.4999      0.0934    5.3517    0.0000
+#&gt; 	eta6                       0.2501      0.1219    2.0508    0.0403
+#&gt; 	Resid_eta6                 0.9784      0.2539    3.8542    0.0001
 #&gt; 
 #&gt;   Dependent construct: 'eta6'
 #&gt; 
 #&gt; 	Independent construct    Estimate  Std. error   t-stat.   p-value
-#&gt; 	eta3                       0.4999      0.0518    9.6490    0.0000
-#&gt; 	eta4                       0.2501      0.0519    4.8214    0.0000
-#&gt; 	eta5                       0.5001      0.0889    5.6247    0.0000
-#&gt; 	Resid_eta5                -0.0056      0.1317   -0.0424    0.9662
+#&gt; 	eta3                       0.4999      0.0582    8.5845    0.0000
+#&gt; 	eta4                       0.2501      0.0498    5.0209    0.0000
+#&gt; 	eta5                       0.5001      0.0929    5.3863    0.0000
+#&gt; 	Resid_eta5                -0.0056      0.1311   -0.0426    0.9660
 #&gt; ________________________________________________________________________________</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

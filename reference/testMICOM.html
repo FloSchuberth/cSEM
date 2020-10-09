@@ -40,15 +40,7 @@
 
 
 <meta property="og:title" content="Test measurement invariance of composites — testMICOM" />
-<meta property="og:description" content="The functions performs the permutation-based test for measurement invariance
-of composites across groups proposed by Henseler et al. (2016-may)
-.
-According to the authors assessing measurement invariance in composite
-models can be assessed by a three-step procedure. The first two steps
-involve an assessment of configural and compositional invariance.
-The third steps involves mean and variance comparisons across groups.
-Assessment of configural invariance is qualitative in nature and hence
-not assessed by the testMICOM() function." />
+<meta property="og:description" content="" />
 
 
 
@@ -150,15 +142,7 @@ not assessed by the testMICOM() function." />
     </div>
 
     <div class="ref-description">
-    <p>The functions performs the permutation-based test for measurement invariance
-of composites across groups proposed by Henseler et al. (2016-may)
-.
-According to the authors assessing measurement invariance in composite
-models can be assessed by a three-step procedure. The first two steps
-involve an assessment of configural and compositional invariance.
-The third steps involves mean and variance comparisons across groups.
-Assessment of configural invariance is qualitative in nature and hence
-not assessed by the <code>testMICOM()</code> function.</p>
+    <p><a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a></p>
     </div>
 
     <pre class="usage"><span class='fu'>testMICOM</span><span class='op'>(</span>
@@ -225,7 +209,16 @@ to the console? Defaults to <code>TRUE</code>.</p></td>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>As <code>testMICOM()</code> requires at least two groups, <code>.object</code> must be of
+    <p>The functions performs the permutation-based test for measurement invariance
+of composites across groups proposed by Henseler et al. (2016-may)
+.
+According to the authors assessing measurement invariance in composite
+models can be assessed by a three-step procedure. The first two steps
+involve an assessment of configural and compositional invariance.
+The third steps involves mean and variance comparisons across groups.
+Assessment of configural invariance is qualitative in nature and hence
+not assessed by the <code>testMICOM()</code> function.</p>
+<p>As <code>testMICOM()</code> requires at least two groups, <code>.object</code> must be of
 class <code>cSEMResults_multi</code>. As of version 0.2.0 of the package, <code>testMICOM()</code>
 does not support models containing second-order constructs.</p>
 <p>It is possible to compare more than two groups, however, multiple-testing

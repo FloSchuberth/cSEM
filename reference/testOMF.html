@@ -40,11 +40,7 @@
 
 
 <meta property="og:title" content="Test for overall model fit — testOMF" />
-<meta property="og:description" content="Bootstrap-based test for overall model fit originally proposed by Beran and Srivastava (1985-mar)
-.
-See also Dijkstra and Henseler (2015)
- who first suggested the test in
-the context of PLS-PM." />
+<meta property="og:description" content="" />
 
 
 
@@ -146,11 +142,7 @@ the context of PLS-PM." />
     </div>
 
     <div class="ref-description">
-    <p>Bootstrap-based test for overall model fit originally proposed by Beran and Srivastava (1985-mar)
-.
-See also Dijkstra and Henseler (2015)
- who first suggested the test in
-the context of PLS-PM.</p>
+    <p><a href='https://www.tidyverse.org/lifecycle/#maturing'><img src='figures/lifecycle-maturing.svg' alt='Maturing lifecycle'></a></p>
     </div>
 
     <pre class="usage"><span class='fu'>testOMF</span><span class='op'>(</span>
@@ -229,7 +221,12 @@ The seed used and the number of total runs.</p></dd>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>By default, <code>testOMF()</code> tests the null hypothesis that the population indicator
+    <p>Bootstrap-based test for overall model fit originally proposed by Beran and Srivastava (1985-mar)
+.
+See also Dijkstra and Henseler (2015)
+ who first suggested the test in
+the context of PLS-PM.</p>
+<p>By default, <code>testOMF()</code> tests the null hypothesis that the population indicator
 correlation matrix equals the population model-implied indicator correlation matrix.
 Several discrepancy measures may be used. By default, <code>testOMF()</code> uses four distance
 measures to assess the distance between the sample indicator correlation matrix

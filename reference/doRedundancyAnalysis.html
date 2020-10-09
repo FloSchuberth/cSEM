@@ -40,10 +40,7 @@
 
 
 <meta property="og:title" content="Do a redundancy analysis — doRedundancyAnalysis" />
-<meta property="og:description" content="Perform a redundancy analysis (RA) as proposed by Hair et al. (2016)
-
-with reference to Chin (1998)
-." />
+<meta property="og:description" content="" />
 
 
 
@@ -145,10 +142,7 @@ with reference to Chin (1998)
     </div>
 
     <div class="ref-description">
-    <p>Perform a redundancy analysis (RA) as proposed by Hair et al. (2016)
-
-with reference to Chin (1998)
-.</p>
+    <p><a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a></p>
     </div>
 
     <pre class="usage"><span class='fu'>doRedundancyAnalysis</span><span class='op'>(</span>.object <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
@@ -169,7 +163,11 @@ the weighting approach used to obtain <code>.object</code> is not <code>"PLS-PM"
 non of the PLS outer modes was mode B, the function silently returns <code>NA</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>RA is confined to PLS-PM, specifically PLS-PM with at least one construct
+    <p>Perform a redundancy analysis (RA) as proposed by Hair et al. (2016)
+
+with reference to Chin (1998)
+.</p>
+<p>RA is confined to PLS-PM, specifically PLS-PM with at least one construct
 whose weights are obtained by mode B. In cSEM this is the case if the construct
 is modeled as a composite or if argument <code>.PLS_modes</code> was explicitly set to
 mode B for at least one construct.
