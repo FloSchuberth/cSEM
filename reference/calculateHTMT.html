@@ -163,7 +163,8 @@ assess discriminant validity.</p>
  .inference            <span class='op'>=</span> <span class='cn'>FALSE</span>,
  .only_common_factors  <span class='op'>=</span> <span class='cn'>TRUE</span>,
  .R                    <span class='op'>=</span> <span class='fl'>499</span>,
- .seed                 <span class='op'>=</span> <span class='cn'>NULL</span>
+ .seed                 <span class='op'>=</span> <span class='cn'>NULL</span>,
+ <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -224,6 +225,10 @@ case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></td>
     </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Ignored.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -246,6 +251,13 @@ model only concepts modeled as common factors are considered by default.
 For concepts modeled as composites the HTMT may be computed by setting
 <code>.only_common_factors = FALSE</code>, however, it is unclear how to
 interpret values in this case.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Henseler J, Ringle CM, Sarstedt M (2015-aug).
+&#8220;A New Criterion for Assessing Discriminant Validity in Variance-based Structural Equation Modeling.&#8221;
+<em>Journal of the Academy of Marketing Science</em>, <b>43</b>, 115--135.
+doi: <a href='https://doi.org/10.1007/s11747-014-0403-8'>10.1007/s11747-014-0403-8</a>
+.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='assess.html'>assess()</a></code>, <a href='csem.html'>csem</a>, <a href='csem_results.html'>cSEMResults</a></p></div>

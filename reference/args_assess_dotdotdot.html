@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Internal: Complete list of assess()'s ... arguments — args_assess_dotdotdot • cSEM</title>
+<title>Complete list of assess()'s ... arguments — args_assess_dotdotdot • cSEM</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Internal: Complete list of assess()'s ... arguments — args_assess_dotdotdot" />
+<meta property="og:title" content="Complete list of assess()'s ... arguments — args_assess_dotdotdot" />
 <meta property="og:description" content="A complete alphabetical list of all possible arguments accepted by assess()'s ...
 (dotdotdot) argument." />
 
@@ -137,7 +137,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Internal: Complete list of assess()'s ... arguments</h1>
+    <h1>Complete list of assess()'s ... arguments</h1>
     <small class="dont-index">Source: <a href='https://github.com/M-E-Rademaker/cSEM/blob/master/R/zz_arguments.R'><code>R/zz_arguments.R</code></a></small>
     <div class="hidden name"><code>args_assess_dotdotdot.Rd</code></div>
     </div>
@@ -160,6 +160,11 @@ Defaults to <code>TRUE</code> .</p></td>
       <th>.alpha</th>
       <td><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></td>
+    </tr>
+    <tr>
+      <th>.ci</th>
+      <td><p>A vector of character strings naming the confidence interval to compute.
+For possible choices see <code><a href='infer.html'>infer()</a></code>.</p></td>
     </tr>
     <tr>
       <th>.closed_form_ci</th>
@@ -204,6 +209,14 @@ to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></td>
     </tr>
     <tr>
+      <th>.type_gfi</th>
+      <td><p>Character string. Which fitting function should the GFI be based
+on? One of <em>"ML"</em> for the maximum likelihood fitting function, <em>"GLS"</em> for
+the generalized least squares fitting function or <em>"ULS"</em> for the
+unweighted least squares fitting function (same as the squared Euclidian distance).
+Defaults to <em>"ML"</em>.</p></td>
+    </tr>
+    <tr>
       <th>.type_vcv</th>
       <td><p>Character string. Which model-implied correlation
 matrix should be calculated?
@@ -215,9 +228,10 @@ One of "<em>indicator</em>" or "<em>construct</em>". Defaults to "<em>indicator<
 
     <p>Most arguments supplied to the <code>...</code> argument of <code><a href='assess.html'>assess()</a></code> are only
 accepted by a subset of the functions called by <code><a href='assess.html'>assess()</a></code>. The following
-list shows which argument is passed to which (internal) function:</p><dl>
+list shows which argument is passed to which function:</p><dl>
 <dt>.absolute</dt><dd><p>Accepted by/Passed down to: <code><a href='calculateHTMT.html'>calculateHTMT()</a></code></p></dd>
 <dt>.alpha</dt><dd><p>Accepted by/Passed down to: <code><a href='reliability.html'>calculateRhoT()</a></code>, <code><a href='calculateHTMT.html'>calculateHTMT()</a></code>, <code><a href='fit_measures.html'>calculateCN()</a></code></p></dd>
+<dt>.ci</dt><dd><p>Accepted by/Passed down to: <code><a href='calculateHTMT.html'>calculateHTMT()</a></code></p></dd>
 <dt>.closed_form_ci</dt><dd><p>Accepted by/Passed down to: <code><a href='reliability.html'>calculateRhoT()</a></code></p></dd>
 <dt>.handle_inadmissibles</dt><dd><p>Accepted by/Passed down to: <code><a href='calculateHTMT.html'>calculateHTMT()</a></code></p></dd>
 <dt>.null_model</dt><dd><p>Accepted by/Passed down to: <code><a href='calculateDf.html'>calculateDf()</a></code></p></dd>
@@ -225,6 +239,7 @@ list shows which argument is passed to which (internal) function:</p><dl>
 <dt>.saturated</dt><dd><p>Accepted by/Passed down to: <code><a href='fit_measures.html'>calculateSRMR()</a></code>,
 <code><a href='distance_measures.html'>calculateDG()</a></code>, <code><a href='distance_measures.html'>calculateDL()</a></code>, <code><a href='distance_measures.html'>calculateDML()</a></code>and subsequently <code><a href='fit.html'>fit()</a></code>.</p></dd>
 <dt>.seed</dt><dd><p>Accepted by/Passed down to: <code><a href='calculateHTMT.html'>calculateHTMT()</a></code></p></dd>
+<dt>.type_gfi</dt><dd><p>Accepted by/Passed down to: <code><a href='fit_measures.html'>calculateGFI()</a></code></p></dd>
 <dt>.type_vcv</dt><dd><p>Accepted by/Passed down to: <code><a href='fit_measures.html'>calculateSRMR()</a></code>,
 <code><a href='distance_measures.html'>calculateDG()</a></code>, <code><a href='distance_measures.html'>calculateDL()</a></code>, <code><a href='distance_measures.html'>calculateDML()</a></code> and subsequently <code><a href='fit.html'>fit()</a></code>.</p></dd>
 

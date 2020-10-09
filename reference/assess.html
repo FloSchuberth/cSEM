@@ -546,10 +546,10 @@ eta3 =~ y31 + y32 + y33
 <span class='co'>## Look at the resamples</span>
 <span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>User_fun</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span>
 </div><div class='output co'>#&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; [1,]    1 0.6851569 0.6906314    0    1 0.6390973    0    0    1
-#&gt; [2,]    1 0.6342517 0.6619395    0    1 0.6292979    0    0    1
-#&gt; [3,]    1 0.6104595 0.7271427    0    1 0.6076305    0    0    1
-#&gt; [4,]    1 0.6631370 0.6462254    0    1 0.5735223    0    0    1</div><div class='input'>
+#&gt; [1,]    1 0.7081158 0.6897182    0    1 0.6398040    0    0    1
+#&gt; [2,]    1 0.7225290 0.6883792    0    1 0.6120832    0    0    1
+#&gt; [3,]    1 0.6670233 0.5457190    0    1 0.6376914    0    0    1
+#&gt; [4,]    1 0.6748622 0.6242248    0    1 0.6408008    0    0    1</div><div class='input'>
 <span class='co'>## Use infer() to compute e.g., the 95% percentile confidence interval</span>
 <span class='va'>res_infer</span> <span class='op'>&lt;-</span> <span class='fu'><a href='infer.html'>infer</a></span><span class='op'>(</span><span class='va'>res</span>, .quantity <span class='op'>=</span> <span class='st'>"CI_percentile"</span><span class='op'>)</span>
 
@@ -557,8 +557,8 @@ eta3 =~ y31 + y32 + y33
 <span class='va'>res_infer</span><span class='op'>$</span><span class='va'>User_fun</span> 
 </div><div class='output co'>#&gt; $CI_percentile
 #&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; 95%L    1 0.6065359 0.5838382    0    1 0.5412251    0    0    1
-#&gt; 95%U    1 0.7629829 0.7196643    0    1 0.6925864    0    0    1
+#&gt; 95%L    1 0.5950832 0.6046727    0    1 0.5401888    0    0    1
+#&gt; 95%U    1 0.7581654 0.7316216    0    1 0.6852450    0    0    1
 #&gt; </div><div class='input'>
 <span class='co'>## Several quality criteria can be resampled simultaneously</span>
 <span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, 
@@ -573,11 +573,11 @@ eta3 =~ y31 + y32 + y33
 <span class='op'>)</span>
 <span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>HTMT</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span>
 </div><div class='output co'>#&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; [1,]    1 0.6731655 0.5866342    0    1 0.6125402    0    0    1
-#&gt; [2,]    1 0.6839229 0.6613843    0    1 0.6917007    0    0    1
-#&gt; [3,]    1 0.6521843 0.6678981    0    1 0.6574656    0    0    1
-#&gt; [4,]    1 0.5809102 0.7086647    0    1 0.5367384    0    0    1</div><div class='input'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>RMS_theta</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; [1] 0.1066270 0.1051273 0.1009892 0.1016130</div><div class='input'>
+#&gt; [1,]    1 0.6165112 0.7154079    0    1 0.6043661    0    0    1
+#&gt; [2,]    1 0.7170280 0.6934339    0    1 0.6651951    0    0    1
+#&gt; [3,]    1 0.7155068 0.6577207    0    1 0.6688024    0    0    1
+#&gt; [4,]    1 0.6345164 0.6617136    0    1 0.6683872    0    0    1</div><div class='input'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>RMS_theta</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
+</div><div class='output co'>#&gt; [1] 0.09880434 0.10656486 0.10630412 0.11053866</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -151,9 +151,9 @@
 
 <span class='fu'>calculateCFI</span><span class='op'>(</span><span class='va'>.object</span><span class='op'>)</span>
 
-<span class='fu'>calculateGFI</span><span class='op'>(</span><span class='va'>.object</span>, .type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ML"</span>, <span class='st'>"GLS"</span>, <span class='st'>"ULS"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'>calculateGFI</span><span class='op'>(</span><span class='va'>.object</span>, .type_gfi <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ML"</span>, <span class='st'>"GLS"</span>, <span class='st'>"ULS"</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>calculateCN</span><span class='op'>(</span><span class='va'>.object</span>, .alpha <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span>
+<span class='fu'>calculateCN</span><span class='op'>(</span><span class='va'>.object</span>, .alpha <span class='op'>=</span> <span class='fl'>0.05</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>calculateIFI</span><span class='op'>(</span><span class='va'>.object</span><span class='op'>)</span>
 
@@ -181,12 +181,16 @@
       <td><p>An R object of class <a href='csem_results.html'>cSEMResults</a> resulting from a call to <code><a href='csem.html'>csem()</a></code>.</p></td>
     </tr>
     <tr>
-      <th>.type</th>
+      <th>.type_gfi</th>
       <td><p>Character string. Which fitting function should the GFI be based
 on? One of <em>"ML"</em> for the maximum likelihood fitting function, <em>"GLS"</em> for
 the generalized least squares fitting function or <em>"ULS"</em> for the
 unweighted least squares fitting function (same as the squared Euclidian distance).
 Defaults to <em>"ML"</em>.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Ignored.</p></td>
     </tr>
     <tr>
       <th>.alpha</th>
@@ -205,10 +209,6 @@ Defaults to <code>0.05</code>.</p></td>
       <th>.saturated</th>
       <td><p>Logical. Should a saturated structural model be used?
 Defaults to <code>FALSE</code>.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Ignored.</p></td>
     </tr>
     </table>
 
