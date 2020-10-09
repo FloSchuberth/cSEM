@@ -14,17 +14,11 @@ Tested using GitHub Actions on
 
 I also tested using rhub::check_for_cran() with default arguments.
 
-There was one NOTE
-
-- checking for future file timestamps ... NOTE
-  unable to verify current time
-  
-  According to <https://stackoverflow.com/questions/63613301/r-cmd-check-note-unable-to-verify-current-time>
-  this is nothing I can adress.
+There was no issue.
 
 ## Check results on all platforms
 
-0 ERRORs | 0 WARNINGs | 1 NOTE
+0 ERRORs | 0 WARNINGs | 0 NOTE
 
 ## Other issues
 
