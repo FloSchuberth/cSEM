@@ -92,12 +92,6 @@ csem(..., .resample_method = &quot;jackknife&quot;) but may also be called direc
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -157,21 +151,21 @@ The function is called by <code><a href='csem.html'>csem()</a></code> if the use
 <code><a href='csem.html'>csem(..., .resample_method = "jackknife")</a></code> but may also be called directly.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>resamplecSEMResults</span>(
- .object                = <span class='kw'>NULL</span>,
- .resample_method       = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bootstrap"</span>, <span class='st'>"jackknife"</span>), 
- .resample_method2      = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"bootstrap"</span>, <span class='st'>"jackknife"</span>), 
- .R                     = <span class='fl'>499</span>,
- .R2                    = <span class='fl'>199</span>,
- .handle_inadmissibles  = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"drop"</span>, <span class='st'>"ignore"</span>, <span class='st'>"replace"</span>),
- .user_funs             = <span class='kw'>NULL</span>,
- .eval_plan             = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"sequential"</span>, <span class='st'>"multiprocess"</span>),
- .force                 = <span class='fl'>FALSE</span>,
- .seed                  = <span class='kw'>NULL</span>,
- .sign_change_option    = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>,<span class='st'>"individual"</span>,<span class='st'>"individual_reestimate"</span>,
-                            <span class='st'>"construct_reestimate"</span>),
- <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>resamplecSEMResults</span><span class='op'>(</span>
+ .object                <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .resample_method       <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"bootstrap"</span>, <span class='st'>"jackknife"</span><span class='op'>)</span>, 
+ .resample_method2      <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"none"</span>, <span class='st'>"bootstrap"</span>, <span class='st'>"jackknife"</span><span class='op'>)</span>, 
+ .R                     <span class='op'>=</span> <span class='fl'>499</span>,
+ .R2                    <span class='op'>=</span> <span class='fl'>199</span>,
+ .handle_inadmissibles  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"drop"</span>, <span class='st'>"ignore"</span>, <span class='st'>"replace"</span><span class='op'>)</span>,
+ .user_funs             <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .eval_plan             <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"sequential"</span>, <span class='st'>"multiprocess"</span><span class='op'>)</span>,
+ .force                 <span class='op'>=</span> <span class='cn'>FALSE</span>,
+ .seed                  <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .sign_change_option    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"none"</span>,<span class='st'>"individual"</span>,<span class='st'>"individual_reestimate"</span>,
+                            <span class='st'>"construct_reestimate"</span><span class='op'>)</span>,
+ <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -313,7 +307,7 @@ is able to deal with each case.</p>
 <p>The number of bootstrap runs for the first and second run are given by <code>.R</code> and <code>.R2</code>.
 The default is <code>499</code> for the first and <code>199</code> for the second run
 but should be increased in real applications. See e.g.,
-Hesterberg (2015)
+Hesterberg (2015-oct)
 , p.380,
 Davison and Hinkley (1997)
 , and
@@ -358,9 +352,9 @@ doi: <a href='https://doi.org/10.1017/cbo9780511802843'>10.1017/cbo9780511802843
 .<br /><br /> Efron B, Hastie T (2016).
 <em>Computer Age Statistical Inference</em>.
 Cambridge University Pr.
-ISBN 1107149894.<br /><br /> Hesterberg TC (2015).
+ISBN 1107149894.<br /><br /> Hesterberg TC (2015-oct).
 &#8220;What Teachers Should Know About the Bootstrap: Resampling in the Undergraduate Statistics Curriculum.&#8221;
-<em>The American Statistician</em>, <b>69</b>(4), 371--386.
+<em>The American Statistician</em>, <b>69</b>, 371--386.
 doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.2015.1089789</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -368,12 +362,12 @@ doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.20
     <div class='dont-index'><p><a href='csem.html'>csem</a>, <code><a href='summarize.html'>summarize()</a></code>, <code><a href='infer.html'>infer()</a></code>, <a href='csem_results.html'>cSEMResults</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Note: example not run as resampling is time consuming</span>
 <span class='co'># ===========================================================================</span>
 <span class='co'># Basic usage</span>
 <span class='co'># ===========================================================================</span>
-<span class='kw'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Structural model
 QUAL ~ EXPE
 EXPE ~ IMAG
@@ -391,15 +385,15 @@ VAL  =~ val1  + val2  + val3  + val4
 "</span>
 
 <span class='co'>## Estimate the model without resampling </span>
-<span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>satisfaction</span>, <span class='kw'>model</span>)
+<span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>satisfaction</span>, <span class='va'>model</span><span class='op'>)</span>
 
 <span class='co'>## Bootstrap and jackknife estimation</span>
-<span class='kw'>boot</span> <span class='op'>&lt;-</span> <span class='fu'>resamplecSEMResults</span>(<span class='kw'>a</span>)
-<span class='kw'>jack</span> <span class='op'>&lt;-</span> <span class='fu'>resamplecSEMResults</span>(<span class='kw'>a</span>, .resample_method = <span class='st'>"jackknife"</span>) 
+<span class='va'>boot</span> <span class='op'>&lt;-</span> <span class='fu'>resamplecSEMResults</span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
+<span class='va'>jack</span> <span class='op'>&lt;-</span> <span class='fu'>resamplecSEMResults</span><span class='op'>(</span><span class='va'>a</span>, .resample_method <span class='op'>=</span> <span class='st'>"jackknife"</span><span class='op'>)</span> 
 
 <span class='co'>## Alternatively use .resample_method in csem()</span>
-<span class='kw'>boot_csem</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>satisfaction</span>, <span class='kw'>model</span>, .resample_method = <span class='st'>"bootstrap"</span>)
-<span class='kw'>jack_csem</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>satisfaction</span>, <span class='kw'>model</span>, .resample_method = <span class='st'>"jackknife"</span>)
+<span class='va'>boot_csem</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>satisfaction</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span><span class='op'>)</span>
+<span class='va'>jack_csem</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>satisfaction</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"jackknife"</span><span class='op'>)</span>
 
 <span class='co'># ===========================================================================</span>
 <span class='co'># Extended usage</span>
@@ -408,55 +402,55 @@ VAL  =~ val1  + val2  + val3  + val4
 <span class='co'># The confidence intervals (e.g. the bias-corrected and accelearated CI) </span>
 <span class='co'># require double resampling. Use .resample_method2 for this.</span>
 
-<span class='kw'>boot1</span> <span class='op'>&lt;-</span> <span class='fu'>resamplecSEMResults</span>(
-  .object = <span class='kw'>a</span>, 
-  .resample_method  = <span class='st'>"bootstrap"</span>, 
-  .R                = <span class='fl'>50</span>,
-  .resample_method2 = <span class='st'>"bootstrap"</span>, 
-  .R2               = <span class='fl'>20</span>,
-  .seed             = <span class='fl'>1303</span>
-  )
+<span class='va'>boot1</span> <span class='op'>&lt;-</span> <span class='fu'>resamplecSEMResults</span><span class='op'>(</span>
+  .object <span class='op'>=</span> <span class='va'>a</span>, 
+  .resample_method  <span class='op'>=</span> <span class='st'>"bootstrap"</span>, 
+  .R                <span class='op'>=</span> <span class='fl'>50</span>,
+  .resample_method2 <span class='op'>=</span> <span class='st'>"bootstrap"</span>, 
+  .R2               <span class='op'>=</span> <span class='fl'>20</span>,
+  .seed             <span class='op'>=</span> <span class='fl'>1303</span>
+  <span class='op'>)</span>
 
 <span class='co'>## Again, this is identical to using csem </span>
-<span class='kw'>boot1_csem</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(
-  .data             = <span class='kw'>satisfaction</span>, 
-  .model            = <span class='kw'>model</span>, 
-  .resample_method  = <span class='st'>"bootstrap"</span>,
-  .R                = <span class='fl'>50</span>,
-  .resample_method2 = <span class='st'>"bootstrap"</span>,
-  .R2               = <span class='fl'>20</span>,
-  .seed             = <span class='fl'>1303</span>
-  )
+<span class='va'>boot1_csem</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span>
+  .data             <span class='op'>=</span> <span class='va'>satisfaction</span>, 
+  .model            <span class='op'>=</span> <span class='va'>model</span>, 
+  .resample_method  <span class='op'>=</span> <span class='st'>"bootstrap"</span>,
+  .R                <span class='op'>=</span> <span class='fl'>50</span>,
+  .resample_method2 <span class='op'>=</span> <span class='st'>"bootstrap"</span>,
+  .R2               <span class='op'>=</span> <span class='fl'>20</span>,
+  .seed             <span class='op'>=</span> <span class='fl'>1303</span>
+  <span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(<span class='kw'>boot1</span>, <span class='kw'>boot1_csem</span>) <span class='co'># only true if .seed was set</span>
+<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>boot1</span>, <span class='va'>boot1_csem</span><span class='op'>)</span> <span class='co'># only true if .seed was set</span>
 
 <span class='co'>### Inference ---------------------------------------------------------------</span>
 <span class='co'># To get inferencial quanitites such as the estimated standard error or</span>
 <span class='co'># the percentile confidence intervall for each resampled quantity use </span>
 <span class='co'># postestimation function infer()</span>
 
-<span class='kw'>inference</span> <span class='op'>&lt;-</span> <span class='fu'><a href='infer.html'>infer</a></span>(<span class='kw'>boot1</span>)
-<span class='kw'>inference</span><span class='op'>$</span><span class='kw'>Path_estimates</span><span class='op'>$</span><span class='kw'>sd</span>
-<span class='kw'>inference</span><span class='op'>$</span><span class='kw'>Path_estimates</span><span class='op'>$</span><span class='kw'>CI_percentile</span>
+<span class='va'>inference</span> <span class='op'>&lt;-</span> <span class='fu'><a href='infer.html'>infer</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
+<span class='va'>inference</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>sd</span>
+<span class='va'>inference</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_percentile</span>
 
 <span class='co'># As usual summarize() can be called directly</span>
-<span class='fu'><a href='summarize.html'>summarize</a></span>(<span class='kw'>boot1</span>)
+<span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
 
 <span class='co'># In the example above .R x .R2 = 50 x 20 = 1000. Multiprocessing will be</span>
 <span class='co'># faster on most systems here and is therefore recommended. Note that multiprocessing</span>
 <span class='co'># does not affect the random number generation</span>
 
-<span class='kw'>boot2</span> <span class='op'>&lt;-</span> <span class='fu'>resamplecSEMResults</span>(
-  .object           = <span class='kw'>a</span>, 
-  .resample_method  = <span class='st'>"bootstrap"</span>, 
-  .R                = <span class='fl'>50</span>,
-  .resample_method2 = <span class='st'>"bootstrap"</span>, 
-  .R2               = <span class='fl'>20</span>,
-  .eval_plan        = <span class='st'>"multiprocess"</span>, 
-  .seed             = <span class='fl'>1303</span>
-  )
+<span class='va'>boot2</span> <span class='op'>&lt;-</span> <span class='fu'>resamplecSEMResults</span><span class='op'>(</span>
+  .object           <span class='op'>=</span> <span class='va'>a</span>, 
+  .resample_method  <span class='op'>=</span> <span class='st'>"bootstrap"</span>, 
+  .R                <span class='op'>=</span> <span class='fl'>50</span>,
+  .resample_method2 <span class='op'>=</span> <span class='st'>"bootstrap"</span>, 
+  .R2               <span class='op'>=</span> <span class='fl'>20</span>,
+  .eval_plan        <span class='op'>=</span> <span class='st'>"multiprocess"</span>, 
+  .seed             <span class='op'>=</span> <span class='fl'>1303</span>
+  <span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(<span class='kw'>boot1</span>, <span class='kw'>boot2</span>)}
+<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>boot1</span>, <span class='va'>boot2</span><span class='op'>)</span><span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -473,7 +467,7 @@ VAL  =~ val1  + val2  + val3  + val4
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

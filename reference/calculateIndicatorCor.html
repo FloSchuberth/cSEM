@@ -89,12 +89,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -151,10 +145,10 @@
     <p>Calculate the indicator correlation matrix using conventional or robust methods.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>calculateIndicatorCor</span>(
-  .X_cleaned           = <span class='kw'>NULL</span>, 
-  .approach_cor_robust = <span class='st'>"none"</span>
- )</pre>
+    <pre class="usage"><span class='fu'>calculateIndicatorCor</span><span class='op'>(</span>
+  .X_cleaned           <span class='op'>=</span> <span class='cn'>NULL</span>, 
+  .approach_cor_robust <span class='op'>=</span> <span class='st'>"none"</span>
+ <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -206,7 +200,7 @@ polychoric correlation (Drasgow 1988)
 
 </dl><p>Note: logical input is treated as a 0-1 factor variable.</p>
 <p>If  <code>"mcd"</code> (= minimum covariance determinant), the MCD estimator
-(Rousseeuw and Driessen 1999)
+(Rousseeuw and Driessen 1999-aug)
 , a robust covariance estimator, is applied
 (via <code><a href='https://rdrr.io/pkg/MASS/man/cov.rob.html'>MASS::cov.rob()</a></code>).</p>
 <p>If <code>"spearman"</code>, the Spearman rank correlation is used (via <code><a href='https://rdrr.io/r/stats/cor.html'>stats::cor()</a></code>).</p>
@@ -214,10 +208,11 @@ polychoric correlation (Drasgow 1988)
 
     <p>Drasgow F (1988).
 &#8220;Polychoric and polyserial correlations.&#8221;
-In <em>Encyclopedia of Statistical Sciences</em>, volume 7, 68-74.
-John Wiley &amp; Sons Inc, Hoboken.<br /><br /> Rousseeuw PJ, Driessen KV (1999).
+In <em>Encyclopedia of Statistical Sciences</em>, volume 7, 68--74.
+John Wiley &amp; Sons Inc, Hoboken.
+<a href='Drasgow1988.pdf'>Drasgow1988.pdf</a>.<br /><br /> Rousseeuw PJ, Driessen KV (1999-aug).
 &#8220;A Fast Algorithm for the Minimum Covariance Determinant Estimator.&#8221;
-<em>Technometrics</em>, <b>41</b>(3), 212--223.
+<em>Technometrics</em>, <b>41</b>, 212--223.
 doi: <a href='https://doi.org/10.1080/00401706.1999.10485670'>10.1080/00401706.1999.10485670</a>
 .</p>
 
@@ -236,7 +231,7 @@ doi: <a href='https://doi.org/10.1080/00401706.1999.10485670'>10.1080/00401706.1
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

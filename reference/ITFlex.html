@@ -89,12 +89,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -151,7 +145,7 @@
     <p>A data frame containing 16 variables with 100 observations.</p>
     </div>
 
-    <pre class="usage"><span class='kw'>ITFlex</span></pre>
+    <pre class="usage"><span class='va'>ITFlex</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -207,7 +201,8 @@ All questionnaire items are measured on a 5-point scale.</p>
 
     <p>Benitez J, Ray G, Henseler J (2018).
 &#8220;Impact of Information Technology Infrastructure Flexibility on Mergers and Acquisitions.&#8221;
-<em>MIS Quarterly</em>, <b>42</b>(1), 25--43.<br /><br /> Henseler J (2020).
+<em>MIS Quarterly</em>, <b>42</b>, 25--43.
+<a href='Benitez2018.pdf'>Benitez2018.pdf</a>.<br /><br /> Henseler J (2020).
 <em>Composite-Based Structural Equation Modeling: An Introduction to Partial Least Squares &amp; Co. Using ADANCO</em>.
 Guilford Press.</p>
 
@@ -215,7 +210,7 @@ Guilford Press.</p>
     <pre class="examples"><div class='input'><span class='co'>#============================================================================</span>
 <span class='co'># Example is taken from Henseler (2020)</span>
 <span class='co'>#============================================================================</span>
-<span class='kw'>model_IT_Fex</span><span class='op'>=</span><span class='st'>"
+<span class='va'>model_IT_Fex</span><span class='op'>=</span><span class='st'>"
 # Composite models
 ITComp  &lt;~ ITCOMP1 + ITCOMP2 + ITCOMP3 + ITCOMP4
 Modul   &lt;~ MOD1 + MOD2 + MOD3 + MOD4
@@ -228,10 +223,10 @@ Modul  ~ ITComp + ITConn
 ITConn ~ ITComp 
 "</span>
 
-<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(.data = <span class='kw'>ITFlex</span>, .model = <span class='kw'>model_IT_Fex</span>,
-           .PLS_weight_scheme_inner = <span class='st'>'factorial'</span>,
-           .tolerance = <span class='fl'>1e-06</span>,
-           .PLS_ignore_structural_model = <span class='fl'>TRUE</span>)
+<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>ITFlex</span>, .model <span class='op'>=</span> <span class='va'>model_IT_Fex</span>,
+           .PLS_weight_scheme_inner <span class='op'>=</span> <span class='st'>'factorial'</span>,
+           .tolerance <span class='op'>=</span> <span class='fl'>1e-06</span>,
+           .PLS_ignore_structural_model <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 </div></pre>
   </div>
@@ -249,7 +244,7 @@ ITConn ~ ITComp
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -89,12 +89,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -151,14 +145,14 @@
     <p>Predict the indicator scores of endogenous constructs.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>predict</span>(
- .object               = <span class='kw'>NULL</span>,
- .benchmark            = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"lm"</span>, <span class='st'>"unit"</span>, <span class='st'>"PLS-PM"</span>, <span class='st'>"GSCA"</span>, <span class='st'>"PCA"</span>, <span class='st'>"MAXVAR"</span>),
- .cv_folds             = <span class='fl'>10</span>,
- .handle_inadmissibles = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"stop"</span>, <span class='st'>"ignore"</span>, <span class='st'>"set_NA"</span>),
- .r                    = <span class='fl'>10</span>,
- .test_data            = <span class='kw'>NULL</span>
- )</pre>
+    <pre class="usage"><span class='fu'>predict</span><span class='op'>(</span>
+ .object               <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .benchmark            <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"lm"</span>, <span class='st'>"unit"</span>, <span class='st'>"PLS-PM"</span>, <span class='st'>"GSCA"</span>, <span class='st'>"PCA"</span>, <span class='st'>"MAXVAR"</span><span class='op'>)</span>,
+ .cv_folds             <span class='op'>=</span> <span class='fl'>10</span>,
+ .handle_inadmissibles <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"stop"</span>, <span class='st'>"ignore"</span>, <span class='st'>"set_NA"</span><span class='op'>)</span>,
+ .r                    <span class='op'>=</span> <span class='fl'>10</span>,
+ .test_data            <span class='op'>=</span> <span class='cn'>NULL</span>
+ <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -226,9 +220,9 @@ MAE, RMSE, and Q2_predict.</p></dd>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Predict uses the procedure introduced by Shmueli et al. (2016)
+    <p>Predict uses the procedure introduced by Shmueli et al. (2016-oct)
  in the context of
-PLS (commonly called: "PLSPredict" (Shmueli et al. 2019)
+PLS (commonly called: "PLSPredict" (Shmueli et al. 2019-nov)
 ).
 Predict uses k-fold cross-validation to randomly
 split the data into training and test data and subsequently predicts the
@@ -236,7 +230,7 @@ relevant values in the test data based on the model parameter estimates obtained
 using the training data. The number of cross-validation folds is 10 by default but
 may be changed using the <code>.cv_folds</code> argument.
 By default, the procedure is repeated <code>.r = 10</code> times to avoid irregularities
-due to a particular split. See Shmueli et al. (2019)
+due to a particular split. See Shmueli et al. (2019-nov)
  for
 details.</p>
 <p>Alternatively, users may supply a matrix of <code>.test_data</code> with the same column names
@@ -244,7 +238,7 @@ as those in the data used to obtain <code>.object</code> (the training data).
 In this case, arguments <code>.cv_folds</code> and <code>.r</code> are
 ignored and predict uses the estimated coefficients from <code>.object</code> to
 predict the values in the columns of <code>.test_data</code>.</p>
-<p>In Shmueli et al. (2016)
+<p>In Shmueli et al. (2016-oct)
  PLS-based predictions for indicator <code>i</code>
 are compared to the predictions based on a multiple regression of indicator <code>i</code>
 on all available exogenous indicators (<code>.benchmark = "lm"</code>) and
@@ -260,15 +254,15 @@ Users may choose to <code>"ignore"</code> inadmissible results or to simply set 
 to <code>NA</code> (<code>"set_NA"</code>) for the particular run that failed.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Shmueli G, Ray S, Estrada JMV, Chatla SB (2016).
+    <p>Shmueli G, Ray S, Estrada JMV, Chatla SB (2016-oct).
 &#8220;The Elephant in the Room: Predictive Performance of PLS Models.&#8221;
-<em>Journal of Business Research</em>, <b>69</b>(10), 4552--4564.
+<em>Journal of Business Research</em>, <b>69</b>, 4552--4564.
 doi: <a href='https://doi.org/10.1016/j.jbusres.2016.03.049'>10.1016/j.jbusres.2016.03.049</a>
-.<br /><br /> Shmueli G, Sarstedt M, Hair JF, Cheah J, Ting H, Vaithilingam S, Ringle CM (2019).
+, <a href='Literatur/Shmueli2016.pdf'>Literatur/Shmueli2016.pdf</a>.<br /><br /> Shmueli G, Sarstedt M, Hair JF, Cheah J, Ting H, Vaithilingam S, Ringle CM (2019-nov).
 &#8220;Predictive Model Assessment in PLS-SEM: Guidelines for Using PLSpredict.&#8221;
-<em>European Journal of Marketing</em>, <b>53</b>(11), 2322--2347.
+<em>European Journal of Marketing</em>, <b>53</b>, 2322--2347.
 doi: <a href='https://doi.org/10.1108/ejm-02-2019-0189'>10.1108/ejm-02-2019-0189</a>
-.</p>
+, <a href='Literatur/Shmueli2019.pdf'>Literatur/Shmueli2019.pdf</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><a href='csem.html'>csem</a>, <a href='csem_results.html'>cSEMResults</a></p></div>
@@ -277,20 +271,20 @@ doi: <a href='https://doi.org/10.1108/ejm-02-2019-0189'>10.1108/ejm-02-2019-0189
     <pre class="examples"><div class='input'><span class='co'>### Anime example taken from https://github.com/ISS-Analytics/pls-predict</span>
 
 <span class='co'># Load data</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>Anime</span>) <span class='co'># data is similar to the Anime.csv found on </span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>Anime</span><span class='op'>)</span> <span class='co'># data is similar to the Anime.csv found on </span>
             <span class='co'># https://github.com/ISS-Analytics/pls-predict but with irrelevant</span>
             <span class='co'># columns removed</span>
 
 <span class='co'># Split into training and data the same way as it is done on </span>
 <span class='co'># https://github.com/ISS-Analytics/pls-predict</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>123</span><span class='op'>)</span>
 
-<span class='kw'>index</span>     <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample.int</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span>(<span class='kw'>Anime</span>)[<span class='fl'>1</span>], <span class='fl'>83</span>, replace = <span class='fl'>FALSE</span>)
-<span class='kw'>dat_train</span> <span class='op'>&lt;-</span> <span class='kw'>Anime</span>[<span class='op'>-</span><span class='kw'>index</span>, ]
-<span class='kw'>dat_test</span>  <span class='op'>&lt;-</span> <span class='kw'>Anime</span>[<span class='kw'>index</span>, ]
+<span class='va'>index</span>     <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample.int</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span><span class='op'>(</span><span class='va'>Anime</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>, <span class='fl'>83</span>, replace <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>dat_train</span> <span class='op'>&lt;-</span> <span class='va'>Anime</span><span class='op'>[</span><span class='op'>-</span><span class='va'>index</span>, <span class='op'>]</span>
+<span class='va'>dat_test</span>  <span class='op'>&lt;-</span> <span class='va'>Anime</span><span class='op'>[</span><span class='va'>index</span>, <span class='op'>]</span>
 
 <span class='co'># Specify model</span>
-<span class='kw'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Structural model
 
 ApproachAvoidance ~ PerceivedVisualComplexity + Arousal
@@ -303,24 +297,24 @@ Arousal                   &lt;~ Aro1 + Aro2 + Aro3 + Aro4
 "</span>
 
 <span class='co'># Estimate (replicating the results of the `simplePLS()` function)</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>dat_train</span>, 
-            <span class='kw'>model</span>, 
-            .disattenuate = <span class='fl'>FALSE</span>, <span class='co'># original PLS</span>
-            .iter_max = <span class='fl'>300</span>, 
-            .tolerance = <span class='fl'>1e-07</span>, 
-            .PLS_weight_scheme_inner = <span class='st'>"factorial"</span>
-)
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>dat_train</span>, 
+            <span class='va'>model</span>, 
+            .disattenuate <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='co'># original PLS</span>
+            .iter_max <span class='op'>=</span> <span class='fl'>300</span>, 
+            .tolerance <span class='op'>=</span> <span class='fl'>1e-07</span>, 
+            .PLS_weight_scheme_inner <span class='op'>=</span> <span class='st'>"factorial"</span>
+<span class='op'>)</span>
 
 <span class='co'># Predict using a user-supplied training data set</span>
-<span class='kw'>pp</span> <span class='op'>&lt;-</span> <span class='fu'>predict</span>(<span class='kw'>res</span>, .test_data = <span class='kw'>dat_test</span>)
-<span class='kw'>pp</span><span class='op'>$</span><span class='kw'>Predictions_target</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>, ]
+<span class='va'>pp</span> <span class='op'>&lt;-</span> <span class='fu'>predict</span><span class='op'>(</span><span class='va'>res</span>, .test_data <span class='op'>=</span> <span class='va'>dat_test</span><span class='op'>)</span>
+<span class='va'>pp</span><span class='op'>$</span><span class='va'>Predictions_target</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>, <span class='op'>]</span>
 </div><div class='output co'>#&gt;          AA0      AA1      AA2      AA3
 #&gt; 4  1.6668304 2.101690 2.252157 2.538023
 #&gt; 6  6.3109205 6.453202 6.577008 6.542260
 #&gt; 7  4.3329867 4.599878 4.735039 4.836842
 #&gt; 12 3.6066459 3.919297 4.058628 4.210575
 #&gt; 13 5.8594078 6.030135 6.156533 6.152956
-#&gt; 14 0.9136649 1.395974 1.550764 1.888627</div><div class='input'><span class='kw'>pp</span>
+#&gt; 14 0.9136649 1.395974 1.550764 1.888627</div><div class='input'><span class='va'>pp</span>
 </div><div class='output co'>#&gt; ________________________________________________________________________________
 #&gt; ----------------------------------- Overview -----------------------------------
 #&gt; 
@@ -342,20 +336,20 @@ Arousal                   &lt;~ Aro1 + Aro2 + Aro3 + Aro4
 #&gt;   AA3         1.0416         1.0489       1.4282         1.4743       0.3656
 #&gt; ________________________________________________________________________________</div><div class='input'>
 <span class='co'>### Compute prediction metrics  ------------------------------------------------</span>
-<span class='kw'>res2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>Anime</span>, <span class='co'># whole data set</span>
-            <span class='kw'>model</span>, 
-            .disattenuate = <span class='fl'>FALSE</span>, <span class='co'># original PLS</span>
-            .iter_max = <span class='fl'>300</span>, 
-            .tolerance = <span class='fl'>1e-07</span>, 
-            .PLS_weight_scheme_inner = <span class='st'>"factorial"</span>
-)
+<span class='va'>res2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>Anime</span>, <span class='co'># whole data set</span>
+            <span class='va'>model</span>, 
+            .disattenuate <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='co'># original PLS</span>
+            .iter_max <span class='op'>=</span> <span class='fl'>300</span>, 
+            .tolerance <span class='op'>=</span> <span class='fl'>1e-07</span>, 
+            .PLS_weight_scheme_inner <span class='op'>=</span> <span class='st'>"factorial"</span>
+<span class='op'>)</span>
 
 <span class='co'># Predict using 10-fold cross-validation with 5 repetitions</span>
-<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>pp2</span> <span class='op'>&lt;-</span> <span class='fu'>predict</span>(<span class='kw'>res</span>, .benchmark = <span class='st'>"lm"</span>)
-<span class='kw'>pp2</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>pp2</span> <span class='op'>&lt;-</span> <span class='fu'>predict</span><span class='op'>(</span><span class='va'>res</span>, .benchmark <span class='op'>=</span> <span class='st'>"lm"</span><span class='op'>)</span>
+<span class='va'>pp2</span>
 <span class='co'>## There is a plot method available</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>pp2</span>)}
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>pp2</span><span class='op'>)</span><span class='op'>}</span>
 
 </div></pre>
   </div>
@@ -373,7 +367,7 @@ Arousal                   &lt;~ Aro1 + Aro2 + Aro3 + Aro4
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

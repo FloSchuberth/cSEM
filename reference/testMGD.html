@@ -42,7 +42,7 @@
 <meta property="og:title" content="Tests for multi-group comparisons — testMGD" />
 <meta property="og:description" content="This function performs various tests proposed in the context of multigroup analysis.
 The following tests are implemented:
-.approach_mgd = &quot;Klesel&quot;: Approach suggested by Klesel et al. (2019)
+.approach_mgd = &quot;Klesel&quot;: Approach suggested by Klesel et al. (2019-jun)
 The model-implied variance-covariance matrix (either indicator
 (.type_vcv = &quot;indicator&quot;) or construct (.type_vcv = &quot;construct&quot;))
 is compared across groups. If the model-implied indicator or construct correlation
@@ -51,9 +51,9 @@ To measure the distance between the model-implied variance-covariance matrices,
 the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
 If more than two groups are compared, the average distance over all groups
 is used.
-.approach_mgd = &quot;Sarstedt&quot;: Approach suggested by Sarstedt et al. (2011)
+.approach_mgd = &quot;Sarstedt&quot;: Approach suggested by Sarstedt et al. (2011-jan)
 Groups are compared in terms of parameter differences across groups.
-Sarstedt et al. (2011)
+Sarstedt et al. (2011-jan)
  tests if parameter k is equal
 across all groups. If several parameters are tested simultaneously
 it is recommended to adjust the significance  level or the p-values (in cSEM correction is
@@ -62,9 +62,9 @@ no multiple testing correction is done, however, several common
 adjustments are available via .approach_p_adjust. See
 stats::p.adjust() for details. Note: the
 test has some severe shortcomings. Use with caution.
-.approach_mgd = &quot;Chin&quot;: Approach suggested by Chin and Dibbern (2010)
+.approach_mgd = &quot;Chin&quot;: Approach suggested by Chin and Dibbern (2010-nov)
 Groups are compared in terms of parameter differences across groups.
-Chin and Dibbern (2010)
+Chin and Dibbern (2010-nov)
  tests if parameter k is equal
 between two groups. If more than two groups are tested for equality, parameter
 k is compared between all pairs of groups. In this case, it is recommended
@@ -99,7 +99,7 @@ Similarly to Keil et al. (2000)
 for equality between two groups. In contrast to Keil et al. (2000)
 ,
 it is assumed, that the standard errors of the coefficients are
-unequal across groups (Sarstedt et al. 2011)
+unequal across groups (Sarstedt et al. 2011-jan)
 .
 If more than two groups are tested for equality, parameter k is compared
 between all pairs of groups. In this case, it is recommended
@@ -122,13 +122,13 @@ Moreover, .approach_p_adjust is ignored and no overall decision
 is returned.
 For a more detailed description, see also Henseler et al. (2009)
 .
-.approach_mgd = &quot;CI_param&quot;: Approach mentioned in Sarstedt et al. (2011)
+.approach_mgd = &quot;CI_param&quot;: Approach mentioned in Sarstedt et al. (2011-jan)
 This approach is based on the confidence intervals constructed around the
 parameter estimates of the two groups. If the parameter of one group falls within
 the confidence interval of the other group and/or vice versa, it can be concluded
 that there is no group difference.
 Since it is based on the confidence intervals .approach_p_adjust is ignored.
-.approach_mgd = &quot;CI_overlap&quot;: Approach mentioned in Sarstedt et al. (2011)
+.approach_mgd = &quot;CI_overlap&quot;: Approach mentioned in Sarstedt et al. (2011-jan)
 This approach is based on the confidence intervals (CIs) constructed around the
 parameter estimates of the two groups. If the two CIs overlap, it can be concluded
 that there is no group difference.
@@ -184,12 +184,6 @@ Since it is based on the confidence intervals .approach_p_adjust is ignored.
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -245,7 +239,7 @@ Since it is based on the confidence intervals .approach_p_adjust is ignored.
     <div class="ref-description">
     <p>This function performs various tests proposed in the context of multigroup analysis.</p>
 <p>The following tests are implemented:</p><dl>
-<dt><code>.approach_mgd = "Klesel"</code>: Approach suggested by Klesel et al. (2019)
+<dt><code>.approach_mgd = "Klesel"</code>: Approach suggested by Klesel et al. (2019-jun)
 </dt><dd><p>The model-implied variance-covariance matrix (either indicator
 (<code>.type_vcv = "indicator"</code>) or construct (<code>.type_vcv = "construct"</code>))
 is compared across groups. If the model-implied indicator or construct correlation
@@ -254,9 +248,9 @@ To measure the distance between the model-implied variance-covariance matrices,
 the geodesic distance (dG) and the squared Euclidean distance (dL) are used.
 If more than two groups are compared, the average distance over all groups
 is used.</p></dd>
-<dt><code>.approach_mgd = "Sarstedt"</code>: Approach suggested by Sarstedt et al. (2011)
+<dt><code>.approach_mgd = "Sarstedt"</code>: Approach suggested by Sarstedt et al. (2011-jan)
 </dt><dd><p>Groups are compared in terms of parameter differences across groups.
-Sarstedt et al. (2011)
+Sarstedt et al. (2011-jan)
  tests if parameter k is equal
 across all groups. If several parameters are tested simultaneously
 it is recommended to adjust the significance  level or the p-values (in <span class="pkg">cSEM</span> correction is
@@ -265,9 +259,9 @@ no multiple testing correction is done, however, several common
 adjustments are available via <code>.approach_p_adjust</code>. See
 <code><a href='https://rdrr.io/r/stats/p.adjust.html'>stats::p.adjust()</a></code> for details. Note: the
 test has some severe shortcomings. Use with caution.</p></dd>
-<dt><code>.approach_mgd = "Chin"</code>: Approach suggested by Chin and Dibbern (2010)
+<dt><code>.approach_mgd = "Chin"</code>: Approach suggested by Chin and Dibbern (2010-nov)
 </dt><dd><p>Groups are compared in terms of parameter differences across groups.
-Chin and Dibbern (2010)
+Chin and Dibbern (2010-nov)
  tests if parameter k is equal
 between two groups. If more than two groups are tested for equality, parameter
 k is compared between all pairs of groups. In this case, it is recommended
@@ -302,7 +296,7 @@ Similarly to Keil et al. (2000)
 for equality between two groups. In contrast to Keil et al. (2000)
 ,
 it is assumed, that the standard errors of the coefficients are
-unequal across groups (Sarstedt et al. 2011)
+unequal across groups (Sarstedt et al. 2011-jan)
 .
 If more than two groups are tested for equality, parameter k is compared
 between all pairs of groups. In this case, it is recommended
@@ -325,13 +319,13 @@ Moreover, <code>.approach_p_adjust</code> is ignored and no overall decision
 is returned.
 For a more detailed description, see also Henseler et al. (2009)
 .</p></dd>
-<dt><code>.approach_mgd = "CI_param"</code>: Approach mentioned in Sarstedt et al. (2011)
+<dt><code>.approach_mgd = "CI_param"</code>: Approach mentioned in Sarstedt et al. (2011-jan)
 </dt><dd><p>This approach is based on the confidence intervals constructed around the
 parameter estimates of the two groups. If the parameter of one group falls within
 the confidence interval of the other group and/or vice versa, it can be concluded
 that there is no group difference.
 Since it is based on the confidence intervals <code>.approach_p_adjust</code> is ignored.</p></dd>
-<dt><code>.approach_mgd = "CI_overlap"</code>: Approach mentioned in Sarstedt et al. (2011)
+<dt><code>.approach_mgd = "CI_overlap"</code>: Approach mentioned in Sarstedt et al. (2011-jan)
 </dt><dd><p>This approach is based on the confidence intervals (CIs) constructed around the
 parameter estimates of the two groups. If the two CIs overlap, it can be concluded
 that there is no group difference.
@@ -341,24 +335,24 @@ Since it is based on the confidence intervals <code>.approach_p_adjust</code> is
 
     </div>
 
-    <pre class="usage"><span class='fu'>testMGD</span>(
- .object                = <span class='kw'>NULL</span>,
- .alpha                 = <span class='fl'>0.05</span>,
- .approach_p_adjust     = <span class='st'>"none"</span>,
- .approach_mgd          = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"Klesel"</span>, <span class='st'>"Chin"</span>, <span class='st'>"Sarstedt"</span>, 
-                            <span class='st'>"Keil"</span>, <span class='st'>"Nitzl"</span>, <span class='st'>"Henseler"</span>, <span class='st'>"CI_para"</span>,<span class='st'>"CI_overlap"</span>),
- .output_type           = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"complete"</span>, <span class='st'>"structured"</span>),
- .parameters_to_compare = <span class='kw'>NULL</span>,
- .eval_plan             = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"sequential"</span>, <span class='st'>"multiprocess"</span>),                           
- .handle_inadmissibles  = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"replace"</span>, <span class='st'>"drop"</span>, <span class='st'>"ignore"</span>),
- .R_permutation         = <span class='fl'>499</span>,
- .R_bootstrap           = <span class='fl'>499</span>,
- .saturated             = <span class='fl'>FALSE</span>,
- .seed                  = <span class='kw'>NULL</span>,
- .type_ci               = <span class='st'>"CI_percentile"</span>,
- .type_vcv              = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"indicator"</span>, <span class='st'>"construct"</span>),
- .verbose               = <span class='fl'>TRUE</span>
- )</pre>
+    <pre class="usage"><span class='fu'>testMGD</span><span class='op'>(</span>
+ .object                <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .alpha                 <span class='op'>=</span> <span class='fl'>0.05</span>,
+ .approach_p_adjust     <span class='op'>=</span> <span class='st'>"none"</span>,
+ .approach_mgd          <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"Klesel"</span>, <span class='st'>"Chin"</span>, <span class='st'>"Sarstedt"</span>, 
+                            <span class='st'>"Keil"</span>, <span class='st'>"Nitzl"</span>, <span class='st'>"Henseler"</span>, <span class='st'>"CI_para"</span>,<span class='st'>"CI_overlap"</span><span class='op'>)</span>,
+ .output_type           <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"complete"</span>, <span class='st'>"structured"</span><span class='op'>)</span>,
+ .parameters_to_compare <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .eval_plan             <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"sequential"</span>, <span class='st'>"multiprocess"</span><span class='op'>)</span>,                           
+ .handle_inadmissibles  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"replace"</span>, <span class='st'>"drop"</span>, <span class='st'>"ignore"</span><span class='op'>)</span>,
+ .R_permutation         <span class='op'>=</span> <span class='fl'>499</span>,
+ .R_bootstrap           <span class='op'>=</span> <span class='fl'>499</span>,
+ .saturated             <span class='op'>=</span> <span class='cn'>FALSE</span>,
+ .seed                  <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .type_ci               <span class='op'>=</span> <span class='st'>"CI_percentile"</span>,
+ .type_vcv              <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"indicator"</span>, <span class='st'>"construct"</span><span class='op'>)</span>,
+ .verbose               <span class='op'>=</span> <span class='cn'>TRUE</span>
+ <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -498,7 +492,7 @@ all parameters (<code>.parameters_to_compare = NULL</code>). To compare only
 a subset of parameters provide the parameters in <a href='https://rdrr.io/pkg/lavaan/man/model.syntax.html'>lavaan model syntax</a>  just like
 the model to estimate. Take the simple model:</p>
 <pre>
-<span class='kw'>model_to_estimate</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>model_to_estimate</span> <span class='op'>&lt;-</span> <span class='st'>"
 Structural model
 eta2 ~ eta1
 eta3 ~ eta1 + eta2
@@ -510,7 +504,7 @@ eta3 =~ y31 + y32 + y33
 "</span>
 </pre><p>If only the path from eta1 to eta3 and the loadings of eta1 are to be compared
 across groups, write:</p><pre>
-<span class='kw'>to_compare</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>to_compare</span> <span class='op'>&lt;-</span> <span class='st'>"
 Structural parameters to compare
 eta3 ~ eta1
 
@@ -532,28 +526,29 @@ This is useful to test differences in the measurement models between groups
 in isolation.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Chin WW, Dibbern J (2010).
+    <p>Chin WW, Dibbern J (2010-nov).
 &#8220;An Introduction to a Permutation Based Procedure for Multi-Group PLS Analysis: Results of Tests of Differences on Simulated Data and a Cross Cultural Analysis of the Sourcing of Information System Services Between Germany and the USA.&#8221;
 In <em>Handbook of Partial Least Squares</em>, 171--193.
 Springer Berlin Heidelberg.
 doi: <a href='https://doi.org/10.1007/978-3-540-32827-8_8'>10.1007/978-3-540-32827-8_8</a>
 .<br /><br /> Henseler J (2007).
 &#8220;A new and simple approach to multi-group analysis in partial least squares path modeling.&#8221;
-In Martens H, Næs T (eds.), <em>Proceedings of PLS'07 - The 5th International Symposium on PLS and Related Methods</em>, 104--107.
-PLS, Norway: Matforsk, As.<br /><br /> Henseler J, Ringle CM, Sinkovics RR (2009).
+In <em>Proceedings of PLS'07 - The 5th International Symposium on PLS and Related Methods</em>, 104--107.
+PLS.<br /><br /> Henseler J, Ringle CM, Sinkovics RR (2009).
 &#8220;The use of partial least squares path modeling in international marketing.&#8221;
 <em>Advances in International Marketing</em>, <b>20</b>, 277--320.
 doi: <a href='https://doi.org/10.1108/S1474-7979(2009)0000020014'>10.1108/S1474-7979(2009)0000020014</a>
 .<br /><br /> Keil M, Tan BC, Wei K, Saarinen T, Tuunainen V, Wassenaar A (2000).
 &#8220;A cross-cultural study on escalation of commitment behavior in software projects.&#8221;
-<em>MIS Quarterly</em>, <b>24</b>(2), 299--325.<br /><br /> Klesel M, Schuberth F, Henseler J, Niehaves B (2019).
+<em>MIS Quarterly</em>, <b>24</b>, 299--325.
+<a href='Keil2000.pdf'>Keil2000.pdf</a>.<br /><br /> Klesel M, Schuberth F, Henseler J, Niehaves B (2019-jun).
 &#8220;A Test for Multigroup Comparison Using Partial Least Squares Path Modeling.&#8221;
-<em>Internet Research</em>, <b>29</b>(3), 464--477.
+<em>Internet Research</em>, <b>29</b>, 464--477.
 doi: <a href='https://doi.org/10.1108/intr-11-2017-0418'>10.1108/intr-11-2017-0418</a>
 .<br /><br /> Nitzl C (2010).
 &#8220;Eine anwenderorientierte Einfuehrung in die Partial Least Square (PLS)-Methode.&#8221;
 In <em>Arbeitspapier</em>,  number 21.
-Universitaet Hamburg, Institut fuer Industrielles Management, Hamburg.<br /><br /> Sarstedt M, Henseler J, Ringle CM (2011).
+Universitaet Hamburg, Institut fuer Industrielles Management.<br /><br /> Sarstedt M, Henseler J, Ringle CM (2011-jan).
 &#8220;Multigroup Analysis in Partial Least Squares (PLS) Path Modeling: Alternative Methods and Empirical Results.&#8221;
 In <em>Advances in International Marketing</em>, 195--218.
 Emerald Group Publishing Limited.
@@ -564,11 +559,11 @@ doi: <a href='https://doi.org/10.1108/s1474-7979(2011)0000022012'>10.1108/s1474-
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <a href='csem_results.html'>cSEMResults</a>, <code><a href='testMICOM.html'>testMICOM()</a></code>, <code><a href='testOMF.html'>testOMF()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># ===========================================================================</span>
 <span class='co'># Basic usage</span>
 <span class='co'># ===========================================================================</span>
-<span class='kw'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Structural model
 QUAL ~ EXPE
 EXPE ~ IMAG
@@ -587,11 +582,11 @@ VAL  &lt;~ val1  + val2  + val3  + val4
 "</span>
 
 <span class='co'>## Create list of virtually identical data sets</span>
-<span class='kw'>dat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>satisfaction</span>[<span class='op'>-</span><span class='fl'>3</span>,], <span class='kw'>satisfaction</span>[<span class='op'>-</span><span class='fl'>5</span>, ], <span class='kw'>satisfaction</span>[<span class='op'>-</span><span class='fl'>10</span>, ])
-<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>dat</span>, <span class='kw'>model</span>, .resample_method = <span class='st'>"bootstrap"</span>, .R = <span class='fl'>40</span>) 
+<span class='va'>dat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>satisfaction</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>3</span>,<span class='op'>]</span>, <span class='va'>satisfaction</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>5</span>, <span class='op'>]</span>, <span class='va'>satisfaction</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>10</span>, <span class='op'>]</span><span class='op'>)</span>
+<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>dat</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R <span class='op'>=</span> <span class='fl'>40</span><span class='op'>)</span> 
 
 <span class='co'>## Test </span>
-<span class='fu'>testMGD</span>(<span class='kw'>out</span>, .R_permutation = <span class='fl'>40</span>,.verbose = <span class='fl'>FALSE</span>)
+<span class='fu'>testMGD</span><span class='op'>(</span><span class='va'>out</span>, .R_permutation <span class='op'>=</span> <span class='fl'>40</span>,.verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
 <span class='co'># Notes: </span>
 <span class='co'>#  1. .R_permutation (and .R in the call to csem) is small to make examples run quicker; </span>
@@ -611,7 +606,7 @@ VAL  &lt;~ val1  + val2  + val3  + val4
 <span class='co'># By default all parameters are compared. Select a subset by providing a </span>
 <span class='co'># model in lavaan model syntax:</span>
 
-<span class='kw'>to_compare</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>to_compare</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Path coefficients
 QUAL ~ EXPE
 
@@ -620,8 +615,8 @@ EXPE &lt;~ expe1 + expe2 + expe3 + expe4 + expe5
 "</span>
 
 <span class='co'>## Test </span>
-<span class='fu'>testMGD</span>(<span class='kw'>out</span>, .parameters_to_compare = <span class='kw'>to_compare</span>, .R_permutation = <span class='fl'>20</span>, 
-        .R_bootstrap = <span class='fl'>20</span>, .verbose = <span class='fl'>FALSE</span>)
+<span class='fu'>testMGD</span><span class='op'>(</span><span class='va'>out</span>, .parameters_to_compare <span class='op'>=</span> <span class='va'>to_compare</span>, .R_permutation <span class='op'>=</span> <span class='fl'>20</span>, 
+        .R_bootstrap <span class='op'>=</span> <span class='fl'>20</span>, .verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
 <span class='co'>### Different p_adjustments --------------------------------------------------</span>
 <span class='co'># To adjust p-values to accommodate multiple testing use .approach_p_adjust. </span>
@@ -631,10 +626,10 @@ EXPE &lt;~ expe1 + expe2 + expe3 + expe4 + expe5
 <span class='co'># adjustments, a vector of p-adjustments may be chosen.</span>
 
 <span class='co'>## Test </span>
-<span class='fu'>testMGD</span>(<span class='kw'>out</span>, .parameters_to_compare = <span class='kw'>to_compare</span>, 
-        .approach_p_adjust = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"none"</span>, <span class='st'>"bonferroni"</span>),
-        .R_permutation = <span class='fl'>20</span>, .R_bootstrap = <span class='fl'>20</span>, .verbose = <span class='fl'>FALSE</span>)
-}
+<span class='fu'>testMGD</span><span class='op'>(</span><span class='va'>out</span>, .parameters_to_compare <span class='op'>=</span> <span class='va'>to_compare</span>, 
+        .approach_p_adjust <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"none"</span>, <span class='st'>"bonferroni"</span><span class='op'>)</span>,
+        .R_permutation <span class='op'>=</span> <span class='fl'>20</span>, .R_bootstrap <span class='op'>=</span> <span class='fl'>20</span>, .verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -651,7 +646,7 @@ EXPE &lt;~ expe1 + expe2 + expe3 + expe4 + expe5
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

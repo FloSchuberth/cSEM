@@ -44,12 +44,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -94,13 +88,13 @@
 
       
 
-      </header><div class="row">
+      </header><script src="cSEM_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduction to cSEM</h1>
                         <h4 class="author">Manuel Rademaker</h4>
             
-            <h4 class="date">Last edited: 2020-09-17</h4>
+            <h4 class="date">Last edited: 2020-10-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/master/vignettes/cSEM.Rmd"><code>vignettes/cSEM.Rmd</code></a></small>
       <div class="hidden name"><code>cSEM.Rmd</code></div>
@@ -168,16 +162,15 @@
 </ol>
 <p>The first point is an always ongoing task since approaches are constantly evolving with new developments appearing at a pace that we, the package authors, will not be able to keep up with. The second point, however, was particularly important to us as we have been frustrated ourselves by how technical, unfriendly packages in R can be. Hence, from the very start we envisioned a workflow that essentially only comprises three steps:</p>
 <ol style="list-style-type: decimal">
-<li>
-<strong>Get the essential</strong>: no estimator or approach works without data and a description of what parameters are to be estimated and how data is related to these parameters, i.e. a model. Hence, we always need a data set and model. Since, model specification in <a href="http://lavaan.ugent.be/tutorial/syntax1.html">lavaan model syntax</a> is probably unbeatable in its ease and well known to R users that have an interest in SEM, to us, <a href="http://lavaan.ugent.be/tutorial/syntax1.html">lavaan model syntax</a> is the obvious tool for users to specify their model. Experience tells, that for R beginners the biggest obstacle has been to get the data into R. However, largely thanks to the <a href="https://www.tidyverse.org/">tidyverse</a> and <a href="https://www.rstudio.com">RStudio</a>, data import and data transformation are nowadays relatively easy to handle. See the <a href="#preparedata">Preparing the data</a> and the <a href="#specifyingamodel">Specifying a model</a> sections below.</li>
+<li><p><strong>Get the essential</strong>: no estimator or approach works without data and a description of what parameters are to be estimated and how data is related to these parameters, i.e. a model. Hence, we always need a data set and model. Since, model specification in <a href="http://lavaan.ugent.be/tutorial/syntax1.html">lavaan model syntax</a> is probably unbeatable in its ease and well known to R users that have an interest in SEM, to us, <a href="http://lavaan.ugent.be/tutorial/syntax1.html">lavaan model syntax</a> is the obvious tool for users to specify their model. Experience tells, that for R beginners the biggest obstacle has been to get the data into R. However, largely thanks to the <a href="https://www.tidyverse.org/">tidyverse</a> and <a href="https://www.rstudio.com">RStudio</a>, data import and data transformation are nowadays relatively easy to handle. See the <a href="#preparedata">Preparing the data</a> and the <a href="#specifyingamodel">Specifying a model</a> sections below.</p></li>
 <li>
 <p><strong>Estimate</strong>: no matter the model and type of data, estimation is always done using one central function with the data as its first and the model as its second argument:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(.data = <span class="kw">my_data</span>, .model = <span class="kw">my_model</span>)
-</pre></div>
-Naturally, the <code><a href="../reference/csem.html">csem()</a></code> function has a number of additional arguments to fine-tune the estimation, however, since <code><a href="../reference/csem.html">csem()</a></code> automatically recognizes, for instance, whether a concept was modeled as a common factor or composite and automatically applies appropriate correction for attenuation, default arguments are often sufficient. See the <a href="#estimate">Estimate using csem()</a> section below.</li>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">my_data</span>, .model <span class="op">=</span> <span class="va">my_model</span><span class="op">)</span></pre></div>
+<p>Naturally, the <code><a href="../reference/csem.html">csem()</a></code> function has a number of additional arguments to fine-tune the estimation, however, since <code><a href="../reference/csem.html">csem()</a></code> automatically recognizes, for instance, whether a concept was modeled as a common factor or composite and automatically applies appropriate correction for attenuation, default arguments are often sufficient. See the <a href="#estimate">Estimate using csem()</a> section below.</p>
+</li>
 <li>
-<strong>Postestimate</strong>: Inspired by the <a href="https://dplyr.tidyverse.org/">grammar of data manipulation</a> underlying the <a href="https://dplyr.tidyverse.org/">dplyr</a> package, cSEM provides 5 postestimation verbs that concisely cover all common postestimation tasks as well as 4 additional test commands and 2 general do commands:
+<p><strong>Postestimate</strong>: Inspired by the <a href="https://dplyr.tidyverse.org/">grammar of data manipulation</a> underlying the <a href="https://dplyr.tidyverse.org/">dplyr</a> package, cSEM provides 5 postestimation verbs that concisely cover all common postestimation tasks as well as 4 additional test commands and 2 general do commands:</p>
 <ol style="list-style-type: decimal">
 <li><code><a href="../reference/assess.html">assess()</a></code></li>
 <li><code><a href="../reference/infer.html">infer()</a></code></li>
@@ -218,15 +211,14 @@ Naturally, the <code><a href="../reference/csem.html">csem()</a></code> function
 <p><strong>Example:</strong></p>
 <p>Assuming the following simple model is to be estimated:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw">model</span> <span class="op">&lt;-</span> <span class="st">"
+<span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"
 # Structural model
 EXPE ~ IMAG
 
 # Reflective measurement model
 EXPE =~ expe1 + expe2
 IMAG =~ imag1 + imag2
-"</span>
-</pre></div>
+"</span></pre></div>
 <p>To estimate the model a data frame with <span class="math inline">\(N\)</span> rows (the observations) and <span class="math inline">\(K = 4\)</span> columns with column names <code>expe1</code>, <code>imag1</code>, <code>expe2</code>, <code>imag2</code> is required. The order of the columns in the dataset is irrelevant. In <strong>cSEM</strong> the order is defined by the order in which the names appear in the measurement or composite model equations in the model description. In this case any resulting matrix or vector whose (row/column) names contain the indicator names would have the order <code>expe1</code>, <code>expe2</code>, <code>imag1</code>, <code>imag2</code>. More one model specificaiton below.</p>
 </li>
 <li><p>A <code>matrix</code> with column names matching the indicator names used in the lavaan model description of the measurement model or composite model description.</p></li>
@@ -250,7 +242,7 @@ IMAG =~ imag1 + imag2
 <a href="#linear-models" class="anchor"></a>Linear models</h4>
 <p>A typical linear model would look like this:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw">model</span> <span class="op">&lt;-</span> <span class="st">"
+<span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"
 # Structural model
 EXPE ~ IMAG
 QUAL ~ EXPE
@@ -270,8 +262,7 @@ LOY  =~ loy1  + loy2  + loy3  + loy4           # common factor
 
 # Measurement error correlation
 sat1 ~~ sat2
-"</span>
-</pre></div>
+"</span></pre></div>
 <p>Note that the operator <code>&lt;~</code> tells <strong>cSEM</strong> that the concept to its left is modeled as a composite; the operator <code>=~</code> tells <strong>cSEM</strong> that the concept to its left is modeled as a common factor. <code>~~</code> tells <strong>cSEM</strong> that the measurement errors of <code>sat1</code> and <code>sat2</code> are assumed to correlate.</p>
 </div>
 <div id="nonlinear-models" class="section level4">
@@ -294,22 +285,21 @@ sat1 ~~ sat2
 </ul>
 <p>A simple example would look like this:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="kw">model</span> <span class="op">&lt;-</span> <span class="st">"
+<span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"
 # Structural model
 EXPE ~ IMAG + IMAG.IMAG
 
 # Composite model
 EXPE &lt;~ expe1 + expe2
 IMAG &lt;~ imag1 + imag2
-"</span>
-</pre></div>
+"</span></pre></div>
 </div>
 <div id="hierarchical-second-order-models" class="section level4">
 <h4 class="hasAnchor">
 <a href="#hierarchical-second-order-models" class="anchor"></a>Hierarchical (second order) models</h4>
 <p>Currently only second-order models are supported. Specification of the second-order construct takes place in the measurement/composite model.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw">model</span> <span class="op">&lt;-</span> <span class="st">"
+<span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"
 # Structural model
 SAT ~ QUAL
 VAL ~ SAT + QUAL
@@ -324,8 +314,7 @@ EXPE &lt;~ expe1 + expe2
 
 # Second-order term
 QUAL =~ IMAG + EXPE
-"</span>
-</pre></div>
+"</span></pre></div>
 <p>In this case <code>QUAL</code> is modeled as a second-order common factor measuring <code>IMAG</code> and <code>EXPE</code>, where <code>IMAG</code> is modeled as a composite and and <code>EXPE</code> is itself a common factor.</p>
 </div>
 </div>
@@ -337,9 +326,9 @@ QUAL =~ IMAG + EXPE
 <p><code><a href="../reference/csem.html">csem()</a></code> accepts all models and data types described above. The result of a call to <code><a href="../reference/csem.html">csem()</a></code>is always an object of class <code>cSEMResults</code>. Technically, the resulting object has an additional class attribute, namely <code>cSEMResults_default</code>, <code>cSEMResults_multi</code> or <code>cSEMResults_2ndorder</code> that depends on the type of model and/or data provided, however, users usually do not need to worry since postestimation functions automatically work on all classes.</p>
 <p>The simplest possible call to <code><a href="../reference/csem.html">csem()</a></code> involves a data set and a model:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="kw"><a href="https://github.com/M-E-Rademaker/cSEM">cSEM</a></span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/M-E-Rademaker/cSEM">cSEM</a></span><span class="op">)</span>
 
-<span class="kw">model</span> <span class="op">&lt;-</span> <span class="st">"
+<span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"
 # Path model / Regressions
 eta2 ~ eta1
 eta3 ~ eta1 + eta2
@@ -350,9 +339,8 @@ eta2 =~ y21 + y22 + y23
 eta3 =~ y31 + y32 + y33
 "</span>
 
-<span class="kw">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/csem.html">csem</a></span>(.data = <span class="kw">threecommonfactors</span>, .model = <span class="kw">model</span>)
-<span class="kw">a</span>
-</pre></div>
+<span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">threecommonfactors</span>, .model <span class="op">=</span> <span class="va">model</span><span class="op">)</span>
+<span class="va">a</span></pre></div>
 <pre><code>## ________________________________________________________________________________
 ## ----------------------------------- Overview -----------------------------------
 ## 
@@ -383,38 +371,37 @@ eta3 =~ y31 + y32 + y33
 ## ________________________________________________________________________________</code></pre>
 <p>This is equivalent to:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(
-   .data                        = <span class="kw">threecommonfactors</span>,
-   .model                       = <span class="kw">model</span>,
-   .approach_cor_robust         = <span class="st">"none"</span>,
-   .approach_nl                 = <span class="st">"sequential"</span>,
-   .approach_paths              = <span class="st">"OLS"</span>,
-   .approach_weights            = <span class="st">"PLS-PM"</span>,
-   .conv_criterion              = <span class="st">"diff_absolute"</span>,
-   .disattenuate                = <span class="fl">TRUE</span>,
-   .dominant_indicators         = <span class="kw">NULL</span>,
-   .estimate_structural         = <span class="fl">TRUE</span>,
-   .id                          = <span class="kw">NULL</span>,
-   .iter_max                    = <span class="fl">100</span>,
-   .normality                   = <span class="fl">FALSE</span>,
-   .PLS_approach_cf             = <span class="st">"dist_squared_euclid"</span>,
-   .PLS_ignore_structural_model = <span class="fl">FALSE</span>,
-   .PLS_modes                   = <span class="kw">NULL</span>,
-   .PLS_weight_scheme_inner     = <span class="st">"path"</span>,
-   .reliabilities               = <span class="kw">NULL</span>,
-   .starting_values             = <span class="kw">NULL</span>,
-   .tolerance                   = <span class="fl">1e-05</span>,
-   .resample_method             = <span class="st">"none"</span>,
-   .resample_method2            = <span class="st">"none"</span>,
-   .R                           = <span class="fl">499</span>,
-   .R2                          = <span class="fl">199</span>,
-   .handle_inadmissibles        = <span class="st">"drop"</span>,
-   .user_funs                   = <span class="kw">NULL</span>,
-   .eval_plan                   = <span class="st">"sequential"</span>,
-   .seed                        = <span class="kw">NULL</span>,
-   .sign_change_option          = <span class="st">"no"</span>
-    )
-</pre></div>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span>
+   .data                        <span class="op">=</span> <span class="va">threecommonfactors</span>,
+   .model                       <span class="op">=</span> <span class="va">model</span>,
+   .approach_cor_robust         <span class="op">=</span> <span class="st">"none"</span>,
+   .approach_nl                 <span class="op">=</span> <span class="st">"sequential"</span>,
+   .approach_paths              <span class="op">=</span> <span class="st">"OLS"</span>,
+   .approach_weights            <span class="op">=</span> <span class="st">"PLS-PM"</span>,
+   .conv_criterion              <span class="op">=</span> <span class="st">"diff_absolute"</span>,
+   .disattenuate                <span class="op">=</span> <span class="cn">TRUE</span>,
+   .dominant_indicators         <span class="op">=</span> <span class="cn">NULL</span>,
+   .estimate_structural         <span class="op">=</span> <span class="cn">TRUE</span>,
+   .id                          <span class="op">=</span> <span class="cn">NULL</span>,
+   .iter_max                    <span class="op">=</span> <span class="fl">100</span>,
+   .normality                   <span class="op">=</span> <span class="cn">FALSE</span>,
+   .PLS_approach_cf             <span class="op">=</span> <span class="st">"dist_squared_euclid"</span>,
+   .PLS_ignore_structural_model <span class="op">=</span> <span class="cn">FALSE</span>,
+   .PLS_modes                   <span class="op">=</span> <span class="cn">NULL</span>,
+   .PLS_weight_scheme_inner     <span class="op">=</span> <span class="st">"path"</span>,
+   .reliabilities               <span class="op">=</span> <span class="cn">NULL</span>,
+   .starting_values             <span class="op">=</span> <span class="cn">NULL</span>,
+   .tolerance                   <span class="op">=</span> <span class="fl">1e-05</span>,
+   .resample_method             <span class="op">=</span> <span class="st">"none"</span>,
+   .resample_method2            <span class="op">=</span> <span class="st">"none"</span>,
+   .R                           <span class="op">=</span> <span class="fl">499</span>,
+   .R2                          <span class="op">=</span> <span class="fl">199</span>,
+   .handle_inadmissibles        <span class="op">=</span> <span class="st">"drop"</span>,
+   .user_funs                   <span class="op">=</span> <span class="cn">NULL</span>,
+   .eval_plan                   <span class="op">=</span> <span class="st">"sequential"</span>,
+   .seed                        <span class="op">=</span> <span class="cn">NULL</span>,
+   .sign_change_option          <span class="op">=</span> <span class="st">"no"</span>
+    <span class="op">)</span></pre></div>
 <p>See the <code><a href="../reference/csem.html">csem()</a></code> documentation for details on the arguments.</p>
 <div id="inference" class="section level4">
 <h4 class="hasAnchor">
@@ -426,13 +413,11 @@ eta3 =~ y31 + y32 + y33
 <li>The same result is achieved by passing a <code>cSEMResults</code> object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResults()</a></code> and subsequently using <code><a href="../reference/summarize.html">summarize()</a></code> or <code><a href="../reference/infer.html">infer()</a></code>.</li>
 </ol>
 <div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="kw">b1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/csem.html">csem</a></span>(.data = <span class="kw">threecommonfactors</span>, .model = <span class="kw">model</span>, .resample_method = <span class="st">"bootstrap"</span>)
-<span class="kw">b2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resamplecSEMResults.html">resamplecSEMResults</a></span>(<span class="kw">a</span>)
-</pre></div>
+<span class="va">b1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">threecommonfactors</span>, .model <span class="op">=</span> <span class="va">model</span>, .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span><span class="op">)</span>
+<span class="va">b2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/resamplecSEMResults.html">resamplecSEMResults</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span></pre></div>
 <p>Several confidence intervals are implemented, see <code>?infer()</code>:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="fu"><a href="../reference/summarize.html">summarize</a></span>(<span class="kw">b1</span>)
-</pre></div>
+<span class="fu"><a href="../reference/summarize.html">summarize</a></span><span class="op">(</span><span class="va">b1</span><span class="op">)</span></pre></div>
 <pre><code>## ________________________________________________________________________________
 ## ----------------------------------- Overview -----------------------------------
 ## 
@@ -455,7 +440,7 @@ eta3 =~ y31 + y32 + y33
 ##  Number of admissible results     = 499
 ##  Approach to handle inadmissibles = "drop"
 ##  Sign change option               = "none"
-##  Random seed                      = -1992831074
+##  Random seed                      = -681672681
 ## 
 ##  Construct details:
 ##  ------------------
@@ -471,37 +456,37 @@ eta3 =~ y31 + y32 + y33
 ## ============================
 ##                                                              CI_percentile   
 ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1      0.6713      0.0462   14.5175    0.0000 [ 0.5742; 0.7569 ] 
-##   eta3 ~ eta1      0.4585      0.0842    5.4449    0.0000 [ 0.2959; 0.6391 ] 
-##   eta3 ~ eta2      0.3052      0.0879    3.4707    0.0005 [ 0.1054; 0.4755 ] 
+##   eta2 ~ eta1      0.6713      0.0432   15.5422    0.0000 [ 0.5870; 0.7523 ] 
+##   eta3 ~ eta1      0.4585      0.0818    5.6072    0.0000 [ 0.3165; 0.6246 ] 
+##   eta3 ~ eta2      0.3052      0.0878    3.4769    0.0005 [ 0.1278; 0.4644 ] 
 ## 
 ## Estimated loadings:
 ## ===================
 ##                                                              CI_percentile   
 ##   Loading        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 =~ y11      0.6631      0.0398   16.6583    0.0000 [ 0.5786; 0.7369 ] 
-##   eta1 =~ y12      0.6493      0.0405   16.0350    0.0000 [ 0.5657; 0.7221 ] 
-##   eta1 =~ y13      0.7613      0.0340   22.4246    0.0000 [ 0.6916; 0.8302 ] 
-##   eta2 =~ y21      0.5165      0.0539    9.5822    0.0000 [ 0.4058; 0.6190 ] 
-##   eta2 =~ y22      0.7554      0.0363   20.8004    0.0000 [ 0.6758; 0.8181 ] 
-##   eta2 =~ y23      0.7997      0.0372   21.5251    0.0000 [ 0.7303; 0.8807 ] 
-##   eta3 =~ y31      0.8223      0.0323   25.4769    0.0000 [ 0.7617; 0.8811 ] 
-##   eta3 =~ y32      0.6581      0.0420   15.6631    0.0000 [ 0.5749; 0.7326 ] 
-##   eta3 =~ y33      0.7474      0.0405   18.4542    0.0000 [ 0.6670; 0.8226 ] 
+##   eta1 =~ y11      0.6631      0.0407   16.2743    0.0000 [ 0.5868; 0.7454 ] 
+##   eta1 =~ y12      0.6493      0.0399   16.2779    0.0000 [ 0.5611; 0.7181 ] 
+##   eta1 =~ y13      0.7613      0.0309   24.6613    0.0000 [ 0.6962; 0.8206 ] 
+##   eta2 =~ y21      0.5165      0.0583    8.8571    0.0000 [ 0.3807; 0.6241 ] 
+##   eta2 =~ y22      0.7554      0.0354   21.3509    0.0000 [ 0.6797; 0.8185 ] 
+##   eta2 =~ y23      0.7997      0.0369   21.6897    0.0000 [ 0.7261; 0.8665 ] 
+##   eta3 =~ y31      0.8223      0.0327   25.1103    0.0000 [ 0.7619; 0.8871 ] 
+##   eta3 =~ y32      0.6581      0.0405   16.2663    0.0000 [ 0.5813; 0.7343 ] 
+##   eta3 =~ y33      0.7474      0.0397   18.8143    0.0000 [ 0.6558; 0.8144 ] 
 ## 
 ## Estimated weights:
 ## ==================
 ##                                                              CI_percentile   
 ##   Weight         Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 &lt;~ y11      0.3956      0.0220   17.9813    0.0000 [ 0.3512; 0.4398 ] 
-##   eta1 &lt;~ y12      0.3873      0.0199   19.4549    0.0000 [ 0.3451; 0.4235 ] 
-##   eta1 &lt;~ y13      0.4542      0.0206   22.0217    0.0000 [ 0.4150; 0.4956 ] 
-##   eta2 &lt;~ y21      0.3058      0.0280   10.9408    0.0000 [ 0.2507; 0.3564 ] 
-##   eta2 &lt;~ y22      0.4473      0.0204   21.9096    0.0000 [ 0.4071; 0.4880 ] 
-##   eta2 &lt;~ y23      0.4735      0.0224   21.1448    0.0000 [ 0.4326; 0.5194 ] 
-##   eta3 &lt;~ y31      0.4400      0.0194   22.6463    0.0000 [ 0.4064; 0.4818 ] 
-##   eta3 &lt;~ y32      0.3521      0.0190   18.5179    0.0000 [ 0.3112; 0.3870 ] 
-##   eta3 &lt;~ y33      0.3999      0.0195   20.5139    0.0000 [ 0.3620; 0.4362 ] 
+##   eta1 &lt;~ y11      0.3956      0.0197   20.0807    0.0000 [ 0.3555; 0.4349 ] 
+##   eta1 &lt;~ y12      0.3873      0.0199   19.4215    0.0000 [ 0.3470; 0.4255 ] 
+##   eta1 &lt;~ y13      0.4542      0.0206   22.0482    0.0000 [ 0.4158; 0.4925 ] 
+##   eta2 &lt;~ y21      0.3058      0.0300   10.1986    0.0000 [ 0.2367; 0.3597 ] 
+##   eta2 &lt;~ y22      0.4473      0.0218   20.5609    0.0000 [ 0.4082; 0.4934 ] 
+##   eta2 &lt;~ y23      0.4735      0.0218   21.7167    0.0000 [ 0.4290; 0.5130 ] 
+##   eta3 &lt;~ y31      0.4400      0.0190   23.1761    0.0000 [ 0.4065; 0.4804 ] 
+##   eta3 &lt;~ y32      0.3521      0.0188   18.7297    0.0000 [ 0.3160; 0.3912 ] 
+##   eta3 &lt;~ y33      0.3999      0.0196   20.4137    0.0000 [ 0.3603; 0.4351 ] 
 ## 
 ## ------------------------------------ Effects -----------------------------------
 ## 
@@ -509,46 +494,44 @@ eta3 =~ y31 + y32 + y33
 ## ========================
 ##                                                               CI_percentile   
 ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1       0.6713      0.0462   14.5175    0.0000 [ 0.5742; 0.7569 ] 
-##   eta3 ~ eta1       0.6634      0.0421   15.7627    0.0000 [ 0.5776; 0.7410 ] 
-##   eta3 ~ eta2       0.3052      0.0879    3.4707    0.0005 [ 0.1054; 0.4755 ] 
+##   eta2 ~ eta1       0.6713      0.0432   15.5422    0.0000 [ 0.5870; 0.7523 ] 
+##   eta3 ~ eta1       0.6634      0.0384   17.2850    0.0000 [ 0.5855; 0.7325 ] 
+##   eta3 ~ eta2       0.3052      0.0878    3.4769    0.0005 [ 0.1278; 0.4644 ] 
 ## 
 ## Estimated indirect effects:
 ## ===========================
 ##                                                                  CI_percentile   
 ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta3 ~ eta1          0.2049      0.0599    3.4211    0.0006 [ 0.0739; 0.3166 ] 
+##   eta3 ~ eta1          0.2049      0.0583    3.5115    0.0004 [ 0.0870; 0.3130 ] 
 ## ________________________________________________________________________________</code></pre>
 <p>Or directly via <code><a href="../reference/infer.html">infer()</a></code></p>
 <div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="kw">ii</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infer.html">infer</a></span>(<span class="kw">b1</span>, .quantity = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"CI_standard_z"</span>, <span class="st">"CI_percentile"</span>), .alpha = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.01</span>, <span class="fl">0.05</span>))
-<span class="kw">ii</span><span class="op">$</span><span class="kw">Path_estimates</span>
-</pre></div>
+<span class="va">ii</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infer.html">infer</a></span><span class="op">(</span><span class="va">b1</span>, .quantity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CI_standard_z"</span>, <span class="st">"CI_percentile"</span><span class="op">)</span>, .alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span>
+<span class="va">ii</span><span class="op">$</span><span class="va">Path_estimates</span></pre></div>
 <pre><code>## $CI_standard_z
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5517986   0.2431513  0.07730794
-## 99%U   0.7900273   0.6769648  0.53025820
-## 95%L   0.5802782   0.2950124  0.13145678
-## 95%U   0.7615478   0.6251037  0.47610935
+## 99%L   0.5587991   0.2481104  0.08050765
+## 99%U   0.7813210   0.6693647  0.53264685
+## 95%L   0.5854009   0.2984701  0.13455953
+## 95%U   0.7547192   0.6190050  0.47859497
 ## 
 ## $CI_percentile
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5443230   0.2449095   0.0607439
-## 99%U   0.7812622   0.6842488   0.5104085
-## 95%L   0.5742369   0.2959333   0.1053987
-## 95%U   0.7568762   0.6390700   0.4754714</code></pre>
+## 99%L   0.5608069   0.2502514  0.06413178
+## 99%U   0.7955695   0.6707835  0.50445663
+## 95%L   0.5869991   0.3164682  0.12778651
+## 95%U   0.7523390   0.6246277  0.46439220</code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future">future framework</a>. For multiprocessing simply set <code>.eval_plan = "multiprocess"</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the background as there are cores available instead. Note that this naturally has some overhead. Consequently, for a small number of resamples multiprocessing will generally not be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument. A typical call would look like this:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="kw">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/csem.html">csem</a></span>(
-  .data            = <span class="kw">satisfaction</span>,
-  .model           = <span class="kw">model</span>,
-  .resample_method = <span class="st">"bootstrap"</span>,
-  .R               = <span class="fl">999</span>,
-  .seed            = <span class="fl">98234</span>,
-  .eval_plan       = <span class="st">"multiprocess"</span>)
+<span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span>
+  .data            <span class="op">=</span> <span class="va">satisfaction</span>,
+  .model           <span class="op">=</span> <span class="va">model</span>,
+  .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span>,
+  .R               <span class="op">=</span> <span class="fl">999</span>,
+  .seed            <span class="op">=</span> <span class="fl">98234</span>,
+  .eval_plan       <span class="op">=</span> <span class="st">"multiprocess"</span><span class="op">)</span>
 
-<span class="co"># Output omitted</span>
-</pre></div>
+<span class="co"># Output omitted</span></pre></div>
 </div>
 </div>
 <div id="postestimate" class="section level3">
@@ -624,18 +607,18 @@ eta3 =~ y31 + y32 + y33
 <h2 class="hasAnchor">
 <a href="#principles-underlying-csem" class="anchor"></a>Principles underlying cSEM</h2>
 <p><strong>cSEM</strong> is based on a number of principles, that have shaped its design, terminology and scope. These principles are discussed below</p>
-<div id="model-vs-estimation" class="section level3">
+<div id="model-vs--estimation" class="section level3">
 <h3 class="hasAnchor">
-<a href="#model-vs-estimation" class="anchor"></a>Model vs. Estimation</h3>
+<a href="#model-vs--estimation" class="anchor"></a>Model vs. Estimation</h3>
 <p>The way different concepts and their relationship are <em>modeled</em> is strictly distinct from how they are <em>estimated</em>. Hence we strictly distinguish between concepts modeled as common factors (or composites) and the actual estimation <strong>for a given model</strong>. In our opinion, these differences are fundamental to understanding the scope and limits of a certain approach. The most notable consequence is that approaches such as partial least squares and everything related to it (e.g., the modes) or generalized structured component analysis are “only” considered as estimators/estimation approaches <strong>for a given model</strong>.</p>
 </div>
-<div id="composites-in-a-composite-model-vs-composites-in-a-common-factor-model-and-disattenuation" class="section level3">
+<div id="composites-in-a-composite-model-vs--composites-in-a-common-factor-model-and-disattenuation" class="section level3">
 <h3 class="hasAnchor">
-<a href="#composites-in-a-composite-model-vs-composites-in-a-common-factor-model-and-disattenuation" class="anchor"></a>Composites in a composite model vs. composites in a common factor model and disattenuation</h3>
+<a href="#composites-in-a-composite-model-vs--composites-in-a-common-factor-model-and-disattenuation" class="anchor"></a>Composites in a composite model vs. composites in a common factor model and disattenuation</h3>
 <p>By virtue of the package, <strong>cSEM</strong> uses composite-based estimators/approaches only. Depending on the postulated model, linear compounds may therefore either serve as a composite as part of the composite model or as a proxy/stand-in for a common factor. If a concept is modeled as a common factor, proxy correlations, proxy-indicator correlations and path coefficients are inconsistent estimates for their supposed construct level counterparts (construct correlations, loadings and path coefficients) unless the proxy is a perfect representation of its construct level counterpart. This is commonly referred to as <strong>attenuation bias</strong>. Several approaches have been suggested to correct for these biases. In <strong>cSEM</strong> estimates are correctly dissattenuated by default if any of the concepts involved is modeled as a common factor! Disattentuation is controlled by the <code>.disattenuate</code> argument of <code><a href="../reference/csem.html">csem()</a></code>.</p>
 <p><strong>Example</strong></p>
 <div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="kw">model</span> <span class="op">&lt;-</span> <span class="st">"
+<span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"
 ## Structural model
 eta2 ~ eta1
 
@@ -645,12 +628,11 @@ eta2 =~ item4 + item5 + item6
 "</span>
 
 <span class="co"># Identical</span>
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>)
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .disattenuate = <span class="fl">TRUE</span>)
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span><span class="op">)</span>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .disattenuate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="co"># To supress automatic disattenuation</span>
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .disattenuate = <span class="fl">FALSE</span>)
-</pre></div>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .disattenuate <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
 <p>Note that since <code>.approach_weights = "PLS-PM"</code> and <code>.disattentuate = TRUE</code> by default (see for <a href="#roleofpls">The role of the weighting scheme and partial least squares (PLS)</a> below) and one of the concepts in the model above is modeled as a common factor, composite (proxy) correlations, loadings and path coefficients are adequately disattenuated using the correction approach commonly known as <strong>consistent partial least squares (PLSc)</strong>. If <code>.disattenuate = FALSE</code> or all concepts are modeled as composites “proper” PLS values are returned.</p>
 </div>
 <div id="roleofpls" class="section level3">
@@ -659,7 +641,7 @@ eta2 =~ item4 + item5 + item6
 <p>In principal, any weighted combination of appropriately chosen observables can be used to estimate structural relationships between these compounds. Hence, any conceptual or methodological issue discussed based on a composite build by a given (weighting) approach may equally well be discussed for any other potential weighting scheme. The appropriateness or potential superiority of a specific weighting approach such as “partial least squares path modeling” (PLS-PM) over another such as “unit weights” (sum scores) or generalized structured component analysis (GSCA) is therefore to some extent a question of <em>relative</em> appropriateness and <em>relative</em> superiority.</p>
 <p>As a notable consequence, we believe that well known approaches such partial least squares path modeling (PLS-PM) and generalized structured component analysis (GSCA) are - contrary to common belief - best exclusively understood as prescriptions for forming linear compounds based on observables, i.e., as weighting approaches. Not more, not less.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> In <strong>cSEM</strong> this is reflected by the fact that <code>"PLS"</code> and <code>"GSCA"</code> are choices of the <code>.approach_weights</code> argument.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="kw">model</span> <span class="op">&lt;-</span> <span class="st">"
+<span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"
 ## Structural model
 eta2 ~ eta1
 
@@ -670,26 +652,25 @@ eta2 &lt;~ item4 + item5 + item6
 
 <span class="co">### Currently the following weight approaches are implemented</span>
 <span class="co"># Partial least squares path modeling (PLS)</span>
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .approach_weights = <span class="st">"PLS-PM"</span>) <span class="co"># default</span>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"PLS-PM"</span><span class="op">)</span> <span class="co"># default</span>
 
 <span class="co"># Generalized canonical correlation analysis (Kettenring approaches)</span>
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .approach_weights = <span class="st">"SUMCORR"</span>)
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .approach_weights = <span class="st">"MAXVAR"</span>)
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .approach_weights = <span class="st">"SSQCORR"</span>)
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .approach_weights = <span class="st">"MINVAR"</span>)
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .approach_weights = <span class="st">"GENVAR"</span>)
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"SUMCORR"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"MAXVAR"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"SSQCORR"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"MINVAR"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"GENVAR"</span><span class="op">)</span>
 
 <span class="co"># Generalized structured component analysis (GSCA)</span>
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .approach_weights = <span class="st">"GSCA"</span>)
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"GSCA"</span><span class="op">)</span>
 
 <span class="co"># Principal component analysis (PCA)</span>
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .approach_weights = <span class="st">"PCA"</span>)
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"PCA"</span><span class="op">)</span>
 
 <span class="co"># Factor score regression (FSR) using "unit", "bartlett" or "regression" weights</span>
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .approach_weights = <span class="st">"unit"</span>)
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .approach_weights = <span class="st">"bartlett"</span>)
-<span class="fu"><a href="../reference/csem.html">csem</a></span>(<span class="kw">threecommonfactors</span>, <span class="kw">model</span>, .approach_weights = <span class="st">"regression"</span>)
-</pre></div>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"unit"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"bartlett"</span><span class="op">)</span>
+<span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"regression"</span><span class="op">)</span></pre></div>
 </div>
 </div>
 </div>
@@ -698,7 +679,7 @@ eta2 &lt;~ item4 + item5 + item6
 <a href="#literature" class="anchor"></a>Literature</h1>
 <div id="refs" class="references">
 <div id="ref-Beran1985">
-<p>Beran, Rudolf, and Muni S. Srivastava. 1985. “Bootstrap Tests and Confidence Regions for Functions of a Covariance Matrix.” <em>The Annals of Statistics</em> 13 (1). Institute of Mathematical Statistics: 95–115. <a href="https://doi.org/10.1214/aos/1176346579" class="uri">https://doi.org/10.1214/aos/1176346579</a>.</p>
+<p>Beran, Rudolf, and Muni S. Srivastava. 1985. “Bootstrap Tests and Confidence Regions for Functions of a Covariance Matrix.” <em>The Annals of Statistics</em> 13 (1): 95–115. <a href="https://doi.org/10.1214/aos/1176346579">https://doi.org/10.1214/aos/1176346579</a>.</p>
 </div>
 <div id="ref-Bollen1989">
 <p>Bollen, Kenneth A. 1989. <em>Structural Equations with Latent Variables</em>. Wiley-Interscience.</p>
@@ -713,35 +694,35 @@ eta2 &lt;~ item4 + item5 + item6
 <p>Hair, Joseph F, G Tomas M Hult, Christian Ringle, and Marko Sarstedt. 2016. <em>A Primer on Partial Least Squares Structural Equation Modeling (PLS-SEM)</em>. Sage publications.</p>
 </div>
 <div id="ref-Henseler2017">
-<p>Henseler, Jörg. 2017. “Bridging Design and Behavioral Research with Variance-Based Structural Equation Modeling.” <em>Journal of Advertising</em> 46 (1): 178–92. <a href="https://doi.org/10.1080/00913367.2017.1281780" class="uri">https://doi.org/10.1080/00913367.2017.1281780</a>.</p>
+<p>Henseler, Jörg. 2017. “Bridging Design and Behavioral Research with Variance-Based Structural Equation Modeling.” <em>Journal of Advertising</em> 46 (1): 178–92. <a href="https://doi.org/10.1080/00913367.2017.1281780">https://doi.org/10.1080/00913367.2017.1281780</a>.</p>
 </div>
 <div id="ref-Henseler2016">
-<p>Henseler, Jörg, Christian M. Ringle, and Marko Sarstedt. 2016. “Testing Measurement Invariance of Composites Using Partial Least Squares.” Edited by Ruey-Jer “Bryan” Jean Rudolf R. Sinkovics. <em>International Marketing Review</em> 33 (3). Emerald: 405–31. <a href="https://doi.org/10.1108/imr-09-2014-0304" class="uri">https://doi.org/10.1108/imr-09-2014-0304</a>.</p>
+<p>Henseler, Jörg, Christian M. Ringle, and Marko Sarstedt. 2016. “Testing Measurement Invariance of Composites Using Partial Least Squares.” Edited by Ruey-Jer “Bryan” Jean Rudolf R. Sinkovics. <em>International Marketing Review</em> 33 (3): 405–31. <a href="https://doi.org/10.1108/imr-09-2014-0304">https://doi.org/10.1108/imr-09-2014-0304</a>.</p>
 </div>
 <div id="ref-Klesel2019">
-<p>Klesel, Michael, Florian Schuberth, Jörg Henseler, and Bjoern Niehaves. 2019. “A Test for Multigroup Comparison Using Partial Least Squares Path Modeling.” <em>Internet Research</em> 29 (3). Emerald: 464–77. <a href="https://doi.org/10.1108/intr-11-2017-0418" class="uri">https://doi.org/10.1108/intr-11-2017-0418</a>.</p>
-</div>
-<div id="ref-Rigdon2012">
-<p>Rigdon, Edward E. 2012. “Rethinking Partial Least Squares Path Modeling: In Praise of Simple Methods.” <em>Long Range Planning</em> 45 (5-6). Elsevier BV: 341–58. <a href="https://doi.org/10.1016/j.lrp.2012.09.010" class="uri">https://doi.org/10.1016/j.lrp.2012.09.010</a>.</p>
+<p>Klesel, Michael, Florian Schuberth, Jörg Henseler, and Bjoern Niehaves. 2019. “A Test for Multigroup Comparison Using Partial Least Squares Path Modeling.” <em>Internet Research</em> 29 (3): 464–77. <a href="https://doi.org/10.1108/intr-11-2017-0418">https://doi.org/10.1108/intr-11-2017-0418</a>.</p>
 </div>
 <div id="ref-Rigdon2016">
-<p>———. 2016. “Choosing PLS Path Modeling as Analytical Method in European Management Research: A Realist Perspective.” <em>European Management Journal</em> 34 (6). Elsevier BV: 598–605. <a href="https://doi.org/10.1016/j.emj.2016.05.006" class="uri">https://doi.org/10.1016/j.emj.2016.05.006</a>.</p>
+<p>Rigdon, Edward E. 2016. “Choosing PLS Path Modeling as Analytical Method in European Management Research: A Realist Perspective.” <em>European Management Journal</em> 34 (6): 598–605. <a href="https://doi.org/10.1016/j.emj.2016.05.006">https://doi.org/10.1016/j.emj.2016.05.006</a>.</p>
+</div>
+<div id="ref-Rigdon2012">
+<p>———. 2012. “Rethinking Partial Least Squares Path Modeling: In Praise of Simple Methods.” <em>Long Range Planning</em> 45 (5-6): 341–58. <a href="https://doi.org/10.1016/j.lrp.2012.09.010">https://doi.org/10.1016/j.lrp.2012.09.010</a>.</p>
 </div>
 <div id="ref-Rigdon2019">
-<p>Rigdon, Edward E., Jan-Michael Becker, and Marko Sarstedt. 2019. “Factor Indeterminacy as Metrological Uncertainty: Implications for Advancing Psychological Measurement.” <em>Multivariate Behavioral Research</em>, March. Informa UK Limited, 1–15. <a href="https://doi.org/10.1080/00273171.2018.1535420" class="uri">https://doi.org/10.1080/00273171.2018.1535420</a>.</p>
+<p>Rigdon, Edward E., Jan-Michael Becker, and Marko Sarstedt. 2019. “Factor Indeterminacy as Metrological Uncertainty: Implications for Advancing Psychological Measurement.” <em>Multivariate Behavioral Research</em>, March, 1–15. <a href="https://doi.org/10.1080/00273171.2018.1535420">https://doi.org/10.1080/00273171.2018.1535420</a>.</p>
 </div>
 <div id="ref-Shmueli2016">
-<p>Shmueli, Galit, Soumya Ray, Juan Manuel Velasquez Estrada, and Suneel Babu Chatla. 2016. “The Elephant in the Room: Predictive Performance of PLS Models.” <em>Journal of Business Research</em> 69 (10). Elsevier BV: 4552–64. <a href="https://doi.org/10.1016/j.jbusres.2016.03.049" class="uri">https://doi.org/10.1016/j.jbusres.2016.03.049</a>.</p>
+<p>Shmueli, Galit, Soumya Ray, Juan Manuel Velasquez Estrada, and Suneel Babu Chatla. 2016. “The Elephant in the Room: Predictive Performance of PLS Models.” <em>Journal of Business Research</em> 69 (10): 4552–64. <a href="https://doi.org/10.1016/j.jbusres.2016.03.049">https://doi.org/10.1016/j.jbusres.2016.03.049</a>.</p>
 </div>
 <div id="ref-Spiller2013">
-<p>Spiller, Stephen A., Gavan J. Fitzsimons, John G. Lynch, and Gary H. Mcclelland. 2013. “Spotlights, Floodlights, and the Magic Number Zero: Simple Effects Tests in Moderated Regression.” <em>Journal of Marketing Research</em> 50 (2). SAGE Publications: 277–88. <a href="https://doi.org/10.1509/jmr.12.0420" class="uri">https://doi.org/10.1509/jmr.12.0420</a>.</p>
+<p>Spiller, Stephen A., Gavan J. Fitzsimons, John G. Lynch, and Gary H. Mcclelland. 2013. “Spotlights, Floodlights, and the Magic Number Zero: Simple Effects Tests in Moderated Regression.” <em>Journal of Marketing Research</em> 50 (2): 277–88. <a href="https://doi.org/10.1509/jmr.12.0420">https://doi.org/10.1509/jmr.12.0420</a>.</p>
 </div>
 </div>
 </div>
 <div class="footnotes">
 <hr>
 <ol>
-<li id="fn1"><p>In fact, labels such as PLS-PM and even more so PLS-SEM are misleading as they create the impression that PLS(-PM) is somehow capable of more than other composite-based approaches. While among composite-based approaches, methodological research surrounding <em>composites formed using weights obtained by the PLS(-PM) algorithm</em> is most advanced, the PLS algorithm remains a weighting scheme in its core.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>In fact, labels such as PLS-PM and even more so PLS-SEM are misleading as they create the impression that PLS(-PM) is somehow capable of more than other composite-based approaches. While among composite-based approaches, methodological research surrounding <em>composites formed using weights obtained by the PLS(-PM) algorithm</em> is most advanced, the PLS algorithm remains a weighting scheme in its core.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
   </div>
@@ -761,7 +742,7 @@ eta2 &lt;~ item4 + item5 + item6
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

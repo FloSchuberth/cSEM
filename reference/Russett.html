@@ -89,12 +89,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -151,7 +145,7 @@
     <p>A data frame containing 10 variables with 47 observations.</p>
     </div>
 
-    <pre class="usage"><span class='kw'>Russett</span></pre>
+    <pre class="usage"><span class='va'>Russett</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -200,17 +194,17 @@ Wiley.<br /><br /> Henseler J (2020).
 <em>Composite-Based Structural Equation Modeling: An Introduction to Partial Least Squares &amp; Co. Using ADANCO</em>.
 Guilford Press.<br /><br /> Russett BM (1964).
 &#8220;Inequality and Instability: The Relation of Land Tenure to Politics.&#8221;
-<em>World Politics</em>, <b>16</b>(3), 442--454.
+<em>World Politics</em>, <b>16</b>, 442--454.
 doi: <a href='https://doi.org/10.2307/2009581'>10.2307/2009581</a>
 .<br /><br /> Tenenhaus A, Tenenhaus M (2011).
 &#8220;Regularized generalized canonical correlation analysis.&#8221;
-<em>Psychometrika</em>, <b>76</b>(2), 257--284.</p>
+<em>Psychometrika</em>, <b>76</b>, 257--284.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>#============================================================================</span>
 <span class='co'># Example is taken from Henseler (2020)</span>
 <span class='co'>#============================================================================</span>
-<span class='kw'>model_Russett</span><span class='op'>=</span><span class='st'>"
+<span class='va'>model_Russett</span><span class='op'>=</span><span class='st'>"
 # Composite model
 AgrIneq &lt;~ gini + farm + rent
 IndDev  &lt;~ gnpr + labo
@@ -220,10 +214,10 @@ PolInst &lt;~ inst + ecks + deat + stab + dict
 PolInst ~ AgrIneq + IndDev
 "</span>
 
-<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(.data = <span class='kw'>Russett</span>, .model = <span class='kw'>model_Russett</span>,
-            .PLS_weight_scheme_inner = <span class='st'>'factorial'</span>,
-            .tolerance = <span class='fl'>1e-06</span>
-)
+<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>Russett</span>, .model <span class='op'>=</span> <span class='va'>model_Russett</span>,
+            .PLS_weight_scheme_inner <span class='op'>=</span> <span class='st'>'factorial'</span>,
+            .tolerance <span class='op'>=</span> <span class='fl'>1e-06</span>
+<span class='op'>)</span>
 
 </div></pre>
   </div>
@@ -241,7 +235,7 @@ PolInst ~ AgrIneq + IndDev
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

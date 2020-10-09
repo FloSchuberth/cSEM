@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Test for overall model fit — testOMF" />
-<meta property="og:description" content="Bootstrap-based test for overall model fit originally proposed by Beran and Srivastava (1985)
+<meta property="og:description" content="Bootstrap-based test for overall model fit originally proposed by Beran and Srivastava (1985-mar)
 .
 See also Dijkstra and Henseler (2015)
  who first suggested the test in
@@ -93,12 +93,6 @@ the context of PLS-PM." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -152,23 +146,23 @@ the context of PLS-PM." />
     </div>
 
     <div class="ref-description">
-    <p>Bootstrap-based test for overall model fit originally proposed by Beran and Srivastava (1985)
+    <p>Bootstrap-based test for overall model fit originally proposed by Beran and Srivastava (1985-mar)
 .
 See also Dijkstra and Henseler (2015)
  who first suggested the test in
 the context of PLS-PM.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>testOMF</span>(
- .object                = <span class='kw'>NULL</span>, 
- .alpha                 = <span class='fl'>0.05</span>,
- .fit_measures          = <span class='fl'>FALSE</span>,
- .handle_inadmissibles  = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"drop"</span>, <span class='st'>"ignore"</span>, <span class='st'>"replace"</span>), 
- .R                     = <span class='fl'>499</span>, 
- .saturated             = <span class='fl'>FALSE</span>,
- .seed                  = <span class='kw'>NULL</span>,
- .verbose               = <span class='fl'>TRUE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>testOMF</span><span class='op'>(</span>
+ .object                <span class='op'>=</span> <span class='cn'>NULL</span>, 
+ .alpha                 <span class='op'>=</span> <span class='fl'>0.05</span>,
+ .fit_measures          <span class='op'>=</span> <span class='cn'>FALSE</span>,
+ .handle_inadmissibles  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"drop"</span>, <span class='st'>"ignore"</span>, <span class='st'>"replace"</span><span class='op'>)</span>, 
+ .R                     <span class='op'>=</span> <span class='fl'>499</span>, 
+ .saturated             <span class='op'>=</span> <span class='cn'>FALSE</span>,
+ .seed                  <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .verbose               <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -243,7 +237,7 @@ and the estimated model-implied indicator correlation matrix, namely the geodesi
 the squared Euclidean distance, the standardized root mean square residual (SRMR),
 and the distance based on the maximum likelihood fit function.
 The reference distribution for each test statistic is obtained by
-the bootstrap as proposed by Beran and Srivastava (1985)
+the bootstrap as proposed by Beran and Srivastava (1985-mar)
 .</p>
 <p>It is possible to perform the bootstrap-based test using fit measures such
 as the CFI, RMSEA or the GFI if <code>.fit_measures = TRUE</code>. This is experimental.
@@ -257,13 +251,14 @@ a saturated model, i.e., a model in which all constructs are allowed to correlat
 This is useful to test misspecification of the measurement model in isolation.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Beran R, Srivastava MS (1985).
+    <p>Beran R, Srivastava MS (1985-mar).
 &#8220;Bootstrap Tests and Confidence Regions for Functions of a Covariance Matrix.&#8221;
-<em>The Annals of Statistics</em>, <b>13</b>(1), 95--115.
+<em>The Annals of Statistics</em>, <b>13</b>, 95--115.
 doi: <a href='https://doi.org/10.1214/aos/1176346579'>10.1214/aos/1176346579</a>
-.<br /><br /> Dijkstra TK, Henseler J (2015).
+, <a href='Papers/SEM/Beran1985.pdf'>Papers/SEM/Beran1985.pdf</a>.<br /><br /> Dijkstra TK, Henseler J (2015).
 &#8220;Consistent and Asymptotically Normal PLS Estimators for Linear Structural Equations.&#8221;
-<em>Computational Statistics &amp; Data Analysis</em>, <b>81</b>, 10--23.</p>
+<em>Computational Statistics &amp; Data Analysis</em>, <b>81</b>, 10--23.
+<a href='Papers/SEM/Dijkstra2015.pdf'>Papers/SEM/Dijkstra2015.pdf</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <code><a href='fit_measures.html'>calculateSRMR()</a></code>, <code><a href='distance_measures.html'>calculateDG()</a></code>, <code><a href='distance_measures.html'>calculateDL()</a></code>, <a href='csem_results.html'>cSEMResults</a>,
@@ -273,7 +268,7 @@ doi: <a href='https://doi.org/10.1214/aos/1176346579'>10.1214/aos/1176346579</a>
     <pre class="examples"><div class='input'><span class='co'># ===========================================================================</span>
 <span class='co'># Basic usage</span>
 <span class='co'># ===========================================================================</span>
-<span class='kw'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Structural model
 eta2 ~ eta1
 eta3 ~ eta1 + eta2
@@ -285,10 +280,10 @@ eta3 =~ y31 + y32 + y33
 "</span>
 
 <span class='co'>## Estimate</span>
-<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>threecommonfactors</span>, <span class='kw'>model</span>, .approach_weights = <span class='st'>"PLS-PM"</span>)
+<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .approach_weights <span class='op'>=</span> <span class='st'>"PLS-PM"</span><span class='op'>)</span>
 
 <span class='co'>## Test</span>
-<span class='fu'>testOMF</span>(<span class='kw'>out</span>, .R = <span class='fl'>50</span>, .verbose = <span class='fl'>FALSE</span>, .seed = <span class='fl'>320</span>)
+<span class='fu'>testOMF</span><span class='op'>(</span><span class='va'>out</span>, .R <span class='op'>=</span> <span class='fl'>50</span>, .verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, .seed <span class='op'>=</span> <span class='fl'>320</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; ________________________________________________________________________________
 #&gt; --------- Test for overall model fit based on Beran &amp; Srivastava (1985) --------
 #&gt; 
@@ -343,7 +338,7 @@ eta3 =~ y31 + y32 + y33
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

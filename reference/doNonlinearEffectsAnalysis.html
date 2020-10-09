@@ -92,12 +92,6 @@ the input for the floodlight analysis." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -157,16 +151,16 @@ are assumed to be zero, i.e., they are fixed at their mean levels. Moreover, it 
 the input for the floodlight analysis.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>doNonlinearEffectsAnalysis</span>(
- .object            = <span class='kw'>NULL</span>,
- .dependent         = <span class='kw'>NULL</span>, 
- .independent       = <span class='kw'>NULL</span>,
- .moderator         = <span class='kw'>NULL</span>,
- .n_steps           = <span class='fl'>100</span>,
- .values_moderator  = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>2</span>, <span class='op'>-</span><span class='fl'>1</span>, <span class='fl'>0</span>, <span class='fl'>1</span>, <span class='fl'>2</span>),
- .value_independent = <span class='fl'>0</span>,
- .alpha             = <span class='fl'>0.05</span>
- )</pre>
+    <pre class="usage"><span class='fu'>doNonlinearEffectsAnalysis</span><span class='op'>(</span>
+ .object            <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .dependent         <span class='op'>=</span> <span class='cn'>NULL</span>, 
+ .independent       <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .moderator         <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .n_steps           <span class='op'>=</span> <span class='fl'>100</span>,
+ .values_moderator  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>2</span>, <span class='op'>-</span><span class='fl'>1</span>, <span class='fl'>0</span>, <span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>,
+ .value_independent <span class='op'>=</span> <span class='fl'>0</span>,
+ .alpha             <span class='op'>=</span> <span class='fl'>0.05</span>
+ <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -221,8 +215,8 @@ for <code><a href='https://rdrr.io/r/graphics/plot.default.html'>plot()</a></cod
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <a href='csem_results.html'>cSEMResults</a>, <code><a href='plot.cSEMNonlinearEffects.html'>plot.cSEMNonlinearEffects()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='kw'>model_Int</span> <span class='op'>&lt;-</span> <span class='st'>"
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>model_Int</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Measurement models
 INV =~ INV1 + INV2 + INV3 +INV4
 SAT =~ SAT1 + SAT2 + SAT3
@@ -233,34 +227,34 @@ INT ~ INV + SAT + INV.SAT
 "</span>
   
 <span class='co'># Estimate model</span>
-<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(.data = <span class='kw'>Switching</span>, .model = <span class='kw'>model_Int</span>,
+<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>Switching</span>, .model <span class='op'>=</span> <span class='va'>model_Int</span>,
             <span class='co'># ADANCO settings</span>
-            .PLS_weight_scheme_inner = <span class='st'>'factorial'</span>,
-            .tolerance = <span class='fl'>1e-06</span>,
-            .resample_method = <span class='st'>'bootstrap'</span>
-)
+            .PLS_weight_scheme_inner <span class='op'>=</span> <span class='st'>'factorial'</span>,
+            .tolerance <span class='op'>=</span> <span class='fl'>1e-06</span>,
+            .resample_method <span class='op'>=</span> <span class='st'>'bootstrap'</span>
+<span class='op'>)</span>
   
 <span class='co'># Do nonlinear effects analysis</span>
-<span class='kw'>neffects</span> <span class='op'>&lt;-</span> <span class='fu'>doNonlinearEffectsAnalysis</span>(<span class='kw'>out</span>, 
-                                       .dependent = <span class='st'>'INT'</span>,
-                                       .moderator = <span class='st'>'INV'</span>,
-                                       .independent = <span class='st'>'SAT'</span>) 
+<span class='va'>neffects</span> <span class='op'>&lt;-</span> <span class='fu'>doNonlinearEffectsAnalysis</span><span class='op'>(</span><span class='va'>out</span>, 
+                                       .dependent <span class='op'>=</span> <span class='st'>'INT'</span>,
+                                       .moderator <span class='op'>=</span> <span class='st'>'INV'</span>,
+                                       .independent <span class='op'>=</span> <span class='st'>'SAT'</span><span class='op'>)</span> 
 
 <span class='co'># Get an overview</span>
-<span class='kw'>neffects</span>
+<span class='va'>neffects</span>
 
 <span class='co'># Simple effects plot</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>neffects</span>, .plot_type = <span class='st'>'simpleeffects'</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>neffects</span>, .plot_type <span class='op'>=</span> <span class='st'>'simpleeffects'</span><span class='op'>)</span>
 
 <span class='co'># Surface plot using plotly</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>neffects</span>, .plot_type = <span class='st'>'surface'</span>, .plot_package = <span class='st'>'plotly'</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>neffects</span>, .plot_type <span class='op'>=</span> <span class='st'>'surface'</span>, .plot_package <span class='op'>=</span> <span class='st'>'plotly'</span><span class='op'>)</span>
 
 <span class='co'># Surface plot using persp</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>neffects</span>, .plot_type = <span class='st'>'surface'</span>, .plot_package = <span class='st'>'persp'</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>neffects</span>, .plot_type <span class='op'>=</span> <span class='st'>'surface'</span>, .plot_package <span class='op'>=</span> <span class='st'>'persp'</span><span class='op'>)</span>
 
 <span class='co'># Floodlight analysis</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>neffects</span>, .plot_type = <span class='st'>'floodlight'</span>)
-}
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>neffects</span>, .plot_type <span class='op'>=</span> <span class='st'>'floodlight'</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -277,7 +271,7 @@ INT ~ INV + SAT + INV.SAT
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

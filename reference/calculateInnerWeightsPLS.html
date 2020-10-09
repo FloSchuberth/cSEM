@@ -115,12 +115,6 @@ a warning is issued and .PLS_ignore_structural_model is changed to FALSE." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -203,13 +197,13 @@ are considered. If <code>.PLS_ignore_structural_model = TRUE</code> and <code>.P
 a warning is issued and <code>.PLS_ignore_structural_model</code> is changed to <code>FALSE</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>calculateInnerWeightsPLS</span>(
-  .S                           = <span class='fu'><a href='args_default.html'>args_default</a></span>()<span class='op'>$</span><span class='kw'>.S</span>,
-  .W                           = <span class='fu'><a href='args_default.html'>args_default</a></span>()<span class='op'>$</span><span class='kw'>.W</span>,
-  .csem_model                  = <span class='fu'><a href='args_default.html'>args_default</a></span>()<span class='op'>$</span><span class='kw'>.csem_model</span>,
-  .PLS_ignore_structural_model = <span class='fu'><a href='args_default.html'>args_default</a></span>()<span class='op'>$</span><span class='kw'>.PLS_ignore_structrual_model</span>,
-  .PLS_weight_scheme_inner     = <span class='fu'><a href='args_default.html'>args_default</a></span>()<span class='op'>$</span><span class='kw'>.PLS_weight_scheme_inner</span>
-)</pre>
+    <pre class="usage"><span class='fu'>calculateInnerWeightsPLS</span><span class='op'>(</span>
+  .S                           <span class='op'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>.S</span>,
+  .W                           <span class='op'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>.W</span>,
+  .csem_model                  <span class='op'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>.csem_model</span>,
+  .PLS_ignore_structural_model <span class='op'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>.PLS_ignore_structrual_model</span>,
+  .PLS_weight_scheme_inner     <span class='op'>=</span> <span class='fu'><a href='args_default.html'>args_default</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>$</span><span class='va'>.PLS_weight_scheme_inner</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -259,7 +253,7 @@ Defaults to "<em>path</em>". Ignored if <code>.approach_weight</code> is not PLS
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

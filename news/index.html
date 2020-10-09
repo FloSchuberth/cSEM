@@ -88,12 +88,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -145,9 +139,9 @@
       <small>Source: <a href='https://github.com/M-E-Rademaker/cSEM/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="csem-0-2-0-30-03-2020" class="section level1">
+    <div id="csem-020-30032020" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.0">
-<a href="#csem-0-2-0-30-03-2020" class="anchor"></a>cSEM 0.2.0 (30.03.2020)<small> 2020-03-29 </small>
+<a href="#csem-020-30032020" class="anchor"></a>cSEM 0.2.0 (30.03.2020)<small> 2020-03-29 </small>
 </h1>
 <div id="major-changes" class="section level2">
 <h2 class="hasAnchor">
@@ -203,8 +197,7 @@
 <li><code><a href="../reference/calculateVIFModeB.html">calculateVIFModeB()</a></code></li>
 </ul>
 </li>
-<li>
-<code><a href="../reference/assess.html">assess()</a></code> now supports all of cSEM’s native classes. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/323'>#323</a>)</li>
+<li><p><code><a href="../reference/assess.html">assess()</a></code> now supports all of cSEM’s native classes. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/323'>#323</a>)</p></li>
 <li><p><code><a href="../reference/assess.html">assess()</a></code> now also computes and prints the total and indirect effects for each variable as they are often used for model assessment and may thus be considered a quality criteria. In addition, the variance accounted for (VAF) is computed and printed as well. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/335'>#335</a>)</p></li>
 <li><p>Breaking: change the name of the the quality criterion “effect size (f2)” from <code>esize</code> to <code>f2</code> and the corresponding function from <code>calculateEffectSize()</code> to <code><a href="../reference/calculatef2.html">calculatef2()</a></code>as this is more common. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/336'>#336</a>)</p></li>
 <li><p>Add the Chi_square statistic and the Chi_square statistic divided by its degrees of freedom to the list of fit indices. See: <code>?calculateChiSquare()</code> and <code>?calculateChiSquareDf()</code></p></li>
@@ -219,7 +212,7 @@
 <ul>
 <li><p>Update documentation for <code><a href="../reference/predict.html">predict()</a></code>.</p></li>
 <li><p>Integrate and document <code>cSEMPredict</code> method for generic function <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>. Now users may call <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> on an object created by <code><a href="../reference/predict.html">predict()</a></code>. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/337'>#337</a>)</p></li>
-<li>Add the density of the residuals as plot to <code><a href="../reference/plot.cSEMPredict.html">plot.cSEMPredict()</a></code>. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/337'>#337</a>)</li>
+<li><p>Add the density of the residuals as plot to <code><a href="../reference/plot.cSEMPredict.html">plot.cSEMPredict()</a></code>. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/337'>#337</a>)</p></li>
 <li><p>Remove argument <code>.only_common_factors</code> for postestimation function <code><a href="../reference/predict.html">predict()</a></code>. Now <code><a href="../reference/predict.html">predict()</a></code> retruns predictions for composite models as well. This will break existing code that uses <code><a href="../reference/predict.html">predict(..., .only_common_factors = ...)</a></code>. You will get an <code>unused argument (.only_common_factors = FALSE)</code> error. Simply remove the argument to fix it. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/330'>#330</a>)</p></li>
 <li><p>Fixed error in <code><a href="../reference/predict.html">predict()</a></code> when the dataset used to obtain <code>.object</code> contained a character column. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/345'>#345</a>)</p></li>
 </ul>
@@ -269,7 +262,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

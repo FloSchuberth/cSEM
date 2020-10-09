@@ -92,12 +92,6 @@ for details." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -157,22 +151,22 @@ section of the <a href='https://m-e-rademaker.github.io/cSEM/index.html'>cSEM we
 for details.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>calculateRhoC</span>(
-  .object = <span class='kw'>NULL</span>,
-  .model_implied = <span class='fl'>TRUE</span>,
-  .only_common_factors = <span class='fl'>TRUE</span>,
-  .weighted = <span class='fl'>FALSE</span>
-)
+    <pre class="usage"><span class='fu'>calculateRhoC</span><span class='op'>(</span>
+  .object <span class='op'>=</span> <span class='cn'>NULL</span>,
+  .model_implied <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  .only_common_factors <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  .weighted <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span>
 
-<span class='fu'>calculateRhoT</span>(
-  .object = <span class='kw'>NULL</span>,
-  .alpha = <span class='fl'>0.05</span>,
-  .closed_form_ci = <span class='fl'>FALSE</span>,
-  .only_common_factors = <span class='fl'>TRUE</span>,
-  .output_type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vector"</span>, <span class='st'>"data.frame"</span>),
-  .weighted = <span class='fl'>FALSE</span>,
-  <span class='kw'>...</span>
-)</pre>
+<span class='fu'>calculateRhoT</span><span class='op'>(</span>
+  .object <span class='op'>=</span> <span class='cn'>NULL</span>,
+  .alpha <span class='op'>=</span> <span class='fl'>0.05</span>,
+  .closed_form_ci <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  .only_common_factors <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  .output_type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"vector"</span>, <span class='st'>"data.frame"</span><span class='op'>)</span>,
+  .weighted <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -242,7 +236,7 @@ To compute congeneric and tau-equivalent reliability based on a score that
 uses the weights of the weight approach used to obtain <code>.object</code> use <code>.weighted = TRUE</code>
 instead.</p>
 <p>For the tau-equivalent reliability ("<code>rho_T</code>" or "<code>cronbachs_alpha</code>") a closed-form
-confidence interval may be computed (Trinchera et al. 2018)
+confidence interval may be computed (Trinchera et al. 2018-mar)
  by setting
 <code>.closed_form_ci = TRUE</code> (default is <code>FALSE</code>). If <code>.alpha</code> is a vector
 several CI's are returned.</p>
@@ -255,9 +249,9 @@ several CI's are returned.</p>
 </ul>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Trinchera L, Marie N, Marcoulides GA (2018).
+    <p>Trinchera L, Marie N, Marcoulides GA (2018-mar).
 &#8220;A Distribution Free Interval Estimate for Coefficient Alpha.&#8221;
-<em>Structural Equation Modeling: A Multidisciplinary Journal</em>, <b>25</b>(6), 876--887.
+<em>Structural Equation ModelingA Multidisciplinary Journal</em>, <b>25</b>, 876--887.
 doi: <a href='https://doi.org/10.1080/10705511.2018.1431544'>10.1080/10705511.2018.1431544</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -279,7 +273,7 @@ doi: <a href='https://doi.org/10.1080/10705511.2018.1431544'>10.1080/10705511.20
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

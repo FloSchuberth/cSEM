@@ -44,12 +44,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -94,14 +88,14 @@
 
       
 
-      </header><div class="row">
+      </header><script src="Using-assess_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Postestimation: Assessing a model</h1>
             <h3 class="subtitle">Using the <code>assess()</code> function</h3>
                         <h4 class="author">Manuel Rademaker</h4>
             
-            <h4 class="date">Last edited: 2020-09-17</h4>
+            <h4 class="date">Last edited: 2020-10-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/master/vignettes/Using-assess.Rmd"><code>vignettes/Using-assess.Rmd</code></a></small>
       <div class="hidden name"><code>Using-assess.Rmd</code></div>
@@ -168,10 +162,10 @@
 <h1 class="hasAnchor">
 <a href="#syntax-options" class="anchor"></a>Syntax &amp; Options</h1>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="../reference/assess.html">assess</a></span>(
-  .object              = <span class="kw">NULL</span>, 
-  .only_common_factors = <span class="fl">TRUE</span>, 
-  .quality_criterion   = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"all"</span>, <span class="st">"aic"</span>, <span class="st">"aicc"</span>, <span class="st">"aicu"</span>, <span class="st">"bic"</span>, <span class="st">"fpe"</span>, <span class="st">"gm"</span>, <span class="st">"hq"</span>,
+<span class="fu"><a href="../reference/assess.html">assess</a></span><span class="op">(</span>
+  .object              <span class="op">=</span> <span class="cn">NULL</span>, 
+  .only_common_factors <span class="op">=</span> <span class="cn">TRUE</span>, 
+  .quality_criterion   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"aic"</span>, <span class="st">"aicc"</span>, <span class="st">"aicu"</span>, <span class="st">"bic"</span>, <span class="st">"fpe"</span>, <span class="st">"gm"</span>, <span class="st">"hq"</span>,
                            <span class="st">"hqc"</span>, <span class="st">"mallows_cp"</span>, <span class="st">"ave"</span>,
                            <span class="st">"rho_C"</span>, <span class="st">"rho_C_mm"</span>, <span class="st">"rho_C_weighted"</span>, 
                            <span class="st">"rho_C_weighted_mm"</span>, <span class="st">"dg"</span>, <span class="st">"dl"</span>, <span class="st">"dml"</span>, <span class="st">"df"</span>,
@@ -181,10 +175,9 @@
                            <span class="st">"rmsea"</span>, <span class="st">"rms_theta"</span>, <span class="st">"srmr"</span>,
                            <span class="st">"gof"</span>, <span class="st">"htmt"</span>, <span class="st">"r2"</span>, <span class="st">"r2_adj"</span>,
                            <span class="st">"rho_T"</span>, <span class="st">"rho_T_weighted"</span>, <span class="st">"vif"</span>, 
-                           <span class="st">"vifmodeB"</span>),
-  <span class="kw">...</span>
-)
-</pre></div>
+                           <span class="st">"vifmodeB"</span><span class="op">)</span>,
+  <span class="va">...</span>
+<span class="op">)</span></pre></div>
 <dl>
 <dt><code>.object</code></dt>
 <dd>
@@ -212,9 +205,9 @@
 <!--   will be exported. This mean users can directly invoke functions such as e.g., -->
 <!--   `calculateHTMT()` or `calculateRhoT()`. These functions will also be generic  -->
 <!--   accepting all types of cSEMResults classes. -->
-<div id="composite-models-vs-common-factor-models" class="section level3">
+<div id="composite-models-vs--common-factor-models" class="section level3">
 <h3 class="hasAnchor">
-<a href="#composite-models-vs-common-factor-models" class="anchor"></a>Composite models vs. common factor models</h3>
+<a href="#composite-models-vs--common-factor-models" class="anchor"></a>Composite models vs. common factor models</h3>
 <p>Some assessment measures are inherently tied to the common factor model. It is therefore unclear how to interpret their results in the context of a composite model. Consequently, their computation is suppressed by default for constructs modeled as composites. Currently, this applies to the following quality criteria:</p>
 <ul>
 <li>AVE and validity assessment based thereon (i.e., the Fornell-Larcker criterion)</li>
@@ -574,7 +567,7 @@
 <div id="definition-4" class="section level3">
 <h3 class="hasAnchor">
 <a href="#definition-4" class="anchor"></a>Definition</h3>
-<p>Calculate the Goodness of Fit (GoF) proposed by <span class="citation">Tenenhaus, Amanto, and Vinzi (2004)</span>. Note that, contrary to what the name suggests, the GoF is <strong>not</strong> a measure of (overall) model fit in a <span class="math inline">\(\chi^2\)</span>-fit test sense. See e.g. <span class="citation">Henseler and Sarstedt (2012)</span> for a discussion.</p>
+<p>Calculate the Goodness of Fit (GoF) proposed by <span class="citation">Tenenhaus, Amanto, and Vinzi (2004)</span>. Note that, contrary to what the name suggests, the GoF is <strong>not</strong> a measure of (overall) model fit in a <span class="math inline">\(\chi^2\)</span>-fit test sense. See e.g. <span class="citation">Henseler and Sarstedt (2012)</span> for a discussion.</p>
 </div>
 <div id="formulae-4" class="section level3">
 <h3 class="hasAnchor">
@@ -619,7 +612,7 @@
 <!-- are always standardized. Hence, only $\rho_T$ is reported. -->
 <div id="refs" class="references">
 <div id="ref-Bentler1990">
-<p>Bentler, Peter M. 1990. “Comparative Fit Indexes in Structural Models.” <em>Psychological Bulletin</em> 107 (2). The American Psychological Association, Inc.: 238–46.</p>
+<p>Bentler, Peter M. 1990. “Comparative Fit Indexes in Structural Models.” <em>Psychological Bulletin</em> 107 (2): 238–46.</p>
 </div>
 <div id="ref-Bentler2006">
 <p>———. 2006. <em>EQS 6 Structural Equations Program Manual</em> (version 6). Encino, CA: Multivariate Software, Inc.</p>
@@ -631,56 +624,56 @@
 <p>Bollen, Kenneth A. 1989. <em>Structural Equations with Latent Variables</em>. Wiley-Interscience.</p>
 </div>
 <div id="ref-Browne1992">
-<p>Browne, Michael W., and Robert Cudeck. 1992. “Alternative Ways of Assessing Model Fit.” <em>Sociological Methods &amp; Research</em> 21 (2). Sage Periodicals Press: 230–58.</p>
+<p>Browne, Michael W., and Robert Cudeck. 1992. “Alternative Ways of Assessing Model Fit.” <em>Sociological Methods &amp; Research</em> 21 (2): 230–58.</p>
 </div>
 <div id="ref-Cho2016">
-<p>Cho, Eunseong. 2016. “Making Reliability Reliable.” <em>Organizational Research Methods</em> 19 (4). SAGE Publications: 651–82. <a href="https://doi.org/10.1177/1094428116656239" class="uri">https://doi.org/10.1177/1094428116656239</a>.</p>
+<p>Cho, Eunseong. 2016. “Making Reliability Reliable.” <em>Organizational Research Methods</em> 19 (4): 651–82. <a href="https://doi.org/10.1177/1094428116656239">https://doi.org/10.1177/1094428116656239</a>.</p>
 </div>
 <div id="ref-Fornell1981">
 <p>Fornell, C., and D. F. Larcker. 1981. “Evaluating Structural Equation Models with Unobservable Variables and Measurement Error.” <em>Journal of Marketing Research</em> XVIII: 39–50.</p>
 </div>
 <div id="ref-Henseler2015">
-<p>Henseler, Jörg, Christian M. Ringle, and Marko Sarstedt. 2015. “A New Criterion for Assessing Discriminant Validity in Variance-Based Structural Equation Modeling.” <em>Journal of the Academy of Marketing Science</em> 43 (1). Springer Nature: 115–35. <a href="https://doi.org/10.1007/s11747-014-0403-8" class="uri">https://doi.org/10.1007/s11747-014-0403-8</a>.</p>
+<p>Henseler, Jörg, Christian M. Ringle, and Marko Sarstedt. 2015. “A New Criterion for Assessing Discriminant Validity in Variance-Based Structural Equation Modeling.” <em>Journal of the Academy of Marketing Science</em> 43 (1): 115–35. <a href="https://doi.org/10.1007/s11747-014-0403-8">https://doi.org/10.1007/s11747-014-0403-8</a>.</p>
 </div>
 <div id="ref-Henseler2012a">
-<p>Henseler, Jörg, and Marko Sarstedt. 2012. “Goodness-of-Fit Indices for Partial Least Squares Path Modeling.” <em>Computational Statistics</em> 28 (2). Springer Nature: 565–80. <a href="https://doi.org/10.1007/s00180-012-0317-1" class="uri">https://doi.org/10.1007/s00180-012-0317-1</a>.</p>
+<p>Henseler, Jörg, and Marko Sarstedt. 2012. “Goodness-of-Fit Indices for Partial Least Squares Path Modeling.” <em>Computational Statistics</em> 28 (2): 565–80. <a href="https://doi.org/10.1007/s00180-012-0317-1">https://doi.org/10.1007/s00180-012-0317-1</a>.</p>
 </div>
 <div id="ref-Hu1999">
 <p>Hu, Li-tze, and Peter M. Bentler. 1999. “Cutoff Criteria for Fit Indexes in Covariance Structure Analysis: Conventional Criteria Versus New Alternatives.” <em>Structural Equation Modeling</em> 6 (1): 1–55.</p>
 </div>
 <div id="ref-Joereskog1982">
-<p>Jöreskog, Karl G., and Dag Sörbom. 1982. “Recent Developments in Structural Equation Modeling.” <em>Journal of Marketing Research</em> 19 (4). American Marketing Association: 404–16.</p>
+<p>Jöreskog, Karl G., and Dag Sörbom. 1982. “Recent Developments in Structural Equation Modeling.” <em>Journal of Marketing Research</em> 19 (4): 404–16.</p>
 </div>
 <div id="ref-Joereskog1969">
-<p>Jöreskog, K. G. 1969. “A General Approach to Confirmatory Maximum Likelihood Factor Analysis.” <em>Psychometrika</em> 34 (2). Springer Nature: 183–202. <a href="https://doi.org/10.1007/bf02289343" class="uri">https://doi.org/10.1007/bf02289343</a>.</p>
+<p>Jöreskog, K. G. 1969. “A General Approach to Confirmatory Maximum Likelihood Factor Analysis.” <em>Psychometrika</em> 34 (2): 183–202. <a href="https://doi.org/10.1007/bf02289343">https://doi.org/10.1007/bf02289343</a>.</p>
 </div>
 <div id="ref-Lohmoeller1989">
 <p>Lohmöller, Jan-Bernd. 1989. <em>Latent Variable Path Modeling with Partial Least Squares</em>. Physica, Heidelberg.</p>
 </div>
 <div id="ref-Marsh2004">
-<p>Marsh, Herbert W., Kit-Tai Hau, and Zhonglin Wen. 2004. “In Search of Golden Rules: Comment on Hypothesis-Testing Approaches to Setting Cutoff Values for Fit Indexes and Dangers in Overgeneralizing Hu and Bentler’s (1999) Findings.” <em>Structural Equation Modeling: A Multidisciplinary Journal</em> 11 (3). Informa UK Limited: 320–41. <a href="https://doi.org/10.1207/s15328007sem1103_2" class="uri">https://doi.org/10.1207/s15328007sem1103_2</a>.</p>
+<p>Marsh, Herbert W., Kit-Tai Hau, and Zhonglin Wen. 2004. “In Search of Golden Rules: Comment on Hypothesis-Testing Approaches to Setting Cutoff Values for Fit Indexes and Dangers in Overgeneralizing Hu and Bentler’s (1999) Findings.” <em>Structural Equation Modeling: A Multidisciplinary Journal</em> 11 (3): 320–41. <a href="https://doi.org/10.1207/s15328007sem1103_2">https://doi.org/10.1207/s15328007sem1103_2</a>.</p>
 </div>
 <div id="ref-Mulaik1989">
-<p>Mulaik, Stanley A., Larry R. James, Judith Van Alstine, Nathan Bennett, Sherri Lind, and C. Dean Stilwell. 1989. “Evaluation of Goodness-of-Fit Indices for Structural Equation Models.” <em>Psychological Bulletin</em> 105 (3). American Psychological Association (APA): 430–45. <a href="https://doi.org/10.1037/0033-2909.105.3.430" class="uri">https://doi.org/10.1037/0033-2909.105.3.430</a>.</p>
+<p>Mulaik, Stanley A., Larry R. James, Judith Van Alstine, Nathan Bennett, Sherri Lind, and C. Dean Stilwell. 1989. “Evaluation of Goodness-of-Fit Indices for Structural Equation Models.” <em>Psychological Bulletin</em> 105 (3): 430–45. <a href="https://doi.org/10.1037/0033-2909.105.3.430">https://doi.org/10.1037/0033-2909.105.3.430</a>.</p>
 </div>
 <div id="ref-Sharma2019">
-<p>Sharma, Pratyush, Marko Sarstedt, Galit Shmueli, Kevin H. Kim, and Kai O. Thiele. 2019. “PLS-Based Model Selection: The Role of Alternative Explanations in Information Systems Research.” <em>Journal of the Association for Information Systems</em> 20 (4). <a href="https://doi.org/10.17005/1.jais.00538" class="uri">https://doi.org/10.17005/1.jais.00538</a>.</p>
+<p>Sharma, Pratyush, Marko Sarstedt, Galit Shmueli, Kevin H. Kim, and Kai O. Thiele. 2019. “PLS-Based Model Selection: The Role of Alternative Explanations in Information Systems Research.” <em>Journal of the Association for Information Systems</em> 20 (4). <a href="https://doi.org/10.17005/1.jais.00538">https://doi.org/10.17005/1.jais.00538</a>.</p>
 </div>
 <div id="ref-Tanaka1985">
-<p>Tanaka, J. S., and G. J. Huba. 1985. “A Fit Index for Covariance Structure Models Under Arbitrary GLS Estimation.” <em>British Journal of Mathematical and Statistical Psychology</em> 38 (2). Wiley: 197–201. <a href="https://doi.org/10.1111/j.2044-8317.1985.tb00834.x" class="uri">https://doi.org/10.1111/j.2044-8317.1985.tb00834.x</a>.</p>
+<p>Tanaka, J. S., and G. J. Huba. 1985. “A Fit Index for Covariance Structure Models Under Arbitrary GLS Estimation.” <em>British Journal of Mathematical and Statistical Psychology</em> 38 (2): 197–201. <a href="https://doi.org/10.1111/j.2044-8317.1985.tb00834.x">https://doi.org/10.1111/j.2044-8317.1985.tb00834.x</a>.</p>
 </div>
 <div id="ref-Tenenhaus2004">
 <p>Tenenhaus, Michel, Silvano Amanto, and Vincenzo Esposito Vinzi. 2004. “A Global Goodness-of-Fit Index for PLS Structural Equation Modelling.” In <em>Proceedings of the XLII SIS Scientific Meeting</em>, 739–42.</p>
 </div>
 <div id="ref-Trinchera2018">
-<p>Trinchera, Laura, Nicolas Marie, and George A. Marcoulides. 2018. “A Distribution Free Interval Estimate for Coefficient Alpha.” <em>Structural Equation Modeling: A Multidisciplinary Journal</em> 25 (6). Informa UK Limited: 876–87. <a href="https://doi.org/10.1080/10705511.2018.1431544" class="uri">https://doi.org/10.1080/10705511.2018.1431544</a>.</p>
+<p>Trinchera, Laura, Nicolas Marie, and George A. Marcoulides. 2018. “A Distribution Free Interval Estimate for Coefficient Alpha.” <em>Structural Equation Modeling: A Multidisciplinary Journal</em> 25 (6): 876–87. <a href="https://doi.org/10.1080/10705511.2018.1431544">https://doi.org/10.1080/10705511.2018.1431544</a>.</p>
 </div>
 </div>
 </div>
 <div class="footnotes">
 <hr>
 <ol>
-<li id="fn1"><p>There are some cutoffs such as e.g., the SRMR should be less than 0.08 or 0.1, however, these values are essentially arbitrary as they have never been formally motivated. Reference is usually done to <span class="citation">Hu and Bentler (1999)</span> which based the cut-off on a simulation using factor-based SEM.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>There are some cutoffs such as e.g., the SRMR should be less than 0.08 or 0.1, however, these values are essentially arbitrary as they have never been formally motivated. Reference is usually done to <span class="citation">Hu and Bentler (1999)</span> which based the cut-off on a simulation using factor-based SEM.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
   </div>
@@ -700,7 +693,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

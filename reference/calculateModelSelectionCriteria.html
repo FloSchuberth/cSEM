@@ -91,12 +91,6 @@ the Hannan-Quinn criterion (HQ)." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -155,13 +149,13 @@ Akaike information criterion (AIC), the Bayesian information criterion (BIC) or
 the Hannan-Quinn criterion (HQ).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>calculateModelSelectionCriteria</span>(
-  .object          = <span class='kw'>NULL</span>,
-  .ms_criterion    = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"aic"</span>, <span class='st'>"aicc"</span>, <span class='st'>"aicu"</span>, <span class='st'>"bic"</span>, <span class='st'>"fpe"</span>, <span class='st'>"gm"</span>, <span class='st'>"hq"</span>,
-                       <span class='st'>"hqc"</span>, <span class='st'>"mallows_cp"</span>),
-  .by_equation     = <span class='fl'>TRUE</span>, 
-  .only_structural = <span class='fl'>TRUE</span> 
-  )</pre>
+    <pre class="usage"><span class='fu'>calculateModelSelectionCriteria</span><span class='op'>(</span>
+  .object          <span class='op'>=</span> <span class='cn'>NULL</span>,
+  .ms_criterion    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"aic"</span>, <span class='st'>"aicc"</span>, <span class='st'>"aicu"</span>, <span class='st'>"bic"</span>, <span class='st'>"fpe"</span>, <span class='st'>"gm"</span>, <span class='st'>"hq"</span>,
+                       <span class='st'>"hqc"</span>, <span class='st'>"mallows_cp"</span><span class='op'>)</span>,
+  .by_equation     <span class='op'>=</span> <span class='cn'>TRUE</span>, 
+  .only_structural <span class='op'>=</span> <span class='cn'>TRUE</span> 
+  <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -203,7 +197,7 @@ Table B1 of the appendix of Sharma et al. (2019)
 .</p>
 <p>If <code>.by_equation == FALSE</code> the AIC, the BIC and the HQ for whole model
 are calculated. All other criteria are currently ignored in this case!
-The relevant formulae are (see, e.g., (Akaike 1974)
+The relevant formulae are (see, e.g., (Akaike 1974-dec)
 ,
 Schwarz (1978)
 ,
@@ -219,17 +213,18 @@ and n the sample size.</p>
 The argument is ignored if <code>.by_equation == TRUE</code>.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Akaike H (1974).
+    <p>Akaike H (1974-dec).
 &#8220;A New Look at the Statistical Model Identification.&#8221;
-<em>IEEE Transactions on Automatic Control</em>, <b>19</b>(6), 716--723.<br /><br /> Hannan EJ, Quinn BG (1979).
+<em>IEEE Transactions on Automatic Control</em>, <b>19</b>, 716--723.<br /><br /> Hannan EJ, Quinn BG (1979).
 &#8220;The Determination of the order of an autoregression.&#8221;
-<em>Journal of the Royal Statistical Society: Series B (Methodological)</em>, <b>41</b>(2), 190--195.<br /><br /> Schwarz G (1978).
+<em>Journal of the Royal Statistical SocietySeries B (Methodological)</em>, <b>41</b>, 190--195.
+<a href='Hannan1979.pdf'>Hannan1979.pdf</a>.<br /><br /> Schwarz G (1978).
 &#8220;Estimating the Dimension of a Model.&#8221;
-<em>The Annals of Statistics</em>, <b>6</b>(2), 461--464.
+<em>The Annals of Statistics</em>, <b>6</b>, 461--464.
 doi: <a href='https://doi.org/10.1214/aos/1176344136'>10.1214/aos/1176344136</a>
-.<br /><br /> Sharma P, Sarstedt M, Shmueli G, Kim KH, Thiele KO (2019).
+, <a href='Schwarz1978.pdf'>Schwarz1978.pdf</a>.<br /><br /> Sharma P, Sarstedt M, Shmueli G, Kim KH, Thiele KO (2019).
 &#8220;PLS-Based Model Selection: The Role of Alternative Explanations in Information Systems Research.&#8221;
-<em>Journal of the Association for Information Systems</em>, <b>20</b>(4).
+<em>Journal of the Association for Information Systems</em>, <b>20</b>.
 doi: <a href='https://doi.org/10.17005/1.jais.00538'>10.17005/1.jais.00538</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -251,7 +246,7 @@ doi: <a href='https://doi.org/10.17005/1.jais.00538'>10.17005/1.jais.00538</a>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

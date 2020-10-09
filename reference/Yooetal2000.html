@@ -89,12 +89,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -151,7 +145,7 @@
     <p>A data frame containing 34 variables with 569 observations.</p>
     </div>
 
-    <pre class="usage"><span class='kw'>Yooetal2000</span></pre>
+    <pre class="usage"><span class='va'>Yooetal2000</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -179,13 +173,13 @@ for demonstration purposes, see the corresponding tutorial.</p>
 
     <p>Henseler J (2017).
 &#8220;Bridging Design and Behavioral Research With Variance-Based Structural Equation Modeling.&#8221;
-<em>Journal of Advertising</em>, <b>46</b>(1), 178--192.
+<em>Journal of Advertising</em>, <b>46</b>, 178--192.
 doi: <a href='https://doi.org/10.1080/00913367.2017.1281780'>10.1080/00913367.2017.1281780</a>
-.<br /><br /> Henseler J (2020).
+, <a href='Papers/Henseler2017.pdf'>Papers/Henseler2017.pdf</a>.<br /><br /> Henseler J (2020).
 <em>Composite-Based Structural Equation Modeling: An Introduction to Partial Least Squares &amp; Co. Using ADANCO</em>.
 Guilford Press.<br /><br /> Yoo B, Donthu N, Lee S (2000).
 &#8220;An Examination of Selected Marketing Mix Elements and Brand Equity.&#8221;
-<em>Journal of the Academy of Marketing Science</em>, <b>28</b>(2), 195--211.
+<em>Journal of the Academy of Marketing Science</em>, <b>28</b>, 195--211.
 doi: <a href='https://doi.org/10.1177/0092070300282002'>10.1177/0092070300282002</a>
 .</p>
 
@@ -193,7 +187,7 @@ doi: <a href='https://doi.org/10.1177/0092070300282002'>10.1177/0092070300282002
     <pre class="examples"><div class='input'><span class='co'>#============================================================================</span>
 <span class='co'># Example is taken from Henseler (2020)</span>
 <span class='co'>#============================================================================</span>
-<span class='kw'>model_HOC</span><span class='op'>=</span><span class='st'>"
+<span class='va'>model_HOC</span><span class='op'>=</span><span class='st'>"
 # Measurement models FOC
 PR =~ PR1 + PR2 + PR3
 IM =~ IM1 + IM2 + IM3
@@ -211,9 +205,9 @@ BR &lt;~ QL + LO + AA
 BR~ PR + IM + DI + AD + DL 
 "</span>
 
-<span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(.data = <span class='kw'>Yooetal2000</span>, .model = <span class='kw'>model_HOC</span>,
-            .PLS_weight_scheme_inner = <span class='st'>'factorial'</span>,
-            .tolerance = <span class='fl'>1e-06</span>)
+<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>Yooetal2000</span>, .model <span class='op'>=</span> <span class='va'>model_HOC</span>,
+            .PLS_weight_scheme_inner <span class='op'>=</span> <span class='st'>'factorial'</span>,
+            .tolerance <span class='op'>=</span> <span class='fl'>1e-06</span><span class='op'>)</span>
 
 </div></pre>
   </div>
@@ -231,7 +225,7 @@ BR~ PR + IM + DI + AD + DL
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

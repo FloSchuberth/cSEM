@@ -92,12 +92,6 @@ cSEM website for details." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -157,9 +151,9 @@ article on the
 <a href='https://m-e-rademaker.github.io/cSEM/index.html'>cSEM website</a> for details.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>assess</span>(
-  .object              = <span class='kw'>NULL</span>, 
-  .quality_criterion   = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"aic"</span>, <span class='st'>"aicc"</span>, <span class='st'>"aicu"</span>, <span class='st'>"bic"</span>, <span class='st'>"fpe"</span>, <span class='st'>"gm"</span>, <span class='st'>"hq"</span>,
+    <pre class="usage"><span class='fu'>assess</span><span class='op'>(</span>
+  .object              <span class='op'>=</span> <span class='cn'>NULL</span>, 
+  .quality_criterion   <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"aic"</span>, <span class='st'>"aicc"</span>, <span class='st'>"aicu"</span>, <span class='st'>"bic"</span>, <span class='st'>"fpe"</span>, <span class='st'>"gm"</span>, <span class='st'>"hq"</span>,
                            <span class='st'>"hqc"</span>, <span class='st'>"mallows_cp"</span>, <span class='st'>"ave"</span>,
                            <span class='st'>"rho_C"</span>, <span class='st'>"rho_C_mm"</span>, <span class='st'>"rho_C_weighted"</span>, 
                            <span class='st'>"rho_C_weighted_mm"</span>, <span class='st'>"dg"</span>, <span class='st'>"dl"</span>, <span class='st'>"dml"</span>, <span class='st'>"df"</span>,
@@ -169,10 +163,10 @@ article on the
                            <span class='st'>"rmsea"</span>, <span class='st'>"rms_theta"</span>, <span class='st'>"srmr"</span>,
                            <span class='st'>"gof"</span>, <span class='st'>"htmt"</span>, <span class='st'>"r2"</span>, <span class='st'>"r2_adj"</span>,
                            <span class='st'>"rho_T"</span>, <span class='st'>"rho_T_weighted"</span>, <span class='st'>"vif"</span>, 
-                           <span class='st'>"vifmodeB"</span>),
-  .only_common_factors = <span class='fl'>TRUE</span>, 
-  <span class='kw'>...</span>
-)</pre>
+                           <span class='st'>"vifmodeB"</span><span class='op'>)</span>,
+  .only_common_factors <span class='op'>=</span> <span class='cn'>TRUE</span>, 
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -280,7 +274,7 @@ suffer from serious statistical drawbacks. Calculation is done by <code><a href=
 <code><a href='fit_measures.html'>calculateChiSquareDf()</a></code>, <code><a href='fit_measures.html'>calculateCFI()</a></code>,
 <code><a href='fit_measures.html'>calculateGFI()</a></code>, <code><a href='fit_measures.html'>calculateIFI()</a></code>, <code><a href='fit_measures.html'>calculateNFI()</a></code>, <code><a href='fit_measures.html'>calculateNNFI()</a></code>,
 <code><a href='fit_measures.html'>calculateRMSEA()</a></code>, <code><a href='fit_measures.html'>calculateRMSTheta()</a></code> and <code><a href='fit_measures.html'>calculateSRMR()</a></code>.</p></dd>
-<dt>Fornell-Larcker criterion; "fl_criterion"</dt><dd><p>A rule suggested by Fornell and Larcker (1981)to assess discriminant validity. The Fornell-Larcker
+<dt>Fornell-Larcker criterion; "fl_criterion"</dt><dd><p>A rule suggested by Fornell and Larcker (1981-February)to assess discriminant validity. The Fornell-Larcker
 criterion is a decision rule based on a comparison between the squared
 construct correlations and the average variance extracted. FL returns
 a matrix with the squared construct correlations on the off-diagonal and
@@ -380,7 +374,7 @@ See <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code> fo
     <pre class="examples"><div class='input'><span class='co'># ===========================================================================</span>
 <span class='co'># Using the three common factors dataset</span>
 <span class='co'># ===========================================================================</span>
-<span class='kw'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Structural model
 eta2 ~ eta1
 eta3 ~ eta1 + eta2
@@ -391,9 +385,9 @@ eta2 =~ y21 + y22 + y23
 eta3 =~ y31 + y32 + y33
 "</span>
 
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>threecommonfactors</span>, <span class='kw'>model</span>)
-<span class='kw'>a</span>   <span class='op'>&lt;-</span> <span class='fu'>assess</span>(<span class='kw'>res</span>) <span class='co'># computes all quality criteria (.quality_criterion = "all")</span>
-<span class='kw'>a</span>
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span><span class='op'>)</span>
+<span class='va'>a</span>   <span class='op'>&lt;-</span> <span class='fu'>assess</span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span> <span class='co'># computes all quality criteria (.quality_criterion = "all")</span>
+<span class='va'>a</span>
 </div><div class='output co'>#&gt; ________________________________________________________________________________
 #&gt; 
 #&gt; 	Construct        AVE           R2          R2_adj    
@@ -508,13 +502,13 @@ eta3 =~ y31 + y32 + y33
 #&gt;   eta3 ~ eta1          0.2049          NA        NA        NA
 #&gt; ________________________________________________________________________________</div><div class='input'>
 <span class='co'>## The return value is a named list. Type for example:</span>
-<span class='kw'>a</span><span class='op'>$</span><span class='kw'>HTMT</span>
+<span class='va'>a</span><span class='op'>$</span><span class='va'>HTMT</span>
 </div><div class='output co'>#&gt;           eta1      eta2 eta3
 #&gt; eta1 1.0000000 0.0000000    0
 #&gt; eta2 0.6782752 1.0000000    0
 #&gt; eta3 0.6668841 0.6124418    1</div><div class='input'>
 <span class='co'># You may also just compute a subset of the quality criteria</span>
-<span class='fu'>assess</span>(<span class='kw'>res</span>, .quality_criterion = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ave"</span>, <span class='st'>"rho_C"</span>, <span class='st'>"htmt"</span>))
+<span class='fu'>assess</span><span class='op'>(</span><span class='va'>res</span>, .quality_criterion <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ave"</span>, <span class='st'>"rho_C"</span>, <span class='st'>"htmt"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; ________________________________________________________________________________
 #&gt; 
 #&gt; 	Construct        AVE     
@@ -543,47 +537,47 @@ eta3 =~ y31 + y32 + y33
 <span class='co'># To resample a given quality criterion use csem()'s .user_funs argument</span>
 <span class='co'># Note: The output of the quality criterion needs to be a vector or a matrix.</span>
 <span class='co'>#       Matrices will be vectorized columnwise.</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>threecommonfactors</span>, <span class='kw'>model</span>, 
-            .resample_method = <span class='st'>"bootstrap"</span>, 
-            .R               = <span class='fl'>40</span>,
-            .user_funs       = <span class='kw'>cSEM</span>:::<span class='kw'><a href='calculateHTMT.html'>calculateHTMT</a></span>
-)
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, 
+            .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, 
+            .R               <span class='op'>=</span> <span class='fl'>40</span>,
+            .user_funs       <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='calculateHTMT.html'>calculateHTMT</a></span>
+<span class='op'>)</span>
 
 <span class='co'>## Look at the resamples</span>
-<span class='kw'>res</span><span class='op'>$</span><span class='kw'>Estimates</span><span class='op'>$</span><span class='kw'>Estimates_resample</span><span class='op'>$</span><span class='kw'>Estimates1</span><span class='op'>$</span><span class='kw'>User_fun</span><span class='op'>$</span><span class='kw'>Resampled</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, ]
+<span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>User_fun</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span>
 </div><div class='output co'>#&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; [1,]    1 0.5869651 0.6397972    0    1 0.5609028    0    0    1
-#&gt; [2,]    1 0.7103227 0.7047829    0    1 0.6480625    0    0    1
-#&gt; [3,]    1 0.7445085 0.7443467    0    1 0.6224240    0    0    1
-#&gt; [4,]    1 0.7271647 0.7191618    0    1 0.6689359    0    0    1</div><div class='input'>
+#&gt; [1,]    1 0.6576803 0.6800806    0    1 0.5759551    0    0    1
+#&gt; [2,]    1 0.6447426 0.7146667    0    1 0.6026988    0    0    1
+#&gt; [3,]    1 0.7191140 0.6364501    0    1 0.5918626    0    0    1
+#&gt; [4,]    1 0.6959850 0.6305859    0    1 0.6154001    0    0    1</div><div class='input'>
 <span class='co'>## Use infer() to compute e.g., the 95% percentile confidence interval</span>
-<span class='kw'>res_infer</span> <span class='op'>&lt;-</span> <span class='fu'><a href='infer.html'>infer</a></span>(<span class='kw'>res</span>, .quantity = <span class='st'>"CI_percentile"</span>)
+<span class='va'>res_infer</span> <span class='op'>&lt;-</span> <span class='fu'><a href='infer.html'>infer</a></span><span class='op'>(</span><span class='va'>res</span>, .quantity <span class='op'>=</span> <span class='st'>"CI_percentile"</span><span class='op'>)</span>
 
 <span class='co'>## The results are saved under the name "User_fun"</span>
-<span class='kw'>res_infer</span><span class='op'>$</span><span class='kw'>User_fun</span> 
+<span class='va'>res_infer</span><span class='op'>$</span><span class='va'>User_fun</span> 
 </div><div class='output co'>#&gt; $CI_percentile
 #&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; 95%L    1 0.5733008 0.5838121    0    1 0.5253783    0    0    1
-#&gt; 95%U    1 0.7507253 0.7533939    0    1 0.6693959    0    0    1
+#&gt; 95%L    1 0.6272998 0.5904644    0    1 0.5470586    0    0    1
+#&gt; 95%U    1 0.7451811 0.7193806    0    1 0.6961229    0    0    1
 #&gt; </div><div class='input'>
 <span class='co'>## Several quality criteria can be resampled simultaneously</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>threecommonfactors</span>, <span class='kw'>model</span>, 
-            .resample_method = <span class='st'>"bootstrap"</span>,
-            .R               = <span class='fl'>40</span>,
-            .user_funs       = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-              <span class='st'>"HTMT"</span> = <span class='kw'>cSEM</span>:::<span class='kw'><a href='calculateHTMT.html'>calculateHTMT</a></span>,
-              <span class='st'>"SRMR"</span> = <span class='kw'>cSEM</span>:::<span class='kw'><a href='fit_measures.html'>calculateSRMR</a></span>,
-              <span class='st'>"RMS_theta"</span> = <span class='kw'>cSEM</span>:::<span class='kw'><a href='fit_measures.html'>calculateRMSTheta</a></span>
-            ),
-            .tolerance = <span class='fl'>1e-04</span>
-)
-<span class='kw'>res</span><span class='op'>$</span><span class='kw'>Estimates</span><span class='op'>$</span><span class='kw'>Estimates_resample</span><span class='op'>$</span><span class='kw'>Estimates1</span><span class='op'>$</span><span class='kw'>HTMT</span><span class='op'>$</span><span class='kw'>Resampled</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, ]
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, 
+            .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>,
+            .R               <span class='op'>=</span> <span class='fl'>40</span>,
+            .user_funs       <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
+              <span class='st'>"HTMT"</span> <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='calculateHTMT.html'>calculateHTMT</a></span>,
+              <span class='st'>"SRMR"</span> <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='fit_measures.html'>calculateSRMR</a></span>,
+              <span class='st'>"RMS_theta"</span> <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='fit_measures.html'>calculateRMSTheta</a></span>
+            <span class='op'>)</span>,
+            .tolerance <span class='op'>=</span> <span class='fl'>1e-04</span>
+<span class='op'>)</span>
+<span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>HTMT</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span>
 </div><div class='output co'>#&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; [1,]    1 0.7723065 0.7967316    0    1 0.6774124    0    0    1
-#&gt; [2,]    1 0.5949810 0.6032386    0    1 0.4969149    0    0    1
-#&gt; [3,]    1 0.6278339 0.7483597    0    1 0.6331425    0    0    1
-#&gt; [4,]    1 0.6959405 0.6628249    0    1 0.5934862    0    0    1</div><div class='input'><span class='kw'>res</span><span class='op'>$</span><span class='kw'>Estimates</span><span class='op'>$</span><span class='kw'>Estimates_resample</span><span class='op'>$</span><span class='kw'>Estimates1</span><span class='op'>$</span><span class='kw'>RMS_theta</span><span class='op'>$</span><span class='kw'>Resampled</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>]
-</div><div class='output co'>#&gt; [1] 0.11169976 0.09470899 0.10281336 0.10520906</div><div class='input'>
+#&gt; [1,]    1 0.6755868 0.6852481    0    1 0.5498478    0    0    1
+#&gt; [2,]    1 0.5963386 0.6339570    0    1 0.5631551    0    0    1
+#&gt; [3,]    1 0.6556417 0.7103320    0    1 0.6769100    0    0    1
+#&gt; [4,]    1 0.6617734 0.6299304    0    1 0.5116820    0    0    1</div><div class='input'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>RMS_theta</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
+</div><div class='output co'>#&gt; [1] 0.11065739 0.10517392 0.10634174 0.09792807</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -600,7 +594,7 @@ eta3 =~ y31 + y32 + y33
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

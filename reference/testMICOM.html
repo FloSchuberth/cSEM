@@ -41,7 +41,7 @@
 
 <meta property="og:title" content="Test measurement invariance of composites — testMICOM" />
 <meta property="og:description" content="The functions performs the permutation-based test for measurement invariance
-of composites across groups proposed by Henseler et al. (2016)
+of composites across groups proposed by Henseler et al. (2016-may)
 .
 According to the authors assessing measurement invariance in composite
 models can be assessed by a three-step procedure. The first two steps
@@ -97,12 +97,6 @@ not assessed by the testMICOM() function." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -157,7 +151,7 @@ not assessed by the testMICOM() function." />
 
     <div class="ref-description">
     <p>The functions performs the permutation-based test for measurement invariance
-of composites across groups proposed by Henseler et al. (2016)
+of composites across groups proposed by Henseler et al. (2016-may)
 .
 According to the authors assessing measurement invariance in composite
 models can be assessed by a three-step procedure. The first two steps
@@ -167,14 +161,14 @@ Assessment of configural invariance is qualitative in nature and hence
 not assessed by the <code>testMICOM()</code> function.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>testMICOM</span>(
- .object               = <span class='kw'>NULL</span>,
- .approach_p_adjust    = <span class='st'>"none"</span>,
- .handle_inadmissibles = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"drop"</span>, <span class='st'>"ignore"</span>, <span class='st'>"replace"</span>), 
- .R                    = <span class='fl'>499</span>,
- .seed                 = <span class='kw'>NULL</span>,
- .verbose              = <span class='fl'>TRUE</span>
- )</pre>
+    <pre class="usage"><span class='fu'>testMICOM</span><span class='op'>(</span>
+ .object               <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .approach_p_adjust    <span class='op'>=</span> <span class='st'>"none"</span>,
+ .handle_inadmissibles <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"drop"</span>, <span class='st'>"ignore"</span>, <span class='st'>"replace"</span><span class='op'>)</span>, 
+ .R                    <span class='op'>=</span> <span class='fl'>499</span>,
+ .seed                 <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .verbose              <span class='op'>=</span> <span class='cn'>TRUE</span>
+ <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -243,29 +237,29 @@ instructions how inadmissible results are to be handled (<code>handle_inadmissib
 and whether the function should be verbose in a sense that progress is printed
 to the console.</p>
 <p>The number of permutation runs defaults to <code>args_default()$.R</code> for
-performance reasons. According to Henseler et al. (2016)
+performance reasons. According to Henseler et al. (2016-may)
 
 the number of permutations should be at least 5000 for assessment to be
 sufficiently reliable.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Henseler J, Ringle CM, Sarstedt M (2016).
+    <p>Henseler J, Ringle CM, Sarstedt M (2016-may).
 &#8220;Testing Measurement Invariance of Composites Using Partial Least Squares.&#8221;
-<em>International Marketing Review</em>, <b>33</b>(3), 405--431.
+<em>International Marketing Review</em>, <b>33</b>, 405--431.
 doi: <a href='https://doi.org/10.1108/imr-09-2014-0304'>10.1108/imr-09-2014-0304</a>
-.</p>
+, <a href='Papers/Henseler2016.pdf'>Papers/Henseler2016.pdf</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <a href='csem_results.html'>cSEMResults</a>, <code><a href='testOMF.html'>testOMF()</a></code>, <code><a href='testMGD.html'>testMGD()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># NOTE: to run the example. Download and load the newst version of cSEM.DGP</span>
 <span class='co'># from GitHub using devtools::install_github("M-E-Rademaker/cSEM.DGP").</span>
 
 <span class='co'># Create two data generating processes (DGPs) that only differ in how the composite</span>
 <span class='co'># X is build. Hence, the two groups are not compositionally invariant.</span>
-<span class='kw'>dgp1</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>dgp1</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Structural model
 Y ~ 0.6*X
 
@@ -276,7 +270,7 @@ X &lt;~ 0.4*x1 + 0.8*x2
 x1 ~~ 0.3125*x2
 "</span>
 
-<span class='kw'>dgp2</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>dgp2</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Structural model
 Y ~ 0.6*X
 
@@ -287,11 +281,11 @@ X &lt;~ 0.8*x1 + 0.4*x2
 x1 ~~ 0.3125*x2
 "</span>
 
-<span class='kw'>g1</span> <span class='op'>&lt;-</span> <span class='fu'>generateData</span>(<span class='kw'>dgp1</span>, .N = <span class='fl'>399</span>, .empirical = <span class='fl'>TRUE</span>) <span class='co'># requires cSEM.DGP </span>
-<span class='kw'>g2</span> <span class='op'>&lt;-</span> <span class='fu'>generateData</span>(<span class='kw'>dgp2</span>, .N = <span class='fl'>200</span>, .empirical = <span class='fl'>TRUE</span>) <span class='co'># requires cSEM.DGP</span>
+<span class='va'>g1</span> <span class='op'>&lt;-</span> <span class='fu'>generateData</span><span class='op'>(</span><span class='va'>dgp1</span>, .N <span class='op'>=</span> <span class='fl'>399</span>, .empirical <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='co'># requires cSEM.DGP </span>
+<span class='va'>g2</span> <span class='op'>&lt;-</span> <span class='fu'>generateData</span><span class='op'>(</span><span class='va'>dgp2</span>, .N <span class='op'>=</span> <span class='fl'>200</span>, .empirical <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='co'># requires cSEM.DGP</span>
 
 <span class='co'># Model is the same for both DGPs</span>
-<span class='kw'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Structural model
 Y ~ X
 
@@ -301,11 +295,11 @@ X &lt;~ x1 + x2
 "</span>
 
 <span class='co'># Estimate</span>
-<span class='kw'>csem_results</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(.data = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"group1"</span> = <span class='kw'>g1</span>, <span class='st'>"group2"</span> = <span class='kw'>g2</span>), <span class='kw'>model</span>)
+<span class='va'>csem_results</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span>.data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"group1"</span> <span class='op'>=</span> <span class='va'>g1</span>, <span class='st'>"group2"</span> <span class='op'>=</span> <span class='va'>g2</span><span class='op'>)</span>, <span class='va'>model</span><span class='op'>)</span>
 
 <span class='co'># Test</span>
-<span class='fu'>testMICOM</span>(<span class='kw'>csem_results</span>, .R = <span class='fl'>50</span>, .alpha = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.01</span>, <span class='fl'>0.05</span>), .seed = <span class='fl'>1987</span>)
-}
+<span class='fu'>testMICOM</span><span class='op'>(</span><span class='va'>csem_results</span>, .R <span class='op'>=</span> <span class='fl'>50</span>, .alpha <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.01</span>, <span class='fl'>0.05</span><span class='op'>)</span>, .seed <span class='op'>=</span> <span class='fl'>1987</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -322,7 +316,7 @@ X &lt;~ x1 + x2
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

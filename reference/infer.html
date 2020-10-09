@@ -94,12 +94,6 @@ different confidence interval estimates." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -161,14 +155,14 @@ user-friendly print method. <code>infer()</code> is useful for comparing
 different confidence interval estimates.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>infer</span>(
- .object            = <span class='kw'>NULL</span>,
- .quantity          = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"mean"</span>, <span class='st'>"sd"</span>, <span class='st'>"bias"</span>, <span class='st'>"CI_standard_z"</span>, 
+    <pre class="usage"><span class='fu'>infer</span><span class='op'>(</span>
+ .object            <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .quantity          <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"mean"</span>, <span class='st'>"sd"</span>, <span class='st'>"bias"</span>, <span class='st'>"CI_standard_z"</span>, 
                         <span class='st'>"CI_standard_t"</span>, <span class='st'>"CI_percentile"</span>, <span class='st'>"CI_basic"</span>, 
-                        <span class='st'>"CI_bc"</span>, <span class='st'>"CI_bca"</span>, <span class='st'>"CI_t_interval"</span>),
- .alpha             = <span class='fl'>0.05</span>,
- .bias_corrected    = <span class='fl'>TRUE</span>
-)</pre>
+                        <span class='st'>"CI_bc"</span>, <span class='st'>"CI_bca"</span>, <span class='st'>"CI_t_interval"</span><span class='op'>)</span>,
+ .alpha             <span class='op'>=</span> <span class='fl'>0.05</span>,
+ .bias_corrected    <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -224,7 +218,7 @@ contained in the object. By default all possible quantities are
 computed (<code>.quantity = all</code>). The following table list the available
 inferential quantities alongside a brief description. Implementation and
 terminology of the confidence intervals is based on
-Hesterberg (2015)
+Hesterberg (2015-oct)
  and
 Davison and Hinkley (1997)
 .</p><dl>
@@ -241,7 +235,7 @@ standard normally distributed statistic,
 upper bounds of the confidence interval are estimated as the alpha and
 1-alpha quantiles of the distribution of the resample estimates.</p></dd>
 <dt><code>"CI_basic"</code></dt><dd><p>The basic confidence interval also called the reverse
-bootstrap percentile confidence interval. See Hesterberg (2015)for details.</p></dd>
+bootstrap percentile confidence interval. See Hesterberg (2015-oct)for details.</p></dd>
 <dt><code>"CI_bc"</code></dt><dd><p>The bias corrected (Bc) confidence interval. See
 Davison and Hinkley (1997)
  for details.</p></dd>
@@ -251,7 +245,7 @@ See Davison and Hinkley (1997)
  for details.</p></dd>
 <dt><code>"CI_t_interval"</code></dt><dd><p>The "studentized" t-confidence interval. If based on bootstrap
 resamples the interval is also called the bootstrap t-interval
-confidence interval. See Hesterberg (2015)
+confidence interval. See Hesterberg (2015-oct)
  on page 381.
 Requires resamples of resamples. See <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code>.</p></dd>
 
@@ -270,9 +264,9 @@ Hence, computation is triggered only if explicitly chosen.</p>
 <em>Bootstrap Methods and their Application</em>.
 Cambridge University Press.
 doi: <a href='https://doi.org/10.1017/cbo9780511802843'>10.1017/cbo9780511802843</a>
-.<br /><br /> Hesterberg TC (2015).
+.<br /><br /> Hesterberg TC (2015-oct).
 &#8220;What Teachers Should Know About the Bootstrap: Resampling in the Undergraduate Statistics Curriculum.&#8221;
-<em>The American Statistician</em>, <b>69</b>(4), 371--386.
+<em>The American Statistician</em>, <b>69</b>, 371--386.
 doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.2015.1089789</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -280,7 +274,7 @@ doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.20
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code>, <code><a href='summarize.html'>summarize()</a></code> <a href='csem_results.html'>cSEMResults</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
+    <pre class="examples"><div class='input'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Structural model
 QUAL ~ EXPE
 EXPE ~ IMAG
@@ -298,37 +292,37 @@ VAL  =~ val1  + val2  + val3  + val4
 "</span>
   
 <span class='co'>## Estimate the model with bootstrap resampling </span>
-<span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>satisfaction</span>, <span class='kw'>model</span>, .resample_method = <span class='st'>"bootstrap"</span>, .R = <span class='fl'>20</span>,
-          .handle_inadmissibles = <span class='st'>"replace"</span>)
+<span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>satisfaction</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R <span class='op'>=</span> <span class='fl'>20</span>,
+          .handle_inadmissibles <span class='op'>=</span> <span class='st'>"replace"</span><span class='op'>)</span>
 
 <span class='co'>## Compute inferential quantities</span>
-<span class='kw'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span>(<span class='kw'>a</span>)
+<span class='va'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
 
-<span class='kw'>inf</span><span class='op'>$</span><span class='kw'>Path_estimates</span><span class='op'>$</span><span class='kw'>CI_basic</span>
-</div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE
-#&gt; 95%L   0.6292389    1.013431  -5.166487   4.625955 -0.1896639   1.510150
-#&gt; 95%U   0.7503610    1.048103  -3.695398   6.035358  0.0913784   3.265823
-#&gt;      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT
-#&gt; 95%L  -4.603083  1.616589 0.08571387 0.3684970
-#&gt; 95%U  -2.238648  2.434707 0.47178354 0.7486507</div><div class='input'><span class='kw'>inf</span><span class='op'>$</span><span class='kw'>Indirect_effect</span><span class='op'>$</span><span class='kw'>sd</span>
+<span class='va'>inf</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_basic</span>
+</div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL    SAT ~ IMAG SAT ~ EXPE
+#&gt; 95%L   0.5290259    1.019897  -5.776118   4.808677 -0.2983679097   2.276938
+#&gt; 95%U   0.7005415    1.070600  -3.913340   6.592206 -0.0003368103   3.431597
+#&gt;      SAT ~ QUAL SAT ~ VAL  LOY ~ IMAG LOY ~ SAT
+#&gt; 95%L  -4.679546  1.834695 -0.06003587 0.3979549
+#&gt; 95%U  -3.173696  2.574538  0.42761565 0.8940787</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
 </div><div class='output co'>#&gt; QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL 
-#&gt;  0.03811874  0.04023791  0.42966751  0.05245845  0.54546591  0.56979432 
+#&gt;  0.05259032  0.06013673  0.50719804  0.08473078  0.32213696  0.59043591 
 #&gt;  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL 
-#&gt;  0.05516174  0.08916087  0.35534648  0.17017255 </div><div class='input'>
+#&gt;  0.07851389  0.10637065  0.38565150  0.16374172 </div><div class='input'>
 <span class='co'>### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span>
 <span class='co'>## For the studentied t-interval confidence interval a double bootstrap is required.</span>
 <span class='co'>## This is pretty time consuming.</span>
-<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-  <span class='kw'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span>(<span class='kw'>a</span>, .quantity = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"CI_bca"</span>)) <span class='co'># requires jackknife estimates </span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span><span class='op'>(</span><span class='va'>a</span>, .quantity <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"CI_bca"</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># requires jackknife estimates </span>
   
 <span class='co'>## Estimate the model with double bootstrap resampling:</span>
 <span class='co'># Notes:</span>
 <span class='co'>#   1. The .resample_method2 arguments triggers a bootstrap of each bootstrap sample</span>
 <span class='co'>#   2. The double bootstrap is is very time consuming, consider setting </span>
 <span class='co'>#      `.eval_plan = "multiprocess`. </span>
-<span class='kw'>a1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>satisfaction</span>, <span class='kw'>model</span>, .resample_method = <span class='st'>"bootstrap"</span>, .R = <span class='fl'>499</span>,
-          .resample_method2 = <span class='st'>"bootstrap"</span>, .R2 = <span class='fl'>199</span>, .handle_inadmissibles = <span class='st'>"replace"</span>) 
-<span class='fu'>infer</span>(<span class='kw'>a1</span>, .quantity = <span class='st'>"CI_t_interval"</span>)}
+<span class='va'>a1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>satisfaction</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R <span class='op'>=</span> <span class='fl'>499</span>,
+          .resample_method2 <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R2 <span class='op'>=</span> <span class='fl'>199</span>, .handle_inadmissibles <span class='op'>=</span> <span class='st'>"replace"</span><span class='op'>)</span> 
+<span class='fu'>infer</span><span class='op'>(</span><span class='va'>a1</span>, .quantity <span class='op'>=</span> <span class='st'>"CI_t_interval"</span><span class='op'>)</span><span class='op'>}</span>
 
 </div></pre>
   </div>
@@ -346,7 +340,7 @@ VAL  =~ val1  + val2  + val3  + val4
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

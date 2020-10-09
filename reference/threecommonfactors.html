@@ -90,12 +90,6 @@ population model with three concepts modeled as common factors." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/cSEM.html">Get started</a>
 </li>
 <li>
@@ -153,7 +147,7 @@ population model with three concepts modeled as common factors." />
 population model with three concepts modeled as common factors.</p>
     </div>
 
-    <pre class="usage"><span class='kw'>threecommonfactors</span></pre>
+    <pre class="usage"><span class='va'>threecommonfactors</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -177,7 +171,7 @@ $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
     <pre class="examples"><div class='input'><span class='co'>#============================================================================</span>
 <span class='co'># Correct model (the model used to generate the data)</span>
 <span class='co'>#============================================================================</span>
-<span class='kw'>model_correct</span> <span class='op'>&lt;-</span> <span class='st'>"
+<span class='va'>model_correct</span> <span class='op'>&lt;-</span> <span class='st'>"
 # Structural model
 eta2 ~ eta1
 eta3 ~ eta1 + eta2
@@ -188,10 +182,10 @@ eta2 =~ y21 + y22 + y23
 eta3 =~ y31 + y32 + y33 
 "</span>
 
-<span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span>(<span class='kw'>threecommonfactors</span>, <span class='kw'>model_correct</span>)
+<span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model_correct</span><span class='op'>)</span>
 
 <span class='co'>## The overall model fit is evidently almost perfect:</span>
-<span class='fu'><a href='testOMF.html'>testOMF</a></span>(<span class='kw'>a</span>, .R = <span class='fl'>30</span>, .verbose = <span class='fl'>FALSE</span>) <span class='co'># .R = 30 to speed up the example</span>
+<span class='fu'><a href='testOMF.html'>testOMF</a></span><span class='op'>(</span><span class='va'>a</span>, .R <span class='op'>=</span> <span class='fl'>30</span>, .verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span> <span class='co'># .R = 30 to speed up the example</span>
 </div><div class='output co'>#&gt; ________________________________________________________________________________
 #&gt; --------- Test for overall model fit based on Beran &amp; Srivastava (1985) --------
 #&gt; 
@@ -208,10 +202,10 @@ eta3 =~ y31 + y32 + y33
 #&gt; 
 #&gt; 	                                  	Critical value
 #&gt; 	Distance measure    Test statistic	  95% 	
-#&gt; 	dG                      0.0060    	0.0161	
-#&gt; 	SRMR                    0.0158    	0.0262	
-#&gt; 	dL                      0.0112    	0.0310	
-#&gt; 	dML                     0.0320    	0.0853	
+#&gt; 	dG                      0.0060    	0.0171	
+#&gt; 	SRMR                    0.0158    	0.0260	
+#&gt; 	dL                      0.0112    	0.0304	
+#&gt; 	dML                     0.0320    	0.0904	
 #&gt; 	
 #&gt; 
 #&gt; Decision: 
@@ -228,7 +222,7 @@ eta3 =~ y31 + y32 + y33
 #&gt; 	Out of 30 bootstrap replications 30 are admissible.
 #&gt; 	See </span><span style='color: #BBBB00;'>?</span><span style='color: #BB00BB;'>verify</span><span>() for what constitutes an inadmissible result.
 #&gt; 
-#&gt; 	The seed used was: -1149271026
+#&gt; 	The seed used was: -1628135669
 #&gt; ________________________________________________________________________________</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -245,7 +239,7 @@ eta3 =~ y31 + y32 + y33
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
