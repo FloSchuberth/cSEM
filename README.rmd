@@ -67,7 +67,7 @@ knitr::include_graphics("man/figures/api.png")
 
 Usully, using `cSEM` is the same 3 step procedure:
 
-> 1. Pick a dataset and specify a model using [lavaan syntax](http://lavaan.ugent.be/tutorial/syntax1.html)
+> 1. Pick a dataset and specify a model using [lavaan syntax](https://lavaan.ugent.be/tutorial/syntax1.html)
 > 2. Use `csem()`
 > 3. Apply one of the postestimation functions listed below on the resulting object.
 
@@ -101,7 +101,7 @@ Currently, three do functions are implemented:
 All functions require a `cSEMResults` object.
 
 ## Example
-Models are defined using [lavaan syntax](http://lavaan.ugent.be/tutorial/syntax1.html) 
+Models are defined using [lavaan syntax](https://lavaan.ugent.be/tutorial/syntax1.html) 
 with some slight modifications (see the [Specifying a model](https://m-e-rademaker.github.io/cSEM/articles/cSEM.html#using-csem) section on the [cSEM-website](https://m-e-rademaker.github.io/cSEM/)). For illustration we use the build-in and well-known 
 `satisfaction` dataset.
 

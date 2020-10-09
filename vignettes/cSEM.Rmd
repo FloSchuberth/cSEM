@@ -168,7 +168,7 @@ The idea of cSEM is twofold:
 
 1. Provide a unified framework to all common composite-based SEM approaches, 
    including typical postestimation procedures. In principal, it should be 
-   similar to what [lavaan](http://lavaan.ugent.be/) does for covariance-bases/factor-based SEM.
+   similar to what [lavaan](https://lavaan.ugent.be/) does for covariance-bases/factor-based SEM.
 2. Make the user experience as hassle-free as possible. 
 
 The first point is an always ongoing task since approaches are constantly evolving
@@ -181,12 +181,12 @@ only comprises three steps:
 1. **Get the essential**: no estimator or approach works without data and a description
    of what parameters are to be estimated and how data is related to these parameters, 
    i.e. a model. Hence, we always need a data set and model.
-   Since, model specification in [lavaan model syntax](http://lavaan.ugent.be/tutorial/syntax1.html) is probably unbeatable in its
-   ease and well known to R users that have an interest in SEM, to us, [lavaan model syntax](http://lavaan.ugent.be/tutorial/syntax1.html) 
+   Since, model specification in [lavaan model syntax](https://lavaan.ugent.be/tutorial/syntax1.html) is probably unbeatable in its
+   ease and well known to R users that have an interest in SEM, to us, [lavaan model syntax](https://lavaan.ugent.be/tutorial/syntax1.html) 
    is the obvious tool for users to specify their model. Experience tells,
    that for R beginners the biggest obstacle has been to get the data into R. 
    However, largely thanks to the [tidyverse](https://www.tidyverse.org/) and 
-   [RStudio](https://www.rstudio.com), data import and data transformation 
+   [RStudio](https://rstudio.com), data import and data transformation 
    are nowadays relatively easy to handle. See the [Preparing the data](#preparedata)
    and the [Specifying a model](#specifyingamodel) sections below.
 1. **Estimate**: no matter the model and type of data, estimation is always done using one
@@ -255,7 +255,7 @@ data import and data processing capabilities. While these topics may have been
 overwhelming for newcomers several years ago, data import and data transformation
 have become extremely simple and user-friendly if the right tools packages
 are used. The best place to start is
-the [Rstudio Cheat sheet webpage](https://www.rstudio.com/resources/cheatsheets/),
+the [Rstudio Cheat sheet webpage](https://rstudio.com/resources/cheatsheets/),
 especially the *Data Import* and the *Data Transformation* cheat sheets.
 
 **cSEM** is relatively flexible as to the type of data accepted. Currently the following
@@ -306,7 +306,7 @@ at least the basic approaches for handling missing values. Regularly check <http
 to get the latest updates.
 
 ### Specify a model {#specifyingamodel}
-Models are defined using [lavaan model syntax](http://lavaan.ugent.be/tutorial/syntax1.html).
+Models are defined using [lavaan model syntax](https://lavaan.ugent.be/tutorial/syntax1.html).
 Currently, only the "standard" lavaan model syntax is supported. This comprises:
 
 1. The definition of a latent variable/common factor (or more precisely: the definition of a concept
@@ -319,7 +319,7 @@ Currently, only the "standard" lavaan model syntax is supported. This comprises:
 
 **cSEM** handles linear, nonlinear and hierarchical models. Syntax for each
 model is illustrated below using variables of the build-in `satisfaction` dataset.
-For more information see the [lavaan syntax tutorial](http://lavaan.ugent.be/tutorial/syntax1.html).
+For more information see the [lavaan syntax tutorial](https://lavaan.ugent.be/tutorial/syntax1.html).
 
 #### Linear models
 A typical linear model would look like this:
@@ -737,7 +737,7 @@ csem(threecommonfactors, model, .approach_weights = "regression")
       is most advanced, the PLS algorithm remains a weighting scheme in its core.
       
 [Assess]: https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html
-[Lavaan]: http://lavaan.ugent.be/tutorial/index.html
+[Lavaan]: https://lavaan.ugent.be/tutorial/index.html
 [Notation]: https://m-e-rademaker.github.io/cSEM/articles/Notation.html
 [Testing]: https://m-e-rademaker.github.io/cSEM/articles/Using-test.html
 [Terminology]: https://m-e-rademaker.github.io/cSEM/articles/Terminology.html

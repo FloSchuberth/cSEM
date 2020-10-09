@@ -21,7 +21,7 @@ A data frame of 75 observations of 11 variables.
 }
 }
 \source{
-The \href{http://lavaan.ugent.be/}{lavaan} package (version 0.6-3).
+The \href{https://lavaan.ugent.be/}{lavaan} package (version 0.6-3).
 }
 \usage{
 PoliticalDemocracy

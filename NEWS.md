@@ -1,5 +1,7 @@
 # Development version: cSEM 0.2.0:9000
 
+- Add lifecylce badges to postestimation functions.(#376)
+
 - Some arguments accepted by `assess()`'s `...` argument had not been documented
   properly. This has been fixed. See `args_assess_dotdotdot` for a complete list of
   available arguments.

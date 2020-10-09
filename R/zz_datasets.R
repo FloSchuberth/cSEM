@@ -201,7 +201,7 @@
 #'    \item{\code{x3}}{The percentage of the labor force in industry in 1960}
 #' }
 #'
-#' @source The \href{http://lavaan.ugent.be/}{lavaan} package (version 0.6-3).
+#' @source The \href{https://lavaan.ugent.be/}{lavaan} package (version 0.6-3).
 #' @references
 #'   \insertAllCited{}            
 #' @examples 
