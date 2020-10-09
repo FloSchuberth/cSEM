@@ -1,4 +1,6 @@
 #' Summarize model
+#' 
+#' \lifecycle{stable}
 #'
 #' The summary is mainly focused on estimated parameters. For quality criteria 
 #' such as the average variance extracted (AVE), reliability estimates, 

@@ -1,4 +1,6 @@
 #' Tests for multi-group comparisons
+#' 
+#' \lifecycle{stable}
 #'
 #' This function performs various tests proposed in the context of multigroup analysis.
 #'  

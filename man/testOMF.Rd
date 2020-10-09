@@ -58,11 +58,13 @@ The seed used and the number of total runs.}
 }
 }
 \description{
+\lifecycle{maturing}
+}
+\details{
 Bootstrap-based test for overall model fit originally proposed by \insertCite{Beran1985;textual}{cSEM}.
 See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in
 the context of PLS-PM.
-}
-\details{
+
 By default, \code{testOMF()} tests the null hypothesis that the population indicator
 correlation matrix equals the population model-implied indicator correlation matrix.
 Several discrepancy measures may be used. By default, \code{testOMF()} uses four distance

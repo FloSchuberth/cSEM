@@ -1,5 +1,7 @@
 #' Predict indicator scores
 #'
+#'\lifecycle{maturing}
+#'
 #' Predict the indicator scores of endogenous constructs.
 #' 
 #' Predict uses the procedure introduced by \insertCite{Shmueli2016;textual}{cSEM} in the context of

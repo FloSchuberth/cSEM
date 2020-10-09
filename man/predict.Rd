@@ -61,9 +61,11 @@ MAE, RMSE, and Q2_predict.}
 }
 }
 \description{
-Predict the indicator scores of endogenous constructs.
+\lifecycle{maturing}
 }
 \details{
+Predict the indicator scores of endogenous constructs.
+
 Predict uses the procedure introduced by \insertCite{Shmueli2016;textual}{cSEM} in the context of
 PLS (commonly called: "PLSPredict" \insertCite{Shmueli2019}{cSEM}).
 Predict uses k-fold cross-validation to randomly

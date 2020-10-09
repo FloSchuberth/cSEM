@@ -1,5 +1,7 @@
 #' Assess model
 #'
+#' \lifecycle{maturing}
+#' 
 #' Assess a model using common quality criteria.
 #' See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
 #' article on the

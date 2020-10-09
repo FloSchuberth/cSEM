@@ -44,6 +44,9 @@ A list of class \code{cSEMNonlinearEffects} with a corresponding method
 for \code{plot()}. See: \code{\link[=plot.cSEMNonlinearEffects]{plot.cSEMNonlinearEffects()}}.
 }
 \description{
+\lifecycle{maturing}
+}
+\details{
 Calculate the expected value of the dependent variable conditional on the values of
 an independent variables and a moderator variable. All other variables in the model
 are assumed to be zero, i.e., they are fixed at their mean levels. Moreover, it produces

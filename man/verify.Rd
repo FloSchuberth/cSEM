@@ -26,9 +26,11 @@ second-order constructs).
 }
 }
 \description{
-Verify admissibility of the results obtained using \code{\link[=csem]{csem()}}.
+\lifecycle{stable}
 }
 \details{
+Verify admissibility of the results obtained using \code{\link[=csem]{csem()}}.
+
 Results exhibiting one of the following defects are deemed inadmissible:
 non-convergence of the algorithm used to obtain weights, loadings and/or
 (congeneric) reliabilities larger than 1, a construct variance-covariance (VCV) and/or

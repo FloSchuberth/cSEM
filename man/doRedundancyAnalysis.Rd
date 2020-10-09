@@ -15,10 +15,12 @@ the weighting approach used to obtain \code{.object} is not \code{"PLS-PM"} or
 non of the PLS outer modes was mode B, the function silently returns \code{NA}.
 }
 \description{
-Perform a redundancy analysis (RA) as proposed by \insertCite{Hair2016;textual}{cSEM}
-with reference to \insertCite{Chin1998;textual}{cSEM}.
+\lifecycle{stable}
 }
 \details{
+Perform a redundancy analysis (RA) as proposed by \insertCite{Hair2016;textual}{cSEM}
+with reference to \insertCite{Chin1998;textual}{cSEM}.
+
 RA is confined to PLS-PM, specifically PLS-PM with at least one construct
 whose weights are obtained by mode B. In cSEM this is the case if the construct
 is modeled as a composite or if argument \code{.PLS_modes} was explicitly set to

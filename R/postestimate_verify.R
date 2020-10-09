@@ -1,4 +1,6 @@
 #' Verify admissibility
+#' 
+#' \lifecycle{stable}
 #'
 #' Verify admissibility of the results obtained using [csem()].
 #' 

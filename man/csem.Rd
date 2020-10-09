@@ -216,6 +216,9 @@ data provided to the \code{.model} and \code{.data} arguments. The third class a
 For a details see the \link[=cSEMResults]{cSEMResults helpfile }.
 }
 \description{
+\lifecycle{stable}
+}
+\details{
 Estimate linear, nonlinear, hierarchical or multigroup structural equation
 models using a composite-based approach. In \pkg{cSEM}
 any method or approach that involves linear compounds (scores/proxies/composites)
@@ -223,8 +226,7 @@ of observables (indicators/items/manifest variables) is defined as composite-bas
 See the \href{https://m-e-rademaker.github.io/cSEM/articles/cSEM.html}{Get started}
 section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
 for a general introduction to composite-based SEM and \pkg{cSEM}.
-}
-\details{
+
 \code{csem()} estimates linear, nonlinear, hierarchical  or multigroup structural
 equation models using a composite-based approach.
 

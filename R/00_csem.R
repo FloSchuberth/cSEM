@@ -1,5 +1,7 @@
 #' Composite-based SEM
 #'
+#'\lifecycle{stable}
+#'
 #' Estimate linear, nonlinear, hierarchical or multigroup structural equation
 #' models using a composite-based approach. In \pkg{cSEM} 
 #' any method or approach that involves linear compounds (scores/proxies/composites)

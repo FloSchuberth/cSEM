@@ -117,6 +117,9 @@ hypotheses was rejected; if FALSE it was not rejected.}
 }
 }
 \description{
+\lifecycle{stable}
+}
+\details{
 This function performs various tests proposed in the context of multigroup analysis.
 
 The following tests are implemented:
@@ -205,8 +208,7 @@ parameter estimates of the two groups. If the two CIs overlap, it can be conclud
 that there is no group difference.
 Since it is based on the confidence intervals \code{.approach_p_adjust} is ignored.}
 }
-}
-\details{
+
 Use \code{.approach_mgd} to choose the approach. By default all approaches are computed
 (\code{.approach_mgd = "all"}).
 

@@ -35,11 +35,13 @@ The data frame format is usually much more convenient if users intend to
 present the results in e.g., a paper or a presentation.
 }
 \description{
+\lifecycle{stable}
+}
+\details{
 The summary is mainly focused on estimated parameters. For quality criteria
 such as the average variance extracted (AVE), reliability estimates,
 effect size estimates etc., use \code{\link[=assess]{assess()}}.
-}
-\details{
+
 If \code{.object} contains resamples, standard errors, t-values and p-values
 (assuming estimates are standard normally distributed) are printed as well.
 By default the percentile confidence interval is given as well. For other

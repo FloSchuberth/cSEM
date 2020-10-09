@@ -1,4 +1,6 @@
 #' Inference
+#' 
+#' \lifecycle{stable}
 #'
 #' Calculate common inferential quantities. For users interested in the
 #' estimated standard errors, t-values, p-values and/or confidences

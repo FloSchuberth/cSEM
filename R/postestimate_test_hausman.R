@@ -1,5 +1,7 @@
 #' Regression-based Hausman test
 #' 
+#' \lifecycle{experimental}
+#' 
 #' Calculates the regression-based Hausman test to be used to compare 
 #' OLS to 2SLS estimates or 2SLS to 3SLS estimates. See e.g., \insertCite{Wooldridge2010;textual}{cSEM}
 #' (pages 131 f.) for details.

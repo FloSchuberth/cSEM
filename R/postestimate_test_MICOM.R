@@ -1,4 +1,6 @@
 #' Test measurement invariance of composites
+#' 
+#' \lifecycle{stable}
 #'
 #' The functions performs the permutation-based test for measurement invariance 
 #' of composites across groups proposed by \insertCite{Henseler2016;textual}{cSEM}. 

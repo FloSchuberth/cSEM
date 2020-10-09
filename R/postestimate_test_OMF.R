@@ -1,4 +1,6 @@
 #' Test for overall model fit
+#' 
+#' \lifecycle{maturing}
 #'
 #' Bootstrap-based test for overall model fit originally proposed by \insertCite{Beran1985;textual}{cSEM}. 
 #' See also \insertCite{Dijkstra2015;textual}{cSEM} who first suggested the test in 

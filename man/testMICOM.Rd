@@ -50,6 +50,9 @@ A named list of class \code{cSEMTestMICOM} containing the following list element
 }
 }
 \description{
+\lifecycle{stable}
+}
+\details{
 The functions performs the permutation-based test for measurement invariance
 of composites across groups proposed by \insertCite{Henseler2016;textual}{cSEM}.
 According to the authors assessing measurement invariance in composite
@@ -58,8 +61,7 @@ involve an assessment of configural and compositional invariance.
 The third steps involves mean and variance comparisons across groups.
 Assessment of configural invariance is qualitative in nature and hence
 not assessed by the \code{\link[=testMICOM]{testMICOM()}} function.
-}
-\details{
+
 As \code{\link[=testMICOM]{testMICOM()}} requires at least two groups, \code{.object} must be of
 class \code{cSEMResults_multi}. As of version 0.2.0 of the package, \code{\link[=testMICOM]{testMICOM()}}
 does not support models containing second-order constructs.

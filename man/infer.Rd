@@ -36,14 +36,16 @@ Defaults to \code{TRUE}}
 A list of class \code{cSEMInfer}.
 }
 \description{
+\lifecycle{stable}
+}
+\details{
 Calculate common inferential quantities. For users interested in the
 estimated standard errors, t-values, p-values and/or confidences
 intervals of the path, weight or loading estimates, calling \code{\link[=summarize]{summarize()}}
 directly will usually be more convenient as it has a much more
 user-friendly print method. \code{\link[=infer]{infer()}} is useful for comparing
 different confidence interval estimates.
-}
-\details{
+
 \code{\link[=infer]{infer()}} is a convenience wrapper around a
 number of internal functions that compute a particular inferential
 quantity, i.e., a value or set of values to be used in statistical inference.

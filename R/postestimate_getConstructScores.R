@@ -1,4 +1,6 @@
 #' Get construct scores
+#' 
+#' \lifecycle{stable}
 #'
 #' Get the standardized or unstandardized construct scores.
 #' 

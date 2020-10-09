@@ -14,9 +14,11 @@ A list of class \code{cSEMIPA} with a corresponding method for \code{plot()}.
 See: \code{\link[=plot.cSEMIPMA]{plot.cSEMIPMA()}}.
 }
 \description{
-Performs an importance-performance matrix analysis (IPMA).
+\lifecycle{maturing}
 }
 \details{
+Performs an importance-performance matrix analysis (IPMA).
+
 To calculate the performance and importance, the weights of the indicators
 are unstandardized using the standard deviation of the original
 indicators but normed to have a length of 1.

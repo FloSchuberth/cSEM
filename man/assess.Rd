@@ -42,12 +42,14 @@ A named list of quality criteria. Note that if only a single quality
 criteria is computed the return value is still a list!
 }
 \description{
+\lifecycle{maturing}
+}
+\details{
 Assess a model using common quality criteria.
 See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
 article on the
 \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
-}
-\details{
+
 The function is essentially a wrapper around a number of internal functions
 that perform an "assessment task" (called a \strong{quality criterion} in \pkg{cSEM}
 parlance) like computing reliability estimates,
