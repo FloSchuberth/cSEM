@@ -334,6 +334,7 @@ NULL
 #' \item{.ci}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
 #' \item{.handle_inadmissibles}{Accepted by/Passed down to: [calculateHTMT()]}
+#' \item{.inference}{Accepted by/Passed down to: [calculateHTMT]}
 #' \item{.null_model}{Accepted by/Passed down to: [calculateDf()]}
 #' \item{.R}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.saturated}{Accepted by/Passed down to: [calculateSRMR()], 

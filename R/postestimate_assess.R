@@ -462,7 +462,6 @@ assess <- function(
     }
   }
   if(any(.quality_criterion %in% c("all", "srmr"))) {
-    # Effect size
     out[["SRMR"]] <- calculateSRMR(.object, ...)
   }
   if(any(.quality_criterion %in% c("all", "fl_criterion"))) {

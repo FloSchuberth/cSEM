@@ -65,6 +65,7 @@ list shows which argument is passed to which function:
 \item{.ci}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.closed_form_ci}{Accepted by/Passed down to: \code{\link[=calculateRhoT]{calculateRhoT()}}}
 \item{.handle_inadmissibles}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
+\item{.inference}{Accepted by/Passed down to: \link{calculateHTMT}}
 \item{.null_model}{Accepted by/Passed down to: \code{\link[=calculateDf]{calculateDf()}}}
 \item{.R}{Accepted by/Passed down to: \code{\link[=calculateHTMT]{calculateHTMT()}}}
 \item{.saturated}{Accepted by/Passed down to: \code{\link[=calculateSRMR]{calculateSRMR()}},
