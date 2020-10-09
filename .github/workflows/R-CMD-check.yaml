@@ -1,10 +1,4 @@
-on:
-  push:
-    branches:
-      - github-actions
-  pull_request:
-    branches:
-      - master
+on: [push, pull-request]
 
 name: R-CMD-check
 

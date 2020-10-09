@@ -1,6 +1,6 @@
 on:
   push:
-    branches: github-actions
+    branches: master
 
 name: Gh-pages deployment
 
