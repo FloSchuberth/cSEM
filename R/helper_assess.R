@@ -1046,7 +1046,8 @@ calculateRhoT <- function(
 #'  .inference            = FALSE,
 #'  .only_common_factors  = TRUE,
 #'  .R                    = 499,
-#'  .seed                 = NULL
+#'  .seed                 = NULL,
+#'  ...
 #' )
 #'
 #' @inheritParams csem_arguments
@@ -1056,12 +1057,18 @@ calculateRhoT <- function(
 #'   to compute the 1-alpha% quantile of the bootstrap HTMT values. For possible 
 #'   choices see [infer()]. Ignored
 #'   if `.inference = FALSE`. Defaults to "*CI_percentile*".
+#' @param ... Ignored.
 #'
 #' @return A lower tringular matrix of HTMT values. If `.inference = TRUE`
 #'   the upper tringular part is the 1-.alpha%-quantile of the HTMT's bootstrap
 #'   distribution.
 #' 
 #' @seealso [assess()], [csem], [cSEMResults]
+#' 
+#' @references 
+#' 
+#' \insertAllCited{}
+#' 
 #' @export
 
 calculateHTMT <- function(
@@ -1074,7 +1081,8 @@ calculateHTMT <- function(
   .inference            = FALSE,
   .only_common_factors  = TRUE,
   .R                    = 499,
-  .seed                 = NULL
+  .seed                 = NULL,
+  ...
 ){
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   .ci                   <- match.arg(.ci) # allow only one CI
@@ -1452,11 +1460,11 @@ calculateCFI <- function(.object) {
 #' @describeIn fit_measures The goodness of fit index (GFI).
 #' @export
 
-calculateGFI <- function(.object, .type = c("ML", "GLS", "ULS")) {
-  .type <- match.arg(.type)
+calculateGFI <- function(.object, .type_gfi = c("ML", "GLS", "ULS"), ...) {
+  .type_gfi <- match.arg(.type_gfi)
 
   if(inherits(.object, "cSEMResults_multi")) {
-    out <- lapply(.object, calculateGFI, .type = .type)
+    out <- lapply(.object, calculateGFI, .type_gfi = .type_gfi)
     return(out)
   }
   if(inherits(.object, "cSEMResults_default")) {
@@ -1472,16 +1480,16 @@ calculateGFI <- function(.object, .type = c("ML", "GLS", "ULS")) {
   
   Sigma_hat <- fit(.object)
   
-  if(.type == "ML") {
+  if(.type_gfi == "ML") {
     # If ML; See Mulaik (1989, p. 345)
     1 - matrixcalc::matrix.trace(t(solve(Sigma_hat) %*% S - diag(nrow(S))) %*% 
                                    (solve(Sigma_hat) %*% S - diag(nrow(S)))) / 
       matrixcalc::matrix.trace(t(solve(Sigma_hat) %*% S) %*% (solve(Sigma_hat) %*% S))
-  } else if(.type == "GLS") {
+  } else if(.type_gfi == "GLS") {
     # If GLS; See Tanaka & Huba (1985, p. 199; Eq. 16)
     1 - matrixcalc::matrix.trace(t(diag(nrow(S)) - Sigma_hat %*% solve(S)) %*% 
                                    (diag(nrow(S)) - Sigma_hat %*% solve(S))) / nrow(S)
-  } else if(.type == "ULS") {
+  } else if(.type_gfi == "ULS") {
     # If ULS; See Mulaik (1989, p. 345)
     1 - matrixcalc::matrix.trace(t(S - Sigma_hat) %*% (S - Sigma_hat)) / 
       matrixcalc::matrix.trace(t(S) %*% S)
@@ -1491,7 +1499,7 @@ calculateGFI <- function(.object, .type = c("ML", "GLS", "ULS")) {
 #' @describeIn fit_measures The Hoelter index alias Hoelter's (critical) N (CN).
 #' @export
 
-calculateCN <- function(.object, .alpha = 0.05) {
+calculateCN <- function(.object, .alpha = 0.05, ...) {
   
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, calculateCN)

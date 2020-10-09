@@ -274,7 +274,7 @@
 #'   training data.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
-#' @param .type Character string. Which fitting function should the GFI be based 
+#' @param .type_gfi Character string. Which fitting function should the GFI be based 
 #'   on? One of *"ML"* for the maximum likelihood fitting function, *"GLS"* for 
 #'   the generalized least squares fitting function or *"ULS"* for the
 #'   unweighted least squares fitting function (same as the squared Euclidian distance). 
@@ -320,17 +320,18 @@
 #' @keywords internal
 NULL
 
-#' Internal: Complete list of assess()'s ... arguments
+#' Complete list of assess()'s ... arguments
 #' 
 #' A complete alphabetical list of all possible arguments accepted by `assess()`'s `...` 
 #' (dotdotdot) argument.
 #' 
 #' Most arguments supplied to the `...` argument of `assess()` are only
 #' accepted by a subset of the functions called by `assess()`. The following
-#' list shows which argument is passed to which (internal) function:
+#' list shows which argument is passed to which function:
 #' \describe{
 #' \item{.absolute}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.alpha}{Accepted by/Passed down to: [calculateRhoT()], [calculateHTMT()], [calculateCN()]}
+#' \item{.ci}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.closed_form_ci}{Accepted by/Passed down to: [calculateRhoT()]}
 #' \item{.handle_inadmissibles}{Accepted by/Passed down to: [calculateHTMT()]}
 #' \item{.null_model}{Accepted by/Passed down to: [calculateDf()]}
@@ -338,6 +339,7 @@ NULL
 #' \item{.saturated}{Accepted by/Passed down to: [calculateSRMR()], 
 #'   [calculateDG()], [calculateDL()], [calculateDML()]and subsequently [fit()].}
 #' \item{.seed}{Accepted by/Passed down to: [calculateHTMT()]}
+#' \item{.type_gfi}{Accepted by/Passed down to: [calculateGFI()]}
 #' \item{.type_vcv}{Accepted by/Passed down to: [calculateSRMR()], 
 #'   [calculateDG()], [calculateDL()], [calculateDML()] and subsequently [fit()].}
 #' }
@@ -349,6 +351,8 @@ NULL
 args_assess_dotdotdot <- function(
   .absolute            = TRUE,
   .alpha               = 0.05,
+  .ci                  = c("CI_standard_z", "CI_standard_t", "CI_percentile", 
+                           "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
   .closed_form_ci      = FALSE,
   .handle_inadmissibles= c("drop", "ignore", "replace"),
   .inference           = FALSE,
@@ -356,6 +360,7 @@ args_assess_dotdotdot <- function(
   .R                   = 499,
   .saturated           = FALSE,
   .seed                = NULL,
+  .type_gfi            = c("ML", "GLS", "ULS"),
   .type_vcv            = "indicator"
 ) {NULL}
   
@@ -499,7 +504,7 @@ args_default <- function(.choices = FALSE) {
     .terms                   = NULL,
     .test_data               = NULL,
     .tolerance               = 1e-05,
-    .type                    = c("ML", "GLS", "ULS"),
+    .type_gfi                = c("ML", "GLS", "ULS"),
     .type_vcv                = c("indicator", "construct"),
     .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
                                  "CI_basic","CI_bc", "CI_bca"),

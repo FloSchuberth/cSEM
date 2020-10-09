@@ -14,7 +14,8 @@ calculateHTMT(
  .inference            = FALSE,
  .only_common_factors  = TRUE,
  .R                    = 499,
- .seed                 = NULL
+ .seed                 = NULL,
+ ...
 )
 }
 \arguments{
@@ -54,6 +55,8 @@ Defaults to \code{TRUE}.}
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
+
+\item{...}{Ignored.}
 }
 \value{
 A lower tringular matrix of HTMT values. If \code{.inference = TRUE}
@@ -82,6 +85,9 @@ model only concepts modeled as common factors are considered by default.
 For concepts modeled as composites the HTMT may be computed by setting
 \code{.only_common_factors = FALSE}, however, it is unclear how to
 interpret values in this case.
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \code{\link[=assess]{assess()}}, \link{csem}, \link{cSEMResults}
