@@ -2,6 +2,8 @@
 
 - This is version 0.3.0 including bug fixes and several
   changes to the package
+  
+- Removed URIs
 
 ## Tests
 

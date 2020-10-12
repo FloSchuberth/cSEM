@@ -1,4 +1,6 @@
-# Development version: cSEM 0.2.0:9000
+# Development version: cSEM 0.3.0:9000
+
+# cSEM 0.3.0 (12.10.2020)
 
 - Add lifecylce badges to postestimation functions.(#376)
 
