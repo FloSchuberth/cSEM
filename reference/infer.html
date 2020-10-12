@@ -214,7 +214,7 @@ contained in the object. By default all possible quantities are
 computed (<code>.quantity = all</code>). The following table list the available
 inferential quantities alongside a brief description. Implementation and
 terminology of the confidence intervals is based on
-Hesterberg (2015-oct)
+Hesterberg (2015)
  and
 Davison and Hinkley (1997)
 .</p><dl>
@@ -231,7 +231,7 @@ standard normally distributed statistic,
 upper bounds of the confidence interval are estimated as the alpha and
 1-alpha quantiles of the distribution of the resample estimates.</p></dd>
 <dt><code>"CI_basic"</code></dt><dd><p>The basic confidence interval also called the reverse
-bootstrap percentile confidence interval. See Hesterberg (2015-oct)for details.</p></dd>
+bootstrap percentile confidence interval. See Hesterberg (2015)for details.</p></dd>
 <dt><code>"CI_bc"</code></dt><dd><p>The bias corrected (Bc) confidence interval. See
 Davison and Hinkley (1997)
  for details.</p></dd>
@@ -241,7 +241,7 @@ See Davison and Hinkley (1997)
  for details.</p></dd>
 <dt><code>"CI_t_interval"</code></dt><dd><p>The "studentized" t-confidence interval. If based on bootstrap
 resamples the interval is also called the bootstrap t-interval
-confidence interval. See Hesterberg (2015-oct)
+confidence interval. See Hesterberg (2015)
  on page 381.
 Requires resamples of resamples. See <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code>.</p></dd>
 
@@ -260,7 +260,7 @@ Hence, computation is triggered only if explicitly chosen.</p>
 <em>Bootstrap Methods and their Application</em>.
 Cambridge University Press.
 doi: <a href='https://doi.org/10.1017/cbo9780511802843'>10.1017/cbo9780511802843</a>
-.<br /><br /> Hesterberg TC (2015-oct).
+.<br /><br /> Hesterberg TC (2015).
 &#8220;What Teachers Should Know About the Bootstrap: Resampling in the Undergraduate Statistics Curriculum.&#8221;
 <em>The American Statistician</em>, <b>69</b>, 371--386.
 doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.2015.1089789</a>
@@ -296,15 +296,15 @@ VAL  =~ val1  + val2  + val3  + val4
 
 <span class='va'>inf</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_basic</span>
 </div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE
-#&gt; 95%L   0.5233124    1.017215  -5.654120   4.876414 -0.2794516   1.277683
-#&gt; 95%U   0.7416064    1.079834  -3.991434   6.430396  0.1646350   3.998492
+#&gt; 95%L   0.5787988    1.006009  -5.869757   5.200698 -0.2223638   1.958409
+#&gt; 95%U   0.7837022    1.045104  -4.330552   6.727625  0.1441305   3.098503
 #&gt;      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT
-#&gt; 95%L  -5.297908  1.527768  0.0136799 0.3593738
-#&gt; 95%U  -2.024252  2.659815  0.4273939 0.8194432</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
+#&gt; 95%L  -4.341117  1.634267  0.1365340 0.2587058
+#&gt; 95%U  -2.912039  2.558997  0.6357029 0.7008486</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
 </div><div class='output co'>#&gt; QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL 
-#&gt;  0.07352057  0.07539799  0.49530390  0.08293375  0.68677198  0.69402762 
+#&gt;  0.05862114  0.06603150  0.44672422  0.07478318  0.33505147  0.64185816 
 #&gt;  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL 
-#&gt;  0.06689593  0.09900259  0.51624469  0.21581261 </div><div class='input'>
+#&gt;  0.07818024  0.10504299  0.36939451  0.20842920 </div><div class='input'>
 <span class='co'>### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span>
 <span class='co'>## For the studentied t-interval confidence interval a double bootstrap is required.</span>
 <span class='co'>## This is pretty time consuming.</span>

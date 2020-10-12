@@ -139,6 +139,35 @@
       <small>Source: <a href='https://github.com/M-E-Rademaker/cSEM/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="csem-030-12102020" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.0">
+<a href="#csem-030-12102020" class="anchor"></a>cSEM 0.3.0 (12.10.2020)<small> Unreleased </small>
+</h1>
+<ul>
+<li><p>Add lifecylce badges to postestimation functions.(<a href='https://github.com/M-E-Rademaker/cSEM/issues/376'>#376</a>)</p></li>
+<li><p>Some arguments accepted by <code><a href="../reference/assess.html">assess()</a></code>’s <code>...</code> argument had not been documented properly. This has been fixed. See <code>args_assess_dotdotdot</code> for a complete list of available arguments.</p></li>
+<li><p><code><a href="../reference/calculateHTMT.html">calculateHTMT()</a></code> now allows users to chose the type of confidence interval to use when computing the critical (1-alpha)% quantile of the HTMT values (<a href='https://github.com/M-E-Rademaker/cSEM/issues/379'>#379</a>)</p></li>
+<li><p><code><a href="../reference/testMGD.html">testMGD()</a></code> gains a new <code>.output_type</code> argument. By default (<code>.output_type = "structured"</code>), the standard output is returned. If <code>.output_type = "structured"</code>, however, a tibble (data frame) summarizing the test decisions in a user-friendly way is returned. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/398'>#398</a>)</p></li>
+<li><p>Remove warning from <code><a href="../reference/fit.html">fit()</a></code> when polycoric or polyserial indicator correlation is used during estimation. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/413'>#413</a>)</p></li>
+<li><p><code><a href="../reference/print.cSEMAssess.html">print.cSEMAssess()</a></code> no longer prints zero for VIF values of constructs that are not part of a particular structural equation.</p></li>
+<li><p><code><a href="../reference/print.cSEMAssess.html">print.cSEMAssess()</a></code> now prints the results of <code><a href="../reference/calculateVIFModeB.html">calculateVIFModeB()</a></code>. This had been missing in previous releases. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/384'>#384</a>)</p></li>
+<li><p>Breaking: <code><a href="../reference/calculateVIFModeB.html">calculateVIFModeB()</a></code> now returns a matrix with the dependent construct in the rows and the VIFs for the coresponding weights in the columns. Previously, the output was a list.</p></li>
+<li><p>Add model selection criteria. See the <code><a href="../reference/calculateModelSelectionCriteria.html">calculateModelSelectionCriteria()</a></code> function for details. As usual, all criteria are available via <code><a href="../reference/assess.html">assess()</a></code>. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/412'>#412</a>)</p></li>
+<li><p>Combine functions for surface, floodlight and simple effects analysis in the <code><a href="../reference/doNonlinearEffectsAnalysis.html">doNonlinearEffectsAnalysis()</a></code> function; Breaking: functions <code>doFloodlightAnalysis()</code> and <code>doSurfaceAnalysis()</code> have been removed!</p></li>
+<li>
+<p>Progress bars are now supported for every function that does resampling. Progress bars are fully customizable via the <code>progressr</code> framework created by</p>
+<p>@HenrikBengtsson. Note: to suppress the progress bar use <code><a href="https://rdrr.io/pkg/progressr/man/handlers.html">progressr::handlers("void")</a></code> and then run your csem commands. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/359'>#359</a>)</p>
+</li>
+<li><p>Fix bug in the computation of the Bc and Bca interval. Computation failed for models that had no indirect effects.</p></li>
+<li><p>List element “reliability” of <code><a href="../reference/assess.html">assess()</a></code> is changed to “Reliability” to be consistent with the naming scheme of the other list elements.</p></li>
+<li><p><code><a href="../reference/infer.html">infer()</a></code> automatically computes bootstrap resamples now by default if <code>.object</code> does not have class <code>cSEMResults_resampled</code> already. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/389'>#389</a>)</p></li>
+<li><p>Remove <code>.alpha</code> argument from <code><a href="../reference/testMICOM.html">testMICOM()</a></code>. The argument is no longer required as decisions are made via (possibly adjusted) p-values. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/393'>#393</a>)</p></li>
+<li><p>Add checks to plot methods for <code><a href="../reference/predict.html">predict()</a></code>, <code>doFloodlightAnalysis</code>, and, <code>doFloodlightAnalysis</code>.</p></li>
+<li><p>Several documentation updates and typo corrections.</p></li>
+<li><p>The Fornell-Larcker criterion is now computed by its own function <code><a href="../reference/calculateFLCriterion.html">calculateFLCriterion()</a></code>. Previously, it was only available via <code><a href="../reference/assess.html">assess()</a></code>. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/387'>#387</a>)</p></li>
+<li><p>Implement importance-performance matrix analysis via <code><a href="../reference/doIPMA.html">doIPMA()</a></code>. A corresponding plot method is also available.</p></li>
+</ul>
+</div>
     <div id="csem-020-30032020" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.0">
 <a href="#csem-020-30032020" class="anchor"></a>cSEM 0.2.0 (30.03.2020)<small> 2020-03-29 </small>

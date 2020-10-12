@@ -551,7 +551,7 @@ c2 =~ x21 + x22
 VAL &lt;~ c1 + c2
 "</span>
 </pre><p>Currently, two approaches are explicitly implemented:</p><ul>
-<li><p>(Default) <code>"2stage"</code>. The (disjoint) two stage approach as proposed by Agarwal and Karahanna (2000-dec)
+<li><p>(Default) <code>"2stage"</code>. The (disjoint) two stage approach as proposed by Agarwal and Karahanna (2000)
 .</p></li>
 <li><p><code>"mixed"</code>. The mixed repeated indicators/two-stage approach as proposed by Ringle et al. (2012)
 .</p></li>
@@ -559,7 +559,7 @@ VAL &lt;~ c1 + c2
 
 <p>The repeated indicators approach as proposed by Joereskog and Wold (1982)
 
-and the extension proposed by Becker et al. (2012-oct)
+and the extension proposed by Becker et al. (2012)
  are
 not directly implemented as they simply require a respecification  of the model.
 In the above example the repeated indicators approach
@@ -615,7 +615,7 @@ confidence intervals.</p></dd>
 <p>Tests are performed using the test-family of functions. Currently the following
 tests are implemented:</p><dl>
 <dt><code><a href='testOMF.html'>testOMF()</a></code></dt><dd><p>Bootstrap-based test for overall model fit based on
-Beran and Srivastava (1985-mar)</p></dd>
+Beran and Srivastava (1985)</p></dd>
 <dt><code><a href='testMICOM.html'>testMICOM()</a></code></dt><dd><p>Permutation-based test for measurement invariance of composites
 proposed by Henseler et al. (2016)</p></dd>
 <dt><code><a href='testMGD.html'>testMGD()</a></code></dt><dd><p>Several (mainly) permutation-based tests for multi-group comparisons.</p></dd>
@@ -637,17 +637,17 @@ Hair et al. (2016)
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Agarwal R, Karahanna E (2000-dec).
+    <p>Agarwal R, Karahanna E (2000).
 &#8220;Time Flies When You're Having Fun: Cognitive Absorption and Beliefs about Information Technology Usage.&#8221;
-<em>MIS Quarterly</em>, <b>24</b>.<br /><br /> Becker J, Klein K, Wetzels M (2012-oct).
+<em>MIS Quarterly</em>, <b>24</b>.<br /><br /> Becker J, Klein K, Wetzels M (2012).
 &#8220;Hierarchical Latent Variable Models in PLS-SEM: Guidelines for Using Reflective-Formative Type Models.&#8221;
 <em>Long Range Planning</em>, <b>45</b>, 359--394.
 doi: <a href='https://doi.org/10.1016/j.lrp.2012.10.001'>10.1016/j.lrp.2012.10.001</a>
-.<br /><br /> Beran R, Srivastava MS (1985-mar).
+.<br /><br /> Beran R, Srivastava MS (1985).
 &#8220;Bootstrap Tests and Confidence Regions for Functions of a Covariance Matrix.&#8221;
 <em>The Annals of Statistics</em>, <b>13</b>, 95--115.
 doi: <a href='https://doi.org/10.1214/aos/1176346579'>10.1214/aos/1176346579</a>
-, <a href='Papers/SEM/Beran1985.pdf'>Papers/SEM/Beran1985.pdf</a>.<br /><br /> Chin WW (1998).
+.<br /><br /> Chin WW (1998).
 &#8220;Modern Methods for Business Research.&#8221;
 In Marcoulides GA (ed.), chapter The Partial Least Squares Approach to Structural Equation Modeling, 295--358.
 Mahwah, NJ: Lawrence Erlbaum.<br /><br /> Croon MA (2002).
@@ -656,25 +656,21 @@ In Marcoulides GA, Moustaki I (eds.), <em>Latent Variable and Latent Structure M
 Lawrence Erlbaum.
 ISBN 080584046X, Pagination: 288.<br /><br /> Dijkstra TK, Henseler J (2015).
 &#8220;Consistent and Asymptotically Normal PLS Estimators for Linear Structural Equations.&#8221;
-<em>Computational Statistics &amp; Data Analysis</em>, <b>81</b>, 10--23.
-<a href='Papers/SEM/Dijkstra2015.pdf'>Papers/SEM/Dijkstra2015.pdf</a>.<br /><br /> Dijkstra TK, Schermelleh-Engel K (2014).
+<em>Computational Statistics &amp; Data Analysis</em>, <b>81</b>, 10--23.<br /><br /> Dijkstra TK, Schermelleh-Engel K (2014).
 &#8220;Consistent Partial Least Squares For Nonlinear Structural Equation Models.&#8221;
-<em>Psychometrika</em>, <b>79</b>, 585--604.
-<a href='Papers/SEM/Dijkstra2014.pdf'>Papers/SEM/Dijkstra2014.pdf</a>.<br /><br /> Hair JF, Hult GTM, Ringle C, Sarstedt M (2016).
+<em>Psychometrika</em>, <b>79</b>, 585--604.<br /><br /> Hair JF, Hult GTM, Ringle C, Sarstedt M (2016).
 <em>A Primer on Partial Least Squares Structural Equation Modeling (PLS-SEM)</em>.
 Sage publications.<br /><br /> Henseler J, Ringle CM, Sarstedt M (2016).
 &#8220;Testing Measurement Invariance of Composites Using Partial Least Squares.&#8221;
 <em>International Marketing Review</em>, <b>33</b>, 405--431.
 doi: <a href='https://doi.org/10.1108/imr-09-2014-0304'>10.1108/imr-09-2014-0304</a>
 .<br /><br /> Hwang H, Takane Y, Jung K (2017).
-&#8220;Generalized Structured Component Analysis with Uniqueness Terms for Accommodating Measurement Error.&#8221;
+&#8220;Generalized structured component analysis with uniqueness terms for accommodating measurement error.&#8221;
 <em>Frontiers in Psychology</em>, <b>8</b>, 1--12.<br /><br /> Joereskog KG, Wold HO (1982).
 <em>Systems under Indirect Observation: Causality, Structure, Prediction - Part II</em>, volume 139.
-North Holland.
-<a href='Papers/Joereskog1982b.pdf'>Papers/Joereskog1982b.pdf</a>.<br /><br /> Ringle CM, Sarstedt M, Straub D (2012).
+North Holland.<br /><br /> Ringle CM, Sarstedt M, Straub D (2012).
 &#8220;A Critical Look at the Use of PLS-SEM in MIS Quarterly.&#8221;
-<em>MIS Quarterly</em>, <b>36</b>, iii--xiv.
-<a href='Papers/Ringle2012.pdf'>Papers/Ringle2012.pdf</a>.<br /><br /> Spiller SA, Fitzsimons GJ, Lynch JG, Mcclelland GH (2013).
+<em>MIS Quarterly</em>, <b>36</b>, iii--xiv.<br /><br /> Spiller SA, Fitzsimons GJ, Lynch JG, Mcclelland GH (2013).
 &#8220;Spotlights, Floodlights, and the Magic Number Zero: Simple Effects Tests in Moderated Regression.&#8221;
 <em>Journal of Marketing Research</em>, <b>50</b>, 277--288.
 doi: <a href='https://doi.org/10.1509/jmr.12.0420'>10.1509/jmr.12.0420</a>
