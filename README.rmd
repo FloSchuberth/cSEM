@@ -74,7 +74,7 @@ Usully, using `cSEM` is the same 3 step procedure:
 ## Postestimation functions
 
 There are five major postestimation verbs, three test family functions and
-four do-family of function: 
+three do-family of function: 
 
 - `assess()` : assess the model using common quality criteria
 - `infer()` : calculate common inferencial quantities (e.g., standard errors, confidence intervals)
