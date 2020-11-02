@@ -26,11 +26,23 @@ plot.cSEMIPMA <- function(
   
   .level <- match.arg(.level)
   
+
   # Check wether the input is of class cSEMIPMA
   if(!inherits(x, "cSEMIPMA")) {
     stop2("x must be of class `cSEMIPMA`.")
   }
+
   
+  # check whether .dependent is supplied:
+  if(is.null(.dependent)){
+    stop2("Please provide the name of the dependent construct.")
+  }
+  
+  # check whether .dependent is supplied:
+  if(is.null(.attributes)){
+    stop2("Please provide the names of the constructs/indicators that should be plotted in the IPM.")
+  }
+    
   # Check whether specified dependent variable is valid
   if(!.dependent %in% x$Construct_names | !is.character(.dependent)){
     stop2(".dependent is not a valid construct name.")
