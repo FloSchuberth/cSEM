@@ -100,8 +100,15 @@
 #' \insertCite{Dijkstra2014;textual}{cSEM}. Nonlinear terms include interactions and
 #' exponential terms. The latter is described in model syntax as an
 #' "interaction with itself", e.g., `xi^3 = xi.xi.xi`. Currently only exponential
-#' terms up to a power of three (e.g., three-way interactions or cubic terms) are allowed.
-#'
+#' terms up to a power of three (e.g., three-way interactions or cubic terms) are allowed:
+#' \enumerate{
+#' \item{- Single, e.g., `eta1`}
+#' \item{- Quadratic, e.g., `eta1.eta1`}
+#' \item{- Cubic, e.g., `eta1.eta1.eta1`}
+#' \item{- Two-way interaction, e.g., `eta1.eta2`}
+#' \item{- Three-way interaction, e.g., `eta1.eta2.eta3`}
+#' \item{- Quadratic and two-way interaction, e.g., `eta1.eta1.eta3`}
+#' }
 #' The current version of the package allows two kinds of estimation:
 #' estimation of the reduced form equation (`.approach_nl = "replace"`) and 
 #' sequential estimation (`.approach_nl = "sequential"`, the default). The latter does not 
