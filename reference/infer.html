@@ -295,16 +295,16 @@ VAL  =~ val1  + val2  + val3  + val4
 <span class='va'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
 
 <span class='va'>inf</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_basic</span>
-</div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE
-#&gt; 95%L   0.5870579    1.012374  -5.168470   4.897204 -0.2167464   1.232277
-#&gt; 95%U   0.7648722    1.055377  -3.942352   6.040669  0.1856944   3.317894
+</div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL  SAT ~ IMAG SAT ~ EXPE
+#&gt; 95%L   0.5669424    1.008847   -5.68377   4.789221 -0.34868559  0.9376309
+#&gt; 95%U   0.6864051    1.068375   -3.88195   6.571385  0.03805476  3.0071306
 #&gt;      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT
-#&gt; 95%L  -4.603374  1.487632  0.0217654 0.4337608
-#&gt; 95%U  -1.901872  2.598380  0.3899519 0.8150285</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
+#&gt; 95%L  -4.214017  1.672026  0.1846589 0.2909667
+#&gt; 95%U  -1.530197  2.491389  0.5689603 0.7030067</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
 </div><div class='output co'>#&gt; QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL 
-#&gt;  0.05542093  0.05376410  0.40124554  0.08766072  0.54569855  0.71740499 
+#&gt;  0.04214670  0.04329926  0.53820203  0.06698762  0.59076941  0.66835714 
 #&gt;  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL 
-#&gt;  0.05241957  0.11037396  0.30799169  0.21657977 </div><div class='input'>
+#&gt;  0.07097155  0.08351678  0.35762989  0.16002779 </div><div class='input'>
 <span class='co'>### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span>
 <span class='co'>## For the studentied t-interval confidence interval a double bootstrap is required.</span>
 <span class='co'>## This is pretty time consuming.</span>

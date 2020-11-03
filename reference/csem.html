@@ -515,8 +515,14 @@ Dijkstra and Schermelleh-Engel (2014)
 . Nonlinear terms include interactions and
 exponential terms. The latter is described in model syntax as an
 "interaction with itself", e.g., <code>xi^3 = xi.xi.xi</code>. Currently only exponential
-terms up to a power of three (e.g., three-way interactions or cubic terms) are allowed.</p>
-<p>The current version of the package allows two kinds of estimation:
+terms up to a power of three (e.g., three-way interactions or cubic terms) are allowed:</p><ol>
+<li><p>- Single, e.g., <code>eta1</code></p></li>
+<li><p>- Quadratic, e.g., <code>eta1.eta1</code></p></li>
+<li><p>- Cubic, e.g., <code>eta1.eta1.eta1</code></p></li>
+<li><p>- Two-way interaction, e.g., <code>eta1.eta2</code></p></li>
+<li><p>- Three-way interaction, e.g., <code>eta1.eta2.eta3</code></p></li>
+<li><p>- Quadratic and two-way interaction, e.g., <code>eta1.eta1.eta3</code></p></li>
+</ol><p>The current version of the package allows two kinds of estimation:
 estimation of the reduced form equation (<code>.approach_nl = "replace"</code>) and
 sequential estimation (<code>.approach_nl = "sequential"</code>, the default). The latter does not
 allow for multivariate normality of all exogenous variables, i.e.,
