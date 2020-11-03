@@ -1,5 +1,8 @@
 # Development version: cSEM 0.3.0:9000
 
+- Bug fix: `summarize()` no longer fails when `.object` is a of class 
+  `cSEMResults_2ndorder` and contains no indirect effects.
+
 # cSEM 0.3.0 (12.10.2020)
 
 - Add lifecylce badges to postestimation functions.(#376)

@@ -654,35 +654,8 @@ summarize.cSEMResults_2ndorder <- function(
           x21$Effect_estimates$Indirect_effect <- effects[["Indirect_effect"]] # Indirect effect 
         }
       }
-      effects <- lapply(c("Total_effect", "Indirect_effect"), function(nx) {
-        temp   <- infer_out[[nx]]
-        x <- effects[[nx]]
-        t_temp <- x$Estimate / temp$sd
-        
-        x["Std_err"] <- temp$sd
-        x["t_stat"]  <- t_temp
-        x["p_value"] <- 2*pnorm(abs(t_temp), lower.tail = FALSE)
-        
-        if(!is.null(.ci)) {
-          ## Add CI's
-          # Column names
-          ci_colnames <- paste0(rep(names(temp[.ci]), sapply(temp[.ci], function(x) nrow(x))), ".",
-                                unlist(lapply(temp[.ci], rownames)))
-          
-          # Add cis to data frame and set names
-          x <- cbind(x, t(do.call(rbind, temp[.ci])))
-          rownames(x) <- NULL
-          colnames(x)[(length(colnames(x)) - 
-                         (length(ci_colnames) - 1)):length(colnames(x))] <- ci_colnames
-        }
-        ## Return
-        x
-      })
-      # Add effects to second stage
-      x21$Effect_estimates$Indirect_effect <- effects[[2]] # Indirect effect
-      x21$Effect_estimates$Total_effect <- effects[[1]] # Total effect!
     }
-  }
+  } # END resampled
   
   ## Set class for printing and return
   out <- list("First_stage"  = list("Estimates" = x11, "Information" = x12), 
