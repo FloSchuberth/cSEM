@@ -119,7 +119,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/M-E-Rademaker/cSEM/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -260,11 +260,11 @@ Hence, computation is triggered only if explicitly chosen.</p>
 <em>Bootstrap Methods and their Application</em>.
 Cambridge University Press.
 doi: <a href='https://doi.org/10.1017/cbo9780511802843'>10.1017/cbo9780511802843</a>
-.<br /><br /> Hesterberg TC (2015).
+, <a href='https://doi.org/10.1017/cbo9780511802843'>https://doi.org/10.1017/cbo9780511802843</a>.<br /><br /> Hesterberg TC (2015).
 &#8220;What Teachers Should Know About the Bootstrap: Resampling in the Undergraduate Statistics Curriculum.&#8221;
-<em>The American Statistician</em>, <b>69</b>, 371--386.
+<em>The American Statistician</em>, <b>69</b>(4), 371--386.
 doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.2015.1089789</a>
-.</p>
+, <a href='https://doi.org/10.1080/00031305.2015.1089789'>https://doi.org/10.1080/00031305.2015.1089789</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code>, <code><a href='summarize.html'>summarize()</a></code> <a href='csem_results.html'>cSEMResults</a></p></div>
@@ -295,16 +295,16 @@ VAL  =~ val1  + val2  + val3  + val4
 <span class='va'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
 
 <span class='va'>inf</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_basic</span>
-</div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL  SAT ~ IMAG SAT ~ EXPE
-#&gt; 95%L   0.5669424    1.008847   -5.68377   4.789221 -0.34868559  0.9376309
-#&gt; 95%U   0.6864051    1.068375   -3.88195   6.571385  0.03805476  3.0071306
+</div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE
+#&gt; 95%L   0.5718500    1.012089  -5.318172   5.044115 -0.1241055   1.158507
+#&gt; 95%U   0.7711082    1.069312  -4.153973   6.197626  0.1925096   2.964667
 #&gt;      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT
-#&gt; 95%L  -4.214017  1.672026  0.1846589 0.2909667
-#&gt; 95%U  -1.530197  2.491389  0.5689603 0.7030067</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
+#&gt; 95%L  -4.052378  1.449457  0.2245940 0.2559630
+#&gt; 95%U  -1.812890  2.371888  0.5450757 0.6452397</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
 </div><div class='output co'>#&gt; QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL 
-#&gt;  0.04214670  0.04329926  0.53820203  0.06698762  0.59076941  0.66835714 
+#&gt;  0.05867275  0.06016270  0.34532333  0.08870626  0.47114251  0.67680284 
 #&gt;  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL 
-#&gt;  0.07097155  0.08351678  0.35762989  0.16002779 </div><div class='input'>
+#&gt;  0.05962323  0.11734882  0.36939414  0.25383969 </div><div class='input'>
 <span class='co'>### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span>
 <span class='co'>## For the studentied t-interval confidence interval a double bootstrap is required.</span>
 <span class='co'>## This is pretty time consuming.</span>

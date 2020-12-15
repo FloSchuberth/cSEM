@@ -1,10 +1,10 @@
 pandoc: 2.7.3
 pkgdown: 1.6.1.9000
-pkgdown_sha: 0e53969319d5931beeacbade0a8c604877cab2b1
+pkgdown_sha: 6094ac3dd80a1f3f1d4e2f47d0ed4716d51362b0
 articles:
   Notation: Notation.html
   Terminology: Terminology.html
   Using-assess: Using-assess.html
   cSEM: cSEM.html
-last_built: 2020-11-03T23:01Z
+last_built: 2020-12-15T13:00Z
 

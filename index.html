@@ -85,7 +85,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/M-E-Rademaker/cSEM/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -115,12 +115,12 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>The package is available on <a href="https://cran.r-project.org/">CRAN</a>:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"cSEM"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"cSEM"</span><span class="op">)</span></code></pre></div>
 <p>To install the development version use:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"M-E-Rademaker/cSEM"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"M-E-Rademaker/cSEM"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
@@ -193,8 +193,8 @@
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
 <p>Models are defined using <a href="https://lavaan.ugent.be/tutorial/syntax1.html">lavaan syntax</a> with some slight modifications (see the <a href="https://m-e-rademaker.github.io/cSEM/articles/cSEM.html#using-csem">Specifying a model</a> section on the <a href="https://m-e-rademaker.github.io/cSEM/">cSEM-website</a>). For illustration we use the build-in and well-known <code>satisfaction</code> dataset.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/M-E-Rademaker/cSEM">cSEM</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/M-E-Rademaker/cSEM">cSEM</a></span><span class="op">)</span>
     
 <span class="co">## Note: The operator "&lt;~" tells cSEM that the construct to its left is modelled</span>
 <span class="co">##       as a composite.</span>
@@ -220,12 +220,12 @@ VAL  &lt;~ val1  + val2  + val3
 # Reflective measurement model
 SAT  =~ sat1  + sat2  + sat3  + sat4
 LOY  =~ loy1  + loy2  + loy3  + loy4
-"</span></pre></div>
+"</span></code></pre></div>
 <p>The estimation is conducted using the <code><a href="reference/csem.html">csem()</a></code> function.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="co"># Estimate using defaults</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Estimate using defaults</span>
 <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">satisfaction</span>, .model <span class="op">=</span> <span class="va">model</span><span class="op">)</span>
-<span class="va">res</span></pre></div>
+<span class="va">res</span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">## ________________________________________________________________________________</span></span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="co">## ----------------------------------- Overview -----------------------------------</span></span>
 <span id="cb5-3"><a href="#cb5-3"></a><span class="co">## </span></span>
@@ -255,8 +255,8 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 <span id="cb5-27"><a href="#cb5-27"></a><span class="co">##  - verify(&lt;object-name&gt;)</span></span>
 <span id="cb5-28"><a href="#cb5-28"></a><span class="co">## ________________________________________________________________________________</span></span></code></pre></div>
 <p>This is equal to:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu"><a href="reference/csem.html">csem</a></span><span class="op">(</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/csem.html">csem</a></span><span class="op">(</span>
    .data                        <span class="op">=</span> <span class="va">satisfaction</span>,
    .model                       <span class="op">=</span> <span class="va">model</span>,
    .approach_cor_robust         <span class="op">=</span> <span class="st">"none"</span>,
@@ -286,19 +286,19 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
    .eval_plan                   <span class="op">=</span> <span class="st">"sequential"</span>,
    .seed                        <span class="op">=</span> <span class="cn">NULL</span>,
    .sign_change_option          <span class="op">=</span> <span class="st">"none"</span>
-    <span class="op">)</span></pre></div>
+    <span class="op">)</span></code></pre></div>
 <p>The result is always a named list of class <code>cSEMResults</code>.</p>
 <p>To access list elements use <code><a href="https://rdrr.io/r/base/Extract.html">$</a></code>:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Loading_estimates</span> 
-<span class="va">res</span><span class="op">$</span><span class="va">Information</span><span class="op">$</span><span class="va">Model</span></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Loading_estimates</span> 
+<span class="va">res</span><span class="op">$</span><span class="va">Information</span><span class="op">$</span><span class="va">Model</span></code></pre></div>
 <p>A useful tool to examine a list is the <a href="https://github.com/timelyportfolio/listviewer">listviewer package</a>. If you are new to <code>cSEM</code> this might be a good way to familiarize yourself with the structure of a <code>cSEMResults</code> object.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu">listviewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/listviewer/man/jsonedit.html">jsonedit</a></span><span class="op">(</span><span class="va">res</span>, mode <span class="op">=</span> <span class="st">"view"</span><span class="op">)</span> <span class="co"># requires the listviewer package.</span></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">listviewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/listviewer/man/jsonedit.html">jsonedit</a></span><span class="op">(</span><span class="va">res</span>, mode <span class="op">=</span> <span class="st">"view"</span><span class="op">)</span> <span class="co"># requires the listviewer package.</span></code></pre></div>
 <p>Apply postestimation functions:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="co">## Get a summary</span>
-<span class="fu"><a href="reference/summarize.html">summarize</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> </pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Get a summary</span>
+<span class="fu"><a href="reference/summarize.html">summarize</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> </code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co">## ________________________________________________________________________________</span></span>
 <span id="cb10-2"><a href="#cb10-2"></a><span class="co">## ----------------------------------- Overview -----------------------------------</span></span>
 <span id="cb10-3"><a href="#cb10-3"></a><span class="co">## </span></span>
@@ -451,9 +451,9 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 <span id="cb10-150"><a href="#cb10-150"></a><span class="co">##   LOY ~ QUAL           0.3714          NA        NA        NA</span></span>
 <span id="cb10-151"><a href="#cb10-151"></a><span class="co">##   LOY ~ VAL            0.3311          NA        NA        NA</span></span>
 <span id="cb10-152"><a href="#cb10-152"></a><span class="co">## ________________________________________________________________________________</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="co">## Verify admissibility of the results</span>
-<span class="fu"><a href="reference/verify.html">verify</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> </pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Verify admissibility of the results</span>
+<span class="fu"><a href="reference/verify.html">verify</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> </code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co">## ________________________________________________________________________________</span></span>
 <span id="cb12-2"><a href="#cb12-2"></a><span class="co">## </span></span>
 <span id="cb12-3"><a href="#cb12-3"></a><span class="co">## Verify admissibility:</span></span>
@@ -469,9 +469,9 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 <span id="cb12-13"><a href="#cb12-13"></a><span class="co">##   4      ok        All reliability estimates &lt;= 1                         </span></span>
 <span id="cb12-14"><a href="#cb12-14"></a><span class="co">##   5      ok        Model-implied indicator VCV is positive semi-definite  </span></span>
 <span id="cb12-15"><a href="#cb12-15"></a><span class="co">## ________________________________________________________________________________</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="co">## Test overall model fit</span>
-<span class="fu"><a href="reference/testOMF.html">testOMF</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Test overall model fit</span>
+<span class="fu"><a href="reference/testOMF.html">testOMF</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co">## ________________________________________________________________________________</span></span>
 <span id="cb14-2"><a href="#cb14-2"></a><span class="co">## --------- Test for overall model fit based on Beran &amp; Srivastava (1985) --------</span></span>
 <span id="cb14-3"><a href="#cb14-3"></a><span class="co">## </span></span>
@@ -510,9 +510,9 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 <span id="cb14-36"><a href="#cb14-36"></a><span class="co">## </span></span>
 <span id="cb14-37"><a href="#cb14-37"></a><span class="co">##  The seed used was: 891891725</span></span>
 <span id="cb14-38"><a href="#cb14-38"></a><span class="co">## ________________________________________________________________________________</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="co">## Assess the model</span>
-<span class="fu"><a href="reference/assess.html">assess</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Assess the model</span>
+<span class="fu"><a href="reference/assess.html">assess</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co">## ________________________________________________________________________________</span></span>
 <span id="cb16-2"><a href="#cb16-2"></a><span class="co">## </span></span>
 <span id="cb16-3"><a href="#cb16-3"></a><span class="co">##  Construct        AVE           R2          R2_adj    </span></span>
@@ -718,9 +718,9 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 <span id="cb16-203"><a href="#cb16-203"></a><span class="co">##   LOY ~ QUAL           0.3714          NA        NA        NA</span></span>
 <span id="cb16-204"><a href="#cb16-204"></a><span class="co">##   LOY ~ VAL            0.3311          NA        NA        NA</span></span>
 <span id="cb16-205"><a href="#cb16-205"></a><span class="co">## ________________________________________________________________________________</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="co">## Predict indicator scores of endogenous constructs</span>
-<span class="fu"><a href="reference/predict.html">predict</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Predict indicator scores of endogenous constructs</span>
+<span class="fu"><a href="reference/predict.html">predict</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb18"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co">## ________________________________________________________________________________</span></span>
 <span id="cb18-2"><a href="#cb18-2"></a><span class="co">## ----------------------------------- Overview -----------------------------------</span></span>
 <span id="cb18-3"><a href="#cb18-3"></a><span class="co">## </span></span>
@@ -765,14 +765,14 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 <li>Setting <code>.resample_method</code> in <code><a href="reference/csem.html">csem()</a></code> to <code>"jackkinfe"</code> or <code>"bootstrap"</code> and subsequently using postestimation functions <code><a href="reference/summarize.html">summarize()</a></code> or <code><a href="reference/infer.html">infer()</a></code>.</li>
 <li>The same result is achieved by passing a <code>cSEMResults</code> object to <code><a href="reference/resamplecSEMResults.html">resamplecSEMResults()</a></code> and subsequently using postestimation functions <code><a href="reference/summarize.html">summarize()</a></code> or <code><a href="reference/infer.html">infer()</a></code>.</li>
 </ol>
-<!-- end list --><div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="co"># Setting `.resample_method`</span>
+<!-- end list --><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Setting `.resample_method`</span>
 <span class="va">b1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">satisfaction</span>, .model <span class="op">=</span> <span class="va">model</span>, .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span><span class="op">)</span>
 <span class="co"># Using resamplecSEMResults()</span>
-<span class="va">b2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/resamplecSEMResults.html">resamplecSEMResults</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></pre></div>
+<span class="va">b2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/resamplecSEMResults.html">resamplecSEMResults</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
 <p>Now <code><a href="reference/summarize.html">summarize()</a></code> shows inferencial quantities as well:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="fu"><a href="reference/summarize.html">summarize</a></span><span class="op">(</span><span class="va">b1</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/summarize.html">summarize</a></span><span class="op">(</span><span class="va">b1</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb21"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="co">## ________________________________________________________________________________</span></span>
 <span id="cb21-2"><a href="#cb21-2"></a><span class="co">## ----------------------------------- Overview -----------------------------------</span></span>
 <span id="cb21-3"><a href="#cb21-3"></a><span class="co">## </span></span>
@@ -941,17 +941,17 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 <span id="cb21-166"><a href="#cb21-166"></a><span class="co">##   LOY ~ VAL            0.3311      0.0738    4.4886    0.0000 [ 0.1918; 0.4761 ] </span></span>
 <span id="cb21-167"><a href="#cb21-167"></a><span class="co">## ________________________________________________________________________________</span></span></code></pre></div>
 <p>Several resample-based confidence intervals are implemented, see <code>?infer()</code>:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="fu"><a href="reference/infer.html">infer</a></span><span class="op">(</span><span class="va">b1</span>, .quantity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CI_standard_z"</span>, <span class="st">"CI_percentile"</span><span class="op">)</span><span class="op">)</span> <span class="co"># no print method yet</span></pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/infer.html">infer</a></span><span class="op">(</span><span class="va">b1</span>, .quantity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CI_standard_z"</span>, <span class="st">"CI_percentile"</span><span class="op">)</span><span class="op">)</span> <span class="co"># no print method yet</span></code></pre></div>
 <p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as setting random seeds via the <a href="https://github.com/HenrikBengtsson/future">future framework</a>. For multiprocessing simply set <code>.eval_plan = "multiprocess"</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the backround as there are cores available instead. Note that this naturally has some overhead so for a small number of resamples multiprocessing will not always be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit">
-<span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/csem.html">csem</a></span><span class="op">(</span>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/csem.html">csem</a></span><span class="op">(</span>
   .data            <span class="op">=</span> <span class="va">satisfaction</span>,
   .model           <span class="op">=</span> <span class="va">model</span>, 
   .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span>,
   .R               <span class="op">=</span> <span class="fl">999</span>,
   .seed            <span class="op">=</span> <span class="fl">98234</span>,
-  .eval_plan       <span class="op">=</span> <span class="st">"multiprocess"</span><span class="op">)</span></pre></div>
+  .eval_plan       <span class="op">=</span> <span class="st">"multiprocess"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 </div>

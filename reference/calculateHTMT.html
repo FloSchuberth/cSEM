@@ -40,11 +40,12 @@
 
 
 <meta property="og:title" content="HTMT — calculateHTMT" />
-<meta property="og:description" content="Compute the heterotrait-monotrait ratio of correlations (HTMT) based on
+<meta property="og:description" content="Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on
 Henseler et al. (2015)
-. The HTMT is a consistent estimator for the
-construct correlations of a tau-equivalent measurement model. It is used to
-assess discriminant validity." />
+ or its advancement HTMT2. While the HTMT
+is a consistent estimator for the construct correlation in case of tau-equivalent
+measurement models, the HTMT2 is a consistent estimator for congeneric measurement
+models. In general, they are used to assess discriminant validity." />
 
 
 
@@ -123,7 +124,7 @@ assess discriminant validity." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/M-E-Rademaker/cSEM/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -146,15 +147,17 @@ assess discriminant validity." />
     </div>
 
     <div class="ref-description">
-    <p>Compute the heterotrait-monotrait ratio of correlations (HTMT) based on
+    <p>Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on
 Henseler et al. (2015)
-. The HTMT is a consistent estimator for the
-construct correlations of a tau-equivalent measurement model. It is used to
-assess discriminant validity.</p>
+ or its advancement HTMT2. While the HTMT
+is a consistent estimator for the construct correlation in case of tau-equivalent
+measurement models, the HTMT2 is a consistent estimator for congeneric measurement
+models. In general, they are used to assess discriminant validity.</p>
     </div>
 
     <pre class="usage"><span class='fu'>calculateHTMT</span><span class='op'>(</span>
  .object               <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .type_htmt            <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'htmt'</span>,<span class='st'>'htmt2'</span><span class='op'>)</span>,
  .absolute             <span class='op'>=</span> <span class='cn'>TRUE</span>,
  .alpha                <span class='op'>=</span> <span class='fl'>0.05</span>,
  .ci                   <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"CI_percentile"</span>, <span class='st'>"CI_standard_z"</span>, <span class='st'>"CI_standard_t"</span>, 
@@ -173,6 +176,12 @@ assess discriminant validity.</p>
     <tr>
       <th>.object</th>
       <td><p>An R object of class <a href='csem_results.html'>cSEMResults</a> resulting from a call to <code><a href='csem.html'>csem()</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>.type_htmt</th>
+      <td><p>Character string indicating the type of HTMT that should be
+calculated, i.e., the original HTMT ("<em>htmt</em>") or the HTMT2 ("<em>htmt2</em>").
+Defaults to "<em>htmt</em>"</p></td>
     </tr>
     <tr>
       <th>.absolute</th>
@@ -255,9 +264,9 @@ interpret values in this case.</p>
 
     <p>Henseler J, Ringle CM, Sarstedt M (2015).
 &#8220;A New Criterion for Assessing Discriminant Validity in Variance-based Structural Equation Modeling.&#8221;
-<em>Journal of the Academy of Marketing Science</em>, <b>43</b>, 115--135.
+<em>Journal of the Academy of Marketing Science</em>, <b>43</b>(1), 115--135.
 doi: <a href='https://doi.org/10.1007/s11747-014-0403-8'>10.1007/s11747-014-0403-8</a>
-.</p>
+, <a href='https://doi.org/10.1007/s11747-014-0403-8'>https://doi.org/10.1007/s11747-014-0403-8</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='assess.html'>assess()</a></code>, <a href='csem.html'>csem</a>, <a href='csem_results.html'>cSEMResults</a></p></div>
