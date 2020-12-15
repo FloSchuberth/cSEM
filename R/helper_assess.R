@@ -1015,10 +1015,11 @@ calculateRhoT <- function(
 
 #' HTMT
 #'
-#' Compute the heterotrait-monotrait ratio of correlations (HTMT) based on 
-#' \insertCite{Henseler2015;textual}{cSEM}. The HTMT is a consistent estimator for the
-#' construct correlations in case of tau-equivalent measurement models. It is used to
-#' assess discriminant validity.
+#' Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on 
+#' \insertCite{Henseler2015;textual}{cSEM} or its advancement HTMT2. While the HTMT
+#' is a consistent estimator for the construct correlation in case of tau-equivalent
+#'  measurement models, the HTMT2 is a consistent estimator for congeneric measurement
+#'  models. In general, they are used to assess discriminant validity.
 #' 
 #' Computation of the HTMT assumes that all intra-block and inter-block 
 #' correlations between indicators are either all-positive or all-negative.
@@ -1038,6 +1039,7 @@ calculateRhoT <- function(
 #' 
 #' @usage calculateHTMT(
 #'  .object               = NULL,
+#'  .type_htmt            = c('htmt','htmt2'),
 #'  .absolute             = TRUE,
 #'  .alpha                = 0.05,
 #'  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
@@ -1050,7 +1052,7 @@ calculateRhoT <- function(
 #'  ...
 #' )
 #'
-#' @inheritParams csem_arguments.
+#' @inheritParams csem_arguments
 #' @param .alpha A numeric value giving the significance level. 
 #'   Defaults to `0.05`.
 #' @param .ci A character strings naming the type of confidence interval to use 
@@ -1073,7 +1075,7 @@ calculateRhoT <- function(
 
 calculateHTMT <- function(
   .object               = NULL,
-  .type_htmt            = c('htmt'),
+  .type_htmt            = c('htmt','htmt2'),
   .absolute             = TRUE,
   .alpha                = 0.05,
   .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
@@ -1087,6 +1089,7 @@ calculateHTMT <- function(
 ){
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   .ci                   <- match.arg(.ci) # allow only one CI
+  .type_htmt            <- match.arg(.type_htmt)
 
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, calculateHTMT,
@@ -1205,8 +1208,8 @@ calculateHTMT <- function(
   
   # Sort HTMT values in matrix
   out<-matrix(0,
-         nrow=length(block_pairs),
-         ncol=length(block_pairs),
+         nrow=length(names(ind_blocks)),
+         ncol=length(names(ind_blocks)),
          dimnames=list(names(ind_blocks),names(ind_blocks)))
   out[lower.tri(out)]<-htmts
   
@@ -1284,7 +1287,7 @@ calculateHTMT <- function(
   }
   # Return
   diag(out) <- 1
-  return(out)
+  out
 }
 
 

@@ -1,3 +1,5 @@
+- `calculateHTMT()` extended by HTMT2.
+
 # Development version: cSEM 0.3.0:9000
 
 - Bug fix: `summarize()` no longer fails when `.object` is a of class 

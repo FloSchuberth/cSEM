@@ -6,6 +6,7 @@
 \usage{
 calculateHTMT(
  .object               = NULL,
+ .type_htmt            = c('htmt','htmt2'),
  .absolute             = TRUE,
  .alpha                = 0.05,
  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
@@ -20,6 +21,10 @@ calculateHTMT(
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.type_htmt}{Character string indicating the type of HTMT that should be
+calculated, i.e., the original HTMT ("\emph{htmt}") or the HTMT2 ("\emph{htmt2}").
+Defaults to "\emph{htmt}"}
 
 \item{.absolute}{Logical. Should the absolute HTMT values be returned?
 Defaults to \code{TRUE} .}
@@ -64,10 +69,11 @@ the upper tringular part is the 1-.alpha\%-quantile of the HTMT's bootstrap
 distribution.
 }
 \description{
-Compute the heterotrait-monotrait ratio of correlations (HTMT) based on
-\insertCite{Henseler2015;textual}{cSEM}. The HTMT is a consistent estimator for the
-construct correlations of a tau-equivalent measurement model. It is used to
-assess discriminant validity.
+Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on
+\insertCite{Henseler2015;textual}{cSEM} or its advancement HTMT2. While the HTMT
+is a consistent estimator for the construct correlation in case of tau-equivalent
+measurement models, the HTMT2 is a consistent estimator for congeneric measurement
+models. In general, they are used to assess discriminant validity.
 }
 \details{
 Computation of the HTMT assumes that all intra-block and inter-block
