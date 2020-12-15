@@ -90,6 +90,7 @@ testOMF <- function(
     
     out <- lapply(.object, testOMF,
                   .alpha                = .alpha,
+                  .fit_measures         = .fit_measures,
                   .handle_inadmissibles = .handle_inadmissibles,
                   .R                    = .R,
                   .saturated            = .saturated,
