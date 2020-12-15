@@ -283,6 +283,9 @@
 #'   For possible choices, see the `.quantity` argument of the [infer()] function.
 #'   Only used if `.approch_mgd` is one of "*CI_para*" or "*CI_overlap*". Ignored otherwise.
 #'   Defaults to "*CI_percentile*". 
+#' @param .type_htmt Character string indicating the type of HTMT that should be 
+#' calculated, i.e., the original HTMT ("*htmt*") or the HTMT2 ("*htmt2*").
+#' Defaults to "*htmt*"
 #' @param .type_vcv Character string. Which model-implied correlation 
 #'  matrix should be calculated?
 #'  One of "*indicator*" or "*construct*". Defaults to "*indicator*".   
@@ -506,6 +509,7 @@ args_default <- function(.choices = FALSE) {
     .test_data               = NULL,
     .tolerance               = 1e-05,
     .type_gfi                = c("ML", "GLS", "ULS"),
+    .type_htmt               = c("htmt", "htmt2"),
     .type_vcv                = c("indicator", "construct"),
     .type_ci                 = c("CI_percentile","CI_standard_z","CI_standard_t",
                                  "CI_basic","CI_bc", "CI_bca"),

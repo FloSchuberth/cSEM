@@ -384,6 +384,10 @@ For possible choices, see the \code{.quantity} argument of the \code{\link[=infe
 Only used if \code{.approch_mgd} is one of "\emph{CI_para}" or "\emph{CI_overlap}". Ignored otherwise.
 Defaults to "\emph{CI_percentile}".}
 
+\item{.type_htmt}{Character string indicating the type of HTMT that should be
+calculated, i.e., the original HTMT ("\emph{htmt}") or the HTMT2 ("\emph{htmt2}").
+Defaults to "\emph{htmt}"}
+
 \item{.type_vcv}{Character string. Which model-implied correlation
 matrix should be calculated?
 One of "\emph{indicator}" or "\emph{construct}". Defaults to "\emph{indicator}".}

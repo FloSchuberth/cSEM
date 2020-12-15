@@ -506,6 +506,13 @@ assess <- function(
       } else {
         out$Information[[".ci"]] <- "CI_percentile"
       } 
+      
+      if(any(names(args_htmt) == ".type_htmt")) {
+        out$Information[[".type_htmt"]] <- args_htmt[[".type_htmt"]]
+      } else {
+        # If .type_htmt is not set in the funtion
+        out$Information[[".type_htmt"]] <- "htmt"
+      } 
     } else { # 2nd_order
       warning("Computation of the HTMT",
               " not supported for models containing second-order constructs:\n",

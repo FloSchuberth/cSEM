@@ -1015,10 +1015,11 @@ calculateRhoT <- function(
 
 #' HTMT
 #'
-#' Compute the heterotrait-monotrait ratio of correlations (HTMT) based on 
-#' \insertCite{Henseler2015;textual}{cSEM}. The HTMT is a consistent estimator for the
-#' construct correlations of a tau-equivalent measurement model. It is used to
-#' assess discriminant validity.
+#' Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on 
+#' \insertCite{Henseler2015;textual}{cSEM} or its advancement HTMT2. While the HTMT
+#' is a consistent estimator for the construct correlation in case of tau-equivalent
+#'  measurement models, the HTMT2 is a consistent estimator for congeneric measurement
+#'  models. In general, they are used to assess discriminant validity.
 #' 
 #' Computation of the HTMT assumes that all intra-block and inter-block 
 #' correlations between indicators are either all-positive or all-negative.
@@ -1038,6 +1039,7 @@ calculateRhoT <- function(
 #' 
 #' @usage calculateHTMT(
 #'  .object               = NULL,
+#'  .type_htmt            = c('htmt','htmt2'),
 #'  .absolute             = TRUE,
 #'  .alpha                = 0.05,
 #'  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
@@ -1073,6 +1075,7 @@ calculateRhoT <- function(
 
 calculateHTMT <- function(
   .object               = NULL,
+  .type_htmt            = c('htmt','htmt2'),
   .absolute             = TRUE,
   .alpha                = 0.05,
   .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
@@ -1086,9 +1089,11 @@ calculateHTMT <- function(
 ){
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   .ci                   <- match.arg(.ci) # allow only one CI
+  .type_htmt            <- match.arg(.type_htmt)
 
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, calculateHTMT,
+                  .type_htmt     = .type_htmt,
                   .absolute = .absolute,
                   .alpha                = .alpha,
                   .handle_inadmissibles = .handle_inadmissibles,
@@ -1147,37 +1152,99 @@ calculateHTMT <- function(
       " must be either all-positive or all-negative.", call. = FALSE)
   }
   
-  ## Average correlation of the indicators within and across blocks
-  ## The eta_i - eta_i (main diagonal) element is the monotrait-heteromethod correlation
-  ## The eta_i - eta_j (off-diagonal) element is the heterotrait-heteromethod correlation
-  avrg_cor <- cf_measurement %*% (S - diag(diag(S))) %*% t(cf_measurement) / S_elements
+  # Extract names of the indicators belnging to one block
+  ind_blocks<-lapply(rownames(cf_measurement),function(x){
+    colnames(cf_measurement)[cf_measurement[x,]==1]
+  })
+  names(ind_blocks)<-rownames(cf_measurement)
   
-  # Single-indicator constructs monotrait-heteromethod correlation is set to 1
-  x <- rowSums(cf_measurement) == 1
-
-  if(sum(x) == 1) {
-    avrg_cor[x, x] <- 1
-  } else if(sum(x) > 1) {
-    diag(avrg_cor[x, x]) <- 1 
-  } # else: dont do anything
+  # Create pairs of indicator blocks 
+  block_pairs <- utils::combn(ind_blocks, 2, simplify = FALSE)
   
-  ## Compute HTMT
-  # HTMT_ij = Average heterotrait-heteromethod correlation between i and j divided by 
-  # the geometric means of the average monotrait-heteromethod correlation of 
-  # eta_i with the average monotrait-heteromethod correlation of construct eta_j
-  # (can be negative if some indicators are negatively correlated)
-  tryCatch({sqrt(diag(avrg_cor) %o% diag(avrg_cor))},
-           warning = function(w) {
-             warning(
-               "The following warning occured in the calculateHTMT() function:\n",
-               "The geometric mean of the average monotrait-heteromethod",
-               " correlation of at least one construct with",
-               " the average monotrait-heteromethod correlation of the",
-               " other constructs is negative. NaNs produced.",
-               call. = FALSE)
-           }
-  )
-  out <- avrg_cor*lower.tri(avrg_cor) / suppressWarnings(sqrt(diag(avrg_cor) %o% diag(avrg_cor))) 
+  # extract monotrait and heterotrait correlations
+  correlations <- lapply(block_pairs, function(x){
+    monocortemp<-S[x[[1]],x[[1]],drop=FALSE]
+    # Set monotrait-heteromethod cor to one for single-indicator constructs 
+    if(nrow(monocortemp)==1){
+     monocor1=1 
+    }else{
+      monocor1<-monocortemp[lower.tri(monocortemp)]
+    }
+    monocortemp<-S[x[[2]],x[[2]],drop=FALSE]
+    # Set monotrait-heteromethod cor to one for single-indicator constructs 
+    if(nrow(monocortemp)==1){
+      monocor2=1
+    }else{
+      monocor2<-monocortemp[lower.tri(monocortemp)]
+    }
+    hetcor<-c(S[x[[1]],x[[2]]])
+    
+    # return correlations as list of vectors containing correlations
+    list(monocor1,monocor2,hetcor)
+  })
+  
+  if(.type_htmt=='htmt2'){
+    # calculate geometric mean of the correlations
+    avg_cor<-lapply(correlations, function(x){
+      sapply(x, function(y){
+        prod(y)^(1/length(y))
+      })
+    })
+  }
+  
+  if(.type_htmt=='htmt'){
+    # calculate the arithmetic mean of the correlations
+    avg_cor<-lapply(correlations, function(x){
+      sapply(x, function(y){
+        mean(y)
+      })
+    })
+  }
+  
+  # Compute HTMT
+  htmts <- sapply(avg_cor,function(x){
+    x[3]/sqrt(x[1]*x[2])
+  })
+  
+  # Sort HTMT values in matrix
+  out<-matrix(0,
+         nrow=length(names(ind_blocks)),
+         ncol=length(names(ind_blocks)),
+         dimnames=list(names(ind_blocks),names(ind_blocks)))
+  out[lower.tri(out)]<-htmts
+  
+  
+  # ## Average correlation of the indicators within and across blocks
+  # ## The eta_i - eta_i (main diagonal) element is the monotrait-heteromethod correlation
+  # ## The eta_i - eta_j (off-diagonal) element is the heterotrait-heteromethod correlation
+  # avrg_cor <- cf_measurement %*% (S - diag(diag(S))) %*% t(cf_measurement) / S_elements
+  # 
+  # # Single-indicator constructs monotrait-heteromethod correlation is set to 1
+  # x <- rowSums(cf_measurement) == 1
+  # 
+  # if(sum(x) == 1) {
+  #   avrg_cor[x, x] <- 1
+  # } else if(sum(x) > 1) {
+  #   diag(avrg_cor[x, x]) <- 1 
+  # } # else: dont do anything
+  # 
+  # ## Compute HTMT
+  # # HTMT_ij = Average heterotrait-heteromethod correlation between i and j divided by 
+  # # the geometric means of the average monotrait-heteromethod correlation of 
+  # # eta_i with the average monotrait-heteromethod correlation of construct eta_j
+  # # (can be negative if some indicators are negatively correlated)
+  # tryCatch({sqrt(diag(avrg_cor) %o% diag(avrg_cor))},
+  #          warning = function(w) {
+  #            warning(
+  #              "The following warning occured in the calculateHTMT() function:\n",
+  #              "The geometric mean of the average monotrait-heteromethod",
+  #              " correlation of at least one construct with",
+  #              " the average monotrait-heteromethod correlation of the",
+  #              " other constructs is negative. NaNs produced.",
+  #              call. = FALSE)
+  #          }
+  # )
+  # out <- avrg_cor*lower.tri(avrg_cor) / suppressWarnings(sqrt(diag(avrg_cor) %o% diag(avrg_cor))) 
   
   if(.absolute) {
     out <- abs(out)
@@ -1188,6 +1255,7 @@ calculateHTMT <- function(
     out_resample <- resamplecSEMResults(
       .object, 
       .user_funs = list("HTMT" = calculateHTMT), 
+      .type_htmt = .type_htmt,
       .absolute = .absolute,
       .handle_inadmissibles = .handle_inadmissibles,
       .inference = FALSE,
@@ -1219,7 +1287,7 @@ calculateHTMT <- function(
   }
   # Return
   diag(out) <- 1
-  return(out)
+  out
 }
 
 

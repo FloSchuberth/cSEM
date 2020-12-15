@@ -305,7 +305,12 @@ print.cSEMAssess <- function(x, ...) {
   if(any(names(x) %in% c("Fornell-Larcker", "HTMT"))) {
     cat2("\n\n", rule2("Validity assessment"))
     if(any(names(x) == "HTMT") && !is.null(x$HTMT)) {
+      if(x$Information$.type_htmt == 'htmt'){
       cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n")
+      }
+      if(x$Information$.type_htmt == 'htmt2'){
+        cat2("\n\n  Advanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)\n\n")
+      }
       if(x$Information$.inference) {
         cat2("\tValues in the upper triangular part are the ", 
              paste0(100*(1 - x$Information$.alpha), "%-quantile of the\n", 
