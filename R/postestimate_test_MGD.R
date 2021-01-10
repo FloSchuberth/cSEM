@@ -715,7 +715,7 @@ testMGD <- function(
   ## Klesel et al. (2019) ------------------------------------------------------
   if(any(.approach_mgd %in% c("all", "Klesel"))) {
     
-  # Collect permuation results and combine
+  # Collect permutation results and combine
   ref_dist_Klesel <- lapply(ref_dist1, function(x) x$Klesel)
   ref_dist_matrix_Klesel <- do.call(cbind, ref_dist_Klesel)
   
