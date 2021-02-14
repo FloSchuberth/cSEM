@@ -1,9 +1,7 @@
 ## Notes
 
-- This is version 0.3.0 including bug fixes and several
-  changes to the package
-  
-- Removed URIs
+- This is version 0.3.1 
+- Fixes the WARNING: https://cran.r-project.org/web/checks/check_results_cSEM.html
 
 ## Tests
 

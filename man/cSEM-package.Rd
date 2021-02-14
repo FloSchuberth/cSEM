@@ -6,11 +6,11 @@
 \alias{cSEM-package}
 \title{cSEM: A package for composite-based structural equation modeling}
 \description{
-Estimate, analyse, test, and study linear, nonlinear, hierachical and
+Estimate, analyze, test, and study linear, nonlinear, hierarchical and
 multigroup structural equation models using composite-based approaches and procedures including estimation
-techniques such as partial least squares path modelling (PLS) and its derivatives
+techniques such as partial least squares path modeling (PLS) and its derivatives
 (PLSc, ordPLSc, robustPLSc), generalized structured component analysis (GSCA),
-generalized structured component analyis with uniqueness terms (GSCAm),
+generalized structured component analysis with uniqueness terms (GSCAm),
 generalized canonical correlation analysis (GCCA) unit weights (sum score) and
 fixed weights, as well as several tests and typical postestimation
 procedures (e.g., assess the model fit, compute direct, indirect and total effects).
