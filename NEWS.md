@@ -1,11 +1,14 @@
-- `calculateHTMT()` extended by HTMT2.
+# Development version: cSEM 0.3.1:9000
 
-# Development version: cSEM 0.3.0:9000
+# cSEM 0.3.1 (2021-02-14)
 
 - Bug fix: `summarize()` no longer fails when `.object` is a of class 
   `cSEMResults_2ndorder` and contains no indirect effects.
+  
+- Add argument `type_htmt` to `calculateHTMT()`. `type_htmt = "htmt2"` calculates 
+  a consistent estimator for congeneric measurement models.
 
-# cSEM 0.3.0 (12.10.2020)
+# cSEM 0.3.0 (2020-12-10)
 
 - Add lifecylce badges to postestimation functions.(#376)
 
