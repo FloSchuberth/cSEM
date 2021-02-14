@@ -67,9 +67,15 @@
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-title-body">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -83,7 +89,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cSEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -216,7 +222,7 @@
 <h3 class="hasAnchor">
 <a href="#stylenaming" class="anchor"></a>Style/Naming</h3>
 <p>Stick to <a href="http://style.tidyverse.org/">this styleguide</a> with the following exceptions/additions:</p>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Function and class names are always CamelCase. Function names should contain a verb followed by a noun like: <code><a href="reference/processData.html">processData()</a></code>, <code>calculateValue()</code>.</li>
 <li>Verbs in function names should be consistent across the whole package. Avoid to mix synonyms. Example: <code>computeValue()</code> vs. <code>calculateValue()</code>. This package always uses <code>calculate</code> instead of <code>compute</code>. Similarly, <code>method</code> vs e.g. <code>approach</code>. This package always uses <code>approach</code> instead of <code>method</code>.</li>
 <li>Use plural in function/object names if the main output is more than one element, like <code><a href="reference/scaleWeights.html">scaleWeights()</a></code>, <code>calculateComposites()</code>, <code><a href="reference/handleArgs.html">handleArgs()</a></code> etc. but stick to singular in other cases like <code><a href="reference/parseModel.html">parseModel()</a></code>.</li>
@@ -248,7 +254,7 @@
 <a href="#matrices" class="anchor"></a>Matrices</h3>
 <ul>
 <li>Whenever possible: variables belong in columns, observations belong to rows. This implies: whenever a matrix contains observations, variables are in columns, no matter if they are indicators, proxies, errors or anything else.</li>
-<li>Covariance matrices: indicators <strong>always</strong> belong to columns and proxies to rows, i.e., the matrix of weights <span class="math inline"><em>W</em></span> for PLS is therefore <span class="math inline">(<em>J</em> × <em>K</em>)</span> where <span class="math inline"><em>J</em></span> is the number of proxies and <span class="math inline"><em>K</em></span> the number of indicators.</li>
+<li>Covariance matrices: indicators <strong>always</strong> belong to columns and proxies to rows, i.e., the matrix of weights (W) for PLS is therefore ((J K)) where (J) is the number of proxies and (K) the number of indicators.</li>
 <li>Naming: matrices within the package should be named according to the naming schemes of the related SEM literature.</li>
 </ul>
 </div>
@@ -256,7 +262,7 @@
 <h3 class="hasAnchor">
 <a href="#arguments" class="anchor"></a>Arguments</h3>
 <p>All arguments used by any of the functions in the package (including internal functions) are centrally collected in the file <code>zz_arguments.R</code>. Whenever a new argument is introduced:</p>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Add the new argument name + a description to the <code>cSEMArguments</code> list in alphabetical order by writing <code>@param &lt;argument&gt; "Some description". "Defaults to xxx".</code>
 </li>
 <li>Add the argument to the <code>args</code> or the <code>args_dotdotdot_csem</code> list of the <code><a href="reference/args_default.html">args_default()</a></code> function and provide a default value.
@@ -296,6 +302,8 @@
 
   
 
+
+  
 
   </body>
 </html>

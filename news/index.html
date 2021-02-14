@@ -67,9 +67,15 @@
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -83,7 +89,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cSEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -166,7 +172,9 @@
 <li><p>Combine functions for surface, floodlight and simple effects analysis in the <code><a href="../reference/doNonlinearEffectsAnalysis.html">doNonlinearEffectsAnalysis()</a></code> function; Breaking: functions <code>doFloodlightAnalysis()</code> and <code>doSurfaceAnalysis()</code> have been removed!</p></li>
 <li>
 <p>Progress bars are now supported for every function that does resampling. Progress bars are fully customizable via the <code>progressr</code> framework created by</p>
-<p>@HenrikBengtsson. Note: to suppress the progress bar use <code><a href="https://rdrr.io/pkg/progressr/man/handlers.html">progressr::handlers("void")</a></code> and then run your csem commands. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/359'>#359</a>)</p>
+<ol class="example" style="list-style-type: decimal">
+<li>Note: to suppress the progress bar use <code><a href="https://rdrr.io/pkg/progressr/man/handlers.html">progressr::handlers("void")</a></code> and then run your csem commands. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/359'>#359</a>)</li>
+</ol>
 </li>
 <li><p>Fix bug in the computation of the Bc and Bca interval. Computation failed for models that had no indirect effects.</p></li>
 <li><p>List element “reliability” of <code><a href="../reference/assess.html">assess()</a></code> is changed to “Reliability” to be consistent with the naming scheme of the other list elements.</p></li>
@@ -314,6 +322,8 @@
 
   
 
+
+  
 
   </body>
 </html>

@@ -36,6 +36,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -48,7 +50,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cSEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -142,7 +144,7 @@
 <p><img src="reference/figures/api.png" width="80%" style="display: block; margin: auto;"></p>
 <p>Usully, using <code>cSEM</code> is the same 3 step procedure:</p>
 <blockquote>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Pick a dataset and specify a model using <a href="https://lavaan.ugent.be/tutorial/syntax1.html">lavaan syntax</a>
 </li>
 <li>Use <code><a href="reference/csem.html">csem()</a></code>
@@ -761,7 +763,7 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 <a href="#resampling-and-inference" class="anchor"></a>Resampling and Inference</h4>
 <p>By default no inferential quantities are calculated since most composite-based estimators have no closed-form expressions for standard errors. Resampling is used instead. <code>cSEM</code> mostly relies on the <code>bootstrap</code> procedure (although <code>jackknife</code> is implemented as well) to estimate standard errors, test statistics, and critical quantiles.</p>
 <p><code>cSEM</code> offers two ways to compute resamples:</p>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Setting <code>.resample_method</code> in <code><a href="reference/csem.html">csem()</a></code> to <code>"jackkinfe"</code> or <code>"bootstrap"</code> and subsequently using postestimation functions <code><a href="reference/summarize.html">summarize()</a></code> or <code><a href="reference/infer.html">infer()</a></code>.</li>
 <li>The same result is achieved by passing a <code>cSEMResults</code> object to <code><a href="reference/resamplecSEMResults.html">resamplecSEMResults()</a></code> and subsequently using postestimation functions <code><a href="reference/summarize.html">summarize()</a></code> or <code><a href="reference/infer.html">infer()</a></code>.</li>
 </ol>
@@ -969,24 +971,28 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 </li>
 </ul>
 </div>
+
 <div class="license">
 <h2>License</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></li>
 </ul>
 </div>
+
 <div class="community">
 <h2>Community</h2>
 <ul class="list-unstyled">
 <li><a href="CONTRIBUTING.html">Contributing guide</a></li>
 </ul>
 </div>
+
 <div class="citation">
 <h2>Citation</h2>
 <ul class="list-unstyled">
 <li><a href="authors.html">Citing cSEM</a></li>
 </ul>
 </div>
+
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
@@ -996,7 +1002,7 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 </ul>
 </div>
 
-  <div class="dev-status">
+<div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://cran.r-project.org/package=cSEM"><img src="https://www.r-pkg.org/badges/version/cSEM" alt="CRAN status"></a></li>
@@ -1005,7 +1011,8 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 <li><a href="https://cran.r-project.org/package=cSEM"><img src="https://cranlogs.r-pkg.org/badges/cSEM" alt="CRAN downloads"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
@@ -1022,6 +1029,8 @@ LOY  =~ loy1  + loy2  + loy3  + loy4
 
   
 
+
+  
 
   </body>
 </html>
