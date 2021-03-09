@@ -1,6 +1,6 @@
 Package: cSEM
 Title: Composite-Based Structural Equation Modeling
-Version: 0.3.1
+Version: 0.3.1.9000
 Date: 2021-02-14
 Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut", "cre"),
