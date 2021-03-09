@@ -75,7 +75,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/M-E-Rademaker/cSEM/">
+  <a href="https://github.com/M-E-Rademaker/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -94,11 +94,11 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduction to cSEM</h1>
-                        <h4 class="author">Manuel Rademaker</h4>
+                        <h4 data-toc-skip class="author">Manuel Rademaker</h4>
             
-            <h4 class="date">Last edited: 2021-02-14</h4>
+            <h4 data-toc-skip class="date">Last edited: 2021-03-09</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/master/vignettes/cSEM.Rmd"><code>vignettes/cSEM.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/master/vignettes/cSEM.Rmd" class="external-link"><code>vignettes/cSEM.Rmd</code></a></small>
       <div class="hidden name"><code>cSEM.Rmd</code></div>
 
     </div>
@@ -113,12 +113,12 @@
 <p>Structural equation modeling (SEM) has been used and developed for decades across various research fields such as (among others) psychology, sociology, and business research.</p>
 <p>As an almost inevitable consequence, a different terminology system and, to some extent, mathematical notation has evolved within each field over the years. This “terminology mess” is one of the major obstacles in interdisciplinary research and (scientific) debates, since it hampers a broader understanding of methodological issues, and, even worse, promotes systematic misuse (e.g., the use of Cronbach’s alpha as an estimator for congeneric reliability). This is particularly true for users new to SEM or practitioners who are overwhelmed by terminology of their own field only to find that the term they just thought to have finally completely grasped is defined differently in another field, making the confusion complete. A prime example is the term “formative” (measurement) which has been used to describe a causal-formative as well as <a href="#cmodel">a composite model</a>. See e.g., <span class="citation">Henseler (2017)</span> for a clarification.</p>
 <p>Ultimately, this is a matter of (mis)communication which, in our opinion, can only be satisfactorily solved by establishing a clear, unambiguous definition for each term and symbol that is used within the package. We emphasize that we do not seek to impose “our” conventions, nor do we claim they are the “correct” conventions, but merely seek to make communication between us (the authors of the package) and you (the package user) as unambiguous and error-free as possible.</p>
-<p>Hence, we provide a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Terminology</a> and a <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation</a> file that contains key terms and mathematical notation/symbols that we consider crucial, alongside our definition. Users are encouraged to read these files carefully to avoid potential misunderstandings.</p>
+<p>Hence, we provide a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a> and a <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a> file that contains key terms and mathematical notation/symbols that we consider crucial, alongside our definition. Users are encouraged to read these files carefully to avoid potential misunderstandings.</p>
 <ol style="list-style-type: decimal">
-<li>The <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Terminology</a> file contains each term that we think should be defined and explained in order to make sure package users understand complementary help files and vignettes the way the package authors intended them to be understood.</li>
-<li>The <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation</a> files contains some fundamental mathematical notation/ symbols used in the package documentation alongside a definition. Bearing some exceptions, we mostly follow standard notation as laid out in e.g., <span class="citation">Bollen (1989)</span>.</li>
+<li>The <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a> file contains each term that we think should be defined and explained in order to make sure package users understand complementary help files and vignettes the way the package authors intended them to be understood.</li>
+<li>The <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a> files contains some fundamental mathematical notation/ symbols used in the package documentation alongside a definition. Bearing some exceptions, we mostly follow standard notation as laid out in e.g., <span class="citation">Bollen (1989)</span>.</li>
 </ol>
-<p>The package is designed based on a set of principles and a terminology that is partly in contrast to commonly used open-source or commercial software packages offering similar content (e.g., smartPLS). Together with the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Terminology</a> and <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html">Notation</a> file this introduction seeks to explain these principles. Lastly, to use <strong>cSEM</strong> effectively, it is helpful to understand its design. Hence, the package architecture and design as well as what we consider the “cSEM workflow” are discussed.</p>
+<p>The package is designed based on a set of principles and a terminology that is partly in contrast to commonly used open-source or commercial software packages offering similar content (e.g., smartPLS). Together with the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a> and <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a> file this introduction seeks to explain these principles. Lastly, to use <strong>cSEM</strong> effectively, it is helpful to understand its design. Hence, the package architecture and design as well as what we consider the “cSEM workflow” are discussed.</p>
 </div>
 <div id="composite-based-structural-equation-modeling" class="section level1">
 <h1 class="hasAnchor">
@@ -126,30 +126,30 @@
 <div id="what-is-structural-equation-modeling-sem" class="section level2">
 <h2 class="hasAnchor">
 <a href="#what-is-structural-equation-modeling-sem" class="anchor"></a>What is structural equation modeling (SEM)</h2>
-<p><a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Structural equation modeling (SEM)</a> is about analyzing, i.e., modeling, estimating, assessing, and testing, the (causal) relationships between <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a> - an entity defined by a conceptual definition - with other <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a> and/or observable quantities generally referred to as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">indicators, manifest variables or items</a>. Broadly speaking, two modeling approaches for the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a> and their relationship exist. We refer to the first as <a href="#lvmodel">the latent variable or common factor model</a> and to the second as <a href="#cmodel">the composite model</a>. Each approach entails a set of methods, test, and evaluation criteria as well as a specific terminology that may or may not be adequate within the realm of the other approach.</p>
+<p><a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Structural equation modeling (SEM)</a> is about analyzing, i.e., modeling, estimating, assessing, and testing, the (causal) relationships between <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a> - an entity defined by a conceptual definition - with other <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a> and/or observable quantities generally referred to as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">indicators, manifest variables or items</a>. Broadly speaking, two modeling approaches for the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a> and their relationship exist. We refer to the first as <a href="#lvmodel">the latent variable or common factor model</a> and to the second as <a href="#cmodel">the composite model</a>. Each approach entails a set of methods, test, and evaluation criteria as well as a specific terminology that may or may not be adequate within the realm of the other approach.</p>
 <div id="lvmodel" class="section level3">
 <h3 class="hasAnchor">
 <a href="#lvmodel" class="anchor"></a>The classical latent variable or common factor model</h3>
-<p>Assuming a researcher identifies <span class="math inline">\(J\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a> and <span class="math inline">\(K\)</span> indicators, the fundamental feature of the latent variable model is the assumption of the existence of a set of <span class="math inline">\(J\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">latent variables (common factors)</a> that each serve as a representation of one of the <span class="math inline">\(J\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a> to be studied in a sense that each <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">latent variable</a> is causally responsible for the manifestations of a set of <span class="math inline">\(K_j\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">indicators</a> which are supposed to measure the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concept</a> in question. The entirety of these measurement relations is captured by the <strong>measurement model</strong> which relates <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">indicators</a> to <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">latent variables</a> according to the researchers theory of how observables are related to the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a> in question. The entirety of the relationships between <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a> (i.e., its representation in a statistical model, the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">construct</a>) is captured by the <strong>structural model</strong> whose parameters are usually at the center of the researchers interest. Caution is warranted though as the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">common factor</a> and its respective <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concept</a> are not the same thing. Within the “classical” <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">covariance-based or factor-based</a> literature <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concept</a>, <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">construct</a>, <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">latent variable</a> and its representation the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">common factor</a> have often been used interchangeably <span class="citation">(Rigdon 2012, 2016; Rigdon, Becker, and Sarstedt 2019)</span>. This will not be the case in <strong>cSEM</strong> and readers are explicitly made aware of the fact that <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a> are the abstract entity which <em>may</em> be modeled by a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">common factor</a>, however, no assertion as to the correctness of this approach in terms of “closeness of the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">common factor</a> and its related <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concept</a>” are made.</p>
-<p>Parameters in latent variable models are usually retrieved by maximum likelihood (ML). The basic idea of ML is to find parameters such that the difference between the model-implied and the empirical indicator covariance matrix is minimized. Such estimation methods are therefore often referred to as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">covariance-based methods</a>.</p>
+<p>Assuming a researcher identifies <span class="math inline">\(J\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a> and <span class="math inline">\(K\)</span> indicators, the fundamental feature of the latent variable model is the assumption of the existence of a set of <span class="math inline">\(J\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent variables (common factors)</a> that each serve as a representation of one of the <span class="math inline">\(J\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a> to be studied in a sense that each <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent variable</a> is causally responsible for the manifestations of a set of <span class="math inline">\(K_j\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">indicators</a> which are supposed to measure the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a> in question. The entirety of these measurement relations is captured by the <strong>measurement model</strong> which relates <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">indicators</a> to <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent variables</a> according to the researchers theory of how observables are related to the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a> in question. The entirety of the relationships between <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a> (i.e., its representation in a statistical model, the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">construct</a>) is captured by the <strong>structural model</strong> whose parameters are usually at the center of the researchers interest. Caution is warranted though as the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common factor</a> and its respective <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a> are not the same thing. Within the “classical” <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">covariance-based or factor-based</a> literature <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>, <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">construct</a>, <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent variable</a> and its representation the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common factor</a> have often been used interchangeably <span class="citation">(Rigdon 2012, 2016; Rigdon, Becker, and Sarstedt 2019)</span>. This will not be the case in <strong>cSEM</strong> and readers are explicitly made aware of the fact that <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a> are the abstract entity which <em>may</em> be modeled by a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common factor</a>, however, no assertion as to the correctness of this approach in terms of “closeness of the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common factor</a> and its related <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>” are made.</p>
+<p>Parameters in latent variable models are usually retrieved by maximum likelihood (ML). The basic idea of ML is to find parameters such that the difference between the model-implied and the empirical indicator covariance matrix is minimized. Such estimation methods are therefore often referred to as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">covariance-based methods</a>.</p>
 </div>
 <div id="cmodel" class="section level3">
 <h3 class="hasAnchor">
 <a href="#cmodel" class="anchor"></a>The composite model</h3>
-<p>The second approach is known as the composite model. As opposed to the latent variable or common factor model, composites do not presuppose the existence of a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">latent variable</a>. Hence, designed entities (artifacts) such as the “OECD Better Life Index” that arguably have no latent counterpart may be adequately described by a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">composite</a>, i.e., the linear combination of observables defining the composite. Composites may also be formed to represent <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">latent variables/common factors</a> (or more precisely <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a> modeled as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">common factors</a>) in which case the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">composite</a> serves as a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">proxy or stand-in</a> for the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">latent variable</a>. However, in <strong>cSEM</strong>, the term “composite <em><strong>model</strong></em>” is only used to refer to a model in a the former sense, i.e., a model in which the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">composite</a> is a direct representation of <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concept/construct</a>!</p>
-<p>Parameters in composite models are retrivied by a composite-based approach such as partial least squares path modeling (PLS-PM), generalized structured component analysis (GSCA) or dimension reduction techniques such as principal component analysis (PCA). The basic idea of any composite-based approach is to build scores/composites for each concept and subsequently retrieve structural model parameters by a series of (linear) regressions. Such estimation methods are therefore often referred to as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">variance-based methods</a> as regression maximizes the explained variance of the dependent variable.</p>
+<p>The second approach is known as the composite model. As opposed to the latent variable or common factor model, composites do not presuppose the existence of a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent variable</a>. Hence, designed entities (artifacts) such as the “OECD Better Life Index” that arguably have no latent counterpart may be adequately described by a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composite</a>, i.e., the linear combination of observables defining the composite. Composites may also be formed to represent <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent variables/common factors</a> (or more precisely <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a> modeled as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common factors</a>) in which case the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composite</a> serves as a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">proxy or stand-in</a> for the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent variable</a>. However, in <strong>cSEM</strong>, the term “composite <em><strong>model</strong></em>” is only used to refer to a model in a the former sense, i.e., a model in which the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composite</a> is a direct representation of <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept/construct</a>!</p>
+<p>Parameters in composite models are retrivied by a composite-based approach such as partial least squares path modeling (PLS-PM), generalized structured component analysis (GSCA) or dimension reduction techniques such as principal component analysis (PCA). The basic idea of any composite-based approach is to build scores/composites for each concept and subsequently retrieve structural model parameters by a series of (linear) regressions. Such estimation methods are therefore often referred to as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">variance-based methods</a> as regression maximizes the explained variance of the dependent variable.</p>
 </div>
 </div>
 <div id="what-is-composite-based-sem" class="section level2">
 <h2 class="hasAnchor">
 <a href="#what-is-composite-based-sem" class="anchor"></a>What is composite-based SEM?</h2>
-<p>Composite-based SEM is the entirety of methods, approaches, procedures, algorithms that in some way or another involve linear compounds (<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">composites/proxies/scores</a>), i.e., linear combinations of observables when retrieving (estimating) quantities of interest such as the coefficients of the structural model. It is crucial to clearly distinguish between the <strong>composite model</strong> and <strong>composite-based SEM</strong>. They are not the same. While the former is “only” <em><strong>a</strong></em> <em>statistical model</em> relating <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a> to observables, the latter simply states that <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">composites</a> - linear compounds, i.e., weighted linear combinations of observables - are used to retrieve quantities of interest! Hence, composite-based SEM as a way of obtaining/estimating parameters of interest may thus be used for <a href="#lvmodel">the latent variable or common factor model</a> as well as <a href="#cmodel">the composite model</a>. However, interpretation of the parameter estimates is fundamentally different since the underlying models differ!</p>
-<p>As sketched above, common factor and composite models fundamentally differ in how the relation between observables and <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a> is modeled. Naturally, results and, most notably, their (correct/meaningful) interpretation critically hinge on what type of model the user specifies. Across the package we therefore strictly distinguish between</p>
+<p>Composite-based SEM is the entirety of methods, approaches, procedures, algorithms that in some way or another involve linear compounds (<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composites/proxies/scores</a>), i.e., linear combinations of observables when retrieving (estimating) quantities of interest such as the coefficients of the structural model. It is crucial to clearly distinguish between the <strong>composite model</strong> and <strong>composite-based SEM</strong>. They are not the same. While the former is “only” <em><strong>a</strong></em> <em>statistical model</em> relating <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a> to observables, the latter simply states that <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composites</a> - linear compounds, i.e., weighted linear combinations of observables - are used to retrieve quantities of interest! Hence, composite-based SEM as a way of obtaining/estimating parameters of interest may thus be used for <a href="#lvmodel">the latent variable or common factor model</a> as well as <a href="#cmodel">the composite model</a>. However, interpretation of the parameter estimates is fundamentally different since the underlying models differ!</p>
+<p>As sketched above, common factor and composite models fundamentally differ in how the relation between observables and <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a> is modeled. Naturally, results and, most notably, their (correct/meaningful) interpretation critically hinge on what type of model the user specifies. Across the package we therefore strictly distinguish between</p>
 <ul>
 <li>
-<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Concepts</a>/<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Constructs</a> modeled as common factors (or alternatively latent variables)</li>
+<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Concepts</a>/<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Constructs</a> modeled as common factors (or alternatively latent variables)</li>
 <li>
-<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Concepts</a>/<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">Constructs</a> modeled as composites</li>
+<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Concepts</a>/<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Constructs</a> modeled as composites</li>
 </ul>
 <p>These phrases will repeatedly appear in help files and other complementary files. It is therefore crucial to remember what they supposed to convey.</p>
 </div>
@@ -159,12 +159,12 @@
 <a href="#using-csem" class="anchor"></a>Using cSEM</h1>
 <p>The idea of cSEM is twofold:</p>
 <ol style="list-style-type: decimal">
-<li>Provide a unified framework to all common composite-based SEM approaches, including typical postestimation procedures. In principal, it should be similar to what <a href="https://lavaan.ugent.be/">lavaan</a> does for covariance-bases/factor-based SEM.</li>
+<li>Provide a unified framework to all common composite-based SEM approaches, including typical postestimation procedures. In principal, it should be similar to what <a href="https://lavaan.ugent.be/" class="external-link">lavaan</a> does for covariance-bases/factor-based SEM.</li>
 <li>Make the user experience as hassle-free as possible.</li>
 </ol>
 <p>The first point is an always ongoing task since approaches are constantly evolving with new developments appearing at a pace that we, the package authors, will not be able to keep up with. The second point, however, was particularly important to us as we have been frustrated ourselves by how technical, unfriendly packages in R can be. Hence, from the very start we envisioned a workflow that essentially only comprises three steps:</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Get the essential</strong>: no estimator or approach works without data and a description of what parameters are to be estimated and how data is related to these parameters, i.e. a model. Hence, we always need a data set and model. Since, model specification in <a href="https://lavaan.ugent.be/tutorial/syntax1.html">lavaan model syntax</a> is probably unbeatable in its ease and well known to R users that have an interest in SEM, to us, <a href="https://lavaan.ugent.be/tutorial/syntax1.html">lavaan model syntax</a> is the obvious tool for users to specify their model. Experience tells, that for R beginners the biggest obstacle has been to get the data into R. However, largely thanks to the <a href="https://www.tidyverse.org/">tidyverse</a> and <a href="https://rstudio.com">RStudio</a>, data import and data transformation are nowadays relatively easy to handle. See the <a href="#preparedata">Preparing the data</a> and the <a href="#specifyingamodel">Specifying a model</a> sections below.</p></li>
+<li><p><strong>Get the essential</strong>: no estimator or approach works without data and a description of what parameters are to be estimated and how data is related to these parameters, i.e. a model. Hence, we always need a data set and model. Since, model specification in <a href="https://lavaan.ugent.be/tutorial/syntax1.html" class="external-link">lavaan model syntax</a> is probably unbeatable in its ease and well known to R users that have an interest in SEM, to us, <a href="https://lavaan.ugent.be/tutorial/syntax1.html" class="external-link">lavaan model syntax</a> is the obvious tool for users to specify their model. Experience tells, that for R beginners the biggest obstacle has been to get the data into R. However, largely thanks to the <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> and <a href="https://rstudio.com" class="external-link">RStudio</a>, data import and data transformation are nowadays relatively easy to handle. See the <a href="#preparedata">Preparing the data</a> and the <a href="#specifyingamodel">Specifying a model</a> sections below.</p></li>
 <li>
 <p><strong>Estimate</strong>: no matter the model and type of data, estimation is always done using one central function with the data as its first and the model as its second argument:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -172,7 +172,7 @@
 <p>Naturally, the <code><a href="../reference/csem.html">csem()</a></code> function has a number of additional arguments to fine-tune the estimation, however, since <code><a href="../reference/csem.html">csem()</a></code> automatically recognizes, for instance, whether a concept was modeled as a common factor or composite and automatically applies appropriate correction for attenuation, default arguments are often sufficient. See the <a href="#estimate">Estimate using csem()</a> section below.</p>
 </li>
 <li>
-<p><strong>Postestimate</strong>: Inspired by the <a href="https://dplyr.tidyverse.org/">grammar of data manipulation</a> underlying the <a href="https://dplyr.tidyverse.org/">dplyr</a> package, cSEM provides 5 postestimation verbs that concisely cover all common postestimation tasks as well as 4 additional test commands and 2 general do commands:</p>
+<p><strong>Postestimate</strong>: Inspired by the <a href="https://dplyr.tidyverse.org/" class="external-link">grammar of data manipulation</a> underlying the <a href="https://dplyr.tidyverse.org/" class="external-link">dplyr</a> package, cSEM provides 5 postestimation verbs that concisely cover all common postestimation tasks as well as 4 additional test commands and 2 general do commands:</p>
 <ol style="list-style-type: decimal">
 <li><code><a href="../reference/assess.html">assess()</a></code></li>
 <li><code><a href="../reference/infer.html">infer()</a></code></li>
@@ -205,7 +205,7 @@
 <div id="preparedata" class="section level3">
 <h3 class="hasAnchor">
 <a href="#preparedata" class="anchor"></a>Prepare the data</h3>
-<p>Technically, preparing the data does not require the <strong>cSEM</strong> and is therefore better considered a preparation task, i.e., a “pre-cSEM” task. The reason why this step is nevertheless considered an explicit part of the cSEM-workflow is motivated by the experience that applied/causal users tend to shy away from software like R because “just getting the data in” and understanding how to show, manipulate and work with data can be frustrating if one is not aware of R’s rich and easy to learn data import and data processing capabilities. While these topics may have been overwhelming for newcomers several years ago, data import and data transformation have become extremely simple and user-friendly if the right tools packages are used. The best place to start is the <a href="https://rstudio.com/resources/cheatsheets/">Rstudio Cheat sheet webpage</a>, especially the <em>Data Import</em> and the <em>Data Transformation</em> cheat sheets.</p>
+<p>Technically, preparing the data does not require the <strong>cSEM</strong> and is therefore better considered a preparation task, i.e., a “pre-cSEM” task. The reason why this step is nevertheless considered an explicit part of the cSEM-workflow is motivated by the experience that applied/causal users tend to shy away from software like R because “just getting the data in” and understanding how to show, manipulate and work with data can be frustrating if one is not aware of R’s rich and easy to learn data import and data processing capabilities. While these topics may have been overwhelming for newcomers several years ago, data import and data transformation have become extremely simple and user-friendly if the right tools packages are used. The best place to start is the <a href="https://rstudio.com/resources/cheatsheets/" class="external-link">Rstudio Cheat sheet webpage</a>, especially the <em>Data Import</em> and the <em>Data Transformation</em> cheat sheets.</p>
 <p><strong>cSEM</strong> is relatively flexible as to the type of data accepted. Currently the following data types/structures are accepted:</p>
 <ol style="list-style-type: decimal">
 <li>
@@ -226,19 +226,19 @@ IMAG =~ imag1 + imag2
 <li><p>A <code>matrix</code> with column names matching the indicator names used in the lavaan model description of the measurement model or composite model description.</p></li>
 <li><p>A list of data frames or matrices. In this case estimation is repeated for each data frame or matrix separately.</p></li>
 </ol>
-<p>The current version 0.1.0 available on CRAN does not provide any tools to handle missing values. Future versions are likely to include at least the basic approaches for handling missing values. Regularly check <a href="https://github.com/M-E-Rademaker/cSEM" class="uri">https://github.com/M-E-Rademaker/cSEM</a> to get the latest updates.</p>
+<p>The current version 0.1.0 available on CRAN does not provide any tools to handle missing values. Future versions are likely to include at least the basic approaches for handling missing values. Regularly check <a href="https://github.com/M-E-Rademaker/cSEM" class="external-link uri">https://github.com/M-E-Rademaker/cSEM</a> to get the latest updates.</p>
 </div>
 <div id="specifyingamodel" class="section level3">
 <h3 class="hasAnchor">
 <a href="#specifyingamodel" class="anchor"></a>Specify a model</h3>
-<p>Models are defined using <a href="https://lavaan.ugent.be/tutorial/syntax1.html">lavaan model syntax</a>. Currently, only the “standard” lavaan model syntax is supported. This comprises:</p>
+<p>Models are defined using <a href="https://lavaan.ugent.be/tutorial/syntax1.html" class="external-link">lavaan model syntax</a>. Currently, only the “standard” lavaan model syntax is supported. This comprises:</p>
 <ol style="list-style-type: decimal">
 <li>The definition of a latent variable/common factor (or more precisely: the definition of a concept modeled as a common factor) by the “<code>=~</code>” operator.</li>
 <li>The definition of a composite (or more precisely: the definition of a concept modeled as a composite) by the “<code>&lt;~</code>” operator.</li>
-<li>The specification of regression equations by the “<code><a href="https://rdrr.io/r/base/tilde.html">~</a></code>” operator.</li>
+<li>The specification of regression equations by the “<code><a href="https://rdrr.io/r/base/tilde.html" class="external-link">~</a></code>” operator.</li>
 <li>The definition of error (co)variances, indicator correlations, or correlations between exogenous constructs using the “<code>~~</code>” operator.</li>
 </ol>
-<p><strong>cSEM</strong> handles linear, nonlinear and hierarchical models. Syntax for each model is illustrated below using variables of the build-in <code>satisfaction</code> dataset. For more information see the <a href="https://lavaan.ugent.be/tutorial/syntax1.html">lavaan syntax tutorial</a>.</p>
+<p><strong>cSEM</strong> handles linear, nonlinear and hierarchical models. Syntax for each model is illustrated below using variables of the build-in <code>satisfaction</code> dataset. For more information see the <a href="https://lavaan.ugent.be/tutorial/syntax1.html" class="external-link">lavaan syntax tutorial</a>.</p>
 <div id="linear-models" class="section level4">
 <h4 class="hasAnchor">
 <a href="#linear-models" class="anchor"></a>Linear models</h4>
@@ -324,11 +324,11 @@ QUAL =~ IMAG + EXPE
 <h3 class="hasAnchor">
 <a href="#estimate-using-csem" class="anchor"></a>Estimate using <code id="estimate">csem()</code>
 </h3>
-<p><code><a href="../reference/csem.html">csem()</a></code> is the central function of the package. Although it is possible to estimate a model using individual functions called by <code><a href="../reference/csem.html">csem()</a></code> (such as <code><a href="../reference/parseModel.html">parseModel()</a></code>, <code><a href="../reference/processData.html">processData()</a></code>, <code><a href="../reference/calculateWeightsPLS.html">calculateWeightsPLS()</a></code>, <code><a href="../reference/estimatePath.html">estimatePath()</a></code> etc.) using R’s <code><a href="https://rdrr.io/r/base/ns-dblcolon.html">:::</a></code>mechanism for non-exported functions, it is virtually always easier, safer and quicker to use <code><a href="../reference/csem.html">csem()</a></code> instead (this is why these functions are not exported).</p>
+<p><code><a href="../reference/csem.html">csem()</a></code> is the central function of the package. Although it is possible to estimate a model using individual functions called by <code><a href="../reference/csem.html">csem()</a></code> (such as <code><a href="../reference/parseModel.html">parseModel()</a></code>, <code><a href="../reference/processData.html">processData()</a></code>, <code><a href="../reference/calculateWeightsPLS.html">calculateWeightsPLS()</a></code>, <code><a href="../reference/estimatePath.html">estimatePath()</a></code> etc.) using R’s <code><a href="https://rdrr.io/r/base/ns-dblcolon.html" class="external-link">:::</a></code>mechanism for non-exported functions, it is virtually always easier, safer and quicker to use <code><a href="../reference/csem.html">csem()</a></code> instead (this is why these functions are not exported).</p>
 <p><code><a href="../reference/csem.html">csem()</a></code> accepts all models and data types described above. The result of a call to <code><a href="../reference/csem.html">csem()</a></code>is always an object of class <code>cSEMResults</code>. Technically, the resulting object has an additional class attribute, namely <code>cSEMResults_default</code>, <code>cSEMResults_multi</code> or <code>cSEMResults_2ndorder</code> that depends on the type of model and/or data provided, however, users usually do not need to worry since postestimation functions automatically work on all classes.</p>
 <p>The simplest possible call to <code><a href="../reference/csem.html">csem()</a></code> involves a data set and a model:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/M-E-Rademaker/cSEM">cSEM</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/M-E-Rademaker/cSEM" class="external-link">cSEM</a></span><span class="op">)</span>
 
 <span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"
 # Path model / Regressions
@@ -442,7 +442,7 @@ eta3 =~ y31 + y32 + y33
 ##  Number of admissible results     = 499
 ##  Approach to handle inadmissibles = "drop"
 ##  Sign change option               = "none"
-##  Random seed                      = -157315383
+##  Random seed                      = -1363997327
 ## 
 ##  Construct details:
 ##  ------------------
@@ -458,37 +458,37 @@ eta3 =~ y31 + y32 + y33
 ## ============================
 ##                                                              CI_percentile   
 ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1      0.6713      0.0453   14.8320    0.0000 [ 0.5790; 0.7523 ] 
-##   eta3 ~ eta1      0.4585      0.0845    5.4238    0.0000 [ 0.3004; 0.6368 ] 
-##   eta3 ~ eta2      0.3052      0.0879    3.4721    0.0005 [ 0.1203; 0.4767 ] 
+##   eta2 ~ eta1      0.6713      0.0425   15.7807    0.0000 [ 0.5870; 0.7500 ] 
+##   eta3 ~ eta1      0.4585      0.0803    5.7120    0.0000 [ 0.3055; 0.6232 ] 
+##   eta3 ~ eta2      0.3052      0.0872    3.4990    0.0005 [ 0.1272; 0.4683 ] 
 ## 
 ## Estimated loadings:
 ## ===================
 ##                                                              CI_percentile   
 ##   Loading        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 =~ y11      0.6631      0.0406   16.3390    0.0000 [ 0.5869; 0.7440 ] 
-##   eta1 =~ y12      0.6493      0.0368   17.6654    0.0000 [ 0.5720; 0.7143 ] 
-##   eta1 =~ y13      0.7613      0.0347   21.9474    0.0000 [ 0.6889; 0.8246 ] 
-##   eta2 =~ y21      0.5165      0.0494   10.4532    0.0000 [ 0.4056; 0.6060 ] 
-##   eta2 =~ y22      0.7554      0.0368   20.5042    0.0000 [ 0.6807; 0.8247 ] 
-##   eta2 =~ y23      0.7997      0.0359   22.2583    0.0000 [ 0.7337; 0.8736 ] 
-##   eta3 =~ y31      0.8223      0.0318   25.8884    0.0000 [ 0.7548; 0.8863 ] 
-##   eta3 =~ y32      0.6581      0.0386   17.0454    0.0000 [ 0.5786; 0.7343 ] 
-##   eta3 =~ y33      0.7474      0.0379   19.7469    0.0000 [ 0.6621; 0.8132 ] 
+##   eta1 =~ y11      0.6631      0.0406   16.3249    0.0000 [ 0.5812; 0.7404 ] 
+##   eta1 =~ y12      0.6493      0.0403   16.1147    0.0000 [ 0.5617; 0.7226 ] 
+##   eta1 =~ y13      0.7613      0.0345   22.0548    0.0000 [ 0.6855; 0.8184 ] 
+##   eta2 =~ y21      0.5165      0.0517    9.9869    0.0000 [ 0.4010; 0.6004 ] 
+##   eta2 =~ y22      0.7554      0.0368   20.5465    0.0000 [ 0.6796; 0.8220 ] 
+##   eta2 =~ y23      0.7997      0.0402   19.9039    0.0000 [ 0.7171; 0.8777 ] 
+##   eta3 =~ y31      0.8223      0.0318   25.8888    0.0000 [ 0.7625; 0.8880 ] 
+##   eta3 =~ y32      0.6581      0.0428   15.3897    0.0000 [ 0.5720; 0.7371 ] 
+##   eta3 =~ y33      0.7474      0.0400   18.7042    0.0000 [ 0.6615; 0.8160 ] 
 ## 
 ## Estimated weights:
 ## ==================
 ##                                                              CI_percentile   
 ##   Weight         Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 &lt;~ y11      0.3956      0.0219   18.0289    0.0000 [ 0.3539; 0.4334 ] 
-##   eta1 &lt;~ y12      0.3873      0.0187   20.7202    0.0000 [ 0.3514; 0.4236 ] 
-##   eta1 &lt;~ y13      0.4542      0.0203   22.3673    0.0000 [ 0.4162; 0.4959 ] 
-##   eta2 &lt;~ y21      0.3058      0.0259   11.8022    0.0000 [ 0.2471; 0.3498 ] 
-##   eta2 &lt;~ y22      0.4473      0.0213   21.0116    0.0000 [ 0.4090; 0.4891 ] 
-##   eta2 &lt;~ y23      0.4735      0.0203   23.2868    0.0000 [ 0.4400; 0.5159 ] 
-##   eta3 &lt;~ y31      0.4400      0.0182   24.1331    0.0000 [ 0.4066; 0.4779 ] 
-##   eta3 &lt;~ y32      0.3521      0.0182   19.2979    0.0000 [ 0.3169; 0.3877 ] 
-##   eta3 &lt;~ y33      0.3999      0.0183   21.8688    0.0000 [ 0.3627; 0.4334 ] 
+##   eta1 &lt;~ y11      0.3956      0.0220   17.9755    0.0000 [ 0.3536; 0.4385 ] 
+##   eta1 &lt;~ y12      0.3873      0.0213   18.1963    0.0000 [ 0.3474; 0.4273 ] 
+##   eta1 &lt;~ y13      0.4542      0.0202   22.4824    0.0000 [ 0.4147; 0.4929 ] 
+##   eta2 &lt;~ y21      0.3058      0.0279   10.9567    0.0000 [ 0.2473; 0.3549 ] 
+##   eta2 &lt;~ y22      0.4473      0.0216   20.6863    0.0000 [ 0.4100; 0.4935 ] 
+##   eta2 &lt;~ y23      0.4735      0.0209   22.6459    0.0000 [ 0.4344; 0.5193 ] 
+##   eta3 &lt;~ y31      0.4400      0.0183   24.0106    0.0000 [ 0.4070; 0.4788 ] 
+##   eta3 &lt;~ y32      0.3521      0.0193   18.2648    0.0000 [ 0.3113; 0.3911 ] 
+##   eta3 &lt;~ y33      0.3999      0.0201   19.8922    0.0000 [ 0.3593; 0.4370 ] 
 ## 
 ## ------------------------------------ Effects -----------------------------------
 ## 
@@ -496,34 +496,34 @@ eta3 =~ y31 + y32 + y33
 ## ========================
 ##                                                               CI_percentile   
 ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1       0.6713      0.0453   14.8320    0.0000 [ 0.5790; 0.7523 ] 
-##   eta3 ~ eta1       0.6634      0.0410   16.1636    0.0000 [ 0.5838; 0.7398 ] 
-##   eta3 ~ eta2       0.3052      0.0879    3.4721    0.0005 [ 0.1203; 0.4767 ] 
+##   eta2 ~ eta1       0.6713      0.0425   15.7807    0.0000 [ 0.5870; 0.7500 ] 
+##   eta3 ~ eta1       0.6634      0.0382   17.3434    0.0000 [ 0.5901; 0.7477 ] 
+##   eta3 ~ eta2       0.3052      0.0872    3.4990    0.0005 [ 0.1272; 0.4683 ] 
 ## 
 ## Estimated indirect effects:
 ## ===========================
 ##                                                                  CI_percentile   
 ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta3 ~ eta1          0.2049      0.0596    3.4378    0.0006 [ 0.0824; 0.3209 ] 
+##   eta3 ~ eta1          0.2049      0.0583    3.5155    0.0004 [ 0.0862; 0.3138 ] 
 ## ________________________________________________________________________________</code></pre>
 <p>Or directly via <code><a href="../reference/infer.html">infer()</a></code></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ii</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infer.html">infer</a></span><span class="op">(</span><span class="va">b1</span>, .quantity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"CI_standard_z"</span>, <span class="st">"CI_percentile"</span><span class="op">)</span>, .alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">ii</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infer.html">infer</a></span><span class="op">(</span><span class="va">b1</span>, .quantity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CI_standard_z"</span>, <span class="st">"CI_percentile"</span><span class="op">)</span>, .alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span>
 <span class="va">ii</span><span class="op">$</span><span class="va">Path_estimates</span></code></pre></div>
 <pre><code>## $CI_standard_z
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5568136   0.2312490  0.08846138
-## 99%U   0.7899912   0.6667518  0.54121691
-## 95%L   0.5846893   0.2833120  0.14258695
-## 95%U   0.7621155   0.6146888  0.48709135
+## 99%L   0.5627930   0.2491327  0.08239123
+## 99%U   0.7819517   0.6626620  0.53167183
+## 95%L   0.5889928   0.2985689  0.13610137
+## 95%U   0.7557519   0.6132258  0.47796169
 ## 
 ## $CI_percentile
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5465017   0.2525267  0.08075499
-## 99%U   0.7771192   0.6860845  0.52240518
-## 95%L   0.5790499   0.3003703  0.12034319
-## 95%U   0.7523017   0.6367755  0.47670451</code></pre>
-<p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future">future framework</a>. For multiprocessing simply set <code>.eval_plan = "multiprocess"</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the background as there are cores available instead. Note that this naturally has some overhead. Consequently, for a small number of resamples multiprocessing will generally not be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument. A typical call would look like this:</p>
+## 99%L   0.5724203   0.2548621   0.0845321
+## 99%U   0.7891448   0.6648769   0.5134293
+## 95%L   0.5870005   0.3055051   0.1271572
+## 95%U   0.7499516   0.6231730   0.4682591</code></pre>
+<p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future" class="external-link">future framework</a>. For multiprocessing simply set <code>.eval_plan = "multiprocess"</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the background as there are cores available instead. Note that this naturally has some overhead. Consequently, for a small number of resamples multiprocessing will generally not be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument. A typical call would look like this:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span>
   .data            <span class="op">=</span> <span class="va">satisfaction</span>,
@@ -681,7 +681,7 @@ eta2 &lt;~ item4 + item5 + item6
 <a href="#literature" class="anchor"></a>Literature</h1>
 <div id="refs" class="references">
 <div id="ref-Beran1985">
-<p>Beran, Rudolf, and Muni S. Srivastava. 1985. “Bootstrap Tests and Confidence Regions for Functions of a Covariance Matrix.” <em>The Annals of Statistics</em> 13 (1): 95–115. <a href="https://doi.org/10.1214/aos/1176346579">https://doi.org/10.1214/aos/1176346579</a>.</p>
+<p>Beran, Rudolf, and Muni S. Srivastava. 1985. “Bootstrap Tests and Confidence Regions for Functions of a Covariance Matrix.” <em>The Annals of Statistics</em> 13 (1): 95–115. <a href="https://doi.org/10.1214/aos/1176346579" class="external-link">https://doi.org/10.1214/aos/1176346579</a>.</p>
 </div>
 <div id="ref-Bollen1989">
 <p>Bollen, Kenneth A. 1989. <em>Structural Equations with Latent Variables</em>. Wiley-Interscience.</p>
@@ -696,28 +696,28 @@ eta2 &lt;~ item4 + item5 + item6
 <p>Hair, Joseph F, G Tomas M Hult, Christian Ringle, and Marko Sarstedt. 2016. <em>A Primer on Partial Least Squares Structural Equation Modeling (PLS-SEM)</em>. Sage publications.</p>
 </div>
 <div id="ref-Henseler2017">
-<p>Henseler, Jörg. 2017. “Bridging Design and Behavioral Research with Variance-Based Structural Equation Modeling.” <em>Journal of Advertising</em> 46 (1): 178–92. <a href="https://doi.org/10.1080/00913367.2017.1281780">https://doi.org/10.1080/00913367.2017.1281780</a>.</p>
+<p>Henseler, Jörg. 2017. “Bridging Design and Behavioral Research with Variance-Based Structural Equation Modeling.” <em>Journal of Advertising</em> 46 (1): 178–92. <a href="https://doi.org/10.1080/00913367.2017.1281780" class="external-link">https://doi.org/10.1080/00913367.2017.1281780</a>.</p>
 </div>
 <div id="ref-Henseler2016">
-<p>Henseler, Jörg, Christian M. Ringle, and Marko Sarstedt. 2016. “Testing Measurement Invariance of Composites Using Partial Least Squares.” <em>International Marketing Review</em> 33 (3): 405–31. <a href="https://doi.org/10.1108/imr-09-2014-0304">https://doi.org/10.1108/imr-09-2014-0304</a>.</p>
+<p>Henseler, Jörg, Christian M. Ringle, and Marko Sarstedt. 2016. “Testing Measurement Invariance of Composites Using Partial Least Squares.” <em>International Marketing Review</em> 33 (3): 405–31. <a href="https://doi.org/10.1108/imr-09-2014-0304" class="external-link">https://doi.org/10.1108/imr-09-2014-0304</a>.</p>
 </div>
 <div id="ref-Klesel2019">
-<p>Klesel, Michael, Florian Schuberth, Jörg Henseler, and Bjoern Niehaves. 2019. “A Test for Multigroup Comparison Using Partial Least Squares Path Modeling.” <em>Internet Research</em> 29 (3): 464–77. <a href="https://doi.org/10.1108/intr-11-2017-0418">https://doi.org/10.1108/intr-11-2017-0418</a>.</p>
+<p>Klesel, Michael, Florian Schuberth, Jörg Henseler, and Bjoern Niehaves. 2019. “A Test for Multigroup Comparison Using Partial Least Squares Path Modeling.” <em>Internet Research</em> 29 (3): 464–77. <a href="https://doi.org/10.1108/intr-11-2017-0418" class="external-link">https://doi.org/10.1108/intr-11-2017-0418</a>.</p>
 </div>
 <div id="ref-Rigdon2012">
-<p>Rigdon, Edward E. 2012. “Rethinking Partial Least Squares Path Modeling: In Praise of Simple Methods.” <em>Long Range Planning</em> 45 (5-6): 341–58. <a href="https://doi.org/10.1016/j.lrp.2012.09.010">https://doi.org/10.1016/j.lrp.2012.09.010</a>.</p>
+<p>Rigdon, Edward E. 2012. “Rethinking Partial Least Squares Path Modeling: In Praise of Simple Methods.” <em>Long Range Planning</em> 45 (5-6): 341–58. <a href="https://doi.org/10.1016/j.lrp.2012.09.010" class="external-link">https://doi.org/10.1016/j.lrp.2012.09.010</a>.</p>
 </div>
 <div id="ref-Rigdon2016">
-<p>———. 2016. “Choosing PLS Path Modeling as Analytical Method in European Management Research: A Realist Perspective.” <em>European Management Journal</em> 34 (6). <a href="https://doi.org/10.1016/j.emj.2016.05.006">https://doi.org/10.1016/j.emj.2016.05.006</a>.</p>
+<p>———. 2016. “Choosing PLS Path Modeling as Analytical Method in European Management Research: A Realist Perspective.” <em>European Management Journal</em> 34 (6). <a href="https://doi.org/10.1016/j.emj.2016.05.006" class="external-link">https://doi.org/10.1016/j.emj.2016.05.006</a>.</p>
 </div>
 <div id="ref-Rigdon2019">
-<p>Rigdon, Edward E., Jan-Michael Becker, and Marko Sarstedt. 2019. “Factor Indeterminacy as Metrological Uncertainty: Implications for Advancing Psychological Measurement.” <em>Multivariate Behavioral Research</em>, 1–15. <a href="https://doi.org/10.1080/00273171.2018.1535420">https://doi.org/10.1080/00273171.2018.1535420</a>.</p>
+<p>Rigdon, Edward E., Jan-Michael Becker, and Marko Sarstedt. 2019. “Factor Indeterminacy as Metrological Uncertainty: Implications for Advancing Psychological Measurement.” <em>Multivariate Behavioral Research</em>, 1–15. <a href="https://doi.org/10.1080/00273171.2018.1535420" class="external-link">https://doi.org/10.1080/00273171.2018.1535420</a>.</p>
 </div>
 <div id="ref-Shmueli2016">
-<p>Shmueli, Galit, Soumya Ray, Juan Manuel Velasquez Estrada, and Suneel Babu Chatla. 2016. “The Elephant in the Room: Predictive Performance of PLS Models.” <em>Journal of Business Research</em> 69 (10): 4552–64. <a href="https://doi.org/10.1016/j.jbusres.2016.03.049">https://doi.org/10.1016/j.jbusres.2016.03.049</a>.</p>
+<p>Shmueli, Galit, Soumya Ray, Juan Manuel Velasquez Estrada, and Suneel Babu Chatla. 2016. “The Elephant in the Room: Predictive Performance of PLS Models.” <em>Journal of Business Research</em> 69 (10): 4552–64. <a href="https://doi.org/10.1016/j.jbusres.2016.03.049" class="external-link">https://doi.org/10.1016/j.jbusres.2016.03.049</a>.</p>
 </div>
 <div id="ref-Spiller2013">
-<p>Spiller, Stephen A., Gavan J. Fitzsimons, John G. Lynch, and Gary H. Mcclelland. 2013. “Spotlights, Floodlights, and the Magic Number Zero: Simple Effects Tests in Moderated Regression.” <em>Journal of Marketing Research</em> 50 (2): 277–88. <a href="https://doi.org/10.1509/jmr.12.0420">https://doi.org/10.1509/jmr.12.0420</a>.</p>
+<p>Spiller, Stephen A., Gavan J. Fitzsimons, John G. Lynch, and Gary H. Mcclelland. 2013. “Spotlights, Floodlights, and the Magic Number Zero: Simple Effects Tests in Moderated Regression.” <em>Journal of Marketing Research</em> 50 (2): 277–88. <a href="https://doi.org/10.1509/jmr.12.0420" class="external-link">https://doi.org/10.1509/jmr.12.0420</a>.</p>
 </div>
 </div>
 </div>
@@ -740,11 +740,13 @@ eta2 &lt;~ item4 + item5 + item6
 
 
       <footer><div class="copyright">
-  <p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
+  <p></p>
+<p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -150,7 +150,7 @@
     </div>
 
     <div class="ref-description">
-    <p><a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a></p>
+    <p><a href='https://lifecycle.r-lib.org/articles/stages.html#stable'><img src='figures/lifecycle-stable.svg' alt='[Stable]' /></a></p>
     </div>
 
     <pre class="usage"><span class='fu'>csem</span><span class='op'>(</span>
@@ -442,7 +442,7 @@ section of the <a href='https://m-e-rademaker.github.io/cSEM/index.html'>cSEM we
 for a general introduction to composite-based SEM and <span class="pkg">cSEM</span>.</p>
 <p><code>csem()</code> estimates linear, nonlinear, hierarchical  or multigroup structural
 equation models using a composite-based approach.</p>
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Data and model:</h3>
+<h3 class='hasAnchor' id='data-and-model-'><a class='anchor' href='#data-and-model-'></a>Data and model:</h3>
 <p>The <code>.data</code> and <code>.model</code> arguments are required. <code>.data</code> must be given
 a <code>matrix</code> or a <code>data.frame</code> with column names matching
 the indicator names used in the model description. Alternatively,
@@ -463,7 +463,7 @@ Therefore, specifying e.g., a threshold or scaling factors is ignored.
 Alternatively, a standardized (possibly incomplete) <a href='csem_model.html'>cSEMModel</a>-list may be supplied.
 See <code><a href='parseModel.html'>parseModel()</a></code> for details.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Weights and path coefficients:</h3>
+<h3 class='hasAnchor' id='weights-and-path-coefficients-'><a class='anchor' href='#weights-and-path-coefficients-'></a>Weights and path coefficients:</h3>
 <p>By default weights are estimated using the partial least squares path modeling
 algorithm (<code>"PLS-PM"</code>).
 A range of alternative weighting algorithms may be supplied to
@@ -516,7 +516,7 @@ instruments for themselves.</p>
 <code>.reliabilities</code>, where <code>value</code> is a numeric value between 0 and 1.
 Currently, only supported for "PLS-PM".</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Nonlinear models:</h3>
+<h3 class='hasAnchor' id='nonlinear-models-'><a class='anchor' href='#nonlinear-models-'></a>Nonlinear models:</h3>
 <p>If the model contains nonlinear terms <code>csem()</code> estimates a polynomial structural equation model
 using a non-iterative method of moments approach described in
 Dijkstra and Schermelleh-Engel (2014)
@@ -543,7 +543,7 @@ measurement errors behave as if they were Gaussian.
 For details see: Dijkstra and Schermelleh-Engel (2014)
 .</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Second-order model</h3>
+<h3 class='hasAnchor' id='second-order-model'><a class='anchor' href='#second-order-model'></a>Second-order model</h3>
 <p>Second-order models are specified using the operators <code>=~</code> and <code>&lt;~</code>. These
 operators are usually used with indicators on their right-hand side. For
 second-order models the right-hand side variables are constructs instead.
@@ -597,7 +597,7 @@ c2 =~ x21 + x22
 </pre><p>According to the extended approach indirect effects of <code>QUAL</code> on <code>VAL</code> via <code>c1</code>
 and <code>c2</code> would have to be specified as well.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Multigroup analysis</h3>
+<h3 class='hasAnchor' id='multigroup-analysis'><a class='anchor' href='#multigroup-analysis'></a>Multigroup analysis</h3>
 <p>To perform multigroup analysis provide either a list of data sets or one
 data set containing a group-identifier-column whose column
 name must be provided to <code>.id</code>. Values of this column are taken as levels of a
@@ -608,7 +608,7 @@ the group-identifier-column has, the more estimation runs are required.
 This can considerably slow down estimation, especially if resampling is
 requested. For the latter it will generally be faster to use
 <code>.eval_plan = "multiprocess"</code>.</p>
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Inference:</h3>
+<h3 class='hasAnchor' id='inference-'><a class='anchor' href='#inference-'></a>Inference:</h3>
 <p>Inference is done via resampling. See <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code> and <code><a href='infer.html'>infer()</a></code> for details.</p>
 
     <h2 class="hasAnchor" id="postestimation"><a class="anchor" href="#postestimation"></a>Postestimation</h2>
@@ -1411,11 +1411,11 @@ eta3 =~ y31 + y32 + y33
 
       <footer>
       <div class="copyright">
-  <p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
+  <p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>

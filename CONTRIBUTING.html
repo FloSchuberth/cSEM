@@ -213,7 +213,7 @@
 <a href="#general-design-choices" class="anchor"></a>General design choices</h3>
 <ul>
 <li>The only OO system used is the S3 system. No S4 classes will be allowed!</li>
-<li>Whenever you subset a matrix using <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> use: <code>[..., ..., drop = FALSE]</code> to avoid accidentally dropping the <code>dim</code> attributes.</li>
+<li>Whenever you subset a matrix using <code><a href="https://rdrr.io/r/base/Extract.html" class="external-link">[</a></code> use: <code>[..., ..., drop = FALSE]</code> to avoid accidentally dropping the <code>dim</code> attributes.</li>
 <li>Generally avoid using attributes (sometimes they are meaningful though)</li>
 <li>Whenever the output consists of more than 1 element use a named list!</li>
 </ul>
@@ -221,7 +221,7 @@
 <div id="stylenaming" class="section level3">
 <h3 class="hasAnchor">
 <a href="#stylenaming" class="anchor"></a>Style/Naming</h3>
-<p>Stick to <a href="http://style.tidyverse.org/">this styleguide</a> with the following exceptions/additions:</p>
+<p>Stick to <a href="http://style.tidyverse.org/" class="external-link">this styleguide</a> with the following exceptions/additions:</p>
 <ol style="list-style-type: decimal">
 <li>Function and class names are always CamelCase. Function names should contain a verb followed by a noun like: <code><a href="reference/processData.html">processData()</a></code>, <code>calculateValue()</code>.</li>
 <li>Verbs in function names should be consistent across the whole package. Avoid to mix synonyms. Example: <code>computeValue()</code> vs. <code>calculateValue()</code>. This package always uses <code>calculate</code> instead of <code>compute</code>. Similarly, <code>method</code> vs e.g. <code>approach</code>. This package always uses <code>approach</code> instead of <code>method</code>.</li>
@@ -235,7 +235,7 @@
 <span class="va">calculateInnerWeightsPLS</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">.S</span>                           <span class="op">=</span> <span class="cn">NULL</span>,
                                      <span class="va">.W</span>                           <span class="op">=</span> <span class="cn">NULL</span>,
                                      <span class="va">.csem_model</span>                  <span class="op">=</span> <span class="cn">NULL</span>,
-                                     <span class="va">.PLS_weight_scheme_inner</span>     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"centroid"</span>,
+                                     <span class="va">.PLS_weight_scheme_inner</span>     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid"</span>,
                                                                       <span class="st">"factorial"</span>, 
                                                                       <span class="st">"path"</span><span class="op">)</span>,
                                      <span class="va">.PLS_ignore_structural_model</span> <span class="op">=</span> <span class="cn">NULL</span>
@@ -245,7 +245,7 @@
   <span class="va">.S</span>                            <span class="op">=</span> <span class="cn">NULL</span>,
   <span class="va">.W</span>                            <span class="op">=</span> <span class="cn">NULL</span>,
   <span class="va">.csem_model</span>                   <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">.PLS_weight_scheme_inner</span>      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"centroid"</span>,<span class="st">"factorial"</span>, <span class="st">"path"</span><span class="op">)</span>,
+  <span class="va">.PLS_weight_scheme_inner</span>      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid"</span>,<span class="st">"factorial"</span>, <span class="st">"path"</span><span class="op">)</span>,
   <span class="va">.PLS_ignore_structural_model</span>  <span class="op">=</span> <span class="cn">NULL</span>
   <span class="op">)</span> <span class="op">{</span> <span class="op">}</span></code></pre></div>
 </div>
@@ -290,11 +290,11 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
+  <p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>

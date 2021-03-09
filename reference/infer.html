@@ -150,7 +150,7 @@
     </div>
 
     <div class="ref-description">
-    <p><a href='https://www.tidyverse.org/lifecycle/#stable'><img src='figures/lifecycle-stable.svg' alt='Stable lifecycle'></a></p>
+    <p><a href='https://lifecycle.r-lib.org/articles/stages.html#stable'><img src='figures/lifecycle-stable.svg' alt='[Stable]' /></a></p>
     </div>
 
     <pre class="usage"><span class='fu'>infer</span><span class='op'>(</span>
@@ -304,15 +304,15 @@ VAL  =~ val1  + val2  + val3  + val4
 
 <span class='va'>inf</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_basic</span>
 </div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE
-#&gt; 95%L   0.5914791    1.029249  -6.082501   5.531768 -0.1712059   1.505026
-#&gt; 95%U   0.7247013    1.087596  -4.620285   6.990097  0.2864431   3.417891
+#&gt; 95%L   0.5848460    1.017207  -5.215833   4.666478 -0.3216930   1.321811
+#&gt; 95%U   0.7843458    1.067826  -3.797138   6.073530  0.1778844   2.748156
 #&gt;      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT
-#&gt; 95%L  -4.879666  1.377132  0.1395480 0.3227897
-#&gt; 95%U  -2.138424  2.738123  0.4851715 0.7212314</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
+#&gt; 95%L  -3.586209  1.326789  0.2166127 0.2458389
+#&gt; 95%U  -1.706300  2.372911  0.5867307 0.5857875</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
 </div><div class='output co'>#&gt; QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL 
-#&gt;  0.04185823  0.04997926  0.42500316  0.08698429  0.50355156  0.68367052 
+#&gt;  0.06574259  0.07739638  0.43153150  0.10479061  0.44566907  0.80909036 
 #&gt;  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL 
-#&gt;  0.07477493  0.10400270  0.27379216  0.22151337 </div><div class='input'>
+#&gt;  0.06954907  0.08655133  0.31365969  0.19857639 </div><div class='input'>
 <span class='co'>### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span>
 <span class='co'>## For the studentied t-interval confidence interval a double bootstrap is required.</span>
 <span class='co'>## This is pretty time consuming.</span>
@@ -340,11 +340,11 @@ VAL  =~ val1  + val2  + val3  + val4
 
       <footer>
       <div class="copyright">
-  <p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
+  <p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>

@@ -149,12 +149,12 @@
 
     <div id="development-version-csem-0319000" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.1">
-<a href="#development-version-csem-0319000" class="anchor"></a>Development version: cSEM 0.3.1:9000<small> Unreleased </small>
+<a href="#development-version-csem-0319000" class="anchor"></a>Development version: cSEM 0.3.1:9000<small> 2021-02-14 </small>
 </h1>
 </div>
     <div id="csem-031-2021-02-14" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.1">
-<a href="#csem-031-2021-02-14" class="anchor"></a>cSEM 0.3.1 (2021-02-14)<small> Unreleased </small>
+<a href="#csem-031-2021-02-14" class="anchor"></a>cSEM 0.3.1 (2021-02-14)<small> 2021-02-14 </small>
 </h1>
 <ul>
 <li><p>Bug fix: <code><a href="../reference/summarize.html">summarize()</a></code> no longer fails when <code>.object</code> is a of class <code>cSEMResults_2ndorder</code> and contains no indirect effects.</p></li>
@@ -179,7 +179,7 @@
 <li>
 <p>Progress bars are now supported for every function that does resampling. Progress bars are fully customizable via the <code>progressr</code> framework created by</p>
 <ol class="example" style="list-style-type: decimal">
-<li>Note: to suppress the progress bar use <code><a href="https://rdrr.io/pkg/progressr/man/handlers.html">progressr::handlers("void")</a></code> and then run your csem commands. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/359'>#359</a>)</li>
+<li>Note: to suppress the progress bar use <code><a href="https://rdrr.io/pkg/progressr/man/handlers.html" class="external-link">progressr::handlers("void")</a></code> and then run your csem commands. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/359'>#359</a>)</li>
 </ol>
 </li>
 <li><p>Fix bug in the computation of the Bc and Bca interval. Computation failed for models that had no indirect effects.</p></li>
@@ -264,7 +264,7 @@
 <a href="#predict" class="anchor"></a>predict()</h3>
 <ul>
 <li><p>Update documentation for <code><a href="../reference/predict.html">predict()</a></code>.</p></li>
-<li><p>Integrate and document <code>cSEMPredict</code> method for generic function <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code>. Now users may call <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> on an object created by <code><a href="../reference/predict.html">predict()</a></code>. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/337'>#337</a>)</p></li>
+<li><p>Integrate and document <code>cSEMPredict</code> method for generic function <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>. Now users may call <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on an object created by <code><a href="../reference/predict.html">predict()</a></code>. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/337'>#337</a>)</p></li>
 <li><p>Add the density of the residuals as plot to <code><a href="../reference/plot.cSEMPredict.html">plot.cSEMPredict()</a></code>. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/337'>#337</a>)</p></li>
 <li><p>Remove argument <code>.only_common_factors</code> for postestimation function <code><a href="../reference/predict.html">predict()</a></code>. Now <code><a href="../reference/predict.html">predict()</a></code> retruns predictions for composite models as well. This will break existing code that uses <code><a href="../reference/predict.html">predict(..., .only_common_factors = ...)</a></code>. You will get an <code>unused argument (.only_common_factors = FALSE)</code> error. Simply remove the argument to fix it. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/330'>#330</a>)</p></li>
 <li><p>Fixed error in <code><a href="../reference/predict.html">predict()</a></code> when the dataset used to obtain <code>.object</code> contained a character column. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/345'>#345</a>)</p></li>
@@ -316,11 +316,11 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
+  <p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>

@@ -75,7 +75,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/M-E-Rademaker/cSEM/">
+  <a href="https://github.com/M-E-Rademaker/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -94,11 +94,11 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Notation</h1>
-                        <h4 class="author">Manuel Rademaker</h4>
+                        <h4 data-toc-skip class="author">Manuel Rademaker</h4>
             
-            <h4 class="date">Last edited: 2021-02-14</h4>
+            <h4 data-toc-skip class="date">Last edited: 2021-03-09</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/master/vignettes/Notation.Rmd"><code>vignettes/Notation.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/master/vignettes/Notation.Rmd" class="external-link"><code>vignettes/Notation.Rmd</code></a></small>
       <div class="hidden name"><code>Notation.Rmd</code></div>
 
     </div>
@@ -110,9 +110,9 @@
 <div id="the-structural-model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#the-structural-model" class="anchor"></a>The structural model</h2>
-<p>The structural model specifies the relationships between <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">constructs</a> (i.e., the statistical representation of a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concept</a>) via paths (arrows) and associated path coefficients. The path coefficients - sometimes also called structural coefficients - express the magnitude of the influence exerted by the construct at the start of the arrow on the variable at the arrow’s end. In <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">composite-based SEM</a> constructs are always operationalized (not modeled!!) as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">composites</a>, i.e., weighted linear combinations of its respective <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">indicators</a>. Consequently, depending on how a given construct is modeled, such a composite may either serve as a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">proxy</a> for an underlying <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">latent variable</a> (<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">common factor</a>) or as a composite in its own right. Despite this crucial difference, we stick with the common - although somewhat ambivalent - notation and represent both the construct and the latent variable (which is only <strong>a</strong> possible construct) by <span class="math inline">\(\eta\)</span>. Let <span class="math inline">\(x_{kj}\)</span> <span class="math inline">\((k = 1,\dots, K_j)\)</span> be an indicator (observable) belonging to construct <span class="math inline">\(\eta_j\)</span> <span class="math inline">\((j = 1\dots, J)\)</span> and <span class="math inline">\(w_{kj}\)</span> be a weight. A composite is definied as: <span class="math display">\[\hat{\eta}_j = \sum^{K_j}_{k = 1} w_{kj} x_{kj} \]</span> Again, <span class="math inline">\(\hat{\eta}_j\)</span> may represent a latent variable <span class="math inline">\(\eta_j\)</span> but may also serve as composite in its own right in which case we would essentially say that<br><span class="math inline">\(\hat{\eta}_j = \eta_j\)</span> and refer to <span class="math inline">\(\eta_j\)</span> as a construct instead of a latent variable. Since <span class="math inline">\(\hat{\eta}_j\)</span> generally does not have a natural scale, weights are usually chosen such that <span class="math inline">\(\hat{\eta}_j\)</span> is standardized. Therefore, unless otherwise stated:</p>
+<p>The structural model specifies the relationships between <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">constructs</a> (i.e., the statistical representation of a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>) via paths (arrows) and associated path coefficients. The path coefficients - sometimes also called structural coefficients - express the magnitude of the influence exerted by the construct at the start of the arrow on the variable at the arrow’s end. In <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composite-based SEM</a> constructs are always operationalized (not modeled!!) as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composites</a>, i.e., weighted linear combinations of its respective <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">indicators</a>. Consequently, depending on how a given construct is modeled, such a composite may either serve as a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">proxy</a> for an underlying <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent variable</a> (<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common factor</a>) or as a composite in its own right. Despite this crucial difference, we stick with the common - although somewhat ambivalent - notation and represent both the construct and the latent variable (which is only <strong>a</strong> possible construct) by <span class="math inline">\(\eta\)</span>. Let <span class="math inline">\(x_{kj}\)</span> <span class="math inline">\((k = 1,\dots, K_j)\)</span> be an indicator (observable) belonging to construct <span class="math inline">\(\eta_j\)</span> <span class="math inline">\((j = 1\dots, J)\)</span> and <span class="math inline">\(w_{kj}\)</span> be a weight. A composite is definied as: <span class="math display">\[\hat{\eta}_j = \sum^{K_j}_{k = 1} w_{kj} x_{kj} \]</span> Again, <span class="math inline">\(\hat{\eta}_j\)</span> may represent a latent variable <span class="math inline">\(\eta_j\)</span> but may also serve as composite in its own right in which case we would essentially say that<br><span class="math inline">\(\hat{\eta}_j = \eta_j\)</span> and refer to <span class="math inline">\(\eta_j\)</span> as a construct instead of a latent variable. Since <span class="math inline">\(\hat{\eta}_j\)</span> generally does not have a natural scale, weights are usually chosen such that <span class="math inline">\(\hat{\eta}_j\)</span> is standardized. Therefore, unless otherwise stated:</p>
 <p><span class="math display">\[E(\hat\eta_j) = 0\quad\quad \text{and}\quad\quad Var(\hat\eta_j) = E(\hat\eta^2_j) = 1\]</span></p>
-<p>Since the relations between <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">concepts</a>(or its statistical sibbling the constructs) are a product of the researcher’s theory and assumptions to be analyzed, some constructs are typically not directly connected by a path. Technically this implies a restriction of the path between construct <span class="math inline">\(j\)</span> and <span class="math inline">\(i\)</span> to zero. If all constructs of the reserchers model are connected by a path we call the structural model <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">saturated</a>. If at least one path is restricted to zero, the structural model is called <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html">non-saturated</a>.</p>
+<p>Since the relations between <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>(or its statistical sibbling the constructs) are a product of the researcher’s theory and assumptions to be analyzed, some constructs are typically not directly connected by a path. Technically this implies a restriction of the path between construct <span class="math inline">\(j\)</span> and <span class="math inline">\(i\)</span> to zero. If all constructs of the reserchers model are connected by a path we call the structural model <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">saturated</a>. If at least one path is restricted to zero, the structural model is called <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">non-saturated</a>.</p>
 <!-- Suppose that there are constructs $\eta_j$ and $\eta_l$ with a path  -->
 <!-- leading from $\eta_j$ to $\eta_l$ with no other latent variable having an -->
 <!-- influence on $\eta_l$. The corresponding path coefficient shall be -->
@@ -282,11 +282,13 @@ Var(\bar\varepsilon) &amp;= \sum w_k^2 (1 - \lambda_k^2)
 
 
       <footer><div class="copyright">
-  <p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
+  <p></p>
+<p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
