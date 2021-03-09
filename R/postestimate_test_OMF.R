@@ -36,11 +36,12 @@
 #'  .R                     = 499, 
 #'  .saturated             = FALSE,
 #'  .seed                  = NULL,
-#'  .verbose               = TRUE
+#'  .verbose               = TRUE,
+#'  ...
 #' )
 #' 
 #' @inheritParams  csem_arguments
-#' 
+#' @param ... Can be used to determine the fitting function used in the calculateGFI function.
 #' @return
 #' A list of class `cSEMTestOMF` containing the following list elements:
 #' \describe{
@@ -69,7 +70,8 @@ testOMF <- function(
   .R                     = 499, 
   .saturated             = FALSE,
   .seed                  = NULL,
-  .verbose               = TRUE
+  .verbose               = TRUE,
+  ...
 ) {
   
   # Implementation is based on:
@@ -95,7 +97,8 @@ testOMF <- function(
                   .R                    = .R,
                   .saturated            = .saturated,
                   .seed                 = .seed,
-                  .verbose              = .verbose
+                  .verbose              = .verbose,
+                  ...
     )
     ## Return
     return(out)
@@ -160,7 +163,7 @@ testOMF <- function(
       "Chi_square"   = calculateChiSquare(.object),
       "Chi_square_df"= calculateChiSquareDf(.object),
       "CFI"          = calculateCFI(.object),
-      "GFI"          = calculateGFI(.object),
+      "GFI"          = calculateGFI(.object,...),
       "IFI"          = calculateIFI(.object),
       "NFI"          = calculateNFI(.object),
       "NNFI"         = calculateNNFI(.object),
@@ -259,7 +262,7 @@ testOMF <- function(
           "Chi_square"   = calculateChiSquare(Est_temp),
           "Chi_square_df"= calculateChiSquareDf(Est_temp),
           "CFI"          = calculateCFI(Est_temp),
-          "GFI"          = calculateGFI(Est_temp),
+          "GFI"          = calculateGFI(Est_temp,...),
           "IFI"          = calculateIFI(Est_temp),
           "NFI"          = calculateNFI(Est_temp),
           "NNFI"         = calculateNNFI(Est_temp),

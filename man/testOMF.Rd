@@ -12,7 +12,8 @@ testOMF(
  .R                     = 499, 
  .saturated             = FALSE,
  .seed                  = NULL,
- .verbose               = TRUE
+ .verbose               = TRUE,
+ ...
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ not be altered!}
 
 \item{.verbose}{Logical. Should information (e.g., progress bar) be printed
 to the console? Defaults to \code{TRUE}.}
+
+\item{...}{Can be used to determine the fitting function used in the calculateGFI function.}
 }
 \value{
 A list of class \code{cSEMTestOMF} containing the following list elements:
