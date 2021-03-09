@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cSEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -303,16 +303,16 @@ VAL  =~ val1  + val2  + val3  + val4
 <span class='va'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
 
 <span class='va'>inf</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_basic</span>
-</div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE
-#&gt; 95%L   0.5848460    1.017207  -5.215833   4.666478 -0.3216930   1.321811
-#&gt; 95%U   0.7843458    1.067826  -3.797138   6.073530  0.1778844   2.748156
+</div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL  SAT ~ IMAG SAT ~ EXPE
+#&gt; 95%L   0.6208739    1.019235  -5.525106   5.077485 -0.29523892   1.113007
+#&gt; 95%U   0.8036427    1.058074  -4.161745   6.413020  0.03500352   2.215910
 #&gt;      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT
-#&gt; 95%L  -3.586209  1.326789  0.2166127 0.2458389
-#&gt; 95%U  -1.706300  2.372911  0.5867307 0.5857875</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
+#&gt; 95%L  -3.113522  1.494064  0.1236458 0.4128812
+#&gt; 95%U  -1.702954  2.198169  0.4112179 0.6884467</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
 </div><div class='output co'>#&gt; QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL 
-#&gt;  0.06574259  0.07739638  0.43153150  0.10479061  0.44566907  0.80909036 
+#&gt;  0.05410420  0.05701131  0.40116539  0.07305704  0.31373031  0.50461564 
 #&gt;  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL 
-#&gt;  0.06954907  0.08655133  0.31365969  0.19857639 </div><div class='input'>
+#&gt;  0.05266475  0.08320660  0.23216287  0.13647159 </div><div class='input'>
 <span class='co'>### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span>
 <span class='co'>## For the studentied t-interval confidence interval a double bootstrap is required.</span>
 <span class='co'>## This is pretty time consuming.</span>
