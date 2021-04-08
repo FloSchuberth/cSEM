@@ -76,7 +76,7 @@ calculateModelSelectionCriteria <- function(
     
     out_saturated <- do.call(csem, args)
     
-    MSE <- (1 - out_saturated$Estimates$R2)
+    MSE <- (1 - out_saturated$Estimates$R2)[names(x1$R2)]
     
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
     
@@ -95,6 +95,7 @@ calculateModelSelectionCriteria <- function(
     MSE <- (1 - out_saturated$Estimates$R2)
     # remove _temp suffix in second stage
     names(MSE) <- gsub("_temp","", names(MSE))
+    MSE <- MSE[[names(x1$R2)]]
     
   } else {
     stop2(
