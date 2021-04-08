@@ -63,7 +63,7 @@ test_that("Assess works for all choices of .quality_criterion", {
   expect_equivalent(a$RhoT, c(0.7317595, 0.7280738, 0.7859542), tolerance = 1e-07)
   expect_equivalent(a$RhoT_weighted, c(0.7288400, 0.6637134, 0.7821770) , tolerance = 1e-07)
   expect_equivalent(c(a$VIF), c(1.530619, 1.530619), tolerance = 1e-06)
-  expect_equivalent(c(a$VIF_modeB), c(1.859990, 2.621641, 2.623095), tolerance = 1e-06)
+  expect_equivalent(c(a$VIF_modeB), c(1.271908, 1.619737, 1.620424), tolerance = 1e-06)
 })
 
 ## Assess using additional arguments

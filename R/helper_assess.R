@@ -95,7 +95,7 @@ calculateModelSelectionCriteria <- function(
     MSE <- (1 - out_saturated$Estimates$R2)
     # remove _temp suffix in second stage
     names(MSE) <- gsub("_temp","", names(MSE))
-    MSE <- MSE[[names(x1$R2)]]
+    MSE <- MSE[names(x1$R2)]
     
   } else {
     stop2(
@@ -2006,7 +2006,7 @@ calculateVIFModeB <- function(.object = NULL) {
           Xk <- X[, setdiff(indicator_names, k)]
           
           beta <- solve(t(Xk) %*% Xk) %*% t(Xk) %*% y
-          R2   <- cor(Xk %*% beta, y)
+          R2   <- cor(Xk %*% beta, y)^2
           VIF_j[k] <- 1 / (1 - R2) 
         }
         
