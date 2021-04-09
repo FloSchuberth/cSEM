@@ -153,6 +153,7 @@
 <a href="#development-version-csem-0319000" class="anchor"></a>Development version: cSEM 0.3.1:9000<small> 2021-02-14 </small>
 </h1>
 <ul>
+<li><p>Bug fix: <code><a href="../reference/predict.html">predict()</a></code> checks now the column names of the test dataset instead of the rownames.</p></li>
 <li><p>Critical bug fix: <code>calculateVifModeB()</code> did not calculate the VIFs for modeB constructs correctly because of a bug in the calculation of the R^2. PLEASE REVIEW YOUR CALCULATIONS in cSEM version &lt; 0.3.1:9000! (thanks to <a href='https://github.com/Benjamin'>@Benjamin</a> Liengaard for pointing it out).</p></li>
 <li><p>Bug fix: calculation of the MSE in <code>modelSelectionCriteria()</code> resulted in a vector of incorrect length. In some cases this affected the computation of “GM” and “Mallows_cp”.</p></li>
 </ul>
