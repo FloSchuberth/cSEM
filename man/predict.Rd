@@ -77,8 +77,8 @@ By default, the procedure is repeated \code{.r = 10} times to avoid irregulariti
 due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for
 details.
 
-Alternatively, users may supply a matrix of \code{.test_data} with the same column names
-as those in the data used to obtain \code{.object} (the training data).
+Alternatively, users may supply a matrix or a data frame of \code{.test_data} with
+the same column names as those in the data used to obtain \code{.object} (the training data).
 In this case, arguments \code{.cv_folds} and \code{.r} are
 ignored and predict uses the estimated coefficients from \code{.object} to
 predict the values in the columns of \code{.test_data}.
@@ -88,7 +88,7 @@ are compared to the predictions based on a multiple regression of indicator \cod
 on all available exogenous indicators (\code{.benchmark = "lm"}) and
 a simple mean-based prediction summarized in the Q2_predict metric.
 \code{predict()} is more general in that is allows users to compare the predictions
-based on a so-called target model/specificiation to predictions based on an
+based on a so-called target model/specification to predictions based on an
 alternative benchmark. Available benchmarks include predictions
 based on a linear model, PLS-PM weights, unit weights (i.e. sum scores),
 GSCA weights, PCA weights, and MAXVAR weights.
