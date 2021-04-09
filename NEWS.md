@@ -1,5 +1,14 @@
 # Development version: cSEM 0.3.1:9000
 
+- Critical bug fix: `calculateVifModeB()` did not calculate the VIFs for modeB 
+  constructs correctly because of a bug in the calculation of the R^2. 
+  PLEASE REVIEW YOUR CALCULATIONS in cSEM version < 0.3.1:9000! (thanks to @Benjamin Liengaard
+  for pointing it out).
+
+- Bug fix: calculation of the MSE in `modelSelectionCriteria()` resulted in a
+  vector of incorrect length. In some cases this affected the computation 
+  of "GM" and "Mallows_cp". 
+
 # cSEM 0.3.1 (2021-02-14)
 
 - Bug fix: `summarize()` no longer fails when `.object` is a of class 
