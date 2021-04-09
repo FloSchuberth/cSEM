@@ -15,8 +15,8 @@
 #' due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for 
 #' details.
 #' 
-#' Alternatively, users may supply a matrix of `.test_data` with the same column names
-#' as those in the data used to obtain `.object` (the training data). 
+#' Alternatively, users may supply a matrix or a data frame of `.test_data` with 
+#' the same column names as those in the data used to obtain `.object` (the training data). 
 #' In this case, arguments `.cv_folds` and `.r` are
 #' ignored and predict uses the estimated coefficients from `.object` to
 #' predict the values in the columns of `.test_data`.
@@ -26,7 +26,7 @@
 #' on all available exogenous indicators (`.benchmark = "lm"`) and 
 #' a simple mean-based prediction summarized in the Q2_predict metric.
 #' `predict()` is more general in that is allows users to compare the predictions
-#' based on a so-called target model/specificiation to predictions based on an
+#' based on a so-called target model/specification to predictions based on an
 #' alternative benchmark. Available benchmarks include predictions
 #' based on a linear model, PLS-PM weights, unit weights (i.e. sum scores), 
 #' GSCA weights, PCA weights, and MAXVAR weights.
@@ -138,7 +138,7 @@ predict <- function(
     args <- .object$Information$Arguments
     indicators <- colnames(.object$Information$Data) # the data used for the estimation 
     # (standardized and clean) with variables
-    # ordered accoriding to model$measurement.  
+    # ordered according to model$measurement.  
     
     ## Is the benchmark the same as what was used to obtain .object
     if(.benchmark == args$.approach_weights) {
@@ -161,22 +161,33 @@ predict <- function(
     
     ## Has .test_data been supplied?
     if(!is.null(.test_data)) {
+      # Is it a matrix or a data.frame?
+      if(!any(class(.test_data) %in% c("data.frame", "matrix"))) {
+        stop2("The following error occured in the `predict()` function:\n",
+              ".test_data must be a matrix or a data frame.")
+      }
       .r <- 1
       .cv_folds <- NA
       
       dat_train <- args$.data[, indicators]
       
-      # if(length(setdiff(colnames(.test_data), colnames(dat_train))) > 0) {
-      #   stop2("The following error occured in the `predict()` function:\n",
-      #         "Some variable names in the test data are not part of the training data.")
-      # }
-      # Warn if .test_data doesnt have row names
+      # Convert to matrix and add rownames
+      # Since rownames are required further below to match the observations in the
+      # k'th fold of the .r'th run with those of the r+1'th run rownames are also
+      # required for the .test_data.
+      
+      .test_data = as.matrix(.test_data)
+      rownames(.test_data) <- 1:nrow(.test_data)
+      
+      # Stop if .test_data does not have column names! As we need to match column
+      # names between training and test data.
       if(is.null(colnames(.test_data))) {
-        warning2(
-          "The following warning occured in the `predict()` function:\n",
-          "The test data does not have row names to identify observations. "
+        stop2(
+          "The following error occured in the `predict()` function:\n",
+          "The test data does not have column names that match the training data. "
         )
       }
+      
       dat_test  <- .test_data[, indicators]
       
       dat <- list("test" = dat_test, "train" = dat_train)
