@@ -171,7 +171,7 @@ predict <- function(
       #         "Some variable names in the test data are not part of the training data.")
       # }
       # Warn if .test_data doesnt have row names
-      if(is.null(rownames(.test_data))) {
+      if(is.null(colnames(.test_data))) {
         warning2(
           "The following warning occured in the `predict()` function:\n",
           "The test data does not have row names to identify observations. "
