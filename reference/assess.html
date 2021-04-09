@@ -93,7 +93,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cSEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -555,10 +555,10 @@ eta3 =~ y31 + y32 + y33
 <span class='co'>## Look at the resamples</span>
 <span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>User_fun</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span>
 </div><div class='output co'>#&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; [1,]    1 0.7152489 0.6862076    0    1 0.6508290    0    0    1
-#&gt; [2,]    1 0.6541450 0.6077874    0    1 0.5940646    0    0    1
-#&gt; [3,]    1 0.6112366 0.6837055    0    1 0.5064402    0    0    1
-#&gt; [4,]    1 0.6830768 0.6005360    0    1 0.6274857    0    0    1</div><div class='input'>
+#&gt; [1,]    1 0.6023793 0.6414052    0    1 0.6109008    0    0    1
+#&gt; [2,]    1 0.7046913 0.6773471    0    1 0.6149820    0    0    1
+#&gt; [3,]    1 0.6592008 0.6062065    0    1 0.5955570    0    0    1
+#&gt; [4,]    1 0.6423120 0.7069234    0    1 0.6098622    0    0    1</div><div class='input'>
 <span class='co'>## Use infer() to compute e.g., the 95% percentile confidence interval</span>
 <span class='va'>res_infer</span> <span class='op'>&lt;-</span> <span class='fu'><a href='infer.html'>infer</a></span><span class='op'>(</span><span class='va'>res</span>, .quantity <span class='op'>=</span> <span class='st'>"CI_percentile"</span><span class='op'>)</span>
 
@@ -566,8 +566,8 @@ eta3 =~ y31 + y32 + y33
 <span class='va'>res_infer</span><span class='op'>$</span><span class='va'>User_fun</span> 
 </div><div class='output co'>#&gt; $CI_percentile
 #&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; 95%L    1 0.6028481 0.5914668    0    1 0.5364049    0    0    1
-#&gt; 95%U    1 0.7646829 0.7096914    0    1 0.7024272    0    0    1
+#&gt; 95%L    1 0.6119415 0.6060359    0    1 0.5716612    0    0    1
+#&gt; 95%U    1 0.7594324 0.7311535    0    1 0.7048982    0    0    1
 #&gt; </div><div class='input'>
 <span class='co'>## Several quality criteria can be resampled simultaneously</span>
 <span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, 
@@ -580,13 +580,14 @@ eta3 =~ y31 + y32 + y33
             <span class='op'>)</span>,
             .tolerance <span class='op'>=</span> <span class='fl'>1e-04</span>
 <span class='op'>)</span>
-<span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>HTMT</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: The following warning occured in the calculateHTMT() function:</span>
+#&gt; <span class='warning'>Intra-block and inter-block correlations between indicators must be either all-positive or all-negative.</span></div><div class='input'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>HTMT</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span>
 </div><div class='output co'>#&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; [1,]    1 0.7068094 0.7509497    0    1 0.6077163    0    0    1
-#&gt; [2,]    1 0.6242258 0.7143348    0    1 0.5601413    0    0    1
-#&gt; [3,]    1 0.6969118 0.6439818    0    1 0.5922027    0    0    1
-#&gt; [4,]    1 0.6174782 0.6307070    0    1 0.5862512    0    0    1</div><div class='input'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>RMS_theta</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; [1] 0.1141544 0.1010402 0.1095426 0.1039894</div><div class='input'>
+#&gt; [1,]    1 0.6320361 0.6388849    0    1 0.6689552    0    0    1
+#&gt; [2,]    1 0.6560463 0.6836603    0    1 0.6200075    0    0    1
+#&gt; [3,]    1 0.7701548 0.6264839    0    1 0.7072731    0    0    1
+#&gt; [4,]    1 0.5961632 0.5758385    0    1 0.5476366    0    0    1</div><div class='input'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>RMS_theta</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
+</div><div class='output co'>#&gt; [1] 0.10203317 0.10383741 0.11199216 0.09696414</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

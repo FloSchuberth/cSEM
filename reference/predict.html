@@ -93,7 +93,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cSEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -245,8 +245,8 @@ By default, the procedure is repeated <code>.r = 10</code> times to avoid irregu
 due to a particular split. See Shmueli et al. (2019)
  for
 details.</p>
-<p>Alternatively, users may supply a matrix of <code>.test_data</code> with the same column names
-as those in the data used to obtain <code>.object</code> (the training data).
+<p>Alternatively, users may supply a matrix or a data frame of <code>.test_data</code> with
+the same column names as those in the data used to obtain <code>.object</code> (the training data).
 In this case, arguments <code>.cv_folds</code> and <code>.r</code> are
 ignored and predict uses the estimated coefficients from <code>.object</code> to
 predict the values in the columns of <code>.test_data</code>.</p>
@@ -256,7 +256,7 @@ are compared to the predictions based on a multiple regression of indicator <cod
 on all available exogenous indicators (<code>.benchmark = "lm"</code>) and
 a simple mean-based prediction summarized in the Q2_predict metric.
 <code>predict()</code> is more general in that is allows users to compare the predictions
-based on a so-called target model/specificiation to predictions based on an
+based on a so-called target model/specification to predictions based on an
 alternative benchmark. Available benchmarks include predictions
 based on a linear model, PLS-PM weights, unit weights (i.e. sum scores),
 GSCA weights, PCA weights, and MAXVAR weights.</p>
@@ -320,13 +320,13 @@ Arousal                   &lt;~ Aro1 + Aro2 + Aro3 + Aro4
 <span class='co'># Predict using a user-supplied training data set</span>
 <span class='va'>pp</span> <span class='op'>&lt;-</span> <span class='fu'>predict</span><span class='op'>(</span><span class='va'>res</span>, .test_data <span class='op'>=</span> <span class='va'>dat_test</span><span class='op'>)</span>
 <span class='va'>pp</span><span class='op'>$</span><span class='va'>Predictions_target</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>, <span class='op'>]</span>
-</div><div class='output co'>#&gt;          AA0      AA1      AA2      AA3
-#&gt; 4  1.6668304 2.101690 2.252157 2.538023
-#&gt; 6  6.3109205 6.453202 6.577008 6.542260
-#&gt; 7  4.3329867 4.599878 4.735039 4.836842
-#&gt; 12 3.6066459 3.919297 4.058628 4.210575
-#&gt; 13 5.8594078 6.030135 6.156533 6.152956
-#&gt; 14 0.9136649 1.395974 1.550764 1.888627</div><div class='input'><span class='va'>pp</span>
+</div><div class='output co'>#&gt;         AA0      AA1      AA2      AA3
+#&gt; 1 2.6721142 3.043641 3.188336 3.404801
+#&gt; 2 5.8792289 6.048707 6.174991 6.170046
+#&gt; 3 0.9136649 1.395974 1.550764 1.888627
+#&gt; 4 4.1853797 4.461571 4.597579 4.709572
+#&gt; 5 6.1292377 6.282965 6.407814 6.385609
+#&gt; 6 3.8898464 4.184656 4.322361 4.454756</div><div class='input'><span class='va'>pp</span>
 </div><div class='output co'>#&gt; ________________________________________________________________________________
 #&gt; ----------------------------------- Overview -----------------------------------
 #&gt; 
