@@ -1,4 +1,5 @@
 # Development version: cSEM 0.3.1:9000
+- Bug fix: `predict()` checks now the column names of the test dataset instead of the rownames.
 
 - Critical bug fix: `calculateVifModeB()` did not calculate the VIFs for modeB 
   constructs correctly because of a bug in the calculation of the R^2. 
