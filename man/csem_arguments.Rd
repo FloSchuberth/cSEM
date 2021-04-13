@@ -142,14 +142,16 @@ be estimated? Defaults to \code{TRUE}.}
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
 all available cores will be used. Defaults to "\emph{sequential}".}
 
+\item{.file_name}{Character string. The file name.}
+
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
 data obtained by resamplecSEMResults().}
 
-\item{.force}{Logical. Should .object be resampled even if it contains resamples
-already?. Defaults to \code{FALSE}.}
-
 \item{.fit_measures}{Logical. (EXPERIMENTAL) Should additional fit measures
 be included? Defaults to \code{FALSE}.}
+
+\item{.force}{Logical. Should .object be resampled even if it contains resamples
+already?. Defaults to \code{FALSE}.}
 
 \item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}

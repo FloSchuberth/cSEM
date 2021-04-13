@@ -96,8 +96,11 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
     expect_equal(path$Estimate, path$Pop_value, tolerance = 0.01)
     expect_equal(loadings$Estimate, loadings$Pop_value, tolerance = 0.01)
   })
+  
+  # Export to Excel test
+  exportToExcel(assess(res), .file_name = paste0("../test_results_exportToExcel/test_assess_", i, ".xlsx"))
+  exportToExcel(summarize(res), .file_name = paste0("../test_results_exportToExcel/test_summarize_", i, ".xlsx"))
 }
-
 
 ### DGP_linear_3compostites ====================================================
 # Loads Sigma, models and population values

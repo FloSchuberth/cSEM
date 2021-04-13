@@ -107,12 +107,13 @@
 #' @param .eval_plan Character string. The evaluation plan to use. One of 
 #'   "*sequential*" or "*multiprocess*". In the latter case 
 #'   all available cores will be used. Defaults to "*sequential*".
+#' @param .file_name Character string. The file name.
 #' @param .first_resample A list containing the `.R` resamples based on the original
 #'   data obtained by resamplecSEMResults().
-#' @param .force Logical. Should .object be resampled even if it contains resamples
-#'   already?. Defaults to `FALSE`.
 #' @param .fit_measures Logical. (EXPERIMENTAL) Should additional fit measures 
 #'   be included? Defaults to `FALSE`. 
+#' @param .force Logical. Should .object be resampled even if it contains resamples
+#'   already?. Defaults to `FALSE`.
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .H The (N x J) matrix of construct scores.
@@ -429,9 +430,10 @@ args_default <- function(.choices = FALSE) {
     .effect                  = NULL,
     .estimate_structural     = TRUE,
     .eval_plan               = c("sequential", "multiprocess"),
-    .force                   = FALSE,
+    .file_name               = "results.xlsx",
     .fit_measures            = FALSE,
     .first_resample          = NULL,
+    .force                   = FALSE,
     .full_output             = TRUE,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
