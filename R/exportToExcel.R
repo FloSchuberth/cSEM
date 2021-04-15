@@ -41,7 +41,7 @@ exportToExcel <- function(
       "Package `openxlsx` required. Use `install.packages(\"openxlsx\")` and rerun.")
   }
   
-  if(inherits(.postestimation_object, "list")) {
+  if(inherits(.postestimation_object, c("list", "cSEMPredict_multi"))) {
     for(i in seq_along(.postestimation_object)) {
       filename = paste0(gsub(".xlsx", "", .filename), "_", i, ".xlsx")
       exportToExcel(.postestimation_object[[i]], .filename = filename, .path = .path)
@@ -184,13 +184,34 @@ exportToExcel <- function(
       openxlsx::addWorksheet(wb, element)
     }
     openxlsx::writeData(wb, sheet = "Information", data.frame(
-      "Info"  = names(aa1$Information),
-      "Value" = unname(unlist(aa1$Information)) 
+      "Info"  = names(.postestimation_object$Information),
+      "Value" = unname(unlist(.postestimation_object$Information)) 
     ))
     
     for(x in setdiff(names(.postestimation_object), "Information")) {
       openxlsx::writeData(wb, sheet = x, .postestimation_object[[x]])
     }
+  } else if(inherits(.postestimation_object, "cSEMTestOMF")) {
+    for(element in c(names(.postestimation_object), "Bootstrap_values")) {
+      ## Add worksheets
+      openxlsx::addWorksheet(wb, element)
+    }
+    openxlsx::writeData(wb, sheet = "Bootstrap_values", dplyr::bind_rows(.postestimation_object$Information$Bootstrap_values))
+    openxlsx::writeData(wb, sheet = "Information", data.frame(
+      "Info"  = setdiff(names(.postestimation_object$Information), "Bootstrap_values"),
+      "Value" = unname(unlist(.postestimation_object$Information[setdiff(names(.postestimation_object$Information), "Bootstrap_values")])) 
+    ))
+    openxlsx::writeData(wb, sheet = "Test_statistic", data.frame(
+      "Distance measure"  = names(.postestimation_object$Test_statistic),
+      "Value" = .postestimation_object$Test_statistic,
+      check.names = FALSE
+    ))
+    openxlsx::writeData(wb, sheet = "Critical_value", 
+                        data.frame("Distance measure" = rownames(.postestimation_object$Critical_value), 
+                                   .postestimation_object$Critical_value, check.names = FALSE))
+    openxlsx::writeData(wb, sheet = "Decision", 
+                        data.frame("Distance measure" = rownames(.postestimation_object$Decision), 
+                                   .postestimation_object$Decision, check.names = FALSE))
   } else {
     stop2(
       "The following error occured in the exportToExcel() function:\n",
