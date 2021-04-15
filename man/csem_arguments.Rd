@@ -287,6 +287,9 @@ Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.probs}{A vector of probabilities.}
 
+\item{.postestimation_object}{An object resulting from a call to one of cSEM's
+postestimation functions (e.g. \code{\link[=summarize]{summarize()}}).}
+
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
 the Details section for a list of possible candidates.

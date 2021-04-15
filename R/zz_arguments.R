@@ -211,6 +211,8 @@
 #'   used by PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
 #'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS-PM.
 #' @param .probs A vector of probabilities.
+#' @param .postestimation_object An object resulting from a call to one of cSEM's
+#'   postestimation functions (e.g. [summarize()]).
 #' @param .quality_criterion Character string. A single character string or a
 #'   vector of character strings naming the quality criterion to compute. See 
 #'   the Details section for a list of possible candidates. 
@@ -475,6 +477,7 @@ args_default <- function(.choices = FALSE) {
     .PLS_ignore_structural_model = FALSE,
     .PLS_modes               = NULL,
     .PLS_weight_scheme_inner = c("path", "centroid", "factorial"),
+    .postestimation_object   = NULL,
     .quality_criterion       = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
                                  "hqc", "mallows_cp", "ave",
                                  "rho_C", "rho_C_mm", "rho_C_weighted", 
