@@ -163,6 +163,9 @@ test_that("DPG_2ndorder_cf_of_cfs is correctly estimated", {
   expect_equal(loadings$Estimate, loadings$Pop_value)
 })
 
+# Export to Excel test
+exportToExcel(summarize(res), .filename = "test_summarize", .path = "../test_results_exportToExcel")
+
 ### DGP_2ndorder - Common factor of composites =================================
 # Loads Sigma, models and population values
 load(file = "../data/DGP_2ndorder_cf_of_composites.RData")  

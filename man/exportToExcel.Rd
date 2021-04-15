@@ -5,29 +5,34 @@
 \title{Export to Excel (.xlsx)}
 \usage{
 exportToExcel(
-  .object    = NULL, 
-  .filename  = "results.xlsx",
-  .path      = NULL
+  .postestimation_object = NULL, 
+  .filename              = "results.xlsx",
+  .path                  = NULL
   )
 }
 \arguments{
-\item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
-
 \item{.filename}{Character string. The file name. Defaults to "results.xlsx".}
 
 \item{.path}{Character string. Path of the directory to save the file to. Defaults
 to the current working directory.}
 }
 \description{
+\lifecycle{experimental}
+}
+\details{
 Export results from a postestimation function such as \code{\link[=assess]{assess()}} or
 \code{\link[=summarize]{summarize()}} to an .xlsx (Excel) file. The function uses the openxlsx
 package which does not depend on Java!
-}
-\details{
+
 The function is deliberately kept simple: all it does is to take all the
-relevant elements in \code{.object} and write them (worksheet by worksheet) into
+relevant elements in \code{.postestimation_object} and write them (worksheet by worksheet) into
 an .xlsx file named \code{.filename} in the directory given by \code{.path} (the current
 working directory by default).
+
+If \code{.postestimation_object} has class attribute \verb{_2ndorder} two .xlsx files
+named \code{".filename_first_stage.xlsx"} and \code{".filename_second_stage.xlsx"}
+are created. If \code{.postestimation_object} is a list of appropriate objects,
+one file for each list elements is created.
 
 Note: rerunning \code{\link[=exportToExcel]{exportToExcel()}} without changing \code{.filename} and \code{.path}
 overwrites the file!
