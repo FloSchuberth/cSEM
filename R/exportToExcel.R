@@ -177,7 +177,20 @@ exportToExcel <- function(
     } else {
       .postestimation_object$`Fornell-Larcker`
     })
+  
+  } else if(inherits(.postestimation_object, "cSEMPredict")) {
+    for(element in names(.postestimation_object)) {
+      ## Add worksheets
+      openxlsx::addWorksheet(wb, element)
+    }
+    openxlsx::writeData(wb, sheet = "Information", data.frame(
+      "Info"  = names(aa1$Information),
+      "Value" = unname(unlist(aa1$Information)) 
+    ))
     
+    for(x in setdiff(names(.postestimation_object), "Information")) {
+      openxlsx::writeData(wb, sheet = x, .postestimation_object[[x]])
+    }
   } else {
     stop2(
       "The following error occured in the exportToExcel() function:\n",
