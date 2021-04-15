@@ -96,6 +96,16 @@ exportToExcel <- function(
       ## Add worksheets
       openxlsx::addWorksheet(wb, element)
     }
+    # For ease of implementation: 
+    #  If the user selected only a subset of quality criteria via .quality_criterion
+    #  some quality criteria are not in .postestimate_object. This would require
+    #  to write an "if present then use, else dont" check, which is just a lot
+    #  of code for probably a rather rare instance. Therefore, if .quality_criterion != "all",
+    #  the user is asked to run assess() again with .quality_criterion = "all" to make sure all
+    #  elements are present.
+    if(!.postestimation_object$Information$All) {
+      stop2("Rerun assess() with .quality_criterion = 'all' and try again.")
+    }
     
     ## Write data to worksheets
     openxlsx::writeData(wb, sheet = "AVE", data.frame("Name" = names(.postestimation_object$AVE), "AVE" = .postestimation_object$AVE))
@@ -131,7 +141,11 @@ exportToExcel <- function(
       "NFI"                        = .postestimation_object$NFI,
       "NNFI"                       = .postestimation_object$NNFI,
       "RMSEA"                      = .postestimation_object$RMSEA,
-      "RMS_theta"                  = .postestimation_object$RMS_theta,
+      "RMS_theta"                  = if(is.null(.postestimation_object$RMS_theta)) {
+        NA
+      } else {
+        .postestimation_object$RMS_theta
+      },
       "SRMR"                       = .postestimation_object$SRMR,
       "Degrees of freedom"         = .postestimation_object$Df
     )
@@ -153,9 +167,16 @@ exportToExcel <- function(
     openxlsx::writeData(wb, sheet = "Model selection criteria", d)
     openxlsx::writeData(wb, sheet = "VIFs", data.frame("Name" = rownames(.postestimation_object$VIF), .postestimation_object$VIF))
     openxlsx::writeData(wb, sheet = "Effect sizes", data.frame("Name" = rownames(.postestimation_object$F2), .postestimation_object$F2))
-    openxlsx::writeData(wb, sheet = "HTMT", .postestimation_object$HTMT)
-    openxlsx::writeData(wb, sheet = "Fornell-Larcker matrix", .postestimation_object$`Fornell-Larcker`)
-    
+    openxlsx::writeData(wb, sheet = "HTMT", if(is.null(.postestimation_object$HTMT)) {
+      NA
+    } else {
+      .postestimation_object$HTMT
+    })
+    openxlsx::writeData(wb, sheet = "Fornell-Larcker matrix", if(is.null(.postestimation_object$`Fornell-Larcker`)) {
+      NA
+    } else {
+      .postestimation_object$`Fornell-Larcker`
+    })
     
   } else {
     stop2(

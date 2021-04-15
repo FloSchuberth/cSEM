@@ -232,6 +232,10 @@ assess <- function(
   ...
 ){
   
+  # Note to authors:
+  #   If you add a new argument to .quality_criterion, make sure to add it
+  #   to the exportToExcel() function as well!
+  
   ## Check arguments
   match.arg(.quality_criterion, 
             args_default(.choices = TRUE)$.quality_criterion, several.ok = TRUE)
