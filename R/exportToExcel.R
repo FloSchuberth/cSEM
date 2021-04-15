@@ -1,5 +1,7 @@
 #' Export to Excel (.xlsx)
 #'
+#' \lifecycle{experimental}
+#' 
 #' Export results from a postestimation function such as [assess()] or 
 #' [summarize()] to an .xlsx (Excel) file. The function uses the openxlsx
 #' package which does not depend on Java!
