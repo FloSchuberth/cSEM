@@ -98,8 +98,10 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
   })
   
   # Export to Excel test
-  exportToExcel(assess(res), .file_name = paste0("../test_results_exportToExcel/test_assess_", i, ".xlsx"))
-  exportToExcel(summarize(res), .file_name = paste0("../test_results_exportToExcel/test_summarize_", i, ".xlsx"))
+  exportToExcel(assess(res), .filename = paste0("test_assess_", i, ".xlsx"),
+                .path = "../test_results_exportToExcel")
+  exportToExcel(summarize(res), .filename = paste0("test_summarize_", i, ".xlsx"),
+                .path = "../test_results_exportToExcel")
 }
 
 ### DGP_linear_3compostites ====================================================

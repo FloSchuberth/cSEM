@@ -6,15 +6,16 @@
 #' 
 #' The function is deliberately kept simple: all it does is to take all the 
 #' relevant elements in `.object` and write them (worksheet by worksheet) into 
-#' an .xlsx file named `.file_name` in your current working directory. 
-#' The rest is left to be done in Excel.
+#' an .xlsx file named `.filename` in the directory given by `.path` (the current 
+#' working directory by default).
 #' 
-#' Note: rerunning [exportToExcel()] without changing `.file_name` overwrites 
-#' the existing file.
+#' Note: rerunning [exportToExcel()] without changing `.filename` and `.path` 
+#' overwrites the file!
 #' 
 #' @usage exportToExcel(
 #'   .object    = NULL, 
-#'   .file_name = "results.xlsx"
+#'   .filename  = "results.xlsx",
+#'   .path      = NULL
 #'   )
 #'
 #' @inheritParams csem_arguments
@@ -22,7 +23,10 @@
 #' @seealso [assess()], [summarize()], [predict()], [verify()]
 #'
 #' @export
-exportToExcel <- function(.object = NULL, .file_name = "results.xlsx") {
+exportToExcel <- function(
+  .object    = NULL, 
+  .filename = "results.xlsx",
+  .path      = NULL) {
   
   ## Install openxlsx if not already installed
   if (!requireNamespace("openxlsx", quietly = TRUE)) {
@@ -136,6 +140,14 @@ exportToExcel <- function(.object = NULL, .file_name = "results.xlsx") {
   }
   
   ## Save workbook
-  openxlsx::saveWorkbook(wb, file = .file_name, overwrite = TRUE)
-  print(paste0("File saved as: '", .file_name, "' in: ", getwd()))
+  if(is.null(.path)) {
+    .path = getwd()
+  } else {
+    .path = normalizePath(.path)
+  }
+  
+  file = file.path(.path, .filename)
+  
+  openxlsx::saveWorkbook(wb, file = file, overwrite = TRUE)
+  print(paste0("File saved as: '", .filename, "' in: ", .path))
 }

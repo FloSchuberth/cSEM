@@ -142,7 +142,7 @@ be estimated? Defaults to \code{TRUE}.}
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
 all available cores will be used. Defaults to "\emph{sequential}".}
 
-\item{.file_name}{Character string. The file name.}
+\item{.filename}{Character string. The file name. Defaults to "results.xlsx".}
 
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
 data obtained by resamplecSEMResults().}
@@ -247,6 +247,9 @@ structural model? Ignored if \code{.by_equation == TRUE}. Defaults to \code{TRUE
 parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or correlations (\verb{~~})) should be
 compared across groups. Defaults to \code{NULL} in which case all weights, loadings and
 path coefficients of the originally specified model are compared.}
+
+\item{.path}{Character string. Path of the directory to save the file to. Defaults
+to the current working directory.}
 
 \item{.path_coefficients}{List. A list that contains the resampled and the original
 path coefficient estimates. Typically a part of a \code{cSEMResults_resampled} object.

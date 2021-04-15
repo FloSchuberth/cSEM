@@ -6,13 +6,17 @@
 \usage{
 exportToExcel(
   .object    = NULL, 
-  .file_name = "results.xlsx"
+  .filename  = "results.xlsx",
+  .path      = NULL
   )
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
-\item{.file_name}{Character string. The file name.}
+\item{.filename}{Character string. The file name. Defaults to "results.xlsx".}
+
+\item{.path}{Character string. Path of the directory to save the file to. Defaults
+to the current working directory.}
 }
 \description{
 Export results from a postestimation function such as \code{\link[=assess]{assess()}} or
@@ -22,11 +26,11 @@ package which does not depend on Java!
 \details{
 The function is deliberately kept simple: all it does is to take all the
 relevant elements in \code{.object} and write them (worksheet by worksheet) into
-an .xlsx file named \code{.file_name} in your current working directory.
-The rest is left to be done in Excel.
+an .xlsx file named \code{.filename} in the directory given by \code{.path} (the current
+working directory by default).
 
-Note: rerunning \code{\link[=exportToExcel]{exportToExcel()}} without changing \code{.file_name} overwrites
-the existing file.
+Note: rerunning \code{\link[=exportToExcel]{exportToExcel()}} without changing \code{.filename} and \code{.path}
+overwrites the file!
 }
 \seealso{
 \code{\link[=assess]{assess()}}, \code{\link[=summarize]{summarize()}}, \code{\link[=predict]{predict()}}, \code{\link[=verify]{verify()}}
