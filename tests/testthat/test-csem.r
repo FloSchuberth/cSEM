@@ -102,6 +102,10 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
                 .path = "../test_results_exportToExcel")
   exportToExcel(summarize(res), .filename = paste0("test_summarize_", i, ".xlsx"),
                 .path = "../test_results_exportToExcel")
+  exportToExcel(predict(res), .filename = paste0("test_predict_", i, ".xlsx"),
+                .path = "../test_results_exportToExcel")
+  exportToExcel(testOMF(res, .R = 10), .filename = paste0("test_testOMF_", i, ".xlsx"),
+                .path = "../test_results_exportToExcel")
 }
 
 ### DGP_linear_3compostites ====================================================
@@ -166,6 +170,11 @@ test_that("DPG_2ndorder_cf_of_cfs is correctly estimated", {
 # Export to Excel test
 exportToExcel(summarize(res), .filename = "test_summarize", .path = "../test_results_exportToExcel")
 exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
+exportToExcel(testOMF(res, .R = 20), .filename = "test_testOMF", .path = "../test_results_exportToExcel")
+exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
+exportToExcel(assess(res), .filename = "test_assess", .path = "../test_results_exportToExcel")
+
+
 
 ### DGP_2ndorder - Common factor of composites =================================
 # Loads Sigma, models and population values

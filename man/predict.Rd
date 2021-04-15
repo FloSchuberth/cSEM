@@ -162,5 +162,5 @@ plot(pp2)}
 \insertAllCited{}
 }
 \seealso{
-\link{csem}, \link{cSEMResults}
+\link{csem}, \link{cSEMResults}, \code{\link[=exportToExcel]{exportToExcel()}}
 }

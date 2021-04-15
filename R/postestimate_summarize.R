@@ -33,7 +33,7 @@
 #' @inheritParams csem_arguments
 #' @param ... Further arguments to `summarize()`. Currently ignored.
 #'
-#' @seealso [csem], [assess()], [cSEMResults]
+#' @seealso [csem], [assess()], [cSEMResults], [exportToExcel()]
 #'
 #' @example inst/examples/example_summarize.R
 #' @export

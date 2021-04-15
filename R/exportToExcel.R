@@ -2,8 +2,8 @@
 #'
 #' \lifecycle{experimental}
 #' 
-#' Export results from a postestimation function such as [assess()] or 
-#' [summarize()] to an .xlsx (Excel) file. The function uses the openxlsx
+#' Export results from postestimation functions [assess()], [predict()],
+#' [summarize()] and [testOMF()] to an .xlsx (Excel) file. The function uses the openxlsx
 #' package which does not depend on Java!
 #' 
 #' The function is deliberately kept simple: all it does is to take all the 
@@ -27,7 +27,7 @@
 #'
 #' @inheritParams csem_arguments
 #'   
-#' @seealso [assess()], [summarize()], [predict()], [verify()]
+#' @seealso [assess()], [summarize()], [predict()], [testOMF()]
 #'
 #' @export
 exportToExcel <- function(
@@ -196,7 +196,9 @@ exportToExcel <- function(
       ## Add worksheets
       openxlsx::addWorksheet(wb, element)
     }
-    openxlsx::writeData(wb, sheet = "Bootstrap_values", dplyr::bind_rows(.postestimation_object$Information$Bootstrap_values))
+    # Remove NA's in bootstrap values to be able bind rows
+    boot_values <- Filter(Negate(anyNA), .postestimation_object$Information$Bootstrap_values)
+    openxlsx::writeData(wb, sheet = "Bootstrap_values", dplyr::bind_rows(boot_values))
     openxlsx::writeData(wb, sheet = "Information", data.frame(
       "Info"  = setdiff(names(.postestimation_object$Information), "Bootstrap_values"),
       "Value" = unname(unlist(.postestimation_object$Information[setdiff(names(.postestimation_object$Information), "Bootstrap_values")])) 

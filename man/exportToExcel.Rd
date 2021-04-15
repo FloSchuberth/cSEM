@@ -23,8 +23,8 @@ to the current working directory.}
 \lifecycle{experimental}
 }
 \details{
-Export results from a postestimation function such as \code{\link[=assess]{assess()}} or
-\code{\link[=summarize]{summarize()}} to an .xlsx (Excel) file. The function uses the openxlsx
+Export results from postestimation functions \code{\link[=assess]{assess()}}, \code{\link[=predict]{predict()}},
+\code{\link[=summarize]{summarize()}} and \code{\link[=testOMF]{testOMF()}} to an .xlsx (Excel) file. The function uses the openxlsx
 package which does not depend on Java!
 
 The function is deliberately kept simple: all it does is to take all the
@@ -41,5 +41,5 @@ Note: rerunning \code{\link[=exportToExcel]{exportToExcel()}} without changing \
 overwrites the file!
 }
 \seealso{
-\code{\link[=assess]{assess()}}, \code{\link[=summarize]{summarize()}}, \code{\link[=predict]{predict()}}, \code{\link[=verify]{verify()}}
+\code{\link[=assess]{assess()}}, \code{\link[=summarize]{summarize()}}, \code{\link[=predict]{predict()}}, \code{\link[=testOMF]{testOMF()}}
 }

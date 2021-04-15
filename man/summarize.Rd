@@ -86,5 +86,5 @@ res_summarize
 res_summarize$Estimates$Path_estimates
 }
 \seealso{
-\link{csem}, \code{\link[=assess]{assess()}}, \link{cSEMResults}
+\link{csem}, \code{\link[=assess]{assess()}}, \link{cSEMResults}, \code{\link[=exportToExcel]{exportToExcel()}}
 }
