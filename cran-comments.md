@@ -1,7 +1,9 @@
 ## Notes
 
-- This is version 0.3.2
+- This is version 0.4.0
 - Adds a couple of bug fixes as described in the NEWS file.
+- Add exportToExcel() function
+- Addressed possibly invalid URLs
 
 ## Tests
 
