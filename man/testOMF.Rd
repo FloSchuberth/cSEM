@@ -117,5 +117,5 @@ testOMF(out, .R = 50, .verbose = FALSE, .seed = 320)
 }
 \seealso{
 \code{\link[=csem]{csem()}}, \code{\link[=calculateSRMR]{calculateSRMR()}}, \code{\link[=calculateDG]{calculateDG()}}, \code{\link[=calculateDL]{calculateDL()}}, \link{cSEMResults},
-\code{\link[=testMICOM]{testMICOM()}}, \code{\link[=testMGD]{testMGD()}}
+\code{\link[=testMICOM]{testMICOM()}}, \code{\link[=testMGD]{testMGD()}}, \code{\link[=exportToExcel]{exportToExcel()}}
 }

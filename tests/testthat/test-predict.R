@@ -32,9 +32,8 @@ test_that("predict() works for linear models", {
 })
 ### Using test data
 index <- sample(1:500, 400, replace = FALSE)
-train_dat <- threecommonfactors[index, ]
-test_dat  <- threecommonfactors[-index, ] 
-rownames(test_dat) <- 1:nrow(test_dat)
+train_dat <- cSEM::threecommonfactors[index, ]
+test_dat  <- cSEM::threecommonfactors[-index, ]
 
 test_that("predict() works for linear models if test data is given ", {
   expect_s3_class({

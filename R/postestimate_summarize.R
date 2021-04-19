@@ -33,7 +33,7 @@
 #' @inheritParams csem_arguments
 #' @param ... Further arguments to `summarize()`. Currently ignored.
 #'
-#' @seealso [csem], [assess()], [cSEMResults]
+#' @seealso [csem], [assess()], [cSEMResults], [exportToExcel()]
 #'
 #' @example inst/examples/example_summarize.R
 #' @export
@@ -657,9 +657,10 @@ summarize.cSEMResults_2ndorder <- function(
     }
   } # END resampled
   
-  ## Set class for printing and return
   out <- list("First_stage"  = list("Estimates" = x11, "Information" = x12), 
               "Second_stage" = list("Estimates" = x21, "Information" = x22))
+  ## Set class for list elements
+  class(out$First_stage) <- class(out$Second_stage) <- c("cSEMSummarize", "cSEMSummarize_default")
   
   ## Set class for printing and return
   class(out) <- if(inherits(.object, "cSEMResults_resampled")) {

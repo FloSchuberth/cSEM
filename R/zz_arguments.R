@@ -107,12 +107,13 @@
 #' @param .eval_plan Character string. The evaluation plan to use. One of 
 #'   "*sequential*" or "*multiprocess*". In the latter case 
 #'   all available cores will be used. Defaults to "*sequential*".
+#' @param .filename Character string. The file name. Defaults to "results.xlsx".
 #' @param .first_resample A list containing the `.R` resamples based on the original
 #'   data obtained by resamplecSEMResults().
-#' @param .force Logical. Should .object be resampled even if it contains resamples
-#'   already?. Defaults to `FALSE`.
 #' @param .fit_measures Logical. (EXPERIMENTAL) Should additional fit measures 
 #'   be included? Defaults to `FALSE`. 
+#' @param .force Logical. Should .object be resampled even if it contains resamples
+#'   already?. Defaults to `FALSE`.
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
 #' @param .H The (N x J) matrix of construct scores.
@@ -180,6 +181,8 @@
 #'   parameters (i.e, path (`~`), loadings (`=~`), weights (`<~`), or correlations (`~~`)) should be
 #'   compared across groups. Defaults to `NULL` in which case all weights, loadings and 
 #'   path coefficients of the originally specified model are compared.
+#' @param .path Character string. Path of the directory to save the file to. Defaults
+#'   to the current working directory.
 #' @param .path_coefficients List. A list that contains the resampled and the original 
 #' path coefficient estimates. Typically a part of a `cSEMResults_resampled` object.
 #' Defaults to `NULL`. 
@@ -208,6 +211,8 @@
 #'   used by PLS-PM. One of: "*centroid*", "*factorial*", or "*path*".
 #'   Defaults to "*path*". Ignored if `.approach_weight` is not PLS-PM.
 #' @param .probs A vector of probabilities.
+#' @param .postestimation_object An object resulting from a call to one of cSEM's
+#'   postestimation functions (e.g. [summarize()]).
 #' @param .quality_criterion Character string. A single character string or a
 #'   vector of character strings naming the quality criterion to compute. See 
 #'   the Details section for a list of possible candidates. 
@@ -429,9 +434,10 @@ args_default <- function(.choices = FALSE) {
     .effect                  = NULL,
     .estimate_structural     = TRUE,
     .eval_plan               = c("sequential", "multiprocess"),
-    .force                   = FALSE,
+    .filename                = "results.xlsx",
     .fit_measures            = FALSE,
     .first_resample          = NULL,
+    .force                   = FALSE,
     .full_output             = TRUE,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
@@ -459,6 +465,7 @@ args_default <- function(.choices = FALSE) {
     .output_type             = c("complete", "structured"),
     .P                       = NULL,
     .parameters_to_compare   = NULL,
+    .path                    = NULL,
     .path_coefficients       = NULL,
     .plot_package            = NULL,
     .plot_type               = NULL,
@@ -470,6 +477,7 @@ args_default <- function(.choices = FALSE) {
     .PLS_ignore_structural_model = FALSE,
     .PLS_modes               = NULL,
     .PLS_weight_scheme_inner = c("path", "centroid", "factorial"),
+    .postestimation_object   = NULL,
     .quality_criterion       = c("all", "aic", "aicc", "aicu", "bic", "fpe", "gm", "hq",
                                  "hqc", "mallows_cp", "ave",
                                  "rho_C", "rho_C_mm", "rho_C_weighted", 

@@ -53,7 +53,7 @@
 #' }
 #' 
 #' @seealso [csem()], [calculateSRMR()], [calculateDG()], [calculateDL()], [cSEMResults],
-#'   [testMICOM()], [testMGD()]
+#'   [testMICOM()], [testMGD()], [exportToExcel()]
 #' 
 #' @references
 #'   \insertAllCited{}

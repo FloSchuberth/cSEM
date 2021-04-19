@@ -142,14 +142,16 @@ be estimated? Defaults to \code{TRUE}.}
 "\emph{sequential}" or "\emph{multiprocess}". In the latter case
 all available cores will be used. Defaults to "\emph{sequential}".}
 
+\item{.filename}{Character string. The file name. Defaults to "results.xlsx".}
+
 \item{.first_resample}{A list containing the \code{.R} resamples based on the original
 data obtained by resamplecSEMResults().}
 
-\item{.force}{Logical. Should .object be resampled even if it contains resamples
-already?. Defaults to \code{FALSE}.}
-
 \item{.fit_measures}{Logical. (EXPERIMENTAL) Should additional fit measures
 be included? Defaults to \code{FALSE}.}
+
+\item{.force}{Logical. Should .object be resampled even if it contains resamples
+already?. Defaults to \code{FALSE}.}
 
 \item{.full_output}{Logical. Should the full output of summarize be printed.
 Defaults to \code{TRUE}.}
@@ -246,6 +248,9 @@ parameters (i.e, path (\code{~}), loadings (\verb{=~}), weights (\verb{<~}), or 
 compared across groups. Defaults to \code{NULL} in which case all weights, loadings and
 path coefficients of the originally specified model are compared.}
 
+\item{.path}{Character string. Path of the directory to save the file to. Defaults
+to the current working directory.}
+
 \item{.path_coefficients}{List. A list that contains the resampled and the original
 path coefficient estimates. Typically a part of a \code{cSEMResults_resampled} object.
 Defaults to \code{NULL}.}
@@ -281,6 +286,9 @@ used by PLS-PM. One of: "\emph{centroid}", "\emph{factorial}", or "\emph{path}".
 Defaults to "\emph{path}". Ignored if \code{.approach_weight} is not PLS-PM.}
 
 \item{.probs}{A vector of probabilities.}
+
+\item{.postestimation_object}{An object resulting from a call to one of cSEM's
+postestimation functions (e.g. \code{\link[=summarize]{summarize()}}).}
 
 \item{.quality_criterion}{Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See

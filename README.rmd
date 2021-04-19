@@ -31,6 +31,16 @@ Croon's approach), as well as several tests and typical postestimation
 procedures (e.g., verify admissibility of the estimates, assess the model fit, 
 test the model fit, compute confidence intervals, compare groups, etc.).
 
+## News (2021-04-16):
+
+- New function `exportToExcel()`. The function conveniently exports the results
+  from `assess()`, `predict()`, `summarize()` and `testOMF()` to an .xlsx file.
+
+- Several bug fixes, most notably: `calculateVifModeB()` did not calculate the VIFs for modeB 
+  constructs correctly because of a bug in the calculation of the R^2. 
+  PLEASE REVIEW YOUR CALCULATIONS in cSEM version < 0.3.1:9000! (thanks to @Benjamin Liengaard
+  for pointing it out)
+  
 ## Installation
 The package is available on [CRAN](https://cran.r-project.org/):
 ```{r, eval = FALSE}
@@ -46,16 +56,6 @@ devtools::install_github("M-E-Rademaker/cSEM")
 ## Getting started
 
 The best place to get started is the [cSEM-website](https://m-e-rademaker.github.io/cSEM/).
-
-<!-- ## Philosophy -->
-
-<!-- - First and foremost: `cSEM` has a user-centered design!. "User-centered" mainly  -->
-<!--   boils down to: `cSEM` is easy, i.e. intuitive to use by non-R experts!  -->
-<!-- - Modern in a sense that the package integrates modern developments within  -->
-<!--   the R community. This mainly includes ideas/recommendations/design choices that -->
-<!--   fead into the packages of the [tidyverse](https://github.com/tidyverse/tidyverse). -->
-<!-- - State of the art in a sense that we seek to quickly implement recent methodological -->
-<!--   developments in composite-based SEM.  -->
   
 ## Basic usage
 

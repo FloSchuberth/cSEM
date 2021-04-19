@@ -186,7 +186,7 @@ only comprises three steps:
    is the obvious tool for users to specify their model. Experience tells,
    that for R beginners the biggest obstacle has been to get the data into R. 
    However, largely thanks to the [tidyverse](https://www.tidyverse.org/) and 
-   [RStudio](https://rstudio.com), data import and data transformation 
+   [RStudio](https://www.rstudio.com/), data import and data transformation 
    are nowadays relatively easy to handle. See the [Preparing the data](#preparedata)
    and the [Specifying a model](#specifyingamodel) sections below.
 1. **Estimate**: no matter the model and type of data, estimation is always done using one
@@ -255,7 +255,7 @@ data import and data processing capabilities. While these topics may have been
 overwhelming for newcomers several years ago, data import and data transformation
 have become extremely simple and user-friendly if the right tools packages
 are used. The best place to start is
-the [Rstudio Cheat sheet webpage](https://rstudio.com/resources/cheatsheets/),
+the [Rstudio Cheat sheet webpage](https://www.rstudio.com/resources/cheatsheets/),
 especially the *Data Import* and the *Data Transformation* cheat sheets.
 
 **cSEM** is relatively flexible as to the type of data accepted. Currently the following

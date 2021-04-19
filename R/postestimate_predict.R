@@ -76,7 +76,7 @@
 #'   For "*set_NA*" predictions based on inadmissible parameter estimates are
 #'   set to `NA`. Defaults to "*stop*"
 #'
-#' @seealso [csem], [cSEMResults]
+#' @seealso [csem], [cSEMResults], [exportToExcel()]
 #' 
 #' @references
 #'   \insertAllCited{}

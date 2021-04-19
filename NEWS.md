@@ -1,14 +1,19 @@
-# cSEM 0.3.2 (2021-04-09)
+# cSEM 0.4.0 (2021-04-16)
 
-- Correct typos
+### Major changes
 
-- Bug fix: `predict()` no longer silently returns empty predictions when `.test_data`
-  does not contain rownames.
+- New function `exportToExcel()`. The function conveniently exports the results
+  from `assess()`, `predict()`, `summarize()` and `testOMF()` to an .xlsx file.
+
+### Bug fixes
 
 - Critical bug fix: `calculateVifModeB()` did not calculate the VIFs for modeB 
   constructs correctly because of a bug in the calculation of the R^2. 
   PLEASE REVIEW YOUR CALCULATIONS in cSEM version < 0.3.1:9000! (thanks to @Benjamin Liengaard
   for pointing it out).
+
+- Bug fix: `predict()` no longer silently returns empty predictions when `.test_data`
+  does not contain rownames.
 
 - Bug fix: calculation of the MSE in `modelSelectionCriteria()` resulted in a
   vector of incorrect length. In some cases this affected the computation 

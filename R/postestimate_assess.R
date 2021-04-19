@@ -206,7 +206,7 @@
 #' @param ... Further arguments passed to functions called by [assess()].
 #'   See [args_assess_dotdotdot] for a complete list of available arguments.
 #'
-#' @seealso [csem()], [resamplecSEMResults()]
+#' @seealso [csem()], [resamplecSEMResults()], [exportToExcel()]
 #'
 #' @return A named list of quality criteria. Note that if only a single quality
 #'   criteria is computed the return value is still a list!
@@ -231,6 +231,10 @@ assess <- function(
   .only_common_factors = TRUE, 
   ...
 ){
+  
+  # Note to authors:
+  #   If you add a new argument to .quality_criterion, make sure to add it
+  #   to the exportToExcel() function as well!
   
   ## Check arguments
   match.arg(.quality_criterion, 

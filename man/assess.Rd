@@ -288,5 +288,5 @@ res$Estimates$Estimates_resample$Estimates1$RMS_theta$Resampled[1:4]
 }
 }
 \seealso{
-\code{\link[=csem]{csem()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}
+\code{\link[=csem]{csem()}}, \code{\link[=resamplecSEMResults]{resamplecSEMResults()}}, \code{\link[=exportToExcel]{exportToExcel()}}
 }
