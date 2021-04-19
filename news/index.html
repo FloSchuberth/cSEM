@@ -90,7 +90,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cSEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -148,16 +148,26 @@
       <small>Source: <a href='https://github.com/M-E-Rademaker/cSEM/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="csem-032-2021-04-09" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.2">
-<a href="#csem-032-2021-04-09" class="anchor"></a>cSEM 0.3.2 (2021-04-09)<small> Unreleased </small>
+    <div id="csem-040-2021-04-16" class="section level1">
+<h1 class="page-header" data-toc-text="0.4.0">
+<a href="#csem-040-2021-04-16" class="anchor"></a>cSEM 0.4.0 (2021-04-16)<small> Unreleased </small>
 </h1>
+<div id="major-changes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#major-changes" class="anchor"></a>Major changes</h3>
 <ul>
-<li><p>Correct typos</p></li>
-<li><p>Bug fix: <code><a href="../reference/predict.html">predict()</a></code> no longer silently returns empty predictions when <code>.test_data</code> does not contain rownames.</p></li>
+<li>New function <code><a href="../reference/exportToExcel.html">exportToExcel()</a></code>. The function conveniently exports the results from <code><a href="../reference/assess.html">assess()</a></code>, <code><a href="../reference/predict.html">predict()</a></code>, <code><a href="../reference/summarize.html">summarize()</a></code> and <code><a href="../reference/testOMF.html">testOMF()</a></code> to an .xlsx file.</li>
+</ul>
+</div>
+<div id="bug-fixes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h3>
+<ul>
 <li><p>Critical bug fix: <code>calculateVifModeB()</code> did not calculate the VIFs for modeB constructs correctly because of a bug in the calculation of the R^2. PLEASE REVIEW YOUR CALCULATIONS in cSEM version &lt; 0.3.1:9000! (thanks to <a href='https://github.com/Benjamin'>@Benjamin</a> Liengaard for pointing it out).</p></li>
+<li><p>Bug fix: <code><a href="../reference/predict.html">predict()</a></code> no longer silently returns empty predictions when <code>.test_data</code> does not contain rownames.</p></li>
 <li><p>Bug fix: calculation of the MSE in <code>modelSelectionCriteria()</code> resulted in a vector of incorrect length. In some cases this affected the computation of “GM” and “Mallows_cp”.</p></li>
 </ul>
+</div>
 </div>
     <div id="csem-031-2021-02-14" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.1">
@@ -203,9 +213,9 @@
 <h1 class="page-header" data-toc-text="0.2.0">
 <a href="#csem-020-30032020" class="anchor"></a>cSEM 0.2.0 (30.03.2020)<small> 2020-03-29 </small>
 </h1>
-<div id="major-changes" class="section level2">
+<div id="major-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#major-changes" class="anchor"></a>Major changes</h2>
+<a href="#major-changes-1" class="anchor"></a>Major changes</h2>
 <ul>
 <li><p><code><a href="../reference/testMICOM.html">testMICOM()</a></code> gains the <code>.approach_p_adjust</code> argument. The argument takes a single character string or a vector of character strings naming the p-value adjustment for multiple comparisons. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/138'>#138</a>)</p></li>
 <li><p>Review <code><a href="../reference/calculateHTMT.html">calculateHTMT()</a></code>. 1.) Add inference; 2) fix wrong handling of single-indicator constructs (<a href='https://github.com/M-E-Rademaker/cSEM/issues/351'>#351</a>); 3) Remove warning produced by <code><a href="../reference/calculateHTMT.html">calculateHTMT()</a></code> when the estimated model contains less than 2 common factors. (<a href='https://github.com/M-E-Rademaker/cSEM/issues/325'>#325</a>)</p></li>

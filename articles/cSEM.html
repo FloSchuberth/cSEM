@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cSEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -96,7 +96,7 @@
       <h1 data-toc-skip>Introduction to cSEM</h1>
                         <h4 data-toc-skip class="author">Manuel Rademaker</h4>
             
-            <h4 data-toc-skip class="date">Last edited: 2021-04-09</h4>
+            <h4 data-toc-skip class="date">Last edited: 2021-04-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/master/vignettes/cSEM.Rmd" class="external-link"><code>vignettes/cSEM.Rmd</code></a></small>
       <div class="hidden name"><code>cSEM.Rmd</code></div>
@@ -164,7 +164,7 @@
 </ol>
 <p>The first point is an always ongoing task since approaches are constantly evolving with new developments appearing at a pace that we, the package authors, will not be able to keep up with. The second point, however, was particularly important to us as we have been frustrated ourselves by how technical, unfriendly packages in R can be. Hence, from the very start we envisioned a workflow that essentially only comprises three steps:</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Get the essential</strong>: no estimator or approach works without data and a description of what parameters are to be estimated and how data is related to these parameters, i.e. a model. Hence, we always need a data set and model. Since, model specification in <a href="https://lavaan.ugent.be/tutorial/syntax1.html" class="external-link">lavaan model syntax</a> is probably unbeatable in its ease and well known to R users that have an interest in SEM, to us, <a href="https://lavaan.ugent.be/tutorial/syntax1.html" class="external-link">lavaan model syntax</a> is the obvious tool for users to specify their model. Experience tells, that for R beginners the biggest obstacle has been to get the data into R. However, largely thanks to the <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> and <a href="https://rstudio.com" class="external-link">RStudio</a>, data import and data transformation are nowadays relatively easy to handle. See the <a href="#preparedata">Preparing the data</a> and the <a href="#specifyingamodel">Specifying a model</a> sections below.</p></li>
+<li><p><strong>Get the essential</strong>: no estimator or approach works without data and a description of what parameters are to be estimated and how data is related to these parameters, i.e. a model. Hence, we always need a data set and model. Since, model specification in <a href="https://lavaan.ugent.be/tutorial/syntax1.html" class="external-link">lavaan model syntax</a> is probably unbeatable in its ease and well known to R users that have an interest in SEM, to us, <a href="https://lavaan.ugent.be/tutorial/syntax1.html" class="external-link">lavaan model syntax</a> is the obvious tool for users to specify their model. Experience tells, that for R beginners the biggest obstacle has been to get the data into R. However, largely thanks to the <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> and <a href="https://www.rstudio.com/" class="external-link">RStudio</a>, data import and data transformation are nowadays relatively easy to handle. See the <a href="#preparedata">Preparing the data</a> and the <a href="#specifyingamodel">Specifying a model</a> sections below.</p></li>
 <li>
 <p><strong>Estimate</strong>: no matter the model and type of data, estimation is always done using one central function with the data as its first and the model as its second argument:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -205,7 +205,7 @@
 <div id="preparedata" class="section level3">
 <h3 class="hasAnchor">
 <a href="#preparedata" class="anchor"></a>Prepare the data</h3>
-<p>Technically, preparing the data does not require the <strong>cSEM</strong> and is therefore better considered a preparation task, i.e., a “pre-cSEM” task. The reason why this step is nevertheless considered an explicit part of the cSEM-workflow is motivated by the experience that applied/causal users tend to shy away from software like R because “just getting the data in” and understanding how to show, manipulate and work with data can be frustrating if one is not aware of R’s rich and easy to learn data import and data processing capabilities. While these topics may have been overwhelming for newcomers several years ago, data import and data transformation have become extremely simple and user-friendly if the right tools packages are used. The best place to start is the <a href="https://rstudio.com/resources/cheatsheets/" class="external-link">Rstudio Cheat sheet webpage</a>, especially the <em>Data Import</em> and the <em>Data Transformation</em> cheat sheets.</p>
+<p>Technically, preparing the data does not require the <strong>cSEM</strong> and is therefore better considered a preparation task, i.e., a “pre-cSEM” task. The reason why this step is nevertheless considered an explicit part of the cSEM-workflow is motivated by the experience that applied/causal users tend to shy away from software like R because “just getting the data in” and understanding how to show, manipulate and work with data can be frustrating if one is not aware of R’s rich and easy to learn data import and data processing capabilities. While these topics may have been overwhelming for newcomers several years ago, data import and data transformation have become extremely simple and user-friendly if the right tools packages are used. The best place to start is the <a href="https://www.rstudio.com/resources/cheatsheets/" class="external-link">Rstudio Cheat sheet webpage</a>, especially the <em>Data Import</em> and the <em>Data Transformation</em> cheat sheets.</p>
 <p><strong>cSEM</strong> is relatively flexible as to the type of data accepted. Currently the following data types/structures are accepted:</p>
 <ol style="list-style-type: decimal">
 <li>
@@ -442,7 +442,7 @@ eta3 =~ y31 + y32 + y33
 ##  Number of admissible results     = 499
 ##  Approach to handle inadmissibles = "drop"
 ##  Sign change option               = "none"
-##  Random seed                      = 1009796224
+##  Random seed                      = 1608314484
 ## 
 ##  Construct details:
 ##  ------------------
@@ -458,37 +458,37 @@ eta3 =~ y31 + y32 + y33
 ## ============================
 ##                                                              CI_percentile   
 ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1      0.6713      0.0454   14.7902    0.0000 [ 0.5758; 0.7583 ] 
-##   eta3 ~ eta1      0.4585      0.0842    5.4433    0.0000 [ 0.2867; 0.6175 ] 
-##   eta3 ~ eta2      0.3052      0.0889    3.4307    0.0006 [ 0.1355; 0.4752 ] 
+##   eta2 ~ eta1      0.6713      0.0432   15.5310    0.0000 [ 0.5839; 0.7536 ] 
+##   eta3 ~ eta1      0.4585      0.0782    5.8619    0.0000 [ 0.3126; 0.6142 ] 
+##   eta3 ~ eta2      0.3052      0.0834    3.6594    0.0003 [ 0.1330; 0.4538 ] 
 ## 
 ## Estimated loadings:
 ## ===================
 ##                                                              CI_percentile   
 ##   Loading        Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 =~ y11      0.6631      0.0396   16.7594    0.0000 [ 0.5846; 0.7420 ] 
-##   eta1 =~ y12      0.6493      0.0399   16.2774    0.0000 [ 0.5676; 0.7151 ] 
-##   eta1 =~ y13      0.7613      0.0331   22.9918    0.0000 [ 0.6957; 0.8256 ] 
-##   eta2 =~ y21      0.5165      0.0526    9.8182    0.0000 [ 0.4152; 0.6132 ] 
-##   eta2 =~ y22      0.7554      0.0359   21.0473    0.0000 [ 0.6810; 0.8181 ] 
-##   eta2 =~ y23      0.7997      0.0375   21.3136    0.0000 [ 0.7250; 0.8641 ] 
-##   eta3 =~ y31      0.8223      0.0348   23.6358    0.0000 [ 0.7519; 0.8875 ] 
-##   eta3 =~ y32      0.6581      0.0418   15.7259    0.0000 [ 0.5759; 0.7296 ] 
-##   eta3 =~ y33      0.7474      0.0414   18.0623    0.0000 [ 0.6646; 0.8235 ] 
+##   eta1 =~ y11      0.6631      0.0407   16.2897    0.0000 [ 0.5690; 0.7361 ] 
+##   eta1 =~ y12      0.6493      0.0399   16.2782    0.0000 [ 0.5679; 0.7267 ] 
+##   eta1 =~ y13      0.7613      0.0304   25.0472    0.0000 [ 0.6949; 0.8147 ] 
+##   eta2 =~ y21      0.5165      0.0532    9.7004    0.0000 [ 0.4091; 0.6161 ] 
+##   eta2 =~ y22      0.7554      0.0378   19.9817    0.0000 [ 0.6769; 0.8225 ] 
+##   eta2 =~ y23      0.7997      0.0379   21.0934    0.0000 [ 0.7211; 0.8677 ] 
+##   eta3 =~ y31      0.8223      0.0347   23.7025    0.0000 [ 0.7547; 0.8905 ] 
+##   eta3 =~ y32      0.6581      0.0416   15.8279    0.0000 [ 0.5784; 0.7394 ] 
+##   eta3 =~ y33      0.7474      0.0385   19.4187    0.0000 [ 0.6708; 0.8189 ] 
 ## 
 ## Estimated weights:
 ## ==================
 ##                                                              CI_percentile   
 ##   Weight         Estimate  Std. error   t-stat.   p-value         95%        
-##   eta1 &lt;~ y11      0.3956      0.0210   18.8688    0.0000 [ 0.3540; 0.4407 ] 
-##   eta1 &lt;~ y12      0.3873      0.0198   19.5684    0.0000 [ 0.3459; 0.4234 ] 
-##   eta1 &lt;~ y13      0.4542      0.0207   21.9098    0.0000 [ 0.4150; 0.4966 ] 
-##   eta2 &lt;~ y21      0.3058      0.0277   11.0432    0.0000 [ 0.2534; 0.3596 ] 
-##   eta2 &lt;~ y22      0.4473      0.0216   20.6781    0.0000 [ 0.4036; 0.4885 ] 
-##   eta2 &lt;~ y23      0.4735      0.0203   23.3429    0.0000 [ 0.4326; 0.5112 ] 
-##   eta3 &lt;~ y31      0.4400      0.0196   22.4337    0.0000 [ 0.4017; 0.4797 ] 
-##   eta3 &lt;~ y32      0.3521      0.0199   17.6746    0.0000 [ 0.3154; 0.3916 ] 
-##   eta3 &lt;~ y33      0.3999      0.0201   19.9150    0.0000 [ 0.3639; 0.4412 ] 
+##   eta1 &lt;~ y11      0.3956      0.0216   18.3238    0.0000 [ 0.3530; 0.4347 ] 
+##   eta1 &lt;~ y12      0.3873      0.0188   20.5866    0.0000 [ 0.3515; 0.4271 ] 
+##   eta1 &lt;~ y13      0.4542      0.0197   23.0414    0.0000 [ 0.4167; 0.4956 ] 
+##   eta2 &lt;~ y21      0.3058      0.0282   10.8319    0.0000 [ 0.2452; 0.3584 ] 
+##   eta2 &lt;~ y22      0.4473      0.0217   20.5663    0.0000 [ 0.4053; 0.4910 ] 
+##   eta2 &lt;~ y23      0.4735      0.0213   22.2480    0.0000 [ 0.4347; 0.5170 ] 
+##   eta3 &lt;~ y31      0.4400      0.0188   23.3564    0.0000 [ 0.4005; 0.4755 ] 
+##   eta3 &lt;~ y32      0.3521      0.0195   18.0929    0.0000 [ 0.3108; 0.3896 ] 
+##   eta3 &lt;~ y33      0.3999      0.0192   20.8254    0.0000 [ 0.3623; 0.4371 ] 
 ## 
 ## ------------------------------------ Effects -----------------------------------
 ## 
@@ -496,15 +496,15 @@ eta3 =~ y31 + y32 + y33
 ## ========================
 ##                                                               CI_percentile   
 ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta2 ~ eta1       0.6713      0.0454   14.7902    0.0000 [ 0.5758; 0.7583 ] 
-##   eta3 ~ eta1       0.6634      0.0404   16.4210    0.0000 [ 0.5750; 0.7414 ] 
-##   eta3 ~ eta2       0.3052      0.0889    3.4307    0.0006 [ 0.1355; 0.4752 ] 
+##   eta2 ~ eta1       0.6713      0.0432   15.5310    0.0000 [ 0.5839; 0.7536 ] 
+##   eta3 ~ eta1       0.6634      0.0376   17.6548    0.0000 [ 0.5859; 0.7351 ] 
+##   eta3 ~ eta2       0.3052      0.0834    3.6594    0.0003 [ 0.1330; 0.4538 ] 
 ## 
 ## Estimated indirect effects:
 ## ===========================
 ##                                                                  CI_percentile   
 ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-##   eta3 ~ eta1          0.2049      0.0600    3.4161    0.0006 [ 0.0930; 0.3264 ] 
+##   eta3 ~ eta1          0.2049      0.0573    3.5750    0.0004 [ 0.0921; 0.3086 ] 
 ## ________________________________________________________________________________</code></pre>
 <p>Or directly via <code><a href="../reference/infer.html">infer()</a></code></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -512,17 +512,17 @@ eta3 =~ y31 + y32 + y33
 <span class="va">ii</span><span class="op">$</span><span class="va">Path_estimates</span></code></pre></div>
 <pre><code>## $CI_standard_z
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5536129   0.2468609  0.07062115
-## 99%U   0.7874492   0.6808007  0.52884100
-## 95%L   0.5815673   0.2987371  0.12539996
-## 95%U   0.7594947   0.6289245  0.47406219
+## 99%L   0.5559921   0.2550022   0.0927372
+## 99%U   0.7786744   0.6579520   0.5223223
+## 95%L   0.5826131   0.3031737   0.1440928
+## 95%U   0.7520534   0.6097806   0.4709667
 ## 
 ## $CI_percentile
 ##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2
-## 99%L   0.5470130   0.2325214  0.06827067
-## 99%U   0.7828715   0.6714977  0.53631036
-## 95%L   0.5758229   0.2867153  0.13549369
-## 95%U   0.7583163   0.6175038  0.47520022</code></pre>
+## 99%L   0.5569763   0.2650663   0.1005284
+## 99%U   0.7682536   0.6465212   0.5193936
+## 95%L   0.5838514   0.3125935   0.1330202
+## 95%U   0.7536191   0.6141510   0.4537900</code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future" class="external-link">future framework</a>. For multiprocessing simply set <code>.eval_plan = "multiprocess"</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the background as there are cores available instead. Note that this naturally has some overhead. Consequently, for a small number of resamples multiprocessing will generally not be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument. A typical call would look like this:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span>

@@ -95,7 +95,7 @@ their possible choices, use args_default(.choices = TRUE)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cSEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -378,19 +378,23 @@ be estimated? Defaults to <code>TRUE</code>.</p></td>
 all available cores will be used. Defaults to "<em>sequential</em>".</p></td>
     </tr>
     <tr>
+      <th>.filename</th>
+      <td><p>Character string. The file name. Defaults to "results.xlsx".</p></td>
+    </tr>
+    <tr>
       <th>.first_resample</th>
       <td><p>A list containing the <code>.R</code> resamples based on the original
 data obtained by resamplecSEMResults().</p></td>
     </tr>
     <tr>
-      <th>.force</th>
-      <td><p>Logical. Should .object be resampled even if it contains resamples
-already?. Defaults to <code>FALSE</code>.</p></td>
-    </tr>
-    <tr>
       <th>.fit_measures</th>
       <td><p>Logical. (EXPERIMENTAL) Should additional fit measures
 be included? Defaults to <code>FALSE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>.force</th>
+      <td><p>Logical. Should .object be resampled even if it contains resamples
+already?. Defaults to <code>FALSE</code>.</p></td>
     </tr>
     <tr>
       <th>.full_output</th>
@@ -545,6 +549,11 @@ compared across groups. Defaults to <code>NULL</code> in which case all weights,
 path coefficients of the originally specified model are compared.</p></td>
     </tr>
     <tr>
+      <th>.path</th>
+      <td><p>Character string. Path of the directory to save the file to. Defaults
+to the current working directory.</p></td>
+    </tr>
+    <tr>
       <th>.path_coefficients</th>
       <td><p>List. A list that contains the resampled and the original
 path coefficient estimates. Typically a part of a <code>cSEMResults_resampled</code> object.
@@ -595,6 +604,11 @@ Defaults to "<em>path</em>". Ignored if <code>.approach_weight</code> is not PLS
     <tr>
       <th>.probs</th>
       <td><p>A vector of probabilities.</p></td>
+    </tr>
+    <tr>
+      <th>.postestimation_object</th>
+      <td><p>An object resulting from a call to one of cSEM's
+postestimation functions (e.g. <code><a href='summarize.html'>summarize()</a></code>).</p></td>
     </tr>
     <tr>
       <th>.quality_criterion</th>
