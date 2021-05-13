@@ -102,7 +102,7 @@ for(i in c("PLS-PM", "GSCA", "SUMCORR", "MAXVAR", "MINVAR", "GENVAR", "PCA",
                 .path = "../test_results_exportToExcel")
   exportToExcel(summarize(res), .filename = paste0("test_summarize_", i, ".xlsx"),
                 .path = "../test_results_exportToExcel")
-  exportToExcel(predict(res), .filename = paste0("test_predict_", i, ".xlsx"),
+  exportToExcel(predict(res, .handle_inadmissibles = "ignore"), .filename = paste0("test_predict_", i, ".xlsx"),
                 .path = "../test_results_exportToExcel")
   exportToExcel(testOMF(res, .R = 10), .filename = paste0("test_testOMF_", i, ".xlsx"),
                 .path = "../test_results_exportToExcel")

@@ -77,7 +77,7 @@ There are five major postestimation verbs, three test family functions and
 three do-family of function: 
 
 - `assess()` : assess the model using common quality criteria
-- `infer()` : calculate common inferencial quantities (e.g., standard errors, confidence intervals)
+- `infer()` : calculate common inferential quantities (e.g., standard errors, confidence intervals)
 - `predict()` : predict endogenous indicator values
 - `summarize()` : summarize the results
 - `verify()` : verify admissibility of the estimates
