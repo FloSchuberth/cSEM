@@ -149,7 +149,7 @@
 
 <div id="notes-to-contributors" class="section level2">
 <h2 class="hasAnchor">
-<a href="#notes-to-contributors" class="anchor"></a>Notes to contributors</h2>
+<a href="#notes-to-contributors" class="anchor" aria-hidden="true"></a>Notes to contributors</h2>
 <p>Stick to the structure, design choices and style conventions described below. For questions: please contact the <a href="mailto:manuel.rademaker@uni-wuerzburg.de">author</a>.</p>
 <!-- ### Structure -->
 <!-- The package structure is best understood with reference to a (hierarchically organized)  -->
@@ -211,17 +211,17 @@
 <!-- Mark every internal function as internal with `@keywords internal`. -->
 <div id="general-design-choices" class="section level3">
 <h3 class="hasAnchor">
-<a href="#general-design-choices" class="anchor"></a>General design choices</h3>
+<a href="#general-design-choices" class="anchor" aria-hidden="true"></a>General design choices</h3>
 <ul>
 <li>The only OO system used is the S3 system. No S4 classes will be allowed!</li>
-<li>Whenever you subset a matrix using <code><a href="https://rdrr.io/r/base/Extract.html" class="external-link">[</a></code> use: <code>[..., ..., drop = FALSE]</code> to avoid accidentally dropping the <code>dim</code> attributes.</li>
+<li>Whenever you subset a matrix using <code>[</code> use: <code>[..., ..., drop = FALSE]</code> to avoid accidentally dropping the <code>dim</code> attributes.</li>
 <li>Generally avoid using attributes (sometimes they are meaningful though)</li>
 <li>Whenever the output consists of more than 1 element use a named list!</li>
 </ul>
 </div>
 <div id="stylenaming" class="section level3">
 <h3 class="hasAnchor">
-<a href="#stylenaming" class="anchor"></a>Style/Naming</h3>
+<a href="#stylenaming" class="anchor" aria-hidden="true"></a>Style/Naming</h3>
 <p>Stick to <a href="http://style.tidyverse.org/" class="external-link">this styleguide</a> with the following exceptions/additions:</p>
 <ol style="list-style-type: decimal">
 <li>Function and class names are always CamelCase. Function names should contain a verb followed by a noun like: <code><a href="reference/processData.html">processData()</a></code>, <code>calculateValue()</code>.</li>
@@ -252,7 +252,7 @@
 </div>
 <div id="matrices" class="section level3">
 <h3 class="hasAnchor">
-<a href="#matrices" class="anchor"></a>Matrices</h3>
+<a href="#matrices" class="anchor" aria-hidden="true"></a>Matrices</h3>
 <ul>
 <li>Whenever possible: variables belong in columns, observations belong to rows. This implies: whenever a matrix contains observations, variables are in columns, no matter if they are indicators, proxies, errors or anything else.</li>
 <li>Covariance matrices: indicators <strong>always</strong> belong to columns and proxies to rows, i.e., the matrix of weights (W) for PLS is therefore ((J K)) where (J) is the number of proxies and (K) the number of indicators.</li>
@@ -261,7 +261,7 @@
 </div>
 <div id="arguments" class="section level3">
 <h3 class="hasAnchor">
-<a href="#arguments" class="anchor"></a>Arguments</h3>
+<a href="#arguments" class="anchor" aria-hidden="true"></a>Arguments</h3>
 <p>All arguments used by any of the functions in the package (including internal functions) are centrally collected in the file <code>zz_arguments.R</code>. Whenever a new argument is introduced:</p>
 <ol style="list-style-type: decimal">
 <li>Add the new argument name + a description to the <code>cSEMArguments</code> list in alphabetical order by writing <code>@param &lt;argument&gt; "Some description". "Defaults to xxx".</code>

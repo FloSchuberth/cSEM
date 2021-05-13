@@ -445,7 +445,7 @@ section of the <a href='https://m-e-rademaker.github.io/cSEM/index.html'>cSEM we
 for a general introduction to composite-based SEM and <span class="pkg">cSEM</span>.</p>
 <p><code>csem()</code> estimates linear, nonlinear, hierarchical  or multigroup structural
 equation models using a composite-based approach.</p>
-<h3 class='hasAnchor' id='data-and-model-'><a class='anchor' href='#data-and-model-'></a>Data and model:</h3>
+<h3 class='hasAnchor' id='data-and-model-'><a class='anchor' aria-hidden='true' href='#data-and-model-'></a>Data and model:</h3>
 <p>The <code>.data</code> and <code>.model</code> arguments are required. <code>.data</code> must be given
 a <code>matrix</code> or a <code>data.frame</code> with column names matching
 the indicator names used in the model description. Alternatively,
@@ -466,7 +466,7 @@ Therefore, specifying e.g., a threshold or scaling factors is ignored.
 Alternatively, a standardized (possibly incomplete) <a href='csem_model.html'>cSEMModel</a>-list may be supplied.
 See <code><a href='parseModel.html'>parseModel()</a></code> for details.</p>
 
-<h3 class='hasAnchor' id='weights-and-path-coefficients-'><a class='anchor' href='#weights-and-path-coefficients-'></a>Weights and path coefficients:</h3>
+<h3 class='hasAnchor' id='weights-and-path-coefficients-'><a class='anchor' aria-hidden='true' href='#weights-and-path-coefficients-'></a>Weights and path coefficients:</h3>
 <p>By default weights are estimated using the partial least squares path modeling
 algorithm (<code>"PLS-PM"</code>).
 A range of alternative weighting algorithms may be supplied to
@@ -519,7 +519,7 @@ instruments for themselves.</p>
 <code>.reliabilities</code>, where <code>value</code> is a numeric value between 0 and 1.
 Currently, only supported for "PLS-PM".</p>
 
-<h3 class='hasAnchor' id='nonlinear-models-'><a class='anchor' href='#nonlinear-models-'></a>Nonlinear models:</h3>
+<h3 class='hasAnchor' id='nonlinear-models-'><a class='anchor' aria-hidden='true' href='#nonlinear-models-'></a>Nonlinear models:</h3>
 <p>If the model contains nonlinear terms <code>csem()</code> estimates a polynomial structural equation model
 using a non-iterative method of moments approach described in
 Dijkstra and Schermelleh-Engel (2014)
@@ -546,7 +546,7 @@ measurement errors behave as if they were Gaussian.
 For details see: Dijkstra and Schermelleh-Engel (2014)
 .</p>
 
-<h3 class='hasAnchor' id='second-order-model'><a class='anchor' href='#second-order-model'></a>Second-order model</h3>
+<h3 class='hasAnchor' id='second-order-model'><a class='anchor' aria-hidden='true' href='#second-order-model'></a>Second-order model</h3>
 <p>Second-order models are specified using the operators <code>=~</code> and <code>&lt;~</code>. These
 operators are usually used with indicators on their right-hand side. For
 second-order models the right-hand side variables are constructs instead.
@@ -600,7 +600,7 @@ c2 =~ x21 + x22
 </pre><p>According to the extended approach indirect effects of <code>QUAL</code> on <code>VAL</code> via <code>c1</code>
 and <code>c2</code> would have to be specified as well.</p>
 
-<h3 class='hasAnchor' id='multigroup-analysis'><a class='anchor' href='#multigroup-analysis'></a>Multigroup analysis</h3>
+<h3 class='hasAnchor' id='multigroup-analysis'><a class='anchor' aria-hidden='true' href='#multigroup-analysis'></a>Multigroup analysis</h3>
 <p>To perform multigroup analysis provide either a list of data sets or one
 data set containing a group-identifier-column whose column
 name must be provided to <code>.id</code>. Values of this column are taken as levels of a
@@ -611,7 +611,7 @@ the group-identifier-column has, the more estimation runs are required.
 This can considerably slow down estimation, especially if resampling is
 requested. For the latter it will generally be faster to use
 <code>.eval_plan = "multiprocess"</code>.</p>
-<h3 class='hasAnchor' id='inference-'><a class='anchor' href='#inference-'></a>Inference:</h3>
+<h3 class='hasAnchor' id='inference-'><a class='anchor' aria-hidden='true' href='#inference-'></a>Inference:</h3>
 <p>Inference is done via resampling. See <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code> and <code><a href='infer.html'>infer()</a></code> for details.</p>
 
     <h2 class="hasAnchor" id="postestimation"><a class="anchor" href="#postestimation"></a>Postestimation</h2>
@@ -699,710 +699,718 @@ doi: <a href='https://doi.org/10.1509/jmr.12.0420'>10.1509/jmr.12.0420</a>
 <code><a href='testMGD.html'>testMGD()</a></code>, <code><a href='testMICOM.html'>testMICOM()</a></code>, <code><a href='testHausman.html'>testHausman()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># ===========================================================================</span>
-<span class='co'># Basic usage</span>
-<span class='co'># ===========================================================================</span>
-<span class='co'>### Linear model ------------------------------------------------------------</span>
-<span class='co'># Most basic usage requires a dataset and a model. We use the </span>
-<span class='co'>#  `threecommonfactors` dataset. </span>
-
-<span class='co'>## Take a look at the dataset</span>
-<span class='co'>#?threecommonfactors</span>
-
-<span class='co'>## Specify the (correct) model</span>
-<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
-# Structural model
-eta2 ~ eta1
-eta3 ~ eta1 + eta2
-
-# (Reflective) measurement model
-eta1 =~ y11 + y12 + y13
-eta2 =~ y21 + y22 + y23
-eta3 =~ y31 + y32 + y33
-"</span>
-
-<span class='co'>## Estimate</span>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span><span class='op'>)</span>
-
-<span class='co'>## Postestimation</span>
-<span class='fu'><a href='verify.html'>verify</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; ________________________________________________________________________________
-#&gt; 
-#&gt; Verify admissibility:
-#&gt; <span style='color: #00BB00;'>
-#&gt; 	 admissible</span><span>
-#&gt; 
-#&gt; Details:
-#&gt; 
-#&gt;   Code   Status    Description
-#&gt;   1      </span><span style='color: #00BB00;'>ok</span><span>        Convergence achieved                                   
-#&gt;   2      </span><span style='color: #00BB00;'>ok</span><span>        All absolute standardized loading estimates &lt;= 1       
-#&gt;   3      </span><span style='color: #00BB00;'>ok</span><span>        Construct VCV is positive semi-definite                
-#&gt;   4      </span><span style='color: #00BB00;'>ok</span><span>        All reliability estimates &lt;= 1                         
-#&gt;   5      </span><span style='color: #00BB00;'>ok</span><span>        Model-implied indicator VCV is positive semi-definite  
-#&gt; ________________________________________________________________________________</div><div class='input'><span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>  
-</div><div class='output co'>#&gt; ________________________________________________________________________________
-#&gt; ----------------------------------- Overview -----------------------------------
-#&gt; 
-#&gt; 	General information:
-#&gt; 	------------------------
-#&gt; 	Estimation status                = </span><span style='color: #00BB00;'>Ok</span><span>
-#&gt; 	Number of observations           = 500
-#&gt; 	Weight estimator                 = PLS-PM
-#&gt; 	Inner weighting scheme           = "path"
-#&gt; 	Type of indicator correlation    = Pearson
-#&gt; 	Path model estimator             = OLS
-#&gt; 	Second-order approach            = NA
-#&gt; 	Type of path model               = Linear
-#&gt; 	Disattenuated                    = Yes (PLSc)
-#&gt; 
-#&gt; 	Construct details:
-#&gt; 	------------------
-#&gt; 	Name  Modeled as     Order         Mode      
-#&gt; 
-#&gt; 	eta1  Common factor  First order   "modeA"   
-#&gt; 	eta2  Common factor  First order   "modeA"   
-#&gt; 	eta3  Common factor  First order   "modeA"   
-#&gt; 
-#&gt; ----------------------------------- Estimates ----------------------------------
-#&gt; 
-#&gt; Estimated path coefficients:
-#&gt; ============================
-#&gt;   Path           Estimate  Std. error   t-stat.   p-value
-#&gt;   eta2 ~ eta1      0.6713          NA        NA        NA
-#&gt;   eta3 ~ eta1      0.4585          NA        NA        NA
-#&gt;   eta3 ~ eta2      0.3052          NA        NA        NA
-#&gt; 
-#&gt; Estimated loadings:
-#&gt; ===================
-#&gt;   Loading        Estimate  Std. error   t-stat.   p-value
-#&gt;   eta1 =~ y11      0.6631          NA        NA        NA
-#&gt;   eta1 =~ y12      0.6493          NA        NA        NA
-#&gt;   eta1 =~ y13      0.7613          NA        NA        NA
-#&gt;   eta2 =~ y21      0.5165          NA        NA        NA
-#&gt;   eta2 =~ y22      0.7554          NA        NA        NA
-#&gt;   eta2 =~ y23      0.7997          NA        NA        NA
-#&gt;   eta3 =~ y31      0.8223          NA        NA        NA
-#&gt;   eta3 =~ y32      0.6581          NA        NA        NA
-#&gt;   eta3 =~ y33      0.7474          NA        NA        NA
-#&gt; 
-#&gt; Estimated weights:
-#&gt; ==================
-#&gt;   Weight         Estimate  Std. error   t-stat.   p-value
-#&gt;   eta1 &lt;~ y11      0.3956          NA        NA        NA
-#&gt;   eta1 &lt;~ y12      0.3873          NA        NA        NA
-#&gt;   eta1 &lt;~ y13      0.4542          NA        NA        NA
-#&gt;   eta2 &lt;~ y21      0.3058          NA        NA        NA
-#&gt;   eta2 &lt;~ y22      0.4473          NA        NA        NA
-#&gt;   eta2 &lt;~ y23      0.4735          NA        NA        NA
-#&gt;   eta3 &lt;~ y31      0.4400          NA        NA        NA
-#&gt;   eta3 &lt;~ y32      0.3521          NA        NA        NA
-#&gt;   eta3 &lt;~ y33      0.3999          NA        NA        NA
-#&gt; 
-#&gt; ------------------------------------ Effects -----------------------------------
-#&gt; 
-#&gt; Estimated total effects:
-#&gt; ========================
-#&gt;   Total effect    Estimate  Std. error   t-stat.   p-value
-#&gt;   eta2 ~ eta1       0.6713          NA        NA        NA
-#&gt;   eta3 ~ eta1       0.6634          NA        NA        NA
-#&gt;   eta3 ~ eta2       0.3052          NA        NA        NA
-#&gt; 
-#&gt; Estimated indirect effects:
-#&gt; ===========================
-#&gt;   Indirect effect    Estimate  Std. error   t-stat.   p-value
-#&gt;   eta3 ~ eta1          0.2049          NA        NA        NA
-#&gt; ________________________________________________________________________________</div><div class='input'><span class='fu'><a href='assess.html'>assess</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; ________________________________________________________________________________
-#&gt; 
-#&gt; 	Construct        AVE           R2          R2_adj    
-#&gt; 	eta1           0.4803          NA            NA      
-#&gt; 	eta2           0.4923        0.4507        0.4496    
-#&gt; 	eta3           0.5559        0.4912        0.4892    
-#&gt; 
-#&gt; -------------- Common (internal consistency) reliability estimates -------------
-#&gt; 
-#&gt; 	Construct Cronbachs_alpha   Joereskogs_rho   Dijkstra-Henselers_rho_A 
-#&gt; 	eta1        0.7318           0.7339                0.7388          
-#&gt; 	eta2        0.7281           0.7380                0.7647          
-#&gt; 	eta3        0.7860           0.7884                0.7964          
-#&gt; 
-#&gt; ----------- Alternative (internal consistency) reliability estimates -----------
-#&gt; 
-#&gt; 	Construct       RhoC         RhoC_mm    RhoC_weighted
-#&gt; 	eta1           0.7339        0.7341        0.7388    
-#&gt; 	eta2           0.7380        0.7361        0.7647    
-#&gt; 	eta3           0.7884        0.7875        0.7964    
-#&gt; 
-#&gt; 	Construct  RhoC_weighted_mm     RhoT      RhoT_weighted
-#&gt; 	eta1           0.7388        0.7318        0.7288    
-#&gt; 	eta2           0.7647        0.7281        0.7095    
-#&gt; 	eta3           0.7964        0.7860        0.7820    
-#&gt; 
-#&gt; --------------------------- Distance and fit measures --------------------------
-#&gt; 
-#&gt; 	Geodesic distance           = 0.006013595
-#&gt; 	Squared Euclidian distance  = 0.01121567
-#&gt; 	ML distance                 = 0.03203348
-#&gt; 
-#&gt; 	Chi_square     = 15.9847
-#&gt; 	Chi_square_df  = 0.6660294
-#&gt; 	CFI            = 1
-#&gt; 	CN             = 1137.78
-#&gt; 	GFI            = 0.9920803
-#&gt; 	IFI            = 1.005614
-#&gt; 	NFI            = 0.9889886
-#&gt; 	NNFI           = 1
-#&gt; 	RMSEA          = 0
-#&gt; 	RMS_theta      = 0.1050618
-#&gt; 	SRMR           = 0.01578725
-#&gt; 
-#&gt; 	Degrees of freedom    = 24
-#&gt; 
-#&gt; --------------------------- Model selection criteria ---------------------------
-#&gt; 
-#&gt; 	Construct        AIC          AICc          AICu     
-#&gt; 	eta2          -296.5459     205.5025      -294.5419  
-#&gt; 	eta3          -332.8544     169.2264      -329.8454  
-#&gt; 
-#&gt; 	Construct        BIC           FPE           GM      
-#&gt; 	eta2          -288.1166      0.5526       511.4292   
-#&gt; 	eta3          -320.2106      0.5139       517.6438   
-#&gt; 
-#&gt; 	Construct        HQ            HQc       Mallows_Cp  
-#&gt; 	eta2          -293.2383     -293.1793      3.0000    
-#&gt; 	eta3          -327.8930     -327.7823      5.0000    
-#&gt; 
-#&gt; ----------------------- Variance inflation factors (VIFs) ----------------------
-#&gt; 
-#&gt;   Dependent construct: 'eta3'
-#&gt; 
-#&gt; 	Independent construct    VIF value 
-#&gt; 	eta1                      1.8205   
-#&gt; 	eta2                      1.8205   
-#&gt; 
-#&gt; -------------------------- Effect sizes (Cohen's f^2) --------------------------
-#&gt; 
-#&gt;   Dependent construct: 'eta2'
-#&gt; 
-#&gt; 	Independent construct       f^2    
-#&gt; 	eta1                      0.8205   
-#&gt; 
-#&gt;   Dependent construct: 'eta3'
-#&gt; 
-#&gt; 	Independent construct       f^2    
-#&gt; 	eta1                      0.2270   
-#&gt; 	eta2                      0.1005   
-#&gt; 
-#&gt; ------------------------------ Validity assessment -----------------------------
-#&gt; 
-#&gt; 	Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)
-#&gt; 
-#&gt;           eta1      eta2 eta3
-#&gt; eta1 1.0000000 0.0000000    0
-#&gt; eta2 0.6782752 1.0000000    0
-#&gt; eta3 0.6668841 0.6124418    1
-#&gt; 
-#&gt; 
-#&gt; 	Fornell-Larcker matrix
-#&gt; 
-#&gt;           eta1      eta2      eta3
-#&gt; eta1 0.4802903 0.4506886 0.4400530
-#&gt; eta2 0.4506886 0.4922660 0.3757225
-#&gt; eta3 0.4400530 0.3757225 0.5559458
-#&gt; 
-#&gt; 
-#&gt; ------------------------------------ Effects -----------------------------------
-#&gt; 
-#&gt; Estimated total effects:
-#&gt; ========================
-#&gt;   Total effect    Estimate  Std. error   t-stat.   p-value
-#&gt;   eta2 ~ eta1       0.6713          NA        NA        NA
-#&gt;   eta3 ~ eta1       0.6634          NA        NA        NA
-#&gt;   eta3 ~ eta2       0.3052          NA        NA        NA
-#&gt; 
-#&gt; Estimated indirect effects:
-#&gt; ===========================
-#&gt;   Indirect effect    Estimate  Std. error   t-stat.   p-value
-#&gt;   eta3 ~ eta1          0.2049          NA        NA        NA
-#&gt; ________________________________________________________________________________</div><div class='input'>
-<span class='co'># Notes: </span>
-<span class='co'>#   1. By default no inferential quantities (e.g. Std. errors, p-values, or</span>
-<span class='co'>#      confidence intervals) are calculated. Use resampling to obtain</span>
-<span class='co'>#      inferential quantities. See "Resampling" in the "Extended usage"</span>
-<span class='co'>#      section below.</span>
-<span class='co'>#   2. `summarize()` prints the full output by default. For a more condensed</span>
-<span class='co'>#       output use:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>, .full_output <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; ________________________________________________________________________________
-#&gt; ----------------------------------- Overview -----------------------------------
-#&gt; 
-#&gt; 	General information:
-#&gt; 	------------------------
-#&gt; 	Estimation status                = </span><span style='color: #00BB00;'>Ok</span><span>
-#&gt; 	Number of observations           = 500
-#&gt; 	Weight estimator                 = PLS-PM
-#&gt; 	Inner weighting scheme           = "path"
-#&gt; 	Type of indicator correlation    = Pearson
-#&gt; 	Path model estimator             = OLS
-#&gt; 	Second-order approach            = NA
-#&gt; 	Type of path model               = Linear
-#&gt; 	Disattenuated                    = Yes (PLSc)
-#&gt; 
-#&gt; 	Construct details:
-#&gt; 	------------------
-#&gt; 	Name  Modeled as     Order         Mode      
-#&gt; 
-#&gt; 	eta1  Common factor  First order   "modeA"   
-#&gt; 	eta2  Common factor  First order   "modeA"   
-#&gt; 	eta3  Common factor  First order   "modeA"   
-#&gt; 
-#&gt; ----------------------------------- Estimates ----------------------------------
-#&gt; 
-#&gt; Estimated path coefficients:
-#&gt; ============================
-#&gt;   Path           Estimate  Std. error   t-stat.   p-value
-#&gt;   eta2 ~ eta1      0.6713          NA        NA        NA
-#&gt;   eta3 ~ eta1      0.4585          NA        NA        NA
-#&gt;   eta3 ~ eta2      0.3052          NA        NA        NA
-#&gt; 
-#&gt; Estimated loadings:
-#&gt; ===================
-#&gt;   Loading        Estimate  Std. error   t-stat.   p-value
-#&gt;   eta1 =~ y11      0.6631          NA        NA        NA
-#&gt;   eta1 =~ y12      0.6493          NA        NA        NA
-#&gt;   eta1 =~ y13      0.7613          NA        NA        NA
-#&gt;   eta2 =~ y21      0.5165          NA        NA        NA
-#&gt;   eta2 =~ y22      0.7554          NA        NA        NA
-#&gt;   eta2 =~ y23      0.7997          NA        NA        NA
-#&gt;   eta3 =~ y31      0.8223          NA        NA        NA
-#&gt;   eta3 =~ y32      0.6581          NA        NA        NA
-#&gt;   eta3 =~ y33      0.7474          NA        NA        NA
-#&gt; 
-#&gt; Estimated weights:
-#&gt; ==================
-#&gt;   Weight         Estimate  Std. error   t-stat.   p-value
-#&gt;   eta1 &lt;~ y11      0.3956          NA        NA        NA
-#&gt;   eta1 &lt;~ y12      0.3873          NA        NA        NA
-#&gt;   eta1 &lt;~ y13      0.4542          NA        NA        NA
-#&gt;   eta2 &lt;~ y21      0.3058          NA        NA        NA
-#&gt;   eta2 &lt;~ y22      0.4473          NA        NA        NA
-#&gt;   eta2 &lt;~ y23      0.4735          NA        NA        NA
-#&gt;   eta3 &lt;~ y31      0.4400          NA        NA        NA
-#&gt;   eta3 &lt;~ y32      0.3521          NA        NA        NA
-#&gt;   eta3 &lt;~ y33      0.3999          NA        NA        NA
-#&gt; ________________________________________________________________________________</div><div class='input'>
-<span class='co'>## Dealing with endogeneity -------------------------------------------------</span>
-
-<span class='co'># See: ?testHausman()</span>
-
-<span class='co'>### Models containing second constructs--------------------------------------</span>
-<span class='co'>## Take a look at the dataset</span>
-<span class='co'>#?dgp_2ndorder_cf_of_c</span>
-
-<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
-# Path model / Regressions 
-c4   ~ eta1
-eta2 ~ eta1 + c4
-
-# Reflective measurement model
-c1   &lt;~ y11 + y12 
-c2   &lt;~ y21 + y22 + y23 + y24
-c3   &lt;~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38
-eta1 =~ y41 + y42 + y43
-eta2 =~ y51 + y52 + y53
-
-# Composite model (second order)
-c4   =~ c1 + c2 + c3
-"</span>
-
-<span class='va'>res_2stage</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>dgp_2ndorder_cf_of_c</span>, <span class='va'>model</span>, .approach_2ndorder <span class='op'>=</span> <span class='st'>"2stage"</span><span class='op'>)</span>
-<span class='va'>res_mixed</span>  <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>dgp_2ndorder_cf_of_c</span>, <span class='va'>model</span>, .approach_2ndorder <span class='op'>=</span> <span class='st'>"mixed"</span><span class='op'>)</span>
-
-<span class='co'># The standard repeated indicators approach is done by 1.) respecifying the model</span>
-<span class='co'># and 2.) adding the repeated indicators to the data set</span>
-
-<span class='co'># 1.) Respecify the model</span>
-<span class='va'>model_RI</span> <span class='op'>&lt;-</span> <span class='st'>"
-# Path model / Regressions 
-c4   ~ eta1
-eta2 ~ eta1 + c4
-c4   ~ c1 + c2 + c3
-
-# Reflective measurement model
-c1   &lt;~ y11 + y12 
-c2   &lt;~ y21 + y22 + y23 + y24
-c3   &lt;~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38
-eta1 =~ y41 + y42 + y43
-eta2 =~ y51 + y52 + y53
-
-# c4 is a common factor measured by composites
-c4 =~ y11_temp + y12_temp + y21_temp + y22_temp + y23_temp + y24_temp +
-      y31_temp + y32_temp + y33_temp + y34_temp + y35_temp + y36_temp + 
-      y37_temp + y38_temp
-"</span>
-
-<span class='co'># 2.) Update data set</span>
-<span class='va'>data_RI</span> <span class='op'>&lt;-</span> <span class='va'>dgp_2ndorder_cf_of_c</span>
-<span class='va'>coln</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>data_RI</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>data_RI</span><span class='op'>)</span>, <span class='st'>"_temp"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>data_RI</span> <span class='op'>&lt;-</span> <span class='va'>data_RI</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>data_RI</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>data_RI</span><span class='op'>)</span><span class='op'>)</span><span class='op'>]</span>
-<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>data_RI</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>coln</span>
-
-<span class='co'># Estimate</span>
-<span class='va'>res_RI</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>data_RI</span>, <span class='va'>model_RI</span><span class='op'>)</span>
-<span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_RI</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; ________________________________________________________________________________
-#&gt; ----------------------------------- Overview -----------------------------------
-#&gt; 
-#&gt; 	General information:
-#&gt; 	------------------------
-#&gt; 	Estimation status                = </span><span style='color: #BB0000;'>Not ok!</span><span>
-#&gt; 	Number of observations           = 500
-#&gt; 	Weight estimator                 = PLS-PM
-#&gt; 	Inner weighting scheme           = "path"
-#&gt; 	Type of indicator correlation    = Pearson
-#&gt; 	Path model estimator             = OLS
-#&gt; 	Second-order approach            = NA
-#&gt; 	Type of path model               = Linear
-#&gt; 	Disattenuated                    = Yes (PLSc)
-#&gt; 
-#&gt; 	Construct details:
-#&gt; 	------------------
-#&gt; 	Name  Modeled as     Order         Mode      
-#&gt; 
-#&gt; 	eta1  Common factor  First order   "modeA"   
-#&gt; 	c1    Composite      First order   "modeB"   
-#&gt; 	c2    Composite      First order   "modeB"   
-#&gt; 	c3    Composite      First order   "modeB"   
-#&gt; 	c4    Common factor  First order   "modeA"   
-#&gt; 	eta2  Common factor  First order   "modeA"   
-#&gt; 
-#&gt; ----------------------------------- Estimates ----------------------------------
-#&gt; 
-#&gt; Estimated path coefficients:
-#&gt; ============================
-#&gt;   Path           Estimate  Std. error   t-stat.   p-value
-#&gt;   c4 ~ eta1        0.0029          NA        NA        NA
-#&gt;   c4 ~ c1          0.2333          NA        NA        NA
-#&gt;   c4 ~ c2          0.4381          NA        NA        NA
-#&gt;   c4 ~ c3          0.5448          NA        NA        NA
-#&gt;   eta2 ~ eta1      0.0345          NA        NA        NA
-#&gt;   eta2 ~ c4        0.5128          NA        NA        NA
-#&gt; 
-#&gt; Estimated loadings:
-#&gt; ===================
-#&gt;   Loading           Estimate  Std. error   t-stat.   p-value
-#&gt;   eta1 =~ y41         0.9416          NA        NA        NA
-#&gt;   eta1 =~ y42         0.7374          NA        NA        NA
-#&gt;   eta1 =~ y43         0.5285          NA        NA        NA
-#&gt;   c1 =~ y11           0.8999          NA        NA        NA
-#&gt;   c1 =~ y12           0.7204          NA        NA        NA
-#&gt;   c2 =~ y21           0.8041          NA        NA        NA
-#&gt;   c2 =~ y22           0.7090          NA        NA        NA
-#&gt;   c2 =~ y23           0.6563          NA        NA        NA
-#&gt;   c2 =~ y24           0.6739          NA        NA        NA
-#&gt;   c3 =~ y31           0.5380          NA        NA        NA
-#&gt;   c3 =~ y32           0.6091          NA        NA        NA
-#&gt;   c3 =~ y33           0.6759          NA        NA        NA
-#&gt;   c3 =~ y34           0.4268          NA        NA        NA
-#&gt;   c3 =~ y35           0.3482          NA        NA        NA
-#&gt;   c3 =~ y36           0.6089          NA        NA        NA
-#&gt;   c3 =~ y37           0.4549          NA        NA        NA
-#&gt;   c3 =~ y38           0.6092          NA        NA        NA
-#&gt;   c4 =~ y11_temp      0.6249          NA        NA        NA
-#&gt;   c4 =~ y12_temp      0.4750          NA        NA        NA
-#&gt;   c4 =~ y21_temp      0.6808          NA        NA        NA
-#&gt;   c4 =~ y22_temp      0.5885          NA        NA        NA
-#&gt;   c4 =~ y23_temp      0.5291          NA        NA        NA
-#&gt;   c4 =~ y24_temp      0.5771          NA        NA        NA
-#&gt;   c4 =~ y31_temp      0.4817          NA        NA        NA
-#&gt;   c4 =~ y32_temp      0.5415          NA        NA        NA
-#&gt;   c4 =~ y33_temp      0.5586          NA        NA        NA
-#&gt;   c4 =~ y34_temp      0.3624          NA        NA        NA
-#&gt;   c4 =~ y35_temp      0.3157          NA        NA        NA
-#&gt;   c4 =~ y36_temp      0.5154          NA        NA        NA
-#&gt;   c4 =~ y37_temp      0.4129          NA        NA        NA
-#&gt;   c4 =~ y38_temp      0.5111          NA        NA        NA
-#&gt;   eta2 =~ y51         0.7991          NA        NA        NA
-#&gt;   eta2 =~ y52         0.8477          NA        NA        NA
-#&gt;   eta2 =~ y53         0.7304          NA        NA        NA
-#&gt; 
-#&gt; Estimated weights:
-#&gt; ==================
-#&gt;   Weight            Estimate  Std. error   t-stat.   p-value
-#&gt;   eta1 &lt;~ y41         0.5052          NA        NA        NA
-#&gt;   eta1 &lt;~ y42         0.3957          NA        NA        NA
-#&gt;   eta1 &lt;~ y43         0.2836          NA        NA        NA
-#&gt;   c1 &lt;~ y11           0.7392          NA        NA        NA
-#&gt;   c1 &lt;~ y12           0.4648          NA        NA        NA
-#&gt;   c2 &lt;~ y21           0.4487          NA        NA        NA
-#&gt;   c2 &lt;~ y22           0.3168          NA        NA        NA
-#&gt;   c2 &lt;~ y23           0.2773          NA        NA        NA
-#&gt;   c2 &lt;~ y24           0.3452          NA        NA        NA
-#&gt;   c3 &lt;~ y31           0.2758          NA        NA        NA
-#&gt;   c3 &lt;~ y32           0.2653          NA        NA        NA
-#&gt;   c3 &lt;~ y33           0.2202          NA        NA        NA
-#&gt;   c3 &lt;~ y34           0.1587          NA        NA        NA
-#&gt;   c3 &lt;~ y35           0.1682          NA        NA        NA
-#&gt;   c3 &lt;~ y36           0.2495          NA        NA        NA
-#&gt;   c3 &lt;~ y37           0.2784          NA        NA        NA
-#&gt;   c3 &lt;~ y38           0.2238          NA        NA        NA
-#&gt;   c4 &lt;~ y11_temp      0.1510          NA        NA        NA
-#&gt;   c4 &lt;~ y12_temp      0.1148          NA        NA        NA
-#&gt;   c4 &lt;~ y21_temp      0.1645          NA        NA        NA
-#&gt;   c4 &lt;~ y22_temp      0.1422          NA        NA        NA
-#&gt;   c4 &lt;~ y23_temp      0.1279          NA        NA        NA
-#&gt;   c4 &lt;~ y24_temp      0.1395          NA        NA        NA
-#&gt;   c4 &lt;~ y31_temp      0.1164          NA        NA        NA
-#&gt;   c4 &lt;~ y32_temp      0.1309          NA        NA        NA
-#&gt;   c4 &lt;~ y33_temp      0.1350          NA        NA        NA
-#&gt;   c4 &lt;~ y34_temp      0.0876          NA        NA        NA
-#&gt;   c4 &lt;~ y35_temp      0.0763          NA        NA        NA
-#&gt;   c4 &lt;~ y36_temp      0.1246          NA        NA        NA
-#&gt;   c4 &lt;~ y37_temp      0.0998          NA        NA        NA
-#&gt;   c4 &lt;~ y38_temp      0.1235          NA        NA        NA
-#&gt;   eta2 &lt;~ y51         0.3873          NA        NA        NA
-#&gt;   eta2 &lt;~ y52         0.4109          NA        NA        NA
-#&gt;   eta2 &lt;~ y53         0.3540          NA        NA        NA
-#&gt; 
-#&gt; Estimated construct correlations:
-#&gt; =================================
-#&gt;   Correlation    Estimate  Std. error   t-stat.   p-value
-#&gt;   eta1 ~~ c1       0.2882          NA        NA        NA
-#&gt;   eta1 ~~ c2       0.2527          NA        NA        NA
-#&gt;   eta1 ~~ c3       0.2871          NA        NA        NA
-#&gt;   c1 ~~ c2         0.5772          NA        NA        NA
-#&gt;   c1 ~~ c3         0.6242          NA        NA        NA
-#&gt;   c2 ~~ c3         0.7480          NA        NA        NA
-#&gt; 
-#&gt; Estimated indicator correlations:
-#&gt; =================================
-#&gt;   Correlation    Estimate  Std. error   t-stat.   p-value
-#&gt;   y11 ~~ y12       0.3459          NA        NA        NA
-#&gt;   y21 ~~ y22       0.4341          NA        NA        NA
-#&gt;   y21 ~~ y23       0.3805          NA        NA        NA
-#&gt;   y21 ~~ y24       0.3255          NA        NA        NA
-#&gt;   y22 ~~ y23       0.3260          NA        NA        NA
-#&gt;   y22 ~~ y24       0.3102          NA        NA        NA
-#&gt;   y23 ~~ y24       0.3043          NA        NA        NA
-#&gt;   y31 ~~ y32       0.1558          NA        NA        NA
-#&gt;   y31 ~~ y33       0.2728          NA        NA        NA
-#&gt;   y31 ~~ y34      -0.1472          NA        NA        NA
-#&gt;   y31 ~~ y35       0.1617          NA        NA        NA
-#&gt;   y31 ~~ y36       0.3372          NA        NA        NA
-#&gt;   y31 ~~ y37       0.0961          NA        NA        NA
-#&gt;   y31 ~~ y38       0.2059          NA        NA        NA
-#&gt;   y32 ~~ y33       0.2355          NA        NA        NA
-#&gt;   y32 ~~ y34       0.4146          NA        NA        NA
-#&gt;   y32 ~~ y35       0.2228          NA        NA        NA
-#&gt;   y32 ~~ y36       0.2184          NA        NA        NA
-#&gt;   y32 ~~ y37       0.2684          NA        NA        NA
-#&gt;   y32 ~~ y38       0.0736          NA        NA        NA
-#&gt;   y33 ~~ y34       0.2908          NA        NA        NA
-#&gt;   y33 ~~ y35      -0.0586          NA        NA        NA
-#&gt;   y33 ~~ y36       0.3445          NA        NA        NA
-#&gt;   y33 ~~ y37       0.2018          NA        NA        NA
-#&gt;   y33 ~~ y38       0.6233          NA        NA        NA
-#&gt;   y34 ~~ y35       0.1723          NA        NA        NA
-#&gt;   y34 ~~ y36       0.1704          NA        NA        NA
-#&gt;   y34 ~~ y37       0.0729          NA        NA        NA
-#&gt;   y34 ~~ y38       0.1916          NA        NA        NA
-#&gt;   y35 ~~ y36       0.1125          NA        NA        NA
-#&gt;   y35 ~~ y37      -0.1425          NA        NA        NA
-#&gt;   y35 ~~ y38       0.3285          NA        NA        NA
-#&gt;   y36 ~~ y37       0.1102          NA        NA        NA
-#&gt;   y36 ~~ y38       0.2499          NA        NA        NA
-#&gt;   y37 ~~ y38       0.0858          NA        NA        NA
-#&gt; 
-#&gt; ------------------------------------ Effects -----------------------------------
-#&gt; 
-#&gt; Estimated total effects:
-#&gt; ========================
-#&gt;   Total effect    Estimate  Std. error   t-stat.   p-value
-#&gt;   c4 ~ eta1         0.0029          NA        NA        NA
-#&gt;   c4 ~ c1           0.2333          NA        NA        NA
-#&gt;   c4 ~ c2           0.4381          NA        NA        NA
-#&gt;   c4 ~ c3           0.5448          NA        NA        NA
-#&gt;   eta2 ~ eta1       0.0359          NA        NA        NA
-#&gt;   eta2 ~ c1         0.1197          NA        NA        NA
-#&gt;   eta2 ~ c2         0.2247          NA        NA        NA
-#&gt;   eta2 ~ c3         0.2794          NA        NA        NA
-#&gt;   eta2 ~ c4         0.5128          NA        NA        NA
-#&gt; 
-#&gt; Estimated indirect effects:
-#&gt; ===========================
-#&gt;   Indirect effect    Estimate  Std. error   t-stat.   p-value
-#&gt;   eta2 ~ eta1          0.0015          NA        NA        NA
-#&gt;   eta2 ~ c1            0.1197          NA        NA        NA
-#&gt;   eta2 ~ c2            0.2247          NA        NA        NA
-#&gt;   eta2 ~ c3            0.2794          NA        NA        NA
-#&gt; ________________________________________________________________________________</div><div class='input'>
-<span class='co'>### Multigroup analysis -----------------------------------------------------</span>
-
-<span class='co'># See: ?testMGD()</span>
-
-<span class='co'># ===========================================================================</span>
-<span class='co'># Extended usage</span>
-<span class='co'># ===========================================================================</span>
-<span class='co'># `csem()` provides defaults for all arguments except `.data` and `.model`.</span>
-<span class='co'>#   Below some common options/tasks that users are likely to be interested in.</span>
-<span class='co'>#   We use the threecommonfactors data set again:</span>
-
-<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
-# Structural model
-eta2 ~ eta1
-eta3 ~ eta1 + eta2
-
-# (Reflective) measurement model
-eta1 =~ y11 + y12 + y13
-eta2 =~ y21 + y22 + y23
-eta3 =~ y31 + y32 + y33
-"</span>
-
-<span class='co'>### PLS vs PLSc and disattenuation</span>
-<span class='co'># In the model all concepts are modeled as common factors. If </span>
-<span class='co'>#   .approach_weights = "PLS-PM", csem() uses PLSc to disattenuate composite-indicator </span>
-<span class='co'>#   and composite-composite correlations.</span>
-<span class='va'>res_plsc</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .approach_weights <span class='op'>=</span> <span class='st'>"PLS-PM"</span><span class='op'>)</span>
-<span class='va'>res</span><span class='op'>$</span><span class='va'>Information</span><span class='op'>$</span><span class='va'>Model</span><span class='op'>$</span><span class='va'>construct_type</span> <span class='co'># all common factors</span>
-</div><div class='output co'>#&gt;            eta1            eta2            eta3 
-#&gt; "Common factor" "Common factor" "Common factor" </div><div class='input'>
-<span class='co'># To obtain "original" (inconsistent) PLS estimates use `.disattenuate = FALSE`</span>
-<span class='va'>res_pls</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, 
-                .approach_weights <span class='op'>=</span> <span class='st'>"PLS-PM"</span>,
-                .disattenuate <span class='op'>=</span> <span class='cn'>FALSE</span>
-                <span class='op'>)</span>
-
-<span class='va'>s_plsc</span> <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_plsc</span><span class='op'>)</span>
-<span class='va'>s_pls</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_pls</span><span class='op'>)</span>
-
-<span class='co'># Compare</span>
-<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
-  <span class='st'>"Path"</span>      <span class='op'>=</span> <span class='va'>s_plsc</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Name</span>,
-  <span class='st'>"Pop_value"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.6</span>, <span class='fl'>0.4</span>, <span class='fl'>0.35</span><span class='op'>)</span>, <span class='co'># see ?threecommonfactors</span>
-  <span class='st'>"PLSc"</span>      <span class='op'>=</span> <span class='va'>s_plsc</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Estimate</span>,
-  <span class='st'>"PLS"</span>       <span class='op'>=</span> <span class='va'>s_pls</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Estimate</span>
-  <span class='op'>)</span>
-</div><div class='output co'>#&gt;          Path Pop_value      PLSc       PLS
-#&gt; 1 eta2 ~ eta1      0.60 0.6713334 0.5046062
-#&gt; 2 eta3 ~ eta1      0.40 0.4585068 0.3588557
-#&gt; 3 eta3 ~ eta2      0.35 0.3051511 0.2972680</div><div class='input'>
-<span class='co'>### Resampling --------------------------------------------------------------</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='co'>## Basic resampling</span>
-<span class='va'>res_boot</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span><span class='op'>)</span>
-<span class='va'>res_jack</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"jackknife"</span><span class='op'>)</span>
-
-<span class='co'># See ?resamplecSEMResults for more examples</span>
-
-<span class='co'>### Choosing a different weightning scheme ----------------------------------</span>
-
-<span class='va'>res_gscam</span>  <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .approach_weights <span class='op'>=</span> <span class='st'>"GSCA"</span><span class='op'>)</span>
-<span class='va'>res_gsca</span>   <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, 
-                   .approach_weights <span class='op'>=</span> <span class='st'>"GSCA"</span>,
-                   .disattenuate <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='op'>)</span>
-
-<span class='va'>s_gscam</span> <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_gscam</span><span class='op'>)</span>
-<span class='va'>s_gsca</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_gsca</span><span class='op'>)</span>
-
-<span class='co'># Compare</span>
-<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
-  <span class='st'>"Path"</span>      <span class='op'>=</span> <span class='va'>s_gscam</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Name</span>,
-  <span class='st'>"Pop_value"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.6</span>, <span class='fl'>0.4</span>, <span class='fl'>0.35</span><span class='op'>)</span>, <span class='co'># see ?threecommonfactors</span>
-  <span class='st'>"GSCAm"</span>      <span class='op'>=</span> <span class='va'>s_gscam</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Estimate</span>,
-  <span class='st'>"GSCA"</span>       <span class='op'>=</span> <span class='va'>s_gsca</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Estimate</span>
-<span class='op'>)</span><span class='op'>}</span>
-<span class='co'>### Fine-tuning a weighting scheme ------------------------------------------</span>
-<span class='co'>## Setting starting values</span>
-
-<span class='va'>sv</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"eta1"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"y12"</span> <span class='op'>=</span> <span class='fl'>10</span>, <span class='st'>"y13"</span> <span class='op'>=</span> <span class='fl'>4</span>, <span class='st'>"y11"</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .starting_values <span class='op'>=</span> <span class='va'>sv</span><span class='op'>)</span>
-
-<span class='co'>## Choosing a different inner weighting scheme </span>
-<span class='co'>#?args_csem_dotdotdot</span>
-
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .PLS_weight_scheme_inner <span class='op'>=</span> <span class='st'>"factorial"</span>,
-            .PLS_ignore_structural_model <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-
-
-<span class='co'>## Choosing different modes for PLS</span>
-<span class='co'># By default, concepts modeled as common factors uses PLS Mode A weights.</span>
-<span class='va'>modes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"eta1"</span> <span class='op'>=</span> <span class='st'>"unit"</span>, <span class='st'>"eta2"</span> <span class='op'>=</span> <span class='st'>"modeB"</span>, <span class='st'>"eta3"</span> <span class='op'>=</span> <span class='st'>"unit"</span><span class='op'>)</span>
-<span class='va'>res</span>   <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .PLS_modes <span class='op'>=</span> <span class='va'>modes</span><span class='op'>)</span>
-<span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span> 
-</div><div class='output co'>#&gt; ________________________________________________________________________________
-#&gt; ----------------------------------- Overview -----------------------------------
-#&gt; 
-#&gt; 	General information:
-#&gt; 	------------------------
-#&gt; 	Estimation status                = </span><span style='color: #BB0000;'>Not ok!</span><span>
-#&gt; 	Number of observations           = 500
-#&gt; 	Weight estimator                 = PLS-PM
-#&gt; 	Inner weighting scheme           = "path"
-#&gt; 	Type of indicator correlation    = Pearson
-#&gt; 	Path model estimator             = OLS
-#&gt; 	Second-order approach            = NA
-#&gt; 	Type of path model               = Linear
-#&gt; 	Disattenuated                    = Yes (PLSc)
-#&gt; 
-#&gt; 	Construct details:
-#&gt; 	------------------
-#&gt; 	Name  Modeled as     Order         Mode      
-#&gt; 
-#&gt; 	eta1  Common factor  First order   "unit"    
-#&gt; 	eta2  Common factor  First order   "modeB"   
-#&gt; 	eta3  Common factor  First order   "unit"    
-#&gt; 
-#&gt; ----------------------------------- Estimates ----------------------------------
-#&gt; 
-#&gt; Estimated path coefficients:
-#&gt; ============================
-#&gt;   Path           Estimate  Std. error   t-stat.   p-value
-#&gt;   eta2 ~ eta1      1.9918          NA        NA        NA
-#&gt;   eta3 ~ eta1      0.6827          NA        NA        NA
-#&gt;   eta3 ~ eta2      0.6987          NA        NA        NA
-#&gt; 
-#&gt; Estimated loadings:
-#&gt; ===================
-#&gt;   Loading        Estimate  Std. error   t-stat.   p-value
-#&gt;   eta1 =~ y11      0.4132          NA        NA        NA
-#&gt;   eta1 =~ y12      0.4132          NA        NA        NA
-#&gt;   eta1 =~ y13      0.4132          NA        NA        NA
-#&gt;   eta2 =~ y21      0.1407          NA        NA        NA
-#&gt;   eta2 =~ y22      0.4008          NA        NA        NA
-#&gt;   eta2 =~ y23      0.5053          NA        NA        NA
-#&gt;   eta3 =~ y31      0.3983          NA        NA        NA
-#&gt;   eta3 =~ y32      0.3983          NA        NA        NA
-#&gt;   eta3 =~ y33      0.3983          NA        NA        NA
-#&gt; 
-#&gt; Estimated weights:
-#&gt; ==================
-#&gt;   Weight         Estimate  Std. error   t-stat.   p-value
-#&gt;   eta1 &lt;~ y11      0.4132          NA        NA        NA
-#&gt;   eta1 &lt;~ y12      0.4132          NA        NA        NA
-#&gt;   eta1 &lt;~ y13      0.4132          NA        NA        NA
-#&gt;   eta2 &lt;~ y21      0.1593          NA        NA        NA
-#&gt;   eta2 &lt;~ y22      0.4538          NA        NA        NA
-#&gt;   eta2 &lt;~ y23      0.5722          NA        NA        NA
-#&gt;   eta3 &lt;~ y31      0.3983          NA        NA        NA
-#&gt;   eta3 &lt;~ y32      0.3983          NA        NA        NA
-#&gt;   eta3 &lt;~ y33      0.3983          NA        NA        NA
-#&gt; 
-#&gt; ------------------------------------ Effects -----------------------------------
-#&gt; 
-#&gt; Estimated total effects:
-#&gt; ========================
-#&gt;   Total effect    Estimate  Std. error   t-stat.   p-value
-#&gt;   eta2 ~ eta1       1.9918          NA        NA        NA
-#&gt;   eta3 ~ eta1       2.0744          NA        NA        NA
-#&gt;   eta3 ~ eta2       0.6987          NA        NA        NA
-#&gt; 
-#&gt; Estimated indirect effects:
-#&gt; ===========================
-#&gt;   Indirect effect    Estimate  Std. error   t-stat.   p-value
-#&gt;   eta3 ~ eta1          1.3917          NA        NA        NA
-#&gt; ________________________________________________________________________________</div></span></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'># Basic usage</span></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'>### Linear model ------------------------------------------------------------</span></span>
+<span class='r-in'><span class='co'># Most basic usage requires a dataset and a model. We use the </span></span>
+<span class='r-in'><span class='co'>#  `threecommonfactors` dataset. </span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Take a look at the dataset</span></span>
+<span class='r-in'><span class='co'>#?threecommonfactors</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Specify the (correct) model</span></span>
+<span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'># Structural model</span>
+<span class='r-in'>eta2 ~ eta1</span>
+<span class='r-in'>eta3 ~ eta1 + eta2</span>
+<span class='r-in'></span>
+<span class='r-in'># (Reflective) measurement model</span>
+<span class='r-in'>eta1 =~ y11 + y12 + y13</span>
+<span class='r-in'>eta2 =~ y21 + y22 + y23</span>
+<span class='r-in'>eta3 =~ y31 + y32 + y33</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Estimate</span></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Postestimation</span></span>
+<span class='r-in'><span class='fu'><a href='verify.html'>verify</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Verify admissibility:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'></span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>	 admissible</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Details:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Code   Status    Description</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   1      <span style='color: #00BB00;'>ok</span><span>        Convergence achieved                                   </span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   2      <span style='color: #00BB00;'>ok</span><span>        All absolute standardized loading estimates &lt;= 1       </span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   3      <span style='color: #00BB00;'>ok</span><span>        Construct VCV is positive semi-definite                </span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   4      <span style='color: #00BB00;'>ok</span><span>        All reliability estimates &lt;= 1                         </span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   5      <span style='color: #00BB00;'>ok</span><span>        Model-implied indicator VCV is positive semi-definite  </span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-in'><span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------------------------------- Overview -----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	General information:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Estimation status                = <span style='color: #00BB00;'>Ok</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Number of observations           = 500</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Weight estimator                 = PLS-PM</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Inner weighting scheme           = "path"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Type of indicator correlation    = Pearson</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Path model estimator             = OLS</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Second-order approach            = NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Type of path model               = Linear</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Disattenuated                    = Yes (PLSc)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct details:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Name  Modeled as     Order         Mode      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1  Common factor  First order   "modeA"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2  Common factor  First order   "modeA"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3  Common factor  First order   "modeA"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------------------------------- Estimates ----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated path coefficients:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ============================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Path           Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ eta1      0.6713          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta1      0.4585          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta2      0.3052          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated loadings:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ===================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Loading        Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y11      0.6631          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y12      0.6493          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y13      0.7613          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y21      0.5165          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y22      0.7554          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y23      0.7997          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 =~ y31      0.8223          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 =~ y32      0.6581          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 =~ y33      0.7474          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated weights:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ==================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Weight         Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y11      0.3956          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y12      0.3873          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y13      0.4542          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y21      0.3058          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y22      0.4473          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y23      0.4735          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 &lt;~ y31      0.4400          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 &lt;~ y32      0.3521          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 &lt;~ y33      0.3999          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ------------------------------------ Effects -----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated total effects:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ========================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Total effect    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ eta1       0.6713          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta1       0.6634          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta2       0.3052          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated indirect effects:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ===========================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Indirect effect    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta1          0.2049          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-in'><span class='fu'><a href='assess.html'>assess</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct        AVE           R2          R2_adj    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1           0.4803          NA            NA      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2           0.4923        0.4507        0.4496    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3           0.5559        0.4912        0.4892    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> -------------- Common (internal consistency) reliability estimates -------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct Cronbachs_alpha   Joereskogs_rho   Dijkstra-Henselers_rho_A </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1        0.7318           0.7339                0.7388          </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2        0.7281           0.7380                0.7647          </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3        0.7860           0.7884                0.7964          </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------- Alternative (internal consistency) reliability estimates -----------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct       RhoC         RhoC_mm    RhoC_weighted</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1           0.7339        0.7341        0.7388    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2           0.7380        0.7361        0.7647    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3           0.7884        0.7875        0.7964    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct  RhoC_weighted_mm     RhoT      RhoT_weighted</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1           0.7388        0.7318        0.7288    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2           0.7647        0.7281        0.7095    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3           0.7964        0.7860        0.7820    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> --------------------------- Distance and fit measures --------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Geodesic distance           = 0.006013595</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Squared Euclidian distance  = 0.01121567</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	ML distance                 = 0.03203348</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Chi_square     = 15.9847</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Chi_square_df  = 0.6660294</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	CFI            = 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	CN             = 1137.78</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	GFI            = 0.9920803</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	IFI            = 1.005614</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	NFI            = 0.9889886</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	NNFI           = 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	RMSEA          = 0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	RMS_theta      = 0.1050618</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	SRMR           = 0.01578725</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Degrees of freedom    = 24</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> --------------------------- Model selection criteria ---------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct        AIC          AICc          AICu     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2          -296.5459     205.5025      -294.5419  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3          -332.8544     169.2264      -329.8454  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct        BIC           FPE           GM      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2          -288.1166      0.5526       511.4292   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3          -320.2106      0.5139       517.6438   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct        HQ            HQc       Mallows_Cp  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2          -293.2383     -293.1793      3.0000    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3          -327.8930     -327.7823      5.0000    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------------------- Variance inflation factors (VIFs) ----------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Dependent construct: 'eta3'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Independent construct    VIF value </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1                      1.8205   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2                      1.8205   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> -------------------------- Effect sizes (Cohen's f^2) --------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Dependent construct: 'eta2'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Independent construct       f^2    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1                      0.8205   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Dependent construct: 'eta3'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Independent construct       f^2    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1                      0.2270   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2                      0.1005   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ------------------------------ Validity assessment -----------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           eta1      eta2 eta3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta1 1.0000000 0.0000000    0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta2 0.6782752 1.0000000    0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta3 0.6668841 0.6124418    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Fornell-Larcker matrix</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           eta1      eta2      eta3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta1 0.4802903 0.4506886 0.4400530</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta2 0.4506886 0.4922660 0.3757225</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta3 0.4400530 0.3757225 0.5559458</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ------------------------------------ Effects -----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated total effects:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ========================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Total effect    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ eta1       0.6713          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta1       0.6634          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta2       0.3052          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated indirect effects:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ===========================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Indirect effect    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta1          0.2049          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Notes: </span></span>
+<span class='r-in'><span class='co'>#   1. By default no inferential quantities (e.g. Std. errors, p-values, or</span></span>
+<span class='r-in'><span class='co'>#      confidence intervals) are calculated. Use resampling to obtain</span></span>
+<span class='r-in'><span class='co'>#      inferential quantities. See "Resampling" in the "Extended usage"</span></span>
+<span class='r-in'><span class='co'>#      section below.</span></span>
+<span class='r-in'><span class='co'>#   2. `summarize()` prints the full output by default. For a more condensed</span></span>
+<span class='r-in'><span class='co'>#       output use:</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>, .full_output <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------------------------------- Overview -----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	General information:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Estimation status                = <span style='color: #00BB00;'>Ok</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Number of observations           = 500</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Weight estimator                 = PLS-PM</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Inner weighting scheme           = "path"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Type of indicator correlation    = Pearson</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Path model estimator             = OLS</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Second-order approach            = NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Type of path model               = Linear</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Disattenuated                    = Yes (PLSc)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct details:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Name  Modeled as     Order         Mode      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1  Common factor  First order   "modeA"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2  Common factor  First order   "modeA"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3  Common factor  First order   "modeA"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------------------------------- Estimates ----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated path coefficients:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ============================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Path           Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ eta1      0.6713          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta1      0.4585          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta2      0.3052          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated loadings:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ===================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Loading        Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y11      0.6631          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y12      0.6493          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y13      0.7613          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y21      0.5165          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y22      0.7554          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y23      0.7997          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 =~ y31      0.8223          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 =~ y32      0.6581          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 =~ y33      0.7474          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated weights:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ==================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Weight         Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y11      0.3956          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y12      0.3873          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y13      0.4542          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y21      0.3058          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y22      0.4473          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y23      0.4735          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 &lt;~ y31      0.4400          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 &lt;~ y32      0.3521          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 &lt;~ y33      0.3999          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Dealing with endogeneity -------------------------------------------------</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># See: ?testHausman()</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### Models containing second constructs--------------------------------------</span></span>
+<span class='r-in'><span class='co'>## Take a look at the dataset</span></span>
+<span class='r-in'><span class='co'>#?dgp_2ndorder_cf_of_c</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'># Path model / Regressions </span>
+<span class='r-in'>c4   ~ eta1</span>
+<span class='r-in'>eta2 ~ eta1 + c4</span>
+<span class='r-in'></span>
+<span class='r-in'># Reflective measurement model</span>
+<span class='r-in'>c1   &lt;~ y11 + y12 </span>
+<span class='r-in'>c2   &lt;~ y21 + y22 + y23 + y24</span>
+<span class='r-in'>c3   &lt;~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38</span>
+<span class='r-in'>eta1 =~ y41 + y42 + y43</span>
+<span class='r-in'>eta2 =~ y51 + y52 + y53</span>
+<span class='r-in'></span>
+<span class='r-in'># Composite model (second order)</span>
+<span class='r-in'>c4   =~ c1 + c2 + c3</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>res_2stage</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>dgp_2ndorder_cf_of_c</span>, <span class='va'>model</span>, .approach_2ndorder <span class='op'>=</span> <span class='st'>"2stage"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res_mixed</span>  <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>dgp_2ndorder_cf_of_c</span>, <span class='va'>model</span>, .approach_2ndorder <span class='op'>=</span> <span class='st'>"mixed"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># The standard repeated indicators approach is done by 1.) respecifying the model</span></span>
+<span class='r-in'><span class='co'># and 2.) adding the repeated indicators to the data set</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># 1.) Respecify the model</span></span>
+<span class='r-in'><span class='va'>model_RI</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'># Path model / Regressions </span>
+<span class='r-in'>c4   ~ eta1</span>
+<span class='r-in'>eta2 ~ eta1 + c4</span>
+<span class='r-in'>c4   ~ c1 + c2 + c3</span>
+<span class='r-in'></span>
+<span class='r-in'># Reflective measurement model</span>
+<span class='r-in'>c1   &lt;~ y11 + y12 </span>
+<span class='r-in'>c2   &lt;~ y21 + y22 + y23 + y24</span>
+<span class='r-in'>c3   &lt;~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38</span>
+<span class='r-in'>eta1 =~ y41 + y42 + y43</span>
+<span class='r-in'>eta2 =~ y51 + y52 + y53</span>
+<span class='r-in'></span>
+<span class='r-in'># c4 is a common factor measured by composites</span>
+<span class='r-in'>c4 =~ y11_temp + y12_temp + y21_temp + y22_temp + y23_temp + y24_temp +</span>
+<span class='r-in'>      y31_temp + y32_temp + y33_temp + y34_temp + y35_temp + y36_temp + </span>
+<span class='r-in'>      y37_temp + y38_temp</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># 2.) Update data set</span></span>
+<span class='r-in'><span class='va'>data_RI</span> <span class='op'>&lt;-</span> <span class='va'>dgp_2ndorder_cf_of_c</span></span>
+<span class='r-in'><span class='va'>coln</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>data_RI</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>data_RI</span><span class='op'>)</span>, <span class='st'>"_temp"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>data_RI</span> <span class='op'>&lt;-</span> <span class='va'>data_RI</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>data_RI</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>data_RI</span><span class='op'>)</span><span class='op'>)</span><span class='op'>]</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>data_RI</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>coln</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Estimate</span></span>
+<span class='r-in'><span class='va'>res_RI</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>data_RI</span>, <span class='va'>model_RI</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_RI</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------------------------------- Overview -----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	General information:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Estimation status                = <span style='color: #BB0000;'>Not ok!</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Number of observations           = 500</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Weight estimator                 = PLS-PM</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Inner weighting scheme           = "path"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Type of indicator correlation    = Pearson</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Path model estimator             = OLS</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Second-order approach            = NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Type of path model               = Linear</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Disattenuated                    = Yes (PLSc)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct details:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Name  Modeled as     Order         Mode      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1  Common factor  First order   "modeA"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	c1    Composite      First order   "modeB"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	c2    Composite      First order   "modeB"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	c3    Composite      First order   "modeB"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	c4    Common factor  First order   "modeA"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2  Common factor  First order   "modeA"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------------------------------- Estimates ----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated path coefficients:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ============================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Path           Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 ~ eta1        0.0029          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 ~ c1          0.2333          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 ~ c2          0.4381          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 ~ c3          0.5448          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ eta1      0.0345          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ c4        0.5128          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated loadings:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ===================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Loading           Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y41         0.9416          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y42         0.7374          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y43         0.5285          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c1 =~ y11           0.8999          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c1 =~ y12           0.7204          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c2 =~ y21           0.8041          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c2 =~ y22           0.7090          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c2 =~ y23           0.6563          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c2 =~ y24           0.6739          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 =~ y31           0.5380          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 =~ y32           0.6091          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 =~ y33           0.6759          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 =~ y34           0.4268          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 =~ y35           0.3482          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 =~ y36           0.6089          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 =~ y37           0.4549          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 =~ y38           0.6092          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y11_temp      0.6249          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y12_temp      0.4750          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y21_temp      0.6808          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y22_temp      0.5885          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y23_temp      0.5291          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y24_temp      0.5771          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y31_temp      0.4817          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y32_temp      0.5415          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y33_temp      0.5586          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y34_temp      0.3624          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y35_temp      0.3157          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y36_temp      0.5154          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y37_temp      0.4129          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 =~ y38_temp      0.5111          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y51         0.7991          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y52         0.8477          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y53         0.7304          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated weights:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ==================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Weight            Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y41         0.5052          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y42         0.3957          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y43         0.2836          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c1 &lt;~ y11           0.7392          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c1 &lt;~ y12           0.4648          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c2 &lt;~ y21           0.4487          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c2 &lt;~ y22           0.3168          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c2 &lt;~ y23           0.2773          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c2 &lt;~ y24           0.3452          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 &lt;~ y31           0.2758          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 &lt;~ y32           0.2653          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 &lt;~ y33           0.2202          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 &lt;~ y34           0.1587          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 &lt;~ y35           0.1682          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 &lt;~ y36           0.2495          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 &lt;~ y37           0.2784          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c3 &lt;~ y38           0.2238          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y11_temp      0.1510          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y12_temp      0.1148          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y21_temp      0.1645          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y22_temp      0.1422          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y23_temp      0.1279          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y24_temp      0.1395          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y31_temp      0.1164          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y32_temp      0.1309          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y33_temp      0.1350          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y34_temp      0.0876          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y35_temp      0.0763          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y36_temp      0.1246          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y37_temp      0.0998          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 &lt;~ y38_temp      0.1235          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y51         0.3873          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y52         0.4109          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y53         0.3540          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated construct correlations:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> =================================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Correlation    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 ~~ c1       0.2882          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 ~~ c2       0.2527          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 ~~ c3       0.2871          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c1 ~~ c2         0.5772          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c1 ~~ c3         0.6242          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c2 ~~ c3         0.7480          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated indicator correlations:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> =================================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Correlation    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y11 ~~ y12       0.3459          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y21 ~~ y22       0.4341          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y21 ~~ y23       0.3805          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y21 ~~ y24       0.3255          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y22 ~~ y23       0.3260          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y22 ~~ y24       0.3102          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y23 ~~ y24       0.3043          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y31 ~~ y32       0.1558          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y31 ~~ y33       0.2728          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y31 ~~ y34      -0.1472          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y31 ~~ y35       0.1617          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y31 ~~ y36       0.3372          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y31 ~~ y37       0.0961          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y31 ~~ y38       0.2059          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y32 ~~ y33       0.2355          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y32 ~~ y34       0.4146          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y32 ~~ y35       0.2228          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y32 ~~ y36       0.2184          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y32 ~~ y37       0.2684          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y32 ~~ y38       0.0736          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y33 ~~ y34       0.2908          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y33 ~~ y35      -0.0586          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y33 ~~ y36       0.3445          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y33 ~~ y37       0.2018          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y33 ~~ y38       0.6233          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y34 ~~ y35       0.1723          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y34 ~~ y36       0.1704          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y34 ~~ y37       0.0729          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y34 ~~ y38       0.1916          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y35 ~~ y36       0.1125          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y35 ~~ y37      -0.1425          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y35 ~~ y38       0.3285          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y36 ~~ y37       0.1102          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y36 ~~ y38       0.2499          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   y37 ~~ y38       0.0858          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ------------------------------------ Effects -----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated total effects:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ========================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Total effect    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 ~ eta1         0.0029          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 ~ c1           0.2333          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 ~ c2           0.4381          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   c4 ~ c3           0.5448          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ eta1       0.0359          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ c1         0.1197          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ c2         0.2247          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ c3         0.2794          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ c4         0.5128          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated indirect effects:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ===========================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Indirect effect    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ eta1          0.0015          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ c1            0.1197          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ c2            0.2247          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ c3            0.2794          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### Multigroup analysis -----------------------------------------------------</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># See: ?testMGD()</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'># Extended usage</span></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'># `csem()` provides defaults for all arguments except `.data` and `.model`.</span></span>
+<span class='r-in'><span class='co'>#   Below some common options/tasks that users are likely to be interested in.</span></span>
+<span class='r-in'><span class='co'>#   We use the threecommonfactors data set again:</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'># Structural model</span>
+<span class='r-in'>eta2 ~ eta1</span>
+<span class='r-in'>eta3 ~ eta1 + eta2</span>
+<span class='r-in'></span>
+<span class='r-in'># (Reflective) measurement model</span>
+<span class='r-in'>eta1 =~ y11 + y12 + y13</span>
+<span class='r-in'>eta2 =~ y21 + y22 + y23</span>
+<span class='r-in'>eta3 =~ y31 + y32 + y33</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### PLS vs PLSc and disattenuation</span></span>
+<span class='r-in'><span class='co'># In the model all concepts are modeled as common factors. If </span></span>
+<span class='r-in'><span class='co'>#   .approach_weights = "PLS-PM", csem() uses PLSc to disattenuate composite-indicator </span></span>
+<span class='r-in'><span class='co'>#   and composite-composite correlations.</span></span>
+<span class='r-in'><span class='va'>res_plsc</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .approach_weights <span class='op'>=</span> <span class='st'>"PLS-PM"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res</span><span class='op'>$</span><span class='va'>Information</span><span class='op'>$</span><span class='va'>Model</span><span class='op'>$</span><span class='va'>construct_type</span> <span class='co'># all common factors</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eta1            eta2            eta3 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> "Common factor" "Common factor" "Common factor" </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># To obtain "original" (inconsistent) PLS estimates use `.disattenuate = FALSE`</span></span>
+<span class='r-in'><span class='va'>res_pls</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, </span>
+<span class='r-in'>                .approach_weights <span class='op'>=</span> <span class='st'>"PLS-PM"</span>,</span>
+<span class='r-in'>                .disattenuate <span class='op'>=</span> <span class='cn'>FALSE</span></span>
+<span class='r-in'>                <span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>s_plsc</span> <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_plsc</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>s_pls</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_pls</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Compare</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='st'>"Path"</span>      <span class='op'>=</span> <span class='va'>s_plsc</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Name</span>,</span>
+<span class='r-in'>  <span class='st'>"Pop_value"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.6</span>, <span class='fl'>0.4</span>, <span class='fl'>0.35</span><span class='op'>)</span>, <span class='co'># see ?threecommonfactors</span></span>
+<span class='r-in'>  <span class='st'>"PLSc"</span>      <span class='op'>=</span> <span class='va'>s_plsc</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Estimate</span>,</span>
+<span class='r-in'>  <span class='st'>"PLS"</span>       <span class='op'>=</span> <span class='va'>s_pls</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Estimate</span></span>
+<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          Path Pop_value      PLSc       PLS</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1 eta2 ~ eta1      0.60 0.6713334 0.5046062</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2 eta3 ~ eta1      0.40 0.4585068 0.3588557</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3 eta3 ~ eta2      0.35 0.3051511 0.2972680</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### Resampling --------------------------------------------------------------</span></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='co'>## Basic resampling</span></span>
+<span class='r-in'><span class='va'>res_boot</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res_jack</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"jackknife"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># See ?resamplecSEMResults for more examples</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### Choosing a different weightning scheme ----------------------------------</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>res_gscam</span>  <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .approach_weights <span class='op'>=</span> <span class='st'>"GSCA"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res_gsca</span>   <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, </span>
+<span class='r-in'>                   .approach_weights <span class='op'>=</span> <span class='st'>"GSCA"</span>,</span>
+<span class='r-in'>                   .disattenuate <span class='op'>=</span> <span class='cn'>FALSE</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>s_gscam</span> <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_gscam</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>s_gsca</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_gsca</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Compare</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='st'>"Path"</span>      <span class='op'>=</span> <span class='va'>s_gscam</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Name</span>,</span>
+<span class='r-in'>  <span class='st'>"Pop_value"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.6</span>, <span class='fl'>0.4</span>, <span class='fl'>0.35</span><span class='op'>)</span>, <span class='co'># see ?threecommonfactors</span></span>
+<span class='r-in'>  <span class='st'>"GSCAm"</span>      <span class='op'>=</span> <span class='va'>s_gscam</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Estimate</span>,</span>
+<span class='r-in'>  <span class='st'>"GSCA"</span>       <span class='op'>=</span> <span class='va'>s_gsca</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>Estimate</span></span>
+<span class='r-in'><span class='op'>)</span><span class='op'>}</span></span>
+<span class='r-in'><span class='co'>### Fine-tuning a weighting scheme ------------------------------------------</span></span>
+<span class='r-in'><span class='co'>## Setting starting values</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>sv</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"eta1"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"y12"</span> <span class='op'>=</span> <span class='fl'>10</span>, <span class='st'>"y13"</span> <span class='op'>=</span> <span class='fl'>4</span>, <span class='st'>"y11"</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .starting_values <span class='op'>=</span> <span class='va'>sv</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Choosing a different inner weighting scheme </span></span>
+<span class='r-in'><span class='co'>#?args_csem_dotdotdot</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .PLS_weight_scheme_inner <span class='op'>=</span> <span class='st'>"factorial"</span>,</span>
+<span class='r-in'>            .PLS_ignore_structural_model <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Choosing different modes for PLS</span></span>
+<span class='r-in'><span class='co'># By default, concepts modeled as common factors uses PLS Mode A weights.</span></span>
+<span class='r-in'><span class='va'>modes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"eta1"</span> <span class='op'>=</span> <span class='st'>"unit"</span>, <span class='st'>"eta2"</span> <span class='op'>=</span> <span class='st'>"modeB"</span>, <span class='st'>"eta3"</span> <span class='op'>=</span> <span class='st'>"unit"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res</span>   <span class='op'>&lt;-</span> <span class='fu'>csem</span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .PLS_modes <span class='op'>=</span> <span class='va'>modes</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------------------------------- Overview -----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	General information:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Estimation status                = <span style='color: #BB0000;'>Not ok!</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Number of observations           = 500</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Weight estimator                 = PLS-PM</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Inner weighting scheme           = "path"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Type of indicator correlation    = Pearson</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Path model estimator             = OLS</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Second-order approach            = NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Type of path model               = Linear</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Disattenuated                    = Yes (PLSc)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct details:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Name  Modeled as     Order         Mode      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1  Common factor  First order   "unit"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2  Common factor  First order   "modeB"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3  Common factor  First order   "unit"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------------------------------- Estimates ----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated path coefficients:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ============================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Path           Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ eta1      1.9918          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta1      0.6827          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta2      0.6987          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated loadings:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ===================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Loading        Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y11      0.4132          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y12      0.4132          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 =~ y13      0.4132          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y21      0.1407          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y22      0.4008          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 =~ y23      0.5053          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 =~ y31      0.3983          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 =~ y32      0.3983          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 =~ y33      0.3983          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated weights:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ==================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Weight         Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y11      0.4132          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y12      0.4132          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta1 &lt;~ y13      0.4132          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y21      0.1593          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y22      0.4538          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 &lt;~ y23      0.5722          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 &lt;~ y31      0.3983          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 &lt;~ y32      0.3983          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 &lt;~ y33      0.3983          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ------------------------------------ Effects -----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated total effects:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ========================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Total effect    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ eta1       1.9918          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta1       2.0744          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta2       0.6987          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated indirect effects:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ===========================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Indirect effect    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta1          1.3917          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

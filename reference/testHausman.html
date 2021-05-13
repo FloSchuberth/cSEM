@@ -225,93 +225,94 @@ MIT Press.</p>
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <a href='csem_results.html'>cSEMResults</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>### Example from Dijkstra &amp; Hensler (2015)</span>
-<span class='co'>## Prepartion (values are from p. 15-16 of the paper)</span>
-<span class='va'>Lambda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/kronecker.html'>kronecker</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span><span class='op'>(</span><span class='fl'>6</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.7</span>, <span class='fl'>0.7</span>, <span class='fl'>0.7</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>Phi</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1.0000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.0500</span>, <span class='fl'>0.4000</span>, 
-                <span class='fl'>0.5000</span>, <span class='fl'>1.0000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.5071</span>, <span class='fl'>0.6286</span>,
-                <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>1.0000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.2929</span>, <span class='fl'>0.7714</span>,
-                <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>1.0000</span>, <span class='fl'>0.2571</span>, <span class='fl'>0.6286</span>,
-                <span class='fl'>0.0500</span>, <span class='fl'>0.5071</span>, <span class='fl'>0.2929</span>, <span class='fl'>0.2571</span>, <span class='fl'>1.0000</span>, <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span><span class='op'>(</span><span class='fl'>0.5</span><span class='op'>)</span>,
-                <span class='fl'>0.4000</span>, <span class='fl'>0.6286</span>, <span class='fl'>0.7714</span>, <span class='fl'>0.6286</span>, <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span><span class='op'>(</span><span class='fl'>0.5</span><span class='op'>)</span>, <span class='fl'>1.0000</span><span class='op'>)</span>, 
-              ncol <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span>
-
-<span class='co'>## Create population indicator covariance matrix</span>
-<span class='va'>Sigma</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span><span class='op'>(</span><span class='va'>Lambda</span><span class='op'>)</span> <span class='op'>%*%</span> <span class='va'>Phi</span> <span class='op'>%*%</span> <span class='va'>Lambda</span>
-<span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span><span class='op'>(</span><span class='va'>Sigma</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
-<span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span><span class='op'>(</span><span class='va'>Sigma</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"x"</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>, each <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>,
-                        <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"x"</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>, each <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'>## Generate data</span>
-<span class='va'>dat</span> <span class='op'>&lt;-</span> <span class='fu'>MASS</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/MASS/man/mvrnorm.html'>mvrnorm</a></span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>500</span>, mu <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>18</span><span class='op'>)</span>, Sigma <span class='op'>=</span> <span class='va'>Sigma</span>, empirical <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='co'># empirical = TRUE to show that 2SLS is in fact able to recover the true population</span>
-<span class='co'># parameters.</span>
-
-<span class='co'>## Model to estimate</span>
-<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
-## Structural model (nonrecurisve)
-eta5 ~ eta6 + eta1 + eta2
-eta6 ~ eta5 + eta3 + eta4
-
-## Measurement model
-eta1 =~ x11 + x12 + x13
-eta2 =~ x21 + x22 + x23
-eta3 =~ x31 + x32 + x33
-eta4 =~ x41 + x42 + x43
-
-eta5 =~ x51 + x52 + x53
-eta6 =~ x61 + x62 + x63
-"</span>
-
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/M-E-Rademaker/cSEM'>cSEM</a></span><span class='op'>)</span>
-
-<span class='co'>## Estimate</span>
-<span class='va'>res_ols</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>dat</span>, .model <span class='op'>=</span> <span class='va'>model</span>, .approach_paths <span class='op'>=</span> <span class='st'>"OLS"</span><span class='op'>)</span>
-<span class='va'>sum_res_ols</span> <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_ols</span><span class='op'>)</span> 
-
-<span class='co'># Note: For the example the model-implied indicator correlation is irrelevant</span>
-<span class='co'>#       the warnings can be ignored.</span>
-
-<span class='va'>res_2sls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>dat</span>, .model <span class='op'>=</span> <span class='va'>model</span>, .approach_paths <span class='op'>=</span> <span class='st'>"2SLS"</span>,
-                 .instruments <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"eta5"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'eta1'</span>,<span class='st'>'eta2'</span>,<span class='st'>'eta3'</span>,<span class='st'>'eta4'</span><span class='op'>)</span>, 
-                                     <span class='st'>"eta6"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'eta1'</span>,<span class='st'>'eta2'</span>,<span class='st'>'eta3'</span>,<span class='st'>'eta4'</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>sum_res_2sls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_2sls</span><span class='op'>)</span>
-<span class='co'># Note that exogenous constructs are supplied as instruments for themselves!</span>
-
-<span class='co'>## Test for endogeneity</span>
-<span class='va'>test_ha</span> <span class='op'>&lt;-</span> <span class='fu'>testHausman</span><span class='op'>(</span><span class='va'>res_2sls</span>, .R <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span>
-<span class='va'>test_ha</span>
-</div><div class='output co'>#&gt; ________________________________________________________________________________
-#&gt; ───────────────────────── Regression-based Hausman test ────────────────────────
-#&gt; 
-#&gt; Null hypothesis:
-#&gt; 
-#&gt;    ┌──────────────────────────────────────────────────────────────────────────┐
-#&gt;    │                                                                          │
-#&gt;    │   H0: Variable(s) suspected to be endogenous are uncorrelated with the   │
-#&gt;    │   error term (no endogeneity).                                           │
-#&gt;    │                                                                          │
-#&gt;    └──────────────────────────────────────────────────────────────────────────┘
-#&gt; 
-#&gt; Regression output: 
-#&gt; 
-#&gt; 	
-#&gt;   Dependent construct: 'eta5'
-#&gt; 
-#&gt; 	Independent construct    Estimate  Std. error   t-stat.   p-value
-#&gt; 	eta1                      -0.3000      0.1184   -2.5341    0.0113
-#&gt; 	eta2                       0.4999      0.1015    4.9235    0.0000
-#&gt; 	eta6                       0.2501      0.1386    1.8039    0.0712
-#&gt; 	Resid_eta6                 0.9784      0.2752    3.5560    0.0004
-#&gt; 
-#&gt;   Dependent construct: 'eta6'
-#&gt; 
-#&gt; 	Independent construct    Estimate  Std. error   t-stat.   p-value
-#&gt; 	eta3                       0.4999      0.0560    8.9278    0.0000
-#&gt; 	eta4                       0.2501      0.0570    4.3876    0.0000
-#&gt; 	eta5                       0.5001      0.1094    4.5695    0.0000
-#&gt; 	Resid_eta5                -0.0056      0.1508   -0.0370    0.9705
-#&gt; ________________________________________________________________________________</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'>### Example from Dijkstra &amp; Hensler (2015)</span></span>
+<span class='r-in'><span class='co'>## Prepartion (values are from p. 15-16 of the paper)</span></span>
+<span class='r-in'><span class='va'>Lambda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/kronecker.html'>kronecker</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span><span class='op'>(</span><span class='fl'>6</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.7</span>, <span class='fl'>0.7</span>, <span class='fl'>0.7</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>Phi</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1.0000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.0500</span>, <span class='fl'>0.4000</span>, </span>
+<span class='r-in'>                <span class='fl'>0.5000</span>, <span class='fl'>1.0000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.5071</span>, <span class='fl'>0.6286</span>,</span>
+<span class='r-in'>                <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>1.0000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.2929</span>, <span class='fl'>0.7714</span>,</span>
+<span class='r-in'>                <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>0.5000</span>, <span class='fl'>1.0000</span>, <span class='fl'>0.2571</span>, <span class='fl'>0.6286</span>,</span>
+<span class='r-in'>                <span class='fl'>0.0500</span>, <span class='fl'>0.5071</span>, <span class='fl'>0.2929</span>, <span class='fl'>0.2571</span>, <span class='fl'>1.0000</span>, <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span><span class='op'>(</span><span class='fl'>0.5</span><span class='op'>)</span>,</span>
+<span class='r-in'>                <span class='fl'>0.4000</span>, <span class='fl'>0.6286</span>, <span class='fl'>0.7714</span>, <span class='fl'>0.6286</span>, <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span><span class='op'>(</span><span class='fl'>0.5</span><span class='op'>)</span>, <span class='fl'>1.0000</span><span class='op'>)</span>, </span>
+<span class='r-in'>              ncol <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Create population indicator covariance matrix</span></span>
+<span class='r-in'><span class='va'>Sigma</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span><span class='op'>(</span><span class='va'>Lambda</span><span class='op'>)</span> <span class='op'><a href='https://rdrr.io/r/base/matmult.html'>%*%</a></span> <span class='va'>Phi</span> <span class='op'><a href='https://rdrr.io/r/base/matmult.html'>%*%</a></span> <span class='va'>Lambda</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span><span class='op'>(</span><span class='va'>Sigma</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>1</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span><span class='op'>(</span><span class='va'>Sigma</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"x"</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>, each <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>,</span>
+<span class='r-in'>                        <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"x"</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>, each <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Generate data</span></span>
+<span class='r-in'><span class='va'>dat</span> <span class='op'>&lt;-</span> <span class='fu'>MASS</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/MASS/man/mvrnorm.html'>mvrnorm</a></span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>500</span>, mu <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>18</span><span class='op'>)</span>, Sigma <span class='op'>=</span> <span class='va'>Sigma</span>, empirical <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># empirical = TRUE to show that 2SLS is in fact able to recover the true population</span></span>
+<span class='r-in'><span class='co'># parameters.</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Model to estimate</span></span>
+<span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'>## Structural model (nonrecurisve)</span>
+<span class='r-in'>eta5 ~ eta6 + eta1 + eta2</span>
+<span class='r-in'>eta6 ~ eta5 + eta3 + eta4</span>
+<span class='r-in'></span>
+<span class='r-in'>## Measurement model</span>
+<span class='r-in'>eta1 =~ x11 + x12 + x13</span>
+<span class='r-in'>eta2 =~ x21 + x22 + x23</span>
+<span class='r-in'>eta3 =~ x31 + x32 + x33</span>
+<span class='r-in'>eta4 =~ x41 + x42 + x43</span>
+<span class='r-in'></span>
+<span class='r-in'>eta5 =~ x51 + x52 + x53</span>
+<span class='r-in'>eta6 =~ x61 + x62 + x63</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/M-E-Rademaker/cSEM'>cSEM</a></span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Estimate</span></span>
+<span class='r-in'><span class='va'>res_ols</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>dat</span>, .model <span class='op'>=</span> <span class='va'>model</span>, .approach_paths <span class='op'>=</span> <span class='st'>"OLS"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>sum_res_ols</span> <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_ols</span><span class='op'>)</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Note: For the example the model-implied indicator correlation is irrelevant</span></span>
+<span class='r-in'><span class='co'>#       the warnings can be ignored.</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>res_2sls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>dat</span>, .model <span class='op'>=</span> <span class='va'>model</span>, .approach_paths <span class='op'>=</span> <span class='st'>"2SLS"</span>,</span>
+<span class='r-in'>                 .instruments <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"eta5"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'eta1'</span>,<span class='st'>'eta2'</span>,<span class='st'>'eta3'</span>,<span class='st'>'eta4'</span><span class='op'>)</span>, </span>
+<span class='r-in'>                                     <span class='st'>"eta6"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'eta1'</span>,<span class='st'>'eta2'</span>,<span class='st'>'eta3'</span>,<span class='st'>'eta4'</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>sum_res_2sls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res_2sls</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># Note that exogenous constructs are supplied as instruments for themselves!</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Test for endogeneity</span></span>
+<span class='r-in'><span class='va'>test_ha</span> <span class='op'>&lt;-</span> <span class='fu'>testHausman</span><span class='op'>(</span><span class='va'>res_2sls</span>, .R <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>test_ha</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ───────────────────────── Regression-based Hausman test ────────────────────────</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Null hypothesis:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    ┌──────────────────────────────────────────────────────────────────────────┐</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    │                                                                          │</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    │   H0: Variable(s) suspected to be endogenous are uncorrelated with the   │</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    │   error term (no endogeneity).                                           │</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    │                                                                          │</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    └──────────────────────────────────────────────────────────────────────────┘</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Regression output: </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Dependent construct: 'eta5'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1                      -0.3000      0.1393   -2.1537    0.0313</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2                       0.4999      0.0850    5.8783    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta6                       0.2501      0.1417    1.7648    0.0776</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Resid_eta6                 0.9784      0.3247    3.0138    0.0026</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Dependent construct: 'eta6'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3                       0.4999      0.0593    8.4343    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta4                       0.2501      0.0569    4.3935    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta5                       0.5001      0.0977    5.1173    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Resid_eta5                -0.0056      0.1253   -0.0446    0.9645</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

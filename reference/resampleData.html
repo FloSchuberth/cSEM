@@ -323,197 +323,205 @@ doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.20
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <a href='csem_results.html'>cSEMResults</a>, <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># ===========================================================================</span>
-<span class='co'># Using the raw data </span>
-<span class='co'># ===========================================================================</span>
-<span class='co'>### Bootstrap (default) -----------------------------------------------------</span>
-
-<span class='va'>res_boot1</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>satisfaction</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>res_boot1</span>, max.level <span class='op'>=</span> <span class='fl'>3</span>, list.len <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of 499
-#&gt;  $ :'data.frame':	250 obs. of  27 variables:
-#&gt;   ..$ imag1: int [1:250] 8 7 8 6 8 8 10 9 3 8 ...
-#&gt;   ..$ imag2: int [1:250] 9 8 9 8 6 8 10 10 4 8 ...
-#&gt;   ..$ imag3: int [1:250] 10 8 9 8 3 8 10 10 3 8 ...
-#&gt;   .. [list output truncated]
-#&gt;  $ :'data.frame':	250 obs. of  27 variables:
-#&gt;   ..$ imag1: int [1:250] 6 10 10 9 6 8 10 7 8 5 ...
-#&gt;   ..$ imag2: int [1:250] 6 10 10 9 7 8 10 7 9 9 ...
-#&gt;   ..$ imag3: int [1:250] 7 10 8 9 7 8 10 7 9 10 ...
-#&gt;   .. [list output truncated]
-#&gt;  $ :'data.frame':	250 obs. of  27 variables:
-#&gt;   ..$ imag1: int [1:250] 8 8 10 7 10 9 8 10 10 9 ...
-#&gt;   ..$ imag2: int [1:250] 9 8 9 9 10 9 8 10 3 10 ...
-#&gt;   ..$ imag3: int [1:250] 9 3 9 9 10 9 8 10 7 10 ...
-#&gt;   .. [list output truncated]
-#&gt;   [list output truncated]</div><div class='input'>
-<span class='co'>## To replicate a bootstrap draw use .seed:</span>
-<span class='va'>res_boot1a</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>satisfaction</span>, .seed <span class='op'>=</span> <span class='fl'>2364</span><span class='op'>)</span>
-<span class='va'>res_boot1b</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>satisfaction</span>, .seed <span class='op'>=</span> <span class='fl'>2364</span><span class='op'>)</span>
-                           
-<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>res_boot1</span>, <span class='va'>res_boot1a</span><span class='op'>)</span> <span class='co'># TRUE</span>
-</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
-<span class='co'>### Jackknife ---------------------------------------------------------------</span>
-
-<span class='va'>res_jack</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>satisfaction</span>, .resample_method <span class='op'>=</span> <span class='st'>"jackknife"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>res_jack</span>, max.level <span class='op'>=</span> <span class='fl'>3</span>, list.len <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of 250
-#&gt;  $ :'data.frame':	249 obs. of  27 variables:
-#&gt;   ..$ imag1: int [1:249] 9 9 8 10 7 5 9 9 10 2 ...
-#&gt;   ..$ imag2: int [1:249] 9 8 9 10 8 5 9 8 10 2 ...
-#&gt;   ..$ imag3: int [1:249] 10 8 8 8 8 5 9 9 10 8 ...
-#&gt;   .. [list output truncated]
-#&gt;  $ :'data.frame':	249 obs. of  27 variables:
-#&gt;   ..$ imag1: int [1:249] 8 9 8 10 7 5 9 9 10 2 ...
-#&gt;   ..$ imag2: int [1:249] 8 8 9 10 8 5 9 8 10 2 ...
-#&gt;   ..$ imag3: int [1:249] 9 8 8 8 8 5 9 9 10 8 ...
-#&gt;   .. [list output truncated]
-#&gt;  $ :'data.frame':	249 obs. of  27 variables:
-#&gt;   ..$ imag1: int [1:249] 8 9 8 10 7 5 9 9 10 2 ...
-#&gt;   ..$ imag2: int [1:249] 8 9 9 10 8 5 9 8 10 2 ...
-#&gt;   ..$ imag3: int [1:249] 9 10 8 8 8 5 9 9 10 8 ...
-#&gt;   .. [list output truncated]
-#&gt;   [list output truncated]</div><div class='input'>
-<span class='co'>### Cross-validation --------------------------------------------------------</span>
-<span class='co'>## Create dataset for illustration:</span>
-<span class='va'>dat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
-  <span class='st'>"x1"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>,
-  <span class='st'>"x2"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>,
-  <span class='st'>"group"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"male"</span>, <span class='st'>"female"</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>100</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
-  stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-<span class='co'>## 10-fold cross-validation (repeated 100 times)</span>
-<span class='va'>cv_10a</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>dat</span>, .resample_method <span class='op'>=</span> <span class='st'>"cross-validation"</span>, 
-                      .R <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>cv_10a</span>, max.level <span class='op'>=</span> <span class='fl'>3</span>, list.len <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of 100
-#&gt;  $ :List of 10
-#&gt;   ..$ 1 :'data.frame':	10 obs. of  3 variables:
-#&gt;   .. ..$ x1   : num [1:10] 0.41 -1.568 0.152 0.794 -0.23 ...
-#&gt;   .. ..$ x2   : num [1:10] -1.276 2.708 -0.284 0.362 -0.463 ...
-#&gt;   .. ..$ group: chr [1:10] "female" "male" "male" "male" ...
-#&gt;   ..$ 2 :'data.frame':	10 obs. of  3 variables:
-#&gt;   .. ..$ x1   : num [1:10] -0.559 0.184 0.603 0.452 -0.714 ...
-#&gt;   .. ..$ x2   : num [1:10] -1.38843 2.37546 0.44913 -0.00514 0.73952 ...
-#&gt;   .. ..$ group: chr [1:10] "male" "female" "female" "female" ...
-#&gt;   ..$ 3 :'data.frame':	10 obs. of  3 variables:
-#&gt;   .. ..$ x1   : num [1:10] -0.7662 -1.2613 0.8517 -0.0841 0.6344 ...
-#&gt;   .. ..$ x2   : num [1:10] -0.386 -1.649 -0.947 -3.311 0.97 ...
-#&gt;   .. ..$ group: chr [1:10] "male" "male" "male" "female" ...
-#&gt;   .. [list output truncated]
-#&gt;  $ :List of 10
-#&gt;   ..$ 1 :'data.frame':	10 obs. of  3 variables:
-#&gt;   .. ..$ x1   : num [1:10] -0.559 -0.464 0.452 0.184 -0.62 ...
-#&gt;   .. ..$ x2   : num [1:10] -1.38843 -0.53507 -0.00514 2.37546 -1.57014 ...
-#&gt;   .. ..$ group: chr [1:10] "male" "male" "female" "female" ...
-#&gt;   ..$ 2 :'data.frame':	10 obs. of  3 variables:
-#&gt;   .. ..$ x1   : num [1:10] 1.871 0.79 0.496 -0.489 1.397 ...
-#&gt;   .. ..$ x2   : num [1:10] -1.049 1.227 1.373 0.709 -1.911 ...
-#&gt;   .. ..$ group: chr [1:10] "male" "female" "male" "female" ...
-#&gt;   ..$ 3 :'data.frame':	10 obs. of  3 variables:
-#&gt;   .. ..$ x1   : num [1:10] -0.783 0.163 1.764 -0.319 -2.399 ...
-#&gt;   .. ..$ x2   : num [1:10] -0.2047 -0.5763 0.3698 -0.5012 0.0099 ...
-#&gt;   .. ..$ group: chr [1:10] "female" "female" "female" "male" ...
-#&gt;   .. [list output truncated]
-#&gt;  $ :List of 10
-#&gt;   ..$ 1 :'data.frame':	10 obs. of  3 variables:
-#&gt;   .. ..$ x1   : num [1:10] -0.084 0.412 -0.735 0.496 0.382 ...
-#&gt;   .. ..$ x2   : num [1:10] -0.7076 -0.0186 -0.3313 1.3726 0.5385 ...
-#&gt;   .. ..$ group: chr [1:10] "female" "male" "female" "male" ...
-#&gt;   ..$ 2 :'data.frame':	10 obs. of  3 variables:
-#&gt;   .. ..$ x1   : num [1:10] 1.779 1.117 -0.783 0.419 1.871 ...
-#&gt;   .. ..$ x2   : num [1:10] -1.094 -1.152 -0.205 0.212 -1.049 ...
-#&gt;   .. ..$ group: chr [1:10] "male" "male" "female" "male" ...
-#&gt;   ..$ 3 :'data.frame':	10 obs. of  3 variables:
-#&gt;   .. ..$ x1   : num [1:10] -0.9008 0.0845 1.1849 -0.7525 -0.7555 ...
-#&gt;   .. ..$ x2   : num [1:10] -0.755 0.786 -0.161 0.463 0.489 ...
-#&gt;   .. ..$ group: chr [1:10] "female" "female" "male" "male" ...
-#&gt;   .. [list output truncated]
-#&gt;   [list output truncated]</div><div class='input'>
-<span class='co'># Cross-validation can be done by group if a group identifyer is provided:</span>
-<span class='va'>cv_10</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>dat</span>, .resample_method <span class='op'>=</span> <span class='st'>"cross-validation"</span>, 
-                      .id <span class='op'>=</span> <span class='st'>"group"</span>, .R <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: UNRELIABLE VALUE: Future (‘future_lapply-1’) unexpectedly generated random numbers without specifying argument 'future.seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify 'future.seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use 'future.seed=NULL', or set option 'future.rng.onMisuse' to "ignore".</span></div><div class='input'>
-<span class='co'>## Leave-one-out-cross-validation (repeated 50 times)</span>
-<span class='va'>cv_loocv</span>  <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>dat</span><span class='op'>[</span>, <span class='op'>-</span><span class='fl'>3</span><span class='op'>]</span>, 
-                          .resample_method <span class='op'>=</span> <span class='st'>"cross-validation"</span>, 
-                          .cv_folds <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>dat</span><span class='op'>)</span>,
-                          .R <span class='op'>=</span> <span class='fl'>50</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>cv_loocv</span>, max.level <span class='op'>=</span> <span class='fl'>2</span>, list.len <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of 50
-#&gt;  $ :List of 100
-#&gt;   ..$ 1  :'data.frame':	1 obs. of  2 variables:
-#&gt;   ..$ 2  :'data.frame':	1 obs. of  2 variables:
-#&gt;   ..$ 3  :'data.frame':	1 obs. of  2 variables:
-#&gt;   .. [list output truncated]
-#&gt;  $ :List of 100
-#&gt;   ..$ 1  :'data.frame':	1 obs. of  2 variables:
-#&gt;   ..$ 2  :'data.frame':	1 obs. of  2 variables:
-#&gt;   ..$ 3  :'data.frame':	1 obs. of  2 variables:
-#&gt;   .. [list output truncated]
-#&gt;  $ :List of 100
-#&gt;   ..$ 1  :'data.frame':	1 obs. of  2 variables:
-#&gt;   ..$ 2  :'data.frame':	1 obs. of  2 variables:
-#&gt;   ..$ 3  :'data.frame':	1 obs. of  2 variables:
-#&gt;   .. [list output truncated]
-#&gt;   [list output truncated]</div><div class='input'>
-<span class='co'>### Permuation ---------------------------------------------------------------</span>
-
-<span class='va'>res_perm</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>dat</span>, .resample_method <span class='op'>=</span> <span class='st'>"permutation"</span>,
-                         .id <span class='op'>=</span> <span class='st'>"group"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>res_perm</span>, max.level <span class='op'>=</span> <span class='fl'>2</span>, list.len <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of 499
-#&gt;  $ :'data.frame':	100 obs. of  3 variables:
-#&gt;   ..$ x1: num [1:100] -0.242 -0.468 -0.773 2.15 -1.334 ...
-#&gt;   ..$ x2: num [1:100] 1.066 -0.536 0.536 -1.829 -1.814 ...
-#&gt;   ..$ id: chr [1:100] "female" "male" "female" "female" ...
-#&gt;  $ :'data.frame':	100 obs. of  3 variables:
-#&gt;   ..$ x1: num [1:100] -0.242 -0.468 -0.773 2.15 -1.334 ...
-#&gt;   ..$ x2: num [1:100] 1.066 -0.536 0.536 -1.829 -1.814 ...
-#&gt;   ..$ id: chr [1:100] "male" "male" "female" "female" ...
-#&gt;  $ :'data.frame':	100 obs. of  3 variables:
-#&gt;   ..$ x1: num [1:100] -0.242 -0.468 -0.773 2.15 -1.334 ...
-#&gt;   ..$ x2: num [1:100] 1.066 -0.536 0.536 -1.829 -1.814 ...
-#&gt;   ..$ id: chr [1:100] "male" "male" "female" "female" ...
-#&gt;   [list output truncated]</div><div class='input'>
-<span class='co'># Forgetting to set .id causes an error</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>res_perm</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>dat</span>, .resample_method <span class='op'>=</span> <span class='st'>"permutation"</span><span class='op'>)</span>
-<span class='op'>}</span>
-
-<span class='co'># ===========================================================================</span>
-<span class='co'># Using a cSEMResults object</span>
-<span class='co'># ===========================================================================</span>
-
-<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
-# Structural model
-QUAL ~ EXPE
-EXPE ~ IMAG
-SAT  ~ IMAG + EXPE + QUAL + VAL
-LOY  ~ IMAG + SAT
-VAL  ~ EXPE + QUAL
-
-# Measurement model
-EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5
-IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5
-LOY  =~ loy1  + loy2  + loy3  + loy4
-QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
-SAT  =~ sat1  + sat2  + sat3  + sat4
-VAL  =~ val1  + val2  + val3  + val4
-"</span>
-<span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>satisfaction</span>, <span class='va'>model</span><span class='op'>)</span>
-
-<span class='co'># Create bootstrap and jackknife samples</span>
-<span class='va'>res_boot</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span><span class='va'>a</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R <span class='op'>=</span> <span class='fl'>499</span><span class='op'>)</span>
-<span class='va'>res_jack</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span><span class='va'>a</span>, .resample_method <span class='op'>=</span> <span class='st'>"jackknife"</span><span class='op'>)</span>
-
-<span class='co'># Since `satisfaction` is the dataset used the following approaches yield</span>
-<span class='co'># identical results.</span>
-<span class='va'>res_boot_data</span>   <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>satisfaction</span>, .seed <span class='op'>=</span> <span class='fl'>2364</span><span class='op'>)</span>
-<span class='va'>res_boot_object</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span><span class='va'>a</span>, .seed <span class='op'>=</span> <span class='fl'>2364</span><span class='op'>)</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>res_boot_data</span>, <span class='va'>res_boot_object</span><span class='op'>)</span> <span class='co'># TRUE</span>
-</div><div class='output co'>#&gt; [1] TRUE</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'># Using the raw data </span></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'>### Bootstrap (default) -----------------------------------------------------</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>res_boot1</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>satisfaction</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>res_boot1</span>, max.level <span class='op'>=</span> <span class='fl'>3</span>, list.len <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> List of 499</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	250 obs. of  27 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:250] 7 8 5 10 8 8 6 9 5 10 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:250] 7 8 5 10 7 8 5 9 8 10 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:250] 7 8 7 10 8 8 5 9 8 10 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	250 obs. of  27 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:250] 8 7 7 9 5 8 8 10 10 8 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:250] 7 4 7 9 5 8 4 10 10 8 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:250] 8 5 7 9 5 8 3 10 10 8 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	250 obs. of  27 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:250] 10 8 3 10 8 7 9 7 7 6 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:250] 10 8 4 10 9 8 10 7 6 8 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:250] 10 8 3 10 9 8 9 7 9 8 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [list output truncated]</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## To replicate a bootstrap draw use .seed:</span></span>
+<span class='r-in'><span class='va'>res_boot1a</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>satisfaction</span>, .seed <span class='op'>=</span> <span class='fl'>2364</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res_boot1b</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>satisfaction</span>, .seed <span class='op'>=</span> <span class='fl'>2364</span><span class='op'>)</span></span>
+<span class='r-in'>                           </span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>res_boot1</span>, <span class='va'>res_boot1a</span><span class='op'>)</span> <span class='co'># TRUE</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] FALSE</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### Jackknife ---------------------------------------------------------------</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>res_jack</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>satisfaction</span>, .resample_method <span class='op'>=</span> <span class='st'>"jackknife"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>res_jack</span>, max.level <span class='op'>=</span> <span class='fl'>3</span>, list.len <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> List of 250</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	249 obs. of  27 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:249] 9 9 8 10 7 5 9 9 10 2 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:249] 9 8 9 10 8 5 9 8 10 2 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:249] 10 8 8 8 8 5 9 9 10 8 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	249 obs. of  27 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:249] 8 9 8 10 7 5 9 9 10 2 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:249] 8 8 9 10 8 5 9 8 10 2 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:249] 9 8 8 8 8 5 9 9 10 8 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	249 obs. of  27 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:249] 8 9 8 10 7 5 9 9 10 2 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:249] 8 9 9 10 8 5 9 8 10 2 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:249] 9 10 8 8 8 5 9 9 10 8 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [list output truncated]</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### Cross-validation --------------------------------------------------------</span></span>
+<span class='r-in'><span class='co'>## Create dataset for illustration:</span></span>
+<span class='r-in'><span class='va'>dat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='st'>"x1"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>,</span>
+<span class='r-in'>  <span class='st'>"x2"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>,</span>
+<span class='r-in'>  <span class='st'>"group"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"male"</span>, <span class='st'>"female"</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>100</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,</span>
+<span class='r-in'>  stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## 10-fold cross-validation (repeated 100 times)</span></span>
+<span class='r-in'><span class='va'>cv_10a</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>dat</span>, .resample_method <span class='op'>=</span> <span class='st'>"cross-validation"</span>, </span>
+<span class='r-in'>                      .R <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>cv_10a</span>, max.level <span class='op'>=</span> <span class='fl'>3</span>, list.len <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> List of 100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :List of 10</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 1 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 0.163 0.629 0.79 -0.266 -0.768 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.576 -0.14 1.227 0.322 -2.102 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "male" "female" "female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 2 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 0.4104 0.34 -1.2613 -0.084 0.0845 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -1.276 -0.972 -1.649 -0.708 0.786 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "male" "female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 1.39743 -0.77298 1.23398 0.00705 -2.34829 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -1.911 0.536 -0.564 0.879 -0.341 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "male" "female" "female" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :List of 10</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 1 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 0.8539 0.00705 0.52686 -0.26399 1.87142 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.99 0.879 -0.87 -1.196 -1.049 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "male" "male" "female" "female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 2 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 0.4104 -0.0479 0.1837 0.1516 1.6465 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -1.276 -0.923 2.375 -0.284 -0.973 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "female" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 0.0749 0.9618 -1.0934 1.1772 -0.773 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.8103 -0.0325 0.8925 0.529 0.5359 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "female" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :List of 10</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 1 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -0.08414 0.4188 0.00705 -0.15241 0.96181 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -3.3107 0.2118 0.8794 2.0113 -0.0325 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "male" "male" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 2 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 0.6029 -0.264 -1.5955 0.6286 0.0749 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] 0.449 -1.196 -0.265 -0.14 -0.81 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "female" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -0.0469 -2.3483 -0.9009 0.8539 0.7936 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] 1.366 -0.341 -0.405 -0.99 0.362 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "male" "male" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [list output truncated]</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Cross-validation can be done by group if a group identifyer is provided:</span></span>
+<span class='r-in'><span class='va'>cv_10</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>dat</span>, .resample_method <span class='op'>=</span> <span class='st'>"cross-validation"</span>, </span>
+<span class='r-in'>                      .id <span class='op'>=</span> <span class='st'>"group"</span>, .R <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>UNRELIABLE VALUE: Future (‘future_lapply-1’) unexpectedly generated random numbers without specifying argument 'future.seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify 'future.seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use 'future.seed=NULL', or set option 'future.rng.onMisuse' to "ignore".</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Leave-one-out-cross-validation (repeated 50 times)</span></span>
+<span class='r-in'><span class='va'>cv_loocv</span>  <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>dat</span><span class='op'>[</span>, <span class='op'>-</span><span class='fl'>3</span><span class='op'>]</span>, </span>
+<span class='r-in'>                          .resample_method <span class='op'>=</span> <span class='st'>"cross-validation"</span>, </span>
+<span class='r-in'>                          .cv_folds <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>dat</span><span class='op'>)</span>,</span>
+<span class='r-in'>                          .R <span class='op'>=</span> <span class='fl'>50</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>cv_loocv</span>, max.level <span class='op'>=</span> <span class='fl'>2</span>, list.len <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> List of 50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :List of 100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 1  :'data.frame':	1 obs. of  2 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 2  :'data.frame':	1 obs. of  2 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 3  :'data.frame':	1 obs. of  2 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :List of 100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 1  :'data.frame':	1 obs. of  2 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 2  :'data.frame':	1 obs. of  2 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 3  :'data.frame':	1 obs. of  2 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :List of 100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 1  :'data.frame':	1 obs. of  2 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 2  :'data.frame':	1 obs. of  2 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 3  :'data.frame':	1 obs. of  2 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [list output truncated]</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### Permuation ---------------------------------------------------------------</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>res_perm</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>dat</span>, .resample_method <span class='op'>=</span> <span class='st'>"permutation"</span>,</span>
+<span class='r-in'>                         .id <span class='op'>=</span> <span class='st'>"group"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>res_perm</span>, max.level <span class='op'>=</span> <span class='fl'>2</span>, list.len <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> List of 499</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	100 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x1: num [1:100] -0.242 -0.468 -0.773 2.15 -1.334 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x2: num [1:100] 1.066 -0.536 0.536 -1.829 -1.814 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ id: chr [1:100] "female" "female" "male" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	100 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x1: num [1:100] -0.242 -0.468 -0.773 2.15 -1.334 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x2: num [1:100] 1.066 -0.536 0.536 -1.829 -1.814 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ id: chr [1:100] "female" "female" "male" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	100 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x1: num [1:100] -0.242 -0.468 -0.773 2.15 -1.334 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x2: num [1:100] 1.066 -0.536 0.536 -1.829 -1.814 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ id: chr [1:100] "female" "male" "female" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [list output truncated]</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Forgetting to set .id causes an error</span></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='va'>res_perm</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>dat</span>, .resample_method <span class='op'>=</span> <span class='st'>"permutation"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'># Using a cSEMResults object</span></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'># Structural model</span>
+<span class='r-in'>QUAL ~ EXPE</span>
+<span class='r-in'>EXPE ~ IMAG</span>
+<span class='r-in'>SAT  ~ IMAG + EXPE + QUAL + VAL</span>
+<span class='r-in'>LOY  ~ IMAG + SAT</span>
+<span class='r-in'>VAL  ~ EXPE + QUAL</span>
+<span class='r-in'></span>
+<span class='r-in'># Measurement model</span>
+<span class='r-in'>EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5</span>
+<span class='r-in'>IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5</span>
+<span class='r-in'>LOY  =~ loy1  + loy2  + loy3  + loy4</span>
+<span class='r-in'>QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5</span>
+<span class='r-in'>SAT  =~ sat1  + sat2  + sat3  + sat4</span>
+<span class='r-in'>VAL  =~ val1  + val2  + val3  + val4</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'><span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>satisfaction</span>, <span class='va'>model</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Create bootstrap and jackknife samples</span></span>
+<span class='r-in'><span class='va'>res_boot</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span><span class='va'>a</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R <span class='op'>=</span> <span class='fl'>499</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res_jack</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span><span class='va'>a</span>, .resample_method <span class='op'>=</span> <span class='st'>"jackknife"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Since `satisfaction` is the dataset used the following approaches yield</span></span>
+<span class='r-in'><span class='co'># identical results.</span></span>
+<span class='r-in'><span class='va'>res_boot_data</span>   <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>satisfaction</span>, .seed <span class='op'>=</span> <span class='fl'>2364</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res_boot_object</span> <span class='op'>&lt;-</span> <span class='fu'>resampleData</span><span class='op'>(</span><span class='va'>a</span>, .seed <span class='op'>=</span> <span class='fl'>2364</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>res_boot_data</span>, <span class='va'>res_boot_object</span><span class='op'>)</span> <span class='co'># TRUE</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] TRUE</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

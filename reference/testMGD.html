@@ -210,7 +210,7 @@ Default to "<em>all</em>" in which case all approaches are computed (if possible
     <tr>
       <th>.parameters_to_compare</th>
       <td><p>A model in <a href='https://rdrr.io/pkg/lavaan/man/model.syntax.html'>lavaan model syntax</a> indicating which
-parameters (i.e, path (<code><a href='https://rdrr.io/r/base/tilde.html'>~</a></code>), loadings (<code>=~</code>), weights (<code>&lt;~</code>), or correlations (<code>~~</code>)) should be
+parameters (i.e, path (<code>~</code>), loadings (<code>=~</code>), weights (<code>&lt;~</code>), or correlations (<code>~~</code>)) should be
 compared across groups. Defaults to <code>NULL</code> in which case all weights, loadings and
 path coefficients of the originally specified model are compared.</p></td>
     </tr>
@@ -475,78 +475,78 @@ doi: <a href='https://doi.org/10.1108/s1474-7979(2011)0000022012'>10.1108/s1474-
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <a href='csem_results.html'>cSEMResults</a>, <code><a href='testMICOM.html'>testMICOM()</a></code>, <code><a href='testOMF.html'>testOMF()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='co'># ===========================================================================</span>
-<span class='co'># Basic usage</span>
-<span class='co'># ===========================================================================</span>
-<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
-# Structural model
-QUAL ~ EXPE
-EXPE ~ IMAG
-SAT  ~ IMAG + EXPE + QUAL + VAL
-LOY  ~ IMAG + SAT
-VAL  ~ EXPE + QUAL
-
-# Measurement model
-
-EXPE &lt;~ expe1 + expe2 + expe3 + expe4 + expe5
-IMAG &lt;~ imag1 + imag2 + imag3 + imag4 + imag5
-LOY  =~ loy1  + loy2  + loy3  + loy4
-QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
-SAT  &lt;~ sat1  + sat2  + sat3  + sat4
-VAL  &lt;~ val1  + val2  + val3  + val4
-"</span>
-
-<span class='co'>## Create list of virtually identical data sets</span>
-<span class='va'>dat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>satisfaction</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>3</span>,<span class='op'>]</span>, <span class='va'>satisfaction</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>5</span>, <span class='op'>]</span>, <span class='va'>satisfaction</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>10</span>, <span class='op'>]</span><span class='op'>)</span>
-<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>dat</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R <span class='op'>=</span> <span class='fl'>40</span><span class='op'>)</span> 
-
-<span class='co'>## Test </span>
-<span class='fu'>testMGD</span><span class='op'>(</span><span class='va'>out</span>, .R_permutation <span class='op'>=</span> <span class='fl'>40</span>,.verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-<span class='co'># Notes: </span>
-<span class='co'>#  1. .R_permutation (and .R in the call to csem) is small to make examples run quicker; </span>
-<span class='co'>#     should be higher in real applications.</span>
-<span class='co'>#  2. Test will not reject their respective H0s since the groups are virtually</span>
-<span class='co'>#     identical.</span>
-<span class='co'>#  3. Only exception is the approach suggested by Sarstedt et al. (2011), a</span>
-<span class='co'>#     sign that the test is unreliable.</span>
-<span class='co'>#  4. As opposed to other functions involving the argument, </span>
-<span class='co'>#     '.handle_inadmissibles' the default is "replace" as this is</span>
-<span class='co'>#     required by Sarstedt et al. (2011)'s approach.</span>
-
-<span class='co'># ===========================================================================</span>
-<span class='co'># Extended usage</span>
-<span class='co'># ===========================================================================</span>
-<span class='co'>### Test only a subset ------------------------------------------------------</span>
-<span class='co'># By default all parameters are compared. Select a subset by providing a </span>
-<span class='co'># model in lavaan model syntax:</span>
-
-<span class='va'>to_compare</span> <span class='op'>&lt;-</span> <span class='st'>"
-# Path coefficients
-QUAL ~ EXPE
-
-# Loadings
-EXPE &lt;~ expe1 + expe2 + expe3 + expe4 + expe5
-"</span>
-
-<span class='co'>## Test </span>
-<span class='fu'>testMGD</span><span class='op'>(</span><span class='va'>out</span>, .parameters_to_compare <span class='op'>=</span> <span class='va'>to_compare</span>, .R_permutation <span class='op'>=</span> <span class='fl'>20</span>, 
-        .R_bootstrap <span class='op'>=</span> <span class='fl'>20</span>, .verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-<span class='co'>### Different p_adjustments --------------------------------------------------</span>
-<span class='co'># To adjust p-values to accommodate multiple testing use .approach_p_adjust. </span>
-<span class='co'># The number of tests to use for adjusting depends on the approach chosen. For</span>
-<span class='co'># the Chin approach for example it is the number of parameters to test times the</span>
-<span class='co'># number of possible group comparisons. To compare the results for different</span>
-<span class='co'># adjustments, a vector of p-adjustments may be chosen.</span>
-
-<span class='co'>## Test </span>
-<span class='fu'>testMGD</span><span class='op'>(</span><span class='va'>out</span>, .parameters_to_compare <span class='op'>=</span> <span class='va'>to_compare</span>, 
-        .approach_p_adjust <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"none"</span>, <span class='st'>"bonferroni"</span><span class='op'>)</span>,
-        .R_permutation <span class='op'>=</span> <span class='fl'>20</span>, .R_bootstrap <span class='op'>=</span> <span class='fl'>20</span>, .verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-<span class='op'>}</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'># Basic usage</span></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'># Structural model</span>
+<span class='r-in'>QUAL ~ EXPE</span>
+<span class='r-in'>EXPE ~ IMAG</span>
+<span class='r-in'>SAT  ~ IMAG + EXPE + QUAL + VAL</span>
+<span class='r-in'>LOY  ~ IMAG + SAT</span>
+<span class='r-in'>VAL  ~ EXPE + QUAL</span>
+<span class='r-in'></span>
+<span class='r-in'># Measurement model</span>
+<span class='r-in'></span>
+<span class='r-in'>EXPE &lt;~ expe1 + expe2 + expe3 + expe4 + expe5</span>
+<span class='r-in'>IMAG &lt;~ imag1 + imag2 + imag3 + imag4 + imag5</span>
+<span class='r-in'>LOY  =~ loy1  + loy2  + loy3  + loy4</span>
+<span class='r-in'>QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5</span>
+<span class='r-in'>SAT  &lt;~ sat1  + sat2  + sat3  + sat4</span>
+<span class='r-in'>VAL  &lt;~ val1  + val2  + val3  + val4</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Create list of virtually identical data sets</span></span>
+<span class='r-in'><span class='va'>dat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>satisfaction</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>3</span>,<span class='op'>]</span>, <span class='va'>satisfaction</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>5</span>, <span class='op'>]</span>, <span class='va'>satisfaction</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>10</span>, <span class='op'>]</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>dat</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R <span class='op'>=</span> <span class='fl'>40</span><span class='op'>)</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Test </span></span>
+<span class='r-in'><span class='fu'>testMGD</span><span class='op'>(</span><span class='va'>out</span>, .R_permutation <span class='op'>=</span> <span class='fl'>40</span>,.verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Notes: </span></span>
+<span class='r-in'><span class='co'>#  1. .R_permutation (and .R in the call to csem) is small to make examples run quicker; </span></span>
+<span class='r-in'><span class='co'>#     should be higher in real applications.</span></span>
+<span class='r-in'><span class='co'>#  2. Test will not reject their respective H0s since the groups are virtually</span></span>
+<span class='r-in'><span class='co'>#     identical.</span></span>
+<span class='r-in'><span class='co'>#  3. Only exception is the approach suggested by Sarstedt et al. (2011), a</span></span>
+<span class='r-in'><span class='co'>#     sign that the test is unreliable.</span></span>
+<span class='r-in'><span class='co'>#  4. As opposed to other functions involving the argument, </span></span>
+<span class='r-in'><span class='co'>#     '.handle_inadmissibles' the default is "replace" as this is</span></span>
+<span class='r-in'><span class='co'>#     required by Sarstedt et al. (2011)'s approach.</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'># Extended usage</span></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'>### Test only a subset ------------------------------------------------------</span></span>
+<span class='r-in'><span class='co'># By default all parameters are compared. Select a subset by providing a </span></span>
+<span class='r-in'><span class='co'># model in lavaan model syntax:</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>to_compare</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'># Path coefficients</span>
+<span class='r-in'>QUAL ~ EXPE</span>
+<span class='r-in'></span>
+<span class='r-in'># Loadings</span>
+<span class='r-in'>EXPE &lt;~ expe1 + expe2 + expe3 + expe4 + expe5</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Test </span></span>
+<span class='r-in'><span class='fu'>testMGD</span><span class='op'>(</span><span class='va'>out</span>, .parameters_to_compare <span class='op'>=</span> <span class='va'>to_compare</span>, .R_permutation <span class='op'>=</span> <span class='fl'>20</span>, </span>
+<span class='r-in'>        .R_bootstrap <span class='op'>=</span> <span class='fl'>20</span>, .verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### Different p_adjustments --------------------------------------------------</span></span>
+<span class='r-in'><span class='co'># To adjust p-values to accommodate multiple testing use .approach_p_adjust. </span></span>
+<span class='r-in'><span class='co'># The number of tests to use for adjusting depends on the approach chosen. For</span></span>
+<span class='r-in'><span class='co'># the Chin approach for example it is the number of parameters to test times the</span></span>
+<span class='r-in'><span class='co'># number of possible group comparisons. To compare the results for different</span></span>
+<span class='r-in'><span class='co'># adjustments, a vector of p-adjustments may be chosen.</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Test </span></span>
+<span class='r-in'><span class='fu'>testMGD</span><span class='op'>(</span><span class='va'>out</span>, .parameters_to_compare <span class='op'>=</span> <span class='va'>to_compare</span>, </span>
+<span class='r-in'>        .approach_p_adjust <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"none"</span>, <span class='st'>"bonferroni"</span><span class='op'>)</span>,</span>
+<span class='r-in'>        .R_permutation <span class='op'>=</span> <span class='fl'>20</span>, .R_bootstrap <span class='op'>=</span> <span class='fl'>20</span>, .verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

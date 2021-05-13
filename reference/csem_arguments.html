@@ -159,7 +159,7 @@ their possible choices, use args_default(.choices = TRUE)." />
 including their description and defaults.
 Mainly used for internal purposes (parameter inheritance). To list all arguments
 and their defaults, use <code><a href='args_default.html'>args_default()</a></code>. To list all arguments and
-their possible choices, use <code><a href='args_default.html'>args_default(.choices = TRUE)</a></code>.</p>
+their possible choices, use <code>args_default(.choices = TRUE)</code>.</p>
     </div>
 
 
@@ -544,7 +544,7 @@ structural model? Ignored if <code>.by_equation == TRUE</code>. Defaults to <cod
     <tr>
       <th>.parameters_to_compare</th>
       <td><p>A model in <a href='https://rdrr.io/pkg/lavaan/man/model.syntax.html'>lavaan model syntax</a> indicating which
-parameters (i.e, path (<code><a href='https://rdrr.io/r/base/tilde.html'>~</a></code>), loadings (<code>=~</code>), weights (<code>&lt;~</code>), or correlations (<code>~~</code>)) should be
+parameters (i.e, path (<code>~</code>), loadings (<code>=~</code>), weights (<code>&lt;~</code>), or correlations (<code>~~</code>)) should be
 compared across groups. Defaults to <code>NULL</code> in which case all weights, loadings and
 path coefficients of the originally specified model are compared.</p></td>
     </tr>
@@ -802,7 +802,7 @@ higher-order term.</p></td>
       <th>.values_moderator</th>
       <td><p>A numeric vector. The values of the moderator in a
 the simple effects analysis. Typically these are difference from the mean (=0)
-measured in standard deviations. Defaults to <code><a href='https://rdrr.io/r/base/c.html'>c(-2, -1, 0, 1, 2)</a></code>.</p></td>
+measured in standard deviations. Defaults to <code>c(-2, -1, 0, 1, 2)</code>.</p></td>
     </tr>
     <tr>
       <th>.vcv_asymptotic</th>

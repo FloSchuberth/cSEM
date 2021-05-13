@@ -180,38 +180,38 @@ model. All constructs are modeled as composites.</p>
 <em>Econometrica</em>, <b>33</b>(1), 1--41.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/M-E-Rademaker/cSEM'>cSEM</a></span><span class='op'>)</span>
-
-<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
-ETA1 ~ ETA2 + XI1 + XI2
-ETA2 ~ ETA1 + XI3 +XI4
-
-ETA1 ~~ ETA2
-
-XI1  &lt;~ x1 + x2 + x3
-XI2  &lt;~ x4 + x5 + x6
-XI3  &lt;~ x7 + x8 + x9
-XI4  &lt;~ x10 + x11 + x12
-ETA1 &lt;~ y1 + y2 + y3
-ETA2 &lt;~ y4 + y5 + y6
-"</span>
-
-<span class='co'>## Generate data</span>
-<span class='va'>summers_dat</span> <span class='op'>&lt;-</span> <span class='fu'>MASS</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/MASS/man/mvrnorm.html'>mvrnorm</a></span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>300</span>, mu <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>18</span><span class='op'>)</span>, 
-                             Sigma <span class='op'>=</span> <span class='va'>Sigma_Summers_composites</span>, empirical <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-
-<span class='co'>## Estimate</span>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>summers_dat</span>, .model <span class='op'>=</span> <span class='va'>model</span><span class='op'>)</span> <span class='co'># inconsistent</span>
-
-<span class='co'>## </span>
-<span class='co'># 2SLS</span>
-<span class='va'>res_2SLS</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>summers_dat</span>, .model <span class='op'>=</span> <span class='va'>model</span>, .approach_paths <span class='op'>=</span> <span class='st'>"2SLS"</span>,
-                 .instruments <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>ETA1 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'XI1'</span>, <span class='st'>'XI2'</span>, <span class='st'>'XI3'</span>, <span class='st'>'XI4'</span><span class='op'>)</span>,
-                                     ETA2 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'XI1'</span>, <span class='st'>'XI2'</span>, <span class='st'>'XI3'</span>, <span class='st'>'XI4'</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>)</span>
-
-</div></pre>
+    <pre class="examples"><span class='r-in'></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/M-E-Rademaker/cSEM'>cSEM</a></span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'>ETA1 ~ ETA2 + XI1 + XI2</span>
+<span class='r-in'>ETA2 ~ ETA1 + XI3 +XI4</span>
+<span class='r-in'></span>
+<span class='r-in'>ETA1 ~~ ETA2</span>
+<span class='r-in'></span>
+<span class='r-in'>XI1  &lt;~ x1 + x2 + x3</span>
+<span class='r-in'>XI2  &lt;~ x4 + x5 + x6</span>
+<span class='r-in'>XI3  &lt;~ x7 + x8 + x9</span>
+<span class='r-in'>XI4  &lt;~ x10 + x11 + x12</span>
+<span class='r-in'>ETA1 &lt;~ y1 + y2 + y3</span>
+<span class='r-in'>ETA2 &lt;~ y4 + y5 + y6</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Generate data</span></span>
+<span class='r-in'><span class='va'>summers_dat</span> <span class='op'>&lt;-</span> <span class='fu'>MASS</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/MASS/man/mvrnorm.html'>mvrnorm</a></span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>300</span>, mu <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>18</span><span class='op'>)</span>, </span>
+<span class='r-in'>                             Sigma <span class='op'>=</span> <span class='va'>Sigma_Summers_composites</span>, empirical <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Estimate</span></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>summers_dat</span>, .model <span class='op'>=</span> <span class='va'>model</span><span class='op'>)</span> <span class='co'># inconsistent</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## </span></span>
+<span class='r-in'><span class='co'># 2SLS</span></span>
+<span class='r-in'><span class='va'>res_2SLS</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span>.data <span class='op'>=</span> <span class='va'>summers_dat</span>, .model <span class='op'>=</span> <span class='va'>model</span>, .approach_paths <span class='op'>=</span> <span class='st'>"2SLS"</span>,</span>
+<span class='r-in'>                 .instruments <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>ETA1 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'XI1'</span>, <span class='st'>'XI2'</span>, <span class='st'>'XI3'</span>, <span class='st'>'XI4'</span><span class='op'>)</span>,</span>
+<span class='r-in'>                                     ETA2 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'XI1'</span>, <span class='st'>'XI2'</span>, <span class='st'>'XI3'</span>, <span class='st'>'XI4'</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -370,7 +370,7 @@ It is possible to force computation of all quality criteria for constructs
 modeled as composites by setting <code>.only_common_factors = FALSE</code>, however,
 we explicitly warn to interpret quality criteria in analogy to the common factor
 model in this case, as the interpretation often does not carry over to composite models.</p>
-<h3 class='hasAnchor' id='resampling'><a class='anchor' href='#resampling'></a>Resampling</h3>
+<h3 class='hasAnchor' id='resampling'><a class='anchor' aria-hidden='true' href='#resampling'></a>Resampling</h3>
 <p>To resample a given quality criterion supply the name of the function
 that calculates the desired quality criterion to <code><a href='csem.html'>csem()</a></code>'s <code>.user_funs</code> argument.
 See <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code> for details.</p>
@@ -380,214 +380,221 @@ See <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code> fo
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code>, <code><a href='exportToExcel.html'>exportToExcel()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># ===========================================================================</span>
-<span class='co'># Using the three common factors dataset</span>
-<span class='co'># ===========================================================================</span>
-<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
-# Structural model
-eta2 ~ eta1
-eta3 ~ eta1 + eta2
-
-# Each concept is measured by 3 indicators, i.e., modeled as latent variable
-eta1 =~ y11 + y12 + y13
-eta2 =~ y21 + y22 + y23
-eta3 =~ y31 + y32 + y33
-"</span>
-
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span><span class='op'>)</span>
-<span class='va'>a</span>   <span class='op'>&lt;-</span> <span class='fu'>assess</span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span> <span class='co'># computes all quality criteria (.quality_criterion = "all")</span>
-<span class='va'>a</span>
-</div><div class='output co'>#&gt; ________________________________________________________________________________
-#&gt; 
-#&gt; 	Construct        AVE           R2          R2_adj    
-#&gt; 	eta1           0.4803          NA            NA      
-#&gt; 	eta2           0.4923        0.4507        0.4496    
-#&gt; 	eta3           0.5559        0.4912        0.4892    
-#&gt; 
-#&gt; -------------- Common (internal consistency) reliability estimates -------------
-#&gt; 
-#&gt; 	Construct Cronbachs_alpha   Joereskogs_rho   Dijkstra-Henselers_rho_A 
-#&gt; 	eta1        0.7318           0.7339                0.7388          
-#&gt; 	eta2        0.7281           0.7380                0.7647          
-#&gt; 	eta3        0.7860           0.7884                0.7964          
-#&gt; 
-#&gt; ----------- Alternative (internal consistency) reliability estimates -----------
-#&gt; 
-#&gt; 	Construct       RhoC         RhoC_mm    RhoC_weighted
-#&gt; 	eta1           0.7339        0.7341        0.7388    
-#&gt; 	eta2           0.7380        0.7361        0.7647    
-#&gt; 	eta3           0.7884        0.7875        0.7964    
-#&gt; 
-#&gt; 	Construct  RhoC_weighted_mm     RhoT      RhoT_weighted
-#&gt; 	eta1           0.7388        0.7318        0.7288    
-#&gt; 	eta2           0.7647        0.7281        0.7095    
-#&gt; 	eta3           0.7964        0.7860        0.7820    
-#&gt; 
-#&gt; --------------------------- Distance and fit measures --------------------------
-#&gt; 
-#&gt; 	Geodesic distance           = 0.006013595
-#&gt; 	Squared Euclidian distance  = 0.01121567
-#&gt; 	ML distance                 = 0.03203348
-#&gt; 
-#&gt; 	Chi_square     = 15.9847
-#&gt; 	Chi_square_df  = 0.6660294
-#&gt; 	CFI            = 1
-#&gt; 	CN             = 1137.78
-#&gt; 	GFI            = 0.9920803
-#&gt; 	IFI            = 1.005614
-#&gt; 	NFI            = 0.9889886
-#&gt; 	NNFI           = 1
-#&gt; 	RMSEA          = 0
-#&gt; 	RMS_theta      = 0.1050618
-#&gt; 	SRMR           = 0.01578725
-#&gt; 
-#&gt; 	Degrees of freedom    = 24
-#&gt; 
-#&gt; --------------------------- Model selection criteria ---------------------------
-#&gt; 
-#&gt; 	Construct        AIC          AICc          AICu     
-#&gt; 	eta2          -296.5459     205.5025      -294.5419  
-#&gt; 	eta3          -332.8544     169.2264      -329.8454  
-#&gt; 
-#&gt; 	Construct        BIC           FPE           GM      
-#&gt; 	eta2          -288.1166      0.5526       511.4292   
-#&gt; 	eta3          -320.2106      0.5139       517.6438   
-#&gt; 
-#&gt; 	Construct        HQ            HQc       Mallows_Cp  
-#&gt; 	eta2          -293.2383     -293.1793      3.0000    
-#&gt; 	eta3          -327.8930     -327.7823      5.0000    
-#&gt; 
-#&gt; ----------------------- Variance inflation factors (VIFs) ----------------------
-#&gt; 
-#&gt;   Dependent construct: 'eta3'
-#&gt; 
-#&gt; 	Independent construct    VIF value 
-#&gt; 	eta1                      1.8205   
-#&gt; 	eta2                      1.8205   
-#&gt; 
-#&gt; -------------------------- Effect sizes (Cohen's f^2) --------------------------
-#&gt; 
-#&gt;   Dependent construct: 'eta2'
-#&gt; 
-#&gt; 	Independent construct       f^2    
-#&gt; 	eta1                      0.8205   
-#&gt; 
-#&gt;   Dependent construct: 'eta3'
-#&gt; 
-#&gt; 	Independent construct       f^2    
-#&gt; 	eta1                      0.2270   
-#&gt; 	eta2                      0.1005   
-#&gt; 
-#&gt; ------------------------------ Validity assessment -----------------------------
-#&gt; 
-#&gt; 	Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)
-#&gt; 
-#&gt;           eta1      eta2 eta3
-#&gt; eta1 1.0000000 0.0000000    0
-#&gt; eta2 0.6782752 1.0000000    0
-#&gt; eta3 0.6668841 0.6124418    1
-#&gt; 
-#&gt; 
-#&gt; 	Fornell-Larcker matrix
-#&gt; 
-#&gt;           eta1      eta2      eta3
-#&gt; eta1 0.4802903 0.4506886 0.4400530
-#&gt; eta2 0.4506886 0.4922660 0.3757225
-#&gt; eta3 0.4400530 0.3757225 0.5559458
-#&gt; 
-#&gt; 
-#&gt; ------------------------------------ Effects -----------------------------------
-#&gt; 
-#&gt; Estimated total effects:
-#&gt; ========================
-#&gt;   Total effect    Estimate  Std. error   t-stat.   p-value
-#&gt;   eta2 ~ eta1       0.6713          NA        NA        NA
-#&gt;   eta3 ~ eta1       0.6634          NA        NA        NA
-#&gt;   eta3 ~ eta2       0.3052          NA        NA        NA
-#&gt; 
-#&gt; Estimated indirect effects:
-#&gt; ===========================
-#&gt;   Indirect effect    Estimate  Std. error   t-stat.   p-value
-#&gt;   eta3 ~ eta1          0.2049          NA        NA        NA
-#&gt; ________________________________________________________________________________</div><div class='input'>
-<span class='co'>## The return value is a named list. Type for example:</span>
-<span class='va'>a</span><span class='op'>$</span><span class='va'>HTMT</span>
-</div><div class='output co'>#&gt;           eta1      eta2 eta3
-#&gt; eta1 1.0000000 0.0000000    0
-#&gt; eta2 0.6782752 1.0000000    0
-#&gt; eta3 0.6668841 0.6124418    1</div><div class='input'>
-<span class='co'># You may also just compute a subset of the quality criteria</span>
-<span class='fu'>assess</span><span class='op'>(</span><span class='va'>res</span>, .quality_criterion <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ave"</span>, <span class='st'>"rho_C"</span>, <span class='st'>"htmt"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; ________________________________________________________________________________
-#&gt; 
-#&gt; 	Construct        AVE     
-#&gt; 	eta1           0.4803    
-#&gt; 	eta2           0.4923    
-#&gt; 	eta3           0.5559    
-#&gt; 
-#&gt; ----------- Alternative (internal consistency) reliability estimates -----------
-#&gt; 
-#&gt; 	Construct       RhoC     
-#&gt; 	eta1           0.7339    
-#&gt; 	eta2           0.7380    
-#&gt; 	eta3           0.7884    
-#&gt; 
-#&gt; ------------------------------ Validity assessment -----------------------------
-#&gt; 
-#&gt; 	Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)
-#&gt; 
-#&gt;           eta1      eta2 eta3
-#&gt; eta1 1.0000000 0.0000000    0
-#&gt; eta2 0.6782752 1.0000000    0
-#&gt; eta3 0.6668841 0.6124418    1
-#&gt; 
-#&gt; ________________________________________________________________________________</div><div class='input'>
-<span class='co'>## Resampling ---------------------------------------------------------------</span>
-<span class='co'># To resample a given quality criterion use csem()'s .user_funs argument</span>
-<span class='co'># Note: The output of the quality criterion needs to be a vector or a matrix.</span>
-<span class='co'>#       Matrices will be vectorized columnwise.</span>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, 
-            .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, 
-            .R               <span class='op'>=</span> <span class='fl'>40</span>,
-            .user_funs       <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='calculateHTMT.html'>calculateHTMT</a></span>
-<span class='op'>)</span>
-
-<span class='co'>## Look at the resamples</span>
-<span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>User_fun</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span>
-</div><div class='output co'>#&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; [1,]    1 0.7203486 0.7019870    0    1 0.6946464    0    0    1
-#&gt; [2,]    1 0.6394035 0.6582325    0    1 0.6119650    0    0    1
-#&gt; [3,]    1 0.7306991 0.7586029    0    1 0.5584585    0    0    1
-#&gt; [4,]    1 0.6595729 0.6571026    0    1 0.6441936    0    0    1</div><div class='input'>
-<span class='co'>## Use infer() to compute e.g., the 95% percentile confidence interval</span>
-<span class='va'>res_infer</span> <span class='op'>&lt;-</span> <span class='fu'><a href='infer.html'>infer</a></span><span class='op'>(</span><span class='va'>res</span>, .quantity <span class='op'>=</span> <span class='st'>"CI_percentile"</span><span class='op'>)</span>
-
-<span class='co'>## The results are saved under the name "User_fun"</span>
-<span class='va'>res_infer</span><span class='op'>$</span><span class='va'>User_fun</span> 
-</div><div class='output co'>#&gt; $CI_percentile
-#&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; 95%L    1 0.6106446 0.6047467    0    1 0.5057336    0    0    1
-#&gt; 95%U    1 0.7416364 0.7377663    0    1 0.6947246    0    0    1
-#&gt; </div><div class='input'>
-<span class='co'>## Several quality criteria can be resampled simultaneously</span>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, 
-            .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>,
-            .R               <span class='op'>=</span> <span class='fl'>40</span>,
-            .user_funs       <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-              <span class='st'>"HTMT"</span> <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='calculateHTMT.html'>calculateHTMT</a></span>,
-              <span class='st'>"SRMR"</span> <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='fit_measures.html'>calculateSRMR</a></span>,
-              <span class='st'>"RMS_theta"</span> <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='fit_measures.html'>calculateRMSTheta</a></span>
-            <span class='op'>)</span>,
-            .tolerance <span class='op'>=</span> <span class='fl'>1e-04</span>
-<span class='op'>)</span>
-<span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>HTMT</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span>
-</div><div class='output co'>#&gt;      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]
-#&gt; [1,]    1 0.7275915 0.7193788    0    1 0.6434943    0    0    1
-#&gt; [2,]    1 0.6426480 0.6014101    0    1 0.5488840    0    0    1
-#&gt; [3,]    1 0.6876820 0.7586087    0    1 0.5922141    0    0    1
-#&gt; [4,]    1 0.6698364 0.6408056    0    1 0.4809506    0    0    1</div><div class='input'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>RMS_theta</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; [1] 0.1115125 0.1074513 0.1084517 0.1057877</div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'># Using the three common factors dataset</span></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'># Structural model</span>
+<span class='r-in'>eta2 ~ eta1</span>
+<span class='r-in'>eta3 ~ eta1 + eta2</span>
+<span class='r-in'></span>
+<span class='r-in'># Each concept is measured by 3 indicators, i.e., modeled as latent variable</span>
+<span class='r-in'>eta1 =~ y11 + y12 + y13</span>
+<span class='r-in'>eta2 =~ y21 + y22 + y23</span>
+<span class='r-in'>eta3 =~ y31 + y32 + y33</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>a</span>   <span class='op'>&lt;-</span> <span class='fu'>assess</span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span> <span class='co'># computes all quality criteria (.quality_criterion = "all")</span></span>
+<span class='r-in'><span class='va'>a</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct        AVE           R2          R2_adj    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1           0.4803          NA            NA      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2           0.4923        0.4507        0.4496    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3           0.5559        0.4912        0.4892    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> -------------- Common (internal consistency) reliability estimates -------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct Cronbachs_alpha   Joereskogs_rho   Dijkstra-Henselers_rho_A </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1        0.7318           0.7339                0.7388          </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2        0.7281           0.7380                0.7647          </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3        0.7860           0.7884                0.7964          </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------- Alternative (internal consistency) reliability estimates -----------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct       RhoC         RhoC_mm    RhoC_weighted</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1           0.7339        0.7341        0.7388    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2           0.7380        0.7361        0.7647    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3           0.7884        0.7875        0.7964    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct  RhoC_weighted_mm     RhoT      RhoT_weighted</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1           0.7388        0.7318        0.7288    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2           0.7647        0.7281        0.7095    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3           0.7964        0.7860        0.7820    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> --------------------------- Distance and fit measures --------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Geodesic distance           = 0.006013595</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Squared Euclidian distance  = 0.01121567</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	ML distance                 = 0.03203348</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Chi_square     = 15.9847</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Chi_square_df  = 0.6660294</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	CFI            = 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	CN             = 1137.78</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	GFI            = 0.9920803</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	IFI            = 1.005614</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	NFI            = 0.9889886</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	NNFI           = 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	RMSEA          = 0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	RMS_theta      = 0.1050618</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	SRMR           = 0.01578725</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Degrees of freedom    = 24</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> --------------------------- Model selection criteria ---------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct        AIC          AICc          AICu     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2          -296.5459     205.5025      -294.5419  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3          -332.8544     169.2264      -329.8454  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct        BIC           FPE           GM      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2          -288.1166      0.5526       511.4292   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3          -320.2106      0.5139       517.6438   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct        HQ            HQc       Mallows_Cp  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2          -293.2383     -293.1793      3.0000    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3          -327.8930     -327.7823      5.0000    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------------------- Variance inflation factors (VIFs) ----------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Dependent construct: 'eta3'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Independent construct    VIF value </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1                      1.8205   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2                      1.8205   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> -------------------------- Effect sizes (Cohen's f^2) --------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Dependent construct: 'eta2'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Independent construct       f^2    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1                      0.8205   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Dependent construct: 'eta3'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Independent construct       f^2    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1                      0.2270   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2                      0.1005   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ------------------------------ Validity assessment -----------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           eta1      eta2 eta3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta1 1.0000000 0.0000000    0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta2 0.6782752 1.0000000    0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta3 0.6668841 0.6124418    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Fornell-Larcker matrix</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           eta1      eta2      eta3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta1 0.4802903 0.4506886 0.4400530</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta2 0.4506886 0.4922660 0.3757225</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta3 0.4400530 0.3757225 0.5559458</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ------------------------------------ Effects -----------------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated total effects:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ========================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Total effect    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta2 ~ eta1       0.6713          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta1       0.6634          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta2       0.3052          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Estimated indirect effects:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ===========================</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Indirect effect    Estimate  Std. error   t-stat.   p-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   eta3 ~ eta1          0.2049          NA        NA        NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## The return value is a named list. Type for example:</span></span>
+<span class='r-in'><span class='va'>a</span><span class='op'>$</span><span class='va'>HTMT</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           eta1      eta2 eta3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta1 1.0000000 0.0000000    0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta2 0.6782752 1.0000000    0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta3 0.6668841 0.6124418    1</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># You may also just compute a subset of the quality criteria</span></span>
+<span class='r-in'><span class='fu'>assess</span><span class='op'>(</span><span class='va'>res</span>, .quality_criterion <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ave"</span>, <span class='st'>"rho_C"</span>, <span class='st'>"htmt"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct        AVE     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1           0.4803    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2           0.4923    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3           0.5559    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ----------- Alternative (internal consistency) reliability estimates -----------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Construct       RhoC     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta1           0.7339    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta2           0.7380    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	eta3           0.7884    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ------------------------------ Validity assessment -----------------------------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           eta1      eta2 eta3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta1 1.0000000 0.0000000    0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta2 0.6782752 1.0000000    0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> eta3 0.6668841 0.6124418    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Resampling ---------------------------------------------------------------</span></span>
+<span class='r-in'><span class='co'># To resample a given quality criterion use csem()'s .user_funs argument</span></span>
+<span class='r-in'><span class='co'># Note: The output of the quality criterion needs to be a vector or a matrix.</span></span>
+<span class='r-in'><span class='co'>#       Matrices will be vectorized columnwise.</span></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, </span>
+<span class='r-in'>            .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, </span>
+<span class='r-in'>            .R               <span class='op'>=</span> <span class='fl'>40</span>,</span>
+<span class='r-in'>            .user_funs       <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='calculateHTMT.html'>calculateHTMT</a></span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Look at the resamples</span></span>
+<span class='r-in'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>User_fun</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,]    1 0.6350342 0.5686457    0    1 0.6880614    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,]    1 0.6914866 0.6766868    0    1 0.6354154    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,]    1 0.7156620 0.7415118    0    1 0.6400163    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4,]    1 0.6284457 0.5947371    0    1 0.4203077    0    0    1</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Use infer() to compute e.g., the 95% percentile confidence interval</span></span>
+<span class='r-in'><span class='va'>res_infer</span> <span class='op'>&lt;-</span> <span class='fu'><a href='infer.html'>infer</a></span><span class='op'>(</span><span class='va'>res</span>, .quantity <span class='op'>=</span> <span class='st'>"CI_percentile"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## The results are saved under the name "User_fun"</span></span>
+<span class='r-in'><span class='va'>res_infer</span><span class='op'>$</span><span class='va'>User_fun</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $CI_percentile</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L    1 0.5985652 0.5671143    0    1 0.5291906    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U    1 0.7803226 0.7266683    0    1 0.6911570    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Several quality criteria can be resampled simultaneously</span></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, </span>
+<span class='r-in'>            .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>,</span>
+<span class='r-in'>            .R               <span class='op'>=</span> <span class='fl'>40</span>,</span>
+<span class='r-in'>            .user_funs       <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span></span>
+<span class='r-in'>              <span class='st'>"HTMT"</span> <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='calculateHTMT.html'>calculateHTMT</a></span>,</span>
+<span class='r-in'>              <span class='st'>"SRMR"</span> <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='fit_measures.html'>calculateSRMR</a></span>,</span>
+<span class='r-in'>              <span class='st'>"RMS_theta"</span> <span class='op'>=</span> <span class='fu'>cSEM</span><span class='fu'>:::</span><span class='va'><a href='fit_measures.html'>calculateRMSTheta</a></span></span>
+<span class='r-in'>            <span class='op'>)</span>,</span>
+<span class='r-in'>            .tolerance <span class='op'>=</span> <span class='fl'>1e-04</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>HTMT</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,]    1 0.6578669 0.6677822    0    1 0.6285276    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,]    1 0.6040564 0.5795368    0    1 0.6143013    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,]    1 0.7003984 0.7003145    0    1 0.6816754    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4,]    1 0.7372690 0.6821510    0    1 0.7233854    0    0    1</span>
+<span class='r-in'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>RMS_theta</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.1089299 0.1015280 0.1095170 0.1132380</span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

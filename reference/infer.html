@@ -281,57 +281,59 @@ doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.20
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code>, <code><a href='summarize.html'>summarize()</a></code> <a href='csem_results.html'>cSEMResults</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
-# Structural model
-QUAL ~ EXPE
-EXPE ~ IMAG
-SAT  ~ IMAG + EXPE + QUAL + VAL
-LOY  ~ IMAG + SAT
-VAL  ~ EXPE + QUAL
-
-# Measurement model
-EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5
-IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5
-LOY  =~ loy1  + loy2  + loy3  + loy4
-QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5
-SAT  =~ sat1  + sat2  + sat3  + sat4
-VAL  =~ val1  + val2  + val3  + val4
-"</span>
-  
-<span class='co'>## Estimate the model with bootstrap resampling </span>
-<span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>satisfaction</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R <span class='op'>=</span> <span class='fl'>20</span>,
-          .handle_inadmissibles <span class='op'>=</span> <span class='st'>"replace"</span><span class='op'>)</span>
-
-<span class='co'>## Compute inferential quantities</span>
-<span class='va'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
-
-<span class='va'>inf</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_basic</span>
-</div><div class='output co'>#&gt;      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE
-#&gt; 95%L   0.5459633    1.015821  -5.570068   4.831156 -0.4104949   0.438216
-#&gt; 95%U   0.7680318    1.084246  -3.999686   6.372183  0.1035638   3.066102
-#&gt;      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT
-#&gt; 95%L -4.1100232  1.227714  0.1168497 0.3818833
-#&gt; 95%U -0.5304805  2.358709  0.4390908 0.8170403</div><div class='input'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span>
-</div><div class='output co'>#&gt; QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL 
-#&gt;  0.07136417  0.06844365  0.44406985  0.08282968  0.74191342  0.87895823 
-#&gt;  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL 
-#&gt;  0.07252214  0.10235894  0.30230266  0.23295597 </div><div class='input'>
-<span class='co'>### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span>
-<span class='co'>## For the studentied t-interval confidence interval a double bootstrap is required.</span>
-<span class='co'>## This is pretty time consuming.</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span><span class='op'>(</span><span class='va'>a</span>, .quantity <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"CI_bca"</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># requires jackknife estimates </span>
-  
-<span class='co'>## Estimate the model with double bootstrap resampling:</span>
-<span class='co'># Notes:</span>
-<span class='co'>#   1. The .resample_method2 arguments triggers a bootstrap of each bootstrap sample</span>
-<span class='co'>#   2. The double bootstrap is is very time consuming, consider setting </span>
-<span class='co'>#      `.eval_plan = "multiprocess`. </span>
-<span class='va'>a1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>satisfaction</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R <span class='op'>=</span> <span class='fl'>499</span>,
-          .resample_method2 <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R2 <span class='op'>=</span> <span class='fl'>199</span>, .handle_inadmissibles <span class='op'>=</span> <span class='st'>"replace"</span><span class='op'>)</span> 
-<span class='fu'>infer</span><span class='op'>(</span><span class='va'>a1</span>, .quantity <span class='op'>=</span> <span class='st'>"CI_t_interval"</span><span class='op'>)</span><span class='op'>}</span>
-
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'># Structural model</span>
+<span class='r-in'>QUAL ~ EXPE</span>
+<span class='r-in'>EXPE ~ IMAG</span>
+<span class='r-in'>SAT  ~ IMAG + EXPE + QUAL + VAL</span>
+<span class='r-in'>LOY  ~ IMAG + SAT</span>
+<span class='r-in'>VAL  ~ EXPE + QUAL</span>
+<span class='r-in'></span>
+<span class='r-in'># Measurement model</span>
+<span class='r-in'>EXPE =~ expe1 + expe2 + expe3 + expe4 + expe5</span>
+<span class='r-in'>IMAG =~ imag1 + imag2 + imag3 + imag4 + imag5</span>
+<span class='r-in'>LOY  =~ loy1  + loy2  + loy3  + loy4</span>
+<span class='r-in'>QUAL =~ qual1 + qual2 + qual3 + qual4 + qual5</span>
+<span class='r-in'>SAT  =~ sat1  + sat2  + sat3  + sat4</span>
+<span class='r-in'>VAL  =~ val1  + val2  + val3  + val4</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'>  </span>
+<span class='r-in'><span class='co'>## Estimate the model with bootstrap resampling </span></span>
+<span class='r-in'><span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>satisfaction</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R <span class='op'>=</span> <span class='fl'>20</span>,</span>
+<span class='r-in'>          .handle_inadmissibles <span class='op'>=</span> <span class='st'>"replace"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Compute inferential quantities</span></span>
+<span class='r-in'><span class='va'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_basic</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L   0.6180979    1.013794  -5.002688   3.909084 -0.1803651   1.225936</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U   0.7666783    1.052250  -3.003772   5.930426  0.2067211   3.990814</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L  -5.387137  1.071656  0.1184224 0.3850219</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U  -1.527690  2.612550  0.4727685 0.7104729</span>
+<span class='r-in'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  0.04835391  0.05229858  0.60449165  0.06569930  0.74216358  1.01121781 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  0.06982530  0.06767711  0.41556840  0.19649222 </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span></span>
+<span class='r-in'><span class='co'>## For the studentied t-interval confidence interval a double bootstrap is required.</span></span>
+<span class='r-in'><span class='co'>## This is pretty time consuming.</span></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'>  <span class='va'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span><span class='op'>(</span><span class='va'>a</span>, .quantity <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"CI_bca"</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># requires jackknife estimates </span></span>
+<span class='r-in'>  </span>
+<span class='r-in'><span class='co'>## Estimate the model with double bootstrap resampling:</span></span>
+<span class='r-in'><span class='co'># Notes:</span></span>
+<span class='r-in'><span class='co'>#   1. The .resample_method2 arguments triggers a bootstrap of each bootstrap sample</span></span>
+<span class='r-in'><span class='co'>#   2. The double bootstrap is is very time consuming, consider setting </span></span>
+<span class='r-in'><span class='co'>#      `.eval_plan = "multiprocess`. </span></span>
+<span class='r-in'><span class='va'>a1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>satisfaction</span>, <span class='va'>model</span>, .resample_method <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R <span class='op'>=</span> <span class='fl'>499</span>,</span>
+<span class='r-in'>          .resample_method2 <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R2 <span class='op'>=</span> <span class='fl'>199</span>, .handle_inadmissibles <span class='op'>=</span> <span class='st'>"replace"</span><span class='op'>)</span> </span>
+<span class='r-in'><span class='fu'>infer</span><span class='op'>(</span><span class='va'>a1</span>, .quantity <span class='op'>=</span> <span class='st'>"CI_t_interval"</span><span class='op'>)</span><span class='op'>}</span></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

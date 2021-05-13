@@ -96,7 +96,7 @@
       <h1 data-toc-skip>Terminology</h1>
                         <h4 data-toc-skip class="author">Manuel Rademaker</h4>
             
-            <h4 data-toc-skip class="date">Last edited: 2021-04-20</h4>
+            <h4 data-toc-skip class="date">Last edited: 2021-05-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/master/vignettes/Terminology.Rmd" class="external-link"><code>vignettes/Terminology.Rmd</code></a></small>
       <div class="hidden name"><code>Terminology.Rmd</code></div>
@@ -109,59 +109,59 @@
 
 <div id="commonfactor" class="section level3">
 <h3 class="hasAnchor">
-<a href="#commonfactor" class="anchor"></a>Common factor</h3>
+<a href="#commonfactor" class="anchor" aria-hidden="true"></a>Common factor</h3>
 <p>A common factor or latent variable is a type of <a href="#construct">construct</a>. The name common factor is motivated by the theorized relationship to its <a href="#indicator">indicators</a>. This relation is commonly refered to as the <a href="#mm">measurement model</a>. Two kinds of measurement models exist: the reflective and the (causal-)formative measurement model. The defining feature of a common factor in a reflective measurement model is the idea that the common factor is the common underlying (latent) cause of the realizations of a set of indicators that are said to measure the common factor. The idea of the reflective measurement model is closely related to the <a href="#truescore">true score</a> theory. Accordingly, indicators related to the common factor are modeled as measurement error-prone manifestations of a common variable, cause or factor. Although there are subtle conceptional differences, the terms common factor, true score, and latent variable are mostly used synommenoulsy in <strong>cSEM</strong>.</p>
 <p>The common factor is also the central entity in the causal-formative measurment model. Here the indicators are modeled as causing the/one common factor. This type of measurement looks similar to the <a href="#composite">composite (measurement) model</a>, however, both models are, in fact, quite different. While the causal-formative measurement model assumes that the common factor is imperfectly measured by its indicators (i.e., there is an error term with non-zero variance) the composite in a composite model is build/defined by its indicators, i.e., error-free by definition.</p>
 </div>
 <div id="composite" class="section level3">
 <h3 class="hasAnchor">
-<a href="#composite" class="anchor"></a>Composite</h3>
+<a href="#composite" class="anchor" aria-hidden="true"></a>Composite</h3>
 <p>A composite is a weighted sum of <a href="#indicator">indicators</a>. Composites may either serve as <a href="#construct">constructs</a> in their own right or as <a href="#proxy">proxies</a> for a <a href="#latentvariable">latent variable</a> which, in turn, serves as a “statistical proxy” for a <a href="#concept">concept</a> under study. The nature of the composite is therefore defined by the type of (measurement) model. If composites are error-free representations of a concept we refer to the measurement model as the composite (measurement) model. If composites are used as <a href="#standin">stand-ins</a> for a <a href="#latentvariable">latent variable</a>, the measurement model is called causal-formative <span class="citation">(Henseler 2017)</span>.</p>
 <p>Note that, although we sometimes use it this way as well, the term “measurement” is acutally rather inadequate for the composite model since in a composite model the construct is build/formed by its related indicators. Hence no measurement in the acutal sense of the word takes place.</p>
 </div>
 <div id="cbased" class="section level3">
 <h3 class="hasAnchor">
-<a href="#cbased" class="anchor"></a>Composite-based methods</h3>
+<a href="#cbased" class="anchor" aria-hidden="true"></a>Composite-based methods</h3>
 <p>Composite-based methods or composite-based SEM refers to the entirety of methods centered around the use as of <a href="#composite">composites</a> (linear compounts of observables) as <a href="#standin">stand-ins</a> or error-free representations for the <a href="#concept">concepts</a> under investigation. Composite-based methods are often also called variance-based methods as focal parameters are usually retrived such that explained variance of the dependend constructs in a structural model is maximized.</p>
 </div>
 <div id="cbasedsem" class="section level3">
 <h3 class="hasAnchor">
-<a href="#cbasedsem" class="anchor"></a>Composite-based SEM</h3>
+<a href="#cbasedsem" class="anchor" aria-hidden="true"></a>Composite-based SEM</h3>
 <p>See: <a href="#cbased">Composite-based methods</a></p>
 </div>
 <div id="concept" class="section level3">
 <h3 class="hasAnchor">
-<a href="#concept" class="anchor"></a>Concept</h3>
+<a href="#concept" class="anchor" aria-hidden="true"></a>Concept</h3>
 <p>An entity defined by a conceptual/theoretical definition. In line with <span class="citation">Rigdon (2016)</span> variables representing or subsuming a concept are called conceptual variables. The precise nature/meaning of a conceptual variable depends on “differnt assumptions, philosophies or worldviews [of the researcher]” <span class="citation">(Rigdon 2016, 2)</span>. Unless otherwise stated, in <strong>cSEM</strong>, it is sufficient to think of concepts as entities that exist simply because they have been defined. Hence, abstract terms such as “loyalty” or “depression” as well as designed entities (artifacts) such as the “OECD Better Life Index” are covered by the definition.</p>
 </div>
 <div id="construct" class="section level3">
 <h3 class="hasAnchor">
-<a href="#construct" class="anchor"></a>Construct</h3>
+<a href="#construct" class="anchor" aria-hidden="true"></a>Construct</h3>
 <p>Construct refers to a representation of a <a href="#concept">concept</a> within a given statistical model. While a concept is defined by a conceptual (theoretical) definition, a construct for a concept is defined/created by the researcher’s operationalization of a concept within a statistical model. Concepts are either modeled as common factors/latent variables or as composites. Both operationalizations - the common factor and the composite - are called constructs in <strong>cSEM</strong>. As opposed to concepts, constructs therefore exist because they arise as the result of the act of modeling their relation to the observable variables (indicators) based on a specific set of assumptions. Constructs may therefore best be understood as <a href="#standin">stand-ins</a>, i.e. statistical proxies for concepts. Consequently, constructs do not necessarily represent the concept they seek to represent, i.e., there may be a validity gap.</p>
 </div>
 <div id="covariance-based-sem" class="section level3">
 <h3 class="hasAnchor">
-<a href="#covariance-based-sem" class="anchor"></a>Covariance-based SEM</h3>
+<a href="#covariance-based-sem" class="anchor" aria-hidden="true"></a>Covariance-based SEM</h3>
 <p>See: <a href="#fbmethods">Factor-based methods</a></p>
 </div>
 <div id="fbmethods" class="section level3">
 <h3 class="hasAnchor">
-<a href="#fbmethods" class="anchor"></a>Factor-based methods</h3>
+<a href="#fbmethods" class="anchor" aria-hidden="true"></a>Factor-based methods</h3>
 <p>Factor-based methods or factor-based SEM refers to the entirety of methods centered around the use of <a href="#commonfactor">common factors</a> as statistical <a href="#proxy">proxies</a> for the <a href="#concept">concepts</a> under investigation. Factor-based methods are also called covariance-based methods as focal parameters are retrived such that the difference between the model-implied <span class="math inline">\(\boldsymbol{\mathbf{\Sigma}}(\theta)\)</span> and the empirical indicator covariance matrix <span class="math inline">\(\boldsymbol{\mathbf{S}}\)</span> is minimized.</p>
 </div>
 <div id="indicator" class="section level3">
 <h3 class="hasAnchor">
-<a href="#indicator" class="anchor"></a>Indicator</h3>
+<a href="#indicator" class="anchor" aria-hidden="true"></a>Indicator</h3>
 <p>An observable variable. In <strong>cSEM</strong> observable variables are generally refered to as indicators, however, terms such as item, manifest variable, or observable (variable) are sometimes used synommenoulsy.</p>
 </div>
 <div id="latentvariable" class="section level3">
 <h3 class="hasAnchor">
-<a href="#latentvariable" class="anchor"></a>Latent variable</h3>
+<a href="#latentvariable" class="anchor" aria-hidden="true"></a>Latent variable</h3>
 <p>See: <a href="#commonfactor">Common factor</a></p>
 </div>
 <div id="mm" class="section level3">
 <h3 class="hasAnchor">
-<a href="#mm" class="anchor"></a>Measurement model</h3>
+<a href="#mm" class="anchor" aria-hidden="true"></a>Measurement model</h3>
 <p>The measurement model is a statistical model relating <a href="#indicator">indicators</a> to <a href="#construct">constructs</a> (the statistical representiation of a <a href="#concept">concept</a>). If the concept under study is modeled as a <a href="#commonfactor">common factor</a> two measurement models exist:</p>
 <ul>
 <li>The reflective measurement model</li>
@@ -175,7 +175,7 @@
 </div>
 <div id="model" class="section level3">
 <h3 class="hasAnchor">
-<a href="#model" class="anchor"></a>Model</h3>
+<a href="#model" class="anchor" aria-hidden="true"></a>Model</h3>
 <p>There are many ways to define the term “model”. In <strong>cSEM</strong> we use the term model to refer to both the theoretical and the statistical model.</p>
 <p>Simply speaking theoretical models are a formalized set of hypotheses stating if and how entities (observable or unobservable) are related. Since theoretical models are by definition theoretical any statistical analysis inevitably mandates a statistical model.</p>
 <p>A statistical model is typically defined by a set of (testable) restrictions. Statistical models are best understood as the operationalized version of the theoretical model. Note that the act of operationalizing a given theoretical model always entails the possibility for error. Using a <a href="#construct">construct</a> modeled as a <a href="#composite">composite</a> or a <a href="#commonfactor">common factor</a>, for instance, is an attempt to map a theoretical entity (the <a href="#concept">concept</a>) from the theoretical space into the statistical space. If this mapping is not one-to-one the construct is only an imperfect representation of the concept. Consequently, there is a validity gap.</p>
@@ -183,43 +183,43 @@
 </div>
 <div id="testscore" class="section level3">
 <h3 class="hasAnchor">
-<a href="#testscore" class="anchor"></a>Test score</h3>
+<a href="#testscore" class="anchor" aria-hidden="true"></a>Test score</h3>
 <p>A <a href="#proxy">proxy</a> for a <a href="#truescore">true score</a>. Usually, the test score is a simple (unweighted) sum score of <a href="#indicators">observables/indicators</a>, i.e. unit weights are assumed when building the test score. More generally, the test score can be any weighted sum of observables (i.e. a <a href="#composite">composite</a>), however, the term “test score” is historically closely tied to the idea that it is indeed a simple sum score. Hence, whenever it is important to distinguish between a true score as representing a sum score and a true score as representing a weighted sum of indicators (where indicator weights a not necessarily one) we will explicitly state what kind of test score we mean.</p>
 </div>
 <div id="truescore" class="section level3">
 <h3 class="hasAnchor">
-<a href="#truescore" class="anchor"></a>True score</h3>
+<a href="#truescore" class="anchor" aria-hidden="true"></a>True score</h3>
 <p>The term true score derives from the true score theory which theorizes/models an <a href="#indicator">indicator</a> or outcome as the sum of a true score and an error score. The term is closely linked to the <a href="#commonfactor">latent variable/common factor</a> model in that the true score of a set of indicators are linear functions of some underlying common factor. Mathematically speaking, the correspondence is <span class="math inline">\(\eta_{jk} = \lambda_{jk}\eta_j\)</span><br>
 where <span class="math inline">\(\eta_{jk}\)</span> is the true score, <span class="math inline">\(\eta_j\)</span> the underlying latent variable and <span class="math inline">\(\lambda_{jk}\)</span> the loading. Despite some differences, the term true score can generally be used synommenoulsy to the terms common factor and latent variable in <strong>cSEM</strong> without risking a misunderstanding.</p>
 </div>
 <div id="proxy" class="section level3">
 <h3 class="hasAnchor">
-<a href="#proxy" class="anchor"></a>Proxy</h3>
+<a href="#proxy" class="anchor" aria-hidden="true"></a>Proxy</h3>
 <p>Any quantity that functions as a representation of some other quantity. Prominent proxies are the <a href="#testscore">test score</a> - which serves as a stand-in/proxy for the <a href="#truescore">true score</a> - and the <a href="#composite">composite</a> - which serves as a stand-in/proxy for a common factor if not used as a composite in its own right. Proxies are usually - but not necessarily - error-prone representations of the quantity they seek to represent.</p>
 </div>
 <div id="saturated-and-non-saturated-models" class="section level3">
 <h3 class="hasAnchor">
-<a href="#saturated-and-non-saturated-models" class="anchor"></a>Saturated and non-saturated models</h3>
+<a href="#saturated-and-non-saturated-models" class="anchor" aria-hidden="true"></a>Saturated and non-saturated models</h3>
 <p>A structural model is called “saturated” if all <a href="#construct">constructs</a> of the model are allowed to freely covary. This is equivalent to saying that none of the path of the structural model are restricted to zero. A saturated model has zero degrees of freedom and hence carries no testable restrictions. If at least one path is restricted to zero, the structural model is called “non-saturated”.</p>
 </div>
 <div id="standin" class="section level3">
 <h3 class="hasAnchor">
-<a href="#standin" class="anchor"></a>Stand-in</h3>
+<a href="#standin" class="anchor" aria-hidden="true"></a>Stand-in</h3>
 <p>See: <a href="#proxy">Proxy</a></p>
 </div>
 <div id="structural-equation-modeling-sem" class="section level3">
 <h3 class="hasAnchor">
-<a href="#structural-equation-modeling-sem" class="anchor"></a>Structural Equation Modeling (SEM)</h3>
+<a href="#structural-equation-modeling-sem" class="anchor" aria-hidden="true"></a>Structural Equation Modeling (SEM)</h3>
 <p>The entirety of a set of related theories, mathematical models, methods, algorithms and terminologies related to analyzing the relationships between <a href="#concept">concepts</a> and/or observables.</p>
 </div>
 <div id="vbmethods" class="section level3">
 <h3 class="hasAnchor">
-<a href="#vbmethods" class="anchor"></a>Variance-based methods</h3>
+<a href="#vbmethods" class="anchor" aria-hidden="true"></a>Variance-based methods</h3>
 <p>See: <a href="#cbased">Composite-based methods</a></p>
 </div>
 <div id="literatur" class="section level2 unnumbered">
 <h2 class="hasAnchor">
-<a href="#literatur" class="anchor"></a>Literatur</h2>
+<a href="#literatur" class="anchor" aria-hidden="true"></a>Literatur</h2>
 <div id="refs" class="references">
 <div id="ref-Henseler2017">
 <p>Henseler, Jörg. 2017. “Bridging Design and Behavioral Research with Variance-Based Structural Equation Modeling.” <em>Journal of Advertising</em> 46 (1): 178–92. <a href="https://doi.org/10.1080/00913367.2017.1281780" class="external-link">https://doi.org/10.1080/00913367.2017.1281780</a>.</p>

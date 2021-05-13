@@ -277,64 +277,65 @@ doi: <a href='https://doi.org/10.1214/aos/1176346579'>10.1214/aos/1176346579</a>
 <code><a href='testMICOM.html'>testMICOM()</a></code>, <code><a href='testMGD.html'>testMGD()</a></code>, <code><a href='exportToExcel.html'>exportToExcel()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># ===========================================================================</span>
-<span class='co'># Basic usage</span>
-<span class='co'># ===========================================================================</span>
-<span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"
-# Structural model
-eta2 ~ eta1
-eta3 ~ eta1 + eta2
-
-# (Reflective) measurement model
-eta1 =~ y11 + y12 + y13
-eta2 =~ y21 + y22 + y23
-eta3 =~ y31 + y32 + y33
-"</span>
-
-<span class='co'>## Estimate</span>
-<span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .approach_weights <span class='op'>=</span> <span class='st'>"PLS-PM"</span><span class='op'>)</span>
-
-<span class='co'>## Test</span>
-<span class='fu'>testOMF</span><span class='op'>(</span><span class='va'>out</span>, .R <span class='op'>=</span> <span class='fl'>50</span>, .verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, .seed <span class='op'>=</span> <span class='fl'>320</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; ________________________________________________________________________________
-#&gt; --------- Test for overall model fit based on Beran &amp; Srivastava (1985) --------
-#&gt; 
-#&gt; Null hypothesis:
-#&gt; 
-#&gt;        ┌──────────────────────────────────────────────────────────────────┐
-#&gt;        │                                                                  │
-#&gt;        │   H0: The model-implied indicator covariance matrix equals the   │
-#&gt;        │   population indicator covariance matrix.                        │
-#&gt;        │                                                                  │
-#&gt;        └──────────────────────────────────────────────────────────────────┘
-#&gt; 
-#&gt; Test statistic and critical value: 
-#&gt; 
-#&gt; 	                                  	Critical value
-#&gt; 	Distance measure    Test statistic	  95% 	
-#&gt; 	dG                      0.0060    	0.0192	
-#&gt; 	SRMR                    0.0158    	0.0272	
-#&gt; 	dL                      0.0112    	0.0333	
-#&gt; 	dML                     0.0320    	0.1027	
-#&gt; 	
-#&gt; 
-#&gt; Decision: 
-#&gt; 
-#&gt; 	                    	Significance level
-#&gt; 	Distance measure    	     95%     	
-#&gt; 	dG                  	<span style='color: #00BB00;'>Do not reject</span><span>	
-#&gt; 	SRMR                	</span><span style='color: #00BB00;'>Do not reject</span><span>	
-#&gt; 	dL                  	</span><span style='color: #00BB00;'>Do not reject</span><span>	
-#&gt; 	dML                 	</span><span style='color: #00BB00;'>Do not reject</span><span>	
-#&gt; 	
-#&gt; Additional information:
-#&gt; 
-#&gt; 	Out of 50 bootstrap replications 50 are admissible.
-#&gt; 	See </span><span style='color: #BBBB00;'>?</span><span style='color: #BB00BB;'>verify</span><span>() for what constitutes an inadmissible result.
-#&gt; 
-#&gt; 	The seed used was: 320
-#&gt; ________________________________________________________________________________</div><div class='input'>
-</div></span></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='co'># Basic usage</span></span>
+<span class='r-in'><span class='co'># ===========================================================================</span></span>
+<span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'># Structural model</span>
+<span class='r-in'>eta2 ~ eta1</span>
+<span class='r-in'>eta3 ~ eta1 + eta2</span>
+<span class='r-in'></span>
+<span class='r-in'># (Reflective) measurement model</span>
+<span class='r-in'>eta1 =~ y11 + y12 + y13</span>
+<span class='r-in'>eta2 =~ y21 + y22 + y23</span>
+<span class='r-in'>eta3 =~ y31 + y32 + y33</span>
+<span class='r-in'>"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Estimate</span></span>
+<span class='r-in'><span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model</span>, .approach_weights <span class='op'>=</span> <span class='st'>"PLS-PM"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Test</span></span>
+<span class='r-in'><span class='fu'>testOMF</span><span class='op'>(</span><span class='va'>out</span>, .R <span class='op'>=</span> <span class='fl'>50</span>, .verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, .seed <span class='op'>=</span> <span class='fl'>320</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> --------- Test for overall model fit based on Beran &amp; Srivastava (1985) --------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Null hypothesis:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        ┌──────────────────────────────────────────────────────────────────┐</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        │                                                                  │</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        │   H0: The model-implied indicator covariance matrix equals the   │</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        │   population indicator covariance matrix.                        │</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        │                                                                  │</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        └──────────────────────────────────────────────────────────────────┘</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Test statistic and critical value: </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	                                  	Critical value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Distance measure    Test statistic	  95% 	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dG                      0.0060    	0.0192	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	SRMR                    0.0158    	0.0272	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dL                      0.0112    	0.0333	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dML                     0.0320    	0.1027	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Decision: </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	                    	Significance level</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Distance measure    	     95%     	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dG                  	<span style='color: #00BB00;'>Do not reject</span><span>	</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	SRMR                	<span style='color: #00BB00;'>Do not reject</span><span>	</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dL                  	<span style='color: #00BB00;'>Do not reject</span><span>	</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dML                 	<span style='color: #00BB00;'>Do not reject</span><span>	</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Additional information:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Out of 50 bootstrap replications 50 are admissible.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	See <span style='color: #BBBB00;'>?</span><span style='color: #BB00BB;'>verify</span><span>() for what constitutes an inadmissible result.</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	The seed used was: 320</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
