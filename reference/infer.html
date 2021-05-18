@@ -68,8 +68,6 @@
 </script>
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -156,14 +154,14 @@
     <p><a href='https://lifecycle.r-lib.org/articles/stages.html#stable'><img src='figures/lifecycle-stable.svg' alt='[Stable]' /></a></p>
     </div>
 
-    <pre class="usage"><span class='fu'>infer</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>infer</span><span class='op'>(</span>
  .object            <span class='op'>=</span> <span class='cn'>NULL</span>,
  .quantity          <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"mean"</span>, <span class='st'>"sd"</span>, <span class='st'>"bias"</span>, <span class='st'>"CI_standard_z"</span>, 
                         <span class='st'>"CI_standard_t"</span>, <span class='st'>"CI_percentile"</span>, <span class='st'>"CI_basic"</span>, 
                         <span class='st'>"CI_bc"</span>, <span class='st'>"CI_bca"</span>, <span class='st'>"CI_t_interval"</span><span class='op'>)</span>,
  .alpha             <span class='op'>=</span> <span class='fl'>0.05</span>,
  .bias_corrected    <span class='op'>=</span> <span class='cn'>TRUE</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -281,7 +279,7 @@ doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.20
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code>, <code><a href='summarize.html'>summarize()</a></code> <a href='csem_results.html'>cSEMResults</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
 <span class='r-in'># Structural model</span>
 <span class='r-in'>QUAL ~ EXPE</span>
 <span class='r-in'>EXPE ~ IMAG</span>
@@ -307,16 +305,16 @@ doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.20
 <span class='r-in'></span>
 <span class='r-in'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_basic</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L   0.6180979    1.013794  -5.002688   3.909084 -0.1803651   1.225936</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U   0.7666783    1.052250  -3.003772   5.930426  0.2067211   3.990814</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L   0.5998966    1.011335  -5.413667   4.886437 -0.1689508  0.8794399</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U   0.7662642    1.065810  -3.988887   6.277150  0.2726638  2.3508468</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L  -5.387137  1.071656  0.1184224 0.3850219</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U  -1.527690  2.612550  0.4727685 0.7104729</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L  -3.335291  1.301210  0.1447114 0.3326588</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U  -1.444644  2.138761  0.5323543 0.6544428</span>
 <span class='r-in'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  0.04835391  0.05229858  0.60449165  0.06569930  0.74216358  1.01121781 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  0.05933145  0.07076598  0.41670451  0.08448994  0.44229797  0.60607533 </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  0.06982530  0.06767711  0.41556840  0.19649222 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  0.05185155  0.08561973  0.32361932  0.16494668 </span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'>### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span></span>
 <span class='r-in'><span class='co'>## For the studentied t-interval confidence interval a double bootstrap is required.</span></span>
@@ -333,7 +331,7 @@ doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.20
 <span class='r-in'>          .resample_method2 <span class='op'>=</span> <span class='st'>"bootstrap"</span>, .R2 <span class='op'>=</span> <span class='fl'>199</span>, .handle_inadmissibles <span class='op'>=</span> <span class='st'>"replace"</span><span class='op'>)</span> </span>
 <span class='r-in'><span class='fu'>infer</span><span class='op'>(</span><span class='va'>a1</span>, .quantity <span class='op'>=</span> <span class='st'>"CI_t_interval"</span><span class='op'>)</span><span class='op'>}</span></span>
 <span class='r-in'></span>
-</pre>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

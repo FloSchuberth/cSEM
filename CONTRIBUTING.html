@@ -150,7 +150,7 @@
 <div id="notes-to-contributors" class="section level2">
 <h2 class="hasAnchor">
 <a href="#notes-to-contributors" class="anchor" aria-hidden="true"></a>Notes to contributors</h2>
-<p>Stick to the structure, design choices and style conventions described below. For questions: please contact the <a href="mailto:manuel.rademaker@uni-wuerzburg.de">author</a>.</p>
+<p>Stick to the structure, design choices and style conventions described below. For questions: please contact the <a href="mailto:manuel-rademaker@outlook.de">author</a>.</p>
 <!-- ### Structure -->
 <!-- The package structure is best understood with reference to a (hierarchically organized)  -->
 <!-- company. In analogy to company departments, two separate "function departments"  -->
@@ -231,7 +231,7 @@
 <li>Argument names always start with a dot to distinguish them from other objects.</li>
 <li>Indentation: It is OK to align function arguments indented by two spaces below the function name instead of where the function starts if this help with clarity.</li>
 </ol>
-<!-- end list --><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Both ok but second is prefered in this case</span>
 <span class="va">calculateInnerWeightsPLS</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">.S</span>                           <span class="op">=</span> <span class="cn">NULL</span>,
                                      <span class="va">.W</span>                           <span class="op">=</span> <span class="cn">NULL</span>,
@@ -255,7 +255,7 @@
 <a href="#matrices" class="anchor" aria-hidden="true"></a>Matrices</h3>
 <ul>
 <li>Whenever possible: variables belong in columns, observations belong to rows. This implies: whenever a matrix contains observations, variables are in columns, no matter if they are indicators, proxies, errors or anything else.</li>
-<li>Covariance matrices: indicators <strong>always</strong> belong to columns and proxies to rows, i.e., the matrix of weights (W) for PLS is therefore ((J K)) where (J) is the number of proxies and (K) the number of indicators.</li>
+<li>Covariance matrices: indicators <strong>always</strong> belong to columns and proxies to rows, i.e., the matrix of weights <em>W</em> for PLS is therefore (<em>J</em> × <em>K</em>) where <em>J</em> is the number of proxies and <em>K</em> the number of indicators.</li>
 <li>Naming: matrices within the package should be named according to the naming schemes of the related SEM literature.</li>
 </ul>
 </div>
