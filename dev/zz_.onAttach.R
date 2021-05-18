@@ -4,5 +4,5 @@
                       fields = "Version")
   packageStartupMessage("This is ",paste(pkgname, version))
   packageStartupMessage("Caution: ", pkgname, " is under active developement! Breaking changes may occur in the future.")
-  packageStartupMessage("Please report improvements and bugs to: manuel.rademaker@uni-wuerzburg.de")
+  packageStartupMessage("Please report improvements and bugs to: manuel-rademaker@outlook.de")
 }

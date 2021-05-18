@@ -25,7 +25,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Manuel E. Rademaker \email{manuel.rademaker@uni-wuerzburg.de} (\href{https://orcid.org/0000-0002-8902-3561}{ORCID})
+\strong{Maintainer}: Manuel E. Rademaker \email{manuel-rademaker@outlook.de} (\href{https://orcid.org/0000-0002-8902-3561}{ORCID})
 
 Authors:
 \itemize{
