@@ -262,12 +262,54 @@ calculateIndicatorCor <- function(
               thres_est = NULL
             } else {
               # Pd is TRUE by default. See ?hetcor for details
-              temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
-              S    <- temp$correlations
-              cor_type <- unique(c(temp$type))
-              cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""'
+              #temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
+              #S    <- temp$correlations
+              #cor_type <- unique(c(temp$type))
+              #cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""'
               
-              thres_est <- NULL
+              temp <- matrix(0, ncol = ncol(.X_cleaned), nrow = ncol(.X_cleaned),
+                             dimnames = list(colnames(.X_cleaned), colnames(.X_cleaned)))
+              cor_type <- matrix(0, ncol = ncol(.X_cleaned), nrow = ncol(.X_cleaned),
+                                 dimnames = list(colnames(.X_cleaned), colnames(.X_cleaned)))
+              diag(temp) <- 1
+              diag(cor_type) <- ""
+              temp1 <- lapply(.X_cleaned, is.numeric)
+              thres <- NULL
+              for(i in colnames(.X_cleaned)){
+                for(j in colnames(.X_cleaned)[colnames(.X_cleaned)!=i]){
+                  if (temp1[[i]] == FALSE && temp1[[j]] == FALSE){
+                    temp2 <- polycor::polychor(.X_cleaned[,i], .X_cleaned[,j], ML = TRUE, std.err = TRUE)
+                    temp[i,j] <- temp2$rho
+                    cor_type[i,j] <- temp2$type
+                    thres[[i]] <- temp2$row.cuts
+                    thres[[j]] <- temp2$col.cuts
+                  }else if(temp1[[i]] == FALSE && temp1[[j]] == TRUE){
+                    temp2 <- polycor::polyserial(.X_cleaned[,j], .X_cleaned[,i], ML = TRUE, std.err = TRUE)
+                    temp[i,j] <- temp2$rho
+                    cor_type[i,j] <- temp2$type
+                    thres[[i]] <- temp2$cuts
+                    thres[[j]] <- ""
+                  }else if(temp1[[i]] == TRUE && temp1[[j]] == FALSE){
+                    temp2 <- polycor::polyserial(.X_cleaned[,i], .X_cleaned[,j], ML = TRUE, std.err = TRUE)
+                    temp[i,j] <- temp2$rho
+                    cor_type[i,j] <- temp2$type
+                    thres[[j]] <- temp2$cuts
+                    thres[[i]] <- ""
+                  }else{
+                    temp[i,j] <- cor(.X_cleaned[,i], .X_cleaned[,j])
+                    cor_type[i,j] <- "Pearson"
+                    thres[[i]] <- ""
+                    thres[[j]] <- ""
+                  }
+                }
+              }
+              S <- temp + t(temp)
+              diag(S) <- 1
+              cor_type <- unique(c(cor_type))
+              cor_type <- cor_type[which(nchar(cor_type) != 0)]
+              
+              
+              thres_est <- thres
               
               # The lavCor function does no smoothing in case of empty cells, which creates problems during bootstrap
               # # Use lavCor function from the lavaan package for the calculation of the polychoric and polyserial correlation 
