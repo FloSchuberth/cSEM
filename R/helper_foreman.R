@@ -245,7 +245,9 @@ calculateIndicatorCor <- function(
   .approach_cor_robust = "none"
 ){
   
-  only_numeric_cols <- all(unlist(lapply(.X_cleaned, is.numeric)))
+  is_numeric_indicator <- lapply(.X_cleaned, is.numeric)
+  
+  only_numeric_cols <- all(unlist(is_numeric_indicator))
   
   if(.approach_cor_robust != "none" && !only_numeric_cols) {
     stop2("Setting `.approach_cor_robust = ", .approach_cor_robust, "` requires all",
@@ -261,55 +263,64 @@ calculateIndicatorCor <- function(
               cor_type <- "Pearson" 
               thres_est = NULL
             } else {
-              # Pd is TRUE by default. See ?hetcor for details
-              #temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
-              #S    <- temp$correlations
-              #cor_type <- unique(c(temp$type))
-              #cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""'
               
-              temp <- matrix(0, ncol = ncol(.X_cleaned), nrow = ncol(.X_cleaned),
+              # Indicator's correlation matrix
+              S <- matrix(0, ncol = ncol(.X_cleaned), nrow = ncol(.X_cleaned),
                              dimnames = list(colnames(.X_cleaned), colnames(.X_cleaned)))
-              cor_type <- matrix(0, ncol = ncol(.X_cleaned), nrow = ncol(.X_cleaned),
-                                 dimnames = list(colnames(.X_cleaned), colnames(.X_cleaned)))
-              diag(temp) <- 1
+              # matrix containing the type of correlation 
+              cor_type <- S
               diag(cor_type) <- ""
-              temp1 <- lapply(.X_cleaned, is.numeric)
-              thres <- NULL
+              
+              # list for the thresholds
+              thres_est <- NULL
+              
+              # temp is used to only calculate the correlations between two 
+              # indicators once (upper triangular matrix)
+              temp <- colnames(.X_cleaned)
               for(i in colnames(.X_cleaned)){
-                for(j in colnames(.X_cleaned)[colnames(.X_cleaned)!=i]){
-                  if (temp1[[i]] == FALSE && temp1[[j]] == FALSE){
+                temp <- temp[temp!=i]
+                for(j in temp){
+                  # If both indicators are not continous, the polychoric 
+                  # correlation is calculated
+                  if (is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == FALSE){
                     temp2 <- polycor::polychor(.X_cleaned[,i], .X_cleaned[,j], ML = TRUE, std.err = TRUE)
-                    temp[i,j] <- temp2$rho
+                    S[i,j] <- temp2$rho
                     cor_type[i,j] <- temp2$type
-                    thres[[i]] <- temp2$row.cuts
-                    thres[[j]] <- temp2$col.cuts
-                  }else if(temp1[[i]] == FALSE && temp1[[j]] == TRUE){
+                    thres_est[[i]] <- temp2$row.cuts
+                    thres_est[[j]] <- temp2$col.cuts
+                    
+                    # If one indicator is continous, the polyserial correlation 
+                    # is calculated.Note: polyserial needs the continous 
+                    # indicator as the first argument
+                  }else if(is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == TRUE){
                     temp2 <- polycor::polyserial(.X_cleaned[,j], .X_cleaned[,i], ML = TRUE, std.err = TRUE)
-                    temp[i,j] <- temp2$rho
+                    S[i,j] <- temp2$rho
                     cor_type[i,j] <- temp2$type
-                    thres[[i]] <- temp2$cuts
-                    thres[[j]] <- ""
-                  }else if(temp1[[i]] == TRUE && temp1[[j]] == FALSE){
+                    thres_est[[i]] <- temp2$cuts
+                    thres_est[[j]] <- NA
+                  }else if(is_numeric_indicator[[i]] == TRUE && is_numeric_indicator[[j]] == FALSE){
                     temp2 <- polycor::polyserial(.X_cleaned[,i], .X_cleaned[,j], ML = TRUE, std.err = TRUE)
-                    temp[i,j] <- temp2$rho
+                    S[i,j] <- temp2$rho
                     cor_type[i,j] <- temp2$type
-                    thres[[j]] <- temp2$cuts
-                    thres[[i]] <- ""
+                    thres_est[[j]] <- temp2$cuts
+                    thres_est[[i]] <- NA
+                    
+                    # If both indicators are continous, the Pearson correlation
+                    # is calculated.
                   }else{
-                    temp[i,j] <- cor(.X_cleaned[,i], .X_cleaned[,j])
+                    S[i,j] <- cor(.X_cleaned[,i], .X_cleaned[,j])
                     cor_type[i,j] <- "Pearson"
-                    thres[[i]] <- ""
-                    thres[[j]] <- ""
+                    thres_est[[i]] <- NA
+                    thres_est[[j]] <- NA
                   }
                 }
               }
-              S <- temp + t(temp)
+              S <- S + t(S)
               diag(S) <- 1
               cor_type <- unique(c(cor_type))
               cor_type <- cor_type[which(nchar(cor_type) != 0)]
               
-              
-              thres_est <- thres
+            
               
               # The lavCor function does no smoothing in case of empty cells, which creates problems during bootstrap
               # # Use lavCor function from the lavaan package for the calculation of the polychoric and polyserial correlation 
