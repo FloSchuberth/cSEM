@@ -260,7 +260,7 @@ summarize.cSEMResults_default <- function(
     ## Check arguments
     match.arg(.ci, args_default(.choices = TRUE)$.ci, several.ok = TRUE)
     
-    ## The 95% percentile CI is returned by default (BCa is acutally better 
+    ## The 95% percentile CI is returned by default (BCa is actually better 
     ##  but requires a second resampling run and should therefore not be the 
     ##  default).
     if(is.null(.ci)) .ci <- "CI_percentile"
@@ -273,6 +273,11 @@ summarize.cSEMResults_default <- function(
       .quantity        = quantity,
       ...
     )
+    # Note (19.05.2021): infer() also computes standard deviations and confidence
+    # intervals for constant values. Because of floating point impressions
+    # its possible that the sd is not exactly zero in some instances. This
+    # needs to be kept in mind for the print method of summarize()
+    
     
     ## Path estimates ----------------------------------------------------------
     if(!all(x2$Model$structural == 0)) {

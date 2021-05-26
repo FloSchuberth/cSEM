@@ -145,7 +145,7 @@ infer <- function(
       stop2("The following error occured in the `infer()` function:\n",
             "`.alpha` must be between 0 and 1.")
     }
-    # Both two sided and one sided confidence intervalls may be needed.
+    # Both two sided and one sided confidence intervals may be needed.
     # Therefore for every alpha four values will be put in a vector 
     # 1. alpha
     # 2. 1 - alpha
