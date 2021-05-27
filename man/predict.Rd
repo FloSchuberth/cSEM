@@ -11,6 +11,7 @@ predict(
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
  .r                    = 10,
  .test_data            = NULL
+ .approach             = c("mean", "median")
  )
 }
 \arguments{
@@ -30,7 +31,11 @@ will stop immediatly if estimation yields an inadmissible result.
 For "\emph{ignore}" all results are returned even if all or some of the estimates
 yielded inadmissible results.
 For "\emph{set_NA}" predictions based on inadmissible parameter estimates are
-set to \code{NA}. Defaults to "\emph{stop}"}
+set to \code{NA}. Defaults to "\emph{stop}"
+@param .approach Character string. How should the aggregation of the estimates of
+the truncated normal distribution be done? One of "\emph{mean}" or "\emph{median}".
+If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{median}", the mean of the estimated endogenous indicators is calculated.}
 
 \item{.r}{Integer. The number of repetitions to use. Defaults to \code{10}.}
 
