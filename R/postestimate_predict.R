@@ -76,7 +76,7 @@
 #'   yielded inadmissible results. 
 #'   For "*set_NA*" predictions based on inadmissible parameter estimates are
 #'   set to `NA`. Defaults to "*stop*"
-#'   @param .approach Character string. How should the aggregation of the estimates of
+#'  @param .approach Character string. How should the aggregation of the estimates of
 #'   the truncated normal distribution be done? One of "*mean*" or "*median*". 
 #'   If "*mean*", the mean of the estimated endogenous indicators is calculated. 
 #'   If "*median*", the mean of the estimated endogenous indicators is calculated.
@@ -299,7 +299,7 @@ predict <- function(
             
             # For categorical indicators use prediction from OrdPLS, else 
             # normal prediction is used
-            if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
+            if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') && k ==1){
               
               # Save the categorical indicators and the continous indicators
               is_numeric_indicator <- lapply(X_test_old, is.numeric)
@@ -343,6 +343,9 @@ predict <- function(
             X_test_list <- list()
             nrep <- 100
             Cov_ind <- Est$Estimates$Indicator_VCV
+            if(all(exo_indicators %in% cont_indicators)){
+              X_test_list[[1]] <- X_test_scaled[,exo_indicators]
+            }else{
             for(m in 1:nrep){
               X_test_list[[m]] <- matrix(0, nrow = nrow(X_test), ncol = length(exo_indicators))
               colnames(X_test_list[[m]]) <- exo_indicators
@@ -360,7 +363,7 @@ predict <- function(
                   u <- c(u,thresholds[[p]][X_test[o,p]+1] )
                 }else{
                   l <- c(l, -10)
-                  l <- c(l, 10)
+                  u <- c(u, 10)
                 }
               }
               l <- l[-1]
@@ -371,7 +374,8 @@ predict <- function(
               X_test_list[[m]] <- scale(X_test_list[[m]])
             }
               # The continous indicators are replaced through their original counterparts
-              X_test_list[[m]][,exo_indicators[exo_indicators%in%cont_indicators]] <- X_test[,exo_indicators[exo_indicators%in%cont_indicators]]
+              X_test_list[[m]][,exo_indicators[exo_indicators%in%cont_indicators]] <- X_test_scaled[,exo_indicators[exo_indicators%in%cont_indicators]]
+            }
             }
             eta_hat_exo <- lapply(X_test_list, function(x) x%*%t(W_train[cons_exo, exo_indicators, drop = FALSE]))
           
@@ -451,17 +455,32 @@ predict <- function(
         }
         
         if(.benchmark %in% c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR")) {
+          if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
           predictions_benchmark <- results[[2]][[1]]
+          predictions_benchmark[,colnames(predictions_benchmark) %in% cat_indicators] <- round(predictions_benchmark[,colnames(predictions_benchmark) %in% cat_indicators])
           residuals_benchmark   <- results[[2]][[2]]
+          residuals_benchmark[,colnames(residuals_benchmark) %in% cat_indicators] <- round(residuals_benchmark[,colnames(residuals_benchmark) %in% cat_indicators])
+          
+          }else{
+            predictions_benchmark <- results[[2]][[1]]
+            residuals_benchmark   <- results[[2]][[2]]
+          }
         } else if(.benchmark == "lm") {
           ## Compute naiv predictions based on a linear model that explains each
           ## endogenous indicator by all exogenous indicators
           beta_exo <- solve(t(X_train[, exo_indicators]) %*% 
                               X_train[, exo_indicators]) %*% 
             t(X_train[, exo_indicators]) %*% X_train[, endo_indicators, drop = FALSE]
-          
+          if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
           predictions_benchmark <- as.matrix(X_test[, exo_indicators]) %*% beta_exo
+          predictions_benchmark[,colnames(predictions_benchmark) %in% cat_indicators] <- round(predictions_benchmark[,colnames(predictions_benchmark) %in% cat_indicators])
+          
           residuals_benchmark   <- X_test[, endo_indicators] - predictions_benchmark
+          residuals_benchmark[,colnames(residuals_benchmark) %in% cat_indicators] <- round(residuals_benchmark[,colnames(residuals_benchmark) %in% cat_indicators])
+          }else{
+            predictions_benchmark <- as.matrix(X_test[, exo_indicators]) %*% beta_exo
+            residuals_benchmark   <- X_test[, endo_indicators] - predictions_benchmark 
+          }
         }
         ## Compute naiv mean-based predictions and residuals
         residuals_mb   <- t(t(X_test[, endo_indicators]) - mean_train[endo_indicators])
