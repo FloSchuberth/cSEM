@@ -31,16 +31,22 @@ will stop immediatly if estimation yields an inadmissible result.
 For "\emph{ignore}" all results are returned even if all or some of the estimates
 yielded inadmissible results.
 For "\emph{set_NA}" predictions based on inadmissible parameter estimates are
-set to \code{NA}. Defaults to "\emph{stop}"
-@param .approach Character string. How should the aggregation of the estimates of
-the truncated normal distribution be done? One of "\emph{mean}" or "\emph{median}".
-If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
-If "\emph{median}", the mean of the estimated endogenous indicators is calculated.}
+set to \code{NA}. Defaults to "\emph{stop}"}
 
 \item{.r}{Integer. The number of repetitions to use. Defaults to \code{10}.}
 
 \item{.test_data}{A matrix of test data with the same column names as the
 training data.}
+
+\item{.approach_score}{Character string. How should the aggregation of the estimates of
+the truncated normal distribution be done? One of "\emph{mean}" or "\emph{median}" or "\emph{mode}".
+If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{median}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{mode}", the maximum empirical density on the intervals defined by the thresholds
+is used.}
+
+\item{.nrep}{integer. How many samples from the truncated normal distribution should
+be simulated to estimate the exogenous construct scores?}
 }
 \value{
 An object of class \code{cSEMPredict} with print and plot methods.

@@ -76,10 +76,14 @@
 #'   yielded inadmissible results. 
 #'   For "*set_NA*" predictions based on inadmissible parameter estimates are
 #'   set to `NA`. Defaults to "*stop*"
-#'  @param .approach Character string. How should the aggregation of the estimates of
-#'   the truncated normal distribution be done? One of "*mean*" or "*median*". 
+#' @param .approach_score Character string. How should the aggregation of the estimates of
+#'   the truncated normal distribution be done? One of "*mean*" or "*median*" or "*mode*". 
 #'   If "*mean*", the mean of the estimated endogenous indicators is calculated. 
 #'   If "*median*", the mean of the estimated endogenous indicators is calculated.
+#'   If "*mode*", the maximum empirical density on the intervals defined by the thresholds
+#'   is used.
+#' @param .nrep integer. How many samples from the truncated normal distribution should
+#'   be simulated to estimate the exogenous construct scores?
 #'
 #' @seealso [csem], [cSEMResults], [exportToExcel()]
 #' 
@@ -97,7 +101,8 @@ predict <- function(
   .handle_inadmissibles = c("stop", "ignore", "set_NA"),
   .r                    = 10,
   .test_data            = NULL,
-  .approach             = "mean"
+  .approach_score       = c("mean", "median", "mode","none"),
+  .nrep                 = 100
   ) {
   
   .benchmark            <- match.arg(.benchmark)
@@ -147,7 +152,7 @@ predict <- function(
     # ordered according to model$measurement.  
     
     ## Is the benchmark the same as what was used to obtain .object
-    if(.benchmark == args$.approach_weights) {
+    if(.benchmark == args$.approach_weights && all(.object$Information$Type_of_indicator_correlation == 'Pearson')) {
       warning2(
         "The following warning occured in the `predict()` function:\n",
         "Original estimation is based on the same approach as the benchmark approach.",
@@ -181,10 +186,13 @@ predict <- function(
       # Since rownames are required further below to match the observations in the
       # k'th fold of the .r'th run with those of the r+1'th run rownames are also
       # required for the .test_data.
-      
+      if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
+        .test_data = data.matrix(.test_data)
+        rownames(.test_data) <- 1:nrow(.test_data) 
+      }else{
       .test_data = as.matrix(.test_data)
       rownames(.test_data) <- 1:nrow(.test_data)
-      
+      }
       # Stop if .test_data does not have column names! As we need to match column
       # names between training and test data.
       if(is.null(colnames(.test_data))) {
@@ -227,14 +235,14 @@ predict <- function(
         # For categorical indicators, both the original matrix as the data matrix
         # are saved.
         if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
-          X_train     <- data.matrix((do.call(rbind, dat[-j])))[, indicators]
-          X_train_old <- do.call(rbind, dat[-j])[, indicators]
-          X_test_old  <- dat[[j]][, indicators]
-          X_test <- data.matrix(dat[[j]][, indicators])
+          #X_train     <- data.matrix((do.call(rbind, dat[-j])))[, indicators]
+          X_train <- do.call(rbind, dat[-j])[, indicators]
+          X_test  <- data.matrix(dat[[j]][, indicators])
+          #X_test <- data.matrix(dat[[j]][, indicators])
           }else{
         X_train    <- as.matrix(do.call(rbind, dat[-j]))[, indicators]
         X_test     <- dat[[j]][, indicators]
-          }
+          
         
         mean_train      <- colMeans(X_train)
         sd_train        <- matrixStats::colSds(as.matrix(X_train))
@@ -251,7 +259,7 @@ predict <- function(
         # Keep rownames to be able to find individual observations
         colnames(X_test_scaled) <- colnames(X_test)
         rownames(X_test_scaled) <- rownames(X_test)
-        
+          }
         ### Estimate target and benchmark using training data and original arguments
         args$.data <- X_train
         
@@ -268,8 +276,11 @@ predict <- function(
         args_list <- list(args_target, args_benchmark)
         results <- list()
         for(k in 1:kk) {
-          
-          Est        <- do.call(foreman, args_list[[k]]) 
+          if(is.null(.test_data)){
+          Est        <- do.call(foreman, args_list[[k]])
+          }else{
+            Est <- .object
+          }
           
           # Identify exogenous construct in the structural model
           cons_exo  <- Est$Information$Model$cons_exo
@@ -301,126 +312,223 @@ predict <- function(
             # normal prediction is used
             if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') && k ==1){
               
+        
               # Save the categorical indicators and the continous indicators
-              is_numeric_indicator <- lapply(X_test_old, is.numeric)
+              is_numeric_indicator <- lapply(X_train, is.numeric)
               cat_indicators <- names(is_numeric_indicator[is_numeric_indicator == FALSE])
               cont_indicators <- names(is_numeric_indicator[is_numeric_indicator == TRUE])
               
-              # Find the categorical and continous exogenous and endogenous constructs
-            #  cat_const_exo <-  sapply(cons_exo, function(x){
-            #    all(colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[x, , drop = FALSE]) != 0] %in% cat_indicators)})
-            #  cat_const_exo <- names(cat_const_exo[cat_const_exo == TRUE])
+              if(!all(endo_indicators%in%cat_indicators) && .approach_score == "mode"){
+                stop2(
+                  "The following error occured in the `predict()` function:\n",
+                  "The option '.approach_score = mode' can only be applied to only\n", 
+                  "categorical indicators"
+                )
+              }
               
-            #  cont_const_exo <-  sapply(cons_exo, function(x){
-            #    all(colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[x, , drop = FALSE]) != 0] %in% cont_indicators)})
-            #  cont_const_exo <- names(cont_const_exo[cont_const_exo == TRUE])
+              X_train <- data.matrix(X_train)
+              mean_train      <- colMeans(X_train)
+              sd_train        <- matrixStats::colSds(as.matrix(X_train))
+              names(sd_train) <- names(mean_train)
               
-            #  cat_const_endo <-  sapply(cons_endo, function(x){
-            #    all(colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[x, , drop = FALSE]) != 0] %in% cat_indicators)})
-            #  cat_const_endo <- names(cat_const_endo[cat_const_endo == TRUE])
+              # Scale the test data set with the descriptives of the training data set
+              # Reason: estimated parameters are based on a standardized data set, i.e., in
+              #         a standardized metric. Observations of the test data must have the
+              #         same scale as these estimates. 
+              X_test_scaled <- sapply(1:ncol(X_test), function(x){
+                (X_test[, x] - mean_train[x]) / sd_train[x]
+              })
               
-            #  cont_const_endo <-  sapply(cons_endo, function(x){
-            #    all(colnames(Est$Information$Model$measurement)[colSums(Est$Information$Model$measurement[x, , drop = FALSE]) != 0] %in% cont_indicators)})
-            #  cont_const_endo <- names(cont_const_endo[cont_const_endo == TRUE])
+              colnames(X_test_scaled) <- colnames(X_test)
+              rownames(X_test_scaled) <- rownames(X_test)
               
-            # if(!(length(cat_const_exo) + length(cont_const_exo) == length(cons_exo) && 
-            #      length(cat_const_endo) + length(cont_const_endo) == length(cons_endo))){
-            #    stop2("Currently, predict () only works for constructs that have only categorical or only continous indicators.")
-            # }
+              X_test_scaled[,cat_indicators] <- X_test[,cat_indicators]
               
-            labelofcategories <- apply(X_test_old[,cat_indicators], 2, function(x){names(table(x))})
-            
             # get the thresholds for the categorical indicators
-            thresholds <- .object$Information$Threshold_parameter_estimates
+            thresholds <- Est$Information$Threshold_parameter_estimates
             thresholds <- thresholds[!is.na(thresholds)]
             Tmin <- -4
             Tmax <- 4
             thresholds <- lapply(thresholds, function(x) c(Tmin, x, Tmax))
             
-            # List for the 100 datasets of the truncated normal distribution
-            # X_test_list contains 100 datasets with as many observation as the
-            # original test data for all exogenous indicators
-            X_test_list <- list()
-            nrep <- 100
+            # # List for the 100 datasets of the truncated normal distribution
+            # # X_test_list contains 100 datasets with as many observation as the
+            # # original test data for all exogenous indicators
+            # X_test_list <- list()
+            # Cov_ind <- Est$Estimates$Indicator_VCV
+            # if(all(exo_indicators %in% cont_indicators)){
+            #   X_test_list[[1]] <- X_test_scaled[,exo_indicators]
+            # }else{
+            # for(m in 1:.nrep){
+            #   X_test_list[[m]] <- matrix(0, nrow = nrow(X_test), ncol = length(exo_indicators))
+            #   colnames(X_test_list[[m]]) <- exo_indicators
+            #   rownames(X_test_list[[m]]) <- rownames(X_test)
+            # for(o in 1:nrow(X_test)){
+            #   l <- NA
+            #   u <- NA
+            #   for(p in exo_indicators){
+            #     
+            #     # Lower and upper thresholds for each observation have to be defined
+            #     # for the categorical indicators, the estimated thresholds are used
+            #     # for the continous indicators, -10 and 10 are used
+            #     if(p %in% cat_indicators){
+            #       l <- c(l,thresholds[[p]][X_test[o,p]])
+            #       u <- c(u,thresholds[[p]][X_test[o,p]+1] )
+            #     }else{
+            #       l <- c(l, -10)
+            #       u <- c(u, 10)
+            #     }
+            #   }
+            #   l <- l[-1]
+            #   u <- u[-1]
+            #   names(l) <- exo_indicators
+            #   names(u) <- exo_indicators
+            #   X_test_list[[m]][o,] <- TruncatedNormal::mvrandn(l = l, u = u, Cov_ind[exo_indicators, exo_indicators],1)
+            # }
+            #   # The continuous indicators are replaced through their original counterparts
+            #   X_test_list[[m]][,exo_indicators[exo_indicators%in%cont_indicators]] <- X_test_scaled[,exo_indicators[exo_indicators%in%cont_indicators]]
+            # }
+            # }
+            # eta_hat_exo <- lapply(X_test_list, function(x) x%*%t(W_train[cons_exo, exo_indicators, drop = FALSE]))
+            # 
+            # 
+            # # Predict scores for the endogenous constructs (structural prediction)
+            # eta_hat_endo_star <- lapply(eta_hat_exo, function(x){
+            #   x %*% t(Gamma_train) %*% t(solve(diag(nrow(B_train)) - B_train))})
+            # 
+            # # Predict scores for indicators of endogenous constructs (communality prediction)
+            # X_hat_endo_star <- lapply(eta_hat_endo_star, function(x)
+            #   x %*% loadings_train[cons_endo, endo_indicators, drop = FALSE])
+            # 
+            # # Aggregation of the npred estimations via mean or median
+            # if(.approach_score == "mean"){
+            # X_hat_endo_star.mean <- X_hat_endo_star[[1]]
+            # X_hat_endo_star.mean[]<- tapply(unlist(X_hat_endo_star), 
+            #                                 rep(seq(length(X_hat_endo_star[[1]])),
+            #                                     length(X_hat_endo_star)), FUN=mean)
+            # 
+            # # Calculating the categorical variables for categorical indicators, 
+            # # for continuous indicators, the mean/median values are saved
+            # X_hat_rescaled <- X_hat_endo_star.mean
+            # for(m in colnames(X_hat_endo_star.mean)){
+            #   if(m %in% cat_indicators){
+            #   for(o in 1:length(X_hat_endo_star.mean[,1])){
+            #     X_hat_rescaled[o,m] <- findInterval(X_hat_endo_star.mean[o,m], thresholds[[m]])
+            #     }
+            #   }
+            # }
+            # }else if(.approach_score == "median"){
+            # X_hat_endo_star.median <- X_hat_endo_star[[1]]
+            # X_hat_endo_star.median[]<- tapply(unlist(X_hat_endo_star), 
+            #                                   rep(seq(length(X_hat_endo_star[[1]])),
+            #                                       length(X_hat_endo_star)), FUN=median)
+            # 
+            # X_hat_rescaled <- X_hat_endo_star.median
+            # for(m in colnames(X_hat_endo_star.median)){
+            #   if(m %in% cat_indicators){
+            #     for(o in 1:length(X_hat_endo_star.mean[,1])){
+            #       X_hat_rescaled[o,m] <- findInterval(X_hat_endo_star.median[o,m], thresholds[[m]])
+            #     }
+            #   }
+            # }
+            # }else if (.approach_score == "mode"){
+            #   
+            # }
+            # 
             Cov_ind <- Est$Estimates$Indicator_VCV
+            X_hat_rescaled <- matrix(0, nrow = nrow(.test_data), ncol = length(endo_indicators),
+                                     dimnames = list(rownames(X_test),endo_indicators))
             if(all(exo_indicators %in% cont_indicators)){
-              X_test_list[[1]] <- X_test_scaled[,exo_indicators]
+              # Predict scores for the exogenous constructs
+              eta_hat_exo <- X_test_scaled[,exo_indicators]%*%t(W_train[cons_exo, exo_indicators, drop = FALSE])
+              
+              # Predict scores for the endogenous constructs (structural prediction)
+              eta_hat_endo_star <- eta_hat_exo %*% t(Gamma_train) %*% t(solve(diag(nrow(B_train)) - B_train))
+              
+              # Predict scores for indicators of endogenous constructs (communality prediction)
+              X_hat_endo_star <- eta_hat_endo_star %*% loadings_train[cons_endo, endo_indicators, drop = FALSE]
+              
+              X_hat_rescaled <- X_hat_endo_star
+              
+              for(m in colnames(X_hat_endo_star)){
+                if(m %in% cat_indicators){
+                  for(o in 1:length(X_hat_endo_star[,1])){
+                    X_hat_rescaled[o,m] <- findInterval(X_hat_endo_star[o,m], thresholds[[m]])
+                  }
+                }
+              }
             }else{
-            for(m in 1:nrep){
-              X_test_list[[m]] <- matrix(0, nrow = nrow(X_test), ncol = length(exo_indicators))
-              colnames(X_test_list[[m]]) <- exo_indicators
-              rownames(X_test_list[[m]]) <- rownames(X_test)
-            for(o in 1:nrow(X_test)){
-              l <- NA
-              u <- NA
-              for(p in exo_indicators){
+              for(o in 1:nrow(X_test)){
+                l <- NA
+                u <- NA
+                for(p in exo_indicators){
+                  
+                  # Lower and upper thresholds for each observation have to be defined
+                  # for the categorical indicators, the estimated thresholds are used
+                  # for the continous indicators, -10 and 10 are used
+                  if(p %in% cat_indicators){
+                    l <- c(l,thresholds[[p]][X_test[o,p]])
+                    u <- c(u,thresholds[[p]][X_test[o,p]+1] )
+                  }else{
+                    l <- c(l, -10)
+                    u <- c(u, 10)
+                  }
+                }
+                l <- l[-1]
+                u <- u[-1]
+                names(l) <- exo_indicators
+                names(u) <- exo_indicators
                 
-                # Lower and upper thresholds for each observation have to be defined
-                # for the categorical indicators, the estimated thresholds are used
-                # for the continous indicators, -10 and 10 are used
-                if(p %in% cat_indicators){
-                  l <- c(l,thresholds[[p]][X_test[o,p]])
-                  u <- c(u,thresholds[[p]][X_test[o,p]+1] )
-                }else{
-                  l <- c(l, -10)
-                  u <- c(u, 10)
+                # Simulation of values of the truncated normal distribution for the categorical indicators
+                Xstar <- t(TruncatedNormal::mvrandn(l = l, u = u, Cov_ind[exo_indicators, exo_indicators],.nrep))
+                colnames(Xstar) <- exo_indicators
+                
+                # The continuous indicators are replaced through their original values of the test data
+                for(z in colnames(Xstar)){
+                  if(z %in% cont_indicators){
+                    Xstar[,z] <- rep(X_test_scaled[o,z],.nrep)
+                  }
                 }
-              }
-              l <- l[-1]
-              u <- u[-1]
-              names(l) <- exo_indicators
-              names(u) <- exo_indicators
-              X_test_list[[m]][o,] <- TruncatedNormal::mvrandn(l = l, u = u, Cov_ind[exo_indicators, exo_indicators],1)
-              X_test_list[[m]] <- scale(X_test_list[[m]])
-            }
-              # The continous indicators are replaced through their original counterparts
-              X_test_list[[m]][,exo_indicators[exo_indicators%in%cont_indicators]] <- X_test_scaled[,exo_indicators[exo_indicators%in%cont_indicators]]
-            }
-            }
-            eta_hat_exo <- lapply(X_test_list, function(x) x%*%t(W_train[cons_exo, exo_indicators, drop = FALSE]))
-          
-            
-            # Predict scores for the endogenous constructs (structural prediction)
-            eta_hat_endo_star <- lapply(eta_hat_exo, function(x){
-              x %*% t(Gamma_train) %*% t(solve(diag(nrow(B_train)) - B_train))})
-            
-            # Predict scores for indicators of endogenous constructs (communality prediction)
-            X_hat_endo_star <- lapply(eta_hat_endo_star, function(x)
-              x %*% loadings_train[cons_endo, endo_indicators, drop = FALSE])
-            
-            # Aggregation of the npred estimations via mean or median
-            if(.approach == "mean"){
-            X_hat_endo_star.mean <- X_hat_endo_star[[1]]
-            X_hat_endo_star.mean[]<- tapply(unlist(X_hat_endo_star), 
-                                            rep(seq(length(X_hat_endo_star[[1]])),
-                                                length(X_hat_endo_star)), FUN=mean)
-            
-            # Calculating the categorical variables for categorical indicators, 
-            # for continous indicators, the mean/median values are saved
-            X_hat_rescaled <- X_hat_endo_star.mean
-            for(m in colnames(X_hat_endo_star.mean)){
-              if(m %in% cat_indicators){
-              for(o in 1:length(X_hat_endo_star.mean[,1])){
-                X_hat_rescaled[o,m] <- findInterval(X_hat_endo_star.mean[o,m], thresholds[[m]])
+                
+                # Predict scores for the exogenous constructs
+                eta_hat_exo <- Xstar[,exo_indicators]%*%t(W_train[cons_exo, exo_indicators, drop = FALSE])
+                
+                # Predict scores for the endogenous constructs (structural prediction)
+                eta_hat_endo_star <- eta_hat_exo %*% t(Gamma_train) %*% t(solve(diag(nrow(B_train)) - B_train))
+                
+                # Predict scores for indicators of endogenous constructs (communality prediction)
+                X_hat_endo_star <- eta_hat_endo_star %*% loadings_train[cons_endo, endo_indicators, drop = FALSE]
+                
+                # Aggregation of the npred estimations via mean or median
+                if(.approach_score == "mean"){
+                  X_hat_rescaled[o,] <- apply(X_hat_endo_star,2,mean)
+                }else if(.approach_score == "median"){
+                  X_hat_rescaled[o,] <- apply(X_hat_endo_star,2,median)
+                }else if(.approach_score == "mode"){
+                  for(z in colnames(X_hat_endo_star)){
+                    breaks <- thresholds[[z]]
+                    dupl <- which(duplicated(thresholds[[z]]))
+                    if (length(dupl) > 0) breaks <- thresholds[[z]][-dupl]
+                    if (min(X_hat_endo_star[, z]) < breaks[1]) breaks[1] <- min(X_hat_endo_star[, z])
+                    if (max(X_hat_endo_star[, z]) > breaks[length(breaks)]) breaks[length(breaks)] <- max(X_hat_endo_star[, z])
+                    
+                    X_hat_rescaled[o,z] <- which.max(hist(X_hat_endo_star[, z], breaks = breaks, plot = FALSE)$density)
+                  }
                 }
-              }
-            }
-            }else if(.approach == "median"){
-            X_hat_endo_star.median <- X_hat_endo_star[[1]]
-            X_hat_endo_star.median[]<- tapply(unlist(X_hat_endo_star), 
-                                              rep(seq(length(X_hat_endo_star[[1]])),
-                                                  length(X_hat_endo_star)), FUN=median)
-            
-            X_hat_rescaled <- X_hat_endo_star.median
-            for(m in colnames(X_hat_endo_star.median)){
-              if(m %in% cat_indicators){
-                for(o in 1:length(X_hat_endo_star.mean[,1])){
-                  X_hat_rescaled[o,m] <- findInterval(X_hat_endo_star.median[o,m], thresholds[[m]])
+                
+                if(.approach_score == "mean" || .approach_score == "median"){
+                  # Calculating the categorical variables for categorical indicators, 
+                  # for continuous indicators, the mean/median values are saved
+                  for(m in colnames(X_hat_rescaled)){
+                    if(m %in% cat_indicators){
+                      X_hat_rescaled[o,m] <- findInterval(X_hat_rescaled[o,m], thresholds[[m]])
+                    }
+                  }
                 }
+                
+                
               }
             }
-            }
-            
             
             }else{
             ## Predict scores for the exogenous constructs (validity prediction)
