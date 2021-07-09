@@ -10,8 +10,12 @@ predict(
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
  .r                    = 10,
- .test_data            = NULL
- .approach             = c("mean", "median")
+ .test_data            = NULL,
+ .approach_score_target= c("mean", "median", "mode"),
+ .sim_points           = 100,
+ .disattenuate         = TRUE,
+ .treat_as_continuous  = FALSE,
+ .approach_score_benchmark = c("mean", "median", "mode", "round")
  )
 }
 \arguments{
@@ -38,15 +42,36 @@ set to \code{NA}. Defaults to "\emph{stop}"}
 \item{.test_data}{A matrix of test data with the same column names as the
 training data.}
 
-\item{.approach_score}{Character string. How should the aggregation of the estimates of
-the truncated normal distribution be done? One of "\emph{mean}" or "\emph{median}" or "\emph{mode}".
+\item{.approach_score_target}{Character string. How should the aggregation of the estimates of
+the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
+One of "\emph{mean}" or "\emph{median}" or "\emph{mode}".
 If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
 If "\emph{median}", the mean of the estimated endogenous indicators is calculated.
 If "\emph{mode}", the maximum empirical density on the intervals defined by the thresholds
-is used.}
+is used. Defaults to "\emph{mean}".}
 
-\item{.nrep}{integer. How many samples from the truncated normal distribution should
-be simulated to estimate the exogenous construct scores?}
+\item{.sim_points}{integer. How many samples from the truncated normal distribution should
+be simulated to estimate the exogenous construct scores? Defaults to "\emph{100}".}
+
+\item{.disattenuate}{logical. Should the benchmark predictions be based on
+disattenuated parameter estimates? Defaults to "\emph{TRUE}".}
+
+\item{.treat_as_continuous}{logical. Should the indicators for the benchmark predictions
+be treated as continuous? If "\emph{TRUE}" all indicators are treated as continuous and also
+in case of categorical indicators PLS-PM/PLSc is applied. If "\emph{FALSE}" in case of
+categorical indicators OrdPLS/OrdPLSc is applied. Defaults to "\emph{FALSE}".}
+
+\item{.approach_score_benchmark}{Character string. How should the aggregation of the estimates of
+the truncated normal distribution be done for the benchmark predictions?
+One of "\emph{mean}" or "\emph{median}" or "\emph{mode}" or "\emph{round}".
+If "\emph{round}", the benchmark predictions are obtained using the traditional prediction
+algorithm for PLS-PM which are rounded for categorical indicators.
+If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{median}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{mode}", the maximum empirical density on the intervals defined by the thresholds
+is used.
+If "\emph{.treat_as_continuous}" = TRUE or if all indicators are on a continuous scale,
+.approach_score_benchmark is ignored. Defaults to "\emph{round}".}
 }
 \value{
 An object of class \code{cSEMPredict} with print and plot methods.

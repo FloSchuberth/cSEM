@@ -64,8 +64,12 @@
 #'  .cv_folds             = 10,
 #'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
 #'  .r                    = 10,
-#'  .test_data            = NULL
-#'  .approach             = c("mean", "median")
+#'  .test_data            = NULL,
+#'  .approach_score_target= c("mean", "median", "mode"),
+#'  .sim_points           = 100,
+#'  .disattenuate         = TRUE,
+#'  .treat_as_continuous  = FALSE,
+#'  .approach_score_benchmark = c("mean", "median", "mode", "round")
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -76,14 +80,32 @@
 #'   yielded inadmissible results. 
 #'   For "*set_NA*" predictions based on inadmissible parameter estimates are
 #'   set to `NA`. Defaults to "*stop*"
-#' @param .approach_score Character string. How should the aggregation of the estimates of
-#'   the truncated normal distribution be done? One of "*mean*" or "*median*" or "*mode*". 
+#' @param .approach_score_target Character string. How should the aggregation of the estimates of
+#'   the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
+#'   One of "*mean*" or "*median*" or "*mode*". 
+#'   If "*mean*", the mean of the estimated endogenous indicators is calculated. 
+#'   If "*median*", the mean of the estimated endogenous indicators is calculated.
+#'   If "*mode*", the maximum empirical density on the intervals defined by the thresholds
+#'   is used. Defaults to "*mean*".
+#' @param .sim_points integer. How many samples from the truncated normal distribution should
+#'   be simulated to estimate the exogenous construct scores? Defaults to "*100*".
+#' @param .approach_score_benchmark Character string. How should the aggregation of the estimates of
+#'   the truncated normal distribution be done for the benchmark predictions?
+#'   One of "*mean*" or "*median*" or "*mode*" or "*round*". 
+#'   If "*round*", the benchmark predictions are obtained using the traditional prediction
+#'   algorithm for PLS-PM which are rounded for categorical indicators.
 #'   If "*mean*", the mean of the estimated endogenous indicators is calculated. 
 #'   If "*median*", the mean of the estimated endogenous indicators is calculated.
 #'   If "*mode*", the maximum empirical density on the intervals defined by the thresholds
 #'   is used.
-#' @param .nrep integer. How many samples from the truncated normal distribution should
-#'   be simulated to estimate the exogenous construct scores?
+#'   If "*.treat_as_continuous*" = TRUE or if all indicators are on a continuous scale,
+#'   .approach_score_benchmark is ignored. Defaults to "*round*".
+#' @param .disattenuate logical. Should the benchmark predictions be based on 
+#'   disattenuated parameter estimates? Defaults to "*TRUE*".
+#' @param .treat_as_continuous logical. Should the indicators for the benchmark predictions
+#'   be treated as continuous? If "*TRUE*" all indicators are treated as continuous and also
+#'   in case of categorical indicators PLS-PM/PLSc is applied. If "*FALSE*" in case of 
+#'   categorical indicators OrdPLS/OrdPLSc is applied. Defaults to "*TRUE*".
 #'
 #' @seealso [csem], [cSEMResults], [exportToExcel()]
 #' 
@@ -95,18 +117,23 @@
 #' @export
 
 predict <- function(
-  .object               = NULL, 
-  .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
-  .cv_folds             = 10,
-  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
-  .r                    = 10,
-  .test_data            = NULL,
-  .approach_score       = c("mean", "median", "mode","none"),
-  .nrep                 = 100
+  .object                   = NULL, 
+  .benchmark                = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
+  .cv_folds                 = 10,
+  .handle_inadmissibles     = c("stop", "ignore", "set_NA"),
+  .r                        = 10,
+  .test_data                = NULL,
+  .approach_score_target    = c("mean", "median", "mode"),
+  .sim_points               = 100,
+  .disattenuate             = TRUE,
+  .treat_as_continuous      = FALSE,
+  .approach_score_benchmark = c("mean", "median", "mode", "round")
   ) {
   
   .benchmark            <- match.arg(.benchmark)
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+  .approach_score_target <- match.arg(.approach_score_target)
+  .approach_score_benchmark <- match.arg(.approach_score_benchmark)
   
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, predict, 
@@ -137,10 +164,11 @@ predict <- function(
       stop2('Currently, `predict()` works only for linear models.')
     }
     
-    # Stop if indicator correlation is not Bravais-Pearson
-    #if(.object$Information$Type_of_indicator_correlation != 'Pearson'){
-    #  stop2('Currently, `predict()` works only in combination with Pearson correlation.')
-    #}
+    if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') &&
+       is.null(.test_data) && .r > 1){
+      stop2('For categorical indicators, only one repetition can be done.')
+    }
+    
     
     ## Get arguments and relevant indicators
     #  Note: It is possible that the original data set used to obtain .object
@@ -170,6 +198,17 @@ predict <- function(
       )
     }
     
+    if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') && 
+       .benchmark != "PLS-PM" && .treat_as_continuous == FALSE) {
+      .treat_as_continuous = TRUE
+      warning2(
+        "The following warning occured in the `predict()` function:\n",
+        "The categorical nature of the indicators can currently only be considered",
+        "for .benchmark = PLS-PM, the results for benchmark = '", .benchmark, 
+         "' treat the indicators as continuous."
+      )
+    }
+    
     ## Has .test_data been supplied?
     if(!is.null(.test_data)) {
       # Is it a matrix or a data.frame?
@@ -188,11 +227,10 @@ predict <- function(
       # required for the .test_data.
       if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
         .test_data = data.matrix(.test_data)
-        rownames(.test_data) <- 1:nrow(.test_data) 
       }else{
       .test_data = as.matrix(.test_data)
-      rownames(.test_data) <- 1:nrow(.test_data)
       }
+      rownames(.test_data) <- 1:nrow(.test_data)
       # Stop if .test_data does not have column names! As we need to match column
       # names between training and test data.
       if(is.null(colnames(.test_data))) {
@@ -276,10 +314,37 @@ predict <- function(
         args_list <- list(args_target, args_benchmark)
         results <- list()
         for(k in 1:kk) {
+          
+          # For the target predictions, the parameter estimates are obtained
+          # for the target data, while the estimates equal the estimates of 
+          # .object if a test data is given.
+          if(k == 1){
           if(is.null(.test_data)){
           Est        <- do.call(foreman, args_list[[k]])
           }else{
             Est <- .object
+          }
+          }else{
+            # For the benchmark predictions, the parameter estimates are obtained
+            # for the target data. If a test sample is given and .disattenuate
+            # equals .disattenuate of .object and if all indicators are numeric
+            # and should be treated in their original form, the estimates equal
+            # the estimates of .object.
+            if((!is.null(.test_data) && args_list[[k]]$.disattenuate == .disattenuate &&
+               all(.object$Information$Type_of_indicator_correlation == 'Pearson'))|
+               (!is.null(.test_data) && args_list[[k]]$.disattenuate == .disattenuate &&
+               .treat_as_continuous == FALSE)){
+                 Est <- .object
+            }else{
+              
+            if(args_list[[k]]$.disattenuate != .disattenuate){
+              args_list[[k]]$.disattenuate <- .disattenuate
+            }
+            if(.treat_as_continuous){
+              args_list[[k]]$.data <- data.matrix(args_list[[k]]$.data)
+            }
+              Est        <- do.call(foreman, args_list[[k]])
+            }
           }
           
           # Identify exogenous construct in the structural model
@@ -318,6 +383,12 @@ predict <- function(
               cat_indicators <- names(is_numeric_indicator[is_numeric_indicator == FALSE])
               cont_indicators <- names(is_numeric_indicator[is_numeric_indicator == TRUE])
               
+              if(k == 1){
+                .approach_score = .approach_score_target
+              }else{
+                .approach_score = .approach_score_benchmark
+              }
+              
               if(!all(endo_indicators%in%cat_indicators) && .approach_score == "mode"){
                 stop2(
                   "The following error occured in the `predict()` function:\n",
@@ -342,6 +413,8 @@ predict <- function(
               colnames(X_test_scaled) <- colnames(X_test)
               rownames(X_test_scaled) <- rownames(X_test)
               
+              # Replace the scaled categorical indicators by their original values
+              # Reason: Categorical indicators should not be scaled
               X_test_scaled[,cat_indicators] <- X_test[,cat_indicators]
               
             # get the thresholds for the categorical indicators
@@ -436,7 +509,7 @@ predict <- function(
             # }
             # 
             Cov_ind <- Est$Estimates$Indicator_VCV
-            X_hat_rescaled <- matrix(0, nrow = nrow(.test_data), ncol = length(endo_indicators),
+            X_hat <- matrix(0, nrow = nrow(X_test), ncol = length(endo_indicators),
                                      dimnames = list(rownames(X_test),endo_indicators))
             if(all(exo_indicators %in% cont_indicators)){
               # Predict scores for the exogenous constructs
@@ -448,15 +521,21 @@ predict <- function(
               # Predict scores for indicators of endogenous constructs (communality prediction)
               X_hat_endo_star <- eta_hat_endo_star %*% loadings_train[cons_endo, endo_indicators, drop = FALSE]
               
-              X_hat_rescaled <- X_hat_endo_star
+              X_hat <- X_hat_endo_star
               
               for(m in colnames(X_hat_endo_star)){
                 if(m %in% cat_indicators){
                   for(o in 1:length(X_hat_endo_star[,1])){
-                    X_hat_rescaled[o,m] <- findInterval(X_hat_endo_star[o,m], thresholds[[m]])
+                    X_hat[o,m] <- findInterval(X_hat_endo_star[o,m], thresholds[[m]])
                   }
                 }
               }
+              
+              X_hat_rescaled <- sapply(colnames(X_hat), function(x) {
+                mean_train[x] + X_hat[, x] * sd_train[x]
+              })
+              X_hat_rescaled[,cat_indicators] <- X_hat[,cat_indicators]
+              
             }else{
               for(o in 1:nrow(X_test)){
                 l <- NA
@@ -480,13 +559,13 @@ predict <- function(
                 names(u) <- exo_indicators
                 
                 # Simulation of values of the truncated normal distribution for the categorical indicators
-                Xstar <- t(TruncatedNormal::mvrandn(l = l, u = u, Cov_ind[exo_indicators, exo_indicators],.nrep))
+                Xstar <- t(TruncatedNormal::mvrandn(l = l, u = u, Cov_ind[exo_indicators, exo_indicators],.sim_points))
                 colnames(Xstar) <- exo_indicators
                 
                 # The continuous indicators are replaced through their original values of the test data
                 for(z in colnames(Xstar)){
                   if(z %in% cont_indicators){
-                    Xstar[,z] <- rep(X_test_scaled[o,z],.nrep)
+                    Xstar[,z] <- X_test_scaled[o,z]
                   }
                 }
                 
@@ -501,9 +580,9 @@ predict <- function(
                 
                 # Aggregation of the npred estimations via mean or median
                 if(.approach_score == "mean"){
-                  X_hat_rescaled[o,] <- apply(X_hat_endo_star,2,mean)
+                  X_hat[o,] <- apply(X_hat_endo_star,2,mean)
                 }else if(.approach_score == "median"){
-                  X_hat_rescaled[o,] <- apply(X_hat_endo_star,2,median)
+                  X_hat[o,] <- apply(X_hat_endo_star,2,median)
                 }else if(.approach_score == "mode"){
                   for(z in colnames(X_hat_endo_star)){
                     breaks <- thresholds[[z]]
@@ -512,22 +591,27 @@ predict <- function(
                     if (min(X_hat_endo_star[, z]) < breaks[1]) breaks[1] <- min(X_hat_endo_star[, z])
                     if (max(X_hat_endo_star[, z]) > breaks[length(breaks)]) breaks[length(breaks)] <- max(X_hat_endo_star[, z])
                     
-                    X_hat_rescaled[o,z] <- which.max(hist(X_hat_endo_star[, z], breaks = breaks, plot = FALSE)$density)
+                    X_hat[o,z] <- which.max(hist(X_hat_endo_star[, z], breaks = breaks, plot = FALSE)$density)
                   }
                 }
                 
                 if(.approach_score == "mean" || .approach_score == "median"){
                   # Calculating the categorical variables for categorical indicators, 
                   # for continuous indicators, the mean/median values are saved
-                  for(m in colnames(X_hat_rescaled)){
+                  for(m in colnames(X_hat)){
                     if(m %in% cat_indicators){
-                      X_hat_rescaled[o,m] <- findInterval(X_hat_rescaled[o,m], thresholds[[m]])
+                      X_hat[o,m] <- findInterval(X_hat[o,m], thresholds[[m]])
                     }
                   }
                 }
                 
                 
               }
+              # Rescale the continuous indicators
+                X_hat_rescaled <- sapply(colnames(X_hat), function(x) {
+                  mean_train[x] + X_hat[, x] * sd_train[x]
+                })
+                X_hat_rescaled[,endo_indicators[which(endo_indicators %in% cat_indicators)]] <- X_hat[,endo_indicators[which(endo_indicators %in% cat_indicators)]]
             }
             
             }else{
@@ -647,6 +731,19 @@ predict <- function(
     )
     rownames(df_metrics) <- NULL
     
+    if(.benchmark == "PLS-PM" && !all(.object$Information$Type_of_indicator_correlation == 'Pearson')
+       && .treat_as_continuous == FALSE){
+      if(.approach_score_benchmark != "round"){
+      .benchmark = "OrdPLS"
+      }else{
+        .benchmark = "OrdPLS rounded"
+      }
+    }
+    if(.object$Information$Arguments$.approach_weights == "PLS-PM" && !all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
+      .target <- "OrdPLS"
+    }else{
+      .target = .object$Information$Arguments$.approach_weights
+    }
     out <- list(
       "Actual"      = if(is.null(.test_data)) {
         .object$Information$Arguments$.data[, endo_indicators]
@@ -658,8 +755,9 @@ predict <- function(
       "Residuals_benchmark" = out_temp$Residuals_benchmark,
       "Prediction_metrics"  = df_metrics,
       "Information"         = list(
-        "Target"                 = .object$Information$Arguments$.approach_weights,
+        "Target"                 = .target,
         "Benchmark"              = .benchmark,
+        "Disattenuate"           = .disattenuate,
         "Handle_inadmissibles"   = .handle_inadmissibles,
         "Number_of_observations_training" = nrow(X_train),
         "Number_of_observations_test" = nrow(X_test),
