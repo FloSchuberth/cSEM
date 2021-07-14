@@ -188,6 +188,14 @@ predict <- function(
       )
     }
     
+    if(.treat_as_continuous == FALSE && !all(.object$Information$Type_of_indicator_correlation == 'Pearson')) {
+      warning2(
+        "The following warning occured in the `predict()` function:\n",
+        "Benchmark predictions are based on OrdPLS/OrdPLSc results but",
+        "the predictions ignore the categorical nature of the indicators."
+      )
+    }
+    
     if(args$.disattenuate & .benchmark %in% c("unit", "GSCA", "MAXVAR") & 
        any(.object$Information$Model$construct_type == "Composite")) {
       args$.disattenuate <- FALSE
@@ -711,6 +719,22 @@ predict <- function(
     mae_benchmark <- apply(out_temp$Residuals_benchmark, 2, function(x) mean(abs(x - mean(x))))
     rmse_target   <- apply(out_temp$Residuals_target, 2, function(x) sqrt(mean((x - mean(x))^2)))
     rmse_benchmark<- apply(out_temp$Residuals_benchmark, 2, function(x) sqrt(mean((x - mean(x))^2)))
+    if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
+    concordance_target    <- mae_target
+    concordance_benchmark <- mae_benchmark
+    for(i in colnames(out_temp$Residuals_target)){
+      if(i%in%cat_indicators){
+        x <- out_temp$Residuals_target[,i]
+        concordance_target[i] <- length(x[x==0])/length(x)
+      }
+    }
+    for(i in colnames(out_temp$Residuals_benchmark)){
+      if(i%in%cat_indicators){
+        x <- out_temp$Residuals_benchmark[,i]
+        concordance_benchmark[i] <- length(x[x==0])/length(x)
+      }
+    }
+    }
     
     q2_predict  <- c()
     for(i in colnames(out_temp$Residuals_target)) {
@@ -719,7 +743,22 @@ predict <- function(
         sum((out_temp$Residuals_mb[, i] - mean(out_temp$Residuals_mb[, i]))^2)
     }
     
-    ## Create data fram
+    if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
+    ## Create data frame
+    df_metrics <- data.frame(
+      "Name"           = endo_indicators,
+      "MAE_target"     = mae_target,
+      "MAE_benchmark" = mae_benchmark,
+      "RMSE_target"    = rmse_target,
+      "RMSE_benchmark" = rmse_benchmark,
+      "Q2_predict"     = q2_predict,
+      "concordance_target" = concordance_target,
+      "concordance_benchmark" = concordance_benchmark,
+      stringsAsFactors = FALSE
+    )
+    }else{
+    
+    ## Create data frame
     df_metrics <- data.frame(
       "Name"           = endo_indicators,
       "MAE_target"     = mae_target,
@@ -729,6 +768,7 @@ predict <- function(
       "Q2_predict"     = q2_predict,
       stringsAsFactors = FALSE
     )
+    }
     rownames(df_metrics) <- NULL
     
     if(.benchmark == "PLS-PM" && !all(.object$Information$Type_of_indicator_correlation == 'Pearson')
@@ -744,6 +784,7 @@ predict <- function(
     }else{
       .target = .object$Information$Arguments$.approach_weights
     }
+    
     out <- list(
       "Actual"      = if(is.null(.test_data)) {
         .object$Information$Arguments$.data[, endo_indicators]

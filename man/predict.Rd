@@ -59,7 +59,7 @@ disattenuated parameter estimates? Defaults to "\emph{TRUE}".}
 \item{.treat_as_continuous}{logical. Should the indicators for the benchmark predictions
 be treated as continuous? If "\emph{TRUE}" all indicators are treated as continuous and also
 in case of categorical indicators PLS-PM/PLSc is applied. If "\emph{FALSE}" in case of
-categorical indicators OrdPLS/OrdPLSc is applied. Defaults to "\emph{FALSE}".}
+categorical indicators OrdPLS/OrdPLSc is applied. Defaults to "\emph{TRUE}".}
 
 \item{.approach_score_benchmark}{Character string. How should the aggregation of the estimates of
 the truncated normal distribution be done for the benchmark predictions?
