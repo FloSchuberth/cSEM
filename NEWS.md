@@ -1,5 +1,7 @@
 # <Development version: cSEM 0.4.0.9000
 
+- Bug fix: `predict()` no longer fails when LOOCV is used (#337)
+
 - Bug fix: fix print method for `summarize()` when resampling with constant values
   (weights or loadings) is conducted. The standard error, t-value, p-value and
   CI are properly set to `NA` now. (#433)
