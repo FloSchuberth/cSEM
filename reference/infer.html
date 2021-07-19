@@ -68,7 +68,6 @@
 </script>
 
 
-
   
 
   
@@ -269,11 +268,11 @@ Hence, computation is triggered only if explicitly chosen.</p>
 <em>Bootstrap Methods and their Application</em>.
 Cambridge University Press.
 doi: <a href='https://doi.org/10.1017/cbo9780511802843'>10.1017/cbo9780511802843</a>
-, <a href='https://doi.org/10.1017/cbo9780511802843'>https://doi.org/10.1017/cbo9780511802843</a>.<br /><br /> Hesterberg TC (2015).
+.<br /><br /> Hesterberg TC (2015).
 &#8220;What Teachers Should Know About the Bootstrap: Resampling in the Undergraduate Statistics Curriculum.&#8221;
 <em>The American Statistician</em>, <b>69</b>(4), 371--386.
 doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.2015.1089789</a>
-, <a href='https://doi.org/10.1080/00031305.2015.1089789'>https://doi.org/10.1080/00031305.2015.1089789</a>.</p>
+.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code>, <code><a href='summarize.html'>summarize()</a></code> <a href='csem_results.html'>cSEMResults</a></p></div>
@@ -304,17 +303,17 @@ doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.20
 <span class='r-in'><span class='va'>inf</span> <span class='op'>&lt;-</span> <span class='fu'>infer</span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Path_estimates</span><span class='op'>$</span><span class='va'>CI_basic</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL   SAT ~ IMAG SAT ~ EXPE</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L    0.524051    1.008357  -4.828617    4.19221 -0.542249239 0.06169277</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U    0.679619    1.054218  -3.324678    5.74254 -0.005957917 2.83764847</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L   0.6199864    1.009198  -5.305066   4.743590 -0.1530487   1.396232</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U   0.7827953    1.047913  -3.834543   6.240289  0.2290684   2.996072</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L -4.2193051  1.600023  0.1661858 0.2758886</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U -0.4754998  2.961342  0.5432024 0.6403138</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L  -4.100828  1.290915  0.2486733 0.2607496</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U  -1.933761  2.164001  0.5206855 0.5766311</span>
 <span class='r-in'><span class='va'>inf</span><span class='op'>$</span><span class='va'>Indirect_effect</span><span class='op'>$</span><span class='va'>sd</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  0.04896108  0.06621783  0.48766763  0.07132562  0.73547403  0.89011787 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  0.04421770  0.05032484  0.47959494  0.07505761  0.50101227  0.87928288 </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  0.09499542  0.08491053  0.35035756  0.23995582 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  0.05371397  0.09336059  0.45185067  0.17771438 </span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'>### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span></span>
 <span class='r-in'><span class='co'>## For the studentied t-interval confidence interval a double bootstrap is required.</span></span>

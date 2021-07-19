@@ -70,7 +70,6 @@ call this function but directly use resamplecSEMResults() instead." />
 </script>
 
 
-
   
 
   
@@ -315,7 +314,7 @@ R package version 1.0.1, <a href='https://CRAN.R-project.org/package=future.appl
 &#8220;What Teachers Should Know About the Bootstrap: Resampling in the Undergraduate Statistics Curriculum.&#8221;
 <em>The American Statistician</em>, <b>69</b>(4), 371--386.
 doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.2015.1089789</a>
-, <a href='https://doi.org/10.1080/00031305.2015.1089789'>https://doi.org/10.1080/00031305.2015.1089789</a>.</p>
+.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='csem.html'>csem()</a></code>, <a href='csem_results.html'>cSEMResults</a>, <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code></p></div>
@@ -330,19 +329,19 @@ doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.20
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>res_boot1</span>, max.level <span class='op'>=</span> <span class='fl'>3</span>, list.len <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> List of 499</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	250 obs. of  27 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:250] 7 8 10 8 5 9 5 5 8 3 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:250] 5 8 3 8 3 7 7 5 7 3 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:250] 7 8 7 3 4 8 7 7 8 3 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:250] 7 5 8 7 10 8 10 9 9 8 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:250] 9 5 8 7 10 7 9 9 9 9 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:250] 8 7 8 7 10 10 7 9 10 9 ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	250 obs. of  27 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:250] 9 5 9 8 10 10 5 9 7 10 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:250] 9 7 9 9 10 10 3 9 8 10 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:250] 9 4 10 9 10 10 4 9 7 10 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:250] 8 10 8 10 8 6 8 10 8 7 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:250] 9 10 8 9 8 6 7 10 6 9 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:250] 8 10 8 9 8 5 8 10 9 8 ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	250 obs. of  27 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:250] 9 9 8 9 3 5 10 9 0 8 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:250] 9 10 7 8 4 7 10 10 4 7 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:250] 9 9 8 9 2 8 10 8 7 8 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag1: int [1:250] 8 8 7 7 8 8 8 8 8 10 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag2: int [1:250] 8 6 9 8 9 8 8 5 7 10 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ imag3: int [1:250] 8 6 9 8 9 8 8 7 7 10 ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   [list output truncated]</span>
 <span class='r-in'></span>
@@ -390,45 +389,45 @@ doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.20
 <span class='r-out co'><span class='r-pr'>#&gt;</span> List of 100</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :List of 10</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 1 :'data.frame':	10 obs. of  3 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -0.7685 -0.1524 -0.0469 2.1499 -0.4636 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -2.102 2.011 1.366 -1.829 -0.535 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "male" "female" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 1.185 0.441 -0.242 0.496 1.397 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.161 0.972 0.667 1.373 -1.911 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "male" "male" "female" "male" ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 2 :'data.frame':	10 obs. of  3 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 0.163 -0.766 -0.261 0.611 -0.752 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.576 -0.386 0.286 -1.405 0.463 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "male" "female" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -0.62 -0.319 0.79 -0.686 1.871 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -1.57 -0.501 1.227 -0.982 -1.049 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "male" "male" "female" "female" ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 1.7637 -0.4889 -0.3194 -0.2793 -0.0193 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] 0.37 0.709 -0.501 2.196 -0.409 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -0.626 -0.375 -0.768 -0.23 -1.568 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.0422 -0.8676 -2.1022 -0.4629 2.7082 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "male" "female" "female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :List of 10</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 1 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 0.34 -0.901 0.193 -0.901 -0.375 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.972 -0.755 -0.61 -0.405 -0.868 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "male" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 2 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -1.5677 0.3821 -0.7136 0.0377 0.7936 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] 2.708 0.538 0.74 0.192 0.362 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "male" "female" "female" "female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -0.2417 -0.2303 0.5964 0.0749 0.4407 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] 1.066 -0.463 0.549 -0.81 0.972 ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "male" "female" ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :List of 10</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 1 :'data.frame':	10 obs. of  3 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 0.852 -1.261 0.629 -1.568 -0.766 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.947 -1.649 -0.14 2.708 -0.386 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "male" "male" "male" "male" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -0.279 -0.489 0.3 -0.464 -0.468 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] 2.196 0.709 1.797 -0.535 -0.536 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "female" "male" ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 2 :'data.frame':	10 obs. of  3 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -0.9009 -0.1804 -0.9008 0.0845 0.8539 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.405 0.16 -0.755 0.786 -0.99 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 0.34 -0.626 1.377 -0.242 1.646 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.972 -0.0422 1.0919 1.0664 -0.9729 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "male" "female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 0.1516 0.3055 -0.0193 -0.084 0.2064 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.284 0.792 -0.409 -0.708 1.901 ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "male" "female" "female" "female" ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -1.093 -1.334 0.441 -2.348 -0.261 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] 0.892 -1.814 0.972 -0.341 0.286 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "male" "male" ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :List of 10</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 1 :'data.frame':	10 obs. of  3 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -0.735 0.34 1.177 1.117 0.903 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.331 -0.972 0.529 -1.152 2.454 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "female" "female" "male" "male" ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 2 :'data.frame':	10 obs. of  3 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] 2.15 0.527 -0.468 -1.428 0.962 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -1.8286 -0.8705 -0.5362 -0.2837 -0.0325 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "male" "female" "female" "male" ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ 3 :'data.frame':	10 obs. of  3 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x1   : num [1:10] -0.375 -0.901 -0.977 0.79 0.629 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ x2   : num [1:10] -0.868 -0.405 0.693 1.227 -0.14 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   .. ..$ group: chr [1:10] "male" "male" "male" "female" ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   .. [list output truncated]</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   [list output truncated]</span>
 <span class='r-in'></span>
@@ -470,15 +469,15 @@ doi: <a href='https://doi.org/10.1080/00031305.2015.1089789'>10.1080/00031305.20
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	100 obs. of  3 variables:</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x1: num [1:100] -0.242 -0.468 -0.773 2.15 -1.334 ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x2: num [1:100] 1.066 -0.536 0.536 -1.829 -1.814 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ id: chr [1:100] "female" "female" "female" "female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	100 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x1: num [1:100] -0.242 -0.468 -0.773 2.15 -1.334 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x2: num [1:100] 1.066 -0.536 0.536 -1.829 -1.814 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ id: chr [1:100] "female" "female" "female" "female" ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	100 obs. of  3 variables:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x1: num [1:100] -0.242 -0.468 -0.773 2.15 -1.334 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x2: num [1:100] 1.066 -0.536 0.536 -1.829 -1.814 ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ id: chr [1:100] "male" "male" "female" "female" ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	100 obs. of  3 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x1: num [1:100] -0.242 -0.468 -0.773 2.15 -1.334 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x2: num [1:100] 1.066 -0.536 0.536 -1.829 -1.814 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ id: chr [1:100] "male" "female" "male" "female" ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ :'data.frame':	100 obs. of  3 variables:</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x1: num [1:100] -0.242 -0.468 -0.773 2.15 -1.334 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ x2: num [1:100] 1.066 -0.536 0.536 -1.829 -1.814 ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   ..$ id: chr [1:100] "male" "male" "male" "female" ...</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   [list output truncated]</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># Forgetting to set .id causes an error</span></span>
