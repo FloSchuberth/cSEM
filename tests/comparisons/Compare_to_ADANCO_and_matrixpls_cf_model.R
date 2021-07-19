@@ -1,11 +1,11 @@
 #===============================================================================
 #
-#   Topic: Compare results from cSEM (0.1.0.9000), ADANCO 2.1.1., 
-#          and matrixpls (v. 1.0.6)
+#   Topic: Compare results from cSEM (0.4.0.9000), ADANCO 2.2.1., 
+#          and matrixpls (v. 1.0.13)
 #
 #   Type of model: common factor model
 #
-#   Date: 21.01.2020
+#   Date: 19.07.2021
 #
 #===============================================================================
 rm(list = ls())
@@ -13,9 +13,10 @@ rm(list = ls())
 require(cSEM)
 require(xlsx)
 require(matrixpls)
-data("satisfaction")
+data("satisfaction", package = "cSEM")
 
-path_to_results <- "tests/comparisons/results_cf_model.xls"
+path_to_results <- "tests/comparisons/results_cf_model_adanco_2_2_1_centroid.xls"
+
 
 ### Import ADANCO results ------------------------------------------------------
 ## Import weights
@@ -166,18 +167,18 @@ a1 <- csem(
   .tolerance                   = 1e-06,
   .PLS_modes                   = NULL,
   .PLS_ignore_structural_model = FALSE,
-  .PLS_weight_scheme_inner     = "factorial" 
+  .PLS_weight_scheme_inner     = "centroid" 
 )
 suma1 <- cSEM:::summarize(a1)
 assa1 <- assess(a1)
 
 ### Matrixpls ------------------------------------------------------------------
-a2 <- matrixpls(S          = cor(satisfaction),
+a2 <- matrixpls(S           = cor(satisfaction),
                 model       = model,
                 standardize = TRUE,
                 parametersReflective = estimator.plscLoadings,
                 disattenuate = TRUE,
-                innerEstim  = innerEstim.factor,
+                innerEstim  = innerEstim.centroid,
                 ignoreInnerModel = FALSE,
                 outerEstim  = outerEstim.modeA,
                 tol = 1e-06
@@ -200,6 +201,8 @@ sigma_hat_estimated_matpls <- matrixpls:::fitted.matrixpls(a2)
 # Note (19.12.2019): Apparently ADANCO has a bug. If you change the weighting scheme
 # from Factor to Centroid nothing changes, i.e., the ADANCO always uses the
 # factor scheme.
+# Note (19.07.2021): This issue has been fixed in version 2.2.1. Now centroid and
+# factorial scheme yield different results
 
 ## Compare weights
 a1$Estimates$Weight_estimates - t(weights_ADANCO) # identical at the 8th sig digit
@@ -226,8 +229,7 @@ round(fit(a1, .saturated = TRUE) - sigma_hat_saturated, 8) # identical at the 8t
 fit(a1, .saturated = TRUE) - sigma_hat_saturated_matpls # identical
 
 ## Compare model_implied indicator cor (estimated)
-round(fit(a1) - sigma_hat_estimated, 6) # Differences for blocks of SAT and LOY
-                                        # See: fit function for explanation why.
+round(fit(a1) - sigma_hat_estimated, 6) # Identical
 round(fit(a1) - sigma_hat_estimated_matpls, 6) # Differences for blocks of SAT and LOY
                                                # See: fit function for explanation why.
 
@@ -252,14 +254,15 @@ V_eta_ADANCO <- solve(t(Lambda_matpls) %*% Lambda_matpls) %*% t(Lambda_matpls) %
   (sigma_hat_estimated - Theta_matpls) %*% Lambda_matpls %*% 
   solve(t(Lambda_matpls) %*% Lambda_matpls)
 
-round(fit(a1, .type_vcv = "construct") - V_eta_ADANCO, 8) # same as above.
+round(fit(a1, .type_vcv = "construct") - V_eta_ADANCO, 8) # identical to the 8th digit
 
 ### Quality criteria -------------------------------------------------------------
 ## Overall model fit
 # SRMR, dG dL
-# Note: the fitted function in ADANCO is not correct. Reason: the model-implied
+# Note : the fitted function in ADANCO is not correct. Reason: the model-implied
 # construct correlation matrix does not always have ones on its main diagonal,
-# i.e. the variance of some constructs (those deeper down the nomologial net)
+# i.e. the variance of some constructs (those deeper down the nomologial net).
+# Note (19.07.2021): fixed in ADANCO version 2.2.1
 
 ## Distance measures for saturated model
 cSEM:::calculateSRMR(a1, .saturated = TRUE) - gof_s_ADANCO["SRMR"] # identical at the 8th sig digit
@@ -268,23 +271,23 @@ cSEM:::calculateDG(a1, .saturated = TRUE) - gof_s_ADANCO["dG"] # identical at th
 # no measures for matrixpls
 
 ## Distance measures for estimated model
-cSEM:::calculateSRMR(a1) - gof_e_ADANCO["SRMR"] # different, since model-implied vcv is different
-cSEM:::calculateDL(a1) - gof_e_ADANCO["dULS"] # different, since model-implied vcv is different
-cSEM:::calculateDG(a1) - gof_e_ADANCO["dG"] # different, since model-implied vcv is different
+cSEM:::calculateSRMR(a1) - gof_e_ADANCO["SRMR"] # identical at the 8th sig digit
+cSEM:::calculateDL(a1) - gof_e_ADANCO["dULS"] # identical at the 8th sig digit
+cSEM:::calculateDG(a1) - gof_e_ADANCO["dG"] # identical at the 8th sig digit
 
 cSEM:::calculateSRMR(a1) - resid_matpls$indices[1] # different, since model-implied vcv is different
 # for dg and DL no measure for matrixpls
 
 ## R2
-assa1$R2 - r2_ADANCO$Coefficient.of.determination..R2. # identical to ADANCO
+assa1$R2 - r2_ADANCO$Coefficient.of.determination..R2. # identical at the 8th sig digit
 assa1$R2 - suma2$r2[-1] # identical to matrixpls
 
 ## R2 adjusted
-assa1$R2_adj - r2_ADANCO$Adjusted.R2 # identical to ADANCO
+assa1$R2_adj - r2_ADANCO$Adjusted.R2 # identical at the 8th sig digit
 # no measures for matrixpls
 
 ## AVE
-assa1$AVE - ave_ADANCO # identical to ADANCO
+assa1$AVE - ave_ADANCO # identical at the 8th sig digit
 assa1$AVE - suma2$ave$ave # identical to matrixpls
 
 ## HTMT
@@ -301,11 +304,11 @@ assa1$F2 # identical to ADANCO
 # no measure for matrixpls
 
 ## Reliability
-assa1$reliability$`Dijkstra-Henselers_rho_A` - reliability_ADANCO$Dijkstra.Henseler.s.rho..Ï.A. # identical to ADNACO
-assa1$reliability$Joereskogs_rho - reliability_ADANCO$JÃ.reskog.s.rho..Ï.c. # identical to ADANCO
-assa1$reliability$Cronbachs_alpha - reliability_ADANCO$`Cronbach.s.alpha.Î..` # identical ADANCO
+assa1$Reliability$`Dijkstra-Henselers_rho_A` - reliability_ADANCO$Dijkstra.Henseler.s.rho...U.03C1.A. # identical to ADNACO
+assa1$Reliability$Joereskogs_rho - reliability_ADANCO$Jöreskog.s.rho...U.03C1.c. # identical to ADANCO
+assa1$Reliability$Cronbachs_alpha - reliability_ADANCO$Cronbach.s.alpha.a. # identical ADANCO
 
-assa1$reliability$Joereskogs_rho - suma2$cr # identical to matrixpls
+assa1$Reliability$Joereskogs_rho - suma2$cr # identical to matrixpls
 
 ## GoF
 assa1$GoF -  suma2$gof # identical to matrixpls
