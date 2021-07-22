@@ -302,6 +302,7 @@ predict <- function(
             if(!inherits(X_hat_rescaled, "matrix")) {
               X_hat_rescaled <- matrix(X_hat_rescaled, nrow = 1)
               colnames(X_hat_rescaled) <- colnames(X_hat)
+              rownames(X_hat_rescaled) <- rownames(X_hat)
             }
             
             # Select only endogenous indicators
