@@ -51,7 +51,10 @@
 #'     of the endogenous constructs based on a model estimated by the procedure
 #'     given to `.benchmark`.}
 #'   \item{`$Prediction_metrics`}{A data frame containing the predictions metrics
-#'     MAE, RMSE, and Q2_predict.}
+#'     MAE, RMSE, and Q2_predict. In case of catgorical indicators, the concordance
+#'     is also included. Please note that the concordance can only be obtained for categorical
+#'     indicators. In case of continuous indicators, the concordance is set to the
+#'     MAE value.}
 #'   \item{`$Information`}{A list with elements
 #'     `Target`, `Benchmark`,
 #'     `Number_of_observations_training`, `Number_of_observations_test`, `Number_of_folds`,
@@ -68,7 +71,7 @@
 #'  .approach_score_target= c("mean", "median", "mode"),
 #'  .sim_points           = 100,
 #'  .disattenuate         = TRUE,
-#'  .treat_as_continuous  = FALSE,
+#'  .treat_as_continuous  = TRUE,
 #'  .approach_score_benchmark = c("mean", "median", "mode", "round")
 #'  )
 #'
@@ -90,7 +93,8 @@
 #' @param .sim_points integer. How many samples from the truncated normal distribution should
 #'   be simulated to estimate the exogenous construct scores? Defaults to "*100*".
 #' @param .approach_score_benchmark Character string. How should the aggregation of the estimates of
-#'   the truncated normal distribution be done for the benchmark predictions?
+#'   the truncated normal distribution be done for the benchmark predictions? Is ignored
+#'   if not OrdPLS or OrdPLSc is used as benchmark predictions.
 #'   One of "*mean*" or "*median*" or "*mode*" or "*round*". 
 #'   If "*round*", the benchmark predictions are obtained using the traditional prediction
 #'   algorithm for PLS-PM which are rounded for categorical indicators.
@@ -154,6 +158,10 @@ predict <- function(
       stop2('Currently, `predict()` is not implemented for models containing higher-order constructs.')
     }
     
+    if(sum(verify(.object))!=0) {
+      stop2('The csem object is not admissible.')
+    }
+    
     # Stop if second order
     if(all(.object$Information$Model$structural == 0)) {
       stop2("`predict()` requires a structural model.")
@@ -165,7 +173,7 @@ predict <- function(
     }
     
     if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') &&
-       is.null(.test_data) && .r > 1){
+       is.null(.test_data) && .r > 1 && is.null(.test_data)){
       stop2('For categorical indicators, only one repetition can be done.')
     }
     
@@ -188,17 +196,10 @@ predict <- function(
       )
     }
     
-    if(.treat_as_continuous == FALSE && !all(.object$Information$Type_of_indicator_correlation == 'Pearson')) {
-      warning2(
-        "The following warning occured in the `predict()` function:\n",
-        "Benchmark predictions are based on OrdPLS/OrdPLSc results but",
-        "the predictions ignore the categorical nature of the indicators."
-      )
-    }
-    
     if(args$.disattenuate & .benchmark %in% c("unit", "GSCA", "MAXVAR") & 
        any(.object$Information$Model$construct_type == "Composite")) {
       args$.disattenuate <- FALSE
+      .disattenuate <- FALSE
       warning2(
         "The following warning occured in the `predict()` function:\n",
         "Disattenuation only applicable if all constructs are modeled as common factors.",
@@ -383,13 +384,15 @@ predict <- function(
             
             # For categorical indicators use prediction from OrdPLS, else 
             # normal prediction is used
-            if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') && k ==1){
+            if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') && k ==1|
+               k == 2 && .treat_as_continuous == FALSE){
               
-        
+              if(k == 1){
               # Save the categorical indicators and the continous indicators
               is_numeric_indicator <- lapply(X_train, is.numeric)
               cat_indicators <- names(is_numeric_indicator[is_numeric_indicator == FALSE])
               cont_indicators <- names(is_numeric_indicator[is_numeric_indicator == TRUE])
+              }
               
               if(k == 1){
                 .approach_score = .approach_score_target
@@ -405,6 +408,7 @@ predict <- function(
                 )
               }
               
+              if(k == 1){
               X_train <- data.matrix(X_train)
               mean_train      <- colMeans(X_train)
               sd_train        <- matrixStats::colSds(as.matrix(X_train))
@@ -424,7 +428,7 @@ predict <- function(
               # Replace the scaled categorical indicators by their original values
               # Reason: Categorical indicators should not be scaled
               X_test_scaled[,cat_indicators] <- X_test[,cat_indicators]
-              
+              }
             # get the thresholds for the categorical indicators
             thresholds <- Est$Information$Threshold_parameter_estimates
             thresholds <- thresholds[!is.na(thresholds)]
