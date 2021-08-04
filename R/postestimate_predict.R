@@ -311,6 +311,8 @@ predict <- function(
         args$.data <- X_train
         
         args_target <- args_benchmark <- args
+        .disattenuate_benchmark <- .disattenuate
+        .disattenuate_target <- args_target$.disattenuate
         
         if(.benchmark %in% c("unit", "PLS-PM", "GSCA", "PCA", "MAXVAR")) {
           args_benchmark$.approach_weights <- .benchmark
@@ -800,14 +802,15 @@ predict <- function(
       "Residuals_benchmark" = out_temp$Residuals_benchmark,
       "Prediction_metrics"  = df_metrics,
       "Information"         = list(
-        "Target"                 = .target,
-        "Benchmark"              = .benchmark,
-        "Disattenuate"           = .disattenuate,
-        "Handle_inadmissibles"   = .handle_inadmissibles,
+        "Estimator_target"          = .target,
+        "Estimator_benchmark"       = .benchmark,
+        "Disattenuation_target"     = .disattenuate_target,
+        "Disattenuation_benchmark"  = .disattenuate_benchmark,
+        "Handle_inadmissibles"      = .handle_inadmissibles,
         "Number_of_observations_training" = nrow(X_train),
         "Number_of_observations_test" = nrow(X_test),
-        "Number_of_folds"        = .cv_folds,
-        "Number_of_repetitions"  = .r
+        "Number_of_folds"           = .cv_folds,
+        "Number_of_repetitions"     = .r
       )
     )
     
