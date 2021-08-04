@@ -283,26 +283,51 @@ calculateIndicatorCor <- function(
                   # If both indicators are not continous, the polychoric 
                   # correlation is calculated
                   if (is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == FALSE){
-                    temp2 <- polycor::polychor(.X_cleaned[,i], .X_cleaned[,j], ML = TRUE, std.err = TRUE)
-                    S[i,j] <- temp2$rho
-                    cor_type[i,j] <- temp2$type
-                    thres_est[[i]] <- temp2$row.cuts
-                    thres_est[[j]] <- temp2$col.cuts
+                    S[i,j] <- polycor::polychor(.X_cleaned[,i], .X_cleaned[,j])
+                    
+                    # The following code is taken from the polychor function of the
+                    # polycor package to obtain the threshold estimates
+                    cor_type[i,j] <- "polychoric"
+                    tab <- table(.X_cleaned[,i], .X_cleaned[,j])
+                    zerorows <- apply(tab, 1, function(x) all(x == 0))
+                    zerocols <- apply(tab, 2, function(x) all(x == 0))
+                    zr <- sum(zerorows)
+                    zc <- sum(zerocols)
+                    tab <- tab[!zerorows, ,drop=FALSE]  
+                    tab <- tab[, !zerocols, drop=FALSE] 
+                    thres_est[[i]] <- qnorm(cumsum(rowSums(tab))/sum(tab))[-nrow(tab)]
+                    thres_est[[j]] <- qnorm(cumsum(colSums(tab))/sum(tab))[-ncol(tab)]
                     
                     # If one indicator is continous, the polyserial correlation 
                     # is calculated.Note: polyserial needs the continous 
                     # indicator as the first argument
-                  }else if(is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == TRUE){
-                    temp2 <- polycor::polyserial(.X_cleaned[,j], .X_cleaned[,i], ML = TRUE, std.err = TRUE)
-                    S[i,j] <- temp2$rho
-                    cor_type[i,j] <- temp2$type
-                    thres_est[[i]] <- temp2$cuts
+                  }else if(is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == TRUE)
+                    S[i,j] <- polycor::polyserial(.X_cleaned[,j], .X_cleaned[,i])
+                  
+                  # The following code is taken from the polyserial function of the
+                  # polycor package to obtain the threshold estimates
+                    valid <- complete.cases(.X_cleaned[,j], .X_cleaned[,i])
+                    x <- .X_cleaned[,j][valid]
+                    y <- .X_cleaned[,i][valid]
+                    z <- scale(x)
+                    tab <- table(y)
+                    indices <- 1:sum(tab)
+                    cor_type[i,j] <- "polyserial"
+                    thres_est[[i]] <- qnorm(cumsum(tab)/sum(tab))[-length(tab)]
                     thres_est[[j]] <- NA
                   }else if(is_numeric_indicator[[i]] == TRUE && is_numeric_indicator[[j]] == FALSE){
-                    temp2 <- polycor::polyserial(.X_cleaned[,i], .X_cleaned[,j], ML = TRUE, std.err = TRUE)
-                    S[i,j] <- temp2$rho
-                    cor_type[i,j] <- temp2$type
-                    thres_est[[j]] <- temp2$cuts
+                    S[i,j] <- polycor::polyserial(.X_cleaned[,i], .X_cleaned[,j])
+                    
+                    # The following code is taken from the polyserial function of the
+                    # polycor package to obtain the threshold estimates
+                    cor_type[i,j] <- "polyserial"
+                    valid <- complete.cases(x, y)
+                    x <- x[valid]
+                    y <- y[valid]
+                    z <- scale(x)
+                    tab <- table(y)
+                    indices <- 1:sum(tab)
+                    thres_est[[j]] <- qnorm(cumsum(tab)/sum(tab))[-length(tab)]
                     thres_est[[i]] <- NA
                     
                     # If both indicators are continous, the Pearson correlation
