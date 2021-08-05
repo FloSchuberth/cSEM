@@ -230,6 +230,7 @@ predict <- function(
       
       dat_train <- args$.data[, indicators]
       
+      
       # Convert to matrix and add rownames
       # Since rownames are required further below to match the observations in the
       # k'th fold of the .r'th run with those of the r+1'th run rownames are also

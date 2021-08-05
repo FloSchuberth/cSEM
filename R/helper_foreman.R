@@ -287,7 +287,7 @@ calculateIndicatorCor <- function(
                     
                     # The following code is taken from the polychor function of the
                     # polycor package to obtain the threshold estimates
-                    cor_type[i,j] <- "polychoric"
+                    cor_type[i,j] <- "Polychoric"
                     tab <- table(.X_cleaned[,i], .X_cleaned[,j])
                     zerorows <- apply(tab, 1, function(x) all(x == 0))
                     zerocols <- apply(tab, 2, function(x) all(x == 0))
@@ -312,7 +312,7 @@ calculateIndicatorCor <- function(
                     z <- scale(x)
                     tab <- table(y)
                     indices <- 1:sum(tab)
-                    cor_type[i,j] <- "polyserial"
+                    cor_type[i,j] <- "Polyserial"
                     thres_est[[i]] <- qnorm(cumsum(tab)/sum(tab))[-length(tab)]
                     thres_est[[j]] <- NA
                   }else if(is_numeric_indicator[[i]] == TRUE && is_numeric_indicator[[j]] == FALSE){
@@ -320,7 +320,7 @@ calculateIndicatorCor <- function(
                     
                     # The following code is taken from the polyserial function of the
                     # polycor package to obtain the threshold estimates
-                    cor_type[i,j] <- "polyserial"
+                    cor_type[i,j] <- "Polyserial"
                     valid <- complete.cases(x, y)
                     x <- x[valid]
                     y <- y[valid]

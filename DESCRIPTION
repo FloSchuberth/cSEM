@@ -66,6 +66,7 @@ Imports:
     rlang,
     stats,
     symmoments,
+    TruncatedNormal,
     utils,
     lifecycle
 RdMacros: Rdpack, lifecycle
