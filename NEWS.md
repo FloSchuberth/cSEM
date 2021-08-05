@@ -1,5 +1,7 @@
 # <Development version: cSEM 0.4.0.9000
 
+- Bug fix: GSCAm (i.e., `.approach_weights = "GSCA"` with constructs modeled as 
+  common factors) no longer fails when a single indicator construct is supplied (#441)
 - Bug fix: `predict()` no longer fails when LOOCV is used (#337)
 
 - Bug fix: fix print method for `summarize()` when resampling with constant values
