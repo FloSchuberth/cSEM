@@ -172,10 +172,10 @@ predict <- function(
       stop2('Currently, `predict()` works only for linear models.')
     }
     
-    if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') &&
-       is.null(.test_data) && .r > 1 && is.null(.test_data)){
-      stop2('For categorical indicators, only one repetition can be done.')
-    }
+    #if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') &&
+    #   is.null(.test_data) && .r > 1 && is.null(.test_data)){
+    #  stop2('For categorical indicators, only one repetition can be done.')
+    #}
     
     
     ## Get arguments and relevant indicators
@@ -196,14 +196,21 @@ predict <- function(
       )
     }
     
-    if(args$.disattenuate & .benchmark %in% c("unit", "GSCA", "MAXVAR") & 
+    if(.disattenuate && .benchmark %in% c("unit", "GSCA", "MAXVAR") && 
        any(.object$Information$Model$construct_type == "Composite")) {
-      args$.disattenuate <- FALSE
       .disattenuate <- FALSE
       warning2(
         "The following warning occured in the `predict()` function:\n",
         "Disattenuation only applicable if all constructs are modeled as common factors.",
         " Results based on benchmark = `", .benchmark, "` are not disattenuated."
+      )
+    }
+    
+    if(.disattenuate & .benchmark %in% c("lm")) {
+      .disattenuate <- FALSE
+      warning2(
+        "The following warning occured in the `predict()` function:\n",
+        "Disattenuation is not applicable for `", .benchmark, "`" 
       )
     }
     
@@ -388,7 +395,8 @@ predict <- function(
             # For categorical indicators use prediction from OrdPLS, else 
             # normal prediction is used
             if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') && k ==1|
-               k == 2 && .treat_as_continuous == FALSE){
+               !all(.object$Information$Type_of_indicator_correlation == 'Pearson') &&k == 2 && 
+               .treat_as_continuous == FALSE){
               
               if(k == 1){
               # Save the categorical indicators and the continous indicators
@@ -439,90 +447,6 @@ predict <- function(
             Tmax <- 4
             thresholds <- lapply(thresholds, function(x) c(Tmin, x, Tmax))
             
-            # # List for the 100 datasets of the truncated normal distribution
-            # # X_test_list contains 100 datasets with as many observation as the
-            # # original test data for all exogenous indicators
-            # X_test_list <- list()
-            # Cov_ind <- Est$Estimates$Indicator_VCV
-            # if(all(exo_indicators %in% cont_indicators)){
-            #   X_test_list[[1]] <- X_test_scaled[,exo_indicators]
-            # }else{
-            # for(m in 1:.nrep){
-            #   X_test_list[[m]] <- matrix(0, nrow = nrow(X_test), ncol = length(exo_indicators))
-            #   colnames(X_test_list[[m]]) <- exo_indicators
-            #   rownames(X_test_list[[m]]) <- rownames(X_test)
-            # for(o in 1:nrow(X_test)){
-            #   l <- NA
-            #   u <- NA
-            #   for(p in exo_indicators){
-            #     
-            #     # Lower and upper thresholds for each observation have to be defined
-            #     # for the categorical indicators, the estimated thresholds are used
-            #     # for the continous indicators, -10 and 10 are used
-            #     if(p %in% cat_indicators){
-            #       l <- c(l,thresholds[[p]][X_test[o,p]])
-            #       u <- c(u,thresholds[[p]][X_test[o,p]+1] )
-            #     }else{
-            #       l <- c(l, -10)
-            #       u <- c(u, 10)
-            #     }
-            #   }
-            #   l <- l[-1]
-            #   u <- u[-1]
-            #   names(l) <- exo_indicators
-            #   names(u) <- exo_indicators
-            #   X_test_list[[m]][o,] <- TruncatedNormal::mvrandn(l = l, u = u, Cov_ind[exo_indicators, exo_indicators],1)
-            # }
-            #   # The continuous indicators are replaced through their original counterparts
-            #   X_test_list[[m]][,exo_indicators[exo_indicators%in%cont_indicators]] <- X_test_scaled[,exo_indicators[exo_indicators%in%cont_indicators]]
-            # }
-            # }
-            # eta_hat_exo <- lapply(X_test_list, function(x) x%*%t(W_train[cons_exo, exo_indicators, drop = FALSE]))
-            # 
-            # 
-            # # Predict scores for the endogenous constructs (structural prediction)
-            # eta_hat_endo_star <- lapply(eta_hat_exo, function(x){
-            #   x %*% t(Gamma_train) %*% t(solve(diag(nrow(B_train)) - B_train))})
-            # 
-            # # Predict scores for indicators of endogenous constructs (communality prediction)
-            # X_hat_endo_star <- lapply(eta_hat_endo_star, function(x)
-            #   x %*% loadings_train[cons_endo, endo_indicators, drop = FALSE])
-            # 
-            # # Aggregation of the npred estimations via mean or median
-            # if(.approach_score == "mean"){
-            # X_hat_endo_star.mean <- X_hat_endo_star[[1]]
-            # X_hat_endo_star.mean[]<- tapply(unlist(X_hat_endo_star), 
-            #                                 rep(seq(length(X_hat_endo_star[[1]])),
-            #                                     length(X_hat_endo_star)), FUN=mean)
-            # 
-            # # Calculating the categorical variables for categorical indicators, 
-            # # for continuous indicators, the mean/median values are saved
-            # X_hat_rescaled <- X_hat_endo_star.mean
-            # for(m in colnames(X_hat_endo_star.mean)){
-            #   if(m %in% cat_indicators){
-            #   for(o in 1:length(X_hat_endo_star.mean[,1])){
-            #     X_hat_rescaled[o,m] <- findInterval(X_hat_endo_star.mean[o,m], thresholds[[m]])
-            #     }
-            #   }
-            # }
-            # }else if(.approach_score == "median"){
-            # X_hat_endo_star.median <- X_hat_endo_star[[1]]
-            # X_hat_endo_star.median[]<- tapply(unlist(X_hat_endo_star), 
-            #                                   rep(seq(length(X_hat_endo_star[[1]])),
-            #                                       length(X_hat_endo_star)), FUN=median)
-            # 
-            # X_hat_rescaled <- X_hat_endo_star.median
-            # for(m in colnames(X_hat_endo_star.median)){
-            #   if(m %in% cat_indicators){
-            #     for(o in 1:length(X_hat_endo_star.mean[,1])){
-            #       X_hat_rescaled[o,m] <- findInterval(X_hat_endo_star.median[o,m], thresholds[[m]])
-            #     }
-            #   }
-            # }
-            # }else if (.approach_score == "mode"){
-            #   
-            # }
-            # 
             Cov_ind <- Est$Estimates$Indicator_VCV
             X_hat <- matrix(0, nrow = nrow(X_test), ncol = length(endo_indicators),
                                      dimnames = list(rownames(X_test),endo_indicators))
@@ -711,46 +635,52 @@ predict <- function(
       out_all[[i]] <- out_temp
     }
     
-    # Compute average prediction over all .r runs that are not NA
-    out_temp <- lapply(purrr::transpose(out_all), function(x) {
-      
-      a <- apply(abind::abind(x, along = 3), 1:2, function(y) sum(y, na.rm = TRUE))
-      b <- Reduce("+", lapply(x, function(y) !is.na(y)))
-      
-      a / b
+    out_temp<- lapply(purrr::transpose(out_all), function(x) {
+      x <- do.call(rbind, x)
+      x <- x[order(as.numeric(rownames(x))), ]
+      x
     })
+    
+    # Compute average prediction over all .r runs that are not NA
+    #out_temp <- lapply(purrr::transpose(out_all), function(x) {
+      
+    #  a <- apply(abind::abind(x, along = 3), 1:2, function(y) sum(y, na.rm = TRUE))
+    #  b <- Reduce("+", lapply(x, function(y) !is.na(y)))
+      
+    #  a / b
+    #})
     
     ## Compute prediction metrics ------------------------------------------------
     
-    mae_target    <- apply(out_temp$Residuals_target, 2, function(x) mean(abs(x - mean(x))))
-    mae_benchmark <- apply(out_temp$Residuals_benchmark, 2, function(x) mean(abs(x - mean(x))))
-    rmse_target   <- apply(out_temp$Residuals_target, 2, function(x) sqrt(mean((x - mean(x))^2)))
-    rmse_benchmark<- apply(out_temp$Residuals_benchmark, 2, function(x) sqrt(mean((x - mean(x))^2)))
-    if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
-    concordance_target    <- mae_target
-    concordance_benchmark <- mae_benchmark
-    for(i in colnames(out_temp$Residuals_target)){
-      if(i%in%cat_indicators){
-        x <- out_temp$Residuals_target[,i]
-        concordance_target[i] <- length(x[x==0])/length(x)
-      }
-    }
-    for(i in colnames(out_temp$Residuals_benchmark)){
-      if(i%in%cat_indicators){
-        x <- out_temp$Residuals_benchmark[,i]
-        concordance_benchmark[i] <- length(x[x==0])/length(x)
-      }
-    }
-    }
+    mae_target    <- apply(na.omit(out_temp$Residuals_target), 2, function(x) mean(abs(x - mean(x))))
+    mae_benchmark <- apply(na.omit(out_temp$Residuals_benchmark), 2, function(x) mean(abs(x - mean(x))))
+    rmse_target   <- apply(na.omit(out_temp$Residuals_target), 2, function(x) sqrt(mean((x - mean(x))^2)))
+    rmse_benchmark<- apply(na.omit(out_temp$Residuals_benchmark), 2, function(x) sqrt(mean((x - mean(x))^2)))
+    concordance_target    <- apply(out_temp$Residuals_target, 2, function(x) length(x[x==0])/length(x))
+    concordance_benchmark <- apply(out_temp$Residuals_benchmark, 2, function(x) length(x[x==0])/length(x))
     
     q2_predict  <- c()
     for(i in colnames(out_temp$Residuals_target)) {
       
-      q2_predict[i] <- 1- sum((out_temp$Residuals_target[, i] - mean(out_temp$Residuals_target[, i]))^2) /
-        sum((out_temp$Residuals_mb[, i] - mean(out_temp$Residuals_mb[, i]))^2)
+      q2_predict[i] <- 1- sum((na.omit(out_temp$Residuals_target[, i]) - mean(na.omit(out_temp$Residuals_target[, i])))^2) /
+        sum((na.omit(out_temp$Residuals_mb[, i]) - mean(na.omit(out_temp$Residuals_mb[, i])))^2)
     }
     
-    if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
+    #if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
+    ## Create data frame
+    #df_metrics <- data.frame(
+    #  "Name"           = endo_indicators,
+    #  "MAE_target"     = mae_target,
+    #  "MAE_benchmark" = mae_benchmark,
+    #  "RMSE_target"    = rmse_target,
+    #  "RMSE_benchmark" = rmse_benchmark,
+    #  "Q2_predict"     = q2_predict,
+    #  "concordance_target" = concordance_target,
+    #  "concordance_benchmark" = concordance_benchmark,
+    #  stringsAsFactors = FALSE
+    #)
+    #}else{
+    
     ## Create data frame
     df_metrics <- data.frame(
       "Name"           = endo_indicators,
@@ -763,19 +693,7 @@ predict <- function(
       "concordance_benchmark" = concordance_benchmark,
       stringsAsFactors = FALSE
     )
-    }else{
-    
-    ## Create data frame
-    df_metrics <- data.frame(
-      "Name"           = endo_indicators,
-      "MAE_target"     = mae_target,
-      "MAE_benchmark" = mae_benchmark,
-      "RMSE_target"    = rmse_target,
-      "RMSE_benchmark" = rmse_benchmark,
-      "Q2_predict"     = q2_predict,
-      stringsAsFactors = FALSE
-    )
-    }
+    #}
     rownames(df_metrics) <- NULL
     
     if(.benchmark == "PLS-PM" && !all(.object$Information$Type_of_indicator_correlation == 'Pearson')
