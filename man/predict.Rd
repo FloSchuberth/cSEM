@@ -9,7 +9,7 @@ predict(
  .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
- .r                    = 10,
+ .r                    = 1,
  .test_data            = NULL,
  .approach_score_target= c("mean", "median", "mode"),
  .sim_points           = 100,
@@ -113,7 +113,7 @@ split the data into training and test data and subsequently predicts the
 relevant values in the test data based on the model parameter estimates obtained
 using the training data. The number of cross-validation folds is 10 by default but
 may be changed using the \code{.cv_folds} argument.
-By default, the procedure is repeated \code{.r = 10} times to avoid irregularities
+By default, the procedure is repeated \code{.r = 1} times to avoid irregularities
 due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for
 details.
 
