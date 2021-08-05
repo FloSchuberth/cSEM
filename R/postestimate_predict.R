@@ -11,7 +11,7 @@
 #' relevant values in the test data based on the model parameter estimates obtained 
 #' using the training data. The number of cross-validation folds is 10 by default but
 #' may be changed using the `.cv_folds` argument.
-#' By default, the procedure is repeated `.r = 10` times to avoid irregularities
+#' By default, the procedure is repeated `.r = 1` times to avoid irregularities
 #' due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for 
 #' details.
 #' 
@@ -66,7 +66,7 @@
 #'  .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
 #'  .cv_folds             = 10,
 #'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
-#'  .r                    = 10,
+#'  .r                    = 1,
 #'  .test_data            = NULL,
 #'  .approach_score_target= c("mean", "median", "mode"),
 #'  .sim_points           = 100,
@@ -125,12 +125,12 @@ predict <- function(
   .benchmark                = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
   .cv_folds                 = 10,
   .handle_inadmissibles     = c("stop", "ignore", "set_NA"),
-  .r                        = 10,
+  .r                        = 1,
   .test_data                = NULL,
   .approach_score_target    = c("mean", "median", "mode"),
   .sim_points               = 100,
   .disattenuate             = TRUE,
-  .treat_as_continuous      = FALSE,
+  .treat_as_continuous      = TRUE,
   .approach_score_benchmark = c("mean", "median", "mode", "round")
   ) {
   
@@ -530,7 +530,7 @@ predict <- function(
                     if (min(X_hat_endo_star[, z]) < breaks[1]) breaks[1] <- min(X_hat_endo_star[, z])
                     if (max(X_hat_endo_star[, z]) > breaks[length(breaks)]) breaks[length(breaks)] <- max(X_hat_endo_star[, z])
                     
-                    X_hat[o,z] <- which.max(hist(X_hat_endo_star[, z], breaks = breaks, plot = FALSE)$density)
+                    X_hat[o,z] <- which.max(graphics::hist(X_hat_endo_star[, z], breaks = breaks, plot = FALSE)$density)
                   }
                 }
                 

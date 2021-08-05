@@ -84,5 +84,6 @@ Suggests:
     listviewer,
     testthat,
     ggplot2,
-    openxlsx
+    openxlsx,
+    graphics
 VignetteBuilder: knitr
