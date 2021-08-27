@@ -36,7 +36,6 @@
 #'  .R                     = 499, 
 #'  .saturated             = FALSE,
 #'  .seed                  = NULL,
-#'  .verbose               = TRUE,
 #'  ...
 #' )
 #' 
@@ -70,7 +69,6 @@ testOMF <- function(
   .R                     = 499, 
   .saturated             = FALSE,
   .seed                  = NULL,
-  .verbose               = TRUE,
   ...
 ) {
   
@@ -97,7 +95,6 @@ testOMF <- function(
                   .R                    = .R,
                   .saturated            = .saturated,
                   .seed                 = .seed,
-                  .verbose              = .verbose,
                   ...
     )
     ## Return
@@ -123,11 +120,6 @@ testOMF <- function(
       "`.object` must be a `cSEMResults` object."
     )
   }
-  
-  # if(.verbose) {
-  #   cat(rule2("Test for overall model fit based on Beran & Srivastava (1985)",
-  #             type = 3), "\n\n")
-  # }
   
   ### Checks and errors ========================================================
   ## Check if initial results are inadmissible

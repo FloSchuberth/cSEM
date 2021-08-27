@@ -16,5 +16,5 @@ eta3 =~ y31 + y32 + y33
 out <- csem(threecommonfactors, model, .approach_weights = "PLS-PM")
 
 ## Test
-testOMF(out, .R = 50, .verbose = FALSE, .seed = 320)
+testOMF(out, .R = 50, .seed = 320)
 }

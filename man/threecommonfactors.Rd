@@ -46,6 +46,6 @@ eta3 =~ y31 + y32 + y33
 a <- csem(threecommonfactors, model_correct)
 
 ## The overall model fit is evidently almost perfect:
-testOMF(a, .R = 30, .verbose = FALSE) # .R = 30 to speed up the example
+testOMF(a, .R = 30) # .R = 30 to speed up the example
 }
 \keyword{datasets}

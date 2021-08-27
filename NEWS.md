@@ -1,5 +1,7 @@
 # <Development version: cSEM 0.4.0.9000
 
+- Removed argument `.verbose` from `testOMF()` as it did not have any effect (#445).
+
 - Bug fix: GSCAm (i.e., `.approach_weights = "GSCA"` with constructs modeled as 
   common factors) no longer fails when a single indicator construct is supplied (#441)
   
