@@ -158,8 +158,13 @@
  .benchmark            <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"lm"</span>, <span class='st'>"unit"</span>, <span class='st'>"PLS-PM"</span>, <span class='st'>"GSCA"</span>, <span class='st'>"PCA"</span>, <span class='st'>"MAXVAR"</span><span class='op'>)</span>,
  .cv_folds             <span class='op'>=</span> <span class='fl'>10</span>,
  .handle_inadmissibles <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"stop"</span>, <span class='st'>"ignore"</span>, <span class='st'>"set_NA"</span><span class='op'>)</span>,
- .r                    <span class='op'>=</span> <span class='fl'>10</span>,
- .test_data            <span class='op'>=</span> <span class='cn'>NULL</span>
+ .r                    <span class='op'>=</span> <span class='fl'>1</span>,
+ .test_data            <span class='op'>=</span> <span class='cn'>NULL</span>,
+ .approach_score_target<span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mean"</span>, <span class='st'>"median"</span>, <span class='st'>"mode"</span><span class='op'>)</span>,
+ .sim_points           <span class='op'>=</span> <span class='fl'>100</span>,
+ .disattenuate         <span class='op'>=</span> <span class='cn'>TRUE</span>,
+ .treat_as_continuous  <span class='op'>=</span> <span class='cn'>TRUE</span>,
+ .approach_score_benchmark <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mean"</span>, <span class='st'>"median"</span>, <span class='st'>"mode"</span>, <span class='st'>"round"</span><span class='op'>)</span>
  <span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -185,7 +190,7 @@ leave-one-out cross-validation samples. Defaults to <code>10</code>.</p></td>
       <th>.handle_inadmissibles</th>
       <td><p>Character string. How should inadmissible results
 be treated? One of "<em>stop</em>", "<em>ignore</em>", or "<em>set_NA</em>". If "<em>stop</em>", <code>predict()</code>
-will stop immediatly if estimation yields an inadmissible result.
+will stop immediately if estimation yields an inadmissible result.
 For "<em>ignore</em>" all results are returned even if all or some of the estimates
 yielded inadmissible results.
 For "<em>set_NA</em>" predictions based on inadmissible parameter estimates are
@@ -193,12 +198,53 @@ set to <code>NA</code>. Defaults to "<em>stop</em>"</p></td>
     </tr>
     <tr>
       <th>.r</th>
-      <td><p>Integer. The number of repetitions to use. Defaults to <code>10</code>.</p></td>
+      <td><p>Integer. The number of repetitions to use. Defaults to <code>1</code>.</p></td>
     </tr>
     <tr>
       <th>.test_data</th>
       <td><p>A matrix of test data with the same column names as the
 training data.</p></td>
+    </tr>
+    <tr>
+      <th>.approach_score_target</th>
+      <td><p>Character string. How should the aggregation of the estimates of
+the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
+One of "<em>mean</em>" or "<em>median</em>" or "<em>mode</em>".
+If "<em>mean</em>", the mean of the estimated endogenous indicators is calculated.
+If "<em>median</em>", the mean of the estimated endogenous indicators is calculated.
+If "<em>mode</em>", the maximum empirical density on the intervals defined by the thresholds
+is used. Defaults to "<em>mean</em>".</p></td>
+    </tr>
+    <tr>
+      <th>.sim_points</th>
+      <td><p>Integer. How many samples from the truncated normal distribution should
+be simulated to estimate the exogenous construct scores? Defaults to "<em>100</em>".</p></td>
+    </tr>
+    <tr>
+      <th>.disattenuate</th>
+      <td><p>Logical. Should the benchmark predictions be based on
+disattenuated parameter estimates? Defaults to <code>TRUE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>.treat_as_continuous</th>
+      <td><p>Logical. Should the indicators for the benchmark predictions
+be treated as continuous? If <code>TRUE</code> all indicators are treated as continuous and PLS-PM/PLSc is applied.
+If <code>FALSE</code> OrdPLS/OrdPLSc is applied. Defaults to <code>TRUE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>.approach_score_benchmark</th>
+      <td><p>Character string. How should the aggregation
+of the estimates of the truncated normal distribution be done for the
+benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
+One of "<em>mean</em>" or "<em>median</em>" or "<em>mode</em>" or "<em>round</em>".
+If "<em>round</em>", the benchmark predictions are obtained using the traditional prediction
+algorithm for PLS-PM which are rounded for categorical indicators.
+If "<em>mean</em>", the mean of the estimated endogenous indicators is calculated.
+If "<em>median</em>", the mean of the estimated endogenous indicators is calculated.
+If "<em>mode</em>", the maximum empirical density on the intervals defined by the thresholds
+is used.
+If <code>.treat_as_continuous = TRUE</code> or if all indicators are on a continuous scale,
+<code>.approach_score_benchmark</code> is ignored. Defaults to "<em>round</em>".</p></td>
     </tr>
     </table>
 
@@ -218,7 +264,10 @@ based on the target model.</p></dd>
 of the endogenous constructs based on a model estimated by the procedure
 given to <code>.benchmark</code>.</p></dd>
 <dt><code>$Prediction_metrics</code></dt><dd><p>A data frame containing the predictions metrics
-MAE, RMSE, and Q2_predict.</p></dd>
+MAE, RMSE, and Q2_predict. In case of catgorical indicators, the concordance
+is also included. Please note that the concordance can only be obtained for categorical
+indicators. In case of continuous indicators, the concordance is set to the
+MAE value.</p></dd>
 <dt><code>$Information</code></dt><dd><p>A list with elements
 <code>Target</code>, <code>Benchmark</code>,
 <code>Number_of_observations_training</code>, <code>Number_of_observations_test</code>, <code>Number_of_folds</code>,
@@ -238,10 +287,11 @@ split the data into training and test data and subsequently predicts the
 relevant values in the test data based on the model parameter estimates obtained
 using the training data. The number of cross-validation folds is 10 by default but
 may be changed using the <code>.cv_folds</code> argument.
-By default, the procedure is repeated <code>.r = 10</code> times to avoid irregularities
-due to a particular split. See Shmueli et al. (2019)
+By default, the procedure is not repeated (<code>.r = 1</code>). You may choose to repeat
+cross-validation by setting a higher <code>.r</code> to be sure not to have a particular
+(unfortunate) split. See Shmueli et al. (2019)
  for
-details.</p>
+details. Typically <code>.r = 1</code> should be sufficient though.</p>
 <p>Alternatively, users may supply a matrix or a data frame of <code>.test_data</code> with
 the same column names as those in the data used to obtain <code>.object</code> (the training data).
 In this case, arguments <code>.cv_folds</code> and <code>.r</code> are
@@ -316,6 +366,8 @@ doi: <a href='https://doi.org/10.1108/ejm-02-2019-0189'>10.1108/ejm-02-2019-0189
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># Predict using a user-supplied training data set</span></span>
 <span class='r-in'><span class='va'>pp</span> <span class='op'>&lt;-</span> <span class='fu'>predict</span><span class='op'>(</span><span class='va'>res</span>, .test_data <span class='op'>=</span> <span class='va'>dat_test</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>The following warning occured in the `predict()` function:</span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> Disattenuation is not applicable to benchmark `lm` and ignored.</span>
 <span class='r-in'><span class='va'>pp</span><span class='op'>$</span><span class='va'>Predictions_target</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>, <span class='op'>]</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>         AA0      AA1      AA2      AA3</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 1 2.6721142 3.043641 3.188336 3.404801</span>
@@ -333,8 +385,10 @@ doi: <a href='https://doi.org/10.1108/ejm-02-2019-0189'>10.1108/ejm-02-2019-0189
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 	Number of cv folds                 = NA</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 	Number of repetitions              = 1</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 	Handle inadmissibles               = stop</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Target                             = 'PLS-PM'</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Benchmark                          = 'lm'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Estimator target                   = 'PLS-PM'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Estimator benchmark                = 'lm'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Disattenuation target              = 'FALSE'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Disattenuation benchmark           = 'FALSE'</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> ------------------------------ Prediction metrics ------------------------------</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
@@ -355,13 +409,66 @@ doi: <a href='https://doi.org/10.1108/ejm-02-2019-0189'>10.1108/ejm-02-2019-0189
 <span class='r-in'>            .PLS_weight_scheme_inner <span class='op'>=</span> <span class='st'>"factorial"</span></span>
 <span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'><span class='co'># Predict using 10-fold cross-validation with 5 repetitions</span></span>
+<span class='r-in'><span class='co'># Predict using 10-fold cross-validation</span></span>
 <span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
 <span class='r-in'><span class='va'>pp2</span> <span class='op'>&lt;-</span> <span class='fu'>predict</span><span class='op'>(</span><span class='va'>res</span>, .benchmark <span class='op'>=</span> <span class='st'>"lm"</span><span class='op'>)</span></span>
 <span class='r-in'><span class='va'>pp2</span></span>
 <span class='r-in'><span class='co'>## There is a plot method available</span></span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>pp2</span><span class='op'>)</span><span class='op'>}</span></span>
 <span class='r-in'></span>
+<span class='r-in'><span class='co'>### Example using OrdPLScPredict -----------------------------------------------</span></span>
+<span class='r-in'><span class='co'># Transform the numerical indicators into factors</span></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"BergamiBagozzi2000"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>data_new</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>cei1    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>cei1</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       cei2    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>cei2</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       cei3    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>cei3</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       cei4    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>cei4</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       cei5    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>cei5</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       cei6    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>cei6</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       cei7    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>cei7</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       cei8    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>cei8</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       ma1     <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>ma1</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       ma2     <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>ma2</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       ma3     <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>ma3</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       ma4     <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>ma4</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       ma5     <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>ma5</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       ma6     <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>ma6</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       orgcmt1 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>orgcmt1</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       orgcmt2 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>orgcmt2</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       orgcmt3 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>orgcmt3</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       orgcmt5 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>orgcmt5</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       orgcmt6 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>orgcmt6</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       orgcmt7 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>orgcmt7</span><span class='op'>)</span>,</span>
+<span class='r-in'>                       orgcmt8 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>as.ordered</a></span><span class='op'>(</span><span class='va'>BergamiBagozzi2000</span><span class='op'>$</span><span class='va'>orgcmt8</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>model</span> <span class='op'>&lt;-</span> <span class='st'>"</span>
+<span class='r-in'># Measurement models</span>
+<span class='r-in'>OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8</span>
+<span class='r-in'>OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6</span>
+<span class='r-in'>AffJoy  =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7</span>
+<span class='r-in'>AffLove =~ orgcmt5 + orgcmt 6 + orgcmt8</span>
+<span class='r-in'></span>
+<span class='r-in'># Structural model</span>
+<span class='r-in'>OrgIden ~ OrgPres</span>
+<span class='r-in'>AffLove ~ OrgIden</span>
+<span class='r-in'>AffJoy  ~ OrgIden </span>
+<span class='r-in'>"</span></span>
+<span class='r-in'><span class='co'># Estimate using cSEM; note: the fact that indicators are factors triggers OrdPLSc</span></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span>.model <span class='op'>=</span> <span class='va'>model</span>, .data <span class='op'>=</span> <span class='va'>data_new</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>250</span>,<span class='op'>]</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='summarize.html'>summarize</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Predict using OrdPLSPredict</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>123</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>pred</span> <span class='op'>&lt;-</span> <span class='fu'>predict</span><span class='op'>(</span></span>
+<span class='r-in'>  .object <span class='op'>=</span> <span class='va'>res</span>, </span>
+<span class='r-in'>  .benchmark <span class='op'>=</span> <span class='st'>"PLS-PM"</span>,</span>
+<span class='r-in'>  .test_data <span class='op'>=</span> <span class='va'>data_new</span><span class='op'>[</span><span class='op'>(</span><span class='fl'>251</span><span class='op'>)</span><span class='op'>:</span><span class='fl'>305</span>,<span class='op'>]</span>,</span>
+<span class='r-in'>   .treat_as_continuous <span class='op'>=</span> <span class='cn'>TRUE</span>, .approach_score_target <span class='op'>=</span> <span class='st'>"median"</span></span>
+<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>pred</span> </span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='op'>(</span><span class='va'>pred</span><span class='op'>$</span><span class='va'>Prediction_metrics</span><span class='op'>[</span>, <span class='op'>-</span><span class='fl'>1</span><span class='op'>]</span>, <span class='fl'>4</span><span class='op'>)</span><span class='op'>}</span></span>
 </code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

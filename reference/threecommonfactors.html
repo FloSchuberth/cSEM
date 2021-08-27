@@ -193,7 +193,7 @@ $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
 <span class='r-in'><span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='csem.html'>csem</a></span><span class='op'>(</span><span class='va'>threecommonfactors</span>, <span class='va'>model_correct</span><span class='op'>)</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'>## The overall model fit is evidently almost perfect:</span></span>
-<span class='r-in'><span class='fu'><a href='testOMF.html'>testOMF</a></span><span class='op'>(</span><span class='va'>a</span>, .R <span class='op'>=</span> <span class='fl'>30</span>, .verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span> <span class='co'># .R = 30 to speed up the example</span></span>
+<span class='r-in'><span class='fu'><a href='testOMF.html'>testOMF</a></span><span class='op'>(</span><span class='va'>a</span>, .R <span class='op'>=</span> <span class='fl'>30</span><span class='op'>)</span> <span class='co'># .R = 30 to speed up the example</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> --------- Test for overall model fit based on Beran &amp; Srivastava (1985) --------</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
@@ -210,10 +210,10 @@ $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 	                                  	Critical value</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 	Distance measure    Test statistic	  95% 	</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dG                      0.0060    	0.0164	</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 	SRMR                    0.0158    	0.0261	</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dL                      0.0112    	0.0308	</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dML                     0.0320    	0.0869	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dG                      0.0060    	0.0211	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	SRMR                    0.0158    	0.0259	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dL                      0.0112    	0.0302	</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	dML                     0.0320    	0.1098	</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 	</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Decision: </span>
@@ -230,7 +230,7 @@ $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 	Out of 30 bootstrap replications 30 are admissible.</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 	See <span style='color: #BBBB00;'>?</span><span style='color: #BB00BB;'>verify</span>() for what constitutes an inadmissible result.</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 	The seed used was: -267743197</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	The seed used was: 357282015</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> ________________________________________________________________________________</span>
 </code></pre></div>
   </div>

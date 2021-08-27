@@ -231,6 +231,31 @@ structural coefficients. One of: "<em>OLS</em>" or "<em>2SLS</em>". If "<em>2SLS
 need to be supplied to <code>.instruments</code>. Defaults to "<em>OLS</em>".</p></td>
     </tr>
     <tr>
+      <th>.approach_score_benchmark</th>
+      <td><p>Character string. How should the aggregation
+of the estimates of the truncated normal distribution be done for the
+benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
+One of "<em>mean</em>" or "<em>median</em>" or "<em>mode</em>" or "<em>round</em>".
+If "<em>round</em>", the benchmark predictions are obtained using the traditional prediction
+algorithm for PLS-PM which are rounded for categorical indicators.
+If "<em>mean</em>", the mean of the estimated endogenous indicators is calculated.
+If "<em>median</em>", the mean of the estimated endogenous indicators is calculated.
+If "<em>mode</em>", the maximum empirical density on the intervals defined by the thresholds
+is used.
+If <code>.treat_as_continuous = TRUE</code> or if all indicators are on a continuous scale,
+<code>.approach_score_benchmark</code> is ignored. Defaults to "<em>round</em>".</p></td>
+    </tr>
+    <tr>
+      <th>.approach_score_target</th>
+      <td><p>Character string. How should the aggregation of the estimates of
+the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
+One of "<em>mean</em>" or "<em>median</em>" or "<em>mode</em>".
+If "<em>mean</em>", the mean of the estimated endogenous indicators is calculated.
+If "<em>median</em>", the mean of the estimated endogenous indicators is calculated.
+If "<em>mode</em>", the maximum empirical density on the intervals defined by the thresholds
+is used. Defaults to "<em>mean</em>".</p></td>
+    </tr>
+    <tr>
       <th>.approach_weights</th>
       <td><p>Character string. Approach used to
 obtain composite weights. One of: "<em>PLS-PM</em>", "<em>SUMCORR</em>", "<em>MAXVAR</em>",
@@ -666,7 +691,7 @@ of each row.</p></td>
     </tr>
     <tr>
       <th>.r</th>
-      <td><p>Integer. The number of repetitions to use. Defaults to <code>10</code>.</p></td>
+      <td><p>Integer. The number of repetitions to use. Defaults to <code>1</code>.</p></td>
     </tr>
     <tr>
       <th>.R</th>
@@ -714,6 +739,11 @@ be used to handle flipping signs when resampling? One of "<em>none</em>","<em>in
 "<em>individual_reestimate</em>", "<em>construct_reestimate</em>". Defaults to "<em>none</em>".</p></td>
     </tr>
     <tr>
+      <th>.sim_points</th>
+      <td><p>Integer. How many samples from the truncated normal distribution should
+be simulated to estimate the exogenous construct scores? Defaults to "<em>100</em>".</p></td>
+    </tr>
+    <tr>
       <th>.stage</th>
       <td><p>Character string. The stage the model is needed for.
 One of "<em>first</em>" or "<em>second</em>". Defaults to "<em>first</em>".</p></td>
@@ -749,6 +779,12 @@ training data.</p></td>
       <th>.tolerance</th>
       <td><p>Double. The tolerance criterion for convergence.
 Defaults to <code>1e-05</code>.</p></td>
+    </tr>
+    <tr>
+      <th>.treat_as_continuous</th>
+      <td><p>Logical. Should the indicators for the benchmark predictions
+be treated as continuous? If <code>TRUE</code> all indicators are treated as continuous and PLS-PM/PLSc is applied.
+If <code>FALSE</code> OrdPLS/OrdPLSc is applied. Defaults to <code>TRUE</code>.</p></td>
     </tr>
     <tr>
       <th>.type_gfi</th>
