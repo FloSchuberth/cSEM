@@ -19,7 +19,7 @@ printSummarizeOverview <- function(.summarize_object) {
     col_align("\n\tNumber of observations", 35), "= ", nrow(x$Arguments$.data),
     col_align("\n\tWeight estimator", 35), "= ", 
     ifelse(x$Arguments$.approach_weights == "PLS-PM" && 
-             x$Type_of_indicator_correlation %in% c("Polychoric", "Polyserial"), 
+             !all(x$Type_of_indicator_correlation == 'Pearson'), 
            "PLS-PM (OrdPLS)", x$Arguments$.approach_weights)
   )
   
