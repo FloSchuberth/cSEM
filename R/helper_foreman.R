@@ -269,7 +269,6 @@ calculateIndicatorCor <- function(
                              dimnames = list(colnames(.X_cleaned), colnames(.X_cleaned)))
               # matrix containing the type of correlation 
               cor_type <- S
-              diag(cor_type) <- ""
               
               # list for the thresholds
               thres_est <- NULL
@@ -343,7 +342,7 @@ calculateIndicatorCor <- function(
               S <- S + t(S)
               diag(S) <- 1
               cor_type <- unique(c(cor_type))
-              cor_type <- cor_type[which(nchar(cor_type) != 0)]
+              cor_type <- cor_type[cor_type != "0"]
               
             
               
