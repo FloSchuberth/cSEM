@@ -199,6 +199,7 @@ plot(pp2)}
 
 ### Example using OrdPLScPredict -----------------------------------------------
 # Transform the numerical indicators into factors
+\dontrun{
 data("BergamiBagozzi2000")
 data_new <- data.frame(cei1    = as.ordered(BergamiBagozzi2000$cei1),
                        cei2    = as.ordered(BergamiBagozzi2000$cei2),
@@ -248,7 +249,7 @@ pred <- predict(
   )
 
 pred 
-round(pred$Prediction_metrics[, -1], 4)
+round(pred$Prediction_metrics[, -1], 4)}
 }
 \references{
 \insertAllCited{}
