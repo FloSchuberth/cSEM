@@ -4,7 +4,7 @@ Version: 0.4.0.9000
 Date: 2021-04-20
 Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut", "cre"),
-                    email = "manuel.rademaker@uni-wuerzburg.de",
+                    email = "manuel-rademaker@outlook.de",
                     comment = c(ORCID = "0000-0002-8902-3561")),
              person(given = "Florian", family = "Schuberth",
                     role  = c("aut"),
@@ -25,7 +25,7 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("ctb"),
                     email = "",
                     comment = c(ORCID = "0000-0002-9736-3048")))
-Maintainer: Manuel E. Rademaker <manuel.rademaker@uni-wuerzburg.de>
+Maintainer: Manuel E. Rademaker <manuel-rademaker@outlook.de>
 Depends: R (>= 3.5.0)
 Description: Estimate, assess, test, and study linear, nonlinear, hierarchical 
   and multigroup structural equation models using composite-based approaches 

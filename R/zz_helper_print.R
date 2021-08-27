@@ -264,6 +264,13 @@ printSummarizeLoadingsWeights <- function(.summarize_object, .ci_colnames) {
     }
     
     for(i in 1:nrow(x)) {
+      # Note (19.05.2021): infer() also computes standard deviations and confidence
+      # intervals for constant values. Because of floating point impressions
+      # its possible that the sd is not exactly zero in some instances. This
+      # messes up the print method. In this case, set to NA
+      if(isTRUE(all.equal(x[i, "Std_err"], 0))) {
+        x[i, 4:ncol(x)] <- NA
+      }
       cat2(
         "\n  ", 
         col_align(x[i, "Name"], max(l, nchar(.what)) + 2), 

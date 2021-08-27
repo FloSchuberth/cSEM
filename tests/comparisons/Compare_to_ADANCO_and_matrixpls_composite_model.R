@@ -1,11 +1,11 @@
 #===============================================================================
 #
-#   Topic: Compare results from cSEM (0.1.0.9000), ADANCO 2.1.1., 
-#          and matrixpls (v. 1.0.6)
+#   Topic: Compare results from cSEM (0.4.0.9000), ADANCO 2.2.1., 
+#          and matrixpls (v. 1.0.13)
 #
 #   Type of model: common factor model
 #
-#   Date: 21.01.2020
+#   Date: 19.07.2021
 #
 #===============================================================================
 rm(list = ls())
@@ -13,9 +13,9 @@ rm(list = ls())
 require(cSEM)
 require(xlsx)
 require(matrixpls)
-data("satisfaction")
+data("satisfaction", package = "cSEM")
 
-path_to_results <- "tests/comparisons/results_composite_model.xls"
+path_to_results <- "tests/comparisons/results_composite_model_adanco_2_2_1_centroid.xls"
 
 ### Import ADANCO results ------------------------------------------------------
 ## Import weights
@@ -166,7 +166,7 @@ a1 <- csem(
   .tolerance                   = 1e-06,
   .PLS_modes                   = NULL,
   .PLS_ignore_structural_model = FALSE,
-  .PLS_weight_scheme_inner     = "factorial" 
+  .PLS_weight_scheme_inner     = "centroid" 
 )
 suma1 <- cSEM:::summarize(a1)
 assa1 <- assess(a1, .only_common_factors = FALSE)
@@ -175,7 +175,7 @@ assa1 <- assess(a1, .only_common_factors = FALSE)
 a2 <- matrixpls(S          = cor(satisfaction),
                 model       = model,
                 standardize = TRUE,
-                innerEstim  = innerEstim.factor,
+                innerEstim  = innerEstim.centroid,
                 ignoreInnerModel = FALSE,
                 outerEstim  = outerEstim.modeB,
                 tol = 1e-06
@@ -251,20 +251,17 @@ round(fit(a1, .type_vcv = "construct") - V_eta_ADANCO, 8) # identical at the 8th
 ### Quality criteria -------------------------------------------------------------
 ## Overall model fit
 # SRMR, dG dL
-# Note: the fitted function in ADANCO is not correct. Reason: the model-implied
-# construct correlation matrix does not always have ones on its main diagonal,
-# i.e. the variance of some constructs (those deeper down the nomologial net)
 
 ## Distance measures for saturated model
 cSEM:::calculateSRMR(a1, .saturated = TRUE) - gof_s_ADANCO["SRMR"] # identical at the 8th sig digit
-# cSEM:::calculateDL(a1, .saturated = TRUE) - gof_s_ADANCO["dULS"] # not computed by ADANCO
-# cSEM:::calculateDG(a1, .saturated = TRUE) - gof_s_ADANCO["dG"] # not computed by ADANCO
+cSEM:::calculateDL(a1, .saturated = TRUE) - gof_s_ADANCO["dULS"] # identical at the 8th sig digit
+cSEM:::calculateDG(a1, .saturated = TRUE) - gof_s_ADANCO["dG"] # identical at the 8th sig digit
 # no measures for matrixpls
 
 ## Distance measures for estimated model
-cSEM:::calculateSRMR(a1) - gof_e_ADANCO["SRMR"] # different, since model-implied vcv is different
-# cSEM:::calculateDL(a1) - gof_e_ADANCO["dULS"] # not computed by ADANCO
-# cSEM:::calculateDG(a1) - gof_e_ADANCO["dG"] # not computed by ADANCO
+cSEM:::calculateSRMR(a1) - gof_e_ADANCO["SRMR"] # identical at the 8th sig digit
+cSEM:::calculateDL(a1) - gof_e_ADANCO["dULS"] # identical at the 8th sig digit
+cSEM:::calculateDG(a1) - gof_e_ADANCO["dG"] # identical at the 8th sig digit
 
 # cSEM:::calculateSRMR(a1) - resid_matpls$indices[1] # not computed by matrixpls
 
@@ -290,7 +287,7 @@ assa1$`Fornell-Larcker` - fl_ADANCO # identical to ADANCO except for main diagon
 
 ## Cohens f^2
 f2_ADANCO
-assa1$Effect_size # identical to ADANCO
+assa1$F2 # identical to ADANCO
 
 # no measure for matrixpls
 
@@ -299,7 +296,7 @@ assa1$Effect_size # identical to ADANCO
 # assa1$reliability$Joereskogs_rho - reliability_ADANCO$JÃ.reskog.s.rho..Ï.c. # not computed by ADANCO
 # assa1$reliability$Cronbachs_alpha - reliability_ADANCO$`Cronbach.s.alpha.Î..` # not computed by ADANCO
 
-assa1$reliability$Joereskogs_rho - suma2$cr # not computed by matrixpls
+assa1$Reliability$Joereskogs_rho - suma2$cr # not computed by matrixpls
 
 ## GoF
 assa1$GoF -  suma2$gof # not computed by matrixpls

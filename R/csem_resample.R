@@ -501,7 +501,7 @@ resamplecSEMResults <- function(
   ## Does .object already contain resamples
   if(inherits(.object, "cSEMResults_resampled")) {
     if(.force) {
-      # Delte resamples
+      # Delete resamples
       if(inherits(.object, "cSEMResults_default")) {
         .object$Estimates[["Estimates_resample"]] <- NULL
         .object$Information[["Information_resample"]] <- NULL
@@ -568,7 +568,7 @@ resamplecSEMResults <- function(
     # drawing a random seed out of .Random.seed. If set.seed(seed = NULL) is not
     # called sample(.Random.seed, 1) would result in the same random seed as
     # long as .Random.seed remains unchanged. By resetting the seed we make 
-    # sure that sample draws a different element everytime it is called.
+    # sure that sample draws a different element every time it is called.
     .seed <- sample(.Random.seed, 1)
   }
   

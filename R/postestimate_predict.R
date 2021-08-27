@@ -311,6 +311,11 @@ predict <- function(
           (X_test[, x] - mean_train[x]) / sd_train[x]
         })
         
+        # If nrow = 1 sapply returns a vector, but We always need a matrix
+        if(!inherits(X_test_scaled, "matrix")) {
+          X_test_scaled <- matrix(X_test_scaled, nrow = 1)
+        }
+        
         # Keep rownames to be able to find individual observations
         colnames(X_test_scaled) <- colnames(X_test)
         rownames(X_test_scaled) <- rownames(X_test)
@@ -567,10 +572,17 @@ predict <- function(
             X_hat_rescaled <- sapply(colnames(X_hat), function(x) {
               mean_train[x] + X_hat[, x] * sd_train[x]
             })
-            # Select only endogenous indicators
-            X_hat_rescaled <- X_hat_rescaled[, endo_indicators]
+
+            # If nrow = 1 sapply returns a vector, but We always need a matrix
+            if(!inherits(X_hat_rescaled, "matrix")) {
+              X_hat_rescaled <- matrix(X_hat_rescaled, nrow = 1)
+              colnames(X_hat_rescaled) <- colnames(X_hat)
+              rownames(X_hat_rescaled) <- rownames(X_hat)
             }
             
+            # Select only endogenous indicators
+            X_hat_rescaled <- X_hat_rescaled[, endo_indicators, drop = FALSE]
+
             # Calculate the difference between original and predicted values
             residuals_target <- X_test[, endo_indicators] - X_hat_rescaled[, endo_indicators]
             
