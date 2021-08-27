@@ -9,8 +9,13 @@ predict(
  .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
- .r                    = 10,
- .test_data            = NULL
+ .r                    = 1,
+ .test_data            = NULL,
+ .approach_score_target= c("mean", "median", "mode"),
+ .sim_points           = 100,
+ .disattenuate         = TRUE,
+ .treat_as_continuous  = TRUE,
+ .approach_score_benchmark = c("mean", "median", "mode", "round")
  )
 }
 \arguments{
@@ -26,16 +31,47 @@ leave-one-out cross-validation samples. Defaults to \code{10}.}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results
 be treated? One of "\emph{stop}", "\emph{ignore}", or "\emph{set_NA}". If "\emph{stop}", \code{\link[=predict]{predict()}}
-will stop immediatly if estimation yields an inadmissible result.
+will stop immediately if estimation yields an inadmissible result.
 For "\emph{ignore}" all results are returned even if all or some of the estimates
 yielded inadmissible results.
 For "\emph{set_NA}" predictions based on inadmissible parameter estimates are
 set to \code{NA}. Defaults to "\emph{stop}"}
 
-\item{.r}{Integer. The number of repetitions to use. Defaults to \code{10}.}
+\item{.r}{Integer. The number of repetitions to use. Defaults to \code{1}.}
 
 \item{.test_data}{A matrix of test data with the same column names as the
 training data.}
+
+\item{.approach_score_target}{Character string. How should the aggregation of the estimates of
+the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
+One of "\emph{mean}" or "\emph{median}" or "\emph{mode}".
+If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{median}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{mode}", the maximum empirical density on the intervals defined by the thresholds
+is used. Defaults to "\emph{mean}".}
+
+\item{.sim_points}{Integer. How many samples from the truncated normal distribution should
+be simulated to estimate the exogenous construct scores? Defaults to "\emph{100}".}
+
+\item{.disattenuate}{Logical. Should the benchmark predictions be based on
+disattenuated parameter estimates? Defaults to \code{TRUE}.}
+
+\item{.treat_as_continuous}{Logical. Should the indicators for the benchmark predictions
+be treated as continuous? If \code{TRUE} all indicators are treated as continuous and PLS-PM/PLSc is applied.
+If \code{FALSE} OrdPLS/OrdPLSc is applied. Defaults to \code{TRUE}.}
+
+\item{.approach_score_benchmark}{Character string. How should the aggregation
+of the estimates of the truncated normal distribution be done for the
+benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
+One of "\emph{mean}" or "\emph{median}" or "\emph{mode}" or "\emph{round}".
+If "\emph{round}", the benchmark predictions are obtained using the traditional prediction
+algorithm for PLS-PM which are rounded for categorical indicators.
+If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{median}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{mode}", the maximum empirical density on the intervals defined by the thresholds
+is used.
+If \code{.treat_as_continuous = TRUE} or if all indicators are on a continuous scale,
+\code{.approach_score_benchmark} is ignored. Defaults to "\emph{round}".}
 }
 \value{
 An object of class \code{cSEMPredict} with print and plot methods.
@@ -53,7 +89,10 @@ based on the target model.}
 of the endogenous constructs based on a model estimated by the procedure
 given to \code{.benchmark}.}
 \item{\verb{$Prediction_metrics}}{A data frame containing the predictions metrics
-MAE, RMSE, and Q2_predict.}
+MAE, RMSE, and Q2_predict. In case of catgorical indicators, the concordance
+is also included. Please note that the concordance can only be obtained for categorical
+indicators. In case of continuous indicators, the concordance is set to the
+MAE value.}
 \item{\verb{$Information}}{A list with elements
 \code{Target}, \code{Benchmark},
 \code{Number_of_observations_training}, \code{Number_of_observations_test}, \code{Number_of_folds},
@@ -73,9 +112,10 @@ split the data into training and test data and subsequently predicts the
 relevant values in the test data based on the model parameter estimates obtained
 using the training data. The number of cross-validation folds is 10 by default but
 may be changed using the \code{.cv_folds} argument.
-By default, the procedure is repeated \code{.r = 10} times to avoid irregularities
-due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for
-details.
+By default, the procedure is not repeated (\code{.r = 1}). You may choose to repeat
+cross-validation by setting a higher \code{.r} to be sure not to have a particular
+(unfortunate) split. See \insertCite{Shmueli2019;textual}{cSEM} for
+details. Typically \code{.r = 1} should be sufficient though.
 
 Alternatively, users may supply a matrix or a data frame of \code{.test_data} with
 the same column names as those in the data used to obtain \code{.object} (the training data).
@@ -150,13 +190,65 @@ res2 <- csem(Anime, # whole data set
             .PLS_weight_scheme_inner = "factorial"
 )
 
-# Predict using 10-fold cross-validation with 5 repetitions
+# Predict using 10-fold cross-validation
 \dontrun{
 pp2 <- predict(res, .benchmark = "lm")
 pp2
 ## There is a plot method available
 plot(pp2)}
 
+### Example using OrdPLScPredict -----------------------------------------------
+# Transform the numerical indicators into factors
+data("BergamiBagozzi2000")
+data_new <- data.frame(cei1    = as.ordered(BergamiBagozzi2000$cei1),
+                       cei2    = as.ordered(BergamiBagozzi2000$cei2),
+                       cei3    = as.ordered(BergamiBagozzi2000$cei3),
+                       cei4    = as.ordered(BergamiBagozzi2000$cei4),
+                       cei5    = as.ordered(BergamiBagozzi2000$cei5),
+                       cei6    = as.ordered(BergamiBagozzi2000$cei6),
+                       cei7    = as.ordered(BergamiBagozzi2000$cei7),
+                       cei8    = as.ordered(BergamiBagozzi2000$cei8),
+                       ma1     = as.ordered(BergamiBagozzi2000$ma1),
+                       ma2     = as.ordered(BergamiBagozzi2000$ma2),
+                       ma3     = as.ordered(BergamiBagozzi2000$ma3),
+                       ma4     = as.ordered(BergamiBagozzi2000$ma4),
+                       ma5     = as.ordered(BergamiBagozzi2000$ma5),
+                       ma6     = as.ordered(BergamiBagozzi2000$ma6),
+                       orgcmt1 = as.ordered(BergamiBagozzi2000$orgcmt1),
+                       orgcmt2 = as.ordered(BergamiBagozzi2000$orgcmt2),
+                       orgcmt3 = as.ordered(BergamiBagozzi2000$orgcmt3),
+                       orgcmt5 = as.ordered(BergamiBagozzi2000$orgcmt5),
+                       orgcmt6 = as.ordered(BergamiBagozzi2000$orgcmt6),
+                       orgcmt7 = as.ordered(BergamiBagozzi2000$orgcmt7),
+                       orgcmt8 = as.ordered(BergamiBagozzi2000$orgcmt8))
+
+model <- "
+# Measurement models
+OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8
+OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
+AffJoy  =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+AffLove =~ orgcmt5 + orgcmt 6 + orgcmt8
+
+# Structural model
+OrgIden ~ OrgPres
+AffLove ~ OrgIden
+AffJoy  ~ OrgIden 
+"
+# Estimate using cSEM; note: the fact that indicators are factors triggers OrdPLSc
+res <- csem(.model = model, .data = data_new[1:250,])
+summarize(res)
+
+# Predict using OrdPLSPredict
+set.seed(123)
+pred <- predict(
+  .object = res, 
+  .benchmark = "PLS-PM",
+  .test_data = data_new[(251):305,],
+   .treat_as_continuous = TRUE, .approach_score_target = "median"
+  )
+
+pred 
+round(pred$Prediction_metrics[, -1], 4)
 }
 \references{
 \insertAllCited{}

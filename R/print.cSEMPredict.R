@@ -34,8 +34,10 @@ print.cSEMPredict <- function(x, ...) {
       col_align("\n\tNumber of cv folds", 35), "= ", x2$Number_of_folds,
       col_align("\n\tNumber of repetitions", 35), "= ", x2$Number_of_repetitions,
       col_align("\n\tHandle inadmissibles", 35), "= ", x2$Handle_inadmissibles,
-      col_align("\n\tTarget", 35), "= ", paste0("'", x2$Target, "'"),
-      col_align("\n\tBenchmark", 35), "= ", paste0("'", x2$Benchmark, "'")
+      col_align("\n\tEstimator target", 35), "= ", paste0("'", x2$Estimator_target, "'"),
+      col_align("\n\tEstimator benchmark", 35), "= ", paste0("'", x2$Estimator_benchmark, "'"),
+      col_align("\n\tDisattenuation target", 35), "= ", paste0("'", x2$Disattenuation_target, "'"),
+      col_align("\n\tDisattenuation benchmark", 35), "= ", paste0("'", x2$Disattenuation_benchmark, "'")
     )
     
     ### Prediction metricts-------------------------------------------------------
