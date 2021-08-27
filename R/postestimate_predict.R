@@ -11,9 +11,10 @@
 #' relevant values in the test data based on the model parameter estimates obtained 
 #' using the training data. The number of cross-validation folds is 10 by default but
 #' may be changed using the `.cv_folds` argument.
-#' By default, the procedure is repeated `.r = 1` times to avoid irregularities
-#' due to a particular split. See \insertCite{Shmueli2019;textual}{cSEM} for 
-#' details.
+#' By default, the procedure is not repeated (`.r = 1`). You may choose to repeat
+#' cross-validation by setting a higher `.r` to be sure not to have a particular 
+#' (unfortunate) split. See \insertCite{Shmueli2019;textual}{cSEM} for 
+#' details. Typically `.r = 1` should be sufficient though.
 #' 
 #' Alternatively, users may supply a matrix or a data frame of `.test_data` with 
 #' the same column names as those in the data used to obtain `.object` (the training data). 
@@ -78,38 +79,13 @@
 #' @inheritParams csem_arguments
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*stop*", "*ignore*", or "*set_NA*". If "*stop*", [predict()] 
-#'   will stop immediatly if estimation yields an inadmissible result.
+#'   will stop immediately if estimation yields an inadmissible result.
 #'   For "*ignore*" all results are returned even if all or some of the estimates
 #'   yielded inadmissible results. 
 #'   For "*set_NA*" predictions based on inadmissible parameter estimates are
 #'   set to `NA`. Defaults to "*stop*"
-#' @param .approach_score_target Character string. How should the aggregation of the estimates of
-#'   the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
-#'   One of "*mean*" or "*median*" or "*mode*". 
-#'   If "*mean*", the mean of the estimated endogenous indicators is calculated. 
-#'   If "*median*", the mean of the estimated endogenous indicators is calculated.
-#'   If "*mode*", the maximum empirical density on the intervals defined by the thresholds
-#'   is used. Defaults to "*mean*".
-#' @param .sim_points integer. How many samples from the truncated normal distribution should
-#'   be simulated to estimate the exogenous construct scores? Defaults to "*100*".
-#' @param .approach_score_benchmark Character string. How should the aggregation of the estimates of
-#'   the truncated normal distribution be done for the benchmark predictions? Is ignored
-#'   if not OrdPLS or OrdPLSc is used as benchmark predictions.
-#'   One of "*mean*" or "*median*" or "*mode*" or "*round*". 
-#'   If "*round*", the benchmark predictions are obtained using the traditional prediction
-#'   algorithm for PLS-PM which are rounded for categorical indicators.
-#'   If "*mean*", the mean of the estimated endogenous indicators is calculated. 
-#'   If "*median*", the mean of the estimated endogenous indicators is calculated.
-#'   If "*mode*", the maximum empirical density on the intervals defined by the thresholds
-#'   is used.
-#'   If "*.treat_as_continuous*" = TRUE or if all indicators are on a continuous scale,
-#'   .approach_score_benchmark is ignored. Defaults to "*round*".
-#' @param .disattenuate logical. Should the benchmark predictions be based on 
-#'   disattenuated parameter estimates? Defaults to "*TRUE*".
-#' @param .treat_as_continuous logical. Should the indicators for the benchmark predictions
-#'   be treated as continuous? If "*TRUE*" all indicators are treated as continuous and also
-#'   in case of categorical indicators PLS-PM/PLSc is applied. If "*FALSE*" in case of 
-#'   categorical indicators OrdPLS/OrdPLSc is applied. Defaults to "*TRUE*".
+#' @param .disattenuate Logical. Should the benchmark predictions be based on 
+#'   disattenuated parameter estimates? Defaults to `TRUE`.
 #'
 #' @seealso [csem], [cSEMResults], [exportToExcel()]
 #' 
@@ -210,7 +186,7 @@ predict <- function(
       .disattenuate <- FALSE
       warning2(
         "The following warning occured in the `predict()` function:\n",
-        "Disattenuation is not applicable for `", .benchmark, "`" 
+        "Disattenuation is not applicable to benchmark `", .benchmark, "` and ignored."
       )
     }
     
@@ -582,7 +558,7 @@ predict <- function(
             
             # Select only endogenous indicators
             X_hat_rescaled <- X_hat_rescaled[, endo_indicators, drop = FALSE]
-
+            }
             # Calculate the difference between original and predicted values
             residuals_target <- X_test[, endo_indicators] - X_hat_rescaled[, endo_indicators]
             

@@ -49,10 +49,62 @@ res2 <- csem(Anime, # whole data set
             .PLS_weight_scheme_inner = "factorial"
 )
 
-# Predict using 10-fold cross-validation with 5 repetitions
+# Predict using 10-fold cross-validation
 \dontrun{
 pp2 <- predict(res, .benchmark = "lm")
 pp2
 ## There is a plot method available
 plot(pp2)}
 
+### Example using OrdPLScPredict -----------------------------------------------
+# Transform the numerical indicators into factors
+data("BergamiBagozzi2000")
+data_new <- data.frame(cei1    = as.ordered(BergamiBagozzi2000$cei1),
+                       cei2    = as.ordered(BergamiBagozzi2000$cei2),
+                       cei3    = as.ordered(BergamiBagozzi2000$cei3),
+                       cei4    = as.ordered(BergamiBagozzi2000$cei4),
+                       cei5    = as.ordered(BergamiBagozzi2000$cei5),
+                       cei6    = as.ordered(BergamiBagozzi2000$cei6),
+                       cei7    = as.ordered(BergamiBagozzi2000$cei7),
+                       cei8    = as.ordered(BergamiBagozzi2000$cei8),
+                       ma1     = as.ordered(BergamiBagozzi2000$ma1),
+                       ma2     = as.ordered(BergamiBagozzi2000$ma2),
+                       ma3     = as.ordered(BergamiBagozzi2000$ma3),
+                       ma4     = as.ordered(BergamiBagozzi2000$ma4),
+                       ma5     = as.ordered(BergamiBagozzi2000$ma5),
+                       ma6     = as.ordered(BergamiBagozzi2000$ma6),
+                       orgcmt1 = as.ordered(BergamiBagozzi2000$orgcmt1),
+                       orgcmt2 = as.ordered(BergamiBagozzi2000$orgcmt2),
+                       orgcmt3 = as.ordered(BergamiBagozzi2000$orgcmt3),
+                       orgcmt5 = as.ordered(BergamiBagozzi2000$orgcmt5),
+                       orgcmt6 = as.ordered(BergamiBagozzi2000$orgcmt6),
+                       orgcmt7 = as.ordered(BergamiBagozzi2000$orgcmt7),
+                       orgcmt8 = as.ordered(BergamiBagozzi2000$orgcmt8))
+
+model <- "
+# Measurement models
+OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8
+OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
+AffJoy  =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
+AffLove =~ orgcmt5 + orgcmt 6 + orgcmt8
+
+# Structural model
+OrgIden ~ OrgPres
+AffLove ~ OrgIden
+AffJoy  ~ OrgIden 
+"
+# Estimate using cSEM; note: the fact that indicators are factors triggers OrdPLSc
+res <- csem(.model = model, .data = data_new[1:250,])
+summarize(res)
+
+# Predict using OrdPLSPredict
+set.seed(123)
+pred <- predict(
+  .object = res, 
+  .benchmark = "PLS-PM",
+  .test_data = data_new[(251):305,],
+   .treat_as_continuous = TRUE, .approach_score_target = "median"
+  )
+
+pred 
+round(pred$Prediction_metrics[, -1], 4)

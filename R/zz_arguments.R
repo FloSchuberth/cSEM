@@ -41,6 +41,25 @@
 #' @param .approach_paths Character string. Approach used to estimate the
 #'   structural coefficients. One of: "*OLS*" or "*2SLS*". If "*2SLS*", instruments
 #'   need to be supplied to `.instruments`. Defaults to "*OLS*".
+#' @param .approach_score_benchmark Character string. How should the aggregation
+#'   of the estimates of the truncated normal distribution be done for the 
+#'   benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
+#'   One of "*mean*" or "*median*" or "*mode*" or "*round*". 
+#'   If "*round*", the benchmark predictions are obtained using the traditional prediction
+#'   algorithm for PLS-PM which are rounded for categorical indicators.
+#'   If "*mean*", the mean of the estimated endogenous indicators is calculated. 
+#'   If "*median*", the mean of the estimated endogenous indicators is calculated.
+#'   If "*mode*", the maximum empirical density on the intervals defined by the thresholds
+#'   is used.
+#'   If `.treat_as_continuous = TRUE` or if all indicators are on a continuous scale,
+#'   `.approach_score_benchmark` is ignored. Defaults to "*round*".
+#' @param .approach_score_target Character string. How should the aggregation of the estimates of
+#'   the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
+#'   One of "*mean*" or "*median*" or "*mode*". 
+#'   If "*mean*", the mean of the estimated endogenous indicators is calculated. 
+#'   If "*median*", the mean of the estimated endogenous indicators is calculated.
+#'   If "*mode*", the maximum empirical density on the intervals defined by the thresholds
+#'   is used. Defaults to "*mean*".
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
 #'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
@@ -244,7 +263,7 @@
 #' @param .resample_sarstedt A matrix containing the parameter estimates that 
 #'   could potentially be compared and an id column indicating the group adherence
 #'   of each row.
-#' @param .r Integer. The number of repetitions to use. Defaults to `10`.
+#' @param .r Integer. The number of repetitions to use. Defaults to `1`.
 #' @param .R Integer. The number of bootstrap replications. Defaults to `499`.
 #' @param .R2 Integer. The number of bootstrap replications to use when 
 #'   resampling from a resample. Defaults to `199`.
@@ -263,6 +282,8 @@
 #' @param .sign_change_option Character string. Which sign change option should 
 #' be used to handle flipping signs when resampling? One of "*none*","*individual*",
 #' "*individual_reestimate*", "*construct_reestimate*". Defaults to "*none*".
+#' @param .sim_points Integer. How many samples from the truncated normal distribution should
+#'   be simulated to estimate the exogenous construct scores? Defaults to "*100*".
 #' @param .stage Character string. The stage the model is needed for.
 #'   One of "*first*" or "*second*". Defaults to "*first*".
 #' @param .standardized Logical. Should standardized scores be returned? Defaults
@@ -279,6 +300,9 @@
 #'   training data.
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
+#' @param .treat_as_continuous Logical. Should the indicators for the benchmark predictions
+#'   be treated as continuous? If `TRUE` all indicators are treated as continuous and PLS-PM/PLSc is applied. 
+#'   If `FALSE` OrdPLS/OrdPLSc is applied. Defaults to `TRUE`.
 #' @param .type_gfi Character string. Which fitting function should the GFI be based 
 #'   on? One of *"ML"* for the maximum likelihood fitting function, *"GLS"* for 
 #'   the generalized least squares fitting function or *"ULS"* for the
@@ -405,6 +429,8 @@ args_default <- function(.choices = FALSE) {
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS"),
+    .approach_score_benchmark= c("mean", "median", "mode", "round"),
+    .approach_score_target   = c("mean", "median", "mode"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
@@ -493,7 +519,7 @@ args_default <- function(.choices = FALSE) {
     .quantity                = c("all", "mean", "sd", "bias", "CI_standard_z", "CI_standard_t",
                                  "CI_percentile", "CI_basic", "CI_bc", "CI_bca", "CI_t_intervall"),
     .Q                       = NULL,
-    .r                       = 10,
+    .r                       = 1,
     .R                       = 499,
     .R2                      = 199,
     .R_bootstrap             = 499,
@@ -509,6 +535,7 @@ args_default <- function(.choices = FALSE) {
     .seed                    = NULL,
     .sign_change_option      = c("none", "individual", "individual_reestimate",
                                  "construct_reestimate"),
+    .sim_points              = 100,
     .stage                   = c("first", "second"),
     .standardized            = TRUE,
     .starting_values         = NULL,
@@ -516,6 +543,7 @@ args_default <- function(.choices = FALSE) {
     .terms                   = NULL,
     .test_data               = NULL,
     .tolerance               = 1e-05,
+    .treat_as_continuous     = TRUE,
     .type_gfi                = c("ML", "GLS", "ULS"),
     .type_htmt               = c("htmt", "htmt2"),
     .type_vcv                = c("indicator", "construct"),
