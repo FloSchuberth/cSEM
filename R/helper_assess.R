@@ -1178,11 +1178,26 @@ calculateHTMT <- function(
     }else{
       monocor2<-monocortemp[lower.tri(monocortemp)]
     }
-    hetcor<-c(S[x[[1]],x[[2]]])
+    # take always the absolute value of the heterotrait-heteromethod correlations
+    hetcor<-abs(c(S[x[[1]],x[[2]]]))
     
     # return correlations as list of vectors containing correlations
     list(monocor1,monocor2,hetcor)
   })
+  
+  # check if sign of all heterotrait-heteromethod correlations is negative; 
+  # if this i the case -1 else 1
+  sign_identification=sapply(block_pairs,function(x){
+    S_signs_two_blocks=S_signs[names(x)[1],names(x)[2]]
+    S_elements_two_blocks=S_elements[names(x)[1],names(x)[2]]
+    
+    if(S_signs_two_blocks==S_elements_two_blocks){
+      1
+    }else{
+      -1
+    }
+  })
+  
   
   if(.type_htmt=='htmt2'){
     # calculate geometric mean of the correlations
@@ -1206,6 +1221,9 @@ calculateHTMT <- function(
   htmts <- sapply(avg_cor,function(x){
     x[3]/sqrt(x[1]*x[2])
   })
+  
+  # 
+  htmts <- htmts * sign_identification 
   
   # Sort HTMT values in matrix
   out<-matrix(0,
