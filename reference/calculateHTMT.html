@@ -42,10 +42,11 @@
 <meta property="og:title" content="HTMT — calculateHTMT" />
 <meta property="og:description" content="Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on
 Henseler et al. (2015)
- or its advancement HTMT2. While the HTMT
-is a consistent estimator for the construct correlation in case of tau-equivalent
-measurement models, the HTMT2 is a consistent estimator for congeneric measurement
-models. In general, they are used to assess discriminant validity." />
+ or its advancement HTMT2 Roemer et al. (in print)
+.
+While the HTMT is a consistent estimator for the construct correlation in
+case of tau-equivalent measurement models, the HTMT2 is a consistent estimator
+for congeneric measurement models. In general, they are used to assess discriminant validity." />
 
 
 
@@ -157,10 +158,11 @@ models. In general, they are used to assess discriminant validity." />
     <div class="ref-description">
     <p>Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on
 Henseler et al. (2015)
- or its advancement HTMT2. While the HTMT
-is a consistent estimator for the construct correlation in case of tau-equivalent
-measurement models, the HTMT2 is a consistent estimator for congeneric measurement
-models. In general, they are used to assess discriminant validity.</p>
+ or its advancement HTMT2 Roemer et al. (in print)
+.
+While the HTMT is a consistent estimator for the construct correlation in
+case of tau-equivalent measurement models, the HTMT2 is a consistent estimator
+for congeneric measurement models. In general, they are used to assess discriminant validity.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>calculateHTMT</span><span class='op'>(</span>
@@ -263,7 +265,7 @@ correlations are negative the absolute HTMT values are returned (<code>.absolute
 value set <code>.inference = TRUE</code>. To choose the type of confidence interval to use
 to compute the 1-alpha%-quantile, use <code>.ci</code>. To control the bootstrap process,
 arguments <code>.handle_inadmissibles</code>, <code>.R</code> and <code>.seed</code> are available.</p>
-<p>Since the HTMT is defined with respect to a classical true score measurement
+<p>Since the HTMT and the HTMT2 both assume a reflective measurement
 model only concepts modeled as common factors are considered by default.
 For concepts modeled as composites the HTMT may be computed by setting
 <code>.only_common_factors = FALSE</code>, however, it is unclear how to
@@ -274,7 +276,9 @@ interpret values in this case.</p>
 &#8220;A New Criterion for Assessing Discriminant Validity in Variance-based Structural Equation Modeling.&#8221;
 <em>Journal of the Academy of Marketing Science</em>, <b>43</b>(1), 115--135.
 doi: <a href='https://doi.org/10.1007/s11747-014-0403-8'>10.1007/s11747-014-0403-8</a>
-.</p>
+.<br /><br /> Roemer E, Schuberth F, Henseler J (in print).
+&#8220; HTMT2 -- an improved criterion for assessing discriminant validity in structural equation modeling.&#8221;
+<em>Industrial Management \&amp; Data Systems</em>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='assess.html'>assess()</a></code>, <a href='csem.html'>csem</a>, <a href='csem_results.html'>cSEMResults</a></p></div>
