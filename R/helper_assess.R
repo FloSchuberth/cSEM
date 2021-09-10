@@ -1017,7 +1017,7 @@ calculateRhoT <- function(
 #' HTMT
 #'
 #' Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on 
-#' \insertCite{Henseler2015;textual}{cSEM} or its advancement HTMT2 \insertCite{Roemerinprint;textual}{cSEM}.
+#' \insertCite{Henseler2015;textual}{cSEM} or its advancement HTMT2 proposed by \insertCite{Roemerinprint;textual}{cSEM}.
 #' While the HTMT is a consistent estimator for the construct correlation in 
 #' case of tau-equivalent measurement models, the HTMT2 is a consistent estimator
 #' for congeneric measurement models. In general, they are used to assess discriminant validity.
