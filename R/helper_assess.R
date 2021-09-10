@@ -1017,10 +1017,10 @@ calculateRhoT <- function(
 #' HTMT
 #'
 #' Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on 
-#' \insertCite{Henseler2015;textual}{cSEM} or its advancement HTMT2. While the HTMT
-#' is a consistent estimator for the construct correlation in case of tau-equivalent
-#'  measurement models, the HTMT2 is a consistent estimator for congeneric measurement
-#'  models. In general, they are used to assess discriminant validity.
+#' \insertCite{Henseler2015;textual}{cSEM} or its advancement HTMT2 \insertCite{Roemerinprint;textual}{cSEM}.
+#' While the HTMT is a consistent estimator for the construct correlation in 
+#' case of tau-equivalent measurement models, the HTMT2 is a consistent estimator
+#' for congeneric measurement models. In general, they are used to assess discriminant validity.
 #' 
 #' Computation of the HTMT assumes that all intra-block and inter-block 
 #' correlations between indicators are either all-positive or all-negative.
@@ -1032,7 +1032,7 @@ calculateRhoT <- function(
 #' to compute the 1-alpha%-quantile, use `.ci`. To control the bootstrap process,
 #' arguments `.handle_inadmissibles`, `.R` and `.seed` are available. 
 #' 
-#' Since the HTMT is defined with respect to a classical true score measurement
+#' Since the HTMT and the HTMT2 both assume a reflective measurement
 #' model only concepts modeled as common factors are considered by default.
 #' For concepts modeled as composites the HTMT may be computed by setting
 #' `.only_common_factors = FALSE`, however, it is unclear how to
