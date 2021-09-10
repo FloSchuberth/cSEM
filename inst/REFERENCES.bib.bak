@@ -7,12 +7,7 @@
   year      = {2014},
   number    = {4},
   pages     = {585--604},
-  volume    = {79},
-  file      = {:Papers/SEM/Dijkstra2014.pdf:PDF},
-  keywords  = {consistent partial least squares, latent moderated structural equations, nonlinear structural equation model, interaction effect, quadratic effect},
-  owner     = {fls44rr},
-  publisher = {Springer},
-  timestamp = {2017.06.06},
+  volume    = {79}
 }
 
 @Article{Dijkstra2015,
@@ -21,9 +16,7 @@
   journal  = {Computational Statistics & Data Analysis},
   year     = {2015},
   volume   = {81},
-  pages    = {10--23},
-  file     = {:Papers/SEM/Dijkstra2015.pdf:PDF},
-  keywords = {Partial least squares, Structural equation modeling, Consistency, Recursiveness, Goodness-of-fit},
+  pages    = {10--23}
 }
 
 @Article{Dijkstra2015a,
@@ -34,7 +27,6 @@
   volume  = {39},
   number  = {2},
   pages   = {297--316},
-  file    = {:Papers/SEM/Dijkstra2015a.pdf:PDF},
 }
 
 @Article{Dijkstra2013,
@@ -42,9 +34,7 @@
   title     = {A Note on How to Make Partial Least Squares Consistent},
   journal   = {Working Paper},
   year      = {2013},
-  doi       = {10.13140/RG.2.1.4547.5688},
-  file      = {:Papers/SEM/Dijkstra2013.pdf:PDF},
-  timestamp = {2017.10.05},
+  doi       = {10.13140/RG.2.1.4547.5688}
 }
 
 @Article{Kettenring1971,
@@ -54,11 +44,7 @@
   year      = {1971},
   volume    = {58},
   number    = {3},
-  pages     = {433--451},
-  file      = {:Papers/SEM/Kettenring1971.pdf:PDF},
-  owner     = {s343185},
-  publisher = {Biometrika Trust},
-  timestamp = {2015.09.07},
+  pages     = {433--451}
 }
 
 @Book{Bollen1989,
@@ -77,10 +63,7 @@
   volume    = {13},
   number    = {1},
   pages     = {95--115},
-  month     = {mar},
-  doi       = {10.1214/aos/1176346579},
-  file      = {:Papers/SEM/Beran1985.pdf:PDF},
-  publisher = {Institute of Mathematical Statistics},
+  doi       = {10.1214/aos/1176346579}
 }
 
 @Article{Raykov1997,
@@ -90,9 +73,7 @@
   year      = {1997},
   number    = {2},
   pages     = {173--184},
-  volume    = {21},
-  file      = {Raykov1997.pdf:Raykov1997.pdf:PDF},
-  publisher = {Sage Publications},
+  volume    = {21}
 }
 
 @Article{Cronbach1951,
@@ -103,10 +84,7 @@
   volume    = {16},
   number    = {3},
   pages     = {297--334},
-  month     = {sep},
-  doi       = {10.1007/bf02310555},
-  file      = {:Cronbach1951.pdf:PDF},
-  publisher = {Springer Nature},
+  doi       = {10.1007/bf02310555}
 }
 
 @Article{Fornell1981,
@@ -114,12 +92,8 @@
   journal   = {Journal of Marketing Research},
   title     = {Evaluating structural equation models with unobservable variables and measurement error},
   year      = {1981},
-  month     = {February},
   pages     = {39--50},
-  volume    = {XVIII},
-  file      = {Fornell1981.pdf:Fornell1981.pdf:PDF},
-  owner     = {fls44rr},
-  timestamp = {2012.11.22},
+  volume    = {XVIII}
 }
 
 @Article{Hesterberg2015,
@@ -130,53 +104,45 @@
   volume    = {69},
   number    = {4},
   pages     = {371--386},
-  month     = {oct},
-  doi       = {10.1080/00031305.2015.1089789},
-  publisher = {Informa {UK} Limited},
+  doi       = {10.1080/00031305.2015.1089789}
 }
 
 @Article{Hwang2017,
-  Title                    = {Generalized {Structured} {Component} {Analysis} with {Uniqueness} {Terms} for {Accommodating} {Measurement} {Error}},
-  Author                   = {Hwang, Heungsun and Takane, Yoshio and Jung, Kwanghee},
-  Journal                  = {Frontiers in Psychology},
-  Year                     = {2017},
-  Number                   = {2137},
-  Pages                    = {1--12},
-  Volume                   = {8},
-  Language                 = {English},
-  Publisher                = {Frontiers Media}
+  title                    = {Generalized structured component analysis with uniqueness terms for accommodating measurement error},
+  author                   = {Hwang, Heungsun and Takane, Yoshio and Jung, Kwanghee},
+  journal                  = {Frontiers in Psychology},
+  year                     = {2017},
+  number                   = {2137},
+  pages                    = {1--12},
+  volume                   = {8}
 }
 
 @book{Hwang2014,
-  Title =     {Generalized Structured Component Analysis: A Component-Based Approach to Structural Equation Modeling},
-   Author =    {Hwang, Heungsun and Takane, Yoshio},
-   publisher = {Chapman and Hall/CRC},
-   year =      {2014},
-   series =    {Chapman & Hall/CRC Statistics in the Social and Behavioral Sciences},
+  title =     {Generalized Structured Component Analysis: A Component-Based Approach to Structural Equation Modeling},
+  author =    {Hwang, Heungsun and Takane, Yoshio},
+  publisher = {Chapman and Hall/CRC},
+  year =      {2014},
+  series =    {Chapman & Hall/CRC Statistics in the Social and Behavioral Sciences},
 }
 
 @Article{Hwang2004,
-  Title                    = {Generalized {Structured} {Component} {Analysis}},
+  Title                    = {Generalized Structured Component Analysis},
   Author                   = {Hwang, Heungsun and Takane, Yoshio},
   Journal                  = {Psychometrika},
   Year                     = {2004},
   Number                   = {1},
   Pages                    = {81--99},
-  Volume                   = {69},
-  Language                 = {English},
-  Publisher                = {Springer}
+  Volume                   = {69}
 }
 
 @Article{Hwang2010,
-  Title                    = {A {Comparative} {Study} on {Parameter} {Recovery} of {Three} {Approaches} to {Structural} {Equation} {Modeling}},
+  Title                    = {A comparative study on parameter recovery of three approaches to structural equation modeling},
   Author                   = {Hwang, Heungsun and Malhotra, Naresh K. and Kim, Youngchan and Tomiuk, Marc A. and Hong, Sungjin},
   Journal                  = {Journal of Marketing Research},
   Year                     = {2010},
   Number                   = {4},
   Pages                    = {699--712},
-  Volume                   = {47},
-  Language                 = {English},
-  Publisher                = {American Marketing Association}
+  Volume                   = {47}
 }
 
 @Manual{Bengtsson2018,
@@ -192,9 +158,7 @@
   publisher = {Cambridge University Pr.},
   year      = {2016},
   author    = {Efron, Bradley and Hastie, Trevor},
-  isbn      = {1107149894},
-  date      = {2016-07-31},
-  ean       = {9781107149892},
+  isbn      = {1107149894}
 }
 
 @Book{Davison1997,
@@ -221,9 +185,7 @@
   volume    = {19},
   number    = {4},
   pages     = {651--682},
-  month     = {jul},
-  doi       = {10.1177/1094428116656239},
-  publisher = {{SAGE} Publications},
+  doi       = {10.1177/1094428116656239}
 }
 
 @Article{Trinchera2018,
@@ -234,9 +196,7 @@
   volume    = {25},
   number    = {6},
   pages     = {876--887},
-  month     = {mar},
-  doi       = {10.1080/10705511.2018.1431544},
-  publisher = {Informa {UK} Limited},
+  doi       = {10.1080/10705511.2018.1431544}
 }
 
 @InProceedings{Tenenhaus2004,
@@ -255,10 +215,7 @@
   volume    = {28},
   number    = {2},
   pages     = {565--580},
-  month     = {mar},
   doi       = {10.1007/s00180-012-0317-1},
-  file      = {:Papers/Henseler2012a.pdf:PDF},
-  publisher = {Springer Nature},
 }
 
 @Article{Henseler2015,
@@ -269,9 +226,7 @@
   volume    = {43},
   number    = {1},
   pages     = {115--135},
-  month     = {aug},
   doi       = {10.1007/s11747-014-0403-8},
-  publisher = {Springer Nature},
 }
 
 @InBook{Croon2002,
@@ -296,10 +251,7 @@
   volume    = {45},
   number    = {5-6},
   pages     = {341--358},
-  month     = {oct},
-  doi       = {10.1016/j.lrp.2012.09.010},
-  file      = {:Papers/Rigdon2012.pdf:PDF},
-  publisher = {Elsevier {BV}},
+  doi       = {10.1016/j.lrp.2012.09.010}
 }
 
 @Article{Rigdon2016,
@@ -309,10 +261,7 @@
   year      = {2016},
   volume    = {34},
   number    = {6},
-  pages     = {598--605},
-  doi       = {10.1016/j.emj.2016.05.006},
-  file      = {:Papers/Rigdon2016.pdf:PDF},
-  publisher = {Elsevier {BV}},
+  doi       = {10.1016/j.emj.2016.05.006}
 }
 
 @Article{Rigdon2019,
@@ -321,9 +270,7 @@
   journal   = {Multivariate Behavioral Research},
   year      = {2019},
   pages     = {1--15},
-  month     = {mar},
   doi       = {10.1080/00273171.2018.1535420},
-  publisher = {Informa {UK} Limited},
 }
 
 @Article{Holzinger1939,
@@ -342,11 +289,7 @@
   volume    = {33},
   number    = {3},
   pages     = {405--431},
-  month     = {may},
-  doi       = {10.1108/imr-09-2014-0304},
-  editor    = {Rudolf R. Sinkovics, Ruey-Jer {\textquotedblleft}Bryan{\textquotedblright} Jean},
-  file      = {:Papers/Henseler2016.pdf:PDF},
-  publisher = {Emerald},
+  doi       = {10.1108/imr-09-2014-0304}
 }
 
 @Article{Spiller2013,
@@ -357,10 +300,7 @@
   volume    = {50},
   number    = {2},
   pages     = {277--288},
-  month     = {apr},
-  doi       = {10.1509/jmr.12.0420},
-  file      = {:Spiller2013.pdf:PDF;:Spiller2013_WebAppendix.pdf:PDF},
-  publisher = {{SAGE} Publications},
+  doi       = {10.1509/jmr.12.0420}
 }
 
 @Article{Wong1996,
@@ -370,10 +310,7 @@
   year      = {1996},
   number    = {2},
   pages     = {139--143},
-  volume    = {53},
-  file      = {Wong1996.pdf:Wong1996.pdf:PDF},
-  keywords  = {Bootstrap; Exogeneity},
-  publisher = {Elsevier},
+  volume    = {53}
 }
 
 @Article{Hausman1978,
@@ -383,11 +320,7 @@
   year      = {1978},
   number    = {6},
   pages     = {1251--1271},
-  volume    = {46},
-  file      = {Hausman1978.pdf:Hausman1978.pdf:PDF},
-  owner     = {fls44rr},
-  publisher = {JSTOR},
-  timestamp = {2015.10.07},
+  volume    = {46}
 }
 
 @Article{Klesel2019,
@@ -398,9 +331,7 @@
   volume    = {29},
   number    = {3},
   pages     = {464--477},
-  month     = {jun},
-  doi       = {10.1108/intr-11-2017-0418},
-  publisher = {Emerald},
+  doi       = {10.1108/intr-11-2017-0418}
 }
 
 @InCollection{Chin2010,
@@ -410,8 +341,7 @@
   publisher = {Springer Berlin Heidelberg},
   year      = {2010},
   pages     = {171--193},
-  month     = {nov},
-  doi       = {10.1007/978-3-540-32827-8_8},
+  doi       = {10.1007/978-3-540-32827-8_8}
 }
 
 @InCollection{Sarstedt2011,
@@ -421,7 +351,6 @@
   publisher = {Emerald Group Publishing Limited},
   year      = {2011},
   pages     = {195--218},
-  month     = {jan},
   doi       = {10.1108/s1474-7979(2011)0000022012},
 }
 
@@ -432,9 +361,7 @@
   year      = {1992},
   volume    = {112},
   number    = {1},
-  pages     = {155--159},
-  file      = {:Cohen1992.pdf:PDF},
-  publisher = {American Psychological Association},
+  pages     = {155--159}
 }
 
 @InCollection{Wold1975,
@@ -447,9 +374,7 @@
   series    = {International Perspectives on Mathematical and Statistical Modeling},
   chapter   = {11},
   pages     = {307--357},
-  address   = {New York},
-  owner     = {s343185},
-  timestamp = {2015.09.07},
+  address   = {New York}
 }
 
 @Book{Hair2016,
@@ -476,18 +401,14 @@
   year      = {2000},
   number    = {451},
   pages     = {929--940},
-  volume    = {95},
-  file      = {Wall2000.pdf:Wall2000.pdf:PDF},
-  keywords  = {Asymptotic inferences; Errors in variables; Factor scores; Latent variable analysis; Social and behavioral applications.},
-  publisher = {Taylor & Francis},
+  volume    = {95}
 }
 
 @Book{Lohmoeller1989,
   title     = {Latent Variable Path Modeling with Partial Least Squares},
   publisher = {Physica, Heidelberg},
   year      = {1989},
-  author    = {Lohm{\"o}ller, Jan-Bernd},
-  file      = {Lohmoeller2013.pdf:Lohmoeller2013.pdf:PDF},
+  author    = {Lohm{\"o}ller, Jan-Bernd}
 }
 
 @Article{Rousseeuw1999,
@@ -498,9 +419,7 @@
   volume    = {41},
   number    = {3},
   pages     = {212--223},
-  month     = {aug},
-  doi       = {10.1080/00401706.1999.10485670},
-  publisher = {Informa {UK} Limited},
+  doi       = {10.1080/00401706.1999.10485670}
 }
 
 @InCollection{Drasgow1988,
@@ -510,8 +429,7 @@
   title     = {Polychoric and polyserial correlations},
   year      = {1988},
   pages     = {68-74},
-  volume    = {7},
-  file      = {Drasgow1988.pdf:Drasgow1988.pdf:PDF},
+  volume    = {7}
 }
 
 @Article{Agarwal2000,
@@ -519,11 +437,9 @@
   journal   = {{MIS} Quarterly},
   title     = {Time Flies When You're Having Fun: Cognitive Absorption and Beliefs about Information Technology Usage},
   year      = {2000},
-  month     = {dec},
   number    = {4},
   pages     = {665},
-  volume    = {24},
-  publisher = {{JSTOR}},
+  volume    = {24}
 }
 
 @Book{Joereskog1982b,
@@ -531,8 +447,7 @@
   publisher = {North Holland},
   year      = {1982},
   author    = {Joereskog, Karl G and Wold, Herman OA},
-  volume    = {139},
-  file      = {:Papers/Joereskog1982b.pdf:PDF},
+  volume    = {139}
 }
 
 @Article{Becker2012,
@@ -543,9 +458,7 @@
   volume    = {45},
   number    = {5-6},
   pages     = {359--394},
-  month     = {oct},
-  doi       = {10.1016/j.lrp.2012.10.001},
-  publisher = {Elsevier {BV}},
+  doi       = {10.1016/j.lrp.2012.10.001}
 }
 
 @Article{Ringle2012,
@@ -555,8 +468,7 @@
   year    = {2012},
   volume  = {36},
   number  = {1},
-  pages   = {iii--xiv},
-  file    = {:Papers/Ringle2012.pdf:PDF},
+  pages   = {iii--xiv}
 }
 
 @Article{Keil2000,
@@ -566,9 +478,7 @@
   year     = {2000},
   number   = {2},
   pages    = {299--325},
-  volume   = {24},
-  file     = {Keil2000.pdf:Keil2000.pdf:PDF},
-  keywords = {Software project management, esca- lation of commitment behavior, sunk cost, risk propensity, risk perception, uncertainty avoidance},
+  volume   = {24}
 }
 
 @InCollection{Henseler2007a,
@@ -593,26 +503,23 @@
 }
 
 @Article{Bentler1980,
-  Title                    = {Significance {Tests} and {Goodness} of {Fit}
-in the {Analysis} of {Covariance} {Structures}},
+  Title                    = {Significance tests and goodness of fit in the analysis of covariance structures},
   Author                   = {Bentler, Peter M. and Bonett, Douglas G.},
   Journal                  = {Psychological Bulletin},
   Year                     = {1980},
   Pages                    = {588--606},
   Volume                   = {88},
-  Number 				   = {3}, 
-  Language                 = {English}
+  Number 				           = {3}
 }
 
 @Article{Hu1999,
-  Title                    = {Cutoff {Criteria} for {Fit} {Indexes} in {Covariance} {Structure} {Analysis}: {Conventional} {Criteria} {Versus} {New} {Alternatives}},
+  Title                    = {Cutoff criteria for fit indexes in covariance structure analysis: conventional criteria versus new alternatives},
   Author                   = {Hu, Li-tze and Bentler, Peter M.},
   Journal                  = {Structural Equation Modeling},
   Year                     = {1999},
   Number                   = {1},
   Pages                    = {1--55},
-  Volume                   = {6},
-  Language                 = {English}
+  Volume                   = {6}
 }
 
 @Article{Browne1992,
@@ -620,11 +527,9 @@ in the {Analysis} of {Covariance} {Structures}},
   Author                   = {Browne, Michael W. and Cudeck, Robert},
   Journal                  = {Sociological Methods & Research},
   Year                     = {1992},
-  Number				   = {2},	
+  Number				           = {2},	
   Pages                    = {230--258},
-  Volume                   = {21},
-  Language                 = {English},
-  Publisher 			   = {Sage Periodicals Press}
+  Volume                   = {21}
 }
 
 @Book{Bentler2006,
@@ -640,11 +545,9 @@ in the {Analysis} of {Covariance} {Structures}},
   Author                   = {Bentler, Peter M.},
   Journal                  = {Psychological Bulletin},
   Year                     = {1990},
-  Number				   = {2},	
+  Number				           = {2},	
   Pages                    = {238--246},
-  Volume                   = {107},
-  Language                 = {English},
-  Publisher 			   = {The American Psychological Association, Inc.}
+  Volume                   = {107}
 }
 
 @Article{Bollen1989a,
@@ -654,9 +557,7 @@ in the {Analysis} of {Covariance} {Structures}},
   year      = {1989},
   volume    = {3},
   number    = {17},
-  pages     = {303--316},
-  language  = {English},
-  publisher = {Sage Publications, Inc.},
+  pages     = {303--316}
 }
 
 @InCollection{Nitzl2010,
@@ -677,8 +578,7 @@ in the {Analysis} of {Covariance} {Structures}},
   volume  = {46},
   number  = {1},
   pages   = {178--192},
-  doi     = {10.1080/00913367.2017.1281780},
-  file    = {:Papers/Henseler2017.pdf:PDF},
+  doi     = {10.1080/00913367.2017.1281780}
 }
 
 @Article{Shmueli2016,
@@ -686,13 +586,10 @@ in the {Analysis} of {Covariance} {Structures}},
   journal   = {Journal of Business Research},
   title     = {The Elephant in the Room: Predictive Performance of {PLS} Models},
   year      = {2016},
-  month     = {oct},
   number    = {10},
   pages     = {4552--4564},
   volume    = {69},
-  doi       = {10.1016/j.jbusres.2016.03.049},
-  file      = {:Literatur/Shmueli2016.pdf:PDF},
-  publisher = {Elsevier {BV}},
+  doi       = {10.1016/j.jbusres.2016.03.049}
 }
 
 @Article{Shmueli2019,
@@ -700,13 +597,10 @@ in the {Analysis} of {Covariance} {Structures}},
   journal   = {European Journal of Marketing},
   title     = {Predictive Model Assessment in {PLS}-{SEM}: Guidelines for Using {PLSpredict}},
   year      = {2019},
-  month     = {nov},
   number    = {11},
   pages     = {2322--2347},
   volume    = {53},
   doi       = {10.1108/ejm-02-2019-0189},
-  file      = {:Literatur/Shmueli2019.pdf:PDF},
-  publisher = {Emerald},
 }
 
 @Article{Marsh2004,
@@ -714,13 +608,10 @@ in the {Analysis} of {Covariance} {Structures}},
   journal   = {Structural Equation Modeling: A Multidisciplinary Journal},
   title     = {In Search of Golden Rules: Comment on Hypothesis-Testing Approaches to Setting Cutoff Values for Fit Indexes and Dangers in Overgeneralizing Hu and Bentler's (1999) Findings},
   year      = {2004},
-  month     = {jul},
   number    = {3},
   pages     = {320--341},
   volume    = {11},
-  doi       = {10.1207/s15328007sem1103_2},
-  file      = {:Literatur/Marsh2004.pdf:PDF},
-  publisher = {Informa {UK} Limited},
+  doi       = {10.1207/s15328007sem1103_2}
 }
 
 @Article{Joereskog1982,
@@ -730,9 +621,7 @@ in the {Analysis} of {Covariance} {Structures}},
   year      = {1982},
   number    = {4},
   pages     = {404--416},
-  volume    = {19},
-  file      = {:Literatur/Joereskog1982.pdf:PDF},
-  publisher = {American Marketing Association},
+  volume    = {19}
 }
 
 @Book{Wooldridge2010,
@@ -751,10 +640,7 @@ in the {Analysis} of {Covariance} {Structures}},
   volume    = {34},
   number    = {2},
   pages     = {183--202},
-  month     = {jun},
-  doi       = {10.1007/bf02289343},
-  file      = {:Literatur/Joereskog1969.pdf:PDF},
-  publisher = {Springer Nature},
+  doi       = {10.1007/bf02289343}
 }
 
 @Article{Russett1964,
@@ -782,9 +668,7 @@ in the {Analysis} of {Covariance} {Structures}},
   year      = {2011},
   volume    = {76},
   number    = {2},
-  pages     = {257--284},
-  keywords  = {Generalized canonical correlation analysis, Multi-block data analysis, PLS path modeling, Regularized canonical correlation analysis.},
-  publisher = {Springer},
+  pages     = {257--284}
 }
 
 @Article{Benitez2018,
@@ -794,8 +678,7 @@ in the {Analysis} of {Covariance} {Structures}},
   year    = {2018},
   volume  = {42},
   number  = {1},
-  pages   = {25--43},
-  file    = {:Benitez2018.pdf:PDF},
+  pages   = {25--43}
 }
 
 @Book{Henseler2020,
@@ -810,12 +693,10 @@ in the {Analysis} of {Covariance} {Structures}},
   journal   = {Journal of Business Research},
   title     = {Introducing new products that affect consumer privacy: A mediation model},
   year      = {2016},
-  month     = {oct},
   number    = {10},
   pages     = {4659--4666},
   volume    = {69},
-  doi       = {10.1016/j.jbusres.2016.04.015},
-  publisher = {Elsevier {BV}},
+  doi       = {10.1016/j.jbusres.2016.04.015}
 }
 
 @Article{Bergami2000,
@@ -826,9 +707,7 @@ in the {Analysis} of {Covariance} {Structures}},
   volume    = {39},
   number    = {4},
   pages     = {555--577},
-  month     = {dec},
-  doi       = {10.1348/014466600164633},
-  publisher = {Wiley},
+  doi       = {10.1348/014466600164633}
 }
 
 @Article{Yoo2000,
@@ -839,8 +718,7 @@ in the {Analysis} of {Covariance} {Structures}},
   volume    = {28},
   number    = {2},
   pages     = {195--211},
-  doi       = {10.1177/0092070300282002},
-  publisher = {Springer Science and Business Media {LLC}},
+  doi       = {10.1177/0092070300282002}
 }
 
 @Article{Summers1965,
@@ -850,8 +728,7 @@ in the {Analysis} of {Covariance} {Structures}},
   year      = {1965},
   number    = {1},
   pages     = {1--41},
-  volume    = {33},
-  publisher = {[Wiley, Econometric Society]},
+  volume    = {33}
 }
 
 @Article{Ringle2016,
@@ -861,9 +738,7 @@ in the {Analysis} of {Covariance} {Structures}},
   year      = {2016},
   number    = {9},
   pages     = {2--20},
-  volume    = {116},
-  file      = {Ringle2016.pdf:Ringle2016.pdf:PDF},
-  publisher = {Emerald Group Publishing Limited},
+  volume    = {116}
 }
 
 @InProceedings{Bliemel2004,
@@ -873,7 +748,6 @@ in the {Analysis} of {Covariance} {Structures}},
   year      = {2004},
   address   = {Murcia, Spain},
   editor    = {Munuera-Aleman, Jose L.},
-  month     = {May},
   pages     = {224},
 }
 
@@ -882,11 +756,9 @@ in the {Analysis} of {Covariance} {Structures}},
   journal   = {{IEEE} Transactions on Automatic Control},
   title     = {A New Look at the Statistical Model Identification},
   year      = {1974},
-  month     = {dec},
   number    = {6},
   pages     = {716--723},
-  volume    = {19},
-  publisher = {Institute of Electrical and Electronics Engineers ({IEEE})},
+  volume    = {19}
 }
 
 @Article{Schwarz1978,
@@ -897,9 +769,7 @@ in the {Analysis} of {Covariance} {Structures}},
   number    = {2},
   pages     = {461--464},
   volume    = {6},
-  doi       = {10.1214/aos/1176344136},
-  file      = {:Schwarz1978.pdf:PDF},
-  publisher = {Institute of Mathematical Statistics},
+  doi       = {10.1214/aos/1176344136}
 }
 
 @Article{Wit2012,
@@ -907,11 +777,9 @@ in the {Analysis} of {Covariance} {Structures}},
   journal = {Statistica Neerlandica},
   title   = {'All models are wrong...' an introduction to model uncertainty},
   year    = {2012},
-  month   = {jul},
   number  = {3},
   pages   = {217--236},
-  volume  = {66},
-  file    = {:Wit2012.pdf:PDF},
+  volume  = {66}
 }
 
 @Article{Bozdogan1987,
@@ -919,13 +787,10 @@ in the {Analysis} of {Covariance} {Structures}},
   journal   = {Psychometrika},
   title     = {Model selection and {A}kaike's Information Criterion ({AIC}): The general theory and its analytical extensions},
   year      = {1987},
-  month     = {sep},
   number    = {3},
   pages     = {345--370},
   volume    = {52},
-  doi       = {10.1007/bf02294361},
-  file      = {:Bozdogan1987.pdf:PDF},
-  publisher = {Springer Science and Business Media {LLC}},
+  doi       = {10.1007/bf02294361}
 }
 
 @Article{Hannan1979,
@@ -935,8 +800,7 @@ in the {Analysis} of {Covariance} {Structures}},
   year    = {1979},
   number  = {2},
   pages   = {190--195},
-  volume  = {41},
-  file    = {:Hannan1979.pdf:PDF},
+  volume  = {41}
 }
 
 @Article{Sharma2019,
@@ -945,8 +809,7 @@ in the {Analysis} of {Covariance} {Structures}},
   title   = {{PLS}-Based Model Selection: The Role of Alternative Explanations in Information Systems Research},
   year    = {2019},
   number  = {4},
-  volume  = {20},
-  doi     = {10.17005/1.jais.00538},
+  volume  = {20}
 }
 
 @Article{Mulaik1989,
@@ -957,9 +820,18 @@ in the {Analysis} of {Covariance} {Structures}},
   number    = {3},
   pages     = {430--445},
   volume    = {105},
-  doi       = {10.1037/0033-2909.105.3.430},
-  file      = {:Literatur/Mulaik1989.pdf:PDF},
-  publisher = {American Psychological Association ({APA})},
+  doi       = {10.1037/0033-2909.105.3.430}
+}
+
+@Article{Tanaka1985,
+  author    = {J. S. Tanaka and G. J. Huba},
+  journal   = {British Journal of Mathematical and Statistical Psychology},
+  title     = {A Fit Index for Covariance Structure Models under Arbitrary {GLS} Estimation},
+  year      = {1985},
+  number    = {2},
+  pages     = {197--201},
+  volume    = {38},
+  doi       = {10.1111/j.2044-8317.1985.tb00834.x}
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
