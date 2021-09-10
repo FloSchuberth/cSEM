@@ -70,7 +70,7 @@ Imports:
     utils,
     lifecycle
 RdMacros: Rdpack, lifecycle
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
 Suggests: 
     dplyr,
