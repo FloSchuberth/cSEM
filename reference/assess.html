@@ -555,10 +555,10 @@ See <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code> fo
 <span class='r-in'><span class='co'>## Look at the resamples</span></span>
 <span class='r-in'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>User_fun</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,]    1 0.7371219 0.6922245    0    1 0.6370455    0    0    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,]    1 0.6412385 0.6622466    0    1 0.5726098    0    0    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,]    1 0.7056407 0.6551333    0    1 0.6609589    0    0    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [4,]    1 0.7011110 0.6729554    0    1 0.5581164    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,]    1 0.6933466 0.7052180    0    1 0.6517755    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,]    1 0.5956097 0.6165198    0    1 0.5554104    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,]    1 0.7295130 0.6671263    0    1 0.6834732    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4,]    1 0.7234275 0.7040808    0    1 0.6553921    0    0    1</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'>## Use infer() to compute e.g., the 95% percentile confidence interval</span></span>
 <span class='r-in'><span class='va'>res_infer</span> <span class='op'>&lt;-</span> <span class='fu'><a href='infer.html'>infer</a></span><span class='op'>(</span><span class='va'>res</span>, .quantity <span class='op'>=</span> <span class='st'>"CI_percentile"</span><span class='op'>)</span></span>
@@ -567,8 +567,8 @@ See <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code> fo
 <span class='r-in'><span class='va'>res_infer</span><span class='op'>$</span><span class='va'>User_fun</span> </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> $CI_percentile</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L    1 0.6145865 0.6150261    0    1 0.5388942    0    0    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U    1 0.7382128 0.7272123    0    1 0.6915953    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%L    1 0.5946826 0.6008249    0    1 0.5534407    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 95%U    1 0.7416716 0.7407188    0    1 0.6836082    0    0    1</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'>## Several quality criteria can be resampled simultaneously</span></span>
@@ -584,12 +584,12 @@ See <code><a href='resamplecSEMResults.html'>resamplecSEMResults()</a></code> fo
 <span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>HTMT</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>, <span class='op'>]</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,]    1 0.6760554 0.6288772    0    1 0.6310610    0    0    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,]    1 0.7259959 0.6567872    0    1 0.6539100    0    0    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,]    1 0.7116919 0.6764214    0    1 0.6518357    0    0    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [4,]    1 0.7185809 0.6814273    0    1 0.6120726    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,]    1 0.6554131 0.7194702    0    1 0.5558510    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,]    1 0.6656173 0.6866792    0    1 0.6657100    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,]    1 0.6617485 0.6684181    0    1 0.6548753    0    0    1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4,]    1 0.7440949 0.6949018    0    1 0.6211531    0    0    1</span>
 <span class='r-in'><span class='va'>res</span><span class='op'>$</span><span class='va'>Estimates</span><span class='op'>$</span><span class='va'>Estimates_resample</span><span class='op'>$</span><span class='va'>Estimates1</span><span class='op'>$</span><span class='va'>RMS_theta</span><span class='op'>$</span><span class='va'>Resampled</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.1066754 0.1086080 0.1089785 0.1046085</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.1031627 0.1067712 0.1068375 0.1061316</span>
 <span class='r-in'></span>
 </code></pre></div>
   </div>
