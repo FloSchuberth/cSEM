@@ -668,10 +668,38 @@ calculateWeightsGSCAm <- function(
   # Calculate initial values for the unique variables in U
   # analogous to step 3 of the modified ALS-algorithm
   D          <- Ij
-  Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (P+1):N, drop = FALSE]
-  s          <- svd(D %*% t(Z) %*% Gamma_orth)
-  U_tilde    <- s$v %*% t(s$u)
-  U          <- Gamma_orth %*% U_tilde # this is the initial matrix U
+  
+  # Implementation based on the updated MATLAB code provided by Heungsun in 
+  # private communication to deal with big dataset (20.10.2021)
+  temp <- svd(t(Gamma)%*%Gamma)
+  gd2 <- diag(temp$d)
+  gv <- temp$v
+  
+  GU <- Gamma%*%gv%*%solve(sqrt(gd2))
+  
+  M3 <- Z%*%D - GU%*%(t(GU)%*%Z)%*%D
+  
+  if(N>J){
+    temp <- svd(t(M3)%*%M3)
+    d2 <- diag(temp$d)
+    v <- temp$v
+    
+    u <- M3%*%v%*%solve(sqrt(d2))
+    U <- u[,1:J,drop=FALSE]%*%t(v)
+  } else {
+    temp = svd(M3)
+    u <- temp$u
+    v <- temp$v
+    U <- u[,1:J,drop = FALSE]%*%t(v)
+  }
+  
+  # Old GSCAm version which faces problem in case of large datasets
+  # Gamma_orth <- qr.Q(qr(Gamma), complete = TRUE)[, (P+1):N, drop = FALSE]
+  # s          <- svd(D %*% t(Z) %*% Gamma_orth)
+  # U_tilde    <- s$v %*% t(s$u)
+  # U          <- Gamma_orth %*% U_tilde # this is the initial matrix U
+  
+  
   D <- diag(diag(t(U) %*% Z))
   
   est  <-  A[which(A != 0)]
