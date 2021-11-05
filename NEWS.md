@@ -1,5 +1,7 @@
 # <Development version: cSEM 0.4.0.9000
 
+- Use singular value decompostion in GSCAm to deal with large datasets (#444)
+
 - Bug fix: GSCAm (i.e., `.approach_weights = "GSCA"` with constructs modeled as 
   common factors) no longer fails when a single indicator construct is supplied (#441)
 
