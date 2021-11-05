@@ -718,6 +718,7 @@ calculateWeightsGSCAm <- function(
       # If construct p is a single-indicator construct, dividing w by its norm
       # sometimes doesnt yield 1 exactly due to the way norm() works. This causes
       # problems in verify() since we check if loadings are > 1, which they are
+
       # if the weight is 1.000000...0002.
       if(length(w) == 1) {
         w <- 1

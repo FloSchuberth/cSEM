@@ -50,6 +50,27 @@ their description. Defaults to "\emph{none}".}
 structural coefficients. One of: "\emph{OLS}" or "\emph{2SLS}". If "\emph{2SLS}", instruments
 need to be supplied to \code{.instruments}. Defaults to "\emph{OLS}".}
 
+\item{.approach_score_benchmark}{Character string. How should the aggregation
+of the estimates of the truncated normal distribution be done for the
+benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
+One of "\emph{mean}" or "\emph{median}" or "\emph{mode}" or "\emph{round}".
+If "\emph{round}", the benchmark predictions are obtained using the traditional prediction
+algorithm for PLS-PM which are rounded for categorical indicators.
+If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{median}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{mode}", the maximum empirical density on the intervals defined by the thresholds
+is used.
+If \code{.treat_as_continuous = TRUE} or if all indicators are on a continuous scale,
+\code{.approach_score_benchmark} is ignored. Defaults to "\emph{round}".}
+
+\item{.approach_score_target}{Character string. How should the aggregation of the estimates of
+the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
+One of "\emph{mean}" or "\emph{median}" or "\emph{mode}".
+If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{median}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{mode}", the maximum empirical density on the intervals defined by the thresholds
+is used. Defaults to "\emph{mean}".}
+
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
 "\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
@@ -329,7 +350,7 @@ or \code{"jackknife"} when calling \code{\link[=csem]{csem()}}.}
 could potentially be compared and an id column indicating the group adherence
 of each row.}
 
-\item{.r}{Integer. The number of repetitions to use. Defaults to \code{10}.}
+\item{.r}{Integer. The number of repetitions to use. Defaults to \code{1}.}
 
 \item{.R}{Integer. The number of bootstrap replications. Defaults to \code{499}.}
 
@@ -358,6 +379,9 @@ not be altered!}
 be used to handle flipping signs when resampling? One of "\emph{none}","\emph{individual}",
 "\emph{individual_reestimate}", "\emph{construct_reestimate}". Defaults to "\emph{none}".}
 
+\item{.sim_points}{Integer. How many samples from the truncated normal distribution should
+be simulated to estimate the exogenous construct scores? Defaults to "\emph{100}".}
+
 \item{.stage}{Character string. The stage the model is needed for.
 One of "\emph{first}" or "\emph{second}". Defaults to "\emph{first}".}
 
@@ -380,6 +404,10 @@ training data.}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
+
+\item{.treat_as_continuous}{Logical. Should the indicators for the benchmark predictions
+be treated as continuous? If \code{TRUE} all indicators are treated as continuous and PLS-PM/PLSc is applied.
+If \code{FALSE} OrdPLS/OrdPLSc is applied. Defaults to \code{TRUE}.}
 
 \item{.type_gfi}{Character string. Which fitting function should the GFI be based
 on? One of \emph{"ML"} for the maximum likelihood fitting function, \emph{"GLS"} for

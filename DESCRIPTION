@@ -66,6 +66,7 @@ Imports:
     rlang,
     stats,
     symmoments,
+    TruncatedNormal,
     utils,
     lifecycle
 RdMacros: Rdpack, lifecycle
@@ -83,5 +84,6 @@ Suggests:
     listviewer,
     testthat,
     ggplot2,
-    openxlsx
+    openxlsx,
+    graphics
 VignetteBuilder: knitr

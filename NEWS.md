@@ -2,6 +2,20 @@
 
 - Bug fix: GSCAm (i.e., `.approach_weights = "GSCA"` with constructs modeled as 
   common factors) no longer fails when a single indicator construct is supplied (#441)
+
+- The default value for argument `.r` (the number of repetitions) of `predict()` 
+  was changed from 10 to 1 since more than one repetition is hardly ever necessary.
+  
+- `predict()` is now able to predict categorical indicators (a procedure known as
+   OrdPLScPredict). `predict()` therefore gains a number of new arguments, namely:
+   `.approach_score_target`, `.sim_points`, `.treat_as_continuous`, and
+   `.approach_score_benchmark`.
+
+- Removed argument `.verbose` from `testOMF()` as it did not have any effect (#445).
+
+- Bug fix: GSCAm (i.e., `.approach_weights = "GSCA"` with constructs modeled as 
+  common factors) no longer fails when a single indicator construct is supplied (#441)
+  
 - Bug fix: `predict()` no longer fails when LOOCV is used (#337)
 
 - Bug fix: fix print method for `summarize()` when resampling with constant values

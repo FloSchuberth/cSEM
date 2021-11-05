@@ -12,7 +12,6 @@ testOMF(
  .R                     = 499, 
  .saturated             = FALSE,
  .seed                  = NULL,
- .verbose               = TRUE,
  ...
 )
 }
@@ -44,9 +43,6 @@ Defaults to \code{FALSE}.}
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!}
-
-\item{.verbose}{Logical. Should information (e.g., progress bar) be printed
-to the console? Defaults to \code{TRUE}.}
 
 \item{...}{Can be used to determine the fitting function used in the calculateGFI function.}
 }
@@ -109,7 +105,7 @@ eta3 =~ y31 + y32 + y33
 out <- csem(threecommonfactors, model, .approach_weights = "PLS-PM")
 
 ## Test
-testOMF(out, .R = 50, .verbose = FALSE, .seed = 320)
+testOMF(out, .R = 50, .seed = 320)
 }
 }
 \references{

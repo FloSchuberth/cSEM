@@ -11,13 +11,14 @@ verify(.object)
 }
 \value{
 A logical vector indicating which (if any) problem occurred.
-A \code{FALSE} indicates that the specific problem has not occured. For models containg second-order
-constructs estimated by a two stage approach, a list of two such vectors
+A \code{FALSE} indicates that the specific problem has not occurred. For models containing second-order
+constructs estimated by the two/three-stage approach, a list of two such vectors
 (one for the first and one for the second stage) is returned. Status codes are:
 \itemize{
 \item 1: The algorithm has converged.
 \item 2: All absolute standardized loading estimates are smaller than or equal to 1.
 A violation implies either a negative variance of the measurement error or
+a correlation larger than 1.
 \item 3: The construct VCV is positive semi-definite.
 \item 4: All reliability estimates are smaller than or equal to 1.
 \item 5: The model-implied indicator VCV is positive semi-definite.

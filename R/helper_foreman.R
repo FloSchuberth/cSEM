@@ -245,7 +245,9 @@ calculateIndicatorCor <- function(
   .approach_cor_robust = "none"
 ){
   
-  only_numeric_cols <- all(unlist(lapply(.X_cleaned, is.numeric)))
+  is_numeric_indicator <- lapply(.X_cleaned, is.numeric)
+  
+  only_numeric_cols <- all(unlist(is_numeric_indicator))
   
   if(.approach_cor_robust != "none" && !only_numeric_cols) {
     stop2("Setting `.approach_cor_robust = ", .approach_cor_robust, "` requires all",
@@ -261,13 +263,88 @@ calculateIndicatorCor <- function(
               cor_type <- "Pearson" 
               thres_est = NULL
             } else {
-              # Pd is TRUE by default. See ?hetcor for details
-              temp <- polycor::hetcor(.X_cleaned, std.err = FALSE, pd = TRUE)
-              S    <- temp$correlations
-              cor_type <- unique(c(temp$type))
-              cor_type <- cor_type[which(nchar(cor_type) != 0)] # delete '""'
               
+              # Indicator's correlation matrix
+              S <- matrix(0, ncol = ncol(.X_cleaned), nrow = ncol(.X_cleaned),
+                             dimnames = list(colnames(.X_cleaned), colnames(.X_cleaned)))
+              # matrix containing the type of correlation 
+              cor_type <- S
+              
+              # list for the thresholds
               thres_est <- NULL
+              
+              # temp is used to only calculate the correlations between two 
+              # indicators once (upper triangular matrix)
+              temp <- colnames(.X_cleaned)
+              for(i in colnames(.X_cleaned)){
+                temp <- temp[temp!=i]
+                for(j in temp){
+                  # If both indicators are not continous, the polychoric 
+                  # correlation is calculated
+                  if (is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == FALSE){
+                    S[i,j] <- polycor::polychor(.X_cleaned[,i], .X_cleaned[,j])
+                    
+                    # The following code is taken from the polychor function of the
+                    # polycor package to obtain the threshold estimates
+                    cor_type[i,j] <- "Polychoric"
+                    tab <- table(.X_cleaned[,i], .X_cleaned[,j])
+                    zerorows <- apply(tab, 1, function(x) all(x == 0))
+                    zerocols <- apply(tab, 2, function(x) all(x == 0))
+                    zr <- sum(zerorows)
+                    zc <- sum(zerocols)
+                    tab <- tab[!zerorows, ,drop=FALSE]  
+                    tab <- tab[, !zerocols, drop=FALSE] 
+                    thres_est[[i]] <- qnorm(cumsum(rowSums(tab))/sum(tab))[-nrow(tab)]
+                    thres_est[[j]] <- qnorm(cumsum(colSums(tab))/sum(tab))[-ncol(tab)]
+                    
+                    # If one indicator is continous, the polyserial correlation 
+                    # is calculated.Note: polyserial needs the continous 
+                    # indicator as the first argument
+                  }else if(is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == TRUE){
+                    S[i,j] <- polycor::polyserial(.X_cleaned[,j], .X_cleaned[,i])
+                  
+                  # The following code is taken from the polyserial function of the
+                  # polycor package to obtain the threshold estimates
+                    valid <- complete.cases(.X_cleaned[,j], .X_cleaned[,i])
+                    x <- .X_cleaned[,j][valid]
+                    y <- .X_cleaned[,i][valid]
+                    z <- scale(x)
+                    tab <- table(y)
+                    indices <- 1:sum(tab)
+                    cor_type[i,j] <- "Polyserial"
+                    thres_est[[i]] <- qnorm(cumsum(tab)/sum(tab))[-length(tab)]
+                    thres_est[[j]] <- NA
+                  }else if(is_numeric_indicator[[i]] == TRUE && is_numeric_indicator[[j]] == FALSE){
+                    S[i,j] <- polycor::polyserial(.X_cleaned[,i], .X_cleaned[,j])
+                    
+                    # The following code is taken from the polyserial function of the
+                    # polycor package to obtain the threshold estimates
+                    cor_type[i,j] <- "Polyserial"
+                    valid <- complete.cases(x, y)
+                    x <- x[valid]
+                    y <- y[valid]
+                    z <- scale(x)
+                    tab <- table(y)
+                    indices <- 1:sum(tab)
+                    thres_est[[j]] <- qnorm(cumsum(tab)/sum(tab))[-length(tab)]
+                    thres_est[[i]] <- NA
+                    
+                    # If both indicators are continous, the Pearson correlation
+                    # is calculated.
+                  }else{
+                    S[i,j] <- cor(.X_cleaned[,i], .X_cleaned[,j])
+                    cor_type[i,j] <- "Pearson"
+                    thres_est[[i]] <- NA
+                    thres_est[[j]] <- NA
+                  }
+                }
+              }
+              S <- S + t(S)
+              diag(S) <- 1
+              cor_type <- unique(c(cor_type))
+              cor_type <- cor_type[cor_type != "0"]
+              
+            
               
               # The lavCor function does no smoothing in case of empty cells, which creates problems during bootstrap
               # # Use lavCor function from the lavaan package for the calculation of the polychoric and polyserial correlation 
