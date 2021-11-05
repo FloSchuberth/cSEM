@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cSEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0.9000</span>
       </span>
     </div>
 
@@ -96,9 +96,9 @@
       <h1 data-toc-skip>Notation</h1>
                         <h4 data-toc-skip class="author">Manuel Rademaker</h4>
             
-            <h4 data-toc-skip class="date">Last edited: 2021-09-20</h4>
+            <h4 data-toc-skip class="date">Last edited: 2021-11-05</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/master/vignettes/Notation.Rmd" class="external-link"><code>vignettes/Notation.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/HEAD/vignettes/Notation.Rmd" class="external-link"><code>vignettes/Notation.Rmd</code></a></small>
       <div class="hidden name"><code>Notation.Rmd</code></div>
 
     </div>
@@ -107,9 +107,9 @@
     
 <!-- used to print boldface greek symbols (\mathbf only works for latin symbols) -->
 
-<div id="the-structural-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#the-structural-model" class="anchor" aria-hidden="true"></a>The structural model</h2>
+<div class="section level2">
+<h2 id="the-structural-model">The structural model<a class="anchor" aria-label="anchor" href="#the-structural-model"></a>
+</h2>
 <p>The structural model specifies the relationships between <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">constructs</a> (i.e., the statistical representation of a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>) via paths (arrows) and associated path coefficients. The path coefficients - sometimes also called structural coefficients - express the magnitude of the influence exerted by the construct at the start of the arrow on the variable at the arrow’s end. In <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composite-based SEM</a> constructs are always operationalized (not modeled!!) as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composites</a>, i.e., weighted linear combinations of its respective <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">indicators</a>. Consequently, depending on how a given construct is modeled, such a composite may either serve as a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">proxy</a> for an underlying <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent variable</a> (<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common factor</a>) or as a composite in its own right. Despite this crucial difference, we stick with the common - although somewhat ambivalent - notation and represent both the construct and the latent variable (which is only <strong>a</strong> possible construct) by <span class="math inline">\(\eta\)</span>. Let <span class="math inline">\(x_{kj}\)</span> <span class="math inline">\((k = 1,\dots, K_j)\)</span> be an indicator (observable) belonging to construct <span class="math inline">\(\eta_j\)</span> <span class="math inline">\((j = 1\dots, J)\)</span> and <span class="math inline">\(w_{kj}\)</span> be a weight. A composite is definied as: <span class="math display">\[\hat{\eta}_j = \sum^{K_j}_{k = 1} w_{kj} x_{kj} \]</span> Again, <span class="math inline">\(\hat{\eta}_j\)</span> may represent a latent variable <span class="math inline">\(\eta_j\)</span> but may also serve as composite in its own right in which case we would essentially say that<br><span class="math inline">\(\hat{\eta}_j = \eta_j\)</span> and refer to <span class="math inline">\(\eta_j\)</span> as a construct instead of a latent variable. Since <span class="math inline">\(\hat{\eta}_j\)</span> generally does not have a natural scale, weights are usually chosen such that <span class="math inline">\(\hat{\eta}_j\)</span> is standardized. Therefore, unless otherwise stated:</p>
 <p><span class="math display">\[E(\hat\eta_j) = 0\quad\quad \text{and}\quad\quad Var(\hat\eta_j) = E(\hat\eta^2_j) = 1\]</span></p>
 <p>Since the relations between <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>(or its statistical sibbling the constructs) are a product of the researcher’s theory and assumptions to be analyzed, some constructs are typically not directly connected by a path. Technically this implies a restriction of the path between construct <span class="math inline">\(j\)</span> and <span class="math inline">\(i\)</span> to zero. If all constructs of the reserchers model are connected by a path we call the structural model <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">saturated</a>. If at least one path is restricted to zero, the structural model is called <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">non-saturated</a>.</p>
@@ -134,9 +134,9 @@
 <!-- $$ \Sigma = \Lambda \, V_{\eta} \, \Lambda'+ \Theta $$ -->
 <!-- where $\Theta$ is the variance covariance matrix of the indicator error terms.  -->
 </div>
-<div id="the-reflective-measurement-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#the-reflective-measurement-model" class="anchor" aria-hidden="true"></a>The reflective measurement model</h2>
+<div class="section level2">
+<h2 id="the-reflective-measurement-model">The reflective measurement model<a class="anchor" aria-label="anchor" href="#the-reflective-measurement-model"></a>
+</h2>
 <p>Define the general reflective (congeneric) measurement model as: <span class="math display">\[ x_{kj} = \eta_{kj} + \varepsilon_{kj} = \lambda_{kj}\eta_j +  \varepsilon_{kj}\quad\text{for}\quad k = 1, \dots, K_j\quad\text{and}\quad j = 1, \dots, J\]</span></p>
 <p>Call <span class="math inline">\(\eta_{kj} = \lambda_{kj}\eta_j\)</span> the (indicator) true/population score and <span class="math inline">\(\eta_j\)</span> the underlying latent variable supposed to be the common factor or cause of the <span class="math inline">\(K_j\)</span> indicators connected to latent variable <span class="math inline">\(\eta_j\)</span>. Call <span class="math inline">\(\lambda_{kj}\)</span> the loading or direct effect of the latent variable on its indicator. Let <span class="math inline">\(x_{kj}\)</span> be an indicator (observable), <span class="math inline">\(\varepsilon_{kj}\)</span> be a measurement error and<br><span class="math display">\[\hat{\eta}_j = \sum^{K_j}_{k = 1} w_{kj} x_{kj} = \sum^{K_j}_{k = 1} w_{kj} \eta_{kj} + \sum^{K_j}_{k = 1} w_{kj} \varepsilon_{kj}
 = \bar\eta_{j} + \bar\varepsilon_{j} = \eta_j\sum_{k=1}^{K_J}w_{kj}\lambda_{kj} + \bar\varepsilon_{kj}, \]</span> be a proxy/test score/composite/stand-in for/of <span class="math inline">\(\eta_j\)</span> based on a weighted sum of observables, where <span class="math inline">\(w_{kj}\)</span> is a weight to be determined and <span class="math inline">\(\bar\eta_j\)</span> the proxy true score, i.e., a weighted sum of (indicator) true scores. Note the distinction between what we refer to as the <strong>indicator true score</strong> <span class="math inline">\(\eta_{kj}\)</span> and the <strong>proxy true score</strong> which is the true score for <span class="math inline">\(\hat\eta_j\)</span> (i.e, the true score of a score that is in fact a linear combination of (indicator) scores!).</p>
@@ -189,9 +189,9 @@ Var(\bar\varepsilon) &amp;= \sum w_k^2 (1 - \lambda_k^2)
 \end{align}
 \]</span> For most formulae this implies a significant simplification, however, for ease of comparison to extant literature formulae we stick with the “general form” here but mention the “simplified form” or “cSEM form” in the Methods and Formula sections.</p>
 </div>
-<div id="notation-table" class="section level2">
-<h2 class="hasAnchor">
-<a href="#notation-table" class="anchor" aria-hidden="true"></a>Notation table</h2>
+<div class="section level2">
+<h2 id="notation-table">Notation table<a class="anchor" aria-label="anchor" href="#notation-table"></a>
+</h2>
 <center>
 <table class="table">
 <colgroup>
@@ -288,7 +288,7 @@ Var(\bar\varepsilon) &amp;= \sum w_k^2 (1 - \lambda_k^2)
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
 </div>
 
       </footer>
