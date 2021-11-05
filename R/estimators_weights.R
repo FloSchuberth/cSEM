@@ -677,7 +677,7 @@ calculateWeightsGSCAm <- function(
   
   GU <- Gamma%*%gv%*%solve(sqrt(gd2))
   
-  M3 <- Z%*%D - GU%*%(t(GU)%*%Z)%*%D
+  M3 <- Z%*%t(D) - GU%*%(t(GU)%*%Z)%*%t(D)
   
   if(N>J){
     temp <- svd(t(M3)%*%M3)
@@ -717,7 +717,7 @@ calculateWeightsGSCAm <- function(
       Xp       <- X[,windex_p, drop = FALSE]
       # If construct p is a single-indicator construct, dividing w by its norm
       # sometimes doesnt yield 1 exactly due to the way norm() works. This causes
-      # problemes in verify() since we check if loadings are > 1, which they are
+      # problems in verify() since we check if loadings are > 1, which they are
       # if the weight is 1.000000...0002.
       if(length(w) == 1) {
         w <- 1
@@ -761,7 +761,7 @@ calculateWeightsGSCAm <- function(
     gd2 <- diag(temp$d) 
     gv <- temp$v
     
-    GU <- Gamma%*%gv%*%solve(gd2)
+    GU <- Gamma%*%gv%*%solve(sqrt(gd2))
     M3 <- Z%*%D - GU%*%(t(GU)%*%Z)%*%t(D)
     
     if(N>J){
@@ -803,7 +803,7 @@ calculateWeightsGSCAm <- function(
             "Iterations" = iter_counter)
   return(l)
   
-} # END calculateWeightsGSCA
+} # END calculateWeightsGSCAm
 
 #' Calculate composite weights using unit weights
 #'
