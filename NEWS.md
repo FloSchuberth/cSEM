@@ -1,5 +1,8 @@
 # <Development version: cSEM 0.4.0.9000
 
+- Bug fix: GSCAm (i.e., `.approach_weights = "GSCA"` with constructs modeled as 
+  common factors) no longer fails when a single indicator construct is supplied (#441)
+
 - The default value for argument `.r` (the number of repetitions) of `predict()` 
   was changed from 10 to 1 since more than one repetition is hardly ever necessary.
   
