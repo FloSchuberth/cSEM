@@ -184,6 +184,9 @@ foreman <- function(
   Lambda  <- LambdaQ2W$Lambda
   Q       <- sqrt(LambdaQ2W$Q2)
   
+  # Overwrite the .disattenuate argument 
+  # args_used$.disattenuate <- LambdaQ2W$.disattenuate
+  
   ## Calculate measurement error correlation
   # Compute theta
   Theta <- S - t(Lambda) %*% Lambda
