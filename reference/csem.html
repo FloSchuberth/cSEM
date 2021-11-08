@@ -408,11 +408,11 @@ For details see: Dijkstra and Schermelleh-Engel (2014)
 </div>
 
 <div class="section">
-<h3 id="second-order-model">Second-order model<a class="anchor" aria-label="anchor" href="#second-order-model"></a></h3>
-<p>Second-order models are specified using the operators <code>=~</code> and <code>&lt;~</code>. These
+<h3 id="models-containing-second-order-constructs">Models containing second-order constructs<a class="anchor" aria-label="anchor" href="#models-containing-second-order-constructs"></a></h3>
+<p>Second-order constructs are specified using the operators <code>=~</code> and <code>&lt;~</code>. These
 operators are usually used with indicators on their right-hand side. For
-second-order models the right-hand side variables are constructs instead.
-If c1, and c2 are constructs forming or measuring a higher order
+second-order constructs the right-hand side variables are constructs instead.
+If c1, and c2 are constructs forming or measuring a higher-order
 construct, a model would look like this:</p><pre><code><span class="va">my_model</span> <span class="op">&lt;-</span> <span class="st">"
 # Structural model
 SAT  ~ QUAL
@@ -425,11 +425,16 @@ SAT  =~ sat1 + sat2
 c1 =~ x11 + x12
 c2 =~ x21 + x22
 
-# Second-order term (in this case a second-order composite build by common
+# Second-order construct (in this case a second-order composite build by common
 # factors)
 VAL &lt;~ c1 + c2
-"</span></code></pre><p>Currently, two approaches are explicitly implemented:</p><ul><li><p>(Default) <code>"2stage"</code>. The (disjoint) two stage approach as proposed by Agarwal and Karahanna (2000)
-.</p></li>
+"</span></code></pre><p>Currently, two approaches are explicitly implemented:</p><ul><li><p>(Default) <code>"2stage"</code>. The (disjoint) two-stage approach as proposed by Agarwal and Karahanna (2000)
+.
+Note that by default a correction for attenuation is applied if common factors are
+involved in modeling second-order constructs. For instance, the three-stage approach
+proposed by Van Riel et al. (2017)
+ is applied in case of a second-order construct specified as a
+composite of common factors.</p></li>
 <li><p><code>"mixed"</code>. The mixed repeated indicators/two-stage approach as proposed by Ringle et al. (2012)
 .</p></li>
 </ul><p>The repeated indicators approach as proposed by Joereskog and Wold (1982)
@@ -460,7 +465,7 @@ and <code>c2</code> would have to be specified as well.</p>
 
 <div class="section">
 <h3 id="multigroup-analysis">Multigroup analysis<a class="anchor" aria-label="anchor" href="#multigroup-analysis"></a></h3>
-<p>To perform multigroup analysis provide either a list of data sets or one
+<p>To perform a multigroup analysis provide either a list of data sets or one
 data set containing a group-identifier-column whose column
 name must be provided to <code>.id</code>. Values of this column are taken as levels of a
 factor and are interpreted as group
@@ -570,6 +575,10 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 “Spotlights, Floodlights, and the Magic Number Zero: Simple Effects Tests in Moderated Regression.”
 <em>Journal of Marketing Research</em>, <b>50</b>(2), 277--288.
 doi: <a href="https://doi.org/10.1509/jmr.12.0420" class="external-link">10.1509/jmr.12.0420</a>
+.<br><br> Van Riel ACR, Henseler J, Kemeny I, Sasovova Z (2017).
+“Estimating hierarchical constructs using Partial Least Squares: The case of second order composites of factors.”
+<em>Industrial Management \&amp; Data Systems</em>, <b>117</b>(3), 459--477.
+doi: <a href="https://doi.org/10.1108/IMDS-07-2016-0286" class="external-link">10.1108/IMDS-07-2016-0286</a>
 .</p>
     </div>
     <div id="see-also">

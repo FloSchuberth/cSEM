@@ -74,7 +74,9 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.0.9000" id="development-version-csem-0409000">&lt;Development version: cSEM 0.4.0.9000<a class="anchor" aria-label="anchor" href="#development-version-csem-0409000"></a></h2>
-<ul><li><p>Use singular value decompostion in GSCAm to deal with large datasets (<a href="https://github.com/M-E-Rademaker/cSEM/issues/444" class="external-link">#444</a>)</p></li>
+<ul><li><p>Revise the description of the two-stage approach in the csem help file (<a href="https://github.com/M-E-Rademaker/cSEM/issues/418" class="external-link">#418</a>)</p></li>
+<li><p>Bug fix: fix print method for <code><a href="../reference/summarize.html">summarize()</a></code> when disattenuate is set to TRUE internally. Now disattenuate as treated in csem is reported and not the value provided by the user. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/419" class="external-link">#419</a>)</p></li>
+<li><p>Use singular value decompostion in GSCAm to deal with large datasets (<a href="https://github.com/M-E-Rademaker/cSEM/issues/444" class="external-link">#444</a>)</p></li>
 <li><p>Bug fix: GSCAm (i.e., <code>.approach_weights = "GSCA"</code> with constructs modeled as common factors) no longer fails when a single indicator construct is supplied (<a href="https://github.com/M-E-Rademaker/cSEM/issues/441" class="external-link">#441</a>)</p></li>
 <li><p>The default value for argument <code>.r</code> (the number of repetitions) of <code><a href="../reference/predict.html">predict()</a></code> was changed from 10 to 1 since more than one repetition is hardly ever necessary.</p></li>
 <li><p><code><a href="../reference/predict.html">predict()</a></code> is now able to predict categorical indicators (a procedure known as OrdPLScPredict). <code><a href="../reference/predict.html">predict()</a></code> therefore gains a number of new arguments, namely: <code>.approach_score_target</code>, <code>.sim_points</code>, <code>.treat_as_continuous</code>, and <code>.approach_score_benchmark</code>.</p></li>
