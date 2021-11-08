@@ -184,6 +184,12 @@ foreman <- function(
   Lambda  <- LambdaQ2W$Lambda
   Q       <- sqrt(LambdaQ2W$Q2)
   
+  # Overwrite the .disattenuate argument 
+  # The .disattenuate argument can changed in the calcualte Reliabilities function 
+  # in the case that reliabilities are
+  # given by the user or that the two stage approach is used. 
+  args_used$.disattenuate <- LambdaQ2W$.disattenuate
+  
   ## Calculate measurement error correlation
   # Compute theta
   Theta <- S - t(Lambda) %*% Lambda

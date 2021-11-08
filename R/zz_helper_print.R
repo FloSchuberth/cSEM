@@ -50,11 +50,29 @@ printSummarizeOverview <- function(.summarize_object) {
   cat2(
     col_align("\n\tSecond-order approach", 35), "= ", x$Approach_2ndorder
   )
+  
+  
+  # 
+  
+  
   cat2(
     col_align("\n\tType of path model", 35), "= ", x$Model$model_type,
     col_align("\n\tDisattenuated", 35), "= ", 
     ifelse(x$Arguments$.disattenuate & any(x$Model$construct_type == "Common factor"), 
-           ifelse(x$Arguments$.approach_weights == "PLS-PM", "Yes (PLSc)",
+           ifelse(x$Arguments$.approach_weights == "PLS-PM", 
+                  # If the model contains second-order constructs, the mixed or two-stage approach 
+                  # is applied. Hence, the model is estimated in two stages and 
+                  # consequently .disattenuate is reported for both stages.
+                  # If further approaches are implemented that require only one stage 
+                  # such as the repeated indicators approach we need to do a more detailed check here
+                  if(!is.na(x$Approach_2ndorder)){
+                    paste("First stage:", ifelse(.summarize_object$First_stage$Information$Arguments$.disattenuate==TRUE,
+                                                 "Yes",
+                                                 "No"), "\n",col_align("= Second stage:", 55, "right"), 
+                          ifelse(x$Arguments$.disattenuate == TRUE, "Yes", "No"))
+                  }else{
+                         "Yes (PLSc)"
+           },
                   ifelse(x$Arguments$.approach_weights == "GSCA", "Yes (GSCAm)", "Yes")
            ), "No")
   )

@@ -480,7 +480,7 @@ calculateReliabilities <- function(
       # Note: Only necessary if at least one common factor is in the model
       if(.disattenuate & any(.csem_model$construct_type == "Common factor")) {
         ## "Croon" approach
-        # The Croon reliabilities assume that the scores are built by sumscores 
+        # The Croon reliabilities assume that the scores are built by sum scores 
         # (i.e. unit weights).
         # Moreover, all constructs must be modeled as common factors.
         
@@ -549,6 +549,12 @@ calculateReliabilities <- function(
             .approach_weights)
     }
     
+    
+    # If reliabilities are given by the user, a correction for attenuation is always conducted. 
+    # Consequently, in case of the two/three-stage approach for models containing second-order
+    # constructs always a correction for attenuation is conducted in the second stage 
+    # because in the first stage we calculate the reliabilities and therefore in the 
+    # second stage reliabilities are given which leads to correction for attenuation. 
     if(!.disattenuate) {
       .disattenuate <- TRUE
       warning2("`.disattenuate = FALSE` is set to `TRUE`.")
@@ -633,8 +639,10 @@ calculateReliabilities <- function(
     # } # END if(length(names_cf))
   } # END if(is.null(.reliabilities))
   
-  ## Return Loadings, Reliabilities, and Cross loadings
-  out <- list("Lambda" = Lambda, "Q2" = Q^2, "W" = W)
+  # Return Loadings, Reliabilities, and Cross loadings
+  # Additionally, the disattenuate argument is returned because it can change in
+  # the calculate reliabilities function.
+  out <- list("Lambda" = Lambda, "Q2" = Q^2, "W" = W,".disattenuate" = .disattenuate)
   return(out)
 }
 

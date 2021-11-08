@@ -1,5 +1,10 @@
 # <Development version: cSEM 0.4.0.9000
 
+- Revise the description of the two-stage approach in the csem help file (#418)
+
+- Bug fix: fix print method for `summarize()` when disattenuate is set to TRUE internally. 
+  Now disattenuate as treated in csem is reported and not the value provided by the user. (#419) 
+
 - Use singular value decompostion in GSCAm to deal with large datasets (#444)
 
 - Bug fix: GSCAm (i.e., `.approach_weights = "GSCA"` with constructs modeled as 
