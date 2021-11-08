@@ -37,7 +37,7 @@ calculate2ndStage <- function(
   # Add scores for nonlinear terms if a second order construct is attached
   # to a nonlinear term
   # Note: 23.07.2019: We dont allow for first order nonlinear terms to build/
-  #                   measure a second order construct. Hence the code below 
+  #                   measure a second-order construct. Hence the code below 
   #                   is superfluos.
   # if(any(grepl("\\.", colnames(model2$measurement)))) {
   #   
