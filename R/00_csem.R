@@ -123,11 +123,11 @@
 #' For details see: \insertCite{Dijkstra2014;textual}{cSEM}.
 #' }
 #' 
-#' \subsection{Second-order model}{
-#' Second-order models are specified using the operators `=~` and `<~`. These
+#' \subsection{Models containing second-order constructs}{
+#' Second-order constructs are specified using the operators `=~` and `<~`. These
 #' operators are usually used with indicators on their right-hand side. For 
-#' second-order models the right-hand side variables are constructs instead.
-#' If c1, and c2 are constructs forming or measuring a higher order
+#' second-order constructs the right-hand side variables are constructs instead.
+#' If c1, and c2 are constructs forming or measuring a higher-order
 #' construct, a model would look like this:
 #' \preformatted{my_model <- "
 #' # Structural model
@@ -141,16 +141,21 @@
 #' c1 =~ x11 + x12
 #' c2 =~ x21 + x22
 #' 
-#' # Second-order term (in this case a second-order composite build by common
+#' # Second-order construct (in this case a second-order composite build by common
 #' # factors)
 #' VAL <~ c1 + c2
 #' "
 #' }
 #' Currently, two approaches are explicitly implemented: 
 #' \itemize{
-#' \item{(Default) `"2stage"`. The (disjoint) two stage approach as proposed by \insertCite{Agarwal2000;textual}{cSEM}.}
+#' \item{(Default) `"2stage"`. The (disjoint) two-stage approach as proposed by \insertCite{Agarwal2000;textual}{cSEM}.
+#' Note that by default a correction for attenuation is applied if common factors are 
+#' involved in modeling second-order constructs. For instance, the three-stage approach
+#'  proposed by \insertCite{VanRiel2017;textual}{cSEM} is applied in case of a second-order construct specified as a 
+#'  composite of common factors.}
 #' \item{`"mixed"`. The mixed repeated indicators/two-stage approach as proposed by \insertCite{Ringle2012;textual}{cSEM}.}
 #' }
+#'  
 #' 
 #' The repeated indicators approach as proposed by \insertCite{Joereskog1982b;textual}{cSEM}
 #' and the extension proposed by \insertCite{Becker2012;textual}{cSEM} are 
@@ -180,7 +185,7 @@
 #'}
 #' 
 #' \subsection{Multigroup analysis}{
-#' To perform multigroup analysis provide either a list of data sets or one 
+#' To perform a multigroup analysis provide either a list of data sets or one 
 #' data set containing a group-identifier-column whose column 
 #' name must be provided to `.id`. Values of this column are taken as levels of a
 #' factor and are interpreted as group 
