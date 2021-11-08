@@ -639,7 +639,7 @@ calculateReliabilities <- function(
     # } # END if(length(names_cf))
   } # END if(is.null(.reliabilities))
   
-  ## Return Loadings, Reliabilities, and Cross loadings
+  # Return Loadings, Reliabilities, and Cross loadings
   # Additionally, the disattenuate argument is returned because it can change in
   # the calculate reliabilities function.
   out <- list("Lambda" = Lambda, "Q2" = Q^2, "W" = W,".disattenuate" = .disattenuate)
