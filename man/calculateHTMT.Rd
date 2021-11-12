@@ -7,7 +7,7 @@
 calculateHTMT(
  .object               = NULL,
  .type_htmt            = c('htmt','htmt2'),
- .absolute             = TRUE,
+ .absolute             = FALSE,
  .alpha                = 0.05,
  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
@@ -36,16 +36,6 @@ Defaults to \code{0.05}.}
 to compute the 1-alpha\% quantile of the bootstrap HTMT values. For possible
 choices see \code{\link[=infer]{infer()}}. Ignored
 if \code{.inference = FALSE}. Defaults to "\emph{CI_percentile}".}
-
-\item{.handle_inadmissibles}{Character string. How should inadmissible results
-be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
-replications/resamples yielding an inadmissible result will be dropped
-(i.e. the number of results returned will potentially be less than \code{.R}).
-For "\emph{ignore}" all results are returned even if all or some of the replications
-yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
-For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Depending on the frequency of inadmissible solutions this may significantly increase
-computing time. Defaults to "\emph{drop}".}
 
 \item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
 
@@ -84,7 +74,7 @@ correlations are negative the absolute HTMT values are returned (\code{.absolute
 To obtain the 1-alpha\%-quantile of the bootstrap distribution for each HTMT
 value set \code{.inference = TRUE}. To choose the type of confidence interval to use
 to compute the 1-alpha\%-quantile, use \code{.ci}. To control the bootstrap process,
-arguments \code{.handle_inadmissibles}, \code{.R} and \code{.seed} are available.
+arguments \code{.R} and \code{.seed} are available.
 
 Since the HTMT and the HTMT2 both assume a reflective measurement
 model only concepts modeled as common factors are considered by default.
