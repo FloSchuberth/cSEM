@@ -1104,20 +1104,7 @@ calculateHTMTcore <- function(
     list(monocor1,monocor2,hetcor)
   })
   
-  # # check if sign of all heterotrait-heteromethod correlations is negative; 
-  # # if this i the case -1 else 1
-  # sign_identification=sapply(block_pairs,function(x){
-  #   S_signs_two_blocks=S_signs[names(x)[1],names(x)[2]]
-  #   S_elements_two_blocks=S_elements[names(x)[1],names(x)[2]]
-  #   
-  #   if(S_signs_two_blocks==S_elements_two_blocks){
-  #     1
-  #   }else{
-  #     -1
-  #   }
-  # })
-  
-  
+
   if(.type_htmt=='htmt2'){
     # calculate geometric mean of the correlations
     avg_cor<-lapply(correlations, function(x){
@@ -1205,15 +1192,14 @@ calculateHTMTcore <- function(
 #' HTMT
 #'
 #' Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on 
-#' \insertCite{Henseler2015;textual}{cSEM} or its advancement HTMT2 proposed by \insertCite{Roemerinprint;textual}{cSEM}.
+#' \insertCite{Henseler2015;textual}{cSEM} or the HTMT2 proposed by \insertCite{Roemerinprint;textual}{cSEM}.
 #' While the HTMT is a consistent estimator for the construct correlation in 
 #' case of tau-equivalent measurement models, the HTMT2 is a consistent estimator
 #' for congeneric measurement models. In general, they are used to assess discriminant validity.
 #' 
-#' Computation of the HTMT assumes that all intra-block and inter-block 
+#' Computation of the HTMT/HTMT2 assumes that all intra-block and inter-block 
 #' correlations between indicators are either all-positive or all-negative.
-#' A warning is given if this is not the case. If all intra-block or inter-block
-#' correlations are negative the absolute HTMT values are returned (`.absolute = TRUE`).
+#' A warning is given if this is not the case.
 #' 
 #' To obtain the 1-alpha%-quantile of the bootstrap distribution for each HTMT 
 #' value set `.inference = TRUE`. To choose the type of confidence interval to use
@@ -1250,9 +1236,20 @@ calculateHTMTcore <- function(
 #'   if `.inference = FALSE`. Defaults to "*CI_percentile*".
 #' @param ... Ignored.
 #'
-#' @return A lower tringular matrix of HTMT values. If `.inference = TRUE`
-#'   the upper tringular part is the 1-.alpha%-quantile of the HTMT's bootstrap
-#'   distribution.
+#' @return A named list containing: 
+#' \itemize{
+#' \item the values of the HTMT/HTMT2.
+#' \item the results for the print function, i.e,. a matrix with the HTMT/HTMT2 values 
+#' at its lower triangular and if `.inference = TRUE` the upper triangular contains
+#'  the upper limit of the 1-2*.alpha% bootstrap confidence interval if the HTMT/HTMT2 is positive and 
+#'  the lower limit if the HTMT/HTMT2 is negative.
+#'  \item the lower and upper limits of the 1-2*.alpha% bootstrap confidence interval if 
+#'  `.inference = TRUE`; otherwise it is `NULL`.
+#'  \item the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values
+#'  calculated during bootstrap if `.inference = TRUE`; otherwise it is `NULL`.
+#'  Note, the HTMT2 is based on the geometric and thus cannot always be calculated. 
+#'  }
+#' 
 #' 
 #' @seealso [assess()], [csem], [cSEMResults]
 #' 
@@ -1265,7 +1262,7 @@ calculateHTMTcore <- function(
 calculateHTMT <- function(
   .object               = NULL,
   .type_htmt            = c('htmt','htmt2'),
-  .absolute             = TRUE,
+  .absolute             = FALSE,
   .alpha                = 0.05,
   .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
                             "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
@@ -1358,15 +1355,7 @@ calculateHTMT <- function(
     out_for_print <- out + t(temp_quantiles)
     diag(out_for_print) <- 1
     
-    # ## Reassemble matrix
-    # htmt_quantiles <- out
-    # htmt_quantiles[] <- quants
-    # 
-    # htmt_inference <- out + t(htmt_quantiles)
-    # 
-    # # Return
-    # diag(htmt_inference) <- 1
-    # return(htmt_inference)
+
   }else{ #if inference == FALSE
     quants <- NULL
     nr_admissible = NULL
@@ -1375,7 +1364,10 @@ calculateHTMT <- function(
 
     # Return
   # diag(out) <- 1
-  list(out,quants,out_for_print,nr_admissible)
+  list("values" = out,
+       "out_print" = out_for_print,
+       "quantiles" = quants,
+       "nr_admissibles" = nr_admissible)
 }
 
 

@@ -102,7 +102,19 @@
 #'   measure of model fit in a Chi-square fit test sense. Calculation is done 
 #'   by [calculateGoF()].}
 #' \item{Heterotrait-monotrait ratio of correlations (HTMT); "htmt"}{
-#'   An estimate of the correlation between latent variables. The HTMT is used 
+#'   An estimate of the correlation between latent variables assuming tau equivalent
+#'   measurement models. The HTMT is used 
+#'   to assess convergent and/or discriminant validity of a construct. 
+#'   The HTMT is inherently tied to the common factor model. If the model contains
+#'   less than two constructs modeled as common factors and 
+#'   `.only_common_factors = TRUE`, `NA` is returned.
+#'   It is possible to report the HTMT for constructs modeled as 
+#'   composites by setting `.only_common_factors = FALSE`, however, result should be 
+#'   interpreted with caution as they may not have a conceptual meaning.
+#'   Calculation is done by [calculateHTMT()].}
+#' \item{HTMT2; "htmt2"}{
+#'   An estimate of the correlation between latent variables assuming congeneric
+#'   measurement models. The HTMT2 is used 
 #'   to assess convergent and/or discriminant validity of a construct. 
 #'   The HTMT is inherently tied to the common factor model. If the model contains
 #'   less than two constructs modeled as common factors and 
@@ -195,7 +207,7 @@
 #'                            "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
 #'                            "reliability",
 #'                            "rmsea", "rms_theta", "srmr",
-#'                            "gof", "htmt", "r2", "r2_adj",
+#'                            "gof", "htmt", "htmt2", "r2", "r2_adj",
 #'                            "rho_T", "rho_T_weighted", "vif", 
 #'                            "vifmodeB"),
 #'   .only_common_factors = TRUE, 
@@ -225,7 +237,7 @@ assess <- function(
                            "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "srmr",
-                           "gof", "htmt", "r2", "r2_adj",
+                           "gof", "htmt", "htmt2", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
                            "vifmodeB"),
   .only_common_factors = TRUE, 
@@ -483,14 +495,25 @@ assess <- function(
     # GoF
     out[["GoF"]]   <- calculateGoF(.object)
   }
-  if(any(.quality_criterion %in% c("all", "htmt"))) {
+  if(any(.quality_criterion %in% c("all", "htmt", "htmt2"))) {
     # HTMT 
     if(inherits(.object, "cSEMResults_default")) {
-      out[["HTMT"]]  <- calculateHTMT(
+      if(any(.quality_criterion %in% c("all", "htmt"))){
+       out[["HTMT"]]  <- calculateHTMT(
         .object,
         .only_common_factors  = .only_common_factors,
+        .type_htmt = "htmt",
         ...
-      )
+       )}
+      
+      if(any(.quality_criterion %in% c("all", "htmt2"))){
+        out[["HTMT2"]]  <- calculateHTMT(
+          .object,
+          .only_common_factors  = .only_common_factors,
+          .type_htmt = "htmt2",
+          ...
+        )}
+    
       # Get argument values
       args_htmt <- list(...)
       if(any(names(args_htmt) == ".inference")) {
@@ -514,7 +537,7 @@ assess <- function(
       if(any(names(args_htmt) == ".type_htmt")) {
         out$Information[[".type_htmt"]] <- args_htmt[[".type_htmt"]]
       } else {
-        # If .type_htmt is not set in the funtion
+        # If .type_htmt is not set in the function
         out$Information[[".type_htmt"]] <- "htmt"
       } 
     } else { # 2nd_order

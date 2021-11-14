@@ -54,22 +54,31 @@ not be altered!}
 \item{...}{Ignored.}
 }
 \value{
-A lower tringular matrix of HTMT values. If \code{.inference = TRUE}
-the upper tringular part is the 1-.alpha\%-quantile of the HTMT's bootstrap
-distribution.
+A named list containing:
+\itemize{
+\item the values of the HTMT/HTMT2.
+\item the results for the print function, i.e,. a matrix with the HTMT/HTMT2 values
+at its lower triangular and if \code{.inference = TRUE} the upper triangular contains
+the upper limit of the 1-2*.alpha\% bootstrap confidence interval if the HTMT/HTMT2 is positive and
+the lower limit if the HTMT/HTMT2 is negative.
+\item the lower and upper limits of the 1-2*.alpha\% bootstrap confidence interval if
+\code{.inference = TRUE}; otherwise it is \code{NULL}.
+\item the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values
+calculated during bootstrap if \code{.inference = TRUE}; otherwise it is \code{NULL}.
+Note, the HTMT2 is based on the geometric and thus cannot always be calculated.
+}
 }
 \description{
 Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on
-\insertCite{Henseler2015;textual}{cSEM} or its advancement HTMT2 proposed by \insertCite{Roemerinprint;textual}{cSEM}.
+\insertCite{Henseler2015;textual}{cSEM} or the HTMT2 proposed by \insertCite{Roemerinprint;textual}{cSEM}.
 While the HTMT is a consistent estimator for the construct correlation in
 case of tau-equivalent measurement models, the HTMT2 is a consistent estimator
 for congeneric measurement models. In general, they are used to assess discriminant validity.
 }
 \details{
-Computation of the HTMT assumes that all intra-block and inter-block
+Computation of the HTMT/HTMT2 assumes that all intra-block and inter-block
 correlations between indicators are either all-positive or all-negative.
-A warning is given if this is not the case. If all intra-block or inter-block
-correlations are negative the absolute HTMT values are returned (\code{.absolute = TRUE}).
+A warning is given if this is not the case.
 
 To obtain the 1-alpha\%-quantile of the bootstrap distribution for each HTMT
 value set \code{.inference = TRUE}. To choose the type of confidence interval to use
