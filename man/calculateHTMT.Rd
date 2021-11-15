@@ -7,7 +7,7 @@
 calculateHTMT(
  .object               = NULL,
  .type_htmt            = c('htmt','htmt2'),
- .absolute             = FALSE,
+ .absolute             = TRUE,
  .alpha                = 0.05,
  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
@@ -78,10 +78,11 @@ Computation of the HTMT/HTMT2 assumes that all intra-block and inter-block
 correlations between indicators are either all-positive or all-negative.
 A warning is given if this is not the case.
 
-To obtain the 1-alpha\%-quantile of the bootstrap distribution for each HTMT
-value set \code{.inference = TRUE}. To choose the type of confidence interval to use
-to compute the 1-alpha\%-quantile, use \code{.ci}. To control the bootstrap process,
-arguments \code{.R} and \code{.seed} are available.
+To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set \code{.inference = TRUE}.
+To choose the type of confidence interval, use \code{.ci}. To control the bootstrap process,
+arguments \code{.R} and \code{.seed} are available. Note, that \code{.alpha} is multiplied by two
+because typically researchers are interested in one-sided bootstrap confidence intervals
+for the HTMT/HTMT2.
 
 Since the HTMT and the HTMT2 both assume a reflective measurement
 model only concepts modeled as common factors are considered by default.

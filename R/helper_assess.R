@@ -1201,10 +1201,11 @@ calculateHTMTcore <- function(
 #' correlations between indicators are either all-positive or all-negative.
 #' A warning is given if this is not the case.
 #' 
-#' To obtain the 1-alpha%-quantile of the bootstrap distribution for each HTMT 
-#' value set `.inference = TRUE`. To choose the type of confidence interval to use
-#' to compute the 1-alpha%-quantile, use `.ci`. To control the bootstrap process,
-#' arguments `.R` and `.seed` are available. 
+#' To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set `.inference = TRUE`.
+#' To choose the type of confidence interval, use `.ci`. To control the bootstrap process,
+#' arguments `.R` and `.seed` are available. Note, that `.alpha` is multiplied by two
+#' because typically researchers are interested in one-sided bootstrap confidence intervals
+#' for the HTMT/HTMT2. 
 #' 
 #' Since the HTMT and the HTMT2 both assume a reflective measurement
 #' model only concepts modeled as common factors are considered by default.
@@ -1216,7 +1217,7 @@ calculateHTMTcore <- function(
 #' @usage calculateHTMT(
 #'  .object               = NULL,
 #'  .type_htmt            = c('htmt','htmt2'),
-#'  .absolute             = FALSE,
+#'  .absolute             = TRUE,
 #'  .alpha                = 0.05,
 #'  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
 #'                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
@@ -1261,7 +1262,7 @@ calculateHTMTcore <- function(
 calculateHTMT <- function(
   .object               = NULL,
   .type_htmt            = c('htmt','htmt2'),
-  .absolute             = FALSE,
+  .absolute             = TRUE,
   .alpha                = 0.05,
   .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
                             "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
@@ -1271,7 +1272,6 @@ calculateHTMT <- function(
   .seed                 = NULL,
   ...
 ){
-  # .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   .ci                   <- match.arg(.ci) # allow only one CI
   .type_htmt            <- match.arg(.type_htmt)
 
@@ -1280,7 +1280,6 @@ calculateHTMT <- function(
                   .type_htmt     = .type_htmt,
                   .absolute = .absolute,
                   .alpha                = .alpha,
-                  # .handle_inadmissibles = .handle_inadmissibles,
                   .inference            = .inference,
                   .only_common_factors  = .only_common_factors,
                   .R                    = .R,
@@ -1321,14 +1320,12 @@ calculateHTMT <- function(
       .seed = .seed
     )
     
-    
     # remove NaNs from out_resample manually; this removes also valid values if the row contains a NaN  
-   out_resample$Estimates$Estimates_resample$Estimates1$HTMT$Resampled <- na.omit(out_resample$Estimates$Estimates_resample$Estimates1$HTMT$Resampled) 
+    out_resample$Estimates$Estimates_resample$Estimates1$HTMT$Resampled <- na.omit(out_resample$Estimates$Estimates_resample$Estimates1$HTMT$Resampled) 
     
     # number of admissible HTMT calculations, i.e., not NaNs
     nr_admissible <- dim(out_resample$Estimates$Estimates_resample$Estimates1$HTMT$Resampled)[1]
 
-    
     # Compute quantile
     if(length(.alpha) == 1) {
       out_infer <- infer(out_resample, .alpha = .alpha*2, .quantity = .ci)
@@ -1347,7 +1344,8 @@ calculateHTMT <- function(
         quants[2,x] 
       }
     })
-    
+
+    # Assemble output 
     temp_quantiles <- out
     temp_quantiles[] <- quants_for_print 
     
@@ -1360,9 +1358,8 @@ calculateHTMT <- function(
     nr_admissible = NULL
     out_for_print <- out
   }
-
-    # Return
-  # diag(out) <- 1
+  
+  # Return
   list("htmts" = out_for_print,
        "quantiles" = quants,
        "nr_admissibles" = nr_admissible)
