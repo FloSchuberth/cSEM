@@ -90,7 +90,7 @@ exportToExcel <- function(
   } else if(inherits(.postestimation_object, "cSEMAssess")) {
     elements <- c("AVE", "R2", "R2_adj", "Reliability",
                   "Distance and Fit measures", "Model selection criteria", 
-                  "VIFs", "Effect sizes", "HTMT", "Fornell-Larcker matrix")
+                  "VIFs", "Effect sizes", "HTMT", "HTMT2", "Fornell-Larcker matrix")
     
     for(element in elements) {
       ## Add worksheets
