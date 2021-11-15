@@ -512,7 +512,7 @@ args_default <- function(.choices = FALSE) {
                                  "cfi", "gfi", "ifi", "nfi", "nnfi", 
                                  "reliability",
                                  "rmsea", "rms_theta", "srmr",
-                                 "gof", "htmt", "r2", "r2_adj",
+                                 "gof", "htmt", "htmt2", "r2", "r2_adj",
                                  "rho_T", "rho_T_weighted", "vif", 
                                  "vifmodeB"),
     

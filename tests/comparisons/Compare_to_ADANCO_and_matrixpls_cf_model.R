@@ -291,8 +291,8 @@ assa1$AVE - ave_ADANCO # identical at the 8th sig digit
 assa1$AVE - suma2$ave$ave # identical to matrixpls
 
 ## HTMT
-assa1$HTMT - htmt_ADANCO # identical to ADANCO
-assa1$HTMT - suma2$htmt # identical to matrixpls
+assa1$HTMT$values - htmt_ADANCO # identical to ADANCO
+assa1$HTMT$values - suma2$htmt # identical to matrixpls
 
 ## Fornell-Larcker
 assa1$`Fornell-Larcker` - fl_ADANCO # identical to ADANCO 

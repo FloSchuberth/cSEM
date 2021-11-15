@@ -11,7 +11,6 @@ calculateHTMT(
  .alpha                = 0.05,
  .ci                   = c("CI_percentile", "CI_standard_z", "CI_standard_t", 
                            "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
- .handle_inadmissibles = c("drop", "ignore", "replace"),
  .inference            = FALSE,
  .only_common_factors  = TRUE,
  .R                    = 499,
@@ -37,16 +36,6 @@ to compute the 1-alpha\% quantile of the bootstrap HTMT values. For possible
 choices see \code{\link[=infer]{infer()}}. Ignored
 if \code{.inference = FALSE}. Defaults to "\emph{CI_percentile}".}
 
-\item{.handle_inadmissibles}{Character string. How should inadmissible results
-be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
-replications/resamples yielding an inadmissible result will be dropped
-(i.e. the number of results returned will potentially be less than \code{.R}).
-For "\emph{ignore}" all results are returned even if all or some of the replications
-yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
-For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
-Depending on the frequency of inadmissible solutions this may significantly increase
-computing time. Defaults to "\emph{drop}".}
-
 \item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
@@ -64,27 +53,36 @@ not be altered!}
 \item{...}{Ignored.}
 }
 \value{
-A lower tringular matrix of HTMT values. If \code{.inference = TRUE}
-the upper tringular part is the 1-.alpha\%-quantile of the HTMT's bootstrap
-distribution.
+A named list containing:
+\itemize{
+\item the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2 values
+at its lower triangular and if \code{.inference = TRUE} the upper triangular contains
+the upper limit of the 1-2*.alpha\% bootstrap confidence interval if the HTMT/HTMT2 is positive and
+the lower limit if the HTMT/HTMT2 is negative.
+\item the lower and upper limits of the 1-2*.alpha\% bootstrap confidence interval if
+\code{.inference = TRUE}; otherwise it is \code{NULL}.
+\item the number of admissible bootstrap runs, i.e., the number of HTMT/HTMT2 values
+calculated during bootstrap if \code{.inference = TRUE}; otherwise it is \code{NULL}.
+Note, the HTMT2 is based on the geometric and thus cannot always be calculated.
+}
 }
 \description{
 Computes either the heterotrait-monotrait ratio of correlations (HTMT) based on
-\insertCite{Henseler2015;textual}{cSEM} or its advancement HTMT2 proposed by \insertCite{Roemerinprint;textual}{cSEM}.
+\insertCite{Henseler2015;textual}{cSEM} or the HTMT2 proposed by \insertCite{Roemerinprint;textual}{cSEM}.
 While the HTMT is a consistent estimator for the construct correlation in
 case of tau-equivalent measurement models, the HTMT2 is a consistent estimator
 for congeneric measurement models. In general, they are used to assess discriminant validity.
 }
 \details{
-Computation of the HTMT assumes that all intra-block and inter-block
+Computation of the HTMT/HTMT2 assumes that all intra-block and inter-block
 correlations between indicators are either all-positive or all-negative.
-A warning is given if this is not the case. If all intra-block or inter-block
-correlations are negative the absolute HTMT values are returned (\code{.absolute = TRUE}).
+A warning is given if this is not the case.
 
-To obtain the 1-alpha\%-quantile of the bootstrap distribution for each HTMT
-value set \code{.inference = TRUE}. To choose the type of confidence interval to use
-to compute the 1-alpha\%-quantile, use \code{.ci}. To control the bootstrap process,
-arguments \code{.handle_inadmissibles}, \code{.R} and \code{.seed} are available.
+To obtain bootstrap confidence intervals for the HTMT/HTMT2 values, set \code{.inference = TRUE}.
+To choose the type of confidence interval, use \code{.ci}. To control the bootstrap process,
+arguments \code{.R} and \code{.seed} are available. Note, that \code{.alpha} is multiplied by two
+because typically researchers are interested in one-sided bootstrap confidence intervals
+for the HTMT/HTMT2.
 
 Since the HTMT and the HTMT2 both assume a reflective measurement
 model only concepts modeled as common factors are considered by default.

@@ -302,23 +302,33 @@ print.cSEMAssess <- function(x, ...) {
   
   ## Validity assessment -------------------------------------------------------
   
-  if(any(names(x) %in% c("Fornell-Larcker", "HTMT"))) {
-    cat2("\n\n", rule2("Validity assessment"))
+  if(any(names(x) %in% c("Fornell-Larcker", "HTMT", "HTMT2"))) {
+    cat2("\n\n", rule2("Discriminant validity assessment"))
+    # HTMT
     if(any(names(x) == "HTMT") && !is.null(x$HTMT)) {
-      if(x$Information$.type_htmt == 'htmt'){
       cat2("\n\n\tHeterotrait-monotrait ratio of correlations matrix (HTMT matrix)\n\n")
-      }
-      if(x$Information$.type_htmt == 'htmt2'){
-        cat2("\n\n  Advanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)\n\n")
-      }
+
       if(x$Information$.inference) {
         cat2("\tValues in the upper triangular part are the ", 
-             paste0(100*(1 - x$Information$.alpha), "%-quantile of the\n", 
-            "\tbootstrap distribution (using .ci = '", x$Information$.ci, "').\n\n")) 
+             paste0(100*(1 - x$Information$.alpha), "%-quantiles of the\n", 
+            "\tbootstrap confidence intervals (using .ci = '", x$Information$.ci, "')\n",
+            "\tbased on ", x$HTMT$nr_admissibles ," valid bootstrap runs.\n\n")) 
       }
-      print(x$HTMT)
+      print(x$HTMT$htmts)
     }
-    
+# HTMT2
+    if(any(names(x) == "HTMT2") && !is.null(x$HTMT)) {
+      cat2("\n\n\tAdvanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)\n\n")
+      
+      if(x$Information$.inference) {
+        cat2("\tValues in the upper triangular part are the ", 
+             paste0(100*(1 - x$Information$.alpha), "%-quantiles of the\n", 
+                    "\tbootstrap confidence intervals (using .ci = '", x$Information$.ci, "')\n",
+                    "\tbased on ", x$HTMT2$nr_admissibles ," valid bootstrap runs.\n\n")) 
+      }
+      print(x$HTMT2$htmts)
+    }    
+
     if(any(names(x) == "Fornell-Larcker")) {
       cat2("\n\n\tFornell-Larcker matrix\n\n")
       print(x$`Fornell-Larcker`)

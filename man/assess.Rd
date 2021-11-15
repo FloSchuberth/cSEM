@@ -14,7 +14,7 @@ assess(
                            "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
                            "reliability",
                            "rmsea", "rms_theta", "srmr",
-                           "gof", "htmt", "r2", "r2_adj",
+                           "gof", "htmt", "htmt2", "r2", "r2_adj",
                            "rho_T", "rho_T_weighted", "vif", 
                            "vifmodeB"),
   .only_common_factors = TRUE, 
@@ -145,7 +145,19 @@ Note that, contrary to what the name suggests, the GoF is \strong{not} a
 measure of model fit in a Chi-square fit test sense. Calculation is done
 by \code{\link[=calculateGoF]{calculateGoF()}}.}
 \item{Heterotrait-monotrait ratio of correlations (HTMT); "htmt"}{
-An estimate of the correlation between latent variables. The HTMT is used
+An estimate of the correlation between latent variables assuming tau equivalent
+measurement models. The HTMT is used
+to assess convergent and/or discriminant validity of a construct.
+The HTMT is inherently tied to the common factor model. If the model contains
+less than two constructs modeled as common factors and
+\code{.only_common_factors = TRUE}, \code{NA} is returned.
+It is possible to report the HTMT for constructs modeled as
+composites by setting \code{.only_common_factors = FALSE}, however, result should be
+interpreted with caution as they may not have a conceptual meaning.
+Calculation is done by \code{\link[=calculateHTMT]{calculateHTMT()}}.}
+\item{HTMT2; "htmt2"}{
+An estimate of the correlation between latent variables assuming congeneric
+measurement models. The HTMT2 is used
 to assess convergent and/or discriminant validity of a construct.
 The HTMT is inherently tied to the common factor model. If the model contains
 less than two constructs modeled as common factors and
@@ -260,7 +272,7 @@ assess(res, .quality_criterion = c("ave", "rho_C", "htmt"))
 res <- csem(threecommonfactors, model, 
             .resample_method = "bootstrap", 
             .R               = 40,
-            .user_funs       = cSEM:::calculateHTMT
+            .user_funs       = cSEM:::calculateSRMR
 )
 
 ## Look at the resamples
@@ -277,13 +289,12 @@ res <- csem(threecommonfactors, model,
             .resample_method = "bootstrap",
             .R               = 40,
             .user_funs       = list(
-              "HTMT" = cSEM:::calculateHTMT,
               "SRMR" = cSEM:::calculateSRMR,
               "RMS_theta" = cSEM:::calculateRMSTheta
             ),
             .tolerance = 1e-04
 )
-res$Estimates$Estimates_resample$Estimates1$HTMT$Resampled[1:4, ]
+res$Estimates$Estimates_resample$Estimates1$SRMR$Resampled[1:4, ]
 res$Estimates$Estimates_resample$Estimates1$RMS_theta$Resampled[1:4]
 }
 }
