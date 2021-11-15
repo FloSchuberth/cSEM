@@ -272,7 +272,7 @@ assess(res, .quality_criterion = c("ave", "rho_C", "htmt"))
 res <- csem(threecommonfactors, model, 
             .resample_method = "bootstrap", 
             .R               = 40,
-            .user_funs       = cSEM:::calculateHTMTcore
+            .user_funs       = cSEM:::calculateSRMR
 )
 
 ## Look at the resamples
@@ -289,13 +289,12 @@ res <- csem(threecommonfactors, model,
             .resample_method = "bootstrap",
             .R               = 40,
             .user_funs       = list(
-              "HTMT" = cSEM:::calculateHTMTcore,
               "SRMR" = cSEM:::calculateSRMR,
               "RMS_theta" = cSEM:::calculateRMSTheta
             ),
             .tolerance = 1e-04
 )
-res$Estimates$Estimates_resample$Estimates1$HTMT$Resampled[1:4, ]
+res$Estimates$Estimates_resample$Estimates1$SRMR$Resampled[1:4, ]
 res$Estimates$Estimates_resample$Estimates1$RMS_theta$Resampled[1:4]
 }
 }

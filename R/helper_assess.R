@@ -1212,8 +1212,6 @@ calculateHTMTcore <- function(
 #' `.only_common_factors = FALSE`, however, it is unclear how to
 #' interpret values in this case.
 #' 
-#' Note if `calculateHTMT()` cannot be used as `.user_fun` argument for cSEM because
-#' a list is returned. However, the `cSEM:::calculateHTMTcore()` function can be used instead.
 #' 
 #' @usage calculateHTMT(
 #'  .object               = NULL,
@@ -1240,8 +1238,7 @@ calculateHTMTcore <- function(
 #'
 #' @return A named list containing: 
 #' \itemize{
-#' \item the values of the HTMT/HTMT2.
-#' \item the results for the print function, i.e., a matrix with the HTMT/HTMT2 values 
+#' \item the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2 values 
 #' at its lower triangular and if `.inference = TRUE` the upper triangular contains
 #'  the upper limit of the 1-2*.alpha% bootstrap confidence interval if the HTMT/HTMT2 is positive and 
 #'  the lower limit if the HTMT/HTMT2 is negative.
@@ -1366,8 +1363,7 @@ calculateHTMT <- function(
 
     # Return
   # diag(out) <- 1
-  list("values" = out,
-       "out_print" = out_for_print,
+  list("htmts" = out_for_print,
        "quantiles" = quants,
        "nr_admissibles" = nr_admissible)
 }

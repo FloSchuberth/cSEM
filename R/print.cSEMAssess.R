@@ -314,7 +314,7 @@ print.cSEMAssess <- function(x, ...) {
             "\tbootstrap confidence intervals (using .ci = '", x$Information$.ci, "')\n",
             "\tbased on ", x$HTMT$nr_admissibles ," valid bootstrap runs.\n\n")) 
       }
-      print(x$HTMT$out_print)
+      print(x$HTMT$htmts)
     }
 # HTMT2
     if(any(names(x) == "HTMT2") && !is.null(x$HTMT)) {
@@ -326,7 +326,7 @@ print.cSEMAssess <- function(x, ...) {
                     "\tbootstrap confidence intervals (using .ci = '", x$Information$.ci, "')\n",
                     "\tbased on ", x$HTMT2$nr_admissibles ," valid bootstrap runs.\n\n")) 
       }
-      print(x$HTMT2$out_print)
+      print(x$HTMT2$htmts)
     }    
 
     if(any(names(x) == "Fornell-Larcker")) {

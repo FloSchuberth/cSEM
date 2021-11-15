@@ -55,8 +55,7 @@ not be altered!}
 \value{
 A named list containing:
 \itemize{
-\item the values of the HTMT/HTMT2.
-\item the results for the print function, i.e., a matrix with the HTMT/HTMT2 values
+\item the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2 values
 at its lower triangular and if \code{.inference = TRUE} the upper triangular contains
 the upper limit of the 1-2*.alpha\% bootstrap confidence interval if the HTMT/HTMT2 is positive and
 the lower limit if the HTMT/HTMT2 is negative.
@@ -89,9 +88,6 @@ model only concepts modeled as common factors are considered by default.
 For concepts modeled as composites the HTMT may be computed by setting
 \code{.only_common_factors = FALSE}, however, it is unclear how to
 interpret values in this case.
-
-Note if \code{calculateHTMT()} cannot be used as \code{.user_fun} argument for cSEM because
-a list is returned. However, the \code{cSEM:::calculateHTMTcore()} function can be used instead.
 }
 \references{
 \insertAllCited{}
