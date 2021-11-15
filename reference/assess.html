@@ -87,7 +87,7 @@
                            <span class="st">"cfi"</span>, <span class="st">"cn"</span>, <span class="st">"gfi"</span>, <span class="st">"ifi"</span>, <span class="st">"nfi"</span>, <span class="st">"nnfi"</span>, 
                            <span class="st">"reliability"</span>,
                            <span class="st">"rmsea"</span>, <span class="st">"rms_theta"</span>, <span class="st">"srmr"</span>,
-                           <span class="st">"gof"</span>, <span class="st">"htmt"</span>, <span class="st">"r2"</span>, <span class="st">"r2_adj"</span>,
+                           <span class="st">"gof"</span>, <span class="st">"htmt"</span>, <span class="st">"htmt2"</span>, <span class="st">"r2"</span>, <span class="st">"r2_adj"</span>,
                            <span class="st">"rho_T"</span>, <span class="st">"rho_T_weighted"</span>, <span class="st">"vif"</span>, 
                            <span class="st">"vifmodeB"</span><span class="op">)</span>,
   .only_common_factors <span class="op">=</span> <span class="cn">TRUE</span>, 
@@ -231,7 +231,20 @@ measure of model fit in a Chi-square fit test sense. Calculation is done
 by <code><a href="calculateGoF.html">calculateGoF()</a></code>.</p></dd>
 
 <dt>Heterotrait-monotrait ratio of correlations (HTMT); "htmt"</dt>
-<dd><p>An estimate of the correlation between latent variables. The HTMT is used
+<dd><p>An estimate of the correlation between latent variables assuming tau equivalent
+measurement models. The HTMT is used
+to assess convergent and/or discriminant validity of a construct.
+The HTMT is inherently tied to the common factor model. If the model contains
+less than two constructs modeled as common factors and
+<code>.only_common_factors = TRUE</code>, <code>NA</code> is returned.
+It is possible to report the HTMT for constructs modeled as
+composites by setting <code>.only_common_factors = FALSE</code>, however, result should be
+interpreted with caution as they may not have a conceptual meaning.
+Calculation is done by <code><a href="calculateHTMT.html">calculateHTMT()</a></code>.</p></dd>
+
+<dt>HTMT2; "htmt2"</dt>
+<dd><p>An estimate of the correlation between latent variables assuming congeneric
+measurement models. The HTMT2 is used
 to assess convergent and/or discriminant validity of a construct.
 The HTMT is inherently tied to the common factor model. If the model contains
 less than two constructs modeled as common factors and
@@ -430,7 +443,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	eta1                      0.2270   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2                      0.1005   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------ Validity assessment -----------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------------------- Discriminant validity assessment -----------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -438,6 +451,14 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-out co"><span class="r-pr">#&gt;</span> eta1 1.0000000 0.0000000    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> eta2 0.6782752 1.0000000    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> eta3 0.6668841 0.6124418    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Advanced heterotrait-monotrait ratio of correlations matrix (HTMT2 matrix)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           eta1      eta2 eta3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eta1 1.0000000 0.0000000    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eta2 0.6724003 1.0000000    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eta3 0.6652760 0.5958725    1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Fornell-Larcker matrix</span>
@@ -465,10 +486,18 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## The return value is a named list. Type for example:</span></span>
 <span class="r-in"><span class="va">a</span><span class="op">$</span><span class="va">HTMT</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $htmts</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           eta1      eta2 eta3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> eta1 1.0000000 0.0000000    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> eta2 0.6782752 1.0000000    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> eta3 0.6668841 0.6124418    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $quantiles</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $nr_admissibles</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># You may also just compute a subset of the quality criteria</span></span>
 <span class="r-in"><span class="fu">assess</span><span class="op">(</span><span class="va">res</span>, .quality_criterion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ave"</span>, <span class="st">"rho_C"</span>, <span class="st">"htmt"</span><span class="op">)</span><span class="op">)</span></span>
@@ -486,7 +515,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2           0.7380    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	eta3           0.7884    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------ Validity assessment -----------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ----------------------- Discriminant validity assessment -----------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Heterotrait-monotrait ratio of correlations matrix (HTMT matrix)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -504,16 +533,12 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, </span>
 <span class="r-in">            .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span>, </span>
 <span class="r-in">            .R               <span class="op">=</span> <span class="fl">40</span>,</span>
-<span class="r-in">            .user_funs       <span class="op">=</span> <span class="fu">cSEM</span><span class="fu">:::</span><span class="va"><a href="calculateHTMT.html">calculateHTMT</a></span></span>
+<span class="r-in">            .user_funs       <span class="op">=</span> <span class="fu">cSEM</span><span class="fu">:::</span><span class="va"><a href="fit_measures.html">calculateSRMR</a></span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Look at the resamples</span></span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">User_fun</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]    1 0.7025354 0.6477869    0    1 0.5838548    0    0    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]    1 0.7346478 0.7129404    0    1 0.6734041    0    0    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]    1 0.6252920 0.6982864    0    1 0.6211447    0    0    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]    1 0.6589002 0.6845232    0    1 0.6755659    0    0    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02496639 0.02649278 0.02076395 0.02506558</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Use infer() to compute e.g., the 95% percentile confidence interval</span></span>
 <span class="r-in"><span class="va">res_infer</span> <span class="op">&lt;-</span> <span class="fu"><a href="infer.html">infer</a></span><span class="op">(</span><span class="va">res</span>, .quantity <span class="op">=</span> <span class="st">"CI_percentile"</span><span class="op">)</span></span>
@@ -521,9 +546,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span class="co">## The results are saved under the name "User_fun"</span></span>
 <span class="r-in"><span class="va">res_infer</span><span class="op">$</span><span class="va">User_fun</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CI_percentile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L    1 0.5850754 0.6060793    0    1 0.5415193    0    0    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U    1 0.7653614 0.7474791    0    1 0.6799512    0    0    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.02075971</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03602594</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Several quality criteria can be resampled simultaneously</span></span>
@@ -531,20 +556,15 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in">            .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span>,</span>
 <span class="r-in">            .R               <span class="op">=</span> <span class="fl">40</span>,</span>
 <span class="r-in">            .user_funs       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">              <span class="st">"HTMT"</span> <span class="op">=</span> <span class="fu">cSEM</span><span class="fu">:::</span><span class="va"><a href="calculateHTMT.html">calculateHTMT</a></span>,</span>
 <span class="r-in">              <span class="st">"SRMR"</span> <span class="op">=</span> <span class="fu">cSEM</span><span class="fu">:::</span><span class="va"><a href="fit_measures.html">calculateSRMR</a></span>,</span>
 <span class="r-in">              <span class="st">"RMS_theta"</span> <span class="op">=</span> <span class="fu">cSEM</span><span class="fu">:::</span><span class="va"><a href="fit_measures.html">calculateRMSTheta</a></span></span>
 <span class="r-in">            <span class="op">)</span>,</span>
 <span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">HTMT</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1]      [,2]      [,3] [,4] [,5]      [,6] [,7] [,8] [,9]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]    1 0.6799832 0.6806426    0    1 0.6093840    0    0    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]    1 0.7367333 0.7125780    0    1 0.6456197    0    0    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]    1 0.7203291 0.6743627    0    1 0.6148544    0    0    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]    1 0.6301193 0.6263387    0    1 0.5661515    0    0    1</span>
+<span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">SRMR</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.03466496 0.01666942 0.02344121 0.02557180</span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">RMS_theta</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1084324 0.1083112 0.1080443 0.1048981</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1006828 0.1003974 0.1047085 0.1083848</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
