@@ -77,14 +77,15 @@
     <p><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="figures/lifecycle-stable.svg" alt="[Stable]"></a></p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">summarize</span><span class="op">(</span>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">summarize</span><span class="op">(</span>
  .object <span class="op">=</span> <span class="cn">NULL</span>, 
  .alpha  <span class="op">=</span> <span class="fl">0.05</span>,
  .ci     <span class="op">=</span> <span class="cn">NULL</span>,
  <span class="va">...</span>
  <span class="op">)</span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
@@ -123,11 +124,10 @@ and a description.</p>
     <h2>See also</h2>
     <div class="dont-index"><p><a href="csem.html">csem</a>, <code><a href="assess.html">assess()</a></code>, <a href="csem_results.html">cSEMResults</a>, <code><a href="exportToExcel.html">exportToExcel()</a></code></p></div>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Take a look at the dataset</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Take a look at the dataset</span></span>
 <span class="r-in"><span class="co">#?threecommonfactors</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Specify the (correct) model</span></span>
@@ -170,7 +170,7 @@ and a description.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of admissible results       = 40</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Approach to handle inadmissibles   = "drop"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Sign change option                 = "none"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Random seed                        = -518562992</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Random seed                        = 607265549</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Construct details:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	------------------</span>
@@ -186,37 +186,37 @@ and a description.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ============================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                              CI_percentile   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Path           Estimate  Std. error   t-stat.   p-value         95%        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 ~ eta1      0.6713      0.0470   14.2686    0.0000 [ 0.6048; 0.7668 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1      0.4585      0.0954    4.8056    0.0000 [ 0.2548; 0.6034 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta2      0.3052      0.1047    2.9139    0.0036 [ 0.1568; 0.5172 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 ~ eta1      0.6713      0.0470   14.2904    0.0000 [ 0.5800; 0.7501 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1      0.4585      0.0924    4.9645    0.0000 [ 0.2801; 0.5933 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta2      0.3052      0.0987    3.0923    0.0020 [ 0.1627; 0.4792 ] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Estimated loadings:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ===================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                              CI_percentile   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Loading        Estimate  Std. error   t-stat.   p-value         95%        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y11      0.6631      0.0413   16.0511    0.0000 [ 0.5663; 0.7329 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y12      0.6493      0.0360   18.0283    0.0000 [ 0.5856; 0.7022 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y13      0.7613      0.0321   23.6930    0.0000 [ 0.7035; 0.8058 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y21      0.5165      0.0461   11.1958    0.0000 [ 0.4457; 0.5985 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y22      0.7554      0.0453   16.6667    0.0000 [ 0.6730; 0.8218 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y23      0.7997      0.0363   22.0455    0.0000 [ 0.7405; 0.8640 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y31      0.8223      0.0280   29.3949    0.0000 [ 0.7704; 0.8616 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y32      0.6581      0.0318   20.6638    0.0000 [ 0.5924; 0.7031 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y33      0.7474      0.0361   20.6949    0.0000 [ 0.6645; 0.8071 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y11      0.6631      0.0443   14.9623    0.0000 [ 0.5987; 0.7465 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y12      0.6493      0.0471   13.7947    0.0000 [ 0.5337; 0.7088 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y13      0.7613      0.0360   21.1523    0.0000 [ 0.6976; 0.8283 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y21      0.5165      0.0510   10.1218    0.0000 [ 0.4265; 0.5954 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y22      0.7554      0.0280   26.9738    0.0000 [ 0.7165; 0.8048 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y23      0.7997      0.0413   19.3748    0.0000 [ 0.7277; 0.8854 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y31      0.8223      0.0347   23.7202    0.0000 [ 0.7569; 0.8810 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y32      0.6581      0.0298   22.0647    0.0000 [ 0.6152; 0.7222 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y33      0.7474      0.0423   17.6521    0.0000 [ 0.6693; 0.8108 ] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Estimated weights:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ==================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                              CI_percentile   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Weight         Estimate  Std. error   t-stat.   p-value         95%        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y11      0.3956      0.0215   18.4273    0.0000 [ 0.3466; 0.4315 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y12      0.3873      0.0187   20.6839    0.0000 [ 0.3480; 0.4156 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y13      0.4542      0.0213   21.3560    0.0000 [ 0.4194; 0.5150 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y21      0.3058      0.0258   11.8706    0.0000 [ 0.2692; 0.3551 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y22      0.4473      0.0231   19.3598    0.0000 [ 0.4042; 0.4875 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y23      0.4735      0.0181   26.1520    0.0000 [ 0.4374; 0.5009 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y31      0.4400      0.0147   29.8669    0.0000 [ 0.4082; 0.4606 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y32      0.3521      0.0172   20.4278    0.0000 [ 0.3181; 0.3817 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y33      0.3999      0.0165   24.2874    0.0000 [ 0.3769; 0.4340 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y11      0.3956      0.0217   18.2070    0.0000 [ 0.3666; 0.4412 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y12      0.3873      0.0239   16.2052    0.0000 [ 0.3331; 0.4140 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y13      0.4542      0.0247   18.3989    0.0000 [ 0.4160; 0.5066 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y21      0.3058      0.0256   11.9235    0.0000 [ 0.2597; 0.3515 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y22      0.4473      0.0232   19.2408    0.0000 [ 0.4076; 0.4940 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y23      0.4735      0.0182   26.0853    0.0000 [ 0.4427; 0.5037 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y31      0.4400      0.0185   23.7844    0.0000 [ 0.4045; 0.4743 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y32      0.3521      0.0151   23.3853    0.0000 [ 0.3256; 0.3771 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y33      0.3999      0.0204   19.6333    0.0000 [ 0.3602; 0.4351 ] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------ Effects -----------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -224,39 +224,39 @@ and a description.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ========================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                               CI_percentile   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Total effect    Estimate  Std. error   t-stat.   p-value         95%        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 ~ eta1       0.6713      0.0470   14.2686    0.0000 [ 0.6048; 0.7668 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1       0.6634      0.0360   18.4062    0.0000 [ 0.5913; 0.7333 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta2       0.3052      0.1047    2.9139    0.0036 [ 0.1568; 0.5172 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 ~ eta1       0.6713      0.0470   14.2904    0.0000 [ 0.5800; 0.7501 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1       0.6634      0.0365   18.1789    0.0000 [ 0.5945; 0.7146 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta2       0.3052      0.0987    3.0923    0.0020 [ 0.1627; 0.4792 ] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Estimated indirect effects:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ===========================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                  CI_percentile   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1          0.2049      0.0723    2.8331    0.0046 [ 0.1071; 0.3295 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1          0.2049      0.0685    2.9892    0.0028 [ 0.1118; 0.3151 ] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Extract e.g. the loadings</span></span>
 <span class="r-in"><span class="va">res_summarize</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Loading_estimates</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Name Construct_type  Estimate    Std_err   t_stat       p_value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 eta1 =~ y11  Common factor 0.6630699 0.04130981 16.05115  5.611708e-58</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 eta1 =~ y12  Common factor 0.6492779 0.03601441 18.02828  1.168678e-72</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 eta1 =~ y13  Common factor 0.7613458 0.03213384 23.69296 4.261410e-124</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 eta2 =~ y21  Common factor 0.5164548 0.04612930 11.19581  4.274901e-29</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 eta2 =~ y22  Common factor 0.7553877 0.04532318 16.66669  2.289071e-62</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 eta2 =~ y23  Common factor 0.7996637 0.03627332 22.04551 1.054942e-107</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7 eta3 =~ y31  Common factor 0.8222773 0.02797343 29.39495 6.372347e-190</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 eta3 =~ y32  Common factor 0.6580689 0.03184648 20.66379  7.337724e-95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9 eta3 =~ y33  Common factor 0.7474241 0.03611638 20.69488  3.851711e-95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 eta1 =~ y11  Common factor 0.6630699 0.04431609 14.96228  1.295064e-50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 eta1 =~ y12  Common factor 0.6492779 0.04706705 13.79474  2.741256e-43</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 eta1 =~ y13  Common factor 0.7613458 0.03599357 21.15227  2.629792e-99</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 eta2 =~ y21  Common factor 0.5164548 0.05102412 10.12178  4.423057e-24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 eta2 =~ y22  Common factor 0.7553877 0.02800450 26.97380 3.000212e-160</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 eta2 =~ y23  Common factor 0.7996637 0.04127349 19.37475  1.260628e-83</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 eta3 =~ y31  Common factor 0.8222773 0.03466564 23.72024 2.229461e-124</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 eta3 =~ y32  Common factor 0.6580689 0.02982444 22.06475 6.894932e-108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 eta3 =~ y33  Common factor 0.7474241 0.04234197 17.65208  9.806830e-70</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   CI_percentile.95%L CI_percentile.95%U</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          0.5663044          0.7328868</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          0.5856030          0.7022230</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          0.7035480          0.8058477</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          0.4456606          0.5985043</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          0.6730278          0.8218229</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          0.7404507          0.8639511</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          0.7703994          0.8616430</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8          0.5923982          0.7031117</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9          0.6645303          0.8070601</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          0.5987273          0.7465381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          0.5336923          0.7088450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          0.6975996          0.8282697</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          0.4265011          0.5954283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          0.7165152          0.8047990</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          0.7277098          0.8853634</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          0.7569387          0.8809589</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          0.6151969          0.7222342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9          0.6692531          0.8107744</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## By default only the 95% percentile confidence interval is printed. User</span></span>
 <span class="r-in"><span class="co">## can have several confidence interval computed, however, only the first</span></span>
@@ -287,7 +287,7 @@ and a description.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of admissible results       = 40</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Approach to handle inadmissibles   = "drop"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Sign change option                 = "none"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Random seed                        = -518562992</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Random seed                        = 607265549</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Construct details:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	------------------</span>
@@ -306,37 +306,37 @@ and a description.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ============================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                              CI_standard_t   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Path           Estimate  Std. error   t-stat.   p-value         99%        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 ~ eta1      0.6713      0.0470   14.2686    0.0000 [ 0.5462; 0.7895 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1      0.4585      0.0954    4.8056    0.0000 [ 0.2185; 0.7119 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta2      0.3052      0.1047    2.9139    0.0036 [ 0.0200; 0.5616 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 ~ eta1      0.6713      0.0470   14.2904    0.0000 [ 0.5531; 0.7961 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1      0.4585      0.0924    4.9645    0.0000 [ 0.2297; 0.7073 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta2      0.3052      0.0987    3.0923    0.0020 [ 0.0399; 0.5502 ] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Estimated loadings:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ===================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                              CI_standard_t   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Loading        Estimate  Std. error   t-stat.   p-value         99%        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y11      0.6631      0.0413   16.0511    0.0000 [ 0.5670; 0.7806 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y12      0.6493      0.0360   18.0283    0.0000 [ 0.5646; 0.7509 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y13      0.7613      0.0321   23.6930    0.0000 [ 0.6784; 0.8446 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y21      0.5165      0.0461   11.1958    0.0000 [ 0.3804; 0.6189 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y22      0.7554      0.0453   16.6667    0.0000 [ 0.6363; 0.8707 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y23      0.7997      0.0363   22.0455    0.0000 [ 0.7094; 0.8970 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y31      0.8223      0.0280   29.3949    0.0000 [ 0.7541; 0.8988 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y32      0.6581      0.0318   20.6638    0.0000 [ 0.5765; 0.7412 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y33      0.7474      0.0361   20.6949    0.0000 [ 0.6541; 0.8408 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y11      0.6631      0.0443   14.9623    0.0000 [ 0.5533; 0.7825 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y12      0.6493      0.0471   13.7947    0.0000 [ 0.5394; 0.7828 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 =~ y13      0.7613      0.0360   21.1523    0.0000 [ 0.6681; 0.8542 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y21      0.5165      0.0510   10.1218    0.0000 [ 0.3974; 0.6613 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y22      0.7554      0.0280   26.9738    0.0000 [ 0.6760; 0.8208 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 =~ y23      0.7997      0.0413   19.3748    0.0000 [ 0.6936; 0.9071 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y31      0.8223      0.0347   23.7202    0.0000 [ 0.7266; 0.9059 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y32      0.6581      0.0298   22.0647    0.0000 [ 0.5735; 0.7277 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 =~ y33      0.7474      0.0423   17.6521    0.0000 [ 0.6412; 0.8602 ] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Estimated weights:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ==================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                              CI_standard_t   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Weight         Estimate  Std. error   t-stat.   p-value         99%        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y11      0.3956      0.0215   18.4273    0.0000 [ 0.3414; 0.4524 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y12      0.3873      0.0187   20.6839    0.0000 [ 0.3390; 0.4358 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y13      0.4542      0.0213   21.3560    0.0000 [ 0.3931; 0.5031 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y21      0.3058      0.0258   11.8706    0.0000 [ 0.2325; 0.3657 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y22      0.4473      0.0231   19.3598    0.0000 [ 0.3909; 0.5104 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y23      0.4735      0.0181   26.1520    0.0000 [ 0.4334; 0.5271 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y31      0.4400      0.0147   29.8669    0.0000 [ 0.4027; 0.4789 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y32      0.3521      0.0172   20.4278    0.0000 [ 0.3068; 0.3960 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y33      0.3999      0.0165   24.2874    0.0000 [ 0.3562; 0.4414 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y11      0.3956      0.0217   18.2070    0.0000 [ 0.3381; 0.4505 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y12      0.3873      0.0239   16.2052    0.0000 [ 0.3286; 0.4522 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta1 &lt;~ y13      0.4542      0.0247   18.3989    0.0000 [ 0.3850; 0.5126 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y21      0.3058      0.0256   11.9235    0.0000 [ 0.2468; 0.3794 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y22      0.4473      0.0232   19.2408    0.0000 [ 0.3816; 0.5018 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 &lt;~ y23      0.4735      0.0182   26.0853    0.0000 [ 0.4260; 0.5199 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y31      0.4400      0.0185   23.7844    0.0000 [ 0.3921; 0.4877 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y32      0.3521      0.0151   23.3853    0.0000 [ 0.3118; 0.3896 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y33      0.3999      0.0204   19.6333    0.0000 [ 0.3519; 0.4573 ] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------ Effects -----------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -344,31 +344,31 @@ and a description.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ========================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                               CI_standard_t   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Total effect    Estimate  Std. error   t-stat.   p-value         99%        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 ~ eta1       0.6713      0.0470   14.2686    0.0000 [ 0.5462; 0.7895 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1       0.6634      0.0360   18.4062    0.0000 [ 0.5661; 0.7525 ] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta2       0.3052      0.1047    2.9139    0.0036 [ 0.0200; 0.5616 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 ~ eta1       0.6713      0.0470   14.2904    0.0000 [ 0.5531; 0.7961 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1       0.6634      0.0365   18.1789    0.0000 [ 0.5735; 0.7623 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta2       0.3052      0.0987    3.0923    0.0020 [ 0.0399; 0.5502 ] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Estimated indirect effects:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ===========================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                  CI_standard_t   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Indirect effect    Estimate  Std. error   t-stat.   p-value         99%        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1          0.2049      0.0723    2.8331    0.0046 [ 0.0071; 0.3810 ] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1          0.2049      0.0685    2.9892    0.0028 [ 0.0222; 0.3766 ] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Extract the loading including both confidence intervals</span></span>
 <span class="r-in"><span class="va">res_summarize</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Name Construct_type  Estimate    Std_err    t_stat      p_value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 eta2 ~ eta1  Common factor 0.6713334 0.04704971 14.268598 3.434117e-46</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 eta3 ~ eta1  Common factor 0.4585068 0.09541062  4.805616 1.542759e-06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 eta3 ~ eta2  Common factor 0.3051511 0.10472410  2.913858 3.569926e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 eta2 ~ eta1  Common factor 0.6713334 0.04697778 14.290447 2.509919e-46</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 eta3 ~ eta1  Common factor 0.4585068 0.09235699  4.964505 6.887641e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 eta3 ~ eta2  Common factor 0.3051511 0.09868073  3.092307 1.986073e-03</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   CI_standard_t.99%L CI_standard_t.99%U CI_standard_t.95%L CI_standard_t.95%U</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         0.54623067          0.7895452         0.57544799          0.7603279</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         0.21853602          0.7119459         0.27778489          0.6526970</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         0.01997907          0.5615530         0.08501151          0.4965206</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         0.55313475          0.7960773          0.5823074          0.7669046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         0.22965483          0.7072730          0.2870074          0.6499204</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         0.03986134          0.5501824          0.1011409          0.4889028</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   CI_percentile.99%L CI_percentile.99%U CI_percentile.95%L CI_percentile.95%U</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          0.5964603          0.7981440          0.6047762          0.7668133</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          0.2392994          0.6071517          0.2548090          0.6033736</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          0.1514281          0.5520649          0.1567856          0.5172215</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         0.56899820          0.7521986          0.5800169          0.7500733</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         0.25179116          0.6357560          0.2800864          0.5933266</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         0.09186248          0.5270581          0.1627132          0.4792480</span>
 </code></pre></div>
     </div>
   </div>
@@ -383,7 +383,7 @@ and a description.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.9000.</p>
 </div>
 
       </footer></div>

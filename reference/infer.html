@@ -77,7 +77,8 @@
     <p><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="figures/lifecycle-stable.svg" alt="[Stable]"></a></p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">infer</span><span class="op">(</span>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">infer</span><span class="op">(</span>
  .object            <span class="op">=</span> <span class="cn">NULL</span>,
  .quantity          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"mean"</span>, <span class="st">"sd"</span>, <span class="st">"bias"</span>, <span class="st">"CI_standard_z"</span>, 
                         <span class="st">"CI_standard_t"</span>, <span class="st">"CI_percentile"</span>, <span class="st">"CI_basic"</span>, 
@@ -85,8 +86,8 @@
  .alpha             <span class="op">=</span> <span class="fl">0.05</span>,
  .bias_corrected    <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
@@ -210,11 +211,10 @@ doi: <a href="https://doi.org/10.1080/00031305.2015.1089789" class="external-lin
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="csem.html">csem()</a></code>, <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code>, <code><a href="summarize.html">summarize()</a></code> <a href="csem_results.html">cSEMResults</a></p></div>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span>
 <span class="r-in"># Structural model</span>
 <span class="r-in">QUAL ~ EXPE</span>
 <span class="r-in">EXPE ~ IMAG</span>
@@ -239,17 +239,17 @@ doi: <a href="https://doi.org/10.1080/00031305.2015.1089789" class="external-lin
 <span class="r-in"><span class="va">inf</span> <span class="op">&lt;-</span> <span class="fu">infer</span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">inf</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">CI_basic</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L   0.5389811   0.9963337  -4.667636   4.181909 -0.3135702  0.7049445</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U   0.7420438   1.0402412  -3.331683   5.486859  0.1920955  2.8939573</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL  SAT ~ IMAG SAT ~ EXPE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L   0.6603332    1.023403  -5.749731   5.059108 -0.07790861   1.810555</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U   0.8113169    1.059162  -4.120588   6.637173  0.29581788   3.172242</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L  -3.929587  1.373942 0.02097247 0.4503365</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U  -1.226103  2.491108 0.37643494 0.8499134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L  -4.204816  1.150295  0.1966148 0.2896042</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U  -2.266955  2.228812  0.5533574 0.6160510</span>
 <span class="r-in"><span class="va">inf</span><span class="op">$</span><span class="va">Indirect_effect</span><span class="op">$</span><span class="va">sd</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.05972575  0.06086234  0.40642446  0.09088399  0.54969152  0.87417982 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.04633483  0.05482033  0.41874084  0.06392294  0.37817117  0.61258240 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.06797086  0.11093685  0.24210750  0.25407378 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.06529152  0.07042432  0.29604504  0.14259964 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span></span>
 <span class="r-in"><span class="co">## For the studentied t-interval confidence interval a double bootstrap is required.</span></span>
@@ -280,7 +280,7 @@ doi: <a href="https://doi.org/10.1080/00031305.2015.1089789" class="external-lin
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.9000.</p>
 </div>
 
       </footer></div>

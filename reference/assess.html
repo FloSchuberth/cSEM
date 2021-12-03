@@ -77,7 +77,8 @@
     <p><a href="https://lifecycle.r-lib.org/articles/stages.html#maturing" class="external-link"><img src="figures/lifecycle-maturing.svg" alt="[Maturing]"></a></p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">assess</span><span class="op">(</span>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">assess</span><span class="op">(</span>
   .object              <span class="op">=</span> <span class="cn">NULL</span>, 
   .quality_criterion   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"aic"</span>, <span class="st">"aicc"</span>, <span class="st">"aicu"</span>, <span class="st">"bic"</span>, <span class="st">"fpe"</span>, <span class="st">"gm"</span>, <span class="st">"hq"</span>,
                            <span class="st">"hqc"</span>, <span class="st">"mallows_cp"</span>, <span class="st">"ave"</span>,
@@ -93,8 +94,8 @@
   .only_common_factors <span class="op">=</span> <span class="cn">TRUE</span>, 
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
@@ -341,11 +342,10 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="csem.html">csem()</a></code>, <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code>, <code><a href="exportToExcel.html">exportToExcel()</a></code></p></div>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># ===========================================================================</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># ===========================================================================</span></span>
 <span class="r-in"><span class="co"># Using the three common factors dataset</span></span>
 <span class="r-in"><span class="co"># ===========================================================================</span></span>
 <span class="r-in"><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span>
@@ -538,7 +538,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Look at the resamples</span></span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">User_fun</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02496639 0.02649278 0.02076395 0.02506558</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02173016 0.02399786 0.02857245 0.02374493</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Use infer() to compute e.g., the 95% percentile confidence interval</span></span>
 <span class="r-in"><span class="va">res_infer</span> <span class="op">&lt;-</span> <span class="fu"><a href="infer.html">infer</a></span><span class="op">(</span><span class="va">res</span>, .quantity <span class="op">=</span> <span class="st">"CI_percentile"</span><span class="op">)</span></span>
@@ -547,8 +547,8 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span class="va">res_infer</span><span class="op">$</span><span class="va">User_fun</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CI_percentile</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.02075971</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03602594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.01900369</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03324314</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Several quality criteria can be resampled simultaneously</span></span>
@@ -562,9 +562,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">SRMR</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.03466496 0.01666942 0.02344121 0.02557180</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02342755 0.03065062 0.02907496 0.02199113</span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">RMS_theta</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1006828 0.1003974 0.1047085 0.1083848</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1077801 0.1047724 0.1123540 0.1022336</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
@@ -580,7 +580,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.9000.</p>
 </div>
 
       </footer></div>

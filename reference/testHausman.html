@@ -77,7 +77,8 @@
     <p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a></p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">testHausman</span><span class="op">(</span>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">testHausman</span><span class="op">(</span>
  .object               <span class="op">=</span> <span class="cn">NULL</span>,
  .eval_plan            <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"multiprocess"</span><span class="op">)</span>,
  .handle_inadmissibles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"drop"</span>, <span class="st">"ignore"</span>, <span class="st">"replace"</span><span class="op">)</span>,
@@ -85,8 +86,8 @@
  .resample_method      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bootstrap"</span>, <span class="st">"jackknife"</span><span class="op">)</span>,
  .seed                 <span class="op">=</span> <span class="cn">NULL</span>
  <span class="op">)</span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
@@ -134,11 +135,10 @@ MIT Press.</p>
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="csem.html">csem()</a></code>, <a href="csem_results.html">cSEMResults</a></p></div>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">### Example from Dijkstra &amp; Hensler (2015)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">### Example from Dijkstra &amp; Hensler (2015)</span></span>
 <span class="r-in"><span class="co">## Prepartion (values are from p. 15-16 of the paper)</span></span>
 <span class="r-in"><span class="va">Lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/kronecker.html" class="external-link">kronecker</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.7</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">Phi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.0000</span>, <span class="fl">0.5000</span>, <span class="fl">0.5000</span>, <span class="fl">0.5000</span>, <span class="fl">0.0500</span>, <span class="fl">0.4000</span>, </span>
@@ -212,18 +212,18 @@ MIT Press.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Dependent construct: 'eta5'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta1                      -0.3000      0.1043   -2.8772    0.0040</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2                       0.4999      0.0833    6.0033    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta6                       0.2501      0.1305    1.9170    0.0552</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta6                 0.9784      0.2931    3.3381    0.0008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta1                      -0.3000      0.1296   -2.3138    0.0207</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2                       0.4999      0.0909    5.4979    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta6                       0.2501      0.1317    1.8993    0.0575</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta6                 0.9784      0.2916    3.3558    0.0008</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Dependent construct: 'eta6'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta3                       0.4999      0.0496   10.0798    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta4                       0.2501      0.0493    5.0690    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta5                       0.5001      0.1053    4.7510    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta5                -0.0056      0.1388   -0.0402    0.9679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta3                       0.4999      0.0580    8.6205    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta4                       0.2501      0.0486    5.1409    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta5                       0.5001      0.1123    4.4519    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta5                -0.0056      0.1467   -0.0381    0.9696</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 </code></pre></div>
     </div>
@@ -239,7 +239,7 @@ MIT Press.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.9000.</p>
 </div>
 
       </footer></div>
