@@ -306,11 +306,8 @@ calculateIndicatorCor <- function(
                   # The following code is taken from the polyserial function of the
                   # polycor package to obtain the threshold estimates
                     cor_type[i,j] <- "Polyserial"
-                    valid <- complete.cases(.X_cleaned[,j], .X_cleaned[,i])
-                    x <- .X_cleaned[,j][valid]
-                    y <- .X_cleaned[,i][valid]
-                    z <- scale(x)
-                    tab <- table(y)
+                    z <- scale(.X_cleaned[,j])
+                    tab <- table(y <- .X_cleaned[,i])
                     indices <- 1:sum(tab)
                     thres_est[[i]] <- qnorm(cumsum(tab)/sum(tab))[-length(tab)]
                     thres_est[[j]] <- NA
@@ -320,11 +317,8 @@ calculateIndicatorCor <- function(
                   # The following code is taken from the polyserial function of the
                   # polycor package to obtain the threshold estimates
                     cor_type[i,j] <- "Polyserial"
-                    valid <- complete.cases(.X_cleaned[,i], .X_cleaned[,j])
-                    x <- .X_cleaned[,i][valid]
-                    y <- .X_cleaned[,j][valid]
-                    z <- scale(x)
-                    tab <- table(y)
+                    z <- scale(.X_cleaned[,i])
+                    tab <- table(.X_cleaned[,j])
                     indices <- 1:sum(tab)
                     thres_est[[j]] <- qnorm(cumsum(tab)/sum(tab))[-length(tab)]
                     thres_est[[i]] <- NA
