@@ -305,20 +305,20 @@ calculateIndicatorCor <- function(
                   
                   # The following code is taken from the polyserial function of the
                   # polycor package to obtain the threshold estimates
+                    cor_type[i,j] <- "Polyserial"
                     valid <- complete.cases(.X_cleaned[,j], .X_cleaned[,i])
                     x <- .X_cleaned[,j][valid]
                     y <- .X_cleaned[,i][valid]
                     z <- scale(x)
                     tab <- table(y)
                     indices <- 1:sum(tab)
-                    cor_type[i,j] <- "Polyserial"
                     thres_est[[i]] <- qnorm(cumsum(tab)/sum(tab))[-length(tab)]
                     thres_est[[j]] <- NA
                   }else if(is_numeric_indicator[[i]] == TRUE && is_numeric_indicator[[j]] == FALSE){
                     S[i,j] <- polycor::polyserial(.X_cleaned[,i], .X_cleaned[,j])
                     
-                    # The following code is taken from the polyserial function of the
-                    # polycor package to obtain the threshold estimates
+                  # The following code is taken from the polyserial function of the
+                  # polycor package to obtain the threshold estimates
                     cor_type[i,j] <- "Polyserial"
                     valid <- complete.cases(.X_cleaned[,i], .X_cleaned[,j])
                     x <- .X_cleaned[,i][valid]
