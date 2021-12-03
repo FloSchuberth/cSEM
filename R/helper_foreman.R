@@ -320,9 +320,9 @@ calculateIndicatorCor <- function(
                     # The following code is taken from the polyserial function of the
                     # polycor package to obtain the threshold estimates
                     cor_type[i,j] <- "Polyserial"
-                    valid <- complete.cases(x, y)
-                    x <- x[valid]
-                    y <- y[valid]
+                    valid <- complete.cases(.X_cleaned[,i], .X_cleaned[,j])
+                    x <- .X_cleaned[,i][valid]
+                    y <- .X_cleaned[,j][valid]
                     z <- scale(x)
                     tab <- table(y)
                     indices <- 1:sum(tab)
