@@ -281,7 +281,7 @@ calculateIndicatorCor <- function(
                 for(j in temp){
                   # If both indicators are not continous, the polychoric 
                   # correlation is calculated
-                  if (is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == FALSE){
+                  if (is_numeric_indicator[[i]] == FALSE & is_numeric_indicator[[j]] == FALSE){
                     S[i,j] <- polycor::polychor(.X_cleaned[,i], .X_cleaned[,j])
                     
                     # The following code is taken from the polychor function of the
@@ -300,7 +300,7 @@ calculateIndicatorCor <- function(
                     # If one indicator is continous, the polyserial correlation 
                     # is calculated.Note: polyserial needs the continous 
                     # indicator as the first argument.
-                  }else if(is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == TRUE){
+                  }else if(is_numeric_indicator[[i]] == FALSE & is_numeric_indicator[[j]] == TRUE){
                     S[i,j] <- polycor::polyserial(.X_cleaned[,j], .X_cleaned[,i])
                   
                   # The following code is taken from the polyserial function of the
@@ -314,7 +314,7 @@ calculateIndicatorCor <- function(
                     indices <- 1:sum(tab)
                     thres_est[[i]] <- qnorm(cumsum(tab)/sum(tab))[-length(tab)]
                     thres_est[[j]] <- NA
-                  }else if(is_numeric_indicator[[i]] == TRUE && is_numeric_indicator[[j]] == FALSE){
+                  }else if(is_numeric_indicator[[i]] == TRUE & is_numeric_indicator[[j]] == FALSE){
                     S[i,j] <- polycor::polyserial(.X_cleaned[,i], .X_cleaned[,j])
                     
                   # The following code is taken from the polyserial function of the
