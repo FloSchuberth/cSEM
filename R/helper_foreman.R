@@ -299,7 +299,7 @@ calculateIndicatorCor <- function(
                     
                     # If one indicator is continous, the polyserial correlation 
                     # is calculated.Note: polyserial needs the continous 
-                    # indicator as the first argument
+                    # indicator as the first argument.
                   }else if(is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == TRUE){
                     S[i,j] <- polycor::polyserial(.X_cleaned[,j], .X_cleaned[,i])
                   
