@@ -281,7 +281,7 @@ calculateIndicatorCor <- function(
                 for(j in temp){
                   # If both indicators are not continous, the polychoric 
                   # correlation is calculated
-                  if (is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == FALSE){
+                  if (is_numeric_indicator[[i]] == FALSE & is_numeric_indicator[[j]] == FALSE){
                     S[i,j] <- polycor::polychor(.X_cleaned[,i], .X_cleaned[,j])
                     
                     # The following code is taken from the polychor function of the
@@ -299,32 +299,26 @@ calculateIndicatorCor <- function(
                     
                     # If one indicator is continous, the polyserial correlation 
                     # is calculated.Note: polyserial needs the continous 
-                    # indicator as the first argument
-                  }else if(is_numeric_indicator[[i]] == FALSE && is_numeric_indicator[[j]] == TRUE){
+                    # indicator as the first argument.
+                  }else if(is_numeric_indicator[[i]] == FALSE & is_numeric_indicator[[j]] == TRUE){
                     S[i,j] <- polycor::polyserial(.X_cleaned[,j], .X_cleaned[,i])
                   
                   # The following code is taken from the polyserial function of the
                   # polycor package to obtain the threshold estimates
-                    valid <- complete.cases(.X_cleaned[,j], .X_cleaned[,i])
-                    x <- .X_cleaned[,j][valid]
-                    y <- .X_cleaned[,i][valid]
-                    z <- scale(x)
-                    tab <- table(y)
-                    indices <- 1:sum(tab)
                     cor_type[i,j] <- "Polyserial"
+                    z <- scale(.X_cleaned[,j])
+                    tab <- table(y <- .X_cleaned[,i])
+                    indices <- 1:sum(tab)
                     thres_est[[i]] <- qnorm(cumsum(tab)/sum(tab))[-length(tab)]
                     thres_est[[j]] <- NA
-                  }else if(is_numeric_indicator[[i]] == TRUE && is_numeric_indicator[[j]] == FALSE){
+                  }else if(is_numeric_indicator[[i]] == TRUE & is_numeric_indicator[[j]] == FALSE){
                     S[i,j] <- polycor::polyserial(.X_cleaned[,i], .X_cleaned[,j])
                     
-                    # The following code is taken from the polyserial function of the
-                    # polycor package to obtain the threshold estimates
+                  # The following code is taken from the polyserial function of the
+                  # polycor package to obtain the threshold estimates
                     cor_type[i,j] <- "Polyserial"
-                    valid <- complete.cases(x, y)
-                    x <- x[valid]
-                    y <- y[valid]
-                    z <- scale(x)
-                    tab <- table(y)
+                    z <- scale(.X_cleaned[,i])
+                    tab <- table(.X_cleaned[,j])
                     indices <- 1:sum(tab)
                     thres_est[[j]] <- qnorm(cumsum(tab)/sum(tab))[-length(tab)]
                     thres_est[[i]] <- NA
