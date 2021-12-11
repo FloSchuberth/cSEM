@@ -70,13 +70,13 @@ calculateModelSelectionCriteria <- function(
     S  <- x1$Indicator_VCV
     n <- nrow(.object$Information$Data)
     
-    ## Mean square of the saturated model
-    args <- .object$Information$Arguments
-    args$.model$structural[lower.tri(args$.model$structural)] <- 1
-    
-    out_saturated <- do.call(csem, args)
-    
-    MSE <- (1 - out_saturated$Estimates$R2)[names(x1$R2)]
+    # ## Mean square of the saturated model
+    # args <- .object$Information$Arguments
+    # args$.model$structural[lower.tri(args$.model$structural)] <- 1
+    # 
+    # out_saturated <- do.call(csem, args)
+    # 
+    # MSE <- (1 - out_saturated$Estimates$R2)[names(x1$R2)]
     
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
     
@@ -86,16 +86,16 @@ calculateModelSelectionCriteria <- function(
     # Sample size
     n <- nrow(.object$First_stage$Information$Data)
     
-    ## Mean square of the saturated model
-    args <- .object$Second_stage$Information$Arguments
-    args$.model$structural[lower.tri(args$.model$structural)] <- 1
-    
-    out_saturated <- do.call(csem, args)
-    
-    MSE <- (1 - out_saturated$Estimates$R2)
-    # remove _temp suffix in second stage
-    names(MSE) <- gsub("_temp","", names(MSE))
-    MSE <- MSE[names(x1$R2)]
+    # ## Mean square of the saturated model
+    # args <- .object$Second_stage$Information$Arguments
+    # args$.model$structural[lower.tri(args$.model$structural)] <- 1
+    # 
+    # out_saturated <- do.call(csem, args)
+    # 
+    # MSE <- (1 - out_saturated$Estimates$R2)
+    # # remove _temp suffix in second stage
+    # names(MSE) <- gsub("_temp","", names(MSE))
+    # MSE <- MSE[names(x1$R2)]
     
   } else {
     stop2(
@@ -168,7 +168,7 @@ calculateModelSelectionCriteria <- function(
     
     ## Update k to contain the number of parameters for each equation instead of
     ## all model parameters.
-    ## Note: in line with Sharma et. al (2019) the number of paramters per equation
+    ## Note: in line with Sharma et. al (2019) the number of parameters per equation
     ##       is computed as number of regressors + 1 (for the constant).
     ##       Its unclear if the constant is really necessary since constructs are
     ##       standardized. Hence, the constant will always be zero.
@@ -190,17 +190,43 @@ calculateModelSelectionCriteria <- function(
     if(any(.ms_criterion %in% c("all", "fpe"))) {
       out[["FPE"]] <- (SSE / (n-k)) * (1 + k/n)
     }
-    if(any(.ms_criterion %in% c("all", "gm"))) {
-      out[["GM"]] <- (SSE / MSE) + k*log(n)
-    }
     if(any(.ms_criterion %in% c("all", "hq"))) {
       out[["HQ"]] <- n*(log(SSE / n) + (2*k*log(log(n)))/n)
     }
     if(any(.ms_criterion %in% c("all", "hqc"))) {
       out[["HQc"]] <- n*(log(SSE / n) + (2*k*log(log(n)))/(n - k - 2))
     }
-    if(any(.ms_criterion %in% c("all", "mallows_cp"))) {
-      out[["Mallows_Cp"]] <- (SSE / MSE) - (n - 2*k)
+    # These model selection criteria require the MSE
+    if(any(.ms_criterion %in% c("all", "gm", "mallows_cp"))) {
+      #  Calculate the MSE
+      if(inherits(.object, "cSEMResults_default")) {
+        ## Mean square of the saturated model
+        args <- .object$Information$Arguments
+        args$.model$structural[lower.tri(args$.model$structural)] <- 1
+        
+        out_saturated <- do.call(csem, args)
+        
+        MSE <- (1 - out_saturated$Estimates$R2)[names(x1$R2)]
+        
+      } else if(inherits(.object, "cSEMResults_2ndorder")) {
+        ## Mean square of the saturated model
+        args <- .object$Second_stage$Information$Arguments
+        args$.model$structural[lower.tri(args$.model$structural)] <- 1
+        
+        out_saturated <- do.call(csem, args)
+        
+        MSE <- (1 - out_saturated$Estimates$R2)
+        # remove _temp suffix in second stage
+        names(MSE) <- gsub("_temp","", names(MSE))
+        MSE <- MSE[names(x1$R2)]
+      }
+      
+      if(any(.ms_criterion %in% c("all", "gm"))) {
+        out[["GM"]] <- (SSE / MSE) + k*log(n)
+      }
+      if(any(.ms_criterion %in% c("all", "mallows_cp"))) {
+        out[["Mallows_Cp"]] <- (SSE / MSE) - (n - 2*k)
+      }
     }
   }
   
