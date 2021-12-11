@@ -509,7 +509,7 @@ args_default <- function(.choices = FALSE) {
                                  "rho_C", "rho_C_mm", "rho_C_weighted", 
                                  "rho_C_weighted_mm", "dg", "dl", "dml", "df",
                                  "effects", "f2", "fl_criterion", "chi_square", "chi_square_df",
-                                 "cfi", "gfi", "ifi", "nfi", "nnfi", 
+                                 "cfi", "cn", "gfi", "ifi", "nfi", "nnfi", 
                                  "reliability",
                                  "rmsea", "rms_theta", "srmr",
                                  "gof", "htmt", "htmt2", "r2", "r2_adj",
