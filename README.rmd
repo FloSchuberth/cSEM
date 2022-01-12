@@ -15,14 +15,14 @@ output: github_document
 
 ## Purpose
 
-Estimate, analyse, test, and study linear, nonlinear, hierachical and
+Estimate, analyse, test, and study linear, nonlinear, hierarchical and
 multi-group structural equation models using composite-based approaches and procedures, including 
 estimation techniques such as partial least squares path 
 modeling (PLS-PM) and its derivatives (PLSc, OrdPLSc, robustPLSc), generalized 
 structured component analysis (GSCA), generalized structured component 
 analysis with uniqueness terms (GSCAm), generalized canonical correlation analysis (GCCA),
 principal component analysis (PCA), factor score regression (FSR) using
-sum score, regression or bartlett scores (including bias correction using
+sum score, regression or Bartlett scores (including bias correction using
 Croon's approach), as well as several tests and typical postestimation 
 procedures (e.g., verify admissibility of the estimates, assess the model fit, 
 test the model fit, compute confidence intervals, compare groups, etc.).
@@ -219,7 +219,7 @@ to estimate standard errors, test statistics, and critical quantiles.
 
 `cSEM` offers two ways to compute resamples:
 
-1. Setting `.resample_method` in `csem()` to `"jackkinfe"` or `"bootstrap"` and subsequently using 
+1. Setting `.resample_method` in `csem()` to `"jackknife"` or `"bootstrap"` and subsequently using 
    postestimation functions `summarize()` or `infer()`.
 2. The same result is achieved by passing a `cSEMResults` object to `resamplecSEMResults()`
    and subsequently using postestimation functions `summarize()` or `infer()`.
@@ -235,7 +235,7 @@ b2 <- resamplecSEMResults(res)
 b1 <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
 ```
 
-Now `summarize()` shows inferencial quantities as well:
+Now `summarize()` shows inferential quantities as well:
 
 ```{r}
 summarize(b1)
@@ -251,7 +251,7 @@ Both bootstrap and jackknife resampling support platform-independent multiproces
 as well as setting random seeds via the [future framework](https://github.com/HenrikBengtsson/future). 
 For multiprocessing simply set `.eval_plan = "multiprocess"` in which case the maximum number of available cores
 is used if not on Windows. On Windows as many separate R instances are opened in the
-backround as there are cores available instead. Note
+background as there are cores available instead. Note
 that this naturally has some overhead so for a small number of resamples multiprocessing
 will not always be faster compared to sequential (single core) processing (the default).
 Seeds are set via the `.seed` argument.
