@@ -538,7 +538,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Look at the resamples</span></span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">User_fun</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02579524 0.01637285 0.02533548 0.02510199</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02569794 0.02883941 0.02508353 0.02491788</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Use infer() to compute e.g., the 95% percentile confidence interval</span></span>
 <span class="r-in"><span class="va">res_infer</span> <span class="op">&lt;-</span> <span class="fu"><a href="infer.html">infer</a></span><span class="op">(</span><span class="va">res</span>, .quantity <span class="op">=</span> <span class="st">"CI_percentile"</span><span class="op">)</span></span>
@@ -547,8 +547,8 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span class="va">res_infer</span><span class="op">$</span><span class="va">User_fun</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CI_percentile</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.01635812</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03543788</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.01844110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03293511</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Several quality criteria can be resampled simultaneously</span></span>
@@ -562,9 +562,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">SRMR</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02430939 0.02568142 0.02673486 0.02538631</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02500439 0.02900981 0.02654024 0.02562894</span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">RMS_theta</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1028780 0.1051235 0.1052695 0.1073012</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1007335 0.1048450 0.1077258 0.1101021</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
@@ -580,7 +580,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.9000.</p>
 </div>
 
       </footer></div>
