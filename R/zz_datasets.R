@@ -553,7 +553,7 @@
 #' OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 
 #' OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6
 #' AffJoy =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7
-#' AffLove  =~ orgcmt5 + orgcmt5 + orgcmt8
+#' AffLove  =~ orgcmt5 + orgcmt6 + orgcmt8
 #' 
 #' # Structural model 
 #' OrgIden ~ OrgPres 
