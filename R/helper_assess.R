@@ -2092,7 +2092,7 @@ calculateVIFModeB <- function(.object = NULL) {
     })
     names(VIF) <- names(modesB)
   } else {
-    VIF <- NA
+    VIF <- NULL
   }
   
   ## Make output a matrix
@@ -2101,7 +2101,7 @@ calculateVIFModeB <- function(.object = NULL) {
   #       Currently, the .user_funs functions 
   #       need to return a vector or a matrix.
   
-  if(!anyNA(VIF)) {
+  if(!is.null(VIF)) {
     mm <- m[names(modesB), colSums(m[names(modesB), , drop = FALSE]) != 0 , drop = FALSE]
     tm <- t(mm)
     tm[which(tm == 1)] <- unlist(VIF)

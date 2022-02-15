@@ -257,10 +257,10 @@ print.cSEMAssess <- function(x, ...) {
     }
   }
   
-  ## Variance inflation factors for modeB constructs ---------------------------
+  ## Variance inflation factors for modeB weights ---------------------------
   
-  if(any(names(x) == "VIF_modeB") && !is.na(x$VIF_modeB)) {
-    cat2("\n\n", rule2("Variance inflation factors (VIFs) for modeB constructs"))
+  if(any(names(x) == "VIF_modeB") && !is.null(x$VIF_modeB)) {
+    cat2("\n\n", rule2("Variance inflation factors (VIFs) for modeB weights"))
     for(i in rownames(x$VIF_modeB)) {
       cat2("\n\n  Construct: '", i, "'\n")
       cat2(
