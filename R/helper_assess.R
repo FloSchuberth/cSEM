@@ -2092,7 +2092,7 @@ calculateVIFModeB <- function(.object = NULL) {
     })
     names(VIF) <- names(modesB)
   } else {
-     VIF <- NULL #Set to NULL and not NA because anyna checks the complete list which creates problems in the prinit function 
+     VIF <- NULL #Set to NULL and not NA because anyna checks the complete list which creates problems in the print function 
   }
   
   ## Make output a matrix
