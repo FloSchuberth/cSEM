@@ -2046,7 +2046,36 @@ calculateVIFModeB <- function(.object = NULL) {
     # continue
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
     out <- lapply(.object, calculateVIFModeB)
-    return(out)
+    
+    # Create a matrix as output
+      # If both stages are NA --> return NA
+      # If First_Stage is NA, and Second isnt --> return only Second_stage matrix
+      # If only First_stage is not NA --> return only First_stage matrix
+      # If both are not NA, combine and return combined matrix.
+      
+    VIF <- if(is.null(out$First_stage)) {
+        if(is.null(out$Second_stage)) {
+          # 1st is NULL and 2nd is NULL, i.e., ModeB was not applied in any of the two stages
+          NULL
+        } else {
+          # 1st is NULL and 2nd is not NULL
+          out$Second_stage
+        }
+      } else {
+        if(is.null(out$Second_stage)) {
+          # 1st is not NULL and 2nd is NULL
+          out$First_stage
+        } else {
+          # Non is NULL
+          out_temp <- rbind(cbind(out$First_stage, matrix(0, nrow = nrow(out$First_stage), ncol = ncol(out$Second_stage))),
+                            cbind(matrix(0, nrow = nrow(out$Second_stage), ncol = ncol(out$First_stage)), out$Second_stage))
+          rownames(out_temp) <- c(paste0(rownames(out$First_stage),'_first'), paste0(rownames(out$Second_stage),'_second'))
+          colnames(out_temp) <- c(colnames(out$First_stage), colnames(out$Second_stage))
+          out_temp
+        }
+      }
+    
+    return(VIF)
   } else {
     stop2(
       "The following error occured in the calculateVIFModeB() function:\n",
