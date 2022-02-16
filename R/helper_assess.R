@@ -2069,7 +2069,7 @@ calculateVIFModeB <- function(.object = NULL) {
           # Non is NULL
           out_temp <- rbind(cbind(out$First_stage, matrix(0, nrow = nrow(out$First_stage), ncol = ncol(out$Second_stage))),
                             cbind(matrix(0, nrow = nrow(out$Second_stage), ncol = ncol(out$First_stage)), out$Second_stage))
-          rownames(out_temp) <- c(paste0(rownames(out$First_stage),'_first'), paste0(rownames(out$Second_stage),'_second'))
+          rownames(out_temp) <- c(paste0(rownames(out$First_stage),'_1stStage'), paste0(rownames(out$Second_stage),'_2ndStage'))
           colnames(out_temp) <- c(colnames(out$First_stage), colnames(out$Second_stage))
           out_temp
         }
