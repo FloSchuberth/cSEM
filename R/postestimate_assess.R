@@ -550,20 +550,18 @@ assess <- function(
     # R2
     out[["R2"]]  <- x21$R2
     if(inherits(.object, "cSEMResults_2ndorder")) {
-      # Keep only second-order R2s
-      second_order <- x22$Arguments_original$.model$vars_2nd
-      cfs          <- names(which(x22$Arguments_original$.model$construct_type == "Common factor"))
-      out$R2 <- out$R2[intersect(second_order, cfs)]
+      # Remove temp from the R2s of the second stage
+      names(out$R2) <- gsub("_temp", "", names(x21$R2))
+      # out$R2 <- out$R2[intersect(second_order, cfs)]
     }
   }
   if(any(.quality_criterion %in% c("all", "r2_adj")) && !all(x22$Model$structural == 0)) {
     # Adjusted R2
     out[["R2_adj"]]  <- x21$R2adj
     if(inherits(.object, "cSEMResults_2ndorder")) {
-      # Keep only second-order R2s
-      second_order <- x22$Arguments_original$.model$vars_2nd
-      cfs          <- names(which(x22$Arguments_original$.model$construct_type == "Common factor"))
-      out$R2 <- out$R2[intersect(second_order, cfs)]
+      # Remove temp from the R2s of the second stage
+      names(out$R2_adj) <- gsub("_temp", "", names(x21$R2adj))
+
     }
   }
   if(any(.quality_criterion %in% c("all", "reliability"))) {
