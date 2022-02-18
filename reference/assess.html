@@ -173,7 +173,7 @@ Calculation is done by <code><a href="reliability.html">calculateRhoC()</a></cod
 <dt>Distance measures; "dg", "dl", "dml"</dt>
 <dd><p>Measures of the distance
 between the model-implied and the empirical indicator correlation matrix.
-Currently, the geodesic distance (<code>"dg"</code>), the squared Euclidian distance
+Currently, the geodesic distance (<code>"dg"</code>), the squared Euclidean distance
 (<code>"dl"</code>) and the the maximum likelihood-based distance function are implemented
 (<code>"dml"</code>). Calculation is done by <code><a href="distance_measures.html">calculateDL()</a></code>, <code><a href="distance_measures.html">calculateDG()</a></code>,
 and <code><a href="distance_measures.html">calculateDML()</a></code>.</p></dd>
@@ -391,7 +391,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-out co"><span class="r-pr">#&gt;</span> --------------------------- Distance and fit measures --------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Geodesic distance             = 0.006013595</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Squared Euclidian distance    = 0.01121567</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Squared Euclidean distance    = 0.01121567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	ML distance                   = 0.03203348</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Chi_square       = 15.9847</span>
@@ -538,7 +538,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Look at the resamples</span></span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">User_fun</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02529081 0.01904987 0.02855768 0.02982866</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.03138620 0.02125857 0.02877965 0.02890906</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Use infer() to compute e.g., the 95% percentile confidence interval</span></span>
 <span class="r-in"><span class="va">res_infer</span> <span class="op">&lt;-</span> <span class="fu"><a href="infer.html">infer</a></span><span class="op">(</span><span class="va">res</span>, .quantity <span class="op">=</span> <span class="st">"CI_percentile"</span><span class="op">)</span></span>
@@ -547,8 +547,8 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span class="va">res_infer</span><span class="op">$</span><span class="va">User_fun</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CI_percentile</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.02219060</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03424082</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.02083073</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03284803</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Several quality criteria can be resampled simultaneously</span></span>
@@ -562,9 +562,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">SRMR</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02464747 0.02880834 0.01721840 0.03032091</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01935790 0.02699583 0.03017955 0.02638067</span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">RMS_theta</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1017242 0.1123806 0.1052173 0.1039171</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.10505475 0.10434169 0.10382820 0.09888071</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
