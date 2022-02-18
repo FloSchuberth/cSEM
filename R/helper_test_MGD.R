@@ -12,7 +12,7 @@
 #' Currently two distance measures are supported:
 #' \describe{
 #'   \item{`geodesic`}{(Default) The geodesic distance.}
-#'   \item{`squared_euclidian`}{The squared Euclidian distance}
+#'   \item{`squared_euclidean`}{The squared Euclidean distance}
 #' }
 #' 
 #' @usage calculateDistance(
@@ -50,7 +50,7 @@ calculateDistance <- function(
   distances <- lapply(temp, function(x) {
     switch (.distance,
             "geodesic" = {calculateDG(.matrix1 = x[[1]], .matrix2 = x[[2]])},
-            "squared_euclidian" = {calculateDL(.matrix1 = x[[1]], .matrix2 = x[[2]])}
+            "squared_euclidean" = {calculateDL(.matrix1 = x[[1]], .matrix2 = x[[2]])}
     )
   })
   

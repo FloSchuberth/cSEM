@@ -497,7 +497,7 @@ assess(res)
     ## --------------------------- Distance and fit measures --------------------------
     ## 
     ##  Geodesic distance           = 0.6493432
-    ##  Squared Euclidian distance  = 2.23402
+    ##  Squared Euclidean distance  = 2.23402
     ##  ML distance                 = 2.921932
     ## 
     ##  Chi_square     = 727.5611

@@ -141,7 +141,7 @@ One of \emph{"t"} for Student's t-distribution or \emph{"z"} for the standard no
 Defaults to \emph{"z"}.}
 
 \item{.distance}{Character string. A distance measure. One of: "\emph{geodesic}"
-or "\emph{squared_euclidian}". Defaults to "\emph{geodesic}".}
+or "\emph{squared_euclidean}". Defaults to "\emph{geodesic}".}
 
 \item{.df}{Character string. The method for obtaining the degrees of freedom.
 Choices are "\emph{type1}" and "\emph{type2}". Defaults to "\emph{type1}" .}
@@ -412,7 +412,7 @@ If \code{FALSE} OrdPLS/OrdPLSc is applied. Defaults to \code{TRUE}.}
 \item{.type_gfi}{Character string. Which fitting function should the GFI be based
 on? One of \emph{"ML"} for the maximum likelihood fitting function, \emph{"GLS"} for
 the generalized least squares fitting function or \emph{"ULS"} for the
-unweighted least squares fitting function (same as the squared Euclidian distance).
+unweighted least squares fitting function (same as the squared Euclidean distance).
 Defaults to \emph{"ML"}.}
 
 \item{.type_ci}{Character string. Which confidence interval should be calculated?

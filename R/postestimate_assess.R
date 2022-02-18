@@ -54,7 +54,7 @@
 #'   Calculation is done by [calculateRhoC()].}
 #' \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
 #'   between the model-implied and the empirical indicator correlation matrix.
-#'   Currently, the geodesic distance (`"dg"`), the squared Euclidian distance
+#'   Currently, the geodesic distance (`"dg"`), the squared Euclidean distance
 #'   (`"dl"`) and the the maximum likelihood-based distance function are implemented 
 #'   (`"dml"`). Calculation is done by [calculateDL()], [calculateDG()], 
 #'   and [calculateDML()].}

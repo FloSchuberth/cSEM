@@ -136,7 +136,7 @@ print.cSEMAssess <- function(x, ...) {
       cat2(col_align("\n\tGeodesic distance", 30), "= ", x$DG)
     }
     if(any(names(x) == "DL")) {
-      cat2(col_align("\n\tSquared Euclidian distance", 30), "= ", x$DL)
+      cat2(col_align("\n\tSquared Euclidean distance", 30), "= ", x$DL)
     }
     if(any(names(x) == "DML")) {
       cat2(col_align("\n\tML distance", 30), "= ", x$DML)
