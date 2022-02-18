@@ -97,7 +97,7 @@ interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by \code{\link[=calculateRhoC]{calculateRhoC()}}.}
 \item{Distance measures; "dg", "dl", "dml"}{Measures of the distance
 between the model-implied and the empirical indicator correlation matrix.
-Currently, the geodesic distance (\code{"dg"}), the squared Euclidian distance
+Currently, the geodesic distance (\code{"dg"}), the squared Euclidean distance
 (\code{"dl"}) and the the maximum likelihood-based distance function are implemented
 (\code{"dml"}). Calculation is done by \code{\link[=calculateDL]{calculateDL()}}, \code{\link[=calculateDG]{calculateDG()}},
 and \code{\link[=calculateDML]{calculateDML()}}.}

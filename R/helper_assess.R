@@ -1425,7 +1425,7 @@ calculateDG <- function(
   0.5 * sum(logEigenvaluessq)
 }
 
-#' @describeIn distance_measures The squared Euclidian distance
+#' @describeIn distance_measures The squared Euclidean distance
 #' @export
 
 calculateDL <- function(

@@ -44,7 +44,7 @@ not be altered!}
 \item{.type_gfi}{Character string. Which fitting function should the GFI be based
 on? One of \emph{"ML"} for the maximum likelihood fitting function, \emph{"GLS"} for
 the generalized least squares fitting function or \emph{"ULS"} for the
-unweighted least squares fitting function (same as the squared Euclidian distance).
+unweighted least squares fitting function (same as the squared Euclidean distance).
 Defaults to \emph{"ML"}.}
 
 \item{.type_vcv}{Character string. Which model-implied correlation

@@ -351,7 +351,7 @@ testMGD <- function(
     ## Compute test statistic
     temp <- c(
       "dG" = calculateDistance(.matrices = fit, .distance = "geodesic"),
-      "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidian")
+      "dL" = calculateDistance(.matrices = fit, .distance = "squared_euclidean")
     )
 
     ## Save test statistic
@@ -647,7 +647,7 @@ testMGD <- function(
           ## Compute test statistic
           temp <- c(
             "dG" = calculateDistance(.matrices = fit_temp, .distance = "geodesic"),
-            "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidian")
+            "dL" = calculateDistance(.matrices = fit_temp, .distance = "squared_euclidean")
           )
           
           ## Save test statistic

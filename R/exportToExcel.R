@@ -130,7 +130,7 @@ exportToExcel <- function(
     # Distance and fit
     d <- data.frame(
       "Geodesic distance"          = .postestimation_object$DG,
-      "Squared Euclidian distance" = .postestimation_object$DL,
+      "Squared Euclidean distance" = .postestimation_object$DL,
       "ML distance"                = .postestimation_object$DML,
       "Chi_square"                 = .postestimation_object$Chi_square,
       "Chi_square_df"              = .postestimation_object$Chi_square_df,

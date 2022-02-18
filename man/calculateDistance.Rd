@@ -13,7 +13,7 @@ calculateDistance(
 \item{.matrices}{A list of at least two matrices.}
 
 \item{.distance}{Character string. A distance measure. One of: "\emph{geodesic}"
-or "\emph{squared_euclidian}". Defaults to "\emph{geodesic}".}
+or "\emph{squared_euclidean}". Defaults to "\emph{geodesic}".}
 }
 \value{
 A numeric vector of length one containing the (arithmetic) mean of
@@ -33,7 +33,7 @@ become computationally challenging.
 Currently two distance measures are supported:
 \describe{
 \item{\code{geodesic}}{(Default) The geodesic distance.}
-\item{\code{squared_euclidian}}{The squared Euclidian distance}
+\item{\code{squared_euclidean}}{The squared Euclidian distance}
 }
 }
 \keyword{internal}

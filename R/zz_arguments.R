@@ -111,7 +111,7 @@
 #'  One of *"t"* for Student's t-distribution or *"z"* for the standard normal distribution.
 #'  Defaults to *"z"*.
 #' @param .distance Character string. A distance measure. One of: "*geodesic*"
-#'   or "*squared_euclidian*". Defaults to "*geodesic*".
+#'   or "*squared_euclidean*". Defaults to "*geodesic*".
 #' @param .df Character string. The method for obtaining the degrees of freedom.
 #'   Choices are "*type1*" and "*type2*". Defaults to "*type1*" .
 #' @param .dominant_indicators A character vector of `"construct_name" = "indicator_name"` pairs, 
@@ -306,7 +306,7 @@
 #' @param .type_gfi Character string. Which fitting function should the GFI be based 
 #'   on? One of *"ML"* for the maximum likelihood fitting function, *"GLS"* for 
 #'   the generalized least squares fitting function or *"ULS"* for the
-#'   unweighted least squares fitting function (same as the squared Euclidian distance). 
+#'   unweighted least squares fitting function (same as the squared Euclidean distance). 
 #'   Defaults to *"ML"*.
 #' @param .type_ci Character string. Which confidence interval should be calculated? 
 #'   For possible choices, see the `.quantity` argument of the [infer()] function.
@@ -453,7 +453,7 @@ args_default <- function(.choices = FALSE) {
     .dependent               = NULL,
     .disattenuate            = TRUE,
     .dist                    = c("z", "t"),
-    .distance                = c("geodesic", "squared_euclidian"),
+    .distance                = c("geodesic", "squared_euclidean"),
     .df                      = c("type1", "type2"),
     .dominant_indicators     = NULL,
     .E                       = NULL,
