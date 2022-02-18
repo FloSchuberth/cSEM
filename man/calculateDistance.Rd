@@ -33,7 +33,7 @@ become computationally challenging.
 Currently two distance measures are supported:
 \describe{
 \item{\code{geodesic}}{(Default) The geodesic distance.}
-\item{\code{squared_euclidean}}{The squared Euclidian distance}
+\item{\code{squared_euclidean}}{The squared Euclidean distance}
 }
 }
 \keyword{internal}

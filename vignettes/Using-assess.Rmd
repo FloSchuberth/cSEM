@@ -410,7 +410,7 @@ stands for the value of the maximum likelihood fitting function evaluated at $\b
 (the estimated model-implied covariance matrix of the indicators). The value of
 the maximum likelihood fitting function is computed by `calculateDML()`.
 <!-- In the context of composite-based estimators, the distance measures $d_{G}$  -->
-<!-- (geodesic distance), $d_{L}$ (squared Euclidian distance) and $d_{ML}$ -->
+<!-- (geodesic distance), $d_{L}$ (squared Euclidean distance) and $d_{ML}$ -->
 <!-- (maximum likelihood distance) serve as fitting functions. -->
 
 #### The $\chi^2$-statistic
@@ -548,7 +548,7 @@ The functions are implemented as: `calculateChiSquare()`, `calculateChiSquareDf(
 ### See also
 
 Several fit indices require a fitting function, i.e., a distance 
-measure like the geodesic distance, the squared Euclidian distance or the maximum 
+measure like the geodesic distance, the squared Euclidean distance or the maximum 
 likelihood distance. These are implemented as: `calculateDG()`, `calculateDL()`, 
 and `calculateDML()`.
 

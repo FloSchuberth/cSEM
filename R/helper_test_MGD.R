@@ -12,7 +12,7 @@
 #' Currently two distance measures are supported:
 #' \describe{
 #'   \item{`geodesic`}{(Default) The geodesic distance.}
-#'   \item{`squared_euclidean`}{The squared Euclidian distance}
+#'   \item{`squared_euclidean`}{The squared Euclidean distance}
 #' }
 #' 
 #' @usage calculateDistance(
