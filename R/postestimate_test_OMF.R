@@ -353,7 +353,8 @@ testOMF <- function(
       "Bootstrap_values"   = ref_dist,
       "Number_admissibles" = ncol(ref_dist_matrix),
       "Seed"               = .seed,
-      "Total_runs"         = counter + n_inadmissibles
+      "Total_runs"         = counter + n_inadmissibles,
+      "Saturated"          = .saturated
     )
   )
   
