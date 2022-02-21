@@ -147,7 +147,7 @@ print.cSEMTestMGD <- function(
       cat2(
         "\n\nNull hypothesis:\n\n", 
         boxx(paste0("H0: Model-implied ", xk$VCV_type, " covariance matrix is equal across groups."),
-             float = "center")
+             float = "center",width=80)
       )
       
       ## Test statistic and p-value ----------------------------------------------

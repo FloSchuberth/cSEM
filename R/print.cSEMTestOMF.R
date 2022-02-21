@@ -16,11 +16,19 @@ print.cSEMTestOMF <- function(x, ...) {
   )
   
   ## Null hypothesis -----------------------------------------------------------
+  if(!isTRUE(x$Information$Saturated)){
   cat2(
     "\n\nNull hypothesis:\n\n", 
     boxx(c("H0: The model-implied indicator covariance matrix equals the", 
-           "population indicator covariance matrix."), float = "center")
+           "population indicator covariance matrix."), float = "center",width=80)
   )
+  }else if(isTRUE(x$Information$Saturated)){
+    cat2(
+      "\n\nNull hypothesis:\n\n", 
+      boxx(c("H0: The model-implied indicator covariance matrix with a saturated", 
+             "structural model equals the population indicator covariance matrix."), float = "center",width=80)
+    )
+  }
   
   ## Test statistic and critical value -----------------------------------------
   cat("\n\nTest statistic and critical value: \n\n\t", sep = "")

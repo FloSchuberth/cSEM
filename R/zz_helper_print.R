@@ -502,7 +502,7 @@ printTestMGDResults <- function(.x, .approach, .info) {
   
   cat2(
     "\n\nNull hypothesis:\n\n",
-    boxx("H0: Parameter k is equal across two groups.", float = "center")
+    boxx("H0: Parameter k is equal across two groups.", float = "center",width=80)
   )
 
   

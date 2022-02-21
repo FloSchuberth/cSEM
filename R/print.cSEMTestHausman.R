@@ -23,7 +23,7 @@ print.cSEMTestHausman <- function(x, ...) {
   cat2(
     "\n\nNull hypothesis:\n\n", 
     boxx(c("H0: Variable(s) suspected to be endogenous are uncorrelated with the",
-           "error term (no endogeneity)."), float = "center")
+           "error term (no endogeneity)."), float = "center",width=80)
   )
   
   ## Regression output ---------------------------------------------------------
