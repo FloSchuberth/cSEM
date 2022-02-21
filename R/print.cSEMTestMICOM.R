@@ -133,7 +133,7 @@ print.cSEMTestMICOM <- function(x, ...) {
   #     cat("\n\t")
   #   }  
   #   cat("\n\n")
-  # } # END for i (each group)
+  # } # END for i (each group )
   # 
   ### Step 3 ===================================================================
   cat2(rule2("Step 3 - Equality of the means and variances", type = 3))
