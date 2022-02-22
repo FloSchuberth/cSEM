@@ -195,7 +195,7 @@
 #' the group-identifier-column has, the more estimation runs are required.
 #' This can considerably slow down estimation, especially if resampling is
 #' requested. For the latter it will generally be faster to use 
-#' `.eval_plan = "multiprocess"`.
+#' `.eval_plan = "multiprocess"` or `.eval_plan = "multisession"`.
 #' } 
 #' \subsection{Inference:}{
 #' Inference is done via resampling. See [resamplecSEMResults()] and [infer()] for details.
@@ -234,7 +234,7 @@
 #' .R2                    = 199,
 #' .handle_inadmissibles  = c("drop", "ignore", "replace"),
 #' .user_funs             = NULL,
-#' .eval_plan             = c("sequential", "multiprocess"),
+#' .eval_plan             = c("sequential", "multiprocess", "multisession"),
 #' .seed                  = NULL,
 #' .sign_change_option    = c("none", "individual", "individual_reestimate", 
 #'                            "construct_reestimate"),
@@ -337,7 +337,7 @@ csem <- function(
   .R2                    = 199,
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .user_funs             = NULL,
-  .eval_plan             = c("sequential", "multiprocess"),
+  .eval_plan             = c("sequential", "multiprocess", "multisession"),
   .seed                  = NULL,
   .sign_change_option    = c("none", "individual", "individual_reestimate", 
                              "construct_reestimate"),

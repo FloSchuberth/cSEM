@@ -391,21 +391,21 @@ resampleData <- function(
 #' framework \insertCite{Bengtsson2018}{cSEM}. Users may simply choose an evaluation plan
 #' via `.eval_plan` and the package takes care of all the complicated backend 
 #' issues. Currently, users may choose between standard single-core/single-session
-#'  evaluation (`"sequential"`) and multiprocessing (`"multiprocess"`). The future package
+#'  evaluation (`"sequential"`) and multiprocessing (`"multiprocess"` or `"multisession"`). The future package
 #' provides other options (e.g., `"cluster"` or `"remote"`), however, they probably 
 #' will not be needed in the context of the \pkg{cSEM} package as simulations usually
-#' do not require high-performance clusters. Depeding on the operating system, the future
+#' do not require high-performance clusters. Depending on the operating system, the future
 #' package will manage to distribute tasks to multiple R sessions (Windows)
 #' or multiple cores. Note that multiprocessing is not necessary always faster
 #' when only a "small" number of replications is required as the overhead of
 #' initializing new sessions or distributing tasks to different cores 
-#' will not immediatley be compensated by the avaiability of multiple sessions/cores.
+#' will not immediately be compensated by the availability of multiple sessions/cores.
 #'
 #' Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
 #' \href{https://github.com/HenrikBengtsson/future.apply}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
 #' It is independent of the evaluation plan. Hence, setting e.g., `.seed = 123` will
 #' generate the same random number and replicates
-#' for both `.eval_plan = "sequential"` and `.eval_plan = "multiprocess"`.
+#' for both `.eval_plan = "sequential"`, `.eval_plan = "multiprocess"`, and `.eval_plan = "multisession"`.
 #' See [?future_lapply][future.apply::future_lapply] for details.
 #' 
 #' @usage resamplecSEMResults(
@@ -416,7 +416,7 @@ resampleData <- function(
 #'  .R2                    = 199,
 #'  .handle_inadmissibles  = c("drop", "ignore", "replace"),
 #'  .user_funs             = NULL,
-#'  .eval_plan             = c("sequential", "multiprocess"),
+#'  .eval_plan             = c("sequential", "multiprocess", "multisession"),
 #'  .force                 = FALSE,
 #'  .seed                  = NULL,
 #'  .sign_change_option    = c("none","individual","individual_reestimate",
@@ -461,7 +461,7 @@ resamplecSEMResults <- function(
   .R2                    = 199,
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .user_funs             = NULL,
-  .eval_plan             = c("sequential", "multiprocess"),
+  .eval_plan             = c("sequential", "multiprocess", "multisession"),
   .force                 = FALSE,
   .seed                  = NULL,
   .sign_change_option    = c("none","individual","individual_reestimate",

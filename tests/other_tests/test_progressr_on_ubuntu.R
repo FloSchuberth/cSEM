@@ -18,4 +18,4 @@ eta3 =~ y31 + y32 + y33
 runif(1)
 
 system.time(csem(threecommonfactors, model, .resample_method = "bootstrap", .R = 1000,
-                 .eval_plan = "multiprocess"))
+                 .eval_plan = "multisession"))

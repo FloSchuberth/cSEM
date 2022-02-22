@@ -124,7 +124,7 @@
 #' @param .estimate_structural Logical. Should the structural coefficients
 #'   be estimated? Defaults to `TRUE`.
 #' @param .eval_plan Character string. The evaluation plan to use. One of 
-#'   "*sequential*" or "*multiprocess*". In the latter case 
+#'   "*sequential*", "*multiprocess*", or "*multisession*". In the two latter cases 
 #'   all available cores will be used. Defaults to "*sequential*".
 #' @param .filename Character string. The file name. Defaults to "results.xlsx".
 #' @param .first_resample A list containing the `.R` resamples based on the original
@@ -459,7 +459,7 @@ args_default <- function(.choices = FALSE) {
     .E                       = NULL,
     .effect                  = NULL,
     .estimate_structural     = TRUE,
-    .eval_plan               = c("sequential", "multiprocess"),
+    .eval_plan               = c("sequential", "multiprocess","multisession"),
     .filename                = "results.xlsx",
     .fit_measures            = FALSE,
     .first_resample          = NULL,
