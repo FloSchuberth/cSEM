@@ -391,7 +391,7 @@ resampleData <- function(
 #' framework \insertCite{Bengtsson2018}{cSEM}. Users may simply choose an evaluation plan
 #' via `.eval_plan` and the package takes care of all the complicated backend 
 #' issues. Currently, users may choose between standard single-core/single-session
-#'  evaluation (`"sequential"`) and multiprocessing (`"multiprocess"` or `"multisession"`). The future package
+#'  evaluation (`"sequential"`) and multiprocessing (`"multisession"` or `"multicore"`). The future package
 #' provides other options (e.g., `"cluster"` or `"remote"`), however, they probably 
 #' will not be needed in the context of the \pkg{cSEM} package as simulations usually
 #' do not require high-performance clusters. Depending on the operating system, the future
@@ -405,7 +405,7 @@ resampleData <- function(
 #' \href{https://github.com/HenrikBengtsson/future.apply}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
 #' It is independent of the evaluation plan. Hence, setting e.g., `.seed = 123` will
 #' generate the same random number and replicates
-#' for both `.eval_plan = "sequential"`, `.eval_plan = "multiprocess"`, and `.eval_plan = "multisession"`.
+#' for both `.eval_plan = "sequential"`, `.eval_plan = "multisession"`, and `.eval_plan = "multicore"`.
 #' See [?future_lapply][future.apply::future_lapply] for details.
 #' 
 #' @usage resamplecSEMResults(
@@ -416,7 +416,7 @@ resampleData <- function(
 #'  .R2                    = 199,
 #'  .handle_inadmissibles  = c("drop", "ignore", "replace"),
 #'  .user_funs             = NULL,
-#'  .eval_plan             = c("sequential", "multiprocess", "multisession"),
+#'  .eval_plan             = c("sequential", "multicore", "multisession"),
 #'  .force                 = FALSE,
 #'  .seed                  = NULL,
 #'  .sign_change_option    = c("none","individual","individual_reestimate",
@@ -461,7 +461,7 @@ resamplecSEMResults <- function(
   .R2                    = 199,
   .handle_inadmissibles  = c("drop", "ignore", "replace"),
   .user_funs             = NULL,
-  .eval_plan             = c("sequential", "multiprocess", "multisession"),
+  .eval_plan             = c("sequential", "multicore", "multisession"),
   .force                 = FALSE,
   .seed                  = NULL,
   .sign_change_option    = c("none","individual","individual_reestimate",

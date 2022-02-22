@@ -160,7 +160,7 @@ Default to \code{NULL}.}
 be estimated? Defaults to \code{TRUE}.}
 
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
-"\emph{sequential}", "\emph{multiprocess}", or "\emph{multisession}". In the two latter cases
+"\emph{sequential}", "\emph{multicore}", or "\emph{multisession}". In the two latter cases
 all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.filename}{Character string. The file name. Defaults to "results.xlsx".}

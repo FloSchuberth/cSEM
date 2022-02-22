@@ -10,7 +10,7 @@
 #' 
 #' @usage testHausman(
 #'  .object               = NULL,
-#'  .eval_plan            = c("sequential", "multiprocess", "multisession"),
+#'  .eval_plan            = c("sequential", "multicore", "multisession"),
 #'  .handle_inadmissibles = c("drop", "ignore", "replace"),
 #'  .R                    = 499,
 #'  .resample_method      = c("bootstrap", "jackknife"),
@@ -30,7 +30,7 @@
 
 testHausman <- function(
   .object               = NULL,
-  .eval_plan            = c("sequential", "multiprocess", "multisession"),
+  .eval_plan            = c("sequential", "multicore", "multisession"),
   .handle_inadmissibles = c("drop", "ignore", "replace"),
   .R                    = 499,
   .resample_method      = c("bootstrap", "jackknife"),
