@@ -18,12 +18,12 @@ A data frame containing 26 variables with 767 observations.
 }
 \details{
 The data contains variables about the consumers’ intention to switch a
-service provider. It is also used in \insertCite{Henseler2020;textual}{cSEM}
+service provider. It is also used in \insertCite{Henseler2021;textual}{cSEM}
 for demonstration purposes, see the corresponding tutorial.
 }
 \examples{
 #============================================================================
-# Example is taken from Henseler (2020)
+# Example is taken from Henseler (2021)
 #============================================================================
 model_Int <-"
 # Measurement models

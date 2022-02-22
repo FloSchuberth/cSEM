@@ -23,7 +23,7 @@ A data frame containing 10 variables with 1090 observations.
 The data was analysed by \insertCite{Lancelot-Miltgen2016;textual}{cSEM}
 to study young consumers’ adoption intentions of a location tracker technology
 in the light of privacy concerns. It is also used in
-\insertCite{Henseler2020;textual}{cSEM} for demonstration purposes, see the
+\insertCite{Henseler2021;textual}{cSEM} for demonstration purposes, see the
 corresponding tutorial.
 }
 \examples{

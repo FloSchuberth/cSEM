@@ -247,7 +247,7 @@
 #' The dataset was initially compiled by \insertCite{Russett1964;textual}{cSEM}, 
 #' discussed and reprinted by \insertCite{Gifi1990;textual}{cSEM}, 
 #' and partially transformed by \insertCite{Tenenhaus2011;textual}{cSEM}.
-#' It is also used in \insertCite{Henseler2020;textual}{cSEM} for demonstration 
+#' It is also used in \insertCite{Henseler2021;textual}{cSEM} for demonstration 
 #' purposes.
 #'
 #' @format A data frame containing the following variables for 47 countries:
@@ -298,14 +298,14 @@
 #' @references
 #'   \insertAllCited{}
 #'     
-#' @source From: \insertCite{Henseler2020;textual}{cSEM}
+#' @source From: \insertCite{Henseler2021;textual}{cSEM}
 "Russett"
 
 
 #' Data: ITFlex
 #'
 #' The dataset was studied by \insertCite{Benitez2018;textual}{cSEM} and is used in 
-#' \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes, see the
+#' \insertCite{Henseler2021;textual}{cSEM} for demonstration purposes, see the
 #' corresponding tutorial. 
 #' All questionnaire items are measured on a 5-point scale.
 #' 
@@ -383,7 +383,7 @@
 #' The data was analysed by \insertCite{Lancelot-Miltgen2016;textual}{cSEM} 
 #' to study young consumers’ adoption intentions of a location tracker technology 
 #' in the light of privacy concerns. It is also used in 
-#' \insertCite{Henseler2020;textual}{cSEM} for demonstration purposes, see the
+#' \insertCite{Henseler2021;textual}{cSEM} for demonstration purposes, see the
 #' corresponding tutorial.
 #' 
 #' @docType data
@@ -430,7 +430,7 @@
 #' image, distribution intensity, advertising spending, and price deals, are
 #' related to the so-called dimensions of brand equity, i.e., perceived brand
 #' quality, brand loyalty, and brand awareness/associations. It is also used in 
-#' \insertCite{Henseler2017;textual}{cSEM} and \insertCite{Henseler2020;textual}{cSEM} 
+#' \insertCite{Henseler2017;textual}{cSEM} and \insertCite{Henseler2021;textual}{cSEM} 
 #' for demonstration purposes, see the corresponding tutorial.
 #' 
 #' @docType data
@@ -439,7 +439,7 @@
 #' 
 #' @examples 
 #' #============================================================================
-#' # Example is taken from Henseler (2020)
+#' # Example is taken from Henseler (2021)
 #' #============================================================================
 #' model_HOC="
 #' # Measurement models FOC
@@ -474,7 +474,7 @@
 #' Data: Switching
 #'
 #' The data contains variables about the consumers’ intention to switch a
-#' service provider. It is also used in \insertCite{Henseler2020;textual}{cSEM} 
+#' service provider. It is also used in \insertCite{Henseler2021;textual}{cSEM} 
 #' for demonstration purposes, see the corresponding tutorial.
 #' 
 #' @docType data
@@ -483,7 +483,7 @@
 #' 
 #' @examples 
 #' #============================================================================
-#' # Example is taken from Henseler (2020)
+#' # Example is taken from Henseler (2021)
 #' #============================================================================
 #' model_Int <-"
 #' # Measurement models
@@ -513,7 +513,7 @@
 #' from a larger survey among South Korean employees conducted and
 #' reported by \insertCite{Bergami2000;textual}{cSEM}. It is
 #' also used in  \insertCite{Hwang2004;textual}{cSEM} and 
-#' \insertCite{Henseler2020;textual}{cSEM} 
+#' \insertCite{Henseler2021;textual}{cSEM} 
 #' for demonstration purposes, see the corresponding tutorial.
 #' 
 #' @docType data
@@ -522,7 +522,7 @@
 #' 
 #' @examples 
 #' #============================================================================
-#' # Example is taken from Henseler (2020)
+#' # Example is taken from Henseler (2021)
 #' #============================================================================
 #' model_Bergami_Bagozzi_Henseler="
 #' # Measurement models
@@ -627,7 +627,7 @@
 #'
 #' The data comes from a European manufacturer of durable consumer goods and was 
 #' studied by \insertCite{Bliemel2004;textual}{cSEM} who focused on service quality.
-#' It is also used in \insertCite{Henseler2020;textual}{cSEM} 
+#' It is also used in \insertCite{Henseler2021;textual}{cSEM} 
 #' for demonstration purposes, see the corresponding tutorial.
 #' 
 #' @docType data

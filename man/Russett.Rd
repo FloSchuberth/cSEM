@@ -28,7 +28,7 @@ violence per 1,000,000 people. Transformation: ln (x + 1)}
 }
 }
 \source{
-From: \insertCite{Henseler2020;textual}{cSEM}
+From: \insertCite{Henseler2021;textual}{cSEM}
 }
 \usage{
 Russett
@@ -40,7 +40,7 @@ A data frame containing 10 variables with 47 observations.
 The dataset was initially compiled by \insertCite{Russett1964;textual}{cSEM},
 discussed and reprinted by \insertCite{Gifi1990;textual}{cSEM},
 and partially transformed by \insertCite{Tenenhaus2011;textual}{cSEM}.
-It is also used in \insertCite{Henseler2020;textual}{cSEM} for demonstration
+It is also used in \insertCite{Henseler2021;textual}{cSEM} for demonstration
 purposes.
 }
 \examples{

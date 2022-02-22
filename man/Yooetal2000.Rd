@@ -24,12 +24,12 @@ to examine how five elements of the marketing mix, namely price, store
 image, distribution intensity, advertising spending, and price deals, are
 related to the so-called dimensions of brand equity, i.e., perceived brand
 quality, brand loyalty, and brand awareness/associations. It is also used in
-\insertCite{Henseler2017;textual}{cSEM} and \insertCite{Henseler2020;textual}{cSEM}
+\insertCite{Henseler2017;textual}{cSEM} and \insertCite{Henseler2021;textual}{cSEM}
 for demonstration purposes, see the corresponding tutorial.
 }
 \examples{
 #============================================================================
-# Example is taken from Henseler (2020)
+# Example is taken from Henseler (2021)
 #============================================================================
 model_HOC="
 # Measurement models FOC

@@ -208,10 +208,10 @@ calculateConstructVCV <- function(
 #'      Bravais-Pearson product-moment correlation is computed (via [stats::cor()][stats::cor()]).}
 #'   \item{`Numeric-factor`}{If any of the columns is a factor variable, the 
 #'     polyserial correlation \insertCite{Drasgow1988}{cSEM} is computed (via 
-#'     [polycor::hetcor()][polycor::hetcor()]).}
+#'     [polycor::polyserial()][polycor::polyserial()]).}
 #'   \item{`Factor-factor`}{If both columns are factor variables, the 
 #'     polychoric correlation \insertCite{Drasgow1988}{cSEM} is computed (via 
-#'     [polycor::hetcor()][polycor::hetcor()]).}
+#'     [polycor::polychor()][polycor::polychor()]).}
 #' }
 #' Note: logical input is treated as a 0-1 factor variable.
 #' 

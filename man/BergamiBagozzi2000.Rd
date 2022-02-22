@@ -22,12 +22,12 @@ The dataset contains 22 variables and originates
 from a larger survey among South Korean employees conducted and
 reported by \insertCite{Bergami2000;textual}{cSEM}. It is
 also used in  \insertCite{Hwang2004;textual}{cSEM} and
-\insertCite{Henseler2020;textual}{cSEM}
+\insertCite{Henseler2021;textual}{cSEM}
 for demonstration purposes, see the corresponding tutorial.
 }
 \examples{
 #============================================================================
-# Example is taken from Henseler (2020)
+# Example is taken from Henseler (2021)
 #============================================================================
 model_Bergami_Bagozzi_Henseler="
 # Measurement models

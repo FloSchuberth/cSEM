@@ -369,7 +369,8 @@ Currently, two approaches are explicitly implemented:
 Note that by default a correction for attenuation is applied if common factors are
 involved in modeling second-order constructs. For instance, the three-stage approach
 proposed by \insertCite{VanRiel2017;textual}{cSEM} is applied in case of a second-order construct specified as a
-composite of common factors.}
+composite of common factors. On the other hand, if no common factors are involved the two-stage approach
+is applied as proposed by \insertCite{Schuberth2020;textual}{cSEM}.}
 \item{\code{"mixed"}. The mixed repeated indicators/two-stage approach as proposed by \insertCite{Ringle2012;textual}{cSEM}.}
 }
 
