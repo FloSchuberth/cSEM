@@ -12,7 +12,7 @@ resamplecSEMResults(
  .R2                    = 199,
  .handle_inadmissibles  = c("drop", "ignore", "replace"),
  .user_funs             = NULL,
- .eval_plan             = c("sequential", "multiprocess"),
+ .eval_plan             = c("sequential", "multicore", "multisession"),
  .force                 = FALSE,
  .seed                  = NULL,
  .sign_change_option    = c("none","individual","individual_reestimate",
@@ -55,7 +55,7 @@ vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
 
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
-"\emph{sequential}" or "\emph{multiprocess}". In the latter case
+"\emph{sequential}", "\emph{multicore}", or "\emph{multisession}". In the two latter cases
 all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.force}{Logical. Should .object be resampled even if it contains resamples
@@ -156,21 +156,21 @@ The \pkg{cSEM} package supports (multi)processing via the \href{https://github.c
 framework \insertCite{Bengtsson2018}{cSEM}. Users may simply choose an evaluation plan
 via \code{.eval_plan} and the package takes care of all the complicated backend
 issues. Currently, users may choose between standard single-core/single-session
-evaluation (\code{"sequential"}) and multiprocessing (\code{"multiprocess"}). The future package
+evaluation (\code{"sequential"}) and multiprocessing (\code{"multisession"} or \code{"multicore"}). The future package
 provides other options (e.g., \code{"cluster"} or \code{"remote"}), however, they probably
 will not be needed in the context of the \pkg{cSEM} package as simulations usually
-do not require high-performance clusters. Depeding on the operating system, the future
+do not require high-performance clusters. Depending on the operating system, the future
 package will manage to distribute tasks to multiple R sessions (Windows)
 or multiple cores. Note that multiprocessing is not necessary always faster
 when only a "small" number of replications is required as the overhead of
 initializing new sessions or distributing tasks to different cores
-will not immediatley be compensated by the avaiability of multiple sessions/cores.
+will not immediately be compensated by the availability of multiple sessions/cores.
 
 Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
 \href{https://github.com/HenrikBengtsson/future.apply}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
 It is independent of the evaluation plan. Hence, setting e.g., \code{.seed = 123} will
 generate the same random number and replicates
-for both \code{.eval_plan = "sequential"} and \code{.eval_plan = "multiprocess"}.
+for both \code{.eval_plan = "sequential"}, \code{.eval_plan = "multisession"}, and \code{.eval_plan = "multicore"}.
 See \link[future.apply:future_lapply]{?future_lapply} for details.
 }
 \examples{
@@ -258,7 +258,7 @@ boot2 <- resamplecSEMResults(
   .R                = 50,
   .resample_method2 = "bootstrap", 
   .R2               = 20,
-  .eval_plan        = "multiprocess", 
+  .eval_plan        = "multisession", 
   .seed             = 1303
   )
 

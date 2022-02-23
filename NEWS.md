@@ -1,4 +1,9 @@
 # <Development version: cSEM 0.4.0.9000
+- Update the .eval_plan argument since the multiprocess argument of the future package
+  is deprecated. Now multisession or multicore need to be used. Note multicore does not work on
+  Windows machines. 
+
+- Bug fix: Calculation of the R2 and adjR2 in the print function of the assess function 
 
 - Revise the description of the two-stage approach in the csem help file (#418)
 

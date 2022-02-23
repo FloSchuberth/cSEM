@@ -133,7 +133,7 @@ ii$Path_estimates
 #    .resample_method = "bootstrap",
 #    .R               = 999,
 #    .seed            = 98234,
-#    .eval_plan       = "multiprocess")
+#    .eval_plan       = "multisession")
 #  
 #  # Output omitted
 

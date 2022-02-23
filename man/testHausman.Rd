@@ -6,7 +6,7 @@
 \usage{
 testHausman(
  .object               = NULL,
- .eval_plan            = c("sequential", "multiprocess"),
+ .eval_plan            = c("sequential", "multicore", "multisession"),
  .handle_inadmissibles = c("drop", "ignore", "replace"),
  .R                    = 499,
  .resample_method      = c("bootstrap", "jackknife"),
@@ -17,7 +17,7 @@ testHausman(
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
-"\emph{sequential}" or "\emph{multiprocess}". In the latter case
+"\emph{sequential}", "\emph{multicore}", or "\emph{multisession}". In the two latter cases
 all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results

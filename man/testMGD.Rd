@@ -12,7 +12,7 @@ testMGD(
                             "Keil", "Nitzl", "Henseler", "CI_para","CI_overlap"),
  .output_type           = c("complete", "structured"),
  .parameters_to_compare = NULL,
- .eval_plan             = c("sequential", "multiprocess"),                           
+ .eval_plan             = c("sequential", "multicore", "multisession"),                           
  .handle_inadmissibles  = c("replace", "drop", "ignore"),
  .R_permutation         = 499,
  .R_bootstrap           = 499,
@@ -49,7 +49,7 @@ compared across groups. Defaults to \code{NULL} in which case all weights, loadi
 path coefficients of the originally specified model are compared.}
 
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
-"\emph{sequential}" or "\emph{multiprocess}". In the latter case
+"\emph{sequential}", "\emph{multicore}", or "\emph{multisession}". In the two latter cases
 all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.handle_inadmissibles}{Character string. How should inadmissible results

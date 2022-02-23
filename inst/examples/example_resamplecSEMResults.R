@@ -82,7 +82,7 @@ boot2 <- resamplecSEMResults(
   .R                = 50,
   .resample_method2 = "bootstrap", 
   .R2               = 20,
-  .eval_plan        = "multiprocess", 
+  .eval_plan        = "multisession", 
   .seed             = 1303
   )
 

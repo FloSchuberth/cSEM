@@ -35,7 +35,7 @@ inf$Indirect_effect$sd
 # Notes:
 #   1. The .resample_method2 arguments triggers a bootstrap of each bootstrap sample
 #   2. The double bootstrap is is very time consuming, consider setting 
-#      `.eval_plan = "multiprocess`. 
+#      `.eval_plan = "multisession`. 
 a1 <- csem(satisfaction, model, .resample_method = "bootstrap", .R = 499,
           .resample_method2 = "bootstrap", .R2 = 199, .handle_inadmissibles = "replace") 
 infer(a1, .quantity = "CI_t_interval")}

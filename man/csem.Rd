@@ -37,7 +37,7 @@ csem(
 .R2                    = 199,
 .handle_inadmissibles  = c("drop", "ignore", "replace"),
 .user_funs             = NULL,
-.eval_plan             = c("sequential", "multiprocess"),
+.eval_plan             = c("sequential", "multicore", "multisession"),
 .seed                  = NULL,
 .sign_change_option    = c("none", "individual", "individual_reestimate", 
                            "construct_reestimate"),
@@ -190,7 +190,7 @@ vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.}
 
 \item{.eval_plan}{Character string. The evaluation plan to use. One of
-"\emph{sequential}" or "\emph{multiprocess}". In the latter case
+"\emph{sequential}", "\emph{multicore}", or "\emph{multisession}". In the two latter cases
 all available cores will be used. Defaults to "\emph{sequential}".}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
@@ -411,7 +411,7 @@ the estimation for each level separately. Note that the more levels
 the group-identifier-column has, the more estimation runs are required.
 This can considerably slow down estimation, especially if resampling is
 requested. For the latter it will generally be faster to use
-\code{.eval_plan = "multiprocess"}.
+\code{.eval_plan = "multisession"} or \code{.eval_plan = "multicore"}.
 }
 \subsection{Inference:}{
 Inference is done via resampling. See \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} and \code{\link[=infer]{infer()}} for details.
