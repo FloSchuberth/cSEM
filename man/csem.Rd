@@ -407,7 +407,7 @@ data set containing a group-identifier-column whose column
 name must be provided to \code{.id}. Values of this column are taken as levels of a
 factor and are interpreted as group
 identifiers. \code{csem()} will split the data by levels of that column and run
-the estimation for each level separately. Note that the more levels
+the estimation for each level separately. Note, the more levels
 the group-identifier-column has, the more estimation runs are required.
 This can considerably slow down estimation, especially if resampling is
 requested. For the latter it will generally be faster to use
