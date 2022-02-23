@@ -240,16 +240,16 @@ doi: <a href="https://doi.org/10.1080/00031305.2015.1089789" class="external-lin
 <span class="r-in"></span>
 <span class="r-in"><span class="va">inf</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">CI_basic</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL  SAT ~ IMAG SAT ~ EXPE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L   0.5801462    1.023538  -5.427946   4.809229 -0.06982347   0.355093</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U   0.7775575    1.070369  -3.914671   6.308609  0.29129403   2.526382</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L   0.6024236    1.014824  -5.450977   4.481274 -0.23124510   1.369902</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U   0.7775902    1.063987  -3.537870   6.359258  0.06327669   3.145702</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L -3.3430917 0.6989671 0.02461956 0.2491446</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U -0.3748003 1.9507157 0.51663996 0.7806961</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L  -4.318593  1.459547  0.1007486 0.4014165</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U  -1.956291  2.309209  0.4537105 0.7750381</span>
 <span class="r-in"><span class="va">inf</span><span class="op">$</span><span class="va">Indirect_effect</span><span class="op">$</span><span class="va">sd</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.05529950  0.06985327  0.44447053  0.07141191  0.61623851  1.02578267 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.04871711  0.04385543  0.53508904  0.04478087  0.50442652  0.81710198 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.08165418  0.12026840  0.31878192  0.29159444 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.06440585  0.07987801  0.33905125  0.15698719 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span></span>
 <span class="r-in"><span class="co">## For the studentied t-interval confidence interval a double bootstrap is required.</span></span>
@@ -261,7 +261,7 @@ doi: <a href="https://doi.org/10.1080/00031305.2015.1089789" class="external-lin
 <span class="r-in"><span class="co"># Notes:</span></span>
 <span class="r-in"><span class="co">#   1. The .resample_method2 arguments triggers a bootstrap of each bootstrap sample</span></span>
 <span class="r-in"><span class="co">#   2. The double bootstrap is is very time consuming, consider setting </span></span>
-<span class="r-in"><span class="co">#      `.eval_plan = "multiprocess`. </span></span>
+<span class="r-in"><span class="co">#      `.eval_plan = "multisession`. </span></span>
 <span class="r-in"><span class="va">a1</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">satisfaction</span>, <span class="va">model</span>, .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span>, .R <span class="op">=</span> <span class="fl">499</span>,</span>
 <span class="r-in">          .resample_method2 <span class="op">=</span> <span class="st">"bootstrap"</span>, .R2 <span class="op">=</span> <span class="fl">199</span>, .handle_inadmissibles <span class="op">=</span> <span class="st">"replace"</span><span class="op">)</span> </span>
 <span class="r-in"><span class="fu">infer</span><span class="op">(</span><span class="va">a1</span>, .quantity <span class="op">=</span> <span class="st">"CI_t_interval"</span><span class="op">)</span><span class="op">}</span></span>

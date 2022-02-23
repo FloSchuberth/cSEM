@@ -111,7 +111,7 @@
 .R2                    <span class="op">=</span> <span class="fl">199</span>,
 .handle_inadmissibles  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"drop"</span>, <span class="st">"ignore"</span>, <span class="st">"replace"</span><span class="op">)</span>,
 .user_funs             <span class="op">=</span> <span class="cn">NULL</span>,
-.eval_plan             <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"multiprocess"</span><span class="op">)</span>,
+.eval_plan             <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"multicore"</span>, <span class="st">"multisession"</span><span class="op">)</span>,
 .seed                  <span class="op">=</span> <span class="cn">NULL</span>,
 .sign_change_option    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"individual"</span>, <span class="st">"individual_reestimate"</span>, 
                            <span class="st">"construct_reestimate"</span><span class="op">)</span>,
@@ -268,7 +268,7 @@ vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.</p></dd>
 <dt>.eval_plan</dt>
 <dd><p>Character string. The evaluation plan to use. One of
-"<em>sequential</em>" or "<em>multiprocess</em>". In the latter case
+"<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
 <dt>.seed</dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
@@ -477,7 +477,7 @@ the estimation for each level separately. Note that the more levels
 the group-identifier-column has, the more estimation runs are required.
 This can considerably slow down estimation, especially if resampling is
 requested. For the latter it will generally be faster to use
-<code>.eval_plan = "multiprocess"</code>.</p>
+<code>.eval_plan = "multisession"</code> or <code>.eval_plan = "multicore"</code>.</p>
 </div>
 <div class="section">
 <h3 id="inference-">Inference:<a class="anchor" aria-label="anchor" href="#inference-"></a></h3>

@@ -92,7 +92,7 @@ The function is called by <code><a href="csem.html">csem()</a></code> if the use
  .R2                    <span class="op">=</span> <span class="fl">199</span>,
  .handle_inadmissibles  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"drop"</span>, <span class="st">"ignore"</span>, <span class="st">"replace"</span><span class="op">)</span>,
  .user_funs             <span class="op">=</span> <span class="cn">NULL</span>,
- .eval_plan             <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"multiprocess"</span><span class="op">)</span>,
+ .eval_plan             <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"multicore"</span>, <span class="st">"multisession"</span><span class="op">)</span>,
  .force                 <span class="op">=</span> <span class="cn">FALSE</span>,
  .seed                  <span class="op">=</span> <span class="cn">NULL</span>,
  .sign_change_option    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>,<span class="st">"individual"</span>,<span class="st">"individual_reestimate"</span>,
@@ -138,7 +138,7 @@ vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.</p></dd>
 <dt>.eval_plan</dt>
 <dd><p>Character string. The evaluation plan to use. One of
-"<em>sequential</em>" or "<em>multiprocess</em>". In the latter case
+"<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
 <dt>.force</dt>
 <dd><p>Logical. Should .object be resampled even if it contains resamples
@@ -231,21 +231,21 @@ framework (Bengtsson 2018)
 . Users may simply choose an evaluation plan
 via <code>.eval_plan</code> and the package takes care of all the complicated backend
 issues. Currently, users may choose between standard single-core/single-session
-evaluation (<code>"sequential"</code>) and multiprocessing (<code>"multiprocess"</code>). The future package
+evaluation (<code>"sequential"</code>) and multiprocessing (<code>"multisession"</code> or <code>"multicore"</code>). The future package
 provides other options (e.g., <code>"cluster"</code> or <code>"remote"</code>), however, they probably
 will not be needed in the context of the <span class="pkg">cSEM</span> package as simulations usually
-do not require high-performance clusters. Depeding on the operating system, the future
+do not require high-performance clusters. Depending on the operating system, the future
 package will manage to distribute tasks to multiple R sessions (Windows)
 or multiple cores. Note that multiprocessing is not necessary always faster
 when only a "small" number of replications is required as the overhead of
 initializing new sessions or distributing tasks to different cores
-will not immediatley be compensated by the avaiability of multiple sessions/cores.</p>
+will not immediately be compensated by the availability of multiple sessions/cores.</p>
 <p>Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
 <a href="https://github.com/HenrikBengtsson/future.apply" class="external-link">future.apply package</a> (Bengtsson 2018)
 .
 It is independent of the evaluation plan. Hence, setting e.g., <code>.seed = 123</code> will
 generate the same random number and replicates
-for both <code>.eval_plan = "sequential"</code> and <code>.eval_plan = "multiprocess"</code>.
+for both <code>.eval_plan = "sequential"</code>, <code>.eval_plan = "multisession"</code>, and <code>.eval_plan = "multicore"</code>.
 See <a href="https://future.apply.futureverse.org/reference/future_lapply.html" class="external-link">?future_lapply</a> for details.</p>
     </div>
     <div id="references">
@@ -358,7 +358,7 @@ doi: <a href="https://doi.org/10.1080/00031305.2015.1089789" class="external-lin
 <span class="r-in">  .R                <span class="op">=</span> <span class="fl">50</span>,</span>
 <span class="r-in">  .resample_method2 <span class="op">=</span> <span class="st">"bootstrap"</span>, </span>
 <span class="r-in">  .R2               <span class="op">=</span> <span class="fl">20</span>,</span>
-<span class="r-in">  .eval_plan        <span class="op">=</span> <span class="st">"multiprocess"</span>, </span>
+<span class="r-in">  .eval_plan        <span class="op">=</span> <span class="st">"multisession"</span>, </span>
 <span class="r-in">  .seed             <span class="op">=</span> <span class="fl">1303</span></span>
 <span class="r-in">  <span class="op">)</span></span>
 <span class="r-in"></span>

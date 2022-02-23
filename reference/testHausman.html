@@ -80,7 +80,7 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">testHausman</span><span class="op">(</span>
  .object               <span class="op">=</span> <span class="cn">NULL</span>,
- .eval_plan            <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"multiprocess"</span><span class="op">)</span>,
+ .eval_plan            <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"multicore"</span>, <span class="st">"multisession"</span><span class="op">)</span>,
  .handle_inadmissibles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"drop"</span>, <span class="st">"ignore"</span>, <span class="st">"replace"</span><span class="op">)</span>,
  .R                    <span class="op">=</span> <span class="fl">499</span>,
  .resample_method      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bootstrap"</span>, <span class="st">"jackknife"</span><span class="op">)</span>,
@@ -94,7 +94,7 @@
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 <dt>.eval_plan</dt>
 <dd><p>Character string. The evaluation plan to use. One of
-"<em>sequential</em>" or "<em>multiprocess</em>". In the latter case
+"<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
 <dt>.handle_inadmissibles</dt>
 <dd><p>Character string. How should inadmissible results
@@ -212,18 +212,18 @@ MIT Press.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Dependent construct: 'eta5'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta1                      -0.3000      0.1377   -2.1790    0.0293</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2                       0.4999      0.0931    5.3711    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta6                       0.2501      0.1450    1.7242    0.0847</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta6                 0.9784      0.2599    3.7652    0.0002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta1                      -0.3000      0.0912   -3.2908    0.0010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2                       0.4999      0.0795    6.2850    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta6                       0.2501      0.1191    2.0999    0.0357</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta6                 0.9784      0.3024    3.2355    0.0012</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Dependent construct: 'eta6'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta3                       0.4999      0.0512    9.7557    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta4                       0.2501      0.0569    4.3960    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta5                       0.5001      0.1104    4.5283    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta5                -0.0056      0.1394   -0.0401    0.9680</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta3                       0.4999      0.0602    8.3028    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta4                       0.2501      0.0593    4.2165    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta5                       0.5001      0.1130    4.4249    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta5                -0.0056      0.1484   -0.0376    0.9700</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 </code></pre></div>
     </div>
