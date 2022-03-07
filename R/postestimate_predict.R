@@ -52,7 +52,7 @@
 #'     of the endogenous constructs based on a model estimated by the procedure
 #'     given to `.benchmark`.}
 #'   \item{`$Prediction_metrics`}{A data frame containing the predictions metrics
-#'     MAE, RMSE, and Q2_predict. In case of catgorical indicators, the concordance
+#'     MAE, RMSE, and Q2_predict. In case of categorical indicators, the concordance
 #'     is also included. Please note that the concordance can only be obtained for categorical
 #'     indicators. In case of continuous indicators, the concordance is set to the
 #'     MAE value.}
