@@ -1,4 +1,6 @@
 # <Development version: cSEM 0.4.0.9000
+- Bug fix: Revision of the predict metrics in the predict function. 
+
 - Update the .eval_plan argument since the multiprocess argument of the future package
   is deprecated. Now multisession or multicore need to be used. Note multicore does not work on
   Windows machines. 

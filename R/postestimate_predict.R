@@ -52,7 +52,7 @@
 #'     of the endogenous constructs based on a model estimated by the procedure
 #'     given to `.benchmark`.}
 #'   \item{`$Prediction_metrics`}{A data frame containing the predictions metrics
-#'     MAE, RMSE, and Q2_predict. In case of catgorical indicators, the concordance
+#'     MAE, RMSE, and Q2_predict. In case of categorical indicators, the concordance
 #'     is also included. Please note that the concordance can only be obtained for categorical
 #'     indicators. In case of continuous indicators, the concordance is set to the
 #'     MAE value.}
@@ -639,11 +639,11 @@ predict <- function(
     #})
     
     ## Compute prediction metrics ------------------------------------------------
-    
-    mae_target    <- apply(na.omit(out_temp$Residuals_target), 2, function(x) mean(abs(x - mean(x))))
-    mae_benchmark <- apply(na.omit(out_temp$Residuals_benchmark), 2, function(x) mean(abs(x - mean(x))))
-    rmse_target   <- apply(na.omit(out_temp$Residuals_target), 2, function(x) sqrt(mean((x - mean(x))^2)))
-    rmse_benchmark<- apply(na.omit(out_temp$Residuals_benchmark), 2, function(x) sqrt(mean((x - mean(x))^2)))
+    # Here we could add further measures and further metrics
+    mae_target    <- apply(na.omit(out_temp$Residuals_target), 2, function(x) mean(abs(x)))
+    mae_benchmark <- apply(na.omit(out_temp$Residuals_benchmark), 2, function(x) mean(abs(x)))
+    rmse_target   <- apply(na.omit(out_temp$Residuals_target), 2, function(x) sqrt(mean(x^2)))
+    rmse_benchmark<- apply(na.omit(out_temp$Residuals_benchmark), 2, function(x) sqrt(mean(x^2)))
     concordance_target    <- apply(out_temp$Residuals_target, 2, function(x) length(x[x==0])/length(x))
     concordance_benchmark <- apply(out_temp$Residuals_benchmark, 2, function(x) length(x[x==0])/length(x))
     
