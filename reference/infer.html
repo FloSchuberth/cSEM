@@ -35,7 +35,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -239,17 +239,17 @@ doi: <a href="https://doi.org/10.1080/00031305.2015.1089789" class="external-lin
 <span class="r-in"><span class="va">inf</span> <span class="op">&lt;-</span> <span class="fu">infer</span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">inf</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">CI_basic</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL  SAT ~ IMAG SAT ~ EXPE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L   0.6217261    1.022651  -5.514942   4.794839 -0.04174324   1.744690</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U   0.8021774    1.080655  -3.878449   6.403243  0.28467533   2.845027</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L    0.641315    1.024113  -5.516825   5.114865 -0.3211301   1.575919</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U    0.814546    1.075675  -4.205939   6.420628  0.1875556   2.675163</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L  -3.833086  1.282616  0.2151023 0.2759362</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U  -2.260652  2.126149  0.4552484 0.5484843</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L  -3.779121  1.667734 0.07897616 0.3955340</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U  -2.427582  2.587497 0.47049540 0.7757006</span>
 <span class="r-in"><span class="va">inf</span><span class="op">$</span><span class="va">Indirect_effect</span><span class="op">$</span><span class="va">sd</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.05419627  0.06654940  0.45943819  0.06702134  0.35702309  0.67622086 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.05973562  0.06847349  0.42202305  0.08769250  0.37403591  0.64113759 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.06705312  0.05218983  0.32151838  0.10140487 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.07231754  0.08219479  0.35763128  0.16954636 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span></span>
 <span class="r-in"><span class="co">## For the studentied t-interval confidence interval a double bootstrap is required.</span></span>

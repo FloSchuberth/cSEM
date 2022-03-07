@@ -52,7 +52,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -96,7 +96,7 @@
       <h1 data-toc-skip>Introduction to cSEM</h1>
                         <h4 data-toc-skip class="author">Manuel Rademaker</h4>
             
-            <h4 data-toc-skip class="date">Last edited: 2022-02-23</h4>
+            <h4 data-toc-skip class="date">Last edited: 2022-03-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/HEAD/vignettes/cSEM.Rmd" class="external-link"><code>vignettes/cSEM.Rmd</code></a></small>
       <div class="hidden name"><code>cSEM.Rmd</code></div>
@@ -441,7 +441,7 @@ eta3 =~ y31 + y32 + y33
 <span class="co">##  Number of admissible results       = 499</span>
 <span class="co">##  Approach to handle inadmissibles   = "drop"</span>
 <span class="co">##  Sign change option                 = "none"</span>
-<span class="co">##  Random seed                        = -1962431743</span>
+<span class="co">##  Random seed                        = 336190785</span>
 <span class="co">## </span>
 <span class="co">##  Construct details:</span>
 <span class="co">##  ------------------</span>
@@ -457,37 +457,37 @@ eta3 =~ y31 + y32 + y33
 <span class="co">## ============================</span>
 <span class="co">##                                                              CI_percentile   </span>
 <span class="co">##   Path           Estimate  Std. error   t-stat.   p-value         95%        </span>
-<span class="co">##   eta2 ~ eta1      0.6713      0.0424   15.8214    0.0000 [ 0.5871; 0.7520 ] </span>
-<span class="co">##   eta3 ~ eta1      0.4585      0.0777    5.9039    0.0000 [ 0.3219; 0.6203 ] </span>
-<span class="co">##   eta3 ~ eta2      0.3052      0.0826    3.6950    0.0002 [ 0.1402; 0.4609 ] </span>
+<span class="co">##   eta2 ~ eta1      0.6713      0.0440   15.2493    0.0000 [ 0.5827; 0.7515 ] </span>
+<span class="co">##   eta3 ~ eta1      0.4585      0.0821    5.5820    0.0000 [ 0.2901; 0.6065 ] </span>
+<span class="co">##   eta3 ~ eta2      0.3052      0.0875    3.4855    0.0005 [ 0.1467; 0.4772 ] </span>
 <span class="co">## </span>
 <span class="co">## Estimated loadings:</span>
 <span class="co">## ===================</span>
 <span class="co">##                                                              CI_percentile   </span>
 <span class="co">##   Loading        Estimate  Std. error   t-stat.   p-value         95%        </span>
-<span class="co">##   eta1 =~ y11      0.6631      0.0422   15.7300    0.0000 [ 0.5734; 0.7434 ] </span>
-<span class="co">##   eta1 =~ y12      0.6493      0.0397   16.3731    0.0000 [ 0.5652; 0.7217 ] </span>
-<span class="co">##   eta1 =~ y13      0.7613      0.0327   23.2894    0.0000 [ 0.6925; 0.8195 ] </span>
-<span class="co">##   eta2 =~ y21      0.5165      0.0533    9.6827    0.0000 [ 0.4078; 0.6058 ] </span>
-<span class="co">##   eta2 =~ y22      0.7554      0.0352   21.4830    0.0000 [ 0.6873; 0.8206 ] </span>
-<span class="co">##   eta2 =~ y23      0.7997      0.0372   21.4820    0.0000 [ 0.7288; 0.8719 ] </span>
-<span class="co">##   eta3 =~ y31      0.8223      0.0334   24.6076    0.0000 [ 0.7567; 0.8859 ] </span>
-<span class="co">##   eta3 =~ y32      0.6581      0.0405   16.2322    0.0000 [ 0.5766; 0.7260 ] </span>
-<span class="co">##   eta3 =~ y33      0.7474      0.0381   19.6200    0.0000 [ 0.6714; 0.8175 ] </span>
+<span class="co">##   eta1 =~ y11      0.6631      0.0402   16.4986    0.0000 [ 0.5809; 0.7413 ] </span>
+<span class="co">##   eta1 =~ y12      0.6493      0.0409   15.8875    0.0000 [ 0.5735; 0.7279 ] </span>
+<span class="co">##   eta1 =~ y13      0.7613      0.0356   21.3950    0.0000 [ 0.6876; 0.8278 ] </span>
+<span class="co">##   eta2 =~ y21      0.5165      0.0517    9.9853    0.0000 [ 0.4151; 0.6191 ] </span>
+<span class="co">##   eta2 =~ y22      0.7554      0.0363   20.8071    0.0000 [ 0.6844; 0.8233 ] </span>
+<span class="co">##   eta2 =~ y23      0.7997      0.0375   21.3288    0.0000 [ 0.7229; 0.8708 ] </span>
+<span class="co">##   eta3 =~ y31      0.8223      0.0333   24.7281    0.0000 [ 0.7562; 0.8875 ] </span>
+<span class="co">##   eta3 =~ y32      0.6581      0.0406   16.2031    0.0000 [ 0.5779; 0.7398 ] </span>
+<span class="co">##   eta3 =~ y33      0.7474      0.0391   19.1134    0.0000 [ 0.6676; 0.8235 ] </span>
 <span class="co">## </span>
 <span class="co">## Estimated weights:</span>
 <span class="co">## ==================</span>
 <span class="co">##                                                              CI_percentile   </span>
 <span class="co">##   Weight         Estimate  Std. error   t-stat.   p-value         95%        </span>
-<span class="co">##   eta1 &lt;~ y11      0.3956      0.0220   17.9622    0.0000 [ 0.3507; 0.4375 ] </span>
-<span class="co">##   eta1 &lt;~ y12      0.3873      0.0199   19.4336    0.0000 [ 0.3482; 0.4260 ] </span>
-<span class="co">##   eta1 &lt;~ y13      0.4542      0.0212   21.4436    0.0000 [ 0.4186; 0.5007 ] </span>
-<span class="co">##   eta2 &lt;~ y21      0.3058      0.0276   11.0896    0.0000 [ 0.2466; 0.3545 ] </span>
-<span class="co">##   eta2 &lt;~ y22      0.4473      0.0213   20.9507    0.0000 [ 0.4100; 0.4922 ] </span>
-<span class="co">##   eta2 &lt;~ y23      0.4735      0.0217   21.8350    0.0000 [ 0.4337; 0.5183 ] </span>
-<span class="co">##   eta3 &lt;~ y31      0.4400      0.0180   24.4430    0.0000 [ 0.4063; 0.4754 ] </span>
-<span class="co">##   eta3 &lt;~ y32      0.3521      0.0193   18.2043    0.0000 [ 0.3134; 0.3883 ] </span>
-<span class="co">##   eta3 &lt;~ y33      0.3999      0.0193   20.7275    0.0000 [ 0.3619; 0.4399 ] </span>
+<span class="co">##   eta1 &lt;~ y11      0.3956      0.0221   17.8955    0.0000 [ 0.3533; 0.4358 ] </span>
+<span class="co">##   eta1 &lt;~ y12      0.3873      0.0205   18.8750    0.0000 [ 0.3494; 0.4276 ] </span>
+<span class="co">##   eta1 &lt;~ y13      0.4542      0.0208   21.8608    0.0000 [ 0.4171; 0.4974 ] </span>
+<span class="co">##   eta2 &lt;~ y21      0.3058      0.0270   11.3078    0.0000 [ 0.2520; 0.3550 ] </span>
+<span class="co">##   eta2 &lt;~ y22      0.4473      0.0216   20.7259    0.0000 [ 0.4062; 0.4874 ] </span>
+<span class="co">##   eta2 &lt;~ y23      0.4735      0.0211   22.4135    0.0000 [ 0.4329; 0.5133 ] </span>
+<span class="co">##   eta3 &lt;~ y31      0.4400      0.0187   23.4719    0.0000 [ 0.4061; 0.4772 ] </span>
+<span class="co">##   eta3 &lt;~ y32      0.3521      0.0191   18.4655    0.0000 [ 0.3141; 0.3870 ] </span>
+<span class="co">##   eta3 &lt;~ y33      0.3999      0.0195   20.5404    0.0000 [ 0.3637; 0.4368 ] </span>
 <span class="co">## </span>
 <span class="co">## ------------------------------------ Effects -----------------------------------</span>
 <span class="co">## </span>
@@ -495,15 +495,15 @@ eta3 =~ y31 + y32 + y33
 <span class="co">## ========================</span>
 <span class="co">##                                                               CI_percentile   </span>
 <span class="co">##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        </span>
-<span class="co">##   eta2 ~ eta1       0.6713      0.0424   15.8214    0.0000 [ 0.5871; 0.7520 ] </span>
-<span class="co">##   eta3 ~ eta1       0.6634      0.0368   18.0123    0.0000 [ 0.5889; 0.7366 ] </span>
-<span class="co">##   eta3 ~ eta2       0.3052      0.0826    3.6950    0.0002 [ 0.1402; 0.4609 ] </span>
+<span class="co">##   eta2 ~ eta1       0.6713      0.0440   15.2493    0.0000 [ 0.5827; 0.7515 ] </span>
+<span class="co">##   eta3 ~ eta1       0.6634      0.0394   16.8238    0.0000 [ 0.5851; 0.7360 ] </span>
+<span class="co">##   eta3 ~ eta2       0.3052      0.0875    3.4855    0.0005 [ 0.1467; 0.4772 ] </span>
 <span class="co">## </span>
 <span class="co">## Estimated indirect effects:</span>
 <span class="co">## ===========================</span>
 <span class="co">##                                                                  CI_percentile   </span>
 <span class="co">##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        </span>
-<span class="co">##   eta3 ~ eta1          0.2049      0.0558    3.6684    0.0002 [ 0.0938; 0.3091 ] </span>
+<span class="co">##   eta3 ~ eta1          0.2049      0.0590    3.4711    0.0005 [ 0.1011; 0.3272 ] </span>
 <span class="co">## ________________________________________________________________________________</span></code></pre>
 <p>Or directly via <code><a href="../reference/infer.html">infer()</a></code></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -511,17 +511,17 @@ eta3 =~ y31 + y32 + y33
 <span class="va">ii</span><span class="op">$</span><span class="va">Path_estimates</span></code></pre></div>
 <pre><code><span class="co">## $CI_standard_z</span>
 <span class="co">##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2</span>
-<span class="co">## 99%L   0.5634491   0.2558962  0.09379983</span>
-<span class="co">## 99%U   0.7820447   0.6559823  0.51924827</span>
-<span class="co">## 95%L   0.5895816   0.3037253  0.14466092</span>
-<span class="co">## 95%U   0.7559123   0.6081533  0.46838719</span>
+<span class="co">## 99%L   0.5586559   0.2525169  0.07370004</span>
+<span class="co">## 99%U   0.7854519   0.6756773  0.52471493</span>
+<span class="co">## 95%L   0.5857687   0.3031044  0.12761751</span>
+<span class="co">## 95%U   0.7583391   0.6250898  0.47079745</span>
 <span class="co">## </span>
 <span class="co">## $CI_percentile</span>
 <span class="co">##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2</span>
-<span class="co">## 99%L   0.5527842   0.2693952   0.0696007</span>
-<span class="co">## 99%U   0.7814639   0.6543741   0.4800766</span>
-<span class="co">## 95%L   0.5871401   0.3218828   0.1401507</span>
-<span class="co">## 95%U   0.7519866   0.6202555   0.4609345</span></code></pre>
+<span class="co">## 99%L   0.5573878   0.2565614   0.1003897</span>
+<span class="co">## 99%U   0.7863951   0.6649432   0.5191449</span>
+<span class="co">## 95%L   0.5826569   0.2901162   0.1467497</span>
+<span class="co">## 95%U   0.7515183   0.6064699   0.4771824</span></code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future" class="external-link">future framework</a>. For multiprocessing simply set <code>.eval_plan = "multiprocess"</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the background as there are cores available instead. Note that this naturally has some overhead. Consequently, for a small number of resamples multiprocessing will generally not be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument. A typical call would look like this:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/csem.html">csem</a></span><span class="op">(</span>
