@@ -639,18 +639,37 @@ predict <- function(
     #})
     
     ## Compute prediction metrics ------------------------------------------------
-    # Here we could add further measures and further metrics
-    mae_target    <- apply(na.omit(out_temp$Residuals_target), 2, function(x) mean(abs(x)))
-    mae_benchmark <- apply(na.omit(out_temp$Residuals_benchmark), 2, function(x) mean(abs(x)))
-    rmse_target   <- apply(na.omit(out_temp$Residuals_target), 2, function(x) sqrt(mean(x^2)))
-    rmse_benchmark<- apply(na.omit(out_temp$Residuals_benchmark), 2, function(x) sqrt(mean(x^2)))
-    concordance_target    <- apply(out_temp$Residuals_target, 2, function(x) length(x[x==0])/length(x))
-    concordance_benchmark <- apply(out_temp$Residuals_benchmark, 2, function(x) length(x[x==0])/length(x))
+    Res_t <- out_temp$Residuals_target
+    Res_b <- out_temp$Residuals_benchmark
+    Pred_t <- out_temp$Predictions_target
+    Pred_b <- out_temp$Predictions_benchmark
+    act   <- X_test[,endo_indicators]
+    
+    mae_target    <- calculateMAE(resid = Res_t)
+    mae_benchmark <- calculateMAE(resid = Res_b)
+    rmse_target   <- calculateRMSE(resid = Res_t)
+    rmse_benchmark<- calculateRMSE(resid = Res_b)
+    misclassification_target    <- calculateMissclassification(resid = Res_t)
+    misclassification_benchmark <- calculateMissclassification(resid = Res_b)
+    mape_target <- calculateMAPE(resid = Res_t, act = act)
+    mape_benchmark <- calculateMAPE(resid = Res_b, act = act)
+    mse2_target <- calculateMSE2(pred = Pred_t, act = act, resid = Res_t)
+    mse2_benchmark <- calculateMSE2(pred = Pred_b, act = act, resid = Res_b)
+    u1_target <- calculateU1(act = act, mse2 = mse2_target)
+    u1_benchmark <- calculateU1(act = act, mse2 = mse2_benchmark)
+    u2_target <- calculateU2(act = act, resid = Res_t)
+    u2_benchmark <- calculateU2(act = act, resid = Res_b)
+    um_target <- calculateUM(act = act, pred = Pred_t, mse2 = mse2_target)
+    um_benchmark <- calculateUM(act = act, pred = Pred_b, mse2 = mse2_benchmark)
+    ur_target <- calculateUR(pred = Pred_t, act = act, mse2 = mse2_target)
+    ur_benchmark <- calculateUR(pred = Pred_b, act = act, mse2 = mse2_benchmark)
+    ud_target <- calculateUD(pred = Pred_t, act = act, mse2 = mse2_target)
+    ud_benchmark <- calculateUD(pred = Pred_b, act = act, mse2 = mse2_benchmark)
     
     q2_predict  <- c()
-    for(i in colnames(out_temp$Residuals_target)) {
+    for(i in colnames(Res_t)) {
       
-      q2_predict[i] <- 1- sum((na.omit(out_temp$Residuals_target[, i]) - mean(na.omit(out_temp$Residuals_target[, i])))^2) /
+      q2_predict[i] <- 1- sum((na.omit(Res_t[, i]) - mean(na.omit(Res_t[, i])))^2) /
         sum((na.omit(out_temp$Residuals_mb[, i]) - mean(na.omit(out_temp$Residuals_mb[, i])))^2)
     }
     
@@ -677,8 +696,22 @@ predict <- function(
       "RMSE_target"    = rmse_target,
       "RMSE_benchmark" = rmse_benchmark,
       "Q2_predict"     = q2_predict,
-      "concordance_target" = concordance_target,
-      "concordance_benchmark" = concordance_benchmark,
+      "misclassification_target" = misclassification_target,
+      "misclassification_benchmark" = misclassification_benchmark,
+      "MAPE_target"    = mape_target,
+      "MAPE_benchmark" = mape_benchmark,
+      "MSE2_target"    = mse2_target,
+      "MSE2_benchmark" = mse2_benchmark,
+      "U1_target"      = u1_target,
+      "U1_benchmark"   = u1_benchmark,
+      "U2_target"      = u2_target,
+      "U2_benchmark"   = u2_benchmark,
+      "UM_target"      = um_target,
+      "UM_benchmark"   = um_benchmark,
+      "UR_target"      = ur_target,
+      "UR_benchmark"   = ur_benchmark,
+      "UD_target"      = ud_target,
+      "UD_benchmark"   = ud_benchmark,
       stringsAsFactors = FALSE
     )
     #}
