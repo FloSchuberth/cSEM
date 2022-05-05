@@ -610,7 +610,8 @@ predict <- function(
           "Residuals_target"      = results[[1]][[2]],
           "Predictions_benchmark" = predictions_benchmark,
           "Residuals_benchmark"   = residuals_benchmark,
-          "Residuals_mb"          = residuals_mb
+          "Residuals_mb"          = residuals_mb,
+          "actual"                = X_test[,endo_indicators]
         )
       } # END for j in 1:length(dat)  
       
@@ -643,7 +644,7 @@ predict <- function(
     Res_b <- out_temp$Residuals_benchmark
     Pred_t <- out_temp$Predictions_target
     Pred_b <- out_temp$Predictions_benchmark
-    act   <- X_test[,endo_indicators]
+    act   <- out_temp$actual
     
     mae_target    <- calculateMAE(resid = Res_t)
     mae_benchmark <- calculateMAE(resid = Res_b)
@@ -665,7 +666,6 @@ predict <- function(
     ur_benchmark <- calculateUR(pred = Pred_b, act = act, mse2 = mse2_benchmark)
     ud_target <- calculateUD(pred = Pred_t, act = act, mse2 = mse2_target)
     ud_benchmark <- calculateUD(pred = Pred_b, act = act, mse2 = mse2_benchmark)
-    
     q2_predict  <- c()
     for(i in colnames(Res_t)) {
       
