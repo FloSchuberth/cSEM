@@ -239,7 +239,7 @@ dat_OrdPLS_all_ordinal <- data.frame(y11 = cut(threecommonfactors[,"y11"],breaks
                          y32 = cut(threecommonfactors[,"y32"],breaks=tau1_4sym),
                          y33 = cut(threecommonfactors[,"y33"],breaks=tau1_4sym))
 
-res_OrdPLS_all_ordinal <- csem(dat_OrdPLS, model_linear)
+res_OrdPLS_all_ordinal <- csem(dat_OrdPLS_all_ordinal, model_linear)
 
 
 dat_OrdPLS_ordinal_continuous <- data.frame(y11 = threecommonfactors[,"y11"],
