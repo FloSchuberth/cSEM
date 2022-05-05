@@ -295,9 +295,6 @@
 #' @param .steps_mod A numeric vector. Steps used for the moderator variable in calculating 
 #' the simple effects of an independent variable on the dependent variable. 
 #' Defaults to `NULL`.
-#' @param .testtype A character which defines whether the CVPAT test for the 
-#' predict function should be twosided or onesided. One of "*two.sided*", "*greater*",
-#' "*smaller*". Defaults to "*two.sided*". 
 #' @param .terms A vector of construct names to be classified.
 #' @param .test_data A matrix of test data with the same column names as the 
 #'   training data.
