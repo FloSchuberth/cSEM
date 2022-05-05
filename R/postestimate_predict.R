@@ -73,7 +73,8 @@
 #'  .sim_points           = 100,
 #'  .disattenuate         = TRUE,
 #'  .treat_as_continuous  = TRUE,
-#'  .approach_score_benchmark = c("mean", "median", "mode", "round")
+#'  .approach_score_benchmark = c("mean", "median", "mode", "round"),
+#'  .testtype             = c("two.sided", "greater", "less")
 #'  )
 #'
 #' @inheritParams csem_arguments
@@ -86,6 +87,9 @@
 #'   set to `NA`. Defaults to "*stop*"
 #' @param .disattenuate Logical. Should the benchmark predictions be based on 
 #'   disattenuated parameter estimates? Defaults to `TRUE`.
+#' @param .testtype Character string. Should the CVPAT test be calculated based
+#'   on a twosided or one sided hypothesis? One of "*two.sided*", "*greater*",
+#'   or "*less*". Defaults to "*two.sided*".
 #'
 #' @seealso [csem], [cSEMResults], [exportToExcel()]
 #' 
@@ -107,13 +111,15 @@ predict <- function(
   .sim_points               = 100,
   .disattenuate             = TRUE,
   .treat_as_continuous      = TRUE,
-  .approach_score_benchmark = c("mean", "median", "mode", "round")
+  .approach_score_benchmark = c("mean", "median", "mode", "round"),
+  .testtype                 = c("two.sided", "greater", "less")
   ) {
   
   .benchmark            <- match.arg(.benchmark)
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   .approach_score_target <- match.arg(.approach_score_target)
   .approach_score_benchmark <- match.arg(.approach_score_benchmark)
+  .testtype             <- match.arg(.testtype)
   
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, predict, 
@@ -673,6 +679,10 @@ predict <- function(
         sum((na.omit(out_temp$Residuals_mb[, i]) - mean(na.omit(out_temp$Residuals_mb[, i])))^2)
     }
     
+    # Cross-Validated Predictive Ability Test
+    CVPAT <- t.test(unlist(Res_b), unlist(Res_t), alternative = .testtype, paired = TRUE)
+    CVPAT <- c(CVPAT[1], CVPAT[2], CVPAT[3], CVPAT[4])
+    
     #if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
     ## Create data frame
     #df_metrics <- data.frame(
@@ -741,6 +751,7 @@ predict <- function(
       "Residuals_target"    = out_temp$Residuals_target,
       "Residuals_benchmark" = out_temp$Residuals_benchmark,
       "Prediction_metrics"  = df_metrics,
+      "CVPAT"               = CVPAT,
       "Information"         = list(
         "Estimator_target"          = .target,
         "Estimator_benchmark"       = .benchmark,
