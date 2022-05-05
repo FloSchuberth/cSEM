@@ -52,9 +52,9 @@
 #'     of the endogenous constructs based on a model estimated by the procedure
 #'     given to `.benchmark`.}
 #'   \item{`$Prediction_metrics`}{A data frame containing the predictions metrics
-#'     MAE, RMSE, and Q2_predict. In case of categorical indicators, the concordance
-#'     is also included. Please note that the concordance can only be obtained for categorical
-#'     indicators. In case of continuous indicators, the concordance is set to the
+#'     MAE, RMSE, and Q2_predict. In case of categorical indicators, the misclassification error rate
+#'     is also included. Please note that the misclassification error rate can only be obtained for categorical
+#'     indicators. In case of continuous indicators, the misclassification error rate is set to the
 #'     MAE value.}
 #'   \item{`$Information`}{A list with elements
 #'     `Target`, `Benchmark`,
@@ -426,6 +426,15 @@ predict <- function(
             thresholds <- thresholds[!is.na(thresholds)]
             Tmin <- -4
             Tmax <- 4
+            correction <- function(x) {
+              multval <- x[duplicated(x)]
+              threshold.indices.to.change <- which(x == multval)
+              if (length(threshold.indices.to.change) == 0) return(x)
+              x[threshold.indices.to.change] <- multval - epsilon * rev(threshold.indices.to.change - min(threshold.indices.to.change))    
+              x
+            }
+            for (th in 1:length(thresholds)) thresholds[[th]] <- correction(thresholds[[th]])
+            
             thresholds <- lapply(thresholds, function(x) c(Tmin, x, Tmax))
             
             Cov_ind <- Est$Estimates$Indicator_VCV

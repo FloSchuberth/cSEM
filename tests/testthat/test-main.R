@@ -224,3 +224,32 @@ res_multi_id_2ndorder_boot  <- csem(dat2ndorder_id, model_2ndorder,
                                  .handle_inadmissibles = "replace",
                                  .id = "group")
 
+
+# OrdPLS
+# symmetric distribution with 4 categories
+tau1_4sym <- c(-Inf,-1.25, 0, 1.25, Inf)  
+
+dat_OrdPLS_all_ordinal <- data.frame(y11 = cut(threecommonfactors[,"y11"],breaks=tau1_4sym),
+                         y12 = cut(threecommonfactors[,"y12"],breaks=tau1_4sym),
+                         y13 = cut(threecommonfactors[,"y13"],breaks=tau1_4sym),
+                         y21 = cut(threecommonfactors[,"y21"],breaks=tau1_4sym),
+                         y22 = cut(threecommonfactors[,"y22"],breaks=tau1_4sym),
+                         y23 = cut(threecommonfactors[,"y23"],breaks=tau1_4sym),
+                         y31 = cut(threecommonfactors[,"y31"],breaks=tau1_4sym),
+                         y32 = cut(threecommonfactors[,"y32"],breaks=tau1_4sym),
+                         y33 = cut(threecommonfactors[,"y33"],breaks=tau1_4sym))
+
+res_OrdPLS_all_ordinal <- csem(dat_OrdPLS, model_linear)
+
+
+dat_OrdPLS_ordinal_continuous <- data.frame(y11 = threecommonfactors[,"y11"],
+                                     y12 = cut(threecommonfactors[,"y12"],breaks=tau1_4sym),
+                                     y13 = threecommonfactors[,"y13"],
+                                     y21 = cut(threecommonfactors[,"y21"],breaks=tau1_4sym),
+                                     y22 = threecommonfactors[,"y22"],
+                                     y23 = cut(threecommonfactors[,"y23"],breaks=tau1_4sym),
+                                     y31 = threecommonfactors[,"y31"],
+                                     y32 = cut(threecommonfactors[,"y32"],breaks=tau1_4sym),
+                                     y33 = cut(threecommonfactors[,"y33"],breaks=tau1_4sym))
+
+res_OrdPLS_ordinal_continuous <- csem(dat_OrdPLS_ordinal_continuous, model_linear)

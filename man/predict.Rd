@@ -89,9 +89,9 @@ based on the target model.}
 of the endogenous constructs based on a model estimated by the procedure
 given to \code{.benchmark}.}
 \item{\verb{$Prediction_metrics}}{A data frame containing the predictions metrics
-MAE, RMSE, and Q2_predict. In case of categorical indicators, the concordance
-is also included. Please note that the concordance can only be obtained for categorical
-indicators. In case of continuous indicators, the concordance is set to the
+MAE, RMSE, and Q2_predict. In case of categorical indicators, the misclassification error rate
+is also included. Please note that the misclassification error rate can only be obtained for categorical
+indicators. In case of continuous indicators, the misclassification error rate is set to the
 MAE value.}
 \item{\verb{$Information}}{A list with elements
 \code{Target}, \code{Benchmark},
