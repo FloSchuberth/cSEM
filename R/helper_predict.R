@@ -68,3 +68,12 @@ calculateUD <- function(pred, act, mse2){
   return(sapply(colnames(act), function(x) (1 - cor(pred[,x], act[,x])^2)*
                   var(act[,x])^2/mse2[x]))
 }
+
+calculateq2 <- function(res, MB){
+  q2_predict <- c()
+   for(i in colnames(res)) {
+     q2_predict[i] <- 1- sum((na.omit(res[, i]) - mean(na.omit(res[, i])))^2) /
+      sum((na.omit(MB[, i]) - mean(na.omit(MB[, i])))^2)
+   }
+  return(q2_predict)
+}

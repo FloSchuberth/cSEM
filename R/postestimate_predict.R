@@ -594,7 +594,7 @@ predict <- function(
             residuals_benchmark   <- results[[2]][[2]]
           }
         } else if(.benchmark == "lm") {
-          ## Compute naiv predictions based on a linear model that explains each
+          ## Compute naive predictions based on a linear model that explains each
           ## endogenous indicator by all exogenous indicators
           beta_exo <- solve(t(X_train[, exo_indicators]) %*% 
                               X_train[, exo_indicators]) %*% 
@@ -610,7 +610,7 @@ predict <- function(
             residuals_benchmark   <- X_test[, endo_indicators] - predictions_benchmark 
           }
         }
-        ## Compute naiv mean-based predictions and residuals
+        ## Compute naive mean-based predictions and residuals
         residuals_mb   <- t(t(X_test[, endo_indicators]) - mean_train[endo_indicators])
         
         ## Output
@@ -620,7 +620,7 @@ predict <- function(
           "Predictions_benchmark" = predictions_benchmark,
           "Residuals_benchmark"   = residuals_benchmark,
           "Residuals_mb"          = residuals_mb,
-          "actual"                = X_test[,endo_indicators]
+          "Actual"                = X_test[,endo_indicators]
         )
       } # END for j in 1:length(dat)  
       
@@ -633,11 +633,13 @@ predict <- function(
       out_all[[i]] <- out_temp
     }
     
-    out_temp<- lapply(purrr::transpose(out_all), function(x) {
-      x <- do.call(rbind, x)
-      x <- x[order(as.numeric(rownames(x))), ]
-      x
-    })
+    #out_temp<- lapply(purrr::transpose(out_all), function(x) {
+    #  x <- do.call(rbind, x)
+    #  x <- x[order(as.numeric(rownames(x))), ]
+    #  x
+    #})
+    
+    out_temp <- purrr::transpose(out_all)
     
     # Compute average prediction over all .r runs that are not NA
     #out_temp <- lapply(purrr::transpose(out_all), function(x) {
@@ -647,87 +649,48 @@ predict <- function(
       
     #  a / b
     #})
-    
+    df_metrics <- list()
+    for(q in 1: length(out_all)){
     ## Compute prediction metrics ------------------------------------------------
-    Res_t <- out_temp$Residuals_target
-    Res_b <- out_temp$Residuals_benchmark
-    Pred_t <- out_temp$Predictions_target
-    Pred_b <- out_temp$Predictions_benchmark
-    act   <- out_temp$actual
-    
-    mae_target    <- calculateMAE(resid = Res_t)
-    mae_benchmark <- calculateMAE(resid = Res_b)
-    rmse_target   <- calculateRMSE(resid = Res_t)
-    rmse_benchmark<- calculateRMSE(resid = Res_b)
-    misclassification_target    <- calculateMissclassification(resid = Res_t)
-    misclassification_benchmark <- calculateMissclassification(resid = Res_b)
-    mape_target <- calculateMAPE(resid = Res_t, act = act)
-    mape_benchmark <- calculateMAPE(resid = Res_b, act = act)
-    mse2_target <- calculateMSE2(pred = Pred_t, act = act, resid = Res_t)
-    mse2_benchmark <- calculateMSE2(pred = Pred_b, act = act, resid = Res_b)
-    u1_target <- calculateU1(act = act, mse2 = mse2_target)
-    u1_benchmark <- calculateU1(act = act, mse2 = mse2_benchmark)
-    u2_target <- calculateU2(act = act, resid = Res_t)
-    u2_benchmark <- calculateU2(act = act, resid = Res_b)
-    um_target <- calculateUM(act = act, pred = Pred_t, mse2 = mse2_target)
-    um_benchmark <- calculateUM(act = act, pred = Pred_b, mse2 = mse2_benchmark)
-    ur_target <- calculateUR(pred = Pred_t, act = act, mse2 = mse2_target)
-    ur_benchmark <- calculateUR(pred = Pred_b, act = act, mse2 = mse2_benchmark)
-    ud_target <- calculateUD(pred = Pred_t, act = act, mse2 = mse2_target)
-    ud_benchmark <- calculateUD(pred = Pred_b, act = act, mse2 = mse2_benchmark)
-    q2_predict  <- c()
-    for(i in colnames(Res_t)) {
-      
-      q2_predict[i] <- 1- sum((na.omit(Res_t[, i]) - mean(na.omit(Res_t[, i])))^2) /
-        sum((na.omit(out_temp$Residuals_mb[, i]) - mean(na.omit(out_temp$Residuals_mb[, i])))^2)
-    }
-    
-    # Cross-Validated Predictive Ability Test
-    CVPAT <- stats::t.test(unlist(Res_b), unlist(Res_t), alternative = "two.sided", paired = TRUE)
-    CVPAT <- c(CVPAT[1], CVPAT[2], CVPAT[3], CVPAT[4])
-    
-    #if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson')){
-    ## Create data frame
-    #df_metrics <- data.frame(
-    #  "Name"           = endo_indicators,
-    #  "MAE_target"     = mae_target,
-    #  "MAE_benchmark" = mae_benchmark,
-    #  "RMSE_target"    = rmse_target,
-    #  "RMSE_benchmark" = rmse_benchmark,
-    #  "Q2_predict"     = q2_predict,
-    #  "concordance_target" = concordance_target,
-    #  "concordance_benchmark" = concordance_benchmark,
-    #  stringsAsFactors = FALSE
-    #)
-    #}else{
+    Res_t <- out_all[[q]]$Residuals_target
+    Res_b <- out_all[[q]]$Residuals_benchmark
+    Pred_t <- out_all[[q]]$Predictions_target
+    Pred_b <- out_all[[q]]$Predictions_benchmark
+    act   <- out_all[[q]]$Actual
+
+    mse2_target = calculateMSE2(pred = Pred_t, act = act, resid = Res_t)
+    mse2_benchmark = calculateMSE2(pred = Pred_b, act = act, resid = Res_b)
     
     ## Create data frame
-    df_metrics <- data.frame(
-      "Name"           = endo_indicators,
-      "MAE_target"     = mae_target,
-      "MAE_benchmark" = mae_benchmark,
-      "RMSE_target"    = rmse_target,
-      "RMSE_benchmark" = rmse_benchmark,
-      "Q2_predict"     = q2_predict,
-      "misclassification_target" = misclassification_target,
-      "misclassification_benchmark" = misclassification_benchmark,
-      "MAPE_target"    = mape_target,
-      "MAPE_benchmark" = mape_benchmark,
+    df_metrics[[q]] <- data.frame(
+      "MAE_target"     = calculateMAE(resid = Res_t),
+      "MAE_benchmark"  = calculateMAE(resid = Res_b),
+      "RMSE_target"    = calculateRMSE(resid = Res_t),
+      "RMSE_benchmark" = calculateRMSE(resid = Res_b),
+      "Q2_predict"     = calculateq2(res = Res_t, MB = out_all[[q]]$Residuals_mb),
+      "misclassification_target"    = calculateMissclassification(resid = Res_t),
+      "misclassification_benchmark" = calculateMissclassification(resid = Res_b),
+      "MAPE_target"    = calculateMAPE(resid = Res_t, act = act),
+      "MAPE_benchmark" = calculateMAPE(resid = Res_b, act = act),
       "MSE2_target"    = mse2_target,
       "MSE2_benchmark" = mse2_benchmark,
-      "U1_target"      = u1_target,
-      "U1_benchmark"   = u1_benchmark,
-      "U2_target"      = u2_target,
-      "U2_benchmark"   = u2_benchmark,
-      "UM_target"      = um_target,
-      "UM_benchmark"   = um_benchmark,
-      "UR_target"      = ur_target,
-      "UR_benchmark"   = ur_benchmark,
-      "UD_target"      = ud_target,
-      "UD_benchmark"   = ud_benchmark,
+      "U1_target"      = calculateU1(act = act, mse2 = mse2_target),
+      "U1_benchmark"   = calculateU1(act = act, mse2 = mse2_benchmark),
+      "U2_target"      = calculateU2(act = act, resid = Res_t),
+      "U2_benchmark"   = calculateU2(act = act, resid = Res_b),
+      "UM_target"      = calculateUM(act = act, pred = Pred_t, mse2 = mse2_target),
+      "UM_benchmark"   = calculateUM(act = act, pred = Pred_b, mse2 = mse2_benchmark),
+      "UR_target"      = calculateUR(pred = Pred_t, act = act, mse2 = mse2_target),
+      "UR_benchmark"   = calculateUR(pred = Pred_b, act = act, mse2 = mse2_benchmark),
+      "UD_target"      = calculateUD(pred = Pred_t, act = act, mse2 = mse2_target),
+      "UD_benchmark"   = calculateUD(pred = Pred_b, act = act, mse2 = mse2_benchmark),
       stringsAsFactors = FALSE
     )
     #}
+    }
+    df_metrics <- data.frame(
+      "Name" = endo_indicators,
+      Reduce("+", df_metrics)/length(df_metrics))
     rownames(df_metrics) <- NULL
     
     if(.benchmark == "PLS-PM" && !all(.object$Information$Type_of_indicator_correlation == 'Pearson')
@@ -745,16 +708,16 @@ predict <- function(
     }
     
     out <- list(
-      "Actual"      = if(is.null(.test_data)) {
-        .object$Information$Arguments$.data[, endo_indicators]
-      } else {
-        .test_data[, endo_indicators]
-      },
+     # "Actual"      = if(is.null(.test_data)) {
+      #  .object$Information$Arguments$.data[, endo_indicators]
+      #} else {
+      #  .test_data[, endo_indicators]
+      #},
+      "Actual"              = out_temp$Actual,
       "Predictions_target"  = out_temp$Predictions_target,
       "Residuals_target"    = out_temp$Residuals_target,
       "Residuals_benchmark" = out_temp$Residuals_benchmark,
       "Prediction_metrics"  = df_metrics,
-      "CVPAT"               = CVPAT,
       "Information"         = list(
         "Estimator_target"          = .target,
         "Estimator_benchmark"       = .benchmark,
