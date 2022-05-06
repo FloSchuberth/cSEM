@@ -302,15 +302,17 @@ resampleData <- function(
             # shuffle data set
             y <- y[sample(1:nrow(y)), ]
             if(ceiling(nrow(data)/.cv_folds)*.cv_folds - nrow(data) < ceiling(nrow(data)/.cv_folds)){
-            suppressWarnings(
+              
+            #In case that warnings occur, the splitting of the data set might be changed  
+            #suppressWarnings(
               split(as.data.frame(y), rep(1:.cv_folds, 
                                           each = ceiling(nrow(y)/.cv_folds)))
-            )
+            #)
             }else{
-              suppressWarnings(
+              #suppressWarnings(
                 split(as.data.frame(y), rep(1:.cv_folds, 
                                             each = floor(nrow(y)/.cv_folds)))
-              ) 
+              #) 
             }
           }, future.seed = .seed)
         })
