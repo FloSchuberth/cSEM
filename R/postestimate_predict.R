@@ -569,10 +569,11 @@ predict <- function(
             X_hat_rescaled <- X_hat_rescaled[, endo_indicators, drop = FALSE]
             }
             # Calculate the difference between original and predicted values
-            residuals_target <- X_test[, endo_indicators] - X_hat_rescaled[, endo_indicators]
+            residuals_target <- X_test[, endo_indicators, drop = FALSE] - 
+                                X_hat_rescaled[, endo_indicators, drop = FALSE]
             
           } else if(status_code != 0 & .handle_inadmissibles == "set_NA"){
-            X_hat_rescaled  <- residuals_target <- X_test[, endo_indicators] 
+            X_hat_rescaled  <- residuals_target <- X_test[, endo_indicators, drop = FALSE] 
             X_hat_rescaled[] <- NA
             residuals_target[] <- NA
           } else {
@@ -607,39 +608,27 @@ predict <- function(
           residuals_benchmark[,colnames(residuals_benchmark) %in% cat_indicators] <- round(residuals_benchmark[,colnames(residuals_benchmark) %in% cat_indicators])
           }else{
             predictions_benchmark <- as.matrix(X_test[, exo_indicators]) %*% beta_exo
-            residuals_benchmark   <- X_test[, endo_indicators] - predictions_benchmark 
+            residuals_benchmark   <- X_test[, endo_indicators, drop = FALSE] - predictions_benchmark 
           }
         }
         ## Compute naive mean-based predictions and residuals
-        residuals_mb   <- t(t(X_test[, endo_indicators]) - mean_train[endo_indicators])
-        
-        if(is.null(dimnames(residuals_mb))){
-          dimnames(residuals_mb) = dimnames(residuals_benchmark)
-        }
-        actual <- as.matrix(X_test[,endo_indicators])
-        if(is.null(dimnames(actual))){
-          dimnames(actual) = dimnames(residuals_benchmark)
-        }
-        residuals_target <- as.matrix(results[[1]][[2]])
-        if(is.null(colnames(residuals_target))){
-          colnames(residuals_target) = colnames(residuals_benchmark)
-        }
-        
+        residuals_mb   <- t(t(X_test[, endo_indicators, drop = FALSE]) - mean_train[endo_indicators])
+      
         
         ## Output
         out_cv[[j]] <- list(
           "Predictions_target"    = results[[1]][[1]],
-          "Residuals_target"      = residuals_target,
+          "Residuals_target"      = results[[1]][[2]],
           "Predictions_benchmark" = predictions_benchmark,
           "Residuals_benchmark"   = residuals_benchmark,
           "Residuals_mb"          = residuals_mb,
-          "Actual"                = actual
+          "Actual"                = X_test[,endo_indicators, drop = FALSE]
         )
       } # END for j in 1:length(dat)  
       
       out_temp <- lapply(purrr::transpose(out_cv), function(x) {
         x <- do.call(rbind, x)
-        #x <- x[order(as.numeric(rownames(x))), ]
+        x <- x[order(as.numeric(rownames(x))), , drop = FALSE]
         x
       })
       
@@ -665,11 +654,11 @@ predict <- function(
     df_metrics <- list()
     for(q in 1: length(out_all)){
     ## Compute prediction metrics ------------------------------------------------
-    Res_t <- as.matrix(out_all[[q]]$Residuals_target)
-    Res_b <- as.matrix(out_all[[q]]$Residuals_benchmark)
-    Pred_t <- as.matrix(out_all[[q]]$Predictions_target)
-    Pred_b <- as.matrix(out_all[[q]]$Predictions_benchmark)
-    act   <- as.matrix(out_all[[q]]$Actual)
+    Res_t <- out_all[[q]]$Residuals_target
+    Res_b <- out_all[[q]]$Residuals_benchmark
+    Pred_t <- out_all[[q]]$Predictions_target
+    Pred_b <- out_all[[q]]$Predictions_benchmark
+    act   <- out_all[[q]]$Actual
 
     mse2_target = calculateMSE2(pred = Pred_t, act = act, resid = Res_t)
     mse2_benchmark = calculateMSE2(pred = Pred_b, act = act, resid = Res_b)
