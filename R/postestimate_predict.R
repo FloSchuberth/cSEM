@@ -613,20 +613,33 @@ predict <- function(
         ## Compute naive mean-based predictions and residuals
         residuals_mb   <- t(t(X_test[, endo_indicators]) - mean_train[endo_indicators])
         
+        if(is.null(dimnames(residuals_mb))){
+          dimnames(residuals_mb) = dimnames(residuals_benchmark)
+        }
+        actual <- as.matrix(X_test[,endo_indicators])
+        if(is.null(dimnames(actual))){
+          dimnames(actual) = dimnames(residuals_benchmark)
+        }
+        residuals_target <- as.matrix(results[[1]][[2]])
+        if(is.null(colnames(residuals_target))){
+          colnames(residuals_target) = colnames(residuals_benchmark)
+        }
+        
+        
         ## Output
         out_cv[[j]] <- list(
           "Predictions_target"    = results[[1]][[1]],
-          "Residuals_target"      = results[[1]][[2]],
+          "Residuals_target"      = residuals_target,
           "Predictions_benchmark" = predictions_benchmark,
           "Residuals_benchmark"   = residuals_benchmark,
           "Residuals_mb"          = residuals_mb,
-          "Actual"                = X_test[,endo_indicators]
+          "Actual"                = actual
         )
       } # END for j in 1:length(dat)  
       
       out_temp <- lapply(purrr::transpose(out_cv), function(x) {
         x <- do.call(rbind, x)
-        x <- x[order(as.numeric(rownames(x))), ]
+        #x <- x[order(as.numeric(rownames(x))), ]
         x
       })
       
@@ -652,11 +665,11 @@ predict <- function(
     df_metrics <- list()
     for(q in 1: length(out_all)){
     ## Compute prediction metrics ------------------------------------------------
-    Res_t <- out_all[[q]]$Residuals_target
-    Res_b <- out_all[[q]]$Residuals_benchmark
-    Pred_t <- out_all[[q]]$Predictions_target
-    Pred_b <- out_all[[q]]$Predictions_benchmark
-    act   <- out_all[[q]]$Actual
+    Res_t <- as.matrix(out_all[[q]]$Residuals_target)
+    Res_b <- as.matrix(out_all[[q]]$Residuals_benchmark)
+    Pred_t <- as.matrix(out_all[[q]]$Predictions_target)
+    Pred_b <- as.matrix(out_all[[q]]$Predictions_benchmark)
+    act   <- as.matrix(out_all[[q]]$Actual)
 
     mse2_target = calculateMSE2(pred = Pred_t, act = act, resid = Res_t)
     mse2_benchmark = calculateMSE2(pred = Pred_b, act = act, resid = Res_b)
