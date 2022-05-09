@@ -27,16 +27,13 @@ Croon's approach), as well as several tests and typical postestimation
 procedures (e.g., verify admissibility of the estimates, assess the model fit, 
 test the model fit, compute confidence intervals, compare groups, etc.).
 
-## News (2021-04-16):
+## News (2022-05-09):
 
-- New function `exportToExcel()`. The function conveniently exports the results
-  from `assess()`, `predict()`, `summarize()` and `testOMF()` to an .xlsx file.
+- `predict()` function is now able to predict categorical indicators (a procedure known as
+   OrdPLScPredict). 
 
-- Several bug fixes, most notably: `calculateVifModeB()` did not calculate the VIFs for modeB 
-  constructs correctly because of a bug in the calculation of the R^2. 
-  PLEASE REVIEW YOUR CALCULATIONS in cSEM version < 0.3.1:9000! (thanks to @Benjamin Liengaard
-  for pointing it out)
-  
+- Use singular value decomposition in GSCAm to deal with large datasets, which allows for large datasets (thanks to Heungsun Hwang)
+
 ## Installation
 The package is available on [CRAN](https://cran.r-project.org/):
 ```{r, eval = FALSE}

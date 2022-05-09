@@ -37,7 +37,7 @@ parseModel <- function(
   ) {
 
   ### Check if already a cSEMModel list; if yes return as is
-  if(class(.model) == "cSEMModel") {
+  if(inherits(.model,"cSEMModel")) {
 
     return(.model)
     

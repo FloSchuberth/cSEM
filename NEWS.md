@@ -2,7 +2,7 @@
 
 # cSEM 0.5.0 (2022-05-09)
 
-- Bug fix: Revision of the predict metrics in the predict function. 
+- Bug fix: Revision of the predict metrics in the `predict` function. 
 
 - Update the .eval_plan argument since the multiprocess argument of the future package
   is deprecated. Now multisession or multicore need to be used. Note multicore does not work on
@@ -15,7 +15,7 @@
 - Bug fix: fix print method for `summarize()` when disattenuate is set to TRUE internally. 
   Now disattenuate as treated in csem is reported and not the value provided by the user. (#419) 
 
-- Use singular value decompostion in GSCAm to deal with large datasets (#444)
+- Use singular value decomposition in GSCAm to deal with large datasets (#444)
 
 - Bug fix: GSCAm (i.e., `.approach_weights = "GSCA"` with constructs modeled as 
   common factors) no longer fails when a single indicator construct is supplied (#441)
