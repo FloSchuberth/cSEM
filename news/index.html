@@ -75,7 +75,9 @@
     <div class="section level2"><h2 class="page-header" data-toc-text="0.4.0.9000" id="development-version-csem-0409000">&lt;Development version: cSEM 0.4.0.9000<a class="anchor" aria-label="anchor" href="#development-version-csem-0409000"></a></h2></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.0" id="csem-050-2022-05-09">cSEM 0.5.0 (2022-05-09)<a class="anchor" aria-label="anchor" href="#csem-050-2022-05-09"></a></h2>
-<ul><li><p>Bug fix: Revision of the predict metrics in the <code>predict</code> function.</p></li>
+<ul><li><p>Bug fix in <code>.resampleData()</code> when crossvalidation is used. Empty datasets are not possible anymore.</p></li>
+<li><p>Implemented several other prediction metrics.</p></li>
+<li><p>Bug fix: Revision of the predict metrics in the <code>predict</code> function.</p></li>
 <li><p>Update the .eval_plan argument since the multiprocess argument of the future package is deprecated. Now multisession or multicore need to be used. Note multicore does not work on Windows machines.</p></li>
 <li><p>Bug fix: Calculation of the R2 and adjR2 in the print function of the assess function</p></li>
 <li><p>Revise the description of the two-stage approach in the csem help file (<a href="https://github.com/M-E-Rademaker/cSEM/issues/418" class="external-link">#418</a>)</p></li>
