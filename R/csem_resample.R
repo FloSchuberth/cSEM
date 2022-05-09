@@ -276,6 +276,14 @@ resampleData <- function(
           "The following error occured in the `resampleData()` function:\n",
           "A minimum of 2 cross-validation folds required.")
       }
+      if((ceiling(nrow(data)/.cv_folds)*.cv_folds - nrow(data) >= ceiling(nrow(data)/.cv_folds))){
+        warning2(
+          "The following error occured in the `resampleData()` function:\n",
+          "The number of .cv_folds is not plausible for the given sample size.\n",
+          "Change .cv_folds such that \n",
+          "ceiling(nrow(data)/.cv_folds)*.cv_folds - nrow(data) <= ceiling(nrow(data)/.cv_folds)"
+        )
+      }
       # k-fold cross-validation (=draw k samples of equal size.).
       # Note the last sample may contain less observations if equal sized
       # samples are not possible
@@ -293,10 +301,19 @@ resampleData <- function(
           future.apply::future_lapply(1:.R, function(x) {
             # shuffle data set
             y <- y[sample(1:nrow(y)), ]
-            suppressWarnings(
+            if(ceiling(nrow(data)/.cv_folds)*.cv_folds - nrow(data) < ceiling(nrow(data)/.cv_folds)){
+              
+            #In case that warnings occur, the splitting of the data set might be changed  
+            #suppressWarnings(
               split(as.data.frame(y), rep(1:.cv_folds, 
                                           each = ceiling(nrow(y)/.cv_folds)))
-            )
+            #)
+            }else{
+              #suppressWarnings(
+                split(as.data.frame(y), rep(1:.cv_folds, 
+                                            each = floor(nrow(y)/.cv_folds)))
+              #) 
+            }
           }, future.seed = .seed)
         })
       } else {
@@ -311,10 +328,17 @@ resampleData <- function(
         # shuffle data
         future.apply::future_lapply(1:.R, function(x) {
           data <- data[sample(1:nrow(data)), ]
+          if(ceiling(nrow(data)/.cv_folds)*.cv_folds - nrow(data) < ceiling(nrow(data)/.cv_folds)){
           suppressWarnings(
             split(as.data.frame(data), rep(1:.cv_folds, 
                                            each = ceiling(nrow(data)/.cv_folds)))
           )
+          }else{
+            suppressWarnings(
+              split(as.data.frame(data), rep(1:.cv_folds, 
+                                             each = floor(nrow(data)/.cv_folds)))
+            )
+          }
         }, future.seed = .seed)
       }
     } # END cross-validation
