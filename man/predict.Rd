@@ -92,7 +92,7 @@ given to \code{.benchmark} for each repetition .r.}
 MAE, RMSE, Q2_predict, the misclassification error rate, the MAPE, the MSE2,
 Theil's forecast accuracy (U1), Theil's forecast quality (U2), Bias proportion
 of MSE (UM), Regression proportion of MSE (UR), and disturbance proportion
-of MSE (UD) \insertCite{Hora2015}, \insertCite{Watson2002}.}
+of MSE (UD) \insertCite{Hora2015,Watson2002}{cSEM}.}
 \item{\verb{$Information}}{A list with elements
 \code{Target}, \code{Benchmark},
 \code{Number_of_observations_training}, \code{Number_of_observations_test}, \code{Number_of_folds},

@@ -55,7 +55,7 @@
 #'     MAE, RMSE, Q2_predict, the misclassification error rate, the MAPE, the MSE2, 
 #'     Theil's forecast accuracy (U1), Theil's forecast quality (U2), Bias proportion
 #'     of MSE (UM), Regression proportion of MSE (UR), and disturbance proportion 
-#'     of MSE (UD) \insertCite{Hora2015}, \insertCite{Watson2002}.}
+#'     of MSE (UD) \insertCite{Hora2015,Watson2002}{cSEM}.}
 #'   \item{`$Information`}{A list with elements
 #'     `Target`, `Benchmark`,
 #'     `Number_of_observations_training`, `Number_of_observations_test`, `Number_of_folds`,
