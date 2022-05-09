@@ -429,7 +429,9 @@ predict <- function(
             correction <- function(x) {
               multval <- x[duplicated(x)]
               threshold.indices.to.change <- which(x == multval)
-              if (length(threshold.indices.to.change) == 0) return(x)
+              if (length(threshold.indices.to.change) == 0){
+                return(x)
+              }
               x[threshold.indices.to.change] <- multval - epsilon * rev(threshold.indices.to.change - min(threshold.indices.to.change))    
               x
             }
