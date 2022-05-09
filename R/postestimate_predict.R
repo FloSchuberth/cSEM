@@ -435,7 +435,10 @@ predict <- function(
               x[threshold.indices.to.change] <- multval - epsilon * rev(threshold.indices.to.change - min(threshold.indices.to.change))    
               x
             }
-            for (th in 1:length(thresholds)) thresholds[[th]] <- correction(thresholds[[th]])
+            
+            for (th in 1:length(thresholds)){
+              thresholds[[th]] <- correction(thresholds[[th]])
+            } 
             
             thresholds <- lapply(thresholds, function(x) c(Tmin, x, Tmax))
             
