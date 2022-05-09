@@ -80,19 +80,19 @@ named list containing the following list elements:
 
 \describe{
 \item{\verb{$Actual}}{A matrix of the actual values/indicator scores of the endogenous constructs.}
-\item{\verb{$Prediction_target}}{A matrix of the predicted indicator scores of the endogenous constructs
-based on the target model. Target refers to procedure used to estimate
-the parameters in \code{.object}.}
-\item{\verb{$Residuals_target}}{A matrix of the residual indicator scores of the endogenous constructs
-based on the target model.}
-\item{\verb{$Residuals_benchmark}}{A matrix of the residual indicator scores
+\item{\verb{$Prediction_target}}{A list containing matrices of the predicted indicator
+scores of the endogenous constructs based on the target model for each repetition
+.r. Target refers to procedure used to estimate the parameters in \code{.object}.}
+\item{\verb{$Residuals_target}}{A list of matrices of the residual indicator scores
+of the endogenous constructs based on the target model in each repetition .r.}
+\item{\verb{$Residuals_benchmark}}{A list of matrices of the residual indicator scores
 of the endogenous constructs based on a model estimated by the procedure
-given to \code{.benchmark}.}
+given to \code{.benchmark} for each repetition .r.}
 \item{\verb{$Prediction_metrics}}{A data frame containing the predictions metrics
-MAE, RMSE, and Q2_predict. In case of categorical indicators, the misclassification error rate
-is also included. Please note that the misclassification error rate can only be obtained for categorical
-indicators. In case of continuous indicators, the misclassification error rate is set to the
-MAE value.}
+MAE, RMSE, Q2_predict, the misclassification error rate, the MAPE, the MSE2,
+Theil's forecast accuracy (U1), Theil's forecast quality (U2), Bias proportion
+of MSE (UM), Regression proportion of MSE (UR), and disturbance proportion
+of MSE (UD) \insertCite{Hora2015}, \insertCite{Watson2002}.}
 \item{\verb{$Information}}{A list with elements
 \code{Target}, \code{Benchmark},
 \code{Number_of_observations_training}, \code{Number_of_observations_test}, \code{Number_of_folds},

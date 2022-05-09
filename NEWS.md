@@ -2,6 +2,10 @@
 
 # cSEM 0.5.0 (2022-05-09)
 
+- Bug fix in `.resampleData()` when crossvalidation is used. Empty datasets are not possible anymore. 
+
+- Implemented several other prediction metrics.
+
 - Bug fix: Revision of the predict metrics in the `predict` function. 
 
 - Update the .eval_plan argument since the multiprocess argument of the future package
