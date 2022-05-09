@@ -20,7 +20,7 @@
 }
 
 @Article{Dijkstra2015a,
-  author  = {Dijkstra, Theo K and Henseler, J{\"o}rg},
+  author  = {Dijkstra, Theo K. and Henseler, J{\"o}rg},
   title   = {Consistent Partial Least Squares Path Modeling},
   journal = {{MIS} Quarterly},
   year    = {2015},
@@ -56,7 +56,7 @@
 }
 
 @Article{Beran1985,
-  author    = {Rudolf Beran and Muni S. Srivastava},
+  author    = {Beran, Rudolf and Srivastava, Muni S.},
   title     = {Bootstrap Tests and Confidence Regions for Functions of a Covariance Matrix},
   journal   = {The Annals of Statistics},
   year      = {1985},
@@ -311,6 +311,17 @@
   number    = {2},
   pages     = {139--143},
   volume    = {53}
+}
+
+@Article{Schuberth2020,
+  author  = {Schuberth, Florian and Rademaker, Manuel Elias and Henseler, J\"org},
+  journal = {Industrial Management {\&} Data Systems},
+  title   = {Estimating and assessing second-order constructs using {PLS}-{PM}: the case of composites of composites},
+  year    = {2020},
+  number  = {12},
+  pages   = {2211-2241},
+  volume  = {120},
+  doi     = {10.1108/imds-12-2019-0642}
 }
 
 @Article{Hausman1978,
@@ -661,6 +672,18 @@
   author    = {Gifi, Albert},
 }
 
+
+@Article{VanRiel2017,
+  Title                    = {Estimating hierarchical constructs using Partial Least Squares: {T}he case of second order composites of factors},
+  Author                   = {Van Riel, A. C. R. and Henseler, J\"org and Kemeny, I. and Sasovova, Z},
+  Journal                  = {Industrial Management \& Data Systems},
+  Year                     = {2017},
+  Number                   = {3},
+  doi       = {10.1108/IMDS-07-2016-0286},
+  Pages                    = {459--477},
+  Volume                   = {117}
+}
+
 @Article{Tenenhaus2011,
   author    = {Tenenhaus, Arthur and Tenenhaus, Michel},
   title     = {Regularized generalized canonical correlation analysis},
@@ -681,10 +704,11 @@
   pages   = {25--43}
 }
 
-@Book{Henseler2020,
-  title     = {Composite-Based Structural Equation Modeling: An Introduction to Partial Least Squares & Co. Using {ADANCO}},
+@Book{Henseler2021,
+  title     = {Composite-Based Structural Equation Modeling: Analyzing Latent and Emergent Variables},
   publisher = {Guilford Press},
-  year      = {2020},
+  address   = {New York},
+  year      = {2021},
   author    = {Henseler, J\"org},
 }
 
@@ -832,6 +856,38 @@
   pages     = {197--201},
   volume    = {38},
   doi       = {10.1111/j.2044-8317.1985.tb00834.x}
+}
+
+@Article{Roemer2021,
+  author  = {Roemer, Ellen and Schuberth, Florian and Henseler, J\"org},
+  journal = {Industrial Management \& Data Systems},
+  title   = {{HTMT2} -- an improved criterion for assessing discriminant validity in structural equation modeling},
+  year    = {2021},
+  volume  = {121},
+  number  = {12},
+  pages   = {2637--2650},
+  file    = {:Roemerinprint.pdf:PDF},
+}
+
+@Article{Hora2015,
+  author    = {Joana Hora and Pedro Campos},
+  journal   = {Expert Systems},
+  title     = {A review of performance criteria to validate simulation models},
+  year      = {2015},
+  month     = {may},
+  number    = {5},
+  pages     = {578--595},
+  volume    = {32},
+  doi       = {10.1111/exsy.12111},
+  publisher = {Wiley},
+}
+
+@Book{Watson2002,
+  author    = {Watson, Patrick K and Teelucksingh, Sonja S},
+  publisher = {University of West Indies Press},
+  title     = {A practical introduction to econometric methods: Classical and modern},
+  year      = {2002},
+  address   = {Mona, Jamaica},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
