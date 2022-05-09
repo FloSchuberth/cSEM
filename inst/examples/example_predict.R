@@ -37,7 +37,6 @@ res <- csem(dat_train,
 
 # Predict using a user-supplied training data set
 pp <- predict(res, .test_data = dat_test)
-pp$Predictions_target[1:6, ]
 pp
 
 ### Compute prediction metrics  ------------------------------------------------

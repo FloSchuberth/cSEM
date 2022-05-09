@@ -30,6 +30,17 @@ test_that("predict() works for linear models", {
     predict(res_multi_id_linear, .cv_folds = 2, .r = 2)
   }, "cSEMPredict")
 })
+
+test_that("predict() works with ordinal categorical indicators", {
+  expect_s3_class({
+    predict(res_OrdPLS_all_ordinal, .cv_folds = 2, .r = 2)
+  }, "cSEMPredict")
+  expect_s3_class({
+    predict(res_OrdPLS_ordinal_continuous, .cv_folds = 2, .r = 2)
+  }, "cSEMPredict")
+})
+
+
 ### Using test data
 index <- sample(1:500, 400, replace = FALSE)
 train_dat <- cSEM::threecommonfactors[index, ]
@@ -44,6 +55,9 @@ test_that("predict() works for linear models if test data is given ", {
   }, "cSEMPredict")
   expect_s3_class({
     predict(csem(threecommonfactors_id, model_linear, .id = "Group_id"), .test_data = test_dat)
+  }, "cSEMPredict")
+  expect_s3_class({
+    predict(res_OrdPLS_ordinal_continuous, .test_data = dat_OrdPLS_ordinal_continuous[1:100,])
   }, "cSEMPredict")
 })
 
