@@ -538,7 +538,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Look at the resamples</span></span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">User_fun</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01834589 0.02873620 0.02085470 0.03083061</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.03102510 0.03371917 0.02228384 0.02621675</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Use infer() to compute e.g., the 95% percentile confidence interval</span></span>
 <span class="r-in"><span class="va">res_infer</span> <span class="op">&lt;-</span> <span class="fu"><a href="infer.html">infer</a></span><span class="op">(</span><span class="va">res</span>, .quantity <span class="op">=</span> <span class="st">"CI_percentile"</span><span class="op">)</span></span>
@@ -546,9 +546,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span class="co">## The results are saved under the name "User_fun"</span></span>
 <span class="r-in"><span class="va">res_infer</span><span class="op">$</span><span class="va">User_fun</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CI_percentile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.01832408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03349932</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.0206919</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.0337706</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Several quality criteria can be resampled simultaneously</span></span>
@@ -562,9 +562,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">SRMR</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02490995 0.03258274 0.02775737 0.02326056</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02916463 0.02170374 0.02655760 0.02501046</span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">RMS_theta</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1003009 0.1045318 0.1044736 0.1045632</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1076909 0.1091162 0.1052580 0.1072450</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>

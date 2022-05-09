@@ -176,13 +176,16 @@ given to <code>.benchmark</code> for each repetition .r.</p></dd>
 MAE, RMSE, Q2_predict, the misclassification error rate, the MAPE, the MSE2,
 Theil's forecast accuracy (U1), Theil's forecast quality (U2), Bias proportion
 of MSE (UM), Regression proportion of MSE (UR), and disturbance proportion
-of MSE (UD) , \insertCite{Watson2002</p></dd>
-.
-</dl><dl><dt><code>$Information</code></dt>
+of MSE (UD) (Hora and Campos 2015; Watson and Teelucksingh 2002)
+.</p></dd>
+
+<dt><code>$Information</code></dt>
 <dd><p>A list with elements
 <code>Target</code>, <code>Benchmark</code>,
 <code>Number_of_observations_training</code>, <code>Number_of_observations_test</code>, <code>Number_of_folds</code>,
 <code>Number_of_repetitions</code>, and <code>Handle_inadmissibles</code>.</p></dd>
+
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -223,7 +226,11 @@ to <code>NA</code> (<code>"set_NA"</code>) for the particular run that failed.</
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Shmueli G, Ray S, Estrada JMV, Chatla SB (2016).
+    <p>Hora J, Campos P (2015).
+“A review of performance criteria to validate simulation models.”
+<em>Expert Systems</em>, <b>32</b>(5), 578--595.
+<a href="https://doi.org/10.1111/exsy.12111" class="external-link">doi:10.1111/exsy.12111</a>
+.<br><br> Shmueli G, Ray S, Estrada JMV, Chatla SB (2016).
 “The Elephant in the Room: Predictive Performance of PLS Models.”
 <em>Journal of Business Research</em>, <b>69</b>(10), 4552--4564.
 <a href="https://doi.org/10.1016/j.jbusres.2016.03.049" class="external-link">doi:10.1016/j.jbusres.2016.03.049</a>
@@ -231,7 +238,9 @@ to <code>NA</code> (<code>"set_NA"</code>) for the particular run that failed.</
 “Predictive Model Assessment in PLS-SEM: Guidelines for Using PLSpredict.”
 <em>European Journal of Marketing</em>, <b>53</b>(11), 2322--2347.
 <a href="https://doi.org/10.1108/ejm-02-2019-0189" class="external-link">doi:10.1108/ejm-02-2019-0189</a>
-.</p>
+.<br><br> Watson PK, Teelucksingh SS (2002).
+<em>A practical introduction to econometric methods: Classical and modern</em>.
+University of West Indies Press, Mona, Jamaica.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
