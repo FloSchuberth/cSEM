@@ -1,4 +1,7 @@
 # <Development version: cSEM 0.4.0.9000
+
+# cSEM 0.5.0 (2022-05-09)
+
 - Bug fix: Revision of the predict metrics in the predict function. 
 
 - Update the .eval_plan argument since the multiprocess argument of the future package

@@ -1,7 +1,7 @@
 Package: cSEM
 Title: Composite-Based Structural Equation Modeling
-Version: 0.4.0.9000
-Date: 2021-04-20
+Version: 0.5.0
+Date: 2022-05-09
 Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut", "cre"),
                     email = "manuel-rademaker@outlook.de",
@@ -25,7 +25,7 @@ Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("ctb"),
                     email = "",
                     comment = c(ORCID = "0000-0002-9736-3048")))
-Maintainer: Manuel E. Rademaker <manuel-rademaker@outlook.de>
+Maintainer: Florian Schuberth <f.schuberth@utwente.nl>
 Depends: R (>= 3.5.0)
 Description: Estimate, assess, test, and study linear, nonlinear, hierarchical 
   and multigroup structural equation models using composite-based approaches 
