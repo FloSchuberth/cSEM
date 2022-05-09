@@ -173,9 +173,9 @@ given to <code>.benchmark</code>.</p></dd>
 
 <dt><code>$Prediction_metrics</code></dt>
 <dd><p>A data frame containing the predictions metrics
-MAE, RMSE, and Q2_predict. In case of categorical indicators, the concordance
-is also included. Please note that the concordance can only be obtained for categorical
-indicators. In case of continuous indicators, the concordance is set to the
+MAE, RMSE, and Q2_predict. In case of categorical indicators, the misclassification error rate
+is also included. Please note that the misclassification error rate can only be obtained for categorical
+indicators. In case of continuous indicators, the misclassification error rate is set to the
 MAE value.</p></dd>
 
 <dt><code>$Information</code></dt>
@@ -283,14 +283,6 @@ to <code>NA</code> (<code>"set_NA"</code>) for the particular run that failed.</
 <span class="r-in"><span class="va">pp</span> <span class="op">&lt;-</span> <span class="fu">predict</span><span class="op">(</span><span class="va">res</span>, .test_data <span class="op">=</span> <span class="va">dat_test</span><span class="op">)</span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The following warning occured in the `predict()` function:</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Disattenuation is not applicable to benchmark `lm` and ignored.</span>
-<span class="r-in"><span class="va">pp</span><span class="op">$</span><span class="va">Predictions_target</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         AA0      AA1      AA2      AA3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2.6721142 3.043641 3.188336 3.404801</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 5.8792289 6.048707 6.174991 6.170046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.9136649 1.395974 1.550764 1.888627</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 4.1853797 4.461571 4.597579 4.709572</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 6.1292377 6.282965 6.407814 6.385609</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 3.8898464 4.184656 4.322361 4.454756</span>
 <span class="r-in"><span class="va">pp</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----------------------------------- Overview -----------------------------------</span>
