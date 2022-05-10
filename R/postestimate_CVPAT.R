@@ -23,6 +23,8 @@
 #' .cv_folds = 10)
 #'
 #' @inheritParams csem_arguments
+#' @param .object1 An R object of class [cSEMResults] resulting from a call to [csem()].
+#' @param .object2 An R object of class [cSEMResults] resulting from a call to [csem()].
 #'
 #' @seealso [csem], [cSEMResults], [exportToExcel()]
 #' 
@@ -40,6 +42,12 @@ postestimate_CVPAT <- function(
   .cv_folds = 10){
   
   ##Errors and warnings---------------------------------------------------------
+  #Stop if one object is not of class "cSEMResults"
+  if(!inherits(.object1, "cSEMResults")|!inherits(.object2, "cSEMResults")) {
+    stop2('The objects should be of class "cSEMResults".')
+  }
+  
+  
   #Stop if one object is second order
   if(inherits(.object1, "cSEMResults_2ndorder")|inherits(.object2, "cSEMResults_2ndorder")) {
     stop2('Currently, `predict()` is not implemented for models containing higher-order constructs.')
