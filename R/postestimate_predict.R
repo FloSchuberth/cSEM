@@ -73,7 +73,8 @@
 #'  .sim_points           = 100,
 #'  .disattenuate         = TRUE,
 #'  .treat_as_continuous  = TRUE,
-#'  .approach_score_benchmark = c("mean", "median", "mode", "round")
+#'  .approach_score_benchmark = c("mean", "median", "mode", "round"),
+#'  .seed                 = NULL
 #'  )
 #'
 #' @inheritParams csem_arguments
