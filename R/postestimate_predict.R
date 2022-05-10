@@ -107,7 +107,8 @@ predict <- function(
   .sim_points               = 100,
   .disattenuate             = TRUE,
   .treat_as_continuous      = TRUE,
-  .approach_score_benchmark = c("mean", "median", "mode", "round")
+  .approach_score_benchmark = c("mean", "median", "mode", "round"),
+  .seed                     = NULL
   ) {
   
   .benchmark            <- match.arg(.benchmark)
@@ -146,6 +147,11 @@ predict <- function(
     # Stop if nonlinear. See Danks et al. (?) for how this can be addressed.
     if(.object$Information$Model$model_type != 'Linear'){
       stop2('Currently, `predict()` works only for linear models.')
+    }
+    
+    # Stop if a seed is provided, but .r is not equal to 1
+    if(!is.null(.seed) && .r>1){
+      stop2('Setting a seed is possible for one repetition.')
     }
     
     #if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') &&
@@ -248,7 +254,7 @@ predict <- function(
           .resample_method = "cross-validation", 
           .cv_folds        = .cv_folds,
           .R               = 1,
-          .seed            = NULL
+          .seed            = .seed
         )[[1]]
         
         ## Clean data
