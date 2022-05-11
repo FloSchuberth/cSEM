@@ -248,6 +248,10 @@ be computed? Defaults to \code{FALSE}.}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
+\item{.object1}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.object2}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality critera:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
