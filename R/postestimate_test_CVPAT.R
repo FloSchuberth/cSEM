@@ -76,7 +76,7 @@ testCVPAT <- function(
   #Stop if no seed is provided
   if(is.null(.seed)){
     warning2('`testCVPAT()` requires a seed. Since no seed has been provided a random seed is used.')
-    .seed = sample(1:1000,1)
+    .seed = sample(1:9999,1)
   }
   
   
@@ -107,13 +107,13 @@ testCVPAT <- function(
       "Prediction 2"       = predict2,
       "Sample Size"        = N,
       "Seed"               = .seed,
-      "Degrees of Freedom" = N-1
+      "Degrees_of_Freedom" = N-1
     ),
     "test_statistic" = test_stat,
-    "p-value"        = p_value,
+    "p_value"        = p_value,
     "degrees of freedom" = N-1
   )
-  class(out) = "cSEMCVPAT"
+  class(out) = "cSEMTestCVPAT"
   out
   
 }
