@@ -26,6 +26,7 @@ print.cSEMPredict <- function(x, ...) {
     
     x1 <- x$Prediction_metrics
     x2 <- x$Information
+    x3 <- x$Information$Estimator_benchmark
     
     # cat2("\n\tGeneral information:\n\t","------------------------")
     cat2(
@@ -55,7 +56,8 @@ print.cSEMPredict <- function(x, ...) {
       col_align("Q2_predict", 13, align = "right")
     )
     
-    for(i in 1:nrow(x1)) {
+    if(x3 != "NA"){
+      for(i in 1:nrow(x1)){
       cat2(
         "\n  ", 
         col_align(x1[i, "Name"], l + 2), 
@@ -65,7 +67,20 @@ print.cSEMPredict <- function(x, ...) {
         col_align(sprintf("%.4f", x1[i, "RMSE_benchmark"]), 15, align = "right"),
         col_align(sprintf("%.4f", x1[i, "Q2_predict"]), 13, align = "right")
       )
-    } 
+      }
+    }else if(x3 == "NA"){
+      for(i in 1:nrow(x1)){
+        cat2(
+          "\n  ", 
+          col_align(x1[i, "Name"], l + 2), 
+          col_align(sprintf("%.4f", x1[i, "MAE_target"]), 13, align = "right"),
+          col_align(x1[i, "MAE_benchmark"], 15, align = "right"),
+          col_align(sprintf("%.4f", x1[i, "RMSE_target"]), 13, align = "right"),
+          col_align(x1[i, "RMSE_benchmark"], 15, align = "right"),
+          col_align(x1[i, "Q2_predict"], 13, align = "right")
+        )
+      }
+    }
   }
   
   cat2("\n", rule2(type = 2), "\n")

@@ -64,7 +64,7 @@
 #'   
 #' @usage predict(
 #'  .object               = NULL,
-#'  .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
+#'  .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "NA"),
 #'  .cv_folds             = 10,
 #'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
 #'  .r                    = 1,
@@ -99,7 +99,7 @@
 
 predict <- function(
   .object                   = NULL, 
-  .benchmark                = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
+  .benchmark                = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "NA"),
   .cv_folds                 = 10,
   .handle_inadmissibles     = c("stop", "ignore", "set_NA"),
   .r                        = 1,
@@ -622,6 +622,11 @@ predict <- function(
             predictions_benchmark <- as.matrix(X_test[, exo_indicators]) %*% beta_exo
             residuals_benchmark   <- X_test[, endo_indicators, drop = FALSE] - predictions_benchmark 
           }
+        } else if(.benchmark == "NA"){
+          residuals_benchmark <- matrix(0, nrow = nrow(residuals_target), ncol = ncol(residuals_target),
+                                        dimnames = dimnames(residuals_target))
+          predictions_benchmark <- matrix(0, nrow = nrow(residuals_target), ncol = ncol(residuals_target),
+                                        dimnames = dimnames(residuals_target))
         }
         ## Compute naive mean-based predictions and residuals
         residuals_mb   <- t(t(X_test[, endo_indicators, drop = FALSE]) - mean_train[endo_indicators])
@@ -675,6 +680,7 @@ predict <- function(
     mse2_target = calculateMSE2(pred = Pred_t, act = act, resid = Res_t)
     mse2_benchmark = calculateMSE2(pred = Pred_b, act = act, resid = Res_b)
     
+    if(.benchmark != "NA"){
     ## Create data frame
     df_metrics[[q]] <- data.frame(
       "MAE_target"     = calculateMAE(resid = Res_t),
@@ -700,12 +706,52 @@ predict <- function(
       "UD_benchmark"   = calculateUD(pred = Pred_b, act = act, mse2 = mse2_benchmark),
       stringsAsFactors = FALSE
     )
+    }else if(.benchmark == "NA"){
+      df_metrics[[q]] <- data.frame(
+        "MAE_target"     = calculateMAE(resid = Res_t),
+        "MAE_benchmark"  = 0,
+        "RMSE_target"    = calculateRMSE(resid = Res_t),
+        "RMSE_benchmark" = 0,
+        "Q2_predict"     = 0,
+        "misclassification_target"    = calculateMissclassification(resid = Res_t),
+        "misclassification_benchmark" = 0,
+        "MAPE_target"    = calculateMAPE(resid = Res_t, act = act),
+        "MAPE_benchmark" = 0,
+        "MSE2_target"    = mse2_target,
+        "MSE2_benchmark" = 0,
+        "U1_target"      = calculateU1(act = act, mse2 = mse2_target),
+        "U1_benchmark"   = 0,
+        "U2_target"      = calculateU2(act = act, resid = Res_t),
+        "U2_benchmark"   = 0,
+        "UM_target"      = calculateUM(act = act, pred = Pred_t, mse2 = mse2_target),
+        "UM_benchmark"   = 0,
+        "UR_target"      = calculateUR(pred = Pred_t, act = act, mse2 = mse2_target),
+        "UR_benchmark"   = 0,
+        "UD_target"      = calculateUD(pred = Pred_t, act = act, mse2 = mse2_target),
+        "UD_benchmark"   = 0,
+        stringsAsFactors = FALSE
+      )
+      }
     #}
     }
     df_metrics <- data.frame(
       "Name" = endo_indicators,
       Reduce("+", df_metrics)/length(df_metrics))
     rownames(df_metrics) <- NULL
+    
+    if(.benchmark == "NA"){
+      df_metrics$MAE_benchmark <- "NA"
+      df_metrics$RMSE_benchmark <- "NA"
+      df_metrics$Q2_predict <- "NA"
+      df_metrics$misclassification_benchmark <- "NA"
+      df_metrics$MAPE_benchmark <- "NA"
+      df_metrics$MSE2_benchmark <- "NA"
+      df_metrics$U1_benchmark <- "NA"
+      df_metrics$U2_benchmark <- "NA"
+      df_metrics$UM_benchmark <- "NA"
+      df_metrics$UR_benchmark <- "NA"
+      df_metrics$UD_benchmark <- "NA"
+    }
     
     if(.benchmark == "PLS-PM" && !all(.object$Information$Type_of_indicator_correlation == 'Pearson')
        && .treat_as_continuous == FALSE){
@@ -719,6 +765,10 @@ predict <- function(
       .target <- "OrdPLS"
     }else{
       .target = .object$Information$Arguments$.approach_weights
+    }
+    
+    if(.benchmark == "NA"){
+      out_temp$Residuals_benchmark <- rep("NA", length(out_temp$Predictions_target))
     }
     
     out <- list(

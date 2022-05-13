@@ -88,8 +88,8 @@ testCVPAT <- function(
   predict2 <- predict(.object = .object2, .benchmark = "lm", 
                       .cv_folds = .cv_folds, .r = 1, .seed = .seed)
   
-  L1 <- c(as.matrix(predict1$Residuals_target[[1]]))
-  L2 <- c(as.matrix(predict2$Residuals_target[[1]]))
+  L1 <- rowMeans(predict1$Residuals_target[[1]]^2)
+  L2 <- rowMeans(predict2$Residuals_target[[1]]^2)
   
   D <- L2 - L1
   

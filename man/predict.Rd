@@ -6,7 +6,7 @@
 \usage{
 predict(
  .object               = NULL,
- .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
+ .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "NA"),
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
  .r                    = 1,
