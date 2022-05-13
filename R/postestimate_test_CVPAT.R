@@ -3,18 +3,17 @@
 #'\lifecycle{maturing}
 #'
 #' Perform a Cross-Validated Predictive Ability Test (CVPAT) as described in 
-#' \insertCite{Liengaard2020}{cSEM}.
+#' \insertCite{Liengaard2020}{cSEM}. The predictive performance of two models 
+#' based on the same dataset is compared. In doing so, the average difference in 
+#' losses in predictions is compared for both models. 
 #'
 #' @return An object of class `cSEMCVPAT` with print and plot methods.
 #'   Technically, `cSEMCVPAT` is a 
 #'   named list containing the following list elements:
-#'
-#' \describe{
-#'   \item{`$teststatistic`}{The test statistic for H0: The predictive performance of
-#'                            both models is identical.}
-#'   \item{`$pvalue`}{The p-value for H0: The predictive performance of
-#'                            both models is identical.}
-#'     }
+#'   
+#'   \describe{
+#'   \item{'$Information'}{Additional information.}
+#'   }
 #'   
 #' @usage testCVPAT(
 #' .object1  = NULL,
@@ -82,27 +81,37 @@ testCVPAT <- function(
   
   
   #Perform out-of-sample predictions for both models
-  predict1 <- predict(.object = .object1, .benchmark = "lm", 
+  predict1 <- predict(.object = .object1, .benchmark = "NA", 
                       .cv_folds = .cv_folds, .r = 1, .seed = .seed)
   
-  predict2 <- predict(.object = .object2, .benchmark = "lm", 
+  predict2 <- predict(.object = .object2, .benchmark = "NA", 
                       .cv_folds = .cv_folds, .r = 1, .seed = .seed)
   
   L1 <- rowMeans(predict1$Residuals_target[[1]]^2)
   L2 <- rowMeans(predict2$Residuals_target[[1]]^2)
   
+  N <- length(L1)
+  
   D <- L2 - L1
   
   D_bar <- mean(D)
   
-  test_stat <- D_bar/sqrt(var(D)/length(L1))
+  test_stat <- D_bar/sqrt(var(D)/N)
   
-  p_value <- 2*(1-pt(abs(test_stat), length(L1)-1))
+  p_value <- 2*(1-pt(abs(test_stat), N-1))
   
   #missing: degrees of freedom, decision, information: seed, number cv_folds, alpha
   out <- list(
+    "Information"          = list(
+      "Prediction 1"       = predict1,
+      "Prediction 2"       = predict2,
+      "Sample Size"        = N,
+      "Seed"               = .seed,
+      "Degrees of Freedom" = N-1
+    ),
     "test_statistic" = test_stat,
-    "p-value"        = p_value
+    "p-value"        = p_value,
+    "degrees of freedom" = N-1
   )
   class(out) = "cSEMCVPAT"
   out
