@@ -38,7 +38,8 @@ print.cSEMPredict <- function(x, ...) {
       col_align("\n\tEstimator target", 35), "= ", paste0("'", x2$Estimator_target, "'"),
       col_align("\n\tEstimator benchmark", 35), "= ", paste0("'", x2$Estimator_benchmark, "'"),
       col_align("\n\tDisattenuation target", 35), "= ", paste0("'", x2$Disattenuation_target, "'"),
-      col_align("\n\tDisattenuation benchmark", 35), "= ", paste0("'", x2$Disattenuation_benchmark, "'")
+      col_align("\n\tDisattenuation benchmark", 35), "= ", paste0("'", x2$Disattenuation_benchmark, "'"),
+      col_align("\n\tApproach to predict", 35), "= ", paste0("'", x2$Approach_to_predict, "'")
     )
     
     ### Prediction metricts-------------------------------------------------------

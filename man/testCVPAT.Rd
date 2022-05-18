@@ -7,6 +7,7 @@
 testCVPAT(
 .object1  = NULL,
 .object2  = NULL,
+.approach_predict = c("earliest", "direct"),
 .seed     = NULL,
 .cv_folds = 10)
 }
@@ -14,6 +15,13 @@ testCVPAT(
 \item{.object1}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.object2}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+
+\item{.approach_predict}{Character string. Which approach should be used to
+predictions? One of "\emph{earliest}" and "\emph{direct}". If "\emph{earliest}" predictions
+for indicators associated to endogenous constructs are performed using only
+indicators associated to exogenous constructs. If "\emph{direct}", predictions for
+indicators associated to endogenous constructs are based on indicators associated
+to their direct antecedents. Defaults to "\emph{earliest}".}
 
 \item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited

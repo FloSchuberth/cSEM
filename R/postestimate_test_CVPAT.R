@@ -18,12 +18,19 @@
 #' @usage testCVPAT(
 #' .object1  = NULL,
 #' .object2  = NULL,
+#' .approach_predict = c("earliest", "direct"),
 #' .seed     = NULL,
 #' .cv_folds = 10)
 #'
 #' @inheritParams csem_arguments
 #' @param .object1 An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .object2 An R object of class [cSEMResults] resulting from a call to [csem()].
+#' @param .approach_predict Character string. Which approach should be used to 
+#'  predictions? One of "*earliest*" and "*direct*". If "*earliest*" predictions
+#'  for indicators associated to endogenous constructs are performed using only
+#'  indicators associated to exogenous constructs. If "*direct*", predictions for 
+#'  indicators associated to endogenous constructs are based on indicators associated
+#'  to their direct antecedents. Defaults to "*earliest*".
 #'
 #' @seealso [csem], [cSEMResults], [exportToExcel()]
 #' 
@@ -37,6 +44,7 @@
 testCVPAT <- function(
   .object1  = NULL,
   .object2  = NULL,
+  .approach_predict = c("earliest", "direct"),
   .seed     = NULL,
   .cv_folds = 10){
   
@@ -83,10 +91,12 @@ testCVPAT <- function(
   
   #Perform out-of-sample predictions for both models
   predict1 <- predict(.object = .object1, .benchmark = "NA", 
-                      .cv_folds = .cv_folds, .r = 1, .seed = .seed)
+                      .cv_folds = .cv_folds, .r = 1, .seed = .seed, 
+                      .approach_predict = .approach_predict)
   
   predict2 <- predict(.object = .object2, .benchmark = "NA", 
-                      .cv_folds = .cv_folds, .r = 1, .seed = .seed)
+                      .cv_folds = .cv_folds, .r = 1, .seed = .seed,
+                      .approach_predict = .approach_predict)
   
   L1 <- rowMeans(predict1$Residuals_target[[1]]^2)
   L2 <- rowMeans(predict2$Residuals_target[[1]]^2)

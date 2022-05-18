@@ -65,6 +65,7 @@
 #' @usage predict(
 #'  .object               = NULL,
 #'  .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "NA"),
+#'  .approach_predict     = c("earliest", "direct"),
 #'  .cv_folds             = 10,
 #'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
 #'  .r                    = 1,
@@ -87,6 +88,12 @@
 #'   set to `NA`. Defaults to "*stop*"
 #' @param .disattenuate Logical. Should the benchmark predictions be based on 
 #'   disattenuated parameter estimates? Defaults to `TRUE`.
+#' @param .approach_predict Character string. Which approach should be used to 
+#'  predictions? One of "*earliest*" and "*direct*". If "*earliest*" predictions
+#'  for indicators associated to endogenous constructs are performed using only
+#'  indicators associated to exogenous constructs. If "*direct*", predictions for 
+#'  indicators associated to endogenous constructs are based on indicators associated
+#'  to their direct antecedents. Defaults to "*earliest*". 
 #'
 #' @seealso [csem], [cSEMResults], [exportToExcel()]
 #' 
@@ -100,6 +107,7 @@
 predict <- function(
   .object                   = NULL, 
   .benchmark                = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "NA"),
+  .approach_predict         = c("earliest", "direct"),
   .cv_folds                 = 10,
   .handle_inadmissibles     = c("stop", "ignore", "set_NA"),
   .r                        = 1,
@@ -116,6 +124,7 @@ predict <- function(
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   .approach_score_target <- match.arg(.approach_score_target)
   .approach_score_benchmark <- match.arg(.approach_score_benchmark)
+  .approach_predict     <- match.arg(.approach_predict)
   
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, predict, 
@@ -153,6 +162,12 @@ predict <- function(
     # Stop if a seed is provided, but .r is not equal to 1
     if(!is.null(.seed) && .r>1){
       stop2('Setting a seed is possible for one repetition.')
+    }
+    
+    if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') &&
+       .approach_predict == "direct"){
+      stop2('Performing out-of-sample predictions based on models estimated by:\n',
+            'OrdPLS/OrdPLSc can only be performed using the earliest antecedent approach.')
     }
     
     #if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') &&
@@ -556,11 +571,20 @@ predict <- function(
             }
             
             }else{
+            
+            if(.approach_predict == "earliest"){
             ## Predict scores for the exogenous constructs (validity prediction)
             eta_hat_exo  <- X_test_scaled %*% t(W_train[cons_exo, ,drop = FALSE])
             
             # Predict scores for the endogenous constructs (structural prediction)
             eta_hat_endo <- eta_hat_exo %*% t(Gamma_train) %*% t(solve(diag(nrow(B_train)) - B_train))
+            }else{
+            
+            eta_hat_all <- X_test_scaled %*% t(W_train)
+            
+            # Predict scores for the endogenous constructs using the scores for all constructs
+            eta_hat_endo <- eta_hat_all%*%t(path_train)[,cons_endo, drop = FALSE]
+            }
             
             # Predict scores for indicators of endogenous constructs (communality prediction)
             X_hat <- eta_hat_endo %*% loadings_train[cons_endo, , drop = FALSE]
@@ -791,7 +815,8 @@ predict <- function(
         "Number_of_observations_training" = nrow(X_train),
         "Number_of_observations_test" = nrow(X_test),
         "Number_of_folds"           = .cv_folds,
-        "Number_of_repetitions"     = .r
+        "Number_of_repetitions"     = .r,
+        "Approach_to_predict"       = .approach_predict
       )
     )
     

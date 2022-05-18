@@ -41,6 +41,13 @@ Default to "\emph{all}" in which case all approaches are computed (if possible).
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
+\item{.approach_predict}{Character string. Which approach should be used to
+predictions? One of "\emph{earliest}" and "\emph{direct}". If "\emph{earliest}" predictions
+for indicators associated to endogenous constructs are performed using only
+indicators associated to exogenous constructs. If "\emph{direct}", predictions for
+indicators associated to endogenous constructs are based on indicators associated
+to their direct antecedents. Defaults to "\emph{earliest}".}
+
 \item{.approach_p_adjust}{Character string or a vector of character strings.
 Approach used to adjust the p-value for multiple testing.
 See the \code{methods} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and

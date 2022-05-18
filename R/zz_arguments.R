@@ -34,6 +34,12 @@
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
+#' @param .approach_predict Character string. Which approach should be used to 
+#'  predictions? One of "*earliest*" and "*direct*". If "*earliest*" predictions
+#'  for indicators associated to endogenous constructs are performed using only
+#'  indicators associated to exogenous constructs. If "*direct*", predictions for 
+#'  indicators associated to endogenous constructs are based on indicators associated
+#'  to their direct antecedents. Defaults to "*earliest*". 
 #' @param .approach_p_adjust Character string or a vector of character strings. 
 #' Approach used to adjust the p-value for multiple testing. 
 #' See the `methods` argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
