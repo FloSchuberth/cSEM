@@ -69,9 +69,10 @@ testCVPAT <- function(
   }
   
   #Stop if both objects are based on different datasets
-  if(!all(.object1$Information$Data == .object2$Information$Data)){
-    stop2('The objects are not based on the same dataset.')
+  if(!all(.object1$Information$Data[,colnames(.object1$Information$Data) %in% colnames(.object2$Information$Data)] == .object2$Information$Data[, colnames(.object2$Information$Data) %in% colnames(.object1$Information$Data)])){
+      stop2('The objects are not based on the same dataset.')
   }
+
   
   #Stop if no seed is provided
   if(is.null(.seed)){
