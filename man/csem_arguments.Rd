@@ -413,6 +413,10 @@ Defaults to \code{NULL}.}
 \item{.test_data}{A matrix of test data with the same column names as the
 training data.}
 
+\item{.testtype}{Character string. One of "\emph{twosided}" (H1: The models do not
+perform equally in predicting indicators belonging to endogenous constructs)"
+and \emph{onesided}" (H1: Model 1 performs better in predicting indicators belonging}
+
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}
 

@@ -9,7 +9,9 @@ testCVPAT(
 .object2  = NULL,
 .approach_predict = c("earliest", "direct"),
 .seed     = NULL,
-.cv_folds = 10)
+.cv_folds = 10,
+.handle_inadmissibles     = c("stop", "ignore"),
+.testtype = c("twosided", "onesided"))
 }
 \arguments{
 \item{.object1}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -31,6 +33,21 @@ not be altered!}
 \item{.cv_folds}{Integer. The number of cross-validation folds to use. Setting
 \code{.cv_folds} to \code{N} (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to \code{10}.}
+
+\item{.handle_inadmissibles}{Character string. How should inadmissible results
+be treated? One of "\emph{drop}", "\emph{ignore}", or "\emph{replace}". If "\emph{drop}", all
+replications/resamples yielding an inadmissible result will be dropped
+(i.e. the number of results returned will potentially be less than \code{.R}).
+For "\emph{ignore}" all results are returned even if all or some of the replications
+yielded inadmissible results (i.e. number of results returned is equal to \code{.R}).
+For "\emph{replace}" resampling continues until there are exactly \code{.R} admissible solutions.
+Depending on the frequency of inadmissible solutions this may significantly increase
+computing time. Defaults to "\emph{drop}".}
+
+\item{.testtype}{Character string. One of "\emph{twosided}" (H1: The models do not
+perform equally in predicting indicators belonging to endogenous constructs)"
+and \emph{onesided}" (H1: Model 1 performs better in predicting indicators belonging
+to endogenous constructs than model2). Defaults to "\emph{twosided}".}
 }
 \value{
 An object of class \code{cSEMCVPAT} with print and plot methods.

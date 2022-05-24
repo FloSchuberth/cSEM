@@ -306,6 +306,9 @@
 #' @param .terms A vector of construct names to be classified.
 #' @param .test_data A matrix of test data with the same column names as the 
 #'   training data.
+#' @param .testtype Character string. One of "*twosided*" (H1: The models do not 
+#'  perform equally in predicting indicators belonging to endogenous constructs)"
+#'  and *onesided*" (H1: Model 1 performs better in predicting indicators belonging 
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
 #' @param .treat_as_continuous Logical. Should the indicators for the benchmark predictions
