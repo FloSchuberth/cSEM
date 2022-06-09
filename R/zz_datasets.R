@@ -520,7 +520,8 @@
 #' #============================================================================
 #' # Example is taken from Benitez et al. (2020)
 #' #============================================================================
-#' # Reflective measurement models
+#' model_Benitez <-"
+#' # Reflective measurement models# Reflective measurement models
 #' SEXB =~ SEXB1 + SEXB2 + SEXB3 +SEXB4
 #' SEMB =~ SEMB1 + SEMB2 + SEMB3 + SEMB4
 #' 
