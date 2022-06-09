@@ -11,7 +11,7 @@ verify(.object)
 }
 \value{
 A logical vector indicating which (if any) problem occurred.
-A \code{FALSE} indicates that the specific problem has not occurred. For models containing second-order
+A \code{FALSE} indicates that the specific problem did not occurred. For models containing second-order
 constructs estimated by the two/three-stage approach, a list of two such vectors
 (one for the first and one for the second stage) is returned. Status codes are:
 \itemize{
