@@ -2,6 +2,8 @@
 
 # cSEM 0.5.0 (2022-05-09)
 
+- Bug fix in `testOMF()`. Now the saturated argument is passed to the discrepancy/fit measures. 
+
 - Bug fix in `.resampleData()` when crossvalidation is used. Empty datasets are not possible anymore. 
 
 - Implemented several other prediction metrics.

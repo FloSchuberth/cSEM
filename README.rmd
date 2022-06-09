@@ -101,9 +101,9 @@ with some slight modifications (see the [Specifying a model](https://m-e-rademak
 ```{r warning=FALSE, error=FALSE, message=FALSE}
 require(cSEM)
     
-## Note: The operator "<~" tells cSEM that the construct to its left is modelled
+## Note: The operator "<~" tells cSEM that the construct to its left is modeled
 ##       as a composite.
-##       The operator "=~" tells cSEM that the construct to its left is modelled
+##       The operator "=~" tells cSEM that the construct to its left is modeled
 ##       as a common factor.
 ##       The operator "~" tells cSEM which are the dependent (left-hand side) and
 ##       independent variables (right-hand side).
@@ -209,12 +209,12 @@ predict(res)
 
 #### Resampling and Inference
 
-By default no inferential quantities are calculated since most composite-based estimators 
+By default no inferential statistics are calculated since most composite-based estimators 
 have no closed-form expressions for standard errors. Resampling is used instead.
 `cSEM` mostly relies on the `bootstrap` procedure (although `jackknife` is implemented as well)
 to estimate standard errors, test statistics, and critical quantiles.
 
-`cSEM` offers two ways to compute resamples:
+`cSEM` offers two ways for resampling:
 
 1. Setting `.resample_method` in `csem()` to `"jackknife"` or `"bootstrap"` and subsequently using 
    postestimation functions `summarize()` or `infer()`.
@@ -232,13 +232,13 @@ b2 <- resamplecSEMResults(res)
 b1 <- csem(.data = satisfaction, .model = model, .resample_method = "bootstrap")
 ```
 
-Now `summarize()` shows inferential quantities as well:
+The `summarize()` function reports the inferential statistics:
 
 ```{r}
 summarize(b1)
 ```
 
-Several resample-based confidence intervals are implemented, see `?infer()`:
+Several bootstrap-based confidence intervals are implemented, see `?infer()`:
 
 ```{r eval=FALSE}
 infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
@@ -246,7 +246,7 @@ infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
 
 Both bootstrap and jackknife resampling support platform-independent multiprocessing 
 as well as setting random seeds via the [future framework](https://github.com/HenrikBengtsson/future). 
-For multiprocessing simply set `.eval_plan = "multiprocess"` in which case the maximum number of available cores
+For multiprocessing simply set `.eval_plan = "multisession"` in which case the maximum number of available cores
 is used if not on Windows. On Windows as many separate R instances are opened in the
 background as there are cores available instead. Note
 that this naturally has some overhead so for a small number of resamples multiprocessing
@@ -260,5 +260,5 @@ b <- csem(
   .resample_method = "bootstrap",
   .R               = 999,
   .seed            = 98234,
-  .eval_plan       = "multiprocess")
+  .eval_plan       = "multisession")
 ```

@@ -15,7 +15,7 @@
 \alias{calculateSRMR}
 \title{Model fit measures}
 \usage{
-calculateChiSquare(.object)
+calculateChiSquare(.object, .saturated = FALSE)
 
 calculateChiSquareDf(.object)
 
@@ -46,6 +46,9 @@ calculateSRMR(
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
+\item{.saturated}{Logical. Should a saturated structural model be used?
+Defaults to \code{FALSE}.}
+
 \item{.type_gfi}{Character string. Which fitting function should the GFI be based
 on? One of \emph{"ML"} for the maximum likelihood fitting function, \emph{"GLS"} for
 the generalized least squares fitting function or \emph{"ULS"} for the
@@ -60,9 +63,6 @@ Defaults to \code{0.05}.}
 \item{.matrix1}{A \code{matrix} to compare.}
 
 \item{.matrix2}{A \code{matrix} to compare.}
-
-\item{.saturated}{Logical. Should a saturated structural model be used?
-Defaults to \code{FALSE}.}
 }
 \value{
 A single numeric value.
