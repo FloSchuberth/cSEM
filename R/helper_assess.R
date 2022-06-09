@@ -1520,9 +1520,11 @@ NULL
 #' @describeIn fit_measures The chi square statistic.
 #' @export
 
-calculateChiSquare <- function(.object) {
+calculateChiSquare <- function(.object,
+                               .saturated = FALSE) {
   if(inherits(.object, "cSEMResults_multi")) {
-    out <- lapply(.object, calculateChiSquare)
+    out <- lapply(.object, calculateChiSquare,
+                  .saturated = .saturated)
     return(out)
   }
   if(inherits(.object, "cSEMResults_default")) {
@@ -1536,7 +1538,8 @@ calculateChiSquare <- function(.object) {
     )
   }
   
-  F0   <- calculateDML(.object)
+  F0   <- calculateDML(.object,
+                       .saturated=.saturated)
   
   (n - 1) * F0
 }
