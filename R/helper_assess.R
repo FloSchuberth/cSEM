@@ -475,7 +475,7 @@ calculateDf <- function(
     for(j in names_constructs) {
       if(construct_order[j] == "Second order") {
         if(x22$construct_type[j] == "Composite") {
-          ## Number of weights minus 1 (since weights are choosen s.t. Var(eta) = 1)
+          ## Number of weights minus 1 (since weights are chosen s.t. Var(eta) = 1)
           n_weights <- sum(x22$measurement[j, ]) - 1 
           
           ## Number of free non-redundant off-diagonal element of each intra-block
