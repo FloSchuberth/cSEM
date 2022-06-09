@@ -97,30 +97,45 @@ OLS, 2SLS. The latter currently work for linear models only.</p>
 <dd><p>Character string. Approach used to estimate nonlinear
 structural relationships. One of: "<em>sequential</em>" or "<em>replace</em>".
 Defaults to "<em>sequential</em>".</p></dd>
+
+
 <dt>.approach_paths</dt>
 <dd><p>Character string. Approach used to estimate the
 structural coefficients. One of: "<em>OLS</em>" or "<em>2SLS</em>". If "<em>2SLS</em>", instruments
 need to be supplied to <code>.instruments</code>. Defaults to "<em>OLS</em>".</p></dd>
+
+
 <dt>.csem_model</dt>
 <dd><p>A (possibly incomplete) <a href="csem_model.html">cSEMModel</a>-list.</p></dd>
+
+
 <dt>.H</dt>
 <dd><p>The (N x J) matrix of construct scores.</p></dd>
+
+
 <dt>.normality</dt>
 <dd><p>Logical. Should joint normality of
 \([\eta_{1:p}; \zeta; \epsilon]\)
 be assumed in the nonlinear model? See (Dijkstra and Schermelleh-Engel 2014)
  for details.
 Defaults to <code>FALSE</code>. Ignored if the model is not nonlinear.</p></dd>
+
+
 <dt>.P</dt>
 <dd><p>A (J x J) construct variance-covariance matrix (possibly disattenuated).</p></dd>
+
+
 <dt>.Q</dt>
 <dd><p>A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A named list containing the estimated structural coefficients, the
+    
+
+<p>A named list containing the estimated structural coefficients, the
 R2, the adjusted R2, and the VIF's for each regression.</p>
     </div>
 

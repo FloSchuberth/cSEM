@@ -88,15 +88,20 @@
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.model</dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a> indicating which
 parameters (i.e., path (<code>~</code>), loadings (<code>=~</code>), or weights (<code>&lt;~</code>)) should be
 compared across groups. Defaults to <code>NULL</code> in which case all parameters of the model
 are compared.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of length equal to the number of groups in <code>.object</code>.
+    
+
+<p>A list of length equal to the number of groups in <code>.object</code>.
 Each list element is itself a list of three. The first list element contains
 the relevant parameter estimates of the structural model, the second
 list element the relevant estimated loadings, and the third

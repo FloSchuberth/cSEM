@@ -94,27 +94,41 @@
     <h2>Arguments</h2>
     <dl><dt>.X</dt>
 <dd><p>A matrix of processed data (scaled, cleaned and ordered).</p></dd>
+
+
 <dt>.S</dt>
 <dd><p>The (K x K) empirical indicator correlation matrix.</p></dd>
+
+
 <dt>.W</dt>
 <dd><p>A (J x K) matrix of weights.</p></dd>
+
+
 <dt>.approach_weights</dt>
 <dd><p>Character string. Approach used to
 obtain composite weights. One of: "<em>PLS-PM</em>", "<em>SUMCORR</em>", "<em>MAXVAR</em>",
 "<em>SSQCORR</em>", "<em>MINVAR</em>", "<em>GENVAR</em>", "<em>GSCA</em>", "<em>PCA</em>", "<em>unit</em>", "<em>bartlett</em>",
 or "<em>regression</em>". Defaults to "<em>PLS-PM</em>".</p></dd>
+
+
 <dt>.csem_model</dt>
 <dd><p>A (possibly incomplete) <a href="csem_model.html">cSEMModel</a>-list.</p></dd>
+
+
 <dt>.disattenuate</dt>
 <dd><p>Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.PLS_approach_cf</dt>
 <dd><p>Character string. Approach used to obtain the correction
 factors for PLSc. One of: "<em>dist_squared_euclid</em>", "<em>dist_euclid_weighted</em>",
 "<em>fisher_transformed</em>", "<em>mean_arithmetic</em>", "<em>mean_geometric</em>", "<em>mean_harmonic</em>",
 "<em>geo_of_harmonic</em>". Defaults to "<em>dist_squared_euclid</em>".
 Ignored if <code>.disattenuate = FALSE</code> or if <code>.approach_weights</code> is not PLS-PM.</p></dd>
+
+
 <dt>.reliabilities</dt>
 <dd><p>A character vector of <code>"name" = value</code> pairs,
 where <code>value</code> is a number between 0 and 1 and <code>"name"</code> a character string
@@ -122,6 +136,7 @@ of the corresponding construct name, or <code>NULL</code>. Reliabilities
 may be given for a subset of the constructs. Defaults to <code>NULL</code> in which case
 reliabilities are estimated by <code><a href="csem.html">csem()</a></code>. Currently, only supported for
 <code>.approach_weights = "PLS-PM"</code>.</p></dd>
+
 </dl></div>
 
   </div>

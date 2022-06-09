@@ -95,20 +95,29 @@ the Hannan-Quinn criterion (HQ).</p>
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.ms_criterion</dt>
 <dd><p>Character string. Either a single character string or a vector
 of character strings naming the model selection criterion to compute.
 Defaults to <code>"all"</code>.</p></dd>
+
+
 <dt>.by_equation</dt>
 <dd><p>Should the criteria be computed for each structural model
 equation separately? Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.only_structural</dt>
 <dd><p>Should the the log-likelihood be based on the
 structural model? Ignored if <code>.by_equation == TRUE</code>. Defaults to <code>TRUE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>If <code>.by_equation == TRUE</code> a named list of model selection criteria.</p>
+    
+
+<p>If <code>.by_equation == TRUE</code> a named list of model selection criteria.</p>
     </div>
     <div id="details">
     <h2>Details</h2>

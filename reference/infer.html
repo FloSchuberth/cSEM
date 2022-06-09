@@ -92,15 +92,21 @@
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.quantity</dt>
 <dd><p>Character string. Which statistic should be returned?
 One of "<em>all</em>", "<em>mean</em>", "<em>sd</em>", "<em>bias</em>", "<em>CI_standard_z</em>", "<em>CI_standard_t</em>",
 "<em>CI_percentile</em>", "<em>CI_basic</em>", "<em>CI_bc</em>", "<em>CI_bca</em>", "<em>CI_t_interval</em>"
 Defaults to "<em>all</em>" in which case all quantities that do not require
 additional resampling are returned, i.e., all quantities but "<em>CI_bca</em>", "<em>CI_t_interval</em>".</p></dd>
+
+
 <dt>.alpha</dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
+
+
 <dt>.bias_corrected</dt>
 <dd><p>Logical. Should the standard and the tStat
 confidence interval be bias-corrected using the bootstrapped bias estimate?
@@ -108,10 +114,13 @@ If <code>TRUE</code> the confidence interval for some estimated parameter <code>
 is centered at <code>2*theta - theta*_hat</code>,
 where <code>theta*_hat</code> is the average over all <code>.R</code> bootstrap estimates of <code>theta</code>.
 Defaults to <code>TRUE</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of class <code>cSEMInfer</code>.</p>
+    
+
+<p>A list of class <code>cSEMInfer</code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -240,16 +249,16 @@ Cambridge University Press.
 <span class="r-in"></span>
 <span class="r-in"><span class="va">inf</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">CI_basic</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L   0.5617815    1.024345  -5.796096   4.743609 -0.2488697   1.183711</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U   0.7559263    1.077787  -3.802194   6.649509  0.2207480   2.773659</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L   0.6487942    1.026855  -5.590263   4.786366 -0.1200253  0.8930043</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U   0.8160593    1.076025  -3.881347   6.544326  0.1850750  2.6866883</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L  -3.595624 0.9984297 0.06499072 0.3989489</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U  -1.400263 2.0735161 0.45978287 0.7577385</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L  -3.712606  1.488230  0.2756035 0.1738488</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U  -1.568879  2.113889  0.5949914 0.4956545</span>
 <span class="r-in"><span class="va">inf</span><span class="op">$</span><span class="va">Indirect_effect</span><span class="op">$</span><span class="va">sd</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.06267552  0.06658954  0.55537215  0.10391873  0.47503538  0.78664360 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.04696626  0.05467284  0.51772517  0.05908779  0.54398139  0.82071384 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.05052858  0.09667427  0.34604805  0.19787948 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.05496915  0.08547947  0.28197877  0.17809008 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span></span>
 <span class="r-in"><span class="co">## For the studentied t-interval confidence interval a double bootstrap is required.</span></span>

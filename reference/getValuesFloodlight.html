@@ -101,27 +101,42 @@ for each bootstrap run and for the original estimation for each step of the mode
     <dl><dt>.model</dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a>
 or a <a href="csem_model.html">cSEMModel</a> list.</p></dd>
+
+
 <dt>.path_coefficients</dt>
 <dd><p>List. A list that contains the resampled and the original
 path coefficient estimates. Typically a part of a <code>cSEMResults_resampled</code> object.
 Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.dependent</dt>
 <dd><p>Character string. The name of the dependent variable.</p></dd>
+
+
 <dt>.independent</dt>
 <dd><p>Character string. The name of the independent variable.</p></dd>
+
+
 <dt>.moderator</dt>
 <dd><p>Character string. The name of the moderator variable.</p></dd>
+
+
 <dt>.steps_mod</dt>
 <dd><p>A numeric vector. Steps used for the moderator variable in calculating
 the simple effects of an independent variable on the dependent variable.
 Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.value_independent</dt>
 <dd><p>Integer. Only required for floodlight analysis;
 The value of the independent variable in case that it appears as a
 higher-order term.</p></dd>
+
+
 <dt>.alpha</dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>

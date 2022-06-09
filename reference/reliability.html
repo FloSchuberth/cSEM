@@ -106,34 +106,53 @@ for details.</p>
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.model_implied</dt>
 <dd><p>Logical. Should weights be scaled using the model-implied
 indicator correlation matrix? Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.only_common_factors</dt>
 <dd><p>Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality critera:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.weighted</dt>
 <dd><p>Logical. Should estimation be based on a score that uses
 the weights of the weight approach used to obtain <code>.object</code>?. Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.alpha</dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
+
+
 <dt>.closed_form_ci</dt>
 <dd><p>Logical. Should a closed-form confidence interval be computed?
 Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.output_type</dt>
 <dd><p>Character string. The type of output. One of "vector" or
 "data.frame". Defaults to "vector".</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>For <code>calculateRhoC()</code> and <code>calculateRhoT()</code> (if <code>.output_type = "vector"</code>)
+    
+
+<p>For <code>calculateRhoC()</code> and <code>calculateRhoT()</code> (if <code>.output_type = "vector"</code>)
 a named numeric vector containing the reliability estimates.
-If <code>.output_type = "data.frame"</code><code>calculateRhoT()</code> returns a <code>data.frame</code> with as many rows as there are
+If <code>.output_type = "data.frame"</code></p>
+<p></p>
+<p><code>calculateRhoT()</code> returns a <code>data.frame</code> with as many rows as there are
 constructs modeled as common factors in the model (unless
 <code>.only_common_factors = FALSE</code> in which case the number of rows equals the
 total number of constructs in the model). The first column contains the name of the construct.

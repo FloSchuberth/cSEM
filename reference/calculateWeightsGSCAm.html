@@ -96,29 +96,42 @@ with uniqueness terms (GSCAm) proposed by Hwang et al. (2017)
     <h2>Arguments</h2>
     <dl><dt>.X</dt>
 <dd><p>A matrix of processed data (scaled, cleaned and ordered).</p></dd>
+
+
 <dt>.csem_model</dt>
 <dd><p>A (possibly incomplete) <a href="csem_model.html">cSEMModel</a>-list.</p></dd>
+
+
 <dt>.conv_criterion</dt>
 <dd><p>Character string. The criterion to use for the convergence check.
 One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", or "<em>diff_relative</em>". Defaults
 to "<em>diff_absolute</em>".</p></dd>
+
+
 <dt>.iter_max</dt>
 <dd><p>Integer. The maximum number of iterations allowed.
 If <code>iter_max = 1</code> and <code>.approach_weights = "PLS-PM"</code> one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 <code>.iter_max - 1</code>  will be returned with a warning. Defaults to <code>100</code>.</p></dd>
+
+
 <dt>.starting_values</dt>
 <dd><p>A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of <code>"indicator_name" = value</code>
 pairs, where <code>value</code> is the (scaled or unscaled) starting weight. Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.tolerance</dt>
 <dd><p>Double. The tolerance criterion for convergence.
 Defaults to <code>1e-05</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list with the elements</p><dl><dt><code>$W</code></dt>
+    
+
+<p>A list with the elements</p><dl><dt><code>$W</code></dt>
 <dd><p>A (J x K) matrix of estimated weights.</p></dd>
 
 <dt><code>$C</code></dt>

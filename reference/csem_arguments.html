@@ -91,20 +91,30 @@ their possible choices, use <code>args_default(.choices = TRUE)</code>.</p>
     <dl><dt>.alpha</dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
+
+
 <dt>.absolute</dt>
 <dd><p>Logical. Should the absolute HTMT values be returned?
 Defaults to <code>TRUE</code> .</p></dd>
+
+
 <dt>.approach_gcca</dt>
 <dd><p>Character string. The Kettenring approach to use for GCCA. One of
 "<em>SUMCORR</em>", "<em>MAXVAR</em>", "<em>SSQCORR</em>", "<em>MINVAR</em>" or "<em>GENVAR</em>". Defaults to
 "<em>SUMCORR</em>".</p></dd>
+
+
 <dt>.approach_2ndorder</dt>
 <dd><p>Character string. Approach used for models containing
 second-order constructs. One of: "<em>2stage</em>", or "<em>mixed</em>". Defaults to "<em>2stage</em>".</p></dd>
+
+
 <dt>.approach_alpha_adjust</dt>
 <dd><p>Character string. Approach used to adjust the
 significance level to accommodate multiple testing.
 One of "<em>none</em>" or "<em>bonferroni</em>". Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.approach_cor_robust</dt>
 <dd><p>Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "<em>none</em>" in which case the standard
@@ -115,24 +125,34 @@ Defaults to "<em>none</em>". Note that many postestimation procedures (such as
 <code><a href="testOMF.html">testOMF()</a></code> or <code><a href="fit.html">fit()</a></code> implicitly assume a continuous
 indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.</p></dd>
+
+
 <dt>.approach_mgd</dt>
 <dd><p>Character string or a vector of character strings.
 Approach used for the multi-group comparison. One of: "<em>all</em>", "<em>Klesel</em>", "<em>Chin</em>",
 "<em>Sarstedt</em>", "<em>Keil</em>, "<em>Nitzl</em>", "<em>Henseler</em>", "<em>CI_para</em>", or "<em>CI_overlap</em>".
 Default to "<em>all</em>" in which case all approaches are computed (if possible).</p></dd>
+
+
 <dt>.approach_nl</dt>
 <dd><p>Character string. Approach used to estimate nonlinear
 structural relationships. One of: "<em>sequential</em>" or "<em>replace</em>".
 Defaults to "<em>sequential</em>".</p></dd>
+
+
 <dt>.approach_p_adjust</dt>
 <dd><p>Character string or a vector of character strings.
 Approach used to adjust the p-value for multiple testing.
 See the <code>methods</code> argument of <code><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">stats::p.adjust()</a></code> for a list of choices and
 their description. Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.approach_paths</dt>
 <dd><p>Character string. Approach used to estimate the
 structural coefficients. One of: "<em>OLS</em>" or "<em>2SLS</em>". If "<em>2SLS</em>", instruments
 need to be supplied to <code>.instruments</code>. Defaults to "<em>OLS</em>".</p></dd>
+
+
 <dt>.approach_score_benchmark</dt>
 <dd><p>Character string. How should the aggregation
 of the estimates of the truncated normal distribution be done for the
@@ -146,6 +166,8 @@ If "<em>mode</em>", the maximum empirical density on the intervals defined by th
 is used.
 If <code>.treat_as_continuous = TRUE</code> or if all indicators are on a continuous scale,
 <code>.approach_score_benchmark</code> is ignored. Defaults to "<em>round</em>".</p></dd>
+
+
 <dt>.approach_score_target</dt>
 <dd><p>Character string. How should the aggregation of the estimates of
 the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
@@ -154,20 +176,30 @@ If "<em>mean</em>", the mean of the estimated endogenous indicators is calculate
 If "<em>median</em>", the mean of the estimated endogenous indicators is calculated.
 If "<em>mode</em>", the maximum empirical density on the intervals defined by the thresholds
 is used. Defaults to "<em>mean</em>".</p></dd>
+
+
 <dt>.approach_weights</dt>
 <dd><p>Character string. Approach used to
 obtain composite weights. One of: "<em>PLS-PM</em>", "<em>SUMCORR</em>", "<em>MAXVAR</em>",
 "<em>SSQCORR</em>", "<em>MINVAR</em>", "<em>GENVAR</em>", "<em>GSCA</em>", "<em>PCA</em>", "<em>unit</em>", "<em>bartlett</em>",
 or "<em>regression</em>". Defaults to "<em>PLS-PM</em>".</p></dd>
+
+
 <dt>.args_used</dt>
 <dd><p>A list of function argument names whose value was modified
 by the user.</p></dd>
+
+
 <dt>.attrbutes</dt>
 <dd><p>Character string. Variables used as attributes in IPMA.</p></dd>
+
+
 <dt>.benchmark</dt>
 <dd><p>Character string. The procedure to obtain benchmark predictions.
 One of "<em>lm</em>", "<em>unit</em>", "<em>PLS-PM</em>", "<em>GSCA</em>", "<em>PCA</em>", or "<em>MAXVAR</em>".
 Default to "<em>lm</em>".</p></dd>
+
+
 <dt>.bias_corrected</dt>
 <dd><p>Logical. Should the standard and the tStat
 confidence interval be bias-corrected using the bootstrapped bias estimate?
@@ -175,93 +207,151 @@ If <code>TRUE</code> the confidence interval for some estimated parameter <code>
 is centered at <code>2*theta - theta*_hat</code>,
 where <code>theta*_hat</code> is the average over all <code>.R</code> bootstrap estimates of <code>theta</code>.
 Defaults to <code>TRUE</code></p></dd>
+
+
 <dt>.by_equation</dt>
 <dd><p>Should the criteria be computed for each structural model
 equation separately? Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.C</dt>
 <dd><p>A (J x J) composite variance-covariance matrix.</p></dd>
+
+
 <dt>.check_errors</dt>
 <dd><p>Logical. Should the model to parse be checked for correctness
 in a sense that all necessary components to estimate the model are given?
 Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.choices</dt>
 <dd><p>Logical. Should candidate values for the arguments be returned?
 Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.ci</dt>
 <dd><p>A vector of character strings naming the confidence interval to compute.
 For possible choices see <code><a href="infer.html">infer()</a></code>.</p></dd>
+
+
 <dt>.ci_colnames</dt>
 <dd><p>Internal argument used by several print helper functions.</p></dd>
+
+
 <dt>.closed_form_ci</dt>
 <dd><p>Logical. Should a closed-form confidence interval be computed?
 Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.conv_criterion</dt>
 <dd><p>Character string. The criterion to use for the convergence check.
 One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", or "<em>diff_relative</em>". Defaults
 to "<em>diff_absolute</em>".</p></dd>
+
+
 <dt>.csem_model</dt>
 <dd><p>A (possibly incomplete) <a href="csem_model.html">cSEMModel</a>-list.</p></dd>
+
+
 <dt>.csem_resample</dt>
 <dd><p>A list resulting from a call to <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code>.</p></dd>
+
+
 <dt>.cv_folds</dt>
 <dd><p>Integer. The number of cross-validation folds to use. Setting
 <code>.cv_folds</code> to <code>N</code> (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to <code>10</code>.</p></dd>
+
+
 <dt>.data</dt>
 <dd><p>A <code>data.frame</code> or a <code>matrix</code> of standardized or unstandardized
 data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "<code>logical</code>", "<code>numeric</code>" ("<code>double</code>" or "<code>integer</code>"),
 "<code>factor</code>" ("<code>ordered</code>" and/or "<code>unordered</code>"), "<code>character</code>" (converted to factor),
 or a mix of several types.</p></dd>
+
+
 <dt>.dependent</dt>
 <dd><p>Character string. The name of the dependent variable.</p></dd>
+
+
 <dt>.disattenuate</dt>
 <dd><p>Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.dist</dt>
 <dd><p>Character string. The distribution to use for the critical value.
 One of <em>"t"</em> for Student's t-distribution or <em>"z"</em> for the standard normal distribution.
 Defaults to <em>"z"</em>.</p></dd>
+
+
 <dt>.distance</dt>
 <dd><p>Character string. A distance measure. One of: "<em>geodesic</em>"
 or "<em>squared_euclidean</em>". Defaults to "<em>geodesic</em>".</p></dd>
+
+
 <dt>.df</dt>
 <dd><p>Character string. The method for obtaining the degrees of freedom.
 Choices are "<em>type1</em>" and "<em>type2</em>". Defaults to "<em>type1</em>" .</p></dd>
+
+
 <dt>.dominant_indicators</dt>
 <dd><p>A character vector of <code>"construct_name" = "indicator_name"</code> pairs,
 where <code>"indicator_name"</code> is a character string giving the name of the dominant indicator
 and <code>"construct_name"</code> a character string of the corresponding construct name.
 Dominant indicators may be specified for a subset of the constructs.
 Default to <code>NULL</code>.</p></dd>
+
+
 <dt>.E</dt>
 <dd><p>A (J x J) matrix of inner weights.</p></dd>
+
+
 <dt>.effect</dt>
 <dd><p>Internal argument used by helper printEffects().</p></dd>
+
+
 <dt>.estimate_structural</dt>
 <dd><p>Logical. Should the structural coefficients
 be estimated? Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.eval_plan</dt>
 <dd><p>Character string. The evaluation plan to use. One of
 "<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
+
+
 <dt>.filename</dt>
 <dd><p>Character string. The file name. Defaults to "results.xlsx".</p></dd>
+
+
 <dt>.first_resample</dt>
 <dd><p>A list containing the <code>.R</code> resamples based on the original
 data obtained by resamplecSEMResults().</p></dd>
+
+
 <dt>.fit_measures</dt>
 <dd><p>Logical. (EXPERIMENTAL) Should additional fit measures
 be included? Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.force</dt>
 <dd><p>Logical. Should .object be resampled even if it contains resamples
 already?. Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.full_output</dt>
 <dd><p>Logical. Should the full output of summarize be printed.
 Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.H</dt>
 <dd><p>The (N x J) matrix of construct scores.</p></dd>
+
+
 <dt>.handle_inadmissibles</dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
@@ -272,14 +362,22 @@ yielded inadmissible results (i.e. number of results returned is equal to <code>
 For "<em>replace</em>" resampling continues until there are exactly <code>.R</code> admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "<em>drop</em>".</p></dd>
+
+
 <dt>.id</dt>
 <dd><p>Character string or integer. A character string giving the name or
 an integer of the position of the column of <code>.data</code> whose levels are used
 to split <code>.data</code> into groups. Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.inference</dt>
 <dd><p>Logical. Should critical values be computed? Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.independent</dt>
 <dd><p>Character string. The name of the independent variable.</p></dd>
+
+
 <dt>.instruments</dt>
 <dd><p>A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -287,93 +385,149 @@ equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation <strong>must</strong> be supplied as
 instruments for themselves. Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.iter_max</dt>
 <dd><p>Integer. The maximum number of iterations allowed.
 If <code>iter_max = 1</code> and <code>.approach_weights = "PLS-PM"</code> one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 <code>.iter_max - 1</code>  will be returned with a warning. Defaults to <code>100</code>.</p></dd>
+
+
 <dt>.level</dt>
 <dd><p>Character. Used in <code>plot.cSEMIPMA</code> to indicate whether IPMA should be done
 for constructs or indicators.</p></dd>
+
+
 <dt>.matrix1</dt>
 <dd><p>A <code>matrix</code> to compare.</p></dd>
+
+
 <dt>.matrix2</dt>
 <dd><p>A <code>matrix</code> to compare.</p></dd>
+
+
 <dt>.matrices</dt>
 <dd><p>A list of at least two matrices.</p></dd>
+
+
 <dt>.model</dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a>
 or a <a href="csem_model.html">cSEMModel</a> list.</p></dd>
+
+
 <dt>.moderator</dt>
 <dd><p>Character string. The name of the moderator variable.</p></dd>
+
+
 <dt>.modes</dt>
 <dd><p>A vector giving the mode for each construct in the form <code>"name" = "mode"</code>.
 Only used internally.</p></dd>
+
+
 <dt>.ms_criterion</dt>
 <dd><p>Character string. Either a single character string or a vector
 of character strings naming the model selection criterion to compute.
 Defaults to <code>"all"</code>.</p></dd>
+
+
 <dt>.n</dt>
 <dd><p>Integer. The number of observations of the original data.</p></dd>
+
+
 <dt>.n_steps</dt>
 <dd><p>Integer. A value giving the number of steps (the spotlights, i.e.,
 values of .moderator in surface analysis or floodlight analysis)
 between the minimum and maximum value of the moderator. Defaults to <code>100</code>.</p></dd>
+
+
 <dt>.normality</dt>
 <dd><p>Logical. Should joint normality of
 \([\eta_{1:p}; \zeta; \epsilon]\)
 be assumed in the nonlinear model? See (Dijkstra and Schermelleh-Engel 2014)
  for details.
 Defaults to <code>FALSE</code>. Ignored if the model is not nonlinear.</p></dd>
+
+
 <dt>.nr_comparisons</dt>
 <dd><p>Integer. The number of comparisons. Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.null_model</dt>
 <dd><p>Logical. Should the degrees of freedom for the null model
 be computed? Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.only_common_factors</dt>
 <dd><p>Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality critera:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.only_structural</dt>
 <dd><p>Should the the log-likelihood be based on the
 structural model? Ignored if <code>.by_equation == TRUE</code>. Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.original_arguments</dt>
 <dd><p>The list of arguments used within <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.output_type</dt>
 <dd><p>Character string. The type of output to return. One of
 "<em>complete</em>" or "<em>structured</em>". See the Value section for details. Defaults to
 "<em>complete</em>".</p></dd>
+
+
 <dt>.P</dt>
 <dd><p>A (J x J) construct variance-covariance matrix (possibly disattenuated).</p></dd>
+
+
 <dt>.parameters_to_compare</dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a> indicating which
 parameters (i.e, path (<code>~</code>), loadings (<code>=~</code>), weights (<code>&lt;~</code>), or correlations (<code>~~</code>)) should be
 compared across groups. Defaults to <code>NULL</code> in which case all weights, loadings and
 path coefficients of the originally specified model are compared.</p></dd>
+
+
 <dt>.path</dt>
 <dd><p>Character string. Path of the directory to save the file to. Defaults
 to the current working directory.</p></dd>
+
+
 <dt>.path_coefficients</dt>
 <dd><p>List. A list that contains the resampled and the original
 path coefficient estimates. Typically a part of a <code>cSEMResults_resampled</code> object.
 Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.PLS_approach_cf</dt>
 <dd><p>Character string. Approach used to obtain the correction
 factors for PLSc. One of: "<em>dist_squared_euclid</em>", "<em>dist_euclid_weighted</em>",
 "<em>fisher_transformed</em>", "<em>mean_arithmetic</em>", "<em>mean_geometric</em>", "<em>mean_harmonic</em>",
 "<em>geo_of_harmonic</em>". Defaults to "<em>dist_squared_euclid</em>".
 Ignored if <code>.disattenuate = FALSE</code> or if <code>.approach_weights</code> is not PLS-PM.</p></dd>
+
+
 <dt>.plot_package</dt>
 <dd><p>Character string. Indicates which packages should be used for plotting.</p></dd>
+
+
 <dt>.plot_type</dt>
 <dd><p>Character string. Indicates the type of plot that is produced.</p></dd>
+
+
 <dt>.PLS_ignore_structural_model</dt>
 <dd><p>Logical. Should the structural model be ignored
 when calculating the inner weights of the PLS-PM algorithm? Defaults to <code>FALSE</code>.
 Ignored if <code>.approach_weights</code> is not PLS-PM.</p></dd>
+
+
 <dt>.PLS_modes</dt>
 <dd><p>Either a named list specifying the mode that should be used for
 each construct in the form <code>"construct_name" = mode</code>, a single character
@@ -386,30 +540,44 @@ using unit weights, as weights are rescaled such that the related composite
 has unit variance.  Defaults to <code>NULL</code>.
 If <code>NULL</code> the appropriate mode according to the type
 of construct used is chosen. Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
+
+
 <dt>.PLS_weight_scheme_inner</dt>
 <dd><p>Character string. The inner weighting scheme
 used by PLS-PM. One of: "<em>centroid</em>", "<em>factorial</em>", or "<em>path</em>".
 Defaults to "<em>path</em>". Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
+
+
 <dt>.probs</dt>
 <dd><p>A vector of probabilities.</p></dd>
+
+
 <dt>.postestimation_object</dt>
 <dd><p>An object resulting from a call to one of cSEM's
 postestimation functions (e.g. <code><a href="summarize.html">summarize()</a></code>).</p></dd>
+
+
 <dt>.quality_criterion</dt>
 <dd><p>Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
 the Details section for a list of possible candidates.
 Defaults to "<em>all</em>" in which case all possible quality criteria are computed.</p></dd>
+
+
 <dt>.quantity</dt>
 <dd><p>Character string. Which statistic should be returned?
 One of "<em>all</em>", "<em>mean</em>", "<em>sd</em>", "<em>bias</em>", "<em>CI_standard_z</em>", "<em>CI_standard_t</em>",
 "<em>CI_percentile</em>", "<em>CI_basic</em>", "<em>CI_bc</em>", "<em>CI_bca</em>", "<em>CI_t_interval</em>"
 Defaults to "<em>all</em>" in which case all quantities that do not require
 additional resampling are returned, i.e., all quantities but "<em>CI_bca</em>", "<em>CI_t_interval</em>".</p></dd>
+
+
 <dt>.Q</dt>
 <dd><p>A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.</p></dd>
+
+
 <dt>.reliabilities</dt>
 <dd><p>A character vector of <code>"name" = value</code> pairs,
 where <code>value</code> is a number between 0 and 1 and <code>"name"</code> a character string
@@ -417,104 +585,162 @@ of the corresponding construct name, or <code>NULL</code>. Reliabilities
 may be given for a subset of the constructs. Defaults to <code>NULL</code> in which case
 reliabilities are estimated by <code><a href="csem.html">csem()</a></code>. Currently, only supported for
 <code>.approach_weights = "PLS-PM"</code>.</p></dd>
+
+
 <dt>.resample_method</dt>
 <dd><p>Character string. The resampling method to use. One of:
 "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.resample_method2</dt>
 <dd><p>Character string. The resampling method to use when resampling
 from a resample. One of: "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". For
 "<em>bootstrap</em>" the number of draws is provided via <code>.R2</code>. Currently,
 resampling from each resample is only required for the studentized confidence
 intervall ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>`.resample_object`</dt>
 <dd><p>An R object of class <code>cSEMResults_resampled</code>
 obtained from <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> or by setting <code>.resample_method = "bootstrap"</code>
 or <code>"jackknife"</code> when calling <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.resample_sarstedt</dt>
 <dd><p>A matrix containing the parameter estimates that
 could potentially be compared and an id column indicating the group adherence
 of each row.</p></dd>
+
+
 <dt>.r</dt>
 <dd><p>Integer. The number of repetitions to use. Defaults to <code>1</code>.</p></dd>
+
+
 <dt>.R</dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
+
+
 <dt>.R2</dt>
 <dd><p>Integer. The number of bootstrap replications to use when
 resampling from a resample. Defaults to <code>199</code>.</p></dd>
+
+
 <dt>.R_bootstrap</dt>
 <dd><p>Integer. The number of bootstrap runs. Ignored if <code>.object</code>
 contains resamples. Defaults to <code>499</code></p></dd>
+
+
 <dt>.R_permutation</dt>
 <dd><p>Integer. The number of permutations. Defaults to <code>499</code></p></dd>
+
+
 <dt>.S</dt>
 <dd><p>The (K x K) empirical indicator correlation matrix.</p></dd>
+
+
 <dt>.saturated</dt>
 <dd><p>Logical. Should a saturated structural model be used?
 Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.second_resample</dt>
 <dd><p>A list containing <code>.R2</code> resamples for each of the <code>.R</code>
 resamples of the first run.</p></dd>
+
+
 <dt>.seed</dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
+
 <dt>.sign_change_option</dt>
 <dd><p>Character string. Which sign change option should
 be used to handle flipping signs when resampling? One of "<em>none</em>","<em>individual</em>",
 "<em>individual_reestimate</em>", "<em>construct_reestimate</em>". Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.sim_points</dt>
 <dd><p>Integer. How many samples from the truncated normal distribution should
 be simulated to estimate the exogenous construct scores? Defaults to "<em>100</em>".</p></dd>
+
+
 <dt>.stage</dt>
 <dd><p>Character string. The stage the model is needed for.
 One of "<em>first</em>" or "<em>second</em>". Defaults to "<em>first</em>".</p></dd>
+
+
 <dt>.standardized</dt>
 <dd><p>Logical. Should standardized scores be returned? Defaults
 to <code>TRUE</code>.</p></dd>
+
+
 <dt>.starting_values</dt>
 <dd><p>A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of <code>"indicator_name" = value</code>
 pairs, where <code>value</code> is the (scaled or unscaled) starting weight. Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.steps_mod</dt>
 <dd><p>A numeric vector. Steps used for the moderator variable in calculating
 the simple effects of an independent variable on the dependent variable.
 Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.terms</dt>
 <dd><p>A vector of construct names to be classified.</p></dd>
+
+
 <dt>.test_data</dt>
 <dd><p>A matrix of test data with the same column names as the
 training data.</p></dd>
+
+
 <dt>.tolerance</dt>
 <dd><p>Double. The tolerance criterion for convergence.
 Defaults to <code>1e-05</code>.</p></dd>
+
+
 <dt>.treat_as_continuous</dt>
 <dd><p>Logical. Should the indicators for the benchmark predictions
 be treated as continuous? If <code>TRUE</code> all indicators are treated as continuous and PLS-PM/PLSc is applied.
 If <code>FALSE</code> OrdPLS/OrdPLSc is applied. Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.type_gfi</dt>
 <dd><p>Character string. Which fitting function should the GFI be based
 on? One of <em>"ML"</em> for the maximum likelihood fitting function, <em>"GLS"</em> for
 the generalized least squares fitting function or <em>"ULS"</em> for the
 unweighted least squares fitting function (same as the squared Euclidean distance).
 Defaults to <em>"ML"</em>.</p></dd>
+
+
 <dt>.type_ci</dt>
 <dd><p>Character string. Which confidence interval should be calculated?
 For possible choices, see the <code>.quantity</code> argument of the <code><a href="infer.html">infer()</a></code> function.
 Only used if <code>.approch_mgd</code> is one of "<em>CI_para</em>" or "<em>CI_overlap</em>". Ignored otherwise.
 Defaults to "<em>CI_percentile</em>".</p></dd>
+
+
 <dt>.type_htmt</dt>
 <dd><p>Character string indicating the type of HTMT that should be
 calculated, i.e., the original HTMT ("<em>htmt</em>") or the HTMT2 ("<em>htmt2</em>").
 Defaults to "<em>htmt</em>"</p></dd>
+
+
 <dt>.type_vcv</dt>
 <dd><p>Character string. Which model-implied correlation
 matrix should be calculated?
 One of "<em>indicator</em>" or "<em>construct</em>". Defaults to "<em>indicator</em>".</p></dd>
+
+
 <dt>.verbose</dt>
 <dd><p>Logical. Should information (e.g., progress bar) be printed
 to the console? Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.user_funs</dt>
 <dd><p>A function or a (named) list of functions to apply to every
 resample. The functions must take <code>.object</code> as its first argument (e.g.,
@@ -522,38 +748,63 @@ resample. The functions must take <code>.object</code> as its first argument (e.
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.</p></dd>
+
+
 <dt>.value_independent</dt>
 <dd><p>Integer. Only required for floodlight analysis;
 The value of the independent variable in case that it appears as a
 higher-order term.</p></dd>
+
+
 <dt>.values_moderator</dt>
 <dd><p>A numeric vector. The values of the moderator in a
 the simple effects analysis. Typically these are difference from the mean (=0)
 measured in standard deviations. Defaults to <code>c(-2, -1, 0, 1, 2)</code>.</p></dd>
+
+
 <dt>.vcv_asymptotic</dt>
 <dd><p>Logical. Should the asymptotic variance-covariance matrix be used, i.e.,
 VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) be computed directly?
 Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.vector1</dt>
 <dd><p>A vector of numeric values.</p></dd>
+
+
 <dt>.vector2</dt>
 <dd><p>A vector of numeric values.</p></dd>
+
+
 <dt>.W</dt>
 <dd><p>A (J x K) matrix of weights.</p></dd>
+
+
 <dt>.what</dt>
 <dd><p>Internal argument used by several print helper functions.</p></dd>
+
+
 <dt>.W_new</dt>
 <dd><p>A (J x K) matrix of weights.</p></dd>
+
+
 <dt>.W_old</dt>
 <dd><p>A (J x K) matrix of weights.</p></dd>
+
+
 <dt>.weighted</dt>
 <dd><p>Logical. Should estimation be based on a score that uses
 the weights of the weight approach used to obtain <code>.object</code>?. Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.X</dt>
 <dd><p>A matrix of processed data (scaled, cleaned and ordered).</p></dd>
+
+
 <dt>.X_cleaned</dt>
 <dd><p>A data.frame of processed data (cleaned and ordered). Note: <code>X_cleaned</code>
 may not be scaled!</p></dd>
+
 </dl></div>
 
   </div>

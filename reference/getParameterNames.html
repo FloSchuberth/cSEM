@@ -98,15 +98,23 @@ according to the test proposed by Chin and Dibbern (2010)
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.model</dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a> indicating which
 parameters (i.e, path (<code>~</code>), loadings (<code>=~</code>), or weights (<code>&lt;~</code>)) should be
 compared across groups. Defaults to <code>NULL</code> in which case all parameters of the model
 are compared.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list with elements <code>names_path</code>, <code>names_loadings</code>, and <code>names_weights</code>containing the names of the structural parameters, the loadings,
+    
+
+<p>A list with elements <code>names_path</code>, <code>names_loadings</code>, and <code>names_weights</code></p>
+
+
+<p>containing the names of the structural parameters, the loadings,
 and the weight to compare across groups.</p>
     </div>
     <div id="references">

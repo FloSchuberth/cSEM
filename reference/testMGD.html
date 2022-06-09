@@ -102,32 +102,46 @@
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.alpha</dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
+
+
 <dt>.approach_p_adjust</dt>
 <dd><p>Character string or a vector of character strings.
 Approach used to adjust the p-value for multiple testing.
 See the <code>methods</code> argument of <code><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">stats::p.adjust()</a></code> for a list of choices and
 their description. Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.approach_mgd</dt>
 <dd><p>Character string or a vector of character strings.
 Approach used for the multi-group comparison. One of: "<em>all</em>", "<em>Klesel</em>", "<em>Chin</em>",
 "<em>Sarstedt</em>", "<em>Keil</em>, "<em>Nitzl</em>", "<em>Henseler</em>", "<em>CI_para</em>", or "<em>CI_overlap</em>".
 Default to "<em>all</em>" in which case all approaches are computed (if possible).</p></dd>
+
+
 <dt>.output_type</dt>
 <dd><p>Character string. The type of output to return. One of
 "<em>complete</em>" or "<em>structured</em>". See the Value section for details. Defaults to
 "<em>complete</em>".</p></dd>
+
+
 <dt>.parameters_to_compare</dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a> indicating which
 parameters (i.e, path (<code>~</code>), loadings (<code>=~</code>), weights (<code>&lt;~</code>), or correlations (<code>~~</code>)) should be
 compared across groups. Defaults to <code>NULL</code> in which case all weights, loadings and
 path coefficients of the originally specified model are compared.</p></dd>
+
+
 <dt>.eval_plan</dt>
 <dd><p>Character string. The evaluation plan to use. One of
 "<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
+
+
 <dt>.handle_inadmissibles</dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
@@ -137,36 +151,56 @@ For "<em>ignore</em>" all results are returned even if all or some of the replic
 yielded inadmissible results (i.e. number of results returned is equal to <code>.R</code>).
 For "<em>replace</em>" resampling continues until there are exactly <code>.R</code> admissible solutions.
 Defaults to "<em>replace</em>" to accommodate all approaches.</p></dd>
+
+
 <dt>.R_permutation</dt>
 <dd><p>Integer. The number of permutations. Defaults to <code>499</code></p></dd>
+
+
 <dt>.R_bootstrap</dt>
 <dd><p>Integer. The number of bootstrap runs. Ignored if <code>.object</code>
 contains resamples. Defaults to <code>499</code></p></dd>
+
+
 <dt>.saturated</dt>
 <dd><p>Logical. Should a saturated structural model be used?
 Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.seed</dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
+
 <dt>.type_ci</dt>
 <dd><p>Character string. Which confidence interval should be calculated?
 For possible choices, see the <code>.quantity</code> argument of the <code><a href="infer.html">infer()</a></code> function.
 Only used if <code>.approch_mgd</code> is one of "<em>CI_para</em>" or "<em>CI_overlap</em>". Ignored otherwise.
 Defaults to "<em>CI_percentile</em>".</p></dd>
+
+
 <dt>.type_vcv</dt>
 <dd><p>Character string. Which model-implied correlation
 matrix should be calculated?
 One of "<em>indicator</em>" or "<em>construct</em>". Defaults to "<em>indicator</em>".</p></dd>
+
+
 <dt>.verbose</dt>
 <dd><p>Logical. Should information (e.g., progress bar) be printed
 to the console? Defaults to <code>TRUE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>If <code>.output_type = "complete"</code> a list of class <code>cSEMTestMGD</code>. Technically, <code>cSEMTestMGD</code> is a
-named list containing the following list elements:</p><dl><dt><code>$Information</code></dt>
+    
+
+<p>If <code>.output_type = "complete"</code> a list of class <code>cSEMTestMGD</code>. Technically, <code>cSEMTestMGD</code> is a
+named list containing the following list elements:</p>
+
+
+<dl><dt><code>$Information</code></dt>
 <dd><p>Additional information.</p></dd>
 
 <dt><code>$Klesel</code></dt>
@@ -195,7 +229,10 @@ named list containing the following list elements:</p><dl><dt><code>$Information
 
 
 </dl><p>If <code>.output_type = "structured"</code> a tibble (data frame) with the following columns
-is returned.</p><dl><dt><code>Test</code></dt>
+is returned.</p>
+
+
+<dl><dt><code>Test</code></dt>
 <dd><p>The name of the test.</p></dd>
 
 <dt><code>Comparision</code></dt>

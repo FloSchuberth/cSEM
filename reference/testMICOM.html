@@ -92,11 +92,15 @@
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.approach_p_adjust</dt>
 <dd><p>Character string or a vector of character strings.
 Approach used to adjust the p-value for multiple testing.
 See the <code>methods</code> argument of <code><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">stats::p.adjust()</a></code> for a list of choices and
 their description. Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.handle_inadmissibles</dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
@@ -107,20 +111,29 @@ yielded inadmissible results (i.e. number of results returned is equal to <code>
 For "<em>replace</em>" resampling continues until there are exactly <code>.R</code> admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "<em>drop</em>".</p></dd>
+
+
 <dt>.R</dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
+
+
 <dt>.seed</dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
+
 <dt>.verbose</dt>
 <dd><p>Logical. Should information (e.g., progress bar) be printed
 to the console? Defaults to <code>TRUE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A named list of class <code>cSEMTestMICOM</code> containing the following list element:</p><dl><dt><code>$Step2</code></dt>
+    
+
+<p>A named list of class <code>cSEMTestMICOM</code> containing the following list element:</p><dl><dt><code>$Step2</code></dt>
 <dd><p>A list containing the results of the test for compositional invariance (Step 2).</p></dd>
 
 <dt><code>$Step3</code></dt>

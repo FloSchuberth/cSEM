@@ -89,6 +89,8 @@
     <dl><dt>.X_cleaned</dt>
 <dd><p>A data.frame of processed data (cleaned and ordered). Note: <code>X_cleaned</code>
 may not be scaled!</p></dd>
+
+
 <dt>.approach_cor_robust</dt>
 <dd><p>Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "<em>none</em>" in which case the standard
@@ -99,10 +101,13 @@ Defaults to "<em>none</em>". Note that many postestimation procedures (such as
 <code><a href="testOMF.html">testOMF()</a></code> or <code><a href="fit.html">fit()</a></code> implicitly assume a continuous
 indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list with elements:</p><dl><dt><code>$S</code></dt>
+    
+
+<p>A list with elements:</p><dl><dt><code>$S</code></dt>
 <dd><p>The (K x K) indicator correlation matrix</p></dd>
 
 <dt><code>$cor_type</code></dt>

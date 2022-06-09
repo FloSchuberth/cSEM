@@ -85,15 +85,20 @@
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A named list of vectors containing the VIF values. Each list name
+    
+
+<p>A named list of vectors containing the VIF values. Each list name
 is the name of a construct whose weights were obtained by Mode B.
 The vectors contain the VIF values obtained from a regression of each
 explanatory variable of a given construct on the remaining explanatory
-variables of that construct.
-If the weighting approach is not <code>"PLS-PM"</code> or for none of the constructs Mode B is used,
+variables of that construct.</p>
+
+
+<p>If the weighting approach is not <code>"PLS-PM"</code> or for none of the constructs Mode B is used,
 the function silently returns <code>NA</code>.</p>
     </div>
     <div id="details">

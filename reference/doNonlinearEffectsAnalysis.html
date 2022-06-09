@@ -94,31 +94,48 @@
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.dependent</dt>
 <dd><p>Character string. The name of the dependent variable.</p></dd>
+
+
 <dt>.independent</dt>
 <dd><p>Character string. The name of the independent variable.</p></dd>
+
+
 <dt>.moderator</dt>
 <dd><p>Character string. The name of the moderator variable.</p></dd>
+
+
 <dt>.n_steps</dt>
 <dd><p>Integer. A value giving the number of steps (the spotlights, i.e.,
 values of .moderator in surface analysis or floodlight analysis)
 between the minimum and maximum value of the moderator. Defaults to <code>100</code>.</p></dd>
+
+
 <dt>.values_moderator</dt>
 <dd><p>A numeric vector. The values of the moderator in a
 the simple effects analysis. Typically these are difference from the mean (=0)
 measured in standard deviations. Defaults to <code>c(-2, -1, 0, 1, 2)</code>.</p></dd>
+
+
 <dt>.value_independent</dt>
 <dd><p>Integer. Only required for floodlight analysis;
 The value of the independent variable in case that it appears as a
 higher-order term.</p></dd>
+
+
 <dt>.alpha</dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of class <code>cSEMNonlinearEffects</code> with a corresponding method
+    
+
+<p>A list of class <code>cSEMNonlinearEffects</code> with a corresponding method
 for <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>. See: <code><a href="plot.cSEMNonlinearEffects.html">plot.cSEMNonlinearEffects()</a></code>.</p>
     </div>
     <div id="details">

@@ -151,22 +151,33 @@ a warning is issued and <code>.PLS_ignore_structural_model</code> is changed to 
     <h2>Arguments</h2>
     <dl><dt>.S</dt>
 <dd><p>The (K x K) empirical indicator correlation matrix.</p></dd>
+
+
 <dt>.W</dt>
 <dd><p>A (J x K) matrix of weights.</p></dd>
+
+
 <dt>.csem_model</dt>
 <dd><p>A (possibly incomplete) <a href="csem_model.html">cSEMModel</a>-list.</p></dd>
+
+
 <dt>.PLS_ignore_structural_model</dt>
 <dd><p>Logical. Should the structural model be ignored
 when calculating the inner weights of the PLS-PM algorithm? Defaults to <code>FALSE</code>.
 Ignored if <code>.approach_weights</code> is not PLS-PM.</p></dd>
+
+
 <dt>.PLS_weight_scheme_inner</dt>
 <dd><p>Character string. The inner weighting scheme
 used by PLS-PM. One of: "<em>centroid</em>", "<em>factorial</em>", or "<em>path</em>".
 Defaults to "<em>path</em>". Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The (J x J) matrix <code>E</code> of inner weights.</p>
+    
+
+<p>The (J x J) matrix <code>E</code> of inner weights.</p>
     </div>
 
   </div>

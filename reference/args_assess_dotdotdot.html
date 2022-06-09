@@ -85,15 +85,23 @@
     <dl><dt>.absolute</dt>
 <dd><p>Logical. Should the absolute HTMT values be returned?
 Defaults to <code>TRUE</code> .</p></dd>
+
+
 <dt>.alpha</dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
+
+
 <dt>.ci</dt>
 <dd><p>A vector of character strings naming the confidence interval to compute.
 For possible choices see <code><a href="infer.html">infer()</a></code>.</p></dd>
+
+
 <dt>.closed_form_ci</dt>
 <dd><p>Logical. Should a closed-form confidence interval be computed?
 Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.handle_inadmissibles</dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
@@ -104,31 +112,46 @@ yielded inadmissible results (i.e. number of results returned is equal to <code>
 For "<em>replace</em>" resampling continues until there are exactly <code>.R</code> admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "<em>drop</em>".</p></dd>
+
+
 <dt>.inference</dt>
 <dd><p>Logical. Should critical values be computed? Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.null_model</dt>
 <dd><p>Logical. Should the degrees of freedom for the null model
 be computed? Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.R</dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
+
+
 <dt>.saturated</dt>
 <dd><p>Logical. Should a saturated structural model be used?
 Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.seed</dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
+
 <dt>.type_gfi</dt>
 <dd><p>Character string. Which fitting function should the GFI be based
 on? One of <em>"ML"</em> for the maximum likelihood fitting function, <em>"GLS"</em> for
 the generalized least squares fitting function or <em>"ULS"</em> for the
 unweighted least squares fitting function (same as the squared Euclidean distance).
 Defaults to <em>"ML"</em>.</p></dd>
+
+
 <dt>.type_vcv</dt>
 <dd><p>Character string. Which model-implied correlation
 matrix should be calculated?
 One of "<em>indicator</em>" or "<em>construct</em>". Defaults to "<em>indicator</em>".</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>

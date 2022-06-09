@@ -105,20 +105,30 @@ The function is called by <code><a href="csem.html">csem()</a></code> if the use
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.resample_method</dt>
 <dd><p>Character string. The resampling method to use. One of:
 "<em>bootstrap</em>" or "<em>jackknife</em>". Defaults to "<em>bootstrap</em>".</p></dd>
+
+
 <dt>.resample_method2</dt>
 <dd><p>Character string. The resampling method to use when resampling
 from a resample. One of: "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". For
 "<em>bootstrap</em>" the number of draws is provided via <code>.R2</code>. Currently,
 resampling from each resample is only required for the studentized confidence
 intervall ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.R</dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
+
+
 <dt>.R2</dt>
 <dd><p>Integer. The number of bootstrap replications to use when
 resampling from a resample. Defaults to <code>199</code>.</p></dd>
+
+
 <dt>.handle_inadmissibles</dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
@@ -129,6 +139,8 @@ yielded inadmissible results (i.e. number of results returned is equal to <code>
 For "<em>replace</em>" resampling continues until there are exactly <code>.R</code> admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "<em>drop</em>".</p></dd>
+
+
 <dt>.user_funs</dt>
 <dd><p>A function or a (named) list of functions to apply to every
 resample. The functions must take <code>.object</code> as its first argument (e.g.,
@@ -136,28 +148,41 @@ resample. The functions must take <code>.object</code> as its first argument (e.
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.</p></dd>
+
+
 <dt>.eval_plan</dt>
 <dd><p>Character string. The evaluation plan to use. One of
 "<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
+
+
 <dt>.force</dt>
 <dd><p>Logical. Should .object be resampled even if it contains resamples
 already?. Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.seed</dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
+
 <dt>.sign_change_option</dt>
 <dd><p>Character string. Which sign change option should
 be used to handle flipping signs when resampling? One of "<em>none</em>","<em>individual</em>",
 "<em>individual_reestimate</em>", "<em>construct_reestimate</em>". Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Further arguments passed to functions supplied to <code>.user_funs</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The core structure is the same structure as that of <code>.object</code> with
+    
+
+<p>The core structure is the same structure as that of <code>.object</code> with
 the following elements added:</p><ul><li><p><code>$Estimates_resamples</code>: A list containing the <code>.R</code> resamples and
 the original estimates for each of the resampled quantities (Path_estimates,
 Loading_estimates, Weight_estimates, user defined functions).

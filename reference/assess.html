@@ -100,23 +100,32 @@
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.quality_criterion</dt>
 <dd><p>Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
 the Details section for a list of possible candidates.
 Defaults to "<em>all</em>" in which case all possible quality criteria are computed.</p></dd>
+
+
 <dt>.only_common_factors</dt>
 <dd><p>Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality critera:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Further arguments passed to functions called by <code>assess()</code>.
 See <a href="args_assess_dotdotdot.html">args_assess_dotdotdot</a> for a complete list of available arguments.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A named list of quality criteria. Note that if only a single quality
+    
+
+<p>A named list of quality criteria. Note that if only a single quality
 criteria is computed the return value is still a list!</p>
     </div>
     <div id="details">
@@ -538,7 +547,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Look at the resamples</span></span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">User_fun</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02394714 0.02614328 0.02495671 0.03005586</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02598195 0.03089541 0.02602931 0.03333518</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Use infer() to compute e.g., the 95% percentile confidence interval</span></span>
 <span class="r-in"><span class="va">res_infer</span> <span class="op">&lt;-</span> <span class="fu"><a href="infer.html">infer</a></span><span class="op">(</span><span class="va">res</span>, .quantity <span class="op">=</span> <span class="st">"CI_percentile"</span><span class="op">)</span></span>
@@ -547,8 +556,8 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span class="va">res_infer</span><span class="op">$</span><span class="va">User_fun</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CI_percentile</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.01711908</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03161497</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.01893271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03335418</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Several quality criteria can be resampled simultaneously</span></span>
@@ -562,9 +571,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">SRMR</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02249627 0.03175281 0.02209694 0.02319613</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01918489 0.02528004 0.02591145 0.02173742</span>
 <span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">RMS_theta</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1038760 0.1131269 0.1028918 0.1086415</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1039578 0.1076819 0.1086749 0.1089578</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>

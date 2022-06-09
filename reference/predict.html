@@ -97,14 +97,20 @@
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.benchmark</dt>
 <dd><p>Character string. The procedure to obtain benchmark predictions.
 One of "<em>lm</em>", "<em>unit</em>", "<em>PLS-PM</em>", "<em>GSCA</em>", "<em>PCA</em>", or "<em>MAXVAR</em>".
 Default to "<em>lm</em>".</p></dd>
+
+
 <dt>.cv_folds</dt>
 <dd><p>Integer. The number of cross-validation folds to use. Setting
 <code>.cv_folds</code> to <code>N</code> (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to <code>10</code>.</p></dd>
+
+
 <dt>.handle_inadmissibles</dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>stop</em>", "<em>ignore</em>", or "<em>set_NA</em>". If "<em>stop</em>", <code>predict()</code>
@@ -113,11 +119,17 @@ For "<em>ignore</em>" all results are returned even if all or some of the estima
 yielded inadmissible results.
 For "<em>set_NA</em>" predictions based on inadmissible parameter estimates are
 set to <code>NA</code>. Defaults to "<em>stop</em>"</p></dd>
+
+
 <dt>.r</dt>
 <dd><p>Integer. The number of repetitions to use. Defaults to <code>1</code>.</p></dd>
+
+
 <dt>.test_data</dt>
 <dd><p>A matrix of test data with the same column names as the
 training data.</p></dd>
+
+
 <dt>.approach_score_target</dt>
 <dd><p>Character string. How should the aggregation of the estimates of
 the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
@@ -126,16 +138,24 @@ If "<em>mean</em>", the mean of the estimated endogenous indicators is calculate
 If "<em>median</em>", the mean of the estimated endogenous indicators is calculated.
 If "<em>mode</em>", the maximum empirical density on the intervals defined by the thresholds
 is used. Defaults to "<em>mean</em>".</p></dd>
+
+
 <dt>.sim_points</dt>
 <dd><p>Integer. How many samples from the truncated normal distribution should
 be simulated to estimate the exogenous construct scores? Defaults to "<em>100</em>".</p></dd>
+
+
 <dt>.disattenuate</dt>
 <dd><p>Logical. Should the benchmark predictions be based on
 disattenuated parameter estimates? Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.treat_as_continuous</dt>
 <dd><p>Logical. Should the indicators for the benchmark predictions
 be treated as continuous? If <code>TRUE</code> all indicators are treated as continuous and PLS-PM/PLSc is applied.
 If <code>FALSE</code> OrdPLS/OrdPLSc is applied. Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.approach_score_benchmark</dt>
 <dd><p>Character string. How should the aggregation
 of the estimates of the truncated normal distribution be done for the
@@ -149,12 +169,18 @@ If "<em>mode</em>", the maximum empirical density on the intervals defined by th
 is used.
 If <code>.treat_as_continuous = TRUE</code> or if all indicators are on a continuous scale,
 <code>.approach_score_benchmark</code> is ignored. Defaults to "<em>round</em>".</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class <code>cSEMPredict</code> with print and plot methods.
+    
+
+<p>An object of class <code>cSEMPredict</code> with print and plot methods.
 Technically, <code>cSEMPredict</code> is a
-named list containing the following list elements:</p><dl><dt><code>$Actual</code></dt>
+named list containing the following list elements:</p>
+
+
+<dl><dt><code>$Actual</code></dt>
 <dd><p>A matrix of the actual values/indicator scores of the endogenous constructs.</p></dd>
 
 <dt><code>$Prediction_target</code></dt>

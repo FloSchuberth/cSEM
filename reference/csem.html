@@ -129,12 +129,18 @@ case estimation is repeated for each data set. Possible column types or classes
 of the data provided are: "<code>logical</code>", "<code>numeric</code>" ("<code>double</code>" or "<code>integer</code>"),
 "<code>factor</code>" ("<code>ordered</code>" and/or "<code>unordered</code>"), "<code>character</code>" (will be converted to factor),
 or a mix of several types.</p></dd>
+
+
 <dt>.model</dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a>
 or a <a href="csem_model.html">cSEMModel</a> list.</p></dd>
+
+
 <dt>.approach_2ndorder</dt>
 <dd><p>Character string. Approach used for models containing
 second-order constructs. One of: "<em>2stage</em>", or "<em>mixed</em>". Defaults to "<em>2stage</em>".</p></dd>
+
+
 <dt>.approach_cor_robust</dt>
 <dd><p>Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "<em>none</em>" in which case the standard
@@ -145,40 +151,58 @@ Defaults to "<em>none</em>". Note that many postestimation procedures (such as
 <code><a href="testOMF.html">testOMF()</a></code> or <code><a href="fit.html">fit()</a></code> implicitly assume a continuous
 indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.</p></dd>
+
+
 <dt>.approach_nl</dt>
 <dd><p>Character string. Approach used to estimate nonlinear
 structural relationships. One of: "<em>sequential</em>" or "<em>replace</em>".
 Defaults to "<em>sequential</em>".</p></dd>
+
+
 <dt>.approach_paths</dt>
 <dd><p>Character string. Approach used to estimate the
 structural coefficients. One of: "<em>OLS</em>" or "<em>2SLS</em>". If "<em>2SLS</em>", instruments
 need to be supplied to <code>.instruments</code>. Defaults to "<em>OLS</em>".</p></dd>
+
+
 <dt>.approach_weights</dt>
 <dd><p>Character string. Approach used to
 obtain composite weights. One of: "<em>PLS-PM</em>", "<em>SUMCORR</em>", "<em>MAXVAR</em>",
 "<em>SSQCORR</em>", "<em>MINVAR</em>", "<em>GENVAR</em>", "<em>GSCA</em>", "<em>PCA</em>", "<em>unit</em>", "<em>bartlett</em>",
 or "<em>regression</em>". Defaults to "<em>PLS-PM</em>".</p></dd>
+
+
 <dt>.conv_criterion</dt>
 <dd><p>Character string. The criterion to use for the convergence check.
 One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", or "<em>diff_relative</em>". Defaults
 to "<em>diff_absolute</em>".</p></dd>
+
+
 <dt>.disattenuate</dt>
 <dd><p>Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.dominant_indicators</dt>
 <dd><p>A character vector of <code>"construct_name" = "indicator_name"</code> pairs,
 where <code>"indicator_name"</code> is a character string giving the name of the dominant indicator
 and <code>"construct_name"</code> a character string of the corresponding construct name.
 Dominant indicators may be specified for a subset of the constructs.
 Default to <code>NULL</code>.</p></dd>
+
+
 <dt>.estimate_structural</dt>
 <dd><p>Logical. Should the structural coefficients
 be estimated? Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.id</dt>
 <dd><p>Character string or integer. A character string giving the name or
 an integer of the position of the column of <code>.data</code> whose levels are used
 to split <code>.data</code> into groups. Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.instruments</dt>
 <dd><p>A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -186,27 +210,37 @@ equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation <strong>must</strong> be supplied as
 instruments for themselves. Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.iter_max</dt>
 <dd><p>Integer. The maximum number of iterations allowed.
 If <code>iter_max = 1</code> and <code>.approach_weights = "PLS-PM"</code> one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 <code>.iter_max - 1</code>  will be returned with a warning. Defaults to <code>100</code>.</p></dd>
+
+
 <dt>.normality</dt>
 <dd><p>Logical. Should joint normality of
 \([\eta_{1:p}; \zeta; \epsilon]\)
 be assumed in the nonlinear model? See (Dijkstra and Schermelleh-Engel 2014)
  for details.
 Defaults to <code>FALSE</code>. Ignored if the model is not nonlinear.</p></dd>
+
+
 <dt>.PLS_approach_cf</dt>
 <dd><p>Character string. Approach used to obtain the correction
 factors for PLSc. One of: "<em>dist_squared_euclid</em>", "<em>dist_euclid_weighted</em>",
 "<em>fisher_transformed</em>", "<em>mean_arithmetic</em>", "<em>mean_geometric</em>", "<em>mean_harmonic</em>",
 "<em>geo_of_harmonic</em>". Defaults to "<em>dist_squared_euclid</em>".
 Ignored if <code>.disattenuate = FALSE</code> or if <code>.approach_weights</code> is not PLS-PM.</p></dd>
+
+
 <dt>.PLS_ignore_structural_model</dt>
 <dd><p>Logical. Should the structural model be ignored
 when calculating the inner weights of the PLS-PM algorithm? Defaults to <code>FALSE</code>.
 Ignored if <code>.approach_weights</code> is not PLS-PM.</p></dd>
+
+
 <dt>.PLS_modes</dt>
 <dd><p>Either a named list specifying the mode that should be used for
 each construct in the form <code>"construct_name" = mode</code>, a single character
@@ -219,10 +253,14 @@ using unit weights, as weights are rescaled such that the related composite
 has unit variance.  Defaults to <code>NULL</code>.
 If <code>NULL</code> the appropriate mode according to the type
 of construct used is chosen. Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
+
+
 <dt>.PLS_weight_scheme_inner</dt>
 <dd><p>Character string. The inner weighting scheme
 used by PLS-PM. One of: "<em>centroid</em>", "<em>factorial</em>", or "<em>path</em>".
 Defaults to "<em>path</em>". Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
+
+
 <dt>.reliabilities</dt>
 <dd><p>A character vector of <code>"name" = value</code> pairs,
 where <code>value</code> is a number between 0 and 1 and <code>"name"</code> a character string
@@ -230,25 +268,37 @@ of the corresponding construct name, or <code>NULL</code>. Reliabilities
 may be given for a subset of the constructs. Defaults to <code>NULL</code> in which case
 reliabilities are estimated by <code>csem()</code>. Currently, only supported for
 <code>.approach_weights = "PLS-PM"</code>.</p></dd>
+
+
 <dt>.starting_values</dt>
 <dd><p>A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of <code>"indicator_name" = value</code>
 pairs, where <code>value</code> is the (scaled or unscaled) starting weight. Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.resample_method</dt>
 <dd><p>Character string. The resampling method to use. One of:
 "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.resample_method2</dt>
 <dd><p>Character string. The resampling method to use when resampling
 from a resample. One of: "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". For
 "<em>bootstrap</em>" the number of draws is provided via <code>.R2</code>. Currently,
 resampling from each resample is only required for the studentized confidence
 intervall ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.R</dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
+
+
 <dt>.R2</dt>
 <dd><p>Integer. The number of bootstrap replications to use when
 resampling from a resample. Defaults to <code>199</code>.</p></dd>
+
+
 <dt>.handle_inadmissibles</dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
@@ -259,6 +309,8 @@ yielded inadmissible results (i.e. number of results returned is equal to <code>
 For "<em>replace</em>" resampling continues until there are exactly <code>.R</code> admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "<em>drop</em>".</p></dd>
+
+
 <dt>.user_funs</dt>
 <dd><p>A function or a (named) list of functions to apply to every
 resample. The functions must take <code>.object</code> as its first argument (e.g.,
@@ -266,26 +318,37 @@ resample. The functions must take <code>.object</code> as its first argument (e.
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.</p></dd>
+
+
 <dt>.eval_plan</dt>
 <dd><p>Character string. The evaluation plan to use. One of
 "<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
+
+
 <dt>.seed</dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
+
 <dt>.sign_change_option</dt>
 <dd><p>Character string. Which sign change option should
 be used to handle flipping signs when resampling? One of "<em>none</em>","<em>individual</em>",
 "<em>individual_reestimate</em>", "<em>construct_reestimate</em>". Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.tolerance</dt>
 <dd><p>Double. The tolerance criterion for convergence.
 Defaults to <code>1e-05</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class <code>cSEMResults</code> with methods for all postestimation generics.
+    
+
+<p>An object of class <code>cSEMResults</code> with methods for all postestimation generics.
 Technically, a call to <code>csem()</code> results in an object with at least
 two class attributes. The first class attribute is always <code>cSEMResults</code>.
 The second is one of <code>cSEMResults_default</code>, <code>cSEMResults_multi</code>, or

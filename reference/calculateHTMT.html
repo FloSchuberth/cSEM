@@ -109,41 +109,62 @@ for congeneric measurement models. In general, they are used to assess discrimin
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.type_htmt</dt>
 <dd><p>Character string indicating the type of HTMT that should be
 calculated, i.e., the original HTMT ("<em>htmt</em>") or the HTMT2 ("<em>htmt2</em>").
 Defaults to "<em>htmt</em>"</p></dd>
+
+
 <dt>.absolute</dt>
 <dd><p>Logical. Should the absolute HTMT values be returned?
 Defaults to <code>TRUE</code> .</p></dd>
+
+
 <dt>.alpha</dt>
 <dd><p>A numeric value giving the significance level.
 Defaults to <code>0.05</code>.</p></dd>
+
+
 <dt>.ci</dt>
 <dd><p>A character strings naming the type of confidence interval to use
 to compute the 1-alpha% quantile of the bootstrap HTMT values. For possible
 choices see <code><a href="infer.html">infer()</a></code>. Ignored
 if <code>.inference = FALSE</code>. Defaults to "<em>CI_percentile</em>".</p></dd>
+
+
 <dt>.inference</dt>
 <dd><p>Logical. Should critical values be computed? Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.only_common_factors</dt>
 <dd><p>Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality critera:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt>.R</dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
+
+
 <dt>.seed</dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A named list containing:</p><ul><li><p>the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2 values
+    
+
+<p>A named list containing:</p><ul><li><p>the values of the HTMT/HTMT2, i.e., a matrix with the HTMT/HTMT2 values
 at its lower triangular and if <code>.inference = TRUE</code> the upper triangular contains
 the upper limit of the 1-2*.alpha% bootstrap confidence interval if the HTMT/HTMT2 is positive and
 the lower limit if the HTMT/HTMT2 is negative.</p></li>

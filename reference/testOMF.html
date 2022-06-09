@@ -94,12 +94,18 @@
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.alpha</dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
+
+
 <dt>.fit_measures</dt>
 <dd><p>Logical. (EXPERIMENTAL) Should additional fit measures
 be included? Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.handle_inadmissibles</dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
@@ -110,22 +116,33 @@ yielded inadmissible results (i.e. number of results returned is equal to <code>
 For "<em>replace</em>" resampling continues until there are exactly <code>.R</code> admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "<em>drop</em>".</p></dd>
+
+
 <dt>.R</dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
+
+
 <dt>.saturated</dt>
 <dd><p>Logical. Should a saturated structural model be used?
 Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt>.seed</dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Can be used to determine the fitting function used in the calculateGFI function.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of class <code>cSEMTestOMF</code> containing the following list elements:</p><dl><dt><code>$Test_statistic</code></dt>
+    
+
+<p>A list of class <code>cSEMTestOMF</code> containing the following list elements:</p><dl><dt><code>$Test_statistic</code></dt>
 <dd><p>The value of the test statistics.</p></dd>
 
 <dt><code>$Critical_value</code></dt>

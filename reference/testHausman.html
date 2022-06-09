@@ -92,10 +92,14 @@
     <h2>Arguments</h2>
     <dl><dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
 <dt>.eval_plan</dt>
 <dd><p>Character string. The evaluation plan to use. One of
 "<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
+
+
 <dt>.handle_inadmissibles</dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
@@ -106,16 +110,23 @@ yielded inadmissible results (i.e. number of results returned is equal to <code>
 For "<em>replace</em>" resampling continues until there are exactly <code>.R</code> admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "<em>drop</em>".</p></dd>
+
+
 <dt>.R</dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
+
+
 <dt>.resample_method</dt>
 <dd><p>Character string. The resampling method to use. One of:
 "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.seed</dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -212,18 +223,18 @@ MIT Press.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Dependent construct: 'eta5'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta1                      -0.3000      0.0738   -4.0624    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2                       0.4999      0.0879    5.6862    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta6                       0.2501      0.1039    2.4061    0.0161</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta6                 0.9784      0.2311    4.2331    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta1                      -0.3000      0.1081   -2.7740    0.0055</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2                       0.4999      0.0828    6.0344    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta6                       0.2501      0.1284    1.9482    0.0514</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta6                 0.9784      0.2510    3.8983    0.0001</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Dependent construct: 'eta6'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta3                       0.4999      0.0557    8.9773    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta4                       0.2501      0.0471    5.3141    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta5                       0.5001      0.1018    4.9132    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta5                -0.0056      0.1275   -0.0438    0.9651</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta3                       0.4999      0.0526    9.5005    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta4                       0.2501      0.0493    5.0757    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta5                       0.5001      0.0912    5.4853    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta5                -0.0056      0.1350   -0.0414    0.9670</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 </code></pre></div>
     </div>

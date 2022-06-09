@@ -92,6 +92,8 @@ cSEMModel list."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/
     <dl><dt>.model</dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a>
 or a <a href="csem_model.html">cSEMModel</a> list.</p></dd>
+
+
 <dt>.instruments</dt>
 <dd><p>A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -99,14 +101,19 @@ equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation <strong>must</strong> be supplied as
 instruments for themselves. Defaults to <code>NULL</code>.</p></dd>
+
+
 <dt>.check_errors</dt>
 <dd><p>Logical. Should the model to parse be checked for correctness
 in a sense that all necessary components to estimate the model are given?
 Defaults to <code>TRUE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class <a href="csem_model.html">cSEMModel</a> is a standardized list containing the
+    
+
+<p>An object of class <a href="csem_model.html">cSEMModel</a> is a standardized list containing the
 following components. J stands for the number of constructs and K for the number
 of indicators.</p><dl><dt><code>$structural</code></dt>
 <dd><p>A matrix mimicking the structural relationship between

@@ -118,11 +118,17 @@
     <dl><dt>.first_resample</dt>
 <dd><p>A list containing the <code>.R</code> resamples based on the original
 data obtained by resamplecSEMResults().</p></dd>
+
+
 <dt>.resample_method</dt>
 <dd><p>Character string. The resampling method to use. One of:
 "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.n</dt>
 <dd><p>Integer. The number of observations of the original data.</p></dd>
+
+
 <dt>.bias_corrected</dt>
 <dd><p>Logical. Should the standard and the tStat
 confidence interval be bias-corrected using the bootstrapped bias estimate?
@@ -130,26 +136,39 @@ If <code>TRUE</code> the confidence interval for some estimated parameter <code>
 is centered at <code>2*theta - theta*_hat</code>,
 where <code>theta*_hat</code> is the average over all <code>.R</code> bootstrap estimates of <code>theta</code>.
 Defaults to <code>TRUE</code></p></dd>
+
+
 <dt>.dist</dt>
 <dd><p>Character string. The distribution to use for the critical value.
 One of <em>"t"</em> for Student's t-distribution or <em>"z"</em> for the standard normal distribution.
 Defaults to <em>"z"</em>.</p></dd>
+
+
 <dt>.df</dt>
 <dd><p>Character string. The method for obtaining the degrees of freedom.
 Choices are "<em>type1</em>" and "<em>type2</em>". Defaults to "<em>type1</em>" .</p></dd>
+
+
 <dt>.probs</dt>
 <dd><p>A vector of probabilities.</p></dd>
+
+
 <dt>.second_resample</dt>
 <dd><p>A list containing <code>.R2</code> resamples for each of the <code>.R</code>
 resamples of the first run.</p></dd>
+
+
 <dt>.resample_method2</dt>
 <dd><p>Character string. The resampling method to use when resampling
 from a resample. One of: "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". For
 "<em>bootstrap</em>" the number of draws is provided via <code>.R2</code>. Currently,
 resampling from each resample is only required for the studentized confidence
 intervall ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
+
+
 <dt>.object</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
