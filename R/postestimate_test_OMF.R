@@ -148,12 +148,14 @@ testOMF <- function(
   ## Calculate test statistic
   if(.fit_measures) {
     teststat <- c(
-      "dG"           = calculateDG(.object),
-      "SRMR"         = calculateSRMR(.object),
-      "dL"           = calculateDL(.object),
-      "dML"          = calculateDML(.object),
-      "Chi_square"   = calculateChiSquare(.object),
-      "Chi_square_df"= calculateChiSquareDf(.object),
+      "dG"           = calculateDG(.object,.saturated = .saturated),
+      "SRMR"         = calculateSRMR(.object,.saturated = .saturated),
+      "dL"           = calculateDL(.object,.saturated = .saturated),
+      "dML"          = calculateDML(.object,.saturated = .saturated),
+      "Chi_square"   = calculateChiSquare(.object,.saturated = .saturated),
+      # The following fit measures are not affected by the saturated argument since they are based on dfs,
+      # which calculation is a bit more more difficult in case of a saturated structural model. 
+      "Chi_square_df"= calculateChiSquareDf(.object), 
       "CFI"          = calculateCFI(.object),
       "GFI"          = calculateGFI(.object,...),
       "IFI"          = calculateIFI(.object),
@@ -165,10 +167,10 @@ testOMF <- function(
     )
   } else {
     teststat <- c(
-      "dG"           = calculateDG(.object),
-      "SRMR"         = calculateSRMR(.object),
-      "dL"           = calculateDL(.object),
-      "dML"          = calculateDML(.object)
+      "dG"           = calculateDG(.object,.saturated = .saturated),
+      "SRMR"         = calculateSRMR(.object,.saturated = .saturated),
+      "dL"           = calculateDL(.object,.saturated = .saturated),
+      "dML"          = calculateDML(.object,.saturated = .saturated)
     )
   }
 
@@ -247,11 +249,13 @@ testOMF <- function(
         
        ref_dist[[counter]] <- if(.fit_measures) {
         c(
-          "dG"           = calculateDG(Est_temp),
-          "SRMR"         = calculateSRMR(Est_temp),
-          "dL"           = calculateDL(Est_temp),
-          "dML"          = calculateDML(Est_temp),
-          "Chi_square"   = calculateChiSquare(Est_temp),
+          "dG"           = calculateDG(Est_temp,.saturated = .saturated),
+          "SRMR"         = calculateSRMR(Est_temp,.saturated = .saturated),
+          "dL"           = calculateDL(Est_temp,.saturated = .saturated),
+          "dML"          = calculateDML(Est_temp,.saturated = .saturated),
+          "Chi_square"   = calculateChiSquare(Est_temp,.saturated = .saturated),
+          # The following fit measures are not affected by the saturated argument since they are based on dfs,
+          # which calculation is a bit more more difficult in case of a saturated structural model. 
           "Chi_square_df"= calculateChiSquareDf(Est_temp),
           "CFI"          = calculateCFI(Est_temp),
           "GFI"          = calculateGFI(Est_temp,...),
@@ -264,10 +268,10 @@ testOMF <- function(
         ) 
       } else {
         c(
-          "dG"           = calculateDG(Est_temp),
-          "SRMR"         = calculateSRMR(Est_temp),
-          "dL"           = calculateDL(Est_temp),
-          "dML"          = calculateDML(Est_temp)
+          "dG"           = calculateDG(Est_temp,.saturated = .saturated),
+          "SRMR"         = calculateSRMR(Est_temp,.saturated = .saturated),
+          "dL"           = calculateDL(Est_temp,.saturated = .saturated),
+          "dML"          = calculateDML(Est_temp,.saturated = .saturated)
         ) 
       }
         
