@@ -106,6 +106,35 @@ The dataset was used as an illustrative example in Benitez et al. (2020)
 .</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">#============================================================================</span></span>
+<span class="r-in"><span class="co"># Example is taken from Benitez et al. (2020)</span></span>
+<span class="r-in"><span class="co">#============================================================================</span></span>
+<span class="r-in"><span class="va">model_Benitez</span> <span class="op">&lt;-</span><span class="st">"</span>
+<span class="r-in"># Reflective measurement models# Reflective measurement models</span>
+<span class="r-in">SEXB =~ SEXB1 + SEXB2 + SEXB3 +SEXB4</span>
+<span class="r-in">SEMB =~ SEMB1 + SEMB2 + SEMB3 + SEMB4</span>
+<span class="r-in"></span>
+<span class="r-in"># Composite models</span>
+<span class="r-in">SMC &lt;~ SMC1 + SMC2 + SMC3 + SMC4</span>
+<span class="r-in">BPP &lt;~ BPP1 + BPP2 + BPP3 + BPP4 + BPP5</span>
+<span class="r-in"></span>
+<span class="r-in"># Control variables</span>
+<span class="r-in">FS&lt;~ FirmSize</span>
+<span class="r-in">Ind &lt;~ Industry1 + Industry2 + Industry3</span>
+<span class="r-in"></span>
+<span class="r-in"># Structural model</span>
+<span class="r-in">SMC ~ SEXB + SEMB </span>
+<span class="r-in">BPP ~ SMC + Ind + FS</span>
+<span class="r-in">"</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">Benitezetal2020</span>, .model <span class="op">=</span> <span class="va">model_Benitez</span>,</span>
+<span class="r-in">            .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">'factorial'</span>,</span>
+<span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-06</span><span class="op">)</span></span>
+<span class="r-in"></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
