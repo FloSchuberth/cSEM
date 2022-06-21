@@ -171,6 +171,10 @@
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
+#' @param .metrics Character string or a vector of character strings. 
+#'   Which prediction metrics should be displayed? One of: "*MAE*", "*RMSE*", "*Q2*", 
+#'   "*misclassification*", "*MAPE*, "*MSE2*", "*U1*", "*U2*", "*UM*", "*UR*", or "*UD*". 
+#'   Default to c("*MAE*", "*RMSE*", "*Q2*").
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
 #'   or a [cSEMModel] list.
 #' @param .moderator Character string. The name of the moderator variable.
@@ -440,6 +444,7 @@ args_default <- function(.choices = FALSE) {
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS"),
+    .approach_predict        = c("earliest", "direct"),
     .approach_score_benchmark= c("mean", "median", "mode", "round"),
     .approach_score_target   = c("mean", "median", "mode"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
@@ -488,6 +493,8 @@ args_default <- function(.choices = FALSE) {
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,
+    .metrics                 = c("MAE", "RMSE", "Q2", "misclassification", 
+                                 "MAPE", "MSE2", "U1", "U2" , "UM", "UR", "UD"),
     .model                   = NULL,
     .moderator               = NULL,
     .modes                   = NULL,

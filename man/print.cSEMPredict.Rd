@@ -4,7 +4,13 @@
 \alias{print.cSEMPredict}
 \title{\code{cSEMPredict} method for \code{print()}}
 \usage{
-\method{print}{cSEMPredict}(x, ...)
+\method{print}{cSEMPredict}(x, .metrics = c("MAE", "RMSE", "Q2"), ...)
+}
+\arguments{
+\item{.metrics}{Character string or a vector of character strings.
+Which prediction metrics should be displayed? One of: "\emph{MAE}", "\emph{RMSE}", "\emph{Q2}",
+"\emph{misclassification}", "\emph{MAPE}, "\emph{MSE2}", "\emph{U1}", "\emph{U2}", "\emph{UM}", "\emph{UR}", or "\emph{UD}".
+Default to c("\emph{MAE}", "\emph{RMSE}", "\emph{Q2}").}
 }
 \description{
 The \code{cSEMPredict} method for the generic function \code{\link[=print]{print()}}.

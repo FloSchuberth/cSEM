@@ -88,7 +88,7 @@
 #'   set to `NA`. Defaults to "*stop*"
 #' @param .disattenuate Logical. Should the benchmark predictions be based on 
 #'   disattenuated parameter estimates? Defaults to `TRUE`.
-#' @param .approach_predict Character string. Which approach should be used to 
+#' @param .approach_predict Character string. Which approach should be used to perform
 #'  predictions? One of "*earliest*" and "*direct*". If "*earliest*" predictions
 #'  for indicators associated to endogenous constructs are performed using only
 #'  indicators associated to exogenous constructs. If "*direct*", predictions for 
@@ -448,21 +448,12 @@ predict <- function(
             thresholds <- thresholds[!is.na(thresholds)]
             Tmin <- -4
             Tmax <- 4
-            correction <- function(x) {
-              multval <- x[duplicated(x)]
-              threshold.indices.to.change <- which(x == multval)
-              if (length(threshold.indices.to.change) == 0){
-                return(x)
-              }
-              x[threshold.indices.to.change] <- multval - epsilon * rev(threshold.indices.to.change - min(threshold.indices.to.change))    
-              x
-            }
-            
-            for (th in 1:length(thresholds)){
-              thresholds[[th]] <- correction(thresholds[[th]])
-            } 
             
             thresholds <- lapply(thresholds, function(x) c(Tmin, x, Tmax))
+            
+            if(any(apply(X_test[, cat_indicators], 2, max) >= lapply(thresholds, function(x) length(x)))){
+              stop2("The test dataset contains more categories than the train dataset.")
+            }
             
             Cov_ind <- Est$Estimates$Indicator_VCV
             X_hat <- matrix(0, nrow = nrow(X_test), ncol = length(endo_indicators),
@@ -693,6 +684,7 @@ predict <- function(
     #  a / b
     #})
     df_metrics <- list()
+    
     for(q in 1: length(out_all)){
     ## Compute prediction metrics ------------------------------------------------
     Res_t <- out_all[[q]]$Residuals_target
@@ -706,6 +698,13 @@ predict <- function(
     
     if(.benchmark != "NA"){
     ## Create data frame
+      
+    if(any(apply(Pred_t, 2, sd) == 0) | any(apply(Pred_b, 2, sd) == 0)){
+      warning2("The predictions of at least one indicator are equal for all \n",
+               "observations of the test dataset. UR and UD cannot be calculated \n",
+               "for the respective indicators.")
+    }
+        
     df_metrics[[q]] <- data.frame(
       "MAE_target"     = calculateMAE(resid = Res_t),
       "MAE_benchmark"  = calculateMAE(resid = Res_b),
@@ -731,12 +730,13 @@ predict <- function(
       stringsAsFactors = FALSE
     )
     }else if(.benchmark == "NA"){
+      
       df_metrics[[q]] <- data.frame(
         "MAE_target"     = calculateMAE(resid = Res_t),
         "MAE_benchmark"  = 0,
         "RMSE_target"    = calculateRMSE(resid = Res_t),
         "RMSE_benchmark" = 0,
-        "Q2_predict"     = 0,
+       "Q2_predict"     = 0,
         "misclassification_target"    = calculateMissclassification(resid = Res_t),
         "misclassification_benchmark" = 0,
         "MAPE_target"    = calculateMAPE(resid = Res_t, act = act),
@@ -762,6 +762,7 @@ predict <- function(
       "Name" = endo_indicators,
       Reduce("+", df_metrics)/length(df_metrics))
     rownames(df_metrics) <- NULL
+    
     
     if(.benchmark == "NA"){
       df_metrics$MAE_benchmark <- "NA"

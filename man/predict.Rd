@@ -27,7 +27,7 @@ predict(
 One of "\emph{lm}", "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", or "\emph{MAXVAR}".
 Default to "\emph{lm}".}
 
-\item{.approach_predict}{Character string. Which approach should be used to
+\item{.approach_predict}{Character string. Which approach should be used to perform
 predictions? One of "\emph{earliest}" and "\emph{direct}". If "\emph{earliest}" predictions
 for indicators associated to endogenous constructs are performed using only
 indicators associated to exogenous constructs. If "\emph{direct}", predictions for

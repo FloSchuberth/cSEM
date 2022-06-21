@@ -225,6 +225,11 @@ for constructs or indicators.}
 
 \item{.matrices}{A list of at least two matrices.}
 
+\item{.metrics}{Character string or a vector of character strings.
+Which prediction metrics should be displayed? One of: "\emph{MAE}", "\emph{RMSE}", "\emph{Q2}",
+"\emph{misclassification}", "\emph{MAPE}, "\emph{MSE2}", "\emph{U1}", "\emph{U2}", "\emph{UM}", "\emph{UR}", or "\emph{UD}".
+Default to c("\emph{MAE}", "\emph{RMSE}", "\emph{Q2}").}
+
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
 
