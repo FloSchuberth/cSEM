@@ -103,7 +103,7 @@ of the endogenous constructs based on the target model in each repetition .r.}
 of the endogenous constructs based on a model estimated by the procedure
 given to \code{.benchmark} for each repetition .r.}
 \item{\verb{$Prediction_metrics}}{A data frame containing the predictions metrics
-MAE, RMSE, Q2_predict, the misclassification error rate, the MAPE, the MSE2,
+MAE, RMSE, Q2_predict, the misclassification error rate (MER), the MAPE, the MSE2,
 Theil's forecast accuracy (U1), Theil's forecast quality (U2), Bias proportion
 of MSE (UM), Regression proportion of MSE (UR), and disturbance proportion
 of MSE (UD) \insertCite{Hora2015,Watson2002}{cSEM}.}

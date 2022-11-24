@@ -6,7 +6,7 @@
 #' 
 #' @param .metrics Character string or a vector of character strings. 
 #'   Which prediction metrics should be displayed? One of: "*MAE*", "*RMSE*", "*Q2*", 
-#'   "*misclassification*", "*MAPE*, "*MSE2*", "*U1*", "*U2*", "*UM*", "*UR*", or "*UD*". 
+#'   "*MER*", "*MAPE*, "*MSE2*", "*U1*", "*U2*", "*UM*", "*UR*", or "*UD*". 
 #'   Default to c("*MAE*", "*RMSE*", "*Q2*").
 #'
 #' @seealso [csem()], [cSEMResults], [predict()]
@@ -89,10 +89,10 @@ print.cSEMPredict <- function(x,
         col_align("Q2_predict", 13, align = "right")
       )
     }
-    if(any(metrics_to_display == "misclassification")){
+    if(any(metrics_to_display == "MER")){
       cat2(
-        col_align("misclassification target", 25, align = "right"), 
-        col_align("misclassification benchmark", 28, align = "right")
+        col_align("MER target", 13, align = "right"), 
+        col_align("MER benchmark", 15, align = "right")
       )
     }
     if(any(metrics_to_display == "MAPE")){
@@ -155,9 +155,9 @@ print.cSEMPredict <- function(x,
           if(any(metrics_to_display == "Q2")){
             cat2(col_align(sprintf("%.4f",x1[i, "Q2_predict"]), 13, align = "right"))
           }
-          if(any(metrics_to_display == "misclassification")){
-            cat2(col_align(sprintf("%.4f", x1[i, "misclassification_target"]), 25, align = "right"),
-          col_align(sprintf("%.4f",x1[i, "misclassification_benchmark"]), 28, align = "right"))
+          if(any(metrics_to_display == "MER")){
+            cat2(col_align(sprintf("%.4f", x1[i, "MER_target"]), 13, align = "right"),
+          col_align(sprintf("%.4f",x1[i, "MER_benchmark"]), 15, align = "right"))
           }
           if(any(metrics_to_display == "MAPE")){
             cat2(col_align(sprintf("%.4f", x1[i, "MAPE_target"]), 13, align = "right"),
@@ -199,8 +199,8 @@ print.cSEMPredict <- function(x,
         if(any(metrics_to_display == "RMSE")){
           cat2(col_align(sprintf("%.4f", x1[i, "RMSE_target"]), 13, align = "right"))
         }
-        if(any(metrics_to_display == "misclassification")){
-          cat2(col_align(sprintf("%.4f", x1[i, "misclassification_target"]), 25, align = "right"))
+        if(any(metrics_to_display == "MER")){
+          cat2(col_align(sprintf("%.4f", x1[i, "MER_target"]), 13, align = "right"))
         }
         if(any(metrics_to_display == "MAPE")){
           cat2(col_align(sprintf("%.4f", x1[i, "MAPE_target"]), 13, align = "right"))

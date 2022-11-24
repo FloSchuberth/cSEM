@@ -173,7 +173,7 @@
 #' @param .matrices A list of at least two matrices.
 #' @param .metrics Character string or a vector of character strings. 
 #'   Which prediction metrics should be displayed? One of: "*MAE*", "*RMSE*", "*Q2*", 
-#'   "*misclassification*", "*MAPE*, "*MSE2*", "*U1*", "*U2*", "*UM*", "*UR*", or "*UD*". 
+#'   "*MER*", "*MAPE*, "*MSE2*", "*U1*", "*U2*", "*UM*", "*UR*", or "*UD*". 
 #'   Default to c("*MAE*", "*RMSE*", "*Q2*").
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
 #'   or a [cSEMModel] list.
@@ -493,7 +493,7 @@ args_default <- function(.choices = FALSE) {
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,
-    .metrics                 = c("MAE", "RMSE", "Q2", "misclassification", 
+    .metrics                 = c("MAE", "RMSE", "Q2", "MER", 
                                  "MAPE", "MSE2", "U1", "U2" , "UM", "UR", "UD"),
     .model                   = NULL,
     .moderator               = NULL,

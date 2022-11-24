@@ -52,7 +52,7 @@
 #'     of the endogenous constructs based on a model estimated by the procedure
 #'     given to `.benchmark` for each repetition .r.}
 #'   \item{`$Prediction_metrics`}{A data frame containing the predictions metrics
-#'     MAE, RMSE, Q2_predict, the misclassification error rate, the MAPE, the MSE2, 
+#'     MAE, RMSE, Q2_predict, the misclassification error rate (MER), the MAPE, the MSE2, 
 #'     Theil's forecast accuracy (U1), Theil's forecast quality (U2), Bias proportion
 #'     of MSE (UM), Regression proportion of MSE (UR), and disturbance proportion 
 #'     of MSE (UD) \insertCite{Hora2015,Watson2002}{cSEM}.}
@@ -711,8 +711,8 @@ predict <- function(
       "RMSE_target"    = calculateRMSE(resid = Res_t),
       "RMSE_benchmark" = calculateRMSE(resid = Res_b),
       "Q2_predict"     = calculateq2(res = Res_t, MB = out_all[[q]]$Residuals_mb),
-      "misclassification_target"    = calculateMissclassification(resid = Res_t),
-      "misclassification_benchmark" = calculateMissclassification(resid = Res_b),
+      "MER_target"     = calculateMissclassification(resid = Res_t),
+      "MER_benchmark"   = calculateMissclassification(resid = Res_b),
       "MAPE_target"    = calculateMAPE(resid = Res_t, act = act),
       "MAPE_benchmark" = calculateMAPE(resid = Res_b, act = act),
       "MSE2_target"    = mse2_target,
@@ -737,8 +737,8 @@ predict <- function(
         "RMSE_target"    = calculateRMSE(resid = Res_t),
         "RMSE_benchmark" = 0,
        "Q2_predict"     = 0,
-        "misclassification_target"    = calculateMissclassification(resid = Res_t),
-        "misclassification_benchmark" = 0,
+        "MER_target"    = calculateMissclassification(resid = Res_t),
+        "MER_benchmark" = 0,
         "MAPE_target"    = calculateMAPE(resid = Res_t, act = act),
         "MAPE_benchmark" = 0,
         "MSE2_target"    = mse2_target,
@@ -768,7 +768,7 @@ predict <- function(
       df_metrics$MAE_benchmark <- "NA"
       df_metrics$RMSE_benchmark <- "NA"
       df_metrics$Q2_predict <- "NA"
-      df_metrics$misclassification_benchmark <- "NA"
+      df_metrics$MER_benchmark <- "NA"
       df_metrics$MAPE_benchmark <- "NA"
       df_metrics$MSE2_benchmark <- "NA"
       df_metrics$U1_benchmark <- "NA"
