@@ -3,11 +3,11 @@ Title: Composite-Based Structural Equation Modeling
 Version: 0.5.0
 Date: 2022-05-09
 Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
-                    role  = c("aut", "cre"),
+                    role  = c("aut"),
                     email = "manuel-rademaker@outlook.de",
                     comment = c(ORCID = "0000-0002-8902-3561")),
              person(given = "Florian", family = "Schuberth",
-                    role  = c("aut"),
+                    role  = c("aut", "cre"),
                     email = "f.schuberth@utwente.nl",
                     comment = c(ORCID = "0000-0002-2110-9086")),
              person(given = "Tamara", family = "Schamberger",
