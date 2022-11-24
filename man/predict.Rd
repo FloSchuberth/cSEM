@@ -2,22 +2,22 @@
 % Please edit documentation in R/postestimate_predict.R
 \name{predict}
 \alias{predict}
-\title{Predict indicator scores}
+\title{Predict indicator and construct scores}
 \usage{
 predict(
- .object               = NULL,
- .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "NA"),
- .approach_predict     = c("earliest", "direct"),
- .cv_folds             = 10,
- .handle_inadmissibles = c("stop", "ignore", "set_NA"),
- .r                    = 1,
- .test_data            = NULL,
- .approach_score_target= c("mean", "median", "mode"),
- .sim_points           = 100,
- .disattenuate         = TRUE,
- .treat_as_continuous  = TRUE,
+ .object                   = NULL,
+ .benchmark                = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "NA"),
+ .approach_predict         = c("earliest", "direct"),
+ .cv_folds                 = 10,
+ .handle_inadmissibles     = c("stop", "ignore", "set_NA"),
+ .r                        = 1,
+ .test_data                = NULL,
+ .approach_score_target    = c("mean", "median", "mode"),
+ .sim_points               = 100,
+ .disattenuate             = TRUE,
+ .treat_as_continuous      = TRUE,
  .approach_score_benchmark = c("mean", "median", "mode", "round"),
- .seed                 = NULL
+ .seed                     = NULL
  )
 }
 \arguments{

@@ -7,12 +7,13 @@
 
 Tested using GitHub Actions on 
 
-* Windows-latest (10.0.17763); R-current (R 4.2.0)
-* mac OS x (10.15.7); R-current (R 4.2.0)
-* ubuntu 20.04 R-devel, R-current (R 4.2.0)
-* windows x86_64-w64-mingw32/x64 (on appveyor); R-current (R 4.2.0)
+* Windows-latest (x86_64-w64-mingw32 (64-bit)); R-current (R 4.2.2)
+* macOS-latest (x86_64-apple-darwin17.0 (64-bit)); R-current (R 4.2.2)
+* ubuntu-20.04 (x86_64-pc-linux-gnu (64-bit)); R-current (R 4.2.2)
+* ubuntu 20.04 R-devel, R-current (R 4.2.2)
 
-I also tested using rhub::check_for_cran() with default arguments.
+
+I also tested using devtools::check() with default arguments.
 
 There was no issue.
 

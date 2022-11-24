@@ -5,13 +5,13 @@
 \title{Perform a Cross-Validated Predictive Ability Test (CVPAT)}
 \usage{
 testCVPAT(
-.object1  = NULL,
-.object2  = NULL,
-.approach_predict = c("earliest", "direct"),
-.seed     = NULL,
-.cv_folds = 10,
-.handle_inadmissibles     = c("stop", "ignore"),
-.testtype = c("twosided", "onesided"))
+.object1              = NULL,
+.object2              = NULL,
+.approach_predict     = c("earliest", "direct"),
+.seed                 = NULL,
+.cv_folds             = 10,
+.handle_inadmissibles = c("stop", "ignore"),
+.testtype             = c("twosided", "onesided"))
 }
 \arguments{
 \item{.object1}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}

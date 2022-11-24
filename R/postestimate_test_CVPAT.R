@@ -16,13 +16,13 @@
 #'   }
 #'   
 #' @usage testCVPAT(
-#' .object1  = NULL,
-#' .object2  = NULL,
-#' .approach_predict = c("earliest", "direct"),
-#' .seed     = NULL,
-#' .cv_folds = 10,
-#' .handle_inadmissibles     = c("stop", "ignore"),
-#' .testtype = c("twosided", "onesided"))
+#' .object1              = NULL,
+#' .object2              = NULL,
+#' .approach_predict     = c("earliest", "direct"),
+#' .seed                 = NULL,
+#' .cv_folds             = 10,
+#' .handle_inadmissibles = c("stop", "ignore"),
+#' .testtype             = c("twosided", "onesided"))
 #'
 #' @inheritParams csem_arguments
 #' @param .object1 An R object of class [cSEMResults] resulting from a call to [csem()].
@@ -48,13 +48,13 @@
 #' @export
 
 testCVPAT <- function(
-  .object1  = NULL,
-  .object2  = NULL,
-  .approach_predict = c("earliest", "direct"),
-  .seed     = NULL,
-  .cv_folds = 10,
-  .handle_inadmissibles     = c("stop", "ignore"),
-  .testtype = c("twosided", "onesided")){
+  .object1              = NULL,
+  .object2              = NULL,
+  .approach_predict     = c("earliest", "direct"),
+  .seed                 = NULL,
+  .cv_folds             = 10,
+  .handle_inadmissibles = c("stop", "ignore"),
+  .testtype             = c("twosided", "onesided")){
   
   .approach_predict            <- match.arg(.approach_predict)
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
