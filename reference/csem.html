@@ -144,7 +144,7 @@ second-order constructs. One of: "<em>2stage</em>", or "<em>mixed</em>". Default
 <dt>.approach_cor_robust</dt>
 <dd><p>Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "<em>none</em>" in which case the standard
-Bravais-Person correlation is used,
+Bravais-Pearson correlation is used,
 "<em>spearman</em>" for the Spearman rank correlation, or
 "<em>mcd</em>" via <code><a href="https://rdrr.io/pkg/MASS/man/cov.rob.html" class="external-link">MASS::cov.rob()</a></code> for a robust correlation matrix.
 Defaults to "<em>none</em>". Note that many postestimation procedures (such as
@@ -287,7 +287,7 @@ pairs, where <code>value</code> is the (scaled or unscaled) starting weight. Def
 from a resample. One of: "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". For
 "<em>bootstrap</em>" the number of draws is provided via <code>.R2</code>. Currently,
 resampling from each resample is only required for the studentized confidence
-intervall ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
+interval ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
 
 
 <dt>.R</dt>

@@ -111,7 +111,7 @@ Defaults to "<em>all</em>" in which case all possible quality criteria are compu
 
 <dt>.only_common_factors</dt>
 <dd><p>Logical. Should only concepts modeled as common
-factors be included when calculating one of the following quality critera:
+factors be included when calculating one of the following quality criteria:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to <code>TRUE</code>.</p></dd>
 
@@ -164,8 +164,8 @@ There are four different versions implemented. See the
 of the <a href="https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
 article on the
 <a href="https://m-e-rademaker.github.io/cSEM/index.html" class="external-link">cSEM website</a> for details.
-Alternative but synonemmous names for <code>"rho_C"</code> are:
-composite reliability, construct reliablity, reliability coefficient,
+Alternative but synonymous names for <code>"rho_C"</code> are:
+composite reliability, construct reliability, reliability coefficient,
 Joereskog's rho, coefficient omega, or Dillon-Goldstein's rho.
 For <code>"rho_C_weighted"</code>: (Dijkstra-Henselers) rhoA. <code>rho_C_mm</code> and <code>rho_C_weighted_mm</code>
 have no corresponding names. The former uses unit weights scaled by (w'Sw)^(-1/2) and
@@ -201,7 +201,7 @@ by <code><a href="calculateEffects.html">calculateEffects()</a></code>.</p></dd>
 variable in a structural regression equation. This measure is commonly
 known as Cohen's f^2. The effect size of the k'th
 independent variable in this case
-is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where
+is defined as the ratio (R2_included - R2_excluded)/(1 - R2_included), where
 R2_included and R2_excluded are the R squares of the
 original structural model regression equation (R2_included) and the
 alternative specification with the k'th variable dropped (R2_excluded).
@@ -308,8 +308,8 @@ interpreted with caution as they may not have a conceptual meaning.
 Calculation is done by <code><a href="reliability.html">calculateRhoT()</a></code>.</p></dd>
 
 <dt>Variance inflation factors (VIF); "vif"</dt>
-<dd><p>An index for the amount of (multi-)
-collinearity between independent variables of a regression equation. Computed
+<dd><p>An index for the amount of
+(multi-)collinearity between independent variables of a regression equation. Computed
 for each structural equation. Practically, VIF_k is defined
 as the ratio of 1 over (1 - R2_k) where R2_k is the R squared from a regression
 of the k'th independent variable on all remaining independent variables.
@@ -317,7 +317,7 @@ Calculated when running <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 <dt>Variance inflation factors for PLS-PM mode B (VIF-ModeB); "vifmodeB"</dt>
 <dd><p>An index for
-the amount of (multi-) collinearity between independent variables (indicators) in
+the amount of (multi-)collinearity between independent variables (indicators) in
 mode B regression equations. Computed only if <code>.object</code> was obtained using
 <code>.weight_approach = "PLS-PM"</code> and at least one mode was mode B.
 Practically, VIF-ModeB_k is defined as the ratio of 1 over (1 - R2_k) where
@@ -547,7 +547,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Look at the resamples</span></span></span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">User_fun</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02336786 0.02848123 0.02046647 0.03478400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02804259 0.02612679 0.02445657 0.03114397</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Use infer() to compute e.g., the 95% percentile confidence interval</span></span></span>
 <span class="r-in"><span><span class="va">res_infer</span> <span class="op">&lt;-</span> <span class="fu"><a href="infer.html">infer</a></span><span class="op">(</span><span class="va">res</span>, .quantity <span class="op">=</span> <span class="st">"CI_percentile"</span><span class="op">)</span></span></span>
@@ -556,8 +556,8 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span><span class="va">res_infer</span><span class="op">$</span><span class="va">User_fun</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CI_percentile</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.01787816</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03448093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.02214041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03523905</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Several quality criteria can be resampled simultaneously</span></span></span>
@@ -571,9 +571,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span>            .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">SRMR</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01841972 0.03131133 0.02752535 0.02356120</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02365735 0.03269994 0.02753668 0.02615067</span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">RMS_theta</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1050313 0.1099823 0.1032318 0.1050374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1012128 0.1094030 0.1073296 0.1005427</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

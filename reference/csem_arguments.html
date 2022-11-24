@@ -118,7 +118,7 @@ One of "<em>none</em>" or "<em>bonferroni</em>". Defaults to "<em>none</em>".</p
 <dt>.approach_cor_robust</dt>
 <dd><p>Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "<em>none</em>" in which case the standard
-Bravais-Person correlation is used,
+Bravais-Pearson correlation is used,
 "<em>spearman</em>" for the Spearman rank correlation, or
 "<em>mcd</em>" via <code><a href="https://rdrr.io/pkg/MASS/man/cov.rob.html" class="external-link">MASS::cov.rob()</a></code> for a robust correlation matrix.
 Defaults to "<em>none</em>". Note that many postestimation procedures (such as
@@ -488,7 +488,7 @@ be computed? Defaults to <code>FALSE</code>.</p></dd>
 
 <dt>.only_common_factors</dt>
 <dd><p>Logical. Should only concepts modeled as common
-factors be included when calculating one of the following quality critera:
+factors be included when calculating one of the following quality criteria:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to <code>TRUE</code>.</p></dd>
 
@@ -621,7 +621,7 @@ reliabilities are estimated by <code><a href="csem.html">csem()</a></code>. Curr
 from a resample. One of: "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". For
 "<em>bootstrap</em>" the number of draws is provided via <code>.R2</code>. Currently,
 resampling from each resample is only required for the studentized confidence
-intervall ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
+interval ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
 
 
 <dt>`.resample_object`</dt>

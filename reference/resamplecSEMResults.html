@@ -117,7 +117,7 @@ The function is called by <code><a href="csem.html">csem()</a></code> if the use
 from a resample. One of: "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". For
 "<em>bootstrap</em>" the number of draws is provided via <code>.R2</code>. Currently,
 resampling from each resample is only required for the studentized confidence
-intervall ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
+interval ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
 
 
 <dt>.R</dt>
@@ -191,7 +191,7 @@ Each list element is a list containing elements
 row representing one resample for each of the <code>K</code> parameters/statistics.
 <code>$Original</code> contains the original estimates (vectorized by column if the output of
 the user provided function is a matrix.</p></li>
-<li><p><code>$Information_resamples</code>: A list containing addtional information.</p></li>
+<li><p><code>$Information_resamples</code>: A list containing additional information.</p></li>
 </ul><p>Use <code>str(&lt;.object&gt;, list.len = 3)</code> on the resulting object for an overview.</p>
     </div>
     <div id="details">
@@ -199,7 +199,7 @@ the user provided function is a matrix.</p></li>
     <p>Given <code>M</code> resamples (for bootstrap <code>M = .R</code> and for jackknife <code>M = N</code>, where
 <code>N</code> is the number of observations) based on the data used to compute the
 <a href="csem_results.html">cSEMResults</a> object provided via <code>.object</code>, <code>resamplecSEMResults()</code> essentially calls
-<code><a href="csem.html">csem()</a></code> on each resample using the arguments of the origianl call (ignoring any arguments
+<code><a href="csem.html">csem()</a></code> on each resample using the arguments of the original call (ignoring any arguments
 related to resampling) and returns estimates for each of a subset of
 practically useful resampled parameters/statistics computed by <code><a href="csem.html">csem()</a></code>.
 Currently, the following estimates are computed and returned by default based
@@ -217,7 +217,7 @@ in the <a href="csem_results.html">cSEMResults</a> object only. Output of <code>
 be a (named) vector but matrices are also accepted.
 However, the output will be vectorized (columnwise) in this case.
 See the examples section for details.</p>
-<p>Both resampling the origianl <a href="csem_results.html">cSEMResults</a> object (call it "first resample")
+<p>Both resampling the original <a href="csem_results.html">cSEMResults</a> object (call it "first resample")
 and resampling based on a resampled <a href="csem_results.html">cSEMResults</a> object (call it "second resample")
 are supported. Choices for the former
 are "<em>bootstrap</em>" and "<em>jackknife</em>". Resampling based on a resample is turned off
@@ -247,10 +247,10 @@ Davison and Hinkley (1997)
 Efron and Hastie (2016)
  for recommendations.
 For jackknife <code>.R</code> are <code>.R2</code> are ignored.</p>
-<p>Resampling may produce inadmissble results (as checked by <code><a href="verify.html">verify()</a></code>).
+<p>Resampling may produce inadmissible results (as checked by <code><a href="verify.html">verify()</a></code>).
 By default these results are dropped however users may choose to <code>"ignore"</code>
-or <code>"replace"</code> inadmissble results in which resampling continious until
-the necessary number of admissble results is reached.</p>
+or <code>"replace"</code> inadmissible results in which resampling continuous until
+the necessary number of admissible results is reached.</p>
 <p>The <span class="pkg">cSEM</span> package supports (multi)processing via the <a href="https://github.com/HenrikBengtsson/future" class="external-link">future</a>
 framework (Bengtsson 2018)
 . Users may simply choose an evaluation plan
