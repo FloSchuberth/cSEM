@@ -44,7 +44,7 @@ Table B1 of the appendix of \insertCite{Sharma2019;textual}{cSEM}.
 
 If \code{.by_equation == FALSE} the AIC, the BIC and the HQ for whole model
 are calculated. All other criteria are currently ignored in this case!
-The relevant formulae are (see, e.g., \insertCite{Akaike1974}{cSEM},
+The relevant formula are (see, e.g., \insertCite{Akaike1974}{cSEM},
 \insertCite{Schwarz1978;textual}{cSEM},
 \insertCite{Hannan1979;textual}{cSEM}):
 

@@ -79,7 +79,7 @@ for details on the implementation.
 \itemize{
 \item \code{calculateChiSquare()}: The chi square statistic.
 
-\item \code{calculateChiSquareDf()}: The ChiSquare statistic divided by its degrees of freedom.
+\item \code{calculateChiSquareDf()}: The Chi square statistic divided by its degrees of freedom.
 
 \item \code{calculateCFI()}: The comparative fit index (CFI).
 

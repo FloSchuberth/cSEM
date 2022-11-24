@@ -384,7 +384,7 @@ getParameterNames <- function(
 
 #' Internal: Parameter differences across groups
 #' 
-#' Calculate the difference between one or more paramater estimates across
+#' Calculate the difference between one or more parameter estimates across
 #' all possible pairs of groups (data sets) in `.object`.
 #'
 #' @usage calculateParameterDifference(
@@ -516,7 +516,7 @@ calculateParameterDifference <- function(
 
 #' Internal: Multiple testing correction
 #'
-#' Adjust a given significance level `.alpha` to accomodate multiple testing.
+#' Adjust a given significance level `.alpha` to accommodate multiple testing.
 #' The following corrections are implemented:
 #' \describe{
 #'   \item{`none`}{(Default) No correction is done.}
@@ -561,7 +561,7 @@ adjustAlpha <- function(
 #' 
 #' @inheritParams csem_arguments
 #' 
-#' @return A named scaler, the test statistic of the ANOVA F-test
+#' @return A named scalar, the test statistic of the ANOVA F-test
 #'
 #' @references
 #'   \insertAllCited{}

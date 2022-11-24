@@ -24,7 +24,7 @@ One of "\emph{none}" or "\emph{bonferroni}". Defaults to "\emph{none}".}
 A vector of (possibly adjusted) significance levels.
 }
 \description{
-Adjust a given significance level \code{.alpha} to accomodate multiple testing.
+Adjust a given significance level \code{.alpha} to accommodate multiple testing.
 The following corrections are implemented:
 \describe{
 \item{\code{none}}{(Default) No correction is done.}

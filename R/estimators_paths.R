@@ -16,7 +16,7 @@
 #' @inheritParams csem_arguments
 #'
 #' @return A named list containing the estimated structural coefficients, the
-#'   R2, the adjusted R2, and the VIF's for each regression.
+#'   R2, the adjusted R2, and the VIFs for each regression.
 #'
 #' @keywords internal
 

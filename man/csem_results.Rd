@@ -18,7 +18,7 @@ was conducted.
 Depending on the type of data and/or model provided three different output
 types exists.
 \describe{
-\item{_default}{This will be the structure for the vaste majority of applications.
+\item{_default}{This will be the structure for the vast majority of applications.
 If the data is a single \code{matrix} or \code{data.frame} with no id-column,
 the result is a \code{list} with elements:
 \describe{

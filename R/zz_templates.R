@@ -74,7 +74,7 @@ NULL
 #' Depending on the type of data and/or model provided three different output
 #' types exists.
 #' \describe{
-#' \item{_default}{This will be the structure for the vaste majority of applications.
+#' \item{_default}{This will be the structure for the vast majority of applications.
 #'  If the data is a single `matrix` or `data.frame` with no id-column, 
 #'  the result is a `list` with elements: 
 #' \describe{
@@ -141,7 +141,7 @@ NULL
 #'   \item{`$Critical_value`}{The critical value(s).}
 #'   \item{`$Decision`}{The test decision. One of: **Reject** or **Do not reject**}
 #'   \item{`$Number_admissibles`}{The number of admissible runs. See [verify()] for
-#'     what constitues and inadmissible run.}
+#'     what constitutes and inadmissible run.}
 #' }
 #'
 #' @name csem_test

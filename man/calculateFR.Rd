@@ -12,7 +12,7 @@ could potentially be compared and an id column indicating the group adherence
 of each row.}
 }
 \value{
-A named scaler, the test statistic of the ANOVA F-test
+A named scalar, the test statistic of the ANOVA F-test
 }
 \description{
 Calculate the ANOVA F-test statistic suggested by

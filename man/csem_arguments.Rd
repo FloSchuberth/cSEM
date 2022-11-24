@@ -24,7 +24,7 @@ One of "\emph{none}" or "\emph{bonferroni}". Defaults to "\emph{none}".}
 
 \item{.approach_cor_robust}{Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "\emph{none}" in which case the standard
-Bravais-Person correlation is used,
+Bravais-Pearson correlation is used,
 "\emph{spearman}" for the Spearman rank correlation, or
 "\emph{mcd}" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix.
 Defaults to "\emph{none}". Note that many postestimation procedures (such as
@@ -265,7 +265,7 @@ be computed? Defaults to \code{FALSE}.}
 \item{.object2}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
-factors be included when calculating one of the following quality critera:
+factors be included when calculating one of the following quality criteria:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to \code{TRUE}.}
 
@@ -356,7 +356,7 @@ reliabilities are estimated by \code{csem()}. Currently, only supported for
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
 "\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
 resampling from each resample is only required for the studentized confidence
-intervall ("\emph{CI_t_interval}") computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
+interval ("\emph{CI_t_interval}") computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
 \item{`.resample_object`}{An R object of class \code{cSEMResults_resampled}
 obtained from \code{\link[=resamplecSEMResults]{resamplecSEMResults()}} or by setting \code{.resample_method = "bootstrap"}

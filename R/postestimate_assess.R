@@ -38,8 +38,8 @@
 #'   of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model} 
 #'   article on the
 #'   \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
-#'   Alternative but synonemmous names for `"rho_C"` are: 
-#'   composite reliability, construct reliablity, reliability coefficient, 
+#'   Alternative but synonymous names for `"rho_C"` are: 
+#'   composite reliability, construct reliability, reliability coefficient, 
 #'   Joereskog's rho, coefficient omega, or Dillon-Goldstein's rho. 
 #'   For `"rho_C_weighted"`: (Dijkstra-Henselers) rhoA. `rho_C_mm` and `rho_C_weighted_mm`
 #'   have no corresponding names. The former uses unit weights scaled by (w'Sw)^(-1/2) and
@@ -69,7 +69,7 @@
 #'   variable in a structural regression equation. This measure is commonly 
 #'   known as Cohen's f^2. The effect size of the k'th
 #'   independent variable in this case
-#'   is definied as the ratio (R2_included - R2_excluded)/(1 - R2_included), where 
+#'   is defined as the ratio (R2_included - R2_excluded)/(1 - R2_included), where 
 #'   R2_included and R2_excluded are the R squares of the 
 #'   original structural model regression equation (R2_included) and the
 #'   alternative specification with the k'th variable dropped (R2_excluded).
@@ -160,14 +160,14 @@
 #'   composites by setting `.only_common_factors = FALSE`, however, result should be 
 #'   interpreted with caution as they may not have a conceptual meaning.
 #'   Calculation is done by [calculateRhoT()].}
-#' \item{Variance inflation factors (VIF); "vif"}{An index for the amount of (multi-) 
-#'   collinearity between independent variables of a regression equation. Computed
+#' \item{Variance inflation factors (VIF); "vif"}{An index for the amount of 
+#'   (multi-)collinearity between independent variables of a regression equation. Computed
 #'   for each structural equation. Practically, VIF_k is defined
 #'   as the ratio of 1 over (1 - R2_k) where R2_k is the R squared from a regression
 #'   of the k'th independent variable on all remaining independent variables.
 #'   Calculated when running [csem()].}
 #' \item{Variance inflation factors for PLS-PM mode B (VIF-ModeB); "vifmodeB"}{An index for 
-#'   the amount of (multi-) collinearity between independent variables (indicators) in
+#'   the amount of (multi-)collinearity between independent variables (indicators) in
 #'   mode B regression equations. Computed only if `.object` was obtained using
 #'   `.weight_approach = "PLS-PM"` and at least one mode was mode B. 
 #'   Practically, VIF-ModeB_k is defined as the ratio of 1 over (1 - R2_k) where 

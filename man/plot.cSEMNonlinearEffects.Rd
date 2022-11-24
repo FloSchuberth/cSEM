@@ -30,10 +30,10 @@ are used. Since the constructs are standardized the values of the moderator
 equals the deviation from its mean measured in standard deviations.
 }
 \item{\code{.plot_type = "surface"}:}{
-The plot of a surface analyis displays the predicted values of an
+The plot of a surface analysis displays the predicted values of an
 independent variable (z). The values are predicted based on the values of the moderator
 and the independent variable including all their higher-order terms.
-For the values of the moderator and the indepedent variable steps between
+For the values of the moderator and the independent variable steps between
 their minimum and maximum values  are used.
 }
 \item{\code{.plot_type = "floodlight"}:}{

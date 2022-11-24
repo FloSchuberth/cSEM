@@ -7,11 +7,11 @@
 \format{
 A matrix with 500 rows and 9 variables:
 \describe{
-\item{y11-y13}{Indicators attachted to the first common factor (\code{eta1}).
+\item{y11-y13}{Indicators attached to the first common factor (\code{eta1}).
 Population loadings are: 0.7; 0.7; 0.7}
-\item{y21-y23}{Indicators attachted to the second common factor (\code{eta2}).
+\item{y21-y23}{Indicators attached to the second common factor (\code{eta2}).
 Population loadings are: 0.5; 0.7; 0.8}
-\item{y31-y33}{Indicators attachted to the third common factor (\code{eta3}).
+\item{y31-y33}{Indicators attached to the third common factor (\code{eta3}).
 Population loadings are: 0.8; 0.75; 0.7}
 }
 

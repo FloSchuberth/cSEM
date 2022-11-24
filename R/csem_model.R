@@ -701,7 +701,7 @@ parseModel <- function(
 
 #' Internal: Convert second order cSEMModel
 #'
-#' Uses a [cSEMModel] containg second order constructs and turns it into an
+#' Uses a [cSEMModel] containing second order constructs and turns it into an
 #' estimable model using either the "2stage" approach or the "mixed" approach.
 #'
 #' @usage convertModel(

@@ -20,7 +20,7 @@
 #'   One of "*none*" or "*bonferroni*". Defaults to "*none*". 
 #' @param .approach_cor_robust Character string. Approach used to obtain a robust 
 #'   indicator correlation matrix. One of: "*none*" in which case the standard 
-#'   Bravais-Person correlation is used,
+#'   Bravais-Pearson correlation is used,
 #'   "*spearman*" for the Spearman rank correlation, or
 #'   "*mcd*" via \code{\link[MASS:cov.rob]{MASS::cov.rob()}} for a robust correlation matrix. 
 #'   Defaults to "*none*". Note that many postestimation procedures (such as
@@ -198,7 +198,7 @@
 #' @param .object1 An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .object2 An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .only_common_factors Logical. Should only concepts modeled as common 
-#'   factors be included when calculating one of the following quality critera: 
+#'   factors be included when calculating one of the following quality criteria: 
 #'   AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates. 
 #'   Defaults to `TRUE`.
 #' @param .only_structural Should the the log-likelihood be based on the 
@@ -268,7 +268,7 @@
 #'   from a resample. One of: "*none*", "*bootstrap*" or "*jackknife*". For 
 #'   "*bootstrap*" the number of draws is provided via `.R2`. Currently, 
 #'   resampling from each resample is only required for the studentized confidence
-#'   intervall ("*CI_t_interval*") computed by the [infer()] function. Defaults to "*none*".  
+#'   interval ("*CI_t_interval*") computed by the [infer()] function. Defaults to "*none*".  
 #' @param `.resample_object` An R object of class `cSEMResults_resampled`
 #'   obtained from [resamplecSEMResults()] or by setting `.resample_method = "bootstrap"`
 #'   or `"jackknife"` when calling [csem()].

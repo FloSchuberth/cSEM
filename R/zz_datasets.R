@@ -106,11 +106,11 @@
 #' 
 #' @format A matrix with 500 rows and 9 variables:
 #' \describe{
-#'   \item{y11-y13}{Indicators attachted to the first common factor (`eta1`). 
+#'   \item{y11-y13}{Indicators attached to the first common factor (`eta1`). 
 #'                  Population loadings are: 0.7; 0.7; 0.7}
-#'   \item{y21-y23}{Indicators attachted to the second common factor (`eta2`).
+#'   \item{y21-y23}{Indicators attached to the second common factor (`eta2`).
 #'                  Population loadings are: 0.5; 0.7; 0.8}
-#'   \item{y31-y33}{Indicators attachted to the third common factor (`eta3`).
+#'   \item{y31-y33}{Indicators attached to the third common factor (`eta3`).
 #'                  Population loadings are: 0.8; 0.75; 0.7}
 #' }
 #'                  
@@ -328,7 +328,7 @@
 #'    \item{\code{ITCONN4}}{There are very few identifiable communications
 #'    bottlenecks within our firm.}
 #'    \item{\code{MOD1}}{Our firm possesses a great speed in developing new
-#'    business applications ormodifying existing applications.}
+#'    business applications or modifying existing applications.}
 #'    \item{\code{MOD2}}{Our corporate database is able to communicate in
 #'    several different protocols.}
 #'    \item{\code{MOD3}}{Reusable software modules are widely used in new
@@ -680,7 +680,7 @@
 #'
 #' @description A data frame containing 23 variables with 411 observations. The original
 #' indicators were measured on a 6-point scale. In this version of the dataset,
-#' the indidcators are scaled to be between 0 and 100. 
+#' the indicators are scaled to be between 0 and 100. 
 #' 
 #' 
 #' @references

@@ -40,7 +40,7 @@
 #' as permutation will simply reorder the observations which is usually not 
 #' meaningful. If a list of data is provided 
 #' each list element is assumed to represent the observations belonging to one
-#' group. In this case, data is pooled and group adherence permutated.
+#' group. In this case, data is pooled and group adherence permuted.
 #' 
 #' For cross-validation the number of folds (`k`) defaults to `10`. It may be
 #' changed via the `.cv_folds` argument. Setting `k = 2` (not 1!) splits
@@ -106,7 +106,7 @@
 #'   is provided an error is returned as permutation will simply reorder the observations.
 #'   If a grouping variable is specified or a list of data is provided 
 #'   (where each list element is assumed to contain data of one group), 
-#'   group membership is permutated. Hence, the result is a list of length `.R`
+#'   group membership is permuted. Hence, the result is a list of length `.R`
 #'   where each element of that list is a permutation (re)sample.}
 #' \item{Cross-validation}{If a `matrix` or `data.frame` without grouping variable 
 #'   is provided a list of length `.R` is returned. Each list element
@@ -357,7 +357,7 @@ resampleData <- function(
 #' Given `M` resamples (for bootstrap `M = .R` and for jackknife `M = N`, where
 #' `N` is the number of observations) based on the data used to compute the
 #' [cSEMResults] object provided via `.object`, `resamplecSEMResults()` essentially calls 
-#' [csem()] on each resample using the arguments of the origianl call (ignoring any arguments
+#' [csem()] on each resample using the arguments of the original call (ignoring any arguments
 #' related to resampling) and returns estimates for each of a subset of 
 #' practically useful resampled parameters/statistics computed by [csem()]. 
 #' Currently, the following estimates are computed and returned by default based 
@@ -377,7 +377,7 @@ resampleData <- function(
 #' However, the output will be vectorized (columnwise) in this case. 
 #' See the examples section for details.
 #'
-#' Both resampling the origianl [cSEMResults] object (call it "first resample") 
+#' Both resampling the original [cSEMResults] object (call it "first resample") 
 #' and resampling based on a resampled [cSEMResults] object (call it "second resample") 
 #' are supported. Choices for the former 
 #' are "*bootstrap*" and "*jackknife*". Resampling based on a resample is turned off
@@ -406,10 +406,10 @@ resampleData <- function(
 #' \insertCite{Efron2016;textual}{cSEM} for recommendations.
 #' For jackknife `.R` are `.R2` are ignored. 
 #' 
-#' Resampling may produce inadmissble results (as checked by [verify()]).
+#' Resampling may produce inadmissible results (as checked by [verify()]).
 #' By default these results are dropped however users may choose to `"ignore"`
-#' or `"replace"` inadmissble results in which resampling continious until
-#' the necessary number of admissble results is reached.
+#' or `"replace"` inadmissible results in which resampling continuous until
+#' the necessary number of admissible results is reached.
 #' 
 #' The \pkg{cSEM} package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future} 
 #' framework \insertCite{Bengtsson2018}{cSEM}. Users may simply choose an evaluation plan
@@ -464,7 +464,7 @@ resampleData <- function(
 #' row representing one resample for each of the `K` parameters/statistics.
 #' `$Original` contains the original estimates (vectorized by column if the output of 
 #' the user provided function is a matrix.}
-#' \item {`$Information_resamples`: A list containing addtional information.}
+#' \item {`$Information_resamples`: A list containing additional information.}
 #' }
 #' Use `str(<.object>, list.len = 3)` on the resulting object for an overview.
 #' 

@@ -2,7 +2,7 @@
 #' 
 #' Collection of various functions that compute an inferential quantity. 
 #' 
-#' Implementation and termionology of the confidence intervals is based on 
+#' Implementation and terminology of the confidence intervals is based on 
 #' \insertCite{Hesterberg2015;textual}{cSEM} and 
 #' \insertCite{Davison1997;textual}{cSEM}.
 #' 

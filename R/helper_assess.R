@@ -14,7 +14,7 @@
 #'  
 #' If `.by_equation == FALSE` the AIC, the BIC and the HQ for whole model 
 #' are calculated. All other criteria are currently ignored in this case! 
-#' The relevant formulae are (see, e.g., \insertCite{Akaike1974}{cSEM},
+#' The relevant formula are (see, e.g., \insertCite{Akaike1974}{cSEM},
 #' \insertCite{Schwarz1978;textual}{cSEM}, 
 #' \insertCite{Hannan1979;textual}{cSEM}): 
 #' 
@@ -1544,7 +1544,7 @@ calculateChiSquare <- function(.object,
   (n - 1) * F0
 }
 
-#' @describeIn fit_measures The ChiSquare statistic divided by its degrees of freedom.
+#' @describeIn fit_measures The Chi square statistic divided by its degrees of freedom.
 #' @export
 
 calculateChiSquareDf <- function(.object) {

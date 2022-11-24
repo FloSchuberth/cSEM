@@ -119,7 +119,7 @@ of MSE (UD) \insertCite{Hora2015,Watson2002}{cSEM}.}
 \details{
 The predict function implements the procedure introduced by \insertCite{Shmueli2016;textual}{cSEM} in the PLS context
 known as "PLSPredict" \insertCite{Shmueli2019}{cSEM} including its variants PLScPredcit, OrdPLSpredict and OrdPLScpredict.
-It is used to predict the indicator scores of endogenous constructs and to evaluat the out-of-sample predictive power
+It is used to predict the indicator scores of endogenous constructs and to evaluate the out-of-sample predictive power
 of a model.
 For that purpose, the predict function uses k-fold cross-validation to randomly
 split the data into training and test datasets, and subsequently predicts the

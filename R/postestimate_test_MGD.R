@@ -128,7 +128,7 @@
 #' does not need to be an estimable model! 
 #' 
 #' Note also that compared to all other functions in \pkg{cSEM} using the argument,
-#'  `.handle_inadmissibles` defaults to `"replace"` to accomdate the Sarstedt et al. (2011) approach.
+#'  `.handle_inadmissibles` defaults to `"replace"` to accommodate the Sarstedt et al. (2011) approach.
 #' 
 #' Argument `.R_permuation` is ignored for the `"Nitzl"` and the `"Keil"` approach. 
 #' `.R_bootstrap` is ignored if  `.object` already contains resamples, 

@@ -40,7 +40,7 @@ Q^2 is also called the reliability coefficient.}
 }
 \value{
 A named list containing the estimated structural coefficients, the
-R2, the adjusted R2, and the VIF's for each regression.
+R2, the adjusted R2, and the VIFs for each regression.
 }
 \description{
 Estimates the coefficients of the structural model (nonlinear and linear) using

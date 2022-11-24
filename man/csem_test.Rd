@@ -12,7 +12,7 @@ list containing the following list elements:
 \item{\verb{$Critical_value}}{The critical value(s).}
 \item{\verb{$Decision}}{The test decision. One of: \strong{Reject} or \strong{Do not reject}}
 \item{\verb{$Number_admissibles}}{The number of admissible runs. See \code{\link[=verify]{verify()}} for
-what constitues and inadmissible run.}
+what constitutes and inadmissible run.}
 }
 }
 \description{

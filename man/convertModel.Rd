@@ -24,7 +24,7 @@ A \link{cSEMModel} list that may be passed to any function requiring
 \code{.csem_model} as a mandatory argument.
 }
 \description{
-Uses a \link{cSEMModel} containg second order constructs and turns it into an
+Uses a \link{cSEMModel} containing second order constructs and turns it into an
 estimable model using either the "2stage" approach or the "mixed" approach.
 }
 \keyword{internal}

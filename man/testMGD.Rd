@@ -246,7 +246,7 @@ Note that the "model" provided to \code{.parameters_to_compare}
 does not need to be an estimable model!
 
 Note also that compared to all other functions in \pkg{cSEM} using the argument,
-\code{.handle_inadmissibles} defaults to \code{"replace"} to accomdate the Sarstedt et al. (2011) approach.
+\code{.handle_inadmissibles} defaults to \code{"replace"} to accommodate the Sarstedt et al. (2011) approach.
 
 Argument \code{.R_permuation} is ignored for the \code{"Nitzl"} and the \code{"Keil"} approach.
 \code{.R_bootstrap} is ignored if  \code{.object} already contains resamples,

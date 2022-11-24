@@ -27,7 +27,7 @@ list element the difference between estimated loadings, and the third
 the difference between estimated weights.
 }
 \description{
-Calculate the difference between one or more paramater estimates across
+Calculate the difference between one or more parameter estimates across
 all possible pairs of groups (data sets) in \code{.object}.
 }
 \keyword{internal}

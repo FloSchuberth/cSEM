@@ -79,7 +79,7 @@ resamples of the first run.}
 from a resample. One of: "\emph{none}", "\emph{bootstrap}" or "\emph{jackknife}". For
 "\emph{bootstrap}" the number of draws is provided via \code{.R2}. Currently,
 resampling from each resample is only required for the studentized confidence
-intervall ("\emph{CI_t_interval}") computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
+interval ("\emph{CI_t_interval}") computed by the \code{\link[=infer]{infer()}} function. Defaults to "\emph{none}".}
 
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 }
@@ -87,7 +87,7 @@ intervall ("\emph{CI_t_interval}") computed by the \code{\link[=infer]{infer()}}
 Collection of various functions that compute an inferential quantity.
 }
 \details{
-Implementation and termionology of the confidence intervals is based on
+Implementation and terminology of the confidence intervals is based on
 \insertCite{Hesterberg2015;textual}{cSEM} and
 \insertCite{Davison1997;textual}{cSEM}.
 }

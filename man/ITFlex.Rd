@@ -24,7 +24,7 @@ the central office.}
 \item{\code{ITCONN4}}{There are very few identifiable communications
 bottlenecks within our firm.}
 \item{\code{MOD1}}{Our firm possesses a great speed in developing new
-business applications ormodifying existing applications.}
+business applications or modifying existing applications.}
 \item{\code{MOD2}}{Our corporate database is able to communicate in
 several different protocols.}
 \item{\code{MOD3}}{Reusable software modules are widely used in new

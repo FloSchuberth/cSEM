@@ -39,7 +39,7 @@ if \code{.inference = FALSE}. Defaults to "\emph{CI_percentile}".}
 \item{.inference}{Logical. Should critical values be computed? Defaults to \code{FALSE}.}
 
 \item{.only_common_factors}{Logical. Should only concepts modeled as common
-factors be included when calculating one of the following quality critera:
+factors be included when calculating one of the following quality criteria:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to \code{TRUE}.}
 
