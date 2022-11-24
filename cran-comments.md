@@ -33,4 +33,4 @@ I checked the dependencies and all listed packages are required.
 
 ## Other issues
 
-- None
+- The maintainer changed.

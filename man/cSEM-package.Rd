@@ -25,11 +25,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Manuel E. Rademaker \email{manuel-rademaker@outlook.de} (\href{https://orcid.org/0000-0002-8902-3561}{ORCID})
+\strong{Maintainer}: Florian Schuberth \email{f.schuberth@utwente.nl} (\href{https://orcid.org/0000-0002-2110-9086}{ORCID})
 
 Authors:
 \itemize{
-  \item Florian Schuberth \email{f.schuberth@utwente.nl} (\href{https://orcid.org/0000-0002-2110-9086}{ORCID})
+  \item Manuel E. Rademaker \email{manuel-rademaker@outlook.de} (\href{https://orcid.org/0000-0002-8902-3561}{ORCID})
 }
 
 Other contributors:
