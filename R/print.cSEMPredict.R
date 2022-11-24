@@ -85,6 +85,11 @@ print.cSEMPredict <- function(x,
         col_align("RMSE benchmark", 15, align = "right")
       )
     }
+    if(any(metrics_to_display == "Q2")){
+      cat2(
+        col_align("Q2_predict", 13, align = "right")
+      )
+    }  
     if(any(metrics_to_display == "MER")){
       cat2(
         col_align("MER target", 13, align = "right"), 
@@ -144,11 +149,7 @@ print.cSEMPredict <- function(x,
           col_align("RMSE target", 13, align = "right")
         )
       }
-      if(any(metrics_to_display == "Q2")){
-        cat2(
-          col_align("Q2_predict", 13, align = "right")
-        )
-      }
+
       if(any(metrics_to_display == "MER")){
         cat2(
           col_align("MER target", 13, align = "right")
