@@ -185,7 +185,7 @@ only comprises three steps:
    ease and well known to R users that have an interest in SEM, to us, [lavaan model syntax](https://lavaan.ugent.be/tutorial/syntax1.html) 
    is the obvious tool for users to specify their model. Experience tells,
    that for R beginners the biggest obstacle has been to get the data into R. 
-   However, largely thanks to [RStudio](https://www.posit.co/), data import and data transformation 
+   However, largely thanks to [RStudio](https://posit.co/), data import and data transformation 
    are nowadays relatively easy to handle. See the [Preparing the data](#preparedata)
    and the [Specifying a model](#specifyingamodel) sections below.
 1. **Estimate**: no matter the model and type of data, estimation is always done using one
