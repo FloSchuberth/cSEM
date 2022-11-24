@@ -12,15 +12,15 @@ Tested using GitHub Actions on
 * ubuntu-20.04 (x86_64-pc-linux-gnu (64-bit)); R-current (R 4.2.2)
 * ubuntu 20.04 R-devel, R-current (R 4.2.2)
 
-There was no issue.
+There were no errors or warnings.
 
 
 I also tested the package using devtools::check() with default arguments.
-
-00 errors ✔ | 0 warnings ✔ | 2 notes ✖
+There were no errors or warnings but the following 2 notes:
 
 N  checking dependencies in R code (3.5s) Namespace in Imports field not imported from: 'Rdpack'
      All declared Imports should be used.
+     
 The Rdpack package is required for referencing.
 
 N  checking package dependencies (3.7s)
@@ -29,7 +29,7 @@ N  checking package dependencies (3.7s)
    them becoming unavailable.  Move as many as possible to Suggests and
    use conditionally.
 
-I checked the dependencies and they are all required.
+I checked the dependencies and all listed packages are required.
 
 ## Other issues
 
