@@ -93,8 +93,10 @@
 <li><p>Bug fix: GSCAm (i.e., <code>.approach_weights = "GSCA"</code> with constructs modeled as common factors) no longer fails when a single indicator construct is supplied (<a href="https://github.com/M-E-Rademaker/cSEM/issues/441" class="external-link">#441</a>)</p></li>
 <li><p>Bug fix: <code><a href="../reference/predict.html">predict()</a></code> no longer fails when LOOCV is used (<a href="https://github.com/M-E-Rademaker/cSEM/issues/337" class="external-link">#337</a>)</p></li>
 <li><p>Bug fix: fix print method for <code><a href="../reference/summarize.html">summarize()</a></code> when resampling with constant values (weights or loadings) is conducted. The standard error, t-value, p-value and CI are properly set to <code>NA</code> now. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/433" class="external-link">#433</a>)</p></li>
-<li>
-</li></ul></div>
+<li><p><code>postestimate_test_CVPAT()</code>: Perform a Cross-Validated Predictive Ability Test (CVPAT) to compare the predictive performance of two models (<a href="https://github.com/M-E-Rademaker/cSEM/issues/455" class="external-link">#455</a>)</p></li>
+<li><p><code><a href="../reference/predict.html">predict()</a></code> is now able to perform predictions either based on the earliest antecedents, i.e., the values of the indicators associated to exogenous constructs or based on the direct antecedents, i.e., based on the values or predictions associated to the direct antecedents (3485)</p></li>
+<li><p><code><a href="../reference/predict.html">predict()</a></code> a variety of prediction metrics are added</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.0" id="csem-040-2021-04-20">cSEM 0.4.0 (2021-04-20)<small>2021-04-19</small><a class="anchor" aria-label="anchor" href="#csem-040-2021-04-20"></a></h2>
 <div class="section level4">
