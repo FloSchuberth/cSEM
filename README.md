@@ -30,7 +30,9 @@ procedures (e.g., verify admissibility of the estimates, assess the
 model fit, test the model fit, compute confidence intervals, compare
 groups, etc.).
 
-## News (2022-05-09):
+## News (2022-11-24):
+
+-   `testCVPAT()` function implements the cross-validated predictive ability test (CVPAT)
 
 -   `predict()` function is now able to predict categorical indicators
     (a procedure known as OrdPLScPredict).
