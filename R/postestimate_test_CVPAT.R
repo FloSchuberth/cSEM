@@ -18,12 +18,25 @@
 #' @usage testCVPAT(
 #' .object1  = NULL,
 #' .object2  = NULL,
+#' .approach_predict = c("earliest", "direct"),
 #' .seed     = NULL,
-#' .cv_folds = 10)
+#' .cv_folds = 10,
+#' .handle_inadmissibles     = c("stop", "ignore"),
+#' .testtype = c("twosided", "onesided"))
 #'
 #' @inheritParams csem_arguments
 #' @param .object1 An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .object2 An R object of class [cSEMResults] resulting from a call to [csem()].
+#' @param .approach_predict Character string. Which approach should be used to 
+#'  predictions? One of "*earliest*" and "*direct*". If "*earliest*" predictions
+#'  for indicators associated to endogenous constructs are performed using only
+#'  indicators associated to exogenous constructs. If "*direct*", predictions for 
+#'  indicators associated to endogenous constructs are based on indicators associated
+#'  to their direct antecedents. Defaults to "*earliest*".
+#' @param .testtype Character string. One of "*twosided*" (H1: The models do not 
+#'  perform equally in predicting indicators belonging to endogenous constructs)"
+#'  and *onesided*" (H1: Model 1 performs better in predicting indicators belonging 
+#'  to endogenous constructs than model2). Defaults to "*twosided*".
 #'
 #' @seealso [csem], [cSEMResults], [exportToExcel()]
 #' 
@@ -37,8 +50,16 @@
 testCVPAT <- function(
   .object1  = NULL,
   .object2  = NULL,
+  .approach_predict = c("earliest", "direct"),
   .seed     = NULL,
-  .cv_folds = 10){
+  .cv_folds = 10,
+  .handle_inadmissibles     = c("stop", "ignore"),
+  .testtype = c("twosided", "onesided")){
+  
+  .approach_predict            <- match.arg(.approach_predict)
+  .handle_inadmissibles <- match.arg(.handle_inadmissibles)
+  .approach_predict     <- match.arg(.approach_predict)
+  .testtype = match.arg(.testtype)
   
   ##Errors and warnings---------------------------------------------------------
   #Stop if one object is not of class "cSEMResults"
@@ -69,7 +90,8 @@ testCVPAT <- function(
   }
   
   #Stop if both objects are based on different datasets
-  if(!all(.object1$Information$Data[,colnames(.object1$Information$Data) %in% colnames(.object2$Information$Data)] == .object2$Information$Data[, colnames(.object2$Information$Data) %in% colnames(.object1$Information$Data)])){
+  cols_both <- colnames(.object1$Information$Data)[colnames(.object1$Information$Data) %in%colnames(.object2$Information$Data)]
+  if(!all(.object1$Information$Data[,cols_both] == .object2$Information$Data[, cols_both])){
       stop2('The objects are not based on the same dataset.')
   }
 
@@ -83,10 +105,12 @@ testCVPAT <- function(
   
   #Perform out-of-sample predictions for both models
   predict1 <- predict(.object = .object1, .benchmark = "NA", 
-                      .cv_folds = .cv_folds, .r = 1, .seed = .seed)
+                      .cv_folds = .cv_folds, .r = 1, .seed = .seed, 
+                      .approach_predict = .approach_predict, .handle_inadmissibles = .handle_inadmissibles)
   
   predict2 <- predict(.object = .object2, .benchmark = "NA", 
-                      .cv_folds = .cv_folds, .r = 1, .seed = .seed)
+                      .cv_folds = .cv_folds, .r = 1, .seed = .seed,
+                      .approach_predict = .approach_predict, .handle_inadmissibles = .handle_inadmissibles)
   
   L1 <- rowMeans(predict1$Residuals_target[[1]]^2)
   L2 <- rowMeans(predict2$Residuals_target[[1]]^2)
@@ -99,7 +123,11 @@ testCVPAT <- function(
   
   test_stat <- D_bar/sqrt(var(D)/N)
   
-  p_value <- 2*(1-pt(abs(test_stat), N-1))
+  if(.testtype == "twosided"){
+    p_value <- 2*(1-pt(abs(test_stat), N-1)) 
+  }else{
+    p_value <- 1-pt(test_stat, N-1)
+  }
   
   #missing: degrees of freedom, decision, information: seed, number cv_folds, alpha
   out <- list(
@@ -112,7 +140,8 @@ testCVPAT <- function(
     ),
     "test_statistic" = test_stat,
     "p_value"        = p_value,
-    "degrees of freedom" = N-1
+    "degrees of freedom" = N-1,
+    "Testtype"      = .testtype
   )
   class(out) = "cSEMTestCVPAT"
   out

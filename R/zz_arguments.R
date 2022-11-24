@@ -34,6 +34,12 @@
 #' @param .approach_nl Character string. Approach used to estimate nonlinear
 #'   structural relationships. One of: "*sequential*" or "*replace*".
 #'   Defaults to "*sequential*".
+#' @param .approach_predict Character string. Which approach should be used to 
+#'  predictions? One of "*earliest*" and "*direct*". If "*earliest*" predictions
+#'  for indicators associated to endogenous constructs are performed using only
+#'  indicators associated to exogenous constructs. If "*direct*", predictions for 
+#'  indicators associated to endogenous constructs are based on indicators associated
+#'  to their direct antecedents. Defaults to "*earliest*". 
 #' @param .approach_p_adjust Character string or a vector of character strings. 
 #' Approach used to adjust the p-value for multiple testing. 
 #' See the `methods` argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
@@ -165,6 +171,10 @@
 #' @param .matrix1 A `matrix` to compare.
 #' @param .matrix2 A `matrix` to compare.
 #' @param .matrices A list of at least two matrices.
+#' @param .metrics Character string or a vector of character strings. 
+#'   Which prediction metrics should be displayed? One of: "*MAE*", "*RMSE*", "*Q2*", 
+#'   "*MER*", "*MAPE*, "*MSE2*", "*U1*", "*U2*", "*UM*", "*UR*", or "*UD*". 
+#'   Default to c("*MAE*", "*RMSE*", "*Q2*").
 #' @param .model A model in [lavaan model syntax][lavaan::model.syntax] 
 #'   or a [cSEMModel] list.
 #' @param .moderator Character string. The name of the moderator variable.
@@ -300,6 +310,9 @@
 #' @param .terms A vector of construct names to be classified.
 #' @param .test_data A matrix of test data with the same column names as the 
 #'   training data.
+#' @param .testtype Character string. One of "*twosided*" (H1: The models do not 
+#'  perform equally in predicting indicators belonging to endogenous constructs)"
+#'  and *onesided*" (H1: Model 1 performs better in predicting indicators belonging 
 #' @param .tolerance Double. The tolerance criterion for convergence. 
 #'   Defaults to `1e-05`.
 #' @param .treat_as_continuous Logical. Should the indicators for the benchmark predictions
@@ -431,6 +444,7 @@ args_default <- function(.choices = FALSE) {
     .approach_nl             = c("sequential", "replace"),
     .approach_p_adjust       = "none",
     .approach_paths          = c("OLS", "2SLS"),
+    .approach_predict        = c("earliest", "direct"),
     .approach_score_benchmark= c("mean", "median", "mode", "round"),
     .approach_score_target   = c("mean", "median", "mode"),
     .approach_weights        = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR",
@@ -479,6 +493,8 @@ args_default <- function(.choices = FALSE) {
     .matrix1                 = NULL,
     .matrix2                 = NULL,
     .matrices                = NULL,
+    .metrics                 = c("MAE", "RMSE", "Q2", "MER", 
+                                 "MAPE", "MSE2", "U1", "U2" , "UM", "UR", "UD"),
     .model                   = NULL,
     .moderator               = NULL,
     .modes                   = NULL,

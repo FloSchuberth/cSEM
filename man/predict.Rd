@@ -7,6 +7,7 @@
 predict(
  .object               = NULL,
  .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "NA"),
+ .approach_predict     = c("earliest", "direct"),
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
  .r                    = 1,
@@ -25,6 +26,13 @@ predict(
 \item{.benchmark}{Character string. The procedure to obtain benchmark predictions.
 One of "\emph{lm}", "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", or "\emph{MAXVAR}".
 Default to "\emph{lm}".}
+
+\item{.approach_predict}{Character string. Which approach should be used to perform
+predictions? One of "\emph{earliest}" and "\emph{direct}". If "\emph{earliest}" predictions
+for indicators associated to endogenous constructs are performed using only
+indicators associated to exogenous constructs. If "\emph{direct}", predictions for
+indicators associated to endogenous constructs are based on indicators associated
+to their direct antecedents. Defaults to "\emph{earliest}".}
 
 \item{.cv_folds}{Integer. The number of cross-validation folds to use. Setting
 \code{.cv_folds} to \code{N} (the number of observations) produces
@@ -95,7 +103,7 @@ of the endogenous constructs based on the target model in each repetition .r.}
 of the endogenous constructs based on a model estimated by the procedure
 given to \code{.benchmark} for each repetition .r.}
 \item{\verb{$Prediction_metrics}}{A data frame containing the predictions metrics
-MAE, RMSE, Q2_predict, the misclassification error rate, the MAPE, the MSE2,
+MAE, RMSE, Q2_predict, the misclassification error rate (MER), the MAPE, the MSE2,
 Theil's forecast accuracy (U1), Theil's forecast quality (U2), Bias proportion
 of MSE (UM), Regression proportion of MSE (UR), and disturbance proportion
 of MSE (UD) \insertCite{Hora2015,Watson2002}{cSEM}.}

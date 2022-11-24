@@ -27,7 +27,8 @@ print.cSEMTestCVPAT <- function(x, ...) {
   cat2(
   col_align("\n\tTest statistic", 35), "= ", x$test_statistic,
   col_align("\n\tP value", 35), "= ", x$p_value,
-  col_align("\n\tDegrees of freedom", 35), "= ", x$Information$Degrees_of_Freedom
+  col_align("\n\tDegrees of freedom", 35), "= ", x$Information$Degrees_of_Freedom,
+  col_align("\n\tTesttype", 35), "= ", x$Testtype
   )
   
   cat("\n\nInformation:\n\t", sep = "")

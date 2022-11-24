@@ -41,6 +41,13 @@ Default to "\emph{all}" in which case all approaches are computed (if possible).
 structural relationships. One of: "\emph{sequential}" or "\emph{replace}".
 Defaults to "\emph{sequential}".}
 
+\item{.approach_predict}{Character string. Which approach should be used to
+predictions? One of "\emph{earliest}" and "\emph{direct}". If "\emph{earliest}" predictions
+for indicators associated to endogenous constructs are performed using only
+indicators associated to exogenous constructs. If "\emph{direct}", predictions for
+indicators associated to endogenous constructs are based on indicators associated
+to their direct antecedents. Defaults to "\emph{earliest}".}
+
 \item{.approach_p_adjust}{Character string or a vector of character strings.
 Approach used to adjust the p-value for multiple testing.
 See the \code{methods} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for a list of choices and
@@ -217,6 +224,11 @@ for constructs or indicators.}
 \item{.matrix2}{A \code{matrix} to compare.}
 
 \item{.matrices}{A list of at least two matrices.}
+
+\item{.metrics}{Character string or a vector of character strings.
+Which prediction metrics should be displayed? One of: "\emph{MAE}", "\emph{RMSE}", "\emph{Q2}",
+"\emph{MER}", "\emph{MAPE}, "\emph{MSE2}", "\emph{U1}", "\emph{U2}", "\emph{UM}", "\emph{UR}", or "\emph{UD}".
+Default to c("\emph{MAE}", "\emph{RMSE}", "\emph{Q2}").}
 
 \item{.model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
 or a \link{cSEMModel} list.}
@@ -405,6 +417,10 @@ Defaults to \code{NULL}.}
 
 \item{.test_data}{A matrix of test data with the same column names as the
 training data.}
+
+\item{.testtype}{Character string. One of "\emph{twosided}" (H1: The models do not
+perform equally in predicting indicators belonging to endogenous constructs)"
+and \emph{onesided}" (H1: Model 1 performs better in predicting indicators belonging}
 
 \item{.tolerance}{Double. The tolerance criterion for convergence.
 Defaults to \code{1e-05}.}

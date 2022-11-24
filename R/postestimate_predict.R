@@ -52,7 +52,7 @@
 #'     of the endogenous constructs based on a model estimated by the procedure
 #'     given to `.benchmark` for each repetition .r.}
 #'   \item{`$Prediction_metrics`}{A data frame containing the predictions metrics
-#'     MAE, RMSE, Q2_predict, the misclassification error rate, the MAPE, the MSE2, 
+#'     MAE, RMSE, Q2_predict, the misclassification error rate (MER), the MAPE, the MSE2, 
 #'     Theil's forecast accuracy (U1), Theil's forecast quality (U2), Bias proportion
 #'     of MSE (UM), Regression proportion of MSE (UR), and disturbance proportion 
 #'     of MSE (UD) \insertCite{Hora2015,Watson2002}{cSEM}.}
@@ -65,6 +65,7 @@
 #' @usage predict(
 #'  .object               = NULL,
 #'  .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "NA"),
+#'  .approach_predict     = c("earliest", "direct"),
 #'  .cv_folds             = 10,
 #'  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
 #'  .r                    = 1,
@@ -87,6 +88,12 @@
 #'   set to `NA`. Defaults to "*stop*"
 #' @param .disattenuate Logical. Should the benchmark predictions be based on 
 #'   disattenuated parameter estimates? Defaults to `TRUE`.
+#' @param .approach_predict Character string. Which approach should be used to perform
+#'  predictions? One of "*earliest*" and "*direct*". If "*earliest*" predictions
+#'  for indicators associated to endogenous constructs are performed using only
+#'  indicators associated to exogenous constructs. If "*direct*", predictions for 
+#'  indicators associated to endogenous constructs are based on indicators associated
+#'  to their direct antecedents. Defaults to "*earliest*". 
 #'
 #' @seealso [csem], [cSEMResults], [exportToExcel()]
 #' 
@@ -100,6 +107,7 @@
 predict <- function(
   .object                   = NULL, 
   .benchmark                = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "NA"),
+  .approach_predict         = c("earliest", "direct"),
   .cv_folds                 = 10,
   .handle_inadmissibles     = c("stop", "ignore", "set_NA"),
   .r                        = 1,
@@ -116,6 +124,7 @@ predict <- function(
   .handle_inadmissibles <- match.arg(.handle_inadmissibles)
   .approach_score_target <- match.arg(.approach_score_target)
   .approach_score_benchmark <- match.arg(.approach_score_benchmark)
+  .approach_predict     <- match.arg(.approach_predict)
   
   if(inherits(.object, "cSEMResults_multi")) {
     out <- lapply(.object, predict, 
@@ -153,6 +162,12 @@ predict <- function(
     # Stop if a seed is provided, but .r is not equal to 1
     if(!is.null(.seed) && .r>1){
       stop2('Setting a seed is possible for one repetition.')
+    }
+    
+    if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') &&
+       .approach_predict == "direct"){
+      stop2('Performing out-of-sample predictions based on models estimated by:\n',
+            'OrdPLS/OrdPLSc can only be performed using the earliest antecedent approach.')
     }
     
     #if(!all(.object$Information$Type_of_indicator_correlation == 'Pearson') &&
@@ -433,21 +448,12 @@ predict <- function(
             thresholds <- thresholds[!is.na(thresholds)]
             Tmin <- -4
             Tmax <- 4
-            correction <- function(x) {
-              multval <- x[duplicated(x)]
-              threshold.indices.to.change <- which(x == multval)
-              if (length(threshold.indices.to.change) == 0){
-                return(x)
-              }
-              x[threshold.indices.to.change] <- multval - epsilon * rev(threshold.indices.to.change - min(threshold.indices.to.change))    
-              x
-            }
-            
-            for (th in 1:length(thresholds)){
-              thresholds[[th]] <- correction(thresholds[[th]])
-            } 
             
             thresholds <- lapply(thresholds, function(x) c(Tmin, x, Tmax))
+            
+            if(any(apply(X_test[, cat_indicators], 2, max) >= lapply(thresholds, function(x) length(x)))){
+              stop2("The test dataset contains more categories than the train dataset.")
+            }
             
             Cov_ind <- Est$Estimates$Indicator_VCV
             X_hat <- matrix(0, nrow = nrow(X_test), ncol = length(endo_indicators),
@@ -556,11 +562,20 @@ predict <- function(
             }
             
             }else{
+            
+            if(.approach_predict == "earliest"){
             ## Predict scores for the exogenous constructs (validity prediction)
             eta_hat_exo  <- X_test_scaled %*% t(W_train[cons_exo, ,drop = FALSE])
             
             # Predict scores for the endogenous constructs (structural prediction)
             eta_hat_endo <- eta_hat_exo %*% t(Gamma_train) %*% t(solve(diag(nrow(B_train)) - B_train))
+            }else{
+            
+            eta_hat_all <- X_test_scaled %*% t(W_train)
+            
+            # Predict scores for the endogenous constructs using the scores for all constructs
+            eta_hat_endo <- eta_hat_all%*%t(path_train)[,cons_endo, drop = FALSE]
+            }
             
             # Predict scores for indicators of endogenous constructs (communality prediction)
             X_hat <- eta_hat_endo %*% loadings_train[cons_endo, , drop = FALSE]
@@ -669,6 +684,7 @@ predict <- function(
     #  a / b
     #})
     df_metrics <- list()
+    
     for(q in 1: length(out_all)){
     ## Compute prediction metrics ------------------------------------------------
     Res_t <- out_all[[q]]$Residuals_target
@@ -682,14 +698,21 @@ predict <- function(
     
     if(.benchmark != "NA"){
     ## Create data frame
+      
+    if(any(apply(Pred_t, 2, sd) == 0) | any(apply(Pred_b, 2, sd) == 0)){
+      warning2("The predictions of at least one indicator are equal for all \n",
+               "observations of the test dataset. UR and UD cannot be calculated \n",
+               "for the respective indicators.")
+    }
+        
     df_metrics[[q]] <- data.frame(
       "MAE_target"     = calculateMAE(resid = Res_t),
       "MAE_benchmark"  = calculateMAE(resid = Res_b),
       "RMSE_target"    = calculateRMSE(resid = Res_t),
       "RMSE_benchmark" = calculateRMSE(resid = Res_b),
       "Q2_predict"     = calculateq2(res = Res_t, MB = out_all[[q]]$Residuals_mb),
-      "misclassification_target"    = calculateMissclassification(resid = Res_t),
-      "misclassification_benchmark" = calculateMissclassification(resid = Res_b),
+      "MER_target"     = calculateMissclassification(resid = Res_t),
+      "MER_benchmark"   = calculateMissclassification(resid = Res_b),
       "MAPE_target"    = calculateMAPE(resid = Res_t, act = act),
       "MAPE_benchmark" = calculateMAPE(resid = Res_b, act = act),
       "MSE2_target"    = mse2_target,
@@ -707,14 +730,15 @@ predict <- function(
       stringsAsFactors = FALSE
     )
     }else if(.benchmark == "NA"){
+      
       df_metrics[[q]] <- data.frame(
         "MAE_target"     = calculateMAE(resid = Res_t),
         "MAE_benchmark"  = 0,
         "RMSE_target"    = calculateRMSE(resid = Res_t),
         "RMSE_benchmark" = 0,
-        "Q2_predict"     = 0,
-        "misclassification_target"    = calculateMissclassification(resid = Res_t),
-        "misclassification_benchmark" = 0,
+       "Q2_predict"     = 0,
+        "MER_target"    = calculateMissclassification(resid = Res_t),
+        "MER_benchmark" = 0,
         "MAPE_target"    = calculateMAPE(resid = Res_t, act = act),
         "MAPE_benchmark" = 0,
         "MSE2_target"    = mse2_target,
@@ -739,11 +763,12 @@ predict <- function(
       Reduce("+", df_metrics)/length(df_metrics))
     rownames(df_metrics) <- NULL
     
+    
     if(.benchmark == "NA"){
       df_metrics$MAE_benchmark <- "NA"
       df_metrics$RMSE_benchmark <- "NA"
       df_metrics$Q2_predict <- "NA"
-      df_metrics$misclassification_benchmark <- "NA"
+      df_metrics$MER_benchmark <- "NA"
       df_metrics$MAPE_benchmark <- "NA"
       df_metrics$MSE2_benchmark <- "NA"
       df_metrics$U1_benchmark <- "NA"
@@ -791,7 +816,8 @@ predict <- function(
         "Number_of_observations_training" = nrow(X_train),
         "Number_of_observations_test" = nrow(X_test),
         "Number_of_folds"           = .cv_folds,
-        "Number_of_repetitions"     = .r
+        "Number_of_repetitions"     = .r,
+        "Approach_to_predict"       = .approach_predict
       )
     )
     

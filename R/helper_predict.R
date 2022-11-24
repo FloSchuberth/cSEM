@@ -60,13 +60,13 @@ calculateUM <- function(pred, act, mse2){
 }
 
 calculateUR <- function(pred, act, mse2){
-  return(sapply(colnames(act), function(x) (sd(pred[,x]) - cor(pred[,x], act[,x])*
-                                          sd(act[,x]))^2/mse2[x]))
+  return(sapply(colnames(act), function(x) suppressWarnings((sd(pred[,x]) - cor(pred[,x], act[,x])*
+                                          sd(act[,x]))^2/mse2[x])))
 }
 
 calculateUD <- function(pred, act, mse2){
-  return(sapply(colnames(act), function(x) (1 - cor(pred[,x], act[,x])^2)*
-                  var(act[,x])^2/mse2[x]))
+  return(sapply(colnames(act), function(x) suppressWarnings((1 - cor(pred[,x], act[,x])^2)*
+                  var(act[,x])^2/mse2[x])))
 }
 
 calculateq2 <- function(res, MB){
