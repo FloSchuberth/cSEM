@@ -185,8 +185,7 @@ only comprises three steps:
    ease and well known to R users that have an interest in SEM, to us, [lavaan model syntax](https://lavaan.ugent.be/tutorial/syntax1.html) 
    is the obvious tool for users to specify their model. Experience tells,
    that for R beginners the biggest obstacle has been to get the data into R. 
-   However, largely thanks to the [tidyverse](https://www.tidyverse.org/) and 
-   [RStudio](https://www.rstudio.com/), data import and data transformation 
+   However, largely thanks to [RStudio](https://www.posit.co/), data import and data transformation 
    are nowadays relatively easy to handle. See the [Preparing the data](#preparedata)
    and the [Specifying a model](#specifyingamodel) sections below.
 1. **Estimate**: no matter the model and type of data, estimation is always done using one
@@ -255,7 +254,7 @@ data import and data processing capabilities. While these topics may have been
 overwhelming for newcomers several years ago, data import and data transformation
 have become extremely simple and user-friendly if the right tools packages
 are used. The best place to start is
-the [Rstudio Cheat sheet webpage](https://www.rstudio.com/resources/cheatsheets/),
+the [Rstudio Cheat sheet webpage](https://posit.co/resources/cheatsheets/),
 especially the *Data Import* and the *Data Transformation* cheat sheets.
 
 **cSEM** is relatively flexible as to the type of data accepted. Currently the following
@@ -291,7 +290,7 @@ data types/structures are accepted:
    composite model equations in the
    model description. In this case any resulting matrix or vector whose (row/column)
    names contain the indicator names would have the order `expe1`, `expe2`,
-   `imag1`, `imag2`. More one model specificaiton below.
+   `imag1`, `imag2`. More one model specification below.
 
 1. A `matrix` with column names matching the indicator names used
    in the lavaan model description of the measurement model or composite model 
@@ -300,9 +299,9 @@ data types/structures are accepted:
 1. A list of data frames or matrices. In this case estimation is repeated for
    each data frame or matrix separately.
 
-The current version 0.1.0 available on CRAN does not 
+The current version 0.5.0 available on CRAN does not 
 provide any tools to handle missing values. Future versions are likely to include 
-at least the basic approaches for handling missing values. Regularly check <https://github.com/M-E-Rademaker/cSEM>
+at least the basic approaches for handling missing values. Regularly check <https://github.com/M-E-Rademaker/cSEM/>
 to get the latest updates.
 
 ### Specify a model {#specifyingamodel}
@@ -508,7 +507,7 @@ ii$Path_estimates
 ```
 
 Both bootstrap and jackknife resampling support platform-independent multiprocessing
-as well as random seeds via the [future framework](https://github.com/HenrikBengtsson/future).
+as well as random seeds via the [future framework](https://github.com/HenrikBengtsson/future/).
 For multiprocessing simply set `.eval_plan = "multiprocess"` in which case the maximum number of available cores
 is used if not on Windows. On Windows as many separate R instances are opened in the
 background as there are cores available instead. Note that this naturally has some overhead.

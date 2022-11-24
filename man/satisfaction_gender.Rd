@@ -8,7 +8,7 @@
 An object of class \code{data.frame} with 250 rows and 28 columns.
 }
 \source{
-The \href{https://github.com/gastonstat/plspm}{plspm} package (version  0.4.9).
+The \href{https://github.com/gastonstat/plspm/}{plspm} package (version  0.4.9).
 Original source according to \pkg{plspm}:
 "Laboratory of Information Analysis and Modeling (LIAM).
 Facultat d'Informatica de Barcelona, Universitat Politecnica de Catalunya".
@@ -54,7 +54,7 @@ and the sense of loyalty.}
 \details{
 This data set contains the variables from a customer satisfaction study of
 a Spanish credit institution on 250 customers. The data is taken from the
-\href{https://github.com/gastonstat/plspm}{plspm} package. For convenience,
+\href{https://github.com/gastonstat/plspm/}{plspm} package. For convenience,
 there is a version of the dataset with the last column (\code{gender}) removed: \link{satisfaction}.
 }
 \keyword{datasets}

@@ -8,7 +8,7 @@
 An object of class \code{data.frame} with 183 rows and 13 columns.
 }
 \source{
-Original source: \href{https://github.com/ISS-Analytics/pls-predict}{github.com/ISS-Analytics/pls-predict}
+Original source: \href{https://github.com/ISS-Analytics/pls-predict/}{github.com/ISS-Analytics/pls-predict/}
 }
 \usage{
 Anime
@@ -17,7 +17,7 @@ Anime
 A data frame with 183 observations and 13 variables.
 }
 \details{
-The data set for the example on \href{https://github.com/ISS-Analytics/pls-predict}{github.com/ISS-Analytics/pls-predict}
+The data set for the example on \href{https://github.com/ISS-Analytics/pls-predict/}{github.com/ISS-Analytics/pls-predict/}
 with irrelevant variables removed.
 }
 \keyword{datasets}

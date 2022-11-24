@@ -92,7 +92,7 @@ For questions: please contact the [author](mailto:manuel-rademaker@outlook.de).
 
 ### Style/Naming
 
-Stick to [this styleguide](http://style.tidyverse.org/) with the following
+Stick to [this styleguide](https://style.tidyverse.org/) with the following
 exceptions/additions:
 
 1. Function and class names are always CamelCase. Function names should contain 

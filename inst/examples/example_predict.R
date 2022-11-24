@@ -1,12 +1,12 @@
-### Anime example taken from https://github.com/ISS-Analytics/pls-predict
+### Anime example taken from https://github.com/ISS-Analytics/pls-predict/
 
 # Load data
 data(Anime) # data is similar to the Anime.csv found on 
-            # https://github.com/ISS-Analytics/pls-predict but with irrelevant
+            # https://github.com/ISS-Analytics/pls-predict/ but with irrelevant
             # columns removed
 
 # Split into training and data the same way as it is done on 
-# https://github.com/ISS-Analytics/pls-predict
+# https://github.com/ISS-Analytics/pls-predict/
 set.seed(123)
 
 index     <- sample.int(dim(Anime)[1], 83, replace = FALSE)

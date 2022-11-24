@@ -78,7 +78,7 @@ below. For questions: please contact the
 
 ### Style/Naming
 
-Stick to [this styleguide](http://style.tidyverse.org/) with the
+Stick to [this styleguide](https://style.tidyverse.org/) with the
 following exceptions/additions:
 
 1.  Function and class names are always CamelCase. Function names should

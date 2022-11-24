@@ -18,9 +18,9 @@ procedures (e.g., assess the model fit, compute direct, indirect and total effec
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/M-E-Rademaker/cSEM}
+  \item \url{https://github.com/M-E-Rademaker/cSEM/}
   \item \url{https://m-e-rademaker.github.io/cSEM/}
-  \item Report bugs at \url{https://github.com/M-E-Rademaker/cSEM/issues}
+  \item Report bugs at \url{https://github.com/M-E-Rademaker/cSEM/issues/}
 }
 
 }

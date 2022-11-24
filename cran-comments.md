@@ -1,3 +1,16 @@
+## Resubmission
+This is a resubmission. In this version I have:
+
+* replaced all 'http' by 'https' in urls; if possible. 
+
+* added trainling slashes to urls. 
+
+* replaced https://www.rstudio.com/ by https://www.posit.co/  
+
+* replaced https://www.rstudio.com/resources/cheatsheets/ by https://www.posit.co/resources/cheatsheets/
+
+* adjusted the date field
+
 ## Notes
 
 - This is version 0.5.0

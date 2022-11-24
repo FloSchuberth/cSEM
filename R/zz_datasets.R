@@ -2,7 +2,7 @@
 #'
 #' This dataset contains the variables from a customer satisfaction study of 
 #' a Spanish credit institution on 250 customers. The data is identical to
-#' the dataset provided by the \href{https://github.com/gastonstat/plspm}{plspm} package
+#' the dataset provided by the \href{https://github.com/gastonstat/plspm/}{plspm} package
 #' but with the last column  (`gender`) removed. If you are looking for the original
 #' dataset use the [satisfaction_gender] dataset.
 #'
@@ -43,7 +43,7 @@
 #' 
 #' 
 #' 
-#' @source The \href{https://github.com/gastonstat/plspm}{plspm} package (version  0.4.9). 
+#' @source The \href{https://github.com/gastonstat/plspm/}{plspm} package (version  0.4.9). 
 #' Original source according to \pkg{plspm}:
 #' "Laboratory of Information Analysis and Modeling (LIAM). 
 #' Facultat d'Informatica de Barcelona, Universitat Politecnica de Catalunya".
@@ -53,7 +53,7 @@
 #'
 #' This data set contains the variables from a customer satisfaction study of 
 #' a Spanish credit institution on 250 customers. The data is taken from the
-#' \href{https://github.com/gastonstat/plspm}{plspm} package. For convenience, 
+#' \href{https://github.com/gastonstat/plspm/}{plspm} package. For convenience, 
 #' there is a version of the dataset with the last column (`gender`) removed: [satisfaction].
 #'
 #' @docType data
@@ -91,7 +91,7 @@
 #'                    and the sense of loyalty.}
 #'   \item{gender}{The sex of the respondent.}
 #' }
-#' @source The \href{https://github.com/gastonstat/plspm}{plspm} package (version  0.4.9). 
+#' @source The \href{https://github.com/gastonstat/plspm/}{plspm} package (version  0.4.9). 
 #' Original source according to \pkg{plspm}:
 #' "Laboratory of Information Analysis and Modeling (LIAM). 
 #' Facultat d'Informatica de Barcelona, Universitat Politecnica de Catalunya".
@@ -230,14 +230,14 @@
 
 #' Data: Anime
 #'
-#' The data set for the example on \href{https://github.com/ISS-Analytics/pls-predict}{github.com/ISS-Analytics/pls-predict}
+#' The data set for the example on \href{https://github.com/ISS-Analytics/pls-predict/}{github.com/ISS-Analytics/pls-predict/}
 #' with irrelevant variables removed.
 #'
 #' @docType data
 #'
 #' @description A data frame with 183 observations and 13 variables. 
 #' 
-#' @source Original source: \href{https://github.com/ISS-Analytics/pls-predict}{github.com/ISS-Analytics/pls-predict}
+#' @source Original source: \href{https://github.com/ISS-Analytics/pls-predict/}{github.com/ISS-Analytics/pls-predict/}
 "Anime"
 
 

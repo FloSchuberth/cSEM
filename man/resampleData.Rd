@@ -140,7 +140,7 @@ Note: 1.) At least 2 folds required  (\code{k > 1}); 2.) \code{k} can not be lar
 3.) If \code{N/k} is not not an integer the last fold will have less observations.
 
 Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented
-in the \href{https://github.com/HenrikBengtsson/future.apply}{future.apply package}
+in the \href{https://github.com/HenrikBengtsson/future.apply/}{future.apply package}
 \insertCite{Bengtsson2018a}{cSEM}.
 See \link[future.apply:future_lapply]{?future_lapply} for details. By default
 a random seed is chosen.

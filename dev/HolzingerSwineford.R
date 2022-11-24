@@ -30,7 +30,7 @@
 #'   \item{\code{x9}}{Speeded discrimination straight and curved capitals}
 #' }
 #' 
-#' @source The \href{http://lavaan.ugent.be/}{lavaan} package (version 0.6-3).
+#' @source The \href{https://lavaan.ugent.be/}{lavaan} package (version 0.6-3).
 #' @references
 #'   \insertAllCited{}
 #'   

@@ -24,7 +24,7 @@ str(verify(out))
 # stage estimates estimates are checked for admissibility
 
 \dontrun{
-require(cSEM.DGP) # download from https://m-e-rademaker.github.io/cSEM.DGP
+require(cSEM.DGP) # download from https://m-e-rademaker.github.io/cSEM.DGP/
   
 # Create DGP with 2nd order construct. Loading for indicator y51 is set to 1.1
 # to produce a failing first stage model

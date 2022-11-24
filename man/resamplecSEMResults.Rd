@@ -152,7 +152,7 @@ By default these results are dropped however users may choose to \code{"ignore"}
 or \code{"replace"} inadmissible results in which resampling continuous until
 the necessary number of admissible results is reached.
 
-The \pkg{cSEM} package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future}{future}
+The \pkg{cSEM} package supports (multi)processing via the \href{https://github.com/HenrikBengtsson/future/}{future}
 framework \insertCite{Bengtsson2018}{cSEM}. Users may simply choose an evaluation plan
 via \code{.eval_plan} and the package takes care of all the complicated backend
 issues. Currently, users may choose between standard single-core/single-session
@@ -167,7 +167,7 @@ initializing new sessions or distributing tasks to different cores
 will not immediately be compensated by the availability of multiple sessions/cores.
 
 Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
-\href{https://github.com/HenrikBengtsson/future.apply}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
+\href{https://github.com/HenrikBengtsson/future.apply/}{future.apply package} \insertCite{Bengtsson2018a}{cSEM}.
 It is independent of the evaluation plan. Hence, setting e.g., \code{.seed = 123} will
 generate the same random number and replicates
 for both \code{.eval_plan = "sequential"}, \code{.eval_plan = "multisession"}, and \code{.eval_plan = "multicore"}.

@@ -1,7 +1,7 @@
 Package: cSEM
 Title: Composite-Based Structural Equation Modeling
 Version: 0.5.0
-Date: 2022-05-09
+Date: 2022-11-24
 Authors@R: c(person(given = "Manuel E.", family = "Rademaker",
                     role  = c("aut"),
                     email = "manuel-rademaker@outlook.de",
@@ -39,8 +39,8 @@ Description: Estimate, assess, test, and study linear, nonlinear, hierarchical
   as well as several tests and typical postestimation procedures 
   (e.g., verify admissibility of the estimates, assess the model fit, 
   test the model fit etc.).
-BugReports: https://github.com/M-E-Rademaker/cSEM/issues
-URL: https://github.com/M-E-Rademaker/cSEM, https://m-e-rademaker.github.io/cSEM/
+BugReports: https://github.com/M-E-Rademaker/cSEM/issues/
+URL: https://github.com/M-E-Rademaker/cSEM/, https://m-e-rademaker.github.io/cSEM/
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
