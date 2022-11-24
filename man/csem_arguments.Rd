@@ -60,7 +60,7 @@ need to be supplied to \code{.instruments}. Defaults to "\emph{OLS}".}
 \item{.approach_score_benchmark}{Character string. How should the aggregation
 of the estimates of the truncated normal distribution be done for the
 benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
-One of "\emph{mean}" or "\emph{median}" or "\emph{mode}" or "\emph{round}".
+One of "\emph{mean}", "\emph{median}", "\emph{mode}" or "\emph{round}".
 If "\emph{round}", the benchmark predictions are obtained using the traditional prediction
 algorithm for PLS-PM which are rounded for categorical indicators.
 If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
@@ -72,7 +72,7 @@ If \code{.treat_as_continuous = TRUE} or if all indicators are on a continuous s
 
 \item{.approach_score_target}{Character string. How should the aggregation of the estimates of
 the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
-One of "\emph{mean}" or "\emph{median}" or "\emph{mode}".
+One of "\emph{mean}", "\emph{median}" or "\emph{mode}".
 If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
 If "\emph{median}", the mean of the estimated endogenous indicators is calculated.
 If "\emph{mode}", the maximum empirical density on the intervals defined by the thresholds
@@ -89,7 +89,7 @@ by the user.}
 \item{.attrbutes}{Character string. Variables used as attributes in IPMA.}
 
 \item{.benchmark}{Character string. The procedure to obtain benchmark predictions.
-One of "\emph{lm}", "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", or "\emph{MAXVAR}".
+One of "\emph{lm}", "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", "\emph{MAXVAR}", or "\emph{NA}".
 Default to "\emph{lm}".}
 
 \item{.bias_corrected}{Logical. Should the standard and the tStat

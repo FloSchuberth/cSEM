@@ -1,22 +1,23 @@
-#' Predict indicator and construct scores
+#' Predict indicator scores
 #'
 #'\lifecycle{maturing}
 #'
-#' Predict the indicator scores of endogenous constructs.
 #' 
-#' Predict uses the procedure introduced by \insertCite{Shmueli2016;textual}{cSEM} in the context of
-#' PLS (commonly called: "PLSPredict" \insertCite{Shmueli2019}{cSEM}). 
-#' Predict uses k-fold cross-validation to randomly 
-#' split the data into training and test data and subsequently predicts the 
-#' relevant values in the test data based on the model parameter estimates obtained 
-#' using the training data. The number of cross-validation folds is 10 by default but
+#' The predict function implements the procedure introduced by \insertCite{Shmueli2016;textual}{cSEM} in the PLS context
+#' known as "PLSPredict" \insertCite{Shmueli2019}{cSEM} including its variants PLScPredcit, OrdPLSpredict and OrdPLScpredict.
+#' It is used to predict the indicator scores of endogenous constructs and to evaluat the out-of-sample predictive power 
+#' of a model.  
+#' For that purpose, the predict function uses k-fold cross-validation to randomly 
+#' split the data into training and test datasets, and subsequently predicts the 
+#' values of the test data based on the model parameter estimates obtained 
+#' from the training data. The number of cross-validation folds is 10 by default but
 #' may be changed using the `.cv_folds` argument.
 #' By default, the procedure is not repeated (`.r = 1`). You may choose to repeat
 #' cross-validation by setting a higher `.r` to be sure not to have a particular 
 #' (unfortunate) split. See \insertCite{Shmueli2019;textual}{cSEM} for 
 #' details. Typically `.r = 1` should be sufficient though.
 #' 
-#' Alternatively, users may supply a matrix or a data frame of `.test_data` with 
+#' Alternatively, users may supply a test dataset as matrix or a data frame of `.test_data` with 
 #' the same column names as those in the data used to obtain `.object` (the training data). 
 #' In this case, arguments `.cv_folds` and `.r` are
 #' ignored and predict uses the estimated coefficients from `.object` to

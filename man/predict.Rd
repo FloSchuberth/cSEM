@@ -2,7 +2,7 @@
 % Please edit documentation in R/postestimate_predict.R
 \name{predict}
 \alias{predict}
-\title{Predict indicator and construct scores}
+\title{Predict indicator scores}
 \usage{
 predict(
  .object                   = NULL,
@@ -24,7 +24,7 @@ predict(
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
 
 \item{.benchmark}{Character string. The procedure to obtain benchmark predictions.
-One of "\emph{lm}", "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", or "\emph{MAXVAR}".
+One of "\emph{lm}", "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", "\emph{MAXVAR}", or "\emph{NA}".
 Default to "\emph{lm}".}
 
 \item{.approach_predict}{Character string. Which approach should be used to perform
@@ -53,7 +53,7 @@ training data.}
 
 \item{.approach_score_target}{Character string. How should the aggregation of the estimates of
 the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
-One of "\emph{mean}" or "\emph{median}" or "\emph{mode}".
+One of "\emph{mean}", "\emph{median}" or "\emph{mode}".
 If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
 If "\emph{median}", the mean of the estimated endogenous indicators is calculated.
 If "\emph{mode}", the maximum empirical density on the intervals defined by the thresholds
@@ -72,7 +72,7 @@ If \code{FALSE} OrdPLS/OrdPLSc is applied. Defaults to \code{TRUE}.}
 \item{.approach_score_benchmark}{Character string. How should the aggregation
 of the estimates of the truncated normal distribution be done for the
 benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
-One of "\emph{mean}" or "\emph{median}" or "\emph{mode}" or "\emph{round}".
+One of "\emph{mean}", "\emph{median}", "\emph{mode}" or "\emph{round}".
 If "\emph{round}", the benchmark predictions are obtained using the traditional prediction
 algorithm for PLS-PM which are rounded for categorical indicators.
 If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
@@ -117,21 +117,21 @@ of MSE (UD) \insertCite{Hora2015,Watson2002}{cSEM}.}
 \lifecycle{maturing}
 }
 \details{
-Predict the indicator scores of endogenous constructs.
-
-Predict uses the procedure introduced by \insertCite{Shmueli2016;textual}{cSEM} in the context of
-PLS (commonly called: "PLSPredict" \insertCite{Shmueli2019}{cSEM}).
-Predict uses k-fold cross-validation to randomly
-split the data into training and test data and subsequently predicts the
-relevant values in the test data based on the model parameter estimates obtained
-using the training data. The number of cross-validation folds is 10 by default but
+The predict function implements the procedure introduced by \insertCite{Shmueli2016;textual}{cSEM} in the PLS context
+known as "PLSPredict" \insertCite{Shmueli2019}{cSEM} including its variants PLScPredcit, OrdPLSpredict and OrdPLScpredict.
+It is used to predict the indicator scores of endogenous constructs and to evaluat the out-of-sample predictive power
+of a model.
+For that purpose, the predict function uses k-fold cross-validation to randomly
+split the data into training and test datasets, and subsequently predicts the
+values of the test data based on the model parameter estimates obtained
+from the training data. The number of cross-validation folds is 10 by default but
 may be changed using the \code{.cv_folds} argument.
 By default, the procedure is not repeated (\code{.r = 1}). You may choose to repeat
 cross-validation by setting a higher \code{.r} to be sure not to have a particular
 (unfortunate) split. See \insertCite{Shmueli2019;textual}{cSEM} for
 details. Typically \code{.r = 1} should be sufficient though.
 
-Alternatively, users may supply a matrix or a data frame of \code{.test_data} with
+Alternatively, users may supply a test dataset as matrix or a data frame of \code{.test_data} with
 the same column names as those in the data used to obtain \code{.object} (the training data).
 In this case, arguments \code{.cv_folds} and \code{.r} are
 ignored and predict uses the estimated coefficients from \code{.object} to
