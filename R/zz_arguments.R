@@ -50,7 +50,7 @@
 #' @param .approach_score_benchmark Character string. How should the aggregation
 #'   of the estimates of the truncated normal distribution be done for the 
 #'   benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
-#'   One of "*mean*" or "*median*" or "*mode*" or "*round*". 
+#'   One of "*mean*", "*median*", "*mode*" or "*round*". 
 #'   If "*round*", the benchmark predictions are obtained using the traditional prediction
 #'   algorithm for PLS-PM which are rounded for categorical indicators.
 #'   If "*mean*", the mean of the estimated endogenous indicators is calculated. 
@@ -61,7 +61,7 @@
 #'   `.approach_score_benchmark` is ignored. Defaults to "*round*".
 #' @param .approach_score_target Character string. How should the aggregation of the estimates of
 #'   the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
-#'   One of "*mean*" or "*median*" or "*mode*". 
+#'   One of "*mean*", "*median*" or "*mode*". 
 #'   If "*mean*", the mean of the estimated endogenous indicators is calculated. 
 #'   If "*median*", the mean of the estimated endogenous indicators is calculated.
 #'   If "*mode*", the maximum empirical density on the intervals defined by the thresholds
@@ -75,7 +75,7 @@
 #'   
 #' @param .attrbutes Character string. Variables used as attributes in IPMA.
 #' @param .benchmark Character string. The procedure to obtain benchmark predictions.
-#'   One of "*lm*", "*unit*", "*PLS-PM*", "*GSCA*", "*PCA*", or "*MAXVAR*".
+#'   One of "*lm*", "*unit*", "*PLS-PM*", "*GSCA*", "*PCA*", "*MAXVAR*", or "*NA*".
 #'   Default to "*lm*".
 #' @param .bias_corrected Logical. Should the standard and the tStat
 #'   confidence interval be bias-corrected using the bootstrapped bias estimate? 
@@ -451,7 +451,7 @@ args_default <- function(.choices = FALSE) {
                                  "GSCA", "PCA", "unit", "bartlett", "regression"), 
     .arguments               = NULL,
     .attributes              = NULL,
-    .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
+    .benchmark               = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR","NA"),
     .bias_corrected          = TRUE,
     .by_equation             = TRUE,
     .C                       = NULL,
