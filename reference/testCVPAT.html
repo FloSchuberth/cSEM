@@ -176,15 +176,15 @@ losses in predictions is compared for both models.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">### Anime example taken from https://github.com/ISS-Analytics/pls-predict</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">### Anime example taken from https://github.com/ISS-Analytics/pls-predict/</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Load data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Anime</span><span class="op">)</span> <span class="co"># data is similar to the Anime.csv found on </span></span></span>
-<span class="r-in"><span>            <span class="co"># https://github.com/ISS-Analytics/pls-predict but with irrelevant</span></span></span>
+<span class="r-in"><span>            <span class="co"># https://github.com/ISS-Analytics/pls-predict/ but with irrelevant</span></span></span>
 <span class="r-in"><span>            <span class="co"># columns removed</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Split into training and data the same way as it is done on </span></span></span>
-<span class="r-in"><span><span class="co"># https://github.com/ISS-Analytics/pls-predict</span></span></span>
+<span class="r-in"><span><span class="co"># https://github.com/ISS-Analytics/pls-predict/</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">index</span>     <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">Anime</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">83</span>, replace <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>

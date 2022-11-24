@@ -251,7 +251,7 @@ For jackknife <code>.R</code> are <code>.R2</code> are ignored.</p>
 By default these results are dropped however users may choose to <code>"ignore"</code>
 or <code>"replace"</code> inadmissible results in which resampling continuous until
 the necessary number of admissible results is reached.</p>
-<p>The <span class="pkg">cSEM</span> package supports (multi)processing via the <a href="https://github.com/HenrikBengtsson/future" class="external-link">future</a>
+<p>The <span class="pkg">cSEM</span> package supports (multi)processing via the <a href="https://github.com/HenrikBengtsson/future/" class="external-link">future</a>
 framework (Bengtsson 2018)
 . Users may simply choose an evaluation plan
 via <code>.eval_plan</code> and the package takes care of all the complicated backend
@@ -266,7 +266,7 @@ when only a "small" number of replications is required as the overhead of
 initializing new sessions or distributing tasks to different cores
 will not immediately be compensated by the availability of multiple sessions/cores.</p>
 <p>Random number generation (RNG) uses the L'Ecuyer-CRMR RGN stream as implemented in the
-<a href="https://github.com/HenrikBengtsson/future.apply" class="external-link">future.apply package</a> (Bengtsson 2018)
+<a href="https://github.com/HenrikBengtsson/future.apply/" class="external-link">future.apply package</a> (Bengtsson 2018)
 .
 It is independent of the evaluation plan. Hence, setting e.g., <code>.seed = 123</code> will
 generate the same random number and replicates
