@@ -890,6 +890,7 @@
   address   = {Mona, Jamaica},
 }
 
+
 @Article{Liengaard2020,
   author    = {Benjamin Dybro Liengaard and Pratyush Nidhi Sharma and G. Tomas M. Hult and Morten Berg Jensen and Marko Sarstedt and Joseph F. Hair and Christian M. Ringle},
   journal   = {Decision Sciences},
@@ -902,5 +903,6 @@
   doi       = {10.1111/deci.12445},
   publisher = {Wiley},
 }
+
 
 @Comment{jabref-meta: databaseType:bibtex;}

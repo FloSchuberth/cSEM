@@ -21,7 +21,7 @@
 #' @seealso [csem()], [summarize()], [cSEMResults]
 #'
 #' @return A logical vector indicating which (if any) problem occurred. 
-#'   A `FALSE` indicates that the specific problem has not occurred. For models containing second-order
+#'   A `FALSE` indicates that the specific problem did not occurred. For models containing second-order
 #'   constructs estimated by the two/three-stage approach, a list of two such vectors 
 #'   (one for the first and one for the second stage) is returned. Status codes are:
 #'\itemize{
