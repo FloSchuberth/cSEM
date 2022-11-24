@@ -185,6 +185,8 @@
 #' @param .null_model Logical. Should the degrees of freedom for the null model
 #'   be computed? Defaults to `FALSE`.
 #' @param .object An R object of class [cSEMResults] resulting from a call to [csem()].
+#' @param .object1 An R object of class [cSEMResults] resulting from a call to [csem()].
+#' @param .object2 An R object of class [cSEMResults] resulting from a call to [csem()].
 #' @param .only_common_factors Logical. Should only concepts modeled as common 
 #'   factors be included when calculating one of the following quality critera: 
 #'   AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates. 

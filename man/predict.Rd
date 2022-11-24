@@ -6,7 +6,7 @@
 \usage{
 predict(
  .object               = NULL,
- .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR"),
+ .benchmark            = c("lm", "unit", "PLS-PM", "GSCA", "PCA", "MAXVAR", "NA"),
  .cv_folds             = 10,
  .handle_inadmissibles = c("stop", "ignore", "set_NA"),
  .r                    = 1,
@@ -15,7 +15,8 @@ predict(
  .sim_points           = 100,
  .disattenuate         = TRUE,
  .treat_as_continuous  = TRUE,
- .approach_score_benchmark = c("mean", "median", "mode", "round")
+ .approach_score_benchmark = c("mean", "median", "mode", "round"),
+ .seed                 = NULL
  )
 }
 \arguments{
@@ -72,6 +73,11 @@ If "\emph{mode}", the maximum empirical density on the intervals defined by the 
 is used.
 If \code{.treat_as_continuous = TRUE} or if all indicators are on a continuous scale,
 \code{.approach_score_benchmark} is ignored. Defaults to "\emph{round}".}
+
+\item{.seed}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
 }
 \value{
 An object of class \code{cSEMPredict} with print and plot methods.
