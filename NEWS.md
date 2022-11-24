@@ -45,7 +45,15 @@
   (weights or loadings) is conducted. The standard error, t-value, p-value and
   CI are properly set to `NA` now. (#433)
   
-- 
+- `postestimate_test_CVPAT()`:  Perform a Cross-Validated Predictive Ability Test (CVPAT) to
+  compare the predictive performance of two models (#455)
+
+- `predict()` is now able to perform predictions either based on the earliest
+   antecedents, i.e., the values of the indicators associated to exogenous constructs
+   or based on the direct antecedents, i.e., based on the values or predictions 
+   associated to the direct antecedents (3485)
+   
+- `predict()` a variety of prediction metrics are added
 
 # cSEM 0.4.0 (2021-04-20)
 
