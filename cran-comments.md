@@ -10,7 +10,7 @@ Tested using GitHub Actions on
 * Windows-latest (x86_64-w64-mingw32 (64-bit)); R-current (R 4.2.2)
 * macOS-latest (x86_64-apple-darwin17.0 (64-bit)); R-current (R 4.2.2)
 * ubuntu-20.04 (x86_64-pc-linux-gnu (64-bit)); R-current (R 4.2.2)
-* ubuntu 20.04 R-devel, R-current (R 4.2.2)
+* ubuntu 20.04 R-devel
 
 There were no errors or warnings.
 
