@@ -166,7 +166,7 @@ need to be supplied to <code>.instruments</code>. Defaults to "<em>OLS</em>".</p
 <dd><p>Character string. How should the aggregation
 of the estimates of the truncated normal distribution be done for the
 benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
-One of "<em>mean</em>" or "<em>median</em>" or "<em>mode</em>" or "<em>round</em>".
+One of "<em>mean</em>", "<em>median</em>", "<em>mode</em>" or "<em>round</em>".
 If "<em>round</em>", the benchmark predictions are obtained using the traditional prediction
 algorithm for PLS-PM which are rounded for categorical indicators.
 If "<em>mean</em>", the mean of the estimated endogenous indicators is calculated.
@@ -180,7 +180,7 @@ If <code>.treat_as_continuous = TRUE</code> or if all indicators are on a contin
 <dt>.approach_score_target</dt>
 <dd><p>Character string. How should the aggregation of the estimates of
 the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
-One of "<em>mean</em>" or "<em>median</em>" or "<em>mode</em>".
+One of "<em>mean</em>", "<em>median</em>" or "<em>mode</em>".
 If "<em>mean</em>", the mean of the estimated endogenous indicators is calculated.
 If "<em>median</em>", the mean of the estimated endogenous indicators is calculated.
 If "<em>mode</em>", the maximum empirical density on the intervals defined by the thresholds
@@ -205,7 +205,7 @@ by the user.</p></dd>
 
 <dt>.benchmark</dt>
 <dd><p>Character string. The procedure to obtain benchmark predictions.
-One of "<em>lm</em>", "<em>unit</em>", "<em>PLS-PM</em>", "<em>GSCA</em>", "<em>PCA</em>", or "<em>MAXVAR</em>".
+One of "<em>lm</em>", "<em>unit</em>", "<em>PLS-PM</em>", "<em>GSCA</em>", "<em>PCA</em>", "<em>MAXVAR</em>", or "<em>NA</em>".
 Default to "<em>lm</em>".</p></dd>
 
 
