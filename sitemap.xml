@@ -283,6 +283,9 @@
     <loc>/reference/print.cSEMSummarize.html</loc>
   </url>
   <url>
+    <loc>/reference/print.cSEMTestCVPAT.html</loc>
+  </url>
+  <url>
     <loc>/reference/print.cSEMTestHausman.html</loc>
   </url>
   <url>
@@ -329,6 +332,9 @@
   </url>
   <url>
     <loc>/reference/summarize.html</loc>
+  </url>
+  <url>
+    <loc>/reference/testCVPAT.html</loc>
   </url>
   <url>
     <loc>/reference/testHausman.html</loc>

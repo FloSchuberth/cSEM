@@ -78,16 +78,16 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">doNonlinearEffectsAnalysis</span><span class="op">(</span>
- .object            <span class="op">=</span> <span class="cn">NULL</span>,
- .dependent         <span class="op">=</span> <span class="cn">NULL</span>, 
- .independent       <span class="op">=</span> <span class="cn">NULL</span>,
- .moderator         <span class="op">=</span> <span class="cn">NULL</span>,
- .n_steps           <span class="op">=</span> <span class="fl">100</span>,
- .values_moderator  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,
- .value_independent <span class="op">=</span> <span class="fl">0</span>,
- .alpha             <span class="op">=</span> <span class="fl">0.05</span>
- <span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">doNonlinearEffectsAnalysis</span><span class="op">(</span></span>
+<span> .object            <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span> .dependent         <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span> .independent       <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span> .moderator         <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span> .n_steps           <span class="op">=</span> <span class="fl">100</span>,</span>
+<span> .values_moderator  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span> .value_independent <span class="op">=</span> <span class="fl">0</span>,</span>
+<span> .alpha             <span class="op">=</span> <span class="fl">0.05</span></span>
+<span> <span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -152,46 +152,46 @@ the input for the floodlight analysis.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">model_Int</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in"># Measurement models</span>
-<span class="r-in">INV =~ INV1 + INV2 + INV3 +INV4</span>
-<span class="r-in">SAT =~ SAT1 + SAT2 + SAT3</span>
-<span class="r-in">INT =~ INT1 + INT2</span>
-<span class="r-in"></span>
-<span class="r-in"># Structrual model containing an interaction term.</span>
-<span class="r-in">INT ~ INV + SAT + INV.SAT</span>
-<span class="r-in">"</span></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="co"># Estimate model</span></span>
-<span class="r-in"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">Switching</span>, .model <span class="op">=</span> <span class="va">model_Int</span>,</span>
-<span class="r-in">            <span class="co"># ADANCO settings</span></span>
-<span class="r-in">            .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">'factorial'</span>,</span>
-<span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-06</span>,</span>
-<span class="r-in">            .resample_method <span class="op">=</span> <span class="st">'bootstrap'</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="co"># Do nonlinear effects analysis</span></span>
-<span class="r-in"><span class="va">neffects</span> <span class="op">&lt;-</span> <span class="fu">doNonlinearEffectsAnalysis</span><span class="op">(</span><span class="va">out</span>, </span>
-<span class="r-in">                                       .dependent <span class="op">=</span> <span class="st">'INT'</span>,</span>
-<span class="r-in">                                       .moderator <span class="op">=</span> <span class="st">'INV'</span>,</span>
-<span class="r-in">                                       .independent <span class="op">=</span> <span class="st">'SAT'</span><span class="op">)</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Get an overview</span></span>
-<span class="r-in"><span class="va">neffects</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simple effects plot</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">neffects</span>, .plot_type <span class="op">=</span> <span class="st">'simpleeffects'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Surface plot using plotly</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">neffects</span>, .plot_type <span class="op">=</span> <span class="st">'surface'</span>, .plot_package <span class="op">=</span> <span class="st">'plotly'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Surface plot using persp</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">neffects</span>, .plot_type <span class="op">=</span> <span class="st">'surface'</span>, .plot_package <span class="op">=</span> <span class="st">'persp'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Floodlight analysis</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">neffects</span>, .plot_type <span class="op">=</span> <span class="st">'floodlight'</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">model_Int</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Measurement models</span></span></span>
+<span class="r-in"><span><span class="st">INV =~ INV1 + INV2 + INV3 +INV4</span></span></span>
+<span class="r-in"><span><span class="st">SAT =~ SAT1 + SAT2 + SAT3</span></span></span>
+<span class="r-in"><span><span class="st">INT =~ INT1 + INT2</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Structrual model containing an interaction term.</span></span></span>
+<span class="r-in"><span><span class="st">INT ~ INV + SAT + INV.SAT</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="co"># Estimate model</span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">Switching</span>, .model <span class="op">=</span> <span class="va">model_Int</span>,</span></span>
+<span class="r-in"><span>            <span class="co"># ADANCO settings</span></span></span>
+<span class="r-in"><span>            .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">'factorial'</span>,</span></span>
+<span class="r-in"><span>            .tolerance <span class="op">=</span> <span class="fl">1e-06</span>,</span></span>
+<span class="r-in"><span>            .resample_method <span class="op">=</span> <span class="st">'bootstrap'</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="co"># Do nonlinear effects analysis</span></span></span>
+<span class="r-in"><span><span class="va">neffects</span> <span class="op">&lt;-</span> <span class="fu">doNonlinearEffectsAnalysis</span><span class="op">(</span><span class="va">out</span>, </span></span>
+<span class="r-in"><span>                                       .dependent <span class="op">=</span> <span class="st">'INT'</span>,</span></span>
+<span class="r-in"><span>                                       .moderator <span class="op">=</span> <span class="st">'INV'</span>,</span></span>
+<span class="r-in"><span>                                       .independent <span class="op">=</span> <span class="st">'SAT'</span><span class="op">)</span> </span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Get an overview</span></span></span>
+<span class="r-in"><span><span class="va">neffects</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simple effects plot</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">neffects</span>, .plot_type <span class="op">=</span> <span class="st">'simpleeffects'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Surface plot using plotly</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">neffects</span>, .plot_type <span class="op">=</span> <span class="st">'surface'</span>, .plot_package <span class="op">=</span> <span class="st">'plotly'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Surface plot using persp</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">neffects</span>, .plot_type <span class="op">=</span> <span class="st">'surface'</span>, .plot_package <span class="op">=</span> <span class="st">'persp'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Floodlight analysis</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">neffects</span>, .plot_type <span class="op">=</span> <span class="st">'floodlight'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -206,7 +206,7 @@ the input for the floodlight analysis.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

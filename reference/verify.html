@@ -78,7 +78,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">verify</span><span class="op">(</span><span class="va">.object</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">verify</span><span class="op">(</span><span class="va">.object</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -124,23 +124,23 @@ model-implied indicator VCV matrix for nonlinear models and returns "ok".</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">### Without higher order constructs --------------------------------------------</span></span>
-<span class="r-in"><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in"># Structural model</span>
-<span class="r-in">eta2 ~ eta1</span>
-<span class="r-in">eta3 ~ eta1 + eta2</span>
-<span class="r-in"></span>
-<span class="r-in"># (Reflective) measurement model</span>
-<span class="r-in">eta1 =~ y11 + y12 + y13</span>
-<span class="r-in">eta2 =~ y21 + y22 + y23</span>
-<span class="r-in">eta3 =~ y31 + y32 + y33</span>
-<span class="r-in">"</span></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="co"># Estimate</span></span>
-<span class="r-in"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span><span class="op">)</span></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="co"># Check admissibility</span></span>
-<span class="r-in"><span class="fu">verify</span><span class="op">(</span><span class="va">out</span><span class="op">)</span> <span class="co"># ok!</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">### Without higher order constructs --------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Structural model</span></span></span>
+<span class="r-in"><span><span class="st">eta2 ~ eta1</span></span></span>
+<span class="r-in"><span><span class="st">eta3 ~ eta1 + eta2</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># (Reflective) measurement model</span></span></span>
+<span class="r-in"><span><span class="st">eta1 =~ y11 + y12 + y13</span></span></span>
+<span class="r-in"><span><span class="st">eta2 =~ y21 + y22 + y23</span></span></span>
+<span class="r-in"><span><span class="st">eta3 =~ y31 + y32 + y33</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="co"># Estimate</span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="co"># Check admissibility</span></span></span>
+<span class="r-in"><span><span class="fu">verify</span><span class="op">(</span><span class="va">out</span><span class="op">)</span> <span class="co"># ok!</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Verify admissibility:</span>
@@ -156,42 +156,42 @@ model-implied indicator VCV matrix for nonlinear models and returns "ok".</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   4      <span style="color: #00BB00;">ok</span>        All reliability estimates &lt;= 1                         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   5      <span style="color: #00BB00;">ok</span>        Model-implied indicator VCV is positive semi-definite  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Examine the structure of a cSEMVerify object</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">verify</span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Examine the structure of a cSEMVerify object</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">verify</span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  'cSEMVerify' Named logi [1:5] FALSE FALSE FALSE FALSE FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "names")= chr [1:5] "1" "2" "3" "4" ...</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">### With higher order constructs -----------------------------------------------</span></span>
-<span class="r-in"><span class="co"># If the model containes higher order constructs both the first and the second-</span></span>
-<span class="r-in"><span class="co"># stage estimates estimates are checked for admissibility</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va">cSEM.DGP</span><span class="op">)</span> <span class="co"># download from https://m-e-rademaker.github.io/cSEM.DGP</span></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="co"># Create DGP with 2nd order construct. Loading for indicator y51 is set to 1.1</span></span>
-<span class="r-in"><span class="co"># to produce a failing first stage model</span></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="va">dgp_2ndorder</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in">## Path model / Regressions</span>
-<span class="r-in">eta2 ~ 0.5*eta1</span>
-<span class="r-in">eta3 ~ 0.35*eta1 + 0.4*eta2</span>
-<span class="r-in"></span>
-<span class="r-in">## Composite model</span>
-<span class="r-in">eta1 =~ 0.8*y41 + 0.6*y42 + 0.6*y43</span>
-<span class="r-in">eta2 =~ 1.1*y51 + 0.7*y52 + 0.7*y53</span>
-<span class="r-in">c1   =~ 0.8*y11 + 0.4*y12</span>
-<span class="r-in">c2   =~ 0.5*y21 + 0.3*y22</span>
-<span class="r-in"></span>
-<span class="r-in">## Higher order composite</span>
-<span class="r-in">eta3 =~ 0.4*c1 + 0.4*c2</span>
-<span class="r-in">"</span></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu">generateData</span><span class="op">(</span><span class="va">dgp_2ndorder</span><span class="op">)</span> <span class="co"># requires the cSEM.DGP package</span></span>
-<span class="r-in"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">dat</span>, .model <span class="op">=</span> <span class="va">dgp_2ndorder</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">verify</span><span class="op">(</span><span class="va">out</span><span class="op">)</span> <span class="co"># not ok</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">### With higher order constructs -----------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co"># If the model containes higher order constructs both the first and the second-</span></span></span>
+<span class="r-in"><span><span class="co"># stage estimates estimates are checked for admissibility</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va">cSEM.DGP</span><span class="op">)</span> <span class="co"># download from https://m-e-rademaker.github.io/cSEM.DGP</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="co"># Create DGP with 2nd order construct. Loading for indicator y51 is set to 1.1</span></span></span>
+<span class="r-in"><span><span class="co"># to produce a failing first stage model</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="va">dgp_2ndorder</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st">## Path model / Regressions</span></span></span>
+<span class="r-in"><span><span class="st">eta2 ~ 0.5*eta1</span></span></span>
+<span class="r-in"><span><span class="st">eta3 ~ 0.35*eta1 + 0.4*eta2</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st">## Composite model</span></span></span>
+<span class="r-in"><span><span class="st">eta1 =~ 0.8*y41 + 0.6*y42 + 0.6*y43</span></span></span>
+<span class="r-in"><span><span class="st">eta2 =~ 1.1*y51 + 0.7*y52 + 0.7*y53</span></span></span>
+<span class="r-in"><span><span class="st">c1   =~ 0.8*y11 + 0.4*y12</span></span></span>
+<span class="r-in"><span><span class="st">c2   =~ 0.5*y21 + 0.3*y22</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st">## Higher order composite</span></span></span>
+<span class="r-in"><span><span class="st">eta3 =~ 0.4*c1 + 0.4*c2</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu">generateData</span><span class="op">(</span><span class="va">dgp_2ndorder</span><span class="op">)</span> <span class="co"># requires the cSEM.DGP package</span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">dat</span>, .model <span class="op">=</span> <span class="va">dgp_2ndorder</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">verify</span><span class="op">(</span><span class="va">out</span><span class="op">)</span> <span class="co"># not ok</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -206,7 +206,7 @@ model-implied indicator VCV matrix for nonlinear models and returns "ok".</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

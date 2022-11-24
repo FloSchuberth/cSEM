@@ -78,7 +78,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">ITFlex</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="va">ITFlex</span></span></code></pre></div>
     </div>
 
     <div id="format">
@@ -173,27 +173,27 @@ Guilford Press, New York.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">#============================================================================</span></span>
-<span class="r-in"><span class="co"># Example is taken from Henseler (2020)</span></span>
-<span class="r-in"><span class="co">#============================================================================</span></span>
-<span class="r-in"><span class="va">model_IT_Fex</span><span class="op">=</span><span class="st">"</span>
-<span class="r-in"># Composite models</span>
-<span class="r-in">ITComp  &lt;~ ITCOMP1 + ITCOMP2 + ITCOMP3 + ITCOMP4</span>
-<span class="r-in">Modul   &lt;~ MOD1 + MOD2 + MOD3 + MOD4</span>
-<span class="r-in">ITConn  &lt;~ ITCONN1 + ITCONN2 + ITCONN3 + ITCONN4</span>
-<span class="r-in">ITPers  &lt;~ ITPSF1 + ITPSF2 + ITPSF3 + ITPSF4</span>
-<span class="r-in"></span>
-<span class="r-in"># Saturated structural model</span>
-<span class="r-in">ITPers ~ ITComp + Modul + ITConn</span>
-<span class="r-in">Modul  ~ ITComp + ITConn </span>
-<span class="r-in">ITConn ~ ITComp </span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">ITFlex</span>, .model <span class="op">=</span> <span class="va">model_IT_Fex</span>,</span>
-<span class="r-in">           .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">'factorial'</span>,</span>
-<span class="r-in">           .tolerance <span class="op">=</span> <span class="fl">1e-06</span>,</span>
-<span class="r-in">           .PLS_ignore_structural_model <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#============================================================================</span></span></span>
+<span class="r-in"><span><span class="co"># Example is taken from Henseler (2020)</span></span></span>
+<span class="r-in"><span><span class="co">#============================================================================</span></span></span>
+<span class="r-in"><span><span class="va">model_IT_Fex</span><span class="op">=</span><span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Composite models</span></span></span>
+<span class="r-in"><span><span class="st">ITComp  &lt;~ ITCOMP1 + ITCOMP2 + ITCOMP3 + ITCOMP4</span></span></span>
+<span class="r-in"><span><span class="st">Modul   &lt;~ MOD1 + MOD2 + MOD3 + MOD4</span></span></span>
+<span class="r-in"><span><span class="st">ITConn  &lt;~ ITCONN1 + ITCONN2 + ITCONN3 + ITCONN4</span></span></span>
+<span class="r-in"><span><span class="st">ITPers  &lt;~ ITPSF1 + ITPSF2 + ITPSF3 + ITPSF4</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Saturated structural model</span></span></span>
+<span class="r-in"><span><span class="st">ITPers ~ ITComp + Modul + ITConn</span></span></span>
+<span class="r-in"><span><span class="st">Modul  ~ ITComp + ITConn </span></span></span>
+<span class="r-in"><span><span class="st">ITConn ~ ITComp </span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">ITFlex</span>, .model <span class="op">=</span> <span class="va">model_IT_Fex</span>,</span></span>
+<span class="r-in"><span>           .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">'factorial'</span>,</span></span>
+<span class="r-in"><span>           .tolerance <span class="op">=</span> <span class="fl">1e-06</span>,</span></span>
+<span class="r-in"><span>           .PLS_ignore_structural_model <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -208,7 +208,7 @@ Guilford Press, New York.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

@@ -78,45 +78,45 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">csem</span><span class="op">(</span>
-.data                  <span class="op">=</span> <span class="cn">NULL</span>,
-.model                 <span class="op">=</span> <span class="cn">NULL</span>,
-.approach_2ndorder     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2stage"</span>, <span class="st">"mixed"</span><span class="op">)</span>,
-.approach_cor_robust   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"mcd"</span>, <span class="st">"spearman"</span><span class="op">)</span>,
-.approach_nl           <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"replace"</span><span class="op">)</span>,
-.approach_paths        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"OLS"</span>, <span class="st">"2SLS"</span><span class="op">)</span>,
-.approach_weights      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PLS-PM"</span>, <span class="st">"SUMCORR"</span>, <span class="st">"MAXVAR"</span>, <span class="st">"SSQCORR"</span>, 
-                           <span class="st">"MINVAR"</span>, <span class="st">"GENVAR"</span>,<span class="st">"GSCA"</span>, <span class="st">"PCA"</span>,
-                           <span class="st">"unit"</span>, <span class="st">"bartlett"</span>, <span class="st">"regression"</span><span class="op">)</span>,
-.conv_criterion        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"diff_absolute"</span>, <span class="st">"diff_squared"</span>, <span class="st">"diff_relative"</span><span class="op">)</span>,
-.disattenuate          <span class="op">=</span> <span class="cn">TRUE</span>,
-.dominant_indicators   <span class="op">=</span> <span class="cn">NULL</span>,
-.estimate_structural   <span class="op">=</span> <span class="cn">TRUE</span>,
-.id                    <span class="op">=</span> <span class="cn">NULL</span>,
-.instruments           <span class="op">=</span> <span class="cn">NULL</span>,
-.iter_max              <span class="op">=</span> <span class="fl">100</span>,
-.normality             <span class="op">=</span> <span class="cn">FALSE</span>,
-.PLS_approach_cf       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_squared_euclid"</span>, <span class="st">"dist_euclid_weighted"</span>, 
-                           <span class="st">"fisher_transformed"</span>, <span class="st">"mean_arithmetic"</span>,
-                           <span class="st">"mean_geometric"</span>, <span class="st">"mean_harmonic"</span>,
-                           <span class="st">"geo_of_harmonic"</span><span class="op">)</span>,
-.PLS_ignore_structural_model <span class="op">=</span> <span class="cn">FALSE</span>,
-.PLS_modes                   <span class="op">=</span> <span class="cn">NULL</span>,
-.PLS_weight_scheme_inner     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"path"</span>, <span class="st">"centroid"</span>, <span class="st">"factorial"</span><span class="op">)</span>,
-.reliabilities         <span class="op">=</span> <span class="cn">NULL</span>,
-.starting_values       <span class="op">=</span> <span class="cn">NULL</span>,
-.resample_method       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"bootstrap"</span>, <span class="st">"jackknife"</span><span class="op">)</span>,
-.resample_method2      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"bootstrap"</span>, <span class="st">"jackknife"</span><span class="op">)</span>,
-.R                     <span class="op">=</span> <span class="fl">499</span>,
-.R2                    <span class="op">=</span> <span class="fl">199</span>,
-.handle_inadmissibles  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"drop"</span>, <span class="st">"ignore"</span>, <span class="st">"replace"</span><span class="op">)</span>,
-.user_funs             <span class="op">=</span> <span class="cn">NULL</span>,
-.eval_plan             <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"multicore"</span>, <span class="st">"multisession"</span><span class="op">)</span>,
-.seed                  <span class="op">=</span> <span class="cn">NULL</span>,
-.sign_change_option    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"individual"</span>, <span class="st">"individual_reestimate"</span>, 
-                           <span class="st">"construct_reestimate"</span><span class="op">)</span>,
-.tolerance             <span class="op">=</span> <span class="fl">1e-05</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">csem</span><span class="op">(</span></span>
+<span>.data                  <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>.model                 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>.approach_2ndorder     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2stage"</span>, <span class="st">"mixed"</span><span class="op">)</span>,</span>
+<span>.approach_cor_robust   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"mcd"</span>, <span class="st">"spearman"</span><span class="op">)</span>,</span>
+<span>.approach_nl           <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"replace"</span><span class="op">)</span>,</span>
+<span>.approach_paths        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"OLS"</span>, <span class="st">"2SLS"</span><span class="op">)</span>,</span>
+<span>.approach_weights      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PLS-PM"</span>, <span class="st">"SUMCORR"</span>, <span class="st">"MAXVAR"</span>, <span class="st">"SSQCORR"</span>, </span>
+<span>                           <span class="st">"MINVAR"</span>, <span class="st">"GENVAR"</span>,<span class="st">"GSCA"</span>, <span class="st">"PCA"</span>,</span>
+<span>                           <span class="st">"unit"</span>, <span class="st">"bartlett"</span>, <span class="st">"regression"</span><span class="op">)</span>,</span>
+<span>.conv_criterion        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"diff_absolute"</span>, <span class="st">"diff_squared"</span>, <span class="st">"diff_relative"</span><span class="op">)</span>,</span>
+<span>.disattenuate          <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>.dominant_indicators   <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>.estimate_structural   <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>.id                    <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>.instruments           <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>.iter_max              <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>.normality             <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>.PLS_approach_cf       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_squared_euclid"</span>, <span class="st">"dist_euclid_weighted"</span>, </span>
+<span>                           <span class="st">"fisher_transformed"</span>, <span class="st">"mean_arithmetic"</span>,</span>
+<span>                           <span class="st">"mean_geometric"</span>, <span class="st">"mean_harmonic"</span>,</span>
+<span>                           <span class="st">"geo_of_harmonic"</span><span class="op">)</span>,</span>
+<span>.PLS_ignore_structural_model <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>.PLS_modes                   <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>.PLS_weight_scheme_inner     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"path"</span>, <span class="st">"centroid"</span>, <span class="st">"factorial"</span><span class="op">)</span>,</span>
+<span>.reliabilities         <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>.starting_values       <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>.resample_method       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"bootstrap"</span>, <span class="st">"jackknife"</span><span class="op">)</span>,</span>
+<span>.resample_method2      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"bootstrap"</span>, <span class="st">"jackknife"</span><span class="op">)</span>,</span>
+<span>.R                     <span class="op">=</span> <span class="fl">499</span>,</span>
+<span>.R2                    <span class="op">=</span> <span class="fl">199</span>,</span>
+<span>.handle_inadmissibles  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"drop"</span>, <span class="st">"ignore"</span>, <span class="st">"replace"</span><span class="op">)</span>,</span>
+<span>.user_funs             <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>.eval_plan             <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"multicore"</span>, <span class="st">"multisession"</span><span class="op">)</span>,</span>
+<span>.seed                  <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>.sign_change_option    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"individual"</span>, <span class="st">"individual_reestimate"</span>, </span>
+<span>                           <span class="st">"construct_reestimate"</span><span class="op">)</span>,</span>
+<span>.tolerance             <span class="op">=</span> <span class="fl">1e-05</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -477,22 +477,22 @@ For details see: Dijkstra and Schermelleh-Engel (2014)
 operators are usually used with indicators on their right-hand side. For
 second-order constructs the right-hand side variables are constructs instead.
 If c1, and c2 are constructs forming or measuring a higher-order
-construct, a model would look like this:</p><div class="sourceCode"><pre><code><span class="va">my_model</span> <span class="op">&lt;-</span> <span class="st">"
-# Structural model
-SAT  ~ QUAL
-VAL  ~ SAT
-
-# Measurement/composite model
-QUAL =~ qual1 + qual2
-SAT  =~ sat1 + sat2
-
-c1 =~ x11 + x12
-c2 =~ x21 + x22
-
-# Second-order construct (in this case a second-order composite build by common
-# factors)
-VAL &lt;~ c1 + c2
-"</span></code></pre></div><p>Currently, two approaches are explicitly implemented:</p><ul><li><p>(Default) <code>"2stage"</code>. The (disjoint) two-stage approach as proposed by Agarwal and Karahanna (2000)
+construct, a model would look like this:</p><div class="sourceCode"><pre><code><span><span class="va">my_model</span> <span class="op">&lt;-</span> <span class="st">"</span></span>
+<span><span class="st"># Structural model</span></span>
+<span><span class="st">SAT  ~ QUAL</span></span>
+<span><span class="st">VAL  ~ SAT</span></span>
+<span><span class="st"></span></span>
+<span><span class="st"># Measurement/composite model</span></span>
+<span><span class="st">QUAL =~ qual1 + qual2</span></span>
+<span><span class="st">SAT  =~ sat1 + sat2</span></span>
+<span><span class="st"></span></span>
+<span><span class="st">c1 =~ x11 + x12</span></span>
+<span><span class="st">c2 =~ x21 + x22</span></span>
+<span><span class="st"></span></span>
+<span><span class="st"># Second-order construct (in this case a second-order composite build by common</span></span>
+<span><span class="st"># factors)</span></span>
+<span><span class="st">VAL &lt;~ c1 + c2</span></span>
+<span><span class="st">"</span></span></code></pre></div><p>Currently, two approaches are explicitly implemented:</p><ul><li><p>(Default) <code>"2stage"</code>. The (disjoint) two-stage approach as proposed by Agarwal and Karahanna (2000)
 .
 Note that by default a correction for attenuation is applied if common factors are
 involved in modeling second-order constructs. For instance, the three-stage approach
@@ -511,21 +511,21 @@ not directly implemented as they simply require a respecification  of the model.
 In the above example the repeated indicators approach
 would require to change the model and to append the repeated indicators to
 the data supplied to <code>.data</code>. Note that the indicators need to be renamed in this case as
-<code>csem()</code> does not allow for one indicator to be attached to multiple constructs.</p><div class="sourceCode"><pre><code><span class="va">my_model</span> <span class="op">&lt;-</span> <span class="st">"
-# Structural model
-SAT  ~ QUAL
-VAL  ~ SAT
-
-VAL ~ c1 + c2
-
-# Measurement/composite model
-QUAL =~ qual1 + qual2
-SAT  =~ sat1 + sat2
-VAL  =~ x11_temp + x12_temp + x21_temp + x22_temp
-
-c1 =~ x11 + x12
-c2 =~ x21 + x22
-"</span></code></pre></div><p>According to the extended approach indirect effects of <code>QUAL</code> on <code>VAL</code> via <code>c1</code>
+<code>csem()</code> does not allow for one indicator to be attached to multiple constructs.</p><div class="sourceCode"><pre><code><span><span class="va">my_model</span> <span class="op">&lt;-</span> <span class="st">"</span></span>
+<span><span class="st"># Structural model</span></span>
+<span><span class="st">SAT  ~ QUAL</span></span>
+<span><span class="st">VAL  ~ SAT</span></span>
+<span><span class="st"></span></span>
+<span><span class="st">VAL ~ c1 + c2</span></span>
+<span><span class="st"></span></span>
+<span><span class="st"># Measurement/composite model</span></span>
+<span><span class="st">QUAL =~ qual1 + qual2</span></span>
+<span><span class="st">SAT  =~ sat1 + sat2</span></span>
+<span><span class="st">VAL  =~ x11_temp + x12_temp + x21_temp + x22_temp</span></span>
+<span><span class="st"></span></span>
+<span><span class="st">c1 =~ x11 + x12</span></span>
+<span><span class="st">c2 =~ x21 + x22</span></span>
+<span><span class="st">"</span></span></code></pre></div><p>According to the extended approach indirect effects of <code>QUAL</code> on <code>VAL</code> via <code>c1</code>
 and <code>c2</code> would have to be specified as well.</p>
 </div>
 
@@ -639,7 +639,7 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 “A Critical Look at the Use of PLS-SEM in MIS Quarterly.”
 <em>MIS Quarterly</em>, <b>36</b>(1), iii--xiv.<br><br> Schuberth F, Rademaker ME, Henseler J (2020).
 “Estimating and assessing second-order constructs using PLS-PM: the case of composites of composites.”
-<em>Industrial Management \&amp; Data Systems</em>, <b>120</b>(12), 2211-2241.
+<em>Industrial Management &amp; Data Systems</em>, <b>120</b>(12), 2211-2241.
 <a href="https://doi.org/10.1108/imds-12-2019-0642" class="external-link">doi:10.1108/imds-12-2019-0642</a>
 .<br><br> Spiller SA, Fitzsimons GJ, Lynch JG, Mcclelland GH (2013).
 “Spotlights, Floodlights, and the Magic Number Zero: Simple Effects Tests in Moderated Regression.”
@@ -647,7 +647,7 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 <a href="https://doi.org/10.1509/jmr.12.0420" class="external-link">doi:10.1509/jmr.12.0420</a>
 .<br><br> Van Riel ACR, Henseler J, Kemeny I, Sasovova Z (2017).
 “Estimating hierarchical constructs using Partial Least Squares: The case of second order composites of factors.”
-<em>Industrial Management \&amp; Data Systems</em>, <b>117</b>(3), 459--477.
+<em>Industrial Management &amp; Data Systems</em>, <b>117</b>(3), 459--477.
 <a href="https://doi.org/10.1108/IMDS-07-2016-0286" class="external-link">doi:10.1108/IMDS-07-2016-0286</a>
 .</p>
     </div>
@@ -660,33 +660,33 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># ===========================================================================</span></span>
-<span class="r-in"><span class="co"># Basic usage</span></span>
-<span class="r-in"><span class="co"># ===========================================================================</span></span>
-<span class="r-in"><span class="co">### Linear model ------------------------------------------------------------</span></span>
-<span class="r-in"><span class="co"># Most basic usage requires a dataset and a model. We use the </span></span>
-<span class="r-in"><span class="co">#  `threecommonfactors` dataset. </span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Take a look at the dataset</span></span>
-<span class="r-in"><span class="co">#?threecommonfactors</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Specify the (correct) model</span></span>
-<span class="r-in"><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in"># Structural model</span>
-<span class="r-in">eta2 ~ eta1</span>
-<span class="r-in">eta3 ~ eta1 + eta2</span>
-<span class="r-in"></span>
-<span class="r-in"># (Reflective) measurement model</span>
-<span class="r-in">eta1 =~ y11 + y12 + y13</span>
-<span class="r-in">eta2 =~ y21 + y22 + y23</span>
-<span class="r-in">eta3 =~ y31 + y32 + y33</span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Estimate</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Postestimation</span></span>
-<span class="r-in"><span class="fu"><a href="verify.html">verify</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># ===========================================================================</span></span></span>
+<span class="r-in"><span><span class="co"># Basic usage</span></span></span>
+<span class="r-in"><span><span class="co"># ===========================================================================</span></span></span>
+<span class="r-in"><span><span class="co">### Linear model ------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co"># Most basic usage requires a dataset and a model. We use the </span></span></span>
+<span class="r-in"><span><span class="co">#  `threecommonfactors` dataset. </span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Take a look at the dataset</span></span></span>
+<span class="r-in"><span><span class="co">#?threecommonfactors</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Specify the (correct) model</span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Structural model</span></span></span>
+<span class="r-in"><span><span class="st">eta2 ~ eta1</span></span></span>
+<span class="r-in"><span><span class="st">eta3 ~ eta1 + eta2</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># (Reflective) measurement model</span></span></span>
+<span class="r-in"><span><span class="st">eta1 =~ y11 + y12 + y13</span></span></span>
+<span class="r-in"><span><span class="st">eta2 =~ y21 + y22 + y23</span></span></span>
+<span class="r-in"><span><span class="st">eta3 =~ y31 + y32 + y33</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Estimate</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Postestimation</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="verify.html">verify</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Verify admissibility:</span>
@@ -702,7 +702,7 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 <span class="r-out co"><span class="r-pr">#&gt;</span>   4      <span style="color: #00BB00;">ok</span>        All reliability estimates &lt;= 1                         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   5      <span style="color: #00BB00;">ok</span>        Model-implied indicator VCV is positive semi-definite  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-in"><span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span>  </span>
+<span class="r-in"><span><span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span>  </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----------------------------------- Overview -----------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -775,7 +775,7 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Indirect effect    Estimate  Std. error   t-stat.   p-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1          0.2049          NA        NA        NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-in"><span class="fu"><a href="assess.html">assess</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="assess.html">assess</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Construct        AVE           R2          R2_adj    </span>
@@ -897,15 +897,15 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Indirect effect    Estimate  Std. error   t-stat.   p-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1          0.2049          NA        NA        NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Notes: </span></span>
-<span class="r-in"><span class="co">#   1. By default no inferential quantities (e.g. Std. errors, p-values, or</span></span>
-<span class="r-in"><span class="co">#      confidence intervals) are calculated. Use resampling to obtain</span></span>
-<span class="r-in"><span class="co">#      inferential quantities. See "Resampling" in the "Extended usage"</span></span>
-<span class="r-in"><span class="co">#      section below.</span></span>
-<span class="r-in"><span class="co">#   2. `summarize()` prints the full output by default. For a more condensed</span></span>
-<span class="r-in"><span class="co">#       output use:</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span>, .full_output <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Notes: </span></span></span>
+<span class="r-in"><span><span class="co">#   1. By default no inferential quantities (e.g. Std. errors, p-values, or</span></span></span>
+<span class="r-in"><span><span class="co">#      confidence intervals) are calculated. Use resampling to obtain</span></span></span>
+<span class="r-in"><span><span class="co">#      inferential quantities. See "Resampling" in the "Extended usage"</span></span></span>
+<span class="r-in"><span><span class="co">#      section below.</span></span></span>
+<span class="r-in"><span><span class="co">#   2. `summarize()` prints the full output by default. For a more condensed</span></span></span>
+<span class="r-in"><span><span class="co">#       output use:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span>, .full_output <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----------------------------------- Overview -----------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -964,66 +964,66 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 <span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y32      0.3521          NA        NA        NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 &lt;~ y33      0.3999          NA        NA        NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Dealing with endogeneity -------------------------------------------------</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># See: ?testHausman()</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">### Models containing second constructs--------------------------------------</span></span>
-<span class="r-in"><span class="co">## Take a look at the dataset</span></span>
-<span class="r-in"><span class="co">#?dgp_2ndorder_cf_of_c</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in"># Path model / Regressions </span>
-<span class="r-in">c4   ~ eta1</span>
-<span class="r-in">eta2 ~ eta1 + c4</span>
-<span class="r-in"></span>
-<span class="r-in"># Reflective measurement model</span>
-<span class="r-in">c1   &lt;~ y11 + y12 </span>
-<span class="r-in">c2   &lt;~ y21 + y22 + y23 + y24</span>
-<span class="r-in">c3   &lt;~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38</span>
-<span class="r-in">eta1 =~ y41 + y42 + y43</span>
-<span class="r-in">eta2 =~ y51 + y52 + y53</span>
-<span class="r-in"></span>
-<span class="r-in"># Composite model (second order)</span>
-<span class="r-in">c4   =~ c1 + c2 + c3</span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">res_2stage</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">dgp_2ndorder_cf_of_c</span>, <span class="va">model</span>, .approach_2ndorder <span class="op">=</span> <span class="st">"2stage"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">res_mixed</span>  <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">dgp_2ndorder_cf_of_c</span>, <span class="va">model</span>, .approach_2ndorder <span class="op">=</span> <span class="st">"mixed"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The standard repeated indicators approach is done by 1.) respecifying the model</span></span>
-<span class="r-in"><span class="co"># and 2.) adding the repeated indicators to the data set</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 1.) Respecify the model</span></span>
-<span class="r-in"><span class="va">model_RI</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in"># Path model / Regressions </span>
-<span class="r-in">c4   ~ eta1</span>
-<span class="r-in">eta2 ~ eta1 + c4</span>
-<span class="r-in">c4   ~ c1 + c2 + c3</span>
-<span class="r-in"></span>
-<span class="r-in"># Reflective measurement model</span>
-<span class="r-in">c1   &lt;~ y11 + y12 </span>
-<span class="r-in">c2   &lt;~ y21 + y22 + y23 + y24</span>
-<span class="r-in">c3   &lt;~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38</span>
-<span class="r-in">eta1 =~ y41 + y42 + y43</span>
-<span class="r-in">eta2 =~ y51 + y52 + y53</span>
-<span class="r-in"></span>
-<span class="r-in"># c4 is a common factor measured by composites</span>
-<span class="r-in">c4 =~ y11_temp + y12_temp + y21_temp + y22_temp + y23_temp + y24_temp +</span>
-<span class="r-in">      y31_temp + y32_temp + y33_temp + y34_temp + y35_temp + y36_temp + </span>
-<span class="r-in">      y37_temp + y38_temp</span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 2.) Update data set</span></span>
-<span class="r-in"><span class="va">data_RI</span> <span class="op">&lt;-</span> <span class="va">dgp_2ndorder_cf_of_c</span></span>
-<span class="r-in"><span class="va">coln</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_RI</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_RI</span><span class="op">)</span>, <span class="st">"_temp"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">data_RI</span> <span class="op">&lt;-</span> <span class="va">data_RI</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">data_RI</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">data_RI</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_RI</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">coln</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Estimate</span></span>
-<span class="r-in"><span class="va">res_RI</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">data_RI</span>, <span class="va">model_RI</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res_RI</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Dealing with endogeneity -------------------------------------------------</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># See: ?testHausman()</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">### Models containing second constructs--------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## Take a look at the dataset</span></span></span>
+<span class="r-in"><span><span class="co">#?dgp_2ndorder_cf_of_c</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Path model / Regressions </span></span></span>
+<span class="r-in"><span><span class="st">c4   ~ eta1</span></span></span>
+<span class="r-in"><span><span class="st">eta2 ~ eta1 + c4</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Reflective measurement model</span></span></span>
+<span class="r-in"><span><span class="st">c1   &lt;~ y11 + y12 </span></span></span>
+<span class="r-in"><span><span class="st">c2   &lt;~ y21 + y22 + y23 + y24</span></span></span>
+<span class="r-in"><span><span class="st">c3   &lt;~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38</span></span></span>
+<span class="r-in"><span><span class="st">eta1 =~ y41 + y42 + y43</span></span></span>
+<span class="r-in"><span><span class="st">eta2 =~ y51 + y52 + y53</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Composite model (second order)</span></span></span>
+<span class="r-in"><span><span class="st">c4   =~ c1 + c2 + c3</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">res_2stage</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">dgp_2ndorder_cf_of_c</span>, <span class="va">model</span>, .approach_2ndorder <span class="op">=</span> <span class="st">"2stage"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res_mixed</span>  <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">dgp_2ndorder_cf_of_c</span>, <span class="va">model</span>, .approach_2ndorder <span class="op">=</span> <span class="st">"mixed"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The standard repeated indicators approach is done by 1.) respecifying the model</span></span></span>
+<span class="r-in"><span><span class="co"># and 2.) adding the repeated indicators to the data set</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 1.) Respecify the model</span></span></span>
+<span class="r-in"><span><span class="va">model_RI</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Path model / Regressions </span></span></span>
+<span class="r-in"><span><span class="st">c4   ~ eta1</span></span></span>
+<span class="r-in"><span><span class="st">eta2 ~ eta1 + c4</span></span></span>
+<span class="r-in"><span><span class="st">c4   ~ c1 + c2 + c3</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Reflective measurement model</span></span></span>
+<span class="r-in"><span><span class="st">c1   &lt;~ y11 + y12 </span></span></span>
+<span class="r-in"><span><span class="st">c2   &lt;~ y21 + y22 + y23 + y24</span></span></span>
+<span class="r-in"><span><span class="st">c3   &lt;~ y31 + y32 + y33 + y34 + y35 + y36 + y37 + y38</span></span></span>
+<span class="r-in"><span><span class="st">eta1 =~ y41 + y42 + y43</span></span></span>
+<span class="r-in"><span><span class="st">eta2 =~ y51 + y52 + y53</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># c4 is a common factor measured by composites</span></span></span>
+<span class="r-in"><span><span class="st">c4 =~ y11_temp + y12_temp + y21_temp + y22_temp + y23_temp + y24_temp +</span></span></span>
+<span class="r-in"><span><span class="st">      y31_temp + y32_temp + y33_temp + y34_temp + y35_temp + y36_temp + </span></span></span>
+<span class="r-in"><span><span class="st">      y37_temp + y38_temp</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 2.) Update data set</span></span></span>
+<span class="r-in"><span><span class="va">data_RI</span> <span class="op">&lt;-</span> <span class="va">dgp_2ndorder_cf_of_c</span></span></span>
+<span class="r-in"><span><span class="va">coln</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_RI</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_RI</span><span class="op">)</span>, <span class="st">"_temp"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">data_RI</span> <span class="op">&lt;-</span> <span class="va">data_RI</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">data_RI</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">data_RI</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_RI</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">coln</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Estimate</span></span></span>
+<span class="r-in"><span><span class="va">res_RI</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">data_RI</span>, <span class="va">model_RI</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res_RI</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----------------------------------- Overview -----------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1210,103 +1210,103 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 <span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 ~ c2            0.2247          NA        NA        NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   eta2 ~ c3            0.2794          NA        NA        NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">### Multigroup analysis -----------------------------------------------------</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># See: ?testMGD()</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># ===========================================================================</span></span>
-<span class="r-in"><span class="co"># Extended usage</span></span>
-<span class="r-in"><span class="co"># ===========================================================================</span></span>
-<span class="r-in"><span class="co"># `csem()` provides defaults for all arguments except `.data` and `.model`.</span></span>
-<span class="r-in"><span class="co">#   Below some common options/tasks that users are likely to be interested in.</span></span>
-<span class="r-in"><span class="co">#   We use the threecommonfactors data set again:</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in"># Structural model</span>
-<span class="r-in">eta2 ~ eta1</span>
-<span class="r-in">eta3 ~ eta1 + eta2</span>
-<span class="r-in"></span>
-<span class="r-in"># (Reflective) measurement model</span>
-<span class="r-in">eta1 =~ y11 + y12 + y13</span>
-<span class="r-in">eta2 =~ y21 + y22 + y23</span>
-<span class="r-in">eta3 =~ y31 + y32 + y33</span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">### PLS vs PLSc and disattenuation</span></span>
-<span class="r-in"><span class="co"># In the model all concepts are modeled as common factors. If </span></span>
-<span class="r-in"><span class="co">#   .approach_weights = "PLS-PM", csem() uses PLSc to disattenuate composite-indicator </span></span>
-<span class="r-in"><span class="co">#   and composite-composite correlations.</span></span>
-<span class="r-in"><span class="va">res_plsc</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"PLS-PM"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Information</span><span class="op">$</span><span class="va">Model</span><span class="op">$</span><span class="va">construct_type</span> <span class="co"># all common factors</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">### Multigroup analysis -----------------------------------------------------</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># See: ?testMGD()</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># ===========================================================================</span></span></span>
+<span class="r-in"><span><span class="co"># Extended usage</span></span></span>
+<span class="r-in"><span><span class="co"># ===========================================================================</span></span></span>
+<span class="r-in"><span><span class="co"># `csem()` provides defaults for all arguments except `.data` and `.model`.</span></span></span>
+<span class="r-in"><span><span class="co">#   Below some common options/tasks that users are likely to be interested in.</span></span></span>
+<span class="r-in"><span><span class="co">#   We use the threecommonfactors data set again:</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Structural model</span></span></span>
+<span class="r-in"><span><span class="st">eta2 ~ eta1</span></span></span>
+<span class="r-in"><span><span class="st">eta3 ~ eta1 + eta2</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># (Reflective) measurement model</span></span></span>
+<span class="r-in"><span><span class="st">eta1 =~ y11 + y12 + y13</span></span></span>
+<span class="r-in"><span><span class="st">eta2 =~ y21 + y22 + y23</span></span></span>
+<span class="r-in"><span><span class="st">eta3 =~ y31 + y32 + y33</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">### PLS vs PLSc and disattenuation</span></span></span>
+<span class="r-in"><span><span class="co"># In the model all concepts are modeled as common factors. If </span></span></span>
+<span class="r-in"><span><span class="co">#   .approach_weights = "PLS-PM", csem() uses PLSc to disattenuate composite-indicator </span></span></span>
+<span class="r-in"><span><span class="co">#   and composite-composite correlations.</span></span></span>
+<span class="r-in"><span><span class="va">res_plsc</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"PLS-PM"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Information</span><span class="op">$</span><span class="va">Model</span><span class="op">$</span><span class="va">construct_type</span> <span class="co"># all common factors</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            eta1            eta2            eta3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "Common factor" "Common factor" "Common factor" </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># To obtain "original" (inconsistent) PLS estimates use `.disattenuate = FALSE`</span></span>
-<span class="r-in"><span class="va">res_pls</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, </span>
-<span class="r-in">                .approach_weights <span class="op">=</span> <span class="st">"PLS-PM"</span>,</span>
-<span class="r-in">                .disattenuate <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span class="r-in">                <span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">s_plsc</span> <span class="op">&lt;-</span> <span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res_plsc</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">s_pls</span>  <span class="op">&lt;-</span> <span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res_pls</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Compare</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="st">"Path"</span>      <span class="op">=</span> <span class="va">s_plsc</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Name</span>,</span>
-<span class="r-in">  <span class="st">"Pop_value"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.4</span>, <span class="fl">0.35</span><span class="op">)</span>, <span class="co"># see ?threecommonfactors</span></span>
-<span class="r-in">  <span class="st">"PLSc"</span>      <span class="op">=</span> <span class="va">s_plsc</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Estimate</span>,</span>
-<span class="r-in">  <span class="st">"PLS"</span>       <span class="op">=</span> <span class="va">s_pls</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Estimate</span></span>
-<span class="r-in">  <span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># To obtain "original" (inconsistent) PLS estimates use `.disattenuate = FALSE`</span></span></span>
+<span class="r-in"><span><span class="va">res_pls</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, </span></span>
+<span class="r-in"><span>                .approach_weights <span class="op">=</span> <span class="st">"PLS-PM"</span>,</span></span>
+<span class="r-in"><span>                .disattenuate <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span>                <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">s_plsc</span> <span class="op">&lt;-</span> <span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res_plsc</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">s_pls</span>  <span class="op">&lt;-</span> <span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res_pls</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Compare</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"Path"</span>      <span class="op">=</span> <span class="va">s_plsc</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Name</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"Pop_value"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.4</span>, <span class="fl">0.35</span><span class="op">)</span>, <span class="co"># see ?threecommonfactors</span></span></span>
+<span class="r-in"><span>  <span class="st">"PLSc"</span>      <span class="op">=</span> <span class="va">s_plsc</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Estimate</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"PLS"</span>       <span class="op">=</span> <span class="va">s_pls</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Estimate</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Path Pop_value      PLSc       PLS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 eta2 ~ eta1      0.60 0.6713334 0.5046062</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 eta3 ~ eta1      0.40 0.4585068 0.3588557</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 eta3 ~ eta2      0.35 0.3051511 0.2972680</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">### Resampling --------------------------------------------------------------</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co">## Basic resampling</span></span>
-<span class="r-in"><span class="va">res_boot</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">res_jack</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .resample_method <span class="op">=</span> <span class="st">"jackknife"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># See ?resamplecSEMResults for more examples</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">### Choosing a different weightning scheme ----------------------------------</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">res_gscam</span>  <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"GSCA"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">res_gsca</span>   <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, </span>
-<span class="r-in">                   .approach_weights <span class="op">=</span> <span class="st">"GSCA"</span>,</span>
-<span class="r-in">                   .disattenuate <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">s_gscam</span> <span class="op">&lt;-</span> <span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res_gscam</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">s_gsca</span>  <span class="op">&lt;-</span> <span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res_gsca</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Compare</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="st">"Path"</span>      <span class="op">=</span> <span class="va">s_gscam</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Name</span>,</span>
-<span class="r-in">  <span class="st">"Pop_value"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.4</span>, <span class="fl">0.35</span><span class="op">)</span>, <span class="co"># see ?threecommonfactors</span></span>
-<span class="r-in">  <span class="st">"GSCAm"</span>      <span class="op">=</span> <span class="va">s_gscam</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Estimate</span>,</span>
-<span class="r-in">  <span class="st">"GSCA"</span>       <span class="op">=</span> <span class="va">s_gsca</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Estimate</span></span>
-<span class="r-in"><span class="op">)</span><span class="op">}</span></span>
-<span class="r-in"><span class="co">### Fine-tuning a weighting scheme ------------------------------------------</span></span>
-<span class="r-in"><span class="co">## Setting starting values</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">sv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"eta1"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y12"</span> <span class="op">=</span> <span class="fl">10</span>, <span class="st">"y13"</span> <span class="op">=</span> <span class="fl">4</span>, <span class="st">"y11"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .starting_values <span class="op">=</span> <span class="va">sv</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Choosing a different inner weighting scheme </span></span>
-<span class="r-in"><span class="co">#?args_csem_dotdotdot</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">"factorial"</span>,</span>
-<span class="r-in">            .PLS_ignore_structural_model <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Choosing different modes for PLS</span></span>
-<span class="r-in"><span class="co"># By default, concepts modeled as common factors uses PLS Mode A weights.</span></span>
-<span class="r-in"><span class="va">modes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"eta1"</span> <span class="op">=</span> <span class="st">"unit"</span>, <span class="st">"eta2"</span> <span class="op">=</span> <span class="st">"modeB"</span>, <span class="st">"eta3"</span> <span class="op">=</span> <span class="st">"unit"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">res</span>   <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .PLS_modes <span class="op">=</span> <span class="va">modes</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">### Resampling --------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co">## Basic resampling</span></span></span>
+<span class="r-in"><span><span class="va">res_boot</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res_jack</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .resample_method <span class="op">=</span> <span class="st">"jackknife"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># See ?resamplecSEMResults for more examples</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">### Choosing a different weightning scheme ----------------------------------</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">res_gscam</span>  <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .approach_weights <span class="op">=</span> <span class="st">"GSCA"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res_gsca</span>   <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, </span></span>
+<span class="r-in"><span>                   .approach_weights <span class="op">=</span> <span class="st">"GSCA"</span>,</span></span>
+<span class="r-in"><span>                   .disattenuate <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">s_gscam</span> <span class="op">&lt;-</span> <span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res_gscam</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">s_gsca</span>  <span class="op">&lt;-</span> <span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res_gsca</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Compare</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"Path"</span>      <span class="op">=</span> <span class="va">s_gscam</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Name</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"Pop_value"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.4</span>, <span class="fl">0.35</span><span class="op">)</span>, <span class="co"># see ?threecommonfactors</span></span></span>
+<span class="r-in"><span>  <span class="st">"GSCAm"</span>      <span class="op">=</span> <span class="va">s_gscam</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Estimate</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"GSCA"</span>       <span class="op">=</span> <span class="va">s_gsca</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">Estimate</span></span></span>
+<span class="r-in"><span><span class="op">)</span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co">### Fine-tuning a weighting scheme ------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co">## Setting starting values</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">sv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"eta1"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y12"</span> <span class="op">=</span> <span class="fl">10</span>, <span class="st">"y13"</span> <span class="op">=</span> <span class="fl">4</span>, <span class="st">"y11"</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .starting_values <span class="op">=</span> <span class="va">sv</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Choosing a different inner weighting scheme </span></span></span>
+<span class="r-in"><span><span class="co">#?args_csem_dotdotdot</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">"factorial"</span>,</span></span>
+<span class="r-in"><span>            .PLS_ignore_structural_model <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Choosing different modes for PLS</span></span></span>
+<span class="r-in"><span><span class="co"># By default, concepts modeled as common factors uses PLS Mode A weights.</span></span></span>
+<span class="r-in"><span><span class="va">modes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"eta1"</span> <span class="op">=</span> <span class="st">"unit"</span>, <span class="st">"eta2"</span> <span class="op">=</span> <span class="st">"modeB"</span>, <span class="st">"eta3"</span> <span class="op">=</span> <span class="st">"unit"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span>   <span class="op">&lt;-</span> <span class="fu">csem</span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, .PLS_modes <span class="op">=</span> <span class="va">modes</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="summarize.html">summarize</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ----------------------------------- Overview -----------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1393,7 +1393,7 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

@@ -140,6 +140,15 @@ structural relationships. One of: "<em>sequential</em>" or "<em>replace</em>".
 Defaults to "<em>sequential</em>".</p></dd>
 
 
+<dt>.approach_predict</dt>
+<dd><p>Character string. Which approach should be used to
+predictions? One of "<em>earliest</em>" and "<em>direct</em>". If "<em>earliest</em>" predictions
+for indicators associated to endogenous constructs are performed using only
+indicators associated to exogenous constructs. If "<em>direct</em>", predictions for
+indicators associated to endogenous constructs are based on indicators associated
+to their direct antecedents. Defaults to "<em>earliest</em>".</p></dd>
+
+
 <dt>.approach_p_adjust</dt>
 <dd><p>Character string or a vector of character strings.
 Approach used to adjust the p-value for multiple testing.
@@ -411,6 +420,13 @@ for constructs or indicators.</p></dd>
 <dd><p>A list of at least two matrices.</p></dd>
 
 
+<dt>.metrics</dt>
+<dd><p>Character string or a vector of character strings.
+Which prediction metrics should be displayed? One of: "<em>MAE</em>", "<em>RMSE</em>", "<em>Q2</em>",
+"<em>MER</em>", "<em>MAPE</em>, "<em>MSE2</em>", "<em>U1</em>", "<em>U2</em>", "<em>UM</em>", "<em>UR</em>", or "<em>UD</em>".
+Default to c("<em>MAE</em>", "<em>RMSE</em>", "<em>Q2</em>").</p></dd>
+
+
 <dt>.model</dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a>
 or a <a href="csem_model.html">cSEMModel</a> list.</p></dd>
@@ -459,6 +475,14 @@ be computed? Defaults to <code>FALSE</code>.</p></dd>
 
 
 <dt>.object</dt>
+<dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
+<dt>.object1</dt>
+<dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
+
+
+<dt>.object2</dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
@@ -698,6 +722,12 @@ Defaults to <code>NULL</code>.</p></dd>
 training data.</p></dd>
 
 
+<dt>.testtype</dt>
+<dd><p>Character string. One of "<em>twosided</em>" (H1: The models do not
+perform equally in predicting indicators belonging to endogenous constructs)"
+and <em>onesided</em>" (H1: Model 1 performs better in predicting indicators belonging</p></dd>
+
+
 <dt>.tolerance</dt>
 <dd><p>Double. The tolerance criterion for convergence.
 Defaults to <code>1e-05</code>.</p></dd>
@@ -819,7 +849,7 @@ may not be scaled!</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

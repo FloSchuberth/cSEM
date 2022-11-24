@@ -78,7 +78,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">Yooetal2000</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="va">Yooetal2000</span></span></code></pre></div>
     </div>
 
     <div id="format">
@@ -122,31 +122,31 @@ Guilford Press, New York.<br><br> Yoo B, Donthu N, Lee S (2000).
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">#============================================================================</span></span>
-<span class="r-in"><span class="co"># Example is taken from Henseler (2021)</span></span>
-<span class="r-in"><span class="co">#============================================================================</span></span>
-<span class="r-in"><span class="va">model_HOC</span><span class="op">=</span><span class="st">"</span>
-<span class="r-in"># Measurement models FOC</span>
-<span class="r-in">PR =~ PR1 + PR2 + PR3</span>
-<span class="r-in">IM =~ IM1 + IM2 + IM3</span>
-<span class="r-in">DI =~ DI1 + DI2 + DI3</span>
-<span class="r-in">AD =~ AD1 + AD2 + AD3</span>
-<span class="r-in">DL =~ DL1 + DL2 + DL3</span>
-<span class="r-in">AA =~ AA1 + AA2 + AA3 + AA4 + AA5 + AA6</span>
-<span class="r-in">LO =~ LO1 + LO3</span>
-<span class="r-in">QL =~ QL1 + QL2 + QL3 + QL4 + QL5 + QL6</span>
-<span class="r-in"></span>
-<span class="r-in"># Composite model for SOC</span>
-<span class="r-in">BR &lt;~ QL + LO + AA</span>
-<span class="r-in"></span>
-<span class="r-in"># Structural model</span>
-<span class="r-in">BR~ PR + IM + DI + AD + DL </span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">Yooetal2000</span>, .model <span class="op">=</span> <span class="va">model_HOC</span>,</span>
-<span class="r-in">            .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">'factorial'</span>,</span>
-<span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-06</span><span class="op">)</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#============================================================================</span></span></span>
+<span class="r-in"><span><span class="co"># Example is taken from Henseler (2021)</span></span></span>
+<span class="r-in"><span><span class="co">#============================================================================</span></span></span>
+<span class="r-in"><span><span class="va">model_HOC</span><span class="op">=</span><span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Measurement models FOC</span></span></span>
+<span class="r-in"><span><span class="st">PR =~ PR1 + PR2 + PR3</span></span></span>
+<span class="r-in"><span><span class="st">IM =~ IM1 + IM2 + IM3</span></span></span>
+<span class="r-in"><span><span class="st">DI =~ DI1 + DI2 + DI3</span></span></span>
+<span class="r-in"><span><span class="st">AD =~ AD1 + AD2 + AD3</span></span></span>
+<span class="r-in"><span><span class="st">DL =~ DL1 + DL2 + DL3</span></span></span>
+<span class="r-in"><span><span class="st">AA =~ AA1 + AA2 + AA3 + AA4 + AA5 + AA6</span></span></span>
+<span class="r-in"><span><span class="st">LO =~ LO1 + LO3</span></span></span>
+<span class="r-in"><span><span class="st">QL =~ QL1 + QL2 + QL3 + QL4 + QL5 + QL6</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Composite model for SOC</span></span></span>
+<span class="r-in"><span><span class="st">BR &lt;~ QL + LO + AA</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Structural model</span></span></span>
+<span class="r-in"><span><span class="st">BR~ PR + IM + DI + AD + DL </span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">Yooetal2000</span>, .model <span class="op">=</span> <span class="va">model_HOC</span>,</span></span>
+<span class="r-in"><span>            .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">'factorial'</span>,</span></span>
+<span class="r-in"><span>            .tolerance <span class="op">=</span> <span class="fl">1e-06</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -161,7 +161,7 @@ Guilford Press, New York.<br><br> Yoo B, Donthu N, Lee S (2000).
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

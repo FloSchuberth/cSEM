@@ -72,7 +72,9 @@
       <small>Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="section level2"><h2 class="page-header" data-toc-text="0.4.0.9000" id="development-version-csem-0409000">&lt;Development version: cSEM 0.4.0.9000<a class="anchor" aria-label="anchor" href="#development-version-csem-0409000"></a></h2></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.4.0.9000" id="development-version-csem-0409000">&lt;Development version: cSEM 0.4.0.9000<a class="anchor" aria-label="anchor" href="#development-version-csem-0409000"></a></h2>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.0" id="csem-050-2022-05-09">cSEM 0.5.0 (2022-05-09)<a class="anchor" aria-label="anchor" href="#csem-050-2022-05-09"></a></h2>
 <ul><li><p>Bug fix in <code><a href="../reference/testOMF.html">testOMF()</a></code>. Now the saturated argument is passed to the discrepancy/fit measures.</p></li>
@@ -91,12 +93,14 @@
 <li><p>Bug fix: GSCAm (i.e., <code>.approach_weights = "GSCA"</code> with constructs modeled as common factors) no longer fails when a single indicator construct is supplied (<a href="https://github.com/M-E-Rademaker/cSEM/issues/441" class="external-link">#441</a>)</p></li>
 <li><p>Bug fix: <code><a href="../reference/predict.html">predict()</a></code> no longer fails when LOOCV is used (<a href="https://github.com/M-E-Rademaker/cSEM/issues/337" class="external-link">#337</a>)</p></li>
 <li><p>Bug fix: fix print method for <code><a href="../reference/summarize.html">summarize()</a></code> when resampling with constant values (weights or loadings) is conducted. The standard error, t-value, p-value and CI are properly set to <code>NA</code> now. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/433" class="external-link">#433</a>)</p></li>
-</ul></div>
+<li>
+</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.4.0" id="csem-040-2021-04-20">cSEM 0.4.0 (2021-04-20)<small>2021-04-19</small><a class="anchor" aria-label="anchor" href="#csem-040-2021-04-20"></a></h2>
 <div class="section level4">
 <h4 id="major-changes-0-4-0">Major changes<a class="anchor" aria-label="anchor" href="#major-changes-0-4-0"></a></h4>
-<ul><li>New function <code><a href="../reference/exportToExcel.html">exportToExcel()</a></code>. The function conveniently exports the results from <code><a href="../reference/assess.html">assess()</a></code>, <code><a href="../reference/predict.html">predict()</a></code>, <code><a href="../reference/summarize.html">summarize()</a></code> and <code><a href="../reference/testOMF.html">testOMF()</a></code> to an .xlsx file.</li></ul></div>
+<ul><li>New function <code><a href="../reference/exportToExcel.html">exportToExcel()</a></code>. The function conveniently exports the results from <code><a href="../reference/assess.html">assess()</a></code>, <code><a href="../reference/predict.html">predict()</a></code>, <code><a href="../reference/summarize.html">summarize()</a></code> and <code><a href="../reference/testOMF.html">testOMF()</a></code> to an .xlsx file.</li>
+</ul></div>
 <div class="section level4">
 <h4 id="bug-fixes-0-4-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-4-0"></a></h4>
 <ul><li><p>Critical bug fix: <code>calculateVifModeB()</code> did not calculate the VIFs for modeB constructs correctly because of a bug in the calculation of the R^2. PLEASE REVIEW YOUR CALCULATIONS in cSEM version &lt; 0.3.1:9000! (thanks to <a href="https://github.com/Benjamin" class="external-link">@Benjamin</a> Liengaard for pointing it out).</p></li>
@@ -123,7 +127,8 @@
 <li><p>Combine functions for surface, floodlight and simple effects analysis in the <code><a href="../reference/doNonlinearEffectsAnalysis.html">doNonlinearEffectsAnalysis()</a></code> function; Breaking: functions <code>doFloodlightAnalysis()</code> and <code>doSurfaceAnalysis()</code> have been removed!</p></li>
 <li>
 <p>Progress bars are now supported for every function that does resampling. Progress bars are fully customizable via the <code>progressr</code> framework created by</p>
-<ol class="example" style="list-style-type: decimal"><li>Note: to suppress the progress bar use <code>progressr::handlers("void")</code> and then run your csem commands. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/359" class="external-link">#359</a>)</li></ol></li>
+<ol class="example" style="list-style-type: decimal"><li>Note: to suppress the progress bar use <code>progressr::handlers("void")</code> and then run your csem commands. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/359" class="external-link">#359</a>)</li>
+</ol></li>
 <li><p>Fix bug in the computation of the Bc and Bca interval. Computation failed for models that had no indirect effects.</p></li>
 <li><p>List element “reliability” of <code><a href="../reference/assess.html">assess()</a></code> is changed to “Reliability” to be consistent with the naming scheme of the other list elements.</p></li>
 <li><p><code><a href="../reference/infer.html">infer()</a></code> automatically computes bootstrap resamples now by default if <code>.object</code> does not have class <code>cSEMResults_resampled</code> already. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/389" class="external-link">#389</a>)</p></li>
@@ -197,13 +202,14 @@
 </ul></div>
 <div class="section level4">
 <h4 id="experimental-features-0-2-0">Experimental features<a class="anchor" aria-label="anchor" href="#experimental-features-0-2-0"></a></h4>
-<ul><li>Add <code>.fit_measures</code> argument to <code><a href="../reference/testOMF.html">testOMF()</a></code>. Now other fit measures such as the RMSEA or the GFI can be used as the test statistic. This is a rather experimental feature and may be removed in future versions.</li></ul></div>
+<ul><li>Add <code>.fit_measures</code> argument to <code><a href="../reference/testOMF.html">testOMF()</a></code>. Now other fit measures such as the RMSEA or the GFI can be used as the test statistic. This is a rather experimental feature and may be removed in future versions.</li>
+</ul></div>
 </div>
 <div class="section level3">
 <h3 id="minor-changes-and-bug-fixes-0-2-0">Minor changes and bug fixes<a class="anchor" aria-label="anchor" href="#minor-changes-and-bug-fixes-0-2-0"></a></h3>
 <ul><li><p>Using <code>.approach_weights = "GSCA"</code> for models containing nonlinear terms gives a more meaningful error message. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/342" class="external-link">#342</a>)</p></li>
 <li><p><code><a href="../reference/print.cSEMTestMICOM.html">print.cSEMTestMICOM()</a></code> no longer prints the decision but additional bootstrap information. (in parts: <a href="https://github.com/M-E-Rademaker/cSEM/issues/339" class="external-link">#339</a>)</p></li>
-<li><p>If the weighting scheme is <code>"PLS-PM"</code> and <code>.disattenuate = TRUE</code>, dissatenuation is longer applied to constructs using modes other than “modeA”" or “modeB”. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/352" class="external-link">#352</a>)</p></li>
+<li><p>If the weighting scheme is <code>"PLS-PM"</code> and <code>.disattenuate = TRUE</code>, dissatenuation is longer applied to constructs using modes other than “modeA”” or “modeB”. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/352" class="external-link">#352</a>)</p></li>
 <li><p>Model-implied indicator correlation matrix for non-recursive models should now be calculated correctly. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/264" class="external-link">#264</a>)</p></li>
 <li><p><code><a href="../reference/calculatef2.html">calculatef2()</a></code> gives an error when the path model estimator is not “OLS”. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/360" class="external-link">#360</a>, <a href="https://github.com/M-E-Rademaker/cSEM/issues/370" class="external-link">#370</a>)</p></li>
 <li><p>Add <code>.type</code> argument to <code><a href="../reference/fit_measures.html">calculateGFI()</a></code>. Now GFI based on the ML and ULS fitting function can be computed. (<a href="https://github.com/M-E-Rademaker/cSEM/issues/371" class="external-link">#371</a>)</p></li>
@@ -216,7 +222,9 @@
 <li><p>Update vignettes <code>csem-notation</code></p></li>
 </ul></div>
 </div>
-    <div class="section level2"><h2 class="page-header" data-toc-text="0.1.0" id="initial-release-csem-010-07012020">Initial release: cSEM 0.1.0 (07.01.2020)<small>2020-01-13</small><a class="anchor" aria-label="anchor" href="#initial-release-csem-010-07012020"></a></h2></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.1.0" id="initial-release-csem-010-07012020">Initial release: cSEM 0.1.0 (07.01.2020)<small>2020-01-13</small><a class="anchor" aria-label="anchor" href="#initial-release-csem-010-07012020"></a></h2>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -231,7 +239,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

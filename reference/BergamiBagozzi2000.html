@@ -78,7 +78,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">BergamiBagozzi2000</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="va">BergamiBagozzi2000</span></span></code></pre></div>
     </div>
 
     <div id="format">
@@ -118,53 +118,53 @@ Guilford Press, New York.<br><br> Hwang H, Takane Y (2004).
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">#============================================================================</span></span>
-<span class="r-in"><span class="co"># Example is taken from Henseler (2021)</span></span>
-<span class="r-in"><span class="co">#============================================================================</span></span>
-<span class="r-in"><span class="va">model_Bergami_Bagozzi_Henseler</span><span class="op">=</span><span class="st">"</span>
-<span class="r-in"># Measurement models</span>
-<span class="r-in">OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 </span>
-<span class="r-in">OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6</span>
-<span class="r-in">AffLove =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7</span>
-<span class="r-in">AffJoy  =~ orgcmt5 + orgcmt8</span>
-<span class="r-in">Gender  &lt;~ gender</span>
-<span class="r-in"></span>
-<span class="r-in"># Structural model </span>
-<span class="r-in">OrgIden ~ OrgPres</span>
-<span class="r-in">AffLove ~ OrgPres + OrgIden + Gender </span>
-<span class="r-in">AffJoy  ~ OrgPres + OrgIden + Gender </span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">BergamiBagozzi2000</span>, </span>
-<span class="r-in">            .model <span class="op">=</span> <span class="va">model_Bergami_Bagozzi_Henseler</span>,</span>
-<span class="r-in">            .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">'factorial'</span>,</span>
-<span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-06</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#============================================================================</span></span>
-<span class="r-in"><span class="co"># Example is taken from Hwang et al. (2004)</span></span>
-<span class="r-in"><span class="co">#============================================================================ </span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">model_Bergami_Bagozzi_Hwang</span><span class="op">=</span><span class="st">"</span>
-<span class="r-in"># Measurement models</span>
-<span class="r-in">OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 </span>
-<span class="r-in">OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6</span>
-<span class="r-in">AffJoy =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7</span>
-<span class="r-in">AffLove  =~ orgcmt5 + orgcmt6 + orgcmt8</span>
-<span class="r-in"></span>
-<span class="r-in"># Structural model </span>
-<span class="r-in">OrgIden ~ OrgPres </span>
-<span class="r-in">AffLove ~ OrgIden</span>
-<span class="r-in">AffJoy  ~ OrgIden"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">out_Hwang</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">BergamiBagozzi2000</span>, </span>
-<span class="r-in">                 .model <span class="op">=</span> <span class="va">model_Bergami_Bagozzi_Hwang</span>,</span>
-<span class="r-in">                 .approach_weights <span class="op">=</span> <span class="st">"GSCA"</span>,</span>
-<span class="r-in">                 .disattenuate <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span class="r-in">                 .id <span class="op">=</span> <span class="st">"gender"</span>,</span>
-<span class="r-in">                 .tolerance <span class="op">=</span> <span class="fl">1e-06</span><span class="op">)</span> </span>
-<span class="r-in"></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#============================================================================</span></span></span>
+<span class="r-in"><span><span class="co"># Example is taken from Henseler (2021)</span></span></span>
+<span class="r-in"><span><span class="co">#============================================================================</span></span></span>
+<span class="r-in"><span><span class="va">model_Bergami_Bagozzi_Henseler</span><span class="op">=</span><span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Measurement models</span></span></span>
+<span class="r-in"><span><span class="st">OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 </span></span></span>
+<span class="r-in"><span><span class="st">OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6</span></span></span>
+<span class="r-in"><span><span class="st">AffLove =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7</span></span></span>
+<span class="r-in"><span><span class="st">AffJoy  =~ orgcmt5 + orgcmt8</span></span></span>
+<span class="r-in"><span><span class="st">Gender  &lt;~ gender</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Structural model </span></span></span>
+<span class="r-in"><span><span class="st">OrgIden ~ OrgPres</span></span></span>
+<span class="r-in"><span><span class="st">AffLove ~ OrgPres + OrgIden + Gender </span></span></span>
+<span class="r-in"><span><span class="st">AffJoy  ~ OrgPres + OrgIden + Gender </span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">BergamiBagozzi2000</span>, </span></span>
+<span class="r-in"><span>            .model <span class="op">=</span> <span class="va">model_Bergami_Bagozzi_Henseler</span>,</span></span>
+<span class="r-in"><span>            .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">'factorial'</span>,</span></span>
+<span class="r-in"><span>            .tolerance <span class="op">=</span> <span class="fl">1e-06</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#============================================================================</span></span></span>
+<span class="r-in"><span><span class="co"># Example is taken from Hwang et al. (2004)</span></span></span>
+<span class="r-in"><span><span class="co">#============================================================================ </span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">model_Bergami_Bagozzi_Hwang</span><span class="op">=</span><span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Measurement models</span></span></span>
+<span class="r-in"><span><span class="st">OrgPres =~ cei1 + cei2 + cei3 + cei4 + cei5 + cei6 + cei7 + cei8 </span></span></span>
+<span class="r-in"><span><span class="st">OrgIden =~ ma1 + ma2 + ma3 + ma4 + ma5 + ma6</span></span></span>
+<span class="r-in"><span><span class="st">AffJoy =~ orgcmt1 + orgcmt2 + orgcmt3 + orgcmt7</span></span></span>
+<span class="r-in"><span><span class="st">AffLove  =~ orgcmt5 + orgcmt6 + orgcmt8</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Structural model </span></span></span>
+<span class="r-in"><span><span class="st">OrgIden ~ OrgPres </span></span></span>
+<span class="r-in"><span><span class="st">AffLove ~ OrgIden</span></span></span>
+<span class="r-in"><span><span class="st">AffJoy  ~ OrgIden"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">out_Hwang</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">BergamiBagozzi2000</span>, </span></span>
+<span class="r-in"><span>                 .model <span class="op">=</span> <span class="va">model_Bergami_Bagozzi_Hwang</span>,</span></span>
+<span class="r-in"><span>                 .approach_weights <span class="op">=</span> <span class="st">"GSCA"</span>,</span></span>
+<span class="r-in"><span>                 .disattenuate <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                 .id <span class="op">=</span> <span class="st">"gender"</span>,</span></span>
+<span class="r-in"><span>                 .tolerance <span class="op">=</span> <span class="fl">1e-06</span><span class="op">)</span> </span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -179,7 +179,7 @@ Guilford Press, New York.<br><br> Hwang H, Takane Y (2004).
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

@@ -80,7 +80,7 @@ population model with three concepts modeled as common factors.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">threecommonfactors</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="va">threecommonfactors</span></span></code></pre></div>
     </div>
 
     <div id="format">
@@ -106,24 +106,24 @@ $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">#============================================================================</span></span>
-<span class="r-in"><span class="co"># Correct model (the model used to generate the data)</span></span>
-<span class="r-in"><span class="co">#============================================================================</span></span>
-<span class="r-in"><span class="va">model_correct</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in"># Structural model</span>
-<span class="r-in">eta2 ~ eta1</span>
-<span class="r-in">eta3 ~ eta1 + eta2</span>
-<span class="r-in"></span>
-<span class="r-in"># Measurement model</span>
-<span class="r-in">eta1 =~ y11 + y12 + y13</span>
-<span class="r-in">eta2 =~ y21 + y22 + y23</span>
-<span class="r-in">eta3 =~ y31 + y32 + y33 </span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model_correct</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## The overall model fit is evidently almost perfect:</span></span>
-<span class="r-in"><span class="fu"><a href="testOMF.html">testOMF</a></span><span class="op">(</span><span class="va">a</span>, .R <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="co"># .R = 30 to speed up the example</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#============================================================================</span></span></span>
+<span class="r-in"><span><span class="co"># Correct model (the model used to generate the data)</span></span></span>
+<span class="r-in"><span><span class="co">#============================================================================</span></span></span>
+<span class="r-in"><span><span class="va">model_correct</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Structural model</span></span></span>
+<span class="r-in"><span><span class="st">eta2 ~ eta1</span></span></span>
+<span class="r-in"><span><span class="st">eta3 ~ eta1 + eta2</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Measurement model</span></span></span>
+<span class="r-in"><span><span class="st">eta1 =~ y11 + y12 + y13</span></span></span>
+<span class="r-in"><span><span class="st">eta2 =~ y21 + y22 + y23</span></span></span>
+<span class="r-in"><span><span class="st">eta3 =~ y31 + y32 + y33 </span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model_correct</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## The overall model fit is evidently almost perfect:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="testOMF.html">testOMF</a></span><span class="op">(</span><span class="va">a</span>, .R <span class="op">=</span> <span class="fl">30</span><span class="op">)</span> <span class="co"># .R = 30 to speed up the example</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> --------- Test for overall model fit based on Beran &amp; Srivastava (1985) --------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -140,10 +140,10 @@ $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	                                  	Critical value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Distance measure    Test statistic	  95% 	</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	dG                      0.0060    	0.0212	</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	SRMR                    0.0158    	0.0279	</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	dL                      0.0112    	0.0349	</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	dML                     0.0320    	0.1120	</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	dG                      0.0060    	0.0208	</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	SRMR                    0.0158    	0.0291	</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	dL                      0.0112    	0.0380	</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	dML                     0.0320    	0.1081	</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Decision: </span>
@@ -160,7 +160,7 @@ $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Out of 30 bootstrap replications 30 are admissible.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	See <span style="color: #BBBB00;">?</span><span style="color: #BB00BB;">verify</span>() for what constitutes an inadmissible result.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	The seed used was: 1614705571</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	The seed used was: -156453694</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 </code></pre></div>
     </div>
@@ -176,7 +176,7 @@ $$`eta3` = gamma2 * `eta1` + beta * `eta2` + zeta2$$</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

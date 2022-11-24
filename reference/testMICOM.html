@@ -78,14 +78,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">testMICOM</span><span class="op">(</span>
- .object               <span class="op">=</span> <span class="cn">NULL</span>,
- .approach_p_adjust    <span class="op">=</span> <span class="st">"none"</span>,
- .handle_inadmissibles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"drop"</span>, <span class="st">"ignore"</span>, <span class="st">"replace"</span><span class="op">)</span>, 
- .R                    <span class="op">=</span> <span class="fl">499</span>,
- .seed                 <span class="op">=</span> <span class="cn">NULL</span>,
- .verbose              <span class="op">=</span> <span class="cn">TRUE</span>
- <span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">testMICOM</span><span class="op">(</span></span>
+<span> .object               <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span> .approach_p_adjust    <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span> .handle_inadmissibles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"drop"</span>, <span class="st">"ignore"</span>, <span class="st">"replace"</span><span class="op">)</span>, </span>
+<span> .R                    <span class="op">=</span> <span class="fl">499</span>,</span>
+<span> .seed                 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span> .verbose              <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span> <span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -187,53 +187,53 @@ sufficiently reliable.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># NOTE: to run the example. Download and load the newst version of cSEM.DGP</span></span>
-<span class="r-in"><span class="co"># from GitHub using devtools::install_github("M-E-Rademaker/cSEM.DGP").</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Create two data generating processes (DGPs) that only differ in how the composite</span></span>
-<span class="r-in"><span class="co"># X is build. Hence, the two groups are not compositionally invariant.</span></span>
-<span class="r-in"><span class="va">dgp1</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in"># Structural model</span>
-<span class="r-in">Y ~ 0.6*X</span>
-<span class="r-in"></span>
-<span class="r-in"># Measurement model</span>
-<span class="r-in">Y =~ 1*y1</span>
-<span class="r-in">X &lt;~ 0.4*x1 + 0.8*x2</span>
-<span class="r-in"></span>
-<span class="r-in">x1 ~~ 0.3125*x2</span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">dgp2</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in"># Structural model</span>
-<span class="r-in">Y ~ 0.6*X</span>
-<span class="r-in"></span>
-<span class="r-in"># Measurement model</span>
-<span class="r-in">Y =~ 1*y1</span>
-<span class="r-in">X &lt;~ 0.8*x1 + 0.4*x2</span>
-<span class="r-in"></span>
-<span class="r-in">x1 ~~ 0.3125*x2</span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu">generateData</span><span class="op">(</span><span class="va">dgp1</span>, .N <span class="op">=</span> <span class="fl">399</span>, .empirical <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># requires cSEM.DGP </span></span>
-<span class="r-in"><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu">generateData</span><span class="op">(</span><span class="va">dgp2</span>, .N <span class="op">=</span> <span class="fl">200</span>, .empirical <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># requires cSEM.DGP</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Model is the same for both DGPs</span></span>
-<span class="r-in"><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in"># Structural model</span>
-<span class="r-in">Y ~ X</span>
-<span class="r-in"></span>
-<span class="r-in"># Measurement model</span>
-<span class="r-in">Y =~ y1</span>
-<span class="r-in">X &lt;~ x1 + x2</span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Estimate</span></span>
-<span class="r-in"><span class="va">csem_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"group1"</span> <span class="op">=</span> <span class="va">g1</span>, <span class="st">"group2"</span> <span class="op">=</span> <span class="va">g2</span><span class="op">)</span>, <span class="va">model</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Test</span></span>
-<span class="r-in"><span class="fu">testMICOM</span><span class="op">(</span><span class="va">csem_results</span>, .R <span class="op">=</span> <span class="fl">50</span>, .alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.05</span><span class="op">)</span>, .seed <span class="op">=</span> <span class="fl">1987</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># NOTE: to run the example. Download and load the newst version of cSEM.DGP</span></span></span>
+<span class="r-in"><span><span class="co"># from GitHub using devtools::install_github("M-E-Rademaker/cSEM.DGP").</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Create two data generating processes (DGPs) that only differ in how the composite</span></span></span>
+<span class="r-in"><span><span class="co"># X is build. Hence, the two groups are not compositionally invariant.</span></span></span>
+<span class="r-in"><span><span class="va">dgp1</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Structural model</span></span></span>
+<span class="r-in"><span><span class="st">Y ~ 0.6*X</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Measurement model</span></span></span>
+<span class="r-in"><span><span class="st">Y =~ 1*y1</span></span></span>
+<span class="r-in"><span><span class="st">X &lt;~ 0.4*x1 + 0.8*x2</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st">x1 ~~ 0.3125*x2</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">dgp2</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Structural model</span></span></span>
+<span class="r-in"><span><span class="st">Y ~ 0.6*X</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Measurement model</span></span></span>
+<span class="r-in"><span><span class="st">Y =~ 1*y1</span></span></span>
+<span class="r-in"><span><span class="st">X &lt;~ 0.8*x1 + 0.4*x2</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st">x1 ~~ 0.3125*x2</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">g1</span> <span class="op">&lt;-</span> <span class="fu">generateData</span><span class="op">(</span><span class="va">dgp1</span>, .N <span class="op">=</span> <span class="fl">399</span>, .empirical <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># requires cSEM.DGP </span></span></span>
+<span class="r-in"><span><span class="va">g2</span> <span class="op">&lt;-</span> <span class="fu">generateData</span><span class="op">(</span><span class="va">dgp2</span>, .N <span class="op">=</span> <span class="fl">200</span>, .empirical <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># requires cSEM.DGP</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Model is the same for both DGPs</span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Structural model</span></span></span>
+<span class="r-in"><span><span class="st">Y ~ X</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Measurement model</span></span></span>
+<span class="r-in"><span><span class="st">Y =~ y1</span></span></span>
+<span class="r-in"><span><span class="st">X &lt;~ x1 + x2</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Estimate</span></span></span>
+<span class="r-in"><span><span class="va">csem_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"group1"</span> <span class="op">=</span> <span class="va">g1</span>, <span class="st">"group2"</span> <span class="op">=</span> <span class="va">g2</span><span class="op">)</span>, <span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Test</span></span></span>
+<span class="r-in"><span><span class="fu">testMICOM</span><span class="op">(</span><span class="va">csem_results</span>, .R <span class="op">=</span> <span class="fl">50</span>, .alpha <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.05</span><span class="op">)</span>, .seed <span class="op">=</span> <span class="fl">1987</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -248,7 +248,7 @@ sufficiently reliable.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

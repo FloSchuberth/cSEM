@@ -78,7 +78,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">Benitezetal2020</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="va">Benitezetal2020</span></span></code></pre></div>
     </div>
 
     <div id="format">
@@ -101,38 +101,38 @@ The dataset was used as an illustrative example in Benitez et al. (2020)
     <h2>References</h2>
     <p>Benitez J, Henseler J, Castillo A, Schuberth F (2020).
 “How to perform and report an impactful analysis using partial least squares: Guidelines for confirmatory and explanatory IS research.”
-<em>Information \&amp; Management</em>, <b>2</b>(57), 103168.
+<em>Information &amp; Management</em>, <b>2</b>(57), 103168.
 <a href="https://doi.org/10.1016/j.im.2019.05.003" class="external-link">doi:10.1016/j.im.2019.05.003</a>
 .</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">#============================================================================</span></span>
-<span class="r-in"><span class="co"># Example is taken from Benitez et al. (2020)</span></span>
-<span class="r-in"><span class="co">#============================================================================</span></span>
-<span class="r-in"><span class="va">model_Benitez</span> <span class="op">&lt;-</span><span class="st">"</span>
-<span class="r-in"># Reflective measurement models# Reflective measurement models</span>
-<span class="r-in">SEXB =~ SEXB1 + SEXB2 + SEXB3 +SEXB4</span>
-<span class="r-in">SEMB =~ SEMB1 + SEMB2 + SEMB3 + SEMB4</span>
-<span class="r-in"></span>
-<span class="r-in"># Composite models</span>
-<span class="r-in">SMC &lt;~ SMC1 + SMC2 + SMC3 + SMC4</span>
-<span class="r-in">BPP &lt;~ BPP1 + BPP2 + BPP3 + BPP4 + BPP5</span>
-<span class="r-in"></span>
-<span class="r-in"># Control variables</span>
-<span class="r-in">FS&lt;~ FirmSize</span>
-<span class="r-in">Ind &lt;~ Industry1 + Industry2 + Industry3</span>
-<span class="r-in"></span>
-<span class="r-in"># Structural model</span>
-<span class="r-in">SMC ~ SEXB + SEMB </span>
-<span class="r-in">BPP ~ SMC + Ind + FS</span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">Benitezetal2020</span>, .model <span class="op">=</span> <span class="va">model_Benitez</span>,</span>
-<span class="r-in">            .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">'factorial'</span>,</span>
-<span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-06</span><span class="op">)</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#============================================================================</span></span></span>
+<span class="r-in"><span><span class="co"># Example is taken from Benitez et al. (2020)</span></span></span>
+<span class="r-in"><span><span class="co">#============================================================================</span></span></span>
+<span class="r-in"><span><span class="va">model_Benitez</span> <span class="op">&lt;-</span><span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Reflective measurement models# Reflective measurement models</span></span></span>
+<span class="r-in"><span><span class="st">SEXB =~ SEXB1 + SEXB2 + SEXB3 +SEXB4</span></span></span>
+<span class="r-in"><span><span class="st">SEMB =~ SEMB1 + SEMB2 + SEMB3 + SEMB4</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Composite models</span></span></span>
+<span class="r-in"><span><span class="st">SMC &lt;~ SMC1 + SMC2 + SMC3 + SMC4</span></span></span>
+<span class="r-in"><span><span class="st">BPP &lt;~ BPP1 + BPP2 + BPP3 + BPP4 + BPP5</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Control variables</span></span></span>
+<span class="r-in"><span><span class="st">FS&lt;~ FirmSize</span></span></span>
+<span class="r-in"><span><span class="st">Ind &lt;~ Industry1 + Industry2 + Industry3</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Structural model</span></span></span>
+<span class="r-in"><span><span class="st">SMC ~ SEXB + SEMB </span></span></span>
+<span class="r-in"><span><span class="st">BPP ~ SMC + Ind + FS</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="va">Benitezetal2020</span>, .model <span class="op">=</span> <span class="va">model_Benitez</span>,</span></span>
+<span class="r-in"><span>            .PLS_weight_scheme_inner <span class="op">=</span> <span class="st">'factorial'</span>,</span></span>
+<span class="r-in"><span>            .tolerance <span class="op">=</span> <span class="fl">1e-06</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -147,7 +147,7 @@ The dataset was used as an illustrative example in Benitez et al. (2020)
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

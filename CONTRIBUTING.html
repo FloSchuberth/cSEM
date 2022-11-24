@@ -74,7 +74,65 @@
 <div class="section level2">
 <h2 id="notes-to-contributors">Notes to contributors<a class="anchor" aria-label="anchor" href="#notes-to-contributors"></a></h2>
 <p>Stick to the structure, design choices and style conventions described below. For questions: please contact the <a href="mailto:manuel-rademaker@outlook.de">author</a>.</p>
-<!-- ### Structure --><!-- The package structure is best understood with reference to a (hierarchically organized)  --><!-- company. In analogy to company departments, two separate "function departments"  --><!-- exist: --><!-- - **Estimation functions** --><!-- - **Postestimation functions** --><!-- Each department is hierarchically structured. All functions that do not belong --><!-- to one of the departments are considered **utility functions**. To stay in the --><!-- picture, they are best understood as external consultants in charge of one --><!-- specific task that is not meaningfully classified as belonging to (only) one of --><!-- the two departments. --><!-- #### Estimation functions: --><!-- Estimation functions are all functions involved in the estimation/calculation  --><!-- of the quantities of the measurement and the path/structural model. There are: --><!-- - **2 toplevel functions** (`csem()`). These functions + the --><!--   postestimation function `summarize()` (see below) should be sufficient for the end --><!--   user most of the time. Both functions eventually call `foreman()`. --><!-- - **1 midlevel function**, `foreman()`, that acts like a foreman by collecting all --><!--   (estimation) tasks, distributing them to lower level (helper) functions, and  --><!--   eventually recollecting all of their results. --><!-- - **Lowlevel (helper) functions** that perform one specific task. A distinction --><!--   is made between: --><!--     - **Exported helper functions**: Functions that are exported to be applied --><!--       directly by the end user if needed (e.g. `parseModel()` or --><!--       `calculateWeightsPLS()`). --><!--     - **Internal helper functions**: Functions that are not exported. These functions  --><!--       can be accessed via `csem:::` but they are not generally useful to the end user --><!--       (e.g. `calculateConstructVCV()` or `classifyConstructs()`).  --><!-- #### Postestimation functions: --><!-- Postestimation functions are functions to be applied to an object resulting  --><!-- from a call to `csem()`, `cca()` or `foreman()`, namely a `cSEMResults` object.  --><!-- All postestimation functions are consistently named by (preferably short) verbs. --><!-- Postestimation functions are generic with methods for classes `cSEMResults_default`, --><!-- `cSEMResults_multi` and `cSEMResults_2ndorder`. --><!-- Currently only a subset of these functions is implemented: --><!-- - 1 toplevel function:  --><!--   - `summarize()` with class `cSEMSummarize` --><!-- - 2 midlevel functions: --><!--   - `assess()` with class `cSEMCheck` --><!--   - `verify` with class `cSEMVerify` --><!-- - 3 lowlevel functions: --><!--   - `testMICOM()` with class `cSEMTestMICOM` --><!--   - `testMGD()` with class `cSEMTestMGA` --><!--   - `testOMF()` with class `cSEMTestOMF` --><!-- Each function has (will eventually have) a distinct class and a corresponding  --><!-- `print` method. --><!-- ### Helper functions --><!-- #### Exported helper functions --><!-- Exported helper functions should be written as autonomous as possible in a sense  --><!-- that they can be used without having to jump to a mother function in order to allow  --><!-- researchers using the package to use helper function the way they need it.  --><!-- Flexibility will come at the price of code repetition (i.e. most exported helper  --><!-- functions will have to have a `parseModel()` + `processDate()` statement at the  --><!-- beginning) to make them autonomous. --><!-- #### Internal helper functions --><!-- Internal helper functions on the other hand do not need to be autonomous. Here --><!-- code compactness is preferred.  --><!-- Mark every internal function as internal with `@keywords internal`. --><div class="section level3">
+<!-- ### Structure -->
+<!-- The package structure is best understood with reference to a (hierarchically organized)  -->
+<!-- company. In analogy to company departments, two separate "function departments"  -->
+<!-- exist: -->
+<!-- - **Estimation functions** -->
+<!-- - **Postestimation functions** -->
+<!-- Each department is hierarchically structured. All functions that do not belong -->
+<!-- to one of the departments are considered **utility functions**. To stay in the -->
+<!-- picture, they are best understood as external consultants in charge of one -->
+<!-- specific task that is not meaningfully classified as belonging to (only) one of -->
+<!-- the two departments. -->
+<!-- #### Estimation functions: -->
+<!-- Estimation functions are all functions involved in the estimation/calculation  -->
+<!-- of the quantities of the measurement and the path/structural model. There are: -->
+<!-- - **2 toplevel functions** (`csem()`). These functions + the -->
+<!--   postestimation function `summarize()` (see below) should be sufficient for the end -->
+<!--   user most of the time. Both functions eventually call `foreman()`. -->
+<!-- - **1 midlevel function**, `foreman()`, that acts like a foreman by collecting all -->
+<!--   (estimation) tasks, distributing them to lower level (helper) functions, and  -->
+<!--   eventually recollecting all of their results. -->
+<!-- - **Lowlevel (helper) functions** that perform one specific task. A distinction -->
+<!--   is made between: -->
+<!--     - **Exported helper functions**: Functions that are exported to be applied -->
+<!--       directly by the end user if needed (e.g. `parseModel()` or -->
+<!--       `calculateWeightsPLS()`). -->
+<!--     - **Internal helper functions**: Functions that are not exported. These functions  -->
+<!--       can be accessed via `csem:::` but they are not generally useful to the end user -->
+<!--       (e.g. `calculateConstructVCV()` or `classifyConstructs()`).  -->
+<!-- #### Postestimation functions: -->
+<!-- Postestimation functions are functions to be applied to an object resulting  -->
+<!-- from a call to `csem()`, `cca()` or `foreman()`, namely a `cSEMResults` object.  -->
+<!-- All postestimation functions are consistently named by (preferably short) verbs. -->
+<!-- Postestimation functions are generic with methods for classes `cSEMResults_default`, -->
+<!-- `cSEMResults_multi` and `cSEMResults_2ndorder`. -->
+<!-- Currently only a subset of these functions is implemented: -->
+<!-- - 1 toplevel function:  -->
+<!--   - `summarize()` with class `cSEMSummarize` -->
+<!-- - 2 midlevel functions: -->
+<!--   - `assess()` with class `cSEMCheck` -->
+<!--   - `verify` with class `cSEMVerify` -->
+<!-- - 3 lowlevel functions: -->
+<!--   - `testMICOM()` with class `cSEMTestMICOM` -->
+<!--   - `testMGD()` with class `cSEMTestMGA` -->
+<!--   - `testOMF()` with class `cSEMTestOMF` -->
+<!-- Each function has (will eventually have) a distinct class and a corresponding  -->
+<!-- `print` method. -->
+<!-- ### Helper functions -->
+<!-- #### Exported helper functions -->
+<!-- Exported helper functions should be written as autonomous as possible in a sense  -->
+<!-- that they can be used without having to jump to a mother function in order to allow  -->
+<!-- researchers using the package to use helper function the way they need it.  -->
+<!-- Flexibility will come at the price of code repetition (i.e. most exported helper  -->
+<!-- functions will have to have a `parseModel()` + `processDate()` statement at the  -->
+<!-- beginning) to make them autonomous. -->
+<!-- #### Internal helper functions -->
+<!-- Internal helper functions on the other hand do not need to be autonomous. Here -->
+<!-- code compactness is preferred.  -->
+<!-- Mark every internal function as internal with `@keywords internal`. -->
+<div class="section level3">
 <h3 id="general-design-choices">General design choices<a class="anchor" aria-label="anchor" href="#general-design-choices"></a></h3>
 <ul><li>The only OO system used is the S3 system. No S4 classes will be allowed!</li>
 <li>Whenever you subset a matrix using <code>[</code> use: <code>[..., ..., drop = FALSE]</code> to avoid accidentally dropping the <code>dim</code> attributes.</li>
@@ -91,23 +149,23 @@
 <li>Argument names always start with a dot to distinguish them from other objects.</li>
 <li>Indentation: It is OK to align function arguments indented by two spaces below the function name instead of where the function starts if this help with clarity.</li>
 </ol><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## Both ok but second is prefered in this case</span>
-<span class="va">calculateInnerWeightsPLS</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">.S</span>                           <span class="op">=</span> <span class="cn">NULL</span>,
-                                     <span class="va">.W</span>                           <span class="op">=</span> <span class="cn">NULL</span>,
-                                     <span class="va">.csem_model</span>                  <span class="op">=</span> <span class="cn">NULL</span>,
-                                     <span class="va">.PLS_weight_scheme_inner</span>     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid"</span>,
-                                                                      <span class="st">"factorial"</span>, 
-                                                                      <span class="st">"path"</span><span class="op">)</span>,
-                                     <span class="va">.PLS_ignore_structural_model</span> <span class="op">=</span> <span class="cn">NULL</span>
-                                     <span class="op">)</span> <span class="op">{</span> <span class="op">}</span>
-
-<span class="va">calculateInnerWeightsPLS</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span>
-  <span class="va">.S</span>                            <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">.W</span>                            <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">.csem_model</span>                   <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">.PLS_weight_scheme_inner</span>      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid"</span>,<span class="st">"factorial"</span>, <span class="st">"path"</span><span class="op">)</span>,
-  <span class="va">.PLS_ignore_structural_model</span>  <span class="op">=</span> <span class="cn">NULL</span>
-  <span class="op">)</span> <span class="op">{</span> <span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">## Both ok but second is prefered in this case</span></span>
+<span><span class="va">calculateInnerWeightsPLS</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">.S</span>                           <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                                     <span class="va">.W</span>                           <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                                     <span class="va">.csem_model</span>                  <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                                     <span class="va">.PLS_weight_scheme_inner</span>     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid"</span>,</span>
+<span>                                                                      <span class="st">"factorial"</span>, </span>
+<span>                                                                      <span class="st">"path"</span><span class="op">)</span>,</span>
+<span>                                     <span class="va">.PLS_ignore_structural_model</span> <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>                                     <span class="op">)</span> <span class="op">{</span> <span class="op">}</span></span>
+<span></span>
+<span><span class="va">calculateInnerWeightsPLS</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span></span>
+<span>  <span class="va">.S</span>                            <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">.W</span>                            <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">.csem_model</span>                   <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">.PLS_weight_scheme_inner</span>      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"centroid"</span>,<span class="st">"factorial"</span>, <span class="st">"path"</span><span class="op">)</span>,</span>
+<span>  <span class="va">.PLS_ignore_structural_model</span>  <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  <span class="op">)</span> <span class="op">{</span> <span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="matrices">Matrices<a class="anchor" aria-label="anchor" href="#matrices"></a></h3>
@@ -120,7 +178,8 @@
 <p>All arguments used by any of the functions in the package (including internal functions) are centrally collected in the file <code>zz_arguments.R</code>. Whenever a new argument is introduced:</p>
 <ol style="list-style-type: decimal"><li>Add the new argument name + a description to the <code>cSEMArguments</code> list in alphabetical order by writing <code>@param &lt;argument&gt; "Some description". "Defaults to xxx".</code>
 </li>
-<li>Add the argument to the <code>args</code> or the <code>args_dotdotdot_csem</code> list of the <code><a href="reference/args_default.html">args_default()</a></code> function and provide a default value.<ul><li>Arguments for <code>args_dotdotdot_csem</code>: all arguments that can be used when calling <code><a href="reference/csem.html">csem()</a></code> or <code>cca()</code> . Practically this comprises all formal arguments of <code><a href="reference/foreman.html">foreman()</a></code> that are not formal arguments of <code><a href="reference/csem.html">csem()</a></code>.</li>
+<li>Add the argument to the <code>args</code> or the <code>args_dotdotdot_csem</code> list of the <code><a href="reference/args_default.html">args_default()</a></code> function and provide a default value.
+<ul><li>Arguments for <code>args_dotdotdot_csem</code>: all arguments that can be used when calling <code><a href="reference/csem.html">csem()</a></code> or <code>cca()</code> . Practically this comprises all formal arguments of <code><a href="reference/foreman.html">foreman()</a></code> that are not formal arguments of <code><a href="reference/csem.html">csem()</a></code>.</li>
 <li>Arguments for <code>args</code>: all other arguments.</li>
 </ul></li>
 <li>Add the argument to the function you want to use it in. Order arguments according to their importance (i.e. <code>.data</code> and <code>.model</code> always come first). if there is one otherwise use alphabetical order.</li>
@@ -142,7 +201,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

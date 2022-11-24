@@ -78,22 +78,22 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">assess</span><span class="op">(</span>
-  .object              <span class="op">=</span> <span class="cn">NULL</span>, 
-  .quality_criterion   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"aic"</span>, <span class="st">"aicc"</span>, <span class="st">"aicu"</span>, <span class="st">"bic"</span>, <span class="st">"fpe"</span>, <span class="st">"gm"</span>, <span class="st">"hq"</span>,
-                           <span class="st">"hqc"</span>, <span class="st">"mallows_cp"</span>, <span class="st">"ave"</span>,
-                           <span class="st">"rho_C"</span>, <span class="st">"rho_C_mm"</span>, <span class="st">"rho_C_weighted"</span>, 
-                           <span class="st">"rho_C_weighted_mm"</span>, <span class="st">"dg"</span>, <span class="st">"dl"</span>, <span class="st">"dml"</span>, <span class="st">"df"</span>,
-                           <span class="st">"effects"</span>, <span class="st">"f2"</span>, <span class="st">"fl_criterion"</span>, <span class="st">"chi_square"</span>, <span class="st">"chi_square_df"</span>,
-                           <span class="st">"cfi"</span>, <span class="st">"cn"</span>, <span class="st">"gfi"</span>, <span class="st">"ifi"</span>, <span class="st">"nfi"</span>, <span class="st">"nnfi"</span>, 
-                           <span class="st">"reliability"</span>,
-                           <span class="st">"rmsea"</span>, <span class="st">"rms_theta"</span>, <span class="st">"srmr"</span>,
-                           <span class="st">"gof"</span>, <span class="st">"htmt"</span>, <span class="st">"htmt2"</span>, <span class="st">"r2"</span>, <span class="st">"r2_adj"</span>,
-                           <span class="st">"rho_T"</span>, <span class="st">"rho_T_weighted"</span>, <span class="st">"vif"</span>, 
-                           <span class="st">"vifmodeB"</span><span class="op">)</span>,
-  .only_common_factors <span class="op">=</span> <span class="cn">TRUE</span>, 
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">assess</span><span class="op">(</span></span>
+<span>  .object              <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>  .quality_criterion   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"aic"</span>, <span class="st">"aicc"</span>, <span class="st">"aicu"</span>, <span class="st">"bic"</span>, <span class="st">"fpe"</span>, <span class="st">"gm"</span>, <span class="st">"hq"</span>,</span>
+<span>                           <span class="st">"hqc"</span>, <span class="st">"mallows_cp"</span>, <span class="st">"ave"</span>,</span>
+<span>                           <span class="st">"rho_C"</span>, <span class="st">"rho_C_mm"</span>, <span class="st">"rho_C_weighted"</span>, </span>
+<span>                           <span class="st">"rho_C_weighted_mm"</span>, <span class="st">"dg"</span>, <span class="st">"dl"</span>, <span class="st">"dml"</span>, <span class="st">"df"</span>,</span>
+<span>                           <span class="st">"effects"</span>, <span class="st">"f2"</span>, <span class="st">"fl_criterion"</span>, <span class="st">"chi_square"</span>, <span class="st">"chi_square_df"</span>,</span>
+<span>                           <span class="st">"cfi"</span>, <span class="st">"cn"</span>, <span class="st">"gfi"</span>, <span class="st">"ifi"</span>, <span class="st">"nfi"</span>, <span class="st">"nnfi"</span>, </span>
+<span>                           <span class="st">"reliability"</span>,</span>
+<span>                           <span class="st">"rmsea"</span>, <span class="st">"rms_theta"</span>, <span class="st">"srmr"</span>,</span>
+<span>                           <span class="st">"gof"</span>, <span class="st">"htmt"</span>, <span class="st">"htmt2"</span>, <span class="st">"r2"</span>, <span class="st">"r2_adj"</span>,</span>
+<span>                           <span class="st">"rho_T"</span>, <span class="st">"rho_T_weighted"</span>, <span class="st">"vif"</span>, </span>
+<span>                           <span class="st">"vifmodeB"</span><span class="op">)</span>,</span>
+<span>  .only_common_factors <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -354,23 +354,23 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># ===========================================================================</span></span>
-<span class="r-in"><span class="co"># Using the three common factors dataset</span></span>
-<span class="r-in"><span class="co"># ===========================================================================</span></span>
-<span class="r-in"><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span>
-<span class="r-in"># Structural model</span>
-<span class="r-in">eta2 ~ eta1</span>
-<span class="r-in">eta3 ~ eta1 + eta2</span>
-<span class="r-in"></span>
-<span class="r-in"># Each concept is measured by 3 indicators, i.e., modeled as latent variable</span>
-<span class="r-in">eta1 =~ y11 + y12 + y13</span>
-<span class="r-in">eta2 =~ y21 + y22 + y23</span>
-<span class="r-in">eta3 =~ y31 + y32 + y33</span>
-<span class="r-in">"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">a</span>   <span class="op">&lt;-</span> <span class="fu">assess</span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="co"># computes all quality criteria (.quality_criterion = "all")</span></span>
-<span class="r-in"><span class="va">a</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># ===========================================================================</span></span></span>
+<span class="r-in"><span><span class="co"># Using the three common factors dataset</span></span></span>
+<span class="r-in"><span><span class="co"># ===========================================================================</span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span></span></span>
+<span class="r-in"><span><span class="st"># Structural model</span></span></span>
+<span class="r-in"><span><span class="st">eta2 ~ eta1</span></span></span>
+<span class="r-in"><span><span class="st">eta3 ~ eta1 + eta2</span></span></span>
+<span class="r-in"><span><span class="st"></span></span></span>
+<span class="r-in"><span><span class="st"># Each concept is measured by 3 indicators, i.e., modeled as latent variable</span></span></span>
+<span class="r-in"><span><span class="st">eta1 =~ y11 + y12 + y13</span></span></span>
+<span class="r-in"><span><span class="st">eta2 =~ y21 + y22 + y23</span></span></span>
+<span class="r-in"><span><span class="st">eta3 =~ y31 + y32 + y33</span></span></span>
+<span class="r-in"><span><span class="st">"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">a</span>   <span class="op">&lt;-</span> <span class="fu">assess</span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="co"># computes all quality criteria (.quality_criterion = "all")</span></span></span>
+<span class="r-in"><span><span class="va">a</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Construct        AVE           R2          R2_adj    </span>
@@ -492,9 +492,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Indirect effect    Estimate  Std. error   t-stat.   p-value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   eta3 ~ eta1          0.2049          NA        NA        NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## The return value is a named list. Type for example:</span></span>
-<span class="r-in"><span class="va">a</span><span class="op">$</span><span class="va">HTMT</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## The return value is a named list. Type for example:</span></span></span>
+<span class="r-in"><span><span class="va">a</span><span class="op">$</span><span class="va">HTMT</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $htmts</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           eta1      eta2 eta3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> eta1 1.0000000 0.0000000    0</span>
@@ -507,9 +507,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-out co"><span class="r-pr">#&gt;</span> $nr_admissibles</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># You may also just compute a subset of the quality criteria</span></span>
-<span class="r-in"><span class="fu">assess</span><span class="op">(</span><span class="va">res</span>, .quality_criterion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ave"</span>, <span class="st">"rho_C"</span>, <span class="st">"htmt"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># You may also just compute a subset of the quality criteria</span></span></span>
+<span class="r-in"><span><span class="fu">assess</span><span class="op">(</span><span class="va">res</span>, .quality_criterion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ave"</span>, <span class="st">"rho_C"</span>, <span class="st">"htmt"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Construct        AVE     </span>
@@ -534,47 +534,47 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-out co"><span class="r-pr">#&gt;</span> eta3 0.6668841 0.6124418    1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Resampling ---------------------------------------------------------------</span></span>
-<span class="r-in"><span class="co"># To resample a given quality criterion use csem()'s .user_funs argument</span></span>
-<span class="r-in"><span class="co"># Note: The output of the quality criterion needs to be a vector or a matrix.</span></span>
-<span class="r-in"><span class="co">#       Matrices will be vectorized columnwise.</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, </span>
-<span class="r-in">            .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span>, </span>
-<span class="r-in">            .R               <span class="op">=</span> <span class="fl">40</span>,</span>
-<span class="r-in">            .user_funs       <span class="op">=</span> <span class="fu">cSEM</span><span class="fu">:::</span><span class="va"><a href="fit_measures.html">calculateSRMR</a></span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Look at the resamples</span></span>
-<span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">User_fun</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01901419 0.03418605 0.03304482 0.02225527</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Use infer() to compute e.g., the 95% percentile confidence interval</span></span>
-<span class="r-in"><span class="va">res_infer</span> <span class="op">&lt;-</span> <span class="fu"><a href="infer.html">infer</a></span><span class="op">(</span><span class="va">res</span>, .quantity <span class="op">=</span> <span class="st">"CI_percentile"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## The results are saved under the name "User_fun"</span></span>
-<span class="r-in"><span class="va">res_infer</span><span class="op">$</span><span class="va">User_fun</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Resampling ---------------------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co"># To resample a given quality criterion use csem()'s .user_funs argument</span></span></span>
+<span class="r-in"><span><span class="co"># Note: The output of the quality criterion needs to be a vector or a matrix.</span></span></span>
+<span class="r-in"><span><span class="co">#       Matrices will be vectorized columnwise.</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, </span></span>
+<span class="r-in"><span>            .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span>, </span></span>
+<span class="r-in"><span>            .R               <span class="op">=</span> <span class="fl">40</span>,</span></span>
+<span class="r-in"><span>            .user_funs       <span class="op">=</span> <span class="fu">cSEM</span><span class="fu">:::</span><span class="va"><a href="fit_measures.html">calculateSRMR</a></span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Look at the resamples</span></span></span>
+<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">User_fun</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02778175 0.02457809 0.02558889 0.02847749</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Use infer() to compute e.g., the 95% percentile confidence interval</span></span></span>
+<span class="r-in"><span><span class="va">res_infer</span> <span class="op">&lt;-</span> <span class="fu"><a href="infer.html">infer</a></span><span class="op">(</span><span class="va">res</span>, .quantity <span class="op">=</span> <span class="st">"CI_percentile"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## The results are saved under the name "User_fun"</span></span></span>
+<span class="r-in"><span><span class="va">res_infer</span><span class="op">$</span><span class="va">User_fun</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CI_percentile</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.01901031</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03693422</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.02010392</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03242984</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Several quality criteria can be resampled simultaneously</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, </span>
-<span class="r-in">            .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span>,</span>
-<span class="r-in">            .R               <span class="op">=</span> <span class="fl">40</span>,</span>
-<span class="r-in">            .user_funs       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">              <span class="st">"SRMR"</span> <span class="op">=</span> <span class="fu">cSEM</span><span class="fu">:::</span><span class="va"><a href="fit_measures.html">calculateSRMR</a></span>,</span>
-<span class="r-in">              <span class="st">"RMS_theta"</span> <span class="op">=</span> <span class="fu">cSEM</span><span class="fu">:::</span><span class="va"><a href="fit_measures.html">calculateRMSTheta</a></span></span>
-<span class="r-in">            <span class="op">)</span>,</span>
-<span class="r-in">            .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">SRMR</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.03080377 0.03017401 0.02541330 0.02597641</span>
-<span class="r-in"><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">RMS_theta</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1038914 0.1050527 0.1013355 0.1022610</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Several quality criteria can be resampled simultaneously</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="csem.html">csem</a></span><span class="op">(</span><span class="va">threecommonfactors</span>, <span class="va">model</span>, </span></span>
+<span class="r-in"><span>            .resample_method <span class="op">=</span> <span class="st">"bootstrap"</span>,</span></span>
+<span class="r-in"><span>            .R               <span class="op">=</span> <span class="fl">40</span>,</span></span>
+<span class="r-in"><span>            .user_funs       <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>              <span class="st">"SRMR"</span> <span class="op">=</span> <span class="fu">cSEM</span><span class="fu">:::</span><span class="va"><a href="fit_measures.html">calculateSRMR</a></span>,</span></span>
+<span class="r-in"><span>              <span class="st">"RMS_theta"</span> <span class="op">=</span> <span class="fu">cSEM</span><span class="fu">:::</span><span class="va"><a href="fit_measures.html">calculateRMSTheta</a></span></span></span>
+<span class="r-in"><span>            <span class="op">)</span>,</span></span>
+<span class="r-in"><span>            .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">SRMR</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02721840 0.02983317 0.02825361 0.02609665</span>
+<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">RMS_theta</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1051801 0.1038407 0.1086512 0.1068696</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -589,7 +589,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>
