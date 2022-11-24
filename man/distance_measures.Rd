@@ -58,10 +58,10 @@ If A and B are supplied \code{.object} is ignored.
 }
 \section{Functions}{
 \itemize{
-\item \code{calculateDG}: The geodesic distance (dG).
+\item \code{calculateDG()}: The geodesic distance (dG).
 
-\item \code{calculateDL}: The squared Euclidean distance
+\item \code{calculateDL()}: The squared Euclidean distance
 
-\item \code{calculateDML}: The distance measure (fit function) used by ML
+\item \code{calculateDML()}: The distance measure (fit function) used by ML
+
 }}
-

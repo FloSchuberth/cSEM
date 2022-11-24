@@ -84,11 +84,11 @@ several CI's are returned.
 }
 \section{Functions}{
 \itemize{
-\item \code{calculateRhoC}: Calculate the congeneric reliability
+\item \code{calculateRhoC()}: Calculate the congeneric reliability
 
-\item \code{calculateRhoT}: Calculate the tau-equivalent reliability
+\item \code{calculateRhoT()}: Calculate the tau-equivalent reliability
+
 }}
-
 \references{
 \insertAllCited{}
 }

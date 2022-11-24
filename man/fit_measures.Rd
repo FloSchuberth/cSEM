@@ -77,26 +77,26 @@ for details on the implementation.
 }
 \section{Functions}{
 \itemize{
-\item \code{calculateChiSquare}: The chi square statistic.
+\item \code{calculateChiSquare()}: The chi square statistic.
 
-\item \code{calculateChiSquareDf}: The ChiSquare statistic divided by its degrees of freedom.
+\item \code{calculateChiSquareDf()}: The ChiSquare statistic divided by its degrees of freedom.
 
-\item \code{calculateCFI}: The comparative fit index (CFI).
+\item \code{calculateCFI()}: The comparative fit index (CFI).
 
-\item \code{calculateGFI}: The goodness of fit index (GFI).
+\item \code{calculateGFI()}: The goodness of fit index (GFI).
 
-\item \code{calculateCN}: The Hoelter index alias Hoelter's (critical) N (CN).
+\item \code{calculateCN()}: The Hoelter index alias Hoelter's (critical) N (CN).
 
-\item \code{calculateIFI}: The incremental fit index (IFI).
+\item \code{calculateIFI()}: The incremental fit index (IFI).
 
-\item \code{calculateNFI}: The normed fit index (NFI).
+\item \code{calculateNFI()}: The normed fit index (NFI).
 
-\item \code{calculateNNFI}: The non-normed fit index (NNFI). Also called the Tucker-Lewis index (TLI).
+\item \code{calculateNNFI()}: The non-normed fit index (NNFI). Also called the Tucker-Lewis index (TLI).
 
-\item \code{calculateRMSEA}: The root mean square error of approximation (RMSEA).
+\item \code{calculateRMSEA()}: The root mean square error of approximation (RMSEA).
 
-\item \code{calculateRMSTheta}: The root mean squared residual covariance matrix of the outer model residuals (RMS theta).
+\item \code{calculateRMSTheta()}: The root mean squared residual covariance matrix of the outer model residuals (RMS theta).
 
-\item \code{calculateSRMR}: The standardized root mean square residual (SRMR).
+\item \code{calculateSRMR()}: The standardized root mean square residual (SRMR).
+
 }}
-
