@@ -72,6 +72,7 @@ print.cSEMPredict <- function(x,
       col_align("Name", l + 2)
     )
     
+    if(x3 != "NA"){
     if(any(metrics_to_display == "MAE")){
       cat2(
         col_align("MAE target", 13, align = "right"), 
@@ -82,11 +83,6 @@ print.cSEMPredict <- function(x,
       cat2(
         col_align("RMSE target", 13, align = "right"), 
         col_align("RMSE benchmark", 15, align = "right")
-      )
-    }
-    if(any(metrics_to_display == "Q2")){
-      cat2(
-        col_align("Q2_predict", 13, align = "right")
       )
     }
     if(any(metrics_to_display == "MER")){
@@ -136,6 +132,63 @@ print.cSEMPredict <- function(x,
         col_align("UD target", 13, align = "right"), 
         col_align("UD benchmark", 15, align = "right")
       )
+    }
+    }else if(x3 == "NA"){
+      if(any(metrics_to_display == "MAE")){
+        cat2(
+          col_align("MAE target", 13, align = "right")
+        )
+      }
+      if(any(metrics_to_display == "RMSE")){
+        cat2(
+          col_align("RMSE target", 13, align = "right")
+        )
+      }
+      if(any(metrics_to_display == "Q2")){
+        cat2(
+          col_align("Q2_predict", 13, align = "right")
+        )
+      }
+      if(any(metrics_to_display == "MER")){
+        cat2(
+          col_align("MER target", 13, align = "right")
+        )
+      }
+      if(any(metrics_to_display == "MAPE")){
+        cat2(
+          col_align("MAPE target", 13, align = "right")
+        )
+      }
+      if(any(metrics_to_display == "MSE2")){
+        cat2(
+          col_align("MSE2 target", 13, align = "right")
+        )
+      }
+      if(any(metrics_to_display == "U1")){
+        cat2(
+          col_align("U1 target", 13, align = "right")
+        )
+      }
+      if(any(metrics_to_display == "U2")){
+        cat2(
+          col_align("U2 target", 13, align = "right")
+        )
+      }
+      if(any(metrics_to_display == "UM")){
+        cat2(
+          col_align("UM target", 13, align = "right")
+        )
+      }
+      if(any(metrics_to_display == "UR")){
+        cat2(
+          col_align("UR target", 13, align = "right")
+        )
+      }
+      if(any(metrics_to_display == "UD")){
+        cat2(
+          col_align("UD target", 13, align = "right")
+        )
+      }
     }
 
 
