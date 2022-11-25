@@ -35,7 +35,7 @@ Description: Estimate, assess, test, and study linear, nonlinear, hierarchical
   component analysis with uniqueness terms (GSCAm), generalized canonical 
   correlation analysis (GCCA), principal component analysis (PCA), 
   factor score regression (FSR) using sum score, regression or 
-  bartlett scores (including bias correction using Croon’s approach), 
+  Bartlett scores (including bias correction using Croon’s approach), 
   as well as several tests and typical postestimation procedures 
   (e.g., verify admissibility of the estimates, assess the model fit, 
   test the model fit etc.).
