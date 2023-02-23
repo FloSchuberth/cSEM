@@ -1,5 +1,7 @@
 # <Development version: cSEM 0.5.0.9000
 
+- Bug fix in `calculateReliabilities()`. Now correction for attenuation is correctly done for PLS-PM Mode B.
+
 # cSEM 0.5.0 (2022-05-09)
 
 - Bug fix in `testOMF()`. Now the saturated argument is passed to the discrepancy/fit measures. 
