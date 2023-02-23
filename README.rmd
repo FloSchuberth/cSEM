@@ -40,7 +40,7 @@ The package is available on [CRAN](https://cran.r-project.org/):
 install.packages("cSEM")
 ```
 
-To install the development version use:
+To install the development version, which is recommended, use:
 ```{r, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("M-E-Rademaker/cSEM")
