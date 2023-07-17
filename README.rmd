@@ -54,12 +54,11 @@ The best place to get started is the [cSEM-website](https://m-e-rademaker.github
 
 The basic usage is illustrated below.
 
-<div class = "white">
+
 ```{r out.width = "80%", fig.align = "center", echo=FALSE} 
-# https://stackoverflow.com/a/41042148
 knitr::include_graphics("man/figures/api.png")
 ```
-</div>
+
 
 Usually, using `cSEM` is the same 3 step procedure:
 
@@ -67,7 +66,7 @@ Usually, using `cSEM` is the same 3 step procedure:
 > 2. Use `csem()`
 > 3. Apply one of the post-estimation functions listed below on the resulting object.
 
-## Post-estimation functions
+## Post-Estimation Functions
 
 There are five major post-estimation verbs, three test family functions and
 three do-family of function: 
