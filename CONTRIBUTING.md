@@ -85,7 +85,7 @@ following exceptions/additions:
     contain a verb followed by a noun like: `processData()`,
     `calculateValue()`.
 2.  Verbs in function names should be consistent across the whole
-    package. Avoid to mix synonyms. Example: `computeValue()`
+    package. Avoid mixing synonyms. Example: `computeValue()`
     vs. `calculateValue()`. This package always uses `calculate` instead
     of `compute`. Similarly, `method` vs e.g. `approach`. This package
     always uses `approach` instead of `method`.
@@ -98,12 +98,12 @@ following exceptions/additions:
     `respect_structural_model` compared to something like `resp_sm`.
     Naming should also be consistent if possible. For example: any
     argument that describes a method or an approach should be named
-    `.appraoch_*`.
+    `.approach_*`.
 5.  Argument names always start with a dot to distinguish them from
     other objects.
 6.  Indentation: It is OK to align function arguments indented by two
     spaces below the function name instead of where the function starts
-    if this help with clarity.
+    if this help with readability.
 
 ``` r
 ## Both ok but second is prefered in this case
