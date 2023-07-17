@@ -25,20 +25,18 @@ generalized structured component analysis with uniqueness terms (GSCAm),
 generalized canonical correlation analysis (GCCA), principal component
 analysis (PCA), factor score regression (FSR) using sum score,
 regression or Bartlett scores (including bias correction using Croon’s
-approach), as well as several tests and typical postestimation
+approach), as well as several tests and typical post-estimation
 procedures (e.g., verify admissibility of the estimates, assess the
 model fit, test the model fit, compute confidence intervals, compare
 groups, etc.).
 
-## News (2022-11-24):
+## News (2022-05-09):
 
--   `testCVPAT()` function implements the cross-validated predictive ability test (CVPAT)
+- `predict()` function is now able to predict categorical indicators (a
+  procedure known as OrdPLScPredict).
 
--   `predict()` function is now able to predict categorical indicators
-    (a procedure known as OrdPLScPredict).
-
--   Use singular value decomposition in GSCAm to deal with large
-    datasets, which allows for large datasets (thanks to Heungsun Hwang)
+- Use singular value decomposition in GSCAm to deal with large datasets,
+  which allows for large datasets (thanks to Heungsun Hwang)
 
 ## Installation
 
@@ -48,7 +46,7 @@ The package is available on [CRAN](https://cran.r-project.org/):
 install.packages("cSEM")
 ```
 
-To install the development version use:
+To install the development version, which is recommended, use:
 
 ``` r
 # install.packages("devtools")
@@ -64,45 +62,48 @@ The best place to get started is the
 
 The basic usage is illustrated below.
 
+<div class="white">
+
 <img src="man/figures/api.png" width="80%" style="display: block; margin: auto;" />
 
-Usully, using `cSEM` is the same 3 step procedure:
+</div>
+
+Usually, using `cSEM` is the same 3 step procedure:
 
 > 1.  Pick a dataset and specify a model using [lavaan
 >     syntax](https://lavaan.ugent.be/tutorial/syntax1.html)
 > 2.  Use `csem()`
-> 3.  Apply one of the postestimation functions listed below on the
+> 3.  Apply one of the post-estimation functions listed below on the
 >     resulting object.
 
-## Postestimation functions
+## Post-estimation functions
 
-There are five major postestimation verbs, three test family functions
+There are five major post-estimation verbs, three test family functions
 and three do-family of function:
 
--   `assess()` : assess the model using common quality criteria
--   `infer()` : calculate common inferential quantities (e.g., standard
-    errors, confidence intervals)
--   `predict()` : predict endogenous indicator values
--   `summarize()` : summarize the results
--   `verify()` : verify admissibility of the estimates
+- `assess()` : assess the model using common quality criteria
+- `infer()` : calculate common inferential quantities (e.g., standard
+  errors, confidence intervals)
+- `predict()` : predict endogenous indicator values
+- `summarize()` : summarize the results
+- `verify()` : verify admissibility of the estimates
 
 Tests are performed by using the test family of functions. Currently,
 the following tests are implemented:
 
--   `testOMF()` : performs a test for overall model fit
--   `testMICOM()` : performs a test for composite measurement invariance
--   `testMGD()` : performs several tests to assess multi-group
-    differences
--   `testHausman()` : performs the regression-based Hausman test to test
-    for endogeneity
+- `testOMF()` : performs a test for overall model fit
+- `testMICOM()` : performs a test for composite measurement invariance
+- `testMGD()` : performs several tests to assess multi-group differences
+- `testHausman()` : performs the regression-based Hausman test to test
+  for endogeneity
 
-Other miscellaneous postestimation functions belong do the do-family of
+Other miscellaneous post-estimation functions belong do the do-family of
 functions. Currently, three do functions are implemented:
 
--   `doIPMA()`: performs an importance-performance matrix analysis
--   `doNonlinearEffectsAnalysis()`: performs a nonlinear effects
-    analysis such as floodlight and surface analysis
--   `doRedundancyAnalysis()`: performs a redundancy analysis
+- `doIPMA()`: performs an importance-performance matrix analysis
+- `doNonlinearEffectsAnalysis()`: performs a nonlinear effects analysis
+  such as floodlight and surface analysis
+- `doRedundancyAnalysis()`: performs a redundancy analysis
 
 All functions require a `cSEMResults` object.
 
@@ -229,7 +230,7 @@ res$Information$Model
 ```
 
 A useful tool to examine a list is the [listviewer
-package](https://github.com/timelyportfolio/listviewer). If you are new
+package](https://github.com/timelyportfolio/listviewer/). If you are new
 to `cSEM` this might be a good way to familiarize yourself with the
 structure of a `cSEMResults` object.
 
@@ -237,7 +238,7 @@ structure of a `cSEMResults` object.
 listviewer::jsonedit(res, mode = "view") # requires the listviewer package.
 ```
 
-Apply postestimation functions:
+Apply post-estimation functions:
 
 ``` r
 ## Get a summary
@@ -439,10 +440,10 @@ testOMF(res)
     ## 
     ##                                      Critical value
     ##  Distance measure    Test statistic    95%   
-    ##  dG                      0.6493      0.3199  
-    ##  SRMR                    0.0940      0.0518  
-    ##  dL                      2.2340      0.6776  
-    ##  dML                     2.9219      1.5557  
+    ##  dG                      0.6493      0.3256  
+    ##  SRMR                    0.0940      0.0519  
+    ##  dL                      2.2340      0.6808  
+    ##  dML                     2.9219      1.6331  
     ##  
     ## 
     ## Decision: 
@@ -456,10 +457,10 @@ testOMF(res)
     ##  
     ## Additional information:
     ## 
-    ##  Out of 499 bootstrap replications 468 are admissible.
+    ##  Out of 499 bootstrap replications 480 are admissible.
     ##  See ?verify() for what constitutes an inadmissible result.
     ## 
-    ##  The seed used was: -464649022
+    ##  The seed used was: -2112241140
     ## ________________________________________________________________________________
 
 ``` r
@@ -697,30 +698,31 @@ predict(res)
     ##  Estimator benchmark                = 'lm'
     ##  Disattenuation target              = 'TRUE'
     ##  Disattenuation benchmark           = 'FALSE'
+    ##  Approach to predict                = 'earliest'
     ## 
     ## ------------------------------ Prediction metrics ------------------------------
     ## 
     ## 
     ##   Name      MAE target  MAE benchmark  RMSE target RMSE benchmark   Q2_predict
-    ##   expe1         1.4636         1.5861       1.9173         2.0928       0.0492
-    ##   expe2         1.4183         1.4928       1.9404         2.0247       0.1954
-    ##   expe3         1.6283         1.7381       2.1238         2.2202       0.1250
-    ##   qual1         1.4801         1.5542       1.9341         2.0550       0.1145
-    ##   qual2         1.5918         1.5564       2.0624         2.0859       0.2094
-    ##   qual3         1.7337         1.7504       2.2261         2.2952       0.1197
-    ##   qual4         1.2387         1.1993       1.6026         1.6525       0.2256
-    ##   qual5         1.5191         1.5114       1.9505         1.9670       0.1840
-    ##   val1          1.4563         1.3747       1.8868         1.7819       0.2410
-    ##   val2          1.2320         1.2238       1.6538         1.7264       0.1702
-    ##   val3          1.4847         1.3894       1.9731         1.9326       0.1471
-    ##   sat1          1.2529         1.2369       1.6558         1.6316       0.3348
-    ##   sat2          1.2406         1.2109       1.6564         1.6407       0.2983
-    ##   sat3          1.3463         1.3083       1.6848         1.7557       0.2059
-    ##   sat4          1.3176         1.2601       1.6650         1.6322       0.2825
-    ##   loy1          1.6933         1.6679       2.2309         2.2317       0.2723
-    ##   loy2          1.4846         1.4868       1.9080         1.9831       0.1343
-    ##   loy3          1.7210         1.6872       2.3015         2.2909       0.2698
-    ##   loy4          1.6908         1.6881       2.1798         2.3134       0.0830
+    ##   expe1         1.4546         1.5962       1.9060         2.1068       0.0554
+    ##   expe2         1.4073         1.4993       1.9294         2.0298       0.2041
+    ##   expe3         1.6310         1.7420       2.1213         2.2193       0.1300
+    ##   qual1         1.4759         1.5539       1.9312         2.0714       0.1137
+    ##   qual2         1.5732         1.5345       2.0327         2.0531       0.2223
+    ##   qual3         1.7306         1.7399       2.2199         2.2807       0.1251
+    ##   qual4         1.2347         1.1973       1.5962         1.6310       0.2340
+    ##   qual5         1.5061         1.5205       1.9325         1.9652       0.2044
+    ##   val1          1.4409         1.3664       1.8632         1.7681       0.2540
+    ##   val2          1.2297         1.2220       1.6503         1.7220       0.1712
+    ##   val3          1.4853         1.3955       1.9709         1.9349       0.1453
+    ##   sat1          1.2470         1.2262       1.6463         1.6163       0.3382
+    ##   sat2          1.2312         1.1984       1.6397         1.6252       0.3083
+    ##   sat3          1.3356         1.2841       1.6708         1.7178       0.2078
+    ##   sat4          1.3192         1.2601       1.6723         1.6363       0.2751
+    ##   loy1          1.6965         1.6688       2.2367         2.2395       0.2724
+    ##   loy2          1.4925         1.4952       1.9201         1.9945       0.1267
+    ##   loy3          1.7018         1.6768       2.2800         2.2863       0.2740
+    ##   loy4          1.6985         1.6855       2.1985         2.3090       0.0754
     ## ________________________________________________________________________________
 
 #### Resampling and Inference
@@ -734,10 +736,10 @@ estimate standard errors, test statistics, and critical quantiles.
 `cSEM` offers two ways for resampling:
 
 1.  Setting `.resample_method` in `csem()` to `"jackknife"` or
-    `"bootstrap"` and subsequently using postestimation functions
+    `"bootstrap"` and subsequently using post-estimation functions
     `summarize()` or `infer()`.
 2.  The same result is achieved by passing a `cSEMResults` object to
-    `resamplecSEMResults()` and subsequently using postestimation
+    `resamplecSEMResults()` and subsequently using post-estimation
     functions `summarize()` or `infer()`.
 
 ``` r
@@ -772,10 +774,10 @@ summarize(b1)
     ##  ---------------------
     ##  Resample method                    = "bootstrap"
     ##  Number of resamples                = 499
-    ##  Number of admissible results       = 482
+    ##  Number of admissible results       = 489
     ##  Approach to handle inadmissibles   = "drop"
     ##  Sign change option                 = "none"
-    ##  Random seed                        = 1326272388
+    ##  Random seed                        = 519363542
     ## 
     ##  Construct details:
     ##  ------------------
@@ -794,94 +796,94 @@ summarize(b1)
     ## ============================
     ##                                                              CI_percentile   
     ##   Path           Estimate  Std. error   t-stat.   p-value         95%        
-    ##   EXPE ~ IMAG      0.4714      0.0613    7.6922    0.0000 [ 0.3391; 0.5903 ] 
-    ##   QUAL ~ EXPE      0.8344      0.0223   37.3800    0.0000 [ 0.7881; 0.8753 ] 
-    ##   VAL ~ EXPE       0.0457      0.0842    0.5432    0.5870 [-0.1063; 0.2152 ] 
-    ##   VAL ~ QUAL       0.7013      0.0840    8.3475    0.0000 [ 0.5285; 0.8503 ] 
-    ##   SAT ~ IMAG       0.2450      0.0542    4.5235    0.0000 [ 0.1421; 0.3475 ] 
-    ##   SAT ~ EXPE      -0.0172      0.0761   -0.2265    0.8208 [-0.1707; 0.1277 ] 
-    ##   SAT ~ QUAL       0.2215      0.1085    2.0426    0.0411 [ 0.0390; 0.4510 ] 
-    ##   SAT ~ VAL        0.5270      0.0901    5.8505    0.0000 [ 0.3501; 0.6904 ] 
-    ##   LOY ~ IMAG       0.1819      0.0802    2.2675    0.0234 [ 0.0330; 0.3350 ] 
-    ##   LOY ~ SAT        0.6283      0.0806    7.7916    0.0000 [ 0.4737; 0.7962 ] 
+    ##   EXPE ~ IMAG      0.4714      0.0661    7.1282    0.0000 [ 0.3445; 0.5955 ] 
+    ##   QUAL ~ EXPE      0.8344      0.0234   35.7261    0.0000 [ 0.7859; 0.8751 ] 
+    ##   VAL ~ EXPE       0.0457      0.0849    0.5383    0.5904 [-0.1059; 0.2227 ] 
+    ##   VAL ~ QUAL       0.7013      0.0817    8.5796    0.0000 [ 0.5332; 0.8494 ] 
+    ##   SAT ~ IMAG       0.2450      0.0564    4.3455    0.0000 [ 0.1460; 0.3597 ] 
+    ##   SAT ~ EXPE      -0.0172      0.0716   -0.2407    0.8098 [-0.1607; 0.1145 ] 
+    ##   SAT ~ QUAL       0.2215      0.0927    2.3901    0.0168 [ 0.0438; 0.4028 ] 
+    ##   SAT ~ VAL        0.5270      0.0849    6.2061    0.0000 [ 0.3648; 0.7003 ] 
+    ##   LOY ~ IMAG       0.1819      0.0789    2.3057    0.0211 [ 0.0334; 0.3328 ] 
+    ##   LOY ~ SAT        0.6283      0.0792    7.9350    0.0000 [ 0.4735; 0.7819 ] 
     ## 
     ## Estimated loadings:
     ## ===================
     ##                                                                CI_percentile   
     ##   Loading          Estimate  Std. error   t-stat.   p-value         95%        
-    ##   IMAG =~ imag1      0.6306      0.1008    6.2566    0.0000 [ 0.4187; 0.8201 ] 
-    ##   IMAG =~ imag2      0.9246      0.0396   23.3305    0.0000 [ 0.8217; 0.9769 ] 
-    ##   IMAG =~ imag3      0.9577      0.0290   32.9821    0.0000 [ 0.8775; 0.9926 ] 
-    ##   EXPE =~ expe1      0.7525      0.0788    9.5530    0.0000 [ 0.5794; 0.8728 ] 
-    ##   EXPE =~ expe2      0.9348      0.0270   34.5866    0.0000 [ 0.8659; 0.9724 ] 
-    ##   EXPE =~ expe3      0.7295      0.0713   10.2253    0.0000 [ 0.5887; 0.8494 ] 
-    ##   QUAL =~ qual1      0.7861      0.0680   11.5650    0.0000 [ 0.6183; 0.8861 ] 
-    ##   QUAL =~ qual2      0.9244      0.0217   42.5752    0.0000 [ 0.8645; 0.9543 ] 
-    ##   QUAL =~ qual3      0.7560      0.0581   13.0115    0.0000 [ 0.6186; 0.8535 ] 
-    ##   QUAL =~ qual4      0.7632      0.0518   14.7319    0.0000 [ 0.6384; 0.8486 ] 
-    ##   QUAL =~ qual5      0.7834      0.0488   16.0554    0.0000 [ 0.6749; 0.8587 ] 
-    ##   VAL =~ val1        0.9518      0.0228   41.7463    0.0000 [ 0.8998; 0.9830 ] 
-    ##   VAL =~ val2        0.8056      0.0635   12.6818    0.0000 [ 0.6695; 0.9076 ] 
-    ##   VAL =~ val3        0.6763      0.0738    9.1579    0.0000 [ 0.5191; 0.8028 ] 
-    ##   SAT =~ sat1        0.9243      0.0227   40.7096    0.0000 [ 0.8759; 0.9624 ] 
-    ##   SAT =~ sat2        0.8813      0.0280   31.5064    0.0000 [ 0.8192; 0.9281 ] 
-    ##   SAT =~ sat3        0.7127      0.0521   13.6786    0.0000 [ 0.5993; 0.8070 ] 
-    ##   SAT =~ sat4        0.7756      0.0485   16.0069    0.0000 [ 0.6761; 0.8575 ] 
-    ##   LOY =~ loy1        0.9097      0.0505   17.9971    0.0000 [ 0.7932; 0.9796 ] 
-    ##   LOY =~ loy2        0.5775      0.0862    6.6979    0.0000 [ 0.3940; 0.7281 ] 
-    ##   LOY =~ loy3        0.9043      0.0422   21.4115    0.0000 [ 0.8147; 0.9772 ] 
-    ##   LOY =~ loy4        0.4917      0.0947    5.1946    0.0000 [ 0.3163; 0.6824 ] 
+    ##   IMAG =~ imag1      0.6306      0.1053    5.9864    0.0000 [ 0.3941; 0.8087 ] 
+    ##   IMAG =~ imag2      0.9246      0.0393   23.5084    0.0000 [ 0.8301; 0.9755 ] 
+    ##   IMAG =~ imag3      0.9577      0.0283   33.8577    0.0000 [ 0.8852; 0.9902 ] 
+    ##   EXPE =~ expe1      0.7525      0.0838    8.9797    0.0000 [ 0.5571; 0.8797 ] 
+    ##   EXPE =~ expe2      0.9348      0.0288   32.5033    0.0000 [ 0.8674; 0.9727 ] 
+    ##   EXPE =~ expe3      0.7295      0.0694   10.5075    0.0000 [ 0.5781; 0.8401 ] 
+    ##   QUAL =~ qual1      0.7861      0.0719   10.9288    0.0000 [ 0.6220; 0.8880 ] 
+    ##   QUAL =~ qual2      0.9244      0.0246   37.5815    0.0000 [ 0.8623; 0.9613 ] 
+    ##   QUAL =~ qual3      0.7560      0.0579   13.0671    0.0000 [ 0.6337; 0.8499 ] 
+    ##   QUAL =~ qual4      0.7632      0.0522   14.6247    0.0000 [ 0.6518; 0.8607 ] 
+    ##   QUAL =~ qual5      0.7834      0.0457   17.1414    0.0000 [ 0.6838; 0.8630 ] 
+    ##   VAL =~ val1        0.9518      0.0229   41.6273    0.0000 [ 0.8997; 0.9847 ] 
+    ##   VAL =~ val2        0.8056      0.0644   12.5061    0.0000 [ 0.6658; 0.9081 ] 
+    ##   VAL =~ val3        0.6763      0.0746    9.0610    0.0000 [ 0.5204; 0.8152 ] 
+    ##   SAT =~ sat1        0.9243      0.0218   42.3875    0.0000 [ 0.8799; 0.9635 ] 
+    ##   SAT =~ sat2        0.8813      0.0293   30.0744    0.0000 [ 0.8225; 0.9299 ] 
+    ##   SAT =~ sat3        0.7127      0.0511   13.9377    0.0000 [ 0.6036; 0.8015 ] 
+    ##   SAT =~ sat4        0.7756      0.0490   15.8259    0.0000 [ 0.6723; 0.8587 ] 
+    ##   LOY =~ loy1        0.9097      0.0488   18.6534    0.0000 [ 0.7973; 0.9839 ] 
+    ##   LOY =~ loy2        0.5775      0.0843    6.8475    0.0000 [ 0.4074; 0.7303 ] 
+    ##   LOY =~ loy3        0.9043      0.0423   21.3785    0.0000 [ 0.8034; 0.9769 ] 
+    ##   LOY =~ loy4        0.4917      0.0965    5.0952    0.0000 [ 0.2982; 0.6658 ] 
     ## 
     ## Estimated weights:
     ## ==================
     ##                                                                CI_percentile   
     ##   Weight           Estimate  Std. error   t-stat.   p-value         95%        
-    ##   IMAG <~ imag1      0.0156      0.1199    0.1305    0.8962 [-0.2377; 0.2731 ] 
-    ##   IMAG <~ imag2      0.4473      0.1484    3.0138    0.0026 [ 0.1282; 0.7429 ] 
-    ##   IMAG <~ imag3      0.6020      0.1404    4.2873    0.0000 [ 0.3127; 0.8576 ] 
-    ##   EXPE <~ expe1      0.2946      0.1139    2.5855    0.0097 [ 0.0645; 0.5052 ] 
-    ##   EXPE <~ expe2      0.6473      0.0844    7.6655    0.0000 [ 0.4627; 0.7903 ] 
-    ##   EXPE <~ expe3      0.2374      0.0952    2.4928    0.0127 [ 0.0400; 0.4311 ] 
-    ##   QUAL <~ qual1      0.2370      0.0900    2.6349    0.0084 [ 0.0713; 0.4184 ] 
-    ##   QUAL <~ qual2      0.4712      0.0810    5.8162    0.0000 [ 0.3034; 0.6182 ] 
-    ##   QUAL <~ qual3      0.1831      0.0783    2.3393    0.0193 [ 0.0049; 0.3223 ] 
-    ##   QUAL <~ qual4      0.1037      0.0604    1.7161    0.0861 [-0.0055; 0.2228 ] 
-    ##   QUAL <~ qual5      0.2049      0.0665    3.0806    0.0021 [ 0.0699; 0.3305 ] 
-    ##   VAL <~ val1        0.7163      0.0944    7.5851    0.0000 [ 0.5330; 0.8730 ] 
-    ##   VAL <~ val2        0.2202      0.0922    2.3884    0.0169 [ 0.0471; 0.4119 ] 
-    ##   VAL <~ val3        0.2082      0.0609    3.4176    0.0006 [ 0.0868; 0.3222 ] 
-    ##   SAT <~ sat1        0.3209      0.0147   21.7866    0.0000 [ 0.2969; 0.3549 ] 
-    ##   SAT <~ sat2        0.3059      0.0141   21.7153    0.0000 [ 0.2825; 0.3380 ] 
-    ##   SAT <~ sat3        0.2474      0.0110   22.4943    0.0000 [ 0.2246; 0.2691 ] 
-    ##   SAT <~ sat4        0.2692      0.0117   22.9935    0.0000 [ 0.2474; 0.2912 ] 
-    ##   LOY <~ loy1        0.3834      0.0266   14.4290    0.0000 [ 0.3278; 0.4325 ] 
-    ##   LOY <~ loy2        0.2434      0.0305    7.9881    0.0000 [ 0.1770; 0.2956 ] 
-    ##   LOY <~ loy3        0.3812      0.0271   14.0831    0.0000 [ 0.3286; 0.4345 ] 
-    ##   LOY <~ loy4        0.2073      0.0348    5.9602    0.0000 [ 0.1406; 0.2759 ] 
+    ##   IMAG <~ imag1      0.0156      0.1157    0.1352    0.8925 [-0.2148; 0.2560 ] 
+    ##   IMAG <~ imag2      0.4473      0.1410    3.1722    0.0015 [ 0.1823; 0.7096 ] 
+    ##   IMAG <~ imag3      0.6020      0.1371    4.3907    0.0000 [ 0.3201; 0.8393 ] 
+    ##   EXPE <~ expe1      0.2946      0.1203    2.4481    0.0144 [ 0.0584; 0.5040 ] 
+    ##   EXPE <~ expe2      0.6473      0.0861    7.5205    0.0000 [ 0.4817; 0.7951 ] 
+    ##   EXPE <~ expe3      0.2374      0.0905    2.6234    0.0087 [ 0.0548; 0.4085 ] 
+    ##   QUAL <~ qual1      0.2370      0.0918    2.5820    0.0098 [ 0.0596; 0.4236 ] 
+    ##   QUAL <~ qual2      0.4712      0.0793    5.9438    0.0000 [ 0.3077; 0.6258 ] 
+    ##   QUAL <~ qual3      0.1831      0.0787    2.3268    0.0200 [ 0.0277; 0.3486 ] 
+    ##   QUAL <~ qual4      0.1037      0.0634    1.6354    0.1020 [-0.0117; 0.2397 ] 
+    ##   QUAL <~ qual5      0.2049      0.0643    3.1854    0.0014 [ 0.0767; 0.3241 ] 
+    ##   VAL <~ val1        0.7163      0.0959    7.4732    0.0000 [ 0.5239; 0.8807 ] 
+    ##   VAL <~ val2        0.2202      0.0937    2.3497    0.0188 [ 0.0495; 0.4041 ] 
+    ##   VAL <~ val3        0.2082      0.0630    3.3017    0.0010 [ 0.0879; 0.3251 ] 
+    ##   SAT <~ sat1        0.3209      0.0150   21.4186    0.0000 [ 0.2967; 0.3517 ] 
+    ##   SAT <~ sat2        0.3059      0.0136   22.5695    0.0000 [ 0.2831; 0.3349 ] 
+    ##   SAT <~ sat3        0.2474      0.0107   23.1406    0.0000 [ 0.2263; 0.2681 ] 
+    ##   SAT <~ sat4        0.2692      0.0119   22.5414    0.0000 [ 0.2448; 0.2915 ] 
+    ##   LOY <~ loy1        0.3834      0.0255   15.0082    0.0000 [ 0.3343; 0.4385 ] 
+    ##   LOY <~ loy2        0.2434      0.0284    8.5797    0.0000 [ 0.1803; 0.2913 ] 
+    ##   LOY <~ loy3        0.3812      0.0269   14.1789    0.0000 [ 0.3297; 0.4370 ] 
+    ##   LOY <~ loy4        0.2073      0.0365    5.6779    0.0000 [ 0.1339; 0.2735 ] 
     ## 
     ## Estimated indicator correlations:
     ## =================================
     ##                                                                 CI_percentile   
     ##   Correlation       Estimate  Std. error   t-stat.   p-value         95%        
-    ##   imag1 ~~ imag2      0.6437      0.0638   10.0911    0.0000 [ 0.5133; 0.7530 ] 
-    ##   imag1 ~~ imag3      0.5433      0.0696    7.8079    0.0000 [ 0.3992; 0.6757 ] 
-    ##   imag2 ~~ imag3      0.7761      0.0387   20.0364    0.0000 [ 0.6848; 0.8386 ] 
-    ##   expe1 ~~ expe2      0.5353      0.0609    8.7881    0.0000 [ 0.4153; 0.6509 ] 
-    ##   expe1 ~~ expe3      0.4694      0.0630    7.4477    0.0000 [ 0.3493; 0.5916 ] 
-    ##   expe2 ~~ expe3      0.5467      0.0593    9.2256    0.0000 [ 0.4258; 0.6619 ] 
-    ##   qual1 ~~ qual2      0.6053      0.0552   10.9619    0.0000 [ 0.4905; 0.6955 ] 
-    ##   qual1 ~~ qual3      0.5406      0.0609    8.8784    0.0000 [ 0.4221; 0.6467 ] 
-    ##   qual1 ~~ qual4      0.5662      0.0692    8.1779    0.0000 [ 0.4357; 0.6856 ] 
-    ##   qual1 ~~ qual5      0.5180      0.0677    7.6494    0.0000 [ 0.3866; 0.6416 ] 
-    ##   qual2 ~~ qual3      0.6187      0.0520   11.8872    0.0000 [ 0.5115; 0.7056 ] 
-    ##   qual2 ~~ qual4      0.6517      0.0589   11.0576    0.0000 [ 0.5233; 0.7495 ] 
-    ##   qual2 ~~ qual5      0.6291      0.0563   11.1649    0.0000 [ 0.5124; 0.7280 ] 
-    ##   qual3 ~~ qual4      0.4752      0.0644    7.3785    0.0000 [ 0.3330; 0.5906 ] 
-    ##   qual3 ~~ qual5      0.5074      0.0617    8.2210    0.0000 [ 0.3895; 0.6231 ] 
-    ##   qual4 ~~ qual5      0.6402      0.0559   11.4491    0.0000 [ 0.5110; 0.7369 ] 
-    ##   val1 ~~ val2        0.6344      0.0553   11.4678    0.0000 [ 0.5184; 0.7310 ] 
-    ##   val1 ~~ val3        0.4602      0.0710    6.4849    0.0000 [ 0.3241; 0.5978 ] 
-    ##   val2 ~~ val3        0.6288      0.0626   10.0421    0.0000 [ 0.4920; 0.7419 ] 
+    ##   imag1 ~~ imag2      0.6437      0.0676    9.5193    0.0000 [ 0.4970; 0.7531 ] 
+    ##   imag1 ~~ imag3      0.5433      0.0740    7.3459    0.0000 [ 0.3743; 0.6705 ] 
+    ##   imag2 ~~ imag3      0.7761      0.0408   19.0049    0.0000 [ 0.6891; 0.8417 ] 
+    ##   expe1 ~~ expe2      0.5353      0.0648    8.2662    0.0000 [ 0.4035; 0.6500 ] 
+    ##   expe1 ~~ expe3      0.4694      0.0627    7.4823    0.0000 [ 0.3441; 0.5904 ] 
+    ##   expe2 ~~ expe3      0.5467      0.0589    9.2790    0.0000 [ 0.4240; 0.6423 ] 
+    ##   qual1 ~~ qual2      0.6053      0.0590   10.2613    0.0000 [ 0.4836; 0.7075 ] 
+    ##   qual1 ~~ qual3      0.5406      0.0595    9.0869    0.0000 [ 0.4187; 0.6513 ] 
+    ##   qual1 ~~ qual4      0.5662      0.0653    8.6642    0.0000 [ 0.4328; 0.6835 ] 
+    ##   qual1 ~~ qual5      0.5180      0.0673    7.6929    0.0000 [ 0.3690; 0.6375 ] 
+    ##   qual2 ~~ qual3      0.6187      0.0543   11.3839    0.0000 [ 0.4982; 0.7051 ] 
+    ##   qual2 ~~ qual4      0.6517      0.0584   11.1607    0.0000 [ 0.5375; 0.7555 ] 
+    ##   qual2 ~~ qual5      0.6291      0.0561   11.2052    0.0000 [ 0.5184; 0.7305 ] 
+    ##   qual3 ~~ qual4      0.4752      0.0613    7.7578    0.0000 [ 0.3582; 0.5944 ] 
+    ##   qual3 ~~ qual5      0.5074      0.0588    8.6233    0.0000 [ 0.3991; 0.6225 ] 
+    ##   qual4 ~~ qual5      0.6402      0.0548   11.6818    0.0000 [ 0.5268; 0.7397 ] 
+    ##   val1 ~~ val2        0.6344      0.0547   11.5910    0.0000 [ 0.5285; 0.7358 ] 
+    ##   val1 ~~ val3        0.4602      0.0728    6.3240    0.0000 [ 0.3229; 0.6042 ] 
+    ##   val2 ~~ val3        0.6288      0.0610   10.3169    0.0000 [ 0.5067; 0.7353 ] 
     ## 
     ## ------------------------------------ Effects -----------------------------------
     ## 
@@ -889,36 +891,36 @@ summarize(b1)
     ## ========================
     ##                                                               CI_percentile   
     ##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        
-    ##   EXPE ~ IMAG       0.4714      0.0613    7.6922    0.0000 [ 0.3391; 0.5903 ] 
-    ##   QUAL ~ IMAG       0.3933      0.0566    6.9468    0.0000 [ 0.2795; 0.5032 ] 
-    ##   QUAL ~ EXPE       0.8344      0.0223   37.3800    0.0000 [ 0.7881; 0.8753 ] 
-    ##   VAL ~ IMAG        0.2974      0.0559    5.3174    0.0000 [ 0.1969; 0.4162 ] 
-    ##   VAL ~ EXPE        0.6309      0.0479   13.1757    0.0000 [ 0.5289; 0.7152 ] 
-    ##   VAL ~ QUAL        0.7013      0.0840    8.3475    0.0000 [ 0.5285; 0.8503 ] 
-    ##   SAT ~ IMAG        0.4807      0.0631    7.6191    0.0000 [ 0.3523; 0.5963 ] 
-    ##   SAT ~ EXPE        0.5001      0.0582    8.5879    0.0000 [ 0.3922; 0.6053 ] 
-    ##   SAT ~ QUAL        0.5911      0.0993    5.9525    0.0000 [ 0.3961; 0.7878 ] 
-    ##   SAT ~ VAL         0.5270      0.0901    5.8505    0.0000 [ 0.3501; 0.6904 ] 
-    ##   LOY ~ IMAG        0.4840      0.0655    7.3841    0.0000 [ 0.3637; 0.6041 ] 
-    ##   LOY ~ EXPE        0.3142      0.0546    5.7573    0.0000 [ 0.2162; 0.4344 ] 
-    ##   LOY ~ QUAL        0.3714      0.0862    4.3085    0.0000 [ 0.2247; 0.5653 ] 
-    ##   LOY ~ VAL         0.3311      0.0757    4.3717    0.0000 [ 0.2043; 0.4768 ] 
-    ##   LOY ~ SAT         0.6283      0.0806    7.7916    0.0000 [ 0.4737; 0.7962 ] 
+    ##   EXPE ~ IMAG       0.4714      0.0661    7.1282    0.0000 [ 0.3445; 0.5955 ] 
+    ##   QUAL ~ IMAG       0.3933      0.0615    6.3989    0.0000 [ 0.2810; 0.5081 ] 
+    ##   QUAL ~ EXPE       0.8344      0.0234   35.7261    0.0000 [ 0.7859; 0.8751 ] 
+    ##   VAL ~ IMAG        0.2974      0.0619    4.8051    0.0000 [ 0.1919; 0.4317 ] 
+    ##   VAL ~ EXPE        0.6309      0.0520   12.1281    0.0000 [ 0.5261; 0.7348 ] 
+    ##   VAL ~ QUAL        0.7013      0.0817    8.5796    0.0000 [ 0.5332; 0.8494 ] 
+    ##   SAT ~ IMAG        0.4807      0.0666    7.2187    0.0000 [ 0.3491; 0.6111 ] 
+    ##   SAT ~ EXPE        0.5001      0.0607    8.2431    0.0000 [ 0.3732; 0.6101 ] 
+    ##   SAT ~ QUAL        0.5911      0.0901    6.5623    0.0000 [ 0.4151; 0.7572 ] 
+    ##   SAT ~ VAL         0.5270      0.0849    6.2061    0.0000 [ 0.3648; 0.7003 ] 
+    ##   LOY ~ IMAG        0.4840      0.0685    7.0650    0.0000 [ 0.3574; 0.6176 ] 
+    ##   LOY ~ EXPE        0.3142      0.0562    5.5897    0.0000 [ 0.2116; 0.4382 ] 
+    ##   LOY ~ QUAL        0.3714      0.0805    4.6127    0.0000 [ 0.2220; 0.5554 ] 
+    ##   LOY ~ VAL         0.3311      0.0721    4.5913    0.0000 [ 0.2036; 0.4808 ] 
+    ##   LOY ~ SAT         0.6283      0.0792    7.9350    0.0000 [ 0.4735; 0.7819 ] 
     ## 
     ## Estimated indirect effects:
     ## ===========================
     ##                                                                  CI_percentile   
     ##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        
-    ##   QUAL ~ IMAG          0.3933      0.0566    6.9468    0.0000 [ 0.2795; 0.5032 ] 
-    ##   VAL ~ IMAG           0.2974      0.0559    5.3174    0.0000 [ 0.1969; 0.4162 ] 
-    ##   VAL ~ EXPE           0.5852      0.0722    8.1051    0.0000 [ 0.4417; 0.7187 ] 
-    ##   SAT ~ IMAG           0.2357      0.0464    5.0853    0.0000 [ 0.1541; 0.3343 ] 
-    ##   SAT ~ EXPE           0.5173      0.0701    7.3833    0.0000 [ 0.3806; 0.6454 ] 
-    ##   SAT ~ QUAL           0.3696      0.0648    5.7004    0.0000 [ 0.2340; 0.4930 ] 
-    ##   LOY ~ IMAG           0.3020      0.0559    5.3991    0.0000 [ 0.2092; 0.4286 ] 
-    ##   LOY ~ EXPE           0.3142      0.0546    5.7573    0.0000 [ 0.2162; 0.4344 ] 
-    ##   LOY ~ QUAL           0.3714      0.0862    4.3085    0.0000 [ 0.2247; 0.5653 ] 
-    ##   LOY ~ VAL            0.3311      0.0757    4.3717    0.0000 [ 0.2043; 0.4768 ] 
+    ##   QUAL ~ IMAG          0.3933      0.0615    6.3989    0.0000 [ 0.2810; 0.5081 ] 
+    ##   VAL ~ IMAG           0.2974      0.0619    4.8051    0.0000 [ 0.1919; 0.4317 ] 
+    ##   VAL ~ EXPE           0.5852      0.0701    8.3434    0.0000 [ 0.4412; 0.7155 ] 
+    ##   SAT ~ IMAG           0.2357      0.0504    4.6801    0.0000 [ 0.1468; 0.3386 ] 
+    ##   SAT ~ EXPE           0.5173      0.0657    7.8700    0.0000 [ 0.3849; 0.6444 ] 
+    ##   SAT ~ QUAL           0.3696      0.0620    5.9642    0.0000 [ 0.2507; 0.4975 ] 
+    ##   LOY ~ IMAG           0.3020      0.0555    5.4383    0.0000 [ 0.2088; 0.4245 ] 
+    ##   LOY ~ EXPE           0.3142      0.0562    5.5897    0.0000 [ 0.2116; 0.4382 ] 
+    ##   LOY ~ QUAL           0.3714      0.0805    4.6127    0.0000 [ 0.2220; 0.5554 ] 
+    ##   LOY ~ VAL            0.3311      0.0721    4.5913    0.0000 [ 0.2036; 0.4808 ] 
     ## ________________________________________________________________________________
 
 Several bootstrap-based confidence intervals are implemented, see
@@ -930,7 +932,7 @@ infer(b1, .quantity = c("CI_standard_z", "CI_percentile")) # no print method yet
 
 Both bootstrap and jackknife resampling support platform-independent
 multiprocessing as well as setting random seeds via the [future
-framework](https://github.com/HenrikBengtsson/future). For
+framework](https://github.com/HenrikBengtsson/future/). For
 multiprocessing simply set `.eval_plan = "multisession"` in which case
 the maximum number of available cores is used if not on Windows. On
 Windows as many separate R instances are opened in the background as
