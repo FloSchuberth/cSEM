@@ -23,7 +23,7 @@ structured component analysis (GSCA), generalized structured component
 analysis with uniqueness terms (GSCAm), generalized canonical correlation analysis (GCCA),
 principal component analysis (PCA), factor score regression (FSR) using
 sum score, regression or Bartlett scores (including bias correction using
-Croon's approach), as well as several tests and typical postestimation 
+Croon's approach), as well as several tests and typical post-estimation 
 procedures (e.g., verify admissibility of the estimates, assess the model fit, 
 test the model fit, compute confidence intervals, compare groups, etc.).
 
@@ -54,19 +54,21 @@ The best place to get started is the [cSEM-website](https://m-e-rademaker.github
 
 The basic usage is illustrated below.
 
+
 ```{r out.width = "80%", fig.align = "center", echo=FALSE} 
 knitr::include_graphics("man/figures/api.png")
 ```
 
-Usully, using `cSEM` is the same 3 step procedure:
+
+Usually, using `cSEM` is the same 3 step procedure:
 
 > 1. Pick a dataset and specify a model using [lavaan syntax](https://lavaan.ugent.be/tutorial/syntax1.html)
 > 2. Use `csem()`
-> 3. Apply one of the postestimation functions listed below on the resulting object.
+> 3. Apply one of the post-estimation functions listed below on the resulting object.
 
-## Postestimation functions
+## Post-Estimation Functions
 
-There are five major postestimation verbs, three test family functions and
+There are five major post-estimation verbs, three test family functions and
 three do-family of function: 
 
 - `assess()` : assess the model using common quality criteria
@@ -83,7 +85,7 @@ tests are implemented:
 - `testMGD()` : performs several tests to assess multi-group differences
 - `testHausman()` : performs the regression-based Hausman test to test for endogeneity
 
-Other miscellaneous postestimation functions belong do the do-family of functions.
+Other miscellaneous post-estimation functions belong do the do-family of functions.
 Currently, three do functions are implemented:
 
 - `doIPMA()`: performs an importance-performance matrix analysis
@@ -185,7 +187,7 @@ of a `cSEMResults` object.
 listviewer::jsonedit(res, mode = "view") # requires the listviewer package.
 ```
 
-Apply postestimation functions:
+Apply post-estimation functions:
 ```{r echo=FALSE, results='hide'}
 rnorm(1) # necessary to initialize a .Random.seed object
 ```
@@ -217,9 +219,9 @@ to estimate standard errors, test statistics, and critical quantiles.
 `cSEM` offers two ways for resampling:
 
 1. Setting `.resample_method` in `csem()` to `"jackknife"` or `"bootstrap"` and subsequently using 
-   postestimation functions `summarize()` or `infer()`.
+   post-estimation functions `summarize()` or `infer()`.
 2. The same result is achieved by passing a `cSEMResults` object to `resamplecSEMResults()`
-   and subsequently using postestimation functions `summarize()` or `infer()`.
+   and subsequently using post-estimation functions `summarize()` or `infer()`.
 
 ```{r eval=FALSE}
 # Setting `.resample_method`
