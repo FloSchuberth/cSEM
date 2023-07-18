@@ -99,13 +99,12 @@
 <div class="section level2">
 <h2 id="purpose">Purpose<a class="anchor" aria-label="anchor" href="#purpose"></a>
 </h2>
-<p>Estimate, analyse, test, and study linear, nonlinear, hierarchical and multi-group structural equation models using composite-based approaches and procedures, including estimation techniques such as partial least squares path modeling (PLS-PM) and its derivatives (PLSc, OrdPLSc, robustPLSc), generalized structured component analysis (GSCA), generalized structured component analysis with uniqueness terms (GSCAm), generalized canonical correlation analysis (GCCA), principal component analysis (PCA), factor score regression (FSR) using sum score, regression or Bartlett scores (including bias correction using Croon’s approach), as well as several tests and typical postestimation procedures (e.g., verify admissibility of the estimates, assess the model fit, test the model fit, compute confidence intervals, compare groups, etc.).</p>
+<p>Estimate, analyse, test, and study linear, nonlinear, hierarchical and multi-group structural equation models using composite-based approaches and procedures, including estimation techniques such as partial least squares path modeling (PLS-PM) and its derivatives (PLSc, OrdPLSc, robustPLSc), generalized structured component analysis (GSCA), generalized structured component analysis with uniqueness terms (GSCAm), generalized canonical correlation analysis (GCCA), principal component analysis (PCA), factor score regression (FSR) using sum score, regression or Bartlett scores (including bias correction using Croon’s approach), as well as several tests and typical post-estimation procedures (e.g., verify admissibility of the estimates, assess the model fit, test the model fit, compute confidence intervals, compare groups, etc.).</p>
 </div>
 <div class="section level2">
-<h2 id="news-2022-11-24">News (2022-11-24):<a class="anchor" aria-label="anchor" href="#news-2022-11-24"></a>
+<h2 id="news-2022-05-09">News (2022-05-09):<a class="anchor" aria-label="anchor" href="#news-2022-05-09"></a>
 </h2>
 <ul>
-<li><p><code><a href="reference/testCVPAT.html">testCVPAT()</a></code> function implements the cross-validated predictive ability test (CVPAT)</p></li>
 <li><p><code><a href="reference/predict.html">predict()</a></code> function is now able to predict categorical indicators (a procedure known as OrdPLScPredict).</p></li>
 <li><p>Use singular value decomposition in GSCAm to deal with large datasets, which allows for large datasets (thanks to Heungsun Hwang)</p></li>
 </ul>
@@ -116,7 +115,7 @@
 <p>The package is available on <a href="https://cran.r-project.org/" class="external-link">CRAN</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"cSEM"</span><span class="op">)</span></span></code></pre></div>
-<p>To install the development version use:</p>
+<p>To install the development version, which is recommended, use:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"M-E-Rademaker/cSEM"</span><span class="op">)</span></span></code></pre></div>
@@ -131,21 +130,21 @@
 </h2>
 <p>The basic usage is illustrated below.</p>
 <p><img src="reference/figures/api.png" width="80%" style="display: block; margin: auto;"></p>
-<p>Usully, using <code>cSEM</code> is the same 3 step procedure:</p>
+<p>Usually, using <code>cSEM</code> is the same 3 step procedure:</p>
 <blockquote>
 <ol style="list-style-type: decimal">
 <li>Pick a dataset and specify a model using <a href="https://lavaan.ugent.be/tutorial/syntax1.html" class="external-link">lavaan syntax</a>
 </li>
 <li>Use <code><a href="reference/csem.html">csem()</a></code>
 </li>
-<li>Apply one of the postestimation functions listed below on the resulting object.</li>
+<li>Apply one of the post-estimation functions listed below on the resulting object.</li>
 </ol>
 </blockquote>
 </div>
 <div class="section level2">
-<h2 id="postestimation-functions">Postestimation functions<a class="anchor" aria-label="anchor" href="#postestimation-functions"></a>
+<h2 id="post-estimation-functions">Post-Estimation Functions<a class="anchor" aria-label="anchor" href="#post-estimation-functions"></a>
 </h2>
-<p>There are five major postestimation verbs, three test family functions and three do-family of function:</p>
+<p>There are five major post-estimation verbs, three test family functions and three do-family of function:</p>
 <ul>
 <li>
 <code><a href="reference/assess.html">assess()</a></code> : assess the model using common quality criteria</li>
@@ -169,7 +168,7 @@
 <li>
 <code><a href="reference/testHausman.html">testHausman()</a></code> : performs the regression-based Hausman test to test for endogeneity</li>
 </ul>
-<p>Other miscellaneous postestimation functions belong do the do-family of functions. Currently, three do functions are implemented:</p>
+<p>Other miscellaneous post-estimation functions belong do the do-family of functions. Currently, three do functions are implemented:</p>
 <ul>
 <li>
 <code><a href="reference/doIPMA.html">doIPMA()</a></code>: performs an importance-performance matrix analysis</li>
@@ -283,10 +282,10 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Loading_estimates</span> </span>
 <span><span class="va">res</span><span class="op">$</span><span class="va">Information</span><span class="op">$</span><span class="va">Model</span></span></code></pre></div>
-<p>A useful tool to examine a list is the <a href="https://github.com/timelyportfolio/listviewer" class="external-link">listviewer package</a>. If you are new to <code>cSEM</code> this might be a good way to familiarize yourself with the structure of a <code>cSEMResults</code> object.</p>
+<p>A useful tool to examine a list is the <a href="https://github.com/timelyportfolio/listviewer/" class="external-link">listviewer package</a>. If you are new to <code>cSEM</code> this might be a good way to familiarize yourself with the structure of a <code>cSEMResults</code> object.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">listviewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/listviewer/man/jsonedit.html" class="external-link">jsonedit</a></span><span class="op">(</span><span class="va">res</span>, mode <span class="op">=</span> <span class="st">"view"</span><span class="op">)</span> <span class="co"># requires the listviewer package.</span></span></code></pre></div>
-<p>Apply postestimation functions:</p>
+<p>Apply post-estimation functions:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Get a summary</span></span>
 <span><span class="fu"><a href="reference/summarize.html">summarize</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> </span></code></pre></div>
@@ -479,10 +478,10 @@
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="do">##                                      Critical value</span></span>
 <span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  Distance measure    Test statistic    95%   </span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  dG                      0.6493      0.3199  </span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  SRMR                    0.0940      0.0518  </span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  dL                      2.2340      0.6776  </span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  dML                     2.9219      1.5557  </span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  dG                      0.6493      0.3263  </span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  SRMR                    0.0940      0.0530  </span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  dL                      2.2340      0.7099  </span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  dML                     2.9219      1.6308  </span></span>
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="do">##  </span></span>
 <span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="do">## Decision: </span></span>
@@ -496,10 +495,10 @@
 <span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="do">##  </span></span>
 <span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="do">## Additional information:</span></span>
 <span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="do">##  Out of 499 bootstrap replications 468 are admissible.</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="do">##  Out of 499 bootstrap replications 476 are admissible.</span></span>
 <span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="do">##  See ?verify() for what constitutes an inadmissible result.</span></span>
 <span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a><span class="do">##  The seed used was: -464649022</span></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a><span class="do">##  The seed used was: 980464158</span></span>
 <span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a><span class="do">## ________________________________________________________________________________</span></span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Assess the model</span></span>
@@ -731,39 +730,40 @@
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  Estimator benchmark                = 'lm'</span></span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  Disattenuation target              = 'TRUE'</span></span>
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  Disattenuation benchmark           = 'FALSE'</span></span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------ Prediction metrics ------------------------------</span></span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  Approach to predict                = 'earliest'</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------ Prediction metrics ------------------------------</span></span>
 <span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="do">##   Name      MAE target  MAE benchmark  RMSE target RMSE benchmark   Q2_predict</span></span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe1         1.4636         1.5861       1.9173         2.0928       0.0492</span></span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe2         1.4183         1.4928       1.9404         2.0247       0.1954</span></span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe3         1.6283         1.7381       2.1238         2.2202       0.1250</span></span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual1         1.4801         1.5542       1.9341         2.0550       0.1145</span></span>
-<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual2         1.5918         1.5564       2.0624         2.0859       0.2094</span></span>
-<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual3         1.7337         1.7504       2.2261         2.2952       0.1197</span></span>
-<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual4         1.2387         1.1993       1.6026         1.6525       0.2256</span></span>
-<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual5         1.5191         1.5114       1.9505         1.9670       0.1840</span></span>
-<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a><span class="do">##   val1          1.4563         1.3747       1.8868         1.7819       0.2410</span></span>
-<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a><span class="do">##   val2          1.2320         1.2238       1.6538         1.7264       0.1702</span></span>
-<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="do">##   val3          1.4847         1.3894       1.9731         1.9326       0.1471</span></span>
-<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="do">##   sat1          1.2529         1.2369       1.6558         1.6316       0.3348</span></span>
-<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="do">##   sat2          1.2406         1.2109       1.6564         1.6407       0.2983</span></span>
-<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a><span class="do">##   sat3          1.3463         1.3083       1.6848         1.7557       0.2059</span></span>
-<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a><span class="do">##   sat4          1.3176         1.2601       1.6650         1.6322       0.2825</span></span>
-<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a><span class="do">##   loy1          1.6933         1.6679       2.2309         2.2317       0.2723</span></span>
-<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="do">##   loy2          1.4846         1.4868       1.9080         1.9831       0.1343</span></span>
-<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a><span class="do">##   loy3          1.7210         1.6872       2.3015         2.2909       0.2698</span></span>
-<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="do">##   loy4          1.6908         1.6881       2.1798         2.3134       0.0830</span></span>
-<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a><span class="do">## ________________________________________________________________________________</span></span></code></pre></div>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="do">##   Name      MAE target  MAE benchmark  RMSE target RMSE benchmark   Q2_predict</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe1         1.4681         1.6013       1.9215         2.1197       0.0435</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe2         1.4233         1.5085       1.9455         2.0427       0.1907</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe3         1.6278         1.7411       2.1223         2.2187       0.1224</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual1         1.4835         1.5636       1.9342         2.0818       0.1115</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual2         1.5822         1.5459       2.0474         2.0710       0.2111</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual3         1.7312         1.7355       2.2205         2.2806       0.1176</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual4         1.2308         1.2007       1.5951         1.6432       0.2345</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual5         1.5032         1.5178       1.9349         1.9653       0.1958</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a><span class="do">##   val1          1.4477         1.3711       1.8707         1.7731       0.2481</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="do">##   val2          1.2276         1.2270       1.6515         1.7353       0.1713</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="do">##   val3          1.4746         1.3913       1.9619         1.9351       0.1520</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="do">##   sat1          1.2565         1.2362       1.6547         1.6278       0.3319</span></span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a><span class="do">##   sat2          1.2372         1.2051       1.6465         1.6348       0.3035</span></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a><span class="do">##   sat3          1.3398         1.2889       1.6715         1.7256       0.2105</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a><span class="do">##   sat4          1.3171         1.2679       1.6718         1.6510       0.2734</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="do">##   loy1          1.7100         1.6798       2.2523         2.2520       0.2581</span></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a><span class="do">##   loy2          1.4907         1.4904       1.9127         1.9860       0.1354</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="do">##   loy3          1.7170         1.6789       2.2952         2.2773       0.2609</span></span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a><span class="do">##   loy4          1.7045         1.7085       2.1899         2.3266       0.0850</span></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a><span class="do">## ________________________________________________________________________________</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="resampling-and-inference">Resampling and Inference<a class="anchor" aria-label="anchor" href="#resampling-and-inference"></a>
 </h4>
 <p>By default no inferential statistics are calculated since most composite-based estimators have no closed-form expressions for standard errors. Resampling is used instead. <code>cSEM</code> mostly relies on the <code>bootstrap</code> procedure (although <code>jackknife</code> is implemented as well) to estimate standard errors, test statistics, and critical quantiles.</p>
 <p><code>cSEM</code> offers two ways for resampling:</p>
 <ol style="list-style-type: decimal">
-<li>Setting <code>.resample_method</code> in <code><a href="reference/csem.html">csem()</a></code> to <code>"jackknife"</code> or <code>"bootstrap"</code> and subsequently using postestimation functions <code><a href="reference/summarize.html">summarize()</a></code> or <code><a href="reference/infer.html">infer()</a></code>.</li>
-<li>The same result is achieved by passing a <code>cSEMResults</code> object to <code><a href="reference/resamplecSEMResults.html">resamplecSEMResults()</a></code> and subsequently using postestimation functions <code><a href="reference/summarize.html">summarize()</a></code> or <code><a href="reference/infer.html">infer()</a></code>.</li>
+<li>Setting <code>.resample_method</code> in <code><a href="reference/csem.html">csem()</a></code> to <code>"jackknife"</code> or <code>"bootstrap"</code> and subsequently using post-estimation functions <code><a href="reference/summarize.html">summarize()</a></code> or <code><a href="reference/infer.html">infer()</a></code>.</li>
+<li>The same result is achieved by passing a <code>cSEMResults</code> object to <code><a href="reference/resamplecSEMResults.html">resamplecSEMResults()</a></code> and subsequently using post-estimation functions <code><a href="reference/summarize.html">summarize()</a></code> or <code><a href="reference/infer.html">infer()</a></code>.</li>
 </ol>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Setting `.resample_method`</span></span>
@@ -792,10 +792,10 @@
 <span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  ---------------------</span></span>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  Resample method                    = "bootstrap"</span></span>
 <span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  Number of resamples                = 499</span></span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  Number of admissible results       = 482</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  Number of admissible results       = 487</span></span>
 <span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a><span class="do">##  Approach to handle inadmissibles   = "drop"</span></span>
 <span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a><span class="do">##  Sign change option                 = "none"</span></span>
-<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="do">##  Random seed                        = 1326272388</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="do">##  Random seed                        = -558304815</span></span>
 <span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a><span class="do">##  Construct details:</span></span>
 <span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a><span class="do">##  ------------------</span></span>
@@ -814,94 +814,94 @@
 <span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a><span class="do">## ============================</span></span>
 <span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a><span class="do">##                                                              CI_percentile   </span></span>
 <span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a><span class="do">##   Path           Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE ~ IMAG      0.4714      0.0613    7.6922    0.0000 [ 0.3391; 0.5903 ] </span></span>
-<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL ~ EXPE      0.8344      0.0223   37.3800    0.0000 [ 0.7881; 0.8753 ] </span></span>
-<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ EXPE       0.0457      0.0842    0.5432    0.5870 [-0.1063; 0.2152 ] </span></span>
-<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ QUAL       0.7013      0.0840    8.3475    0.0000 [ 0.5285; 0.8503 ] </span></span>
-<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ IMAG       0.2450      0.0542    4.5235    0.0000 [ 0.1421; 0.3475 ] </span></span>
-<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ EXPE      -0.0172      0.0761   -0.2265    0.8208 [-0.1707; 0.1277 ] </span></span>
-<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ QUAL       0.2215      0.1085    2.0426    0.0411 [ 0.0390; 0.4510 ] </span></span>
-<span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ VAL        0.5270      0.0901    5.8505    0.0000 [ 0.3501; 0.6904 ] </span></span>
-<span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ IMAG       0.1819      0.0802    2.2675    0.0234 [ 0.0330; 0.3350 ] </span></span>
-<span id="cb21-51"><a href="#cb21-51" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ SAT        0.6283      0.0806    7.7916    0.0000 [ 0.4737; 0.7962 ] </span></span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE ~ IMAG      0.4714      0.0645    7.3038    0.0000 [ 0.3572; 0.5912 ] </span></span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL ~ EXPE      0.8344      0.0239   34.8885    0.0000 [ 0.7835; 0.8732 ] </span></span>
+<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ EXPE       0.0457      0.0830    0.5505    0.5820 [-0.1025; 0.2206 ] </span></span>
+<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ QUAL       0.7013      0.0796    8.8114    0.0000 [ 0.5327; 0.8562 ] </span></span>
+<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ IMAG       0.2450      0.0541    4.5315    0.0000 [ 0.1378; 0.3406 ] </span></span>
+<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ EXPE      -0.0172      0.0702   -0.2457    0.8059 [-0.1644; 0.1206 ] </span></span>
+<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ QUAL       0.2215      0.1034    2.1427    0.0321 [ 0.0491; 0.4451 ] </span></span>
+<span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ VAL        0.5270      0.0878    5.9992    0.0000 [ 0.3340; 0.6845 ] </span></span>
+<span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ IMAG       0.1819      0.0799    2.2764    0.0228 [ 0.0531; 0.3645 ] </span></span>
+<span id="cb21-51"><a href="#cb21-51" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ SAT        0.6283      0.0827    7.5987    0.0000 [ 0.4545; 0.7812 ] </span></span>
 <span id="cb21-52"><a href="#cb21-52" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb21-53"><a href="#cb21-53" aria-hidden="true" tabindex="-1"></a><span class="do">## Estimated loadings:</span></span>
 <span id="cb21-54"><a href="#cb21-54" aria-hidden="true" tabindex="-1"></a><span class="do">## ===================</span></span>
 <span id="cb21-55"><a href="#cb21-55" aria-hidden="true" tabindex="-1"></a><span class="do">##                                                                CI_percentile   </span></span>
 <span id="cb21-56"><a href="#cb21-56" aria-hidden="true" tabindex="-1"></a><span class="do">##   Loading          Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span id="cb21-57"><a href="#cb21-57" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG =~ imag1      0.6306      0.1008    6.2566    0.0000 [ 0.4187; 0.8201 ] </span></span>
-<span id="cb21-58"><a href="#cb21-58" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG =~ imag2      0.9246      0.0396   23.3305    0.0000 [ 0.8217; 0.9769 ] </span></span>
-<span id="cb21-59"><a href="#cb21-59" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG =~ imag3      0.9577      0.0290   32.9821    0.0000 [ 0.8775; 0.9926 ] </span></span>
-<span id="cb21-60"><a href="#cb21-60" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE =~ expe1      0.7525      0.0788    9.5530    0.0000 [ 0.5794; 0.8728 ] </span></span>
-<span id="cb21-61"><a href="#cb21-61" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE =~ expe2      0.9348      0.0270   34.5866    0.0000 [ 0.8659; 0.9724 ] </span></span>
-<span id="cb21-62"><a href="#cb21-62" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE =~ expe3      0.7295      0.0713   10.2253    0.0000 [ 0.5887; 0.8494 ] </span></span>
-<span id="cb21-63"><a href="#cb21-63" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL =~ qual1      0.7861      0.0680   11.5650    0.0000 [ 0.6183; 0.8861 ] </span></span>
-<span id="cb21-64"><a href="#cb21-64" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL =~ qual2      0.9244      0.0217   42.5752    0.0000 [ 0.8645; 0.9543 ] </span></span>
-<span id="cb21-65"><a href="#cb21-65" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL =~ qual3      0.7560      0.0581   13.0115    0.0000 [ 0.6186; 0.8535 ] </span></span>
-<span id="cb21-66"><a href="#cb21-66" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL =~ qual4      0.7632      0.0518   14.7319    0.0000 [ 0.6384; 0.8486 ] </span></span>
-<span id="cb21-67"><a href="#cb21-67" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL =~ qual5      0.7834      0.0488   16.0554    0.0000 [ 0.6749; 0.8587 ] </span></span>
-<span id="cb21-68"><a href="#cb21-68" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL =~ val1        0.9518      0.0228   41.7463    0.0000 [ 0.8998; 0.9830 ] </span></span>
-<span id="cb21-69"><a href="#cb21-69" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL =~ val2        0.8056      0.0635   12.6818    0.0000 [ 0.6695; 0.9076 ] </span></span>
-<span id="cb21-70"><a href="#cb21-70" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL =~ val3        0.6763      0.0738    9.1579    0.0000 [ 0.5191; 0.8028 ] </span></span>
-<span id="cb21-71"><a href="#cb21-71" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT =~ sat1        0.9243      0.0227   40.7096    0.0000 [ 0.8759; 0.9624 ] </span></span>
-<span id="cb21-72"><a href="#cb21-72" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT =~ sat2        0.8813      0.0280   31.5064    0.0000 [ 0.8192; 0.9281 ] </span></span>
-<span id="cb21-73"><a href="#cb21-73" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT =~ sat3        0.7127      0.0521   13.6786    0.0000 [ 0.5993; 0.8070 ] </span></span>
-<span id="cb21-74"><a href="#cb21-74" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT =~ sat4        0.7756      0.0485   16.0069    0.0000 [ 0.6761; 0.8575 ] </span></span>
-<span id="cb21-75"><a href="#cb21-75" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY =~ loy1        0.9097      0.0505   17.9971    0.0000 [ 0.7932; 0.9796 ] </span></span>
-<span id="cb21-76"><a href="#cb21-76" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY =~ loy2        0.5775      0.0862    6.6979    0.0000 [ 0.3940; 0.7281 ] </span></span>
-<span id="cb21-77"><a href="#cb21-77" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY =~ loy3        0.9043      0.0422   21.4115    0.0000 [ 0.8147; 0.9772 ] </span></span>
-<span id="cb21-78"><a href="#cb21-78" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY =~ loy4        0.4917      0.0947    5.1946    0.0000 [ 0.3163; 0.6824 ] </span></span>
+<span id="cb21-57"><a href="#cb21-57" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG =~ imag1      0.6306      0.0982    6.4240    0.0000 [ 0.4163; 0.8001 ] </span></span>
+<span id="cb21-58"><a href="#cb21-58" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG =~ imag2      0.9246      0.0414   22.3433    0.0000 [ 0.8208; 0.9761 ] </span></span>
+<span id="cb21-59"><a href="#cb21-59" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG =~ imag3      0.9577      0.0286   33.4955    0.0000 [ 0.8813; 0.9945 ] </span></span>
+<span id="cb21-60"><a href="#cb21-60" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE =~ expe1      0.7525      0.0759    9.9200    0.0000 [ 0.5820; 0.8621 ] </span></span>
+<span id="cb21-61"><a href="#cb21-61" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE =~ expe2      0.9348      0.0277   33.7516    0.0000 [ 0.8571; 0.9717 ] </span></span>
+<span id="cb21-62"><a href="#cb21-62" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE =~ expe3      0.7295      0.0700   10.4149    0.0000 [ 0.5649; 0.8461 ] </span></span>
+<span id="cb21-63"><a href="#cb21-63" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL =~ qual1      0.7861      0.0657   11.9741    0.0000 [ 0.6252; 0.8846 ] </span></span>
+<span id="cb21-64"><a href="#cb21-64" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL =~ qual2      0.9244      0.0218   42.4976    0.0000 [ 0.8691; 0.9566 ] </span></span>
+<span id="cb21-65"><a href="#cb21-65" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL =~ qual3      0.7560      0.0595   12.7096    0.0000 [ 0.6145; 0.8500 ] </span></span>
+<span id="cb21-66"><a href="#cb21-66" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL =~ qual4      0.7632      0.0531   14.3660    0.0000 [ 0.6453; 0.8510 ] </span></span>
+<span id="cb21-67"><a href="#cb21-67" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL =~ qual5      0.7834      0.0440   17.7936    0.0000 [ 0.6891; 0.8574 ] </span></span>
+<span id="cb21-68"><a href="#cb21-68" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL =~ val1        0.9518      0.0246   38.6484    0.0000 [ 0.8941; 0.9854 ] </span></span>
+<span id="cb21-69"><a href="#cb21-69" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL =~ val2        0.8056      0.0647   12.4583    0.0000 [ 0.6711; 0.9056 ] </span></span>
+<span id="cb21-70"><a href="#cb21-70" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL =~ val3        0.6763      0.0733    9.2279    0.0000 [ 0.5271; 0.8104 ] </span></span>
+<span id="cb21-71"><a href="#cb21-71" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT =~ sat1        0.9243      0.0240   38.5351    0.0000 [ 0.8710; 0.9662 ] </span></span>
+<span id="cb21-72"><a href="#cb21-72" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT =~ sat2        0.8813      0.0308   28.6399    0.0000 [ 0.8099; 0.9273 ] </span></span>
+<span id="cb21-73"><a href="#cb21-73" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT =~ sat3        0.7127      0.0550   12.9677    0.0000 [ 0.5923; 0.8009 ] </span></span>
+<span id="cb21-74"><a href="#cb21-74" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT =~ sat4        0.7756      0.0500   15.5128    0.0000 [ 0.6697; 0.8675 ] </span></span>
+<span id="cb21-75"><a href="#cb21-75" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY =~ loy1        0.9097      0.0501   18.1412    0.0000 [ 0.7959; 0.9838 ] </span></span>
+<span id="cb21-76"><a href="#cb21-76" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY =~ loy2        0.5775      0.0833    6.9336    0.0000 [ 0.4093; 0.7281 ] </span></span>
+<span id="cb21-77"><a href="#cb21-77" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY =~ loy3        0.9043      0.0428   21.1431    0.0000 [ 0.8068; 0.9688 ] </span></span>
+<span id="cb21-78"><a href="#cb21-78" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY =~ loy4        0.4917      0.1016    4.8403    0.0000 [ 0.2938; 0.6902 ] </span></span>
 <span id="cb21-79"><a href="#cb21-79" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb21-80"><a href="#cb21-80" aria-hidden="true" tabindex="-1"></a><span class="do">## Estimated weights:</span></span>
 <span id="cb21-81"><a href="#cb21-81" aria-hidden="true" tabindex="-1"></a><span class="do">## ==================</span></span>
 <span id="cb21-82"><a href="#cb21-82" aria-hidden="true" tabindex="-1"></a><span class="do">##                                                                CI_percentile   </span></span>
 <span id="cb21-83"><a href="#cb21-83" aria-hidden="true" tabindex="-1"></a><span class="do">##   Weight           Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span id="cb21-84"><a href="#cb21-84" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG &lt;~ imag1      0.0156      0.1199    0.1305    0.8962 [-0.2377; 0.2731 ] </span></span>
-<span id="cb21-85"><a href="#cb21-85" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG &lt;~ imag2      0.4473      0.1484    3.0138    0.0026 [ 0.1282; 0.7429 ] </span></span>
-<span id="cb21-86"><a href="#cb21-86" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG &lt;~ imag3      0.6020      0.1404    4.2873    0.0000 [ 0.3127; 0.8576 ] </span></span>
-<span id="cb21-87"><a href="#cb21-87" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE &lt;~ expe1      0.2946      0.1139    2.5855    0.0097 [ 0.0645; 0.5052 ] </span></span>
-<span id="cb21-88"><a href="#cb21-88" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE &lt;~ expe2      0.6473      0.0844    7.6655    0.0000 [ 0.4627; 0.7903 ] </span></span>
-<span id="cb21-89"><a href="#cb21-89" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE &lt;~ expe3      0.2374      0.0952    2.4928    0.0127 [ 0.0400; 0.4311 ] </span></span>
-<span id="cb21-90"><a href="#cb21-90" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL &lt;~ qual1      0.2370      0.0900    2.6349    0.0084 [ 0.0713; 0.4184 ] </span></span>
-<span id="cb21-91"><a href="#cb21-91" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL &lt;~ qual2      0.4712      0.0810    5.8162    0.0000 [ 0.3034; 0.6182 ] </span></span>
-<span id="cb21-92"><a href="#cb21-92" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL &lt;~ qual3      0.1831      0.0783    2.3393    0.0193 [ 0.0049; 0.3223 ] </span></span>
-<span id="cb21-93"><a href="#cb21-93" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL &lt;~ qual4      0.1037      0.0604    1.7161    0.0861 [-0.0055; 0.2228 ] </span></span>
-<span id="cb21-94"><a href="#cb21-94" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL &lt;~ qual5      0.2049      0.0665    3.0806    0.0021 [ 0.0699; 0.3305 ] </span></span>
-<span id="cb21-95"><a href="#cb21-95" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL &lt;~ val1        0.7163      0.0944    7.5851    0.0000 [ 0.5330; 0.8730 ] </span></span>
-<span id="cb21-96"><a href="#cb21-96" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL &lt;~ val2        0.2202      0.0922    2.3884    0.0169 [ 0.0471; 0.4119 ] </span></span>
-<span id="cb21-97"><a href="#cb21-97" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL &lt;~ val3        0.2082      0.0609    3.4176    0.0006 [ 0.0868; 0.3222 ] </span></span>
-<span id="cb21-98"><a href="#cb21-98" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT &lt;~ sat1        0.3209      0.0147   21.7866    0.0000 [ 0.2969; 0.3549 ] </span></span>
-<span id="cb21-99"><a href="#cb21-99" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT &lt;~ sat2        0.3059      0.0141   21.7153    0.0000 [ 0.2825; 0.3380 ] </span></span>
-<span id="cb21-100"><a href="#cb21-100" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT &lt;~ sat3        0.2474      0.0110   22.4943    0.0000 [ 0.2246; 0.2691 ] </span></span>
-<span id="cb21-101"><a href="#cb21-101" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT &lt;~ sat4        0.2692      0.0117   22.9935    0.0000 [ 0.2474; 0.2912 ] </span></span>
-<span id="cb21-102"><a href="#cb21-102" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY &lt;~ loy1        0.3834      0.0266   14.4290    0.0000 [ 0.3278; 0.4325 ] </span></span>
-<span id="cb21-103"><a href="#cb21-103" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY &lt;~ loy2        0.2434      0.0305    7.9881    0.0000 [ 0.1770; 0.2956 ] </span></span>
-<span id="cb21-104"><a href="#cb21-104" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY &lt;~ loy3        0.3812      0.0271   14.0831    0.0000 [ 0.3286; 0.4345 ] </span></span>
-<span id="cb21-105"><a href="#cb21-105" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY &lt;~ loy4        0.2073      0.0348    5.9602    0.0000 [ 0.1406; 0.2759 ] </span></span>
+<span id="cb21-84"><a href="#cb21-84" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG &lt;~ imag1      0.0156      0.1192    0.1312    0.8956 [-0.2039; 0.2429 ] </span></span>
+<span id="cb21-85"><a href="#cb21-85" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG &lt;~ imag2      0.4473      0.1540    2.9037    0.0037 [ 0.1171; 0.7296 ] </span></span>
+<span id="cb21-86"><a href="#cb21-86" aria-hidden="true" tabindex="-1"></a><span class="do">##   IMAG &lt;~ imag3      0.6020      0.1389    4.3349    0.0000 [ 0.3265; 0.8840 ] </span></span>
+<span id="cb21-87"><a href="#cb21-87" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE &lt;~ expe1      0.2946      0.1121    2.6281    0.0086 [ 0.0595; 0.4870 ] </span></span>
+<span id="cb21-88"><a href="#cb21-88" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE &lt;~ expe2      0.6473      0.0785    8.2469    0.0000 [ 0.4702; 0.7858 ] </span></span>
+<span id="cb21-89"><a href="#cb21-89" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE &lt;~ expe3      0.2374      0.0902    2.6320    0.0085 [ 0.0560; 0.4173 ] </span></span>
+<span id="cb21-90"><a href="#cb21-90" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL &lt;~ qual1      0.2370      0.0889    2.6667    0.0077 [ 0.0688; 0.4078 ] </span></span>
+<span id="cb21-91"><a href="#cb21-91" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL &lt;~ qual2      0.4712      0.0739    6.3735    0.0000 [ 0.3344; 0.6058 ] </span></span>
+<span id="cb21-92"><a href="#cb21-92" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL &lt;~ qual3      0.1831      0.0783    2.3383    0.0194 [ 0.0237; 0.3205 ] </span></span>
+<span id="cb21-93"><a href="#cb21-93" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL &lt;~ qual4      0.1037      0.0585    1.7722    0.0764 [-0.0022; 0.2202 ] </span></span>
+<span id="cb21-94"><a href="#cb21-94" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL &lt;~ qual5      0.2049      0.0603    3.3952    0.0007 [ 0.0849; 0.3109 ] </span></span>
+<span id="cb21-95"><a href="#cb21-95" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL &lt;~ val1        0.7163      0.0987    7.2574    0.0000 [ 0.5053; 0.8754 ] </span></span>
+<span id="cb21-96"><a href="#cb21-96" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL &lt;~ val2        0.2202      0.0939    2.3457    0.0190 [ 0.0601; 0.4145 ] </span></span>
+<span id="cb21-97"><a href="#cb21-97" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL &lt;~ val3        0.2082      0.0634    3.2811    0.0010 [ 0.0952; 0.3370 ] </span></span>
+<span id="cb21-98"><a href="#cb21-98" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT &lt;~ sat1        0.3209      0.0156   20.5742    0.0000 [ 0.2963; 0.3535 ] </span></span>
+<span id="cb21-99"><a href="#cb21-99" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT &lt;~ sat2        0.3059      0.0141   21.6609    0.0000 [ 0.2808; 0.3365 ] </span></span>
+<span id="cb21-100"><a href="#cb21-100" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT &lt;~ sat3        0.2474      0.0119   20.8686    0.0000 [ 0.2233; 0.2707 ] </span></span>
+<span id="cb21-101"><a href="#cb21-101" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT &lt;~ sat4        0.2692      0.0125   21.5568    0.0000 [ 0.2471; 0.2966 ] </span></span>
+<span id="cb21-102"><a href="#cb21-102" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY &lt;~ loy1        0.3834      0.0271   14.1384    0.0000 [ 0.3314; 0.4345 ] </span></span>
+<span id="cb21-103"><a href="#cb21-103" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY &lt;~ loy2        0.2434      0.0288    8.4639    0.0000 [ 0.1803; 0.2913 ] </span></span>
+<span id="cb21-104"><a href="#cb21-104" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY &lt;~ loy3        0.3812      0.0273   13.9809    0.0000 [ 0.3275; 0.4349 ] </span></span>
+<span id="cb21-105"><a href="#cb21-105" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY &lt;~ loy4        0.2073      0.0377    5.4925    0.0000 [ 0.1325; 0.2795 ] </span></span>
 <span id="cb21-106"><a href="#cb21-106" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb21-107"><a href="#cb21-107" aria-hidden="true" tabindex="-1"></a><span class="do">## Estimated indicator correlations:</span></span>
 <span id="cb21-108"><a href="#cb21-108" aria-hidden="true" tabindex="-1"></a><span class="do">## =================================</span></span>
 <span id="cb21-109"><a href="#cb21-109" aria-hidden="true" tabindex="-1"></a><span class="do">##                                                                 CI_percentile   </span></span>
 <span id="cb21-110"><a href="#cb21-110" aria-hidden="true" tabindex="-1"></a><span class="do">##   Correlation       Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span id="cb21-111"><a href="#cb21-111" aria-hidden="true" tabindex="-1"></a><span class="do">##   imag1 ~~ imag2      0.6437      0.0638   10.0911    0.0000 [ 0.5133; 0.7530 ] </span></span>
-<span id="cb21-112"><a href="#cb21-112" aria-hidden="true" tabindex="-1"></a><span class="do">##   imag1 ~~ imag3      0.5433      0.0696    7.8079    0.0000 [ 0.3992; 0.6757 ] </span></span>
-<span id="cb21-113"><a href="#cb21-113" aria-hidden="true" tabindex="-1"></a><span class="do">##   imag2 ~~ imag3      0.7761      0.0387   20.0364    0.0000 [ 0.6848; 0.8386 ] </span></span>
-<span id="cb21-114"><a href="#cb21-114" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe1 ~~ expe2      0.5353      0.0609    8.7881    0.0000 [ 0.4153; 0.6509 ] </span></span>
-<span id="cb21-115"><a href="#cb21-115" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe1 ~~ expe3      0.4694      0.0630    7.4477    0.0000 [ 0.3493; 0.5916 ] </span></span>
-<span id="cb21-116"><a href="#cb21-116" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe2 ~~ expe3      0.5467      0.0593    9.2256    0.0000 [ 0.4258; 0.6619 ] </span></span>
-<span id="cb21-117"><a href="#cb21-117" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual1 ~~ qual2      0.6053      0.0552   10.9619    0.0000 [ 0.4905; 0.6955 ] </span></span>
-<span id="cb21-118"><a href="#cb21-118" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual1 ~~ qual3      0.5406      0.0609    8.8784    0.0000 [ 0.4221; 0.6467 ] </span></span>
-<span id="cb21-119"><a href="#cb21-119" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual1 ~~ qual4      0.5662      0.0692    8.1779    0.0000 [ 0.4357; 0.6856 ] </span></span>
-<span id="cb21-120"><a href="#cb21-120" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual1 ~~ qual5      0.5180      0.0677    7.6494    0.0000 [ 0.3866; 0.6416 ] </span></span>
-<span id="cb21-121"><a href="#cb21-121" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual2 ~~ qual3      0.6187      0.0520   11.8872    0.0000 [ 0.5115; 0.7056 ] </span></span>
-<span id="cb21-122"><a href="#cb21-122" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual2 ~~ qual4      0.6517      0.0589   11.0576    0.0000 [ 0.5233; 0.7495 ] </span></span>
-<span id="cb21-123"><a href="#cb21-123" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual2 ~~ qual5      0.6291      0.0563   11.1649    0.0000 [ 0.5124; 0.7280 ] </span></span>
-<span id="cb21-124"><a href="#cb21-124" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual3 ~~ qual4      0.4752      0.0644    7.3785    0.0000 [ 0.3330; 0.5906 ] </span></span>
-<span id="cb21-125"><a href="#cb21-125" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual3 ~~ qual5      0.5074      0.0617    8.2210    0.0000 [ 0.3895; 0.6231 ] </span></span>
-<span id="cb21-126"><a href="#cb21-126" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual4 ~~ qual5      0.6402      0.0559   11.4491    0.0000 [ 0.5110; 0.7369 ] </span></span>
-<span id="cb21-127"><a href="#cb21-127" aria-hidden="true" tabindex="-1"></a><span class="do">##   val1 ~~ val2        0.6344      0.0553   11.4678    0.0000 [ 0.5184; 0.7310 ] </span></span>
-<span id="cb21-128"><a href="#cb21-128" aria-hidden="true" tabindex="-1"></a><span class="do">##   val1 ~~ val3        0.4602      0.0710    6.4849    0.0000 [ 0.3241; 0.5978 ] </span></span>
-<span id="cb21-129"><a href="#cb21-129" aria-hidden="true" tabindex="-1"></a><span class="do">##   val2 ~~ val3        0.6288      0.0626   10.0421    0.0000 [ 0.4920; 0.7419 ] </span></span>
+<span id="cb21-111"><a href="#cb21-111" aria-hidden="true" tabindex="-1"></a><span class="do">##   imag1 ~~ imag2      0.6437      0.0660    9.7459    0.0000 [ 0.5046; 0.7537 ] </span></span>
+<span id="cb21-112"><a href="#cb21-112" aria-hidden="true" tabindex="-1"></a><span class="do">##   imag1 ~~ imag3      0.5433      0.0692    7.8542    0.0000 [ 0.3989; 0.6627 ] </span></span>
+<span id="cb21-113"><a href="#cb21-113" aria-hidden="true" tabindex="-1"></a><span class="do">##   imag2 ~~ imag3      0.7761      0.0393   19.7338    0.0000 [ 0.6929; 0.8385 ] </span></span>
+<span id="cb21-114"><a href="#cb21-114" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe1 ~~ expe2      0.5353      0.0584    9.1611    0.0000 [ 0.4000; 0.6434 ] </span></span>
+<span id="cb21-115"><a href="#cb21-115" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe1 ~~ expe3      0.4694      0.0587    8.0001    0.0000 [ 0.3451; 0.5749 ] </span></span>
+<span id="cb21-116"><a href="#cb21-116" aria-hidden="true" tabindex="-1"></a><span class="do">##   expe2 ~~ expe3      0.5467      0.0606    9.0141    0.0000 [ 0.4078; 0.6554 ] </span></span>
+<span id="cb21-117"><a href="#cb21-117" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual1 ~~ qual2      0.6053      0.0568   10.6494    0.0000 [ 0.4852; 0.7079 ] </span></span>
+<span id="cb21-118"><a href="#cb21-118" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual1 ~~ qual3      0.5406      0.0568    9.5226    0.0000 [ 0.4302; 0.6485 ] </span></span>
+<span id="cb21-119"><a href="#cb21-119" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual1 ~~ qual4      0.5662      0.0671    8.4422    0.0000 [ 0.4362; 0.6877 ] </span></span>
+<span id="cb21-120"><a href="#cb21-120" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual1 ~~ qual5      0.5180      0.0642    8.0657    0.0000 [ 0.3943; 0.6359 ] </span></span>
+<span id="cb21-121"><a href="#cb21-121" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual2 ~~ qual3      0.6187      0.0552   11.2007    0.0000 [ 0.5043; 0.7127 ] </span></span>
+<span id="cb21-122"><a href="#cb21-122" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual2 ~~ qual4      0.6517      0.0613   10.6365    0.0000 [ 0.5252; 0.7516 ] </span></span>
+<span id="cb21-123"><a href="#cb21-123" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual2 ~~ qual5      0.6291      0.0545   11.5384    0.0000 [ 0.5168; 0.7250 ] </span></span>
+<span id="cb21-124"><a href="#cb21-124" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual3 ~~ qual4      0.4752      0.0627    7.5821    0.0000 [ 0.3551; 0.5928 ] </span></span>
+<span id="cb21-125"><a href="#cb21-125" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual3 ~~ qual5      0.5074      0.0609    8.3332    0.0000 [ 0.3957; 0.6226 ] </span></span>
+<span id="cb21-126"><a href="#cb21-126" aria-hidden="true" tabindex="-1"></a><span class="do">##   qual4 ~~ qual5      0.6402      0.0579   11.0481    0.0000 [ 0.5187; 0.7365 ] </span></span>
+<span id="cb21-127"><a href="#cb21-127" aria-hidden="true" tabindex="-1"></a><span class="do">##   val1 ~~ val2        0.6344      0.0539   11.7782    0.0000 [ 0.5247; 0.7355 ] </span></span>
+<span id="cb21-128"><a href="#cb21-128" aria-hidden="true" tabindex="-1"></a><span class="do">##   val1 ~~ val3        0.4602      0.0702    6.5561    0.0000 [ 0.3208; 0.5949 ] </span></span>
+<span id="cb21-129"><a href="#cb21-129" aria-hidden="true" tabindex="-1"></a><span class="do">##   val2 ~~ val3        0.6288      0.0611   10.2953    0.0000 [ 0.5148; 0.7399 ] </span></span>
 <span id="cb21-130"><a href="#cb21-130" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb21-131"><a href="#cb21-131" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------ Effects -----------------------------------</span></span>
 <span id="cb21-132"><a href="#cb21-132" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
@@ -909,41 +909,41 @@
 <span id="cb21-134"><a href="#cb21-134" aria-hidden="true" tabindex="-1"></a><span class="do">## ========================</span></span>
 <span id="cb21-135"><a href="#cb21-135" aria-hidden="true" tabindex="-1"></a><span class="do">##                                                               CI_percentile   </span></span>
 <span id="cb21-136"><a href="#cb21-136" aria-hidden="true" tabindex="-1"></a><span class="do">##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span id="cb21-137"><a href="#cb21-137" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE ~ IMAG       0.4714      0.0613    7.6922    0.0000 [ 0.3391; 0.5903 ] </span></span>
-<span id="cb21-138"><a href="#cb21-138" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL ~ IMAG       0.3933      0.0566    6.9468    0.0000 [ 0.2795; 0.5032 ] </span></span>
-<span id="cb21-139"><a href="#cb21-139" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL ~ EXPE       0.8344      0.0223   37.3800    0.0000 [ 0.7881; 0.8753 ] </span></span>
-<span id="cb21-140"><a href="#cb21-140" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ IMAG        0.2974      0.0559    5.3174    0.0000 [ 0.1969; 0.4162 ] </span></span>
-<span id="cb21-141"><a href="#cb21-141" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ EXPE        0.6309      0.0479   13.1757    0.0000 [ 0.5289; 0.7152 ] </span></span>
-<span id="cb21-142"><a href="#cb21-142" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ QUAL        0.7013      0.0840    8.3475    0.0000 [ 0.5285; 0.8503 ] </span></span>
-<span id="cb21-143"><a href="#cb21-143" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ IMAG        0.4807      0.0631    7.6191    0.0000 [ 0.3523; 0.5963 ] </span></span>
-<span id="cb21-144"><a href="#cb21-144" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ EXPE        0.5001      0.0582    8.5879    0.0000 [ 0.3922; 0.6053 ] </span></span>
-<span id="cb21-145"><a href="#cb21-145" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ QUAL        0.5911      0.0993    5.9525    0.0000 [ 0.3961; 0.7878 ] </span></span>
-<span id="cb21-146"><a href="#cb21-146" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ VAL         0.5270      0.0901    5.8505    0.0000 [ 0.3501; 0.6904 ] </span></span>
-<span id="cb21-147"><a href="#cb21-147" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ IMAG        0.4840      0.0655    7.3841    0.0000 [ 0.3637; 0.6041 ] </span></span>
-<span id="cb21-148"><a href="#cb21-148" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ EXPE        0.3142      0.0546    5.7573    0.0000 [ 0.2162; 0.4344 ] </span></span>
-<span id="cb21-149"><a href="#cb21-149" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ QUAL        0.3714      0.0862    4.3085    0.0000 [ 0.2247; 0.5653 ] </span></span>
-<span id="cb21-150"><a href="#cb21-150" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ VAL         0.3311      0.0757    4.3717    0.0000 [ 0.2043; 0.4768 ] </span></span>
-<span id="cb21-151"><a href="#cb21-151" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ SAT         0.6283      0.0806    7.7916    0.0000 [ 0.4737; 0.7962 ] </span></span>
+<span id="cb21-137"><a href="#cb21-137" aria-hidden="true" tabindex="-1"></a><span class="do">##   EXPE ~ IMAG       0.4714      0.0645    7.3038    0.0000 [ 0.3572; 0.5912 ] </span></span>
+<span id="cb21-138"><a href="#cb21-138" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL ~ IMAG       0.3933      0.0605    6.5021    0.0000 [ 0.2854; 0.5030 ] </span></span>
+<span id="cb21-139"><a href="#cb21-139" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL ~ EXPE       0.8344      0.0239   34.8885    0.0000 [ 0.7835; 0.8732 ] </span></span>
+<span id="cb21-140"><a href="#cb21-140" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ IMAG        0.2974      0.0600    4.9526    0.0000 [ 0.1930; 0.4247 ] </span></span>
+<span id="cb21-141"><a href="#cb21-141" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ EXPE        0.6309      0.0507   12.4388    0.0000 [ 0.5356; 0.7312 ] </span></span>
+<span id="cb21-142"><a href="#cb21-142" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ QUAL        0.7013      0.0796    8.8114    0.0000 [ 0.5327; 0.8562 ] </span></span>
+<span id="cb21-143"><a href="#cb21-143" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ IMAG        0.4807      0.0667    7.2079    0.0000 [ 0.3445; 0.6084 ] </span></span>
+<span id="cb21-144"><a href="#cb21-144" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ EXPE        0.5001      0.0569    8.7964    0.0000 [ 0.3856; 0.6051 ] </span></span>
+<span id="cb21-145"><a href="#cb21-145" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ QUAL        0.5911      0.0934    6.3297    0.0000 [ 0.4312; 0.7866 ] </span></span>
+<span id="cb21-146"><a href="#cb21-146" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ VAL         0.5270      0.0878    5.9992    0.0000 [ 0.3340; 0.6845 ] </span></span>
+<span id="cb21-147"><a href="#cb21-147" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ IMAG        0.4840      0.0671    7.2176    0.0000 [ 0.3701; 0.6248 ] </span></span>
+<span id="cb21-148"><a href="#cb21-148" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ EXPE        0.3142      0.0540    5.8235    0.0000 [ 0.2088; 0.4148 ] </span></span>
+<span id="cb21-149"><a href="#cb21-149" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ QUAL        0.3714      0.0800    4.6407    0.0000 [ 0.2269; 0.5264 ] </span></span>
+<span id="cb21-150"><a href="#cb21-150" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ VAL         0.3311      0.0769    4.3039    0.0000 [ 0.1797; 0.4755 ] </span></span>
+<span id="cb21-151"><a href="#cb21-151" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ SAT         0.6283      0.0827    7.5987    0.0000 [ 0.4545; 0.7812 ] </span></span>
 <span id="cb21-152"><a href="#cb21-152" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
 <span id="cb21-153"><a href="#cb21-153" aria-hidden="true" tabindex="-1"></a><span class="do">## Estimated indirect effects:</span></span>
 <span id="cb21-154"><a href="#cb21-154" aria-hidden="true" tabindex="-1"></a><span class="do">## ===========================</span></span>
 <span id="cb21-155"><a href="#cb21-155" aria-hidden="true" tabindex="-1"></a><span class="do">##                                                                  CI_percentile   </span></span>
 <span id="cb21-156"><a href="#cb21-156" aria-hidden="true" tabindex="-1"></a><span class="do">##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span id="cb21-157"><a href="#cb21-157" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL ~ IMAG          0.3933      0.0566    6.9468    0.0000 [ 0.2795; 0.5032 ] </span></span>
-<span id="cb21-158"><a href="#cb21-158" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ IMAG           0.2974      0.0559    5.3174    0.0000 [ 0.1969; 0.4162 ] </span></span>
-<span id="cb21-159"><a href="#cb21-159" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ EXPE           0.5852      0.0722    8.1051    0.0000 [ 0.4417; 0.7187 ] </span></span>
-<span id="cb21-160"><a href="#cb21-160" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ IMAG           0.2357      0.0464    5.0853    0.0000 [ 0.1541; 0.3343 ] </span></span>
-<span id="cb21-161"><a href="#cb21-161" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ EXPE           0.5173      0.0701    7.3833    0.0000 [ 0.3806; 0.6454 ] </span></span>
-<span id="cb21-162"><a href="#cb21-162" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ QUAL           0.3696      0.0648    5.7004    0.0000 [ 0.2340; 0.4930 ] </span></span>
-<span id="cb21-163"><a href="#cb21-163" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ IMAG           0.3020      0.0559    5.3991    0.0000 [ 0.2092; 0.4286 ] </span></span>
-<span id="cb21-164"><a href="#cb21-164" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ EXPE           0.3142      0.0546    5.7573    0.0000 [ 0.2162; 0.4344 ] </span></span>
-<span id="cb21-165"><a href="#cb21-165" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ QUAL           0.3714      0.0862    4.3085    0.0000 [ 0.2247; 0.5653 ] </span></span>
-<span id="cb21-166"><a href="#cb21-166" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ VAL            0.3311      0.0757    4.3717    0.0000 [ 0.2043; 0.4768 ] </span></span>
+<span id="cb21-157"><a href="#cb21-157" aria-hidden="true" tabindex="-1"></a><span class="do">##   QUAL ~ IMAG          0.3933      0.0605    6.5021    0.0000 [ 0.2854; 0.5030 ] </span></span>
+<span id="cb21-158"><a href="#cb21-158" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ IMAG           0.2974      0.0600    4.9526    0.0000 [ 0.1930; 0.4247 ] </span></span>
+<span id="cb21-159"><a href="#cb21-159" aria-hidden="true" tabindex="-1"></a><span class="do">##   VAL ~ EXPE           0.5852      0.0680    8.6095    0.0000 [ 0.4469; 0.7188 ] </span></span>
+<span id="cb21-160"><a href="#cb21-160" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ IMAG           0.2357      0.0487    4.8406    0.0000 [ 0.1469; 0.3346 ] </span></span>
+<span id="cb21-161"><a href="#cb21-161" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ EXPE           0.5173      0.0663    7.7999    0.0000 [ 0.3961; 0.6611 ] </span></span>
+<span id="cb21-162"><a href="#cb21-162" aria-hidden="true" tabindex="-1"></a><span class="do">##   SAT ~ QUAL           0.3696      0.0630    5.8700    0.0000 [ 0.2426; 0.4801 ] </span></span>
+<span id="cb21-163"><a href="#cb21-163" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ IMAG           0.3020      0.0554    5.4563    0.0000 [ 0.1934; 0.4106 ] </span></span>
+<span id="cb21-164"><a href="#cb21-164" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ EXPE           0.3142      0.0540    5.8235    0.0000 [ 0.2088; 0.4148 ] </span></span>
+<span id="cb21-165"><a href="#cb21-165" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ QUAL           0.3714      0.0800    4.6407    0.0000 [ 0.2269; 0.5264 ] </span></span>
+<span id="cb21-166"><a href="#cb21-166" aria-hidden="true" tabindex="-1"></a><span class="do">##   LOY ~ VAL            0.3311      0.0769    4.3039    0.0000 [ 0.1797; 0.4755 ] </span></span>
 <span id="cb21-167"><a href="#cb21-167" aria-hidden="true" tabindex="-1"></a><span class="do">## ________________________________________________________________________________</span></span></code></pre></div>
 <p>Several bootstrap-based confidence intervals are implemented, see <code>?infer()</code>:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/infer.html">infer</a></span><span class="op">(</span><span class="va">b1</span>, .quantity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CI_standard_z"</span>, <span class="st">"CI_percentile"</span><span class="op">)</span><span class="op">)</span> <span class="co"># no print method yet</span></span></code></pre></div>
-<p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as setting random seeds via the <a href="https://github.com/HenrikBengtsson/future" class="external-link">future framework</a>. For multiprocessing simply set <code>.eval_plan = "multisession"</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the background as there are cores available instead. Note that this naturally has some overhead so for a small number of resamples multiprocessing will not always be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument.</p>
+<p>Both bootstrap and jackknife resampling support platform-independent multiprocessing as well as setting random seeds via the <a href="https://github.com/HenrikBengtsson/future/" class="external-link">future framework</a>. For multiprocessing simply set <code>.eval_plan = "multisession"</code> in which case the maximum number of available cores is used if not on Windows. On Windows as many separate R instances are opened in the background as there are cores available instead. Note that this naturally has some overhead so for a small number of resamples multiprocessing will not always be faster compared to sequential (single core) processing (the default). Seeds are set via the <code>.seed</code> argument.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/csem.html">csem</a></span><span class="op">(</span></span>
 <span>  .data            <span class="op">=</span> <span class="va">satisfaction</span>,</span>
