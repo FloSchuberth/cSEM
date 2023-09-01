@@ -50,7 +50,7 @@ To install the development version, which is recommended, use:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("M-E-Rademaker/cSEM")
+devtools::install_github("FloSchuberth/cSEM")
 ```
 
 ## Getting started
