@@ -54,7 +54,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/M-E-Rademaker/cSEM/" class="external-link">
+  <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -69,7 +69,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Assess model</h1>
-    <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/HEAD/R/postestimate_assess.R" class="external-link"><code>R/postestimate_assess.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/postestimate_assess.R" class="external-link"><code>R/postestimate_assess.R</code></a></small>
     <div class="hidden name"><code>assess.Rd</code></div>
     </div>
 
@@ -131,9 +131,9 @@ criteria is computed the return value is still a list!</p>
     <div id="details">
     <h2>Details</h2>
     <p>Assess a model using common quality criteria.
-See the <a href="https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
+See the <a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
 article on the
-<a href="https://m-e-rademaker.github.io/cSEM/index.html" class="external-link">cSEM website</a> for details.</p>
+<a href="https://floschuberth.github.io/cSEM/index.html" class="external-link">cSEM website</a> for details.</p>
 <p>The function is essentially a wrapper around a number of internal functions
 that perform an "assessment task" (called a <strong>quality criterion</strong> in <span class="pkg">cSEM</span>
 parlance) like computing reliability estimates,
@@ -160,10 +160,10 @@ by <code><a href="calculateAVE.html">calculateAVE()</a></code>.</p></dd>
 <dd><p>An estimate of the reliability assuming a congeneric measurement model (i.e., loadings are
 allowed to differ) and a test score (proxy) based on unit weights.
 There are four different versions implemented. See the
-<a href="https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods" class="external-link">Methods and Formulae</a> section
-of the <a href="https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
+<a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html#methods" class="external-link">Methods and Formulae</a> section
+of the <a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
 article on the
-<a href="https://m-e-rademaker.github.io/cSEM/index.html" class="external-link">cSEM website</a> for details.
+<a href="https://floschuberth.github.io/cSEM/index.html" class="external-link">cSEM website</a> for details.
 Alternative but synonymous names for <code>"rho_C"</code> are:
 composite reliability, construct reliability, reliability coefficient,
 Joereskog's rho, coefficient omega, or Dillon-Goldstein's rho.
@@ -271,9 +271,9 @@ Calculation is done by <code><a href="calculateHTMT.html">calculateHTMT()</a></c
 in the context of PLS. See: <code><a href="calculateModelSelectionCriteria.html">calculateModelSelectionCriteria()</a></code> for details.</p></dd>
 
 <dt>Reliability: "reliability"</dt>
-<dd><p>As described in the <a href="https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods" class="external-link">Methods and Formulae</a>
-section of the <a href="https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
-article on the <a href="https://m-e-rademaker.github.io/cSEM/index.html" class="external-link">cSEM website</a>
+<dd><p>As described in the <a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html#methods" class="external-link">Methods and Formulae</a>
+section of the <a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
+article on the <a href="https://floschuberth.github.io/cSEM/index.html" class="external-link">cSEM website</a>
 there are many different estimators for the (internal consistency) reliability.
 Choosing <code>.quality_criterion = "reliability"</code> computes the three most common
 measures, namely: "Cronbachs alpha" (identical to "rho_T"), "Jöreskogs rho" (identical to "rho_C_mm"),
@@ -326,14 +326,14 @@ all remaining indicators of the same block.
 Calculation is done by <code><a href="calculateVIFModeB.html">calculateVIFModeB()</a></code>.</p></dd>
 
 
-</dl><p>For details on the most important quality criteria see the <a href="https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods" class="external-link">Methods and Formulae</a> section
-of the <a href="https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
+</dl><p>For details on the most important quality criteria see the <a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html#methods" class="external-link">Methods and Formulae</a> section
+of the <a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
 article on the on the
-<a href="https://m-e-rademaker.github.io/cSEM/index.html" class="external-link">cSEM website</a>.</p>
+<a href="https://floschuberth.github.io/cSEM/index.html" class="external-link">cSEM website</a>.</p>
 <p>Some of the quality criteria are inherently tied to the classical common
 factor model and therefore only meaningfully interpreted within a common
 factor model (see the
-<a href="https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
+<a href="https://floschuberth.github.io/cSEM/articles/Using-assess.html" class="external-link">Postestimation: Assessing a model</a>
 article for details).
 It is possible to force computation of all quality criteria for constructs
 modeled as composites by setting <code>.only_common_factors = FALSE</code>, however,
@@ -547,7 +547,7 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Look at the resamples</span></span></span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">User_fun</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02353165 0.02958913 0.02179888 0.02698303</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02619307 0.02635311 0.02963092 0.03113481</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Use infer() to compute e.g., the 95% percentile confidence interval</span></span></span>
 <span class="r-in"><span><span class="va">res_infer</span> <span class="op">&lt;-</span> <span class="fu"><a href="infer.html">infer</a></span><span class="op">(</span><span class="va">res</span>, .quantity <span class="op">=</span> <span class="st">"CI_percentile"</span><span class="op">)</span></span></span>
@@ -556,8 +556,8 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span><span class="va">res_infer</span><span class="op">$</span><span class="va">User_fun</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CI_percentile</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.02078479</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03267737</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L 0.01643596</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U 0.03699628</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Several quality criteria can be resampled simultaneously</span></span></span>
@@ -571,9 +571,9 @@ See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> fo
 <span class="r-in"><span>            .tolerance <span class="op">=</span> <span class="fl">1e-04</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">SRMR</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01983683 0.02070027 0.02724537 0.02799084</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02175819 0.02127054 0.02289715 0.02795881</span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Estimates</span><span class="op">$</span><span class="va">Estimates_resample</span><span class="op">$</span><span class="va">Estimates1</span><span class="op">$</span><span class="va">RMS_theta</span><span class="op">$</span><span class="va">Resampled</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.10316243 0.10396537 0.09634372 0.10007140</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1043437 0.1108208 0.1021310 0.1161918</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

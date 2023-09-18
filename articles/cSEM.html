@@ -75,7 +75,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/M-E-Rademaker/cSEM/" class="external-link">
+  <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -97,9 +97,9 @@
                         <h4 data-toc-skip class="author">Manuel
 Rademaker</h4>
             
-            <h4 data-toc-skip class="date">Last edited: 2023-09-01</h4>
+            <h4 data-toc-skip class="date">Last edited: 2023-09-18</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/M-E-Rademaker/cSEM/blob/HEAD/vignettes/cSEM.Rmd" class="external-link"><code>vignettes/cSEM.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/vignettes/cSEM.Rmd" class="external-link"><code>vignettes/cSEM.Rmd</code></a></small>
       <div class="hidden name"><code>cSEM.Rmd</code></div>
 
     </div>
@@ -133,18 +133,18 @@ package. We emphasize that we do not seek to impose “our” conventions,
 nor do we claim they are the “correct” conventions, but merely seek to
 make communication between us (the authors of the package) and you (the
 package user) as unambiguous and error-free as possible.</p>
-<p>Hence, we provide a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a>
-and a <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a>
+<p>Hence, we provide a <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a>
+and a <a href="https://floschuberth.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a>
 file that contains key terms and mathematical notation/symbols that we
 consider crucial, alongside our definition. Users are encouraged to read
 these files carefully to avoid potential misunderstandings.</p>
 <ol style="list-style-type: decimal">
-<li>The <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a>
+<li>The <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a>
 file contains each term that we think should be defined and explained in
 order to make sure package users understand complementary help files and
 vignettes the way the package authors intended them to be
 understood.</li>
-<li>The <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a>
+<li>The <a href="https://floschuberth.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a>
 files contains some fundamental mathematical notation/ symbols used in
 the package documentation alongside a definition. Bearing some
 exceptions, we mostly follow standard notation as laid out in e.g.,
@@ -153,8 +153,8 @@ exceptions, we mostly follow standard notation as laid out in e.g.,
 <p>The package is designed based on a set of principles and a
 terminology that is partly in contrast to commonly used open-source or
 commercial software packages offering similar content (e.g., smartPLS).
-Together with the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a>
-and <a href="https://m-e-rademaker.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a>
+Together with the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Terminology</a>
+and <a href="https://floschuberth.github.io/cSEM/articles/Notation.html" class="external-link">Notation</a>
 file this introduction seeks to explain these principles. Lastly, to use
 <strong>cSEM</strong> effectively, it is helpful to understand its
 design. Hence, the package architecture and design as well as what we
@@ -166,14 +166,14 @@ consider the “cSEM workflow” are discussed.</p>
 <div class="section level3">
 <h3 id="what-is-structural-equation-modeling-sem">What is structural equation modeling (SEM)<a class="anchor" aria-label="anchor" href="#what-is-structural-equation-modeling-sem"></a>
 </h3>
-<p><a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Structural
+<p><a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Structural
 equation modeling (SEM)</a> is about analyzing, i.e., modeling,
 estimating, assessing, and testing, the (causal) relationships between
-<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
-- an entity defined by a conceptual definition - with other <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
-and/or observable quantities generally referred to as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">indicators,
+<a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
+- an entity defined by a conceptual definition - with other <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
+and/or observable quantities generally referred to as <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">indicators,
 manifest variables or items</a>. Broadly speaking, two modeling
-approaches for the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
+approaches for the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
 and their relationship exist. We refer to the first as <a href="#lvmodel">the latent variable or common factor model</a> and to
 the second as <a href="#cmodel">the composite model</a>. Each approach
 entails a set of methods, test, and evaluation criteria as well as a
@@ -182,45 +182,45 @@ the other approach.</p>
 <div class="section level4">
 <h4 id="lvmodel">The classical latent variable or common factor model<a class="anchor" aria-label="anchor" href="#lvmodel"></a>
 </h4>
-<p>Assuming a researcher identifies <span class="math inline">\(J\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
+<p>Assuming a researcher identifies <span class="math inline">\(J\)</span> <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
 and <span class="math inline">\(K\)</span> indicators, the fundamental
 feature of the latent variable model is the assumption of the existence
-of a set of <span class="math inline">\(J\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent
+of a set of <span class="math inline">\(J\)</span> <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">latent
 variables (common factors)</a> that each serve as a representation of
-one of the <span class="math inline">\(J\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
-to be studied in a sense that each <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent
+one of the <span class="math inline">\(J\)</span> <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
+to be studied in a sense that each <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">latent
 variable</a> is causally responsible for the manifestations of a set of
-<span class="math inline">\(K_j\)</span> <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">indicators</a>
-which are supposed to measure the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>
+<span class="math inline">\(K_j\)</span> <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">indicators</a>
+which are supposed to measure the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>
 in question. The entirety of these measurement relations is captured by
-the <strong>measurement model</strong> which relates <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">indicators</a>
-to <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent
+the <strong>measurement model</strong> which relates <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">indicators</a>
+to <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">latent
 variables</a> according to the researchers theory of how observables are
-related to the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
-in question. The entirety of the relationships between <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
-(i.e., its representation in a statistical model, the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">construct</a>)
+related to the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
+in question. The entirety of the relationships between <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
+(i.e., its representation in a statistical model, the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">construct</a>)
 is captured by the <strong>structural model</strong> whose parameters
 are usually at the center of the researchers interest. Caution is
-warranted though as the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common
-factor</a> and its respective <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>
-are not the same thing. Within the “classical” <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">covariance-based
-or factor-based</a> literature <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>,
-<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">construct</a>,
-<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent
-variable</a> and its representation the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common
+warranted though as the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">common
+factor</a> and its respective <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>
+are not the same thing. Within the “classical” <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">covariance-based
+or factor-based</a> literature <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>,
+<a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">construct</a>,
+<a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">latent
+variable</a> and its representation the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">common
 factor</a> have often been used interchangeably <span class="citation">(Rigdon 2012, 2016; Rigdon, Becker, and Sarstedt
 2019)</span>. This will not be the case in <strong>cSEM</strong> and
-readers are explicitly made aware of the fact that <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
-are the abstract entity which <em>may</em> be modeled by a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common
+readers are explicitly made aware of the fact that <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
+are the abstract entity which <em>may</em> be modeled by a <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">common
 factor</a>, however, no assertion as to the correctness of this approach
-in terms of “closeness of the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common
-factor</a> and its related <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>”
+in terms of “closeness of the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">common
+factor</a> and its related <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concept</a>”
 are made.</p>
 <p>Parameters in latent variable models are usually retrieved by maximum
 likelihood (ML). The basic idea of ML is to find parameters such that
 the difference between the model-implied and the empirical indicator
 covariance matrix is minimized. Such estimation methods are therefore
-often referred to as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">covariance-based
+often referred to as <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">covariance-based
 methods</a>.</p>
 </div>
 <div class="section level4">
@@ -228,21 +228,21 @@ methods</a>.</p>
 </h4>
 <p>The second approach is known as the composite model. As opposed to
 the latent variable or common factor model, composites do not presuppose
-the existence of a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent
+the existence of a <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">latent
 variable</a>. Hence, designed entities (artifacts) such as the “OECD
 Better Life Index” that arguably have no latent counterpart may be
-adequately described by a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composite</a>,
+adequately described by a <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">composite</a>,
 i.e., the linear combination of observables defining the composite.
-Composites may also be formed to represent <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent
-variables/common factors</a> (or more precisely <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
-modeled as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">common
-factors</a>) in which case the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composite</a>
-serves as a <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">proxy
-or stand-in</a> for the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">latent
+Composites may also be formed to represent <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">latent
+variables/common factors</a> (or more precisely <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
+modeled as <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">common
+factors</a>) in which case the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">composite</a>
+serves as a <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">proxy
+or stand-in</a> for the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">latent
 variable</a>. However, in <strong>cSEM</strong>, the term “composite
 <em><strong>model</strong></em>” is only used to refer to a model in a
-the former sense, i.e., a model in which the <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composite</a>
-is a direct representation of <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concept/construct</a>!</p>
+the former sense, i.e., a model in which the <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">composite</a>
+is a direct representation of <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concept/construct</a>!</p>
 <p>Parameters in composite models are retrivied by a composite-based
 approach such as partial least squares path modeling (PLS-PM),
 generalized structured component analysis (GSCA) or dimension reduction
@@ -250,7 +250,7 @@ techniques such as principal component analysis (PCA). The basic idea of
 any composite-based approach is to build scores/composites for each
 concept and subsequently retrieve structural model parameters by a
 series of (linear) regressions. Such estimation methods are therefore
-often referred to as <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">variance-based
+often referred to as <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">variance-based
 methods</a> as regression maximizes the explained variance of the
 dependent variable.</p>
 </div>
@@ -260,14 +260,14 @@ dependent variable.</p>
 </h3>
 <p>Composite-based SEM is the entirety of methods, approaches,
 procedures, algorithms that in some way or another involve linear
-compounds (<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composites/proxies/scores</a>),
+compounds (<a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">composites/proxies/scores</a>),
 i.e., linear combinations of observables when retrieving (estimating)
 quantities of interest such as the coefficients of the structural model.
 It is crucial to clearly distinguish between the <strong>composite
 model</strong> and <strong>composite-based SEM</strong>. They are not
 the same. While the former is “only” <em><strong>a</strong></em>
-<em>statistical model</em> relating <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
-to observables, the latter simply states that <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">composites</a>
+<em>statistical model</em> relating <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
+to observables, the latter simply states that <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">composites</a>
 - linear compounds, i.e., weighted linear combinations of observables -
 are used to retrieve quantities of interest! Hence, composite-based SEM
 as a way of obtaining/estimating parameters of interest may thus be used
@@ -276,17 +276,17 @@ well as <a href="#cmodel">the composite model</a>. However,
 interpretation of the parameter estimates is fundamentally different
 since the underlying models differ!</p>
 <p>As sketched above, common factor and composite models fundamentally
-differ in how the relation between observables and <a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
+differ in how the relation between observables and <a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">concepts</a>
 is modeled. Naturally, results and, most notably, their
 (correct/meaningful) interpretation critically hinge on what type of
 model the user specifies. Across the package we therefore strictly
 distinguish between</p>
 <ul>
 <li>
-<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Concepts</a>/<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Constructs</a>
+<a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Concepts</a>/<a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Constructs</a>
 modeled as common factors (or alternatively latent variables)</li>
 <li>
-<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Concepts</a>/<a href="https://m-e-rademaker.github.io/cSEM/articles/Terminology.html" class="external-link">Constructs</a>
+<a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Concepts</a>/<a href="https://floschuberth.github.io/cSEM/articles/Terminology.html" class="external-link">Constructs</a>
 modeled as composites</li>
 </ul>
 <p>These phrases will repeatedly appear in help files and other
@@ -451,7 +451,7 @@ repeated for each data frame or matrix separately.</p></li>
 <p>The current version 0.5.0 available on CRAN does not provide any
 tools to handle missing values. Future versions are likely to include at
 least the basic approaches for handling missing values. Regularly check
-<a href="https://github.com/M-E-Rademaker/cSEM/" class="external-link uri">https://github.com/M-E-Rademaker/cSEM/</a> to get the latest
+<a href="https://github.com/FloSchuberth/cSEM/" class="external-link uri">https://github.com/FloSchuberth/cSEM/</a> to get the latest
 updates.</p>
 </div>
 <div class="section level4">
@@ -596,7 +596,7 @@ automatically work on all classes.</p>
 <p>The simplest possible call to <code><a href="../reference/csem.html">csem()</a></code> involves a data set
 and a model:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/M-E-Rademaker/cSEM/" class="external-link">cSEM</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/FloSchuberth/cSEM/" class="external-link">cSEM</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"</span></span>
 <span><span class="st"># Path model / Regressions</span></span>
@@ -724,7 +724,7 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="co">##  Number of admissible results       = 499</span></span>
 <span><span class="co">##  Approach to handle inadmissibles   = "drop"</span></span>
 <span><span class="co">##  Sign change option                 = "none"</span></span>
-<span><span class="co">##  Random seed                        = -1274919072</span></span>
+<span><span class="co">##  Random seed                        = 1270049255</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##  Construct details:</span></span>
 <span><span class="co">##  ------------------</span></span>
@@ -740,37 +740,37 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="co">## ============================</span></span>
 <span><span class="co">##                                                              CI_percentile   </span></span>
 <span><span class="co">##   Path           Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta2 ~ eta1      0.6713      0.0460   14.5786    0.0000 [ 0.5809; 0.7569 ] </span></span>
-<span><span class="co">##   eta3 ~ eta1      0.4585      0.0806    5.6879    0.0000 [ 0.3055; 0.6082 ] </span></span>
-<span><span class="co">##   eta3 ~ eta2      0.3052      0.0857    3.5594    0.0004 [ 0.1361; 0.4671 ] </span></span>
+<span><span class="co">##   eta2 ~ eta1      0.6713      0.0440   15.2520    0.0000 [ 0.5800; 0.7538 ] </span></span>
+<span><span class="co">##   eta3 ~ eta1      0.4585      0.0835    5.4931    0.0000 [ 0.3066; 0.6142 ] </span></span>
+<span><span class="co">##   eta3 ~ eta2      0.3052      0.0892    3.4228    0.0006 [ 0.1297; 0.4702 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated loadings:</span></span>
 <span><span class="co">## ===================</span></span>
 <span><span class="co">##                                                              CI_percentile   </span></span>
 <span><span class="co">##   Loading        Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta1 =~ y11      0.6631      0.0383   17.3044    0.0000 [ 0.5797; 0.7396 ] </span></span>
-<span><span class="co">##   eta1 =~ y12      0.6493      0.0390   16.6330    0.0000 [ 0.5680; 0.7213 ] </span></span>
-<span><span class="co">##   eta1 =~ y13      0.7613      0.0337   22.5951    0.0000 [ 0.6915; 0.8221 ] </span></span>
-<span><span class="co">##   eta2 =~ y21      0.5165      0.0546    9.4607    0.0000 [ 0.3956; 0.6070 ] </span></span>
-<span><span class="co">##   eta2 =~ y22      0.7554      0.0367   20.5929    0.0000 [ 0.6825; 0.8253 ] </span></span>
-<span><span class="co">##   eta2 =~ y23      0.7997      0.0373   21.4426    0.0000 [ 0.7191; 0.8677 ] </span></span>
-<span><span class="co">##   eta3 =~ y31      0.8223      0.0335   24.5271    0.0000 [ 0.7530; 0.8842 ] </span></span>
-<span><span class="co">##   eta3 =~ y32      0.6581      0.0406   16.2018    0.0000 [ 0.5826; 0.7376 ] </span></span>
-<span><span class="co">##   eta3 =~ y33      0.7474      0.0423   17.6870    0.0000 [ 0.6631; 0.8255 ] </span></span>
+<span><span class="co">##   eta1 =~ y11      0.6631      0.0402   16.4803    0.0000 [ 0.5881; 0.7459 ] </span></span>
+<span><span class="co">##   eta1 =~ y12      0.6493      0.0410   15.8517    0.0000 [ 0.5574; 0.7230 ] </span></span>
+<span><span class="co">##   eta1 =~ y13      0.7613      0.0328   23.2317    0.0000 [ 0.7001; 0.8285 ] </span></span>
+<span><span class="co">##   eta2 =~ y21      0.5165      0.0530    9.7364    0.0000 [ 0.4094; 0.6100 ] </span></span>
+<span><span class="co">##   eta2 =~ y22      0.7554      0.0365   20.6975    0.0000 [ 0.6774; 0.8236 ] </span></span>
+<span><span class="co">##   eta2 =~ y23      0.7997      0.0373   21.4549    0.0000 [ 0.7275; 0.8710 ] </span></span>
+<span><span class="co">##   eta3 =~ y31      0.8223      0.0329   25.0108    0.0000 [ 0.7516; 0.8832 ] </span></span>
+<span><span class="co">##   eta3 =~ y32      0.6581      0.0389   16.9297    0.0000 [ 0.5704; 0.7270 ] </span></span>
+<span><span class="co">##   eta3 =~ y33      0.7474      0.0412   18.1350    0.0000 [ 0.6615; 0.8229 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated weights:</span></span>
 <span><span class="co">## ==================</span></span>
 <span><span class="co">##                                                              CI_percentile   </span></span>
 <span><span class="co">##   Weight         Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta1 &lt;~ y11      0.3956      0.0210   18.8214    0.0000 [ 0.3563; 0.4390 ] </span></span>
-<span><span class="co">##   eta1 &lt;~ y12      0.3873      0.0198   19.5601    0.0000 [ 0.3469; 0.4243 ] </span></span>
-<span><span class="co">##   eta1 &lt;~ y13      0.4542      0.0196   23.1669    0.0000 [ 0.4197; 0.4938 ] </span></span>
-<span><span class="co">##   eta2 &lt;~ y21      0.3058      0.0283   10.8196    0.0000 [ 0.2437; 0.3553 ] </span></span>
-<span><span class="co">##   eta2 &lt;~ y22      0.4473      0.0226   19.7888    0.0000 [ 0.4086; 0.4936 ] </span></span>
-<span><span class="co">##   eta2 &lt;~ y23      0.4735      0.0209   22.6057    0.0000 [ 0.4357; 0.5177 ] </span></span>
-<span><span class="co">##   eta3 &lt;~ y31      0.4400      0.0193   22.7830    0.0000 [ 0.4016; 0.4765 ] </span></span>
-<span><span class="co">##   eta3 &lt;~ y32      0.3521      0.0195   18.0439    0.0000 [ 0.3165; 0.3923 ] </span></span>
-<span><span class="co">##   eta3 &lt;~ y33      0.3999      0.0199   20.0522    0.0000 [ 0.3581; 0.4369 ] </span></span>
+<span><span class="co">##   eta1 &lt;~ y11      0.3956      0.0224   17.6930    0.0000 [ 0.3539; 0.4431 ] </span></span>
+<span><span class="co">##   eta1 &lt;~ y12      0.3873      0.0204   18.9599    0.0000 [ 0.3419; 0.4252 ] </span></span>
+<span><span class="co">##   eta1 &lt;~ y13      0.4542      0.0195   23.3314    0.0000 [ 0.4197; 0.4979 ] </span></span>
+<span><span class="co">##   eta2 &lt;~ y21      0.3058      0.0273   11.1928    0.0000 [ 0.2544; 0.3546 ] </span></span>
+<span><span class="co">##   eta2 &lt;~ y22      0.4473      0.0216   20.6681    0.0000 [ 0.4086; 0.4922 ] </span></span>
+<span><span class="co">##   eta2 &lt;~ y23      0.4735      0.0219   21.5983    0.0000 [ 0.4337; 0.5174 ] </span></span>
+<span><span class="co">##   eta3 &lt;~ y31      0.4400      0.0188   23.3923    0.0000 [ 0.4039; 0.4765 ] </span></span>
+<span><span class="co">##   eta3 &lt;~ y32      0.3521      0.0181   19.4377    0.0000 [ 0.3173; 0.3881 ] </span></span>
+<span><span class="co">##   eta3 &lt;~ y33      0.3999      0.0195   20.4831    0.0000 [ 0.3594; 0.4363 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## ------------------------------------ Effects -----------------------------------</span></span>
 <span><span class="co">## </span></span>
@@ -778,15 +778,15 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="co">## ========================</span></span>
 <span><span class="co">##                                                               CI_percentile   </span></span>
 <span><span class="co">##   Total effect    Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta2 ~ eta1       0.6713      0.0460   14.5786    0.0000 [ 0.5809; 0.7569 ] </span></span>
-<span><span class="co">##   eta3 ~ eta1       0.6634      0.0378   17.5397    0.0000 [ 0.5880; 0.7310 ] </span></span>
-<span><span class="co">##   eta3 ~ eta2       0.3052      0.0857    3.5594    0.0004 [ 0.1361; 0.4671 ] </span></span>
+<span><span class="co">##   eta2 ~ eta1       0.6713      0.0440   15.2520    0.0000 [ 0.5800; 0.7538 ] </span></span>
+<span><span class="co">##   eta3 ~ eta1       0.6634      0.0390   16.9936    0.0000 [ 0.5857; 0.7384 ] </span></span>
+<span><span class="co">##   eta3 ~ eta2       0.3052      0.0892    3.4228    0.0006 [ 0.1297; 0.4702 ] </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated indirect effects:</span></span>
 <span><span class="co">## ===========================</span></span>
 <span><span class="co">##                                                                  CI_percentile   </span></span>
 <span><span class="co">##   Indirect effect    Estimate  Std. error   t-stat.   p-value         95%        </span></span>
-<span><span class="co">##   eta3 ~ eta1          0.2049      0.0567    3.6132    0.0003 [ 0.0947; 0.3134 ] </span></span>
+<span><span class="co">##   eta3 ~ eta1          0.2049      0.0608    3.3671    0.0008 [ 0.0884; 0.3236 ] </span></span>
 <span><span class="co">## ________________________________________________________________________________</span></span></code></pre>
 <p>Or directly via <code><a href="../reference/infer.html">infer()</a></code></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -794,17 +794,17 @@ object to <code><a href="../reference/resamplecSEMResults.html">resamplecSEMResu
 <span><span class="va">ii</span><span class="op">$</span><span class="va">Path_estimates</span></span></code></pre></div>
 <pre><code><span><span class="co">## $CI_standard_z</span></span>
 <span><span class="co">##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2</span></span>
-<span><span class="co">## 99%L   0.5502788   0.2529201  0.08206948</span></span>
-<span><span class="co">## 99%U   0.7875090   0.6682035  0.52372233</span></span>
-<span><span class="co">## 95%L   0.5786390   0.3025660  0.13486775</span></span>
-<span><span class="co">## 95%U   0.7591488   0.6185577  0.47092406</span></span>
+<span><span class="co">## 99%L   0.5582620   0.2391133  0.08161356</span></span>
+<span><span class="co">## 99%U   0.7850179   0.6691171  0.54089648</span></span>
+<span><span class="co">## 95%L   0.5853700   0.2905190  0.13651945</span></span>
+<span><span class="co">## 95%U   0.7579099   0.6177114  0.48599059</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $CI_percentile</span></span>
 <span><span class="co">##      eta2 ~ eta1 eta3 ~ eta1 eta3 ~ eta2</span></span>
-<span><span class="co">## 99%L   0.5547767   0.2571780  0.08988061</span></span>
-<span><span class="co">## 99%U   0.7857673   0.6717177  0.52250676</span></span>
-<span><span class="co">## 95%L   0.5809435   0.3055199  0.13611345</span></span>
-<span><span class="co">## 95%U   0.7568968   0.6081733  0.46710462</span></span></code></pre>
+<span><span class="co">## 99%L   0.5510683   0.2560150  0.07990416</span></span>
+<span><span class="co">## 99%U   0.7752226   0.6662514  0.52979905</span></span>
+<span><span class="co">## 95%L   0.5799945   0.3065828  0.12968269</span></span>
+<span><span class="co">## 95%U   0.7538362   0.6141968  0.47018478</span></span></code></pre>
 <p>Both bootstrap and jackknife resampling support platform-independent
 multiprocessing as well as random seeds via the <a href="https://github.com/HenrikBengtsson/future/" class="external-link">future framework</a>.
 For multiprocessing simply set <code>.eval_plan = "multiprocess"</code>
