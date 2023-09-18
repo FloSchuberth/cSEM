@@ -6,8 +6,8 @@
 #' models using a composite-based approach. In \pkg{cSEM} 
 #' any method or approach that involves linear compounds (scores/proxies/composites)
 #' of observables (indicators/items/manifest variables) is defined as composite-based.
-#' See the \href{https://m-e-rademaker.github.io/cSEM/articles/cSEM.html}{Get started} 
-#' section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+#' See the \href{https://floschuberth.github.io/cSEM/articles/cSEM.html}{Get started} 
+#' section of the \href{https://floschuberth.github.io/cSEM/index.html}{cSEM website}
 #' for a general introduction to composite-based SEM and \pkg{cSEM}.
 #'
 #' `csem()` estimates linear, nonlinear, hierarchical  or multigroup structural 

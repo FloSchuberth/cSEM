@@ -301,7 +301,7 @@ data types/structures are accepted:
 
 The current version 0.5.0 available on CRAN does not 
 provide any tools to handle missing values. Future versions are likely to include 
-at least the basic approaches for handling missing values. Regularly check <https://github.com/M-E-Rademaker/cSEM/>
+at least the basic approaches for handling missing values. Regularly check <https://github.com/FloSchuberth/cSEM/>
 to get the latest updates.
 
 ### Specify a model {#specifyingamodel}
@@ -735,8 +735,8 @@ csem(threecommonfactors, model, .approach_weights = "regression")
       research surrounding *composites formed using weights obtained by the PLS(-PM) algorithm* 
       is most advanced, the PLS algorithm remains a weighting scheme in its core.
       
-[Assess]: https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html
+[Assess]: https://floschuberth.github.io/cSEM/articles/Using-assess.html
 [Lavaan]: https://lavaan.ugent.be/tutorial/index.html
-[Notation]: https://m-e-rademaker.github.io/cSEM/articles/Notation.html
-[Testing]: https://m-e-rademaker.github.io/cSEM/articles/Using-test.html
-[Terminology]: https://m-e-rademaker.github.io/cSEM/articles/Terminology.html
+[Notation]: https://floschuberth.github.io/cSEM/articles/Notation.html
+[Testing]: https://floschuberth.github.io/cSEM/articles/Using-test.html
+[Terminology]: https://floschuberth.github.io/cSEM/articles/Terminology.html

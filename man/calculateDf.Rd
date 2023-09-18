@@ -29,7 +29,7 @@ Although, composite-based estimators always retrieve parameters of the
 postulated models via the estimation of a composite model,
 the computation of the degrees of freedom depends on the postulated model.
 
-See: \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{cSEM website}
+See: \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html}{cSEM website}
 for details on how the degrees of freedom are calculated.
 
 To compute the degrees of freedom of the null model use \code{.null_model = TRUE}.

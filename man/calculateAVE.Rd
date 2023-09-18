@@ -24,7 +24,7 @@ of \code{cSEMResults} objects, a list of AVEs is returned.
 \description{
 Calculate the average variance extracted (AVE) as proposed by
 \insertCite{Fornell1981;textual}{cSEM}. For details see the
-\href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#ave}{cSEM website}
+\href{https://floschuberth.github.io/cSEM/articles/Using-assess.html#ave}{cSEM website}
 }
 \details{
 The AVE is inherently tied to the common factor model. It is therefore

@@ -71,8 +71,8 @@ A single numeric value.
 Calculate fit measures.
 }
 \details{
-See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#fit_indices}{Fit indices}
-section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+See the \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html#fit_indices}{Fit indices}
+section of the \href{https://floschuberth.github.io/cSEM/index.html}{cSEM website}
 for details on the implementation.
 }
 \section{Functions}{

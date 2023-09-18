@@ -211,7 +211,7 @@ calculateModelSelectionCriteria <- function(
 #'
 #' Calculate the average variance extracted (AVE) as proposed by 
 #' \insertCite{Fornell1981;textual}{cSEM}. For details see the
-#' \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#ave}{cSEM website} 
+#' \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html#ave}{cSEM website} 
 #'
 #' The AVE is inherently tied to the common factor model. It is therefore 
 #' unclear how to meaningfully interpret the AVE in the context of a 
@@ -303,7 +303,7 @@ calculateAVE <- function(
 #' postulated models via the estimation of a composite model,
 #' the computation of the degrees of freedom depends on the postulated model.
 #' 
-#' See: \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{cSEM website} 
+#' See: \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html}{cSEM website} 
 #' for details on how the degrees of freedom are calculated.
 #' 
 #' To compute the degrees of freedom of the null model use `.null_model = TRUE`.
@@ -681,8 +681,8 @@ calculateGoF <- function(
 #' Reliability
 #'
 #' Compute several reliability estimates. See the 
-#' \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#reliability}{Reliability}
-#' section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+#' \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html#reliability}{Reliability}
+#' section of the \href{https://floschuberth.github.io/cSEM/index.html}{cSEM website}
 #' for details.
 #' 
 #' Since reliability is defined with respect to a classical true score measurement
@@ -1505,8 +1505,8 @@ calculateDML <- function(
 #' 
 #' Calculate fit measures.
 #' 
-#' See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#fit_indices}{Fit indices}
-#' section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+#' See the \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html#fit_indices}{Fit indices}
+#' section of the \href{https://floschuberth.github.io/cSEM/index.html}{cSEM website}
 #' for details on the implementation.
 #' 
 #' @return A single numeric value.

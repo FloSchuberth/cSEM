@@ -774,10 +774,10 @@ The function is implemented as: `calculateHTMT()`.
       never been formally motivated. Reference is usually done to @Hu1999 which
       based the cut-off on a simulation using factor-based SEM.
       
-[Testing]: https://m-e-rademaker.github.io/cSEM/articles/Using-test.html
-[Notation]: https://m-e-rademaker.github.io/cSEM/articles/Notation.html
-[Terminology]: https://m-e-rademaker.github.io/cSEM/articles/Terminology.html
-[dotdotdot]: https://m-e-rademaker.github.io/cSEM/reference/args_assess_dotdotdot.html
+[Testing]: https://floschuberth.github.io/cSEM/articles/Using-test.html
+[Notation]: https://floschuberth.github.io/cSEM/articles/Notation.html
+[Terminology]: https://floschuberth.github.io/cSEM/articles/Terminology.html
+[dotdotdot]: https://floschuberth.github.io/cSEM/reference/args_assess_dotdotdot.html
 
 <!-- A third reliability measure is **Parallel reliability** ($\rho_P$), also known -->
 <!-- as e.g.: split-half reliability,  -->

@@ -7,12 +7,12 @@ citEntry(entry = "Manual",
   author       = personList(as.person("Manuel E. Rademaker"),
                             as.person("Florian Schuberth")),
   year         = "2020",
-  url          = "https://m-e-rademaker.github.io/cSEM/",
+  url          = "https://floschuberth.github.io/cSEM/",
   note         = vers,
   
   textVersion =
               paste0("Rademaker, Manuel E. and Schuberth, Florian (2020).",
                     " cSEM: Composite-Based Structural Equation Modeling. ",
                     vers, ". ", "URL: ",
-                    "https://m-e-rademaker.github.io/cSEM/", ".")
+                    "https://floschuberth.github.io/cSEM/", ".")
 )

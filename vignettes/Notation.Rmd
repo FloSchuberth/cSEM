@@ -202,4 +202,4 @@ and Formula sections.
 <!-- | $\bm\Theta$       | $(K \times K)$          |  The covariance matrix of the indicator error terms| -->
 </center>
 
-[Terminology]: https://m-e-rademaker.github.io/cSEM/articles/Terminology.html
+[Terminology]: https://floschuberth.github.io/cSEM/articles/Terminology.html

@@ -61,8 +61,8 @@ for the (1 - \code{.alpha}) confidence interval(s).
 }
 \description{
 Compute several reliability estimates. See the
-\href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#reliability}{Reliability}
-section of the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+\href{https://floschuberth.github.io/cSEM/articles/Using-assess.html#reliability}{Reliability}
+section of the \href{https://floschuberth.github.io/cSEM/index.html}{cSEM website}
 for details.
 }
 \details{

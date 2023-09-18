@@ -5,7 +5,7 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/cSEM)](https://cran.r-project.org/package=cSEM)
-[![R-CMD-check](https://github.com/M-E-Rademaker/cSEM/workflows/R-CMD-check/badge.svg)](https://github.com/M-E-Rademaker/cSEM/actions)
+[![R-CMD-check](https://github.com/FloSchuberth/cSEM/workflows/R-CMD-check/badge.svg)](https://github.com/FloSchuberth/cSEM/actions)
 <!-- [![Build Status](https://travis-ci.com/M-E-Rademaker/cSEM.svg?branch=master)](https://travis-ci.com/M-E-Rademaker/cSEM) -->
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/M-E-Rademaker/cSEM?branch=master&svg=true)](https://ci.appveyor.com/project/M-E-Rademaker/csem)
@@ -56,7 +56,7 @@ devtools::install_github("FloSchuberth/cSEM")
 ## Getting started
 
 The best place to get started is the
-[cSEM-website](https://m-e-rademaker.github.io/cSEM/).
+[cSEM-website](https://floschuberth.github.io/cSEM/).
 
 ## Basic usage
 
@@ -108,8 +108,8 @@ All functions require a `cSEMResults` object.
 Models are defined using [lavaan
 syntax](https://lavaan.ugent.be/tutorial/syntax1.html) with some slight
 modifications (see the [Specifying a
-model](https://m-e-rademaker.github.io/cSEM/articles/cSEM.html#using-csem)
-section on the [cSEM-website](https://m-e-rademaker.github.io/cSEM/)).
+model](https://floschuberth.github.io/cSEM/articles/cSEM.html#using-csem)
+section on the [cSEM-website](https://floschuberth.github.io/cSEM/)).
 For illustration we use the build-in and well-known `satisfaction`
 dataset.
 

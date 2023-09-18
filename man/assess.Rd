@@ -46,9 +46,9 @@ criteria is computed the return value is still a list!
 }
 \details{
 Assess a model using common quality criteria.
-See the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
+See the \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
 article on the
-\href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
+\href{https://floschuberth.github.io/cSEM/index.html}{cSEM website} for details.
 
 The function is essentially a wrapper around a number of internal functions
 that perform an "assessment task" (called a \strong{quality criterion} in \pkg{cSEM}
@@ -77,10 +77,10 @@ by \code{\link[=calculateAVE]{calculateAVE()}}.}
 An estimate of the reliability assuming a congeneric measurement model (i.e., loadings are
 allowed to differ) and a test score (proxy) based on unit weights.
 There are four different versions implemented. See the
-\href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
-of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
+\href{https://floschuberth.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
+of the \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
 article on the
-\href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website} for details.
+\href{https://floschuberth.github.io/cSEM/index.html}{cSEM website} for details.
 Alternative but synonymous names for \code{"rho_C"} are:
 composite reliability, construct reliability, reliability coefficient,
 Joereskog's rho, coefficient omega, or Dillon-Goldstein's rho.
@@ -171,9 +171,9 @@ Calculation is done by \code{\link[=calculateHTMT]{calculateHTMT()}}.}
 Several model selection criteria as suggested by \insertCite{Sharma2019;textual}{cSEM}
 in the context of PLS. See: \code{\link[=calculateModelSelectionCriteria]{calculateModelSelectionCriteria()}} for details.}
 \item{Reliability: "reliability"}{
-As described in the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae}
-section of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
-article on the \href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}
+As described in the \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae}
+section of the \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
+article on the \href{https://floschuberth.github.io/cSEM/index.html}{cSEM website}
 there are many different estimators for the (internal consistency) reliability.
 Choosing \code{.quality_criterion = "reliability"} computes the three most common
 measures, namely: "Cronbachs alpha" (identical to "rho_T"), "Jöreskogs rho" (identical to "rho_C_mm"),
@@ -219,15 +219,15 @@ all remaining indicators of the same block.
 Calculation is done by \code{\link[=calculateVIFModeB]{calculateVIFModeB()}}.}
 }
 
-For details on the most important quality criteria see the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
-of the \href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
+For details on the most important quality criteria see the \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html#methods}{Methods and Formulae} section
+of the \href{https://floschuberth.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
 article on the on the
-\href{https://m-e-rademaker.github.io/cSEM/index.html}{cSEM website}.
+\href{https://floschuberth.github.io/cSEM/index.html}{cSEM website}.
 
 Some of the quality criteria are inherently tied to the classical common
 factor model and therefore only meaningfully interpreted within a common
 factor model (see the
-\href{https://m-e-rademaker.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
+\href{https://floschuberth.github.io/cSEM/articles/Using-assess.html}{Postestimation: Assessing a model}
 article for details).
 It is possible to force computation of all quality criteria for constructs
 modeled as composites by setting \code{.only_common_factors = FALSE}, however,

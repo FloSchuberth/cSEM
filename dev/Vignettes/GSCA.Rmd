@@ -45,7 +45,7 @@ model (constructs as linear combinations of indicators) (for a detailed
 description see [@Hwang2014, chapter 2.1-2.2]). The [Methods & Formula](#methods) 
 provides more details. 
 
-As described in detail in the [Introduction to cSEM](https://m-e-rademaker.github.io/cSEM/articles/cSEM.html) parameter estimates
+As described in detail in the [Introduction to cSEM](https://floschuberth.github.io/cSEM/articles/cSEM.html) parameter estimates
 obtained using GSCA are biased if concepts are modeled as common factors.
 <!-- It is possible that the estimated parameters, especially loadings, are biased  -->
 <!-- when using GSCA. In particular, this is the case when indicators are observed  -->

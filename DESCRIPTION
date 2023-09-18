@@ -39,8 +39,8 @@ Description: Estimate, assess, test, and study linear, nonlinear, hierarchical
   as well as several tests and typical postestimation procedures 
   (e.g., verify admissibility of the estimates, assess the model fit, 
   test the model fit etc.).
-BugReports: https://github.com/M-E-Rademaker/cSEM/issues/
-URL: https://github.com/M-E-Rademaker/cSEM/, https://m-e-rademaker.github.io/cSEM/
+BugReports: https://github.com/FloSchuberth/cSEM/issues/
+URL: https://github.com/FloSchuberth/cSEM/, https://floschuberth.github.io/cSEM/
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
