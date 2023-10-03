@@ -97,7 +97,11 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         type <- rep(m$construct_type, times = rowSums(round(out[[x]] + if(names(out[x]) %in% c("Direct_effect", "Total_effect"))
           {m$structural} else {0}, 10) != 0))
 
-      if(all(round(out[[x]], 10) == 0)) {
+      if(all(round(out[[x]]+ if(names(out[x]) %in% c("Direct_effect", "Total_effect")){
+        m$structural
+      } else {
+        0
+      }, 10) == 0)) {
         data.frame(
           "Name"           = character(),
           "Construct_type" = character(),
