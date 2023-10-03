@@ -77,8 +77,8 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         # Get construct type for relevant variables
         # Note: round() in the formula below is necessary as calculateEffect() can
         #       sometimes produce values that are not exactly 0 due to floating point
-        #       imprecisions. To round to 10 digits is rather arbitrary. Maybe
-        #       there is a better way to check if a number is "acutally zero".
+        #       imprecision. To round to 10 digits is rather arbitrary. Maybe
+        #       there is a better way to check if a number is "actually zero".
         # type <- rep(m$construct_type, times = rowSums(round(x, 10) != 0))
 
         # Note (07.08.2019): Rounding may be confusing. I was using the repeated
@@ -93,6 +93,7 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         # Note (03.10.2023): To address the rounding problem, the structural matrix is added in case of 
         # direct and total effects.  
         # Yet, it can still happen that an indirect is very small and thus mistakenly dropped.
+        # For the future it would be better work with indicator matrices. 
 
         type <- rep(m$construct_type, times = rowSums(round(out[[x]] + if(names(out[x]) %in% c("Direct_effect", "Total_effect"))
           {m$structural} else {0}, 10) != 0))
