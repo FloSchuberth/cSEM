@@ -101,10 +101,9 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         #       is an effect that is falsley estimated to zero.
         # type <- rep(m$construct_type, times = rowSums(x != 0))
         
-        # Note (03.10.2023): To address the rounding problem, the structural matrix is added in case of 
-        # direct and total effects.  
-        # Yet, it can still happen that an indirect is very small and thus mistakenly dropped.
-        # For the future it would be better work with indicator matrices. 
+        # Note (03.10.2023): To address the rounding problem, indicator matrices are used.
+        # The elements of these matrices are 1 in case of an effect and 0 otherwise. 
+        # These matrices are added. 
 
         type <- rep(m$construct_type, times = rowSums(round(out[[x]] + if(names(out[x]) %in% c("Direct_effect")){
           m$structural
@@ -158,55 +157,6 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
       
       
     })
-    
-    
-    # lout <- lapply(out, function(x) {
-    #   # Get construct type for relevant variables
-    #   # Note: round() in the formula below is necessary as calculateEffect() can
-    #   #       sometimes produce values that are not exactly 0 due to floating point
-    #   #       imprecisions. To round to 10 digits is rather arbitrary. Maybe
-    #   #       there is a better way to check if a number is "acutally zero".
-    #   type <- rep(m$construct_type, times = rowSums(round(x, 10) != 0))
-    #   
-    #   # Note (07.08.2019): Rounding may be confusing. I was using the repeated 
-    #   #       indicators approach for the model
-    #   #       c4 ~ eta1
-    #   #       eta2 ~ eta1 + c4
-    #   #       and expecting there to be an effect of eta1 on c4 (knowlingly that 
-    #   #       it should be zero). Round killed it, but it should be there as it
-    #   #       is an effect that is falsley estimated to zero.
-    #   # type <- rep(m$construct_type, times = rowSums(x != 0))
-    #   
-    #   # If there are no indirect effects the matrix "indirect" is the zero matrix
-    #   # return an empty data frame in this case
-    #   if(all(round(x, 10) == 0)) {
-    #     data.frame(
-    #       "Name"           = character(),
-    #       "Construct_type" = character(),
-    #       "Estimate"       = double(),
-    #       "Std_err"        = double(),
-    #       "t_stat"         = double(),
-    #       "p_value"        = double(),
-    #       stringsAsFactors = FALSE,
-    #       row.names = NULL
-    #     )
-    #   } else {
-    #     data.frame(
-    #       "Name"           = t(temp)[round(t(x), 10) != 0 ],
-    #       "Construct_type" = type,
-    #       "Estimate"       = t(x)[round(t(x), 10) != 0 ],
-    #       # "Name"           = t(temp)[t(x) != 0 ],
-    #       # "Construct_type" = type,
-    #       # "Estimate"       = t(x)[t(x) != 0 ],
-    #       "Std_err"        = NA,
-    #       "t_stat"         = NA,
-    #       "p_value"        = NA,
-    #       stringsAsFactors = FALSE,
-    #       row.names = NULL
-    #     )
-    #   }
-    # 
-    # })
     
     out[["Direct_effect"]]   <- lout[[1]]
     out[["Indirect_effect"]] <- lout[[2]] 
