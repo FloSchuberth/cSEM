@@ -62,13 +62,13 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
     temp <- temp %*% m$structural
   }
  
-  nonrec=all(temp == 0)
+  recursive=all(temp == 0)
   
    
   # # Create indicator matrix for total and indirect effects; if model without reciprocal relationship
   # Otherwise it does not work
   
-  if(nonrec){
+  if(recursive){
   Btemp <- diag(nrow(m$structural)) - m$structural
 
   totaltemp <- solve(Btemp) - diag(nrow(m$structural))
@@ -79,6 +79,7 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
   indirectInd <- matrix(0,nrow=nrow(indirecttemp), ncol=ncol(indirecttemp))
   indirectInd[indirecttemp!=0] <- 1
   }
+  
   # Matrix containing the variance accounted for (VAF)
   VAF <- indirect/total
   VAF[which(is.nan(VAF), arr.ind = TRUE)] <- 0
@@ -120,7 +121,7 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         # before rounding. In case of recursive models, it is just rounded. 
 
       # Choose binary indicator matrix
-        IndMat = if(nonrec){
+        IndMat = if(recursive){
           if(names(out[x]) %in% c("Direct_effect")){
           m$structural
         } else if(names(out[x]) %in% c("Indirect_effect")){
