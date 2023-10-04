@@ -99,11 +99,11 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         #       eta2 ~ eta1 + c4
         #       and expecting there to be an effect of eta1 on c4 (knowlingly that
         #       it should be zero). Round killed it, but it should be there as it
-        #       is an effect that is falsley estimated to zero.
+        #       is an effect that is falsely estimated to zero.
         # type <- rep(m$construct_type, times = rowSums(x != 0))
         
         # Note (03.10.2023): To address the rounding problem, the structural matrix is added
-        # in case of a direct and total effect. Yet, this can still be problmeatic for indirect effects
+        # in case of a direct and total effect. Yet, this can still be problematic for indirect effects.
         # We should try to work with indicator matrices.  
 
         type <- rep(m$construct_type, times = rowSums(round(out[[x]] + if(names(out[x]) %in% c("Direct_effect","Total_effect")){
