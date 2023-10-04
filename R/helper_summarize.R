@@ -104,15 +104,15 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         
         # Note (03.10.2023): To address the rounding problem, the structural matrix is added
         # in case of a direct and total effect. Yet, this can still be problematic for indirect effects.
-        # We should try to work with indicator matrices.  
+        # We should try to work with indicator matrices. Moreover, rounding is changed to the 15th digit.  
 
         type <- rep(m$construct_type, times = rowSums(round(out[[x]] + if(names(out[x]) %in% c("Direct_effect","Total_effect")){
           m$structural
-        } else {0}, 10) != 0))
+        } else {0}, 15) != 0))
 
       if(all(round(out[[x]]+ if(names(out[x]) %in% c("Direct_effect","Total_effect")){
         m$structural
-      } else {0}, 10) == 0)) {
+      } else {0}, 15) == 0)) {
         data.frame(
           "Name"           = character(),
           "Construct_type" = character(),
@@ -127,11 +127,11 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         data.frame(
           "Name"           = t(temp)[round(t(out[[x]] + if(names(out[x]) %in% c("Direct_effect","Total_effect")){
             m$structural
-          } else {0}), 10) != 0 ],
+          } else {0}), 15) != 0 ],
           "Construct_type" = type,
           "Estimate"       = t(out[[x]])[round(t(out[[x]] + if(names(out[x]) %in% c("Direct_effect","Total_effect")){
             m$structural
-          } else {0}), 10) != 0 ],
+          } else {0}), 15) != 0 ],
           # "Name"           = t(temp)[t(x) != 0 ],
           # "Construct_type" = type,
           # "Estimate"       = t(x)[t(x) != 0 ],
