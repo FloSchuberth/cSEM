@@ -53,16 +53,17 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
   ## Matrix of indirect effects:
   indirect <- total - direct
   
-  # Create indicator matrix for total and indirect effects
-  Btemp <- diag(nrow(m$structural)) - m$structural
-  
-  totaltemp <- solve(Btemp) - diag(nrow(m$structural))
-  totalInd = matrix(0,nrow=nrow(totaltemp), ncol=ncol(totaltemp))
-  totalInd[totaltemp!=0] <- 1
-  
-  indirecttemp = totaltemp - m$structural
-  indirectInd <- matrix(0,nrow=nrow(indirecttemp), ncol=ncol(indirecttemp))
-  indirectInd[indirecttemp!=0] <- 1
+  # # Create indicator matrix for total and indirect effects; if model without reciprocal relationship
+  # Otherwise it does not work
+  # Btemp <- diag(nrow(m$structural)) - m$structural
+  # 
+  # totaltemp <- solve(Btemp) - diag(nrow(m$structural))
+  # totalInd = matrix(0,nrow=nrow(totaltemp), ncol=ncol(totaltemp))
+  # totalInd[totaltemp!=0] <- 1
+  # 
+  # indirecttemp = totaltemp - m$structural
+  # indirectInd <- matrix(0,nrow=nrow(indirecttemp), ncol=ncol(indirecttemp))
+  # indirectInd[indirecttemp!=0] <- 1
   
   # Matrix containing the variance accounted for (VAF)
   VAF <- indirect/total
@@ -101,24 +102,17 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         #       is an effect that is falsley estimated to zero.
         # type <- rep(m$construct_type, times = rowSums(x != 0))
         
-        # Note (03.10.2023): To address the rounding problem, indicator matrices are used.
-        # The elements of these matrices are 1 in case of an effect and 0 otherwise. 
-        # These matrices are added. 
+        # Note (03.10.2023): To address the rounding problem, the structural matrix is added
+        # in case of a direct and total effect. Yet, this can still be problmeatic for indirect effects
+        # We should try to work with indicator matrices.  
 
-        type <- rep(m$construct_type, times = rowSums(round(out[[x]] + if(names(out[x]) %in% c("Direct_effect")){
+        type <- rep(m$construct_type, times = rowSums(round(out[[x]] + if(names(out[x]) %in% c("Direct_effect","Total_effect")){
           m$structural
-        } else if(names(out[x]) %in% c("Total_effect")){
-          totalInd} else if (names(out[x]) %in% c("Indirect_effect")){
-            indirectInd
-          } else {0}
-            , 10) != 0))
+        } else {0}, 10) != 0))
 
-      if(all(round(out[[x]]+ if(names(out[x]) %in% c("Direct_effect")){
+      if(all(round(out[[x]]+ if(names(out[x]) %in% c("Direct_effect","Total_effect")){
         m$structural
-      } else if(names(out[x]) %in% c("Total_effect")){
-        totalInd} else if (names(out[x]) %in% c("Indirect_effect")){
-          indirectInd
-        } else {0}, 10) == 0)) {
+      } else {0}, 10) == 0)) {
         data.frame(
           "Name"           = character(),
           "Construct_type" = character(),
@@ -131,19 +125,13 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         )
       } else {
         data.frame(
-          "Name"           = t(temp)[round(t(out[[x]] + if(names(out[x]) %in% c("Direct_effect")){
+          "Name"           = t(temp)[round(t(out[[x]] + if(names(out[x]) %in% c("Direct_effect","Total_effect")){
             m$structural
-          } else if(names(out[x]) %in% c("Total_effect")){
-            totalInd} else if (names(out[x]) %in% c("Indirect_effect")){
-              indirectInd
-            } else {0}), 10) != 0 ],
+          } else {0}), 10) != 0 ],
           "Construct_type" = type,
-          "Estimate"       = t(out[[x]])[round(t(out[[x]] + if(names(out[x]) %in% c("Direct_effect")){
+          "Estimate"       = t(out[[x]])[round(t(out[[x]] + if(names(out[x]) %in% c("Direct_effect","Total_effect")){
             m$structural
-          } else if(names(out[x]) %in% c("Total_effect")){
-            totalInd} else if (names(out[x]) %in% c("Indirect_effect")){
-              indirectInd
-            } else {0}), 10) != 0 ],
+          } else {0}), 10) != 0 ],
           # "Name"           = t(temp)[t(x) != 0 ],
           # "Construct_type" = type,
           # "Estimate"       = t(x)[t(x) != 0 ],
