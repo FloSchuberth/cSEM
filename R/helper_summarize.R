@@ -119,6 +119,7 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         # Note (04.10.2023): To address the rounding problem, the binary indicator matrices are added in case of non-recursive models
         # before rounding. In case of recursive models, it is just rounded. 
 
+      # Choose binary indicator matrix
         IndMat = if(nonrec){
           if(names(out[x]) %in% c("Direct_effect")){
           m$structural
