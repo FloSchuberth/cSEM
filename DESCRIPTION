@@ -51,6 +51,7 @@ Imports:
     expm (>= 0.999-5),
     future.apply,
     future,
+    lifecycle,
     lavaan,
     magrittr,
     MASS,
@@ -66,8 +67,7 @@ Imports:
     stats,
     symmoments,
     TruncatedNormal,
-    utils,
-    lifecycle
+    utils
 RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))

@@ -291,11 +291,15 @@ scaleWeights <- function(
   ## Calculate the variance of the proxies:
   var_proxies <- diag(.W %*% .S %*% t(.W))
   
-  ## Scale the weights to ensure that the proxies have a variance of one
-  W_scaled <- solve(diag(sqrt(var_proxies), 
-                         nrow = length(var_proxies),
-                         ncol = length(var_proxies)
-                         )) %*% .W
+  # Using the solve function is suboptimal as if one of the proxies' variances
+  # is closed to 0, matrix inversion might not work. 
+  # W_scaled <- solve(diag(sqrt(var_proxies), 
+                         # nrow = length(var_proxies),
+                         # ncol = length(var_proxies)
+                         # )) %*% .W
+  
+  ## Scale the weights to ensure that the proxies have a variance of one  
+  W_scaled <- diag(1/sqrt(var_proxies)) %*%.W
   
   ## Assign rownames and colnames to the scaled weights and return
   rownames(W_scaled) <- rownames(.W)

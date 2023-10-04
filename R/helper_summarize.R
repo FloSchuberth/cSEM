@@ -53,6 +53,33 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
   ## Matrix of indirect effects:
   indirect <- total - direct
   
+  # check whether system is non-recursive (Bollen, 1987):
+  
+  # k: number of variables in the structural model
+  k=nrow(m$structural)
+  temp=m$structural
+  for (i in 1:k) {
+    temp <- temp %*% m$structural
+  }
+ 
+  recursive=all(temp == 0)
+  
+   
+  # # Create indicator matrix for total and indirect effects; if model without reciprocal relationship
+  # Otherwise it does not work
+  
+  if(recursive){
+  Btemp <- diag(nrow(m$structural)) - m$structural
+
+  totaltemp <- solve(Btemp) - diag(nrow(m$structural))
+  totalInd = matrix(0,nrow=nrow(totaltemp), ncol=ncol(totaltemp))
+  totalInd[totaltemp!=0] <- 1
+
+  indirecttemp = totaltemp - m$structural
+  indirectInd <- matrix(0,nrow=nrow(indirecttemp), ncol=ncol(indirecttemp))
+  indirectInd[indirecttemp!=0] <- 1
+  }
+  
   # Matrix containing the variance accounted for (VAF)
   VAF <- indirect/total
   VAF[which(is.nan(VAF), arr.ind = TRUE)] <- 0
@@ -71,26 +98,45 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
     temp <- outer(rownames(direct), colnames(direct), 
                   FUN = function(x, y) paste(x, y, sep = " ~ "))
     
-    lout <- lapply(out, function(x) {
-      # Get construct type for relevant variables
-      # Note: round() in the formula below is necessary as calculateEffect() can
-      #       sometimes produce values that are not exactly 0 due to floating point
-      #       imprecisions. To round to 10 digits is rather arbitrary. Maybe
-      #       there is a better way to check if a number is "acutally zero".
-      type <- rep(m$construct_type, times = rowSums(round(x, 10) != 0))
+    
+    lout <- lapply(1:length(out),function(x){
       
-      # Note (07.08.2019): Rounding may be confusing. I was using the repeated 
-      #       indicators approach for the model
-      #       c4 ~ eta1
-      #       eta2 ~ eta1 + c4
-      #       and expecting there to be an effect of eta1 on c4 (knowlingly that 
-      #       it should be zero). Round killed it, but it should be there as it
-      #       is an effect that is falsley estimated to zero.
-      # type <- rep(m$construct_type, times = rowSums(x != 0))
+        # Get construct type for relevant variables
+        # Note: round() in the formula below is necessary as calculateEffects() can
+        #       sometimes produce values that are not exactly 0 due to floating point
+        #       imprecision. To round to 10 digits is rather arbitrary. Maybe
+        #       there is a better way to check if a number is "actually zero".
+        # type <- rep(m$construct_type, times = rowSums(round(x, 10) != 0))
+
+        # Note (07.08.2019): Rounding may be confusing. I was using the repeated
+        #       indicators approach for the model
+        #       c4 ~ eta1
+        #       eta2 ~ eta1 + c4
+        #       and expecting there to be an effect of eta1 on c4 (knowingly that
+        #       it should be zero). Round killed it, but it should be there as it
+        #       is an effect that is falsely estimated to zero.
+        # type <- rep(m$construct_type, times = rowSums(x != 0))
+        
+        # Note (04.10.2023): To address the rounding problem, the binary indicator matrices are added in case of non-recursive models
+        # before rounding. In case of recursive models, it is just rounded. 
+
+      # Choose binary indicator matrix
+        IndMat = if(recursive){
+          if(names(out[x]) %in% c("Direct_effect")){
+          m$structural
+        } else if(names(out[x]) %in% c("Indirect_effect")){
+          indirectInd
+        } else if(names(out[x]) %in% c("Total_effect")){
+          totalInd
+        }else{
+          0
+        }} else {
+          0
+        }
       
-      # If there are no indirect effects the matrix "indirect" is the zero matrix
-      # return an empty data frame in this case
-      if(all(round(x, 10) == 0)) {
+        type <- rep(m$construct_type, times = rowSums(round(out[[x]] + IndMat, 10) != 0))
+
+      if(all(round(out[[x]]+ IndMat, 10) == 0)) {
         data.frame(
           "Name"           = character(),
           "Construct_type" = character(),
@@ -103,9 +149,9 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
         )
       } else {
         data.frame(
-          "Name"           = t(temp)[round(t(x), 10) != 0 ],
+          "Name"           = t(temp)[round(t(out[[x]] + IndMat), 10) != 0 ],
           "Construct_type" = type,
-          "Estimate"       = t(x)[round(t(x), 10) != 0 ],
+          "Estimate"       = t(out[[x]])[round(t(out[[x]] + IndMat), 10) != 0 ],
           # "Name"           = t(temp)[t(x) != 0 ],
           # "Construct_type" = type,
           # "Estimate"       = t(x)[t(x) != 0 ],
@@ -116,7 +162,8 @@ calculateEffects <- function(.object = NULL, .output_type = c("data.frame", "mat
           row.names = NULL
         )
       }
-
+      
+      
     })
     
     out[["Direct_effect"]]   <- lout[[1]]
