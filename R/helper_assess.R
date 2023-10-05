@@ -677,6 +677,105 @@ calculateGoF <- function(
 }
 
 
+#' Relative Goodness of Fit (relative GoF)
+#'
+#' Calculate the Relative Goodness of Fit (GoF) proposed by \insertCite{Vinzi2010a;textual}{cSEM}. 
+#' Note that, contrary to what the name suggests, the Relative GoF is **not** a 
+#' measure of model fit in the sense of SEM. See e.g. \insertCite{Henseler2012a;textual}{cSEM}
+#' for a discussion.
+#' 
+#' 
+#' @usage calculateRelativeGoF(
+#'  .object              = NULL
+#' )
+#'
+#' @return A single numeric value.
+#'   
+#' @inheritParams csem_arguments
+#'
+#' @seealso [assess()], [cSEMResults]
+#'
+#' @references 
+#' \insertAllCited{}
+#' @export
+
+calculateRelativeGoF <- function(
+    .object              = NULL
+){
+  
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateGoF)
+    return(out)
+  } else if(inherits(.object, "cSEMResults_default")) {
+    ## Get relevant quantities
+    Lambda    <- .object$Estimates$Loading_estimates
+    R2        <- .object$Estimates$R2
+    S <- .object$Estimates$Indicator_VCV
+    
+    structural <- .object$Information$Model$structural
+    measurement <- .object$Information$Model$measurement
+    construct_names <- rownames(measurement)
+    
+    constructs_with_more_than_one_indicator <- construct_names[rowSums(measurement)!=1]
+    
+    if(length(constructs_with_more_than_one_indicator)!=0){
+    T1 <- sapply(constructs_with_more_than_one_indicator, function(x){
+      
+      indicator_names <- colnames(measurement[x,measurement[x,]!=0,drop=FALSE])
+    
+      numerator <- Lambda[x,Lambda[x,]!=0,drop=FALSE]^2
+      
+      # calculate the largest Eigenvalue
+      denominator <- eigen(S[indicator_names,indicator_names])$values[1]
+      
+      numerator/denominator
+    })
+    
+    T1 <- mean(unlist(T1))
+    
+
+    T2 <- sapply(cons_endo,function(x){
+      
+      indicators_dep <- colnames(measurement[x,measurement[x,]!=0,drop=FALSE])
+      cons_indep <- colnames(structural[x,structural[x,]!=0,drop=FALSE])
+      indicators_ind <-colnames(measurement[cons_indep,colSums(measurement[cons_indep,,drop=FALSE])!=0,drop=FALSE])
+      
+      S_depdep <- S[indicators_dep,indicators_dep,drop=FALSE]
+      S_indind <- S[indicators_ind,indicators_ind,drop=FALSE]
+      S_depind <- S[indicators_dep,indicators_ind,drop=FALSE]
+      
+      rho2 <- eigen(solve(S_depdep)%*%S_depind%*%solve(S_indind)%*%t(S_depind))$values[1]
+      
+      
+      R2[x]/rho2
+    })
+    
+    T2 <- mean(T2)
+    
+    relGoF <- sqrt(T1*T2)
+    } else {
+      relGoF <- NA
+    }
+    return(relGoF)
+
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2(
+      "The following error occured in the calculateGoF() function:\n",
+      "For models contianing second-order constructs, the relative GoF is not implemented."
+    )
+  } else {
+    stop2(
+      "The following error occured in the calculateGoF() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
+
+
+}
+
+
+
 
 #' Reliability
 #'
