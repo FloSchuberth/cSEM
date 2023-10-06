@@ -716,6 +716,8 @@ calculateRelativeGoF <- function(
     measurement <- .object$Information$Model$measurement
     construct_names <- rownames(measurement)
     
+    cons_endo <- .object$Information$Model$cons_endo
+    
     constructs_with_more_than_one_indicator <- construct_names[rowSums(measurement)!=1]
     
     if(length(constructs_with_more_than_one_indicator)!=0){
