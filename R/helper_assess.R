@@ -745,8 +745,9 @@ calculateRelativeGoF <- function(
       S_depdep <- S[indicators_dep,indicators_dep,drop=FALSE]
       S_indind <- S[indicators_ind,indicators_ind,drop=FALSE]
       S_depind <- S[indicators_dep,indicators_ind,drop=FALSE]
+      S_inddep <- t(S_depind)
       
-      rho2 <- eigen(solve(S_depdep)%*%S_depind%*%solve(S_indind)%*%t(S_depind))$values[1]
+      rho2 <- eigen(solve(S_depdep)%*%S_depind%*%solve(S_indind)%*%S_inddep)$values[1]
       
       
       R2[x]/rho2
