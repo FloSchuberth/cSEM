@@ -640,8 +640,11 @@ calculateGoF <- function(
     out <- lapply(.object, calculateGoF)
     return(out)
   } else if(inherits(.object, "cSEMResults_default")) {
+    # Only select constructs with more than one indicator
+    NoSingleConstruct <- rownames(.object$Information$Model$measurement)[rowSums(.object$Information$Model$measurement) != 1]
+    
     ## Get relevant quantities
-    Lambda    <- .object$Estimates$Loading_estimates
+    Lambda    <- .object$Estimates$Loading_estimates[NoSingleConstruct,,drop=FALSE]
     R2        <- .object$Estimates$R2
     
     # Select only non-zero loadings
@@ -650,12 +653,18 @@ calculateGoF <- function(
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
     c_names2  <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
     
-    ## Extract loadings
-    Lambda   <- .object$First_stage$Estimates$Loading_estimates
-    Lambda2  <- .object$Second_stage$Estimates$Loading_estimates 
+    ## Extract loadings for cosntructs with more than one indicator
+    # First stage
+    NoSingleConstruct <- rownames(.object$First_stage$Information$Model$measurement)[rowSums(.object$First_stage$Information$Model$measurement) != 1] 
+    Lambda   <- .object$First_stage$Estimates$Loading_estimates[NoSingleConstruct,,drop=FALSE]
+    
+    NoSingleConstruct2 <- rownames(.object$Second_stage$Information$Model$measurement)[rowSums(.object$Second_stage$Information$Model$measurement) != 1]
+    
+    # The single-indicator constructs from the first stage are also removed in this way
+    Lambda2  <- .object$Second_stage$Estimates$Loading_estimates[NoSingleConstruct2,,drop=FALSE] 
     R2       <- .object$Second_stage$Estimates$R2
     
-    Lambda2   <- Lambda2[c_names2, ]
+    # Lambda2   <- Lambda2[c_names2, ]
 
     L  <- Lambda[Lambda != 0]
     L2 <- Lambda2[Lambda2 != 0]
@@ -668,9 +677,15 @@ calculateGoF <- function(
     )
   }
   
+  # Warning in case of single-indicator constructs only.
+  if(length(L)==0){
+    warning2("This warning occured in the `calculateGoF()` function.\n",
+             "Model consists of single-indicator constructs only.\n")
+  }
+
   # The GoF is defined as the sqrt of the mean of the R^2s of the structural model 
   # times the variance in the indicators that is explained by the construct (lambda^2).
-
+    
   gof <- sqrt(mean(L^2) * mean(R2))
   
   return(gof)
