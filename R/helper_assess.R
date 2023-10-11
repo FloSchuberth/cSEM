@@ -651,21 +651,18 @@ calculateGoF <- function(
     L  <- Lambda[Lambda != 0]
     
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
-    c_names2  <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
-    
-    ## Extract loadings for cosntructs with more than one indicator
+
+    ## Extract loadings for constructs with more than one indicator
     # First stage
     NoSingleConstruct <- rownames(.object$First_stage$Information$Model$measurement)[rowSums(.object$First_stage$Information$Model$measurement) != 1] 
     Lambda   <- .object$First_stage$Estimates$Loading_estimates[NoSingleConstruct,,drop=FALSE]
     
     NoSingleConstruct2 <- rownames(.object$Second_stage$Information$Model$measurement)[rowSums(.object$Second_stage$Information$Model$measurement) != 1]
     
-    # The single-indicator constructs from the first stage are also removed in this way
+    # In this way the single-indicator constructs from the first stage are also not considered in the second stage
     Lambda2  <- .object$Second_stage$Estimates$Loading_estimates[NoSingleConstruct2,,drop=FALSE] 
     R2       <- .object$Second_stage$Estimates$R2
     
-    # Lambda2   <- Lambda2[c_names2, ]
-
     L  <- Lambda[Lambda != 0]
     L2 <- Lambda2[Lambda2 != 0]
     
