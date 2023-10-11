@@ -640,23 +640,29 @@ calculateGoF <- function(
     out <- lapply(.object, calculateGoF)
     return(out)
   } else if(inherits(.object, "cSEMResults_default")) {
+    # Only select constructs with more than one indicator
+    NoSingleConstruct <- rownames(.object$Information$Model$measurement)[rowSums(.object$Information$Model$measurement) != 1]
+    
     ## Get relevant quantities
-    Lambda    <- .object$Estimates$Loading_estimates
+    Lambda    <- .object$Estimates$Loading_estimates[NoSingleConstruct,,drop=FALSE]
     R2        <- .object$Estimates$R2
     
     # Select only non-zero loadings
     L  <- Lambda[Lambda != 0]
     
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
-    c_names2  <- .object$Second_stage$Information$Arguments_original$.model$vars_2nd
+
+    ## Extract loadings for constructs with more than one indicator
+    # First stage
+    NoSingleConstruct <- rownames(.object$First_stage$Information$Model$measurement)[rowSums(.object$First_stage$Information$Model$measurement) != 1] 
+    Lambda   <- .object$First_stage$Estimates$Loading_estimates[NoSingleConstruct,,drop=FALSE]
     
-    ## Extract loadings
-    Lambda   <- .object$First_stage$Estimates$Loading_estimates
-    Lambda2  <- .object$Second_stage$Estimates$Loading_estimates 
+    NoSingleConstruct2 <- rownames(.object$Second_stage$Information$Model$measurement)[rowSums(.object$Second_stage$Information$Model$measurement) != 1]
+    
+    # In this way the single-indicator constructs from the first stage are also not considered in the second stage
+    Lambda2  <- .object$Second_stage$Estimates$Loading_estimates[NoSingleConstruct2,,drop=FALSE] 
     R2       <- .object$Second_stage$Estimates$R2
     
-    Lambda2   <- Lambda2[c_names2, ]
-
     L  <- Lambda[Lambda != 0]
     L2 <- Lambda2[Lambda2 != 0]
     
@@ -668,13 +674,125 @@ calculateGoF <- function(
     )
   }
   
+  # Warning in case of single-indicator constructs only.
+  if(length(L)==0){
+    warning2("This warning occured in the `calculateGoF()` function.\n",
+             "Model consists of single-indicator constructs only.\n")
+  }
+
   # The GoF is defined as the sqrt of the mean of the R^2s of the structural model 
   # times the variance in the indicators that is explained by the construct (lambda^2).
-
+    
   gof <- sqrt(mean(L^2) * mean(R2))
   
   return(gof)
 }
+
+
+#' Relative Goodness of Fit (relative GoF)
+#'
+#' Calculate the Relative Goodness of Fit (GoF) proposed by \insertCite{Vinzi2010a;textual}{cSEM}. 
+#' Note that, contrary to what the name suggests, the Relative GoF is **not** a 
+#' measure of model fit in the sense of SEM. See e.g. \insertCite{Henseler2012a;textual}{cSEM}
+#' for a discussion.
+#' 
+#' 
+#' @usage calculateRelativeGoF(
+#'  .object              = NULL
+#' )
+#'
+#' @return A single numeric value.
+#'   
+#' @inheritParams csem_arguments
+#'
+#' @seealso [assess()], [cSEMResults]
+#'
+#' @references 
+#' \insertAllCited{}
+#' @export
+
+calculateRelativeGoF <- function(
+    .object              = NULL
+){
+  
+  if(inherits(.object, "cSEMResults_multi")) {
+    out <- lapply(.object, calculateGoF)
+    return(out)
+  } else if(inherits(.object, "cSEMResults_default")) {
+    ## Get relevant quantities
+    Lambda    <- .object$Estimates$Loading_estimates
+    R2        <- .object$Estimates$R2
+    S <- .object$Estimates$Indicator_VCV
+    
+    structural <- .object$Information$Model$structural
+    measurement <- .object$Information$Model$measurement
+    construct_names <- rownames(measurement)
+    
+    cons_endo <- .object$Information$Model$cons_endo
+    
+    constructs_with_more_than_one_indicator <- construct_names[rowSums(measurement)!=1]
+    
+    if(length(constructs_with_more_than_one_indicator)!=0){
+    T1 <- sapply(constructs_with_more_than_one_indicator, function(x){
+      
+      indicator_names <- colnames(measurement[x,measurement[x,]!=0,drop=FALSE])
+    
+      numerator <- Lambda[x,Lambda[x,]!=0,drop=FALSE]^2
+      
+      # calculate the largest Eigenvalue
+      denominator <- eigen(S[indicator_names,indicator_names])$values[1]
+      
+      numerator/denominator
+    })
+    
+    T1 <- mean(unlist(T1))
+    
+
+    T2 <- sapply(cons_endo,function(x){
+      
+      indicators_dep <- colnames(measurement[x,measurement[x,]!=0,drop=FALSE])
+      cons_indep <- colnames(structural[x,structural[x,]!=0,drop=FALSE])
+      indicators_ind <-colnames(measurement[cons_indep,colSums(measurement[cons_indep,,drop=FALSE])!=0,drop=FALSE])
+      
+      S_depdep <- S[indicators_dep,indicators_dep,drop=FALSE]
+      S_indind <- S[indicators_ind,indicators_ind,drop=FALSE]
+      S_depind <- S[indicators_dep,indicators_ind,drop=FALSE]
+      S_inddep <- t(S_depind)
+      
+      rho2 <- eigen(solve(S_depdep)%*%S_depind%*%solve(S_indind)%*%S_inddep)$values[1]
+      
+      
+      R2[x]/rho2
+    })
+    
+    T2 <- mean(T2)
+    
+    relGoF <- sqrt(T1*T2)
+    } else {
+      
+      warning2("This warning occured in the `calculateRelativeGoF()` function.\n",
+               "Model consists of single-indicator constructs only.\n")
+      
+      relGoF <- NA
+    }
+    return(relGoF)
+
+    
+  } else if(inherits(.object, "cSEMResults_2ndorder")) {
+    stop2(
+      "The following error occured in the calculateRelativeGoF() function:\n",
+      "For models contianing second-order constructs, the relative GoF is not implemented."
+    )
+  } else {
+    stop2(
+      "The following error occured in the calculateRelativeGoF() function:\n",
+      "`.object` must be of class `cSEMResults`."
+    )
+  }
+
+
+}
+
 
 
 
