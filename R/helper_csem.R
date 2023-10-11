@@ -130,7 +130,7 @@ calculate2ndStage <- function(
         col_names   <- colnames(original_model$measurement[
           i, original_model$measurement[i, , drop = FALSE ] == 1, drop = FALSE])
         w           <- out2$Estimates$Weight_estimates[i, col_names, drop = FALSE]
-        Sstar       <- out2$Estimates$Indicator_VCV[col_names, col_names]
+        Sstar       <- out2$Estimates$Indicator_VCV[col_names, col_names,drop=FALSE]
         diag(Sstar) <- rel_all_1step[col_names]
         
         rel_2nd_order[i] <- c(w %*% Sstar %*% t(w))
