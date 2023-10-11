@@ -772,6 +772,10 @@ calculateRelativeGoF <- function(
     
     relGoF <- sqrt(T1*T2)
     } else {
+      
+      warning2("This warning occured in the `calculateRelativeGoF()` function.\n",
+               "Model consists of single-indicator constructs only.\n")
+      
       relGoF <- NA
     }
     return(relGoF)
@@ -779,12 +783,12 @@ calculateRelativeGoF <- function(
     
   } else if(inherits(.object, "cSEMResults_2ndorder")) {
     stop2(
-      "The following error occured in the calculateGoF() function:\n",
+      "The following error occured in the calculateRelativeGoF() function:\n",
       "For models contianing second-order constructs, the relative GoF is not implemented."
     )
   } else {
     stop2(
-      "The following error occured in the calculateGoF() function:\n",
+      "The following error occured in the calculateRelativeGoF() function:\n",
       "`.object` must be of class `cSEMResults`."
     )
   }
