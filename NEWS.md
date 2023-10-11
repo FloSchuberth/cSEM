@@ -1,5 +1,11 @@
 # <Development version: cSEM 0.5.0.9000
 
+- Implement  `calculateRelativeGoF`. Now the relative GoF can be obtained.
+
+- Bug fix in `calculateGoF`. Now single-indicator constructs are excluded. Thanks to Mehmet Mehmetoglu and Sergio Venturini.
+
+- Bug fix in `calculateEffects()`. Now it is distinguished between recursive and non-recursive models. For recursive models rounding is no longer necessary.
+
 - Bug fix in `calculateReliabilities()`. Now correction for attenuation is correctly done for PLS-PM Mode B.
 
 # cSEM 0.5.0 (2022-05-09)
