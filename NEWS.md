@@ -1,5 +1,7 @@
 # <Development version: cSEM 0.5.0.9000
 
+- Bug fix in case of a second-order composite that is formed by one common factor. 
+
 - Implement  `calculateRelativeGoF`. Now the relative GoF can be obtained.
 
 - Bug fix in `calculateGoF`. Now single-indicator constructs are excluded. Thanks to Mehmet Mehmetoglu and Sergio Venturini.
