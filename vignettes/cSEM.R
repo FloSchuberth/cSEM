@@ -44,7 +44,7 @@ EXPE <~ expe1 + expe2
 IMAG <~ imag1 + imag2
 "
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  model <- "
 #  # Structural model
 #  SAT ~ QUAL
@@ -79,7 +79,7 @@ eta3 =~ y31 + y32 + y33
 a <- csem(.data = threecommonfactors, .model = model)
 a
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  csem(
 #     .data                        = threecommonfactors,
 #     .model                       = model,
@@ -143,8 +143,8 @@ ii$Path_estimates
 #  eta2 ~ eta1
 #  
 #  ## Measurement model
-#  eta1 <~ item1 + item2 + item3
-#  eta2 =~ item4 + item5 + item6
+#  eta1 <~ y11 + y12 + y13
+#  eta2 =~ y21 + y22 + y23
 #  "
 #  
 #  # Identical
@@ -160,8 +160,8 @@ ii$Path_estimates
 #  eta2 ~ eta1
 #  
 #  ## Composite model
-#  eta1 <~ item1 + item2 + item3
-#  eta2 <~ item4 + item5 + item6
+#  eta1 <~ y11 + y12 + y13
+#  eta2 <~ y21 + y22 + y23
 #  "
 #  
 #  ### Currently the following weight approaches are implemented
