@@ -2,6 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+.httr-oauth
+.DS_Store
+.quarto
 .sav
 inst/REFERENCES.bib.bak
 inst/REFERENCES.bib.sav
