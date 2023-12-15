@@ -57,7 +57,7 @@
 #'                             ov_type = igsca_sim_in$ov_type, ind_domi = igsca_sim_in$ind_domi,
 #'                             nbt = 0,
 #'                             devmode = TRUE,
-#'                             swap_step = "prepare_for_ALS")
+#'                             swap_step = "noswap")
 #'                             )
 igsca_sim <- function(Z0, W0, C0, B0, lv_type, ov_type, ind_domi, nbt,
                       swap_step = c("noswap", "prepare_for_ALS", "first_iteration_update",
@@ -65,7 +65,7 @@ igsca_sim <- function(Z0, W0, C0, B0, lv_type, ov_type, ind_domi, nbt,
                                     "flip_signs_ind_domi"),
                       itmax = 100, ceps = 0.001, devmode =  FALSE,
                       devdir = list("dev", "Notes", "data")) {
-  browser()
+  
 # Safety Checks ------------------------------------------------------------
   
   swap_step <- match.arg(swap_step)
@@ -86,7 +86,7 @@ igsca_sim <- function(Z0, W0, C0, B0, lv_type, ov_type, ind_domi, nbt,
 # Bootstrap Cycle ---------------------------------------------------------
 for(nb in seq_len(nbt+1)) { 
 
-## Initial Estimates and Preparation ---------------------------------------
+## Initial Estimates and Preparation -------------------------------------
   prepared_for_ALS <- prepare_for_ALS(
     Z0 = Z0,
     W0 = W0,
@@ -96,25 +96,13 @@ for(nb in seq_len(nbt+1)) {
     nlv = nlv,
     ov_type = ov_type
   )
-  # TODO: Write a comment on what this updates
+  ### Updates W, C, B, V, Z, D, U, Gamma
   list2env(prepared_for_ALS, envir = environment())
-  # W <- prepared_for_ALS$W
-  # C <- prepared_for_ALS$C
-  # B <- prepared_for_ALS$B
-  # V <- prepared_for_ALS$V # Used for updating Composites
-  # Z <- prepared_for_ALS$Z
-  # D <- prepared_for_ALS$D
-  # U <- prepared_for_ALS$U # Used for updating Weights
-  # Gamma <- prepared_for_ALS$Gamma
   
   if(isTRUE(devmode)) {
-    
-    mapply(
-      write.csv,
-      x = prepared_for_ALS,
-      file = paste0(here::here(devdir, "R_out", "prepare_for_ALS"), "/", names(prepared_for_ALS), ".csv"),
-      row.names = FALSE
-    )
+    # Takes entire environment and saves it as rds for later comparison
+    as.list.environment(x = environment(), all.names = TRUE) |>
+      saveRDS(file = here::here(devdir, "R_out", swap_step, "prepare_forALS.rds"))
     
     if (swap_step == "prepare_for_ALS") {
       swapdir <- c(devdir, "matlab_out", "prepare_for_ALS.MAT")
@@ -123,9 +111,7 @@ for(nb in seq_len(nbt+1)) {
     } 
   }
   
-    
-
-# Alternating Least Squares Algorithm -------------------------------------
+## Alternating Least Squares Algorithm -------------------------------------
 
 ### While Counters and Initial Estimates ----------------------------------
     # Set the initial estimates based on either the structural model or the loadings
@@ -160,10 +146,8 @@ for(nb in seq_len(nbt+1)) {
         nlv = nlv,
         B = B
       )
-      # TODO: Fix up what this updates
+      # Creates X (for updating Composites) and WW (for updating Factors)
       list2env(updated_X_weights, envir = environment())
-      # X <- updated_X_weights$X # Used for Updating Composites
-      # WW <- updated_X_weights$WW # Used for Updating Factors
       
 #### Iterative Update of LVs -------------------------------------------------
       A <- cbind(C, B) 
@@ -194,9 +178,9 @@ for(nb in seq_len(nbt+1)) {
           if(exists("composite_counter") && isTRUE(devmode)) {
             
             if (composite_counter == 0) {
-              write.csv(theta,
-                        file = here::here(devdir, "R_out", "first_composite_update", "theta.csv"),
-                        row.names = FALSE)
+              
+              as.list.environment(x = environment(), all.names = TRUE) |>
+                saveRDS(file = here::here(devdir, "R_out", swap_step, "first_composite_update.rds"))
 
               composite_counter = composite_counter + 1
               
@@ -220,9 +204,8 @@ for(nb in seq_len(nbt+1)) {
             
             if (factor_counter == 0) {
               
-              write.csv(theta,
-                        file = here::here(devdir, "R_out", "first_factor_update", "theta.csv"),
-                        row.names = FALSE)
+              as.list.environment(x = environment(), all.names = TRUE) |>
+                saveRDS(file = here::here(devdir, "R_out", swap_step, "first_factor_update.rds"))
               
               factor_counter = factor_counter + 1
               
@@ -246,20 +229,10 @@ for(nb in seq_len(nbt+1)) {
         V[windex_j, tot] <- theta
         
         if(it == 1 && isTRUE(devmode)) {
-          mapply(
-            write.csv,
-            x = list(Gamma, theta, V, W), 
-            file = paste0(
-              here::here(devdir, "R_out", "first_iteration_update"),
-              "/",
-              list("Gamma",
-                   "theta",
-                   "V",
-                   "W"),
-              ".csv"
-            ),
-            row.names = FALSE
-          )
+          
+          as.list.environment(x = environment(), all.names = TRUE) |>
+            saveRDS(file = here::here(devdir, "R_out", swap_step, "first_iteration_update_theta_Gamma_W_V.rds"))
+          
           if (swap_step == "first_iteration_update") {
             swapdir <- c(devdir, "matlab_out", "first_iteration_update_theta_Gamma_W_V.MAT")
             R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
@@ -268,7 +241,7 @@ for(nb in seq_len(nbt+1)) {
         }
     }
       
-### Update Loadings, Path Coefficients and Disturbance Terms ----------
+#### Update Loadings, Path Coefficients and Disturbance Terms ----------
 
       updated_C_B_D <- update_C_B_D(
         X = X,
@@ -284,33 +257,15 @@ for(nb in seq_len(nbt+1)) {
         Z = Z,
         ov_type = ov_type
       )
-      # TODO: List what this updates
+      # Updates C, B, D, uniqueD, est, and U
       list2env(updated_C_B_D, envir = environment())
-      # D <- updated_C_B_D$D
-      # uniqueD <- updated_C_B_D$uniqueD
-      # est <- updated_C_B_D$est
-      # U <- updated_C_B_D$U
-      # B <- updated_C_B_D$B
-      # C <- updated_C_B_D$C
     }
     
     if(it == 1 && isTRUE(devmode)) {
-      mapply(
-        write.csv,
-        x = list(B, C, D, est, uniqueD), 
-        file = paste0(
-          here::here(devdir, "R_out", "first_iteration_update"),
-          "/",
-          list("B",
-               "C",
-               "D",
-               "est",
-               "uniqueD"
-               ),
-          ".csv"
-        ),
-        row.names = FALSE
-      )
+      
+      as.list.environment(x = environment(), all.names = TRUE) |>
+        saveRDS(file = here::here(devdir, "R_out", swap_step, "first_iteration_update_C_B_D_uniqueD_est.rds"))
+      
       if (swap_step == "first_iteration_update") {
         swapdir <- c(devdir, "matlab_out", "first_iteration_update_C_B_D_uniqueD_est.MAT")
         R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
@@ -319,7 +274,7 @@ for(nb in seq_len(nbt+1)) {
       }
     }
 
-# Flip Signs for Factors and Composites Based on Dominant Indicators --------
+## Flip Signs for Factors and cOmposites Based on Dominant Indicators --------
 
     flipped_signs <-
       flip_signs_ind_domi(
@@ -331,28 +286,13 @@ for(nb in seq_len(nbt+1)) {
         C = C,
         B = B
       )
+    # Updates Gamma, C and B
     list2env(flipped_signs, envir = environment())
-    # TODO: List what this updates
-    # Gamma <- flipped_signs$Gamma
-    # C <- flipped_signs$C
-    # B <- flipped_signs$B
     
     if (isTRUE(devmode)) {
       
-      mapply(
-        write.csv,
-        x = list(Gamma, C, B), 
-        file = paste0(
-          here::here(devdir, "R_out", "flip_signs_ind_domi"),
-          "/",
-          list("Gamma",
-               "C",
-               "B"
-          ),
-          ".csv"
-        ),
-        row.names = FALSE
-      )
+      as.list.environment(x = environment(), all.names = TRUE) |>
+        saveRDS(file = here::here(devdir, "R_out", swap_step, "flip_signs_ind_domi.rds"))
       
       if (swap_step == "flip_signs_ind_domi") {
         swapdir <- c(devdir, "matlab_out", "flip_signs_ind_domi.MAT")
@@ -368,39 +308,34 @@ for(nb in seq_len(nbt+1)) {
     mC <- t(C)[t(C0) == 1] 
     mB <- B[bindex] 
     mD <- uniqueD
-  }
+  
   
   if (isTRUE(devmode)) {
     
-    mapply(
-      write.csv,
-      x = list(mW, mC, mB, mD), 
-      file = paste0(
-        here::here(devdir, "R_out", "end_results"),
-        "/",
-        list("mW",
-             "mC",
-             "mB",
-             "mD"
-        ),
-        ".csv"
-      ),
-      row.names = FALSE
-    )
+    as.list.environment(x = environment(), all.names = TRUE) |>
+      saveRDS(file = here::here(devdir, "R_out", swap_step, "end_results.rds"))
     
     # Heuristic check for when a function is returning more arguments than what is needed
     # Although in-order to maintain testability against matlab, this may have to be kept...
-    
-    devcheck <- print_important_objects()
-    
-    extra_arguments <- lapply(list("prepared_for_ALS" = prepared_for_ALS,
-                                   "updated_X_weights" = updated_X_weights,
-                                   "updated_C_B_D" = updated_C_B_D),
-                              FUN = \(x)  names(x)[!(names(x) %in% devcheck)])
-    extra_arguments 
+    # TODO: This could be improved later
+    # devcheck <- print_important_objects()
+    # 
+    # extra_arguments <- lapply(list("prepared_for_ALS" = prepared_for_ALS,
+    #                                "updated_X_weights" = updated_X_weights,
+    #                                "updated_C_B_D" = updated_C_B_D),
+    #                           FUN = \(x)  names(x)[!(names(x) %in% devcheck)])
+    # extra_arguments 
     
   }
-  return(list("Weights (mW)" = mW, "Loadings (mC)" =  mC, "Path Coefficients (mB)" =  mB, "Uniqueness Terms (mD)" = mD))
+    return(
+      list(
+        "Weights (mW)" = mW,
+        "Loadings (mC)" =  mC,
+        "Path Coefficients (mB)" =  mB,
+        "Uniqueness Terms (mD)" = mD
+      )
+    )
+
 }
 
 
