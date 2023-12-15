@@ -54,14 +54,15 @@
 #'                             B0 = igsca_sim_in$B0, lv_type = igsca_sim_in$lv_type,
 #'                             ov_type = igsca_sim_in$ov_type, ind_domi = igsca_sim_in$ind_domi,
 #'                             nbt = 0,
-#'                             testEquivalence = TRUE,
 #'                             devmode = TRUE)
 #'                             )
-igsca_sim <- function(Z0, W0, C0, B0, lv_type, ov_type, ind_domi, nbt, testEquivalence = FALSE,
-                      swap_step = c("data", "qr1", "gsca_initialization", "svd1", "qr2", "svd2"),
-                      itmax = 100, ceps = 0.001, devmode =  FALSE) {
+igsca_sim <- function(Z0, W0, C0, B0, lv_type, ov_type, ind_domi, nbt,
+                      swap_step = c("prepare_for_ALS", "first_iteration_update",
+                                    "first_factor_update", "first_composite_update",
+                                    "flip_signs_ind_domi"),
+                      itmax = 100, ceps = 0.001, devmode =  FALSE,
+                      devdir = list("dev", "Notes", "data")) {
   
-
 # Safety Checks ------------------------------------------------------------
   swap_step <- match.arg(swap_step)
   # TODO: This should be extended and completed to make igsca into a stand-alone function. However, cSEM already has its own safety checks that make this essentially unnecessary
@@ -100,7 +101,30 @@ for(nb in seq_len(nbt+1)) {
   D <- prepared_for_ALS$D
   U <- prepared_for_ALS$U # Used for updating Weights
   Gamma <- prepared_for_ALS$Gamma
+  
+  if(isTRUE(devmode)) {
     
+    mapply(
+      write.csv,
+      x = prepared_for_ALS,
+      file = paste0(here::here(devdir, "R_out", "prepare_for_ALS"), "/", names(prepared_for_ALS), ".csv"),
+      row.names = FALSE
+    )
+    
+    if (swap_step == "prepare_for_ALS") {
+      
+      swapdir <- c(devdir, "matlab_out", "prepare_for_ALS")
+      W <- read.csv.to.matrix(here::here(swapdir, "W.csv"))
+      C <- read.csv.to.matrix(here::here(swapdir, "C.csv"))
+      B <- read.csv.to.matrix(here::here(swapdir, "B.csv"))
+      V <- read.csv.to.matrix(here::here(swapdir, "V.csv"))
+      Z <- read.csv.to.matrix(here::here(swapdir, "Z.csv"))
+      D <- read.csv.to.matrix(here::here(swapdir, "D.csv"))
+      U <- read.csv.to.matrix(here::here(swapdir, "U.csv"))
+      Gamma <- read.csv.to.matrix(here::here(swapdir, "Gamma.csv"))
+    } 
+  }
+  
     
 
 # Alternating Least Squares Algorithm -------------------------------------
@@ -115,7 +139,11 @@ for(nb in seq_len(nbt+1)) {
     }    
     est0 <- est + 1 
     it <- 0
-
+    
+    if (isTRUE(devmode)) {
+      composite_counter = 0
+      factor_counter = 0
+    }
 ### Alternate Between Updating Weights and Loadings -----------------------
     while ((sum(abs(est0 - est)) > ceps) && (it <= itmax)) {
       # TODO: Review better way to do this while condition
@@ -125,7 +153,7 @@ for(nb in seq_len(nbt+1)) {
       est0 <- est
       
 #### Update Weights ----------------------------------------------------------
-      warning("X and WW probably aren't weights, the naming for this section is a misnomer")
+      # FIXME: warning("X and WW probably aren't weights, the naming for this section is a misnomer")
       updated_X_weights <- update_X_weights(
         Z = Z,
         U = U,
@@ -146,6 +174,7 @@ for(nb in seq_len(nbt+1)) {
         windex_j <- (W0[, j] == 1)
         Xj <- X[, windex_j]
         
+        
         if (lv_type[j] == 0) {
           # Update Composite LV
           theta <-
@@ -160,6 +189,23 @@ for(nb in seq_len(nbt+1)) {
               X = X,
               windex_j = windex_j # Changes per lv_update iteration
             )
+          
+          if(exists("composite_counter") && isTRUE(devmode)) {
+            
+            if (composite_counter == 0) {
+              write.csv(theta,
+                        file = here::here(devdir, "R_out", "first_composite_update", "theta.csv"),
+                        row.names = FALSE)
+
+              composite_counter = composite_counter + 1
+              
+              if (swap_step == "first_composite_update") {
+                
+                swapdir <- c(devdir, "matlab_out", "first_composite_update")
+                theta <- read.csv.to.matrix(here::here(swapdir, "theta.csv"))
+              } 
+            }
+          }
         } else if (lv_type[j] == 1) {
           # Update Factor LV
           theta <-
@@ -168,18 +214,60 @@ for(nb in seq_len(nbt+1)) {
                windex_j = windex_j, # Changes per iteration
                j = j # Changes per iteration
                )
+          
+          if(exists("factor_counter") && isTRUE(devmode)) {
+            
+            if (factor_counter == 0) {
+              
+              write.csv(theta,
+                        file = here::here(devdir, "R_out", "first_factor_update", "theta.csv"),
+                        row.names = FALSE)
+              
+              factor_counter = factor_counter + 1
+              
+              if (swap_step == "first_factor_update") {
+                
+                swapdir <- c(devdir, "matlab_out", "first_factor_update")
+                theta <- read.csv.to.matrix(here::here(swapdir, "theta.csv"))
+              } 
+            }
+          }
         } else {
           stop("lv_type should either be 1 for factors or 0 for composites")
         }
         # This is where the 'actual' updating occurs, in terms of the Gamma matrix, Weights and V(?)
-        warning("Is Matlab doing a 2-norm here?")
+        # FIXME: warning("Is Matlab doing a 2-norm here?")
         theta <- theta / norm(Xj %*% theta, "2")
         
         Gamma[, j] <- Xj %*% theta
         W[windex_j, j] <- theta
         V[windex_j, tot] <- theta
+        
+        if(it == 1 && isTRUE(devmode)) {
+          mapply(
+            write.csv,
+            x = list(Gamma, theta, V, W), 
+            file = paste0(
+              here::here(devdir, "R_out", "first_iteration_update"),
+              "/",
+              list("Gamma",
+                   "theta",
+                   "V",
+                   "W"),
+              ".csv"
+            ),
+            row.names = FALSE
+          )
+          if (swap_step == "first_iteration_update") {
+            swapdir <- c(devdir, "matlab_out", "first_iteration_update")
+            Gamma <- read.csv.to.matrix(here::here(swapdir, "Gamma.csv"))
+            theta <- read.csv.to.matrix(here::here(swapdir, "theta.csv"))
+            V <- read.csv.to.matrix(here::here(swapdir, "V.csv"))
+            W <- read.csv.to.matrix(here::here(swapdir, "W.csv"))
+          }
+        }
     }
-
+      
 ### Update Loadings, Path Coefficients and Disturbance Terms ----------
 
       updated_C_B_D <- update_C_B_D(
@@ -204,6 +292,32 @@ for(nb in seq_len(nbt+1)) {
       C <- updated_C_B_D$C
     }
     
+    if(it == 1 && isTRUE(devmode)) {
+      mapply(
+        write.csv,
+        x = list(B, C, D, est, uniqueD), 
+        file = paste0(
+          here::here(devdir, "R_out", "first_iteration_update"),
+          "/",
+          list("B",
+               "C",
+               "D",
+               "est",
+               "uniqueD"
+               ),
+          ".csv"
+        ),
+        row.names = FALSE
+      )
+      if (swap_step == "first_iteration_update") {
+        swapdir <- c(devdir, "matlab_out", "first_iteration_update")
+        B <- read.csv.to.matrix(here::here(swapdir, "B.csv"))
+        C <- read.csv.to.matrix(here::here(swapdir, "C.csv"))
+        D <- read.csv.to.matrix(here::here(swapdir, "D.csv"))
+        est <- read.csv.to.matrix(here::here(swapdir, "est.csv"))
+        uniqueD <- read.csv.to.matrix(here::here(swapdir, "uniqueD.csv"))
+      }
+    }
 
 # Flip Signs for Factors and Composites Based on Dominant Indicators --------
 
@@ -221,6 +335,32 @@ for(nb in seq_len(nbt+1)) {
     C <- flipped_signs$C
     B <- flipped_signs$B
     
+    if (isTRUE(devmode)) {
+      
+      mapply(
+        write.csv,
+        x = list(Gamma, C, B), 
+        file = paste0(
+          here::here(devdir, "R_out", "flip_signs_ind_domi"),
+          "/",
+          list("Gamma",
+               "C",
+               "B"
+          ),
+          ".csv"
+        ),
+        row.names = FALSE
+      )
+      
+      if (swap_step == "flip_signs_ind_domi") {
+        swapdir <- c(devdir, "matlab_out", swap_step)
+        Gamma <- read.csv.to.matrix(here::here(swapdir, "Gamma.csv"))
+        C <- read.csv.to.matrix(here::here(swapdir, "C.csv"))
+        B <- read.csv.to.matrix(here::here(swapdir, "B.csv"))
+      }
+    }
+    
+    
     mW <- W[windex] 
     # TODO: Commented out in matlab version, why?
     # mC <- c[cindex] 
@@ -230,20 +370,36 @@ for(nb in seq_len(nbt+1)) {
   }
   
   if (isTRUE(devmode)) {
-    browser()
+    
+    mapply(
+      write.csv,
+      x = list(mW, mC, mB, mD), 
+      file = paste0(
+        here::here(devdir, "R_out", "end_results"),
+        "/",
+        list("mW",
+             "mC",
+             "mB",
+             "mD"
+        ),
+        ".csv"
+      ),
+      row.names = FALSE
+    )
+    
     # Heuristic check for when a function is returning more arguments than what is needed
     # Although in-order to maintain testability against matlab, this may have to be kept...
-    devcheck <- print_important_arguments()
+    
+    devcheck <- print_important_objects()
     
     extra_arguments <- lapply(list("prepared_for_ALS" = prepared_for_ALS,
-                                   "updated_weights" = updated_weights,
+                                   "updated_X_weights" = updated_X_weights,
                                    "updated_C_B_D" = updated_C_B_D),
                               FUN = \(x)  names(x)[!(names(x) %in% devcheck)])
     extra_arguments 
     
   }
-  
-  return(list("Weights" = mW, "Loadings" =  mC, "Path Coefficients" =  mB, "Uniqueness Terms" = mD))
+  return(list("Weights (mW)" = mW, "Loadings (mC)" =  mC, "Path Coefficients (mB)" =  mB, "Uniqueness Terms (mD)" = mD))
 }
 
 
@@ -366,6 +522,8 @@ extract_parseModel <- function(model, data, ind_domi_as_first = TRUE) {
 write_for_matlab <- function(extracted_matrices) {
   
   indir <- list("dev", "Notes", "data", "matlab_in")
+  extracted_matrices$lv_type <- as.numeric(extracted_matrices$lv_type)
+  extracted_matrices$ov_type <- as.numeric(extracted_matrices$ov_type)
   
   mapply(
     write.csv,
@@ -586,13 +744,13 @@ prepare_for_ALS <- function(Z0, W0, B0, nvar, ncase, nlv, ov_type) {
       "V" = V,
       "Z" = Z,
       "D" = D,
-      # "Utilde" = Utilde,
       "U" = U,
+      "Gamma" = Gamma
+      # "Utilde" = Utilde,
       # "v" = v,
       # "u" = u,
       # "F_o" = F_o,
       # "Q" = Q,
-      "Gamma" = Gamma
     )
   )
 }
@@ -631,7 +789,7 @@ update_C_B_D <- function(X, nvar, Gamma, cindex, C, nlv, bindex, B, ncase, D, Z,
   # Solution for Q is copied from estimators_weights.R
   Q <- qr.Q(qr(Gamma), complete =  TRUE) 
   F_o <- Q[, (nlv+1):ncase]
-  warning("It's unclear to me whether this SVD is safe. The Matlab code seems to either do a 'normal' svd or a economy svd depending on the dimensionality of the input matrix. Should look into this more.")
+  # FIXME: warning("It's unclear to me whether this SVD is safe. The Matlab code seems to either do a 'normal' svd or a economy svd depending on the dimensionality of the input matrix. Should look into this more.")
   # https://www.mathworks.com/help/matlab/ref/double.svd.html?searchHighlight=svd&s_tid=srchtitle_support_results_1_svd#d126e1597915
   svd_out2 <- (D %*% t(Z) %*% F_o) |>
     {\(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))}()
@@ -682,9 +840,9 @@ update_C_B_D <- function(X, nvar, Gamma, cindex, C, nlv, bindex, B, ncase, D, Z,
 #'
 #' @examples
 update_X_weights <- function(Z, U, D, C, nlv, B) {
-  # TODO: X deviates from Matlab because it is an offspring of svd_out
+  # X deviates from Matlab because it is an offspring of svd_out
   X <- Z - U %*% D
-  warning("I don't quite understand why this is the equivalent of the Matlab expression, revisit page 44 of Hiebeler 2015 R and Matlab")
+  # FIXME: warning("I don't quite understand why this is the equivalent of the Matlab expression, revisit page 44 of Hiebeler 2015 R and Matlab")
   # TODO: Should find alternative to solve() to avoid matrix inversions
   WW <-
     t(C) %*% solve((C %*% t(C) + diag(nlv) - 2 * B + (B %*% t(B))))
@@ -709,7 +867,7 @@ update_X_weights <- function(Z, U, D, C, nlv, B) {
 #' @examples
 update_composite_LV <- function(ntv, tot, nlv, j, W, A, V, X, windex_j) {
   
-  warning("There may be a bug in using lv_type because if it's numeric then it might only ever call the first column/row perhaps boolean would be better?")
+  
   # This updates the composite
   e <- matrix(0, nrow = 1, ncol = ntv)
   e[tot] <- 1 
@@ -791,4 +949,21 @@ print_important_objects <- function() {
       "theta"
     ) |> unique()
   )
+}
+
+
+#' Read csv File and Convert to Matrix
+#' 
+#' Small helper function to read csv files and convert them to matrices immediately. This is to ease interoperability between matlab and R.
+#' 
+#' @param file 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+read.csv.to.matrix <- function(file) {
+  
+  read.csv(file) |>
+    as.matrix()
 }
