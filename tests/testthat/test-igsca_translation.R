@@ -1,10 +1,8 @@
 ## Libraries
-require(R.matlab) # TODO: Should check whether one should load libraries in testthat
 require(testthat) # TODO: This certainly doesn't show up in the cSEM test files...
+require(R.matlab) # TODO: Should check whether one should load libraries in testthat
 require(here)
 require(readxl)
-require(future)
-require(future.apply)
 
 # Generate R Outputs by Swap ----------------------------------------------
 
@@ -52,11 +50,10 @@ here::here(eval(formals(igsca_sim)$devdir),
   invisible()
 
 # Generate Swaps
-# TODO: In principle, we could parallelize this. But this function and its tests are unlikely to reach the end
 generate_swaps <- formals(igsca_sim)$swap_step |>
   eval() |>
   as.list() |>
-  lapply(FUN = \(sw_step) try(igsca_sim(
+  lapply(FUN = \(sw_step) testthat::expect_no_error(igsca_sim(
     z0 = igsca_sim_in$z0,
     W0 = igsca_sim_in$W0,
     C0 = igsca_sim_in$C0,
@@ -70,17 +67,8 @@ generate_swaps <- formals(igsca_sim)$swap_step |>
   ))
   ) 
 
-names(generate_swaps) <- formals(igsca_sim)$swap_step |>
-  eval() |>
-  as.list()
-
-lapply(generate_swaps, is, 'try-error')
-
-# TODO: Set some testthat expectation that there are no errors here
-
-
 # Compare Matlab and R Object Names ---------------------------------------
-igsca_sim(z0 = igsca_sim_in$z0,
+matlab_r_compared_names <- igsca_sim(z0 = igsca_sim_in$z0,
           W0 = igsca_sim_in$W0,
           C0 = igsca_sim_in$C0,
           B0 = igsca_sim_in$B0,
@@ -92,14 +80,45 @@ igsca_sim(z0 = igsca_sim_in$z0,
           swap_step = "noswap",
           devmode_checkobj = TRUE)
 
-# TODO: Set testthat expectation of what the current names of the objects are...
-
+# Check to see if the list of acceptable non-overlapping names between R and Matlab is the same as before
+testthat::test_that("Matlab_R_Compared_Names", {
+  testthat::expect_snapshot(igsca_sim(z0 = igsca_sim_in$z0,
+                            W0 = igsca_sim_in$W0,
+                            C0 = igsca_sim_in$C0,
+                            B0 = igsca_sim_in$B0,
+                            lv_type = igsca_sim_in$lv_type,
+                            ov_type = igsca_sim_in$ov_type,
+                            ind_domi = igsca_sim_in$ind_domi,
+                            nbt = 0,
+                            devmode = TRUE,
+                            swap_step = "noswap",
+                            devmode_checkobj = TRUE))
+})
  
 
 # Compare GSCAPro and Matlab ----------------------------------------------
 
 # TODO: Compare GSCAPro and matlab
- 
+GSCAPro_in <- list("dev", "Notes", "data", "GSCAPro_1_2_1Output") |>
+  {\(x) here::here(x, list.files(here::here(x)))}()
+GSCAPro <- vector(mode = "list", length = length(GSCAPro_in))
+names(GSCAPro) <- list("dev", "Notes", "data", "GSCAPro_1_2_1Output") |>
+  {\(x) list.files(here::here(x))}()
+
+for (i in seq_len(length(GSCAPro))) {
+  if (is(try(read.csv(file = GSCAPro_in[[i]]), silent = TRUE)
+         , 'try-error')) {
+    try({
+      x <- read.csv(file = GSCAPro_in[[i]], skip = 1)
+    })
+  } else {
+    x <- read.csv(file = GSCAPro_in[[i]], skip = 0)
+  }
+  GSCAPro[[i]] <- x
+}
+
+# TODO: Rename names(GSCAPro) to something more concise, using regex
+# TODO: Figure out how to compare the values of GSCAPro and Matlab
 
 
 # Compare Matlab and R ----------------------------------------------------
