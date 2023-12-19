@@ -27,21 +27,21 @@
 #' tutorial_igsca_model <- "
 #' # Composite Model
 #' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
-#' NumberofJobInterviews <~ Interview1 + Interview2
-#' NumberofJobOffers <~ Offer1 + Offer2 
+#' Numberofjobinterviews <~ Interview1 + Interview2
+#' Numberofjoboffers <~ Offer1 + Offer2 
 #' 
 #' # Reflective Measurement Model
-#' Honesty_Humility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
+#' HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
 #' Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
 #' Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
 #' Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
 #' Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
-#' Openness_to_Experience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
+#' OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
 #' 
 #' # Structural Model
-#' NetworkingBehavior ~ Honesty_Humility + Emotionality + Extraversion + Agreeableness + Conscientiousness + Openness_to_Experience
-#' NumberofJobInterviews ~ NetworkingBehavior
-#' NumberofJobOffers ~ NetworkingBehavior
+#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience
+#' Numberofjobinterviews ~ NetworkingBehavior
+#' Numberofjoboffers ~ NetworkingBehavior
 #' "
 #' 
 #' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
@@ -89,7 +89,7 @@ igsca_sim <-
   swap_step <- match.arg(swap_step)
   # TODO: This should be extended and completed to make igsca into a stand-alone function. However, cSEM already has its own safety checks that make this essentially unnecessary
   stopifnot("The number of bootstraps should be a non-negative integer" = nbt >= 0)
-
+  
 # Auxiliary Variables -----------------------------------------------------
   ncase <- nrow(z0)
   nvar <- ncol(z0)
@@ -99,6 +99,15 @@ igsca_sim <-
   windex <- which(c(W0) == 1) 
   cindex <- which(c(C0) == 1)
   bindex <- which(c(B0) == 1)
+  
+  # column and row names are kept aside because swapping with matlab's environment removes the column and row names. Arrays in matlabs don't have row or column names.
+  special_names <- list()
+  special_names$weights$row <- rownames(W0)
+  special_names$weights$col <- colnames(W0)
+  special_names$loadings$row <- rownames(C0)
+  special_names$loadings$col <- colnames(C0)
+  special_names$path$row <- rownames(B0)
+  special_names$path$col <- colnames(B0)
   
 
 # Bootstrap Cycle ---------------------------------------------------------
@@ -133,10 +142,10 @@ for(nb in seq_len(nbt+1)) {
                is.vector)
       
       # Only take the objects that have overlapping names between R and Matlab
-      R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-        {\(mat_env) mat_env[ls()]}() |>
-        convert_matlab2R(vectorness = vectorness) |>
-        list2env(envir = environment())
+      mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
+      mat_env <- mat_env[names(mat_env) %in% ls()] |>
+        convert_matlab2R(vectorness = vectorness) 
+      list2env(x = mat_env, envir = environment())
       
     } 
   }
@@ -146,7 +155,7 @@ for(nb in seq_len(nbt+1)) {
 ### While Counters and Initial Estimates ----------------------------------
     # Set the initial estimates based on either the structural model or the loadings
     # if there's no structural model
-    if (any(bindex)) {
+    if (length(bindex) > 0) {
       est <- B[bindex] 
     } else {
       est <- C[cindex]
@@ -222,10 +231,10 @@ for(nb in seq_len(nbt+1)) {
                          is.vector)
                 
                 # Only take the objects that have overlapping names between R and Matlab
-                R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-                  {\(mat_env) mat_env[ls()]}() |>
-                  convert_matlab2R(vectorness = vectorness) |>
-                  list2env(envir = environment())
+                mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
+                mat_env <- mat_env[names(mat_env) %in% ls()] |>
+                  convert_matlab2R(vectorness = vectorness) 
+                list2env(x = mat_env, envir = environment())
               } 
             }
           }
@@ -255,10 +264,10 @@ for(nb in seq_len(nbt+1)) {
                          is.vector)
                 
                 # Only take the objects that have overlapping names between R and Matlab
-                R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-                  {\(mat_env) mat_env[ls()]}() |>
-                  convert_matlab2R(vectorness = vectorness) |>
-                  list2env(envir = environment())
+                mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
+                mat_env <- mat_env[names(mat_env) %in% ls()] |>
+                  convert_matlab2R(vectorness = vectorness) 
+                list2env(x = mat_env, envir = environment())
                 
               } 
             }
@@ -287,10 +296,10 @@ for(nb in seq_len(nbt+1)) {
                      is.vector)
             
             # Only take the objects that have overlapping names between R and Matlab
-            R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-              {\(mat_env) mat_env[ls()]}() |>
-              convert_matlab2R(vectorness = vectorness) |>
-              list2env(envir = environment())
+            mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
+            mat_env <- mat_env[names(mat_env) %in% ls()] |>
+              convert_matlab2R(vectorness = vectorness) 
+            list2env(x = mat_env, envir = environment())
           }
         }
     }
@@ -328,10 +337,10 @@ for(nb in seq_len(nbt+1)) {
                  is.vector)
         
         # Only take the objects that have overlapping names between R and Matlab
-        R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-          {\(mat_env) mat_env[ls()]}() |>
-          convert_matlab2R(vectorness = vectorness) |>
-          list2env(envir = environment())
+        mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
+        mat_env <- mat_env[names(mat_env) %in% ls()] |>
+          convert_matlab2R(vectorness = vectorness) 
+        list2env(x = mat_env, envir = environment())
       }
       }
     }
@@ -364,20 +373,40 @@ for(nb in seq_len(nbt+1)) {
                  is.vector)
         
         # Only take the objects that have overlapping names between R and Matlab
-        R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-          {\(mat_env) mat_env[ls()]}() |>
-          convert_matlab2R(vectorness = vectorness) |>
-          list2env(envir = environment())
+        # Note: Previous iteration of this put ls() in an anonymous function, which does not work. 
+        # For example, this {\(x) ls()}() only shows x 
+        
+        mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
+        mat_env <- mat_env[names(mat_env) %in% ls()] |>
+          convert_matlab2R(vectorness = vectorness) 
+        list2env(x = mat_env, envir = environment())
       }
     }
     
     
     mW <- W[windex] 
-    # TODO: Commented out in matlab version, why?
+    # This was commented out in the Matlab version because the loadings dimensions
+    # are transposed relative to the weights matrix
     # mC <- c[cindex] 
     mC <- t(C)[t(C0) == 1] 
     mB <- B[bindex] 
     mD <- uniqueD
+  
+  
+  # Format Output
+  Weights <- W
+  rownames(Weights) <- special_names$weights$row
+  colnames(Weights) <- special_names$weights$col
+  
+  Loadings <- t(C)
+  rownames(Loadings) <- special_names$loadings$row
+  colnames(Loadings) <- special_names$loadings$col
+  
+  PathCoefficients <- B
+  rownames(PathCoefficients) <- special_names$path$row
+  colnames(PathCoefficients) <- special_names$path$col
+  
+  names(uniqueD) <- rownames(Loadings)
   
   
   if (isTRUE(devmode)) {
@@ -401,17 +430,23 @@ for(nb in seq_len(nbt+1)) {
     # Objects in Matlab that don't appear in R
     MatObj_NotIn_R <- mat_names[mat_names %in% non_overlapping_names]
     
-    message("As manually checked on December 17/2023, I'm fairly sure that the non-overlapping names are OK. Most of the Matlab 'unique' names actually show-up in the R sub-functions. A small minority simply don't appear for parsimony (C_t, crindex) and some probably aren't legal/good-idea R names (t). The R-unique object names are intermediaries from functions")
+    # For Maintenance
+    # "As manually checked on December 17/2023, I'm fairly sure that the non-overlapping names are OK.
+    # Most of the Matlab 'unique' names actually show-up in the R sub-functions.
+    # A small minority simply don't appear for parsimony (C_t, crindex) and some
+    # probably aren't legal/good-idea R names (t). The R-unique object names are
+    # intermediaries from functions"
+    # For Maintenance 
     
     return(list("RObj_NotIn_Matlab" = RObj_NotIn_Matlab, "MatObj_NotIn_R" =  MatObj_NotIn_R))
    } 
   }
     return(
       list(
-        "Weights (mW)" = mW,
-        "Loadings (mC)" =  mC,
-        "Path Coefficients (mB)" =  mB,
-        "Uniqueness Terms (mD)" = mD
+        "Weights" = Weights,
+        "Loadings" =  Loadings,
+        "Path Coefficients" =  PathCoefficients,
+        "Uniqueness Terms" = uniqueD
       )
     )
 
@@ -435,21 +470,21 @@ for(nb in seq_len(nbt+1)) {
 #' tutorial_igsca_model <- "
 #' # Composite Model
 #' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
-#' NumberofJobInterviews <~ Interview1 + Interview2
-#' NumberofJobOffers <~ Offer1 + Offer2 
+#' Numberofjobinterviews <~ Interview1 + Interview2
+#' Numberofjoboffers <~ Offer1 + Offer2 
 #' 
 #' # Reflective Measurement Model
-#' Honesty_Humility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
+#' HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
 #' Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
 #' Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
 #' Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
 #' Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
-#' Openness_to_Experience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
+#' OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
 #' 
 #' # Structural Model
-#' NetworkingBehavior ~ Honesty_Humility + Emotionality + Extraversion + Agreeableness + Conscientiousness + Openness_to_Experience
-#' NumberofJobInterviews ~ NetworkingBehavior
-#' NumberofJobOffers ~ NetworkingBehavior
+#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience
+#' Numberofjobinterviews ~ NetworkingBehavior
+#' Numberofjoboffers ~ NetworkingBehavior
 #' "
 #' 
 #' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
@@ -467,9 +502,12 @@ extract_parseModel <-
     ov_type <- csemify$construct_type == "Composite"
     
     # TODO: More parsimonious expression to get to C0
-    W0_to_C0 <- W0
-    W0_to_C0[, ov_type] <- 0
-    C0 <- W0_to_C0
+    # This is also wrong, all indicators that have LVs also have loadings
+    # W0_to_C0 <- W0
+    # W0_to_C0[, ov_type] <- 0
+    # C0 <- W0_to_C0
+    C0 <- W0
+    
     
     stopifnot(
       "Data matrix (z0) does not correctly correspond with Weights matrix (W0)" = identical(colnames(z0), rownames(W0)),
@@ -516,21 +554,21 @@ extract_parseModel <-
 #' tutorial_igsca_model <- "
 #' # Composite Model
 #' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
-#' NumberofJobInterviews <~ Interview1 + Interview2
-#' NumberofJobOffers <~ Offer1 + Offer2 
+#' Numberofjobinterviews <~ Interview1 + Interview2
+#' Numberofjoboffers <~ Offer1 + Offer2 
 #' 
 #' # Reflective Measurement Model
-#' Honesty_Humility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
+#' HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
 #' Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
 #' Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
 #' Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
 #' Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
-#' Openness_to_Experience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
+#' OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
 #' 
 #' # Structural Model
-#' NetworkingBehavior ~ Honesty_Humility + Emotionality + Extraversion + Agreeableness + Conscientiousness + Openness_to_Experience
-#' NumberofJobInterviews ~ NetworkingBehavior
-#' NumberofJobOffers ~ NetworkingBehavior
+#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience
+#' Numberofjobinterviews ~ NetworkingBehavior
+#' Numberofjoboffers ~ NetworkingBehavior
 #' "
 #' 
 #' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
@@ -574,21 +612,21 @@ write_for_matlab <- function(extracted_matrices) {
 #' tutorial_gsca_model <- "
 #' # Composite Model
 #' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
-#' NumberofJobInterviews <~ Interview1 + Interview2
-#' NumberofJobOffers <~ Offer1 + Offer2 
+#' Numberofjobinterviews <~ Interview1 + Interview2
+#' Numberofjoboffers <~ Offer1 + Offer2 
 #' 
 #' # Reflective Measurement Model Forced into Composite
-#' Honesty_Humility <~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
+#' HonestyHumility <~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
 #' Emotionality <~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
 #' Extraversion <~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
 #' Agreeableness <~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
 #' Conscientiousness <~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
-#' Openness_to_Experience <~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
+#' OpennesstoExperience <~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
 #' 
 #' # Structural Model
-#' NetworkingBehavior ~ Honesty_Humility + Emotionality + Extraversion + Agreeableness + Conscientiousness + Openness_to_Experience
-#' NumberofJobInterviews ~ NetworkingBehavior
-#' NumberofJobOffers ~ NetworkingBehavior
+#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience
+#' Numberofjobinterviews ~ NetworkingBehavior
+#' Numberofjoboffers ~ NetworkingBehavior
 #' "
 #' 
 #' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
@@ -653,8 +691,8 @@ gsca_inione <- function(z0, W0, B0) {
       
       XI <- kronecker(t(beta), Z)
       XI <- XI[, windex_p]
-      theta = MASS::ginv(t(XI) %*% XI) %*% t(XI) %*% vecZDelta
-      zw = Z[, windex_p] %*% theta
+      theta <- MASS::ginv(t(XI) %*% XI) %*% t(XI) %*% vecZDelta
+      zw <- Z[, windex_p] %*% theta
       
       
       theta <- sqrt(N) * theta / norm(zw, "2")
@@ -844,7 +882,7 @@ update_C_B_D <-
     D[ov_type != 1, ov_type != 1] <- 0
     
     
-    if (any(bindex)) {
+    if (length(bindex) > 0) {
       est <- B[bindex]
     } else {
       est <- C[cindex]
@@ -1074,3 +1112,219 @@ parse_GSCAPro_FullResults <-
     return(tables)
     
   }
+
+#' Converts Output of igsca functions into a table to facilitate comparisons
+#' 
+#' Assumes that indicators only load onto one factor and that there are no cross-factor loadings
+#'
+#' @param model 
+#' @param weights 
+#' @param loadings 
+#' @param uniqueD 
+#' @param paths 
+#' @importFrom lavaan lavaanify
+#' @return
+#' @export
+#'
+#' @examples
+get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, paths) {
+  table <- lavaan::lavaanify(model = model)[, c("lhs", "op", "rhs")]
+  # Remove unnecessary rows
+  table <- table[table$op %in% c("=~", "<~", "~"),]
+  # Pre-allocate Columns
+  table <-
+    cbind(table, list(
+      "weights" = 0,
+      "loadings" = 0,
+      "uniqueD" = 0,
+      "paths" = 0
+    ))
+  
+  # Slide in weights
+  for (indicator in rownames(weights)) {
+    for (lv in colnames(weights)) {
+      table[((table$lhs == lv &
+              table$rhs == indicator) &
+              table$op %in% c("<~", "=~")), "weights"] <- weights[indicator, lv]
+    }
+  }
+  
+  # Slide in loadings
+  for (indicator in rownames(loadings)) {
+    for (lv in colnames(loadings)) {
+      table[((table$lhs == lv &
+                table$rhs == indicator) &
+               table$op %in% c("<~", "=~")), "loadings"] <- loadings[indicator, lv]
+    }
+  }
+  
+  # Slide in uniqueD
+  for (indicator in names(uniqueD)) {
+    # This assumes that every indicator only loads onto one factor
+    # Cross-factor loadings will not work with this
+      table[((table$rhs == indicator) &
+               (table$op == "=~")), "uniqueD"] <- uniqueD[indicator]
+  }
+  
+  # Slide in Paths
+  for (lv_to in rownames(paths)) {
+    for (lv_from in colnames(paths)) {
+      table[((table$rhs == lv_from &
+                table$lhs == lv_to) &
+               table$op == "~"), "paths"] <- paths[lv_to, lv_from]
+    }
+  }
+  
+  # Remove zeros for cells that shouldn't have values
+  table[!(table$op %in% c("<~", "=~")), "weights"] <- NA
+  table[!(table$op %in% c("<~", "=~")), "loadings"] <- NA
+  table[!(table$op %in% c("=~")), "uniqueD"] <- NA
+  table[!(table$op %in% c("~")), "paths"] <- NA
+  
+  
+  return(table)
+  
+}
+
+
+#' Takes GSCAPro input and Creates a Lavaan-style Table
+#'
+#' Assumes that every indicator loads onto only one latent variable (composite/factor)
+#' 
+#' @param gscapro_in 
+#' @param model 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_lavaan_table_igsca_gscapro <- function(gscapro_in, model) {
+  
+  table <- lavaan::lavaanify(model = model)[, c("lhs", "op", "rhs")]
+  # Remove unnecessary rows
+  table <- table[table$op %in% c("=~", "<~", "~"),]
+  # Pre-allocate Columns
+  table <-
+    cbind(table, list(
+      "weights" = 0,
+      "loadings" = 0,
+      "uniqueD" = 0,
+      "paths" = 0
+    ))
+  
+  
+  # Correct names of latent variables
+  gscapro_in$Weights$V1 <-
+    gsub(pattern = " ",
+         x = gscapro_in$Weights$V1,
+         replacement = "")
+  
+  gscapro_in$Weights$V1 <-
+    gsub(pattern = "-",
+         x = gscapro_in$Weights$V1,
+         replacement = "")
+  
+  
+  
+  lv_idx <- list()
+  span <- list() 
+  
+  lv_idx$weights <- which(is.na(gscapro_in$Weights$Estimate))
+  # Number of rows after the row of the LV that correspond to that LV's indicators
+  span$weights <- diff(lv_idx$weights)
+  gscapro_in$Weights$lv <- ""
+  gscapro_in$Weights$lv <-
+    c(with(gscapro_in$Weights, rep(V1[is.na(Estimate) &
+                                      (nchar(V1) > 0)], times = span$weights)), "")
+  
+  
+  # Retrieving indicators from gscapro
+  gscapro_indicators <-
+    with(gscapro_in$Weights, V1[!(V1 %in% lv) & (nchar(V1) > 0)])
+  gscapro_lv <-
+    with(gscapro_in$Weights, unique(lv)[nchar(unique(lv)) > 0])
+  
+  rownames(gscapro_in$Weights)<-gscapro_in$Weights$V1
+  
+  for (indicator in gscapro_indicators) {
+    for (lv in gscapro_lv) {
+      table[((table$lhs == lv &
+                table$rhs == indicator) &
+               table$op %in% c("<~", "=~")), "weights"] <- gscapro_in$Weights[indicator, "Estimate"]
+    }
+  }
+  
+  
+  # Loadings Parser Shortcut
+  gscapro_in$Loadings$V1 <-
+    gsub(pattern = " ",
+         x = gscapro_in$Loadings$V1,
+         replacement = "")
+  
+  gscapro_in$Loadings$V1 <-
+    gsub(pattern = "-",
+         x = gscapro_in$Loadings$V1,
+         replacement = "")
+  
+  if (identical(gscapro_in$Weights$V1, gscapro_in$Loadings$V1)) {
+    rownames(gscapro_in$Loadings) <- gscapro_in$Loadings$V1
+    
+    for (indicator in gscapro_indicators) {
+      for (lv in gscapro_lv) {
+        table[((table$lhs == lv &
+                  table$rhs == indicator) &
+                 table$op %in% c("<~", "=~")), "loadings"] <-
+          gscapro_in$Loadings[indicator, "Estimate"]
+      }
+    }
+  } else {
+    stop("Cannot take the shortcut of weight indicators for loadings")
+  }
+  
+  # Paths need their own parser 
+  
+  gscapro_in$`Path coefficients` <-
+    gscapro_in$`Path coefficients`[!is.na(gscapro_in$`Path coefficients`$Estimate), ]
+  gscapro_in$`Path coefficients`$V1 <-
+    gsub(pattern = " ",
+         x = gscapro_in$`Path coefficients`$V1,
+         replacement = "")
+  
+  gscapro_in$`Path coefficients`$V1 <-
+    gsub(pattern = "->",
+         x = gscapro_in$`Path coefficients`$V1,
+         replacement = " ")
+  
+  gscapro_in$`Path coefficients`$V1 <-
+    gsub(pattern = "-",
+         x = gscapro_in$`Path coefficients`$V1,
+         replacement = "")
+  
+  # ephpostfacto on November 6, 2009; editted by Jilber Urbina on Jan 1/2014 https://stackoverflow.com/a/1690753
+  paths <-strsplit(gscapro_in$`Path coefficients`$V1, " ")
+  gscapro_in$`Path coefficients`$lvfrom <-sapply(paths, FUN = \(.) .[1])
+  gscapro_in$`Path coefficients`$lvto <-sapply(paths, FUN = \(.) .[2])
+  
+  for (lv_to_iter in gscapro_in$`Path coefficients`$lvto) {
+    for (lv_from_iter in gscapro_in$`Path coefficients`$lvfrom) {
+      table[((table$rhs == lv_from_iter &
+                table$lhs == lv_to_iter) &
+               table$op == "~"), "paths"] <- with(gscapro_in$`Path coefficients`, Estimate[(lvfrom == lv_from_iter) & (lvto == lv_to_iter)])
+                 
+    }
+  }
+  
+  # Parsing for Uniqueness Terms
+  for (indicator in names(gscapro_in$`Unique D^2`)) {
+    table[((table$rhs == indicator) &
+             (table$op == "=~")), "uniqueD"] <- gscapro_in$`Unique D^2`[indicator]
+  }
+  
+  # Remove zeros for cells that shouldn't have values
+  table[!(table$op %in% c("<~", "=~")), "weights"] <- NA
+  table[!(table$op %in% c("<~", "=~")), "loadings"] <- NA
+  table[!(table$op %in% c("=~")), "uniqueD"] <- NA
+  table[!(table$op %in% c("~")), "paths"] <- NA
+  
+  return(table)
+}
