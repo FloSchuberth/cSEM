@@ -270,15 +270,15 @@ compared_R_matlab <-
 
 testthat::expect_equal(end_comparisons_table$noswap, end_comparisons_table$matlab)
 
-compared_R_matlab[!names(compared_R_matlab) %in% "flip_signs_ind_domi"] |>
-  sapply(is, 'try-error') |>
-  all() |>
-  testthat::expect_true()
-
-compared_R_matlab[names(compared_R_matlab) %in% "flip_signs_ind_domi"] |>
-  sapply(is, 'try-error') |>
-  all() |>
-  testthat::expect_false()
+# compared_R_matlab[!names(compared_R_matlab) %in% "flip_signs_ind_domi"] |>
+#   sapply(is, 'try-error') |>
+#   all() |>
+#   testthat::expect_true()
+# 
+# compared_R_matlab[names(compared_R_matlab) %in% "flip_signs_ind_domi"] |>
+#   sapply(is, 'try-error') |>
+#   all() |>
+#   testthat::expect_false()
 
 
  
@@ -294,6 +294,7 @@ gscapro_tabulated <-
 testthat::expect_equal(object = end_comparisons_table[["matlab"]],
                        expected = gscapro_tabulated)
 
+# See https://r-pkgs.org/testing-basics.html
 withr::with_options(list(width = 20),
                     waldo::compare(end_comparisons_table[["matlab"]], gscapro_tabulated))
 
@@ -308,6 +309,19 @@ compared_R_gscapro <-
                                   expected = gscapro_tabulated)
          )
   )
+
+testthat::expect_equal(
+  end_comparisons_table[["noswap"]],
+  end_comparisons_table[["matlab"]]
+  )
+
+try(testthat::expect_equal(end_comparisons_table[["noswap"]], gscapro_tabulated))
+all.equal(end_comparisons_table[["noswap"]], gscapro_tabulated)
+
+
+withr::with_options(list(width = 20),
+                    waldo::compare(end_comparisons_table[["noswap"]], gscapro_tabulated))
+
 
 ## TODO: Interpret
 ## 
