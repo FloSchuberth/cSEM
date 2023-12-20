@@ -13,6 +13,9 @@ gsca_inione(z0, W0, B0)
 
 \item{B0}{Path Coefficients}
 }
+\value{
+When used in the context of igsca_sim(), it returns a list of the starting values for Weights, Loadings and Path Coefficients. In principle, otherwise, it is a slightly modified implementation of ordinary Generalised Structured Component Analysis (GSCA).
+}
 \description{
 Initializes the values for I-GSCA
 }

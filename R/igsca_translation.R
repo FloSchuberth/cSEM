@@ -66,9 +66,13 @@
 #'                                    ind_domi_as_first = TRUE)
 #'
 #' # Fit the I-GSCA model
-#' (igsca_sim_out <- igsca_sim(z0 = igsca_sim_in$z0, W0 = igsca_sim_in$W0, C0 = igsca_sim_in$C0,
-#'                             B0 = igsca_sim_in$B0, lv_type = igsca_sim_in$lv_type,
-#'                             ov_type = igsca_sim_in$ov_type, ind_domi = igsca_sim_in$ind_domi,
+#' (igsca_sim_out <- igsca_sim(z0 = igsca_sim_in$z0,
+#'                             W0 = igsca_sim_in$W0,
+#'                             C0 = igsca_sim_in$C0,
+#'                             B0 = igsca_sim_in$B0,
+#'                             lv_type = igsca_sim_in$lv_type,
+#'                             ov_type = igsca_sim_in$ov_type,
+#'                             ind_domi = igsca_sim_in$ind_domi,
 #'                             nbt = 0,
 #'                             devmode = FALSE,
 #'                             swap_step = "noswap")
@@ -475,7 +479,7 @@ for(nb in seq_len(nbt+1)) {
 #' @param data Dataframe 
 #' @param ind_domi_as_first Boolean for whether the first indicator for each latent factor should be chosen as the dominant indicator
 #'
-#' @return z0, W0, B0, C0, lv_type, ov_type, ind_domi
+#' @return Returns a list of matrices required for igsca_sim() to run: z0, W0, B0, C0, lv_type, ov_type, ind_domi. 
 #' @export
 #' @examples
 #' 
@@ -572,7 +576,7 @@ extract_parseModel <-
 #'
 #' @param extracted_matrices Object returned by extract_parseModel
 #'
-#' @return
+#' @return Writes the matrices from extract_parseModel() to the appropriate test directory for the Matlab implementation of igsca_sim to run.
 #' @importFrom here here
 #' @examples
 #' 
@@ -629,7 +633,7 @@ write_for_matlab <- function(extracted_matrices) {
 #' 
 #' @author Michael S. Truong
 #' 
-#' @return
+#' @return When used in the context of igsca_sim(), it returns a list of the starting values for Weights, Loadings and Path Coefficients. In principle, otherwise, it is a slightly modified implementation of ordinary Generalised Structured Component Analysis (GSCA). 
 #' @export
 #'
 #' @examples
@@ -755,7 +759,7 @@ gsca_inione <- function(z0, W0, B0) {
 #' @param C 
 #' @param B 
 #'
-#' @return Gamma 
+#' @return List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
 #'
 #' @examples
 flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
@@ -787,8 +791,12 @@ flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
 #' @param nlv 
 #' @param ov_type 
 #'
-#' @return
+#' @return List of matrices to put through the Alternating Least Squared (ALS) algorithm: 
 #'
+#' 1) Starting values for Weights (W), Loadings (C), Path-Coefficients (B) and Uniqueness Terms (D)
+#' 2) Standardized data matrix (Z)
+#' 3) SVD Decomposition of ...*something* to get U and V matrices.
+#' TODO: Figure out what the SVD decomposition if for
 #' @examples
 prepare_for_ALS <- function(z0, W0, B0, nvar, ncase, nlv, ov_type) {
   bz0 <- z0
@@ -864,8 +872,14 @@ prepare_for_ALS <- function(z0, W0, B0, nvar, ncase, nlv, ov_type) {
 #' @param Z 
 #' @param ov_type 
 #'
-#' @return 
+#' @return List of matrices:
 #'
+#' 1) Uniqueness terms (D) and (\eqn{D^2})
+#' 2) Non-zero Path-Coefficients (if Paths are specified in B0) or non-zero Loadings 
+#' 3) Path-Coefficients (B) and Loadings (C)
+#' 4) U, Utilde, v, F_o, Q, U *something*
+#' TODO: Name these accessory matrices
+#' 
 #' @examples
 update_C_B_D <-
   function(X,
@@ -921,11 +935,11 @@ update_C_B_D <-
         "uniqueD" = uniqueD,
         "est" = est,
         "U" = U,
-        "Utilde" = Utilde,
+        "Utilde" = Utilde,# TODO: This is used somewhere?
         "v" = v,
         "u" = u,
         "F_o" = F_o,
-        "Q" = Q,
+        "Q" = Q, # TODO: This is used somewhere else?
         "B" = B,
         "C" = C
       )
@@ -941,7 +955,10 @@ update_C_B_D <-
 #' @param nlv 
 #' @param B 
 #'
-#' @return
+#' @return Two matrices:
+#' - *X*: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D)(?)
+#' - *WW*: *presumably* Weights after accounting for current Loading and Path-Coefficients values.
+#' TODO: Double check that I've got this right.
 #' @export
 #'
 #' @examples
@@ -967,7 +984,8 @@ update_X_weights <- function(Z, U, D, C, nlv, B) {
 #' @param X 
 #' @param windex_j 
 #'
-#' @return
+#' @return theta: A matrix that will later be used to update the weights for the composite variable.
+#' TODO: Double check that this is for weights only?
 #' @export
 #'
 #' @examples
@@ -999,7 +1017,9 @@ update_composite_LV <-
 #' @param windex_j 
 #' @param j 
 #'
-#' @return
+#' @return theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
+#' 
+#' TODO: Double check that this is correct.
 #' @export
 #'
 #' @examples
@@ -1015,7 +1035,7 @@ update_factor_LV <- function(WW, windex_j, j) {
 #' @param mat_env The (piped-in) matlab lab environment from readMat()
 #' @param vectorness Vector object that lists the different objects in the pre-swap environment that were vectors
 #'
-#' @return Corrected Matlab
+#' @return Convert particular Matlab objects to be compatible with idiomatic R programming. 
 #' @export
 #'
 #' @examples
@@ -1041,7 +1061,7 @@ convert_matlab2R <- function(mat_env, vectorness) {
 #' 
 #' The commented headers require more work to get working
 #' 
-#' @return
+#' @return List of extracted matrices from GSCA Pro Full results
 #' @export
 #' @importFrom data.table fread
 #' @importFrom data.table fwrite
@@ -1131,7 +1151,7 @@ parse_GSCAPro_FullResults <-
 #' @param uniqueD 
 #' @param paths 
 #' @importFrom lavaan lavaanify
-#' @return
+#' @return Table of Weights, Loadings, Path-Coefficients and Uniqueness terms from i-gsca algorithms in Matlab or R.
 #' @export
 #'
 #' @examples
@@ -1199,10 +1219,12 @@ get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, pat
 #'
 #' Assumes that every indicator loads onto only one latent variable (composite/factor)
 #' 
+#' Expects output from parse_GSCAPro_FullResults.
+#' 
 #' @param gscapro_in 
 #' @param model 
 #'
-#' @return
+#' @return Table of GSCA Pro results of Weights, Loadings, Path Coefficients and Uniqueness Terms in lavaan style. 
 #' @export
 #'
 #' @examples

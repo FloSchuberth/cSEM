@@ -10,6 +10,9 @@ parse_GSCAPro_FullResults(
   headers = c("Weights", "Loadings", "Path coefficients", "Unique D^2")
 )
 }
+\value{
+List of extracted matrices from GSCA Pro Full results
+}
 \description{
 The commented headers require more work to get working
 }

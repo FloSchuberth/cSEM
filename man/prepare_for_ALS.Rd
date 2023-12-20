@@ -21,6 +21,15 @@ prepare_for_ALS(z0, W0, B0, nvar, ncase, nlv, ov_type)
 
 \item{ov_type}{}
 }
+\value{
+List of matrices to put through the Alternating Least Squared (ALS) algorithm:
+\enumerate{
+\item Starting values for Weights (W), Loadings (C), Path-Coefficients (B) and Uniqueness Terms (D)
+\item Standardized data matrix (Z)
+\item SVD Decomposition of ...\emph{something} to get U and V matrices.
+TODO: Figure out what the SVD decomposition if for
+}
+}
 \description{
 Internal I-GSCA function
 }

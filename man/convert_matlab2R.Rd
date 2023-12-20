@@ -12,7 +12,7 @@ convert_matlab2R(mat_env, vectorness)
 \item{vectorness}{Vector object that lists the different objects in the pre-swap environment that were vectors}
 }
 \value{
-Corrected Matlab
+Convert particular Matlab objects to be compatible with idiomatic R programming.
 }
 \description{
 Matlab vectors are matrices when read into R, so here we perform the conversions to make them more R-friendly. This is also a placeholder for any future needed adjustments to make the Matlab environment swappable with R
