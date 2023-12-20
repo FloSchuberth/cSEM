@@ -1,20 +1,33 @@
-#' One-to-One R Translation of igsca_sim.m from Heungsun Hwang
+#' One-to-One R Translation of igsca_sim.m by Heungsun Hwang
 #' 
-#' @param z0 Input data matrix
-#' @param W0 Weight indicator: Indicators in rows, LVs in columns
-#' @param C0 Loadings indicator. Indicators that load onto factors should have 1s in both W0 and C0.
-#' @param B0 Path Coefficients Indicators
-#' @param lv_type A boolean vector index for what latent variable is a factor. Length = ncol(W0)
-#' @param ov_type A numeric vector index for whether an indicator is for a composite variable or for factor. 1 means indicator for factor, 0 means indicator for composite variable. Important for D matrix, it zeros the entries for composite indicators. Length = nrow(W0)
-#' @param ind_domi A numeric vector index for the indicator that is dominant for each latent variable. Range of values should be the number of indicators, which is nrow(W0). Length should be ncol(W0)
-#' @param nbt Number of boostraps -- though this should really be removed
-#' @param testEquivalence TRUE/FALSE for whether comparison with Matlab should be made
-#' @param swap_step List the stages where the R computation should be swapped for Matlab's to better identify the root of the divergences
-#' @param itmax Maximum number of ALS iterations
-#' @param ceps Minimum amount of absolute change in the estimates between ALS iterations before ending the optimization.
+#' This is a one-to-one R translation of the matlab implementation of I-GSCA by Heungsun Hwang. This implementation was also re-factored for ease of interpretation. 
+#' 
+#' The code here generally assumes that every indicator corresponds to a single latent variable.
+#' 
+#' @param z0 Input data-frame/matrix. Should contain named columns.
+#' @param W0 Indicator matrix of weights: indicators (rows) and their corresponding latent variable (columns).
+#' @param C0 Indicator matrix of loadings: indicators (rows) and their corresponding latent variable (columns).
+#' @param B0 Square indicator matrix of path coefficients: from-latent-variable (rows) and to-latent-variable (columns). The order of latent variables should match the order in C0 and W0.
+#' @param lv_type A logical vector that indices whether a latent variable (columns in W0 and C0) is a factor (TRUE) or composite (FALSE). Its length should be equal to the number of columns of W0 and C0. 
+#' 
+#' @param ov_type An indicator vector that indices whether an indicator (rows of W0 and C0) corresponds to a factor latent variable (1) or a composite latent variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators. 
+#' 
+#' @param ind_domi A numeric vector that indices the dominant indicator for each latent variable. *It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.* This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of latent variables and each value should represent the row number of the dominant indicator for that latent variable. 
+#' 
+#' @param nbt Non-functional argument for the number of bootstrap-iterations, intended for computation of standard-errors, 95% confidence intervals and p-values. 
+#' @param devmode Logical argument (TRUE/FALSE) for whether devmode functionality should be enabled. When enabled, the function saves the function's environment as a .Rds at various stages of the algorithm. This was intended to facilitate the comparison between the R and Matlab implementations by narrowing down sources of discrepancy.
+#' @param swap_step This is an argument for different key stages of the algorithm. When selected, it swaps the overlapping objects between the R and Matlab environment at that stage of the algorithm. Requires devmode to be TRUE to be functional. 
+#' *'noswap'* means that no swapping will be made.
+#' 
+#' @param itmax Maximum number of iterations in the Alternating Least Squares (ALS) algorithm.
+#' 
+#' @param ceps Minimum amount of absolute change in the estimates of the path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero, meaning ther are no path-coefficients) between ALS iterations before ending the optimization.
+#' 
+#' @param devdir A list of folders to be provided to here::here() to store the saved environments from `swap_step`.
+#' @param devmode_checkobj A development argument for checking whether the list of overlapping and non-overlapping objects between the R and Matlab implementations of I-GSCA are the same as before. 
 #' @author Michael S. Truong
 #' 
-#' @return
+#' @returns List of 4 matrices that make up a fitted I-GSCA Model: (1) Weights, (2) Loadings, (3) Uniqueness Terms D^2, and (4) Path Coefficients.
 #' @export
 #' @importFrom MASS ginv 
 #' @importFrom R.matlab readMat
@@ -23,7 +36,7 @@
 #' require(here)
 #' require(readxl)
 #' 
-#' 
+#' # Specify the model according to GSCA Pro's example
 #' tutorial_igsca_model <- "
 #' # Composite Model
 #' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
@@ -44,14 +57,15 @@
 #' Numberofjoboffers ~ NetworkingBehavior
 #' "
 #' 
+#' # Load the data
 #' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
 #' 
-#' 
+#' # Pre-generate the required matrices for the algorithm and assume that the first indicator for each latent variable is the dominant indicator.
 #' igsca_sim_in <- extract_parseModel(model = tutorial_igsca_model,
 #'                                    data = dat,
 #'                                    ind_domi_as_first = TRUE)
 #'
-#'
+#' # Fit the I-GSCA model
 #' (igsca_sim_out <- igsca_sim(z0 = igsca_sim_in$z0, W0 = igsca_sim_in$W0, C0 = igsca_sim_in$C0,
 #'                             B0 = igsca_sim_in$B0, lv_type = igsca_sim_in$lv_type,
 #'                             ov_type = igsca_sim_in$ov_type, ind_domi = igsca_sim_in$ind_domi,
@@ -87,7 +101,7 @@ igsca_sim <-
 # Safety Checks ------------------------------------------------------------
   
   swap_step <- match.arg(swap_step)
-  # TODO: This should be extended and completed to make igsca into a stand-alone function. However, cSEM already has its own safety checks that make this essentially unnecessary
+  # TODO: This could be extended and completed to make igsca into a stand-alone function. However, cSEM already has its own safety checks that make this essentially unnecessary
   stopifnot("The number of bootstraps should be a non-negative integer" = nbt >= 0)
   
 # Auxiliary Variables -----------------------------------------------------
@@ -463,7 +477,6 @@ for(nb in seq_len(nbt+1)) {
 #'
 #' @return z0, W0, B0, C0, lv_type, ov_type, ind_domi
 #' @export
-#' @importFrom csem parseModel
 #' @examples
 #' 
 #' require(here)
@@ -494,8 +507,8 @@ for(nb in seq_len(nbt+1)) {
 #' extract_parseModel(model = tutorial_igsca_model, data = dat, ind_domi_as_first = TRUE)
 extract_parseModel <-
   function(model, data, ind_domi_as_first = TRUE) {
-    # TODO: Probably shouldn't use cSEM:: within the cSEM package
-    csemify <- cSEM::parseModel(.model = model)
+    # Note: parseModel is from cSEM internal
+    csemify <- parseModel(.model = model)
     
     z0 <- data[, csemify$indicators]
     # browser()
@@ -560,7 +573,6 @@ extract_parseModel <-
 #' @param extracted_matrices Object returned by extract_parseModel
 #'
 #' @return
-#' @export
 #' @importFrom here here
 #' @examples
 #' 
@@ -744,7 +756,6 @@ gsca_inione <- function(z0, W0, B0) {
 #' @param B 
 #'
 #' @return Gamma 
-#' @export
 #'
 #' @examples
 flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
@@ -777,7 +788,6 @@ flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
 #' @param ov_type 
 #'
 #' @return
-#' @export
 #'
 #' @examples
 prepare_for_ALS <- function(z0, W0, B0, nvar, ncase, nlv, ov_type) {
@@ -854,8 +864,7 @@ prepare_for_ALS <- function(z0, W0, B0, nvar, ncase, nlv, ov_type) {
 #' @param Z 
 #' @param ov_type 
 #'
-#' @return
-#' @export
+#' @return 
 #'
 #' @examples
 update_C_B_D <-

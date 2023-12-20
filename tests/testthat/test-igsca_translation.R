@@ -58,24 +58,32 @@ here::here(eval(formals(igsca_sim)$devdir),
 
 # Generate Swaps
 # FIXME: For some reason future.apply::future_lapply() doesn't work here because it can't find igsca_sim?
-generated_swaps_end_results <- formals(igsca_sim)$swap_step |>
-  eval() |>
-  as.list() |>
-  lapply(FUN = \(sw_step) testthat::expect_no_error(igsca_sim(
-    z0 = igsca_sim_in$z0,
-    W0 = igsca_sim_in$W0,
-    C0 = igsca_sim_in$C0,
-    B0 = igsca_sim_in$B0,
-    lv_type = igsca_sim_in$lv_type,
-    ov_type = igsca_sim_in$ov_type,
-    ind_domi = igsca_sim_in$ind_domi,
-    nbt = 0,
-    devmode = TRUE,
-    swap_step = sw_step
-  ))
-  ) 
 
-names(generated_swaps_end_results) <- eval(formals(igsca_sim)$swap_step)
+generate_swaps <- FALSE
+if (isTRUE(generate_swaps)) {
+  generated_swaps_end_results <- formals(igsca_sim)$swap_step |>
+    eval() |>
+    as.list() |>
+    lapply(FUN = \(sw_step) testthat::expect_no_error(
+      igsca_sim(
+        z0 = igsca_sim_in$z0,
+        W0 = igsca_sim_in$W0,
+        C0 = igsca_sim_in$C0,
+        B0 = igsca_sim_in$B0,
+        lv_type = igsca_sim_in$lv_type,
+        ov_type = igsca_sim_in$ov_type,
+        ind_domi = igsca_sim_in$ind_domi,
+        nbt = 0,
+        devmode = TRUE,
+        swap_step = sw_step
+      )
+    ))
+  
+  names(generated_swaps_end_results) <-
+    eval(formals(igsca_sim)$swap_step)
+} else if (isFALSE(generate_swaps)) {
+  warning("Swaps were not generated, comparisons with swaps may be out-of-date.")
+}
 
 # Comparing R-Swaps-----------------------------
 ## Comparing R-Swaps against each other
