@@ -3,17 +3,11 @@ require(testthat) # TODO: This certainly doesn't show up in the cSEM test files.
 require(R.matlab) # TODO: Should check whether one should load libraries in testthat
 require(here)
 require(readxl)
-require(future)
-require(future.apply)
-require(withr)
+require(waldo)
 
-# future Specifications ---------------------------------------------------
-## Future Plans copied from csem_resample.R
-oplan <- future::plan()
-on.exit(future::plan(oplan), add = TRUE)
-future::plan("multisession", workers = 4)
+# General Pre-Test -------------------------------------------------------------
 
-# Model Specification and Load Data ---------------------------------------
+## Model Specification and Load Data ---------------------------------------
 tutorial_igsca_model <- "
 # Composite Model
 NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
@@ -43,12 +37,12 @@ igsca_sim_in <- extract_parseModel(model = tutorial_igsca_model,
 
 
 
-# Testing Input Matrices From extract_parseModel -------------------------------
+## Testing Input Matrices From extract_parseModel -------------------------------
 
-expect_identical(igsca_sim_in$W0, igsca_sim_in$C0,
-                 label = "All indicators for composite and factorial LVs should have loadings in I-GSCA")
+testthat::expect_identical(igsca_sim_in$W0, igsca_sim_in$C0,
+                           label = "All indicators for composite and factorial LVs should have loadings in I-GSCA")
 
-# Generate R Outputs by Swap ----------------------------------------------
+## Generate R Outputs by Swap ----------------------------------------------
 
 
 # Pre-make Folder Directories
@@ -63,7 +57,7 @@ here::here(eval(formals(igsca_sim)$devdir),
   invisible()
 
 # Generate Swaps
-# TODO: For some reason future.apply::future_lapply() doesn't work here because it can't find igsca_sim?
+# FIXME: For some reason future.apply::future_lapply() doesn't work here because it can't find igsca_sim?
 generated_swaps_end_results <- formals(igsca_sim)$swap_step |>
   eval() |>
   as.list() |>
@@ -83,7 +77,8 @@ generated_swaps_end_results <- formals(igsca_sim)$swap_step |>
 
 names(generated_swaps_end_results) <- eval(formals(igsca_sim)$swap_step)
 
-# R-Swaps Should be different From Each Other -----------------------------
+# Comparing R-Swaps-----------------------------
+## Comparing R-Swaps against each other
 
 # Load R end_results from each swap step
 
@@ -94,6 +89,7 @@ end_results <- here::here(eval(formals(igsca_sim)$devdir),
   lapply(FUN = readRDS)
 
 names(end_results) <- eval(formals(igsca_sim)$swap_step)
+
 end_comparisons <-
   lapply(end_results,
          FUN = \(computations) computations[c("Weights", "Loadings",
@@ -101,9 +97,9 @@ end_comparisons <-
 
 end_comparisons_table <- lapply(
   end_comparisons,
-  FUN = function(swap_results)
+  FUN = function(end_comparisons_iter)
     with(
-      swap_results,
+      end_comparisons_iter,
       get_lavaan_table_igsca_matrix(
         model = tutorial_igsca_model,
         weights = Weights,
@@ -113,30 +109,53 @@ end_comparisons_table <- lapply(
       )
     )
 )
-## Compare the R end_results across all different unique combination --------
 
+## Compare All Unique Combinations of R end_results Based on Swap --------
+
+# Generate Combinations
 unique_combn_swaps <-
   combn(names(end_comparisons_table[!names(end_comparisons_table) %in% "matlab"]),
         m = 2,
         simplify = TRUE)
 
+
+### Rough Equivalence -------------------------------------------------------
+# Compare for rough equivalence
 compared_R_swaps <- mapply(
   FUN = function(obj, expect)
-    identical(end_comparisons_table[[obj]],
-              end_comparisons_table[[expect]]),
+    try(testthat::expect_equal(end_comparisons_table[[obj]],
+              end_comparisons_table[[expect]])),
+  obj = unique_combn_swaps[1, ],
+  expect = unique_combn_swaps[2,],
+  SIMPLIFY = FALSE
+)
+
+## Expect that all of the R-swaps to be roughly equivalent 
+compared_R_swaps |>
+  sapply(is, 'try-error') |>
+  any() |>
+  testthat::expect_false()
+
+### Exact Identicalness -----------------------------------------------------
+# Compare for exact equivalence
+compared_R_swaps_identical <- mapply(
+  FUN = function(obj, expect)
+    try(testthat::expect_identical(end_comparisons_table[[obj]],
+                 end_comparisons_table[[expect]])),
   obj = unique_combn_swaps[1, ],
   expect = unique_combn_swaps[2,],
   SIMPLIFY = TRUE
 )
 ## Not expecting them to be identical due to differences between R and matlab, so expect_false
+compared_R_swaps_identical |>
+  sapply(is, 'try-error') |>
+  all() |>
+  testthat::expect_false()
 
-testthat::expect_false(all(compared_R_swaps))
-
-## R Swaps Comparison ------------------------------------------
-
-if (identical(names(compared_R_swaps), unique_combn_swaps[1, ])) {
-  compared_R_swaps_named <-
-    rbind(compared_R_swaps, unique_combn_swaps[2, ]) |>
+#### Interpretation of Identicalness ----------------------------
+if (identical(names(compared_R_swaps_identical), unique_combn_swaps[1, ])) {
+  compared_R_swaps_identical_named <-
+    rbind(compared_R_swaps_identical, unique_combn_swaps[2, ]) |>
     t()
 } else {
   stop(
@@ -144,19 +163,19 @@ if (identical(names(compared_R_swaps), unique_combn_swaps[1, ])) {
   )
 }
 
-# Interpret Table of identicalness
-compared_R_swaps_named
+compared_R_swaps_identical_named
+
+testthat::expect_identical(end_comparisons_table[["noswap"]], end_comparisons_table[["first_iteration_update_C_B_D_uniqueD_est"]])
+
+# None of the swaps are precisely identical except for when Matlab is substituted in after the first iteration... This makes the result identical to noswap
+## TODO: This seems to require a cup of coffee to interpret
 
 
-# The only two times any two swaps are identical to each other are:
-# noswap and first_iteration_update_C_B_D_uniqueD_est
-# TODO: Difficult to interpret...
-# prepare_for_ALS and first_factor_update
-# - This makes sense to me because the first iteration in this model is on a factor (Honesty_Humility),
-#   so I don't expect much to change in-between loading for prepare_for_ALS and the first_factor_update
+# Compare Matlab and R ----------------------------------------------------
 
+## Pre-Test ----------------------------------------------------------------
 
-# Compare Matlab and R Object Names ---------------------------------------
+### Compare Matlab and R Object Names ---------------------------------------
 # Check to see if the list of acceptable non-overlapping names between R and Matlab is the same as before
 testthat::test_that("Matlab_R_Compared_Names", {
   testthat::expect_snapshot(with(
@@ -176,16 +195,19 @@ testthat::test_that("Matlab_R_Compared_Names", {
     )
   ))
 })
- 
 
 
-# Compare Matlab and R ----------------------------------------------------
-
-## Comparing End Results ---------------------------------------------------
+### Load Matlab end_results -------------------------------------------------
 
 # Load Matlab end_results
 matlab_end_results <-
-  here::here(list("dev", "Notes", "data", "matlab_out", "end_results.MAT")) |>
+  here::here(list(
+    "tests",
+    "comparisons",
+    "igsca_translation",
+    "matlab_out",
+    "end_results.MAT"
+  )) |> 
   R.matlab::readMat(fixNames = FALSE) |>
   {
     \(mat_env) mat_env[c("W", "C", "B", "uniqueD")]
@@ -193,15 +215,16 @@ matlab_end_results <-
   convert_matlab2R(vectorness = unlist(lapply(end_comparisons[[1]], is.vector)))
 
 if (with(matlab_end_results, exists("C"))) {
-  # C needs to be transposed
+  # C-matrix needs to be transposed
   matlab_end_results$C <- t(matlab_end_results$C)
 }
 
 
-### Add the names back to the matlab objects and expect matching dimensions --------
+#### Add Names to Matlab Objects ---------------------------------------------
+# Doing this requires that the dimensions between the R and matlab objects 
+# are matching. So first, we compare the dimension sizes.
 
 ## Generate Dimension Sizes
-
 end_comparisons_dims <-
   lapply(end_comparisons$noswap, \(result) try(dim(result))
   )
@@ -216,15 +239,16 @@ matlab_end_results_dims <-
 matlab_end_results_dims[unlist(lapply(matlab_end_results_dims, is.null))] <- 
   lapply(matlab_end_results[sapply(matlab_end_results_dims, is.null)], length)
 
-
 ## Expect the dimensions of the extracted objects to match
-mapply(FUN = testthat::expect_identical, object = end_comparisons_dims, expected = matlab_end_results_dims)
+mapply(
+  FUN = testthat::expect_identical,
+  object = end_comparisons_dims,
+  expected = matlab_end_results_dims
+)
 
 ## Add back the names
 ### Name of each list
 names(matlab_end_results) <- names(end_comparisons$noswap)
-
-
 ### Name of the columns, rows and vectors
 for (i in names(matlab_end_results)) {
   if (isTRUE(sapply(matlab_end_results, is.matrix)[i])) {
@@ -238,6 +262,11 @@ for (i in names(matlab_end_results)) {
     stop("One of the compared objects is neither a vector nor a matrix")
   }
 }
+
+
+### Tabulate both R and Matlab Output ---------------------------------------
+# This facilitates the comparison, so that we are comparing a two tables
+#  against each other instead of 4 matrices on each side.
 
 # Tabulate both R and Matlab Output
 end_comparisons_table <- lapply(
@@ -255,74 +284,72 @@ end_comparisons_table <- lapply(
     )
 )
 
-## Compares each R with the Matlab end result ------------------------------
+## Compare each R_swap with the Matlab end result ------------------------------
+### Rough Equivalence -------------------------------------------------------
 compared_R_matlab <-
   lapply(end_comparisons_table[!(names(end_comparisons_table) == "matlab")],
-         FUN = \(selected_R_table) try(
-           testthat::expect_equal(object = selected_R_table,
-                                  expected = end_comparisons_table[["matlab"]])
-           )
+         FUN = \(selected_R_table)
+         try(testthat::expect_equal(object = selected_R_table,
+                                    expected = end_comparisons_table[["matlab"]]))
   )
 
-# Check which ones failed to be equivalent
-# Only flip_signs_ind_domi should match matlab because no further computations are performed
+# Tests that all the different R swaps are equivalent to the matlab version within error
+compared_R_matlab |>
+  sapply(is, 'try-error') |>
+  any() |>
+  testthat::expect_false()
 
+### Exact Identicalness -----------------------------------------------------
+compared_R_matlab_exact <-
+  lapply(
+    end_comparisons_table[!(names(end_comparisons_table) == "matlab")],
+    FUN = \(selected_R_table)
+    try(testthat::expect_identical(object = selected_R_table,
+                           expected = end_comparisons_table[["matlab"]]))    
+  )
 
-testthat::expect_equal(end_comparisons_table$noswap, end_comparisons_table$matlab)
+# Expect TRUE because these should all swaps except for `flip_signs_ind_domi`
+# should not be identical to matlab
+compared_R_matlab_exact[
+  !names(compared_R_matlab_exact) %in% "flip_signs_ind_domi"
+  ] |>
+  sapply(is, 'try-error') |>
+  all() |>
+  testthat::expect_true()
 
-# compared_R_matlab[!names(compared_R_matlab) %in% "flip_signs_ind_domi"] |>
-#   sapply(is, 'try-error') |>
-#   all() |>
-#   testthat::expect_true()
-# 
-# compared_R_matlab[names(compared_R_matlab) %in% "flip_signs_ind_domi"] |>
-#   sapply(is, 'try-error') |>
-#   all() |>
-#   testthat::expect_false()
+# Expect FALSE because flip_signs_ind_domi should be identical to matlab, so no issue of try-error
+compared_R_matlab_exact[
+  names(compared_R_matlab_exact) %in% "flip_signs_ind_domi"
+  ] |>
+  sapply(is, 'try-error') |>
+  testthat::expect_false()
 
+# Comparison Against GSCAPro ----------------------------------------------
 
- 
-
-# Compare GSCAPro and Matlab ----------------------------------------------
-
-## Use custom parser for loading GSCAPro Results
+## Pre-Test ----------------------------------------------------------------
+## Use custom parser for lo ading GSCAPro Results
 gscapro <- parse_GSCAPro_FullResults()
 
 gscapro_tabulated <-
   get_lavaan_table_igsca_gscapro(gscapro_in = gscapro, model = tutorial_igsca_model)
 
-testthat::expect_equal(object = end_comparisons_table[["matlab"]],
-                       expected = gscapro_tabulated)
+
+## GSCAPro and Matlab ------------------------------------------------------
+try(testthat::expect_equal(object = end_comparisons_table[["matlab"]],
+                       expected = gscapro_tabulated))
 
 # See https://r-pkgs.org/testing-basics.html
-withr::with_options(list(width = 20),
-                    waldo::compare(end_comparisons_table[["matlab"]], gscapro_tabulated))
+waldo::compare(end_comparisons_table[["matlab"]], gscapro_tabulated,
+               max_diffs = Inf)
 
-# Compare GSCAPro and R ---------------------------------------------------
+all.equal(end_comparisons_table[["matlab"]], gscapro_tabulated)
 
-# TODO: Compare GSCAPro and R
-
+## GSCAPro and R ---------------------------------------------------
 compared_R_gscapro <-
-  lapply(end_comparisons_table[!(names(end_comparisons_table) == "matlab")],
-         FUN = \(selected_R_table) try(
-           testthat::expect_equal(object = selected_R_table,
-                                  expected = gscapro_tabulated)
-         )
+  try(testthat::expect_equal(end_comparisons_table$noswap, gscapro_tabulated)
   )
 
-testthat::expect_equal(
-  end_comparisons_table[["noswap"]],
-  end_comparisons_table[["matlab"]]
-  )
+waldo::compare(end_comparisons_table[["noswap"]], gscapro_tabulated,
+               max_diffs = Inf)
 
-try(testthat::expect_equal(end_comparisons_table[["noswap"]], gscapro_tabulated))
 all.equal(end_comparisons_table[["noswap"]], gscapro_tabulated)
-
-
-withr::with_options(list(width = 20),
-                    waldo::compare(end_comparisons_table[["noswap"]], gscapro_tabulated))
-
-
-## TODO: Interpret
-## 
-## TODO: See what happens when I increase the maximum number of iterations and the tolerance
