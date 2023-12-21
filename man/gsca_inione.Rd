@@ -7,11 +7,11 @@
 gsca_inione(z0, W0, B0)
 }
 \arguments{
-\item{z0}{matrix...}
+\item{z0}{Data Matrix}
 
-\item{W0}{Weights}
+\item{W0}{Indicator matrix of weights}
 
-\item{B0}{Path Coefficients}
+\item{B0}{Indicator matrix of Path Coefficients.}
 }
 \value{
 When used in the context of igsca_sim(), it returns a list of the starting values for Weights, Loadings and Path Coefficients. In principle, otherwise, it is a slightly modified implementation of ordinary Generalised Structured Component Analysis (GSCA).

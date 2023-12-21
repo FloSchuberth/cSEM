@@ -27,7 +27,7 @@ List of matrices to put through the Alternating Least Squared (ALS) algorithm:
 \item Starting values for Weights (W), Loadings (C), Path-Coefficients (B) and Uniqueness Terms (D)
 \item Standardized data matrix (Z)
 \item SVD Decomposition of ...\emph{something} to get U and V matrices.
-TODO: Figure out what the SVD decomposition if for
+TODO: Figure out what the SVD decomposition is for
 }
 }
 \description{

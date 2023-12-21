@@ -322,7 +322,7 @@ for(nb in seq_len(nbt+1)) {
         }
     }
       
-#### Update Loadings, Path Coefficients and Disturbance Terms ----------
+#### Update Loadings, Path Coefficients and Uniqueness Terms ----------
 
       updated_C_B_D <- update_C_B_D(
         X = X,
@@ -472,164 +472,12 @@ for(nb in seq_len(nbt+1)) {
 
 }
 
-
-#' A parseModel extractor function for the purposes of running I-GSCA code example
-#'
-#' @param model Specified Model in lavaan style
-#' @param data Dataframe 
-#' @param ind_domi_as_first Boolean for whether the first indicator for each latent factor should be chosen as the dominant indicator
-#'
-#' @return Returns a list of matrices required for igsca_sim() to run: z0, W0, B0, C0, lv_type, ov_type, ind_domi. 
-#' @export
-#' @examples
-#' 
-#' require(here)
-#' require(readxl)
-#' 
-#' tutorial_igsca_model <- "
-#' # Composite Model
-#' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
-#' Numberofjobinterviews <~ Interview1 + Interview2
-#' Numberofjoboffers <~ Offer1 + Offer2 
-#' 
-#' # Reflective Measurement Model
-#' HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
-#' Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
-#' Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
-#' Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
-#' Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
-#' OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
-#' 
-#' # Structural Model
-#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience
-#' Numberofjobinterviews ~ NetworkingBehavior
-#' Numberofjoboffers ~ NetworkingBehavior
-#' "
-#' 
-#' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
-#' 
-#' extract_parseModel(model = tutorial_igsca_model, data = dat, ind_domi_as_first = TRUE)
-extract_parseModel <-
-  function(model, data, ind_domi_as_first = TRUE) {
-    # Note: parseModel is from cSEM internal
-    csemify <- parseModel(.model = model)
-    
-    z0 <- data[, csemify$indicators]
-    # browser()
-    # B0 <- csemify$structural
-    B0 <- t(csemify$structural)
-    W0 <- t(csemify$measurement)
-    
-    lv_type <- csemify$construct_type == "Common factor"
-    
-    # Constructing ov_type
-    ov_type <- vector(length = ncol(csemify$measurement))
-    names(ov_type) <- colnames(csemify$measurement)
-      
-    
-    for (lv in rownames(csemify$measurement)) {
-      for (indicator in colnames(csemify$measurement)) {
-        if (csemify$construct_type[lv] == "Common factor") {
-        
-          if (csemify$measurement[lv, indicator] == 1) {
-            ov_type[indicator] <- TRUE
-          }
-          
-        }
-      }
-    }
-    
-    C0 <- W0
-    
-    
-    stopifnot(
-      "Data matrix (z0) does not correctly correspond with Weights matrix (W0)" = identical(colnames(z0), rownames(W0)),
-      "Weights matrix (W0) does not correctly correspond with Structural matrix (B0)" = identical(colnames(W0), colnames(B0)),
-      "Construct indicator does not correctly correspond with Weights Matrix (W0)" = identical(names(csemify$construct_type), colnames(W0))
-    )
-    
-    if (isTRUE(ind_domi_as_first)) {
-      # Row Indices of W0 that correspond to the dominant indicator for each factor/composite
-      # TODO: Change to W0 to W0[, lv_type] if it turns out that the correction should only apply to latent factors
-      ind_domi <- apply(W0, 2, as.logical) |>
-        apply(2, which, TRUE) |>
-        lapply(FUN = \(x) x[[1]]) |>
-        unlist()
-    } else {
-      ind_domi <- NA
-    }
-    
-    return(
-      list(
-        "z0" = z0,
-        "B0" = B0,
-        "W0" = W0,
-        "lv_type" = lv_type,
-        "ov_type" = ov_type,
-        "C0" = C0,
-        "ind_domi" = ind_domi
-      )
-    )
-  }
-
-#' Writes the extracted matrices to run with igsca_sim_test.m
-#'
-#' @param extracted_matrices Object returned by extract_parseModel
-#'
-#' @return Writes the matrices from extract_parseModel() to the appropriate test directory for the Matlab implementation of igsca_sim to run.
-#' @importFrom here here
-#' @examples
-#' 
-#' require(here)
-#' require(readxl)
-#' 
-#' tutorial_igsca_model <- "
-#' # Composite Model
-#' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
-#' Numberofjobinterviews <~ Interview1 + Interview2
-#' Numberofjoboffers <~ Offer1 + Offer2 
-#' 
-#' # Reflective Measurement Model
-#' HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
-#' Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
-#' Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
-#' Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
-#' Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
-#' OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
-#' 
-#' # Structural Model
-#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience
-#' Numberofjobinterviews ~ NetworkingBehavior
-#' Numberofjoboffers ~ NetworkingBehavior
-#' "
-#' 
-#' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
-#' 
-#' write_for_matlab(extract_parseModel(model = tutorial_igsca_model, data = dat, ind_domi_as_first = TRUE))
-write_for_matlab <- function(extracted_matrices) {
-  indir <- list("tests", "comparisons", "igsca_translation", "matlab_in")
-  extracted_matrices$lv_type <-
-    as.numeric(extracted_matrices$lv_type)
-  extracted_matrices$ov_type <-
-    as.numeric(extracted_matrices$ov_type)
-  
-  mapply(
-    write.csv,
-    x = extracted_matrices,
-    file = paste0(here::here(indir), "/", names(extracted_matrices), ".csv"),
-    row.names = FALSE
-  )
-  
-  invisible()
-}
-
-
 #' One-to-One R Translation of gsca_inione.m from Heungsun Hwang
 #' 
 #' Initializes the values for I-GSCA
-#' @param z0 matrix...
-#' @param W0 Weights
-#' @param B0 Path Coefficients
+#' @param z0 Data Matrix
+#' @param W0 Indicator matrix of weights
+#' @param B0 Indicator matrix of Path Coefficients.
 #' 
 #' @author Michael S. Truong
 #' 
@@ -749,34 +597,6 @@ gsca_inione <- function(z0, W0, B0) {
   ))
 }
 
-#' Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator
-#'
-#' @param nlv 
-#' @param Z 
-#' @param ind_domi 
-#' @param j 
-#' @param Gamma 
-#' @param C 
-#' @param B 
-#'
-#' @return List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
-#'
-flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
-  for (j in seq_len(nlv)) {
-    if ((t(Z[, ind_domi[j]]) %*% Gamma[, j]) < 0) {
-      Gamma[, j] <- (-1 * Gamma[, j])
-      C[j, ] <- (-1 * C[j, ])
-      B[B, ] <- (-1 * B[j, ])
-      B[, j] <- (-1 * B[, j])
-    }
-  }
-  return(list(
-    "Gamma" = Gamma,
-    "C" = C,
-    "B" = B
-  ))
-}
-
 
 #' Prepare for ALS Algorithm
 #'
@@ -795,7 +615,7 @@ flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
 #' 1) Starting values for Weights (W), Loadings (C), Path-Coefficients (B) and Uniqueness Terms (D)
 #' 2) Standardized data matrix (Z)
 #' 3) SVD Decomposition of ...*something* to get U and V matrices.
-#' TODO: Figure out what the SVD decomposition if for
+#' TODO: Figure out what the SVD decomposition is for
 prepare_for_ALS <- function(z0, W0, B0, nvar, ncase, nlv, ov_type) {
   bz0 <- z0
   
@@ -854,6 +674,89 @@ prepare_for_ALS <- function(z0, W0, B0, nvar, ncase, nlv, ov_type) {
     # "Q" = Q,
   ))
 }
+
+#' Update Weights and X (?)
+#'
+#' @param Z 
+#' @param U 
+#' @param D 
+#' @param C 
+#' @param nlv 
+#' @param B 
+#'
+#' @return Two matrices:
+#' - *X*: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D)(?)
+#' - *WW*: *presumably* Weights after accounting for current Loading and Path-Coefficients values.
+#' TODO: Double check that I've got this right.
+#' @export
+#'
+update_X_weights <- function(Z, U, D, C, nlv, B) {
+  # X deviates from Matlab because it is an offspring of svd_out
+  X <- Z - U %*% D
+  # FIXME: warning("I don't quite understand why this is the equivalent of the Matlab expression, revisit page 44 of Hiebeler 2015 R and Matlab")
+  # TODO: Should find alternative to solve() to avoid matrix inversions
+  WW <-
+    t(C) %*% solve((C %*% t(C) + diag(nlv) - 2 * B + (B %*% t(B))))
+  return(list("X" = X, "WW" = WW))
+}
+
+
+#' Update Factor Latent Variable
+#'
+#' @param WW 
+#' @param windex_j 
+#' @param j 
+#'
+#' @return theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
+#' 
+#' TODO: Double check that this is correct.
+#' @export
+#'
+update_factor_LV <- function(WW, windex_j, j) {
+  theta <- WW[windex_j, j]
+  return(theta)
+}
+
+
+
+
+
+#' Update Composite Latent Variables
+#'
+#' @param ntv 
+#' @param tot 
+#' @param nlv 
+#' @param j 
+#' @param W 
+#' @param A 
+#' @param V 
+#' @param X 
+#' @param windex_j 
+#'
+#' @return theta: A matrix that will later be used to update the weights for the composite variable.
+#' TODO: Double check that this is for weights only?
+#' @export
+#'
+update_composite_LV <-
+  function(ntv, tot, nlv, j, W, A, V, X, windex_j) {
+    # This updates the composite
+    e <- matrix(0, nrow = 1, ncol = ntv)
+    e[tot] <- 1
+    H1 <- diag(ntv)
+    H2 <- diag(nlv)
+    H1[tot, tot] <- 0
+    H2[j, j] <- 0
+    Delta <- (W %*% H2 %*% A) - (V %*% H1)
+    
+    
+    vecZDelta <- c(X %*% Delta)
+    beta <- e - A[j, ]
+    XI <- kronecker(t(beta), X)
+    XI <- XI[, windex_j]
+    
+    theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
+    return(theta)
+  }
 
 #' Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables
 #'
@@ -943,83 +846,182 @@ update_C_B_D <-
     )
   }
 
-#' Update Weights and X (?)
+#' Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator
 #'
-#' @param Z 
-#' @param U 
-#' @param D 
-#' @param C 
 #' @param nlv 
+#' @param Z 
+#' @param ind_domi 
+#' @param j 
+#' @param Gamma 
+#' @param C 
 #' @param B 
 #'
-#' @return Two matrices:
-#' - *X*: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D)(?)
-#' - *WW*: *presumably* Weights after accounting for current Loading and Path-Coefficients values.
-#' TODO: Double check that I've got this right.
-#' @export
+#' @return List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
 #'
-update_X_weights <- function(Z, U, D, C, nlv, B) {
-  # X deviates from Matlab because it is an offspring of svd_out
-  X <- Z - U %*% D
-  # FIXME: warning("I don't quite understand why this is the equivalent of the Matlab expression, revisit page 44 of Hiebeler 2015 R and Matlab")
-  # TODO: Should find alternative to solve() to avoid matrix inversions
-  WW <-
-    t(C) %*% solve((C %*% t(C) + diag(nlv) - 2 * B + (B %*% t(B))))
-  return(list("X" = X, "WW" = WW))
+flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
+  for (j in seq_len(nlv)) {
+    if ((t(Z[, ind_domi[j]]) %*% Gamma[, j]) < 0) {
+      Gamma[, j] <- (-1 * Gamma[, j])
+      C[j, ] <- (-1 * C[j, ])
+      B[B, ] <- (-1 * B[j, ])
+      B[, j] <- (-1 * B[, j])
+    }
+  }
+  return(list(
+    "Gamma" = Gamma,
+    "C" = C,
+    "B" = B
+  ))
 }
 
-#' Update Composite Latent Variables
+#' A parseModel extractor function for the purposes of running I-GSCA code example
 #'
-#' @param ntv 
-#' @param tot 
-#' @param nlv 
-#' @param j 
-#' @param W 
-#' @param A 
-#' @param V 
-#' @param X 
-#' @param windex_j 
+#' @param model Specified Model in lavaan style
+#' @param data Dataframe 
+#' @param ind_domi_as_first Boolean for whether the first indicator for each latent factor should be chosen as the dominant indicator
 #'
-#' @return theta: A matrix that will later be used to update the weights for the composite variable.
-#' TODO: Double check that this is for weights only?
+#' @return Returns a list of matrices required for igsca_sim() to run: z0, W0, B0, C0, lv_type, ov_type, ind_domi. 
 #' @export
-#'
-update_composite_LV <-
-  function(ntv, tot, nlv, j, W, A, V, X, windex_j) {
-    # This updates the composite
-    e <- matrix(0, nrow = 1, ncol = ntv)
-    e[tot] <- 1
-    H1 <- diag(ntv)
-    H2 <- diag(nlv)
-    H1[tot, tot] <- 0
-    H2[j, j] <- 0
-    Delta <- (W %*% H2 %*% A) - (V %*% H1)
+#' @examples
+#' 
+#' require(here)
+#' require(readxl)
+#' 
+#' tutorial_igsca_model <- "
+#' # Composite Model
+#' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
+#' Numberofjobinterviews <~ Interview1 + Interview2
+#' Numberofjoboffers <~ Offer1 + Offer2 
+#' 
+#' # Reflective Measurement Model
+#' HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
+#' Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
+#' Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
+#' Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
+#' Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
+#' OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
+#' 
+#' # Structural Model
+#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience
+#' Numberofjobinterviews ~ NetworkingBehavior
+#' Numberofjoboffers ~ NetworkingBehavior
+#' "
+#' 
+#' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
+#' 
+#' extract_parseModel(model = tutorial_igsca_model, data = dat, ind_domi_as_first = TRUE)
+extract_parseModel <-
+  function(model, data, ind_domi_as_first = TRUE) {
+    # Note: parseModel is from cSEM internal
+    csemify <- parseModel(.model = model)
+    
+    z0 <- data[, csemify$indicators]
+    # browser()
+    # B0 <- csemify$structural
+    B0 <- t(csemify$structural)
+    W0 <- t(csemify$measurement)
+    
+    lv_type <- csemify$construct_type == "Common factor"
+    
+    # Constructing ov_type
+    ov_type <- vector(length = ncol(csemify$measurement))
+    names(ov_type) <- colnames(csemify$measurement)
     
     
-    vecZDelta <- c(X %*% Delta)
-    beta <- e - A[j, ]
-    XI <- kronecker(t(beta), X)
-    XI <- XI[, windex_j]
+    for (lv in rownames(csemify$measurement)) {
+      for (indicator in colnames(csemify$measurement)) {
+        if (csemify$construct_type[lv] == "Common factor") {
+          
+          if (csemify$measurement[lv, indicator] == 1) {
+            ov_type[indicator] <- TRUE
+          }
+          
+        }
+      }
+    }
     
-    theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
-    return(theta)
+    C0 <- W0
+    
+    
+    stopifnot(
+      "Data matrix (z0) does not correctly correspond with Weights matrix (W0)" = identical(colnames(z0), rownames(W0)),
+      "Weights matrix (W0) does not correctly correspond with Structural matrix (B0)" = identical(colnames(W0), colnames(B0)),
+      "Construct indicator does not correctly correspond with Weights Matrix (W0)" = identical(names(csemify$construct_type), colnames(W0))
+    )
+    
+    if (isTRUE(ind_domi_as_first)) {
+      # Row Indices of W0 that correspond to the dominant indicator for each factor/composite
+      # TODO: Change to W0 to W0[, lv_type] if it turns out that the correction should only apply to latent factors
+      ind_domi <- apply(W0, 2, as.logical) |>
+        apply(2, which, TRUE) |>
+        lapply(FUN = \(x) x[[1]]) |>
+        unlist()
+    } else {
+      ind_domi <- NA
+    }
+    
+    return(
+      list(
+        "z0" = z0,
+        "B0" = B0,
+        "W0" = W0,
+        "lv_type" = lv_type,
+        "ov_type" = ov_type,
+        "C0" = C0,
+        "ind_domi" = ind_domi
+      )
+    )
   }
 
-
-#' Update Factor Latent Variable
+#' Writes the extracted matrices to run with igsca_sim_test.m
 #'
-#' @param WW 
-#' @param windex_j 
-#' @param j 
+#' @param extracted_matrices Object returned by extract_parseModel
 #'
-#' @return theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
+#' @return Writes the matrices from extract_parseModel() to the appropriate test directory for the Matlab implementation of igsca_sim to run.
+#' @importFrom here here
+#' @examples
 #' 
-#' TODO: Double check that this is correct.
-#' @export
-#'
-update_factor_LV <- function(WW, windex_j, j) {
-  theta <- WW[windex_j, j]
-  return(theta)
+#' require(here)
+#' require(readxl)
+#' 
+#' tutorial_igsca_model <- "
+#' # Composite Model
+#' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
+#' Numberofjobinterviews <~ Interview1 + Interview2
+#' Numberofjoboffers <~ Offer1 + Offer2 
+#' 
+#' # Reflective Measurement Model
+#' HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
+#' Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
+#' Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
+#' Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
+#' Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
+#' OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
+#' 
+#' # Structural Model
+#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience
+#' Numberofjobinterviews ~ NetworkingBehavior
+#' Numberofjoboffers ~ NetworkingBehavior
+#' "
+#' 
+#' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
+#' 
+#' write_for_matlab(extract_parseModel(model = tutorial_igsca_model, data = dat, ind_domi_as_first = TRUE))
+write_for_matlab <- function(extracted_matrices) {
+  indir <- list("tests", "comparisons", "igsca_translation", "matlab_in")
+  extracted_matrices$lv_type <-
+    as.numeric(extracted_matrices$lv_type)
+  extracted_matrices$ov_type <-
+    as.numeric(extracted_matrices$ov_type)
+  
+  mapply(
+    write.csv,
+    x = extracted_matrices,
+    file = paste0(here::here(indir), "/", names(extracted_matrices), ".csv"),
+    row.names = FALSE
+  )
+  
+  invisible()
 }
 
 #' Convert Matlab to R
