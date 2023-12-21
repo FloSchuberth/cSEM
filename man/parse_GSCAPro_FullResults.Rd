@@ -16,3 +16,6 @@ List of extracted matrices from GSCA Pro Full results
 \description{
 The commented headers require more work to get working
 }
+\examples{
+parse_GSCAPro_FullResults()
+}
