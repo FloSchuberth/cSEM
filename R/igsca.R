@@ -14,17 +14,12 @@
 #' 
 #' @param ind_domi A numeric vector that indices the dominant indicator for each latent variable. *It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.* This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of latent variables and each value should represent the row number of the dominant indicator for that latent variable. 
 #' 
-#' @param nbt Non-functional argument for the number of bootstrap-iterations, intended for computation of standard-errors, 95% confidence intervals and p-values. 
-#' @param devmode Logical argument (TRUE/FALSE) for whether devmode functionality should be enabled. When enabled, the function saves the function's environment as a .Rds at various stages of the algorithm. This was intended to facilitate the comparison between the R and Matlab implementations by narrowing down sources of discrepancy.
-#' @param swap_step This is an argument for different key stages of the algorithm. When selected, it swaps the overlapping objects between the R and Matlab environment at that stage of the algorithm. Requires devmode to be TRUE to be functional. 
-#' *'noswap'* means that no swapping will be made.
+#' @param nbt Non-functional argument for the number of bootstrap-iterations, intended for computation of standard-errors, 95% confidence intervals and p-values.
 #' 
 #' @param itmax Maximum number of iterations in the Alternating Least Squares (ALS) algorithm.
 #' 
 #' @param ceps Minimum amount of absolute change in the estimates of the path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero, meaning ther are no path-coefficients) between ALS iterations before ending the optimization.
 #' 
-#' @param devdir A list of folders to be provided to here::here() to store the saved environments from `swap_step`.
-#' @param devmode_checkobj A development argument for checking whether the list of overlapping and non-overlapping objects between the R and Matlab implementations of I-GSCA are the same as before. 
 #' @author Michael S. Truong
 #' 
 #' @returns List of 4 matrices that make up a fitted I-GSCA Model: (1) Weights, (2) Loadings, (3) Uniqueness Terms D^2, and (4) Path Coefficients.
@@ -73,9 +68,7 @@
 #'                             lv_type = igsca_sim_in$lv_type,
 #'                             ov_type = igsca_sim_in$ov_type,
 #'                             ind_domi = igsca_sim_in$ind_domi,
-#'                             nbt = 0,
-#'                             devmode = FALSE,
-#'                             swap_step = "noswap")
+#'                             nbt = 0)
 #'                             )
 igsca_sim <-
   function(z0,
@@ -86,27 +79,14 @@ igsca_sim <-
            ov_type,
            ind_domi,
            nbt,
-           swap_step = c(
-             "noswap",
-             "prepare_for_ALS",
-             "first_iteration_update_theta_Gamma_W_V",
-             "first_iteration_update_C_B_D_uniqueD_est",
-             "first_factor_update",
-             "first_composite_update",
-             "flip_signs_ind_domi"
-           ),
            itmax = 100,
-           ceps = 0.001,
-           devmode =  FALSE,
-           devdir = list("tests", "comparisons", "igsca_translation"),
-           devmode_checkobj = FALSE) {
+           ceps = 0.001) {
     
   
 # Safety Checks ------------------------------------------------------------
   
-  swap_step <- match.arg(swap_step)
   # TODO: This could be extended and completed to make igsca into a stand-alone function. However, cSEM already has its own safety checks that make this essentially unnecessary
-  stopifnot("The number of bootstraps should be a non-negative integer" = nbt >= 0)
+  # stopifnot("The number of bootstraps should be a non-negative integer" = nbt >= 0)
   
 # Auxiliary Variables -----------------------------------------------------
   ncase <- nrow(z0)
@@ -144,29 +124,6 @@ for(nb in seq_len(nbt+1)) {
   ### Updates W, C, B, V, Z, D, U, Gamma
   list2env(prepared_for_ALS, envir = environment())
   
-  if(isTRUE(devmode)) {
-    # Takes entire environment and saves it as rds for later comparison
-    as.list.environment(x = environment(), all.names = TRUE) |>
-      saveRDS(file = here::here(devdir, "R_out", swap_step, "prepare_forALS.rds"))
-    
-    if (swap_step == "prepare_for_ALS") {
-      swapdir <- c(devdir, "matlab_out", "prepare_for_ALS.MAT")
-      
-      # Matlab vectors are read-back as vectors, which is undesirable for R
-      # So here we record vectorness before the swap and re-apply it post-swap
-      # using `convert_matlab2R()`
-      vectorness <-
-        lapply(as.list.environment(x = environment(), all.names = TRUE),
-               is.vector)
-      
-      # Only take the objects that have overlapping names between R and Matlab
-      mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
-      mat_env <- mat_env[names(mat_env) %in% ls()] |>
-        convert_matlab2R(vectorness = vectorness) 
-      list2env(x = mat_env, envir = environment())
-      
-    } 
-  }
   
 ## Alternating Least Squares Algorithm -------------------------------------
 
@@ -181,10 +138,6 @@ for(nb in seq_len(nbt+1)) {
     est0 <- est + 1 
     it <- 0
     
-    if (isTRUE(devmode)) {
-      composite_counter = 0
-      factor_counter = 0
-    }
 ### Alternate Between Updating Weights and Loadings -----------------------
     while ((sum(abs(est0 - est)) > ceps) && (it <= itmax)) {
       # TODO: Review better way to do this while condition
@@ -232,30 +185,7 @@ for(nb in seq_len(nbt+1)) {
             )
           
           
-          if(exists("composite_counter") && isTRUE(devmode)) {
-            
-            if (composite_counter == 0) {
-              
-              as.list.environment(x = environment(), all.names = TRUE) |>
-                saveRDS(file = here::here(devdir, "R_out", swap_step, "first_composite_update.rds"))
-
-              composite_counter = composite_counter + 1
-              
-              if (swap_step == "first_composite_update") {
-                swapdir <- c(devdir, "matlab_out", "first_composite_update.MAT")
-                
-                vectorness <-
-                  lapply(as.list.environment(x = environment(), all.names = TRUE),
-                         is.vector)
-                
-                # Only take the objects that have overlapping names between R and Matlab
-                mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
-                mat_env <- mat_env[names(mat_env) %in% ls()] |>
-                  convert_matlab2R(vectorness = vectorness) 
-                list2env(x = mat_env, envir = environment())
-              } 
-            }
-          }
+          
         } else if (lv_type[j] == 1) {
           # Update Factor LV
           theta <-
@@ -265,31 +195,6 @@ for(nb in seq_len(nbt+1)) {
                j = j # Changes per iteration
                )
           
-          if(exists("factor_counter") && isTRUE(devmode)) {
-            
-            if (factor_counter == 0) {
-              
-              as.list.environment(x = environment(), all.names = TRUE) |>
-                saveRDS(file = here::here(devdir, "R_out", swap_step, "first_factor_update.rds"))
-              
-              factor_counter = factor_counter + 1
-              
-              if (swap_step == "first_factor_update") {
-                swapdir <- c(devdir, "matlab_out", "first_factor_update.MAT")
-                
-                vectorness <-
-                  lapply(as.list.environment(x = environment(), all.names = TRUE),
-                         is.vector)
-                
-                # Only take the objects that have overlapping names between R and Matlab
-                mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
-                mat_env <- mat_env[names(mat_env) %in% ls()] |>
-                  convert_matlab2R(vectorness = vectorness) 
-                list2env(x = mat_env, envir = environment())
-                
-              } 
-            }
-          }
         } else {
           stop("lv_type should either be 1 for factors or 0 for composites")
         }
@@ -301,25 +206,7 @@ for(nb in seq_len(nbt+1)) {
         W[windex_j, j] <- theta
         V[windex_j, tot] <- theta
         
-        if(it == 1 && isTRUE(devmode)) {
-          
-          as.list.environment(x = environment(), all.names = TRUE) |>
-            saveRDS(file = here::here(devdir, "R_out", swap_step, "first_iteration_update_theta_Gamma_W_V.rds"))
-          
-          if (swap_step == "first_iteration_update_theta_Gamma_W_V") {
-            swapdir <- c(devdir, "matlab_out", "first_iteration_update_theta_Gamma_W_V.MAT")
-            
-            vectorness <-
-              lapply(as.list.environment(x = environment(), all.names = TRUE),
-                     is.vector)
-            
-            # Only take the objects that have overlapping names between R and Matlab
-            mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
-            mat_env <- mat_env[names(mat_env) %in% ls()] |>
-              convert_matlab2R(vectorness = vectorness) 
-            list2env(x = mat_env, envir = environment())
-          }
-        }
+        
     }
       
 #### Update Loadings, Path Coefficients and Uniqueness Terms ----------
@@ -342,25 +229,6 @@ for(nb in seq_len(nbt+1)) {
       list2env(updated_C_B_D, envir = environment())
     }
     
-    if(it == 1 && isTRUE(devmode)) {
-      
-      as.list.environment(x = environment(), all.names = TRUE) |>
-        saveRDS(file = here::here(devdir, "R_out", swap_step, "first_iteration_update_C_B_D_uniqueD_est.rds"))
-      
-      if (swap_step == "first_iteration_update_C_B_D_uniqueD_est") {
-        swapdir <- c(devdir, "matlab_out", "first_iteration_update_C_B_D_uniqueD_est.MAT")
-        
-        vectorness <-
-          lapply(as.list.environment(x = environment(), all.names = TRUE),
-                 is.vector)
-        
-        # Only take the objects that have overlapping names between R and Matlab
-        mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
-        mat_env <- mat_env[names(mat_env) %in% ls()] |>
-          convert_matlab2R(vectorness = vectorness) 
-        list2env(x = mat_env, envir = environment())
-      }
-      }
     }
 
 ## Flip Signs for Factors and cOmposites Based on Dominant Indicators --------
@@ -378,28 +246,6 @@ for(nb in seq_len(nbt+1)) {
     # Updates Gamma, C and B
     list2env(flipped_signs, envir = environment())
     
-    if (isTRUE(devmode)) {
-      
-      as.list.environment(x = environment(), all.names = TRUE) |>
-        saveRDS(file = here::here(devdir, "R_out", swap_step, "flip_signs_ind_domi.rds"))
-      
-      if (swap_step == "flip_signs_ind_domi") {
-        swapdir <- c(devdir, "matlab_out", "flip_signs_ind_domi.MAT")
-        
-        vectorness <-
-          lapply(as.list.environment(x = environment(), all.names = TRUE),
-                 is.vector)
-        
-        # Only take the objects that have overlapping names between R and Matlab
-        # Note: Previous iteration of this put ls() in an anonymous function, which does not work. 
-        # For example, this {\(x) ls()}() only shows x 
-        
-        mat_env <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) 
-        mat_env <- mat_env[names(mat_env) %in% ls()] |>
-          convert_matlab2R(vectorness = vectorness) 
-        list2env(x = mat_env, envir = environment())
-      }
-    }
     
     
     mW <- W[windex] 
@@ -428,39 +274,6 @@ for(nb in seq_len(nbt+1)) {
   
   names(uniqueD) <- rownames(Loadings)
   
-  
-  if (isTRUE(devmode)) {
-    as.list.environment(x = environment(), all.names = TRUE) |>
-      saveRDS(file = here::here(devdir, "R_out", swap_step, "end_results.rds"))
-    
-    if (isTRUE(devmode_checkobj)) {
-    ### Checking that objects in R and Matlab are named similarly
-    R_names <- ls()
-    swapdir <- c(devdir, "matlab_out", "end_results.MAT")
-    mat_names <- R.matlab::readMat(here::here(swapdir), fixNames = FALSE) |>
-      names()
-    
-    # browser()
-    
-    non_overlapping_names <- table(c(R_names, mat_names)) |>
-      {\(x) x[x < 2]}() |>
-      names()
-    # Objects in R that don't appear in Matlab
-    RObj_NotIn_Matlab <- R_names[R_names %in% non_overlapping_names]
-    # Objects in Matlab that don't appear in R
-    MatObj_NotIn_R <- mat_names[mat_names %in% non_overlapping_names]
-    
-    # For Maintenance
-    # "As manually checked on December 17/2023, I'm fairly sure that the non-overlapping names are OK.
-    # Most of the Matlab 'unique' names actually show-up in the R sub-functions.
-    # A small minority simply don't appear for parsimony (C_t, crindex) and some
-    # probably aren't legal/good-idea R names (t). The R-unique object names are
-    # intermediaries from functions"
-    # For Maintenance 
-    
-    return(list("RObj_NotIn_Matlab" = RObj_NotIn_Matlab, "MatObj_NotIn_R" =  MatObj_NotIn_R))
-   } 
-  }
     return(
       list(
         "Weights" = Weights,
