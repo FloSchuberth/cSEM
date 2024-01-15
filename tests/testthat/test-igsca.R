@@ -21,20 +21,43 @@ Numberofjobinterviews ~ NetworkingBehavior
 Numberofjoboffers ~ NetworkingBehavior
 "
 
-dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx"))
+data("LeDang2022")
 
 
-igsca_sim_in <- extract_parseModel(model = tutorial_igsca_model,
-                                   data = dat,
+igsca_in <- extract_parseModel(model = tutorial_igsca_model,
+                                   data = LeDang2022,
                                    ind_domi_as_first = TRUE)
 
 ## Testing Input Matrices From extract_parseModel -------------------------------
 
-testthat::expect_identical(igsca_sim_in$W0, igsca_sim_in$C0,
+testthat::expect_identical(igsca_in$W0, igsca_in$C0,
                            label = "All indicators for composite and factorial LVs should have loadings in I-GSCA")
 
+## Compute and tabulate igsca ----------------------------------------------------
+
+igsca_out <- with(igsca_in, igsca(z0 = z0,
+                           W0 = W0,
+                           C0 = C0,
+                           B0 = B0,
+                           lv_type = lv_type,
+                           ov_type = ov_type,
+                           ind_domi = ind_domi,
+                           nbt = 0))
+
+igsca_r_table <- with(
+  igsca_out,
+  get_lavaan_table_igsca_matrix(
+    model = tutorial_igsca_model,
+    weights = Weights,
+    loadings = Loadings,
+    uniqueD = `Uniqueness Terms`,
+    paths = `Path Coefficients`
+  )
+)
 
 # Comparison Against GSCAPro and igsca_sim.m ------------------------------
+
+
 
 ## Pre-Test ----------------------------------------------------------------
 
@@ -61,10 +84,10 @@ all.equal(end_comparisons_table[["matlab"]], gscapro_tabulated)
 
 ## GSCAPro and R ---------------------------------------------------
 compared_R_gscapro <-
-  try(testthat::expect_equal(end_comparisons_table$noswap, gscapro_tabulated)
+  try(testthat::expect_equal(igsca_r_table, gscapro_tabulated)
   )
 
-waldo::compare(end_comparisons_table[["noswap"]], gscapro_tabulated,
+waldo::compare(igsca_out, gscapro_tabulated,
                max_diffs = Inf)
 
 all.equal(end_comparisons_table[["noswap"]], gscapro_tabulated)
