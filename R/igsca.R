@@ -27,8 +27,6 @@
 #' @export
 #' @importFrom MASS ginv 
 #' @examples
-#' require(here)
-#' require(readxl)
 #' 
 #' # Specify the model according to GSCA Pro's example
 #' tutorial_igsca_model <- "
@@ -52,22 +50,23 @@
 #' "
 #' 
 #' # Load the data
-#' load()
+#' data(LeDang2022)
+#' 
 #' # Pre-generate the required matrices for the algorithm and assume that the first indicator for each latent variable is the dominant indicator.
-#' igsca_sim_in <- extract_parseModel(model = tutorial_igsca_model,
-#'                                    data = dat,
+#' igsca_in <- extract_parseModel(model = tutorial_igsca_model,
+#'                                    data = LeDang2022,
 #'                                    ind_domi_as_first = TRUE)
 #'
 #' # Fit the I-GSCA model
-#' (igsca_sim_out <- igsca_sim(z0 = igsca_sim_in$z0,
-#'                             W0 = igsca_sim_in$W0,
-#'                             C0 = igsca_sim_in$C0,
-#'                             B0 = igsca_sim_in$B0,
-#'                             lv_type = igsca_sim_in$lv_type,
-#'                             ov_type = igsca_sim_in$ov_type,
-#'                             ind_domi = igsca_sim_in$ind_domi,
+#' (igsca_out <- with(igsca_in, igsca(z0 = z0,
+#'                             W0 = W0,
+#'                             C0 = C0,
+#'                             B0 = B0,
+#'                             lv_type = lv_type,
+#'                             ov_type = ov_type,
+#'                             ind_domi = ind_domi,
 #'                             nbt = 0)
-#'                             )
+#'                             ))
 igsca <-
   function(z0,
            W0,
@@ -197,7 +196,6 @@ for(nb in seq_len(nbt+1)) {
           stop("lv_type should either be 1 for factors or 0 for composites")
         }
         # This is where the 'actual' updating occurs, in terms of the Gamma matrix, Weights and V(?)
-        # FIXME: warning("Is Matlab doing a 2-norm here?")
         theta <- theta / norm(Xj %*% theta, "2")
         
         Gamma[, j] <- Xj %*% theta
@@ -285,6 +283,8 @@ for(nb in seq_len(nbt+1)) {
 
 #' One-to-One R Translation of gsca_inione.m from Heungsun Hwang
 #' 
+#' Internal I-GSCA Function
+#' 
 #' Initializes the values for I-GSCA
 #' @param z0 Data Matrix
 #' @param W0 Indicator matrix of weights
@@ -293,12 +293,9 @@ for(nb in seq_len(nbt+1)) {
 #' @author Michael S. Truong
 #' 
 #' @return When used in the context of igsca_sim(), it returns a list of the starting values for Weights, Loadings and Path Coefficients. In principle, otherwise, it is a slightly modified implementation of ordinary Generalised Structured Component Analysis (GSCA). 
-#' @export
 #'
 #' @examples
-#' 
-#' require(here)
-#' require(readxl)
+#'
 #' 
 #' tutorial_gsca_model <- "
 #' # Composite Model
@@ -320,14 +317,19 @@ for(nb in seq_len(nbt+1)) {
 #' Numberofjoboffers ~ NetworkingBehavior
 #' "
 #' 
-#' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
+#' data("LeDang2022")
 #' 
 #' 
-#' gsca_sim_in <- extract_parseModel(model = tutorial_gsca_model,
-#'                                    data = dat,
+#' gsca_in <- extract_parseModel(model = tutorial_gsca_model,
+#'                                    data = LeDang2022,
 #'                                    ind_domi_as_first = TRUE)
 #'                          
-#' (gsca_inione_test <- gsca_inione(z0 = gsca_sim_in$z0, W0 = gsca_sim_in$W0, B0 = gsca_sim_in$B0))
+#' (gsca_inione_test <- with(gsca_in,
+#'                           gsca_inione(z0 = z0,
+#'                                       W0 = W0,
+#'                                       B0 = B0)
+#'                                       )
+#'                                       )
 gsca_inione <- function(z0, W0, B0) {
   N <- nrow(z0)
   J <- nrow(W0)
@@ -694,9 +696,7 @@ flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
 #' @return Returns a list of matrices required for igsca_sim() to run: z0, W0, B0, C0, lv_type, ov_type, ind_domi. 
 #' @export
 #' @examples
-#' 
-#' require(here)
-#' require(readxl)
+#'
 #' 
 #' tutorial_igsca_model <- "
 #' # Composite Model
@@ -718,9 +718,9 @@ flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
 #' Numberofjoboffers ~ NetworkingBehavior
 #' "
 #' 
-#' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
+#' data("LeDang2022")
 #' 
-#' extract_parseModel(model = tutorial_igsca_model, data = dat, ind_domi_as_first = TRUE)
+#' extract_parseModel(model = tutorial_igsca_model, data = LeDang2022, ind_domi_as_first = TRUE)
 extract_parseModel <-
   function(model, data, ind_domi_as_first = TRUE) {
     # Note: parseModel is from cSEM internal
@@ -792,8 +792,6 @@ extract_parseModel <-
 #' @importFrom here here
 #' @examples
 #' 
-#' require(here)
-#' require(readxl)
 #' 
 #' tutorial_igsca_model <- "
 #' # Composite Model
@@ -815,9 +813,9 @@ extract_parseModel <-
 #' Numberofjoboffers ~ NetworkingBehavior
 #' "
 #' 
-#' dat <- readxl::read_excel(here::here("dev", "Notes", "data", "mmc1.xlsx")) 
+#' data("LeDang2022")
 #' 
-#' write_for_matlab(extract_parseModel(model = tutorial_igsca_model, data = dat, ind_domi_as_first = TRUE))
+#' write_for_matlab(extract_parseModel(model = tutorial_igsca_model, data = LeDang2022, ind_domi_as_first = TRUE))
 write_for_matlab <- function(extracted_matrices) {
   indir <- list("tests", "comparisons", "igsca_translation", "matlab_in")
   extracted_matrices$lv_type <-
@@ -1170,13 +1168,13 @@ get_lavaan_table_igsca_gscapro <- function(gscapro_in, model) {
 
 #' Title
 #'
-#' @param igsca_sim_results 
+#' @param igsca_results 
 #'
 #' @return
 #' @export
 #'
 #' @examples
-summarize_FIT_idx <- function(igsca_sim_results) {
+summarize_FIT_idx <- function(igsca_results) {
   # TODO: Compute FIT statistic
   return(FIT)
 }

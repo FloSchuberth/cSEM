@@ -55,39 +55,47 @@ igsca_r_table <- with(
   )
 )
 
-# Comparison Against GSCAPro and igsca_sim.m ------------------------------
+# Comparisons between cSEM::igsca(), GSCAPro and igsca_sim.-----------------
 
+## Load Matlab Results -----------------------------------------------------
+# Loads into igsca_sim_m_table
+data("igsca_matlab")
 
+## Load GSCAPro Results ----------------------------------------------------
+# Loads into igsca_gscapro
+data("igsca_gscapro")
 
-## Pre-Test ----------------------------------------------------------------
-
-### igsca_sim.m -------------------------------------------------------------
-
-# TODO: Write matlab results to a csv and write separate reproducible code for how to generate these matlab results.
-
-## Use custom parser for loading GSCAPro Results
-gscapro <- parse_GSCAPro_FullResults()
-
-gscapro_tabulated <-
-  get_lavaan_table_igsca_gscapro(gscapro_in = gscapro, model = tutorial_igsca_model)
-
-
-## GSCAPro and Matlab ------------------------------------------------------
-try(testthat::expect_equal(object = end_comparisons_table[["matlab"]],
-                       expected = gscapro_tabulated))
-
+## Compare Matlab and cSEM::igsca()------------------------------------------
 # See https://r-pkgs.org/testing-basics.html
-waldo::compare(end_comparisons_table[["matlab"]], gscapro_tabulated,
+testthat::expect_equal(object = igsca_sim_m_table,
+                           expected = igsca_r_table)
+
+waldo::compare(igsca_sim_m_table, igsca_r_table,
                max_diffs = Inf)
 
-all.equal(end_comparisons_table[["matlab"]], gscapro_tabulated)
+all.equal(igsca_sim_m_table, igsca_r_table)
 
 ## GSCAPro and R ---------------------------------------------------
-compared_R_gscapro <-
-  try(testthat::expect_equal(igsca_r_table, gscapro_tabulated)
-  )
+try(testthat::expect_equal(igsca_r_table, igsca_gscapro))
 
-waldo::compare(igsca_out, gscapro_tabulated,
+waldo::compare(igsca_r_table, igsca_gscapro,
                max_diffs = Inf)
 
-all.equal(end_comparisons_table[["noswap"]], gscapro_tabulated)
+all.equal(igsca_r_table, igsca_gscapro)
+
+
+## Compare GSCAPro and Matlab ----------------------------------------------
+try(testthat::expect_equal(object = igsca_sim_m_table,
+                           expected = igsca_gscapro))
+
+waldo::compare(igsca_sim_m_table, igsca_gscapro,
+               max_diffs = Inf)
+
+all.equal(igsca_sim_m_table, igsca_gscapro)
+
+
+
+
+
+
+
