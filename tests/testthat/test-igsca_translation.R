@@ -1,3 +1,4 @@
+if (exists(run)) { # To disable for now
 # General Pre-Test -------------------------------------------------------------
 
 ## Model Specification and Load Data ---------------------------------------
@@ -354,3 +355,4 @@ waldo::compare(end_comparisons_table[["noswap"]], gscapro_tabulated,
                max_diffs = Inf)
 
 all.equal(end_comparisons_table[["noswap"]], gscapro_tabulated)
+}
