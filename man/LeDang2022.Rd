@@ -17,8 +17,7 @@ LeDang2022
 Data: LeDang2022
 }
 \details{
-The data comes from a European manufacturer of durable consumer goods and was
-studied by \insertCite{ledang2022DataBrief;textual}{cSEM}
+Insert details on where this comes from and what it means \insertCite{ledang2022DataBrief;textual}{cSEM}
 }
 \references{
 \insertAllCited{}
