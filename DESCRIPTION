@@ -67,12 +67,7 @@ Imports:
     stats,
     symmoments,
     TruncatedNormal,
-    utils,
-    R.matlab,
-    here,
-    readxl,
-    waldo,
-    data.table
+    utils
 RdMacros: Rdpack, lifecycle
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "collate"))
