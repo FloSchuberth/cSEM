@@ -170,12 +170,12 @@ exportToExcel <- function(
     openxlsx::writeData(wb, sheet = "HTMT", if(is.null(.postestimation_object$HTMT)) {
       NA
     } else {
-      .postestimation_object$HTMT$out_print
+      .postestimation_object$HTMT$htmts
     })
     openxlsx::writeData(wb, sheet = "HTMT2", if(is.null(.postestimation_object$HTMT2)) {
       NA
     } else {
-      .postestimation_object$HTMT2$out_print
+      .postestimation_object$HTMT2$htmts
     })
     openxlsx::writeData(wb, sheet = "Fornell-Larcker matrix", if(is.null(.postestimation_object$`Fornell-Larcker`)) {
       NA
