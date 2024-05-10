@@ -107,56 +107,56 @@ for congeneric measurement models. In general, they are used to assess discrimin
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>.object</dt>
+    <dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.type_htmt</dt>
+<dt id="arg--type-htmt">.type_htmt<a class="anchor" aria-label="anchor" href="#arg--type-htmt"></a></dt>
 <dd><p>Character string indicating the type of HTMT that should be
 calculated, i.e., the original HTMT ("<em>htmt</em>") or the HTMT2 ("<em>htmt2</em>").
 Defaults to "<em>htmt</em>"</p></dd>
 
 
-<dt>.absolute</dt>
+<dt id="arg--absolute">.absolute<a class="anchor" aria-label="anchor" href="#arg--absolute"></a></dt>
 <dd><p>Logical. Should the absolute HTMT values be returned?
 Defaults to <code>TRUE</code> .</p></dd>
 
 
-<dt>.alpha</dt>
+<dt id="arg--alpha">.alpha<a class="anchor" aria-label="anchor" href="#arg--alpha"></a></dt>
 <dd><p>A numeric value giving the significance level.
 Defaults to <code>0.05</code>.</p></dd>
 
 
-<dt>.ci</dt>
+<dt id="arg--ci">.ci<a class="anchor" aria-label="anchor" href="#arg--ci"></a></dt>
 <dd><p>A character strings naming the type of confidence interval to use
 to compute the 1-alpha% quantile of the bootstrap HTMT values. For possible
 choices see <code><a href="infer.html">infer()</a></code>. Ignored
 if <code>.inference = FALSE</code>. Defaults to "<em>CI_percentile</em>".</p></dd>
 
 
-<dt>.inference</dt>
+<dt id="arg--inference">.inference<a class="anchor" aria-label="anchor" href="#arg--inference"></a></dt>
 <dd><p>Logical. Should critical values be computed? Defaults to <code>FALSE</code>.</p></dd>
 
 
-<dt>.only_common_factors</dt>
+<dt id="arg--only-common-factors">.only_common_factors<a class="anchor" aria-label="anchor" href="#arg--only-common-factors"></a></dt>
 <dd><p>Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality criteria:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.R</dt>
+<dt id="arg--r">.R<a class="anchor" aria-label="anchor" href="#arg--r"></a></dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
 
 
-<dt>.seed</dt>
+<dt id="arg--seed">.seed<a class="anchor" aria-label="anchor" href="#arg--seed"></a></dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Ignored.</p></dd>
 
 </dl></div>
@@ -217,7 +217,7 @@ interpret values in this case.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>

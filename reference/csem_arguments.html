@@ -88,34 +88,34 @@ their possible choices, use <code>args_default(.choices = TRUE)</code>.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>.alpha</dt>
+    <dl><dt id="arg--alpha">.alpha<a class="anchor" aria-label="anchor" href="#arg--alpha"></a></dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
 
 
-<dt>.absolute</dt>
+<dt id="arg--absolute">.absolute<a class="anchor" aria-label="anchor" href="#arg--absolute"></a></dt>
 <dd><p>Logical. Should the absolute HTMT values be returned?
 Defaults to <code>TRUE</code> .</p></dd>
 
 
-<dt>.approach_gcca</dt>
+<dt id="arg--approach-gcca">.approach_gcca<a class="anchor" aria-label="anchor" href="#arg--approach-gcca"></a></dt>
 <dd><p>Character string. The Kettenring approach to use for GCCA. One of
 "<em>SUMCORR</em>", "<em>MAXVAR</em>", "<em>SSQCORR</em>", "<em>MINVAR</em>" or "<em>GENVAR</em>". Defaults to
 "<em>SUMCORR</em>".</p></dd>
 
 
-<dt>.approach_2ndorder</dt>
+<dt id="arg--approach-ndorder">.approach_2ndorder<a class="anchor" aria-label="anchor" href="#arg--approach-ndorder"></a></dt>
 <dd><p>Character string. Approach used for models containing
 second-order constructs. One of: "<em>2stage</em>", or "<em>mixed</em>". Defaults to "<em>2stage</em>".</p></dd>
 
 
-<dt>.approach_alpha_adjust</dt>
+<dt id="arg--approach-alpha-adjust">.approach_alpha_adjust<a class="anchor" aria-label="anchor" href="#arg--approach-alpha-adjust"></a></dt>
 <dd><p>Character string. Approach used to adjust the
 significance level to accommodate multiple testing.
 One of "<em>none</em>" or "<em>bonferroni</em>". Defaults to "<em>none</em>".</p></dd>
 
 
-<dt>.approach_cor_robust</dt>
+<dt id="arg--approach-cor-robust">.approach_cor_robust<a class="anchor" aria-label="anchor" href="#arg--approach-cor-robust"></a></dt>
 <dd><p>Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "<em>none</em>" in which case the standard
 Bravais-Pearson correlation is used,
@@ -127,20 +127,20 @@ indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.</p></dd>
 
 
-<dt>.approach_mgd</dt>
+<dt id="arg--approach-mgd">.approach_mgd<a class="anchor" aria-label="anchor" href="#arg--approach-mgd"></a></dt>
 <dd><p>Character string or a vector of character strings.
 Approach used for the multi-group comparison. One of: "<em>all</em>", "<em>Klesel</em>", "<em>Chin</em>",
 "<em>Sarstedt</em>", "<em>Keil</em>, "<em>Nitzl</em>", "<em>Henseler</em>", "<em>CI_para</em>", or "<em>CI_overlap</em>".
 Default to "<em>all</em>" in which case all approaches are computed (if possible).</p></dd>
 
 
-<dt>.approach_nl</dt>
+<dt id="arg--approach-nl">.approach_nl<a class="anchor" aria-label="anchor" href="#arg--approach-nl"></a></dt>
 <dd><p>Character string. Approach used to estimate nonlinear
 structural relationships. One of: "<em>sequential</em>" or "<em>replace</em>".
 Defaults to "<em>sequential</em>".</p></dd>
 
 
-<dt>.approach_predict</dt>
+<dt id="arg--approach-predict">.approach_predict<a class="anchor" aria-label="anchor" href="#arg--approach-predict"></a></dt>
 <dd><p>Character string. Which approach should be used to
 predictions? One of "<em>earliest</em>" and "<em>direct</em>". If "<em>earliest</em>" predictions
 for indicators associated to endogenous constructs are performed using only
@@ -149,20 +149,20 @@ indicators associated to endogenous constructs are based on indicators associate
 to their direct antecedents. Defaults to "<em>earliest</em>".</p></dd>
 
 
-<dt>.approach_p_adjust</dt>
+<dt id="arg--approach-p-adjust">.approach_p_adjust<a class="anchor" aria-label="anchor" href="#arg--approach-p-adjust"></a></dt>
 <dd><p>Character string or a vector of character strings.
 Approach used to adjust the p-value for multiple testing.
 See the <code>methods</code> argument of <code><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">stats::p.adjust()</a></code> for a list of choices and
 their description. Defaults to "<em>none</em>".</p></dd>
 
 
-<dt>.approach_paths</dt>
+<dt id="arg--approach-paths">.approach_paths<a class="anchor" aria-label="anchor" href="#arg--approach-paths"></a></dt>
 <dd><p>Character string. Approach used to estimate the
 structural coefficients. One of: "<em>OLS</em>" or "<em>2SLS</em>". If "<em>2SLS</em>", instruments
 need to be supplied to <code>.instruments</code>. Defaults to "<em>OLS</em>".</p></dd>
 
 
-<dt>.approach_score_benchmark</dt>
+<dt id="arg--approach-score-benchmark">.approach_score_benchmark<a class="anchor" aria-label="anchor" href="#arg--approach-score-benchmark"></a></dt>
 <dd><p>Character string. How should the aggregation
 of the estimates of the truncated normal distribution be done for the
 benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
@@ -177,7 +177,7 @@ If <code>.treat_as_continuous = TRUE</code> or if all indicators are on a contin
 <code>.approach_score_benchmark</code> is ignored. Defaults to "<em>round</em>".</p></dd>
 
 
-<dt>.approach_score_target</dt>
+<dt id="arg--approach-score-target">.approach_score_target<a class="anchor" aria-label="anchor" href="#arg--approach-score-target"></a></dt>
 <dd><p>Character string. How should the aggregation of the estimates of
 the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
 One of "<em>mean</em>", "<em>median</em>" or "<em>mode</em>".
@@ -187,29 +187,29 @@ If "<em>mode</em>", the maximum empirical density on the intervals defined by th
 is used. Defaults to "<em>mean</em>".</p></dd>
 
 
-<dt>.approach_weights</dt>
+<dt id="arg--approach-weights">.approach_weights<a class="anchor" aria-label="anchor" href="#arg--approach-weights"></a></dt>
 <dd><p>Character string. Approach used to
 obtain composite weights. One of: "<em>PLS-PM</em>", "<em>SUMCORR</em>", "<em>MAXVAR</em>",
 "<em>SSQCORR</em>", "<em>MINVAR</em>", "<em>GENVAR</em>", "<em>GSCA</em>", "<em>PCA</em>", "<em>unit</em>", "<em>bartlett</em>",
 or "<em>regression</em>". Defaults to "<em>PLS-PM</em>".</p></dd>
 
 
-<dt>.args_used</dt>
+<dt id="arg--args-used">.args_used<a class="anchor" aria-label="anchor" href="#arg--args-used"></a></dt>
 <dd><p>A list of function argument names whose value was modified
 by the user.</p></dd>
 
 
-<dt>.attrbutes</dt>
+<dt id="arg--attrbutes">.attrbutes<a class="anchor" aria-label="anchor" href="#arg--attrbutes"></a></dt>
 <dd><p>Character string. Variables used as attributes in IPMA.</p></dd>
 
 
-<dt>.benchmark</dt>
+<dt id="arg--benchmark">.benchmark<a class="anchor" aria-label="anchor" href="#arg--benchmark"></a></dt>
 <dd><p>Character string. The procedure to obtain benchmark predictions.
 One of "<em>lm</em>", "<em>unit</em>", "<em>PLS-PM</em>", "<em>GSCA</em>", "<em>PCA</em>", "<em>MAXVAR</em>", or "<em>NA</em>".
 Default to "<em>lm</em>".</p></dd>
 
 
-<dt>.bias_corrected</dt>
+<dt id="arg--bias-corrected">.bias_corrected<a class="anchor" aria-label="anchor" href="#arg--bias-corrected"></a></dt>
 <dd><p>Logical. Should the standard and the tStat
 confidence interval be bias-corrected using the bootstrapped bias estimate?
 If <code>TRUE</code> the confidence interval for some estimated parameter <code>theta</code>
@@ -218,61 +218,61 @@ where <code>theta*_hat</code> is the average over all <code>.R</code> bootstrap 
 Defaults to <code>TRUE</code></p></dd>
 
 
-<dt>.by_equation</dt>
+<dt id="arg--by-equation">.by_equation<a class="anchor" aria-label="anchor" href="#arg--by-equation"></a></dt>
 <dd><p>Should the criteria be computed for each structural model
 equation separately? Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.C</dt>
+<dt id="arg--c">.C<a class="anchor" aria-label="anchor" href="#arg--c"></a></dt>
 <dd><p>A (J x J) composite variance-covariance matrix.</p></dd>
 
 
-<dt>.check_errors</dt>
+<dt id="arg--check-errors">.check_errors<a class="anchor" aria-label="anchor" href="#arg--check-errors"></a></dt>
 <dd><p>Logical. Should the model to parse be checked for correctness
 in a sense that all necessary components to estimate the model are given?
 Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.choices</dt>
+<dt id="arg--choices">.choices<a class="anchor" aria-label="anchor" href="#arg--choices"></a></dt>
 <dd><p>Logical. Should candidate values for the arguments be returned?
 Defaults to <code>FALSE</code>.</p></dd>
 
 
-<dt>.ci</dt>
+<dt id="arg--ci">.ci<a class="anchor" aria-label="anchor" href="#arg--ci"></a></dt>
 <dd><p>A vector of character strings naming the confidence interval to compute.
 For possible choices see <code><a href="infer.html">infer()</a></code>.</p></dd>
 
 
-<dt>.ci_colnames</dt>
+<dt id="arg--ci-colnames">.ci_colnames<a class="anchor" aria-label="anchor" href="#arg--ci-colnames"></a></dt>
 <dd><p>Internal argument used by several print helper functions.</p></dd>
 
 
-<dt>.closed_form_ci</dt>
+<dt id="arg--closed-form-ci">.closed_form_ci<a class="anchor" aria-label="anchor" href="#arg--closed-form-ci"></a></dt>
 <dd><p>Logical. Should a closed-form confidence interval be computed?
 Defaults to <code>FALSE</code>.</p></dd>
 
 
-<dt>.conv_criterion</dt>
+<dt id="arg--conv-criterion">.conv_criterion<a class="anchor" aria-label="anchor" href="#arg--conv-criterion"></a></dt>
 <dd><p>Character string. The criterion to use for the convergence check.
 One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", or "<em>diff_relative</em>". Defaults
 to "<em>diff_absolute</em>".</p></dd>
 
 
-<dt>.csem_model</dt>
+<dt id="arg--csem-model">.csem_model<a class="anchor" aria-label="anchor" href="#arg--csem-model"></a></dt>
 <dd><p>A (possibly incomplete) <a href="csem_model.html">cSEMModel</a>-list.</p></dd>
 
 
-<dt>.csem_resample</dt>
+<dt id="arg--csem-resample">.csem_resample<a class="anchor" aria-label="anchor" href="#arg--csem-resample"></a></dt>
 <dd><p>A list resulting from a call to <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code>.</p></dd>
 
 
-<dt>.cv_folds</dt>
+<dt id="arg--cv-folds">.cv_folds<a class="anchor" aria-label="anchor" href="#arg--cv-folds"></a></dt>
 <dd><p>Integer. The number of cross-validation folds to use. Setting
 <code>.cv_folds</code> to <code>N</code> (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to <code>10</code>.</p></dd>
 
 
-<dt>.data</dt>
+<dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
 <dd><p>A <code>data.frame</code> or a <code>matrix</code> of standardized or unstandardized
 data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "<code>logical</code>", "<code>numeric</code>" ("<code>double</code>" or "<code>integer</code>"),
@@ -280,33 +280,33 @@ of the data provided are: "<code>logical</code>", "<code>numeric</code>" ("<code
 or a mix of several types.</p></dd>
 
 
-<dt>.dependent</dt>
+<dt id="arg--dependent">.dependent<a class="anchor" aria-label="anchor" href="#arg--dependent"></a></dt>
 <dd><p>Character string. The name of the dependent variable.</p></dd>
 
 
-<dt>.disattenuate</dt>
+<dt id="arg--disattenuate">.disattenuate<a class="anchor" aria-label="anchor" href="#arg--disattenuate"></a></dt>
 <dd><p>Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.dist</dt>
+<dt id="arg--dist">.dist<a class="anchor" aria-label="anchor" href="#arg--dist"></a></dt>
 <dd><p>Character string. The distribution to use for the critical value.
 One of <em>"t"</em> for Student's t-distribution or <em>"z"</em> for the standard normal distribution.
 Defaults to <em>"z"</em>.</p></dd>
 
 
-<dt>.distance</dt>
+<dt id="arg--distance">.distance<a class="anchor" aria-label="anchor" href="#arg--distance"></a></dt>
 <dd><p>Character string. A distance measure. One of: "<em>geodesic</em>"
 or "<em>squared_euclidean</em>". Defaults to "<em>geodesic</em>".</p></dd>
 
 
-<dt>.df</dt>
+<dt id="arg--df">.df<a class="anchor" aria-label="anchor" href="#arg--df"></a></dt>
 <dd><p>Character string. The method for obtaining the degrees of freedom.
 Choices are "<em>type1</em>" and "<em>type2</em>". Defaults to "<em>type1</em>" .</p></dd>
 
 
-<dt>.dominant_indicators</dt>
+<dt id="arg--dominant-indicators">.dominant_indicators<a class="anchor" aria-label="anchor" href="#arg--dominant-indicators"></a></dt>
 <dd><p>A character vector of <code>"construct_name" = "indicator_name"</code> pairs,
 where <code>"indicator_name"</code> is a character string giving the name of the dominant indicator
 and <code>"construct_name"</code> a character string of the corresponding construct name.
@@ -314,54 +314,54 @@ Dominant indicators may be specified for a subset of the constructs.
 Default to <code>NULL</code>.</p></dd>
 
 
-<dt>.E</dt>
+<dt id="arg--e">.E<a class="anchor" aria-label="anchor" href="#arg--e"></a></dt>
 <dd><p>A (J x J) matrix of inner weights.</p></dd>
 
 
-<dt>.effect</dt>
+<dt id="arg--effect">.effect<a class="anchor" aria-label="anchor" href="#arg--effect"></a></dt>
 <dd><p>Internal argument used by helper printEffects().</p></dd>
 
 
-<dt>.estimate_structural</dt>
+<dt id="arg--estimate-structural">.estimate_structural<a class="anchor" aria-label="anchor" href="#arg--estimate-structural"></a></dt>
 <dd><p>Logical. Should the structural coefficients
 be estimated? Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.eval_plan</dt>
+<dt id="arg--eval-plan">.eval_plan<a class="anchor" aria-label="anchor" href="#arg--eval-plan"></a></dt>
 <dd><p>Character string. The evaluation plan to use. One of
 "<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
 
 
-<dt>.filename</dt>
+<dt id="arg--filename">.filename<a class="anchor" aria-label="anchor" href="#arg--filename"></a></dt>
 <dd><p>Character string. The file name. Defaults to "results.xlsx".</p></dd>
 
 
-<dt>.first_resample</dt>
+<dt id="arg--first-resample">.first_resample<a class="anchor" aria-label="anchor" href="#arg--first-resample"></a></dt>
 <dd><p>A list containing the <code>.R</code> resamples based on the original
 data obtained by resamplecSEMResults().</p></dd>
 
 
-<dt>.fit_measures</dt>
+<dt id="arg--fit-measures">.fit_measures<a class="anchor" aria-label="anchor" href="#arg--fit-measures"></a></dt>
 <dd><p>Logical. (EXPERIMENTAL) Should additional fit measures
 be included? Defaults to <code>FALSE</code>.</p></dd>
 
 
-<dt>.force</dt>
+<dt id="arg--force">.force<a class="anchor" aria-label="anchor" href="#arg--force"></a></dt>
 <dd><p>Logical. Should .object be resampled even if it contains resamples
 already?. Defaults to <code>FALSE</code>.</p></dd>
 
 
-<dt>.full_output</dt>
+<dt id="arg--full-output">.full_output<a class="anchor" aria-label="anchor" href="#arg--full-output"></a></dt>
 <dd><p>Logical. Should the full output of summarize be printed.
 Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.H</dt>
+<dt id="arg--h">.H<a class="anchor" aria-label="anchor" href="#arg--h"></a></dt>
 <dd><p>The (N x J) matrix of construct scores.</p></dd>
 
 
-<dt>.handle_inadmissibles</dt>
+<dt id="arg--handle-inadmissibles">.handle_inadmissibles<a class="anchor" aria-label="anchor" href="#arg--handle-inadmissibles"></a></dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
 replications/resamples yielding an inadmissible result will be dropped
@@ -373,21 +373,21 @@ Depending on the frequency of inadmissible solutions this may significantly incr
 computing time. Defaults to "<em>drop</em>".</p></dd>
 
 
-<dt>.id</dt>
+<dt id="arg--id">.id<a class="anchor" aria-label="anchor" href="#arg--id"></a></dt>
 <dd><p>Character string or integer. A character string giving the name or
 an integer of the position of the column of <code>.data</code> whose levels are used
 to split <code>.data</code> into groups. Defaults to <code>NULL</code>.</p></dd>
 
 
-<dt>.inference</dt>
+<dt id="arg--inference">.inference<a class="anchor" aria-label="anchor" href="#arg--inference"></a></dt>
 <dd><p>Logical. Should critical values be computed? Defaults to <code>FALSE</code>.</p></dd>
 
 
-<dt>.independent</dt>
+<dt id="arg--independent">.independent<a class="anchor" aria-label="anchor" href="#arg--independent"></a></dt>
 <dd><p>Character string. The name of the independent variable.</p></dd>
 
 
-<dt>.instruments</dt>
+<dt id="arg--instruments">.instruments<a class="anchor" aria-label="anchor" href="#arg--instruments"></a></dt>
 <dd><p>A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
@@ -396,68 +396,68 @@ that exogenous variables of a given equation <strong>must</strong> be supplied a
 instruments for themselves. Defaults to <code>NULL</code>.</p></dd>
 
 
-<dt>.iter_max</dt>
+<dt id="arg--iter-max">.iter_max<a class="anchor" aria-label="anchor" href="#arg--iter-max"></a></dt>
 <dd><p>Integer. The maximum number of iterations allowed.
 If <code>iter_max = 1</code> and <code>.approach_weights = "PLS-PM"</code> one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 <code>.iter_max - 1</code>  will be returned with a warning. Defaults to <code>100</code>.</p></dd>
 
 
-<dt>.level</dt>
+<dt id="arg--level">.level<a class="anchor" aria-label="anchor" href="#arg--level"></a></dt>
 <dd><p>Character. Used in <code>plot.cSEMIPMA</code> to indicate whether IPMA should be done
 for constructs or indicators.</p></dd>
 
 
-<dt>.matrix1</dt>
+<dt id="arg--matrix-">.matrix1<a class="anchor" aria-label="anchor" href="#arg--matrix-"></a></dt>
 <dd><p>A <code>matrix</code> to compare.</p></dd>
 
 
-<dt>.matrix2</dt>
+<dt id="arg--matrix-">.matrix2<a class="anchor" aria-label="anchor" href="#arg--matrix-"></a></dt>
 <dd><p>A <code>matrix</code> to compare.</p></dd>
 
 
-<dt>.matrices</dt>
+<dt id="arg--matrices">.matrices<a class="anchor" aria-label="anchor" href="#arg--matrices"></a></dt>
 <dd><p>A list of at least two matrices.</p></dd>
 
 
-<dt>.metrics</dt>
+<dt id="arg--metrics">.metrics<a class="anchor" aria-label="anchor" href="#arg--metrics"></a></dt>
 <dd><p>Character string or a vector of character strings.
 Which prediction metrics should be displayed? One of: "<em>MAE</em>", "<em>RMSE</em>", "<em>Q2</em>",
 "<em>MER</em>", "<em>MAPE</em>, "<em>MSE2</em>", "<em>U1</em>", "<em>U2</em>", "<em>UM</em>", "<em>UR</em>", or "<em>UD</em>".
 Default to c("<em>MAE</em>", "<em>RMSE</em>", "<em>Q2</em>").</p></dd>
 
 
-<dt>.model</dt>
+<dt id="arg--model">.model<a class="anchor" aria-label="anchor" href="#arg--model"></a></dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a>
 or a <a href="csem_model.html">cSEMModel</a> list.</p></dd>
 
 
-<dt>.moderator</dt>
+<dt id="arg--moderator">.moderator<a class="anchor" aria-label="anchor" href="#arg--moderator"></a></dt>
 <dd><p>Character string. The name of the moderator variable.</p></dd>
 
 
-<dt>.modes</dt>
+<dt id="arg--modes">.modes<a class="anchor" aria-label="anchor" href="#arg--modes"></a></dt>
 <dd><p>A vector giving the mode for each construct in the form <code>"name" = "mode"</code>.
 Only used internally.</p></dd>
 
 
-<dt>.ms_criterion</dt>
+<dt id="arg--ms-criterion">.ms_criterion<a class="anchor" aria-label="anchor" href="#arg--ms-criterion"></a></dt>
 <dd><p>Character string. Either a single character string or a vector
 of character strings naming the model selection criterion to compute.
 Defaults to <code>"all"</code>.</p></dd>
 
 
-<dt>.n</dt>
+<dt id="arg--n">.n<a class="anchor" aria-label="anchor" href="#arg--n"></a></dt>
 <dd><p>Integer. The number of observations of the original data.</p></dd>
 
 
-<dt>.n_steps</dt>
+<dt id="arg--n-steps">.n_steps<a class="anchor" aria-label="anchor" href="#arg--n-steps"></a></dt>
 <dd><p>Integer. A value giving the number of steps (the spotlights, i.e.,
 values of .moderator in surface analysis or floodlight analysis)
 between the minimum and maximum value of the moderator. Defaults to <code>100</code>.</p></dd>
 
 
-<dt>.normality</dt>
+<dt id="arg--normality">.normality<a class="anchor" aria-label="anchor" href="#arg--normality"></a></dt>
 <dd><p>Logical. Should joint normality of
 \([\eta_{1:p}; \zeta; \epsilon]\)
 be assumed in the nonlinear model? See (Dijkstra and Schermelleh-Engel 2014)
@@ -465,72 +465,72 @@ be assumed in the nonlinear model? See (Dijkstra and Schermelleh-Engel 2014)
 Defaults to <code>FALSE</code>. Ignored if the model is not nonlinear.</p></dd>
 
 
-<dt>.nr_comparisons</dt>
+<dt id="arg--nr-comparisons">.nr_comparisons<a class="anchor" aria-label="anchor" href="#arg--nr-comparisons"></a></dt>
 <dd><p>Integer. The number of comparisons. Defaults to <code>NULL</code>.</p></dd>
 
 
-<dt>.null_model</dt>
+<dt id="arg--null-model">.null_model<a class="anchor" aria-label="anchor" href="#arg--null-model"></a></dt>
 <dd><p>Logical. Should the degrees of freedom for the null model
 be computed? Defaults to <code>FALSE</code>.</p></dd>
 
 
-<dt>.object</dt>
+<dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.object1</dt>
+<dt id="arg--object-">.object1<a class="anchor" aria-label="anchor" href="#arg--object-"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.object2</dt>
+<dt id="arg--object-">.object2<a class="anchor" aria-label="anchor" href="#arg--object-"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.only_common_factors</dt>
+<dt id="arg--only-common-factors">.only_common_factors<a class="anchor" aria-label="anchor" href="#arg--only-common-factors"></a></dt>
 <dd><p>Logical. Should only concepts modeled as common
 factors be included when calculating one of the following quality criteria:
 AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
 Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.only_structural</dt>
+<dt id="arg--only-structural">.only_structural<a class="anchor" aria-label="anchor" href="#arg--only-structural"></a></dt>
 <dd><p>Should the the log-likelihood be based on the
 structural model? Ignored if <code>.by_equation == TRUE</code>. Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.original_arguments</dt>
+<dt id="arg--original-arguments">.original_arguments<a class="anchor" aria-label="anchor" href="#arg--original-arguments"></a></dt>
 <dd><p>The list of arguments used within <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.output_type</dt>
+<dt id="arg--output-type">.output_type<a class="anchor" aria-label="anchor" href="#arg--output-type"></a></dt>
 <dd><p>Character string. The type of output to return. One of
 "<em>complete</em>" or "<em>structured</em>". See the Value section for details. Defaults to
 "<em>complete</em>".</p></dd>
 
 
-<dt>.P</dt>
+<dt id="arg--p">.P<a class="anchor" aria-label="anchor" href="#arg--p"></a></dt>
 <dd><p>A (J x J) construct variance-covariance matrix (possibly disattenuated).</p></dd>
 
 
-<dt>.parameters_to_compare</dt>
+<dt id="arg--parameters-to-compare">.parameters_to_compare<a class="anchor" aria-label="anchor" href="#arg--parameters-to-compare"></a></dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a> indicating which
 parameters (i.e, path (<code>~</code>), loadings (<code>=~</code>), weights (<code>&lt;~</code>), or correlations (<code>~~</code>)) should be
 compared across groups. Defaults to <code>NULL</code> in which case all weights, loadings and
 path coefficients of the originally specified model are compared.</p></dd>
 
 
-<dt>.path</dt>
+<dt id="arg--path">.path<a class="anchor" aria-label="anchor" href="#arg--path"></a></dt>
 <dd><p>Character string. Path of the directory to save the file to. Defaults
 to the current working directory.</p></dd>
 
 
-<dt>.path_coefficients</dt>
+<dt id="arg--path-coefficients">.path_coefficients<a class="anchor" aria-label="anchor" href="#arg--path-coefficients"></a></dt>
 <dd><p>List. A list that contains the resampled and the original
 path coefficient estimates. Typically a part of a <code>cSEMResults_resampled</code> object.
 Defaults to <code>NULL</code>.</p></dd>
 
 
-<dt>.PLS_approach_cf</dt>
+<dt id="arg--pls-approach-cf">.PLS_approach_cf<a class="anchor" aria-label="anchor" href="#arg--pls-approach-cf"></a></dt>
 <dd><p>Character string. Approach used to obtain the correction
 factors for PLSc. One of: "<em>dist_squared_euclid</em>", "<em>dist_euclid_weighted</em>",
 "<em>fisher_transformed</em>", "<em>mean_arithmetic</em>", "<em>mean_geometric</em>", "<em>mean_harmonic</em>",
@@ -538,21 +538,21 @@ factors for PLSc. One of: "<em>dist_squared_euclid</em>", "<em>dist_euclid_weigh
 Ignored if <code>.disattenuate = FALSE</code> or if <code>.approach_weights</code> is not PLS-PM.</p></dd>
 
 
-<dt>.plot_package</dt>
+<dt id="arg--plot-package">.plot_package<a class="anchor" aria-label="anchor" href="#arg--plot-package"></a></dt>
 <dd><p>Character string. Indicates which packages should be used for plotting.</p></dd>
 
 
-<dt>.plot_type</dt>
+<dt id="arg--plot-type">.plot_type<a class="anchor" aria-label="anchor" href="#arg--plot-type"></a></dt>
 <dd><p>Character string. Indicates the type of plot that is produced.</p></dd>
 
 
-<dt>.PLS_ignore_structural_model</dt>
+<dt id="arg--pls-ignore-structural-model">.PLS_ignore_structural_model<a class="anchor" aria-label="anchor" href="#arg--pls-ignore-structural-model"></a></dt>
 <dd><p>Logical. Should the structural model be ignored
 when calculating the inner weights of the PLS-PM algorithm? Defaults to <code>FALSE</code>.
 Ignored if <code>.approach_weights</code> is not PLS-PM.</p></dd>
 
 
-<dt>.PLS_modes</dt>
+<dt id="arg--pls-modes">.PLS_modes<a class="anchor" aria-label="anchor" href="#arg--pls-modes"></a></dt>
 <dd><p>Either a named list specifying the mode that should be used for
 each construct in the form <code>"construct_name" = mode</code>, a single character
 string giving the mode that should be used for all constructs, or <code>NULL</code>.
@@ -566,29 +566,29 @@ If <code>NULL</code> the appropriate mode according to the type
 of construct used is chosen. Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
 
 
-<dt>.PLS_weight_scheme_inner</dt>
+<dt id="arg--pls-weight-scheme-inner">.PLS_weight_scheme_inner<a class="anchor" aria-label="anchor" href="#arg--pls-weight-scheme-inner"></a></dt>
 <dd><p>Character string. The inner weighting scheme
 used by PLS-PM. One of: "<em>centroid</em>", "<em>factorial</em>", or "<em>path</em>".
 Defaults to "<em>path</em>". Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
 
 
-<dt>.probs</dt>
+<dt id="arg--probs">.probs<a class="anchor" aria-label="anchor" href="#arg--probs"></a></dt>
 <dd><p>A vector of probabilities.</p></dd>
 
 
-<dt>.postestimation_object</dt>
+<dt id="arg--postestimation-object">.postestimation_object<a class="anchor" aria-label="anchor" href="#arg--postestimation-object"></a></dt>
 <dd><p>An object resulting from a call to one of cSEM's
 postestimation functions (e.g. <code><a href="summarize.html">summarize()</a></code>).</p></dd>
 
 
-<dt>.quality_criterion</dt>
+<dt id="arg--quality-criterion">.quality_criterion<a class="anchor" aria-label="anchor" href="#arg--quality-criterion"></a></dt>
 <dd><p>Character string. A single character string or a
 vector of character strings naming the quality criterion to compute. See
 the Details section for a list of possible candidates.
 Defaults to "<em>all</em>" in which case all possible quality criteria are computed.</p></dd>
 
 
-<dt>.quantity</dt>
+<dt id="arg--quantity">.quantity<a class="anchor" aria-label="anchor" href="#arg--quantity"></a></dt>
 <dd><p>Character string. Which statistic should be returned?
 One of "<em>all</em>", "<em>mean</em>", "<em>sd</em>", "<em>bias</em>", "<em>CI_standard_z</em>", "<em>CI_standard_t</em>",
 "<em>CI_percentile</em>", "<em>CI_basic</em>", "<em>CI_bc</em>", "<em>CI_bca</em>", "<em>CI_t_interval</em>"
@@ -596,13 +596,13 @@ Defaults to "<em>all</em>" in which case all quantities that do not require
 additional resampling are returned, i.e., all quantities but "<em>CI_bca</em>", "<em>CI_t_interval</em>".</p></dd>
 
 
-<dt>.Q</dt>
+<dt id="arg--q">.Q<a class="anchor" aria-label="anchor" href="#arg--q"></a></dt>
 <dd><p>A vector of composite-construct correlations with element names equal to
 the names of the J construct names used in the measurement model. Note
 Q^2 is also called the reliability coefficient.</p></dd>
 
 
-<dt>.reliabilities</dt>
+<dt id="arg--reliabilities">.reliabilities<a class="anchor" aria-label="anchor" href="#arg--reliabilities"></a></dt>
 <dd><p>A character vector of <code>"name" = value</code> pairs,
 where <code>value</code> is a number between 0 and 1 and <code>"name"</code> a character string
 of the corresponding construct name, or <code>NULL</code>. Reliabilities
@@ -611,12 +611,12 @@ reliabilities are estimated by <code><a href="csem.html">csem()</a></code>. Curr
 <code>.approach_weights = "PLS-PM"</code>.</p></dd>
 
 
-<dt>.resample_method</dt>
+<dt id="arg--resample-method">.resample_method<a class="anchor" aria-label="anchor" href="#arg--resample-method"></a></dt>
 <dd><p>Character string. The resampling method to use. One of:
 "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". Defaults to "<em>none</em>".</p></dd>
 
 
-<dt>.resample_method2</dt>
+<dt id="arg--resample-method-">.resample_method2<a class="anchor" aria-label="anchor" href="#arg--resample-method-"></a></dt>
 <dd><p>Character string. The resampling method to use when resampling
 from a resample. One of: "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". For
 "<em>bootstrap</em>" the number of draws is provided via <code>.R2</code>. Currently,
@@ -624,122 +624,122 @@ resampling from each resample is only required for the studentized confidence
 interval ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
 
 
-<dt>`.resample_object`</dt>
+<dt id="arg--resample-object-">`.resample_object`<a class="anchor" aria-label="anchor" href="#arg--resample-object-"></a></dt>
 <dd><p>An R object of class <code>cSEMResults_resampled</code>
 obtained from <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> or by setting <code>.resample_method = "bootstrap"</code>
 or <code>"jackknife"</code> when calling <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.resample_sarstedt</dt>
+<dt id="arg--resample-sarstedt">.resample_sarstedt<a class="anchor" aria-label="anchor" href="#arg--resample-sarstedt"></a></dt>
 <dd><p>A matrix containing the parameter estimates that
 could potentially be compared and an id column indicating the group adherence
 of each row.</p></dd>
 
 
-<dt>.r</dt>
+<dt id="arg--r">.r<a class="anchor" aria-label="anchor" href="#arg--r"></a></dt>
 <dd><p>Integer. The number of repetitions to use. Defaults to <code>1</code>.</p></dd>
 
 
-<dt>.R</dt>
+<dt id="arg--r">.R<a class="anchor" aria-label="anchor" href="#arg--r"></a></dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
 
 
-<dt>.R2</dt>
+<dt id="arg--r-">.R2<a class="anchor" aria-label="anchor" href="#arg--r-"></a></dt>
 <dd><p>Integer. The number of bootstrap replications to use when
 resampling from a resample. Defaults to <code>199</code>.</p></dd>
 
 
-<dt>.R_bootstrap</dt>
+<dt id="arg--r-bootstrap">.R_bootstrap<a class="anchor" aria-label="anchor" href="#arg--r-bootstrap"></a></dt>
 <dd><p>Integer. The number of bootstrap runs. Ignored if <code>.object</code>
 contains resamples. Defaults to <code>499</code></p></dd>
 
 
-<dt>.R_permutation</dt>
+<dt id="arg--r-permutation">.R_permutation<a class="anchor" aria-label="anchor" href="#arg--r-permutation"></a></dt>
 <dd><p>Integer. The number of permutations. Defaults to <code>499</code></p></dd>
 
 
-<dt>.S</dt>
+<dt id="arg--s">.S<a class="anchor" aria-label="anchor" href="#arg--s"></a></dt>
 <dd><p>The (K x K) empirical indicator correlation matrix.</p></dd>
 
 
-<dt>.saturated</dt>
+<dt id="arg--saturated">.saturated<a class="anchor" aria-label="anchor" href="#arg--saturated"></a></dt>
 <dd><p>Logical. Should a saturated structural model be used?
 Defaults to <code>FALSE</code>.</p></dd>
 
 
-<dt>.second_resample</dt>
+<dt id="arg--second-resample">.second_resample<a class="anchor" aria-label="anchor" href="#arg--second-resample"></a></dt>
 <dd><p>A list containing <code>.R2</code> resamples for each of the <code>.R</code>
 resamples of the first run.</p></dd>
 
 
-<dt>.seed</dt>
+<dt id="arg--seed">.seed<a class="anchor" aria-label="anchor" href="#arg--seed"></a></dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
 
 
-<dt>.sign_change_option</dt>
+<dt id="arg--sign-change-option">.sign_change_option<a class="anchor" aria-label="anchor" href="#arg--sign-change-option"></a></dt>
 <dd><p>Character string. Which sign change option should
 be used to handle flipping signs when resampling? One of "<em>none</em>","<em>individual</em>",
 "<em>individual_reestimate</em>", "<em>construct_reestimate</em>". Defaults to "<em>none</em>".</p></dd>
 
 
-<dt>.sim_points</dt>
+<dt id="arg--sim-points">.sim_points<a class="anchor" aria-label="anchor" href="#arg--sim-points"></a></dt>
 <dd><p>Integer. How many samples from the truncated normal distribution should
 be simulated to estimate the exogenous construct scores? Defaults to "<em>100</em>".</p></dd>
 
 
-<dt>.stage</dt>
+<dt id="arg--stage">.stage<a class="anchor" aria-label="anchor" href="#arg--stage"></a></dt>
 <dd><p>Character string. The stage the model is needed for.
 One of "<em>first</em>" or "<em>second</em>". Defaults to "<em>first</em>".</p></dd>
 
 
-<dt>.standardized</dt>
+<dt id="arg--standardized">.standardized<a class="anchor" aria-label="anchor" href="#arg--standardized"></a></dt>
 <dd><p>Logical. Should standardized scores be returned? Defaults
 to <code>TRUE</code>.</p></dd>
 
 
-<dt>.starting_values</dt>
+<dt id="arg--starting-values">.starting_values<a class="anchor" aria-label="anchor" href="#arg--starting-values"></a></dt>
 <dd><p>A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of <code>"indicator_name" = value</code>
 pairs, where <code>value</code> is the (scaled or unscaled) starting weight. Defaults to <code>NULL</code>.</p></dd>
 
 
-<dt>.steps_mod</dt>
+<dt id="arg--steps-mod">.steps_mod<a class="anchor" aria-label="anchor" href="#arg--steps-mod"></a></dt>
 <dd><p>A numeric vector. Steps used for the moderator variable in calculating
 the simple effects of an independent variable on the dependent variable.
 Defaults to <code>NULL</code>.</p></dd>
 
 
-<dt>.terms</dt>
+<dt id="arg--terms">.terms<a class="anchor" aria-label="anchor" href="#arg--terms"></a></dt>
 <dd><p>A vector of construct names to be classified.</p></dd>
 
 
-<dt>.test_data</dt>
+<dt id="arg--test-data">.test_data<a class="anchor" aria-label="anchor" href="#arg--test-data"></a></dt>
 <dd><p>A matrix of test data with the same column names as the
 training data.</p></dd>
 
 
-<dt>.testtype</dt>
+<dt id="arg--testtype">.testtype<a class="anchor" aria-label="anchor" href="#arg--testtype"></a></dt>
 <dd><p>Character string. One of "<em>twosided</em>" (H1: The models do not
 perform equally in predicting indicators belonging to endogenous constructs)"
 and <em>onesided</em>" (H1: Model 1 performs better in predicting indicators belonging</p></dd>
 
 
-<dt>.tolerance</dt>
+<dt id="arg--tolerance">.tolerance<a class="anchor" aria-label="anchor" href="#arg--tolerance"></a></dt>
 <dd><p>Double. The tolerance criterion for convergence.
 Defaults to <code>1e-05</code>.</p></dd>
 
 
-<dt>.treat_as_continuous</dt>
+<dt id="arg--treat-as-continuous">.treat_as_continuous<a class="anchor" aria-label="anchor" href="#arg--treat-as-continuous"></a></dt>
 <dd><p>Logical. Should the indicators for the benchmark predictions
 be treated as continuous? If <code>TRUE</code> all indicators are treated as continuous and PLS-PM/PLSc is applied.
 If <code>FALSE</code> OrdPLS/OrdPLSc is applied. Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.type_gfi</dt>
+<dt id="arg--type-gfi">.type_gfi<a class="anchor" aria-label="anchor" href="#arg--type-gfi"></a></dt>
 <dd><p>Character string. Which fitting function should the GFI be based
 on? One of <em>"ML"</em> for the maximum likelihood fitting function, <em>"GLS"</em> for
 the generalized least squares fitting function or <em>"ULS"</em> for the
@@ -747,31 +747,31 @@ unweighted least squares fitting function (same as the squared Euclidean distanc
 Defaults to <em>"ML"</em>.</p></dd>
 
 
-<dt>.type_ci</dt>
+<dt id="arg--type-ci">.type_ci<a class="anchor" aria-label="anchor" href="#arg--type-ci"></a></dt>
 <dd><p>Character string. Which confidence interval should be calculated?
 For possible choices, see the <code>.quantity</code> argument of the <code><a href="infer.html">infer()</a></code> function.
 Only used if <code>.approch_mgd</code> is one of "<em>CI_para</em>" or "<em>CI_overlap</em>". Ignored otherwise.
 Defaults to "<em>CI_percentile</em>".</p></dd>
 
 
-<dt>.type_htmt</dt>
+<dt id="arg--type-htmt">.type_htmt<a class="anchor" aria-label="anchor" href="#arg--type-htmt"></a></dt>
 <dd><p>Character string indicating the type of HTMT that should be
 calculated, i.e., the original HTMT ("<em>htmt</em>") or the HTMT2 ("<em>htmt2</em>").
 Defaults to "<em>htmt</em>"</p></dd>
 
 
-<dt>.type_vcv</dt>
+<dt id="arg--type-vcv">.type_vcv<a class="anchor" aria-label="anchor" href="#arg--type-vcv"></a></dt>
 <dd><p>Character string. Which model-implied correlation
 matrix should be calculated?
 One of "<em>indicator</em>" or "<em>construct</em>". Defaults to "<em>indicator</em>".</p></dd>
 
 
-<dt>.verbose</dt>
+<dt id="arg--verbose">.verbose<a class="anchor" aria-label="anchor" href="#arg--verbose"></a></dt>
 <dd><p>Logical. Should information (e.g., progress bar) be printed
 to the console? Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.user_funs</dt>
+<dt id="arg--user-funs">.user_funs<a class="anchor" aria-label="anchor" href="#arg--user-funs"></a></dt>
 <dd><p>A function or a (named) list of functions to apply to every
 resample. The functions must take <code>.object</code> as its first argument (e.g.,
 <code>myFun &lt;- function(.object, ...) {body-of-the-function}</code>).
@@ -780,58 +780,58 @@ vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.</p></dd>
 
 
-<dt>.value_independent</dt>
+<dt id="arg--value-independent">.value_independent<a class="anchor" aria-label="anchor" href="#arg--value-independent"></a></dt>
 <dd><p>Integer. Only required for floodlight analysis;
 The value of the independent variable in case that it appears as a
 higher-order term.</p></dd>
 
 
-<dt>.values_moderator</dt>
+<dt id="arg--values-moderator">.values_moderator<a class="anchor" aria-label="anchor" href="#arg--values-moderator"></a></dt>
 <dd><p>A numeric vector. The values of the moderator in a
 the simple effects analysis. Typically these are difference from the mean (=0)
 measured in standard deviations. Defaults to <code>c(-2, -1, 0, 1, 2)</code>.</p></dd>
 
 
-<dt>.vcv_asymptotic</dt>
+<dt id="arg--vcv-asymptotic">.vcv_asymptotic<a class="anchor" aria-label="anchor" href="#arg--vcv-asymptotic"></a></dt>
 <dd><p>Logical. Should the asymptotic variance-covariance matrix be used, i.e.,
 VCV(b0) - VCV(b1)= VCV(b1-b0), or should VCV(b1-b0) be computed directly?
 Defaults to <code>FALSE</code>.</p></dd>
 
 
-<dt>.vector1</dt>
+<dt id="arg--vector-">.vector1<a class="anchor" aria-label="anchor" href="#arg--vector-"></a></dt>
 <dd><p>A vector of numeric values.</p></dd>
 
 
-<dt>.vector2</dt>
+<dt id="arg--vector-">.vector2<a class="anchor" aria-label="anchor" href="#arg--vector-"></a></dt>
 <dd><p>A vector of numeric values.</p></dd>
 
 
-<dt>.W</dt>
+<dt id="arg--w">.W<a class="anchor" aria-label="anchor" href="#arg--w"></a></dt>
 <dd><p>A (J x K) matrix of weights.</p></dd>
 
 
-<dt>.what</dt>
+<dt id="arg--what">.what<a class="anchor" aria-label="anchor" href="#arg--what"></a></dt>
 <dd><p>Internal argument used by several print helper functions.</p></dd>
 
 
-<dt>.W_new</dt>
+<dt id="arg--w-new">.W_new<a class="anchor" aria-label="anchor" href="#arg--w-new"></a></dt>
 <dd><p>A (J x K) matrix of weights.</p></dd>
 
 
-<dt>.W_old</dt>
+<dt id="arg--w-old">.W_old<a class="anchor" aria-label="anchor" href="#arg--w-old"></a></dt>
 <dd><p>A (J x K) matrix of weights.</p></dd>
 
 
-<dt>.weighted</dt>
+<dt id="arg--weighted">.weighted<a class="anchor" aria-label="anchor" href="#arg--weighted"></a></dt>
 <dd><p>Logical. Should estimation be based on a score that uses
 the weights of the weight approach used to obtain <code>.object</code>?. Defaults to <code>FALSE</code>.</p></dd>
 
 
-<dt>.X</dt>
+<dt id="arg--x">.X<a class="anchor" aria-label="anchor" href="#arg--x"></a></dt>
 <dd><p>A matrix of processed data (scaled, cleaned and ordered).</p></dd>
 
 
-<dt>.X_cleaned</dt>
+<dt id="arg--x-cleaned">.X_cleaned<a class="anchor" aria-label="anchor" href="#arg--x-cleaned"></a></dt>
 <dd><p>A data.frame of processed data (cleaned and ordered). Note: <code>X_cleaned</code>
 may not be scaled!</p></dd>
 
@@ -849,7 +849,7 @@ may not be scaled!</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>

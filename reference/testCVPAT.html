@@ -90,15 +90,15 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>.object1</dt>
+    <dl><dt id="arg--object-">.object1<a class="anchor" aria-label="anchor" href="#arg--object-"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.object2</dt>
+<dt id="arg--object-">.object2<a class="anchor" aria-label="anchor" href="#arg--object-"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.approach_predict</dt>
+<dt id="arg--approach-predict">.approach_predict<a class="anchor" aria-label="anchor" href="#arg--approach-predict"></a></dt>
 <dd><p>Character string. Which approach should be used to
 predictions? One of "<em>earliest</em>" and "<em>direct</em>". If "<em>earliest</em>" predictions
 for indicators associated to endogenous constructs are performed using only
@@ -107,20 +107,20 @@ indicators associated to endogenous constructs are based on indicators associate
 to their direct antecedents. Defaults to "<em>earliest</em>".</p></dd>
 
 
-<dt>.seed</dt>
+<dt id="arg--seed">.seed<a class="anchor" aria-label="anchor" href="#arg--seed"></a></dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
 
 
-<dt>.cv_folds</dt>
+<dt id="arg--cv-folds">.cv_folds<a class="anchor" aria-label="anchor" href="#arg--cv-folds"></a></dt>
 <dd><p>Integer. The number of cross-validation folds to use. Setting
 <code>.cv_folds</code> to <code>N</code> (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to <code>10</code>.</p></dd>
 
 
-<dt>.handle_inadmissibles</dt>
+<dt id="arg--handle-inadmissibles">.handle_inadmissibles<a class="anchor" aria-label="anchor" href="#arg--handle-inadmissibles"></a></dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
 replications/resamples yielding an inadmissible result will be dropped
@@ -132,7 +132,7 @@ Depending on the frequency of inadmissible solutions this may significantly incr
 computing time. Defaults to "<em>drop</em>".</p></dd>
 
 
-<dt>.testtype</dt>
+<dt id="arg--testtype">.testtype<a class="anchor" aria-label="anchor" href="#arg--testtype"></a></dt>
 <dd><p>Character string. One of "<em>twosided</em>" (H1: The models do not
 perform equally in predicting indicators belonging to endogenous constructs)"
 and <em>onesided</em>" (H1: Model 1 performs better in predicting indicators belonging
@@ -325,7 +325,7 @@ losses in predictions is compared for both models.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>

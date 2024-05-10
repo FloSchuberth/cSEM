@@ -115,7 +115,7 @@ be more convenient to use <code><a href="csem.html">csem()</a></code> instead.</
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>.data</dt>
+    <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
 <dd><p>A <code>data.frame</code> or a <code>matrix</code> of standardized or unstandardized
 data (indicators/items/manifest variables). Possible column types or classes
 of the data provided are: "<code>logical</code>", "<code>numeric</code>" ("<code>double</code>" or "<code>integer</code>"),
@@ -123,12 +123,12 @@ of the data provided are: "<code>logical</code>", "<code>numeric</code>" ("<code
 or a mix of several types.</p></dd>
 
 
-<dt>.model</dt>
+<dt id="arg--model">.model<a class="anchor" aria-label="anchor" href="#arg--model"></a></dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a>
 or a <a href="csem_model.html">cSEMModel</a> list.</p></dd>
 
 
-<dt>.approach_cor_robust</dt>
+<dt id="arg--approach-cor-robust">.approach_cor_robust<a class="anchor" aria-label="anchor" href="#arg--approach-cor-robust"></a></dt>
 <dd><p>Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "<em>none</em>" in which case the standard
 Bravais-Pearson correlation is used,
@@ -140,38 +140,38 @@ indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.</p></dd>
 
 
-<dt>.approach_nl</dt>
+<dt id="arg--approach-nl">.approach_nl<a class="anchor" aria-label="anchor" href="#arg--approach-nl"></a></dt>
 <dd><p>Character string. Approach used to estimate nonlinear
 structural relationships. One of: "<em>sequential</em>" or "<em>replace</em>".
 Defaults to "<em>sequential</em>".</p></dd>
 
 
-<dt>.approach_paths</dt>
+<dt id="arg--approach-paths">.approach_paths<a class="anchor" aria-label="anchor" href="#arg--approach-paths"></a></dt>
 <dd><p>Character string. Approach used to estimate the
 structural coefficients. One of: "<em>OLS</em>" or "<em>2SLS</em>". If "<em>2SLS</em>", instruments
 need to be supplied to <code>.instruments</code>. Defaults to "<em>OLS</em>".</p></dd>
 
 
-<dt>.approach_weights</dt>
+<dt id="arg--approach-weights">.approach_weights<a class="anchor" aria-label="anchor" href="#arg--approach-weights"></a></dt>
 <dd><p>Character string. Approach used to
 obtain composite weights. One of: "<em>PLS-PM</em>", "<em>SUMCORR</em>", "<em>MAXVAR</em>",
 "<em>SSQCORR</em>", "<em>MINVAR</em>", "<em>GENVAR</em>", "<em>GSCA</em>", "<em>PCA</em>", "<em>unit</em>", "<em>bartlett</em>",
 or "<em>regression</em>". Defaults to "<em>PLS-PM</em>".</p></dd>
 
 
-<dt>.conv_criterion</dt>
+<dt id="arg--conv-criterion">.conv_criterion<a class="anchor" aria-label="anchor" href="#arg--conv-criterion"></a></dt>
 <dd><p>Character string. The criterion to use for the convergence check.
 One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", or "<em>diff_relative</em>". Defaults
 to "<em>diff_absolute</em>".</p></dd>
 
 
-<dt>.disattenuate</dt>
+<dt id="arg--disattenuate">.disattenuate<a class="anchor" aria-label="anchor" href="#arg--disattenuate"></a></dt>
 <dd><p>Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.dominant_indicators</dt>
+<dt id="arg--dominant-indicators">.dominant_indicators<a class="anchor" aria-label="anchor" href="#arg--dominant-indicators"></a></dt>
 <dd><p>A character vector of <code>"construct_name" = "indicator_name"</code> pairs,
 where <code>"indicator_name"</code> is a character string giving the name of the dominant indicator
 and <code>"construct_name"</code> a character string of the corresponding construct name.
@@ -179,18 +179,18 @@ Dominant indicators may be specified for a subset of the constructs.
 Default to <code>NULL</code>.</p></dd>
 
 
-<dt>.estimate_structural</dt>
+<dt id="arg--estimate-structural">.estimate_structural<a class="anchor" aria-label="anchor" href="#arg--estimate-structural"></a></dt>
 <dd><p>Logical. Should the structural coefficients
 be estimated? Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.id</dt>
+<dt id="arg--id">.id<a class="anchor" aria-label="anchor" href="#arg--id"></a></dt>
 <dd><p>Character string or integer. A character string giving the name or
 an integer of the position of the column of <code>.data</code> whose levels are used
 to split <code>.data</code> into groups. Defaults to <code>NULL</code>.</p></dd>
 
 
-<dt>.instruments</dt>
+<dt id="arg--instruments">.instruments<a class="anchor" aria-label="anchor" href="#arg--instruments"></a></dt>
 <dd><p>A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
 equation whose explanatory variables are endogenous. The vectors
@@ -199,14 +199,14 @@ that exogenous variables of a given equation <strong>must</strong> be supplied a
 instruments for themselves. Defaults to <code>NULL</code>.</p></dd>
 
 
-<dt>.iter_max</dt>
+<dt id="arg--iter-max">.iter_max<a class="anchor" aria-label="anchor" href="#arg--iter-max"></a></dt>
 <dd><p>Integer. The maximum number of iterations allowed.
 If <code>iter_max = 1</code> and <code>.approach_weights = "PLS-PM"</code> one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 <code>.iter_max - 1</code>  will be returned with a warning. Defaults to <code>100</code>.</p></dd>
 
 
-<dt>.normality</dt>
+<dt id="arg--normality">.normality<a class="anchor" aria-label="anchor" href="#arg--normality"></a></dt>
 <dd><p>Logical. Should joint normality of
 \([\eta_{1:p}; \zeta; \epsilon]\)
 be assumed in the nonlinear model? See (Dijkstra and Schermelleh-Engel 2014)
@@ -214,7 +214,7 @@ be assumed in the nonlinear model? See (Dijkstra and Schermelleh-Engel 2014)
 Defaults to <code>FALSE</code>. Ignored if the model is not nonlinear.</p></dd>
 
 
-<dt>.PLS_approach_cf</dt>
+<dt id="arg--pls-approach-cf">.PLS_approach_cf<a class="anchor" aria-label="anchor" href="#arg--pls-approach-cf"></a></dt>
 <dd><p>Character string. Approach used to obtain the correction
 factors for PLSc. One of: "<em>dist_squared_euclid</em>", "<em>dist_euclid_weighted</em>",
 "<em>fisher_transformed</em>", "<em>mean_arithmetic</em>", "<em>mean_geometric</em>", "<em>mean_harmonic</em>",
@@ -222,13 +222,13 @@ factors for PLSc. One of: "<em>dist_squared_euclid</em>", "<em>dist_euclid_weigh
 Ignored if <code>.disattenuate = FALSE</code> or if <code>.approach_weights</code> is not PLS-PM.</p></dd>
 
 
-<dt>.PLS_ignore_structural_model</dt>
+<dt id="arg--pls-ignore-structural-model">.PLS_ignore_structural_model<a class="anchor" aria-label="anchor" href="#arg--pls-ignore-structural-model"></a></dt>
 <dd><p>Logical. Should the structural model be ignored
 when calculating the inner weights of the PLS-PM algorithm? Defaults to <code>FALSE</code>.
 Ignored if <code>.approach_weights</code> is not PLS-PM.</p></dd>
 
 
-<dt>.PLS_modes</dt>
+<dt id="arg--pls-modes">.PLS_modes<a class="anchor" aria-label="anchor" href="#arg--pls-modes"></a></dt>
 <dd><p>Either a named list specifying the mode that should be used for
 each construct in the form <code>"construct_name" = mode</code>, a single character
 string giving the mode that should be used for all constructs, or <code>NULL</code>.
@@ -242,13 +242,13 @@ If <code>NULL</code> the appropriate mode according to the type
 of construct used is chosen. Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
 
 
-<dt>.PLS_weight_scheme_inner</dt>
+<dt id="arg--pls-weight-scheme-inner">.PLS_weight_scheme_inner<a class="anchor" aria-label="anchor" href="#arg--pls-weight-scheme-inner"></a></dt>
 <dd><p>Character string. The inner weighting scheme
 used by PLS-PM. One of: "<em>centroid</em>", "<em>factorial</em>", or "<em>path</em>".
 Defaults to "<em>path</em>". Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
 
 
-<dt>.reliabilities</dt>
+<dt id="arg--reliabilities">.reliabilities<a class="anchor" aria-label="anchor" href="#arg--reliabilities"></a></dt>
 <dd><p>A character vector of <code>"name" = value</code> pairs,
 where <code>value</code> is a number between 0 and 1 and <code>"name"</code> a character string
 of the corresponding construct name, or <code>NULL</code>. Reliabilities
@@ -257,14 +257,14 @@ reliabilities are estimated by <code><a href="csem.html">csem()</a></code>. Curr
 <code>.approach_weights = "PLS-PM"</code>.</p></dd>
 
 
-<dt>.starting_values</dt>
+<dt id="arg--starting-values">.starting_values<a class="anchor" aria-label="anchor" href="#arg--starting-values"></a></dt>
 <dd><p>A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of <code>"indicator_name" = value</code>
 pairs, where <code>value</code> is the (scaled or unscaled) starting weight. Defaults to <code>NULL</code>.</p></dd>
 
 
-<dt>.tolerance</dt>
+<dt id="arg--tolerance">.tolerance<a class="anchor" aria-label="anchor" href="#arg--tolerance"></a></dt>
 <dd><p>Double. The tolerance criterion for convergence.
 Defaults to <code>1e-05</code>.</p></dd>
 
@@ -286,7 +286,7 @@ Defaults to <code>1e-05</code>.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>

@@ -115,21 +115,21 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>.first_resample</dt>
+    <dl><dt id="arg--first-resample">.first_resample<a class="anchor" aria-label="anchor" href="#arg--first-resample"></a></dt>
 <dd><p>A list containing the <code>.R</code> resamples based on the original
 data obtained by resamplecSEMResults().</p></dd>
 
 
-<dt>.resample_method</dt>
+<dt id="arg--resample-method">.resample_method<a class="anchor" aria-label="anchor" href="#arg--resample-method"></a></dt>
 <dd><p>Character string. The resampling method to use. One of:
 "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". Defaults to "<em>none</em>".</p></dd>
 
 
-<dt>.n</dt>
+<dt id="arg--n">.n<a class="anchor" aria-label="anchor" href="#arg--n"></a></dt>
 <dd><p>Integer. The number of observations of the original data.</p></dd>
 
 
-<dt>.bias_corrected</dt>
+<dt id="arg--bias-corrected">.bias_corrected<a class="anchor" aria-label="anchor" href="#arg--bias-corrected"></a></dt>
 <dd><p>Logical. Should the standard and the tStat
 confidence interval be bias-corrected using the bootstrapped bias estimate?
 If <code>TRUE</code> the confidence interval for some estimated parameter <code>theta</code>
@@ -138,27 +138,27 @@ where <code>theta*_hat</code> is the average over all <code>.R</code> bootstrap 
 Defaults to <code>TRUE</code></p></dd>
 
 
-<dt>.dist</dt>
+<dt id="arg--dist">.dist<a class="anchor" aria-label="anchor" href="#arg--dist"></a></dt>
 <dd><p>Character string. The distribution to use for the critical value.
 One of <em>"t"</em> for Student's t-distribution or <em>"z"</em> for the standard normal distribution.
 Defaults to <em>"z"</em>.</p></dd>
 
 
-<dt>.df</dt>
+<dt id="arg--df">.df<a class="anchor" aria-label="anchor" href="#arg--df"></a></dt>
 <dd><p>Character string. The method for obtaining the degrees of freedom.
 Choices are "<em>type1</em>" and "<em>type2</em>". Defaults to "<em>type1</em>" .</p></dd>
 
 
-<dt>.probs</dt>
+<dt id="arg--probs">.probs<a class="anchor" aria-label="anchor" href="#arg--probs"></a></dt>
 <dd><p>A vector of probabilities.</p></dd>
 
 
-<dt>.second_resample</dt>
+<dt id="arg--second-resample">.second_resample<a class="anchor" aria-label="anchor" href="#arg--second-resample"></a></dt>
 <dd><p>A list containing <code>.R2</code> resamples for each of the <code>.R</code>
 resamples of the first run.</p></dd>
 
 
-<dt>.resample_method2</dt>
+<dt id="arg--resample-method-">.resample_method2<a class="anchor" aria-label="anchor" href="#arg--resample-method-"></a></dt>
 <dd><p>Character string. The resampling method to use when resampling
 from a resample. One of: "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". For
 "<em>bootstrap</em>" the number of draws is provided via <code>.R2</code>. Currently,
@@ -166,7 +166,7 @@ resampling from each resample is only required for the studentized confidence
 interval ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
 
 
-<dt>.object</dt>
+<dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 </dl></div>
@@ -203,7 +203,7 @@ Cambridge University Press.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>

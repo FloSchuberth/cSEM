@@ -90,17 +90,17 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>.object</dt>
+    <dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.eval_plan</dt>
+<dt id="arg--eval-plan">.eval_plan<a class="anchor" aria-label="anchor" href="#arg--eval-plan"></a></dt>
 <dd><p>Character string. The evaluation plan to use. One of
 "<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
 
 
-<dt>.handle_inadmissibles</dt>
+<dt id="arg--handle-inadmissibles">.handle_inadmissibles<a class="anchor" aria-label="anchor" href="#arg--handle-inadmissibles"></a></dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
 replications/resamples yielding an inadmissible result will be dropped
@@ -112,16 +112,16 @@ Depending on the frequency of inadmissible solutions this may significantly incr
 computing time. Defaults to "<em>drop</em>".</p></dd>
 
 
-<dt>.R</dt>
+<dt id="arg--r">.R<a class="anchor" aria-label="anchor" href="#arg--r"></a></dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
 
 
-<dt>.resample_method</dt>
+<dt id="arg--resample-method">.resample_method<a class="anchor" aria-label="anchor" href="#arg--resample-method"></a></dt>
 <dd><p>Character string. The resampling method to use. One of:
 "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". Defaults to "<em>none</em>".</p></dd>
 
 
-<dt>.seed</dt>
+<dt id="arg--seed">.seed<a class="anchor" aria-label="anchor" href="#arg--seed"></a></dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
@@ -223,18 +223,18 @@ MIT Press.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Dependent construct: 'eta5'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta1                      -0.3000      0.1357   -2.2109    0.0270</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2                       0.4999      0.1025    4.8763    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta6                       0.2501      0.1487    1.6818    0.0926</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta6                 0.9784      0.2886    3.3908    0.0007</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta1                      -0.3000      0.1484   -2.0216    0.0432</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta2                       0.4999      0.0978    5.1128    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta6                       0.2501      0.1436    1.7419    0.0815</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta6                 0.9784      0.3057    3.2012    0.0014</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Dependent construct: 'eta6'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Independent construct    Estimate  Std. error   t-stat.   p-value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta3                       0.4999      0.0516    9.6823    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta4                       0.2501      0.0542    4.6170    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta5                       0.5001      0.0920    5.4360    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta5                -0.0056      0.1229   -0.0454    0.9638</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta3                       0.4999      0.0539    9.2699    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta4                       0.2501      0.0471    5.3043    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	eta5                       0.5001      0.1018    4.9132    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Resid_eta5                -0.0056      0.1466   -0.0381    0.9696</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 </code></pre></div>
     </div>
@@ -250,7 +250,7 @@ MIT Press.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>

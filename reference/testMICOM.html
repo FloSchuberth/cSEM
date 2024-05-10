@@ -90,18 +90,18 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>.object</dt>
+    <dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.approach_p_adjust</dt>
+<dt id="arg--approach-p-adjust">.approach_p_adjust<a class="anchor" aria-label="anchor" href="#arg--approach-p-adjust"></a></dt>
 <dd><p>Character string or a vector of character strings.
 Approach used to adjust the p-value for multiple testing.
 See the <code>methods</code> argument of <code><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">stats::p.adjust()</a></code> for a list of choices and
 their description. Defaults to "<em>none</em>".</p></dd>
 
 
-<dt>.handle_inadmissibles</dt>
+<dt id="arg--handle-inadmissibles">.handle_inadmissibles<a class="anchor" aria-label="anchor" href="#arg--handle-inadmissibles"></a></dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
 replications/resamples yielding an inadmissible result will be dropped
@@ -113,18 +113,18 @@ Depending on the frequency of inadmissible solutions this may significantly incr
 computing time. Defaults to "<em>drop</em>".</p></dd>
 
 
-<dt>.R</dt>
+<dt id="arg--r">.R<a class="anchor" aria-label="anchor" href="#arg--r"></a></dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
 
 
-<dt>.seed</dt>
+<dt id="arg--seed">.seed<a class="anchor" aria-label="anchor" href="#arg--seed"></a></dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
 
 
-<dt>.verbose</dt>
+<dt id="arg--verbose">.verbose<a class="anchor" aria-label="anchor" href="#arg--verbose"></a></dt>
 <dd><p>Logical. Should information (e.g., progress bar) be printed
 to the console? Defaults to <code>TRUE</code>.</p></dd>
 
@@ -248,7 +248,7 @@ sufficiently reliable.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>

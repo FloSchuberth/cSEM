@@ -90,11 +90,11 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>.object</dt>
+    <dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.quantity</dt>
+<dt id="arg--quantity">.quantity<a class="anchor" aria-label="anchor" href="#arg--quantity"></a></dt>
 <dd><p>Character string. Which statistic should be returned?
 One of "<em>all</em>", "<em>mean</em>", "<em>sd</em>", "<em>bias</em>", "<em>CI_standard_z</em>", "<em>CI_standard_t</em>",
 "<em>CI_percentile</em>", "<em>CI_basic</em>", "<em>CI_bc</em>", "<em>CI_bca</em>", "<em>CI_t_interval</em>"
@@ -102,12 +102,12 @@ Defaults to "<em>all</em>" in which case all quantities that do not require
 additional resampling are returned, i.e., all quantities but "<em>CI_bca</em>", "<em>CI_t_interval</em>".</p></dd>
 
 
-<dt>.alpha</dt>
+<dt id="arg--alpha">.alpha<a class="anchor" aria-label="anchor" href="#arg--alpha"></a></dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
 
 
-<dt>.bias_corrected</dt>
+<dt id="arg--bias-corrected">.bias_corrected<a class="anchor" aria-label="anchor" href="#arg--bias-corrected"></a></dt>
 <dd><p>Logical. Should the standard and the tStat
 confidence interval be bias-corrected using the bootstrapped bias estimate?
 If <code>TRUE</code> the confidence interval for some estimated parameter <code>theta</code>
@@ -248,17 +248,17 @@ Cambridge University Press.
 <span class="r-in"><span><span class="va">inf</span> <span class="op">&lt;-</span> <span class="fu">infer</span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">inf</span><span class="op">$</span><span class="va">Path_estimates</span><span class="op">$</span><span class="va">CI_basic</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL SAT ~ IMAG SAT ~ EXPE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L   0.6051905    1.012917  -4.890022   4.618671 -0.1543038   1.276635</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U   0.7313714    1.054290  -3.775159   5.726920  0.3227524   2.728309</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      EXPE ~ IMAG QUAL ~ EXPE VAL ~ EXPE VAL ~ QUAL  SAT ~ IMAG SAT ~ EXPE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L   0.5773318    1.017299  -5.714900   5.285902 -0.09156211  0.7974547</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U   0.7242981    1.046706  -4.456544   6.550367  0.18290450  2.9177587</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      SAT ~ QUAL SAT ~ VAL LOY ~ IMAG LOY ~ SAT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L  -3.795062  1.094998  0.2328454 0.1335464</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U  -1.576098  2.248870  0.6707312 0.6272729</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%L  -3.936605 0.9175359 0.05968307 0.3804658</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95%U  -0.947609 2.0979896 0.49852580 0.8050555</span>
 <span class="r-in"><span><span class="va">inf</span><span class="op">$</span><span class="va">Indirect_effect</span><span class="op">$</span><span class="va">sd</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> QUAL ~ IMAG  VAL ~ IMAG  VAL ~ EXPE  SAT ~ IMAG  SAT ~ EXPE  SAT ~ QUAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.03771727  0.04890256  0.35078141  0.07351609  0.37718273  0.79492804 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.04554310  0.05534016  0.34015077  0.06550442  0.59654431  0.89785618 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  LOY ~ IMAG  LOY ~ EXPE  LOY ~ QUAL   LOY ~ VAL </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.10421286  0.08602456  0.31723841  0.19534714 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.06888288  0.09309121  0.23483755  0.19255140 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">### Compute the bias-corrected and accelerated and/or the studentized t-inverval.</span></span></span>
 <span class="r-in"><span><span class="co">## For the studentied t-interval confidence interval a double bootstrap is required.</span></span></span>
@@ -289,7 +289,7 @@ Cambridge University Press.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>

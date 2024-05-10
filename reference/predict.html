@@ -97,17 +97,17 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>.object</dt>
+    <dl><dt id="arg--object">.object<a class="anchor" aria-label="anchor" href="#arg--object"></a></dt>
 <dd><p>An R object of class <a href="csem_results.html">cSEMResults</a> resulting from a call to <code><a href="csem.html">csem()</a></code>.</p></dd>
 
 
-<dt>.benchmark</dt>
+<dt id="arg--benchmark">.benchmark<a class="anchor" aria-label="anchor" href="#arg--benchmark"></a></dt>
 <dd><p>Character string. The procedure to obtain benchmark predictions.
 One of "<em>lm</em>", "<em>unit</em>", "<em>PLS-PM</em>", "<em>GSCA</em>", "<em>PCA</em>", "<em>MAXVAR</em>", or "<em>NA</em>".
 Default to "<em>lm</em>".</p></dd>
 
 
-<dt>.approach_predict</dt>
+<dt id="arg--approach-predict">.approach_predict<a class="anchor" aria-label="anchor" href="#arg--approach-predict"></a></dt>
 <dd><p>Character string. Which approach should be used to perform
 predictions? One of "<em>earliest</em>" and "<em>direct</em>". If "<em>earliest</em>" predictions
 for indicators associated to endogenous constructs are performed using only
@@ -116,13 +116,13 @@ indicators associated to endogenous constructs are based on indicators associate
 to their direct antecedents. Defaults to "<em>earliest</em>".</p></dd>
 
 
-<dt>.cv_folds</dt>
+<dt id="arg--cv-folds">.cv_folds<a class="anchor" aria-label="anchor" href="#arg--cv-folds"></a></dt>
 <dd><p>Integer. The number of cross-validation folds to use. Setting
 <code>.cv_folds</code> to <code>N</code> (the number of observations) produces
 leave-one-out cross-validation samples. Defaults to <code>10</code>.</p></dd>
 
 
-<dt>.handle_inadmissibles</dt>
+<dt id="arg--handle-inadmissibles">.handle_inadmissibles<a class="anchor" aria-label="anchor" href="#arg--handle-inadmissibles"></a></dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>stop</em>", "<em>ignore</em>", or "<em>set_NA</em>". If "<em>stop</em>", <code>predict()</code>
 will stop immediately if estimation yields an inadmissible result.
@@ -132,16 +132,16 @@ For "<em>set_NA</em>" predictions based on inadmissible parameter estimates are
 set to <code>NA</code>. Defaults to "<em>stop</em>"</p></dd>
 
 
-<dt>.r</dt>
+<dt id="arg--r">.r<a class="anchor" aria-label="anchor" href="#arg--r"></a></dt>
 <dd><p>Integer. The number of repetitions to use. Defaults to <code>1</code>.</p></dd>
 
 
-<dt>.test_data</dt>
+<dt id="arg--test-data">.test_data<a class="anchor" aria-label="anchor" href="#arg--test-data"></a></dt>
 <dd><p>A matrix of test data with the same column names as the
 training data.</p></dd>
 
 
-<dt>.approach_score_target</dt>
+<dt id="arg--approach-score-target">.approach_score_target<a class="anchor" aria-label="anchor" href="#arg--approach-score-target"></a></dt>
 <dd><p>Character string. How should the aggregation of the estimates of
 the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
 One of "<em>mean</em>", "<em>median</em>" or "<em>mode</em>".
@@ -151,23 +151,23 @@ If "<em>mode</em>", the maximum empirical density on the intervals defined by th
 is used. Defaults to "<em>mean</em>".</p></dd>
 
 
-<dt>.sim_points</dt>
+<dt id="arg--sim-points">.sim_points<a class="anchor" aria-label="anchor" href="#arg--sim-points"></a></dt>
 <dd><p>Integer. How many samples from the truncated normal distribution should
 be simulated to estimate the exogenous construct scores? Defaults to "<em>100</em>".</p></dd>
 
 
-<dt>.disattenuate</dt>
+<dt id="arg--disattenuate">.disattenuate<a class="anchor" aria-label="anchor" href="#arg--disattenuate"></a></dt>
 <dd><p>Logical. Should the benchmark predictions be based on
 disattenuated parameter estimates? Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.treat_as_continuous</dt>
+<dt id="arg--treat-as-continuous">.treat_as_continuous<a class="anchor" aria-label="anchor" href="#arg--treat-as-continuous"></a></dt>
 <dd><p>Logical. Should the indicators for the benchmark predictions
 be treated as continuous? If <code>TRUE</code> all indicators are treated as continuous and PLS-PM/PLSc is applied.
 If <code>FALSE</code> OrdPLS/OrdPLSc is applied. Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.approach_score_benchmark</dt>
+<dt id="arg--approach-score-benchmark">.approach_score_benchmark<a class="anchor" aria-label="anchor" href="#arg--approach-score-benchmark"></a></dt>
 <dd><p>Character string. How should the aggregation
 of the estimates of the truncated normal distribution be done for the
 benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
@@ -182,7 +182,7 @@ If <code>.treat_as_continuous = TRUE</code> or if all indicators are on a contin
 <code>.approach_score_benchmark</code> is ignored. Defaults to "<em>round</em>".</p></dd>
 
 
-<dt>.seed</dt>
+<dt id="arg--seed">.seed<a class="anchor" aria-label="anchor" href="#arg--seed"></a></dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
@@ -443,7 +443,7 @@ University of West Indies Press, Mona, Jamaica.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>

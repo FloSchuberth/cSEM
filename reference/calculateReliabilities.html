@@ -92,36 +92,36 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>.X</dt>
+    <dl><dt id="arg--x">.X<a class="anchor" aria-label="anchor" href="#arg--x"></a></dt>
 <dd><p>A matrix of processed data (scaled, cleaned and ordered).</p></dd>
 
 
-<dt>.S</dt>
+<dt id="arg--s">.S<a class="anchor" aria-label="anchor" href="#arg--s"></a></dt>
 <dd><p>The (K x K) empirical indicator correlation matrix.</p></dd>
 
 
-<dt>.W</dt>
+<dt id="arg--w">.W<a class="anchor" aria-label="anchor" href="#arg--w"></a></dt>
 <dd><p>A (J x K) matrix of weights.</p></dd>
 
 
-<dt>.approach_weights</dt>
+<dt id="arg--approach-weights">.approach_weights<a class="anchor" aria-label="anchor" href="#arg--approach-weights"></a></dt>
 <dd><p>Character string. Approach used to
 obtain composite weights. One of: "<em>PLS-PM</em>", "<em>SUMCORR</em>", "<em>MAXVAR</em>",
 "<em>SSQCORR</em>", "<em>MINVAR</em>", "<em>GENVAR</em>", "<em>GSCA</em>", "<em>PCA</em>", "<em>unit</em>", "<em>bartlett</em>",
 or "<em>regression</em>". Defaults to "<em>PLS-PM</em>".</p></dd>
 
 
-<dt>.csem_model</dt>
+<dt id="arg--csem-model">.csem_model<a class="anchor" aria-label="anchor" href="#arg--csem-model"></a></dt>
 <dd><p>A (possibly incomplete) <a href="csem_model.html">cSEMModel</a>-list.</p></dd>
 
 
-<dt>.disattenuate</dt>
+<dt id="arg--disattenuate">.disattenuate<a class="anchor" aria-label="anchor" href="#arg--disattenuate"></a></dt>
 <dd><p>Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to <code>TRUE</code>.</p></dd>
 
 
-<dt>.PLS_approach_cf</dt>
+<dt id="arg--pls-approach-cf">.PLS_approach_cf<a class="anchor" aria-label="anchor" href="#arg--pls-approach-cf"></a></dt>
 <dd><p>Character string. Approach used to obtain the correction
 factors for PLSc. One of: "<em>dist_squared_euclid</em>", "<em>dist_euclid_weighted</em>",
 "<em>fisher_transformed</em>", "<em>mean_arithmetic</em>", "<em>mean_geometric</em>", "<em>mean_harmonic</em>",
@@ -129,7 +129,7 @@ factors for PLSc. One of: "<em>dist_squared_euclid</em>", "<em>dist_euclid_weigh
 Ignored if <code>.disattenuate = FALSE</code> or if <code>.approach_weights</code> is not PLS-PM.</p></dd>
 
 
-<dt>.reliabilities</dt>
+<dt id="arg--reliabilities">.reliabilities<a class="anchor" aria-label="anchor" href="#arg--reliabilities"></a></dt>
 <dd><p>A character vector of <code>"name" = value</code> pairs,
 where <code>value</code> is a number between 0 and 1 and <code>"name"</code> a character string
 of the corresponding construct name, or <code>NULL</code>. Reliabilities
@@ -151,7 +151,7 @@ reliabilities are estimated by <code><a href="csem.html">csem()</a></code>. Curr
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer></div>
