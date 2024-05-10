@@ -700,7 +700,7 @@ predict <- function(
     if(.benchmark != "NA"){
     ## Create data frame
       
-    if(any(apply(Pred_t, 2, sd) == 0) | any(apply(Pred_b, 2, sd) == 0)){
+    if(any(apply(Pred_t, 2, sd, na.rm=TRUE) == 0) | any(apply(Pred_b, 2, sd, na.rm=TRUE) == 0)){
       warning2("The predictions of at least one indicator are equal for all \n",
                "observations of the test dataset. UR and UD cannot be calculated \n",
                "for the respective indicators.")
