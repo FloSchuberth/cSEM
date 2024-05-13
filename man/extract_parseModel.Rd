@@ -14,10 +14,10 @@ extract_parseModel(model, data, ind_domi_as_first = TRUE)
 \item{ind_domi_as_first}{Boolean for whether the first indicator for each latent factor should be chosen as the dominant indicator}
 }
 \value{
-Returns a list of matrices required for igsca_sim() to run: z0, W0, B0, C0, lv_type, ov_type, ind_domi.
+Returns a list of matrices required for igsca_sim() to run: Z0, W0, B0, C0, con_type, ov_type, ind_domi.
 }
 \description{
-In the context of igsca, this function prepares: (1) the initial indicators (z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (lv_type); (3) whether an indicator corresponds to a latent or composite variable (ov_type); and (4) the dominant indicator of each construct (ind_domi).
+In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (con_type); (3) whether an indicator corresponds to a latent or composite variable (ov_type); and (4) the dominant indicator of each construct (ind_domi).
 }
 \examples{
 

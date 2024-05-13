@@ -4,12 +4,25 @@
 \alias{update_C_B_D}
 \title{Update Loadings, Path-Coefficients and Uniqueness Terms After Updating Latent Variables}
 \usage{
-update_C_B_D(X, nvar, Gamma, cindex, C, nlv, bindex, B, ncase, D, Z, ov_type)
+update_C_B_D(
+  X,
+  n_indicators,
+  Gamma,
+  cindex,
+  C,
+  n_constructs,
+  bindex,
+  B,
+  ncase,
+  D,
+  Z,
+  ov_type
+)
 }
 \arguments{
 \item{X}{}
 
-\item{nvar}{}
+\item{n_indicators}{}
 
 \item{Gamma}{}
 
@@ -17,7 +30,7 @@ update_C_B_D(X, nvar, Gamma, cindex, C, nlv, bindex, B, ncase, D, Z, ov_type)
 
 \item{C}{}
 
-\item{nlv}{}
+\item{n_constructs}{}
 
 \item{bindex}{}
 

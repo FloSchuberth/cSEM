@@ -270,7 +270,7 @@ igsca <-
 
 }
 
-#' One-to-One R Translation of gsca_inione.m from Heungsun Hwang
+#' R Implementation of gsca_inione.m from Heungsun Hwang
 #' 
 #' Internal I-GSCA Function
 #' 
@@ -320,6 +320,7 @@ igsca <-
 #'                                       )
 #'                                       )
 gsca_inione <- function(Z0, W0, B0) {
+  
   N <- nrow(Z0)
   J <- nrow(W0)
   P <- ncol(W0)
@@ -414,10 +415,6 @@ gsca_inione <- function(Z0, W0, B0) {
 #'
 #' @return List of matrices to put through the Alternating Least Squared (ALS) algorithm: 
 #'
-#' 1) Starting values for Weights (W), Loadings (C), Path-Coefficients (B) and Uniqueness Terms (D)
-#' 2) Standardized data matrix (Z)
-#' 3) SVD Decomposition of ...*something* to get U and V matrices.
-#' TODO: Figure out what the SVD decomposition is for
 prepare_for_ALS <- function(Z0, W0, B0, n_indicators, ncase, n_constructs, ov_type) {
   
   

@@ -4,31 +4,25 @@
 \alias{prepare_for_ALS}
 \title{Prepare for ALS Algorithm}
 \usage{
-prepare_for_ALS(z0, W0, B0, nvar, ncase, nlv, ov_type)
+prepare_for_ALS(Z0, W0, B0, n_indicators, ncase, n_constructs, ov_type)
 }
 \arguments{
-\item{z0}{}
+\item{Z0}{}
 
 \item{W0}{}
 
 \item{B0}{}
 
-\item{nvar}{}
+\item{n_indicators}{}
 
 \item{ncase}{}
 
-\item{nlv}{}
+\item{n_constructs}{}
 
 \item{ov_type}{}
 }
 \value{
 List of matrices to put through the Alternating Least Squared (ALS) algorithm:
-\enumerate{
-\item Starting values for Weights (W), Loadings (C), Path-Coefficients (B) and Uniqueness Terms (D)
-\item Standardized data matrix (Z)
-\item SVD Decomposition of ...\emph{something} to get U and V matrices.
-TODO: Figure out what the SVD decomposition is for
-}
 }
 \description{
 Internal I-GSCA function

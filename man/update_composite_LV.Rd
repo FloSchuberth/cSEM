@@ -4,14 +4,14 @@
 \alias{update_composite_LV}
 \title{Update Composite Latent Variables}
 \usage{
-update_composite_LV(ntv, tot, nlv, j, W, A, V, X, windex_j)
+update_composite_LV(ntv, tot, n_constructs, j, W, A, V, X, windex_j)
 }
 \arguments{
 \item{ntv}{}
 
 \item{tot}{}
 
-\item{nlv}{}
+\item{n_constructs}{}
 
 \item{j}{}
 
