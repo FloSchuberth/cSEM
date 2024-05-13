@@ -96,7 +96,7 @@ igsca <-
   
 # Alternating Least Squares Algorithm -------------------------------------
 
-## While Counters and Initial Estimates ----------------------------------
+## Optimization Preparation -----------------------------------------------
     # Set the initial estimates based on either the structural model or the loadings
     # if there's no structural model
     if (length(bindex) > 0) {
@@ -107,14 +107,15 @@ igsca <-
     est0 <- est + 1 
     it <- 0
     
-## Alternate Between Updating Weights and Loadings -----------------------
+## Optimization Loop: Alternating Between Weights and Loadings -----------------------
     while ((sum(abs(est0 - est)) > ceps) && (it <= itmax)) {
 
       # Counter Things
       it <- it + 1
       est0 <- est
-      
-### Compute pseudo-weights ----------------------------------------------------------
+  
+
+### Compute Pseudo-Weights --------------------------------------------------
       updated_X_weights <- update_X_weights(
         Z = Z,
         U = U,
@@ -125,8 +126,9 @@ igsca <-
       )
       # Creates X (for updating Composites) and WW (for updating Factors)
       list2env(updated_X_weights, envir = environment())
-      
-### Iterative Update of LVs -------------------------------------------------
+
+### Sequential Updating of Constructs ---------------------------------------
+
       A <- cbind(C, B) 
       
       for (j in seq_len(n_constructs)) {
@@ -137,7 +139,7 @@ igsca <-
         
         
         if (con_type[j] == "Composite") {
-          # Update Composite LV
+          # Update Composite
           theta <-
             update_composite_LV(
               n_total_var = n_total_var,
@@ -154,7 +156,7 @@ igsca <-
           
           
         } else if (con_type[j] == "Common factor") {
-          # Update Factor LV
+          # Update Common Factor
           theta <-
              update_factor_LV(
                WW = WW, 
@@ -176,7 +178,6 @@ igsca <-
     }
       
 ### Update Loadings, Path Coefficients and Uniqueness Terms ----------
-
       updated_C_B_D <- update_C_B_D(
         X = X,
         n_indicators = n_indicators,
@@ -197,7 +198,6 @@ igsca <-
     
 
 # Flip Signs for Factors and Composites Based on Dominant Indicators --------
-
     flipped_signs <-
       flip_signs_ind_domi(
         n_constructs = n_constructs,
