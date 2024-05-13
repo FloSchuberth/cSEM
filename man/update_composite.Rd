@@ -37,7 +37,6 @@ update_composite(
 }
 \value{
 theta: A matrix that will later be used to update the weights for the composite variable.
-TODO: Double check that this is for weights only?
 }
 \description{
 Update Composite Variables
