@@ -76,7 +76,7 @@ igsca <-
   n_case <- nrow(Z0)
   n_indicators <- ncol(Z0)
   n_constructs <- ncol(W0)
-  ntv <- n_indicators + n_constructs
+  n_total_var <- n_indicators + n_constructs
   
   windex <- which(c(W0) == 1) 
   cindex <- which(c(C0) == 1)
@@ -155,7 +155,7 @@ igsca <-
           # Update Composite LV
           theta <-
             update_composite_LV(
-              ntv = ntv,
+              n_total_var = n_total_var,
               tot = tot, # Changes per lv_update iteration
               n_constructs = n_constructs,
               j = j, # Changes per lv_update iteration
@@ -481,7 +481,7 @@ update_factor_LV <- function(WW, windex_j, j) {
 
 #' Update Composite Latent Variables
 #'
-#' @param ntv 
+#' @param n_total_var 
 #' @param tot 
 #' @param n_constructs 
 #' @param j 
@@ -496,11 +496,11 @@ update_factor_LV <- function(WW, windex_j, j) {
 #' @export
 #'
 update_composite_LV <-
-  function(ntv, tot, n_constructs, j, W, A, V, X, windex_j) {
+  function(n_total_var, tot, n_constructs, j, W, A, V, X, windex_j) {
     # This updates the composite
-    e <- matrix(0, nrow = 1, ncol = ntv)
+    e <- matrix(0, nrow = 1, ncol = n_total_var)
     e[tot] <- 1
-    H1 <- diag(ntv)
+    H1 <- diag(n_total_var)
     H2 <- diag(n_constructs)
     H1[tot, tot] <- 0
     H2[j, j] <- 0
