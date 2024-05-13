@@ -131,15 +131,15 @@ igsca <-
 
       A <- cbind(C, B) 
       
-      for (gamma_idx in seq_len(n_constructs)) {
       # After each cycle, the Gamma, W and V matrices are updated
+      for (gamma_idx in seq_len(n_constructs)) {
+      
         tot <- n_indicators + gamma_idx
         windex_gamma_idx <- (W0[, gamma_idx] == 1)
         X_gamma_idx <- X[, windex_gamma_idx]
         
-        
         if (con_type[gamma_idx] == "Composite") {
-          # Update Composite
+          
           theta <-
             update_composite(
               n_total_var = n_total_var,
@@ -153,10 +153,8 @@ igsca <-
               windex_gamma_idx = windex_gamma_idx # Changes per gamma_idx iteration
             )
           
-          
-          
         } else if (con_type[gamma_idx] == "Common factor") {
-          # Update Common Factor
+          
           theta <-
              update_common_factor(
                WW = WW, 
@@ -165,17 +163,16 @@ igsca <-
                )
           
         } else {
-          stop("con_type should either be `Composite` or `Common factor`")
+          stop("con_type should only either be `Composite` or `Common factor`")
         }
         
-        # This is where the 'actual' updating occurs, in terms of the Gamma matrix, Weights and V(?)
+        # This is where Gamma, Weights and V are updated
+        
         theta <- theta / norm(X_gamma_idx %*% theta, "2")
         
         Gamma[, gamma_idx] <- X_gamma_idx %*% theta
         W[windex_gamma_idx, gamma_idx] <- theta
         V[windex_gamma_idx, tot] <- theta
-        
-        
     }
       
 #### Update Loadings, Path Coefficients and Uniqueness Terms ----------
@@ -460,7 +457,7 @@ update_common_factor <- function(WW, windex_gamma_idx, gamma_idx) {
 #' @param windex_gamma_idx 
 #'
 #' @return theta: A matrix that will later be used to update the weights for the composite variable.
-#' TODO: Double check that this is for weights only?
+#' 
 #' @export
 #'
 update_composite <-
