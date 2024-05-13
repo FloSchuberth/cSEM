@@ -141,16 +141,16 @@ igsca <-
         if (con_type[j] == "Composite") {
           # Update Composite
           theta <-
-            update_composite_LV(
+            update_composite(
               n_total_var = n_total_var,
-              tot = tot, # Changes per lv_update iteration
+              tot = tot, # Changes per j iteration
               n_constructs = n_constructs,
-              j = j, # Changes per lv_update iteration
-              W = W, # Changes per lv_update iteration
+              j = j, # Changes per j iteration
+              W = W, # Changes per j iteration
               A = A,
-              V = V, # Changes per lv_update iteration
+              V = V, # Changes per j iteration
               X = X,
-              windex_j = windex_j # Changes per lv_update iteration
+              windex_j = windex_j # Changes per j iteration
             )
           
           
@@ -158,15 +158,16 @@ igsca <-
         } else if (con_type[j] == "Common factor") {
           # Update Common Factor
           theta <-
-             update_factor_LV(
+             update_common_factor(
                WW = WW, 
-               windex_j = windex_j, # Changes per iteration
-               j = j # Changes per iteration
+               windex_j = windex_j, # Changes per j iteration
+               j = j # Changes per j iteration
                )
           
         } else {
           stop("con_type should either be `Composite` or `Common factor`")
         }
+        
         # This is where the 'actual' updating occurs, in terms of the Gamma matrix, Weights and V(?)
         theta <- theta / norm(Xj %*% theta, "2")
         
@@ -426,7 +427,7 @@ update_X_weights <- function(Z, U, D, C, n_constructs, B) {
 }
 
 
-#' Update Factor Latent Variable
+#' Update Common Factor Variable
 #'
 #' @param WW 
 #' @param windex_j 
@@ -434,10 +435,10 @@ update_X_weights <- function(Z, U, D, C, n_constructs, B) {
 #'
 #' @return theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
 #' 
-#' TODO: Double check that this is correct.
+#' 
 #' @export
 #'
-update_factor_LV <- function(WW, windex_j, j) {
+update_common_factor <- function(WW, windex_j, j) {
   theta <- WW[windex_j, j]
   return(theta)
 }
@@ -446,7 +447,7 @@ update_factor_LV <- function(WW, windex_j, j) {
 
 
 
-#' Update Composite Latent Variables
+#' Update Composite Variables
 #'
 #' @param n_total_var 
 #' @param tot 
@@ -462,7 +463,7 @@ update_factor_LV <- function(WW, windex_j, j) {
 #' TODO: Double check that this is for weights only?
 #' @export
 #'
-update_composite_LV <-
+update_composite <-
   function(n_total_var, tot, n_constructs, j, W, A, V, X, windex_j) {
     # This updates the composite
     e <- matrix(0, nrow = 1, ncol = n_total_var)
