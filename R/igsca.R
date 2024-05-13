@@ -2,7 +2,7 @@
 #' 
 #' This R implementation of I-GSCA is based on the Matlab implementation in igsca_sim.m by Dr. Heungsun Hwang.
 #' 
-#' @param Z0 Data matrix of N cases (measurements) x J indicators with named columns
+#' @param Z0 Data matrix of N cases (measurements) x J indicators with named columns, unstandardized.
 #' @param W0 Indicator matrix of weights: J indicators (rows) and their corresponding Gamma construct variables (columns).
 #' @param C0 Indicator matrix of loadings: J indicators (rows) and their corresponding Gamma construct variable (columns).
 #' @param B0 Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of Gamma construct variables should match the order in C0 and W0.
