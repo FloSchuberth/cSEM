@@ -131,37 +131,37 @@ igsca <-
 
       A <- cbind(C, B) 
       
-      for (j in seq_len(n_constructs)) {
+      for (gamma_idx in seq_len(n_constructs)) {
       # After each cycle, the Gamma, W and V matrices are updated
-        tot <- n_indicators + j
-        windex_j <- (W0[, j] == 1)
-        Xj <- X[, windex_j]
+        tot <- n_indicators + gamma_idx
+        windex_gamma_idx <- (W0[, gamma_idx] == 1)
+        Xgamma_idx <- X[, windex_gamma_idx]
         
         
-        if (con_type[j] == "Composite") {
+        if (con_type[gamma_idx] == "Composite") {
           # Update Composite
           theta <-
             update_composite(
               n_total_var = n_total_var,
-              tot = tot, # Changes per j iteration
+              tot = tot, # Changes per gamma_idx iteration
               n_constructs = n_constructs,
-              j = j, # Changes per j iteration
-              W = W, # Changes per j iteration
+              gamma_idx = gamma_idx, # Changes per gamma_idx iteration
+              W = W, # Changes per gamma_idx iteration
               A = A,
-              V = V, # Changes per j iteration
+              V = V, # Changes per gamma_idx iteration
               X = X,
-              windex_j = windex_j # Changes per j iteration
+              windex_gamma_idx = windex_gamma_idx # Changes per gamma_idx iteration
             )
           
           
           
-        } else if (con_type[j] == "Common factor") {
+        } else if (con_type[gamma_idx] == "Common factor") {
           # Update Common Factor
           theta <-
              update_common_factor(
                WW = WW, 
-               windex_j = windex_j, # Changes per j iteration
-               j = j # Changes per j iteration
+               windex_gamma_idx = windex_gamma_idx, # Changes per gamma_idx iteration
+               gamma_idx = gamma_idx # Changes per gamma_idx iteration
                )
           
         } else {
@@ -169,11 +169,11 @@ igsca <-
         }
         
         # This is where the 'actual' updating occurs, in terms of the Gamma matrix, Weights and V(?)
-        theta <- theta / norm(Xj %*% theta, "2")
+        theta <- theta / norm(Xgamma_idx %*% theta, "2")
         
-        Gamma[, j] <- Xj %*% theta
-        W[windex_j, j] <- theta
-        V[windex_j, tot] <- theta
+        Gamma[, gamma_idx] <- Xgamma_idx %*% theta
+        W[windex_gamma_idx, gamma_idx] <- theta
+        V[windex_gamma_idx, tot] <- theta
         
         
     }
@@ -204,7 +204,7 @@ igsca <-
         n_constructs = n_constructs,
         Z = Z,
         ind_domi = ind_domi,
-        j = j,
+        gamma_idx = gamma_idx,
         Gamma = Gamma,
         C = C,
         B = B
@@ -430,16 +430,16 @@ update_X_weights <- function(Z, U, D, C, n_constructs, B) {
 #' Update Common Factor Variable
 #'
 #' @param WW 
-#' @param windex_j 
-#' @param j 
+#' @param windex_gamma_idx 
+#' @param gamma_idx 
 #'
 #' @return theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
 #' 
 #' 
 #' @export
 #'
-update_common_factor <- function(WW, windex_j, j) {
-  theta <- WW[windex_j, j]
+update_common_factor <- function(WW, windex_gamma_idx, gamma_idx) {
+  theta <- WW[windex_gamma_idx, gamma_idx]
   return(theta)
 }
 
@@ -452,33 +452,33 @@ update_common_factor <- function(WW, windex_j, j) {
 #' @param n_total_var 
 #' @param tot 
 #' @param n_constructs 
-#' @param j 
+#' @param gamma_idx 
 #' @param W 
 #' @param A 
 #' @param V 
 #' @param X 
-#' @param windex_j 
+#' @param windex_gamma_idx 
 #'
 #' @return theta: A matrix that will later be used to update the weights for the composite variable.
 #' TODO: Double check that this is for weights only?
 #' @export
 #'
 update_composite <-
-  function(n_total_var, tot, n_constructs, j, W, A, V, X, windex_j) {
+  function(n_total_var, tot, n_constructs, gamma_idx, W, A, V, X, windex_gamma_idx) {
     # This updates the composite
     e <- matrix(0, nrow = 1, ncol = n_total_var)
     e[tot] <- 1
     H1 <- diag(n_total_var)
     H2 <- diag(n_constructs)
     H1[tot, tot] <- 0
-    H2[j, j] <- 0
+    H2[gamma_idx, gamma_idx] <- 0
     Delta <- (W %*% H2 %*% A) - (V %*% H1)
     
     
     vecZDelta <- c(X %*% Delta)
-    beta <- e - A[j, ]
+    beta <- e - A[gamma_idx, ]
     XI <- kronecker(t(beta), X)
-    XI <- XI[, windex_j]
+    XI <- XI[, windex_gamma_idx]
     
     theta <- solve((t(XI) %*% XI), t(XI)) %*% vecZDelta
     return(theta)
@@ -577,20 +577,20 @@ update_C_B_D <-
 #' @param n_constructs 
 #' @param Z 
 #' @param ind_domi 
-#' @param j 
+#' @param gamma_idx 
 #' @param Gamma 
 #' @param C 
 #' @param B 
 #'
 #' @return List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
 #'
-flip_signs_ind_domi <- function(n_constructs, Z, ind_domi, j, Gamma, C, B) {
-  for (j in seq_len(n_constructs)) {
-    if ((t(Z[, ind_domi[j]]) %*% Gamma[, j]) < 0) {
-      Gamma[, j] <- (-1 * Gamma[, j])
-      C[j, ] <- (-1 * C[j, ])
-      B[j, ] <- (-1 * B[j, ])
-      B[, j] <- (-1 * B[, j])
+flip_signs_ind_domi <- function(n_constructs, Z, ind_domi, gamma_idx, Gamma, C, B) {
+  for (gamma_idx in seq_len(n_constructs)) {
+    if ((t(Z[, ind_domi[gamma_idx]]) %*% Gamma[, gamma_idx]) < 0) {
+      Gamma[, gamma_idx] <- (-1 * Gamma[, gamma_idx])
+      C[gamma_idx, ] <- (-1 * C[gamma_idx, ])
+      B[gamma_idx, ] <- (-1 * B[gamma_idx, ])
+      B[, gamma_idx] <- (-1 * B[, gamma_idx])
     }
   }
   return(list(
