@@ -353,10 +353,9 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_t
       W0 = apply(W0 != 0, 2, as.numeric),
       B0 = apply(B0 != 0, 2, as.numeric)
     )
-  # TODO: Update using list2env()
-  W <- initial_est$W
-  C <- initial_est$C
-  B <- initial_est$B
+  
+  list2env(initial_est[c("W", "C", "B")], envir = environment())
+  
   
   
   V <- cbind(diag(n_indicators), W)
