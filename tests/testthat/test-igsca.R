@@ -58,11 +58,17 @@ igsca_r_table <- with(
 
 ## Load Matlab Results -----------------------------------------------------
 # Loads into igsca_sim_m_table
-load("tests/data/igsca_matlab.RData")
+load("../data/igsca_matlab.RData")
+# load("tests/data/igsca_matlab.RData") # uncomment to source
+# on local machine
+
 
 ## Load GSCAPro Results ----------------------------------------------------
 # Loads into igsca_gscapro
-load("tests/data/igsca_gscapro.RData")
+load("../data/igsca_gscapro.RData")
+# load("tests/data/igsca_gscapro.RData") # uncomment to source
+# on local machine
+
 
 ## Compare Matlab and cSEM::igsca()------------------------------------------
 # See https://r-pkgs.org/testing-basics.html
