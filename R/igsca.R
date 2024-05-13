@@ -7,7 +7,7 @@
 #' @param C0 Indicator matrix of loadings: J indicators (rows) and their corresponding Gamma construct variable (columns).
 #' @param B0 Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of Gamma construct variables should match the order in C0 and W0.
 #' @param con_type A vector that denotes whether each construct variable (columns in W0 and C0) is a common factor or composite. Its length should be equal to the number of columns of W0 and C0. 
-#' @param ov_type An indicator vector that indices whether a j indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators. 
+#' @param indicator_type An indicator vector that indices whether a j indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators. 
 #' @param ind_domi A numeric vector that indices the dominant indicator for each construct variable. *It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.* This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable. 
 #' @param itmax Maximum number of iterations of the Alternating Least Squares (ALS) algorithm.
 #' @param ceps Minimum amount of absolute change in the estimates of the path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero, meaning ther are no path-coefficients) between ALS iterations before ending the optimization.
@@ -55,11 +55,11 @@
 #'                             C0 = C0,
 #'                             B0 = B0,
 #'                             con_type = con_type,
-#'                             ov_type = ov_type,
+#'                             indicator_type = indicator_type,
 #'                             ind_domi = ind_domi)
 #'                             ))
 igsca <-
-  function(Z0, W0, C0, B0, con_type, ov_type, ind_domi, itmax = 100, ceps = 0.001) {
+  function(Z0, W0, C0, B0, con_type, indicator_type, ind_domi, itmax = 100, ceps = 0.001) {
   
 ## Initialize Computational Variables -----------------------------------------------------
   n_case <- nrow(Z0)
@@ -80,7 +80,7 @@ igsca <-
     n_indicators = n_indicators,
     n_case = n_case,
     n_constructs = n_constructs,
-    ov_type = ov_type
+    indicator_type = indicator_type
   )
   
   list2env(prepared_for_ALS[c("W", "C", "B", "V", "Z", "D", "U", "Gamma")],
@@ -180,7 +180,7 @@ igsca <-
         n_case = n_case,
         D = D,
         Z = Z,
-        ov_type = ov_type
+        indicator_type = indicator_type
       )
       
       list2env(updated_C_B_D_U[c("D", "U", "C", "B")], envir = environment())
@@ -337,11 +337,11 @@ gsca_inione <- function(Z0, W0, B0) {
 #' @param n_indicators 
 #' @param n_case 
 #' @param n_constructs 
-#' @param ov_type 
+#' @param indicator_type 
 #'
 #' @return List of matrices to put through the Alternating Least Squared (ALS) algorithm: 
 #'
-prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_type) {
+prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indicator_type) {
   
   # Initial estimates using GSCA
   initial_est <-
@@ -379,7 +379,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, ov_t
   Utilde <- v[, 1:n_indicators] %*% t(u)
   U <- F_o %*% Utilde
   D <- diag(diag(t(U) %*% Z))
-  D[ov_type == 0, ov_type == 0] <- 0
+  D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
   
   
   return(list(
@@ -491,7 +491,7 @@ update_composite <-
 #' @param n_case 
 #' @param D 
 #' @param Z 
-#' @param ov_type 
+#' @param indicator_type 
 #'
 #' @return List of matrices:
 #'
@@ -510,7 +510,7 @@ update_C_B_D_U <-
            n_case,
            D,
            Z,
-           ov_type) {
+           indicator_type) {
     t1 <- c(X)
     M1 <- kronecker(diag(n_indicators), Gamma)
     M1 <- M1[, c_index]
@@ -535,7 +535,7 @@ update_C_B_D_U <-
     Utilde <- v[, 1:n_indicators] %*% t(u)
     U <- F_o %*% Utilde
     D <- diag(diag(t(U) %*% Z))
-    D[ov_type != 1, ov_type != 1] <- 0
+    D[indicator_type == "Composite", indicator_type == "Composite"] <- 0
     
     return(
       list(
@@ -577,13 +577,13 @@ flip_signs_ind_domi <- function(n_constructs, Z, ind_domi, Gamma, C, B) {
 
 #' A parseModel extractor function for the purposes of running I-GSCA code example
 #' 
-#' In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (con_type); (3) whether an indicator corresponds to a latent or composite variable (ov_type); and (4) the dominant indicator of each construct (ind_domi). 
+#' In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (con_type); (3) whether an indicator corresponds to a latent or composite variable (indicator_type); and (4) the dominant indicator of each construct (ind_domi). 
 #' 
 #' @param model Specified Model in lavaan style
 #' @param data Dataframe 
 #' @param ind_domi_as_first Boolean for whether the first indicator for each latent factor should be chosen as the dominant indicator
 #'
-#' @return Returns a list of matrices required for igsca_sim() to run: Z0, W0, B0, C0, con_type, ov_type, ind_domi. 
+#' @return Returns a list of matrices required for igsca_sim() to run: Z0, W0, B0, C0, con_type, indicator_type, ind_domi. 
 #' @export
 #' @examples
 #'
@@ -625,17 +625,18 @@ extract_parseModel <-
     # con_type <- csemify$construct_type == "Common factor"
     con_type <- csemify$construct_type
     
-    # Constructing ov_type
-    ov_type <- vector(length = ncol(csemify$measurement))
-    names(ov_type) <- colnames(csemify$measurement)
+    # Constructing indicator_type
+    indicator_type <- vector(mode = "character", length = ncol(csemify$measurement))
+    indicator_type <- rep("Composite", length(indicator_type)) # FIXME: This should be removed, only added for simple testing purposes
+    names(indicator_type) <- colnames(csemify$measurement)
     
-    
+    # browser()
     for (gamma_idx in rownames(csemify$measurement)) {
       for (indicator in colnames(csemify$measurement)) {
         if (csemify$construct_type[gamma_idx] == "Common factor") {
           
           if (csemify$measurement[gamma_idx, indicator] == 1) {
-            ov_type[indicator] <- TRUE
+            indicator_type[indicator] <- "Common factor"
           }
           
         }
@@ -668,7 +669,7 @@ extract_parseModel <-
         "B0" = B0,
         "W0" = W0,
         "con_type" = con_type,
-        "ov_type" = ov_type,
+        "indicator_type" = indicator_type,
         "C0" = C0,
         "ind_domi" = ind_domi
       )
