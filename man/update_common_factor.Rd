@@ -4,14 +4,14 @@
 \alias{update_common_factor}
 \title{Update Common Factor Variable}
 \usage{
-update_common_factor(WW, windex_j, j)
+update_common_factor(WW, windex_gamma_idx, gamma_idx)
 }
 \arguments{
 \item{WW}{}
 
-\item{windex_j}{}
+\item{windex_gamma_idx}{}
 
-\item{j}{}
+\item{gamma_idx}{}
 }
 \value{
 theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
