@@ -41,8 +41,7 @@ igsca_out <- with(igsca_in, igsca(Z0 = Z0,
                            B0 = B0,
                            con_type = con_type,
                            ov_type = ov_type,
-                           ind_domi = ind_domi,
-                           nbt = 0))
+                           ind_domi = ind_domi))
 
 igsca_r_table <- with(
   igsca_out,

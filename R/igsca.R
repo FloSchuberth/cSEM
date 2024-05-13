@@ -13,7 +13,6 @@
 #' 
 #' @param ind_domi A numeric vector that indices the dominant indicator for each construct variable. *It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.* This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable. 
 #' 
-#' @param nbt Non-functional argument for the number of bootstrap-iterations, intended for computation of standard-errors, 95% confidence intervals and p-values.
 #' 
 #' @param itmax Maximum number of iterations of the Alternating Least Squares (ALS) algorithm.
 #' 
@@ -62,8 +61,7 @@
 #'                             B0 = B0,
 #'                             con_type = con_type,
 #'                             ov_type = ov_type,
-#'                             ind_domi = ind_domi,
-#'                             nbt = 0)
+#'                             ind_domi = ind_domi)
 #'                             ))
 igsca <-
   function(Z0,
@@ -73,15 +71,11 @@ igsca <-
            con_type,
            ov_type,
            ind_domi,
-           nbt,
            itmax = 100,
            ceps = 0.001) {
     
   
-# Safety Checks ------------------------------------------------------------
-  
-  # TODO: This could be extended and completed to make igsca into a stand-alone function. However, cSEM already has its own safety checks that make this essentially unnecessary
-  # stopifnot("The number of bootstraps should be a non-negative integer" = nbt >= 0)
+
   
 # Auxiliary Variables -----------------------------------------------------
   ncase <- nrow(Z0)
@@ -103,10 +97,10 @@ igsca <-
   special_names$path$col <- colnames(B0)
   
 
-# Bootstrap Cycle ---------------------------------------------------------
-for(nb in seq_len(nbt+1)) { 
 
-## Initial Estimates and Preparation -------------------------------------
+
+
+# Initial Estimates and Preparation -------------------------------------
   prepared_for_ALS <- prepare_for_ALS(
     Z0 = Z0,
     W0 = W0,
@@ -120,9 +114,9 @@ for(nb in seq_len(nbt+1)) {
   list2env(prepared_for_ALS, envir = environment())
   
   
-## Alternating Least Squares Algorithm -------------------------------------
+# Alternating Least Squares Algorithm -------------------------------------
 
-### While Counters and Initial Estimates ----------------------------------
+## While Counters and Initial Estimates ----------------------------------
     # Set the initial estimates based on either the structural model or the loadings
     # if there's no structural model
     if (length(bindex) > 0) {
@@ -133,7 +127,7 @@ for(nb in seq_len(nbt+1)) {
     est0 <- est + 1 
     it <- 0
     
-### Alternate Between Updating Weights and Loadings -----------------------
+## Alternate Between Updating Weights and Loadings -----------------------
     while ((sum(abs(est0 - est)) > ceps) && (it <= itmax)) {
       # TODO: Review better way to do this while condition
 
@@ -141,8 +135,7 @@ for(nb in seq_len(nbt+1)) {
       it <- it + 1
       est0 <- est
       
-#### Update Weights ----------------------------------------------------------
-      # FIXME: warning("X and WW probably aren't weights, the naming for this section is a misnomer")
+### Compute pseudo-Weights ----------------------------------------------------------
       updated_X_weights <- update_X_weights(
         Z = Z,
         U = U,
@@ -154,7 +147,7 @@ for(nb in seq_len(nbt+1)) {
       # Creates X (for updating Composites) and WW (for updating Factors)
       list2env(updated_X_weights, envir = environment())
       
-#### Iterative Update of LVs -------------------------------------------------
+### Iterative Update of LVs -------------------------------------------------
       A <- cbind(C, B) 
       
       for (j in seq_len(nlv)) {
@@ -203,7 +196,7 @@ for(nb in seq_len(nbt+1)) {
         
     }
       
-#### Update Loadings, Path Coefficients and Uniqueness Terms ----------
+### Update Loadings, Path Coefficients and Uniqueness Terms ----------
 
       updated_C_B_D <- update_C_B_D(
         X = X,
@@ -223,9 +216,8 @@ for(nb in seq_len(nbt+1)) {
       list2env(updated_C_B_D, envir = environment())
     }
     
-    }
 
-## Flip Signs for Factors and Composites Based on Dominant Indicators --------
+# Flip Signs for Factors and Composites Based on Dominant Indicators --------
 
     flipped_signs <-
       flip_signs_ind_domi(
