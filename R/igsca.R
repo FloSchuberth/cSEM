@@ -75,9 +75,9 @@ igsca <-
   n_constructs <- ncol(W0)
   n_total_var <- n_indicators + n_constructs
   
-  windex <- which(c(W0) == 1) 
-  cindex <- which(c(C0) == 1)
-  bindex <- which(c(B0) == 1)
+  w_index <- which(c(W0) == 1) 
+  c_index <- which(c(C0) == 1)
+  b_index <- which(c(B0) == 1)
   
 
 # Initial Estimates and Preparation -------------------------------------
@@ -99,10 +99,10 @@ igsca <-
 ## Optimization Preparation -----------------------------------------------
     # Set the initial estimates based on either the structural model or the loadings
     # if there's no structural model
-    if (length(bindex) > 0) {
-      est <- B[bindex] 
+    if (length(b_index) > 0) {
+      est <- B[b_index] 
     } else {
-      est <- C[cindex]
+      est <- C[c_index]
     }    
     est0 <- est + 1 
     it <- 0
@@ -183,10 +183,10 @@ igsca <-
         X = X,
         n_indicators = n_indicators,
         Gamma = Gamma,
-        cindex = cindex,
+        c_index = c_index,
         C = C,
         n_constructs = n_constructs,
-        bindex = bindex,
+        b_index = b_index,
         B = B,
         n_case = n_case,
         D = D,
@@ -256,7 +256,7 @@ gsca_inione <- function(Z0, W0, B0) {
   C0 <- t(W0)
   A0 <- cbind(C0, B0)
   
-  windex <- which(W0 != 0)
+  w_index <- which(W0 != 0)
   aindex <- which(A0 != 0)
   
   Z <- scale(Z0, center = TRUE, scale = TRUE) * sqrt(N) / sqrt(N - 1)
@@ -264,7 +264,7 @@ gsca_inione <- function(Z0, W0, B0) {
   W <- W0
   A <- A0
   
-  W[windex] <- rep(1, length(windex))
+  W[w_index] <- rep(1, length(w_index))
   A[aindex] <- runif(length(aindex), min = 0, max = 1)
   
   Gamma <- Z %*% W
@@ -488,10 +488,10 @@ update_composite <-
 #' @param X 
 #' @param n_indicators 
 #' @param Gamma 
-#' @param cindex 
+#' @param c_index 
 #' @param C 
 #' @param n_constructs 
-#' @param bindex 
+#' @param b_index 
 #' @param B 
 #' @param n_case 
 #' @param D 
@@ -510,10 +510,10 @@ update_C_B_D <-
   function(X,
            n_indicators,
            Gamma,
-           cindex,
+           c_index,
            C,
            n_constructs,
-           bindex,
+           b_index,
            B,
            n_case,
            D,
@@ -521,13 +521,13 @@ update_C_B_D <-
            ov_type) {
     t1 <- c(X)
     M1 <- kronecker(diag(n_indicators), Gamma)
-    M1 <- M1[, cindex]
-    C[cindex] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
+    M1 <- M1[, c_index]
+    C[c_index] <- MASS::ginv(t(M1) %*% M1) %*% (t(M1) %*% t1)
     
     t2 <- c(Gamma)
     M2 <- kronecker(diag(n_constructs), Gamma)
-    M2 <- M2[, bindex]
-    B[bindex] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
+    M2 <- M2[, b_index]
+    B[b_index] <- MASS::ginv(t(M2) %*% M2) %*% (t(M2) %*% t2)
     
     # Solution for Q is copied from estimators_weights.R
     Q <- qr.Q(qr(Gamma), complete =  TRUE)
@@ -546,10 +546,10 @@ update_C_B_D <-
     D[ov_type != 1, ov_type != 1] <- 0
     
     
-    if (length(bindex) > 0) {
-      est <- B[bindex]
+    if (length(b_index) > 0) {
+      est <- B[b_index]
     } else {
-      est <- C[cindex]
+      est <- C[c_index]
     }
     # browser()
     uniqueD <- diag(D) ^ 2
