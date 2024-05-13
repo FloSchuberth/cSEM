@@ -441,10 +441,6 @@ update_common_factor <- function(WW, windex_gamma_idx, gamma_idx) {
   return(theta)
 }
 
-
-
-
-
 #' Update Composite Variables
 #'
 #' @param n_total_var 
@@ -634,11 +630,11 @@ extract_parseModel <-
     names(ov_type) <- colnames(csemify$measurement)
     
     
-    for (lv in rownames(csemify$measurement)) {
+    for (gamma_idx in rownames(csemify$measurement)) {
       for (indicator in colnames(csemify$measurement)) {
-        if (csemify$construct_type[lv] == "Common factor") {
+        if (csemify$construct_type[gamma_idx] == "Common factor") {
           
-          if (csemify$measurement[lv, indicator] == 1) {
+          if (csemify$measurement[gamma_idx, indicator] == 1) {
             ov_type[indicator] <- TRUE
           }
           
