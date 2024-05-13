@@ -4,6 +4,7 @@
 #' 
 #' The code here generally assumes that every indicator corresponds to a single construct. (A construct is a superset consisting of latent and emergent variables. Latent variables are sometimes referred to as common-factor/factor variables; and emergent variables are sometimes referred to as component/composite variables.)
 #' 
+#' 
 #' @param Z0 Input matrix. Should contain named columns in this form.
 #' @param W0 Indicator matrix of weights: indicators (rows) and their corresponding construct variable (columns).
 #' @param C0 Indicator matrix of loadings: indicators (rows) and their corresponding construct variable (columns).
@@ -20,11 +21,12 @@
 #' 
 #' @author Michael S. Truong
 #' 
-#' @returns List of 4 matrices that make up a fitted I-GSCA Model: (1) Weights, (2) Loadings, (3) Uniqueness Terms D^2, and (4) Path Coefficients.
+#' @return List of 4 matrices that make up a fitted I-GSCA Model: (1) Weights, (2) Loadings, (3) Uniqueness Terms D^2, and (4) Path Coefficients.
+#' TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example
 #' @export
 #' @importFrom MASS ginv 
 #' @examples
-#' TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example
+#' 
 #' # Specify the model according to GSCA Pro's example
 #' tutorial_igsca_model <- "
 #' # Composite Model
@@ -280,45 +282,8 @@ igsca <-
 #' @param B0 Indicator matrix of Path Coefficients.
 #' 
 #' @author Michael S. Truong
-#' 
 #' @return When used in the context of igsca_sim(), it returns a list of the starting values for Weights, Loadings and Path Coefficients. In principle, otherwise, it is a slightly modified implementation of ordinary Generalised Structured Component Analysis (GSCA). 
 #'
-#' @examples
-#'
-#' 
-#' tutorial_gsca_model <- "
-#' # Composite Model
-#' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
-#' Numberofjobinterviews <~ Interview1 + Interview2
-#' Numberofjoboffers <~ Offer1 + Offer2 
-#' 
-#' # Reflective Measurement Model Forced into Composite
-#' HonestyHumility <~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
-#' Emotionality <~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
-#' Extraversion <~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
-#' Agreeableness <~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
-#' Conscientiousness <~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
-#' OpennesstoExperience <~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
-#' 
-#' # Structural Model
-#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience
-#' Numberofjobinterviews ~ NetworkingBehavior
-#' Numberofjoboffers ~ NetworkingBehavior
-#' "
-#' 
-#' data("LeDang2022")
-#' 
-#' 
-#' gsca_in <- extract_parseModel(model = tutorial_gsca_model,
-#'                                    data = LeDang2022,
-#'                                    ind_domi_as_first = TRUE)
-#'                          
-#' (gsca_inione_test <- with(gsca_in,
-#'                           gsca_inione(Z0 = Z0,
-#'                                       W0 = W0,
-#'                                       B0 = B0)
-#'                                       )
-#'                                       )
 gsca_inione <- function(Z0, W0, B0) {
   
   N <- nrow(Z0)

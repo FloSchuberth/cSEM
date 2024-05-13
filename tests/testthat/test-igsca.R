@@ -58,16 +58,14 @@ igsca_r_table <- with(
 
 ## Load Matlab Results -----------------------------------------------------
 # Loads into igsca_sim_m_table
-load("../data/igsca_matlab.RData")
-# load("tests/data/igsca_matlab.RData") # uncomment to source
-# on local machine
+load(testthat::test_path("data", "igsca_matlab.RData"))
+
 
 
 ## Load GSCAPro Results ----------------------------------------------------
 # Loads into igsca_gscapro
-load("../data/igsca_gscapro.RData")
-# load("tests/data/igsca_gscapro.RData") # uncomment to source
-# on local machine
+load(testthat::test_path("data", "igsca_gscapro.RData"))
+
 
 
 ## Compare Matlab and cSEM::igsca()------------------------------------------
@@ -75,28 +73,32 @@ load("../data/igsca_gscapro.RData")
 testthat::expect_equal(object = igsca_sim_m_table,
                            expected = igsca_r_table)
 
-waldo::compare(igsca_sim_m_table, igsca_r_table,
-               max_diffs = Inf)
+# waldo::compare(igsca_sim_m_table, igsca_r_table,
+#                max_diffs = Inf)
 
-all.equal(igsca_sim_m_table, igsca_r_table)
+# all.equal(igsca_sim_m_table, igsca_r_table)
 
 ## GSCAPro and R ---------------------------------------------------
-try(testthat::expect_equal(igsca_r_table, igsca_gscapro))
+testthat::expect_equal(igsca_r_table,
+                      igsca_gscapro ,
+                      tolerance = 10 ^ -2
+                      )
 
-waldo::compare(igsca_r_table, igsca_gscapro,
-               max_diffs = Inf)
 
-all.equal(igsca_r_table, igsca_gscapro)
+# waldo::compare(igsca_r_table, igsca_gscapro, max_diffs = Inf)
+
+# all.equal(igsca_r_table, igsca_gscapro)
 
 
 ## Compare GSCAPro and Matlab ----------------------------------------------
-try(testthat::expect_equal(object = igsca_sim_m_table,
-                           expected = igsca_gscapro))
+testthat::expect_equal(object = igsca_sim_m_table,
+                       expected = igsca_gscapro ,
+                       tolerance = 10 ^ -2
+                       )
 
-waldo::compare(igsca_sim_m_table, igsca_gscapro,
-               max_diffs = Inf)
+# waldo::compare(igsca_sim_m_table, igsca_gscapro, max_diffs = Inf)
 
-all.equal(igsca_sim_m_table, igsca_gscapro)
+# all.equal(igsca_sim_m_table, igsca_gscapro)
 
 
 
