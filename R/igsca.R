@@ -419,12 +419,12 @@ gsca_inione <- function(Z0, W0, B0) {
 #' 3) SVD Decomposition of ...*something* to get U and V matrices.
 #' TODO: Figure out what the SVD decomposition is for
 prepare_for_ALS <- function(Z0, W0, B0, n_indicators, ncase, n_constructs, ov_type) {
-  bZ0 <- Z0
+  
   
   
   initial_est <-
     gsca_inione(
-      Z0 = bZ0,
+      Z0 = Z0,
       W0 = apply(W0 != 0, 2, as.numeric),
       B0 = apply(B0 != 0, 2, as.numeric)
     )
@@ -435,7 +435,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, ncase, n_constructs, ov_ty
   
   
   V <- cbind(diag(n_indicators), W)
-  Z <- scale(bZ0, center = TRUE, scale = TRUE) / sqrt(ncase - 1)
+  Z <- scale(Z0, center = TRUE, scale = TRUE) / sqrt(ncase - 1)
   Gamma <- Z %*% W
   D <- diag(n_indicators)
   
