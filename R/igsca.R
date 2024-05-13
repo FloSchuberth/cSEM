@@ -4,7 +4,7 @@
 #' 
 #' The code here generally assumes that every indicator corresponds to a single construct. (A construct is a superset consisting of latent and emergent variables. Latent variables are sometimes referred to as common-factor/factor variables; and emergent variables are sometimes referred to as component/composite variables.)
 #' 
-#' @param z0 Input matrix. Should contain named columns in this form.
+#' @param Z0 Input matrix. Should contain named columns in this form.
 #' @param W0 Indicator matrix of weights: indicators (rows) and their corresponding construct variable (columns).
 #' @param C0 Indicator matrix of loadings: indicators (rows) and their corresponding construct variable (columns).
 #' @param B0 Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of construct variables should match the order in C0 and W0.
@@ -57,7 +57,7 @@
 #'                                    ind_domi_as_first = TRUE)
 #'
 #' # Fit the I-GSCA model
-#' (igsca_out <- with(igsca_in, igsca(z0 = z0,
+#' (igsca_out <- with(igsca_in, igsca(Z0 = Z0,
 #'                             W0 = W0,
 #'                             C0 = C0,
 #'                             B0 = B0,
@@ -67,7 +67,7 @@
 #'                             nbt = 0)
 #'                             ))
 igsca <-
-  function(z0,
+  function(Z0,
            W0,
            C0,
            B0,
@@ -85,8 +85,8 @@ igsca <-
   # stopifnot("The number of bootstraps should be a non-negative integer" = nbt >= 0)
   
 # Auxiliary Variables -----------------------------------------------------
-  ncase <- nrow(z0)
-  nvar <- ncol(z0)
+  ncase <- nrow(Z0)
+  nvar <- ncol(Z0)
   nlv <- ncol(W0)
   ntv <- nvar + nlv
   
@@ -109,7 +109,7 @@ for(nb in seq_len(nbt+1)) {
 
 ## Initial Estimates and Preparation -------------------------------------
   prepared_for_ALS <- prepare_for_ALS(
-    z0 = z0,
+    Z0 = Z0,
     W0 = W0,
     B0 = B0,
     nvar = nvar,
@@ -285,7 +285,7 @@ for(nb in seq_len(nbt+1)) {
 #' Internal I-GSCA Function
 #' 
 #' Initializes the values for I-GSCA
-#' @param z0 Data Matrix
+#' @param Z0 Data Matrix
 #' @param W0 Indicator matrix of weights
 #' @param B0 Indicator matrix of Path Coefficients.
 #' 
@@ -324,13 +324,13 @@ for(nb in seq_len(nbt+1)) {
 #'                                    ind_domi_as_first = TRUE)
 #'                          
 #' (gsca_inione_test <- with(gsca_in,
-#'                           gsca_inione(z0 = z0,
+#'                           gsca_inione(Z0 = Z0,
 #'                                       W0 = W0,
 #'                                       B0 = B0)
 #'                                       )
 #'                                       )
-gsca_inione <- function(z0, W0, B0) {
-  N <- nrow(z0)
+gsca_inione <- function(Z0, W0, B0) {
+  N <- nrow(Z0)
   J <- nrow(W0)
   P <- ncol(W0)
   TRep <- J + P
@@ -340,7 +340,7 @@ gsca_inione <- function(z0, W0, B0) {
   windex <- which(W0 != 0)
   aindex <- which(A0 != 0)
   
-  Z <- scale(z0, center = TRUE, scale = TRUE) * sqrt(N) / sqrt(N - 1)
+  Z <- scale(Z0, center = TRUE, scale = TRUE) * sqrt(N) / sqrt(N - 1)
   # Random Values to W and A
   W <- W0
   A <- A0
@@ -414,7 +414,7 @@ gsca_inione <- function(z0, W0, B0) {
 #'
 #' Internal I-GSCA function
 #'
-#' @param z0 
+#' @param Z0 
 #' @param W0 
 #' @param B0 
 #' @param nvar 
@@ -428,13 +428,13 @@ gsca_inione <- function(z0, W0, B0) {
 #' 2) Standardized data matrix (Z)
 #' 3) SVD Decomposition of ...*something* to get U and V matrices.
 #' TODO: Figure out what the SVD decomposition is for
-prepare_for_ALS <- function(z0, W0, B0, nvar, ncase, nlv, ov_type) {
-  bz0 <- z0
+prepare_for_ALS <- function(Z0, W0, B0, nvar, ncase, nlv, ov_type) {
+  bZ0 <- Z0
   
   
   initial_est <-
     gsca_inione(
-      z0 = bz0,
+      Z0 = bZ0,
       W0 = apply(W0 != 0, 2, as.numeric),
       B0 = apply(B0 != 0, 2, as.numeric)
     )
@@ -445,7 +445,7 @@ prepare_for_ALS <- function(z0, W0, B0, nvar, ncase, nlv, ov_type) {
   
   
   V <- cbind(diag(nvar), W)
-  Z <- scale(bz0, center = TRUE, scale = TRUE) / sqrt(ncase - 1)
+  Z <- scale(bZ0, center = TRUE, scale = TRUE) / sqrt(ncase - 1)
   Gamma <- Z %*% W
   D <- diag(nvar)
   
@@ -689,13 +689,13 @@ flip_signs_ind_domi <- function(nlv, Z, ind_domi, j, Gamma, C, B) {
 
 #' A parseModel extractor function for the purposes of running I-GSCA code example
 #' 
-#' In the context of igsca, this function prepares: (1) the initial indicators (z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (lv_type); (3) whether an indicator corresponds to a latent or composite variable (ov_type); and (4) the dominant indicator of each construct (ind_domi). 
+#' In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (lv_type); (3) whether an indicator corresponds to a latent or composite variable (ov_type); and (4) the dominant indicator of each construct (ind_domi). 
 #' 
 #' @param model Specified Model in lavaan style
 #' @param data Dataframe 
 #' @param ind_domi_as_first Boolean for whether the first indicator for each latent factor should be chosen as the dominant indicator
 #'
-#' @return Returns a list of matrices required for igsca_sim() to run: z0, W0, B0, C0, lv_type, ov_type, ind_domi. 
+#' @return Returns a list of matrices required for igsca_sim() to run: Z0, W0, B0, C0, lv_type, ov_type, ind_domi. 
 #' @export
 #' @examples
 #'
@@ -728,7 +728,7 @@ extract_parseModel <-
     # Note: parseModel is from cSEM internal
     csemify <- parseModel(.model = model)
     
-    z0 <- data[, csemify$indicators]
+    Z0 <- data[, csemify$indicators]
     # browser()
     # B0 <- csemify$structural
     B0 <- t(csemify$structural)
@@ -757,7 +757,7 @@ extract_parseModel <-
     
     
     stopifnot(
-      "Data matrix (z0) does not correctly correspond with Weights matrix (W0)" = identical(colnames(z0), rownames(W0)),
+      "Data matrix (Z0) does not correctly correspond with Weights matrix (W0)" = identical(colnames(Z0), rownames(W0)),
       "Weights matrix (W0) does not correctly correspond with Structural matrix (B0)" = identical(colnames(W0), colnames(B0)),
       "Construct indicator does not correctly correspond with Weights Matrix (W0)" = identical(names(csemify$construct_type), colnames(W0))
     )
@@ -775,7 +775,7 @@ extract_parseModel <-
     
     return(
       list(
-        "z0" = z0,
+        "Z0" = Z0,
         "B0" = B0,
         "W0" = W0,
         "lv_type" = lv_type,
@@ -1008,10 +1008,10 @@ get_lavaan_table_igsca_gscapro <- function(gscapro_in, model) {
 #'
 #' @param igsca_results 
 #'
-#' @return
+#' @return FIT index statistic
 #' @export
 #'
-#' @examples
+#' @examples summarize_FIT_idx(igsca_results)
 summarize_FIT_idx <- function(igsca_results) {
   # TODO: Compute FIT statistic
   return(FIT)
@@ -1022,10 +1022,10 @@ summarize_FIT_idx <- function(igsca_results) {
 #' @param model 
 #' @param group 
 #'
-#' @return
-#' @export
+#' @return Multi-group igsca model
+#' @export 
 #'
-#' @examples
+#' @examples model_multigroup_igsca(model, group)
 model_multigroup_igsca <- function(model, group) {
   
   return(mutligroup_igsca_result)
