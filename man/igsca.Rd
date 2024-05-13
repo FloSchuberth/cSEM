@@ -4,7 +4,17 @@
 \alias{igsca}
 \title{R Implementation of igsca_sim.m}
 \usage{
-igsca(Z0, W0, C0, B0, con_type, ov_type, ind_domi, itmax = 100, ceps = 0.001)
+igsca(
+  Z0,
+  W0,
+  C0,
+  B0,
+  con_type,
+  indicator_type,
+  ind_domi,
+  itmax = 100,
+  ceps = 0.001
+)
 }
 \arguments{
 \item{Z0}{Data matrix of N cases (measurements) x J indicators with named columns, unstandardized.}
@@ -17,7 +27,7 @@ igsca(Z0, W0, C0, B0, con_type, ov_type, ind_domi, itmax = 100, ceps = 0.001)
 
 \item{con_type}{A vector that denotes whether each construct variable (columns in W0 and C0) is a common factor or composite. Its length should be equal to the number of columns of W0 and C0.}
 
-\item{ov_type}{An indicator vector that indices whether a j indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators.}
+\item{indicator_type}{An indicator vector that indices whether a j indicator (rows of W0 and C0) corresponds to a common factor variable (1) or a composite variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators.}
 
 \item{ind_domi}{A numeric vector that indices the dominant indicator for each construct variable. \emph{It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.} This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable.}
 
@@ -69,7 +79,7 @@ igsca_in <- extract_parseModel(model = tutorial_igsca_model,
                             C0 = C0,
                             B0 = B0,
                             con_type = con_type,
-                            ov_type = ov_type,
+                            indicator_type = indicator_type,
                             ind_domi = ind_domi)
                             ))
 }

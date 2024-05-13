@@ -16,7 +16,6 @@
 #' 
 #' @return List of 4 matrices that make up a fitted I-GSCA Model: (1) Weights, (2) Loadings, (3) Uniqueness Terms D^2, and (4) Path Coefficients.
 #' TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example
-#' @export
 #' @importFrom MASS ginv 
 #' @examples
 #' 
@@ -391,11 +390,6 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indi
     "D" = D,
     "U" = U,
     "Gamma" = Gamma
-    # "Utilde" = Utilde,
-    # "v" = v,
-    # "u" = u,
-    # "F_o" = F_o,
-    # "Q" = Q,
   ))
 }
 
@@ -434,7 +428,6 @@ update_X_WW_pseudo_weights <- function(Z, U, D, C, n_constructs, B) {
 #' @return theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
 #' 
 #' 
-#' @export
 #'
 update_common_factor <- function(WW, windex_gamma_idx, gamma_idx) {
   theta <- WW[windex_gamma_idx, gamma_idx]
@@ -455,7 +448,6 @@ update_common_factor <- function(WW, windex_gamma_idx, gamma_idx) {
 #'
 #' @return theta: A matrix that will later be used to update the weights for the composite variable.
 #' 
-#' @export
 #'
 update_composite <-
   function(n_total_var, tot, n_constructs, gamma_idx, W, A, V, X, windex_gamma_idx) {
