@@ -9,7 +9,6 @@
 #' @param C0 Indicator matrix of loadings: indicators (rows) and their corresponding construct variable (columns).
 #' @param B0 Square indicator matrix of path coefficients: from-construct-variable (rows) and to-construct-variable (columns). The order of construct variables should match the order in C0 and W0.
 #' @param con_type A logical vector that indices whether a construct variable (columns in W0 and C0) is a factor (TRUE) or composite (FALSE). Its length should be equal to the number of columns of W0 and C0. 
-#' TODO: Rename con_type into cv_type
 #' @param ov_type An indicator vector that indices whether an indicator (rows of W0 and C0) corresponds to a factor latent variable (1) or a composite emergent variable (0). This vector is important for computing the uniqueness terms (D) because it zeros the entries for composite indicators. 
 #' 
 #' @param ind_domi A numeric vector that indices the dominant indicator for each construct variable. *It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.* This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable. 
@@ -165,7 +164,7 @@ for(nb in seq_len(nbt+1)) {
         Xj <- X[, windex_j]
         
         
-        if (con_type[j] == 0) {
+        if (con_type[j] == "Composite") {
           # Update Composite LV
           theta <-
             update_composite_LV(
@@ -182,7 +181,7 @@ for(nb in seq_len(nbt+1)) {
           
           
           
-        } else if (con_type[j] == 1) {
+        } else if (con_type[j] == "Common factor") {
           # Update Factor LV
           theta <-
              update_factor_LV(
@@ -192,7 +191,7 @@ for(nb in seq_len(nbt+1)) {
                )
           
         } else {
-          stop("con_type should either be 1 for factors or 0 for composites")
+          stop("con_type should either be `Composite` or `Common factor`")
         }
         # This is where the 'actual' updating occurs, in terms of the Gamma matrix, Weights and V(?)
         theta <- theta / norm(Xj %*% theta, "2")
@@ -734,7 +733,8 @@ extract_parseModel <-
     B0 <- t(csemify$structural)
     W0 <- t(csemify$measurement)
     
-    con_type <- csemify$construct_type == "Common factor"
+    # con_type <- csemify$construct_type == "Common factor"
+    con_type <- csemify$construct_type
     
     # Constructing ov_type
     ov_type <- vector(length = ncol(csemify$measurement))
