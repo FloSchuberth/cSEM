@@ -135,7 +135,7 @@ igsca <-
       # After each cycle, the Gamma, W and V matrices are updated
         tot <- n_indicators + gamma_idx
         windex_gamma_idx <- (W0[, gamma_idx] == 1)
-        Xgamma_idx <- X[, windex_gamma_idx]
+        X_gamma_idx <- X[, windex_gamma_idx]
         
         
         if (con_type[gamma_idx] == "Composite") {
@@ -169,9 +169,9 @@ igsca <-
         }
         
         # This is where the 'actual' updating occurs, in terms of the Gamma matrix, Weights and V(?)
-        theta <- theta / norm(Xgamma_idx %*% theta, "2")
+        theta <- theta / norm(X_gamma_idx %*% theta, "2")
         
-        Gamma[, gamma_idx] <- Xgamma_idx %*% theta
+        Gamma[, gamma_idx] <- X_gamma_idx %*% theta
         W[windex_gamma_idx, gamma_idx] <- theta
         V[windex_gamma_idx, tot] <- theta
         
