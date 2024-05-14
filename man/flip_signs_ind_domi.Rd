@@ -7,19 +7,17 @@
 flip_signs_ind_domi(n_constructs, Z, .dominant_indicators, Gamma, C, B)
 }
 \arguments{
-\item{n_constructs}{}
+\item{n_constructs}{Number of construct variables}
 
-\item{Z}{}
+\item{Z}{Standardized data matrix}
 
-\item{.dominant_indicators}{}
+\item{.dominant_indicators}{Named vector of the dominant indicator for each construct variable}
 
-\item{Gamma}{}
+\item{Gamma}{Matrix of construct scores}
 
-\item{C}{}
+\item{C}{Loadings matrix}
 
-\item{B}{}
-
-\item{gamma_idx}{}
+\item{B}{Path Coefficients matrix}
 }
 \value{
 List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)

@@ -7,15 +7,15 @@
 get_lavaan_table_igsca_matrix(model, weights, loadings, uniqueD, paths)
 }
 \arguments{
-\item{model}{}
+\item{model}{Lavaan-style specification of model}
 
-\item{weights}{}
+\item{weights}{Weights matrix}
 
-\item{loadings}{}
+\item{loadings}{Loadings matrix}
 
-\item{uniqueD}{}
+\item{uniqueD}{Vector of Uniqueness for each indicator of a common factor}
 
-\item{paths}{}
+\item{paths}{Path coefficients matrix}
 }
 \value{
 Table of Weights, Loadings, Path-Coefficients and Uniqueness terms from i-gsca algorithms in Matlab or R.

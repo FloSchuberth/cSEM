@@ -4,12 +4,14 @@
 \alias{model_multigroup_igsca}
 \title{Title}
 \usage{
-model_multigroup_igsca(model, group)
+model_multigroup_igsca(model, group, data)
 }
 \arguments{
-\item{model}{}
+\item{model}{Specified Lavaan Style Model}
 
-\item{group}{}
+\item{group}{Column name of group of input data}
+
+\item{data}{Input dataframe}
 }
 \value{
 Multi-group igsca model

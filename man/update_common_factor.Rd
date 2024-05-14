@@ -7,11 +7,11 @@
 update_common_factor(WW, windex_gamma_idx, gamma_idx)
 }
 \arguments{
-\item{WW}{}
+\item{WW}{Pseudo-weights for Common Factors}
 
-\item{windex_gamma_idx}{}
+\item{windex_gamma_idx}{Index of weights related to the indicators for the construct of interest}
 
-\item{gamma_idx}{}
+\item{gamma_idx}{Index of which construct we are examining}
 }
 \value{
 theta: Used to update factor latent variables -- after accounting for loadings and path-coefficients.
