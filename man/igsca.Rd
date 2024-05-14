@@ -13,7 +13,7 @@ igsca(
   indicator_type,
   .dominant_indicators = .dominant_indicators,
   itmax = 100,
-  ceps = 0.001
+  ceps = 1e-04
 )
 }
 \arguments{
