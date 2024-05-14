@@ -13,7 +13,7 @@
 #' @param ceps Minimum amount of absolute change in the estimates of the path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero, meaning ther are no path-coefficients) between ALS iterations before ending the optimization.
 #' 
 #' @author Michael S. Truong
-#' 
+#' @export
 #' @return List of 4 matrices that make up a fitted I-GSCA Model: (1) Weights, (2) Loadings, (3) Uniqueness Terms D^2, and (4) Path Coefficients.
 #' TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example
 #' @importFrom MASS ginv 
@@ -57,7 +57,7 @@
 #'                             .dominant_indicators = NULL)
 #'                             ))
 igsca <-
-  function(Z0, W0, C0, B0, con_type, indicator_type, .dominant_indicators = .dominant_indicators, itmax = 100, ceps = 0.001) {
+  function(Z0, W0, C0, B0, con_type, indicator_type, .dominant_indicators = .dominant_indicators, itmax = 100, ceps = 0.0001) {
   
 ## Initialize Computational Variables -----------------------------------------------------
   n_case <- nrow(Z0)
@@ -738,152 +738,6 @@ get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, pat
   
 }
 
-
-#' Takes GSCAPro input and Creates a Lavaan-style Table
-#'
-#' TODO: Rename the functions here
-#' 
-#' Assumes that every indicator loads onto only one latent variable (composite/factor)
-#' 
-#' Expects output from parse_GSCAPro_FullResults.
-#' 
-#' @param gscapro_in 
-#' @param model 
-#'
-#' @return Table of GSCA Pro results of Weights, Loadings, Path Coefficients and Uniqueness Terms in lavaan style. 
-#' @export
-#'
-get_lavaan_table_igsca_gscapro <- function(gscapro_in, model) {
-  
-  table <- lavaan::lavaanify(model = model)[, c("lhs", "op", "rhs")]
-  # Remove unnecessary rows
-  table <- table[table$op %in% c("=~", "<~", "~"),]
-  # Pre-allocate Columns
-  table <-
-    cbind(table, list(
-      "weights" = 0,
-      "loadings" = 0,
-      "uniqueD" = 0,
-      "paths" = 0
-    ))
-  
-  
-  # Correct names of latent variables
-  gscapro_in$Weights$V1 <-
-    gsub(pattern = " ",
-         x = gscapro_in$Weights$V1,
-         replacement = "")
-  
-  gscapro_in$Weights$V1 <-
-    gsub(pattern = "-",
-         x = gscapro_in$Weights$V1,
-         replacement = "")
-  
-  
-  
-  lv_idx <- list()
-  span <- list() 
-  
-  lv_idx$weights <- which(is.na(gscapro_in$Weights$Estimate))
-  # Number of rows after the row of the LV that correspond to that LV's indicators
-  span$weights <- diff(lv_idx$weights)
-  gscapro_in$Weights$lv <- ""
-  gscapro_in$Weights$lv <-
-    c(with(gscapro_in$Weights, rep(V1[is.na(Estimate) &
-                                      (nchar(V1) > 0)], times = span$weights)), "")
-  
-  
-  # Retrieving indicators from gscapro
-  gscapro_indicators <-
-    with(gscapro_in$Weights, V1[!(V1 %in% lv) & (nchar(V1) > 0)])
-  gscapro_lv <-
-    with(gscapro_in$Weights, unique(lv)[nchar(unique(lv)) > 0])
-  
-  rownames(gscapro_in$Weights)<-gscapro_in$Weights$V1
-  
-  for (indicator in gscapro_indicators) {
-    for (lv in gscapro_lv) {
-      table[((table$lhs == lv &
-                table$rhs == indicator) &
-               table$op %in% c("<~", "=~")), "weights"] <- gscapro_in$Weights[indicator, "Estimate"]
-    }
-  }
-  
-  
-  # Loadings Parser Shortcut
-  gscapro_in$Loadings$V1 <-
-    gsub(pattern = " ",
-         x = gscapro_in$Loadings$V1,
-         replacement = "")
-  
-  gscapro_in$Loadings$V1 <-
-    gsub(pattern = "-",
-         x = gscapro_in$Loadings$V1,
-         replacement = "")
-  
-  if (identical(gscapro_in$Weights$V1, gscapro_in$Loadings$V1)) {
-    rownames(gscapro_in$Loadings) <- gscapro_in$Loadings$V1
-    
-    for (indicator in gscapro_indicators) {
-      for (lv in gscapro_lv) {
-        table[((table$lhs == lv &
-                  table$rhs == indicator) &
-                 table$op %in% c("<~", "=~")), "loadings"] <-
-          gscapro_in$Loadings[indicator, "Estimate"]
-      }
-    }
-  } else {
-    stop("Cannot take the shortcut of weight indicators for loadings")
-  }
-  
-  # Paths need their own parser 
-  
-  gscapro_in$`Path coefficients` <-
-    gscapro_in$`Path coefficients`[!is.na(gscapro_in$`Path coefficients`$Estimate), ]
-  gscapro_in$`Path coefficients`$V1 <-
-    gsub(pattern = " ",
-         x = gscapro_in$`Path coefficients`$V1,
-         replacement = "")
-  
-  gscapro_in$`Path coefficients`$V1 <-
-    gsub(pattern = "->",
-         x = gscapro_in$`Path coefficients`$V1,
-         replacement = " ")
-  
-  gscapro_in$`Path coefficients`$V1 <-
-    gsub(pattern = "-",
-         x = gscapro_in$`Path coefficients`$V1,
-         replacement = "")
-  
-  # ephpostfacto on November 6, 2009; editted by Jilber Urbina on Jan 1/2014 https://stackoverflow.com/a/1690753
-  paths <-strsplit(gscapro_in$`Path coefficients`$V1, " ")
-  gscapro_in$`Path coefficients`$lvfrom <-sapply(paths, FUN = \(.) .[1])
-  gscapro_in$`Path coefficients`$lvto <-sapply(paths, FUN = \(.) .[2])
-  
-  for (lv_to_iter in gscapro_in$`Path coefficients`$lvto) {
-    for (lv_from_iter in gscapro_in$`Path coefficients`$lvfrom) {
-      table[((table$rhs == lv_from_iter &
-                table$lhs == lv_to_iter) &
-               table$op == "~"), "paths"] <- with(gscapro_in$`Path coefficients`, Estimate[(lvfrom == lv_from_iter) & (lvto == lv_to_iter)])
-                 
-    }
-  }
-  
-  # Parsing for Uniqueness Terms
-  for (indicator in names(gscapro_in$`Unique D^2`)) {
-    table[((table$rhs == indicator) &
-             (table$op == "=~")), "uniqueD"] <- gscapro_in$`Unique D^2`[indicator]
-  }
-  
-  # Remove zeros for cells that shouldn't have values
-  table[!(table$op %in% c("<~", "=~")), "weights"] <- NA
-  table[!(table$op %in% c("<~", "=~")), "loadings"] <- NA
-  table[!(table$op %in% c("=~")), "uniqueD"] <- NA
-  table[!(table$op %in% c("~")), "paths"] <- NA
-  
-  return(table)
-}
-
 #' Title
 #'
 #' @param igsca_results 
@@ -891,7 +745,6 @@ get_lavaan_table_igsca_gscapro <- function(gscapro_in, model) {
 #' @return FIT index statistic
 #' @export
 #'
-#' @examples summarize_FIT_idx(igsca_results)
 summarize_FIT_idx <- function(igsca_results) {
   # TODO: Compute FIT statistic
   return(FIT)
@@ -905,8 +758,7 @@ summarize_FIT_idx <- function(igsca_results) {
 #' @return Multi-group igsca model
 #' @export 
 #'
-#' @examples model_multigroup_igsca(model, group)
 model_multigroup_igsca <- function(model, group) {
-  
+  # TODO: Illustrate how this would be done
   return(mutligroup_igsca_result)
 }

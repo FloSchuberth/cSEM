@@ -4,20 +4,18 @@
 \alias{extract_parseModel}
 \title{A parseModel extractor function for the purposes of running I-GSCA code example}
 \usage{
-extract_parseModel(model, data, ind_domi_as_first = TRUE)
+extract_parseModel(model, data)
 }
 \arguments{
 \item{model}{Specified Model in lavaan style}
 
 \item{data}{Dataframe}
-
-\item{ind_domi_as_first}{Boolean for whether the first indicator for each latent factor should be chosen as the dominant indicator}
 }
 \value{
-Returns a list of matrices required for igsca_sim() to run: Z0, W0, B0, C0, con_type, indicator_type, ind_domi.
+Returns a list of matrices required for igsca_sim() to run: Z0, W0, B0, C0, con_type, indicator_type, .dominant_indicators.
 }
 \description{
-In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (con_type); (3) whether an indicator corresponds to a latent or composite variable (indicator_type); and (4) the dominant indicator of each construct (ind_domi).
+In the context of igsca, this function prepares: (1) the initial indicators (Z0), weights (W0), structural (B0), loadings(C0) matrices; (2) whether a construct is a latent or composite variable (con_type); (3) whether an indicator corresponds to a latent or composite variable (indicator_type); and (4) the dominant indicator of each construct (.dominant_indicators).
 }
 \examples{
 
@@ -44,5 +42,5 @@ Numberofjoboffers ~ NetworkingBehavior
 
 data("LeDang2022")
 
-extract_parseModel(model = tutorial_igsca_model, data = LeDang2022, ind_domi_as_first = TRUE)
+extract_parseModel(model = tutorial_igsca_model, data = LeDang2022)
 }
