@@ -30,7 +30,14 @@ igsca_in <- extract_parseModel(model = tutorial_igsca_model,
 ## Testing Input Matrices From extract_parseModel -------------------------------
 
 testthat::expect_identical(igsca_in$W0, igsca_in$C0,
-                           label = "All indicators for composite and factorial LVs should have loadings in I-GSCA")
+                           label = "All indicators for composite and common factor should have loadings in I-GSCA")
+
+testthat::expect_identical(unique(rowSums(igsca_in$C0)), 1,
+                           label = "Every indicator should only have loadings from one construct")
+
+testthat::expect_identical(unique(rowSums(igsca_in$W0)), 1,
+                           label = "Every indicator should only have weights to one construct")
+
 
 ## Compute and tabulate igsca ----------------------------------------------------
 
