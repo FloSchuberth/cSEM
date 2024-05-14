@@ -7,7 +7,7 @@
 get_lavaan_table_igsca_matrix(model, weights, loadings, uniqueD, paths)
 }
 \arguments{
-\item{model}{Lavaan-style specification of model}
+\item{model}{Specified Model in lavaan style}
 
 \item{weights}{Weights matrix}
 

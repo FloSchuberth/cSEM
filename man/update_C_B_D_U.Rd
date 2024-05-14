@@ -28,27 +28,28 @@ update_C_B_D_U(
 
 \item{c_index}{Index of loadings}
 
-\item{C}{Loadings matrix}
+\item{C}{Matrix of estimated loadings}
 
 \item{n_constructs}{Number of constructs}
 
 \item{b_index}{Index of Path Coefficients}
 
-\item{B}{Path Coefficients Matrix}
+\item{B}{Matrix of path coefficients}
 
 \item{n_case}{Number of Cases}
 
-\item{D}{Related to Unique Error}
+\item{D}{Matrix of estimated unique error}
 
-\item{Z}{Standardized Data}
+\item{Z}{Standardized data matrix}
 
 \item{indicator_type}{Vector of whether each indicator corresponds to a common factor or composite}
 }
 \value{
 List of matrices:
-\enumerate{
-\item Uniqueness terms (D) and (U)
-\item Path-Coefficients (B) and Loadings (C)
+\itemize{
+\item (1) Uniqueness terms (D) and (U)
+\item (2) Estimated Path Coefficients matrix (B)
+\item (3) Estimated Loadings matrix (C)
 }
 }
 \description{

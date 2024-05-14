@@ -7,23 +7,23 @@
 update_X_WW_pseudo_weights(Z, U, D, C, n_constructs, B)
 }
 \arguments{
-\item{Z}{Standardized Data}
+\item{Z}{Standardized data matrix}
 
-\item{U}{Related to Unique error}
+\item{U}{Matrix of estimates related to unique error}
 
-\item{D}{Unique Error}
+\item{D}{Matrix of estimated unique error}
 
-\item{C}{Loadings}
+\item{C}{Matrix of estimated loadings}
 
 \item{n_constructs}{Number of constructs}
 
-\item{B}{Path Coefficients}
+\item{B}{Matrix of path coefficients}
 }
 \value{
 Two matrices:
 \itemize{
-\item \emph{X}: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing theta when updating Gamma, W and V
-\item \emph{WW}: Weights after accounting for current Loading and Path-Coefficients values, used for estimating common-factor loadings
+\item X: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing theta when updating Gamma, W and V
+\item WW: Weights after accounting for current Loading and Path-Coefficients values, used for estimating common-factor loadings
 }
 }
 \description{

@@ -7,7 +7,7 @@
 model_multigroup_igsca(model, group, data)
 }
 \arguments{
-\item{model}{Specified Lavaan Style Model}
+\item{model}{Specified Model in lavaan style}
 
 \item{group}{Column name of group of input data}
 

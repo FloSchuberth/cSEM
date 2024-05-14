@@ -36,11 +36,19 @@ igsca(
 \item{ceps}{Minimum amount of absolute change in the estimates of the path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero, meaning ther are no path-coefficients) between ALS iterations before ending the optimization.}
 }
 \value{
-List of 4 matrices that make up a fitted I-GSCA Model: (1) Weights, (2) Loadings, (3) Uniqueness Terms D^2, and (4) Path Coefficients.
-TODO: Cite the GSCA Pro SEM reference instead of GSCA Pro's Example
+List of 4 matrices that make up a fitted I-GSCA Model:
+\itemize{
+\item (1) Weights
+\item (2) Loadings
+\item (3) Uniqueness Terms D^2
+\item (4) Path Coefficients.
+}
 }
 \description{
 This R implementation of I-GSCA is based on the Matlab implementation in igsca_sim.m by Dr. Heungsun Hwang.
+}
+\details{
+In the example section, the specified model is based on the tutorial I-GSCA model associated with GSCA Pro \insertCite{hwangetal2023StructuralEquationModelingAMultidisciplinaryJournal}{cSEM}.
 }
 \examples{
 
@@ -81,6 +89,9 @@ igsca_in <- extract_parseModel(model = tutorial_igsca_model,
                             indicator_type = indicator_type,
                             .dominant_indicators = NULL)
                             ))
+}
+\references{
+\insertAllCited{}
 }
 \author{
 Michael S. Truong

@@ -7,20 +7,25 @@
 flip_signs_ind_domi(n_constructs, Z, .dominant_indicators, Gamma, C, B)
 }
 \arguments{
-\item{n_constructs}{Number of construct variables}
+\item{n_constructs}{Number of constructs}
 
 \item{Z}{Standardized data matrix}
 
-\item{.dominant_indicators}{Named vector of the dominant indicator for each construct variable}
+\item{.dominant_indicators}{A named vector that indices the dominant indicator for each construct variable. \emph{It is to be clarified whether this should only apply to factor latent variables or also composite latent variables.} This is important for ensuring that the signs of the path-coefficients and loadings are consistent. It is sometimes the case in composite-based structural equation modelling methods that loadings/path-coefficients may have the opposite sign. The length of this vector should be equal to the number of construct variables and each value should represent the row number of the dominant indicator for that construct variable.}
 
-\item{Gamma}{Matrix of construct scores}
+\item{Gamma}{Construct Scores}
 
-\item{C}{Loadings matrix}
+\item{C}{Matrix of estimated loadings}
 
-\item{B}{Path Coefficients matrix}
+\item{B}{Matrix of path coefficients}
 }
 \value{
-List of matrices: Gamma, Loadings (C) and Path-Coefficients (B)
+List of matrices:
+\itemize{
+\item Estimated Construct Scores (Gamma)
+\item Estimated Loadings matrix (C)
+\item Estimated Path-Coefficients matrix (B)
+}
 }
 \description{
 Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator
