@@ -528,8 +528,8 @@ update_C_B_D_U <-
     # Solution for Q is copied from estimators_weights.R
     Q <- qr.Q(qr(Gamma), complete =  TRUE)
     F_o <- Q[, (n_constructs + 1):n_case]
-    # FIXME: warning("It's unclear to me whether this SVD is safe. The Matlab code seems to either do a 'normal' svd or a economy svd depending on the dimensionality of the input matrix. Should look into this more.")
-    # https://www.mathworks.com/help/matlab/ref/double.svd.html?searchHighlight=svd&s_tid=srchtitle_support_results_1_svd#d126e1597915
+    
+    # svd between R and Matlab by Ahmed Fasih on February 1/2017 https://stackoverflow.com/a/41972818
     svd_out2 <- (D %*% t(Z) %*% F_o) |>
       {
         \(mx) svd(mx, nu = nrow(mx),  nv = ncol(mx))
