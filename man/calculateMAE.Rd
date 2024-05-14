@@ -17,7 +17,7 @@ Currently, the following prediction measures are available:
 \itemize{
 \item Mean absolute error
 \item Mean absolute percentage error
-\item Mean squared error
+\item Mean squared error (MSE)
 \item Root mean squared error
 \item Theil's forecast accuracy
 \item Theil's forecast quality
