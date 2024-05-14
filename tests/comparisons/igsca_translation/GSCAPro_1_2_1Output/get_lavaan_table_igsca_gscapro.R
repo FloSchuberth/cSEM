@@ -1,6 +1,5 @@
 #' Takes GSCAPro input and Creates a Lavaan-style Table
 #'
-#' TODO: Rename the functions here
 #' 
 #' Assumes that every indicator loads onto only one latent variable (composite/factor)
 #' 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/igsca.R
 \name{model_multigroup_igsca}
 \alias{model_multigroup_igsca}
-\title{Title}
+\title{Compute multi-group model for I-GSCA}
 \usage{
 model_multigroup_igsca(model, group, data)
 }
@@ -17,5 +17,5 @@ model_multigroup_igsca(model, group, data)
 Multi-group igsca model
 }
 \description{
-Title
+TBD
 }
