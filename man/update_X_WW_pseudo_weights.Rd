@@ -27,5 +27,9 @@ Two matrices:
 }
 }
 \description{
-Update Pseudo Weights for Composites and Common-Factors
+Computation of WW matrix was converted between Matlab to R based on page 44 of \insertCite{Hiebeler2015}{cSEM}.
+TODO: I can't figure out why this hiebeler citation isn't working.
+}
+\references{
+\insertAllCited{}
 }
