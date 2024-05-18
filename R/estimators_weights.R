@@ -806,6 +806,20 @@ calculateWeightsGSCAm <- function(
   
 } # END calculateWeightsGSCAm
 
+#' Calculate weights using Integrated Generalised Structured Component Analysis (I-GSCA)
+#'
+#' @return List of matrices of the fitted I-GSCA Model
+#'
+#' @examples
+calculateWeightsIGSCA <- function() {
+  # TODO: Error checking for what IGSCA can and cannot currently handle -- perhaps put this in a separate function
+  
+  
+  # TODO: Merging what cSEM::extract_parseModel() would have done and giving it to igsca()
+  
+}
+
+
 #' Calculate composite weights using unit weights
 #'
 #' Calculate unit weights for all blocks, i.e., each indicator of a block is

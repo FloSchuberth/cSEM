@@ -313,7 +313,7 @@ csem <- function(
   .approach_paths        = c("OLS", "2SLS"),
   .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                              "MINVAR", "GENVAR","GSCA", "PCA",
-                             "unit", "bartlett", "regression"),
+                             "unit", "bartlett", "regression", "IGSCA"),
   .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
   .disattenuate          = TRUE,
   .dominant_indicators   = NULL,
