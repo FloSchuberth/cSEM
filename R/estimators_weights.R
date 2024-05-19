@@ -807,15 +807,48 @@ calculateWeightsGSCAm <- function(
 } # END calculateWeightsGSCAm
 
 #' Calculate weights using Integrated Generalised Structured Component Analysis (I-GSCA)
-#'
+#' 
+#' @inheritParams igsca
+#' @inheritParams extract_parseModel
+#' @inheritParams csem
+#' 
 #' @return List of matrices of the fitted I-GSCA Model
 #'
-#' @examples
-calculateWeightsIGSCA <- function() {
+#' 
+calculateWeightsIGSCA <- function(.data,
+                                  .csem_model = args_default()$.csem_model, # TODO: What does this even mean? Is this what I want?
+                                  # args_default()$.conv_criterion, # TODO: Implement this
+                                  .tolerance = args_default()$.tolerance,
+                                  .iter_max = args_default()$.iter_max,
+                                  .dominant_indicators = args_default()$.dominant_indicators) {
+  
+  
   # TODO: Error checking for what IGSCA can and cannot currently handle -- perhaps put this in a separate function
+  # FIXME: Something probably went wrong in the argument specification here, which is why this is no longer equivalent to matlab
+  browser()
+  igsca_in <- extract_parseModel(.model = .csem_model, .data = .data)
   
+  igsca_out <- igsca(
+    Z0 = igsca_in$Z0,
+    W0 = igsca_in$W0,
+    C0 = igsca_in$C0,
+    B0 = igsca_in$B0,
+    con_type = igsca_in$con_type,
+    indicator_type = igsca_in$indicator_type,
+    .dominant_indicators = .dominant_indicators,
+    .iter_max = .iter_max,
+    .tolerance = .tolerance
+  )
   
-  # TODO: Merging what cSEM::extract_parseModel() would have done and giving it to igsca()
+  l <- list("W" = igsca_out$Weights, 
+            "C" = igsca_out$Loadings,
+            "B" = igsca_out$`Path Coefficients`,
+            "E" = igsca_out$`Uniqueness Terms`, # TODO: Idon't know if this is what I think it is
+            "Modes" = "gsca", 
+            "Conv_status" = ifelse(igsca_out$Iterations > .iter_max, FALSE, TRUE),
+            "Iterations" = igsca_out$Iterations)
+  
+  return(l)
   
 }
 

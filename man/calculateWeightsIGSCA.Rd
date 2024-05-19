@@ -4,7 +4,38 @@
 \alias{calculateWeightsIGSCA}
 \title{Calculate weights using Integrated Generalised Structured Component Analysis (I-GSCA)}
 \usage{
-calculateWeightsIGSCA()
+calculateWeightsIGSCA(
+  data,
+  .csem_model = args_default()$.csem_model,
+  .tolerance = args_default()$.tolerance,
+  .iter_max = args_default()$.iter_max,
+  .dominant_indicators = args_default()$.dominant_indicators
+)
+}
+\arguments{
+\item{data}{Input dataframe}
+
+\item{.tolerance}{Minimum amount of absolute change in the estimates of the
+path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
+meaning ther are no path-coefficients) between ALS iterations before ending
+the optimization.}
+
+\item{.iter_max}{Maximum number of iterations of the Alternating Least Squares
+(ALS) algorithm.}
+
+\item{.dominant_indicators}{A named vector that indices the dominant
+indicator for each construct variable. \emph{It is to be clarified whether this
+should only apply to factor latent variables or also composite latent
+variables.} This is important for ensuring that the signs of the
+path-coefficients and loadings are consistent. It is sometimes the case in
+composite-based structural equation modelling methods that
+loadings/path-coefficients may have the opposite sign. The length of this
+vector should be equal to the number of construct variables and each value
+should represent the row number of the dominant indicator for that
+construct variable.}
+}
+\value{
+List of matrices of the fitted I-GSCA Model
 }
 \description{
 Calculate weights using Integrated Generalised Structured Component Analysis (I-GSCA)
