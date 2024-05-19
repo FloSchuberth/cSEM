@@ -810,7 +810,7 @@ calculateWeightsGSCAm <- function(
 #' 
 #' @inheritParams igsca
 #' @inheritParams extract_parseModel
-#' @inheritParams csem
+#' @inheritParams csem_arguments
 #' 
 #' @return List of matrices of the fitted I-GSCA Model
 #'

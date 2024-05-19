@@ -21,6 +21,8 @@ of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or
 "\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (will be converted to factor),
 or a mix of several types.}
 
+\item{.csem_model}{A (possibly incomplete) \link{cSEMModel}-list.}
+
 \item{.tolerance}{Minimum amount of absolute change in the estimates of the
 path-coefficients (if B0 is non-zero) or the loadings (if B0 is all zero,
 meaning ther are no path-coefficients) between ALS iterations before ending

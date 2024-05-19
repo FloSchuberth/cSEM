@@ -80,7 +80,7 @@ is used. Defaults to "\emph{mean}".}
 
 \item{.approach_weights}{Character string. Approach used to
 obtain composite weights. One of: "\emph{PLS-PM}", "\emph{SUMCORR}", "\emph{MAXVAR}",
-"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
+"\emph{SSQCORR}", "\emph{MINVAR}", "\emph{GENVAR}", "\emph{GSCA}", "\emph{IGSCA}", "\emph{PCA}", "\emph{unit}", "\emph{bartlett}",
 or "\emph{regression}". Defaults to "\emph{PLS-PM}".}
 
 \item{.args_used}{A list of function argument names whose value was modified

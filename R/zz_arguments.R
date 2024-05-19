@@ -68,7 +68,7 @@
 #'   is used. Defaults to "*mean*".
 #' @param .approach_weights Character string. Approach used to
 #'   obtain composite weights. One of: "*PLS-PM*", "*SUMCORR*", "*MAXVAR*",
-#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*PCA*", "*unit*", "*bartlett*", 
+#'   "*SSQCORR*", "*MINVAR*", "*GENVAR*", "*GSCA*", "*IGSCA*", "*PCA*", "*unit*", "*bartlett*", 
 #'   or "*regression*". Defaults to "*PLS-PM*".
 #' @param .args_used A list of function argument names whose value was modified 
 #'   by the user.
