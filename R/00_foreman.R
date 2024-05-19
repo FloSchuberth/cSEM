@@ -154,7 +154,7 @@ foreman <- function(
     # TODO: Make sure output is formatted correctly for this to work
     # FIXME: This is bypassing everything else -- it needs to be checked whether everything else is ok
     # browser()
-    # return(W) # Commented out for development
+    return(W) # Commented out for development
     # TODO: The following was done for GSCAM, should I do it for IGSCA?
     # W$W <- scaleWeights(S, W$W) 
     
