@@ -11,9 +11,10 @@ igsca(
   B0,
   con_type,
   indicator_type,
-  .dominant_indicators = .dominant_indicators,
+  .dominant_indicators,
   .iter_max = 100,
-  .tolerance = 1e-04
+  .tolerance = 1e-04,
+  .conv_criterion
 )
 }
 \arguments{
@@ -99,7 +100,7 @@ Numberofjoboffers ~ NetworkingBehavior
 data(LeDang2022)
 
 csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "IGSCA",
-.dominant_indicators = NULL, .tolerance = 0.0001)
+.dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion = "diff_absolute")
 }
 \references{
 \insertAllCited{}

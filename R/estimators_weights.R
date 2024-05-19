@@ -820,7 +820,8 @@ calculateWeightsIGSCA <- function(.data,
                                   # args_default()$.conv_criterion, # TODO: Implement this
                                   .tolerance = args_default()$.tolerance,
                                   .iter_max = args_default()$.iter_max,
-                                  .dominant_indicators = args_default()$.dominant_indicators) {
+                                  .dominant_indicators = args_default()$.dominant_indicators,
+                                  .conv_criterion = args_default()$.conv_criterion) {
   
   
   # TODO: Error checking for what IGSCA can and cannot currently handle -- perhaps put this in a separate function
@@ -837,13 +838,14 @@ calculateWeightsIGSCA <- function(.data,
     indicator_type = igsca_in$indicator_type,
     .dominant_indicators = .dominant_indicators,
     .iter_max = .iter_max,
-    .tolerance = .tolerance
+    .tolerance = .tolerance,
+    .conv_criterion = .conv_criterion
   )
   
   l <- list("W" = igsca_out$Weights, 
             "C" = igsca_out$Loadings,
             "B" = igsca_out$`Path Coefficients`,
-            "E" = igsca_out$`Uniqueness Terms`, # TODO: Idon't know if this is what I think it is
+            "E" = igsca_out$`Uniqueness Terms`, # TODO: I don't know if this is what I think it is
             "Modes" = "gsca", 
             "Conv_status" = ifelse(igsca_out$Iterations > .iter_max, FALSE, TRUE),
             "Iterations" = igsca_out$Iterations)

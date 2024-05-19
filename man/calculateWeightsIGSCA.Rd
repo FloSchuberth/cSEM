@@ -9,7 +9,8 @@ calculateWeightsIGSCA(
   .csem_model = args_default()$.csem_model,
   .tolerance = args_default()$.tolerance,
   .iter_max = args_default()$.iter_max,
-  .dominant_indicators = args_default()$.dominant_indicators
+  .dominant_indicators = args_default()$.dominant_indicators,
+  .conv_criterion = args_default()$.conv_criterion
 )
 }
 \arguments{
@@ -41,6 +42,10 @@ loadings/path-coefficients may have the opposite sign. The length of this
 vector should be equal to the number of construct variables and each value
 should represent the row number of the dominant indicator for that
 construct variable.}
+
+\item{.conv_criterion}{Character string. The criterion to use for the convergence check.
+One of: "\emph{diff_absolute}", "\emph{diff_squared}", "\emph{diff_relative}", or "\emph{sum_diff_absolute}". Defaults
+to "\emph{diff_absolute}".}
 }
 \value{
 List of matrices of the fitted I-GSCA Model
