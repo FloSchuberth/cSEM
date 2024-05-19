@@ -825,7 +825,7 @@ calculateWeightsIGSCA <- function(.data,
   
   # TODO: Error checking for what IGSCA can and cannot currently handle -- perhaps put this in a separate function
   # FIXME: Something probably went wrong in the argument specification here, which is why this is no longer equivalent to matlab
-  browser()
+  # browser()
   igsca_in <- extract_parseModel(.model = .csem_model, .data = .data)
   
   igsca_out <- igsca(

@@ -12,7 +12,7 @@ csem(
 .approach_nl           = c("sequential", "replace"),
 .approach_paths        = c("OLS", "2SLS"),
 .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
-                           "MINVAR", "GENVAR","GSCA", "IGSCA","PCA",
+                           "MINVAR", "GENVAR","GSCA", "IGSCA", "PCA",
                            "unit", "bartlett", "regression"),
 .conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative"),
 .disattenuate          = TRUE,

@@ -7,11 +7,18 @@
 model_multigroup_igsca(model, group, data)
 }
 \arguments{
-\item{model}{Specified Model in lavaan style}
+\item{model}{A model in \link[lavaan:model.syntax]{lavaan model syntax}
+or a \link{cSEMModel} list.}
 
 \item{group}{Column name of group of input data}
 
-\item{data}{Input dataframe}
+\item{data}{A \code{data.frame} or a \code{matrix} of standardized or unstandardized
+data (indicators/items/manifest variables).
+Additionally, a \code{list} of data sets (data frames or matrices) is accepted in which
+case estimation is repeated for each data set. Possible column types or classes
+of the data provided are: "\code{logical}", "\code{numeric}" ("\code{double}" or "\code{integer}"),
+"\code{factor}" ("\code{ordered}" and/or "\code{unordered}"), "\code{character}" (will be converted to factor),
+or a mix of several types.}
 }
 \value{
 Multi-group igsca model

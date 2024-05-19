@@ -649,7 +649,7 @@ extract_parseModel <-
   function(.data, .model) {
     # Note: parseModel is from cSEM internal
     # FIXME: I think this part is why the integration is not working well.
-    browser()
+    # browser()
     csemify <- parseModel(.model = .model)
     
     Z0 <- .data[, csemify$indicators]
