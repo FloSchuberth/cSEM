@@ -140,7 +140,7 @@ foreman <- function(
     }
     
   } else if (.approach_weights == "IGSCA") {
-    # TODO: fill in function here
+    
     
     W <- calculateWeightsIGSCA(
       .data = X_cleaned,
@@ -150,13 +150,12 @@ foreman <- function(
       .dominant_indicators = .dominant_indicators,
       .conv_criterion = .conv_criterion
     )
-    # TODO: This needs to be better formatted
-    # TODO: Make sure output is formatted correctly for this to work
-    # FIXME: This is bypassing everything else -- it needs to be checked whether everything else is ok
-    # browser()
-    return(W) # Commented out for development
-    # TODO: The following was done for GSCAM, should I do it for IGSCA?
-    # W$W <- scaleWeights(S, W$W) 
+    
+    # Transpose weights and loadings matrix for compatibility with calculateReliabilities()
+    W$W <- t(W$W)
+    W$C <- t(W$C)
+    # Transpose path coefficients matrix for comparability with IGSCA
+    W$B <- t(W$B)
     
   } else if (.approach_weights == "unit") {
     W <- calculateWeightsUnit(.S                        = S,
@@ -179,13 +178,13 @@ foreman <- function(
   }
 
   ## Dominant indicators:
-  if(!is.null(.dominant_indicators)) {
+  if(!is.null(.dominant_indicators) && (.approach_weights != "IGSCA")) {
     W$W <- setDominantIndicator(
       .W = W$W, 
       .dominant_indicators = .dominant_indicators,
       .S = S)
   }
-
+  
   LambdaQ2W <- calculateReliabilities(
     .X                = X,
     .S                = S,
@@ -212,7 +211,12 @@ foreman <- function(
   Theta <- S - t(Lambda) %*% Lambda
   
   ## Calculate proxies/scores
-  H <- X %*% t(Weights)
+  if (.approach_weights == "IGSCA") {
+    H <- W$Construct_scores
+  } else if (.approach_weights != "IGSCA") {
+    H <- X %*% t(Weights)
+  }
+  
   
   ## Calculate proxy covariance matrix
   C <- calculateCompositeVCV(.S = S, .W = Weights)
@@ -233,6 +237,9 @@ foreman <- function(
       .P              = P,
       .Q              = Q
     ) 
+    if (.approach_weights == "IGSCA") {
+      estim_results$Path_estimates <- W$B
+    }
   } else {
     estim_results <- NULL
   }
@@ -253,6 +260,11 @@ foreman <- function(
       "Indicator_VCV"          = S,
       "Proxy_VCV"              = C,
       "Construct_VCV"          = P,
+      "D2"                     = if(.approach_weights == "IGSCA"){
+        W$D_squared
+      } else {
+        NA
+      },
       "Reliabilities"          = Q^2,
       "R2"                     = if(.estimate_structural) {
         estim_results$R2

@@ -430,20 +430,23 @@ calculateReliabilities <- function(
           Q[j]        <- c(W[j, ] %*% Lambda[j, ])
         }
       } 
-    } else if(.approach_weights == "GSCA") {
-      
-      if(.disattenuate & all(.csem_model$construct_type == "Common factor")) {
-        # Currently, GSCAm only supports pure common factor models. This may change
-        # in the future.
-        
-        # Compute consistent loadings and Q (Composite/proxy-construct correlation)
-        # Consistent factor loadings are obtained from GSCAm.
-        
-        for(j in rownames(Lambda)) {
-          Lambda[j, ] <- .W$C[j, ]
-          Q[j]        <- c(W[j, ] %*% Lambda[j, ]) 
+    } else if (.approach_weights == "GSCA" || .approach_weights == "IGSCA") {
+      # FIXME: Need to verify whether the following code applies validly to IGSCA
+        if ((.disattenuate &
+            all(.csem_model$construct_type == "Common factor")) || .approach_weights == "IGSCA") {
+          
+          # Currently, GSCAm only supports pure common factor models. This may change
+          # in the future.
+          
+          # Compute consistent loadings and Q (Composite/proxy-construct correlation)
+          # Consistent factor loadings are obtained from GSCAm.
+          
+          for (j in rownames(Lambda)) {
+            Lambda[j, ] <- .W$C[j, ]
+            Q[j]        <- c(W[j, ] %*% Lambda[j, ])
+          }
         }
-      }
+      
     } else if(.approach_weights %in% c("unit", "bartlett", "regression", "PCA", 
                 "SUMCORR", "MAXVAR", "SSQCORR", "MINVAR", "GENVAR")) {
     

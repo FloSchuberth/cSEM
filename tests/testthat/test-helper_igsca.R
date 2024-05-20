@@ -33,13 +33,13 @@ igsca_out <- csem(.data = LeDang2022,
                   .conv_criterion = "sum_diff_absolute")
 
 igsca_r_table <- with(
-  igsca_out,
+  igsca_out$Estimates,
   get_lavaan_table_igsca_matrix(
     model = tutorial_igsca_model,
-    weights = W,
-    loadings = C,
-    uniqueD = E,
-    paths = B
+    weights = t(Weight_estimates),
+    loadings = t(Loading_estimates),
+    uniqueD = D2,
+    paths = t(Path_estimates)
   )
 )
 
@@ -59,8 +59,8 @@ load(testthat::test_path("data", "igsca_gscapro.RData"))
 
 ## Compare Matlab and cSEM::igsca()------------------------------------------
 # See https://r-pkgs.org/testing-basics.html
-testthat::expect_equal(object = igsca_sim_m_table,
-                           expected = igsca_r_table)
+testthat::expect_equal(object = igsca_r_table,
+                           expected = igsca_sim_m_table)
 
 # waldo::compare(igsca_sim_m_table, igsca_r_table, max_diffs = Inf)
 
@@ -90,10 +90,3 @@ testthat::expect_success(testthat::expect_equal(igsca_sim_m_table,
 # waldo::compare(igsca_sim_m_table, igsca_gscapro, max_diffs = Inf)
 
 # all.equal(igsca_sim_m_table, igsca_gscapro)
-
-
-
-
-
-
-

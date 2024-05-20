@@ -816,17 +816,13 @@ calculateWeightsGSCAm <- function(
 #'
 #' 
 calculateWeightsIGSCA <- function(.data,
-                                  .csem_model = args_default()$.csem_model, # TODO: What does this even mean? Is this what I want?
-                                  # args_default()$.conv_criterion, # TODO: Implement this
+                                  .csem_model = args_default()$.csem_model, 
                                   .tolerance = args_default()$.tolerance,
                                   .iter_max = args_default()$.iter_max,
                                   .dominant_indicators = args_default()$.dominant_indicators,
                                   .conv_criterion = args_default()$.conv_criterion) {
   
   
-  # TODO: Error checking for what IGSCA can and cannot currently handle -- perhaps put this in a separate function
-  # FIXME: Something probably went wrong in the argument specification here, which is why this is no longer equivalent to matlab
-  # browser()
   igsca_in <- extract_parseModel(.model = .csem_model, .data = .data)
   
   igsca_out <- igsca(
@@ -845,7 +841,8 @@ calculateWeightsIGSCA <- function(.data,
   l <- list("W" = igsca_out$Weights, 
             "C" = igsca_out$Loadings,
             "B" = igsca_out$`Path Coefficients`,
-            "E" = igsca_out$`Uniqueness Terms`, # TODO: I don't know if this is what I think it is
+            "Construct_scores" = igsca_out$`Construct Scores`,
+            "D_squared" = igsca_out$`Uniqueness Terms`, 
             "Modes" = "gsca", 
             "Conv_status" = ifelse(igsca_out$Iterations > .iter_max, FALSE, TRUE),
             "Iterations" = igsca_out$Iterations)
