@@ -6,11 +6,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -26,7 +23,6 @@
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
-
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -37,7 +33,6 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -56,15 +51,11 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-
-      
-
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
@@ -72,11 +63,9 @@
     <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/00_csem.R" class="external-link"><code>R/00_csem.R</code></a></small>
     <div class="hidden name"><code>csem.Rd</code></div>
     </div>
-
     <div class="ref-description">
     <p><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="figures/lifecycle-stable.svg" alt="[Stable]"></a></p>
     </div>
-
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">csem</span><span class="op">(</span></span>
 <span>.data                  <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -118,7 +107,6 @@
 <span>.tolerance             <span class="op">=</span> <span class="fl">1e-05</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
-
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt id="arg--data">.data<a class="anchor" aria-label="anchor" href="#arg--data"></a></dt>
@@ -129,18 +117,12 @@ case estimation is repeated for each data set. Possible column types or classes
 of the data provided are: "<code>logical</code>", "<code>numeric</code>" ("<code>double</code>" or "<code>integer</code>"),
 "<code>factor</code>" ("<code>ordered</code>" and/or "<code>unordered</code>"), "<code>character</code>" (will be converted to factor),
 or a mix of several types.</p></dd>
-
-
 <dt id="arg--model">.model<a class="anchor" aria-label="anchor" href="#arg--model"></a></dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a>
 or a <a href="csem_model.html">cSEMModel</a> list.</p></dd>
-
-
 <dt id="arg--approach-ndorder">.approach_2ndorder<a class="anchor" aria-label="anchor" href="#arg--approach-ndorder"></a></dt>
 <dd><p>Character string. Approach used for models containing
 second-order constructs. One of: "<em>2stage</em>", or "<em>mixed</em>". Defaults to "<em>2stage</em>".</p></dd>
-
-
 <dt id="arg--approach-cor-robust">.approach_cor_robust<a class="anchor" aria-label="anchor" href="#arg--approach-cor-robust"></a></dt>
 <dd><p>Character string. Approach used to obtain a robust
 indicator correlation matrix. One of: "<em>none</em>" in which case the standard
@@ -151,58 +133,40 @@ Defaults to "<em>none</em>". Note that many postestimation procedures (such as
 <code><a href="testOMF.html">testOMF()</a></code> or <code><a href="fit.html">fit()</a></code> implicitly assume a continuous
 indicator correlation matrix (e.g. Bravais-Pearson correlation matrix).
 Only use if you know what you are doing.</p></dd>
-
-
 <dt id="arg--approach-nl">.approach_nl<a class="anchor" aria-label="anchor" href="#arg--approach-nl"></a></dt>
 <dd><p>Character string. Approach used to estimate nonlinear
 structural relationships. One of: "<em>sequential</em>" or "<em>replace</em>".
 Defaults to "<em>sequential</em>".</p></dd>
-
-
 <dt id="arg--approach-paths">.approach_paths<a class="anchor" aria-label="anchor" href="#arg--approach-paths"></a></dt>
 <dd><p>Character string. Approach used to estimate the
 structural coefficients. One of: "<em>OLS</em>" or "<em>2SLS</em>". If "<em>2SLS</em>", instruments
 need to be supplied to <code>.instruments</code>. Defaults to "<em>OLS</em>".</p></dd>
-
-
 <dt id="arg--approach-weights">.approach_weights<a class="anchor" aria-label="anchor" href="#arg--approach-weights"></a></dt>
 <dd><p>Character string. Approach used to
 obtain composite weights. One of: "<em>PLS-PM</em>", "<em>SUMCORR</em>", "<em>MAXVAR</em>",
 "<em>SSQCORR</em>", "<em>MINVAR</em>", "<em>GENVAR</em>", "<em>GSCA</em>", "<em>PCA</em>", "<em>unit</em>", "<em>bartlett</em>",
 or "<em>regression</em>". Defaults to "<em>PLS-PM</em>".</p></dd>
-
-
 <dt id="arg--conv-criterion">.conv_criterion<a class="anchor" aria-label="anchor" href="#arg--conv-criterion"></a></dt>
 <dd><p>Character string. The criterion to use for the convergence check.
 One of: "<em>diff_absolute</em>", "<em>diff_squared</em>", or "<em>diff_relative</em>". Defaults
 to "<em>diff_absolute</em>".</p></dd>
-
-
 <dt id="arg--disattenuate">.disattenuate<a class="anchor" aria-label="anchor" href="#arg--disattenuate"></a></dt>
 <dd><p>Logical. Should composite/proxy correlations
 be disattenuated to yield consistent loadings and path estimates if at least
 one of the construct is modeled as a common factor? Defaults to <code>TRUE</code>.</p></dd>
-
-
 <dt id="arg--dominant-indicators">.dominant_indicators<a class="anchor" aria-label="anchor" href="#arg--dominant-indicators"></a></dt>
 <dd><p>A character vector of <code>"construct_name" = "indicator_name"</code> pairs,
 where <code>"indicator_name"</code> is a character string giving the name of the dominant indicator
 and <code>"construct_name"</code> a character string of the corresponding construct name.
 Dominant indicators may be specified for a subset of the constructs.
 Default to <code>NULL</code>.</p></dd>
-
-
 <dt id="arg--estimate-structural">.estimate_structural<a class="anchor" aria-label="anchor" href="#arg--estimate-structural"></a></dt>
 <dd><p>Logical. Should the structural coefficients
 be estimated? Defaults to <code>TRUE</code>.</p></dd>
-
-
 <dt id="arg--id">.id<a class="anchor" aria-label="anchor" href="#arg--id"></a></dt>
 <dd><p>Character string or integer. A character string giving the name or
 an integer of the position of the column of <code>.data</code> whose levels are used
 to split <code>.data</code> into groups. Defaults to <code>NULL</code>.</p></dd>
-
-
 <dt id="arg--instruments">.instruments<a class="anchor" aria-label="anchor" href="#arg--instruments"></a></dt>
 <dd><p>A named list of vectors of instruments. The names
 of the list elements are the names of the dependent (LHS) constructs of the structural
@@ -210,37 +174,27 @@ equation whose explanatory variables are endogenous. The vectors
 contain the names of the instruments corresponding to each equation. Note
 that exogenous variables of a given equation <strong>must</strong> be supplied as
 instruments for themselves. Defaults to <code>NULL</code>.</p></dd>
-
-
 <dt id="arg--iter-max">.iter_max<a class="anchor" aria-label="anchor" href="#arg--iter-max"></a></dt>
 <dd><p>Integer. The maximum number of iterations allowed.
 If <code>iter_max = 1</code> and <code>.approach_weights = "PLS-PM"</code> one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 <code>.iter_max - 1</code>  will be returned with a warning. Defaults to <code>100</code>.</p></dd>
-
-
 <dt id="arg--normality">.normality<a class="anchor" aria-label="anchor" href="#arg--normality"></a></dt>
 <dd><p>Logical. Should joint normality of
 \([\eta_{1:p}; \zeta; \epsilon]\)
 be assumed in the nonlinear model? See (Dijkstra and Schermelleh-Engel 2014)
  for details.
 Defaults to <code>FALSE</code>. Ignored if the model is not nonlinear.</p></dd>
-
-
 <dt id="arg--pls-approach-cf">.PLS_approach_cf<a class="anchor" aria-label="anchor" href="#arg--pls-approach-cf"></a></dt>
 <dd><p>Character string. Approach used to obtain the correction
 factors for PLSc. One of: "<em>dist_squared_euclid</em>", "<em>dist_euclid_weighted</em>",
 "<em>fisher_transformed</em>", "<em>mean_arithmetic</em>", "<em>mean_geometric</em>", "<em>mean_harmonic</em>",
 "<em>geo_of_harmonic</em>". Defaults to "<em>dist_squared_euclid</em>".
 Ignored if <code>.disattenuate = FALSE</code> or if <code>.approach_weights</code> is not PLS-PM.</p></dd>
-
-
 <dt id="arg--pls-ignore-structural-model">.PLS_ignore_structural_model<a class="anchor" aria-label="anchor" href="#arg--pls-ignore-structural-model"></a></dt>
 <dd><p>Logical. Should the structural model be ignored
 when calculating the inner weights of the PLS-PM algorithm? Defaults to <code>FALSE</code>.
 Ignored if <code>.approach_weights</code> is not PLS-PM.</p></dd>
-
-
 <dt id="arg--pls-modes">.PLS_modes<a class="anchor" aria-label="anchor" href="#arg--pls-modes"></a></dt>
 <dd><p>Either a named list specifying the mode that should be used for
 each construct in the form <code>"construct_name" = mode</code>, a single character
@@ -253,14 +207,10 @@ using unit weights, as weights are rescaled such that the related composite
 has unit variance.  Defaults to <code>NULL</code>.
 If <code>NULL</code> the appropriate mode according to the type
 of construct used is chosen. Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
-
-
 <dt id="arg--pls-weight-scheme-inner">.PLS_weight_scheme_inner<a class="anchor" aria-label="anchor" href="#arg--pls-weight-scheme-inner"></a></dt>
 <dd><p>Character string. The inner weighting scheme
 used by PLS-PM. One of: "<em>centroid</em>", "<em>factorial</em>", or "<em>path</em>".
 Defaults to "<em>path</em>". Ignored if <code>.approach_weight</code> is not PLS-PM.</p></dd>
-
-
 <dt id="arg--reliabilities">.reliabilities<a class="anchor" aria-label="anchor" href="#arg--reliabilities"></a></dt>
 <dd><p>A character vector of <code>"name" = value</code> pairs,
 where <code>value</code> is a number between 0 and 1 and <code>"name"</code> a character string
@@ -268,37 +218,25 @@ of the corresponding construct name, or <code>NULL</code>. Reliabilities
 may be given for a subset of the constructs. Defaults to <code>NULL</code> in which case
 reliabilities are estimated by <code>csem()</code>. Currently, only supported for
 <code>.approach_weights = "PLS-PM"</code>.</p></dd>
-
-
 <dt id="arg--starting-values">.starting_values<a class="anchor" aria-label="anchor" href="#arg--starting-values"></a></dt>
 <dd><p>A named list of vectors where the
 list names are the construct names whose indicator weights the user
 wishes to set. The vectors must be named vectors of <code>"indicator_name" = value</code>
 pairs, where <code>value</code> is the (scaled or unscaled) starting weight. Defaults to <code>NULL</code>.</p></dd>
-
-
 <dt id="arg--resample-method">.resample_method<a class="anchor" aria-label="anchor" href="#arg--resample-method"></a></dt>
 <dd><p>Character string. The resampling method to use. One of:
 "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". Defaults to "<em>none</em>".</p></dd>
-
-
 <dt id="arg--resample-method-">.resample_method2<a class="anchor" aria-label="anchor" href="#arg--resample-method-"></a></dt>
 <dd><p>Character string. The resampling method to use when resampling
 from a resample. One of: "<em>none</em>", "<em>bootstrap</em>" or "<em>jackknife</em>". For
 "<em>bootstrap</em>" the number of draws is provided via <code>.R2</code>. Currently,
 resampling from each resample is only required for the studentized confidence
 interval ("<em>CI_t_interval</em>") computed by the <code><a href="infer.html">infer()</a></code> function. Defaults to "<em>none</em>".</p></dd>
-
-
 <dt id="arg--r">.R<a class="anchor" aria-label="anchor" href="#arg--r"></a></dt>
 <dd><p>Integer. The number of bootstrap replications. Defaults to <code>499</code>.</p></dd>
-
-
 <dt id="arg--r-">.R2<a class="anchor" aria-label="anchor" href="#arg--r-"></a></dt>
 <dd><p>Integer. The number of bootstrap replications to use when
 resampling from a resample. Defaults to <code>199</code>.</p></dd>
-
-
 <dt id="arg--handle-inadmissibles">.handle_inadmissibles<a class="anchor" aria-label="anchor" href="#arg--handle-inadmissibles"></a></dt>
 <dd><p>Character string. How should inadmissible results
 be treated? One of "<em>drop</em>", "<em>ignore</em>", or "<em>replace</em>". If "<em>drop</em>", all
@@ -309,8 +247,6 @@ yielded inadmissible results (i.e. number of results returned is equal to <code>
 For "<em>replace</em>" resampling continues until there are exactly <code>.R</code> admissible solutions.
 Depending on the frequency of inadmissible solutions this may significantly increase
 computing time. Defaults to "<em>drop</em>".</p></dd>
-
-
 <dt id="arg--user-funs">.user_funs<a class="anchor" aria-label="anchor" href="#arg--user-funs"></a></dt>
 <dd><p>A function or a (named) list of functions to apply to every
 resample. The functions must take <code>.object</code> as its first argument (e.g.,
@@ -318,36 +254,25 @@ resample. The functions must take <code>.object</code> as its first argument (e.
 Function output should preferably be a (named)
 vector but matrices are also accepted. However, the output will be
 vectorized (columnwise) in this case. See the examples section for details.</p></dd>
-
-
 <dt id="arg--eval-plan">.eval_plan<a class="anchor" aria-label="anchor" href="#arg--eval-plan"></a></dt>
 <dd><p>Character string. The evaluation plan to use. One of
 "<em>sequential</em>", "<em>multicore</em>", or "<em>multisession</em>". In the two latter cases
 all available cores will be used. Defaults to "<em>sequential</em>".</p></dd>
-
-
 <dt id="arg--seed">.seed<a class="anchor" aria-label="anchor" href="#arg--seed"></a></dt>
 <dd><p>Integer or <code>NULL</code>. The random seed to use. Defaults to <code>NULL</code> in which
 case an arbitrary seed is chosen. Note that the scope of the seed is limited
 to the body of the function it is used in. Hence, the global seed will
 not be altered!</p></dd>
-
-
 <dt id="arg--sign-change-option">.sign_change_option<a class="anchor" aria-label="anchor" href="#arg--sign-change-option"></a></dt>
 <dd><p>Character string. Which sign change option should
 be used to handle flipping signs when resampling? One of "<em>none</em>","<em>individual</em>",
 "<em>individual_reestimate</em>", "<em>construct_reestimate</em>". Defaults to "<em>none</em>".</p></dd>
-
-
 <dt id="arg--tolerance">.tolerance<a class="anchor" aria-label="anchor" href="#arg--tolerance"></a></dt>
 <dd><p>Double. The tolerance criterion for convergence.
 Defaults to <code>1e-05</code>.</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
 <p>An object of class <code>cSEMResults</code> with methods for all postestimation generics.
 Technically, a call to <code>csem()</code> results in an object with at least
 two class attributes. The first class attribute is always <code>cSEMResults</code>.
@@ -390,7 +315,6 @@ Therefore, specifying e.g., a threshold or scaling factors is ignored.
 Alternatively, a standardized (possibly incomplete) <a href="csem_model.html">cSEMModel</a>-list may be supplied.
 See <code><a href="parseModel.html">parseModel()</a></code> for details.</p>
 </div>
-
 <div class="section">
 <h3 id="weights-and-path-coefficients-">Weights and path coefficients:<a class="anchor" aria-label="anchor" href="#weights-and-path-coefficients-"></a></h3>
 <p>By default weights are estimated using the partial least squares path modeling
@@ -442,7 +366,6 @@ instruments for themselves.</p>
 <code>.reliabilities</code>, where <code>value</code> is a numeric value between 0 and 1.
 Currently, only supported for "PLS-PM".</p>
 </div>
-
 <div class="section">
 <h3 id="nonlinear-models-">Nonlinear models:<a class="anchor" aria-label="anchor" href="#nonlinear-models-"></a></h3>
 <p>If the model contains nonlinear terms <code>csem()</code> estimates a polynomial structural equation model
@@ -470,7 +393,6 @@ measurement errors behave as if they were Gaussian.
 For details see: Dijkstra and Schermelleh-Engel (2014)
 .</p>
 </div>
-
 <div class="section">
 <h3 id="models-containing-second-order-constructs">Models containing second-order constructs<a class="anchor" aria-label="anchor" href="#models-containing-second-order-constructs"></a></h3>
 <p>Second-order constructs are specified using the operators <code>=~</code> and <code>&lt;~</code>. These
@@ -481,14 +403,11 @@ construct, a model would look like this:</p><div class="sourceCode"><pre><code><
 <span><span class="st"># Structural model</span></span>
 <span><span class="st">SAT  ~ QUAL</span></span>
 <span><span class="st">VAL  ~ SAT</span></span>
-<span><span class="st"></span></span>
 <span><span class="st"># Measurement/composite model</span></span>
 <span><span class="st">QUAL =~ qual1 + qual2</span></span>
 <span><span class="st">SAT  =~ sat1 + sat2</span></span>
-<span><span class="st"></span></span>
 <span><span class="st">c1 =~ x11 + x12</span></span>
 <span><span class="st">c2 =~ x21 + x22</span></span>
-<span><span class="st"></span></span>
 <span><span class="st"># Second-order construct (in this case a second-order composite build by common</span></span>
 <span><span class="st"># factors)</span></span>
 <span><span class="st">VAL &lt;~ c1 + c2</span></span>
@@ -504,7 +423,6 @@ is applied as proposed by Schuberth et al. (2020)
 <li><p><code>"mixed"</code>. The mixed repeated indicators/two-stage approach as proposed by Ringle et al. (2012)
 .</p></li>
 </ul><p>The repeated indicators approach as proposed by Joereskog and Wold (1982)
-
 and the extension proposed by Becker et al. (2012)
  are
 not directly implemented as they simply require a respecification  of the model.
@@ -515,20 +433,16 @@ the data supplied to <code>.data</code>. Note that the indicators need to be ren
 <span><span class="st"># Structural model</span></span>
 <span><span class="st">SAT  ~ QUAL</span></span>
 <span><span class="st">VAL  ~ SAT</span></span>
-<span><span class="st"></span></span>
 <span><span class="st">VAL ~ c1 + c2</span></span>
-<span><span class="st"></span></span>
 <span><span class="st"># Measurement/composite model</span></span>
 <span><span class="st">QUAL =~ qual1 + qual2</span></span>
 <span><span class="st">SAT  =~ sat1 + sat2</span></span>
 <span><span class="st">VAL  =~ x11_temp + x12_temp + x21_temp + x22_temp</span></span>
-<span><span class="st"></span></span>
 <span><span class="st">c1 =~ x11 + x12</span></span>
 <span><span class="st">c2 =~ x21 + x22</span></span>
 <span><span class="st">"</span></span></code></pre></div><p>According to the extended approach indirect effects of <code>QUAL</code> on <code>VAL</code> via <code>c1</code>
 and <code>c2</code> would have to be specified as well.</p>
 </div>
-
 <div class="section">
 <h3 id="multigroup-analysis">Multigroup analysis<a class="anchor" aria-label="anchor" href="#multigroup-analysis"></a></h3>
 <p>To perform a multigroup analysis provide either a list of data sets or one
@@ -546,61 +460,43 @@ requested. For the latter it will generally be faster to use
 <h3 id="inference-">Inference:<a class="anchor" aria-label="anchor" href="#inference-"></a></h3>
 <p>Inference is done via resampling. See <code><a href="resamplecSEMResults.html">resamplecSEMResults()</a></code> and <code><a href="infer.html">infer()</a></code> for details.</p>
 </div>
-
     </div>
     <div id="postestimation">
     <h2>Postestimation</h2>
-    
-
 <dl><dt><code><a href="assess.html">assess()</a></code></dt>
 <dd><p>Assess results using common quality criteria, e.g., reliability,
 fit measures, HTMT, R2 etc.</p></dd>
-
 <dt><code><a href="infer.html">infer()</a></code></dt>
 <dd><p>Calculate common inferential quantities, e.g., standard errors,
 confidence intervals.</p></dd>
-
 <dt><code><a href="predict.html">predict()</a></code></dt>
 <dd><p>Predict endogenous indicator scores and compute common prediction metrics.</p></dd>
-
 <dt><code><a href="summarize.html">summarize()</a></code></dt>
 <dd><p>Summarize the results. Mainly called for its side-effect the print method.</p></dd>
-
 <dt><code><a href="verify.html">verify()</a></code></dt>
 <dd><p>Verify/Check admissibility of the estimates.</p></dd>
-
-
 </dl><p>Tests are performed using the test-family of functions. Currently the following
 tests are implemented:</p><dl><dt><code><a href="testOMF.html">testOMF()</a></code></dt>
 <dd><p>Bootstrap-based test for overall model fit based on
 Beran and Srivastava (1985)</p></dd>
-
 <dt><code><a href="testMICOM.html">testMICOM()</a></code></dt>
 <dd><p>Permutation-based test for measurement invariance of composites
 proposed by Henseler et al. (2016)</p></dd>
-
 <dt><code><a href="testMGD.html">testMGD()</a></code></dt>
 <dd><p>Several (mainly) permutation-based tests for multi-group comparisons.</p></dd>
-
 <dt><code><a href="testHausman.html">testHausman()</a></code></dt>
 <dd><p>Regression-based Hausman test to test for endogeneity.</p></dd>
-
-
 </dl><p>Other miscellaneous postestimation functions belong do the do-family of functions.
 Currently three do functions are implemented:</p><dl><dt><code><a href="doIPMA.html">doIPMA()</a></code></dt>
 <dd><p>Performs an importance-performance matrix analyis (IPMA).</p></dd>
-
 <dt><code><a href="doNonlinearEffectsAnalysis.html">doNonlinearEffectsAnalysis()</a></code></dt>
 <dd><p>Perform a nonlinear effects analysis as
 described in e.g.,
 Spiller et al. (2013)</p></dd>
-
 <dt><code><a href="doRedundancyAnalysis.html">doRedundancyAnalysis()</a></code></dt>
 <dd><p>Perform a redundancy analysis (RA) as proposed by
 Hair et al. (2016)
  with reference to Chin (1998)</p></dd>
-
-
 </dl></div>
     <div id="references">
     <h2>References</h2>
@@ -657,7 +553,6 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
 <code><a href="assess.html">assess()</a></code>, <code><a href="infer.html">infer()</a></code>, <code><a href="predict.html">predict()</a></code>, <code><a href="summarize.html">summarize()</a></code>, <code><a href="verify.html">verify()</a></code>, <code><a href="testOMF.html">testOMF()</a></code>,
 <code><a href="testMGD.html">testMGD()</a></code>, <code><a href="testMICOM.html">testMICOM()</a></code>, <code><a href="testHausman.html">testHausman()</a></code></p></div>
     </div>
-
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># ===========================================================================</span></span></span>
@@ -1386,22 +1281,12 @@ North Holland.<br><br> Ringle CM, Sarstedt M, Straub D (2012).
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
-
-
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
-
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
-
       </footer></div>
-
-  
-
-
-  
-
   </body></html>
 

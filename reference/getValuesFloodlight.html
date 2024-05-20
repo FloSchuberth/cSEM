@@ -9,11 +9,8 @@ for each bootstrap run and for the original estimation for each step of the mode
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -29,7 +26,6 @@ for each bootstrap run and for the original estimation for each step of the mode
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
-
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -40,7 +36,6 @@ for each bootstrap run and for the original estimation for each step of the mode
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -59,15 +54,11 @@ for each bootstrap run and for the original estimation for each step of the mode
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-
-      
-
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
@@ -75,14 +66,12 @@ for each bootstrap run and for the original estimation for each step of the mode
     <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/helper_doNonlinearEffectsAnalysis.R" class="external-link"><code>R/helper_doNonlinearEffectsAnalysis.R</code></a></small>
     <div class="hidden name"><code>getValuesFloodlight.Rd</code></div>
     </div>
-
     <div class="ref-description">
     <p>Function that calculates the values required for the floodlight analysis,
 namely 1) partial effect of the independent variable on the dependent variable
 for each bootstrap run and for the original estimation for each step of the moderator
 2) alpha/2 and 1-alpha/2 quantile of the bootstrap estimates.</p>
     </div>
-
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getValuesFloodlight</span><span class="op">(</span></span>
 <span>  .model <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -95,48 +84,32 @@ for each bootstrap run and for the original estimation for each step of the mode
 <span>  .alpha <span class="op">=</span> <span class="fu"><a href="args_default.html">args_default</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.alpha</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
-
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt id="arg--model">.model<a class="anchor" aria-label="anchor" href="#arg--model"></a></dt>
 <dd><p>A model in <a href="https://rdrr.io/pkg/lavaan/man/model.syntax.html" class="external-link">lavaan model syntax</a>
 or a <a href="csem_model.html">cSEMModel</a> list.</p></dd>
-
-
 <dt id="arg--path-coefficients">.path_coefficients<a class="anchor" aria-label="anchor" href="#arg--path-coefficients"></a></dt>
 <dd><p>List. A list that contains the resampled and the original
 path coefficient estimates. Typically a part of a <code>cSEMResults_resampled</code> object.
 Defaults to <code>NULL</code>.</p></dd>
-
-
 <dt id="arg--dependent">.dependent<a class="anchor" aria-label="anchor" href="#arg--dependent"></a></dt>
 <dd><p>Character string. The name of the dependent variable.</p></dd>
-
-
 <dt id="arg--independent">.independent<a class="anchor" aria-label="anchor" href="#arg--independent"></a></dt>
 <dd><p>Character string. The name of the independent variable.</p></dd>
-
-
 <dt id="arg--moderator">.moderator<a class="anchor" aria-label="anchor" href="#arg--moderator"></a></dt>
 <dd><p>Character string. The name of the moderator variable.</p></dd>
-
-
 <dt id="arg--steps-mod">.steps_mod<a class="anchor" aria-label="anchor" href="#arg--steps-mod"></a></dt>
 <dd><p>A numeric vector. Steps used for the moderator variable in calculating
 the simple effects of an independent variable on the dependent variable.
 Defaults to <code>NULL</code>.</p></dd>
-
-
 <dt id="arg--value-independent">.value_independent<a class="anchor" aria-label="anchor" href="#arg--value-independent"></a></dt>
 <dd><p>Integer. Only required for floodlight analysis;
 The value of the independent variable in case that it appears as a
 higher-order term.</p></dd>
-
-
 <dt id="arg--alpha">.alpha<a class="anchor" aria-label="anchor" href="#arg--alpha"></a></dt>
 <dd><p>An integer or a numeric vector of significance levels.
 Defaults to <code>0.05</code>.</p></dd>
-
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -145,28 +118,17 @@ If it contains a variable other than the independent variable and the moderator
 the effect is set to zero as the other variables are evaluated at their means (=0),
 hence the effect is zero.</p>
     </div>
-
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
-
-
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
-
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
-
       </footer></div>
-
-  
-
-
-  
-
   </body></html>
 

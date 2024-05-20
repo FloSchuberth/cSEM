@@ -7,14 +7,12 @@ dependent variable for different values of the independent variable and the mode
 As levels for the moderator the levels provided to the doNonlinearEffectsAnalysis() function
 are used. Since the constructs are standardized the values of the moderator
 equals the deviation from its mean measured in standard deviations.
-
 .plot_type = "surface":
 The plot of a surface analysis displays the predicted values of an
 independent variable (z). The values are predicted based on the values of the moderator
 and the independent variable including all their higher-order terms.
 For the values of the moderator and the independent variable steps between
 their minimum and maximum values  are used.
-
 .plot_type = "floodlight":
 The plot of a floodlight analysis displays the direct effect of an continuous
 independent variable (z) on a dependent variable (y) conditional on the values
@@ -23,8 +21,6 @@ the confidence interval and the Johnson-Neyman points. It is
 noted that in the floodlight plot only moderation is taken into account and higher
 order terms are ignored. For more details, see Spiller et al. (2013)
 .
-
-
 Plot the predicted values of an independent variable (z)
 The values are predicted based on a certain moderator and a certain
 independent variable including all their higher-order terms.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -34,11 +30,8 @@ independent variable including all their higher-order terms.'><!-- mathjax --><s
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -54,7 +47,6 @@ independent variable including all their higher-order terms.'><!-- mathjax --><s
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
-
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -65,7 +57,6 @@ independent variable including all their higher-order terms.'><!-- mathjax --><s
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -84,15 +75,11 @@ independent variable including all their higher-order terms.'><!-- mathjax --><s
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-
-      
-
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
@@ -100,7 +87,6 @@ independent variable including all their higher-order terms.'><!-- mathjax --><s
     <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/plot.cSEMNonlinearEffects.R" class="external-link"><code>R/plot.cSEMNonlinearEffects.R</code></a></small>
     <div class="hidden name"><code>plot.cSEMNonlinearEffects.Rd</code></div>
     </div>
-
     <div class="ref-description">
     <p>This plot method can be used to create plots to analyze non-linear models in more
 depth. In doing so the following plot types can be selected:</p><dl><dt><code>.plot_type = "simpleeffects"</code>:</dt>
@@ -109,14 +95,12 @@ dependent variable for different values of the independent variable and the mode
 As levels for the moderator the levels provided to the <code><a href="doNonlinearEffectsAnalysis.html">doNonlinearEffectsAnalysis()</a></code> function
 are used. Since the constructs are standardized the values of the moderator
 equals the deviation from its mean measured in standard deviations.</p></dd>
-
 <dt><code>.plot_type = "surface"</code>:</dt>
 <dd><p>The plot of a surface analysis displays the predicted values of an
 independent variable (z). The values are predicted based on the values of the moderator
 and the independent variable including all their higher-order terms.
 For the values of the moderator and the independent variable steps between
 their minimum and maximum values  are used.</p></dd>
-
 <dt><code>.plot_type = "floodlight"</code>:</dt>
 <dd><p>The plot of a floodlight analysis displays the direct effect of an continuous
 independent variable (z) on a dependent variable (y) conditional on the values
@@ -125,65 +109,43 @@ the confidence interval and the Johnson-Neyman points. It is
 noted that in the floodlight plot only moderation is taken into account and higher
 order terms are ignored. For more details, see Spiller et al. (2013)
 .</p></dd>
-
-
 </dl><p>Plot the predicted values of an independent variable (z)
 The values are predicted based on a certain moderator and a certain
 independent variable including all their higher-order terms.</p>
     </div>
-
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'cSEMNonlinearEffects'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, .plot_type <span class="op">=</span> <span class="st">"simpleeffects"</span>, .plot_package <span class="op">=</span> <span class="st">"plotly"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
-
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>An R object of class <code>cSEMNonlinearEffects</code>.</p></dd>
-
-
 <dt id="arg--plot-type">.plot_type<a class="anchor" aria-label="anchor" href="#arg--plot-type"></a></dt>
 <dd><p>A character string indicating the type of plot that should be produced.
 Options are "<em>simpleeffects</em>", "<em>surface</em>", and "<em>floodlight</em>". Defaults to "<em>simpleeffects</em>".</p></dd>
-
-
 <dt id="arg--plot-package">.plot_package<a class="anchor" aria-label="anchor" href="#arg--plot-package"></a></dt>
 <dd><p>A character vector indicating the plot package used. Options are
 "<em>plotly</em>", and "<em>persp</em>". Defaults to "<em>plotly</em>".</p></dd>
-
-
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional parameters that can be passed to
 <code><a href="https://rdrr.io/r/graphics/persp.html" class="external-link">graphics::persp</a></code>, e.g., to rotate the plot.</p></dd>
-
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="doNonlinearEffectsAnalysis.html">doNonlinearEffectsAnalysis()</a></code></p></div>
     </div>
-
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
-
-
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
-
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
-
       </footer></div>
-
-  
-
-
-  
-
   </body></html>
 

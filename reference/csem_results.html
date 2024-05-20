@@ -13,11 +13,8 @@ was conducted."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'UA-156347841-1');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -33,7 +30,6 @@ was conducted."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
-
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../articles/cSEM.html">Get started</a>
@@ -44,7 +40,6 @@ was conducted."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -63,15 +58,11 @@ was conducted."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/FloSchuberth/cSEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-
-      
-
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
@@ -79,7 +70,6 @@ was conducted."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
     <small class="dont-index">Source: <a href="https://github.com/FloSchuberth/cSEM/blob/HEAD/R/zz_templates.R" class="external-link"><code>R/zz_templates.R</code></a></small>
     <div class="hidden name"><code>csem_results.Rd</code></div>
     </div>
-
     <div class="ref-description">
     <p>A call to <code><a href="csem.html">csem()</a></code> results in an object with at least
 two class attributes. The first class attribute is always <code>cSEMResults</code> no matter
@@ -90,8 +80,6 @@ data provided to the <code>.model</code> and <code>.data</code> arguments of <co
 The third class attribute <code>cSEMResults_resampled</code> is only added if resampling
 was conducted.</p>
     </div>
-
-
     <div id="details">
     <h2>Details</h2>
     <p>Depending on the type of data and/or model provided three different output
@@ -100,13 +88,9 @@ types exists.</p><dl><dt>_default</dt>
 If the data is a single <code>matrix</code> or <code>data.frame</code> with no id-column,
 the result is a <code>list</code> with elements:</p><dl><dt><code>$Estimates</code></dt>
 <dd><p>A list containing a list of estimated quantities.</p></dd>
-
 <dt><code>$Information</code></dt>
 <dd><p>A list containing a list of additional information.</p></dd>
-
-
 </dl><p>The resulting object has classes <code>cSEMResults</code> and <code>cSEMResults_default</code>.</p></dd>
-
 <dt>_multi</dt>
 <dd><p>If the data provided is a single <code>matrix</code> or <code>data.frame</code> containing
 an id-column to split the data by <code>G</code> group levels
@@ -116,7 +100,6 @@ in the list of datasets provided. Each of the <code>G</code> list elements is it
 a <code>cSEMResults_default</code> object. Hence its structure is identical to
 the structure described in <code>_default</code>.</p>
 <p>The resulting object has classes <code>cSEMResults</code> and <code>cSEMResults_multi</code>.</p></dd>
-
 <dt>_2ndorder</dt>
 <dd><p>A special output is generated if the model to estimate contains hierarchical constructs
 <strong>and</strong> the "2stage" or "mixed" approach is used to estimate the model. In this case
@@ -124,8 +107,6 @@ the resulting object is a list containing two elements <code>First_stage</code> 
 <code> Second_stage</code>.</p>
 <p>Each list element is itself a <code>cSEMResults_default</code> object. Hence its structure is identical to
 the structure described in <code>_default</code>.</p></dd>
-
-
 </dl><p>If <code>.resample_method = "bootstrap"</code> or <code>.resample_method = "jackknife"</code>, resamples
 are attached to each object. For objects of class <code>cSEMResults_default</code> the resamples are
 attached to <code>.object$Estimates$Estimates_resample</code>. For objects of class
@@ -134,28 +115,17 @@ attached to <code>.object$Estimates$Estimates_resample</code>. For objects of cl
 <code>.object$Second_stage$Information$Resamples</code>. All objects containing
 these elements gain the <code>cSEMResults_resampled</code> class.</p>
     </div>
-
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>
 </div>
-
-
       <footer><div class="copyright">
   <p></p><p>Developed by Manuel E. Rademaker, Florian Schuberth.</p>
 </div>
-
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
-
       </footer></div>
-
-  
-
-
-  
-
   </body></html>
 
