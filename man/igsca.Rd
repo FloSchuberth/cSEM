@@ -104,7 +104,7 @@ Numberofjoboffers ~ NetworkingBehavior
 data(LeDang2022)
 
 csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "IGSCA",
-.dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion = "diff_absolute")
+.dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion = "sum_diff_absolute")
 }
 \references{
 \insertAllCited{}

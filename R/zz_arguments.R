@@ -461,7 +461,7 @@ args_default <- function(.choices = FALSE) {
                                  "CI_basic", "CI_bc", "CI_bca", "CI_t_interval"),
     .ci_colnames             = NULL,
     .closed_form_ci          = FALSE, 
-    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute"),
+    .conv_criterion          = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute", "mean_diff_absolute"),
     .csem_model              = NULL,
     .csem_resample           = NULL,
     .cv_folds                = 10,
