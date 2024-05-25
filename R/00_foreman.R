@@ -263,7 +263,7 @@ foreman <- function(
       "D2"                     = if(.approach_weights == "IGSCA"){
         W$D_squared
       } else {
-        NA
+        NULL
       },
       "Reliabilities"          = Q^2,
       "R2"                     = if(.estimate_structural) {

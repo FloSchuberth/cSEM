@@ -749,31 +749,8 @@ get_lavaan_table_igsca_matrix <- function(model, weights, loadings, uniqueD, pat
   
 }
 
-#' Compute FIT statistic for I-GSCA models
-#' 
-#' TBD
-#'
-#' @param igsca_results Results from igsca()
-#'
-#' @return FIT index statistic
-#' @export
-#'
-summarize_FIT_idx <- function(igsca_results) {
-  # Incomplete
-  return(FIT)
-}
-
-#' Compute multi-group model for I-GSCA
-#' 
-#' TBD
-#' 
-#' @inheritParams extract_parseModel
-#' @param group Column name of group of input data
-#' 
-#' @return Multi-group igsca model
-#' @export 
-#'
-model_multigroup_igsca <- function(model, group, data) {
-  # Incomplete
-  return(mutligroup_igsca_result)
+igsca_warning <- function() {
+  # TODO: Might want to do something about this during the simulations...
+  # TODO: Maybe only call with the print Method?
+  warning("IGSCA in cSEM currently only supports...")
 }
