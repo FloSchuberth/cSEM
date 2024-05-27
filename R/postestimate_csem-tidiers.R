@@ -153,6 +153,7 @@ tidy.cSEMResults <- function(x,
 #' This method and documentation is based on the `glance` method for `lavaan`, as found in `broom:::glance.lavaan()`.
 #'
 #' @inheritParams tidy.cSEMResults
+#' @inheritDotParams assess
 #'
 #' @return A one-row `data.frame` with columns: 
 #' @importFrom generics glance
@@ -171,7 +172,8 @@ glance.cSEMResults <- function(x, ...) {
 #' 
 #' 
 #' @inheritParams tidy.cSEMResults
-#'
+#' @inheritDotParams predict
+#' 
 #' @return A `data.frame` of the original dataset alongside its construct scores and...
 #' @importFrom generics augment
 #'

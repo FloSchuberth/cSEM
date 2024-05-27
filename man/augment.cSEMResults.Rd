@@ -8,6 +8,64 @@
 }
 \arguments{
 \item{x}{Fitted \code{csem} model with class \code{cSEMResults} as returned from \code{\link[=csem]{csem()}}}
+
+\item{...}{
+  Arguments passed on to \code{\link[=predict]{predict}}
+  \describe{
+    \item{\code{.handle_inadmissibles}}{Character string. How should inadmissible results
+be treated? One of "\emph{stop}", "\emph{ignore}", or "\emph{set_NA}". If "\emph{stop}", \code{\link[=predict]{predict()}}
+will stop immediately if estimation yields an inadmissible result.
+For "\emph{ignore}" all results are returned even if all or some of the estimates
+yielded inadmissible results.
+For "\emph{set_NA}" predictions based on inadmissible parameter estimates are
+set to \code{NA}. Defaults to "\emph{stop}"}
+    \item{\code{.disattenuate}}{Logical. Should the benchmark predictions be based on
+disattenuated parameter estimates? Defaults to \code{TRUE}.}
+    \item{\code{.approach_predict}}{Character string. Which approach should be used to perform
+predictions? One of "\emph{earliest}" and "\emph{direct}". If "\emph{earliest}" predictions
+for indicators associated to endogenous constructs are performed using only
+indicators associated to exogenous constructs. If "\emph{direct}", predictions for
+indicators associated to endogenous constructs are based on indicators associated
+to their direct antecedents. Defaults to "\emph{earliest}".}
+    \item{\code{.approach_score_benchmark}}{Character string. How should the aggregation
+of the estimates of the truncated normal distribution be done for the
+benchmark predictions? Ignored if not OrdPLS or OrdPLSc is used to obtain benchmark predictions.
+One of "\emph{mean}", "\emph{median}", "\emph{mode}" or "\emph{round}".
+If "\emph{round}", the benchmark predictions are obtained using the traditional prediction
+algorithm for PLS-PM which are rounded for categorical indicators.
+If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{median}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{mode}", the maximum empirical density on the intervals defined by the thresholds
+is used.
+If \code{.treat_as_continuous = TRUE} or if all indicators are on a continuous scale,
+\code{.approach_score_benchmark} is ignored. Defaults to "\emph{round}".}
+    \item{\code{.approach_score_target}}{Character string. How should the aggregation of the estimates of
+the truncated normal distribution for the predictions using OrdPLS/OrdPLSc be done?
+One of "\emph{mean}", "\emph{median}" or "\emph{mode}".
+If "\emph{mean}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{median}", the mean of the estimated endogenous indicators is calculated.
+If "\emph{mode}", the maximum empirical density on the intervals defined by the thresholds
+is used. Defaults to "\emph{mean}".}
+    \item{\code{.benchmark}}{Character string. The procedure to obtain benchmark predictions.
+One of "\emph{lm}", "\emph{unit}", "\emph{PLS-PM}", "\emph{GSCA}", "\emph{PCA}", "\emph{MAXVAR}", or "\emph{NA}".
+Default to "\emph{lm}".}
+    \item{\code{.cv_folds}}{Integer. The number of cross-validation folds to use. Setting
+\code{.cv_folds} to \code{N} (the number of observations) produces
+leave-one-out cross-validation samples. Defaults to \code{10}.}
+    \item{\code{.object}}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+    \item{\code{.r}}{Integer. The number of repetitions to use. Defaults to \code{1}.}
+    \item{\code{.seed}}{Integer or \code{NULL}. The random seed to use. Defaults to \code{NULL} in which
+case an arbitrary seed is chosen. Note that the scope of the seed is limited
+to the body of the function it is used in. Hence, the global seed will
+not be altered!}
+    \item{\code{.sim_points}}{Integer. How many samples from the truncated normal distribution should
+be simulated to estimate the exogenous construct scores? Defaults to "\emph{100}".}
+    \item{\code{.test_data}}{A matrix of test data with the same column names as the
+training data.}
+    \item{\code{.treat_as_continuous}}{Logical. Should the indicators for the benchmark predictions
+be treated as continuous? If \code{TRUE} all indicators are treated as continuous and PLS-PM/PLSc is applied.
+If \code{FALSE} OrdPLS/OrdPLSc is applied. Defaults to \code{TRUE}.}
+  }}
 }
 \value{
 A \code{data.frame} of the original dataset alongside its construct scores and...

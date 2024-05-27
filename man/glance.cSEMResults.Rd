@@ -8,6 +8,20 @@
 }
 \arguments{
 \item{x}{Fitted \code{csem} model with class \code{cSEMResults} as returned from \code{\link[=csem]{csem()}}}
+
+\item{...}{
+  Arguments passed on to \code{\link[=assess]{assess}}
+  \describe{
+    \item{\code{.object}}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
+    \item{\code{.only_common_factors}}{Logical. Should only concepts modeled as common
+factors be included when calculating one of the following quality criteria:
+AVE, the Fornell-Larcker criterion, HTMT, and all reliability estimates.
+Defaults to \code{TRUE}.}
+    \item{\code{.quality_criterion}}{Character string. A single character string or a
+vector of character strings naming the quality criterion to compute. See
+the Details section for a list of possible candidates.
+Defaults to "\emph{all}" in which case all possible quality criteria are computed.}
+  }}
 }
 \value{
 A one-row \code{data.frame} with columns:
