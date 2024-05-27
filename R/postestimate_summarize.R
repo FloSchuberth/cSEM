@@ -178,6 +178,27 @@ summarize.cSEMResults_default <- function(
     residual_correlation <- data.frame(NULL)
   }
   
+
+  ## D2 ----------------------------------------------------------------------
+  # Build names
+  if (!is.null(x1$D2)) {
+  temp <- paste0(names(x1$D2), " ~Du~ ", names(x1$D2))
+  
+  D2 <- data.frame(
+    "Name"           = temp,
+    "Estimate"       = x1$D2,
+    "Std_err"        = NA,
+    "t_stat"         = NA,
+    "p_value"        = NA,
+    stringsAsFactors = FALSE)
+  
+  # Delete rownames
+  rownames(D2) <- NULL
+  } else if (is.null(x1$D2)) {
+    D2 <- x1$D2
+  }
+  
+  
   ## Indicator correlation ------------------------------------------------------
   # Set up empty matrix to select the relevant residual correlations 
   cor_selector[] <- 0
@@ -352,6 +373,7 @@ summarize.cSEMResults_default <- function(
   .object$Estimates$Path_estimates    <- path_estimates
   .object$Estimates$Loading_estimates <- loading_estimates
   .object$Estimates$Weight_estimates  <- weight_estimates
+  .object$Estimates$D2                <- D2
   .object$Estimates$Residual_correlation <- residual_correlation
   .object$Estimates$Indicator_correlation <- indicator_correlation
   .object$Estimates$Exo_construct_correlation <- exo_construct_correlation

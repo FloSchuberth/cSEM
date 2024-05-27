@@ -1,42 +1,28 @@
-#' Title
-#'
-#' @param x 
-#' @param ... 
-#'
-#' @return
+#' tidy Method for cSEMResults Objects
+#' 
+#' This method and documentation is based on the `tidy` method for `lavaan`, as found in `broom:::tidy.lavaan()`.
+#' 
+#' **Cautionary Note**: As with all `tidy()` methods, mis-specified arguments may be silently ignored.
+#' 
+#' @param x Fitted `csem` model with class `cSEMResults` as returned from [cSEM::csem()]
+#' @param parameters Character string. Selects the desired parameter estimates as outputted from [cSEM::summarize()]. Defaults to `all`.
+#' @inheritDotParams summarize
+#' @return A `data.frame` with one row for each estimated parameter. The
+#'   description of the column names are as follows: 
+#'   
+#'   \item{term}{The result of `paste(lhs, op, rhs)`}
+#'   \item{op}{The operator in the model syntax (e.g., `~~` for correlation, `<~` for weights, `=~` for loadings, and `~` for path estimates)}
+#'   \item{estimate}{The parameter estimate}
+#'   \item{construct.type}{Whether the modelled construct is a common factor or composite variable}
+#'   \item{std.error}{}
+#'   \item{statistic}{The t-statistic as returned from [cSEM::summarize()] and `cSEM:::addInfer()`}
+#'   \item{p_value}{}
+#' 
 #' @importFrom generics tidy
 #' @export
 #'
-#' @examples
-#' # Specify the model according to GSCA Pro's example
-#' tutorial_igsca_model <- "
-#' # Composite Model
-#' NetworkingBehavior <~ Behavior1 + Behavior2 + Behavior3 + Behavior5 + Behavior7 + Behavior8 + Behavior9
-#' Numberofjobinterviews <~ Interview1 + Interview2
-#' Numberofjoboffers <~ Offer1 + Offer2 
-#' 
-#' # Reflective Measurement Model
-#' HonestyHumility =~ Honesty1 + Honesty2 + Honesty3 + Honesty4 + Honesty5 + Honesty6 + Honesty7 + Honesty8 + Honesty9 + Honesty10
-#' Emotionality =~ Emotion1 + Emotion2 + Emotion3 + Emotion4 + Emotion5 + Emotion6 + Emotion8 + Emotion10
-#' Extraversion =~ Extraver2 + Extraver3 + Extraver4 + Extraver5 + Extraver6 + Extraver7 + Extraver8 + Extraver9 + Extraver10
-#' Agreeableness =~ Agreeable1 + Agreeable3 + Agreeable4 + Agreeable5 + Agreeable7 + Agreeable8 + Agreeable9 + Agreeable10
-#' Conscientiousness =~ Conscientious1 + Conscientious3 + Conscientious4 + Conscientious6 + Conscientious7 + Conscientious8 + Conscientious9 + Conscientious10
-#' OpennesstoExperience =~ Openness1 + Openness2 + Openness3 + Openness5 + Openness7 + Openness8 + Openness9 + Openness10
-#' 
-#' # Structural Model
-#' NetworkingBehavior ~ HonestyHumility + Emotionality + Extraversion + Agreeableness + Conscientiousness + OpennesstoExperience
-#' Numberofjobinterviews ~ NetworkingBehavior
-#' Numberofjoboffers ~ NetworkingBehavior
-#' "
-#' 
-#' data(LeDang2022)
-#' 
-#' mod <- csem(.data = LeDang2022, tutorial_igsca_model, .approach_weights = "IGSCA",
-#' .dominant_indicators = NULL, .tolerance = 0.0001, .conv_criterion = "sum_diff_absolute")
-#' tidy(mod)
 tidy.cSEMResults <- function(x,
-                             format = c("list", "tibble"),
-                             what = c(
+                             parameters = c(
                                "all",
                                "Path_estimates",
                                "Loadings_estimates",
@@ -47,71 +33,150 @@ tidy.cSEMResults <- function(x,
                                "Exo_construct_correlation"
                              ),
                              ...) {
-  
-  summarized_cSEMResults <- summarize(x)
-  
-  if (what == "all") { 
-    general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "D2", "Indicator_correlation", "Exo_construct_correlation")]
+
+  parameters <- match.arg(
+    parameters,
+    c(
+      "all",
+      "Path_estimates",
+      "Loadings_estimates",
+      "Weight_estimates",
+      "D2",
+      "Effect_estimates",
+      "Indicator_correlation",
+      "Exo_construct_correlation"
+    )
+  )
+
+  summarized_cSEMResults <- summarize(x, ...)
+
+## Selection ---------------------------------------------------------------
+  if (parameters == "all") {
+
+
+    if (is.null(summarized_cSEMResults$D2)) {
+      general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "Indicator_correlation", "Exo_construct_correlation")]
+    } else {
+      general_estimates <- summarized_cSEMResults[["Estimates"]][c("Path_estimates", "Loading_estimates", "Weight_estimates", "D2", "Indicator_correlation", "Exo_construct_correlation")]
+    }
+
+
     effect_estimates <- summarized_cSEMResults[["Estimates"]][["Effect_estimates"]][c("Direct_effect", "Indirect_effect", "Total_effect")]
-    out <- c(general_estimates, effect_estimates) # TODO: Test that this works -- I want it flat
     
-  } else if (what != "Effect_estimates") {
-    general_estimates <- summarized_cSEMResults[["Estimates"]][what] # TODO: Test that this works
-    out <- general_estimates
+  # Add type of effect as column
+  # See user1317221_G on April 26/2015 https://stackoverflow.com/a/29878732
+    effect_estimates <- mapply(function(df, df_name) {
+      df$op <- rep(df_name, nrow(df))
+      return(df)
+    },
+    effect_estimates,
+    names(effect_estimates),
+    SIMPLIFY = FALSE)
+
+
+    out <- c(general_estimates, effect_estimates)
     
-  } else if (what == "Effect_estimates") {
-    effect_estimates <- summarized_cSEMResults[["Estimates"]][c("Direct_effect", "Indirect_effect", "Total_effect")]
+  } else if (parameters != "Effect_estimates") {
+    out <- summarized_cSEMResults[["Estimates"]][parameters] 
+    
+  } else if (parameters == "Effect_estimates") {
+    effect_estimates <- summarized_cSEMResults[["Estimates"]][["Effect_estimates"]][c("Direct_effect", "Indirect_effect", "Total_effect")]
+    
+    # Add type of effect as column
+    # See user1317221_G on April 26/2015 https://stackoverflow.com/a/29878732
+    effect_estimates <- mapply(function(df, df_name) {
+      df$op <- rep(df_name, nrow(df))
+      return(df)
+    },
+    effect_estimates,
+    names(effect_estimates),
+    SIMPLIFY = FALSE)
+    
     out <- effect_estimates
     
-  } else {
-    stop("An unsupported result of summarize was selected.")
-    
-  }
+  } 
   
+  # Take out the empty data.frames to facilitate the later concatenation
+  out <- out[sapply(out, function(x)
+    nrow(x) > 0)]
+  # Add operand as op column
+  out <- mapply(function(df, df_name) {
+    if ((df_name %in% c("Direct_effect", "Indirect_effect", "Total_effect"))) {
+      return(df)
+    } else {
+      
+      # Test for what operand is consistent for the iterated dataframe
+      ## This needs spaces so that we don't conflate ~~ with ~
+      operands <- c(" =~ ", " <~ ", " ~~ ", " ~ ", " ~Du~ ") 
+      names(operands) <- c("=~", "<~", "~~", "~", "~Du~")
+      df_type <- sapply(operands, function(x) grepl(x, df$Name[1]))
+      
+      if (length(names(df_type)[df_type]) == 1) {
+        df$op <- rep(names(df_type)[df_type], nrow(df))
+        
+      } else {
+        stop("There is more than one type of allowed operand in the iterated data.frame. Cannot determine what to assign to op column.")
+        
+      }
+      
+      return(df)
+    }
+  },
+  out,
+  names(out),
+  SIMPLIFY = FALSE) 
+
+## Conversion to broom Style -------------------------------------------------------------
+  # Merge list of data.frames into one
+  # See response by Charles on November 11/2011 https://stackoverflow.com/a/8097519
+    out <- Reduce(function(...) merge(..., all = TRUE, sort = FALSE), out)
   
-  # TODO: Implement whether to return as single list the way summarize does or a tibble like tidy.lavaan
-  if (format == "list") {
-    return(out)
-    
-  } else if (format == "tibble") {
-    # TODO: Gotta make some remark if Path_estimates is not equal to Direct effect estimates
-    # TODO: Flatten and return as a tibble in the fashion of lavaan-tidiers
-  } else {
-    stop("An unsupported return format of tidy.cSEMResults was selected.")
-    
-  }
-    
-  
-  
+  # Rename columns to be consistent with tidy glossary standard
+  # See Zon Shi Wu Jie from May 5/2014 https://stackoverflow.com/a/23475492
+   colnames(out)[colnames(out) == "Name"] <- 'term'
+   colnames(out)[colnames(out) == "Construct_type"] <- 'type'
+   colnames(out)[colnames(out) == "Estimate"] <- 'estimate'
+   colnames(out)[colnames(out) == "Std_err"] <- 'std.error'
+   colnames(out)[colnames(out) == "t_stat"] <- 't.stat'
+   colnames(out)[colnames(out) == "p_value"] <- 'p.value'
+   
+  return(out)
   
 }
 
-#' Title
+#' glance Method for cSEMResults Objects
+#' 
+#' Placeholder function for future development. 
+#' 
+#' TODO: This method should be used to obtain a one row `data.frame` with a different column for every fit-statistic/estimation information.
+#' 
+#' This method and documentation is based on the `glance` method for `lavaan`, as found in `broom:::glance.lavaan()`.
 #'
-#' @param x 
-#' @param ... 
+#' @inheritParams tidy.cSEMResults
 #'
-#' @return
+#' @return A one-row `data.frame` with columns: 
 #' @importFrom generics glance
-#' @export
 #'
-#' @examples
 glance.cSEMResults <- function(x, ...) {
   # TODO: May want to look at assess
   # cSEM:::assess()
+  print("The glance method is currently not implemented in cSEM.")
 }
 
-#' Title
+#' augment Method for cSEMResults Objects
 #'
-#' @param x 
-#' @param ... 
+#' Placeholder function for future development
+#' 
+#' TODO: This method should be used to obtain the construct scores and other information provided by [cSEM::predict()]
+#' 
+#' 
+#' @inheritParams tidy.cSEMResults
 #'
-#' @return
+#' @return A `data.frame` of the original dataset alongside its construct scores and...
 #' @importFrom generics augment
-#' @export
 #'
-#' @examples
 augment.cSEMResults <- function(x, ...) {
   # TODO: Look at predict and maybe also get the construct scores
-  # cSEM:::predict()
+  # cSEM::predict()
+  print("The augment method is currently not implemented in cSEM.")
 }
