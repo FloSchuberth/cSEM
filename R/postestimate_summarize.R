@@ -182,10 +182,12 @@ summarize.cSEMResults_default <- function(
   ## D2 ----------------------------------------------------------------------
   # Build names
   if (!is.null(x1$D2)) {
-  temp <- paste0(names(x1$D2), " ~Du~ ", names(x1$D2))
+  type <- rep(x2$Model$construct_type, times = rowSums(x2$Model$measurement))
+  temp <- paste0(names(x1$D2), " ~~ ", names(x1$D2))
   
   D2 <- data.frame(
     "Name"           = temp,
+    "Construct_type" = type,
     "Estimate"       = x1$D2,
     "Std_err"        = NA,
     "t_stat"         = NA,
