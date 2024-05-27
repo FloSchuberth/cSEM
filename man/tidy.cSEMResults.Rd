@@ -7,7 +7,7 @@
 \method{tidy}{cSEMResults}(
   x,
   parameters = c("all", "Path_estimates", "Loadings_estimates", "Weight_estimates", "D2",
-    "Effect_estimates", "Indicator_correlation", "Exo_construct_correlation"),
+    "Effect_estimates", "Exo_construct_correlation"),
   ...
 )
 }
