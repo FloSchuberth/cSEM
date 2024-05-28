@@ -1,8 +1,8 @@
 #' Writes the extracted matrices to run with igsca_sim_test.m
 #'
-#' @param extracted_matrices Object returned by extract_parseModel
+#' @param extracted_matrices Object returned by getIgscaInputs
 #'
-#' @return Writes the matrices from extract_parseModel() to the appropriate test directory for the Matlab implementation of igsca_sim to run.
+#' @return Writes the matrices from getIgscaInputs() to the appropriate test directory for the Matlab implementation of igsca_sim to run.
 #' @importFrom here here
 #' @examples
 #' 
@@ -29,7 +29,7 @@
 #' 
 #' data("LeDang2022")
 #' 
-#' write_for_matlab(extract_parseModel(model = tutorial_igsca_model, data = LeDang2022, ind_domi_as_first = TRUE))
+#' write_for_matlab(getIgscaInputs(model = tutorial_igsca_model, data = LeDang2022, ind_domi_as_first = TRUE))
 write_for_matlab <- function(extracted_matrices) {
   indir <- list("tests", "comparisons", "igsca_translation", "matlab_in")
   extracted_matrices$lv_type <-

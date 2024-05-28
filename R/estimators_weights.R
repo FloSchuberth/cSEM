@@ -809,7 +809,7 @@ calculateWeightsGSCAm <- function(
 #' Calculate weights using Integrated Generalised Structured Component Analysis (I-GSCA)
 #' 
 #' @inheritParams igsca
-#' @inheritParams extract_parseModel
+#' @inheritParams getIgscaInputs
 #' @inheritParams csem_arguments
 #' 
 #' @return List of matrices of the fitted I-GSCA Model
@@ -823,7 +823,7 @@ calculateWeightsIGSCA <- function(.data,
                                   .conv_criterion = args_default()$.conv_criterion) {
   
   
-  igsca_in <- extract_parseModel(.model = .csem_model, .data = .data)
+  igsca_in <- getIgscaInputs(.model = .csem_model, .data = .data)
   
   igsca_out <- igsca(
     Z0 = igsca_in$Z0,
