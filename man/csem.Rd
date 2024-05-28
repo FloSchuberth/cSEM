@@ -14,13 +14,15 @@ csem(
 .approach_weights      = c("PLS-PM", "SUMCORR", "MAXVAR", "SSQCORR", 
                            "MINVAR", "GENVAR","GSCA", "IGSCA", "PCA",
                            "unit", "bartlett", "regression"),
-.conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative", "sum_diff_absolute", "mean_diff_absolute"),
+.conv_criterion        = c("diff_absolute", "diff_squared", "diff_relative",
+                           "sum_diff_absolute", "mean_diff_absolute"),
 .disattenuate          = TRUE,
 .dominant_indicators   = NULL,
 .estimate_structural   = TRUE,
 .id                    = NULL,
 .instruments           = NULL,
 .iter_max              = 100,
+.GSCA_modes            = NULL,
 .normality             = FALSE,
 .PLS_approach_cf       = c("dist_squared_euclid", "dist_euclid_weighted", 
                            "fisher_transformed", "mean_arithmetic",
@@ -114,6 +116,15 @@ instruments for themselves. Defaults to \code{NULL}.}
 If \code{iter_max = 1} and \code{.approach_weights = "PLS-PM"} one-step weights are returned.
 If the algorithm exceeds the specified number, weights of iteration step
 \code{.iter_max - 1}  will be returned with a warning. Defaults to \code{100}.}
+
+\item{.GSCA_modes}{Either a named list specifying the mode that should be
+used for each composite in the form \code{"composite_name" = mode}, a single
+character string giving the mode that should be used for all composites.
+Possible single character string choices for \code{mode} are: "\emph{canon}" for
+canonical composites, or "\emph{nomo}" for nomological composites, or \code{NULL} for
+default behavior. Default behavior is to estimate nomological composites.
+Passed to (I-)GSCA estimating functions in \code{\link[=calculateWeightsGSCA]{calculateWeightsGSCA()}}
+or \code{\link[=calculateWeightsIGSCA]{calculateWeightsIGSCA()}}. Defaults to \code{NULL}.}
 
 \item{.normality}{Logical. Should joint normality of
 \eqn{[\eta_{1:p}; \zeta; \epsilon]}{[\eta_(1:p); \zeta; \epsilon]}

@@ -356,6 +356,7 @@ calculateWeightsKettenring <- function(
 #'   .S                           = args_default()$.S,
 #'   .csem_model                  = args_default()$.csem_model,
 #'   .conv_criterion              = args_default()$.conv_criterion,
+#'   .GSCA_modes                  = args_default()$.GSCA_modes,
 #'   .iter_max                    = args_default()$.iter_max,
 #'   .starting_values             = args_default()$.starting_values,
 #'   .tolerance                   = args_default()$.tolerance
@@ -383,12 +384,15 @@ calculateWeightsGSCA <- function(
   .S                           = args_default()$.S,
   .csem_model                  = args_default()$.csem_model,
   .conv_criterion              = args_default()$.conv_criterion,
+  .GSCA_modes                  = args_default()$.GSCA_modes,
   .iter_max                    = args_default()$.iter_max,
   .starting_values             = args_default()$.starting_values,
   .tolerance                   = args_default()$.tolerance
 ) {
   ### Calculation (ALS algorithm) ==============================================
-  
+  if (!is.null(.GSCA_modes)) {
+    stop(".GSCA_modes is currently a non-functional argument")
+  }
   W0 <- Lambda0 <- .csem_model$measurement # Weight relation model
   Lambda0[which(.csem_model$construct_type == "Composite"), ]  <- 0
   B0 <- .csem_model$structural # Structural model
@@ -817,13 +821,18 @@ calculateWeightsGSCAm <- function(
 #' 
 calculateWeightsIGSCA <- function(.data,
                                   .csem_model = args_default()$.csem_model, 
-                                  .tolerance = args_default()$.tolerance,
-                                  .iter_max = args_default()$.iter_max,
+                                  .conv_criterion = args_default()$.conv_criterion,
                                   .dominant_indicators = args_default()$.dominant_indicators,
-                                  .conv_criterion = args_default()$.conv_criterion) {
+                                  .GSCA_modes = args_default()$.GSCA_modes,
+                                  .iter_max = args_default()$.iter_max,
+                                  .tolerance = args_default()$.tolerance
+                                  ) {
   
-  
-  igsca_in <- getIgscaInputs(.model = .csem_model, .data = .data)
+  if (is.null(.GSCA_modes)) {
+    igsca_in <- getIgscaInputs(.model = .csem_model, .data = .data)
+  } else {
+    stop(".GSCA_modes is currently a non-functional argument")
+  }
   
   igsca_out <- igsca(
     Z0 = igsca_in$Z0,

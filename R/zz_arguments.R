@@ -141,6 +141,14 @@
 #'   already?. Defaults to `FALSE`.
 #' @param .full_output Logical. Should the full output of summarize be printed.
 #'   Defaults to `TRUE`.
+#' @param .GSCA_modes Either a named list specifying the mode that should be
+#'   used for each composite in the form `"composite_name" = mode`, a single
+#'   character string giving the mode that should be used for all composites.
+#'   Possible single character string choices for `mode` are: "*canon*" for
+#'   canonical composites, or "*nomo*" for nomological composites, or `NULL` for
+#'   default behavior. Default behavior is to estimate nomological composites.
+#'   Passed to (I-)GSCA estimating functions in [cSEM::calculateWeightsGSCA()]
+#'   or [cSEM::calculateWeightsIGSCA()]. Defaults to `NULL`.
 #' @param .H The (N x J) matrix of construct scores.
 #' @param .handle_inadmissibles Character string. How should inadmissible results 
 #'   be treated? One of "*drop*", "*ignore*", or "*replace*". If "*drop*", all
@@ -481,6 +489,7 @@ args_default <- function(.choices = FALSE) {
     .first_resample          = NULL,
     .force                   = FALSE,
     .full_output             = TRUE,
+    .GSCA_modes              = NULL,
     .handle_inadmissibles    = c("drop", "ignore", "replace"),
     .H                       = NULL,
     .id                      = NULL,
