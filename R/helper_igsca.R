@@ -600,7 +600,7 @@ updateCBDU <-
 #'
 flipGammaCBSigns <- function(Z, Gamma, C, B, n_constructs, .dominant_indicators) {
   for (gamma_idx in seq_len(n_constructs)) {
-    if (exists(.dominant_indicators[gamma_idx])) {
+    if (.dominant_indicators[gamma_idx] %in% colnames(Z)) {
       if ((t(Z[, .dominant_indicators[gamma_idx]]) %*% Gamma[, gamma_idx]) < 0) {
         Gamma[, gamma_idx] <- (-1 * Gamma[, gamma_idx])
         C[gamma_idx,] <- (-1 * C[gamma_idx,])
