@@ -4,7 +4,7 @@
 \alias{update_X_WW_pseudo_weights}
 \title{Update Pseudo Weights for Composites and Common-Factors}
 \usage{
-update_X_WW_pseudo_weights(Z, U, D, C, n_constructs, B)
+update_X_WW_pseudo_weights(Z, U, D, C, B, n_constructs)
 }
 \arguments{
 \item{Z}{Standardized data matrix}
@@ -15,9 +15,9 @@ update_X_WW_pseudo_weights(Z, U, D, C, n_constructs, B)
 
 \item{C}{Matrix of estimated loadings}
 
-\item{n_constructs}{Number of constructs}
-
 \item{B}{Matrix of path coefficients}
+
+\item{n_constructs}{Number of constructs}
 }
 \value{
 Two matrices:

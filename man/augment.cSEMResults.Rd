@@ -76,3 +76,6 @@ Placeholder function for future development
 \details{
 TODO: This method should be used to obtain the construct scores and other information provided by \code{\link[=predict]{predict()}}
 }
+\author{
+Michael s. truong
+}

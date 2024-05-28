@@ -18,6 +18,8 @@
 #'   \item{statistic}{The t-statistic as returned from [cSEM::summarize()] and `cSEM:::addInfer()`}
 #'   \item{p_value}{}
 #' 
+#' @author Michael s. truong
+#' 
 #' @importFrom generics tidy
 #' @export
 #'
@@ -155,7 +157,7 @@ tidy.cSEMResults <- function(x,
 #'
 #' @return A one-row `data.frame` with columns: 
 #' @importFrom generics glance
-#'
+#' @author Michael s. truong
 glance.cSEMResults <- function(x, ...) {
   # TODO: May want to look at assess
   # cSEM:::assess()
@@ -174,7 +176,7 @@ glance.cSEMResults <- function(x, ...) {
 #' 
 #' @return A `data.frame` of the original dataset alongside its construct scores and...
 #' @importFrom generics augment
-#'
+#' @author Michael s. truong
 augment.cSEMResults <- function(x, ...) {
   # TODO: Look at predict and maybe also get the construct scores
   # cSEM::predict()

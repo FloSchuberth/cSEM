@@ -5,26 +5,18 @@
 \title{Update Composite Variables}
 \usage{
 update_composite(
-  n_total_var,
-  tot,
-  n_constructs,
-  gamma_idx,
   W,
   A,
   V,
   X,
-  windex_gamma_idx
+  windex_gamma_idx,
+  n_total_var,
+  tot,
+  n_constructs,
+  gamma_idx
 )
 }
 \arguments{
-\item{n_total_var}{Number of indicators and constructs}
-
-\item{tot}{Index dependent on which construct variable we are examining}
-
-\item{n_constructs}{Number of constructs}
-
-\item{gamma_idx}{Index of which construct we are examining}
-
 \item{W}{Weights matrix}
 
 \item{A}{Stacked matrix of loadings and path coefficients}
@@ -34,6 +26,14 @@ update_composite(
 \item{X}{Pseudo-weights for composite variables}
 
 \item{windex_gamma_idx}{Index of weights related to the indicators for the construct of interest}
+
+\item{n_total_var}{Number of indicators and constructs}
+
+\item{tot}{Index dependent on which construct variable we are examining}
+
+\item{n_constructs}{Number of constructs}
+
+\item{gamma_idx}{Index of which construct we are examining}
 }
 \value{
 theta: A matrix that will later be used to update the weights for the composite variable.

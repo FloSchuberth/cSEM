@@ -34,3 +34,6 @@ TODO: This method should be used to obtain a one row \code{data.frame} with a di
 
 This method and documentation is based on the \code{glance} method for \code{lavaan}, as found in \code{broom:::glance.lavaan()}.
 }
+\author{
+Michael s. truong
+}

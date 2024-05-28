@@ -4,12 +4,18 @@
 \alias{flip_signs_ind_domi}
 \title{Flip signs of Gamma, Loadings and Path-Coefficients Cells Based on Dominant Indicator}
 \usage{
-flip_signs_ind_domi(n_constructs, Z, .dominant_indicators, Gamma, C, B)
+flip_signs_ind_domi(Z, Gamma, C, B, n_constructs, .dominant_indicators)
 }
 \arguments{
-\item{n_constructs}{Number of constructs}
-
 \item{Z}{Standardized data matrix}
+
+\item{Gamma}{Construct Scores}
+
+\item{C}{Matrix of estimated loadings}
+
+\item{B}{Matrix of path coefficients}
+
+\item{n_constructs}{Number of constructs}
 
 \item{.dominant_indicators}{A named vector that indices the dominant
 indicator for each construct variable. \emph{It is to be clarified whether this
@@ -21,12 +27,6 @@ loadings/path-coefficients may have the opposite sign. The length of this
 vector should be equal to the number of construct variables and each value
 should represent the row number of the dominant indicator for that
 construct variable.}
-
-\item{Gamma}{Construct Scores}
-
-\item{C}{Matrix of estimated loadings}
-
-\item{B}{Matrix of path coefficients}
 }
 \value{
 List of matrices:

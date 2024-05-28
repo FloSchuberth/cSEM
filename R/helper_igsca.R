@@ -153,8 +153,8 @@ igsca <-
         U = U,
         D = D,
         C = C,
-        n_constructs = n_constructs,
-        B = B
+        B = B,
+        n_constructs = n_constructs
       )
       # Creates X (for updating Composites) and WW (for updating Factors)
       list2env(updated_X_WW_pseudo_weights[c("X", "WW")], envir = environment())
@@ -174,14 +174,14 @@ igsca <-
           
           theta <-
             update_composite(
-              n_total_var = n_total_var,
-              tot = tot, # Changes per gamma_idx iteration
-              n_constructs = n_constructs,
-              gamma_idx = gamma_idx, # Changes per gamma_idx iteration
               W = W, # Changes per gamma_idx iteration
               A = A,
-              V = V, # Changes per gamma_idx iteration
               X = X,
+              V = V, # Changes per gamma_idx iteration
+              gamma_idx = gamma_idx, # Changes per gamma_idx iteration
+              tot = tot, # Changes per gamma_idx iteration
+              n_constructs = n_constructs,
+              n_total_var = n_total_var,
               windex_gamma_idx = windex_gamma_idx # Changes per gamma_idx iteration
             )
           
@@ -210,17 +210,17 @@ igsca <-
 #### Update Loadings, Path Coefficients and Uniqueness Terms ----------
       updated_C_B_D_U <- update_C_B_D_U(
         X = X,
-        n_indicators = n_indicators,
         Gamma = Gamma,
-        c_index = c_index,
         C = C,
-        n_constructs = n_constructs,
-        b_index = b_index,
         B = B,
-        n_case = n_case,
         D = D,
         Z = Z,
-        indicator_type = indicator_type
+        n_indicators = n_indicators,
+        indicator_type = indicator_type,
+        n_constructs = n_constructs,
+        n_case = n_case,
+        c_index = c_index,
+        b_index = b_index
       )
       
       list2env(updated_C_B_D_U[c("D", "U", "C", "B")], envir = environment())
@@ -237,12 +237,12 @@ igsca <-
     if (!is.null(.dominant_indicators)) {
       flipped_signs <-
         flip_signs_ind_domi(
-          n_constructs = n_constructs,
           Z = Z,
-          .dominant_indicators = .dominant_indicators,
-          Gamma = Gamma,
           C = C,
-          B = B
+          B = B,
+          Gamma = Gamma,
+          n_constructs = n_constructs,
+          .dominant_indicators = .dominant_indicators
         )
       
       list2env(flipped_signs[c("Gamma", "C", "B")], envir = environment())
@@ -450,8 +450,8 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indi
 #' @param D Matrix of estimated unique error
 #' @param U Matrix of estimates related to unique error
 #' @param C Matrix of estimated loadings
-#' @param n_constructs  Number of constructs
 #' @param B Matrix of path coefficients
+#' @param n_constructs  Number of constructs
 #'
 #' @returns Two matrices:
 #' * X: Remaining part of data (Z) after accounting for uniqueness terms (U) and (D), used for estimating composite loadings. Also used for standardizing theta when updating Gamma, W and V
@@ -461,7 +461,7 @@ prepare_for_ALS <- function(Z0, W0, B0, n_indicators, n_case, n_constructs, indi
 #'   \insertAllCited{}
 #' 
 #'
-update_X_WW_pseudo_weights <- function(Z, U, D, C, n_constructs, B) {
+update_X_WW_pseudo_weights <- function(Z, U, D, C, B, n_constructs) {
   # X deviates from Matlab because it is an offspring of svd_out
   X <- Z - U %*% D
 
@@ -488,21 +488,21 @@ update_common_factor <- function(WW, windex_gamma_idx, gamma_idx) {
 
 #' Update Composite Variables
 #'
-#' @param n_total_var Number of indicators and constructs
-#' @param tot Index dependent on which construct variable we are examining
-#' @param n_constructs Number of constructs
-#' @param gamma_idx Index of which construct we are examining
 #' @param W Weights matrix
 #' @param A Stacked matrix of loadings and path coefficients
 #' @param V Unclear meaning
 #' @param X Pseudo-weights for composite variables
 #' @param windex_gamma_idx Index of weights related to the indicators for the construct of interest
+#' @param n_total_var Number of indicators and constructs
+#' @param tot Index dependent on which construct variable we are examining
+#' @param n_constructs Number of constructs
+#' @param gamma_idx Index of which construct we are examining
 #'
 #' @return theta: A matrix that will later be used to update the weights for the composite variable.
 #' 
 #'
 update_composite <-
-  function(n_total_var, tot, n_constructs, gamma_idx, W, A, V, X, windex_gamma_idx) {
+  function(W, A, V, X, windex_gamma_idx, n_total_var, tot, n_constructs, gamma_idx) {
     
     e <- matrix(0, nrow = 1, ncol = n_total_var)
     e[tot] <- 1
@@ -540,18 +540,18 @@ update_composite <-
 #' * (3) Estimated Loadings matrix (C)
 #'
 update_C_B_D_U <-
-  function(X,
-           n_indicators,
+  function(Z,
+           X,
            Gamma,
-           c_index,
            C,
+           B,
+           D,
+           indicator_type,
+           n_indicators,
+           c_index,
            n_constructs,
            b_index,
-           B,
-           n_case,
-           D,
-           Z,
-           indicator_type) {
+           n_case) {
     t1 <- c(X)
     M1 <- kronecker(diag(n_indicators), Gamma)
     M1 <- M1[, c_index]
@@ -599,7 +599,7 @@ update_C_B_D_U <-
 #' * Estimated Loadings matrix (C)
 #' * Estimated Path-Coefficients matrix (B)
 #'
-flip_signs_ind_domi <- function(n_constructs, Z, .dominant_indicators, Gamma, C, B) {
+flip_signs_ind_domi <- function(Z, Gamma, C, B, n_constructs, .dominant_indicators) {
   for (gamma_idx in seq_len(n_constructs)) {
     if (exists(.dominant_indicators[gamma_idx])) {
       if ((t(Z[, .dominant_indicators[gamma_idx]]) %*% Gamma[, gamma_idx]) < 0) {
@@ -696,14 +696,18 @@ extract_parseModel <-
         "Z0" = Z0,
         "B0" = B0,
         "W0" = W0,
+        "C0" = C0,
         "con_type" = con_type,
-        "indicator_type" = indicator_type,
-        "C0" = C0
+        "indicator_type" = indicator_type
       )
     )
   }
 
+#' Warning Function for I-GSCA
+#' 
+#' @author Michael S. Truong
 igsca_warning <- function() {
+  
   # TODO: Might want to do something about this during the simulations...
   # TODO: Maybe only call with the print Method?
   warning("IGSCA in cSEM currently only supports...")
