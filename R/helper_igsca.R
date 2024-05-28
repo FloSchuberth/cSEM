@@ -708,8 +708,6 @@ getIgscaInputs <-
 #' 
 #' @author Michael S. Truong
 warnIgscaFeatures <- function() {
-  
-  # TODO: Might want to do something about this during the simulations...
-  # TODO: Maybe only call with the print Method?
+
   warning("The list of current suspected and confirmed limitations of the R IGSCA limitations if found here: https://github.com/FloSchuberth/cSEM/wiki/Notes-on-I%E2%80%90GSCA-Implementation#current-limitations")
 }
