@@ -851,10 +851,12 @@ calculateWeightsIGSCA <- function(.data,
             "C" = igsca_out$Loadings,
             "B" = igsca_out$`Path Coefficients`,
             "Construct_scores" = igsca_out$`Construct Scores`,
-            "D_squared" = igsca_out$`Uniqueness Terms`, 
+            "D_squared" = igsca_out$`Squared Unique Loadings`,
+            "UniqueComponent" = igsca_out$UniqueComponent, 
             "Modes" = "gsca", 
             "Conv_status" = ifelse(igsca_out$Iterations > .iter_max, FALSE, TRUE),
-            "Iterations" = igsca_out$Iterations)
+            "Iterations" = igsca_out$Iterations,
+            "Data" = igsca_out$Data)
   
   return(l)
   

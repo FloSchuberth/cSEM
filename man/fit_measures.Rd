@@ -13,6 +13,9 @@
 \alias{calculateRMSEA}
 \alias{calculateRMSTheta}
 \alias{calculateSRMR}
+\alias{calculateFIT}
+\alias{calculateFIT_m}
+\alias{calculateFIT_s}
 \title{Model fit measures}
 \usage{
 calculateChiSquare(.object, .saturated = FALSE)
@@ -42,6 +45,12 @@ calculateSRMR(
   .saturated = FALSE,
   ...
 )
+
+calculateFIT(.object = NULL)
+
+calculateFIT_m(.object = NULL)
+
+calculateFIT_s(.object = NULL)
 }
 \arguments{
 \item{.object}{An R object of class \link{cSEMResults} resulting from a call to \code{\link[=csem]{csem()}}.}
@@ -98,5 +107,11 @@ for details on the implementation.
 \item \code{calculateRMSTheta()}: The root mean squared residual covariance matrix of the outer model residuals (RMS theta).
 
 \item \code{calculateSRMR()}: The standardized root mean square residual (SRMR).
+
+\item \code{calculateFIT()}: The measure of overall FIT for GSCA/I-GSCA models (FIT)
+
+\item \code{calculateFIT_m()}: The measure of measurement model fit for GSCA/I-GSCA models (FIT_m)
+
+\item \code{calculateFIT_s()}: The measure of structural model FIT for GSCA/I-GSCA models (FIT_s)
 
 }}

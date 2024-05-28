@@ -68,8 +68,9 @@ List of 4 matrices that make up a fitted I-GSCA Model:
 \itemize{
 \item (1) Weights
 \item (2) Loadings
-\item (3) Uniqueness Terms D^2
+\item (3) Squared Unique Loadings D^2
 \item (4) Path Coefficients.
+\item (5) Unique Component of Indicators (for common factors) DU
 }
 }
 \description{
