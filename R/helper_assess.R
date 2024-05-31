@@ -74,6 +74,10 @@ calculateModelSelectionCriteria <- function(
     args <- .object$Information$Arguments
     args$.model$structural[lower.tri(args$.model$structural)] <- 1
     
+    # set the .id argument to NULL; this is necessary as otherwise csem treats it as multigroup object,
+    # which produces errors.  
+    args$.id <- NULL
+    
     out_saturated <- do.call(csem, args)
     
     MSE <- (1 - out_saturated$Estimates$R2)[names(x1$R2)]
